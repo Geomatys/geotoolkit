@@ -48,9 +48,12 @@ import org.opengis.filter.PropertyIsGreaterThanOrEqualTo;
 import org.opengis.filter.PropertyIsLessThan;
 import org.opengis.filter.PropertyIsLessThanOrEqualTo;
 import org.opengis.filter.PropertyIsLike;
+import org.opengis.filter.PropertyIsNil;
 import org.opengis.filter.PropertyIsNotEqualTo;
 import org.opengis.filter.PropertyIsNull;
+import org.opengis.filter.capability.ComparisonOperators;
 import org.opengis.filter.capability.FilterCapabilities;
+import org.opengis.filter.capability.ScalarCapabilities;
 import org.opengis.filter.expression.Add;
 import org.opengis.filter.expression.BinaryExpression;
 import org.opengis.filter.expression.Divide;
@@ -74,6 +77,20 @@ import org.opengis.filter.spatial.Intersects;
 import org.opengis.filter.spatial.Overlaps;
 import org.opengis.filter.spatial.Touches;
 import org.opengis.filter.spatial.Within;
+import org.opengis.filter.temporal.After;
+import org.opengis.filter.temporal.AnyInteracts;
+import org.opengis.filter.temporal.Before;
+import org.opengis.filter.temporal.Begins;
+import org.opengis.filter.temporal.BegunBy;
+import org.opengis.filter.temporal.During;
+import org.opengis.filter.temporal.EndedBy;
+import org.opengis.filter.temporal.Ends;
+import org.opengis.filter.temporal.Meets;
+import org.opengis.filter.temporal.MetBy;
+import org.opengis.filter.temporal.OverlappedBy;
+import org.opengis.filter.temporal.TContains;
+import org.opengis.filter.temporal.TEquals;
+import org.opengis.filter.temporal.TOverlaps;
 
 /**
  * Determines what queries can be processed server side and which can be processed client side.
@@ -536,6 +553,76 @@ public class CapabilitiesFilterSplitter implements FilterVisitor, ExpressionVisi
     }
 
     @Override
+    public Object visit(After filter, Object extraData) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Object visit(AnyInteracts filter, Object extraData) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Object visit(Before filter, Object extraData) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Object visit(Begins filter, Object extraData) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Object visit(BegunBy filter, Object extraData) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Object visit(During filter, Object extraData) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Object visit(EndedBy filter, Object extraData) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Object visit(Ends filter, Object extraData) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Object visit(Meets filter, Object extraData) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Object visit(MetBy filter, Object extraData) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Object visit(OverlappedBy filter, Object extraData) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Object visit(TContains filter, Object extraData) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Object visit(TEquals filter, Object extraData) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Object visit(TOverlaps filter, Object extraData) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+    
+    @Override
     public Object visit(final PropertyIsLike filter, final Object notUsed) {
         if (original == null) {
             original = filter;
@@ -708,6 +795,11 @@ public class CapabilitiesFilterSplitter implements FilterVisitor, ExpressionVisi
         return null;
     }
 
+    @Override
+    public Object visit(final PropertyIsNil filter, Object extraData) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+    
     @Override
     public Object visit(final Id filter, final Object notUsed) {
         if (original == null) {

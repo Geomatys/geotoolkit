@@ -20,9 +20,11 @@ import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LinearRing;
+import java.text.ParseException;
 import java.util.Collections;
 import org.geotoolkit.filter.DefaultFilterFactory2;
 import org.geotoolkit.filter.identity.DefaultFeatureId;
+import org.geotoolkit.temporal.object.TemporalUtilities;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
 import static org.junit.Assert.*;
 import org.junit.Ignore;
@@ -270,6 +272,117 @@ public class FilterWritingTest {
         final String cql = CQL.write(filter);
         assertNotNull(cql);
         assertEquals("WITHIN(att,POLYGON ((10 20, 30 40, 50 60, 10 20)))", cql);
+    }
+    
+    @Test
+    public void testAfter() throws CQLException, ParseException {
+        final Filter filter = FF.after(FF.property("att"), FF.literal(TemporalUtilities.parseDate("2012-03-21T05:42:36Z")));
+        final String cql = CQL.write(filter);
+        assertNotNull(cql);
+        assertEquals("att AFTER 2012-03-21T05:42:36Z", cql);
+    }
+        
+    @Test
+    public void testAnyInteracts() throws CQLException, ParseException {
+        final Filter filter = FF.anyInteracts(FF.property("att"), FF.literal(TemporalUtilities.parseDate("2012-03-21T05:42:36Z")));
+        final String cql = CQL.write(filter);
+        assertNotNull(cql);
+        assertEquals("att ANYINTERACTS 2012-03-21T05:42:36Z", cql);
+    }
+    
+    @Test
+    public void testBefore() throws CQLException, ParseException {
+        final Filter filter = FF.before(FF.property("att"), FF.literal(TemporalUtilities.parseDate("2012-03-21T05:42:36Z")));
+        final String cql = CQL.write(filter);
+        assertNotNull(cql);
+        assertEquals("att BEFORE 2012-03-21T05:42:36Z", cql);
+    }
+    
+    @Test
+    public void testBegins() throws CQLException, ParseException {
+        final Filter filter = FF.begins(FF.property("att"), FF.literal(TemporalUtilities.parseDate("2012-03-21T05:42:36Z")));
+        final String cql = CQL.write(filter);
+        assertNotNull(cql);
+        assertEquals("att BEGINS 2012-03-21T05:42:36Z", cql);
+    }
+    
+    @Test
+    public void testBegunBy() throws CQLException, ParseException {
+        final Filter filter = FF.begunBy(FF.property("att"), FF.literal(TemporalUtilities.parseDate("2012-03-21T05:42:36Z")));
+        final String cql = CQL.write(filter);
+        assertNotNull(cql);
+        assertEquals("att BEGUNBY 2012-03-21T05:42:36Z", cql);
+    }
+    
+    @Test
+    public void testDuring() throws CQLException, ParseException {
+        final Filter filter = FF.during(FF.property("att"), FF.literal(TemporalUtilities.parseDate("2012-03-21T05:42:36Z")));
+        final String cql = CQL.write(filter);
+        assertNotNull(cql);
+        assertEquals("att DURING 2012-03-21T05:42:36Z", cql);
+    }
+    
+    @Test
+    public void testEndedBy() throws CQLException, ParseException {
+        final Filter filter = FF.endedBy(FF.property("att"), FF.literal(TemporalUtilities.parseDate("2012-03-21T05:42:36Z")));
+        final String cql = CQL.write(filter);
+        assertNotNull(cql);
+        assertEquals("att ENDEDBY 2012-03-21T05:42:36Z", cql);
+    }
+    
+    @Test
+    public void testEnds() throws CQLException, ParseException {
+        final Filter filter = FF.ends(FF.property("att"), FF.literal(TemporalUtilities.parseDate("2012-03-21T05:42:36Z")));
+        final String cql = CQL.write(filter);
+        assertNotNull(cql);
+        assertEquals("att ENDS 2012-03-21T05:42:36Z", cql);
+    }
+    
+    @Test
+    public void testMeets() throws CQLException, ParseException {
+        final Filter filter = FF.meets(FF.property("att"), FF.literal(TemporalUtilities.parseDate("2012-03-21T05:42:36Z")));
+        final String cql = CQL.write(filter);
+        assertNotNull(cql);
+        assertEquals("att MEETS 2012-03-21T05:42:36Z", cql);
+    }
+    
+    @Test
+    public void testMetBy() throws CQLException, ParseException {
+        final Filter filter = FF.metBy(FF.property("att"), FF.literal(TemporalUtilities.parseDate("2012-03-21T05:42:36Z")));
+        final String cql = CQL.write(filter);
+        assertNotNull(cql);
+        assertEquals("att METBY 2012-03-21T05:42:36Z", cql);
+    }
+    @Test
+    public void testOverlappedBy() throws CQLException, ParseException {
+        final Filter filter = FF.overlappedBy(FF.property("att"), FF.literal(TemporalUtilities.parseDate("2012-03-21T05:42:36Z")));
+        final String cql = CQL.write(filter);
+        assertNotNull(cql);
+        assertEquals("att OVERLAPPEDBY 2012-03-21T05:42:36Z", cql);
+    }
+    
+    @Test
+    public void testTcontains() throws CQLException, ParseException {
+        final Filter filter = FF.tcontains(FF.property("att"), FF.literal(TemporalUtilities.parseDate("2012-03-21T05:42:36Z")));
+        final String cql = CQL.write(filter);
+        assertNotNull(cql);
+        assertEquals("att TCONTAINS 2012-03-21T05:42:36Z", cql);
+    }
+    
+    @Test
+    public void testTequals() throws CQLException, ParseException {
+        final Filter filter = FF.tequals(FF.property("att"), FF.literal(TemporalUtilities.parseDate("2012-03-21T05:42:36Z")));
+        final String cql = CQL.write(filter);
+        assertNotNull(cql);
+        assertEquals("att TEQUALS 2012-03-21T05:42:36Z", cql);
+    }
+    
+    @Test
+    public void testToverlaps() throws CQLException, ParseException {
+        final Filter filter = FF.toverlaps(FF.property("att"), FF.literal(TemporalUtilities.parseDate("2012-03-21T05:42:36Z")));
+        final String cql = CQL.write(filter);
+        assertNotNull(cql);
+        assertEquals("att TOVERLAPS 2012-03-21T05:42:36Z", cql);
     }
     
 }

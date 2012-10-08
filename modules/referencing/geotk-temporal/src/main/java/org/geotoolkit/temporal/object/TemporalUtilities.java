@@ -120,6 +120,8 @@ public final class TemporalUtilities {
 
     private static final SimpleDateFormat sdf6 = new java.text.SimpleDateFormat(
             "yyyy-MM-dd");
+    private static final SimpleDateFormat sdf7 = new java.text.SimpleDateFormat(
+            "yyyy-MM-dd'T'HH:mm:ss'Z'");
     static {
         sdf6.setTimeZone(TimeZone.getDefault());
     }
@@ -1022,5 +1024,33 @@ public final class TemporalUtilities {
                 "ISO 8601 format can not proceed because date is null.");
         return "";
     }
+    
+    /**
+     * Format date with TimeZone using pattern yyyy-MM-dd'T'HH:mm:ssZ
+     * 
+     * @param date
+     *            : date to format
+     * @param timezone
+     *            : timezone for date
+     * @return ISO 8601 string or empty string if date is null
+     */
+    public static String toISO8601Z(final Date date, TimeZone timezone) {
+        if (date != null) {
+            synchronized (sdf7) {
+                if (timezone != null) {
+                    sdf7.setTimeZone(timezone);
+                } else {
+                    SimpleTimeZone tz = new SimpleTimeZone(0, "Out Timezone");
+                    sdf7.setTimeZone(tz);
+                }
 
+                return sdf7.format(date);
+            }
+        }
+        LOGGER.log(Level.INFO,
+                "ISO 8601 format can not proceed because date is null.");
+        return "";
+    }
+    
+    
 }

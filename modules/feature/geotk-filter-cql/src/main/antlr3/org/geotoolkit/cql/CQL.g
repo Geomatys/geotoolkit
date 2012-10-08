@@ -329,19 +329,19 @@ filter_term 	: expression
                             | NOT? LIKE^ expression
                             | IS^ NOT? NULL
                             | AFTER^  expression
-                            | ANYINTERACTS expression
-                            | BEFORE expression
-                            | BEGINS expression
-                            | BEGUNBY expression
-                            | DURING expression
-                            | ENDEDBY expression
-                            | ENDS expression
-                            | MEETS expression
-                            | METBY expression
-                            | OVERLAPPEDBY expression
-                            | TCONTAINS expression
-                            | TEQUALS expression
-                            | TOVERLAPS expression
+                            | ANYINTERACTS^ expression
+                            | BEFORE^ expression
+                            | BEGINS^ expression
+                            | BEGUNBY^ expression
+                            | DURING^ expression
+                            | ENDEDBY^ expression
+                            | ENDS^ expression
+                            | MEETS^ expression
+                            | METBY^ expression
+                            | OVERLAPPEDBY^ expression
+                            | TCONTAINS^ expression
+                            | TEQUALS^ expression
+                            | TOVERLAPS^ expression
                     ) ?
                 | filter_geometry
                 ;

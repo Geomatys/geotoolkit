@@ -49,6 +49,7 @@ import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.filter.function.geometry.GeometryTypeFunction;
 import org.opengis.feature.type.Name;
+import org.opengis.filter.MatchAction;
 
 
 public abstract class JDBCDataStoreAPITest extends JDBCTestSupport {
@@ -193,7 +194,7 @@ public abstract class JDBCDataStoreAPITest extends JDBCTestSupport {
             }
         }
 
-        filter = factory.equal(geomTypeExpr, factory.literal("LineString"),false);
+        filter = factory.equal(geomTypeExpr, factory.literal("LineString"),false, MatchAction.ANY);
         q = QueryBuilder.filtered(dataStore.getFeatureType(tname("road")).getName(),filter);
         try{
             reader = dataStore.getFeatureReader(q);
@@ -232,7 +233,7 @@ public abstract class JDBCDataStoreAPITest extends JDBCTestSupport {
             }
         }
 
-        filter = factory.equal(geomTypeExpr, factory.literal("LineString"),false);
+        filter = factory.equal(geomTypeExpr, factory.literal("LineString"),false, MatchAction.ANY);
         builder.setFilter(filter);
         query = builder.buildQuery();
         try{

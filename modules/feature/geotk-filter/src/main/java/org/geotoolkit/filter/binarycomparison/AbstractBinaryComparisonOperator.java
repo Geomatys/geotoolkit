@@ -3,7 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2002-2008, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2009, Geomatys
+ *    (C) 2009-2012, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -20,12 +20,11 @@ package org.geotoolkit.filter.binarycomparison;
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
-import org.geotoolkit.util.Converters;
-
-import org.opengis.filter.BinaryComparisonOperator;
-import org.opengis.filter.expression.Expression;
-
 import static org.geotoolkit.util.ArgumentChecks.*;
+import org.geotoolkit.util.Converters;
+import org.opengis.filter.BinaryComparisonOperator;
+import org.opengis.filter.MatchAction;
+import org.opengis.filter.expression.Expression;
 
 /**
  * Immutable abstract "binary comparison operator".
@@ -41,15 +40,17 @@ public abstract class AbstractBinaryComparisonOperator<E extends Expression,F ex
     protected final E left;
     protected final F right;
     protected final boolean match;
+    protected final MatchAction matchAction;
 
-    public AbstractBinaryComparisonOperator(final E left, final F right, final boolean match) {
+    public AbstractBinaryComparisonOperator(final E left, final F right, final boolean match, final MatchAction matchAction) {
         ensureNonNull("left", left);
         ensureNonNull("right", right);
         this.left = left;
         this.right = right;
         this.match = match;
+        this.matchAction = matchAction;
     }
-
+    
     /**
      * {@inheritDoc }
      */
@@ -74,6 +75,11 @@ public abstract class AbstractBinaryComparisonOperator<E extends Expression,F ex
         return match;
     }
 
+    @Override
+    public MatchAction getMatchAction() {
+        return matchAction;
+    }
+    
     protected Integer compare(final Object object){
         Object objleft = left.evaluate(object);
 

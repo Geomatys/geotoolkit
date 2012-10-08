@@ -31,11 +31,9 @@ import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.RecognitionException;
 import org.antlr.runtime.TokenStream;
 import org.antlr.runtime.tree.CommonTree;
-import org.antlr.runtime.tree.Tree;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.gui.swing.tree.Trees;
-import org.geotoolkit.temporal.object.ISODateParser;
 import org.geotoolkit.temporal.object.TemporalUtilities;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory2;
@@ -498,6 +496,62 @@ public final class CQL {
             final Expression exp1 = convertExpression((CommonTree)tree.getChild(0), ff);
             final Expression exp2 = convertExpression((CommonTree)tree.getChild(1), ff);  
             return ff.within(exp1,exp2);
+        }else if(CQLParser.AFTER == type){
+            final Expression exp1 = convertExpression((CommonTree)tree.getChild(0), ff);
+            final Expression exp2 = convertExpression((CommonTree)tree.getChild(1), ff);  
+            return ff.after(exp1,exp2);
+        }else if(CQLParser.ANYINTERACTS == type){
+            final Expression exp1 = convertExpression((CommonTree)tree.getChild(0), ff);
+            final Expression exp2 = convertExpression((CommonTree)tree.getChild(1), ff);  
+            return ff.anyInteracts(exp1,exp2);
+        }else if(CQLParser.BEFORE == type){
+            final Expression exp1 = convertExpression((CommonTree)tree.getChild(0), ff);
+            final Expression exp2 = convertExpression((CommonTree)tree.getChild(1), ff);  
+            return ff.before(exp1,exp2);
+        }else if(CQLParser.BEGINS == type){
+            final Expression exp1 = convertExpression((CommonTree)tree.getChild(0), ff);
+            final Expression exp2 = convertExpression((CommonTree)tree.getChild(1), ff);  
+            return ff.begins(exp1,exp2);
+        }else if(CQLParser.BEGUNBY == type){
+            final Expression exp1 = convertExpression((CommonTree)tree.getChild(0), ff);
+            final Expression exp2 = convertExpression((CommonTree)tree.getChild(1), ff);  
+            return ff.begunBy(exp1,exp2);
+        }else if(CQLParser.DURING == type){
+            final Expression exp1 = convertExpression((CommonTree)tree.getChild(0), ff);
+            final Expression exp2 = convertExpression((CommonTree)tree.getChild(1), ff);  
+            return ff.during(exp1,exp2);
+        }else if(CQLParser.ENDEDBY == type){
+            final Expression exp1 = convertExpression((CommonTree)tree.getChild(0), ff);
+            final Expression exp2 = convertExpression((CommonTree)tree.getChild(1), ff);  
+            return ff.endedBy(exp1,exp2);
+        }else if(CQLParser.ENDS == type){
+            final Expression exp1 = convertExpression((CommonTree)tree.getChild(0), ff);
+            final Expression exp2 = convertExpression((CommonTree)tree.getChild(1), ff);  
+            return ff.ends(exp1,exp2);
+        }else if(CQLParser.MEETS == type){
+            final Expression exp1 = convertExpression((CommonTree)tree.getChild(0), ff);
+            final Expression exp2 = convertExpression((CommonTree)tree.getChild(1), ff);  
+            return ff.meets(exp1,exp2);
+        }else if(CQLParser.METBY == type){
+            final Expression exp1 = convertExpression((CommonTree)tree.getChild(0), ff);
+            final Expression exp2 = convertExpression((CommonTree)tree.getChild(1), ff);  
+            return ff.metBy(exp1,exp2);
+        }else if(CQLParser.OVERLAPPEDBY == type){
+            final Expression exp1 = convertExpression((CommonTree)tree.getChild(0), ff);
+            final Expression exp2 = convertExpression((CommonTree)tree.getChild(1), ff);  
+            return ff.overlappedBy(exp1,exp2);
+        }else if(CQLParser.TCONTAINS == type){
+            final Expression exp1 = convertExpression((CommonTree)tree.getChild(0), ff);
+            final Expression exp2 = convertExpression((CommonTree)tree.getChild(1), ff);  
+            return ff.tcontains(exp1,exp2);
+        }else if(CQLParser.TEQUALS == type){
+            final Expression exp1 = convertExpression((CommonTree)tree.getChild(0), ff);
+            final Expression exp2 = convertExpression((CommonTree)tree.getChild(1), ff);  
+            return ff.tequals(exp1,exp2);
+        }else if(CQLParser.TOVERLAPS == type){
+            final Expression exp1 = convertExpression((CommonTree)tree.getChild(0), ff);
+            final Expression exp2 = convertExpression((CommonTree)tree.getChild(1), ff);  
+            return ff.toverlaps(exp1,exp2);
         }
         
         throw new CQLException("Unreconized filter : type="+tree.getType()+" text=" + tree.getText());

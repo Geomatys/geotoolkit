@@ -37,6 +37,7 @@ import org.opengis.filter.PropertyIsGreaterThanOrEqualTo;
 import org.opengis.filter.PropertyIsLessThan;
 import org.opengis.filter.PropertyIsLessThanOrEqualTo;
 import org.opengis.filter.PropertyIsLike;
+import org.opengis.filter.PropertyIsNil;
 import org.opengis.filter.PropertyIsNotEqualTo;
 import org.opengis.filter.PropertyIsNull;
 import org.opengis.filter.expression.Add;
@@ -59,6 +60,20 @@ import org.opengis.filter.spatial.Intersects;
 import org.opengis.filter.spatial.Overlaps;
 import org.opengis.filter.spatial.Touches;
 import org.opengis.filter.spatial.Within;
+import org.opengis.filter.temporal.After;
+import org.opengis.filter.temporal.AnyInteracts;
+import org.opengis.filter.temporal.Before;
+import org.opengis.filter.temporal.Begins;
+import org.opengis.filter.temporal.BegunBy;
+import org.opengis.filter.temporal.During;
+import org.opengis.filter.temporal.EndedBy;
+import org.opengis.filter.temporal.Ends;
+import org.opengis.filter.temporal.Meets;
+import org.opengis.filter.temporal.MetBy;
+import org.opengis.filter.temporal.OverlappedBy;
+import org.opengis.filter.temporal.TContains;
+import org.opengis.filter.temporal.TEquals;
+import org.opengis.filter.temporal.TOverlaps;
 
 /**
  *
@@ -149,6 +164,11 @@ public class IsValidSpatialFilterVisitor implements FilterVisitor,ExpressionVisi
 
     @Override
     public Object visit(final PropertyIsNull pin, final Object o) {
+        return true;
+    }
+
+    @Override
+    public Object visit(final PropertyIsNil pin, final Object o) {
         return true;
     }
 
@@ -317,6 +337,76 @@ public class IsValidSpatialFilterVisitor implements FilterVisitor,ExpressionVisi
 
     @Override
     public Object visit(final Subtract sbtrct, final Object o) {
+        return true;
+    }
+    
+    @Override
+    public Object visit(After filter, Object extraData) {
+        return true;
+    }
+
+    @Override
+    public Object visit(AnyInteracts filter, Object extraData) {
+        return true;
+    }
+
+    @Override
+    public Object visit(Before filter, Object extraData) {
+        return true;
+    }
+
+    @Override
+    public Object visit(Begins filter, Object extraData) {
+        return true;
+    }
+
+    @Override
+    public Object visit(BegunBy filter, Object extraData) {
+        return true;
+    }
+
+    @Override
+    public Object visit(During filter, Object extraData) {
+        return true;
+    }
+
+    @Override
+    public Object visit(EndedBy filter, Object extraData) {
+        return true;
+    }
+
+    @Override
+    public Object visit(Ends filter, Object extraData) {
+        return true;
+    }
+
+    @Override
+    public Object visit(Meets filter, Object extraData) {
+        return true;
+    }
+
+    @Override
+    public Object visit(MetBy filter, Object extraData) {
+        return true;
+    }
+
+    @Override
+    public Object visit(OverlappedBy filter, Object extraData) {
+        return true;
+    }
+
+    @Override
+    public Object visit(TContains filter, Object extraData) {
+        return true;
+    }
+
+    @Override
+    public Object visit(TEquals filter, Object extraData) {
+        return true;
+    }
+
+    @Override
+    public Object visit(TOverlaps filter, Object extraData) {
         return true;
     }
 

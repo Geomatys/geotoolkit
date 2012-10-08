@@ -22,7 +22,9 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.Polygon;
+import java.text.ParseException;
 import org.geotoolkit.filter.DefaultFilterFactory2;
+import org.geotoolkit.temporal.object.TemporalUtilities;
 import static org.junit.Assert.*;
 import org.junit.Test;
 import org.opengis.filter.FilterFactory2;
@@ -88,6 +90,15 @@ public class ExpressionWritingTest {
         assertNotNull(cql);
         assertEquals("9.0E-21", cql);    
     }
+    
+    @Test
+    public void testDate() throws CQLException, ParseException{
+        final Expression exp = FF.literal(TemporalUtilities.parseDate("2012-03-21T05:42:36Z"));
+        final String cql = CQL.write(exp);
+        assertNotNull(cql);
+        assertEquals("2012-03-21T05:42:36Z", cql);    
+    }
+    
     
     @Test
     public void testNegativeDecimal() throws CQLException{

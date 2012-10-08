@@ -2,8 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2002-2008, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2009, Geomatys
+ *    (C) 2012, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -15,33 +14,50 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.filter.binarycomparison;
+package org.geotoolkit.filter;
 
-import org.geotoolkit.util.StringUtilities;
+import java.io.Serializable;
+import static org.geotoolkit.util.ArgumentChecks.*;
 import org.opengis.filter.FilterVisitor;
-import org.opengis.filter.MatchAction;
-import org.opengis.filter.PropertyIsGreaterThanOrEqualTo;
+import org.opengis.filter.PropertyIsNil;
 import org.opengis.filter.expression.Expression;
 
 /**
- * Immutable "is greater than or equal" fitler.
+ * Immutable "is nill" filter.
+ * This implementation is similar to isNull.
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class DefaultPropertyIsGreaterThanOrEqualTo extends AbstractBinaryComparisonOperator<Expression,Expression> implements PropertyIsGreaterThanOrEqualTo{
+public class DefaultPropertyIsNil implements PropertyIsNil,Serializable {
 
-    public DefaultPropertyIsGreaterThanOrEqualTo(final Expression left, final Expression right, final boolean match, final MatchAction matchAction) {
-        super(left,right,match,matchAction);
+    private final Expression exp;
+
+    public DefaultPropertyIsNil(final Expression exp) {
+        ensureNonNull("expression", exp);
+        this.exp = exp;
     }
 
     /**
      * {@inheritDoc }
      */
     @Override
+    public Expression getExpression() {
+        return exp;
+    }
+
+    @Override
+    public String getNilReason() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+    
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public boolean evaluate(final Object object) {
-        final Integer v = compare(object);
-        return (v == null) ? false : (v >= 0) ;
+        Object obj = exp.evaluate(object);
+        return obj == null;
     }
 
     /**
@@ -57,10 +73,7 @@ public class DefaultPropertyIsGreaterThanOrEqualTo extends AbstractBinaryCompari
      */
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("PropertyIsGreaterThanOrEqualTo (matchcase=");
-        sb.append(match).append(")\n");
-        sb.append(StringUtilities.toStringTree(left,right));
-        return sb.toString();
+        return "IsNull:"+exp.toString();
     }
 
     /**
@@ -74,14 +87,8 @@ public class DefaultPropertyIsGreaterThanOrEqualTo extends AbstractBinaryCompari
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final AbstractBinaryComparisonOperator other = (AbstractBinaryComparisonOperator) obj;
-        if (this.left != other.left && !this.left.equals(other.left)) {
-            return false;
-        }
-        if (this.right != other.right && !this.right.equals(other.right)) {
-            return false;
-        }
-        if (this.match != other.match) {
+        final DefaultPropertyIsNil other = (DefaultPropertyIsNil) obj;
+        if (this.exp != other.exp && (this.exp == null || !this.exp.equals(other.exp))) {
             return false;
         }
         return true;
@@ -92,10 +99,8 @@ public class DefaultPropertyIsGreaterThanOrEqualTo extends AbstractBinaryCompari
      */
     @Override
     public int hashCode() {
-        int hash = 9;
-        hash = 23 * hash + this.left.hashCode();
-        hash = 23 * hash + this.right.hashCode() ;
-        hash = 23 * hash + (this.match ? 1 : 0);
+        int hash = 7;
+        hash = 97 * hash + (this.exp != null ? this.exp.hashCode() : 0);
         return hash;
     }
 

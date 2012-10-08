@@ -2,8 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2002-2008, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2009, Geomatys
+ *    (C) 2012, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -15,50 +14,40 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.filter.binarycomparison;
+package org.geotoolkit.filter.temporal;
 
 import org.geotoolkit.util.StringUtilities;
-import org.opengis.filter.FilterVisitor;
-import org.opengis.filter.MatchAction;
-import org.opengis.filter.PropertyIsGreaterThanOrEqualTo;
+import org.geotoolkit.util.converter.Classes;
 import org.opengis.filter.expression.Expression;
 
 /**
- * Immutable "is greater than or equal" fitler.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
  */
-public class DefaultPropertyIsGreaterThanOrEqualTo extends AbstractBinaryComparisonOperator<Expression,Expression> implements PropertyIsGreaterThanOrEqualTo{
+public class AbstractTemporalFilter {
 
-    public DefaultPropertyIsGreaterThanOrEqualTo(final Expression left, final Expression right, final boolean match, final MatchAction matchAction) {
-        super(left,right,match,matchAction);
+    protected final Expression left;
+    protected final Expression right;
+    
+    public AbstractTemporalFilter(final Expression left, final Expression right) {
+        this.left = left;
+        this.right = right;
     }
 
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public boolean evaluate(final Object object) {
-        final Integer v = compare(object);
-        return (v == null) ? false : (v >= 0) ;
+    public Expression getExpression1() {
+        return left;
     }
 
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public Object accept(final FilterVisitor visitor, final Object extraData) {
-        return visitor.visit(this, extraData);
+    public Expression getExpression2() {
+        return right;
     }
-
+    
     /**
      * {@inheritDoc }
      */
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("PropertyIsGreaterThanOrEqualTo (matchcase=");
-        sb.append(match).append(")\n");
+        final StringBuilder sb = new StringBuilder(Classes.getShortClassName(this));
         sb.append(StringUtilities.toStringTree(left,right));
         return sb.toString();
     }
@@ -74,14 +63,11 @@ public class DefaultPropertyIsGreaterThanOrEqualTo extends AbstractBinaryCompari
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final AbstractBinaryComparisonOperator other = (AbstractBinaryComparisonOperator) obj;
+        final AbstractTemporalFilter other = (AbstractTemporalFilter) obj;
         if (this.left != other.left && !this.left.equals(other.left)) {
             return false;
         }
         if (this.right != other.right && !this.right.equals(other.right)) {
-            return false;
-        }
-        if (this.match != other.match) {
             return false;
         }
         return true;
@@ -92,11 +78,9 @@ public class DefaultPropertyIsGreaterThanOrEqualTo extends AbstractBinaryCompari
      */
     @Override
     public int hashCode() {
-        int hash = 9;
+        int hash = 10;
         hash = 23 * hash + this.left.hashCode();
         hash = 23 * hash + this.right.hashCode() ;
-        hash = 23 * hash + (this.match ? 1 : 0);
         return hash;
     }
-
 }

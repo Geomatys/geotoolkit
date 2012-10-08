@@ -95,7 +95,8 @@ class FilterToSqlHelper {
         return new DefaultFilterCapabilities(AbstractSQLDialect.BASE_DBMS_CAPABILITIES.getVersion(),
                                              AbstractSQLDialect.BASE_DBMS_CAPABILITIES.getIdCapabilities(),
                                              spatialCaps,
-                                             AbstractSQLDialect.BASE_DBMS_CAPABILITIES.getScalarCapabilities());
+                                             AbstractSQLDialect.BASE_DBMS_CAPABILITIES.getScalarCapabilities(),
+                                             AbstractSQLDialect.BASE_DBMS_CAPABILITIES.getTemporalCapabilities());
     }
 
     protected Object visitBinarySpatialOperator(final BinarySpatialOperator filter,

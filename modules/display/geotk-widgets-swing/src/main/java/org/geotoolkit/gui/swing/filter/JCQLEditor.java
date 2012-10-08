@@ -25,28 +25,22 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import org.geotoolkit.cql.CQL;
 import org.geotoolkit.cql.CQLException;
 import org.geotoolkit.filter.function.FunctionFactory;
 import org.geotoolkit.filter.function.Functions;
-
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapLayer;
-
+import org.jdesktop.swingx.combobox.ListComboBoxModel;
 import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;
-
-import static org.geotoolkit.util.ArgumentChecks.*;
-import org.jdesktop.swingx.combobox.ListComboBoxModel;
 import org.opengis.filter.expression.Expression;
 
 /**

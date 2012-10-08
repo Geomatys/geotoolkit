@@ -34,6 +34,7 @@ import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.FilterVisitor;
 import org.opengis.filter.Id;
 import org.opengis.filter.IncludeFilter;
+import org.opengis.filter.MatchAction;
 import org.opengis.filter.Not;
 import org.opengis.filter.Or;
 import org.opengis.filter.PropertyIsBetween;
@@ -43,6 +44,7 @@ import org.opengis.filter.PropertyIsGreaterThanOrEqualTo;
 import org.opengis.filter.PropertyIsLessThan;
 import org.opengis.filter.PropertyIsLessThanOrEqualTo;
 import org.opengis.filter.PropertyIsLike;
+import org.opengis.filter.PropertyIsNil;
 import org.opengis.filter.PropertyIsNotEqualTo;
 import org.opengis.filter.PropertyIsNull;
 import org.opengis.filter.expression.Add;
@@ -66,6 +68,20 @@ import org.opengis.filter.spatial.Intersects;
 import org.opengis.filter.spatial.Overlaps;
 import org.opengis.filter.spatial.Touches;
 import org.opengis.filter.spatial.Within;
+import org.opengis.filter.temporal.After;
+import org.opengis.filter.temporal.AnyInteracts;
+import org.opengis.filter.temporal.Before;
+import org.opengis.filter.temporal.Begins;
+import org.opengis.filter.temporal.BegunBy;
+import org.opengis.filter.temporal.During;
+import org.opengis.filter.temporal.EndedBy;
+import org.opengis.filter.temporal.Ends;
+import org.opengis.filter.temporal.Meets;
+import org.opengis.filter.temporal.MetBy;
+import org.opengis.filter.temporal.OverlappedBy;
+import org.opengis.filter.temporal.TContains;
+import org.opengis.filter.temporal.TEquals;
+import org.opengis.filter.temporal.TOverlaps;
 import org.opengis.geometry.BoundingBox;
 
 
@@ -168,43 +184,53 @@ public class DuplicatingFilterVisitor implements FilterVisitor, ExpressionVisito
         final Expression expr1 = visit(filter.getExpression1(), extraData);
         final Expression expr2 = visit(filter.getExpression2(), extraData);
         boolean matchCase = filter.isMatchingCase();
-        return getFactory(extraData).equal(expr1, expr2, matchCase);
+        final MatchAction matchAction = filter.getMatchAction();
+        return getFactory(extraData).equal(expr1, expr2, matchCase,matchAction);
     }
 
     @Override
     public Object visit(final PropertyIsNotEqualTo filter, final Object extraData) {
         final Expression expr1 = visit(filter.getExpression1(), extraData);
         final Expression expr2 = visit(filter.getExpression2(), extraData);
-        boolean matchCase = filter.isMatchingCase();
-        return getFactory(extraData).notEqual(expr1, expr2, matchCase);
+        final boolean matchCase = filter.isMatchingCase();
+        final MatchAction matchAction = filter.getMatchAction();
+        return getFactory(extraData).notEqual(expr1, expr2, matchCase,matchAction);
     }
 
     @Override
     public Object visit(final PropertyIsGreaterThan filter, final Object extraData) {
         final Expression expr1 = visit(filter.getExpression1(), extraData);
         final Expression expr2 = visit(filter.getExpression2(), extraData);
-        return getFactory(extraData).greater(expr1, expr2);
+        final boolean matchCase = filter.isMatchingCase();
+        final MatchAction matchAction = filter.getMatchAction();
+        return getFactory(extraData).greater(expr1, expr2,matchCase,matchAction);
     }
 
     @Override
     public Object visit(final PropertyIsGreaterThanOrEqualTo filter, final Object extraData) {
         final Expression expr1 = visit(filter.getExpression1(), extraData);
         final Expression expr2 = visit(filter.getExpression2(), extraData);
-        return getFactory(extraData).greaterOrEqual(expr1, expr2);
+        final boolean matchCase = filter.isMatchingCase();
+        final MatchAction matchAction = filter.getMatchAction();
+        return getFactory(extraData).greaterOrEqual(expr1, expr2,matchCase,matchAction);
     }
 
     @Override
     public Object visit(final PropertyIsLessThan filter, final Object extraData) {
         final Expression expr1 = visit(filter.getExpression1(), extraData);
         final Expression expr2 = visit(filter.getExpression2(), extraData);
-        return getFactory(extraData).less(expr1, expr2);
+        final boolean matchCase = filter.isMatchingCase();
+        final MatchAction matchAction = filter.getMatchAction();
+        return getFactory(extraData).less(expr1, expr2,matchCase,matchAction);
     }
 
     @Override
     public Object visit(final PropertyIsLessThanOrEqualTo filter, final Object extraData) {
         final Expression expr1 = visit(filter.getExpression1(), extraData);
         final Expression expr2 = visit(filter.getExpression2(), extraData);
-        return getFactory(extraData).lessOrEqual(expr1, expr2);
+        final boolean matchCase = filter.isMatchingCase();
+        final MatchAction matchAction = filter.getMatchAction();
+        return getFactory(extraData).lessOrEqual(expr1, expr2,matchCase,matchAction);
     }
 
     @Override
@@ -224,6 +250,12 @@ public class DuplicatingFilterVisitor implements FilterVisitor, ExpressionVisito
         return getFactory(extraData).isNull(expr);
     }
 
+    @Override
+    public Object visit(final PropertyIsNil filter, Object extraData) {
+        final Expression expr = visit(filter.getExpression(), extraData);
+        return getFactory(extraData).isNil(expr);
+    }
+    
     @Override
     public Object visit(final BBOX filter, final Object extraData) {
 
@@ -325,6 +357,104 @@ public class DuplicatingFilterVisitor implements FilterVisitor, ExpressionVisito
         return getFactory(extraData).within(geometry1, geometry2);
     }
 
+    @Override
+    public Object visit(After filter, Object extraData) {
+        final Expression exp1 = visit(filter.getExpression1(), extraData);
+        final Expression exp2 = visit(filter.getExpression2(), extraData);
+        return getFactory(extraData).after(exp1, exp2);
+    }
+
+    @Override
+    public Object visit(AnyInteracts filter, Object extraData) {
+        final Expression exp1 = visit(filter.getExpression1(), extraData);
+        final Expression exp2 = visit(filter.getExpression2(), extraData);
+        return getFactory(extraData).anyInteracts(exp1, exp2);
+    }
+
+    @Override
+    public Object visit(Before filter, Object extraData) {
+        final Expression exp1 = visit(filter.getExpression1(), extraData);
+        final Expression exp2 = visit(filter.getExpression2(), extraData);
+        return getFactory(extraData).before(exp1, exp2);
+    }
+
+    @Override
+    public Object visit(Begins filter, Object extraData) {
+        final Expression exp1 = visit(filter.getExpression1(), extraData);
+        final Expression exp2 = visit(filter.getExpression2(), extraData);
+        return getFactory(extraData).begins(exp1, exp2);
+    }
+
+    @Override
+    public Object visit(BegunBy filter, Object extraData) {
+        final Expression exp1 = visit(filter.getExpression1(), extraData);
+        final Expression exp2 = visit(filter.getExpression2(), extraData);
+        return getFactory(extraData).begunBy(exp1, exp2);
+    }
+
+    @Override
+    public Object visit(During filter, Object extraData) {
+        final Expression exp1 = visit(filter.getExpression1(), extraData);
+        final Expression exp2 = visit(filter.getExpression2(), extraData);
+        return getFactory(extraData).during(exp1, exp2);
+    }
+
+    @Override
+    public Object visit(EndedBy filter, Object extraData) {
+        final Expression exp1 = visit(filter.getExpression1(), extraData);
+        final Expression exp2 = visit(filter.getExpression2(), extraData);
+        return getFactory(extraData).endedBy(exp1, exp2);
+    }
+
+    @Override
+    public Object visit(Ends filter, Object extraData) {
+        final Expression exp1 = visit(filter.getExpression1(), extraData);
+        final Expression exp2 = visit(filter.getExpression2(), extraData);
+        return getFactory(extraData).ends(exp1, exp2);
+    }
+
+    @Override
+    public Object visit(Meets filter, Object extraData) {
+        final Expression exp1 = visit(filter.getExpression1(), extraData);
+        final Expression exp2 = visit(filter.getExpression2(), extraData);
+        return getFactory(extraData).meets(exp1, exp2);
+    }
+
+    @Override
+    public Object visit(MetBy filter, Object extraData) {
+        final Expression exp1 = visit(filter.getExpression1(), extraData);
+        final Expression exp2 = visit(filter.getExpression2(), extraData);
+        return getFactory(extraData).metBy(exp1, exp2);
+    }
+
+    @Override
+    public Object visit(OverlappedBy filter, Object extraData) {
+        final Expression exp1 = visit(filter.getExpression1(), extraData);
+        final Expression exp2 = visit(filter.getExpression2(), extraData);
+        return getFactory(extraData).overlappedBy(exp1, exp2);
+    }
+
+    @Override
+    public Object visit(TContains filter, Object extraData) {
+        final Expression exp1 = visit(filter.getExpression1(), extraData);
+        final Expression exp2 = visit(filter.getExpression2(), extraData);
+        return getFactory(extraData).tcontains(exp1, exp2);
+    }
+
+    @Override
+    public Object visit(TEquals filter, Object extraData) {
+        final Expression exp1 = visit(filter.getExpression1(), extraData);
+        final Expression exp2 = visit(filter.getExpression2(), extraData);
+        return getFactory(extraData).tequals(exp1, exp2);
+    }
+
+    @Override
+    public Object visit(TOverlaps filter, Object extraData) {
+        final Expression exp1 = visit(filter.getExpression1(), extraData);
+        final Expression exp2 = visit(filter.getExpression2(), extraData);
+        return getFactory(extraData).toverlaps(exp1, exp2);
+    }
+    
     @Override
     public Object visitNullFilter(final Object extraData) {
         return null;
