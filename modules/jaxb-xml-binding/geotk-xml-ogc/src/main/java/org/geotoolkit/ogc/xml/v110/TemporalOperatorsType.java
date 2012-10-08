@@ -17,19 +17,22 @@
 package org.geotoolkit.ogc.xml.v110;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.util.Utilities;
+import org.opengis.filter.capability.TemporalOperator;
+import org.opengis.filter.capability.TemporalOperators;
 
 
 /**
  * <p>Java class for TemporalOperatorsType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="TemporalOperatorsType">
  *   &lt;complexContent>
@@ -41,28 +44,55 @@ import org.geotoolkit.util.Utilities;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "TemporalOperatorsType", propOrder = {
     "temporalOperator"
 })
-public class TemporalOperatorsType {
+public class TemporalOperatorsType implements TemporalOperators {
 
     @XmlElement(name = "TemporalOperator", required = true)
     private List<TemporalOperatorType> temporalOperator;
 
     /**
      * Gets the value of the temporalOperator property.
-     * 
+     *
      */
     public List<TemporalOperatorType> getTemporalOperator() {
         if (temporalOperator == null) {
             temporalOperator = new ArrayList<TemporalOperatorType>();
         }
         return this.temporalOperator;
+    }
+
+    @Override
+    public Collection<TemporalOperator> getOperators() {
+        List<TemporalOperator> result =  new ArrayList<TemporalOperator>();
+        if (temporalOperator == null) {
+            temporalOperator = new ArrayList<TemporalOperatorType>();
+            return result;
+        } else {
+            for (TemporalOperatorType c: temporalOperator) {
+                result.add(c);
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public TemporalOperator getOperator(final String name) {
+        if ( name == null || temporalOperator == null) {
+            return null;
+        }
+        for (TemporalOperator operator : temporalOperator ) {
+            if ( name.equals( operator.getName() ) ) {
+                return operator;
+            }
+        }
+        return null;
     }
 
     @Override

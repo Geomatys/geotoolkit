@@ -28,13 +28,16 @@ import org.geotoolkit.gml.xml.v311.AbstractTimeObjectType;
 import org.geotoolkit.gml.xml.v311.AbstractTimePrimitiveType;
 import org.geotoolkit.gml.xml.v311.TimeInstantType;
 import org.geotoolkit.gml.xml.v311.TimePeriodType;
+import org.opengis.filter.FilterVisitor;
+import org.opengis.filter.expression.Expression;
+import org.opengis.filter.temporal.BinaryTemporalOperator;
 
 
 /**
  * <p>Java class for BinaryTemporalOpType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="BinaryTemporalOpType">
  *   &lt;complexContent>
@@ -50,8 +53,8 @@ import org.geotoolkit.gml.xml.v311.TimePeriodType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -59,7 +62,7 @@ import org.geotoolkit.gml.xml.v311.TimePeriodType;
     "propertyName",
     "rest"
 })
-public class BinaryTemporalOpType extends TemporalOpsType {
+public class BinaryTemporalOpType extends TemporalOpsType implements BinaryTemporalOperator {
 
     @XmlElements({
         //@XmlElement(name = "TimeTopologyComplex", namespace = "http://www.opengis.net/gml", type = TimeTopologyComplexType.class),
@@ -82,9 +85,9 @@ public class BinaryTemporalOpType extends TemporalOpsType {
      * Empty contructor used by JAXB
      */
     public BinaryTemporalOpType(){
-        
+
     }
-    
+
     /**
      * Build a new temporal operator with the specified objects.
      */
@@ -94,7 +97,7 @@ public class BinaryTemporalOpType extends TemporalOpsType {
             rest.add(obj);
         }
     }
-    
+
     /**
      * Gets the value of the rest property.
      */
@@ -132,6 +135,25 @@ public class BinaryTemporalOpType extends TemporalOpsType {
             }
         }
         return sb.toString();
+    }
+
+    public boolean evaluate(Object o) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public Object accept(FilterVisitor fv, Object o) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public Expression getExpression1() {
+        return new PropertyNameType(propertyName);
+    }
+
+    public Expression getExpression2() {
+        if (rest != null && !rest.isEmpty()) {
+            return (Expression) rest.get(0);
+        }
+        return null;
     }
 }
 

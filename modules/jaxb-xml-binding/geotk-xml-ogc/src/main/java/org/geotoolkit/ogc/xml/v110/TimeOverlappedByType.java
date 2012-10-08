@@ -15,7 +15,7 @@
  *    Lesser General Public License for more details.
  */
 
-package org.geotoolkit.ogc.xml.v200;
+package org.geotoolkit.ogc.xml.v110;
 
 import org.opengis.filter.FilterVisitor;
 import org.opengis.filter.temporal.OverlappedBy;

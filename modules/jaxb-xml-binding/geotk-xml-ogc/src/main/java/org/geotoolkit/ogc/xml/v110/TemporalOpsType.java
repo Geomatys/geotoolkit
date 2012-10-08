@@ -20,13 +20,14 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import org.opengis.filter.Filter;
 
 
 /**
  * <p>Java class for TemporalOpsType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="TemporalOpsType">
  *   &lt;complexContent>
@@ -35,14 +36,14 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "TemporalOpsType")
 @XmlSeeAlso({ BinaryTemporalOpType.class })
-public abstract class TemporalOpsType {
+public abstract class TemporalOpsType implements Filter {
 
 
 }

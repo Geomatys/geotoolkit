@@ -31,9 +31,9 @@ import org.opengis.filter.capability.SpatialOperator;
 
 /**
  * <p>Java class for SpatialOperatorType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="SpatialOperatorType">
  *   &lt;complexContent>
@@ -46,8 +46,8 @@ import org.opengis.filter.capability.SpatialOperator;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -62,23 +62,23 @@ public class SpatialOperatorType implements SpatialOperator {
     private SpatialOperatorNameType name;
 
     /**
-     * An empty constructor used by JAXB 
+     * An empty constructor used by JAXB
      */
     public SpatialOperatorType() {
-        
+
     }
-    
+
     /**
-     * build a new spatial operator 
+     * build a new spatial operator
      */
     public SpatialOperatorType(final String name, final GeometryOperand[] geometryOperands) {
         this.name = SpatialOperatorNameType.valueOf(name);
         if (geometryOperands != null) {
             this.geometryOperands = new GeometryOperandsType(geometryOperands);
         }
-        
+
     }
-    
+
     /**
      * Gets the value of the geometryOperands property.
      */
@@ -93,11 +93,12 @@ public class SpatialOperatorType implements SpatialOperator {
         return name;
     }
 
-   
+
     /**
      * Implements SpatialOperator geoAPI interface
      * @return
      */
+    @Override
     public Collection<GeometryOperand> getGeometryOperands() {
         List<GeometryOperand> result = new ArrayList<GeometryOperand>();
         if (geometryOperands != null) {
@@ -108,6 +109,7 @@ public class SpatialOperatorType implements SpatialOperator {
         return result;
     }
 
+    @Override
     public String getName() {
         if (name != null) {
             return name.name();
@@ -138,7 +140,7 @@ public class SpatialOperatorType implements SpatialOperator {
 
        if (object instanceof SpatialOperatorType) {
            final SpatialOperatorType that = (SpatialOperatorType) object;
-       
+
             return Utilities.equals(this.geometryOperands, that.geometryOperands) &&
                    Utilities.equals(this.name, that.name);
         }

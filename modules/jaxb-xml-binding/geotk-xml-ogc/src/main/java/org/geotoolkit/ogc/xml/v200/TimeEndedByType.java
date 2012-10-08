@@ -18,12 +18,25 @@
 package org.geotoolkit.ogc.xml.v200;
 
 import org.opengis.filter.FilterVisitor;
+import org.opengis.filter.temporal.EndedBy;
 
 /**
  *
  * @author Guilhem Legal (Geomatys)
  */
-public class TimeEndedByType extends BinaryTemporalOpType {
+public class TimeEndedByType extends BinaryTemporalOpType implements EndedBy{
+
+    /**
+     * An empty constructor used by JAXB
+     */
+    public TimeEndedByType() {
+
+    }
+
+    public TimeEndedByType(final String propertyName, final Object temporal) {
+        super(propertyName, temporal);
+    }
+
 
     @Override
     public boolean evaluate(Object o) {
@@ -34,5 +47,5 @@ public class TimeEndedByType extends BinaryTemporalOpType {
     public Object accept(FilterVisitor fv, Object o) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-    
+
 }

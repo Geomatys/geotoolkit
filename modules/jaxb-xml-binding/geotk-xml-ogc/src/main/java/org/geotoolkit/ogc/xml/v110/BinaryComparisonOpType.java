@@ -28,14 +28,15 @@ import javax.xml.namespace.QName;
 import org.geotoolkit.util.Utilities;
 import org.opengis.filter.BinaryComparisonOperator;
 import org.opengis.filter.FilterVisitor;
+import org.opengis.filter.MatchAction;
 import org.opengis.filter.expression.Expression;
 
 
 /**
  * <p>Java class for BinaryComparisonOpType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="BinaryComparisonOpType">
  *   &lt;complexContent>
@@ -52,7 +53,7 @@ import org.opengis.filter.expression.Expression;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
+ *
  * @author Guilhem Legal
  * @module pending
  */
@@ -64,7 +65,7 @@ public class BinaryComparisonOpType extends ComparisonOpsType implements BinaryC
 
     @XmlElementRef(name = "expression", namespace = "http://www.opengis.net/ogc", type = JAXBElement.class)
     protected List<JAXBElement<?>> expression;
-            
+
     @XmlAttribute
     private Boolean matchCase;
 
@@ -74,9 +75,9 @@ public class BinaryComparisonOpType extends ComparisonOpsType implements BinaryC
      * Empty constructor used by JAXB
      */
     public BinaryComparisonOpType() {
-        
+
     }
-    
+
     /**
      * Build a new Binary comparison operator
      */
@@ -156,7 +157,7 @@ public class BinaryComparisonOpType extends ComparisonOpsType implements BinaryC
     public Boolean getMatchCase() {
         return matchCase;
     }
-    
+
     /**
      * Gets the value of the matchCase property.
      */
@@ -165,7 +166,7 @@ public class BinaryComparisonOpType extends ComparisonOpsType implements BinaryC
             return false;
         return matchCase;
     }
-    
+
     /**
      * sets the value of the matchCase property.
      */
@@ -256,11 +257,15 @@ public class BinaryComparisonOpType extends ComparisonOpsType implements BinaryC
     public void setPropertyName(final String propertyName) {
         getExpression().add(FACTORY.createPropertyName(new PropertyNameType(propertyName)));
     }
-    
+
     public void setPropertyName(final PropertyNameType propertyName) {
         getExpression().add(FACTORY.createPropertyName(propertyName));
     }
 
+    public MatchAction getMatchAction() {
+        return MatchAction.ANY;
+    }
+    
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder(super.toString());

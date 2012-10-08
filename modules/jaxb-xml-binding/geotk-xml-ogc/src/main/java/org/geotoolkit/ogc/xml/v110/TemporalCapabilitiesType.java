@@ -16,18 +16,25 @@
  */
 package org.geotoolkit.ogc.xml.v110;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.namespace.QName;
 import org.geotoolkit.util.Utilities;
+import org.opengis.filter.capability.TemporalCapabilities;
+import org.opengis.filter.capability.TemporalOperand;
+import org.opengis.filter.capability.TemporalOperators;
 
 
 /**
  * <p>Java class for Temporal_CapabilitiesType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="Temporal_CapabilitiesType">
  *   &lt;complexContent>
@@ -40,8 +47,8 @@ import org.geotoolkit.util.Utilities;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -49,7 +56,7 @@ import org.geotoolkit.util.Utilities;
     "temporalOperands",
     "temporalOperators"
 })
-public class TemporalCapabilitiesType {
+public class TemporalCapabilitiesType implements TemporalCapabilities {
 
     @XmlElement(name = "TemporalOperands", required = true)
     private TemporalOperandsType temporalOperands;
@@ -57,16 +64,31 @@ public class TemporalCapabilitiesType {
     private TemporalOperatorsType temporalOperators;
 
     /**
-     * Gets the value of the temporalOperands property.
-     * 
+     * empty constructor used by JAXB
      */
-    public TemporalOperandsType getTemporalOperands() {
+    public TemporalCapabilitiesType() {
+
+    }
+
+    /**
+     * Build a new SpatialCapabilities
+     */
+    public TemporalCapabilitiesType(final TemporalOperand[] geometryOperands, final TemporalOperators spatial) {
+        this.temporalOperands = new TemporalOperandsType(geometryOperands);
+        this.temporalOperators = (TemporalOperatorsType) spatial;
+    }
+
+    /**
+     * Gets the value of the temporalOperands property.
+     *
+     */
+    public TemporalOperandsType getTemporalOperandsType() {
         return temporalOperands;
     }
 
     /**
      * Sets the value of the temporalOperands property.
-     * 
+     *
      */
     public void setTemporalOperands(final TemporalOperandsType value) {
         this.temporalOperands = value;
@@ -74,18 +96,34 @@ public class TemporalCapabilitiesType {
 
     /**
      * Gets the value of the temporalOperators property.
-     * 
+     *
      */
+    @Override
     public TemporalOperatorsType getTemporalOperators() {
         return temporalOperators;
     }
 
     /**
      * Sets the value of the temporalOperators property.
-     * 
+     *
      */
     public void setTemporalOperators(final TemporalOperatorsType value) {
         this.temporalOperators = value;
+    }
+
+    /**
+     * implements SpatialCapabilities geoAPI interface
+     * @return
+     */
+    @Override
+    public Collection<TemporalOperand> getTemporalOperands() {
+        List<TemporalOperand> result = new ArrayList<TemporalOperand>();
+        if (temporalOperands != null) {
+            for (QName qn: temporalOperands.getTemporalOperand()) {
+                result.add(TemporalOperand.get(qn.getNamespaceURI(), qn.getLocalPart()));
+            }
+        }
+        return result;
     }
 
     @Override
@@ -111,7 +149,7 @@ public class TemporalCapabilitiesType {
 
        if (object instanceof TemporalCapabilitiesType) {
            final TemporalCapabilitiesType that = (TemporalCapabilitiesType) object;
-       
+
             return Utilities.equals(this.temporalOperands, that.temporalOperands) &&
                    Utilities.equals(this.temporalOperators, that.temporalOperators);
         }

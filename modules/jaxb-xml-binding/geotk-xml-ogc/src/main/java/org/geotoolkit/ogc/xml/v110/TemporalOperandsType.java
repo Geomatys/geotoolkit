@@ -24,13 +24,14 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
 import org.geotoolkit.util.Utilities;
+import org.opengis.filter.capability.TemporalOperand;
 
 
 /**
  * <p>Java class for TemporalOperandsType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="TemporalOperandsType">
  *   &lt;complexContent>
@@ -42,8 +43,8 @@ import org.geotoolkit.util.Utilities;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -56,8 +57,38 @@ public class TemporalOperandsType {
     private List<QName> temporalOperand;
 
     /**
+     * Empty constructor used by JAXB
+     */
+    public TemporalOperandsType() {
+
+    }
+
+    /**
+     * build a new temporal Operands object with the specified array of TemporalOperand (from geoAPI)
+     */
+    public TemporalOperandsType(TemporalOperand[] tmpOperands) {
+        if (tmpOperands == null) {
+            tmpOperands = new TemporalOperand[0];
+        }
+        temporalOperand = new ArrayList<QName>();
+        for (TemporalOperand g: tmpOperands) {
+            temporalOperand.add(new QName(g.getNamespaceURI(), g.getLocalPart()));
+        }
+    }
+
+    /**
+     * build a new geometry Operands object with the specified array of GeometryOperand (from geoAPI)
+     */
+    public TemporalOperandsType(List<QName> tmpOperands) {
+        if (tmpOperands == null) {
+            tmpOperands = new ArrayList<QName>();
+        }
+        this.temporalOperand = tmpOperands;
+    }
+
+    /**
      * Gets the value of the temporalOperand property.
-     * 
+     *
      */
     public List<QName> getTemporalOperand() {
         if (temporalOperand == null) {
@@ -65,7 +96,7 @@ public class TemporalOperandsType {
         }
         return this.temporalOperand;
     }
-    
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("[TemporalOperandsType]").append("\n");
@@ -89,7 +120,7 @@ public class TemporalOperandsType {
 
        if (object instanceof TemporalOperandsType) {
            final TemporalOperandsType that = (TemporalOperandsType) object;
-       
+
             return Utilities.equals(this.temporalOperand, that.temporalOperand);
         }
         return false;

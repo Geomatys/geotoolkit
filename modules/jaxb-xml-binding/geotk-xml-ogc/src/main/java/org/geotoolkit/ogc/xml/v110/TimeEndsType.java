@@ -15,25 +15,25 @@
  *    Lesser General Public License for more details.
  */
 
-package org.geotoolkit.ogc.xml.v200;
+package org.geotoolkit.ogc.xml.v110;
 
 import org.opengis.filter.FilterVisitor;
-import org.opengis.filter.temporal.OverlappedBy;
+import org.opengis.filter.temporal.Ends;
 
 /**
  *
  * @author Guilhem Legal (Geomatys)
  */
-public class TimeOverlappedByType extends BinaryTemporalOpType implements OverlappedBy {
+public class TimeEndsType extends BinaryTemporalOpType implements Ends {
 
     /**
      * An empty constructor used by JAXB
      */
-    public TimeOverlappedByType() {
+    public TimeEndsType() {
 
     }
 
-    public TimeOverlappedByType(final String propertyName, final Object temporal) {
+    public TimeEndsType(final String propertyName, final Object temporal) {
         super(propertyName, temporal);
     }
 

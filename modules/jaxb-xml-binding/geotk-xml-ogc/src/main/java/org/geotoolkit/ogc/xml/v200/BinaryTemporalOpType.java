@@ -31,6 +31,10 @@ import javax.xml.bind.annotation.XmlMixed;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.util.Utilities;
 import org.opengis.filter.FilterVisitor;
+import org.opengis.filter.expression.Expression;
+import org.opengis.filter.expression.ExpressionVisitor;
+import org.opengis.filter.expression.PropertyName;
+import org.opengis.filter.temporal.BinaryTemporalOperator;
 
 
 /**
@@ -62,7 +66,7 @@ import org.opengis.filter.FilterVisitor;
     "expression",
     "any"
 })
-public class BinaryTemporalOpType extends TemporalOpsType {
+public class BinaryTemporalOpType extends TemporalOpsType  implements BinaryTemporalOperator {
 
     @XmlElement(name = "ValueReference", required = true)
     private String valueReference;
@@ -203,6 +207,35 @@ public class BinaryTemporalOpType extends TemporalOpsType {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    public Expression getExpression1() {
+        return new PropertyName(){
+            public String getPropertyName() {
+                return valueReference;
+            }
+
+            public Object evaluate(Object o) {
+                throw new UnsupportedOperationException("Not supported yet.");
+            }
+
+            public <T> T evaluate(Object o, Class<T> type) {
+                throw new UnsupportedOperationException("Not supported yet.");
+            }
+
+            public Object accept(ExpressionVisitor ev, Object o) {
+                throw new UnsupportedOperationException("Not supported yet.");
+            }
+        };
+    }
+
+    public Expression getExpression2() {
+        if (expression != null && expression.getValue() instanceof Expression) {
+            return (Expression) expression.getValue();
+        }
+        if (any != null && !any.isEmpty() && any.get(0) instanceof Expression) {
+            return (Expression)any.get(0);
+        }
+        return null;
+    }
     /**
      * Verify that this entry is identical to the specified object.
      */
@@ -256,16 +289,15 @@ public class BinaryTemporalOpType extends TemporalOpsType {
     }
 
 
-
-
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder("[").append(this.getClass().getSimpleName()).append("]");
-        if (valueReference != null)
+        if (valueReference != null) {
             s.append("valueReference: ").append(valueReference).append('\n');
-
-        if (expression != null && expression.getValue() != null)
+        }
+        if (expression != null && expression.getValue() != null) {
             s.append("expression: ").append(expression.getValue().toString()).append('\n');
+        }
 
         cleanAny();
         if (any != null) {

@@ -30,9 +30,9 @@ import javax.xml.namespace.QName;
 
 /**
  * <p>Java class for TemporalOperandsType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="TemporalOperandsType">
  *   &lt;complexContent>
@@ -52,8 +52,8 @@ import javax.xml.namespace.QName;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "TemporalOperandsType", propOrder = {
@@ -65,26 +65,59 @@ public class TemporalOperandsType {
     private List<TemporalOperandsType.TemporalOperand> temporalOperand;
 
     /**
+     * Empty constructor used by JAXB
+     */
+    public TemporalOperandsType() {
+
+    }
+
+    /**
+     * build a new temporal Operands object with the specified array of TemporalOperand (from geoAPI)
+     */
+    public TemporalOperandsType(org.opengis.filter.capability.TemporalOperand[] tmpOperands) {
+        if (tmpOperands == null) {
+            tmpOperands = new org.opengis.filter.capability.TemporalOperand[0];
+        }
+        temporalOperand = new ArrayList<TemporalOperandsType.TemporalOperand>();
+        for (org.opengis.filter.capability.TemporalOperand g: tmpOperands) {
+            temporalOperand.add(new TemporalOperand(new QName(g.getNamespaceURI(), g.getLocalPart())));
+        }
+    }
+
+    /**
+     * build a new geometry Operands object with the specified array of GeometryOperand (from geoAPI)
+     */
+    public TemporalOperandsType(List<QName> tmpOperands) {
+        if (tmpOperands == null) {
+            tmpOperands = new ArrayList<QName>();
+        }
+        this.temporalOperand = new ArrayList<TemporalOperand>();
+        for (QName qn : tmpOperands) {
+            this.temporalOperand.add(new TemporalOperand(qn));
+        }
+    }
+
+    /**
      * Gets the value of the temporalOperand property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the temporalOperand property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getTemporalOperand().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link TemporalOperandsType.TemporalOperand }
-     * 
-     * 
+     *
+     *
      */
     public List<TemporalOperandsType.TemporalOperand> getTemporalOperand() {
         if (temporalOperand == null) {
@@ -96,9 +129,9 @@ public class TemporalOperandsType {
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -108,8 +141,8 @@ public class TemporalOperandsType {
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "")
@@ -118,13 +151,21 @@ public class TemporalOperandsType {
         @XmlAttribute(required = true)
         private QName name;
 
+        public TemporalOperand() {
+
+        }
+
+        public TemporalOperand(final QName name) {
+            this.name = name;
+        }
+
         /**
          * Gets the value of the name property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link QName }
-         *     
+         *
          */
         public QName getName() {
             return name;
@@ -132,11 +173,11 @@ public class TemporalOperandsType {
 
         /**
          * Sets the value of the name property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link QName }
-         *     
+         *
          */
         public void setName(QName value) {
             this.name = value;

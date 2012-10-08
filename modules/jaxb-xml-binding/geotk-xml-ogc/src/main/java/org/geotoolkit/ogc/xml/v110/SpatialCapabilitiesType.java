@@ -32,9 +32,9 @@ import org.opengis.filter.capability.SpatialOperators;
 
 /**
  * <p>Java class for Spatial_CapabilitiesType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="Spatial_CapabilitiesType">
  *   &lt;complexContent>
@@ -47,8 +47,8 @@ import org.opengis.filter.capability.SpatialOperators;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -67,11 +67,11 @@ public class SpatialCapabilitiesType implements SpatialCapabilities {
      * empty constructor used by JAXB
      */
     public SpatialCapabilitiesType() {
-        
+
     }
-    
+
     /**
-     * Build a new SpatialCapabilities 
+     * Build a new SpatialCapabilities
      */
     public SpatialCapabilitiesType(final GeometryOperand[] geometryOperands, final SpatialOperators spatial) {
         this.geometryOperands = new GeometryOperandsType(geometryOperands);
@@ -96,14 +96,16 @@ public class SpatialCapabilitiesType implements SpatialCapabilities {
     /**
      * Gets the value of the spatialOperators property.
      */
+    @Override
     public SpatialOperatorsType getSpatialOperators() {
         return spatialOperators;
     }
 
     /**
-     * implements SpatialCapabilities geoAPI interface 
+     * implements SpatialCapabilities geoAPI interface
      * @return
      */
+    @Override
     public Collection<GeometryOperand> getGeometryOperands() {
         List<GeometryOperand> result = new ArrayList<GeometryOperand>();
         if (geometryOperands != null) {
@@ -113,7 +115,7 @@ public class SpatialCapabilitiesType implements SpatialCapabilities {
         }
         return result;
     }
-    
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("[SpatialCapabilitiesType]").append("\n");
@@ -137,7 +139,7 @@ public class SpatialCapabilitiesType implements SpatialCapabilities {
 
        if (object instanceof SpatialCapabilitiesType) {
            final SpatialCapabilitiesType that = (SpatialCapabilitiesType) object;
-       
+
             return Utilities.equals(this.geometryOperands, that.geometryOperands) &&
                    Utilities.equals(this.spatialOperators, that.spatialOperators);
         }
