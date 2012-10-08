@@ -25,10 +25,12 @@ import java.util.Map.Entry;
 import java.util.concurrent.atomic.AtomicInteger;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
+import javax.xml.namespace.QName;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
+import org.geotoolkit.feature.xml.Utils;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.wfs.Delete;
@@ -51,6 +53,7 @@ import org.geotoolkit.xml.MarshallerPool;
 import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.feature.type.Name;
 import org.opengis.feature.type.PropertyDescriptor;
+import org.opengis.feature.type.PropertyType;
 import org.opengis.filter.Filter;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -323,7 +326,9 @@ public class JAXPStreamTransactionWriter {
             writer.writeEndElement();
 
             //write value
+            final PropertyType propertyType = entry.getKey().getType();
             Object value = entry.getValue();
+
             if(value != null){
                 //todo must handle geometry differently
 
@@ -354,8 +359,9 @@ public class JAXPStreamTransactionWriter {
                     }
                 }else{
                     writer.writeStartElement(WFS_PREFIX, TAG_VALUE, WFS_NAMESPACE);
-                    writer.writeAttribute(XSI_PREFIX, XSI_NAMESPACE, PROP_TYPE, bestType(value));
-                    writer.writeCharacters(value.toString());
+                    QName qname = Utils.getQNameFromType(propertyType,"");
+                    writer.writeAttribute(XSI_PREFIX, XSI_NAMESPACE, PROP_TYPE, qname.getLocalPart());
+                    writer.writeCharacters(Utils.getStringValue(value));
                     writer.writeEndElement();
                 }
             }
