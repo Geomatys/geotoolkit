@@ -62,6 +62,7 @@
     <module>geotk-processing-jts-geometry</module>
     <module>geotk-processing-io</module>
     <module>geotk-processing-metadata</module>
+    <module>geotk-processing-groovy</module>
   </modules>
 
 </project>
