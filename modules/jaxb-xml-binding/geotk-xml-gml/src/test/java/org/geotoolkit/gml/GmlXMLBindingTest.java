@@ -17,25 +17,26 @@
 package org.geotoolkit.gml;
 
 import java.io.StringReader;
-import javax.xml.bind.Unmarshaller;
-import java.util.Arrays;
-import javax.xml.datatype.Duration;
 import java.io.StringWriter;
+import java.util.Arrays;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.datatype.Duration;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
+
 import org.geotoolkit.gml.xml.GMLMarshallerPool;
 import org.geotoolkit.gml.xml.v311.DirectPositionListType;
 import org.geotoolkit.gml.xml.v311.DirectPositionType;
 import org.geotoolkit.gml.xml.v311.EnvelopeType;
-
-//Junit dependencies
 import org.geotoolkit.gml.xml.v311.LineStringSegmentType;
 import org.geotoolkit.gml.xml.v311.ObjectFactory;
 import org.geotoolkit.gml.xml.v311.TimePeriodType;
 import org.geotoolkit.gml.xml.v311.TimePositionType;
 import org.geotoolkit.util.StringUtilities;
 import org.geotoolkit.xml.MarshallerPool;
+
+//Junit dependencies
 import org.junit.*;
 import static org.junit.Assert.*;
 
@@ -96,7 +97,7 @@ public class GmlXMLBindingTest {
         result = result.substring(result.indexOf("?>") + 3);
         //we remove the xmlmns
         result = StringUtilities.removeXmlns(result);
-       
+
         String expResult = "<gml:Envelope srsName=\"urn:ogc:def:crs:EPSG:6.8:4283\" gml:id=\"bound-1\" >" + '\n' +
                            "    <gml:lowerCorner>-30.711 134.196</gml:lowerCorner>" + '\n' +
                            "    <gml:upperCorner>-30.702 134.205</gml:upperCorner>" + '\n' +
@@ -140,7 +141,7 @@ public class GmlXMLBindingTest {
         DirectPositionType pos2 = new DirectPositionType(Arrays.asList(2.3, 48.1));
         ls.getPos().add(pos1);
         ls.getPos().add(pos2);
-        
+
         sw = new StringWriter();
         marshaller.marshal(FACTORY.createLineStringSegment(ls), sw);
 
@@ -188,7 +189,7 @@ public class GmlXMLBindingTest {
                     "    <gml:pos>1.1 1.2</gml:pos>" + '\n' +
                     "    <gml:pos>2.3 48.1</gml:pos>" + '\n' +
                     "</gml:LineStringSegment>" + '\n' ;
-        
+
         result = unmarshaller.unmarshal(new StringReader(xml));
 
         if (result instanceof JAXBElement) {
@@ -196,13 +197,13 @@ public class GmlXMLBindingTest {
         }
         assertEquals(expResult, result);
     }
-    
+
     @Test
     public void timePeriodUmarshallingTest() throws Exception {
         TimePositionType begin = new TimePositionType("2002-08-01");
         TimePositionType end = new TimePositionType("2003-08-01");
         TimePeriodType expResult = new TimePeriodType(begin, end);
-        
+
 
         String xml = "<gml:TimePeriod xmlns:gml=\"http://www.opengis.net/gml\">" + '\n' +
                      "    <gml:beginPosition>2002-08-01</gml:beginPosition>" + '\n' +
@@ -215,9 +216,9 @@ public class GmlXMLBindingTest {
             result = ((JAXBElement)result).getValue();
         }
         assertEquals(expResult, result);
-        
+
         expResult = new TimePeriodType(begin, null);
-        
+
 
         xml = "<gml:TimePeriod xmlns:gml=\"http://www.opengis.net/gml\">" + '\n' +
               "    <gml:beginPosition>2002-08-01</gml:beginPosition>" + '\n' +

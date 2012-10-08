@@ -19,6 +19,8 @@ package org.geotoolkit.gml.xml;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 import javax.xml.bind.annotation.XmlTransient;
 import org.geotoolkit.util.logging.Logging;
@@ -34,7 +36,13 @@ public abstract class AbstractTimePosition implements Position {
 
     protected static final Logger LOGGER = Logging.getLogger(AbstractTimePosition.class);
 
-    protected static final DateFormat FORMATTER = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    protected static final List<DateFormat> FORMATTERS = new ArrayList<DateFormat>();
+
+    static {
+        FORMATTERS.add(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss"));
+        FORMATTERS.add(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
+        FORMATTERS.add(new SimpleDateFormat("yyyy-MM-dd"));
+    }
 
     @Override
     public TemporalPosition anyOther() {

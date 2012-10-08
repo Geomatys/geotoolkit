@@ -19,6 +19,7 @@ package org.geotoolkit.gml.xml.v311;
 import java.io.Serializable;
 import java.sql.Time;
 import java.sql.Timestamp;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -94,9 +95,7 @@ public class TimePositionType extends AbstractTimePosition implements Serializab
     }
 
     public TimePositionType(final Position value){
-        synchronized (FORMATTER) {
-            this.value = FORMATTER.format(value.getDate());
-        }
+        this(value.getDate());
     }
 
     /**
@@ -123,9 +122,7 @@ public class TimePositionType extends AbstractTimePosition implements Serializab
      * @param value a date.
      */
     public TimePositionType(final Date time){
-        synchronized (FORMATTER) {
-            this.value = FORMATTER.format(time);
-        }
+        setValue(time);
     }
 
     /**
@@ -143,13 +140,14 @@ public class TimePositionType extends AbstractTimePosition implements Serializab
         return value;
     }
 
-    public void setValue(String value) {
+    public void setValue(final String value) {
         this.value = value;
     }
 
-    public void setValue(Date value) {
-        synchronized (FORMATTER) {
-            this.value = FORMATTER.format(value);
+    public final void setValue(final Date value) {
+        final DateFormat df = FORMATTERS.get(0);
+        synchronized (df) {
+            this.value = df.format(value);
         }
     }
 
@@ -228,14 +226,17 @@ public class TimePositionType extends AbstractTimePosition implements Serializab
     @Override
     public Date getDate() {
         if (value != null && !value.isEmpty()) {
-            try {
-                synchronized (FORMATTER) {
-                    return FORMATTER.parse(value);
+            for (DateFormat df : FORMATTERS) {
+                try {
+                    synchronized (df) {
+                        return df.parse(value);
+                    }
+                } catch (ParseException ex) {
+                    continue;
                 }
-            } catch (ParseException ex) {
-                LOGGER.log(Level.WARNING, "Parse exception while parsing date value:" + value, ex);
             }
         }
+        LOGGER.log(Level.WARNING, "Unable to parse date value:{0}", value);
         return null;
     }
 
@@ -294,8 +295,8 @@ public class TimePositionType extends AbstractTimePosition implements Serializab
             try {
                 final SimpleDateFormat sdf = new SimpleDateFormat("d MMMMM yyyy HH:mm:ss z");
                 final Date date;
-                synchronized (FORMATTER) {
-                    date = FORMATTER.parse(value);
+                synchronized (sdf) {
+                    date = sdf.parse(value);
                 }
                 s.append(sdf.format(date));
             } catch (ParseException ex) {

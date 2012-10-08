@@ -20,6 +20,7 @@ package org.geotoolkit.gml.xml.v321;
 
 import java.io.Serializable;
 import java.sql.Time;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -190,14 +191,17 @@ public class TimePositionType extends AbstractTimePosition implements Serializab
 
     public Date getDate() {
         if (value != null && !value.isEmpty()) {
-            try {
-                synchronized (FORMATTER) {
-                    return FORMATTER.parse(value.get(0));
+            for (DateFormat df : FORMATTERS) {
+                try {
+                    synchronized (df) {
+                        return df.parse(value.get(0));
+                    }
+                } catch (ParseException ex) {
+                    continue;
                 }
-            } catch (ParseException ex) {
-                LOGGER.log(Level.WARNING, "Parse exception while parsing date value:" + value, ex);
             }
         }
+        LOGGER.log(Level.WARNING, "Unable to parse date value:{0}", value);
         return null;
     }
 
@@ -261,8 +265,8 @@ public class TimePositionType extends AbstractTimePosition implements Serializab
             for (String v : value) {
                 try {
                     final Date date;
-                    synchronized (FORMATTER) {
-                        date = FORMATTER.parse(v);
+                    synchronized (sdf) {
+                        date = sdf.parse(v);
                     }
                     s.append(sdf.format(date));
                 } catch (ParseException ex) {
