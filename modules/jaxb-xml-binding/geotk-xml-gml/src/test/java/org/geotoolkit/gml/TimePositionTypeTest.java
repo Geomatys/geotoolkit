@@ -21,7 +21,6 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-import org.geotoolkit.gml.xml.GMLMarshallerPool;
 import org.geotoolkit.gml.xml.v311.TimePositionType;
 
 //Junit dependencies
@@ -75,5 +74,19 @@ public class TimePositionTypeTest {
         final Date dateNoTime = cal.getTime();
 
         assertEquals(dateNoTime, tp.getDate());
+    }
+
+    @Test
+    public void setValueTest() throws Exception {
+        String s = null;
+        TimePositionType tp = new TimePositionType(s);
+
+        final Date d = f3.parse("2010-01-01");
+        tp.setValue(d);
+        assertEquals(tp.getValue(), "2010-01-01");
+
+        final Date d2 = f2.parse("2010-01-01 01:01:02");
+        tp.setValue(d2);
+        assertEquals(tp.getValue(), "2010-01-01T01:01:02");
     }
 }

@@ -22,6 +22,7 @@ import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.logging.Level;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -145,9 +146,18 @@ public class TimePositionType extends AbstractTimePosition implements Serializab
     }
 
     public final void setValue(final Date value) {
-        final DateFormat df = FORMATTERS.get(0);
-        synchronized (df) {
-            this.value = df.format(value);
+        final Calendar c = Calendar.getInstance();
+        c.setTime(value);
+        if (c.get(Calendar.HOUR) == 0 && c.get(Calendar.MINUTE) == 0 && c.get(Calendar.SECOND) == 0) {
+            final DateFormat df = FORMATTERS.get(2);
+            synchronized (df) {
+                this.value = df.format(value);
+            }
+        } else {
+            final DateFormat df = FORMATTERS.get(0);
+            synchronized (df) {
+                this.value = df.format(value);
+            }
         }
     }
 
@@ -225,19 +235,7 @@ public class TimePositionType extends AbstractTimePosition implements Serializab
 
     @Override
     public Date getDate() {
-        if (value != null && !value.isEmpty()) {
-            for (DateFormat df : FORMATTERS) {
-                try {
-                    synchronized (df) {
-                        return df.parse(value);
-                    }
-                } catch (ParseException ex) {
-                    continue;
-                }
-            }
-        }
-        LOGGER.log(Level.WARNING, "Unable to parse date value:{0}", value);
-        return null;
+        return parseDate(value);
     }
 
     @Override
@@ -291,17 +289,9 @@ public class TimePositionType extends AbstractTimePosition implements Serializab
             s.append("indeterminatePosition:").append(indeterminatePosition.value()).append('\n');
         }
 
-        if (value != null) {
-            try {
-                final SimpleDateFormat sdf = new SimpleDateFormat("d MMMMM yyyy HH:mm:ss z");
-                final Date date;
-                synchronized (sdf) {
-                    date = sdf.parse(value);
-                }
-                s.append(sdf.format(date));
-            } catch (ParseException ex) {
-               LOGGER.log(Level.WARNING, null, ex);
-            }
+        if (value != null && getDate() != null) {
+            final SimpleDateFormat sdf = new SimpleDateFormat("d MMMMM yyyy HH:mm:ss z");
+            s.append(sdf.format(getDate()));
         }
         return s.toString();
     }

@@ -190,18 +190,9 @@ public class TimePositionType extends AbstractTimePosition implements Serializab
     }
 
     public Date getDate() {
-        if (value != null && !value.isEmpty()) {
-            for (DateFormat df : FORMATTERS) {
-                try {
-                    synchronized (df) {
-                        return df.parse(value.get(0));
-                    }
-                } catch (ParseException ex) {
-                    continue;
-                }
-            }
+        if (value!= null && !value.isEmpty()) {
+            return parseDate(value.get(0));
         }
-        LOGGER.log(Level.WARNING, "Unable to parse date value:{0}", value);
         return null;
     }
 
@@ -265,7 +256,7 @@ public class TimePositionType extends AbstractTimePosition implements Serializab
             for (String v : value) {
                 try {
                     final Date date;
-                    synchronized (sdf) {
+                    synchronized (FORMATTERS.get(0)) {
                         date = sdf.parse(v);
                     }
                     s.append(sdf.format(date));

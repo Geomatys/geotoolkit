@@ -18,9 +18,12 @@
 package org.geotoolkit.gml.xml;
 
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.bind.annotation.XmlTransient;
 import org.geotoolkit.util.logging.Logging;
@@ -49,4 +52,19 @@ public abstract class AbstractTimePosition implements Position {
         return null;
     }
 
+    protected Date parseDate(final String value) {
+        if (value != null && !value.isEmpty()) {
+            for (DateFormat df : FORMATTERS) {
+                try {
+                    synchronized (df) {
+                        return df.parse(value);
+                    }
+                } catch (ParseException ex) {
+                    continue;
+                }
+            }
+        }
+        LOGGER.log(Level.WARNING, "Unable to parse date value:{0}", value);
+        return null;
+    }
 }
