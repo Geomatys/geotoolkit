@@ -17,6 +17,7 @@
 
 package org.geotoolkit.gui.swing.go2.control.edition;
 
+import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.MultiPolygon;
 
 import org.geotoolkit.gui.swing.go2.JMap2D;
@@ -57,7 +58,8 @@ public class MultiPolygonCreationTool extends AbstractEditionTool {
             return false;
         }
 
-        return MultiPolygon.class.isAssignableFrom(desc.getType().getBinding());
+        return MultiPolygon.class.isAssignableFrom(desc.getType().getBinding())
+            || Geometry.class.equals(desc.getType().getBinding());
     }
 
     @Override

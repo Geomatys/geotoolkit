@@ -17,6 +17,7 @@
 
 package org.geotoolkit.gui.swing.go2.control.edition;
 
+import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.Polygon;
 import org.geotoolkit.gui.swing.go2.JMap2D;
 import org.geotoolkit.gui.swing.resource.IconBundle;
@@ -55,7 +56,8 @@ public class PolygonCreationTool extends AbstractEditionTool {
             return false;
         }
 
-        return Polygon.class.isAssignableFrom(desc.getType().getBinding());
+        return Polygon.class.isAssignableFrom(desc.getType().getBinding())
+            || Geometry.class.equals(desc.getType().getBinding());
     }
 
     @Override
