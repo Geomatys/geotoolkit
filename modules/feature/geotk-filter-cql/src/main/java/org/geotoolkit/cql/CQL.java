@@ -38,6 +38,7 @@ import org.geotoolkit.temporal.object.TemporalUtilities;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.expression.Expression;
+import org.opengis.filter.expression.Literal;
 import org.opengis.filter.expression.PropertyName;
 
 /**
@@ -447,10 +448,10 @@ public final class CQL {
             return ff.not(sub);
         }else if(CQLParser.BBOX == type){
             final String exp = ((PropertyName)convertExpression((CommonTree)tree.getChild(0), ff)).getPropertyName();
-            final double v1 = Double.valueOf(tree.getChild(1).getText());
-            final double v2 = Double.valueOf(tree.getChild(2).getText());
-            final double v3 = Double.valueOf(tree.getChild(3).getText());
-            final double v4 = Double.valueOf(tree.getChild(4).getText());
+            final double v1 = ((Number)((Literal)convertExpression((CommonTree)tree.getChild(1),ff)).getValue()).doubleValue();
+            final double v2 = ((Number)((Literal)convertExpression((CommonTree)tree.getChild(2),ff)).getValue()).doubleValue();
+            final double v3 = ((Number)((Literal)convertExpression((CommonTree)tree.getChild(3),ff)).getValue()).doubleValue();
+            final double v4 = ((Number)((Literal)convertExpression((CommonTree)tree.getChild(4),ff)).getValue()).doubleValue();
             String crs = null;
             if(tree.getChildCount()>5){
                 crs = convertExpression((CommonTree)tree.getChild(5), ff).evaluate(null, String.class);
