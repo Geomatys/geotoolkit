@@ -30,13 +30,14 @@ import org.opengis.parameter.ParameterValueGroup;
 import java.util.HashMap;
 
 /**
+ * Definition of the process allows you to run a condition written in groovy and retrieve the result.
  * @author Christophe Mourette (Geomatys)
  * @module pending
  */
 public class GroovyDescriptor extends AbstractProcessDescriptor{
 
     /**Process name : addition */
-    public static final String NAME = "boolean";
+    public static final String NAME = "condition";
 
     /**
      * Input parameters
@@ -69,7 +70,7 @@ public class GroovyDescriptor extends AbstractProcessDescriptor{
 
     @Override
     public Process createProcess(final ParameterValueGroup input) {
-        return new GroovyProcess(input);
+        return new GroovyConditionProcess(input);
     }
     
 }

@@ -30,15 +30,15 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
- * JUnit test of Add process
- * @author Quentin Boileau
+ * JUnit test of groovy condition process
+ * @author Christophe Mourette
  * @module pending
  */
 public class GroovyTest extends AbstractProcessTest{
 
 
     public GroovyTest() {
-        super("boolean");
+        super("condition");
     }
 
     @Test
@@ -49,7 +49,7 @@ public class GroovyTest extends AbstractProcessTest{
         final String  expression = "(i>2)";
         variables.put("i",new Integer(3)) ;
         // Process
-        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("groovy", "boolean");
+        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("groovy", "condition");
 
         final ParameterValueGroup in = desc.getInputDescriptor().createValue();
         in.parameter("variables").setValue(variables);

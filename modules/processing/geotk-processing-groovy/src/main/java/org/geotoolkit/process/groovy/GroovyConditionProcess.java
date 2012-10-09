@@ -30,14 +30,14 @@ import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 
 /**
- * Addition process between two numbers.
+ * This process allows you to run a condition written in groovy and retrieve the result.
  *
- * @author Johann Sorel (Geomatys)
+ * @author Christophe Mourette (Geomatys)
  * @module pending
  */
-public class GroovyProcess extends AbstractProcess {
+public class GroovyConditionProcess extends AbstractProcess {
 
-    public GroovyProcess(final ParameterValueGroup input) {
+    public GroovyConditionProcess(final ParameterValueGroup input) {
         super(INSTANCE,input);
     }
 

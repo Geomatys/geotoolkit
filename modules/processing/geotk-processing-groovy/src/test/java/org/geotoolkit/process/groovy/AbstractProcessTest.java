@@ -25,7 +25,7 @@ import org.opengis.util.NoSuchIdentifierException;
 import static org.junit.Assert.assertNotNull;
 
 /**
- * Abstract JUnit test for math process
+ * Abstract JUnit test for groovy process
  * @author Quentin Boileau
  * @module pending
  */
