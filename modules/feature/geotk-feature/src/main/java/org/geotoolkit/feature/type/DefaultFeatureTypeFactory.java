@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.feature.type;
 
+import com.vividsolutions.jts.geom.Geometry;
 import java.util.Collection;
 import java.util.List;
 
@@ -79,7 +80,11 @@ public class DefaultFeatureTypeFactory implements FeatureTypeFactory {
     @Override
     public AttributeDescriptor createAttributeDescriptor(final AttributeType type, final Name name,
             final int minOccurs, final int maxOccurs, final boolean isNillable, final Object defaultValue){
-        return new DefaultAttributeDescriptor(type, name, minOccurs, maxOccurs, isNillable, defaultValue);
+        if(type instanceof GeometryType){
+            return createGeometryDescriptor((GeometryType)type, name, minOccurs, maxOccurs, isNillable, defaultValue);
+        }else{
+            return new DefaultAttributeDescriptor(type, name, minOccurs, maxOccurs, isNillable, defaultValue);
+        }
     }
 
     /**
@@ -109,8 +114,13 @@ public class DefaultFeatureTypeFactory implements FeatureTypeFactory {
     public AttributeType createAttributeType(final Name name, final Class binding,
             final boolean isIdentifiable, final boolean isAbstract, final List restrictions,
             final AttributeType superType, final InternationalString description){
-        return new DefaultAttributeType(name, binding, isIdentifiable, isAbstract,
+        if(Geometry.class.isAssignableFrom(binding) || org.opengis.geometry.Geometry.class.isAssignableFrom(binding)){
+            return createGeometryType(name, binding, null, isIdentifiable, isAbstract,
                 restrictions, superType, description);
+        }else{
+            return new DefaultAttributeType(name, binding, isIdentifiable, isAbstract,
+                restrictions, superType, description);
+        }
     }
 
     /**

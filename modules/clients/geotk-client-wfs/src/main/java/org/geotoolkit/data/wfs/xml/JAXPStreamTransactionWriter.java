@@ -43,6 +43,12 @@ import org.geotoolkit.data.wfs.TransactionRequest;
 import org.geotoolkit.data.wfs.Update;
 import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureWriter;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
+import org.geotoolkit.gml.GmlGeometryAdapter;
+import org.geotoolkit.gml.JTStoGeometry;
+import org.geotoolkit.gml.xml.GMLMarshallerPool;
+import org.geotoolkit.gml.xml.GMLXmlFactory;
+import org.geotoolkit.gml.xml.v311.AbstractGeometryType;
+import org.geotoolkit.gml.xml.v311.GeometryPropertyType;
 import org.geotoolkit.internal.jaxb.JTSWrapperMarshallerPool;
 import org.geotoolkit.internal.jaxb.ObjectFactory;
 import org.geotoolkit.metadata.iso.citation.Citations;
@@ -112,6 +118,7 @@ public class JAXPStreamTransactionWriter {
     private final AtomicInteger inc = new AtomicInteger();
 
     private static final MarshallerPool POOL = JTSWrapperMarshallerPool.getInstance();
+    private static final MarshallerPool GMLPOOL = GMLMarshallerPool.getInstance();
 
     public void write(final OutputStream out, final TransactionRequest request)
             throws XMLStreamException, FactoryException, JAXBException, DataStoreException, IOException{
@@ -334,15 +341,15 @@ public class JAXPStreamTransactionWriter {
 
                 if(value instanceof Geometry){
                     final GeometryDescriptor desc = (GeometryDescriptor) entry.getKey();
-                    value = JTSUtils.toISO( (Geometry)value, desc.getCoordinateReferenceSystem());
+                    value = new GeometryPropertyType((AbstractGeometryType)JTStoGeometry.toGML("3.1.1", (Geometry)value));
                     Marshaller marshaller = null;
                     try {
-                        marshaller = POOL.acquireMarshaller();
+                        marshaller = GMLPOOL.acquireMarshaller();
                         marshaller.setProperty(marshaller.JAXB_FRAGMENT, Boolean.TRUE);
                         marshaller.marshal(new ObjectFactory().createValue(value), writer);
                     } finally {
                         if (marshaller != null) {
-                            POOL.release(marshaller);
+                            GMLPOOL.release(marshaller);
                         }
                     }
 

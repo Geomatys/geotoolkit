@@ -127,15 +127,14 @@ public class GMLXmlFactory {
             }
             return new org.geotoolkit.gml.xml.v321.PolygonType(srsName, (org.geotoolkit.gml.xml.v321.AbstractRingType) gmlExterior, interiors);
         } else if ("3.1.1".equals(version)) {
-            if (gmlInterior != null && !(gmlInterior instanceof org.geotoolkit.gml.xml.v311.AbstractRingType)) {
-                throw new IllegalArgumentException("unexpected gml version for interior ring.");
-            }
             final List<org.geotoolkit.gml.xml.v311.AbstractRingType> interiors = new ArrayList<org.geotoolkit.gml.xml.v311.AbstractRingType>();
-            for (AbstractRing ar : gmlInterior) {
-                if (ar != null && !(ar instanceof org.geotoolkit.gml.xml.v311.AbstractRingType)) {
-                    throw new IllegalArgumentException("unexpected gml version for interior ring.");
-                } else if (ar != null) {
-                    interiors.add((org.geotoolkit.gml.xml.v311.AbstractRingType)ar);
+            if (gmlInterior != null) {
+                for (AbstractRing ar : gmlInterior) {
+                    if (ar != null && !(ar instanceof org.geotoolkit.gml.xml.v311.AbstractRingType)) {
+                        throw new IllegalArgumentException("unexpected gml version for interior ring.");
+                    } else if (ar != null) {
+                        interiors.add((org.geotoolkit.gml.xml.v311.AbstractRingType)ar);
+                    }
                 }
             }
             return new org.geotoolkit.gml.xml.v311.PolygonType(srsName, (org.geotoolkit.gml.xml.v311.AbstractRingType)gmlExterior, interiors);

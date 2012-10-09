@@ -64,10 +64,12 @@ import org.opengis.feature.type.PropertyDescriptor;
 
 import static javax.xml.stream.events.XMLEvent.*;
 import net.iharder.Base64;
+import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.gml.GeometrytoJTS;
 import org.geotoolkit.gml.xml.AbstractGeometry;
 import org.geotoolkit.gml.xml.GMLMarshallerPool;
 import org.opengis.feature.ComplexAttribute;
+import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.ComplexType;
 import org.opengis.feature.type.PropertyType;
 import org.opengis.util.FactoryException;
@@ -397,7 +399,14 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
             }
         }
 
-        if (featureType instanceof FeatureType) {
+        if (featureType instanceof SimpleFeatureType) {
+            //we must ensure we have the rigth number of properties
+            final SimpleFeatureBuilder sfb = new SimpleFeatureBuilder((SimpleFeatureType)featureType);
+            for(Property p : namedProperties.values()){
+                sfb.set(p.getName(), p.getValue());
+            }
+            return sfb.buildFeature(id);
+        }else if (featureType instanceof FeatureType) {
             return FF.createFeature(namedProperties.values(), (FeatureType)featureType, id);
         } else {
             return FF.createComplexAttribute(namedProperties.values(), (ComplexType)featureType, null);
