@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.ogc.xml.v110;
 
+import java.util.List;
+import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
@@ -35,6 +37,13 @@ public class PropertyIsEqualToType extends BinaryComparisonOpType implements Pro
      */
     public PropertyIsEqualToType() {
         
+    }
+    
+    /**
+     * Build a new Binary comparison operator
+     */
+    public PropertyIsEqualToType(final List<JAXBElement<?>> expression, final Boolean matchCase) {
+        super(expression,matchCase);
     }
     
     /**

@@ -35,7 +35,7 @@ import org.opengis.feature.type.GeometryDescriptor;
 public class PointCreationTool extends AbstractEditionTool {
 
     public PointCreationTool() {
-        super(1400,"pointCreation",MessageBundle.getI18NString("create"),
+        super(1400,"pointCreation",MessageBundle.getI18NString("createPoint"),
              new SimpleInternationalString("Tool for creating points."), 
              IconBundle.getIcon("16_newgeometry"), FeatureMapLayer.class);
     }

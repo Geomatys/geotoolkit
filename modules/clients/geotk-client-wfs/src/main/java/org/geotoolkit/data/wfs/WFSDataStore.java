@@ -129,7 +129,12 @@ public class WFSDataStore extends AbstractDataStore{
             CoordinateReferenceSystem crs;
             FeatureType sft;
             try {
-                crs = CRS.decode(ftt.getDefaultSRS(),getLongitudeFirst());
+                String defaultCRS = ftt.getDefaultSRS();
+                if(defaultCRS.contains("EPSG")){
+                    final int last = defaultCRS.lastIndexOf(':');
+                    defaultCRS = "EPSG:"+defaultCRS.substring(last+1);
+                }
+                crs = CRS.decode(defaultCRS,getLongitudeFirst());
                 sft = requestType(typeName);                
             } catch (IOException ex) {
                 getLogger().log(Level.WARNING, null, ex);
@@ -243,7 +248,7 @@ public class WFSDataStore extends AbstractDataStore{
      * {@inheritDoc }
      */
     @Override
-    public Envelope getEnvelope(final Query query) throws DataStoreException {
+    public Envelope getEnvelope(final Query query) throws DataStoreException {        
         final Name typeName = query.getTypeName();
         typeCheck(typeName);
         return bounds.get(typeName);

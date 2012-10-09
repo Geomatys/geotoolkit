@@ -32,6 +32,8 @@ import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.factory.Factory;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.style.DefaultStyleFactory;
+import org.geotoolkit.style.MutableFeatureTypeStyle;
+import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
 
@@ -52,6 +54,8 @@ import org.opengis.style.Stroke;
 import org.opengis.style.Symbolizer;
 
 import static org.geotoolkit.style.StyleConstants.*;
+import org.opengis.filter.Filter;
+import org.opengis.filter.MatchAction;
 
 /**
  * Random style factory. This is a convini class if you dont need special styles.
@@ -78,10 +82,22 @@ public class RandomStyleFactory extends Factory {
 
     //----------------------creation--------------------------------------------
     public static PointSymbolizer createPointSymbolizer() {
+        return createPointSymbolizer(randomColor());
+    }
+
+    public static LineSymbolizer createLineSymbolizer() {  
+        return createLineSymbolizer(randomColor());
+    }
+
+    public static PolygonSymbolizer createPolygonSymbolizer() {        
+        return createPolygonSymbolizer(randomColor());
+    }
+    
+    private static PointSymbolizer createPointSymbolizer(Color color) {
                 
         final List<GraphicalSymbol> symbols = new ArrayList<GraphicalSymbol>();        
-        final Fill fill = SF.fill(SF.literal(randomColor()), FF.literal(0.6f) );
-        final Stroke stroke = SF.stroke(randomColor(), 1);
+        final Fill fill = SF.fill(SF.literal(color), FF.literal(0.6f) );
+        final Stroke stroke = SF.stroke(color, 1);
         final Mark mark = SF.mark(MARK_SQUARE, stroke, fill);
         symbols.add(mark);
                 
@@ -101,8 +117,8 @@ public class RandomStyleFactory extends Factory {
                 gra);
     }
 
-    public static LineSymbolizer createLineSymbolizer() {
-        final Stroke stroke = SF.stroke(randomColor(), 1);
+    private static LineSymbolizer createLineSymbolizer(Color color) {
+        final Stroke stroke = SF.stroke(color, 1);
         return SF.lineSymbolizer(
                 null,
                 DEFAULT_GEOM,
@@ -112,9 +128,9 @@ public class RandomStyleFactory extends Factory {
                 LITERAL_ZERO_FLOAT);
     }
 
-    public static PolygonSymbolizer createPolygonSymbolizer() {        
-        final Fill fill = SF.fill(SF.literal(randomColor()), FF.literal(0.6f) );
-        final Stroke stroke = SF.stroke(randomColor(), 1);
+    private static PolygonSymbolizer createPolygonSymbolizer(Color color) {        
+        final Fill fill = SF.fill(SF.literal(color), FF.literal(0.6f) );
+        final Stroke stroke = SF.stroke(Color.DARK_GRAY, 1);
         return SF.polygonSymbolizer(
                 null,
                 DEFAULT_GEOM,
@@ -125,17 +141,9 @@ public class RandomStyleFactory extends Factory {
                 DEFAULT_DISPLACEMENT,
                 LITERAL_ZERO_FLOAT);
     }
-
+    
     public static RasterSymbolizer createRasterSymbolizer() {
         return SF.rasterSymbolizer();
-    }
-
-    public static MutableStyle createPolygonStyle() {
-        final PolygonSymbolizer ps = createPolygonSymbolizer();
-        final MutableStyle style = SF.style();
-        style.featureTypeStyles().add(SF.featureTypeStyle(ps));
-
-        return style;
     }
 
     public static MutableStyle createDefaultVectorStyle(final FeatureCollection<SimpleFeature> fs){
@@ -144,6 +152,10 @@ public class RandomStyleFactory extends Factory {
 
         final FeatureType typ = fs.getFeatureType();
         final AttributeDescriptor att = typ.getGeometryDescriptor();
+        if(att == null){
+            return SF.style();
+        }
+        
         final AttributeType type = att.getType();
 
         final Class cla = type.getBinding();
@@ -155,7 +167,34 @@ public class RandomStyleFactory extends Factory {
         } else if (cla.equals(Point.class) || cla.equals(MultiPoint.class)) {
             ps = SF.pointSymbolizer();
         } else{
-            ps = SF.polygonSymbolizer();
+            //geometry can be anything, create a style with a rule for each type
+            final MutableRule mrpt = SF.rule(SF.pointSymbolizer());
+            mrpt.setFilter(
+                    FF.or(
+                        FF.equal(FF.function("geometryType", FF.property(att.getLocalName())),FF.literal("Point"),false,MatchAction.ANY),
+                        FF.equal(FF.function("geometryType", FF.property(att.getLocalName())),FF.literal("MultiPoint"),false,MatchAction.ANY)
+                    ));
+            
+            final MutableRule mrl = SF.rule(SF.lineSymbolizer());
+            mrl.setFilter(
+                    FF.or(
+                        FF.equal(FF.function("geometryType", FF.property(att.getLocalName())),FF.literal("LineString"),false,MatchAction.ANY),
+                        FF.equal(FF.function("geometryType", FF.property(att.getLocalName())),FF.literal("MultiLineString"),false,MatchAction.ANY)
+                    ));
+            final MutableRule mrpo = SF.rule(SF.polygonSymbolizer());
+            mrpo.setFilter(
+                    FF.or(
+                        FF.equal(FF.function("geometryType", FF.property(att.getLocalName())),FF.literal("Polygon"),false,MatchAction.ANY),
+                        FF.equal(FF.function("geometryType", FF.property(att.getLocalName())),FF.literal("MultiPolygon"),false,MatchAction.ANY)
+                    ));
+            
+            final MutableStyle style = SF.style();
+            final MutableFeatureTypeStyle fts = SF.featureTypeStyle();
+            fts.rules().add(mrpt);
+            fts.rules().add(mrl);
+            fts.rules().add(mrpo);
+            style.featureTypeStyles().add(fts);            
+            return style;
         }
 
         final MutableStyle style = SF.style();
@@ -175,15 +214,43 @@ public class RandomStyleFactory extends Factory {
 
         final AttributeType type = att.getType();
         final Class cla = type.getBinding();
+        final Color color = randomColor();
 
         if (cla.equals(Polygon.class) || cla.equals(MultiPolygon.class)) {
-            ps = createPolygonSymbolizer();
+            ps = createPolygonSymbolizer(color);
         } else if (cla.equals(LineString.class) || cla.equals(MultiLineString.class)) {
-            ps = createLineSymbolizer();
+            ps = createLineSymbolizer(color);
         } else if (cla.equals(Point.class) || cla.equals(MultiPoint.class)) {
-            ps = createPointSymbolizer();
-        } else{
-            ps = createPolygonSymbolizer();
+            ps = createPointSymbolizer(color);
+        } else {
+            //geometry can be anything, create a style with a rule for each type
+            final MutableRule mrpt = SF.rule(createPointSymbolizer(color));
+            mrpt.setFilter(
+                    FF.or(
+                        FF.equal(FF.function("geometryType", FF.property(att.getLocalName())),FF.literal("Point"),false,MatchAction.ANY),
+                        FF.equal(FF.function("geometryType", FF.property(att.getLocalName())),FF.literal("MultiPoint"),false,MatchAction.ANY)
+                    ));
+            
+            final MutableRule mrl = SF.rule(createLineSymbolizer(color));
+            mrl.setFilter(
+                    FF.or(
+                        FF.equal(FF.function("geometryType", FF.property(att.getLocalName())),FF.literal("LineString"),false,MatchAction.ANY),
+                        FF.equal(FF.function("geometryType", FF.property(att.getLocalName())),FF.literal("MultiLineString"),false,MatchAction.ANY)
+                    ));
+            final MutableRule mrpo = SF.rule(createPolygonSymbolizer(color));
+            mrpo.setFilter(
+                    FF.or(
+                        FF.equal(FF.function("geometryType", FF.property(att.getLocalName())),FF.literal("Polygon"),false,MatchAction.ANY),
+                        FF.equal(FF.function("geometryType", FF.property(att.getLocalName())),FF.literal("MultiPolygon"),false,MatchAction.ANY)
+                    ));
+            
+            final MutableStyle style = SF.style();
+            final MutableFeatureTypeStyle fts = SF.featureTypeStyle();
+            fts.rules().add(mrpt);
+            fts.rules().add(mrl);
+            fts.rules().add(mrpo);
+            style.featureTypeStyles().add(fts);            
+            return style;
         }
 
         final MutableStyle style = SF.style();

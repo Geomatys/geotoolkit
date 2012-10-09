@@ -901,6 +901,13 @@ public class CapabilitiesFilterSplitter implements FilterVisitor, ExpressionVisi
      */
     @Override
     public Object visit(final Function expression, final Object notUsed) {
+        //we don't have informations yet on supported function so we consider they are not supported.
+        if(true){
+            postStack.addFirst(expression);
+            return null;
+        }
+        
+        
         /*if (!fcs.fullySupports(expression)) {
         postStack.addFirst(expression);
         return null;

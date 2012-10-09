@@ -35,7 +35,7 @@ import org.opengis.feature.type.GeometryDescriptor;
 public class MultiPointCreationTool extends AbstractEditionTool {
 
     public MultiPointCreationTool() {
-        super(1200,"multipointCreation",MessageBundle.getI18NString("create"),
+        super(1200,"multipointCreation",MessageBundle.getI18NString("createMultiPoint"),
              new SimpleInternationalString("Tool for creating multi-points."), 
              IconBundle.getIcon("16_newgeometry"), FeatureMapLayer.class);
     }
