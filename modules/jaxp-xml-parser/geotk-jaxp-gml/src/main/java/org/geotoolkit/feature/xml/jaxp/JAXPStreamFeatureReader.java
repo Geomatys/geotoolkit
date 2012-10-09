@@ -69,6 +69,7 @@ import org.geotoolkit.gml.xml.AbstractGeometry;
 import org.geotoolkit.gml.xml.GMLMarshallerPool;
 import org.opengis.feature.ComplexAttribute;
 import org.opengis.feature.type.ComplexType;
+import org.opengis.feature.type.PropertyType;
 import org.opengis.util.FactoryException;
 
 
@@ -290,6 +291,7 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                         throw new IllegalArgumentException("Unexpected attribute:" + propName + " not found in :\n" + featureType);
                     }
                 }
+                final PropertyType propertyType = pdesc.getType();
 
                 if (pdesc instanceof GeometryDescriptor) {
                     event = reader.next();
@@ -336,7 +338,7 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                         }
                     }
 
-                } else if (pdesc.getType() instanceof ComplexType) {
+                } else if (propertyType instanceof ComplexType) {
                     // skip the Class Mark
                     while (reader.hasNext()) {
                         if (reader.next() == START_ELEMENT) {
@@ -344,12 +346,12 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                         }
                     }
 
-                    final ComplexAttribute catt = readFeature(null, (ComplexType)pdesc.getType());
+                    final ComplexAttribute catt = readFeature(null, (ComplexType)propertyType);
                     namedProperties.put(propName, FF.createComplexAttribute(catt.getProperties(), (AttributeDescriptor)pdesc, null));
 
                 } else {
                     final String content = reader.getElementText();
-                    final Class propertyType = pdesc.getType().getBinding();
+                    final Class typeBinding = propertyType.getBinding();
                     final Property prevProp = namedProperties.get(propName);
                     final Object previous = (prevProp == null) ? null : prevProp.getValue();
 
@@ -358,25 +360,14 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                         map.put(nameAttribute, content);
                         namedProperties.put(propName, FF.createAttribute(map, (AttributeDescriptor)pdesc, null));
 
-                    } else if (previous == null && List.class.equals(propertyType)) {
+                    } else if (previous == null && List.class.equals(typeBinding)) {
                         final List<String> list = new ArrayList<String>();
                         list.add(content);
                         namedProperties.put(propName, FF.createAttribute(list, (AttributeDescriptor)pdesc, null));
 
                     } else if (previous == null) {
-                        if(propertyType == byte[].class && content != null){
-                            Object value = content;
-                            try {
-                                value = Base64.decode(content);
-                            } catch (IOException ex) {
-                                LOGGER.log(Level.INFO, "Failed to parser binary64 : "+ex.getMessage(),ex);
-                            }
-                            namedProperties.put(propName, FF.createAttribute(value,
-                                (AttributeDescriptor)pdesc, null));
-                        }else{
-                            namedProperties.put(propName, FF.createAttribute(Converters.convert(content, propertyType),
-                                (AttributeDescriptor)pdesc, null));
-                        }
+                        namedProperties.put(propName, FF.createAttribute(readValue(content, propertyType),
+                            (AttributeDescriptor)pdesc, null));
 
                     } else if (previous instanceof Map && nameAttribute != null) {
                         ((Map) previous).put(nameAttribute, content);
@@ -390,19 +381,7 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                     } else {
                         final List multipleValue = new ArrayList();
                         multipleValue.add(previous);
-                        
-                        if(propertyType == byte[].class && content != null){
-                            Object value = content;
-                            try {
-                                value = Base64.decode(content);
-                            } catch (IOException ex) {
-                                LOGGER.log(Level.INFO, "Failed to parser binary64 : "+ex.getMessage(),ex);
-                            }
-                            multipleValue.add(value);
-                        }else{
-                            multipleValue.add(Converters.convert(content, propertyType));
-                        }
-                        
+                        multipleValue.add(readValue(content, propertyType));                        
                         namedProperties.put(propName, FF.createAttribute(multipleValue, (AttributeDescriptor)pdesc, null));
                     }
 
@@ -423,6 +402,20 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
         } else {
             return FF.createComplexAttribute(namedProperties.values(), (ComplexType)featureType, null);
         }
+    }
+    
+    public Object readValue(final String content, final PropertyType type){
+        Object value = content;
+        if(type.getBinding() == byte[].class && content != null){
+            try {
+                value = Base64.decode(content);
+            } catch (IOException ex) {
+                LOGGER.log(Level.INFO, "Failed to parser binary64 : "+ex.getMessage(),ex);
+            }
+        }else{
+            value = Converters.convert(value, type.getBinding());
+        }
+        return value;
     }
 
     private Object extractFeatureFromTransaction() throws XMLStreamException {
