@@ -17,28 +17,23 @@
 package org.geotoolkit.data.postgis;
 
 import com.vividsolutions.jts.geom.Coordinate;
-import java.io.IOException;
-
-import org.geotoolkit.data.jdbc.FilterToSQL;
-import org.geotoolkit.jdbc.JDBCDataStore;
-import org.opengis.feature.type.AttributeDescriptor;
-import org.opengis.feature.type.GeometryDescriptor;
-import org.opengis.filter.expression.Literal;
-import org.opengis.filter.expression.PropertyName;
-import org.opengis.filter.spatial.BinarySpatialOperator;
-
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LinearRing;
-import java.lang.reflect.Array;
+import java.io.IOException;
 import net.iharder.Base64;
+import org.geotoolkit.data.jdbc.FilterToSQL;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.filter.capability.DefaultFilterCapabilities;
-import org.opengis.filter.FilterFactory;
-import org.opengis.geometry.Envelope;
-
+import org.geotoolkit.jdbc.JDBCDataStore;
 import static org.geotoolkit.util.ArgumentChecks.*;
-import org.geotoolkit.util.Converters;
+import org.opengis.feature.type.AttributeDescriptor;
+import org.opengis.feature.type.GeometryDescriptor;
+import org.opengis.filter.FilterFactory;
+import org.opengis.filter.expression.Literal;
+import org.opengis.filter.expression.PropertyName;
+import org.opengis.filter.spatial.BinarySpatialOperator;
+import org.opengis.geometry.Envelope;
 
 public class PostgisFilterToSQL extends FilterToSQL {
 

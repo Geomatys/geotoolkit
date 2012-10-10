@@ -47,6 +47,7 @@ import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.memory.GenericEmptyFeatureIterator;
+import org.geotoolkit.data.memory.GenericReprojectFeatureIterator;
 import org.geotoolkit.data.memory.GenericWrapFeatureIterator;
 import org.geotoolkit.data.query.DefaultQueryCapabilities;
 import org.geotoolkit.data.query.Query;
@@ -57,6 +58,7 @@ import org.geotoolkit.feature.AttributeTypeBuilder;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.FeatureTypeUtilities;
+import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.feature.xml.XmlFeatureReader;
 import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeReader;
 import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureReader;
@@ -311,11 +313,27 @@ public class WFSDataStore extends AbstractDataStore{
             throw new DataStoreException(ex);
         }
 
+        
+        FeatureReader reader;
         if(collection == null){
-            return GenericEmptyFeatureIterator.createReader(sft);
+            reader = GenericEmptyFeatureIterator.createReader(sft);
         }else{
-            return GenericWrapFeatureIterator.wrapToReader(collection.iterator(), sft);
+            reader = GenericWrapFeatureIterator.wrapToReader(collection.iterator(), sft);
         }
+        
+        //we handle reprojection ourself, too complex or never done properly for a large
+        //majority of wfs server tested.
+        if(query.getCoordinateSystemReproject() != null){
+            try {
+                reader = GenericReprojectFeatureIterator.wrap(reader, query.getCoordinateSystemReproject(), null);
+            } catch (FactoryException ex) {
+                getLogger().log(Level.WARNING, ex.getMessage(), ex);
+            } catch (SchemaException ex) {
+                getLogger().log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
+        
+        return reader;
     }
 
     /**
