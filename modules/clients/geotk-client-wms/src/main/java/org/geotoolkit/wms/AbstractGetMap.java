@@ -20,14 +20,21 @@ import java.awt.Dimension;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.geotoolkit.client.AbstractRequest;
+import org.geotoolkit.client.CapabilitiesException;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.util.StringUtilities;
 import org.geotoolkit.util.logging.Logging;
+import org.geotoolkit.wms.v111.GetCapabilities111;
+import org.geotoolkit.wms.xml.AbstractDimension;
+import org.geotoolkit.wms.xml.AbstractLayer;
+import org.geotoolkit.wms.xml.AbstractWMSCapabilities;
 
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.cs.AxisDirection;
@@ -67,7 +74,8 @@ public abstract class AbstractGetMap extends AbstractRequest implements GetMapRe
     protected String sldVersion = null;
     protected String sldBody = null;
     protected Boolean transparent = null;
-
+    protected WebMapServer server = null;
+    
     /**
      * Defines the server url and the service version for this kind of request.
      *
@@ -76,6 +84,12 @@ public abstract class AbstractGetMap extends AbstractRequest implements GetMapRe
      */
     protected AbstractGetMap(final String serverURL, final String version, final ClientSecurity security) {
         super(serverURL,security,null);
+        this.version = version;
+    }
+    
+    protected AbstractGetMap(final WebMapServer server, final String version, final ClientSecurity security) {
+        super(server.getURL().toString(),security,null);
+        this.server = server;
         this.version = version;
     }
 
@@ -391,10 +405,36 @@ public abstract class AbstractGetMap extends AbstractRequest implements GetMapRe
             } else if ((!ad.equals(AxisDirection.EAST)) && (!ad.equals(AxisDirection.WEST)) &&
                        (!ad.equals(AxisDirection.SOUTH)) && (!ad.equals(AxisDirection.NORTH))) {
 
-                // TODO: handle it with a cql filter and then get back with the toString method
-                // in order to handle the AND filter and to filter on several dimensions.
-                // For now, it only works with one.
-                map.put("cql_filter", axis.getName().getCode() +"="+ env.getMedian(i));
+                /*
+                 * If other dimension is present in requested CRS, check if current layer capabilities 
+                 * support this dimension before add CQL filter on request. 
+                 */
+                if (server != null && layers.length == 1) {
+                    try {
+                        final AbstractWMSCapabilities capa = server.getCapabilities();
+                        final AbstractLayer layer = capa.getLayerFromName(layers[0]);
+                        final List capaDims  = layer.getDimension();
+                        boolean dimensionSupported = false;
+                        
+                        for (Object capaDim : capaDims) {
+                            if (capaDim instanceof AbstractDimension) {
+                                AbstractDimension absDim = (AbstractDimension) capaDim;
+                                if (absDim.getName().equals(axis.getName().getCode())) {
+                                    dimensionSupported = true;
+                                }
+                            }
+                        }
+                        if(dimensionSupported) {
+                            // TODO: handle it with a cql filter and then get back with the toString method
+                            // in order to handle the AND filter and to filter on several dimensions.
+                            // For now, it only works with one.
+                            map.put("cql_filter", axis.getName().getCode() +"="+ env.getMedian(i));
+                        }
+                        
+                    } catch (CapabilitiesException ex) {
+                        // no nothing 
+                    }
+                }
             }
         }
     }

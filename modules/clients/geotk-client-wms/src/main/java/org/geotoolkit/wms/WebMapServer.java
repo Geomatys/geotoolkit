@@ -273,9 +273,9 @@ public class WebMapServer extends AbstractServer implements CoverageStore{
     public GetMapRequest createGetMap() {
         switch (getVersion()) {
             case v111:
-                return new GetMap111(serverURL.toString(),getClientSecurity());
+                return new GetMap111(this,getClientSecurity());
             case v130:
-                return new GetMap130(serverURL.toString(),getClientSecurity());
+                return new GetMap130(this,getClientSecurity());
             default:
                 throw new IllegalArgumentException("Version was not defined");
         }
