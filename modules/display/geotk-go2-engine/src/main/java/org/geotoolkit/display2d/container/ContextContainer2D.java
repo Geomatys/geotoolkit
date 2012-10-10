@@ -32,6 +32,7 @@ import org.geotoolkit.display.shape.XRectangle2D;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.geometry.GeneralEnvelope;
+import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
@@ -176,17 +177,17 @@ public abstract  class ContextContainer2D extends AbstractContainer2D{
     public GeneralEnvelope getGraphicsEnvelope(){
         CoordinateReferenceSystem crs = getCanvas().getObjectiveCRS();
         try {
-
+            crs = CRSUtilities.getCRS2D(crs);
             final MapContext context = getContext();
             if(context != null){
                 Envelope env = context.getBounds();
 
                 if(env != null){
-                if( CRS.equalsIgnoreMetadata(env.getCoordinateReferenceSystem(),crs) ){
-                    return new GeneralEnvelope(env);
-                }else{
-                    return (GeneralEnvelope) CRS.transform(env, crs);
-                }
+                    if ( CRS.equalsIgnoreMetadata(env.getCoordinateReferenceSystem(),crs) ) {
+                        return new GeneralEnvelope(env);
+                    } else {
+                        return (GeneralEnvelope) CRS.transform(env, crs);
+                    }
                 }
             }
 
