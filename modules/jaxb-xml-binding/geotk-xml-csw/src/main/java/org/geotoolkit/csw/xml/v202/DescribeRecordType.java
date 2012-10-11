@@ -32,17 +32,17 @@ import org.geotoolkit.util.Utilities;
 
 
 /**
- * This request allows a user to discover elements of the information model supported by the catalogue. 
+ * This request allows a user to discover elements of the information model supported by the catalogue.
  * If no TypeName elements are included, then all of the schemas for the information model must be returned.
- *       
+ *
  *  schemaLanguage - preferred schema language (W3C XML Schema by default)
- * 
+ *
  *  outputFormat - preferred output format (application/xml by default)
- * 
+ *
  * <p>Java class for DescribeRecordType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="DescribeRecordType">
  *   &lt;complexContent>
@@ -56,8 +56,8 @@ import org.geotoolkit.util.Utilities;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -79,12 +79,12 @@ public class DescribeRecordType extends RequestBaseType implements DescribeRecor
      * An empty constructor used by JAXB
      */
     DescribeRecordType() {
-        
+
     }
-    
+
     /**
      * Build a new DescribeRecord Request
-     * 
+     *
      * @param service Fixed at "CSW".
      * @param version The version of the service.
      * @param typeName A list of QName
@@ -97,14 +97,15 @@ public class DescribeRecordType extends RequestBaseType implements DescribeRecor
         this.outputFormat   = outputFormat;
         this.schemaLanguage = schemaLanguage;
         this.typeName       = typeName;
-        
+
     }
-    
-    
+
+
     /**
      * Gets the value of the typeName property.
      * (unmodifiable)
      */
+    @Override
     public List<QName> getTypeName() {
         if (typeName == null) {
             typeName = new ArrayList<QName>();
@@ -112,6 +113,7 @@ public class DescribeRecordType extends RequestBaseType implements DescribeRecor
         return typeName;
     }
 
+    @Override
     public void setTypeName(final List<QName> typeName) {
         this.typeName = typeName;
     }
@@ -119,13 +121,15 @@ public class DescribeRecordType extends RequestBaseType implements DescribeRecor
     /**
      * Gets the value of the outputFormat property.
      */
+    @Override
     public String getOutputFormat() {
         return outputFormat;
     }
-    
+
     /**
      * Gets the value of the outputFormat property.
      */
+    @Override
     public void setOutputFormat(final String outputFormat) {
         this.outputFormat = outputFormat;
     }
@@ -133,6 +137,7 @@ public class DescribeRecordType extends RequestBaseType implements DescribeRecor
     /**
      * Gets the value of the schemaLanguage property.
      */
+    @Override
     public String getSchemaLanguage() {
         if (schemaLanguage == null) {
             return "http://www.w3.org/XML/Schema";
@@ -141,6 +146,7 @@ public class DescribeRecordType extends RequestBaseType implements DescribeRecor
         }
     }
 
+    @Override
     public void setSchemaLanguage(final String schemaLanguage) {
         this.schemaLanguage = schemaLanguage;
     }

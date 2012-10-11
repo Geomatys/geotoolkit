@@ -25,16 +25,17 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.csw.xml.DescribeRecordResponse;
+import org.geotoolkit.util.Utilities;
 
 
 /**
  * The response contains a list of matching schema components
  *          in the requested schema language.
- * 
+ *
  * <p>Java class for DescribeRecordResponseType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="DescribeRecordResponseType">
  *   &lt;complexContent>
@@ -46,8 +47,8 @@ import org.geotoolkit.csw.xml.DescribeRecordResponse;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -64,9 +65,9 @@ public class DescribeRecordResponseType implements DescribeRecordResponse {
      * An empty constructor used by JAXB.
      */
     public DescribeRecordResponseType() {
-        
+
     }
-    
+
     /**
      * Build a new response to a describeRecord request.
      */
@@ -76,14 +77,14 @@ public class DescribeRecordResponseType implements DescribeRecordResponse {
             schemaComponent.add(sc);
         }
     }
-    
+
     /**
      * Build a new response to a describeRecord request.
      */
     public DescribeRecordResponseType(final List<SchemaComponentType> schemaComponent) {
         this.schemaComponent = schemaComponent;
     }
-    
+
     /**
      * Gets the value of the schemaComponent property.
      * (unmodifiable)
@@ -95,4 +96,38 @@ public class DescribeRecordResponseType implements DescribeRecordResponse {
         return Collections.unmodifiableList(schemaComponent);
     }
 
+    /**
+     * Verify if this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof DescribeRecordResponseType) {
+            final DescribeRecordResponseType that = (DescribeRecordResponseType) object;
+            return Utilities.equals(this.schemaComponent,   that.schemaComponent);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 37 * hash + (this.schemaComponent != null ? this.schemaComponent.hashCode() : 0);
+        return hash;
+    }
+
+
+    @Override
+    public String toString() {
+        final StringBuilder s = new StringBuilder("[DescribeRecordResponseType]");
+        if (schemaComponent != null) {
+            s.append("schemaComponent:\n");
+            for (SchemaComponentType sc : schemaComponent) {
+                s.append(sc).append('\n');
+            }
+        }
+        return s.toString();
+    }
 }

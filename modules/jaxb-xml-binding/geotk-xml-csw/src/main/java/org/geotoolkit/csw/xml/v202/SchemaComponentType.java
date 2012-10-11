@@ -27,17 +27,18 @@ import javax.xml.bind.annotation.XmlMixed;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.csw.xml.SchemaComponent;
+import org.geotoolkit.util.Utilities;
 
 
 /**
  * A schema component includes a schema fragment (type definition) or an entire schema from some target namespace;
- * the schema language is identified by URI. 
+ * the schema language is identified by URI.
  * If the component is a schema fragment its parent MUST be referenced (parentSchema).
- * 
+ *
  * <p>Java class for SchemaComponentType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="SchemaComponentType">
  *   &lt;complexContent>
@@ -52,8 +53,8 @@ import org.geotoolkit.csw.xml.SchemaComponent;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -79,26 +80,27 @@ public class SchemaComponentType implements SchemaComponent {
      * An empty constructor used by JAXB.
      */
     public SchemaComponentType() {
-        
+
     }
-    
+
     /**
      * Build a new Schema Component.
      */
     public SchemaComponentType(final String targetNamespace, final String schemaLanguage, final Object xsd) {
         this.targetNamespace = targetNamespace;
-        this.schemaLanguage  = schemaLanguage; 
+        this.schemaLanguage  = schemaLanguage;
         this.content         = new ArrayList<Object>();
         content.add(xsd);
     }
-    
+
     /**
      * A schema component includes a schema fragment (type definition) or an entire schema from some target namespace;
-     * the schema language is identified by URI. 
+     * the schema language is identified by URI.
      * If the component is a schema fragment its parent MUST be referenced (parentSchema).
      * Gets the value of the content property.
      * (unmodifiable)
      */
+    @Override
     public List<Object> getContent() {
         if (content == null) {
             content = new ArrayList<Object>();
@@ -108,8 +110,9 @@ public class SchemaComponentType implements SchemaComponent {
 
     /**
      * Gets the value of the targetNamespace property.
-     * 
+     *
      */
+    @Override
     public String getTargetNamespace() {
         return targetNamespace;
     }
@@ -117,15 +120,58 @@ public class SchemaComponentType implements SchemaComponent {
     /**
      * Gets the value of the parentSchema property.
      */
+    @Override
     public String getParentSchema() {
         return parentSchema;
     }
-    
+
     /**
      * Gets the value of the schemaLanguage property.
-     * 
+     *
      */
+    @Override
     public String getSchemaLanguage() {
         return schemaLanguage;
+    }
+
+    /**
+     * Verify if this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof SchemaComponentType ) {
+            final SchemaComponentType that = (SchemaComponentType) object;
+            return Utilities.equals(this.content,         that.content)   &&
+                   Utilities.equals(this.schemaLanguage,  that.schemaLanguage) &&
+                   Utilities.equals(this.targetNamespace, that.targetNamespace) &&
+                   Utilities.equals(this.parentSchema,    that.parentSchema);
+        }
+        return false;
+    }
+
+
+    @Override
+    public String toString() {
+        StringBuilder s = new StringBuilder("[SchemaComponentType]\n");
+
+        if (content != null) {
+            s.append("content:\n");
+            for (Object o : content) {
+                s.append(o).append('\n');
+            }
+        }
+        if (schemaLanguage != null) {
+            s.append("schemaLanguage: ").append(schemaLanguage).append('\n');
+        }
+        if (targetNamespace != null) {
+            s.append("targetNamespace: ").append(targetNamespace).append('\n');
+        }
+        if (parentSchema != null) {
+            s.append("parentSchema: ").append(parentSchema).append('\n');
+        }
+        return s.toString();
     }
 }
