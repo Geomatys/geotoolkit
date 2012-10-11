@@ -18,13 +18,17 @@
 package org.geotoolkit.wms.map;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -39,6 +43,7 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextPane;
 import org.geotoolkit.client.CapabilitiesException;
 import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display.primitive.SearchArea;
@@ -188,11 +193,31 @@ public class WMSPresenter extends AbstractInformationPresenter{
 
         try{
             input = url.openStream();
-
-            final BufferedImage image = ImageIO.read(input);
-            final JLabel lbl = new JLabel(new ImageIcon(image));
+            
+            Component content;
+            try {
+                
+                final BufferedImage image = ImageIO.read(input);
+                content = new JLabel(new ImageIcon(image));
+                
+            } catch (Exception ex) {
+                try {
+                    StringWriter writer = new StringWriter();
+                    InputStreamReader streamReader = new InputStreamReader(input);
+                    BufferedReader buffer = new BufferedReader(streamReader);
+                    String line="";
+                    while ( null!=(line=buffer.readLine())){
+                        writer.write(line); 
+                    }
+                    content = new JTextPane();
+                    ((JTextPane)content).setText(writer.toString());
+                } catch (Exception ex2) {
+                    content = new JPanel();
+                }
+            }
+            
             contentPane.remove(guiBuzy);
-            contentPane.add(BorderLayout.CENTER,new JScrollPane(lbl));
+            contentPane.add(BorderLayout.CENTER,new JScrollPane(content));
             contentPane.revalidate();
             contentPane.repaint();
 
