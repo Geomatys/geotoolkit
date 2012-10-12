@@ -259,7 +259,8 @@ public class PyramidBuilder {
             }
 
         }
-        return new PyramidTileManager(outputDirectory, globalRegion.x, globalRegion.y, globalRegion.width, globalRegion.height, slabWidth, slabHeight, tileWidth, tileHeight, outputFormatName);
+        return null;
+        //return new PyramidTileManager(outputDirectory, globalRegion.x, globalRegion.y, globalRegion.width, globalRegion.height, slabWidth, slabHeight, tileWidth, tileHeight, outputFormatName);
     }
 
     private WritableRenderedImage getSlab (Rectangle slabRegion, int subsamplingX, int subsamplingY, TileManager tileManager) throws IOException, NoninvertibleTransformException, TransformException {
