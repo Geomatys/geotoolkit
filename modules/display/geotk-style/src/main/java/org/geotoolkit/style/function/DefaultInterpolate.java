@@ -22,6 +22,7 @@ import java.awt.image.ComponentColorModel;
 import java.awt.image.DataBuffer;
 import java.awt.image.IndexColorModel;
 import java.awt.image.RenderedImage;
+import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -32,6 +33,7 @@ import javax.media.jai.NullOpImage;
 import javax.media.jai.OpImage;
 
 import org.geotoolkit.filter.AbstractExpression;
+import org.geotoolkit.filter.DefaultLiteral;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.geotoolkit.internal.image.ColorUtilities;
 import org.geotoolkit.resources.Errors;
@@ -117,6 +119,23 @@ public class DefaultInterpolate extends AbstractExpression implements Interpolat
     };
 
     
+    public DefaultInterpolate(final Expression ... expressions){
+        lookup = expressions[0];
+        final List<InterpolationPoint> points = new ArrayList<InterpolationPoint>();
+        for(int i=1;i<expressions.length-2;i+=2){
+            final InterpolationPoint ip = new DefaultInterpolationPoint(
+                    expressions[i].evaluate(null, Number.class), expressions[i+1]);
+            points.add(ip);
+        }
+        this.points = points.toArray(new InterpolationPoint[points.size()]);
+        
+        final Method me = Method.parse(expressions[expressions.length-2].evaluate(null, String.class));
+        final Mode mo = Mode.parse(expressions[expressions.length-1].evaluate(null, String.class));
+        this.method = (me==null) ? Method.COLOR : me;
+        this.mode = (mo == null) ? Mode.LINEAR : mo;
+        this.fallback = DEFAULT_FALLBACK;
+    }
+    
     public DefaultInterpolate(final Expression LookUpValue, List<InterpolationPoint> values, 
            final Method method, final Mode mode,final Literal fallback){
                 
@@ -169,6 +188,12 @@ public class DefaultInterpolate extends AbstractExpression implements Interpolat
     public List<Expression> getParameters() {
         final List<Expression> params = new ArrayList<Expression>();
         params.add(lookup);
+        for(InterpolationPoint ip : points){
+            params.add(new DefaultLiteral(ip.getData()));
+            params.add(ip.getValue());
+        }
+        params.add(new DefaultLiteral(method.name().toLowerCase()));
+        params.add(new DefaultLiteral(mode.name().toLowerCase()));
         return params;
     }
 

@@ -31,5 +31,15 @@ import org.opengis.annotation.XmlElement;
 @XmlElement("ThreshholdsBelongToType")
 public enum ThreshholdsBelongTo {
         SUCCEEDING,
-        PRECEDING
+        PRECEDING;
+        
+    public static ThreshholdsBelongTo parse(String val){
+        if("succeeding".equalsIgnoreCase(val)){
+            return SUCCEEDING;
+        }else if("preceding".equalsIgnoreCase(val)){
+            return PRECEDING;
+        }
+        return null;
+    }
+        
 }

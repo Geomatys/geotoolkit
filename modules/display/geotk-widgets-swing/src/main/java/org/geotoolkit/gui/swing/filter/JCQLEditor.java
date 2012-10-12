@@ -34,6 +34,7 @@ import javax.swing.event.ListSelectionListener;
 import org.geotoolkit.cql.CQLException;
 import org.geotoolkit.filter.function.FunctionFactory;
 import org.geotoolkit.filter.function.Functions;
+import org.geotoolkit.gui.swing.misc.JOptionDialog;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.FeatureMapLayer;
@@ -661,8 +662,8 @@ public class JCQLEditor extends javax.swing.JPanel{
         editor.setLayer(layer);
         editor.setFilter(filter);
         
-        final int res = JOptionPane.showOptionDialog(null, editor, "", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, null, null);
-    
+        final int res = JOptionDialog.show(null, editor, JOptionPane.OK_CANCEL_OPTION);
+        
         if(res == JOptionPane.OK_OPTION){
             return editor.getFilter();
         }else{
@@ -676,7 +677,7 @@ public class JCQLEditor extends javax.swing.JPanel{
         editor.setLayer(layer);
         editor.setExpression(expression);
         
-        final int res = JOptionPane.showOptionDialog(null, editor, "", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, null, null);
+        final int res = JOptionDialog.show(null, editor, JOptionPane.OK_CANCEL_OPTION);
     
         if(res == JOptionPane.OK_OPTION){
             return editor.getExpression();

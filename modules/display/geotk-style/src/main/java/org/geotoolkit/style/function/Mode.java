@@ -29,5 +29,17 @@ import org.opengis.annotation.XmlElement;
 public enum Mode {
     LINEAR,
     COSINE,
-    CUBIC
+    CUBIC;
+    
+    public static Mode parse(String val){
+        if("linear".equalsIgnoreCase(val)){
+            return LINEAR;
+        }else if("cosine".equalsIgnoreCase(val)){
+            return COSINE;
+        }else if("cubic".equalsIgnoreCase(val)){
+            return CUBIC;
+        }
+        return null;
+    }
+    
 }

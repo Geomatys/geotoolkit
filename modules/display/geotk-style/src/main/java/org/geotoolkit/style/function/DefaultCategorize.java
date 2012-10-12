@@ -28,6 +28,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 import javax.media.jai.ImageLayout;
@@ -62,6 +63,7 @@ import static org.opengis.filter.expression.Expression.*;
  * <ol>
  * <li>PropertyName; use "Rasterdata" to indicate this is a color map
  * <li>Literal: lookup value
+ * <li>Literal: value 0
  * <li>Literal: threshold 1
  * <li>Literal: value 1
  * <li>Literal: threshold 2
@@ -141,6 +143,33 @@ public class DefaultCategorize extends AbstractExpression implements Categorize 
         }
     };
 
+    public DefaultCategorize(final Expression ... expressions){
+                
+        lookup = expressions[0];
+        this.values.put(CATEGORIZE_LESS_INFINITY, expressions[1]);
+        
+        if(expressions.length%2 == 0){
+            for(int i=2;i<expressions.length;i+=2){
+                this.values.put(expressions[i], expressions[i+1]);
+            }
+            this.belongTo = ThreshholdsBelongTo.SUCCEEDING;
+            
+        }else{
+            for(int i=2;i<expressions.length-1;i+=2){
+                this.values.put(expressions[i], expressions[i+1]);
+            }
+            final ThreshholdsBelongTo to = ThreshholdsBelongTo.parse(expressions[expressions.length-1].evaluate(null, String.class));
+            this.belongTo = (to==null) ? ThreshholdsBelongTo.SUCCEEDING : to;
+        }
+        
+        this.fallback = DEFAULT_FALLBACK;
+        
+        if(this.values.keySet().iterator().next() != CATEGORIZE_LESS_INFINITY){
+            throw new  IllegalArgumentException("Values must hold at least one key : CATEGORIZE_LESS_INFINITY");
+        }
+        
+    }
+    
     /**
      *
      * @param LookUpValue
@@ -205,6 +234,17 @@ public class DefaultCategorize extends AbstractExpression implements Categorize 
     public List<Expression> getParameters() {
         final List<Expression> params = new ArrayList<Expression>();
         params.add(lookup);
+        int i=0;
+        for(Entry<Expression,Expression> entry : values.entrySet()){
+            if(i==0){
+                params.add(entry.getValue());
+            }else{
+                params.add(entry.getKey());
+                params.add(entry.getValue());
+            }
+            i++;
+        }
+        params.add(new DefaultLiteral(belongTo.name().toLowerCase()));
         return params;
     }
 
@@ -236,7 +276,7 @@ public class DefaultCategorize extends AbstractExpression implements Categorize 
             final boolean b = this.belongTo == belongTo.SUCCEEDING;
 
             final Expression closest = values.headMap(exp,!b).lastEntry().getValue();
-            return closest.evaluate(f);
+            return closest.evaluate(f,c);
             
         } else if (object instanceof RenderedImage) {
             return evaluateImage((RenderedImage) object);
