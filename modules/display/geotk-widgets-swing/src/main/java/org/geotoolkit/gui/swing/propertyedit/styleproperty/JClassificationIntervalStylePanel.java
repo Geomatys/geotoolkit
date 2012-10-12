@@ -148,6 +148,20 @@ public class JClassificationIntervalStylePanel extends JPanel implements Propert
 
         guiMethod.setModel(new EnumComboBoxModel(IntervalStyleBuilder.METHOD.class));
         guiMethod.setRenderer(new MethodRenderer());
+        
+        guiNormalize.setRenderer(new DefaultListCellRenderer(){
+
+            @Override
+            public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+                final JLabel lbl = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                if(value == analyze.noValue){
+                    lbl.setText("-");
+                }
+                
+                return lbl;
+            }
+            
+        });
 
     }
 
@@ -188,8 +202,13 @@ public class JClassificationIntervalStylePanel extends JPanel implements Propert
         lstnormalize.remove(guiProperty.getSelectedItem());
         guiNormalize.setModel(new ListComboBoxModel(lstnormalize));
 
-        guiNormalize.setSelectedItem(oldSelected);
-
+        if(oldSelected != null){
+            guiNormalize.setSelectedItem(oldSelected);
+        }
+        if(guiNormalize.getSelectedItem() == null){
+            guiNormalize.setSelectedItem(analyze.noValue);
+        }
+        
     }
 
     private void updateModelGlyph(){
