@@ -65,7 +65,7 @@ public abstract class CachedPyramidSet extends DefaultPyramidSet {
      * default value is false, rely on standard IO.
      */
     public static final String PROPERTY_NIO = "nio_query";
-    
+
     protected static final Logger LOGGER = Logging.getLogger(CachedPyramidSet.class);
 
     //NIO netty bootstrap.
@@ -84,8 +84,8 @@ public abstract class CachedPyramidSet extends DefaultPyramidSet {
         }
         return BOOTSTRAP;
     }
-    
-    
+
+
     /**
      * Cache the last queried tiles
      */
@@ -113,18 +113,11 @@ public abstract class CachedPyramidSet extends DefaultPyramidSet {
 
     public TileReference getTile(GridMosaic mosaic, int col, int row, Map hints) throws DataStoreException {
 
-        final Object input;
         if (cacheImages) {
-            input = getTileImage(mosaic, col, row, hints);
+            return new DefaultTileReference(null, getTileImage(mosaic, col, row, hints), 0, new Point(col, row));
         } else {
-            try {
-                input = getTileRequest(mosaic, col, row, hints).getURL();
-            } catch (MalformedURLException ex) {
-                throw new DataStoreException(ex.getMessage(), ex);
-            }
+            return new RequestTileReference(null, getTileRequest(mosaic, col, row, hints), 0, new Point(col, row));
         }
-
-        return new DefaultTileReference(null, input, 0, new Point(col, row));
     }
 
     private static String toId(GridMosaic mosaic, int col, int row, Map hints) {
@@ -137,10 +130,10 @@ public abstract class CachedPyramidSet extends DefaultPyramidSet {
     }
 
     private RenderedImage getTileImage(GridMosaic mosaic, int col, int row, Map hints) throws DataStoreException {
-        
+
         final String tileId = toId(mosaic, col, row, hints);
 
-        //use the cache if available        
+        //use the cache if available
         RenderedImage value = tileCache.peek(tileId);
         if (value == null) {
             Cache.Handler<RenderedImage> handler = tileCache.lock(tileId);
@@ -186,7 +179,7 @@ public abstract class CachedPyramidSet extends DefaultPyramidSet {
             //we can optimize only if there is no security
             return AbstractGridMosaic.getTiles(mosaic, locations, hints);
         }
-        
+
         final URL url = server.getURL();
         final String protocol = url.getProtocol();
 
@@ -240,14 +233,14 @@ public abstract class CachedPyramidSet extends DefaultPyramidSet {
         }else{
             queryUsingIO(url, queue, downloadList);
         }
-        
-        return queue;        
+
+        return queue;
     }
-    
+
     /**
-     * Use Netty NIO to download tiles. 
+     * Use Netty NIO to download tiles.
      */
-    private void queryUsingNIO(final URL url, final CancellableQueue queue, 
+    private void queryUsingNIO(final URL url, final CancellableQueue queue,
             final List<ImagePack> downloadList){
 
         final String host = url.getHost();
@@ -263,7 +256,7 @@ public abstract class CachedPyramidSet extends DefaultPyramidSet {
                 super.countDown();
                 if (getCount() <= 0) {
                     try {
-                        //put a custom object, this is used in the iterator 
+                        //put a custom object, this is used in the iterator
                         //to detect the end.
                         queue.put(GridMosaic.END_OF_QUEUE);
                     } catch (InterruptedException ex) {
@@ -305,21 +298,21 @@ public abstract class CachedPyramidSet extends DefaultPyramidSet {
         }
 
     }
-    
+
     /**
      * Use standard java IO with a thread pool.
      */
-    private void queryUsingIO(final URL url, final CancellableQueue queue, 
+    private void queryUsingIO(final URL url, final CancellableQueue queue,
             final List<ImagePack> downloadList){
-        
-        final ExecutorService es = Executors.newFixedThreadPool(3);        
+
+        final ExecutorService es = Executors.newFixedThreadPool(3);
         final CountDownLatch latch = new CountDownLatch(downloadList.size()) {
             @Override
             public void countDown() {
                 super.countDown();
                 if (getCount() <= 0) {
                     try {
-                        //put a custom object, this is used in the iterator 
+                        //put a custom object, this is used in the iterator
                         //to detect the end.
                         queue.put(GridMosaic.END_OF_QUEUE);
                     } catch (InterruptedException ex) {
@@ -328,7 +321,7 @@ public abstract class CachedPyramidSet extends DefaultPyramidSet {
                 }
             }
         };
-        
+
         for(final ImagePack pack : downloadList){
             es.submit(new Runnable() {
                 @Override
@@ -345,7 +338,7 @@ public abstract class CachedPyramidSet extends DefaultPyramidSet {
                 }
             });
         }
-        
+
     }
 
     /**
@@ -373,7 +366,7 @@ public abstract class CachedPyramidSet extends DefaultPyramidSet {
             final TileReference ref = mosaic.getTile(pt.x, pt.y, null);
             return ref;
         }
-        
+
         public TileReference getTile() {
             if(img == null){
                 try {
@@ -398,7 +391,7 @@ public abstract class CachedPyramidSet extends DefaultPyramidSet {
         private final CountDownLatch latch;
         private final Map<Integer,ImagePack> packs;
 
-        public TilePipelineFactory(final CancellableQueue<Object> queue, 
+        public TilePipelineFactory(final CancellableQueue<Object> queue,
                 final CountDownLatch latch, final Map<Integer,ImagePack> packs) {
             this.queue = queue;
             this.latch = latch;
@@ -415,7 +408,7 @@ public abstract class CachedPyramidSet extends DefaultPyramidSet {
     }
 
     /**
-     * ChannelHandler that aggregate chunks and update ImagePack, queue and latch. 
+     * ChannelHandler that aggregate chunks and update ImagePack, queue and latch.
      */
     private class TileClientHandler extends SimpleChannelHandler {
 
@@ -424,7 +417,7 @@ public abstract class CachedPyramidSet extends DefaultPyramidSet {
         private final Map<Integer,ImagePack> packs;
         private boolean chunks;
 
-        public TileClientHandler(final CancellableQueue<Object> queue, 
+        public TileClientHandler(final CancellableQueue<Object> queue,
                 final CountDownLatch latch, final Map<Integer,ImagePack> packs) {
             this.queue = queue;
             this.latch = latch;
@@ -435,7 +428,7 @@ public abstract class CachedPyramidSet extends DefaultPyramidSet {
         public void messageReceived(final ChannelHandlerContext ctx, final MessageEvent e) throws Exception {
             final Integer channelID = e.getChannel().getId();
             final ImagePack pack = packs.get(channelID);
-            
+
             if (!chunks) {
                 final HttpResponse response = (HttpResponse) e.getMessage();
 
@@ -459,11 +452,11 @@ public abstract class CachedPyramidSet extends DefaultPyramidSet {
                     pack.buffer.writeBytes(chunk.getContent());
                 }
             }
-            
+
             if(queue.isCancelled()){
                 ctx.getChannel().close();
             }
-            
+
         }
 
         @Override
@@ -476,19 +469,19 @@ public abstract class CachedPyramidSet extends DefaultPyramidSet {
         /**
          * Message completed, all chunk are aggregated into buffer attribute.
          * Create an InputStream from that buffer and update PackImage and add it tho queue.
-         * 
-         * @param e 
+         *
+         * @param e
          */
         private void messageCompleted(final MessageEvent e) {
             final Integer channelID = e.getChannel().getId();
             final ImagePack pack = packs.get(channelID);
-            
+
             try {
                 queue.put(pack.getTile());
             } catch (Exception ex) {
                 LOGGER.log(Level.WARNING, ex.getMessage(), ex);
             }
-            
+
             latch.countDown();
             packs.remove(channelID);
             e.getChannel().close();
