@@ -41,12 +41,12 @@ import org.opengis.parameter.*;
 
 /**
  * WMTS Server factory.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
 public class WMTSServerFactory extends AbstractServerFactory implements CoverageStoreFactory{
-    
+
     /** factory identification **/
     public static final String NAME = "wmts";
     public static final DefaultServiceIdentification IDENTIFICATION;
@@ -57,9 +57,9 @@ public class WMTSServerFactory extends AbstractServerFactory implements Coverage
         citation.setIdentifiers(Collections.singleton(id));
         IDENTIFICATION.setCitation(citation);
     }
-    
+
     public static final ParameterDescriptor<String> IDENTIFIER = createFixedIdentifier(NAME);
-    
+
     /**
      * Mandatory - the serveur verion
      */
@@ -74,22 +74,22 @@ public class WMTSServerFactory extends AbstractServerFactory implements Coverage
         for(WMTSVersion version : WMTSVersion.values()){
             validValues.add(version.getCode());
         }
-        
-        VERSION = new DefaultParameterDescriptor<String>(params, String.class, 
-                validValues.toArray(new String[validValues.size()]), 
+
+        VERSION = new DefaultParameterDescriptor<String>(params, String.class,
+                validValues.toArray(new String[validValues.size()]),
                 WMTSVersion.v100.getCode(), null, null, null, true);
     }
-    
-    
+
+
     public static final ParameterDescriptorGroup PARAMETERS =
             new DefaultParameterDescriptorGroup("WMTSParameters",
-                IDENTIFIER,URL,VERSION,IMAGE_CACHE,NIO_QUERIES);
+                IDENTIFIER,URL,VERSION, SECURITY, IMAGE_CACHE,NIO_QUERIES);
 
     @Override
     public Identification getIdentification() {
         return IDENTIFICATION;
     }
-    
+
     @Override
     public ParameterDescriptorGroup getParametersDescriptor() {
         return PARAMETERS;
@@ -109,13 +109,13 @@ public class WMTSServerFactory extends AbstractServerFactory implements Coverage
     public WebMapTileServer create(ParameterValueGroup params) throws DataStoreException {
         checkCanProcessWithError(params);
         final WebMapTileServer server = new WebMapTileServer(params);
-        
+
         try{
             final ParameterValue val = params.parameter(NIO_QUERIES.getName().getCode());
             boolean useNIO = Boolean.TRUE.equals(val.getValue());
             server.setUserProperty(CachedPyramidSet.PROPERTY_NIO, useNIO);
         }catch(ParameterNotFoundException ex){}
-        
+
         return server;
     }
 
@@ -137,5 +137,5 @@ public class WMTSServerFactory extends AbstractServerFactory implements Coverage
     public CoverageStore createNew(ParameterValueGroup params) throws DataStoreException {
         throw new DataStoreException("Can not create new WMTS coverage store.");
     }
-    
+
 }
