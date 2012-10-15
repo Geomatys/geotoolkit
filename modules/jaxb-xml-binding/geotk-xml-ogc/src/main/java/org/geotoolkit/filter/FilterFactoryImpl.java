@@ -181,7 +181,7 @@ public class FilterFactoryImpl implements FilterFactory2 {
 
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.filter");
 
-    private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss'Z'");
+    private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 
     @Override
     public FeatureId featureId(final String id) {
