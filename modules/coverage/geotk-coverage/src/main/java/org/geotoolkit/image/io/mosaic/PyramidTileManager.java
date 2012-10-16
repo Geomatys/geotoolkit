@@ -159,69 +159,68 @@ public class PyramidTileManager extends TileManager {
         if (!new File(resultPath).exists())
             throw new IllegalStateException("subsampling argument is not conform");
 
-        int datatype = sampleModel.getDataType();
-        int numBand = sampleModel.getNumBands();
+        final int datatype = sampleModel.getDataType();
+        final int numBand  = sampleModel.getNumBands();
 
-        int mx = gRx / subsampling.width;
-        int my = gRy / subsampling.height;
-//        int tminx  = (region.x - mx) / tileWidth;
-//        int tminy  = (region.y - my) / tileHeight;
-//        int tmaxx  = (region.width  + tileWidth  - 1) / tileWidth  + tminx;
-//        int tmaxy  = (region.height + tileHeight - 1) / tileHeight + tminy;
+        final int mx = gRx / subsampling.width;
+        final int my = gRy / subsampling.height;
+        final int slabSizeX = slabWidth  * tileWidth;
+        final int slabSizeY = slabHeight * tileHeight;
 
-        //coordonnée de l'image
-        int ix = Math.max(mx, region.x);
-        int iy = Math.max(my, region.y);
-        int iw = Math.min(region.x + region.width,  gRx + gRw) - ix;
-        int ih = Math.min(region.y + region.height, gRy + gRh) - iy;
+        //image coordinate
+        final int ix = Math.max(mx, region.x);
+        final int iy = Math.max(my, region.y);
+        final int iw = Math.min(region.x + region.width,  (gRx + gRw) / subsampling.width)  - ix;
+        final int ih = Math.min(region.y + region.height, (gRy + gRh) / subsampling.height) - iy;
 
         if (iw <= 0 || ih <= 0)
             throw new IllegalArgumentException("region don't intersect pyramid area");
 
-        Rectangle imgIntersection = new Rectangle();
+        final Rectangle imgIntersection = new Rectangle();
 
-        WritableRenderedImage renderImage = new TiledImage(ix, iy, iw, ih, ix, iy, new BandedSampleModel(datatype, iw, ih, numBand), colorModel);
-        PixelIterator destPix = PixelIteratorFactory.createRowMajorWriteableIterator(renderImage, renderImage);
+        final WritableRenderedImage renderImage = new TiledImage(ix, iy, iw, ih, ix, iy, new BandedSampleModel(datatype, iw, ih, numBand), colorModel);
+        final PixelIterator destPix = PixelIteratorFactory.createRowMajorWriteableIterator(renderImage, renderImage);
 
-        int idSlabMinX = (ix - mx) / (slabWidth * tileWidth);
-        int idSlabMinY = (iy - my) / (slabHeight * tileHeight);
-        int idSlabMaxX = (ix + iw - mx + slabWidth * tileWidth - 1) / (slabWidth * tileWidth);
-        int idSlabMaxY = (iy + ih - my + slabHeight * tileHeight - 1) / (slabHeight * tileHeight);
+        final int idSlabMinX = (ix - mx) / slabSizeX;
+        int idSlabMinY       = (iy - my) / slabSizeY;
+        final int idSlabMaxX = (ix + iw - mx + slabSizeX - 1) / slabSizeX;
+        final int idSlabMaxY = (iy + ih - my + slabSizeY - 1) / slabSizeY;
+
+        final int smxBase = mx + idSlabMinX * slabSizeX;
+        int smy = my + idSlabMinY * slabSizeY;
+
         for (; idSlabMinY<idSlabMaxY; idSlabMinY++) {
+            int smx = smxBase;
             for (int idSMinX = idSlabMinX; idSMinX < idSlabMaxX; idSMinX++) {
-                String slabPath = resultPath+idSMinX+"_"+idSlabMinY+"/";
-                //redefinir les bornes des tuiles au sein de chaque dalle
-                int tminx = (Math.max(ix, gRx+idSMinX*slabWidth*tileWidth) - (gRx+idSMinX*slabWidth*tileWidth))/tileWidth;
-                int tminy = (Math.max(iy, gRy+idSlabMinY*slabHeight*tileHeight) - (gRy+idSlabMinY*slabHeight*tileHeight))/tileHeight;
-                int tmaxx = (Math.min(ix + iw, gRx+(idSMinX+1)*slabWidth*tileWidth) - (gRx+idSMinX*slabWidth*tileWidth) + tileWidth - 1)/tileWidth;
-                int tmaxy = (Math.min(iy + ih, gRy+(idSlabMinY+1)*slabHeight*tileHeight) - (gRy+idSlabMinY*slabHeight*tileHeight) + tileHeight - 1)/tileHeight;
 
+                final String slabPath = resultPath+idSMinX+"_"+idSlabMinY+"/";
+
+                final int tminx = (Math.max(ix, smx) - smx) / tileWidth;
+                int tminy       = (Math.max(iy, smy) - smy) / tileHeight;
+                final int tmaxx = (Math.min(ix+iw, smx+slabSizeX) - smx + tileWidth  - 1) / tileWidth;
+                final int tmaxy = (Math.min(iy+ih, smy+slabSizeY) - smy + tileHeight - 1) / tileHeight;
+
+                int imgminy = smy + tminy * tileWidth;
+                final int imgminxBase = smx + tminx * tileWidth;
                 //parcour des tuiles
                 for (;tminy < tmaxy; tminy++) {
+                    int imgminx = imgminxBase;
                     for (int tx = tminx; tx < tmaxx; tx++) {
-                        //on lit la bonne image
-                        File tilePathTemp = new File(slabPath+tx+"_"+tminy+"."+format);
-                        //si la tuile existe
-                        if (tilePathTemp.exists()) {
-                            ImageReader imgreader = XImageIO.getReader(tilePathTemp, Boolean.FALSE, Boolean.TRUE);
-                            RenderedImage imgTemp = imgreader.read(0);
-                            //on defini l'intersection par rapport a l'image qui commence en (0, 0)
-                            int imgminx = gRx + idSMinX*slabWidth*tileWidth + tx * tileWidth;
-                            int imgminy = gRy + idSlabMinY*slabHeight*tileHeight + tminy * tileHeight;
-                            //largeur hauteur reel a voir
-                            int imgmaxx = imgminx + imgTemp.getWidth();
-                            int imgmaxy = imgminy + imgTemp.getHeight();
 
-                            int interdebx = Math.max(imgminx, ix);
-                            int interdeby = Math.max(imgminy, iy);
-                            int interendx = Math.min(imgmaxx, ix + iw);
-                            int interendy = Math.min(imgmaxy, iy + ih);
+                        File tilePathTemp = new File(slabPath+tx+"_"+tminy+"."+format);
+                        if (tilePathTemp.exists()) {
+                            final ImageReader imgreader = XImageIO.getReader(tilePathTemp, Boolean.FALSE, Boolean.TRUE);
+                            final RenderedImage imgTemp = imgreader.read(0);
+                            //intersection
+                            final int interdebx = Math.max(imgminx, ix);
+                            int interdeby       = Math.max(imgminy, iy);
+                            final int interendx = Math.min(imgminx + imgTemp.getWidth(),  ix + iw);
+                            final int interendy = Math.min(imgminy + imgTemp.getHeight(), iy + ih);
                             imgIntersection.setBounds(interdebx - imgminx, interdeby - imgminy, interendx - interdebx, interendy - interdeby);
                             PixelIterator temPix = PixelIteratorFactory.createRowMajorIterator(imgTemp, imgIntersection);
 
-                            //caler le move to au bon endroit kan on pass d'une tuile a l'autre on sait plus
-                            for (int y = interdeby; y < interendy; y++) {
-                                destPix.moveTo(interdebx, y, 0);
+                            for (; interdeby < interendy; interdeby++) {
+                                destPix.moveTo(interdebx, interdeby, 0);
                                 for (int x = interdebx; x < interendx; x++) {
                                     for (int b = 0; b < numBand; b++) {
                                         temPix.next();
@@ -231,10 +230,17 @@ public class PyramidTileManager extends TileManager {
                                 }
                             }
                         }
+                        //next tile in X direction
+                        imgminx += tileWidth;
                     }
+                    //next tile in Y direction
+                    imgminy += tileHeight;
                 }
-
+                //next slab in X
+                smx += slabSizeX;
             }
+            //next slab in Y direction
+            smy += slabSizeY;
         }
         return renderImage;
     }
@@ -245,6 +251,7 @@ public class PyramidTileManager extends TileManager {
     @Override
     public Collection<Tile> getTiles() throws IOException {
         throw new UnsupportedOperationException("Not supported yet.");
+        //je pense faire methode recursive
     }
 
     /**
@@ -257,21 +264,57 @@ public class PyramidTileManager extends TileManager {
         String resultPath = parentPath+"/"+subsampling.width+"_"+subsampling.height+"/";
         if (!new File(resultPath).exists())
             throw new IllegalStateException("subsampling argument is not conform");
-        int mx = gRx / subsampling.width;
-        int my = gRy / subsampling.height;
-        //intersection des 2 rectangles region et region globale a revoir les maxs
-
-        int tminx  = (region.x - mx) / tileWidth;
-        int tminy  = (region.y - my) / tileHeight;
-        int tmaxx  = (region.width  + tileWidth  - 1) / tileWidth  + tminx;
-        int tmaxy  = (region.height + tileHeight - 1) / tileHeight + tminy;
         Collection<Tile> tileList = new ArrayList<Tile>();
-        for (;tminy < tmaxy; tminy++) {
-            for (int tx = tminx; tx < tmaxx; tx++) {
-                File tileFile = new File(resultPath+tx+"_"+tminy);
-                if (tileFile.exists())
-                    tileList.add(new Tile(null, tileFile, 0, new Rectangle(gRx+tx*tileWidth, gRy+tminy*tileHeight, tileWidth, tileHeight), subsampling));
+
+        final int mx = gRx / subsampling.width;
+        final int my = gRy / subsampling.height;
+        final int slabSizeX = slabWidth  * tileWidth;
+        final int slabSizeY = slabHeight * tileHeight;
+
+        //image coordinate
+        final int ix = Math.max(mx, region.x);
+        final int iy = Math.max(my, region.y);
+        final int iw = Math.min(region.x + region.width,  (gRx + gRw) / subsampling.width)  - ix;
+        final int ih = Math.min(region.y + region.height, (gRy + gRh) / subsampling.height) - iy;
+
+        if (iw <= 0 || ih <= 0)
+            throw new IllegalArgumentException("region don't intersect pyramid area");
+
+
+        final int idSlabMinX = (ix - mx) / slabSizeX;
+        int idSlabMinY       = (iy - my) / slabSizeY;
+        final int idSlabMaxX = (ix + iw - mx + slabSizeX - 1) / slabSizeX;
+        final int idSlabMaxY = (iy + ih - my + slabSizeY - 1) / slabSizeY;
+
+        final int smxBase = mx + idSlabMinX * slabSizeX;
+        int smy = my + idSlabMinY * slabSizeY;
+
+        for (; idSlabMinY<idSlabMaxY; idSlabMinY++) {
+            int smx = smxBase;
+            for (int idSMinX = idSlabMinX; idSMinX < idSlabMaxX; idSMinX++) {
+
+                final String slabPath = resultPath+idSMinX+"_"+idSlabMinY+"/";
+
+                final int tminx = (Math.max(ix, smx) - smx) / tileWidth;
+                int tminy       = (Math.max(iy, smy) - smy) / tileHeight;
+                final int tmaxx = (Math.min(ix+iw, smx+slabSizeX) - smx + tileWidth  - 1) / tileWidth;
+                final int tmaxy = (Math.min(iy+ih, smy+slabSizeY) - smy + tileHeight - 1) / tileHeight;
+
+                //parcour des tuiles
+                for (;tminy < tmaxy; tminy++) {
+                    for (int tx = tminx; tx < tmaxx; tx++) {
+
+                        File tilePathTemp = new File(slabPath+tx+"_"+tminy+"."+format);
+                        if (tilePathTemp.exists())
+                                tileList.add(new Tile(null, tilePathTemp, 0, new Rectangle(gRx+tx*tileWidth, gRy+tminy*tileHeight, tileWidth, tileHeight), subsampling));
+
+                    }
+                }
+                //next slab in X
+                smx += slabSizeX;
             }
+            //next slab in Y direction
+            smy += slabSizeY;
         }
         return tileList;
     }
