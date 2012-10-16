@@ -235,7 +235,7 @@ public class GeometrytoJTS {
             final int srid = SRIDGenerator.toSRID(crsName, Version.V1);
             ls = GF.createLineString(coordinates);
             ls.setSRID(srid);
-        } else {
+        } else if (gmlLine.getPosList() != null) {
             final DirectPositionList dplt = gmlLine.getPosList();
             final int dim = gmlLine.getCoordinateDimension();
             final List<Coordinate> coords = toJTSCoords(dplt, dim);
@@ -244,9 +244,12 @@ public class GeometrytoJTS {
             ls = GF.createLineString(coords.toArray(new Coordinate[coords.size()]));
             ls.setSRID(srid);
 
+        } else {
+            final List<Coordinate> coords = toJTSCoords(gmlLine.getPos());
+            final int srid = SRIDGenerator.toSRID(crsName, Version.V1);
+            ls = GF.createLineString(coords.toArray(new Coordinate[coords.size()]));
+            ls.setSRID(srid);
         }
-
-
         return ls;
     }
 
