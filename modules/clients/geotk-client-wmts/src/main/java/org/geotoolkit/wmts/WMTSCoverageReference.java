@@ -22,6 +22,7 @@ import java.awt.image.RenderedImage;
 import org.geotoolkit.coverage.*;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
+import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.wmts.model.WMTSPyramidSet;
 import org.opengis.feature.type.Name;
@@ -47,6 +48,16 @@ public class WMTSCoverageReference implements CoverageReference, PyramidalModel{
     @Override
     public Name getName() {
         return name;
+    }
+
+    @Override
+    public boolean isWritable() throws DataStoreException {
+        return false;
+    }
+
+    @Override
+    public GridCoverageWriter createWriter() throws DataStoreException {
+        throw new DataStoreException("WMTS coverage are not writable.");
     }
 
     @Override

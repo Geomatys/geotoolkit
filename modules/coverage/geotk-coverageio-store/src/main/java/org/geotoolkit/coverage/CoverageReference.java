@@ -17,6 +17,7 @@
 package org.geotoolkit.coverage;
 
 import org.geotoolkit.coverage.io.GridCoverageReader;
+import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.storage.DataStoreException;
 import org.opengis.feature.type.Name;
 
@@ -35,6 +36,11 @@ public interface CoverageReference {
     Name getName();
     
     /**
+     * @return true if coverage is writable
+     */
+    boolean isWritable() throws DataStoreException;
+    
+    /**
      * Get the coverage store this coverage comes from.
      * 
      * @return CoverageStore, can be null if coverage has a different kind of source.
@@ -48,5 +54,13 @@ public interface CoverageReference {
      * @throws DataStoreException  
      */
     GridCoverageReader createReader() throws DataStoreException;
+    
+    /**
+     * Get a new writer for this coverage.
+     * 
+     * @return GridCoverageWriter
+     * @throws DataStoreException  
+     */
+    GridCoverageWriter createWriter() throws DataStoreException;
     
 }

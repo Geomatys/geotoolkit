@@ -25,6 +25,7 @@ import javax.xml.bind.JAXBException;
 import org.geotoolkit.coverage.*;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
+import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.storage.DataStoreException;
 import org.opengis.feature.type.Name;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -50,6 +51,18 @@ public class XMlCoverageReference implements CoverageReference, PyramidalModel{
     @Override
     public Name getName() {
         return name;
+    }
+
+    @Override
+    public boolean isWritable() throws DataStoreException {
+        //TODO
+        return false;
+    }
+
+    @Override
+    public GridCoverageWriter createWriter() throws DataStoreException {
+        //TODO
+        throw new DataStoreException("Not supported yet.");
     }
 
     @Override

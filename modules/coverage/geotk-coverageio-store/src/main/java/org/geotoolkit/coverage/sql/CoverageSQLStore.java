@@ -23,6 +23,7 @@ import org.geotoolkit.coverage.CoverageStore;
 import org.geotoolkit.coverage.CoverageStoreFactory;
 import org.geotoolkit.coverage.CoverageStoreFinder;
 import org.geotoolkit.coverage.io.GridCoverageReader;
+import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.storage.DataStoreException;
 import org.opengis.feature.type.Name;
@@ -89,6 +90,11 @@ public class CoverageSQLStore extends CoverageDatabase implements CoverageStore 
         }
 
         @Override
+        public boolean isWritable() {
+            return false;
+        }
+        
+        @Override
         public CoverageStore getStore() {
             return CoverageSQLStore.this;
         }
@@ -97,6 +103,11 @@ public class CoverageSQLStore extends CoverageDatabase implements CoverageStore 
         public GridCoverageReader createReader() throws DataStoreException {
             final LayerCoverageReader reader = CoverageSQLStore.this.createGridCoverageReader(name.getLocalPart());
             return reader;
+        }
+
+        @Override
+        public GridCoverageWriter createWriter() throws DataStoreException {
+            throw new DataStoreException("Coverage is not writable.");
         }
 
     }

@@ -18,10 +18,13 @@ package org.geotoolkit.coverage.filestore;
 
 import java.io.File;
 import java.io.IOException;
+import javax.imageio.ImageWriter;
 import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.coverage.CoverageStore;
 import org.geotoolkit.coverage.io.GridCoverageReader;
+import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.coverage.io.ImageCoverageReader;
+import org.geotoolkit.coverage.io.ImageCoverageWriter;
 import org.geotoolkit.storage.DataStoreException;
 import org.opengis.feature.type.Name;
 
@@ -42,6 +45,17 @@ public class FileCoverageReference implements CoverageReference{
         this.name = name;
         this.file = file;
     }
+
+    @Override
+    public boolean isWritable() throws DataStoreException {
+        try {
+            final ImageWriter writer = store.createWriter(file);
+            writer.dispose();
+            return true;
+        } catch (IOException ex) {
+        }
+        return false;
+    }
     
     @Override
     public GridCoverageReader createReader() throws DataStoreException{
@@ -52,6 +66,17 @@ public class FileCoverageReference implements CoverageReference{
             throw new DataStoreException(ex.getMessage(),ex);
         }
         return reader;
+    }
+
+    @Override
+    public GridCoverageWriter createWriter() throws DataStoreException {
+        final ImageCoverageWriter writer = new ImageCoverageWriter();
+        try {
+            writer.setOutput(store.createWriter(file));
+        } catch (IOException ex) {
+            throw new DataStoreException(ex.getMessage(),ex);
+        }
+        return writer;
     }
 
     @Override

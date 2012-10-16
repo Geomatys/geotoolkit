@@ -22,6 +22,7 @@ import java.awt.image.RenderedImage;
 import org.geotoolkit.coverage.*;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
+import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.googlemaps.model.GoogleMapsPyramidSet;
 import org.geotoolkit.storage.DataStoreException;
 import org.opengis.feature.type.Name;
@@ -50,6 +51,11 @@ public class GoogleCoverageReference implements CoverageReference, PyramidalMode
     }
 
     @Override
+    public boolean isWritable() throws DataStoreException {
+        return false;
+    }
+
+    @Override
     public StaticGoogleMapsServer getStore() {
         return server;
     }
@@ -63,6 +69,11 @@ public class GoogleCoverageReference implements CoverageReference, PyramidalMode
         final PyramidalModelReader reader = new PyramidalModelReader();
         reader.setInput(this);
         return reader;
+    }
+
+    @Override
+    public GridCoverageWriter createWriter() throws DataStoreException {
+        throw new DataStoreException("GoogleMaps coverage are not writable.");
     }
 
     @Override

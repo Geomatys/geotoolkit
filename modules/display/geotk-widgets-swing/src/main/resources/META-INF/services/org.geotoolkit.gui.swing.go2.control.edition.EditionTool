@@ -10,6 +10,8 @@ org.geotoolkit.gui.swing.go2.control.edition.MultiPointPartCreationTool
 org.geotoolkit.gui.swing.go2.control.edition.MultiLinePartCreationTool
 org.geotoolkit.gui.swing.go2.control.edition.MultiPolygonPartCreationTool
 org.geotoolkit.gui.swing.go2.control.edition.GeometryCollectionPartDeleteTool
+# Coverage tools ###############################################################
+org.geotoolkit.gui.swing.go2.control.edition.CoverageEditionTool
 # Other tools ##################################################################
 org.geotoolkit.gui.swing.go2.control.edition.FeatureEditTool
 org.geotoolkit.gui.swing.go2.control.edition.PolygonHoleCreationTool

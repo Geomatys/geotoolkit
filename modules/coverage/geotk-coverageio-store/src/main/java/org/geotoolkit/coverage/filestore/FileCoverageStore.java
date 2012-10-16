@@ -26,6 +26,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
+import javax.imageio.ImageWriter;
 import javax.imageio.spi.ImageReaderSpi;
 import org.geotoolkit.coverage.AbstractCoverageStore;
 import org.geotoolkit.coverage.CoverageReference;
@@ -158,5 +159,24 @@ public class FileCoverageStore extends AbstractCoverageStore{
         
         return reader;
     }
+    
+    /**
+     * Create a writer for the given file.
+     * Detect automaticaly the spi if type is set to 'AUTO'.
+     * 
+     * @param candidate
+     * @return ImageWriter, never null
+     * @throws IOException if fail to create a writer.
+     */
+    ImageWriter createWriter(final File candidate) throws IOException{
+        final ImageReaderSpi readerSpi = createReader(candidate).getOriginatingProvider();
+        final String[] writerSpiNames = readerSpi.getImageWriterSpiNames();
+        if(writerSpiNames == null || writerSpiNames.length == 0){
+            throw new IOException("No writer for this format.");
+        }
+        
+        return XImageIO.getWriterByFormatName(readerSpi.getFormatNames()[0], candidate, null);
+    }
+    
     
 }

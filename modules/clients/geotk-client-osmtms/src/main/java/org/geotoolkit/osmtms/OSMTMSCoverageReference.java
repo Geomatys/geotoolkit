@@ -22,6 +22,7 @@ import java.awt.image.RenderedImage;
 import org.geotoolkit.coverage.*;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
+import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.storage.DataStoreException;
 import org.opengis.feature.type.Name;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -47,6 +48,11 @@ public class OSMTMSCoverageReference implements CoverageReference, PyramidalMode
     }
 
     @Override
+    public boolean isWritable() throws DataStoreException {
+        return false;
+    }
+
+    @Override
     public CoverageStore getStore() {
         return server;
     }
@@ -56,6 +62,11 @@ public class OSMTMSCoverageReference implements CoverageReference, PyramidalMode
         final PyramidalModelReader reader = new PyramidalModelReader();
         reader.setInput(this);
         return reader;
+    }
+
+    @Override
+    public GridCoverageWriter createWriter() throws DataStoreException {
+        throw new DataStoreException("OSM TMS coverages are not writable.");
     }
 
     @Override
