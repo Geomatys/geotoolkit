@@ -87,11 +87,21 @@ public class DefaultCitation extends MetadataEntity implements Citation {
 
     /**
      * The authority for International Standard Book Number.
+     *
+     * <p><b>Implementation note:</b> This field is read by reflection in
+     * {@link org.geotoolkit.internal.jaxb.NonMarshalledAuthority}. IF this
+     * field is renamed or moved, then {@code NonMarshalledAuthority} needs
+     * to be updated.</p>
      */
     static final IdentifierSpace<String> ISBN = new NonMarshalledAuthority<>("ISBN", NonMarshalledAuthority.ISBN);
 
     /**
      * The authority for International Standard Serial Number.
+     *
+     * <p><b>Implementation note:</b> This field is read by reflection in
+     * {@link org.geotoolkit.internal.jaxb.NonMarshalledAuthority}. IF this
+     * field is renamed or moved, then {@code NonMarshalledAuthority} needs
+     * to be updated.</p>
      */
     static final IdentifierSpace<String> ISSN = new NonMarshalledAuthority<>("ISSN", NonMarshalledAuthority.ISSN);
 
