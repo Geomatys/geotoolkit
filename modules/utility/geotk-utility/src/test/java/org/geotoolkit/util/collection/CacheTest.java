@@ -50,7 +50,7 @@ public final strictfp class CacheTest extends TestBase {
      * Tests with two values.
      */
     @Test
-    public void testSimple() {
+    public void testSimple() { // LGPL
         final Integer  key1 = 1;
         final Integer  key2 = 2;
         final String value1 = "value 1";
@@ -75,7 +75,7 @@ public final strictfp class CacheTest extends TestBase {
      * @throws InterruptedException Should never happen.
      */
     @Test
-    public void testConcurrent() throws InterruptedException {
+    public void testConcurrent() throws InterruptedException { // LGPL
         final Integer  key1 = 1;
         final String value1 = "value 1";
         final Integer  key2 = 2;
