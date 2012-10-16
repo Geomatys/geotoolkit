@@ -33,14 +33,14 @@ import org.opengis.geometry.DirectPosition;
 
 
 /**
- * A LineString is a special curve that consists of a single segment with linear interpolation. 
+ * A LineString is a special curve that consists of a single segment with linear interpolation.
  * It is defined by two or more coordinate tuples, with linear interpolation between them.
  * It is backwards compatible with the LineString of GML 2, GM_LineString of ISO 19107 is implemented by LineStringSegment.
- * 
+ *
  * <p>Java class for LineStringType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="LineStringType">
  *   &lt;complexContent>
@@ -61,8 +61,8 @@ import org.opengis.geometry.DirectPosition;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -128,14 +128,14 @@ public class LineStringType extends AbstractCurveType implements LineString {
     }
     /**
      * Gets the value of the posOrPointPropertyOrPointRep property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link PointPropertyType }{@code >}
      * {@link JAXBElement }{@code <}{@link DirectPositionType }{@code >}
      * {@link JAXBElement }{@code <}{@link CoordType }{@code >}
      * {@link JAXBElement }{@code <}{@link PointPropertyType }{@code >}
-     * 
-     * 
+     *
+     *
      */
     public List<JAXBElement<?>> getPointPropertyOrPointRep() {
         if (pointPropertyOrPointRep == null) {
@@ -146,11 +146,11 @@ public class LineStringType extends AbstractCurveType implements LineString {
 
     /**
      * Gets the value of the posList property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link DirectPositionListType }
-     *     
+     *
      */
     public DirectPositionListType getPosList() {
         return posList;
@@ -158,11 +158,11 @@ public class LineStringType extends AbstractCurveType implements LineString {
 
     /**
      * Sets the value of the posList property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link DirectPositionListType }
-     *     
+     *
      */
     public void setPosList(final DirectPositionListType value) {
         this.posList = value;
@@ -170,11 +170,11 @@ public class LineStringType extends AbstractCurveType implements LineString {
 
     /**
      * Deprecated with GML version 3.1.0. Use "posList" instead.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CoordinatesType }
-     *     
+     *
      */
     public CoordinatesType getCoordinates() {
         return coordinates;
@@ -182,11 +182,11 @@ public class LineStringType extends AbstractCurveType implements LineString {
 
     /**
      * Deprecated with GML version 3.1.0. Use "posList" instead.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CoordinatesType }
-     *     
+     *
      */
     public void setCoordinates(final CoordinatesType value) {
         this.coordinates = value;
@@ -245,9 +245,9 @@ public class LineStringType extends AbstractCurveType implements LineString {
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder(super.toString());
-        if (posList != null)
+        if (posList != null) {
             s.append("posList").append(posList).append('\n');
-
+        }
         if(coordinates != null) {
             s.append("coordinates=").append(coordinates).append('\n');
         }
