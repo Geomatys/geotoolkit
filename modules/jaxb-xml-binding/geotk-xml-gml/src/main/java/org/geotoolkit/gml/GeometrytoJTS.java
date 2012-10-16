@@ -294,11 +294,16 @@ public class GeometrytoJTS {
                                 new Coordinate(x2, y2)
                             });
                     ls.setSRID(srid);
-                } else {
+                } else if (lineSegment.getPosList() != null){
                     final DirectPositionList dplt = lineSegment.getPosList();
                     final int dim = gmlLine.getCoordinateDimension();
                     final List<Coordinate> coords = toJTSCoords(dplt, dim);
 
+                    final int srid = SRIDGenerator.toSRID(crsName, Version.V1);
+                    ls = GF.createLineString(coords.toArray(new Coordinate[coords.size()]));
+                    ls.setSRID(srid);
+                } else {
+                    final List<Coordinate> coords = toJTSCoords(lineSegment.getPos());
                     final int srid = SRIDGenerator.toSRID(crsName, Version.V1);
                     ls = GF.createLineString(coords.toArray(new Coordinate[coords.size()]));
                     ls.setSRID(srid);
@@ -309,6 +314,15 @@ public class GeometrytoJTS {
             }
         }
         return lineList;
+    }
+
+    public static List<Coordinate> toJTSCoords(List<? extends DirectPosition> pos){
+        final List<Coordinate> coords = new ArrayList<Coordinate>();
+
+        for(DirectPosition dp : pos){
+            coords.add( new Coordinate(dp.getOrdinate(0), dp.getOrdinate(1)));
+        }
+        return coords;
     }
 
     public static List<Coordinate> toJTSCoords(final DirectPositionList lst, final int dim){
