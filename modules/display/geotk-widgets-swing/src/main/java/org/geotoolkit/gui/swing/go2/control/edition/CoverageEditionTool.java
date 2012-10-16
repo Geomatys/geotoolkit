@@ -16,9 +16,13 @@
  */
 package org.geotoolkit.gui.swing.go2.control.edition;
 
+import java.util.logging.Level;
+import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.gui.swing.go2.JMap2D;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.CoverageMapLayer;
+import org.geotoolkit.storage.DataStoreException;
+import org.geotoolkit.util.logging.Logging;
 
 /**
  * Coverage editor tool.
@@ -38,6 +42,24 @@ public class CoverageEditionTool extends AbstractEditionTool{
     @Override
     public EditionDelegate createDelegate(JMap2D map, Object candidate) {
         return new CoverageEditionDelegate(map,(CoverageMapLayer)candidate);
+    }
+
+    @Override
+    public boolean canHandle(Object candidate) {
+        boolean supported = super.canHandle(candidate);
+        if(!supported) return false;
+        
+        final CoverageMapLayer layer = (CoverageMapLayer) candidate;
+        final CoverageReference ref = layer.getCoverageReference();
+        if(ref == null) return false;
+        try{
+            supported = ref.isWritable();
+        }catch(DataStoreException ex){
+            Logging.getLogger(CoverageEditionTool.class).log(Level.INFO, "Coverage not writable : "+ex.getMessage());
+            return false;
+        }
+        
+        return supported;
     }
     
 }

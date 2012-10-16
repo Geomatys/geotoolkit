@@ -36,13 +36,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CancellationException;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
-import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
 import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
@@ -58,12 +56,11 @@ import org.geotoolkit.gui.swing.misc.JOptionDialog;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.MathTransforms;
-import org.geotoolkit.referencing.operation.transform.ConcatenatedTransform;
 import org.geotoolkit.storage.DataStoreException;
 import org.opengis.coverage.grid.GridCoverage;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
-import org.opengis.referencing.operation.NoninvertibleTransformException;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 
@@ -173,7 +170,9 @@ public class CoverageEditionDelegate extends AbstractEditionDelegate {
         private GridCoverage2D coverage = null; 
         private RenderedImage img;
         private WritableRaster raster;
-        private double[] points;
+        private double[] dataPoints;
+        private CoordinateReferenceSystem lastObjCRS = null;
+        private double[] objPoints;
 
         protected CoverageMapDecoration() {
             super(new BorderLayout());
@@ -196,25 +195,36 @@ public class CoverageEditionDelegate extends AbstractEditionDelegate {
                         
             final int height = img.getHeight();
             final int width = img.getWidth();
-            points = new double[(width+1)*(height+1)*2];
+            dataPoints = new double[(width+1)*(height+1)*2];
             int i=0;
             for(int y=0; y<=height; y++){
                 for(int x=0; x<=width; x++){
-                    points[i] = x;
+                    dataPoints[i] = x;
                     i++;
-                    points[i] = y;
+                    dataPoints[i] = y;
                     i++;
                 }
             }
             
             final MathTransform gridTodata = coverage.getGridGeometry().getGridToCRS(PixelInCell.CELL_CORNER);
             try{
-                gridTodata.transform(points, 0, points, 0, i/2);
+                gridTodata.transform(dataPoints, 0, dataPoints, 0, i/2);
             }catch(Exception ex){
                 LOGGER.log(Level.WARNING, ex.getMessage(), ex);
             }
             
         }
+        
+        private double[] getObjPoints(CoordinateReferenceSystem objCRS) throws FactoryException, TransformException{
+            if(objPoints == null || lastObjCRS != objCRS){
+                lastObjCRS = objCRS;
+                objPoints = new double[dataPoints.length];
+                final MathTransform dataToObj = CRS.findMathTransform(coverage.getCoordinateReferenceSystem(), objCRS);
+                dataToObj.transform(dataPoints, 0, objPoints, 0, dataPoints.length/2);
+            }
+            return objPoints;
+        }
+        
         
         public Point getMouseGridPosition() throws FactoryException, TransformException{
             final MathTransform gridTodata = coverage.getGridGeometry().getGridToCRS(PixelInCell.CELL_CORNER);
@@ -286,13 +296,13 @@ public class CoverageEditionDelegate extends AbstractEditionDelegate {
                 final MathTransform objToDisp = context.getObjectiveToDisplay();
                                 
                 final MathTransform gridToDisp = MathTransforms.concatenate(gridTodata, dataToObj, objToDisp);
-                final MathTransform dataToDisp = MathTransforms.concatenate(dataToObj, objToDisp);
                 
                 g.setColor(Color.GRAY);    
                 g.setStroke(new BasicStroke(1));
                 
-                final double[] pointdisp = Arrays.copyOf(points, points.length);
-                dataToDisp.transform(pointdisp, 0, pointdisp, 0, pointdisp.length/2);
+                final double[] pointObj = getObjPoints(context.getObjectiveCRS2D());                
+                final double[] pointdisp = Arrays.copyOf(pointObj, pointObj.length);
+                objToDisp.transform(pointdisp, 0, pointdisp, 0, pointdisp.length/2);
                 
                 final int height = img.getHeight();
                 final int width = img.getWidth() + 1; //there is one extra point per line
