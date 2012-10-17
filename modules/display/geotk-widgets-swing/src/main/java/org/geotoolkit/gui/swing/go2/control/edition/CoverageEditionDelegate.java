@@ -26,33 +26,41 @@ import java.awt.GridLayout;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.geom.GeneralPath;
 import java.awt.image.BufferedImage;
+import java.awt.image.DataBuffer;
 import java.awt.image.RenderedImage;
 import java.awt.image.WritableRaster;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.CancellationException;
 import java.util.logging.Level;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JSeparator;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
+import javax.swing.SwingConstants;
+import javax.swing.border.BevelBorder;
 import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
-import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
-import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.display2d.canvas.DefaultRenderingContext2D;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.gui.swing.go2.JMap2D;
+import org.geotoolkit.gui.swing.go2.decoration.AbstractMapDecoration;
 import org.geotoolkit.gui.swing.go2.decoration.MapDecoration;
 import org.geotoolkit.gui.swing.misc.JOptionDialog;
+import org.geotoolkit.gui.swing.resource.IconBundle;
+import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.MathTransforms;
@@ -61,34 +69,43 @@ import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.NoninvertibleTransformException;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 
 /**
- *
+ * Coverage editor tool.
+ * 
  * @author Johann Sorel (Geomatys)
  */
 public class CoverageEditionDelegate extends AbstractEditionDelegate {
 
-    private final CoverageMapLayer layer;
     private final CoverageMapDecoration decoration = new CoverageMapDecoration();
+    private final CoverageMapLayer layer;
 
+    //mouse gesture variables
     private int mouseX = 0;
     private int mouseY = 0;
+    private boolean selectAction = false;
+    private Rectangle selectRectangle = null;
+    
+    //coverage edition variables
+    private JMap2D map = null;
+    private DefaultRenderingContext2D context = null;
+    private GridCoverage2D coverage = null; 
+    private RenderedImage img;
+    private WritableRaster raster;
+    private CoordinateReferenceSystem lastObjCRS = null;
+    private double[] dataPoints;
+    private double[] objPoints;
+    private final Rectangle gridSelectionSize = new Rectangle();
+    //pixel which value has been changed
+    private final List<Point> editedPixels = new ArrayList<Point>();
+    
     
     public CoverageEditionDelegate(JMap2D map, CoverageMapLayer layer) {
         super(map);
         this.layer = layer;
-        
-        try {
-            GridCoverage cov = layer.getCoverageReader().read(layer.getImageIndex(), null);
-            decoration.setCoverage((GridCoverage2D)cov);
-        } catch (CoverageStoreException ex) {
-            LOGGER.log(Level.WARNING, ex.getMessage(), ex);
-        } catch (CancellationException ex) {
-            LOGGER.log(Level.WARNING, ex.getMessage(), ex);
-        }
-        
     }
 
     @Override
@@ -101,7 +118,7 @@ public class CoverageEditionDelegate extends AbstractEditionDelegate {
         super.mouseMoved(e);
         this.mouseX = e.getX();
         this.mouseY = e.getY();
-        decoration.repaint();
+        decoration.getComponent().repaint();
     }    
 
     @Override
@@ -109,43 +126,61 @@ public class CoverageEditionDelegate extends AbstractEditionDelegate {
         super.mouseClicked(e);
         this.mouseX = e.getX();
         this.mouseY = e.getY();
-        decoration.repaint();
+        decoration.getComponent().repaint();
         try {
-            final Point mouseGridPosition = decoration.getMouseGridPosition();
+            final Point mouseGridPosition = getMouseGridPosition();
             if(mouseGridPosition != null){
                 
                 final JPanel panel = new JPanel(new GridLayout(0, 2));
-                final int nbSample = decoration.img.getSampleModel().getNumBands();
+                panel.setFocusCycleRoot(true);
+                final int nbSample = img.getSampleModel().getNumBands();
+                final int sampleType = img.getSampleModel().getDataType();
+                                
                 final double[] samples = new double[nbSample];
-                decoration.raster.getPixel(mouseGridPosition.x, mouseGridPosition.y, samples);    
+                raster.getPixel(mouseGridPosition.x, mouseGridPosition.y, samples);    
                 final List<JSpinner> spinners = new ArrayList<JSpinner>();
                 for(int i=0;i<samples.length;i++){
                     panel.add(new JLabel(String.valueOf(i)));
                     final JSpinner spinner = new JSpinner();
-                    spinner.setModel(new SpinnerNumberModel(samples[i],Double.NEGATIVE_INFINITY,Double.POSITIVE_INFINITY,1));
+                    if(i==0) spinner.requestFocus();
+                    
+                    switch(sampleType){
+                        case DataBuffer.TYPE_BYTE :
+                            spinner.setModel(new SpinnerNumberModel((int)samples[i],0,255,1));
+                            break;
+                        case DataBuffer.TYPE_DOUBLE :
+                            spinner.setModel(new SpinnerNumberModel(samples[i],Double.NEGATIVE_INFINITY,Double.POSITIVE_INFINITY,1));
+                            break;
+                        case DataBuffer.TYPE_FLOAT :
+                            spinner.setModel(new SpinnerNumberModel(samples[i],Float.NEGATIVE_INFINITY,Float.POSITIVE_INFINITY,1));
+                            break;
+                        case DataBuffer.TYPE_INT :
+                            spinner.setModel(new SpinnerNumberModel((int)samples[i],Integer.MIN_VALUE,Integer.MAX_VALUE,1));
+                            break;
+                        case DataBuffer.TYPE_SHORT :
+                            spinner.setModel(new SpinnerNumberModel((int)samples[i],Short.MIN_VALUE,Short.MAX_VALUE,1));
+                            break;
+                        case DataBuffer.TYPE_USHORT :
+                            spinner.setModel(new SpinnerNumberModel((int)samples[i],0,Short.MAX_VALUE*2,1));
+                            break;
+                        default :
+                            spinner.setModel(new SpinnerNumberModel(samples[i],Double.NEGATIVE_INFINITY,Double.POSITIVE_INFINITY,1));
+                    }
+                    
                     spinners.add(spinner);
                     panel.add(spinner);
                 }
                 
                 final int res = JOptionDialog.show(null, panel, JOptionPane.OK_CANCEL_OPTION);
                 if(res == JOptionPane.OK_OPTION){
+                    editedPixels.add(mouseGridPosition);
                     //update image
                     final CoverageReference ref = layer.getCoverageReference();
                     if(ref != null){
-                        
-                        
                         for(int i=0;i<samples.length;i++){
-                            samples[i] = (Double)spinners.get(i).getValue();
+                            samples[i] = ((Number)spinners.get(i).getValue()).doubleValue();
                         }
-                        decoration.raster.setPixel(mouseGridPosition.x, mouseGridPosition.y, samples);
-                        
-                        final GridCoverageWriter writer = ref.createWriter();
-                        final GridCoverageBuilder gcb = new GridCoverageBuilder();
-                        gcb.setRenderedImage(decoration.img);
-                        gcb.setCoordinateReferenceSystem(decoration.coverage.getCoordinateReferenceSystem2D());
-                        gcb.setGridToCRS(decoration.coverage.getGridGeometry().getGridToCRS2D());
-                        writer.write(gcb.getGridCoverage2D(), null);
-                        
+                        raster.setPixel(mouseGridPosition.x, mouseGridPosition.y, samples);
                     }
                     
                 }
@@ -154,105 +189,236 @@ public class CoverageEditionDelegate extends AbstractEditionDelegate {
             
         } catch (FactoryException ex) {
             LOGGER.log(Level.WARNING, ex.getMessage(), ex);
-        } catch (DataStoreException ex) {
-            LOGGER.log(Level.WARNING, ex.getMessage(), ex);
         } catch (TransformException ex) {
             LOGGER.log(Level.WARNING, ex.getMessage(), ex);
         }
         
-        
+    }
+
+    @Override
+    public void mouseDragged(MouseEvent e) {
+        if(selectAction){
+            if(selectRectangle == null){
+                selectRectangle = new Rectangle(e.getX(),e.getY(),1,1);
+            }
+            
+            selectRectangle.width = e.getX() - selectRectangle.x;
+            selectRectangle.height = e.getY() - selectRectangle.y;
+            decoration.getComponent().repaint();
+        }else{
+            super.mouseDragged(e);
+        }
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+        if(selectAction){
+            selectAction = false;
+            
+            try {
+                GridCoverage cov = layer.getCoverageReader().read(layer.getImageIndex(), null);
+                setCoverage((GridCoverage2D)cov,selectRectangle);
+            } catch (Exception ex) {
+                LOGGER.log(Level.WARNING, ex.getMessage(), ex);
+            }
+            selectRectangle = null;
+            
+            decoration.getComponent().repaint();
+        }
+        super.mouseReleased(e);
     }
     
-    private class CoverageMapDecoration extends JPanel implements MapDecoration {
+    /**
+     * return the current editer area points.
+     */
+    private double[] getObjPoints(CoordinateReferenceSystem objCRS) throws FactoryException, TransformException{
+        if(objPoints == null || lastObjCRS != objCRS){
+            lastObjCRS = objCRS;
+            objPoints = new double[dataPoints.length];
+            final MathTransform dataToObj = CRS.findMathTransform(coverage.getCoordinateReferenceSystem(), objCRS);
+            dataToObj.transform(dataPoints, 0, objPoints, 0, dataPoints.length/2);
+        }
+        return objPoints;
+    }
 
-        private JMap2D map = null;
-        private DefaultRenderingContext2D context = null;
-        private GridCoverage2D coverage = null; 
-        private RenderedImage img;
-        private WritableRaster raster;
-        private double[] dataPoints;
-        private CoordinateReferenceSystem lastObjCRS = null;
-        private double[] objPoints;
+    private void setCoverage(GridCoverage2D coverage, Rectangle selectionRectangle) 
+            throws FactoryException, NoninvertibleTransformException, TransformException {
+        this.editedPixels.clear();
+        this.objPoints = null;
+        this.dataPoints = null;
+        this.raster = null;
+        this.img = null;
+        this.coverage = coverage;
+        if(coverage == null || selectionRectangle == null) return;
+        this.img = coverage.getRenderedImage();
+        this.raster = img.copyData(null);
+        this.img = new BufferedImage(img.getColorModel(), raster, img.getColorModel().isAlphaPremultiplied(), null);
+
+        final MathTransform gridTodata = coverage.getGridGeometry().getGridToCRS(PixelInCell.CELL_CORNER);
+        final MathTransform dispToObj = context.getDisplayToObjective();
+        final MathTransform objToData = CRS.findMathTransform(context.getObjectiveCRS2D(),coverage.getCoordinateReferenceSystem());
+        final MathTransform dataToGrid = gridTodata.inverse();
+        
+        final double[] coords = new double[8];
+        coords[0] = selectionRectangle.x;                       coords[1] = selectionRectangle.y;
+        coords[2] = selectionRectangle.x+selectRectangle.width;   coords[3] = selectionRectangle.y;
+        coords[4] = selectionRectangle.x+selectRectangle.width;   coords[5] = selectionRectangle.y+selectRectangle.height;
+        coords[6] = selectionRectangle.x;                       coords[7] = selectionRectangle.y+selectRectangle.height;
+        dispToObj.transform(coords, 0, coords, 0, 4);
+        objToData.transform(coords, 0, coords, 0, 4);
+        dataToGrid.transform(coords, 0, coords, 0, 4);
+        double minX = coords[0];
+        double maxX = coords[0];
+        double minY = coords[1];
+        double maxY = coords[1];
+        for(int i=0;i<8;i+=2){
+            minX = Math.min(minX,coords[i]);
+            maxX = Math.max(maxX,coords[i]);
+            minY = Math.min(minY,coords[i+1]);
+            maxY = Math.max(maxY,coords[i+1]);
+        }
+        
+        final int imageHeight = img.getHeight();
+        final int imageWidth = img.getWidth();
+        
+        final int startX = (int) minX;
+        final int endX   = Math.min( (int)(maxX+0.5), imageWidth);      
+        final int startY = (int) minY;
+        final int endY   = Math.min( (int)(maxY+0.5), imageHeight);       
+        
+        final int height = endY-startY;
+        final int width = endX-startX;
+        if(height <=0 || width <=0){
+            //invalid edition area
+            this.raster = null;
+            this.img = null;
+            return;
+        }
+        gridSelectionSize.x = startX;
+        gridSelectionSize.y = startY;
+        gridSelectionSize.height = height;
+        gridSelectionSize.width = width;
+        dataPoints = new double[(width+1)*(height+1)*2];
+        int i=0;
+        for(int y=startY; y<=endY; y++){
+            for(int x=startX; x<=endX; x++){
+                dataPoints[i] = x;
+                i++;
+                dataPoints[i] = y;
+                i++;
+            }
+        }
+
+        try{
+            gridTodata.transform(dataPoints, 0, dataPoints, 0, i/2);
+        }catch(Exception ex){
+            LOGGER.log(Level.WARNING, ex.getMessage(), ex);
+        }
+
+    }
+    
+    private Point getMouseGridPosition() throws FactoryException, TransformException{
+        final MathTransform gridTodata = coverage.getGridGeometry().getGridToCRS(PixelInCell.CELL_CORNER);
+        final double[] coords = new double[2];
+        coords[0] = mouseX;
+        coords[1] = mouseY;
+        final MathTransform dispToObj = context.getDisplayToObjective();
+        final MathTransform objToData = CRS.findMathTransform(context.getObjectiveCRS2D(),coverage.getCoordinateReferenceSystem());
+        final MathTransform dataToGrid = gridTodata.inverse();
+
+        dispToObj.transform(coords, 0, coords, 0, 1);
+        objToData.transform(coords, 0, coords, 0, 1);
+        dataToGrid.transform(coords, 0, coords, 0, 1);
+        final int gridX = (int)coords[0];
+        final int gridY = (int)coords[1];
+
+        if(gridSelectionSize.contains(gridX, gridY)){
+            return new Point(gridX, gridY);
+        }
+        return null;
+    }
+    
+    private void save() throws DataStoreException{
+        final CoverageReference ref = layer.getCoverageReference();
+        final GridCoverageWriter writer = ref.createWriter();
+        final GridCoverageBuilder gcb = new GridCoverageBuilder();
+        gcb.setRenderedImage(img);
+        gcb.setCoordinateReferenceSystem(coverage.getCoordinateReferenceSystem2D());
+        gcb.setGridToCRS(coverage.getGridGeometry().getGridToCRS2D());
+        writer.write(gcb.getGridCoverage2D(), null);
+        this.editedPixels.clear();
+    }
+    
+    
+    private class CoverageMapDecoration extends AbstractMapDecoration{
+
+        private final JPanel container = new GridComponent();
+        private final JPanel guiRight = new JPanel(new BorderLayout(10, 10));
+        private final JPanel guiTools = new JPanel(new BorderLayout(0, 0));
+        private final JPanel guiApplyPane = new JPanel(new GridLayout(0,1,2,2));
 
         protected CoverageMapDecoration() {
-            super(new BorderLayout());
-            setOpaque(false);
+            container.setLayout(new BorderLayout());
+            container.setOpaque(false);
+            container.setFocusable(false);
+            guiRight.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
+            
+            final JButton guiSelect = new JButton(MessageBundle.getString("select_area"));
+            guiSelect.setIcon(IconBundle.getIcon("16_select"));
+            guiSelect.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    selectAction = true;
+                }
+            });
+            guiApplyPane.add(guiSelect);
+            final JButton guiSave = new JButton(MessageBundle.getString("save"));
+            guiSave.setIcon(IconBundle.getIcon("16_session_commit"));
+            guiSave.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    try {
+                        save();
+                    } catch (DataStoreException ex) {
+                        LOGGER.log(Level.WARNING, ex.getMessage(),ex);
+                    }
+                }
+            });
+            final JButton guiCancel = new JButton(MessageBundle.getString("cancel"));
+            guiCancel.setIcon(IconBundle.getIcon("16_session_rollback"));
+            guiCancel.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    try {
+                        setCoverage(null,null);
+                    } catch (Exception ex) {
+                        LOGGER.log(Level.WARNING, ex.getMessage(),ex);
+                    }
+                }
+            });
+            guiApplyPane.add(guiSave);
+            guiApplyPane.add(guiCancel);
+            
+            guiTools.add(BorderLayout.NORTH,new JSeparator(SwingConstants.HORIZONTAL));
+            guiTools.add(BorderLayout.SOUTH,new JSeparator(SwingConstants.HORIZONTAL));
+            
+            guiRight.add(BorderLayout.NORTH, guiSelect);
+            guiRight.add(BorderLayout.CENTER, guiTools);
+            guiRight.add(BorderLayout.SOUTH, guiApplyPane);
+            
+            container.add(BorderLayout.EAST,guiRight);            
         }
 
         @Override
         public void refresh() {
         }
-
-        @Override
-        public void dispose() {
-        }
-
-        public void setCoverage(GridCoverage2D coverage) {
-            this.coverage = coverage;
-            this.img = coverage.getRenderedImage();
-            this.raster = img.copyData(null);
-            this.img = new BufferedImage(img.getColorModel(), raster, img.getColorModel().isAlphaPremultiplied(), null);
-                        
-            final int height = img.getHeight();
-            final int width = img.getWidth();
-            dataPoints = new double[(width+1)*(height+1)*2];
-            int i=0;
-            for(int y=0; y<=height; y++){
-                for(int x=0; x<=width; x++){
-                    dataPoints[i] = x;
-                    i++;
-                    dataPoints[i] = y;
-                    i++;
-                }
-            }
-            
-            final MathTransform gridTodata = coverage.getGridGeometry().getGridToCRS(PixelInCell.CELL_CORNER);
-            try{
-                gridTodata.transform(dataPoints, 0, dataPoints, 0, i/2);
-            }catch(Exception ex){
-                LOGGER.log(Level.WARNING, ex.getMessage(), ex);
-            }
-            
-        }
-        
-        private double[] getObjPoints(CoordinateReferenceSystem objCRS) throws FactoryException, TransformException{
-            if(objPoints == null || lastObjCRS != objCRS){
-                lastObjCRS = objCRS;
-                objPoints = new double[dataPoints.length];
-                final MathTransform dataToObj = CRS.findMathTransform(coverage.getCoordinateReferenceSystem(), objCRS);
-                dataToObj.transform(dataPoints, 0, objPoints, 0, dataPoints.length/2);
-            }
-            return objPoints;
-        }
-        
-        
-        public Point getMouseGridPosition() throws FactoryException, TransformException{
-            final MathTransform gridTodata = coverage.getGridGeometry().getGridToCRS(PixelInCell.CELL_CORNER);
-            final double[] coords = new double[2];
-            coords[0] = mouseX;
-            coords[1] = mouseY;
-            final MathTransform dispToObj = context.getDisplayToObjective();
-            final MathTransform objToData = CRS.findMathTransform(context.getObjectiveCRS2D(),coverage.getCoordinateReferenceSystem());
-            final MathTransform dataToGrid = gridTodata.inverse();
-
-            dispToObj.transform(coords, 0, coords, 0, 1);
-            objToData.transform(coords, 0, coords, 0, 1);
-            dataToGrid.transform(coords, 0, coords, 0, 1);
-            final int gridX = (int)coords[0];
-            final int gridY = (int)coords[1];
-            
-            if(   gridX>=0 && gridX <img.getWidth()
-                   && gridY>=0 && gridY <img.getHeight()){
-                return new Point(gridX, gridY);
-            }
-            return null;
-        }
-        
+   
         @Override
         public void setMap2D(final JMap2D map) {
-            this.map = map;
+            super.setMap2D(map);
+            CoverageEditionDelegate.this.map = map;
             
-            if(map != null && map.getCanvas() instanceof J2DCanvas){
+            if(map != null && map.getCanvas() != null){
                 context = new DefaultRenderingContext2D(map.getCanvas());
             }else{
                 context = null;
@@ -260,30 +426,41 @@ public class CoverageEditionDelegate extends AbstractEditionDelegate {
         }
 
         @Override
-        public JMap2D getMap2D() {
-            return map;
-        }
-
-        @Override
         public JComponent getComponent() {
-            return this;
+            return container;
         }
 
+    }
+               
+    private class GridComponent extends JPanel{
+        
         @Override
-        protected void paintComponent(Graphics gg) {
+        protected void paintComponent(final Graphics gg) {
             super.paintComponent(gg);
-            
             final Graphics2D g = (Graphics2D) gg;
-            
+
             //disable anti-aliasing
-            ((Graphics2D)g).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+            ((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-            //check if the map has a Java2D canvas
+            paintGrid(g);
+
+            if (selectRectangle != null) {
+                g.setColor(Color.ORANGE);
+                g.setStroke(new BasicStroke(2));
+                g.draw(selectRectangle);
+            }
+
+        }
+          
+        /**
+         * Paint edit grid and mouse over pixel
+         */
+        private void paintGrid(final Graphics2D g){
+             //check if the map has a Java2D canvas
             if(map == null) return;
-            final ReferencedCanvas2D candidate = map.getCanvas();
-            if(!(candidate instanceof J2DCanvas)) return;
+            final J2DCanvas canvas = map.getCanvas();
+            if(!(canvas != null)) return;
 
-            final J2DCanvas canvas = (J2DCanvas) candidate;
             canvas.prepareContext(context,(Graphics2D) g.create(), null);
             
             if(raster == null) return;
@@ -293,10 +470,11 @@ public class CoverageEditionDelegate extends AbstractEditionDelegate {
             try{
                 final MathTransform gridTodata = coverage.getGridGeometry().getGridToCRS(PixelInCell.CELL_CORNER);
                 final MathTransform dataToObj = CRS.findMathTransform(coverage.getCoordinateReferenceSystem(), context.getObjectiveCRS2D());
-                final MathTransform objToDisp = context.getObjectiveToDisplay();
-                                
+                final MathTransform objToDisp = context.getObjectiveToDisplay();                                
                 final MathTransform gridToDisp = MathTransforms.concatenate(gridTodata, dataToObj, objToDisp);
                 
+                
+                // paint grid --------------------------------------------------
                 g.setColor(Color.GRAY);    
                 g.setStroke(new BasicStroke(1));
                 
@@ -304,8 +482,8 @@ public class CoverageEditionDelegate extends AbstractEditionDelegate {
                 final double[] pointdisp = Arrays.copyOf(pointObj, pointObj.length);
                 objToDisp.transform(pointdisp, 0, pointdisp, 0, pointdisp.length/2);
                 
-                final int height = img.getHeight();
-                final int width = img.getWidth() + 1; //there is one extra point per line
+                final int height = gridSelectionSize.height;
+                final int width = gridSelectionSize.width + 1; //there is one extra point per line
                 final double[] coords = new double[8];
                 for(int y=0; y<height; y++){
                     for(int x=0; x<width-1; x++){
@@ -319,23 +497,42 @@ public class CoverageEditionDelegate extends AbstractEditionDelegate {
                             continue;
                         }
                         
-                        if(x==0){
-                            g.drawLine((int)coords[2], (int)coords[3], (int)coords[4], (int)coords[5]);
-                            g.drawLine((int)coords[6], (int)coords[7], (int)coords[0], (int)coords[1]);                            
-                        }else{
-                            g.drawLine((int)coords[2], (int)coords[3], (int)coords[4], (int)coords[5]);                            
-                        }
-                        
-                        if(y==0){
-                            g.drawLine((int)coords[0], (int)coords[1], (int)coords[2], (int)coords[3]);
-                            g.drawLine((int)coords[4], (int)coords[5], (int)coords[6], (int)coords[7]);
-                        }else{
-                            g.drawLine((int)coords[4], (int)coords[5], (int)coords[6], (int)coords[7]);
-                        }
+                        g.drawLine((int)coords[2], (int)coords[3], (int)coords[4], (int)coords[5]);
+                        if(x==0) g.drawLine((int)coords[6], (int)coords[7], (int)coords[0], (int)coords[1]);                        
+                        g.drawLine((int)coords[4], (int)coords[5], (int)coords[6], (int)coords[7]);
+                        if(y==0) g.drawLine((int)coords[0], (int)coords[1], (int)coords[2], (int)coords[3]);
                     }
                 }
                 
+                //paint edited pixels ------------------------------------------
+                g.setStroke(new BasicStroke(1));
+                for(Point pt : editedPixels){
+                    final int gridX = pt.x;
+                    final int gridY = pt.y;
+                    coords[0] = gridX;      coords[1] = gridY;
+                    coords[2] = gridX+1;    coords[3] = gridY;
+                    coords[4] = gridX+1;    coords[5] = gridY+1;
+                    coords[6] = gridX;      coords[7] = gridY+1;
+
+                    gridToDisp.transform(coords, 0, coords, 0, 4);
+                    
+                    final GeneralPath path = new GeneralPath();
+                    path.moveTo(coords[0], (int)coords[1]);
+                    path.lineTo(coords[2], (int)coords[3]);
+                    path.lineTo(coords[4], (int)coords[5]);
+                    path.lineTo(coords[6], (int)coords[7]);
+                    path.lineTo(coords[0], (int)coords[1]);
+                    path.closePath();
+
+                    g.setColor(Color.YELLOW);            
+                    g.fill(path);
+                    g.setColor(Color.BLACK);
+                    g.draw(path);
+                    g.drawLine((int)coords[0], (int)coords[1], (int)coords[4], (int)coords[5]);
+                    g.drawLine((int)coords[2], (int)coords[3], (int)coords[6], (int)coords[7]);
+                }
                 
+                //paint mouse position -----------------------------------------
                 final Point mouseGridPosition = getMouseGridPosition();
                 if(mouseGridPosition != null){
                     final int gridX = mouseGridPosition.x;
@@ -372,17 +569,12 @@ public class CoverageEditionDelegate extends AbstractEditionDelegate {
                     g.fill(rect);
                     g.setColor(Color.BLACK);
                     g.drawString(str, mouseX+6, mouseY);
-                    
                 }
                 
             }catch(Exception ex ){
                 LOGGER.log(Level.WARNING, ex.getMessage(), ex);
             }
-            
-            
-            
         }
-        
     }
     
 }
