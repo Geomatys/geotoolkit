@@ -48,7 +48,6 @@ import javax.swing.JSeparator;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
-import javax.swing.border.BevelBorder;
 import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
@@ -318,6 +317,7 @@ public class CoverageEditionDelegate extends AbstractEditionDelegate {
     }
     
     private Point getMouseGridPosition() throws FactoryException, TransformException{
+        if(coverage == null) return null;
         final MathTransform gridTodata = coverage.getGridGeometry().getGridToCRS(PixelInCell.CELL_CORNER);
         final double[] coords = new double[2];
         coords[0] = mouseX;
@@ -347,6 +347,7 @@ public class CoverageEditionDelegate extends AbstractEditionDelegate {
         gcb.setGridToCRS(coverage.getGridGeometry().getGridToCRS2D());
         writer.write(gcb.getGridCoverage2D(), null);
         this.editedPixels.clear();
+        map.getCanvas().repaint();
     }
     
     
