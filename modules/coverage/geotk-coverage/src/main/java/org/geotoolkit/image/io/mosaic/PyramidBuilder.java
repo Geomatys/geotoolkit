@@ -99,6 +99,13 @@ public class PyramidBuilder {
     private String outputFormatName = null;
 
     /**
+     * Written tile extention.
+     */
+    private String outputPrefixName = null;
+
+
+    private FilenameFormatter formatter = null;
+    /**
      * Resampling coefficient in X direction.
      */
     private int[] coeffX = null;
@@ -119,6 +126,7 @@ public class PyramidBuilder {
     int lanczosWindow = -1;
 
     public PyramidBuilder() {
+        formatter = new FilenameFormatter();
     }
 
 
@@ -353,8 +361,10 @@ public class PyramidBuilder {
                             final PixelIterator destPix = PixelIteratorFactory.createRowMajorWriteableIterator(slab, tuile, areaTemp);
                             while (destPix.next()) destPix.setSample(destPix.getSample());
 
+                            //generate name
+//                            final String namePTile      = outSlagPath+itx+"_"+ity+"."+outputFormatName;
+                            final String namePTile      = outSlagPath+formatter.generateFilename(floor, itx, ity)+"."+outputFormatName;
                             //writing
-                            final String namePTile      = outSlagPath+itx+"_"+ity+"."+outputFormatName;
                             final File imgOutPutPath    = new File(namePTile);
                             final ImageWriter imgWriter = XImageIO.getWriterByFormatName(outputFormatName, imgOutPutPath, null);
                             imgWriter.write(tuile);
@@ -373,7 +383,7 @@ public class PyramidBuilder {
                 slabMinY += slabSizeY;
             }
         }
-        return new PyramidTileManager(outputDirectory, globalRegion.x, globalRegion.y, globalRegion.width, globalRegion.height, slabWidth, slabHeight, tileWidth, tileHeight, outputFormatName);
+        return new PyramidTileManager(outputDirectory, globalRegion.x, globalRegion.y, globalRegion.width, globalRegion.height,coeffX,coeffY, slabWidth, slabHeight, tileWidth, tileHeight,outputPrefixName, outputFormatName);
     }
 
     /**
@@ -537,7 +547,6 @@ public class PyramidBuilder {
      */
     public void setOutputDirectory(File outputDirectory) {
         this.outputDirectory = (outputDirectory == null) ? new File("") : outputDirectory;
-        //on check si les dossiers existes
         if (!outputDirectory.exists()) outputDirectory.mkdirs();
     }
 
@@ -546,9 +555,12 @@ public class PyramidBuilder {
      *
      * @param outputFormatName name of writing image extension.
      */
-    public void setOutputFormatName(String outputFormatName) {
+    public void setOutputNames(String outPutPrefixName, String outputFormatName) {
+        ArgumentChecks.ensureNonNull("outPutPrefixName", outPutPrefixName);
         ArgumentChecks.ensureNonNull("outputFormatName", outputFormatName);
         this.outputFormatName = outputFormatName;
+        this.outputPrefixName = outPutPrefixName;
+        formatter.ensurePrefixSet(outPutPrefixName);
     }
 
     /**
@@ -599,22 +611,40 @@ public class PyramidBuilder {
 
         {
             //image properties
-            final Element image = document.createElement("image");
+            final Element mosaic = document.createElement("mosaic");
             {
                 final Element minX = document.createElement("minX");
                 minX.setTextContent(String.valueOf(globalArea.x));
-                image.appendChild(minX);
+                mosaic.appendChild(minX);
                 final Element minY = document.createElement("minY");
                 minY.setTextContent(String.valueOf(globalArea.y));
-                image.appendChild(minY);
+                mosaic.appendChild(minY);
                 final Element imgwidth = document.createElement("width");
                 imgwidth.setTextContent(String.valueOf(globalArea.width));
-                image.appendChild(imgwidth);
+                mosaic.appendChild(imgwidth);
                 final Element imgheight = document.createElement("height");
                 imgheight.setTextContent(String.valueOf(globalArea.height));
-                image.appendChild(imgheight);
+                mosaic.appendChild(imgheight);
             }
-            properties.appendChild(image);
+            properties.appendChild(mosaic);
+        }
+        {
+            //subsampling properties
+            final Element subsampling = document.createElement("subsampling");
+            {
+                final Element level = document.createElement("level");
+                level.setTextContent(String.valueOf(coeffX.length));
+                subsampling.appendChild(level);
+                for (int floor = 0; floor < coeffX.length; floor++) {
+                    final Element subx = document.createElement("subx");
+                    subx.setTextContent(String.valueOf(coeffX[floor]));
+                    final Element suby = document.createElement("suby");
+                    suby.setTextContent(String.valueOf(coeffY[floor]));
+                    subsampling.appendChild(subx);
+                    subsampling.appendChild(suby);
+                }
+            }
+            properties.appendChild(subsampling);
         }
         {
             //slab properties
@@ -646,9 +676,9 @@ public class PyramidBuilder {
             //compression properties
             final Element compression = document.createElement("compression");
             {
-//                final Element prefix = document.createElement("prefix");
-//                prefix.setTextContent(String.valueOf("le prefix"));
-//                compression.appendChild(prefix);
+                final Element prefix = document.createElement("prefix");
+                prefix.setTextContent(String.valueOf(outputPrefixName));
+                compression.appendChild(prefix);
                 final Element format = document.createElement("format");
                 format.setTextContent(outputFormatName);
                 compression.appendChild(format);

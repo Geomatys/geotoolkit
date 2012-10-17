@@ -23,7 +23,9 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
 import javax.imageio.ImageReader;
 import javax.media.jai.TiledImage;
 import javax.xml.parsers.DocumentBuilder;
@@ -52,18 +54,19 @@ public class PyramidTileManager extends TileManager {
     private static final String XML_NAME = "properties.xml";
 
     private final String parentPath;
-//    Rectangle globaleRegion;
     private final int gRx;
     private final int gRy;
     private final int gRw;
     private final int gRh;
+    private final Dimension[] subsampling;
     private final int slabWidth;
     private final int slabHeight;
     private final int tileWidth;
     private final int tileHeight;
     private final String format;
-//    private final String prefix;
-
+    private final String prefix;
+    private final FilenameFormatter formatter;
+    private Collection<Tile> allTiles = null;
 
     /**
      *
@@ -81,6 +84,7 @@ public class PyramidTileManager extends TileManager {
         if (xmlFile.length != 1)
             throw new IllegalStateException("you must create tile architecture from pyramid builder");
         this.parentPath = parentDirectory.getAbsolutePath();
+        this.formatter = new FilenameFormatter();
 
         //xml
         final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -89,12 +93,24 @@ public class PyramidTileManager extends TileManager {
         //document trunk
         Element properties = document.getDocumentElement();
         {
-            final Element image = (Element) properties.getElementsByTagName("image").item(0);
+            final Element mosaic = (Element) properties.getElementsByTagName("mosaic").item(0);
             {
-                this.gRx = Integer.decode(image.getElementsByTagName("minX").item(0).getFirstChild().getNodeValue());
-                this.gRy = Integer.decode(image.getElementsByTagName("minY").item(0).getFirstChild().getNodeValue());
-                this.gRw = Integer.decode(image.getElementsByTagName("width").item(0).getFirstChild().getNodeValue());
-                this.gRh = Integer.decode(image.getElementsByTagName("height").item(0).getFirstChild().getNodeValue());
+                this.gRx = Integer.decode(mosaic.getElementsByTagName("minX").item(0).getFirstChild().getNodeValue());
+                this.gRy = Integer.decode(mosaic.getElementsByTagName("minY").item(0).getFirstChild().getNodeValue());
+                this.gRw = Integer.decode(mosaic.getElementsByTagName("width").item(0).getFirstChild().getNodeValue());
+                this.gRh = Integer.decode(mosaic.getElementsByTagName("height").item(0).getFirstChild().getNodeValue());
+            }
+            final Element subsampl = (Element) properties.getElementsByTagName("subsampling").item(0);
+            {
+                int level = Integer.decode(subsampl.getElementsByTagName("level").item(0).getFirstChild().getNodeValue());
+                this.subsampling = new Dimension[level];
+                final NodeList subx = subsampl.getElementsByTagName("subx");
+                final NodeList suby = subsampl.getElementsByTagName("suby");
+                for (int floor = 0; floor < level; floor++) {
+                    final int x = Integer.decode(subx.item(floor).getFirstChild().getNodeValue());
+                    final int y = Integer.decode(suby.item(floor).getFirstChild().getNodeValue());
+                    this.subsampling[floor] = new Dimension(x, y);
+                }
             }
             final Element slab  = (Element) properties.getElementsByTagName("slab").item(0);
             {
@@ -108,10 +124,11 @@ public class PyramidTileManager extends TileManager {
             }
             final Element compression = (Element) properties.getElementsByTagName("compression").item(0);
             {
-//                this.prefix = compression.getElementsByTagName("prefix").item(0).getFirstChild().getNodeValue();
+                this.prefix = compression.getElementsByTagName("prefix").item(0).getFirstChild().getNodeValue();
                 this.format = compression.getElementsByTagName("format").item(0).getFirstChild().getNodeValue();
             }
         }
+        this.formatter.ensurePrefixSet(prefix);
     }
 
     /**
@@ -127,18 +144,22 @@ public class PyramidTileManager extends TileManager {
      * @param tileHeight
      * @param format
      */
-    PyramidTileManager(File parentDirectory, int gRx, int gRy, int gRw, int gRh, int slabWidth, int slabHeight, int tileWidth, int tileHeight, /*String prefix,*/ String format) {
+    PyramidTileManager(File parentDirectory, int gRx, int gRy, int gRw, int gRh, int[] coeffX, int[] coeffY, int slabWidth, int slabHeight, int tileWidth, int tileHeight, String prefix, String format) {
         this.parentPath = parentDirectory.getAbsolutePath();
         this.gRx        = gRx;
         this.gRy        = gRy;
         this.gRw        = gRw;
         this.gRh        = gRh;
+        this.subsampling = new Dimension[coeffX.length];
+        for (int floor = 0; floor < coeffX.length; floor++) this.subsampling[floor] = new Dimension(coeffX[floor], coeffY[floor]);
         this.slabWidth  = slabWidth;
         this.slabHeight = slabHeight;
         this.tileWidth  = tileWidth;
         this.tileHeight = tileHeight;
-//        this.prefix     = prefix;
+        this.prefix     = prefix;
         this.format     = format;
+        this.formatter  = new FilenameFormatter();
+        this.formatter.ensurePrefixSet(prefix);
     }
 
     /**
@@ -158,6 +179,9 @@ public class PyramidTileManager extends TileManager {
         String resultPath = parentPath+"/"+subsampling.width+"_"+subsampling.height+"/";
         if (!new File(resultPath).exists())
             throw new IllegalStateException("subsampling argument is not conform");
+
+        int floor = 0;
+        for (;floor < this.subsampling.length; floor++) if (this.subsampling[floor].equals(subsampling)) break;
 
         final int datatype = sampleModel.getDataType();
         final int numBand  = sampleModel.getNumBands();
@@ -197,8 +221,8 @@ public class PyramidTileManager extends TileManager {
 
                 final int tminx = (Math.max(ix, smx) - smx) / tileWidth;
                 int tminy       = (Math.max(iy, smy) - smy) / tileHeight;
-                final int tmaxx = (Math.min(ix+iw, smx+slabSizeX) - smx + tileWidth  - 1) / tileWidth;
-                final int tmaxy = (Math.min(iy+ih, smy+slabSizeY) - smy + tileHeight - 1) / tileHeight;
+                final int tmaxx = (Math.min(ix + iw, smx + slabSizeX) - smx + tileWidth  - 1) / tileWidth;
+                final int tmaxy = (Math.min(iy + ih, smy + slabSizeY) - smy + tileHeight - 1) / tileHeight;
 
                 int imgminy = smy + tminy * tileWidth;
                 final int imgminxBase = smx + tminx * tileWidth;
@@ -206,18 +230,19 @@ public class PyramidTileManager extends TileManager {
                 for (;tminy < tmaxy; tminy++) {
                     int imgminx = imgminxBase;
                     for (int tx = tminx; tx < tmaxx; tx++) {
-
-                        File tilePathTemp = new File(slabPath+tx+"_"+tminy+"."+format);
+//                        final File tilePathTemp = new File(slabPath+tx+"_"+tminy+"."+format);
+                        final File tilePathTemp = new File(slabPath+formatter.generateFilename(floor, tx, tminy) +"."+format);
                         if (tilePathTemp.exists()) {
                             final ImageReader imgreader = XImageIO.getReader(tilePathTemp, Boolean.FALSE, Boolean.TRUE);
                             final RenderedImage imgTemp = imgreader.read(0);
+                            imgreader.dispose();
                             //intersection
                             final int interdebx = Math.max(imgminx, ix);
                             int interdeby       = Math.max(imgminy, iy);
                             final int interendx = Math.min(imgminx + imgTemp.getWidth(),  ix + iw);
                             final int interendy = Math.min(imgminy + imgTemp.getHeight(), iy + ih);
                             imgIntersection.setBounds(interdebx - imgminx, interdeby - imgminy, interendx - interdebx, interendy - interdeby);
-                            PixelIterator temPix = PixelIteratorFactory.createRowMajorIterator(imgTemp, imgIntersection);
+                            final PixelIterator temPix = PixelIteratorFactory.createRowMajorIterator(imgTemp, imgIntersection);
 
                             for (; interdeby < interendy; interdeby++) {
                                 destPix.moveTo(interdebx, interdeby, 0);
@@ -236,7 +261,7 @@ public class PyramidTileManager extends TileManager {
                     //next tile in Y direction
                     imgminy += tileHeight;
                 }
-                //next slab in X
+                //next slab in X direction
                 smx += slabSizeX;
             }
             //next slab in Y direction
@@ -250,9 +275,13 @@ public class PyramidTileManager extends TileManager {
      */
     @Override
     public Collection<Tile> getTiles() throws IOException {
+        if (allTiles != null) return allTiles;
+        allTiles = new ArrayList<Tile>();
+
         throw new UnsupportedOperationException("Not supported yet.");
         //je pense faire methode recursive
     }
+
 
     /**
      * {@inheritDoc }.
@@ -265,9 +294,10 @@ public class PyramidTileManager extends TileManager {
         if (!new File(resultPath).exists())
             throw new IllegalStateException("subsampling argument is not conform");
         Collection<Tile> tileList = new ArrayList<Tile>();
-
-        final int mx = gRx / subsampling.width;
-        final int my = gRy / subsampling.height;
+        int floor = 0;
+        for (;floor < this.subsampling.length; floor++) if (this.subsampling[floor].equals(subsampling)) break;
+        final int mx        = gRx / subsampling.width;
+        final int my        = gRy / subsampling.height;
         final int slabSizeX = slabWidth  * tileWidth;
         final int slabSizeY = slabHeight * tileHeight;
 
@@ -297,20 +327,24 @@ public class PyramidTileManager extends TileManager {
 
                 final int tminx = (Math.max(ix, smx) - smx) / tileWidth;
                 int tminy       = (Math.max(iy, smy) - smy) / tileHeight;
-                final int tmaxx = (Math.min(ix+iw, smx+slabSizeX) - smx + tileWidth  - 1) / tileWidth;
-                final int tmaxy = (Math.min(iy+ih, smy+slabSizeY) - smy + tileHeight - 1) / tileHeight;
+                final int tmaxx = (Math.min(ix + iw, smx + slabSizeX) - smx + tileWidth  - 1) / tileWidth;
+                final int tmaxy = (Math.min(iy + ih, smy + slabSizeY) - smy + tileHeight - 1) / tileHeight;
 
                 //parcour des tuiles
                 for (;tminy < tmaxy; tminy++) {
                     for (int tx = tminx; tx < tmaxx; tx++) {
-
-                        File tilePathTemp = new File(slabPath+tx+"_"+tminy+"."+format);
-                        if (tilePathTemp.exists())
-                                tileList.add(new Tile(null, tilePathTemp, 0, new Rectangle(gRx+tx*tileWidth, gRy+tminy*tileHeight, tileWidth, tileHeight), subsampling));
-
+//                        final File tilePathTemp = new File(slabPath+tx+"_"+tminy+"."+format);
+                        final File tilePathTemp = new File(slabPath+formatter.generateFilename(floor, tx, tminy) +"."+format);
+                        if (tilePathTemp.exists()) {
+                            final int mintx = mx + idSMinX    * slabSizeX + tx * tileWidth;
+                            final int minty = my + idSlabMinY * slabSizeY + tminy * tileHeight;
+                            final int wt    = Math.min(mintx + tileWidth,  mx + gRw / subsampling.width)  - mintx;
+                            final int ht    = Math.min(minty + tileHeight, my + gRh / subsampling.height) - minty;
+                            tileList.add(new Tile(null, tilePathTemp, 0, new Rectangle(mintx, minty, wt, ht), subsampling));
+                        }
                     }
                 }
-                //next slab in X
+                //next slab in X direction
                 smx += slabSizeX;
             }
             //next slab in Y direction
