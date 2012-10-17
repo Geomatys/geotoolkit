@@ -64,7 +64,6 @@ public final class ReferenceToGridCoverage2DConverter extends AbstractReferenceI
         GridCoverageReader reader = null;
         ImageInputStream imageStream = null;
         try {
-
             imageStream = ImageIO.createImageInputStream(stream);
             reader = CoverageIO.createSimpleReader(imageStream);
             return (GridCoverage2D) reader.read(0, null);
