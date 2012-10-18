@@ -317,7 +317,7 @@ public class PostGISDialect extends AbstractSQLDialect {
             sql.append(tableName).append("','");
             sql.append(geometryColumn).append("'))));");
         } else {
-            sql.append("ST_AsText(ST_Force_2D(Envelope(ST_Extent(\"");
+            sql.append("ST_AsText(ST_Force_2D(st_envelope(ST_Extent(\"");
             sql.append(geometryColumn);
             sql.append("\"::geometry))))");
         }
@@ -683,7 +683,7 @@ public class PostGISDialect extends AbstractSQLDialect {
                 value = value.getFactory().createLineString(((LinearRing) value).getCoordinateSequence());
             }
 
-            sql.append("GeomFromText('").append(value.toText()).append("', ").append(srid).append(")");
+            sql.append("st_geomfromtext('").append(value.toText()).append("', ").append(srid).append(")");
         }
     }
 

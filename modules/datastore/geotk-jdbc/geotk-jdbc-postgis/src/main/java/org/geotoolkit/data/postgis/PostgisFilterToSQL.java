@@ -75,7 +75,7 @@ public class PostgisFilterToSQL extends FilterToSQL {
             geom = geom.getFactory().createLineString(((LinearRing) geom).getCoordinateSequence());
         }
 
-        out.write("GeomFromText('");
+        out.write("st_geomfromtext('");
         out.write(geom.toText());
         out.write("', " + currentSRID + ")");
     }
