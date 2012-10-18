@@ -54,6 +54,7 @@ public final class TableCellEditorRenderer {
             if(value instanceof Property){
                 final Property prop = (Property) value;
                 sub.setValue(prop.getType(), prop.getValue());
+                prop.setValue(sub.getValue());
             }
 
             EmptyCellRenderer.mimicStyle(model, sub);
@@ -91,6 +92,6 @@ public final class TableCellEditorRenderer {
 
     }
 
-    
+
 
 }
