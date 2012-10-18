@@ -17,6 +17,7 @@
 package org.geotoolkit.coverage.filestore;
 
 import java.awt.Dimension;
+import java.awt.Image;
 import java.awt.geom.Point2D;
 import java.awt.image.RenderedImage;
 import java.util.logging.Level;
@@ -40,14 +41,14 @@ public class XMlCoverageReference implements CoverageReference, PyramidalModel{
     private final XMLCoverageStore store;
     private final Name name;
     private final XMLPyramidSet set;
-    
-    
+
+
     public XMlCoverageReference(XMLCoverageStore store, Name name, XMLPyramidSet set) {
         this.store = store;
         this.name = name;
         this.set = set;
     }
-    
+
     @Override
     public Name getName() {
         return name;
@@ -69,7 +70,7 @@ public class XMlCoverageReference implements CoverageReference, PyramidalModel{
     public XMLCoverageStore getStore() {
         return store;
     }
-    
+
     @Override
     public GridCoverageReader createReader() throws CoverageStoreException {
         final PyramidalModelReader reader = new PyramidalModelReader();
@@ -95,7 +96,7 @@ public class XMlCoverageReference implements CoverageReference, PyramidalModel{
     }
 
     @Override
-    public GridMosaic createMosaic(String pyramidId, Dimension gridSize, 
+    public GridMosaic createMosaic(String pyramidId, Dimension gridSize,
     Dimension tilePixelSize, Point2D upperleft, double pixelscale) throws DataStoreException {
         final XMLPyramidSet set = getPyramidSet();
         final XMLPyramid pyramid = set.getPyramid(pyramidId);
@@ -112,10 +113,10 @@ public class XMlCoverageReference implements CoverageReference, PyramidalModel{
         mosaic.createTile(col,row,image);
         save();
     }
-    
+
     /**
      * Save the pyramid set in the file
-     * @throws DataStoreException 
+     * @throws DataStoreException
      */
     synchronized void save() throws DataStoreException{
         final XMLPyramidSet set = getPyramidSet();
@@ -134,5 +135,9 @@ public class XMlCoverageReference implements CoverageReference, PyramidalModel{
         mosaic.writeTiles(image,onlyMissing);
         save();
     }
-    
+
+    public Image getLegend() throws DataStoreException {
+        return null;
+    }
+
 }

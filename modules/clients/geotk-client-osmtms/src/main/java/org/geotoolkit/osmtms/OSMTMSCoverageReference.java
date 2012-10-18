@@ -17,6 +17,7 @@
 package org.geotoolkit.osmtms;
 
 import java.awt.Dimension;
+import java.awt.Image;
 import java.awt.geom.Point2D;
 import java.awt.image.RenderedImage;
 import org.geotoolkit.coverage.*;
@@ -36,7 +37,7 @@ public class OSMTMSCoverageReference implements CoverageReference, PyramidalMode
 
     private final OSMTileMapServer server;
     private final Name name;
-    
+
     OSMTMSCoverageReference(OSMTileMapServer server, Name name){
         this.server = server;
         this.name = name;
@@ -56,7 +57,7 @@ public class OSMTMSCoverageReference implements CoverageReference, PyramidalMode
     public CoverageStore getStore() {
         return server;
     }
-    
+
     @Override
     public GridCoverageReader createReader() throws CoverageStoreException {
         final PyramidalModelReader reader = new PyramidalModelReader();
@@ -78,7 +79,7 @@ public class OSMTMSCoverageReference implements CoverageReference, PyramidalMode
     public boolean isWriteable() {
         return false;
     }
-    
+
     @Override
     public Pyramid createPyramid(CoordinateReferenceSystem crs) throws DataStoreException {
         throw new DataStoreException("Model is not writeable.");
@@ -99,5 +100,10 @@ public class OSMTMSCoverageReference implements CoverageReference, PyramidalMode
         throw new DataStoreException("Model is not writeable.");
     }
 
-    
+    @Override
+    public Image getLegend() throws DataStoreException {
+        return null;
+    }
+
+
 }

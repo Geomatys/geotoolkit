@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.coverage.sql;
 
+import java.awt.Image;
 import java.util.HashSet;
 import java.util.Set;
 import org.geotoolkit.coverage.CoverageReference;
@@ -93,7 +94,7 @@ public class CoverageSQLStore extends CoverageDatabase implements CoverageStore 
         public boolean isWritable() {
             return false;
         }
-        
+
         @Override
         public CoverageStore getStore() {
             return CoverageSQLStore.this;
@@ -108,6 +109,10 @@ public class CoverageSQLStore extends CoverageDatabase implements CoverageStore 
         @Override
         public GridCoverageWriter createWriter() throws DataStoreException {
             throw new DataStoreException("Coverage is not writable.");
+        }
+
+        public Image getLegend() throws DataStoreException {
+            return null;
         }
 
     }

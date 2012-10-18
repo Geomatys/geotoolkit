@@ -40,26 +40,26 @@ import org.opengis.util.FactoryException;
  * @module pending
  */
 public class NcWMSMapLayer extends WMSMapLayer {
-    
+
     private static NcWMSCoverageReference toReference(final NcWebMapServer server, final String... layers) {
         return new NcWMSCoverageReference(server, layers);
     }
-    
+
     public NcWMSMapLayer(final NcWebMapServer server, final String... layers) {
         super(toReference(server, layers));
     }
-    
+
     @Override
     public NcWMSCoverageReference getCoverageReference(){
         return (NcWMSCoverageReference) super.getCoverageReference();
     }
-    
+
     /**
      * @deprecated use getCoverageReference() methods
      */
     public void setOpacity(final Integer opacity) {
         getCoverageReference().setOpacity(opacity);
-    } 
+    }
 
     /**
      * @deprecated use getCoverageReference() methods
@@ -88,7 +88,7 @@ public class NcWMSMapLayer extends WMSMapLayer {
     public void setLogScale(Boolean logScale) {
         getCoverageReference().setLogScale(logScale);
     }
-    
+
     /**
      * @deprecated use getCoverageReference() methods
      */
@@ -96,87 +96,87 @@ public class NcWMSMapLayer extends WMSMapLayer {
     public void prepareQuery(final GetMapRequest request, final GeneralEnvelope env,
             final Dimension dim, final Point2D pickCoord) throws TransformException,
             FactoryException{
-        getCoverageReference().prepareQuery(request, env, dim, pickCoord);     
+        getCoverageReference().prepareQuery(request, env, dim, pickCoord);
     }
-        
+
     /**
      * @deprecated use getCoverageReference() methods
      */
     @Override
-    public URL query(final Envelope env, final Dimension rect) throws MalformedURLException, 
+    public URL query(final Envelope env, final Dimension rect) throws MalformedURLException,
     TransformException, FactoryException {
         return getCoverageReference().query(env, rect);
-    }    
+    }
 
     /**
      * @deprecated use getCoverageReference() methods
      */
     @Override
     public URL queryFeatureInfo(final Envelope env, final Dimension rect, int x,
-            int y, final String[] queryLayers, final String infoFormat, 
+            int y, final String[] queryLayers, final String infoFormat,
             final int featureCount) throws TransformException, FactoryException,
             MalformedURLException {
-        return getCoverageReference().queryFeatureInfo(env, rect, x, y, queryLayers, infoFormat, featureCount);
+        return getCoverageReference().queryFeatureInfo(env, rect, x, y, queryLayers, infoFormat, featureCount).getURL();
     }
-    
+
     /**
      * @deprecated use getCoverageReference() methods
      */
     @Override
-    public URL queryLegend(final Dimension rect, final String format, final String rule, 
+    public URL queryLegend(final Dimension rect, final String format, final String rule,
             final Double scale) throws MalformedURLException {
-        return getCoverageReference().queryLegend(rect, format, rule, scale);
+        return getCoverageReference().queryLegend(rect, format, rule, scale).getURL();
     }
-        
+
     /**
      * @deprecated use getCoverageReference() methods
      */
     public URL queryMetadataLayerDetails() throws MalformedURLException {
         return getCoverageReference().queryMetadataLayerDetails();
     }
-    
+
     /**
      * @deprecated use getCoverageReference() methods
      */
     public URL queryMetadataAnimationTimesteps(final String  start, final String end) throws MalformedURLException {
         return getCoverageReference().queryMetadataAnimationTimesteps(start, end);
     }
-    
+
     /**
      * @deprecated use getCoverageReference() methods
      */
     public URL queryMetadataTimesteps() throws MalformedURLException {
         return getCoverageReference().queryMetadataTimesteps();
     }
-    
+
     /**
      * @deprecated use getCoverageReference() methods
      */
     public URL queryMetadataMinmax(final String crsCode, final String bbox, final String width, final String height) throws MalformedURLException {
         return getCoverageReference().queryMetadataMinmax(crsCode, bbox, width, height);
     }
-    
+
     /**
      * @deprecated use getCoverageReference() methods
      */
-    public URL queryTransect(final String crsCode, final String lineString, 
+    public URL queryTransect(final String crsCode, final String lineString,
             final String outputFormat) throws MalformedURLException {
         return getCoverageReference().queryTransect(crsCode, lineString, outputFormat);
     }
-    
+
     /**
      * @deprecated use getCoverageReference() methods
      */
-    public URL queryVerticalProfile(final String crsCode, float x, float y, 
+    public URL queryVerticalProfile(final String crsCode, float x, float y,
             final String outputFormat) throws MalformedURLException {
         return getCoverageReference().queryVerticalProfile(crsCode, x, y, outputFormat);
     }
-    
+
     /**
      * @deprecated use getCoverageReference() methods
      */
     public URL queryTimeseries(final Envelope env, final Dimension rect, int x,
-            int y, final String infoFormat, 
+            int y, final String infoFormat,
             final String dateBegin, final String dateEnd) throws MalformedURLException, TransformException, FactoryException {
         return getCoverageReference().queryTimeseries(env, rect, x, y, infoFormat, dateBegin, dateEnd);
     }

@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.coverage.filestore;
 
+import java.awt.Image;
 import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageWriter;
@@ -30,7 +31,7 @@ import org.opengis.feature.type.Name;
 
 /**
  * Reference to a coverage stored in a single file.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
@@ -39,7 +40,7 @@ public class FileCoverageReference implements CoverageReference{
     private final FileCoverageStore store;
     private final Name name;
     private final File file;
-    
+
     FileCoverageReference(FileCoverageStore store, Name name, File file) {
         this.store = store;
         this.name = name;
@@ -56,7 +57,7 @@ public class FileCoverageReference implements CoverageReference{
         }
         return false;
     }
-    
+
     @Override
     public GridCoverageReader createReader() throws DataStoreException{
         final ImageCoverageReader reader = new ImageCoverageReader();
@@ -88,5 +89,9 @@ public class FileCoverageReference implements CoverageReference{
     public CoverageStore getStore() {
         return store;
     }
-    
+
+    public Image getLegend() throws DataStoreException {
+        return null;
+    }
+
 }

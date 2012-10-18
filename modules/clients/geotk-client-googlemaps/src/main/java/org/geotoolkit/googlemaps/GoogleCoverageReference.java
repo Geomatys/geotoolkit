@@ -17,6 +17,7 @@
 package org.geotoolkit.googlemaps;
 
 import java.awt.Dimension;
+import java.awt.Image;
 import java.awt.geom.Point2D;
 import java.awt.image.RenderedImage;
 import org.geotoolkit.coverage.*;
@@ -38,13 +39,13 @@ public class GoogleCoverageReference implements CoverageReference, PyramidalMode
     private final StaticGoogleMapsServer server;
     private final GoogleMapsPyramidSet set;
     private final Name name;
-    
+
     GoogleCoverageReference(final StaticGoogleMapsServer server, final Name name,boolean cacheImage) throws DataStoreException{
         this.server = server;
         this.name = name;
         this.set = new GoogleMapsPyramidSet(this,cacheImage);
     }
-    
+
     @Override
     public Name getName() {
         return name;
@@ -59,11 +60,11 @@ public class GoogleCoverageReference implements CoverageReference, PyramidalMode
     public StaticGoogleMapsServer getStore() {
         return server;
     }
-    
+
     public GetMapRequest createGetMap() {
         return new DefaultGetMap(server,name.getLocalPart());
     }
-    
+
     @Override
     public GridCoverageReader createReader() throws CoverageStoreException {
         final PyramidalModelReader reader = new PyramidalModelReader();
@@ -85,7 +86,7 @@ public class GoogleCoverageReference implements CoverageReference, PyramidalMode
     public boolean isWriteable() {
         return false;
     }
-    
+
     @Override
     public Pyramid createPyramid(CoordinateReferenceSystem crs) throws DataStoreException {
         throw new DataStoreException("Model is not writeable.");
@@ -104,6 +105,10 @@ public class GoogleCoverageReference implements CoverageReference, PyramidalMode
     @Override
     public void writeTiles(String pyramidId, String mosaicId, RenderedImage image, boolean onlyMissing) throws DataStoreException {
         throw new DataStoreException("Model is not writeable.");
+    }
+
+    public Image getLegend() throws DataStoreException {
+        return null;
     }
 
 }

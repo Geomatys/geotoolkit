@@ -44,6 +44,7 @@ import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapItem;
 import org.geotoolkit.map.MapLayer;
+import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyle;
@@ -369,28 +370,44 @@ public class J2DLegendUtilities {
             if (layer instanceof DefaultCoverageMapLayer) {
                 final DefaultCoverageMapLayer covLayer = (DefaultCoverageMapLayer)layer;
                 final CoverageReference covRef = covLayer.getCoverageReference();
-                final ParameterValue paramVal;
-                try {
-                    paramVal = covRef.getStore().getConfiguration().parameter("url");
-                } catch (ParameterNotFoundException e) {
-                    LOGGER.log(Level.FINE, e.getLocalizedMessage(), e);
+
+                if (covRef == null) {
                     continue;
                 }
-                final URL urlWms = (URL) paramVal.getValue();
-                final StringBuilder sb = new StringBuilder(urlWms.toString());
-                if (!urlWms.toString().endsWith("?")) {
-                    sb.append("?");
-                }
-                sb.append("request=GetLegendGraphic&service=WMS&format=image/png&layer=")
-                  .append(covLayer.getCoverageName());
-                final BufferedImage image;
+                // try first to retrieve the legend directly from the coverage reference.
+                BufferedImage image;
                 try {
-                    final URL getLegendUrl = new URL(sb.toString());
-                    image = ImageIO.read(getLegendUrl);
-                } catch (IOException e) {
-                    LOGGER.log(Level.INFO, e.getLocalizedMessage(), e);
-                    // just skip this layer if we didn't succeed in getting the get legend result.
+                    image = (BufferedImage) covRef.getLegend();
+                } catch (DataStoreException ex) {
+                    LOGGER.log(Level.FINE, ex.getLocalizedMessage(), ex);
                     continue;
+                }
+
+                // else try a WMS getLegendGraphic request
+                if (image == null) {
+                    final ParameterValue paramVal;
+                    try {
+                        paramVal = covRef.getStore().getConfiguration().parameter("url");
+                    } catch (ParameterNotFoundException e) {
+                        LOGGER.log(Level.FINE, e.getLocalizedMessage(), e);
+                        continue;
+                    }
+                    final URL urlWms = (URL) paramVal.getValue();
+                    final StringBuilder sb = new StringBuilder(urlWms.toString());
+                    if (!urlWms.toString().endsWith("?")) {
+                        sb.append("?");
+                    }
+                    sb.append("request=GetLegendGraphic&service=WMS&format=image/png&layer=")
+                      .append(covLayer.getCoverageName());
+
+                    try {
+                        final URL getLegendUrl = new URL(sb.toString());
+                        image = ImageIO.read(getLegendUrl);
+                    } catch (IOException e) {
+                        LOGGER.log(Level.INFO, e.getLocalizedMessage(), e);
+                        // just skip this layer if we didn't succeed in getting the get legend result.
+                        continue;
+                    }
                 }
 
                 if (image != null) {

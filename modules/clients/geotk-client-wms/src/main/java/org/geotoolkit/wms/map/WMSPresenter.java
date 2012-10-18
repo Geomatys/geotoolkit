@@ -29,9 +29,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
-import java.net.URL;
+import org.geotoolkit.client.Request;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -121,10 +119,10 @@ public class WMSPresenter extends AbstractInformationPresenter{
                 guiCenterPanel.removeAll();
 
                 try {
-                    final URL url = getFeatureInfo(reference, context, area, guiMimeTypes.getSelectedItem().toString(), 20);
+                    final Request request = getFeatureInfo(reference, context, area, guiMimeTypes.getSelectedItem().toString(), 20);
                     try{
                         final JXHyperlink link = new JXHyperlink();
-                        link.setURI(url.toURI());
+                        link.setURI(request.getURL().toURI());
                         guiCenterPanel.add(BorderLayout.NORTH,link);
                     }catch(Exception ex){
                         //hyperlinks is not supported on all platforms
@@ -133,7 +131,7 @@ public class WMSPresenter extends AbstractInformationPresenter{
                     new Thread(){
                         @Override
                         public void run() {
-                            downloadGetFeatureInfo(guiCenterPanel, url);
+                            downloadGetFeatureInfo(guiCenterPanel, request);
                         }
                     }.start();
 
@@ -141,12 +139,10 @@ public class WMSPresenter extends AbstractInformationPresenter{
                     LOGGER.log(Level.WARNING, ex.getMessage(), ex);
                 } catch (FactoryException ex) {
                     LOGGER.log(Level.WARNING, ex.getMessage(), ex);
-                } catch (MalformedURLException ex) {
-                    LOGGER.log(Level.WARNING, ex.getMessage(), ex);
                 } catch (NoninvertibleTransformException ex) {
                     LOGGER.log(Level.WARNING, ex.getMessage(), ex);
                 }
-                
+
                 guiCenterPanel.revalidate();
                 guiCenterPanel.repaint();
             }
@@ -160,15 +156,15 @@ public class WMSPresenter extends AbstractInformationPresenter{
         return guiAll;
     }
 
-    public URL getFeatureInfo(final WMSCoverageReference reference, final RenderingContext context, final SearchArea mask,
+    public Request getFeatureInfo(final WMSCoverageReference reference, final RenderingContext context, final SearchArea mask,
                 final String infoFormat, final int featureCount)
                 throws TransformException, FactoryException,
-                MalformedURLException, NoninvertibleTransformException{
+                NoninvertibleTransformException{
 
             final RenderingContext2D ctx2D = (RenderingContext2D) context;
             final DirectPosition center = mask.getDisplayGeometry().getCentroid();
 
-            final URL url;
+            final Request url;
                 url = reference.queryFeatureInfo(
                         ctx2D.getCanvasObjectiveBounds(),
                         ctx2D.getCanvasDisplayBounds().getSize(),
@@ -180,7 +176,7 @@ public class WMSPresenter extends AbstractInformationPresenter{
             return url;
         }
 
-    private static void downloadGetFeatureInfo(final JPanel contentPane, final URL url){
+    private static void downloadGetFeatureInfo(final JPanel contentPane, final Request request){
 
         final JXBusyLabel guiBuzy = new JXBusyLabel(new Dimension(30, 30));
         guiBuzy.setBusy(true);
@@ -192,14 +188,14 @@ public class WMSPresenter extends AbstractInformationPresenter{
         InputStream input = null;
 
         try{
-            input = url.openStream();
-            
+            input = request.getResponseStream();
+
             Component content;
             try {
-                
+
                 final BufferedImage image = ImageIO.read(input);
                 content = new JLabel(new ImageIcon(image));
-                
+
             } catch (Exception ex) {
                 try {
                     StringWriter writer = new StringWriter();
@@ -207,7 +203,7 @@ public class WMSPresenter extends AbstractInformationPresenter{
                     BufferedReader buffer = new BufferedReader(streamReader);
                     String line="";
                     while ( null!=(line=buffer.readLine())){
-                        writer.write(line); 
+                        writer.write(line);
                     }
                     content = new JTextPane();
                     ((JTextPane)content).setText(writer.toString());
@@ -215,7 +211,7 @@ public class WMSPresenter extends AbstractInformationPresenter{
                     content = new JPanel();
                 }
             }
-            
+
             contentPane.remove(guiBuzy);
             contentPane.add(BorderLayout.CENTER,new JScrollPane(content));
             contentPane.revalidate();
