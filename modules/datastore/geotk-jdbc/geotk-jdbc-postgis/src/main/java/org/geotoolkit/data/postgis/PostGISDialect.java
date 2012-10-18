@@ -620,7 +620,7 @@ public class PostGISDialect extends AbstractSQLDialect {
                         sb = new StringBuilder("ALTER TABLE \"").append(tableName).append('"');
                         sb.append(" ADD CONSTRAINT \"enforce_srid_");
                         sb.append(gd.getLocalName()).append('"');
-                        sb.append(" CHECK (SRID(");
+                        sb.append(" CHECK (st_srid(");
                         sb.append('"').append(gd.getLocalName()).append('"');
                         sb.append(") = ").append(srid).append(')');
                         sql = sb.toString();
