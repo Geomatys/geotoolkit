@@ -36,12 +36,14 @@ import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.ext.vectorfield.VectorFieldSymbolizer;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.filter.DefaultLiteral;
 import org.geotoolkit.map.ElevationModel;
 import org.geotoolkit.sld.DefaultSLDFactory;
 import org.geotoolkit.sld.MutableSLDFactory;
 import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
+import org.geotoolkit.style.StyleConstants;
 
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.expression.Expression;
@@ -71,6 +73,7 @@ import org.opengis.style.Symbolizer;
 import org.opengis.style.TextSymbolizer;
 
 import static org.geotoolkit.style.StyleConstants.*;
+import org.geotoolkit.style.function.ThreshholdsBelongTo;
 
 /**
  *
@@ -543,6 +546,37 @@ public class Styles {
         final Literal fallback = DEFAULT_FALLBACK;
         final Expression function = SF.interpolateFunction(
                 lookup, values, Method.COLOR, Mode.LINEAR, fallback);
+
+        final ChannelSelection selection = DEFAULT_RASTER_CHANNEL_RGB;
+
+        final Expression opacity = LITERAL_ONE_FLOAT;
+        final OverlapBehavior overlap = OverlapBehavior.LATEST_ON_TOP;
+        final ColorMap colorMap = SF.colorMap(function);
+        final ContrastEnhancement enchance = SF.contrastEnhancement(LITERAL_ONE_FLOAT,ContrastMethod.NONE);
+        final ShadedRelief relief = SF.shadedRelief(LITERAL_ONE_FLOAT);
+        final Symbolizer outline = null;
+        final Unit uom = NonSI.PIXEL;
+        final String geom = DEFAULT_GEOM;
+        final String name = "raster symbol name";
+        final Description desc = DEFAULT_DESCRIPTION;
+
+        final RasterSymbolizer symbol = SF.rasterSymbolizer(
+                name,geom,desc,uom,opacity, selection, overlap, colorMap, enchance, relief, outline);
+        return SF.style(symbol);
+    }
+    
+    public static MutableStyle colorCategorizeRaster(){
+
+        final Map<Expression, Expression> values = new HashMap<Expression, Expression>();
+        values.put( StyleConstants.CATEGORIZE_LESS_INFINITY, SF.literal(new Color(46,154,88)));
+        values.put( new DefaultLiteral<Number>(1003), SF.literal(new Color(46,154,88)));
+        values.put( new DefaultLiteral<Number>(1800), SF.literal(new Color(251,255,128)));
+        values.put( new DefaultLiteral<Number>(2800), SF.literal(new Color(224,108,31)));
+        values.put( new DefaultLiteral<Number>(3500), SF.literal(new Color(200,55,55)));
+        values.put( new DefaultLiteral<Number>(4397), SF.literal(new Color(215,244,244 )));
+        final Expression lookup = DEFAULT_CATEGORIZE_LOOKUP;
+        final Literal fallback = DEFAULT_FALLBACK;
+        final Expression function = SF.categorizeFunction(lookup, values, ThreshholdsBelongTo.SUCCEEDING, fallback);
 
         final ChannelSelection selection = DEFAULT_RASTER_CHANNEL_RGB;
 

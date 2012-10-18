@@ -155,13 +155,14 @@ public class J2DLegendUtilities {
 
             // If we are browsing a coverage map layer, a default generic style has been defined,
             // we can use the result of a GetLegendGraphic request instead. It should presents the
-            // default style defined on the WMS service for this layer.
+            // default style defined on the WMS service for this layer
+            wmscase:
             if (layer instanceof DefaultCoverageMapLayer) {
                 final DefaultCoverageMapLayer covLayer = (DefaultCoverageMapLayer)layer;
                 // Get the image from the ones previously stored, to not resend a get legend graphic request.
                 final BufferedImage image = legendResults.get(covLayer.getCoverageName());
                 if (image == null) {
-                    continue;
+                    break wmscase;
                 }
                 if (l != 0) {
                     moveY += gapSize;
@@ -365,8 +366,9 @@ public class J2DLegendUtilities {
             if (template.displayOnlyVisibleLayers() && !layer.isVisible()) {
                 continue;
             }
-
+            
             // Launch a get legend request and take the dimensions from the result
+            testwms:
             if (layer instanceof DefaultCoverageMapLayer) {
                 final DefaultCoverageMapLayer covLayer = (DefaultCoverageMapLayer)layer;
                 final CoverageReference covRef = covLayer.getCoverageReference();
@@ -390,7 +392,7 @@ public class J2DLegendUtilities {
                         paramVal = covRef.getStore().getConfiguration().parameter("url");
                     } catch (ParameterNotFoundException e) {
                         LOGGER.log(Level.FINE, e.getLocalizedMessage(), e);
-                        continue;
+                        break testwms;
                     }
                     final URL urlWms = (URL) paramVal.getValue();
                     final StringBuilder sb = new StringBuilder(urlWms.toString());
@@ -464,15 +466,16 @@ public class J2DLegendUtilities {
                     //calculate the glyph size
                     final int glyphHeight;
                     final int glyphWidth;
+                    
+                    final Dimension preferred = DefaultGlyphService.glyphPreferredSize(rule, glyphSize, layer);
                     if (glyphSize == null) {
                         //find the best size
-                        final Dimension preferred = DefaultGlyphService.glyphPreferredSize(rule, glyphSize, layer);
                         glyphHeight = preferred.height;
                         glyphWidth = preferred.width;
                     } else {
                         //use the defined size
-                        glyphHeight = glyphSize.height;
-                        glyphWidth = glyphSize.width;
+                        glyphHeight = glyphSize.height > preferred.height ? glyphSize.height : preferred.height;
+                        glyphWidth = glyphSize.width > preferred.width ? glyphSize.width : preferred.width;
                     }
 
                     final int totalWidth = glyphWidth + ((textLenght == 0) ? 0 : (GLYPH_SPACE + textLenght));

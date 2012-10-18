@@ -17,22 +17,40 @@
 package org.geotoolkit.display2d.style.renderer;
 
 import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.LinearGradientPaint;
 import java.awt.MultipleGradientPaint;
+import java.awt.Rectangle;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.style.CachedRasterSymbolizer;
 import org.geotoolkit.map.MapLayer;
+import org.geotoolkit.style.StyleConstants;
+import org.geotoolkit.style.function.Categorize;
 import org.geotoolkit.style.function.Interpolate;
 import org.geotoolkit.style.function.InterpolationPoint;
 import org.geotoolkit.style.function.Jenks;
+import org.geotoolkit.util.Converters;
+import org.geotoolkit.util.NumberRange;
+import org.geotoolkit.util.Range;
+import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Function;
 import org.opengis.style.ColorMap;
 import org.opengis.style.RasterSymbolizer;
+import sun.awt.motif.X11FontMetrics;
 
 /**
  * @author Johann Sorel (Geomatys)
@@ -40,6 +58,8 @@ import org.opengis.style.RasterSymbolizer;
  */
 public class DefaultRasterSymbolizerRendererService extends AbstractSymbolizerRendererService<RasterSymbolizer, CachedRasterSymbolizer>{
 
+    private static final int LEGEND_PALETTE_WIDTH = 30;
+    private static final Font LEGEND_FONT = new Font(Font.SERIF, Font.BOLD, 12);
     
     @Override
     public boolean isGroupSymbolizer() {
@@ -78,6 +98,29 @@ public class DefaultRasterSymbolizerRendererService extends AbstractSymbolizerRe
         return new DefaultRasterSymbolizerRenderer(this, symbol, context);
     }
 
+    @Override
+    public Rectangle2D glyphPreferredSize(CachedRasterSymbolizer symbol, MapLayer layer) {
+        final Map<Object, Color> colorMap = getMapColor(symbol);
+        
+        if (colorMap.isEmpty()) {
+            return super.glyphPreferredSize(symbol, layer);
+            
+        } else {
+            final int mapLength = colorMap.size();
+            int maxX = LEGEND_PALETTE_WIDTH;
+            
+            final FontMetrics fm = new X11FontMetrics(LEGEND_FONT);
+            
+            for (Object key : colorMap.keySet()) {
+                int lineWidth = LEGEND_PALETTE_WIDTH + fm.stringWidth("< "+key.toString());
+                maxX = Math.max(maxX, lineWidth);
+            }
+            
+            int maxY = mapLength * fm.getHeight();
+            return new Rectangle2D.Double(0, 0, maxX+5, maxY);
+        }
+    }
+
     /**
      * {@inheritDoc }
      */
@@ -88,86 +131,215 @@ public class DefaultRasterSymbolizerRendererService extends AbstractSymbolizerRe
         Color[] colors;
         
         final ColorMap cm = symbol.getSource().getColorMap();
-        if(cm != null && cm.getFunction() != null){
+        
+        //paint default Glyph
+        if (cm == null || cm.getFunction() == null || ( !(cm.getFunction() instanceof Interpolate)
+                && !(cm.getFunction() instanceof Jenks) && !(cm.getFunction() instanceof Categorize) )) {
+            
+            fractions = new float[] {0.0f, 0.5f, 1.0f};
+            colors = new Color[] {Color.RED, Color.GREEN, Color.BLUE};
+            
+            final MultipleGradientPaint.CycleMethod cycleMethod = MultipleGradientPaint.CycleMethod.NO_CYCLE;
+
+            final LinearGradientPaint paint = new LinearGradientPaint(
+                new Point2D.Double(rectangle.getMinX(),rectangle.getMinY()),
+                new Point2D.Double(rectangle.getMaxX(),rectangle.getMinY()),
+                fractions,
+                colors,
+                cycleMethod
+            );
+
+            g.setPaint(paint);
+            g.fill(rectangle);
+            return;
+        } 
+        
+        //paint Interpolation, Categorize and Jenks Glyphs
+        final Map<Object, Color> colorMap = getMapColor(symbol);
+        
+        if (!colorMap.isEmpty()) {
+            boolean doInterpolation = true;
+            if (colorMap.keySet().iterator().next() instanceof Range) {
+                doInterpolation = false;
+            }
+            
+            final int colorMapSize = colorMap.size();
+            
+            int fillHeight = Double.valueOf(rectangle.getHeight()).intValue();
+            int intervalHeight = fillHeight / colorMapSize;
+           
+            Rectangle2D paintRectangle = new Rectangle(0, 0, LEGEND_PALETTE_WIDTH, fillHeight);
+            
+            g.setClip(rectangle);
+            
+            
+            if (doInterpolation) {
+                //fill color array
+                colors = colorMap.values().toArray(new Color[colorMapSize]);
+                
+                //fill fraction array
+                final float interval = 0.9f / colorMapSize;
+                float fraction = 0.1f;
+                fractions = new float[colorMapSize];
+                for (int i = 0; i < colorMapSize; i++) {
+                    fractions[i] = fraction;
+                    fraction += interval;
+                }
+                
+                //paint nothing
+                if(colors.length == 0){
+                    return;
+                }
+
+                //ensure we have at least 2 colors
+                if(colors.length == 1){
+                    colors = new Color[]{colors[0],colors[0]};
+                    fractions = new float[]{fractions[0],fractions[0]};
+                }
+                
+                //create gradient
+                final LinearGradientPaint paint = new LinearGradientPaint(
+                    new Point2D.Double(paintRectangle.getMinX(),rectangle.getMinY()),
+                    new Point2D.Double(paintRectangle.getMinX(),rectangle.getMaxY()),
+                    fractions,
+                    colors,
+                    MultipleGradientPaint.CycleMethod.NO_CYCLE
+                );
+                g.setPaint(paint);
+                g.fill(paintRectangle);
+            } else {
+                
+                //paint all colors rectangles
+                Collection<Color> colorsList = colorMap.values();
+                int intX = Double.valueOf(rectangle.getMinX()).intValue();
+                int intY = Double.valueOf(rectangle.getMinY()).intValue();
+                
+                for (Color color : colorsList) {
+                    final Rectangle2D colorRect = new Rectangle(intX, intY, LEGEND_PALETTE_WIDTH, intervalHeight);
+                    g.setPaint(color);
+                    g.fill(colorRect);
+                    intY += intervalHeight;
+                }
+            }
+            
+            //paint text
+            float Y = Double.valueOf(rectangle.getMinY()).floatValue();
+            float shift = doInterpolation ? 0.6f : 0.7f;
+            g.setFont(LEGEND_FONT);
+            g.setColor(Color.BLACK);
+            for (Map.Entry<Object, Color> elem : colorMap.entrySet()) {
+                final String text = "< "+elem.getKey().toString();
+                g.drawString(text, LEGEND_PALETTE_WIDTH + 1f , Y + intervalHeight * shift );
+                
+                Y += intervalHeight;
+            }
+        }
+    }
+    
+    /**
+     * Create a map of object and colors from symbolizer colormap functions like 
+     * Interpolate, Jenks and Categorize.
+     * 
+     * @param symbol CachedRaserSymbolizer
+     * @return a Map containing Object like Range or String for key and Color as value. 
+     */
+    private Map<Object, Color> getMapColor(final CachedRasterSymbolizer symbol) {
+        Map<Object, Color> colorMap = new LinkedHashMap<Object, Color>();
+        
+        final ColorMap cm = symbol.getSource().getColorMap();
+        
+        if (cm != null && cm.getFunction() != null ) {
             final Function fct = cm.getFunction();
-            if(fct instanceof Interpolate){
+            if (fct instanceof Interpolate) {
                 final Interpolate interpolate = (Interpolate) fct;
                 final List<InterpolationPoint> points = interpolate.getInterpolationPoints();
                 final int size = points.size();
-                fractions = new float[size];
-                colors = new Color[size];
                 for(int i=0;i<size;i++){
                     final InterpolationPoint pt = points.get(i);
-                    fractions[i] = ((float)i)/(size-1);
-                    Color c = pt.getValue().evaluate(null, Color.class);
-                    if(c == null){
-                        c = new Color(0, 0, 0, 0);
+                    final Color color = Converters.convert(pt.getValue().toString(), Color.class);
+                    colorMap.put(pt.getData().toString(), color);
+                }
+
+            } else if(fct instanceof Jenks) {
+                final Jenks jenks = (Jenks) fct;
+                final Map<Integer, Color> jenksColorMap = jenks.getColorMap();
+                final Map<Color, List<Integer>> rangeJenksMap = new HashMap<Color, List<Integer>>();
+                
+                for (Map.Entry<Integer, Color> elem : jenksColorMap.entrySet()) {
+                    
+                    if (rangeJenksMap.containsKey(elem.getValue())) {
+                        final List<Integer> values = (List<Integer>)rangeJenksMap.get(elem.getValue());
+                        values.add(elem.getKey());
+                        Collections.sort(values);
+                        rangeJenksMap.put(elem.getValue(), values);
+                    } else {
+                        final List<Integer> values = new ArrayList<Integer>();
+                        values.add(elem.getKey());
+                        rangeJenksMap.put(elem.getValue(), values);
                     }
-                    colors[i] = c;
+                }
+
+                //create range sorted map.
+                colorMap = new TreeMap(new RangeComparator());
+                for (Map.Entry<Color, List<Integer>> elem : rangeJenksMap.entrySet()) {
+                    final List<Integer> values = elem.getValue();
+                    Collections.sort(values);
+                    colorMap.put(new NumberRange<Integer>(Integer.class, values.get(0), true, values.get(values.size()-1), true), elem.getKey());
                 }
                 
-            } else if (fct instanceof Jenks) {
-                final Jenks jenks = (Jenks) fct;
-                final Map<Integer, Color> colorMap = jenks.getColorMap();
-                return;
-                //TODO create jenks legend from colorMap.
+            } else if(fct instanceof Categorize) {
+                final Categorize categorize = (Categorize) fct;
+                final Map<Expression, Expression> thresholds = categorize.getThresholds();
                 
+                final Map<Color, List<Double>> colorValuesMap = new HashMap<Color, List<Double>>();
+                
+                for (Map.Entry<Expression, Expression> entry : thresholds.entrySet()) {
+                    
+                    final Color currentColor = entry.getValue().evaluate(null, Color.class);
+                    Double currentValue = Double.NEGATIVE_INFINITY;
+
+                    if(!entry.getKey().equals(StyleConstants.CATEGORIZE_LESS_INFINITY)) {
+                        Double value = (Double) entry.getKey().evaluate(null, Double.class);
+                        if (value != null) {
+                            currentValue = value;
+                        }
+                    }
+
+                    if (currentColor != null) {
+                        if (colorValuesMap.containsKey(currentColor)) {
+                            final LinkedList<Double> values = (LinkedList<Double>)colorValuesMap.get(currentColor);
+                            values.add(currentValue);
+                            colorValuesMap.put(currentColor, values);
+                        } else {
+                            final LinkedList<Double> values = new LinkedList<Double>();
+                            values.add(currentValue);
+                            colorValuesMap.put(currentColor, values);
+                        }
+                    }
+                }
+                
+                //create range sorted map.
+                colorMap = new TreeMap(new RangeComparator());
+                for (Map.Entry<Color, List<Double>> elem : colorValuesMap.entrySet()) {
+                    final List<Double> values = elem.getValue();
+                    Collections.sort(values);
+                    colorMap.put(new NumberRange<Double>(Double.class, values.get(0), true, values.get(values.size()-1), true), elem.getKey());
+                }
             }
-//            else if(fct instanceof Categorize){
-//                final Categorize categorize = (Categorize) fct;
-//                //TODO
-//                
-//            }
-            else{
-                fractions = new float[3];
-                colors = new Color[3];
-
-                fractions[0] = 0.0f;
-                fractions[1] = 0.5f;
-                fractions[2] = 1f;
-
-                colors[0] = Color.RED;
-                colors[1] = Color.GREEN;
-                colors[2] = Color.BLUE;
-            }
-        }else{
-            fractions = new float[3];
-            colors = new Color[3];
-            
-            fractions[0] = 0.0f;
-            fractions[1] = 0.5f;
-            fractions[2] = 1f;
-
-            colors[0] = Color.RED;
-            colors[1] = Color.GREEN;
-            colors[2] = Color.BLUE;
-        }
-
-        //paint nothing
-        if(colors.length == 0){
-            return;
         }
         
-        //ensure we have at least 2 colors
-        if(colors.length == 1){
-            colors = new Color[]{colors[0],colors[0]};
-            fractions = new float[]{fractions[0],fractions[0]};
-        }
-        
-        
-        final MultipleGradientPaint.CycleMethod cycleMethod = MultipleGradientPaint.CycleMethod.NO_CYCLE;
-        final MultipleGradientPaint.ColorSpaceType colorSpace = MultipleGradientPaint.ColorSpaceType.SRGB;
-
-        final LinearGradientPaint paint = new LinearGradientPaint(
-            new Point2D.Double(rectangle.getMinX(),rectangle.getMinY()),
-            new Point2D.Double(rectangle.getMaxX(),rectangle.getMinY()),
-            fractions,
-            colors,
-            cycleMethod
-        );
-
-        g.setPaint(paint);
-        g.fill(rectangle);
+        return colorMap;
     }
 
+    /**
+     * Range comparator.
+     */
+    private class RangeComparator implements Comparator<Range> {
+
+        @Override
+        public int compare(Range o1, Range o2) {
+            return o1.getMaxValue().compareTo(o2.getMinValue());
+        }
+    }
+    
 }
