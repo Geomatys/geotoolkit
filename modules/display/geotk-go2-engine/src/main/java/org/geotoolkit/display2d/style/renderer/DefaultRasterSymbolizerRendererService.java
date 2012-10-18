@@ -25,6 +25,7 @@ import java.awt.MultipleGradientPaint;
 import java.awt.Rectangle;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -50,7 +51,6 @@ import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Function;
 import org.opengis.style.ColorMap;
 import org.opengis.style.RasterSymbolizer;
-import sun.awt.motif.X11FontMetrics;
 
 /**
  * @author Johann Sorel (Geomatys)
@@ -109,7 +109,8 @@ public class DefaultRasterSymbolizerRendererService extends AbstractSymbolizerRe
             final int mapLength = colorMap.size();
             int maxX = LEGEND_PALETTE_WIDTH;
             
-            final FontMetrics fm = new X11FontMetrics(LEGEND_FONT);
+            final BufferedImage img = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
+            final FontMetrics fm = img.createGraphics().getFontMetrics(LEGEND_FONT);
             
             for (Object key : colorMap.keySet()) {
                 int lineWidth = LEGEND_PALETTE_WIDTH + fm.stringWidth("< "+key.toString());
