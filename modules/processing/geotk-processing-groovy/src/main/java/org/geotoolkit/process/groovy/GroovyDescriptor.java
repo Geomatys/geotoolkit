@@ -27,7 +27,8 @@ import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
 
-import java.util.HashMap;
+import java.util.Map;
+import org.geotoolkit.parameter.ExtendedParameterDescriptor;
 
 /**
  * Definition of the process allows you to run a condition written in groovy and retrieve the result.
@@ -43,18 +44,24 @@ public class GroovyDescriptor extends AbstractProcessDescriptor{
      * Input parameters
      */
     public static final ParameterDescriptor<String> SCRIPT =
-            new DefaultParameterDescriptor("expression", "script groovy", String.class, null, true);
-    public static final ParameterDescriptor<HashMap<String,Object>> VARIABLES =
-            new DefaultParameterDescriptor("variables", "map of binding script variable", HashMap.class, null, true);
+            new DefaultParameterDescriptor("expression", "Script groovy", String.class, null, true);
+    public static final ParameterDescriptor<Map<String,Object>> VARIABLES =
+            new DefaultParameterDescriptor("variables", "Map of binding script variable", Map.class, null, true);
+    
+    public static final String[] BEHAVIOR_KEYS = new String[] { "EXCEPTION", "RESULT"};
+    public static final ParameterDescriptor<String> BEHAVIOR =
+            new ExtendedParameterDescriptor<String>("behavior", "Behavior of the process. Could be 'EXCEPTION' or 'RESULT'", 
+            String.class, BEHAVIOR_KEYS, "RESULT", null, null, null, true, null);
+                    
     public static final ParameterDescriptorGroup INPUT_DESC =
             new DefaultParameterDescriptorGroup("InputParameters",
-            new GeneralParameterDescriptor[]{SCRIPT,VARIABLES});
+            new GeneralParameterDescriptor[]{SCRIPT, VARIABLES, BEHAVIOR});
 
     /**
      * OutputParameters
      */
-    public static final ParameterDescriptor<Boolean> RESULT =
-            new DefaultParameterDescriptor("result", "evaluation of condition result", Boolean.class, null, true);
+    public static final ParameterDescriptor<Object> RESULT =
+            new DefaultParameterDescriptor("result", "Result of the expression", Object.class, null, true);
     public static final ParameterDescriptorGroup OUTPUT_DESC =
             new DefaultParameterDescriptorGroup("OutputParameters",
             new GeneralParameterDescriptor[]{RESULT});

@@ -28,6 +28,8 @@ import static org.geotoolkit.parameter.Parameters.getOrCreate;
 import static org.geotoolkit.parameter.Parameters.value;
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
+import java.util.Map;
+import org.geotoolkit.process.ProcessException;
 
 /**
  * This process allows you to run a condition written in groovy and retrieve the result.
@@ -42,10 +44,12 @@ public class GroovyConditionProcess extends AbstractProcess {
     }
 
     @Override
-    protected void execute() {
+    protected void execute() throws ProcessException {
 
-        final HashMap variables = value(VARIABLES, inputParameters);
+        final Map variables = value(VARIABLES, inputParameters);
         final String expression = value(SCRIPT,inputParameters);
+        final String behavior = value(BEHAVIOR,inputParameters);
+        
         final Binding binding = new Binding();
         final GroovyShell shell = new GroovyShell(binding);
         final Set<String> keys = variables.keySet();
@@ -54,6 +58,13 @@ public class GroovyConditionProcess extends AbstractProcess {
         }
         Object result = shell.evaluate(expression);
 
+        if ("EXCEPTION".equals(behavior)) {
+            if (result != null && result instanceof Boolean && !((Boolean) result)) {
+                throw new ProcessException("Groovy expression failed."+expression, this, null);
+            }
+        }
+        
+        
         getOrCreate(RESULT, outputParameters).setValue(result);
     }
 
