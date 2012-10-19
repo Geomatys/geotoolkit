@@ -171,11 +171,9 @@ public class PyramidTileManager extends TileManager {
      * @return
      * @throws IOException
      */
-    public RenderedImage getImage(Rectangle region, Dimension subsampling, SampleModel sampleModel, ColorModel colorModel) throws IOException {
+    public RenderedImage getImage(Rectangle region, Dimension subsampling) throws IOException {
         ArgumentChecks.ensureNonNull("region", region);
         ArgumentChecks.ensureNonNull("subsampling", subsampling);
-        ArgumentChecks.ensureNonNull("sampleModel", sampleModel);
-        ArgumentChecks.ensureNonNull("colorModel", colorModel);
         String resultPath = parentPath+"/"+subsampling.width+"_"+subsampling.height+"/";
         if (!new File(resultPath).exists())
             throw new IllegalStateException("subsampling argument is not conform");
@@ -183,8 +181,7 @@ public class PyramidTileManager extends TileManager {
         int floor = 0;
         for (;floor < this.subsampling.length; floor++) if (this.subsampling[floor].equals(subsampling)) break;
 
-        final int datatype = sampleModel.getDataType();
-        final int numBand  = sampleModel.getNumBands();
+
 
         final int mx = gRx / subsampling.width;
         final int my = gRy / subsampling.height;
@@ -202,8 +199,13 @@ public class PyramidTileManager extends TileManager {
 
         final Rectangle imgIntersection = new Rectangle();
 
-        final WritableRenderedImage renderImage = new TiledImage(ix, iy, iw, ih, ix, iy, new BandedSampleModel(datatype, iw, ih, numBand), colorModel);
-        final PixelIterator destPix = PixelIteratorFactory.createRowMajorWriteableIterator(renderImage, renderImage);
+        WritableRenderedImage renderImage = null;
+        PixelIterator destPix = null;
+        int datatype;
+        int numBand = 0;
+
+//        final WritableRenderedImage renderImage = new TiledImage(ix, iy, iw, ih, ix, iy, new BandedSampleModel(datatype, iw, ih, numBand), colorModel);
+//        final PixelIterator destPix = PixelIteratorFactory.createRowMajorWriteableIterator(renderImage, renderImage);
 
         final int idSlabMinX = (ix - mx) / slabSizeX;
         int idSlabMinY       = (iy - my) / slabSizeY;
@@ -236,6 +238,13 @@ public class PyramidTileManager extends TileManager {
                             final ImageReader imgreader = XImageIO.getReader(tilePathTemp, Boolean.FALSE, Boolean.TRUE);
                             final RenderedImage imgTemp = imgreader.read(0);
                             imgreader.dispose();
+                            if (renderImage == null) {
+                                final SampleModel sm = imgTemp.getSampleModel();
+                                datatype       = sm.getDataType();
+                                numBand        = sm.getNumBands();
+                                renderImage    = new TiledImage(ix, iy, iw, ih, ix, iy, new BandedSampleModel(datatype, iw, ih, numBand), imgTemp.getColorModel());
+                                destPix        = PixelIteratorFactory.createRowMajorWriteableIterator(renderImage, renderImage);
+                            }
                             //intersection
                             final int interdebx = Math.max(imgminx, ix);
                             int interdeby       = Math.max(imgminy, iy);

@@ -17,19 +17,21 @@
 package org.geotoolkit.image.io.mosaic;
 
 import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.Rectangle;
-import java.awt.image.*;
+import java.awt.image.ColorModel;
+import java.awt.image.RenderedImage;
+import java.awt.image.SampleModel;
+import java.awt.image.WritableRenderedImage;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageWriter;
 import javax.media.jai.TiledImage;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -129,6 +131,119 @@ public class PyramidBuilder {
         formatter = new FilenameFormatter();
     }
 
+//    /**
+//     *
+//     * @param interpolationCase
+//     * @param lanczosWindow
+//     */
+//    public TileManager createTileManager(TileManager originalMosaic) throws IOException, NoninvertibleTransformException, TransformException, TransformerConfigurationException, TransformerException, ParserConfigurationException {
+//        ArgumentChecks.ensureNonNull("originalMosaic", originalMosaic);
+//        if(outputDirectory == null)
+//            throw new IllegalStateException("caller must set output directory");
+//        if (coeffX == null || coeffY == null)
+//            throw new IllegalStateException("caller must set resampling coefficients");
+//        if (tileHeight == 0 || tileWidth == 0)
+//            throw new IllegalStateException("caller must set tile dimension");
+//        if (slabHeight == 0 || slabWidth == 0)
+//            throw new IllegalStateException("caller must set slab dimension");
+//        if (interpolationCase == null || lanczosWindow == 0)
+//            throw new IllegalStateException("caller must set interpolation properties");
+//        final Rectangle areaTemp = new Rectangle();
+//        final int levelNbre = coeffX.length;
+//
+//        /*
+//         * Clean destination directory.
+//         */
+//        cleanDirectory(outputDirectory);
+//
+//        final Rectangle globalRegion = originalMosaic.getRegion();
+//
+//        //write xml
+//        writeProperties(globalRegion);
+//
+//        final int slabSizeX = slabWidth  * tileWidth;
+//        final int slabSizeY = slabHeight * tileHeight;
+//
+//        final String outputDirectoryPath = outputDirectory.getAbsolutePath();
+//        //architecture creation
+//        for (int i = 0; i<coeffX.length; i++) {
+//            int nbreSlabX = (globalRegion.width/coeffX[i] + slabSizeX - 1)/slabSizeX;
+//            int nbreSlabY = (globalRegion.height/coeffY[i] + slabSizeY - 1)/slabSizeY;
+//            final String archiPath = outputDirectoryPath+"/"+coeffX[i]+"_"+coeffY[i]+"/";
+//            for (int y = 0; y<nbreSlabY; y++) {
+//                for (int x = 0; x<nbreSlabX; x++) {
+//                    new File(archiPath+x+"_"+y+"/").mkdirs();
+//                }
+//            }
+//        }
+//
+//        for (int floor = 0; floor<levelNbre; floor++) {
+//            String outPath = outputDirectoryPath+"/"+coeffX[floor]+"_"+coeffY[floor]+"/";
+//
+//            final int subGRminx   = globalRegion.x      / coeffX[floor];
+//            final int subGRminy   = globalRegion.y      / coeffY[floor];
+//            final int subGRwidth  = globalRegion.width  / coeffX[floor];
+//            final int subGRheight = globalRegion.height / coeffY[floor];
+//
+//            final int idSlabMaxX  = (subGRwidth  + slabSizeX - 1) / slabSizeX;
+//            final int idSlabMaxY  = (subGRheight + slabSizeY - 1) / slabSizeY;
+//
+//            int slabMinY = subGRminy;
+//            //slab by slab
+//            for (int idSY = 0; idSY < idSlabMaxY;idSY++) {
+//                int slabMinX = subGRminx;
+//                for (int idSX = 0; idSX < idSlabMaxX; idSX++) {
+//
+//                    final String outSlagPath = outPath+idSX+"_"+idSY+"/";
+//                    //current slab coordinates
+//                    final int slabMaxX = Math.min(subGRminx + subGRwidth,  slabMinX + slabSizeX);
+//                    final int slabMaxY = Math.min(subGRminy + subGRheight, slabMinY + slabSizeY);
+//                    final int w        = slabMaxX - slabMinX;
+//                    final int h        = slabMaxY - slabMinY;
+//
+//                    //X direction tile number
+//                    final int nbrTX = (w + tileWidth - 1)  / tileWidth;
+//                    //Y direction tile number
+//                    final int nbrTY = (h + tileHeight - 1) / tileHeight;
+//                    int miny = slabMinY;
+//
+//                    for (int ity = 0; ity<nbrTY; ity++) {
+//                        int tempMinx = slabMinX;
+//              noSlab :  for (int itx = 0; itx < nbrTX; itx++) {
+//                            final int tw = Math.min(tempMinx + tileWidth, slabMaxX) - tempMinx;
+//                            final int th = Math.min(miny + tileHeight, slabMaxY)    - miny;
+//
+//                            areaTemp.setBounds(tempMinx, miny, tw, th);
+//                            WritableRenderedImage tuile = getSlab(areaTemp, coeffX[floor], coeffY[floor], originalMosaic);
+//                            if (tuile == null) {
+//                                //next tile X position
+//                                tempMinx += tileWidth;
+//                                continue noSlab;
+//                            }
+//
+//                            //generate name
+//                            final String namePTile      = outSlagPath+formatter.generateFilename(floor, itx, ity)+"."+outputFormatName;
+//                            //writing
+//                            final File imgOutPutPath    = new File(namePTile);
+//                            final ImageWriter imgWriter = XImageIO.getWriterByFormatName(outputFormatName, imgOutPutPath, null);
+//                            imgWriter.write(tuile);
+//                            imgWriter.dispose();
+//
+//                            //next tile X position
+//                            tempMinx += tileWidth;
+//                        }
+//                        //next tile row
+//                        miny += tileHeight;
+//                    }
+//                    //next slab X position
+//                    slabMinX += slabSizeX;
+//                }
+//                //next slab row
+//                slabMinY += slabSizeY;
+//            }
+//        }
+//        return new PyramidTileManager(outputDirectory, globalRegion.x, globalRegion.y, globalRegion.width, globalRegion.height,coeffX,coeffY, slabWidth, slabHeight, tileWidth, tileHeight,outputPrefixName, outputFormatName);
+//    }
 
 //    /**
 //     *
@@ -147,7 +262,6 @@ public class PyramidBuilder {
 //            throw new IllegalStateException("caller must set slab dimension");
 //        if (interpolationCase == null || lanczosWindow == 0)
 //            throw new IllegalStateException("caller must set interpolation properties");
-//        final Rectangle areaTile = new Rectangle();
 //        final int levelNbre = coeffX.length;
 //
 //        /*
@@ -155,22 +269,20 @@ public class PyramidBuilder {
 //         */
 //        cleanDirectory(outputDirectory);
 //
-//        SampleModel sampleMod = null;
-//        ColorModel colorMod;
-//        Rectangle globalRegion = originalMosaic.getRegion();
+//        final Rectangle globalRegion = originalMosaic.getRegion();
 //
 //        //write xml
 //        writeProperties(globalRegion);
 //
-//
 //        final int slabSizeX = slabWidth  * tileWidth;
 //        final int slabSizeY = slabHeight * tileHeight;
 //
-//        //creer l'architecture
+//        final String outputDirectoryPath = outputDirectory.getAbsolutePath();
+//        //architecture creation
 //        for (int i = 0; i<coeffX.length; i++) {
 //            int nbreSlabX = (globalRegion.width/coeffX[i] + slabSizeX - 1)/slabSizeX;
 //            int nbreSlabY = (globalRegion.height/coeffY[i] + slabSizeY - 1)/slabSizeY;
-//            String archiPath = outputDirectory.getAbsolutePath()+"/"+coeffX[i]+"_"+coeffY[i]+"/";
+//            final String archiPath = outputDirectoryPath+"/"+coeffX[i]+"_"+coeffY[i]+"/";
 //            for (int y = 0; y<nbreSlabY; y++) {
 //                for (int x = 0; x<nbreSlabX; x++) {
 //                    new File(archiPath+x+"_"+y+"/").mkdirs();
@@ -178,86 +290,145 @@ public class PyramidBuilder {
 //            }
 //        }
 //
-//        final String outputDirectoryPath = outputDirectory.getAbsolutePath();
-//        //pour chaque etage de tile manager
+//        final Rectangle slabAreaBase  = new Rectangle();
+//        final Rectangle tuileAreaBase = new Rectangle();
+//        final Rectangle readArea      = new Rectangle();
 //
 //        for (int floor = 0; floor<levelNbre; floor++) {
 //            String outPath = outputDirectoryPath+"/"+coeffX[floor]+"_"+coeffY[floor]+"/";
+//            final MathTransform mt = new AffineTransform2D(1.0 / coeffX[floor], 0, 0, 1.0 / coeffY[floor], 0, 0);
+//            final int subGRminx   = globalRegion.x      / coeffX[floor];
+//            final int subGRminy   = globalRegion.y      / coeffY[floor];
+//            final int subGRwidth  = globalRegion.width  / coeffX[floor];
+//            final int subGRheight = globalRegion.height / coeffY[floor];
 //
-//            int subGRminx   = globalRegion.x      / coeffX[floor];
-//            int subGRminy   = globalRegion.y      / coeffY[floor];
-//            int subGRwidth  = globalRegion.width  / coeffX[floor];
-//            int subGRheight = globalRegion.height / coeffY[floor];
-//
-//            int idSlabMaxX = (subGRwidth  + slabSizeX - 1) / slabSizeX;
-//            int idSlabMaxY = (subGRheight + slabSizeY - 1) / slabSizeY;
+//            final int idSlabMaxX  = (subGRwidth  + slabSizeX - 1) / slabSizeX;
+//            final int idSlabMaxY  = (subGRheight + slabSizeY - 1) / slabSizeY;
 //
 //            int slabMinY = subGRminy;
-//            //on passe dalle par dalle
+//            //slab by slab
 //            for (int idSY = 0; idSY < idSlabMaxY;idSY++) {
 //                int slabMinX = subGRminx;
-//      noSlab :  for (int idSX = 0; idSX < idSlabMaxX; idSX++) {
+//                for (int idSX = 0; idSX < idSlabMaxX; idSX++) {
 //
-//                    String outSlagPath = outPath+idSX+"_"+idSY+"/";
-//                    //coordonnées de la dalle courrente
-////                    int minx = subGRminx + idSX * slabSizeX;//ici c constant je crois kon pourrai juste faire  des +=
-////                    int csminy = subGRminy + idSY * slabSizeY;
-//                    int slabMaxX = Math.min(subGRminx + subGRwidth,  slabMinX + slabSizeX);
-//                    int slabMaxY = Math.min(subGRminy + subGRheight, slabMinY + slabSizeY);
-//                    final Rectangle slabArea = new Rectangle(slabMinX, slabMinY, slabMaxX-slabMinX, slabMaxY-slabMinY);
-//                    //on pourrai faire rectangle temporaire
-//                    WritableRenderedImage slab  = getSlab(slabArea, coeffX[floor], coeffY[floor], originalMosaic);
-//                    if (slab == null) {
-//                        slabMinX += slabSizeX;
-//                        continue noSlab;
-//                    }
+//                    final String outSlagPath = outPath+idSX+"_"+idSY+"/";
+//                    //current slab coordinates
+//                    final int slabMaxX = Math.min(subGRminx + subGRwidth,  slabMinX + slabSizeX);
+//                    final int slabMaxY = Math.min(subGRminy + subGRheight, slabMinY + slabSizeY);
+//                    final int w        = slabMaxX - slabMinX;
+//                    final int h        = slabMaxY - slabMinY;
 //
-//                    sampleMod    = slab.getSampleModel();
-//                    int datatype = sampleMod.getDataType();
-//                    colorMod     = slab.getColorModel();
-//                    int numband  = sampleMod.getNumBands();
-//
-//                    //nbre de tuile suivant x
-//                    final int nbrTX = (slabMaxX-slabMinX + tileWidth - 1)  / tileWidth;
-//                    //nbre de tuile suivant y
-//                    final int nbrTY = (slabMaxY-slabMinY + tileHeight - 1) / tileHeight;
-//                    final int tileGridXOffset = slab.getTileGridXOffset();
-//                    final int tileGridYOffset = slab.getTileGridYOffset();
+//                    //X direction tile number
+//                    final int nbrTX = (w + tileWidth - 1)  / tileWidth;
+//                    //Y direction tile number
+//                    final int nbrTY = (h + tileHeight - 1) / tileHeight;
 //                    int miny = slabMinY;
-//                    //on resample, ecrit sur le disk et insert dans l'arbre pour chaque tuile
+//                    List<Rectangle> listTileArea = new ArrayList<Rectangle>(nbrTX*nbrTY);
+//                    //on rempli la liste
 //                    for (int ity = 0; ity<nbrTY; ity++) {
 //                        int tempMinx = slabMinX;
 //                        for (int itx = 0; itx < nbrTX; itx++) {
-//                            final int tmaxx = Math.min(tempMinx + tileWidth, slabMaxX);
-//                            final int tmaxy = Math.min(miny + tileHeight, slabMaxY);
-//                            //on creer la tuile
-//                            TiledImage tuile = new TiledImage(tempMinx, miny, tmaxx - tempMinx, tmaxy - miny, tileGridXOffset, tileGridYOffset, new BandedSampleModel(datatype, slab.getWidth()/*tmaxx - tempMinx*/, slab.getHeight()/*tmaxy - miny*/, numband), colorMod);
-//                            //on rempli la tuile
-//                            areaTile.setBounds(tempMinx, miny, tmaxx - tempMinx, tmaxy - miny);
-//                            //recopie
-//                            final PixelIterator destPix = PixelIteratorFactory.createRowMajorWriteableIterator(slab, tuile, areaTile);
-//                            while (destPix.next()) destPix.setSample(destPix.getSample());
-//                            //ECRITURE
-//                            //on genere un nom
-//                            String namePTile = outSlagPath+itx+"_"+ity+"."+outputFormatName;
-//                            File imgOutPutPath = new File(namePTile);
-//                            ImageWriter imgWriter = XImageIO.getWriterByFormatName(outputFormatName, imgOutPutPath, null);
-//                            imgWriter.write(tuile);
-//                            imgWriter.dispose();
-//                            //FIN ECRITURE
-//                            //tuile suivante en x
+//                            final int tw = Math.min(tempMinx + tileWidth, slabMaxX) - tempMinx;
+//                            final int th = Math.min(miny + tileHeight, slabMaxY)    - miny;
+//
+//                            listTileArea.add(new Rectangle(tempMinx, miny, tw, th));
+//
+//                            //next tile X position
 //                            tempMinx += tileWidth;
 //                        }
-//                        //ligne de tuile suivante
+//                        //next tile row
 //                        miny += tileHeight;
 //                    }
+//
+//                    //on calcule la taille a la base de la pyramide de la dalle
+//                    slabAreaBase.setBounds(slabMinX*coeffX[floor], slabMinY*coeffY[floor], slabSizeX*coeffX[floor], slabSizeY*coeffY[floor]);
+//                    //on cherche dans le tilemanager les tiles qui intersect
+//                    final Collection<Tile> listTile = originalMosaic.getTiles(slabAreaBase, new Dimension(1, 1), true);
+//                    //pour chacune des tiles de base on check si elles sont contenue
+//                    //dans la tiles
+//                    //pour chaque tiles
+//      unnecessary : for (Tile tile : listTile) {
+//                        //on creer un image reader a ameliorer avec le = null
+//                        //faire une image avec imgreader et param
+//                        //ensuite decoupé avec les iterateurs
+//
+//                        //avec des math.min et math.max
+//                        final Rectangle tileRegion   = tile.getRegion();
+//                        final Rectangle intersection = tileRegion.intersection(slabAreaBase);
+//                        if ((intersection.width  / (tileWidth  * coeffX[floor]) < 2)
+//                         && (intersection.height / (tileHeight * coeffY[floor]) < 2))
+//                            continue unnecessary;
+//
+//                        final ImageReader imgReader    = tile.getImageReader();
+//                        final ImageReadParam imgRParam = new ImageReadParam();
+//                        final int ltaSize_1 = listTileArea.size()-1;
+//                        for (int idl = ltaSize_1; idl >= 0; idl--) {
+//                            final Rectangle tA = listTileArea.get(idl);
+//                            tuileAreaBase.setBounds(tA.x*coeffX[floor], tA.y*coeffY[floor], tA.width*coeffX[floor], tA.height*coeffY[floor]);
+//                            //si la tile contien la region en totalité
+//                            //on enleve le rectangle on lit on resample on ecrit
+//                            if (tileRegion.contains(tuileAreaBase)) {
+//                                //j'enleve le rectangle
+//                                listTileArea.remove(idl);
+//                                //on defini le rectangle de lecture
+//                                readArea.setBounds(tuileAreaBase.x-tileRegion.x, tuileAreaBase.y-tileRegion.y, tuileAreaBase.width, tuileAreaBase.height);
+//                                imgRParam.setSourceRegion(readArea);
+//                                RenderedImage renderImage = imgReader.read(0, imgRParam);//je pense quelle dois commencé en 0,0
+//                                RenderedImage destImg;
+//                                if (coeffX[floor] == 1 && coeffY[floor] == 1) {
+//                                    destImg = renderImage;
+//                                } else {
+//                                    //propriétés de l'image
+//                                    int iw = tuileAreaBase.width  / coeffX[floor];
+//                                    int ih = tuileAreaBase.height / coeffY[floor];
+//                                    ColorModel cm = renderImage.getColorModel();
+//                                    //maintenant il faut la resamplée
+//                                    //interpolator
+//                                    final Interpolation interpolation = Interpolation.create(PixelIteratorFactory.createRowMajorIterator(renderImage), interpolationCase, lanczosWindow);
+//                                    // empty resampled image
+//                                    destImg = new TiledImage(0, 0, iw, ih, 0, 0, cm.createCompatibleSampleModel(iw, ih), cm);
+//                                    //resampling object
+//                                    final Resample resample  = new Resample(mt,(WritableRenderedImage) destImg, interpolation, fillValue);
+//                                    //fill empty resampled image
+//                                    resample.fillImage();
+//                                }
+//                                //on ecrit l'image
+//                                //generate name
+//                                final String namePTile      = outSlagPath+formatter.generateFilename(floor, (tA.x-slabMinX)/tileWidth, (tA.y-slabMinY)/tileHeight)+"."+outputFormatName;
+//                                //writing
+//                                final File imgOutPutPath    = new File(namePTile);
+//                                final ImageWriter imgWriter = XImageIO.getWriterByFormatName(outputFormatName, imgOutPutPath, null);
+//                                imgWriter.write(destImg);
+//                                imgWriter.dispose();
+//                            }
+//                        }
+//                    }
+//
+//                    //normalement maintenant il ne me reste plus que les tuiles aux intersections des tile de base
+//                    //ou tuile etant dans des espaces vides
+//
+//       noTileFind : for (Rectangle tuile : listTileArea) {
+//
+//                        RenderedImage destImg = getSlab(tuile, coeffX[floor], coeffY[floor], originalMosaic);
+//                        if (destImg == null) continue noTileFind;
+//                        //generate name
+//                        final String namePTile      = outSlagPath+formatter.generateFilename(floor, (tuile.x-slabMinX)/tileWidth, (tuile.y-slabMinY)/tileHeight)+"."+outputFormatName;
+//                        //writing
+//                        final File imgOutPutPath    = new File(namePTile);
+//                        final ImageWriter imgWriter = XImageIO.getWriterByFormatName(outputFormatName, imgOutPutPath, null);
+//                        imgWriter.write(destImg);
+//                        imgWriter.dispose();
+//                    }
+//                    //next slab X position
 //                    slabMinX += slabSizeX;
 //                }
+//                //next slab row
 //                slabMinY += slabSizeY;
 //            }
 //        }
-//        return new PyramidTileManager(outputDirectory, globalRegion.x, globalRegion.y, globalRegion.width, globalRegion.height, slabWidth, slabHeight, tileWidth, tileHeight, outputFormatName);
+//        return new PyramidTileManager(outputDirectory, globalRegion.x, globalRegion.y, globalRegion.width, globalRegion.height,coeffX,coeffY, slabWidth, slabHeight, tileWidth, tileHeight,outputPrefixName, outputFormatName);
 //    }
+
 
     /**
      *
@@ -284,8 +455,7 @@ public class PyramidBuilder {
          */
         cleanDirectory(outputDirectory);
 
-        ColorModel colorMod;
-        Rectangle globalRegion = originalMosaic.getRegion();
+        final Rectangle globalRegion = originalMosaic.getRegion();
 
         //write xml
         writeProperties(globalRegion);
@@ -306,9 +476,13 @@ public class PyramidBuilder {
             }
         }
 
+        final Rectangle slabAreaBase  = new Rectangle();
+        final Rectangle tuileAreaBase = new Rectangle();
+        final Rectangle readArea      = new Rectangle();
+
         for (int floor = 0; floor<levelNbre; floor++) {
             String outPath = outputDirectoryPath+"/"+coeffX[floor]+"_"+coeffY[floor]+"/";
-
+//            final MathTransform mt = new AffineTransform2D(1.0 / coeffX[floor], 0, 0, 1.0 / coeffY[floor], 0, 0);
             final int subGRminx   = globalRegion.x      / coeffX[floor];
             final int subGRminy   = globalRegion.y      / coeffY[floor];
             final int subGRwidth  = globalRegion.width  / coeffX[floor];
@@ -321,7 +495,7 @@ public class PyramidBuilder {
             //slab by slab
             for (int idSY = 0; idSY < idSlabMaxY;idSY++) {
                 int slabMinX = subGRminx;
-      noSlab :  for (int idSX = 0; idSX < idSlabMaxX; idSX++) {
+                for (int idSX = 0; idSX < idSlabMaxX; idSX++) {
 
                     final String outSlagPath = outPath+idSX+"_"+idSY+"/";
                     //current slab coordinates
@@ -330,51 +504,140 @@ public class PyramidBuilder {
                     final int w        = slabMaxX - slabMinX;
                     final int h        = slabMaxY - slabMinY;
 
-                    areaTemp.setBounds(slabMinX, slabMinY, w, h);
-                    final WritableRenderedImage slab  = getSlab(areaTemp, coeffX[floor], coeffY[floor], originalMosaic);
-                    //if no slab found
-                    if (slab == null) {
-                        slabMinX += slabSizeX;
-                        continue noSlab;
-                    }
-
-                    final SampleModel sampleMod = slab.getSampleModel();
-                    final int datatype          = sampleMod.getDataType();
-                    final int numband           = sampleMod.getNumBands();
-                    final SampleModel bsm       = new BandedSampleModel(datatype, w, h, numband);
-                    colorMod                    = slab.getColorModel();
-
                     //X direction tile number
                     final int nbrTX = (w + tileWidth - 1)  / tileWidth;
                     //Y direction tile number
                     final int nbrTY = (h + tileHeight - 1) / tileHeight;
                     int miny = slabMinY;
+                    List<Rectangle> listTileArea = new ArrayList<Rectangle>(nbrTX*nbrTY);
+                    //on rempli la liste
                     for (int ity = 0; ity<nbrTY; ity++) {
                         int tempMinx = slabMinX;
                         for (int itx = 0; itx < nbrTX; itx++) {
                             final int tw = Math.min(tempMinx + tileWidth, slabMaxX) - tempMinx;
                             final int th = Math.min(miny + tileHeight, slabMaxY)    - miny;
 
-                            //tile creation
-                            final TiledImage tuile = new TiledImage(tempMinx, miny, tw, th, slabMinX, slabMinY, bsm, colorMod);
-                            areaTemp.setBounds(tempMinx, miny, tw, th);
-                            final PixelIterator destPix = PixelIteratorFactory.createRowMajorWriteableIterator(slab, tuile, areaTemp);
-                            while (destPix.next()) destPix.setSample(destPix.getSample());
-
-                            //generate name
-//                            final String namePTile      = outSlagPath+itx+"_"+ity+"."+outputFormatName;
-                            final String namePTile      = outSlagPath+formatter.generateFilename(floor, itx, ity)+"."+outputFormatName;
-                            //writing
-                            final File imgOutPutPath    = new File(namePTile);
-                            final ImageWriter imgWriter = XImageIO.getWriterByFormatName(outputFormatName, imgOutPutPath, null);
-                            imgWriter.write(tuile);
-                            imgWriter.dispose();
+                            listTileArea.add(new Rectangle(tempMinx, miny, tw, th));
 
                             //next tile X position
                             tempMinx += tileWidth;
                         }
                         //next tile row
                         miny += tileHeight;
+                    }
+
+                    //on calcule la taille a la base de la pyramide de la dalle
+                    slabAreaBase.setBounds(slabMinX*coeffX[floor], slabMinY*coeffY[floor], slabSizeX*coeffX[floor], slabSizeY*coeffY[floor]);
+                    //on cherche dans le tilemanager les tiles qui intersect
+                    final Collection<Tile> listTile = originalMosaic.getTiles(slabAreaBase, new Dimension(1, 1), true);
+                    //pour chacune des tiles de base on check si elles sont contenue
+                    //dans la tiles
+                    //pour chaque tiles
+      unnecessary : for (Tile tile : listTile) {
+                        //on creer un image reader a ameliorer avec le = null
+                        //faire une image avec imgreader et param
+                        //ensuite decoupé avec les iterateurs
+
+                        //avec des math.min et math.max
+                        final Rectangle tileRegion   = tile.getRegion();
+                        final Rectangle intersection = tileRegion.intersection(slabAreaBase);
+                        if ((intersection.width  / (tileWidth  * coeffX[floor]) < 2)
+                         && (intersection.height / (tileHeight * coeffY[floor]) < 2))
+                            continue unnecessary;
+                        //lecture totale de l'intersection
+                        final ImageReader imgReader    = tile.getImageReader();
+                        final ImageReadParam imgRParam = new ImageReadParam();
+                        readArea.setBounds(intersection.x-tileRegion.x, intersection.y-tileRegion.y, intersection.width, intersection.height);
+                        imgRParam.setSourceRegion(readArea);
+                        RenderedImage renderImage = imgReader.read(0, imgRParam);//je pense quelle dois commencé en 0,0
+                        imgReader.dispose();
+                        ColorModel cm = renderImage.getColorModel();
+                        int tgox = renderImage.getTileGridXOffset();
+                        int tgoy = renderImage.getTileGridYOffset();
+
+                        final int ltaSize_1 = listTileArea.size()-1;
+                        for (int idl = ltaSize_1; idl >= 0; idl--) {
+                            final Rectangle tA = listTileArea.get(idl);
+                            tuileAreaBase.setBounds(tA.x*coeffX[floor], tA.y*coeffY[floor], tA.width*coeffX[floor], tA.height*coeffY[floor]);
+                            //si la tile contien la region en totalité
+                            //on enleve le rectangle on lit on resample on ecrit
+                            if (intersection.contains(tuileAreaBase)) {
+                                //j'enleve le rectangle
+                                listTileArea.remove(idl);
+                                //on defini le rectangle de lecture
+//                              //deja creer l'image resultante
+
+                                Rectangle areatuile = new Rectangle(tuileAreaBase.x-intersection.x, tuileAreaBase.y-intersection.y, tuileAreaBase.width, tuileAreaBase.height);
+
+
+                                //cette partie sera a supprimer car je suis convaincu que je peu directement resamplé a partir de la renderimage
+                                //avec le bon math transform associé
+
+                                WritableRenderedImage destImg;
+                                if (coeffX[floor] == 1 && coeffY[floor] == 1) {
+                                    destImg = new TiledImage(areatuile.x, areatuile.y, areatuile.width, areatuile.height, tgox, tgoy,  cm.createCompatibleSampleModel(renderImage.getTileWidth(), renderImage.getTileHeight()), cm);
+                                    //recopie
+                                    PixelIterator pix = PixelIteratorFactory.createRowMajorWriteableIterator(renderImage, destImg, areatuile);
+
+                                    while (pix.next()) pix.setSample(pix.getSample());
+                                } else {
+//                                    //propriétés de l'image
+//                                    int ix = areatuile.x / coeffX[floor];
+//                                    int iy = areatuile.y / coeffY[floor];
+//                                    int iw = tuileAreaBase.width  / coeffX[floor];
+//                                    int ih = tuileAreaBase.height / coeffY[floor];
+//                                    //maintenant il faut la resamplée
+//                                    //interpolator
+//                                    final Interpolation interpolation = Interpolation.create(PixelIteratorFactory.createRowMajorIterator(tuile), interpolationCase, lanczosWindow);
+//                                    // empty resampled image
+//                                    destImg = new TiledImage(ix, iy, iw, ih, ix, iy, cm.createCompatibleSampleModel(iw, ih), cm);
+//                                    //resampling object
+//                                    final Resample resample  = new Resample(mt,(WritableRenderedImage) destImg, interpolation, fillValue);
+//                                    //fill empty resampled image
+//                                    resample.fillImage();
+                                    final MathTransform mt = new AffineTransform2D(1.0 / coeffX[floor], 0, 0, 1.0 / coeffY[floor], 0,0/*areatuile.x/coeffX[floor], areatuile.y/coeffY[floor]*/);
+
+                                    //propriétés de l'image
+                                    int ix = areatuile.x / coeffX[floor];
+                                    int iy = areatuile.y / coeffY[floor];
+                                    int iw = tuileAreaBase.width  / coeffX[floor];
+                                    int ih = tuileAreaBase.height / coeffY[floor];
+                                    //maintenant il faut la resamplée
+                                    //interpolator
+                                    final Interpolation interpolation = Interpolation.create(PixelIteratorFactory.createRowMajorIterator(renderImage), interpolationCase, lanczosWindow);
+                                    // empty resampled image
+                                    destImg = new TiledImage(ix, iy, iw, ih, ix, iy, cm.createCompatibleSampleModel(iw, ih), cm);
+                                    //resampling object
+                                    final Resample resample  = new Resample(mt,(WritableRenderedImage) destImg, interpolation, fillValue);
+                                    //fill empty resampled image
+                                    resample.fillImage();
+                                }
+                                //on ecrit l'image
+                                //generate name
+                                final String namePTile      = outSlagPath+formatter.generateFilename(floor, (tA.x-slabMinX)/tileWidth, (tA.y-slabMinY)/tileHeight)+"."+outputFormatName;
+                                //writing
+                                final File imgOutPutPath    = new File(namePTile);
+                                final ImageWriter imgWriter = XImageIO.getWriterByFormatName(outputFormatName, imgOutPutPath, null);
+                                imgWriter.write(destImg);
+                                imgWriter.dispose();
+                            }
+                        }
+                    }
+
+                    //normalement maintenant il ne me reste plus que les tuiles aux intersections des tile de base
+                    //ou tuile etant dans des espaces vides
+
+       noTileFind : for (Rectangle tuile : listTileArea) {
+
+                        RenderedImage destImg = getSlab(tuile, coeffX[floor], coeffY[floor], originalMosaic);
+                        if (destImg == null) continue noTileFind;
+                        //generate name
+                        final String namePTile      = outSlagPath+formatter.generateFilename(floor, (tuile.x-slabMinX)/tileWidth, (tuile.y-slabMinY)/tileHeight)+"."+outputFormatName;
+                        //writing
+                        final File imgOutPutPath    = new File(namePTile);
+                        final ImageWriter imgWriter = XImageIO.getWriterByFormatName(outputFormatName, imgOutPutPath, null);
+                        imgWriter.write(destImg);
+                        imgWriter.dispose();
                     }
                     //next slab X position
                     slabMinX += slabSizeX;
@@ -385,6 +648,8 @@ public class PyramidBuilder {
         }
         return new PyramidTileManager(outputDirectory, globalRegion.x, globalRegion.y, globalRegion.width, globalRegion.height,coeffX,coeffY, slabWidth, slabHeight, tileWidth, tileHeight,outputPrefixName, outputFormatName);
     }
+
+
 
     /**
      * <p>Compute slab which will be tiled.<br/>
@@ -406,25 +671,29 @@ public class PyramidBuilder {
         final Collection<Tile> listTile = tileManager.getTiles(new Rectangle(slabRegion.x*subsamplingX, slabRegion.y*subsamplingY, slabRegion.width*subsamplingX, slabRegion.height*subsamplingY), new Dimension(1, 1), true);
 
         ColorModel colorMod        = null;
-        int datatype = 0 , numband = 0;
+        int numband = 0;
         WritableRenderedImage slab = null;
         PixelIterator inputPix;
+        Rectangle areaTile = new Rectangle();
         PixelIterator destPix = null;
-        final Rectangle iRect = new Rectangle();
         //resampling affinetransform
         final MathTransform mt = new AffineTransform2D(1.0 / subsamplingX, 0, 0, 1.0 / subsamplingY, 0, 0);
+        final ImageReadParam imgParam = new ImageReadParam();
 
         for (Tile tile : listTile) {
-            final ImageReader imgReader       = tile.getImageReader();
-            final RenderedImage renderedImage = imgReader.read(0);
-            final Rectangle tileRegion        = tile.getRegion();
-            imgReader.dispose();
+            final ImageReader imgReader = tile.getImageReader();
+            final Rectangle tileRegion  = tile.getRegion();
 
             //real intersection
             int iminx = Math.max(tileRegion.x, slabRegion.x * subsamplingX);
             int iminy = Math.max(tileRegion.y, slabRegion.y * subsamplingY);
             int imaxx = Math.min(tileRegion.x + tileRegion.width,  (slabRegion.x + slabRegion.width)  * subsamplingX);
             int imaxy = Math.min(tileRegion.y + tileRegion.height, (slabRegion.y + slabRegion.height) * subsamplingY);
+
+            areaTile.setBounds(iminx - tileRegion.x, iminy - tileRegion.y, imaxx - iminx, imaxy - iminy);
+            imgParam.setSourceRegion(areaTile);
+            final WritableRenderedImage renderedImage = imgReader.read(0, imgParam);
+            imgReader.dispose();
 
             //resampled intersection
             iminx /= subsamplingX;
@@ -435,41 +704,34 @@ public class PyramidBuilder {
             imaxy /= subsamplingY;
 
             //image dimension
-            final int imgx = iminx - tileRegion.x / subsamplingX;
-            final int imgy = iminy - tileRegion.y / subsamplingY;
             final int imgw = imaxx - iminx;
             final int imgh = imaxy - iminy;
 
             if (slab == null) {
-                colorMod              = renderedImage.getColorModel();
-                SampleModel sampleMod = renderedImage.getSampleModel();
-                datatype = sampleMod.getDataType();
-                numband  = sampleMod.getNumBands();
-                slab     = new TiledImage(slabRegion.x, slabRegion.y, slabRegion.width, slabRegion.height, slabRegion.x, slabRegion.y, new BandedSampleModel(datatype, slabRegion.width, slabRegion.height, numband), colorMod);
+                colorMod = renderedImage.getColorModel();
+                numband  = renderedImage.getSampleModel().getNumBands();
+                slab     = new TiledImage(slabRegion.x, slabRegion.y, slabRegion.width, slabRegion.height, slabRegion.x, slabRegion.y, colorMod.createCompatibleSampleModel(slabRegion.width, slabRegion.height), colorMod);
                 destPix  = PixelIteratorFactory.createRowMajorWriteableIterator(slab, slab, slabRegion);
             }
+
+            if (!renderedImage.getColorModel().equals(colorMod))
+                throw new IllegalStateException("tile from basic mosaic haven't got same color model");
 
             //Slab resampling from original mosaic tiles.
             RenderedImage wri;
             if (subsamplingX == 1 && subsamplingY == 1) {
                 wri      = renderedImage;
-                iRect.setBounds(imgx, imgy, imgw, imgh);
-                inputPix = PixelIteratorFactory.createRowMajorIterator(wri, iRect);
             } else {
-
                 //interpolator
                 final Interpolation interpolation = Interpolation.create(PixelIteratorFactory.createRowMajorIterator(renderedImage), interpolationCase, lanczosWindow);
                 // empty resampled image
-                wri = new TiledImage(imgx, imgy, imgw, imgh, imgx, imgy, new BandedSampleModel(datatype, imgw, imgh, numband), colorMod);
+                wri = new TiledImage(0, 0, imgw, imgh, 0, 0, colorMod.createCompatibleSampleModel(imgw, imgh), colorMod);
                 //resampling object
                 final Resample resample  = new Resample(mt,(WritableRenderedImage) wri, interpolation, fillValue);
                 //fill empty resampled image
                 resample.fillImage();
-                //appropriate iterator
-                inputPix = PixelIteratorFactory.createRowMajorIterator(wri);
             }
-
-            //write in result slab
+            inputPix = PixelIteratorFactory.createRowMajorIterator(wri);
             for (int y = iminy; y < imaxy; y++) {
                 destPix.moveTo(iminx, y, 0);
                 for (int x = iminx; x < imaxx; x++) {
@@ -568,7 +830,7 @@ public class PyramidBuilder {
      *
      * @return format tile size.
      */
-    public TileLayout getTileLayout(){
+    public TileLayout getTileLayout() {
         return TileLayout.CONSTANT_TILE_SIZE;
     }
 
