@@ -149,7 +149,7 @@ public class WebProcessingServer extends AbstractServer implements ProcessingReg
         if (version.equals("1.0.0")) {
             Parameters.getOrCreate(WPSServerFactory.VERSION, parameters).setValue(WPSVersion.v100.getCode());
         } else {
-            throw new IllegalArgumentException("Unkonwed version : " + version);
+            throw new IllegalArgumentException("Unknowned version : " + version);
         }
         this.capabilities = null;
     }
@@ -163,7 +163,7 @@ public class WebProcessingServer extends AbstractServer implements ProcessingReg
     public WebProcessingServer(final URL serverURL, final ClientSecurity security, final WPSVersion version) {
         super(create(WPSServerFactory.PARAMETERS, serverURL, security));
         if (version == null) {
-            throw new IllegalArgumentException("Unkonwed version : " + version);
+            throw new IllegalArgumentException("Unknowned version : " + version);
         }
         Parameters.getOrCreate(WPSServerFactory.VERSION, parameters).setValue(version);
         this.capabilities = null;
@@ -737,7 +737,7 @@ public class WebProcessingServer extends AbstractServer implements ProcessingReg
                     try {
                         outputs.parameter(output.getIdentifier().getValue()).setValue(WPSConvertersUtils.convertFromReference(output.getReference(), clazz));
                     } catch (NonconvertibleObjectException ex) {
-                        throw new ProcessException(null, null, ex);
+                        throw new ProcessException(ex.getMessage(), null, ex);
                     }
                     
                 } else {
@@ -761,7 +761,7 @@ public class WebProcessingServer extends AbstractServer implements ProcessingReg
                             outputs.parameter(output.getIdentifier().getValue()).setValue(envelope);
                             
                         } catch (FactoryException ex) {
-                            throw new ProcessException(null, null, ex);
+                            throw new ProcessException(ex.getMessage(), null, ex);
                         } 
                         
                     /*
@@ -772,7 +772,7 @@ public class WebProcessingServer extends AbstractServer implements ProcessingReg
                         try {
                             outputs.parameter(output.getIdentifier().getValue()).setValue(WPSConvertersUtils.convertFromComplex(outputType.getComplexData(), clazz));
                         } catch (NonconvertibleObjectException ex) {
-                            throw new ProcessException(null, null, ex);
+                            throw new ProcessException(ex.getMessage(), null, ex);
                         }
                         
                     /*

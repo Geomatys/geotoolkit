@@ -169,7 +169,7 @@ public abstract class AbstractGetObservation extends AbstractSOSRequest implemen
 
     @Override
     public URL getURL() throws MalformedURLException {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException("Can not generate URL.");
     }
 
     /**

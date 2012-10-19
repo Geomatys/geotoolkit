@@ -70,7 +70,7 @@ public class DifferenceProcess extends AbstractProcess {
             getOrCreate(RESULT_GEOM, outputParameters).setValue(result);
 
         } catch (Exception ex) {
-            throw new ProcessException(null, this, ex);
+            throw new ProcessException(ex.getMessage(), this, ex);
         }
     }
 

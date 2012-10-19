@@ -484,7 +484,7 @@ public class WFSDataStore extends AbstractDataStore{
                 getLogger().log(Level.INFO, "[WFS Client] request type by POST.");
                 stream = request.getResponseStream();
             } else {
-                getLogger().log(Level.INFO, "[WFS Client] request type : " + request.getURL());
+            getLogger().log(Level.INFO, "[WFS Client] request type : " + request.getURL());
                 stream = request.getURL().openStream();
             }
             final List<FeatureType> featureTypes = reader.read(stream);

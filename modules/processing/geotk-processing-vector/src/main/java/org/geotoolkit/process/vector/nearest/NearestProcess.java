@@ -83,11 +83,11 @@ public class NearestProcess extends AbstractProcess {
             getOrCreate(FEATURE_OUT, outputParameters).setValue(resultFeatureList);
 
         } catch (FactoryException ex) {
-            throw new ProcessException(null, this, ex);
+            throw new ProcessException(ex.getMessage(), this, ex);
         } catch (DataStoreException ex) {
-            throw new ProcessException(null, this, ex);
+            throw new ProcessException(ex.getMessage(), this, ex);
         } catch (TransformException ex) {
-            throw new ProcessException(null, this, ex);
+            throw new ProcessException(ex.getMessage(), this, ex);
         }
     }
 

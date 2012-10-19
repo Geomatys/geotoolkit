@@ -80,9 +80,9 @@ public class BufferProcess extends AbstractProcess {
             getOrCreate(RESULT_GEOM, outputParameters).setValue(result);
 
         } catch (NoSuchAuthorityCodeException ex) {
-            throw new ProcessException(null, this, ex);
+            throw new ProcessException(ex.getMessage(), this, ex);
         } catch (FactoryException ex) {
-            throw new ProcessException(null, this, ex);
+            throw new ProcessException(ex.getMessage(), this, ex);
         }
     }
 

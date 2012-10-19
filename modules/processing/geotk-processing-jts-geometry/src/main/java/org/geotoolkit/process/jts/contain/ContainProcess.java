@@ -59,9 +59,9 @@ public class ContainProcess extends AbstractProcess {
             getOrCreate(RESULT, outputParameters).setValue(result);
 
         } catch (FactoryException ex) {
-            throw new ProcessException(null, this, ex);
+            throw new ProcessException(ex.getMessage(), this, ex);
         } catch (TransformException ex) {
-            throw new ProcessException(null, this, ex);
+            throw new ProcessException(ex.getMessage(), this, ex);
         }
     }
 

@@ -83,7 +83,7 @@ public class CoverageToFeaturesProcess extends AbstractProcess {
 
             getOrCreate(FEATURE_OUT, outputParameters).setValue(resultFeatureList);
         } catch (CoverageStoreException ex) {
-            throw new ProcessException(null, this, ex);
+            throw new ProcessException(ex.getMessage(), this, ex);
         }
     }
 

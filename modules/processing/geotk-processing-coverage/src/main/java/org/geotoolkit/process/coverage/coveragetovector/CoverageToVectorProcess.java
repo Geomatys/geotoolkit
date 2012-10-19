@@ -411,9 +411,9 @@ public class CoverageToVectorProcess extends AbstractProcess {
         try {
             result = toPolygon(coverage, ranges, 0);
         } catch (IOException ex) {
-            throw new ProcessException(null, this, ex);
+            throw new ProcessException(ex.getMessage(), this, ex);
         } catch (TransformException ex) {
-            throw new ProcessException(null, this, ex);
+            throw new ProcessException(ex.getMessage(), this, ex);
         }
 
         //avoid memory use

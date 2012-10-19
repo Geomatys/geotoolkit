@@ -75,7 +75,7 @@ public class WebFeatureServer extends AbstractServer implements DataStore{
         if(version.equals("1.1.0")){
             Parameters.getOrCreate(WFSDataStoreFactory.VERSION, parameters).setValue(version);
         }else{
-            throw new IllegalArgumentException("unkonwed version : "+ version);
+            throw new IllegalArgumentException("unknowned version : "+ version);
         }
         Parameters.getOrCreate(WFSDataStoreFactory.POST_REQUEST, parameters).setValue(false);
         this.capabilities = null;
@@ -84,7 +84,7 @@ public class WebFeatureServer extends AbstractServer implements DataStore{
     public WebFeatureServer(final URL serverURL, final ClientSecurity security, final WFSVersion version, final boolean usePost) {
         this(create(WFSDataStoreFactory.PARAMETERS_DESCRIPTOR, serverURL, security));
         if(version == null){
-            throw new IllegalArgumentException("unkonwed version : "+ version);
+            throw new IllegalArgumentException("unknowned version : "+ version);
         }
         Parameters.getOrCreate(WFSDataStoreFactory.VERSION, parameters).setValue(version);
         Parameters.getOrCreate(WFSDataStoreFactory.POST_REQUEST, parameters).setValue(usePost);

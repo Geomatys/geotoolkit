@@ -268,7 +268,7 @@ public class JGraphicSymbolTable <T> extends StyleElementEditor<List> {
                 m = getStyleFactory().externalGraphic(new URL("file:/..."), "image/png");
             } catch (MalformedURLException ex) {
                 //won't happen
-                throw new RuntimeException(ex.getMessage());
+                throw new RuntimeException(ex.getMessage(),ex);
             }
 
             graphics.add(m);

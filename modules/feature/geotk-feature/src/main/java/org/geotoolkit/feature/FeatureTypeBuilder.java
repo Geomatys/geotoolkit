@@ -799,7 +799,7 @@ public class FeatureTypeBuilder {
                 final StringBuilder sb = new StringBuilder();
                 sb.append("Could not retype, property : ").append(types[i]);
                 sb.append(" could not be found in originale feature type,");
-                sb.append("\n Original type : "+ original);
+                sb.append("\n Original type : ").append(original);
                 throw new IllegalArgumentException(sb.toString());
             }
         }

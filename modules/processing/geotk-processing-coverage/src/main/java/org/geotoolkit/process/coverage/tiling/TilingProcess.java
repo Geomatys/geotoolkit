@@ -99,7 +99,7 @@ public final class TilingProcess extends AbstractProcess {
             getOrCreate(OUT_TILE_MANAGER, outputParameters).setValue(tileManager);
             getOrCreate(OUT_CRS, outputParameters).setValue(crs);
         } catch (Exception ex) {
-            throw new ProcessException(null, this, ex);
+            throw new ProcessException(ex.getMessage(), this, ex);
         }
     }
 

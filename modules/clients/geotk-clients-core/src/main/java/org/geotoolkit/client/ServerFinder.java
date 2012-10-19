@@ -119,7 +119,7 @@ public final class ServerFinder extends Static {
                     next = null; // Tells to hasNext() that it will need to fetch a new element.
                     return n;
                 }
-                throw new NoSuchElementException();
+                throw new NoSuchElementException("No more elements.");
             }
 
             /**
@@ -127,7 +127,7 @@ public final class ServerFinder extends Static {
              */
             @Override
             public void remove() {
-                throw new UnsupportedOperationException();
+                throw new UnsupportedOperationException("Can not remove elements from this iterator.");
             }
         });
     }

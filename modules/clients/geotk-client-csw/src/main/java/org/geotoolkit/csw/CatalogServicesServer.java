@@ -76,7 +76,7 @@ public class CatalogServicesServer extends AbstractServer {
         try {
             parameters.parameter(CSWServerFactory.VERSION.getName().getCode()).setValue(CSWVersion.fromCode(v).getCode());
         } catch (IllegalArgumentException ex) {
-            throw new IllegalStateException("unknown CSW version : " + v);
+            throw new IllegalStateException("unknown CSW version : " + v,ex);
         }
     }
 

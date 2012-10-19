@@ -72,7 +72,7 @@ public class Copy extends AbstractProcess {
             try {
                 insert(queryParam, sourceDS, targetDS, eraseParam);
             } catch (DataStoreException ex) {
-                throw new ProcessException(null, this, ex);
+                throw new ProcessException(ex.getMessage(), this, ex);
             }
             return;
         }
@@ -82,7 +82,7 @@ public class Copy extends AbstractProcess {
             try {
                 names = sourceDS.getNames();
             } catch (DataStoreException ex) {
-                throw new ProcessException(null, this, ex);
+                throw new ProcessException(ex.getMessage(), this, ex);
             }
         } else {
             //pick only the wanted names
@@ -93,7 +93,7 @@ public class Copy extends AbstractProcess {
                     final FeatureType type = sourceDS.getFeatureType(s);
                     names.add(type.getName());
                 } catch (DataStoreException ex) {
-                    throw new ProcessException(null, this, ex);
+                    throw new ProcessException(ex.getMessage(), this, ex);
                 }
             }
         }
@@ -105,7 +105,7 @@ public class Copy extends AbstractProcess {
             try {
                 insert(n, sourceDS, targetDS, eraseParam);
             } catch (DataStoreException ex) {
-                throw new ProcessException(null, this, ex);
+                throw new ProcessException(ex.getMessage(), this, ex);
             }
             inc++;
         }
