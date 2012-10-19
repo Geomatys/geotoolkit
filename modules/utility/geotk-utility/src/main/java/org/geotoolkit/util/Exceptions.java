@@ -52,7 +52,8 @@ import org.geotoolkit.resources.Errors;
  * <p>&nbsp;</p>
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.20
+ * @author Johann Sorel (Geomatys)
+ * @version 3.21
  *
  * @since 2.0
  * @module
@@ -67,6 +68,31 @@ public final class Exceptions extends Static {
      * Do not allow instantiation of this class.
      */
     private Exceptions() {
+    }
+
+    /**
+     * Returns {@code true} if the given message is non-null and holds a reliable information.
+     * The message shall not be null, empty (ignoring white spaces) or equals to the string
+     * {@code "null"} (ignoring case).
+     * <p>
+     * This method is intended for use in assertions like below:
+     *
+     * {@preformat java
+     *     assert Exceptions.isValidMessage(message);
+     *     throw new SomeException(message);
+     * }
+     *
+     * @param message The message argument to check.
+     * @return {@code true} if the message is informative, or {@code false} otherwise.
+     *
+     * @since 3.21
+     */
+    public static boolean isValidMessage(String message) {
+        if (message == null) {
+            return false;
+        }
+        message = message.trim();
+        return !message.isEmpty() && !message.equalsIgnoreCase("null");
     }
 
     /**
