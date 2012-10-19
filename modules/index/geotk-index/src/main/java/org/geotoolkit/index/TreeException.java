@@ -17,6 +17,7 @@
 package org.geotoolkit.index;
 
 import java.io.IOException;
+import org.geotoolkit.util.Exceptions;
 
 /**
  * DOCUMENT ME!
@@ -28,10 +29,6 @@ public class TreeException extends IOException {
 
     private static final long serialVersionUID = 1988241322009839486L;
 
-    public TreeException() {
-        super();
-    }
-
     /**
      * DOCUMENT ME!
      * 
@@ -39,6 +36,7 @@ public class TreeException extends IOException {
      */
     public TreeException(final String message) {
         super(message);
+        assert Exceptions.isValidMessage(message) : message;
     }
 
     /**
@@ -50,6 +48,7 @@ public class TreeException extends IOException {
     public TreeException(final String message, final Throwable cause) {
         super(message);
         initCause(cause);
+        assert Exceptions.isValidMessage(message) : message;
     }
 
     /**
@@ -58,7 +57,6 @@ public class TreeException extends IOException {
      * @param cause
      */
     public TreeException(final Throwable cause) {
-        super();
-        initCause(cause);
+        super(cause);
     }
 }

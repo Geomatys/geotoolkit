@@ -227,7 +227,7 @@ public class WMSCoverageReference implements CoverageReference{
         try {
             return getNames()[0];
         } catch (DataStoreException ex) {
-            throw new DataStoreRuntimeException(ex.getMessage(),ex);
+            throw new DataStoreRuntimeException(ex);
         }
     }
 

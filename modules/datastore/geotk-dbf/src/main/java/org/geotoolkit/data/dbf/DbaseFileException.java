@@ -17,6 +17,7 @@
 package org.geotoolkit.data.dbf;
 
 import org.geotoolkit.storage.DataStoreException;
+import org.geotoolkit.util.Exceptions;
 
 
 /**
@@ -28,11 +29,13 @@ public class DbaseFileException extends DataStoreException {
 
     private static final long serialVersionUID = -6890880438911014652L;
 
-    public DbaseFileException(final String s) {
-        super(s);
+    public DbaseFileException(final String message) {
+        super(message);
+        assert Exceptions.isValidMessage(message) : message;
     }
 
-    public DbaseFileException(final String s, final Throwable cause) {
-        super(s, cause);
+    public DbaseFileException(final String message, final Throwable cause) {
+        super(message, cause);
+        assert Exceptions.isValidMessage(message) : message;
     }
 }

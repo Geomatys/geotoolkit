@@ -17,6 +17,7 @@
 
 package org.geotoolkit.data;
 
+import org.geotoolkit.util.Exceptions;
 import org.geotoolkit.util.collection.BackingStoreException;
 
 /**
@@ -28,16 +29,14 @@ import org.geotoolkit.util.collection.BackingStoreException;
  */
 public class DataStoreRuntimeException extends BackingStoreException{
 
-    public DataStoreRuntimeException(){
-        super();
-    }
-
     public DataStoreRuntimeException(final String message){
         super(message);
+        assert Exceptions.isValidMessage(message) : message;
     }
 
     public DataStoreRuntimeException(final String message, final Throwable th){
         super(message, th);
+        assert Exceptions.isValidMessage(message) : message;
     }
 
     public DataStoreRuntimeException(final Throwable th){

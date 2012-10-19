@@ -21,6 +21,8 @@
 
 package org.geotoolkit.data.kml.model;
 
+import org.geotoolkit.util.Exceptions;
+
 /**
  * <p>A spécific exception class for KML parsing errors.</p>
  *
@@ -35,6 +37,7 @@ public class KmlException extends Exception{
      */
     public KmlException(String message){
         super(message);
+        assert Exceptions.isValidMessage(message) : message;
     }
 
 }

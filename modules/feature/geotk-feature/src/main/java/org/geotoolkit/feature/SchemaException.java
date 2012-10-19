@@ -17,6 +17,7 @@
 package org.geotoolkit.feature;
 
 import java.io.IOException;
+import org.geotoolkit.util.Exceptions;
 
 
 /**
@@ -28,10 +29,6 @@ public class SchemaException extends IOException {
 
     private static final String NOT_FOUND = "Feature type could not be found for ";
 
-    public SchemaException(final Throwable cause) {
-        super(cause);
-    }
-
     /**
      * Constructor with message argument.
      *
@@ -39,6 +36,7 @@ public class SchemaException extends IOException {
      */
     public SchemaException(final String message) {
         super(message);
+        assert Exceptions.isValidMessage(message) : message;
     }
 
     /**
@@ -49,6 +47,7 @@ public class SchemaException extends IOException {
      */
     public SchemaException(final String message, final Throwable cause) {
         super(message, cause);
+        assert Exceptions.isValidMessage(message) : message;
     }
 
     public static SchemaException notFound(final String typeName){

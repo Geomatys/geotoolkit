@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.xal.model;
 
+import org.geotoolkit.util.Exceptions;
+
 /**
  * <p>A spécific exception class for xAL parsing errors.</p>
  *
@@ -30,6 +32,7 @@ public class XalException extends Exception{
      */
     public XalException(String message){
         super(message);
+        assert Exceptions.isValidMessage(message) : message;
     }
 
 }

@@ -28,7 +28,6 @@ import org.geotoolkit.data.shapefile.shx.ShxReader;
 import org.geotoolkit.data.shapefile.shp.ShapefileHeader;
 import org.geotoolkit.data.shapefile.shp.ShapefileReader;
 import org.geotoolkit.data.shapefile.shp.ShapefileReader.Record;
-import org.geotoolkit.index.LockTimeoutException;
 import org.geotoolkit.index.TreeException;
 import org.geotoolkit.index.quadtree.DataReader;
 import org.geotoolkit.index.quadtree.QuadTree;
@@ -76,7 +75,7 @@ public class ShapeFileIndexer {
      */
     public int index(final boolean verbose, final ProgressController listener)
             throws MalformedURLException, IOException, TreeException,
-            StoreException, LockTimeoutException {
+            StoreException {
 
         if (this.shpFiles == null) {
             throw new IOException("You have to set a shape file name!");

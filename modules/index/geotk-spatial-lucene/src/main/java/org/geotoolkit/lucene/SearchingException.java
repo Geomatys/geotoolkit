@@ -17,6 +17,9 @@
 
 package org.geotoolkit.lucene;
 
+import org.geotoolkit.util.Exceptions;
+
+
 /**
  * Exceptions thrown by lucene searching should be instances of this type.
  *
@@ -40,6 +43,7 @@ public class SearchingException extends Exception {
      */
     public SearchingException(final String message) {
         super(message);
+        assert Exceptions.isValidMessage(message) : message;
     }
 
     /**
@@ -51,6 +55,7 @@ public class SearchingException extends Exception {
      */
     public SearchingException(final String message, final Throwable cause) {
         super(message, cause);
+        assert Exceptions.isValidMessage(message) : message;
     }
 
 }

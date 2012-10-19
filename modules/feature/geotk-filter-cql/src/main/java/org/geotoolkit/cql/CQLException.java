@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.cql;
 
+import org.geotoolkit.util.Exceptions;
+
 /**
  * CQL exception.
  * 
@@ -23,19 +25,14 @@ package org.geotoolkit.cql;
  */
 public class CQLException extends Exception{
 
-    public CQLException() {
-    }
-
     public CQLException(String message) {
         super(message);
-    }
-
-    public CQLException(Throwable cause) {
-        super(cause);
+        assert Exceptions.isValidMessage(message) : message;
     }
 
     public CQLException(String message, Throwable cause) {
         super(message, cause);
+        assert Exceptions.isValidMessage(message) : message;
     }
     
 }

@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.filter;
 
+import org.geotoolkit.util.Exceptions;
 
 /**
  * Defines an exception for illegal filters.
@@ -35,6 +36,7 @@ public class IllegalFilterException extends RuntimeException {
      */
     public IllegalFilterException(final String message) {
         super(message);
+        assert Exceptions.isValidMessage(message) : message;
     }
 
     /**
@@ -51,10 +53,11 @@ public class IllegalFilterException extends RuntimeException {
      * Constructs an instance of <code>IllegalFilterException</code> with the
      * specified detail message and root cause.
      *
-     * @param msg the detail message.
+     * @param message the detail message.
      * @param cause the root cause of the exceptions.
      */
-    public IllegalFilterException(final String msg, final Exception cause) {
-        super(msg, cause);
+    public IllegalFilterException(final String message, final Exception cause) {
+        super(message, cause);
+        assert Exceptions.isValidMessage(message) : message;
     }
 }
