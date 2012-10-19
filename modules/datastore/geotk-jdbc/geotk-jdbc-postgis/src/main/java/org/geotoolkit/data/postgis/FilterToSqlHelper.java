@@ -159,28 +159,28 @@ class FilterToSqlHelper {
 
         String closingParenthesis = ")";
         if (filter instanceof Equals) {
-            out.write("equals");
+            out.write("st_equals");
         } else if (filter instanceof Disjoint) {
-            out.write("NOT (intersects");
+            out.write("NOT (st_intersects");
             closingParenthesis += ")";
         } else if (filter instanceof Intersects || filter instanceof BBOX) {
-            out.write("intersects");
+            out.write("st_intersects");
         } else if (filter instanceof Crosses) {
-            out.write("crosses");
+            out.write("st_crosses");
         } else if (filter instanceof Within) {
             if(swapped)
-                out.write("contains");
+                out.write("st_contains");
             else
-                out.write("within");
+                out.write("st_within");
         } else if (filter instanceof Contains) {
             if(swapped)
-                out.write("within");
+                out.write("st_within");
             else
-                out.write("contains");
+                out.write("st_contains");
         } else if (filter instanceof Overlaps) {
-            out.write("overlaps");
+            out.write("st_overlaps");
         } else if (filter instanceof Touches) {
-            out.write("touches");
+            out.write("st_touches");
         } else {
             throw new IOException("Unsupported filter type " + filter.getClass());
         }
