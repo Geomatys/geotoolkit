@@ -278,7 +278,9 @@ public class DefaultCanvasController2D extends AbstractCanvasController implemen
 
     @Override
     public void setVisibleArea(final Envelope env) throws NoninvertibleTransformException, TransformException {
+        if(env == null) return;
         final CoordinateReferenceSystem envCRS = env.getCoordinateReferenceSystem();
+        if(envCRS == null) return;
         final CoordinateReferenceSystem envCRS2D = CRSUtilities.getCRS2D(envCRS);
         Envelope env2D = CRS.transform(env, envCRS2D);
 
