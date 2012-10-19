@@ -184,7 +184,7 @@ public class JAdditionalAxisNavigator extends JPanel implements ContextListener{
                 final List<MapLayer> layers = context.layers();
                 for (MapLayer mapLayer : layers) {
                     final Envelope layerBounds = mapLayer.getBounds();
-                    if (layerBounds != null) {
+                    if (layerBounds != null && layerBounds.getCoordinateReferenceSystem() != null) {
                         final CoordinateReferenceSystem layerCRS = layerBounds.getCoordinateReferenceSystem();
                         final CoordinateSystem layerCS = layerCRS.getCoordinateSystem();
                         final int nbDim = layerCS.getDimension();
