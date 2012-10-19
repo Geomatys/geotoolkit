@@ -633,7 +633,7 @@ public class PostGISDialect extends AbstractSQLDialect {
                     sb = new StringBuilder("ALTER TABLE \"").append(tableName).append('"');
                     sb.append(" ADD CONSTRAINT \"enforce_dims_");
                     sb.append(gd.getLocalName()).append('"');
-                    sb.append(" CHECK (ndims(\"").append(gd.getLocalName()).append("\") = 2)");
+                    sb.append(" CHECK (st_ndims(\"").append(gd.getLocalName()).append("\") = 2)");
                     sql = sb.toString();
                     LOGGER.fine(sql);
                     st.execute(sql);
@@ -644,7 +644,7 @@ public class PostGISDialect extends AbstractSQLDialect {
                         sb.append('"');
                         sb.append(" ADD CONSTRAINT \"enforce_geotype_");
                         sb.append(gd.getLocalName()).append('"');
-                        sb.append(" CHECK (geometrytype(");
+                        sb.append(" CHECK (st_geometrytype(");
                         sb.append('"').append(gd.getLocalName()).append('"');
                         sb.append(") = '").append(geomType).append("'::text OR \"");
                         sb.append(gd.getLocalName()).append('"').append(" IS NULL)");
