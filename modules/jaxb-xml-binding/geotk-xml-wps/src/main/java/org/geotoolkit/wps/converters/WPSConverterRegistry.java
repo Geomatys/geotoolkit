@@ -26,8 +26,14 @@ import org.geotoolkit.process.converters.*;
 import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
 import org.geotoolkit.wps.converters.inputs.complex.*;
+import org.geotoolkit.wps.converters.inputs.literal.StringToDoubleArrayConverter;
+import org.geotoolkit.wps.converters.inputs.literal.StringToFloatArrayConverter;
+import org.geotoolkit.wps.converters.inputs.literal.StringToIntegerArrayConverter;
 import org.geotoolkit.wps.converters.inputs.references.*;
 import org.geotoolkit.wps.converters.outputs.complex.*;
+import org.geotoolkit.wps.converters.outputs.literal.DoubleArrayToStringConverter;
+import org.geotoolkit.wps.converters.outputs.literal.FloatArrayToStringConverter;
+import org.geotoolkit.wps.converters.outputs.literal.IntegerArrayToStringConverter;
 import org.geotoolkit.wps.converters.outputs.references.*;
 import org.geotoolkit.wps.xml.v100.ComplexDataType;
 import org.geotoolkit.wps.xml.v100.ReferenceType;
@@ -93,6 +99,14 @@ public class WPSConverterRegistry {
         register(new WPSObjectConverterAdapter(StringToSortByConverter.getInstance()));
         register(new WPSObjectConverterAdapter(StringToNumberRangeConverter.getInstance()));
         register(new WPSObjectConverterAdapter(StringToDate.getInstance()));
+        register(new WPSObjectConverterAdapter(new StringToDoubleArrayConverter()));
+        register(new WPSObjectConverterAdapter(new StringToFloatArrayConverter()));
+        register(new WPSObjectConverterAdapter(new StringToIntegerArrayConverter()));
+        
+        // Object -> String converters
+        register(new WPSObjectConverterAdapter(new DoubleArrayToStringConverter()));
+        register(new WPSObjectConverterAdapter(new IntegerArrayToStringConverter()));
+        register(new WPSObjectConverterAdapter(new FloatArrayToStringConverter()));
 
     }
 

@@ -138,7 +138,11 @@ public final class WPSIO {
         FORMATSUPPORTS.add(new FormatSupport(NumberRange[].class, IOType.INPUT, null, Encoding.UTF8.getValue(), null, true));
         FORMATSUPPORTS.add(new FormatSupport(Filter.class, IOType.INPUT, null, Encoding.UTF8.getValue(), null, true));
         FORMATSUPPORTS.add(new FormatSupport(Date.class, IOType.INPUT, null, Encoding.UTF8.getValue(), null, true));
-
+        
+        //primitive arrays
+        FORMATSUPPORTS.add(new FormatSupport(double[].class, IOType.BOTH, null, Encoding.UTF8.getValue(), null, true));
+        FORMATSUPPORTS.add(new FormatSupport(int[].class, IOType.BOTH, null, Encoding.UTF8.getValue(), null, true));
+        FORMATSUPPORTS.add(new FormatSupport(float[].class, IOType.BOTH, null, Encoding.UTF8.getValue(), null, true));
     }
 
     /**
