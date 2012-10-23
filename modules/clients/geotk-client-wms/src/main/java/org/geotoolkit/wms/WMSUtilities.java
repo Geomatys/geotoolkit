@@ -215,7 +215,7 @@ public final class WMSUtilities {
 
         GeneralEnvelope layerEnvelope = (GeneralEnvelope) layer.getEnvelope();
 
-        final List<Dimension> dimensions = (List<Dimension>) layer.getDimension();
+        final List<AbstractDimension> dimensions = (List<AbstractDimension>) layer.getDimension();
         if (!dimensions.isEmpty()) {
             final CoordinateReferenceSystem envCRS = layerEnvelope.getCoordinateReferenceSystem();
             final List<CoordinateReferenceSystem> dimensionsCRS = new ArrayList<CoordinateReferenceSystem>();
