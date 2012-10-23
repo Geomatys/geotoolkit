@@ -35,6 +35,7 @@ import org.geotoolkit.wms.v111.GetCapabilities111;
 import org.geotoolkit.wms.xml.AbstractDimension;
 import org.geotoolkit.wms.xml.AbstractLayer;
 import org.geotoolkit.wms.xml.AbstractWMSCapabilities;
+import org.geotoolkit.wms.xml.Style;
 
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.cs.AxisDirection;
@@ -325,6 +326,34 @@ public abstract class AbstractGetMap extends AbstractRequest implements GetMapRe
 
         } else if (styles != null && styles.length > 0 && styles[0] != null) {
             styleValue = StringUtilities.toCommaSeparatedValues((Object[])styles);
+        } else {
+            //try to found the default style name in the capabilities
+            //some server implementation do not like when the style is left empty
+            if(server != null && layers != null){
+                try{
+                    final StringBuilder sb = new StringBuilder();
+                    for(int i=0;i<layers.length;i++){
+                        final String ln = layers[i];
+                        if(i!=0){
+                            sb.append(',');
+                        }
+                        final List<? extends Style> styles = WMSUtilities.findStyleCandidates(server, ln);
+                        if(styles != null && !styles.isEmpty()){
+                            final String name = styles.get(0).getName();
+                            final String title = styles.get(0).getTitle();
+                            if(name!=null){ 
+                                sb.append(name);
+                            }else if(title!=null){ 
+                                sb.append(title);
+                            }
+                        }
+                    }
+                    styleValue = sb.toString();
+                }catch(CapabilitiesException ex){
+                    LOGGER.log(Level.FINE, ex.getMessage(),ex);
+                }
+            }
+            
         }
 
         requestParameters.put(styleParam, styleValue);
