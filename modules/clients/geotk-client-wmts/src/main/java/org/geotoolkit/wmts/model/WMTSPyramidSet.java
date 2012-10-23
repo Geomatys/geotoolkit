@@ -22,6 +22,7 @@ import org.geotoolkit.client.map.CachedPyramidSet;
 import org.geotoolkit.coverage.GridMosaic;
 import org.geotoolkit.coverage.Pyramid;
 import org.geotoolkit.coverage.PyramidSet;
+import org.geotoolkit.ows.xml.v110.LanguageStringType;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.wmts.GetTileRequest;
@@ -115,6 +116,20 @@ public class WMTSPyramidSet extends CachedPyramidSet{
         
         //set the format
         Object format = hints.get(PyramidSet.HINT_FORMAT);
+        
+        //extract the default format from server
+        if(format == null){
+            final WMTSPyramidSet ps = (WMTSPyramidSet) mosaic.getPyramid().getPyramidSet();        
+            final List<LayerType> layers = ps.getCapabilities().getContents().getLayers();
+            for(LayerType lt : layers){
+                final String name = lt.getIdentifier().getValue();
+                if(layerName.equals(name)){
+                    format = lt.getFormat().get(0);
+                }
+            }
+        }
+        
+        //last chance, use png as default
         if(format == null){
             //set a default value
             format = "image/png";
