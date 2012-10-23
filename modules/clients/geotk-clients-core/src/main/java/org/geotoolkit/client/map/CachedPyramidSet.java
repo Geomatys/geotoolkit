@@ -17,7 +17,6 @@
 package org.geotoolkit.client.map;
 
 import java.awt.Point;
-import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -37,10 +36,10 @@ import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
-import javax.imageio.ImageReader;
 import org.geotoolkit.client.Request;
 import org.geotoolkit.client.Server;
 import org.geotoolkit.coverage.*;
+import org.geotoolkit.factory.Hints;
 import org.geotoolkit.security.DefaultClientSecurity;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.util.collection.Cache;
@@ -166,26 +165,31 @@ public abstract class CachedPyramidSet extends DefaultPyramidSet {
 
         if (!cacheImages || !useURLQueries) {
             //can not optimize a non url server
-            return AbstractGridMosaic.getTiles(mosaic, locations, hints);
+            return queryUnoptimizedIO(mosaic, locations, hints);
         }
 
         final Server server = getServer();
 
         if (server == null) {
-            return AbstractGridMosaic.getTiles(mosaic, locations, hints);
+            return queryUnoptimizedIO(mosaic, locations, hints);
         }
 
         if (!(server.getClientSecurity() == DefaultClientSecurity.NO_SECURITY)) {
             //we can optimize only if there is no security
-            return AbstractGridMosaic.getTiles(mosaic, locations, hints);
+            return queryUnoptimizedIO(mosaic, locations, hints);
         }
 
+        final boolean useNIO = Boolean.TRUE.equals(server.getUserProperty(PROPERTY_NIO));
+        if(!useNIO){
+            return queryUnoptimizedIO(mosaic, locations, hints);
+        }
+                
         final URL url = server.getURL();
         final String protocol = url.getProtocol();
 
         if (!"http".equalsIgnoreCase(protocol)) {
             //we can optimize only an http protocol
-            return AbstractGridMosaic.getTiles(mosaic, locations, hints);
+            return queryUnoptimizedIO(mosaic, locations, hints);
         }
 
 
@@ -199,12 +203,13 @@ public abstract class CachedPyramidSet extends DefaultPyramidSet {
             final RenderedImage image = tileCache.get(tid);
 
             if (queue.isCancelled()) {
+                queue.offer(GridMosaic.END_OF_QUEUE); //end sentinel
                 return queue;
             }
 
             if (image != null) {
                 //image was in cache, reuse it
-                final ImagePack pack = new ImagePack(tid, mosaic, p);
+                final ImagePack pack = new ImagePack(mosaic, p);
                 pack.img = image;
                 queue.offer(pack.getTile());
             } else {
@@ -227,13 +232,8 @@ public abstract class CachedPyramidSet extends DefaultPyramidSet {
             return queue;
         }
 
-        final boolean useNIO = Boolean.TRUE.equals(server.getUserProperty(PROPERTY_NIO));
-        if(useNIO){
-            queryUsingNIO(url, queue, downloadList);
-        }else{
-            queryUsingIO(url, queue, downloadList);
-        }
-
+        queryUsingNIO(url, queue, downloadList);
+        
         return queue;
     }
 
@@ -302,10 +302,11 @@ public abstract class CachedPyramidSet extends DefaultPyramidSet {
     /**
      * Use standard java IO with a thread pool.
      */
-    private void queryUsingIO(final URL url, final CancellableQueue queue,
+    private void queryUsingIO(final CancellableQueue queue,
             final List<ImagePack> downloadList){
 
-        final ExecutorService es = Executors.newFixedThreadPool(3);
+        final int processors = Runtime.getRuntime().availableProcessors();
+        final ExecutorService es = Executors.newFixedThreadPool(processors*2);
         final CountDownLatch latch = new CountDownLatch(downloadList.size()) {
             @Override
             public void countDown() {
@@ -342,6 +343,46 @@ public abstract class CachedPyramidSet extends DefaultPyramidSet {
     }
 
     /**
+     * When service is secured or has other constraints we can only use standard IO.
+     */
+    private CancellableQueue queryUnoptimizedIO(GridMosaic mosaic, Collection<? extends Point> locations, Map hints){
+        
+        final CancellableQueue<Object> queue = new CancellableQueue<Object>(1000);
+
+        //compose the requiered queries
+        final List<ImagePack> downloadList = new ArrayList<ImagePack>();
+        for (Point p : locations) {
+            //check the cache if we have the image already
+            final String tid = toId(mosaic, p.x, p.y, hints);
+            final RenderedImage image = tileCache.get(tid);
+
+            if (queue.isCancelled()) {
+                queue.offer(GridMosaic.END_OF_QUEUE); //end sentinel
+                return queue;
+            }
+
+            if (image != null) {
+                //image was in cache, reuse it
+                final ImagePack pack = new ImagePack(tid, mosaic, p);
+                pack.img = image;
+                queue.offer(pack.getTile());
+            } else {
+                //we will have to download this image
+                downloadList.add(new ImagePack(mosaic, p));
+            }
+        }
+
+        //nothing to download, everything was in cache.
+        if (downloadList.isEmpty()) {
+            queue.offer(GridMosaic.END_OF_QUEUE); //end sentinel
+            return queue;
+        }
+
+        queryUsingIO(queue, downloadList);        
+        return queue;
+    }
+    
+    /**
      * Used is NIO queries, act as an information container for each query.
      */
     private class ImagePack {
@@ -357,7 +398,13 @@ public abstract class CachedPyramidSet extends DefaultPyramidSet {
             this.mosaic = mosaic;
             this.pt = pt;
         }
-
+        
+        public ImagePack(GridMosaic mosaic, Point pt) {
+            this.requestPath = null;
+            this.mosaic = mosaic;
+            this.pt = pt;
+        }
+        
         public String getRequestPath() {
             return requestPath;
         }

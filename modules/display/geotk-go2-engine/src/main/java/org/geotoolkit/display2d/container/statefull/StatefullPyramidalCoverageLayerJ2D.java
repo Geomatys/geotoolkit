@@ -64,6 +64,8 @@ public class StatefullPyramidalCoverageLayerJ2D extends StatefullMapLayerJ2D<Cov
     @Override
     public void paint(RenderingContext2D context2D) {
         
+        if(!item.isVisible()) return;
+        
         final Name coverageName = item.getCoverageName();
         final CachedRule[] rules = GO2Utilities.getValidCachedRules(item.getStyle(),
                 context2D.getSEScale(), coverageName,null);
