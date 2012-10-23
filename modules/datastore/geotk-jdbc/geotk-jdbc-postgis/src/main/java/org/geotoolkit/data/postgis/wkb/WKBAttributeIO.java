@@ -28,7 +28,9 @@ import com.vividsolutions.jts.io.InStream;
 import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jts.io.WKBReader;
 import com.vividsolutions.jts.io.WKBWriter;
+import java.util.logging.Level;
 import net.iharder.Base64;
+import org.geotoolkit.util.logging.Logging;
 
 
 /**
@@ -41,7 +43,7 @@ import net.iharder.Base64;
 public final class WKBAttributeIO {
 
     private final WKBReader wkbr;
-    private final ByteArrayInStream inStream = new ByteArrayInStream();
+    private final WKBAttributeIO.ByteArrayInStream inStream = new WKBAttributeIO.ByteArrayInStream();
 
     public WKBAttributeIO() {
         wkbr = new WKBReader();
@@ -75,6 +77,12 @@ public final class WKBAttributeIO {
             return wkbr.read(inStream);
         } catch (ParseException e) {
             throw new IOException("An exception occurred while parsing WKB data", e);
+        } catch (IllegalArgumentException e) {
+            //some postgis version return geometry considered invalid by jts.
+            //like linestring with one point. (likely the result of a clamzy decimation)
+            //JTS raise an illegal argument exception in those cases.
+            Logging.getLogger(WKBAttributeIO.class).log(Level.FINE, "Postgis returned geometry not supported by jts wkb parser.",e);
+            return null;
         }
     }
 
