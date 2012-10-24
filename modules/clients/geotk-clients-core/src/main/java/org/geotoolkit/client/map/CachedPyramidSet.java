@@ -17,6 +17,7 @@
 package org.geotoolkit.client.map;
 
 import java.awt.Point;
+import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -369,7 +370,10 @@ public abstract class CachedPyramidSet extends DefaultPyramidSet {
         for (Point p : locations) {
             //check the cache if we have the image already
             final String tid = toId(mosaic, p.x, p.y, hints);
-            final RenderedImage image = tileCache.get(tid);
+            RenderedImage image = null;
+            if(tileCache != null){
+                image = tileCache.get(tid);
+            }
 
             if (queue.isCancelled()) {
                 queue.offer(GridMosaic.END_OF_QUEUE); //end sentinel
@@ -426,16 +430,23 @@ public abstract class CachedPyramidSet extends DefaultPyramidSet {
 
         public TileReference readNow() throws DataStoreException, IOException{
             final TileReference ref = mosaic.getTile(pt.x, pt.y, null);
-            return ref;
+            if(ref.getInput() instanceof RenderedImage){
+                return ref;
+            }
+            final BufferedImage img = ref.getImageReader().read(0);
+            final TileReference tr = new DefaultTileReference(ref.getImageReaderSpi(), img, 0, ref.getPosition());
+            return tr;
         }
 
         public TileReference getTile() {
             if(img == null){
                 try {
                     img = ImageIO.read(new ByteArrayInputStream(buffer.array()));
-                    final String tid = toId(mosaic, pt.x, pt.y, null);
-                    //store it in the cache
-                    tileCache.put(tid, img);
+                    if(tileCache != null){
+                        final String tid = toId(mosaic, pt.x, pt.y, null);
+                        //store it in the cache
+                        tileCache.put(tid, img);
+                    }
                 } catch (Exception ex) {
                     LOGGER.log(Level.WARNING, ex.getMessage(), ex);
                 }
