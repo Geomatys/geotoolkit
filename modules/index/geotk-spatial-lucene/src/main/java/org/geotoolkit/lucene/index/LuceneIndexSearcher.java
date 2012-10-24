@@ -26,11 +26,12 @@ import java.util.logging.Level;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.CorruptIndexException;
+import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.Term;
-import org.apache.lucene.queryParser.ParseException;
-import org.apache.lucene.queryParser.QueryParser;
-import org.apache.lucene.queryParser.QueryParser.Operator;
+import org.apache.lucene.queryparser.classic.ParseException;
+import org.apache.lucene.queryparser.classic.QueryParser;
+import org.apache.lucene.queryparser.classic.QueryParser.Operator;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.Filter;
 import org.apache.lucene.search.IndexSearcher;
@@ -45,7 +46,6 @@ import org.geotoolkit.lucene.LuceneUtils;
 import org.geotoolkit.lucene.SearchingException;
 import org.geotoolkit.lucene.filter.SerialChainFilter;
 import org.geotoolkit.lucene.filter.SpatialQuery;
-import org.geotoolkit.lucene.tree.TreeIndexReaderWrapper;
 import org.geotoolkit.util.FileUtilities;
 
 
@@ -164,12 +164,8 @@ public class LuceneIndexSearcher extends IndexLucene {
 
         } catch (CorruptIndexException ex) {
             throw new IndexingException("Corruption encountered during index searcher creation", ex);
-        } catch (ParseException ex) {
-            throw new IndexingException("Failure to parse during index searcher creation", ex);
         } catch (IOException ex) {
             throw new IndexingException("IO Exception during index searcher creation", ex);
-        }  catch (SearchingException ex) {
-            throw new IndexingException("Searching Exception during index searcher creation", ex);
         }
         
     }
@@ -192,7 +188,7 @@ public class LuceneIndexSearcher extends IndexLucene {
     private void initSearcher() throws CorruptIndexException, IOException {
         final File indexDirectory = getFileDirectory();
         readTree();
-        final IndexReader reader  = new TreeIndexReaderWrapper(IndexReader.open(LuceneUtils.getAppropriateDirectory(indexDirectory)), rTree, envelopeOnly);
+        final IndexReader reader  = DirectoryReader.open(LuceneUtils.getAppropriateDirectory(indexDirectory));
         searcher                  = new IndexSearcher(reader);
         LOGGER.log(Level.INFO, "Creating new Index Searcher with index directory:{0}", indexDirectory.getPath());
        
@@ -201,9 +197,10 @@ public class LuceneIndexSearcher extends IndexLucene {
     /**
      * Fill the list of identifiers ordered by doc ID
      */
-    private void initIdentifiersList() throws IOException, CorruptIndexException, ParseException, SearchingException {
+    private void initIdentifiersList() throws IOException {
         identifiers = new ArrayList<String>();
-        for (int i = 0; i < searcher.maxDoc(); i++) {
+        final long nbDoc = searcher.collectionStatistics("id").maxDoc();
+        for (int i = 0; i < nbDoc; i++) {
             final String metadataID = getMatchingID(searcher.doc(i));
             identifiers.add(i, metadataID);
         }
@@ -221,10 +218,6 @@ public class LuceneIndexSearcher extends IndexLucene {
             initIdentifiersList();
             cachedQueries.clear();
             LOGGER.log(logLevel, "refreshing index searcher");
-        } catch (ParseException ex) {
-            throw new IndexingException("Parse exception encountered during refreshing the index searcher", ex);
-        } catch (SearchingException ex) {
-            throw new IndexingException("Searching exception encountered during refreshing the index searcher", ex);
         } catch (CorruptIndexException ex) {
             throw new IndexingException("Corruption exception encountered during refreshing the index searcher", ex);
         } catch (IOException ex) {
@@ -244,14 +237,16 @@ public class LuceneIndexSearcher extends IndexLucene {
         try {
             final TermQuery query = new TermQuery(new Term(getIdentifierSearchField(), id));
             final Set<String> results = new LinkedHashSet<String>();
-            final int maxRecords = searcher.maxDoc();
+            final int maxRecords = (int)searcher.collectionStatistics("id").maxDoc();
             if (maxRecords == 0) {
                 LOGGER.warning("There is no document in the index");
                 return null;
             }
             final TopDocs hits = searcher.search(query, maxRecords);
             for (ScoreDoc doc : hits.scoreDocs) {
-                results.add(searcher.doc(doc.doc, new IDFieldSelector()).get("id"));
+                final Set<String> fieldsToLoad = new HashSet<String>();
+                fieldsToLoad.add("id");
+                results.add(searcher.document(doc.doc, fieldsToLoad).get("id"));
             }
             if (results.size() > 1) {
                 LOGGER.log(Level.WARNING, "multiple record in lucene index for identifier: {0}", id);
@@ -285,7 +280,7 @@ public class LuceneIndexSearcher extends IndexLucene {
      *
      * @return A database id.
      */
-    public String getMatchingID(final Document doc) throws SearchingException {
+    public String getMatchingID(final Document doc) {
         return doc.get("id");
     }
 
@@ -300,6 +295,7 @@ public class LuceneIndexSearcher extends IndexLucene {
         try {
             final long start = System.currentTimeMillis();
             final Set<String> results = new LinkedHashSet<String>();
+            spatialQuery.applyRtreeOnFilter(rTree, envelopeOnly);
 
             //we look for a cached Query
             if (isCacheEnabled && cachedQueries.containsKey(spatialQuery)) {
@@ -308,7 +304,7 @@ public class LuceneIndexSearcher extends IndexLucene {
                 return cachedResults;
             }
 
-            int maxRecords = searcher.maxDoc();
+            int maxRecords = (int) searcher.collectionStatistics("id").maxDoc();
             if (maxRecords == 0) {
                 LOGGER.warning("The index seems to be empty.");
                 maxRecords = 1;
@@ -316,7 +312,7 @@ public class LuceneIndexSearcher extends IndexLucene {
 
             final String field       = "title";
             String stringQuery       = spatialQuery.getQuery();
-            final QueryParser parser = new ExtendedQueryParser(Version.LUCENE_36, field, analyzer, numericFields);
+            final QueryParser parser = new ExtendedQueryParser(Version.LUCENE_40, field, analyzer, numericFields);
             parser.setDefaultOperator(Operator.AND);
             
             // remove term:* query
@@ -499,13 +495,6 @@ public class LuceneIndexSearcher extends IndexLucene {
     public void destroy() {
         super.destroy();
         LOGGER.info("shutting down index searcher");
-        try {
-            if (searcher != null) {
-                searcher.close();
-            }
-            cachedQueries.clear();
-        } catch (IOException ex) {
-            LOGGER.warning("IOException while closing the index searcher");
-        }
+        cachedQueries.clear();
     }
 }

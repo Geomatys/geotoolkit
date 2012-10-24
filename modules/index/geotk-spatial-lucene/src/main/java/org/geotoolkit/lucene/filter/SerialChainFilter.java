@@ -21,11 +21,13 @@ import java.io.IOException;
 import java.util.BitSet;
 
 import java.util.List;
+import org.apache.lucene.index.AtomicReaderContext;
 import org.apache.lucene.index.CorruptIndexException;
-import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.search.DocIdSet;
 import org.apache.lucene.search.Filter;
+import org.apache.lucene.util.Bits;
 import org.apache.lucene.util.DocIdBitSet;
+import org.geotoolkit.index.tree.Tree;
 
 /**
  * 
@@ -42,7 +44,7 @@ import org.apache.lucene.util.DocIdBitSet;
  * @author Guilhem Legal
  * @module pending
  */
-public class SerialChainFilter extends Filter {
+public class SerialChainFilter extends Filter implements  org.geotoolkit.lucene.filter.Filter {
 
     /**
      * For cross-version compatibility.
@@ -73,17 +75,17 @@ public class SerialChainFilter extends Filter {
      * @see org.apache.lucene.search.Filter#bits(org.apache.lucene.index.IndexReader)
      */
     @Override
-    public  DocIdSet getDocIdSet(final IndexReader reader) throws CorruptIndexException, IOException {
+    public  DocIdSet getDocIdSet(final AtomicReaderContext ctx, final Bits b) throws CorruptIndexException, IOException {
 
         final int chainSize  = chain.size();
         final int actionSize = actionType.length;
 
-        final BitSet bits    = ((DocIdBitSet)chain.get(0).getDocIdSet(reader)).getBitSet();
+        final BitSet bits    = ((DocIdBitSet)chain.get(0).getDocIdSet(ctx, b)).getBitSet();
 
         //if there is only an operand not we don't enter the loop
         int j = 0;
         if (actionType[j] == NOT) {
-            bits.flip(0, reader.maxDoc());
+            bits.flip(0, ctx.reader().maxDoc());
             j++;
         }
 
@@ -97,11 +99,11 @@ public class SerialChainFilter extends Filter {
                 action = DEFAULT;
             }
 
-            final BitSet nextFilterResponse = ((DocIdBitSet)chain.get(i).getDocIdSet(reader)).getBitSet();
+            final BitSet nextFilterResponse = ((DocIdBitSet)chain.get(i).getDocIdSet(ctx, b)).getBitSet();
 
             //if the next operator is NOT we have to process the action before the current operand
             if (j < actionSize && actionType[j] == NOT) {
-                nextFilterResponse.flip(0, reader.maxDoc());
+                nextFilterResponse.flip(0, ctx.reader().maxDoc());
                 j++;
             }
 
@@ -184,6 +186,16 @@ public class SerialChainFilter extends Filter {
         }
     }
     
+    @Override
+    public void applyRtreeOnFilter(final Tree rTree, final boolean envelopeOnly) {
+        for (Filter f : chain) {
+            if (f instanceof org.geotoolkit.lucene.filter.Filter) {
+                ((org.geotoolkit.lucene.filter.Filter)f).applyRtreeOnFilter(rTree, envelopeOnly);
+            }
+        }
+    }
+
+    
     /** 
      * Returns true if <code>o</code> is equal to this.
      * 
@@ -191,17 +203,18 @@ public class SerialChainFilter extends Filter {
      */
     @Override
     public boolean equals(final Object o) {
-        if (this == o) return true;
-        if (!(o instanceof SerialChainFilter)) return false;
+        if (this == o) {return true;}
+        if (!(o instanceof SerialChainFilter)) {return false;}
         final SerialChainFilter other = (SerialChainFilter) o;
 
-        if (this.chain.size() != other.getChain().size() ||
-        	this.actionType.length != other.getActionType().length)
+        if (this.chain.size() != other.getChain().size() || this.actionType.length != other.getActionType().length) {
         	return false;
+        }
         
         for (int i = 0; i < this.chain.size(); i++) {
-            if (this.actionType[i] != other.getActionType()[i]  || !this.chain.get(i).equals(other.getChain().get(i)))
+            if (this.actionType[i] != other.getActionType()[i]  || !this.chain.get(i).equals(other.getChain().get(i))) {
                 return false;
+            }
         }
         return true;
     }
@@ -213,8 +226,9 @@ public class SerialChainFilter extends Filter {
      */
     @Override
     public int hashCode() {
-      if (chain.isEmpty())
+      if (chain.isEmpty()) {
     	  return 0;
+      }
 
       int h = chain.get(0).hashCode() ^ Integer.valueOf(actionType[0]).hashCode();
       for (int i = 1; i < this.chain.size(); i++) {
@@ -254,8 +268,9 @@ public class SerialChainFilter extends Filter {
                         buf.append(actionType[i]);
                 }
                 buf.append('\n');
-                if (chain.size() > i + 1)
+                if (chain.size() > i + 1) {
                     buf.append('\t').append(" ").append(chain.get(i + 1)).append('\n');
+                }
             }
         }
         buf.append('\n');

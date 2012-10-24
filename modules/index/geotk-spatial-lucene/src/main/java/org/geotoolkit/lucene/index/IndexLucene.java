@@ -23,6 +23,7 @@ import java.util.logging.Logger;
 import java.util.HashSet;
 
 import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.util.CharArraySet;
 
 import org.apache.lucene.store.RAMDirectory;
 import org.apache.lucene.util.Version;
@@ -87,7 +88,7 @@ public abstract class IndexLucene {
     * Analyzer field is set to default value ClassicAnalyzer.
     */
     public IndexLucene() {
-        analyzer = new ClassicAnalyzer(Version.LUCENE_36, new HashSet<String>());
+        analyzer = new ClassicAnalyzer(Version.LUCENE_40, new CharArraySet(Version.LUCENE_40, new HashSet<String>(), true));
         this.rTree = buildNewTree();
     }
 
@@ -97,7 +98,7 @@ public abstract class IndexLucene {
      */
     public IndexLucene(final Analyzer analyzer) {
         if (analyzer == null) {
-            this.analyzer = new ClassicAnalyzer(Version.LUCENE_36, new HashSet<String>());
+            this.analyzer = new ClassicAnalyzer(Version.LUCENE_40, new CharArraySet(Version.LUCENE_40, new HashSet<String>(), true));
         } else {
             this.analyzer = analyzer;
         }

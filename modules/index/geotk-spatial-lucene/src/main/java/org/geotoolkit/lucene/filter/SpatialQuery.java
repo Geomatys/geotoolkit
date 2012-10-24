@@ -22,6 +22,7 @@ import java.util.List;
 
 import org.apache.lucene.search.Filter;
 import org.apache.lucene.search.Sort;
+import org.geotoolkit.index.tree.Tree;
 
 import org.geotoolkit.util.Utilities;
 
@@ -119,9 +120,9 @@ public class SpatialQuery {
      * Return the lucene query associated with the filter. 
      */
     public String getQuery() {
-        if (query == null || query.toString().equals("") || query.toString().equals(" "))
+        if (query == null || query.toString().equals("") || query.toString().equals(" ")) {
             return "metafile:doc";
-        
+        }
         return query.toString();
     }
     
@@ -192,6 +193,12 @@ public class SpatialQuery {
      */
     public void appendToQuery(final String s) {
         query.append(s);
+    }
+    
+    public void applyRtreeOnFilter(final Tree rTree, final boolean envelopeOnly) {
+        if (spatialFilter instanceof org.geotoolkit.lucene.filter.Filter) {
+            ((org.geotoolkit.lucene.filter.Filter)spatialFilter).applyRtreeOnFilter(rTree, envelopeOnly);
+        }
     }
     
     /**

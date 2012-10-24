@@ -29,7 +29,7 @@ import com.vividsolutions.jts.geom.impl.CoordinateArraySequence;
 // Apache Lucene dependencies
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.document.Document;
-import org.apache.lucene.document.Field;
+import org.apache.lucene.document.StoredField;
 import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
@@ -178,7 +178,7 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
         final long time = System.currentTimeMillis();
         int nbEntries = 0;
         try {
-            final IndexWriterConfig conf = new IndexWriterConfig(Version.LUCENE_36, analyzer);
+            final IndexWriterConfig conf = new IndexWriterConfig(Version.LUCENE_40, analyzer);
             final IndexWriter writer     = new IndexWriter(LuceneUtils.getAppropriateDirectory(getFileDirectory()), conf);
             final String serviceID       = getServiceID();
             
@@ -222,7 +222,7 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
         final long time  = System.currentTimeMillis();
         int nbEntries      = 0;
         try {
-            final IndexWriterConfig conf   = new IndexWriterConfig(Version.LUCENE_36, analyzer);
+            final IndexWriterConfig conf   = new IndexWriterConfig(Version.LUCENE_40, analyzer);
             final IndexWriter writer       = new IndexWriter(LuceneUtils.getAppropriateDirectory(getFileDirectory()), conf);
             final String serviceID         = getServiceID();
             final Collection<String> identifiers = getAllIdentifiers();
@@ -291,7 +291,7 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
      */
     public void indexDocument(final E meta) {
         try {
-            final IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_36, analyzer);
+            final IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_40, analyzer);
             final IndexWriter writer = new IndexWriter(LuceneUtils.getAppropriateDirectory(getFileDirectory()), config);
 
             final int docId = writer.maxDoc();
@@ -370,7 +370,7 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
      */
     public void removeDocument(final String identifier) {
         try {
-            final IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_36, analyzer);
+            final IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_40, analyzer);
             final IndexWriter writer = new IndexWriter(LuceneUtils.getAppropriateDirectory(getFileDirectory()), config);
 
             final Term t          = new Term("id", identifier);
@@ -485,7 +485,7 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
                 LOGGER.log(Level.WARNING, "Unable to insert envelope in R-Tree.", ex);
             }
         }
-        doc.add(new Field(LuceneOGCFilter.GEOMETRY_FIELD_NAME,WKBUtils.toWKBwithSRID(geom)));
+        doc.add(new StoredField(LuceneOGCFilter.GEOMETRY_FIELD_NAME,WKBUtils.toWKBwithSRID(geom)));
     }
 
     /**

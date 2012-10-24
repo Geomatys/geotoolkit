@@ -32,6 +32,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 import java.io.File;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.analysis.Analyzer;
@@ -39,33 +41,40 @@ import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.StringField;
-import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexWriterConfig;
-import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
-import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.Filter;
-import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.TermQuery;
-import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.SimpleFSDirectory;
 
 import org.geotoolkit.filter.DefaultFilterFactory2;
+import org.geotoolkit.geometry.Envelopes;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.geometry.jts.SRIDGenerator;
 import org.geotoolkit.geometry.jts.SRIDGenerator.Version;
+import org.geotoolkit.index.tree.Tree;
+import org.geotoolkit.index.tree.TreeFactory;
+import org.geotoolkit.index.tree.io.DefaultTreeVisitor;
+import org.geotoolkit.index.tree.io.TreeVisitor;
+import org.geotoolkit.index.tree.io.TreeWriter;
+import org.geotoolkit.index.tree.nodefactory.NodeFactory;
+import org.geotoolkit.index.tree.nodefactory.TreeNodeFactory;
 import org.geotoolkit.lucene.analysis.standard.ClassicAnalyzer;
 import org.geotoolkit.lucene.filter.SerialChainFilter;
 import org.geotoolkit.lucene.filter.SpatialQuery;
 import org.geotoolkit.lucene.index.AbstractIndexer;
+import org.geotoolkit.lucene.tree.NamedEnvelope;
 import org.geotoolkit.referencing.CRS;
 import static org.geotoolkit.lucene.filter.LuceneOGCFilter.*;
+import org.geotoolkit.lucene.index.LuceneIndexSearcher;
+import org.geotoolkit.util.FileUtilities;
 
 import org.opengis.filter.FilterFactory2;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.geometry.Envelope;
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -76,16 +85,17 @@ import static org.junit.Assert.*;
  * @author Guilhem Legal
  * @module pending
  */
-public class LuceneTest {
+public class LuceneSearcherTest {
 
     private static final GeometryFactory GF = new GeometryFactory();
 
     private static File directory;
-    private static IndexSearcher searcher;
-    private static Query         simpleQuery;
+    private static File subDirectory;
+    private static LuceneIndexSearcher searcher;
     private static FilterFactory2 FF = new DefaultFilterFactory2();
     private static CoordinateReferenceSystem crs;
     private static CoordinateReferenceSystem treeCrs;
+    private static Tree rTree;
     private static final Logger LOGGER = Logger.getLogger("org.constellation.lucene");
 
     private static final double TOLERANCE = 0.001;
@@ -100,7 +110,7 @@ public class LuceneTest {
 
         crs = CRS.decode("CRS:84");
 
-        directory = new File("luceneTest");
+        directory = new File("luceneSearcherTest");
         if (!directory.exists()) {
             directory.mkdir();
         } else {
@@ -108,34 +118,38 @@ public class LuceneTest {
                 f.delete();
             }
         }
+        
+        subDirectory = new File(directory, "index-" + System.currentTimeMillis());
 
         // the tree CRS (must be) cartesian
-        treeCrs = CRS.decode("EPSG:3857");
+        treeCrs = CRS.decode("CRS:84");
 
-        final Analyzer analyzer = new StandardAnalyzer(org.apache.lucene.util.Version.LUCENE_40);
+        //Create Calculator. Be careful to choice calculator adapted from crs---
+        //final Calculator calculator = DefaultCalculator.CALCULATOR_2D;
+
+        //Create NodeFactory adapted about caller uses.
+        final NodeFactory nodefactory = TreeNodeFactory.DEFAULT_FACTORY;
+
+        //creating tree (R-Tree)------------------------------------------------
+        rTree = TreeFactory.createStarRTree(15, treeCrs, nodefactory);
+
+        final Analyzer analyzer  = new StandardAnalyzer(org.apache.lucene.util.Version.LUCENE_40);
         IndexWriterConfig config = new IndexWriterConfig(org.apache.lucene.util.Version.LUCENE_40, analyzer);
-        Directory FSDirectory = new SimpleFSDirectory(directory);
+        Directory FSDirectory    = new SimpleFSDirectory(subDirectory);
         final IndexWriter writer = new IndexWriter(FSDirectory, config);
-        fillTestData(writer);
+        fillTestData(writer, rTree);
         writer.commit();
         writer.close();
-
-        //IndexReader reader = new TreeIndexReaderWrapper(IndexReader.open(FSDirectory),rTree, false);
-        IndexReader reader = DirectoryReader.open(FSDirectory);
-        searcher = new IndexSearcher(reader);
-        //create a term query to search against all documents
-        simpleQuery = new TermQuery(new Term("metafile", "doc"));
+        
+        final File treeFile = new File(subDirectory, "tree.bin");
+        TreeWriter.write(rTree, treeFile);
+        
+        searcher = new LuceneIndexSearcher(directory, null, new StandardAnalyzer(org.apache.lucene.util.Version.LUCENE_40), false);
     }
 
     @AfterClass
     public static void tearDownClass() throws Exception {
-        directory = new File("luceneTest");
-        if (directory.exists()) {
-            for (File f : directory.listFiles()) {
-                f.delete();
-            }
-            directory.delete();
-        }
+        FileUtilities.deleteDirectory(directory);
     }
 
     @Before
@@ -159,21 +173,13 @@ public class LuceneTest {
         SpatialQuery bboxQuery = new SpatialQuery(wrap(spaFilter));
 
         //we perform a lucene query
-        TopDocs docs = searcher.search(simpleQuery, bboxQuery.getSpatialFilter(), 15);
+        Set<String> results = searcher.doSearch(bboxQuery);
 
-        int nbResults = docs.totalHits;
+        int nbResults = results.size();
         LOGGER.log(Level.FINER, "BBOX:BBOX 1 CRS=4326: nb Results: {0}", nbResults);
 
-        List<String> results = new ArrayList<String>();
-        for (int i = 0; i < nbResults; i++) {
-            Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("id");
-            results.add(name);
-            LOGGER.log(Level.FINER, "\tid: {0}", name);
-        }
-
-        //we verify that we obtain the correct results
-        assertEquals(nbResults, 10);
+       //we verify that we obtain the correct results
+        assertEquals("was:" + results, nbResults, 10);
         assertTrue(results.contains("point 1"));
         assertTrue(results.contains("point 1 projected"));
         assertTrue(results.contains("point 2"));
@@ -195,18 +201,10 @@ public class LuceneTest {
         bboxQuery = new SpatialQuery(wrap(spaFilter));
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, bboxQuery.getSpatialFilter(), 15);
+        results = searcher.doSearch(bboxQuery);
 
-        nbResults = docs.totalHits;
+        nbResults = results.size();
         LOGGER.log(Level.FINER, "BBOX:BBOX 1 CRS= 3395: nb Results: {0}", nbResults);
-
-        results = new ArrayList<String>();
-        for (int i = 0; i < nbResults; i++) {
-            Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("id");
-            results.add(name);
-            LOGGER.log(Level.FINER, "\tid: {0}", name);
-        }
 
         //we verify that we obtain the correct results
         assertEquals(nbResults, 10);
@@ -228,18 +226,10 @@ public class LuceneTest {
         bboxQuery = new SpatialQuery(wrap(spaFilter));
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, bboxQuery.getSpatialFilter(), 15);
+        results = searcher.doSearch(bboxQuery);
 
-        nbResults = docs.totalHits;
+        nbResults = results.size();
         LOGGER.log(Level.FINER, "BBOX:BBOX 2 CRS= 4326: nb Results: {0}", nbResults);
-
-        results = new ArrayList<String>();
-        for (int i = 0; i < nbResults; i++) {
-            Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("id");
-            results.add(name);
-            LOGGER.log(Level.FINER, "\tid: {0}", name);
-        }
 
          //we verify that we obtain the correct results
         assertEquals(nbResults, 9);
@@ -260,22 +250,161 @@ public class LuceneTest {
         bboxQuery = new SpatialQuery(wrap(spaFilter));
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, bboxQuery.getSpatialFilter(), 15);
+        results = searcher.doSearch(bboxQuery);
 
-        nbResults = docs.totalHits;
+        nbResults = results.size();
         LOGGER.log(Level.FINER, "BBOX:BBOX 3 CRS= 4326: nb Results: {0}", nbResults);
 
-        results = new ArrayList<String>();
+        //we verify that we obtain the correct results
+        assertEquals(nbResults, 1);
+        assertTrue(results.contains("box 5"));
+    }
+
+    /**
+     * Test the rTree.
+     */
+    @Test
+    public void rTreeBBOXTest() throws Exception {
+        /*
+         * first bbox
+         */
+        GeneralEnvelope env = new GeneralEnvelope(crs);
+        env.setEnvelope(-20,-20,20,20);
+
+        // reproject to tree CRS
+        env = (GeneralEnvelope) Envelopes.transform(env, treeCrs);
+
+        //we perform a retree query
+        List<Envelope> docs = new ArrayList<Envelope>();
+        final TreeVisitor treeVisitor = new DefaultTreeVisitor(docs);
+        rTree.search(env, treeVisitor);
+
+        int nbResults = docs.size();
+        LOGGER.log(Level.FINER, "BBOX:BBOX 1 CRS=4326: nb Results: {0}", nbResults);
+
+        List<Integer> results = new ArrayList<Integer>();
         for (int i = 0; i < nbResults; i++) {
-            Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("id");
+            NamedEnvelope doc = (NamedEnvelope) docs.get(i);
+            int id =  doc.getId();
+            results.add(id);
+            LOGGER.log(Level.FINER, "\tid: {0}", id);
+        }
+
+        //we verify that we obtain the correct results
+        assertEquals(nbResults, 11); // gain 1 result was 10 before moving to CRS:84
+        assertTrue(results.contains(0));
+        assertTrue(results.contains(1));
+        assertTrue(results.contains(2));
+        assertTrue(results.contains(3));
+        assertTrue(results.contains(7));
+        assertTrue(results.contains(8));
+        assertTrue(results.contains(10));
+        assertTrue(results.contains(12));
+        assertTrue(results.contains(13));
+        assertTrue(results.contains(14));
+
+        /*
+         * The same box in a diferent crs
+         */
+        env = new GeneralEnvelope(CRS.decode("EPSG:3395"));
+        env.setEnvelope(-2226389.8158654715, -2258423.6490963786,
+                         2226389.8158654715, 2258423.6490963805);
+
+        // reproject to tree CRS
+        env = (GeneralEnvelope) Envelopes.transform(env, treeCrs);
+
+
+        //we perform a retree query
+        docs.clear();
+        rTree.search(env, treeVisitor);
+
+        nbResults = docs.size();
+        LOGGER.log(Level.FINER, "BBOX:BBOX 1 CRS= 3395: nb Results: {0}", nbResults);
+
+        results = new ArrayList<Integer>();
+        for (int i = 0; i < nbResults; i++) {
+            NamedEnvelope doc = (NamedEnvelope) docs.get(i);
+            Integer name =  doc.getId();
+            results.add(name);
+            LOGGER.log(Level.FINER, "\tid: {0}", name);
+        }
+
+        //we verify that we obtain the correct results
+        assertEquals(nbResults, 11); // gain 1 result was 10 before moving to CRS:84
+        assertTrue(results.contains(0));
+        assertTrue(results.contains(1));
+        assertTrue(results.contains(2));
+        assertTrue(results.contains(3));
+        assertTrue(results.contains(7));
+        assertTrue(results.contains(8));
+        assertTrue(results.contains(10));
+        assertTrue(results.contains(12));
+        assertTrue(results.contains(13));
+        assertTrue(results.contains(14));
+
+        /*
+         * second bbox
+         */
+        env = new GeneralEnvelope(crs);
+        env.setEnvelope(-5, -5, 60, 60);
+
+        // reproject to tree CRS
+        env = (GeneralEnvelope) Envelopes.transform(env, treeCrs);
+
+        //we perform a retree query
+        docs.clear();
+        rTree.search(env, treeVisitor);
+
+        nbResults = docs.size();
+        LOGGER.log(Level.FINER, "BBOX:BBOX 2 CRS= 4326: nb Results: {0}", nbResults);
+
+        results = new ArrayList<Integer>();
+        for (int i = 0; i < nbResults; i++) {
+            NamedEnvelope doc = (NamedEnvelope) docs.get(i);
+            int name =  doc.getId();
+            results.add(name);
+            LOGGER.log(Level.FINER, "\tid: {0}", name);
+        }
+
+         //we verify that we obtain the correct results
+        assertEquals(nbResults, 10); // gain 1 result was 9 before moving to CRS:84
+        assertTrue(results.contains(3));
+        assertTrue(results.contains(4));
+        assertTrue(results.contains(9));
+        assertTrue(results.contains(7));
+        assertTrue(results.contains(8));
+        assertTrue(results.contains(11));
+        assertTrue(results.contains(12));
+        assertTrue(results.contains(13));
+        assertTrue(results.contains(14));
+
+        /*
+         * third bbox
+         */
+        env = new GeneralEnvelope(crs);
+        env.setEnvelope(40, -9, 50, -5);
+
+        // reproject to tree CRS
+        env = (GeneralEnvelope) Envelopes.transform(env, treeCrs);
+
+        //we perform a retree query
+        docs.clear();
+        rTree.search(env, treeVisitor);
+
+        nbResults = docs.size();
+        LOGGER.log(Level.FINER, "BBOX:BBOX 3 CRS= 4326: nb Results: {0}", nbResults);
+
+        results = new ArrayList<Integer>();
+        for (int i = 0; i < nbResults; i++) {
+            NamedEnvelope doc = (NamedEnvelope) docs.get(i);
+            int name =  doc.getId();
             results.add(name);
             LOGGER.log(Level.FINER, "\tid: {0}", name);
         }
 
          //we verify that we obtain the correct results
         assertEquals(nbResults, 1);
-        assertTrue(results.contains("box 5"));
+        assertTrue(results.contains(11));
     }
 
     /**
@@ -295,18 +424,10 @@ public class LuceneTest {
         SpatialQuery bboxQuery = new SpatialQuery(wrap(filter));
 
         //we perform a lucene query
-        TopDocs docs = searcher.search(simpleQuery, bboxQuery.getSpatialFilter(), 15);
+        Set<String> results = searcher.doSearch(bboxQuery);
 
-        int nbResults = docs.totalHits;
+        int nbResults = results.size();
         LOGGER.log(Level.FINER, "INTER:BBOX 1 CRS=4326: nb Results: {0}", nbResults);
-
-        List<String> results = new ArrayList<String>();
-        for (int i = 0; i < nbResults; i++) {
-            Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("id");
-            results.add(name);
-            LOGGER.log(Level.FINER, "\tid: {0}", name);
-        }
 
         //we verify that we obtain the correct results.
         assertEquals(nbResults, 10);
@@ -332,18 +453,10 @@ public class LuceneTest {
         bboxQuery = new SpatialQuery(wrap(filter));
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, bboxQuery.getSpatialFilter(), 15);
+        results = searcher.doSearch(bboxQuery);
 
-        nbResults = docs.totalHits;
+        nbResults = results.size();
         LOGGER.log(Level.FINER, "INTER:BBOX 1 CRS= 3395: nb Results: {0}", nbResults);
-
-        results = new ArrayList<String>();
-        for (int i = 0; i < nbResults; i++) {
-            Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("id");
-            results.add(name);
-            LOGGER.log(Level.FINER, "\tid: {0}", name);
-        }
 
         //we verify that we obtain the correct results
         assertEquals(nbResults, 10);
@@ -370,21 +483,10 @@ public class LuceneTest {
         bboxQuery = new SpatialQuery(wrap(filter));
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, bboxQuery.getSpatialFilter(), 15);
+        results = searcher.doSearch(bboxQuery);
 
-        nbResults = docs.totalHits;
+        nbResults = results.size();
         LOGGER.log(Level.FINER, "INTER:Line 1 CRS=4326: nb Results: {0}", nbResults);
-
-
-
-        results = new ArrayList<String>();
-        for (int i = 0; i < nbResults; i++) {
-            Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("id");
-            results.add(name);
-            LOGGER.log(Level.FINER, "\tid: {0}", name);
-        }
-
 
         //we verify that we obtain the correct results.
         assertEquals(nbResults, 4);
@@ -405,18 +507,10 @@ public class LuceneTest {
         bboxQuery = new SpatialQuery(wrap(filter));
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, bboxQuery.getSpatialFilter(), 15);
+        results = searcher.doSearch(bboxQuery);
 
-        nbResults = docs.totalHits;
+        nbResults = results.size();
         LOGGER.log(Level.FINER, "INTER:Line 1 CRS=3395: nb Results: {0}", nbResults);
-
-        results = new ArrayList<String>();
-        for (int i = 0; i < nbResults; i++) {
-            Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("id");
-            results.add(name);
-            LOGGER.log(Level.FINER, "\tid: {0}", name);
-        }
 
         //we verify that we obtain the correct results.
         assertEquals(nbResults, 4);
@@ -437,18 +531,10 @@ public class LuceneTest {
         bboxQuery = new SpatialQuery(wrap(filter));
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, bboxQuery.getSpatialFilter(), 15);
+        results = searcher.doSearch(bboxQuery);
 
-        nbResults = docs.totalHits;
+        nbResults = results.size();
         LOGGER.log(Level.FINER, "INTER:Line 2 CRS=4326: nb Results: {0}", nbResults);
-
-        results = new ArrayList<String>();
-        for (int i = 0; i < nbResults; i++) {
-            Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("id");
-            results.add(name);
-            LOGGER.log(Level.FINER, "\tid: {0}", name);
-        }
 
         //we verify that we obtain the correct results.
         assertEquals(nbResults, 2);
@@ -467,18 +553,10 @@ public class LuceneTest {
         bboxQuery = new SpatialQuery(wrap(filter));
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, bboxQuery.getSpatialFilter(), 15);
+        results = searcher.doSearch(bboxQuery);
 
-        nbResults = docs.totalHits;
+        nbResults = results.size();
         LOGGER.log(Level.FINER, "INTER:Line 2 CRS=3395: nb Results: {0}", nbResults);
-
-        results = new ArrayList<String>();
-        for (int i = 0; i < nbResults; i++) {
-            Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("id");
-            results.add(name);
-            LOGGER.log(Level.FINER, "\tid: {0}", name);
-        }
 
         //we verify that we obtain the correct results.
         assertEquals(nbResults, 2);
@@ -503,18 +581,10 @@ public class LuceneTest {
         SpatialQuery bboxQuery = new SpatialQuery(wrap(filter));
 
         //we perform a lucene query
-        TopDocs docs = searcher.search(simpleQuery, bboxQuery.getSpatialFilter(), 15);
+        Set<String> results = searcher.doSearch(bboxQuery);
 
-        int nbResults = docs.totalHits;
+        int nbResults = results.size();
         LOGGER.log(Level.FINER, "EQ:BBOX 1 CRS=4326: nb Results: {0}", nbResults);
-
-        List<String> results = new ArrayList<String>();
-        for (int i = 0; i < nbResults; i++) {
-            Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("id");
-            results.add(name);
-            LOGGER.log(Level.FINER, "\tid: {0}", name);
-        }
 
         //we verify that we obtain the correct results.
         assertEquals(nbResults, 1);
@@ -533,18 +603,10 @@ public class LuceneTest {
         bboxQuery = new SpatialQuery(wrap(filter));
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, bboxQuery.getSpatialFilter(), 15);
+        results = searcher.doSearch(bboxQuery);
 
-        nbResults = docs.totalHits;
+        nbResults = results.size();
         LOGGER.log(Level.FINER, "EQ:Line 1 CRS=4326: nb Results: {0}", nbResults);
-
-        results = new ArrayList<String>();
-        for (int i = 0; i < nbResults; i++) {
-            Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("id");
-            results.add(name);
-            LOGGER.log(Level.FINER, "\tid: {0}", name);
-        }
 
         //we verify that we obtain the correct results.
         assertEquals(nbResults, 1);
@@ -562,20 +624,12 @@ public class LuceneTest {
         bboxQuery = new SpatialQuery(wrap(filter));
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, bboxQuery.getSpatialFilter(), 15);
+        results = searcher.doSearch(bboxQuery);
 
-        nbResults = docs.totalHits;
+        nbResults = results.size();
         LOGGER.log(Level.FINER, "EQ:Point 1 CRS=4326: nb Results: {0}", nbResults);
 
-        results = new ArrayList<String>();
-        for (int i = 0; i < nbResults; i++) {
-            Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("id");
-            results.add(name);
-            LOGGER.log(Level.FINER, "\tid: {0}", name);
-        }
-
-         //we verify that we obtain the correct results.
+        //we verify that we obtain the correct results.
         assertEquals(nbResults, 1);
         assertTrue(results.contains("point 1" ));
     }
@@ -597,18 +651,11 @@ public class LuceneTest {
         SpatialQuery bboxQuery = new SpatialQuery(wrap(filter));
 
         //we perform a lucene query
-        TopDocs docs = searcher.search(simpleQuery, bboxQuery.getSpatialFilter(), 15);
+        Set<String> results = searcher.doSearch(bboxQuery);
 
-        int nbResults = docs.totalHits;
+        int nbResults = results.size();
         LOGGER.log(Level.FINER, "CT:BBOX 1 CRS=4326: nb Results: {0}", nbResults);
 
-        List<String> results = new ArrayList<String>();
-        for (int i = 0; i < nbResults; i++) {
-            Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("id");
-            results.add(name);
-            LOGGER.log(Level.FINER, "\tid: {0}", name);
-        }
 
         //we verify that we obtain the correct results.
         assertEquals(nbResults, 1);
@@ -626,18 +673,10 @@ public class LuceneTest {
         bboxQuery = new SpatialQuery(wrap(filter));
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, bboxQuery.getSpatialFilter(), 15);
+        results = searcher.doSearch(bboxQuery);
 
-        nbResults = docs.totalHits;
+        nbResults = results.size();
         LOGGER.log(Level.FINER, "CT:Line 1 CRS=4326: nb Results: {0}", nbResults);
-
-        results = new ArrayList<String>();
-        for (int i = 0; i < nbResults; i++) {
-            Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("id");
-            results.add(name);
-            LOGGER.log(Level.FINER, "\tid: {0}", name);
-        }
 
         //we verify that we obtain the correct results.
         assertEquals(nbResults, 1);
@@ -652,18 +691,10 @@ public class LuceneTest {
         bboxQuery = new SpatialQuery(wrap(filter));
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, bboxQuery.getSpatialFilter(), 15);
+        results = searcher.doSearch(bboxQuery);
 
-        nbResults = docs.totalHits;
+        nbResults = results.size();
         LOGGER.log(Level.FINER, "CT:Point 1 CRS=4326: nb Results: {0}", nbResults);
-
-        results = new ArrayList<String>();
-        for (int i = 0; i < nbResults; i++) {
-            Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("id");
-            results.add(name);
-            LOGGER.log(Level.FINER, "\tid: {0}", name);
-        }
 
         //we verify that we obtain the correct results.
         assertEquals(nbResults, 1);
@@ -678,19 +709,10 @@ public class LuceneTest {
         bboxQuery = new SpatialQuery(wrap(filter));
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, bboxQuery.getSpatialFilter(), 15);
+        results = searcher.doSearch(bboxQuery);
 
-        nbResults = docs.totalHits;
+        nbResults = results.size();
         LOGGER.log(Level.FINER, "CT:Point 1 CRS=4326: nb Results: {0}", nbResults);
-
-        results = new ArrayList<String>();
-        for (int i = 0; i < nbResults; i++) {
-            Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("id");
-            results.add(name);
-            LOGGER.log(Level.FINER, "\tid: {0}", name);
-        }
-
 
         //we verify that we obtain the correct results.
         assertEquals(nbResults, 2);
@@ -709,18 +731,10 @@ public class LuceneTest {
         bboxQuery = new SpatialQuery(wrap(filter));
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, bboxQuery.getSpatialFilter(), 15);
+        results = searcher.doSearch(bboxQuery);
 
-        nbResults = docs.totalHits;
+        nbResults = results.size();
         LOGGER.log(Level.FINER, "CT:Line 2 CRS=4326: nb Results: {0}", nbResults);
-
-        results = new ArrayList<String>();
-        for (int i = 0; i < nbResults; i++) {
-            Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("id");
-            results.add(name);
-            LOGGER.log(Level.FINER, "\tid: {0}", name);
-        }
 
         //we verify that we obtain the correct results.
         assertEquals(nbResults, 2);
@@ -744,18 +758,10 @@ public class LuceneTest {
         SpatialQuery spatialQuery = new SpatialQuery(wrap(filter));
 
         //we perform a lucene query
-        TopDocs docs = searcher.search(simpleQuery, spatialQuery.getSpatialFilter(), 15);
+        Set<String> results = searcher.doSearch(spatialQuery);
 
-        int nbResults = docs.totalHits;
+        int nbResults = results.size();
         LOGGER.log(Level.FINER, "DJ:Point 1 CRS=4326: nb Results: {0}", nbResults);
-
-        List<String> results = new ArrayList<String>();
-        for (int i = 0; i < nbResults; i++) {
-            Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("id");
-            results.add(name);
-            LOGGER.log(Level.FINER, "\tid: {0}", name);
-        }
 
         //we verify that we obtain the correct results.
         assertEquals(nbResults, 14);
@@ -785,18 +791,10 @@ public class LuceneTest {
         spatialQuery = new SpatialQuery(wrap(filter));
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, spatialQuery.getSpatialFilter(), 15);
+        results = searcher.doSearch(spatialQuery);
 
-        nbResults = docs.totalHits;
+        nbResults = results.size();
         LOGGER.log(Level.FINER, "DJ:Point 2 CRS=4326: nb Results: {0}", nbResults);
-
-        results = new ArrayList<String>();
-        for (int i = 0; i < nbResults; i++) {
-            Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("id");
-            results.add(name);
-            LOGGER.log(Level.FINER, "\tid: {0}", name);
-        }
 
         //we verify that we obtain the correct results.
         assertEquals(nbResults, 11);
@@ -827,18 +825,10 @@ public class LuceneTest {
         spatialQuery = new SpatialQuery(wrap(filter));
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, spatialQuery.getSpatialFilter(), 15);
+        results = searcher.doSearch(spatialQuery);
 
-        nbResults = docs.totalHits;
+        nbResults = results.size();
         LOGGER.log(Level.FINER, "DJ:Line 1 CRS=4326: nb Results: {0}", nbResults);
-
-        results = new ArrayList<String>();
-        for (int i = 0; i < nbResults; i++) {
-            Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("id");
-            results.add(name);
-            LOGGER.log(Level.FINER, "\tid: {0}", name);
-        }
 
         //we verify that we obtain the correct results.
         assertEquals(nbResults, 8);
@@ -866,18 +856,10 @@ public class LuceneTest {
         spatialQuery = new SpatialQuery(wrap(filter));
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, spatialQuery.getSpatialFilter(), 15);
+        results = searcher.doSearch(spatialQuery);
 
-        nbResults = docs.totalHits;
+        nbResults = results.size();
         LOGGER.log(Level.FINER, "DJ:Line 2 CRS=4326: nb Results: {0}", nbResults);
-
-        results = new ArrayList<String>();
-        for (int i = 0; i < nbResults; i++) {
-            Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("id");
-            results.add(name);
-            LOGGER.log(Level.FINER, "\tid: {0}", name);
-        }
 
         //we verify that we obtain the correct results.
         assertEquals(nbResults, 11);
@@ -905,18 +887,10 @@ public class LuceneTest {
         spatialQuery = new SpatialQuery(wrap(filter));
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, spatialQuery.getSpatialFilter(), 15);
+        results = searcher.doSearch(spatialQuery);
 
-        nbResults = docs.totalHits;
+        nbResults = results.size();
         LOGGER.log(Level.FINER, "DJ:BBox 1 CRS=4326: nb Results: {0}", nbResults);
-
-        results = new ArrayList<String>();
-        for (int i = 0; i < nbResults; i++) {
-            Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("id");
-            results.add(name);
-            LOGGER.log(Level.FINER, "\tid: {0}", name);
-        }
 
         //we verify that we obtain the correct results.
         assertEquals(nbResults, 5);
@@ -938,18 +912,10 @@ public class LuceneTest {
         spatialQuery = new SpatialQuery(wrap(filter));
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, spatialQuery.getSpatialFilter(), 15);
+        results = searcher.doSearch(spatialQuery);
 
-        nbResults = docs.totalHits;
+        nbResults = results.size();
         LOGGER.log(Level.FINER, "DJ:BBox 2 CRS=4326: nb Results: {0}", nbResults);
-
-        results = new ArrayList<String>();
-        for (int i = 0; i < nbResults; i++) {
-            Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("id");
-            results.add(name);
-            LOGGER.log(Level.FINER, "\tid: {0}", name);
-        }
 
         //we verify that we obtain the correct results.
         assertEquals(nbResults, 9);
@@ -982,18 +948,10 @@ public class LuceneTest {
         SpatialQuery spatialQuery = new SpatialQuery(wrap(filter));
 
         //we perform a lucene query
-        TopDocs docs = searcher.search(simpleQuery, spatialQuery.getSpatialFilter(), 15);
+        Set<String> results = searcher.doSearch(spatialQuery);
 
-        int nbResults = docs.totalHits;
+        int nbResults = results.size();
         LOGGER.log(Level.FINER, "TO:Point 1 CRS=4326: nb Results: {0}", nbResults);
-
-        List<String> results = new ArrayList<String>();
-        for (int i = 0; i < nbResults; i++) {
-            Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("id");
-            results.add(name);
-            LOGGER.log(Level.FINER, "\tid: {0}", name);
-        }
 
         //we verify that we obtain the correct results.
         assertEquals(nbResults, 3);
@@ -1012,18 +970,10 @@ public class LuceneTest {
         spatialQuery = new SpatialQuery(wrap(filter));
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, spatialQuery.getSpatialFilter(), 15);
+        results = searcher.doSearch(spatialQuery);
 
-        nbResults = docs.totalHits;
+        nbResults = results.size();
         LOGGER.log(Level.FINER, "TO:Point 2 CRS=4326: nb Results: {0}", nbResults);
-
-        results = new ArrayList<String>();
-        for (int i = 0; i < nbResults; i++) {
-            Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("id");
-            results.add(name);
-            LOGGER.log(Level.FINER, "\tid: {0}", name);
-        }
 
         //we verify that we obtain the correct results.
         assertEquals(nbResults, 1);
@@ -1039,18 +989,10 @@ public class LuceneTest {
         spatialQuery = new SpatialQuery(wrap(filter));
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, spatialQuery.getSpatialFilter(), 15);
+        results = searcher.doSearch(spatialQuery);
 
-        nbResults = docs.totalHits;
+        nbResults = results.size();
         LOGGER.log(Level.FINER, "TO:Point 3 CRS=4326: nb Results: {0}", nbResults);
-
-        results = new ArrayList<String>();
-        for (int i = 0; i < nbResults; i++) {
-            Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("id");
-            results.add(name);
-            LOGGER.log(Level.FINER, "\tid: {0}", name);
-        }
 
         //we verify that we obtain the correct results.
         assertEquals(nbResults, 1);
@@ -1067,19 +1009,10 @@ public class LuceneTest {
 
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, spatialQuery.getSpatialFilter(), 15);
+        results = searcher.doSearch(spatialQuery);
 
-        nbResults = docs.totalHits;
+        nbResults = results.size();
         LOGGER.log(Level.FINER, "TO:Point 4 CRS=4326: nb Results: {0}", nbResults);
-
-        results = new ArrayList<String>();
-        for (int i = 0; i < nbResults; i++) {
-            Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("id");
-            results.add(name);
-            LOGGER.log(Level.FINER, "\tid: {0}", name);
-        }
-
 
 
         //we verify that we obtain the correct results.
@@ -1096,18 +1029,10 @@ public class LuceneTest {
         spatialQuery = new SpatialQuery(wrap(filter));
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, spatialQuery.getSpatialFilter(), 15);
+        results = searcher.doSearch(spatialQuery);
 
-        nbResults = docs.totalHits;
+        nbResults = results.size();
         LOGGER.log(Level.FINER, "TO:Point 5 CRS=4326: nb Results: {0}", nbResults);
-
-        results = new ArrayList<String>();
-        for (int i = 0; i < nbResults; i++) {
-            Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("id");
-            results.add(name);
-            LOGGER.log(Level.FINER, "\tid: {0}", name);
-        }
 
         //we verify that we obtain the correct results.
         assertEquals(nbResults, 0);
@@ -1126,18 +1051,10 @@ public class LuceneTest {
         spatialQuery = new SpatialQuery(wrap(filter));
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, spatialQuery.getSpatialFilter(), 15);
+        results = searcher.doSearch(spatialQuery);
 
-        nbResults = docs.totalHits;
+        nbResults = results.size();
         LOGGER.log(Level.FINER, "TO:Line 1 CRS=4326: nb Results: {0}", nbResults);
-
-        results = new ArrayList<String>();
-        for (int i = 0; i < nbResults; i++) {
-            Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("id");
-            results.add(name);
-            LOGGER.log(Level.FINER, "\tid: {0}", name);
-        }
 
         //we verify that we obtain the correct results.
         assertEquals(nbResults, 2);
@@ -1157,18 +1074,10 @@ public class LuceneTest {
         spatialQuery = new SpatialQuery(wrap(filter));
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, spatialQuery.getSpatialFilter(), 15);
+        results = searcher.doSearch(spatialQuery);
 
-        nbResults = docs.totalHits;
+        nbResults = results.size();
         LOGGER.log(Level.FINER, "TO:Line 2 CRS=4326: nb Results: {0}", nbResults);
-
-        results = new ArrayList<String>();
-        for (int i = 0; i < nbResults; i++) {
-            Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("id");
-            results.add(name);
-            LOGGER.log(Level.FINER, "\tid: {0}", name);
-        }
 
         //we verify that we obtain the correct results.
         assertEquals(nbResults, 2);
@@ -1188,18 +1097,10 @@ public class LuceneTest {
         spatialQuery = new SpatialQuery(wrap(filter));
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, spatialQuery.getSpatialFilter(), 15);
+        results = searcher.doSearch(spatialQuery);
 
-        nbResults = docs.totalHits;
+        nbResults = results.size();
         LOGGER.log(Level.FINER, "TO:Line 2 CRS=4326: nb Results: {0}", nbResults);
-
-        results = new ArrayList<String>();
-        for (int i = 0; i < nbResults; i++) {
-            Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("id");
-            results.add(name);
-            LOGGER.log(Level.FINER, "\tid: {0}", name);
-        }
 
         //we verify that we obtain the correct results.
         assertEquals(nbResults, 5);
@@ -1221,18 +1122,10 @@ public class LuceneTest {
         spatialQuery = new SpatialQuery(wrap(filter));
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, spatialQuery.getSpatialFilter(), 15);
+        results = searcher.doSearch(spatialQuery);
 
-        nbResults = docs.totalHits;
+        nbResults = results.size();
         LOGGER.log(Level.FINER, "TO:BBox 1 CRS=4326: nb Results: {0}", nbResults);
-
-        results = new ArrayList<String>();
-        for (int i = 0; i < nbResults; i++) {
-            Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("id");
-            results.add(name);
-            LOGGER.log(Level.FINER, "\tid: {0}", name);
-        }
 
         //we verify that we obtain the correct results.
         assertEquals(nbResults, 7);
@@ -1262,18 +1155,10 @@ public class LuceneTest {
         SpatialQuery bboxQuery = new SpatialQuery(wrap(filter));
 
         //we perform a lucene query
-        TopDocs docs = searcher.search(simpleQuery, bboxQuery.getSpatialFilter(), 15);
+        Set<String> results = searcher.doSearch(bboxQuery);
 
-        int nbResults = docs.totalHits;
+        int nbResults = results.size();
         LOGGER.log(Level.FINER, "WT:BBOX 1 CRS=4326: nb Results: {0}", nbResults);
-
-        List<String> results = new ArrayList<String>();
-        for (int i = 0; i < nbResults; i++) {
-            Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("id");
-            results.add(name);
-            LOGGER.log(Level.FINER, "\tid: {0}", name);
-        }
 
         //we verify that we obtain the correct results.
         assertEquals(nbResults, 7);
@@ -1296,18 +1181,10 @@ public class LuceneTest {
         bboxQuery = new SpatialQuery(wrap(filter));
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, bboxQuery.getSpatialFilter(), 15);
+        results = searcher.doSearch(bboxQuery);
 
-        nbResults = docs.totalHits;
+        nbResults = results.size();
         LOGGER.log(Level.FINER, "WT:BBOX 2 CRS=4326: nb Results: {0}", nbResults);
-
-        results = new ArrayList<String>();
-        for (int i = 0; i < nbResults; i++) {
-            Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("id");
-            results.add(name);
-            LOGGER.log(Level.FINER, "\tid: {0}", name);
-        }
 
         //we verify that we obtain the correct results.
         assertEquals(nbResults, 3);
@@ -1328,18 +1205,10 @@ public class LuceneTest {
         SpatialQuery spatialQuery = new SpatialQuery(wrap(filter));
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, spatialQuery.getSpatialFilter(), 15);
+        results = searcher.doSearch(spatialQuery);
 
-        nbResults = docs.totalHits;
+        nbResults = results.size();
         LOGGER.log(Level.FINER, "WT:Line 1 CRS=4326: nb Results: {0}", nbResults);
-
-        results = new ArrayList<String>();
-        for (int i = 0; i < nbResults; i++) {
-            Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("id");
-            results.add(name);
-            LOGGER.log(Level.FINER, "\tid: {0}", name);
-        }
 
         //we verify that we obtain the correct results.
         assertEquals(nbResults, 0);
@@ -1366,18 +1235,10 @@ public class LuceneTest {
         SpatialQuery spatialQuery = new SpatialQuery(wrap(filter));
 
         //we perform a lucene query
-        TopDocs docs = searcher.search(simpleQuery, spatialQuery.getSpatialFilter(), 15);
+        Set<String> results = searcher.doSearch(spatialQuery);
 
-        int nbResults = docs.totalHits;
+        int nbResults = results.size();
         LOGGER.log(Level.FINER, "CR:Line 1 CRS=4326: nb Results: {0}", nbResults);
-
-        List<String> results = new ArrayList<String>();
-        for (int i = 0; i < nbResults; i++) {
-            Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("id");
-            results.add(name);
-            LOGGER.log(Level.FINER, "\tid: {0}", name);
-        }
 
         //we verify that we obtain the correct results.
         assertEquals(nbResults, 1);
@@ -1397,18 +1258,10 @@ public class LuceneTest {
         spatialQuery = new SpatialQuery(wrap(filter));
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, spatialQuery.getSpatialFilter(), 15);
+        results = searcher.doSearch(spatialQuery);
 
-        nbResults = docs.totalHits;
+        nbResults = results.size();
         LOGGER.log(Level.FINER, "CR:Line 2 CRS=4326: nb Results: {0}", nbResults);
-
-        results = new ArrayList<String>();
-        for (int i = 0; i < nbResults; i++) {
-            Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("id");
-            results.add(name);
-            LOGGER.log(Level.FINER, "\tid: {0}", name);
-        }
 
         //we verify that we obtain the correct results.
         assertEquals(nbResults, 4);
@@ -1430,18 +1283,10 @@ public class LuceneTest {
         spatialQuery = new SpatialQuery(wrap(filter));
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, spatialQuery.getSpatialFilter(), 15);
+        results = searcher.doSearch(spatialQuery);
 
-        nbResults = docs.totalHits;
+        nbResults = results.size();
         LOGGER.log(Level.FINER, "CR:Line 2 CRS=4326: nb Results: {0}", nbResults);
-
-        results = new ArrayList<String>();
-        for (int i = 0; i < nbResults; i++) {
-            Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("id");
-            results.add(name);
-            LOGGER.log(Level.FINER, "\tid: {0}", name);
-        }
 
         //we verify that we obtain the correct results.
         assertEquals(nbResults, 2);
@@ -1458,18 +1303,10 @@ public class LuceneTest {
         spatialQuery = new SpatialQuery(wrap(filter));
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, spatialQuery.getSpatialFilter(), 15);
+        results = searcher.doSearch(spatialQuery);
 
-        nbResults = docs.totalHits;
+        nbResults = results.size();
         LOGGER.log(Level.FINER, "CR:Point 1 CRS=4326: nb Results: {0}", nbResults);
-
-        results = new ArrayList<String>();
-        for (int i = 0; i < nbResults; i++) {
-            Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("id");
-            results.add(name);
-            LOGGER.log(Level.FINER, "\tid: {0}", name);
-        }
 
         //we verify that we obtain the correct results.
         assertEquals(nbResults, 0);
@@ -1488,18 +1325,10 @@ public class LuceneTest {
         spatialQuery = new SpatialQuery(wrap(filter));
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, spatialQuery.getSpatialFilter(), 15);
+        results = searcher.doSearch(spatialQuery);
 
-        nbResults = docs.totalHits;
+        nbResults = results.size();
         LOGGER.log(Level.FINER, "CR:Point 2 CRS=4326: nb Results: {0}", nbResults);
-
-        results = new ArrayList<String>();
-        for (int i = 0; i < nbResults; i++) {
-            Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("id");
-            results.add(name);
-            LOGGER.log(Level.FINER, "\tid: {0}", name);
-        }
 
         //we verify that we obtain the correct results.
         assertEquals(nbResults, 0);
@@ -1518,18 +1347,10 @@ public class LuceneTest {
         spatialQuery = new SpatialQuery(wrap(filter));
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, spatialQuery.getSpatialFilter(), 15);
+        results = searcher.doSearch(spatialQuery);
 
-        nbResults = docs.totalHits;
+        nbResults = results.size();
         LOGGER.log(Level.FINER, "CR:BBOX 1 CRS=4326: nb Results: {0}", nbResults);
-
-        results = new ArrayList<String>();
-        for (int i = 0; i < nbResults; i++) {
-            Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("id");
-            results.add(name);
-            LOGGER.log(Level.FINER, "\tid: {0}", name);
-        }
 
         //we verify that we obtain the correct results.
         assertEquals(nbResults, 2);
@@ -1560,24 +1381,16 @@ public class LuceneTest {
         List<Filter> filters  = new ArrayList<Filter>();
         filters.add(spatialQuery1.getSpatialFilter());
         filters.add(spatialQuery2.getSpatialFilter());
-        int filterType[]  = {SerialChainFilter.OR};
+        int filterType[]  = {SerialChainFilter.OR, SerialChainFilter.OR};
         SerialChainFilter serialFilter = new SerialChainFilter(filters, filterType);
 
-
-
+        SpatialQuery sQuery = new SpatialQuery("", serialFilter, SerialChainFilter.AND);
+        
         //we perform a lucene query
-        TopDocs docs = searcher.search(simpleQuery, serialFilter, 15);
+        Set<String> results = searcher.doSearch(sQuery);
 
-        int nbResults = docs.totalHits;
+        int nbResults = results.size();
         LOGGER.log(Level.FINER, "TO || BBOX: BBox 1 CRS=4326: nb Results: {0}", nbResults);
-
-        List<String> results = new ArrayList<String>();
-        for (int i = 0; i < nbResults; i++) {
-            Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("id");
-            results.add(name);
-            LOGGER.log(Level.FINER, "\tid: {0}", name);
-        }
 
         //we verify that we obtain the correct results.
         assertEquals(nbResults, 5);
@@ -1594,22 +1407,15 @@ public class LuceneTest {
          * case 2: same test with AND instead of OR
          *
          */
-        int filterType2[]  = {SerialChainFilter.AND};
+        int filterType2[]  = {SerialChainFilter.AND,SerialChainFilter.AND};
         serialFilter = new SerialChainFilter(filters, filterType2);
-
+        sQuery = new SpatialQuery("", serialFilter, SerialChainFilter.AND);
+        
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, serialFilter, 15);
+        results = searcher.doSearch(sQuery);
 
-        nbResults = docs.totalHits;
+        nbResults = results.size();
         LOGGER.log(Level.FINER, "TO && BBOX: BBox 1 CRS=4326: nb Results: {0}", nbResults);
-
-        results = new ArrayList<String>();
-        for (int i = 0; i < nbResults; i++) {
-            Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("id");
-            results.add(name);
-            LOGGER.log(Level.FINER, "\tid: {0}", name);
-        }
 
         //we verify that we obtain the correct results.
         assertEquals(nbResults, 1);
@@ -1630,20 +1436,14 @@ public class LuceneTest {
         filters3.add(spatialQuery.getSpatialFilter());
         int filterType3[]         = {SerialChainFilter.NOT};
         serialFilter              = new SerialChainFilter(filters3, filterType3);
-
+        
+        sQuery = new SpatialQuery("", serialFilter, SerialChainFilter.AND);
+        
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, serialFilter, 15);
+        results = searcher.doSearch(sQuery);
 
-        nbResults = docs.totalHits;
+        nbResults = results.size();
         LOGGER.log(Level.FINER, "NOT INTER:Line 1 CRS=4326: nb Results: {0}", nbResults);
-
-        results = new ArrayList<String>();
-        for (int i = 0; i < nbResults; i++) {
-            Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("id");
-            results.add(name);
-            LOGGER.log(Level.FINER, "\tid: {0}", name);
-        }
 
         //we verify that we obtain the correct results.
         assertEquals(nbResults, 11);
@@ -1673,22 +1473,16 @@ public class LuceneTest {
         List<Filter> filters4  = new ArrayList<Filter>();
         filters4.add(spatialQuery.getSpatialFilter());
         filters4.add(bboxQuery.getSpatialFilter());
-        int filterType4[]         = {SerialChainFilter.AND};
+        int filterType4[]         = {SerialChainFilter.AND,SerialChainFilter.AND};
         serialFilter              = new SerialChainFilter(filters4, filterType4);
-
+        
+        sQuery = new SpatialQuery("", serialFilter, SerialChainFilter.AND);
+        
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, serialFilter, 15);
+        results = searcher.doSearch(sQuery);
 
-        nbResults = docs.totalHits;
+        nbResults = results.size();
         LOGGER.log(Level.FINER, "NOT INTER:Line 1 CRS=4326: nb Results: {0}", nbResults);
-
-        results = new ArrayList<String>();
-        for (int i = 0; i < nbResults; i++) {
-            Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("id");
-            results.add(name);
-            LOGGER.log(Level.FINER, "\tid: {0}", name);
-        }
 
         //we verify that we obtain the correct results.
         assertEquals(nbResults, 4);
@@ -1704,23 +1498,16 @@ public class LuceneTest {
         int filterType5[] = {SerialChainFilter.AND, SerialChainFilter.NOT};
         serialFilter      = new SerialChainFilter(filters4, filterType5);
 
+        sQuery = new SpatialQuery("", serialFilter, SerialChainFilter.AND);
+        
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, serialFilter, 15);
+        results = searcher.doSearch(sQuery);
 
-        nbResults = docs.totalHits;
+        nbResults = results.size();
         LOGGER.log(Level.FINER, "NOT INTER:Line 1 CRS=4326: nb Results: {0}", nbResults);
-
-        results = new ArrayList<String>();
-        for (int i = 0; i < nbResults; i++) {
-            Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("id");
-            results.add(name);
-            LOGGER.log(Level.FINER, "\tid: {0}", name);
-        }
 
         //we verify that we obtain the correct results.
         assertEquals(nbResults, 0);
-
 
     }
 
@@ -1740,18 +1527,10 @@ public class LuceneTest {
         SpatialQuery spatialQuery = new SpatialQuery(wrap(filter));
 
         //we perform a lucene query
-        TopDocs docs = searcher.search(simpleQuery, spatialQuery.getSpatialFilter(), 15);
+        Set<String> results = searcher.doSearch(spatialQuery);
 
-        int nbResults = docs.totalHits;
+        int nbResults = results.size();
         LOGGER.log(Level.FINER, "DW:Point 1 dist: 5km CRS=4326: nb Results: {0}", nbResults);
-
-        List<String> results = new ArrayList<String>();
-        for (int i = 0; i < nbResults; i++) {
-            Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("id");
-            results.add(name);
-            LOGGER.log(Level.FINER, "\tid: {0}", name);
-        }
 
         //we verify that we obtain the correct results.
         assertEquals(nbResults, 4);
@@ -1770,18 +1549,10 @@ public class LuceneTest {
         spatialQuery = new SpatialQuery(wrap(filter));
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, spatialQuery.getSpatialFilter(), 15);
+        results = searcher.doSearch(spatialQuery);
 
-        nbResults = docs.totalHits;
+        nbResults = results.size();
         LOGGER.log(Level.FINER, "DW:Point 1 dist: 1500km CRS=4326: nb Results: {0}", nbResults);
-
-        results = new ArrayList<String>();
-        for (int i = 0; i < nbResults; i++) {
-            Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("id");
-            results.add(name);
-            LOGGER.log(Level.FINER, "\tid: {0}", name);
-        }
 
         //we verify that we obtain the correct results.
         assertEquals(nbResults, 7);
@@ -1803,18 +1574,10 @@ public class LuceneTest {
         spatialQuery = new SpatialQuery(wrap(filter));
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, spatialQuery.getSpatialFilter(), 15);
+        results = searcher.doSearch(spatialQuery);
 
-        nbResults = docs.totalHits;
+        nbResults = results.size();
         LOGGER.log(Level.FINER, "DW:Point 1 dist: 1500000m CRS=4326: nb Results: {0}", nbResults);
-
-        results = new ArrayList<String>();
-        for (int i = 0; i < nbResults; i++) {
-            Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("id");
-            results.add(name);
-            LOGGER.log(Level.FINER, "\tid: {0}", name);
-        }
 
         //we verify that we obtain the correct results.
         assertEquals(nbResults, 7);
@@ -1836,18 +1599,10 @@ public class LuceneTest {
         spatialQuery = new SpatialQuery(wrap(filter));
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, spatialQuery.getSpatialFilter(), 15);
+        results = searcher.doSearch(spatialQuery);
 
-        nbResults = docs.totalHits;
+        nbResults = results.size();
         LOGGER.log(Level.FINER, "DW:Point 1 dist: 2000km CRS=4326: nb Results: {0}", nbResults);
-
-        results = new ArrayList<String>();
-        for (int i = 0; i < nbResults; i++) {
-            Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("id");
-            results.add(name);
-            LOGGER.log(Level.FINER, "\tid: {0}", name);
-        }
 
         //we verify that we obtain the correct results.
         assertEquals(nbResults, 10);
@@ -1872,18 +1627,10 @@ public class LuceneTest {
         spatialQuery = new SpatialQuery(wrap(filter));
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, spatialQuery.getSpatialFilter(), 15);
+        results = searcher.doSearch(spatialQuery);
 
-        nbResults = docs.totalHits;
+        nbResults = results.size();
         LOGGER.log(Level.FINER, "DW:Point 1 dist: 4000km CRS=4326: nb Results: {0}", nbResults);
-
-        results = new ArrayList<String>();
-        for (int i = 0; i < nbResults; i++) {
-            Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("id");
-            results.add(name);
-            LOGGER.log(Level.FINER, "\tid: {0}", name);
-        }
 
         //we verify that we obtain the correct results.
         assertEquals(nbResults, 11);
@@ -1909,18 +1656,10 @@ public class LuceneTest {
         spatialQuery = new SpatialQuery(wrap(filter));
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, spatialQuery.getSpatialFilter(), 15);
+        results = searcher.doSearch(spatialQuery);
 
-        nbResults = docs.totalHits;
+        nbResults = results.size();
         LOGGER.log(Level.FINER, "DW:Point 1 dist: 5000km CRS=4326: nb Results: {0}", nbResults);
-
-        results = new ArrayList<String>();
-        for (int i = 0; i < nbResults; i++) {
-            Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("id");
-            results.add(name);
-            LOGGER.log(Level.FINER, "\tid: {0}", name);
-        }
 
         //we verify that we obtain the correct results.
         assertEquals(nbResults, 13);
@@ -1948,18 +1687,10 @@ public class LuceneTest {
         spatialQuery = new SpatialQuery(wrap(filter));
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, spatialQuery.getSpatialFilter(), 15);
+        results = searcher.doSearch(spatialQuery);
 
-        nbResults = docs.totalHits;
+        nbResults = results.size();
         LOGGER.log(Level.FINER, "DW:Point 1 dist: 6000km CRS=4326: nb Results: {0}", nbResults);
-
-        results = new ArrayList<String>();
-        for (int i = 0; i < nbResults; i++) {
-            Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("id");
-            results.add(name);
-            LOGGER.log(Level.FINER, "\tid: {0}", name);
-        }
 
         //we verify that we obtain the correct results.
         assertEquals(nbResults, 15);
@@ -1990,18 +1721,10 @@ public class LuceneTest {
         SpatialQuery bboxQuery = new SpatialQuery(wrap(filter));
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, bboxQuery.getSpatialFilter(), 15);
+        results = searcher.doSearch(bboxQuery);
 
-        nbResults = docs.totalHits;
+        nbResults = results.size();
         LOGGER.log(Level.FINER, "DW:BBOX 1 dist: 5km CRS=4326: nb Results: {0}", nbResults);
-
-        results = new ArrayList<String>();
-        for (int i = 0; i < nbResults; i++) {
-            Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("id");
-            results.add(name);
-            LOGGER.log(Level.FINER, "\tid: {0}", name);
-        }
 
         //we verify that we obtain the correct results.
         assertEquals(nbResults, 10);
@@ -2024,18 +1747,10 @@ public class LuceneTest {
         bboxQuery = new SpatialQuery(wrap(filter));
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, bboxQuery.getSpatialFilter(), 15);
+        results = searcher.doSearch(bboxQuery);
 
-        nbResults = docs.totalHits;
+        nbResults = results.size();
         LOGGER.log(Level.FINER, "DW:BBOX 1 dist: 1500km CRS=4326: nb Results: {0}", nbResults);
-
-        results = new ArrayList<String>();
-        for (int i = 0; i < nbResults; i++) {
-            Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("id");
-            results.add(name);
-            LOGGER.log(Level.FINER, "\tid: {0}", name);
-        }
 
         //we verify that we obtain the correct results.
         assertEquals(nbResults, 11);
@@ -2058,18 +1773,10 @@ public class LuceneTest {
         bboxQuery = new SpatialQuery(wrap(filter));
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, bboxQuery.getSpatialFilter(), 15);
+        results = searcher.doSearch(bboxQuery);
 
-        nbResults = docs.totalHits;
+        nbResults = results.size();
         LOGGER.log(Level.FINER, "DW:BBOX 1 dist: 3000km CRS=4326: nb Results: {0}", nbResults);
-
-        results = new ArrayList<String>();
-        for (int i = 0; i < nbResults; i++) {
-            Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("id");
-            results.add(name);
-            LOGGER.log(Level.FINER, "\tid: {0}", name);
-        }
 
         //we verify that we obtain the correct results.
         assertEquals(nbResults, 15);
@@ -2102,18 +1809,10 @@ public class LuceneTest {
         spatialQuery = new SpatialQuery(wrap(filter));
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, spatialQuery.getSpatialFilter(), 15);
+        results = searcher.doSearch(spatialQuery);
 
-        nbResults = docs.totalHits;
+        nbResults = results.size();
         LOGGER.log(Level.FINER, "DW:Line 1 dist: 5km CRS=4326: nb Results: {0}", nbResults);
-
-        results = new ArrayList<String>();
-        for (int i = 0; i < nbResults; i++) {
-            Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("id");
-            results.add(name);
-            LOGGER.log(Level.FINER, "\tid: {0}", name);
-        }
 
         //we verify that we obtain the correct results.
         assertEquals(nbResults, 1);
@@ -2127,18 +1826,10 @@ public class LuceneTest {
         spatialQuery = new SpatialQuery(wrap(filter));
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, spatialQuery.getSpatialFilter(), 15);
+        results = searcher.doSearch(spatialQuery);
 
-        nbResults = docs.totalHits;
+        nbResults = results.size();
         LOGGER.log(Level.FINER, "DW:Line 1 dist: 4000km CRS=4326: nb Results: {0}", nbResults);
-
-        results = new ArrayList<String>();
-        for (int i = 0; i < nbResults; i++) {
-            Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("id");
-            results.add(name);
-            LOGGER.log(Level.FINER, "\tid: {0}", name);
-        }
 
         //we verify that we obtain the correct results.
         assertEquals(nbResults, 2);
@@ -2157,19 +1848,10 @@ public class LuceneTest {
 
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, spatialQuery.getSpatialFilter(), 15);
+        results = searcher.doSearch(spatialQuery);
 
-        nbResults = docs.totalHits;
+        nbResults = results.size();
         LOGGER.log(Level.FINER, "DW:Line 1 dist: 5000km CRS=4326: nb Results: {0}", nbResults);
-
-        results = new ArrayList<String>();
-        for (int i = 0; i < nbResults; i++) {
-            Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("id");
-            results.add(name);
-            LOGGER.log(Level.FINER, "\tid: {0}", name);
-        }
-
 
         //we verify that we obtain the correct results.
         assertEquals(nbResults, 3);
@@ -2191,18 +1873,10 @@ public class LuceneTest {
         spatialQuery = new SpatialQuery(wrap(filter));
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, spatialQuery.getSpatialFilter(), 15);
+        results = searcher.doSearch(spatialQuery);
 
-        nbResults = docs.totalHits;
+        nbResults = results.size();
         LOGGER.log(Level.FINER, "DW:Line 1 dist: 6000km CRS=4326: nb Results: {0}", nbResults);
-
-        results = new ArrayList<String>();
-        for (int i = 0; i < nbResults; i++) {
-            Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("id");
-            results.add(name);
-            LOGGER.log(Level.FINER, "\tid: {0}", name);
-        }
 
         //we verify that we obtain the correct results.
         assertEquals(nbResults, 9);
@@ -2239,18 +1913,10 @@ public class LuceneTest {
         SpatialQuery spatialQuery = new SpatialQuery(wrap(filter));
 
         //we perform a lucene query
-        TopDocs docs = searcher.search(simpleQuery, spatialQuery.getSpatialFilter(), 15);
+        Set<String> results = searcher.doSearch(spatialQuery);
 
-        int nbResults = docs.totalHits;
+        int nbResults = results.size();
         LOGGER.log(Level.FINER, "BY:Point 1 CRS=4326: nb Results: {0}", nbResults);
-
-        List<String> results = new ArrayList<String>();
-        for (int i = 0; i < nbResults; i++) {
-            Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("id");
-            results.add(name);
-            LOGGER.log(Level.FINER, "\tid: {0}", name);
-        }
 
         //we verify that we obtain the correct results.
         assertEquals(nbResults, 11);
@@ -2276,18 +1942,10 @@ public class LuceneTest {
         spatialQuery = new SpatialQuery(wrap(filter));
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, spatialQuery.getSpatialFilter(), 15);
+        results = searcher.doSearch(spatialQuery);
 
-        nbResults = docs.totalHits;
+        nbResults = results.size();
         LOGGER.log(Level.FINER, "BY:Point 1 dist: 1500km CRS=4326: nb Results: {0}", nbResults);
-
-        results = new ArrayList<String>();
-        for (int i = 0; i < nbResults; i++) {
-            Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("id");
-            results.add(name);
-            LOGGER.log(Level.FINER, "\tid: {0}", name);
-        }
 
         //we verify that we obtain the correct results.
         assertTrue(results.contains("point 1"));
@@ -2311,18 +1969,10 @@ public class LuceneTest {
         spatialQuery = new SpatialQuery(wrap(filter));
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, spatialQuery.getSpatialFilter(), 15);
+        results = searcher.doSearch(spatialQuery);
 
-        nbResults = docs.totalHits;
+        nbResults = results.size();
         LOGGER.log(Level.FINER, "BY:Point 1 dist: 1500000m CRS=4326: nb Results: {0}", nbResults);
-
-        results = new ArrayList<String>();
-        for (int i = 0; i < nbResults; i++) {
-            Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("id");
-            results.add(name);
-            LOGGER.log(Level.FINER, "\tid: {0}", name);
-        }
 
         //we verify that we obtain the correct results.
         assertEquals(nbResults, 8);
@@ -2346,18 +1996,10 @@ public class LuceneTest {
         spatialQuery = new SpatialQuery(wrap(filter));
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, spatialQuery.getSpatialFilter(), 15);
+        results = searcher.doSearch(spatialQuery);
 
-        nbResults = docs.totalHits;
+        nbResults = results.size();
         LOGGER.log(Level.FINER, "BY:Point 1 dist: 2000km CRS=4326: nb Results: {0}", nbResults);
-
-        results = new ArrayList<String>();
-        for (int i = 0; i < nbResults; i++) {
-            Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("id");
-            results.add(name);
-            LOGGER.log(Level.FINER, "\tid: {0}", name);
-        }
 
         //we verify that we obtain the correct results.
         assertEquals(nbResults, 5);
@@ -2377,18 +2019,10 @@ public class LuceneTest {
         spatialQuery = new SpatialQuery(wrap(filter));
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, spatialQuery.getSpatialFilter(), 15);
+        results = searcher.doSearch(spatialQuery);
 
-        nbResults = docs.totalHits;
+        nbResults = results.size();
         LOGGER.log(Level.FINER, "BY:Point 1 dist: 4000km CRS=4326: nb Results: {0}", nbResults);
-
-        results = new ArrayList<String>();
-        for (int i = 0; i < nbResults; i++) {
-            Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("id");
-            results.add(name);
-            LOGGER.log(Level.FINER, "\tid: {0}", name);
-        }
 
         //we verify that we obtain the correct results.
         assertEquals(nbResults, 4);
@@ -2407,18 +2041,10 @@ public class LuceneTest {
         spatialQuery = new SpatialQuery(wrap(filter));
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, spatialQuery.getSpatialFilter(), 15);
+        results = searcher.doSearch(spatialQuery);
 
-        nbResults = docs.totalHits;
+        nbResults = results.size();
         LOGGER.log(Level.FINER, "BY:Point 1 dist: 5000km CRS=4326: nb Results: {0}", nbResults);
-
-        results = new ArrayList<String>();
-        for (int i = 0; i < nbResults; i++) {
-            Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("id");
-            results.add(name);
-            LOGGER.log(Level.FINER, "\tid: {0}", name);
-        }
 
         //we verify that we obtain the correct results.
         assertEquals(nbResults, 2);
@@ -2435,18 +2061,10 @@ public class LuceneTest {
         spatialQuery = new SpatialQuery(wrap(filter));
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, spatialQuery.getSpatialFilter(), 15);
+        results = searcher.doSearch(spatialQuery);
 
-        nbResults = docs.totalHits;
+        nbResults = results.size();
         LOGGER.log(Level.FINER, "BY:Point 1 dist: 6000km CRS=4326: nb Results: {0}", nbResults);
-
-        results = new ArrayList<String>();
-        for (int i = 0; i < nbResults; i++) {
-            Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("id");
-            results.add(name);
-            LOGGER.log(Level.FINER, "\tid: {0}", name);
-        }
 
         //we verify that we obtain the correct results.
         assertEquals(nbResults, 0);
@@ -2462,18 +2080,10 @@ public class LuceneTest {
         SpatialQuery bboxQuery = new SpatialQuery(wrap(filter));
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, bboxQuery.getSpatialFilter(), 15);
+        results = searcher.doSearch(bboxQuery);
 
-        nbResults = docs.totalHits;
+        nbResults = results.size();
         LOGGER.log(Level.FINER, "BY:BBOX 1 dist: 5km CRS=4326: nb Results: {0}", nbResults);
-
-        results = new ArrayList<String>();
-        for (int i = 0; i < nbResults; i++) {
-            Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("id");
-            results.add(name);
-            LOGGER.log(Level.FINER, "\tid: {0}", name);
-        }
 
         //we verify that we obtain the correct results.
         assertEquals(nbResults, 5);
@@ -2491,18 +2101,10 @@ public class LuceneTest {
         bboxQuery = new SpatialQuery(wrap(filter));
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, bboxQuery.getSpatialFilter(), 15);
+        results = searcher.doSearch(bboxQuery);
 
-        nbResults = docs.totalHits;
+        nbResults = results.size();
         LOGGER.log(Level.FINER, "BY:BBOX 1 dist: 1500km CRS=4326: nb Results: {0}", nbResults);
-
-        results = new ArrayList<String>();
-        for (int i = 0; i < nbResults; i++) {
-            Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("id");
-            results.add(name);
-            LOGGER.log(Level.FINER, "\tid: {0}", name);
-        }
 
         //we verify that we obtain the correct results.
         assertEquals(nbResults, 4);
@@ -2519,18 +2121,10 @@ public class LuceneTest {
         bboxQuery = new SpatialQuery(wrap(filter));
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, bboxQuery.getSpatialFilter(), 15);
+        results = searcher.doSearch(bboxQuery);
 
-        nbResults = docs.totalHits;
+        nbResults = results.size();
         LOGGER.log(Level.FINER, "BY:BBOX 1 dist: 3000km CRS=4326: nb Results: {0}", nbResults);
-
-        results = new ArrayList<String>();
-        for (int i = 0; i < nbResults; i++) {
-            Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("id");
-            results.add(name);
-            LOGGER.log(Level.FINER, "\tid: {0}", name);
-        }
 
         //we verify that we obtain the correct results.
         assertEquals(nbResults, 0);
@@ -2548,18 +2142,10 @@ public class LuceneTest {
         spatialQuery = new SpatialQuery(wrap(filter));
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, spatialQuery.getSpatialFilter(), 15);
+        results = searcher.doSearch(spatialQuery);
 
-        nbResults = docs.totalHits;
+        nbResults = results.size();
         LOGGER.log(Level.FINER, "BY:Line 1 dist: 5km CRS=4326: nb Results: {0}", nbResults);
-
-        results = new ArrayList<String>();
-        for (int i = 0; i < nbResults; i++) {
-            Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("id");
-            results.add(name);
-            LOGGER.log(Level.FINER, "\tid: {0}", name);
-        }
 
         //we verify that we obtain the correct results.
         assertEquals(nbResults, 14);
@@ -2586,18 +2172,10 @@ public class LuceneTest {
         spatialQuery = new SpatialQuery(wrap(filter));
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, spatialQuery.getSpatialFilter(), 15);
+        results = searcher.doSearch(spatialQuery);
 
-        nbResults = docs.totalHits;
+        nbResults = results.size();
         LOGGER.log(Level.FINER, "BY:Line 1 dist: 4000km CRS=4326: nb Results: {0}", nbResults);
-
-        results = new ArrayList<String>();
-        for (int i = 0; i < nbResults; i++) {
-            Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("id");
-            results.add(name);
-            LOGGER.log(Level.FINER, "\tid: {0}", name);
-        }
 
         //we verify that we obtain the correct results.
         assertEquals(nbResults, 13);
@@ -2624,27 +2202,19 @@ public class LuceneTest {
 //        spatialQuery = new SpatialQuery(wrap(filter));
 //
 //        //we perform a lucene query
-//        docs = searcher.search(simpleQuery, spatialQuery.getSpatialFilter(), 15);
+//        results = searcher.doSearch(spatialQuery);
 //
-//        nbResults = docs.totalHits;
+//        nbResults = results.size();
 //        logger.finer("BY:Line 1 dist: 5000km CRS=4326: nb Results: " + nbResults);
-//
-//        results = new ArrayList<String>();
-//        for (int i = 0; i < nbResults; i++) {
-//            Document doc = searcher.doc(docs.scoreDocs[i].doc);
-//            String name =  doc.get("id");
-//            results.add(name);
-//            LOGGER.log(Level.FINER, "\tid: {0}", name);
-//        }
 //
 //        //we verify that we obtain the correct results.
 //        assertEquals(nbResults, 6);
 //        assertTrue(results.contains("point 1"));
 //        assertTrue(results.contains("point 1 projected"));
-//    	assertTrue(results.contains("point 4"));
+//    	  assertTrue(results.contains("point 4"));
 //        assertTrue(results.contains("point 5"));
 //        assertTrue(results.contains("box 2"));
-//    	assertTrue(results.contains("box 2 projected"));
+//    	  assertTrue(results.contains("box 2 projected"));
 //
 //        /*
 //         * case 13: a line distance 6000km
@@ -2654,22 +2224,14 @@ public class LuceneTest {
 //        spatialQuery = new SpatialQuery(wrap(filter));
 //
 //        //we perform a lucene query
-//        docs = searcher.search(simpleQuery, spatialQuery.getSpatialFilter(), 15);
+//        results = searcher.doSearch(spatialQuery);
 //
-//        nbResults = docs.totalHits;
+//        nbResults = results.size();
 //        logger.finer("BY:Line 1 dist: 6000km CRS=4326: nb Results: " + nbResults);
-//
-//        results = new ArrayList<String>();
-//        for (int i = 0; i < nbResults; i++) {
-//            Document doc = searcher.doc(docs.scoreDocs[i].doc);
-//            String name =  doc.get("id");
-//            results.add(name);
-//            LOGGER.log(Level.FINER, "\tid: {0}", name);
-//        }
 //
 //        //we verify that we obtain the correct results.
 //        assertEquals(nbResults, 1);
-//	assertTrue(results.contains("point 5"));
+//	  assertTrue(results.contains("point 5"));
 
 
     }
@@ -2690,18 +2252,10 @@ public class LuceneTest {
         SpatialQuery bboxQuery = new SpatialQuery(wrap(filter));
 
         //we perform a lucene query
-        TopDocs docs = searcher.search(simpleQuery, bboxQuery.getSpatialFilter(), 15);
+        Set<String> results = searcher.doSearch(bboxQuery);
 
-        int nbResults = docs.totalHits;
+        int nbResults = results.size();
         LOGGER.log(Level.FINER, "OL:BBOX 1 CRS=4326: nb Results: {0}", nbResults);
-
-        List<String> results = new ArrayList<String>();
-        for (int i = 0; i < nbResults; i++) {
-            Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("id");
-            results.add(name);
-            LOGGER.log(Level.FINER, "\tid: {0}", name);
-        }
 
         //we verify that we obtain the correct results.
         assertEquals(nbResults, 1);
@@ -2718,18 +2272,10 @@ public class LuceneTest {
         bboxQuery = new SpatialQuery(wrap(filter));
 
         //we perform a lucene query
-        docs = searcher.search(simpleQuery, bboxQuery.getSpatialFilter(), 15);
+        results = searcher.doSearch(bboxQuery);
 
-        nbResults = docs.totalHits;
+        nbResults = results.size();
         LOGGER.log(Level.FINER, "OL:BBOX 2 CRS=4326: nb Results: {0}", nbResults);
-
-        results = new ArrayList<String>();
-        for (int i = 0; i < nbResults; i++) {
-            Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("id");
-            results.add(name);
-            LOGGER.log(Level.FINER, "\tid: {0}", name);
-        }
 
         //we verify that we obtain the correct results.
         assertEquals(nbResults, 3);
@@ -2756,18 +2302,10 @@ public class LuceneTest {
         SpatialQuery bboxQuery = new SpatialQuery(wrap(bboxFilter));
 
         //we perform a lucene query
-        TopDocs docs = searcher.search(simpleQuery, bboxQuery.getSpatialFilter(), 15);
+        Set<String> results = searcher.doSearch(bboxQuery);
 
-        int nbResults = docs.totalHits;
+        int nbResults = results.size();
         LOGGER.log(Level.FINER, "QnS:BBOX 1 CRS=4326: nb Results: {0}", nbResults);
-
-        List<String> results = new ArrayList<String>();
-        for (int i = 0; i < nbResults; i++) {
-            Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("id");
-            results.add(name);
-            LOGGER.log(Level.FINER, "\tid: {0}", name);
-        }
 
         //we verify that we obtain the correct results
         assertEquals(nbResults, 10);
@@ -2787,22 +2325,12 @@ public class LuceneTest {
          */
 
         //we perform a lucene query
-        Analyzer analyzer   = new ClassicAnalyzer(org.apache.lucene.util.Version.LUCENE_40);
-        QueryParser parser  = new QueryParser(org.apache.lucene.util.Version.LUCENE_40, "metafile", analyzer);
-        Query query         = parser.parse("id:point*");
+        SpatialQuery sQuery = new SpatialQuery("id:point*", bboxQuery.getSpatialFilter(), SerialChainFilter.AND);
+                
+        results = searcher.doSearch(sQuery);
 
-        docs = searcher.search(query, bboxQuery.getSpatialFilter(), 15);
-
-        nbResults = docs.totalHits;
+        nbResults = results.size();
         LOGGER.log(Level.FINER, "QnS: title like point* AND BBOX 1: nb Results: {0}", nbResults);
-
-        results = new ArrayList<String>();
-        for (int i = 0; i < nbResults; i++) {
-            Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("id");
-            results.add(name);
-            LOGGER.log(Level.FINER, "\tid: {0}", name);
-        }
 
         //we verify that we obtain the correct results
         assertEquals(nbResults, 4);
@@ -2816,32 +2344,17 @@ public class LuceneTest {
          */
 
         //we perform two lucene query
-        analyzer      = new ClassicAnalyzer(org.apache.lucene.util.Version.LUCENE_40);
-        parser        = new QueryParser(org.apache.lucene.util.Version.LUCENE_40, "metafile", analyzer);
-        query         = parser.parse("id:point*");
-
-        TopDocs hits1 = searcher.search(query, 15);
-        TopDocs hits2 = searcher.search(simpleQuery, bboxQuery.getSpatialFilter(), 15);
+        sQuery = new SpatialQuery("id:point*");
+        Set<String> hits1 = searcher.doSearch(sQuery);
+        Set<String> hits2 = searcher.doSearch(bboxQuery);
 
 
-        results = new ArrayList<String>();
-        StringBuilder resultString = new StringBuilder();
-        for (int i = 0; i < hits1.totalHits; i++) {
-
-            String name = searcher.doc(hits1.scoreDocs[i].doc).get("id");
-            results.add(name);
-            resultString.append('\t').append("id: ").append(name).append('\n');
-        }
-        for (int i = 0; i < hits2.totalHits; i++) {
-            String name = searcher.doc(hits2.scoreDocs[i].doc).get("id");
-            if (!results.contains(name)) {
-                results.add(name);
-                resultString.append('\t').append("id: ").append(name).append('\n');
-            }
-        }
+        results = new HashSet<String>();
+        results.addAll(hits1);
+        results.addAll(hits2);
+        
         nbResults = results.size();
         LOGGER.log(Level.FINER, "QnS: name like point* OR BBOX 1: nb Results: {0}", nbResults);
-        LOGGER.finer(resultString.toString());
 
         //we verify that we obtain the correct results
         assertEquals(nbResults, 12);
@@ -2864,11 +2377,6 @@ public class LuceneTest {
          */
 
         //we perform two lucene query
-        analyzer                = new ClassicAnalyzer(org.apache.lucene.util.Version.LUCENE_40);
-        parser                  = new QueryParser(org.apache.lucene.util.Version.LUCENE_40, "metafile", analyzer);
-        Query query1            = parser.parse("id:point*");
-        Query query2            = parser.parse("id:box*");
-
         Geometry geom1 = GF.createLineString(new Coordinate[]{
             new Coordinate(40, 30),
             new Coordinate(40, -30),
@@ -2876,27 +2384,19 @@ public class LuceneTest {
         geom1.setSRID(SRIDGenerator.toSRID(crs, Version.V1));
         filter = FF.intersects(GEOMETRY_PROPERTY, FF.literal(geom1));
         SpatialQuery interQuery = new SpatialQuery(wrap(filter));
+        
+        SpatialQuery query1     = new SpatialQuery("id:point*", bboxQuery.getSpatialFilter(), SerialChainFilter.AND);
+        SpatialQuery query2     = new SpatialQuery("id:box*", interQuery.getSpatialFilter(),  SerialChainFilter.AND);
 
-        hits1 = searcher.search(query1, bboxQuery.getSpatialFilter(), 15);
-        hits2 = searcher.search(query2, interQuery.getSpatialFilter(), 15);
+        hits1 = searcher.doSearch(query1);
+        hits2 = searcher.doSearch(query2);
 
-        results      = new ArrayList<String>();
-        resultString = new StringBuilder();
-        for (int i = 0; i < hits1.totalHits; i++) {
-            String name = searcher.doc(hits1.scoreDocs[i].doc).get("id");
-            results.add(name);
-            resultString.append('\t').append("id: ").append(name).append('\n');
-        }
-        for (int i = 0; i < hits2.totalHits; i++) {
-            String name = searcher.doc(hits2.scoreDocs[i].doc).get("id");
-            if (!results.contains(name)) {
-                results.add(name);
-                resultString.append('\t').append("id: ").append(name).append('\n');
-            }
-        }
+        results      = new HashSet<String>();
+        results.addAll(hits1);
+        results.addAll(hits2);
+        
         nbResults = results.size();
         LOGGER.log(Level.FINER, "QnS: (name like point* AND BBOX 1) OR (name like box* AND INTERSECT line 1): nb Results: {0}", nbResults);
-        LOGGER.finer(resultString.toString());
 
         //we verify that we obtain the correct results
         assertEquals(nbResults, 5);
@@ -2917,7 +2417,7 @@ public class LuceneTest {
         // we remove a document
         final Analyzer analyzer = new StandardAnalyzer(org.apache.lucene.util.Version.LUCENE_40);
         IndexWriterConfig config = new IndexWriterConfig(org.apache.lucene.util.Version.LUCENE_40, analyzer);
-        Directory FSDirectory = new SimpleFSDirectory(directory);
+        Directory FSDirectory = new SimpleFSDirectory(subDirectory);
         IndexWriter writer = new IndexWriter(FSDirectory, config);
 
         Query query = new TermQuery(new Term("id", "box 2 projected"));
@@ -2925,9 +2425,7 @@ public class LuceneTest {
         writer.commit();
         writer.close();
 
-        //IndexReader reader = new TreeIndexReaderWrapper(IndexReader.open(FSDirectory),rTree, false);
-        IndexReader reader = DirectoryReader.open(FSDirectory);
-        searcher = new IndexSearcher(reader);
+        searcher = new LuceneIndexSearcher(directory, null, new ClassicAnalyzer(org.apache.lucene.util.Version.LUCENE_40), false);
 
         /*
          * case 1: a normal spatial request BBOX
@@ -2940,18 +2438,10 @@ public class LuceneTest {
         SpatialQuery bboxQuery = new SpatialQuery(wrap(bboxFilter));
 
         //we perform a lucene query
-        TopDocs docs = searcher.search(simpleQuery, bboxQuery.getSpatialFilter(), 15);
+        Set<String> results = searcher.doSearch(bboxQuery);
 
-        int nbResults = docs.totalHits;
+        int nbResults = results.size();
         LOGGER.log(Level.FINER, "QnS:BBOX 1 CRS=4326: nb Results: {0}", nbResults);
-
-        List<String> results = new ArrayList<String>();
-        for (int i = 0; i < nbResults; i++) {
-            Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("id");
-            results.add(name);
-            LOGGER.log(Level.FINER, "\tid: {0}", name);
-        }
 
         //we verify that we obtain the correct results
         assertEquals(nbResults, 9);
@@ -2969,37 +2459,27 @@ public class LuceneTest {
         // re-add the document
 
         config = new IndexWriterConfig(org.apache.lucene.util.Version.LUCENE_40, analyzer);
-        FSDirectory = new SimpleFSDirectory(directory);
+        FSDirectory = new SimpleFSDirectory(subDirectory);
         writer = new IndexWriter(FSDirectory, config);
 
         final int srid3395 = SRIDGenerator.toSRID(CRS.decode("EPSG:3395"), Version.V1);
         Document docu = new Document();
         docu.add(new StringField("id", "box 2 projected", Field.Store.YES));
         docu.add(new StringField("docid", writer.maxDoc() + "", Field.Store.YES));
-        addBoundingBox(docu,             556597.4539663679,  1113194.9079327357,  1111475.1028522244, 1678147.5163917788, srid3395); // attention !! reprojeté
+        addBoundingBox(docu,             556597.4539663679,  1113194.9079327357,  1111475.1028522244, 1678147.5163917788, srid3395, rTree); // attention !! reprojeté
         writer.addDocument(docu);
 
         writer.commit();
         writer.close();
 
-        //reader = new TreeIndexReaderWrapper(IndexReader.open(FSDirectory),rTree, false);
-        reader = DirectoryReader.open(FSDirectory);
-        searcher = new IndexSearcher(reader);
+        searcher = new LuceneIndexSearcher(directory, null, new ClassicAnalyzer(org.apache.lucene.util.Version.LUCENE_40), false);
 
 
          //we perform a lucene query
-        docs = searcher.search(simpleQuery, bboxQuery.getSpatialFilter(), 15);
+        results = searcher.doSearch(bboxQuery);
 
-        nbResults = docs.totalHits;
+        nbResults = results.size();
         LOGGER.log(Level.FINER, "QnS:BBOX 1 CRS=4326: nb Results: {0}", nbResults);
-
-        results = new ArrayList<String>();
-        for (int i = 0; i < nbResults; i++) {
-            Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("id");
-            results.add(name);
-            LOGGER.log(Level.FINER, "\tid: {0}", name);
-        }
 
         //we verify that we obtain the correct results
         assertEquals(nbResults, 10);
@@ -3015,7 +2495,7 @@ public class LuceneTest {
         assertTrue(results.contains("line 1 projected"));
     }
 
-    private static void fillTestData(final IndexWriter writer) throws Exception {
+    private static void fillTestData(final IndexWriter writer, final Tree rTree) throws Exception {
 
         final int srid4326 = SRIDGenerator.toSRID(crs, Version.V1);
         final int srid3395 = SRIDGenerator.toSRID(CRS.decode("EPSG:3395"), Version.V1);
@@ -3023,91 +2503,91 @@ public class LuceneTest {
         Document doc = new Document();
         doc.add(new StringField("id", "point 1", Field.Store.YES));
         doc.add(new StringField("docid", writer.maxDoc() + "", Field.Store.YES));
-        addPoint      (doc,           -10,                10, srid4326);
+        addPoint      (doc,           -10,                10, srid4326, rTree);
         writer.addDocument(doc);
 
         doc = new Document();
         doc.add(new StringField("id", "point 1 projected", Field.Store.YES));
         doc.add(new StringField("docid", writer.maxDoc() + "", Field.Store.YES));
-        addPoint      (doc,           -1111475.102852225,   1113194.9079327357, srid3395); // attention !! reprojeté
+        addPoint      (doc,           -1111475.102852225,   1113194.9079327357, srid3395, rTree); // attention !! reprojeté
         writer.addDocument(doc);
 
         doc = new Document();
         doc.add(new StringField("id", "point 2", Field.Store.YES));
         doc.add(new StringField("docid", writer.maxDoc() + "", Field.Store.YES));
-        addPoint      (doc,           -10,                 0, srid4326);
+        addPoint      (doc,           -10,                 0, srid4326, rTree);
         writer.addDocument(doc);
 
         doc = new Document();
         doc.add(new StringField("id", "point 3", Field.Store.YES));
         doc.add(new StringField("docid", writer.maxDoc() + "", Field.Store.YES));
-        addPoint      (doc,             0,                 0, srid4326);
+        addPoint      (doc,             0,                 0, srid4326, rTree);
         writer.addDocument(doc);
 
         doc = new Document();
         doc.add(new StringField("id", "point 4", Field.Store.YES));
         doc.add(new StringField("docid", writer.maxDoc() + "", Field.Store.YES));
-        addPoint      (doc,            40,                20, srid4326);
+        addPoint      (doc,            40,                20, srid4326, rTree);
         writer.addDocument(doc);
 
         doc = new Document();
         doc.add(new StringField("id", "point 5", Field.Store.YES));
         doc.add(new StringField("docid", writer.maxDoc() + "", Field.Store.YES));
-        addPoint      (doc,           -40,                30, srid4326);
+        addPoint      (doc,           -40,                30, srid4326, rTree);
         writer.addDocument(doc);
 
         doc = new Document();
         doc.add(new StringField("id", "box 1", Field.Store.YES));
         doc.add(new StringField("docid", writer.maxDoc() + "", Field.Store.YES));
-        addBoundingBox(doc,           -40,                -25,           -50,               -40, srid4326);
+        addBoundingBox(doc,           -40,                -25,           -50,               -40, srid4326, rTree);
         writer.addDocument(doc);
 
         doc = new Document();
         doc.add(new StringField("id", "box 2", Field.Store.YES));
         doc.add(new StringField("docid", writer.maxDoc() + "", Field.Store.YES));
-        addBoundingBox(doc,             5,                 10,            10,                15, srid4326);
+        addBoundingBox(doc,             5,                 10,            10,                15, srid4326, rTree);
         writer.addDocument(doc);
 
         doc = new Document();
         doc.add(new StringField("id", "box 2 projected", Field.Store.YES));
         doc.add(new StringField("docid", writer.maxDoc() + "", Field.Store.YES));
-        addBoundingBox(doc,             556597.4539663679,  1113194.9079327357,  1111475.1028522244, 1678147.5163917788, srid3395); // attention !! reprojeté
+        addBoundingBox(doc,             556597.4539663679,  1113194.9079327357,  1111475.1028522244, 1678147.5163917788, srid3395, rTree); // attention !! reprojeté
         writer.addDocument(doc);
 
         doc = new Document();
         doc.add(new StringField("id", "box 3", Field.Store.YES));
         doc.add(new StringField("docid", writer.maxDoc() + "", Field.Store.YES));
-        addBoundingBox(doc,            30,                 50,             0,                15, srid4326);
+        addBoundingBox(doc,            30,                 50,             0,                15, srid4326, rTree);
         writer.addDocument(doc);
 
         doc = new Document();
         doc.add(new StringField("id", "box 4", Field.Store.YES));
         doc.add(new StringField("docid", writer.maxDoc() + "", Field.Store.YES));
-        addBoundingBox(doc,           -30,                -15,             0,                10, srid4326);
+        addBoundingBox(doc,           -30,                -15,             0,                10, srid4326, rTree);
         writer.addDocument(doc);
 
         doc = new Document();
         doc.add(new StringField("id", "box 5", Field.Store.YES));
         doc.add(new StringField("docid", writer.maxDoc() + "", Field.Store.YES));
-        addBoundingBox(doc,        44.792,             51.126,        -6.171,             -2.28, srid4326);
+        addBoundingBox(doc,        44.792,             51.126,        -6.171,             -2.28, srid4326, rTree);
         writer.addDocument(doc);
 
         doc = new Document();
         doc.add(new StringField("id", "line 1", Field.Store.YES));
         doc.add(new StringField("docid", writer.maxDoc() + "", Field.Store.YES));
-        addLine       (doc,             0,                  0,            25,                 0, srid4326);
+        addLine       (doc,             0,                  0,            25,                 0, srid4326, rTree);
         writer.addDocument(doc);
 
         doc = new Document();
         doc.add(new StringField("id", "line 1 projected", Field.Store.YES));
         doc.add(new StringField("docid", writer.maxDoc() + "", Field.Store.YES));
-        addLine       (doc,             0,        0,      2857692.6111605316,                 0, srid3395); // attention !! reprojeté
+        addLine       (doc,             0,        0,      2857692.6111605316,                 0, srid3395, rTree); // attention !! reprojeté
         writer.addDocument(doc);
 
         doc = new Document();
         doc.add(new StringField("id", "line 2", Field.Store.YES));
         doc.add(new StringField("docid", writer.maxDoc() + "", Field.Store.YES));
-        addLine       (doc,             0,                  0,             0,               -15, srid4326);
+        addLine       (doc,             0,                  0,             0,               -15, srid4326, rTree);
         writer.addDocument(doc);
     }
 
@@ -3121,7 +2601,7 @@ public class LuceneTest {
      * @param y2  the Y coordinate of the first point of the line.
      * @param crsName The coordinate reference system in witch the coordinates are expressed.
      */
-    private static void addLine(final Document doc, final double x1, final double y1, final double x2, final double y2, final int srid) {
+    private static void addLine(final Document doc, final double x1, final double y1, final double x2, final double y2, final int srid, final Tree rTree) {
 
         LineString line = GF.createLineString(new Coordinate[]{
             new Coordinate(x1,y1),
@@ -3129,7 +2609,7 @@ public class LuceneTest {
         });
         line.setSRID(srid);
 
-        AbstractIndexer.addGeometry(doc, line, null);
+        AbstractIndexer.addGeometry(doc, line, rTree);
 
         // add a default meta field to make searching all documents easy
         doc.add(new StringField("metafile", "doc",   Field.Store.YES));
@@ -3144,12 +2624,12 @@ public class LuceneTest {
      * @param y       The y coordinate of the point.
      * @param crsName The coordinate reference system in witch the coordinates are expressed.
      */
-    private static void addPoint(final Document doc, final double x, final double y, final int srid) {
+    private static void addPoint(final Document doc, final double x, final double y, final int srid, final Tree rTree) {
 
         Point pt = GF.createPoint(new Coordinate(x, y));
         pt.setSRID(srid);
 
-        AbstractIndexer.addGeometry(doc, pt, null);
+        AbstractIndexer.addGeometry(doc, pt, rTree);
 
         // add a default meta field to make searching all documents easy
         doc.add(new StringField("metafile", "doc",    Field.Store.YES));
@@ -3165,7 +2645,7 @@ public class LuceneTest {
      * @param maxy the maximum Y coordinate of the bounding box.
      * @param crsName The coordinate reference system in witch the coordinates are expressed.
      */
-    private static void addBoundingBox(final Document doc, final double minx, final double maxx, final double miny, final double maxy, final int srid) {
+    private static void addBoundingBox(final Document doc, final double minx, final double maxx, final double miny, final double maxy, final int srid, final Tree rTree) {
 
         final Coordinate[] crds = new Coordinate[]{
         new Coordinate(0, 0),
@@ -3189,7 +2669,7 @@ public class LuceneTest {
         crds[4].y = miny;
         poly.setSRID(srid);
 
-        AbstractIndexer.addGeometry(doc, poly, null);
+        AbstractIndexer.addGeometry(doc, poly, rTree);
 
         // add a default meta field to make searching all documents easy
         doc.add(new StringField("metafile", "doc", Field.Store.YES));
