@@ -47,7 +47,7 @@ public class WeakPropertyChangeListener extends WeakReference<PropertyChangeList
         this.source = source;
         //register in the new source
         try {
-            final Method method = source.getClass().getMethod("addPropertyListener", PropertyChangeListener.class);
+            final Method method = source.getClass().getMethod("addPropertyChangeListener", PropertyChangeListener.class);
             method.invoke(source, this);
         } catch (NoSuchMethodException ex) {
             throw new RuntimeException("Object do not have property listener methods.",ex);
@@ -72,7 +72,7 @@ public class WeakPropertyChangeListener extends WeakReference<PropertyChangeList
     public void dispose() {
         if(source != null){
             try {
-                final Method method = source.getClass().getMethod("removePropertyListener", PropertyChangeListener.class);
+                final Method method = source.getClass().getMethod("removePropertyChangeListener", PropertyChangeListener.class);
                 method.invoke(source, this);
             } catch (NoSuchMethodException ex) {
                 throw new RuntimeException("Object do not have property listener methods.",ex);

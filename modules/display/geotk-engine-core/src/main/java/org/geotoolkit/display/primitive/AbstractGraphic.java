@@ -23,6 +23,7 @@ import java.util.Locale;
 import java.util.logging.Logger;
 import org.geotoolkit.display.canvas.DisplayObject;
 import static org.geotoolkit.util.ArgumentChecks.*;
+import org.geotoolkit.util.WeakPropertyChangeListener;
 import org.geotoolkit.util.converter.Classes;
 import org.opengis.display.canvas.Canvas;
 import org.opengis.display.primitive.Graphic;
@@ -78,7 +79,8 @@ public abstract class AbstractGraphic extends DisplayObject implements Graphic, 
         this.canvas = canvas;
 
         if(this.canvas instanceof DisplayObject)
-            ((DisplayObject)this.canvas).addPropertyChangeListener(this);
+            ((DisplayObject)this.canvas).addPropertyChangeListener(
+                    new WeakPropertyChangeListener(canvas, this));
 
     }
 
