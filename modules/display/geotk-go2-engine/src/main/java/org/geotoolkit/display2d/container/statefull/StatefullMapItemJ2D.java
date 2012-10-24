@@ -34,7 +34,6 @@ import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.primitive.SearchArea;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.display2d.container.stateless.StatelessCoverageLayerJ2D;
 import org.geotoolkit.display2d.primitive.AbstractGraphicJ2D;
 import org.geotoolkit.display2d.primitive.GraphicJ2D;
 import org.geotoolkit.map.CoverageMapLayer;
@@ -55,7 +54,15 @@ public class StatefullMapItemJ2D<T extends MapItem> extends AbstractGraphicJ2D i
     private final ItemListener.Weak weakListener = new ItemListener.Weak(this);
 
     /** Executor used to update graphics */
-    private static final RejectedExecutionHandler LOCAL_REJECT_EXECUTION_HANDLER = new ThreadPoolExecutor.CallerRunsPolicy(); 
+    private static final RejectedExecutionHandler LOCAL_REJECT_EXECUTION_HANDLER = new ThreadPoolExecutor.CallerRunsPolicy(){
+
+        @Override
+        public void rejectedExecution(Runnable r, ThreadPoolExecutor e) {
+            System.out.println("> Rejected update");
+            super.rejectedExecution(r, e);
+        }
+        
+    }; 
     private BlockingQueue queue;
     private ThreadPoolExecutor exec;
     
@@ -70,7 +77,7 @@ public class StatefullMapItemJ2D<T extends MapItem> extends AbstractGraphicJ2D i
         this.item = item;
 
         if(parent == null){
-            queue = new ArrayBlockingQueue(100);
+            queue = new ArrayBlockingQueue(100000);
             exec = new ThreadPoolExecutor(Runtime.getRuntime().availableProcessors(), Runtime.getRuntime().availableProcessors(), 
                     1, TimeUnit.MINUTES, queue, 
                     LOCAL_REJECT_EXECUTION_HANDLER);
@@ -139,8 +146,8 @@ public class StatefullMapItemJ2D<T extends MapItem> extends AbstractGraphicJ2D i
             if(ref != null && ref instanceof PyramidalModel){
                 //pyramidal model, we can improve rendering
                 //TODO not ready yet
-                //g2d = new StatefullPyramidalCoverageLayerJ2D(getCanvas(), this, (CoverageMapLayer)child);
-                g2d = new StatefullMapLayerJ2D(getCanvas(), this, (CoverageMapLayer)child);
+                g2d = new StatefullPyramidalCoverageLayerJ2D(getCanvas(), this, (CoverageMapLayer)child);
+//                g2d = new StatefullMapLayerJ2D(getCanvas(), this, (CoverageMapLayer)child);
             }else{
                 //normal coverage
                 g2d = new StatefullMapLayerJ2D(getCanvas(), this, (CoverageMapLayer)child);

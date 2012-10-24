@@ -36,12 +36,16 @@ import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
+import javax.imageio.stream.ImageInputStream;
+import javax.imageio.stream.MemoryCacheImageInputStream;
 import org.geotoolkit.client.Request;
 import org.geotoolkit.client.Server;
 import org.geotoolkit.coverage.*;
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.security.DefaultClientSecurity;
 import org.geotoolkit.storage.DataStoreException;
+import org.geotoolkit.util.FileUtilities;
 import org.geotoolkit.util.collection.Cache;
 import org.geotoolkit.util.logging.Logging;
 import org.jboss.netty.bootstrap.ClientBootstrap;
@@ -141,16 +145,27 @@ public abstract class CachedPyramidSet extends DefaultPyramidSet {
                 if (value == null) {
                     final Request request = getTileRequest(mosaic, col, row, hints);
                     InputStream stream = null;
+                    ImageInputStream iis = null;
                     try {
                         stream = request.getResponseStream();
-                        value = ImageIO.read(stream);
+                        iis = new MemoryCacheImageInputStream(stream);
+                        value = ImageIO.read(iis);
                     } catch (IOException ex) {
-                        LOGGER.log(Level.WARNING, ex.getMessage(), ex);
+                        LOGGER.log(Level.INFO, ex.getMessage());
                     } finally {
-                        try {
-                            stream.close();
-                        } catch (IOException ex) {
-                            LOGGER.log(Level.WARNING, ex.getMessage(), ex);
+                        if(iis != null && value == null){
+                            try {
+                                iis.close();
+                            } catch (IOException ex) {
+                                LOGGER.log(Level.WARNING, ex.getMessage(), ex);
+                            }
+                        }
+                        if(stream != null){
+                            try {
+                                stream.close();
+                            } catch (IOException ex) {
+                                LOGGER.log(Level.WARNING, ex.getMessage(), ex);
+                            }
                         }
                     }
                 }

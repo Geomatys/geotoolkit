@@ -50,11 +50,16 @@ public class DefaultTileReference implements TileReference{
         ImageReaderSpi spi = this.spi;
         ImageReader reader = null;
 
-        if(spi == null){
+        if(spi == null && input != null){
             reader = XImageIO.getReader(input, Boolean.TRUE, Boolean.TRUE);
             spi = reader.getOriginatingProvider();
         }
 
+        if(spi == null){
+            //could not find a proper reader for input
+            throw new IOException("Could not find image reader spi for input : "+input);
+        }
+        
         final Class[] supportedTypes = spi.getInputTypes();
         Object in = null;
 

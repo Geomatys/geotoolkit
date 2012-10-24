@@ -16,13 +16,19 @@
  */
 package org.geotoolkit.display2d.container.statefull;
 
-import com.vividsolutions.jts.geom.Coordinate;
 import java.awt.Dimension;
+import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.logging.Level;
+import javax.vecmath.Point3d;
 import org.geotoolkit.coverage.*;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
 import org.geotoolkit.display2d.GO2Utilities;
@@ -33,6 +39,7 @@ import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.storage.DataStoreException;
+import org.geotoolkit.util.XArrays;
 import org.opengis.feature.type.Name;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -48,7 +55,27 @@ public class StatefullPyramidalCoverageLayerJ2D extends StatefullMapLayerJ2D<Cov
     
     private final PyramidalModel model;
     private final double tolerance;
-    private final Set<StatefullTileJ2D> gtiles = new HashSet<StatefullTileJ2D>();
+    private final Map<Point3d,StatefullTileJ2D> gtiles = new TreeMap<Point3d, StatefullTileJ2D>(new Comparator<Point3d>() {
+        @Override
+        public int compare(Point3d c1, Point3d c2) {            
+            final double zdiff = c2.z - c1.z; //we want lower res tiles to be painted first  
+            
+            if(zdiff > 0) return +1;
+            else if(zdiff < 0) return -1;
+            else{  
+                final double ydiff = c1.y - c2.y;       
+                if(ydiff > 0) return +1;
+                else if(ydiff < 0) return -1;
+                else{ 
+                    final double xdiff = c1.x - c2.x;
+                    if(xdiff > 0) return +1;
+                    else if(xdiff < 0) return -1;
+                    else return 0; //same point
+                }
+            }
+            
+        }
+    });
 
     public StatefullPyramidalCoverageLayerJ2D(final J2DCanvas canvas, final StatefullMapItemJ2D parent, final CoverageMapLayer layer){
         super(canvas, parent, layer);
@@ -63,7 +90,7 @@ public class StatefullPyramidalCoverageLayerJ2D extends StatefullMapLayerJ2D<Cov
      */
     @Override
     public void paint(RenderingContext2D context2D) {
-        
+                
         if(!item.isVisible()) return;
         
         final Name coverageName = item.getCoverageName();
@@ -172,7 +199,7 @@ public class StatefullPyramidalCoverageLayerJ2D extends StatefullMapLayerJ2D<Cov
         }
         
         //tiles to render         
-        final Set<Coordinate> ttiles = new HashSet<Coordinate>();
+        final Set<Point3d> ttiles = new HashSet<Point3d>();
         
         for(int tileCol=(int)tileMinCol; tileCol<tileMaxCol; tileCol++){   
             for(int tileRow=(int)tileMinRow; tileRow<tileMaxRow; tileRow++){
@@ -181,35 +208,118 @@ public class StatefullPyramidalCoverageLayerJ2D extends StatefullMapLayerJ2D<Cov
                     continue;
                 }
                 
-                ttiles.add(new Coordinate(tileCol, tileRow, scale));
+                ttiles.add(new Point3d(tileCol, tileRow, scale));
             }
         }
 
         //update graphic tiles -------------------------------------------------
-        final Collection<StatefullTileJ2D> toRemove = new ArrayList<StatefullTileJ2D>();
+        final Collection<Point3d> toRemove = new ArrayList<Point3d>();
         loop:
-        for(StatefullTileJ2D st : gtiles){
-            for(Coordinate c : ttiles){
-                if(st.coordinate.equals3D(c)){
-                    continue loop;
+        for(StatefullTileJ2D st : gtiles.values()){
+            if(ttiles.contains(st.getCoordinate())){
+                continue loop;
+            }
+            
+            //avoids loading the tile if it's already in the update queue
+            st.setObsoleted(true);
+            
+            if(st.isLoaded()){
+                final Point3d[] coords = getReplacements(pyramid, st.getCoordinate(), mosaic,
+                        tileMinCol,tileMaxCol,tileMinRow,tileMaxRow);
+                for(Point3d c : coords){
+                    if(!ttiles.contains(c)) continue;
+
+                    final StatefullTileJ2D rst = gtiles.get(c);
+                    if(rst == null || !rst.isLoaded()){
+                        //replacement tiles are not all loaded, keep the previous tile
+                        continue loop;
+                    }
                 }
             }
-            toRemove.add(st);
+            
+            toRemove.add(st.getCoordinate());
         }
-        gtiles.removeAll(toRemove);
+        for(Point3d pt : toRemove){
+            gtiles.remove(pt);
+        }
         
-        for(Coordinate c : ttiles){
-            if(!gtiles.contains(c)){
-                gtiles.add(new StatefullTileJ2D(mosaic, c, getCanvas(), this, item));
+        for(Point3d c : ttiles){
+            if(!gtiles.containsKey(c)){
+                gtiles.put(c,new StatefullTileJ2D(mosaic, c, getCanvas(), this, item));
             }
         }
         
-        
         //paint sub tiles ------------------------------------------------------
-        for(final StatefullTileJ2D gt : gtiles){
+        for(final StatefullTileJ2D gt : gtiles.values()){
             gt.paint(context2D);
-        }
-        
+        }        
+    }
+
+    @Override
+    protected synchronized void update() {
     }
     
+    
+    private Point3d[] getReplacements(Pyramid pyramid, Point3d coord, final GridMosaic mosaicUpdate,
+            double qtileMinCol, double qtileMaxCol, double qtileMinRow, double qtileMaxRow){
+        double[] tscales = pyramid.getScales();
+        double[] scales = new double[tscales.length];
+        for (int i=tscales.length-1,j=0; i>=0; i--) {
+            scales[j++] = tscales[i];
+        }
+        
+        final int indexBase = Arrays.binarySearch(scales, coord.z);        
+        final GridMosaic mosaicBase = pyramid.getMosaic(scales.length-indexBase-1);        
+        final Envelope env = mosaicBase.getEnvelope((int)coord.y, (int)coord.x);
+        
+        double bBoxMinX = env.getMinimum(0);
+        double bBoxMinY = env.getMinimum(1);
+        double bBoxMaxX = env.getMaximum(0);
+        double bBoxMaxY = env.getMaximum(1);
+        
+        final double tileMatrixMinX = mosaicUpdate.getUpperLeftCorner().getX();
+        final double tileMatrixMaxY = mosaicUpdate.getUpperLeftCorner().getY();
+        final Dimension gridSize = mosaicUpdate.getGridSize();
+        final Dimension tileSize = mosaicUpdate.getTileSize();
+        final double scale = mosaicUpdate.getScale();
+        final double tileSpanX = scale * tileSize.width;
+        final double tileSpanY = scale * tileSize.height;
+        final int gridWidth = gridSize.width;
+        final int gridHeight = gridSize.height;
+        
+        final double epsilon = 1e-6;
+        double tileMinCol = Math.floor( (bBoxMinX - tileMatrixMinX) / tileSpanX + epsilon);
+        double tileMaxCol = Math.floor( (bBoxMaxX - tileMatrixMinX) / tileSpanX - epsilon)+1;
+        double tileMinRow = Math.floor( (tileMatrixMaxY - bBoxMaxY) / tileSpanY + epsilon);
+        double tileMaxRow = Math.floor( (tileMatrixMaxY - bBoxMinY) / tileSpanY - epsilon)+1;
+        tileMinCol = Math.max(tileMinCol, qtileMinCol);
+        tileMaxCol = Math.min(tileMaxCol, qtileMaxCol);
+        tileMinRow = Math.max(tileMinRow, qtileMinRow);
+        tileMaxRow = Math.min(tileMaxRow, qtileMaxRow);
+
+        //ensure we dont go out of the grid
+        if(tileMinCol < 0) tileMinCol = 0;
+        if(tileMaxCol > gridWidth) tileMaxCol = gridWidth;
+        if(tileMinRow < 0) tileMinRow = 0;
+        if(tileMaxRow > gridHeight) tileMaxRow = gridHeight;
+                
+        //tiles to render         
+        final Set<Point3d> ttiles = new HashSet<Point3d>();
+        
+        if( ((tileMaxCol-tileMinCol)*(tileMaxRow-tileMinRow)) > 100){
+            
+        }
+        
+        for(int tileCol=(int)tileMinCol; tileCol<tileMaxCol; tileCol++){   
+            for(int tileRow=(int)tileMinRow; tileRow<tileMaxRow; tileRow++){
+                if(mosaicUpdate.isMissing(tileCol, tileRow)){
+                    //tile not available
+                    continue;
+                }
+                ttiles.add(new Point3d(tileCol, tileRow, scale));
+            }
+        }
+        
+        return ttiles.toArray(new Point3d[0]);
+    }
 }
