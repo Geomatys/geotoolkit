@@ -465,19 +465,12 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
      * @param doc The lucene document currently building.
      * @param geom A JTS geometry
      */
-    public static void addGeometry(final Document doc, final Geometry geom, final Tree rTree) {
+    public static NamedEnvelope addGeometry(final Document doc, final Geometry geom, final Tree rTree) {
+        NamedEnvelope namedBound = null;
         if (rTree != null) {
-            final Envelope jtsBound = geom.getEnvelopeInternal();
             try {
                 final int id     =  Integer.parseInt(doc.get("docid"));
-                final String epsgCode = SRIDGenerator.toSRS(geom.getSRID(), SRIDGenerator.Version.V1);
-                final CoordinateReferenceSystem geomCRS = CRS.decode(epsgCode);
-                final GeneralEnvelope bound = new GeneralEnvelope(geomCRS);
-                bound.setRange(0, jtsBound.getMinX(), jtsBound.getMaxX());
-                bound.setRange(1, jtsBound.getMinY(), jtsBound.getMaxY());
-            
-                // reproject to cartesian CRS
-                final NamedEnvelope namedBound = new NamedEnvelope(Envelopes.transform(bound, rTree.getCrs()), id);
+                namedBound = getNamedEnvelope(id, geom, rTree.getCrs());
                 rTree.insert(namedBound);
             } catch (TransformException ex) {
                 LOGGER.log(Level.WARNING, "Unable to insert envelope in R-Tree.", ex);
@@ -486,8 +479,21 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
             }
         }
         doc.add(new StoredField(LuceneOGCFilter.GEOMETRY_FIELD_NAME,WKBUtils.toWKBwithSRID(geom)));
+        return namedBound;
     }
+    
+    public static NamedEnvelope getNamedEnvelope(final int id, final Geometry geom, final CoordinateReferenceSystem crs) throws FactoryException, TransformException {
+        final Envelope jtsBound = geom.getEnvelopeInternal();
+        final String epsgCode = SRIDGenerator.toSRS(geom.getSRID(), SRIDGenerator.Version.V1);
+        final CoordinateReferenceSystem geomCRS = CRS.decode(epsgCode);
+        final GeneralEnvelope bound = new GeneralEnvelope(geomCRS);
+        bound.setRange(0, jtsBound.getMinX(), jtsBound.getMaxX());
+        bound.setRange(1, jtsBound.getMinY(), jtsBound.getMaxY());
 
+        // reproject to specified CRS
+        return new NamedEnvelope(Envelopes.transform(bound, crs), id);
+    }
+    
     /**
      * Free the resources.
      */

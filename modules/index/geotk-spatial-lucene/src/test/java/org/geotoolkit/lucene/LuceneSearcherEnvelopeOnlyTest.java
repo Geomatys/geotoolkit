@@ -30,7 +30,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 import java.io.File;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
@@ -86,6 +88,7 @@ public class LuceneSearcherEnvelopeOnlyTest {
 
     private static final GeometryFactory GF = new GeometryFactory();
 
+    private static Map<String, NamedEnvelope> envelopes = new HashMap<String, NamedEnvelope>();
     private static File directory;
     private static File subDirectory;
     private static LuceneIndexSearcher searcher;
@@ -269,9 +272,9 @@ public class LuceneSearcherEnvelopeOnlyTest {
         }
 
         //we verify that we obtain the correct results
-        assertEquals(nbResults, 4);  // gain 1 result was 3 before moving to CRS:84
+        assertEquals(nbResults, 3);
         assertTrue(results.contains(1));
-        assertTrue(results.contains(2));
+        assertTrue(results.contains(2) || results.contains(6)); // depends on test order
         assertTrue(results.contains(4));
 
         /*
@@ -301,9 +304,9 @@ public class LuceneSearcherEnvelopeOnlyTest {
         }
 
         //we verify that we obtain the correct results
-        assertEquals(nbResults, 4);  // gain 1 result was 3 before moving to CRS:84
+        assertEquals(nbResults, 3);
         assertTrue(results.contains(1));
-        assertTrue(results.contains(2));
+        assertTrue(results.contains(2) || results.contains(6)); // depends on test order
         assertTrue(results.contains(4));
 
         /*
@@ -331,10 +334,10 @@ public class LuceneSearcherEnvelopeOnlyTest {
         }
 
          //we verify that we obtain the correct results
-        assertEquals(nbResults, 5); // gain 1 result was 4 before moving to CRS:84
+        assertEquals(nbResults, 4);
         assertTrue(results.contains(3));
         assertTrue(results.contains(1));
-        assertTrue(results.contains(2));
+        assertTrue(results.contains(2) || results.contains(6)); // depends on test order
         assertTrue(results.contains(5));
 
         /*
@@ -2174,6 +2177,13 @@ public class LuceneSearcherEnvelopeOnlyTest {
         writer.commit();
         writer.close();
 
+        //remove from Rtree
+        final NamedEnvelope env = envelopes.get("box 2 projected");
+        rTree.remove(env);
+        
+        final File treeFile = new File(subDirectory, "tree.bin");
+        TreeWriter.write(rTree, treeFile);
+        
         searcher = new LuceneIndexSearcher(directory, null, new ClassicAnalyzer(org.apache.lucene.util.Version.LUCENE_40), true);
 
         //we perform a lucene query
@@ -2195,27 +2205,19 @@ public class LuceneSearcherEnvelopeOnlyTest {
         writer = new IndexWriter(FSDirectory, config);
 
         final int srid3395 = SRIDGenerator.toSRID(CRS.decode("EPSG:3395"), Version.V1);
-        Document docu = new Document();
-        docu.add(new StringField("id", "box 2 projected", Field.Store.YES));
-        docu.add(new StringField("docid", writer.maxDoc() + "", Field.Store.YES));
-        addBoundingBox(docu,             556597.4539663679,  1113194.9079327357,  1111475.1028522244, 1678147.5163917788, srid3395, rTree); // attention !! reprojeté
-        writer.addDocument(docu);
+        Document doc = new Document();
+        doc.add(new StringField("id", "box 2 projected", Field.Store.YES));
+        doc.add(new StringField("docid", writer.maxDoc() + "", Field.Store.YES));
+        envelopes.put("box 2 projected", addBoundingBox(doc,             556597.4539663679,  1113194.9079327357,  1111475.1028522244, 1678147.5163917788, srid3395, rTree)); // attention !! reprojeté
+        writer.addDocument(doc);
 
         writer.commit();
         writer.close();
 
-        final File treeFile = new File(subDirectory, "tree.bin");
-        treeFile.delete();
-        TreeWriter.write(rTree, treeFile);
-        
         searcher = new LuceneIndexSearcher(directory, null, new StandardAnalyzer(org.apache.lucene.util.Version.LUCENE_40), true);
 
-
          //we perform a lucene query
-        org.opengis.filter.Filter bboxFilter2 = FF.bbox(GEOMETRY_PROPERTY, -20, -20, 20, 20, "CRS:84");
-        SpatialQuery bboxQuery2 = new SpatialQuery(wrap(bboxFilter2));
-        
-        results = searcher.doSearch(bboxQuery2);
+        results = searcher.doSearch(bboxQuery);
 
         nbResults = results.size();
         LOGGER.log(Level.FINER, "QnS:BBOX 1 CRS=4326: nb Results: {0}", nbResults);
@@ -2235,37 +2237,37 @@ public class LuceneSearcherEnvelopeOnlyTest {
         Document doc = new Document();
         doc.add(new StringField("id", "box 1", Field.Store.YES));
         doc.add(new StringField("docid", writer.maxDoc() + "", Field.Store.YES));
-        addBoundingBox(doc,           -40,                -25,           -50,               -40, srid4326, rTree);
+        envelopes.put("box 1", addBoundingBox(doc,           -40,                -25,           -50,               -40, srid4326, rTree));
         writer.addDocument(doc);
 
         doc = new Document();
         doc.add(new StringField("id", "box 2", Field.Store.YES));
         doc.add(new StringField("docid", writer.maxDoc() + "", Field.Store.YES));
-        addBoundingBox(doc,             5,                 10,            10,                15, srid4326, rTree);
+        envelopes.put("box 2", addBoundingBox(doc,             5,                 10,            10,                15, srid4326, rTree));
         writer.addDocument(doc);
 
         doc = new Document();
         doc.add(new StringField("id", "box 2 projected", Field.Store.YES));
         doc.add(new StringField("docid", writer.maxDoc() + "", Field.Store.YES));
-        addBoundingBox(doc,             556597.4539663679,  1113194.9079327357,  1111475.1028522244, 1678147.5163917788, srid3395, rTree); // attention !! reprojeté
+        envelopes.put("box 2 projected", addBoundingBox(doc,             556597.4539663679,  1113194.9079327357,  1111475.1028522244, 1678147.5163917788, srid3395, rTree)); // attention !! reprojeté
         writer.addDocument(doc);
 
         doc = new Document();
         doc.add(new StringField("id", "box 3", Field.Store.YES));
         doc.add(new StringField("docid", writer.maxDoc() + "", Field.Store.YES));
-        addBoundingBox(doc,            30,                 50,             0,                15, srid4326, rTree);
+        envelopes.put("box 3", addBoundingBox(doc,            30,                 50,             0,                15, srid4326, rTree));
         writer.addDocument(doc);
 
         doc = new Document();
         doc.add(new StringField("id", "box 4", Field.Store.YES));
         doc.add(new StringField("docid", writer.maxDoc() + "", Field.Store.YES));
-        addBoundingBox(doc,           -30,                -15,             0,                10, srid4326, rTree);
+        envelopes.put("box 4", addBoundingBox(doc,           -30,                -15,             0,                10, srid4326, rTree));
         writer.addDocument(doc);
 
         doc = new Document();
         doc.add(new StringField("id", "box 5", Field.Store.YES));
         doc.add(new StringField("docid", writer.maxDoc() + "", Field.Store.YES));
-        addBoundingBox(doc,        44.792,             51.126,        -6.171,             -2.28, srid4326, rTree);
+        envelopes.put("box 5", addBoundingBox(doc,        44.792,             51.126,        -6.171,             -2.28, srid4326, rTree));
         writer.addDocument(doc);
 
     }
@@ -2280,7 +2282,7 @@ public class LuceneSearcherEnvelopeOnlyTest {
      * @param maxy the maximum Y coordinate of the bounding box.
      * @param crsName The coordinate reference system in witch the coordinates are expressed.
      */
-    private static void addBoundingBox(final Document doc, final double minx, final double maxx, final double miny, final double maxy, final int srid, final Tree rTree) {
+    private static NamedEnvelope addBoundingBox(final Document doc, final double minx, final double maxx, final double miny, final double maxy, final int srid, final Tree rTree) {
 
         final Coordinate[] crds = new Coordinate[]{
         new Coordinate(0, 0),
@@ -2304,10 +2306,9 @@ public class LuceneSearcherEnvelopeOnlyTest {
         crds[4].y = miny;
         poly.setSRID(srid);
 
-        AbstractIndexer.addGeometry(doc, poly, rTree);
-
         // add a default meta field to make searching all documents easy
         doc.add(new StringField("metafile", "doc", Field.Store.YES));
+        return AbstractIndexer.addGeometry(doc, poly, rTree);
     }
 
 }

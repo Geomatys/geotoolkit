@@ -32,7 +32,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 import java.io.File;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
@@ -89,6 +91,7 @@ public class LuceneSearcherTest {
 
     private static final GeometryFactory GF = new GeometryFactory();
 
+    private static Map<String, NamedEnvelope> envelopes = new HashMap<String, NamedEnvelope>();
     private static File directory;
     private static File subDirectory;
     private static LuceneIndexSearcher searcher;
@@ -291,13 +294,13 @@ public class LuceneSearcherTest {
         }
 
         //we verify that we obtain the correct results
-        assertEquals(nbResults, 11); // gain 1 result was 10 before moving to CRS:84
+        assertEquals(nbResults, 10);
         assertTrue(results.contains(0));
         assertTrue(results.contains(1));
         assertTrue(results.contains(2));
         assertTrue(results.contains(3));
         assertTrue(results.contains(7));
-        assertTrue(results.contains(8));
+        assertTrue(results.contains(8) || results.contains(15)); // depends on tests order
         assertTrue(results.contains(10));
         assertTrue(results.contains(12));
         assertTrue(results.contains(13));
@@ -330,13 +333,13 @@ public class LuceneSearcherTest {
         }
 
         //we verify that we obtain the correct results
-        assertEquals(nbResults, 11); // gain 1 result was 10 before moving to CRS:84
+        assertEquals(nbResults, 10);
         assertTrue(results.contains(0));
         assertTrue(results.contains(1));
         assertTrue(results.contains(2));
         assertTrue(results.contains(3));
         assertTrue(results.contains(7));
-        assertTrue(results.contains(8));
+        assertTrue(results.contains(8) || results.contains(15)); // depends on tests order
         assertTrue(results.contains(10));
         assertTrue(results.contains(12));
         assertTrue(results.contains(13));
@@ -367,12 +370,12 @@ public class LuceneSearcherTest {
         }
 
          //we verify that we obtain the correct results
-        assertEquals(nbResults, 10); // gain 1 result was 9 before moving to CRS:84
+        assertEquals(nbResults, 9);
         assertTrue(results.contains(3));
         assertTrue(results.contains(4));
         assertTrue(results.contains(9));
         assertTrue(results.contains(7));
-        assertTrue(results.contains(8));
+        assertTrue(results.contains(8) || results.contains(15)); // depends on tests order
         assertTrue(results.contains(11));
         assertTrue(results.contains(12));
         assertTrue(results.contains(13));
@@ -2424,6 +2427,13 @@ public class LuceneSearcherTest {
         writer.deleteDocuments(query);
         writer.commit();
         writer.close();
+        
+        //remove from Rtree
+        final NamedEnvelope env = envelopes.get("box 2 projected");
+        rTree.remove(env);
+        
+        final File treeFile = new File(subDirectory, "tree.bin");
+        TreeWriter.write(rTree, treeFile);
 
         searcher = new LuceneIndexSearcher(directory, null, new ClassicAnalyzer(org.apache.lucene.util.Version.LUCENE_40), false);
 
@@ -2503,19 +2513,19 @@ public class LuceneSearcherTest {
         Document doc = new Document();
         doc.add(new StringField("id", "point 1", Field.Store.YES));
         doc.add(new StringField("docid", writer.maxDoc() + "", Field.Store.YES));
-        addPoint      (doc,           -10,                10, srid4326, rTree);
+        envelopes.put("point 1", addPoint      (doc,           -10,                10, srid4326, rTree));
         writer.addDocument(doc);
 
         doc = new Document();
         doc.add(new StringField("id", "point 1 projected", Field.Store.YES));
         doc.add(new StringField("docid", writer.maxDoc() + "", Field.Store.YES));
-        addPoint      (doc,           -1111475.102852225,   1113194.9079327357, srid3395, rTree); // attention !! reprojeté
+        envelopes.put("point 1 projected", addPoint      (doc,           -1111475.102852225,   1113194.9079327357, srid3395, rTree)); // attention !! reprojeté
         writer.addDocument(doc);
 
         doc = new Document();
         doc.add(new StringField("id", "point 2", Field.Store.YES));
         doc.add(new StringField("docid", writer.maxDoc() + "", Field.Store.YES));
-        addPoint      (doc,           -10,                 0, srid4326, rTree);
+        envelopes.put("point 2", addPoint      (doc,           -10,                 0, srid4326, rTree));
         writer.addDocument(doc);
 
         doc = new Document();
@@ -2527,67 +2537,67 @@ public class LuceneSearcherTest {
         doc = new Document();
         doc.add(new StringField("id", "point 4", Field.Store.YES));
         doc.add(new StringField("docid", writer.maxDoc() + "", Field.Store.YES));
-        addPoint      (doc,            40,                20, srid4326, rTree);
+        envelopes.put("point 4", addPoint      (doc,            40,                20, srid4326, rTree));
         writer.addDocument(doc);
 
         doc = new Document();
         doc.add(new StringField("id", "point 5", Field.Store.YES));
         doc.add(new StringField("docid", writer.maxDoc() + "", Field.Store.YES));
-        addPoint      (doc,           -40,                30, srid4326, rTree);
+        envelopes.put("point 5", addPoint      (doc,           -40,                30, srid4326, rTree));
         writer.addDocument(doc);
 
         doc = new Document();
         doc.add(new StringField("id", "box 1", Field.Store.YES));
         doc.add(new StringField("docid", writer.maxDoc() + "", Field.Store.YES));
-        addBoundingBox(doc,           -40,                -25,           -50,               -40, srid4326, rTree);
+        envelopes.put("box 1", addBoundingBox(doc,           -40,                -25,           -50,               -40, srid4326, rTree));
         writer.addDocument(doc);
 
         doc = new Document();
         doc.add(new StringField("id", "box 2", Field.Store.YES));
         doc.add(new StringField("docid", writer.maxDoc() + "", Field.Store.YES));
-        addBoundingBox(doc,             5,                 10,            10,                15, srid4326, rTree);
+        envelopes.put("box 2", addBoundingBox(doc,             5,                 10,            10,                15, srid4326, rTree));
         writer.addDocument(doc);
 
         doc = new Document();
         doc.add(new StringField("id", "box 2 projected", Field.Store.YES));
         doc.add(new StringField("docid", writer.maxDoc() + "", Field.Store.YES));
-        addBoundingBox(doc,             556597.4539663679,  1113194.9079327357,  1111475.1028522244, 1678147.5163917788, srid3395, rTree); // attention !! reprojeté
+        envelopes.put("box 2 projected", addBoundingBox(doc,             556597.4539663679,  1113194.9079327357,  1111475.1028522244, 1678147.5163917788, srid3395, rTree)); // attention !! reprojeté
         writer.addDocument(doc);
 
         doc = new Document();
         doc.add(new StringField("id", "box 3", Field.Store.YES));
         doc.add(new StringField("docid", writer.maxDoc() + "", Field.Store.YES));
-        addBoundingBox(doc,            30,                 50,             0,                15, srid4326, rTree);
+        envelopes.put("box 3", addBoundingBox(doc,            30,                 50,             0,                15, srid4326, rTree));
         writer.addDocument(doc);
 
         doc = new Document();
         doc.add(new StringField("id", "box 4", Field.Store.YES));
         doc.add(new StringField("docid", writer.maxDoc() + "", Field.Store.YES));
-        addBoundingBox(doc,           -30,                -15,             0,                10, srid4326, rTree);
+        envelopes.put("box 4", addBoundingBox(doc,           -30,                -15,             0,                10, srid4326, rTree));
         writer.addDocument(doc);
 
         doc = new Document();
         doc.add(new StringField("id", "box 5", Field.Store.YES));
         doc.add(new StringField("docid", writer.maxDoc() + "", Field.Store.YES));
-        addBoundingBox(doc,        44.792,             51.126,        -6.171,             -2.28, srid4326, rTree);
+        envelopes.put("box 5", addBoundingBox(doc,        44.792,             51.126,        -6.171,             -2.28, srid4326, rTree));
         writer.addDocument(doc);
 
         doc = new Document();
         doc.add(new StringField("id", "line 1", Field.Store.YES));
         doc.add(new StringField("docid", writer.maxDoc() + "", Field.Store.YES));
-        addLine       (doc,             0,                  0,            25,                 0, srid4326, rTree);
+        envelopes.put("line 1", addLine       (doc,             0,                  0,            25,                 0, srid4326, rTree));
         writer.addDocument(doc);
 
         doc = new Document();
         doc.add(new StringField("id", "line 1 projected", Field.Store.YES));
         doc.add(new StringField("docid", writer.maxDoc() + "", Field.Store.YES));
-        addLine       (doc,             0,        0,      2857692.6111605316,                 0, srid3395, rTree); // attention !! reprojeté
+        envelopes.put("line 1 projected", addLine       (doc,             0,        0,      2857692.6111605316,                 0, srid3395, rTree)); // attention !! reprojeté
         writer.addDocument(doc);
 
         doc = new Document();
         doc.add(new StringField("id", "line 2", Field.Store.YES));
         doc.add(new StringField("docid", writer.maxDoc() + "", Field.Store.YES));
-        addLine       (doc,             0,                  0,             0,               -15, srid4326, rTree);
+        envelopes.put("line 2", addLine       (doc,             0,                  0,             0,               -15, srid4326, rTree));
         writer.addDocument(doc);
     }
 
@@ -2601,7 +2611,7 @@ public class LuceneSearcherTest {
      * @param y2  the Y coordinate of the first point of the line.
      * @param crsName The coordinate reference system in witch the coordinates are expressed.
      */
-    private static void addLine(final Document doc, final double x1, final double y1, final double x2, final double y2, final int srid, final Tree rTree) {
+    private static NamedEnvelope addLine(final Document doc, final double x1, final double y1, final double x2, final double y2, final int srid, final Tree rTree) {
 
         LineString line = GF.createLineString(new Coordinate[]{
             new Coordinate(x1,y1),
@@ -2609,11 +2619,10 @@ public class LuceneSearcherTest {
         });
         line.setSRID(srid);
 
-        AbstractIndexer.addGeometry(doc, line, rTree);
-
         // add a default meta field to make searching all documents easy
         doc.add(new StringField("metafile", "doc",   Field.Store.YES));
-
+        
+        return AbstractIndexer.addGeometry(doc, line, rTree);
     }
 
     /**
@@ -2624,15 +2633,15 @@ public class LuceneSearcherTest {
      * @param y       The y coordinate of the point.
      * @param crsName The coordinate reference system in witch the coordinates are expressed.
      */
-    private static void addPoint(final Document doc, final double x, final double y, final int srid, final Tree rTree) {
+    private static NamedEnvelope addPoint(final Document doc, final double x, final double y, final int srid, final Tree rTree) {
 
         Point pt = GF.createPoint(new Coordinate(x, y));
         pt.setSRID(srid);
 
-        AbstractIndexer.addGeometry(doc, pt, rTree);
-
         // add a default meta field to make searching all documents easy
         doc.add(new StringField("metafile", "doc",    Field.Store.YES));
+        
+        return AbstractIndexer.addGeometry(doc, pt, rTree);
     }
 
     /**
@@ -2645,7 +2654,7 @@ public class LuceneSearcherTest {
      * @param maxy the maximum Y coordinate of the bounding box.
      * @param crsName The coordinate reference system in witch the coordinates are expressed.
      */
-    private static void addBoundingBox(final Document doc, final double minx, final double maxx, final double miny, final double maxy, final int srid, final Tree rTree) {
+    private static NamedEnvelope addBoundingBox(final Document doc, final double minx, final double maxx, final double miny, final double maxy, final int srid, final Tree rTree) {
 
         final Coordinate[] crds = new Coordinate[]{
         new Coordinate(0, 0),
@@ -2669,10 +2678,10 @@ public class LuceneSearcherTest {
         crds[4].y = miny;
         poly.setSRID(srid);
 
-        AbstractIndexer.addGeometry(doc, poly, rTree);
-
         // add a default meta field to make searching all documents easy
         doc.add(new StringField("metafile", "doc", Field.Store.YES));
+        
+        return AbstractIndexer.addGeometry(doc, poly, rTree);
     }
 
 }
