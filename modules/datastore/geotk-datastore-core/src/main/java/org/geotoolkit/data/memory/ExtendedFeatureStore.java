@@ -24,11 +24,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import org.geotoolkit.data.AbstractDataStore;
-import org.geotoolkit.data.DataStore;
-import org.geotoolkit.data.DataStoreFactory;
-import org.geotoolkit.data.DataUtilities;
+import org.geotoolkit.data.AbstractFeatureStore;
 import org.geotoolkit.data.FeatureReader;
+import org.geotoolkit.data.FeatureStore;
+import org.geotoolkit.data.FeatureStoreFactory;
+import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.StorageListener;
 import org.geotoolkit.data.query.Query;
@@ -49,23 +49,23 @@ import org.opengis.geometry.Envelope;
 import org.opengis.parameter.ParameterValueGroup;
 
 /**
- * Wraps a datastore and store additional queries which will be made available
+ * Wraps a feature store and store additional queries which will be made available
  * like any other types.
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public final class ExtendedDataStore extends AbstractDataStore{
+public final class ExtendedFeatureStore extends AbstractFeatureStore{
 
     private final Map<Name,Query> queries = new ConcurrentHashMap<Name, Query>();
     
     private final Map<Name,FeatureType> featureTypes = new ConcurrentHashMap<Name, FeatureType>();
     
-    private final DataStore wrapped;
+    private final FeatureStore wrapped;
 
-    public ExtendedDataStore(final DataStore wrapped) {
+    public ExtendedFeatureStore(final FeatureStore wrapped) {
         super(null);
-        ArgumentChecks.ensureNonNull("datastore", wrapped);
+        ArgumentChecks.ensureNonNull("feature store", wrapped);
         this.wrapped = wrapped;
     }
 
@@ -75,7 +75,7 @@ public final class ExtendedDataStore extends AbstractDataStore{
     }
 
     @Override
-    public DataStoreFactory getFactory() {
+    public FeatureStoreFactory getFactory() {
         return wrapped.getFactory();
     }
 
@@ -168,7 +168,7 @@ public final class ExtendedDataStore extends AbstractDataStore{
         if(getQueryNames().contains(query.getTypeName())){
             final FeatureReader reader = getFeatureReader(query);
             try{
-                return DataUtilities.calculateCount(reader);
+                return FeatureStoreUtilities.calculateCount(reader);
             }finally{
                 reader.close();
             }
@@ -181,7 +181,7 @@ public final class ExtendedDataStore extends AbstractDataStore{
         if(getQueryNames().contains(query.getTypeName())){
             final FeatureReader reader = getFeatureReader(query);
             try{
-                return DataUtilities.calculateEnvelope(reader);
+                return FeatureStoreUtilities.calculateEnvelope(reader);
             }finally{
                 reader.close();
             }
@@ -274,8 +274,8 @@ public final class ExtendedDataStore extends AbstractDataStore{
         }
 
         @Override
-        public DataStore getDataStore() {
-            return ExtendedDataStore.this;
+        public FeatureStore getFeatureStore() {
+            return ExtendedFeatureStore.this;
         }
 
     }

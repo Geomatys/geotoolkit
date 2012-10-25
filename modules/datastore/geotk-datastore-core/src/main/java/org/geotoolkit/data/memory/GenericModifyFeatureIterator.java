@@ -20,8 +20,8 @@ package org.geotoolkit.data.memory;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NoSuchElementException;
-import org.geotoolkit.data.DataStoreRuntimeException;
 import org.geotoolkit.data.FeatureIterator;
+import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.util.converter.Classes;
 import org.opengis.feature.Feature;
@@ -60,7 +60,7 @@ public class GenericModifyFeatureIterator<F extends Feature, R extends FeatureIt
      * {@inheritDoc }
      */
     @Override
-    public void close() throws DataStoreRuntimeException {
+    public void close() throws FeatureStoreRuntimeException {
         iterator.close();
     }
 
@@ -68,7 +68,7 @@ public class GenericModifyFeatureIterator<F extends Feature, R extends FeatureIt
      * {@inheritDoc }
      */
     @Override
-    public F next() throws DataStoreRuntimeException {
+    public F next() throws FeatureStoreRuntimeException {
         if (hasNext()) {
             // hasNext() ensures that next != null
             final F f = nextFeature;
@@ -83,7 +83,7 @@ public class GenericModifyFeatureIterator<F extends Feature, R extends FeatureIt
      * {@inheritDoc }
      */
     @Override
-    public boolean hasNext() throws DataStoreRuntimeException {
+    public boolean hasNext() throws FeatureStoreRuntimeException {
         if(nextFeature != null) return true;
 
         if(iterator.hasNext()){

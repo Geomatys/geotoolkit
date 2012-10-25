@@ -27,7 +27,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.geotoolkit.data.DataStoreRuntimeException;
+import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.StorageContentEvent;
@@ -259,7 +259,7 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
         final FeatureIterator<Feature> iterator;
         try{
             iterator = features.iterator();
-        }catch(DataStoreRuntimeException ex){
+        }catch(FeatureStoreRuntimeException ex){
             renderingContext.getMonitor().exceptionOccured(ex, Level.WARNING);
             return graphics;
         }

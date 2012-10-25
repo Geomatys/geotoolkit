@@ -35,7 +35,7 @@ import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import org.geotoolkit.data.DataUtilities;
+import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.GO2Utilities;
@@ -254,7 +254,7 @@ public class JCRSChooser extends javax.swing.JDialog {
                 final Polygon polygon = GF.createPolygon(ring, new LinearRing[0]);                
                 final Feature feature = FeatureUtilities.defaultFeature(type, "0");
                 feature.getProperty("geom").setValue(polygon);
-                final FeatureCollection col = DataUtilities.collection(feature);
+                final FeatureCollection col = FeatureStoreUtilities.collection(feature);
                 
                 //general informations
                 final String name = "mySymbol";

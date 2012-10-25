@@ -20,7 +20,7 @@ package org.geotoolkit.data.session;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-import org.geotoolkit.data.DataStore;
+import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.StorageContentEvent;
 import org.geotoolkit.data.StorageListener;
 import org.geotoolkit.data.StorageManagementEvent;
@@ -41,10 +41,10 @@ public abstract class AbstractSession implements Session, StorageListener{
 
     private final Set<StorageListener> listeners = new HashSet<StorageListener>();
     private final StorageListener.Weak weakListener = new Weak(this);
-    protected final DataStore store;
+    protected final FeatureStore store;
 
-    public AbstractSession(final DataStore store){
-        ensureNonNull("datastore", store);
+    public AbstractSession(final FeatureStore store){
+        ensureNonNull("feature store", store);
         this.store = store;
         weakListener.registerSource(store);
     }
@@ -53,7 +53,7 @@ public abstract class AbstractSession implements Session, StorageListener{
      * {@inheritDoc }
      */
     @Override
-    public DataStore getDataStore() {
+    public FeatureStore getFeatureStore() {
         return store;
     }
 

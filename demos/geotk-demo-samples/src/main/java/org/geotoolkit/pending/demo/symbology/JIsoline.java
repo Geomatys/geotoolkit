@@ -17,8 +17,8 @@ import javax.measure.unit.NonSI;
 import javax.measure.unit.Unit;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
-import org.geotoolkit.data.DataStore;
-import org.geotoolkit.data.DataStoreFinder;
+import org.geotoolkit.data.FeatureStore;
+import org.geotoolkit.data.FeatureStoreFinder;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
@@ -53,7 +53,7 @@ public class JIsoline extends JAbstractMapPane{
     private static MapContext createContext() throws DataStoreException {
         final MapContext context = Styles.createWorldContext(null);
         Map<String,Serializable> params;
-        DataStore store;
+        FeatureStore store;
         FeatureCollection fs;
         MutableStyle style;
 
@@ -63,7 +63,7 @@ public class JIsoline extends JAbstractMapPane{
         try{
             params = new HashMap<String,Serializable>();
             params.put( "url", JAbstractMapPane.class.getResource("/data/weather/stations2.shp") );
-            store = DataStoreFinder.open(params);
+            store = FeatureStoreFinder.open(params);
             fs = store.createSession(true).getFeatureCollection(QueryBuilder.all(store.getNames().iterator().next()));
             layer = MapBuilder.createFeatureLayer(fs, createStationStyle());
             layer.setDescription(SF.description("stations", ""));

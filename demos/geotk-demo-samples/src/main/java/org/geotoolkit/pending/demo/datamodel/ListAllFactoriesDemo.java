@@ -2,8 +2,8 @@
 package org.geotoolkit.pending.demo.datamodel;
 
 import java.util.Iterator;
-import org.geotoolkit.data.DataStoreFactory;
-import org.geotoolkit.data.DataStoreFinder;
+import org.geotoolkit.data.FeatureStoreFactory;
+import org.geotoolkit.data.FeatureStoreFinder;
 import org.geotoolkit.pending.demo.Demos;
 import org.opengis.parameter.ParameterDescriptorGroup;
 
@@ -14,17 +14,17 @@ public class ListAllFactoriesDemo {
         Demos.init();
         
         // Listing or creating new datastores are made through the DataStoreFinder utility class        
-        final Iterator<DataStoreFactory> ite = DataStoreFinder.getAllFactories(null).iterator();
+        final Iterator<FeatureStoreFactory> ite = FeatureStoreFinder.getAllFactories(null).iterator();
         
         while(ite.hasNext()){
             
-            final DataStoreFactory factory = ite.next();
+            final FeatureStoreFactory factory = ite.next();
             
             //display general informations about this factory
             System.out.println(factory.getDisplayName());
             System.out.println(factory.getDescription());
             
-            //display the parameter requiered to create a new instance
+            //display the parameter requiered to open a new instance
             //of datastore of this type
             final ParameterDescriptorGroup description = factory.getParametersDescriptor();
             System.out.println(description);
@@ -38,7 +38,7 @@ public class ListAllFactoriesDemo {
             params.parameter("parameter_name_1").setValue("parameter value 1");
             params.parameter("parameter_name_2").setValue("parameter value 2");
             params.parameter("parameter_name_N").setValue("parameter value N");
-            final Server server = factory.create(params);
+            final Server server = factory.open(params);
             */
         }
         

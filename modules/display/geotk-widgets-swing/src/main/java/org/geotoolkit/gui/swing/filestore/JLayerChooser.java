@@ -37,7 +37,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JSeparator;
 import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.coverage.CoverageStore;
-import org.geotoolkit.data.DataStore;
+import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.session.Session;
@@ -120,8 +120,8 @@ public class JLayerChooser extends javax.swing.JPanel {
                     name = (Name) value;
                 }
                 
-                if(source instanceof DataStore){
-                    final DataStore store = (DataStore) source;
+                if(source instanceof FeatureStore){
+                    final FeatureStore store = (FeatureStore) source;
                     final Session session = store.createSession(true);
                     final FeatureCollection collection = session.getFeatureCollection(QueryBuilder.all(name));
                     final MutableStyle style = RandomStyleFactory.createRandomVectorStyle(collection);
@@ -149,8 +149,8 @@ public class JLayerChooser extends javax.swing.JPanel {
         final List firstCandidates = new ArrayList<Name>();
         final List secondCandidates = new ArrayList<Name>();
         
-        if(source instanceof DataStore){
-            final DataStore store = (DataStore) source;
+        if(source instanceof FeatureStore){
+            final FeatureStore store = (FeatureStore) source;
             for(Name name : store.getNames()){
                 final FeatureType ft = store.getFeatureType(name);
                 if(ft.getGeometryDescriptor() != null){
@@ -249,7 +249,7 @@ public class JLayerChooser extends javax.swing.JPanel {
             
             if(value instanceof FeatureType){
                 final FeatureType ft = (FeatureType) value;
-                final DataStore store = (DataStore) getSource();
+                final FeatureStore store = (FeatureStore) getSource();
                 
                 final GeometryDescriptor desc = ft.getGeometryDescriptor();
                 if(desc != null){

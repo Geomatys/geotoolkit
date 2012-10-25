@@ -27,7 +27,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.SwingUtilities;
-import org.geotoolkit.data.DataUtilities;
+import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.gui.swing.go2.JMap2D;
@@ -79,7 +79,7 @@ public class FeatureEditTDelegate extends AbstractFeatureEditionDelegate {
             final JMap2D map = new JMap2D();
             
             final MapContext context = MapBuilder.createContext();
-            final FeatureCollection col = DataUtilities.collection(feature);
+            final FeatureCollection col = FeatureStoreUtilities.collection(feature);
             final FeatureMapLayer layer = MapBuilder.createFeatureLayer(col, RandomStyleFactory.createDefaultVectorStyle(col));
             context.layers().add(layer);
             

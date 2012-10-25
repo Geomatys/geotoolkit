@@ -47,7 +47,7 @@ import org.opengis.feature.type.GeometryDescriptor;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import org.geotoolkit.storage.DataStoreException;
-import org.geotoolkit.data.DataStoreRuntimeException;
+import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.shapefile.lock.AccessManager;
 import org.geotoolkit.data.shapefile.lock.ShpFileType;
 
@@ -219,9 +219,9 @@ public class ShapefileFeatureWriter implements FeatureWriter<SimpleFeatureType, 
      * @throws IOException DOCUMENT ME!
      */
     @Override
-    public void close() throws DataStoreRuntimeException {
+    public void close() throws FeatureStoreRuntimeException {
         if (featureReader == null) {
-            throw new DataStoreRuntimeException("Writer closed");
+            throw new FeatureStoreRuntimeException("Writer closed");
         }
 
         // make sure to write the last feature...
@@ -259,20 +259,20 @@ public class ShapefileFeatureWriter implements FeatureWriter<SimpleFeatureType, 
                 }
             }
         }catch(IOException ex){
-            throw new DataStoreRuntimeException(ex);
+            throw new FeatureStoreRuntimeException(ex);
         }catch(DataStoreException ex){
-            throw new DataStoreRuntimeException(ex);
+            throw new FeatureStoreRuntimeException(ex);
         }
 
         doClose();
         try {
             clean();
         } catch (IOException ex) {
-            throw new DataStoreRuntimeException(ex);
+            throw new FeatureStoreRuntimeException(ex);
         }
     }
 
-    protected void doClose() throws DataStoreRuntimeException {
+    protected void doClose() throws FeatureStoreRuntimeException {
         // close reader, flush headers, and copy temp files, if any
         try {
             featureReader.close();
@@ -280,13 +280,13 @@ public class ShapefileFeatureWriter implements FeatureWriter<SimpleFeatureType, 
             try {
                 flush();
             } catch(IOException ex){
-                throw new DataStoreRuntimeException(ex);
+                throw new FeatureStoreRuntimeException(ex);
             }finally {
                 try {
                     shpWriter.close();
                     dbfWriter.close();
                 } catch (IOException ex) {
-                    throw new DataStoreRuntimeException(ex);
+                    throw new FeatureStoreRuntimeException(ex);
                 }
             }
 
@@ -308,9 +308,9 @@ public class ShapefileFeatureWriter implements FeatureWriter<SimpleFeatureType, 
      * {@inheritDoc }
      */
     @Override
-    public boolean hasNext() throws DataStoreRuntimeException {
+    public boolean hasNext() throws FeatureStoreRuntimeException {
         if (featureReader == null) {
-            throw new DataStoreRuntimeException("Writer closed");
+            throw new FeatureStoreRuntimeException("Writer closed");
         }
 
         return featureReader.hasNext();
@@ -320,10 +320,10 @@ public class ShapefileFeatureWriter implements FeatureWriter<SimpleFeatureType, 
      * {@inheritDoc }
      */
     @Override
-    public SimpleFeature next() throws DataStoreRuntimeException {
+    public SimpleFeature next() throws FeatureStoreRuntimeException {
         // closed already, error!
         if (featureReader == null) {
-            throw new DataStoreRuntimeException("Writer closed");
+            throw new FeatureStoreRuntimeException("Writer closed");
         }
 
         // we have to write the current feature back into the stream
@@ -336,7 +336,7 @@ public class ShapefileFeatureWriter implements FeatureWriter<SimpleFeatureType, 
             try {
                 return currentFeature = featureReader.next();
             } catch (IllegalAttributeException iae) {
-                throw new DataStoreRuntimeException("Error in reading", iae);
+                throw new FeatureStoreRuntimeException("Error in reading", iae);
             }
         }
 
@@ -346,7 +346,7 @@ public class ShapefileFeatureWriter implements FeatureWriter<SimpleFeatureType, 
             final String featureID = getFeatureType().getTypeName()+"."+(records+1);
             return currentFeature = FeatureTypeUtilities.template(getFeatureType(),featureID,emptyAtts);
         } catch (IllegalAttributeException iae) {
-            throw new DataStoreRuntimeException("Error creating empty Feature", iae);
+            throw new FeatureStoreRuntimeException("Error creating empty Feature", iae);
         }
     }
 
@@ -363,13 +363,13 @@ public class ShapefileFeatureWriter implements FeatureWriter<SimpleFeatureType, 
      * {@inheritDoc }
      */
     @Override
-    public void remove() throws DataStoreRuntimeException {
+    public void remove() throws FeatureStoreRuntimeException {
         if (featureReader == null) {
-            throw new DataStoreRuntimeException("Writer closed");
+            throw new FeatureStoreRuntimeException("Writer closed");
         }
 
         if (currentFeature == null) {
-            throw new DataStoreRuntimeException("Current feature is null");
+            throw new FeatureStoreRuntimeException("Current feature is null");
         }
 
         // mark the current feature as null, this will result in it not
@@ -381,13 +381,13 @@ public class ShapefileFeatureWriter implements FeatureWriter<SimpleFeatureType, 
      * {@inheritDoc }
      */
     @Override
-    public void write() throws DataStoreRuntimeException {
+    public void write() throws FeatureStoreRuntimeException {
         if (currentFeature == null) {
-            throw new DataStoreRuntimeException("Current feature is null");
+            throw new FeatureStoreRuntimeException("Current feature is null");
         }
 
         if (featureReader == null) {
-            throw new DataStoreRuntimeException("Writer closed");
+            throw new FeatureStoreRuntimeException("Writer closed");
         }
 
         // writing of Geometry
@@ -407,7 +407,7 @@ public class ShapefileFeatureWriter implements FeatureWriter<SimpleFeatureType, 
                 shpWriter.writeHeaders(new Envelope(), shapeType, 0, 0);
                 handler = shapeType.getShapeHandler(true);
             } catch (Exception se) {
-                throw new DataStoreRuntimeException("Unexpected Error", se);
+                throw new FeatureStoreRuntimeException("Unexpected Error", se);
             }
         }
 
@@ -428,7 +428,7 @@ public class ShapefileFeatureWriter implements FeatureWriter<SimpleFeatureType, 
             // write it
             shpWriter.writeGeometry(g);
         } catch (IOException ex) {
-            throw new DataStoreRuntimeException(ex);
+            throw new FeatureStoreRuntimeException(ex);
         }
 
         // writing of attributes
@@ -444,9 +444,9 @@ public class ShapefileFeatureWriter implements FeatureWriter<SimpleFeatureType, 
         try {
             dbfWriter.write(transferCache);
         } catch (IOException ex) {
-            throw new DataStoreRuntimeException(ex);
+            throw new FeatureStoreRuntimeException(ex);
         } catch (DbaseFileException ex) {
-            throw new DataStoreRuntimeException(ex);
+            throw new FeatureStoreRuntimeException(ex);
         }
 
         // one more down...

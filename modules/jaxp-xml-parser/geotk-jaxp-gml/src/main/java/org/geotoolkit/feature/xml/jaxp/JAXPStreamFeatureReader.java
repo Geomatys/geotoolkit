@@ -33,7 +33,7 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
-import org.geotoolkit.data.DataUtilities;
+import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
@@ -178,9 +178,9 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                     final Object coll = readFeatureCollection(id);
                     if (coll == null) {
                         if (featureTypes.size() == 1) {
-                            return DataUtilities.collection(id, featureTypes.get(0));
+                            return FeatureStoreUtilities.collection(id, featureTypes.get(0));
                         } else {
-                            return DataUtilities.collection(id, null);
+                            return FeatureStoreUtilities.collection(id, null);
                         }
                     }
                     return coll;
@@ -248,7 +248,7 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                     for (FeatureType ft : featureTypes) {
                         if (ft.getName().equals(name)) {
                             if (collection == null) {
-                                collection = DataUtilities.collection(id, ft);
+                                collection = FeatureStoreUtilities.collection(id, ft);
                             }
                             collection.add(readFeature(fid, ft));
                             find = true;

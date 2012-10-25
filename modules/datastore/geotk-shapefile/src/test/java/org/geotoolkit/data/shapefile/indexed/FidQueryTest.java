@@ -29,7 +29,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.geotoolkit.storage.DataStoreException;
-import org.geotoolkit.data.DataUtilities;
+import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
@@ -111,7 +111,7 @@ public class FidQueryTest extends FIDTestCase {
         final Collection<SimpleFeature> collection = new ArrayList<SimpleFeature>();
         collection.add(newFeature);
 
-        final List<FeatureId> newFids = DataUtilities.write(ds.getFeatureWriterAppend(name), collection);
+        final List<FeatureId> newFids = FeatureStoreUtilities.write(ds.getFeatureWriterAppend(name), collection);
         assertEquals(1, newFids.size());
         // this.assertFidsMatch();
 

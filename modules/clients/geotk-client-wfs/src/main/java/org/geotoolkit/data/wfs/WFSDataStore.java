@@ -38,11 +38,11 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 
-import org.geotoolkit.data.AbstractDataStore;
-import org.geotoolkit.data.DataStoreFactory;
-import org.geotoolkit.data.DataStoreFinder;
+import org.geotoolkit.data.AbstractFeatureStore;
+import org.geotoolkit.data.FeatureStoreFactory;
+import org.geotoolkit.data.FeatureStoreFinder;
 import org.geotoolkit.storage.DataStoreException;
-import org.geotoolkit.data.DataUtilities;
+import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureWriter;
@@ -94,7 +94,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class WFSDataStore extends AbstractDataStore{
+public class WFSDataStore extends AbstractFeatureStore{
 
     private static final AtomicLong NS_INC = new AtomicLong();
 
@@ -214,8 +214,8 @@ public class WFSDataStore extends AbstractDataStore{
     }
 
     @Override
-    public DataStoreFactory getFactory() {
-        return DataStoreFinder.getFactoryById(WFSDataStoreFactory.NAME);
+    public FeatureStoreFactory getFactory() {
+        return FeatureStoreFinder.getFactoryById(WFSDataStoreFactory.NAME);
     }
 
     @Override
@@ -359,7 +359,7 @@ public class WFSDataStore extends AbstractDataStore{
         if(newFeatures instanceof FeatureCollection){
             col = (FeatureCollection) newFeatures;
         }else{
-            col = DataUtilities.collection("", null);
+            col = FeatureStoreUtilities.collection("", null);
             col.addAll(newFeatures);
         }
         insert.setFeatures(col);
@@ -541,14 +541,14 @@ public class WFSDataStore extends AbstractDataStore{
 
             if(result instanceof Feature){
                 final Feature sf = (Feature) result;
-                final FeatureCollection<Feature> col = DataUtilities.collection("id", sft);
+                final FeatureCollection<Feature> col = FeatureStoreUtilities.collection("id", sft);
                 col.add(sf);
                 return col;
             }else if(result instanceof FeatureCollection){
                 final FeatureCollection<Feature> col = (FeatureCollection<Feature>) result;
                 return col;
             }else{
-                final FeatureCollection<Feature> col = DataUtilities.collection("", sft);
+                final FeatureCollection<Feature> col = FeatureStoreUtilities.collection("", sft);
                 return col;
             }
 

@@ -19,7 +19,7 @@ package org.geotoolkit.jdbc;
 import java.util.HashSet;
 import java.util.List;
 
-import org.geotoolkit.data.DataUtilities;
+import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.factory.FactoryFinder;
@@ -137,10 +137,10 @@ public abstract class JDBC3DTest extends JDBCTestSupport {
                 "l3" }, null);
 
         // insert it
-        FeatureCollection col = DataUtilities.collection("", null);
+        FeatureCollection col = FeatureStoreUtilities.collection("", null);
         col.add(newFeature);
 
-        List<FeatureId> fids = DataUtilities.write(dataStore.getFeatureWriterAppend(nsname(LINE3D)), col);
+        List<FeatureId> fids = FeatureStoreUtilities.write(dataStore.getFeatureWriterAppend(nsname(LINE3D)), col);
 
 
         // retrieve it back

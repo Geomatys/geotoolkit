@@ -18,9 +18,9 @@
 package org.geotoolkit.data.gpx;
 
 import java.util.Collections;
-import org.geotoolkit.data.AbstractDataStoreFactory;
-import org.geotoolkit.data.AbstractFileDataStoreFactory;
-import org.geotoolkit.data.DataStore;
+import org.geotoolkit.data.AbstractFeatureStoreFactory;
+import org.geotoolkit.data.AbstractFileFeatureStoreFactory;
+import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.metadata.iso.DefaultIdentifier;
 import org.geotoolkit.metadata.iso.citation.DefaultCitation;
 import org.geotoolkit.metadata.iso.identification.DefaultServiceIdentification;
@@ -40,7 +40,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class GPXDataStoreFactory extends AbstractFileDataStoreFactory {
+public class GPXDataStoreFactory extends AbstractFileFeatureStoreFactory {
 
     /** factory identification **/
     public static final String NAME = "gpx";
@@ -80,14 +80,14 @@ public class GPXDataStoreFactory extends AbstractFileDataStoreFactory {
     }
 
     @Override
-    public DataStore create(final ParameterValueGroup params) throws DataStoreException {
+    public FeatureStore open(final ParameterValueGroup params) throws DataStoreException {
         checkCanProcessWithError(params);
         return new GPXDataStore(params);
     }
 
     @Override
-    public DataStore createNew(final ParameterValueGroup params) throws DataStoreException {
-        return create(params);
+    public FeatureStore create(final ParameterValueGroup params) throws DataStoreException {
+        return open(params);
     }
 
     @Override

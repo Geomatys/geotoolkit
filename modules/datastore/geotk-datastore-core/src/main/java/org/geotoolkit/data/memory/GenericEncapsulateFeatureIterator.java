@@ -18,10 +18,10 @@
 package org.geotoolkit.data.memory;
 
 
-import org.geotoolkit.data.DataStoreRuntimeException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.FeatureReader;
+import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.util.converter.Classes;
@@ -56,7 +56,7 @@ public abstract class GenericEncapsulateFeatureIterator<F extends Feature, R ext
      * {@inheritDoc }
      */
     @Override
-    public void close() throws DataStoreRuntimeException {
+    public void close() throws FeatureStoreRuntimeException {
         iterator.close();
     }
 
@@ -64,7 +64,7 @@ public abstract class GenericEncapsulateFeatureIterator<F extends Feature, R ext
      * {@inheritDoc }
      */
     @Override
-    public F next() throws DataStoreRuntimeException {
+    public F next() throws FeatureStoreRuntimeException {
         final Feature next = iterator.next();
         return (F) FeatureUtilities.wrapProperty(next, desc);
     }
@@ -73,7 +73,7 @@ public abstract class GenericEncapsulateFeatureIterator<F extends Feature, R ext
      * {@inheritDoc }
      */
     @Override
-    public boolean hasNext() throws DataStoreRuntimeException {
+    public boolean hasNext() throws FeatureStoreRuntimeException {
         return iterator.hasNext();
     }
 
@@ -122,7 +122,7 @@ public abstract class GenericEncapsulateFeatureIterator<F extends Feature, R ext
         }
 
         @Override
-        public FeatureIterator iterator(final Hints hints) throws DataStoreRuntimeException {
+        public FeatureIterator iterator(final Hints hints) throws FeatureStoreRuntimeException {
             FeatureIterator ite = getOriginalFeatureCollection().iterator(hints);
             if(!(ite instanceof FeatureReader)){
                 ite = GenericWrapFeatureIterator.wrapToReader(ite, getOriginalFeatureCollection().getFeatureType());
@@ -131,7 +131,7 @@ public abstract class GenericEncapsulateFeatureIterator<F extends Feature, R ext
         }
 
         @Override
-        protected Feature modify(Feature original) throws DataStoreRuntimeException {
+        protected Feature modify(Feature original) throws FeatureStoreRuntimeException {
             throw new UnsupportedOperationException("should not have been called.");
         }
 

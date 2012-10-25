@@ -28,8 +28,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.geotoolkit.data.AbstractReadingTests;
-import org.geotoolkit.data.DataStore;
-import org.geotoolkit.data.DataStoreFinder;
+import org.geotoolkit.data.FeatureStore;
+import org.geotoolkit.data.FeatureStoreFinder;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.geometry.GeneralEnvelope;
@@ -91,7 +91,7 @@ public class SMLDataStoreTest extends AbstractReadingTests{
 
 
     private static DefaultDataSource ds;
-    private static DataStore store;
+    private static FeatureStore store;
     private static Set<Name> names = new HashSet<Name>();
     private static List<ExpectedResult> expecteds = new ArrayList<ExpectedResult>();
     static{
@@ -113,7 +113,7 @@ public class SMLDataStoreTest extends AbstractReadingTests{
             params.put("dbtype", "SML");
             params.put(SMLDataStoreFactory.SGBDTYPE.getName().toString(), "derby");
             params.put(SMLDataStoreFactory.DERBYURL.getName().toString(), url);
-            store = DataStoreFinder.open(params);
+            store = FeatureStoreFinder.open(params);
 
 
             final FeatureTypeBuilder featureTypeBuilder = new FeatureTypeBuilder();
@@ -282,7 +282,7 @@ public class SMLDataStoreTest extends AbstractReadingTests{
     }
 
     @Override
-    protected DataStore getDataStore() {
+    protected FeatureStore getDataStore() {
         return store;
     }
 

@@ -19,7 +19,7 @@ package org.geotoolkit.process.vector.merge;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
-import org.geotoolkit.data.DataStoreRuntimeException;
+import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.memory.WrapFeatureCollection;
@@ -80,16 +80,16 @@ public class MergeFeatureCollection extends WrapFeatureCollection {
         try {
             return MergeProcess.mergeFeature(feature, newFeatureType, map);
         } catch (NonconvertibleObjectException ex) {
-            throw new DataStoreRuntimeException(ex);
+            throw new FeatureStoreRuntimeException(ex);
         }
     }
 
      @Override
-    public FeatureIterator<Feature> iterator(final Hints hints) throws DataStoreRuntimeException {
+    public FeatureIterator<Feature> iterator(final Hints hints) throws FeatureStoreRuntimeException {
         try {
             return new MergeFeatureIterator(fcList);
         } catch (NonconvertibleObjectException ex) {
-           throw new DataStoreRuntimeException(ex);
+           throw new FeatureStoreRuntimeException(ex);
         }
     }
 
@@ -171,7 +171,7 @@ public class MergeFeatureCollection extends WrapFeatureCollection {
          */
         @Override
         public void remove() {
-            throw new DataStoreRuntimeException("Unmodifiable collection");
+            throw new FeatureStoreRuntimeException("Unmodifiable collection");
         }
 
         /**
@@ -201,7 +201,7 @@ public class MergeFeatureCollection extends WrapFeatureCollection {
 
                             
                         } catch (NonconvertibleObjectException ex) {
-                           throw new DataStoreRuntimeException(ex);
+                           throw new FeatureStoreRuntimeException(ex);
                         }
                     } else {
                         break;

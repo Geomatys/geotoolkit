@@ -57,7 +57,7 @@ public class PostgisNGDataStoreFactoryTest extends JDBCTestSupport {
         params.put(IDENTIFIER.getName().toString(), "postgis");
 
         assertTrue(factory.canProcess(params));
-        JDBCDataStore store = (JDBCDataStore) factory.create(params);
+        JDBCDataStore store = (JDBCDataStore) factory.open(params);
         assertNotNull(store);
         try {
             // check dialect

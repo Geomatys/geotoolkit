@@ -23,7 +23,7 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LinearRing;
 
-import org.geotoolkit.data.DataUtilities;
+import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.FeatureUtilities;
@@ -185,7 +185,7 @@ public class SpatialJoinTest extends AbstractProcessTest {
 
         type = createSimpleType1();
 
-        final FeatureCollection<Feature> featureList = DataUtilities.collection("Target", type);
+        final FeatureCollection<Feature> featureList = FeatureStoreUtilities.collection("Target", type);
 
         final Feature feature1 = FeatureUtilities.defaultFeature(type, "id-1");
         feature1.getProperty("name").setValue("Human1");
@@ -236,7 +236,7 @@ public class SpatialJoinTest extends AbstractProcessTest {
 
         type = createSimpleType2();
 
-        final FeatureCollection<Feature> featureList = DataUtilities.collection("source", type);
+        final FeatureCollection<Feature> featureList = FeatureStoreUtilities.collection("source", type);
 
         final Feature feature1 = FeatureUtilities.defaultFeature(type, "id-11");
         feature1.getProperty("type").setValue("Tree1");
@@ -287,7 +287,7 @@ public class SpatialJoinTest extends AbstractProcessTest {
 
         type = createSimpleType1();
 
-        final FeatureCollection<Feature> featureList = DataUtilities.collection("target", type);
+        final FeatureCollection<Feature> featureList = FeatureStoreUtilities.collection("target", type);
 
         final Feature feature1 = FeatureUtilities.defaultFeature(type, "id-01");
         feature1.getProperty("name").setValue("Field");
@@ -311,7 +311,7 @@ public class SpatialJoinTest extends AbstractProcessTest {
 
         type = createSimpleType1();
 
-        final FeatureCollection<Feature> featureList = DataUtilities.collection("target", type);
+        final FeatureCollection<Feature> featureList = FeatureStoreUtilities.collection("target", type);
 
         final Feature feature1 = FeatureUtilities.defaultFeature(type, "id-01");
         feature1.getProperty("name").setValue("Field");
@@ -334,7 +334,7 @@ public class SpatialJoinTest extends AbstractProcessTest {
     private static FeatureCollection<?> buildFeatureListInter2() throws FactoryException {
 
         type = createSimpleType2();
-        final FeatureCollection<Feature> featureList = DataUtilities.collection("source", type);
+        final FeatureCollection<Feature> featureList = FeatureStoreUtilities.collection("source", type);
 
         final Feature feature1 = FeatureUtilities.defaultFeature(type, "id-11");
         feature1.getProperty("type").setValue("something1");
@@ -394,7 +394,7 @@ public class SpatialJoinTest extends AbstractProcessTest {
     private static FeatureCollection<?> buildResultNear() throws FactoryException {
         type = createSimpleTypeResult();
 
-        final FeatureCollection<Feature> featureList = DataUtilities.collection("Target", type);
+        final FeatureCollection<Feature> featureList = FeatureStoreUtilities.collection("Target", type);
 
         final Feature feature1 = FeatureUtilities.defaultFeature(type, "id-1_id-11");
         feature1.getProperty("name").setValue("Human1");
@@ -459,7 +459,7 @@ public class SpatialJoinTest extends AbstractProcessTest {
 
         type = createSimpleTypeResult();
 
-        final FeatureCollection<Feature> featureList = DataUtilities.collection("source", type);
+        final FeatureCollection<Feature> featureList = FeatureStoreUtilities.collection("source", type);
 
         final Feature feature1 = FeatureUtilities.defaultFeature(type, "id-01_id-12");
         feature1.getProperty("name").setValue("Field");
@@ -485,7 +485,7 @@ public class SpatialJoinTest extends AbstractProcessTest {
 
         type = createSimpleTypeResult();
 
-        final FeatureCollection<Feature> featureList = DataUtilities.collection("source", type);
+        final FeatureCollection<Feature> featureList = FeatureStoreUtilities.collection("source", type);
 
         final Feature feature1 = FeatureUtilities.defaultFeature(type, "id-01");
         feature1.getProperty("name").setValue("Field");

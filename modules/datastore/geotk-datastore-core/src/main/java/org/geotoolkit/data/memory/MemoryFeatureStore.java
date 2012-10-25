@@ -28,9 +28,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
-import org.geotoolkit.data.AbstractDataStore;
-import org.geotoolkit.data.DataStoreFactory;
-import org.geotoolkit.data.DataStoreRuntimeException;
+import org.geotoolkit.data.AbstractFeatureStore;
+import org.geotoolkit.data.FeatureStoreFactory;
+import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.query.DefaultQueryCapabilities;
@@ -61,7 +61,7 @@ import org.opengis.filter.identity.Identifier;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class MemoryDataStore extends AbstractDataStore{
+public class MemoryFeatureStore extends AbstractFeatureStore{
     
     private static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
 
@@ -112,7 +112,7 @@ public class MemoryDataStore extends AbstractDataStore{
                 @Override
                 public Feature next() {
                     if(next == null){
-                        throw new DataStoreRuntimeException("No more features.");
+                        throw new FeatureStoreRuntimeException("No more features.");
                     }
                     final Feature candidate = next;
                     next = null;
@@ -143,28 +143,28 @@ public class MemoryDataStore extends AbstractDataStore{
     private final Map<Name,Group> groups = new HashMap<Name, Group>();
     private Set<Name> nameCache = null;
 
-    public MemoryDataStore(){
+    public MemoryFeatureStore(){
         super(null);
         singleTypeLock = false;
     }
 
     /**
-     * Memory datastore has no factory
+     * Memory feature store has no factory
      * @return null
      */
     @Override
-    public DataStoreFactory getFactory() {
+    public FeatureStoreFactory getFactory() {
         return null;
     }
     
     /**
-     * Create a memory datastore with a single type.
+     * Create a memory feature store with a single type.
      *
      * @param baseCollection : original collection.
      * @param singleTypeLock : true if you don't want any other types to be create or
      * this type to be deleted.
      */
-    public MemoryDataStore(final FeatureType type, final boolean singleTypeLock){
+    public MemoryFeatureStore(final FeatureType type, final boolean singleTypeLock){
         super(null);
         this.singleTypeLock = singleTypeLock;
         final Name name = type.getName();
@@ -190,7 +190,7 @@ public class MemoryDataStore extends AbstractDataStore{
         final Group grp = groups.get(name);
 
         if(grp == null){
-            throw new DataStoreException("Schema "+ name +" doesnt exist in this datastore.");
+            throw new DataStoreException("Schema "+ name +" doesnt exist in this feature store.");
         }
 
         return grp.getFeatureType();
@@ -202,7 +202,7 @@ public class MemoryDataStore extends AbstractDataStore{
     @Override
     public synchronized void createSchema(final Name name, final FeatureType featureType) throws DataStoreException {
         if(singleTypeLock) throw new DataStoreException(
-                "Memory datastore is in single type mode. Schema modification are not allowed.");
+                "Memory feature store is in single type mode. Schema modification are not allowed.");
 
         ensureNonNull("feature type", featureType);
         ensureNonNull("name", name);
@@ -226,7 +226,7 @@ public class MemoryDataStore extends AbstractDataStore{
     @Override
     public synchronized void updateSchema(final Name typeName, final FeatureType featureType) throws DataStoreException {
         if(singleTypeLock) throw new DataStoreException(
-                "Memory datastore is in single type mode. Schema modification are not allowed.");
+                "Memory feature store is in single type mode. Schema modification are not allowed.");
 
         //todo must do it a way to avoid destroying all features.
 
@@ -255,7 +255,7 @@ public class MemoryDataStore extends AbstractDataStore{
     @Override
     public synchronized void deleteSchema(final Name typeName) throws DataStoreException {
         if(singleTypeLock) throw new DataStoreException(
-                "Memory datastore is in single type mode. Schema modification are not allowed.");
+                "Memory feature store is in single type mode. Schema modification are not allowed.");
 
         final Group grp = groups.remove(typeName);
 

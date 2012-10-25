@@ -27,7 +27,7 @@ import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.Polygon;
 
 
-import org.geotoolkit.data.DataUtilities;
+import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
@@ -137,7 +137,7 @@ public class MergeTest extends AbstractProcessTest {
 
         type = createSimpleType();
 
-        final FeatureCollection<Feature> featureList = DataUtilities.collection("", type);
+        final FeatureCollection<Feature> featureList = FeatureStoreUtilities.collection("", type);
 
 
         Feature myFeature1;
@@ -206,7 +206,7 @@ public class MergeTest extends AbstractProcessTest {
     private static FeatureCollection<?> buildFeatureList2() throws FactoryException {
 
         type = createSimpleType();
-        final FeatureCollection<Feature> featureList = DataUtilities.collection("", type);
+        final FeatureCollection<Feature> featureList = FeatureStoreUtilities.collection("", type);
 
 
         Feature myFeature1;
@@ -275,7 +275,7 @@ public class MergeTest extends AbstractProcessTest {
 
         type = createSimpleType2();
 
-        final FeatureCollection<Feature> featureList = DataUtilities.collection("", type);
+        final FeatureCollection<Feature> featureList = FeatureStoreUtilities.collection("", type);
 
 
         Feature myFeature1;
@@ -347,7 +347,7 @@ public class MergeTest extends AbstractProcessTest {
 
         type = createSimpleType3();
 
-        final FeatureCollection<Feature> featureList = DataUtilities.collection("", type);
+        final FeatureCollection<Feature> featureList = FeatureStoreUtilities.collection("", type);
 
 
         Feature myFeature1;
@@ -406,7 +406,7 @@ public class MergeTest extends AbstractProcessTest {
 
         type = createSimpleType();
 
-        final FeatureCollection<Feature> featureList = DataUtilities.collection("", type);
+        final FeatureCollection<Feature> featureList = FeatureStoreUtilities.collection("", type);
 
 
         Feature myFeature1;

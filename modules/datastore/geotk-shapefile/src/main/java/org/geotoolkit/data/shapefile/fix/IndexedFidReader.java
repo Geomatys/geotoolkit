@@ -26,7 +26,7 @@ import java.nio.channels.ReadableByteChannel;
 import java.util.NoSuchElementException;
 import java.util.logging.Level;
 
-import org.geotoolkit.data.DataStoreRuntimeException;
+import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.shapefile.FeatureIDReader;
 import org.geotoolkit.data.shapefile.lock.ShpFileType;
 import org.geotoolkit.data.shapefile.indexed.RecordNumberTracker;
@@ -249,20 +249,20 @@ public class IndexedFidReader implements FeatureIDReader, Closeable {
     }
 
     @Override
-    public void close() throws DataStoreRuntimeException {
+    public void close() throws FeatureStoreRuntimeException {
         try {
             if (reader != null){
                 try {
                     reader.close();
                 } catch (IOException ex) {
-                    throw new DataStoreRuntimeException(ex);
+                    throw new FeatureStoreRuntimeException(ex);
                 }
             }
         } finally {
             try {
                 readChannel.close();
             } catch (IOException ex) {
-                throw new DataStoreRuntimeException(ex);
+                throw new FeatureStoreRuntimeException(ex);
             }
         }
     }
@@ -273,7 +273,7 @@ public class IndexedFidReader implements FeatureIDReader, Closeable {
     }
     
     @Override
-    public boolean hasNext() throws DataStoreRuntimeException {
+    public boolean hasNext() throws FeatureStoreRuntimeException {
         if (done) {
             return false;
         }
@@ -288,7 +288,7 @@ public class IndexedFidReader implements FeatureIDReader, Closeable {
                 bufferStart = fc.position();
                 read = ShapefileReader.fill(buffer, readChannel);
             } catch (IOException ex) {
-                throw new DataStoreRuntimeException(ex);
+                throw new FeatureStoreRuntimeException(ex);
             }
 
             if (read != 0) {
@@ -300,12 +300,12 @@ public class IndexedFidReader implements FeatureIDReader, Closeable {
     }
 
     @Override
-    public String next() throws DataStoreRuntimeException {
+    public String next() throws FeatureStoreRuntimeException {
         if (reader != null) {
             try {
                 goTo(reader.getRecordNumber() - 1);
             } catch (IOException ex) {
-                throw new DataStoreRuntimeException(ex);
+                throw new FeatureStoreRuntimeException(ex);
             }
         }
 

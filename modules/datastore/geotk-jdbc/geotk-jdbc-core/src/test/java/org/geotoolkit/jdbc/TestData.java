@@ -26,7 +26,7 @@ import com.vividsolutions.jts.geom.Polygon;
 import java.util.Collections;
 import java.util.HashSet;
 
-import org.geotoolkit.data.AbstractDataStore;
+import org.geotoolkit.data.AbstractFeatureStore;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.feature.DefaultName;
@@ -96,7 +96,7 @@ public class TestData {
         sftb.add(new DefaultName(namespace, ROAD_GEOM),LineString.class,"EPSG:4326");
         sftb.add(new DefaultName(namespace, ROAD_NAME),String.class,1,1,true,null);
 
-        roadType = (SimpleFeatureType) AbstractDataStore.ensureGMLNS(sftb.buildSimpleFeatureType());
+        roadType = (SimpleFeatureType) AbstractFeatureStore.ensureGMLNS(sftb.buildSimpleFeatureType());
 
         gf = new GeometryFactory();
 
@@ -158,7 +158,7 @@ public class TestData {
         sftb.add(new DefaultName(namespace, RIVER_GEOM),MultiLineString.class,"EPSG:4326");
         sftb.add(new DefaultName(namespace, RIVER_RIVER),String.class,1,1,true,null);
         sftb.add(new DefaultName(namespace, RIVER_FLOW),Integer.class,1,1,true,null);
-        riverType = (SimpleFeatureType) AbstractDataStore.ensureGMLNS(sftb.buildSimpleFeatureType());
+        riverType = (SimpleFeatureType) AbstractFeatureStore.ensureGMLNS(sftb.buildSimpleFeatureType());
 
         gf = new GeometryFactory();
         riverFeatures = new SimpleFeature[2];

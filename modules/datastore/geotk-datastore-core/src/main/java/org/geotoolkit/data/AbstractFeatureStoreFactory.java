@@ -2,8 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2003-2008, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2009, Geomatys
+ *    (C) 2009-2012, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -29,6 +28,7 @@ import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.util.ResourceInternationalString;
 import org.geotoolkit.util.collection.MapUtilities;
+import org.geotoolkit.util.converter.Classes;
 import org.opengis.metadata.quality.ConformanceResult;
 import org.opengis.parameter.GeneralParameterValue;
 import org.opengis.parameter.InvalidParameterValueException;
@@ -40,13 +40,12 @@ import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.IdentifiedObject;
 
 /**
- * Abstract DataStoreFactory.
+ * Abstract FeatureStoreFactory.
  *
- * @author Jody Garnett, Refractions Research
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public abstract class AbstractDataStoreFactory extends Factory implements DataStoreFactory {
+public abstract class AbstractFeatureStoreFactory extends Factory implements FeatureStoreFactory {
 
     private static final String BUNDLE_PATH = "org/geotoolkit/data/bundle";
     
@@ -58,55 +57,33 @@ public abstract class AbstractDataStoreFactory extends Factory implements DataSt
                     new ResourceInternationalString(BUNDLE_PATH,"paramIdentifierAlias"),
                     new ResourceInternationalString(BUNDLE_PATH,"paramIdentifierRemarks"),
                     String.class,null,null,null,null,null,true);
-    
-    /**
-     * Create the identifier descriptor, and set only one valid value, the one in parameter.
-     * 
-     * TODO : Maybe change the string in parameter to string array.
-     * @param idValue the value to use for identifier.
-     * 
-     * @return an identifier descriptor. 
+        
+    /** 
+     * Namespace, Optional.
+     * Default namespace used for feature type. 
      */
-    public static ParameterDescriptor<String> createFixedIdentifier(String idValue) {
-            return new DefaultParameterDescriptor<String>(
-            MapUtilities.buildMap(DefaultParameterDescriptor.NAME_KEY,             
-                                 IDENTIFIER.getName().getCode(), 
-                                 DefaultParameterDescriptor.REMARKS_KEY, 
-                                 AbstractDataStoreFactory.IDENTIFIER.getRemarks()),
-            String.class, 
-            new String[]{idValue}, 
-            idValue,
-            null,
-            null,
-            null,
-            true);
-    }
-    
-    /** parameter for namespace of the datastore */
     public static final ParameterDescriptor<String> NAMESPACE = createDescriptor("namespace",
                     new ResourceInternationalString(BUNDLE_PATH,"paramNamespaceAlias"),
                     new ResourceInternationalString(BUNDLE_PATH,"paramNamespaceRemarks"),
                     String.class,null,null,null,null,null,false);
 
-
-    /** Default Implementation abuses the naming convention.
-     * <p>
-     * Will return <code>Foo</code> for
-     * <code>org.geotoolkit.data.foo.FooFactory</code>.
-     * </p>
-     * @return return display name based on class name
+    /** 
+     * {@inheritDoc }
+     * 
+     * @return a display name derivate from class name.
      */
     @Override
     public CharSequence getDisplayName() {
-        String name = this.getClass().getName();
-
-        name = name.substring(name.lastIndexOf('.')+1);
-        if (name.endsWith("Factory")) {
-            name = name.substring(0, name.length() - 7);
+        String displayName = Classes.getShortClassName(this);
+        if(displayName.endsWith("Factory")){
+            displayName = displayName.substring(0, displayName.length() - 7);
         }
-        return name;
+        return displayName;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public CharSequence getDescription() {
         return getDisplayName();
@@ -116,7 +93,7 @@ public abstract class AbstractDataStoreFactory extends Factory implements DataSt
      * {@inheritDoc }
      */
     @Override
-    public DataStore create(Map<String, ? extends Serializable> params) throws DataStoreException {
+    public FeatureStore open(Map<String, ? extends Serializable> params) throws DataStoreException {
         params = forceIdentifier(params);
         
         final ParameterValueGroup prm = FeatureUtilities.toParameter(params,getParametersDescriptor());
@@ -124,7 +101,7 @@ public abstract class AbstractDataStoreFactory extends Factory implements DataSt
             return null;
         }
         try{
-            return create(prm);
+            return open(prm);
         }catch(InvalidParameterValueException ex){
             throw new DataStoreException(ex);
         }
@@ -134,7 +111,7 @@ public abstract class AbstractDataStoreFactory extends Factory implements DataSt
      * {@inheritDoc }
      */
     @Override
-    public DataStore createNew(Map<String, ? extends Serializable> params) throws DataStoreException {
+    public FeatureStore create(Map<String, ? extends Serializable> params) throws DataStoreException {
         params = forceIdentifier(params);
         
         final ParameterValueGroup prm = FeatureUtilities.toParameter(params,getParametersDescriptor());
@@ -142,7 +119,7 @@ public abstract class AbstractDataStoreFactory extends Factory implements DataSt
             return null;
         }
         try{
-            return createNew(prm);
+            return create(prm);
         }catch(InvalidParameterValueException ex){
             throw new DataStoreException(ex);
         }
@@ -195,7 +172,7 @@ public abstract class AbstractDataStoreFactory extends Factory implements DataSt
      */
     @Override
     public ConformanceResult availability() {
-        DefaultConformanceResult result =  new DefaultConformanceResult();
+        final DefaultConformanceResult result =  new DefaultConformanceResult();
         result.setPass(Boolean.TRUE);
         return result;
     }
@@ -227,7 +204,7 @@ public abstract class AbstractDataStoreFactory extends Factory implements DataSt
             expectedId = ((ParameterDescriptor<String>)getParametersDescriptor()
                 .descriptor(IDENTIFIER.getName().getCode())).getDefaultValue();
         }catch(ParameterNotFoundException ex){
-            //this datastore factory does not declare a identifier id
+            //this feature store factory does not declare a identifier id
             return true;
         }
         
@@ -252,8 +229,32 @@ public abstract class AbstractDataStoreFactory extends Factory implements DataSt
         }
     }
     
+    
     /**
-     * Convinient method to create a parameter descriptor with an additional alias.
+     * Create the identifier descriptor, and set only one valid value, the one in parameter.
+     * 
+     * TODO : Maybe change the string in parameter to string array.
+     * @param idValue the value to use for identifier.
+     * 
+     * @return an identifier descriptor. 
+     */
+    public static ParameterDescriptor<String> createFixedIdentifier(String idValue) {
+            return new DefaultParameterDescriptor<String>(
+            MapUtilities.buildMap(DefaultParameterDescriptor.NAME_KEY,             
+                                 IDENTIFIER.getName().getCode(), 
+                                 DefaultParameterDescriptor.REMARKS_KEY, 
+                                 AbstractFeatureStoreFactory.IDENTIFIER.getRemarks()),
+            String.class, 
+            new String[]{idValue}, 
+            idValue,
+            null,
+            null,
+            null,
+            true);
+    }
+    
+    /**
+     * Convinient method to open a parameter descriptor with an additional alias.
      */
     protected static <T> ParameterDescriptor<T> createDescriptor(final String name, 
             final CharSequence alias, final CharSequence remarks, final Class<T> clazz, 

@@ -30,7 +30,7 @@ import java.util.Date;
 import java.util.Iterator;
 import javax.xml.stream.XMLStreamException;
 
-import org.geotoolkit.data.DataStoreRuntimeException;
+import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.gpx.model.MetaData;
 import org.geotoolkit.data.gpx.model.Person;
 import org.geotoolkit.xml.StaxStreamWriter;
@@ -106,7 +106,7 @@ public class GPXWriter100 extends StaxStreamWriter{
                 while(ite.hasNext()){
                     writeWayPoint(ite.next(), TAG_WPT);
                 }
-            }catch(DataStoreRuntimeException ex){
+            }catch(FeatureStoreRuntimeException ex){
                 throw new XMLStreamException(ex);
             }finally{
                 if(ite instanceof Closeable){
@@ -124,7 +124,7 @@ public class GPXWriter100 extends StaxStreamWriter{
                 while(ite.hasNext()){
                     writeRoute(ite.next());
                 }
-            }catch(DataStoreRuntimeException ex){
+            }catch(FeatureStoreRuntimeException ex){
                 throw new XMLStreamException(ex);
             }finally{
                 if(ite instanceof Closeable){
@@ -142,7 +142,7 @@ public class GPXWriter100 extends StaxStreamWriter{
                 while(ite.hasNext()){
                     writeTrack(ite.next());
                 }
-            }catch(DataStoreRuntimeException ex){
+            }catch(FeatureStoreRuntimeException ex){
                 throw new XMLStreamException(ex);
             }finally{
                 if(ite instanceof Closeable){

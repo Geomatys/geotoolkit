@@ -6,7 +6,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 
-import org.geotoolkit.data.DataStoreRuntimeException;
+import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 
@@ -38,23 +38,23 @@ public class FishReader implements FeatureReader<FeatureType, Feature> {
     }
 
     @Override
-    public SimpleFeature next() throws DataStoreRuntimeException {
+    public SimpleFeature next() throws FeatureStoreRuntimeException {
         read();
         final SimpleFeature ob = current;
         current = null;
         if (ob == null) {
-            throw new DataStoreRuntimeException("No more records.");
+            throw new FeatureStoreRuntimeException("No more records.");
         }
         return ob;
     }
 
     @Override
-    public boolean hasNext() throws DataStoreRuntimeException {
+    public boolean hasNext() throws FeatureStoreRuntimeException {
         read();
         return current != null;
     }
 
-    private void read() throws DataStoreRuntimeException {
+    private void read() throws FeatureStoreRuntimeException {
         if (current != null) {
             return;
         }
@@ -81,6 +81,6 @@ public class FishReader implements FeatureReader<FeatureType, Feature> {
 
     @Override
     public void remove() {
-        throw new DataStoreRuntimeException("Not supported.");
+        throw new FeatureStoreRuntimeException("Not supported.");
     }
 }

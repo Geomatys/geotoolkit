@@ -20,7 +20,7 @@ package org.geotoolkit.data;
 import junit.framework.TestCase;
 
 import org.geotoolkit.data.iterator.CheckCloseFeatureIterator;
-import org.geotoolkit.data.memory.MemoryDataStore;
+import org.geotoolkit.data.memory.MemoryFeatureStore;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.FeatureTypeBuilder;
@@ -39,13 +39,13 @@ import org.opengis.feature.type.Name;
  */
 public class DataUtilitiesTest extends TestCase{
 
-    private final DataStore store;
+    private final FeatureStore store;
     private final Name name1;
     private final Name name2;
     private final Name name3;
 
     public DataUtilitiesTest() throws DataStoreException{
-        store = new MemoryDataStore();
+        store = new MemoryFeatureStore();
 
         final FeatureTypeBuilder builder = new FeatureTypeBuilder();
         name1 = new DefaultName("http://test.com", "type1");
@@ -103,7 +103,7 @@ public class DataUtilitiesTest extends TestCase{
         sftb.add("att1", String.class);
         FeatureType ft = sftb.buildSimpleFeatureType();
 
-        FeatureCollection col = DataUtilities.collection("myId", ft);
+        FeatureCollection col = FeatureStoreUtilities.collection("myId", ft);
 
         assertEquals("myId", col.getID());
 
@@ -116,7 +116,7 @@ public class DataUtilitiesTest extends TestCase{
         CheckCloseFeatureIterator reader2 = new CheckCloseFeatureIterator(store.getFeatureReader(QueryBuilder.all(name2)));
         CheckCloseFeatureIterator reader3 = new CheckCloseFeatureIterator(store.getFeatureReader(QueryBuilder.all(name3)));
 
-        FeatureReader fr = DataUtilities.sequence(reader1,reader2,reader3);
+        FeatureReader fr = FeatureStoreUtilities.sequence(reader1,reader2,reader3);
         assertFalse(reader1.isClosed());
         assertFalse(reader2.isClosed());
         assertFalse(reader3.isClosed());
@@ -140,7 +140,7 @@ public class DataUtilitiesTest extends TestCase{
         reader2 = new CheckCloseFeatureIterator(store.getFeatureReader(QueryBuilder.all(name2)));
         reader3 = new CheckCloseFeatureIterator(store.getFeatureReader(QueryBuilder.all(name3)));
 
-        fr = DataUtilities.sequence(reader1,reader2,reader3);
+        fr = FeatureStoreUtilities.sequence(reader1,reader2,reader3);
         assertFalse(reader1.isClosed());
         assertFalse(reader2.isClosed());
         assertFalse(reader3.isClosed());
@@ -162,7 +162,7 @@ public class DataUtilitiesTest extends TestCase{
         CheckCloseFeatureIterator reader2 = new CheckCloseFeatureIterator(store.getFeatureReader(QueryBuilder.all(name2)));
         CheckCloseFeatureIterator reader3 = new CheckCloseFeatureIterator(store.getFeatureReader(QueryBuilder.all(name3)));
 
-        FeatureIterator fr = DataUtilities.sequence((FeatureIterator)reader1,(FeatureIterator)reader2,(FeatureIterator)reader3);
+        FeatureIterator fr = FeatureStoreUtilities.sequence((FeatureIterator)reader1,(FeatureIterator)reader2,(FeatureIterator)reader3);
         assertFalse(reader1.isClosed());
         assertFalse(reader2.isClosed());
         assertFalse(reader3.isClosed());
@@ -186,7 +186,7 @@ public class DataUtilitiesTest extends TestCase{
         reader2 = new CheckCloseFeatureIterator(store.getFeatureReader(QueryBuilder.all(name2)));
         reader3 = new CheckCloseFeatureIterator(store.getFeatureReader(QueryBuilder.all(name3)));
 
-        fr = DataUtilities.sequence((FeatureIterator)reader1,(FeatureIterator)reader2,(FeatureIterator)reader3);
+        fr = FeatureStoreUtilities.sequence((FeatureIterator)reader1,(FeatureIterator)reader2,(FeatureIterator)reader3);
         assertFalse(reader1.isClosed());
         assertFalse(reader2.isClosed());
         assertFalse(reader3.isClosed());
@@ -207,7 +207,7 @@ public class DataUtilitiesTest extends TestCase{
         FeatureCollection fc1 = store.createSession(false).getFeatureCollection(QueryBuilder.all(name1));
         FeatureCollection fc2 = store.createSession(false).getFeatureCollection(QueryBuilder.all(name2));
         FeatureCollection fc3 = store.createSession(false).getFeatureCollection(QueryBuilder.all(name3));
-        FeatureCollection col = DataUtilities.sequence("id", fc1, fc2, fc3);
+        FeatureCollection col = FeatureStoreUtilities.sequence("id", fc1, fc2, fc3);
 
         CheckCloseFeatureIterator reader = new CheckCloseFeatureIterator(col.iterator());
         assertFalse(reader.isClosed());

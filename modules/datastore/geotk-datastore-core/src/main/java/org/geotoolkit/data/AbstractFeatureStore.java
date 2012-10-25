@@ -71,14 +71,14 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
 
 /**
- * Uncomplete implementation of a datastore that handle most methods
+ * Uncomplete implementation of a feature store that handle most methods
  * by fallbacking on others. It also offer some generic methods to
  * handle query parameters and events.
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public abstract class AbstractDataStore implements DataStore{
+public abstract class AbstractFeatureStore implements FeatureStore{
 
     /**
      * Static variables refering to GML model.
@@ -95,13 +95,13 @@ public abstract class AbstractDataStore implements DataStore{
     protected final ParameterValueGroup parameters;
     protected String defaultNamespace;
 
-    protected AbstractDataStore(final ParameterValueGroup params) {
+    protected AbstractFeatureStore(final ParameterValueGroup params) {
         
         this.parameters = params;
         String namespace = null;
         if(params != null){
             try{
-                namespace = (String)Parameters.getOrCreate(AbstractDataStoreFactory.NAMESPACE, params).getValue();
+                namespace = (String)Parameters.getOrCreate(AbstractFeatureStoreFactory.NAMESPACE, params).getValue();
             }catch(ParameterNotFoundException ex){
                 //ignore this error, factory might not necesarly have a namespace parameter
                 //example : gpx
@@ -164,7 +164,7 @@ public abstract class AbstractDataStore implements DataStore{
                 return getFeatureType(n);
             }
         }
-        throw new DataStoreException("Schema : " + typeName + "doesnt exist in this datastore.");
+        throw new DataStoreException("Schema : " + typeName + "doesnt exist in this feature store.");
     }
 
     @Override
@@ -174,7 +174,7 @@ public abstract class AbstractDataStore implements DataStore{
 
         if(Query.GEOTK_QOM.equalsIgnoreCase(query.getLanguage()) && source instanceof Selector){
             final Selector selector = (Selector) source;
-            FeatureType ft = selector.getSession().getDataStore().getFeatureType(query.getTypeName());
+            FeatureType ft = selector.getSession().getFeatureStore().getFeatureType(query.getTypeName());
             ft = FeatureTypeUtilities.createSubType(ft, query.getPropertyNames(), query.getCoordinateSystemReproject());
 
             final Boolean hide = (Boolean) query.getHints().get(HintsPending.FEATURE_HIDE_ID_PROPERTY);
@@ -225,7 +225,7 @@ public abstract class AbstractDataStore implements DataStore{
     public long getCount(Query query) throws DataStoreException {
         query = addSeparateFeatureHint(query);
         final FeatureReader reader = getFeatureReader(query);
-        return DataUtilities.calculateCount(reader);
+        return FeatureStoreUtilities.calculateCount(reader);
     }
 
     /**
@@ -235,10 +235,10 @@ public abstract class AbstractDataStore implements DataStore{
      * Subclasses should override this method if they have a faster way to
      * calculate envelope.
      * @throws DataStoreException 
-     * @throws DataStoreRuntimeException
+     * @throws FeatureStoreRuntimeException
      */
     @Override
-    public Envelope getEnvelope(Query query) throws DataStoreException, DataStoreRuntimeException {
+    public Envelope getEnvelope(Query query) throws DataStoreException, FeatureStoreRuntimeException {
         // TODO query = addSeparateFeatureHint(query);
         
         if(query.retrieveAllProperties()){
@@ -256,7 +256,7 @@ public abstract class AbstractDataStore implements DataStore{
         }
         
         final FeatureReader reader = getFeatureReader(query);
-        return DataUtilities.calculateEnvelope(reader);
+        return FeatureStoreUtilities.calculateEnvelope(reader);
     }
 
     private static Query addSeparateFeatureHint(final Query query){
@@ -438,12 +438,12 @@ public abstract class AbstractDataStore implements DataStore{
 
 
     ////////////////////////////////////////////////////////////////////////////
-    // useful methods for datastore that doesn't implement all query parameters/
+    // useful methods for feature store that doesn't implement all query parameters/
     ////////////////////////////////////////////////////////////////////////////
 
     /**
      * Convinient method to check that the given type name exist.
-     * Will raise a datastore exception if the name do not exist in this datastore.
+     * Will raise a datastore exception if the name do not exist in this FeatureStore.
      * @param candidate Name to test.
      * @throws DataStoreException if name do not exist.
      */
@@ -453,7 +453,7 @@ public abstract class AbstractDataStore implements DataStore{
         if(!names.contains(candidate)){
             final StringBuilder sb = new StringBuilder("Type name : ");
             sb.append(candidate);
-            sb.append(" do not exist in this datastore, available names are : ");
+            sb.append(" do not exist in this feature store, available names are : ");
             for(final Name n : names){
                 sb.append(n).append(", ");
             }
@@ -463,7 +463,7 @@ public abstract class AbstractDataStore implements DataStore{
 
     /**
      * Wrap a feature reader with a query.
-     * This method can be use if the datastore implementation can not support all
+     * This method can be use if the FeatureStore implementation can not support all
      * filtering parameters. The returned reader will repect the remaining query
      * parameters but keep in mind that this is done in a generic way, which might
      * not be the most effective way.
@@ -472,11 +472,11 @@ public abstract class AbstractDataStore implements DataStore{
      * OutOfMemory errors since the generic implementation must iterate over all
      * feature and holds them in memory before ordering them.
      * It may be a better solution to say in the query capabilities that sortBy
-     * are not handle by this datastore implementation.
+     * are not handle by this FeatureStore implementation.
      *
      * @param reader FeatureReader to wrap
      * @param remainingParameters , query holding the parameters that where not handle
-     * by the datastore implementation
+     * by the FeatureStore implementation
      * @return FeatureReader Reader wrapping the given reader with all query parameters
      * @throws IOException
      */
@@ -589,7 +589,7 @@ public abstract class AbstractDataStore implements DataStore{
 
     /**
      * Wrap a feature writer with a Filter.
-     * This method can be used when the datastore implementation is not
+     * This method can be used when the featurestore implementation is not
      * intelligent enough to handle filtering.
      *
      * @param writer featureWriter to filter
@@ -625,8 +625,8 @@ public abstract class AbstractDataStore implements DataStore{
     protected List<FeatureId> handleAddWithFeatureWriter(final Name groupName, final Collection<? extends Feature> newFeatures,
             final Hints hints) throws DataStoreException{
         try{
-            return DataUtilities.write(getFeatureWriterAppend(groupName,hints), newFeatures);
-        }catch(DataStoreRuntimeException ex){
+            return FeatureStoreUtilities.write(getFeatureWriterAppend(groupName,hints), newFeatures);
+        }catch(FeatureStoreRuntimeException ex){
             throw new DataStoreException(ex);
         }
     }
@@ -653,7 +653,7 @@ public abstract class AbstractDataStore implements DataStore{
                 }
                 writer.write();
             }
-        } catch(DataStoreRuntimeException ex){
+        } catch(FeatureStoreRuntimeException ex){
             throw new DataStoreException(ex);
         } finally{
             writer.close();
@@ -676,7 +676,7 @@ public abstract class AbstractDataStore implements DataStore{
                 writer.next();
                 writer.remove();
             }
-        } catch(DataStoreRuntimeException ex){
+        } catch(FeatureStoreRuntimeException ex){
             throw new DataStoreException(ex);
         } finally{
             writer.close();

@@ -25,7 +25,7 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.stream.XMLStreamException;
-import org.geotoolkit.data.DataUtilities;
+import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.factory.FactoryFinder;
@@ -89,7 +89,7 @@ public class JAXPStreamValueCollectionWriter extends StaxStreamWriter implements
         setOutput(output);
         FeatureCollection collection;
         if (candidate instanceof Feature) {
-           collection =  DataUtilities.collection((Feature)candidate);
+           collection =  FeatureStoreUtilities.collection((Feature)candidate);
         } else if (candidate instanceof FeatureCollection) {
             collection = (FeatureCollection) candidate;
         } else {

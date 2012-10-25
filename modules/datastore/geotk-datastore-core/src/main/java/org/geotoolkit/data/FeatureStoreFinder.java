@@ -32,11 +32,11 @@ import org.opengis.parameter.ParameterValueGroup;
 
 
 /**
- * Creates {@link DataStore} instances from a set of parameters.
+ * Creates {@link FeatureStore} instances from a set of parameters.
  *
  * {@section Registration}
- * {@link DataStore} factories must implement the {@link DataStoreFactory} interface and declare their
- * fully qualified class name in a {@code META-INF/services/org.geotoolkit.data.DataStoreFactory}
+ * {@link FeatureStore} factories must implement the {@link FeatureStoreFactory} interface and declare their
+ * fully qualified class name in a {@code META-INF/services/org.geotoolkit.data.FeatureStoreFactory}
  * file. See the {@link ServiceLoader} javadoc for more information.
  *
  * @author Martin Desruisseaux (Geomatys)
@@ -47,17 +47,17 @@ import org.opengis.parameter.ParameterValueGroup;
  * @module pending
  */
 @ThreadSafe
-public final class DataStoreFinder extends Static {
+public final class FeatureStoreFinder extends Static {
     /**
      * The service loader. This loader and its iterator are not synchronized;
      * when doing an iteration, the iterator must be used inside synchronized blocks.
      */
-    private static final ServiceLoader<DataStoreFactory> loader = ServiceLoader.load(DataStoreFactory.class);
+    private static final ServiceLoader<FeatureStoreFactory> loader = ServiceLoader.load(FeatureStoreFactory.class);
 
     /**
      * Do not allow instantiation of this class.
      */
-    private DataStoreFinder() {
+    private FeatureStoreFinder() {
     }
 
     /**
@@ -73,8 +73,8 @@ public final class DataStoreFinder extends Static {
      * @param  all  {@code true} for all factories, or {@code false} for only available factories.
      * @return The set of factories for the given conditions.
      */
-    private static synchronized <T extends DataStoreFactory> Set<T> getFactories(final Class<T> type, final boolean all) {
-        final Iterator<DataStoreFactory> factories = loader.iterator();
+    private static synchronized <T extends FeatureStoreFactory> Set<T> getFactories(final Class<T> type, final boolean all) {
+        final Iterator<FeatureStoreFactory> factories = loader.iterator();
         return new LazySet<T>(new Iterator<T>() {
             /**
              * The next factory to be returned by the {@link #next()} method, or {@code null}
@@ -92,9 +92,9 @@ public final class DataStoreFinder extends Static {
                 if (next != null) {
                     return true;
                 }
-                synchronized (DataStoreFinder.class) {
+                synchronized (FeatureStoreFinder.class) {
                     while (factories.hasNext()) {
-                        final DataStoreFactory candidate = factories.next();
+                        final FeatureStoreFactory candidate = factories.next();
                         if (type == null || type.isInstance(candidate)) {
                             if (all || candidate.availability().pass()) {
                                 next = (T) candidate;
@@ -131,30 +131,30 @@ public final class DataStoreFinder extends Static {
 
     /**
      * Returns all factories of the given type, regardless of their
-     * {@linkplain DataStoreFactory#availability() availability}.
+     * {@linkplain FeatureStoreFactory#availability() availability}.
      *
      * @param  <T>  The type of the factories to fetch.
      * @param  type The type of the factories to fetch, or {@code null} for fetching all of them.
      * @return The set of all factories of the given type.
      */
-    public static <T extends DataStoreFactory> Set<T> getAllFactories(final Class<T> type) {
+    public static <T extends FeatureStoreFactory> Set<T> getAllFactories(final Class<T> type) {
         return getFactories(type, true);
     }
 
     /**
      * Returns factories of the given type which are
-     * {@linkplain DataStoreFactory#availability() available}.
+     * {@linkplain FeatureStoreFactory#availability() available}.
      *
      * @param  <T>  The type of the factories to fetch.
      * @param  type The type of the factories to fetch, or {@code null} for fetching very types.
      * @return The set of available factories of the given type.
      */
-    public static <T extends DataStoreFactory> Set<T> getAvailableFactories(final Class<T> type) {
+    public static <T extends FeatureStoreFactory> Set<T> getAvailableFactories(final Class<T> type) {
         return getFactories(type, false);
     }
 
     /**
-     * Returns a factory having an {@linkplain DataStoreFactory#getIdentification() identification}
+     * Returns a factory having an {@linkplain FeatureStoreFactory#getIdentification() identification}
      * equals (ignoring case) to the given string. If more than one factory is found, then this
      * method selects an arbitrary one. If no factory is found, then this method returns
      * {@code null}.
@@ -162,8 +162,8 @@ public final class DataStoreFinder extends Static {
      * @param  identifier The identifier of the factory to find.
      * @return A factory for the given identifier, or {@code null} if none.
      */
-    public static synchronized DataStoreFactory getFactoryById(final String identifier) {
-        for (final DataStoreFactory factory : loader) {
+    public static synchronized FeatureStoreFactory getFactoryById(final String identifier) {
+        for (final FeatureStoreFactory factory : loader) {
             if (Citations.identifierMatches(factory.getIdentification().getCitation(), identifier)) {
                 return factory;
             }
@@ -174,15 +174,15 @@ public final class DataStoreFinder extends Static {
     /**
      * Creates a {@link DataStore} instance for the given map of parameter values. This method iterates
      * over all {@linkplain #getAvailableFactories(Class) available factories} until a factory
-     * claiming to {@linkplain DataStoreFactory#canProcess(Map) be able to process} the given
-     * parameters is found. This factory then {@linkplain DataStoreFactory#create(Map) create}
+     * claiming to {@linkplain FeatureStoreFactory#canProcess(Map) be able to process} the given
+     * parameters is found. This factory then {@linkplain FeatureStoreFactory#open(Map) open}
      * the data store.
      *
      * @param  parameters The configuration of the desired data store.
      * @return A data store created from the given parameters, or {@code null} if none.
-     * @throws DataStoreException If a factory is found but can't create the data store.
+     * @throws DataStoreException If a factory is found but can't open the data store.
      */
-    public static DataStore open(final Map<String, Serializable> parameters) throws DataStoreException {
+    public static FeatureStore open(final Map<String, Serializable> parameters) throws DataStoreException {
         ArgumentChecks.ensureNonNull("parameters", parameters);
         return open(null, parameters);
     }
@@ -190,31 +190,31 @@ public final class DataStoreFinder extends Static {
     /**
      * Creates a {@link DataStore} instance for the given parameters group. This method iterates over
      * all {@linkplain #getAvailableFactories(Class) available factories} until a factory claiming
-     * to {@linkplain DataStoreFactory#canProcess(ParameterValueGroup) be able to process} the given
-     * parameters is found. This factory then {@linkplain DataStoreFactory#create(ParameterValueGroup)
-     * create} the data store.
+     * to {@linkplain FeatureStoreFactory#canProcess(ParameterValueGroup) be able to process} the given
+     * parameters is found. This factory then {@linkplain FeatureStoreFactory#open(ParameterValueGroup)
+     * open} the data store.
      *
      * @param  parameters The configuration of the desired data store.
      * @return A data store created from the given parameters, or {@code null} if none.
-     * @throws DataStoreException If a factory is found but can't create the data store.
+     * @throws DataStoreException If a factory is found but can't open the data store.
      */
-    public static DataStore open(final ParameterValueGroup parameters) throws DataStoreException {
+    public static FeatureStore open(final ParameterValueGroup parameters) throws DataStoreException {
         ArgumentChecks.ensureNonNull("parameters", parameters);
         return open(parameters, null);
     }
 
     /**
-     * Implementation of the public {@code create} method. Exactly one of the {@code parameters}
+     * Implementation of the public {@code open} method. Exactly one of the {@code parameters}
      * and {@code asMap} arguments shall be non-null.
      */
-    private static synchronized DataStore open(final ParameterValueGroup parameters,
+    private static synchronized FeatureStore open(final ParameterValueGroup parameters,
             final Map<String, Serializable> asMap) throws DataStoreException
     {
         CharSequence unavailable = null;
-        for (final DataStoreFactory factory : loader) {
+        for (final FeatureStoreFactory factory : loader) {
             if ((parameters != null) ? factory.canProcess(parameters) : factory.canProcess(asMap)) {
                 if (factory.availability().pass()) {
-                    return (parameters != null) ? factory.create(parameters) : factory.create(asMap);
+                    return (parameters != null) ? factory.open(parameters) : factory.open(asMap);
                 } else if (unavailable == null) {
                     unavailable = factory.getDisplayName();
                 }

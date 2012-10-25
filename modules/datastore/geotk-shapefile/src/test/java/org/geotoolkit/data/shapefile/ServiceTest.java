@@ -21,9 +21,9 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import org.geotoolkit.data.DataStore;
-import org.geotoolkit.data.DataStoreFactory;
-import org.geotoolkit.data.DataStoreFinder;
+import org.geotoolkit.data.FeatureStore;
+import org.geotoolkit.data.FeatureStoreFactory;
+import org.geotoolkit.data.FeatureStoreFinder;
 import org.geotoolkit.ShapeTestData;
 import org.geotoolkit.storage.DataStoreException;
 
@@ -44,10 +44,10 @@ public class ServiceTest extends AbstractTestCaseSupport {
      */
     @Test
     public void testIsAvailable() {
-        Iterator list = DataStoreFinder.getAvailableFactories(null).iterator();
+        Iterator list = FeatureStoreFinder.getAvailableFactories(null).iterator();
         boolean found = false;
         while (list.hasNext()) {
-            DataStoreFactory fac = (DataStoreFactory) list.next();
+            FeatureStoreFactory fac = (FeatureStoreFactory) list.next();
             if (fac instanceof ShapefileDataStoreFactory) {
                 found = true;
                 assertNotNull(fac.getDescription());
@@ -58,13 +58,13 @@ public class ServiceTest extends AbstractTestCaseSupport {
     }
 
     /**
-     * Ensure that we can create a DataStore using url OR string url.
+     * Ensure that we can open a DataStore using url OR string url.
      */
     @Test
     public void testShapefileDataStore() throws Exception {
         HashMap params = new HashMap();
         params.put("url", ShapeTestData.url(TEST_FILE));
-        DataStore ds = DataStoreFinder.open(params);
+        FeatureStore ds = FeatureStoreFinder.open(params);
         assertNotNull(ds);
         params.put("url", ShapeTestData.url(TEST_FILE).toString());
         assertNotNull(ds);
@@ -76,7 +76,7 @@ public class ServiceTest extends AbstractTestCaseSupport {
         params.put("url", "aaa://bbb.ccc");
         try {
             ShapefileDataStoreFactory f = new ShapefileDataStoreFactory();
-            f.create(params);
+            f.open(params);
             fail("did not throw error");
         } catch (DataStoreException ioe) {
             // this is actually good

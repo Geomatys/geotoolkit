@@ -19,9 +19,9 @@ package org.geotoolkit.data.mysql;
 import java.io.IOException;
 
 import java.util.Collections;
-import org.geotoolkit.data.AbstractDataStoreFactory;
-import org.geotoolkit.data.DataStoreFactory;
-import org.geotoolkit.data.DataStoreFinder;
+import org.geotoolkit.data.AbstractFeatureStoreFactory;
+import org.geotoolkit.data.FeatureStoreFactory;
+import org.geotoolkit.data.FeatureStoreFinder;
 import org.geotoolkit.jdbc.DefaultJDBCDataStore;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.jdbc.JDBCDataStore;
@@ -117,10 +117,10 @@ public class MySQLDataStoreFactory extends JDBCDataStoreFactory {
     }
 
     @Override
-    public JDBCDataStore create(final ParameterValueGroup params)
+    public JDBCDataStore open(final ParameterValueGroup params)
         throws DataStoreException {
         checkCanProcessWithError(params);
-        JDBCDataStore dataStore = super.create(params);
+        JDBCDataStore dataStore = super.open(params);
 
         final MySQLDialect dialect;
 

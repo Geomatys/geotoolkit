@@ -17,7 +17,7 @@
 package org.geotoolkit.process.vector.difference;
 
 import com.vividsolutions.jts.geom.Geometry;
-import org.geotoolkit.data.DataStoreRuntimeException;
+import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.memory.WrapFeatureCollection;
 import org.geotoolkit.process.vector.VectorProcessUtils;
@@ -67,11 +67,11 @@ public class DifferenceFeatureCollection extends WrapFeatureCollection {
             return DifferenceProcess.clipFeature(original, newFeatureType, clippingList);
             
         } catch (MismatchedDimensionException ex) {
-            throw new DataStoreRuntimeException(ex);
+            throw new FeatureStoreRuntimeException(ex);
         } catch (TransformException ex) {
-            throw new DataStoreRuntimeException(ex);
+            throw new FeatureStoreRuntimeException(ex);
         } catch (FactoryException ex) {
-            throw new DataStoreRuntimeException(ex);
+            throw new FeatureStoreRuntimeException(ex);
         }
     }
 }

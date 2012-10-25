@@ -19,9 +19,9 @@ package org.geotoolkit.data.session;
 
 import java.util.Collection;
 import java.util.Map;
-import org.geotoolkit.data.DataStore;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
+import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.StorageListener;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.storage.DataStoreException;
@@ -49,8 +49,8 @@ public class SessionDecorator implements Session{
     }
 
     @Override
-    public DataStore getDataStore() {
-        return wrapped.getDataStore();
+    public FeatureStore getFeatureStore() {
+        return wrapped.getFeatureStore();
     }
 
     @Override

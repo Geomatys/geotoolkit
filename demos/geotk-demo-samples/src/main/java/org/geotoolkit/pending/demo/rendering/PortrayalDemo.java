@@ -16,8 +16,8 @@ import org.geotoolkit.coverage.io.CoverageIO;
 
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
-import org.geotoolkit.data.DataStore;
-import org.geotoolkit.data.DataStoreFinder;
+import org.geotoolkit.data.FeatureStore;
+import org.geotoolkit.data.FeatureStoreFinder;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
@@ -95,7 +95,7 @@ public class PortrayalDemo {
         final Map<String,Serializable> params = new HashMap<String,Serializable>();
         params.put("url", PortrayalDemo.class.getResource("/data/world/Countries.shp"));
 
-        final DataStore store = DataStoreFinder.open(params);
+        final FeatureStore store = FeatureStoreFinder.open(params);
         final Session session = store.createSession(true);
         final Query query = QueryBuilder.all(store.getNames().iterator().next());
         final FeatureCollection collection = session.getFeatureCollection(query);

@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.process.datastore.copy;
 
-import org.geotoolkit.data.DataStore;
+import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
@@ -55,16 +55,16 @@ public final class CopyDescriptor extends VectorDescriptor {
     /**
      * Mandatory - Source datastore.
      */
-    public static final ParameterDescriptor<DataStore> SOURCE_STORE =
+    public static final ParameterDescriptor<FeatureStore> SOURCE_STORE =
             new DefaultParameterDescriptor("source_datastore", "The source datastore",
-            DataStore.class, null, true);
+            FeatureStore.class, null, true);
 
     /**
      * Mandatory - Target datastore.
      */
-    public static final ParameterDescriptor<DataStore> TARGET_STORE =
+    public static final ParameterDescriptor<FeatureStore> TARGET_STORE =
             new DefaultParameterDescriptor("target_datastore", "The target datastore",
-            DataStore.class, null, true);
+            FeatureStore.class, null, true);
 
     /**
      * Mandatory - drop before insertion or not.

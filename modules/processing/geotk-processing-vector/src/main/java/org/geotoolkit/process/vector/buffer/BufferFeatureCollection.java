@@ -18,7 +18,7 @@ package org.geotoolkit.process.vector.buffer;
 
 import com.vividsolutions.jts.geom.Geometry;
 
-import org.geotoolkit.data.DataStoreRuntimeException;
+import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.memory.WrapFeatureCollection;
 import org.geotoolkit.process.vector.VectorProcessUtils;
@@ -67,15 +67,15 @@ public class BufferFeatureCollection extends WrapFeatureCollection {
      *  {@inheritDoc }
      */
     @Override
-    public Feature modify(final Feature original) throws DataStoreRuntimeException {
+    public Feature modify(final Feature original) throws FeatureStoreRuntimeException {
         try {
             return BufferProcess.makeBuffer(original, newFeatureType, inputDistance, inputLenient);
         } catch (FactoryException ex) {
-            throw new DataStoreRuntimeException(ex);
+            throw new FeatureStoreRuntimeException(ex);
         } catch (MismatchedDimensionException ex) {
-            throw new DataStoreRuntimeException(ex);
+            throw new FeatureStoreRuntimeException(ex);
         } catch (TransformException ex) {
-            throw new DataStoreRuntimeException(ex);
+            throw new FeatureStoreRuntimeException(ex);
         }
     }
 }

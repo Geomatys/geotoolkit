@@ -21,10 +21,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 import org.geotoolkit.data.AbstractFeatureCollection;
-import org.geotoolkit.data.DataStoreRuntimeException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.FeatureReader;
+import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
@@ -75,7 +75,7 @@ public class GenericExtendFeatureIterator<F extends Feature, R extends FeatureIt
      * {@inheritDoc }
      */
     @Override
-    public void close() throws DataStoreRuntimeException {
+    public void close() throws FeatureStoreRuntimeException {
         iterator.close();
     }
 
@@ -83,12 +83,12 @@ public class GenericExtendFeatureIterator<F extends Feature, R extends FeatureIt
      * {@inheritDoc }
      */
     @Override
-    public boolean hasNext() throws DataStoreRuntimeException {
+    public boolean hasNext() throws FeatureStoreRuntimeException {
         return iterator.hasNext();
     }
 
     @Override
-    public F next() throws DataStoreRuntimeException {
+    public F next() throws FeatureStoreRuntimeException {
         final Feature next = iterator.next();
         final Collection<Property> properties = new ArrayList<Property>(next.getProperties());
         final AttributeDescriptor desc = new DefaultAttributeDescriptor( mask, mask.getName(), 1, 1, true, null);
@@ -180,7 +180,7 @@ public class GenericExtendFeatureIterator<F extends Feature, R extends FeatureIt
         }
 
         @Override
-        public FeatureIterator iterator(final Hints hints) throws DataStoreRuntimeException {
+        public FeatureIterator iterator(final Hints hints) throws FeatureStoreRuntimeException {
             final FeatureIterator sub = col.iterator(hints);
             return new GenericExtendFeatureIterator(sub, mask, extend);
         }

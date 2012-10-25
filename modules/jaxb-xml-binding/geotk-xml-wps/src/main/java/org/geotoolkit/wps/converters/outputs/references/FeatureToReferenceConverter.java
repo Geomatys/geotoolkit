@@ -22,7 +22,7 @@ import java.util.Map;
 import java.util.UUID;
 import javax.xml.bind.JAXBException;
 import javax.xml.stream.XMLStreamException;
-import org.geotoolkit.data.DataStoreRuntimeException;
+import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.feature.xml.XmlFeatureTypeWriter;
 import org.geotoolkit.feature.xml.XmlFeatureWriter;
@@ -147,7 +147,7 @@ public class FeatureToReferenceConverter extends AbstractReferenceOutputConverte
             throw new NonconvertibleObjectException("Stax exception while writing the feature collection", ex);
         } catch (DataStoreException ex) {
             throw new NonconvertibleObjectException("DataStore exception while writing the feature collection", ex);
-        } catch (DataStoreRuntimeException ex) {
+        } catch (FeatureStoreRuntimeException ex) {
             throw new NonconvertibleObjectException("DataStoreRuntimeException exception while writing the feature collection", ex);
         } finally {
             try {

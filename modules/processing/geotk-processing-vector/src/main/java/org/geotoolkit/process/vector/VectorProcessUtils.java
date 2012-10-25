@@ -39,7 +39,7 @@ import javax.measure.converter.UnitConverter;
 import javax.measure.quantity.Length;
 import javax.measure.unit.Unit;
 
-import org.geotoolkit.data.DataUtilities;
+import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
@@ -425,7 +425,7 @@ public final class VectorProcessUtils extends Static {
 
         //name of the new collection "<inputFeatureID>-intersection"
         final FeatureCollection<Feature> resultFeatureList =
-                DataUtilities.collection(inputFeature.getIdentifier().getID() + "-intersection", newType);
+                FeatureStoreUtilities.collection(inputFeature.getIdentifier().getID() + "-intersection", newType);
 
         Geometry inputGeometry = new GeometryFactory().buildGeometry(Collections.EMPTY_LIST);
         CoordinateReferenceSystem inputCRS = null;

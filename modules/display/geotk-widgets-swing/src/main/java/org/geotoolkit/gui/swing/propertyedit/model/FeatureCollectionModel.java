@@ -25,7 +25,7 @@ import javax.swing.table.DefaultTableModel;
 import org.jdesktop.swingx.JXTable;
 
 import org.geotoolkit.storage.DataStoreException;
-import org.geotoolkit.data.DataStoreRuntimeException;
+import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.FeatureIterator;
@@ -87,7 +87,7 @@ public class FeatureCollectionModel extends DefaultTableModel {
         try {
             featureCollection = ((FeatureMapLayer) layer).getCollection().subCollection(query);
         } catch (DataStoreException ex) {
-            throw new DataStoreRuntimeException(ex);
+            throw new FeatureStoreRuntimeException(ex);
         }
         final FeatureType ft = featureCollection.getFeatureType();
 

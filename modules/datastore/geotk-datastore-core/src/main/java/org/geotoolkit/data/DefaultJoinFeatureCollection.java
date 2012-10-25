@@ -152,7 +152,7 @@ public class DefaultJoinFeatureCollection extends AbstractFeatureCollection<Feat
     }
 
     @Override
-    public FeatureIterator<Feature> iterator(final Hints hints) throws DataStoreRuntimeException {
+    public FeatureIterator<Feature> iterator(final Hints hints) throws FeatureStoreRuntimeException {
         final JoinType jt = getSource().getJoinType();
 
         try{
@@ -166,7 +166,7 @@ public class DefaultJoinFeatureCollection extends AbstractFeatureCollection<Feat
                 throw new IllegalArgumentException("Unknowned Join type : " + jt);
             }
         }catch(DataStoreException ex){
-            throw new DataStoreRuntimeException(ex);
+            throw new FeatureStoreRuntimeException(ex);
         }
     }
 
@@ -207,7 +207,7 @@ public class DefaultJoinFeatureCollection extends AbstractFeatureCollection<Feat
             try {
                 searchNext();
             } catch (DataStoreException ex) {
-                throw new DataStoreRuntimeException(ex);
+                throw new FeatureStoreRuntimeException(ex);
             }
             Feature f = combined;
             combined = null;
@@ -227,7 +227,7 @@ public class DefaultJoinFeatureCollection extends AbstractFeatureCollection<Feat
             try {
                 searchNext();
             } catch (DataStoreException ex) {
-                throw new DataStoreRuntimeException(ex);
+                throw new FeatureStoreRuntimeException(ex);
             }
             return combined != null;
         }
@@ -326,7 +326,7 @@ public class DefaultJoinFeatureCollection extends AbstractFeatureCollection<Feat
             try {
                 searchNext();
             } catch (DataStoreException ex) {
-                throw new DataStoreRuntimeException(ex);
+                throw new FeatureStoreRuntimeException(ex);
             }
             Feature f = nextFeature;
             nextFeature = null;
@@ -346,7 +346,7 @@ public class DefaultJoinFeatureCollection extends AbstractFeatureCollection<Feat
             try {
                 searchNext();
             } catch (DataStoreException ex) {
-                throw new DataStoreRuntimeException(ex);
+                throw new FeatureStoreRuntimeException(ex);
             }
             return nextFeature != null;
         }

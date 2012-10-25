@@ -34,7 +34,7 @@ import javax.vecmath.Point3d;
 
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageFactory;
-import org.geotoolkit.data.DataUtilities;
+import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.feature.FeatureTypeBuilder;
@@ -212,7 +212,7 @@ public class KrigingProcess extends AbstractProcess {
         ftb.setDefaultGeometry("geometry");
         final FeatureType type = ftb.buildFeatureType();
 
-        final FeatureCollection col = DataUtilities.collection("id", type);
+        final FeatureCollection col = FeatureStoreUtilities.collection("id", type);
         int inc = 0;
 
         for (final Point3d p : steps.keySet()) {

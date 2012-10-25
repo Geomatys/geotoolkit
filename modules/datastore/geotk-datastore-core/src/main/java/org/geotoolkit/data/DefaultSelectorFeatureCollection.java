@@ -85,9 +85,9 @@ public class DefaultSelectorFeatureCollection extends AbstractFeatureCollection<
      * {@inheritDoc }
      */
     @Override
-    public FeatureType getFeatureType() throws DataStoreRuntimeException{
+    public FeatureType getFeatureType() throws FeatureStoreRuntimeException{
         try {
-            FeatureType ft = getSession().getDataStore().getFeatureType(query.getTypeName());
+            FeatureType ft = getSession().getFeatureStore().getFeatureType(query.getTypeName());
             ft = FeatureTypeUtilities.createSubType(ft, query.getPropertyNames(), query.getCoordinateSystemReproject());
 
             final Boolean hide = (Boolean) query.getHints().get(HintsPending.FEATURE_HIDE_ID_PROPERTY);
@@ -97,9 +97,9 @@ public class DefaultSelectorFeatureCollection extends AbstractFeatureCollection<
 
             return ft;
         } catch (DataStoreException ex) {
-            throw new DataStoreRuntimeException(ex);
+            throw new FeatureStoreRuntimeException(ex);
         } catch (SchemaException ex) {
-            throw new DataStoreRuntimeException(ex);
+            throw new FeatureStoreRuntimeException(ex);
         }
     }
 
@@ -107,7 +107,7 @@ public class DefaultSelectorFeatureCollection extends AbstractFeatureCollection<
      * {@inheritDoc }
      */
     @Override
-    public FeatureIterator<Feature> iterator(final Hints hints) throws DataStoreRuntimeException{
+    public FeatureIterator<Feature> iterator(final Hints hints) throws FeatureStoreRuntimeException{
 
         final Query iteQuery;
         if(hints != null){
@@ -123,7 +123,7 @@ public class DefaultSelectorFeatureCollection extends AbstractFeatureCollection<
         try {
             return getSession().getFeatureIterator(iteQuery);
         } catch (DataStoreException ex) {
-            throw new DataStoreRuntimeException(ex);
+            throw new FeatureStoreRuntimeException(ex);
         }
     }
 
@@ -131,11 +131,11 @@ public class DefaultSelectorFeatureCollection extends AbstractFeatureCollection<
      * {@inheritDoc }
      */
     @Override
-    public int size() throws DataStoreRuntimeException {
+    public int size() throws FeatureStoreRuntimeException {
         try {
             return (int) getSession().getCount(query);
         } catch (DataStoreException ex) {
-            throw new DataStoreRuntimeException(ex);
+            throw new FeatureStoreRuntimeException(ex);
         }
     }
 
@@ -143,11 +143,11 @@ public class DefaultSelectorFeatureCollection extends AbstractFeatureCollection<
      * {@inheritDoc }
      */
     @Override
-    public Envelope getEnvelope() throws DataStoreRuntimeException{
+    public Envelope getEnvelope() throws FeatureStoreRuntimeException{
         try {
             return getSession().getEnvelope(query);
         } catch (DataStoreException ex) {
-            throw new DataStoreRuntimeException(ex);
+            throw new FeatureStoreRuntimeException(ex);
         }
     }
 
@@ -168,14 +168,14 @@ public class DefaultSelectorFeatureCollection extends AbstractFeatureCollection<
             getSession().addFeatures(query.getTypeName(), clctn);
             return true;
         } catch (DataStoreException ex) {
-            throw new DataStoreRuntimeException(ex);
+            throw new FeatureStoreRuntimeException(ex);
         }
     }
 
     @Override
     public boolean isWritable(){
         try {
-            return getSession().getDataStore().isWritable(query.getTypeName());
+            return getSession().getFeatureStore().isWritable(query.getTypeName());
         } catch (DataStoreException ex) {
             Logger.getLogger(DefaultSelectorFeatureCollection.class.getName()).log(Level.WARNING, null, ex);
             return false;
@@ -183,7 +183,7 @@ public class DefaultSelectorFeatureCollection extends AbstractFeatureCollection<
     }
 
     @Override
-    public boolean remove(final Object o) throws DataStoreRuntimeException{
+    public boolean remove(final Object o) throws FeatureStoreRuntimeException{
 
         if(isWritable()){
             if(o instanceof Feature){
@@ -192,7 +192,7 @@ public class DefaultSelectorFeatureCollection extends AbstractFeatureCollection<
                     getSession().removeFeatures(query.getTypeName(), filter);
                     return true;
                 } catch (DataStoreException ex) {
-                    throw new DataStoreRuntimeException(ex);
+                    throw new FeatureStoreRuntimeException(ex);
                 }
             }else{
                 //trying to remove an object which is not a feature
@@ -201,7 +201,7 @@ public class DefaultSelectorFeatureCollection extends AbstractFeatureCollection<
             }
 
         }else{
-            throw new DataStoreRuntimeException("this collection is readable only");
+            throw new FeatureStoreRuntimeException("this collection is readable only");
         }
         return false;
     }
@@ -232,12 +232,12 @@ public class DefaultSelectorFeatureCollection extends AbstractFeatureCollection<
                     getSession().removeFeatures(query.getTypeName(), filter);
                     return true;
                 } catch (DataStoreException ex) {
-                    throw new DataStoreRuntimeException(ex);
+                    throw new FeatureStoreRuntimeException(ex);
                 }
             }
 
         }else{
-            throw new DataStoreRuntimeException("this collection is readable only");
+            throw new FeatureStoreRuntimeException("this collection is readable only");
         }
         return false;
     }
@@ -249,10 +249,10 @@ public class DefaultSelectorFeatureCollection extends AbstractFeatureCollection<
             try {
                 getSession().removeFeatures(query.getTypeName(), query.getFilter());
             } catch (DataStoreException ex) {
-                throw new DataStoreRuntimeException(ex);
+                throw new FeatureStoreRuntimeException(ex);
             }
         }else{
-            throw new DataStoreRuntimeException("this collection is readable only");
+            throw new FeatureStoreRuntimeException("this collection is readable only");
         }
     }
 

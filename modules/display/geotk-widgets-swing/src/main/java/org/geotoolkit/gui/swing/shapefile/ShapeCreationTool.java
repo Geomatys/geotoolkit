@@ -39,7 +39,7 @@ import javax.swing.JTextField;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SwingConstants;
 
-import org.geotoolkit.data.FileDataStoreFactory;
+import org.geotoolkit.data.FileFeatureStoreFactory;
 import org.geotoolkit.data.shapefile.ShapefileDataStore;
 import org.geotoolkit.data.shapefile.ShapefileDataStoreFactory;
 import org.geotoolkit.feature.FeatureTypeUtilities;
@@ -55,7 +55,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 
 /**
- * Widget Panel to create ShapeFiles.
+ * Widget Panel to open ShapeFiles.
  * 
  * @author Johann Sorel (Puzzle-GIS)
  */
@@ -81,14 +81,14 @@ public class ShapeCreationTool extends JPanel {
     private void createShape(final String name) {
         try {
             // Create the DataStoreFactory
-            final FileDataStoreFactory factory = new ShapefileDataStoreFactory();
+            final FileFeatureStoreFactory factory = new ShapefileDataStoreFactory();
 
             // Create a Map object used by our DataStore Factory
             // NOTE: file.toURI().toURL() is used because file.toURL() is deprecated
             final Map<String, Serializable> map = Collections.singletonMap("url", (Serializable)file.toURI().toURL());
 
             // Create the ShapefileDataStore from our factory based on our Map object
-            final ShapefileDataStore myData = (ShapefileDataStore) factory.createNew(map);
+            final ShapefileDataStore myData = (ShapefileDataStore) factory.create(map);
 
             // Tell this shapefile what type of data it will store
             final StringBuilder buffer = new StringBuilder();

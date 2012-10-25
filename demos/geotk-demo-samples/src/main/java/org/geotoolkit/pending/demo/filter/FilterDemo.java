@@ -8,7 +8,7 @@ import com.vividsolutions.jts.geom.Point;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.geotoolkit.data.DataUtilities;
+import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.factory.FactoryFinder;
@@ -125,7 +125,7 @@ public class FilterDemo {
         feature4.getProperty("job").setValue("manager");
         feature4.getProperty("localisation").setValue(gf.createPoint(new Coordinate(22, 7)));
 
-        final FeatureCollection collection = DataUtilities.collection(feature1,feature2,feature3,feature4);
+        final FeatureCollection collection = FeatureStoreUtilities.collection(feature1,feature2,feature3,feature4);
         return collection;
     }
 

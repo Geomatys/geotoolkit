@@ -26,14 +26,12 @@ import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryUtilities;
 import org.geotoolkit.data.query.Source;
 import org.geotoolkit.data.session.Session;
-import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.storage.DataStoreException;
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.filter.Filter;
-import org.opengis.filter.FilterFactory;
 
 /**
  * FeatureCollection that takes it's source from a join query.
@@ -41,15 +39,13 @@ import org.opengis.filter.FilterFactory;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class DataStoreJoinFeatureCollection extends AbstractFeatureCollection<Feature>{
-
-    private static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
+public class DefaultFeatureStoreJoinFeatureCollection extends AbstractFeatureCollection<Feature>{
 
     private final Session session;
     private final Query query;
     private FeatureType type = null;
 
-    public DataStoreJoinFeatureCollection(final String id, final Query query){
+    public DefaultFeatureStoreJoinFeatureCollection(final String id, final Query query){
         super(id,query.getSource());
         this.query = query;
 
@@ -64,7 +60,7 @@ public class DataStoreJoinFeatureCollection extends AbstractFeatureCollection<Fe
 
         final Collection<Session> sessions = QueryUtilities.getSessions(source, null);
 
-        if(sessions.size() == 1 && sessions.iterator().next().getDataStore().getQueryCapabilities().handleCrossQuery()){
+        if(sessions.size() == 1 && sessions.iterator().next().getFeatureStore().getQueryCapabilities().handleCrossQuery()){
             session = sessions.iterator().next();
         }else{
             throw new IllegalArgumentException("Query source must have a single session.");
@@ -85,7 +81,7 @@ public class DataStoreJoinFeatureCollection extends AbstractFeatureCollection<Fe
                 type = reader.getFeatureType();
                 reader.close();
             } catch (DataStoreException ex) {
-                Logger.getLogger(DataStoreJoinFeatureCollection.class.getName()).log(Level.WARNING, null, ex);
+                Logger.getLogger(DefaultFeatureStoreJoinFeatureCollection.class.getName()).log(Level.WARNING, null, ex);
             }
         }
 
@@ -100,11 +96,11 @@ public class DataStoreJoinFeatureCollection extends AbstractFeatureCollection<Fe
     }
 
     @Override
-    public FeatureIterator<Feature> iterator(final Hints hints) throws DataStoreRuntimeException {
+    public FeatureIterator<Feature> iterator(final Hints hints) throws FeatureStoreRuntimeException {
         try {
             return session.getFeatureIterator(query);
         } catch (DataStoreException ex) {
-            throw new DataStoreRuntimeException(ex);
+            throw new FeatureStoreRuntimeException(ex);
         }
     }
 

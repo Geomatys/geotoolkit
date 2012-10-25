@@ -20,7 +20,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.NoSuchElementException;
 
-import org.geotoolkit.data.DataUtilities;
+import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.query.Query;
@@ -43,7 +43,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.Point;
 import org.geotoolkit.storage.DataStoreException;
-import org.geotoolkit.data.DataStoreRuntimeException;
+import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.memory.GenericFilterFeatureIterator;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.session.Session;
@@ -357,7 +357,7 @@ public abstract class JDBCDataStoreAPITest extends JDBCTestSupport {
         try {
             reader.next();
             fail("next should fail with an IOException");
-        } catch (DataStoreRuntimeException expected) {
+        } catch (FeatureStoreRuntimeException expected) {
         }
     }
 
@@ -409,19 +409,19 @@ public abstract class JDBCDataStoreAPITest extends JDBCTestSupport {
         try {
             reader1.next();
             fail("next should fail with an IOException");
-        } catch (DataStoreRuntimeException expectedClosed) {
+        } catch (FeatureStoreRuntimeException expectedClosed) {
         }
 
         try {
             reader2.next();
             fail("next should fail with an IOException");
-        } catch (DataStoreRuntimeException expectedClosed) {
+        } catch (FeatureStoreRuntimeException expectedClosed) {
         }
 
         try {
             reader3.next();
             fail("next should fail with an IOException");
-        } catch (DataStoreRuntimeException expectedClosed) {
+        } catch (FeatureStoreRuntimeException expectedClosed) {
         }
     }
 
@@ -869,7 +869,7 @@ public abstract class JDBCDataStoreAPITest extends JDBCTestSupport {
         //assertEquals(td.roadBounds, all.getBounds());
         assertTrue(areReferencedEnvelopesEuqal(td.roadBounds, (JTSEnvelope2D)all.getEnvelope()));
 
-        FeatureCollection<SimpleFeature> expected = DataUtilities.collection(td.roadFeatures);
+        FeatureCollection<SimpleFeature> expected = FeatureStoreUtilities.collection(td.roadFeatures);
 
         assertCovers("all", expected, all);
 //        assertEquals(td.roadBounds, all.getBounds());
@@ -931,7 +931,7 @@ public abstract class JDBCDataStoreAPITest extends JDBCTestSupport {
 
         assertTrue("rivers", covers(all.iterator(), td.riverFeatures));
 
-        FeatureCollection<SimpleFeature> expected = DataUtilities.collection(td.riverFeatures);
+        FeatureCollection<SimpleFeature> expected = FeatureStoreUtilities.collection(td.riverFeatures);
         assertCovers("all", expected, all);
         //assertEquals(td.riverBounds, all.getBounds());
         assertTrue(areReferencedEnvelopesEuqal(td.riverBounds, (JTSEnvelope2D)all.getEnvelope()));

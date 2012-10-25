@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import org.geotoolkit.storage.DataStoreException;
-import org.geotoolkit.data.DataStoreRuntimeException;
+import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.HintsPending;
@@ -75,12 +75,12 @@ public class JDBCInsertFeatureWriter extends JDBCFeatureReader implements Featur
     }
 
     @Override
-    public boolean hasNext() throws DataStoreRuntimeException {
+    public boolean hasNext() throws FeatureStoreRuntimeException {
         return false;
     }
 
     @Override
-    public SimpleFeature next() throws DataStoreRuntimeException {
+    public SimpleFeature next() throws FeatureStoreRuntimeException {
         //init, setting id to null explicity since the feature is yet to be
         // inserted
         last.init(null);
@@ -88,12 +88,12 @@ public class JDBCInsertFeatureWriter extends JDBCFeatureReader implements Featur
     }
 
     @Override
-    public void remove() throws DataStoreRuntimeException {
+    public void remove() throws FeatureStoreRuntimeException {
         //noop
     }
 
     @Override
-    public void write() throws DataStoreRuntimeException {
+    public void write() throws FeatureStoreRuntimeException {
         
         if(batchInsert){
             toAdd.add(FeatureUtilities.copy(last));
@@ -101,9 +101,9 @@ public class JDBCInsertFeatureWriter extends JDBCFeatureReader implements Featur
                 try {
                     dataStore.insert(toAdd, featureType, st.getConnection());
                 } catch (DataStoreException e) {
-                    throw new DataStoreRuntimeException(e);
+                    throw new FeatureStoreRuntimeException(e);
                 } catch (SQLException e) {
-                    throw new DataStoreRuntimeException(e);
+                    throw new FeatureStoreRuntimeException(e);
                 }
                 toAdd.clear();
             }
@@ -115,15 +115,15 @@ public class JDBCInsertFeatureWriter extends JDBCFeatureReader implements Featur
                 String fid = (String) last.getUserData().get( "fid" );
                 last.setID( fid );
             } catch (DataStoreException e) {
-                throw new DataStoreRuntimeException(e);
+                throw new FeatureStoreRuntimeException(e);
             } catch (SQLException e) {
-                throw new DataStoreRuntimeException(e);
+                throw new FeatureStoreRuntimeException(e);
             }
         }
     }
 
     @Override
-    public void close() throws DataStoreRuntimeException {
+    public void close() throws FeatureStoreRuntimeException {
 
         if(batchInsert && !toAdd.isEmpty()){
             try {
@@ -134,9 +134,9 @@ public class JDBCInsertFeatureWriter extends JDBCFeatureReader implements Featur
                 //String fid = (String) last.getUserData().get( "fid" );
                 //last.setID( fid );
             } catch (DataStoreException e) {
-                throw new DataStoreRuntimeException(e);
+                throw new FeatureStoreRuntimeException(e);
             } catch (SQLException e) {
-                throw new DataStoreRuntimeException(e);
+                throw new FeatureStoreRuntimeException(e);
             }
             toAdd.clear();
         }

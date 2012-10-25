@@ -30,11 +30,11 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import javax.xml.stream.XMLStreamException;
 
-import org.geotoolkit.data.DataStoreFactory;
+import org.geotoolkit.data.FeatureStoreFactory;
 import org.geotoolkit.parameter.Parameters;
-import org.geotoolkit.data.AbstractDataStore;
-import org.geotoolkit.data.DataStoreFinder;
-import org.geotoolkit.data.DataStoreRuntimeException;
+import org.geotoolkit.data.AbstractFeatureStore;
+import org.geotoolkit.data.FeatureStoreFinder;
+import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.gpx.model.MetaData;
@@ -69,7 +69,7 @@ import static org.geotoolkit.data.gpx.model.GPXModelConstants.*;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class GPXDataStore extends AbstractDataStore{
+public class GPXDataStore extends AbstractFeatureStore{
 
     private final ReadWriteLock RWLock = new ReentrantReadWriteLock();
     private final ReadWriteLock TempLock = new ReentrantReadWriteLock();
@@ -97,8 +97,8 @@ public class GPXDataStore extends AbstractDataStore{
     }
 
     @Override
-    public DataStoreFactory getFactory() {
-        return DataStoreFinder.getFactoryById(GPXDataStoreFactory.NAME);
+    public FeatureStoreFactory getFactory() {
+        return FeatureStoreFinder.getFactoryById(GPXDataStoreFactory.NAME);
     }
 
     public MetaData getGPXMetaData() throws DataStoreException{
@@ -244,23 +244,23 @@ public class GPXDataStore extends AbstractDataStore{
         }
 
         @Override
-        public Feature next() throws DataStoreRuntimeException {
+        public Feature next() throws FeatureStoreRuntimeException {
             read();
             final Feature ob = current;
             current = null;
             if(ob == null){
-                throw new DataStoreRuntimeException("No more records.");
+                throw new FeatureStoreRuntimeException("No more records.");
             }
             return ob;
         }
 
         @Override
-        public boolean hasNext() throws DataStoreRuntimeException {
+        public boolean hasNext() throws FeatureStoreRuntimeException {
             read();
             return current != null;
         }
 
-        private void read() throws DataStoreRuntimeException{
+        private void read() throws FeatureStoreRuntimeException{
             if(current != null) return;
             if(reader == null) return;
             
@@ -274,7 +274,7 @@ public class GPXDataStore extends AbstractDataStore{
                     }
                 }
             } catch (XMLStreamException ex) {
-                throw new DataStoreRuntimeException(ex);
+                throw new FeatureStoreRuntimeException(ex);
             }
             current = null;
         }
@@ -286,16 +286,16 @@ public class GPXDataStore extends AbstractDataStore{
                 try {
                     reader.dispose();
                 } catch (IOException ex) {
-                    throw new DataStoreRuntimeException(ex);
+                    throw new FeatureStoreRuntimeException(ex);
                 } catch (XMLStreamException ex) {
-                    throw new DataStoreRuntimeException(ex);
+                    throw new FeatureStoreRuntimeException(ex);
                 }
             }
         }
 
         @Override
         public void remove() {
-            throw new DataStoreRuntimeException("Not supported on reader.");
+            throw new FeatureStoreRuntimeException("Not supported on reader.");
         }
 
     }
@@ -343,13 +343,13 @@ public class GPXDataStore extends AbstractDataStore{
         }
 
         @Override
-        public boolean hasNext() throws DataStoreRuntimeException {
+        public boolean hasNext() throws FeatureStoreRuntimeException {
             findNext();
             return next != null;
         }
 
         @Override
-        public Feature next() throws DataStoreRuntimeException {
+        public Feature next() throws FeatureStoreRuntimeException {
             write();
 
             findNext();
@@ -362,7 +362,7 @@ public class GPXDataStore extends AbstractDataStore{
                 if(writeRestriction != TYPE_GPX_ENTITY){
                     edited = FeatureUtilities.defaultFeature(writeRestriction, "-1");
                 }else{
-                    throw new DataStoreRuntimeException("Writer append not allowed "
+                    throw new FeatureStoreRuntimeException("Writer append not allowed "
                             + "on GPX entity writer, choose a defined type.");
                 }
             }
@@ -388,13 +388,13 @@ public class GPXDataStore extends AbstractDataStore{
         }
 
         @Override
-        public void write() throws DataStoreRuntimeException {
+        public void write() throws FeatureStoreRuntimeException {
             if(edited == null || lastWritten == edited) return;
             lastWritten = edited;
             write(edited);
         }
 
-        private void write(final Feature feature) throws DataStoreRuntimeException {
+        private void write(final Feature feature) throws FeatureStoreRuntimeException {
             final FeatureType ft = feature.getType();
 
             try{
@@ -405,11 +405,11 @@ public class GPXDataStore extends AbstractDataStore{
                 }else if(ft == TYPE_TRACK){
                     writer.writeTrack(feature);
                 }else{
-                    throw new DataStoreRuntimeException("Writer not allowed on GPX "
+                    throw new FeatureStoreRuntimeException("Writer not allowed on GPX "
                             + "entity writer, choose a defined type." + ft.getName());
                 }
             }catch(XMLStreamException ex){
-                throw new DataStoreRuntimeException(ex);
+                throw new FeatureStoreRuntimeException(ex);
             }
 
         }
@@ -427,9 +427,9 @@ public class GPXDataStore extends AbstractDataStore{
                 writer.writeEndDocument();
                 writer.dispose();
             } catch (IOException ex) {
-                throw new DataStoreRuntimeException(ex);
+                throw new FeatureStoreRuntimeException(ex);
             } catch (XMLStreamException ex) {
-                throw new DataStoreRuntimeException(ex);
+                throw new FeatureStoreRuntimeException(ex);
             }
 
             //close read iterator

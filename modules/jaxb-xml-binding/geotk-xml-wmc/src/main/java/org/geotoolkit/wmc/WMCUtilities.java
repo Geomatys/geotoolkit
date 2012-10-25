@@ -32,7 +32,7 @@ import org.geotoolkit.client.ServerFactory;
 import org.geotoolkit.client.ServerFinder;
 import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.coverage.CoverageStore;
-import org.geotoolkit.data.DataStore;
+import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.session.Session;
@@ -182,8 +182,8 @@ public class WMCUtilities {
                     continue;
                 }
 
-            } else if (server instanceof DataStore) {
-                final DataStore wfs = (DataStore) server;
+            } else if (server instanceof FeatureStore) {
+                final FeatureStore wfs = (FeatureStore) server;
                 final Session storeSession = wfs.createSession(true);
                 final FeatureCollection collection = storeSession.getFeatureCollection(QueryBuilder.all(layerName));
                 final MutableStyle style = RandomStyleFactory.createRandomVectorStyle(collection);

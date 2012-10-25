@@ -22,7 +22,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
-import org.geotoolkit.data.DataStore;
+import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.memory.GenericModifyFeatureIterator;
 import org.geotoolkit.data.memory.GenericTransformFeatureIterator;
@@ -144,7 +144,7 @@ class ModifyDelta extends AbstractDelta{
                         }
                         
                         if(hasgeoModified){
-                            final FeatureType original = session.getDataStore().getFeatureType(feature.getType().getName());
+                            final FeatureType original = session.getFeatureStore().getFeatureType(feature.getType().getName());
                             final CoordinateReferenceSystem originalCRS = original.getCoordinateReferenceSystem();
                             if(!CRS.equalsIgnoreMetadata(originalCRS,crs)){
                                 final CoordinateSequenceMathTransformer trs =
@@ -196,7 +196,7 @@ class ModifyDelta extends AbstractDelta{
      * {@inheritDoc }
      */
     @Override
-    public Map<String,String> commit(final DataStore store) throws DataStoreException {
+    public Map<String,String> commit(final FeatureStore store) throws DataStoreException {
         store.updateFeatures(type, filter, values);
         return null;
     }

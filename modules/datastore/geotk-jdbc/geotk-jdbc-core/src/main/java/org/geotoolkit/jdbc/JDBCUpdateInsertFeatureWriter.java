@@ -24,7 +24,7 @@ import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.geotoolkit.storage.DataStoreException;
-import org.geotoolkit.data.DataStoreRuntimeException;
+import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.jdbc.fid.PrimaryKey;
 
@@ -49,7 +49,7 @@ public class JDBCUpdateInsertFeatureWriter extends JDBCUpdateFeatureWriter {
     }
     
     @Override
-    public boolean hasNext() throws DataStoreRuntimeException {
+    public boolean hasNext() throws FeatureStoreRuntimeException {
         if ( inserter != null ) {
             return inserter.hasNext();
         }
@@ -61,7 +61,7 @@ public class JDBCUpdateInsertFeatureWriter extends JDBCUpdateFeatureWriter {
                 //update phase is up, switch to insert mode
                 inserter = new JDBCInsertFeatureWriter( this );
             } catch (SQLException ex) {
-                throw new DataStoreRuntimeException(ex);
+                throw new FeatureStoreRuntimeException(ex);
             }
             return inserter.hasNext();
         }
@@ -70,7 +70,7 @@ public class JDBCUpdateInsertFeatureWriter extends JDBCUpdateFeatureWriter {
     }
 
     @Override
-    public SimpleFeature next() throws DataStoreRuntimeException {
+    public SimpleFeature next() throws FeatureStoreRuntimeException {
         if ( inserter != null ) {
             return inserter.next();
         }
@@ -79,7 +79,7 @@ public class JDBCUpdateInsertFeatureWriter extends JDBCUpdateFeatureWriter {
     }
     
     @Override
-    public void remove() throws DataStoreRuntimeException {
+    public void remove() throws FeatureStoreRuntimeException {
         if ( inserter != null ) {
             inserter.remove();
             return;
@@ -89,7 +89,7 @@ public class JDBCUpdateInsertFeatureWriter extends JDBCUpdateFeatureWriter {
     }
     
     @Override
-    public void write() throws DataStoreRuntimeException {
+    public void write() throws FeatureStoreRuntimeException {
         if ( inserter != null ) {
             inserter.write();
             return;
@@ -99,7 +99,7 @@ public class JDBCUpdateInsertFeatureWriter extends JDBCUpdateFeatureWriter {
     }
     
     @Override
-    public void close() throws DataStoreRuntimeException {
+    public void close() throws FeatureStoreRuntimeException {
         if ( inserter != null ) {
             //JD: do not call close because the inserter borrowed all of its state
             // from this reader... super will deal with it.

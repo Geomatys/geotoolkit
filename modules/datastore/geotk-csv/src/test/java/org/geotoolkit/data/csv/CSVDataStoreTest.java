@@ -21,9 +21,9 @@ import java.util.Map;
 import java.util.Collections;
 import com.vividsolutions.jts.geom.Geometry;
 import java.io.File;
-import org.geotoolkit.data.AbstractFileDataStoreFactory;
-import org.geotoolkit.data.DataStore;
-import org.geotoolkit.data.DataStoreFinder;
+import org.geotoolkit.data.AbstractFileFeatureStoreFactory;
+import org.geotoolkit.data.FeatureStore;
+import org.geotoolkit.data.FeatureStoreFinder;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.query.QueryBuilder;
@@ -75,8 +75,8 @@ public class CSVDataStoreTest {
         File f = File.createTempFile("test", ".csv");
         f.deleteOnExit();
 
-        final DataStore ds = DataStoreFinder.open(
-                (Map)Collections.singletonMap(AbstractFileDataStoreFactory.URLP.getName().getCode(),
+        final FeatureStore ds = FeatureStoreFinder.open(
+                (Map)Collections.singletonMap(AbstractFileFeatureStoreFactory.URLP.getName().getCode(),
                 f.toURL()));
         assertNotNull(ds);
         

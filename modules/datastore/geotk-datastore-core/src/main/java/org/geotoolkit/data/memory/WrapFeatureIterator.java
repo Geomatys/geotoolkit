@@ -22,8 +22,8 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.geotoolkit.data.DataStoreRuntimeException;
 import org.geotoolkit.data.FeatureIterator;
+import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.util.converter.Classes;
 import org.opengis.feature.Feature;
 
@@ -91,7 +91,7 @@ public abstract class WrapFeatureIterator implements FeatureIterator<Feature> {
      */
     @Override
     public void remove() {
-        throw new DataStoreRuntimeException("Unmodifiable collection");
+        throw new FeatureStoreRuntimeException("Unmodifiable collection");
     }
 
     /**

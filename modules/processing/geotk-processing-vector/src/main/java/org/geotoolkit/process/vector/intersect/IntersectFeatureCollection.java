@@ -23,7 +23,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import org.geotoolkit.data.DataStoreRuntimeException;
+import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.memory.GenericFilterFeatureIterator;
@@ -75,10 +75,10 @@ public class IntersectFeatureCollection extends WrapFeatureCollection {
      * Return the new FeatureIterator that which apply intersection filter
      * @param hints
      * @return the FeatureIterator
-     * @throws DataStoreRuntimeException
+     * @throws FeatureStoreRuntimeException
      */
     @Override
-    public FeatureIterator<Feature> iterator(final Hints hints) throws DataStoreRuntimeException {
+    public FeatureIterator<Feature> iterator(final Hints hints) throws FeatureStoreRuntimeException {
         return (FeatureIterator<Feature>) GenericFilterFeatureIterator.wrap(getOriginalFeatureCollection().iterator(null), createFilter());
     }
 

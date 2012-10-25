@@ -36,8 +36,8 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.logging.Level;
 
-import org.geotoolkit.data.DataStoreFactory;
-import org.geotoolkit.data.DataStoreFinder;
+import org.geotoolkit.data.FeatureStoreFactory;
+import org.geotoolkit.data.FeatureStoreFinder;
 import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.jdbc.fid.PrimaryKey;
 import org.geotoolkit.jdbc.fid.PrimaryKeyColumn;
@@ -47,8 +47,8 @@ import org.geotoolkit.jdbc.dialect.PreparedStatementSQLDialect;
 import org.geotoolkit.jdbc.dialect.SQLDialect;
 import org.geotoolkit.jdbc.reverse.DataBaseModel;
 import org.geotoolkit.storage.DataStoreException;
-import org.geotoolkit.data.DataStoreRuntimeException;
-import org.geotoolkit.data.DataUtilities;
+import org.geotoolkit.data.FeatureStoreRuntimeException;
+import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.jdbc.FilterToSQL;
@@ -119,8 +119,8 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
     }
 
     @Override
-    public DataStoreFactory getFactory() {
-        return DataStoreFinder.getFactoryById(factoryId);
+    public FeatureStoreFactory getFactory() {
+        return FeatureStoreFinder.getFactoryById(factoryId);
     }
 
     @Override
@@ -616,7 +616,7 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
         if(CUSTOM_SQL.equalsIgnoreCase(query.getLanguage())){
             final FeatureReader reader = getSQLFeatureReader(query);
             try{
-                return DataUtilities.calculateCount(reader);
+                return FeatureStoreUtilities.calculateCount(reader);
             }finally{
                 reader.close();
             }
@@ -635,7 +635,7 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
             try {
                 //calculate manually, dont use datastore optimization
                 getLogger().fine("Calculating size manually");
-                return DataUtilities.calculateCount(getFeatureReader(query));
+                return FeatureStoreUtilities.calculateCount(getFeatureReader(query));
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -710,12 +710,12 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
      * {@inheritDoc }
      */
     @Override
-    public Envelope getEnvelope(final Query query) throws DataStoreException, DataStoreRuntimeException {
+    public Envelope getEnvelope(final Query query) throws DataStoreException, FeatureStoreRuntimeException {
         if(CUSTOM_SQL.equalsIgnoreCase(query.getLanguage())){
             //can not optimize this query
             final FeatureReader reader = getSQLFeatureReader(query);
             try{
-                return DataUtilities.calculateEnvelope(reader);
+                return FeatureStoreUtilities.calculateEnvelope(reader);
             }finally{
                 reader.close();
             }
@@ -740,7 +740,7 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
             // grab a reader
             final QueryBuilder builder = new QueryBuilder(query);
             builder.setFilter(postFilter);
-            return DataUtilities.calculateEnvelope(getFeatureReader(builder.buildQuery()));
+            return FeatureStoreUtilities.calculateEnvelope(getFeatureReader(builder.buildQuery()));
         } else {
             //post filter was null... pre can be set or null... either way
             // use datastore optimization

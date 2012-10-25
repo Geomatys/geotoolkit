@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2009, Geomatys
+ *    (C) 2009-2012, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -19,9 +19,7 @@ package org.geotoolkit.data;
 
 import java.net.URL;
 import java.util.Collections;
-
 import org.geotoolkit.storage.DataStoreException;
-
 import org.geotoolkit.util.ResourceInternationalString;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterValueGroup;
@@ -31,7 +29,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public abstract class AbstractFileDataStoreFactory extends AbstractDataStoreFactory implements FileDataStoreFactory{
+public abstract class AbstractFileFeatureStoreFactory extends AbstractFeatureStoreFactory implements FileFeatureStoreFactory{
 
     /**
      * url to the file.
@@ -66,17 +64,6 @@ public abstract class AbstractFileDataStoreFactory extends AbstractDataStoreFact
         }
 
     }
-
-    @Override
-    public CharSequence getDescription() {
-        return super.getDescription();
-    }
-
-    @Override
-    public CharSequence getDisplayName() {
-        return super.getDisplayName();
-    }
-
     
     /**
      * {@inheritDoc }
@@ -90,8 +77,8 @@ public abstract class AbstractFileDataStoreFactory extends AbstractDataStoreFact
      * {@inheritDoc }
      */
     @Override
-    public DataStore createDataStore(final URL url) throws DataStoreException {
-        return create(Collections.singletonMap(URLP.getName().toString(), url));
+    public FeatureStore createDataStore(final URL url) throws DataStoreException {
+        return open(Collections.singletonMap(URLP.getName().toString(), url));
     }
 
 }

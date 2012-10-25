@@ -29,7 +29,7 @@ import java.util.Map;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureWriter;
-import org.geotoolkit.data.memory.MemoryDataStore;
+import org.geotoolkit.data.memory.MemoryFeatureStore;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.factory.FactoryFinder;
@@ -71,7 +71,7 @@ public class SessionTest{
 
     private static final FilterFactory2 FF = (FilterFactory2) FactoryFinder.getFilterFactory(null);
 
-    private MemoryDataStore store = new MemoryDataStore();
+    private MemoryFeatureStore store = new MemoryFeatureStore();
 
 
     public SessionTest() {
@@ -79,7 +79,7 @@ public class SessionTest{
 
     @Before
     public void setUp() throws Exception {
-        store = new MemoryDataStore();
+        store = new MemoryFeatureStore();
         final FeatureTypeBuilder builder = new FeatureTypeBuilder();
 
         //create the schema

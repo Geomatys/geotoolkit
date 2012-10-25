@@ -18,7 +18,7 @@
 package org.geotoolkit.data.session;
 
 import java.util.Map;
-import org.geotoolkit.data.DataStore;
+import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.storage.DataStoreException;
@@ -58,7 +58,7 @@ interface Delta {
      * @return Map of potentiel id changes once the commit is done
      * @throws DataStoreException
      */
-    Map<String,String> commit(DataStore store) throws DataStoreException;
+    Map<String,String> commit(FeatureStore store) throws DataStoreException;
 
     void dispose();
 

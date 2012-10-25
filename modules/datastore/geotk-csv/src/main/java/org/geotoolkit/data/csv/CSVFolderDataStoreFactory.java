@@ -16,10 +16,10 @@
  */
 package org.geotoolkit.data.csv;
 
-import org.geotoolkit.data.AbstractDataStoreFactory;
-import org.geotoolkit.data.DataStoreFinder;
-import org.geotoolkit.data.FileDataStoreFactory;
-import org.geotoolkit.data.folder.AbstractFolderDataStoreFactory;
+import org.geotoolkit.data.AbstractFeatureStoreFactory;
+import org.geotoolkit.data.FeatureStoreFinder;
+import org.geotoolkit.data.FileFeatureStoreFactory;
+import org.geotoolkit.data.AbstractFolderFeatureStoreFactory;
 import org.geotoolkit.metadata.iso.identification.DefaultServiceIdentification;
 import org.geotoolkit.util.ResourceInternationalString;
 import org.opengis.metadata.identification.Identification;
@@ -34,7 +34,7 @@ import static org.geotoolkit.data.csv.CSVDataStore.*;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class CSVFolderDataStoreFactory extends AbstractFolderDataStoreFactory{
+public class CSVFolderDataStoreFactory extends AbstractFolderFeatureStoreFactory{
 
     /** factory identification **/
     public static final DefaultServiceIdentification IDENTIFICATION = derivateIdentification(CSVDataStoreFactory.IDENTIFICATION);
@@ -61,8 +61,8 @@ public class CSVFolderDataStoreFactory extends AbstractFolderDataStoreFactory{
      * {@inheritDoc}
      */
     @Override
-    public FileDataStoreFactory getSingleFileFactory() {
-        return DataStoreFinder.getAllFactories(CSVDataStoreFactory.class).iterator().next();
+    public FileFeatureStoreFactory getSingleFileFactory() {
+        return FeatureStoreFinder.getAllFactories(CSVDataStoreFactory.class).iterator().next();
     }
 
     /**

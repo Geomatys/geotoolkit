@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.process.vector.affinetransform;
 
-import org.geotoolkit.data.DataStoreRuntimeException;
+import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.memory.GenericTransformFeatureIterator;
@@ -61,10 +61,10 @@ public class AffineTransformFeatureCollection extends WrapFeatureCollection {
      * Return a FeatureIterator with an affine transformation
      * @param hints
      * @return the FeatureIterator
-     * @throws DataStoreRuntimeException
+     * @throws FeatureStoreRuntimeException
      */
     @Override
-    public FeatureIterator<Feature> iterator(final Hints hints) throws DataStoreRuntimeException {
+    public FeatureIterator<Feature> iterator(final Hints hints) throws FeatureStoreRuntimeException {
         return (GenericTransformFeatureIterator.wrap(getOriginalFeatureCollection(),
                 new AffineTransformGeometryTransformer(transform))).iterator();
     }

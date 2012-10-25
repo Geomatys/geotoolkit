@@ -16,9 +16,9 @@
  */
 package org.geotoolkit.data.dbf;
 
-import org.geotoolkit.data.DataStoreFinder;
-import org.geotoolkit.data.FileDataStoreFactory;
-import org.geotoolkit.data.folder.AbstractFolderDataStoreFactory;
+import org.geotoolkit.data.FeatureStoreFinder;
+import org.geotoolkit.data.FileFeatureStoreFactory;
+import org.geotoolkit.data.AbstractFolderFeatureStoreFactory;
 import org.geotoolkit.metadata.iso.identification.DefaultServiceIdentification;
 import org.geotoolkit.util.ResourceInternationalString;
 import org.opengis.metadata.identification.Identification;
@@ -31,7 +31,7 @@ import org.opengis.parameter.ParameterDescriptorGroup;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class DbaseFolderDataStoreFactory extends AbstractFolderDataStoreFactory{
+public class DbaseFolderDataStoreFactory extends AbstractFolderFeatureStoreFactory{
 
     /** factory identification **/
     public static final DefaultServiceIdentification IDENTIFICATION = derivateIdentification(DbaseDataStoreFactory.IDENTIFICATION);
@@ -59,8 +59,8 @@ public class DbaseFolderDataStoreFactory extends AbstractFolderDataStoreFactory{
      * {@inheritDoc}
      */
     @Override
-    public FileDataStoreFactory getSingleFileFactory() {
-        return DataStoreFinder.getAllFactories(DbaseDataStoreFactory.class).iterator().next();
+    public FileFeatureStoreFactory getSingleFileFactory() {
+        return FeatureStoreFinder.getAllFactories(DbaseDataStoreFactory.class).iterator().next();
     }
 
     /**

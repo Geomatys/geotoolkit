@@ -40,7 +40,7 @@ import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JSeparator;
 import javax.swing.SwingConstants;
 
-import org.geotoolkit.data.DataStoreRuntimeException;
+import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.query.Query;
@@ -222,7 +222,7 @@ public class JSelectionBar extends AbstractMapControlBar implements ActionListen
                             }
                         } catch (DataStoreException ex) {
                             LOGGER.log(Level.WARNING, ex.getMessage(),ex);
-                        } catch (DataStoreRuntimeException ex) {
+                        } catch (FeatureStoreRuntimeException ex) {
                             LOGGER.log(Level.WARNING, ex.getMessage(),ex);
                         }finally {
                             if(ite != null){

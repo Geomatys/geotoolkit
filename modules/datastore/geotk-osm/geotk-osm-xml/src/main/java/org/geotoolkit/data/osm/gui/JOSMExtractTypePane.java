@@ -26,9 +26,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.geotoolkit.data.DataStore;
+import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.storage.DataStoreException;
-import org.geotoolkit.data.DataStoreFinder;
+import org.geotoolkit.data.FeatureStoreFinder;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.memory.GenericMappingFeatureCollection;
 import org.geotoolkit.data.query.DefaultJoin;
@@ -81,7 +81,7 @@ public class JOSMExtractTypePane extends javax.swing.JPanel {
     }
 
     private void process() throws DataStoreException, NoSuchAuthorityCodeException, FactoryException{
-        final DataStore store = DataStoreFinder.open(dbParameters);
+        final FeatureStore store = FeatureStoreFinder.open(dbParameters);
         final Session session = store.createSession(false);
 
 //        processLanduse(store, session);
@@ -94,7 +94,7 @@ public class JOSMExtractTypePane extends javax.swing.JPanel {
         
     }
 
-    private void processRailWay(final DataStore store, final Session session) throws DataStoreException{
+    private void processRailWay(final FeatureStore store, final Session session) throws DataStoreException{
         //create the new schema-------------------------------------------------
         final FeatureTypeBuilder sftb = new FeatureTypeBuilder();
         sftb.setName("RailWay");
@@ -146,7 +146,7 @@ public class JOSMExtractTypePane extends javax.swing.JPanel {
         store.addFeatures(targetType.getName(), mapped);
     }
 
-    private void processNatural(final DataStore store, final Session session) throws DataStoreException{
+    private void processNatural(final FeatureStore store, final Session session) throws DataStoreException{
         //create the new schema-------------------------------------------------
         final FeatureTypeBuilder sftb = new FeatureTypeBuilder();
         sftb.setName("Natural");
@@ -198,7 +198,7 @@ public class JOSMExtractTypePane extends javax.swing.JPanel {
         store.addFeatures(targetType.getName(), mapped);
     }
 
-    private void processBuilding(final DataStore store, final Session session) throws DataStoreException{
+    private void processBuilding(final FeatureStore store, final Session session) throws DataStoreException{
         //create the new schema-------------------------------------------------
         final FeatureTypeBuilder sftb = new FeatureTypeBuilder();
         sftb.setName("Building");
@@ -250,7 +250,7 @@ public class JOSMExtractTypePane extends javax.swing.JPanel {
         store.addFeatures(targetType.getName(), mapped);
     }
 
-    private void processLanduse(final DataStore store, final Session session) throws DataStoreException{
+    private void processLanduse(final FeatureStore store, final Session session) throws DataStoreException{
         //create the new schema-------------------------------------------------
         final FeatureTypeBuilder sftb = new FeatureTypeBuilder();
         sftb.setName("Landuse");
@@ -302,7 +302,7 @@ public class JOSMExtractTypePane extends javax.swing.JPanel {
         store.addFeatures(targetType.getName(), mapped);
     }
 
-    private void processLeisure(final DataStore store, final Session session) throws DataStoreException{
+    private void processLeisure(final FeatureStore store, final Session session) throws DataStoreException{
         //create the new schema-------------------------------------------------
         final FeatureTypeBuilder sftb = new FeatureTypeBuilder();
         sftb.setName("Leisure");
@@ -354,7 +354,7 @@ public class JOSMExtractTypePane extends javax.swing.JPanel {
         store.addFeatures(targetType.getName(), mapped);
     }
 
-    private void processWaterWay(final DataStore store, final Session session) throws DataStoreException{
+    private void processWaterWay(final FeatureStore store, final Session session) throws DataStoreException{
         //create the new schema-------------------------------------------------
         final FeatureTypeBuilder sftb = new FeatureTypeBuilder();
         sftb.setName("Waterway");
@@ -406,7 +406,7 @@ public class JOSMExtractTypePane extends javax.swing.JPanel {
         store.addFeatures(targetType.getName(), mapped);
     }
 
-    private void processHighWay(final DataStore store, final Session session) throws DataStoreException{
+    private void processHighWay(final FeatureStore store, final Session session) throws DataStoreException{
         //create the new schema-------------------------------------------------
         final FeatureTypeBuilder sftb = new FeatureTypeBuilder();
         sftb.setName("Highway");

@@ -24,10 +24,10 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.geotoolkit.data.DataStoreRuntimeException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.FeatureReader;
+import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.HintsPending;
 import org.geotoolkit.feature.AbstractFeature;
@@ -138,7 +138,7 @@ public abstract class GenericReprojectFeatureIterator<F extends Feature, R exten
         }
 
         @Override
-        public F next() throws DataStoreRuntimeException {
+        public F next() throws FeatureStoreRuntimeException {
             final Feature next = iterator.next();
 
             final Collection<Property> properties = new ArrayList<Property>();
@@ -155,7 +155,7 @@ public abstract class GenericReprojectFeatureIterator<F extends Feature, R exten
                             try {
                                 prop.setValue(transformer.transform((Geometry) value));
                             } catch (TransformException e) {
-                                throw new DataStoreRuntimeException("A transformation exception occurred while reprojecting data on the fly", e);
+                                throw new FeatureStoreRuntimeException("A transformation exception occurred while reprojecting data on the fly", e);
                             }
                         }else{
                             //each feature has a different CRS.
@@ -164,9 +164,9 @@ public abstract class GenericReprojectFeatureIterator<F extends Feature, R exten
                                 try {
                                     original = JTS.findCoordinateReferenceSystem((Geometry)value);
                                 } catch (NoSuchAuthorityCodeException ex) {
-                                    throw new DataStoreRuntimeException("An exception occurred while reprojecting data on the fly", ex);
+                                    throw new FeatureStoreRuntimeException("An exception occurred while reprojecting data on the fly", ex);
                                 } catch (FactoryException ex) {
-                                    throw new DataStoreRuntimeException("An exception occurred while reprojecting data on the fly", ex);
+                                    throw new FeatureStoreRuntimeException("An exception occurred while reprojecting data on the fly", ex);
                                 }
                             }else if(value instanceof org.opengis.geometry.Geometry){
                                 original = ((org.opengis.geometry.Geometry)value).getCoordinateReferenceSystem();
@@ -183,7 +183,7 @@ public abstract class GenericReprojectFeatureIterator<F extends Feature, R exten
                                     geom.setSRID(SRIDGenerator.toSRID(targetCRS, SRIDGenerator.Version.V1));
                                     prop.setValue(geom);
                                 } catch (Exception e) {
-                                    throw new DataStoreRuntimeException("An exception occurred while reprojecting data on the fly", e);
+                                    throw new FeatureStoreRuntimeException("An exception occurred while reprojecting data on the fly", e);
                                 }
                             }else{
                                 Logging.getLogger(GenericReprojectFeatureIterator.class).log(
@@ -221,7 +221,7 @@ public abstract class GenericReprojectFeatureIterator<F extends Feature, R exten
         }
 
         @Override
-        public F next() throws DataStoreRuntimeException {
+        public F next() throws FeatureStoreRuntimeException {
             final Feature next = iterator.next();
             feature.setId(next.getIdentifier());
 
@@ -239,7 +239,7 @@ public abstract class GenericReprojectFeatureIterator<F extends Feature, R exten
                             try {
                                 prop.setValue(transformer.transform((Geometry) value));
                             } catch (TransformException e) {
-                                throw new DataStoreRuntimeException("A transformation exception occurred while reprojecting data on the fly", e);
+                                throw new FeatureStoreRuntimeException("A transformation exception occurred while reprojecting data on the fly", e);
                             }
                         }else{
                             //each feature has a different CRS.
@@ -248,9 +248,9 @@ public abstract class GenericReprojectFeatureIterator<F extends Feature, R exten
                                 try {
                                     original = JTS.findCoordinateReferenceSystem((Geometry)value);
                                 } catch (NoSuchAuthorityCodeException ex) {
-                                    throw new DataStoreRuntimeException("An exception occurred while reprojecting data on the fly", ex);
+                                    throw new FeatureStoreRuntimeException("An exception occurred while reprojecting data on the fly", ex);
                                 } catch (FactoryException ex) {
-                                    throw new DataStoreRuntimeException("An exception occurred while reprojecting data on the fly", ex);
+                                    throw new FeatureStoreRuntimeException("An exception occurred while reprojecting data on the fly", ex);
                                 }
                             }else if(value instanceof org.opengis.geometry.Geometry){
                                 original = ((org.opengis.geometry.Geometry)value).getCoordinateReferenceSystem();
@@ -267,7 +267,7 @@ public abstract class GenericReprojectFeatureIterator<F extends Feature, R exten
                                     geom.setSRID(SRIDGenerator.toSRID(targetCRS, SRIDGenerator.Version.V1));
                                     prop.setValue(geom);
                                 } catch (Exception e) {
-                                    throw new DataStoreRuntimeException("An exception occurred while reprojecting data on the fly", e);
+                                    throw new FeatureStoreRuntimeException("An exception occurred while reprojecting data on the fly", e);
                                 }
                             }else{
                                 Logging.getLogger(GenericReprojectFeatureIterator.class).log(
@@ -313,7 +313,7 @@ public abstract class GenericReprojectFeatureIterator<F extends Feature, R exten
         }
 
         @Override
-        public F next() throws DataStoreRuntimeException {
+        public F next() throws FeatureStoreRuntimeException {
             final SimpleFeature next = (SimpleFeature) iterator.next();
             feature.setId(next.getID());
 
@@ -328,7 +328,7 @@ public abstract class GenericReprojectFeatureIterator<F extends Feature, R exten
                             try {
                                 values[i] = transformer.transform((Geometry) value);
                             } catch (TransformException e) {
-                                throw new DataStoreRuntimeException("A transformation exception occurred while reprojecting data on the fly", e);
+                                throw new FeatureStoreRuntimeException("A transformation exception occurred while reprojecting data on the fly", e);
                             }
                         }else{
                             //each feature has a different CRS.
@@ -337,9 +337,9 @@ public abstract class GenericReprojectFeatureIterator<F extends Feature, R exten
                                 try {
                                     original = JTS.findCoordinateReferenceSystem((Geometry)value);
                                 } catch (NoSuchAuthorityCodeException ex) {
-                                    throw new DataStoreRuntimeException("An exception occurred while reprojecting data on the fly", ex);
+                                    throw new FeatureStoreRuntimeException("An exception occurred while reprojecting data on the fly", ex);
                                 } catch (FactoryException ex) {
-                                    throw new DataStoreRuntimeException("An exception occurred while reprojecting data on the fly", ex);
+                                    throw new FeatureStoreRuntimeException("An exception occurred while reprojecting data on the fly", ex);
                                 }
                             }else if(value instanceof org.opengis.geometry.Geometry){
                                 original = ((org.opengis.geometry.Geometry)value).getCoordinateReferenceSystem();
@@ -357,7 +357,7 @@ public abstract class GenericReprojectFeatureIterator<F extends Feature, R exten
                                     geom.setSRID(SRIDGenerator.toSRID(targetCRS, SRIDGenerator.Version.V1));
                                     values[i] = geom;
                                 } catch (Exception e) {
-                                    throw new DataStoreRuntimeException("An exception occurred while reprojecting data on the fly", e);
+                                    throw new FeatureStoreRuntimeException("An exception occurred while reprojecting data on the fly", e);
                                 }
                             }else{
                                 Logging.getLogger(GenericReprojectFeatureIterator.class).log(
@@ -402,7 +402,7 @@ public abstract class GenericReprojectFeatureIterator<F extends Feature, R exten
         }
 
         @Override
-        public FeatureIterator iterator(final Hints hints) throws DataStoreRuntimeException {
+        public FeatureIterator iterator(final Hints hints) throws FeatureStoreRuntimeException {
             FeatureIterator ite = getOriginalFeatureCollection().iterator(hints);
             if(!(ite instanceof FeatureReader)){
                 ite = GenericWrapFeatureIterator.wrapToReader(ite, getFeatureType());
@@ -410,14 +410,14 @@ public abstract class GenericReprojectFeatureIterator<F extends Feature, R exten
             try {
                 return wrap((FeatureReader) ite, targetCrs, hints);
             } catch (FactoryException ex) {
-                throw new DataStoreRuntimeException(ex);
+                throw new FeatureStoreRuntimeException(ex);
             } catch (SchemaException ex) {
-                throw new DataStoreRuntimeException(ex);
+                throw new FeatureStoreRuntimeException(ex);
             }
         }
 
         @Override
-        protected Feature modify(Feature original) throws DataStoreRuntimeException {
+        protected Feature modify(Feature original) throws FeatureStoreRuntimeException {
             throw new UnsupportedOperationException("should not have been called.");
         }
 
@@ -483,7 +483,7 @@ public abstract class GenericReprojectFeatureIterator<F extends Feature, R exten
                         try {
                             prop.setValue(geoTransformer.transform((Geometry) value));
                         } catch (TransformException e) {
-                            throw new DataStoreRuntimeException("A transformation exception occurred while reprojecting data on the fly", e);
+                            throw new FeatureStoreRuntimeException("A transformation exception occurred while reprojecting data on the fly", e);
                         }
                     }else{
                         //each feature has a different CRS.
@@ -492,9 +492,9 @@ public abstract class GenericReprojectFeatureIterator<F extends Feature, R exten
                             try {
                                 original = JTS.findCoordinateReferenceSystem((Geometry)value);
                             } catch (NoSuchAuthorityCodeException ex) {
-                                throw new DataStoreRuntimeException("An exception occurred while reprojecting data on the fly", ex);
+                                throw new FeatureStoreRuntimeException("An exception occurred while reprojecting data on the fly", ex);
                             } catch (FactoryException ex) {
-                                throw new DataStoreRuntimeException("An exception occurred while reprojecting data on the fly", ex);
+                                throw new FeatureStoreRuntimeException("An exception occurred while reprojecting data on the fly", ex);
                             }
                         }else if(value instanceof org.opengis.geometry.Geometry){
                             original = ((org.opengis.geometry.Geometry)value).getCoordinateReferenceSystem();
@@ -511,7 +511,7 @@ public abstract class GenericReprojectFeatureIterator<F extends Feature, R exten
                                 geom.setSRID(SRIDGenerator.toSRID(targetCRS, SRIDGenerator.Version.V1));
                                 prop.setValue(geom);
                             } catch (Exception e) {
-                                throw new DataStoreRuntimeException("An exception occurred while reprojecting data on the fly", e);
+                                throw new FeatureStoreRuntimeException("An exception occurred while reprojecting data on the fly", e);
                             }
                         }else{
                             Logging.getLogger(GenericReprojectFeatureIterator.class).log(

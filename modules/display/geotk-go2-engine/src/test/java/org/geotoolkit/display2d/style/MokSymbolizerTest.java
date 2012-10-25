@@ -22,7 +22,7 @@ import org.geotoolkit.coverage.grid.GridCoverageFactory;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Point;
-import org.geotoolkit.data.DataUtilities;
+import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.feature.FeatureTypeBuilder;
@@ -79,9 +79,9 @@ public class MokSymbolizerTest {
         sftb.add("att1", String.class);
         sftb.add("att2", Double.class);
         final SimpleFeatureType sft = sftb.buildSimpleFeatureType();
-        FeatureCollection col = DataUtilities.collection("id", sft);
+        FeatureCollection col = FeatureStoreUtilities.collection("id", sft);
 
-        final FeatureWriter writer = col.getSession().getDataStore().getFeatureWriterAppend(sft.getName());
+        final FeatureWriter writer = col.getSession().getFeatureStore().getFeatureWriterAppend(sft.getName());
         SimpleFeature sf = (SimpleFeature) writer.next();
         sf.setAttribute("geom", GF.createPoint(new Coordinate(0, 0)));
         sf.setAttribute("att1", "value1");

@@ -20,7 +20,7 @@ import java.util.HashSet;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
-import org.geotoolkit.data.DataStoreRuntimeException;
+import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.factory.Hints;
@@ -112,9 +112,9 @@ public class UnionFeatureCollection extends WrapFeatureCollection {
             }
 
         } catch (TransformException ex) {
-            throw new DataStoreRuntimeException(ex);
+            throw new FeatureStoreRuntimeException(ex);
         } catch (FactoryException ex) {
-            throw new DataStoreRuntimeException(ex);
+            throw new FeatureStoreRuntimeException(ex);
         }
     }
 
@@ -122,7 +122,7 @@ public class UnionFeatureCollection extends WrapFeatureCollection {
      *  {@inheritDoc }
      */
     @Override
-    public FeatureIterator<Feature> iterator(final Hints hints) throws DataStoreRuntimeException {
+    public FeatureIterator<Feature> iterator(final Hints hints) throws FeatureStoreRuntimeException {
         return new IntersectionFeatureIterator(getOriginalFeatureCollection().iterator(), unionFC.iterator());
     }
 
@@ -206,7 +206,7 @@ public class UnionFeatureCollection extends WrapFeatureCollection {
          */
         @Override
         public void remove() {
-            throw new DataStoreRuntimeException("Unmodifiable collection");
+            throw new FeatureStoreRuntimeException("Unmodifiable collection");
         }
 
         /**

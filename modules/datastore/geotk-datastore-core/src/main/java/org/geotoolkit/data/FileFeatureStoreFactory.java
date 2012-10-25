@@ -20,7 +20,7 @@ import java.net.URL;
 import org.geotoolkit.storage.DataStoreException;
 
 /**
- * FileDataStoreFactory for working with formats based on a single URL.
+ * FileFeatureStoreFactory for working with formats based on a single URL.
  * <p>
  * This interface provides a mechanism of discovery for DataStoreFactories
  * which support singular files.
@@ -30,13 +30,12 @@ import org.geotoolkit.storage.DataStoreException;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public interface FileDataStoreFactory extends DataStoreFactory {
+public interface FileFeatureStoreFactory extends FeatureStoreFactory {
 
     /**
      * The list of filename extentions handled by this factory.
      *
-     * @return List of file extensions which can be read by this
-     *         dataStore.
+     * @return List of file extensions which can be read by this FeatureStore.
      */
     String[] getFileExtensions();
 
@@ -45,23 +44,23 @@ public interface FileDataStoreFactory extends DataStoreFactory {
      *
      * @param url URL to a real file (may not be local)
      *
-     * @return <code>true</code> if this url can when this dataStore can resolve and read the data specified
+     * @return <code>true</code> if this url can when this FeatureStore can resolve and read the data specified
      */
     boolean canProcess(URL url);
 
     /**
-     * A DataStore attached to the provided url, may be created if needed.
+     * A FeatureStore attached to the provided url, may be created if needed.
      * <p>
      * Please note that additional configuration options may be available
-     * via the traditional createDataStore( Map ) method provided by the
+     * via the traditional createFeatureStore( Map ) method provided by the
      * superclass.
      * <p>
      * @param url The data location for the
      *
-     * @return Returns a DataStore created from the data source provided.
+     * @return Returns a FeatureStore created from the data source provided.
      *
      * @throws DataStoreException
      */
-    DataStore createDataStore(URL url) throws DataStoreException;
+    FeatureStore createDataStore(URL url) throws DataStoreException;
 
 }

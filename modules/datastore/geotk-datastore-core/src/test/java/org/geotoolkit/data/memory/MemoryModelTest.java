@@ -30,7 +30,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import org.geotoolkit.data.AbstractModelTests;
-import org.geotoolkit.data.DataStore;
+import org.geotoolkit.data.FeatureStore;
 
 /**
  *
@@ -38,7 +38,7 @@ import org.geotoolkit.data.DataStore;
  */
 public class MemoryModelTest extends AbstractModelTests{
 
-    private final MemoryDataStore store = new MemoryDataStore();
+    private final MemoryFeatureStore store = new MemoryFeatureStore();
     private final List<Class> geometries = new ArrayList<Class>();
     private final List<Class> attributs = new ArrayList<Class>();
 
@@ -66,7 +66,7 @@ public class MemoryModelTest extends AbstractModelTests{
     }
 
     @Override
-    protected DataStore getDataStore() {
+    protected FeatureStore getDataStore() {
         return store;
     }
 

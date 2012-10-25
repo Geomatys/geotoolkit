@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import org.geotoolkit.data.DataStoreRuntimeException;
+import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
@@ -267,7 +267,7 @@ public class CategoryStyleBuilder extends Factory {
             }
         }catch(DataStoreException ex){
             ex.printStackTrace();
-        }catch(DataStoreRuntimeException ex){
+        }catch(FeatureStoreRuntimeException ex){
             ex.printStackTrace();
         }finally{
             if(features != null){

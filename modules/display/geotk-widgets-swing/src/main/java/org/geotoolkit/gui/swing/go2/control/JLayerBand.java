@@ -42,7 +42,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingConstants;
 
-import org.geotoolkit.data.DataStoreRuntimeException;
+import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.query.QueryBuilder;
@@ -243,7 +243,7 @@ public class JLayerBand extends JNavigatorBand implements LayerListener{
                     }
                 }catch(final DataStoreException ex){
                     LOGGER.log(Level.FINE,ex.getMessage(),ex);
-                }catch(final DataStoreRuntimeException ex){
+                }catch(final FeatureStoreRuntimeException ex){
                     LOGGER.log(Level.FINE,ex.getMessage(),ex);
                 }finally{
                     if(ite != null){

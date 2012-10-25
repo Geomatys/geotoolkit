@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.data.DataStoreRuntimeException;
+import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
@@ -250,7 +250,7 @@ public class IsolineGraphicJ2D extends StatelessFeatureLayerJ2D {
             
         } catch (TransformException ex) {
             getLogger().log(Level.WARNING, null, ex);
-        } catch (DataStoreRuntimeException ex) {
+        } catch (FeatureStoreRuntimeException ex) {
             getLogger().log(Level.WARNING, null, ex);
         }
 

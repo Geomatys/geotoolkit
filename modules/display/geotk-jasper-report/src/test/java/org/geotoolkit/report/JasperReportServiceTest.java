@@ -46,7 +46,7 @@ import org.geotoolkit.display2d.service.SceneDef;
 import org.geotoolkit.display2d.service.CanvasDef;
 import org.geotoolkit.report.graphic.map.MapDef;
 import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.data.DataUtilities;
+import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageFactory;
@@ -101,7 +101,7 @@ public class JasperReportServiceTest {
         final JasperReport report = entry.getKey();
         final FeatureType type = entry.getValue();
 
-        FeatureCollection collection = DataUtilities.collection("id", type);
+        FeatureCollection collection = FeatureStoreUtilities.collection("id", type);
         Feature feature = FeatureUtilities.defaultFeature(type, "id-0");
         feature.getProperty("map").setValue(new MapDef(
                 new CanvasDef(new Dimension(1, 1), Color.RED),
@@ -130,7 +130,7 @@ public class JasperReportServiceTest {
         final JasperReport report = entry.getKey();
         final FeatureType type = entry.getValue();
 
-        FeatureCollection collection = DataUtilities.collection("id", type);
+        FeatureCollection collection = FeatureStoreUtilities.collection("id", type);
         Feature feature = FeatureUtilities.defaultFeature(type, "id-0");
         feature.getProperty("map").setValue(new MapDef(
                 new CanvasDef(new Dimension(1, 1), Color.RED),

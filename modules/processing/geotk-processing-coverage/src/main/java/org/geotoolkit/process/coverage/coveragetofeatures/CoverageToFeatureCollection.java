@@ -20,7 +20,7 @@ import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
-import org.geotoolkit.data.DataStoreRuntimeException;
+import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureIterator;
 
 import org.opengis.coverage.grid.GridEnvelope;
@@ -64,10 +64,10 @@ public class CoverageToFeatureCollection extends RasterFeatureCollection {
     /**
      * Return FeatureIterator that iterate in coverage
      * @return FeatureIterator
-     * @throws DataStoreRuntimeException
+     * @throws FeatureStoreRuntimeException
      */
     @Override
-    public FeatureIterator<Feature> iterator() throws DataStoreRuntimeException {
+    public FeatureIterator<Feature> iterator() throws FeatureStoreRuntimeException {
         return new RasterFeatureIterator();
     }
 
@@ -78,14 +78,14 @@ public class CoverageToFeatureCollection extends RasterFeatureCollection {
      * @return the Feature
      */
     @Override
-    protected Feature create(int x, int y) throws DataStoreRuntimeException {
+    protected Feature create(int x, int y) throws FeatureStoreRuntimeException {
         Feature feat = null;
         try {
             feat = CoverageToFeaturesProcess.convertToFeature(getFeatureType(), x, y, coverage, reader, gridGeom);
         } catch (CoverageStoreException ex) {
-           throw new DataStoreRuntimeException(ex);
+           throw new FeatureStoreRuntimeException(ex);
         } catch (TransformException ex) {
-           throw new DataStoreRuntimeException(ex);
+           throw new FeatureStoreRuntimeException(ex);
         }
         return feat;
     }

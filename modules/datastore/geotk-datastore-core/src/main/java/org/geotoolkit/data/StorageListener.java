@@ -28,7 +28,7 @@ import org.geotoolkit.internal.ReferenceQueueConsumer;
 import org.geotoolkit.util.Disposable;
 
 /**
- * Listener for datastore, session and feature collection.
+ * Listener for feature store, session and feature collection.
  *
  * @author Johann Sorel (Geomatys)
  */
@@ -78,15 +78,15 @@ public interface StorageListener extends EventListener{
                     final Method method = source.getClass().getMethod("addStorageListener", StorageListener.class);
                     method.invoke(source, this);
                 } catch (IllegalAccessException ex) {
-                    DataUtilities.LOGGER.log(Level.WARNING, ERROR_MSG, source);
+                    FeatureStoreUtilities.LOGGER.log(Level.WARNING, ERROR_MSG, source);
                 } catch (IllegalArgumentException ex) {
-                    DataUtilities.LOGGER.log(Level.WARNING, ERROR_MSG, source);
+                    FeatureStoreUtilities.LOGGER.log(Level.WARNING, ERROR_MSG, source);
                 } catch (InvocationTargetException ex) {
-                    DataUtilities.LOGGER.log(Level.WARNING, ERROR_MSG, source);
+                    FeatureStoreUtilities.LOGGER.log(Level.WARNING, ERROR_MSG, source);
                 } catch (NoSuchMethodException ex) {
-                    DataUtilities.LOGGER.log(Level.WARNING, ERROR_MSG, source);
+                    FeatureStoreUtilities.LOGGER.log(Level.WARNING, ERROR_MSG, source);
                 } catch (SecurityException ex) {
-                    DataUtilities.LOGGER.log(Level.WARNING, ERROR_MSG, source);
+                    FeatureStoreUtilities.LOGGER.log(Level.WARNING, ERROR_MSG, source);
                 }
             }
         }
@@ -113,15 +113,15 @@ public interface StorageListener extends EventListener{
                 final Method method = source.getClass().getMethod("removeStorageListener", StorageListener.class);
                 method.invoke(source, this);
             } catch (IllegalAccessException ex) {
-                DataUtilities.LOGGER.log(Level.WARNING, ERROR_MSG, source);
+                FeatureStoreUtilities.LOGGER.log(Level.WARNING, ERROR_MSG, source);
             } catch (IllegalArgumentException ex) {
-                DataUtilities.LOGGER.log(Level.WARNING, ERROR_MSG, source);
+                FeatureStoreUtilities.LOGGER.log(Level.WARNING, ERROR_MSG, source);
             } catch (InvocationTargetException ex) {
-                DataUtilities.LOGGER.log(Level.WARNING, ERROR_MSG, source);
+                FeatureStoreUtilities.LOGGER.log(Level.WARNING, ERROR_MSG, source);
             } catch (NoSuchMethodException ex) {
-                DataUtilities.LOGGER.log(Level.WARNING, ERROR_MSG, source);
+                FeatureStoreUtilities.LOGGER.log(Level.WARNING, ERROR_MSG, source);
             } catch (SecurityException ex) {
-                DataUtilities.LOGGER.log(Level.WARNING, ERROR_MSG, source);
+                FeatureStoreUtilities.LOGGER.log(Level.WARNING, ERROR_MSG, source);
             }
         }
 

@@ -30,9 +30,9 @@ import org.geotoolkit.client.Server;
 import org.geotoolkit.client.ServerFactory;
 import org.geotoolkit.client.ServerFinder;
 import org.geotoolkit.coverage.CoverageStoreFactory;
-import org.geotoolkit.data.DataStoreFactory;
-import org.geotoolkit.data.FileDataStoreFactory;
-import org.geotoolkit.data.folder.AbstractFolderDataStoreFactory;
+import org.geotoolkit.data.FeatureStoreFactory;
+import org.geotoolkit.data.FileFeatureStoreFactory;
+import org.geotoolkit.data.AbstractFolderFeatureStoreFactory;
 import org.geotoolkit.gui.swing.misc.JOptionDialog;
 import org.geotoolkit.gui.swing.propertyedit.JFeatureOutLine;
 import org.geotoolkit.gui.swing.propertyedit.featureeditor.PropertyValueEditor;
@@ -290,8 +290,8 @@ private void guiConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
                 final ServerFactory factory = (ServerFactory) value;
                 name = String.valueOf(factory.getDisplayName());
                 desc = String.valueOf(factory.getDescription());
-            }else if(value instanceof DataStoreFactory){
-                final DataStoreFactory factory = (DataStoreFactory) value;
+            }else if(value instanceof FeatureStoreFactory){
+                final FeatureStoreFactory factory = (FeatureStoreFactory) value;
                 name = String.valueOf(factory.getDisplayName());
                 desc = String.valueOf(factory.getDescription());
             }else if(value instanceof CoverageStoreFactory){
@@ -322,8 +322,8 @@ private void guiConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
         }else if(candidate instanceof CoverageStoreFactory){
             name = ((CoverageStoreFactory)candidate).getDisplayName().toString().toLowerCase();
             icon = IconBundle.getIcon("24_folder_img");
-        }else if(candidate instanceof DataStoreFactory){
-            name = ((DataStoreFactory)candidate).getDisplayName().toString().toLowerCase();
+        }else if(candidate instanceof FeatureStoreFactory){
+            name = ((FeatureStoreFactory)candidate).getDisplayName().toString().toLowerCase();
             icon = IconBundle.getIcon("24_store");
         }
 
@@ -342,9 +342,9 @@ private void guiConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
             icon = IconBundle.getIcon("24_database");
         }else if(classname.contains("post")){
             icon = IconBundle.getIcon("24_database");
-        }else if(candidate instanceof AbstractFolderDataStoreFactory){
+        }else if(candidate instanceof AbstractFolderFeatureStoreFactory){
             icon = IconBundle.getIcon("24_folder_doc");
-        }else if(candidate instanceof FileDataStoreFactory){
+        }else if(candidate instanceof FileFeatureStoreFactory){
             icon = IconBundle.getIcon("24_doc");
         }
 

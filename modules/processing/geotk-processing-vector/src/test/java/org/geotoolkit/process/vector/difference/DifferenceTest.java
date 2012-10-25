@@ -24,7 +24,7 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.Polygon;
 
-import org.geotoolkit.data.DataUtilities;
+import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
@@ -111,7 +111,7 @@ public class DifferenceTest extends AbstractProcessTest {
 
         type = createSimpleType();
 
-        final FeatureCollection<Feature> featureList = DataUtilities.collection("", type);
+        final FeatureCollection<Feature> featureList = FeatureStoreUtilities.collection("", type);
 
         geometryFactory = new GeometryFactory();
 
@@ -203,7 +203,7 @@ public class DifferenceTest extends AbstractProcessTest {
 
         type = createSimpleType();
 
-        final FeatureCollection<Feature> featureList = DataUtilities.collection("", type);
+        final FeatureCollection<Feature> featureList = FeatureStoreUtilities.collection("", type);
 
         geometryFactory = new GeometryFactory();
 
@@ -278,7 +278,7 @@ public class DifferenceTest extends AbstractProcessTest {
 
         type = createSimpleResultType();
 
-        final FeatureCollection<Feature> featureList = DataUtilities.collection("", type);
+        final FeatureCollection<Feature> featureList = FeatureStoreUtilities.collection("", type);
 
         geometryFactory = new GeometryFactory();
 

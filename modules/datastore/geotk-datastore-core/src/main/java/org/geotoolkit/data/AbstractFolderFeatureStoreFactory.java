@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.data.folder;
+package org.geotoolkit.data;
 
 import java.io.File;
 import java.net.URISyntaxException;
@@ -24,10 +24,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.geotoolkit.data.AbstractDataStoreFactory;
-import org.geotoolkit.data.AbstractFileDataStoreFactory;
-import org.geotoolkit.data.DataStore;
-import org.geotoolkit.data.FileDataStoreFactory;
 import org.geotoolkit.metadata.iso.DefaultIdentifier;
 import org.geotoolkit.metadata.iso.citation.DefaultCitation;
 import org.geotoolkit.metadata.iso.identification.DefaultServiceIdentification;
@@ -43,14 +39,14 @@ import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
 
 /**
- * Factory to create a datastore from a folder of specific file types.
+ * Factory to open a feature store from a folder of specific file types.
  *
  * @author Johann Sorel (Geomatys)
  * @author Cédric Briançon (Geomatys)
  * @module pending
  */
-public abstract class AbstractFolderDataStoreFactory extends AbstractDataStoreFactory{
-    protected static final Logger LOGGER = Logging.getLogger(AbstractFolderDataStoreFactory.class);
+public abstract class AbstractFolderFeatureStoreFactory extends AbstractFeatureStoreFactory{
+    protected static final Logger LOGGER = Logging.getLogger(AbstractFolderFeatureStoreFactory.class);
 
     /**
      * url to the folder.
@@ -68,12 +64,12 @@ public abstract class AbstractFolderDataStoreFactory extends AbstractDataStoreFa
 
     private final ParameterDescriptorGroup paramDesc;
 
-    public AbstractFolderDataStoreFactory(final ParameterDescriptorGroup desc){
+    public AbstractFolderFeatureStoreFactory(final ParameterDescriptorGroup desc){
         ArgumentChecks.ensureNonNull("desc", desc);
         paramDesc = desc;
     }
 
-    public abstract FileDataStoreFactory getSingleFileFactory();
+    public abstract FileFeatureStoreFactory getSingleFileFactory();
 
     /**
      * {@inheritDoc}
@@ -122,19 +118,19 @@ public abstract class AbstractFolderDataStoreFactory extends AbstractDataStoreFa
      * {@inheritDoc}
      */
     @Override
-    public DataStore create(final ParameterValueGroup params) throws DataStoreException {
+    public FeatureStore open(final ParameterValueGroup params) throws DataStoreException {
         checkCanProcessWithError(params);
-        return new FolderDataStore(params,this);
+        return new DefaultFolderFeatureStore(params,this);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public DataStore createNew(final ParameterValueGroup params) throws DataStoreException {
-        //we can create an empty datastore of this type
-        //the create datastore will always work, it will just be empty if there are no files in it.
-        return create(params);
+    public FeatureStore create(final ParameterValueGroup params) throws DataStoreException {
+        //we can open an empty featurestore of this type
+        //the open featurestore will always work, it will just be empty if there are no files in it.
+        return open(params);
     }
 
     /**
@@ -151,7 +147,7 @@ public abstract class AbstractFolderDataStoreFactory extends AbstractDataStoreFa
     }
 
     /**
-     * Create a Folder datastore descriptor group based on the single file factory
+     * Create a Folder FeatureStore descriptor group based on the single file factory
      * parameters.
      *
      * @return ParameterDescriptorGroup
@@ -161,12 +157,12 @@ public abstract class AbstractFolderDataStoreFactory extends AbstractDataStoreFa
 
         final List<GeneralParameterDescriptor> params = new ArrayList<GeneralParameterDescriptor>(sd.descriptors());
         for(int i=0;i<params.size();i++){
-            if(params.get(i).getName().getCode().equals(AbstractDataStoreFactory.IDENTIFIER.getName().getCode())){
+            if(params.get(i).getName().getCode().equals(AbstractFeatureStoreFactory.IDENTIFIER.getName().getCode())){
                 params.remove(i);
                 break;
             }
         }
-        params.remove(AbstractFileDataStoreFactory.URLP);
+        params.remove(AbstractFileFeatureStoreFactory.URLP);
         params.add(0,identifierParam);
         params.add(1,URLFOLDER);
         params.add(2,RECURSIVE);

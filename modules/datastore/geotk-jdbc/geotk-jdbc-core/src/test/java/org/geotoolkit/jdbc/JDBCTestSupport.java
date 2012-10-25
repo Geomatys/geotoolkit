@@ -41,7 +41,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import com.vividsolutions.jts.geom.Geometry;
 import java.util.ArrayList;
 import java.util.List;
-import org.geotoolkit.data.DataStore;
+import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.factory.Hints;
@@ -153,7 +153,7 @@ public abstract class JDBCTestSupport extends TestCase {
         Parameters.getOrCreate(JDBCDataStoreFactory.USER, param).setValue("");
         Parameters.getOrCreate(JDBCDataStoreFactory.PASSWD, param).setValue("");
         
-        dataStore = (JDBCDataStore) factory.create( param );
+        dataStore = (JDBCDataStore) factory.open( param );
         
         setup.setUpDataStore(dataStore);
         dialect = dataStore.getDialect();
@@ -315,7 +315,7 @@ public abstract class JDBCTestSupport extends TestCase {
         assertEquals(0, pkeyFields.size());
     }
 
-    protected void assertPrimaryKeyCanBeHidden(final DataStore store, final SimpleFeatureType sft){
+    protected void assertPrimaryKeyCanBeHidden(final FeatureStore store, final SimpleFeatureType sft){
         final List<String> pkeyFields = new ArrayList<String>();
         for(AttributeDescriptor att : sft.getAttributeDescriptors()){
             pkeyFields.remove(att.getLocalName());

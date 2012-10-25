@@ -23,9 +23,9 @@ import javax.sql.DataSource;
 
 import org.apache.commons.dbcp.BasicDataSource;
 
-import org.geotoolkit.data.DataStore;
+import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.storage.DataStoreException;
-import org.geotoolkit.data.AbstractDataStoreFactory;
+import org.geotoolkit.data.AbstractFeatureStoreFactory;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.LenientFeatureFactory;
@@ -51,7 +51,7 @@ import org.opengis.parameter.ParameterValueGroup;
  *
  * @module pending
  */
-public abstract class JDBCDataStoreFactory extends AbstractDataStoreFactory {
+public abstract class JDBCDataStoreFactory extends AbstractFeatureStoreFactory {
 
     /** parameter for database host */
     public static final ParameterDescriptor<String> HOST =
@@ -132,7 +132,7 @@ public abstract class JDBCDataStoreFactory extends AbstractDataStoreFactory {
     }
 
     @Override
-    public JDBCDataStore create(final ParameterValueGroup params) throws DataStoreException {
+    public JDBCDataStore open(final ParameterValueGroup params) throws DataStoreException {
         checkCanProcessWithError(params);
         // namespace
         String namespace = (String) params.parameter(NAMESPACE.getName().toString()).getValue();
@@ -181,7 +181,7 @@ public abstract class JDBCDataStoreFactory extends AbstractDataStoreFactory {
 
 
     @Override
-    public DataStore createNew(final ParameterValueGroup params) throws DataStoreException {
+    public FeatureStore create(final ParameterValueGroup params) throws DataStoreException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

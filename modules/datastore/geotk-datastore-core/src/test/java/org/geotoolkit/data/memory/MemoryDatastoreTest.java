@@ -78,13 +78,13 @@ public class MemoryDatastoreTest extends TestCase{
 
     @Test
     public void testCreateDataStore() throws Exception {
-        MemoryDataStore store = new MemoryDataStore();
+        MemoryFeatureStore store = new MemoryFeatureStore();
     }
 
     @Test
     public void testSchemas() throws Exception {
         final FeatureTypeBuilder builder = new FeatureTypeBuilder();
-        final MemoryDataStore store = new MemoryDataStore();
+        final MemoryFeatureStore store = new MemoryFeatureStore();
         Set<Name> names;
 
         names = store.getNames();
@@ -165,7 +165,7 @@ public class MemoryDatastoreTest extends TestCase{
     @Test
     public void testFeatures() throws Exception {
         final FeatureTypeBuilder builder = new FeatureTypeBuilder();
-        final MemoryDataStore store = new MemoryDataStore();
+        final MemoryFeatureStore store = new MemoryFeatureStore();
 
         //create the schema
         Name name = new DefaultName("http://test.com", "TestSchema1");
@@ -284,7 +284,7 @@ public class MemoryDatastoreTest extends TestCase{
     @Test
     public void testQuerySupport() throws Exception {
         final FeatureTypeBuilder builder = new FeatureTypeBuilder();
-        final MemoryDataStore store = new MemoryDataStore();
+        final MemoryFeatureStore store = new MemoryFeatureStore();
 
         //create the schema
         final Name name = new DefaultName("http://test.com", "TestSchema1");
@@ -572,7 +572,7 @@ public class MemoryDatastoreTest extends TestCase{
     @Test
     public void testQueryCRSReprojectSupport() throws Exception {
         final FeatureTypeBuilder builder = new FeatureTypeBuilder();
-        final MemoryDataStore store = new MemoryDataStore();
+        final MemoryFeatureStore store = new MemoryFeatureStore();
         final GeometryFactory gf = new GeometryFactory();
 
         //create the schema
@@ -660,7 +660,7 @@ public class MemoryDatastoreTest extends TestCase{
     @Test
     public void testPreserveId() throws Exception{
         final FeatureTypeBuilder builder = new FeatureTypeBuilder();
-        final MemoryDataStore store = new MemoryDataStore();
+        final MemoryFeatureStore store = new MemoryFeatureStore();
         Set<Name> names;
 
         names = store.getNames();
@@ -706,7 +706,7 @@ public class MemoryDatastoreTest extends TestCase{
     @Test
     public void testCollectionAttributs() throws Exception{
         final FeatureTypeBuilder builder = new FeatureTypeBuilder();
-        final MemoryDataStore store = new MemoryDataStore();
+        final MemoryFeatureStore store = new MemoryFeatureStore();
         Set<Name> names;
 
         names = store.getNames();
@@ -789,7 +789,7 @@ public class MemoryDatastoreTest extends TestCase{
     @Test
     public void testNoIteratorUnclosed() throws Exception{
         final FeatureTypeBuilder builder = new FeatureTypeBuilder();
-        final MemoryDataStore store = new MemoryDataStore();
+        final MemoryFeatureStore store = new MemoryFeatureStore();
         Set<Name> names;
 
         names = store.getNames();

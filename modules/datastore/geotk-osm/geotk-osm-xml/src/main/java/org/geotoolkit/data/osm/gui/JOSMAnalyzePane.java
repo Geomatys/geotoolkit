@@ -42,9 +42,9 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
-import org.geotoolkit.data.DataStore;
+import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.storage.DataStoreException;
-import org.geotoolkit.data.DataStoreFinder;
+import org.geotoolkit.data.FeatureStoreFinder;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.osm.model.Node;
 import org.geotoolkit.data.osm.model.Relation;
@@ -63,7 +63,7 @@ import org.opengis.feature.simple.SimpleFeature;
 public class JOSMAnalyzePane extends javax.swing.JPanel {
 
     private Map<String,Serializable> dbParameters = null;
-    private DataStore store = null;
+    private FeatureStore store = null;
 
     private final DefaultTreeModel model;
     private final DefaultMutableTreeNode rootTreeNode = new DefaultMutableTreeNode("root");
@@ -118,10 +118,10 @@ public class JOSMAnalyzePane extends javax.swing.JPanel {
 
     }
 
-    private DataStore getDataStore(){
+    private FeatureStore getDataStore(){
         if(store == null){
             try {
-                store = DataStoreFinder.open(dbParameters);
+                store = FeatureStoreFinder.open(dbParameters);
             } catch (DataStoreException ex) {
                 JXErrorPane.showDialog(ex);
             }
@@ -355,7 +355,7 @@ public class JOSMAnalyzePane extends javax.swing.JPanel {
         }
 
         private void analyze() throws DataStoreException{
-            final DataStore store = getDataStore();
+            final FeatureStore store = getDataStore();
 
             final QueryBuilder qb = new QueryBuilder();
             qb.setTypeName(store.getFeatureType(table).getName());

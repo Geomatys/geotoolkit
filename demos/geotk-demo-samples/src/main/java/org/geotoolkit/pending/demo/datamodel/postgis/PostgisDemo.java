@@ -1,9 +1,9 @@
 package org.geotoolkit.pending.demo.datamodel.postgis;
 
-import org.geotoolkit.data.DataStore;
-import org.geotoolkit.data.DataStoreFinder;
+import org.geotoolkit.data.FeatureStore;
+import org.geotoolkit.data.FeatureStoreFinder;
 import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.data.memory.MemoryDataStore;
+import org.geotoolkit.data.memory.MemoryFeatureStore;
 import org.geotoolkit.data.postgis.PostgisNGDataStoreFactory;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.gui.swing.go2.JMap2DFrame;
@@ -30,7 +30,7 @@ public class PostgisDemo {
         Parameters.getOrCreate(PostgisNGDataStoreFactory.USER, parameters).setValue("user");
         Parameters.getOrCreate(PostgisNGDataStoreFactory.PASSWD, parameters).setValue("secret");
         
-        final DataStore store = DataStoreFinder.open(parameters);
+        final FeatureStore store = FeatureStoreFinder.open(parameters);
         
         final MapContext context = MapBuilder.createContext();
         

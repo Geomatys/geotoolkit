@@ -27,19 +27,19 @@ import org.geotoolkit.util.collection.BackingStoreException;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class DataStoreRuntimeException extends BackingStoreException{
+public class FeatureStoreRuntimeException extends BackingStoreException{
 
-    public DataStoreRuntimeException(final String message){
+    public FeatureStoreRuntimeException(final String message){
         super(message);
         assert Exceptions.isValidMessage(message) : message;
     }
 
-    public DataStoreRuntimeException(final String message, final Throwable th){
+    public FeatureStoreRuntimeException(final String message, final Throwable th){
         super(message, th);
         assert Exceptions.isValidMessage(message) : message;
     }
 
-    public DataStoreRuntimeException(final Throwable th){
+    public FeatureStoreRuntimeException(final Throwable th){
         super(th);
     }
 

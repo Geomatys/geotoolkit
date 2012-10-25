@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.data.folder;
+package org.geotoolkit.data;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -26,15 +26,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
-import org.geotoolkit.data.AbstractDataStore;
-import static org.geotoolkit.data.AbstractDataStoreFactory.IDENTIFIER;
-import static org.geotoolkit.data.AbstractFileDataStoreFactory.*;
-import org.geotoolkit.data.DataStore;
-import org.geotoolkit.data.DataStoreFactory;
-import org.geotoolkit.data.FeatureReader;
-import org.geotoolkit.data.FeatureWriter;
-import org.geotoolkit.data.FileDataStoreFactory;
-import static org.geotoolkit.data.folder.AbstractFolderDataStoreFactory.*;
+import static org.geotoolkit.data.AbstractFileFeatureStoreFactory.*;
+import static org.geotoolkit.data.AbstractFolderFeatureStoreFactory.*;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.factory.Hints;
@@ -52,21 +45,21 @@ import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
 
 /**
- * Handle a folder of single file datastore.
+ * Handle a folder of single file FeatureStore.
  *
  * @author Johann Sorel (Geomatys)
  * @author Cédric Briançon (Geomatys)
  * @module pending
  */
-public class FolderDataStore extends AbstractDataStore{
+public class DefaultFolderFeatureStore extends AbstractFeatureStore{
 
     private final ParameterValueGroup folderParameters;
-    private final AbstractFolderDataStoreFactory folderFactory;
-    private final FileDataStoreFactory singleFileFactory;
+    private final AbstractFolderFeatureStoreFactory folderFactory;
+    private final FileFeatureStoreFactory singleFileFactory;
     private final ParameterValueGroup singleFileDefaultParameters;
-    private Map<Name,DataStore> stores = null;
+    private Map<Name,FeatureStore> stores = null;
 
-    public FolderDataStore(final ParameterValueGroup params, final AbstractFolderDataStoreFactory factory){
+    public DefaultFolderFeatureStore(final ParameterValueGroup params, final AbstractFolderFeatureStoreFactory factory){
         super(params);
         this.folderParameters = params;
         this.folderFactory = factory;
@@ -88,7 +81,7 @@ public class FolderDataStore extends AbstractDataStore{
      * {@inheritDoc}
      */
     @Override
-    public DataStoreFactory getFactory() {
+    public FeatureStoreFactory getFactory() {
         return folderFactory;
     }
 
@@ -99,7 +92,7 @@ public class FolderDataStore extends AbstractDataStore{
     public synchronized Set<Name> getNames() throws DataStoreException {
 
         if(stores == null){
-            this.stores = new HashMap<Name, DataStore>();
+            this.stores = new HashMap<Name, FeatureStore>();
             final File folder = getFolder(folderParameters);
 
             if(!folder.exists()){
@@ -141,7 +134,7 @@ public class FolderDataStore extends AbstractDataStore{
             }
             if(singleFileFactory.canProcess(params)){
                 try {
-                    final DataStore fileDS = singleFileFactory.create(params);
+                    final FeatureStore fileDS = singleFileFactory.open(params);
                     stores.put(fileDS.getNames().iterator().next(), fileDS);
                 } catch (DataStoreException ex) {
                     getLogger().log(Level.WARNING, ex.getLocalizedMessage(),ex);
@@ -177,7 +170,7 @@ public class FolderDataStore extends AbstractDataStore{
             throw new DataStoreException(ex);
         }
 
-        final DataStore store = singleFileFactory.createNew(params);
+        final FeatureStore store = singleFileFactory.create(params);
         store.createSchema(typeName, featureType);
         stores.put(typeName, store);
     }
@@ -204,7 +197,7 @@ public class FolderDataStore extends AbstractDataStore{
     @Override
     public FeatureType getFeatureType(final Name typeName) throws DataStoreException {
         typeCheck(typeName);
-        final DataStore store = stores.get(typeName);
+        final FeatureStore store = stores.get(typeName);
         return store.getFeatureType(typeName);
     }
 
@@ -214,7 +207,7 @@ public class FolderDataStore extends AbstractDataStore{
     @Override
     public boolean isWritable(final Name typeName) throws DataStoreException {
         typeCheck(typeName);
-        final DataStore store = stores.get(typeName);
+        final FeatureStore store = stores.get(typeName);
         return store.isWritable(typeName);
     }
 
@@ -233,7 +226,7 @@ public class FolderDataStore extends AbstractDataStore{
     public List<FeatureId> addFeatures(final Name groupName, final Collection<? extends Feature> newFeatures,
             final Hints hints) throws DataStoreException {
         typeCheck(groupName);
-        final DataStore store = stores.get(groupName);
+        final FeatureStore store = stores.get(groupName);
         return store.addFeatures(groupName, newFeatures);
     }
 
@@ -244,7 +237,7 @@ public class FolderDataStore extends AbstractDataStore{
     public void updateFeatures(final Name groupName, final Filter filter,
             final Map<? extends PropertyDescriptor, ? extends Object> values) throws DataStoreException {
         typeCheck(groupName);
-        final DataStore store = stores.get(groupName);
+        final FeatureStore store = stores.get(groupName);
         store.updateFeatures(groupName, filter, values);
     }
 
@@ -254,7 +247,7 @@ public class FolderDataStore extends AbstractDataStore{
     @Override
     public void removeFeatures(final Name groupName, final Filter filter) throws DataStoreException {
         typeCheck(groupName);
-        final DataStore store = stores.get(groupName);
+        final FeatureStore store = stores.get(groupName);
         store.removeFeatures(groupName, filter);
     }
 
@@ -265,7 +258,7 @@ public class FolderDataStore extends AbstractDataStore{
     public FeatureReader getFeatureReader(final Query query) throws DataStoreException {
         final Name name = query.getTypeName();
         typeCheck(name);
-        final DataStore store = stores.get(name);
+        final FeatureStore store = stores.get(name);
         return store.getFeatureReader(query);
     }
 
@@ -275,7 +268,7 @@ public class FolderDataStore extends AbstractDataStore{
     @Override
     public FeatureWriter getFeatureWriter(final Name typeName, final Filter filter, final Hints hints) throws DataStoreException {
         typeCheck(typeName);
-        final DataStore store = stores.get(typeName);
+        final FeatureStore store = stores.get(typeName);
         return store.getFeatureWriter(typeName, filter, hints);
     }
 

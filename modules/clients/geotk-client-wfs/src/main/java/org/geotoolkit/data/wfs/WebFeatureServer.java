@@ -26,7 +26,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.geotoolkit.client.AbstractServer;
 import org.geotoolkit.client.ServerFinder;
-import org.geotoolkit.data.DataStore;
+import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.StorageListener;
@@ -59,7 +59,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class WebFeatureServer extends AbstractServer implements DataStore{
+public class WebFeatureServer extends AbstractServer implements FeatureStore{
 
     private static final Logger LOGGER = Logging.getLogger(WebFeatureServer.class);
 
@@ -114,7 +114,7 @@ public class WebFeatureServer extends AbstractServer implements DataStore{
         return Parameters.getOrCreate(WFSDataStoreFactory.LONGITUDE_FIRST, parameters).booleanValue();
     }
 
-    private synchronized DataStore getStore() {
+    private synchronized FeatureStore getStore() {
         if(store == null){
             store = new WFSDataStore(this);
         }

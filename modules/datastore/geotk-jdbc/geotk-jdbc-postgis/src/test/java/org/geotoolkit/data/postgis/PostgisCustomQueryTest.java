@@ -19,7 +19,7 @@ package org.geotoolkit.data.postgis;
 import com.vividsolutions.jts.geom.Point;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
-import org.geotoolkit.data.memory.ExtendedDataStore;
+import org.geotoolkit.data.memory.ExtendedFeatureStore;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.feature.DefaultName;
@@ -47,7 +47,7 @@ public class PostgisCustomQueryTest extends JDBCTestSupport{
     @Test
     public void testDefinition() throws DataStoreException, NoSuchAuthorityCodeException, FactoryException{
         
-        final ExtendedDataStore store = new ExtendedDataStore(dataStore);        
+        final ExtendedFeatureStore store = new ExtendedFeatureStore(dataStore);        
         final Name name = DefaultName.valueOf("{http://www.geotoolkit.org/test}extsql");        
         assertFalse(store.getNames().contains(name));
         
@@ -71,7 +71,7 @@ public class PostgisCustomQueryTest extends JDBCTestSupport{
     @Test
     public void testRenamedDefinition() throws DataStoreException, NoSuchAuthorityCodeException, FactoryException{
         
-        final ExtendedDataStore store = new ExtendedDataStore(dataStore);        
+        final ExtendedFeatureStore store = new ExtendedFeatureStore(dataStore);        
         final Name name = DefaultName.valueOf("{http://www.geotoolkit.org/test}extsql");        
         assertFalse(store.getNames().contains(name));
         
@@ -95,7 +95,7 @@ public class PostgisCustomQueryTest extends JDBCTestSupport{
     @Test
     public void testRead() throws DataStoreException, NoSuchAuthorityCodeException, FactoryException{
         
-        final ExtendedDataStore store = new ExtendedDataStore(dataStore);        
+        final ExtendedFeatureStore store = new ExtendedFeatureStore(dataStore);        
         final Name name = DefaultName.valueOf("{http://www.geotoolkit.org/test}extsql");        
         assertFalse(store.getNames().contains(name));
         

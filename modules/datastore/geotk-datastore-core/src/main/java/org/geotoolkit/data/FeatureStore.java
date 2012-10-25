@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2009, Geomatys
+ *    (C) 2009-2012, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -38,18 +38,18 @@ import org.opengis.geometry.Envelope;
 import org.opengis.parameter.ParameterValueGroup;
 
 /**
- * A Datastore is a storage object which manage a serie of FeatureTypes.
- * Depending on it's underlying storage system, the datastore may offer
+ * A Featurestore is a storage object which manage a serie of FeatureTypes.
+ * Depending on it's underlying storage system, the feature store may offer
  * possibility to add new types or allow writing operations.
  *
  * Performances can be completly different from one implementation to another.
- * Consider using the memory datastore is you need to work fast on a small amought
+ * Consider using the memory feature store is you need to work fast on a small amought
  * of datas.
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public interface DataStore {
+public interface FeatureStore {
 
     /**
      * Get the parameters used to initialize this source from it's factory.
@@ -63,12 +63,12 @@ public interface DataStore {
      * 
      * @return this source original factory
      */
-    DataStoreFactory getFactory();
+    FeatureStoreFactory getFactory();
     
     /**
      * Create a session, that session may be synchrone or asynchrone.
      * If you choose it to be synchrone, every changes made in the session are directly
-     * send to the datastore.
+     * send to the feature store.
      * If you choose asynchrone mode then all changes will be send
      * only on a call to commit().
      * Commit and rollback has no effect on a synchrone session.
@@ -105,7 +105,7 @@ public interface DataStore {
     /**
      * Update a schema, should preserve attribute with the same
      * name and set default values to new attributes.
-     * If the attributes type have changed, the datastore should do the best
+     * If the attributes type have changed, the feature store should do the best
      * effort to try to convert values.
      *
      * @param typeName , type name to update
@@ -137,13 +137,13 @@ public interface DataStore {
      *
      * @param typeName name of the searched type
      * @return FeatureType type for the given name
-     * @throws DataStoreException if typeName doesn't exist or datastore internal error.
+     * @throws DataStoreException if typeName doesn't exist or feature store internal error.
      */
     FeatureType getFeatureType(Name typeName) throws DataStoreException;
 
     /**
      * Some kind of queries may define a custom language statement.
-     * In those cases the feature type can only be determinate by the datastore.
+     * In those cases the feature type can only be determinate by the feature store.
      * @param query
      * @return FeatureType
      * @throws DataStoreException
@@ -156,18 +156,18 @@ public interface DataStore {
      *
      * @param typeName name of the searched type
      * @return true if the type features can be edited.
-     * @throws DataStoreException if typeName doesn't exist or datastore internal error.
+     * @throws DataStoreException if typeName doesn't exist or feature store internal error.
      */
     boolean isWritable(Name typeName) throws DataStoreException;
 
     /**
-     * Retrieve informations about the query capabilites of this datastore.
-     * Some datastore may not be enough "intelligent" to support all
+     * Retrieve informations about the query capabilites of this feature store.
+     * Some feature store may not be enough "intelligent" to support all
      * parameters in the query.
      * This capabilities can be used to fetch the list of what it can handle.
      *
      * @return QueryCapabilities
-     * @todo move query capabilities from old datastore model
+     * @todo move query capabilities from old feature store model
      */
     QueryCapabilities getQueryCapabilities();
 
@@ -196,7 +196,7 @@ public interface DataStore {
      * @param groupName , group where features must be added
      * @param newFeatures , collection of new features
      * @return List of featureId of the added features, may be null or inexact
-     * if the datastore can not handle persistent ids.
+     * if the feature store can not handle persistent ids.
      * @throws DataStoreException
      */
     List<FeatureId> addFeatures(Name groupName, Collection<? extends Feature> newFeatures) throws DataStoreException;
@@ -208,7 +208,7 @@ public interface DataStore {
      * @param newFeatures , collection of new features
      * @param hints , writer hints
      * @return List of featureId of the added features, may be null or inexact
-     * if the datastore can not handle persistent ids.
+     * if the feature store can not handle persistent ids.
      * @throws DataStoreException
      */
     List<FeatureId> addFeatures(Name groupName, Collection<? extends Feature> newFeatures, Hints hints) throws DataStoreException;
@@ -288,8 +288,8 @@ public interface DataStore {
     FeatureWriter getFeatureWriterAppend(Name typeName, Hints hints) throws DataStoreException;
 
     /**
-     * Dispose the datastore caches and underlying resources.
-     * The datastore should not be used after this call or it may raise errors.
+     * Dispose the feature store caches and underlying resources.
+     * The feature store should not be used after this call or it may raise errors.
      */
     void dispose();
 

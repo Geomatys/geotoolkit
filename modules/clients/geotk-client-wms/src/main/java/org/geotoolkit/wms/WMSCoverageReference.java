@@ -52,7 +52,7 @@ import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
-import org.geotoolkit.data.DataStoreRuntimeException;
+import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.geometry.Envelope2D;
 import org.geotoolkit.referencing.CRS;
@@ -223,11 +223,11 @@ public class WMSCoverageReference implements CoverageReference{
      * @return first layer name
      */
     @Override
-    public Name getName() throws DataStoreRuntimeException{
+    public Name getName() throws FeatureStoreRuntimeException{
         try {
             return getNames()[0];
         } catch (DataStoreException ex) {
-            throw new DataStoreRuntimeException(ex);
+            throw new FeatureStoreRuntimeException(ex);
         }
     }
 

@@ -19,9 +19,9 @@ package org.geotoolkit.data.session;
 
 import java.util.Collection;
 import java.util.Map;
-import org.geotoolkit.data.DataStore;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
+import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.StorageListener;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.storage.DataStoreException;
@@ -32,8 +32,8 @@ import org.opengis.filter.Filter;
 import org.opengis.geometry.Envelope;
 
 /**
- * This object holds a serie of alteration made against the datastore
- * but thoses are not pushed on the datastore until the commit() method has been called.
+ * This object holds a serie of alteration made against the feature store
+ * but thoses are not pushed on the feature store until the commit() method has been called.
  *
  * If we had follow the WFS specification this class would have been named transaction
  * but we choose to use the name Session given by JSR-170 and JSR-283 (Java Content Repository).
@@ -44,15 +44,15 @@ import org.opengis.geometry.Envelope;
 public interface Session {
 
     /**
-     * Get the datastore attached to this session.
-     * @return Datastore, never null
+     * Get the feature store attached to this session.
+     * @return FeatureStore, never null
      */
-    DataStore getDataStore();
+    FeatureStore getFeatureStore();
 
     /**
      * Check if the session is asynchrone.
      * If it is asynchrone then a call to commit is necessary to push all
-     * changes to the datastore.
+     * changes to the feature store.
      * 
      * @return true if this session is asynchrone
      */
@@ -77,7 +77,7 @@ public interface Session {
     FeatureIterator getFeatureIterator(Query query) throws DataStoreException;
 
     /**
-     * Same behavior as @see DataStore#updateFeatures(org.opengis.feature.type.Name, java.util.Collection)
+     * Same behavior as @see FeatureStore#updateFeatures(org.opengis.feature.type.Name, java.util.Collection)
      * but makes modification in the session diff if this one is asynchrone.
      */
     void addFeatures(Name groupName, Collection<? extends Feature> newFeatures) throws DataStoreException;
@@ -89,13 +89,13 @@ public interface Session {
     void updateFeatures(Name groupName, Filter filter, AttributeDescriptor desc, Object value) throws DataStoreException;
 
     /**
-     * Same behavior as @see DataStore#updateFeatures(org.opengis.feature.type.Name, org.opengis.filter.Filter, java.util.Map)
+     * Same behavior as @see FeatureStore#updateFeatures(org.opengis.feature.type.Name, org.opengis.filter.Filter, java.util.Map)
      * but makes modification in the session diff if this one is asynchrone.
      */
     void updateFeatures(Name groupName, Filter filter, Map< ? extends AttributeDescriptor, ? extends Object> values) throws DataStoreException;
 
     /**
-     * Same behavior as @see DataStore#removeFeatures(org.opengis.feature.type.Name, org.opengis.filter.Filter)
+     * Same behavior as @see FeatureStore#removeFeatures(org.opengis.feature.type.Name, org.opengis.filter.Filter)
      * but makes modification in the session diff if this one is asynchrone.
      */
     void removeFeatures(Name groupName, Filter filter) throws DataStoreException;
@@ -106,7 +106,7 @@ public interface Session {
     boolean hasPendingChanges();
 
     /**
-     * Apply all the changes made in this session on the datastore.
+     * Apply all the changes made in this session on the featurestore.
      *
      * @throws DataStoreException
      */
@@ -118,13 +118,13 @@ public interface Session {
     void rollback();
 
     /**
-     * Same behavior as @see DataStore#getCount(org.geotoolkit.data.query.Query)
+     * Same behavior as @see FeatureStore#getCount(org.geotoolkit.data.query.Query)
      * but take in consideration the session modifications.
      */
     long getCount(Query query) throws DataStoreException;
 
     /**
-     * Same behavior as @see DataStore#getEnvelope(org.geotoolkit.data.query.Query)
+     * Same behavior as @see FeatureStore#getEnvelope(org.geotoolkit.data.query.Query)
      * but take in consideration the session modifications.
      */
     Envelope getEnvelope(Query query) throws DataStoreException;
@@ -133,7 +133,7 @@ public interface Session {
      * Add a storage listener which will be notified when schema are added, modified or deleted
      * and when features are added, modified or deleted.
      *
-     * This includes events from the datastore and events from the session.
+     * This includes events from the feature store and events from the session.
      *
      * @param listener to add
      */

@@ -21,10 +21,10 @@ import java.util.ArrayList;
 import java.util.List;
 import junit.framework.TestCase;
 
-import org.geotoolkit.data.DataStore;
+import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.data.memory.MemoryDataStore;
+import org.geotoolkit.data.memory.MemoryFeatureStore;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.query.QueryUtilities;
@@ -129,7 +129,7 @@ public class MapLayerTest extends TestCase{
         builder.setName(name);
         SimpleFeatureType type = builder.buildSimpleFeatureType();
 
-        DataStore ds = new MemoryDataStore();
+        FeatureStore ds = new MemoryFeatureStore();
         ds.createSchema(name,type);
         FeatureCollection<SimpleFeature> fs = ds.createSession(true).getFeatureCollection(QueryBuilder.all(name));
 

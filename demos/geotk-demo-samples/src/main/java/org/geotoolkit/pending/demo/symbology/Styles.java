@@ -23,8 +23,8 @@ import javax.measure.unit.Unit;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.coverage.io.CoverageStoreException;
-import org.geotoolkit.data.DataStore;
-import org.geotoolkit.data.DataStoreFinder;
+import org.geotoolkit.data.FeatureStore;
+import org.geotoolkit.data.FeatureStoreFinder;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.map.MapBuilder;
@@ -690,13 +690,13 @@ public class Styles {
 
         Map<String,Serializable> params;
         File shape;
-        DataStore store;
+        FeatureStore store;
         FeatureCollection fs;
         File gridFile;
 
         params = new HashMap<String,Serializable>();
         params.put( "url", JAbstractMapPane.class.getResource("/data/world/Countries.shp") );
-        store = DataStoreFinder.open(params);
+        store = FeatureStoreFinder.open(params);
         fs = store.createSession(true).getFeatureCollection(QueryBuilder.all(store.getNames().iterator().next()));
         if(style == null){
             style = SF.style(SF.polygonSymbolizer(SF.stroke(Color.BLACK, 0),SF.fill(SF.literal(new Color(0f, 0.5f, 0.2f,1f)),FF.literal(0.3f)),null));
@@ -716,13 +716,13 @@ public class Styles {
 
         Map<String,Serializable> params;
         File shape;
-        DataStore store;
+        FeatureStore store;
         FeatureCollection fs;
         File gridFile;
 
         params = new HashMap<String,Serializable>();
         params.put( "url", JAbstractMapPane.class.getResource("/data/world/city.shp") );
-        store = DataStoreFinder.open(params);
+        store = FeatureStoreFinder.open(params);
         fs = store.createSession(true).getFeatureCollection(QueryBuilder.all(store.getNames().iterator().next()));
         if(style == null){
             style = SF.style(SF.polygonSymbolizer(SF.stroke(Color.BLACK, 0),SF.fill(SF.literal(new Color(0f, 0.5f, 0.2f,1f)),FF.literal(0.3f)),null));

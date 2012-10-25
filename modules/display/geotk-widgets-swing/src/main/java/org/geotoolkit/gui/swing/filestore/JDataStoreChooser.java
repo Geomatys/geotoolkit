@@ -28,9 +28,9 @@ import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import org.geotoolkit.data.DataStore;
-import org.geotoolkit.data.DataStoreFactory;
-import org.geotoolkit.data.DataStoreFinder;
+import org.geotoolkit.data.FeatureStore;
+import org.geotoolkit.data.FeatureStoreFactory;
+import org.geotoolkit.data.FeatureStoreFinder;
 import org.geotoolkit.gui.swing.filestore.JServerChooser.FactoryCellRenderer;
 import org.geotoolkit.gui.swing.misc.JOptionDialog;
 import org.geotoolkit.gui.swing.propertyedit.JFeatureOutLine;
@@ -54,9 +54,9 @@ public class JDataStoreChooser extends javax.swing.JPanel {
 
     private static final Logger LOGGER = Logging.getLogger(JDataStoreChooser.class);
 
-    private static final Comparator<DataStoreFactory> SORTER = new Comparator<DataStoreFactory>() {
+    private static final Comparator<FeatureStoreFactory> SORTER = new Comparator<FeatureStoreFactory>() {
         @Override
-        public int compare(DataStoreFactory o1, DataStoreFactory o2) {
+        public int compare(FeatureStoreFactory o1, FeatureStoreFactory o2) {
             return o1.getDisplayName().toString().compareTo(o2.getDisplayName().toString());
         }
     };
@@ -68,7 +68,7 @@ public class JDataStoreChooser extends javax.swing.JPanel {
         initComponents();
         guiEditPane.add(BorderLayout.CENTER,new JScrollPane(guiEditor));
 
-        final List<DataStoreFactory> factories = new ArrayList<DataStoreFactory>(DataStoreFinder.getAvailableFactories(null));
+        final List<FeatureStoreFactory> factories = new ArrayList<FeatureStoreFactory>(FeatureStoreFinder.getAvailableFactories(null));
         Collections.sort(factories, SORTER);
 
         guiList.setHighlighters(HighlighterFactory.createAlternateStriping() );
@@ -77,7 +77,7 @@ public class JDataStoreChooser extends javax.swing.JPanel {
         guiList.addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
-                final DataStoreFactory factory = (DataStoreFactory) guiList.getSelectedValue();
+                final FeatureStoreFactory factory = (FeatureStoreFactory) guiList.getSelectedValue();
                 final ParameterValueGroup param = factory.getParametersDescriptor().createValue();
                 guiEditor.setEdited(param);
             }
@@ -96,8 +96,8 @@ public class JDataStoreChooser extends javax.swing.JPanel {
         }
     }
 
-    public DataStore getDataStore() throws DataStoreException{
-        final DataStoreFactory factory = (DataStoreFactory) guiList.getSelectedValue();
+    public FeatureStore getDataStore() throws DataStoreException{
+        final FeatureStoreFactory factory = (FeatureStoreFactory) guiList.getSelectedValue();
 
         if(factory == null){
             return null;
@@ -105,9 +105,9 @@ public class JDataStoreChooser extends javax.swing.JPanel {
 
         final ParameterValueGroup param = guiEditor.getEditedAsParameter(factory.getParametersDescriptor());
         if(guiCreateNew.isSelected()){
-            return factory.createNew(param);
-        }else{
             return factory.create(param);
+        }else{
+            return factory.open(param);
         }
     }
 
@@ -202,7 +202,7 @@ public class JDataStoreChooser extends javax.swing.JPanel {
 
 private void guiConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guiConnectActionPerformed
 
-        DataStore store = null;
+        FeatureStore store = null;
         try {
             chooser.setSource(null);
             store = getDataStore();
@@ -236,7 +236,7 @@ private void guiConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
      * @return
      * @throws DataStoreException
      */
-    public static List<DataStore> showDialog() throws DataStoreException{
+    public static List<FeatureStore> showDialog() throws DataStoreException{
         return showDialog(Collections.EMPTY_LIST);
     }
 
@@ -247,7 +247,7 @@ private void guiConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
      * @return
      * @throws DataStoreException
      */
-    public static List<DataStore> showDialog(List<PropertyValueEditor> editors) throws DataStoreException{
+    public static List<FeatureStore> showDialog(List<PropertyValueEditor> editors) throws DataStoreException{
         return showDialog(editors, false);
     }
 
@@ -275,7 +275,7 @@ private void guiConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
             if(layerVisible){
                 return chooser.getSelectedLayers();
             }else{
-                final DataStore store = chooser.getDataStore();
+                final FeatureStore store = chooser.getDataStore();
                 if(store == null){
                     return Collections.EMPTY_LIST;
                 }else{

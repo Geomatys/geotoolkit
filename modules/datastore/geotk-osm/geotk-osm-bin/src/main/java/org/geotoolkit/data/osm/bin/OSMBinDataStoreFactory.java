@@ -18,9 +18,9 @@
 package org.geotoolkit.data.osm.bin;
 
 import java.util.Collections;
-import org.geotoolkit.data.AbstractDataStoreFactory;
-import org.geotoolkit.data.AbstractFileDataStoreFactory;
-import org.geotoolkit.data.DataStore;
+import org.geotoolkit.data.AbstractFeatureStoreFactory;
+import org.geotoolkit.data.AbstractFileFeatureStoreFactory;
+import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.metadata.iso.DefaultIdentifier;
 import org.geotoolkit.metadata.iso.citation.DefaultCitation;
 import org.geotoolkit.metadata.iso.identification.DefaultServiceIdentification;
@@ -41,7 +41,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class OSMBinDataStoreFactory extends AbstractFileDataStoreFactory{
+public class OSMBinDataStoreFactory extends AbstractFileFeatureStoreFactory{
 
     /** factory identification **/
     public static final String NAME = "osm-bin";
@@ -99,7 +99,7 @@ public class OSMBinDataStoreFactory extends AbstractFileDataStoreFactory{
      * {@inheritDoc }
      */
     @Override
-    public DataStore create(final ParameterValueGroup params) throws DataStoreException {
+    public FeatureStore open(final ParameterValueGroup params) throws DataStoreException {
         checkCanProcessWithError(params);
         throw new UnsupportedOperationException("Not supported yet.");
     }
@@ -108,7 +108,7 @@ public class OSMBinDataStoreFactory extends AbstractFileDataStoreFactory{
      * {@inheritDoc }
      */
     @Override
-    public DataStore createNew(final ParameterValueGroup params) throws DataStoreException {
+    public FeatureStore create(final ParameterValueGroup params) throws DataStoreException {
         throw new DataStoreException("Creation of OSMbin datastore not supported yet.");
     }
 

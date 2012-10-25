@@ -21,10 +21,10 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
-import org.geotoolkit.data.DataStoreRuntimeException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.FeatureReader;
+import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.util.converter.Classes;
@@ -59,7 +59,7 @@ public class GenericCachedFeatureIterator<F extends Feature, R extends FeatureIt
     private Feature[] buffer = null;
     private int bufferIndex = 0;
     protected F next = null;
-    private DataStoreRuntimeException subException = null;
+    private FeatureStoreRuntimeException subException = null;
 
     /**
      * Creates a new instance of GenericCacheFeatureIterator
@@ -78,10 +78,10 @@ public class GenericCachedFeatureIterator<F extends Feature, R extends FeatureIt
      * {@inheritDoc }
      */
     @Override
-    public F next() throws DataStoreRuntimeException {
+    public F next() throws FeatureStoreRuntimeException {
         if(subException != null){
             //forward sub exception
-            final DataStoreRuntimeException d = subException;
+            final FeatureStoreRuntimeException d = subException;
             subException = null;
             throw d;
         }
@@ -99,7 +99,7 @@ public class GenericCachedFeatureIterator<F extends Feature, R extends FeatureIt
      * {@inheritDoc }
      */
     @Override
-    public void close() throws DataStoreRuntimeException {
+    public void close() throws FeatureStoreRuntimeException {
         closed = true;
         //notify collector thread, may be waiting
         synchronized(QUEUELOCK){
@@ -119,10 +119,10 @@ public class GenericCachedFeatureIterator<F extends Feature, R extends FeatureIt
      * {@inheritDoc }
      */
     @Override
-    public boolean hasNext() throws DataStoreRuntimeException {
+    public boolean hasNext() throws FeatureStoreRuntimeException {
         if(subException != null){
             //forward sub exception
-            final DataStoreRuntimeException d = subException;
+            final FeatureStoreRuntimeException d = subException;
             subException = null;
             throw d;
         }
@@ -130,7 +130,7 @@ public class GenericCachedFeatureIterator<F extends Feature, R extends FeatureIt
         return next != null;
     }
 
-    private void findNext() throws DataStoreRuntimeException {
+    private void findNext() throws FeatureStoreRuntimeException {
         if(next != null || closed) return;
         
         if(buffer == null){
@@ -174,7 +174,7 @@ public class GenericCachedFeatureIterator<F extends Feature, R extends FeatureIt
      */
     @Override
     public void remove() {
-        throw new DataStoreRuntimeException("Cached iterator does not support remove operation.");
+        throw new FeatureStoreRuntimeException("Cached iterator does not support remove operation.");
     }
 
     @Override
@@ -221,12 +221,12 @@ public class GenericCachedFeatureIterator<F extends Feature, R extends FeatureIt
         }
 
         @Override
-        public FeatureIterator iterator(final Hints hints) throws DataStoreRuntimeException {
+        public FeatureIterator iterator(final Hints hints) throws FeatureStoreRuntimeException {
             return wrap(getOriginalFeatureCollection().iterator(hints), cacheSize);
         }
 
         @Override
-        protected Feature modify(Feature original) throws DataStoreRuntimeException {
+        protected Feature modify(Feature original) throws FeatureStoreRuntimeException {
             throw new UnsupportedOperationException("should not have been called.");
         }
 
@@ -281,7 +281,7 @@ public class GenericCachedFeatureIterator<F extends Feature, R extends FeatureIt
                                 break;
                             }
                         }
-                    }catch(DataStoreRuntimeException ex){
+                    }catch(FeatureStoreRuntimeException ex){
                         subException = ex;
                     }
 

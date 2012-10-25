@@ -30,7 +30,7 @@ import javax.swing.DefaultListModel;
 import javax.swing.JLabel;
 import javax.swing.JList;
 
-import org.geotoolkit.data.DataStore;
+import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.osm.xml.OSMXMLConstants;
@@ -54,7 +54,7 @@ import org.opengis.filter.sort.SortOrder;
  */
 public class JOSMAnalyzeResultPane extends javax.swing.JPanel {
 
-    private DataStore store;
+    private FeatureStore store;
     private AnalyzeResult result;
 
     /** Creates new form JOSMAnalyzeResultPane */
@@ -67,7 +67,7 @@ public class JOSMAnalyzeResultPane extends javax.swing.JPanel {
 
     }
 
-    public void setDataStore(final DataStore store) {
+    public void setDataStore(final FeatureStore store) {
         this.store = store;
     }
 

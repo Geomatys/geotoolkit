@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.logging.Logger;
-import org.geotoolkit.data.memory.MemoryDataStore;
+import org.geotoolkit.data.memory.MemoryFeatureStore;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.query.SortByComparator;
@@ -51,15 +51,16 @@ import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
- *
+ * Convinient methods to manipulate FeatureStore and FeatureCollection.
+ * 
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class DataUtilities {
+public class FeatureStoreUtilities {
 
     static final Logger LOGGER = Logging.getLogger("org.geotoolkit.data");
 
-    private DataUtilities() {
+    private FeatureStoreUtilities() {
     }
 
     public static FeatureCollection collection(final Feature ... features){
@@ -90,7 +91,7 @@ public class DataUtilities {
             type = sftb.buildSimpleFeatureType();
         }
 
-        final MemoryDataStore ds = new MemoryDataStore(type, true);
+        final MemoryFeatureStore ds = new MemoryFeatureStore(type, true);
         final Session session = ds.createSession(false);
 
         FeatureCollection col = session.getFeatureCollection(QueryBuilder.all(type.getName()));
@@ -125,7 +126,7 @@ public class DataUtilities {
                     try {
                         ((Closeable) ite).close();
                     } catch (IOException ex) {
-                        throw new DataStoreRuntimeException(ex);
+                        throw new FeatureStoreRuntimeException(ex);
                     }
                 }
             }
@@ -140,10 +141,10 @@ public class DataUtilities {
      * @param writer
      * @param collection
      * @return List of generated FeatureId
-     * @throws DataStoreRuntimeException
+     * @throws FeatureStoreRuntimeException
      */
     public static List<FeatureId> write(final FeatureWriter writer, final Collection<? extends Feature> collection)
-            throws DataStoreRuntimeException{
+            throws FeatureStoreRuntimeException{
         final List<FeatureId> ids = new ArrayList<FeatureId>();
 
         final Iterator<? extends Feature> ite = collection.iterator();
@@ -162,13 +163,13 @@ public class DataUtilities {
             
             //close reader before the writer to ensure no more read lock might still exist
             //if we write on the same source
-            DataStoreRuntimeException e = null;
+            FeatureStoreRuntimeException e = null;
             //todo must close safely both iterator
             if(ite instanceof Closeable){
                 try {
                     ((Closeable) ite).close();
                 } catch (Exception ex) {
-                    e = new DataStoreRuntimeException(ex);
+                    e = new FeatureStoreRuntimeException(ex);
                 }
             }
             
@@ -184,9 +185,9 @@ public class DataUtilities {
 
     /**
      * Iterate on the given iterator and calculate count.
-     * @throws DataStoreRuntimeException
+     * @throws FeatureStoreRuntimeException
      */
-    public static long calculateCount(final CloseableIterator reader) throws DataStoreRuntimeException{
+    public static long calculateCount(final CloseableIterator reader) throws FeatureStoreRuntimeException{
         long count = 0;
 
         try{
@@ -203,9 +204,9 @@ public class DataUtilities {
 
     /**
      * Iterate on the given iterator and calculate the envelope.
-     * @throws DataStoreRuntimeException
+     * @throws FeatureStoreRuntimeException
      */
-    public static Envelope calculateEnvelope(final FeatureIterator iterator) throws DataStoreRuntimeException{
+    public static Envelope calculateEnvelope(final FeatureIterator iterator) throws FeatureStoreRuntimeException{
         ensureNonNull("iterator", iterator);
         
         BoundingBox env = null;
@@ -312,7 +313,7 @@ public class DataUtilities {
         }
 
         @Override
-        public FeatureIterator iterator(final Hints hints) throws DataStoreRuntimeException {
+        public FeatureIterator iterator(final Hints hints) throws FeatureStoreRuntimeException {
             return new SequenceIterator(hints);
         }
 
@@ -498,7 +499,7 @@ public class DataUtilities {
             if (active.hasNext()) {
                 return true;
             } else {
-                //Do not close it, datastore often use locks, so the thread who created
+                //Do not close it, featurestore often use locks, so the thread who created
                 //the iterator must close it, but the iteration might be done by another.
                 //active.close();
             }

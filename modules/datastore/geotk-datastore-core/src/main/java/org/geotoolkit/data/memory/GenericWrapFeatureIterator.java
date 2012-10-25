@@ -22,9 +22,9 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.geotoolkit.data.DataStoreRuntimeException;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.FeatureReader;
+import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.util.converter.Classes;
 import org.opengis.feature.Feature;
@@ -54,7 +54,7 @@ public class GenericWrapFeatureIterator<F extends Feature> implements FeatureIte
      * {@inheritDoc }
      */
     @Override
-    public F next() throws DataStoreRuntimeException {
+    public F next() throws FeatureStoreRuntimeException {
         return iterator.next();
     }
 
@@ -65,7 +65,7 @@ public class GenericWrapFeatureIterator<F extends Feature> implements FeatureIte
      * method.
      */
     @Override
-    public void close() throws DataStoreRuntimeException {
+    public void close() throws FeatureStoreRuntimeException {
         if (iterator instanceof Closeable) {
             try {
                 ((Closeable) iterator).close();
@@ -79,7 +79,7 @@ public class GenericWrapFeatureIterator<F extends Feature> implements FeatureIte
      * {@inheritDoc }
      */
     @Override
-    public boolean hasNext() throws DataStoreRuntimeException {
+    public boolean hasNext() throws FeatureStoreRuntimeException {
         return iterator.hasNext();
     }
 
@@ -148,8 +148,8 @@ public class GenericWrapFeatureIterator<F extends Feature> implements FeatureIte
         }
 
         @Override
-        public void write() throws DataStoreRuntimeException {
-            throw new DataStoreRuntimeException("Can not write on a wrapped iterator.");
+        public void write() throws FeatureStoreRuntimeException {
+            throw new FeatureStoreRuntimeException("Can not write on a wrapped iterator.");
         }
     }
 

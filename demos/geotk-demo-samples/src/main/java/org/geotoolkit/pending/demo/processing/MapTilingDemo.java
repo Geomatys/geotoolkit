@@ -15,8 +15,8 @@ import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.spi.ImageWriterSpi;
 
 import org.geotoolkit.coverage.filestore.*;
-import org.geotoolkit.data.DataStore;
-import org.geotoolkit.data.DataStoreFinder;
+import org.geotoolkit.data.FeatureStore;
+import org.geotoolkit.data.FeatureStoreFinder;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;

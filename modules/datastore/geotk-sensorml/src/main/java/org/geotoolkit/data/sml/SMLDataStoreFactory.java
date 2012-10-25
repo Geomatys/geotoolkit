@@ -22,8 +22,8 @@ import java.util.Collections;
 
 import org.apache.commons.dbcp.BasicDataSource;
 
-import org.geotoolkit.data.AbstractDataStoreFactory;
-import org.geotoolkit.data.DataStore;
+import org.geotoolkit.data.AbstractFeatureStoreFactory;
+import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.jdbc.DBCPDataSource;
 import org.geotoolkit.jdbc.ManageableDataSource;
@@ -49,7 +49,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class SMLDataStoreFactory extends AbstractDataStoreFactory {
+public class SMLDataStoreFactory extends AbstractFeatureStoreFactory {
 
     /** factory identification **/
     public static final String NAME = "sml";
@@ -170,7 +170,7 @@ public class SMLDataStoreFactory extends AbstractDataStoreFactory {
     }
 
     @Override
-    public DataStore create(final ParameterValueGroup params) throws DataStoreException {
+    public FeatureStore open(final ParameterValueGroup params) throws DataStoreException {
         checkCanProcessWithError(params);
         try{
             //create a datasource
@@ -206,7 +206,7 @@ public class SMLDataStoreFactory extends AbstractDataStoreFactory {
     }
 
     @Override
-    public DataStore createNew(final ParameterValueGroup params) throws DataStoreException {
+    public FeatureStore create(final ParameterValueGroup params) throws DataStoreException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

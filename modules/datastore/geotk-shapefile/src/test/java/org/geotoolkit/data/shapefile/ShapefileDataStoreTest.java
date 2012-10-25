@@ -32,7 +32,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.geotoolkit.ShapeTestData;
-import org.geotoolkit.data.DataStore;
+import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.feature.DefaultName;
@@ -166,7 +166,7 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
         map.put(ShapefileDataStoreFactory.NAMESPACE.getName().toString(), namespace);
         map.put(ShapefileDataStoreFactory.URLP.getName().toString(), ShapeTestData.url(STATE_POP));
 
-        DataStore store = factory.create(map);
+        FeatureStore store = factory.open(map);
         FeatureType schema = store.getFeatureType(store.getTypeNames()[0]);
         assertEquals(namespace.toString(), schema.getName().getNamespaceURI());
     }
@@ -433,7 +433,7 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
 
         // don't add any features to the data store....
 
-        // this should create a shapefile with no records. Not sure about the
+        // this should open a shapefile with no records. Not sure about the
         // semantics of this,
         // but it's meant to be used in the context of a FeatureCollection
         // iteration,
@@ -452,7 +452,7 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
 
     @Test
     public void testWriteReadBigNumbers() throws Exception {
-        // create feature type
+        // open feature type
         SimpleFeatureType type = FeatureTypeUtilities.createType("junk",
                 "a:Point,b:java.math.BigDecimal,c:java.math.BigInteger");
         Collection<SimpleFeature> features = new ArrayList<SimpleFeature>();
@@ -602,7 +602,7 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
 
     @Test
     public void testWrite() throws Exception {
-        // create feature type
+        // open feature type
         SimpleFeatureType type = FeatureTypeUtilities.createType("junk","a:Point,b:java.math.BigDecimal,c:java.math.BigInteger");
 
         BigInteger bigInteger = new BigInteger("1234567890123456789");

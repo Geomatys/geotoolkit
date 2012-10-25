@@ -16,9 +16,9 @@
  */
 package org.geotoolkit.data.shapefile;
 
-import org.geotoolkit.data.DataStoreFinder;
-import org.geotoolkit.data.FileDataStoreFactory;
-import org.geotoolkit.data.folder.AbstractFolderDataStoreFactory;
+import org.geotoolkit.data.FeatureStoreFinder;
+import org.geotoolkit.data.FileFeatureStoreFactory;
+import org.geotoolkit.data.AbstractFolderFeatureStoreFactory;
 import org.geotoolkit.metadata.iso.identification.DefaultServiceIdentification;
 import org.geotoolkit.util.ResourceInternationalString;
 import org.opengis.metadata.identification.Identification;
@@ -31,7 +31,7 @@ import org.opengis.parameter.ParameterDescriptorGroup;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class ShapefileFolderDataStoreFactory extends AbstractFolderDataStoreFactory{
+public class ShapefileFolderDataStoreFactory extends AbstractFolderFeatureStoreFactory{
 
     /** factory identification **/
     public static final DefaultServiceIdentification IDENTIFICATION = derivateIdentification(ShapefileDataStoreFactory.IDENTIFICATION);
@@ -52,8 +52,8 @@ public class ShapefileFolderDataStoreFactory extends AbstractFolderDataStoreFact
     }
 
     @Override
-    public FileDataStoreFactory getSingleFileFactory() {
-        return DataStoreFinder.getAllFactories(ShapefileDataStoreFactory.class).iterator().next();
+    public FileFeatureStoreFactory getSingleFileFactory() {
+        return FeatureStoreFinder.getAllFactories(ShapefileDataStoreFactory.class).iterator().next();
     }
 
     @Override

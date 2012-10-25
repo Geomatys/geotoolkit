@@ -54,7 +54,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.geotoolkit.data.DataUtilities;
+import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.query.QueryBuilder;
@@ -84,7 +84,7 @@ import org.opengis.filter.sort.SortOrder;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import static org.junit.Assert.*;
-import static org.geotoolkit.data.AbstractDataStore.*;
+import static org.geotoolkit.data.AbstractFeatureStore.*;
 import org.geotoolkit.data.AbstractFeatureCollection;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.feature.xml.jaxp.ElementFeatureWriter;
@@ -271,7 +271,7 @@ public class XmlFeatureTest {
         sfb.set(1,12.31d);
         simpleFeature3 = sfb.buildFeature("id-412");
 
-        collectionSimple = DataUtilities.collection("one of a kind ID", simpleTypeBasic);
+        collectionSimple = FeatureStoreUtilities.collection("one of a kind ID", simpleTypeBasic);
         collectionSimple.add(simpleFeature1);
         collectionSimple.add(simpleFeature2);
         collectionSimple.add(simpleFeature3);

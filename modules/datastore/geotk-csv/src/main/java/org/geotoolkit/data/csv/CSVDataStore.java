@@ -44,10 +44,10 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.logging.Level;
 
-import org.geotoolkit.data.AbstractDataStore;
-import org.geotoolkit.data.DataStoreFactory;
-import org.geotoolkit.data.DataStoreFinder;
-import org.geotoolkit.data.DataStoreRuntimeException;
+import org.geotoolkit.data.AbstractFeatureStore;
+import org.geotoolkit.data.FeatureStoreFactory;
+import org.geotoolkit.data.FeatureStoreFinder;
+import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.query.Query;
@@ -91,7 +91,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class CSVDataStore extends AbstractDataStore{
+public class CSVDataStore extends AbstractFeatureStore{
 
     static final String BUNDLE_PATH = "org/geotoolkit/csv/bundle";
     
@@ -139,8 +139,8 @@ public class CSVDataStore extends AbstractDataStore{
     }
 
     @Override
-    public DataStoreFactory getFactory() {
-        return DataStoreFinder.getFactoryById(CSVDataStoreFactory.NAME);
+    public FeatureStoreFactory getFactory() {
+        return FeatureStoreFinder.getFactoryById(CSVDataStoreFactory.NAME);
     }
     
     private synchronized void checkExist() throws DataStoreException{
@@ -473,23 +473,23 @@ public class CSVDataStore extends AbstractDataStore{
         }
 
         @Override
-        public SimpleFeature next() throws DataStoreRuntimeException {
+        public SimpleFeature next() throws FeatureStoreRuntimeException {
             read();
             final SimpleFeature ob = current;
             current = null;
             if(ob == null){
-                throw new DataStoreRuntimeException("No more records.");
+                throw new FeatureStoreRuntimeException("No more records.");
             }
             return ob;
         }
 
         @Override
-        public boolean hasNext() throws DataStoreRuntimeException {
+        public boolean hasNext() throws FeatureStoreRuntimeException {
             read();
             return current != null;
         }
 
-        private void read() throws DataStoreRuntimeException{
+        private void read() throws FeatureStoreRuntimeException{
             if(current != null) return;
             if(scanner.hasNextLine()){
                 final String line = scanner.nextLine();
@@ -510,7 +510,7 @@ public class CSVDataStore extends AbstractDataStore{
                             try {
                                 value = reader.read(fields.get(i));
                             } catch (ParseException ex) {
-                                throw new DataStoreRuntimeException(ex);
+                                throw new FeatureStoreRuntimeException(ex);
                             }
                         }
                     }else{
@@ -541,7 +541,7 @@ public class CSVDataStore extends AbstractDataStore{
 
         @Override
         public void remove() {
-            throw new DataStoreRuntimeException("Not supported on reader.");
+            throw new FeatureStoreRuntimeException("Not supported on reader.");
         }
 
     }
@@ -574,11 +574,11 @@ public class CSVDataStore extends AbstractDataStore{
         }
 
         @Override
-        public SimpleFeature next() throws DataStoreRuntimeException {
+        public SimpleFeature next() throws FeatureStoreRuntimeException {
             try{
                 write();
                 edited = super.next();
-            }catch(DataStoreRuntimeException ex){
+            }catch(FeatureStoreRuntimeException ex){
                 //we reach append mode
                 sfb.reset();
                 edited = sfb.buildFeature(Integer.toString(inc++));
@@ -592,7 +592,7 @@ public class CSVDataStore extends AbstractDataStore{
         }
 
         @Override
-        public void write() throws DataStoreRuntimeException {
+        public void write() throws FeatureStoreRuntimeException {
             if(edited == null || lastWritten == edited) return;
             lastWritten = edited;
 
@@ -625,7 +625,7 @@ public class CSVDataStore extends AbstractDataStore{
                 writer.append('\n');
                 writer.flush();
             } catch (IOException ex) {
-                throw new DataStoreRuntimeException(ex);
+                throw new FeatureStoreRuntimeException(ex);
             }
         }
 
@@ -636,7 +636,7 @@ public class CSVDataStore extends AbstractDataStore{
                 writer.flush();
                 writer.close();
             } catch (IOException ex) {
-                throw new DataStoreRuntimeException(ex);
+                throw new FeatureStoreRuntimeException(ex);
             }
 
             //close read iterator

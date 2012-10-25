@@ -7,11 +7,11 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
 import java.util.HashSet;
 import java.util.Set;
-import org.geotoolkit.data.DataStore;
-import org.geotoolkit.data.DataUtilities;
+import org.geotoolkit.data.FeatureStore;
+import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureWriter;
-import org.geotoolkit.data.memory.MemoryDataStore;
+import org.geotoolkit.data.memory.MemoryFeatureStore;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.FactoryFinder;
@@ -48,7 +48,7 @@ public class DataStoreWritingDemo {
 
 
         //create the datastore ---------------------------------------------------------
-        final DataStore store = new MemoryDataStore();
+        final FeatureStore store = new MemoryFeatureStore();
         store.createSchema(type.getName(), type);
 
 
@@ -78,7 +78,7 @@ public class DataStoreWritingDemo {
 
         //passing a collection -----------------------------------------------------------
         //used to copy values from one datastore to another
-        FeatureCollection toAdd = DataUtilities.collection("collectionID", type);
+        FeatureCollection toAdd = FeatureStoreUtilities.collection("collectionID", type);
 
         feature = FeatureUtilities.defaultFeature(type, "");
         feature.getProperty("name").setValue("speedy");
@@ -93,7 +93,7 @@ public class DataStoreWritingDemo {
 
         //From a the session -----------------------------------------------------------
         final Session session = store.createSession(true);
-        toAdd = DataUtilities.collection("collectionID", type);
+        toAdd = FeatureStoreUtilities.collection("collectionID", type);
 
         feature = FeatureUtilities.defaultFeature(type, "");
         feature.getProperty("name").setValue("ginette");

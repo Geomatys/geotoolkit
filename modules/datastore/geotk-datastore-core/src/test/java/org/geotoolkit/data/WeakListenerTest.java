@@ -20,7 +20,7 @@ import java.util.logging.Logger;
 import java.util.logging.Level;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.geotoolkit.data.memory.MemoryDataStore;
+import org.geotoolkit.data.memory.MemoryFeatureStore;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.storage.DataStoreException;
 
@@ -77,7 +77,7 @@ public class WeakListenerTest {
 
         final AtomicInteger count = new AtomicInteger(0);
 
-        final DataStore store = new MemoryDataStore();
+        final FeatureStore store = new MemoryFeatureStore();
 
         StorageListener listener = new StorageListener() {
             @Override

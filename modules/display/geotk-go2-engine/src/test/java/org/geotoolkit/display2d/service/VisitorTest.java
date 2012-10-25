@@ -26,7 +26,7 @@ import java.awt.Rectangle;
 import java.awt.Shape;
 import java.util.ArrayList;
 import java.util.List;
-import org.geotoolkit.data.DataUtilities;
+import org.geotoolkit.data.FeatureStoreUtilities;
 
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.display2d.canvas.AbstractGraphicVisitor;
@@ -80,7 +80,7 @@ public class VisitorTest {
         sftb.setDefaultGeometry("geom");
         final SimpleFeatureType sft = sftb.buildSimpleFeatureType();
 
-        final FeatureCollection collection = DataUtilities.collection("id", sft);
+        final FeatureCollection collection = FeatureStoreUtilities.collection("id", sft);
         final SimpleFeatureBuilder sfb = new SimpleFeatureBuilder(sft);
 
         final GeometryFactory gf = new GeometryFactory();

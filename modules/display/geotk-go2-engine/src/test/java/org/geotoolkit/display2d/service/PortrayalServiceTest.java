@@ -39,7 +39,7 @@ import org.geotoolkit.coverage.CoverageStack;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageFactory;
 import org.geotoolkit.coverage.io.GridCoverageReader;
-import org.geotoolkit.data.DataUtilities;
+import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.display.canvas.control.StopOnErrorMonitor;
@@ -106,9 +106,9 @@ public class PortrayalServiceTest {
         sftb.add("att1", String.class);
         sftb.add("att2", Double.class);
         final SimpleFeatureType sft = sftb.buildSimpleFeatureType();
-        FeatureCollection col = DataUtilities.collection("id", sft);
+        FeatureCollection col = FeatureStoreUtilities.collection("id", sft);
 
-        final FeatureWriter writer = col.getSession().getDataStore().getFeatureWriterAppend(sft.getName());
+        final FeatureWriter writer = col.getSession().getFeatureStore().getFeatureWriterAppend(sft.getName());
 
         SimpleFeature sf = (SimpleFeature) writer.next();
         sf.setAttribute("geom", GF.createPoint(new Coordinate(0, 0)));

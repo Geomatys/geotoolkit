@@ -125,11 +125,11 @@ public abstract class AbstractFeatureCollection<F extends Feature> extends Abstr
      * {@inheritDoc }
      */
     @Override
-    public boolean isWritable() throws DataStoreRuntimeException {
+    public boolean isWritable() throws FeatureStoreRuntimeException {
         try {
             return QueryUtilities.isWritable(source);
         } catch (DataStoreException ex) {
-            throw new DataStoreRuntimeException(ex);
+            throw new FeatureStoreRuntimeException(ex);
         }
     }
 
@@ -147,8 +147,8 @@ public abstract class AbstractFeatureCollection<F extends Feature> extends Abstr
     @Override
     public Envelope getEnvelope() throws DataStoreException{
         try{
-            return DataUtilities.calculateEnvelope(iterator());
-        }catch(DataStoreRuntimeException ex){
+            return FeatureStoreUtilities.calculateEnvelope(iterator());
+        }catch(FeatureStoreRuntimeException ex){
             throw new DataStoreException(ex);
         }
     }
@@ -157,8 +157,8 @@ public abstract class AbstractFeatureCollection<F extends Feature> extends Abstr
      * {@inheritDoc }
      */
     @Override
-    public int size() throws DataStoreRuntimeException{
-        return (int) DataUtilities.calculateCount(iterator());
+    public int size() throws FeatureStoreRuntimeException{
+        return (int) FeatureStoreUtilities.calculateCount(iterator());
     }
 
     @Override

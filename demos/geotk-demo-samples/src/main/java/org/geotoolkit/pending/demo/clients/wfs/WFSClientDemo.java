@@ -6,7 +6,7 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import org.geotoolkit.data.DataStore;
+import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.wfs.GetCapabilitiesRequest;
 import org.geotoolkit.data.wfs.GetFeatureRequest;
 import org.geotoolkit.data.wfs.WFSDataStore;
@@ -24,7 +24,7 @@ public class WFSClientDemo {
         final GetFeatureRequest getFeature = wfsServer.createGetFeature();
 
         //simplify WFS like a datastore
-        final DataStore store = new WFSDataStore(wfsServer);
+        final FeatureStore store = new WFSDataStore(wfsServer);
 
     }
 

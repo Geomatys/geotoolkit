@@ -21,7 +21,7 @@ import org.opengis.feature.Feature;
 
 /**
  * Extent the Standard Iterator, limit to Feature class
- * and add a close method from interface Closeable that is needed by the datastore
+ * and add a close method from interface Closeable that is needed by the feature store
  * to release potential resources.
  * 
  * @author Johann Sorel (Geomatys)
@@ -30,10 +30,21 @@ import org.opengis.feature.Feature;
 public interface FeatureIterator<F extends Feature> extends CloseableIterator<F>{
 
     /**
-     * Reduce possibilties to Feature only.
+     * Reduce possibilities to Feature only.
      * @return Feature
+     * @throws FeatureStoreRuntimeException if error occured when reading.
+     * @throws NoSuchElementException if there are no more features.
      */
     @Override
-    F next();
+    F next() throws FeatureStoreRuntimeException;
+    
+    /**
+     * {@inheritDoc }
+     * 
+     * @return true if there are more features.
+     * @throws FeatureStoreRuntimeException 
+     */
+    @Override
+    boolean hasNext() throws FeatureStoreRuntimeException;
 
 }

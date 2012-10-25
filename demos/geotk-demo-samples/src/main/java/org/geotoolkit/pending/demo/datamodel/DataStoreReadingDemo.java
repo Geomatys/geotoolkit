@@ -6,8 +6,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import org.geotoolkit.data.DataStore;
-import org.geotoolkit.data.DataStoreFinder;
+import org.geotoolkit.data.FeatureStore;
+import org.geotoolkit.data.FeatureStoreFinder;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.postgis.PostgisNGDataStoreFactory;
@@ -34,7 +34,7 @@ public class DataStoreReadingDemo {
         Demos.init();
         
         //getting a datastore
-        final DataStore store = createUsingParameterGroup();
+        final FeatureStore store = createUsingParameterGroup();
 
         //getting all available feature types -----------------------------------------------
         final Set<Name> typeNames = store.getNames();
@@ -80,17 +80,17 @@ public class DataStoreReadingDemo {
         }
     }
 
-    private static DataStore createUsingMap() throws DataStoreException{
+    private static FeatureStore createUsingMap() throws DataStoreException{
 
         //we must know the parameters
         final Map<String,Serializable> parameters = new HashMap<String, Serializable>();
         parameters.put("url", DataStoreReadingDemo.class.getResource("/data/world/Countries.shp"));
 
-        final DataStore store = DataStoreFinder.open(parameters);
+        final FeatureStore store = FeatureStoreFinder.open(parameters);
         return store;
     }
 
-    private static DataStore createUsingParameterGroup() throws DataStoreException{
+    private static FeatureStore createUsingParameterGroup() throws DataStoreException{
 
         //find out how to describe things
         System.out.println(ShapefileDataStoreFactory.PARAMETERS_DESCRIPTOR);
@@ -99,7 +99,7 @@ public class DataStoreReadingDemo {
         final ParameterValueGroup parameters = ShapefileDataStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
         parameters.parameter("url").setValue(DataStoreReadingDemo.class.getResource("/data/world/Countries.shp"));
         
-        final DataStore store = DataStoreFinder.open(parameters);
+        final FeatureStore store = FeatureStoreFinder.open(parameters);
         return store;
     }
 
