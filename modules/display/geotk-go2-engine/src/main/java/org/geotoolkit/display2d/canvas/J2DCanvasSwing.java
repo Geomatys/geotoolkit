@@ -23,12 +23,18 @@ import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.awt.geom.NoninvertibleTransformException;
 import java.awt.image.BufferedImage;
+import java.util.logging.Level;
 import javax.swing.JComponent;
+import org.geotoolkit.display.canvas.CanvasController2D;
+import org.geotoolkit.display.canvas.DefaultCanvasController2D;
 import org.geotoolkit.display.container.AbstractContainer2D;
 import org.geotoolkit.factory.Hints;
 import org.opengis.display.canvas.RenderingState;
+import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.TransformException;
 
 /**
  * Canvas directly painting on a swing component.
@@ -39,6 +45,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 public class J2DCanvasSwing extends J2DCanvas{
 
     private final JComponent component = new J2DComponent();
+    private final DelayedController controller = new DelayedController(this);
 
     public J2DCanvasSwing(final CoordinateReferenceSystem crs){
         this(crs,null);
@@ -52,6 +59,19 @@ public class J2DCanvasSwing extends J2DCanvas{
             @Override
             public void componentResized(ComponentEvent e) {
                 setDisplayBounds(new Rectangle(component.getWidth(), component.getHeight()));
+                if(!component.getBounds().isEmpty()){
+                    //first time we affect the size
+                    if(controller.wishedEnvelope!=null){
+                        try {
+                            controller.setVisibleArea(controller.wishedEnvelope);
+                        } catch (NoninvertibleTransformException ex) {
+                            getLogger().log(Level.SEVERE, null, ex);
+                        } catch (TransformException ex) {
+                            getLogger().log(Level.SEVERE, null, ex);
+                        }
+                        controller.wishedEnvelope = null;
+                    }
+                }                
             }
 
             @Override
@@ -67,6 +87,12 @@ public class J2DCanvasSwing extends J2DCanvas{
             }
         });
         
+    }
+    
+    
+    @Override
+    public CanvasController2D getController() {
+        return controller;
     }
     
     public JComponent getComponent(){
@@ -142,6 +168,30 @@ public class J2DCanvasSwing extends J2DCanvas{
             J2DCanvasSwing.this.paint(output, displayArea);
         }
     
+    }
+    
+    
+    /**
+     * Stores the requested visible area if the canvas size is not knowned yet.
+     */
+    private class DelayedController extends DefaultCanvasController2D{
+
+        private Envelope wishedEnvelope = null;
+
+        public DelayedController(final J2DCanvasSwing canvas){
+            super(canvas);
+        }
+
+        @Override
+        public void setVisibleArea(final Envelope env) throws NoninvertibleTransformException, TransformException {
+            if(component.getBounds().isEmpty()){
+                //we don't know our size yet, store the information for later
+                wishedEnvelope = env;
+            }else{
+                super.setVisibleArea(env);
+            }
+        }
+
     }
     
 }
