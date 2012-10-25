@@ -18,14 +18,15 @@ package org.geotoolkit.image.io.mosaic;
 
 import java.awt.Dimension;
 import java.awt.Rectangle;
-import java.awt.image.*;
+import java.awt.image.BandedSampleModel;
+import java.awt.image.RenderedImage;
+import java.awt.image.SampleModel;
+import java.awt.image.WritableRenderedImage;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Comparator;
 import javax.imageio.ImageReader;
 import javax.media.jai.TiledImage;
 import javax.xml.parsers.DocumentBuilder;
@@ -181,8 +182,6 @@ public class PyramidTileManager extends TileManager {
         int floor = 0;
         for (;floor < this.subsampling.length; floor++) if (this.subsampling[floor].equals(subsampling)) break;
 
-
-
         final int mx = gRx / subsampling.width;
         final int my = gRy / subsampling.height;
         final int slabSizeX = slabWidth  * tileWidth;
@@ -203,10 +202,6 @@ public class PyramidTileManager extends TileManager {
         PixelIterator destPix = null;
         int datatype;
         int numBand = 0;
-
-//        final WritableRenderedImage renderImage = new TiledImage(ix, iy, iw, ih, ix, iy, new BandedSampleModel(datatype, iw, ih, numBand), colorModel);
-//        final PixelIterator destPix = PixelIteratorFactory.createRowMajorWriteableIterator(renderImage, renderImage);
-
         final int idSlabMinX = (ix - mx) / slabSizeX;
         int idSlabMinY       = (iy - my) / slabSizeY;
         final int idSlabMaxX = (ix + iw - mx + slabSizeX - 1) / slabSizeX;
@@ -218,9 +213,7 @@ public class PyramidTileManager extends TileManager {
         for (; idSlabMinY<idSlabMaxY; idSlabMinY++) {
             int smx = smxBase;
             for (int idSMinX = idSlabMinX; idSMinX < idSlabMaxX; idSMinX++) {
-
                 final String slabPath = resultPath+idSMinX+"_"+idSlabMinY+"/";
-
                 final int tminx = (Math.max(ix, smx) - smx) / tileWidth;
                 int tminy       = (Math.max(iy, smy) - smy) / tileHeight;
                 final int tmaxx = (Math.min(ix + iw, smx + slabSizeX) - smx + tileWidth  - 1) / tileWidth;
@@ -232,7 +225,6 @@ public class PyramidTileManager extends TileManager {
                 for (;tminy < tmaxy; tminy++) {
                     int imgminx = imgminxBase;
                     for (int tx = tminx; tx < tmaxx; tx++) {
-//                        final File tilePathTemp = new File(slabPath+tx+"_"+tminy+"."+format);
                         final File tilePathTemp = new File(slabPath+formatter.generateFilename(floor, tx, tminy) +"."+format);
                         if (tilePathTemp.exists()) {
                             final ImageReader imgreader = XImageIO.getReader(tilePathTemp, Boolean.FALSE, Boolean.TRUE);
@@ -286,9 +278,49 @@ public class PyramidTileManager extends TileManager {
     public Collection<Tile> getTiles() throws IOException {
         if (allTiles != null) return allTiles;
         allTiles = new ArrayList<Tile>();
-
-        throw new UnsupportedOperationException("Not supported yet.");
-        //je pense faire methode recursive
+        final int subLength = subsampling.length;
+        for (int floor = 0; floor < subLength; floor++) {
+            final int subX       = subsampling[floor].width;
+            final int subY       = subsampling[floor].height;
+            final String subPath = parentPath+"/"+subX+"_"+subY+"/";
+            final int gRX        = gRx / subX;
+            final int gRY        = gRy / subY;
+            final int gRW        = gRw / subX;
+            final int gRH        = gRh / subY;
+            final int slabSizeX  = slabWidth  * tileWidth;
+            final int slabSizeY  = slabHeight * tileHeight;
+            final int nbrSX      = (gRW + slabSizeX - 1) / slabSizeX;
+            final int nbrSY      = (gRH + slabSizeY - 1) / slabSizeY;
+            int minSy            = gRY;
+            for (int nsy = 0; nsy < nbrSY; nsy++) {
+                int minSx = gRX;
+                for (int nsx = 0; nsx < nbrSX; nsx++) {
+                    final String slabPath = subPath+nsx+"_"+nsy+"/";
+                    final int maxSx = Math.min(minSx + slabSizeX, gRX + gRW);
+                    final int maxSy = Math.min(minSy + slabSizeY, gRY + gRH);
+                    final int nbrTx = (maxSx - minSx + tileWidth - 1)  / tileWidth;
+                    final int nbrTy = (maxSy - minSy + tileHeight - 1) / tileHeight;
+                    int minTy = minSy;
+                    for (int ty = 0; ty < nbrTy; ty++) {
+                        int minTx = minSx;
+                        for (int tx = 0; tx < nbrTx; tx++) {
+                            String tilePath = slabPath+formatter.generateFilename(floor, tx, ty)+"."+format;
+                            File tileFile = new File(tilePath);
+                            if (tileFile.exists()) {
+                                final int tw = Math.min(minTx + tileWidth, maxSx)  - minTx;
+                                final int th = Math.min(minTy + tileHeight, maxSy) - minTy;
+                                allTiles.add(new Tile(null, tileFile, 0, new Rectangle(minTx, minTy, tw, th), subsampling[floor]));
+                            }
+                            minTx += tileWidth;
+                        }
+                        minTy = tileHeight;
+                    }
+                    minSx += slabSizeX;
+                }
+                minSy += slabSizeY;
+            }
+        }
+        return allTiles;
     }
 
 
@@ -305,53 +337,51 @@ public class PyramidTileManager extends TileManager {
         Collection<Tile> tileList = new ArrayList<Tile>();
         int floor = 0;
         for (;floor < this.subsampling.length; floor++) if (this.subsampling[floor].equals(subsampling)) break;
-        final int mx        = gRx / subsampling.width;
-        final int my        = gRy / subsampling.height;
+        final int gRX       = gRx / subsampling.width;
+        final int gRY       = gRy / subsampling.height;
+        final int gRMX      = (gRx + gRw) / subsampling.width;
+        final int gRMY      = (gRy + gRh) / subsampling.height;
         final int slabSizeX = slabWidth  * tileWidth;
         final int slabSizeY = slabHeight * tileHeight;
 
         //image coordinate
-        final int ix = Math.max(mx, region.x);
-        final int iy = Math.max(my, region.y);
-        final int iw = Math.min(region.x + region.width,  (gRx + gRw) / subsampling.width)  - ix;
-        final int ih = Math.min(region.y + region.height, (gRy + gRh) / subsampling.height) - iy;
+        final int ix = Math.max(gRX, region.x);
+        final int iy = Math.max(gRY, region.y);
+        final int iw = Math.min(region.x + region.width,  gRMX) - ix;
+        final int ih = Math.min(region.y + region.height, gRMY) - iy;
 
         if (iw <= 0 || ih <= 0)
             throw new IllegalArgumentException("region don't intersect pyramid area");
 
-
-        final int idSlabMinX = (ix - mx) / slabSizeX;
-        int idSlabMinY       = (iy - my) / slabSizeY;
-        final int idSlabMaxX = (ix + iw - mx + slabSizeX - 1) / slabSizeX;
-        final int idSlabMaxY = (iy + ih - my + slabSizeY - 1) / slabSizeY;
-
-        final int smxBase = mx + idSlabMinX * slabSizeX;
-        int smy = my + idSlabMinY * slabSizeY;
+        final int idSlabMinX = (ix - gRX) / slabSizeX;
+        int idSlabMinY       = (iy - gRY) / slabSizeY;
+        final int idSlabMaxX = (ix + iw - gRX + slabSizeX - 1) / slabSizeX;
+        final int idSlabMaxY = (iy + ih - gRY + slabSizeY - 1) / slabSizeY;
+        final int smxBase    = gRX + idSlabMinX * slabSizeX;
+        int smy              = gRY + idSlabMinY * slabSizeY;
 
         for (; idSlabMinY<idSlabMaxY; idSlabMinY++) {
             int smx = smxBase;
             for (int idSMinX = idSlabMinX; idSMinX < idSlabMaxX; idSMinX++) {
-
                 final String slabPath = resultPath+idSMinX+"_"+idSlabMinY+"/";
-
-                final int tminx = (Math.max(ix, smx) - smx) / tileWidth;
-                int tminy       = (Math.max(iy, smy) - smy) / tileHeight;
-                final int tmaxx = (Math.min(ix + iw, smx + slabSizeX) - smx + tileWidth  - 1) / tileWidth;
-                final int tmaxy = (Math.min(iy + ih, smy + slabSizeY) - smy + tileHeight - 1) / tileHeight;
-
-                //parcour des tuiles
-                for (;tminy < tmaxy; tminy++) {
-                    for (int tx = tminx; tx < tmaxx; tx++) {
-//                        final File tilePathTemp = new File(slabPath+tx+"_"+tminy+"."+format);
-                        final File tilePathTemp = new File(slabPath+formatter.generateFilename(floor, tx, tminy) +"."+format);
+                final int idtx        = (Math.max(ix, smx) - smx) / tileWidth;
+                int idty              = (Math.max(iy, smy) - smy) / tileHeight;
+                final int idtmaxx     = (Math.min(ix + iw, smx + slabSizeX) - smx + tileWidth  - 1) / tileWidth;
+                final int idtmaxy     = (Math.min(iy + ih, smy + slabSizeY) - smy + tileHeight - 1) / tileHeight;
+                final int tminxbase   = smx + idtx * tileWidth;
+                int tminy             = smy + idty * tileHeight;
+                for (;idty < idtmaxy; idty++) {
+                    int tminx = tminxbase;
+                    for (int tx = idtx; tx < idtmaxx; tx++) {
+                        final File tilePathTemp = new File(slabPath+formatter.generateFilename(floor, tx, idty) +"."+format);
                         if (tilePathTemp.exists()) {
-                            final int mintx = mx + idSMinX    * slabSizeX + tx * tileWidth;
-                            final int minty = my + idSlabMinY * slabSizeY + tminy * tileHeight;
-                            final int wt    = Math.min(mintx + tileWidth,  mx + gRw / subsampling.width)  - mintx;
-                            final int ht    = Math.min(minty + tileHeight, my + gRh / subsampling.height) - minty;
-                            tileList.add(new Tile(null, tilePathTemp, 0, new Rectangle(mintx, minty, wt, ht), subsampling));
+                            final int wt = Math.min(tminx + tileWidth,  gRMX) - tminx;
+                            final int ht = Math.min(tminy + tileHeight, gRMY) - tminy;
+                            tileList.add(new Tile(null, tilePathTemp, 0, new Rectangle(tminx, tminy, wt, ht), subsampling));
                         }
+                        tminx += tileWidth;
                     }
+                    tminy += tileHeight;
                 }
                 //next slab in X direction
                 smx += slabSizeX;
