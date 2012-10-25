@@ -15,7 +15,7 @@ import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
 import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
-import org.geotoolkit.style.random.RandomStyleBuilder;
+import org.geotoolkit.style.RandomStyleBuilder;
 import org.opengis.coverage.Coverage;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -43,7 +43,7 @@ public class CustomCoverageNDDemo {
                 env.setRange(3, i, i+1);
                 BufferedImage img = new BufferedImage(100, 100, BufferedImage.TYPE_INT_ARGB);
                 final Graphics2D g = img.createGraphics();
-                g.setColor(new RandomStyleBuilder().randomColor() );
+                g.setColor(RandomStyleBuilder.randomColor() );
                 g.fillRect(0, 0, 100, 100);
                 GridCoverage2D coverage = GCF.create("2D", img, env);
                 eles.add(coverage);

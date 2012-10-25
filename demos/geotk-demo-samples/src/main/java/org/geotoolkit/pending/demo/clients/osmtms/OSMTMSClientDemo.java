@@ -16,7 +16,7 @@ import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.style.DefaultDescription;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
-import org.geotoolkit.util.RandomStyleFactory;
+import org.geotoolkit.style.RandomStyleBuilder;
 import org.geotoolkit.util.SimpleInternationalString;
 import org.opengis.feature.type.Name;
 import org.opengis.parameter.ParameterValueGroup;
@@ -48,7 +48,7 @@ public class OSMTMSClientDemo {
         
         for(Name n : store.getNames()){
             final CoverageReference cr = store.getCoverageReference(n);
-            final CoverageMapLayer cml = MapBuilder.createCoverageLayer(cr, RandomStyleFactory.createRasterStyle(), "");
+            final CoverageMapLayer cml = MapBuilder.createCoverageLayer(cr, RandomStyleBuilder.createDefaultRasterStyle(), "");
             cml.setDescription(new DefaultDescription(
                     new SimpleInternationalString(n.getLocalPart()), 
                     new SimpleInternationalString("")));

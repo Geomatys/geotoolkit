@@ -13,7 +13,7 @@ import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.security.BasicAuthenticationSecurity;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.style.DefaultDescription;
-import org.geotoolkit.util.RandomStyleFactory;
+import org.geotoolkit.style.RandomStyleBuilder;
 import org.geotoolkit.util.SimpleInternationalString;
 import org.geotoolkit.wmts.WMTSServerFactory;
 import org.geotoolkit.wmts.WebMapTileServer;
@@ -50,7 +50,7 @@ public class IGN_GEOPORTAIL_WMTS {
                 System.out.println(model.getPyramidSet());
             }
             
-            final CoverageMapLayer cml = MapBuilder.createCoverageLayer(cr, RandomStyleFactory.createRasterStyle(), "");
+            final CoverageMapLayer cml = MapBuilder.createCoverageLayer(cr, RandomStyleBuilder.createDefaultRasterStyle(), "");
             cml.setDescription(new DefaultDescription(new SimpleInternationalString(n.getLocalPart()), new SimpleInternationalString("")));
             context.layers().add(cml);
         }

@@ -27,8 +27,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.SwingUtilities;
-import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.FeatureCollection;
+import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.gui.swing.go2.JMap2D;
 import org.geotoolkit.gui.swing.misc.JOptionDialog;
@@ -38,7 +38,7 @@ import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.storage.DataStoreException;
-import org.geotoolkit.util.RandomStyleFactory;
+import org.geotoolkit.style.RandomStyleBuilder;
 import org.opengis.feature.Feature;
 import org.opengis.feature.GeometryAttribute;
 import org.opengis.feature.Property;
@@ -80,7 +80,7 @@ public class FeatureEditTDelegate extends AbstractFeatureEditionDelegate {
             
             final MapContext context = MapBuilder.createContext();
             final FeatureCollection col = FeatureStoreUtilities.collection(feature);
-            final FeatureMapLayer layer = MapBuilder.createFeatureLayer(col, RandomStyleFactory.createDefaultVectorStyle(col));
+            final FeatureMapLayer layer = MapBuilder.createFeatureLayer(col, RandomStyleBuilder.createDefaultVectorStyle(col.getFeatureType()));
             context.layers().add(layer);
             
             //zoom on this single feature

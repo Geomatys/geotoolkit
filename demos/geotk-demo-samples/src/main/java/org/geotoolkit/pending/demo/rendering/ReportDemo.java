@@ -46,7 +46,7 @@ import org.geotoolkit.report.graphic.scalebar.ScaleBarDef;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
-import org.geotoolkit.util.RandomStyleFactory;
+import org.geotoolkit.style.RandomStyleBuilder;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
@@ -109,7 +109,7 @@ public class ReportDemo {
                 //create the main map with a single feature ------------------
                 final FeatureCollection col = FeatureStoreUtilities.collection(feature);
                 final MapContext context = MapBuilder.createContext();
-                final MutableStyle style = RandomStyleFactory.createRandomVectorStyle(col);
+                final MutableStyle style = RandomStyleBuilder.createRandomVectorStyle(col.getFeatureType());
                 context.layers().add(MapBuilder.createFeatureLayer(col, style));
 
                 try{

@@ -48,9 +48,9 @@ import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.style.DefaultDescription;
 import org.geotoolkit.style.MutableStyle;
+import org.geotoolkit.style.RandomStyleBuilder;
 import org.geotoolkit.style.StyleConstants;
 import org.geotoolkit.util.ArgumentChecks;
-import org.geotoolkit.util.RandomStyleFactory;
 import org.geotoolkit.util.SimpleInternationalString;
 import org.geotoolkit.wmc.xml.v110.*;
 import org.geotoolkit.xml.MarshallerPool;
@@ -186,7 +186,7 @@ public class WMCUtilities {
                 final FeatureStore wfs = (FeatureStore) server;
                 final Session storeSession = wfs.createSession(true);
                 final FeatureCollection collection = storeSession.getFeatureCollection(QueryBuilder.all(layerName));
-                final MutableStyle style = RandomStyleFactory.createRandomVectorStyle(collection);
+                final MutableStyle style = RandomStyleBuilder.createRandomVectorStyle(collection.getFeatureType());
                 final MapLayer layer = MapBuilder.createFeatureLayer(collection, style);
                 context.layers().add(layer);
             }

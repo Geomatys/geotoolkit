@@ -12,7 +12,7 @@ import org.geotoolkit.map.MapContext;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.storage.DataStoreException;
-import org.geotoolkit.util.RandomStyleFactory;
+import org.geotoolkit.style.RandomStyleBuilder;
 import org.opengis.feature.type.Name;
 import org.opengis.parameter.ParameterValueGroup;
 
@@ -38,7 +38,7 @@ public class PostgisDemo {
             System.out.println(store.getFeatureType(n));
             
             final FeatureCollection col = store.createSession(true).getFeatureCollection(QueryBuilder.all(n));
-            context.layers().add(MapBuilder.createFeatureLayer(col, RandomStyleFactory.createRandomVectorStyle(col)));
+            context.layers().add(MapBuilder.createFeatureLayer(col, RandomStyleBuilder.createRandomVectorStyle(col.getFeatureType())));
         }
         
         

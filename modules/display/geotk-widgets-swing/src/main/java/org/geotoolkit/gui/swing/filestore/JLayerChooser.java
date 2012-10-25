@@ -53,8 +53,8 @@ import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
+import org.geotoolkit.style.RandomStyleBuilder;
 import org.geotoolkit.style.StyleConstants;
-import org.geotoolkit.util.RandomStyleFactory;
 import org.jdesktop.swingx.combobox.ListComboBoxModel;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.GeometryDescriptor;
@@ -124,7 +124,7 @@ public class JLayerChooser extends javax.swing.JPanel {
                     final FeatureStore store = (FeatureStore) source;
                     final Session session = store.createSession(true);
                     final FeatureCollection collection = session.getFeatureCollection(QueryBuilder.all(name));
-                    final MutableStyle style = RandomStyleFactory.createRandomVectorStyle(collection);
+                    final MutableStyle style = RandomStyleBuilder.createRandomVectorStyle(collection.getFeatureType());
                     final FeatureMapLayer layer = MapBuilder.createFeatureLayer(collection, style);
                     layer.setDescription(styleFactory.description(name.getLocalPart(), name.toString()));
                     layers.add(layer);

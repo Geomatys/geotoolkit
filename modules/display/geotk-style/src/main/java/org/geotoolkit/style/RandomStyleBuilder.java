@@ -3,6 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2008 - 2009, Johann Sorel
+ *    (C) 2012, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -14,7 +15,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.style.random;
+package org.geotoolkit.style;
 
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.MultiLineString;
@@ -27,12 +28,9 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.measure.unit.NonSI;
 import javax.measure.unit.Unit;
-import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.factory.Factory;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.style.*;
-import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.AttributeType;
 import org.opengis.feature.type.FeatureType;
@@ -53,10 +51,10 @@ import org.opengis.style.Stroke;
 import org.opengis.style.Symbolizer;
 
 /**
- * Random style factory. This is a convini class if you dont need special styles.
+ * Random style builder. This is a convini class if you dont need special styles.
  * This class will provide you simple et good looking styles for your maps.
  * 
- * @author Johann Sorel (Puzzle-GIS)
+ * @author Johann Sorel
  * @module pending
  */
 public class RandomStyleBuilder extends Factory {
@@ -76,30 +74,14 @@ public class RandomStyleBuilder extends Factory {
         Color.ORANGE, Color.RED, Color.YELLOW.darker()
     };
 
-    private final MutableStyleFactory sf;
-    private final FilterFactory ff;
+    private static final MutableStyleFactory SF = (MutableStyleFactory) 
+            FactoryFinder.getStyleFactory(new Hints(Hints.STYLE_FACTORY, MutableStyleFactory.class));
+    private static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
     
-    public RandomStyleBuilder() {
-        this(null,null);
-    }
+    private RandomStyleBuilder() {}
 
-    public RandomStyleBuilder(final MutableStyleFactory styleFactory, final FilterFactory filterFactory){
-        if(styleFactory == null){
-             sf = (MutableStyleFactory) FactoryFinder.getStyleFactory(new Hints(Hints.STYLE_FACTORY, MutableStyleFactory.class));
-        }else{
-            sf = styleFactory;
-        }
 
-        if(filterFactory == null){
-             ff = FactoryFinder.getFilterFactory(null);
-        }else{
-            ff = filterFactory;
-        }
-
-    }
-
-    //----------------------creation--------------------------------------------
-    public PointSymbolizer createPointSymbolizer() {
+    public  static PointSymbolizer createRandomPointSymbolizer() {
         
         final Unit uom = NonSI.PIXEL;
         final String geom = StyleConstants.DEFAULT_GEOM;
@@ -107,128 +89,125 @@ public class RandomStyleBuilder extends Factory {
         
         final List<GraphicalSymbol> symbols = new ArrayList<GraphicalSymbol>();
         
-        final Fill fill =  sf.fill( sf.literal(randomColor()), ff.literal(0.6f) );
-        final Stroke stroke =  sf.stroke(randomColor(), 1);
-        final Mark mark =  sf.mark(randomPointShape(), stroke, fill);
+        final Fill fill =  SF.fill( SF.literal(randomColor()), FF.literal(0.6f) );
+        final Stroke stroke =  SF.stroke(randomColor(), 1);
+        final Mark mark =  SF.mark(randomMarkShape(), stroke, fill);
         symbols.add(mark);
         
-        final Expression opa = ff.literal(1);
-        final Expression size = ff.literal(randomPointSize());
-        final Expression rotation = ff.literal(0);
-        final AnchorPoint anchor =  sf.anchorPoint(0, 0);
-        final Displacement displacement =  sf.displacement(0, 0);
+        final Expression opa = FF.literal(1);
+        final Expression size = FF.literal(randomPointSize());
+        final Expression rotation = FF.literal(0);
+        final AnchorPoint anchor =  SF.anchorPoint(0, 0);
+        final Displacement displacement =  SF.displacement(0, 0);
         
-        final Graphic gra =  sf.graphic(symbols,opa,size,rotation,anchor,displacement);
+        final Graphic gra =  SF.graphic(symbols,opa,size,rotation,anchor,displacement);
         
-        return  sf.pointSymbolizer(name,geom,StyleConstants.DEFAULT_DESCRIPTION,uom,gra);
+        return  SF.pointSymbolizer(name,geom,StyleConstants.DEFAULT_DESCRIPTION,uom,gra);
     }
 
-    public LineSymbolizer createLineSymbolizer() {
+    public  static LineSymbolizer createRandomLineSymbolizer() {
         
         final Unit uom = NonSI.PIXEL;
         final String geom = StyleConstants.DEFAULT_GEOM;
         final String name = null;
         
-        final Stroke stroke =  sf.stroke(randomColor(), 1);
-        final Expression offset = ff.literal(0);
+        final Stroke stroke =  SF.stroke(randomColor(), 1);
+        final Expression offset = FF.literal(0);
         
-        return  sf.lineSymbolizer(name,geom,StyleConstants.DEFAULT_DESCRIPTION,uom,stroke,offset);
+        return  SF.lineSymbolizer(name,geom,StyleConstants.DEFAULT_DESCRIPTION,uom,stroke,offset);
     }
 
-    public PolygonSymbolizer createPolygonSymbolizer() {
+    public  static PolygonSymbolizer createRandomPolygonSymbolizer() {
         
         final Unit uom = NonSI.PIXEL;
         final String geom = StyleConstants.DEFAULT_GEOM;
         final String name = null;
         
-        final Fill fill =  sf.fill( sf.literal(randomColor()), ff.literal(0.6f) );
-        final Stroke stroke =  sf.stroke(randomColor(), 1);
+        final Fill fill =  SF.fill( SF.literal(randomColor()), FF.literal(0.6f) );
+        final Stroke stroke =  SF.stroke(randomColor(), 1);
         
-        final Displacement displacement =  sf.displacement(0, 0);
-        final Expression offset = ff.literal(0);
+        final Displacement displacement =  SF.displacement(0, 0);
+        final Expression offset = FF.literal(0);
         
-        return  sf.polygonSymbolizer(name,geom,StyleConstants.DEFAULT_DESCRIPTION,uom,stroke, fill,displacement,offset);
+        return  SF.polygonSymbolizer(name,geom,StyleConstants.DEFAULT_DESCRIPTION,uom,stroke, fill,displacement,offset);
     }
 
-    public RasterSymbolizer createRasterSymbolizer() {
-        return  sf.rasterSymbolizer();
-    }
-
-    public MutableStyle createPolygonStyle() {
-        final PolygonSymbolizer ps = createPolygonSymbolizer();
-        final MutableStyle style =  sf.style();
-        style.featureTypeStyles().add( sf.featureTypeStyle(ps));
-
-        return style;
-    }
-
-    public MutableStyle createDefaultVectorStyle(final FeatureCollection<SimpleFeature> fs){
+    public  static MutableStyle createDefaultVectorStyle(final FeatureType typ){
 
         final Symbolizer ps;
 
-        final FeatureType typ = fs.getFeatureType();
         final AttributeDescriptor att = typ.getGeometryDescriptor();
         final AttributeType type = att.getType();
 
         final Class cla = type.getBinding();
 
         if (cla.equals(Polygon.class) || cla.equals(MultiPolygon.class)) {
-            ps =  sf.polygonSymbolizer();
+            ps =  SF.polygonSymbolizer();
         } else if (cla.equals(LineString.class) || cla.equals(MultiLineString.class)) {
-            ps =  sf.lineSymbolizer();
+            ps =  SF.lineSymbolizer();
         } else if (cla.equals(Point.class) || cla.equals(MultiPoint.class)) {
-            ps =  sf.pointSymbolizer();
+            ps =  SF.pointSymbolizer();
         } else{
-            ps =  sf.polygonSymbolizer();
+            ps =  SF.polygonSymbolizer();
         }
 
-        final MutableStyle style =  sf.style();
-        style.featureTypeStyles().add( sf.featureTypeStyle(ps));
+        final MutableStyle style =  SF.style();
+        style.featureTypeStyles().add( SF.featureTypeStyle(ps));
         return style;
     }
     
-    public MutableStyle createRandomVectorStyle(final FeatureCollection<SimpleFeature> fs) {
+    public  static MutableStyle createRandomVectorStyle(final FeatureType typ) {
         
         final Symbolizer ps;
-        final FeatureType typ = fs.getFeatureType();
         final AttributeDescriptor att = typ.getGeometryDescriptor();
         final AttributeType type = att.getType();
         final Class cla = type.getBinding();
 
         if (cla.equals(Polygon.class) || cla.equals(MultiPolygon.class)) {
-            ps = createPolygonSymbolizer();
+            ps = createRandomPolygonSymbolizer();
         } else if (cla.equals(LineString.class) || cla.equals(MultiLineString.class)) {
-            ps = createLineSymbolizer();
+            ps = createRandomLineSymbolizer();
         } else if (cla.equals(Point.class) || cla.equals(MultiPoint.class)) {
-            ps = createPointSymbolizer();
+            ps = createRandomPointSymbolizer();
         } else{
-            ps =  sf.polygonSymbolizer();
+            ps =  SF.polygonSymbolizer();
         }
 
-        final MutableStyle style =  sf.style();
-        style.featureTypeStyles().add( sf.featureTypeStyle(ps));
+        final MutableStyle style =  SF.style();
+        style.featureTypeStyles().add( SF.featureTypeStyle(ps));
         return style;
     }
 
-    public MutableStyle createRasterStyle() {
-        final RasterSymbolizer raster =  sf.rasterSymbolizer();
-        return  sf.style(new Symbolizer[]{raster});
+    public static MutableStyle createDefaultRasterStyle() {
+        final RasterSymbolizer raster =  SF.rasterSymbolizer();
+        return  SF.style(new Symbolizer[]{raster});
     }
 
-    //-----------------------random---------------------------------------------
-    public int randomPointSize() {
+    /**
+     * @return random point size (8,10,12,14,16)
+     */
+    public  static int randomPointSize() {
         return SIZES[((int) (Math.random() * SIZES.length))];
     }
 
-    public int randomWidth() {
+    /**
+     * @return random width (1,2)
+     */
+    public  static int randomWidth() {
         return WIDTHS[((int) (Math.random() * WIDTHS.length))];
     }
 
-    public Literal randomPointShape() {
+    /**
+     * @return random mark literal (circle, square, triangle, ...)
+     */
+    public static Literal randomMarkShape() {
         return POINT_SHAPES[((int) (Math.random() * POINT_SHAPES.length))];
     }
 
-    public Color randomColor() {
+    /**
+     * @return random color
+     */
+    public static Color randomColor() {
         return COLORS[((int) (Math.random() * COLORS.length))];
     }
 }

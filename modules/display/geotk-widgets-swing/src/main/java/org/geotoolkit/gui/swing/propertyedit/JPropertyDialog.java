@@ -42,7 +42,7 @@ import javax.swing.event.ChangeListener;
 import org.geotoolkit.gui.swing.propertyedit.styleproperty.JSymbolizerStylePanel;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
-import org.geotoolkit.util.RandomStyleFactory;
+import org.geotoolkit.style.RandomStyleBuilder;
 import org.opengis.style.LineSymbolizer;
 import org.opengis.style.PointSymbolizer;
 import org.opengis.style.PolygonSymbolizer;
@@ -210,11 +210,11 @@ public class JPropertyDialog extends JDialog{
                 public void itemStateChanged(ItemEvent ie) {
                     Object o = box.getSelectedItem();
                     if(o == PointSymbolizer.class){
-                        pane.setSymbolizer(RandomStyleFactory.createPointSymbolizer());
+                        pane.setSymbolizer(RandomStyleBuilder.createRandomPointSymbolizer());
                     }else if(o == LineSymbolizer.class){
-                        pane.setSymbolizer(RandomStyleFactory.createLineSymbolizer());
+                        pane.setSymbolizer(RandomStyleBuilder.createRandomLineSymbolizer());
                     }else if(o == PolygonSymbolizer.class){
-                        pane.setSymbolizer(RandomStyleFactory.createPolygonSymbolizer());
+                        pane.setSymbolizer(RandomStyleBuilder.createRandomPolygonSymbolizer());
                     }
                 }
             });

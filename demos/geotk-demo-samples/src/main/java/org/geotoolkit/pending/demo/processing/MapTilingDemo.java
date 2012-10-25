@@ -1,48 +1,31 @@
 package org.geotoolkit.pending.demo.processing;
 
-import java.net.URL;
-import org.geotoolkit.coverage.*;
-import org.geotoolkit.style.DefaultStyleFactory;
-import org.opengis.feature.type.Name;
 import java.awt.Dimension;
-import java.io.Serializable;
 import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 import javax.imageio.ImageIO;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.spi.ImageWriterSpi;
-
+import org.geotoolkit.coverage.*;
 import org.geotoolkit.coverage.filestore.*;
-import org.geotoolkit.data.FeatureStore;
-import org.geotoolkit.data.FeatureStoreFinder;
-import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.data.query.Query;
-import org.geotoolkit.data.query.QueryBuilder;
-import org.geotoolkit.data.session.Session;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.gui.swing.ProgressWindow;
-import org.geotoolkit.gui.swing.go2.JMap2DFrame;
-import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.image.jai.Registry;
 import org.geotoolkit.map.CoverageMapLayer;
-import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
-import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.process.ProcessDescriptor;
-import org.geotoolkit.storage.DataStoreException;
-import org.geotoolkit.style.MutableStyle;
-import org.geotoolkit.style.MutableStyleFactory;
-import org.geotoolkit.style.StyleConstants;
-import org.opengis.parameter.ParameterValueGroup;
 import org.geotoolkit.process.ProcessFinder;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.util.RandomStyleFactory;
-import org.opengis.geometry.Envelope;
+import org.geotoolkit.storage.DataStoreException;
+import org.geotoolkit.style.DefaultStyleFactory;
+import org.geotoolkit.style.MutableStyleFactory;
+import org.geotoolkit.style.RandomStyleBuilder;
+import org.opengis.feature.type.Name;
+import org.opengis.parameter.ParameterValueGroup;
 
 /**
  * Create a pyramid from a MapContext.
@@ -145,7 +128,7 @@ public class MapTilingDemo {
         final MapContext context = MapBuilder.createContext();
         
         for(Name n : store.getNames()){
-            final CoverageMapLayer layer = MapBuilder.createCoverageLayer(store.getCoverageReference(n), RandomStyleFactory.createRasterStyle(), "n");
+            final CoverageMapLayer layer = MapBuilder.createCoverageLayer(store.getCoverageReference(n), RandomStyleBuilder.createDefaultRasterStyle(), "n");
             context.layers().add(layer);
         }
         

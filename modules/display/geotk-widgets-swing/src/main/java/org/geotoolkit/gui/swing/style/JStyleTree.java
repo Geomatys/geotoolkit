@@ -41,9 +41,6 @@ import java.awt.dnd.DropTargetEvent;
 import java.awt.dnd.DropTargetListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.List;
@@ -60,17 +57,11 @@ import javax.swing.JSpinner;
 import javax.swing.JTree;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
-import javax.swing.event.TreeModelEvent;
-import javax.swing.event.TreeModelListener;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
-import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.service.DefaultGlyphService;
-import org.geotoolkit.display2d.style.CachedSymbolizer;
-import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.tree.DefaultMutableTreeNode;
@@ -78,7 +69,7 @@ import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
-import org.geotoolkit.util.RandomStyleFactory;
+import org.geotoolkit.style.RandomStyleBuilder;
 import org.jdesktop.swingx.JXTree;
 import org.jdesktop.swingx.decorator.ColorHighlighter;
 import org.jdesktop.swingx.decorator.HighlightPredicate;
@@ -481,7 +472,7 @@ public class JStyleTree<T> extends JXTree implements DragGestureListener, DragSo
 
         @Override
         public void actionPerformed(final ActionEvent ae) {
-            style.featureTypeStyles().add(SF.featureTypeStyle(RandomStyleFactory.createPointSymbolizer()));
+            style.featureTypeStyles().add(SF.featureTypeStyle(RandomStyleBuilder.createRandomPointSymbolizer()));
         }
     }
 
@@ -495,7 +486,7 @@ public class JStyleTree<T> extends JXTree implements DragGestureListener, DragSo
 
         @Override
         public void actionPerformed(final ActionEvent ae) {
-            fts.rules().add(SF.rule(RandomStyleFactory.createPointSymbolizer()));
+            fts.rules().add(SF.rule(RandomStyleBuilder.createRandomPointSymbolizer()));
         }
     }
 
