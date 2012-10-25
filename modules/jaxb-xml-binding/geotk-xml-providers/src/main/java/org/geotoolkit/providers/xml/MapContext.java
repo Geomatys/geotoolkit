@@ -31,10 +31,14 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
+    "name",
     "mapItem"
 })
 @XmlRootElement(name = "MapContext")
 public class MapContext {
+
+    @XmlElement
+    private String name;
 
     @XmlElement(name = "MapItem", required = true)
     private MapItem mapItem;
@@ -46,7 +50,20 @@ public class MapContext {
     }
 
     public MapContext(final MapItem mapItem) {
+        this(mapItem, null);
+    }
+
+    public MapContext(final MapItem mapItem, final String name) {
         this.mapItem = mapItem;
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(final String name) {
+        this.name = name;
     }
 
     public MapItem getMapItem() {
