@@ -19,6 +19,7 @@ package org.geotoolkit.internal.jaxb;
 
 import java.util.Map;
 import java.util.UUID;
+import java.util.Random;
 import java.util.HashMap;
 import java.lang.ref.Reference;
 import java.lang.ref.WeakReference;
@@ -76,9 +77,16 @@ public abstract class UUIDs<T> {
      * An implementation of {@link UUIDs} using strings.
      */
     public static final class AsString extends UUIDs<String> {
-        /** Generates a random UUID. */
+        private final Random random = new Random();
+
+        /** Generates a random ID as an alpha-numeric code beginning with a letter. */
         @Override protected String createUUID() {
-            return UUID.randomUUID().toString();
+            final char[] id = new char[6];
+            for (int i=0; i<id.length; i++) {
+                final int c = random.nextInt(i == 0 ? 26 : 36);
+                id[i] = (char) (c + ((c < 26) ? 'A' : ('0' - 26)));
+            }
+            return new String(id);
         }
     }
 
