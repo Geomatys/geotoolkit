@@ -36,7 +36,7 @@ import org.geotoolkit.sld.MutableNamedLayer;
 import org.geotoolkit.sld.MutableSLDFactory;
 import org.geotoolkit.sld.MutableStyledLayerDescriptor;
 import org.geotoolkit.sld.xml.Specification.StyledLayerDescriptor;
-import org.geotoolkit.sld.xml.XMLUtilities;
+import org.geotoolkit.sld.xml.StyleXmlIO;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;
@@ -110,7 +110,7 @@ public class MapfileToSLDProcess extends AbstractProcess{
             mapfileFeature = null;
 
             //write the sld
-            final XMLUtilities utils = new XMLUtilities();
+            final StyleXmlIO utils = new StyleXmlIO();
             utils.writeSLD(sldfile, sld, StyledLayerDescriptor.V_1_1_0);
         } catch (IOException ex) {
             throw new ProcessException(ex.getMessage(), this, ex);

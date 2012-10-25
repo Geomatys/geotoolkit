@@ -32,7 +32,7 @@ import org.geotoolkit.sld.MutableStyledLayerDescriptor;
 import org.geotoolkit.sld.MutableUserLayer;
 import org.geotoolkit.sld.xml.Specification.StyledLayerDescriptor;
 import org.geotoolkit.sld.xml.Specification.SymbologyEncoding;
-import org.geotoolkit.sld.xml.XMLUtilities;
+import org.geotoolkit.sld.xml.StyleXmlIO;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
@@ -56,7 +56,7 @@ public class XMLStyleBank implements StyleBank{
         MASKS.add(".sld");
     }
 
-    private final XMLUtilities sldParser = new XMLUtilities();
+    private final StyleXmlIO sldParser = new StyleXmlIO();
     private final File folder;
     private ElementNode rootNode;
 

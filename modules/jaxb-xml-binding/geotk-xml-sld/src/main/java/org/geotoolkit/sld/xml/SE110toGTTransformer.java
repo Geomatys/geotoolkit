@@ -175,7 +175,7 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
     private static final String UOM_PIXEL = "http://www.opengeospatial.org/se/units/pixel";
     
     protected final MutableStyleFactory styleFactory;
-    protected final XMLUtilities xmlUtilities = new XMLUtilities();
+    protected final StyleXmlIO xmlUtilities = new StyleXmlIO();
 
     public SE110toGTTransformer(final FilterFactory2 filterFactory,final MutableStyleFactory styleFactory){
         super(filterFactory);

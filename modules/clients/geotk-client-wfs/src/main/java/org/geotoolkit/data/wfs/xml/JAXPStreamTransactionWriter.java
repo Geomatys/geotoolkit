@@ -53,7 +53,7 @@ import org.geotoolkit.internal.jaxb.JTSWrapperMarshallerPool;
 import org.geotoolkit.internal.jaxb.ObjectFactory;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.referencing.IdentifiedObjects;
-import org.geotoolkit.sld.xml.XMLUtilities;
+import org.geotoolkit.sld.xml.StyleXmlIO;
 import org.geotoolkit.xml.MarshallerPool;
 
 import org.opengis.feature.type.GeometryDescriptor;
@@ -302,14 +302,14 @@ public class JAXPStreamTransactionWriter {
         //write filter ---------------------------------------------------------
         final Filter filter = element.getFilter();
         if(filter != null){
-            final XMLUtilities util = new XMLUtilities();
-            final Marshaller marshaller = XMLUtilities.getJaxbContext110().acquireMarshaller();
+            final StyleXmlIO util = new StyleXmlIO();
+            final Marshaller marshaller = StyleXmlIO.getJaxbContext110().acquireMarshaller();
             marshaller.setProperty(marshaller.JAXB_FRAGMENT, Boolean.TRUE);
             final Object jaxbelement = util.getTransformerXMLv110().visit(filter);
             try {
                 marshaller.marshal(jaxbelement, writer);
             } finally {
-                 XMLUtilities.getJaxbContext110().release(marshaller);
+                 StyleXmlIO.getJaxbContext110().release(marshaller);
             }
             writer.flush();
         }
@@ -403,7 +403,7 @@ public class JAXPStreamTransactionWriter {
         }
 
         //write filter ---------------------------------------------------------
-        final XMLUtilities util = new XMLUtilities();
+        final StyleXmlIO util = new StyleXmlIO();
         final Marshaller marshaller = util.getJaxbContext110().acquireMarshaller();
         marshaller.setProperty(marshaller.JAXB_FRAGMENT, Boolean.TRUE);
         final Object jaxbelement = util.getTransformerXMLv110().visit(element.getFilter());

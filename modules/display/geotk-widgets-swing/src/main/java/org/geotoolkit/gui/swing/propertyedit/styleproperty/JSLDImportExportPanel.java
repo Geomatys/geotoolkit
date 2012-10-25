@@ -31,7 +31,7 @@ import org.geotoolkit.sld.MutableLayer;
 import org.geotoolkit.sld.MutableStyledLayerDescriptor;
 import org.geotoolkit.sld.xml.Specification;
 import org.geotoolkit.sld.xml.Specification.StyledLayerDescriptor;
-import org.geotoolkit.sld.xml.XMLUtilities;
+import org.geotoolkit.sld.xml.StyleXmlIO;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.util.logging.Logging;
 import org.jdesktop.swingx.combobox.EnumComboBoxModel;
@@ -128,7 +128,7 @@ public class JSLDImportExportPanel extends javax.swing.JPanel implements Propert
             final int result = chooser.showSaveDialog(this);
 
             if(result == JFileChooser.APPROVE_OPTION){
-                final XMLUtilities tool = new XMLUtilities();
+                final StyleXmlIO tool = new StyleXmlIO();
                 try {
                     tool.writeStyle(chooser.getSelectedFile(), style, version);
                 } catch (JAXBException ex) {
@@ -146,7 +146,7 @@ public class JSLDImportExportPanel extends javax.swing.JPanel implements Propert
 
             parse:
             if(result == JFileChooser.APPROVE_OPTION){
-                final XMLUtilities tool = new XMLUtilities();
+                final StyleXmlIO tool = new StyleXmlIO();
                 try {
                     final MutableStyledLayerDescriptor sld = tool.readSLD(chooser.getSelectedFile(), version);
 

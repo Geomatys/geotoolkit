@@ -28,7 +28,7 @@ import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.pending.demo.symbology.Styles;
 import org.geotoolkit.sld.xml.Specification.SymbologyEncoding;
-import org.geotoolkit.sld.xml.XMLUtilities;
+import org.geotoolkit.sld.xml.StyleXmlIO;
 import org.geotoolkit.style.DefaultDescription;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
@@ -83,7 +83,7 @@ public class LegendDemo {
     private static MapContext createContext() throws JAXBException, FactoryException, URISyntaxException{
         final MapContext context = MapBuilder.createContext();
 
-        final XMLUtilities xmlutil = new XMLUtilities();
+        final StyleXmlIO xmlutil = new StyleXmlIO();
 
         //lines styles
         final MutableStyle style2 = xmlutil.readStyle(LegendDemo.class.getResource("/data/style/legend2.xml"), SymbologyEncoding.V_1_1_0);

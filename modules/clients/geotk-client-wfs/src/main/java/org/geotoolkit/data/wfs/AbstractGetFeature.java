@@ -37,7 +37,7 @@ import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.filter.visitor.SimplifyingFilterVisitor;
 import org.geotoolkit.ogc.xml.v110.FilterType;
 import org.geotoolkit.security.ClientSecurity;
-import org.geotoolkit.sld.xml.XMLUtilities;
+import org.geotoolkit.sld.xml.StyleXmlIO;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.wfs.xml.WFSMarshallerPool;
 import org.geotoolkit.wfs.xml.v110.GetFeatureType;
@@ -193,7 +193,7 @@ public abstract class AbstractGetFeature extends AbstractRequest implements GetF
 
 
         if(filter != null && filter != Filter.INCLUDE){
-            final XMLUtilities util = new XMLUtilities();
+            final StyleXmlIO util = new StyleXmlIO();
             final StringWriter writer = new StringWriter();            
             
             try {
@@ -251,7 +251,7 @@ public abstract class AbstractGetFeature extends AbstractRequest implements GetF
         
         FilterType xmlFilter;
         if(filter != null && filter != Filter.INCLUDE){
-            final XMLUtilities util = new XMLUtilities();
+            final StyleXmlIO util = new StyleXmlIO();
             xmlFilter = util.getTransformerXMLv110().visit(filter);
         } else {
             xmlFilter = null;

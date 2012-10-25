@@ -80,7 +80,7 @@ import static org.geotoolkit.util.ArgumentChecks.*;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public final class XMLUtilities {
+public final class StyleXmlIO {
 
     private final FilterFactory2 filterFactory;
     private final MutableStyleFactory styleFactory;
@@ -98,7 +98,7 @@ public final class XMLUtilities {
     
     
 
-    public XMLUtilities() {
+    public StyleXmlIO() {
         final Hints hints = new Hints();
         hints.put(Hints.STYLE_FACTORY, MutableStyleFactory.class);
         hints.put(Hints.FILTER_FACTORY, FilterFactory2.class);
@@ -107,7 +107,7 @@ public final class XMLUtilities {
         this.sldFactory = new DefaultSLDFactory();
     }
 
-    public XMLUtilities(final FilterFactory2 filterFactory, final MutableStyleFactory styleFactory, final MutableSLDFactory sldFactory) {
+    public StyleXmlIO(final FilterFactory2 filterFactory, final MutableStyleFactory styleFactory, final MutableSLDFactory sldFactory) {
         this.filterFactory = filterFactory;
         this.styleFactory = styleFactory;
         this.sldFactory = sldFactory;
@@ -187,7 +187,7 @@ public final class XMLUtilities {
                 final URL url = online.getLinkage().toURL();
                 return unMarshaller.unmarshal(url);
             } catch (MalformedURLException ex) {
-                Logging.getLogger(XMLUtilities.class).log(Level.WARNING, null, ex);
+                Logging.getLogger(StyleXmlIO.class).log(Level.WARNING, null, ex);
                 return null;
             }
             

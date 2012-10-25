@@ -32,7 +32,7 @@ import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.sld.MutableLayer;
 import org.geotoolkit.sld.MutableStyledLayerDescriptor;
 import org.geotoolkit.sld.xml.Specification;
-import org.geotoolkit.sld.xml.XMLUtilities;
+import org.geotoolkit.sld.xml.StyleXmlIO;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyle;
@@ -201,7 +201,7 @@ public final class StyleBank {
 
         if (file.exists()) {
 
-            final XMLUtilities tool = new XMLUtilities();
+            final StyleXmlIO tool = new StyleXmlIO();
             try {
                 final MutableStyledLayerDescriptor sld = tool.readSLD(file, version);
 
