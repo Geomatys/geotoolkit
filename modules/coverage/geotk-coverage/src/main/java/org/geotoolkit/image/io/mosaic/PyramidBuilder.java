@@ -37,7 +37,6 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
@@ -49,17 +48,26 @@ import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.image.iterator.PixelIterator;
 import org.geotoolkit.image.iterator.PixelIteratorFactory;
 import org.geotoolkit.referencing.operation.MathTransforms;
-import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
-import org.geotoolkit.referencing.operation.matrix.XMatrix;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.geotoolkit.util.ArgumentChecks;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
 import org.opengis.referencing.operation.TransformException;
 import org.w3c.dom.Element;
-
 /**
- * Create and write an Image pyramid.
+ * <p>Create and write an Image pyramid.<br/><br/>
+ * Pyramid builder work from a TileManager which represent pyramid base.<br/>
+ * To get mosaic from image list, see org.geotoolkit.image.io.mosaic<br/>
+ * For the next example this TileManager will called "originalMosaic".<br/><br/>
+ * Use example :<br/>
+ * {@code PyramidBuilder pyramid = new PyramidBuilder();}<br/>
+ * {@code pyramid.setInterpolationProperties(InterpolationCase.BILINEAR, 2,0);}<br/>
+ * {@code pyramid.setOutputDirectory(new File("../output_directory/"));}<br/>
+ * {@code pyramid.setOutputNames("chosen_prefix", "TIFF");}<br/>
+ * {@code pyramid.setSubsampling(new int[]{1,2}, new int[]{1,2});}<br/>
+ * {@code pyramid.setTileSize(new Dimension(100, 150));//or null for default value 256x256}<br/>
+ * {@code pyramid.setSlabSize(new Dimension(20, 25));//or null for default value 16x16}<br/>
+ * {@code TileManager ptm = pyramid.createTileManager(originalMosaic);}</p>
  *
  * @author Remi Marechal (Geomatys).
  */
@@ -75,8 +83,14 @@ public class PyramidBuilder {
      */
     private static final int MIN_TILE_SIZE = 64;
 
+    /**
+     * Minimum and default slab size.
+     */
     private static final int DEFAULT_SLAB_SIZE = 16;
 
+    /**
+     * Maximum slab size.
+     */
     private static final int MAX_SLAB_SIZE = 36;
 
     /**
@@ -121,8 +135,14 @@ public class PyramidBuilder {
      */
     private int[] coeffY = null;
 
+    /**
+     * Tile number within each slab in X direction.
+     */
     private int slabWidth;
 
+    /**
+     * Tile number within each slab in Y direction.
+     */
     private int slabHeight;
 
     /**
@@ -131,6 +151,9 @@ public class PyramidBuilder {
     InterpolationCase interpolationCase = null;
     int lanczosWindow = -1;
 
+    /**
+     * Construct a default pyramid builder.
+     */
     public PyramidBuilder() {
         formatter = new FilenameFormatter();
     }
@@ -454,7 +477,8 @@ public class PyramidBuilder {
      * <p>Define slab size.<br/>
      * Slab width define tile number in X direction per slab.<br/>
      * Slab height define tile number in Y direction per slab.<br/>
-     * You must set {@code null} to set {@link #DEFAULT_SLAB_SIZE} = 16.</p>
+     * You must set {@code null} to set {@link #DEFAULT_SLAB_SIZE} = 16.<br/>
+     * Also define tile number which will be within each sub directory in destination directory</p>
      *
      * @param slabSize slab size.
      */
