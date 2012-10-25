@@ -23,7 +23,7 @@
   <!--     Module Description                                      -->
   <!-- =========================================================== -->
     <groupId>org.geotoolkit.pending</groupId>
-    <artifactId>geotk-coverage</artifactId>
+    <artifactId>geotk-coverage-pending</artifactId>
     <packaging>jar</packaging>
     <name>Coverage Imagery</name>
 
