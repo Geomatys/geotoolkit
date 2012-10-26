@@ -166,7 +166,7 @@ public class JCRSChooser extends javax.swing.JDialog {
 
         BackgroundPainter bgWhite = new SolidColorPainter(Color.WHITE);
         guiMap.getCanvas().setBackgroundPainter(BackgroundPainterGroup.wrap(bgWhite ,new GridPainter(gridTemplate)));
-
+        guiForceLongitudeFirst.setSelected(true);
         
     }
 
