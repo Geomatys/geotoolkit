@@ -18,9 +18,8 @@
 package org.geotoolkit.gui.swing.go2.control.information;
 
 import java.awt.event.ActionEvent;
-
-import org.geotoolkit.gui.swing.go2.control.information.presenter.InformationPresenter;
 import org.geotoolkit.gui.swing.go2.control.AbstractMapAction;
+import org.geotoolkit.gui.swing.go2.control.information.presenter.InformationPresenter;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 
