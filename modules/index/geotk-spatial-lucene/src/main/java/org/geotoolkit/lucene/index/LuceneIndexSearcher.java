@@ -318,6 +318,8 @@ public class LuceneIndexSearcher extends IndexLucene {
             // remove term:* query
             stringQuery = removeOnlyWildchar(stringQuery);
             
+            // escape '/' character
+            stringQuery = stringQuery.replace("/", "\\/");
             
             // we enable the leading wildcard mode if the first character of the query is a '*'
             if (stringQuery.indexOf(":*") != -1 || stringQuery.indexOf(":?") != -1 || stringQuery.indexOf(":(*") != -1
