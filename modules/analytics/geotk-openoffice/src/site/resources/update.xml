@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <description xmlns="http://openoffice.org/extensions/update/2006" xmlns:xlink="http://www.w3.org/1999/xlink">
   <identifier value="org.geotoolkit.openoffice"/>
-  <version value="3.19.1"/> <!-- For testing purpose before the 3.20 release -->
+  <version value="3.20"/>
   <update-download>
     <src xlink:href="http://jenkins.geotoolkit.org/job/Geotoolkit/lastSuccessfulBuild/artifact/modules/analytics/geotk-openoffice/target/geotk-3.x-SNAPSHOT.oxt"/>
   </update-download>
@@ -9,6 +9,6 @@
     <name lang="en" xlink:href="http://www.geotoolkit.org/modules/analytics/geotk-openoffice/index.html">Geotoolkit.org</name>
   </publisher>
   <release-notes>
-    <src lang="en" xlink:href="http://download.geotoolkit.org/3.19/"/>
+    <src lang="en" xlink:href="http://download.geotoolkit.org/3.20/"/>
   </release-notes>
 </description>

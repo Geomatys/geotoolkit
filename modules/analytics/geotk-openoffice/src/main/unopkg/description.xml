@@ -4,7 +4,7 @@
        xmlns:xlink="http://www.w3.org/1999/xlink">
 
   <identifier value="org.geotoolkit.openoffice"/>
-  <version    value="3.19"/> <!-- Actually 3.x-SNAPSHOT -->
+  <version    value="3.21"/>
   <platform   value="all"/>
 
   <publisher>
@@ -21,7 +21,7 @@
   </icon>
 
   <release-notes>
-    <src lang="en" xlink:href="http://download.geotoolkit.org/3.19/"/>
+    <src lang="en" xlink:href="http://download.geotoolkit.org/3.21/"/>
   </release-notes>
 
   <update-information>
