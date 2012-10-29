@@ -45,6 +45,7 @@ public class DateRenderer implements NavigatorRenderer{
         subdivisions.add(new TimeSubdivision.Month());
         subdivisions.add(new TimeSubdivision.Day());
         subdivisions.add(new TimeSubdivision.Hour());
+        subdivisions.add(new TimeSubdivision.Quarter());
         subdivisions.add(new TimeSubdivision.Minute());
     }
 
@@ -105,7 +106,9 @@ public class DateRenderer implements NavigatorRenderer{
 
             if(stepWidth > width/3 && i<subdivisions.size()-1){
                 //add to compact group if larg enough and not last subdivision
-                compact.add(sub);
+                if(!sub.isIntermediate()){
+                    compact.add(sub);
+                }
                 continue;
             }
 

@@ -45,6 +45,12 @@ public interface TimeSubdivision {
      *     example : 1 minute would be 60000.
      */
     public double getUnitLength();
+    
+    /**
+     * Intermediate division will not be displayed in the lower bar.
+     * @return true if division is intermediate.
+     */
+    public boolean isIntermediate();
 
     /**
      * @return maximum size of a text element
@@ -78,6 +84,11 @@ public interface TimeSubdivision {
             return TemporalConstants.YEAR_MS;
         }
 
+        @Override
+        public boolean isIntermediate() {
+            return false;
+        }
+        
         @Override
         public double getTextLength(FontMetrics fm) {
             return fm.stringWidth("99999");
@@ -129,6 +140,11 @@ public interface TimeSubdivision {
         }
 
         @Override
+        public boolean isIntermediate() {
+            return false;
+        }
+        
+        @Override
         public double getTextLength(FontMetrics fm) {
             return fm.stringWidth("AAAAAA"); //should not be longer
         }
@@ -179,6 +195,11 @@ public interface TimeSubdivision {
         }
 
         @Override
+        public boolean isIntermediate() {
+            return false;
+        }
+        
+        @Override
         public double getTextLength(FontMetrics fm) {
             return fm.stringWidth("AA"); //31 day max
         }
@@ -228,6 +249,11 @@ public interface TimeSubdivision {
         }
 
         @Override
+        public boolean isIntermediate() {
+            return false;
+        }
+        
+        @Override
         public double getTextLength(FontMetrics fm) {
             return fm.stringWidth("AA"); //24 max
         }
@@ -263,6 +289,59 @@ public interface TimeSubdivision {
 
     }
 
+    public static class Quarter implements TimeSubdivision {
+
+        @Override
+        public String getUnitText() {
+            return "m";
+        }
+
+        @Override
+        public double getUnitLength() {
+            return TemporalConstants.MINUTE_MS * 15;
+        }
+
+        @Override
+        public boolean isIntermediate() {
+            return true;
+        }
+        
+        @Override
+        public double getTextLength(FontMetrics fm) {
+            return fm.stringWidth("AA"); //60 max
+        }
+
+        @Override
+        public String getText(long milliseconds) {
+            final GregorianCalendar calendar = new GregorianCalendar();
+            calendar.setTimeInMillis(milliseconds);
+            return String.valueOf(calendar.get(Calendar.MINUTE));
+        }
+
+        @Override
+        public long[] getSteps(long begin, long end) {
+            final GregorianCalendar calendar = new GregorianCalendar();
+            calendar.setTimeInMillis(begin);
+            calendar.set(Calendar.MINUTE, 0);
+            calendar.set(Calendar.MILLISECOND, 1);
+
+            final List<Long> steps = new ArrayList<Long>();
+            steps.add(calendar.getTimeInMillis());
+            calendar.add(Calendar.MINUTE, 15);
+            while(calendar.getTimeInMillis() <= end){
+                steps.add(calendar.getTimeInMillis());
+                calendar.add(Calendar.MINUTE, 15);
+            }
+
+            final long[] array = new long[steps.size()];
+            for(int i=0,n=steps.size(); i<n; i++){
+                array[i] = steps.get(i);
+            }
+            return array;
+        }
+
+    }
+    
     public static class Minute implements TimeSubdivision {
 
         @Override
@@ -275,6 +354,11 @@ public interface TimeSubdivision {
             return TemporalConstants.MINUTE_MS;
         }
 
+        @Override
+        public boolean isIntermediate() {
+            return true;
+        }
+        
         @Override
         public double getTextLength(FontMetrics fm) {
             return fm.stringWidth("AA"); //60 max
