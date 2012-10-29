@@ -195,7 +195,7 @@ public final class DataBaseModel {
 
 
         } catch (SQLException e) {
-            final String message = (e.getLocalizedMessage() != null && e.getLocalizedMessage().isEmpty()) ?
+            final String message = (e.getLocalizedMessage() != null && !e.getLocalizedMessage().isEmpty()) ?
                     e.getLocalizedMessage() : "Error occurred analyzing database model.";
             throw new DataStoreException(message, e);
         } finally {
