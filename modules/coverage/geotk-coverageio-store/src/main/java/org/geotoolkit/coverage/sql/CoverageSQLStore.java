@@ -91,6 +91,11 @@ public class CoverageSQLStore extends CoverageDatabase implements CoverageStore 
         }
 
         @Override
+        public int getImageIndex() {
+            return 0;
+        }
+
+        @Override
         public boolean isWritable() {
             return false;
         }

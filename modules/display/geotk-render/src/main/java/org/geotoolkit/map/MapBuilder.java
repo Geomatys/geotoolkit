@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CancellationException;
 import org.geotoolkit.coverage.CoverageReference;
+import org.geotoolkit.coverage.DefaultCoverageReference;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
@@ -123,21 +124,21 @@ public final class MapBuilder {
      * @return  CoverageMapLayer
      */
     public static CoverageMapLayer createCoverageLayer(final GridCoverage2D grid, final MutableStyle style, final String name){
-        return createCoverageLayer(new SimpleCoverageReader(grid), style, name);
+        return createCoverageLayer(new SimpleCoverageReader(grid), 0, style, name);
     }
 
     /**
      * Create a default coverage map layer with a coverageReader, a style and the grid name.
      * @param reader GridCoverageReader
+     * @param imageIndex image index in the reader
      * @param style layer style
      * @param name layer name
      * @return  CoverageMapLayer
      */
-    public static CoverageMapLayer createCoverageLayer(final GridCoverageReader reader, final MutableStyle style, final String name){
-        ensureNonNull("name", name);
-        final CoverageMapLayer layer = new DefaultCoverageMapLayer(reader, style, new DefaultName(name) );
-        layer.setDescription(new DefaultDescription(new SimpleInternationalString(name), new SimpleInternationalString(name)));
-        return layer;
+    public static CoverageMapLayer createCoverageLayer(final GridCoverageReader reader, 
+            final int imageIndex, final MutableStyle style, final String name){
+        final CoverageReference ref = new DefaultCoverageReference(reader, imageIndex);
+        return createCoverageLayer(ref, style, name);
     }
 
     /**

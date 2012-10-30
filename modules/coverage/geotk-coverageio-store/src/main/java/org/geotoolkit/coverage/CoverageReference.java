@@ -35,6 +35,11 @@ public interface CoverageReference {
      * @return Name
      */
     Name getName();
+    
+    /**
+     * @return int image index in reader/writer.
+     */
+    int getImageIndex();
 
     /**
      * @return true if coverage is writable

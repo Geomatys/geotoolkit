@@ -54,6 +54,11 @@ public class OSMTMSCoverageReference implements CoverageReference, PyramidalMode
     }
 
     @Override
+    public int getImageIndex() {
+        return 0;
+    }
+    
+    @Override
     public CoverageStore getStore() {
         return server;
     }

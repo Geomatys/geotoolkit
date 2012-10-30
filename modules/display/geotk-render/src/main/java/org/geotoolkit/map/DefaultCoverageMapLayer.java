@@ -47,7 +47,6 @@ public class DefaultCoverageMapLayer extends AbstractMapLayer implements Coverag
     private static final ImmutableEnvelope INFINITE = new ImmutableEnvelope(DefaultGeographicCRS.WGS84, -180, 180, -90, 90);
 
     private final CoverageReference ref;
-    private final GridCoverageReader reader;
     private final Name coverageName;
     private Query query = null;
     private int imageIndex = 0;
@@ -58,28 +57,12 @@ public class DefaultCoverageMapLayer extends AbstractMapLayer implements Coverag
             throw new NullArgumentException("Coverage Reader and name can not be null");
         }
         this.ref = ref;
-        this.reader = null;
-        this.coverageName = name;
-    }
-
-    protected DefaultCoverageMapLayer(final GridCoverageReader reader, final MutableStyle style, final Name name){
-        super(style);
-        if(reader == null || name == null || name.toString() == null || name.getLocalPart() == null){
-            throw new NullArgumentException("Coverage Reader and name can not be null");
-        }
-        this.ref = null;
-        this.reader = reader;
         this.coverageName = name;
     }
 
     @Override
     public int getImageIndex() {
-        return imageIndex;
-    }
-
-    @Override
-    public void setImageIndex(int index) {
-        this.imageIndex = index;
+        return ref.getImageIndex();
     }
 
     /**
@@ -95,14 +78,12 @@ public class DefaultCoverageMapLayer extends AbstractMapLayer implements Coverag
      */
     @Override
     public GridCoverageReader getCoverageReader(){
-        if(ref != null){
-            try {
-                return ref.createReader();
-            } catch (DataStoreException ex) {
-                LOGGER.log(Level.WARNING, ex.getMessage(),ex);
-            }
+        try {
+            return ref.createReader();
+        } catch (DataStoreException ex) {
+            LOGGER.log(Level.WARNING, ex.getMessage(),ex);
         }
-        return reader;
+        return null;
     }
 
     /**

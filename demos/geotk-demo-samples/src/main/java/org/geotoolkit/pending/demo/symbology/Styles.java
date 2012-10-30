@@ -616,7 +616,7 @@ public class Styles {
         final GridCoverageReader readerData = null;
         final GridCoverageReader elevationData = null;
 
-        final MapLayer layer = MapBuilder.createCoverageLayer(readerData, SF.style(shadedSymbolizer), "data");
+        final MapLayer layer = MapBuilder.createCoverageLayer(readerData, 0, SF.style(shadedSymbolizer), "data");
         final ElevationModel elevationModel = MapBuilder.createElevationModel(elevationData);
         //associate this elevation model to the layer.
         layer.setElevationModel(elevationModel);
@@ -741,7 +741,7 @@ public class Styles {
         context.setDescription(SF.description("demo context", ""));
 
         final GridCoverageReader reader = CoverageIO.createSimpleReader(new File("data/clouds.jpg"));
-        final MapLayer layer = MapBuilder.createCoverageLayer(reader, style, "world");
+        final MapLayer layer = MapBuilder.createCoverageLayer(reader, 0, style, "world");
         layer.setDescription(SF.description("raster", ""));
         layer.setName("raster");
         context.layers().add(layer);

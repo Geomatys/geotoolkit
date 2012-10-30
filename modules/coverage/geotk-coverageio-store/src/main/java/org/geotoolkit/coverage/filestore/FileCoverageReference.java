@@ -19,6 +19,7 @@ package org.geotoolkit.coverage.filestore;
 import java.awt.Image;
 import java.io.File;
 import java.io.IOException;
+import javax.imageio.ImageReader;
 import javax.imageio.ImageWriter;
 import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.coverage.CoverageStore;
@@ -40,11 +41,13 @@ public class FileCoverageReference implements CoverageReference{
     private final FileCoverageStore store;
     private final Name name;
     private final File file;
+    private final int imageIndex;
 
-    FileCoverageReference(FileCoverageStore store, Name name, File file) {
+    FileCoverageReference(FileCoverageStore store, Name name, File file, int imageIndex) {
         this.store = store;
         this.name = name;
         this.file = file;
+        this.imageIndex = imageIndex;
     }
 
     @Override
@@ -62,7 +65,8 @@ public class FileCoverageReference implements CoverageReference{
     public GridCoverageReader createReader() throws DataStoreException{
         final ImageCoverageReader reader = new ImageCoverageReader();
         try {
-            reader.setInput(store.createReader(file));
+            final ImageReader ioreader =store.createReader(file);
+            reader.setInput(ioreader);
         } catch (IOException ex) {
             throw new DataStoreException(ex.getMessage(),ex);
         }
@@ -85,6 +89,11 @@ public class FileCoverageReference implements CoverageReference{
         return name;
     }
 
+    @Override
+    public int getImageIndex() {
+        return imageIndex;
+    }
+    
     @Override
     public CoverageStore getStore() {
         return store;

@@ -72,7 +72,7 @@ public class MapDecorationDemo {
         //create a coverage layer
         final GridCoverageReader reader = CoverageIO.createSimpleReader(new File("data/clouds.jpg"));
         final MutableStyle coverageStyle = SF.style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER);
-        final CoverageMapLayer coverageLayer = MapBuilder.createCoverageLayer(reader, coverageStyle,"background");
+        final CoverageMapLayer coverageLayer = MapBuilder.createCoverageLayer(reader, 0, coverageStyle,"background");
 
         //add all layers in the context
         context.layers().add(coverageLayer);

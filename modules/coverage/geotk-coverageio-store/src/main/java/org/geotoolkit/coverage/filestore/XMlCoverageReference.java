@@ -61,6 +61,11 @@ public class XMlCoverageReference implements CoverageReference, PyramidalModel{
     }
 
     @Override
+    public int getImageIndex() {
+        return 0;
+    }
+        
+    @Override
     public GridCoverageWriter createWriter() throws DataStoreException {
         //TODO
         throw new DataStoreException("Not supported yet.");

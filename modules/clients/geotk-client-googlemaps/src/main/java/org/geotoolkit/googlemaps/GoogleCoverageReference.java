@@ -57,6 +57,11 @@ public class GoogleCoverageReference implements CoverageReference, PyramidalMode
     }
 
     @Override
+    public int getImageIndex() {
+        return 0;
+    }
+        
+    @Override
     public StaticGoogleMapsServer getStore() {
         return server;
     }

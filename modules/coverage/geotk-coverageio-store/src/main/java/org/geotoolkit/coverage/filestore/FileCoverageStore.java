@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
@@ -33,9 +34,9 @@ import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.coverage.CoverageStoreFactory;
 import org.geotoolkit.coverage.CoverageStoreFinder;
 import org.geotoolkit.feature.DefaultName;
+import org.geotoolkit.image.io.NamedImageStore;
 import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.storage.DataStoreException;
-import org.geotoolkit.util.XArrays;
 import org.opengis.feature.type.Name;
 import org.opengis.parameter.ParameterValueGroup;
 
@@ -97,21 +98,51 @@ public class FileCoverageStore extends AbstractCoverageStore{
             //don't comment this block, This raise an error if no reader for the file can be found
             //this way we are sure that the file is an image.
             final ImageReader reader = createReader(candidate);
-            reader.dispose();
-
             final String fullName = candidate.getName();
             final int idx = fullName.lastIndexOf('.');
             final String filename = fullName.substring(0, idx);
             final String nmsp = getDefaultNamespace();
-            final Name name = new DefaultName(nmsp,filename);
-            final FileCoverageReference previous = names.put(
-                    name, 
-                    new FileCoverageReference(this,name,candidate));
+                        
+            final int nbImage = reader.getNumImages(true);
             
-            if(previous != null){
-                getLogger().log(Level.WARNING, "Several files with name : "+name+" exist in folder :" + root.getPath());
+            if(reader instanceof NamedImageStore){
+                //try to find a proper name for each image
+                final NamedImageStore nis = (NamedImageStore) reader;
+                
+                final List<String> imageNames = nis.getImageNames();
+                for(int i=0,n=imageNames.size();i<n;i++){
+                    final String in = imageNames.get(i);
+                    final Name name = new DefaultName(nmsp,filename+"."+in);
+                    final FileCoverageReference previous = names.put(
+                            name, 
+                            new FileCoverageReference(this,name,candidate,i));
+
+                    if(previous != null){
+                        getLogger().log(Level.WARNING, "Several files with name : "+name+" exist in folder :" + root.getPath());
+                    }
+                }
+                
+            }else{
+                for(int i=0;i<nbImage;i++){
+                    final Name name;
+                    if(nbImage == 1){
+                        //don't number it if there is only one
+                        name = new DefaultName(nmsp,filename);
+                    }else{
+                        name = new DefaultName(nmsp,filename+"."+i);
+                    }
+                    
+                    final FileCoverageReference previous = names.put(
+                            name, 
+                            new FileCoverageReference(this,name,candidate,i));
+
+                    if(previous != null){
+                        getLogger().log(Level.WARNING, "Several files with name : "+name+" exist in folder :" + root.getPath());
+                    }
+                }
             }
             
+            reader.dispose();
 
         } catch (Exception ex) {
             //Exception type is not specified cause we can get IOException as IllegalArgumentException.

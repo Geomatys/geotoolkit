@@ -58,7 +58,7 @@ public class MapContextDemo {
         //create a coverage layer
         final GridCoverageReader reader = openWorldFile();
         final MutableStyle coverageStyle = SF.style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER);
-        final CoverageMapLayer coverageLayer = MapBuilder.createCoverageLayer(reader, coverageStyle,"coverage");
+        final CoverageMapLayer coverageLayer = MapBuilder.createCoverageLayer(reader, 0, coverageStyle,"coverage");
 
         //create a WMS layer
         final WebMapServer server = new WebMapServer(new URL("http://demo.geomatys.com/constellation/WS/wms"), WMSVersion.v130);

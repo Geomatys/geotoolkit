@@ -55,6 +55,11 @@ public class WMTSCoverageReference implements CoverageReference, PyramidalModel{
     public boolean isWritable() throws DataStoreException {
         return false;
     }
+    
+    @Override
+    public int getImageIndex() {
+        return 0;
+    }
 
     @Override
     public GridCoverageWriter createWriter() throws DataStoreException {

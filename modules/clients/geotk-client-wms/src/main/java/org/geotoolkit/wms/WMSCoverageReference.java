@@ -242,6 +242,11 @@ public class WMSCoverageReference implements CoverageReference{
     public boolean isWritable() throws DataStoreException {
         return false;
     }
+    
+    @Override
+    public int getImageIndex() {
+        return 0;
+    }
 
     @Override
     public GridCoverageWriter createWriter() throws DataStoreException {
