@@ -20,6 +20,7 @@ import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -81,7 +82,8 @@ public class ChoiceEditor extends PropertyValueEditor implements ActionListener{
      * return list of possible values if restriction exist. null otherwise
      */
     private static List<Object> extractChoices(PropertyType candidate){
-        final List<Object> choices = new ArrayList<Object>();
+        Class clazz = candidate.getBinding();
+        final List choices = new ArrayList<Object>();
         final List<Filter> restrictions = candidate.getRestrictions();
         for(Filter f : restrictions){
             f.accept(new DefaultFilterVisitor() {
@@ -99,10 +101,13 @@ public class ChoiceEditor extends PropertyValueEditor implements ActionListener{
 
             }, choices);
         }
-
+        
         if(choices.isEmpty()){
             return null;
         }else{
+            if (Comparable.class.isAssignableFrom(clazz)) {
+                Collections.sort(choices);
+            }
             return choices;
         }
 
