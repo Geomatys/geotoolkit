@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2009, Geomatys
+ *    (C) 2009 - 2012, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -63,6 +63,16 @@ public abstract class AbstractProcess implements Process {
     @Override
     public ParameterValueGroup getInput() {
         return inputParameters;
+    }
+
+    /**
+     * Get the process version. By default, return {@code 1.0}. Subclasses should override
+     * this method if they need to specify their own versions.
+     *
+     * @return The process version. By default {@code 1.0}.
+     */
+    public String getVersion() {
+        return "1.0";
     }
 
     /**
