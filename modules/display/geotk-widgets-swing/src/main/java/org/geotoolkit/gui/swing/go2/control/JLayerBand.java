@@ -72,6 +72,7 @@ import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.TemporalCRS;
 import org.opengis.referencing.crs.VerticalCRS;
+import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.opengis.style.Description;
@@ -158,9 +159,14 @@ public class JLayerBand extends JNavigatorBand implements LayerListener{
             
             final CoordinateSystem cs = env.getCoordinateReferenceSystem().getCoordinateSystem();
             for(int i=0;i<cs.getDimension();i++){
-                CoordinateSystemAxis csa = cs.getAxis(i);
+                final CoordinateSystemAxis csa = cs.getAxis(i);
+                final AxisDirection direction = csa.getDirection();
                 
-                if(!csa.getName().getCode().equalsIgnoreCase(axis.getName().getCode())){
+                if(axis instanceof TemporalCRS){
+                    if(!(AxisDirection.FUTURE.equals(direction) || AxisDirection.PAST.equals(direction))){
+                        continue;
+                    }
+                }else if(!csa.getName().getCode().equalsIgnoreCase(axis.getName().getCode())){
                     continue;
                 }
                                 
