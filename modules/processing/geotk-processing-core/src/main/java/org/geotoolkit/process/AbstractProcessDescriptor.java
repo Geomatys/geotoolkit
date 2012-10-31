@@ -36,18 +36,20 @@ import static org.geotoolkit.util.ArgumentChecks.*;
  * @module pending
  */
 public abstract class AbstractProcessDescriptor implements ProcessDescriptor {
-    
+    private static final String DEFAULT_VERSION = "1.0";
+
     private final Identifier id;
     private final InternationalString abs;
     private final InternationalString displayName;
     private final ParameterDescriptorGroup inputDesc;
     private final ParameterDescriptorGroup outputdesc;
+    private final String version;
 
     public AbstractProcessDescriptor(final String name, final Identification factoryId, final InternationalString abs,
             final ParameterDescriptorGroup inputDesc, final ParameterDescriptorGroup outputdesc) {
         this(new DerivateIdentifier(name, factoryId),abs,inputDesc,outputdesc);
     }
-    
+
     public AbstractProcessDescriptor(final String name, final Identification factoryId, final InternationalString abs,
             final InternationalString displayName, final ParameterDescriptorGroup inputDesc, final ParameterDescriptorGroup outputdesc) {
         this(new DerivateIdentifier(name, factoryId), abs, displayName, inputDesc, outputdesc);
@@ -57,9 +59,14 @@ public abstract class AbstractProcessDescriptor implements ProcessDescriptor {
             final ParameterDescriptorGroup inputDesc, final ParameterDescriptorGroup outputdesc) {
         this(id, abs, null, inputDesc, outputdesc);
     }
-    
+
     public AbstractProcessDescriptor(final Identifier id, final InternationalString abs, final InternationalString displayName,
             final ParameterDescriptorGroup inputDesc, final ParameterDescriptorGroup outputdesc) {
+        this(id, abs, displayName, inputDesc, outputdesc, DEFAULT_VERSION);
+    }
+
+    public AbstractProcessDescriptor(final Identifier id, final InternationalString abs, final InternationalString displayName,
+            final ParameterDescriptorGroup inputDesc, final ParameterDescriptorGroup outputdesc, final String version) {
         ensureNonNull("id", id);
         ensureNonNull("abs", abs);
         ensureNonNull("inputDesc", inputDesc);
@@ -69,9 +76,10 @@ public abstract class AbstractProcessDescriptor implements ProcessDescriptor {
         this.displayName = displayName;
         this.inputDesc = inputDesc;
         this.outputdesc = outputdesc;
+        this.version = (version == null) ? DEFAULT_VERSION : version;
     }
-     
-   
+
+
 
     @Override
     public Identifier getIdentifier() {
@@ -82,7 +90,7 @@ public abstract class AbstractProcessDescriptor implements ProcessDescriptor {
     public InternationalString getDisplayName() {
         return displayName;
     }
-    
+
     @Override
     public InternationalString getProcedureDescription() {
         return abs;
@@ -98,7 +106,15 @@ public abstract class AbstractProcessDescriptor implements ProcessDescriptor {
         return outputdesc;
     }
 
-    
+    /**
+     * Get the process version. By default, return {@code 1.0}.
+     *
+     * @return The process version. By default {@code 1.0}.
+     */
+    public String getVersion() {
+        return version;
+    }
+
     @Override
     public Collection<? extends Citation> getSoftwareReferences() {
         return Collections.emptySet();
@@ -118,8 +134,8 @@ public abstract class AbstractProcessDescriptor implements ProcessDescriptor {
     public Collection<? extends Algorithm> getAlgorithms() {
         return Collections.emptySet();
     }
-    
-    
+
+
     protected static class DerivateIdentifier implements Identifier{
 
         private final String code;
@@ -160,8 +176,8 @@ public abstract class AbstractProcessDescriptor implements ProcessDescriptor {
         sb.append(inputDesc.toString());
         sb.append(outputdesc.toString());
         return sb.toString();
-        
+
     }
 
-    
+
 }

@@ -66,16 +66,6 @@ public abstract class AbstractProcess implements Process {
     }
 
     /**
-     * Get the process version. By default, return {@code 1.0}. Subclasses should override
-     * this method if they need to specify their own versions.
-     *
-     * @return The process version. By default {@code 1.0}.
-     */
-    public String getVersion() {
-        return "1.0";
-    }
-
-    /**
      * {@linkplain #execute() Executes} the process and returns the {@linkplain #outputParameters
      * output parameters}. This method takes care of invoking the
      * {@link ProcessListener#started(ProcessEvent) started} and
