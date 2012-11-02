@@ -185,18 +185,6 @@ public class SpatialMetadataFormatBuilder extends Builder<SpatialMetadataFormat>
     }
 
     /**
-     * Creates a builder for the given metadata format. This method is not public, because
-     * doing so would give a way to modify a published instance of metadata format.
-     *
-     * @deprecated To be removed after the deprecated methods invoking this constructor
-     *             have been removed.
-     */
-    @Deprecated
-    SpatialMetadataFormatBuilder(final SpatialMetadataFormat metadata) {
-        this.metadata = metadata;
-    }
-
-    /**
      * The map of children types to substitute by other types. This map is initially empty.
      * Users can add or remove entries in this map before to invoke any {@code addTree} method.
      * <p>

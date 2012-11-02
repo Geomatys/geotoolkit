@@ -31,9 +31,6 @@ import org.geotoolkit.lang.Debug;
 import org.geotoolkit.lang.Configuration;
 import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.util.converter.Classes;
-import org.geotoolkit.metadata.iso.citation.Citations;
-import org.geotoolkit.metadata.iso.citation.DefaultCitation;
-import org.geotoolkit.metadata.iso.citation.DefaultResponsibleParty;
 
 
 /**
@@ -71,83 +68,6 @@ public class FormattableObject implements Formattable {
      * The formatter for the {@link #toWKT()} method.
      */
     private static final ThreadLocal<Formatter> FORMATTER = new ThreadLocal<>();
-
-    /**
-     * The indentation value to give to the {@link #toWKT(int)} method for formatting the complete
-     * object on a single line.
-     *
-     * @since 2.6
-     *
-     * @deprecated Moved to {@link WKTFormat#SINGLE_LINE} in order to reduce the amount
-     * of declarations in this base class. The raison is that {@code FormattableObject}
-     * is extended by a lot of objects, and those rarely-used WKT stuff are distracting.
-     */
-    @Deprecated
-    public static final int SINGLE_LINE = 0;
-
-    /**
-     * Frequently used authority for formatting WKT. This is the same reference than
-     * the one declared in the {@link Citations} class, copied here for convenience.
-     *
-     * @see Citations#OGC
-     *
-     * @since 3.00
-     *
-     * @deprecated Replaced by {@link Convention#OGC}.
-     */
-    @Deprecated
-    public static final Citation OGC = Citations.OGC;
-
-    /**
-     * Frequently used authority for formatting WKT. This is the same reference than
-     * the one declared in the {@link Citations} class, copied here for convenience.
-     *
-     * @see Citations#EPSG
-     *
-     * @since 3.00
-     *
-     * @deprecated Replaced by {@link Convention#EPSG}.
-     */
-    @Deprecated
-    public static final Citation EPSG = Citations.EPSG;
-
-    /**
-     * Frequently used authority for formatting WKT. This is the same reference than
-     * the one declared in the {@link Citations} class, copied here for convenience.
-     *
-     * @see Citations#GEOTIFF
-     *
-     * @since 3.00
-     *
-     * @deprecated Replaced by {@link Convention#GEOTIFF}.
-     */
-    @Deprecated
-    public static final Citation GEOTIFF = Citations.GEOTIFF;
-
-    /**
-     * A special citation for formatting objects as stored internally by Geotk. This citation
-     * can be given to the {@code authority} argument of the {@link #toWKT(Citation,int)} method.
-     * In the majority of cases, the result will be identical to the one we would get using the
-     * {@link #OGC} authority. However in the particular case of map projections, the result may be
-     * quite different because of the way Geotk separates the linear from the non-linear parameters.
-     * <p>
-     * This citation is used only for debugging purpose.
-     *
-     * @see Formatter#isInternalWKT()
-     *
-     * @since 3.00
-     *
-     * @deprecated Replaced by {@link Convention#INTERNAL}.
-     */
-    @Debug
-    @Deprecated
-    public static final Citation INTERNAL;
-    static {
-        final DefaultCitation c = new DefaultCitation("Internal WKT");
-        c.getCitedResponsibleParties().add(DefaultResponsibleParty.GEOTOOLKIT);
-        c.freeze();
-        INTERNAL = c;
-    }
 
     /**
      * The default indentation value.

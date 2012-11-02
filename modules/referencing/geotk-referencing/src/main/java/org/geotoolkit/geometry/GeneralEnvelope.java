@@ -244,10 +244,6 @@ public class GeneralEnvelope extends ArrayEnvelope implements Cloneable, Seriali
      * <b>Note:</b> The convention is specified as a {@link PixelInCell} code instead than
      * the more detailed {@link PixelOrientation}, because the later is restricted to the
      * two-dimensional case while the former can be used for any number of dimensions.
-     * <p>
-     * <b>Note:</b> The envelope created by this constructor is subject to rounding errors.
-     * Consider invoking {@link #roundIfAlmostInteger(double, int)} after construction for
-     * fixing them.
      *
      * @param gridEnvelope The grid envelope in integer coordinates.
      * @param anchor       Whatever grid coordinates map to pixel center or pixel corner.
@@ -760,38 +756,6 @@ public class GeneralEnvelope extends ArrayEnvelope implements Cloneable, Seriali
         final GeneralEnvelope envelope = new GeneralEnvelope(newDim);
         System.arraycopy(ordinates, lower,        envelope.ordinates, 0,      newDim);
         System.arraycopy(ordinates, lower+curDim, envelope.ordinates, newDim, newDim);
-        return envelope;
-    }
-
-    /**
-     * Returns a new envelope with the same values than this envelope minus the
-     * specified range of dimensions.
-     *
-     * @param  lower The first dimension to omit, inclusive.
-     * @param  upper The last  dimension to omit, exclusive.
-     * @return The sub-envelope.
-     * @throws IndexOutOfBoundsException if an index is out of bounds.
-     *
-     * @deprecated The implementation of this method was broken. Since this method was not
-     * used anymore (which explain why we didn't noticed its bug), it will be removed.
-     */
-    @Deprecated
-    public GeneralEnvelope getReducedEnvelope(final int lower, final int upper)
-            throws IndexOutOfBoundsException
-    {
-        final int curDim = ordinates.length >>> 1;
-        final int rmvDim = upper - lower;
-        if (lower<0 || lower>curDim) {
-            throw new IndexOutOfBoundsException(Errors.format(
-                    Errors.Keys.ILLEGAL_ARGUMENT_$2, "lower", lower));
-        }
-        if (rmvDim<0 || upper>curDim) {
-            throw new IndexOutOfBoundsException(Errors.format(
-                    Errors.Keys.ILLEGAL_ARGUMENT_$2, "upper", upper));
-        }
-        final GeneralEnvelope envelope = new GeneralEnvelope(curDim - rmvDim);
-        System.arraycopy(ordinates, 0,     envelope.ordinates, 0,            lower);
-        System.arraycopy(ordinates, lower, envelope.ordinates, upper, curDim-upper);
         return envelope;
     }
 

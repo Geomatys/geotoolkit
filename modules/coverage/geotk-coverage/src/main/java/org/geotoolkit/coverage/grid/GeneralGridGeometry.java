@@ -121,14 +121,6 @@ public class GeneralGridGeometry implements GridGeometry, Serializable {
     public static final int EXTENT = 4;
 
     /**
-     * @deprecated Renamed {@link #EXTENT}.
-     *
-     * @since 2.2
-     */
-    @Deprecated
-    public static final int GRID_RANGE = EXTENT;
-
-    /**
      * A bitmask to specify the validity of the {@linkplain #getGridToCRS() grid to CRS}
      * transform. This is given in argument to the {@link #isDefined(int)} method.
      *

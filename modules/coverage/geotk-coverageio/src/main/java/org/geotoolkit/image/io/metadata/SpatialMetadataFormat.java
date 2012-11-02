@@ -27,21 +27,16 @@ import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.metadata.IIOMetadataFormat;
 import javax.imageio.metadata.IIOMetadataFormatImpl;
 
-import org.opengis.util.CodeList;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.Metadata;
 import org.opengis.metadata.acquisition.AcquisitionInformation;
 import org.opengis.metadata.acquisition.EnvironmentalRecord;
 import org.opengis.metadata.acquisition.Instrument;
-import org.opengis.metadata.acquisition.Objective;
 import org.opengis.metadata.acquisition.Platform;
-import org.opengis.metadata.citation.Citation;
 import org.opengis.metadata.content.Band;
 import org.opengis.metadata.content.ImageDescription;
-import org.opengis.metadata.content.RangeDimension;
 import org.opengis.metadata.content.RangeElementDescription;
 import org.opengis.metadata.identification.DataIdentification;
-import org.opengis.metadata.identification.Identification;
 import org.opengis.metadata.identification.Keywords;
 import org.opengis.metadata.identification.Resolution;
 import org.opengis.metadata.extent.Extent;
@@ -270,12 +265,6 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
     public static final String GEOTK_FORMAT_NAME = "geotk-coverageio_3.07";
 
     /**
-     * @deprecated Renamed {@link #GEOTK_FORMAT_NAME} for differentiating from ISO format name.
-     */
-    @Deprecated
-    public static final String FORMAT_NAME = GEOTK_FORMAT_NAME;
-
-    /**
      * The ISO-19115 format name, which is {@value}. This metadata format is big and supported
      * only by a few plugins like {@link org.geotoolkit.image.io.plugin.NetcdfImageReader}.
      * For applications that don't need to full verbosity of ISO 19115, consider using the
@@ -339,30 +328,6 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
     }
 
     /**
-     * The default instance for <cite>stream</cite> metadata format. This is the metadata
-     * format that apply to file as a whole, which may contain more than one image. The
-     * tree structure is documented in the <a href="#default-formats">class javadoc</a>.
-     *
-     * @since 3.05
-     *
-     * @deprecated Replaced by call to {@code getStreamInstance(GEOTK_FORMAT_NAME)}.
-     */
-    @Deprecated
-    public static final SpatialMetadataFormat STREAM = Geotk.STREAM;
-
-    /**
-     * The default instance for <cite>image</cite> metadata format. This
-     * is the metadata format that apply to a particular image in a file.
-     * The tree structure is documented in the <a href="#default-formats">class javadoc</a>.
-     *
-     * @since 3.05
-     *
-     * @deprecated Replaced by call to {@code getImageInstance(GEOTK_FORMAT_NAME)}.
-     */
-    @Deprecated
-    public static final SpatialMetadataFormat IMAGE = Geotk.IMAGE;
-
-    /**
      * Returns the <cite>stream</cite> metadata format for the given name. This is the metadata
      * format that apply to a file as a whole, which may contain more than one image. The
      * tree structure is documented in the <a href="#default-formats">class javadoc</a>.
@@ -424,104 +389,6 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
      */
     protected SpatialMetadataFormat(final String rootName) {
         super(rootName, CHILD_POLICY_SOME);
-    }
-
-    /**
-     * Adds a new element or attribute of the given type as a child of the root. This method
-     * performs the same work than {@link #addTree(MetadataStandard, Class, String, String, Map)},
-     * except that the element is added at the root and the name is inferred from the given type
-     * for convenience.
-     *
-     * @param standard     The metadata standard of the element or attribute to be added.
-     * @param type         The type of the element or attribute to be added.
-     * @param substitution The map of children types to substitute by other types, or {@code null}.
-     *
-     * @deprecated Replaced by {@link SpatialMetadataFormatBuilder}.
-     */
-    @Deprecated
-    protected void addTree(final MetadataStandard standard, final Class<?> type,
-            final Map<Class<?>,Class<?>> substitution)
-    {
-        ensureNonNull("standard", standard);
-        ensureNonNull("type",     type);
-        addTree(standard, type, type.getSimpleName(), getRootName(), substitution);
-    }
-
-    /**
-     * Adds a new element or attribute of the given type and name as a child of the given node. If
-     * the given type is a metadata, then that child is {@linkplain #addElement(String,String,int)
-     * added as an element} and all its children are added recursively. Otherwise the type is
-     * {@linkplain #addAttribute(String,String,int,boolean,String) added as an attribute}.
-     *
-     * {@section Element type}
-     * This method expects a {@code type} argument, which can be a {@link CodeList} subclass,
-     * one of the interfaces member of the given metadata {@code standard}, or a simple JSE
-     * type (boolean, number of {@link String}). Do <strong>not</strong> specify collection
-     * types, since the type of collection elements can not be inferred easily. To specify
-     * a multi-occurrence, use the array type instead (e.g. {@code CoordinateSystemAxis[].class}).
-     *
-     * {@section Substitution map}
-     * This method can be given an optional <cite>substitution map</cite>. If this map is non
-     * null, then every occurrence of a class in the set of keys is replaced by the associated
-     * class in the collection of values. The purpose of this map is to:
-     *
-     * <ul>
-     *   <li><p>Replace a base class by some specialized subclass. Since {@code IIOMetadata} is
-     *   about grided data (not generic {@code Feature}s), the exact subtype is often known at
-     *   compile time, and we want the additional attributes to be declared unconditionally.
-     *   Example:</p>
-     *
-     * <blockquote><pre>substitution.put({@linkplain RangeDimension}.class, {@linkplain Band}.class);</pre></blockquote></li>
-     *
-     *   <li><p>Exclude a particular class by setting the replacement to {@code null}. This is used
-     *   for excluding large tree of metadata which may not be applicable. Example:</p>
-     *
-     * <blockquote><pre>substitution.put({@linkplain Objective}.class, null);</pre></blockquote></li>
-     *
-     *   <li><p>Replace an element class (including the whole tree behind it) by a single attribute.
-     *   This simplification is especially useful for {@code Citation} because they typically appear
-     *   in many different places with the same name ("<cite>citation</cite>"), while Image I/O does
-     *   not allow many elements to have the same name (actually this is not strictly forbidden, but
-     *   the getter methods return information only about the first occurrence of a given name).
-     *   Converting an element to an attribute allow it to appear with the same name under different
-     *   nodes, and can make the tree considerably simpler (at the cost of losing all the sub-tree
-     *   below the converted element). Example:</p>
-     *
-     * <blockquote><pre>substitution.put({@linkplain Citation}.class, String.class);</pre></blockquote></li>
-     *
-     *   <li><p>Replace a collection by a singleton, by setting the source type to an array and the
-     *   target type to the element of that array. This is useful when a collection seems an overkill
-     *   for the specific case of stream or image metadata. Example:</p>
-     *
-     * <blockquote><pre>substitution.put({@linkplain Identification}[].class, {@linkplain Identification}.class);</pre></blockquote></li>
-     * </ul>
-     *
-     * The substitution map applies only to children (if any), not to the type given directly to this
-     * method.
-     *
-     * @param standard      The metadata standard of the element or attribute to be added.
-     * @param type          The type of the element or attribute to be added (see javadoc).
-     * @param elementName   The name of the element or attribute node to be added.
-     * @param parentName    The name of the parent node to where to add the child.
-     * @param substitution  The map of children types to substitute by other types (see javadoc),
-     *                      or {@code null} if none.
-     *
-     * @deprecated Replaced by {@link SpatialMetadataFormatBuilder}.
-     */
-    @Deprecated
-    protected void addTree(final MetadataStandard standard, final Class<?> type,
-            final String elementName, final String parentName,
-            final Map<Class<?>,Class<?>> substitution)
-    {
-        ensureNonNull("standard",    standard);
-        ensureNonNull("type",        type);
-        ensureNonNull("elementName", elementName);
-        ensureNonNull("parentName",  parentName);
-        final SpatialMetadataFormatBuilder builder = new SpatialMetadataFormatBuilder(this);
-        if (substitution != null) {
-            builder.substitutions().putAll(substitution);
-        }
-        builder.addTree(standard, type, elementName, parentName, false);
     }
 
     /**

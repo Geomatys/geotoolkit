@@ -484,15 +484,6 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
         }
     }
 
-    /**
-     * @deprecated Not supported anymore.
-     *
-     * @since 2.5
-     */
-    @Deprecated
-    public static synchronized void resetWarnings() {
-    }
-
 
 
 

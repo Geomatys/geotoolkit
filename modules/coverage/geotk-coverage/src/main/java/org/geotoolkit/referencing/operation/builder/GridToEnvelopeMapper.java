@@ -259,14 +259,6 @@ public class GridToEnvelopeMapper {
      * @throws IllegalStateException if the grid envelope has not yet been defined.
      */
     public GridEnvelope getGridExtent() throws IllegalStateException {
-        return getGridRange();
-    }
-
-    /**
-     * @deprecated Renamed {@link #getGridExtent()}.
-     */
-    @Deprecated
-    public GridEnvelope getGridRange() throws IllegalStateException {
         if (gridExtent == null) {
             throw new IllegalStateException(Errors.format(
                     Errors.Keys.NO_PARAMETER_VALUE_$1, "gridEnvelope"));
@@ -282,14 +274,6 @@ public class GridToEnvelopeMapper {
      * @since 3.20 (derived from 2.3)
      */
     public void setGridExtent(final GridEnvelope extent) {
-        setGridRange(extent);
-    }
-
-    /**
-     * @deprecated Renamed {@link #setGridExtent(GridEnvelope)}.
-     */
-    @Deprecated
-    public void setGridRange(final GridEnvelope extent) {
         ensureNonNull("extent", extent);
         ensureDimensionMatch(extent, envelope, true);
         if (!Objects.equals(gridExtent, extent)) {
@@ -308,14 +292,6 @@ public class GridToEnvelopeMapper {
      * @since 3.20 (derived from 3.15)
      */
     public void setGridExtent(final Rectangle extent) {
-        setGridRange(extent);
-    }
-
-    /**
-     * @deprecated Renamed {@link #setGridExtent(GridEnvelope)}.
-     */
-    @Deprecated
-    public void setGridRange(final Rectangle extent) {
         final GridEnvelope ge;
         if (extent instanceof GridEnvelope) {
             ge = (GridEnvelope) extent;
@@ -339,14 +315,6 @@ public class GridToEnvelopeMapper {
      * @since 3.20 (derived from 3.15)
      */
     public void setGridExtent(final int x, final int y, final int width, final int height) {
-        setGridRange(x, y, width, height);
-    }
-
-    /**
-     * @deprecated Renamed {@link #setGridExtent(GridEnvelope)}.
-     */
-    @Deprecated
-    public void setGridRange(final int x, final int y, final int width, final int height) {
         setGridExtent((GridEnvelope) new GridEnvelope2D(x, y, width, height));
     }
 

@@ -1624,20 +1624,6 @@ public final class XArrays extends Static {
     }
 
     /**
-     * @deprecated Renamed {@link #unionSorted(int[], int[])}.
-     *
-     * @param  array1 The first array.
-     * @param  array2 The second array.
-     * @return The union of the given array without duplicated values.
-     *
-     * @since 3.04
-     */
-    @Deprecated
-    public static int[] union(final int[] array1, final int[] array2) {
-        return unionSorted(array1, array2);
-    }
-
-    /**
      * Returns the union of two sorted arrays. The input arrays shall be sorted in strictly
      * increasing order (for performance raison, this is verified only if assertions are enabled).
      * The output array is the union of the input arrays without duplicated values, with elements

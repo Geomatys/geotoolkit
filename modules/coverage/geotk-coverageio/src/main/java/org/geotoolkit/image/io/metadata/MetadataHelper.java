@@ -804,8 +804,8 @@ public class MetadataHelper implements Localized {
      *   <li>First, the given value is multiplied by 360. We choose the 360 value arbitrarily
      *       because it is a multiple of many commonly used factors: 2, 3, 4, 5, 6, 10, 60 and
      *       others.</li>
-     *   <li>If the result of the above step is {@linkplain XMath#roundIfAlmostInteger almost
-     *       an integer}, then round it, divide by 360 and return the result.</li>
+     *   <li>If the result of the above step is almost an integer,
+     *       then round it, divide by 360 and return the result.</li>
      *   <li>Otherwise return the given value unchanged (we do not return the result of
      *       multiplication followed by a division, in order to avoid additional rounding
      *       error).</li>
@@ -814,7 +814,6 @@ public class MetadataHelper implements Localized {
      * @param  value The value that we want to adjust.
      * @return The adjusted value, or the given value unchanged if no adjustment were found.
      *
-     * @see XMath#roundIfAlmostInteger(double, int)
      * @see XAffineTransform#roundIfAlmostInteger(AffineTransform, double)
      */
     public double adjustForRoundingError(final double value) {

@@ -20,7 +20,6 @@ package org.geotoolkit.display.shape;
 import java.awt.Shape;
 import java.awt.geom.Rectangle2D;
 import java.io.Serializable;
-import static java.lang.Double.doubleToLongBits;
 
 import org.geotoolkit.util.converter.Classes;
 
@@ -389,36 +388,6 @@ public class XRectangle2D extends Rectangle2D implements Serializable {
             y -= 0.5*height;
         }
         return shape.intersects(x, y, width, height);
-    }
-
-    /**
-     * Returns {@code true} if the two rectangles are equals up to an epsilon value.
-     *
-     * @param rect1 The first rectangle to test for equality.
-     * @param rect2 The second rectangle to test for equality.
-     * @return {@code true} if the rectangles are equal up to the tolerance value.
-     *
-     * @deprecated Use your own comparison method instead, so you can specify different
-     *             tolerance threshold along different axis.
-     */
-    @Deprecated
-    public static boolean equalsEpsilon(final Rectangle2D rect1, final Rectangle2D rect2) {
-        double dx = 0.5 * Math.abs(rect1.getWidth()  + rect2.getWidth());
-        double dy = 0.5 * Math.abs(rect1.getHeight() + rect2.getHeight());
-        if (dx > 0) dx *= EPS; else dx = EPS;
-        if (dy > 0) dy *= EPS; else dy = EPS;
-        return equalsEpsilon(rect1.getMinX(), rect2.getMinX(), dx) &&
-               equalsEpsilon(rect1.getMinY(), rect2.getMinY(), dy) &&
-               equalsEpsilon(rect1.getMaxX(), rect2.getMaxX(), dx) &&
-               equalsEpsilon(rect1.getMaxY(), rect2.getMaxY(), dy);
-    }
-
-    /**
-     * Compares the specified numbers with the specified tolerance.
-     */
-    @Deprecated
-    private static boolean equalsEpsilon(final double v1, final double v2, final double eps) {
-        return (Math.abs(v1 - v2) < eps) || (doubleToLongBits(v1) == doubleToLongBits(v2));
     }
 
     /**

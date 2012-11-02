@@ -280,14 +280,6 @@ public class ReferencingBuilder extends Builder<CoordinateReferenceSystem> {
     }
 
     /**
-     * @deprecated Renamed {@link #build()}.
-     */
-    @Deprecated
-    public CoordinateReferenceSystem getOptionalCRS() {
-        return build();
-    }
-
-    /**
      * Gets the coordinate reference system. If no CRS is explicitly defined, then a
      * {@linkplain MetadataNodeParser#warningOccurred warning is logged} and a
      * {@linkplain #getDefault(Class) default CRS} is returned, which is {@code null}

@@ -236,7 +236,7 @@ public class DefaultTemporalCRS extends AbstractSingleCRS implements TemporalCRS
      */
     private void initializeConverter() {
         origin   = getDatum().getOrigin().getTime();
-        toMillis = getAxis(0).getUnit().asType(Duration.class).getConverterTo(Units.MILLISECOND);
+        toMillis = getCoordinateSystem().getAxis(0).getUnit().asType(Duration.class).getConverterTo(Units.MILLISECOND);
     }
 
     /**

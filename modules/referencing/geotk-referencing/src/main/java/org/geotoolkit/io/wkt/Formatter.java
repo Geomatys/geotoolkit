@@ -46,7 +46,6 @@ import org.opengis.referencing.operation.OperationMethod;
 import org.opengis.util.CodeList;
 
 import org.geotoolkit.io.X364;
-import org.geotoolkit.lang.Debug;
 import org.geotoolkit.lang.Visitor;
 import org.geotoolkit.measure.Units;
 import org.geotoolkit.util.Strings;
@@ -879,24 +878,6 @@ public class Formatter {
      */
     public Convention getConvention() {
         return convention;
-    }
-
-    /**
-     * Returns {@code true} if the WKT should reflect the internal structure of the object.
-     * This is usually {@code true} only when debugging map projections.
-     *
-     * @return {@code true} for formatting internal WKT.
-     *
-     * @see Convention#INTERNAL
-     *
-     * @since 3.00
-     *
-     * @deprecated Replaced by {@code getConvention() == Convention.INTERNAL}.
-     */
-    @Debug
-    @Deprecated
-    public boolean isInternalWKT() {
-        return convention == Convention.INTERNAL;
     }
 
     /**

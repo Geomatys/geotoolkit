@@ -812,7 +812,6 @@ public abstract class AbstractMathTransform extends FormattableObject
         }
         final PathIterator     it = shape.getPathIterator(preTransform);
         final Path2D.Double  path = new Path2D.Double(it.getWindingRule());
-        final Point2D.Double ctrl = new Point2D.Double();
         final double[]     buffer = new double[6];
 
         double ax=0, ay=0;  // Coordinate of the last point before transform.
@@ -919,12 +918,11 @@ public abstract class AbstractMathTransform extends FormattableObject
             final Point2D ctrlPoint = ShapeUtilities.parabolicControlPoint(px, py,
                                                      buffer[0], buffer[1],
                                                      buffer[2], buffer[3],
-                                                     horizontal, ctrl);
+                                                     horizontal);
             px = buffer[2];
             py = buffer[3];
             if (ctrlPoint != null) {
-                assert ctrl == ctrlPoint;
-                path.quadTo(ctrl.x, ctrl.y, px, py);
+                path.quadTo(ctrlPoint.getX(), ctrlPoint.getY(), px, py);
             } else {
                 path.lineTo(px, py);
             }

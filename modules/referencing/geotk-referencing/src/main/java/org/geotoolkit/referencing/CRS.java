@@ -21,7 +21,6 @@ import java.util.Set;
 import java.util.Map;
 import java.util.List;
 import java.util.HashSet;
-import java.util.StringTokenizer;
 import java.util.NoSuchElementException;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
@@ -1453,38 +1452,5 @@ check:      while (lower != 0 || upper != dimension) {
      */
     static void unexpectedException(final String methodName, final Exception exception) {
         Logging.unexpectedException(CRS.class, methodName, exception);
-    }
-
-    /**
-     * Resets some aspects of the referencing system. The aspects to be reset are specified by
-     * a space or comma delimited string, which may include any of the following elements:
-     * <p>
-     * <ul>
-     *   <li>{@code "plugins"} for {@linkplain AuthorityFactoryFinder#scanForPlugins searching
-     *       the classpath for new plugins}.</li>
-     * </ul>
-     *
-     * @param aspects The aspects to reset, or {@code "all"} for all of them.
-     *        Unknown aspects are silently ignored.
-     *
-     * @since 2.5
-     *
-     * @deprecated This method doesn't do anything more than {@link AuthorityFactoryFinder#scanForPlugins()}.
-     */
-    @Deprecated
-    public static synchronized void reset(final String aspects) {
-        ensureNonNull("aspects", aspects);
-        final StringTokenizer tokens = new StringTokenizer(aspects, ", \t\n\r\f");
-        while (tokens.hasMoreTokens()) {
-            final String aspect = tokens.nextToken().trim();
-            final boolean all = aspect.equalsIgnoreCase("all");
-            if (all || aspect.equalsIgnoreCase("plugins")) {
-                AuthorityFactoryFinder.scanForPlugins();
-                standardFactory = null;
-                xyFactory       = null;
-                strictFactory   = null;
-                lenientFactory  = null;
-            }
-        }
     }
 }

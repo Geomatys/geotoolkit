@@ -874,29 +874,6 @@ public abstract class AbstractEnvelope implements Envelope {
     }
 
     /**
-     * Formats a {@code POLYGON} element from an envelope. This method formats the given envelope
-     * as a geometry in the <cite>Well Known Text</cite> (WKT) format. This is provided as an
-     * alternative to the {@code BOX} element formatted by {@link #toString(Envelope)}, because
-     * the {@code BOX} element is usually not considered a geometry while {@code POLYGON} is.
-     * <p>
-     * The output of this method can be {@linkplain GeneralEnvelope#GeneralEnvelope(String) parsed}
-     * by the {@link GeneralEnvelope} constructor.
-     *
-     * @param  envelope The envelope to format.
-     * @return The envelope as a {@code POLYGON} in WKT format.
-     *
-     * @see org.geotoolkit.io.wkt
-     *
-     * @since 3.09
-     *
-     * @deprecated Moved to {@link Envelopes#toPolygonWKT(Envelope)}.
-     */
-    @Deprecated
-    public static String toPolygonString(final Envelope envelope) {
-        return Envelopes.toPolygonWKT(envelope);
-    }
-
-    /**
      * Returns a hash value for this envelope.
      */
     @Override

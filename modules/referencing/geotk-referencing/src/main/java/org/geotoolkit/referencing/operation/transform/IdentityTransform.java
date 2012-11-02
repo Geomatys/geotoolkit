@@ -45,13 +45,9 @@ import org.geotoolkit.referencing.operation.MathTransforms;
  *
  * @since 2.0
  * @module
- *
- * @deprecated This class will become package-privated. Use {@link MathTransforms} static methods
- *             for creating instances of this class.
  */
-@Deprecated
 @Immutable
-public class IdentityTransform extends AbstractMathTransform implements LinearTransform, Serializable {
+final class IdentityTransform extends AbstractMathTransform implements LinearTransform, Serializable {
     /**
      * Serial number for inter-operability with different versions.
      */
@@ -71,21 +67,6 @@ public class IdentityTransform extends AbstractMathTransform implements LinearTr
      */
     protected IdentityTransform(final int dimension) {
         this.dimension = dimension;
-    }
-
-    /**
-     * Returns an identity transform of the specified dimension. In the special case of
-     * dimension 1 and 2, this method returns instances of {@link LinearTransform1D} or
-     * {@link AffineTransform2D} respectively.
-     *
-     * @param dimension The dimension of the transform to be returned.
-     * @return An identity transform of the specified dimension.
-     *
-     * @deprecated Replaced by {@link MathTransforms#identity(int)}.
-     */
-    @Deprecated
-    public static LinearTransform create(final int dimension) {
-        return MathTransforms.identity(dimension);
     }
 
     /**

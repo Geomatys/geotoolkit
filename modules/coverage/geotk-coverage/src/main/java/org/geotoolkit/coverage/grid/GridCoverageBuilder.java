@@ -1471,26 +1471,6 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
     }
 
     /**
-     * @deprecated Replaced by {@link Variable#getSampleRange()}.
-     *
-     * @return The current range of sample values.
-     */
-    @Deprecated
-    public NumberRange<?> getSampleRange() {
-        return variable(0).getSampleRange();
-    }
-
-    /**
-     * @deprecated Replaced by {@link Variable#setSampleRange(NumberRange)}.
-     *
-     * @param  range The new range of sample values, or {@code null}.
-     */
-    @Deprecated
-    public void setSampleRange(final NumberRange<?> range) {
-        variable(0).setSampleRange(range);
-    }
-
-    /**
      * @deprecated Replaced by {@link Variable#setSampleRange(int, int)}.
      *
      * @param  lower The lower sample value (inclusive), typically 0.
@@ -1861,22 +1841,6 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
     }
 
     /**
-     * Returns the image size.
-     *
-     * @return The current image size.
-     *
-     * @deprecated Replaced by {@link #getImageBounds()}.
-     */
-    @Deprecated
-    public Dimension getImageSize() {
-        try {
-            return getImageBounds().getSize();
-        } catch (InvalidGridGeometryException e) {
-            return null; // To preserve the contract of previous implementation.
-        }
-    }
-
-    /**
      * Sets the image size.
      *
      * @param size The new image size.
@@ -2231,20 +2195,6 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
     @Deprecated
     public void setBufferedImage(final BufferedImage image) {
         setRenderedImage(image);
-    }
-
-    /**
-     * Sets the buffered image by reading it from the given file. Invoking this method
-     * overwrite the {@linkplain #getImageSize() image size} with the given image size.
-     *
-     * @param file The file of the image to be wrapped by {@code GridCoverage2D}.
-     * @throws IOException if the image can't be read.
-     *
-     * @deprecated Use {@link org.geotoolkit.coverage.io.GridCoverageReader} instead.
-     */
-    @Deprecated
-    public void setBufferedImage(final File file) throws IOException {
-        setBufferedImage(ImageIO.read(file));
     }
 
     /**

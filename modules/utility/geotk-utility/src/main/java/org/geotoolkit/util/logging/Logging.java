@@ -26,8 +26,6 @@ import java.util.logging.Handler;
 import java.util.logging.LogRecord;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.SimpleFormatter;
-import java.lang.reflect.Method;
-import java.lang.reflect.InvocationTargetException;
 
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.lang.Configuration;
@@ -51,11 +49,11 @@ import org.geotoolkit.util.converter.Classes;
  *
  * {@section Configuration}
  * The log records can be redirected explicitly to an other logging framework using the
- * following method call (replace {@link LoggerFactory#COMMONS_LOGGING} by
- * {@link LoggerFactory#LOG4J} or an other framework if desired):
+ * following method call (replace {@link org.geotoolkit.util.logging.CommonsLoggerFactory}
+ * by any other framework if desired):
  *
  * {@preformat java
- *     Logging.GEOTOOLKIT.setLoggerFactory(LoggerFactory.COMMONS_LOGGING);
+ *     Logging.GEOTOOLKIT.setLoggerFactory(CommonsLoggerFactory.class);
  * }
  *
  * Note however that the above method invocation is performed automatically if the
@@ -175,38 +173,6 @@ public final class Logging extends Static {
     public static void log(final Class<?> classe, final String method, final LogRecord record) {
         record.setSourceClassName(classe.getCanonicalName());
         record.setSourceMethodName(method);
-        final Logger logger = getLogger(classe);
-        if (record.getLoggerName() == null) {
-            record.setLoggerName(logger.getName());
-        }
-        logger.log(record);
-    }
-
-    /**
-     * Logs the given record to the logger for the given class.
-     * This convenience method performs the following steps:
-     * <p>
-     * <ul>
-     *   <li>Get the logger using {@link #getLogger(Class)};</li>
-     *   <li>{@linkplain LogRecord#setLoggerName(String) Set the logger name} of the given record,
-     *       if not already set;</li>
-     *   <li>{@linkplain Logger#log(LogRecord) Log} the modified record.</li>
-     * </ul>
-     *
-     * {@note This method does not set the source class name because <code>LogRecord</code>
-     * can infer it automatically. However callers are encouraged to set the source class
-     * and method names themselves for more reliability.}
-     *
-     * @param classe The class for which to obtain a logger.
-     * @param record The record to log.
-     *
-     * @since 3.00
-     *
-     * @deprecated Replaced by {@link #log(Class, String, LogRecord)}, because experience suggests
-     * that letting the caller specifies himself the source class and method names is error prone.
-     */
-    @Deprecated
-    public static void log(final Class<?> classe, final LogRecord record) {
         final Logger logger = getLogger(classe);
         if (record.getLoggerName() == null) {
             record.setLoggerName(logger.getName());
@@ -378,69 +344,6 @@ public final class Logging extends Static {
     }
 
     /**
-     * Sets a new logger factory from a fully qualified class name. This method should be
-     * preferred to {@link #setLoggerFactory(LoggerFactory)} when the underlying logging
-     * framework is not guaranteed to be on the classpath.
-     *
-     * @param  className The fully qualified factory class name.
-     * @throws ClassNotFoundException if the specified class was not found.
-     * @throws IllegalArgumentException if the specified class is not a subclass of
-     *         {@link LoggerFactory}, or if no public static {@code getInstance()} method
-     *         has been found or can be executed.
-     *
-     * @see LoggerFactory#COMMONS_LOGGING
-     * @see LoggerFactory#LOG4J
-     *
-     * @deprecated The {@code META-INF/services} mechanism should be sufficient. This method
-     *             will be removed in order to reduce the weight of the Geotk library.
-     */
-    @Deprecated
-    @Configuration
-    public void setLoggerFactory(final String className)
-            throws ClassNotFoundException, IllegalArgumentException
-    {
-        final LoggerFactory<?> factory;
-        if (className == null) {
-            factory = null;
-        } else {
-            final Class<?> factoryClass;
-            try {
-                factoryClass = Class.forName(className);
-            } catch (NoClassDefFoundError error) {
-                throw factoryNotFound(className, error);
-            }
-            if (!LoggerFactory.class.isAssignableFrom(factoryClass)) {
-                throw new IllegalArgumentException(Errors.format(
-                        Errors.Keys.ILLEGAL_CLASS_$2, factoryClass, LoggerFactory.class));
-            }
-            try {
-                final Method method = factoryClass.getMethod("getInstance", (Class<?>[]) null);
-                factory = LoggerFactory.class.cast(method.invoke(null, (Object[]) null));
-            } catch (ReflectiveOperationException e) {
-                /*
-                 * Catching java.lang.Exception is usually bad practice, but there is really a lot
-                 * of checked exceptions when using reflection. Unfortunately there is nothing like
-                 * a "ReflectionException" parent class that we could catch instead. There is also
-                 * a few unchecked exception that we want to process here, like ClassCastException.
-                 */
-                Throwable cause = e;
-                if (e instanceof InvocationTargetException) {
-                    cause = e.getCause(); // Simplify the stack trace.
-                }
-                if (cause instanceof ClassNotFoundException) {
-                    throw (ClassNotFoundException) e;
-                }
-                if (cause instanceof NoClassDefFoundError) {
-                    throw factoryNotFound(className, (NoClassDefFoundError) cause);
-                }
-                throw new IllegalArgumentException(Errors.format(
-                        Errors.Keys.CANT_CREATE_FACTORY_FOR_TYPE_$1, className, cause));
-            }
-        }
-        setLoggerFactory(factory);
-    }
-
-    /**
      * Wraps a unchecked {@link NoClassDefFoundError} into a checked {@link ClassNotFoundException}.
      */
     private static ClassNotFoundException factoryNotFound(String name, NoClassDefFoundError error) {
@@ -455,7 +358,7 @@ public final class Logging extends Static {
      *     META-INF/services/org.geotoolkit.util.logging.LoggerFactory
      * }
      *
-     * The first factory found on the classpath is given to {@link #setLoggerFactory(String)}.
+     * The first factory found on the classpath is given to {@link #setLoggerFactory(Class)}.
      * If it can't be used (for example because of missing dependency), then the second factory
      * is tried, <i>etc.</i> until an acceptable factory is found.
      * <p>
