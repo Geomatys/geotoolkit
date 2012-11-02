@@ -215,7 +215,12 @@ public abstract class AbstractGetFeature extends AbstractRequest implements GetF
             final StringBuilder sb = new StringBuilder();
 
             for(final Name prop : propertyNames){
-                sb.append(DefaultName.toExtendedForm(prop)).append(',');
+                if(typeName != null && prop.getNamespaceURI() != null 
+                   && prop.getNamespaceURI().equals(typeName.getNamespaceURI())){
+                    sb.append(typeName.getPrefix()).append(':').append(prop.getLocalPart()).append(',');
+                }else{
+                    sb.append(DefaultName.toExtendedForm(prop)).append(',');
+                }
             }
 
             if(sb.length() > 0 && sb.charAt(sb.length()-1) == ','){

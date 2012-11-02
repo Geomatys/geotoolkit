@@ -137,7 +137,7 @@ public class WFSDataStore extends AbstractFeatureStore{
                     defaultCRS = "EPSG:"+defaultCRS.substring(last+1);
                 }
                 crs = CRS.decode(defaultCRS,getLongitudeFirst());
-                sft = requestType(typeName);                
+                sft = requestType(typeName);        
             } catch (IOException ex) {
                 getLogger().log(Level.WARNING, null, ex);
                 continue;
@@ -253,7 +253,15 @@ public class WFSDataStore extends AbstractFeatureStore{
     public Envelope getEnvelope(final Query query) throws DataStoreException {        
         final Name typeName = query.getTypeName();
         typeCheck(typeName);
-        return bounds.get(typeName);
+        if(   query.getCoordinateSystemReproject() == null 
+           && query.getFilter() == Filter.INCLUDE
+           && (query.getMaxFeatures() == null || query.getMaxFeatures() == Integer.MAX_VALUE)
+           && query.getStartIndex() == 0){
+            Envelope env = bounds.get(typeName);
+            if(env != null) return env;
+        }
+        
+        return super.getEnvelope(query);
     }
 
     /**
