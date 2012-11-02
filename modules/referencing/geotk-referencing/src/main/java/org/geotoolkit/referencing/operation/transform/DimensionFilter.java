@@ -371,6 +371,20 @@ public class DimensionFilter {
      * @throws FactoryException if the transform is not separable.
      */
     private MathTransform separateInput(final MathTransform transform) throws FactoryException {
+        /*
+         * -------- HACK BEGINS -------- (same than in 'separate(...)')
+         */
+        if (transform instanceof SeparableTransform) {
+            final MathTransform candidate = ((SeparableTransform) transform).subTransform(sourceDimensions, targetDimensions);
+            if (candidate != null) {
+                if (sourceDimensions == null) sourceDimensions = targetDimensions;
+                if (targetDimensions == null) targetDimensions = sourceDimensions;
+                return candidate;
+            }
+        }
+        /*
+         * -------- END OF HACK --------
+         */
         final int dimSource = transform.getSourceDimensions();
         final int dimTarget = transform.getTargetDimensions();
         final int dimInput  = sourceDimensions.length;
