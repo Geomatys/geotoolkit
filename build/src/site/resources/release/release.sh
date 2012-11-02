@@ -61,6 +61,7 @@ mvn site --activate-profiles \!no-site --define skipTests
 mvn org.geotoolkit.project:geotk-jar-collector:pack-specific --non-recursive
 echo "Copying the bundles to $GEOTK_SERVER:geotk-release"
 scp target/bundles/* $GEOTK_SERVER:geotk-release
+scp modules/analytics/geotk-openoffice/target/geotk-$NEW_VERSION.oxt $GEOTK_SERVER:geotk-release
 
 
 #
