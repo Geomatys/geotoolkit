@@ -19,16 +19,18 @@ package org.geotoolkit.wmc.xml.v110;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAnyElement;
+import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.ogc.xml.v100.LiteralType;
 
 
 /**
  * This allows additional elements to be added to support non WMS Layer services.
- * 
+ *
  * <p>Java class for ExtensionType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ExtensionType">
  *   &lt;complexContent>
@@ -40,14 +42,15 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ExtensionType", propOrder = {
     "any"
 })
+@XmlSeeAlso({LiteralType.class,org.geotoolkit.internal.jaxb.geometry.ObjectFactory.class})
 public class ExtensionType {
 
     @XmlAnyElement(lax = true)
@@ -55,11 +58,11 @@ public class ExtensionType {
 
     /**
      * Gets the value of the any property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Object }
-     *     
+     *
      */
     public Object getAny() {
         return any;
@@ -67,11 +70,11 @@ public class ExtensionType {
 
     /**
      * Sets the value of the any property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Object }
-     *     
+     *
      */
     public void setAny(final Object value) {
         this.any = value;
