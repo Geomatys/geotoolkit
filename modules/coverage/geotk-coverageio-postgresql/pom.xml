@@ -66,13 +66,25 @@
         </dependency>
         <dependency>
             <groupId>org.geotoolkit.pending</groupId>
-            <artifactId>geotk-filter</artifactId>
+            <artifactId>geotk-coverageio-store</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.geotoolkit.pending</groupId>
+            <artifactId>geotk-utility-jdbc</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.postgis</groupId>
+            <artifactId>postgis-jdbc</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>net.iharder</groupId>
+            <artifactId>base64</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.derby</groupId>
