@@ -29,6 +29,7 @@ import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageWriter;
 import javax.imageio.spi.ImageReaderSpi;
+import javax.imageio.stream.ImageInputStream;
 import org.geotoolkit.coverage.AbstractCoverageStore;
 import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.coverage.CoverageStoreFactory;
@@ -121,7 +122,7 @@ public class FileCoverageStore extends AbstractCoverageStore{
                         getLogger().log(Level.WARNING, "Several files with name : "+name+" exist in folder :" + root.getPath());
                     }
                 }
-                
+            
             }else{
                 for(int i=0;i<nbImage;i++){
                     final Name name;
@@ -131,7 +132,7 @@ public class FileCoverageStore extends AbstractCoverageStore{
                     }else{
                         name = new DefaultName(nmsp,filename+"."+i);
                     }
-                    
+
                     final FileCoverageReference previous = names.put(
                             name, 
                             new FileCoverageReference(this,name,candidate,i));
@@ -143,6 +144,9 @@ public class FileCoverageStore extends AbstractCoverageStore{
             }
             
             reader.dispose();
+            if (reader.getInput() instanceof ImageInputStream) {
+                ((ImageInputStream)reader.getInput()).close();
+            }
 
         } catch (Exception ex) {
             //Exception type is not specified cause we can get IOException as IllegalArgumentException.
