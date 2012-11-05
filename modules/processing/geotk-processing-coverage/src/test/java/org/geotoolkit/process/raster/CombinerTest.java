@@ -147,14 +147,6 @@ public class CombinerTest {
         RenderedImage img = (RenderedImage) toTest.getRenderedImage();
         //assertEquals(BufferedImage.TYPE_3BYTE_BGR, img.getDataType());
 
-        File f = new File(System.getProperty("user.home")+"/imageTest.bmp");
-        try {
-            ImageIO.write(img, "bmp", f);
-        } catch (IOException ex) {
-            Logger.getLogger(CombinerTest.class.getName()).log(Level.SEVERE, null, ex);
-            fail(ex.getMessage());
-        }
-
     }
 
     private Coverage createCoverage(RenderedImage img){
