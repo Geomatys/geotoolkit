@@ -34,7 +34,7 @@ import java.util.Collections;
 public class GroovyProcessingRegistry extends AbstractProcessingRegistry{
 
     /** factory name **/
-    public static final String NAME = "groovy";
+    public static final String NAME = "dynamic";
     public static final DefaultServiceIdentification IDENTIFICATION;
 
     static {
