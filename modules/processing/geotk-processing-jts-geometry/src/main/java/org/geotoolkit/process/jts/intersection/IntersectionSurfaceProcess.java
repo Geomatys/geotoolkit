@@ -21,7 +21,6 @@ import org.geotoolkit.geometry.jts.JTS;
 import static org.geotoolkit.parameter.Parameters.*;
 import org.geotoolkit.process.AbstractProcess;
 import org.geotoolkit.process.ProcessException;
-import org.geotoolkit.process.jts.JTSProcessingUtils;
 import static org.geotoolkit.process.jts.intersection.IntersectionSurfaceDescriptor.*;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -57,9 +56,9 @@ public class IntersectionSurfaceProcess extends AbstractProcess {
             Geometry geom2 = value(GEOM2, inputParameters);
 
             // ensure geometries are in the same CRS
-            final CoordinateReferenceSystem resultCRS = JTSProcessingUtils.getCommonCRS(geom1, geom2);
-            if (JTSProcessingUtils.isConversionNeeded(geom1, geom2)) {
-                geom2 = JTSProcessingUtils.convertToCRS(geom2, resultCRS);
+            final CoordinateReferenceSystem resultCRS = JTS.getCommonCRS(geom1, geom2);
+            if (JTS.isConversionNeeded(geom1, geom2)) {
+                geom2 = JTS.convertToCRS(geom2, resultCRS);
             }
 
             final Geometry intersection = (Geometry) geom1.intersection(geom2);
