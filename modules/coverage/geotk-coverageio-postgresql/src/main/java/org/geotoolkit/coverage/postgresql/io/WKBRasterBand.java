@@ -16,9 +16,6 @@
  */
 package org.geotoolkit.coverage.postgresql.io;
 
-import java.awt.image.DataBuffer;
-import static org.geotoolkit.coverage.postgresql.io.WKBRasterConstants.*;
-
 /**
  * PostGIS Raster band.
  * 
@@ -94,50 +91,11 @@ class WKBRasterBand {
     }
     
     public int getNbBytePerPixel() {
-        switch (pixelType) {
-            case PT_1BB:
-            case PT_2BUI:
-            case PT_4BUI:
-            case PT_8BUI:
-            case PT_8BSI:
-                return 1;
-            case PT_16BSI:
-            case PT_16BUI:
-                return 2;
-            case PT_32BSI:
-            case PT_32BUI:
-            case PT_32BF:
-                return 4;
-            case PT_64BF:
-                return 8;
-            default:
-                throw new IllegalArgumentException("unknowned pixel type : " + pixelType);
-        }
+        return WKBRasterConstants.getNbBytePerPixel(pixelType);
     }
     
     public int getDataBufferType(){
-        switch (pixelType) {
-            case PT_1BB:
-            case PT_2BUI:
-            case PT_4BUI:
-            case PT_8BUI:
-            case PT_8BSI:
-                return DataBuffer.TYPE_BYTE;
-            case PT_16BSI:
-                return DataBuffer.TYPE_USHORT;
-            case PT_16BUI:
-                return DataBuffer.TYPE_SHORT;
-            case PT_32BSI:
-                return DataBuffer.TYPE_INT;
-            case PT_32BUI:
-                return DataBuffer.TYPE_INT;
-            case PT_32BF:
-                return DataBuffer.TYPE_FLOAT;
-            case PT_64BF:
-                return DataBuffer.TYPE_DOUBLE;
-            default:
-                throw new IllegalArgumentException("unknowned pixel type : " + pixelType);
-        }
+        return WKBRasterConstants.getDataBufferType(pixelType);
     }
 
     @Override
