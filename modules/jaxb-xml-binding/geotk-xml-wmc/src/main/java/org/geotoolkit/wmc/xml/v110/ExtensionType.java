@@ -80,4 +80,26 @@ public class ExtensionType {
         this.any = value;
     }
 
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 19 * hash + (this.any != null ? this.any.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final ExtensionType other = (ExtensionType) obj;
+        if (this.any != other.any && (this.any == null || !this.any.equals(other.any))) {
+            return false;
+        }
+        return true;
+    }
+
 }
