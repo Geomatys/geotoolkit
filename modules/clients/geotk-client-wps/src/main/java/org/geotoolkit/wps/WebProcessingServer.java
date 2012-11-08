@@ -74,7 +74,7 @@ import org.opengis.util.NoSuchIdentifierException;
 /**
  * WPS server, used to aquiere capabilites and requests process.
  *
- * @author Quentin Boileau @modul pending
+ * @author Quentin Boileau @module pending
  */
 public class WebProcessingServer extends AbstractServer implements ProcessingRegistry {
 
