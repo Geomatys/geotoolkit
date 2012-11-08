@@ -452,22 +452,6 @@ public final class ShapeUtilities extends Static {
     }
 
     /**
-     * @deprecated The {@code dest} argument has been removed for consistency with other methods
-     * in this class.
-     */
-    @Deprecated
-    public static Point2D parabolicControlPoint(final double x0, final double y0,
-            double x1, double y1, double x2, double y2, final boolean horizontal, Point2D dest)
-    {
-        final Point2D result = parabolicControlPoint(x0, y0, x1, y1, x2, y2, horizontal);
-        if (result != null && dest != null) {
-            dest.setLocation(result);
-            return dest;
-        }
-        return result;
-    }
-
-    /**
      * Returns a circle passing by the 3 given points. The distance between the returned
      * point and any of the given points will be constant; it is the circle radius.
      *

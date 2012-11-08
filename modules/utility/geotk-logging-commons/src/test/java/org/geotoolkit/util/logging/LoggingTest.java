@@ -41,7 +41,6 @@ public final class LoggingTest {
         assertTrue(Logging.GEOTOOLKIT.getLoggerFactory() instanceof CommonsLoggerFactory);
         Logger logger = Logging.getLogger("org.geotoolkit");
         assertTrue(logger instanceof CommonsLogger);
-        assertEquals(LoggerFactory.COMMONS_LOGGING, Logging.GEOTOOLKIT.getLoggerFactory().getClass().getName());
         /*
          * Tests level setting, ending with OFF in order to avoid
          * polluting the standard output stream with this test.

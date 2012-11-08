@@ -93,12 +93,8 @@ public class MillerCylindrical extends MapProjection {
      *
      * This parameter is <a href="package-summary.html#Obligation">mandatory</a>.
      * Valid values range is [-180 &hellip; 180]&deg; and default value is 0&deg;.
-     *
-     * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
-     * descriptor(String)}</code> instead.
      */
-    @Deprecated
-    public static final ParameterDescriptor<Double> LONGITUDE_OF_CENTRE;
+    static final ParameterDescriptor<Double> LONGITUDE_OF_CENTRE;
 
     /**
      * The operation parameter descriptor for the {@linkplain
@@ -108,12 +104,8 @@ public class MillerCylindrical extends MapProjection {
      * This parameter is <a href="package-summary.html#Obligation">optional</a>
      * (its value is normally zero).
      * Valid values range is [-90 &hellip; 90]&deg; and default value is 0&deg;.
-     *
-     * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
-     * descriptor(String)}</code> instead.
      */
-    @Deprecated
-    public static final ParameterDescriptor<Double> LATITUDE_OF_CENTRE;
+    static final ParameterDescriptor<Double> LATITUDE_OF_CENTRE;
 
     /**
      * The operation parameter descriptor for the {@linkplain
@@ -122,12 +114,8 @@ public class MillerCylindrical extends MapProjection {
      *
      * This parameter is <a href="package-summary.html#Obligation">mandatory</a>.
      * Valid values range is unrestricted and default value is 0 metre.
-     *
-     * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
-     * descriptor(String)}</code> instead.
      */
-    @Deprecated
-    public static final ParameterDescriptor<Double> FALSE_EASTING;
+    static final ParameterDescriptor<Double> FALSE_EASTING;
 
     /**
      * The operation parameter descriptor for the {@linkplain
@@ -136,12 +124,8 @@ public class MillerCylindrical extends MapProjection {
      *
      * This parameter is <a href="package-summary.html#Obligation">mandatory</a>.
      * Valid values range is unrestricted and default value is 0 metre.
-     *
-     * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
-     * descriptor(String)}</code> instead.
      */
-    @Deprecated
-    public static final ParameterDescriptor<Double> FALSE_NORTHING;
+    static final ParameterDescriptor<Double> FALSE_NORTHING;
 
     /**
      * The group of all parameters expected by this coordinate operation.

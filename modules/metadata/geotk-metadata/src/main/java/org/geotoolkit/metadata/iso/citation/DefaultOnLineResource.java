@@ -66,11 +66,8 @@ public class DefaultOnlineResource extends MetadataEntity implements OnlineResou
      * Standardization</A>.
      *
      * @since 3.19
-     *
-     * @deprecated To be replaced by a database (constants are becoming too numerous)
      */
-    @Deprecated
-    public static final OnlineResource ISO;
+    static final OnlineResource ISO;
     static {
         final DefaultOnlineResource r;
         ISO = r = new DefaultOnlineResource("http://www.iso.org/");
@@ -82,11 +79,8 @@ public class DefaultOnlineResource extends MetadataEntity implements OnlineResou
      * "Open Geospatial consortium" is the new name for "OpenGIS consortium".
      *
      * @see #OPEN_GIS
-     *
-     * @deprecated To be replaced by a database (constants are becoming too numerous)
      */
-    @Deprecated
-    public static final OnlineResource OGC;
+    static final OnlineResource OGC;
     static {
         final DefaultOnlineResource r;
         OGC = r = new DefaultOnlineResource("http://www.opengeospatial.org/");
@@ -98,11 +92,8 @@ public class DefaultOnlineResource extends MetadataEntity implements OnlineResou
      * "OpenGIS consortium" is the old name for "Open Geospatial consortium".
      *
      * @see #OGC
-     *
-     * @deprecated To be replaced by a database (constants are becoming too numerous)
      */
-    @Deprecated
-    public static final OnlineResource OPEN_GIS;
+    static final OnlineResource OPEN_GIS;
     static {
         final DefaultOnlineResource r;
         OPEN_GIS = r = new DefaultOnlineResource("http://www.opengis.org");
@@ -112,11 +103,8 @@ public class DefaultOnlineResource extends MetadataEntity implements OnlineResou
     /**
      * The online resources for the
      * <A HREF="http://www.epsg.org">European Petroleum Survey Group</A>.
-     *
-     * @deprecated To be replaced by a database (constants are becoming too numerous)
      */
-    @Deprecated
-    public static final OnlineResource EPSG;
+    static final OnlineResource EPSG;
     static {
         final DefaultOnlineResource r;
         EPSG = r = new DefaultOnlineResource("http://www.epsg.org");
@@ -128,11 +116,8 @@ public class DefaultOnlineResource extends MetadataEntity implements OnlineResou
      * <A HREF="http://www.unidata.ucar.edu/software/netcdf-java">NetCDF library</A>.
      *
      * @since 3.08
-     *
-     * @deprecated To be replaced by a database (constants are becoming too numerous)
      */
-    @Deprecated
-    public static final OnlineResource NETCDF;
+    static final OnlineResource NETCDF;
     static {
         final DefaultOnlineResource r;
         NETCDF = r = new DefaultOnlineResource("http://www.unidata.ucar.edu/software/netcdf-java");
@@ -154,11 +139,8 @@ public class DefaultOnlineResource extends MetadataEntity implements OnlineResou
      * The online resources for the <A HREF="http://trac.osgeo.org/proj">Proj.4</A> project.
      *
      * @since 3.20
-     *
-     * @deprecated To be replaced by a database (constants are becoming too numerous)
      */
-    @Deprecated
-    public static final OnlineResource PROJ4;
+    static final OnlineResource PROJ4;
     static {
         final DefaultOnlineResource r;
         PROJ4 = r = new DefaultOnlineResource("http://trac.osgeo.org/proj");
@@ -167,11 +149,8 @@ public class DefaultOnlineResource extends MetadataEntity implements OnlineResou
 
     /**
      * The online resources for <A HREF="http://www.esri.com">ESRI</A>.
-     *
-     * @deprecated To be replaced by a database (constants are becoming too numerous)
      */
-    @Deprecated
-    public static final OnlineResource ESRI;
+    static final OnlineResource ESRI;
     static {
         final DefaultOnlineResource r;
         ESRI = r = new DefaultOnlineResource("http://www.esri.com");
@@ -180,11 +159,8 @@ public class DefaultOnlineResource extends MetadataEntity implements OnlineResou
 
     /**
      * The online resources for <A HREF="http://www.oracle.com">Oracle</A>.
-     *
-     * @deprecated To be replaced by a database (constants are becoming too numerous)
      */
-    @Deprecated
-    public static final OnlineResource ORACLE;
+    static final OnlineResource ORACLE;
     static {
         final DefaultOnlineResource r;
         ORACLE = r = new DefaultOnlineResource("http://www.oracle.com");
@@ -195,11 +171,8 @@ public class DefaultOnlineResource extends MetadataEntity implements OnlineResou
      * The online resources for <A HREF="http://postgis.refractions.net">PostGIS</A>.
      *
      * @since 2.4
-     *
-     * @deprecated To be replaced by a database (constants are becoming too numerous)
      */
-    @Deprecated
-    public static final OnlineResource POSTGIS;
+    static final OnlineResource POSTGIS;
     static {
         final DefaultOnlineResource r;
         POSTGIS = r = new DefaultOnlineResource("http://postgis.refractions.net");
@@ -211,11 +184,8 @@ public class DefaultOnlineResource extends MetadataEntity implements OnlineResou
      * This online resources point to the Java developer site.
      *
      * @since 2.2
-     *
-     * @deprecated To be replaced by a database (constants are becoming too numerous)
      */
-    @Deprecated
-    public static final OnlineResource SUN_MICROSYSTEMS;
+    static final OnlineResource SUN_MICROSYSTEMS;
     static {
         final DefaultOnlineResource r;
         SUN_MICROSYSTEMS = r = new DefaultOnlineResource("http://java.sun.com");
@@ -224,11 +194,8 @@ public class DefaultOnlineResource extends MetadataEntity implements OnlineResou
 
     /**
      * The online resources for the <A HREF="http://www.geotoolkit.org">Geotoolkit.org</A> project.
-     *
-     * @deprecated To be replaced by a database (constants are becoming too numerous)
      */
-    @Deprecated
-    public static final OnlineResource GEOTOOLKIT;
+    static final OnlineResource GEOTOOLKIT;
     static {
         final DefaultOnlineResource r;
         GEOTOOLKIT = r = new DefaultOnlineResource("http://www.geotoolkit.org");
@@ -237,11 +204,8 @@ public class DefaultOnlineResource extends MetadataEntity implements OnlineResou
 
     /**
      * The online resources for the <A HREF="http://www.geotools.org">GeoTools</A> project.
-     *
-     * @deprecated To be replaced by a database (constants are becoming too numerous)
      */
-    @Deprecated
-    public static final OnlineResource GEOTOOLS;
+    static final OnlineResource GEOTOOLS;
     static {
         final DefaultOnlineResource r;
         GEOTOOLS = r = new DefaultOnlineResource("http://www.geotools.org");
@@ -254,11 +218,8 @@ public class DefaultOnlineResource extends MetadataEntity implements OnlineResou
      * to point toward the latest specification.
      *
      * @since 2.2
-     *
-     * @deprecated To be replaced by a database (constants are becoming too numerous)
      */
-    @Deprecated
-    public static final OnlineResource WMS;
+    static final OnlineResource WMS;
     static {
         final DefaultOnlineResource r;
         WMS = r = new DefaultOnlineResource("http://portal.opengis.org/files/?artifact_id=5316");

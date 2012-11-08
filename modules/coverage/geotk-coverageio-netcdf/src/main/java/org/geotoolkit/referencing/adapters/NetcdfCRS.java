@@ -234,59 +234,6 @@ public class NetcdfCRS extends NetcdfIdentifiedObject implements CoordinateRefer
     }
 
     /**
-     * Creates a new {@code NetcdfCRS} object wrapping the given NetCDF coordinate system.
-     * The returned object may implement any of the {@link ProjectedCRS}, {@link GeographicCRS}
-     * {@link VerticalCRS} or {@link TemporalCRS}, depending on the {@linkplain AxisType axis
-     * types}.
-     * <p>
-     * If the NetCDF object contains different kind of CRS, then the returned CRS will be an
-     * instance of {@link CompoundCRS} in which each component implements one of the above-cited
-     * interfaces.
-     * <p>
-     * If the NetCDF object contains axes of unknown type, then the returned CRS will not
-     * implement any of the above-cited interfaces.
-     *
-     * @param  netcdfCS The NetCDF coordinate system to wrap, or {@code null} if none.
-     * @return A wrapper for the given object, or {@code null} if the argument was null.
-     *
-     * @deprecated Use {@link NetcdfCRSBuilder} instead.
-     */
-    @Deprecated
-    public static NetcdfCRS wrap(final CoordinateSystem netcdfCS) {
-        try {
-            return wrap(netcdfCS, null, null);
-        } catch (IOException e) {
-            throw new AssertionError(e); // Should never happen, since we didn't performed any I/O.
-        }
-    }
-
-    /**
-     * Creates a new {@code NetcdfCRS} object, optionally using the given NetCDF file for additional
-     * information. This method performs the same work than {@link #wrap(CoordinateSystem)}, except
-     * that more accurate coordinate axes may be created if a reference to the original dataset file
-     * is provided. This applies especially to {@link CoordinateAxis1DTime}.
-     *
-     * @param  netcdfCS The NetCDF coordinate system to wrap, or {@code null} if none.
-     * @param  file The originating dataset file, or {@code null} if none.
-     * @param  logger An optional object where to log warnings, or {@code null} if none.
-     * @return A wrapper for the given object, or {@code null} if the {@code netcdfCS}
-     *         argument was null.
-     * @throws IOException If an I/O operation was needed and failed.
-     *
-     * @deprecated Use {@link NetcdfCRSBuilder} instead.
-     *
-     * @since 3.14
-     */
-    @Deprecated
-    public static NetcdfCRS wrap(final CoordinateSystem netcdfCS, final NetcdfDataset file,
-            final WarningProducer logger) throws IOException
-    {
-        final NetcdfCRSBuilder builder = new NetcdfCRSBuilder(file, logger);
-        builder.setCoordinateSystem(netcdfCS);
-        return builder.getNetcdfCRS();
-    }
-
-    /**
      * Converts irregular axes to regular ones, if possible. If this CRS contains a geographic
      * component, and if the (<var>longitude</var>, <var>latitude</var>) axes of that component
      * are irregular, then this method will try to project the axes to the Mercator projection

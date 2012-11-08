@@ -73,11 +73,8 @@ public class DefaultResponsibleParty extends MetadataEntity implements Responsib
      * @return Responsible party describing OGC involvement.
      *
      * @since 2.2
-     *
-     * @deprecated To be replaced by a database (constants are becoming too numerous)
      */
-    @Deprecated
-    public static ResponsibleParty OGC(final Role role, final OnlineResource resource) {
+    static ResponsibleParty OGC(final Role role, final OnlineResource resource) {
         final DefaultResponsibleParty ogc = new DefaultResponsibleParty(role);
         ogc.setOrganisationName(OGC.getOrganisationName());
         if (resource != null) {
@@ -86,7 +83,6 @@ public class DefaultResponsibleParty extends MetadataEntity implements Responsib
             ogc.setContactInfo(contact);
         }
         ogc.freeze();
-
         return ogc;
     }
 
@@ -98,13 +94,10 @@ public class DefaultResponsibleParty extends MetadataEntity implements Responsib
      * @param  function       The OGC function (information, download, etc.) for a resource.
      * @param  onlineResource The URI to the resource.
      * @return Responsible party describing OGC involvement.
-     *
-     * @deprecated To be replaced by a database (constants are becoming too numerous)
      */
-    @Deprecated
-    public static ResponsibleParty OGC(final Role role,
-                                       final OnLineFunction function,
-                                       final URI onlineResource)
+    static ResponsibleParty OGC(final Role role,
+                                final OnLineFunction function,
+                                final URI onlineResource)
     {
         final DefaultOnlineResource resource = new DefaultOnlineResource(onlineResource);
         resource.setFunction(function);
@@ -120,10 +113,7 @@ public class DefaultResponsibleParty extends MetadataEntity implements Responsib
      * @param  function       The OGC function (information, download, etc.) for a resource.
      * @param  onlineResource The URI on the resource.
      * @return Responsible party describing OGC involvement.
-     *
-     * @deprecated To be replaced by a database (constants are becoming too numerous)
      */
-    @Deprecated
     static ResponsibleParty OGC(final Role role,
                                 final OnLineFunction function,
                                 final String onlineResource)
@@ -136,11 +126,8 @@ public class DefaultResponsibleParty extends MetadataEntity implements Responsib
      * responsible party.
      *
      * @since 3.19
-     *
-     * @deprecated To be replaced by a database (constants are becoming too numerous)
      */
-    @Deprecated
-    public static final ResponsibleParty ISO;
+    static final ResponsibleParty ISO;
     static {
         final DefaultResponsibleParty r = new DefaultResponsibleParty(Role.RESOURCE_PROVIDER);
         r.setOrganisationName(new SimpleInternationalString("International Organization for Standardization"));
@@ -154,11 +141,8 @@ public class DefaultResponsibleParty extends MetadataEntity implements Responsib
      * "Open Geospatial consortium" is the new name for "OpenGIS consortium".
      *
      * @see DefaultContact#OGC
-     *
-     * @deprecated To be replaced by a database (constants are becoming too numerous)
      */
-    @Deprecated
-    public static final ResponsibleParty OGC;
+    static final ResponsibleParty OGC;
     static {
         final DefaultResponsibleParty r = new DefaultResponsibleParty(Role.RESOURCE_PROVIDER);
         r.setOrganisationName(new SimpleInternationalString("Open Geospatial Consortium"));
@@ -208,11 +192,8 @@ public class DefaultResponsibleParty extends MetadataEntity implements Responsib
      * @see DefaultContact#NETCDF
      *
      * @since 3.08
-     *
-     * @deprecated To be replaced by a database (constants are becoming too numerous)
      */
-    @Deprecated
-    public static final ResponsibleParty NETCDF;
+    static final ResponsibleParty NETCDF;
     static {
         final DefaultResponsibleParty r = new DefaultResponsibleParty(Role.PRINCIPAL_INVESTIGATOR);
         r.setOrganisationName(new SimpleInternationalString("NETCDF"));
@@ -226,11 +207,8 @@ public class DefaultResponsibleParty extends MetadataEntity implements Responsib
      * party.
      *
      * @see DefaultContact#GEOTIFF
-     *
-     * @deprecated To be replaced by a database (constants are becoming too numerous)
      */
-    @Deprecated
-    public static final ResponsibleParty GEOTIFF;
+    static final ResponsibleParty GEOTIFF;
     static {
         final DefaultResponsibleParty r = new DefaultResponsibleParty(Role.PRINCIPAL_INVESTIGATOR);
         r.setOrganisationName(new SimpleInternationalString("GeoTIFF"));
@@ -245,11 +223,8 @@ public class DefaultResponsibleParty extends MetadataEntity implements Responsib
      * @see DefaultContact#PROJ4
      *
      * @since 3.20
-     *
-     * @deprecated To be replaced by a database (constants are becoming too numerous)
      */
-    @Deprecated
-    public static final ResponsibleParty PROJ4;
+    static final ResponsibleParty PROJ4;
     static {
         final DefaultResponsibleParty r = new DefaultResponsibleParty(Role.PRINCIPAL_INVESTIGATOR);
         r.setOrganisationName(new SimpleInternationalString("PROJ4"));
@@ -279,11 +254,8 @@ public class DefaultResponsibleParty extends MetadataEntity implements Responsib
      * The <A HREF="http://www.oracle.com">Oracle</A> responsible party.
      *
      * @see DefaultContact#ORACLE
-     *
-     * @deprecated To be replaced by a database (constants are becoming too numerous)
      */
-    @Deprecated
-    public static final ResponsibleParty ORACLE;
+    static final ResponsibleParty ORACLE;
     static {
         final DefaultResponsibleParty r = new DefaultResponsibleParty(Role.OWNER);
         r.setOrganisationName(new SimpleInternationalString("Oracle"));
@@ -298,11 +270,8 @@ public class DefaultResponsibleParty extends MetadataEntity implements Responsib
      * @see DefaultContact#POSTGIS
      *
      * @since 2.4
-     *
-     * @deprecated To be replaced by a database (constants are becoming too numerous)
      */
-    @Deprecated
-    public static final ResponsibleParty POSTGIS;
+    static final ResponsibleParty POSTGIS;
     static {
         final DefaultResponsibleParty r = new DefaultResponsibleParty(Role.PRINCIPAL_INVESTIGATOR);
         r.setOrganisationName(new SimpleInternationalString("PostGIS"));
@@ -317,11 +286,8 @@ public class DefaultResponsibleParty extends MetadataEntity implements Responsib
      * @see DefaultContact#SUN_MICROSYSTEMS
      *
      * @since 2.2
-     *
-     * @deprecated To be replaced by a database (constants are becoming too numerous)
      */
-    @Deprecated
-    public static final ResponsibleParty SUN_MICROSYSTEMS;
+    static final ResponsibleParty SUN_MICROSYSTEMS;
     static {
         final DefaultResponsibleParty r = new DefaultResponsibleParty(Role.PRINCIPAL_INVESTIGATOR);
         r.setOrganisationName(new SimpleInternationalString("Sun Microsystems"));
@@ -351,11 +317,8 @@ public class DefaultResponsibleParty extends MetadataEntity implements Responsib
      * The <A HREF="http://www.geotools.org">GeoTools</A> project.
      *
      * @see DefaultContact#GEOTOOLS
-     *
-     * @deprecated To be replaced by a database (constants are becoming too numerous)
      */
-    @Deprecated
-    public static final ResponsibleParty GEOTOOLS;
+    static final ResponsibleParty GEOTOOLS;
     static {
         final DefaultResponsibleParty r = new DefaultResponsibleParty(Role.PRINCIPAL_INVESTIGATOR);
         r.setOrganisationName(new SimpleInternationalString("GeoTools"));

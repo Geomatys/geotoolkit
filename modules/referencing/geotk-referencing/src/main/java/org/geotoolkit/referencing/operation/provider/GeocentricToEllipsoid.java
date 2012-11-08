@@ -80,33 +80,21 @@ public class GeocentricToEllipsoid extends MathTransformProvider {
     /**
      * The operation parameter descriptor for the {@code "semi_major"} parameter value.
      * Valid values range from 0 to infinity.
-     *
-     * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
-     * descriptor(String)}</code> instead.
      */
-    @Deprecated
-    public static final ParameterDescriptor<Double> SEMI_MAJOR = EllipsoidToGeocentric.SEMI_MAJOR;
+    static final ParameterDescriptor<Double> SEMI_MAJOR = EllipsoidToGeocentric.SEMI_MAJOR;
 
     /**
      * The operation parameter descriptor for the {@code "semi_minor"} parameter value.
      * Valid values range from 0 to infinity.
-     *
-     * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
-     * descriptor(String)}</code> instead.
      */
-    @Deprecated
-    public static final ParameterDescriptor<Double> SEMI_MINOR = EllipsoidToGeocentric.SEMI_MINOR;
+    static final ParameterDescriptor<Double> SEMI_MINOR = EllipsoidToGeocentric.SEMI_MINOR;
 
     /**
      * The operation parameter descriptor for the number of geographic dimension (2 or 3).
      * This is a Geotk-specific argument. The default value is 3, which is the value
      * implied in OGC's WKT.
-     *
-     * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
-     * descriptor(String)}</code> instead.
      */
-    @Deprecated
-    public static final ParameterDescriptor<Integer> DIM = EllipsoidToGeocentric.DIM;
+    static final ParameterDescriptor<Integer> DIM = EllipsoidToGeocentric.DIM;
 
     /**
      * The group of all parameters expected by this coordinate operation.

@@ -61,6 +61,7 @@ mvn site --activate-profiles \!no-site --define skipTests
 mvn org.geotoolkit.project:geotk-jar-collector:pack-specific --non-recursive
 echo "Copying the bundles to $GEOTK_SERVER:geotk-release"
 scp target/bundles/* $GEOTK_SERVER:geotk-release
+scp modules/analytics/geotk-openoffice/target/geotk-$NEW_VERSION.oxt $GEOTK_SERVER:geotk-release
 
 
 #
@@ -69,7 +70,7 @@ scp target/bundles/* $GEOTK_SERVER:geotk-release
 cd target/binaries
 mv -i ../../demos/geotk-simples/target/geotk-simples-$NEW_VERSION.jar .
 find geotk-*.jar -exec zip -d '{}' META-INF/INDEX.LIST \;
-pack-all-jars
+find *.jar -exec pack200 --strip-debug --no-keep-file-order --segment-limit=-1 --effort=9 --deflate-hint=true '{}'.pack.gz '{}' \;
 echo "Copying the bundles to $GEOTK_SERVER:geotk-release/packs"
 scp *.gz $GEOTK_SERVER:geotk-release/packs
 cd -

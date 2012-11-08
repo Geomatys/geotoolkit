@@ -44,36 +44,6 @@ import org.geotoolkit.util.collection.WeakValueHashMap;
 @ThreadSafe
 public abstract class LoggerFactory<L> {
     /**
-     * The Apache's <A HREF="http://commons.apache.org/logging/">Commons-logging</A> framework.
-     * This value can be given to {@link Logging#setLoggerFactory(String)} in order to force explicitly
-     * usage of this logging framework. Note that this is usually not needed, since this framework is
-     * selected automatically if {@code geotk-logging-commons.jar} is found on the classpath.
-     *
-     * @see Logging#setLoggerFactory(String)
-     *
-     * @since 3.00
-     *
-     * @deprecated Deprecated together with {@link Logging#setLoggerFactory(String)}.
-     */
-    @Deprecated
-    public static final String COMMONS_LOGGING = "org.geotoolkit.util.logging.CommonsLoggerFactory";
-
-    /**
-     * The <A HREF="http://logging.apache.org/log4j">Log4J</A> framework. This value can be given to
-     * {@link Logging#setLoggerFactory(String)} in order to force explicitly usage of this logging
-     * framework. Note that this is usually not needed, since this framework is selected automatically
-     * if {@code geotk-logging-log4j.jar} is found on the classpath.
-     *
-     * @see Logging#setLoggerFactory(String)
-     *
-     * @since 3.00
-     *
-     * @deprecated Deprecated together with {@link Logging#setLoggerFactory(String)}.
-     */
-    @Deprecated
-    public static final String LOG4J = "org.geotoolkit.util.logging.Log4JLoggerFactory";
-
-    /**
      * The logger class. We ask for this information right at construction time in order to
      * force a {@link NoClassDefFoundError} early rather than only the first time a message
      * is logged.

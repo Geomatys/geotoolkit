@@ -70,24 +70,16 @@ public abstract class MapProjection extends MathTransformProvider {
      * org.geotoolkit.referencing.operation.projection.UnitaryProjection.Parameters#semiMajor
      * semi major} parameter value. Valid values range is (0 &hellip; &infin;). This parameter
      * is mandatory and has no default value.
-     *
-     * @deprecated Invoke <code>PARAMETERS.{@linkplain ParameterDescriptorGroup#descriptor(String)
-     * descriptor(String)}</code> instead.
      */
-    @Deprecated
-    public static final ParameterDescriptor<Double> SEMI_MAJOR = UniversalParameters.SEMI_MAJOR;
+    static final ParameterDescriptor<Double> SEMI_MAJOR = UniversalParameters.SEMI_MAJOR;
 
     /**
      * The operation parameter descriptor for the {@linkplain
      * org.geotoolkit.referencing.operation.projection.UnitaryProjection.Parameters#semiMinor
      * semi minor} parameter value. Valid values range is (0 &hellip; &infin;). This parameter
      * is mandatory and has no default value.
-     *
-     * @deprecated Invoke <code>PARAMETERS.{@linkplain ParameterDescriptorGroup#descriptor(String)
-     * descriptor(String)}</code> instead.
      */
-    @Deprecated
-    public static final ParameterDescriptor<Double> SEMI_MINOR = UniversalParameters.SEMI_MINOR;
+    static final ParameterDescriptor<Double> SEMI_MINOR = UniversalParameters.SEMI_MINOR;
 
     /**
      * The operation parameter descriptor for whatever the projection should roll longitude.
@@ -100,12 +92,8 @@ public abstract class MapProjection extends MathTransformProvider {
      * This is a Geotk-specific parameter.
      *
      * @since 3.00
-     *
-     * @deprecated Invoke <code>PARAMETERS.{@linkplain ParameterDescriptorGroup#descriptor(String)
-     * descriptor(String)}</code> instead.
      */
-    @Deprecated
-    public static final ParameterDescriptor<Boolean> ROLL_LONGITUDE = UniversalParameters.ROLL_LONGITUDE;
+    static final ParameterDescriptor<Boolean> ROLL_LONGITUDE = UniversalParameters.ROLL_LONGITUDE;
 
     /**
      * The operation parameter descriptor for the ESRI {@code "X_Scale"} parameter value.
@@ -115,12 +103,8 @@ public abstract class MapProjection extends MathTransformProvider {
      * The choice to allow this parameter or not is taken on a projection-by-projection basis.
      *
      * @since 3.00
-     *
-     * @deprecated Invoke <code>PARAMETERS.{@linkplain ParameterDescriptorGroup#descriptor(String)
-     * descriptor(String)}</code> instead.
      */
-    @Deprecated
-    public static final ParameterDescriptor<Double> X_SCALE = UniversalParameters.X_SCALE;
+    static final ParameterDescriptor<Double> X_SCALE = UniversalParameters.X_SCALE;
 
     /**
      * The operation parameter descriptor for the ESRI {@code "Y_Scale"} parameter value.
@@ -130,12 +114,8 @@ public abstract class MapProjection extends MathTransformProvider {
      * The choice to allow this parameter or not is taken on a projection-by-projection basis.
      *
      * @since 3.00
-     *
-     * @deprecated Invoke <code>PARAMETERS.{@linkplain ParameterDescriptorGroup#descriptor(String)
-     * descriptor(String)}</code> instead.
      */
-    @Deprecated
-    public static final ParameterDescriptor<Double> Y_SCALE = UniversalParameters.Y_SCALE;
+    static final ParameterDescriptor<Double> Y_SCALE = UniversalParameters.Y_SCALE;
 
     /**
      * The operation parameter descriptor for the ESRI {@code "XY_Plane_Rotation"} parameter value.

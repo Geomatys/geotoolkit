@@ -114,12 +114,8 @@ public class PositionVector7Param extends MathTransformProvider {
      * The operation parameter descriptor for the number of source geographic dimension (2 or 3).
      * This is a Geotk-specific argument. If presents, an {@code "Ellipsoid_To_Geocentric"}
      * transform will be concatenated before the geocentric translation.
-     *
-     * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
-     * descriptor(String)}</code> instead.
      */
-    @Deprecated
-    public static final ParameterDescriptor<Integer> SRC_DIM = DefaultParameterDescriptor.create(
+    static final ParameterDescriptor<Integer> SRC_DIM = DefaultParameterDescriptor.create(
             singletonMap(NAME_KEY, new NamedIdentifier(Citations.GEOTOOLKIT, "src_dim")),
             DEFAULT_DIMENSION, 2, 3, false);
 
@@ -127,12 +123,8 @@ public class PositionVector7Param extends MathTransformProvider {
      * The operation parameter descriptor for the number of target geographic dimension (2 or 3).
      * This is a Geotk-specific argument. If presents, a {@code "Geocentric_To_Ellipsoid"}
      * transform will be concatenated after the geocentric translation.
-     *
-     * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
-     * descriptor(String)}</code> instead.
      */
-    @Deprecated
-    public static final ParameterDescriptor<Integer> TGT_DIM = DefaultParameterDescriptor.create(
+    static final ParameterDescriptor<Integer> TGT_DIM = DefaultParameterDescriptor.create(
             singletonMap(NAME_KEY, new NamedIdentifier(Citations.GEOTOOLKIT, "tgt_dim")),
             DEFAULT_DIMENSION, 2, 3, false);
 
@@ -142,12 +134,8 @@ public class PositionVector7Param extends MathTransformProvider {
      * transform will be concatenated before the geocentric translation.
      * <p>
      * Valid values range from 0 to infinity. Units are {@linkplain SI#METRE metres}.
-     *
-     * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
-     * descriptor(String)}</code> instead.
      */
-    @Deprecated
-    public static final ParameterDescriptor<Double> SRC_SEMI_MAJOR = createDescriptor(
+    static final ParameterDescriptor<Double> SRC_SEMI_MAJOR = createDescriptor(
             new NamedIdentifier[] {
                 new NamedIdentifier(Citations.OGC, "src_semi_major")
             },
@@ -159,12 +147,8 @@ public class PositionVector7Param extends MathTransformProvider {
      * transform will be concatenated before the geocentric translation.
      * <p>
      * Valid values range from 0 to infinity. Units are {@linkplain SI#METRE metres}.
-     *
-     * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
-     * descriptor(String)}</code> instead.
      */
-    @Deprecated
-    public static final ParameterDescriptor<Double> SRC_SEMI_MINOR = createDescriptor(
+    static final ParameterDescriptor<Double> SRC_SEMI_MINOR = createDescriptor(
             new NamedIdentifier[] {
                 new NamedIdentifier(Citations.OGC, "src_semi_minor"),
             },
@@ -176,12 +160,8 @@ public class PositionVector7Param extends MathTransformProvider {
      * transform will be concatenated after the geocentric translation.
      * <p>
      * Valid values range from 0 to infinity. Units are {@linkplain SI#METRE metres}.
-     *
-     * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
-     * descriptor(String)}</code> instead.
      */
-    @Deprecated
-    public static final ParameterDescriptor<Double> TGT_SEMI_MAJOR = createDescriptor(
+    static final ParameterDescriptor<Double> TGT_SEMI_MAJOR = createDescriptor(
             new NamedIdentifier[] {
                 new NamedIdentifier(Citations.OGC, "tgt_semi_major")
             },
@@ -193,12 +173,8 @@ public class PositionVector7Param extends MathTransformProvider {
      * transform will be concatenated after the geocentric translation.
      * <p>
      * Valid values range from 0 to infinity. Units are {@linkplain SI#METRE metres}.
-     *
-     * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
-     * descriptor(String)}</code> instead.
      */
-    @Deprecated
-    public static final ParameterDescriptor<Double> TGT_SEMI_MINOR = createDescriptor(
+    static final ParameterDescriptor<Double> TGT_SEMI_MINOR = createDescriptor(
             new NamedIdentifier[] {
                 new NamedIdentifier(Citations.OGC, "tgt_semi_minor")
             },

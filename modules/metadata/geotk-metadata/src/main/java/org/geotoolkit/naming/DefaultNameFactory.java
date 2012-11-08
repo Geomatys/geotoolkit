@@ -167,23 +167,6 @@ public class DefaultNameFactory extends Factory implements NameFactory {
     }
 
     /**
-     * Creates a namespace having the given name and using the
-     * {@linkplain DefaultNameSpace#DEFAULT_SEPARATOR default separator}.
-     *
-     * @param name The name of the namespace to be returned. This argument can be created using
-     *        <code>{@linkplain #createGenericName createGenericName}(null, parsedNames)</code>.
-     * @return A namespace having the given name and separator.
-     *
-     * @since 3.00
-     *
-     * @deprecated Replaced by {@link #createNameSpace(GenericName, Map)}.
-     */
-    @Deprecated
-    public NameSpace createNameSpace(final GenericName name) {
-        return createNameSpace(name, null);
-    }
-
-    /**
      * Creates a type name from the given character sequence. The default implementation
      * returns a new or an existing {@link DefaultTypeName} instance.
      *

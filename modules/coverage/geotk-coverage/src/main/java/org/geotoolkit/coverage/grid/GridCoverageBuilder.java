@@ -18,7 +18,6 @@
 package org.geotoolkit.coverage.grid;
 
 import java.util.Map;
-import java.util.Random;
 import java.util.TreeMap;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
@@ -37,13 +36,10 @@ import java.awt.image.SampleModel;
 import java.awt.image.RenderedImage;
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
-import java.awt.image.IndexColorModel;
 import java.awt.image.renderable.RenderableImage;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
-import java.io.File;
 import java.io.IOException;
-import javax.imageio.ImageIO;
 import javax.measure.unit.Unit;
 import javax.media.jai.TiledImage;
 import javax.media.jai.PlanarImage;
@@ -1471,37 +1467,6 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
     }
 
     /**
-     * @deprecated Replaced by {@link Variable#getSampleRange()}.
-     *
-     * @return The current range of sample values.
-     */
-    @Deprecated
-    public NumberRange<?> getSampleRange() {
-        return variable(0).getSampleRange();
-    }
-
-    /**
-     * @deprecated Replaced by {@link Variable#setSampleRange(NumberRange)}.
-     *
-     * @param  range The new range of sample values, or {@code null}.
-     */
-    @Deprecated
-    public void setSampleRange(final NumberRange<?> range) {
-        variable(0).setSampleRange(range);
-    }
-
-    /**
-     * @deprecated Replaced by {@link Variable#setSampleRange(int, int)}.
-     *
-     * @param  lower The lower sample value (inclusive), typically 0.
-     * @param  upper The upper sample value (exclusive), typically 256.
-     */
-    @Deprecated
-    public void setSampleRange(final int lower, final int upper) {
-        variable(0).setSampleRange(lower, upper);
-    }
-
-    /**
      * Gets the given image property as an array of double values, or {@code null} if none.
      *
      * @param  name The image property name, typically {@code "minimum"} or {@code "maximum"}.
@@ -1861,66 +1826,6 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
     }
 
     /**
-     * Returns the image size.
-     *
-     * @return The current image size.
-     *
-     * @deprecated Replaced by {@link #getImageBounds()}.
-     */
-    @Deprecated
-    public Dimension getImageSize() {
-        try {
-            return getImageBounds().getSize();
-        } catch (InvalidGridGeometryException e) {
-            return null; // To preserve the contract of previous implementation.
-        }
-    }
-
-    /**
-     * Sets the image size.
-     *
-     * @param size The new image size.
-     *
-     * @deprecated Replaced by {@link #setExtent(int[])}.
-     */
-    @Deprecated
-    public void setImageSize(final Dimension size) {
-        setExtent(size.width, size.height);
-    }
-
-    /**
-     * Sets the image size.
-     *
-     * @param width The new image width.
-     * @param height The new image height.
-     *
-     * @deprecated Replaced by {@link #setExtent(int[])}.
-     */
-    @Deprecated
-    public void setImageSize(final int width, final int height) {
-        setImageSize(new Dimension(width, height));
-    }
-
-    /**
-     * Creates a new variable, which will be mapped to a {@linkplain GridSampleDimension sample
-     * dimension}. Additional information like scale, offset and nodata values can be provided
-     * by invoking setters on the returned variable.
-     *
-     * @param  name  The variable name, or {@code null} for a default name.
-     * @param  units The variable units, or {@code null} if unknown.
-     * @return A new variable.
-     *
-     * @deprecated Replaced by {@link #variable(int)}.
-     */
-    @Deprecated
-    public Variable newVariable(final CharSequence name, final Unit<?> units) {
-        final Variable variable = variable(numBands);
-        variable.setName(name);
-        variable.setUnit(units);
-        return variable;
-    }
-
-    /**
      * Returns the tile size, or {@code null} if the image is untiled.
      * This method returns the first non-null value in the above choices, in preference order:
      * <p>
@@ -2211,68 +2116,6 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
                     hints);
         }
         setRenderedImage(data);
-    }
-
-    /**
-     * @deprecated Replaced by {@link #getRenderedImage()}.
-     *
-     * @return The buffered image to be wrapped by {@code GridCoverage2D}.
-     */
-    @Deprecated
-    public BufferedImage getBufferedImage() {
-        return (BufferedImage) getRenderedImage();
-    }
-
-    /**
-     * @deprecated Replaced by {@link #setRenderedImage(RenderedImage)}.
-     *
-     * @param image The buffered image to be wrapped by {@code GridCoverage2D}.
-     */
-    @Deprecated
-    public void setBufferedImage(final BufferedImage image) {
-        setRenderedImage(image);
-    }
-
-    /**
-     * Sets the buffered image by reading it from the given file. Invoking this method
-     * overwrite the {@linkplain #getImageSize() image size} with the given image size.
-     *
-     * @param file The file of the image to be wrapped by {@code GridCoverage2D}.
-     * @throws IOException if the image can't be read.
-     *
-     * @deprecated Use {@link org.geotoolkit.coverage.io.GridCoverageReader} instead.
-     */
-    @Deprecated
-    public void setBufferedImage(final File file) throws IOException {
-        setBufferedImage(ImageIO.read(file));
-    }
-
-    /**
-     * Sets the buffered image to a raster filled with random value using the specified random
-     * number generator. This method can be used for testing purpose, or for adding noise to a
-     * coverage.
-     *
-     * @param random The random number generator to use for generating pixel values.
-     *
-     * @deprecated No replacement.
-     */
-    @Deprecated
-    public void setBufferedImage(final Random random) {
-        image = null; // Will forces the creation of a new BufferedImage.
-        final BufferedImage image = getBufferedImage();
-        final WritableRaster raster = image.getRaster();
-        final ColorModel model = image.getColorModel();
-        final int size;
-        if (model instanceof IndexColorModel) {
-            size = ((IndexColorModel) model).getMapSize();
-        } else {
-            size = 1 << Short.SIZE;
-        }
-        for (int i=raster.getWidth(); --i>=0;) {
-            for (int j=raster.getHeight(); --j>=0;) {
-                raster.setSample(i,j,0, random.nextInt(size));
-            }
-        }
     }
 
     /**

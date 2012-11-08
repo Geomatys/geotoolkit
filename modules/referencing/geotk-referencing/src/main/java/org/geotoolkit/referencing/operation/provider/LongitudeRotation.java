@@ -70,12 +70,8 @@ public class LongitudeRotation extends MathTransformProvider {
 
     /**
      * The operation parameter descriptor for the "<cite>longitude offset</cite>" parameter value.
-     *
-     * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
-     * descriptor(String)}</code> instead.
      */
-    @Deprecated
-    public static final ParameterDescriptor<Double> OFFSET = createDescriptor(
+    static final ParameterDescriptor<Double> OFFSET = createDescriptor(
             new NamedIdentifier[] {
                 new NamedIdentifier(Citations.EPSG, "Longitude offset")
             },

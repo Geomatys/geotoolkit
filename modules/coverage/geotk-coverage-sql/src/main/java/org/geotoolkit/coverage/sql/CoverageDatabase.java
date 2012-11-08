@@ -725,21 +725,6 @@ public class CoverageDatabase implements Localized {
     }
 
     /**
-     * Reads the data of a two-dimensional slice and returns them as a coverage.
-     *
-     * @param  request Parameters used to control the reading process.
-     * @return The coverage.
-     *
-     * @deprecated Replaced by {@link #readSlice(String, CoverageEnvelope, IIOListeners)}
-     *             because the {@link CoverageQuery} class has been deprecated.
-     */
-    @Deprecated
-    public FutureQuery<GridCoverage2D> readSlice(final CoverageQuery request) {
-        ensureNonNull("request", request);
-        return readSlice(request.getLayer(), request.getEnvelope(), request.listeners);
-    }
-
-    /**
      * The task for {@link CoverageDatabase#readSlice(CoverageQuery, IIOListeners)}. Declared as an
      * explicit class rather than an inner class in order to have more helpful stack trace in case
      * of failure.

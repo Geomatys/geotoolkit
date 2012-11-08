@@ -88,12 +88,8 @@ public class LambertConformal2SP extends MapProjection {
      *
      * This parameter is <a href="package-summary.html#Obligation">mandatory</a>.
      * Valid values range is [-180 &hellip; 180]&deg; and default value is 0&deg;.
-     *
-     * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
-     * descriptor(String)}</code> instead.
      */
-    @Deprecated
-    public static final ParameterDescriptor<Double> CENTRAL_MERIDIAN =
+    static final ParameterDescriptor<Double> CENTRAL_MERIDIAN =
             UniversalParameters.CENTRAL_MERIDIAN.select(null,
                 "Longitude of false origin",     // EPSG
                 "central_meridian",              // OGC
@@ -108,12 +104,8 @@ public class LambertConformal2SP extends MapProjection {
      *
      * This parameter is <a href="package-summary.html#Obligation">mandatory</a>.
      * Valid values range is [-90 &hellip; 90]&deg; and default value is 0&deg;.
-     *
-     * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
-     * descriptor(String)}</code> instead.
      */
-    @Deprecated
-    public static final ParameterDescriptor<Double> LATITUDE_OF_ORIGIN =
+    static final ParameterDescriptor<Double> LATITUDE_OF_ORIGIN =
             UniversalParameters.LATITUDE_OF_ORIGIN.select(null,
                 "Latitude of false origin",  // EPSG
                 "latitude_of_origin",        // OGC
@@ -166,12 +158,8 @@ public class LambertConformal2SP extends MapProjection {
      * defined by EPSG. Valid values range is (0 &hellip; &infin;) and default value is 1.
      *
      * @since 3.20
-     *
-     * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
-     * descriptor(String)}</code> instead.
      */
-    @Deprecated
-    public static final ParameterDescriptor<Double> SCALE_FACTOR =
+    static final ParameterDescriptor<Double> SCALE_FACTOR =
             UniversalParameters.SCALE_FACTOR.select(false, null, new Citation[] {
                 Citations.EPSG, Citations.OGC, Citations.NETCDF, Citations.GEOTIFF, Citations.PROJ4
             }, null);
@@ -183,12 +171,8 @@ public class LambertConformal2SP extends MapProjection {
      *
      * This parameter is <a href="package-summary.html#Obligation">mandatory</a>.
      * Valid values range is unrestricted and default value is 0 metre.
-     *
-     * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
-     * descriptor(String)}</code> instead.
      */
-    @Deprecated
-    public static final ParameterDescriptor<Double> FALSE_EASTING =
+    static final ParameterDescriptor<Double> FALSE_EASTING =
             UniversalParameters.FALSE_EASTING.select(null,
                 "Easting at false origin",  // EPSG
                 "FalseOriginEasting");      // GeoTIFF
@@ -200,12 +184,8 @@ public class LambertConformal2SP extends MapProjection {
      *
      * This parameter is <a href="package-summary.html#Obligation">mandatory</a>.
      * Valid values range is unrestricted and default value is 0 metre.
-     *
-     * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
-     * descriptor(String)}</code> instead.
      */
-    @Deprecated
-    public static final ParameterDescriptor<Double> FALSE_NORTHING =
+    static final ParameterDescriptor<Double> FALSE_NORTHING =
             UniversalParameters.FALSE_NORTHING.select(null,
                 "Northing at false origin", // EPSG
                 "FalseOriginNorthing");     // GeoTIFF

@@ -91,35 +91,6 @@ public final strictfp class XMathTest {
     }
 
     /**
-     * Tests the {@link XMath#countFractionDigits} method.
-     */
-    @Test
-    public void testCountDecimalFractionDigits() {
-        assertEquals(0,   countDecimalFractionDigits(-65.0));
-        assertEquals(1,   countDecimalFractionDigits(-65.5));
-        assertEquals(5,   countDecimalFractionDigits(  6.00125));
-        assertEquals(6,   countDecimalFractionDigits( 65.123456));
-        assertEquals(0,   countDecimalFractionDigits(1.23456E+200));
-        assertEquals(1,   countDecimalFractionDigits(5E-1));
-        assertEquals(5,   countDecimalFractionDigits(5E-5));
-        assertEquals(10,  countDecimalFractionDigits(5E-10));
-        assertEquals(200, countDecimalFractionDigits(5E-200));
-        assertEquals(203, countDecimalFractionDigits(5.125E-200));
-    }
-
-    /**
-     * Tests the {@link XMath#trimDecimalFractionDigits} method.
-     */
-    @Test
-    public void testTrimDecimalFractionDigits() {
-        assertEquals(-61.5,              trimDecimalFractionDigits(-61.50000000000001, 4, 12), 0);
-        assertEquals(-61.5,              trimDecimalFractionDigits(-61.50000000000001, 4, 13), 0);
-        assertEquals(-61.50000000000001, trimDecimalFractionDigits(-61.50000000000001, 4, 14), 0);
-        assertEquals(-61.50000010000001, trimDecimalFractionDigits(-61.50000010000001, 4, 10), 0);
-        assertEquals(-61.5,              trimDecimalFractionDigits(-61.50000000000000, 4, 15), 0);
-    }
-
-    /**
      * Tests the {@link XMath#primeNumber} method.
      */
     @Test

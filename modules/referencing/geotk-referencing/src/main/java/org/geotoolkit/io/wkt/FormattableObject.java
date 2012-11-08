@@ -22,18 +22,13 @@ package org.geotoolkit.io.wkt;
 
 import java.io.Console;
 import java.io.PrintWriter;
-import org.opengis.metadata.citation.Citation;
 import org.opengis.parameter.GeneralParameterValue;
 import org.opengis.referencing.cs.CoordinateSystem;
 
 import org.geotoolkit.io.X364;
 import org.geotoolkit.lang.Debug;
-import org.geotoolkit.lang.Configuration;
 import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.util.converter.Classes;
-import org.geotoolkit.metadata.iso.citation.Citations;
-import org.geotoolkit.metadata.iso.citation.DefaultCitation;
-import org.geotoolkit.metadata.iso.citation.DefaultResponsibleParty;
 
 
 /**
@@ -71,83 +66,6 @@ public class FormattableObject implements Formattable {
      * The formatter for the {@link #toWKT()} method.
      */
     private static final ThreadLocal<Formatter> FORMATTER = new ThreadLocal<Formatter>();
-
-    /**
-     * The indentation value to give to the {@link #toWKT(int)} method for formatting the complete
-     * object on a single line.
-     *
-     * @since 2.6
-     *
-     * @deprecated Moved to {@link WKTFormat#SINGLE_LINE} in order to reduce the amount
-     * of declarations in this base class. The raison is that {@code FormattableObject}
-     * is extended by a lot of objects, and those rarely-used WKT stuff are distracting.
-     */
-    @Deprecated
-    public static final int SINGLE_LINE = 0;
-
-    /**
-     * Frequently used authority for formatting WKT. This is the same reference than
-     * the one declared in the {@link Citations} class, copied here for convenience.
-     *
-     * @see Citations#OGC
-     *
-     * @since 3.00
-     *
-     * @deprecated Replaced by {@link Convention#OGC}.
-     */
-    @Deprecated
-    public static final Citation OGC = Citations.OGC;
-
-    /**
-     * Frequently used authority for formatting WKT. This is the same reference than
-     * the one declared in the {@link Citations} class, copied here for convenience.
-     *
-     * @see Citations#EPSG
-     *
-     * @since 3.00
-     *
-     * @deprecated Replaced by {@link Convention#EPSG}.
-     */
-    @Deprecated
-    public static final Citation EPSG = Citations.EPSG;
-
-    /**
-     * Frequently used authority for formatting WKT. This is the same reference than
-     * the one declared in the {@link Citations} class, copied here for convenience.
-     *
-     * @see Citations#GEOTIFF
-     *
-     * @since 3.00
-     *
-     * @deprecated Replaced by {@link Convention#GEOTIFF}.
-     */
-    @Deprecated
-    public static final Citation GEOTIFF = Citations.GEOTIFF;
-
-    /**
-     * A special citation for formatting objects as stored internally by Geotk. This citation
-     * can be given to the {@code authority} argument of the {@link #toWKT(Citation,int)} method.
-     * In the majority of cases, the result will be identical to the one we would get using the
-     * {@link #OGC} authority. However in the particular case of map projections, the result may be
-     * quite different because of the way Geotk separates the linear from the non-linear parameters.
-     * <p>
-     * This citation is used only for debugging purpose.
-     *
-     * @see Formatter#isInternalWKT()
-     *
-     * @since 3.00
-     *
-     * @deprecated Replaced by {@link Convention#INTERNAL}.
-     */
-    @Debug
-    @Deprecated
-    public static final Citation INTERNAL;
-    static {
-        final DefaultCitation c = new DefaultCitation("Internal WKT");
-        c.getCitedResponsibleParties().add(DefaultResponsibleParty.GEOTOOLKIT);
-        c.freeze();
-        INTERNAL = c;
-    }
 
     /**
      * The default indentation value.
@@ -216,46 +134,6 @@ public class FormattableObject implements Formattable {
      */
     public String toWKT() throws UnformattableObjectException {
         return formatWKT(Convention.OGC, defaultIndentation, false, true);
-    }
-
-    /**
-     * Returns a <cite>Well Known Text</cite> (WKT) for this object using the specified
-     * indentation.
-     *
-     * @param  indentation The amount of spaces to use in indentation for WKT formatting,
-     *         or {@value org.geotoolkit.io.wkt.WKTFormat#SINGLE_LINE} for formatting the
-     *         whole WKT on a single line.
-     * @return The Well Know Text for this object.
-     * @throws UnformattableObjectException If this object can't be formatted as WKT.
-     *
-     * @deprecated Replaced by {@link #toWKT(Convention, int)} with {@link Convention#OGC}.
-     *             This method will be removed in order to simplify the API.
-     */
-    @Deprecated
-    public String toWKT(final int indentation) throws UnformattableObjectException {
-        return formatWKT(Convention.OGC, indentation, false, true);
-    }
-
-    /**
-     * Returns a <cite>Well Known Text</cite> (WKT) for this object using the specified
-     * indentation and authority. The authority is usually {@link #OGC}, but other common
-     * authorities are {@link #GEOTIFF} and {@link #EPSG}. The {@link #INTERNAL} citation
-     * is a special value for debugging map projections.
-     *
-     * @param  authority The authority to prefer when choosing WKT entities names.
-     * @param  indentation The amount of spaces to use in indentation for WKT formatting,
-     *         or {@value org.geotoolkit.io.wkt.WKTFormat#SINGLE_LINE} for formatting the
-     *         whole WKT on a single line.
-     * @return The Well Know Text for this object.
-     * @throws UnformattableObjectException If this object can't be formatted as WKT.
-     *
-     * @deprecated Replaced by {@link #toWKT(Convention, int)}.
-     */
-    @Deprecated
-    public String toWKT(final Citation authority, final int indentation)
-            throws UnformattableObjectException
-    {
-        return toWKT(Convention.forCitation(authority, Convention.OGC), indentation);
     }
 
     /**
@@ -357,36 +235,5 @@ public class FormattableObject implements Formattable {
             }
         }
         return Classes.getShortName(type);
-    }
-
-    /**
-     * Returns the default indentation. The default value can be modified by a call to
-     * {@link #setDefaultIndentation}.
-     *
-     * @return The default indentation.
-     *
-     * @since 3.00
-     *
-     * @deprecated Moved to {@link WKTFormat#getDefaultIndentation()}.
-     */
-    @Deprecated
-    public static int getDefaultIndentation() {
-        return defaultIndentation;
-    }
-
-    /**
-     * Sets the default value for indentation.
-     *
-     * @param indentation The new default value for indentation.
-     *
-     * @since 3.00
-     *
-     * @deprecated Moved to {@link WKTFormat#setDefaultIndentation(int)}.
-     */
-    @Deprecated
-    @Configuration
-    public static void setDefaultIndentation(final int indentation) {
-        // No need to synchronize since setting a 32 bits integer is an atomic operation.
-        defaultIndentation = indentation;
     }
 }

@@ -215,14 +215,6 @@ public class Range<T extends Comparable<? super T>> implements CheckedContainer<
     }
 
     /**
-     * @deprecated Renamed {@link #getElementType()} for allowing retrofitting with {@link CheckedContainer}.
-     */
-    @Deprecated
-    public Class<T> getElementClass() {
-        return getElementType();
-    }
-
-    /**
      * Returns the minimal value, or {@code null} if unbounded. If {@link #isMinIncluded}
      * is {@code true}, then the value is considered included in the set. Otherwise it is
      * considered excluded.

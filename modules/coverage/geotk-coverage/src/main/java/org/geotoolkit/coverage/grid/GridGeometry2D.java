@@ -814,14 +814,6 @@ public class GridGeometry2D extends GeneralGridGeometry {
      * @since 3.20 (derived from 2.1)
      */
     public GridEnvelope2D getExtent2D() throws InvalidGridGeometryException {
-        return getGridRange2D();
-    }
-
-    /**
-     * @deprecated Renamed {@link #getGridRange2D()}.
-     */
-    @Deprecated
-    public GridEnvelope2D getGridRange2D() throws InvalidGridGeometryException {
         final GridEnvelope extent = this.extent;
         if (extent != null) {
             assert isDefined(EXTENT);

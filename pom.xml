@@ -840,7 +840,7 @@
       </plugin>
     </plugins>
 
-    <!-- Following is for users who need to deploy using the sh rather then the file protocol. -->
+    <!-- Following is for users who need to deploy using the ssh rather then the file protocol. -->
     <extensions>
       <extension>
         <groupId>org.apache.maven.wagon</groupId>

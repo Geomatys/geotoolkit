@@ -133,18 +133,6 @@ public class DefaultCompoundCS extends AbstractCS {
      *
      * @return All coordinate systems in this compound CS.
      *
-     * @deprecated Renamed {@link #getComponents()} for consistency with {@code CompoundCRS}.
-     */
-    @Deprecated
-    public List<CoordinateSystem> getCoordinateSystems() {
-        return getComponents();
-    }
-
-    /**
-     * Returns all coordinate systems in this compound CS.
-     *
-     * @return All coordinate systems in this compound CS.
-     *
      * @since 3.20
      */
     public synchronized List<CoordinateSystem> getComponents() {

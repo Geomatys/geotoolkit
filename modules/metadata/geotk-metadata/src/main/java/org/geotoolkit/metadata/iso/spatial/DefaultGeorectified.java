@@ -137,41 +137,6 @@ public class DefaultGeorectified extends DefaultGridSpatialRepresentation implem
     }
 
     /**
-     * Creates a georectified object initialized to the specified values.
-     *
-     * @param numberOfDimensions The number of independent spatial-temporal axes.
-     * @param axisDimensionsProperties Information about spatial-temporal axis properties.
-     * @param cellGeometry Identification of grid data as point or cell.
-     * @param transformationParameterAvailable Indication of whether or not parameters for
-     *          transformation exists.
-     * @param checkPointAvailable Indication of whether or not geographic position points
-     *          are available to test the accuracy of the georeferenced grid data.
-     * @param cornerPoints The corner points.
-     * @param pointInPixel The point in a pixel corresponding to the Earth location of the pixel.
-     *
-     * @deprecated This constructor is somewhat arbitrary as it does not include all attributes
-     *             (especially because of revisions in new ISO standards), not so convenient and
-     *             not used in practice.
-     */
-    @Deprecated
-    public DefaultGeorectified(final int numberOfDimensions,
-                               final List<? extends Dimension> axisDimensionsProperties,
-                               final CellGeometry cellGeometry,
-                               final boolean transformationParameterAvailable,
-                               final boolean checkPointAvailable,
-                               final List<? extends Point> cornerPoints,
-                               final PixelOrientation pointInPixel)
-    {
-        super(numberOfDimensions,
-              axisDimensionsProperties,
-              cellGeometry,
-              transformationParameterAvailable);
-        setCheckPointAvailable(checkPointAvailable);
-        setCornerPoints(cornerPoints);
-        setPointInPixel(pointInPixel);
-    }
-
-    /**
      * Returns a Geotk metadata implementation with the same values than the given arbitrary
      * implementation. If the given object is {@code null}, then this method returns {@code null}.
      * Otherwise if the given object is already a Geotk implementation, then the given object is
