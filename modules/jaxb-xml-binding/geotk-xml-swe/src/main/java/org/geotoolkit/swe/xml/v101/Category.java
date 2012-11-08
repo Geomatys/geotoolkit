@@ -105,6 +105,12 @@ public class Category extends AbstractDataComponentType  implements AbstractCate
         super(definition);
         this.value = value;
     }
+    
+    public Category(final String definition, final String value, final String codespace) {
+        super(definition);
+        this.value = value;
+        this.codeSpace = new CodeSpacePropertyType(codespace);
+    }
 
     /**
      * Gets the value of the codeSpace property.

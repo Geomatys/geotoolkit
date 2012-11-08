@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.sml.xml.v101;
 
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -122,6 +123,10 @@ public class Identification implements AbstractIdentification {
 
     public Identification (final IdentifierList identifierList) {
         this.identifierList = identifierList;
+    }
+    
+    public Identification (final List<Identifier> identifierList) {
+        this.identifierList = new IdentifierList(null,identifierList);
     }
 
     /**

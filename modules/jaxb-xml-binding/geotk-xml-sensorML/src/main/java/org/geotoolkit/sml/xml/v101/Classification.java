@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.sml.xml.v101;
 
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -107,6 +108,10 @@ public class Classification implements AbstractClassification {
 
     public Classification(final ClassifierList cl) {
         this.classifierList = cl;
+    }
+    
+    public Classification(final List<Classifier> cl) {
+        this.classifierList = new ClassifierList(null, cl);
     }
 
     public Classification(final AbstractClassification cl) {
