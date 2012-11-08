@@ -66,12 +66,8 @@ public class RGF93 extends MathTransformProvider {
     /**
      * The operation parameter descriptor for the <cite>Geocentric translation file</cite>
      * parameter value. The default value is {@code "gr3df97a.txt"}.
-     *
-     * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
-     * descriptor(String)}</code> instead.
      */
-    @Deprecated
-    public static final ParameterDescriptor<String> TRANSLATION_FILE = new DefaultParameterDescriptor<>(
+    static final ParameterDescriptor<String> TRANSLATION_FILE = new DefaultParameterDescriptor<>(
             Citations.EPSG, "Geocentric translation file", String.class, null, "gr3df97a.txt", null, null, null, true);
 
     /**

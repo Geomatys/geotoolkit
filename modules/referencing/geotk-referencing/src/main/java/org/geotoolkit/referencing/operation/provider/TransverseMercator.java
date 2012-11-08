@@ -86,12 +86,8 @@ public class TransverseMercator extends MapProjection {
      *
      * This parameter is <a href="package-summary.html#Obligation">mandatory</a>.
      * Valid values range is [-180 &hellip; 180]&deg; and default value is 0&deg;.
-     *
-     * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
-     * descriptor(String)}</code> instead.
      */
-    @Deprecated
-    public static final ParameterDescriptor<Double> CENTRAL_MERIDIAN =
+    static final ParameterDescriptor<Double> CENTRAL_MERIDIAN =
             UniversalParameters.CENTRAL_MERIDIAN.select(null,
                 "Longitude of natural origin",    // EPSG
                 "central_meridian",               // OGC
@@ -106,12 +102,8 @@ public class TransverseMercator extends MapProjection {
      *
      * This parameter is <a href="package-summary.html#Obligation">mandatory</a>.
      * Valid values range is [-90 &hellip; 90]&deg; and default value is 0&deg;.
-     *
-     * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
-     * descriptor(String)}</code> instead.
      */
-    @Deprecated
-    public static final ParameterDescriptor<Double> LATITUDE_OF_ORIGIN = Mercator2SP.LATITUDE_OF_ORIGIN;
+    static final ParameterDescriptor<Double> LATITUDE_OF_ORIGIN = Mercator2SP.LATITUDE_OF_ORIGIN;
 
     /**
      * The operation parameter descriptor for the {@linkplain
@@ -120,12 +112,8 @@ public class TransverseMercator extends MapProjection {
      *
      * This parameter is <a href="package-summary.html#Obligation">mandatory</a>.
      * Valid values range is (0 &hellip; &infin;) and default value is 1.
-     *
-     * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
-     * descriptor(String)}</code> instead.
      */
-    @Deprecated
-    public static final ParameterDescriptor<Double> SCALE_FACTOR =
+    static final ParameterDescriptor<Double> SCALE_FACTOR =
             UniversalParameters.SCALE_FACTOR.select(null,
                 "Scale factor at natural origin",   // EPSG
                 "scale_factor_at_central_meridian", // NetCDF
@@ -138,12 +126,8 @@ public class TransverseMercator extends MapProjection {
      *
      * This parameter is <a href="package-summary.html#Obligation">mandatory</a>.
      * Valid values range is unrestricted and default value is 0 metre.
-     *
-     * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
-     * descriptor(String)}</code> instead.
      */
-    @Deprecated
-    public static final ParameterDescriptor<Double> FALSE_EASTING = Mercator2SP.FALSE_EASTING;
+    static final ParameterDescriptor<Double> FALSE_EASTING = Mercator2SP.FALSE_EASTING;
 
     /**
      * The operation parameter descriptor for the {@linkplain
@@ -152,12 +136,8 @@ public class TransverseMercator extends MapProjection {
      *
      * This parameter is <a href="package-summary.html#Obligation">mandatory</a>.
      * Valid values range is unrestricted and default value is 0 metre.
-     *
-     * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
-     * descriptor(String)}</code> instead.
      */
-    @Deprecated
-    public static final ParameterDescriptor<Double> FALSE_NORTHING = Mercator2SP.FALSE_NORTHING;
+    static final ParameterDescriptor<Double> FALSE_NORTHING = Mercator2SP.FALSE_NORTHING;
 
     /**
      * The group of all parameters expected by this coordinate operation.

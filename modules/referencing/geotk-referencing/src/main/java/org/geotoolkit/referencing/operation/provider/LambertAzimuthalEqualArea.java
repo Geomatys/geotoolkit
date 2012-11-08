@@ -92,12 +92,8 @@ public class LambertAzimuthalEqualArea extends MapProjection {
      *
      * This parameter is <a href="package-summary.html#Obligation">mandatory</a>.
      * Valid values range is [-180 &hellip; 180]&deg; and default value is 0&deg;.
-     *
-     * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
-     * descriptor(String)}</code> instead.
      */
-    @Deprecated
-    public static final ParameterDescriptor<Double> LONGITUDE_OF_CENTRE =
+    static final ParameterDescriptor<Double> LONGITUDE_OF_CENTRE =
             UniversalParameters.CENTRAL_MERIDIAN.select(null, null, null, new String[] {
                 "Spherical longitude of origin"}, // EPSG (deprecated - was used by EPSG:9821 only)
                 "Longitude of natural origin",    // EPSG
@@ -113,12 +109,8 @@ public class LambertAzimuthalEqualArea extends MapProjection {
      *
      * This parameter is <a href="package-summary.html#Obligation">mandatory</a>.
      * Valid values range is [-90 &hellip; 90]&deg; and default value is 0&deg;.
-     *
-     * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
-     * descriptor(String)}</code> instead.
      */
-    @Deprecated
-    public static final ParameterDescriptor<Double> LATITUDE_OF_CENTRE =
+    static final ParameterDescriptor<Double> LATITUDE_OF_CENTRE =
             UniversalParameters.LATITUDE_OF_ORIGIN.select(null, null, null, new String[] {
                 "Spherical latitude of origin"},  // EPSG (deprecated - was used by EPSG:9821 only)
                 "Latitude of natural origin",     // EPSG
@@ -133,12 +125,8 @@ public class LambertAzimuthalEqualArea extends MapProjection {
      *
      * This parameter is <a href="package-summary.html#Obligation">mandatory</a>.
      * Valid values range is unrestricted and default value is 0 metre.
-     *
-     * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
-     * descriptor(String)}</code> instead.
      */
-    @Deprecated
-    public static final ParameterDescriptor<Double> FALSE_EASTING = Mercator2SP.FALSE_EASTING;
+    static final ParameterDescriptor<Double> FALSE_EASTING = Mercator2SP.FALSE_EASTING;
 
     /**
      * The operation parameter descriptor for the {@linkplain
@@ -147,12 +135,8 @@ public class LambertAzimuthalEqualArea extends MapProjection {
      *
      * This parameter is <a href="package-summary.html#Obligation">mandatory</a>.
      * Valid values range is unrestricted and default value is 0 metre.
-     *
-     * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
-     * descriptor(String)}</code> instead.
      */
-    @Deprecated
-    public static final ParameterDescriptor<Double> FALSE_NORTHING = Mercator2SP.FALSE_NORTHING;
+    static final ParameterDescriptor<Double> FALSE_NORTHING = Mercator2SP.FALSE_NORTHING;
 
     /**
      * The group of all parameters expected by this coordinate operation.

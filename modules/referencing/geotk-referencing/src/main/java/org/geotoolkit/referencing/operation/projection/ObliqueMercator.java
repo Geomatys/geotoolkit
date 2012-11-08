@@ -47,7 +47,6 @@ import static java.lang.Double.*;
 import static org.geotoolkit.math.XMath.atanh;
 import static org.geotoolkit.internal.InternalUtilities.epsilonEqual;
 import static org.geotoolkit.referencing.operation.provider.UniversalParameters.*;
-import static org.geotoolkit.referencing.operation.provider.ObliqueMercator.AZIMUTH;
 import static org.geotoolkit.referencing.operation.provider.ObliqueMercator.LATITUDE_OF_CENTRE;
 import static org.geotoolkit.referencing.operation.provider.ObliqueMercator.LONGITUDE_OF_CENTRE;
 

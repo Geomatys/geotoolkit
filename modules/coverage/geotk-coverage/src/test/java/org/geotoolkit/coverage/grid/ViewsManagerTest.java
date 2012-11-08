@@ -17,8 +17,11 @@
  */
 package org.geotoolkit.coverage.grid;
 
-import java.awt.image.WritableRaster;
 import java.util.Random;
+import java.awt.image.ColorModel;
+import java.awt.image.IndexColorModel;
+import java.awt.image.BufferedImage;
+import java.awt.image.WritableRaster;
 import javax.measure.unit.SI;
 
 import org.junit.*;
@@ -47,20 +50,47 @@ public final strictfp class ViewsManagerTest extends GridCoverageTestBase {
     }
 
     /**
+     * Sets the buffered image to a raster filled with random value using the specified random
+     * number generator. This method can be used for testing purpose, or for adding noise to a
+     * coverage.
+     *
+     * @param random The random number generator to use for generating pixel values.
+     */
+    private static void setBufferedImage(final GridCoverageBuilder builder, final Random random) {
+        builder.setRenderedImage((BufferedImage) null); // Will forces the creation of a new BufferedImage.
+        final BufferedImage image = (BufferedImage) builder.getRenderedImage();
+        final WritableRaster raster = image.getRaster();
+        final ColorModel model = image.getColorModel();
+        final int size;
+        if (model instanceof IndexColorModel) {
+            size = ((IndexColorModel) model).getMapSize();
+        } else {
+            size = 1 << Short.SIZE;
+        }
+        for (int i=raster.getWidth(); --i>=0;) {
+            for (int j=raster.getHeight(); --j>=0;) {
+                raster.setSample(i,j,0, random.nextInt(size));
+            }
+        }
+    }
+
+    /**
      * Tests "Piecewise" operation using a simple transform.
      */
     @Test
     public void testPiecewise() {
         // Initialize...
         final GridCoverageBuilder builder = new GridCoverageBuilder();
-        final GridCoverageBuilder.Variable variable = builder.newVariable("Elevation", SI.METRE);
+        final GridCoverageBuilder.Variable variable = builder.variable(0);
+        variable.setName("Elevation");
+        variable.setUnit(SI.METRE);
         variable.addNodataValue("No data", 0, null);
-        builder.setSampleRange(1, 40000);
-        builder.setImageSize(360, 180);
+        variable.setSampleRange(1, 40000);
+        builder.setExtent(360, 180);
         builder.setEnvelope(-180, -90, 180, 90);
         builder.setCoordinateReferenceSystem("CRS:84");
-        builder.setBufferedImage(random);
-        final WritableRaster raster = builder.getBufferedImage().getRaster();
+        setBufferedImage(builder, random);
+        final WritableRaster raster = ((BufferedImage) builder.getRenderedImage()).getRaster();
         raster.setSample(0,0,0,0); // For testing NaN value.
         raster.setSample(1,2,0,0);
 
@@ -85,14 +115,16 @@ public final strictfp class ViewsManagerTest extends GridCoverageTestBase {
 
         // Initialize...
         final GridCoverageBuilder builder = new GridCoverageBuilder();
-        final GridCoverageBuilder.Variable variable = builder.newVariable("Temperature", SI.CELSIUS);
+        final GridCoverageBuilder.Variable variable = builder.variable(0);
+        variable.setName("Temperature");
+        variable.setUnit(SI.CELSIUS);
         variable.addNodataValue("No data", 32767, null);
-        builder.setSampleRange(-20000, 23000);
-        builder.setImageSize(360, 180);
+        variable.setSampleRange(-20000, 23000);
+        builder.setExtent(360, 180);
         builder.setEnvelope(-180, -90, 180, 90);
         builder.setCoordinateReferenceSystem("CRS:84");
-        builder.setBufferedImage(random);
-        final WritableRaster raster = builder.getBufferedImage().getRaster();
+        setBufferedImage(builder, random);
+        final WritableRaster raster = ((BufferedImage) builder.getRenderedImage()).getRaster();
         raster.setSample(0,0,0,32767); // For testing NaN value.
         raster.setSample(1,2,0,32767);
 

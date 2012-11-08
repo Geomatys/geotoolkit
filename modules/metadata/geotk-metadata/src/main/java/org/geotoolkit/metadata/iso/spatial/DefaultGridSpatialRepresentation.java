@@ -104,33 +104,6 @@ public class DefaultGridSpatialRepresentation extends AbstractSpatialRepresentat
     }
 
     /**
-     * Creates a grid spatial representation initialized to the given values.
-     * This is a convenience constructor. The argument types don't need to
-     * match exactly the types expected by getters and setters.
-     *
-     * @param numberOfDimensions The number of independent spatial-temporal axes.
-     * @param axisDimensionsProperties Information about spatial-temporal axis properties.
-     * @param cellGeometry Identification of grid data as point or cell.
-     * @param transformationParameterAvailable Indication of whether or not parameters for
-     *          transformation exists.
-     *
-     * @deprecated This constructor is somewhat arbitrary as it does not include all attributes
-     *             (especially because of revisions in new ISO standards), not so convenient and
-     *             not used in practice.
-     */
-    @Deprecated
-    public DefaultGridSpatialRepresentation(final int numberOfDimensions,
-                                            final List<? extends Dimension> axisDimensionsProperties,
-                                            final CellGeometry cellGeometry,
-                                            final boolean transformationParameterAvailable)
-    {
-        setNumberOfDimensions(numberOfDimensions);
-        setAxisDimensionProperties(axisDimensionsProperties);
-        setCellGeometry(cellGeometry);
-        setTransformationParameterAvailable(transformationParameterAvailable);
-    }
-
-    /**
      * Returns a Geotk metadata implementation with the same values than the given arbitrary
      * implementation. If the given object is {@code null}, then this method returns {@code null}.
      * Otherwise if the given object is already a Geotk implementation, then the given object is

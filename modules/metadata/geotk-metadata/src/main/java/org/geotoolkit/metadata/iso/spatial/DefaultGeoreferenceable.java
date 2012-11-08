@@ -116,38 +116,6 @@ public class DefaultGeoreferenceable extends DefaultGridSpatialRepresentation im
     }
 
     /**
-     * Creates a georeferencable initialized to the given parameters.
-     *
-     * @param numberOfDimensions The number of independent spatial-temporal axes.
-     * @param axisDimensionsProperties Information about spatial-temporal axis properties.
-     * @param cellGeometry Identification of grid data as point or cell.
-     * @param transformationParameterAvailable Indication of whether or not parameters for
-     *        transformation exists.
-     * @param controlPointAvailable An indication of whether or not control point(s) exists.
-     * @param orientationParameterAvailable An indication of whether or not orientation parameters
-     *        are available.
-     *
-     * @deprecated This constructor is somewhat arbitrary as it does not include all attributes
-     *             (especially because of revisions in new ISO standards), not so convenient and
-     *             not used in practice.
-     */
-    @Deprecated
-    public DefaultGeoreferenceable(final int numberOfDimensions,
-                                   final List<? extends Dimension> axisDimensionsProperties,
-                                   final CellGeometry cellGeometry,
-                                   final boolean transformationParameterAvailable,
-                                   final boolean controlPointAvailable,
-                                   final boolean orientationParameterAvailable)
-    {
-        super(numberOfDimensions,
-              axisDimensionsProperties,
-              cellGeometry,
-              transformationParameterAvailable);
-        setControlPointAvailable(controlPointAvailable);
-        setOrientationParameterAvailable(orientationParameterAvailable);
-    }
-
-    /**
      * Returns a Geotk metadata implementation with the same values than the given arbitrary
      * implementation. If the given object is {@code null}, then this method returns {@code null}.
      * Otherwise if the given object is already a Geotk implementation, then the given object is

@@ -233,42 +233,6 @@ public class ConcatenatedTransform extends AbstractMathTransform implements Seri
     }
 
     /**
-     * Concatenates the given two-dimensional transforms. This is a convenience methods
-     * delegating to {@link #create(MathTransform, MathTransform)} and casting the result
-     * to a {@link MathTransform2D} instance.
-     *
-     * @param tr1 The first math transform.
-     * @param tr2 The second math transform.
-     * @return    The concatenated transform.
-     *
-     * @since 3.14
-     *
-     * @deprecated Moved to {@link MathTransforms#concatenate(MathTransform2D, MathTransform2D)}
-     */
-    @Deprecated
-    public static MathTransform2D create(MathTransform2D tr1, MathTransform2D tr2) {
-        return (MathTransform2D) create((MathTransform) tr1, (MathTransform) tr2);
-    }
-
-    /**
-     * Concatenates the given one-dimensional transforms. This is a convenience methods
-     * delegating to {@link #create(MathTransform, MathTransform)} and casting the result
-     * to a {@link MathTransform1D} instance.
-     *
-     * @param tr1 The first math transform.
-     * @param tr2 The second math transform.
-     * @return    The concatenated transform.
-     *
-     * @since 3.14
-     *
-     * @deprecated Moved to {@link MathTransforms#concatenate(MathTransform1D, MathTransform1D)}
-     */
-    @Deprecated
-    public static MathTransform1D create(MathTransform1D tr1, MathTransform1D tr2) {
-        return (MathTransform1D) create((MathTransform) tr1, (MathTransform) tr2);
-    }
-
-    /**
      * Concatenates the three given transforms. This is a convenience methods doing its job
      * as two consecutive concatenations.
      *
@@ -278,50 +242,9 @@ public class ConcatenatedTransform extends AbstractMathTransform implements Seri
      * @return    The concatenated transform.
      *
      * @since 3.00
-     *
-     * @deprecated Moved to {@link MathTransforms#concatenate(MathTransform, MathTransform, MathTransform)}
      */
-    @Deprecated
-    public static MathTransform create(MathTransform tr1, MathTransform tr2, MathTransform tr3) {
+    static MathTransform create(MathTransform tr1, MathTransform tr2, MathTransform tr3) {
         return create(create(tr1, tr2), tr3);
-    }
-
-    /**
-     * Concatenates the three given two-dimensional transforms. This is a convenience methods
-     * delegating to {@link #create(MathTransform, MathTransform, MathTransform)} and casting
-     * the result to a {@link MathTransform2D} instance.
-     *
-     * @param tr1 The first math transform.
-     * @param tr2 The second math transform.
-     * @param tr3 The third math transform.
-     * @return    The concatenated transform.
-     *
-     * @since 3.14
-     *
-     * @deprecated Moved to {@link MathTransforms#concatenate(MathTransform2D, MathTransform2D, MathTransform2D)}
-     */
-    @Deprecated
-    public static MathTransform2D create(MathTransform2D tr1, MathTransform2D tr2, MathTransform2D tr3) {
-        return (MathTransform2D) create((MathTransform) tr1, (MathTransform) tr2, (MathTransform) tr3);
-    }
-
-    /**
-     * Concatenates the three given one-dimensional transforms. This is a convenience methods
-     * delegating to {@link #create(MathTransform, MathTransform, MathTransform)} and casting
-     * the result to a {@link MathTransform1D} instance.
-     *
-     * @param tr1 The first math transform.
-     * @param tr2 The second math transform.
-     * @param tr3 The third math transform.
-     * @return    The concatenated transform.
-     *
-     * @since 3.14
-     *
-     * @deprecated Moved to {@link MathTransforms#concatenate(MathTransform1D, MathTransform1D, MathTransform1D)}
-     */
-    @Deprecated
-    public static MathTransform1D create(MathTransform1D tr1, MathTransform1D tr2, MathTransform1D tr3) {
-        return (MathTransform1D) create((MathTransform) tr1, (MathTransform) tr2, (MathTransform) tr3);
     }
 
     /**

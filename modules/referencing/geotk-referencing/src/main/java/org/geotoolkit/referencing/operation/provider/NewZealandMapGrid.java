@@ -84,12 +84,8 @@ public class NewZealandMapGrid extends MapProjection {
      *
      * This parameter is <a href="package-summary.html#Obligation">mandatory</a>.
      * Valid values range is (0 &hellip; &infin;) and default value is 6378388 metres.
-     *
-     * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
-     * descriptor(String)}</code> instead.
      */
-    @Deprecated
-    public static final ParameterDescriptor<Double> SEMI_MAJOR;
+    static final ParameterDescriptor<Double> SEMI_MAJOR;
 
     /**
      * The operation parameter descriptor for the {@linkplain
@@ -99,12 +95,8 @@ public class NewZealandMapGrid extends MapProjection {
      * This parameter is <a href="package-summary.html#Obligation">mandatory</a>.
      * Valid values range is (0 &hellip; &infin;) and default value is approximatively
      * 6356911.95 metres.
-     *
-     * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
-     * descriptor(String)}</code> instead.
      */
-    @Deprecated
-    public static final ParameterDescriptor<Double> SEMI_MINOR;
+    static final ParameterDescriptor<Double> SEMI_MINOR;
 
     /**
      * The operation parameter descriptor for the {@linkplain
@@ -113,12 +105,8 @@ public class NewZealandMapGrid extends MapProjection {
      *
      * This parameter is <a href="package-summary.html#Obligation">mandatory</a>.
      * Valid values range is [-180 &hellip; 180]&deg; and default value is 173&deg;.
-     *
-     * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
-     * descriptor(String)}</code> instead.
      */
-    @Deprecated
-    public static final ParameterDescriptor<Double> CENTRAL_MERIDIAN;
+    static final ParameterDescriptor<Double> CENTRAL_MERIDIAN;
 
     /**
      * The operation parameter descriptor for the {@linkplain
@@ -127,12 +115,8 @@ public class NewZealandMapGrid extends MapProjection {
      *
      * This parameter is <a href="package-summary.html#Obligation">mandatory</a>.
      * Valid values range is [-90 &hellip; 90]&deg; and default value is -41&deg;.
-     *
-     * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
-     * descriptor(String)}</code> instead.
      */
-    @Deprecated
-    public static final ParameterDescriptor<Double> LATITUDE_OF_ORIGIN;
+    static final ParameterDescriptor<Double> LATITUDE_OF_ORIGIN;
 
     /**
      * The operation parameter descriptor for the {@linkplain
@@ -141,12 +125,8 @@ public class NewZealandMapGrid extends MapProjection {
      *
      * This parameter is <a href="package-summary.html#Obligation">mandatory</a>.
      * Valid values range is unrestricted and default value is 2510000 metre.
-     *
-     * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
-     * descriptor(String)}</code> instead.
      */
-    @Deprecated
-    public static final ParameterDescriptor<Double> FALSE_EASTING;
+    static final ParameterDescriptor<Double> FALSE_EASTING;
 
     /**
      * The operation parameter descriptor for the {@linkplain
@@ -155,12 +135,8 @@ public class NewZealandMapGrid extends MapProjection {
      *
      * This parameter is <a href="package-summary.html#Obligation">mandatory</a>.
      * Valid values range is unrestricted and default value is 6023150 metre.
-     *
-     * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
-     * descriptor(String)}</code> instead.
      */
-    @Deprecated
-    public static final ParameterDescriptor<Double> FALSE_NORTHING;
+    static final ParameterDescriptor<Double> FALSE_NORTHING;
 
     /**
      * Parameters creation, which must be done before to initialize the {@link #PARAMETERS} field.

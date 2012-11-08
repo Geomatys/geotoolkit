@@ -127,23 +127,15 @@ public class Molodensky extends MathTransformProvider {
      * The operation parameter descriptor for the number of source geographic dimension (2 or 3).
      * This is a Geotk-specific argument. The standard parameter is {@link #DIM}, which set both
      * the source and target dimension.
-     *
-     * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
-     * descriptor(String)}</code> instead.
      */
-    @Deprecated
-    public static final ParameterDescriptor<Integer> SRC_DIM = PositionVector7Param.SRC_DIM;
+    static final ParameterDescriptor<Integer> SRC_DIM = PositionVector7Param.SRC_DIM;
 
     /**
      * The operation parameter descriptor for the number of target geographic dimension (2 or 3).
      * This is a Geotk-specific argument. The standard parameter is {@link #DIM}, which set both
      * the source and target dimension.
-     *
-     * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
-     * descriptor(String)}</code> instead.
      */
-    @Deprecated
-    public static final ParameterDescriptor<Integer> TGT_DIM = PositionVector7Param.TGT_DIM;
+    static final ParameterDescriptor<Integer> TGT_DIM = PositionVector7Param.TGT_DIM;
 
     /**
      * The operation parameter descriptor for the <cite>X-axis translation</cite>
@@ -240,12 +232,8 @@ public class Molodensky extends MathTransformProvider {
      * Units are {@linkplain SI#METRE metres}.
      *
      * @since 3.19
-     *
-     * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
-     * descriptor(String)}</code> instead.
      */
-    @Deprecated
-    public static final ParameterDescriptor<Double> AXIS_LENGTH_DIFFERENCE = createDescriptor(
+    static final ParameterDescriptor<Double> AXIS_LENGTH_DIFFERENCE = createDescriptor(
             new NamedIdentifier[] {
                 new NamedIdentifier(Citations.EPSG, "Semi-major axis length difference"),
             },
@@ -259,12 +247,8 @@ public class Molodensky extends MathTransformProvider {
      * Valid values range from -1 to +1, {@linkplain Unit#ONE dimensionless}.
      *
      * @since 3.19
-     *
-     * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
-     * descriptor(String)}</code> instead.
      */
-    @Deprecated
-    public static final ParameterDescriptor<Double> FLATTENING_DIFFERENCE = createDescriptor(
+    static final ParameterDescriptor<Double> FLATTENING_DIFFERENCE = createDescriptor(
             new NamedIdentifier[] {
                 new NamedIdentifier(Citations.EPSG, "Flattening difference"),
             },
