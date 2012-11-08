@@ -78,7 +78,7 @@ public class CoverageToFeatureTest {
 
 
     /**
-     * Test coverageToFeature process with a PixelInCell.CELL_CENTER coverage 
+     * Test coverageToFeature process with a PixelInCell.CELL_CENTER coverage
      * @throws NoSuchAuthorityCodeException
      * @throws FactoryException
      */
@@ -94,7 +94,7 @@ public class CoverageToFeatureTest {
         ParameterValueGroup in = desc.getInputDescriptor().createValue();
         in.parameter("reader_in").setValue(reader);
         org.geotoolkit.process.Process proc = desc.createProcess(in);
-        
+
         //Features out
         final Collection<Feature> featureListOut = (Collection<Feature>) proc.call().parameter("feature_out").getValue();
 
@@ -154,7 +154,7 @@ public class CoverageToFeatureTest {
         ParameterValueGroup in = desc.getInputDescriptor().createValue();
         in.parameter("reader_in").setValue(reader);
         org.geotoolkit.process.Process proc = desc.createProcess(in);
-        
+
         //Features out
         final Collection<Feature> featureListOut = (Collection<Feature>) proc.call().parameter("feature_out").getValue();
 
@@ -340,7 +340,7 @@ public class CoverageToFeatureTest {
 
         @Override
         public SpatialMetadata getCoverageMetadata(int i) throws CoverageStoreException {
-            SpatialMetadata meta = new SpatialMetadata(SpatialMetadataFormat.IMAGE);
+            SpatialMetadata meta = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(SpatialMetadataFormat.GEOTK_FORMAT_NAME));
             GridDomainAccessor grid = new GridDomainAccessor(meta);
             grid.setGridGeometry(coverage.getGridGeometry(), pixPos, CellGeometry.POINT, -1);
             ReferencingBuilder ref = new ReferencingBuilder(meta);

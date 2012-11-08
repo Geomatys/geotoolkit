@@ -104,7 +104,7 @@ public final class GeoTiffMetaDataReader {
     private final Node geoKeyDir;
 
     public GeoTiffMetaDataReader(final IIOMetadata imageMetadata) throws IOException{
-        
+
         root = imageMetadata.getAsTree(imageMetadata.getNativeMetadataFormatName());
         if(root == null) throw new IOException("No image metadatas");
 
@@ -117,7 +117,7 @@ public final class GeoTiffMetaDataReader {
 
     /**
      * Read the Spatial Metadatas.
-     * 
+     *
      * @param imageMetadata
      * @return SpatialMetadata
      * @throws NoSuchAuthorityCodeException
@@ -154,7 +154,7 @@ public final class GeoTiffMetaDataReader {
         }
 
         //create the spatial metadatas.
-        final SpatialMetadata spatialMetadata = new SpatialMetadata(SpatialMetadataFormat.IMAGE);
+        final SpatialMetadata spatialMetadata = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(SpatialMetadataFormat.GEOTK_FORMAT_NAME));
         fillGridMetaDatas(spatialMetadata, entries);
 
         final GeoTiffCRSReader crsReader = new GeoTiffCRSReader(null);
@@ -196,7 +196,7 @@ public final class GeoTiffMetaDataReader {
         }
         final CellGeometry cellGeometry = (orientation == PixelOrientation.UPPER_LEFT)
                                           ? CellGeometry.AREA:CellGeometry.POINT;
-        
+
         //read the image bounds
         final Rectangle bounds = readBounds();
 
@@ -212,19 +212,19 @@ public final class GeoTiffMetaDataReader {
         //check for pixel scale and tie points /////////////////////////////////
         final double[] pixelScale = readPixelScale();
         final double[] tiePoint = readTiePoint();
-        
+
         if(pixelScale == null && tiePoint != null){
-            
+
             final LocalizationGrid grid = new LocalizationGrid(2, 2);
             grid.setLocalizationPoint(0, 0, tiePoint[3], tiePoint[4]);
             grid.setLocalizationPoint(1, 0, tiePoint[9], tiePoint[10]);
             grid.setLocalizationPoint(1, 1, tiePoint[15], tiePoint[16]);
-            grid.setLocalizationPoint(0, 1, tiePoint[21], tiePoint[22]);            
+            grid.setLocalizationPoint(0, 1, tiePoint[21], tiePoint[22]);
             final AffineTransform gridToCRS = grid.getAffineTransform();
             gridToCRS.scale(1f/bounds.width, 1f/bounds.height);
             accesor.setAll(gridToCRS, bounds, cellGeometry, orientation);
             return;
-            
+
         }else if(pixelScale != null && tiePoint != null){
             //TODO the is a third value in the tie point
             final double scaleX         = pixelScale[0];
@@ -247,24 +247,24 @@ public final class GeoTiffMetaDataReader {
      */
     private Rectangle readBounds() throws IOException {
         final Rectangle rect = new Rectangle();
-        
-        final Node width = getNodeByNumber(imgFileDir, ImageWidth);        
+
+        final Node width = getNodeByNumber(imgFileDir, ImageWidth);
         //value can be stored in a short field
         Node widthNode = getNodeByLocalName(width, TAG_GEOTIFF_SHORTS);
-        if(widthNode != null) rect.width = readTiffShorts(widthNode)[0];        
+        if(widthNode != null) rect.width = readTiffShorts(widthNode)[0];
         //can be in a long field
         if(widthNode == null) widthNode = getNodeByLocalName(width, TAG_GEOTIFF_LONGS);
-        if(widthNode != null) rect.width = (int) readTiffLongs(widthNode)[0];        
+        if(widthNode != null) rect.width = (int) readTiffLongs(widthNode)[0];
         if(widthNode == null) throw new IOException("Could not find tiff image width value");
-        
-        
+
+
         final Node height = getNodeByNumber(imgFileDir, ImageLenght);
         //value can be stored in a short field
         Node heightNode = getNodeByLocalName(height, TAG_GEOTIFF_SHORTS);
-        if(heightNode != null) rect.height = readTiffShorts(heightNode)[0];        
+        if(heightNode != null) rect.height = readTiffShorts(heightNode)[0];
         //can be in a long field
         if(heightNode == null) heightNode = getNodeByLocalName(height, TAG_GEOTIFF_LONGS);
-        if(heightNode != null) rect.height = (int) readTiffLongs(heightNode)[0];        
+        if(heightNode != null) rect.height = (int) readTiffLongs(heightNode)[0];
         if(heightNode == null) throw new IOException("Could not find tiff image height value");
 
         return rect;
@@ -439,5 +439,5 @@ public final class GeoTiffMetaDataReader {
     public String toString() {
         return Classes.getShortName(this.getClass()) +"\n"+Trees.toString(Trees.xmlToSwing(root));
     }
-    
+
 }

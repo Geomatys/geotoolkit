@@ -36,7 +36,7 @@ import org.geotoolkit.referencing.crs.DefaultDerivedCRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
-import org.geotoolkit.referencing.operation.transform.IdentityTransform;
+import org.geotoolkit.referencing.operation.MathTransforms;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
 import static org.geotoolkit.util.ArgumentChecks.*;
@@ -303,7 +303,7 @@ public abstract class AbstractReferencedCanvas2D extends AbstractCanvas implemen
                     final double centerX = displayBounds.getCenterX();
                     final double centerY = displayBounds.getCenterY();
                     final AffineTransform change = objToDisp.createInverse();
-                    
+
                     change.translate(+centerX, +centerY);
                     change.rotate(rotation);
                     change.translate(-centerX, -centerY);
@@ -433,7 +433,7 @@ public abstract class AbstractReferencedCanvas2D extends AbstractCanvas implemen
          * 'equalsIgnoreMetadata(...)' version implicitly in the call to factory method.
          */
         if (sourceCRS == targetCRS) {
-            return IdentityTransform.create(sourceCRS.getCoordinateSystem().getDimension());
+            return MathTransforms.identity(sourceCRS.getCoordinateSystem().getDimension());
         }
         MathTransform tr;
         /*
