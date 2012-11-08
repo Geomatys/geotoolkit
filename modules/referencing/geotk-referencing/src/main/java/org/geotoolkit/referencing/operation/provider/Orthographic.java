@@ -81,8 +81,12 @@ public class Orthographic extends MapProjection {
      *
      * This parameter is <a href="package-summary.html#Obligation">mandatory</a>.
      * Valid values range is [-180 &hellip; 180]&deg; and default value is 0&deg;.
+     *
+     * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
+     * descriptor(String)}</code> instead.
      */
-    static final ParameterDescriptor<Double> LONGITUDE_OF_CENTRE =
+    @Deprecated
+    public static final ParameterDescriptor<Double> LONGITUDE_OF_CENTRE =
             UniversalParameters.CENTRAL_MERIDIAN.select(null,
                 "Longitude of natural origin",      // EPSG
                 "central_meridian",                 // OGC
@@ -97,8 +101,12 @@ public class Orthographic extends MapProjection {
      *
      * This parameter is <a href="package-summary.html#Obligation">mandatory</a>.
      * Valid values range is [-90 &hellip; 90]&deg; and default value is 0&deg;.
+     *
+     * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
+     * descriptor(String)}</code> instead.
      */
-    static final ParameterDescriptor<Double> LATITUDE_OF_CENTRE =
+    @Deprecated
+    public static final ParameterDescriptor<Double> LATITUDE_OF_CENTRE =
             UniversalParameters.LATITUDE_OF_ORIGIN.select(null,
                 "Latitude of natural origin",    // EPSG
                 "latitude_of_origin",            // OGC
@@ -113,8 +121,12 @@ public class Orthographic extends MapProjection {
      * This parameter is <a href="package-summary.html#Obligation">optional</a> because
      * <cite>remotesensing.org</cite> does not list it. Valid values range is (0 &hellip;
      * &infin;) and default value is 1.
+     *
+     * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
+     * descriptor(String)}</code> instead.
      */
-    static final ParameterDescriptor<Double> SCALE_FACTOR =
+    @Deprecated
+    public static final ParameterDescriptor<Double> SCALE_FACTOR =
             UniversalParameters.SCALE_FACTOR.select(false, null, new Citation[] {
                 Citations.NETCDF // NetCDF 4.3 doesn't have this parameter.
             }, null,
@@ -128,8 +140,12 @@ public class Orthographic extends MapProjection {
      *
      * This parameter is <a href="package-summary.html#Obligation">mandatory</a>.
      * Valid values range is unrestricted and default value is 0 metre.
+     *
+     * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
+     * descriptor(String)}</code> instead.
      */
-    static final ParameterDescriptor<Double> FALSE_EASTING = Mercator2SP.FALSE_EASTING;
+    @Deprecated
+    public static final ParameterDescriptor<Double> FALSE_EASTING = Mercator2SP.FALSE_EASTING;
 
     /**
      * The operation parameter descriptor for the {@linkplain
@@ -138,8 +154,12 @@ public class Orthographic extends MapProjection {
      *
      * This parameter is <a href="package-summary.html#Obligation">mandatory</a>.
      * Valid values range is unrestricted and default value is 0 metre.
+     *
+     * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
+     * descriptor(String)}</code> instead.
      */
-    static final ParameterDescriptor<Double> FALSE_NORTHING = Mercator2SP.FALSE_NORTHING;
+    @Deprecated
+    public static final ParameterDescriptor<Double> FALSE_NORTHING = Mercator2SP.FALSE_NORTHING;
 
     /**
      * The group of all parameters expected by this coordinate operation.

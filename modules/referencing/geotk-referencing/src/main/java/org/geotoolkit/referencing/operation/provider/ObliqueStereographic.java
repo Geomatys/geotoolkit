@@ -81,8 +81,12 @@ public class ObliqueStereographic extends Stereographic {
      *
      * This parameter is <a href="package-summary.html#Obligation">mandatory</a>.
      * Valid values range is [-180 &hellip; 180]&deg; and default value is 0&deg;.
+     *
+     * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
+     * descriptor(String)}</code> instead.
      */
-    static final ParameterDescriptor<Double> CENTRAL_MERIDIAN;
+    @Deprecated
+    public static final ParameterDescriptor<Double> CENTRAL_MERIDIAN;
 
     /**
      * The operation parameter descriptor for the {@linkplain
@@ -91,8 +95,12 @@ public class ObliqueStereographic extends Stereographic {
      *
      * This parameter is <a href="package-summary.html#Obligation">mandatory</a>.
      * Valid values range is [-90 &hellip; 90]&deg; and default value is 0&deg;.
+     *
+     * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
+     * descriptor(String)}</code> instead.
      */
-    static final ParameterDescriptor<Double> LATITUDE_OF_ORIGIN;
+    @Deprecated
+    public static final ParameterDescriptor<Double> LATITUDE_OF_ORIGIN;
 
     /**
      * The group of all parameters expected by this coordinate operation.
