@@ -60,11 +60,6 @@ public class WMSCCoverageReference extends WMSCoverageReference implements Pyram
     public PyramidSet getPyramidSet() throws DataStoreException {
         return set;
     }
-
-    @Override
-    public boolean isWriteable() {
-        return false;
-    }
     
     @Override
     public Pyramid createPyramid(CoordinateReferenceSystem crs) throws DataStoreException {

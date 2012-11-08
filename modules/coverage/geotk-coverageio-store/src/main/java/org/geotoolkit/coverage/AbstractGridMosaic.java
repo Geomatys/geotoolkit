@@ -38,7 +38,7 @@ import org.opengis.geometry.Envelope;
  */
 public abstract class AbstractGridMosaic implements GridMosaic{
     
-    private final String id = UUID.randomUUID().toString();
+    private final String id;
     private final Pyramid pyramid;
     private final Point2D upperLeft;
     private final Dimension gridSize;
@@ -47,11 +47,23 @@ public abstract class AbstractGridMosaic implements GridMosaic{
 
     public AbstractGridMosaic(Pyramid pyramid, Point2D upperLeft, Dimension gridSize,
             Dimension tileSize, double scale) {
+        this(null,pyramid,upperLeft,gridSize,tileSize,scale);
+    }
+    
+    public AbstractGridMosaic(String id, Pyramid pyramid, Point2D upperLeft, Dimension gridSize,
+            Dimension tileSize, double scale) {
         this.pyramid = pyramid;
         this.upperLeft = (Point2D) upperLeft.clone();
         this.scale = scale;
         this.gridSize = (Dimension) gridSize.clone();
         this.tileSize = (Dimension) tileSize.clone();
+        
+        if(id == null){
+            this.id = UUID.randomUUID().toString();
+        }else{
+            this.id = id;
+        }
+        
     }
 
     @Override

@@ -100,8 +100,8 @@ public class WKBRasterWriter {
         final SampleModel sm = image.getSampleModel();
         final Raster raster = image.getData();
         final int nbBand = sm.getNumBands();
-        final int width = sm.getWidth();
-        final int height = sm.getHeight();
+        final int width = image.getWidth();
+        final int height = image.getHeight();
         int databufferType = sm.getDataType();
         if(databufferType == DataBuffer.TYPE_INT){
             //special case, most image compression bands on single int when it would be byte

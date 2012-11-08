@@ -37,7 +37,7 @@ public interface PyramidalModel {
      * 
      * @return true if model can be modified
      */
-    boolean isWriteable();
+    boolean isWritable() throws DataStoreException;
     
     /**
      * 

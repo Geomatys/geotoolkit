@@ -178,7 +178,7 @@ public class PGCoverageStoreFactory extends AbstractCoverageStoreFactory{
         final String host = (String) params.parameter(HOST.getName().toString()).getValue();
         final Integer port = (Integer) params.parameter(PORT.getName().toString()).getValue();
         final String db = (String) params.parameter(DATABASE.getName().toString()).getValue();
-        return "jdbc:postgresql://" + host + ":" + port + "/" + db;
+        return "jdbc:postgresql://" + host + ":" + port + "/" + db+"";
     }
     
     /**

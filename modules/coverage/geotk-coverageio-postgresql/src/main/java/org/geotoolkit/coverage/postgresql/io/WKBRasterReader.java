@@ -79,7 +79,7 @@ public class WKBRasterReader {
      * @return
      * @throws IOException 
      */
-    public RenderedImage read(byte[] data) throws IOException{
+    public BufferedImage read(byte[] data) throws IOException{
         final InputStream stream = new ByteArrayInputStream(data);
         return read(stream);
     }
@@ -91,7 +91,7 @@ public class WKBRasterReader {
      * @return
      * @throws IOException 
      */
-    public RenderedImage read(final InputStream stream) throws IOException{
+    public BufferedImage read(final InputStream stream) throws IOException{
                 
         final DataInput ds;
         final int endian = stream.read();

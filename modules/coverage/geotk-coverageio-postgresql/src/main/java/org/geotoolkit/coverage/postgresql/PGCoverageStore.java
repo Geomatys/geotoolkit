@@ -16,14 +16,14 @@
  */
 package org.geotoolkit.coverage.postgresql;
 
-import java.sql.*;
-import java.util.AbstractSet;
-import java.util.ArrayList;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.HashSet;
-import java.util.Properties;
 import java.util.Set;
-import java.util.SortedSet;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.sql.DataSource;
 import org.geotoolkit.coverage.AbstractCoverageStore;
 import org.geotoolkit.coverage.CoverageReference;
@@ -41,12 +41,10 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Johann Sorel (Geomatys)
  */
 public class PGCoverageStore extends AbstractCoverageStore{
-
+    
     private DataSource source;
     private int fetchSize;
     private String schema;
-    private static final String names = "\"layerId\"";
-    private static final String table = "\"Layer\"";
 
     public PGCoverageStore(final ParameterValueGroup params, final DataSource source){
         super(params);
@@ -80,31 +78,167 @@ public class PGCoverageStore extends AbstractCoverageStore{
 
     @Override
     public Set<Name> getNames() throws DataStoreException {
-        final Set<Name> layerNames = new HashSet<Name>();
-        final StringBuilder query  = new StringBuilder("SELECT ");
-        query.append(names);
-        query.append(" FROM ");
-        query.append(schema);
-        query.append(".");
-        query.append(table);
-        query.append(";");
+        final Set<Name> names = new HashSet<Name>();
+        final String ns = getDefaultNamespace();
+        
+        final StringBuilder query = new StringBuilder();
+        
+        query.append("SELECT name FROM ");
+        query.append(encodeTableName("Layer"));
 
+        Connection cnx = null;
+        Statement stmt = null;
+        ResultSet rs = null;
         try {
-            final Connection connect = source.getConnection();
-            final Statement stmt     = connect.createStatement();
-            final ResultSet result   = stmt.executeQuery(query.toString());
-            while (result.next()) layerNames.add(new DefaultName(result.getString(1)));
+            cnx = source.getConnection();
+            stmt = cnx.createStatement();
+            rs = stmt.executeQuery(query.toString());
+            while (rs.next()){
+                names.add(new DefaultName(ns,rs.getString(1)));
+            }
         } catch (SQLException ex) {
             throw new DataStoreException(ex);
+        } finally {
+            closeSafe(cnx,stmt,rs);
         }
-        return layerNames;
+        return names;
     }
 
     @Override
     public CoverageReference getCoverageReference(Name name) throws DataStoreException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        typeCheck(name);
+        return new PGCoverageReference(this, name);
     }
 
+    @Override
+    public CoverageReference create(Name name) throws DataStoreException {
+        
+        final StringBuilder query = new StringBuilder();        
+        query.append("INSERT INTO ");
+        query.append(encodeTableName("Layer"));
+        query.append("(name) VALUES ('");
+        query.append(name.getLocalPart());
+        query.append("')");
+        
+        Connection cnx = null;
+        Statement stmt = null;
+        ResultSet rs = null;
+        try {
+            cnx = source.getConnection();
+            stmt = cnx.createStatement();
+            stmt.executeUpdate(query.toString());
+        } catch (SQLException ex) {
+            throw new DataStoreException(ex);
+        } finally {
+            closeSafe(cnx,stmt,rs);
+        }
+        
+        return getCoverageReference(new DefaultName(getDefaultNamespace(), name.getLocalPart()));
+    }
+
+    @Override
+    public Logger getLogger() {
+        return super.getLogger();
+    }
+
+    int getLayerId(String name) throws SQLException {
+        final StringBuilder query = new StringBuilder();        
+        query.append("SELECT id FROM ");
+        query.append(encodeTableName("Layer"));
+        query.append(" WHERE name='");
+        query.append(name);
+        query.append("'");
+        
+        Connection cnx = null;
+        Statement stmt = null;
+        ResultSet rs = null;
+        try {
+            cnx = source.getConnection();
+            stmt = cnx.createStatement();            
+            rs = stmt.executeQuery(query.toString());
+            if(rs.next()){
+                return rs.getInt(1);
+            }else{
+                throw new SQLException("No layer for name : "+name);
+            }
+        } finally {
+            closeSafe(cnx,stmt,rs);
+        }
+        
+    }
+    
+    
+    ////////////////////////////////////////////////////////////////////////////
+    // Connection utils ////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+
+    String encodeTableName(String name){
+        final String schema = getDatabaseSchema();
+        if(schema == null){
+            return "\""+name+"\"";
+        }else{
+            return "\""+schema+"\".\""+name+"\"";
+        }
+    }
+    
+    void closeSafe(final Connection cx, final Statement st, final ResultSet rs){
+        closeSafe(cx);
+        closeSafe(st);
+        closeSafe(rs);
+    }
+
+    void closeSafe(final ResultSet rs) {
+        if (rs == null) {
+            return;
+        }
+
+        try {
+            rs.close();
+        } catch (SQLException e) {
+            final String msg = "Error occurred closing result set";
+            getLogger().warning(msg);
+
+            if (getLogger().isLoggable(Level.FINER)) {
+                getLogger().log(Level.FINER, msg, e);
+            }
+        }
+    }
+
+    void closeSafe(final Statement st) {
+        if (st == null) {
+            return;
+        }
+
+        try {
+            st.close();
+        } catch (SQLException e) {
+            final String msg = "Error occurred closing statement";
+            getLogger().warning(msg);
+
+            if (getLogger().isLoggable(Level.FINER)) {
+                getLogger().log(Level.FINER, msg, e);
+            }
+        }
+    }
+
+    void closeSafe(final Connection cx) {
+        if (cx == null) {
+            return;
+        }
+
+        try {
+            cx.close();
+            getLogger().fine("CLOSE CONNECTION");
+        } catch (SQLException e) {
+            final String msg = "Error occurred closing connection";
+            getLogger().warning(msg);
+
+            if (getLogger().isLoggable(Level.FINER)) {
+                getLogger().log(Level.FINER, msg, e);
+            }
+        }
+    }
+    
     @Override
     public void dispose() {
         if (source instanceof ManageableDataSource) {

@@ -1,92 +1,92 @@
-CREATE TABLE pgcoverage."Layer"
-(
-  "layerId" character varying NOT NULL,
-  CONSTRAINT "Layer_pkey" PRIMARY KEY ("layerId")
+CREATE TABLE "Layer"(
+  "id" serial NOT NULL,
+  "name" character varying(1000) NOT NULL,
+  CONSTRAINT layer_pk PRIMARY KEY (id),
+  CONSTRAINT layer_unique_name UNIQUE (name)
 );
 
-CREATE TABLE pgcoverage."Band"
-(
-  name character varying,
-  datatype character varying,
-  layer character varying, -- pointer on layer table
-  index character varying NOT NULL,
-  CONSTRAINT "Band_pkey" PRIMARY KEY (index),
-  CONSTRAINT band_layer FOREIGN KEY (layer)
-      REFERENCES pgcoverage."Layer" ("layerId") MATCH SIMPLE
-      ON UPDATE NO ACTION ON DELETE NO ACTION -- pointer on layer table
+CREATE TABLE "Band"(
+  "id" serial NOT NULL,
+  "layerId" integer NOT NULL,
+  "indice" integer NOT NULL,
+  "dataType" integer NOT NULL,
+  CONSTRAINT band_pk PRIMARY KEY (id),
+  CONSTRAINT band_fk_layer FOREIGN KEY ("layerId")
+      REFERENCES "Layer" (id) MATCH SIMPLE
+      ON UPDATE CASCADE ON DELETE CASCADE,
+  CONSTRAINT band_unique_indice UNIQUE ("layerId","indice")
 );
 
-CREATE TABLE pgcoverage."Pyramid"
-(
-  "pyramidId" character varying NOT NULL,
-  layer character varying, -- pointer on layer table
-  origin boolean,
-  CONSTRAINT "Pyramid_pkey" PRIMARY KEY ("pyramidId"),
-  CONSTRAINT pyramid_layer FOREIGN KEY (layer)
-      REFERENCES pgcoverage."Layer" ("layerId") MATCH SIMPLE
-      ON UPDATE NO ACTION ON DELETE NO ACTION -- pointer on layer table
+CREATE TABLE "Pyramid"(
+  "id" serial NOT NULL,
+  "layerId" integer NOT NULL,
+  "crs" character varying(3000) NOT NULL,
+  CONSTRAINT pyramid_pk PRIMARY KEY (id),
+  CONSTRAINT pyramid_fk_layer FOREIGN KEY ("layerId")
+      REFERENCES "Layer" (id) MATCH SIMPLE
+      ON UPDATE CASCADE ON DELETE CASCADE
 );
 
-CREATE TABLE pgcoverage."Mosaic"
-(
-  "mosaicId" character varying NOT NULL,
-  pyramid character varying, -- pointer on pyramid table
-  "upperCornerX" integer, -- upper corner X coordinate
-  "upperCornerY" integer, -- upper corner Y coordinate
-  width integer, -- mosaic width
-  height integer, -- mosaic height
-  level double precision, -- pyramid floor (niveau echelle)
-  "tileWidth" integer, -- tile width within this mosaic
-  "tileHeight" integer, -- tile height within mosaic
-  CONSTRAINT "Mosaic_pkey" PRIMARY KEY ("mosaicId"),
-  CONSTRAINT mosaic_pyramid FOREIGN KEY (pyramid)
-      REFERENCES pgcoverage."Pyramid" ("pyramidId") MATCH SIMPLE
-      ON UPDATE NO ACTION ON DELETE NO ACTION -- pointer on pyramid table
+-- CREATE TABLE "PyramidCRS"(
+--  "id" serial NOT NULL,
+--  "pyramidId" integer NOT NULL,
+--  "wkt" character varying(3000) NOT NULL,
+--  CONSTRAINT crs_pk PRIMARY KEY (id),
+--  CONSTRAINT crs_fk_pyramid FOREIGN KEY ("pyramidId")
+--      REFERENCES "Pyramid" (id) MATCH SIMPLE
+--      ON UPDATE CASCADE ON DELETE CASCADE
+-- );
+
+CREATE TABLE "PyramidProperty"(
+  "id" serial NOT NULL,
+  "pyramidId" integer NOT NULL,
+  "key" character varying(200) NOT NULL,
+  "type" character varying(30) NOT NULL,
+  "value" character varying(2000),
+  CONSTRAINT pyramidproperty_pk PRIMARY KEY (id),
+  CONSTRAINT pyramidproperty_fk_pyramid FOREIGN KEY ("pyramidId")
+      REFERENCES "Pyramid" (id) MATCH SIMPLE
+      ON UPDATE CASCADE ON DELETE CASCADE
 );
 
-CREATE TABLE pgcoverage."Tuile"
-(
-  "tuileId" character varying NOT NULL,
-  mosaic character varying, -- pointer on mosaic table
-  "posX" integer, -- position in X direction
-  "posY" integer, -- position in Y direction
-  CONSTRAINT "Tuile_pkey" PRIMARY KEY ("tuileId"),
-  CONSTRAINT tuile_mosaic FOREIGN KEY (mosaic)
-      REFERENCES pgcoverage."Mosaic" ("mosaicId") MATCH SIMPLE
-      ON UPDATE NO ACTION ON DELETE NO ACTION -- pointer on mosaic table
+CREATE TABLE "Mosaic"(
+  "id" bigserial NOT NULL,
+  "pyramidId" integer NOT NULL,
+  "upperCornerX" double precision NOT NULL,
+  "upperCornerY" double precision NOT NULL,
+  "gridWidth" integer NOT NULL,
+  "gridHeight" integer NOT NULL,
+  "scale" double precision NOT NULL,
+  "tileWidth" integer NOT NULL,
+  "tileHeight" integer NOT NULL,
+  CONSTRAINT mosaic_pk PRIMARY KEY (id),
+  CONSTRAINT mosaic_fk_pyramid FOREIGN KEY ("pyramidId")
+      REFERENCES "Pyramid" (id) MATCH SIMPLE
+      ON UPDATE CASCADE ON DELETE CASCADE,
+  CONSTRAINT mosaic_unique_scale UNIQUE ("pyramidId","scale")
 );
 
-CREATE TABLE pgcoverage."Pyramid_Details"
-(
-  "pyramiddetailsId" character varying NOT NULL,
-  pyramid character varying, -- pointer on pyramid table
-  value double precision,
-  CONSTRAINT "Pyramid_Details_pkey" PRIMARY KEY ("pyramiddetailsId"),
-  CONSTRAINT details_pyramid FOREIGN KEY (pyramid)
-      REFERENCES pgcoverage."Pyramid" ("pyramidId") MATCH SIMPLE
-      ON UPDATE NO ACTION ON DELETE NO ACTION -- pointer on pyramid table
+CREATE TABLE "MosaicAxis"(
+  "id" bigserial NOT NULL,
+  "mosaicId" bigint NOT NULL,
+  "indice" integer NOT NULL,
+  "value" double precision NOT NULL,
+  CONSTRAINT mosaicaxis_pk PRIMARY KEY ("id"),
+  CONSTRAINT mosaicaxis_fk_mosaic FOREIGN KEY ("mosaicId")
+      REFERENCES "Mosaic" (id) MATCH SIMPLE
+      ON UPDATE CASCADE ON DELETE CASCADE,
+  CONSTRAINT mosaicaxis_unique_indice UNIQUE ("mosaicId","indice")
 );
 
-CREATE TABLE pgcoverage."Dimension_Mosaic"
-(
-  "dimension_mosaicId" character varying NOT NULL,
-  mosaic character varying, -- pointer on mosaic table
-  "axisOrder" integer,
-  value double precision,
-  CONSTRAINT "Dimension_Mosaic_pkey" PRIMARY KEY ("dimension_mosaicId"),
-  CONSTRAINT dimensionmosaic_mosaic FOREIGN KEY (mosaic)
-      REFERENCES pgcoverage."Mosaic" ("mosaicId") MATCH SIMPLE
-      ON UPDATE NO ACTION ON DELETE NO ACTION -- pointer on mosaic table
-);
-
-CREATE TABLE pgcoverage."CRS_Dimension"
-(
-  "crsDimId" character varying NOT NULL,
-  pyramid character varying, -- pointer on pyramid table
-  "axisOrder" character varying,
-  "code_EPSG" character varying,
-  CONSTRAINT "CRS_Dimension_pkey" PRIMARY KEY ("crsDimId"),
-  CONSTRAINT "crsDim_pyramid" FOREIGN KEY (pyramid)
-      REFERENCES pgcoverage."Pyramid" ("pyramidId") MATCH SIMPLE
-      ON UPDATE NO ACTION ON DELETE NO ACTION -- pointer on pyramid table
+CREATE TABLE "Tile"(
+  "id" bigserial NOT NULL,
+  "mosaicId" bigint NOT NULL,
+  "positionX" integer NOT NULL,
+  "positionY" integer NOT NULL,
+  "raster" raster NOT NULL,
+  CONSTRAINT tile_pk PRIMARY KEY ("id"),
+  CONSTRAINT tile_fk_mosaic FOREIGN KEY ("mosaicId")
+      REFERENCES "Mosaic" (id) MATCH SIMPLE
+      ON UPDATE CASCADE ON DELETE CASCADE,
+  CONSTRAINT tile_unique_position UNIQUE ("mosaicId","positionX","positionY")
 );

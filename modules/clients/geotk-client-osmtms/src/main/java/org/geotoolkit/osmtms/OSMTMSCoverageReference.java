@@ -81,11 +81,6 @@ public class OSMTMSCoverageReference implements CoverageReference, PyramidalMode
     }
 
     @Override
-    public boolean isWriteable() {
-        return false;
-    }
-
-    @Override
     public Pyramid createPyramid(CoordinateReferenceSystem crs) throws DataStoreException {
         throw new DataStoreException("Model is not writeable.");
     }

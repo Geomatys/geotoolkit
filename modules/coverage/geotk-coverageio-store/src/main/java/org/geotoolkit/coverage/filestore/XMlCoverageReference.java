@@ -56,8 +56,7 @@ public class XMlCoverageReference implements CoverageReference, PyramidalModel{
 
     @Override
     public boolean isWritable() throws DataStoreException {
-        //TODO
-        return false;
+        return true;
     }
 
     @Override
@@ -86,11 +85,6 @@ public class XMlCoverageReference implements CoverageReference, PyramidalModel{
     @Override
     public XMLPyramidSet getPyramidSet() throws DataStoreException {
         return set;
-    }
-
-    @Override
-    public boolean isWriteable() {
-        return true;
     }
 
     @Override

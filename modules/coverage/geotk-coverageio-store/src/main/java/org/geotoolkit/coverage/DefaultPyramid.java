@@ -34,7 +34,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 public class DefaultPyramid implements Pyramid{
 
-    private final String id = UUID.randomUUID().toString();
+    private final String id;
     private final PyramidSet set;
     private final CoordinateReferenceSystem crs;
     private final SortedMap<Double,GridMosaic> mosaics = new TreeMap<Double, GridMosaic>(            
@@ -47,8 +47,17 @@ public class DefaultPyramid implements Pyramid{
     });
 
     public DefaultPyramid(PyramidSet set, CoordinateReferenceSystem crs) {
+        this(null,set,crs);
+    }
+    
+    public DefaultPyramid(String id, PyramidSet set, CoordinateReferenceSystem crs) {
         this.set = set;
         this.crs = crs;
+        if(id == null){
+            this.id = UUID.randomUUID().toString();
+        }else{
+            this.id = id;
+        }
     }
 
     @Override
