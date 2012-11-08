@@ -106,7 +106,7 @@ public class WMTSServerFactory extends AbstractServerFactory implements Coverage
     }
 
     @Override
-    public WebMapTileServer create(ParameterValueGroup params) throws DataStoreException {
+    public WebMapTileServer open(ParameterValueGroup params) throws DataStoreException {
         checkCanProcessWithError(params);
         final WebMapTileServer server = new WebMapTileServer(params);
 
@@ -120,21 +120,21 @@ public class WMTSServerFactory extends AbstractServerFactory implements Coverage
     }
 
     @Override
-    public WebMapTileServer create(Map<String, ? extends Serializable> params) throws DataStoreException {
-        return (WebMapTileServer) super.create(params);
+    public WebMapTileServer open(Map<String, ? extends Serializable> params) throws DataStoreException {
+        return (WebMapTileServer) super.open(params);
     }
 
     @Override
-    public CoverageStore createNew(Map<String, ? extends Serializable> params) throws DataStoreException {
+    public CoverageStore create(Map<String, ? extends Serializable> params) throws DataStoreException {
         try{
-            return createNew(FeatureUtilities.toParameter(params,getParametersDescriptor()));
+            return create(FeatureUtilities.toParameter(params,getParametersDescriptor()));
         }catch(InvalidParameterValueException ex){
             throw new DataStoreException(ex);
         }
     }
 
     @Override
-    public CoverageStore createNew(ParameterValueGroup params) throws DataStoreException {
+    public CoverageStore create(ParameterValueGroup params) throws DataStoreException {
         throw new DataStoreException("Can not create new WMTS coverage store.");
     }
 

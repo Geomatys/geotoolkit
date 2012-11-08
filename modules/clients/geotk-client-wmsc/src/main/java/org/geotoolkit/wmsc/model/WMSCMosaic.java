@@ -29,6 +29,7 @@ import org.geotoolkit.coverage.TileReference;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.wms.xml.v111.BoundingBox;
+import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 
 /**
@@ -75,7 +76,7 @@ public class WMSCMosaic implements GridMosaic{
     }
 
     @Override
-    public Point2D getUpperLeftCorner() {
+    public DirectPosition getUpperLeftCorner() {
         return pyramid.getUpperLeftCorner();
     }
 
@@ -99,8 +100,9 @@ public class WMSCMosaic implements GridMosaic{
     @Override
     public Envelope getEnvelope(int col, int row) {
         
-        final double minX = getUpperLeftCorner().getX();
-        final double maxY = getUpperLeftCorner().getY();
+        final DirectPosition ul = getUpperLeftCorner();
+        final double minX = ul.getOrdinate(0);
+        final double maxY = ul.getOrdinate(1);
         final double spanX = tileSpanX;
         final double spanY = tileSpanY;
         
@@ -114,8 +116,9 @@ public class WMSCMosaic implements GridMosaic{
 
     @Override
     public Envelope getEnvelope() {
-        final double minX = getUpperLeftCorner().getX();
-        final double maxY = getUpperLeftCorner().getY();
+        final DirectPosition ul = getUpperLeftCorner();
+        final double minX = ul.getOrdinate(0);
+        final double maxY = ul.getOrdinate(1);
         final double spanX = getTileSize().width * getGridSize().width * getScale();
         final double spanY = getTileSize().height* getGridSize().height* getScale();
         

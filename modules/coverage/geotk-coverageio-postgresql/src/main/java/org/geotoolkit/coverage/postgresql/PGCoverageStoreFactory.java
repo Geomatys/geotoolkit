@@ -130,7 +130,7 @@ public class PGCoverageStoreFactory extends AbstractCoverageStoreFactory{
     }
 
     @Override
-    public CoverageStore create(ParameterValueGroup params) throws DataStoreException {
+    public CoverageStore open(ParameterValueGroup params) throws DataStoreException {
         
         // datasource
         // check if the DATASOURCE parameter was supplied, it takes precendence
@@ -162,7 +162,7 @@ public class PGCoverageStoreFactory extends AbstractCoverageStoreFactory{
     }
 
     @Override
-    public CoverageStore createNew(ParameterValueGroup params) throws DataStoreException {
+    public CoverageStore create(ParameterValueGroup params) throws DataStoreException {
         throw new UnsupportedOperationException("Creation not supported.");
     }
     

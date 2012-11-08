@@ -149,7 +149,7 @@ public interface CoverageStoreFactory {
     /**
      * @see CoverageStoreFactory#createCoverage(org.opengis.parameter.ParameterValueGroup)
      */
-    CoverageStore create(Map<String, ? extends Serializable> params) throws DataStoreException;
+    CoverageStore open(Map<String, ? extends Serializable> params) throws DataStoreException;
 
     /**
      * Construct a live CoverageStore using the connection parameters provided.
@@ -170,10 +170,10 @@ public interface CoverageStoreFactory {
      * @throws IOException if there were any problems setting up (creating or
      *         connecting) the datasource.
      */
+    CoverageStore open(ParameterValueGroup params) throws DataStoreException;
+
+    CoverageStore create(Map<String, ? extends Serializable> params) throws DataStoreException;
+
     CoverageStore create(ParameterValueGroup params) throws DataStoreException;
-
-    CoverageStore createNew(Map<String, ? extends Serializable> params) throws DataStoreException;
-
-    CoverageStore createNew(ParameterValueGroup params) throws DataStoreException;
 
 }

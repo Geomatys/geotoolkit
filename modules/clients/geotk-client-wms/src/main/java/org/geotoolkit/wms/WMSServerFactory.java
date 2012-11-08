@@ -104,27 +104,27 @@ public class WMSServerFactory extends AbstractServerFactory implements CoverageS
     }
     
     @Override
-    public WebMapServer create(ParameterValueGroup params) throws DataStoreException {
+    public WebMapServer open(ParameterValueGroup params) throws DataStoreException {
         checkCanProcessWithError(params);
         return new WebMapServer(params);
     }
 
     @Override
-    public WebMapServer create(Map<String, ? extends Serializable> params) throws DataStoreException {
-        return (WebMapServer) super.create(params);
+    public WebMapServer open(Map<String, ? extends Serializable> params) throws DataStoreException {
+        return (WebMapServer) super.open(params);
     }
 
     @Override
-    public CoverageStore createNew(Map<String, ? extends Serializable> params) throws DataStoreException {
+    public CoverageStore create(Map<String, ? extends Serializable> params) throws DataStoreException {
         try{
-            return createNew(FeatureUtilities.toParameter(params,getParametersDescriptor()));
+            return create(FeatureUtilities.toParameter(params,getParametersDescriptor()));
         }catch(InvalidParameterValueException ex){
             throw new DataStoreException(ex);
         }
     }
 
     @Override
-    public CoverageStore createNew(ParameterValueGroup params) throws DataStoreException {
+    public CoverageStore create(ParameterValueGroup params) throws DataStoreException {
         throw new DataStoreException("Can not create new WMS coverage store.");
     }
     

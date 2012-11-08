@@ -105,7 +105,7 @@ public class NcWMSServerFactory extends AbstractServerFactory implements Coverag
     }
 
     @Override
-    public NcWebMapServer create(ParameterValueGroup params) throws DataStoreException {
+    public NcWebMapServer open(ParameterValueGroup params) throws DataStoreException {
         checkCanProcessWithError(params);
         final URL url = (URL)Parameters.getOrCreate(URL, params).getValue();
         final WMSVersion version = (WMSVersion)Parameters.getOrCreate(VERSION, params).getValue();
@@ -119,17 +119,17 @@ public class NcWMSServerFactory extends AbstractServerFactory implements Coverag
     }
 
     @Override
-    public NcWebMapServer create(Map<String, ? extends Serializable> params) throws DataStoreException {
-        return (NcWebMapServer) super.create(params);
+    public NcWebMapServer open(Map<String, ? extends Serializable> params) throws DataStoreException {
+        return (NcWebMapServer) super.open(params);
     }
     
     @Override
-    public CoverageStore createNew(Map<String, ? extends Serializable> params) throws DataStoreException {
+    public CoverageStore create(Map<String, ? extends Serializable> params) throws DataStoreException {
         throw new DataStoreException("Can not create new ncWMS coverage store.");
     }
 
     @Override
-    public CoverageStore createNew(ParameterValueGroup params) throws DataStoreException {
+    public CoverageStore create(ParameterValueGroup params) throws DataStoreException {
         throw new DataStoreException("Can not create new ncWMS coverage store.");
     }
     

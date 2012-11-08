@@ -48,6 +48,7 @@ import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.coverage.postgresql.io.WKBRasterWriter;
 import org.geotoolkit.storage.DataStoreException;
 import org.opengis.feature.type.Name;
+import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
@@ -156,7 +157,7 @@ public class PGCoverageReference implements CoverageReference, PyramidalModel{
 
     @Override
     public GridMosaic createMosaic(final String pyramidId, final Dimension gridSize, final Dimension tilePixelSize, 
-            final Point2D upperleft, final double pixelscale) throws DataStoreException {
+            final DirectPosition upperleft, final double pixelscale) throws DataStoreException {
             
         long mosaicId = 0;
         
@@ -174,8 +175,8 @@ public class PGCoverageReference implements CoverageReference, PyramidalModel{
             query.append(store.encodeTableName("Mosaic"));
             query.append("(\"pyramidId\",\"upperCornerX\",\"upperCornerY\",\"gridWidth\",\"gridHeight\",\"scale\",\"tileWidth\",\"tileHeight\") VALUES (");
             query.append(pyramidIdInt           ).append(',');
-            query.append(upperleft.getX()       ).append(',');
-            query.append(upperleft.getY()       ).append(',');
+            query.append(upperleft.getOrdinate(0)).append(',');
+            query.append(upperleft.getOrdinate(1)).append(',');
             query.append(gridSize.width         ).append(',');
             query.append(gridSize.height        ).append(',');
             query.append(pixelscale             ).append(',');

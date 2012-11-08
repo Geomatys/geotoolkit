@@ -29,6 +29,7 @@ import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.storage.DataStoreException;
 import org.opengis.feature.type.Name;
+import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
@@ -96,7 +97,7 @@ public class XMlCoverageReference implements CoverageReference, PyramidalModel{
 
     @Override
     public GridMosaic createMosaic(String pyramidId, Dimension gridSize,
-    Dimension tilePixelSize, Point2D upperleft, double pixelscale) throws DataStoreException {
+    Dimension tilePixelSize, DirectPosition upperleft, double pixelscale) throws DataStoreException {
         final XMLPyramidSet set = getPyramidSet();
         final XMLPyramid pyramid = set.getPyramid(pyramidId);
         final XMLMosaic mosaic = pyramid.createMosaic(gridSize, tilePixelSize, upperleft, pixelscale);

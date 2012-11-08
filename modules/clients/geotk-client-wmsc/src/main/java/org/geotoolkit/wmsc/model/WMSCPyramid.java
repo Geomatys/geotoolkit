@@ -16,11 +16,12 @@
  */
 package org.geotoolkit.wmsc.model;
 
-import java.awt.geom.Point2D;
 import java.util.List;
 import org.geotoolkit.coverage.DefaultPyramid;
+import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.wmsc.xml.v111.TileSet;
+import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.util.FactoryException;
 
@@ -32,16 +33,16 @@ import org.opengis.util.FactoryException;
 public class WMSCPyramid extends DefaultPyramid{
         
     private final TileSet tileset;
-    private final Point2D upperleft;
+    private final GeneralDirectPosition upperleft;
     
     public WMSCPyramid(final WMSCPyramidSet set, final TileSet tileset) throws NoSuchAuthorityCodeException, FactoryException{
         super(set,CRS.decode(tileset.getSRS()));        
         this.tileset = tileset;
         
-        this.upperleft = new Point2D.Double(
-                tileset.getBoundingBox().getMinx(), 
-                tileset.getBoundingBox().getMaxy());
-        
+        this.upperleft = new GeneralDirectPosition(getCoordinateReferenceSystem());
+        this.upperleft.setOrdinate(0, tileset.getBoundingBox().getMinx());
+        this.upperleft.setOrdinate(1, tileset.getBoundingBox().getMiny());
+                
         final List<Double> ress = tileset.getResolutions();
         if(ress == null){
             return;
@@ -57,7 +58,7 @@ public class WMSCPyramid extends DefaultPyramid{
         return tileset;
     }
      
-    public Point2D getUpperLeftCorner(){
+    public DirectPosition getUpperLeftCorner(){
         return upperleft;
     }
     

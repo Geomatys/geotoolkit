@@ -41,6 +41,7 @@ import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.util.XArrays;
 import org.opengis.feature.type.Name;
+import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
@@ -163,9 +164,9 @@ public class StatefullPyramidalCoverageLayerJ2D extends StatefullMapLayerJ2D<Cov
         if(Double.isNaN(wantedEnv.getMaximum(1))){ wantedEnv.setRange(1, wantedEnv.getMinimum(1), Double.POSITIVE_INFINITY);  }
         
         
-
-        final double tileMatrixMinX = mosaic.getUpperLeftCorner().getX();
-        final double tileMatrixMaxY = mosaic.getUpperLeftCorner().getY();
+        final DirectPosition ul = mosaic.getUpperLeftCorner();
+        final double tileMatrixMinX = ul.getOrdinate(0);
+        final double tileMatrixMaxY = ul.getOrdinate(1);
         final Dimension gridSize = mosaic.getGridSize();
         final Dimension tileSize = mosaic.getTileSize();
         final double scale = mosaic.getScale();
@@ -277,8 +278,9 @@ public class StatefullPyramidalCoverageLayerJ2D extends StatefullMapLayerJ2D<Cov
         double bBoxMaxX = env.getMaximum(0);
         double bBoxMaxY = env.getMaximum(1);
         
-        final double tileMatrixMinX = mosaicUpdate.getUpperLeftCorner().getX();
-        final double tileMatrixMaxY = mosaicUpdate.getUpperLeftCorner().getY();
+        final DirectPosition ul = mosaicUpdate.getUpperLeftCorner();
+        final double tileMatrixMinX = ul.getOrdinate(0);
+        final double tileMatrixMaxY = ul.getOrdinate(1);
         final Dimension gridSize = mosaicUpdate.getGridSize();
         final Dimension tileSize = mosaicUpdate.getTileSize();
         final double scale = mosaicUpdate.getScale();

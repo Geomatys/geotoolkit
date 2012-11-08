@@ -103,7 +103,7 @@ public class CSWServerFactory extends AbstractServerFactory{
     }
 
     @Override
-    public Server create(ParameterValueGroup params) throws DataStoreException {
+    public Server open(ParameterValueGroup params) throws DataStoreException {
         checkCanProcessWithError(params);
         final URL url = (URL)Parameters.getOrCreate(URL, params).getValue();
         final String version = (String)Parameters.getOrCreate(VERSION, params).getValue();

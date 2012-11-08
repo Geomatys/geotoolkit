@@ -17,7 +17,6 @@
 package org.geotoolkit.googlemaps.model;
 
 import java.awt.Dimension;
-import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Map;
@@ -110,7 +109,9 @@ public class GoogleMapsPyramidSet extends CachedPyramidSet{
         final int tileWidth = (int) BASE_TILE_SIZE;        
         final int tileHeight = (int) BASE_TILE_SIZE;        
         final Envelope extent = MERCATOR_EXTEND;
-        final Point2D upperLeft = new Point2D.Double(extent.getMinimum(0), extent.getMaximum(1));        
+        final GeneralDirectPosition upperLeft = new GeneralDirectPosition(GOOGLE_MERCATOR);
+        upperLeft.setOrdinate(0, extent.getMinimum(0));
+        upperLeft.setOrdinate(1, extent.getMaximum(1));      
         final double scale0Resolution = extent.getSpan(0) / BASE_TILE_SIZE;
         
         for(int i=0; i<=maxScale; i++){

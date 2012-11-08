@@ -85,7 +85,7 @@ public class WMSCServerFactory extends AbstractServerFactory implements Coverage
     }
 
     @Override
-    public WebMapServerCached create(ParameterValueGroup params) throws DataStoreException {
+    public WebMapServerCached open(ParameterValueGroup params) throws DataStoreException {
         checkCanProcessWithError(params);
         final URL url = (URL)Parameters.getOrCreate(URL, params).getValue();
         ClientSecurity security = null;
@@ -112,17 +112,17 @@ public class WMSCServerFactory extends AbstractServerFactory implements Coverage
     }
 
     @Override
-    public WebMapServerCached create(Map<String, ? extends Serializable> params) throws DataStoreException {
-        return (WebMapServerCached) super.create(params);
+    public WebMapServerCached open(Map<String, ? extends Serializable> params) throws DataStoreException {
+        return (WebMapServerCached) super.open(params);
     }
 
     @Override
-    public WebMapServerCached createNew(Map<String, ? extends Serializable> params) throws DataStoreException {
+    public WebMapServerCached create(Map<String, ? extends Serializable> params) throws DataStoreException {
         throw new DataStoreException("Can not create new WMSC coverage store.");
     }
 
     @Override
-    public WebMapServerCached createNew(ParameterValueGroup params) throws DataStoreException {
+    public WebMapServerCached create(ParameterValueGroup params) throws DataStoreException {
         throw new DataStoreException("Can not create new WMSC coverage store.");
     }
     

@@ -106,9 +106,9 @@ public class JCoverageStoreChooser extends javax.swing.JPanel {
 
         final ParameterValueGroup param = guiEditor.getEditedAsParameter(factory.getParametersDescriptor());
         if(guiCreateNew.isSelected()){
-            return factory.createNew(param);
-        }else{
             return factory.create(param);
+        }else{
+            return factory.open(param);
         }
     }
 

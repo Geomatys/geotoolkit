@@ -105,7 +105,7 @@ public class JServerChooser extends javax.swing.JPanel {
         }
 
         final ParameterValueGroup param = guiEditor.getEditedAsParameter(factory.getParametersDescriptor());
-        return factory.create(param);
+        return factory.open(param);
     }
 
     public List<MapLayer> getSelectedLayers() throws DataStoreException{

@@ -20,12 +20,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
-import org.geotoolkit.coverage.filestore.XMLMosaic;
-import org.geotoolkit.coverage.filestore.XMLPyramid;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.gui.swing.tree.Trees;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.util.converter.Classes;
+import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 
 /**
@@ -61,8 +59,9 @@ public class DefaultPyramidSet implements PyramidSet{
             final double[] scales = pyramid.getScales();
             for(int i=0;i<scales.length;i++){
                 final GridMosaic mosaic = pyramid.getMosaic(i);
-                final double minX = mosaic.getUpperLeftCorner().getX();
-                final double maxY = mosaic.getUpperLeftCorner().getY();
+                final DirectPosition position = mosaic.getUpperLeftCorner();
+                final double minX = position.getOrdinate(0);
+                final double maxY = position.getOrdinate(1);
                 final double spanX = mosaic.getTileSize().width * mosaic.getGridSize().width * mosaic.getScale();
                 final double spanY = mosaic.getTileSize().height* mosaic.getGridSize().height* mosaic.getScale();
                 final GeneralEnvelope envelope = new GeneralEnvelope(

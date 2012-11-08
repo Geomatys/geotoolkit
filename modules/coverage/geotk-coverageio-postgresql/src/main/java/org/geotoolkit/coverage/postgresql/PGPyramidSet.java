@@ -30,6 +30,7 @@ import java.util.logging.Level;
 import org.geotoolkit.coverage.DefaultPyramid;
 import org.geotoolkit.coverage.DefaultPyramidSet;
 import org.geotoolkit.coverage.Pyramid;
+import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.referencing.CRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
@@ -131,8 +132,12 @@ public class PGPyramidSet extends DefaultPyramidSet{
                 final int tileWidth = rs.getInt(7);
                 final int tileHeight = rs.getInt(8);
                 
-                final PGGridMosaic mosaic = new PGGridMosaic(ref, mosaicId, pyramid, 
-                        new Point2D.Double(cornerX, cornerY), 
+                final GeneralDirectPosition position = new GeneralDirectPosition(crs);
+                position.setOrdinate(0, cornerX);
+                position.setOrdinate(1, cornerY);
+                
+                final PGGridMosaic mosaic = new PGGridMosaic(ref, 
+                        mosaicId, pyramid, position, 
                         new Dimension(gridWidth, gridHeight),
                         new Dimension(tileWidth, tileHeight), scale);
                 pyramid.getMosaics().put(scale, mosaic);

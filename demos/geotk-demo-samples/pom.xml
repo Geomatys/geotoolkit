@@ -124,6 +124,11 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.geotoolkit.pending</groupId>
+            <artifactId>geotk-coverageio-postgresql</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.geotoolkit</groupId>
             <artifactId>geotk-coverageio-netcdf</artifactId>
             <version>${project.version}</version>

@@ -217,7 +217,7 @@ public final class ServerFinder extends Static {
         for (final ServerFactory factory : loader) {
             if ((parameters != null) ? factory.canProcess(parameters) : factory.canProcess(asMap)) {
                 if (factory.availability().pass()) {
-                    return (parameters != null) ? factory.create(parameters) : factory.create(asMap);
+                    return (parameters != null) ? factory.open(parameters) : factory.open(asMap);
                 } else if (unavailable == null) {
                     unavailable = factory.getDisplayName();
                 }

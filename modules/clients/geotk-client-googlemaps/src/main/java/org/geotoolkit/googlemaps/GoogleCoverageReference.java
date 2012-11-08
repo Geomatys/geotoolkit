@@ -27,6 +27,7 @@ import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.googlemaps.model.GoogleMapsPyramidSet;
 import org.geotoolkit.storage.DataStoreException;
 import org.opengis.feature.type.Name;
+import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
@@ -93,7 +94,7 @@ public class GoogleCoverageReference implements CoverageReference, PyramidalMode
     }
 
     @Override
-    public GridMosaic createMosaic(String pyramidId, Dimension gridSize, Dimension tilePixelSize, Point2D upperleft, double pixelscale) throws DataStoreException {
+    public GridMosaic createMosaic(String pyramidId, Dimension gridSize, Dimension tilePixelSize, DirectPosition upperleft, double pixelscale) throws DataStoreException {
         throw new DataStoreException("Model is not writeable.");
     }
 

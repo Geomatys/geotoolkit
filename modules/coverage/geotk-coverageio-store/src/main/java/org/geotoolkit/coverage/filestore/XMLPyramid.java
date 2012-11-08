@@ -33,6 +33,7 @@ import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.util.converter.Classes;
+import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
@@ -168,15 +169,15 @@ public class XMLPyramid implements Pyramid{
      * @param pixelscale
      * @return 
      */
-    XMLMosaic createMosaic(Dimension gridSize, Dimension tilePixelSize, Point2D upperleft, double pixelscale) {
+    XMLMosaic createMosaic(Dimension gridSize, Dimension tilePixelSize, DirectPosition upperleft, double pixelscale) {
         final XMLMosaic mosaic = new XMLMosaic();
         mosaic.scale = pixelscale;
         mosaic.gridWidth = gridSize.width;
         mosaic.gridHeight = gridSize.height;
         mosaic.tileWidth = tilePixelSize.width;
         mosaic.tileHeight = tilePixelSize.height;
-        mosaic.upperleftX = upperleft.getX();
-        mosaic.upperleftY = upperleft.getY();
+        mosaic.upperleftX = upperleft.getOrdinate(0);
+        mosaic.upperleftY = upperleft.getOrdinate(1);
         mosaic.completion = "";
         mosaics.add(mosaic);
         sorted.put(pixelscale, mosaic);

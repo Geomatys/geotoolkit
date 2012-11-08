@@ -160,7 +160,7 @@ public class WMCUtilities {
                 parameters.put("identifier", serviceId);
                 parameters.put("version", serverType.getVersion());
                 parameters.put("url", serviceURL);
-                server = factory.create(parameters);
+                server = factory.open(parameters);
             } catch (Exception ex) {
                 Logger.getLogger(WMCUtilities.class.getName()).log(Level.SEVERE, null, ex);
                 continue;

@@ -17,12 +17,12 @@
 package org.geotoolkit.osmtms.model;
 
 import java.awt.Dimension;
-import java.awt.geom.Point2D;
 import java.util.Map;
 import org.geotoolkit.client.Request;
 import org.geotoolkit.client.map.CachedPyramidSet;
 import org.geotoolkit.coverage.DefaultPyramid;
 import org.geotoolkit.coverage.GridMosaic;
+import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.osmtms.GetTileRequest;
 import org.geotoolkit.osmtms.OSMTileMapServer;
@@ -69,7 +69,9 @@ public class OSMTMSPyramidSet extends CachedPyramidSet{
         final int tileHeight = (int) BASE_TILE_SIZE;        
         final Envelope extent = MERCATOR_EXTEND;
                 
-        final Point2D upperLeft = new Point2D.Double(extent.getMinimum(0), extent.getMaximum(1));    
+        final GeneralDirectPosition upperLeft = new GeneralDirectPosition(GOOGLE_MERCATOR);
+        upperLeft.setOrdinate(0, extent.getMinimum(0));
+        upperLeft.setOrdinate(1, extent.getMaximum(1));
         
         final double scale0Resolution = extent.getSpan(0) / BASE_TILE_SIZE;
         

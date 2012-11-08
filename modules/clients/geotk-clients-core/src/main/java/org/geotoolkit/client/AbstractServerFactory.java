@@ -146,7 +146,7 @@ public abstract class AbstractServerFactory extends Factory implements ServerFac
      * {@inheritDoc }
      */
     @Override
-    public Server create(Map<String, ? extends Serializable> params) throws DataStoreException {
+    public Server open(Map<String, ? extends Serializable> params) throws DataStoreException {
         params = forceIdentifier(params);
         
         final ParameterValueGroup prm = FeatureUtilities.toParameter(params,getParametersDescriptor());
@@ -154,7 +154,7 @@ public abstract class AbstractServerFactory extends Factory implements ServerFac
             return null;
         }
         try{
-            return create(prm);
+            return open(prm);
         }catch(InvalidParameterValueException ex){
             throw new DataStoreException(ex);
         }

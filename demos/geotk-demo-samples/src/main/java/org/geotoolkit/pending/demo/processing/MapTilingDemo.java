@@ -63,7 +63,7 @@ public class MapTilingDemo {
 
         //create a coverage store where the pyramid wil be stored
         final XMLCoverageStoreFactory factory = new XMLCoverageStoreFactory();
-        final CoverageStore store = factory.createNew(Collections.singletonMap("path", new URL("file:/media/terra/GIS_DATA/wmts_bluemarble")));
+        final CoverageStore store = factory.create(Collections.singletonMap("path", new URL("file:/media/terra/GIS_DATA/wmts_bluemarble")));
         final Name name = new DefaultName("bluemarble");
         final CoverageReference ref = store.create(name);
 

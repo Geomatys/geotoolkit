@@ -18,12 +18,12 @@ package org.geotoolkit.coverage.postgresql;
 
 import java.awt.Dimension;
 import java.awt.Point;
-import java.awt.geom.Point2D;
 import java.util.Map;
 import org.geotoolkit.coverage.AbstractGridMosaic;
 import org.geotoolkit.coverage.Pyramid;
 import org.geotoolkit.coverage.TileReference;
 import org.geotoolkit.storage.DataStoreException;
+import org.opengis.geometry.DirectPosition;
 
 /**
  *
@@ -35,7 +35,7 @@ public class PGGridMosaic extends AbstractGridMosaic{
     private final long id;
     
     public PGGridMosaic(final PGCoverageReference ref, final long id,
-            Pyramid pyramid, Point2D upperLeft, Dimension gridSize, Dimension tileSize, double scale) {
+            Pyramid pyramid, DirectPosition upperLeft, Dimension gridSize, Dimension tileSize, double scale) {
         super(String.valueOf(id),pyramid, upperLeft, gridSize, tileSize, scale);
         this.ref = ref;
         this.id = id;
