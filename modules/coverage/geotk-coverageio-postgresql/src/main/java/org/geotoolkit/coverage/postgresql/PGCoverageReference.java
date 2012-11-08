@@ -28,6 +28,14 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.RejectedExecutionHandler;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.xml.bind.annotation.XmlTransient;
 import net.iharder.Base64;
 import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.coverage.GridMosaic;
@@ -205,15 +213,36 @@ public class PGCoverageReference implements CoverageReference, PyramidalModel{
     }
 
     @Override
-    public void writeTiles(String pyramidId, String mosaicId, RenderedImage image, boolean onlyMissing) throws DataStoreException {
+    public void writeTiles(final String pyramidId, final String mosaicId, 
+            final RenderedImage image, final boolean onlyMissing) throws DataStoreException {
         final int offsetX = image.getMinTileX();
         final int offsetY = image.getMinTileY();
+        
+        final RejectedExecutionHandler rejectHandler = new ThreadPoolExecutor.CallerRunsPolicy();
+        final BlockingQueue queue = new ArrayBlockingQueue(Runtime.getRuntime().availableProcessors());
+        final ThreadPoolExecutor executor = new ThreadPoolExecutor(
+            0, Runtime.getRuntime().availableProcessors(), 1, TimeUnit.MINUTES, queue, rejectHandler);
+        
         for(int y=0; y<image.getNumYTiles();y++){
             for(int x=0;x<image.getNumXTiles();x++){
                 final Raster raster = image.getTile(offsetX+x, offsetY+y);
                 final RenderedImage img = new BufferedImage(image.getColorModel(), 
                         (WritableRaster)raster, image.getColorModel().isAlphaPremultiplied(), null);
-                writeTile(pyramidId, mosaicId, offsetX+x, offsetY+y, img);
+                
+                final int tx = offsetX+x;
+                final int ty = offsetY+y;
+                
+                executor.submit(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            writeTile(pyramidId, mosaicId, tx, ty, img);
+                        } catch (DataStoreException ex) {
+                            Logger.getLogger(PGCoverageReference.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    }
+                });
+                
             }
         }
     }
