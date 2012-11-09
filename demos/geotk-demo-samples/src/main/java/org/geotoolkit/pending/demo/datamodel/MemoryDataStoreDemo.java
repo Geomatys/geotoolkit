@@ -2,7 +2,7 @@ package org.geotoolkit.pending.demo.datamodel;
 
 import com.vividsolutions.jts.geom.Point;
 import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.data.memory.MemoryDataStore;
+import org.geotoolkit.data.memory.MemoryFeatureStore;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.session.Session;
@@ -18,7 +18,7 @@ public class MemoryDataStoreDemo {
         Demos.init();
         
         //create the datastore
-        final MemoryDataStore store = new MemoryDataStore();
+        final MemoryFeatureStore store = new MemoryFeatureStore();
 
 
         //add a schema in the datastore

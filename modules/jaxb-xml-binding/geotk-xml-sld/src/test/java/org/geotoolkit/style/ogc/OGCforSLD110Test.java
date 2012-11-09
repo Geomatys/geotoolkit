@@ -48,7 +48,7 @@ import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.sld.xml.GTtoSE110Transformer;
 import org.geotoolkit.sld.xml.JAXBSLDUtilities;
 import org.geotoolkit.sld.xml.SEJAXBStatics;
-import org.geotoolkit.sld.xml.XMLUtilities;
+import org.geotoolkit.sld.xml.StyleXmlIO;
 import org.geotoolkit.xml.MarshallerPool;
 import org.junit.Test;
 import org.opengis.filter.And;
@@ -1270,7 +1270,7 @@ public class OGCforSLD110Test extends TestCase{
     @Test
     public void testCustom1() throws JAXBException, FactoryException{
 
-        XMLUtilities util = new XMLUtilities();
+        StyleXmlIO util = new StyleXmlIO();
         final Filter filter = util.readFilter(TEST_FILE_CUSTOM_1, org.geotoolkit.sld.xml.Specification.Filter.V_1_1_0);
 
         assertTrue(filter instanceof Or);
@@ -1306,7 +1306,7 @@ public class OGCforSLD110Test extends TestCase{
     @Test
     public void testCustom2() throws JAXBException, FactoryException{
 
-        XMLUtilities util = new XMLUtilities();
+        StyleXmlIO util = new StyleXmlIO();
         final SortBy sort = util.readSortBy(TEST_FILE_CUSTOM_2, org.geotoolkit.sld.xml.Specification.Filter.V_1_1_0);
 
         assertEquals("sf:str4Property", sort.getPropertyName().getPropertyName());

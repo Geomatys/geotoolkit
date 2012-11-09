@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.data.jdbc;
 
+import org.geotoolkit.util.Exceptions;
 
 /**
  * Indicates a client class has attempted to encode a filter not supported by
@@ -34,15 +35,17 @@ public class FilterToSQLException extends Exception {
      */
     public FilterToSQLException(final String message) {
         super(message);
+        assert Exceptions.isValidMessage(message) : message;
     }
 
     /**
      * Constructs a new instance of DataSourceException
      *
-     * @param msg A message explaining the exception
+     * @param message A message explaining the exception
      * @param exp the throwable object which caused this exception
      */
-    public FilterToSQLException(final String msg, final Throwable exp) {
-        super(msg, exp);
+    public FilterToSQLException(final String message, final Throwable exp) {
+        super(message, exp);
+        assert Exceptions.isValidMessage(message) : message;
     }
 }

@@ -38,6 +38,8 @@ import org.geotoolkit.util.logging.Logging;
 import org.opengis.filter.Filter;
 import org.opengis.filter.spatial.*;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.crs.ProjectedCRS;
+import org.opengis.referencing.operation.CylindricalProjection;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 
@@ -66,21 +68,42 @@ public class LuceneUtils {
         }
     }
     
-    public static GeneralEnvelope getExtendedReprojectedEnvelope(final Object geom, final CoordinateReferenceSystem treeCrs, final String strUnit, final double distance) {
-        final GeneralEnvelope bound = getReprojectedEnvelope(geom, treeCrs);
+    public static GeneralEnvelope getExtendedReprojectedEnvelope(final Object geom, final CoordinateReferenceSystem treeCrs, final String strUnit, final double distance) throws FactoryException {
+        GeneralEnvelope bound = getReprojectedEnvelope(geom, treeCrs);
         
         // add the reprojected distance
         if (bound != null) {
-            final Unit unit = Units.valueOf(strUnit);
-            final UnitConverter converter = unit.getConverterTo(treeCrs.getCoordinateSystem().getAxis(0).getUnit());
+            final Unit unit    = Units.valueOf(strUnit);
+            final Unit crsUnit = treeCrs.getCoordinateSystem().getAxis(0).getUnit();
+            final CoordinateReferenceSystem crs;
+            final boolean reproj;
+            final GeneralEnvelope e;
+            if (unit.isCompatible(crsUnit)) {
+                crs = treeCrs;
+                e   = bound;
+                reproj = false;
+            } else {
+                if (Units.isLinear(unit)) {
+                    crs = CRS.decode("EPSG:3857");
+                } else {
+                    crs = CRS.decode("CRS:84");
+                }
+                e   = getReprojectedEnvelope(bound, crs);
+                reproj = true;
+            }
+            final UnitConverter converter = unit.getConverterTo(crs.getCoordinateSystem().getAxis(0).getUnit());
             final double rdistance = converter.convert(distance);
-            final double minx = bound.getLower(0) - rdistance;
-            final double miny = bound.getLower(1) - rdistance;
-            final double maxx = bound.getUpper(0) + rdistance;
-            final double maxy = bound.getUpper(1) + rdistance;
-            bound.setRange(0, minx, maxx);
-            bound.setRange(1, miny, maxy);
+            final double minx = e.getLower(0) - rdistance;
+            final double miny = e.getLower(1) - rdistance;
+            final double maxx = e.getUpper(0) + rdistance;
+            final double maxy = e.getUpper(1) + rdistance;
+            e.setRange(0, minx, maxx);
+            e.setRange(1, miny, maxy);
+            if (reproj) {
+                bound = getReprojectedEnvelope(e, treeCrs);
+            }
         }
+        System.out.println("OBTAINED REPROJECTED ENV:" + bound);
         return bound;
     }
     

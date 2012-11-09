@@ -28,7 +28,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import junit.framework.TestCase;
-import org.geotoolkit.data.DataUtilities;
+import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.FeatureReader;
@@ -133,7 +133,7 @@ public class GenericIteratorTest extends TestCase{
         reprojectedType = builder.buildSimpleFeatureType();
 
 
-        collection = DataUtilities.collection("id", originalType);
+        collection = FeatureStoreUtilities.collection("id", originalType);
 
         sf1 = FeatureUtilities.defaultFeature(originalType, "");
         sf1.setAttribute("att_geom", GF.createPoint(new Coordinate(3, 0)));
@@ -162,7 +162,7 @@ public class GenericIteratorTest extends TestCase{
         builder.add("att_double", Double.class,0,1,false,null);
         FeatureType ct = builder.buildFeatureType();
 
-        collectionComplex = DataUtilities.collection("cid", ct);
+        collectionComplex = FeatureStoreUtilities.collection("cid", ct);
 
         cid1 = "complex-1";
         cid2 = "complex-2";
@@ -271,7 +271,7 @@ public class GenericIteratorTest extends TestCase{
     @Test
     public void testCacheIterator(){
         FeatureIterator ite = GenericCachedFeatureIterator.wrap(collection.iterator(), 1);
-        assertEquals(3, DataUtilities.calculateCount(ite));
+        assertEquals(3, FeatureStoreUtilities.calculateCount(ite));
 
         ite = GenericCachedFeatureIterator.wrap(collection.iterator(), 1);
         
@@ -289,13 +289,13 @@ public class GenericIteratorTest extends TestCase{
     @Test
     public void testFilterIterator(){
         FeatureIterator ite = GenericFilterFeatureIterator.wrap(collection.iterator(), Filter.INCLUDE);
-        assertEquals(3, DataUtilities.calculateCount(ite));
+        assertEquals(3, FeatureStoreUtilities.calculateCount(ite));
 
         ite = GenericFilterFeatureIterator.wrap(collection.iterator(), Filter.EXCLUDE);
-        assertEquals(0, DataUtilities.calculateCount(ite));
+        assertEquals(0, FeatureStoreUtilities.calculateCount(ite));
 
         ite = GenericFilterFeatureIterator.wrap(collection.iterator(), FF.equals(FF.literal("aaa"), FF.property("att_string")));
-        assertEquals(1, DataUtilities.calculateCount(ite));
+        assertEquals(1, FeatureStoreUtilities.calculateCount(ite));
         ite = GenericFilterFeatureIterator.wrap(collection.iterator(), FF.equals(FF.literal("aaa"), FF.property("att_string")));
 
         assertEquals(ite.next().getIdentifier().getID(),id3);
@@ -322,10 +322,10 @@ public class GenericIteratorTest extends TestCase{
     @Test
     public void testMaxIterator(){
         FeatureIterator ite = GenericMaxFeatureIterator.wrap(collection.iterator(), 10);
-        assertEquals(3, DataUtilities.calculateCount(ite));
+        assertEquals(3, FeatureStoreUtilities.calculateCount(ite));
 
         ite = GenericMaxFeatureIterator.wrap(collection.iterator(), 2);
-        assertEquals(2, DataUtilities.calculateCount(ite));
+        assertEquals(2, FeatureStoreUtilities.calculateCount(ite));
 
         ite = GenericMaxFeatureIterator.wrap(collection.iterator(), 1);
         assertEquals(ite.next().getIdentifier().getID(),id1);
@@ -356,7 +356,7 @@ public class GenericIteratorTest extends TestCase{
         values.put(originalType.getDescriptor("att_string"), "toto");
 
         FeatureIterator ite = GenericModifyFeatureIterator.wrap(collection.iterator(), filter, values);
-        assertEquals(3, DataUtilities.calculateCount(ite));
+        assertEquals(3, FeatureStoreUtilities.calculateCount(ite));
 
         ite = GenericModifyFeatureIterator.wrap(collection.iterator(), filter, values);
         while(ite.hasNext()){
@@ -366,7 +366,7 @@ public class GenericIteratorTest extends TestCase{
 
         filter = FF.equals(FF.literal("aaa"), FF.property("att_string"));
         ite = GenericModifyFeatureIterator.wrap(collection.iterator(), filter, values);
-        assertEquals(3, DataUtilities.calculateCount(ite));
+        assertEquals(3, FeatureStoreUtilities.calculateCount(ite));
 
         ite = GenericModifyFeatureIterator.wrap(collection.iterator(), filter, values);
         while(ite.hasNext()){
@@ -409,7 +409,7 @@ public class GenericIteratorTest extends TestCase{
         QueryBuilder qb = new QueryBuilder();
         qb.setTypeName(originalType.getName());
         Query query = qb.buildQuery();
-        FeatureReader reader = collection.getSession().getDataStore().getFeatureReader(query);
+        FeatureReader reader = collection.getSession().getFeatureStore().getFeatureReader(query);
 
         final CoordinateReferenceSystem targetCRS = CRS.decode("EPSG:4326");
         
@@ -435,12 +435,12 @@ public class GenericIteratorTest extends TestCase{
 
 
         //check has next do not iterate
-        reader = collection.getSession().getDataStore().getFeatureReader(query);
+        reader = collection.getSession().getFeatureStore().getFeatureReader(query);
         retyped = GenericReprojectFeatureIterator.wrap(reader, CRS.decode("EPSG:4326"), new Hints());
         testIterationOnNext(retyped, 3);
 
         //check sub iterator is properly closed
-        reader = collection.getSession().getDataStore().getFeatureReader(query);
+        reader = collection.getSession().getFeatureStore().getFeatureReader(query);
         CheckCloseFeatureIterator checkIte = new CheckCloseFeatureIterator(reader);
         assertFalse(checkIte.isClosed());
         retyped = GenericReprojectFeatureIterator.wrap(checkIte, CRS.decode("EPSG:4326"), new Hints());
@@ -468,7 +468,7 @@ public class GenericIteratorTest extends TestCase{
                     new Coordinate(-1, 9) //dx 4 , dy 2
                 });
 
-        final FeatureCollection collection = DataUtilities.collection("id", type);
+        final FeatureCollection collection = FeatureStoreUtilities.collection("id", type);
         SimpleFeature sf = FeatureUtilities.defaultFeature(type, "");
         sf.setAttribute("att_geom", geom);
         collection.add(sf);
@@ -477,7 +477,7 @@ public class GenericIteratorTest extends TestCase{
         QueryBuilder qb = new QueryBuilder();
         qb.setTypeName(originalType.getName());
         Query query = qb.buildQuery();
-        FeatureReader reader = collection.getSession().getDataStore().getFeatureReader(query);
+        FeatureReader reader = collection.getSession().getFeatureStore().getFeatureReader(query);
         
         //create the decimate reader -------------------------------------------
         final Hints hints = new Hints();
@@ -501,7 +501,7 @@ public class GenericIteratorTest extends TestCase{
 
         
         //check the original geometry has not been modified
-        reader = collection.getSession().getDataStore().getFeatureReader(query);
+        reader = collection.getSession().getFeatureStore().getFeatureReader(query);
         assertTrue(reader.hasNext());
 
         LineString notDecimated = (LineString) reader.next().getDefaultGeometryProperty().getValue();
@@ -512,7 +512,7 @@ public class GenericIteratorTest extends TestCase{
         
         
         // same test but with reuse hint ---------------------------------------
-        reader = collection.getSession().getDataStore().getFeatureReader(query);
+        reader = collection.getSession().getFeatureStore().getFeatureReader(query);
         hints.put(HintsPending.FEATURE_DETACHED, Boolean.FALSE);
         
         decim = new GeometryScaleTransformer(10, 10);
@@ -533,7 +533,7 @@ public class GenericIteratorTest extends TestCase{
 
         
         //check the original geometry has not been modified
-        reader = collection.getSession().getDataStore().getFeatureReader(query);
+        reader = collection.getSession().getFeatureStore().getFeatureReader(query);
         assertTrue(reader.hasNext());
 
         notDecimated = (LineString) reader.next().getDefaultGeometryProperty().getValue();
@@ -547,7 +547,7 @@ public class GenericIteratorTest extends TestCase{
         QueryBuilder qb = new QueryBuilder();
         qb.setTypeName(originalType.getName());
         Query query = qb.buildQuery();
-        FeatureReader reader = collection.getSession().getDataStore().getFeatureReader(query);
+        FeatureReader reader = collection.getSession().getFeatureStore().getFeatureReader(query);
 
         FeatureReader retyped = GenericRetypeFeatureIterator.wrap(reader,reducedType,null);
         assertEquals(reducedType,retyped.getFeatureType());
@@ -568,12 +568,12 @@ public class GenericIteratorTest extends TestCase{
 
 
         //check has next do not iterate
-        reader = collection.getSession().getDataStore().getFeatureReader(query);
+        reader = collection.getSession().getFeatureStore().getFeatureReader(query);
         retyped = GenericRetypeFeatureIterator.wrap(reader,reducedType,null);
         testIterationOnNext(retyped, 3);
 
         //check sub iterator is properly closed
-        reader = collection.getSession().getDataStore().getFeatureReader(query);
+        reader = collection.getSession().getFeatureStore().getFeatureReader(query);
         CheckCloseFeatureIterator checkIte = new CheckCloseFeatureIterator(reader);
         assertFalse(checkIte.isClosed());
         retyped = GenericRetypeFeatureIterator.wrap(checkIte,reducedType,null);
@@ -590,7 +590,7 @@ public class GenericIteratorTest extends TestCase{
         };
 
         FeatureIterator ite = GenericSortByFeatureIterator.wrap(collection.iterator(), sorts);
-        assertEquals(3, DataUtilities.calculateCount(ite));
+        assertEquals(3, FeatureStoreUtilities.calculateCount(ite));
 
 
         ite = GenericSortByFeatureIterator.wrap(collection.iterator(), sorts);
@@ -627,7 +627,7 @@ public class GenericIteratorTest extends TestCase{
         };
 
         FeatureIterator ite = GenericSortByFeatureIterator.wrap(collectionComplex.iterator(), sorts);
-        assertEquals(2, DataUtilities.calculateCount(ite));
+        assertEquals(2, FeatureStoreUtilities.calculateCount(ite));
 
         ite = GenericSortByFeatureIterator.wrap(collectionComplex.iterator(), sorts);
         assertEquals(ite.next().getIdentifier().getID(),cid2);
@@ -646,7 +646,7 @@ public class GenericIteratorTest extends TestCase{
         };
 
         ite = GenericSortByFeatureIterator.wrap(collectionComplex.iterator(), sorts);
-        assertEquals(2, DataUtilities.calculateCount(ite));
+        assertEquals(2, FeatureStoreUtilities.calculateCount(ite));
 
         ite = GenericSortByFeatureIterator.wrap(collectionComplex.iterator(), sorts);
         assertEquals(ite.next().getIdentifier().getID(),cid1);
@@ -665,7 +665,7 @@ public class GenericIteratorTest extends TestCase{
         };
 
         ite = GenericSortByFeatureIterator.wrap(collectionComplex.iterator(), sorts);
-        assertEquals(2, DataUtilities.calculateCount(ite));
+        assertEquals(2, FeatureStoreUtilities.calculateCount(ite));
 
         ite = GenericSortByFeatureIterator.wrap(collectionComplex.iterator(), sorts);
         assertEquals(ite.next().getIdentifier().getID(),cid2);
@@ -695,10 +695,10 @@ public class GenericIteratorTest extends TestCase{
     @Test
     public void testStartIndexIterator(){
         FeatureIterator ite = GenericStartIndexFeatureIterator.wrap(collection.iterator(), 0);
-        assertEquals(3, DataUtilities.calculateCount(ite));
+        assertEquals(3, FeatureStoreUtilities.calculateCount(ite));
 
         ite = GenericStartIndexFeatureIterator.wrap(collection.iterator(), 1);
-        assertEquals(2, DataUtilities.calculateCount(ite));
+        assertEquals(2, FeatureStoreUtilities.calculateCount(ite));
 
         ite = GenericStartIndexFeatureIterator.wrap(collection.iterator(), 2);
         assertEquals(ite.next().getIdentifier().getID(),id3);

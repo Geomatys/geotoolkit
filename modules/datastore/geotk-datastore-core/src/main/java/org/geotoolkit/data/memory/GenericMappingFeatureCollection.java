@@ -21,9 +21,9 @@ import java.util.AbstractCollection;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import org.geotoolkit.data.DataStoreRuntimeException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
+import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.StorageListener;
 import org.geotoolkit.data.memory.mapping.DefaultFeatureMapper;
 import org.geotoolkit.data.memory.mapping.FeatureMapper;
@@ -107,12 +107,12 @@ public class GenericMappingFeatureCollection<F extends Feature> extends Abstract
     }
 
     @Override
-    public FeatureIterator<F> iterator() throws DataStoreRuntimeException {
+    public FeatureIterator<F> iterator() throws FeatureStoreRuntimeException {
         return iterator(null);
     }
 
     @Override
-    public FeatureIterator<F> iterator(final Hints hints) throws DataStoreRuntimeException {
+    public FeatureIterator<F> iterator(final Hints hints) throws FeatureStoreRuntimeException {
         return new GenericMappingFeatureIterator<F>(original.iterator(), mapper);
     }
 
@@ -141,6 +141,11 @@ public class GenericMappingFeatureCollection<F extends Feature> extends Abstract
     ////////////////////////////////////////////////////////////////////////////
 
     @Override
+    public void update(Feature feature) throws DataStoreException {
+        throw new DataStoreException("Not writable");
+    }
+    
+    @Override
     public void update(final Filter filter, final AttributeDescriptor desc, final Object value) throws DataStoreException {
         throw new DataStoreException("Not writable");
     }
@@ -157,28 +162,28 @@ public class GenericMappingFeatureCollection<F extends Feature> extends Abstract
 
     @Override
     public boolean add(final F e) {
-        throw new DataStoreRuntimeException("Not writable");
+        throw new FeatureStoreRuntimeException("Not writable");
     }
 
     @Override
     public boolean remove(final Object o) {
-        throw new DataStoreRuntimeException("Not writable");
+        throw new FeatureStoreRuntimeException("Not writable");
     }
 
     @Override
     public boolean addAll(final Collection<? extends F> clctn) {
-        throw new DataStoreRuntimeException("Not writable");
+        throw new FeatureStoreRuntimeException("Not writable");
     }
 
     @Override
     public boolean removeAll(final Collection<?> clctn) {
-        throw new DataStoreRuntimeException("Not writable");
+        throw new FeatureStoreRuntimeException("Not writable");
     }
 
 
     @Override
     public void clear() {
-        throw new DataStoreRuntimeException("Not writable");
+        throw new FeatureStoreRuntimeException("Not writable");
     }
 
 }

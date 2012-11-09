@@ -18,16 +18,18 @@
 package org.geotoolkit.wms.map;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
-import java.net.URL;
+import java.io.InputStreamReader;
+import java.io.StringWriter;
+import org.geotoolkit.client.Request;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -39,11 +41,12 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextPane;
 import org.geotoolkit.client.CapabilitiesException;
 import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display.primitive.SearchArea;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.display2d.container.statefull.StatefullProjectedCoverage;
+import org.geotoolkit.display2d.container.stateless.DefaultProjectedCoverage;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.gui.swing.go2.control.information.presenter.AbstractInformationPresenter;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
@@ -77,11 +80,11 @@ public class WMSPresenter extends AbstractInformationPresenter{
     public JComponent createComponent(final Object graphic,
             final RenderingContext2D context, final SearchAreaJ2D area) {
 
-        if (!(graphic instanceof StatefullProjectedCoverage)) {
+        if (!(graphic instanceof DefaultProjectedCoverage)) {
             return null;
         }
 
-        final StatefullProjectedCoverage graCoverage = (StatefullProjectedCoverage) graphic;
+        final DefaultProjectedCoverage graCoverage = (DefaultProjectedCoverage) graphic;
         final CoverageMapLayer layer = graCoverage.getLayer();
 
         if(!(layer.getCoverageReference() instanceof WMSCoverageReference)){
@@ -116,10 +119,10 @@ public class WMSPresenter extends AbstractInformationPresenter{
                 guiCenterPanel.removeAll();
 
                 try {
-                    final URL url = getFeatureInfo(reference, context, area, guiMimeTypes.getSelectedItem().toString(), 20);
+                    final Request request = getFeatureInfo(reference, context, area, guiMimeTypes.getSelectedItem().toString(), 20);
                     try{
                         final JXHyperlink link = new JXHyperlink();
-                        link.setURI(url.toURI());
+                        link.setURI(request.getURL().toURI());
                         guiCenterPanel.add(BorderLayout.NORTH,link);
                     }catch(Exception ex){
                         //hyperlinks is not supported on all platforms
@@ -128,7 +131,7 @@ public class WMSPresenter extends AbstractInformationPresenter{
                     new Thread(){
                         @Override
                         public void run() {
-                            downloadGetFeatureInfo(guiCenterPanel, url);
+                            downloadGetFeatureInfo(guiCenterPanel, request);
                         }
                     }.start();
 
@@ -136,12 +139,10 @@ public class WMSPresenter extends AbstractInformationPresenter{
                     LOGGER.log(Level.WARNING, ex.getMessage(), ex);
                 } catch (FactoryException ex) {
                     LOGGER.log(Level.WARNING, ex.getMessage(), ex);
-                } catch (MalformedURLException ex) {
-                    LOGGER.log(Level.WARNING, ex.getMessage(), ex);
                 } catch (NoninvertibleTransformException ex) {
                     LOGGER.log(Level.WARNING, ex.getMessage(), ex);
                 }
-                
+
                 guiCenterPanel.revalidate();
                 guiCenterPanel.repaint();
             }
@@ -155,15 +156,15 @@ public class WMSPresenter extends AbstractInformationPresenter{
         return guiAll;
     }
 
-    public URL getFeatureInfo(final WMSCoverageReference reference, final RenderingContext context, final SearchArea mask,
+    public Request getFeatureInfo(final WMSCoverageReference reference, final RenderingContext context, final SearchArea mask,
                 final String infoFormat, final int featureCount)
                 throws TransformException, FactoryException,
-                MalformedURLException, NoninvertibleTransformException{
+                NoninvertibleTransformException{
 
             final RenderingContext2D ctx2D = (RenderingContext2D) context;
             final DirectPosition center = mask.getDisplayGeometry().getCentroid();
 
-            final URL url;
+            final Request url;
                 url = reference.queryFeatureInfo(
                         ctx2D.getCanvasObjectiveBounds(),
                         ctx2D.getCanvasDisplayBounds().getSize(),
@@ -175,7 +176,7 @@ public class WMSPresenter extends AbstractInformationPresenter{
             return url;
         }
 
-    private static void downloadGetFeatureInfo(final JPanel contentPane, final URL url){
+    private static void downloadGetFeatureInfo(final JPanel contentPane, final Request request){
 
         final JXBusyLabel guiBuzy = new JXBusyLabel(new Dimension(30, 30));
         guiBuzy.setBusy(true);
@@ -187,12 +188,32 @@ public class WMSPresenter extends AbstractInformationPresenter{
         InputStream input = null;
 
         try{
-            input = url.openStream();
+            input = request.getResponseStream();
 
-            final BufferedImage image = ImageIO.read(input);
-            final JLabel lbl = new JLabel(new ImageIcon(image));
+            Component content;
+            try {
+
+                final BufferedImage image = ImageIO.read(input);
+                content = new JLabel(new ImageIcon(image));
+
+            } catch (Exception ex) {
+                try {
+                    StringWriter writer = new StringWriter();
+                    InputStreamReader streamReader = new InputStreamReader(input);
+                    BufferedReader buffer = new BufferedReader(streamReader);
+                    String line="";
+                    while ( null!=(line=buffer.readLine())){
+                        writer.write(line);
+                    }
+                    content = new JTextPane();
+                    ((JTextPane)content).setText(writer.toString());
+                } catch (Exception ex2) {
+                    content = new JPanel();
+                }
+            }
+
             contentPane.remove(guiBuzy);
-            contentPane.add(BorderLayout.CENTER,new JScrollPane(lbl));
+            contentPane.add(BorderLayout.CENTER,new JScrollPane(content));
             contentPane.revalidate();
             contentPane.repaint();
 

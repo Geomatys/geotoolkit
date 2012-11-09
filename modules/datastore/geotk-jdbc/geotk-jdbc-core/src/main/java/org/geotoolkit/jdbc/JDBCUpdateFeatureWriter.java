@@ -25,7 +25,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.geotoolkit.storage.DataStoreException;
-import org.geotoolkit.data.DataStoreRuntimeException;
+import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.jdbc.fid.PrimaryKey;
@@ -59,7 +59,7 @@ public class JDBCUpdateFeatureWriter extends JDBCFeatureReader implements
     }
 
     @Override
-    public SimpleFeature next() throws DataStoreRuntimeException {
+    public SimpleFeature next() throws FeatureStoreRuntimeException {
         
         ensureNext();
         
@@ -76,20 +76,20 @@ public class JDBCUpdateFeatureWriter extends JDBCFeatureReader implements
     }
     
     @Override
-    public void remove() throws DataStoreRuntimeException {
+    public void remove() throws FeatureStoreRuntimeException {
         final Filter filter = dataStore.getFilterFactory().id(
                 Collections.singleton(last.getIdentifier()));
         try {
             dataStore.delete(featureType, filter, st.getConnection());
         } catch (SQLException e) {
-            throw new DataStoreRuntimeException(e);
+            throw new FeatureStoreRuntimeException(e);
         } catch (IOException e) {
-            throw new DataStoreRuntimeException(e);
+            throw new FeatureStoreRuntimeException(e);
         }
     }
 
     @Override
-    public void write() throws DataStoreRuntimeException {
+    public void write() throws FeatureStoreRuntimeException {
         try {
             //figure out what the fid is
             final PrimaryKey key = dataStore.getMetaModel().getPrimaryKey(featureType.getName());
@@ -112,12 +112,12 @@ public class JDBCUpdateFeatureWriter extends JDBCFeatureReader implements
             //do the write
             dataStore.update(featureType, changes, filter, st.getConnection());
         } catch (Exception e) {
-            throw new DataStoreRuntimeException(e);
+            throw new FeatureStoreRuntimeException(e);
         }
     }
 
     @Override
-    public void close() throws DataStoreRuntimeException {
+    public void close() throws FeatureStoreRuntimeException {
         super.close();
         if ( last != null ) {
             last.close();

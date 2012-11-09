@@ -24,12 +24,11 @@ import java.util.logging.Logger;
 import java.util.*;
 
 import org.apache.lucene.document.Document;
-import org.apache.lucene.document.FieldSelector;
-import org.apache.lucene.document.FieldSelectorResult;
-import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.index.AtomicReaderContext;
+import org.apache.lucene.index.DocsEnum;
 import org.apache.lucene.index.Term;
-import org.apache.lucene.index.TermDocs;
 import org.apache.lucene.search.DocIdSet;
+import org.apache.lucene.util.Bits;
 import org.apache.lucene.util.DocIdBitSet;
 
 import org.geotoolkit.factory.FactoryFinder;
@@ -40,7 +39,6 @@ import org.geotoolkit.index.tree.io.DefaultTreeVisitor;
 import org.geotoolkit.index.tree.io.TreeVisitor;
 import org.geotoolkit.index.tree.io.TreeX;
 import org.geotoolkit.lucene.tree.NamedEnvelope;
-import org.geotoolkit.lucene.tree.TreeIndexReaderWrapper;
 import org.geotoolkit.util.logging.Logging;
 
 import static org.geotoolkit.lucene.LuceneUtils.*;
@@ -50,6 +48,7 @@ import org.opengis.filter.expression.Literal;
 import org.opengis.filter.expression.PropertyName;
 import org.opengis.filter.spatial.*;
 import org.opengis.geometry.Envelope;
+import org.opengis.util.FactoryException;
 
 /**
  * Wrap an OGC filter object in a Lucene filter.
@@ -57,7 +56,7 @@ import org.opengis.geometry.Envelope;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class LuceneOGCFilter extends org.apache.lucene.search.Filter {
+public class LuceneOGCFilter extends org.apache.lucene.search.Filter implements  org.geotoolkit.lucene.filter.Filter {
 
     public static final String GEOMETRY_FIELD_NAME     = "idx_lucene_geometry";
     public static final String IDENTIFIER_FIELD_NAME   = "id";
@@ -69,18 +68,12 @@ public class LuceneOGCFilter extends org.apache.lucene.search.Filter {
 
     private static final Logger LOGGER = Logging.getLogger(LuceneOGCFilter.class);
 
-    private static final FieldSelector GEOMETRY_FIELD_SELECTOR = new FieldSelector() {
-        @Override
-        public FieldSelectorResult accept(String fieldName) {
-            if (fieldName.equals(GEOMETRY_FIELD_NAME)) {
-                return FieldSelectorResult.LOAD_AND_BREAK;
-            }
-            return FieldSelectorResult.NO_LOAD;
-        }
-    };
-
     private final Filter filter;
 
+    private Tree tree;
+    
+    private boolean envelopeOnly = false;
+    
     private LuceneOGCFilter(final Filter filter){
         this.filter = filter;
         this.filterType = getSpatialFilterType(filter);
@@ -89,89 +82,91 @@ public class LuceneOGCFilter extends org.apache.lucene.search.Filter {
     public Filter getOGCFilter(){
         return filter;
     }
+    
+    public void applyRtreeOnFilter(final Tree rTree, final boolean envelopeOnly) {
+        this.tree         = rTree;
+        this.envelopeOnly = envelopeOnly;
+    }
 
     /**
      * {@inheritDoc }
      */
     @Override
-    public DocIdSet getDocIdSet(final IndexReader reader) throws IOException {
+    public DocIdSet getDocIdSet(final AtomicReaderContext ctx, final Bits b) throws IOException {
 
         final Set<Integer> treeMatching = new HashSet<Integer>();
         boolean treeSearch = false;
         boolean reverse = false;
-        boolean envelopeOnly = false;
-        if (reader instanceof TreeIndexReaderWrapper) {
-            final TreeIndexReaderWrapper wrapper = (TreeIndexReaderWrapper)reader;
-            final Tree tree = wrapper.getrTree();
-            final List<Envelope> results = new ArrayList<Envelope>();
-            final TreeVisitor treeVisitor = new DefaultTreeVisitor(results);
-            if (tree != null) {
-                /*
-                 * For distance buffer filter no envelope only mode
-                 */
-                if (filter instanceof DistanceBufferOperator) {
-                    if (filter instanceof Beyond) {
-                        reverse = true;
-                    }
-                    final DistanceBufferOperator sp = (DistanceBufferOperator)filter;
-                    if (sp.getExpression2() instanceof Literal) {
+        boolean distanceFilter = false;
+        final List<Envelope> results = new ArrayList<Envelope>();
+        final TreeVisitor treeVisitor = new DefaultTreeVisitor(results);
+        if (tree != null) {
+            /*
+             * For distance buffer filter no envelope only mode
+             */
+            if (filter instanceof DistanceBufferOperator) {
+                distanceFilter = true;
+                reverse        = filter instanceof Beyond;
+                final DistanceBufferOperator sp = (DistanceBufferOperator)filter;
+                if (sp.getExpression2() instanceof Literal) {
+                    try {
                         final Literal lit = (Literal) sp.getExpression2();
-                        final GeneralEnvelope bound =  getExtendedReprojectedEnvelope(lit.getValue(), tree.getCrs(), sp.getDistanceUnits(), sp.getDistance());
+                        final GeneralEnvelope bound = getExtendedReprojectedEnvelope(lit.getValue(), tree.getCrs(), sp.getDistanceUnits(), sp.getDistance());
                         tree.search(bound, treeVisitor);
                         treeSearch = true;
-                        
-                    } else {
-                        LOGGER.log(Level.WARNING, "Not a literal for spatial filter:{0}", sp.getExpression2());
-                    }
-
-                } else if (filter instanceof BinarySpatialOperator) {
-                    final BinarySpatialOperator sp = (BinarySpatialOperator)filter;
-                    if (sp.getExpression2() instanceof Literal) {
-                        final Literal lit = (Literal) sp.getExpression2();
-                        final Envelope boundFilter = getReprojectedEnvelope(lit.getValue(), tree.getCrs());
-                        envelopeOnly = wrapper.isEnvelopeOnly();
-                        
-                        if (filterType == SpatialFilterType.CROSSES || !envelopeOnly) {
-                            if (filterType == SpatialFilterType.DISJOINT) {
-                                reverse = true;
-                            }
-                            tree.search(boundFilter, treeVisitor);
-                            treeSearch = true;
-                            envelopeOnly = false;
-                        } else {
-                            TreeX.search(tree, boundFilter, filterType, treeVisitor);
-                            treeSearch = true;
-                        }
-                        
-                    } else {
-                        LOGGER.log(Level.WARNING, "Not a literal for spatial filter:{0}", sp.getExpression2());
+                    } catch (FactoryException ex) {
+                        throw new IOException(ex);
                     }
                 } else {
-                    LOGGER.log(Level.WARNING, "not a spatial operator:{0}", filter.getClass().getName());
+                    LOGGER.log(Level.WARNING, "Not a literal for spatial filter:{0}", sp.getExpression2());
                 }
-                for (Envelope result : results) {
-                    treeMatching.add(((NamedEnvelope) result).getId());
+
+            } else if (filter instanceof BinarySpatialOperator) {
+                final BinarySpatialOperator sp = (BinarySpatialOperator)filter;
+                if (sp.getExpression2() instanceof Literal) {
+                    final Literal lit = (Literal) sp.getExpression2();
+                    final Envelope boundFilter = getReprojectedEnvelope(lit.getValue(), tree.getCrs());
+
+                    if (filterType == SpatialFilterType.CROSSES || !envelopeOnly) {
+                        if (filterType == SpatialFilterType.DISJOINT) {
+                            reverse = true;
+                        }
+                        tree.search(boundFilter, treeVisitor);
+                        treeSearch = true;
+                        envelopeOnly = false;
+                    } else {
+                        TreeX.search(tree, boundFilter, filterType, treeVisitor);
+                        treeSearch = true;
+                    }
+
+                } else {
+                    LOGGER.log(Level.WARNING, "Not a literal for spatial filter:{0}", sp.getExpression2());
                 }
             } else {
-                LOGGER.warning("Null R-tree in spatial search");
+                LOGGER.log(Level.WARNING, "not a spatial operator:{0}", filter.getClass().getName());
             }
+            for (Envelope result : results) {
+                treeMatching.add(((NamedEnvelope) result).getId());
+            }
+        } else {
+            LOGGER.finer("Null R-tree in spatial search");
         }
-        final DocIdBitSet set = new DocIdBitSet(new BitSet(reader.maxDoc()));
-
-        final TermDocs termDocs;
-        termDocs = reader.termDocs(META_FIELD);
-
-        while (termDocs.next()){
-            final int docId     = termDocs.doc();
+        
+        final DocIdBitSet set = new DocIdBitSet(new BitSet(ctx.reader().maxDoc()));
+        final DocsEnum termDocs = ctx.reader().termDocsEnum(META_FIELD);
+        while (termDocs.nextDoc() != DocsEnum.NO_MORE_DOCS){
+            final int docId     = termDocs.docID();
             final boolean match = treeMatching.contains(docId);
             if (treeSearch && reverse && !match) {
                 set.getBitSet().set(docId);
 
             } else if (!treeSearch || match) {
-                if (envelopeOnly) {
+                if (envelopeOnly && !distanceFilter) {
                     set.getBitSet().set(docId);
                 } else {
-                    final Document doc = reader.document(docId,GEOMETRY_FIELD_SELECTOR);
+                    final Set<String> fieldsToLoad = new HashSet<String>();
+                    fieldsToLoad.add(GEOMETRY_FIELD_NAME);
+                    final Document doc = ctx.reader().document(docId, fieldsToLoad);
                     if (filter.evaluate(doc)) {
                         set.getBitSet().set(docId);
                     }

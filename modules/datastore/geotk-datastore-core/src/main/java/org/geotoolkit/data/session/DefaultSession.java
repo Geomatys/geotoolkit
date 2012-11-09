@@ -26,8 +26,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.geotoolkit.data.DataStore;
-import org.geotoolkit.data.DataUtilities;
+import org.geotoolkit.data.FeatureStore;
+import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.memory.GenericFilterFeatureIterator;
@@ -70,7 +70,7 @@ public class DefaultSession extends AbstractSession {
     private final DefaultSessionDiff diff;
     private final boolean async;
 
-    public DefaultSession(final DataStore store, final boolean async){
+    public DefaultSession(final FeatureStore store, final boolean async){
         super(store);
         
         this.diff = new DefaultSessionDiff();
@@ -270,7 +270,7 @@ public class DefaultSession extends AbstractSession {
     @Override
     public long getCount(final Query original) throws DataStoreException {
         if(hasPendingChanges()){
-            return DataUtilities.calculateCount(getFeatureIterator(original));
+            return FeatureStoreUtilities.calculateCount(getFeatureIterator(original));
         }else{
             return store.getCount(original);
         }
@@ -282,7 +282,7 @@ public class DefaultSession extends AbstractSession {
     @Override
     public Envelope getEnvelope(Query original) throws DataStoreException {
         if(hasPendingChanges()){
-            return DataUtilities.calculateEnvelope(getFeatureIterator(original));
+            return FeatureStoreUtilities.calculateEnvelope(getFeatureIterator(original));
         }else{
             return store.getEnvelope(original);
         }

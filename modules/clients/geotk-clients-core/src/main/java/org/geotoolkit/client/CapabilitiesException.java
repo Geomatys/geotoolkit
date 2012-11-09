@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.client;
 
+import org.geotoolkit.util.Exceptions;
+
 /**
  * Exception throwed when the getCapabilities of the server is null or could not
  * be parsed.
@@ -27,10 +29,12 @@ public class CapabilitiesException extends Exception{
     
     public CapabilitiesException(String message) {
         super(message);
+        assert Exceptions.isValidMessage(message) : message;
     }
     
     public CapabilitiesException(String message, Throwable t) {
         super(message,t);
+        assert Exceptions.isValidMessage(message) : message;
     }
     
 }

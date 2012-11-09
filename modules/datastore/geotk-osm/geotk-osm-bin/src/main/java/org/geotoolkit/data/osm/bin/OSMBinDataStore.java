@@ -23,9 +23,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.geotoolkit.data.AbstractDataStore;
-import org.geotoolkit.data.DataStoreFactory;
-import org.geotoolkit.data.DataStoreFinder;
+import org.geotoolkit.data.AbstractFeatureStore;
+import org.geotoolkit.data.FeatureStoreFactory;
+import org.geotoolkit.data.FeatureStoreFinder;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureWriter;
@@ -47,7 +47,7 @@ import org.opengis.filter.identity.FeatureId;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class OSMBinDataStore extends AbstractDataStore{
+public class OSMBinDataStore extends AbstractFeatureStore{
 
     private final QueryCapabilities capabilities = new DefaultQueryCapabilities(false);
 
@@ -56,8 +56,8 @@ public class OSMBinDataStore extends AbstractDataStore{
     }
 
     @Override
-    public DataStoreFactory getFactory() {
-        return DataStoreFinder.getFactoryById(OSMBinDataStoreFactory.NAME);
+    public FeatureStoreFactory getFactory() {
+        return FeatureStoreFinder.getFactoryById(OSMBinDataStoreFactory.NAME);
     }
     
     /**

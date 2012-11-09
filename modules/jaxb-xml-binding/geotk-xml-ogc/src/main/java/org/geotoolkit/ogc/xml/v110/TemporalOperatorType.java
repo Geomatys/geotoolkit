@@ -16,19 +16,25 @@
  */
 package org.geotoolkit.ogc.xml.v110;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.namespace.QName;
+import org.opengis.filter.capability.TemporalOperand;
+import org.opengis.filter.capability.TemporalOperator;
 
 
 /**
  * <p>Java class for TemporalOperatorType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="TemporalOperatorType">
  *   &lt;complexContent>
@@ -41,15 +47,15 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "TemporalOperatorType", propOrder = {
     "temporalOperands"
 })
-public class TemporalOperatorType {
+public class TemporalOperatorType implements TemporalOperator {
 
     @XmlElement(name = "TemporalOperands")
     private TemporalOperandsType temporalOperands;
@@ -58,36 +64,51 @@ public class TemporalOperatorType {
 
     /**
      * Gets the value of the temporalOperands property.
-     * 
+     *
      */
-    public TemporalOperandsType getTemporalOperands() {
+    public TemporalOperandsType getTemporalOperandsType() {
         return temporalOperands;
     }
 
     /**
      * Sets the value of the temporalOperands property.
-     * 
+     *
      */
     public void setTemporalOperands(final TemporalOperandsType value) {
         this.temporalOperands = value;
     }
 
     /**
-     * Gets the value of the name property.
-     * 
+     * Implements SpatialOperator geoAPI interface
+     * @return
      */
-    public TemporalOperatorNameType getName() {
-        return name;
+    @Override
+    public Collection<TemporalOperand> getTemporalOperands() {
+        List<TemporalOperand> result = new ArrayList<TemporalOperand>();
+        if (temporalOperands != null) {
+            for (QName qn: temporalOperands.getTemporalOperand()) {
+                result.add(TemporalOperand.get(qn.getNamespaceURI(), qn.getLocalPart()));
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public String getName() {
+        if (name != null) {
+            return name.name();
+        }
+        return null;
     }
 
     /**
      * Sets the value of the name property.
-     * 
+     *
      */
     public void setName(final TemporalOperatorNameType value) {
         this.name = value;
     }
-    
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("[TemporalOperatorType]").append("\n");

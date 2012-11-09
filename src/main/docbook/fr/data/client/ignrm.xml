@@ -10,7 +10,7 @@
     <title>Service IGN RM</title>
     
     <example>
-        <title>Code source complet : </title>
+        <title>Connexion aux services IGN</title>
     
         <link xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/clients/ignrm/IGNClientDemo.java">
             <acronym>geotoolkit-pending/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/clients/ignrm/IGNClientDemo.java </acronym>
@@ -44,9 +44,7 @@
     </para>
             
     <example>
-        <title>
-            Exemple
-        </title>
+        <title>Code de connexion à un service IGN</title>
         <programlisting>
             
                 //referer parameter

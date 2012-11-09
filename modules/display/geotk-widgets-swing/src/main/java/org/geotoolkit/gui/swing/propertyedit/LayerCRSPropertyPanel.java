@@ -20,6 +20,7 @@ package org.geotoolkit.gui.swing.propertyedit;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Image;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -258,6 +259,11 @@ public class LayerCRSPropertyPanel extends javax.swing.JPanel implements Propert
     }
 
     @Override
+    public Image getPreview() {
+        return null;
+    }
+    
+    @Override
     public String getToolTip() {
         return MessageBundle.getString("crs");
     }
@@ -305,8 +311,12 @@ public class LayerCRSPropertyPanel extends javax.swing.JPanel implements Propert
             }
             final String lineSeparator = System.getProperty("line.separator", "\n");
             if (e instanceof UnformattableObjectException) {
-                text = Vocabulary.format(Vocabulary.Keys.WARNING) + ": " + text +
-                        lineSeparator + lineSeparator + item + lineSeparator;
+                try {
+                    text = Vocabulary.format(Vocabulary.Keys.WARNING) + ": " + text +
+                            lineSeparator + lineSeparator + item + lineSeparator;
+                } catch (UnformattableObjectException ex) {
+                    //do nothing just show the exception stack trace.
+                }
             } else {
                 text = Vocabulary.format(Vocabulary.Keys.ERROR) + ": " + text + lineSeparator;
             }

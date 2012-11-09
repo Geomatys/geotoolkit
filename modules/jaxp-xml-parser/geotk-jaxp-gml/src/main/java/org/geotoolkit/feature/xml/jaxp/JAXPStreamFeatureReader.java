@@ -33,7 +33,7 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
-import org.geotoolkit.data.DataUtilities;
+import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
@@ -63,11 +63,15 @@ import org.opengis.feature.type.Name;
 import org.opengis.feature.type.PropertyDescriptor;
 
 import static javax.xml.stream.events.XMLEvent.*;
+import net.iharder.Base64;
+import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.gml.GeometrytoJTS;
 import org.geotoolkit.gml.xml.AbstractGeometry;
 import org.geotoolkit.gml.xml.GMLMarshallerPool;
 import org.opengis.feature.ComplexAttribute;
+import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.ComplexType;
+import org.opengis.feature.type.PropertyType;
 import org.opengis.util.FactoryException;
 
 
@@ -174,9 +178,9 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                     final Object coll = readFeatureCollection(id);
                     if (coll == null) {
                         if (featureTypes.size() == 1) {
-                            return DataUtilities.collection(id, featureTypes.get(0));
+                            return FeatureStoreUtilities.collection(id, featureTypes.get(0));
                         } else {
-                            return DataUtilities.collection(id, null);
+                            return FeatureStoreUtilities.collection(id, null);
                         }
                     }
                     return coll;
@@ -244,7 +248,7 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                     for (FeatureType ft : featureTypes) {
                         if (ft.getName().equals(name)) {
                             if (collection == null) {
-                                collection = DataUtilities.collection(id, ft);
+                                collection = FeatureStoreUtilities.collection(id, ft);
                             }
                             collection.add(readFeature(fid, ft));
                             find = true;
@@ -289,6 +293,7 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                         throw new IllegalArgumentException("Unexpected attribute:" + propName + " not found in :\n" + featureType);
                     }
                 }
+                final PropertyType propertyType = pdesc.getType();
 
                 if (pdesc instanceof GeometryDescriptor) {
                     event = reader.next();
@@ -335,7 +340,7 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                         }
                     }
 
-                } else if (pdesc.getType() instanceof ComplexType) {
+                } else if (propertyType instanceof ComplexType) {
                     // skip the Class Mark
                     while (reader.hasNext()) {
                         if (reader.next() == START_ELEMENT) {
@@ -343,12 +348,12 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                         }
                     }
 
-                    final ComplexAttribute catt = readFeature(null, (ComplexType)pdesc.getType());
+                    final ComplexAttribute catt = readFeature(null, (ComplexType)propertyType);
                     namedProperties.put(propName, FF.createComplexAttribute(catt.getProperties(), (AttributeDescriptor)pdesc, null));
 
                 } else {
                     final String content = reader.getElementText();
-                    final Class propertyType = pdesc.getType().getBinding();
+                    final Class typeBinding = propertyType.getBinding();
                     final Property prevProp = namedProperties.get(propName);
                     final Object previous = (prevProp == null) ? null : prevProp.getValue();
 
@@ -357,14 +362,14 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                         map.put(nameAttribute, content);
                         namedProperties.put(propName, FF.createAttribute(map, (AttributeDescriptor)pdesc, null));
 
-                    } else if (previous == null && List.class.equals(propertyType)) {
+                    } else if (previous == null && List.class.equals(typeBinding)) {
                         final List<String> list = new ArrayList<String>();
                         list.add(content);
                         namedProperties.put(propName, FF.createAttribute(list, (AttributeDescriptor)pdesc, null));
 
                     } else if (previous == null) {
-                        namedProperties.put(propName, FF.createAttribute(Converters.convert(content, propertyType),
-                                (AttributeDescriptor)pdesc, null));
+                        namedProperties.put(propName, FF.createAttribute(readValue(content, propertyType),
+                            (AttributeDescriptor)pdesc, null));
 
                     } else if (previous instanceof Map && nameAttribute != null) {
                         ((Map) previous).put(nameAttribute, content);
@@ -378,7 +383,7 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                     } else {
                         final List multipleValue = new ArrayList();
                         multipleValue.add(previous);
-                        multipleValue.add(Converters.convert(content, propertyType));
+                        multipleValue.add(readValue(content, propertyType));                        
                         namedProperties.put(propName, FF.createAttribute(multipleValue, (AttributeDescriptor)pdesc, null));
                     }
 
@@ -394,11 +399,32 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
             }
         }
 
-        if (featureType instanceof FeatureType) {
+        if (featureType instanceof SimpleFeatureType) {
+            //we must ensure we have the rigth number of properties
+            final SimpleFeatureBuilder sfb = new SimpleFeatureBuilder((SimpleFeatureType)featureType);
+            for(Property p : namedProperties.values()){
+                sfb.set(p.getName(), p.getValue());
+            }
+            return sfb.buildFeature(id);
+        }else if (featureType instanceof FeatureType) {
             return FF.createFeature(namedProperties.values(), (FeatureType)featureType, id);
         } else {
             return FF.createComplexAttribute(namedProperties.values(), (ComplexType)featureType, null);
         }
+    }
+    
+    public Object readValue(final String content, final PropertyType type){
+        Object value = content;
+        if(type.getBinding() == byte[].class && content != null){
+            try {
+                value = Base64.decode(content);
+            } catch (IOException ex) {
+                LOGGER.log(Level.INFO, "Failed to parser binary64 : "+ex.getMessage(),ex);
+            }
+        }else{
+            value = Converters.convert(value, type.getBinding());
+        }
+        return value;
     }
 
     private Object extractFeatureFromTransaction() throws XMLStreamException {

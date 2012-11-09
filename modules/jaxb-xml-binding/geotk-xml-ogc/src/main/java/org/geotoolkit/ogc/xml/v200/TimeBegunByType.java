@@ -18,12 +18,24 @@
 package org.geotoolkit.ogc.xml.v200;
 
 import org.opengis.filter.FilterVisitor;
+import org.opengis.filter.temporal.BegunBy;
 
 /**
  *
  * @author Guilhem Legal (Geomatys)
  */
-public class TimeBegunByType extends BinaryTemporalOpType {
+public class TimeBegunByType extends BinaryTemporalOpType implements BegunBy {
+
+    /**
+     * An empty constructor used by JAXB
+     */
+    public TimeBegunByType() {
+
+    }
+
+    public TimeBegunByType(final String propertyName, final Object temporal) {
+        super(propertyName, temporal);
+    }
 
     @Override
     public boolean evaluate(Object o) {
@@ -34,5 +46,5 @@ public class TimeBegunByType extends BinaryTemporalOpType {
     public Object accept(FilterVisitor fv, Object o) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-    
+
 }

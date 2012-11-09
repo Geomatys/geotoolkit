@@ -32,8 +32,8 @@ import java.util.List;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -43,12 +43,12 @@ import javax.swing.table.DefaultTableCellRenderer;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.service.DefaultGlyphService;
 import org.geotoolkit.gui.swing.misc.ActionCell;
+import org.geotoolkit.gui.swing.misc.JOptionDialog;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.StyleConstants;
 import org.jdesktop.swingx.JXTable;
-import org.opengis.filter.expression.Expression;
 import org.opengis.style.ExternalGraphic;
 import org.opengis.style.Graphic;
 import org.opengis.style.GraphicalSymbol;
@@ -107,7 +107,6 @@ public class JGraphicSymbolTable <T> extends StyleElementEditor<List> {
                 GraphicalSymbol symbol = (GraphicalSymbol) value;
                 final GraphicalSymbol oldMark = symbol;      
                 
-                final JDialog dia = new JDialog();
                 final StyleElementEditor editor;
                 if(symbol instanceof Mark){
                     editor = new JMarkPane();
@@ -118,17 +117,14 @@ public class JGraphicSymbolTable <T> extends StyleElementEditor<List> {
                 }
                 editor.setLayer(layer);
 
-                dia.setContentPane(editor);
-                dia.pack();
-                dia.setModal(true);
-                dia.setVisible(true);
-
-                symbol = (GraphicalSymbol) editor.create();
-
-                final List<GraphicalSymbol> symbols = model.getGraphics();
-                symbols.add(symbols.indexOf(oldMark),symbol);
-                symbols.remove(oldMark);
-                model.setGraphics(symbols);
+                final int res = JOptionDialog.show(null, editor, JOptionPane.OK_CANCEL_OPTION);
+                if(JOptionPane.OK_OPTION == res){
+                    symbol = (GraphicalSymbol) editor.create();
+                    final List<GraphicalSymbol> symbols = model.getGraphics();
+                    symbols.add(symbols.indexOf(oldMark),symbol);
+                    symbols.remove(oldMark);
+                    model.setGraphics(symbols);
+                }
             }
         });
         
@@ -269,10 +265,10 @@ public class JGraphicSymbolTable <T> extends StyleElementEditor<List> {
         public void newExternal() {
             final GraphicalSymbol m;
             try {
-                m = getStyleFactory().externalGraphic(new URL("http://upload.wikimedia.org/wikipedia/commons/6/63/Wikipedia-logo.png"), "image/png");
+                m = getStyleFactory().externalGraphic(new URL("file:/..."), "image/png");
             } catch (MalformedURLException ex) {
                 //won't happen
-                throw new RuntimeException(ex.getMessage());
+                throw new RuntimeException(ex.getMessage(),ex);
             }
 
             graphics.add(m);

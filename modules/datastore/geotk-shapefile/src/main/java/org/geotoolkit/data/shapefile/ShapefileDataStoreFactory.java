@@ -24,12 +24,12 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.logging.Logger;
 
-import org.geotoolkit.data.DataStore;
+import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.storage.DataStoreException;
-import org.geotoolkit.data.FileDataStoreFactory;
+import org.geotoolkit.data.FileFeatureStoreFactory;
 import org.geotoolkit.data.shapefile.indexed.IndexedShapefileDataStore;
 import org.geotoolkit.metadata.iso.quality.DefaultConformanceResult;
-import org.geotoolkit.data.AbstractFileDataStoreFactory;
+import org.geotoolkit.data.AbstractFileFeatureStoreFactory;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.util.logging.Logging;
@@ -67,7 +67,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class ShapefileDataStoreFactory extends AbstractFileDataStoreFactory implements FileDataStoreFactory {
+public class ShapefileDataStoreFactory extends AbstractFileFeatureStoreFactory implements FileFeatureStoreFactory {
 
     /** factory identification **/
     public static final String NAME = "shapefile";
@@ -155,7 +155,7 @@ public class ShapefileDataStoreFactory extends AbstractFileDataStoreFactory impl
      * IndexedShapefileDataStore and Geometry implementations.
      *
      * @return <tt>true</tt> if and only if this factory is available to
-     *         create DataStores.
+     *         open DataStores.
      */
     @Override
     public ConformanceResult availability() {
@@ -183,7 +183,7 @@ public class ShapefileDataStoreFactory extends AbstractFileDataStoreFactory impl
      * {@inheritDoc }
      */
     @Override
-    public DataStore create(final ParameterValueGroup params) throws DataStoreException {
+    public FeatureStore open(final ParameterValueGroup params) throws DataStoreException {
         checkCanProcessWithError(params);
 
         final URL url = (URL) params.parameter(URLP.getName().toString()).getValue();
@@ -252,7 +252,7 @@ public class ShapefileDataStoreFactory extends AbstractFileDataStoreFactory impl
      * {@inheritDoc }
      */
     @Override
-    public DataStore createNew(final ParameterValueGroup params) throws DataStoreException {
+    public FeatureStore create(final ParameterValueGroup params) throws DataStoreException {
         final URL url = (URL) params.parameter(URLP.getName().toString()).getValue();
         Boolean isMemoryMapped = (Boolean) params.parameter(MEMORY_MAPPED.getName().toString()).getValue();
         final String namespace = (String) params.parameter(NAMESPACE.getName().toString()).getValue();

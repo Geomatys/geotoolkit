@@ -18,6 +18,7 @@
 package org.geotoolkit.gui.swing.propertyedit;
 
 
+import java.awt.Image;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.ImageIcon;
@@ -71,6 +72,11 @@ public class LayerStylePropertyPanel extends MultiPropertyPanel {
         return IconBundle.EMPTY_ICON;
     }
 
+    @Override
+    public Image getPreview() {
+        return null;
+    }
+    
     @Override
     public String getToolTip() {
         return MessageBundle.getString("property_style");

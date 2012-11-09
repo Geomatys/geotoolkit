@@ -28,15 +28,15 @@ import java.util.Map;
 import java.util.Set;
 import javax.xml.stream.XMLStreamException;
 
-import org.geotoolkit.data.AbstractDataStore;
-import org.geotoolkit.data.DataStoreFactory;
-import org.geotoolkit.data.DataStoreFinder;
-import org.geotoolkit.data.DataStoreRuntimeException;
+import org.geotoolkit.data.AbstractFeatureStore;
+import org.geotoolkit.data.FeatureStoreFactory;
+import org.geotoolkit.data.FeatureStoreFinder;
+import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.memory.GenericExtendFeatureIterator;
 import org.geotoolkit.data.memory.GenericExtendFeatureIterator.FeatureExtend;
-import org.geotoolkit.data.memory.MemoryDataStore;
+import org.geotoolkit.data.memory.MemoryFeatureStore;
 import org.geotoolkit.data.osm.xml.OSMXMLReader;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
@@ -74,7 +74,7 @@ import static org.geotoolkit.data.osm.model.OSMModelConstants.*;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class OSMMemoryDataStore extends AbstractDataStore{
+public class OSMMemoryDataStore extends AbstractFeatureStore{
 
     private static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
 
@@ -119,12 +119,12 @@ public class OSMMemoryDataStore extends AbstractDataStore{
         }
     };
 
-    private final MemoryDataStore memoryStore;
+    private final MemoryFeatureStore memoryStore;
 
     public OSMMemoryDataStore(final ParameterValueGroup params, 
             final Object input) throws IOException, XMLStreamException, DataStoreException{
         super(params);
-        memoryStore = new MemoryDataStore();
+        memoryStore = new MemoryFeatureStore();
         memoryStore.createSchema(TYPE_NODE.getName(), TYPE_NODE);
         memoryStore.createSchema(TYPE_WAY.getName(), TYPE_WAY);
         memoryStore.createSchema(TYPE_RELATION.getName(), TYPE_RELATION);
@@ -153,8 +153,8 @@ public class OSMMemoryDataStore extends AbstractDataStore{
     }
 
     @Override
-    public DataStoreFactory getFactory() {
-        return DataStoreFinder.getFactoryById(OSMMemoryDataStoreFactory.NAME);
+    public FeatureStoreFactory getFactory() {
+        return FeatureStoreFinder.getFactoryById(OSMMemoryDataStoreFactory.NAME);
     }
     
     @Override
@@ -257,7 +257,7 @@ public class OSMMemoryDataStore extends AbstractDataStore{
                 reader = memoryStore.getFeatureReader(qb.buildQuery());
                 return reader.next();
             } catch (DataStoreException ex) {
-                throw new DataStoreRuntimeException(ex);
+                throw new FeatureStoreRuntimeException(ex);
             } finally{
                 if(reader != null){
                     reader.close();

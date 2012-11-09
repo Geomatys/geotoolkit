@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.data.DataStoreRuntimeException;
+import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
@@ -33,7 +33,7 @@ import org.geotoolkit.display.exception.PortrayalException;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.display2d.container.statefull.StatefullCoverageLayerJ2D;
+import org.geotoolkit.display2d.container.stateless.StatelessCoverageLayerJ2D;
 import org.geotoolkit.display2d.container.stateless.StatelessFeatureLayerJ2D;
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.GeneralEnvelope;
@@ -237,7 +237,7 @@ public class IsolineGraphicJ2D extends StatelessFeatureLayerJ2D {
                 }else if(coverageStyle != null){
                     //paint with the style
                     final CoverageMapLayer covlayer = MapBuilder.createCoverageLayer(coverage, coverageStyle, "test");
-                    final StatefullCoverageLayerJ2D graphic = new StatefullCoverageLayerJ2D(getCanvas(), covlayer);
+                    final StatelessCoverageLayerJ2D graphic = new StatelessCoverageLayerJ2D(getCanvas(), covlayer);
                     graphic.paint(context);
                 }
             }
@@ -250,7 +250,7 @@ public class IsolineGraphicJ2D extends StatelessFeatureLayerJ2D {
             
         } catch (TransformException ex) {
             getLogger().log(Level.WARNING, null, ex);
-        } catch (DataStoreRuntimeException ex) {
+        } catch (FeatureStoreRuntimeException ex) {
             getLogger().log(Level.WARNING, null, ex);
         }
 

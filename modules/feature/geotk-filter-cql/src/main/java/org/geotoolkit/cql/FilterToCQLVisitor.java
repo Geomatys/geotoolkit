@@ -20,6 +20,8 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.io.WKTWriter;
 import java.util.Date;
 import java.util.List;
+import java.util.SimpleTimeZone;
+import java.util.TimeZone;
 import org.geotoolkit.filter.DefaultPropertyIsLike;
 import org.geotoolkit.temporal.object.TemporalUtilities;
 import org.opengis.filter.And;
@@ -37,6 +39,7 @@ import org.opengis.filter.PropertyIsGreaterThanOrEqualTo;
 import org.opengis.filter.PropertyIsLessThan;
 import org.opengis.filter.PropertyIsLessThanOrEqualTo;
 import org.opengis.filter.PropertyIsLike;
+import org.opengis.filter.PropertyIsNil;
 import org.opengis.filter.PropertyIsNotEqualTo;
 import org.opengis.filter.PropertyIsNull;
 import org.opengis.filter.expression.Add;
@@ -60,6 +63,20 @@ import org.opengis.filter.spatial.Intersects;
 import org.opengis.filter.spatial.Overlaps;
 import org.opengis.filter.spatial.Touches;
 import org.opengis.filter.spatial.Within;
+import org.opengis.filter.temporal.After;
+import org.opengis.filter.temporal.AnyInteracts;
+import org.opengis.filter.temporal.Before;
+import org.opengis.filter.temporal.Begins;
+import org.opengis.filter.temporal.BegunBy;
+import org.opengis.filter.temporal.During;
+import org.opengis.filter.temporal.EndedBy;
+import org.opengis.filter.temporal.Ends;
+import org.opengis.filter.temporal.Meets;
+import org.opengis.filter.temporal.MetBy;
+import org.opengis.filter.temporal.OverlappedBy;
+import org.opengis.filter.temporal.TContains;
+import org.opengis.filter.temporal.TEquals;
+import org.opengis.filter.temporal.TOverlaps;
 
 /**
  * Visitor to convert a Filter in CQL.<br>
@@ -70,6 +87,7 @@ import org.opengis.filter.spatial.Within;
 public class FilterToCQLVisitor implements FilterVisitor, ExpressionVisitor {
 
     public static final FilterToCQLVisitor INSTANCE = new FilterToCQLVisitor();
+    private static final TimeZone TZ = new SimpleTimeZone(0, "Out Timezone");
 
     private FilterToCQLVisitor() {
     }
@@ -81,6 +99,11 @@ public class FilterToCQLVisitor implements FilterVisitor, ExpressionVisitor {
         return new StringBuilder();
     }
 
+    
+    ////////////////////////////////////////////////////////////////////////////
+    // FILTER //////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+    
     @Override
     public Object visitNullFilter(final Object o) {
         throw new UnsupportedOperationException("Null filter not supported in CQL.");
@@ -246,6 +269,18 @@ public class FilterToCQLVisitor implements FilterVisitor, ExpressionVisitor {
     }
 
     @Override
+    public Object visit(PropertyIsNil filter, Object o) {
+        final StringBuilder sb = toStringBuilder(o);
+        filter.getExpression().accept(this,sb);
+        sb.append(" IS NIL");
+        return sb;
+    }
+    
+    ////////////////////////////////////////////////////////////////////////////
+    // GEOMETRY FILTER /////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+    
+    @Override
     public Object visit(final BBOX filter, final Object o) {
         final StringBuilder sb = toStringBuilder(o);
         
@@ -387,6 +422,136 @@ public class FilterToCQLVisitor implements FilterVisitor, ExpressionVisitor {
     }
 
     ////////////////////////////////////////////////////////////////////////////
+    // TEMPORAL FILTER /////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+    
+    @Override
+    public Object visit(After filter, Object o) {
+        final StringBuilder sb = toStringBuilder(o);
+        filter.getExpression1().accept(this,sb);
+        sb.append(" AFTER ");
+        filter.getExpression2().accept(this,sb);
+        return sb;
+    }
+
+    @Override
+    public Object visit(AnyInteracts filter, Object o) {
+        final StringBuilder sb = toStringBuilder(o);
+        filter.getExpression1().accept(this,sb);
+        sb.append(" ANYINTERACTS ");
+        filter.getExpression2().accept(this,sb);
+        return sb;
+    }
+
+    @Override
+    public Object visit(Before filter, Object o) {
+        final StringBuilder sb = toStringBuilder(o);
+        filter.getExpression1().accept(this,sb);
+        sb.append(" BEFORE ");
+        filter.getExpression2().accept(this,sb);
+        return sb;
+    }
+
+    @Override
+    public Object visit(Begins filter, Object o) {
+        final StringBuilder sb = toStringBuilder(o);
+        filter.getExpression1().accept(this,sb);
+        sb.append(" BEGINS ");
+        filter.getExpression2().accept(this,sb);
+        return sb;
+    }
+
+    @Override
+    public Object visit(BegunBy filter, Object o) {
+        final StringBuilder sb = toStringBuilder(o);
+        filter.getExpression1().accept(this,sb);
+        sb.append(" BEGUNBY ");
+        filter.getExpression2().accept(this,sb);
+        return sb;
+    }
+
+    @Override
+    public Object visit(During filter, Object o) {
+        final StringBuilder sb = toStringBuilder(o);
+        filter.getExpression1().accept(this,sb);
+        sb.append(" DURING ");
+        filter.getExpression2().accept(this,sb);
+        return sb;
+    }
+
+    @Override
+    public Object visit(EndedBy filter, Object o) {
+        final StringBuilder sb = toStringBuilder(o);
+        filter.getExpression1().accept(this,sb);
+        sb.append(" ENDEDBY ");
+        filter.getExpression2().accept(this,sb);
+        return sb;
+    }
+
+    @Override
+    public Object visit(Ends filter, Object o) {
+        final StringBuilder sb = toStringBuilder(o);
+        filter.getExpression1().accept(this,sb);
+        sb.append(" ENDS ");
+        filter.getExpression2().accept(this,sb);
+        return sb;
+    }
+
+    @Override
+    public Object visit(Meets filter, Object o) {
+        final StringBuilder sb = toStringBuilder(o);
+        filter.getExpression1().accept(this,sb);
+        sb.append(" MEETS ");
+        filter.getExpression2().accept(this,sb);
+        return sb;
+    }
+
+    @Override
+    public Object visit(MetBy filter, Object o) {
+        final StringBuilder sb = toStringBuilder(o);
+        filter.getExpression1().accept(this,sb);
+        sb.append(" METBY ");
+        filter.getExpression2().accept(this,sb);
+        return sb;
+    }
+
+    @Override
+    public Object visit(OverlappedBy filter, Object o) {
+        final StringBuilder sb = toStringBuilder(o);
+        filter.getExpression1().accept(this,sb);
+        sb.append(" OVERLAPPEDBY ");
+        filter.getExpression2().accept(this,sb);
+        return sb;
+    }
+
+    @Override
+    public Object visit(TContains filter, Object o) {
+        final StringBuilder sb = toStringBuilder(o);
+        filter.getExpression1().accept(this,sb);
+        sb.append(" TCONTAINS ");
+        filter.getExpression2().accept(this,sb);
+        return sb;
+    }
+
+    @Override
+    public Object visit(TEquals filter, Object o) {
+        final StringBuilder sb = toStringBuilder(o);
+        filter.getExpression1().accept(this,sb);
+        sb.append(" TEQUALS ");
+        filter.getExpression2().accept(this,sb);
+        return sb;
+    }
+
+    @Override
+    public Object visit(TOverlaps filter, Object o) {
+        final StringBuilder sb = toStringBuilder(o);
+        filter.getExpression1().accept(this,sb);
+        sb.append(" TOVERLAPS ");
+        filter.getExpression2().accept(this,sb);
+        return sb;
+    }
+    
+    ////////////////////////////////////////////////////////////////////////////
     // EXPRESSIONS /////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
     
@@ -400,7 +565,7 @@ public class FilterToCQLVisitor implements FilterVisitor, ExpressionVisitor {
             sb.append(num.toString());
         }else if(value instanceof Date){
             final Date date = (Date) value;
-            sb.append(TemporalUtilities.toISO8601(date));
+            sb.append(TemporalUtilities.toISO8601Z(date,TZ));
         }else if(value instanceof Geometry){
             final Geometry geometry = (Geometry) value;
             final WKTWriter writer = new WKTWriter();

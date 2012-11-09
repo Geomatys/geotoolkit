@@ -18,7 +18,6 @@ package org.geotoolkit.googlemaps.model;
 
 import java.awt.Dimension;
 import java.awt.Point;
-import java.awt.geom.Point2D;
 import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
@@ -26,6 +25,7 @@ import org.geotoolkit.coverage.AbstractGridMosaic;
 import org.geotoolkit.coverage.Pyramid;
 import org.geotoolkit.coverage.TileReference;
 import org.geotoolkit.storage.DataStoreException;
+import org.opengis.geometry.DirectPosition;
 
 /**
  *
@@ -36,7 +36,7 @@ public class GoogleMapsMosaic extends AbstractGridMosaic{
 
     private final int scaleLevel;
     
-    public GoogleMapsMosaic(Pyramid pyramid, Point2D upperLeft, Dimension gridSize,
+    public GoogleMapsMosaic(Pyramid pyramid, DirectPosition upperLeft, Dimension gridSize,
             Dimension tileSize, double scale, int scaleLevel) {
         super(pyramid,upperLeft,gridSize,tileSize,scale);
         this.scaleLevel = scaleLevel;

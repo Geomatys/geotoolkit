@@ -18,9 +18,6 @@
 package org.geotoolkit.gui.swing.go2.control;
 
 import java.awt.event.ActionEvent;
-
-import javax.swing.JDialog;
-
 import org.geotoolkit.gui.swing.go2.JMap2D;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
@@ -46,7 +43,7 @@ public class ConfigAction extends AbstractMapAction {
     @Override
     public void actionPerformed(final ActionEvent arg0) {
         if (map != null ) {
-            final JDialog dia = new JConfigDialog(null, map);
+            final JConfigDialog dia = new JConfigDialog(null, map);
             dia.setLocationRelativeTo(null);
             dia.setVisible(true);
         }

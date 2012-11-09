@@ -39,7 +39,7 @@ import org.geotoolkit.sld.MutableStyledLayerDescriptor;
 import org.geotoolkit.sld.MutableUserLayer;
 import org.geotoolkit.sld.MutableSLDFactory;
 import org.geotoolkit.sld.DefaultSLDFactory;
-import org.geotoolkit.sld.xml.XMLUtilities;
+import org.geotoolkit.sld.xml.StyleXmlIO;
 import org.geotoolkit.util.SimpleInternationalString;
 
 import org.opengis.filter.expression.Expression;
@@ -97,7 +97,7 @@ public class XMLUtilitiesTest extends TestCase{
     }
 
 
-    private static final XMLUtilities util = new XMLUtilities();
+    private static final StyleXmlIO util = new StyleXmlIO();
 
     private static File FILE_SLD_V100 = null;
     private static File FILE_SLD_V110 = null;

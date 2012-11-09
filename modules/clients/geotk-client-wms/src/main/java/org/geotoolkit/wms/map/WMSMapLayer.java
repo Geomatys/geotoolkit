@@ -21,6 +21,7 @@ import java.awt.geom.Point2D;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Map;
+import org.geotoolkit.client.Request;
 import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.map.DefaultCoverageMapLayer;
@@ -276,7 +277,7 @@ public class WMSMapLayer extends DefaultCoverageMapLayer {
      */
     public URL queryLegend(final Dimension rect, final String format,
             final String rule, final Double scale) throws MalformedURLException {
-        return getCoverageReference().queryLegend(rect, format, rule, scale);
+        return getCoverageReference().queryLegend(rect, format, rule, scale).getURL();
     }
 
     /**
@@ -286,7 +287,7 @@ public class WMSMapLayer extends DefaultCoverageMapLayer {
             int y, final String[] queryLayers, final String infoFormat,
             final int featureCount) throws TransformException, FactoryException,
             MalformedURLException {
-        return getCoverageReference().queryFeatureInfo(env, rect, x, y, queryLayers, infoFormat, featureCount);
+        return getCoverageReference().queryFeatureInfo(env, rect, x, y, queryLayers, infoFormat, featureCount).getURL();
     }
 
 }

@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.gui.swing.style;
 
+import java.awt.Dimension;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import javax.swing.GroupLayout;
@@ -41,6 +42,11 @@ public class JNumberExpressionPane extends StyleElementEditor<Expression>{
         super(Expression.class);
         initComponents();
     }
+    
+    public void setExpressionUnvisible(){
+        guiSpecial.setPreferredSize(new Dimension(1, 1));
+        guiSpecial.setVisible(false);
+    }  
 
     public void setModel(final double value, final double min, final double max, final double step){
         guiNumber.setModel(new SpinnerNumberModel(value, min, max, step));
@@ -95,17 +101,22 @@ public class JNumberExpressionPane extends StyleElementEditor<Expression>{
         layout.setVerticalGroup(
             layout.createParallelGroup(Alignment.LEADING)
             .addComponent(guiNumber, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-            .addComponent(guiSpecial, GroupLayout.DEFAULT_SIZE, 28, Short.MAX_VALUE)
+            .addComponent(guiSpecial, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents
 
 private void guiSpecialPropertyChange(final PropertyChangeEvent evt) {//GEN-FIRST:event_guiSpecialPropertyChange
+    if (PROPERTY_TARGET.equalsIgnoreCase(evt.getPropertyName())) {            
+            firePropertyChange(PROPERTY_TARGET, null, create());
+            parse(create());
+        }
     if(evt.getPropertyName().equals(JSpecialExpressionButton.EXPRESSION_PROPERTY)) {
         parse(guiSpecial.get());
     }
 }//GEN-LAST:event_guiSpecialPropertyChange
 
 private void guiNumberStateChanged(final ChangeEvent evt) {//GEN-FIRST:event_guiNumberStateChanged
+    firePropertyChange(PROPERTY_TARGET, null, create());
     parse(  getFilterFactory().literal( ((SpinnerNumberModel)guiNumber.getModel()).getNumber() ));
 }//GEN-LAST:event_guiNumberStateChanged
 

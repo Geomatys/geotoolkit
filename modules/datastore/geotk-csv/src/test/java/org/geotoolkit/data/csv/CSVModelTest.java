@@ -24,7 +24,7 @@ import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 import org.geotoolkit.data.AbstractModelTests;
-import org.geotoolkit.data.DataStore;
+import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.storage.DataStoreException;
 
 /**
@@ -50,7 +50,7 @@ public class CSVModelTest extends AbstractModelTests{
     }
 
     @Override
-    protected DataStore getDataStore() {
+    protected FeatureStore getDataStore() {
         return store;
     }
 

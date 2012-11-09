@@ -19,10 +19,8 @@ package org.geotoolkit.data.wfs;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.ref.SoftReference;
 import java.math.BigInteger;
 import java.net.MalformedURLException;
-import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -39,17 +37,17 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
-import org.geotoolkit.client.Request;
 
-import org.geotoolkit.data.AbstractDataStore;
-import org.geotoolkit.data.DataStoreFactory;
-import org.geotoolkit.data.DataStoreFinder;
+import org.geotoolkit.data.AbstractFeatureStore;
+import org.geotoolkit.data.FeatureStoreFactory;
+import org.geotoolkit.data.FeatureStoreFinder;
 import org.geotoolkit.storage.DataStoreException;
-import org.geotoolkit.data.DataUtilities;
+import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.memory.GenericEmptyFeatureIterator;
+import org.geotoolkit.data.memory.GenericReprojectFeatureIterator;
 import org.geotoolkit.data.memory.GenericWrapFeatureIterator;
 import org.geotoolkit.data.query.DefaultQueryCapabilities;
 import org.geotoolkit.data.query.Query;
@@ -60,6 +58,7 @@ import org.geotoolkit.feature.AttributeTypeBuilder;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.FeatureTypeUtilities;
+import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.feature.xml.XmlFeatureReader;
 import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeReader;
 import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureReader;
@@ -67,17 +66,15 @@ import org.geotoolkit.filter.identity.DefaultFeatureId;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.ogc.xml.v110.FeatureIdType;
 import org.geotoolkit.ows.xml.v100.WGS84BoundingBoxType;
+import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
-import org.geotoolkit.wfs.xml.TransactionResponse;
 import org.geotoolkit.wfs.xml.WFSMarshallerPool;
-import org.geotoolkit.wfs.xml.v100.TransactionResultType;
 import org.geotoolkit.wfs.xml.v110.FeatureTypeListType;
 import org.geotoolkit.wfs.xml.v110.FeatureTypeType;
 import org.geotoolkit.wfs.xml.v110.InsertResultsType;
 import org.geotoolkit.wfs.xml.v110.InsertedFeatureType;
 import org.geotoolkit.wfs.xml.v110.TransactionResponseType;
-import org.geotoolkit.wfs.xml.v110.TransactionResultsType;
 import org.geotoolkit.wfs.xml.v110.WFSCapabilitiesType;
 
 import org.opengis.feature.Feature;
@@ -97,7 +94,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class WFSDataStore extends AbstractDataStore{
+public class WFSDataStore extends AbstractFeatureStore{
 
     private static final AtomicLong NS_INC = new AtomicLong();
 
@@ -107,15 +104,12 @@ public class WFSDataStore extends AbstractDataStore{
     private final Map<Name,FeatureType> types = new HashMap<Name,FeatureType>();
     private final Map<Name,Envelope> bounds = new HashMap<Name, Envelope>();
     private final Map<String,String> prefixes = new HashMap<String, String>();
-    private final boolean postRequest;
-    private final boolean longitudeFirst;
 
 
-    public WFSDataStore(final URI serverURI, final boolean postRequest, final boolean longitudeFirst) throws MalformedURLException{
-        super(null);
-        this.postRequest = postRequest;
-        this.longitudeFirst = longitudeFirst;
-        this.server = new WebFeatureServer(serverURI.toURL(), "1.1.0");
+    public WFSDataStore(WebFeatureServer server){
+        super(server.getConfiguration());
+        
+        this.server = server;
         final WFSCapabilitiesType capabilities = server.getCapabilities();
 
         final FeatureTypeListType lst = capabilities.getFeatureTypeList();
@@ -137,8 +131,13 @@ public class WFSDataStore extends AbstractDataStore{
             CoordinateReferenceSystem crs;
             FeatureType sft;
             try {
-                crs = CRS.decode(ftt.getDefaultSRS(),longitudeFirst);
-                sft = requestType(typeName);                
+                String defaultCRS = ftt.getDefaultSRS();
+                if(defaultCRS.contains("EPSG")){
+                    final int last = defaultCRS.lastIndexOf(':');
+                    defaultCRS = "EPSG:"+defaultCRS.substring(last+1);
+                }
+                crs = CRS.decode(defaultCRS,getLongitudeFirst());
+                sft = requestType(typeName);        
             } catch (IOException ex) {
                 getLogger().log(Level.WARNING, null, ex);
                 continue;
@@ -205,10 +204,18 @@ public class WFSDataStore extends AbstractDataStore{
         }
 
     }
+    
+    public boolean getUsePost(){        
+        return Parameters.value(WFSDataStoreFactory.POST_REQUEST, parameters);
+    }
+    
+    public boolean getLongitudeFirst(){
+        return Parameters.getOrCreate(WFSDataStoreFactory.LONGITUDE_FIRST, parameters).booleanValue();
+    }
 
     @Override
-    public DataStoreFactory getFactory() {
-        return DataStoreFinder.getFactoryById(WFSDataStoreFactory.NAME);
+    public FeatureStoreFactory getFactory() {
+        return FeatureStoreFinder.getFactoryById(WFSDataStoreFactory.NAME);
     }
 
     @Override
@@ -243,10 +250,18 @@ public class WFSDataStore extends AbstractDataStore{
      * {@inheritDoc }
      */
     @Override
-    public Envelope getEnvelope(final Query query) throws DataStoreException {
+    public Envelope getEnvelope(final Query query) throws DataStoreException {        
         final Name typeName = query.getTypeName();
         typeCheck(typeName);
-        return bounds.get(typeName);
+        if(   query.getCoordinateSystemReproject() == null 
+           && query.getFilter() == Filter.INCLUDE
+           && (query.getMaxFeatures() == null || query.getMaxFeatures() == Integer.MAX_VALUE)
+           && query.getStartIndex() == 0){
+            Envelope env = bounds.get(typeName);
+            if(env != null) return env;
+        }
+        
+        return super.getEnvelope(query);
     }
 
     /**
@@ -306,11 +321,27 @@ public class WFSDataStore extends AbstractDataStore{
             throw new DataStoreException(ex);
         }
 
+        
+        FeatureReader reader;
         if(collection == null){
-            return GenericEmptyFeatureIterator.createReader(sft);
+            reader = GenericEmptyFeatureIterator.createReader(sft);
         }else{
-            return GenericWrapFeatureIterator.wrapToReader(collection.iterator(), sft);
+            reader = GenericWrapFeatureIterator.wrapToReader(collection.iterator(), sft);
         }
+        
+        //we handle reprojection ourself, too complex or never done properly for a large
+        //majority of wfs server tested.
+        if(query.getCoordinateSystemReproject() != null){
+            try {
+                reader = GenericReprojectFeatureIterator.wrap(reader, query.getCoordinateSystemReproject(), null);
+            } catch (FactoryException ex) {
+                getLogger().log(Level.WARNING, ex.getMessage(), ex);
+            } catch (SchemaException ex) {
+                getLogger().log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
+        
+        return reader;
     }
 
     /**
@@ -336,7 +367,7 @@ public class WFSDataStore extends AbstractDataStore{
         if(newFeatures instanceof FeatureCollection){
             col = (FeatureCollection) newFeatures;
         }else{
-            col = DataUtilities.collection("", null);
+            col = FeatureStoreUtilities.collection("", null);
             col.addAll(newFeatures);
         }
         insert.setFeatures(col);
@@ -391,7 +422,7 @@ public class WFSDataStore extends AbstractDataStore{
                 try {
                     response.close();
                 } catch (IOException ex) {
-                    java.util.logging.Logger.getLogger(WFSDataStore.class.getName()).log(Level.SEVERE, null, ex);
+                    getLogger().log(Level.SEVERE, null, ex);
                 }
             }
         }
@@ -457,11 +488,11 @@ public class WFSDataStore extends AbstractDataStore{
         try {
             final JAXBFeatureTypeReader reader = new JAXBFeatureTypeReader();
             final InputStream stream;
-            if (postRequest) {
+            if (getUsePost()) {
                 getLogger().log(Level.INFO, "[WFS Client] request type by POST.");
                 stream = request.getResponseStream();
             } else {
-                getLogger().log(Level.INFO, "[WFS Client] request type : " + request.getURL());
+            getLogger().log(Level.INFO, "[WFS Client] request type : " + request.getURL());
                 stream = request.getURL().openStream();
             }
             final List<FeatureType> featureTypes = reader.read(stream);
@@ -505,7 +536,7 @@ public class WFSDataStore extends AbstractDataStore{
             reader = new JAXPStreamFeatureReader(sft);
             reader.getProperties().put(JAXPStreamFeatureReader.SKIP_UNEXPECTED_PROPERTY_TAGS, true);
             final InputStream stream;
-            if (postRequest) {
+            if (getUsePost()) {
                 getLogger().log(Level.INFO, "[WFS Client] request feature by POST.");
                 stream = request.getResponseStream();
             } else {
@@ -518,14 +549,14 @@ public class WFSDataStore extends AbstractDataStore{
 
             if(result instanceof Feature){
                 final Feature sf = (Feature) result;
-                final FeatureCollection<Feature> col = DataUtilities.collection("id", sft);
+                final FeatureCollection<Feature> col = FeatureStoreUtilities.collection("id", sft);
                 col.add(sf);
                 return col;
             }else if(result instanceof FeatureCollection){
                 final FeatureCollection<Feature> col = (FeatureCollection<Feature>) result;
                 return col;
             }else{
-                final FeatureCollection<Feature> col = DataUtilities.collection("", sft);
+                final FeatureCollection<Feature> col = FeatureStoreUtilities.collection("", sft);
                 return col;
             }
 

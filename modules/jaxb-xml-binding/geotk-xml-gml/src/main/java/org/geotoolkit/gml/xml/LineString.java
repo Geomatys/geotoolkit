@@ -16,13 +16,17 @@
  */
 package org.geotoolkit.gml.xml;
 
+import java.util.List;
+
 /**
  *
  * @author Guilhem Legal (Geomatys)
  */
 public interface LineString extends AbstractGeometry {
-    
+
     Coordinates getCoordinates();
-    
+
     DirectPositionList getPosList();
+
+    List<? extends DirectPosition> getPos();
 }

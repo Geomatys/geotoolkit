@@ -21,9 +21,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.geotoolkit.data.DataStore;
-import org.geotoolkit.data.DataStoreRuntimeException;
 import org.geotoolkit.data.FeatureReader;
+import org.geotoolkit.data.FeatureStore;
+import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.factory.FactoryFinder;
@@ -42,7 +42,7 @@ import org.opengis.filter.identity.FeatureId;
 /**
  * Basic support for a  FeatureWriter that redicts it's calls to
  * the more casual methods : addFeatures, removeFeatures and updateFeatures
- * of the datastore.
+ * of the feature store.
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
@@ -51,7 +51,7 @@ public class GenericFeatureWriter<T extends FeatureType, F extends Feature> impl
 
     private static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
 
-    protected final DataStore store;
+    protected final FeatureStore store;
     protected final Name typeName;
     protected final FeatureReader<T,F> reader;
     protected final T type;
@@ -59,7 +59,7 @@ public class GenericFeatureWriter<T extends FeatureType, F extends Feature> impl
     protected F modified = null;
     private boolean remove = false;
 
-    private GenericFeatureWriter(final DataStore store, final Name typeName, final Filter filter) throws DataStoreException {
+    private GenericFeatureWriter(final FeatureStore store, final Name typeName, final Filter filter) throws DataStoreException {
         this.store = store;
         this.typeName = typeName;
         reader = store.getFeatureReader(QueryBuilder.filtered(typeName, filter));
@@ -68,7 +68,7 @@ public class GenericFeatureWriter<T extends FeatureType, F extends Feature> impl
 
 
     @Override
-    public T getFeatureType() throws DataStoreRuntimeException{
+    public T getFeatureType() throws FeatureStoreRuntimeException{
         return type;
     }
 
@@ -76,7 +76,7 @@ public class GenericFeatureWriter<T extends FeatureType, F extends Feature> impl
      * {@inheritDoc }
      */
     @Override
-    public F next() throws DataStoreRuntimeException {
+    public F next() throws FeatureStoreRuntimeException {
         remove = false;
         if(hasNext()){
             currentFeature = reader.next();
@@ -93,7 +93,7 @@ public class GenericFeatureWriter<T extends FeatureType, F extends Feature> impl
      * {@inheritDoc }
      */
     @Override
-    public void close() throws DataStoreRuntimeException {
+    public void close() throws FeatureStoreRuntimeException {
         reader.close();
         write();
     }
@@ -102,7 +102,7 @@ public class GenericFeatureWriter<T extends FeatureType, F extends Feature> impl
      * {@inheritDoc }
      */
     @Override
-    public boolean hasNext() throws DataStoreRuntimeException {
+    public boolean hasNext() throws FeatureStoreRuntimeException {
         return reader.hasNext();
     }
 
@@ -119,7 +119,7 @@ public class GenericFeatureWriter<T extends FeatureType, F extends Feature> impl
      * {@inheritDoc }
      */
     @Override
-    public void write() throws DataStoreRuntimeException {
+    public void write() throws FeatureStoreRuntimeException {
         if(currentFeature != null){
             final Filter filter = FF.id(Collections.singleton(currentFeature.getIdentifier()));
             if(remove){
@@ -127,7 +127,7 @@ public class GenericFeatureWriter<T extends FeatureType, F extends Feature> impl
                 try {
                     store.removeFeatures(typeName, filter);
                 } catch (DataStoreException ex) {
-                    throw new DataStoreRuntimeException(ex);
+                    throw new FeatureStoreRuntimeException(ex);
                 }
             }else{
                 //it's a modify operation
@@ -147,7 +147,7 @@ public class GenericFeatureWriter<T extends FeatureType, F extends Feature> impl
                     try {
                         store.updateFeatures(typeName, filter, values);
                     } catch (DataStoreException ex) {
-                        throw new DataStoreRuntimeException(ex);
+                        throw new FeatureStoreRuntimeException(ex);
                     }
                 }
             }
@@ -161,7 +161,7 @@ public class GenericFeatureWriter<T extends FeatureType, F extends Feature> impl
                         ((AbstractFeature)modified).setId(res.get(0));
                     }
                 } catch (DataStoreException ex) {
-                    throw new DataStoreRuntimeException(ex);
+                    throw new FeatureStoreRuntimeException(ex);
                 }
                 modified = null;
             }
@@ -191,12 +191,12 @@ public class GenericFeatureWriter<T extends FeatureType, F extends Feature> impl
     }
 
     public static <T extends FeatureType, F extends Feature> FeatureWriter<T,F> wrap(
-            final DataStore store, final Name typeName, final Filter filter) throws DataStoreException{
+            final FeatureStore store, final Name typeName, final Filter filter) throws DataStoreException{
         return new GenericFeatureWriter<T, F>(store, typeName, filter);
     }
 
     public static <T extends FeatureType, F extends Feature> FeatureWriter<T,F> wrapAppend(
-            final DataStore store, final Name typeName) throws DataStoreException{
+            final FeatureStore store, final Name typeName) throws DataStoreException{
         return wrap(store,typeName,Filter.EXCLUDE);
     }
 

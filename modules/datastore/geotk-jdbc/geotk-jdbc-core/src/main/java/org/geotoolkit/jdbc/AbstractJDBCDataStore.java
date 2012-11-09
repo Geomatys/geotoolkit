@@ -27,7 +27,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.sql.DataSource;
 
-import org.geotoolkit.data.AbstractDataStore;
+import org.geotoolkit.data.AbstractFeatureStore;
 import org.geotoolkit.jdbc.dialect.SQLDialect;
 
 import org.opengis.feature.FeatureFactory;
@@ -39,7 +39,7 @@ import org.opengis.parameter.ParameterValueGroup;
  *
  * @author Johann Sorel (Geomatys)
  */
-public abstract class AbstractJDBCDataStore extends AbstractDataStore implements JDBCDataStore{
+public abstract class AbstractJDBCDataStore extends AbstractFeatureStore implements JDBCDataStore{
 
     /**
      * Factory used to create feature types

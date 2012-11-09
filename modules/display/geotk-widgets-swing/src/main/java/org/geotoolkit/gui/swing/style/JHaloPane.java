@@ -17,6 +17,8 @@
  */
 package org.geotoolkit.gui.swing.style;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JLabel;
@@ -89,8 +91,20 @@ public class JHaloPane extends StyleElementEditor<Halo> {
 
         setOpaque(false);
 
+        guiFill.addPropertyChangeListener(new PropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent evt) {
+                JHaloPane.this.propertyChange(evt);
+            }
+        });
 
         jLabel1.setText(MessageBundle.getString("radius")); // NOI18N
+
+        guiRadius.addPropertyChangeListener(new PropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent evt) {
+                JHaloPane.this.propertyChange(evt);
+            }
+        });
+
         GroupLayout layout = new GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -111,6 +125,15 @@ public class JHaloPane extends StyleElementEditor<Halo> {
                 .addComponent(guiFill, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
         );
     }// </editor-fold>//GEN-END:initComponents
+
+    private void propertyChange(PropertyChangeEvent evt) {//GEN-FIRST:event_propertyChange
+        // TODO add your handling code here:
+        if (PROPERTY_TARGET.equalsIgnoreCase(evt.getPropertyName())) {            
+            firePropertyChange(PROPERTY_TARGET, null, create());
+            parse(create());
+        }
+    }//GEN-LAST:event_propertyChange
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private JFillPane guiFill;
     private JNumberExpressionPane guiRadius;

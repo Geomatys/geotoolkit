@@ -31,14 +31,15 @@ import org.geotoolkit.ogc.xml.v110.PropertyNameType;
 import org.geotoolkit.util.Utilities;
 import org.opengis.filter.BinaryComparisonOperator;
 import org.opengis.filter.FilterVisitor;
+import org.opengis.filter.MatchAction;
 import org.opengis.filter.expression.Expression;
 
 
 /**
  * <p>Java class for BinaryComparisonOpType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="BinaryComparisonOpType">
  *   &lt;complexContent>
@@ -52,8 +53,8 @@ import org.opengis.filter.expression.Expression;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "BinaryComparisonOpType", propOrder = {
@@ -69,14 +70,14 @@ public class BinaryComparisonOpType extends ComparisonOpsType implements BinaryC
     private MatchActionType matchAction;
 
     private static final ObjectFactory FACTORY = new ObjectFactory();
-    
+
     /**
      * Empty constructor used by JAXB
      */
     public BinaryComparisonOpType() {
-        
+
     }
-    
+
     /**
      * Build a new Binary comparison operator
      */
@@ -100,17 +101,17 @@ public class BinaryComparisonOpType extends ComparisonOpsType implements BinaryC
         }
         this.matchCase = matchCase;
     }
-    
+
     /**
      * Gets the value of the expression property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link LiteralType }{@code >}
      * {@link JAXBElement }{@code <}{@link Object }{@code >}
      * {@link JAXBElement }{@code <}{@link String }{@code >}
      * {@link JAXBElement }{@code <}{@link FunctionType }{@code >}
-     * 
-     * 
+     *
+     *
      */
     public List<JAXBElement<?>> getExpression() {
         if (expression == null) {
@@ -121,11 +122,11 @@ public class BinaryComparisonOpType extends ComparisonOpsType implements BinaryC
 
     /**
      * Gets the value of the matchCase property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Boolean }
-     *     
+     *
      */
     public boolean isMatchingCase() {
         if (matchCase == null) {
@@ -137,11 +138,11 @@ public class BinaryComparisonOpType extends ComparisonOpsType implements BinaryC
 
     /**
      * Sets the value of the matchCase property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Boolean }
-     *     
+     *
      */
     public void setMatchCase(Boolean value) {
         this.matchCase = value;
@@ -149,13 +150,13 @@ public class BinaryComparisonOpType extends ComparisonOpsType implements BinaryC
 
     /**
      * Gets the value of the matchAction property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link MatchActionType }
-     *     
+     *
      */
-    public MatchActionType getMatchAction() {
+    public MatchActionType getMatchActionType() {
         if (matchAction == null) {
             return MatchActionType.ANY;
         } else {
@@ -165,16 +166,16 @@ public class BinaryComparisonOpType extends ComparisonOpsType implements BinaryC
 
     /**
      * Sets the value of the matchAction property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link MatchActionType }
-     *     
+     *
      */
     public void setMatchAction(MatchActionType value) {
         this.matchAction = value;
     }
-    
+
     @Override
     public boolean evaluate(final Object object) {
         throw new UnsupportedOperationException("Not supported yet.");
@@ -208,7 +209,7 @@ public class BinaryComparisonOpType extends ComparisonOpsType implements BinaryC
         }
         return null;
     }
-    
+
      public LiteralType getLiteral() {
         for (JAXBElement<?> elem : getExpression()) {
             if (elem.getValue() instanceof LiteralType) {
@@ -218,7 +219,14 @@ public class BinaryComparisonOpType extends ComparisonOpsType implements BinaryC
         return null;
     }
 
-    
+    @Override
+    public MatchAction getMatchAction() {
+        if (this.matchAction != null) {
+            return MatchAction.valueOf(this.matchAction.name());
+        }
+        return MatchAction.ANY;
+    }
+
     @Override
     public String toString() {
         final StringBuilder s = new StringBuilder(super.toString());
@@ -240,7 +248,7 @@ public class BinaryComparisonOpType extends ComparisonOpsType implements BinaryC
         hash = 67 * hash + (this.matchCase != null ? this.matchCase.hashCode() : 0);
         return hash;
     }
-    
+
     @Override
     public boolean equals(final Object obj) {
         if (obj == this) {

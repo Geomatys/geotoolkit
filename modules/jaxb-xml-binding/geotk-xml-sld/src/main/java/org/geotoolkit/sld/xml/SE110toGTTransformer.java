@@ -37,7 +37,6 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 
 import org.geotoolkit.display2d.ext.pattern.PatternSymbolizer;
-import org.geotoolkit.util.SimpleInternationalString;
 
 import org.geotoolkit.feature.DefaultName;
 
@@ -96,6 +95,7 @@ import org.geotoolkit.se.xml.v110.SubstringType;
 import org.geotoolkit.se.xml.v110.TrimType;
 
 import org.geotoolkit.se.xml.vext.ColorItemType;
+import org.geotoolkit.se.xml.vext.JenksType;
 import org.geotoolkit.se.xml.vext.PatternSymbolizerType;
 import org.geotoolkit.se.xml.vext.RangeType;
 import org.geotoolkit.se.xml.vext.RecolorType;
@@ -109,6 +109,7 @@ import org.geotoolkit.style.function.Categorize;
 import org.geotoolkit.style.function.ColorItem;
 import org.geotoolkit.style.function.Interpolate;
 import org.geotoolkit.style.function.InterpolationPoint;
+import org.geotoolkit.style.function.Jenks;
 import org.geotoolkit.style.function.Method;
 import org.geotoolkit.style.function.Mode;
 import org.geotoolkit.style.function.RecolorFunction;
@@ -174,7 +175,7 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
     private static final String UOM_PIXEL = "http://www.opengeospatial.org/se/units/pixel";
     
     protected final MutableStyleFactory styleFactory;
-    protected final XMLUtilities xmlUtilities = new XMLUtilities();
+    protected final StyleXmlIO xmlUtilities = new StyleXmlIO();
 
     public SE110toGTTransformer(final FilterFactory2 filterFactory,final MutableStyleFactory styleFactory){
         super(filterFactory);
@@ -936,10 +937,12 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
         if(colorMap == null) return null;
         
         Function function = null;
-        if(colorMap.getCategorize() != null){
+        if (colorMap.getCategorize() != null) {
             function = visit(colorMap.getCategorize());
-        }else if(colorMap.getInterpolate() != null){
+        } else if(colorMap.getInterpolate() != null) {
             function = visit(colorMap.getInterpolate());
+        } else if (colorMap.getJenks() != null) {
+             function = visit(colorMap.getJenks());
         }
         
         return styleFactory.colorMap(function);
@@ -1228,6 +1231,19 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
         }
         
         return styleFactory.interpolateFunction(lookup,values,method,mode,fallback);
+    }
+    
+    /**
+     *  Transform a SLD v1.1 jenks function in GT jenks function.
+     */
+    public Jenks visit(final JenksType jenks) {
+        if(jenks == null) return null;
+        
+        final Literal fallback = filterFactory.literal(jenks.getFallbackValue());
+        final Literal classNumber = filterFactory.literal(jenks.getClassNumber());
+        final Literal palette = filterFactory.literal(jenks.getPalette());
+        
+        return styleFactory.jenksFunction(classNumber, palette, fallback);
     }
 
     /**

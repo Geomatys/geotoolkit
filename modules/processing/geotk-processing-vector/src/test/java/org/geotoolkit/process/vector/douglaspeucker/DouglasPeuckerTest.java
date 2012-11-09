@@ -28,7 +28,7 @@ import javax.measure.quantity.Length;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 
-import org.geotoolkit.data.DataUtilities;
+import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.feature.FeatureTypeBuilder;
@@ -244,7 +244,7 @@ public class DouglasPeuckerTest extends AbstractProcessTest {
     private static FeatureCollection<Feature> buildFeatureCollectionInput1() throws FactoryException {
         type = createSimpleType();
 
-        final FeatureCollection<Feature> featureList = DataUtilities.collection("", type);
+        final FeatureCollection<Feature> featureList = FeatureStoreUtilities.collection("", type);
 
         geometryFactory = new GeometryFactory();
 
@@ -298,7 +298,7 @@ public class DouglasPeuckerTest extends AbstractProcessTest {
     private static FeatureCollection<Feature> buildFeatureCollectionInput2() throws FactoryException {
         type = createSimpleType();
 
-        final FeatureCollection<Feature> featureList = DataUtilities.collection("", type);
+        final FeatureCollection<Feature> featureList = FeatureStoreUtilities.collection("", type);
 
         geometryFactory = new GeometryFactory();
 
@@ -328,7 +328,7 @@ public class DouglasPeuckerTest extends AbstractProcessTest {
     private static FeatureCollection<Feature> buildFeatureCollectionResult() throws FactoryException {
         type = createSimpleType();
 
-        final FeatureCollection<Feature> featureList = DataUtilities.collection("", type);
+        final FeatureCollection<Feature> featureList = FeatureStoreUtilities.collection("", type);
 
         geometryFactory = new GeometryFactory();
 
@@ -375,7 +375,7 @@ public class DouglasPeuckerTest extends AbstractProcessTest {
     private static FeatureCollection<Feature> buildFeatureCollectionResult2() throws FactoryException {
         type = createSimpleType();
 
-        final FeatureCollection<Feature> featureList = DataUtilities.collection("", type);
+        final FeatureCollection<Feature> featureList = FeatureStoreUtilities.collection("", type);
 
         geometryFactory = new GeometryFactory();
 

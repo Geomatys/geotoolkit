@@ -17,6 +17,8 @@
 
 package org.geotoolkit.lucene;
 
+import org.geotoolkit.util.Exceptions;
+
 /**
  * Exceptions thrown by lucene indexing should be instances of this type.
  * 
@@ -39,6 +41,7 @@ public class IndexingException extends Exception {
      */
     public IndexingException(final String message) {
         super(message);
+        assert Exceptions.isValidMessage(message) : message;
     }
 
     /**
@@ -50,6 +53,7 @@ public class IndexingException extends Exception {
      */
     public IndexingException(final String message, final Throwable cause) {
         super(message, cause);
+        assert Exceptions.isValidMessage(message) : message;
     }
 
 }

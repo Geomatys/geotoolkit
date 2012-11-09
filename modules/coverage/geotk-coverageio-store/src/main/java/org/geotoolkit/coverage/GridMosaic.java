@@ -18,12 +18,11 @@ package org.geotoolkit.coverage;
 
 import java.awt.Dimension;
 import java.awt.Point;
-import java.awt.geom.Point2D;
 import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
-import org.geotoolkit.image.io.mosaic.Tile;
 import org.geotoolkit.storage.DataStoreException;
+import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 
 /**
@@ -55,7 +54,7 @@ public interface GridMosaic {
     /**
      * @return upper left corner of the mosaic, expressed in pyramid CRS.
      */
-    Point2D getUpperLeftCorner();
+    DirectPosition getUpperLeftCorner();
     
     /**
      * @return size of the grid in number of columns/rows.

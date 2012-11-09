@@ -17,7 +17,7 @@
 package org.geotoolkit.process.vector.douglaspeucker;
 
 
-import org.geotoolkit.data.DataStoreRuntimeException;
+import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.memory.WrapFeatureCollection;
 
@@ -69,15 +69,15 @@ public class DouglasPeuckerFeatureCollection extends WrapFeatureCollection {
      *  {@inheritDoc }
      */
     @Override
-    public Feature modify(final Feature original) throws DataStoreRuntimeException {
+    public Feature modify(final Feature original) throws FeatureStoreRuntimeException {
         try {
             return DouglasPeuckerProcess.simplifyFeature(original, inputAccuracy, inputBehavior, inputLenient);
         } catch (FactoryException ex) {
-            throw new DataStoreRuntimeException(ex);
+            throw new FeatureStoreRuntimeException(ex);
         } catch (MismatchedDimensionException ex) {
-            throw new DataStoreRuntimeException(ex);
+            throw new FeatureStoreRuntimeException(ex);
         } catch (TransformException ex) {
-            throw new DataStoreRuntimeException(ex);
+            throw new FeatureStoreRuntimeException(ex);
         }
     }
 }

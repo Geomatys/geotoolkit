@@ -17,9 +17,6 @@
  */
 package org.geotoolkit.gui.swing.filestore;
 
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
@@ -29,16 +26,16 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
-import org.geotoolkit.data.AbstractFileDataStoreFactory;
-import org.geotoolkit.data.DataStore;
-import org.geotoolkit.data.DataStoreFinder;
-import org.geotoolkit.data.FileDataStoreFactory;
+import org.geotoolkit.data.AbstractFileFeatureStoreFactory;
+import org.geotoolkit.data.FeatureStore;
+import org.geotoolkit.data.FeatureStoreFinder;
+import org.geotoolkit.data.FileFeatureStoreFactory;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.feature.FeatureUtilities;
+import org.geotoolkit.gui.swing.misc.JOptionDialog;
 import org.geotoolkit.gui.swing.propertyedit.JFeatureOutLine;
 import org.geotoolkit.gui.swing.propertyedit.featureeditor.PropertyValueEditor;
-import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.io.DefaultFileFilter;
 import org.geotoolkit.util.logging.Logging;
 import org.opengis.feature.type.ComplexType;
@@ -54,7 +51,7 @@ public class JFileDatastoreChooser extends javax.swing.JSplitPane {
     private static final Logger LOGGER = Logging.getLogger(JFileDatastoreChooser.class);
     private static volatile File lastPath = null;
     private static volatile FileFilter lastFilter = null;
-    private final Map<FileFilter, FileDataStoreFactory> filterMap = new HashMap<FileFilter, FileDataStoreFactory>();
+    private final Map<FileFilter, FileFeatureStoreFactory> filterMap = new HashMap<FileFilter, FileFeatureStoreFactory>();
     private final JFileChooser guiChooser = new JFileChooser();
     private final JFeatureOutLine guiConfig = new JFeatureOutLine();
 
@@ -78,9 +75,9 @@ public class JFileDatastoreChooser extends javax.swing.JSplitPane {
         // get all datastore factories ---------------------------------------------
         final List<FileFilter> filters = new ArrayList<FileFilter>();
 
-        final Iterator<FileDataStoreFactory> ite = DataStoreFinder.getAvailableFactories(FileDataStoreFactory.class).iterator();
+        final Iterator<FileFeatureStoreFactory> ite = FeatureStoreFinder.getAvailableFactories(FileFeatureStoreFactory.class).iterator();
         while(ite.hasNext()){
-            final FileDataStoreFactory fact = ite.next();
+            final FileFeatureStoreFactory fact = ite.next();
             final String name = fact.getDescription().toString();
             final String[] exts = fact.getFileExtensions();
             final FileFilter filter = new DefaultFileFilter("*"+exts[0], name){
@@ -113,7 +110,7 @@ public class JFileDatastoreChooser extends javax.swing.JSplitPane {
                 if (evt.getPropertyName().equals(JFileChooser.FILE_FILTER_CHANGED_PROPERTY)) {
                     //update the additional configuration sheet accordingly
                     final FileFilter ff = (FileFilter) evt.getNewValue();
-                    final FileDataStoreFactory factory = filterMap.get(ff);
+                    final FileFeatureStoreFactory factory = filterMap.get(ff);
                     if(factory == null){
                         return;
                     }
@@ -124,7 +121,7 @@ public class JFileDatastoreChooser extends javax.swing.JSplitPane {
                     final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
                     ftb.copy(type);
                     for(Object pd : ftb.getProperties().toArray()){
-                        if(AbstractFileDataStoreFactory.URLP.getName().getCode().equals(
+                        if(AbstractFileFeatureStoreFactory.URLP.getName().getCode().equals(
                                 ((PropertyDescriptor)pd).getName().getLocalPart())){
                             ftb.getProperties().remove(pd);
                         }
@@ -178,14 +175,14 @@ public class JFileDatastoreChooser extends javax.swing.JSplitPane {
     /**
      * Returns a list of created datastores
      */
-    public List<DataStore> getSources() {
-        final List<DataStore> stores = new ArrayList<DataStore>();
+    public List<FeatureStore> getSources() {
+        final List<FeatureStore> stores = new ArrayList<FeatureStore>();
         final File[] files = guiChooser.getSelectedFiles();
 
         //store current path and filter for next time.
         lastFilter = guiChooser.getFileFilter();
         lastPath = guiChooser.getCurrentDirectory();
-        final FileDataStoreFactory currentService = filterMap.get(lastFilter);
+        final FileFeatureStoreFactory currentService = filterMap.get(lastFilter);
 
         file_loop:
         for (final File file : files) {
@@ -196,7 +193,7 @@ public class JFileDatastoreChooser extends javax.swing.JSplitPane {
             if (currentService != null) {
                 //specific filter has been choosen, use the related service.
                 try {
-                    final DataStore store = currentService.createDataStore(file.toURI().toURL());
+                    final FeatureStore store = currentService.createDataStore(file.toURI().toURL());
                     stores.add(store);
                 } catch (Exception ex) {
                     LOGGER.log(Level.WARNING, ex.getMessage(), ex);
@@ -204,10 +201,10 @@ public class JFileDatastoreChooser extends javax.swing.JSplitPane {
 
             } else {
                 //no filter choosen, find a service that can handle this file
-                for (Entry<FileFilter, FileDataStoreFactory> entry : filterMap.entrySet()) {
+                for (Entry<FileFilter, FileFeatureStoreFactory> entry : filterMap.entrySet()) {
                     if (entry.getKey().accept(file)) {
                         try {
-                            final DataStore store = currentService.createDataStore(file.toURI().toURL());
+                            final FeatureStore store = currentService.createDataStore(file.toURI().toURL());
                             stores.add(store);
                         } catch (Exception ex) {
                             LOGGER.log(Level.WARNING, ex.getMessage(), ex);
@@ -221,33 +218,14 @@ public class JFileDatastoreChooser extends javax.swing.JSplitPane {
         return stores;
     }
 
-    public static List<DataStore> showDialog(){
+    public static List<FeatureStore> showDialog(){
         return showDialog(Collections.EMPTY_LIST);
     }
 
-    public static List<DataStore> showDialog(List<PropertyValueEditor> editors){
+    public static List<FeatureStore> showDialog(List<PropertyValueEditor> editors){
         final JFileDatastoreChooser chooser = new JFileDatastoreChooser();
         chooser.getEditors().addAll(editors);
-        final JDialog dialog = new JDialog();
-
-        final JToolBar bar = new JToolBar();
-        bar.setLayout(new FlowLayout(FlowLayout.RIGHT));
-        bar.setFloatable(false);
-        bar.add(new AbstractAction(MessageBundle.getString("open")) {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                dialog.dispose();
-            }
-        });
-
-        final JPanel panel = new JPanel(new BorderLayout());
-        panel.add(BorderLayout.CENTER,chooser);
-        panel.add(BorderLayout.SOUTH, bar);
-        dialog.setModal(true);
-        dialog.setContentPane(panel);
-        dialog.pack();
-        dialog.setLocationRelativeTo(null);
-        dialog.setVisible(true);
+        JOptionDialog.show(null, chooser, JOptionPane.OK_OPTION);
         return chooser.getSources();
     }
 

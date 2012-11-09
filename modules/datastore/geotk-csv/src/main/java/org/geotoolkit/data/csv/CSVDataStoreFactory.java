@@ -22,9 +22,9 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.measure.unit.Unit;
 
-import org.geotoolkit.data.AbstractDataStoreFactory;
-import org.geotoolkit.data.AbstractFileDataStoreFactory;
-import org.geotoolkit.data.DataStore;
+import org.geotoolkit.data.AbstractFeatureStoreFactory;
+import org.geotoolkit.data.AbstractFileFeatureStoreFactory;
+import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.metadata.iso.DefaultIdentifier;
 import org.geotoolkit.metadata.iso.citation.DefaultCitation;
 import org.geotoolkit.metadata.iso.identification.DefaultServiceIdentification;
@@ -48,7 +48,7 @@ import static org.geotoolkit.data.csv.CSVDataStore.*;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class CSVDataStoreFactory extends AbstractFileDataStoreFactory {
+public class CSVDataStoreFactory extends AbstractFileFeatureStoreFactory {
 
     
     
@@ -99,14 +99,14 @@ public class CSVDataStoreFactory extends AbstractFileDataStoreFactory {
     }
 
     @Override
-    public DataStore create(final ParameterValueGroup params) throws DataStoreException {
+    public FeatureStore open(final ParameterValueGroup params) throws DataStoreException {
         checkCanProcessWithError(params);
         return new CSVDataStore(params);
     }
 
     @Override
-    public DataStore createNew(final ParameterValueGroup params) throws DataStoreException {
-        return create(params);
+    public FeatureStore create(final ParameterValueGroup params) throws DataStoreException {
+        return open(params);
     }
 
     @Override

@@ -23,7 +23,7 @@ import junit.framework.TestCase;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.FeatureWriter;
-import org.geotoolkit.data.memory.MemoryDataStore;
+import org.geotoolkit.data.memory.MemoryFeatureStore;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.feature.DefaultName;
@@ -53,7 +53,7 @@ public class QueryTest extends TestCase{
     private static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
 
 
-    private final MemoryDataStore store = new MemoryDataStore();
+    private final MemoryFeatureStore store = new MemoryFeatureStore();
     private final Name name1;
     private final Name name2;
     

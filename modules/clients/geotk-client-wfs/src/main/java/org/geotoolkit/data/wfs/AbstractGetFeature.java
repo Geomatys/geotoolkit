@@ -20,11 +20,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.StringWriter;
-import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -39,7 +37,7 @@ import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.filter.visitor.SimplifyingFilterVisitor;
 import org.geotoolkit.ogc.xml.v110.FilterType;
 import org.geotoolkit.security.ClientSecurity;
-import org.geotoolkit.sld.xml.XMLUtilities;
+import org.geotoolkit.sld.xml.StyleXmlIO;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.wfs.xml.WFSMarshallerPool;
 import org.geotoolkit.wfs.xml.v110.GetFeatureType;
@@ -48,6 +46,7 @@ import org.geotoolkit.wfs.xml.ResultTypeType;
 
 import org.opengis.feature.type.Name;
 import org.opengis.filter.Filter;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 
 /**
@@ -194,9 +193,9 @@ public abstract class AbstractGetFeature extends AbstractRequest implements GetF
 
 
         if(filter != null && filter != Filter.INCLUDE){
-            final XMLUtilities util = new XMLUtilities();
-            final StringWriter writer = new StringWriter();
-
+            final StyleXmlIO util = new StyleXmlIO();
+            final StringWriter writer = new StringWriter();            
+            
             try {
                 util.writeFilter(writer, filter, org.geotoolkit.sld.xml.Specification.Filter.V_1_1_0);
             } catch (JAXBException ex) {
@@ -216,7 +215,12 @@ public abstract class AbstractGetFeature extends AbstractRequest implements GetF
             final StringBuilder sb = new StringBuilder();
 
             for(final Name prop : propertyNames){
-                sb.append(DefaultName.toExtendedForm(prop)).append(',');
+                if(typeName != null && prop.getNamespaceURI() != null 
+                   && prop.getNamespaceURI().equals(typeName.getNamespaceURI())){
+                    sb.append(typeName.getPrefix()).append(':').append(prop.getLocalPart()).append(',');
+                }else{
+                    sb.append(DefaultName.toExtendedForm(prop)).append(',');
+                }
             }
 
             if(sb.length() > 0 && sb.charAt(sb.length()-1) == ','){
@@ -244,9 +248,15 @@ public abstract class AbstractGetFeature extends AbstractRequest implements GetF
             typeNames.add(typeName);
         }
 
+        Filter filter = Filter.INCLUDE;
+        if(this.filter != null && this.filter != Filter.INCLUDE){
+            final SimplifyingFilterVisitor visitor = new SimplifyingFilterVisitor();
+            filter = (Filter) this.filter.accept(visitor, null);
+        }
+        
         FilterType xmlFilter;
         if(filter != null && filter != Filter.INCLUDE){
-            final XMLUtilities util = new XMLUtilities();
+            final StyleXmlIO util = new StyleXmlIO();
             xmlFilter = util.getTransformerXMLv110().visit(filter);
         } else {
             xmlFilter = null;

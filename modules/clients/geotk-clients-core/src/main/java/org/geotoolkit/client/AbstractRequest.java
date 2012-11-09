@@ -84,7 +84,7 @@ public abstract class AbstractRequest implements Request {
     protected AbstractRequest(final Server server, final String subPath) {
         this(server.getURL().toString(), server.getClientSecurity(), subPath);
     }
-
+    
     protected AbstractRequest(final String serverURL) {
         this(serverURL,null);
     }

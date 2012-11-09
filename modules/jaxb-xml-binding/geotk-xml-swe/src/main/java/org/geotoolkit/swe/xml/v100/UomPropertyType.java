@@ -59,6 +59,9 @@ import org.geotoolkit.swe.xml.UomProperty;
 })
 public class UomPropertyType implements UomProperty {
 
+    public static final UomPropertyType DEGREE = new UomPropertyType("degree", null);
+    public static final UomPropertyType METER  = new UomPropertyType("m", null);
+    
     @XmlElementRef(name = "UnitDefinition", namespace = "http://www.opengis.net/gml", type = JAXBElement.class)
     private JAXBElement<? extends UnitDefinitionType> unitDefinition;
     @XmlAttribute

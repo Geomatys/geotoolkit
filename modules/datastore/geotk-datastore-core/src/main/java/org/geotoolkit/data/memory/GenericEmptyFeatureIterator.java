@@ -18,10 +18,10 @@
 package org.geotoolkit.data.memory;
 
 import java.util.NoSuchElementException;
-import org.geotoolkit.data.DataStoreRuntimeException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.FeatureReader;
+import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.factory.Hints;
 import org.opengis.feature.Feature;
@@ -45,7 +45,7 @@ public class GenericEmptyFeatureIterator<F extends Feature> implements FeatureIt
      * {@inheritDoc }
      */
     @Override
-    public F next() throws DataStoreRuntimeException {
+    public F next() throws FeatureStoreRuntimeException {
         throw new NoSuchElementException("No such Feature exists");
     }
 
@@ -53,14 +53,14 @@ public class GenericEmptyFeatureIterator<F extends Feature> implements FeatureIt
      * {@inheritDoc }
      */
     @Override
-    public void close() throws DataStoreRuntimeException {
+    public void close() throws FeatureStoreRuntimeException {
     }
 
     /**
      * {@inheritDoc }
      */
     @Override
-    public boolean hasNext() throws DataStoreRuntimeException {
+    public boolean hasNext() throws FeatureStoreRuntimeException {
         return false;
     }
 
@@ -114,8 +114,8 @@ public class GenericEmptyFeatureIterator<F extends Feature> implements FeatureIt
         }
 
         @Override
-        public void write() throws DataStoreRuntimeException {
-            throw new DataStoreRuntimeException("FeatureWriter is empty and does not support write()");
+        public void write() throws FeatureStoreRuntimeException {
+            throw new FeatureStoreRuntimeException("FeatureWriter is empty and does not support write()");
         }
     }
 
@@ -126,12 +126,12 @@ public class GenericEmptyFeatureIterator<F extends Feature> implements FeatureIt
         }
 
         @Override
-        public FeatureIterator iterator(final Hints hints) throws DataStoreRuntimeException {
+        public FeatureIterator iterator(final Hints hints) throws FeatureStoreRuntimeException {
             return createReader(getOriginalFeatureCollection().getFeatureType());
         }
 
         @Override
-        protected Feature modify(Feature original) throws DataStoreRuntimeException {
+        protected Feature modify(Feature original) throws FeatureStoreRuntimeException {
             throw new UnsupportedOperationException("should not have been called.");
         }
 

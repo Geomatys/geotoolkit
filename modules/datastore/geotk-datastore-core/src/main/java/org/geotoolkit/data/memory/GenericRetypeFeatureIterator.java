@@ -21,10 +21,10 @@ package org.geotoolkit.data.memory;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import org.geotoolkit.data.DataStoreRuntimeException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.FeatureReader;
+import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.HintsPending;
@@ -162,7 +162,7 @@ public abstract class GenericRetypeFeatureIterator<F extends Feature, R extends 
      * {@inheritDoc }
      */
     @Override
-    public void close() throws DataStoreRuntimeException {
+    public void close() throws FeatureStoreRuntimeException {
         iterator.close();
     }
 
@@ -170,7 +170,7 @@ public abstract class GenericRetypeFeatureIterator<F extends Feature, R extends 
      * {@inheritDoc }
      */
     @Override
-    public boolean hasNext() throws DataStoreRuntimeException {
+    public boolean hasNext() throws FeatureStoreRuntimeException {
         return iterator.hasNext();
     }
 
@@ -208,7 +208,7 @@ public abstract class GenericRetypeFeatureIterator<F extends Feature, R extends 
         }
 
         @Override
-        public F next() throws DataStoreRuntimeException {
+        public F next() throws FeatureStoreRuntimeException {
             final Feature next = iterator.next();
 
             final Collection<Property> properties = new ArrayList<Property>();
@@ -260,7 +260,7 @@ public abstract class GenericRetypeFeatureIterator<F extends Feature, R extends 
         }
 
         @Override
-        public F next() throws DataStoreRuntimeException {
+        public F next() throws FeatureStoreRuntimeException {
             final SimpleFeature next = (SimpleFeature) iterator.next();
             feature.setId(next.getID());
 
@@ -297,7 +297,7 @@ public abstract class GenericRetypeFeatureIterator<F extends Feature, R extends 
         }
 
         @Override
-        public FeatureIterator iterator(final Hints hints) throws DataStoreRuntimeException {
+        public FeatureIterator iterator(final Hints hints) throws FeatureStoreRuntimeException {
             FeatureIterator ite = getOriginalFeatureCollection().iterator(hints);
             if(!(ite instanceof FeatureReader)){
                 ite = GenericWrapFeatureIterator.wrapToReader(ite, getOriginalFeatureCollection().getFeatureType());
@@ -306,7 +306,7 @@ public abstract class GenericRetypeFeatureIterator<F extends Feature, R extends 
         }
 
         @Override
-        protected Feature modify(Feature original) throws DataStoreRuntimeException {
+        protected Feature modify(Feature original) throws FeatureStoreRuntimeException {
             throw new UnsupportedOperationException("should not have been called.");
         }
 

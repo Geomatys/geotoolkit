@@ -18,6 +18,8 @@
 package org.geotoolkit.gui.swing.style;
 
 import java.awt.Component;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JLabel;
@@ -113,18 +115,42 @@ public class JFontPane extends StyleElementEditor<Font>{
 
         setOpaque(false);
 
-
-
-
-
         jLabel1.setHorizontalAlignment(SwingConstants.RIGHT);
         jLabel1.setText(MessageBundle.getString("family")); // NOI18N
+
         jLabel2.setHorizontalAlignment(SwingConstants.RIGHT);
         jLabel2.setText(MessageBundle.getString("style")); // NOI18N
+
         jLabel3.setHorizontalAlignment(SwingConstants.RIGHT);
         jLabel3.setText(MessageBundle.getString("size")); // NOI18N
+
         jLabel4.setHorizontalAlignment(SwingConstants.RIGHT);
         jLabel4.setText(MessageBundle.getString("weight")); // NOI18N
+
+        guiSize.addPropertyChangeListener(new PropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent evt) {
+                JFontPane.this.propertyChange(evt);
+            }
+        });
+
+        guiFamily.addPropertyChangeListener(new PropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent evt) {
+                JFontPane.this.propertyChange(evt);
+            }
+        });
+
+        guiStyle.addPropertyChangeListener(new PropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent evt) {
+                JFontPane.this.propertyChange(evt);
+            }
+        });
+
+        guiWeight.addPropertyChangeListener(new PropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent evt) {
+                JFontPane.this.propertyChange(evt);
+            }
+        });
+
         GroupLayout layout = new GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -181,6 +207,13 @@ public class JFontPane extends StyleElementEditor<Font>{
         layout.linkSize(SwingConstants.VERTICAL, new Component[] {guiStyle, jLabel2});
 
     }// </editor-fold>//GEN-END:initComponents
+
+    private void propertyChange(PropertyChangeEvent evt) {//GEN-FIRST:event_propertyChange
+        // TODO add your handling code here:
+        if (PROPERTY_TARGET.equalsIgnoreCase(evt.getPropertyName())) {            
+            firePropertyChange(PROPERTY_TARGET, null, create());
+        }
+    }//GEN-LAST:event_propertyChange
     
     
     // Variables declaration - do not modify//GEN-BEGIN:variables

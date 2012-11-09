@@ -17,14 +17,17 @@
 package org.geotoolkit.wmts;
 
 import java.awt.Dimension;
+import java.awt.Image;
 import java.awt.geom.Point2D;
 import java.awt.image.RenderedImage;
 import org.geotoolkit.coverage.*;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
+import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.wmts.model.WMTSPyramidSet;
 import org.opengis.feature.type.Name;
+import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
@@ -37,10 +40,10 @@ public class WMTSCoverageReference implements CoverageReference, PyramidalModel{
     private final WebMapTileServer server;
     private final Name name;
     private final PyramidSet set;
-    
+
     WMTSCoverageReference(WebMapTileServer server, Name name, boolean cacheImage){
         this.server = server;
-        this.name = name; 
+        this.name = name;
         set = new WMTSPyramidSet(server, name.getLocalPart(), cacheImage);
     }
 
@@ -50,10 +53,25 @@ public class WMTSCoverageReference implements CoverageReference, PyramidalModel{
     }
 
     @Override
+    public boolean isWritable() throws DataStoreException {
+        return false;
+    }
+    
+    @Override
+    public int getImageIndex() {
+        return 0;
+    }
+
+    @Override
+    public GridCoverageWriter createWriter() throws DataStoreException {
+        throw new DataStoreException("WMTS coverage are not writable.");
+    }
+
+    @Override
     public CoverageStore getStore() {
         return server;
     }
-    
+
     @Override
     public GridCoverageReader createReader() throws CoverageStoreException {
         final PyramidalModelReader reader = new PyramidalModelReader();
@@ -67,17 +85,12 @@ public class WMTSCoverageReference implements CoverageReference, PyramidalModel{
     }
 
     @Override
-    public boolean isWriteable() {
-        return false;
-    }
-    
-    @Override
     public Pyramid createPyramid(CoordinateReferenceSystem crs) throws DataStoreException {
         throw new DataStoreException("Model is not writeable.");
     }
 
     @Override
-    public GridMosaic createMosaic(String pyramidId, Dimension gridSize, Dimension tilePixelSize, Point2D upperleft, double pixelscale) throws DataStoreException {
+    public GridMosaic createMosaic(String pyramidId, Dimension gridSize, Dimension tilePixelSize, DirectPosition upperleft, double pixelscale) throws DataStoreException {
         throw new DataStoreException("Model is not writeable.");
     }
 
@@ -89,6 +102,10 @@ public class WMTSCoverageReference implements CoverageReference, PyramidalModel{
     @Override
     public void writeTiles(String pyramidId, String mosaicId, RenderedImage image, boolean onlyMissing) throws DataStoreException {
         throw new DataStoreException("Model is not writeable.");
+    }
+
+    public Image getLegend() throws DataStoreException {
+        return null;
     }
 
 }

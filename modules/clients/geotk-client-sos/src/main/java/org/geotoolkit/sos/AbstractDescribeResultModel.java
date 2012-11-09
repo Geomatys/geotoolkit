@@ -67,7 +67,7 @@ public abstract class AbstractDescribeResultModel extends AbstractSOSRequest imp
 
     @Override
     public URL getURL() throws MalformedURLException {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException("Can not generate abstract describe result URL.");
     }
 
     /**

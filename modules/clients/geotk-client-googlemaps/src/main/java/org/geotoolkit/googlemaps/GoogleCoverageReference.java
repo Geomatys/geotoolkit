@@ -17,14 +17,17 @@
 package org.geotoolkit.googlemaps;
 
 import java.awt.Dimension;
+import java.awt.Image;
 import java.awt.geom.Point2D;
 import java.awt.image.RenderedImage;
 import org.geotoolkit.coverage.*;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
+import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.googlemaps.model.GoogleMapsPyramidSet;
 import org.geotoolkit.storage.DataStoreException;
 import org.opengis.feature.type.Name;
+import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
@@ -37,27 +40,37 @@ public class GoogleCoverageReference implements CoverageReference, PyramidalMode
     private final StaticGoogleMapsServer server;
     private final GoogleMapsPyramidSet set;
     private final Name name;
-    
+
     GoogleCoverageReference(final StaticGoogleMapsServer server, final Name name,boolean cacheImage) throws DataStoreException{
         this.server = server;
         this.name = name;
         this.set = new GoogleMapsPyramidSet(this,cacheImage);
     }
-    
+
     @Override
     public Name getName() {
         return name;
     }
 
     @Override
+    public boolean isWritable() throws DataStoreException {
+        return false;
+    }
+
+    @Override
+    public int getImageIndex() {
+        return 0;
+    }
+        
+    @Override
     public StaticGoogleMapsServer getStore() {
         return server;
     }
-    
+
     public GetMapRequest createGetMap() {
         return new DefaultGetMap(server,name.getLocalPart());
     }
-    
+
     @Override
     public GridCoverageReader createReader() throws CoverageStoreException {
         final PyramidalModelReader reader = new PyramidalModelReader();
@@ -66,22 +79,22 @@ public class GoogleCoverageReference implements CoverageReference, PyramidalMode
     }
 
     @Override
+    public GridCoverageWriter createWriter() throws DataStoreException {
+        throw new DataStoreException("GoogleMaps coverage are not writable.");
+    }
+
+    @Override
     public PyramidSet getPyramidSet() throws DataStoreException {
         return set;
     }
 
-    @Override
-    public boolean isWriteable() {
-        return false;
-    }
-    
     @Override
     public Pyramid createPyramid(CoordinateReferenceSystem crs) throws DataStoreException {
         throw new DataStoreException("Model is not writeable.");
     }
 
     @Override
-    public GridMosaic createMosaic(String pyramidId, Dimension gridSize, Dimension tilePixelSize, Point2D upperleft, double pixelscale) throws DataStoreException {
+    public GridMosaic createMosaic(String pyramidId, Dimension gridSize, Dimension tilePixelSize, DirectPosition upperleft, double pixelscale) throws DataStoreException {
         throw new DataStoreException("Model is not writeable.");
     }
 
@@ -93,6 +106,10 @@ public class GoogleCoverageReference implements CoverageReference, PyramidalMode
     @Override
     public void writeTiles(String pyramidId, String mosaicId, RenderedImage image, boolean onlyMissing) throws DataStoreException {
         throw new DataStoreException("Model is not writeable.");
+    }
+
+    public Image getLegend() throws DataStoreException {
+        return null;
     }
 
 }

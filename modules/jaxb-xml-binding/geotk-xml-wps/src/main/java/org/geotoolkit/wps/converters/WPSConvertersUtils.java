@@ -158,10 +158,15 @@ public class WPSConvertersUtils {
         String out = null;
 
         if (data != null) {
-            if (data instanceof CoordinateReferenceSystem) {
-                out = IdentifiedObjects.getIdentifier((CoordinateReferenceSystem) data);
-            } else {
-                out = String.valueOf(data);
+            try {
+                WPSObjectConverter converter = WPSConverterRegistry.getInstance().getConverter(data.getClass(), String.class);
+                out = (String) converter.convert(data, null);
+            } catch (NonconvertibleObjectException ex) {
+                if (data instanceof CoordinateReferenceSystem) {
+                    out = IdentifiedObjects.getIdentifier((CoordinateReferenceSystem) data);
+                } else {
+                    out = String.valueOf(data);
+                }
             }
         }
         return out;

@@ -23,6 +23,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -39,9 +40,9 @@ import javax.swing.GroupLayout.Alignment;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
@@ -59,6 +60,7 @@ import javax.swing.table.TableCellEditor;
 import org.geotoolkit.display2d.service.DefaultGlyphService;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.gui.swing.misc.JOptionDialog;
 import org.geotoolkit.gui.swing.propertyedit.JPropertyDialog;
 import org.geotoolkit.gui.swing.propertyedit.PropertyPane;
 import org.geotoolkit.gui.swing.resource.IconBundle;
@@ -146,6 +148,20 @@ public class JClassificationIntervalStylePanel extends JPanel implements Propert
 
         guiMethod.setModel(new EnumComboBoxModel(IntervalStyleBuilder.METHOD.class));
         guiMethod.setRenderer(new MethodRenderer());
+        
+        guiNormalize.setRenderer(new DefaultListCellRenderer(){
+
+            @Override
+            public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+                final JLabel lbl = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                if(value == analyze.noValue){
+                    lbl.setText("-");
+                }
+                
+                return lbl;
+            }
+            
+        });
 
     }
 
@@ -186,8 +202,13 @@ public class JClassificationIntervalStylePanel extends JPanel implements Propert
         lstnormalize.remove(guiProperty.getSelectedItem());
         guiNormalize.setModel(new ListComboBoxModel(lstnormalize));
 
-        guiNormalize.setSelectedItem(oldSelected);
-
+        if(oldSelected != null){
+            guiNormalize.setSelectedItem(oldSelected);
+        }
+        if(guiNormalize.getSelectedItem() == null){
+            guiNormalize.setSelectedItem(analyze.noValue);
+        }
+        
     }
 
     private void updateModelGlyph(){
@@ -459,16 +480,8 @@ public class JClassificationIntervalStylePanel extends JPanel implements Propert
 
     private void guiClassifyActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_guiClassifyActionPerformed
 
-        JAnalizePanel panel = new JAnalizePanel(analyze);
-
-        JDialog dialog = new JDialog();
-        dialog.setModal(true);
-        dialog.setAlwaysOnTop(true);
-        dialog.setContentPane(panel);
-
-        dialog.pack();
-        dialog.setLocationRelativeTo(guiClassify);
-        dialog.setVisible(true);
+        final JAnalizePanel panel = new JAnalizePanel(analyze);        
+        JOptionDialog.show(null,panel, JOptionPane.OK_CANCEL_OPTION);
 
         guiMethod.setSelectedItem(analyze.getMethod());
         guiClasses.setValue(analyze.getNbClasses());
@@ -516,6 +529,11 @@ public class JClassificationIntervalStylePanel extends JPanel implements Propert
     @Override
     public ImageIcon getIcon() {
         return IconBundle.getIcon("16_classification_interval");
+    }
+    
+    @Override
+    public Image getPreview() {
+        return IconBundle.getIcon("preview_style_class2").getImage();
     }
 
     @Override

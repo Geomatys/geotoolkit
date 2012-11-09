@@ -73,6 +73,8 @@ public class AnyScalarPropertyType implements AnyScalar, Entry {
 
     public static final AnyScalarPropertyType DEPTH_FIELD  = new AnyScalarPropertyType("Depth",  new QuantityType("urn:ogc:phenomenon:depth", "metres"));
     
+    public static final AnyScalarPropertyType DEPTH_FIELD2  = new AnyScalarPropertyType("Depth",  new QuantityType("urn:ogc:phenomenon:depth", "m"));
+    
     public static final AnyScalarPropertyType PRESSION_FIELD  = new AnyScalarPropertyType("Pression",  new QuantityType("urn:ogc:phenomenon:PRES", "decibar"));
 
     public static final AnyScalarPropertyType TIME_FIELD      = new AnyScalarPropertyType("Time",      new TimeType("urn:ogc:data:time:iso8601"));

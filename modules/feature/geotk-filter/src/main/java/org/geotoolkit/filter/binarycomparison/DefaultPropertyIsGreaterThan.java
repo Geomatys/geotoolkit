@@ -19,6 +19,7 @@ package org.geotoolkit.filter.binarycomparison;
 
 import org.geotoolkit.util.StringUtilities;
 import org.opengis.filter.FilterVisitor;
+import org.opengis.filter.MatchAction;
 import org.opengis.filter.PropertyIsGreaterThan;
 import org.opengis.filter.expression.Expression;
 
@@ -30,8 +31,8 @@ import org.opengis.filter.expression.Expression;
  */
 public class DefaultPropertyIsGreaterThan extends AbstractBinaryComparisonOperator<Expression,Expression> implements PropertyIsGreaterThan{
 
-    public DefaultPropertyIsGreaterThan(final Expression left, final Expression right, final boolean match) {
-        super(left,right,match);
+    public DefaultPropertyIsGreaterThan(final Expression left, final Expression right, final boolean match, final MatchAction matchAction) {
+        super(left,right,match,matchAction);
     }
 
     /**

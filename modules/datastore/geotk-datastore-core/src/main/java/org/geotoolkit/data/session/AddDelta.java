@@ -26,8 +26,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.geotoolkit.data.DataStore;
-import org.geotoolkit.data.DataUtilities;
+import org.geotoolkit.data.FeatureStore;
+import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.query.Query;
@@ -62,7 +62,7 @@ class AddDelta extends AbstractDelta{
      * @param typeName
      * @param features : can be empty, even so it would be useless,
      * We do not check the size since this collection may be relying on
-     * a datastore which may be slow or changing with time.
+     * a feature store which may be slow or changing with time.
      * this features from the given collection will be copied.
      */
     AddDelta(final Session session, final Name typeName, final Collection<Feature> features){
@@ -72,13 +72,13 @@ class AddDelta extends AbstractDelta{
 
         FeatureType ft;
         try {
-            ft = session.getDataStore().getFeatureType(typeName);
+            ft = session.getFeatureStore().getFeatureType(typeName);
         } catch (DataStoreException ex) {
             Logger.getLogger(AddDelta.class.getName()).log(Level.WARNING, null, ex);
             ft = null;
         }
 
-        this.features = DataUtilities.collection("temp", ft);
+        this.features = FeatureStoreUtilities.collection("temp", ft);
 
         //we must copy the features since they might be changed later
         final Iterator<? extends Feature> ite = features.iterator();
@@ -127,9 +127,9 @@ class AddDelta extends AbstractDelta{
 
         final SortBy[] sort = query.getSortBy();
         if(sort != null && sort.length > 0){
-            return DataUtilities.combine(query.getSortBy(), reader, affected);
+            return FeatureStoreUtilities.combine(query.getSortBy(), reader, affected);
         }else{
-            return DataUtilities.sequence(reader, affected);
+            return FeatureStoreUtilities.sequence(reader, affected);
         }
     }
 
@@ -163,7 +163,7 @@ class AddDelta extends AbstractDelta{
      * {@inheritDoc }
      */
     @Override
-    public Map<String, String> commit(final DataStore store) throws DataStoreException {
+    public Map<String, String> commit(final FeatureStore store) throws DataStoreException {
         final List<FeatureId> createdIds = store.addFeatures(type, features);
 
         //iterator and list should have the same size

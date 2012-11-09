@@ -23,6 +23,7 @@ import java.util.List;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlElementRefs;
 import javax.xml.bind.annotation.XmlType;
@@ -32,9 +33,9 @@ import org.opengis.geometry.DirectPosition;
 
 /**
  * <p>Java class for LineStringType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="LineStringType">
  *   &lt;complexContent>
@@ -54,23 +55,26 @@ import org.opengis.geometry.DirectPosition;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "LineStringType", propOrder = {
-    "posOrPointPropertyOrPointRep",
+    "pointPropertyOrPointRep",
+    "pos",
     "posList",
     "coordinates"
 })
 public class LineStringType extends AbstractCurveType implements LineString {
 
     @XmlElementRefs({
-        @XmlElementRef(name = "pos", namespace = "http://www.opengis.net/gml/3.2", type = JAXBElement.class),
         @XmlElementRef(name = "pointProperty", namespace = "http://www.opengis.net/gml/3.2", type = JAXBElement.class),
         @XmlElementRef(name = "pointRep", namespace = "http://www.opengis.net/gml/3.2", type = JAXBElement.class)
     })
-    private List<JAXBElement<?>> posOrPointPropertyOrPointRep;
+    private List<JAXBElement<?>> pointPropertyOrPointRep;
+
+    @XmlElement(name = "pos", namespace = "http://www.opengis.net/gml/3.2")
+    private List<DirectPositionType> pos;
     private DirectPositionListType posList;
     private CoordinatesType coordinates;
 
@@ -90,39 +94,44 @@ public class LineStringType extends AbstractCurveType implements LineString {
      * Build a new LineString with the specified coordinates
      */
     public LineStringType(final List<DirectPosition> positions) {
-        this.posOrPointPropertyOrPointRep = new ArrayList<JAXBElement<?>>();
+        this.pointPropertyOrPointRep = new ArrayList<JAXBElement<?>>();
         final ObjectFactory factory = new ObjectFactory();
         for (DirectPosition currentPos : positions) {
             final DirectPositionType position = new DirectPositionType(currentPos);
-            posOrPointPropertyOrPointRep.add(factory.createPos(position));
+            pointPropertyOrPointRep.add(factory.createPos(position));
         }
     }
 
     /**
-     * Gets the value of the posOrPointPropertyOrPointRep property.
-     * 
+     * Gets the value of the pointPropertyOrPointRep property.
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link PointPropertyType }{@code >}
-     * {@link JAXBElement }{@code <}{@link DirectPositionType }{@code >}
      * {@link JAXBElement }{@code <}{@link PointPropertyType }{@code >}
-     * 
-     * 
+     *
      */
-    public List<JAXBElement<?>> getPosOrPointPropertyOrPointRep() {
-        if (posOrPointPropertyOrPointRep == null) {
-            posOrPointPropertyOrPointRep = new ArrayList<JAXBElement<?>>();
+    public List<JAXBElement<?>> getPointPropertyOrPointRep() {
+        if (pointPropertyOrPointRep == null) {
+            pointPropertyOrPointRep = new ArrayList<JAXBElement<?>>();
         }
-        return this.posOrPointPropertyOrPointRep;
+        return this.pointPropertyOrPointRep;
+    }
+
+    public List<DirectPositionType> getPos() {
+        if (pos == null) {
+            pos = new ArrayList<DirectPositionType>();
+        }
+        return pos;
     }
 
     /**
      * Gets the value of the posList property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link DirectPositionListType }
-     *     
+     *
      */
     public DirectPositionListType getPosList() {
         return posList;
@@ -130,11 +139,11 @@ public class LineStringType extends AbstractCurveType implements LineString {
 
     /**
      * Sets the value of the posList property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link DirectPositionListType }
-     *     
+     *
      */
     public void setPosList(DirectPositionListType value) {
         this.posList = value;
@@ -142,11 +151,11 @@ public class LineStringType extends AbstractCurveType implements LineString {
 
     /**
      * Gets the value of the coordinates property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CoordinatesType }
-     *     
+     *
      */
     public CoordinatesType getCoordinates() {
         return coordinates;
@@ -154,11 +163,11 @@ public class LineStringType extends AbstractCurveType implements LineString {
 
     /**
      * Sets the value of the coordinates property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CoordinatesType }
-     *     
+     *
      */
     public void setCoordinates(CoordinatesType value) {
         this.coordinates = value;

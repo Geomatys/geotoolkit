@@ -29,10 +29,9 @@ import javax.measure.quantity.Length;
 import javax.measure.unit.NonSI;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
-import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
-import javax.xml.bind.JAXBException;
 import javax.xml.namespace.QName;
+
 import org.geotoolkit.display2d.ext.pattern.PatternSymbolizer;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
@@ -125,6 +124,7 @@ import org.geotoolkit.se.xml.v110.SvgParameterType;
 import org.geotoolkit.se.xml.v110.TextSymbolizerType;
 import org.geotoolkit.se.xml.v110.ThreshholdsBelongToType;
 import org.geotoolkit.se.xml.vext.ColorItemType;
+import org.geotoolkit.se.xml.vext.JenksType;
 import org.geotoolkit.se.xml.vext.PatternSymbolizerType;
 import org.geotoolkit.se.xml.vext.RangeType;
 import org.geotoolkit.se.xml.vext.RecolorType;
@@ -132,10 +132,12 @@ import org.geotoolkit.style.function.Categorize;
 import org.geotoolkit.style.function.ColorItem;
 import org.geotoolkit.style.function.Interpolate;
 import org.geotoolkit.style.function.InterpolationPoint;
+import org.geotoolkit.style.function.Jenks;
 import org.geotoolkit.style.function.Method;
 import org.geotoolkit.style.function.Mode;
 import org.geotoolkit.style.function.RecolorFunction;
 import org.geotoolkit.style.function.ThreshholdsBelongTo;
+
 import org.opengis.feature.type.Name;
 import org.opengis.filter.And;
 import org.opengis.filter.BinaryComparisonOperator;
@@ -406,39 +408,34 @@ public class GTtoSE110Transformer implements StyleVisitor{
             return ogc_factory.createPropertyIsBetween(bot);
         }else if(filter instanceof PropertyIsEqualTo){
             final BinaryComparisonOperator pit = (BinaryComparisonOperator) filter;
-            final BinaryComparisonOpType bot = ogc_factory.createBinaryComparisonOpType();
+            final PropertyIsEqualToType bot = ogc_factory.createPropertyIsEqualToType();
             bot.getExpression().add( extract(pit.getExpression1()));
             bot.getExpression().add( extract(pit.getExpression2()));
-            return ogc_factory.createPropertyIsEqualTo(new PropertyIsEqualToType(bot.getLiteral(),
-                    new PropertyNameType(bot.getPropertyName()), bot.getMatchCase()));
+            return ogc_factory.createPropertyIsEqualTo(bot);
         }else if(filter instanceof PropertyIsGreaterThan){
             final BinaryComparisonOperator pit = (BinaryComparisonOperator) filter;
-            final BinaryComparisonOpType bot = ogc_factory.createBinaryComparisonOpType();
+            final PropertyIsGreaterThanType bot = ogc_factory.createPropertyIsGreaterThanType();
             bot.getExpression().add( extract(pit.getExpression1()));
             bot.getExpression().add( extract(pit.getExpression2()));
-            return ogc_factory.createPropertyIsGreaterThan(new PropertyIsGreaterThanType(bot.getLiteral(),
-                    new PropertyNameType(bot.getPropertyName()), bot.getMatchCase()));
+            return ogc_factory.createPropertyIsGreaterThan(bot);
         }else if(filter instanceof PropertyIsGreaterThanOrEqualTo){
             final BinaryComparisonOperator pit = (BinaryComparisonOperator) filter;
-            final BinaryComparisonOpType bot = ogc_factory.createBinaryComparisonOpType();
+            final PropertyIsGreaterThanOrEqualToType bot = ogc_factory.createPropertyIsGreaterThanOrEqualToType();
             bot.getExpression().add( extract(pit.getExpression1()));
             bot.getExpression().add( extract(pit.getExpression2()));
-            return ogc_factory.createPropertyIsGreaterThanOrEqualTo(new PropertyIsGreaterThanOrEqualToType(bot.getLiteral(),
-                    new PropertyNameType(bot.getPropertyName()), bot.getMatchCase()));
+            return ogc_factory.createPropertyIsGreaterThanOrEqualTo(bot);
         }else if(filter instanceof PropertyIsLessThan){
             final BinaryComparisonOperator pit = (BinaryComparisonOperator) filter;
-            final BinaryComparisonOpType bot = ogc_factory.createBinaryComparisonOpType();
+            final PropertyIsLessThanType bot = ogc_factory.createPropertyIsLessThanType();
             bot.getExpression().add( extract(pit.getExpression1()));
             bot.getExpression().add( extract(pit.getExpression2()));
-            return ogc_factory.createPropertyIsLessThan(new PropertyIsLessThanType(bot.getLiteral(),
-                    new PropertyNameType(bot.getPropertyName()), bot.getMatchCase()));
+            return ogc_factory.createPropertyIsLessThan(bot);
         }else if(filter instanceof PropertyIsLessThanOrEqualTo){
             final BinaryComparisonOperator pit = (BinaryComparisonOperator) filter;
-            final BinaryComparisonOpType bot = ogc_factory.createBinaryComparisonOpType();
+            final PropertyIsLessThanOrEqualToType bot = ogc_factory.createPropertyIsLessThanOrEqualToType();
             bot.getExpression().add( extract(pit.getExpression1()));
             bot.getExpression().add( extract(pit.getExpression2()));
-            return ogc_factory.createPropertyIsLessThanOrEqualTo(new PropertyIsLessThanOrEqualToType(bot.getLiteral(),
-                    new PropertyNameType(bot.getPropertyName()), bot.getMatchCase()));
+            return ogc_factory.createPropertyIsLessThanOrEqualTo(bot);
         }else if(filter instanceof PropertyIsLike){
             final PropertyIsLike pis = (PropertyIsLike) filter;
             final PropertyIsLikeType bot = ogc_factory.createPropertyIsLikeType();
@@ -453,11 +450,10 @@ public class GTtoSE110Transformer implements StyleVisitor{
             return ogc_factory.createPropertyIsLike(bot);
         }else if(filter instanceof PropertyIsNotEqualTo){
             final BinaryComparisonOperator pit = (BinaryComparisonOperator) filter;
-            final BinaryComparisonOpType bot = ogc_factory.createBinaryComparisonOpType();
+            final PropertyIsNotEqualToType bot = ogc_factory.createPropertyIsNotEqualToType();
             bot.getExpression().add( extract(pit.getExpression1()));
             bot.getExpression().add( extract(pit.getExpression2()));
-            return ogc_factory.createPropertyIsNotEqualTo(new PropertyIsNotEqualToType(bot.getLiteral(),
-                    new PropertyNameType(bot.getPropertyName()), bot.getMatchCase()));
+            return ogc_factory.createPropertyIsNotEqualTo(bot);
         }else if(filter instanceof PropertyIsNull){
             final PropertyIsNull pis = (PropertyIsNull) filter;
             final PropertyIsNullType bot = ogc_factory.createPropertyIsNullType();
@@ -1470,6 +1466,8 @@ public class GTtoSE110Transformer implements StyleVisitor{
             cmt.setCategorize(visit((Categorize)fct));
         }else if(fct instanceof Interpolate){
             cmt.setInterpolate(visit((Interpolate)fct));
+        } else if(fct instanceof Jenks) {
+            cmt.setJenks(visit((Jenks)fct));
         }
 
         return cmt;
@@ -1530,6 +1528,14 @@ public class GTtoSE110Transformer implements StyleVisitor{
             point.setValue(visitExpression(ip.getValue()));
             points.add(point);
         }
+
+        return type;
+    }
+    
+    public JenksType visit(final Jenks jenks){
+        final JenksType type = se_factory.createJenksType();
+        type.setClassNumber(Integer.valueOf(jenks.getClassNumber().getValue().toString()));
+        type.setPalette(jenks.getPalette().getValue().toString());
 
         return type;
     }

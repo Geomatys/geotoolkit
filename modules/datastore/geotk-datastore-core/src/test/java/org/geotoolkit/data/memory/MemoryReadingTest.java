@@ -26,7 +26,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import org.geotoolkit.data.AbstractReadingTests;
-import org.geotoolkit.data.DataStore;
+import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.feature.DefaultName;
@@ -45,7 +45,7 @@ import org.opengis.referencing.NoSuchAuthorityCodeException;
  */
 public class MemoryReadingTest extends AbstractReadingTests{
 
-    private final MemoryDataStore store = new MemoryDataStore();
+    private final MemoryFeatureStore store = new MemoryFeatureStore();
     private final Set<Name> names = new HashSet<Name>();
     private final List<ExpectedResult> expecteds = new ArrayList<ExpectedResult>();
 
@@ -140,7 +140,7 @@ public class MemoryReadingTest extends AbstractReadingTests{
     }
 
     @Override
-    protected synchronized DataStore getDataStore() {
+    protected synchronized FeatureStore getDataStore() {
         return store;
     }
 

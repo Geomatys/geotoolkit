@@ -33,7 +33,7 @@ import java.util.logging.Logger;
 
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.storage.DataStoreException;
-import org.geotoolkit.data.DataStoreRuntimeException;
+import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.feature.DefaultAttribute;
 import org.geotoolkit.feature.DefaultGeometryAttribute;
 import org.geotoolkit.feature.DefaultName;
@@ -220,14 +220,14 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
     }
 
     @Override
-    public boolean hasNext() throws DataStoreRuntimeException {
+    public boolean hasNext() throws FeatureStoreRuntimeException {
         ensureOpen();
 
         if (next == null) {
             try {
                 next = Boolean.valueOf(rs.next());
             } catch (SQLException e) {
-                throw new DataStoreRuntimeException(e);
+                throw new FeatureStoreRuntimeException(e);
             }
         }
 
@@ -240,14 +240,14 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
         }
     }
 
-    protected void ensureOpen() throws DataStoreRuntimeException {
+    protected void ensureOpen() throws FeatureStoreRuntimeException {
         if ( dataStore == null ) {
-            throw new DataStoreRuntimeException( "reader already closed" );
+            throw new FeatureStoreRuntimeException( "reader already closed" );
         }
     }
 
     @Override
-    public SimpleFeature next() throws DataStoreRuntimeException, IllegalArgumentException, NoSuchElementException {
+    public SimpleFeature next() throws FeatureStoreRuntimeException, IllegalArgumentException, NoSuchElementException {
         try {
             ensureOpen();
             ensureNext();
@@ -262,7 +262,7 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
                 // wrap the fid in the type name
                 fid = fidBase + PrimaryKey.encodeFID(pkey,rs);
             } catch (SQLException e) {
-                throw new DataStoreRuntimeException("Could not determine fid from primary key", e);
+                throw new FeatureStoreRuntimeException("Could not determine fid from primary key", e);
             }
 
             // round up attributes
@@ -316,7 +316,7 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
                     }
                     values[i] = value;
                 } catch (SQLException e) {
-                    throw new DataStoreRuntimeException(e);
+                    throw new FeatureStoreRuntimeException(e);
                 }
             }
 
@@ -355,7 +355,7 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
     }
     
     @Override
-    public void close() throws DataStoreRuntimeException {
+    public void close() throws FeatureStoreRuntimeException {
         if( dataStore != null ) {
             //clean up
             dataStore.closeSafe(cx,st,rs);

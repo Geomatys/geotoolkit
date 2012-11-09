@@ -20,6 +20,8 @@ package org.geotoolkit.gui.swing.style;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import javax.swing.ButtonGroup;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
@@ -113,6 +115,18 @@ public class JLabelPlacementPane extends StyleElementEditor<LabelPlacement> {
         jrbPoint = new JRadioButton();
         guiPlacePane = new JPanel();
 
+        guiLine.addPropertyChangeListener(new PropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent evt) {
+                JLabelPlacementPane.this.propertyChange(evt);
+            }
+        });
+
+        guiPoint.addPropertyChangeListener(new PropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent evt) {
+                JLabelPlacementPane.this.propertyChange(evt);
+            }
+        });
+
         setOpaque(false);
         setLayout(new BorderLayout(0, 10));
 
@@ -141,7 +155,7 @@ public class JLabelPlacementPane extends StyleElementEditor<LabelPlacement> {
                 .addComponent(jrbPoint)
                 .addPreferredGap(ComponentPlacement.RELATED)
                 .addComponent(jrbLine)
-                .addContainerGap(59, Short.MAX_VALUE))
+                .addContainerGap(74, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(Alignment.LEADING)
@@ -163,6 +177,14 @@ public class JLabelPlacementPane extends StyleElementEditor<LabelPlacement> {
     private void jrbPointActionPerformed(ActionEvent evt) {//GEN-FIRST:event_jrbPointActionPerformed
         updateActivePlacement();
     }//GEN-LAST:event_jrbPointActionPerformed
+
+    private void propertyChange(PropertyChangeEvent evt) {//GEN-FIRST:event_propertyChange
+        // TODO add your handling code here:
+        if (PROPERTY_TARGET.equalsIgnoreCase(evt.getPropertyName())) {            
+            firePropertyChange(PROPERTY_TARGET, null, create());
+            parse(create());
+        }
+    }//GEN-LAST:event_propertyChange
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private ButtonGroup grpType;

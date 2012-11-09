@@ -5,8 +5,14 @@
     <Component class="javax.swing.ButtonGroup" name="grpType">
     </Component>
     <Component class="org.geotoolkit.gui.swing.style.JLinePlacementPane" name="guiLine">
+      <Events>
+        <EventHandler event="propertyChange" listener="java.beans.PropertyChangeListener" parameters="java.beans.PropertyChangeEvent" handler="propertyChange"/>
+      </Events>
     </Component>
     <Component class="org.geotoolkit.gui.swing.style.JPointPlacementPane" name="guiPoint">
+      <Events>
+        <EventHandler event="propertyChange" listener="java.beans.PropertyChangeListener" parameters="java.beans.PropertyChangeEvent" handler="propertyChange"/>
+      </Events>
     </Component>
   </NonVisualComponents>
   <Properties>
@@ -45,7 +51,7 @@
                   <Component id="jrbPoint" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="jrbLine" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace pref="59" max="32767" attributes="0"/>
+                  <EmptySpace pref="74" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>

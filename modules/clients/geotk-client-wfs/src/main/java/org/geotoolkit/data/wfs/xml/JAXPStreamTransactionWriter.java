@@ -25,10 +25,12 @@ import java.util.Map.Entry;
 import java.util.concurrent.atomic.AtomicInteger;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
+import javax.xml.namespace.QName;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
+import org.geotoolkit.feature.xml.Utils;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.wfs.Delete;
@@ -41,16 +43,23 @@ import org.geotoolkit.data.wfs.TransactionRequest;
 import org.geotoolkit.data.wfs.Update;
 import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureWriter;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
+import org.geotoolkit.gml.GmlGeometryAdapter;
+import org.geotoolkit.gml.JTStoGeometry;
+import org.geotoolkit.gml.xml.GMLMarshallerPool;
+import org.geotoolkit.gml.xml.GMLXmlFactory;
+import org.geotoolkit.gml.xml.v311.AbstractGeometryType;
+import org.geotoolkit.gml.xml.v311.GeometryPropertyType;
 import org.geotoolkit.internal.jaxb.JTSWrapperMarshallerPool;
 import org.geotoolkit.internal.jaxb.ObjectFactory;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.referencing.IdentifiedObjects;
-import org.geotoolkit.sld.xml.XMLUtilities;
+import org.geotoolkit.sld.xml.StyleXmlIO;
 import org.geotoolkit.xml.MarshallerPool;
 
 import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.feature.type.Name;
 import org.opengis.feature.type.PropertyDescriptor;
+import org.opengis.feature.type.PropertyType;
 import org.opengis.filter.Filter;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -109,6 +118,7 @@ public class JAXPStreamTransactionWriter {
     private final AtomicInteger inc = new AtomicInteger();
 
     private static final MarshallerPool POOL = JTSWrapperMarshallerPool.getInstance();
+    private static final MarshallerPool GMLPOOL = GMLMarshallerPool.getInstance();
 
     public void write(final OutputStream out, final TransactionRequest request)
             throws XMLStreamException, FactoryException, JAXBException, DataStoreException, IOException{
@@ -292,14 +302,14 @@ public class JAXPStreamTransactionWriter {
         //write filter ---------------------------------------------------------
         final Filter filter = element.getFilter();
         if(filter != null){
-            final XMLUtilities util = new XMLUtilities();
-            final Marshaller marshaller = XMLUtilities.getJaxbContext110().acquireMarshaller();
+            final StyleXmlIO util = new StyleXmlIO();
+            final Marshaller marshaller = StyleXmlIO.getJaxbContext110().acquireMarshaller();
             marshaller.setProperty(marshaller.JAXB_FRAGMENT, Boolean.TRUE);
             final Object jaxbelement = util.getTransformerXMLv110().visit(filter);
             try {
                 marshaller.marshal(jaxbelement, writer);
             } finally {
-                 XMLUtilities.getJaxbContext110().release(marshaller);
+                 StyleXmlIO.getJaxbContext110().release(marshaller);
             }
             writer.flush();
         }
@@ -323,21 +333,23 @@ public class JAXPStreamTransactionWriter {
             writer.writeEndElement();
 
             //write value
+            final PropertyType propertyType = entry.getKey().getType();
             Object value = entry.getValue();
+
             if(value != null){
                 //todo must handle geometry differently
 
                 if(value instanceof Geometry){
                     final GeometryDescriptor desc = (GeometryDescriptor) entry.getKey();
-                    value = JTSUtils.toISO( (Geometry)value, desc.getCoordinateReferenceSystem());
+                    value = new GeometryPropertyType((AbstractGeometryType)JTStoGeometry.toGML("3.1.1", (Geometry)value));
                     Marshaller marshaller = null;
                     try {
-                        marshaller = POOL.acquireMarshaller();
+                        marshaller = GMLPOOL.acquireMarshaller();
                         marshaller.setProperty(marshaller.JAXB_FRAGMENT, Boolean.TRUE);
                         marshaller.marshal(new ObjectFactory().createValue(value), writer);
                     } finally {
                         if (marshaller != null) {
-                            POOL.release(marshaller);
+                            GMLPOOL.release(marshaller);
                         }
                     }
 
@@ -354,8 +366,9 @@ public class JAXPStreamTransactionWriter {
                     }
                 }else{
                     writer.writeStartElement(WFS_PREFIX, TAG_VALUE, WFS_NAMESPACE);
-                    writer.writeAttribute(XSI_PREFIX, XSI_NAMESPACE, PROP_TYPE, bestType(value));
-                    writer.writeCharacters(value.toString());
+                    QName qname = Utils.getQNameFromType(propertyType,"");
+                    writer.writeAttribute(XSI_PREFIX, XSI_NAMESPACE, PROP_TYPE, qname.getLocalPart());
+                    writer.writeCharacters(Utils.getStringValue(value));
                     writer.writeEndElement();
                 }
             }
@@ -390,7 +403,7 @@ public class JAXPStreamTransactionWriter {
         }
 
         //write filter ---------------------------------------------------------
-        final XMLUtilities util = new XMLUtilities();
+        final StyleXmlIO util = new StyleXmlIO();
         final Marshaller marshaller = util.getJaxbContext110().acquireMarshaller();
         marshaller.setProperty(marshaller.JAXB_FRAGMENT, Boolean.TRUE);
         final Object jaxbelement = util.getTransformerXMLv110().visit(element.getFilter());

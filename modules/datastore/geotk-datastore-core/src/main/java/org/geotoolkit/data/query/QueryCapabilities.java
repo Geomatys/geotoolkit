@@ -18,8 +18,8 @@
 package org.geotoolkit.data.query;
 
 /**
- * Gives some information about the capabilities of the datastore.
- * Some datastore might not be able to handle sort by parameters for example.
+ * Gives some information about the capabilities of the feature store.
+ * Some feature store might not be able to handle sort by parameters for example.
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
@@ -28,7 +28,7 @@ public interface QueryCapabilities {
 
     /**
      * Returns an array of strings representing all query languages supported by
-     * this datastore. This set must include at least the strings represented
+     * this feature store. This set must include at least the strings represented
      * by the constants {@link Query#GEOTK_QOM}. An implementation may also
      * support other languages.
      *
@@ -38,7 +38,7 @@ public interface QueryCapabilities {
 
     /**
      * 
-     * @return true if the datastore can handle queries with join operations.
+     * @return true if the feature store can handle queries with join operations.
      */
     boolean handleCrossQuery();
 

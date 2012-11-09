@@ -19,10 +19,10 @@ package org.geotoolkit.gui.swing.propertyedit.featureeditor;
 import java.awt.BorderLayout;
 import java.math.BigDecimal;
 import java.text.ParseException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
+import org.geotoolkit.util.Converters;
+import org.geotoolkit.util.converter.Classes;
 import org.opengis.feature.type.AttributeType;
 import org.opengis.feature.type.PropertyType;
 
@@ -33,6 +33,7 @@ import org.opengis.feature.type.PropertyType;
 public class NumberEditor extends PropertyValueEditor {
 
     private final JSpinner component = new JSpinner();
+    private Class expected;
 
     public NumberEditor() {
         super(new BorderLayout());
@@ -55,13 +56,30 @@ public class NumberEditor extends PropertyValueEditor {
 
     @Override
     public void setValue(PropertyType propertyType, Object value) {
+        expected=null;
         //change model based on property
         if (propertyType != null && propertyType instanceof AttributeType) {
             final AttributeType type = (AttributeType) propertyType;
-            final Class clazz = type.getBinding();
+            expected = type.getBinding();
+            if(expected.isPrimitive()){
+                if(expected == byte.class){
+                    expected = Byte.class;
+                }else if(expected == short.class){
+                    expected = Short.class;
+                }else if(expected == char.class){
+                    expected = Character.class;
+                }else if(expected == int.class){
+                    expected = Integer.class;
+                }else if(expected == long.class){
+                    expected = Long.class;
+                }else if(expected == float.class){
+                    expected = Float.class;
+                }else if(expected == double.class){
+                    expected = Double.class;
+                }
+            }
 
-            if (clazz == Double.class || clazz == Float.class || clazz == Number.class || clazz == BigDecimal.class ||
-                clazz == double.class || clazz == float.class) {
+            if (expected == Double.class || expected == Float.class || expected == Number.class || expected == BigDecimal.class) {
                 component.setModel(new SpinnerNumberModel(Double.valueOf(0d), null, null, Double.valueOf(0.1d)));
             } else {
                 component.setModel(new SpinnerNumberModel(0, null, null, 1));
@@ -84,7 +102,11 @@ public class NumberEditor extends PropertyValueEditor {
         } catch (ParseException ex) {
             //not important
         }
-        return component.getValue();
+        Object val = component.getValue();
+        if(expected != null){
+            return Converters.convert(val, expected);
+        }
+        return val;
     }
 
 }

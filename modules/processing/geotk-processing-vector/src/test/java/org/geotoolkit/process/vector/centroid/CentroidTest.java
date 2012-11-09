@@ -25,7 +25,7 @@ import com.vividsolutions.jts.geom.Point;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.geotoolkit.data.DataUtilities;
+import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
@@ -111,7 +111,7 @@ public class CentroidTest extends AbstractProcessTest {
 
         type = createSimpleType();
 
-        final FeatureCollection<Feature> featureList = DataUtilities.collection("", type);
+        final FeatureCollection<Feature> featureList = FeatureStoreUtilities.collection("", type);
 
         for (int i = 0; i < 5; i++) {
 
@@ -143,7 +143,7 @@ public class CentroidTest extends AbstractProcessTest {
 
         type = createSimpleResultType();
 
-        final FeatureCollection<Feature> featureList = DataUtilities.collection("", type);
+        final FeatureCollection<Feature> featureList = FeatureStoreUtilities.collection("", type);
 
         for (int i = 0; i < 5; i++) {
 

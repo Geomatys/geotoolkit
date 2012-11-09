@@ -30,11 +30,13 @@ import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.feature.DefaultName;
+import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.referencing.CRS;
 import static org.junit.Assert.*;
 import org.junit.Test;
+import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -48,7 +50,7 @@ public class PyramidalModelReaderTest {
  
     private static final double DELTA = 0.00000001;
     
-    private final Point2D corner;
+    private final DirectPosition corner;
     private final CoordinateReferenceSystem crs;
     private final CoverageReference ref;
 
@@ -69,7 +71,9 @@ public class PyramidalModelReaderTest {
         ref = store.create(name);
         final PyramidalModel model = (PyramidalModel) ref;
         
-        corner = new Point2D.Double(100, 20);
+        corner = new GeneralDirectPosition(crs);
+        corner.setOrdinate(0, 100);
+        corner.setOrdinate(1, 20);
         
         final Pyramid pyramid = model.createPyramid(crs);
         final GridMosaic mosaic1 = model.createMosaic(pyramid.getId(), 
@@ -138,10 +142,10 @@ public class PyramidalModelReaderTest {
         //check coverage informations
         assertTrue(CRS.equalsIgnoreMetadata(crs,  coverage.getCoordinateReferenceSystem()));
         final Envelope env = coverage.getEnvelope();
-        assertEquals(corner.getX(), env.getMinimum(0), DELTA);
-        assertEquals(corner.getY(), env.getMaximum(1), DELTA);
-        assertEquals(corner.getX()+(4*10)*0.5, env.getMaximum(0), DELTA);
-        assertEquals(corner.getY()-(3*10)*0.5, env.getMinimum(1), DELTA);
+        assertEquals(corner.getOrdinate(0), env.getMinimum(0), DELTA);
+        assertEquals(corner.getOrdinate(1), env.getMaximum(1), DELTA);
+        assertEquals(corner.getOrdinate(0) +(4*10)*0.5, env.getMaximum(0), DELTA);
+        assertEquals(corner.getOrdinate(1) -(3*10)*0.5, env.getMinimum(1), DELTA);
         assertTrue(CRS.equalsIgnoreMetadata(crs,  env.getCoordinateReferenceSystem()));
         
         
@@ -177,8 +181,8 @@ public class PyramidalModelReaderTest {
         reader.setInput(ref);
         
         final GeneralEnvelope paramEnv = new GeneralEnvelope(crs);
-        paramEnv.setRange(0, corner.getX()+(1*10)*1, corner.getX()+(2*10)*1);
-        paramEnv.setRange(1, corner.getY()-(2*10)*1, corner.getY());
+        paramEnv.setRange(0, corner.getOrdinate(0) +(1*10)*1, corner.getOrdinate(0) +(2*10)*1);
+        paramEnv.setRange(1, corner.getOrdinate(1) -(2*10)*1, corner.getOrdinate(1));
         //we should obtain tiles [1,0] and [1,1]
         
         final GridCoverageReadParam param = new GridCoverageReadParam();
@@ -191,10 +195,10 @@ public class PyramidalModelReaderTest {
         //check coverage informations
         assertTrue(CRS.equalsIgnoreMetadata(crs,  coverage.getCoordinateReferenceSystem()));
         final Envelope env = coverage.getEnvelope();
-        assertEquals(corner.getX()+(1*10)*1, env.getMinimum(0), DELTA);
-        assertEquals(corner.getY(), env.getMaximum(1), DELTA);
-        assertEquals(corner.getX()+(1*10)*1+(1*10)*1, env.getMaximum(0), DELTA);
-        assertEquals(corner.getY()-(2*10)*1, env.getMinimum(1), DELTA);
+        assertEquals(corner.getOrdinate(0) +(1*10)*1, env.getMinimum(0), DELTA);
+        assertEquals(corner.getOrdinate(1), env.getMaximum(1), DELTA);
+        assertEquals(corner.getOrdinate(0) +(1*10)*1+(1*10)*1, env.getMaximum(0), DELTA);
+        assertEquals(corner.getOrdinate(1) -(2*10)*1, env.getMinimum(1), DELTA);
         assertTrue(CRS.equalsIgnoreMetadata(crs,  env.getCoordinateReferenceSystem()));
         
         

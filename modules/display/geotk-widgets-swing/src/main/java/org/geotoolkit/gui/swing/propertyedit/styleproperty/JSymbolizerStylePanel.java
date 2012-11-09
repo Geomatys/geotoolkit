@@ -18,6 +18,7 @@
 package org.geotoolkit.gui.swing.propertyedit.styleproperty;
 
 import java.awt.BorderLayout;
+import java.awt.Image;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -58,6 +59,11 @@ public class JSymbolizerStylePanel extends JPanel implements PropertyPane {
     @Override
     public ImageIcon getIcon() {
         return IconBundle.getIcon("16_simple_style");
+    }
+    
+    @Override
+    public Image getPreview() {
+        return null;
     }
 
     @Override

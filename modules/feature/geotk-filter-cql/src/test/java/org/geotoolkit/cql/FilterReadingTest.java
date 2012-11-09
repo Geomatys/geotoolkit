@@ -20,7 +20,10 @@ import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LinearRing;
+import java.text.ParseException;
+import java.util.Date;
 import org.geotoolkit.filter.DefaultFilterFactory2;
+import org.geotoolkit.temporal.object.TemporalUtilities;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
 import static org.junit.Assert.*;
 import org.junit.Test;
@@ -51,6 +54,20 @@ import org.opengis.filter.spatial.Intersects;
 import org.opengis.filter.spatial.Overlaps;
 import org.opengis.filter.spatial.Touches;
 import org.opengis.filter.spatial.Within;
+import org.opengis.filter.temporal.After;
+import org.opengis.filter.temporal.AnyInteracts;
+import org.opengis.filter.temporal.Before;
+import org.opengis.filter.temporal.Begins;
+import org.opengis.filter.temporal.BegunBy;
+import org.opengis.filter.temporal.During;
+import org.opengis.filter.temporal.EndedBy;
+import org.opengis.filter.temporal.Ends;
+import org.opengis.filter.temporal.Meets;
+import org.opengis.filter.temporal.MetBy;
+import org.opengis.filter.temporal.OverlappedBy;
+import org.opengis.filter.temporal.TContains;
+import org.opengis.filter.temporal.TEquals;
+import org.opengis.filter.temporal.TOverlaps;
 
 /**
  * Test reading CQL filters.
@@ -290,6 +307,16 @@ public class FilterReadingTest {
         final BBOX filter = (BBOX) obj;
         assertEquals(FF.bbox(FF.property("att"), 10,20,30,40, "CRS:84"), filter);   
     }
+    
+    @Test
+    public void testBBOX4() throws CQLException {
+        final String cql = "BBOX(geometry,-10,-20,10,20)";
+        final Object obj = CQL.parseFilter(cql);        
+        assertTrue(obj instanceof BBOX);
+        final BBOX filter = (BBOX) obj;
+        assertEquals(FF.bbox(FF.property("geometry"), -10,-20,10,20,null), filter);   
+    }
+    
 
     @Test
     public void testBeyond() throws CQLException {
@@ -497,6 +524,202 @@ public class FilterReadingTest {
                 ),
                 filter
                 );               
+    }
+    
+    @Test
+    public void testAfter() throws CQLException, ParseException {
+        final String cql = "att AFTER 2012-03-21T05:42:36Z";
+        final Object obj = CQL.parseFilter(cql);        
+        assertTrue(obj instanceof After);
+        final After filter = (After) obj;
+                
+        assertEquals(FF.property("att"), filter.getExpression1());
+        assertTrue(filter.getExpression2() instanceof Literal);
+        assertTrue( ((Literal)filter.getExpression2()).getValue() instanceof Date);
+        final Date filterdate = (Date) ((Literal)filter.getExpression2()).getValue();
+        assertEquals(TemporalUtilities.parseDate("2012-03-21T05:42:36Z"), filterdate);
+    }
+    
+    @Test
+    public void testAnyInteracts() throws CQLException, ParseException {
+        final String cql = "att ANYINTERACTS 2012-03-21T05:42:36Z";
+        final Object obj = CQL.parseFilter(cql);        
+        assertTrue(obj instanceof AnyInteracts);
+        final AnyInteracts filter = (AnyInteracts) obj;
+                
+        assertEquals(FF.property("att"), filter.getExpression1());
+        assertTrue(filter.getExpression2() instanceof Literal);
+        assertTrue( ((Literal)filter.getExpression2()).getValue() instanceof Date);
+        final Date filterdate = (Date) ((Literal)filter.getExpression2()).getValue();
+        assertEquals(TemporalUtilities.parseDate("2012-03-21T05:42:36Z"), filterdate);
+    }
+    
+    @Test
+    public void testBefore() throws CQLException, ParseException {
+        final String cql = "att BEFORE 2012-03-21T05:42:36Z";
+        final Object obj = CQL.parseFilter(cql);        
+        assertTrue(obj instanceof Before);
+        final Before filter = (Before) obj;
+                
+        assertEquals(FF.property("att"), filter.getExpression1());
+        assertTrue(filter.getExpression2() instanceof Literal);
+        assertTrue( ((Literal)filter.getExpression2()).getValue() instanceof Date);
+        final Date filterdate = (Date) ((Literal)filter.getExpression2()).getValue();
+        assertEquals(TemporalUtilities.parseDate("2012-03-21T05:42:36Z"), filterdate);
+    }
+    
+    @Test
+    public void testBegins() throws CQLException, ParseException {
+        final String cql = "att BEGINS 2012-03-21T05:42:36Z";
+        final Object obj = CQL.parseFilter(cql);        
+        assertTrue(obj instanceof Begins);
+        final Begins filter = (Begins) obj;
+                
+        assertEquals(FF.property("att"), filter.getExpression1());
+        assertTrue(filter.getExpression2() instanceof Literal);
+        assertTrue( ((Literal)filter.getExpression2()).getValue() instanceof Date);
+        final Date filterdate = (Date) ((Literal)filter.getExpression2()).getValue();
+        assertEquals(TemporalUtilities.parseDate("2012-03-21T05:42:36Z"), filterdate);
+    }
+    
+    @Test
+    public void testBegunBy() throws CQLException, ParseException {
+        final String cql = "att BEGUNBY 2012-03-21T05:42:36Z";
+        final Object obj = CQL.parseFilter(cql);        
+        assertTrue(obj instanceof BegunBy);
+        final BegunBy filter = (BegunBy) obj;
+                
+        assertEquals(FF.property("att"), filter.getExpression1());
+        assertTrue(filter.getExpression2() instanceof Literal);
+        assertTrue( ((Literal)filter.getExpression2()).getValue() instanceof Date);
+        final Date filterdate = (Date) ((Literal)filter.getExpression2()).getValue();
+        assertEquals(TemporalUtilities.parseDate("2012-03-21T05:42:36Z"), filterdate);
+    }
+    
+    @Test
+    public void testDuring() throws CQLException, ParseException {
+        final String cql = "att DURING 2012-03-21T05:42:36Z";
+        final Object obj = CQL.parseFilter(cql);        
+        assertTrue(obj instanceof During);
+        final During filter = (During) obj;
+                
+        assertEquals(FF.property("att"), filter.getExpression1());
+        assertTrue(filter.getExpression2() instanceof Literal);
+        assertTrue( ((Literal)filter.getExpression2()).getValue() instanceof Date);
+        final Date filterdate = (Date) ((Literal)filter.getExpression2()).getValue();
+        assertEquals(TemporalUtilities.parseDate("2012-03-21T05:42:36Z"), filterdate);
+    }
+    
+    @Test
+    public void testEndedBy() throws CQLException, ParseException {
+        final String cql = "att ENDEDBY 2012-03-21T05:42:36Z";
+        final Object obj = CQL.parseFilter(cql);        
+        assertTrue(obj instanceof EndedBy);
+        final EndedBy filter = (EndedBy) obj;
+                
+        assertEquals(FF.property("att"), filter.getExpression1());
+        assertTrue(filter.getExpression2() instanceof Literal);
+        assertTrue( ((Literal)filter.getExpression2()).getValue() instanceof Date);
+        final Date filterdate = (Date) ((Literal)filter.getExpression2()).getValue();
+        assertEquals(TemporalUtilities.parseDate("2012-03-21T05:42:36Z"), filterdate);
+    }
+    
+    @Test
+    public void testEnds() throws CQLException, ParseException {
+        final String cql = "att ENDS 2012-03-21T05:42:36Z";
+        final Object obj = CQL.parseFilter(cql);        
+        assertTrue(obj instanceof Ends);
+        final Ends filter = (Ends) obj;
+                
+        assertEquals(FF.property("att"), filter.getExpression1());
+        assertTrue(filter.getExpression2() instanceof Literal);
+        assertTrue( ((Literal)filter.getExpression2()).getValue() instanceof Date);
+        final Date filterdate = (Date) ((Literal)filter.getExpression2()).getValue();
+        assertEquals(TemporalUtilities.parseDate("2012-03-21T05:42:36Z"), filterdate);
+    }
+    
+    @Test
+    public void testMeets() throws CQLException, ParseException {
+        final String cql = "att MEETS 2012-03-21T05:42:36Z";
+        final Object obj = CQL.parseFilter(cql);        
+        assertTrue(obj instanceof Meets);
+        final Meets filter = (Meets) obj;
+                
+        assertEquals(FF.property("att"), filter.getExpression1());
+        assertTrue(filter.getExpression2() instanceof Literal);
+        assertTrue( ((Literal)filter.getExpression2()).getValue() instanceof Date);
+        final Date filterdate = (Date) ((Literal)filter.getExpression2()).getValue();
+        assertEquals(TemporalUtilities.parseDate("2012-03-21T05:42:36Z"), filterdate);
+    }
+    
+    @Test
+    public void testMetBy() throws CQLException, ParseException {
+        final String cql = "att METBY 2012-03-21T05:42:36Z";
+        final Object obj = CQL.parseFilter(cql);        
+        assertTrue(obj instanceof MetBy);
+        final MetBy filter = (MetBy) obj;
+                
+        assertEquals(FF.property("att"), filter.getExpression1());
+        assertTrue(filter.getExpression2() instanceof Literal);
+        assertTrue( ((Literal)filter.getExpression2()).getValue() instanceof Date);
+        final Date filterdate = (Date) ((Literal)filter.getExpression2()).getValue();
+        assertEquals(TemporalUtilities.parseDate("2012-03-21T05:42:36Z"), filterdate);
+    }
+    
+    @Test
+    public void testOverlappedBy() throws CQLException, ParseException {
+        final String cql = "att OVERLAPPEDBY 2012-03-21T05:42:36Z";
+        final Object obj = CQL.parseFilter(cql);        
+        assertTrue(obj instanceof OverlappedBy);
+        final OverlappedBy filter = (OverlappedBy) obj;
+                
+        assertEquals(FF.property("att"), filter.getExpression1());
+        assertTrue(filter.getExpression2() instanceof Literal);
+        assertTrue( ((Literal)filter.getExpression2()).getValue() instanceof Date);
+        final Date filterdate = (Date) ((Literal)filter.getExpression2()).getValue();
+        assertEquals(TemporalUtilities.parseDate("2012-03-21T05:42:36Z"), filterdate);
+    }
+    
+    @Test
+    public void testTcontains() throws CQLException, ParseException {
+        final String cql = "att TCONTAINS 2012-03-21T05:42:36Z";
+        final Object obj = CQL.parseFilter(cql);        
+        assertTrue(obj instanceof TContains);
+        final TContains filter = (TContains) obj;
+                
+        assertEquals(FF.property("att"), filter.getExpression1());
+        assertTrue(filter.getExpression2() instanceof Literal);
+        assertTrue( ((Literal)filter.getExpression2()).getValue() instanceof Date);
+        final Date filterdate = (Date) ((Literal)filter.getExpression2()).getValue();
+        assertEquals(TemporalUtilities.parseDate("2012-03-21T05:42:36Z"), filterdate);
+    }
+    
+    @Test
+    public void testTequals() throws CQLException, ParseException {
+        final String cql = "att TEQUALS 2012-03-21T05:42:36Z";
+        final Object obj = CQL.parseFilter(cql);        
+        assertTrue(obj instanceof TEquals);
+        final TEquals filter = (TEquals) obj;
+                
+        assertEquals(FF.property("att"), filter.getExpression1());
+        assertTrue(filter.getExpression2() instanceof Literal);
+        assertTrue( ((Literal)filter.getExpression2()).getValue() instanceof Date);
+        final Date filterdate = (Date) ((Literal)filter.getExpression2()).getValue();
+        assertEquals(TemporalUtilities.parseDate("2012-03-21T05:42:36Z"), filterdate);
+    }
+    
+    @Test
+    public void testToverlaps() throws CQLException, ParseException {
+        final String cql = "att TOVERLAPS 2012-03-21T05:42:36Z";
+        final Object obj = CQL.parseFilter(cql);        
+        assertTrue(obj instanceof TOverlaps);
+        final TOverlaps filter = (TOverlaps) obj;
+                
+        assertEquals(FF.property("att"), filter.getExpression1());
+        assertTrue(filter.getExpression2() instanceof Literal);
+        assertTrue( ((Literal)filter.getExpression2()).getValue() instanceof Date);
+        final Date filterdate = (Date) ((Literal)filter.getExpression2()).getValue();
+        assertEquals(TemporalUtilities.parseDate("2012-03-21T05:42:36Z"), filterdate);
     }
     
 }

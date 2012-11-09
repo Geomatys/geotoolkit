@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2009-2010, Geomatys
+ *    (C) 2009-2012, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -34,9 +34,8 @@ import java.util.List;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.geotoolkit.geometry.jts.JTS;
 
-import org.geotoolkit.geometry.jts.SRIDGenerator;
-import org.geotoolkit.geometry.jts.SRIDGenerator.Version;
 import org.geotoolkit.gml.xml.*;
 import org.geotoolkit.gml.xml.v311.ArcByCenterPointType;
 import org.geotoolkit.gml.xml.v311.ArcStringByBulgeType;
@@ -65,6 +64,9 @@ public class GeometrytoJTS {
 
     private GeometrytoJTS(){}
 
+    private static CoordinateReferenceSystem toCRS(String name) throws FactoryException{
+        return CRS.decode(name, true);
+    }
 
     /**
      * Transform A GML envelope into JTS Polygon
@@ -102,9 +104,8 @@ public class GeometrytoJTS {
             new Coordinate(min[0], min[1])
         });
         final com.vividsolutions.jts.geom.Polygon polygon = GF.createPolygon(ring, new LinearRing[0]);
-        final CoordinateReferenceSystem crs = CRS.decode(crsName, true);
-        final int srid = SRIDGenerator.toSRID(crs, Version.V1);
-        polygon.setSRID(srid);
+        final CoordinateReferenceSystem crs = toCRS(crsName);
+        JTS.setCRS(polygon, crs);
 
         return polygon;
     }
@@ -113,7 +114,7 @@ public class GeometrytoJTS {
             throws NoSuchAuthorityCodeException, FactoryException{
 
         if (gml instanceof org.geotoolkit.gml.xml.Point){
-            return toJTS((org.geotoolkit.gml.xml.Point)gml, -1);
+            return toJTS((org.geotoolkit.gml.xml.Point)gml, null);
         } else if(gml instanceof org.geotoolkit.gml.xml.LineString){
             return toJTS((org.geotoolkit.gml.xml.LineString)gml);
         } else if(gml instanceof org.geotoolkit.gml.xml.Polygon){
@@ -140,9 +141,9 @@ public class GeometrytoJTS {
 
     }
 
-    public static Point toJTS(final org.geotoolkit.gml.xml.Point gmlPoint, final int parentSrid) throws NoSuchAuthorityCodeException, FactoryException{
+    public static Point toJTS(final org.geotoolkit.gml.xml.Point gmlPoint, final CoordinateReferenceSystem parentCRS) throws NoSuchAuthorityCodeException, FactoryException{
         final String crsName;
-        if (parentSrid == -1) {
+        if (parentCRS == null) {
             crsName = gmlPoint.getSrsName();
 
             if (crsName == null) {
@@ -177,17 +178,16 @@ public class GeometrytoJTS {
             throw new IllegalArgumentException("The GML point is malformed.");
         }
 
-        final int srid;
+        final CoordinateReferenceSystem crs;
         if (crsName != null) {
-            final CoordinateReferenceSystem crs = CRS.decode(crsName, true);
-            srid = SRIDGenerator.toSRID(crs, Version.V1);
+            crs = toCRS(crsName);
         } else {
-            srid = parentSrid;
+            crs = parentCRS;
         }
 
         final com.vividsolutions.jts.geom.Point pt =
-                GF.createPoint(new Coordinate(coordinates[0], coordinates[1]));
-        pt.setSRID(srid);
+                GF.createPoint(new Coordinate(coordinates[0], coordinates[1]));        
+        JTS.setCRS(pt, crs);
 
         return pt;
     }
@@ -204,11 +204,8 @@ public class GeometrytoJTS {
 
         final Polygon polygon = GF.createPolygon(exterior, holes);
 
-        final CoordinateReferenceSystem crs = gml.getCoordinateReferenceSystem();
-        if(crs != null){
-            final int srid = SRIDGenerator.toSRID(crs, SRIDGenerator.Version.V1);
-            polygon.setSRID(srid);
-        }
+        final CoordinateReferenceSystem crs = gml.getCoordinateReferenceSystem();        
+        JTS.setCRS(polygon, crs);
         return polygon;
     }
 
@@ -217,11 +214,11 @@ public class GeometrytoJTS {
         if (crsName == null) {
             throw new FactoryException("A CRS (coordinate Reference system) must be specified for the line.");
         }
+        final CoordinateReferenceSystem crs = toCRS(crsName);
 
         final com.vividsolutions.jts.geom.LineString ls;
         final Coordinates coord = gmlLine.getCoordinates();
         if(coord != null){
-
             final List<Double> values = coord.getValues();
             final Coordinate[] coordinates = new Coordinate[values.size() / 2];
             if (values != null && !values.isEmpty()) {
@@ -231,22 +228,19 @@ public class GeometrytoJTS {
                     cpt++;
                 }
             }
-
-            final int srid = SRIDGenerator.toSRID(crsName, Version.V1);
             ls = GF.createLineString(coordinates);
-            ls.setSRID(srid);
-        } else {
+        } else if (gmlLine.getPosList() != null) {
             final DirectPositionList dplt = gmlLine.getPosList();
             final int dim = gmlLine.getCoordinateDimension();
             final List<Coordinate> coords = toJTSCoords(dplt, dim);
-
-            final int srid = SRIDGenerator.toSRID(crsName, Version.V1);
             ls = GF.createLineString(coords.toArray(new Coordinate[coords.size()]));
-            ls.setSRID(srid);
 
+        } else {
+            final List<Coordinate> coords = toJTSCoords(gmlLine.getPos());
+            ls = GF.createLineString(coords.toArray(new Coordinate[coords.size()]));
         }
-
-
+        
+        JTS.setCRS(ls, crs);
         return ls;
     }
 
@@ -255,6 +249,8 @@ public class GeometrytoJTS {
         if (crsName == null) {
             throw new FactoryException("A CRS (coordinate Reference system) must be specified for the line.");
         }
+        final CoordinateReferenceSystem crs = toCRS(crsName);
+        
         final List<com.vividsolutions.jts.geom.LineString> lineList = new ArrayList<com.vividsolutions.jts.geom.LineString>();
         final CurveSegmentArrayProperty arrayProperty = gmlLine.getSegments();
         List<? extends AbstractCurveSegment> segments = arrayProperty.getAbstractCurveSegment();
@@ -287,28 +283,35 @@ public class GeometrytoJTS {
                     csIndex = s.indexOf(cs, tsIndex + 1);
                     double x2 = Double.parseDouble(s.substring(tsIndex + 1, csIndex));
                     double y2 = Double.parseDouble(s.substring(csIndex + 1));
-
-                    final int srid = SRIDGenerator.toSRID(crsName, Version.V1);
                     ls = GF.createLineString(new Coordinate[]{
                                 new Coordinate(x1, y1),
                                 new Coordinate(x2, y2)
                             });
-                    ls.setSRID(srid);
-                } else {
+                } else if (lineSegment.getPosList() != null){
                     final DirectPositionList dplt = lineSegment.getPosList();
                     final int dim = gmlLine.getCoordinateDimension();
                     final List<Coordinate> coords = toJTSCoords(dplt, dim);
-
-                    final int srid = SRIDGenerator.toSRID(crsName, Version.V1);
                     ls = GF.createLineString(coords.toArray(new Coordinate[coords.size()]));
-                    ls.setSRID(srid);
+                } else {
+                    final List<Coordinate> coords = toJTSCoords(lineSegment.getPos());
+                    ls = GF.createLineString(coords.toArray(new Coordinate[coords.size()]));
                 }
+                JTS.setCRS(ls, crs);
                 lineList.add(ls);
             } else {
                 throw new IllegalArgumentException("only lineStringSegment are allowed in curveType segments");
             }
         }
         return lineList;
+    }
+
+    public static List<Coordinate> toJTSCoords(List<? extends DirectPosition> pos){
+        final List<Coordinate> coords = new ArrayList<Coordinate>();
+
+        for(DirectPosition dp : pos){
+            coords.add( new Coordinate(dp.getOrdinate(0), dp.getOrdinate(1)));
+        }
+        return coords;
     }
 
     public static List<Coordinate> toJTSCoords(final DirectPositionList lst, final int dim){
@@ -326,22 +329,13 @@ public class GeometrytoJTS {
         final Point[] members = new Point[pos.size()];
 
         final CoordinateReferenceSystem crs = gml.getCoordinateReferenceSystem();
-        final int srid;
-        if (crs != null) {
-            srid = SRIDGenerator.toSRID(crs, SRIDGenerator.Version.V1);
-        } else {
-            srid = -1;
-        }
 
         for(int i=0,n=pos.size(); i<n; i++){
-            members[i] = toJTS(pos.get(i).getPoint(), srid);
+            members[i] = toJTS(pos.get(i).getPoint(), crs);
         }
 
         final MultiPoint geom = GF.createMultiPoint(members);
-        if (srid != -1){
-            geom.setSRID(srid);
-        }
-
+        JTS.setCRS(geom, crs);
         return geom;
     }
 
@@ -356,11 +350,7 @@ public class GeometrytoJTS {
         final MultiLineString geom = GF.createMultiLineString(members);
 
         final CoordinateReferenceSystem crs = gml.getCoordinateReferenceSystem();
-        if(crs != null){
-            final int srid = SRIDGenerator.toSRID(crs, SRIDGenerator.Version.V1);
-            geom.setSRID(srid);
-        }
-
+        JTS.setCRS(geom, crs);
         return geom;
     }
 
@@ -382,11 +372,7 @@ public class GeometrytoJTS {
         final MultiLineString geom = GF.createMultiLineString(members.toArray(new LineString[members.size()]));
 
         final CoordinateReferenceSystem crs = gml.getCoordinateReferenceSystem();
-        if(crs != null){
-            final int srid = SRIDGenerator.toSRID(crs, SRIDGenerator.Version.V1);
-            geom.setSRID(srid);
-        }
-
+        JTS.setCRS(geom, crs);
         return geom;
     }
 
@@ -401,11 +387,7 @@ public class GeometrytoJTS {
         final MultiPolygon geom = GF.createMultiPolygon(members);
 
         final CoordinateReferenceSystem crs = gml.getCoordinateReferenceSystem();
-        if(crs != null){
-            final int srid = SRIDGenerator.toSRID(crs, SRIDGenerator.Version.V1);
-            geom.setSRID(srid);
-        }
-
+        JTS.setCRS(geom, crs);
         return geom;
     }
 
@@ -419,11 +401,7 @@ public class GeometrytoJTS {
 
         final MultiPolygon geom             = GF.createMultiPolygon(members);
         final CoordinateReferenceSystem crs = gml.getCoordinateReferenceSystem();
-        if(crs != null){
-            final int srid = SRIDGenerator.toSRID(crs, SRIDGenerator.Version.V1);
-            geom.setSRID(srid);
-        }
-
+        JTS.setCRS(geom, crs);
         return geom;
     }
 
@@ -463,11 +441,7 @@ public class GeometrytoJTS {
         final LinearRing ring = GF.createLinearRing(coords.toArray(new Coordinate[coords.size()]));
 
         final CoordinateReferenceSystem crs = gml.getCoordinateReferenceSystem();
-        if(crs != null){
-            final int srid = SRIDGenerator.toSRID(crs, SRIDGenerator.Version.V1);
-            ring.setSRID(srid);
-        }
-
+        JTS.setCRS(ring, crs);
         return ring;
     }
 
@@ -574,11 +548,7 @@ public class GeometrytoJTS {
         final LinearRing ring = GF.createLinearRing(coords.toArray(new Coordinate[coords.size()]));
 
         final CoordinateReferenceSystem crs = gml.getCoordinateReferenceSystem();
-        if (crs != null) {
-            final int srid = SRIDGenerator.toSRID(crs, SRIDGenerator.Version.V1);
-            ring.setSRID(srid);
-        }
-
+        JTS.setCRS(ring, crs);
         return ring;
     }
 

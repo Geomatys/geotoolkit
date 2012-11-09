@@ -17,12 +17,18 @@
 package org.geotoolkit.wps.converters.outputs.references;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.UUID;
+import javax.imageio.ImageIO;
+import javax.imageio.ImageWriter;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageIO;
 import org.geotoolkit.coverage.io.CoverageStoreException;
+import org.geotoolkit.coverage.io.GridCoverageWriteParam;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
+import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
 import org.geotoolkit.wps.io.WPSIO;
 import org.geotoolkit.wps.xml.v100.InputReferenceType;
@@ -89,12 +95,17 @@ public class CoverageToReferenceConverter extends AbstractReferenceOutputConvert
 
         try {
             final File imageFile = new File((String) params.get(TMP_DIR_PATH), randomFileName);
-            writer = CoverageIO.createSimpleWriter(imageFile);
+            ImageWriter imgWriter = XImageIO.getWriterByMIMEType(reference.getMimeType(), imageFile, source.getRenderedImage());
+            
+            //CoverageIO.write(source, reference.getMimeType(), imageFile); 
+            writer = CoverageIO.createSimpleWriter(imgWriter);           
             writer.write(source, null);
             reference.setHref((String) params.get(TMP_DIR_URL) + "/" +randomFileName);
             
         } catch (CoverageStoreException ex) {
-            throw new NonconvertibleObjectException("Error during wrtie the coverage in the output file.",ex);
+            throw new NonconvertibleObjectException("Error during writing the coverage in the output file.",ex);
+        } catch (IOException ex) {
+            throw new NonconvertibleObjectException("No writer found for mime type "+reference.getMimeType(), ex);
         } finally {
             if (writer != null) {
                 try {

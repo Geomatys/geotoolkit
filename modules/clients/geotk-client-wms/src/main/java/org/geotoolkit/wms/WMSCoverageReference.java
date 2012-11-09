@@ -37,16 +37,22 @@ import java.net.MalformedURLException;
 import org.opengis.referencing.operation.TransformException;
 import java.net.URL;
 import java.awt.Dimension;
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 import org.geotoolkit.util.StringUtilities;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.imageio.ImageIO;
+import org.geotoolkit.client.Request;
 import org.geotoolkit.client.CapabilitiesException;
 import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
-import org.geotoolkit.data.DataStoreRuntimeException;
+import org.geotoolkit.coverage.io.GridCoverageWriter;
+import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.geometry.Envelope2D;
 import org.geotoolkit.referencing.CRS;
@@ -62,13 +68,13 @@ import static org.geotoolkit.util.ArgumentChecks.*;
 
 /**
  * Coverage Reference for a WMS layer.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @author Cédric Briançon (Geomatys)
  * @module pending
  */
 public class WMSCoverageReference implements CoverageReference{
-    
+
     protected static final Logger LOGGER = Logging.getLogger(WMSCoverageReference.class);
 
     /**
@@ -109,12 +115,12 @@ public class WMSCoverageReference implements CoverageReference{
         }
         EPSG_4326 = crs;
     }
-    
+
     /**
      * The web map server to request.
      */
     private final WebMapServer server;
-    
+
     /**
      * Map for optional dimensions specified for the GetMap request.
      */
@@ -160,40 +166,40 @@ public class WMSCoverageReference implements CoverageReference{
      * Output format of exceptions
      */
     private String exceptionsFormat = null;
-    
+
     /**
      * Use local reprojection of the image.
      */
     private boolean useLocalReprojection = true;
-    
+
     /**
      * If a daterange is defined in the envelope, move the temporal value
      * on an existing value.
      */
     private boolean matchCapabilitiesDates = false;
-    
+
     // hacks to fix some server not returning proper images
     private CRS84Politic    crs84Politic = CRS84Politic.STRICT;
     private EPSG4326Politic epsg4326Politic = EPSG4326Politic.STRICT;
-    
+
     /**
      * Expose a WMS as a normal coverage
      */
     private WMSCoverageReader reader;
     private Envelope env;
-    
-    
+
+
     public WMSCoverageReference(final WebMapServer server, String ... layers) {
         this(server,toNames(layers));
     }
-    
+
     public WMSCoverageReference(final WebMapServer server, final Name ... names) {
         this.server = server;
-        
+
         if(names == null || names.length == 0){
             throw new IllegalArgumentException("No layer name defined");
         }
-        
+
         this.layers = names;
     }
 
@@ -201,7 +207,7 @@ public class WMSCoverageReference implements CoverageReference{
         if(names == null || names.length == 0){
             return new Name[0];
         }
-        
+
         final Name[] ns = new Name[names.length];
         for(int i=0;i<names.length;i++){
             final String str = names[i];
@@ -212,31 +218,46 @@ public class WMSCoverageReference implements CoverageReference{
         }
         return ns;
     }
-    
+
     /**
      * @return first layer name
      */
     @Override
-    public Name getName() throws DataStoreRuntimeException{
+    public Name getName() throws FeatureStoreRuntimeException{
         try {
             return getNames()[0];
         } catch (DataStoreException ex) {
-            throw new DataStoreRuntimeException(ex.getMessage(),ex);
+            throw new FeatureStoreRuntimeException(ex);
         }
     }
-    
+
     /**
      * @return array of all layer names
      */
     public Name[] getNames() throws DataStoreException{
         return layers.clone();
     }
+
+    @Override
+    public boolean isWritable() throws DataStoreException {
+        return false;
+    }
     
+    @Override
+    public int getImageIndex() {
+        return 0;
+    }
+
+    @Override
+    public GridCoverageWriter createWriter() throws DataStoreException {
+        throw new DataStoreException("WMS coverage are not writable.");
+    }
+
     @Override
     public WebMapServer getStore() {
         return server;
     }
-        
+
     /**
      * Sets the layer names to requests.
      *
@@ -424,7 +445,7 @@ public class WMSCoverageReference implements CoverageReference{
     public boolean isMatchCapabilitiesDates() {
         return matchCapabilitiesDates;
     }
-    
+
     public Envelope getBounds() {
         if(env == null){
             try {
@@ -438,7 +459,7 @@ public class WMSCoverageReference implements CoverageReference{
         }
         return env;
     }
-    
+
     @Override
     public synchronized GridCoverageReader createReader() throws CoverageStoreException{
         if(reader == null){
@@ -446,8 +467,8 @@ public class WMSCoverageReference implements CoverageReference{
         }
         return reader;
     }
-    
-    
+
+
     /*************************  Queries functions *****************************/
     protected CoordinateReferenceSystem findOriginalCRS() throws FactoryException,CapabilitiesException {
         return WMSUtilities.findOriginalCRS(server,getLayerNames()[0]);
@@ -509,7 +530,7 @@ public class WMSCoverageReference implements CoverageReference{
         } catch (CapabilitiesException ex) {
             LOGGER.log(Level.WARNING, ex.toString(), ex);
         }
-        
+
         if (isUseLocalReprojection() && !supportCRS) {
             try {
                 crs2D = findOriginalCRS();
@@ -680,6 +701,18 @@ public class WMSCoverageReference implements CoverageReference{
     }
 
 
+    @Override
+    public Image getLegend() throws DataStoreException {
+        final BufferedImage image;
+        try {
+            final Request getLegend =queryLegend(null, "image/png", null, null);
+            image = ImageIO.read(getLegend.getResponseStream());
+        } catch (IOException e) {
+            throw new DataStoreException(e);
+        }
+        return image;
+    }
+
     /**
      * Gives a {@linkplain GetLegendRequest GetLegendGraphic request} for
      * the given dimension. The default format will be {@code image/png} if the
@@ -692,11 +725,11 @@ public class WMSCoverageReference implements CoverageReference{
      * @return A {@linkplain GetLegendRequest GetLegendGraphic request}.
      * @throws MalformedURLException if the generated url is invalid.
      */
-    public URL queryLegend(final Dimension rect, final String format,
+    public Request queryLegend(final Dimension rect, final String format,
             final String rule, final Double scale) throws MalformedURLException {
         final GetLegendRequest request = server.createGetLegend();
         prepareGetLegendRequest(request, rect, format, rule, scale);
-        return request.getURL();
+        return request;
     }
 
     /**
@@ -717,8 +750,9 @@ public class WMSCoverageReference implements CoverageReference{
         request.setExceptions(exceptionsFormat);
         request.setLayer(getLayerNames()[0]);
 
-        if (styles.length > 0)
+        if (styles.length > 0) {
             request.setStyle(styles[0]);
+        }
 
         request.setSld(sld);
         request.setSldBody(sldBody);
@@ -747,14 +781,13 @@ public class WMSCoverageReference implements CoverageReference{
      * @throws FactoryException
      * @throws MalformedURLException if the generated url is invalid.
      */
-    public URL queryFeatureInfo(final Envelope env, final Dimension rect, int x,
+    public Request queryFeatureInfo(final Envelope env, final Dimension rect, int x,
             int y, final String[] queryLayers, final String infoFormat,
-            final int featureCount) throws TransformException, FactoryException,
-            MalformedURLException {
+            final int featureCount) throws TransformException, FactoryException {
         final GetFeatureInfoRequest request = server.createGetFeatureInfo();
         prepareGetFeatureInfoRequest(request, env, rect, x, y, queryLayers,
                                      infoFormat, featureCount);
-        return request.getURL();
+        return request;
     }
 
     /**
@@ -775,7 +808,7 @@ public class WMSCoverageReference implements CoverageReference{
     protected void prepareGetFeatureInfoRequest(final GetFeatureInfoRequest request,
             final Envelope env, final Dimension rect, int x, int y,
             final String[] queryLayers, final String infoFormat, final int featureCount)
-            throws TransformException, FactoryException, MalformedURLException {
+            throws TransformException, FactoryException {
         request.setQueryLayers(queryLayers);
         request.setInfoFormat(infoFormat);
         request.setFeatureCount(featureCount);
@@ -790,7 +823,7 @@ public class WMSCoverageReference implements CoverageReference{
         request.setColumnIndex( (int)Math.round(pickCoord.getX()) );
         request.setRawIndex( (int)Math.round(pickCoord.getY()) );
     }
- 
+
     /**
      * Returns the dimension within the coordinate system of the first occurrence of an axis
      * colinear with the specified axis. If an axis with the same
@@ -831,5 +864,5 @@ public class WMSCoverageReference implements CoverageReference{
         return candidate;
     }
 
-    
+
 }

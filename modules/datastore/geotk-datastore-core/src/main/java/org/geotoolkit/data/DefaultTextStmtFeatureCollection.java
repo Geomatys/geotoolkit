@@ -71,14 +71,14 @@ public class DefaultTextStmtFeatureCollection extends AbstractFeatureCollection<
      * {@inheritDoc }
      */
     @Override
-    public synchronized FeatureType getFeatureType() throws DataStoreRuntimeException{
+    public synchronized FeatureType getFeatureType() throws FeatureStoreRuntimeException{
         if(ft == null){
             try {
-                ft = getSession().getDataStore().getFeatureType(query);
+                ft = getSession().getFeatureStore().getFeatureType(query);
             } catch (DataStoreException ex) {
-                throw new DataStoreRuntimeException(ex);
+                throw new FeatureStoreRuntimeException(ex);
             } catch (SchemaException ex) {
-                throw new DataStoreRuntimeException(ex);
+                throw new FeatureStoreRuntimeException(ex);
             }
         }
         return ft;
@@ -88,7 +88,7 @@ public class DefaultTextStmtFeatureCollection extends AbstractFeatureCollection<
      * {@inheritDoc }
      */
     @Override
-    public FeatureIterator<Feature> iterator(final Hints hints) throws DataStoreRuntimeException{
+    public FeatureIterator<Feature> iterator(final Hints hints) throws FeatureStoreRuntimeException{
 
         final Query iteQuery;
         if(hints != null){
@@ -104,7 +104,7 @@ public class DefaultTextStmtFeatureCollection extends AbstractFeatureCollection<
         try {
             return getSession().getFeatureIterator(iteQuery);
         } catch (DataStoreException ex) {
-            throw new DataStoreRuntimeException(ex);
+            throw new FeatureStoreRuntimeException(ex);
         }
     }
 
@@ -112,11 +112,11 @@ public class DefaultTextStmtFeatureCollection extends AbstractFeatureCollection<
      * {@inheritDoc }
      */
     @Override
-    public int size() throws DataStoreRuntimeException {
+    public int size() throws FeatureStoreRuntimeException {
         try {
             return (int) getSession().getCount(query);
         } catch (DataStoreException ex) {
-            throw new DataStoreRuntimeException(ex);
+            throw new FeatureStoreRuntimeException(ex);
         }
     }
 
@@ -124,11 +124,11 @@ public class DefaultTextStmtFeatureCollection extends AbstractFeatureCollection<
      * {@inheritDoc }
      */
     @Override
-    public Envelope getEnvelope() throws DataStoreRuntimeException{
+    public Envelope getEnvelope() throws FeatureStoreRuntimeException{
         try {
             return getSession().getEnvelope(query);
         } catch (DataStoreException ex) {
-            throw new DataStoreRuntimeException(ex);
+            throw new FeatureStoreRuntimeException(ex);
         }
     }
 
@@ -145,7 +145,7 @@ public class DefaultTextStmtFeatureCollection extends AbstractFeatureCollection<
      */
     @Override
     public boolean addAll(final Collection<? extends Feature> clctn) {
-        throw new DataStoreRuntimeException("Statement collection are not editable.");
+        throw new FeatureStoreRuntimeException("Statement collection are not editable.");
     }
 
     @Override
@@ -154,18 +154,18 @@ public class DefaultTextStmtFeatureCollection extends AbstractFeatureCollection<
     }
 
     @Override
-    public boolean remove(final Object o) throws DataStoreRuntimeException{
-        throw new DataStoreRuntimeException("Statement collection are not editable.");
+    public boolean remove(final Object o) throws FeatureStoreRuntimeException{
+        throw new FeatureStoreRuntimeException("Statement collection are not editable.");
     }
 
     @Override
     public boolean removeAll(final Collection<?> clctn) {
-        throw new DataStoreRuntimeException("Statement collection are not editable.");
+        throw new FeatureStoreRuntimeException("Statement collection are not editable.");
     }
 
     @Override
     public void clear() {
-        throw new DataStoreRuntimeException("Statement collection are not editable.");
+        throw new FeatureStoreRuntimeException("Statement collection are not editable.");
     }
 
     /**
@@ -173,7 +173,7 @@ public class DefaultTextStmtFeatureCollection extends AbstractFeatureCollection<
      */
     @Override
     public void update(final Filter filter, final Map<? extends AttributeDescriptor, ? extends Object> values) throws DataStoreException {
-        throw new DataStoreRuntimeException("Statement collection are not editable.");
+        throw new FeatureStoreRuntimeException("Statement collection are not editable.");
     }
 
     /**
@@ -181,7 +181,7 @@ public class DefaultTextStmtFeatureCollection extends AbstractFeatureCollection<
      */
     @Override
     public void remove(final Filter filter) throws DataStoreException {
-        throw new DataStoreRuntimeException("Statement collection are not editable.");
+        throw new FeatureStoreRuntimeException("Statement collection are not editable.");
     }
 
 }

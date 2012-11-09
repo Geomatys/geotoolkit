@@ -38,8 +38,8 @@ import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.display2d.canvas.DefaultRenderingContext2D;
 import org.geotoolkit.display2d.primitive.ProjectedGeometry;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.display2d.container.statefull.StatefullContextParams;
-import org.geotoolkit.display2d.container.statefull.StatefullProjectedGeometry;
+import org.geotoolkit.display2d.container.stateless.StatelessContextParams;
+import org.geotoolkit.display2d.container.stateless.DefaultProjectedGeometry;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.gui.swing.go2.JMap2D;
 import org.geotoolkit.util.logging.Logging;
@@ -144,8 +144,8 @@ public abstract class AbstractGeometryDecoration extends JPanel implements MapDe
 
     protected void paintComponent(final Graphics2D g2, final DefaultRenderingContext2D context){
 
-        final StatefullContextParams params = new StatefullContextParams(null, null);
-        final StatefullProjectedGeometry projected = new StatefullProjectedGeometry(params);
+        final StatelessContextParams params = new StatelessContextParams(null, null);
+        final DefaultProjectedGeometry projected = new DefaultProjectedGeometry(params);
         params.update(context);
 
         //prepare datas for geometry painting

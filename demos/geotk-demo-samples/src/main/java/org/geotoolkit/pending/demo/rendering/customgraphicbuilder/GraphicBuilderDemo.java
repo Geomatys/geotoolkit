@@ -14,8 +14,8 @@ import javax.swing.JPanel;
 import org.geotoolkit.coverage.io.CoverageIO;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 
-import org.geotoolkit.data.DataStore;
-import org.geotoolkit.data.DataStoreFinder;
+import org.geotoolkit.data.FeatureStore;
+import org.geotoolkit.data.FeatureStoreFinder;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.factory.FactoryFinder;
@@ -78,7 +78,7 @@ public class GraphicBuilderDemo {
         //create a feature layer
         Map<String,Serializable> params = new HashMap<String,Serializable>();
         params.put( "url", GraphicBuilderDemo.class.getResource("/data/weather/stations2.shp") );
-        DataStore store = DataStoreFinder.open(params);
+        FeatureStore store = FeatureStoreFinder.open(params);
         FeatureCollection fs = store.createSession(true).getFeatureCollection(QueryBuilder.all(store.getNames().iterator().next()));
         MutableStyle style = SF.style();
         MapLayer layer = MapBuilder.createFeatureLayer(fs, style);
@@ -88,7 +88,7 @@ public class GraphicBuilderDemo {
         //create a coverage layer
         final GridCoverageReader reader = CoverageIO.createSimpleReader(new File("data/clouds.jpg"));
         final MutableStyle coverageStyle = SF.style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER);
-        final CoverageMapLayer coverageLayer = MapBuilder.createCoverageLayer(reader, coverageStyle,"background");
+        final CoverageMapLayer coverageLayer = MapBuilder.createCoverageLayer(reader, 0, coverageStyle,"background");
 
 
 

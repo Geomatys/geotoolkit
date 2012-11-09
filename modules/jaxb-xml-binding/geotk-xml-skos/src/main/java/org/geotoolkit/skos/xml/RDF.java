@@ -60,6 +60,17 @@ public class RDF implements Serializable {
         return concept;
     }
 
+    public Concept getConcept(final String about) {
+        if (concept != null && about != null) {
+            for (Concept c : concept) {
+                if (about.equals(c.getAbout())) {
+                    return c;
+                }
+            }
+        }
+        return null;
+    }
+    
     public void setConcept(final List<Concept> concept) {
         this.concept = concept;
     }
@@ -73,7 +84,18 @@ public class RDF implements Serializable {
         }
         return description;
     }
-
+    
+    public Concept getDescription(final String about) {
+        if (description != null && about != null) {
+            for (Concept c : description) {
+                if (about.equals(c.getAbout())) {
+                    return c;
+                }
+            }
+        }
+        return null;
+    }
+    
     /**
      * @param description the description to set
      */

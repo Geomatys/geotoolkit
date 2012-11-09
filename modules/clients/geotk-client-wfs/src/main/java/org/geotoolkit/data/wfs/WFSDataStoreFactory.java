@@ -24,9 +24,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.geotoolkit.client.AbstractServerFactory;
+import org.geotoolkit.client.Server;
 import org.geotoolkit.client.ServerFactory;
-import org.geotoolkit.data.AbstractDataStoreFactory;
-import org.geotoolkit.data.DataStore;
+import org.geotoolkit.data.AbstractFeatureStoreFactory;
+import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.metadata.iso.DefaultIdentifier;
 import org.geotoolkit.metadata.iso.citation.DefaultCitation;
 import org.geotoolkit.metadata.iso.identification.DefaultServiceIdentification;
@@ -45,7 +46,7 @@ import org.opengis.parameter.*;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class WFSDataStoreFactory extends AbstractDataStoreFactory implements ServerFactory{
+public class WFSDataStoreFactory extends AbstractFeatureStoreFactory implements ServerFactory{
 
     /** factory identification **/
     public static final String NAME = "wfs";
@@ -126,23 +127,27 @@ public class WFSDataStoreFactory extends AbstractDataStoreFactory implements Ser
         return PARAMETERS_DESCRIPTOR;
     }
 
-    /**
-     * {@inheritDoc }
-     */
     @Override
-    public DataStore createNew(final ParameterValueGroup params) throws DataStoreException {
-        throw new DataStoreException("Can not create any new WFS DataStore");
+    public WebFeatureServer open(Map<String, ? extends Serializable> params) throws DataStoreException {
+        return (WebFeatureServer)super.open(params);
+    }
+
+    @Override
+    public WebFeatureServer open(ParameterValueGroup params) throws DataStoreException {
+        checkCanProcessWithError(params);
+        return new WebFeatureServer(params);
     }
 
     @Override
     public WebFeatureServer create(Map<String, ? extends Serializable> params) throws DataStoreException {
         return (WebFeatureServer)super.create(params);
     }
-
+    
+    /**
+     * {@inheritDoc }
+     */
     @Override
-    public WebFeatureServer create(ParameterValueGroup params) throws DataStoreException {
-        checkCanProcessWithError(params);
-        return new WebFeatureServer(params);
+    public WebFeatureServer create(final ParameterValueGroup params) throws DataStoreException {
+        throw new DataStoreException("Can not create any new WFS DataStore");
     }
-
 }

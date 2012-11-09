@@ -174,7 +174,7 @@
                     geotk -help &lt;command&gt;
                 </programlisting>
                 <example>
-                    <title>Exemples : </title>
+                    <title>Execution de process en ligne de commande</title>
                     <itemizedlist>
                         <listitem>
                             Tuilage

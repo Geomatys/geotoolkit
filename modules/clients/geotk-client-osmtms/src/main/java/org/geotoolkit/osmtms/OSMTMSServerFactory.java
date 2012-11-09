@@ -89,7 +89,7 @@ public class OSMTMSServerFactory extends AbstractServerFactory implements Covera
     }
 
     @Override
-    public OSMTileMapServer create(ParameterValueGroup params) throws DataStoreException {
+    public OSMTileMapServer open(ParameterValueGroup params) throws DataStoreException {
         checkCanProcessWithError(params);
         
         final OSMTileMapServer server = new OSMTileMapServer(params);
@@ -104,21 +104,21 @@ public class OSMTMSServerFactory extends AbstractServerFactory implements Covera
     }
 
     @Override
-    public OSMTileMapServer create(Map<String, ? extends Serializable> params) throws DataStoreException {
-        return (OSMTileMapServer) super.create(params);
+    public OSMTileMapServer open(Map<String, ? extends Serializable> params) throws DataStoreException {
+        return (OSMTileMapServer) super.open(params);
     }
 
     @Override
-    public CoverageStore createNew(Map<String, ? extends Serializable> params) throws DataStoreException {
+    public CoverageStore create(Map<String, ? extends Serializable> params) throws DataStoreException {
         try{
-            return createNew(FeatureUtilities.toParameter(params,getParametersDescriptor()));
+            return create(FeatureUtilities.toParameter(params,getParametersDescriptor()));
         }catch(InvalidParameterValueException ex){
             throw new DataStoreException(ex);
         }
     }
 
     @Override
-    public CoverageStore createNew(ParameterValueGroup params) throws DataStoreException {
+    public CoverageStore create(ParameterValueGroup params) throws DataStoreException {
         throw new DataStoreException("Can not create new OSM TMS coverage store.");
     }
     

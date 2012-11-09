@@ -109,7 +109,7 @@ public class JtsBinaryWriter {
     protected void writeGeometry(Geometry geom, ValueSetter dest) {
         final int dimension;
         if (geom == null) {
-            throw new NullPointerException();
+            throw new NullPointerException("Geometry must not be null.");
         } else if (geom.isEmpty()) {
             // don't set any flag bits
             dimension = 0;

@@ -23,6 +23,7 @@ import org.opengis.filter.capability.FilterCapabilities;
 import org.opengis.filter.capability.IdCapabilities;
 import org.opengis.filter.capability.ScalarCapabilities;
 import org.opengis.filter.capability.SpatialCapabilities;
+import org.opengis.filter.capability.TemporalCapabilities;
 
 /**
  * Immutable filter capabilities.
@@ -36,12 +37,17 @@ public class DefaultFilterCapabilities implements FilterCapabilities {
     private final IdCapabilities id;
     private final SpatialCapabilities spatial;
     private final ScalarCapabilities scalar;
+    private final TemporalCapabilities temporal;
 
-    public DefaultFilterCapabilities(final String version, final IdCapabilities id, final SpatialCapabilities spatial, final ScalarCapabilities scalar) {
+    public DefaultFilterCapabilities(final String version, final IdCapabilities id, 
+            final SpatialCapabilities spatial, 
+            final ScalarCapabilities scalar,
+            final TemporalCapabilities temporal) {
         this.version = version;
         this.id = id;
         this.spatial = spatial;
         this.scalar = scalar;
+        this.temporal = temporal;
     }
 
     /**
@@ -60,6 +66,14 @@ public class DefaultFilterCapabilities implements FilterCapabilities {
         return spatial;
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public TemporalCapabilities getTemporalCapabilities() {
+        return temporal;
+    }
+    
     /**
      * {@inheritDoc }
      */

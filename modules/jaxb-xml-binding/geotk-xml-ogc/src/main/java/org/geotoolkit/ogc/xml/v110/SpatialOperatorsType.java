@@ -27,9 +27,9 @@ import org.opengis.filter.capability.SpatialOperators;
 
 /**
  * <p>Java class for SpatialOperatorsType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="SpatialOperatorsType">
  *   &lt;complexContent>
@@ -41,8 +41,8 @@ import org.opengis.filter.capability.SpatialOperators;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -58,12 +58,12 @@ public class SpatialOperatorsType implements SpatialOperators {
      * An empty constructor used by JAXB
      */
     public SpatialOperatorsType() {
-        
+
     }
-    
+
     /**
-     * Build a new comparison operators with the specified array of operator 
-     * 
+     * Build a new comparison operators with the specified array of operator
+     *
      * @param operators an array of comparison operator
      */
     public SpatialOperatorsType( SpatialOperator[] operators ) {
@@ -72,10 +72,11 @@ public class SpatialOperatorsType implements SpatialOperators {
         }
         this.spatialOperator = new ArrayList(Arrays.asList(operators));
     }
-    
+
     /**
      * Gets the value of the spatialOperator property.
      */
+    @Override
     public Collection<SpatialOperator> getOperators() {
         List<SpatialOperator> result =  new ArrayList<SpatialOperator>();
         if (spatialOperator == null) {
@@ -89,18 +90,19 @@ public class SpatialOperatorsType implements SpatialOperators {
         return result;
     }
 
+    @Override
     public SpatialOperator getOperator(final String name) {
         if ( name == null || spatialOperator == null) {
             return null;
-        }        
-        for (SpatialOperator operator : spatialOperator ) {            
+        }
+        for (SpatialOperator operator : spatialOperator ) {
             if ( name.equals( operator.getName() ) ) {
                 return operator;
             }
-        }        
+        }
         return null;
     }
-    
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("[SpatialOperatorsType]").append("\n");

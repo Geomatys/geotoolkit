@@ -39,7 +39,7 @@ import javax.imageio.ImageIO;
 import javax.measure.unit.NonSI;
 import javax.measure.unit.Unit;
 import org.geotoolkit.coverage.grid.GridCoverageFactory;
-import org.geotoolkit.data.DataUtilities;
+import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.service.CanvasDef;
@@ -91,7 +91,7 @@ public class TextSymbolizerTest {
         final Feature feature = FeatureUtilities.defaultFeature(type, "1");
         feature.getProperty("geom").setValue(GF.createPoint(new Coordinate(0, 0)));
         
-        final FeatureCollection collection = DataUtilities.collection(feature);
+        final FeatureCollection collection = FeatureStoreUtilities.collection(feature);
         
         //text symbolizer style
         final String name = "mySymbol";

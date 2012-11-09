@@ -22,37 +22,30 @@ import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
-import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.FlowLayout;
 import java.awt.Graphics2D;
-import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
-import javax.swing.AbstractAction;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.ImageIcon;
-import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JList;
-import javax.swing.JPanel;
+import javax.swing.JOptionPane;
 import javax.swing.JSeparator;
-import javax.swing.JToolBar;
 import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.coverage.CoverageStore;
-import org.geotoolkit.data.DataStore;
+import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.DefaultName;
+import org.geotoolkit.gui.swing.misc.JOptionDialog;
 import org.geotoolkit.gui.swing.resource.IconBundle;
-import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapBuilder;
@@ -60,8 +53,8 @@ import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
+import org.geotoolkit.style.RandomStyleBuilder;
 import org.geotoolkit.style.StyleConstants;
-import org.geotoolkit.util.RandomStyleFactory;
 import org.jdesktop.swingx.combobox.ListComboBoxModel;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.GeometryDescriptor;
@@ -127,11 +120,11 @@ public class JLayerChooser extends javax.swing.JPanel {
                     name = (Name) value;
                 }
                 
-                if(source instanceof DataStore){
-                    final DataStore store = (DataStore) source;
+                if(source instanceof FeatureStore){
+                    final FeatureStore store = (FeatureStore) source;
                     final Session session = store.createSession(true);
                     final FeatureCollection collection = session.getFeatureCollection(QueryBuilder.all(name));
-                    final MutableStyle style = RandomStyleFactory.createRandomVectorStyle(collection);
+                    final MutableStyle style = RandomStyleBuilder.createRandomVectorStyle(collection.getFeatureType());
                     final FeatureMapLayer layer = MapBuilder.createFeatureLayer(collection, style);
                     layer.setDescription(styleFactory.description(name.getLocalPart(), name.toString()));
                     layers.add(layer);
@@ -156,8 +149,8 @@ public class JLayerChooser extends javax.swing.JPanel {
         final List firstCandidates = new ArrayList<Name>();
         final List secondCandidates = new ArrayList<Name>();
         
-        if(source instanceof DataStore){
-            final DataStore store = (DataStore) source;
+        if(source instanceof FeatureStore){
+            final FeatureStore store = (FeatureStore) source;
             for(Name name : store.getNames()){
                 final FeatureType ft = store.getFeatureType(name);
                 if(ft.getGeometryDescriptor() != null){
@@ -231,36 +224,15 @@ public class JLayerChooser extends javax.swing.JPanel {
     public static List<MapLayer> showDialog(Object source) throws DataStoreException{
         final JLayerChooser chooser = new JLayerChooser();
         chooser.setSource(source);
-        final JDialog dialog = new JDialog();
         
-        final AtomicBoolean openAction = new AtomicBoolean(false);
-        final JToolBar bar = new JToolBar();
-        bar.setLayout(new FlowLayout(FlowLayout.RIGHT));
-        bar.setFloatable(false);
-        bar.add(new AbstractAction(MessageBundle.getString("open")) {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                openAction.set(true);
-                dialog.dispose();
-            }
-        });
+        final int res = JOptionDialog.show(null, chooser, JOptionPane.OK_OPTION);
         
-        final JPanel panel = new JPanel(new BorderLayout());
-        panel.add(BorderLayout.CENTER,chooser);        
-        panel.add(BorderLayout.SOUTH, bar);
-        dialog.setModal(true);
-        dialog.setContentPane(panel);
-        dialog.pack();
-        dialog.setLocationRelativeTo(null);
-        dialog.setVisible(true);
-        
-        if(openAction.get()){
+        if (JOptionPane.OK_OPTION == res) {
             return chooser.getLayers();
-        }else{
+        } else {
             return Collections.EMPTY_LIST;
         }
     }
-    
     
     private class NameCellRenderer extends DefaultListCellRenderer{
 
@@ -277,7 +249,7 @@ public class JLayerChooser extends javax.swing.JPanel {
             
             if(value instanceof FeatureType){
                 final FeatureType ft = (FeatureType) value;
-                final DataStore store = (DataStore) getSource();
+                final FeatureStore store = (FeatureStore) getSource();
                 
                 final GeometryDescriptor desc = ft.getGeometryDescriptor();
                 if(desc != null){

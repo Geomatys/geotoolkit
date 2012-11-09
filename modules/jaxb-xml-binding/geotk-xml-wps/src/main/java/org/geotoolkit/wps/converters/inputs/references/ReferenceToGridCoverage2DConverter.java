@@ -18,13 +18,16 @@ package org.geotoolkit.wps.converters.inputs.references;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.Map;
 import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageIO;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
+import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
 import org.geotoolkit.wps.xml.v100.ReferenceType;
 
@@ -62,11 +65,13 @@ public final class ReferenceToGridCoverage2DConverter extends AbstractReferenceI
 
         final InputStream stream = getInputStreamFromReference(source);
         GridCoverageReader reader = null;
-        ImageInputStream imageStream = null;
+//        ImageInputStream imageStream = null;
+        ImageReader imgReader = null;
         try {
-
-            imageStream = ImageIO.createImageInputStream(stream);
-            reader = CoverageIO.createSimpleReader(imageStream);
+            //We used to work with an ImageInputStream, but the url choice have been prefered.
+//            imageStream = ImageIO.createImageInputStream(stream);
+            imgReader = XImageIO.getReader/*ByMIMEType(source.getMimeType(), */(new URL(source.getHref()), Boolean.FALSE, Boolean.FALSE);
+            reader = CoverageIO.createSimpleReader(imgReader);
             return (GridCoverage2D) reader.read(0, null);
 
         } catch (IOException ex) {
@@ -81,13 +86,16 @@ public final class ReferenceToGridCoverage2DConverter extends AbstractReferenceI
                     throw new NonconvertibleObjectException("Error during release the coverage reader.", ex);
                 }
             }
-            if (imageStream != null) {
-                try {
-                    imageStream.close();
-                } catch (IOException ex) {
-                    throw new NonconvertibleObjectException("Error during release the image stream.", ex);
-                }
+            if(imgReader != null) {
+                imgReader.dispose();
             }
+//            if (imageStream != null) {
+//                try {
+//                    imageStream.close();
+//                } catch (IOException ex) {
+//                    throw new NonconvertibleObjectException("Error during release the image stream.", ex);
+//                }
+//            }
         }
     }
 }

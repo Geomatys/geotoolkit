@@ -154,7 +154,7 @@ public final class GeoTiffMetaDataReader {
         }
 
         //create the spatial metadatas.
-        final SpatialMetadata spatialMetadata = new SpatialMetadata(SpatialMetadataFormat.IMAGE);
+        final SpatialMetadata spatialMetadata = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(SpatialMetadataFormat.GEOTK_FORMAT_NAME));
         fillGridMetaDatas(spatialMetadata, entries);
 
         final GeoTiffCRSReader crsReader = new GeoTiffCRSReader(null);

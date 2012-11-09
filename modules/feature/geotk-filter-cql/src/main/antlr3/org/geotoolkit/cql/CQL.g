@@ -308,7 +308,7 @@ expression
 	;
 
 filter_geometry
-        : BBOX^ LPAREN! (PROPERTY_NAME|NAME) COMMA! (INT|FLOAT) COMMA! (INT|FLOAT) COMMA! (INT|FLOAT) COMMA! (INT|FLOAT) COMMA! TEXT? RPAREN!
+        : BBOX^ LPAREN! (PROPERTY_NAME|NAME) COMMA! expression_unary COMMA! expression_unary COMMA! expression_unary COMMA! expression_unary (COMMA! TEXT)? RPAREN!
         | BEYOND^ LPAREN! expression COMMA! expression RPAREN!
         | CONTAINS^ LPAREN! expression COMMA! expression RPAREN!
         | CROSS^ LPAREN! expression COMMA! expression RPAREN!
@@ -329,19 +329,19 @@ filter_term 	: expression
                             | NOT? LIKE^ expression
                             | IS^ NOT? NULL
                             | AFTER^  expression
-                            | ANYINTERACTS expression
-                            | BEFORE expression
-                            | BEGINS expression
-                            | BEGUNBY expression
-                            | DURING expression
-                            | ENDEDBY expression
-                            | ENDS expression
-                            | MEETS expression
-                            | METBY expression
-                            | OVERLAPPEDBY expression
-                            | TCONTAINS expression
-                            | TEQUALS expression
-                            | TOVERLAPS expression
+                            | ANYINTERACTS^ expression
+                            | BEFORE^ expression
+                            | BEGINS^ expression
+                            | BEGUNBY^ expression
+                            | DURING^ expression
+                            | ENDEDBY^ expression
+                            | ENDS^ expression
+                            | MEETS^ expression
+                            | METBY^ expression
+                            | OVERLAPPEDBY^ expression
+                            | TCONTAINS^ expression
+                            | TEQUALS^ expression
+                            | TOVERLAPS^ expression
                     ) ?
                 | filter_geometry
                 ;

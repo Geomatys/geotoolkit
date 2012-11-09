@@ -95,6 +95,26 @@ import org.opengis.filter.spatial.Within;
 
 import com.vividsolutions.jts.geom.Geometry;
 import java.lang.reflect.Array;
+import org.geotoolkit.filter.capability.DefaultTemporalCapabilities;
+import org.geotoolkit.filter.capability.DefaultTemporalOperators;
+import org.opengis.filter.PropertyIsNil;
+import org.opengis.filter.capability.TemporalCapabilities;
+import org.opengis.filter.capability.TemporalOperator;
+import org.opengis.filter.capability.TemporalOperators;
+import org.opengis.filter.temporal.After;
+import org.opengis.filter.temporal.AnyInteracts;
+import org.opengis.filter.temporal.Before;
+import org.opengis.filter.temporal.Begins;
+import org.opengis.filter.temporal.BegunBy;
+import org.opengis.filter.temporal.During;
+import org.opengis.filter.temporal.EndedBy;
+import org.opengis.filter.temporal.Ends;
+import org.opengis.filter.temporal.Meets;
+import org.opengis.filter.temporal.MetBy;
+import org.opengis.filter.temporal.OverlappedBy;
+import org.opengis.filter.temporal.TContains;
+import org.opengis.filter.temporal.TEquals;
+import org.opengis.filter.temporal.TOverlaps;
 
 /**
  * Encodes a filter into a SQL WHERE statement.  It should hopefully be generic
@@ -355,8 +375,11 @@ public class FilterToSQL implements FilterVisitor, ExpressionVisitor {
         };
         final DefaultSpatialOperators spatialOps = new DefaultSpatialOperators(spatialOp);
         final DefaultSpatialCapabilities spatialCaps = new DefaultSpatialCapabilities(null, spatialOps);
+        
+        final TemporalOperators temporalOps = new DefaultTemporalOperators(new TemporalOperator[0]);
+        final TemporalCapabilities temporalCaps = new DefaultTemporalCapabilities(null, temporalOps);
 
-        final DefaultFilterCapabilities caps = new DefaultFilterCapabilities(null, idCaps, spatialCaps, scalCaps);
+        final DefaultFilterCapabilities caps = new DefaultFilterCapabilities(null, idCaps, spatialCaps, scalCaps, temporalCaps);
 
 //        capabilities.addAll(FilterCapabilities.LOGICAL_OPENGIS);
 //        capabilities.addAll(FilterCapabilities.SIMPLE_COMPARISONS_OPENGIS);
@@ -1242,5 +1265,80 @@ public class FilterToSQL implements FilterVisitor, ExpressionVisitor {
      */
     public String escapeName(final String name) {
         return sqlNameEscape + name + sqlNameEscape;
+    }
+
+    @Override
+    public Object visit(PropertyIsNil filter, Object extraData) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Object visit(After filter, Object extraData) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Object visit(AnyInteracts filter, Object extraData) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Object visit(Before filter, Object extraData) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Object visit(Begins filter, Object extraData) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Object visit(BegunBy filter, Object extraData) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Object visit(During filter, Object extraData) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Object visit(EndedBy filter, Object extraData) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Object visit(Ends filter, Object extraData) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Object visit(Meets filter, Object extraData) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Object visit(MetBy filter, Object extraData) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Object visit(OverlappedBy filter, Object extraData) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Object visit(TContains filter, Object extraData) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Object visit(TEquals filter, Object extraData) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Object visit(TOverlaps filter, Object extraData) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

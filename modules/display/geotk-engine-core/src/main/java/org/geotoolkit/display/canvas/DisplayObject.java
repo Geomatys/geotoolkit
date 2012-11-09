@@ -20,8 +20,6 @@ package org.geotoolkit.display.canvas;
 import java.awt.RenderingHints;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-import java.beans.VetoableChangeListener;
-import java.beans.VetoableChangeSupport;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -56,15 +54,6 @@ public class DisplayObject {
     protected final PropertyChangeSupport propertyListeners;
 
     /**
-     * Listeners to be notified about any changes in this object vetoable properties.
-     * 
-     * Property event are also called when no veto exception have been raised.
-     *  
-     * 
-     */
-    protected final VetoableChangeSupport vetoableListeners;
-
-    /**
      * A set of rendering hints.
      */
     protected final Hints hints;
@@ -81,7 +70,6 @@ public class DisplayObject {
      */
     protected DisplayObject(final Hints hints) {
         this.propertyListeners = new PropertyChangeSupport(this);
-        this.vetoableListeners = new VetoableChangeSupport(this);
         this.hints = new Hints(hints);
     }
 
@@ -170,35 +158,6 @@ public class DisplayObject {
     }
 
     /**
-     * Adds a vetoable property change listener to the listener list.
-     * The listener is registered for all vetoable properties.
-     *
-     * @param listener The vetoable property change listener to be added
-     */
-    public void addVetoableChangeListener(final VetoableChangeListener listener) {
-        synchronized (vetoableListeners) {
-            vetoableListeners.addVetoableChangeListener(listener);
-            listenersChanged();
-        }
-    }
-
-    /**
-     * Adds a vetoable property change listener for a specific property.
-     * The listener will be invoked only when that specific property changes.
-     *
-     * @param propertyName The name of the property to listen on.
-     * @param listener     The vetoable property change listener to be added.
-     */
-    public void addVetoableChangeListener(final String propertyName,
-                                          final VetoableChangeListener listener)
-    {
-        synchronized (vetoableListeners) {
-            vetoableListeners.addVetoableChangeListener(propertyName, listener);
-            listenersChanged();
-        }
-    }
-
-    /**
      * Removes a property change listener from the listener list. This removes a listener
      * that was registered for all properties.
      *
@@ -222,34 +181,6 @@ public class DisplayObject {
     {
         synchronized (propertyListeners) {
             propertyListeners.removePropertyChangeListener(propertyName, listener);
-            listenersChanged();
-        }
-    }
-
-    /**
-     * Removes a vetoable property change listener from the listener list.
-     * This removes a listener that was registered for all properties.
-     *
-     * @param listener The vetoable property change listener to be removed
-     */
-    public void removeVetoableChangeListener(final VetoableChangeListener listener) {
-        synchronized(vetoableListeners){
-            vetoableListeners.removeVetoableChangeListener(listener);
-            listenersChanged();
-        }
-    }
-
-    /**
-     * Remove a vetoable property change listener for a specific property.
-     *
-     * @param propertyName The name of the property that was listened on.
-     * @param listener     The vetoable property change listener to be removed.
-     */
-    public void removeVetoableChangeListener(final String propertyName,
-                                             final VetoableChangeListener listener)
-    {
-        synchronized(vetoableListeners){
-            vetoableListeners.removeVetoableChangeListener(propertyName,listener);
             listenersChanged();
         }
     }
@@ -293,13 +224,6 @@ public class DisplayObject {
             final PropertyChangeListener[] list = propertyListeners.getPropertyChangeListeners();
             for (int i=list.length; --i>=0;) {
                 propertyListeners.removePropertyChangeListener(list[i]);
-            }
-            listenersChanged();
-        }
-        synchronized (vetoableListeners) {
-            final VetoableChangeListener[] list = vetoableListeners.getVetoableChangeListeners();
-            for (int i=list.length; --i>=0;) {
-                vetoableListeners.removeVetoableChangeListener(list[i]);
             }
             listenersChanged();
         }

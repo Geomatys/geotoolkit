@@ -27,7 +27,7 @@ import java.util.Collections;
 import org.geotoolkit.ShapeTestData;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.data.shapefile.lock.AccessManager;
-import org.geotoolkit.data.DataStore;
+import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.shapefile.shx.ShxReader;
 import org.geotoolkit.data.shapefile.shp.ShapefileReader;
 import org.geotoolkit.data.shapefile.lock.ShpFiles;
@@ -152,7 +152,7 @@ public class ShapefileTest extends AbstractTestCaseSupport {
 
         // write features
         ShapefileDataStoreFactory make = new ShapefileDataStoreFactory();
-        DataStore s = make.createNew(Collections.singletonMap("url", tmpFile.toURI().toURL()));
+        FeatureStore s = make.create(Collections.singletonMap("url", tmpFile.toURI().toURL()));
         s.createSchema(type.getName(),type);
         Name typeName = type.getName();
 

@@ -41,7 +41,7 @@ public abstract class AbstractModelTests extends TestCase{
 
     private static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
 
-    protected abstract DataStore getDataStore();
+    protected abstract FeatureStore getDataStore();
 
     protected abstract List<Class> getSupportedGeometryTypes();
 
@@ -50,13 +50,13 @@ public abstract class AbstractModelTests extends TestCase{
 
     @Test
     public void testDataStore(){
-        final DataStore store = getDataStore();
+        final FeatureStore store = getDataStore();
         assertNotNull(store);
     }
 
     @Test
     public void testSchemaCreation() throws Exception{
-        final DataStore store = getDataStore();
+        final FeatureStore store = getDataStore();
         final List<Class> geometryBindings = getSupportedGeometryTypes();
         final List<Class> bindinds = getSupportedAttributTypes();
         final FeatureTypeBuilder sftb = new FeatureTypeBuilder();
@@ -162,13 +162,13 @@ public abstract class AbstractModelTests extends TestCase{
 
     }
 
-    private void readAndWriteTest(final DataStore store, final Name name){
+    private void readAndWriteTest(final FeatureStore store, final Name name){
         //todo test creating a few features
     }
 
     @Test
     public void testUpdateSchemas(){
-        final DataStore store = getDataStore();
+        final FeatureStore store = getDataStore();
         //todo, must find a way to test this in a correct way.
     }
 

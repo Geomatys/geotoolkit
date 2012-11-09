@@ -16,31 +16,40 @@
  */
 package org.geotoolkit.lucene.index;
 
-import org.apache.lucene.document.FieldSelector;
-import org.apache.lucene.document.FieldSelectorResult;
+import org.apache.lucene.index.FieldInfo;
+import org.apache.lucene.index.StoredFieldVisitor;
 
 /**
  * A Lucene field selector, allowing to retrieve only the field containg the identifiers of the document.
  *
  * @author Guilhem Legal (Geomatys)
  */
-public final class IDFieldSelector implements FieldSelector {
+public final class IDFieldSelector extends StoredFieldVisitor {
 
+    private boolean found = false;
+    
+    private final String fieldName;
+    
+    public IDFieldSelector(final String fieldName) {
+        this.fieldName = fieldName;
+        this.found     = false;
+    }
+    
     /**
      * Accept only the id field of a lucene document.
      *
-     * @param fieldName The name of the current field to load.
+     * @param field The name of the current field to load.
      * @return FieldSelectorResult.LOAD only if the fieldName is "id".
      */
     @Override
-    public FieldSelectorResult accept(final String fieldName) {
-        if (fieldName != null) {
-            if (fieldName.equals("id")) {
-                return FieldSelectorResult.LOAD_AND_BREAK;
-            } else {
-                return FieldSelectorResult.NO_LOAD;
-            }
+    public Status needsField(final FieldInfo field) {
+        if (field.name.equals(fieldName)) {
+            found = true;
+            return Status.YES;
+        } else if (found) {
+            return Status.STOP;
+        } else {
+            return Status.NO;
         }
-        return FieldSelectorResult.NO_LOAD;
     }
 }

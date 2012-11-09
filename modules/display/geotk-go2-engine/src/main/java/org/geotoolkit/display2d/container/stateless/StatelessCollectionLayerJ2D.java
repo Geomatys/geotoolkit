@@ -40,8 +40,6 @@ import static org.geotoolkit.display2d.GO2Utilities.*;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.container.ContextContainer2D;
-import org.geotoolkit.display2d.container.statefull.StatefullCachedRule;
-import org.geotoolkit.display2d.container.statefull.StatefullContextParams;
 import org.geotoolkit.display2d.primitive.DefaultProjectedObject;
 import org.geotoolkit.display2d.primitive.GraphicJ2D;
 import org.geotoolkit.display2d.primitive.ProjectedObject;
@@ -77,11 +75,11 @@ public class StatelessCollectionLayerJ2D<T extends CollectionMapLayer> extends S
 
     private static final Literal ID_EXPRESSION = FactoryFinder.getFilterFactory(null).literal("@id");
 
-    protected final StatefullContextParams params;
+    protected final StatelessContextParams params;
     
     public StatelessCollectionLayerJ2D(final J2DCanvas canvas, final T layer){
         super(canvas, layer);
-        params = new StatefullContextParams(canvas,layer);
+        params = new StatelessContextParams(canvas,layer);
     }
     
     /**
@@ -254,7 +252,7 @@ public class StatelessCollectionLayerJ2D<T extends CollectionMapLayer> extends S
         return rules;
     }
 
-    protected StatefullContextParams getStatefullParameters(final RenderingContext2D context){
+    protected StatelessContextParams getStatefullParameters(final RenderingContext2D context){
         params.update(context);
         return params;
     }
@@ -272,7 +270,7 @@ public class StatelessCollectionLayerJ2D<T extends CollectionMapLayer> extends S
         //it can be a very expensive operation
 
         //prepare the rendering parameters
-        final StatefullContextParams params = getStatefullParameters(context);
+        final StatelessContextParams params = getStatefullParameters(context);
         if(monitor.stopRequested()) return;
 
         //check if we have group symbolizers, if it's the case we must render by symbol order.
@@ -313,7 +311,7 @@ public class StatelessCollectionLayerJ2D<T extends CollectionMapLayer> extends S
      */
     protected final void renderByObjectOrder(final Collection<?> candidates,
             final RenderingContext2D context, final CachedRule[] rules,
-            final StatefullContextParams params) throws PortrayalException{
+            final StatelessContextParams params) throws PortrayalException{
         final RenderingIterator statefullIterator = getIterator(candidates, context, params);
         renderByObjectOrder(statefullIterator, context, rules);
     }
@@ -323,7 +321,7 @@ public class StatelessCollectionLayerJ2D<T extends CollectionMapLayer> extends S
         final CanvasMonitor monitor = context.getMonitor();
 
         //prepare the renderers
-        final StatefullCachedRule renderers = new StatefullCachedRule(rules, context);
+        final DefaultCachedRule renderers = new DefaultCachedRule(rules, context);
 
         try{
             //performance routine, only one symbol to render
@@ -380,7 +378,7 @@ public class StatelessCollectionLayerJ2D<T extends CollectionMapLayer> extends S
      * render by symbol order.
      */
     protected final void renderBySymbolOrder(final Collection<?> candidates,
-            final RenderingContext2D context, final CachedRule[] rules, final StatefullContextParams params)
+            final RenderingContext2D context, final CachedRule[] rules, final StatelessContextParams params)
             throws PortrayalException {
 
         //performance routine, only one symbol to render
@@ -407,7 +405,7 @@ public class StatelessCollectionLayerJ2D<T extends CollectionMapLayer> extends S
      * for each symbolizer depth, the maximum number of buffer is the maximum number of symbolizer a rule contain.
      */
     private void renderBySymbolIndexInRule(final Collection<?> candidates,
-            final RenderingContext2D context, final CachedRule[] rules, final StatefullContextParams params)
+            final RenderingContext2D context, final CachedRule[] rules, final StatelessContextParams params)
             throws PortrayalException {
         final RenderingIterator statefullIterator = getIterator(candidates, context, params);
         renderBySymbolIndexInRule(candidates,statefullIterator, context, rules);
@@ -423,7 +421,7 @@ public class StatelessCollectionLayerJ2D<T extends CollectionMapLayer> extends S
 
         final CanvasMonitor monitor = context.getMonitor();
 
-        final int elseRuleIndex = StatefullCachedRule.sortByElseRule(rules);
+        final int elseRuleIndex = DefaultCachedRule.sortByElseRule(rules);
 
 
         //store the ids of the features painted during the first round -----------------------------
@@ -562,7 +560,7 @@ public class StatelessCollectionLayerJ2D<T extends CollectionMapLayer> extends S
     }
 
     protected RenderingIterator getIterator(final Collection<?> features,
-            final RenderingContext2D renderingContext, final StatefullContextParams params){
+            final RenderingContext2D renderingContext, final StatelessContextParams params){
         final Iterator<?> iterator = features.iterator();
         final DefaultProjectedObject projectedFeature = new DefaultProjectedObject(params);
         return new GraphicIterator(iterator, projectedFeature);

@@ -32,9 +32,9 @@ import org.opengis.filter.capability.SpatialCapabilities;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -52,8 +52,8 @@ import org.opengis.filter.capability.SpatialCapabilities;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
@@ -87,9 +87,9 @@ public class FilterCapabilities implements org.opengis.filter.capability.FilterC
      * An empty constructor used by JAXB
      */
     public FilterCapabilities() {
-        
+
     }
-    
+
     /**
      * Build a new filter capabilities (light version)
      */
@@ -97,16 +97,16 @@ public class FilterCapabilities implements org.opengis.filter.capability.FilterC
         this.spatialCapabilities = (SpatialCapabilitiesType) spatial;
         this.idCapabilities      = (IdCapabilitiesType)      id;
         this.scalarCapabilities  = (ScalarCapabilitiesType)  scalar;
-        
+
     }
-    
+
     /**
      * Gets the value of the conformance property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ConformanceType }
-     *     
+     *
      */
     public ConformanceType getConformance() {
         return conformance;
@@ -114,11 +114,11 @@ public class FilterCapabilities implements org.opengis.filter.capability.FilterC
 
     /**
      * Sets the value of the conformance property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ConformanceType }
-     *     
+     *
      */
     public void setConformance(ConformanceType value) {
         this.conformance = value;
@@ -126,11 +126,11 @@ public class FilterCapabilities implements org.opengis.filter.capability.FilterC
 
     /**
      * Gets the value of the idCapabilities property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link IdCapabilitiesType }
-     *     
+     *
      */
     public IdCapabilitiesType getIdCapabilities() {
         return idCapabilities;
@@ -138,23 +138,23 @@ public class FilterCapabilities implements org.opengis.filter.capability.FilterC
 
     /**
      * Sets the value of the idCapabilities property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link IdCapabilitiesType }
-     *     
+     *
      */
-    public void setIdCapabilities(IdCapabilitiesType value) {
+    public void setIdCapabilities(final IdCapabilitiesType value) {
         this.idCapabilities = value;
     }
 
     /**
      * Gets the value of the scalarCapabilities property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ScalarCapabilitiesType }
-     *     
+     *
      */
     public ScalarCapabilitiesType getScalarCapabilities() {
         return scalarCapabilities;
@@ -162,23 +162,23 @@ public class FilterCapabilities implements org.opengis.filter.capability.FilterC
 
     /**
      * Sets the value of the scalarCapabilities property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ScalarCapabilitiesType }
-     *     
+     *
      */
-    public void setScalarCapabilities(ScalarCapabilitiesType value) {
+    public void setScalarCapabilities(final ScalarCapabilitiesType value) {
         this.scalarCapabilities = value;
     }
 
     /**
      * Gets the value of the spatialCapabilities property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link SpatialCapabilitiesType }
-     *     
+     *
      */
     public SpatialCapabilitiesType getSpatialCapabilities() {
         return spatialCapabilities;
@@ -186,23 +186,23 @@ public class FilterCapabilities implements org.opengis.filter.capability.FilterC
 
     /**
      * Sets the value of the spatialCapabilities property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link SpatialCapabilitiesType }
-     *     
+     *
      */
-    public void setSpatialCapabilities(SpatialCapabilitiesType value) {
+    public void setSpatialCapabilities(final SpatialCapabilitiesType value) {
         this.spatialCapabilities = value;
     }
 
     /**
      * Gets the value of the temporalCapabilities property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link TemporalCapabilitiesType }
-     *     
+     *
      */
     public TemporalCapabilitiesType getTemporalCapabilities() {
         return temporalCapabilities;
@@ -210,11 +210,11 @@ public class FilterCapabilities implements org.opengis.filter.capability.FilterC
 
     /**
      * Sets the value of the temporalCapabilities property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link TemporalCapabilitiesType }
-     *     
+     *
      */
     public void setTemporalCapabilities(TemporalCapabilitiesType value) {
         this.temporalCapabilities = value;
@@ -222,11 +222,11 @@ public class FilterCapabilities implements org.opengis.filter.capability.FilterC
 
     /**
      * Gets the value of the functions property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link AvailableFunctionsType }
-     *     
+     *
      */
     public AvailableFunctionsType getFunctions() {
         return functions;
@@ -234,11 +234,11 @@ public class FilterCapabilities implements org.opengis.filter.capability.FilterC
 
     /**
      * Sets the value of the functions property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link AvailableFunctionsType }
-     *     
+     *
      */
     public void setFunctions(AvailableFunctionsType value) {
         this.functions = value;
@@ -246,11 +246,11 @@ public class FilterCapabilities implements org.opengis.filter.capability.FilterC
 
     /**
      * Gets the value of the extendedCapabilities property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ExtendedCapabilitiesType }
-     *     
+     *
      */
     public ExtendedCapabilitiesType getExtendedCapabilities() {
         return extendedCapabilities;
@@ -258,11 +258,11 @@ public class FilterCapabilities implements org.opengis.filter.capability.FilterC
 
     /**
      * Sets the value of the extendedCapabilities property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ExtendedCapabilitiesType }
-     *     
+     *
      */
     public void setExtendedCapabilities(ExtendedCapabilitiesType value) {
         this.extendedCapabilities = value;
@@ -271,7 +271,7 @@ public class FilterCapabilities implements org.opengis.filter.capability.FilterC
     public String getVersion() {
         return "2.0.0";
     }
-    
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("[FilterCapabilities]").append("\n");

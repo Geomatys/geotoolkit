@@ -27,6 +27,7 @@ import org.geotoolkit.display2d.service.CanvasDef;
 import org.geotoolkit.display2d.service.SceneDef;
 import org.geotoolkit.display2d.service.ViewDef;
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.process.AbstractProcess;
 import org.geotoolkit.process.ProcessException;
@@ -41,6 +42,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import static org.geotoolkit.parameter.Parameters.*;
 import static org.geotoolkit.process.coverage.pyramid.MapcontextPyramidDescriptor.*;
+import org.opengis.geometry.DirectPosition;
 /**
  * Create a pyramid in the given PyramidalModel.
  * If a pyramid with the given CRS already exist it will be reused.
@@ -114,7 +116,9 @@ public final class MapcontextPyramidProcess extends AbstractProcess {
                 final double gridHeight = envelope.getSpan(1) / (scale*tileSize.height);
 
                 //those parameters can change if another mosaic already exist
-                Point2D upperleft = new Point2D.Double(envelope.getMinimum(0), envelope.getMaximum(1));
+                DirectPosition upperleft = new GeneralDirectPosition(crs);
+                upperleft.setOrdinate(0, envelope.getMinimum(0));
+                upperleft.setOrdinate(1, envelope.getMaximum(1));
                 Dimension tileDim = tileSize;
                 Dimension gridSize = new Dimension( (int)(gridWidth+0.5), (int)(gridHeight+0.5));
 

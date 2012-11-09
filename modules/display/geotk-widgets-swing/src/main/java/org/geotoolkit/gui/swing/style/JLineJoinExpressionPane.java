@@ -18,6 +18,9 @@
 package org.geotoolkit.gui.swing.style;
 
 import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -27,6 +30,7 @@ import javax.swing.ButtonGroup;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.ImageIcon;
+import javax.swing.JLabel;
 import javax.swing.JToggleButton;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SwingConstants;
@@ -55,6 +59,11 @@ public class JLineJoinExpressionPane extends StyleElementEditor<Expression>{
         guiMiter.setIcon(ICON_JOIN_MITRE);
         guiRound.setIcon(ICON_JOIN_ROUND);
     }
+    
+    public void setExpressionUnvisible(){
+        guiSpecial.setPreferredSize(new Dimension(1, 1));
+        guiSpecial.setVisible(false);
+    }  
 
     @Override
     public void setLayer(final MapLayer layer) {
@@ -70,81 +79,86 @@ public class JLineJoinExpressionPane extends StyleElementEditor<Expression>{
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        GridBagConstraints gridBagConstraints;
 
         joinGroup = new ButtonGroup();
         guiSpecial = new JSpecialExpressionButton();
         guiRound = new JToggleButton();
         guiMiter = new JToggleButton();
         guiBevel = new JToggleButton();
+        jLabel1 = new JLabel();
 
         setOpaque(false);
+        setLayout(new GridBagLayout());
 
         guiSpecial.addPropertyChangeListener(new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent evt) {
                 guiSpecialPropertyChange(evt);
             }
         });
+        gridBagConstraints = new GridBagConstraints();
+        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        add(guiSpecial, gridBagConstraints);
 
         joinGroup.add(guiRound);
         guiRound.setSelected(true);
         guiRound.setBorderPainted(false);
         guiRound.setIconTextGap(0);
-        guiRound.setMargin(new Insets(2, 2, 2, 2));
         guiRound.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 guiRoundActionPerformed(evt);
             }
         });
+        gridBagConstraints = new GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        add(guiRound, gridBagConstraints);
 
         joinGroup.add(guiMiter);
         guiMiter.setBorderPainted(false);
         guiMiter.setIconTextGap(0);
-        guiMiter.setMargin(new Insets(2, 2, 2, 2));
         guiMiter.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 guiMiterActionPerformed(evt);
             }
         });
+        gridBagConstraints = new GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        add(guiMiter, gridBagConstraints);
 
         joinGroup.add(guiBevel);
         guiBevel.setBorderPainted(false);
         guiBevel.setIconTextGap(0);
-        guiBevel.setMargin(new Insets(2, 2, 2, 2));
         guiBevel.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 guiBevelActionPerformed(evt);
             }
         });
-
-        GroupLayout layout = new GroupLayout(this);
-        this.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(guiRound)
-                .addPreferredGap(ComponentPlacement.RELATED)
-                .addComponent(guiMiter)
-                .addPreferredGap(ComponentPlacement.RELATED)
-                .addComponent(guiBevel)
-                .addPreferredGap(ComponentPlacement.RELATED)
-                .addComponent(guiSpecial, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
-        layout.linkSize(SwingConstants.HORIZONTAL, new Component[] {guiBevel, guiMiter, guiRound, guiSpecial});
-
-        layout.setVerticalGroup(
-            layout.createParallelGroup(Alignment.LEADING)
-            .addGroup(layout.createParallelGroup(Alignment.TRAILING, false)
-                .addComponent(guiSpecial, GroupLayout.PREFERRED_SIZE, 26, GroupLayout.PREFERRED_SIZE)
-                .addGroup(Alignment.LEADING, layout.createParallelGroup(Alignment.TRAILING, false)
-                    .addComponent(guiRound, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(guiMiter, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(guiBevel, Alignment.LEADING)))
-        );
-
-        layout.linkSize(SwingConstants.VERTICAL, new Component[] {guiBevel, guiMiter, guiRound, guiSpecial});
-
+        gridBagConstraints = new GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        add(guiBevel, gridBagConstraints);
+        gridBagConstraints = new GridBagConstraints();
+        gridBagConstraints.gridx = 4;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        add(jLabel1, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents
 
 private void guiSpecialPropertyChange(final PropertyChangeEvent evt) {//GEN-FIRST:event_guiSpecialPropertyChange
@@ -171,6 +185,7 @@ private void guiBevelActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_g
     private JToggleButton guiMiter;
     private JToggleButton guiRound;
     private JSpecialExpressionButton guiSpecial;
+    private JLabel jLabel1;
     private ButtonGroup joinGroup;
     // End of variables declaration//GEN-END:variables
 

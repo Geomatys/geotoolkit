@@ -20,6 +20,7 @@ import java.awt.Dimension;
 import java.awt.geom.Point2D;
 import java.awt.image.RenderedImage;
 import org.geotoolkit.storage.DataStoreException;
+import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
@@ -37,7 +38,7 @@ public interface PyramidalModel {
      * 
      * @return true if model can be modified
      */
-    boolean isWriteable();
+    boolean isWritable() throws DataStoreException;
     
     /**
      * 
@@ -58,7 +59,7 @@ public interface PyramidalModel {
      * @throws DataStoreException  
      */
     GridMosaic createMosaic(String pyramidId, Dimension gridSize, 
-            Dimension tilePixelSize, Point2D upperleft, double pixelscale) throws DataStoreException;
+            Dimension tilePixelSize, DirectPosition upperleft, double pixelscale) throws DataStoreException;
     
     /**
      * Write a complete mosaic level used the given rendered image.

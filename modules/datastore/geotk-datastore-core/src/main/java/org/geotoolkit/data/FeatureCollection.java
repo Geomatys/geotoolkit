@@ -37,7 +37,7 @@ import org.opengis.geometry.Envelope;
  *
  * Still it can be used a normal java collection.
  *
- * Warning : don't forget to catch DatastoreRuntimeException that might
+ * Warning : don't forget to catch FeatureStoreRuntimeException that might
  * occured on some methods.
  *
  * @author Johann Sorel (Geomatys)
@@ -56,7 +56,7 @@ public interface FeatureCollection<F extends Feature> extends Collection<F> {
 
     /**
      * A collection may be linked to a session, this implies that changes maid
-     * in the collection may not be send to the datastore now.
+     * in the collection may not be send to the FeatureStore now.
      * A session.commit() call must be done.
      * 
      * @return Session or null if not related to a session.
@@ -65,7 +65,7 @@ public interface FeatureCollection<F extends Feature> extends Collection<F> {
 
     /**
      * A collection always takes it's datas from somewhere, it can be any kind
-     * of Datastore.
+     * of FeatureStore.
      *
      * @return feature source of this collection.
      */
@@ -114,10 +114,10 @@ public interface FeatureCollection<F extends Feature> extends Collection<F> {
      * @see FeatureCollection#iterator(org.geotoolkit.factory.Hints)
      * 
      * @return FeatureIterator
-     * @throws DataStoreRuntimeException
+     * @throws FeatureStoreRuntimeException
      */
     @Override
-    FeatureIterator<F> iterator() throws DataStoreRuntimeException;
+    FeatureIterator<F> iterator() throws FeatureStoreRuntimeException;
 
     /**
      * Get an iterator using some extra hints to configure the reader parameters.
@@ -131,10 +131,16 @@ public interface FeatureCollection<F extends Feature> extends Collection<F> {
      * 
      * @param hints : Extra hints
      * @return FeatureIterator
-     * @throws DataStoreRuntimeException
+     * @throws FeatureStoreRuntimeException
      */
-    FeatureIterator<F> iterator(Hints hints) throws DataStoreRuntimeException;
+    FeatureIterator<F> iterator(Hints hints) throws FeatureStoreRuntimeException;
 
+    /**
+     * Convinient method to update a single feature.
+     * @see #update(org.opengis.feature.type.Name, org.opengis.filter.Filter, java.util.Map)
+     */
+    void update(Feature feature) throws DataStoreException;
+    
     /**
      * Convinient method to update a single attribut.
      * @see #update(org.opengis.feature.type.Name, org.opengis.filter.Filter, java.util.Map)

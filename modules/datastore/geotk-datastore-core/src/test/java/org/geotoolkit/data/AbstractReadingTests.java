@@ -86,7 +86,7 @@ public abstract class AbstractReadingTests{
     public void tearDown() {
     }
 
-    protected abstract DataStore getDataStore();
+    protected abstract FeatureStore getDataStore();
 
     protected abstract Set<Name> getExpectedNames();
 
@@ -94,7 +94,7 @@ public abstract class AbstractReadingTests{
 
     @Test
     public void testDataStore(){
-        final DataStore store = getDataStore();
+        final FeatureStore store = getDataStore();
         assertNotNull(store);
     }
 
@@ -103,7 +103,7 @@ public abstract class AbstractReadingTests{
      */
     @Test
     public void testSession(){
-        final DataStore store = getDataStore();
+        final FeatureStore store = getDataStore();
 
         Session async_session = store.createSession(true);
         Session sync_session = store.createSession(false);
@@ -119,7 +119,7 @@ public abstract class AbstractReadingTests{
      */
     @Test
     public void testSchemas() throws Exception{
-        final DataStore store = getDataStore();
+        final FeatureStore store = getDataStore();
         final Set<Name> expectedTypes = getExpectedNames();
 
         //need at least one type to test
@@ -181,7 +181,7 @@ public abstract class AbstractReadingTests{
      */
     @Test
     public void testReader() throws Exception{
-        final DataStore store = getDataStore();
+        final FeatureStore store = getDataStore();
         final List<ExpectedResult> candidates = getReaderTests();
 
         //need at least one type to test
@@ -203,7 +203,7 @@ public abstract class AbstractReadingTests{
     /**
      * test different count with filters.
      */
-    private void testCounts(final DataStore store, final ExpectedResult candidate) throws Exception{
+    private void testCounts(final FeatureStore store, final ExpectedResult candidate) throws Exception{
 
         assertEquals(candidate.size, store.getCount(QueryBuilder.all(candidate.name)));
         
@@ -213,7 +213,7 @@ public abstract class AbstractReadingTests{
     /**
      * test different bounds with filters.
      */
-    private void testBounds(final DataStore store, final ExpectedResult candidate) throws Exception{
+    private void testBounds(final FeatureStore store, final ExpectedResult candidate) throws Exception{
         Envelope res = store.getEnvelope(QueryBuilder.all(candidate.name));
 
         if(candidate.env == null){
@@ -236,7 +236,7 @@ public abstract class AbstractReadingTests{
     /**
      * test different readers.
      */
-    private void testReaders(final DataStore store, final ExpectedResult candidate) throws Exception{
+    private void testReaders(final FeatureStore store, final ExpectedResult candidate) throws Exception{
         final FeatureType type = store.getFeatureType(candidate.name);
         final Collection<PropertyDescriptor> properties = type.getDescriptors();
         final QueryBuilder qb = new QueryBuilder();

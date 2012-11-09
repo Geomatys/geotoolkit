@@ -21,8 +21,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
-import org.geotoolkit.data.DataStore;
-import org.geotoolkit.data.DataStoreFinder;
+import org.geotoolkit.data.FeatureStore;
+import org.geotoolkit.data.FeatureStoreFinder;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.storage.DataStoreException;
@@ -75,7 +75,7 @@ public class StringToFeatureCollectionConverter extends SimpleConverter<String, 
             final Map<String, Serializable> parameters = new HashMap<String, Serializable>();
             parameters.put("url", new URL(url));
 
-            final DataStore store = DataStoreFinder.open(parameters);
+            final FeatureStore store = FeatureStoreFinder.open(parameters);
             
             if(store == null){
                 throw new NonconvertibleObjectException("Invalid URL");

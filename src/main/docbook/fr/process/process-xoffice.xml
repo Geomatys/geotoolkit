@@ -17,7 +17,7 @@
     </para>
 
     <table frame="all">
-        <title>Paquets nécessaires</title>
+        <title>XOffice : paquets nécessaires</title>
         <tgroup cols='4' align='center' colsep='1' rowsep='1'>
             <thead>
                 <row>
@@ -57,7 +57,7 @@
         </para>
 
         <table frame="all">
-            <title>Logiciels requis</title>
+            <title>XOffice : logiciels requis</title>
             <tgroup cols='2' align='center' colsep='1' rowsep='1'>
                 <thead>
                     <row>

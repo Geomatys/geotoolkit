@@ -18,6 +18,7 @@
 package org.geotoolkit.gui.swing.style;
 
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
@@ -42,6 +43,11 @@ public class JTextExpressionPane extends StyleElementEditor<Expression>{
         super(Expression.class);
         initComponents();
     }
+    
+    public void setExpressionUnvisible(){
+        guiSpecial.setPreferredSize(new Dimension(1, 1));
+        guiSpecial.setVisible(false);
+    } 
 
     @Override
     public void setLayer(final MapLayer layer) {
@@ -101,6 +107,7 @@ public class JTextExpressionPane extends StyleElementEditor<Expression>{
     }//GEN-LAST:event_guiSpecialPropertyChange
 
     private void guiTextActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_guiTextActionPerformed
+        firePropertyChange(PROPERTY_TARGET, null, create());
         parse( getFilterFactory().literal( guiText.getText()) );
     }//GEN-LAST:event_guiTextActionPerformed
 

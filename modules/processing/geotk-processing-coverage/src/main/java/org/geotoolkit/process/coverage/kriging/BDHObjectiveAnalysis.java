@@ -18,7 +18,7 @@
 package org.geotoolkit.process.coverage.kriging;
 
 import java.awt.Dimension;
-import java.awt.geom.Point2D.Double;
+import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import org.opengis.metadata.spatial.PixelOrientation;
 
@@ -52,11 +52,9 @@ public class BDHObjectiveAnalysis extends org.geotoolkit.math.ObjectiveAnalysis 
      * Creates a new instance for interpolating values in the given region.
      *
      * @param gridRegion The grid bounding box. The maximal ordinates are inclusive.
-     * @param nx The number of grid cells along the <var>x</var> axis.
-     * @param ny The number of grid cells along the <var>y</var> axis.
-     * @param cellLocation The position to evaluate in each grid cell.
+     * @param size The number of grid cells along the <var>x</var> and <var>y</var> axes.
      */
-    public BDHObjectiveAnalysis(Rectangle2D gridRegion, Dimension size) {
+    public BDHObjectiveAnalysis(final Rectangle2D gridRegion, final Dimension size) {
         super(gridRegion, size.width, size.height, PixelOrientation.CENTER);
     }
 
@@ -76,7 +74,7 @@ public class BDHObjectiveAnalysis extends org.geotoolkit.math.ObjectiveAnalysis 
      * {@inheritDoc }.
      */
     @Override
-    protected double correlation(Double P1, Double P2) {
+    protected double correlation(final Point2D.Double P1, final Point2D.Double P2) {
         double distance = Math.hypot(P1.x - P2.x, P1.y - P2.y);
         distance = distance / scaleHack - 1./150; // Similar to the basic program DISPWX
         if (distance < 0) {

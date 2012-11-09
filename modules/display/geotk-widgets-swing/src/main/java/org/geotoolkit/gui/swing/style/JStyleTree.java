@@ -41,8 +41,6 @@ import java.awt.dnd.DropTargetEvent;
 import java.awt.dnd.DropTargetListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.List;
@@ -59,9 +57,6 @@ import javax.swing.JSpinner;
 import javax.swing.JTree;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
-import javax.swing.event.TreeModelEvent;
-import javax.swing.event.TreeModelListener;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
@@ -74,7 +69,7 @@ import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
-import org.geotoolkit.util.RandomStyleFactory;
+import org.geotoolkit.style.RandomStyleBuilder;
 import org.jdesktop.swingx.JXTree;
 import org.jdesktop.swingx.decorator.ColorHighlighter;
 import org.jdesktop.swingx.decorator.HighlightPredicate;
@@ -304,8 +299,9 @@ public class JStyleTree<T> extends JXTree implements DragGestureListener, DragSo
                     lbl.setIcon(ICON_RULE);
                 } else if (val instanceof Symbolizer) {
                     final Symbolizer symb = (Symbolizer) val;
-                    final BufferedImage img = new BufferedImage(30, 22, BufferedImage.TYPE_INT_ARGB);
-                    DefaultGlyphService.render(symb, new Rectangle(30,22),img.createGraphics(),null);
+                    final Dimension dim = DefaultGlyphService.glyphPreferredSize(symb, null, null);
+                    final BufferedImage img = new BufferedImage(dim.width, dim.height, BufferedImage.TYPE_INT_ARGB);
+                    DefaultGlyphService.render(symb, new Rectangle(dim),img.createGraphics(),null);
                     final Icon ico = new ImageIcon(img);
                     lbl.setText("");
                     lbl.setIcon(ico);
@@ -476,7 +472,7 @@ public class JStyleTree<T> extends JXTree implements DragGestureListener, DragSo
 
         @Override
         public void actionPerformed(final ActionEvent ae) {
-            style.featureTypeStyles().add(SF.featureTypeStyle(RandomStyleFactory.createPointSymbolizer()));
+            style.featureTypeStyles().add(SF.featureTypeStyle(RandomStyleBuilder.createRandomPointSymbolizer()));
         }
     }
 
@@ -490,7 +486,7 @@ public class JStyleTree<T> extends JXTree implements DragGestureListener, DragSo
 
         @Override
         public void actionPerformed(final ActionEvent ae) {
-            fts.rules().add(SF.rule(RandomStyleFactory.createPointSymbolizer()));
+            fts.rules().add(SF.rule(RandomStyleBuilder.createRandomPointSymbolizer()));
         }
     }
 

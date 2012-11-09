@@ -30,6 +30,7 @@ import org.opengis.filter.expression.PropertyName;
 
 import static org.geotoolkit.test.Assert.*;
 import static org.geotoolkit.filter.FilterTestConstants.*;
+import org.opengis.filter.MatchAction;
 
 /**
  *
@@ -743,9 +744,9 @@ public class BinaryComparisonTest {
         Literal rightliteral = FF.literal("test STRING data");
 
         property = FF.property("testString");
-        filter = FF.equal(property, rightliteral, false);
+        filter = FF.equal(property, rightliteral, false, MatchAction.ANY);
         assertTrue(filter.evaluate(CANDIDATE_1));
-        filter = FF.equal(property, rightliteral, true);
+        filter = FF.equal(property, rightliteral, true, MatchAction.ANY);
         assertFalse(filter.evaluate(CANDIDATE_1));
 
         assertSerializable(filter); //test serialize

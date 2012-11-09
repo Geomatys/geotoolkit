@@ -65,6 +65,11 @@
           <version>${project.version}</version>
       </dependency>
       <dependency>
+          <groupId>org.geotoolkit.pending</groupId>
+          <artifactId>geotk-coverage-pending</artifactId>
+          <version>${project.version}</version>
+      </dependency>
+      <dependency>
           <groupId>org.geotoolkit.project</groupId>
           <artifactId>geotk-provided</artifactId>
           <scope>provided</scope>

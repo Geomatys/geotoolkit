@@ -27,7 +27,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.vecmath.Point3d;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.data.DataUtilities;
+import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.FeatureUtilities;
@@ -76,7 +76,7 @@ public class Isoline extends AbstractProcess {
         ftb.setDefaultGeometry("geometry");
         final FeatureType type = ftb.buildFeatureType();
 
-        final FeatureCollection col = DataUtilities.collection("id", type);
+        final FeatureCollection col = FeatureStoreUtilities.collection("id", type);
         int inc = 0;
 
         for (final Point3d p : steps.keySet()) {

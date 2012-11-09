@@ -6,9 +6,8 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.grid.GridCoverageFactory;
+import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.gui.swing.go2.JMap2DFrame;
 import org.geotoolkit.map.CoverageMapLayer;
@@ -42,8 +41,10 @@ public class CustomCoverageDemo {
         env.setRange(1, 0, 100);
         
         //create the coverage
-        final GridCoverageFactory GF = new GridCoverageFactory();
-        final GridCoverage2D coverage = GF.create("myCoverage", img, env);
+        final GridCoverageBuilder gcb = new GridCoverageBuilder();
+        gcb.setEnvelope(env);
+        gcb.setRenderedImage(img);
+        final GridCoverage2D coverage =gcb.getGridCoverage2D();
                         
         //display it
         final MapContext context = MapBuilder.createContext();

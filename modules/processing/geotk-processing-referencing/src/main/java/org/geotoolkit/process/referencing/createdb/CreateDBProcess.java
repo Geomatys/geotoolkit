@@ -50,7 +50,7 @@ public class CreateDBProcess extends AbstractProcess {
         try {
             installer.call();
         } catch (FactoryException ex) {
-            throw  new ProcessException(null, this, ex);
+            throw  new ProcessException(ex.getMessage(), this, ex);
         }
     }
 

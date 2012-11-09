@@ -35,9 +35,9 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.geotoolkit.ShapeTestData;
-import org.geotoolkit.data.DataStore;
+import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.storage.DataStoreException;
-import org.geotoolkit.data.DataUtilities;
+import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.query.Query;
@@ -525,8 +525,8 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
         newFeatures2[1] = FeatureTypeUtilities.template(sds.getFeatureType());
         newFeatures2[1].setDefaultGeometry(fac.createPoint(new Coordinate(0, 0)));
 
-        session.addFeatures(sds.getName(),DataUtilities.collection(newFeatures1));
-        session.addFeatures(sds.getName(),DataUtilities.collection(newFeatures2));
+        session.addFeatures(sds.getName(),FeatureStoreUtilities.collection(newFeatures1));
+        session.addFeatures(sds.getName(),FeatureStoreUtilities.collection(newFeatures2));
         session.commit();
         assertEquals(idx + 3, sds.getCount(QueryBuilder.all(sds.getName())));
         sds.dispose();
@@ -775,7 +775,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
         assertEquals(initialCount - 2, afterCount);
     }
 
-    private int count(final DataStore ds, final String typeName, final Filter filter) throws Exception {
+    private int count(final FeatureStore ds, final String typeName, final Filter filter) throws Exception {
         FeatureReader<SimpleFeatureType, SimpleFeature> reader;
         reader = ds.getFeatureReader(QueryBuilder.filtered(ds.getFeatureType(typeName).getName(), filter));
         int count = 0;

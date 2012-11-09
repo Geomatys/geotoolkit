@@ -42,7 +42,7 @@ import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.design.JasperDesign;
 import net.sf.jasperreports.engine.xml.JRXmlLoader;
 
-import org.geotoolkit.data.DataStoreRuntimeException;
+import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.display2d.service.OutputDef;
@@ -132,7 +132,7 @@ public final class JasperReportService extends Static {
      * @throws JRException
      */
     public static void generateReport(final JasperReport report, final FeatureCollection col, final Map parameters,
-                                  final OutputDef output) throws JRException, DataStoreRuntimeException{
+                                  final OutputDef output) throws JRException, FeatureStoreRuntimeException{
         final FeatureIterator ite = col.iterator();
         try{
             generateReport(report, ite, parameters, output);
@@ -152,7 +152,7 @@ public final class JasperReportService extends Static {
      * @throws JRException
      */
     public static void generateReport(final JasperReport report, final FeatureIterator ite, final Map parameters,
-                                  final OutputDef output) throws JRException, DataStoreRuntimeException{
+                                  final OutputDef output) throws JRException, FeatureStoreRuntimeException{
         final FeatureCollectionDataSource source = new FeatureCollectionDataSource(ite);
         final JasperPrint print = JasperFillManager.fillReport(report, parameters, source);
         generate(print, output);

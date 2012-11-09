@@ -19,6 +19,7 @@
 
 package org.geotoolkit.gui.swing.go2.control.edition;
 
+import java.awt.Dimension;
 import java.awt.event.ItemEvent;
 import java.beans.PropertyChangeEvent;
 import java.util.ArrayList;
@@ -104,6 +105,13 @@ public class JLayerComboBox extends JComboBox implements ContextListener{
         }
 
         setModel(new ListComboBoxModel(objects));
+        
+        final Dimension minSize = getMinimumSize();
+        if(minSize.width>150){
+            minSize.width = 150;
+            setMinimumSize(minSize);
+        }
+        
     }
 
     @Override

@@ -57,7 +57,6 @@ import org.geotoolkit.filter.visitor.IdCollectorFilterVisitor;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.index.CloseableCollection;
 import org.geotoolkit.index.Data;
-import org.geotoolkit.index.LockTimeoutException;
 import org.geotoolkit.index.TreeException;
 import org.geotoolkit.index.quadtree.*;
 import org.geotoolkit.referencing.CRS;
@@ -698,8 +697,6 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
             try {
                 indexer.index(false, new NullProgressListener());
             } catch (MalformedURLException e) {
-                throw new TreeException(e);
-            } catch (LockTimeoutException e) {
                 throw new TreeException(e);
             } catch (Exception e) {
                 if (e instanceof TreeException) {

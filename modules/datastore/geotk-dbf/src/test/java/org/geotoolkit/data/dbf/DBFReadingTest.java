@@ -25,7 +25,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import org.geotoolkit.data.AbstractReadingTests;
-import org.geotoolkit.data.DataStore;
+import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.feature.AttributeDescriptorBuilder;
 import org.geotoolkit.feature.AttributeTypeBuilder;
 import org.geotoolkit.feature.DefaultName;
@@ -106,7 +106,7 @@ public class DBFReadingTest extends AbstractReadingTests{
     }
 
     @Override
-    protected synchronized DataStore getDataStore() {
+    protected synchronized FeatureStore getDataStore() {
         return store;
     }
 

@@ -21,20 +21,21 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.spi.ImageReaderSpi;
+import javax.imageio.stream.ImageInputStream;
 import org.geotoolkit.image.io.XImageIO;
 
 /**
  * Default implementation of a TileReference
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
 public class DefaultTileReference implements TileReference{
 
-    private final ImageReaderSpi spi;
-    private final Object input;
-    private final int imageIndex;
-    private final Point position;
+    protected final ImageReaderSpi spi;
+    protected final Object input;
+    protected final int imageIndex;
+    protected final Point position;
 
     public DefaultTileReference(ImageReaderSpi spi, Object input, int imageIndex, Point position) {
         this.spi = spi;
@@ -42,21 +43,26 @@ public class DefaultTileReference implements TileReference{
         this.imageIndex = imageIndex;
         this.position = position;
     }
-    
+
     @Override
     public ImageReader getImageReader() throws IOException {
-        
+
         ImageReaderSpi spi = this.spi;
         ImageReader reader = null;
-        
-        if(spi == null){
+
+        if(spi == null && input != null){
             reader = XImageIO.getReader(input, Boolean.TRUE, Boolean.TRUE);
             spi = reader.getOriginatingProvider();
         }
-                
+
+        if(spi == null){
+            //could not find a proper reader for input
+            throw new IOException("Could not find image reader spi for input : "+input);
+        }
+        
         final Class[] supportedTypes = spi.getInputTypes();
         Object in = null;
-        
+
         //try to reuse input if it's supported
         for(Class type : supportedTypes){
             if(type.isInstance(input)){
@@ -64,16 +70,16 @@ public class DefaultTileReference implements TileReference{
                 break;
             }
         }
-        
+
         //use default image stream if necessary
         if(in == null){
             in = ImageIO.createImageInputStream(input);
         }
-        
+
         if(reader == null){
             reader = spi.createReaderInstance();
         }
-        
+
         reader.setInput(in, true, true);
         return reader;
     }
@@ -97,5 +103,5 @@ public class DefaultTileReference implements TileReference{
     public Point getPosition() {
         return position;
     }
-    
+
 }

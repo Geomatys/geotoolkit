@@ -25,13 +25,14 @@ import javax.xml.bind.annotation.XmlType;
 import org.opengis.filter.capability.IdCapabilities;
 import org.opengis.filter.capability.ScalarCapabilities;
 import org.opengis.filter.capability.SpatialCapabilities;
+import org.opengis.filter.capability.TemporalCapabilities;
 
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -48,8 +49,8 @@ import org.opengis.filter.capability.SpatialCapabilities;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -81,9 +82,9 @@ public class FilterCapabilities implements org.opengis.filter.capability.FilterC
      * An empty constructor used by JAXB
      */
     public FilterCapabilities() {
-        
+
     }
-    
+
     /**
      * Build a new filter capabilities (light version)
      */
@@ -91,10 +92,20 @@ public class FilterCapabilities implements org.opengis.filter.capability.FilterC
         this.spatialCapabilities = (SpatialCapabilitiesType) spatial;
         this.idCapabilities      = (IdCapabilitiesType)      id;
         this.scalarCapabilities  = (ScalarCapabilitiesType)  scalar;
-        
+
     }
-    
-    
+
+    /**
+     * Build a new filter capabilities (light version)
+     */
+    public FilterCapabilities(final ScalarCapabilities scalar, final SpatialCapabilities spatial, final IdCapabilities id, final TemporalCapabilities temporal) {
+        this.spatialCapabilities = (SpatialCapabilitiesType) spatial;
+        this.idCapabilities      = (IdCapabilitiesType)      id;
+        this.scalarCapabilities  = (ScalarCapabilitiesType)  scalar;
+        this.temporalCapabilities = (TemporalCapabilitiesType) temporal;
+    }
+
+
     /**
      * Gets the value of the spatialCapabilities property.
      */
@@ -141,7 +152,7 @@ public class FilterCapabilities implements org.opengis.filter.capability.FilterC
     public String getVersion() {
         return "1.1.0";
     }
-    
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("[FilterCapabilities]").append("\n");
@@ -201,5 +212,5 @@ public class FilterCapabilities implements org.opengis.filter.capability.FilterC
         return hash;
     }
 
-    
+
 }

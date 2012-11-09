@@ -16,6 +16,9 @@
  */
 package org.geotoolkit.index.quadtree;
 
+import org.geotoolkit.util.Exceptions;
+
+
 /**
  * DOCUMENT ME!
  * 
@@ -26,12 +29,9 @@ public class StoreException extends Exception {
 
     private static final long serialVersionUID = -3356954193373344773L;
 
-    public StoreException() {
-        super();
-    }
-
     public StoreException(final String message) {
         super(message);
+        assert Exceptions.isValidMessage(message) : message;
     }
 
     public StoreException(final Throwable cause) {

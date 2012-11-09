@@ -33,7 +33,8 @@ import org.geotoolkit.sld.xml.v110.StyledLayerDescriptor;
 @XmlType(name = "", propOrder = {
     "dataReference",
     "styleReference",
-    "style"
+    "style",
+    "opacity"
 })
 @XmlRootElement(name = "MapLayer")
 public class MapLayer extends MapItem {
@@ -45,6 +46,9 @@ public class MapLayer extends MapItem {
 
     @XmlElement(name = "style")
     private StyledLayerDescriptor style;
+    
+    @XmlElement(name = "opacity")
+    private Double opacity;
 
     MapLayer(){
     }
@@ -82,4 +86,13 @@ public class MapLayer extends MapItem {
     public void setStyle(StyledLayerDescriptor style) {
         this.style = style;
     }
+
+    public Double getOpacity() {
+        return opacity;
+    }
+
+    public void setOpacity(Double opacity) {
+        this.opacity = opacity;
+    }
+    
 }

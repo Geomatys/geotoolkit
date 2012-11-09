@@ -14,9 +14,9 @@ import java.util.Random;
 
 import net.sf.jasperreports.engine.JasperReport;
 
-import org.geotoolkit.data.DataStore;
-import org.geotoolkit.data.DataStoreFinder;
-import org.geotoolkit.data.DataUtilities;
+import org.geotoolkit.data.FeatureStore;
+import org.geotoolkit.data.FeatureStoreFinder;
+import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.FeatureWriter;
@@ -46,7 +46,7 @@ import org.geotoolkit.report.graphic.scalebar.ScaleBarDef;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
-import org.geotoolkit.util.RandomStyleFactory;
+import org.geotoolkit.style.RandomStyleBuilder;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
@@ -79,7 +79,7 @@ public class ReportDemo {
 
         
         //source to make an atlas ----------------------------------------------------
-        final DataStore store = DataStoreFinder.open(
+        final FeatureStore store = FeatureStoreFinder.open(
                 (Map)Collections.singletonMap("url",ReportDemo.class.getResource("/data/world/Countries.shp")));
         final Name name = store.getNames().iterator().next();
         final FeatureCollection countries =  store.createSession(true).getFeatureCollection(QueryBuilder.all(name));
@@ -107,9 +107,9 @@ public class ReportDemo {
                 final Feature modified = FeatureUtilities.defaultFeature(type, "id");
 
                 //create the main map with a single feature ------------------
-                final FeatureCollection col = DataUtilities.collection(feature);
+                final FeatureCollection col = FeatureStoreUtilities.collection(feature);
                 final MapContext context = MapBuilder.createContext();
-                final MutableStyle style = RandomStyleFactory.createRandomVectorStyle(col);
+                final MutableStyle style = RandomStyleBuilder.createRandomVectorStyle(col.getFeatureType());
                 context.layers().add(MapBuilder.createFeatureLayer(col, style));
 
                 try{
@@ -148,9 +148,9 @@ public class ReportDemo {
                 ftb.add("women",Integer.class);
                 ftb.add("desc", String.class);
                 final FeatureType subType = ftb.buildFeatureType();
-                final FeatureCollection subcol = DataUtilities.collection("sub", subType);
+                final FeatureCollection subcol = FeatureStoreUtilities.collection("sub", subType);
                 try {
-                    FeatureWriter fw = subcol.getSession().getDataStore().getFeatureWriterAppend(subType.getName());
+                    FeatureWriter fw = subcol.getSession().getFeatureStore().getFeatureWriterAppend(subType.getName());
                     for(int i=0,n=new Random().nextInt(20);i<n;i++){
                         Feature f =fw.next();
                         f.getProperty("men").setValue(new Random().nextInt());

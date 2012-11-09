@@ -17,18 +17,16 @@
  */
 package org.geotoolkit.gui.swing.go2.control.information;
 
-import org.geotoolkit.gui.swing.go2.control.information.presenter.InformationPresenter;
-import java.awt.Cursor;
 import java.awt.Component;
+import java.awt.Cursor;
+import java.awt.Rectangle;
+import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
-import java.awt.event.MouseEvent;
-import java.awt.Rectangle;
 import java.awt.geom.Area;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.event.MouseInputListener;
-
 import org.geotoolkit.display.canvas.GraphicVisitor;
 import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display.canvas.VisitFilter;
@@ -37,8 +35,8 @@ import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.gui.swing.go2.JMap2D;
 import org.geotoolkit.gui.swing.go2.control.information.presenter.DefaultInformationPresenter;
+import org.geotoolkit.gui.swing.go2.control.information.presenter.InformationPresenter;
 import org.geotoolkit.gui.swing.go2.control.navigation.AbstractNavigationHandler;
-
 import org.opengis.display.primitive.Graphic;
 
 /**
@@ -50,7 +48,6 @@ import org.opengis.display.primitive.Graphic;
 public class InformationHandler extends AbstractNavigationHandler {
 
     private final MouseListen mouseInputListener = new MouseListen();
-    private final InformationDecoration infoPane = new InformationDecoration();
     private InformationPresenter presenter = new DefaultInformationPresenter();
     private double zoomFactor = 2;
 
@@ -72,7 +69,6 @@ public class InformationHandler extends AbstractNavigationHandler {
     @Override
     public void install(final Component component) {
         super.install(component);
-        map.addDecoration(infoPane);
         component.addMouseListener(mouseInputListener);
         component.addMouseMotionListener(mouseInputListener);
         component.addMouseWheelListener(mouseInputListener);
@@ -84,7 +80,6 @@ public class InformationHandler extends AbstractNavigationHandler {
     @Override
     public void uninstall(final Component component) {
         super.uninstall(component);
-        map.removeDecoration(infoPane);
         component.removeMouseListener(mouseInputListener);
         component.removeMouseMotionListener(mouseInputListener);
         component.removeMouseWheelListener(mouseInputListener);
@@ -117,9 +112,8 @@ public class InformationHandler extends AbstractNavigationHandler {
                 map.getCanvas().getGraphicsIn(searchArea, visitor, VisitFilter.INTERSECTS);
 
                 if(!visitor.graphics.isEmpty()){
-                    infoPane.display(visitor.graphics, presenter, e.getPoint(), visitor.ctx, visitor.area);
-                }else{
-                    infoPane.display(null, null, null, null,null);
+                    final JInformationDialog dialog = new JInformationDialog();
+                    dialog.display(visitor.graphics, presenter, e.getLocationOnScreen(), visitor.ctx, visitor.area);
                 }
                 
             } else if (mousebutton == MouseEvent.BUTTON3) {

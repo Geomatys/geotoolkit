@@ -18,7 +18,6 @@ package org.geotoolkit.coverage.filestore;
 
 import java.awt.Dimension;
 import java.awt.Point;
-import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.Raster;
@@ -50,10 +49,12 @@ import org.geotoolkit.coverage.AbstractGridMosaic;
 import org.geotoolkit.coverage.DefaultTileReference;
 import org.geotoolkit.coverage.GridMosaic;
 import org.geotoolkit.coverage.TileReference;
+import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.util.converter.Classes;
+import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 
 /**
@@ -160,8 +161,11 @@ public class XMLMosaic implements GridMosaic{
     }
     
     @Override
-    public Point2D getUpperLeftCorner() {
-        return new Point2D.Double(upperleftX, upperleftY);
+    public DirectPosition getUpperLeftCorner() {
+        final GeneralDirectPosition ul = new GeneralDirectPosition(getPyramid().getCoordinateReferenceSystem());
+        ul.setOrdinate(0, upperleftX);
+        ul.setOrdinate(1, upperleftY);
+        return ul;
     }
 
     @Override
@@ -181,8 +185,9 @@ public class XMLMosaic implements GridMosaic{
     
     @Override
     public Envelope getEnvelope(){
-        final double minX = getUpperLeftCorner().getX();
-        final double maxY = getUpperLeftCorner().getY();
+        final DirectPosition ul = getUpperLeftCorner();
+        final double minX = ul.getOrdinate(0);
+        final double maxY = ul.getOrdinate(1);
         final double spanX = getTileSize().width * getGridSize().width * scale;
         final double spanY = getTileSize().height* getGridSize().height* scale;
         
@@ -196,8 +201,9 @@ public class XMLMosaic implements GridMosaic{
     
     @Override
     public Envelope getEnvelope(int col, int row) {
-        final double minX = getUpperLeftCorner().getX();
-        final double maxY = getUpperLeftCorner().getY();
+        final DirectPosition ul = getUpperLeftCorner();
+        final double minX = ul.getOrdinate(0);
+        final double maxY = ul.getOrdinate(1);
         final double spanX = getTileSize().width * scale;
         final double spanY = getTileSize().height * scale;
         

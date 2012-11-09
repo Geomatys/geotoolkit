@@ -89,7 +89,8 @@ public class DefaultTemporalPrimitiveTest {
 
         //relative position between Period onbjects
         temporalPrimitive1 = new DefaultPeriod(new DefaultInstant(position1), instant1);
-        cal.set(2012, 9, 1);
+        cal.setTime(instant2.getPosition().getDate());
+        cal.roll(Calendar.YEAR, true); // add one year to instant2 which is current date
         temporalPrimitive2 = new DefaultPeriod(instant2, new DefaultInstant(new DefaultPosition(cal.getTime())));
         result = temporalPrimitive1.relativePosition(other);
         assertFalse(temporalPrimitive2.relativePosition(other).equals(result));

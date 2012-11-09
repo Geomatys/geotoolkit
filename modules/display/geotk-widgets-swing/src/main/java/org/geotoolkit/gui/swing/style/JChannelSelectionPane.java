@@ -23,6 +23,8 @@ import java.awt.Component;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import javax.swing.ButtonGroup;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
@@ -141,6 +143,12 @@ public class JChannelSelectionPane extends StyleElementEditor<ChannelSelection>{
         guiChkRGB = new JRadioButton();
         guiChkGray = new JRadioButton();
 
+        addPropertyChangeListener(new PropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent evt) {
+                JChannelSelectionPane.this.propertyChange(evt);
+            }
+        });
+
         guiLblGray.setForeground(new Color(102, 102, 102));
         guiLblGray.setTitle(MessageBundle.getString("gray")); // NOI18N
         guiLblGray.setFont(guiLblGray.getFont().deriveFont(guiLblGray.getFont().getStyle() | Font.BOLD));
@@ -238,6 +246,14 @@ private void guiChkGrayActionPerformed(final ActionEvent evt) {//GEN-FIRST:event
 private void guiChkRGBActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_guiChkRGBActionPerformed
     lock();
 }//GEN-LAST:event_guiChkRGBActionPerformed
+
+    private void propertyChange(PropertyChangeEvent evt) {//GEN-FIRST:event_propertyChange
+        // TODO add your handling code here:
+         if (PROPERTY_TARGET.equalsIgnoreCase(evt.getPropertyName())) {            
+            firePropertyChange(PROPERTY_TARGET, null, create());
+            parse(create());
+        }
+    }//GEN-LAST:event_propertyChange
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private ButtonGroup group;

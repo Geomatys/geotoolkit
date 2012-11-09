@@ -18,7 +18,7 @@
 package org.geotoolkit.process.coverage.kriging;
 
 import java.awt.Dimension;
-import java.awt.geom.Point2D.Double;
+import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import org.opengis.metadata.spatial.PixelOrientation;
 
@@ -42,7 +42,7 @@ public class ObjectiveAnalysisPending extends org.geotoolkit.math.ObjectiveAnaly
 
     /**
      * An arbitrary scale factor applied in the distance computed by {@link #correlation(double)}.
-     * This is a hack for allowing the code to work with different CRS. Do not relyslt alex tu on this hack,
+     * This is a hack for allowing the code to work with different CRS. Do not on this hack,
      * it may be suppressed in future versions.
      */
     private double scaleHack = 1;
@@ -51,11 +51,9 @@ public class ObjectiveAnalysisPending extends org.geotoolkit.math.ObjectiveAnaly
      * Creates a new instance for interpolating values in the given region.
      *
      * @param gridRegion The grid bounding box. The maximal ordinates are inclusive.
-     * @param nx The number of grid cells along the <var>x</var> axis.
-     * @param ny The number of grid cells along the <var>y</var> axis.
-     * @param cellLocation The position to evaluate in each grid cell.
+     * @param size The number of grid cells along the <var>x</var> and <var>y</var> axes.
      */
-    public ObjectiveAnalysisPending(Rectangle2D gridRegion, Dimension size) {
+    public ObjectiveAnalysisPending(final Rectangle2D gridRegion, final Dimension size) {
         super(gridRegion, size.width, size.height, PixelOrientation.CENTER);
     }
 
@@ -75,7 +73,7 @@ public class ObjectiveAnalysisPending extends org.geotoolkit.math.ObjectiveAnaly
      * {@inheritDoc }.
      */
     @Override
-    protected double correlation(Double P1, Double P2) {
+    protected double correlation(final Point2D.Double P1, final Point2D.Double P2) {
         double distance = Math.hypot(P1.x - P2.x, P1.y - P2.y);
         distance = distance / scaleHack - 1./150; // Similar to the basic program DISPWX
         if (distance < 0) {

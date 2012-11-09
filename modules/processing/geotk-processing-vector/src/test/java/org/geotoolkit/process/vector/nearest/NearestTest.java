@@ -23,7 +23,7 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LinearRing;
 
-import org.geotoolkit.data.DataUtilities;
+import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.FeatureUtilities;
@@ -101,7 +101,7 @@ public class NearestTest extends AbstractProcessTest{
 
         type = createSimpleType();
         
-        final FeatureCollection<Feature> featureList = DataUtilities.collection("nearest", type);
+        final FeatureCollection<Feature> featureList = FeatureStoreUtilities.collection("nearest", type);
 
         final Feature feature1 = FeatureUtilities.defaultFeature(type, "id-1");
         feature1.getProperty("name").setValue("feature1");
@@ -145,7 +145,7 @@ public class NearestTest extends AbstractProcessTest{
 
         type = createSimpleType();
       
-        final FeatureCollection<Feature> featureList = DataUtilities.collection("nearest", type);
+        final FeatureCollection<Feature> featureList = FeatureStoreUtilities.collection("nearest", type);
 
         final Feature feature4 = FeatureUtilities.defaultFeature(type, "id-4");
         feature4.getProperty("name").setValue("feature4");

@@ -100,7 +100,7 @@ public class SOSServerFactory extends AbstractServerFactory{
     }
 
     @Override
-    public Server create(ParameterValueGroup params) throws DataStoreException {
+    public Server open(ParameterValueGroup params) throws DataStoreException {
         checkCanProcessWithError(params);
         return new SensorObservationServiceServer(params);
     }

@@ -17,7 +17,6 @@
 package org.geotoolkit.data.wfs;
 
 import java.net.MalformedURLException;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Collection;
 import java.util.List;
@@ -27,7 +26,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.geotoolkit.client.AbstractServer;
 import org.geotoolkit.client.ServerFinder;
-import org.geotoolkit.data.DataStore;
+import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.StorageListener;
@@ -51,15 +50,16 @@ import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.geometry.Envelope;
+import org.opengis.parameter.ParameterNotFoundException;
 import org.opengis.parameter.ParameterValueGroup;
 
 /**
  * WFS server, used to aquiere capabilites and requests objects.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class WebFeatureServer extends AbstractServer implements DataStore{
+public class WebFeatureServer extends AbstractServer implements FeatureStore{
 
     private static final Logger LOGGER = Logging.getLogger(WebFeatureServer.class);
 
@@ -69,64 +69,58 @@ public class WebFeatureServer extends AbstractServer implements DataStore{
     public WebFeatureServer(final URL serverURL, final String version) {
         this(serverURL,null,version);
     }
-    
+
     public WebFeatureServer(final URL serverURL, final ClientSecurity security, final String version) {
         this(create(WFSDataStoreFactory.PARAMETERS_DESCRIPTOR, serverURL, security));
         if(version.equals("1.1.0")){
             Parameters.getOrCreate(WFSDataStoreFactory.VERSION, parameters).setValue(version);
         }else{
-            throw new IllegalArgumentException("unkonwed version : "+ version);
+            throw new IllegalArgumentException("unknowned version : "+ version);
         }
         Parameters.getOrCreate(WFSDataStoreFactory.POST_REQUEST, parameters).setValue(false);
         this.capabilities = null;
     }
-    
+
     public WebFeatureServer(final URL serverURL, final ClientSecurity security, final WFSVersion version, final boolean usePost) {
         this(create(WFSDataStoreFactory.PARAMETERS_DESCRIPTOR, serverURL, security));
         if(version == null){
-            throw new IllegalArgumentException("unkonwed version : "+ version);
+            throw new IllegalArgumentException("unknowned version : "+ version);
         }
         Parameters.getOrCreate(WFSDataStoreFactory.VERSION, parameters).setValue(version);
         Parameters.getOrCreate(WFSDataStoreFactory.POST_REQUEST, parameters).setValue(usePost);
         this.capabilities = null;
     }
-    
+
     public WebFeatureServer(final ParameterValueGroup params) {
         super(params);
         Parameters.getOrCreate(WFSDataStoreFactory.VERSION, parameters).setValue("1.1.0");
-        Parameters.getOrCreate(WFSDataStoreFactory.POST_REQUEST, parameters).setValue(false);
+        parameters.parameter(WFSDataStoreFactory.POST_REQUEST.getName().getCode());
     }
 
     @Override
     public WFSDataStoreFactory getFactory() {
         return (WFSDataStoreFactory)ServerFinder.getFactoryById(WFSDataStoreFactory.NAME);
     }
-    
+
     public WFSVersion getVersion(){
         return WFSVersion.fromCode(Parameters.value(WFSDataStoreFactory.VERSION, parameters));
     }
-    
-    public boolean getUsePost(){        
+
+    public boolean getUsePost(){
         return Parameters.value(WFSDataStoreFactory.POST_REQUEST, parameters);
     }
-    
-    public boolean getLongitudeFirst(){        
-        return Parameters.value(WFSDataStoreFactory.LONGITUDE_FIRST, parameters);
+
+    public boolean getLongitudeFirst(){
+        return Parameters.getOrCreate(WFSDataStoreFactory.LONGITUDE_FIRST, parameters).booleanValue();
     }
-    
-    private synchronized DataStore getStore() {
+
+    private synchronized FeatureStore getStore() {
         if(store == null){
-            try {
-                store = new WFSDataStore(serverURL.toURI(), getUsePost(),getLongitudeFirst());
-            } catch (MalformedURLException ex) {
-                LOGGER.log(Level.WARNING, ex.getMessage(), ex);
-            } catch (URISyntaxException ex) {
-                LOGGER.log(Level.SEVERE, ex.getMessage(), ex);
-            }
+            store = new WFSDataStore(this);
         }
         return store;
     }
-    
+
     /**
      * @return WFSCapabilitiesType : WFS server capabilities
      */
@@ -140,7 +134,7 @@ public class WebFeatureServer extends AbstractServer implements DataStore{
             @Override
             public void run() {
                 try {
-                    capabilities = (WFSCapabilitiesType) WFSBindingUtilities.unmarshall(createGetCapabilities().getURL(), getVersion());
+                    capabilities = (WFSCapabilitiesType) WFSBindingUtilities.unmarshall(createGetCapabilities().getResponseStream(), getVersion());
                 } catch (Exception ex) {
                     capabilities = null;
                     try {
@@ -387,5 +381,5 @@ public class WebFeatureServer extends AbstractServer implements DataStore{
     public void removeStorageListener(StorageListener listener) {
         getStore().removeStorageListener(listener);
     }
-    
+
 }

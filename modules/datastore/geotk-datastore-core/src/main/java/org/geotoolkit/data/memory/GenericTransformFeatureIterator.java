@@ -22,10 +22,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import org.geotoolkit.data.DataStoreRuntimeException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.FeatureReader;
+import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.HintsPending;
@@ -75,7 +75,7 @@ public abstract class GenericTransformFeatureIterator<F extends Feature, R exten
      * {@inheritDoc }
      */
     @Override
-    public void close() throws DataStoreRuntimeException {
+    public void close() throws FeatureStoreRuntimeException {
         iterator.close();
     }
 
@@ -83,7 +83,7 @@ public abstract class GenericTransformFeatureIterator<F extends Feature, R exten
      * {@inheritDoc }
      */
     @Override
-    public boolean hasNext() throws DataStoreRuntimeException {
+    public boolean hasNext() throws FeatureStoreRuntimeException {
         return iterator.hasNext();
     }
 
@@ -116,7 +116,7 @@ public abstract class GenericTransformFeatureIterator<F extends Feature, R exten
          * {@inheritDoc }
          */
         @Override
-        public F next() throws DataStoreRuntimeException {
+        public F next() throws FeatureStoreRuntimeException {
             Feature next = iterator.next();
             next = FeatureUtilities.deepCopy(next);
 
@@ -128,7 +128,7 @@ public abstract class GenericTransformFeatureIterator<F extends Feature, R exten
                             //transform the geometry
                             prop.setValue(transformer.transform((Geometry) value));
                         } catch (TransformException e) {
-                            throw new DataStoreRuntimeException("A transformation exception occurred while reprojecting data on the fly", e);
+                            throw new FeatureStoreRuntimeException("A transformation exception occurred while reprojecting data on the fly", e);
                         }
 
                     }
@@ -185,7 +185,7 @@ public abstract class GenericTransformFeatureIterator<F extends Feature, R exten
          * {@inheritDoc }
          */
         @Override
-        public F next() throws DataStoreRuntimeException {
+        public F next() throws FeatureStoreRuntimeException {
             final Feature next = iterator.next();
             feature.setId(next.getIdentifier());
 
@@ -199,7 +199,7 @@ public abstract class GenericTransformFeatureIterator<F extends Feature, R exten
                             //transform the geometry
                             prop.setValue(transformer.transform((Geometry) value));
                         } catch (TransformException e) {
-                            throw new DataStoreRuntimeException("A transformation exception occurred while reprojecting data on the fly", e);
+                            throw new FeatureStoreRuntimeException("A transformation exception occurred while reprojecting data on the fly", e);
                         }
 
                     }
@@ -230,7 +230,7 @@ public abstract class GenericTransformFeatureIterator<F extends Feature, R exten
         }
 
         @Override
-        public FeatureIterator iterator(final Hints hints) throws DataStoreRuntimeException {
+        public FeatureIterator iterator(final Hints hints) throws FeatureStoreRuntimeException {
             FeatureIterator ite = getOriginalFeatureCollection().iterator(hints);
             if(!(ite instanceof FeatureReader)){
                 ite = GenericWrapFeatureIterator.wrapToReader(ite, getFeatureType());
@@ -239,7 +239,7 @@ public abstract class GenericTransformFeatureIterator<F extends Feature, R exten
         }
 
         @Override
-        protected Feature modify(Feature original) throws DataStoreRuntimeException {
+        protected Feature modify(Feature original) throws FeatureStoreRuntimeException {
             throw new UnsupportedOperationException("should not have been called.");
         }
 
@@ -288,7 +288,7 @@ public abstract class GenericTransformFeatureIterator<F extends Feature, R exten
                         //transform the geometry
                         prop.setValue(transformer.transform((Geometry) value));
                     } catch (TransformException e) {
-                        throw new DataStoreRuntimeException("A transformation exception occurred while reprojecting data on the fly", e);
+                        throw new FeatureStoreRuntimeException("A transformation exception occurred while reprojecting data on the fly", e);
                     }
 
                 }

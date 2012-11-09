@@ -23,11 +23,11 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import org.geotoolkit.data.DataStoreJoinFeatureCollection;
 import org.geotoolkit.data.DefaultJoinFeatureCollection;
 import org.geotoolkit.data.DefaultSelectorFeatureCollection;
 import org.geotoolkit.data.DefaultTextStmtFeatureCollection;
 import org.geotoolkit.data.FeatureCollection;
+import org.geotoolkit.data.DefaultFeatureStoreJoinFeatureCollection;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.storage.DataStoreException;
@@ -142,7 +142,7 @@ public class QueryUtilities {
 
     /**
      * Create a feature collection for the given query.
-     * This method will try to use the datastore query capabilities if several
+     * This method will try to use the feature store query capabilities if several
      * selector/join source use the same Session.
      * Otherwise a generic (slower) implementation will be returned.
      *
@@ -164,9 +164,9 @@ public class QueryUtilities {
             }else if(s instanceof Join){
                 final Collection<Session> sessions = getSessions(s, null);
 
-                if(sessions.size() == 1 && sessions.iterator().next().getDataStore().getQueryCapabilities().handleCrossQuery()){
-                    //the datastore can handle our join query, it will be much more efficient then a generic implementation
-                    return new DataStoreJoinFeatureCollection(id, query);
+                if(sessions.size() == 1 && sessions.iterator().next().getFeatureStore().getQueryCapabilities().handleCrossQuery()){
+                    //the feature store can handle our join query, it will be much more efficient then a generic implementation
+                    return new DefaultFeatureStoreJoinFeatureCollection(id, query);
                 }else{
                     //can't optimize it, use the generic implementation
                     return new DefaultJoinFeatureCollection(id, query);
@@ -175,7 +175,7 @@ public class QueryUtilities {
                 throw new IllegalArgumentException("Query source is an unknowned type : " + s);
             }
         }else{
-            //custom language query, let the datastore handle it
+            //custom language query, let the feature store handle it
             return new DefaultTextStmtFeatureCollection(id, query);
         }
     }
@@ -199,7 +199,7 @@ public class QueryUtilities {
                 throw new IllegalArgumentException("Source must be absolute to verify if it's writable");
             }
             
-            return session.getDataStore().isWritable(select.getFeatureTypeName());
+            return session.getFeatureStore().isWritable(select.getFeatureTypeName());
         }else if(source instanceof TextStatement){
             return false;
         }else{

@@ -86,8 +86,13 @@ public class Resample {
     private final double[] srcCoords;
 
     /**
-     * Fill destination image from interpolation of source pixels.<br/>
-     * Source pixel is obtained from invert transformation of destination pixel coordinates.
+     * Iterator use to fill destination image from interpolation of source image pixel value.
+     */
+    final PixelIterator destIterator;
+
+    /**
+     * <p>Fill destination image from interpolation of source pixels.<br/>
+     * Source pixel coordinate is obtained from invert transformation of destination pixel coordinates.</p>
      *
      * @param mathTransform Transformation use to transform source point to target point.
      * @param imageDest image will be fill by image source pixel interpolation.
@@ -101,11 +106,42 @@ public class Resample {
             throw new IllegalArgumentException("fillValue table length and numbands are different : "+fillValue.length+" numbands = "+this.numBands);
         assert(numBands == imageDest.getWritableTile(imageDest.getMinTileX(), imageDest.getMinTileY()).getNumBands())
                 : "destination image numbands different from source image numbands";
-        this.fillValue = fillValue;
+        this.destIterator        = PixelIteratorFactory.createDefaultWriteableIterator(imageDest, imageDest);
+        this.fillValue           = fillValue;
         this.invertMathTransform = mathTransform.inverse();
-        this.imageDest = imageDest;
-        this.interpol  = interpol;
-        final Rectangle bound = interpol.getBoundary();
+        this.imageDest           = imageDest;
+        this.interpol            = interpol;
+        final Rectangle bound    = interpol.getBoundary();
+        minSourceX = bound.x;
+        minSourceY = bound.y;
+        maxSourceX = minSourceX + bound.width  - 1;
+        maxSourceY = minSourceY + bound.height - 1;
+        srcCoords  = new double[2];
+    }
+
+    /**
+     * <p>Fill destination image area from interpolation of source pixels.<br/>
+     * Source pixel coordinate is obtained from invert transformation of destination pixel coordinates.</p>
+     *
+     * @param mathTransform Transformation use to transform source point to target point.
+     * @param imageDest image will be fill by image source pixel interpolation.
+     * @param resampleArea destination image area within pixels are resample.
+     * @param interpol Interpolation use to interpolate source image pixels.
+     * @param fillValue contains value use when pixel transformation is out of source image boundary.
+     * @throws NoninvertibleTransformException if it is impossible to invert {@code MathTransform} parameter.
+     */
+    public Resample(MathTransform mathTransform, WritableRenderedImage imageDest, Rectangle resampleArea, Interpolation interpol, double[] fillValue) throws NoninvertibleTransformException {
+        this.numBands = interpol.getNumBands();
+        if (fillValue.length != numBands)
+            throw new IllegalArgumentException("fillValue table length and numbands are different : "+fillValue.length+" numbands = "+this.numBands);
+        assert(numBands == imageDest.getWritableTile(imageDest.getMinTileX(), imageDest.getMinTileY()).getNumBands())
+                : "destination image numbands different from source image numbands";
+        this.destIterator        = PixelIteratorFactory.createDefaultWriteableIterator(imageDest, imageDest, resampleArea);
+        this.fillValue           = fillValue;
+        this.invertMathTransform = mathTransform.inverse();
+        this.imageDest           = imageDest;
+        this.interpol            = interpol;
+        final Rectangle bound    = interpol.getBoundary();
         minSourceX = bound.x;
         minSourceY = bound.y;
         maxSourceX = minSourceX + bound.width  - 1;
@@ -132,7 +168,6 @@ public class Resample {
      * Fill destination image from source image pixel interpolation.
      */
     public void fillImage() throws TransformException {
-        final PixelIterator destIterator = PixelIteratorFactory.createDefaultWriteableIterator(imageDest, imageDest);
         int band;
         double[] destPixValue;
         while (destIterator.next()) {

@@ -39,25 +39,8 @@ import javax.imageio.spi.ImageWriterSpi;
 import javax.imageio.stream.ImageOutputStream;
 import javax.swing.*;
 import javax.swing.JToolBar.Separator;
-
-import org.geotoolkit.client.Server;
-import org.geotoolkit.coverage.CoverageStore;
-import org.geotoolkit.data.DataStore;
 import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.gui.swing.go2.control.JConfigBar;
-import org.geotoolkit.gui.swing.go2.control.JCoordinateBar;
-import org.geotoolkit.gui.swing.go2.control.JEditionBar;
-import org.geotoolkit.gui.swing.go2.control.JInformationBar;
-import org.geotoolkit.gui.swing.go2.control.JNavigationBar;
-import org.geotoolkit.gui.swing.go2.control.JSelectionBar;
-import org.geotoolkit.gui.swing.propertyedit.LayerCRSPropertyPanel;
-import org.geotoolkit.gui.swing.propertyedit.LayerFilterPropertyPanel;
-import org.geotoolkit.gui.swing.propertyedit.LayerGeneralPanel;
-import org.geotoolkit.gui.swing.propertyedit.LayerStylePropertyPanel;
-import org.geotoolkit.gui.swing.propertyedit.PropertyPane;
-import org.geotoolkit.gui.swing.propertyedit.filterproperty.JCQLPropertyPanel;
-import org.geotoolkit.gui.swing.propertyedit.styleproperty.JSimpleStylePanel;
 import org.geotoolkit.gui.swing.contexttree.JContextTree;
 import org.geotoolkit.gui.swing.contexttree.TreePopupItem;
 import org.geotoolkit.gui.swing.contexttree.menu.ContextPropertyItem;
@@ -71,19 +54,30 @@ import org.geotoolkit.gui.swing.contexttree.menu.SessionRollbackItem;
 import org.geotoolkit.gui.swing.contexttree.menu.ZoomToLayerItem;
 import org.geotoolkit.gui.swing.filestore.JCoverageStoreChooser;
 import org.geotoolkit.gui.swing.filestore.JDataStoreChooser;
-import org.geotoolkit.gui.swing.filestore.JLayerChooser;
 import org.geotoolkit.gui.swing.filestore.JServerChooser;
+import org.geotoolkit.gui.swing.go2.control.JConfigBar;
+import org.geotoolkit.gui.swing.go2.control.JCoordinateBar;
+import org.geotoolkit.gui.swing.go2.control.JEditionBar;
+import org.geotoolkit.gui.swing.go2.control.JInformationBar;
+import org.geotoolkit.gui.swing.go2.control.JNavigationBar;
+import org.geotoolkit.gui.swing.go2.control.JSelectionBar;
 import org.geotoolkit.gui.swing.go2.decoration.JClassicNavigationDecoration;
 import org.geotoolkit.gui.swing.propertyedit.ClearSelectionAction;
 import org.geotoolkit.gui.swing.propertyedit.DeleteSelectionAction;
+import org.geotoolkit.gui.swing.propertyedit.LayerCRSPropertyPanel;
+import org.geotoolkit.gui.swing.propertyedit.LayerFilterPropertyPanel;
+import org.geotoolkit.gui.swing.propertyedit.LayerGeneralPanel;
+import org.geotoolkit.gui.swing.propertyedit.LayerStylePropertyPanel;
+import org.geotoolkit.gui.swing.propertyedit.PropertyPane;
+import org.geotoolkit.gui.swing.propertyedit.filterproperty.JCQLPropertyPanel;
 import org.geotoolkit.gui.swing.propertyedit.styleproperty.JAdvancedStylePanel;
-import org.geotoolkit.gui.swing.propertyedit.styleproperty.JClassificationSingleStylePanel;
 import org.geotoolkit.gui.swing.propertyedit.styleproperty.JClassificationIntervalStylePanel;
+import org.geotoolkit.gui.swing.propertyedit.styleproperty.JClassificationSingleStylePanel;
 import org.geotoolkit.gui.swing.propertyedit.styleproperty.JRasterColorMapStylePanel;
 import org.geotoolkit.gui.swing.propertyedit.styleproperty.JSLDImportExportPanel;
+import org.geotoolkit.gui.swing.propertyedit.styleproperty.JSimpleStylePanel;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
-
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.storage.DataStoreException;
 import org.opengis.geometry.Envelope;
@@ -100,18 +94,22 @@ public class JMap2DFrame extends javax.swing.JFrame {
     private final JContextTree guiContextTree;
     
     protected JMap2DFrame(final MapContext context, Hints hints) {
+        this(context,false,hints);
+    }
+    
+    protected JMap2DFrame(final MapContext context, boolean statefull, Hints hints) {
         initComponents();        
 
         guiContextTree = (JContextTree) jScrollPane1;
         guiContextTree.setContext(context);
         initTree(guiContextTree);
                         
-        guiMap = new JMap2D(false);
+        guiMap = new JMap2D(statefull);
         guiMap.getContainer().setContext(context);
         guiMap.getCanvas().setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         guiMap.getCanvas().setRenderingHint(GO2Hints.KEY_GENERALIZE, GO2Hints.GENERALIZE_ON);
         guiMap.getCanvas().setRenderingHint(GO2Hints.KEY_BEHAVIOR_MODE, GO2Hints.BEHAVIOR_PROGRESSIVE);
-        
+               
         if(hints != null){
             guiMap.getCanvas().setRenderingHints(hints);
         }
@@ -206,8 +204,6 @@ public class JMap2DFrame extends javax.swing.JFrame {
     private void initComponents() {
         GridBagConstraints gridBagConstraints;
 
-        buttonGroup1 = new ButtonGroup();
-        AxisProportions = new ButtonGroup();
         jSplitPane1 = new JSplitPane();
         panTabs = new JTabbedPane();
         panGeneral = new JPanel();
@@ -472,25 +468,27 @@ private void openServerChooser(ActionEvent evt) {//GEN-FIRST:event_openServerCho
         return false;
     }
     
-    public static void show(MapContext context){
-        if(context == null) context = MapBuilder.createContext();
+    public static void show(final MapContext context){
         show(context,null);
     }
     
     public static void show(final MapContext context, final Hints hints){
-
+        show(context,false,null);
+    }
+    
+    public static void show(MapContext context, final boolean statefull, final Hints hints){
+        if(context == null) context = MapBuilder.createContext();
+        final MapContext mc = context;
         java.awt.EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                new JMap2DFrame(context,hints).setVisible(true);
+                new JMap2DFrame(mc,statefull,hints).setVisible(true);
             }
         });
     }
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private ButtonGroup AxisProportions;
-    private ButtonGroup buttonGroup1;
     private JConfigBar guiConfigBar;
     private JCoordinateBar guiCoordBar;
     private JEditionBar guiEditBar;

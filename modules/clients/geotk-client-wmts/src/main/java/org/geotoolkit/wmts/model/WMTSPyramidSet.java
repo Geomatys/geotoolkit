@@ -22,6 +22,7 @@ import org.geotoolkit.client.map.CachedPyramidSet;
 import org.geotoolkit.coverage.GridMosaic;
 import org.geotoolkit.coverage.Pyramid;
 import org.geotoolkit.coverage.PyramidSet;
+import org.geotoolkit.ows.xml.v110.LanguageStringType;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.wmts.GetTileRequest;
@@ -43,6 +44,7 @@ public class WMTSPyramidSet extends CachedPyramidSet{
     private final String layerName;
     private final String id = UUID.randomUUID().toString();
     private LayerType wmtsLayer;
+    private Collection<Pyramid> pyramids;
     
     public WMTSPyramidSet(final WebMapTileServer server, final String layerName, boolean cacheImage){
         super(server,true,cacheImage);
@@ -79,27 +81,27 @@ public class WMTSPyramidSet extends CachedPyramidSet{
     }
     
     @Override
-    public Collection<Pyramid> getPyramids() {        
-        final List<Pyramid> pyramids = new ArrayList<Pyramid>();
-        
-        final ContentsType contents = getServer().getCapabilities().getContents();
-        
-        //first find the layer
-        LayerType layer = null;
-        for(LayerType candidate : contents.getLayers()){            
-            if(layerName.equalsIgnoreCase(candidate.getIdentifier().getValue())){
-                layer = candidate;
-                break;
-            }            
-        }
-        
-        if(layer == null){
-            //layer not found
-            return pyramids;
-        }
-        
-        for(TileMatrixSetLink lk : layer.getTileMatrixSetLink()){
-            pyramids.add(new WMTSPyramid(this,lk));
+    public synchronized Collection<Pyramid> getPyramids() {
+        if(pyramids == null){
+            final List<Pyramid> pyramids = new ArrayList<Pyramid>();
+            final ContentsType contents = getServer().getCapabilities().getContents();
+
+            //first find the layer
+            LayerType layer = null;
+            for(LayerType candidate : contents.getLayers()){            
+                if(layerName.equalsIgnoreCase(candidate.getIdentifier().getValue())){
+                    layer = candidate;
+                    break;
+                }            
+            }
+
+            if(layer != null){
+                //layer found
+                for(TileMatrixSetLink lk : layer.getTileMatrixSetLink()){
+                    pyramids.add(new WMTSPyramid(this,lk));
+                }
+            }
+            this.pyramids = pyramids;
         }
         
         return pyramids;
@@ -115,6 +117,20 @@ public class WMTSPyramidSet extends CachedPyramidSet{
         
         //set the format
         Object format = hints.get(PyramidSet.HINT_FORMAT);
+        
+        //extract the default format from server
+        if(format == null){
+            final WMTSPyramidSet ps = (WMTSPyramidSet) mosaic.getPyramid().getPyramidSet();        
+            final List<LayerType> layers = ps.getCapabilities().getContents().getLayers();
+            for(LayerType lt : layers){
+                final String name = lt.getIdentifier().getValue();
+                if(layerName.equals(name)){
+                    format = lt.getFormat().get(0);
+                }
+            }
+        }
+        
+        //last chance, use png as default
         if(format == null){
             //set a default value
             format = "image/png";

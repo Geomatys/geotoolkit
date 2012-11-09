@@ -31,11 +31,11 @@ import static org.junit.Assert.*;
 public class MemoryWritingTest {
 
     private final FeatureType type;
-    private final MemoryDataStore store;
+    private final MemoryFeatureStore store;
 
     public MemoryWritingTest() throws DataStoreException {
 
-        store = new MemoryDataStore();
+        store = new MemoryFeatureStore();
 
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("test");

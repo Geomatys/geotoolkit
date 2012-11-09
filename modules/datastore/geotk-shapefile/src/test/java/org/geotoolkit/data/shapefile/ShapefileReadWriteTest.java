@@ -33,7 +33,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import org.geotoolkit.data.DataUtilities;
+import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.test.TestData;
@@ -208,7 +208,7 @@ public class ShapefileReadWriteTest extends AbstractTestCaseSupport {
         params.put(ShapefileDataStoreFactory.MEMORY_MAPPED.getName().toString(), memorymapped);
         params.put(ShapefileDataStoreFactory.DBFCHARSET.getName().toString(), charset);
 
-        shapefile = (ShapefileDataStore) maker.create(params);
+        shapefile = (ShapefileDataStore) maker.open(params);
 
         shapefile.createSchema(typeName,type);
 
@@ -241,8 +241,8 @@ public class ShapefileReadWriteTest extends AbstractTestCaseSupport {
         }
 
         //copy values, order is not tested here.
-        one = DataUtilities.fill(one, new ArrayList<SimpleFeature>());
-        two = DataUtilities.fill(two, new ArrayList<SimpleFeature>());
+        one = FeatureStoreUtilities.fill(one, new ArrayList<SimpleFeature>());
+        two = FeatureStoreUtilities.fill(two, new ArrayList<SimpleFeature>());
 
         one.containsAll(two);
         two.containsAll(one);

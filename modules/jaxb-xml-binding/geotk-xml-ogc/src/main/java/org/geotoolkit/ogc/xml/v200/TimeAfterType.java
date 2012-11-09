@@ -18,12 +18,13 @@
 package org.geotoolkit.ogc.xml.v200;
 
 import org.opengis.filter.FilterVisitor;
+import org.opengis.filter.temporal.After;
 
 /**
  *
  * @author Guilhem Legal (Geomatys)
  */
-public class TimeAfterType extends BinaryTemporalOpType {
+public class TimeAfterType extends BinaryTemporalOpType implements After {
 
      /**
      * An empty constructor used by JAXB

@@ -35,10 +35,10 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.logging.Level;
 
-import org.geotoolkit.data.AbstractDataStore;
-import org.geotoolkit.data.DataStoreFactory;
-import org.geotoolkit.data.DataStoreFinder;
-import org.geotoolkit.data.DataStoreRuntimeException;
+import org.geotoolkit.data.AbstractFeatureStore;
+import org.geotoolkit.data.FeatureStoreFactory;
+import org.geotoolkit.data.FeatureStoreFinder;
+import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureWriter;
@@ -79,7 +79,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class SMLDataStore extends AbstractDataStore {
+public class SMLDataStore extends AbstractFeatureStore {
 
     private static final FeatureFactory FF = FactoryFinder.getFeatureFactory(
                         new Hints(Hints.FEATURE_FACTORY,LenientFeatureFactory.class));
@@ -174,8 +174,8 @@ public class SMLDataStore extends AbstractDataStore {
     }
 
     @Override
-    public DataStoreFactory getFactory() {
-        return DataStoreFinder.getFactoryById(SMLDataStoreFactory.NAME);
+    public FeatureStoreFactory getFactory() {
+        return FeatureStoreFinder.getFactoryById(SMLDataStoreFactory.NAME);
     }
 
     public Connection getConnection() throws SQLException {
@@ -467,13 +467,13 @@ public class SMLDataStore extends AbstractDataStore {
         }
 
         @Override
-        public Feature next() throws DataStoreRuntimeException {
+        public Feature next() throws FeatureStoreRuntimeException {
             try {
                 read();
             } catch (IOException ex) {
-                throw new DataStoreRuntimeException(ex);
+                throw new FeatureStoreRuntimeException(ex);
             } catch (SQLException ex) {
-                throw new DataStoreRuntimeException(ex);
+                throw new FeatureStoreRuntimeException(ex);
             }
             final Feature f = current;
             if(f == null){
@@ -484,13 +484,13 @@ public class SMLDataStore extends AbstractDataStore {
         }
 
         @Override
-        public boolean hasNext() throws DataStoreRuntimeException {
+        public boolean hasNext() throws FeatureStoreRuntimeException {
             try {
                 read();
             } catch (IOException ex) {
-                throw new DataStoreRuntimeException(ex);
+                throw new FeatureStoreRuntimeException(ex);
             } catch (SQLException ex) {
-                throw new DataStoreRuntimeException(ex);
+                throw new FeatureStoreRuntimeException(ex);
             }
             return current != null;
         }

@@ -16,18 +16,23 @@
  */
 package org.geotoolkit.coverage.filestore;
 
+import java.awt.Image;
 import java.io.File;
 import java.io.IOException;
+import javax.imageio.ImageReader;
+import javax.imageio.ImageWriter;
 import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.coverage.CoverageStore;
 import org.geotoolkit.coverage.io.GridCoverageReader;
+import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.coverage.io.ImageCoverageReader;
+import org.geotoolkit.coverage.io.ImageCoverageWriter;
 import org.geotoolkit.storage.DataStoreException;
 import org.opengis.feature.type.Name;
 
 /**
  * Reference to a coverage stored in a single file.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
@@ -36,22 +41,47 @@ public class FileCoverageReference implements CoverageReference{
     private final FileCoverageStore store;
     private final Name name;
     private final File file;
-    
-    FileCoverageReference(FileCoverageStore store, Name name, File file) {
+    private final int imageIndex;
+
+    FileCoverageReference(FileCoverageStore store, Name name, File file, int imageIndex) {
         this.store = store;
         this.name = name;
         this.file = file;
+        this.imageIndex = imageIndex;
     }
-    
+
+    @Override
+    public boolean isWritable() throws DataStoreException {
+        try {
+            final ImageWriter writer = store.createWriter(file);
+            writer.dispose();
+            return true;
+        } catch (IOException ex) {
+        }
+        return false;
+    }
+
     @Override
     public GridCoverageReader createReader() throws DataStoreException{
         final ImageCoverageReader reader = new ImageCoverageReader();
         try {
-            reader.setInput(store.createReader(file));
+            final ImageReader ioreader =store.createReader(file);
+            reader.setInput(ioreader);
         } catch (IOException ex) {
             throw new DataStoreException(ex.getMessage(),ex);
         }
         return reader;
+    }
+
+    @Override
+    public GridCoverageWriter createWriter() throws DataStoreException {
+        final ImageCoverageWriter writer = new ImageCoverageWriter();
+        try {
+            writer.setOutput(store.createWriter(file));
+        } catch (IOException ex) {
+            throw new DataStoreException(ex.getMessage(),ex);
+        }
+        return writer;
     }
 
     @Override
@@ -60,8 +90,17 @@ public class FileCoverageReference implements CoverageReference{
     }
 
     @Override
+    public int getImageIndex() {
+        return imageIndex;
+    }
+    
+    @Override
     public CoverageStore getStore() {
         return store;
     }
-    
+
+    public Image getLegend() throws DataStoreException {
+        return null;
+    }
+
 }

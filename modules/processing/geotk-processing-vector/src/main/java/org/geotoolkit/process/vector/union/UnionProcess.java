@@ -25,7 +25,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.geotoolkit.data.DataUtilities;
+import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.feature.FeatureTypeBuilder;
@@ -102,7 +102,7 @@ public class UnionProcess extends AbstractProcess {
 
 
         final FeatureCollection<Feature> resultFeatureList =
-                DataUtilities.collection(inputFeature.getIdentifier().getID(), newFeatureType);
+                FeatureStoreUtilities.collection(inputFeature.getIdentifier().getID(), newFeatureType);
 
          /*
          * In order to get all part of Feature, add a second pass with the diffenrence between the FeatureGeometry

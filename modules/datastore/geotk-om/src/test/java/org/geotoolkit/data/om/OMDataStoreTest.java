@@ -26,8 +26,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.geotoolkit.data.AbstractReadingTests;
-import org.geotoolkit.data.DataStore;
-import org.geotoolkit.data.DataStoreFinder;
+import org.geotoolkit.data.FeatureStore;
+import org.geotoolkit.data.FeatureStoreFinder;
 import org.geotoolkit.data.om.OMDataStoreFactory;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.FeatureTypeBuilder;
@@ -47,7 +47,7 @@ import org.opengis.feature.type.Name;
 public class OMDataStoreTest extends AbstractReadingTests{
 
     private static DefaultDataSource ds;
-    private static DataStore store;
+    private static FeatureStore store;
     private static Set<Name> names = new HashSet<Name>();
     private static List<ExpectedResult> expecteds = new ArrayList<ExpectedResult>();
     static{
@@ -66,7 +66,7 @@ public class OMDataStoreTest extends AbstractReadingTests{
             params.put(OMDataStoreFactory.SGBDTYPE.getName().toString(), "derby");
             params.put(OMDataStoreFactory.DERBYURL.getName().toString(), url);
 
-            store = DataStoreFinder.open(params);
+            store = FeatureStoreFinder.open(params);
 
             final String nsOM = "http://www.opengis.net/sampling/1.0";
             final String nsGML = "http://www.opengis.net/gml";
@@ -117,7 +117,7 @@ public class OMDataStoreTest extends AbstractReadingTests{
 //    }
 
     @Override
-    protected DataStore getDataStore() {
+    protected FeatureStore getDataStore() {
         return store;
     }
 

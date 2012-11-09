@@ -19,7 +19,7 @@ package org.geotoolkit.process.datastore.copy;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import org.geotoolkit.data.DataStore;
+import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
@@ -60,8 +60,8 @@ public class Copy extends AbstractProcess {
 
         fireProcessStarted("Starting copy.");
 
-        final DataStore sourceDS    = value(SOURCE_STORE, inputParameters);
-        final DataStore targetDS    = value(TARGET_STORE, inputParameters);
+        final FeatureStore sourceDS    = value(SOURCE_STORE, inputParameters);
+        final FeatureStore targetDS    = value(TARGET_STORE, inputParameters);
         final Boolean eraseParam    = value(ERASE,        inputParameters);
         final String typenameParam  = value(TYPE_NAME,    inputParameters);
         final Query queryParam      = value(QUERY,        inputParameters);
@@ -72,7 +72,7 @@ public class Copy extends AbstractProcess {
             try {
                 insert(queryParam, sourceDS, targetDS, eraseParam);
             } catch (DataStoreException ex) {
-                throw new ProcessException(null, this, ex);
+                throw new ProcessException(ex.getMessage(), this, ex);
             }
             return;
         }
@@ -82,7 +82,7 @@ public class Copy extends AbstractProcess {
             try {
                 names = sourceDS.getNames();
             } catch (DataStoreException ex) {
-                throw new ProcessException(null, this, ex);
+                throw new ProcessException(ex.getMessage(), this, ex);
             }
         } else {
             //pick only the wanted names
@@ -93,7 +93,7 @@ public class Copy extends AbstractProcess {
                     final FeatureType type = sourceDS.getFeatureType(s);
                     names.add(type.getName());
                 } catch (DataStoreException ex) {
-                    throw new ProcessException(null, this, ex);
+                    throw new ProcessException(ex.getMessage(), this, ex);
                 }
             }
         }
@@ -105,7 +105,7 @@ public class Copy extends AbstractProcess {
             try {
                 insert(n, sourceDS, targetDS, eraseParam);
             } catch (DataStoreException ex) {
-                throw new ProcessException(null, this, ex);
+                throw new ProcessException(ex.getMessage(), this, ex);
             }
             inc++;
         }
@@ -113,7 +113,7 @@ public class Copy extends AbstractProcess {
         fireProcessCompleted("Copy successful.");
     }
 
-    private void insert(final Name name, final DataStore source, final DataStore target, final boolean erase) throws DataStoreException{
+    private void insert(final Name name, final FeatureStore source, final FeatureStore target, final boolean erase) throws DataStoreException{
 
         final FeatureType type = source.getFeatureType(name);
         final Session session = source.createSession(false);
@@ -134,7 +134,7 @@ public class Copy extends AbstractProcess {
 
     }
 
-    private void insert(final Query query, final DataStore source, final DataStore target, final boolean erase) throws DataStoreException{
+    private void insert(final Query query, final FeatureStore source, final FeatureStore target, final boolean erase) throws DataStoreException{
 
         final Name name = query.getTypeName();
         final FeatureType type = source.getFeatureType(name);

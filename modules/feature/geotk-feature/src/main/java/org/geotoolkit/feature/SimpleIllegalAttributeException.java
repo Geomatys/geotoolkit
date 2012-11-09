@@ -17,7 +17,7 @@
 package org.geotoolkit.feature;
 
 import java.util.Map;
-
+import org.geotoolkit.util.Exceptions;
 import org.opengis.feature.IllegalAttributeException;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.AttributeType;
@@ -83,6 +83,7 @@ public class SimpleIllegalAttributeException extends IllegalAttributeException {
      */
     public SimpleIllegalAttributeException(final String message) {
         super(NULL_ATTRIBUTE_DESCRIPTOR,null,message);
+        assert Exceptions.isValidMessage(message) : message;
     }
 
     /**

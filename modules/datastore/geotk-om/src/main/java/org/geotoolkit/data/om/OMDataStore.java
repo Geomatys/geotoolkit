@@ -36,11 +36,11 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.geotoolkit.data.AbstractDataStore;
-import org.geotoolkit.data.DataStoreFactory;
-import org.geotoolkit.data.DataStoreFinder;
+import org.geotoolkit.data.AbstractFeatureStore;
+import org.geotoolkit.data.FeatureStoreFactory;
+import org.geotoolkit.data.FeatureStoreFinder;
 import org.geotoolkit.storage.DataStoreException;
-import org.geotoolkit.data.DataStoreRuntimeException;
+import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.query.DefaultQueryCapabilities;
@@ -78,7 +78,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class OMDataStore extends AbstractDataStore {
+public class OMDataStore extends AbstractFeatureStore {
     /** the feature factory */
     private static final FeatureFactory FF = FactoryFinder.getFeatureFactory(
                         new Hints(Hints.FEATURE_FACTORY,LenientFeatureFactory.class));
@@ -113,8 +113,8 @@ public class OMDataStore extends AbstractDataStore {
     }
 
     @Override
-    public DataStoreFactory getFactory() {
-        return DataStoreFinder.getFactoryById(OMDataStoreFactory.NAME);
+    public FeatureStoreFactory getFactory() {
+        return FeatureStoreFinder.getFactoryById(OMDataStoreFactory.NAME);
     }
 
     private Connection getConnection() throws SQLException{
@@ -387,11 +387,11 @@ public class OMDataStore extends AbstractDataStore {
         }
 
         @Override
-        public Feature next() throws DataStoreRuntimeException {
+        public Feature next() throws FeatureStoreRuntimeException {
             try {
                 read();
             } catch (Exception ex) {
-                throw new DataStoreRuntimeException(ex);
+                throw new FeatureStoreRuntimeException(ex);
             }
             Feature candidate = current;
             current = null;
@@ -399,11 +399,11 @@ public class OMDataStore extends AbstractDataStore {
         }
 
         @Override
-        public boolean hasNext() throws DataStoreRuntimeException {
+        public boolean hasNext() throws FeatureStoreRuntimeException {
             try {
                 read();
             } catch (Exception ex) {
-                throw new DataStoreRuntimeException(ex);
+                throw new FeatureStoreRuntimeException(ex);
             }
             return current != null;
         }
@@ -452,13 +452,13 @@ public class OMDataStore extends AbstractDataStore {
                 result.close();
                 cnx.close();
             } catch (SQLException ex) {
-                throw new DataStoreRuntimeException(ex);
+                throw new FeatureStoreRuntimeException(ex);
             }
         }
 
         @Override
-        public void remove() throws DataStoreRuntimeException{
-            throw new DataStoreRuntimeException("Not supported.");
+        public void remove() throws FeatureStoreRuntimeException{
+            throw new FeatureStoreRuntimeException("Not supported.");
         }
 
     }
@@ -472,11 +472,11 @@ public class OMDataStore extends AbstractDataStore {
         }
 
         @Override
-        public Feature next() throws DataStoreRuntimeException {
+        public Feature next() throws FeatureStoreRuntimeException {
             try {
                 read();
             } catch (Exception ex) {
-                throw new DataStoreRuntimeException(ex);
+                throw new FeatureStoreRuntimeException(ex);
             }
             candidate = current;
             current = null;
@@ -484,7 +484,7 @@ public class OMDataStore extends AbstractDataStore {
         }
 
         @Override
-        public void remove() throws DataStoreRuntimeException{
+        public void remove() throws FeatureStoreRuntimeException{
 
             if (candidate == null) {
                 return;
@@ -511,8 +511,8 @@ public class OMDataStore extends AbstractDataStore {
         }
 
         @Override
-        public void write() throws DataStoreRuntimeException {
-            throw new DataStoreRuntimeException("Not supported.");
+        public void write() throws FeatureStoreRuntimeException {
+            throw new FeatureStoreRuntimeException("Not supported.");
         }
     }
 }

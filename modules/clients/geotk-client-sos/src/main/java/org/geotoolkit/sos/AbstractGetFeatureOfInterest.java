@@ -90,7 +90,7 @@ public abstract class AbstractGetFeatureOfInterest extends AbstractSOSRequest im
 
     @Override
     public URL getURL() throws MalformedURLException {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException("Can not generate URL.");
     }
 
     /**

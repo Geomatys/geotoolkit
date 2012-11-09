@@ -515,7 +515,7 @@ public final class DefaultPortrayalService implements PortrayalService{
         readParam.setResolution(resolution);
 
         try{
-            GridCoverage2D coverage = (GridCoverage2D)reader.read(0, readParam);
+            GridCoverage2D coverage = (GridCoverage2D)reader.read(cml.getImageIndex(), readParam);
             final RenderedImage image = coverage.getRenderedImage();
 
             // HACK TO FIX COLOR ERROR ON JPEG /////////////////////////////////

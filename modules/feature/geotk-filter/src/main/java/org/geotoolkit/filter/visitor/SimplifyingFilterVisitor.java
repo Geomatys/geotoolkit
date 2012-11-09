@@ -28,6 +28,8 @@ import org.opengis.filter.Filter;
 import org.opengis.filter.FilterVisitor;
 import org.opengis.filter.Id;
 import org.opengis.filter.Or;
+import org.opengis.filter.PropertyIsEqualTo;
+import org.opengis.filter.expression.Literal;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.filter.identity.GmlObjectId;
 import org.opengis.filter.identity.Identifier;
@@ -244,4 +246,16 @@ public class SimplifyingFilterVisitor extends DuplicatingFilterVisitor {
             return getFactory(extraData).id(validFids);
         }
     }
+
+    @Override
+    public Object visit(PropertyIsEqualTo filter, Object extraData) {
+        if(   filter.getExpression1() instanceof Literal 
+           && filter.getExpression2() instanceof Literal){
+            //we can preevaluate this one
+            return (filter.evaluate(null)) ? Filter.INCLUDE : Filter.EXCLUDE;
+        }else{
+            return super.visit(filter, extraData);
+        }
+    }
+    
 }

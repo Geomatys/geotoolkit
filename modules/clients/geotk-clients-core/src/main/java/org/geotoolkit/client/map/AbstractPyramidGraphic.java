@@ -36,6 +36,7 @@ import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.opengis.display.primitive.Graphic;
+import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
@@ -118,9 +119,9 @@ public abstract class AbstractPyramidGraphic extends AbstractTiledGraphic{
             return;
         }
         
-
-        final double tileMatrixMinX = mosaic.getUpperLeftCorner().getX();
-        final double tileMatrixMaxY = mosaic.getUpperLeftCorner().getY();
+        final DirectPosition ul = mosaic.getUpperLeftCorner();
+        final double tileMatrixMinX = ul.getOrdinate(0);
+        final double tileMatrixMaxY = ul.getOrdinate(1);
         final Dimension gridSize = mosaic.getGridSize();
         final Dimension tileSize = mosaic.getTileSize();
         final double scale = mosaic.getScale();

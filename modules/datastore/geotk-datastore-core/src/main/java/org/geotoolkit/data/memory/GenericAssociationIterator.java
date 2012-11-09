@@ -20,9 +20,9 @@ package org.geotoolkit.data.memory;
 
 import java.util.AbstractCollection;
 import java.util.Collection;
-import org.geotoolkit.data.DataStoreRuntimeException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
+import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.DefaultAssociation;
 import org.geotoolkit.util.collection.CloseableIterator;
@@ -60,7 +60,7 @@ public class GenericAssociationIterator implements CloseableIterator {
      * {@inheritDoc }
      */
     @Override
-    public void close() throws DataStoreRuntimeException {
+    public void close() throws FeatureStoreRuntimeException {
         iterator.close();
     }
 
@@ -68,7 +68,7 @@ public class GenericAssociationIterator implements CloseableIterator {
      * {@inheritDoc }
      */
     @Override
-    public Property next() throws DataStoreRuntimeException {
+    public Property next() throws FeatureStoreRuntimeException {
         final Feature next = iterator.next();
         return new DefaultAssociation(next, desc, link);
     }
@@ -77,7 +77,7 @@ public class GenericAssociationIterator implements CloseableIterator {
      * {@inheritDoc }
      */
     @Override
-    public boolean hasNext() throws DataStoreRuntimeException {
+    public boolean hasNext() throws FeatureStoreRuntimeException {
         return iterator.hasNext();
     }
     
@@ -110,7 +110,7 @@ public class GenericAssociationIterator implements CloseableIterator {
             this.link = link;
         }
 
-        public CloseableIterator iterator(final Hints hints) throws DataStoreRuntimeException {
+        public CloseableIterator iterator(final Hints hints) throws FeatureStoreRuntimeException {
             FeatureIterator ite = original.iterator(hints);
             return wrap(ite, desc, link, hints);
         }

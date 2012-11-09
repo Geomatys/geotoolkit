@@ -47,6 +47,7 @@ import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.util.Cancellable;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.coverage.grid.GridEnvelope;
+import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
@@ -247,8 +248,9 @@ public class PyramidalModelReader extends GridCoverageReader{
         
         
 
-        final double tileMatrixMinX = mosaic.getUpperLeftCorner().getX();
-        final double tileMatrixMaxY = mosaic.getUpperLeftCorner().getY();
+        final DirectPosition ul = mosaic.getUpperLeftCorner();
+        final double tileMatrixMinX = ul.getOrdinate(0);
+        final double tileMatrixMaxY = ul.getOrdinate(1);
         final Dimension gridSize = mosaic.getGridSize();
         final Dimension tileSize = mosaic.getTileSize();
         final double scale = mosaic.getScale();

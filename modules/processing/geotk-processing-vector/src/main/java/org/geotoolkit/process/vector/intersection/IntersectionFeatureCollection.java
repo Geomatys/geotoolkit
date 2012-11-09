@@ -18,7 +18,7 @@ package org.geotoolkit.process.vector.intersection;
 
 import java.util.NoSuchElementException;
 
-import org.geotoolkit.data.DataStoreRuntimeException;
+import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.factory.Hints;
@@ -79,13 +79,13 @@ public class IntersectionFeatureCollection extends WrapFeatureCollection {
             return IntersectionProcess.intersetFeature(original, newFeatureType, intersList, geometryName);
 
         } catch (FactoryException ex) {
-            throw new DataStoreRuntimeException(ex);
+            throw new FeatureStoreRuntimeException(ex);
         } catch (MismatchedDimensionException ex) {
-            throw new DataStoreRuntimeException(ex);
+            throw new FeatureStoreRuntimeException(ex);
         } catch (TransformException ex) {
-            throw new DataStoreRuntimeException(ex);
+            throw new FeatureStoreRuntimeException(ex);
         } catch (ProcessException ex) {
-            throw new DataStoreRuntimeException(ex);
+            throw new FeatureStoreRuntimeException(ex);
         }
     }
 
@@ -93,7 +93,7 @@ public class IntersectionFeatureCollection extends WrapFeatureCollection {
      *  {@inheritDoc }
      */
     @Override
-    public FeatureIterator<Feature> iterator(final Hints hints) throws DataStoreRuntimeException {
+    public FeatureIterator<Feature> iterator(final Hints hints) throws FeatureStoreRuntimeException {
         return new IntersectionFeatureIterator(getOriginalFeatureCollection().iterator());
     }
 
@@ -159,7 +159,7 @@ public class IntersectionFeatureCollection extends WrapFeatureCollection {
          */
         @Override
         public void remove() {
-            throw new DataStoreRuntimeException("Unmodifiable collection");
+            throw new FeatureStoreRuntimeException("Unmodifiable collection");
         }
 
         /**

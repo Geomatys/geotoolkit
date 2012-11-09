@@ -17,6 +17,7 @@
 
 package org.geotoolkit.gui.swing.go2.control.edition;
 
+import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.LineString;
 import org.geotoolkit.gui.swing.go2.JMap2D;
 import org.geotoolkit.gui.swing.resource.IconBundle;
@@ -34,7 +35,7 @@ import org.opengis.feature.type.GeometryDescriptor;
 public class LineCreationTool extends AbstractEditionTool {
 
     public LineCreationTool() {
-        super(1000,"lineCreation",MessageBundle.getI18NString("create"),
+        super(1000,"lineCreation",MessageBundle.getI18NString("createLineString"),
              new SimpleInternationalString("Tool for creating lines."), 
              IconBundle.getIcon("16_newgeometry"), FeatureMapLayer.class);
     }
@@ -55,7 +56,8 @@ public class LineCreationTool extends AbstractEditionTool {
             return false;
         }
 
-        return LineString.class.isAssignableFrom(desc.getType().getBinding());
+        return LineString.class.isAssignableFrom(desc.getType().getBinding())
+            || Geometry.class.equals(desc.getType().getBinding());
     }
 
     @Override

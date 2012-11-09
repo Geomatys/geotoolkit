@@ -26,6 +26,7 @@ import org.geotoolkit.coverage.AbstractGridMosaic;
 import org.geotoolkit.coverage.Pyramid;
 import org.geotoolkit.coverage.TileReference;
 import org.geotoolkit.storage.DataStoreException;
+import org.opengis.geometry.DirectPosition;
 
 /**
  *
@@ -36,7 +37,7 @@ public class OSMTMSMosaic extends AbstractGridMosaic{
 
     private final int scaleLevel;
     
-    public OSMTMSMosaic(Pyramid pyramid, Point2D upperLeft, Dimension gridSize,
+    public OSMTMSMosaic(Pyramid pyramid, DirectPosition upperLeft, Dimension gridSize,
             Dimension tileSize, double scale, int scaleLevel) {
         super(pyramid,upperLeft,gridSize,tileSize,scale);
         this.scaleLevel = scaleLevel;

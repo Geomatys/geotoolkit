@@ -19,10 +19,10 @@
 package org.geotoolkit.data.memory;
 
 import java.util.NoSuchElementException;
-import org.geotoolkit.data.DataStoreRuntimeException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.FeatureReader;
+import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.util.converter.Classes;
@@ -58,7 +58,7 @@ public class GenericMaxFeatureIterator<F extends Feature, R extends FeatureItera
      * {@inheritDoc }
      */
     @Override
-    public F next() throws DataStoreRuntimeException {
+    public F next() throws FeatureStoreRuntimeException {
         if (hasNext()) {
             counter++;
             return iterator.next();
@@ -71,7 +71,7 @@ public class GenericMaxFeatureIterator<F extends Feature, R extends FeatureItera
      * {@inheritDoc }
      */
     @Override
-    public void close() throws DataStoreRuntimeException {
+    public void close() throws FeatureStoreRuntimeException {
         iterator.close();
     }
 
@@ -81,7 +81,7 @@ public class GenericMaxFeatureIterator<F extends Feature, R extends FeatureItera
      * @throws IOException If the reader we are filtering encounters a problem
      */
     @Override
-    public boolean hasNext() throws DataStoreRuntimeException {
+    public boolean hasNext() throws FeatureStoreRuntimeException {
         return ((counter < maxFeatures) && iterator.hasNext());
     }
 
@@ -144,7 +144,7 @@ public class GenericMaxFeatureIterator<F extends Feature, R extends FeatureItera
         }
 
         @Override
-        public void write() throws DataStoreRuntimeException {
+        public void write() throws FeatureStoreRuntimeException {
             iterator.write();
         }
     }
@@ -159,12 +159,12 @@ public class GenericMaxFeatureIterator<F extends Feature, R extends FeatureItera
         }
 
         @Override
-        public FeatureIterator iterator(final Hints hints) throws DataStoreRuntimeException {
+        public FeatureIterator iterator(final Hints hints) throws FeatureStoreRuntimeException {
             return wrap(getOriginalFeatureCollection().iterator(hints), max);
         }
 
         @Override
-        protected Feature modify(Feature original) throws DataStoreRuntimeException {
+        protected Feature modify(Feature original) throws FeatureStoreRuntimeException {
             throw new UnsupportedOperationException("should not have been called.");
         }
 

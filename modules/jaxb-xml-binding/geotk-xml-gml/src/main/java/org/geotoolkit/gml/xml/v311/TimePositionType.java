@@ -22,19 +22,19 @@ import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Objects;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
+import org.geotoolkit.gml.xml.AbstractTimePosition;
 import org.geotoolkit.util.SimpleInternationalString;
 import org.opengis.temporal.Position;
-import org.opengis.temporal.TemporalPosition;
 import org.opengis.util.InternationalString;
 
 
@@ -69,7 +69,7 @@ import org.opengis.util.InternationalString;
 @XmlType(name = "TimePositionType", propOrder = {
     "value"
 })
-public class TimePositionType implements Position, Serializable {
+public class TimePositionType extends AbstractTimePosition implements Serializable {
 
     @XmlValue
     private String value;
@@ -81,7 +81,6 @@ public class TimePositionType implements Position, Serializable {
     @XmlAttribute
     private TimeIndeterminateValueType indeterminatePosition;
 
-    private static final DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
     /**
      * empty constructor used by JAXB.
      */
@@ -97,9 +96,7 @@ public class TimePositionType implements Position, Serializable {
     }
 
     public TimePositionType(final Position value){
-        synchronized (formatter) {
-            this.value = formatter.format(value.getDate());
-        }
+        this(value.getDate());
     }
 
     /**
@@ -126,9 +123,7 @@ public class TimePositionType implements Position, Serializable {
      * @param value a date.
      */
     public TimePositionType(final Date time){
-        synchronized (formatter) {
-            this.value = formatter.format(time);
-        }
+        setValue(time);
     }
 
     /**
@@ -146,13 +141,23 @@ public class TimePositionType implements Position, Serializable {
         return value;
     }
 
-    public void setValue(String value) {
+    public void setValue(final String value) {
         this.value = value;
     }
 
-    public void setValue(Date value) {
-        synchronized (formatter) {
-            this.value = formatter.format(value);
+    public final void setValue(final Date value) {
+        final Calendar c = Calendar.getInstance();
+        c.setTime(value);
+        if (c.get(Calendar.HOUR) == 0 && c.get(Calendar.MINUTE) == 0 && c.get(Calendar.SECOND) == 0) {
+            final DateFormat df = FORMATTERS.get(2);
+            synchronized (df) {
+                this.value = df.format(value);
+            }
+        } else {
+            final DateFormat df = FORMATTERS.get(0);
+            synchronized (df) {
+                this.value = df.format(value);
+            }
         }
     }
 
@@ -229,22 +234,8 @@ public class TimePositionType implements Position, Serializable {
     }
 
     @Override
-    public TemporalPosition anyOther() {
-        return null;
-    }
-
-    @Override
     public Date getDate() {
-        if (value != null && !value.isEmpty()) {
-            try {
-                synchronized (formatter) {
-                    return formatter.parse(value);
-                }
-            } catch (ParseException ex) {
-                Logger.getLogger(TimePositionType.class.getName()).log(Level.WARNING, null, ex);
-            }
-        }
-        return null;
+        return parseDate(value);
     }
 
     @Override
@@ -298,17 +289,9 @@ public class TimePositionType implements Position, Serializable {
             s.append("indeterminatePosition:").append(indeterminatePosition.value()).append('\n');
         }
 
-        if (value != null) {
-            try {
-                final SimpleDateFormat sdf = new SimpleDateFormat("d MMMMM yyyy HH:mm:ss z");
-                final Date date;
-                synchronized (formatter) {
-                    date = formatter.parse(value);
-                }
-                s.append(sdf.format(date));
-            } catch (ParseException ex) {
-                Logger.getLogger(TimePositionType.class.getName()).log(Level.WARNING, null, ex);
-            }
+        if (value != null && getDate() != null) {
+            final SimpleDateFormat sdf = new SimpleDateFormat("d MMMMM yyyy HH:mm:ss z");
+            s.append(sdf.format(getDate()));
         }
         return s.toString();
     }

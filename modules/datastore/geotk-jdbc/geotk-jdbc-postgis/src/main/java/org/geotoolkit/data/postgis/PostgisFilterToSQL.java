@@ -17,25 +17,23 @@
 package org.geotoolkit.data.postgis;
 
 import com.vividsolutions.jts.geom.Coordinate;
-import java.io.IOException;
-
-import org.geotoolkit.data.jdbc.FilterToSQL;
-import org.geotoolkit.jdbc.JDBCDataStore;
-import org.opengis.feature.type.AttributeDescriptor;
-import org.opengis.feature.type.GeometryDescriptor;
-import org.opengis.filter.expression.Literal;
-import org.opengis.filter.expression.PropertyName;
-import org.opengis.filter.spatial.BinarySpatialOperator;
-
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LinearRing;
+import java.io.IOException;
+import net.iharder.Base64;
+import org.geotoolkit.data.jdbc.FilterToSQL;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.filter.capability.DefaultFilterCapabilities;
-import org.opengis.filter.FilterFactory;
-import org.opengis.geometry.Envelope;
-
+import org.geotoolkit.jdbc.JDBCDataStore;
 import static org.geotoolkit.util.ArgumentChecks.*;
+import org.opengis.feature.type.AttributeDescriptor;
+import org.opengis.feature.type.GeometryDescriptor;
+import org.opengis.filter.FilterFactory;
+import org.opengis.filter.expression.Literal;
+import org.opengis.filter.expression.PropertyName;
+import org.opengis.filter.spatial.BinarySpatialOperator;
+import org.opengis.geometry.Envelope;
 
 public class PostgisFilterToSQL extends FilterToSQL {
 
@@ -55,6 +53,18 @@ public class PostgisFilterToSQL extends FilterToSQL {
         helper.looseBBOXEnabled = looseBBOXEnabled;
     }
 
+    
+    @Override
+    protected void writeLiteral(final Object literal) throws IOException {
+        if(literal instanceof byte[]) {
+          out.write("decode('");
+          out.write(Base64.encodeBytes((byte[])literal));
+          out.write("','base64')");
+        }else{
+            super.writeLiteral(literal);
+        }
+    }
+    
     @Override
     protected void visitLiteralGeometry(final Literal expression) throws IOException {
         // evaluate the literal and store it for later
@@ -65,7 +75,7 @@ public class PostgisFilterToSQL extends FilterToSQL {
             geom = geom.getFactory().createLineString(((LinearRing) geom).getCoordinateSequence());
         }
 
-        out.write("GeomFromText('");
+        out.write("st_geomfromtext('");
         out.write(geom.toText());
         out.write("', " + currentSRID + ")");
     }

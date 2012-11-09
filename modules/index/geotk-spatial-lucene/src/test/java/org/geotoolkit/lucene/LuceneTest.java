@@ -35,14 +35,16 @@ import java.io.File;
 
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.KeywordAnalyzer;
+
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
+import org.apache.lucene.document.StringField;
+import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
-import org.apache.lucene.queryParser.QueryParser;
+import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.Filter;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
@@ -52,27 +54,18 @@ import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.SimpleFSDirectory;
 
 import org.geotoolkit.filter.DefaultFilterFactory2;
-import org.geotoolkit.geometry.Envelopes;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.geometry.jts.SRIDGenerator;
 import org.geotoolkit.geometry.jts.SRIDGenerator.Version;
-import org.geotoolkit.index.tree.Tree;
-import org.geotoolkit.index.tree.TreeFactory;
-import org.geotoolkit.index.tree.io.DefaultTreeVisitor;
-import org.geotoolkit.index.tree.io.TreeVisitor;
-import org.geotoolkit.index.tree.nodefactory.NodeFactory;
-import org.geotoolkit.index.tree.nodefactory.TreeNodeFactory;
+import org.geotoolkit.lucene.analysis.standard.ClassicAnalyzer;
 import org.geotoolkit.lucene.filter.SerialChainFilter;
 import org.geotoolkit.lucene.filter.SpatialQuery;
 import org.geotoolkit.lucene.index.AbstractIndexer;
-import org.geotoolkit.lucene.tree.NamedEnvelope;
-import org.geotoolkit.lucene.tree.TreeIndexReaderWrapper;
 import org.geotoolkit.referencing.CRS;
 import static org.geotoolkit.lucene.filter.LuceneOGCFilter.*;
 
 import org.opengis.filter.FilterFactory2;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.geometry.Envelope;
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -93,7 +86,6 @@ public class LuceneTest {
     private static FilterFactory2 FF = new DefaultFilterFactory2();
     private static CoordinateReferenceSystem crs;
     private static CoordinateReferenceSystem treeCrs;
-    private static Tree rTree;
     private static final Logger LOGGER = Logger.getLogger("org.constellation.lucene");
 
     private static final double TOLERANCE = 0.001;
@@ -109,9 +101,9 @@ public class LuceneTest {
         crs = CRS.decode("CRS:84");
 
         directory = new File("luceneTest");
-        if (!directory.exists())
+        if (!directory.exists()) {
             directory.mkdir();
-        else {
+        } else {
             for (File f: directory.listFiles()) {
                 f.delete();
             }
@@ -120,24 +112,16 @@ public class LuceneTest {
         // the tree CRS (must be) cartesian
         treeCrs = CRS.decode("EPSG:3857");
 
-        //Create Calculator. Be careful to choice calculator adapted from crs---
-        //final Calculator calculator = DefaultCalculator.CALCULATOR_2D;
-
-        //Create NodeFactory adapted about caller uses.
-        final NodeFactory nodefactory = TreeNodeFactory.DEFAULT_FACTORY;
-
-        //creating tree (R-Tree)------------------------------------------------
-        rTree = TreeFactory.createStarRTree(10, treeCrs, nodefactory);
-
-        final Analyzer analyzer = new StandardAnalyzer(org.apache.lucene.util.Version.LUCENE_36);
-        IndexWriterConfig config = new IndexWriterConfig(org.apache.lucene.util.Version.LUCENE_36, analyzer);
+        final Analyzer analyzer = new StandardAnalyzer(org.apache.lucene.util.Version.LUCENE_40);
+        IndexWriterConfig config = new IndexWriterConfig(org.apache.lucene.util.Version.LUCENE_40, analyzer);
         Directory FSDirectory = new SimpleFSDirectory(directory);
         final IndexWriter writer = new IndexWriter(FSDirectory, config);
-        fillTestData(writer, rTree);
+        fillTestData(writer);
         writer.commit();
         writer.close();
 
-        IndexReader reader = new TreeIndexReaderWrapper(IndexReader.open(FSDirectory),rTree, false);
+        //IndexReader reader = new TreeIndexReaderWrapper(IndexReader.open(FSDirectory),rTree, false);
+        IndexReader reader = DirectoryReader.open(FSDirectory);
         searcher = new IndexSearcher(reader);
         //create a term query to search against all documents
         simpleQuery = new TermQuery(new Term("metafile", "doc"));
@@ -292,153 +276,6 @@ public class LuceneTest {
          //we verify that we obtain the correct results
         assertEquals(nbResults, 1);
         assertTrue(results.contains("box 5"));
-    }
-
-    /**
-     * Test the rTree.
-     */
-    @Test
-    public void rTreeBBOXTest() throws Exception {
-        /*
-         * first bbox
-         */
-        GeneralEnvelope env = new GeneralEnvelope(crs);
-        env.setEnvelope(-20,-20,20,20);
-
-        // reproject to tree CRS
-        env = (GeneralEnvelope) Envelopes.transform(env, treeCrs);
-
-        //we perform a retree query
-        List<Envelope> docs = new ArrayList<Envelope>();
-        final TreeVisitor treeVisitor = new DefaultTreeVisitor(docs);
-        rTree.search(env, treeVisitor);
-
-        int nbResults = docs.size();
-        LOGGER.log(Level.FINER, "BBOX:BBOX 1 CRS=4326: nb Results: {0}", nbResults);
-
-        List<Integer> results = new ArrayList<Integer>();
-        for (int i = 0; i < nbResults; i++) {
-            NamedEnvelope doc = (NamedEnvelope) docs.get(i);
-            int id =  doc.getId();
-            results.add(id);
-            LOGGER.log(Level.FINER, "\tid: {0}", id);
-        }
-
-        //we verify that we obtain the correct results
-        assertEquals(nbResults, 10);
-        assertTrue(results.contains(0));
-        assertTrue(results.contains(1));
-        assertTrue(results.contains(2));
-        assertTrue(results.contains(3));
-        assertTrue(results.contains(7));
-        assertTrue(results.contains(8));
-        assertTrue(results.contains(10));
-        assertTrue(results.contains(12));
-        assertTrue(results.contains(13));
-        assertTrue(results.contains(14));
-
-        /*
-         * The same box in a diferent crs
-         */
-        env = new GeneralEnvelope(CRS.decode("EPSG:3395"));
-        env.setEnvelope(-2226389.8158654715, -2258423.6490963786,
-                         2226389.8158654715, 2258423.6490963805);
-
-        // reproject to tree CRS
-        env = (GeneralEnvelope) Envelopes.transform(env, treeCrs);
-
-
-        //we perform a retree query
-        docs.clear();
-        rTree.search(env, treeVisitor);
-
-        nbResults = docs.size();
-        LOGGER.log(Level.FINER, "BBOX:BBOX 1 CRS= 3395: nb Results: {0}", nbResults);
-
-        results = new ArrayList<Integer>();
-        for (int i = 0; i < nbResults; i++) {
-            NamedEnvelope doc = (NamedEnvelope) docs.get(i);
-            Integer name =  doc.getId();
-            results.add(name);
-            LOGGER.log(Level.FINER, "\tid: {0}", name);
-        }
-
-        //we verify that we obtain the correct results
-        assertEquals(nbResults, 10);
-        assertTrue(results.contains(0));
-        assertTrue(results.contains(1));
-        assertTrue(results.contains(2));
-        assertTrue(results.contains(3));
-        assertTrue(results.contains(7));
-        assertTrue(results.contains(8));
-        assertTrue(results.contains(10));
-        assertTrue(results.contains(12));
-        assertTrue(results.contains(13));
-        assertTrue(results.contains(14));
-
-        /*
-         * second bbox
-         */
-        env = new GeneralEnvelope(crs);
-        env.setEnvelope(-5, -5, 60, 60);
-
-        // reproject to tree CRS
-        env = (GeneralEnvelope) Envelopes.transform(env, treeCrs);
-
-        //we perform a retree query
-        docs.clear();
-        rTree.search(env, treeVisitor);
-
-        nbResults = docs.size();
-        LOGGER.log(Level.FINER, "BBOX:BBOX 2 CRS= 4326: nb Results: {0}", nbResults);
-
-        results = new ArrayList<Integer>();
-        for (int i = 0; i < nbResults; i++) {
-            NamedEnvelope doc = (NamedEnvelope) docs.get(i);
-            int name =  doc.getId();
-            results.add(name);
-            LOGGER.log(Level.FINER, "\tid: {0}", name);
-        }
-
-         //we verify that we obtain the correct results
-        assertEquals(nbResults, 9);
-        assertTrue(results.contains(3));
-        assertTrue(results.contains(4));
-        assertTrue(results.contains(9));
-        assertTrue(results.contains(7));
-        assertTrue(results.contains(8));
-        assertTrue(results.contains(11));
-        assertTrue(results.contains(12));
-        assertTrue(results.contains(13));
-        assertTrue(results.contains(14));
-
-        /*
-         * third bbox
-         */
-        env = new GeneralEnvelope(crs);
-        env.setEnvelope(40, -9, 50, -5);
-
-        // reproject to tree CRS
-        env = (GeneralEnvelope) Envelopes.transform(env, treeCrs);
-
-        //we perform a retree query
-        docs.clear();
-        rTree.search(env, treeVisitor);
-
-        nbResults = docs.size();
-        LOGGER.log(Level.FINER, "BBOX:BBOX 3 CRS= 4326: nb Results: {0}", nbResults);
-
-        results = new ArrayList<Integer>();
-        for (int i = 0; i < nbResults; i++) {
-            NamedEnvelope doc = (NamedEnvelope) docs.get(i);
-            int name =  doc.getId();
-            results.add(name);
-            LOGGER.log(Level.FINER, "\tid: {0}", name);
-        }
-
-         //we verify that we obtain the correct results
-        assertEquals(nbResults, 1);
-        assertTrue(results.contains(11));
     }
 
     /**
@@ -2950,8 +2787,8 @@ public class LuceneTest {
          */
 
         //we perform a lucene query
-        Analyzer analyzer    = new KeywordAnalyzer();
-        QueryParser parser  = new QueryParser(org.apache.lucene.util.Version.LUCENE_33, "metafile", analyzer);
+        Analyzer analyzer   = new ClassicAnalyzer(org.apache.lucene.util.Version.LUCENE_40);
+        QueryParser parser  = new QueryParser(org.apache.lucene.util.Version.LUCENE_40, "metafile", analyzer);
         Query query         = parser.parse("id:point*");
 
         docs = searcher.search(query, bboxQuery.getSpatialFilter(), 15);
@@ -2979,8 +2816,8 @@ public class LuceneTest {
          */
 
         //we perform two lucene query
-        analyzer      = new KeywordAnalyzer();
-        parser        = new QueryParser(org.apache.lucene.util.Version.LUCENE_33, "metafile", analyzer);
+        analyzer      = new ClassicAnalyzer(org.apache.lucene.util.Version.LUCENE_40);
+        parser        = new QueryParser(org.apache.lucene.util.Version.LUCENE_40, "metafile", analyzer);
         query         = parser.parse("id:point*");
 
         TopDocs hits1 = searcher.search(query, 15);
@@ -3027,8 +2864,8 @@ public class LuceneTest {
          */
 
         //we perform two lucene query
-        analyzer                = new KeywordAnalyzer();
-        parser                  = new QueryParser(org.apache.lucene.util.Version.LUCENE_33, "metafile", analyzer);
+        analyzer                = new ClassicAnalyzer(org.apache.lucene.util.Version.LUCENE_40);
+        parser                  = new QueryParser(org.apache.lucene.util.Version.LUCENE_40, "metafile", analyzer);
         Query query1            = parser.parse("id:point*");
         Query query2            = parser.parse("id:box*");
 
@@ -3078,8 +2915,8 @@ public class LuceneTest {
     public void QueryAndSpatialFilterAfterRemoveTest() throws Exception {
 
         // we remove a document
-        final Analyzer analyzer = new StandardAnalyzer(org.apache.lucene.util.Version.LUCENE_36);
-        IndexWriterConfig config = new IndexWriterConfig(org.apache.lucene.util.Version.LUCENE_36, analyzer);
+        final Analyzer analyzer = new StandardAnalyzer(org.apache.lucene.util.Version.LUCENE_40);
+        IndexWriterConfig config = new IndexWriterConfig(org.apache.lucene.util.Version.LUCENE_40, analyzer);
         Directory FSDirectory = new SimpleFSDirectory(directory);
         IndexWriter writer = new IndexWriter(FSDirectory, config);
 
@@ -3088,7 +2925,8 @@ public class LuceneTest {
         writer.commit();
         writer.close();
 
-        IndexReader reader = new TreeIndexReaderWrapper(IndexReader.open(FSDirectory),rTree, false);
+        //IndexReader reader = new TreeIndexReaderWrapper(IndexReader.open(FSDirectory),rTree, false);
+        IndexReader reader = DirectoryReader.open(FSDirectory);
         searcher = new IndexSearcher(reader);
 
         /*
@@ -3130,21 +2968,22 @@ public class LuceneTest {
 
         // re-add the document
 
-        config = new IndexWriterConfig(org.apache.lucene.util.Version.LUCENE_36, analyzer);
+        config = new IndexWriterConfig(org.apache.lucene.util.Version.LUCENE_40, analyzer);
         FSDirectory = new SimpleFSDirectory(directory);
         writer = new IndexWriter(FSDirectory, config);
 
         final int srid3395 = SRIDGenerator.toSRID(CRS.decode("EPSG:3395"), Version.V1);
         Document docu = new Document();
-        docu.add(new Field("id", "box 2 projected", Field.Store.YES, Field.Index.NOT_ANALYZED));
-        docu.add(new Field("docid", writer.maxDoc() + "", Field.Store.YES, Field.Index.NOT_ANALYZED));
-        addBoundingBox(docu,             556597.4539663679,  1113194.9079327357,  1111475.1028522244, 1678147.5163917788, srid3395, rTree); // attention !! reprojeté
+        docu.add(new StringField("id", "box 2 projected", Field.Store.YES));
+        docu.add(new StringField("docid", writer.maxDoc() + "", Field.Store.YES));
+        addBoundingBox(docu,             556597.4539663679,  1113194.9079327357,  1111475.1028522244, 1678147.5163917788, srid3395); // attention !! reprojeté
         writer.addDocument(docu);
 
         writer.commit();
         writer.close();
 
-        reader = new TreeIndexReaderWrapper(IndexReader.open(FSDirectory),rTree, false);
+        //reader = new TreeIndexReaderWrapper(IndexReader.open(FSDirectory),rTree, false);
+        reader = DirectoryReader.open(FSDirectory);
         searcher = new IndexSearcher(reader);
 
 
@@ -3176,99 +3015,99 @@ public class LuceneTest {
         assertTrue(results.contains("line 1 projected"));
     }
 
-    private static void fillTestData(final IndexWriter writer, final Tree rTree) throws Exception {
+    private static void fillTestData(final IndexWriter writer) throws Exception {
 
         final int srid4326 = SRIDGenerator.toSRID(crs, Version.V1);
         final int srid3395 = SRIDGenerator.toSRID(CRS.decode("EPSG:3395"), Version.V1);
 
         Document doc = new Document();
-        doc.add(new Field("id", "point 1", Field.Store.YES, Field.Index.NOT_ANALYZED));
-        doc.add(new Field("docid", writer.maxDoc() + "", Field.Store.YES, Field.Index.NOT_ANALYZED));
-        addPoint      (doc,           -10,                10, srid4326, rTree);
+        doc.add(new StringField("id", "point 1", Field.Store.YES));
+        doc.add(new StringField("docid", writer.maxDoc() + "", Field.Store.YES));
+        addPoint      (doc,           -10,                10, srid4326);
         writer.addDocument(doc);
 
         doc = new Document();
-        doc.add(new Field("id", "point 1 projected", Field.Store.YES, Field.Index.NOT_ANALYZED));
-        doc.add(new Field("docid", writer.maxDoc() + "", Field.Store.YES, Field.Index.NOT_ANALYZED));
-        addPoint      (doc,           -1111475.102852225,   1113194.9079327357, srid3395, rTree); // attention !! reprojeté
+        doc.add(new StringField("id", "point 1 projected", Field.Store.YES));
+        doc.add(new StringField("docid", writer.maxDoc() + "", Field.Store.YES));
+        addPoint      (doc,           -1111475.102852225,   1113194.9079327357, srid3395); // attention !! reprojeté
         writer.addDocument(doc);
 
         doc = new Document();
-        doc.add(new Field("id", "point 2", Field.Store.YES, Field.Index.NOT_ANALYZED));
-        doc.add(new Field("docid", writer.maxDoc() + "", Field.Store.YES, Field.Index.NOT_ANALYZED));
-        addPoint      (doc,           -10,                 0, srid4326, rTree);
+        doc.add(new StringField("id", "point 2", Field.Store.YES));
+        doc.add(new StringField("docid", writer.maxDoc() + "", Field.Store.YES));
+        addPoint      (doc,           -10,                 0, srid4326);
         writer.addDocument(doc);
 
         doc = new Document();
-        doc.add(new Field("id", "point 3", Field.Store.YES, Field.Index.NOT_ANALYZED));
-        doc.add(new Field("docid", writer.maxDoc() + "", Field.Store.YES, Field.Index.NOT_ANALYZED));
-        addPoint      (doc,             0,                 0, srid4326, rTree);
+        doc.add(new StringField("id", "point 3", Field.Store.YES));
+        doc.add(new StringField("docid", writer.maxDoc() + "", Field.Store.YES));
+        addPoint      (doc,             0,                 0, srid4326);
         writer.addDocument(doc);
 
         doc = new Document();
-        doc.add(new Field("id", "point 4", Field.Store.YES, Field.Index.NOT_ANALYZED));
-        doc.add(new Field("docid", writer.maxDoc() + "", Field.Store.YES, Field.Index.NOT_ANALYZED));
-        addPoint      (doc,            40,                20, srid4326, rTree);
+        doc.add(new StringField("id", "point 4", Field.Store.YES));
+        doc.add(new StringField("docid", writer.maxDoc() + "", Field.Store.YES));
+        addPoint      (doc,            40,                20, srid4326);
         writer.addDocument(doc);
 
         doc = new Document();
-        doc.add(new Field("id", "point 5", Field.Store.YES, Field.Index.NOT_ANALYZED));
-        doc.add(new Field("docid", writer.maxDoc() + "", Field.Store.YES, Field.Index.NOT_ANALYZED));
-        addPoint      (doc,           -40,                30, srid4326, rTree);
+        doc.add(new StringField("id", "point 5", Field.Store.YES));
+        doc.add(new StringField("docid", writer.maxDoc() + "", Field.Store.YES));
+        addPoint      (doc,           -40,                30, srid4326);
         writer.addDocument(doc);
 
         doc = new Document();
-        doc.add(new Field("id", "box 1", Field.Store.YES, Field.Index.NOT_ANALYZED));
-        doc.add(new Field("docid", writer.maxDoc() + "", Field.Store.YES, Field.Index.NOT_ANALYZED));
-        addBoundingBox(doc,           -40,                -25,           -50,               -40, srid4326, rTree);
+        doc.add(new StringField("id", "box 1", Field.Store.YES));
+        doc.add(new StringField("docid", writer.maxDoc() + "", Field.Store.YES));
+        addBoundingBox(doc,           -40,                -25,           -50,               -40, srid4326);
         writer.addDocument(doc);
 
         doc = new Document();
-        doc.add(new Field("id", "box 2", Field.Store.YES, Field.Index.NOT_ANALYZED));
-        doc.add(new Field("docid", writer.maxDoc() + "", Field.Store.YES, Field.Index.NOT_ANALYZED));
-        addBoundingBox(doc,             5,                 10,            10,                15, srid4326, rTree);
+        doc.add(new StringField("id", "box 2", Field.Store.YES));
+        doc.add(new StringField("docid", writer.maxDoc() + "", Field.Store.YES));
+        addBoundingBox(doc,             5,                 10,            10,                15, srid4326);
         writer.addDocument(doc);
 
         doc = new Document();
-        doc.add(new Field("id", "box 2 projected", Field.Store.YES, Field.Index.NOT_ANALYZED));
-        doc.add(new Field("docid", writer.maxDoc() + "", Field.Store.YES, Field.Index.NOT_ANALYZED));
-        addBoundingBox(doc,             556597.4539663679,  1113194.9079327357,  1111475.1028522244, 1678147.5163917788, srid3395, rTree); // attention !! reprojeté
+        doc.add(new StringField("id", "box 2 projected", Field.Store.YES));
+        doc.add(new StringField("docid", writer.maxDoc() + "", Field.Store.YES));
+        addBoundingBox(doc,             556597.4539663679,  1113194.9079327357,  1111475.1028522244, 1678147.5163917788, srid3395); // attention !! reprojeté
         writer.addDocument(doc);
 
         doc = new Document();
-        doc.add(new Field("id", "box 3", Field.Store.YES, Field.Index.NOT_ANALYZED));
-        doc.add(new Field("docid", writer.maxDoc() + "", Field.Store.YES, Field.Index.NOT_ANALYZED));
-        addBoundingBox(doc,            30,                 50,             0,                15, srid4326, rTree);
+        doc.add(new StringField("id", "box 3", Field.Store.YES));
+        doc.add(new StringField("docid", writer.maxDoc() + "", Field.Store.YES));
+        addBoundingBox(doc,            30,                 50,             0,                15, srid4326);
         writer.addDocument(doc);
 
         doc = new Document();
-        doc.add(new Field("id", "box 4", Field.Store.YES, Field.Index.NOT_ANALYZED));
-        doc.add(new Field("docid", writer.maxDoc() + "", Field.Store.YES, Field.Index.NOT_ANALYZED));
-        addBoundingBox(doc,           -30,                -15,             0,                10, srid4326, rTree);
+        doc.add(new StringField("id", "box 4", Field.Store.YES));
+        doc.add(new StringField("docid", writer.maxDoc() + "", Field.Store.YES));
+        addBoundingBox(doc,           -30,                -15,             0,                10, srid4326);
         writer.addDocument(doc);
 
         doc = new Document();
-        doc.add(new Field("id", "box 5", Field.Store.YES, Field.Index.NOT_ANALYZED));
-        doc.add(new Field("docid", writer.maxDoc() + "", Field.Store.YES, Field.Index.NOT_ANALYZED));
-        addBoundingBox(doc,        44.792,             51.126,        -6.171,             -2.28, srid4326, rTree);
+        doc.add(new StringField("id", "box 5", Field.Store.YES));
+        doc.add(new StringField("docid", writer.maxDoc() + "", Field.Store.YES));
+        addBoundingBox(doc,        44.792,             51.126,        -6.171,             -2.28, srid4326);
         writer.addDocument(doc);
 
         doc = new Document();
-        doc.add(new Field("id", "line 1", Field.Store.YES, Field.Index.NOT_ANALYZED));
-        doc.add(new Field("docid", writer.maxDoc() + "", Field.Store.YES, Field.Index.NOT_ANALYZED));
-        addLine       (doc,             0,                  0,            25,                 0, srid4326, rTree);
+        doc.add(new StringField("id", "line 1", Field.Store.YES));
+        doc.add(new StringField("docid", writer.maxDoc() + "", Field.Store.YES));
+        addLine       (doc,             0,                  0,            25,                 0, srid4326);
         writer.addDocument(doc);
 
         doc = new Document();
-        doc.add(new Field("id", "line 1 projected", Field.Store.YES, Field.Index.NOT_ANALYZED));
-        doc.add(new Field("docid", writer.maxDoc() + "", Field.Store.YES, Field.Index.NOT_ANALYZED));
-        addLine       (doc,             0,        0,      2857692.6111605316,                 0, srid3395, rTree); // attention !! reprojeté
+        doc.add(new StringField("id", "line 1 projected", Field.Store.YES));
+        doc.add(new StringField("docid", writer.maxDoc() + "", Field.Store.YES));
+        addLine       (doc,             0,        0,      2857692.6111605316,                 0, srid3395); // attention !! reprojeté
         writer.addDocument(doc);
 
         doc = new Document();
-        doc.add(new Field("id", "line 2", Field.Store.YES, Field.Index.NOT_ANALYZED));
-        doc.add(new Field("docid", writer.maxDoc() + "", Field.Store.YES, Field.Index.NOT_ANALYZED));
-        addLine       (doc,             0,                  0,             0,               -15, srid4326, rTree);
+        doc.add(new StringField("id", "line 2", Field.Store.YES));
+        doc.add(new StringField("docid", writer.maxDoc() + "", Field.Store.YES));
+        addLine       (doc,             0,                  0,             0,               -15, srid4326);
         writer.addDocument(doc);
     }
 
@@ -3282,7 +3121,7 @@ public class LuceneTest {
      * @param y2  the Y coordinate of the first point of the line.
      * @param crsName The coordinate reference system in witch the coordinates are expressed.
      */
-    private static void addLine(final Document doc, final double x1, final double y1, final double x2, final double y2, final int srid, final Tree rTree) {
+    private static void addLine(final Document doc, final double x1, final double y1, final double x2, final double y2, final int srid) {
 
         LineString line = GF.createLineString(new Coordinate[]{
             new Coordinate(x1,y1),
@@ -3290,10 +3129,10 @@ public class LuceneTest {
         });
         line.setSRID(srid);
 
-        AbstractIndexer.addGeometry(doc, line, rTree);
+        AbstractIndexer.addGeometry(doc, line, null);
 
         // add a default meta field to make searching all documents easy
-        doc.add(new Field("metafile", "doc",   Field.Store.YES, Field.Index.ANALYZED));
+        doc.add(new StringField("metafile", "doc",   Field.Store.YES));
 
     }
 
@@ -3305,15 +3144,15 @@ public class LuceneTest {
      * @param y       The y coordinate of the point.
      * @param crsName The coordinate reference system in witch the coordinates are expressed.
      */
-    private static void addPoint(final Document doc, final double x, final double y, final int srid, final Tree rTree) {
+    private static void addPoint(final Document doc, final double x, final double y, final int srid) {
 
         Point pt = GF.createPoint(new Coordinate(x, y));
         pt.setSRID(srid);
 
-        AbstractIndexer.addGeometry(doc, pt, rTree);
+        AbstractIndexer.addGeometry(doc, pt, null);
 
         // add a default meta field to make searching all documents easy
-        doc.add(new Field("metafile", "doc",    Field.Store.YES, Field.Index.ANALYZED));
+        doc.add(new StringField("metafile", "doc",    Field.Store.YES));
     }
 
     /**
@@ -3326,7 +3165,7 @@ public class LuceneTest {
      * @param maxy the maximum Y coordinate of the bounding box.
      * @param crsName The coordinate reference system in witch the coordinates are expressed.
      */
-    private static void addBoundingBox(final Document doc, final double minx, final double maxx, final double miny, final double maxy, final int srid, final Tree rTree) {
+    private static void addBoundingBox(final Document doc, final double minx, final double maxx, final double miny, final double maxy, final int srid) {
 
         final Coordinate[] crds = new Coordinate[]{
         new Coordinate(0, 0),
@@ -3350,10 +3189,10 @@ public class LuceneTest {
         crds[4].y = miny;
         poly.setSRID(srid);
 
-        AbstractIndexer.addGeometry(doc, poly, rTree);
+        AbstractIndexer.addGeometry(doc, poly, null);
 
         // add a default meta field to make searching all documents easy
-        doc.add(new Field("metafile", "doc", Field.Store.YES, Field.Index.ANALYZED));
+        doc.add(new StringField("metafile", "doc", Field.Store.YES));
     }
 
 }

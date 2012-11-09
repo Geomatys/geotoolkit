@@ -16,11 +16,11 @@
  */
 package org.geotoolkit.lucene.index;
 
-import java.util.List;
+import java.nio.ByteBuffer;
 import java.util.Map;
 import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.queryParser.ParseException;
-import org.apache.lucene.queryParser.QueryParser;
+import org.apache.lucene.queryparser.classic.ParseException;
+import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.NumericRangeQuery;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.TermRangeQuery;
@@ -40,33 +40,32 @@ public class ExtendedQueryParser extends QueryParser {
     }
 
     @Override
-    public Query getRangeQuery(final String field, final String part1, final String part2, final boolean inclusive) throws ParseException {
-        final TermRangeQuery query = (TermRangeQuery) super.getRangeQuery(field, part1, part2, inclusive);
+    public Query getRangeQuery(final String field, final String part1, final String part2, final boolean startInclusive, final boolean endInclusive) throws ParseException {
         final Character fieldType = numericFields.get(field);
         if (fieldType != null) {
             switch (fieldType) {
                 case 'd': return NumericRangeQuery.newDoubleRange(field,
-                                                                  Double.parseDouble(query.getLowerTerm()),
-                                                                  Double.parseDouble(query.getUpperTerm()),
-                                                                  query.includesLower(), query.includesUpper());
+                                                                  Double.parseDouble(part1),
+                                                                  Double.parseDouble(part2),
+                                                                  startInclusive, endInclusive);
                 case 'i': return NumericRangeQuery.newIntRange(field,
-                                                               Integer.parseInt(query.getLowerTerm()),
-                                                               Integer.parseInt(query.getUpperTerm()),
-                                                               query.includesLower(), query.includesUpper());
+                                                               Integer.parseInt(part1),
+                                                               Integer.parseInt(part2),
+                                                               startInclusive, endInclusive);
                 case 'f': return NumericRangeQuery.newFloatRange(field,
-                                                                 Float.parseFloat(query.getLowerTerm()),
-                                                                 Float.parseFloat(query.getUpperTerm()),
-                                                                 query.includesLower(), query.includesUpper());
+                                                                 Float.parseFloat(part1),
+                                                                 Float.parseFloat(part2),
+                                                                 startInclusive, endInclusive);
                 case 'l': return NumericRangeQuery.newLongRange(field,
-                                                                Long.parseLong(query.getLowerTerm()),
-                                                                Long.parseLong(query.getUpperTerm()),
-                                                                query.includesLower(), query.includesUpper());
+                                                                Long.parseLong(part1),
+                                                                Long.parseLong(part2),
+                                                                startInclusive, endInclusive);
                     
                 default: throw new IllegalArgumentException("Unexpected field type:" + field);
             }
             
         } else {
-            return query;
+            return (TermRangeQuery) super.getRangeQuery(field, part1, part2, startInclusive, endInclusive);
         }
     }
 }

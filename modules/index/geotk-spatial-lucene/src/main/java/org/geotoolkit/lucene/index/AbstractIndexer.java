@@ -29,7 +29,7 @@ import com.vividsolutions.jts.geom.impl.CoordinateArraySequence;
 // Apache Lucene dependencies
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.document.Document;
-import org.apache.lucene.document.Field;
+import org.apache.lucene.document.StoredField;
 import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
@@ -178,7 +178,7 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
         final long time = System.currentTimeMillis();
         int nbEntries = 0;
         try {
-            final IndexWriterConfig conf = new IndexWriterConfig(Version.LUCENE_36, analyzer);
+            final IndexWriterConfig conf = new IndexWriterConfig(Version.LUCENE_40, analyzer);
             final IndexWriter writer     = new IndexWriter(LuceneUtils.getAppropriateDirectory(getFileDirectory()), conf);
             final String serviceID       = getServiceID();
             
@@ -222,7 +222,7 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
         final long time  = System.currentTimeMillis();
         int nbEntries      = 0;
         try {
-            final IndexWriterConfig conf   = new IndexWriterConfig(Version.LUCENE_36, analyzer);
+            final IndexWriterConfig conf   = new IndexWriterConfig(Version.LUCENE_40, analyzer);
             final IndexWriter writer       = new IndexWriter(LuceneUtils.getAppropriateDirectory(getFileDirectory()), conf);
             final String serviceID         = getServiceID();
             final Collection<String> identifiers = getAllIdentifiers();
@@ -291,7 +291,7 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
      */
     public void indexDocument(final E meta) {
         try {
-            final IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_36, analyzer);
+            final IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_40, analyzer);
             final IndexWriter writer = new IndexWriter(LuceneUtils.getAppropriateDirectory(getFileDirectory()), config);
 
             final int docId = writer.maxDoc();
@@ -370,7 +370,7 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
      */
     public void removeDocument(final String identifier) {
         try {
-            final IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_36, analyzer);
+            final IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_40, analyzer);
             final IndexWriter writer = new IndexWriter(LuceneUtils.getAppropriateDirectory(getFileDirectory()), config);
 
             final Term t          = new Term("id", identifier);
@@ -465,19 +465,12 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
      * @param doc The lucene document currently building.
      * @param geom A JTS geometry
      */
-    public static void addGeometry(final Document doc, final Geometry geom, final Tree rTree) {
+    public static NamedEnvelope addGeometry(final Document doc, final Geometry geom, final Tree rTree) {
+        NamedEnvelope namedBound = null;
         if (rTree != null) {
-            final Envelope jtsBound = geom.getEnvelopeInternal();
             try {
                 final int id     =  Integer.parseInt(doc.get("docid"));
-                final String epsgCode = SRIDGenerator.toSRS(geom.getSRID(), SRIDGenerator.Version.V1);
-                final CoordinateReferenceSystem geomCRS = CRS.decode(epsgCode);
-                final GeneralEnvelope bound = new GeneralEnvelope(geomCRS);
-                bound.setRange(0, jtsBound.getMinX(), jtsBound.getMaxX());
-                bound.setRange(1, jtsBound.getMinY(), jtsBound.getMaxY());
-            
-                // reproject to cartesian CRS
-                final NamedEnvelope namedBound = new NamedEnvelope(Envelopes.transform(bound, rTree.getCrs()), id);
+                namedBound = getNamedEnvelope(id, geom, rTree.getCrs());
                 rTree.insert(namedBound);
             } catch (TransformException ex) {
                 LOGGER.log(Level.WARNING, "Unable to insert envelope in R-Tree.", ex);
@@ -485,9 +478,22 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
                 LOGGER.log(Level.WARNING, "Unable to insert envelope in R-Tree.", ex);
             }
         }
-        doc.add(new Field(LuceneOGCFilter.GEOMETRY_FIELD_NAME,WKBUtils.toWKBwithSRID(geom)));
+        doc.add(new StoredField(LuceneOGCFilter.GEOMETRY_FIELD_NAME,WKBUtils.toWKBwithSRID(geom)));
+        return namedBound;
     }
+    
+    public static NamedEnvelope getNamedEnvelope(final int id, final Geometry geom, final CoordinateReferenceSystem crs) throws FactoryException, TransformException {
+        final Envelope jtsBound = geom.getEnvelopeInternal();
+        final String epsgCode = SRIDGenerator.toSRS(geom.getSRID(), SRIDGenerator.Version.V1);
+        final CoordinateReferenceSystem geomCRS = CRS.decode(epsgCode);
+        final GeneralEnvelope bound = new GeneralEnvelope(geomCRS);
+        bound.setRange(0, jtsBound.getMinX(), jtsBound.getMaxX());
+        bound.setRange(1, jtsBound.getMinY(), jtsBound.getMaxY());
 
+        // reproject to specified CRS
+        return new NamedEnvelope(Envelopes.transform(bound, crs), id);
+    }
+    
     /**
      * Free the resources.
      */

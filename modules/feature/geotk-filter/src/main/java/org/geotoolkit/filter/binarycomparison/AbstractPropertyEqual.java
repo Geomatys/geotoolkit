@@ -20,6 +20,7 @@ package org.geotoolkit.filter.binarycomparison;
 import java.util.Calendar;
 import org.geotoolkit.util.Converters;
 import org.geotoolkit.util.StringUtilities;
+import org.opengis.filter.MatchAction;
 import org.opengis.filter.expression.Expression;
 
 /**
@@ -33,8 +34,8 @@ public abstract class AbstractPropertyEqual extends AbstractBinaryComparisonOper
 
     private static final double EPS = 1E-12;
 
-    public AbstractPropertyEqual(final Expression left, final Expression right, final boolean match) {
-        super(left,right,match);
+    public AbstractPropertyEqual(final Expression left, final Expression right, final boolean match, final MatchAction matchAction) {
+        super(left,right,match,matchAction);
     }
 
     /**

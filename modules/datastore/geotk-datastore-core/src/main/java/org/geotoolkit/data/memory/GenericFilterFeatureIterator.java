@@ -19,7 +19,7 @@
 package org.geotoolkit.data.memory;
 
 import java.util.NoSuchElementException;
-import org.geotoolkit.data.DataStoreRuntimeException;
+import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.FeatureReader;
@@ -59,7 +59,7 @@ public class GenericFilterFeatureIterator<F extends Feature, R extends FeatureIt
      * {@inheritDoc }
      */
     @Override
-    public F next() throws DataStoreRuntimeException {
+    public F next() throws FeatureStoreRuntimeException {
         if (hasNext()) {
             // hasNext() ensures that next != null
             final F f = next;
@@ -74,7 +74,7 @@ public class GenericFilterFeatureIterator<F extends Feature, R extends FeatureIt
      * {@inheritDoc }
      */
     @Override
-    public void close() throws DataStoreRuntimeException {
+    public void close() throws FeatureStoreRuntimeException {
         iterator.close();
     }
 
@@ -82,7 +82,7 @@ public class GenericFilterFeatureIterator<F extends Feature, R extends FeatureIt
      * {@inheritDoc }
      */
     @Override
-    public boolean hasNext() throws DataStoreRuntimeException {
+    public boolean hasNext() throws FeatureStoreRuntimeException {
         if (next != null) {
             return true;
         }
@@ -159,7 +159,7 @@ public class GenericFilterFeatureIterator<F extends Feature, R extends FeatureIt
         }
 
         @Override
-        public void write() throws DataStoreRuntimeException {
+        public void write() throws FeatureStoreRuntimeException {
             iterator.write();
         }
     }
@@ -174,12 +174,12 @@ public class GenericFilterFeatureIterator<F extends Feature, R extends FeatureIt
         }
 
         @Override
-        public FeatureIterator iterator(final Hints hints) throws DataStoreRuntimeException {
+        public FeatureIterator iterator(final Hints hints) throws FeatureStoreRuntimeException {
             return wrap(getOriginalFeatureCollection().iterator(hints), filter);
         }
 
         @Override
-        protected Feature modify(Feature original) throws DataStoreRuntimeException {
+        protected Feature modify(Feature original) throws FeatureStoreRuntimeException {
             throw new UnsupportedOperationException("should not have been called.");
         }
 

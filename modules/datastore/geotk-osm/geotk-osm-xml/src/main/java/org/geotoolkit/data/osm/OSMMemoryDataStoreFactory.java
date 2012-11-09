@@ -20,9 +20,9 @@ package org.geotoolkit.data.osm;
 import java.net.URL;
 
 import java.util.Collections;
-import org.geotoolkit.data.AbstractDataStoreFactory;
-import org.geotoolkit.data.AbstractFileDataStoreFactory;
-import org.geotoolkit.data.DataStore;
+import org.geotoolkit.data.AbstractFeatureStoreFactory;
+import org.geotoolkit.data.AbstractFileFeatureStoreFactory;
+import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.metadata.iso.DefaultIdentifier;
 import org.geotoolkit.metadata.iso.citation.DefaultCitation;
@@ -44,7 +44,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class OSMMemoryDataStoreFactory extends AbstractFileDataStoreFactory {
+public class OSMMemoryDataStoreFactory extends AbstractFileFeatureStoreFactory {
 
     /** factory identification **/
     public static final String NAME = "osm-xml";
@@ -85,7 +85,7 @@ public class OSMMemoryDataStoreFactory extends AbstractFileDataStoreFactory {
     }
 
     @Override
-    public DataStore create(final ParameterValueGroup params) throws DataStoreException {
+    public FeatureStore open(final ParameterValueGroup params) throws DataStoreException {
         checkCanProcessWithError(params);
         final URL url = (URL) params.parameter(URLP.getName().toString()).getValue();
                 
@@ -104,8 +104,8 @@ public class OSMMemoryDataStoreFactory extends AbstractFileDataStoreFactory {
     }
 
     @Override
-    public DataStore createNew(final ParameterValueGroup params) throws DataStoreException {
-        return create(params);
+    public FeatureStore create(final ParameterValueGroup params) throws DataStoreException {
+        return open(params);
     }
 
     @Override

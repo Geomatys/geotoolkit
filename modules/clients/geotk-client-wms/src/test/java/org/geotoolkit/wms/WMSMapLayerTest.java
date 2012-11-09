@@ -203,7 +203,7 @@ public class WMSMapLayerTest {
         env.setRange(1, -180, 180);
         final Dimension rect = new Dimension(360, 180);
 
-        final URL url = layer.getCoverageReference().queryFeatureInfo(env, rect, 140, 250, new String[]{"test"}, "gml", 1);
+        final URL url = layer.getCoverageReference().queryFeatureInfo(env, rect, 140, 250, new String[]{"test"}, "gml", 1).getURL();
 
         final String sUrl = url.toString();
         assertTrue(sUrl.startsWith("http://test.com?"));
@@ -251,7 +251,7 @@ public class WMSMapLayerTest {
         env.setRange(1, -180, 180);
         final Dimension rect = new Dimension(360, 180);
 
-        final URL url = layer.getCoverageReference().queryFeatureInfo(env, rect, 140, 250, new String[]{"test"}, "gml", 1);
+        final URL url = layer.getCoverageReference().queryFeatureInfo(env, rect, 140, 250, new String[]{"test"}, "gml", 1).getURL();
 
         final String sUrl = url.toString();
         assertTrue(sUrl.startsWith("http://test.com?"));
@@ -299,7 +299,7 @@ public class WMSMapLayerTest {
         env.setRange(1, -90, 90);
         final Dimension rect = new Dimension(360, 180);
 
-        final URL url = layer.getCoverageReference().queryFeatureInfo(env, rect, 140, 250, new String[]{"test"}, "gml", 1);
+        final URL url = layer.getCoverageReference().queryFeatureInfo(env, rect, 140, 250, new String[]{"test"}, "gml", 1).getURL();
 
         final String sUrl = url.toString();
         assertTrue(sUrl.startsWith("http://test.com?"));
@@ -348,7 +348,7 @@ public class WMSMapLayerTest {
         env.setRange(1, -90, 90);
         final Dimension rect = new Dimension(360, 180);
 
-        final URL url = layer.getCoverageReference().queryFeatureInfo(env, rect, 140, 250, new String[]{"test"}, "gml", 1);
+        final URL url = layer.getCoverageReference().queryFeatureInfo(env, rect, 140, 250, new String[]{"test"}, "gml", 1).getURL();
 
         final String sUrl = url.toString();
         assertTrue(sUrl.startsWith("http://test.com?"));
@@ -397,7 +397,7 @@ public class WMSMapLayerTest {
         env.setRange(1, -90, 90);
         final Dimension rect = new Dimension(360, 180);
 
-        final URL url = layer.getCoverageReference().queryFeatureInfo(env, rect, 140, 250, new String[]{"test"}, "gml", 1);
+        final URL url = layer.getCoverageReference().queryFeatureInfo(env, rect, 140, 250, new String[]{"test"}, "gml", 1).getURL();
 
         final String sUrl = url.toString();
         assertTrue(sUrl.startsWith("http://test.com?"));
@@ -447,7 +447,7 @@ public class WMSMapLayerTest {
 
         final Dimension rect = new Dimension(512, 512);
 
-        final URL url = layer.getCoverageReference().queryFeatureInfo(env, rect, 140, 250, new String[]{"test"}, "gml", 1);
+        final URL url = layer.getCoverageReference().queryFeatureInfo(env, rect, 140, 250, new String[]{"test"}, "gml", 1).getURL();
 
         final String sUrl = url.toString();
 
@@ -497,7 +497,7 @@ public class WMSMapLayerTest {
         env.setRange(1, -2.0037507067162E7, 2.0037507067162E7);
         final Dimension rect = new Dimension(512, 512);
 
-        final URL url = layer.getCoverageReference().queryFeatureInfo(env, rect, 140, 250, new String[]{"test"}, "gml", 1);
+        final URL url = layer.getCoverageReference().queryFeatureInfo(env, rect, 140, 250, new String[]{"test"}, "gml", 1).getURL();
 
         final String sUrl = url.toString();
         assertTrue(sUrl.startsWith("http://test.com?"));
@@ -548,7 +548,7 @@ public class WMSMapLayerTest {
         env.setRange(1, -2.0037507067162E7, 2.0037507067162E7);
         final Dimension rect = new Dimension(512, 512);
 
-        final URL url = layer.getCoverageReference().queryFeatureInfo(env, rect, 140, 250, new String[]{"test"}, "gml", 1);
+        final URL url = layer.getCoverageReference().queryFeatureInfo(env, rect, 140, 250, new String[]{"test"}, "gml", 1).getURL();
 
         final String sUrl = url.toString();
         assertTrue(sUrl.startsWith("http://test.com?"));
@@ -597,7 +597,7 @@ public class WMSMapLayerTest {
         env.setRange(1, -2.0037507067162E7, 2.0037507067162E7);
         final Dimension rect = new Dimension(512, 512);
 
-        final URL url = layer.getCoverageReference().queryFeatureInfo(env, rect, 140, 250, new String[]{"test"}, "gml", 1);
+        final URL url = layer.getCoverageReference().queryFeatureInfo(env, rect, 140, 250, new String[]{"test"}, "gml", 1).getURL();
 
         final String sUrl = url.toString();
         assertTrue(sUrl.startsWith("http://test.com?"));
@@ -631,7 +631,7 @@ public class WMSMapLayerTest {
         layer.getCoverageReference().dimensions().put("DIMRANGE", "-50,50");
 
         final Dimension rect = new Dimension(140, 20);
-        final URL url = layer.getCoverageReference().queryLegend(rect, "image/gif", "test", 2500.0);
+        final URL url = layer.getCoverageReference().queryLegend(rect, "image/gif", "test", 2500.0).getURL();
         final String sUrl = url.toString();
         assertTrue("was:" + sUrl, sUrl.contains("SERVICE=WMS"));
         assertTrue("was:" + sUrl, sUrl.contains("VERSION=1.1.1"));
@@ -668,7 +668,7 @@ public class WMSMapLayerTest {
         layer.getCoverageReference().dimensions().put("DIMRANGE", "-50,50");
 
         final Dimension rect = new Dimension(140, 20);
-        final URL url = layer.getCoverageReference().queryLegend(rect, "image/gif", "test", 2500.0);
+        final URL url = layer.getCoverageReference().queryLegend(rect, "image/gif", "test", 2500.0).getURL();
         final String sUrl = url.toString();
         assertTrue("was:" + sUrl, sUrl.contains("SERVICE=WMS"));
         assertTrue("was:" + sUrl, sUrl.contains("VERSION=1.3.0"));

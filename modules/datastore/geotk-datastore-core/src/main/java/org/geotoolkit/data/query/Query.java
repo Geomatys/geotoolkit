@@ -61,7 +61,7 @@ public interface Query {
 
     /**
      * Returns the language set for this query. This will be one of the query
-     * language constants returned by {@link DataStore#getSupportedQueryLanguages}.
+     * language constants returned by {@link FeatureStore#getSupportedQueryLanguages}.
      *
      * @return the query language.
      */
@@ -183,16 +183,16 @@ public interface Query {
      *
      * <p>
      * Gets the coordinate System to reproject the data contained in the
-     * backend datastore to.
+     * backend feature store to.
      * </p>
      *
      * <p>
-     * If the DataStore can optimize the reprojection it should, if not then a
+     * If the feature store can optimize the reprojection it should, if not then a
      * decorator on the reader should perform the reprojection on the fly.
      * </p>
      *
      * <p>
-     * If the datastore has the wrong CS then {@link #getCoordinateSystem()} should be set to
+     * If the feature store has the wrong CS then {@link #getCoordinateSystem()} should be set to
      * the CS to be used, this will perform the reprojection on that.
      * </p>
      *

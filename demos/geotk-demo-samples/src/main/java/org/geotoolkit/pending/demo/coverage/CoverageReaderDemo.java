@@ -44,7 +44,7 @@ public class CoverageReaderDemo {
         
         //create a mapcontext
         final MapContext context = MapBuilder.createContext();        
-        final CoverageMapLayer cl = MapBuilder.createCoverageLayer(reader, SF.style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER), "raster");
+        final CoverageMapLayer cl = MapBuilder.createCoverageLayer(reader, 0, SF.style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER), "raster");
         context.layers().add(cl);
         
         //display it

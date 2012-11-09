@@ -25,7 +25,7 @@ import java.nio.charset.Charset;
 import java.util.logging.Level;
 
 import org.geotoolkit.storage.DataStoreException;
-import org.geotoolkit.data.DataStoreRuntimeException;
+import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.shapefile.ShapefileDataStoreFactory;
 import org.geotoolkit.data.shapefile.ShapefileFeatureWriter;
@@ -72,10 +72,10 @@ class IndexedShapefileFeatureWriter extends ShapefileFeatureWriter{
     }
 
     @Override
-    public SimpleFeature next() throws DataStoreRuntimeException {
+    public SimpleFeature next() throws FeatureStoreRuntimeException {
         // closed already, error!
         if (featureReader == null) {
-            throw new DataStoreRuntimeException("Writer closed");
+            throw new FeatureStoreRuntimeException("Writer closed");
         }
 
         // we have to write the current feature back into the stream
@@ -87,7 +87,7 @@ class IndexedShapefileFeatureWriter extends ShapefileFeatureWriter{
         try {
             next = fidWriter.next();
         } catch (IOException ex) {
-            throw new DataStoreRuntimeException(ex);
+            throw new FeatureStoreRuntimeException(ex);
         }
         currentFid = getFeatureType().getTypeName() + "." + next;
         SimpleFeature feature = super.next();
@@ -100,21 +100,21 @@ class IndexedShapefileFeatureWriter extends ShapefileFeatureWriter{
     }
 
     @Override
-    public void remove() throws DataStoreRuntimeException {
+    public void remove() throws FeatureStoreRuntimeException {
         try {
             fidWriter.remove();
         } catch (IOException ex) {
-            throw new DataStoreRuntimeException(ex);
+            throw new FeatureStoreRuntimeException(ex);
         }
         super.remove();
     }
 
     @Override
-    public void write() throws DataStoreRuntimeException {
+    public void write() throws FeatureStoreRuntimeException {
         try {
             fidWriter.write();
         } catch (IOException ex) {
-            throw new DataStoreRuntimeException(ex);
+            throw new FeatureStoreRuntimeException(ex);
         }
         super.write();
     }
@@ -123,7 +123,7 @@ class IndexedShapefileFeatureWriter extends ShapefileFeatureWriter{
      * Release resources and flush the header information.
      */
     @Override
-    public void close() throws DataStoreRuntimeException {
+    public void close() throws FeatureStoreRuntimeException {
         super.close();
 
         try {
@@ -147,7 +147,7 @@ class IndexedShapefileFeatureWriter extends ShapefileFeatureWriter{
     }
 
     @Override
-    protected void doClose() throws DataStoreRuntimeException {
+    protected void doClose() throws FeatureStoreRuntimeException {
         super.doClose();
         try{
             fidWriter.close();

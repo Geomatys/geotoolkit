@@ -25,6 +25,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -89,7 +90,16 @@ public abstract class AbstractTiledGraphic extends AbstractGraphicJ2D{
             return;
         }
         
-        final ExecutorService executor = Executors.newFixedThreadPool(6);
+        final ExecutorService executor = Executors.newFixedThreadPool(6, new ThreadFactory() {
+            
+                    private volatile int inc =0;
+                    @Override
+                    public Thread newThread(Runnable r) {
+                        final Thread t = new Thread();
+                        t.setName("AbstractTileGraphic - " + inc++);
+                        return t;
+                    }
+                });
         
         for(final QueryTileReference entry : queries){            
             if(monitor.stopRequested()){

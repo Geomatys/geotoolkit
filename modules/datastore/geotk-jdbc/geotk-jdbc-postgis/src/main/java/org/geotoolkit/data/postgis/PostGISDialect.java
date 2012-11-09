@@ -83,6 +83,7 @@ public class PostGISDialect extends AbstractSQLDialect {
 
     private static final Map<String, Class> TYPE_TO_CLASS_MAP = new HashMap<String, Class>();
     private static final Map<Class, String> CLASS_TO_TYPE_MAP = new HashMap<Class, String>();
+    private static final Map<String, String> TYPE_TO_ST_TYPE_MAP = new HashMap<String, String>();
 
     static{
         TYPE_TO_CLASS_MAP.put("GEOMETRY", Geometry.class);
@@ -109,6 +110,15 @@ public class PostGISDialect extends AbstractSQLDialect {
         CLASS_TO_TYPE_MAP.put(MultiLineString.class, "MULTILINESTRING");
         CLASS_TO_TYPE_MAP.put(MultiPolygon.class, "MULTIPOLYGON");
         CLASS_TO_TYPE_MAP.put(GeometryCollection.class, "GEOMETRYCOLLECTION");
+        
+        TYPE_TO_ST_TYPE_MAP.put("GEOMETRY","ST_Geometry");
+        TYPE_TO_ST_TYPE_MAP.put("POINT","ST_Point");
+        TYPE_TO_ST_TYPE_MAP.put("LINESTRING","ST_LineString");
+        TYPE_TO_ST_TYPE_MAP.put("POLYGON","ST_Polygon");
+        TYPE_TO_ST_TYPE_MAP.put("MULTIPOINT","ST_MultiPoint");
+        TYPE_TO_ST_TYPE_MAP.put("MULTILINESTRING","ST_MultiLineString");
+        TYPE_TO_ST_TYPE_MAP.put("MULTIPOLYGON","ST_MultiPolygon");
+        TYPE_TO_ST_TYPE_MAP.put("GEOMETRYCOLLECTION","ST_GeometryCollection");
         
         //array types
         CLASS_TO_TYPE_MAP.put(float[].class, "float[]");
@@ -175,7 +185,9 @@ public class PostGISDialect extends AbstractSQLDialect {
     public String getSqlTypeToSqlTypeNameOverride(Integer sqlType, Class clazz) {
         if(sqlType == Types.ARRAY){
             final Class sc = clazz.getComponentType();
-            if(long.class.equals(sc) || Long.class.equals(sc)){
+            if(byte.class.equals(sc) || Byte.class.equals(sc)){
+                return "bytea";
+            }else if(long.class.equals(sc) || Long.class.equals(sc)){
                 return "bigint[]";
             }else if(int.class.equals(sc) || Integer.class.equals(sc)){
                 return "integer[]";
@@ -226,7 +238,7 @@ public class PostGISDialect extends AbstractSQLDialect {
             final String column, final GeometryFactory factory, final Connection cx)
             throws IOException, SQLException{
 
-        switch((GeometryEncoding)descriptor.getType().getUserData().get(GEOM_ENCODING)){
+        switch((PostGISDialect.GeometryEncoding)descriptor.getType().getUserData().get(GEOM_ENCODING)){
             case HEXEWKB:
                 return hexewkbReader.parse(rs.getString(column));
             case WKB:
@@ -246,7 +258,7 @@ public class PostGISDialect extends AbstractSQLDialect {
             final int column, final GeometryFactory factory, final Connection cx)
             throws IOException, SQLException{
 
-        switch((GeometryEncoding)descriptor.getType().getUserData().get(GEOM_ENCODING)){
+        switch((PostGISDialect.GeometryEncoding)descriptor.getType().getUserData().get(GEOM_ENCODING)){
             case HEXEWKB:
                 return hexewkbReader.parse(rs.getString(column));
             case WKB:
@@ -315,7 +327,7 @@ public class PostGISDialect extends AbstractSQLDialect {
             sql.append(tableName).append("','");
             sql.append(geometryColumn).append("'))));");
         } else {
-            sql.append("ST_AsText(ST_Force_2D(Envelope(ST_Extent(\"");
+            sql.append("ST_AsText(ST_Force_2D(st_envelope(ST_Extent(\"");
             sql.append(geometryColumn);
             sql.append("\"::geometry))))");
         }
@@ -356,11 +368,11 @@ public class PostGISDialect extends AbstractSQLDialect {
         if(tableName == null || tableName.isEmpty()){
             //this column informations seems to come from a custom sql query
             //the result will be the natural encoding of postgis which is hexadecimal EWKB
-            atb.addUserData(GEOM_ENCODING, GeometryEncoding.HEXEWKB);
+            atb.addUserData(GEOM_ENCODING, PostGISDialect.GeometryEncoding.HEXEWKB);
 
         }else{
             //this column informations comes from a real table
-            atb.addUserData(GEOM_ENCODING, GeometryEncoding.WKB);
+            atb.addUserData(GEOM_ENCODING, PostGISDialect.GeometryEncoding.WKB);
 
             //first attempt, try with the geometry metadata
             Statement statement = null;
@@ -618,7 +630,7 @@ public class PostGISDialect extends AbstractSQLDialect {
                         sb = new StringBuilder("ALTER TABLE \"").append(tableName).append('"');
                         sb.append(" ADD CONSTRAINT \"enforce_srid_");
                         sb.append(gd.getLocalName()).append('"');
-                        sb.append(" CHECK (SRID(");
+                        sb.append(" CHECK (st_srid(");
                         sb.append('"').append(gd.getLocalName()).append('"');
                         sb.append(") = ").append(srid).append(')');
                         sql = sb.toString();
@@ -631,7 +643,7 @@ public class PostGISDialect extends AbstractSQLDialect {
                     sb = new StringBuilder("ALTER TABLE \"").append(tableName).append('"');
                     sb.append(" ADD CONSTRAINT \"enforce_dims_");
                     sb.append(gd.getLocalName()).append('"');
-                    sb.append(" CHECK (ndims(\"").append(gd.getLocalName()).append("\") = 2)");
+                    sb.append(" CHECK (st_ndims(\"").append(gd.getLocalName()).append("\") = 2)");
                     sql = sb.toString();
                     LOGGER.fine(sql);
                     st.execute(sql);
@@ -642,9 +654,9 @@ public class PostGISDialect extends AbstractSQLDialect {
                         sb.append('"');
                         sb.append(" ADD CONSTRAINT \"enforce_geotype_");
                         sb.append(gd.getLocalName()).append('"');
-                        sb.append(" CHECK (geometrytype(");
+                        sb.append(" CHECK (st_geometrytype(");
                         sb.append('"').append(gd.getLocalName()).append('"');
-                        sb.append(") = '").append(geomType).append("'::text OR \"");
+                        sb.append(") = '").append(TYPE_TO_ST_TYPE_MAP.get(geomType)).append("'::text OR \"");
                         sb.append(gd.getLocalName()).append('"').append(" IS NULL)");
                         sql = sb.toString();
                         LOGGER.fine(sql);
@@ -681,7 +693,7 @@ public class PostGISDialect extends AbstractSQLDialect {
                 value = value.getFactory().createLineString(((LinearRing) value).getCoordinateSequence());
             }
 
-            sql.append("GeomFromText('").append(value.toText()).append("', ").append(srid).append(")");
+            sql.append("st_geomfromtext('").append(value.toText()).append("', ").append(srid).append(")");
         }
     }
 
@@ -767,7 +779,7 @@ public class PostGISDialect extends AbstractSQLDialect {
                     atb.reset();
                     atb.copy((AttributeType)desc.getType());
                     if(Geometry.class.isAssignableFrom(atb.getBinding())){
-                        atb.addUserData(GEOM_ENCODING, GeometryEncoding.HEXEWKB);
+                        atb.addUserData(GEOM_ENCODING, PostGISDialect.GeometryEncoding.HEXEWKB);
                         adb.setType(atb.buildGeometryType());
                     }else{
                         adb.setType(atb.buildType());
@@ -804,7 +816,7 @@ public class PostGISDialect extends AbstractSQLDialect {
                 }
 
                 if(Geometry.class.isAssignableFrom(atb.getBinding())){
-                    atb.addUserData(GEOM_ENCODING, GeometryEncoding.HEXEWKB);
+                    atb.addUserData(GEOM_ENCODING, PostGISDialect.GeometryEncoding.HEXEWKB);
                     adb.setType(atb.buildGeometryType());
                 }else{
                     adb.setType(atb.buildType());

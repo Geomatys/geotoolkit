@@ -18,7 +18,7 @@
 
 package org.geotoolkit.data.shapefile;
 
-import org.geotoolkit.data.DataStoreFactory;
+import org.geotoolkit.data.FeatureStoreFactory;
 import org.geotoolkit.data.shapefile.lock.StorageFile;
 import org.geotoolkit.data.shapefile.lock.ShpFiles;
 import org.geotoolkit.data.shapefile.lock.AccessManager;
@@ -47,10 +47,10 @@ import java.util.Set;
 import java.util.logging.Level;
 
 import org.geotoolkit.data.query.QueryBuilder;
-import org.geotoolkit.data.AbstractDataStore;
-import org.geotoolkit.data.DataStoreFinder;
+import org.geotoolkit.data.AbstractFeatureStore;
+import org.geotoolkit.data.FeatureStoreFinder;
 import org.geotoolkit.storage.DataStoreException;
-import org.geotoolkit.data.DataStoreRuntimeException;
+import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.memory.GenericEmptyFeatureIterator;
@@ -97,7 +97,7 @@ import static org.geotoolkit.data.shapefile.lock.ShpFileType.*;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class ShapefileDataStore extends AbstractDataStore{
+public class ShapefileDataStore extends AbstractFeatureStore{
 
     // This is the default character as specified by the DBF specification
     public static final Charset DEFAULT_STRING_CHARSET = DbaseFileReader.DEFAULT_STRING_CHARSET;
@@ -186,8 +186,8 @@ public class ShapefileDataStore extends AbstractDataStore{
     }
 
     @Override
-    public DataStoreFactory getFactory() {
-        return DataStoreFinder.getFactoryById(ShapefileDataStoreFactory.NAME);
+    public FeatureStoreFactory getFactory() {
+        return FeatureStoreFinder.getFactoryById(ShapefileDataStoreFactory.NAME);
     }
 
     @Override
@@ -247,7 +247,7 @@ public class ShapefileDataStore extends AbstractDataStore{
      * @throws DataSourceException DOCUMENT ME!
      */
     @Override
-    public Envelope getEnvelope(final Query query) throws DataStoreException, DataStoreRuntimeException {
+    public Envelope getEnvelope(final Query query) throws DataStoreException, FeatureStoreRuntimeException {
         typeCheck(query.getTypeName());
 
         if(QueryUtilities.queryAll(query)){

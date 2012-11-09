@@ -23,7 +23,6 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.ComponentColorModel;
-import java.awt.image.DataBuffer;
 import java.awt.image.IndexColorModel;
 import java.awt.image.RenderedImage;
 import java.awt.image.renderable.ParameterBlock;
@@ -31,8 +30,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
 import java.util.logging.Level;
 import javax.media.jai.Histogram;
 import javax.media.jai.ImageLayout;
@@ -57,32 +54,28 @@ import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.style.CachedRasterSymbolizer;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
-import org.geotoolkit.display2d.style.raster.CompatibleColorModel;
+import org.geotoolkit.style.function.CompatibleColorModel;
 import org.geotoolkit.display2d.style.raster.ShadedReliefOp;
 import org.geotoolkit.display2d.style.raster.StatisticOp;
 import org.geotoolkit.filter.visitor.DefaultFilterVisitor;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.image.jai.FloodFill;
-import org.geotoolkit.internal.coverage.CoverageUtilities;
-import org.geotoolkit.internal.image.ColorUtilities;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.map.DefaultCoverageMapLayer;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.transform.LinearTransform;
-import org.geotoolkit.resources.Errors;
 import org.geotoolkit.style.StyleConstants;
 import org.geotoolkit.style.function.Categorize;
 import org.geotoolkit.style.function.DefaultInterpolationPoint;
 import org.geotoolkit.style.function.Interpolate;
 import org.geotoolkit.style.function.InterpolationPoint;
+import org.geotoolkit.style.function.Jenks;
 import org.geotoolkit.style.function.Method;
 import org.geotoolkit.style.function.Mode;
-import org.geotoolkit.util.converter.Classes;
 import org.opengis.coverage.Coverage;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterVisitor;
 import org.opengis.filter.PropertyIsEqualTo;
-import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Function;
 import org.opengis.filter.expression.Literal;
 import org.opengis.filter.expression.PropertyName;
@@ -249,7 +242,8 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
                         if(eles.length > 0 && ComponentColorModel.class.getName().equalsIgnoreCase(eles[0].getClassName())){
 
                             try{
-                                final Map<String,Object> analyze = StatisticOp.analyze(projectedCoverage.getLayer().getCoverageReader());
+                                final Map<String,Object> analyze = StatisticOp.analyze(
+                                        projectedCoverage.getLayer().getCoverageReader(),projectedCoverage.getLayer().getImageIndex());
                                 final double min = (Double)analyze.get(StatisticOp.MINIMUM);
                                 final double max = (Double)analyze.get(StatisticOp.MAXIMUM);
 
@@ -509,190 +503,22 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
 
     private static RenderedImage recolor(final RenderedImage image, final Function function){
 
-        final int visibleBand = CoverageUtilities.getVisibleBand(image);
-        final ColorModel candidate = image.getColorModel();
-
-        //TODO : this should be used when the index color model can not handle signed values
-        //
-        //final SampleModel sm = image.getSampleModel();
-        //final int datatype = sm.getDataType();
-        //if(datatype == DataBuffer.TYPE_SHORT){
-        //    final ColorModel model = new CompatibleColorModel(16, function);
-        //    final ImageLayout layout = new ImageLayout().setColorModel(model);
-        //    return new NullOpImage(image, layout, null, OpImage.OP_COMPUTE_BOUND);
-        //}
-
-
-        /*
-         * Extracts the ARGB codes from the ColorModel and invokes the
-         * transformColormap(...) method.
-         */
-        final int[] ARGB;
-        final ColorModel model;
-        if(candidate instanceof IndexColorModel){
-            final IndexColorModel colors = (IndexColorModel) candidate;
-            final int mapSize = colors.getMapSize();
-            ARGB = new int[mapSize];
-            colors.getRGBs(ARGB);
-
-            transformColormap(ARGB, function);
-            model = ColorUtilities.getIndexColorModel(ARGB, 1, visibleBand, -1);
-
-        }else if(candidate instanceof ComponentColorModel){
-            final ComponentColorModel colors = (ComponentColorModel) candidate;
-            final int nbbit = colors.getPixelSize();
-            final int type = image.getSampleModel().getDataType();
-
-            if(type == DataBuffer.TYPE_BYTE || type == DataBuffer.TYPE_USHORT){
-                final int mapSize = 1 << nbbit;
-                ARGB = new int[mapSize];
-
-                for(int j=0; j<mapSize;j++){
-                    int v = j*255/mapSize;
-                    int a = 255 << 24;
-                    int r = v << 16;
-                    int g = v <<  8;
-                    int b = v <<  0;
-                    ARGB[j] = a|r|g|b;
-                }
-
-                transformColormap(ARGB, function);
-                model = ColorUtilities.getIndexColorModel(ARGB, 1, visibleBand, -1);
-
-            }else{
-                //we can't handle a index color model when values exceed int max value
-                model = new CompatibleColorModel(nbbit, function);
-            }
-
-        }else{
-            // Current implementation supports only sources that use of index color model
-            // and component color model
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_CLASS_$2,
-                    Classes.getClass(candidate), IndexColorModel.class));
-        }
-
-        /*
-         * Gives the color model to the image layout and creates a new image using the Null
-         * operation, which merely propagates its first source along the operation chain
-         * unmodified (except for the ColorModel given in the layout in this case).
-         */
-        final ImageLayout layout = new ImageLayout().setColorModel(model);
-        return new NullOpImage(image, layout, null, OpImage.OP_COMPUTE_BOUND);
-    }
-
-    private static int[] transformColormap(final int[] ARGB, final Function function){
-
-        if( function == null || !( (function instanceof Interpolate) || (function instanceof Categorize)) ){
-            //no function or unknown type, return the original sampleDimension
-            return ARGB;
-        }
-
-        if(function instanceof Interpolate){
-            final Interpolate interpole = (Interpolate) function;
-            final List<InterpolationPoint> points = interpole.getInterpolationPoints();
-            final double[] SE_VALUES = new double[points.size()];
-            final int[] SE_ARGB = new int[points.size()];
-            for(int i=0,n=points.size();i<n;i++){
-                final InterpolationPoint point = points.get(i);
-                SE_VALUES[i] = point.getData().doubleValue();
-                SE_ARGB[i] = point.getValue().evaluate(null, Color.class).getRGB();
-            }
-
-            int lastStep = -1;
-            int lastColor = -1;
-            for(int k=0;k<SE_VALUES.length;k++){
-                final double geoValue = SE_VALUES[k];
-                final int currentColor = SE_ARGB[k];
-                final int currentStep = (int)geoValue;
-
-                //first element, dont interpolate colors
-                if(k == 0){
-                    lastColor = currentColor;
-                    lastStep = -1;
-                }
-
-                final int stepInterval  = currentStep - lastStep;
-                final int lastAlpha     = (lastColor>>>24) & 0xFF;
-                final int lastRed       = (lastColor>>>16) & 0xFF;
-                final int lastGreen     = (lastColor>>> 8) & 0xFF;
-                final int lastBlue      = (lastColor>>> 0) & 0xFF;
-                final int alphaInterval = ((currentColor>>>24) & 0xFF) - lastAlpha;
-                final int redInterval   = ((currentColor>>>16) & 0xFF) - lastRed;
-                final int greenInterval = ((currentColor>>> 8) & 0xFF) - lastGreen;
-                final int blueInterval  = ((currentColor>>> 0) & 0xFF) - lastBlue;
-                for(int i=lastStep+1 ; (i<=currentStep && i<ARGB.length) ; i++){
-                    //calculate interpolated color
-                    final int relativePosition = i-lastStep;
-                    final double pourcent = (double)( (double)relativePosition / (double)stepInterval);
-                    int a = lastAlpha + (int)(pourcent*alphaInterval);
-                    int r = lastRed   + (int)(pourcent*redInterval);
-                    int g = lastGreen + (int)(pourcent*greenInterval);
-                    int b = lastBlue  + (int)(pourcent*blueInterval);
-                    a <<= 24;
-                    r <<= 16;
-                    g <<=  8;
-                    b <<=  0;
-                    ARGB[i] = a|r|g|b;
-                }
-
-                lastStep = (int) currentStep;
-                lastColor = currentColor;
-
-                //last element, fill the remaining cell with the color
-                if(k == SE_VALUES.length-1){
-                    for(int i=lastStep ; i<ARGB.length ; i++){
-                        ARGB[i] = currentColor;
-                    }
-                }
-
-            }
-
-        }else if(function instanceof Categorize){
+        RenderedImage recolorImage = image;
+        if (function instanceof Categorize) {
             final Categorize categorize = (Categorize) function;
-            final Map<Expression,Expression> categorizes = categorize.getThresholds();
-            final List<Expression> keys = new ArrayList<Expression>(categorizes.keySet());
-            final double[] SE_VALUES = new double[keys.size()];
-            final int[] SE_ARGB = new int[keys.size()];
-
-            final Set<Entry<Expression,Expression>> entries = categorizes.entrySet();
-
-            int l=0;
-            for(Entry<Expression,Expression> entry : entries){
-                if(l==0){
-                    SE_VALUES[0] = Double.NEGATIVE_INFINITY;
-                    SE_ARGB[0] = entry.getValue().evaluate(null, Color.class).getRGB();
-                }else{
-                    SE_VALUES[l] = entry.getKey().evaluate(null, Double.class);
-                    SE_ARGB[l] = entry.getValue().evaluate(null, Color.class).getRGB();
-                }
-                l++;
-            }
-
-            int step = 0;
-            for(int k=0;k<SE_VALUES.length-1;k++){
-                final double geoValue = SE_VALUES[k+1];
-                int color = SE_ARGB[k];
-                int sampleValue = (int) geoValue;
-
-                for(int i=step ; (i<sampleValue && i<ARGB.length) ; i++){
-                    ARGB[i] = color;
-                }
-
-                step = (int) sampleValue;
-                if(step < 0) step = 0;
-
-                //we are on the last element, fill the remaining cell with the color
-                if(k == SE_VALUES.length-2){
-                    color = SE_ARGB[k+1];
-                    for(int i=step ; i<ARGB.length ; i++){
-                        ARGB[i] = color;
-                    }
-                }
-
-            }
+            recolorImage = (RenderedImage) categorize.evaluate(image);
+        
+        } else if(function instanceof Interpolate) {
+            final Interpolate interpolate = (Interpolate) function;
+            recolorImage = (RenderedImage) interpolate.evaluate(image);
+            
+        } else if(function instanceof Jenks) {
+            final Jenks jenks = (Jenks) function;
+            recolorImage = (RenderedImage) jenks.evaluate(image);
         }
-
-        return ARGB;
+        
+        return recolorImage;
+        
     }
 
     private static RenderedImage equalize(final RenderedImage source) {

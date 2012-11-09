@@ -27,10 +27,10 @@
     
         <itemizedlist>
             <listitem>
-                <emphasis> Coverage / Coveragestore </emphasis>pour les images/rasters
+                <emphasis>Coverage / Coveragestore </emphasis>pour les images/rasters
             </listitem>
             <listitem>
-                <emphasis> Feature / Datastore </emphasis>pour les données vecteurs et attributaires. 
+                <emphasis>Feature / Datastore </emphasis>pour les données vecteurs et attributaires. 
             </listitem>
             <listitem>
                 <emphasis>Client / Server </emphasis>pour les connexions distantes 

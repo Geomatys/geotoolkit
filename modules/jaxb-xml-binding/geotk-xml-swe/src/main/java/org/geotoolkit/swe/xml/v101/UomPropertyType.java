@@ -70,6 +70,9 @@ import org.geotoolkit.swe.xml.UomProperty;
 })
 public class UomPropertyType implements UomProperty {
 
+    public static final UomPropertyType DEGREE = new UomPropertyType("degree", null);
+    public static final UomPropertyType METER  = new UomPropertyType("m", null);
+            
     @XmlElement(name = "UnitDefinition", namespace = "http://www.opengis.net/gml")
     private UnitDefinitionType unitDefinition;
     @XmlElement(name = "BaseUnit", namespace = "http://www.opengis.net/gml")
@@ -256,35 +259,45 @@ public class UomPropertyType implements UomProperty {
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder();
-        if(actuate != null && !actuate.equals("")) 
+        if(actuate != null && !actuate.equals("")) {
             s.append("actuate:").append(actuate).append('\n');
-        if(arcrole != null && !arcrole.equals("")) 
+        }
+        if(arcrole != null && !arcrole.equals("")) {
             s.append("arcrole:").append(arcrole).append('\n');
-        if(baseUnit != null) 
+        }
+        if(baseUnit != null) {
             s.append("baseUnit:").append(baseUnit.toString()).append('\n');
-        if(code != null && !code.equals("")) 
+        }
+        if(code != null && !code.equals("")) {
             s.append("code:").append(code).append('\n');
-        if(href != null && !href.equals("")) 
+        }
+        if(href != null && !href.equals("")) {
             s.append("href:").append(href).append('\n');
+        }
         if (nilReason != null) {
             s.append("nilReason:").append('\n');
             for (String ss:nilReason) {
                 s.append(ss).append('\n');
             }
         }
-        if(remoteSchema != null && !remoteSchema.equals("")) 
+        if(remoteSchema != null && !remoteSchema.equals("")) {
             s.append("remoteSchema:").append(remoteSchema).append('\n');
-        if(role != null && !role.equals("")) 
+        }
+        if(role != null && !role.equals("")) {
             s.append("role:").append(role).append('\n');
-        if(show != null && !show.equals("")) 
+        }
+        if(show != null && !show.equals("")) {
             s.append("show:").append(show).append('\n');
-        if(title != null && !title.equals("")) 
+        }
+        if(title != null && !title.equals("")) {
             s.append("title:").append(title).append('\n');
-        if(type != null && !type.equals("")) 
+        }
+        if(type != null && !type.equals("")) {
             s.append("type:").append(type).append('\n');
-        if(unitDefinition != null) 
+        }
+        if(unitDefinition != null) {
             s.append("unitDefinition:").append(unitDefinition).append('\n');
-
+        }
         return s.toString();
     }
 

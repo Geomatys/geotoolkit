@@ -43,6 +43,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.namespace.QName;
 import javax.xml.stream.events.XMLEvent;
+import net.iharder.Base64;
 import org.geotoolkit.feature.DefaultName;
 import org.opengis.feature.type.ComplexType;
 import org.opengis.feature.type.Name;
@@ -117,6 +118,7 @@ public class Utils {
         CLASS_BINDING.put("date",     Date.class);
         CLASS_BINDING.put("double",   Double.class);
         CLASS_BINDING.put("float",    Float.class);
+        CLASS_BINDING.put("base64Binary",byte[].class);
 
         // GML geometry types
         CLASS_BINDING.put("GeometryPropertyType",          Geometry.class);
@@ -192,6 +194,7 @@ public class Utils {
         NAME_BINDING.put(QName.class,         new QName("http://www.w3.org/2001/XMLSchema", "QName"));
         NAME_BINDING.put(URI.class,           new QName("http://www.w3.org/2001/XMLSchema", "anyURI"));
         NAME_BINDING.put(Byte.class,          new QName("http://www.w3.org/2001/XMLSchema", "byte"));
+        NAME_BINDING.put(byte[].class,        new QName("http://www.w3.org/2001/XMLSchema", "base64Binary"));
 
     }
 
@@ -313,6 +316,8 @@ public class Utils {
             return dateFormatter.format((java.util.Date) obj);
         } else if (obj instanceof Number || obj instanceof Boolean) {
             return obj.toString();
+        } else if (obj instanceof byte[]) {
+            return Base64.encodeBytes((byte[])obj);
         } else if (obj != null) {
             LOGGER.log(Level.WARNING, "Unhandled type :" + obj.getClass(),new IllegalArgumentException());
         }

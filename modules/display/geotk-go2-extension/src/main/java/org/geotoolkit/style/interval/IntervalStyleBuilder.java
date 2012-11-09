@@ -24,7 +24,9 @@ import java.awt.Color;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import javax.swing.table.AbstractTableModel;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.query.QueryBuilder;
@@ -367,16 +369,14 @@ public class IntervalStyleBuilder extends AbstractTableModel{
         final QueryBuilder query = new QueryBuilder(layer.getCollection().getFeatureType().getName());
 
         if(classification == null || layer == null) return;
+        if(!properties.contains(classification)) return;
 
-            if(!properties.contains(classification)) return;
-
-        if(normalize == null || normalize.equals(noValue)){
-            query.setProperties(new String[]{classification.getPropertyName()});
-        }else{
-            if(!properties.contains(normalize)) return;
-            query.setProperties(new String[]{classification.getPropertyName(),
-                                                normalize.getPropertyName()});
+        final Set<String> qp = new HashSet<String>();
+        qp.add(classification.getPropertyName());
+        if(normalize != null && !normalize.equals(noValue)){
+            qp.add(normalize.getPropertyName());
         }
+        query.setProperties(qp.toArray(new String[0]));
 
         FeatureIterator<? extends Feature> features = null;
         try{
@@ -428,7 +428,6 @@ public class IntervalStyleBuilder extends AbstractTableModel{
                 features.close();
             }
         }
-
 
     }
 

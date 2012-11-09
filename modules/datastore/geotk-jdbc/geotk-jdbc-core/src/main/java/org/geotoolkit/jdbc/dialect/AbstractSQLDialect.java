@@ -72,10 +72,16 @@ import org.geotoolkit.filter.capability.DefaultScalarCapabilities;
 import org.geotoolkit.filter.capability.DefaultSpatialCapabilities;
 import org.geotoolkit.filter.capability.DefaultSpatialOperator;
 import org.geotoolkit.filter.capability.DefaultSpatialOperators;
+import org.geotoolkit.filter.capability.DefaultTemporalCapabilities;
+import org.geotoolkit.filter.capability.DefaultTemporalOperators;
 import org.geotoolkit.jdbc.JDBCDataStore;
 import org.opengis.filter.expression.Literal;
 
 import static org.geotoolkit.util.ArgumentChecks.*;
+import org.opengis.filter.capability.TemporalCapabilities;
+import org.opengis.filter.capability.TemporalOperand;
+import org.opengis.filter.capability.TemporalOperator;
+import org.opengis.filter.capability.TemporalOperators;
 
 /**
  * The driver used by JDBCDataStore to directly communicate with the database.
@@ -180,8 +186,8 @@ public abstract class AbstractSQLDialect implements SQLDialect{
             GeometryOperand.Envelope, GeometryOperand.Polygon, GeometryOperand.Point
         };
         final DefaultSpatialCapabilities spatialCaps = new DefaultSpatialCapabilities(geomOperands, spatialOps);
-
-        BASE_DBMS_CAPABILITIES = new DefaultFilterCapabilities(null, idCaps, spatialCaps, scalCaps);
+        
+        BASE_DBMS_CAPABILITIES = new DefaultFilterCapabilities(null, idCaps, spatialCaps, scalCaps,null);
     }
 
     /**
@@ -629,6 +635,8 @@ public abstract class AbstractSQLDialect implements SQLDialect{
         mappings.put(Types.DATE, Date.class);
         mappings.put(Types.TIME, Time.class);
         mappings.put(Types.TIMESTAMP, Timestamp.class);
+        mappings.put(Types.BINARY, byte[].class);
+        mappings.put(Types.VARBINARY, byte[].class);
         
         mappings.put(Types.ARRAY, Array.class);
     }

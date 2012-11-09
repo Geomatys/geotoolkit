@@ -6,8 +6,8 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.geotoolkit.data.DataStore;
-import org.geotoolkit.data.DataStoreFinder;
+import org.geotoolkit.data.FeatureStore;
+import org.geotoolkit.data.FeatureStoreFinder;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.storage.DataStoreException;
@@ -21,7 +21,7 @@ public class FishDataStoreDemo {
         Map<String,Serializable> params = new HashMap<String, Serializable>();
         params.put("url", FishDataStoreDemo.class.getResource("/data/fishes.fsh"));
 
-        DataStore store = DataStoreFinder.open(params);
+        FeatureStore store = FeatureStoreFinder.open(params);
 
         for(Name name : store.getNames()){
             System.out.println(store.getFeatureType(name));

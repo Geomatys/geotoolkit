@@ -32,7 +32,7 @@ import org.geotoolkit.client.ServerFactory;
 import org.geotoolkit.client.ServerFinder;
 import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.coverage.CoverageStore;
-import org.geotoolkit.data.DataStore;
+import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.session.Session;
@@ -48,9 +48,9 @@ import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.style.DefaultDescription;
 import org.geotoolkit.style.MutableStyle;
+import org.geotoolkit.style.RandomStyleBuilder;
 import org.geotoolkit.style.StyleConstants;
 import org.geotoolkit.util.ArgumentChecks;
-import org.geotoolkit.util.RandomStyleFactory;
 import org.geotoolkit.util.SimpleInternationalString;
 import org.geotoolkit.wmc.xml.v110.*;
 import org.geotoolkit.xml.MarshallerPool;
@@ -160,7 +160,7 @@ public class WMCUtilities {
                 parameters.put("identifier", serviceId);
                 parameters.put("version", serverType.getVersion());
                 parameters.put("url", serviceURL);
-                server = factory.create(parameters);
+                server = factory.open(parameters);
             } catch (Exception ex) {
                 Logger.getLogger(WMCUtilities.class.getName()).log(Level.SEVERE, null, ex);
                 continue;
@@ -182,11 +182,11 @@ public class WMCUtilities {
                     continue;
                 }
 
-            } else if (server instanceof DataStore) {
-                final DataStore wfs = (DataStore) server;
+            } else if (server instanceof FeatureStore) {
+                final FeatureStore wfs = (FeatureStore) server;
                 final Session storeSession = wfs.createSession(true);
                 final FeatureCollection collection = storeSession.getFeatureCollection(QueryBuilder.all(layerName));
-                final MutableStyle style = RandomStyleFactory.createRandomVectorStyle(collection);
+                final MutableStyle style = RandomStyleBuilder.createRandomVectorStyle(collection.getFeatureType());
                 final MapLayer layer = MapBuilder.createFeatureLayer(collection, style);
                 context.layers().add(layer);
             }

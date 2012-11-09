@@ -23,7 +23,7 @@ import java.util.Map;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
-import org.geotoolkit.data.DataStore;
+import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
 
@@ -89,7 +89,7 @@ class DefaultSessionDiff{
         }
     }
 
-    public void commit(final DataStore store) throws DataStoreException{
+    public void commit(final FeatureStore store) throws DataStoreException{
         writeLock.lock();
         try{
             for(int i=0,n=deltas.size();i<n;i++){

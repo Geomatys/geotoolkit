@@ -20,7 +20,7 @@ package org.geotoolkit.data.session;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import org.geotoolkit.data.DataStore;
+import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
@@ -117,7 +117,7 @@ class RemoveDelta extends AbstractDelta{
      * {@inheritDoc }
      */
     @Override
-    public Map<String,String> commit(final DataStore store) throws DataStoreException {
+    public Map<String,String> commit(final FeatureStore store) throws DataStoreException {
         store.removeFeatures(type, removedIds);
         return null;
     }

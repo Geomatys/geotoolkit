@@ -32,7 +32,7 @@ import org.opengis.feature.simple.SimpleFeatureType;
 import com.vividsolutions.jts.geom.Geometry;
 import java.util.ArrayList;
 import java.util.Collection;
-import org.geotoolkit.data.DataUtilities;
+import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.test.TestData;
@@ -148,8 +148,8 @@ public class ShapefileRTreeReadWriteTest extends AbstractTestCaseSupport {
         //copy values, order is not tested here.
         Collection<SimpleFeature> cone = new ArrayList<SimpleFeature>();
         Collection<SimpleFeature> ctwo = new ArrayList<SimpleFeature>();
-        DataUtilities.fill(one, cone);
-        DataUtilities.fill(two, ctwo);
+        FeatureStoreUtilities.fill(one, cone);
+        FeatureStoreUtilities.fill(two, ctwo);
         one.containsAll(two);
         two.containsAll(one);
 

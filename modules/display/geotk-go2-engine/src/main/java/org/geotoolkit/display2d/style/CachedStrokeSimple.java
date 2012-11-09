@@ -332,7 +332,7 @@ public class CachedStrokeSimple extends CachedStroke{
                 }
             } else {
                 //or it's a normal plain inside
-                return GO2Utilities.evaluate(expColor, null, Color.class, Color.BLACK);
+                return GO2Utilities.evaluate(expColor, candidate, Color.class, Color.BLACK);
             }
         }
 

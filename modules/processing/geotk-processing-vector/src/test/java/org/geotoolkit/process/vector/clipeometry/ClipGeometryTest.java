@@ -26,7 +26,7 @@ import com.vividsolutions.jts.geom.Polygon;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.geotoolkit.data.DataUtilities;
+import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
@@ -116,7 +116,7 @@ public class ClipGeometryTest extends AbstractProcessTest {
 
         type = createSimpleType();
 
-        final FeatureCollection<Feature> featureList = DataUtilities.collection("", type);
+        final FeatureCollection<Feature> featureList = FeatureStoreUtilities.collection("", type);
 
         geometryFactory = new GeometryFactory();
 
@@ -223,7 +223,7 @@ public class ClipGeometryTest extends AbstractProcessTest {
 
         type = createSimpleResultType();
 
-        final FeatureCollection<Feature> featureList = DataUtilities.collection("", type);
+        final FeatureCollection<Feature> featureList = FeatureStoreUtilities.collection("", type);
 
         geometryFactory = new GeometryFactory();
 

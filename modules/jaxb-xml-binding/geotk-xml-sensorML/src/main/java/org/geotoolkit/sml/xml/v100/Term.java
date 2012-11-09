@@ -92,6 +92,18 @@ public class Term implements AbstractTerm {
         this.definition = definition;
         this.value      = value;
     }
+    
+    public Term(final CodeSpacePropertyType codeSpace, final String value, final String definition) {
+        this.codeSpace  = codeSpace;
+        this.definition = URI.create(definition);
+        this.value      = value;
+    }
+    
+    public Term(final String codeSpace, final String value, final String definition) {
+        this.codeSpace  = new CodeSpacePropertyType(codeSpace);
+        this.definition = URI.create(definition);
+        this.value      = value;
+    }
 
     /**
      * Gets the value of the codeSpace property.

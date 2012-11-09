@@ -132,6 +132,8 @@ public class DataComponentPropertyType implements DataComponentProperty {
     public static final DataComponentPropertyType PRESSION_FIELD  = new DataComponentPropertyType("Pression",  null, new QuantityType("urn:ogc:phenomenon:PRES", "decibar"));
     
     public static final DataComponentPropertyType DEPTH_FIELD     = new DataComponentPropertyType("Depth",  null, new QuantityType("urn:ogc:phenomenon:depth", "metres"));
+    
+    public static final DataComponentPropertyType DEPTH_FIELD2    = new DataComponentPropertyType("Depth",  null, new QuantityType("urn:ogc:phenomenon:depth", "m"));
 
     public static final DataComponentPropertyType TIME_FIELD      = new DataComponentPropertyType("Time",      null, new TimeType("urn:ogc:data:time:iso8601"));
     

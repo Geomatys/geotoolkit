@@ -22,7 +22,7 @@ import java.util.Arrays;
 import java.util.NoSuchElementException;
 import java.util.logging.Level;
 
-import org.geotoolkit.data.DataStoreRuntimeException;
+import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.HintsPending;
@@ -132,20 +132,20 @@ public abstract class ShapefileFeatureReader implements FeatureReader<SimpleFeat
      * {@inheritDoc }
      */
     @Override
-    public SimpleFeature next() throws DataStoreRuntimeException, NoSuchElementException {
+    public SimpleFeature next() throws FeatureStoreRuntimeException, NoSuchElementException {
         try {
             if (attributeReader.hasNext()) {
                 attributeReader.next();
                 try {
                     return readFeature();
                 } catch (DataStoreException ex) {
-                    throw new DataStoreRuntimeException(ex);
+                    throw new FeatureStoreRuntimeException(ex);
                 }
             } else {
                 throw new NoSuchElementException("There are no more Features to be read");
             }
         } catch (IOException ex) {
-            throw new DataStoreRuntimeException(ex);
+            throw new FeatureStoreRuntimeException(ex);
         }
     }
 
@@ -155,7 +155,8 @@ public abstract class ShapefileFeatureReader implements FeatureReader<SimpleFeat
      * {@inheritDoc }
      */
     @Override
-    public void close() throws DataStoreRuntimeException {
+    public void close() throws FeatureStoreRuntimeException {
+        if(closed) return;
         closed = true;
 
         Exception ex = null;
@@ -178,7 +179,7 @@ public abstract class ShapefileFeatureReader implements FeatureReader<SimpleFeat
         }
 
         if (ex != null) {
-            throw new DataStoreRuntimeException(ex);
+            throw new FeatureStoreRuntimeException(ex);
         }
 
     }
@@ -209,11 +210,11 @@ public abstract class ShapefileFeatureReader implements FeatureReader<SimpleFeat
      * {@inheritDoc }
      */
     @Override
-    public boolean hasNext() throws DataStoreRuntimeException {
+    public boolean hasNext() throws FeatureStoreRuntimeException {
         try {
             return attributeReader.hasNext();
         } catch (IOException ex) {
-            throw new DataStoreRuntimeException(ex);
+            throw new FeatureStoreRuntimeException(ex);
         }
     }
 
@@ -244,8 +245,8 @@ public abstract class ShapefileFeatureReader implements FeatureReader<SimpleFeat
      * {@inheritDoc }
      */
     @Override
-    public void remove() throws DataStoreRuntimeException {
-        throw new DataStoreRuntimeException("Can not remove from a feature reader.");
+    public void remove() throws FeatureStoreRuntimeException {
+        throw new FeatureStoreRuntimeException("Can not remove from a feature reader.");
     }
 
     public static ShapefileFeatureReader create(final ShapefileAttributeReader attributeReader, final FeatureIDReader fidReader,

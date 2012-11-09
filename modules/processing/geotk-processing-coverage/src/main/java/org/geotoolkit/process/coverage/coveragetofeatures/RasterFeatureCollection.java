@@ -19,7 +19,7 @@ package org.geotoolkit.process.coverage.coveragetofeatures;
 import java.util.AbstractCollection;
 
 import org.geotoolkit.coverage.io.GridCoverageReader;
-import org.geotoolkit.data.DataStoreRuntimeException;
+import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureIterator;
 
 import org.opengis.coverage.grid.GridEnvelope;
@@ -177,7 +177,7 @@ public abstract class RasterFeatureCollection extends AbstractCollection<Feature
          */
         @Override
         public void remove() {
-            throw new DataStoreRuntimeException("Unmodifiable collection");
+            throw new FeatureStoreRuntimeException("Unmodifiable collection");
         }
     }
 }

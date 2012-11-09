@@ -27,6 +27,7 @@ import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.wms.WMSCoverageReference;
 import org.geotoolkit.wmsc.model.WMSCPyramidSet;
 import org.opengis.feature.type.Name;
+import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
@@ -60,11 +61,6 @@ public class WMSCCoverageReference extends WMSCoverageReference implements Pyram
     public PyramidSet getPyramidSet() throws DataStoreException {
         return set;
     }
-
-    @Override
-    public boolean isWriteable() {
-        return false;
-    }
     
     @Override
     public Pyramid createPyramid(CoordinateReferenceSystem crs) throws DataStoreException {
@@ -72,7 +68,7 @@ public class WMSCCoverageReference extends WMSCoverageReference implements Pyram
     }
 
     @Override
-    public GridMosaic createMosaic(String pyramidId, Dimension gridSize, Dimension tilePixelSize, Point2D upperleft, double pixelscale) throws DataStoreException {
+    public GridMosaic createMosaic(String pyramidId, Dimension gridSize, Dimension tilePixelSize, DirectPosition upperleft, double pixelscale) throws DataStoreException {
         throw new DataStoreException("Model is not writeable.");
     }
 

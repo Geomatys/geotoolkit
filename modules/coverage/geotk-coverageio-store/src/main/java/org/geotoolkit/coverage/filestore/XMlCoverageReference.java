@@ -17,6 +17,7 @@
 package org.geotoolkit.coverage.filestore;
 
 import java.awt.Dimension;
+import java.awt.Image;
 import java.awt.geom.Point2D;
 import java.awt.image.RenderedImage;
 import java.util.logging.Level;
@@ -25,8 +26,10 @@ import javax.xml.bind.JAXBException;
 import org.geotoolkit.coverage.*;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
+import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.storage.DataStoreException;
 import org.opengis.feature.type.Name;
+import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
@@ -39,24 +42,40 @@ public class XMlCoverageReference implements CoverageReference, PyramidalModel{
     private final XMLCoverageStore store;
     private final Name name;
     private final XMLPyramidSet set;
-    
-    
+
+
     public XMlCoverageReference(XMLCoverageStore store, Name name, XMLPyramidSet set) {
         this.store = store;
         this.name = name;
         this.set = set;
     }
-    
+
     @Override
     public Name getName() {
         return name;
     }
 
     @Override
+    public boolean isWritable() throws DataStoreException {
+        return true;
+    }
+
+    @Override
+    public int getImageIndex() {
+        return 0;
+    }
+        
+    @Override
+    public GridCoverageWriter createWriter() throws DataStoreException {
+        //TODO
+        throw new DataStoreException("Not supported yet.");
+    }
+
+    @Override
     public XMLCoverageStore getStore() {
         return store;
     }
-    
+
     @Override
     public GridCoverageReader createReader() throws CoverageStoreException {
         final PyramidalModelReader reader = new PyramidalModelReader();
@@ -70,11 +89,6 @@ public class XMlCoverageReference implements CoverageReference, PyramidalModel{
     }
 
     @Override
-    public boolean isWriteable() {
-        return true;
-    }
-
-    @Override
     public Pyramid createPyramid(CoordinateReferenceSystem crs) throws DataStoreException {
         final XMLPyramidSet set = getPyramidSet();
         save();
@@ -82,8 +96,8 @@ public class XMlCoverageReference implements CoverageReference, PyramidalModel{
     }
 
     @Override
-    public GridMosaic createMosaic(String pyramidId, Dimension gridSize, 
-    Dimension tilePixelSize, Point2D upperleft, double pixelscale) throws DataStoreException {
+    public GridMosaic createMosaic(String pyramidId, Dimension gridSize,
+    Dimension tilePixelSize, DirectPosition upperleft, double pixelscale) throws DataStoreException {
         final XMLPyramidSet set = getPyramidSet();
         final XMLPyramid pyramid = set.getPyramid(pyramidId);
         final XMLMosaic mosaic = pyramid.createMosaic(gridSize, tilePixelSize, upperleft, pixelscale);
@@ -99,10 +113,10 @@ public class XMlCoverageReference implements CoverageReference, PyramidalModel{
         mosaic.createTile(col,row,image);
         save();
     }
-    
+
     /**
      * Save the pyramid set in the file
-     * @throws DataStoreException 
+     * @throws DataStoreException
      */
     synchronized void save() throws DataStoreException{
         final XMLPyramidSet set = getPyramidSet();
@@ -121,5 +135,9 @@ public class XMlCoverageReference implements CoverageReference, PyramidalModel{
         mosaic.writeTiles(image,onlyMissing);
         save();
     }
-    
+
+    public Image getLegend() throws DataStoreException {
+        return null;
+    }
+
 }

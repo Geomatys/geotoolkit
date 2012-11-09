@@ -110,7 +110,7 @@ public class NcWMSMapLayerTest {
         final NcWMSMapLayer layer = new NcWMSMapLayer(SERVER_111, "BlueMarble");
 
         final String query = layer.getCoverageReference().queryFeatureInfo(env, new Dimension(360, 180),
-                140, 250, new String[]{"BlueMarble"}, "gml", 1).toString();
+                140, 250, new String[]{"BlueMarble"}, "gml", 1).getURL().toString();
         assertTrue("was:" + query, query.contains("INFO_FORMAT=gml"));
         assertTrue("was:" + query, query.contains("QUERY_LAYERS=BlueMarble"));
         assertTrue("was:" + query, query.contains("X=140"));
@@ -141,7 +141,7 @@ public class NcWMSMapLayerTest {
         layer.getCoverageReference().setLogScale(true);
 
         final String query = layer.getCoverageReference().queryFeatureInfo(env, new Dimension(360, 180),
-                140, 250, new String[]{"BlueMarble"}, "gml", 1).toString();
+                140, 250, new String[]{"BlueMarble"}, "gml", 1).getURL().toString();
         assertTrue("was:" + query, query.contains("INFO_FORMAT=gml"));
         assertTrue("was:" + query, query.contains("QUERY_LAYERS=BlueMarble"));
         assertTrue("was:" + query, query.contains("X=140"));
@@ -166,7 +166,7 @@ public class NcWMSMapLayerTest {
         layer.getCoverageReference().setStyles("style_name/palette_name");
 
         final String query = layer.getCoverageReference().queryLegend(new Dimension(360, 180),
-                "image/png", "test", 100.0).toString();
+                "image/png", "test", 100.0).getURL().toString();
         assertTrue("was:" + query, query.contains("FORMAT=image%2Fpng"));
         assertTrue("was:" + query, query.contains("WIDTH=360"));
         assertTrue("was:" + query, query.contains("HEIGHT=180"));

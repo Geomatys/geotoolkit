@@ -17,16 +17,25 @@
 package org.geotoolkit.gui.swing.propertyedit.featureeditor;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Insets;
-import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import org.geotoolkit.gui.swing.misc.JOptionDialog;
+import org.geotoolkit.gui.swing.propertyedit.LayerStylePropertyPanel;
 import org.geotoolkit.gui.swing.propertyedit.styleproperty.JAdvancedStylePanel;
+import org.geotoolkit.gui.swing.propertyedit.styleproperty.JClassificationIntervalStylePanel;
+import org.geotoolkit.gui.swing.propertyedit.styleproperty.JClassificationSingleStylePanel;
+import org.geotoolkit.gui.swing.propertyedit.styleproperty.JRasterColorMapStylePanel;
+import org.geotoolkit.gui.swing.propertyedit.styleproperty.JSimpleStylePanel;
+import org.geotoolkit.map.MapBuilder;
+import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.DefaultMutableStyle;
+import org.geotoolkit.style.MutableStyle;
 import org.opengis.feature.type.PropertyType;
 import org.opengis.style.Style;
 
@@ -79,30 +88,28 @@ public class StyleEditor extends PropertyValueEditor implements ActionListener{
     @Override
     public void actionPerformed(ActionEvent e) {
 
-        final JDialog dialog = new JDialog();
-        final JAdvancedStylePanel stylePane = new JAdvancedStylePanel();
-
         if(value == null){
             value = new DefaultMutableStyle();
         }
+        
+        final MapLayer layer = MapBuilder.createEmptyMapLayer();
+        layer.setStyle((MutableStyle)value);
 
-        stylePane.parse(value);
+        final LayerStylePropertyPanel editors = new LayerStylePropertyPanel();
+        editors.addPropertyPanel(new JSimpleStylePanel());
+        editors.addPropertyPanel(new JClassificationSingleStylePanel());
+        editors.addPropertyPanel(new JClassificationIntervalStylePanel());
+        editors.addPropertyPanel(new JRasterColorMapStylePanel());
+        editors.addPropertyPanel(new JAdvancedStylePanel());
+        editors.setTarget(layer);
+        
 
-        dialog.setContentPane(stylePane);
-        dialog.pack();
-        dialog.setSize(640, 480);
-
-        final Point p = ((JComponent)e.getSource()).getLocationOnScreen();
-        p.x -= dialog.getWidth()/2;
-        p.y -= dialog.getHeight()/2;
-        if(p.x < 0) p.x=0;
-        if(p.y < 0) p.y=0;
-
-        dialog.setLocation(p);
-        dialog.setModal(true);
-        dialog.setVisible(true);
-
-        value = stylePane.create();
+        final int res = JOptionDialog.show((Component)(e.getSource()),editors, JOptionPane.OK_CANCEL_OPTION);
+        
+        if(JOptionPane.OK_OPTION == res){
+            editors.apply();
+            value = layer.getStyle();
+        }
 
         updateText();
     }

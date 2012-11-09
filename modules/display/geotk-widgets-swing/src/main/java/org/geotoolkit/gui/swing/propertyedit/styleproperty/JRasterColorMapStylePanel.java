@@ -18,7 +18,6 @@
 package org.geotoolkit.gui.swing.propertyedit.styleproperty;
 
 
-import org.opengis.util.GenericName;
 import java.util.Map;
 import java.util.Map.Entry;
 import javax.measure.unit.NonSI;
@@ -28,6 +27,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -66,6 +66,8 @@ import org.geotoolkit.gui.swing.propertyedit.PropertyPane;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.CoverageMapLayer;
+import org.geotoolkit.map.FeatureMapLayer;
+import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyleFactory;
@@ -100,6 +102,7 @@ import org.opengis.style.Symbolizer;
 import org.opengis.filter.expression.Function;
 
 import static org.geotoolkit.style.StyleConstants.*;
+import org.opengis.util.GenericName;
 
 /**
  * Style editor which handle Raster colormap edition.
@@ -156,7 +159,7 @@ public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
     private static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
 
     private final ColorMapModel model = new ColorMapModel();
-    private CoverageMapLayer layer = null;
+    private MapLayer layer = null;
 
     public JRasterColorMapStylePanel() {
         initComponents();
@@ -368,17 +371,31 @@ public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
             }
             steps = inverted;
         }
-        final GridCoverageReader reader = layer.getCoverageReader();
-        try {
-            final List<? extends GenericName> names = reader.getCoverageNames();
-            
-            if(mustInterpolation){
-                for(int i=0,n=names.size();i<n;i++){
-                    final List<MeasurementRange<?>> ranges = reader.getSampleValueRanges(i);
-                    if(ranges != null){
-                        for(MeasurementRange r : ranges){
-                            final double min = r.getMinimum();
-                            final double max = r.getMaximum();                    
+        if(layer instanceof CoverageMapLayer){
+            final CoverageMapLayer cml = (CoverageMapLayer)layer;
+            final GridCoverageReader reader = cml.getCoverageReader();
+            try {
+                final List<? extends GenericName> names = reader.getCoverageNames();
+
+                if(mustInterpolation){
+                    for(int i=0,n=names.size();i<n;i++){
+                        final List<MeasurementRange<?>> ranges = reader.getSampleValueRanges(i);
+                        if(ranges != null){
+                            for(MeasurementRange r : ranges){
+                                final double min = r.getMinimum();
+                                final double max = r.getMaximum();                    
+                                for(int s=0,l=steps.size();s<l;s++){
+                                    final Entry<Double, Color> step = steps.get(s);
+                                    model.points.add(SF.interpolationPoint(
+                                            min + (step.getKey()*(max-min)), 
+                                            SF.literal(step.getValue())));
+                                }
+                            }
+                        }else{
+                            //we explore the image and try to find the min and max
+                            Map<String,Object> an = StatisticOp.analyze(reader,cml.getImageIndex());
+                            final double min = (Double)an.get(StatisticOp.MINIMUM);
+                            final double max = (Double)an.get(StatisticOp.MAXIMUM);                
                             for(int s=0,l=steps.size();s<l;s++){
                                 final Entry<Double, Color> step = steps.get(s);
                                 model.points.add(SF.interpolationPoint(
@@ -386,29 +403,18 @@ public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
                                         SF.literal(step.getValue())));
                             }
                         }
-                    }else{
-                        //we explore the image and try to find the min and max
-                        Map<String,Object> an = StatisticOp.analyze(reader);
-                        final double min = (Double)an.get(StatisticOp.MINIMUM);
-                        final double max = (Double)an.get(StatisticOp.MAXIMUM);                
-                        for(int s=0,l=steps.size();s<l;s++){
-                            final Entry<Double, Color> step = steps.get(s);
-                            model.points.add(SF.interpolationPoint(
-                                    min + (step.getKey()*(max-min)), 
-                                    SF.literal(step.getValue())));
-                        }
+                    }
+                }else{
+                    for(int s=0,l=steps.size();s<l;s++){
+                        final Entry<Double, Color> step = steps.get(s);
+                        model.points.add(SF.interpolationPoint(
+                                step.getKey(), SF.literal(step.getValue())));
                     }
                 }
-            }else{
-                for(int s=0,l=steps.size();s<l;s++){
-                    final Entry<Double, Color> step = steps.get(s);
-                    model.points.add(SF.interpolationPoint(
-                            step.getKey(), SF.literal(step.getValue())));
-                }
+
+            } catch (CoverageStoreException ex) {
+                LOGGER.log(Level.INFO, ex.getMessage(),ex);
             }
-            
-        } catch (CoverageStoreException ex) {
-            LOGGER.log(Level.INFO, ex.getMessage(),ex);
         }
         
         model.fireTableDataChanged();
@@ -417,13 +423,13 @@ public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
 
     @Override
     public boolean canHandle(Object target) {
-        return target instanceof CoverageMapLayer;
+        return target instanceof MapLayer && !(target instanceof FeatureMapLayer);
     }
     
     @Override
     public void setTarget(final Object layer) {
-        if(layer instanceof CoverageMapLayer){
-            this.layer = (CoverageMapLayer) layer;
+        if(layer instanceof MapLayer){
+            this.layer = (MapLayer)layer;
             parse();
         }else{
             this.layer = null;
@@ -479,6 +485,11 @@ public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
         return IconBundle.getIcon("16_classification_single");
     }
 
+    @Override
+    public Image getPreview() {
+        return null;
+    }
+    
     @Override
     public String getToolTip() {
         return "";

@@ -34,11 +34,11 @@ public abstract class AbstractWritingTests extends TestCase{
     private static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
 
 
-    protected abstract DataStore getDataStore();
+    protected abstract FeatureStore getDataStore();
 
     @Test
     public void testDataStore(){
-        final DataStore store = getDataStore();
+        final FeatureStore store = getDataStore();
         assertNotNull(store);
     }
 

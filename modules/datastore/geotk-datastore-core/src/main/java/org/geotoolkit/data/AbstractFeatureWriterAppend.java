@@ -47,8 +47,8 @@ public abstract class AbstractFeatureWriterAppend<T extends FeatureType, F exten
      * {@inheritDoc }
      */
     @Override
-    public void remove() throws DataStoreRuntimeException {
-        throw new DataStoreRuntimeException("Can not remove from a feature writer append.");
+    public void remove() throws FeatureStoreRuntimeException {
+        throw new FeatureStoreRuntimeException("Can not remove from a feature writer append.");
     }
 
     /**

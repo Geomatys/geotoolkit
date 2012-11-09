@@ -100,7 +100,7 @@ public class WebMapTileServer extends AbstractServer implements CoverageStore{
     public WebMapTileServer(final URL serverURL, final WMTSVersion version, final Capabilities capabilities) {
         this(serverURL,null,version,capabilities,false);
     }
-    
+
     /**
      * Builds a web map server with the given server url, version and getCapabilities response.
      *
@@ -108,7 +108,7 @@ public class WebMapTileServer extends AbstractServer implements CoverageStore{
      * @param version A string representation of the service version.
      * @param capabilities A getCapabilities response.
      */
-    public WebMapTileServer(final URL serverURL, final ClientSecurity security, 
+    public WebMapTileServer(final URL serverURL, final ClientSecurity security,
             final WMTSVersion version, final Capabilities capabilities, boolean cacheImage) {
         super(create(WMTSServerFactory.PARAMETERS, serverURL, security));
         Parameters.getOrCreate(WMTSServerFactory.VERSION, parameters).setValue(version.getCode());
@@ -119,12 +119,12 @@ public class WebMapTileServer extends AbstractServer implements CoverageStore{
     public WebMapTileServer(ParameterValueGroup param){
         super(param);
     }
-    
+
     @Override
     public WMTSServerFactory getFactory() {
         return (WMTSServerFactory)ServerFinder.getFactoryById(WMTSServerFactory.NAME);
     }
-    
+
     /**
      * Returns the {@linkplain AbstractWMSCapabilities capabilities} response for this
      * request.
@@ -139,7 +139,7 @@ public class WebMapTileServer extends AbstractServer implements CoverageStore{
             @Override
             public void run() {
                 try {
-                    capabilities = WMTSBindingUtilities.unmarshall(createGetCapabilities().getURL(), getVersion());
+                    capabilities = WMTSBindingUtilities.unmarshall(createGetCapabilities().getResponseStream(), getVersion());
                 } catch (Exception ex) {
                     capabilities = null;
                     try {
@@ -175,7 +175,7 @@ public class WebMapTileServer extends AbstractServer implements CoverageStore{
     public boolean getImageCache(){
         return (Boolean)Parameters.getOrCreate(AbstractServerFactory.IMAGE_CACHE, parameters).getValue();
     }
-    
+
     /**
      * Returns the request object, in the version chosen.
      *

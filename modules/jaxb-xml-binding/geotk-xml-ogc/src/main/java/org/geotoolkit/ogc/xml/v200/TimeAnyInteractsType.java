@@ -18,12 +18,13 @@
 package org.geotoolkit.ogc.xml.v200;
 
 import org.opengis.filter.FilterVisitor;
+import org.opengis.filter.temporal.AnyInteracts;
 
 /**
  *
  * @author Guilhem Legal (Geomatys)
  */
-public class TimeAnyInteractsType extends BinaryTemporalOpType {
+public class TimeAnyInteractsType extends BinaryTemporalOpType implements AnyInteracts {
 
     @Override
     public boolean evaluate(Object o) {
@@ -34,5 +35,5 @@ public class TimeAnyInteractsType extends BinaryTemporalOpType {
     public Object accept(FilterVisitor fv, Object o) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-    
+
 }

@@ -31,6 +31,7 @@ import org.opengis.filter.PropertyIsGreaterThanOrEqualTo;
 import org.opengis.filter.PropertyIsLessThan;
 import org.opengis.filter.PropertyIsLessThanOrEqualTo;
 import org.opengis.filter.PropertyIsLike;
+import org.opengis.filter.PropertyIsNil;
 import org.opengis.filter.PropertyIsNotEqualTo;
 import org.opengis.filter.PropertyIsNull;
 import org.opengis.filter.expression.Add;
@@ -53,6 +54,20 @@ import org.opengis.filter.spatial.Intersects;
 import org.opengis.filter.spatial.Overlaps;
 import org.opengis.filter.spatial.Touches;
 import org.opengis.filter.spatial.Within;
+import org.opengis.filter.temporal.After;
+import org.opengis.filter.temporal.AnyInteracts;
+import org.opengis.filter.temporal.Before;
+import org.opengis.filter.temporal.Begins;
+import org.opengis.filter.temporal.BegunBy;
+import org.opengis.filter.temporal.During;
+import org.opengis.filter.temporal.EndedBy;
+import org.opengis.filter.temporal.Ends;
+import org.opengis.filter.temporal.Meets;
+import org.opengis.filter.temporal.MetBy;
+import org.opengis.filter.temporal.OverlappedBy;
+import org.opengis.filter.temporal.TContains;
+import org.opengis.filter.temporal.TEquals;
+import org.opengis.filter.temporal.TOverlaps;
 
 /**
  * Abstract implementation of FilterVisitor simple returns the provided data.
@@ -199,6 +214,11 @@ public abstract class NullFilterVisitor implements FilterVisitor, ExpressionVisi
     }
 
     @Override
+    public Object visit(final PropertyIsNil filter, final Object data) {
+        return data;
+    }
+    
+    @Override
     public Object visit( final BBOX filter, final Object data ) {
         return data;
     }
@@ -253,6 +273,76 @@ public abstract class NullFilterVisitor implements FilterVisitor, ExpressionVisi
         return data;
     }
 
+    @Override
+    public Object visit(After filter, Object data) {
+        return data;
+    }
+
+    @Override
+    public Object visit(AnyInteracts filter, Object data) {
+        return data;
+    }
+
+    @Override
+    public Object visit(Before filter, Object data) {
+        return data;
+    }
+
+    @Override
+    public Object visit(Begins filter, Object data) {
+        return data;
+    }
+
+    @Override
+    public Object visit(BegunBy filter, Object data) {
+        return data;
+    }
+
+    @Override
+    public Object visit(During filter, Object data) {
+        return data;
+    }
+
+    @Override
+    public Object visit(EndedBy filter, Object data) {
+        return data;
+    }
+
+    @Override
+    public Object visit(Ends filter, Object data) {
+        return data;
+    }
+
+    @Override
+    public Object visit(Meets filter, Object data) {
+        return data;
+    }
+
+    @Override
+    public Object visit(MetBy filter, Object data) {
+        return data;
+    }
+
+    @Override
+    public Object visit(OverlappedBy filter, Object data) {
+        return data;
+    }
+
+    @Override
+    public Object visit(TContains filter, Object data) {
+        return data;
+    }
+
+    @Override
+    public Object visit(TEquals filter, Object data) {
+        return data;
+    }
+
+    @Override
+    public Object visit(TOverlaps filter, Object data) {
+        return data;
+    }
+    
     @Override
     public Object visitNullFilter( final Object data ) {
         return data;

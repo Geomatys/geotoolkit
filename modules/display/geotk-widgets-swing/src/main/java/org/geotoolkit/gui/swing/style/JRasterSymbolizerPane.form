@@ -54,6 +54,9 @@
           </Border>
         </Property>
       </Properties>
+      <Events>
+        <EventHandler event="propertyChange" listener="java.beans.PropertyChangeListener" parameters="java.beans.PropertyChangeEvent" handler="propertyChange"/>
+      </Events>
     </Component>
     <Component class="org.geotoolkit.gui.swing.style.JShadedReliefPane" name="guiRelief">
       <Properties>
@@ -65,6 +68,9 @@
           </Border>
         </Property>
       </Properties>
+      <Events>
+        <EventHandler event="propertyChange" listener="java.beans.PropertyChangeListener" parameters="java.beans.PropertyChangeEvent" handler="propertyChange"/>
+      </Events>
     </Component>
     <Container class="javax.swing.JPanel" name="jPanel1">
       <Properties>
@@ -158,6 +164,9 @@
           </Properties>
         </Component>
         <Component class="org.geotoolkit.gui.swing.style.JTextExpressionPane" name="guiOverLap">
+          <Events>
+            <EventHandler event="propertyChange" listener="java.beans.PropertyChangeListener" parameters="java.beans.PropertyChangeEvent" handler="propertyChange"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel2">
           <Properties>
@@ -176,6 +185,9 @@
           </Properties>
         </Component>
         <Component class="org.geotoolkit.gui.swing.style.JNumberExpressionPane" name="guiOpacity">
+          <Events>
+            <EventHandler event="propertyChange" listener="java.beans.PropertyChangeListener" parameters="java.beans.PropertyChangeEvent" handler="propertyChange"/>
+          </Events>
         </Component>
         <Component class="org.geotoolkit.gui.swing.style.JUOMPane" name="guiUOM">
         </Component>

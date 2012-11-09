@@ -18,7 +18,7 @@ package org.geotoolkit.data.memory;
 
 import java.util.Map;
 import org.geotoolkit.data.AbstractFeatureCollection;
-import org.geotoolkit.data.DataStoreRuntimeException;
+import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.factory.Hints;
@@ -51,7 +51,7 @@ public abstract class WrapFeatureCollection extends AbstractFeatureCollection<Fe
      * Return the feature modify on the fly
      * @param original Feature
      */
-    protected abstract Feature modify(Feature original) throws DataStoreRuntimeException;
+    protected abstract Feature modify(Feature original) throws FeatureStoreRuntimeException;
 
     /**
      * Return the original FeatureCollection
@@ -75,10 +75,10 @@ public abstract class WrapFeatureCollection extends AbstractFeatureCollection<Fe
      * original FeatureCollection
      * @param hints
      * @return FeatureIterator
-     * @throws DataStoreRuntimeException
+     * @throws FeatureStoreRuntimeException
      */
     @Override
-    public FeatureIterator<Feature> iterator(final Hints hints) throws DataStoreRuntimeException {
+    public FeatureIterator<Feature> iterator(final Hints hints) throws FeatureStoreRuntimeException {
         return new VectorFeatureIterator(originalFC.iterator());
     }
 
@@ -107,7 +107,7 @@ public abstract class WrapFeatureCollection extends AbstractFeatureCollection<Fe
      *  {@inheritDoc }
      */
     @Override
-    public boolean isWritable() throws DataStoreRuntimeException {
+    public boolean isWritable() throws FeatureStoreRuntimeException {
         return false;
     }
 

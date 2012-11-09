@@ -98,7 +98,7 @@ public class CachedExternal extends Cache<ExternalGraphic>{
                     try {
                         cachedImage = ImageIO.read(path.toURL());
                     } catch (IOException ex) {
-                        ex.printStackTrace();
+                        LOGGER.log(Level.INFO, "CacheExternal, can read image for path : "+ path.toString()+" : "+ex.getMessage());
                     }
                 }
             }

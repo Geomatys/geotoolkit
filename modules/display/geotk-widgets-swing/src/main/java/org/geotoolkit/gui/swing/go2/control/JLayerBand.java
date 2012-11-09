@@ -38,15 +38,13 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.AbstractAction;
-import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingConstants;
 
-import org.geotoolkit.data.DataStoreRuntimeException;
+import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.query.QueryBuilder;
-import org.geotoolkit.gui.swing.go2.JMap2D;
 import org.geotoolkit.gui.swing.navigator.JNavigator;
 import org.geotoolkit.gui.swing.navigator.JNavigatorBand;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
@@ -58,7 +56,7 @@ import org.geotoolkit.map.MapItem;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.referencing.cs.DiscreteCoordinateSystemAxis;
 import org.geotoolkit.storage.DataStoreException;
-import org.geotoolkit.style.random.RandomStyleBuilder;
+import org.geotoolkit.style.RandomStyleBuilder;
 import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.util.Converters;
 import org.geotoolkit.util.NumberRange;
@@ -90,7 +88,7 @@ public class JLayerBand extends JNavigatorBand implements LayerListener{
     private static final Logger LOGGER = Logging.getLogger(JLayerBand.class);
     
     private final MapLayer layer;
-    private Color color = new RandomStyleBuilder().randomColor();
+    private Color color = RandomStyleBuilder.randomColor();
     private final float width = 2f;
     private final float circleSize = 8f;
     
@@ -161,9 +159,14 @@ public class JLayerBand extends JNavigatorBand implements LayerListener{
             
             final CoordinateSystem cs = env.getCoordinateReferenceSystem().getCoordinateSystem();
             for(int i=0;i<cs.getDimension();i++){
-                CoordinateSystemAxis csa = cs.getAxis(i);
+                final CoordinateSystemAxis csa = cs.getAxis(i);
+                final AxisDirection direction = csa.getDirection();
                 
-                if(!csa.getName().getCode().equalsIgnoreCase(axis.getName().getCode())){
+                if(axis instanceof TemporalCRS){
+                    if(!(AxisDirection.FUTURE.equals(direction) || AxisDirection.PAST.equals(direction))){
+                        continue;
+                    }
+                }else if(!csa.getName().getCode().equalsIgnoreCase(axis.getName().getCode())){
                     continue;
                 }
                                 
@@ -243,7 +246,7 @@ public class JLayerBand extends JNavigatorBand implements LayerListener{
                     }
                 }catch(final DataStoreException ex){
                     LOGGER.log(Level.FINE,ex.getMessage(),ex);
-                }catch(final DataStoreRuntimeException ex){
+                }catch(final FeatureStoreRuntimeException ex){
                     LOGGER.log(Level.FINE,ex.getMessage(),ex);
                 }finally{
                     if(ite != null){

@@ -16,7 +16,9 @@
  */
 package org.geotoolkit.coverage;
 
+import java.awt.Image;
 import org.geotoolkit.coverage.io.GridCoverageReader;
+import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.storage.DataStoreException;
 import org.opengis.feature.type.Name;
 
@@ -26,27 +28,52 @@ import org.opengis.feature.type.Name;
  * @module pending
  */
 public interface CoverageReference {
-    
+
     /**
      * Name of the coverage. act as an identifier in the coverage store
-     * 
+     *
      * @return Name
      */
     Name getName();
     
     /**
+     * @return int image index in reader/writer.
+     */
+    int getImageIndex();
+
+    /**
+     * @return true if coverage is writable
+     */
+    boolean isWritable() throws DataStoreException;
+
+    /**
      * Get the coverage store this coverage comes from.
-     * 
+     *
      * @return CoverageStore, can be null if coverage has a different kind of source.
      */
     CoverageStore getStore();
-    
+
     /**
      * Get a new reader for this coverage.
-     * 
+     *
      * @return GridCoverageReader
-     * @throws DataStoreException  
+     * @throws DataStoreException
      */
     GridCoverageReader createReader() throws DataStoreException;
-    
+
+    /**
+     * Get a new writer for this coverage.
+     *
+     * @return GridCoverageWriter
+     * @throws DataStoreException
+     */
+    GridCoverageWriter createWriter() throws DataStoreException;
+
+    /**
+     * Return the legend of this coverage
+     * @return
+     * @throws DataStoreException
+     */
+    Image getLegend() throws DataStoreException;
+
 }

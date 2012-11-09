@@ -18,6 +18,7 @@
 package org.geotoolkit.gui.swing.propertyedit;
 
 
+import java.awt.Image;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.ImageIcon;
@@ -79,6 +80,11 @@ public class LayerFilterPropertyPanel extends MultiPropertyPanel {
         //return IconBundle.getResource().getIcon("16_filter");
     }
 
+    @Override
+    public Image getPreview() {
+        return null;
+    }
+    
     @Override
     public String getToolTip() {
         return null;

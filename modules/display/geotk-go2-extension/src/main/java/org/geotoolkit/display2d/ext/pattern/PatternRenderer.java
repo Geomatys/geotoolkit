@@ -30,8 +30,8 @@ import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.display.exception.PortrayalException;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.display2d.container.statefull.StatefullContextParams;
-import org.geotoolkit.display2d.container.statefull.StatefullProjectedFeature;
+import org.geotoolkit.display2d.container.stateless.DefaultProjectedFeature;
+import org.geotoolkit.display2d.container.stateless.StatelessContextParams;
 import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.geotoolkit.display2d.style.renderer.AbstractCoverageSymbolizerRenderer;
@@ -113,7 +113,7 @@ public class PatternRenderer extends AbstractCoverageSymbolizerRenderer<CachedPa
         //paint all dynamicly generated features -------------------------------
         final ReferencedCanvas2D canvas = renderingContext.getCanvas();
         final CoordinateReferenceSystem dataCRS = dataCoverage.getCoordinateReferenceSystem();
-        final StatefullContextParams params = new StatefullContextParams(canvas,null);
+        final StatelessContextParams params = new StatelessContextParams(canvas,null);
         final CoordinateReferenceSystem objectiveCRS = renderingContext.getObjectiveCRS();
 
 
@@ -132,7 +132,7 @@ public class PatternRenderer extends AbstractCoverageSymbolizerRenderer<CachedPa
         }
         GeometryTransformer trs = new GeometryCSTransformer(cstrs);
 
-        final StatefullProjectedFeature projectedFeature = new StatefullProjectedFeature(params);
+        final DefaultProjectedFeature projectedFeature = new DefaultProjectedFeature(params);
         try {
             for(final Map.Entry<SimpleFeature,List<CachedSymbolizer>> entry : features.entrySet()){
                 Feature f = entry.getKey();

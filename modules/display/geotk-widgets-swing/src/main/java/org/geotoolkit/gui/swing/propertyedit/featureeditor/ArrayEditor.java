@@ -17,8 +17,8 @@
 package org.geotoolkit.gui.swing.propertyedit.featureeditor;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Insets;
-import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.lang.reflect.Array;
@@ -26,13 +26,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import org.geotoolkit.feature.AttributeTypeBuilder;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.FeatureUtilities;
+import org.geotoolkit.gui.swing.misc.JOptionDialog;
 import org.geotoolkit.gui.swing.propertyedit.JFeatureOutLine;
 import org.geotoolkit.util.Utilities;
 import org.opengis.feature.Attribute;
@@ -111,7 +111,6 @@ public class ArrayEditor extends PropertyValueEditor implements ActionListener{
     @Override
     public void actionPerformed(ActionEvent e) {
 
-        final JDialog dialog = new JDialog();
         final JFeatureOutLine outline = new JFeatureOutLine();
 
         final Class subClass = this.type.getBinding().getComponentType();
@@ -131,36 +130,26 @@ public class ArrayEditor extends PropertyValueEditor implements ActionListener{
 
         outline.setEdited(ca);
 
-        dialog.setContentPane(new JScrollPane(outline));
-        dialog.pack();
+        final int res = JOptionDialog.show((Component)e.getSource(), new JScrollPane(outline), JOptionPane.OK_OPTION);
+        
+        if(JOptionPane.OK_OPTION == res){
+            final Collection<Property> properties = ca.getProperties();
+            final int newSize = properties.size();
+            value = Array.newInstance(subClass, newSize);
+            int i=0;
+            for(Property prop : properties){
+                final Object val = prop.getValue();
+                if(subClass.isPrimitive()){
+                    //we can only set if the value is not null
+                    if(val != null){
+                        Array.set(value,i,val);
+                    }
 
-        final Point p = ((JComponent)e.getSource()).getLocationOnScreen();
-        p.x -= dialog.getWidth()/2;
-        p.y -= dialog.getHeight()/2;
-        if(p.x < 0) p.x=0;
-        if(p.y < 0) p.y=0;
-
-        dialog.setLocation(p);
-        dialog.setModal(true);
-        dialog.setVisible(true);
-
-        final Collection<Property> properties = ca.getProperties();
-        final int newSize = properties.size();
-        value = Array.newInstance(subClass, newSize);
-        int i=0;
-        for(Property prop : properties){
-            final Object val = prop.getValue();
-            if(subClass.isPrimitive()){
-                //we can only set if the value is not null
-                if(val != null){
+                }else{
                     Array.set(value,i,val);
                 }
-
-            }else{
-                Array.set(value,i,val);
+                i++;
             }
-
-            i++;
         }
 
         updateText();

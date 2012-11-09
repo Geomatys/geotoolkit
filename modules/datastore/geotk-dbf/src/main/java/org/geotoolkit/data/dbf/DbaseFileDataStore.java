@@ -27,10 +27,10 @@ import java.util.*;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.logging.Level;
-import org.geotoolkit.data.AbstractDataStore;
-import org.geotoolkit.data.DataStoreFactory;
-import org.geotoolkit.data.DataStoreFinder;
-import org.geotoolkit.data.DataStoreRuntimeException;
+import org.geotoolkit.data.AbstractFeatureStore;
+import org.geotoolkit.data.FeatureStoreFactory;
+import org.geotoolkit.data.FeatureStoreFinder;
+import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.dbf.DbaseFileReader.Row;
@@ -60,7 +60,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class DbaseFileDataStore extends AbstractDataStore{
+public class DbaseFileDataStore extends AbstractFeatureStore{
 
     private final ReadWriteLock RWLock = new ReentrantReadWriteLock();
     private final ReadWriteLock TempLock = new ReentrantReadWriteLock();
@@ -105,8 +105,8 @@ public class DbaseFileDataStore extends AbstractDataStore{
      * {@inheritDoc}
      */
     @Override
-    public DataStoreFactory getFactory() {
-        return DataStoreFinder.getFactoryById(DbaseDataStoreFactory.NAME);
+    public FeatureStoreFactory getFactory() {
+        return FeatureStoreFinder.getFactoryById(DbaseDataStoreFactory.NAME);
     }
 
     private synchronized void checkExist() throws DataStoreException{
@@ -290,23 +290,23 @@ public class DbaseFileDataStore extends AbstractDataStore{
         }
 
         @Override
-        public SimpleFeature next() throws DataStoreRuntimeException {
+        public SimpleFeature next() throws FeatureStoreRuntimeException {
             read();
             final SimpleFeature ob = current;
             current = null;
             if(ob == null){
-                throw new DataStoreRuntimeException("No more records.");
+                throw new FeatureStoreRuntimeException("No more records.");
             }
             return ob;
         }
 
         @Override
-        public boolean hasNext() throws DataStoreRuntimeException {
+        public boolean hasNext() throws FeatureStoreRuntimeException {
             read();
             return current != null;
         }
 
-        private void read() throws DataStoreRuntimeException{
+        private void read() throws FeatureStoreRuntimeException{
             if(current != null) return;
             if(!reader.hasNext()) return;
 
@@ -322,7 +322,7 @@ public class DbaseFileDataStore extends AbstractDataStore{
                     current = sfb.buildFeature(Integer.toString(inc++));
                 }
             }catch(IOException ex){
-                throw new DataStoreRuntimeException(ex);
+                throw new FeatureStoreRuntimeException(ex);
             }
 
         }
@@ -340,7 +340,7 @@ public class DbaseFileDataStore extends AbstractDataStore{
 
         @Override
         public void remove() {
-            throw new DataStoreRuntimeException("Not supported on reader.");
+            throw new FeatureStoreRuntimeException("Not supported on reader.");
         }
 
     }

@@ -26,7 +26,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.geom.NoninvertibleTransformException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.measure.unit.NonSI;
@@ -36,7 +35,7 @@ import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import org.geotoolkit.data.DataUtilities;
+import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.GO2Utilities;
@@ -65,8 +64,6 @@ import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.resources.Vocabulary;
-import org.geotoolkit.sld.DefaultSLDFactory;
-import org.geotoolkit.sld.MutableSLDFactory;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.StyleConstants;
@@ -79,7 +76,6 @@ import org.opengis.geometry.Envelope;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.TransformException;
 import org.opengis.style.Description;
 import org.opengis.style.LineSymbolizer;
 
@@ -170,7 +166,7 @@ public class JCRSChooser extends javax.swing.JDialog {
 
         BackgroundPainter bgWhite = new SolidColorPainter(Color.WHITE);
         guiMap.getCanvas().setBackgroundPainter(BackgroundPainterGroup.wrap(bgWhite ,new GridPainter(gridTemplate)));
-
+        guiForceLongitudeFirst.setSelected(true);
         
     }
 
@@ -258,7 +254,7 @@ public class JCRSChooser extends javax.swing.JDialog {
                 final Polygon polygon = GF.createPolygon(ring, new LinearRing[0]);                
                 final Feature feature = FeatureUtilities.defaultFeature(type, "0");
                 feature.getProperty("geom").setValue(polygon);
-                final FeatureCollection col = DataUtilities.collection(feature);
+                final FeatureCollection col = FeatureStoreUtilities.collection(feature);
                 
                 //general informations
                 final String name = "mySymbol";

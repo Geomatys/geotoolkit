@@ -56,15 +56,17 @@ public class CoveragePresenter extends AbstractInformationPresenter{
         final List<Entry<GridSampleDimension,Object>> results = Bridge.readCoverageValues(coverage, context, area);
 
         final StringBuilder builder = new StringBuilder();
-        for (Entry<GridSampleDimension,Object> entry : results) {
-            final Object value = entry.getValue();
-            if (value == null) {
-                continue;
-            }
-            builder.append(value);
-            final Unit unit = entry.getKey().getUnits();
-            if (unit != null) {
-                builder.append(' ').append(unit.toString());
+        if(results != null){
+            for (Entry<GridSampleDimension,Object> entry : results) {
+                final Object value = entry.getValue();
+                if (value == null) {
+                    continue;
+                }
+                builder.append(value);
+                final Unit unit = entry.getKey().getUnits();
+                if (unit != null) {
+                    builder.append(' ').append(unit.toString());
+                }
             }
         }
 

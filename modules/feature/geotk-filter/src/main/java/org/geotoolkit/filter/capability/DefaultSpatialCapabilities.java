@@ -19,12 +19,11 @@ package org.geotoolkit.filter.capability;
 
 import java.util.Collection;
 import java.util.List;
+import static org.geotoolkit.util.ArgumentChecks.*;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
 import org.opengis.filter.capability.GeometryOperand;
 import org.opengis.filter.capability.SpatialCapabilities;
 import org.opengis.filter.capability.SpatialOperators;
-
-import static org.geotoolkit.util.ArgumentChecks.*;
 
 /**
  * Immutable spatial capabilities

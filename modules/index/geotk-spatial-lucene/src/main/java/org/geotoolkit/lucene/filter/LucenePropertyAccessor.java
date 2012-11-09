@@ -28,6 +28,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.lucene.document.Document;
+import org.apache.lucene.util.BytesRef;
 
 import org.geotoolkit.filter.accessor.PropertyAccessor;
 import org.geotoolkit.geometry.jts.SRIDGenerator;
@@ -75,14 +76,14 @@ public class LucenePropertyAccessor implements PropertyAccessor {
 
             //if the requested field is the geometry we must grab the crs field too
             //to generate the geometry
-            final byte[] compact = doc.getBinaryValue(LuceneOGCFilter.GEOMETRY_FIELD_NAME);
+            final BytesRef compact = doc.getBinaryValue(LuceneOGCFilter.GEOMETRY_FIELD_NAME);
             if (compact == null) {
                 return null;
             }
-            final int srid = SRIDGenerator.toSRID(compact, 0);
+            final int srid = SRIDGenerator.toSRID(compact.bytes, 0);
 
             //skip the 5 crs byte;
-            final ByteArrayInStream stream = new ByteArrayInStream(compact);
+            final ByteArrayInStream stream = new ByteArrayInStream(compact.bytes);
             stream.read(new byte[5]);
             
             try {

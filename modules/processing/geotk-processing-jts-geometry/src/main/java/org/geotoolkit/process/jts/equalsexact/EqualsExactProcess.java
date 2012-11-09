@@ -67,9 +67,9 @@ public class EqualsExactProcess extends AbstractProcess {
             getOrCreate(RESULT, outputParameters).setValue(result);
 
         } catch (TransformException ex) {
-            throw new ProcessException(null, this, ex);
+            throw new ProcessException(ex.getMessage(), this, ex);
         } catch (FactoryException ex) {
-            throw new ProcessException(null, this, ex);
+            throw new ProcessException(ex.getMessage(), this, ex);
         }
     }
 

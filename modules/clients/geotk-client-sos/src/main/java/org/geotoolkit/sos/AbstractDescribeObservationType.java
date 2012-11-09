@@ -66,7 +66,7 @@ public abstract class AbstractDescribeObservationType extends AbstractSOSRequest
 
     @Override
     public URL getURL() throws MalformedURLException {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException("Can not generate abstract describe observation URL.");
     }
 
     /**

@@ -61,6 +61,9 @@
       </Properties>
     </Component>
     <Component class="org.geotoolkit.gui.swing.style.JNumberExpressionPane" name="guiGamma">
+      <Events>
+        <EventHandler event="propertyChange" listener="java.beans.PropertyChangeListener" parameters="java.beans.PropertyChangeEvent" handler="propertyChange"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JRadioButton" name="guiNone">
       <Properties>
@@ -71,6 +74,9 @@
           <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="method_none" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
         </Property>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="guiNoneActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JRadioButton" name="guiHistogram">
       <Properties>
@@ -81,6 +87,9 @@
           <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="method_histogram" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
         </Property>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="guiNoneActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JRadioButton" name="guiNormalize">
       <Properties>
@@ -91,6 +100,9 @@
           <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="method_normalize" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
         </Property>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="guiNoneActionPerformed"/>
+      </Events>
     </Component>
   </SubComponents>
 </Form>

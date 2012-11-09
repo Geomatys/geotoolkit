@@ -26,7 +26,7 @@ import javax.sql.DataSource;
 import com.vividsolutions.jts.geom.GeometryFactory;
 
 import java.awt.RenderingHints.Key;
-import org.geotoolkit.data.DataStore;
+import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.jdbc.FilterToSQL;
 import org.geotoolkit.factory.HintsPending;
 import org.geotoolkit.jdbc.dialect.SQLDialect;
@@ -43,7 +43,7 @@ import org.opengis.filter.FilterFactory;
  *
  * @module pending
  */
-public interface JDBCDataStore extends DataStore {
+public interface JDBCDataStore extends FeatureStore {
 
     public static final Key RESAMPLING = new org.geotoolkit.factory.Hints.Key(Object.class);
     

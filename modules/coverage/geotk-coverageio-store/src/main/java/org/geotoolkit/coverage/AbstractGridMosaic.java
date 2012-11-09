@@ -18,16 +18,17 @@ package org.geotoolkit.coverage;
 
 import java.awt.Dimension;
 import java.awt.Point;
-import java.awt.geom.Point2D;
 import java.util.Collection;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.util.converter.Classes;
+import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 
 /**
@@ -38,20 +39,32 @@ import org.opengis.geometry.Envelope;
  */
 public abstract class AbstractGridMosaic implements GridMosaic{
     
-    private final String id = UUID.randomUUID().toString();
+    private final String id;
     private final Pyramid pyramid;
-    private final Point2D upperLeft;
+    private final DirectPosition upperLeft;
     private final Dimension gridSize;
     private final Dimension tileSize;
     private final double scale;
 
-    public AbstractGridMosaic(Pyramid pyramid, Point2D upperLeft, Dimension gridSize,
+    public AbstractGridMosaic(Pyramid pyramid, DirectPosition upperLeft, Dimension gridSize,
+            Dimension tileSize, double scale) {
+        this(null,pyramid,upperLeft,gridSize,tileSize,scale);
+    }
+    
+    public AbstractGridMosaic(String id, Pyramid pyramid, DirectPosition upperLeft, Dimension gridSize,
             Dimension tileSize, double scale) {
         this.pyramid = pyramid;
-        this.upperLeft = (Point2D) upperLeft.clone();
+        this.upperLeft = new GeneralDirectPosition(upperLeft);
         this.scale = scale;
         this.gridSize = (Dimension) gridSize.clone();
         this.tileSize = (Dimension) tileSize.clone();
+        
+        if(id == null){
+            this.id = UUID.randomUUID().toString();
+        }else{
+            this.id = id;
+        }
+        
     }
 
     @Override
@@ -65,8 +78,8 @@ public abstract class AbstractGridMosaic implements GridMosaic{
     }
 
     @Override
-    public Point2D getUpperLeftCorner() {
-        return (Point2D) upperLeft.clone(); //defensive copy
+    public DirectPosition getUpperLeftCorner() {
+        return new GeneralDirectPosition(upperLeft); //defensive copy
     }
 
     @Override
@@ -86,8 +99,9 @@ public abstract class AbstractGridMosaic implements GridMosaic{
     
     @Override
     public Envelope getEnvelope(int row, int col) {
-        final double minX = getUpperLeftCorner().getX();
-        final double maxY = getUpperLeftCorner().getY();
+        final DirectPosition ul = getUpperLeftCorner();
+        final double minX = ul.getOrdinate(0);
+        final double maxY = ul.getOrdinate(1);
         final double spanX = tileSize.width * scale;
         final double spanY = tileSize.height * scale;
         
@@ -101,8 +115,9 @@ public abstract class AbstractGridMosaic implements GridMosaic{
     
     @Override
     public Envelope getEnvelope(){
-        final double minX = getUpperLeftCorner().getX();
-        final double maxY = getUpperLeftCorner().getY();
+        final DirectPosition ul = getUpperLeftCorner();
+        final double minX = ul.getOrdinate(0);
+        final double maxY = ul.getOrdinate(1);
         final double spanX = getTileSize().width * getGridSize().width * getScale();
         final double spanY = getTileSize().height* getGridSize().height* getScale();
         
@@ -138,11 +153,11 @@ public abstract class AbstractGridMosaic implements GridMosaic{
     public static AffineTransform2D getTileGridToCRS(GridMosaic mosaic, Point location){
         
         final Dimension tileSize = mosaic.getTileSize();
-        final Point2D upperleft = mosaic.getUpperLeftCorner();
+        final DirectPosition upperleft = mosaic.getUpperLeftCorner();
         final double scale = mosaic.getScale();
                 
-        final double offsetX  = upperleft.getX() + location.x * (scale * tileSize.width) ;
-        final double offsetY = upperleft.getY() - location.y * (scale * tileSize.height);
+        final double offsetX  = upperleft.getOrdinate(0) + location.x * (scale * tileSize.width) ;
+        final double offsetY = upperleft.getOrdinate(1) - location.y * (scale * tileSize.height);
 
         return new AffineTransform2D(scale, 0, 0, -scale, offsetX, offsetY);
     }

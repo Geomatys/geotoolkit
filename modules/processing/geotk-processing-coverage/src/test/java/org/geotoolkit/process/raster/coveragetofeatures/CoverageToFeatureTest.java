@@ -340,7 +340,7 @@ public class CoverageToFeatureTest {
 
         @Override
         public SpatialMetadata getCoverageMetadata(int i) throws CoverageStoreException {
-            SpatialMetadata meta = new SpatialMetadata(SpatialMetadataFormat.IMAGE);
+            SpatialMetadata meta = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(SpatialMetadataFormat.GEOTK_FORMAT_NAME));
             GridDomainAccessor grid = new GridDomainAccessor(meta);
             grid.setGridGeometry(coverage.getGridGeometry(), pixPos, CellGeometry.POINT, -1);
             ReferencingBuilder ref = new ReferencingBuilder(meta);
