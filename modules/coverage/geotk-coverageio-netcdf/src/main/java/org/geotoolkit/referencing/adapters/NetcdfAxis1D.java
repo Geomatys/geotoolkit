@@ -35,6 +35,8 @@ import org.geotoolkit.referencing.cs.DiscreteCoordinateSystemAxis;
 import org.geotoolkit.lang.Workaround;
 import org.geotoolkit.resources.Errors;
 
+import static org.geotoolkit.math.XMath.xorSign;
+
 
 /**
  * Wraps a NetCDF {@link CoordinateAxis1D} as an implementation of GeoAPI interfaces.
@@ -289,5 +291,50 @@ final class NetcdfAxis1D extends NetcdfAxis implements DiscreteCoordinateSystemA
         } catch (IndexOutOfBoundsException e) {
             throw new TransformException(Errors.format(Errors.Keys.ILLEGAL_COORDINATE_$1, x), e);
         }
+    }
+
+    /**
+     * The reverse of {@link #getOrdinateValue(double[], int)}, finding the index of a given
+     * ordinate value. The returned values are bounded to the range of valid grid indices.
+     *
+     * @since 3.21
+     */
+    @Override
+    void getOrdinateIndex(final double ordinate, final double[] gridPts, final int dstOff) {
+        final CoordinateAxis1D axis = (CoordinateAxis1D) this.axis;
+        final int i = axis.findCoordElementBounded(ordinate);
+        double gridOrdinate = i;
+        if (length > 1 && (axis.isRegular() || axis.isContiguous())) {
+            final double atGridPoint = axis.getCoordValue(i);
+            final double delta = ordinate - atGridPoint;
+            if (delta != 0) {
+                double other;
+                double sign;
+                if (i != length-1) {
+                    other = axis.getCoordValue(i+1);
+                    sign  = 1;
+                    if (xorSign(ordinate - other, delta) >= 0) {
+                        /*
+                         * If we enter in this block, then the 'other' value is on the same side
+                         * than 'atGridPoint' relative to the given 'ordinate' value. This means
+                         * than using this 'other' value would be an extrapolation. Since we want
+                         * interpolations, use the value on the opposite side instead. This is not
+                         * necessarily the nearest value.
+                         */
+                        sign = 0; // This will prevent extrapolation if there is no opposite side.
+                        if (i != 0) {
+                            other = axis.getCoordValue(i-1);
+                            sign  = -1;
+                        }
+                    }
+                } else {
+                    other = axis.getCoordValue(i-1);
+                    sign  = (xorSign(ordinate - other, delta) < 0) ? -1 : 0;
+                    // The above check is for preventing extrapolations.
+                }
+                gridOrdinate += sign * delta / (other - atGridPoint);
+            }
+        }
+        gridPts[dstOff + iDim] = gridOrdinate;
     }
 }

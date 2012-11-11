@@ -25,6 +25,7 @@ import ucar.nc2.dataset.CoordinateAxis1D;
 import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
+import org.opengis.referencing.operation.NoninvertibleTransformException;
 
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.logging.Logging;
@@ -62,6 +63,11 @@ class NetcdfGridToCRS extends AbstractMathTransform implements SeparableTransfor
      * The length of this array is the number of target dimensions.
      */
     private final NetcdfAxis[] axes;
+
+    /**
+     * The inverse of this transform, calculated when first needed.
+     */
+    transient MathTransform inverse;
 
     /**
      * Creates a new transform for the given axes.
@@ -131,6 +137,65 @@ class NetcdfGridToCRS extends AbstractMathTransform implements SeparableTransfor
         }
         System.arraycopy(t, 0, dstPts, dstOff, t.length);
         return null;
+    }
+
+    /**
+     * The inverse transform. Whether this transform is supported or not depends on the axis
+     * subclasses implementing the {@link NetcdfAxis#getOrdinateIndex(double, double[])} method.
+     *
+     * @since 3.21
+     */
+    @SuppressWarnings("serial") // Enclosing class is not serializable.
+    private final class Inverse extends AbstractMathTransform.Inverse {
+        /**
+         * Creates a new inverse transform.
+         */
+        Inverse() {
+            NetcdfGridToCRS.this.super();
+        }
+
+        /**
+         * Transforms a single geodetic coordinate value.
+         */
+        @Override
+        public Matrix transform(final double[] srcPts, final int srcOff,
+                                final double[] dstPts, final int dstOff,
+                                final boolean derivate) throws TransformException
+        {
+            if (derivate) {
+                throw new TransformException(Errors.format(Errors.Keys.CANT_COMPUTE_DERIVATIVE));
+            }
+            final NetcdfAxis[] axes = NetcdfGridToCRS.this.axes;
+            final double[] tmpPts;
+            final int tmpOff;
+            if (srcOff == dstOff && Math.abs(srcOff - dstOff) < Math.max(sourceDim, axes.length)) {
+                tmpPts = new double[sourceDim];
+                tmpOff = 0;
+            } else {
+                tmpPts = dstPts;
+                tmpOff = dstOff;
+            }
+            for (int i=0; i<axes.length; i++) {
+                axes[i].getOrdinateIndex(srcPts[srcOff+i], tmpPts, tmpOff);
+            }
+            if (tmpPts != dstPts) {
+                System.arraycopy(tmpPts, 0, dstPts, dstOff, tmpPts.length);
+            }
+            return null;
+        }
+    }
+
+    /**
+     * Returns the inverse of this transform.
+     *
+     * @since 3.21
+     */
+    @Override
+    public synchronized MathTransform inverse() throws NoninvertibleTransformException {
+        if (inverse == null) {
+            inverse = new Inverse();
+        }
+        return inverse;
     }
 
     /**

@@ -341,6 +341,23 @@ public class NetcdfAxis extends NetcdfIdentifiedObject implements CoordinateSyst
     }
 
     /**
+     * The reverse of {@link #getOrdinateValue(double[], int)}, finding the index of a given
+     * ordinate value.
+     *
+     * @todo This method is currently implemented only for the 1D-case. Generalization to the
+     *       2D case would probably require a change in the method signature.
+     *
+     * @param ordinate The ordinate value to convert.
+     * @param gridPts  The array where to store the grid index.
+     * @param dstOff   Offset of the first ordinate to write in {@code gridPts}.
+     *
+     * @since 3.21
+     */
+    void getOrdinateIndex(final double ordinate, final double[] gridPts, final int dstOff) throws TransformException {
+        throw new TransformException(Errors.format(Errors.Keys.NONINVERTIBLE_TRANSFORM));
+    }
+
+    /**
      * Returns the units as a string. If the axis direction or the time epoch
      * was appended to the units, then this part of the string is removed.
      */

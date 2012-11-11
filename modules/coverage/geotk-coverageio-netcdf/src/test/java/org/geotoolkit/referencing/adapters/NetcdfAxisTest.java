@@ -114,6 +114,42 @@ public final strictfp class NetcdfAxisTest {
     }
 
     /**
+     * Tests the {@link NetcdfAxis#getOrdinateIndex(double, double[])} method.
+     * This method uses the Coriolis depth axis for testing purpose.
+     * The first values are 5 10 20 30 40 50 60 80.
+     *
+     * @throws IOException If an error occurred while reading the test file.
+     * @throws TransformException If an error occurred while interpolating.
+     */
+    @Test
+    public void testGetOrdinateIndex1D() throws IOException, TransformException {
+        final NetcdfDataset data = NetcdfDataset.openDataset(getTestFile().getPath());
+        try {
+            final NetcdfCRS crs = NetcdfCRSTest.wrapStatic(data.getCoordinateSystems().get(0), data);
+            final NetcdfAxis axis = ((NetcdfAxis) crs.getCoordinateSystem().getAxis(2));
+            assertInstanceOf("Expected a one-dimensional axis", NetcdfAxis1D.class, axis);
+            final double[] e = new double[4]; // Expected values
+            final double[] c = new double[4]; // Actual values
+            e[2] = 0.0; axis.getOrdinateIndex( 5.0, c, 0); assertArrayEquals(e, c, EPS);
+            e[2] = 0.5; axis.getOrdinateIndex( 7.5, c, 0); assertArrayEquals(e, c, EPS);
+            e[2] = 1.0; axis.getOrdinateIndex(10.0, c, 0); assertArrayEquals(e, c, EPS);
+            e[2] = 1.5; axis.getOrdinateIndex(15.0, c, 0); assertArrayEquals(e, c, EPS);
+            e[2] = 2.0; axis.getOrdinateIndex(20.0, c, 0); assertArrayEquals(e, c, EPS);
+            e[2] = 2.2; axis.getOrdinateIndex(22.0, c, 0); assertArrayEquals(e, c, EPS);
+            e[2] = 3.0; axis.getOrdinateIndex(30.0, c, 0); assertArrayEquals(e, c, EPS);
+            e[2] = 3.8; axis.getOrdinateIndex(38.0, c, 0); assertArrayEquals(e, c, EPS);
+            e[2] = 4.0; axis.getOrdinateIndex(40.0, c, 0); assertArrayEquals(e, c, EPS);
+            e[2] = 5.0; axis.getOrdinateIndex(50.0, c, 0); assertArrayEquals(e, c, EPS);
+            e[2] = 5.5; axis.getOrdinateIndex(55.0, c, 0); assertArrayEquals(e, c, EPS);
+            e[2] = 6.0; axis.getOrdinateIndex(60.0, c, 0); assertArrayEquals(e, c, EPS);
+            e[2] = 6.5; axis.getOrdinateIndex(70.0, c, 0); assertArrayEquals(e, c, EPS);
+            e[2] = 7.0; axis.getOrdinateIndex(80.0, c, 0); assertArrayEquals(e, c, EPS);
+        } finally {
+            data.close();
+        }
+    }
+
+    /**
      * Tests whatever the patch provided by {@link NetcdfCRS.Temporal#complete}
      * is still necessary. If this method fails in a future version of the UCAR
      * library, then we may consider removing the patch.

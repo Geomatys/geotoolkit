@@ -35,11 +35,6 @@ import org.geotoolkit.resources.Errors;
  */
 final class NetcdfGridToCRS2D extends NetcdfGridToCRS implements MathTransform2D {
     /**
-     * The inverse of this transform, calculated when first needed.
-     */
-    private transient MathTransform2D inverse;
-
-    /**
      * Creates a new transform for the given axes.
      *
      * @see #create(Dimension[], NetcdfAxis[])
@@ -72,6 +67,6 @@ final class NetcdfGridToCRS2D extends NetcdfGridToCRS implements MathTransform2D
         } catch (TransformException e) {
             throw new NoninvertibleTransformException(Errors.format(Errors.Keys.NONINVERTIBLE_TRANSFORM), e);
         }
-        return inverse;
+        return (MathTransform2D) inverse;
     }
 }

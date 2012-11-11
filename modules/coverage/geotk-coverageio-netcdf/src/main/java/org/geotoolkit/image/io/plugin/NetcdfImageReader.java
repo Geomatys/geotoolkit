@@ -156,6 +156,7 @@ import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMA
  *
  * @author Martin Desruisseaux (Geomatys)
  * @author Antoine Hnawia (IRD)
+ * @author Johann Sorel (Geomatys)
  * @version 3.20
  *
  * @see org.geotoolkit.referencing.adapters.NetcdfCRS
@@ -1108,7 +1109,10 @@ public class NetcdfImageReader extends FileImageReader implements
         final Rectangle  srcRegion = new Rectangle();
         final Rectangle destRegion = new Rectangle();
         computeRegions(param, width, height, image, srcRegion, destRegion);
-        IIOImageHelper.flipVertically(param, height, srcRegion);
+        final boolean isGrib = dataset.getFileTypeId().startsWith("GRIB");
+        if (!isGrib) {
+            IIOImageHelper.flipVertically(param, height, srcRegion);
+        }
         final int[] dimensionSlices = getSourceIndices(param, rank);
         final Range[] ranges = new Range[rank];
         for (int i=0; i<ranges.length; i++) {
@@ -1189,8 +1193,14 @@ public class NetcdfImageReader extends FileImageReader implements
                 converter = SampleConverter.IDENTITY;
             }
             final IndexIterator it = array.getIndexIterator();
-            for (int y=ymax; --y>=ymin;) {          // Y_POSITION
-                for (int x=xmin; x<xmax; x++) {     // X_POSITION
+            /*
+             * TEMPORARY PATCH: We are not supposed to flip the image for any format, either
+             * Grib or NetCDF. Instead, we are supposed to flip the sign of the scaleY value
+             * in the 'gridToCRS' affine transform. We will try to fix this problem in the
+             * port to Apache SIS.
+             */
+            for (int y=isGrib ? ymin : ymax; isGrib ? y<ymax : --y>=ymin;) { // Y_POSITION
+                for (int x=xmin; x<xmax; x++) {                              // X_POSITION
                     switch (type) {
                         case DataBuffer.TYPE_DOUBLE: {
                             raster.setSample(x, y, dstBand, converter.convert(it.getDoubleNext()));
@@ -1206,6 +1216,7 @@ public class NetcdfImageReader extends FileImageReader implements
                         }
                     }
                 }
+                if (isGrib) y++;
             }
             /*
              * Checks for abort requests after reading. It would be a waste of a potentially
