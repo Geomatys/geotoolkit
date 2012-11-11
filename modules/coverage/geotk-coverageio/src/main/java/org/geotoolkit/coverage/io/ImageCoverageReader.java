@@ -38,6 +38,7 @@ import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.stream.ImageInputStream;
 
+import org.opengis.geometry.Envelope;
 import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.coverage.grid.GridGeometry;
 import org.opengis.coverage.grid.RectifiedGrid;
@@ -45,6 +46,7 @@ import org.opengis.metadata.spatial.Georectified;
 import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform2D;
+import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.util.GenericName;
@@ -58,6 +60,7 @@ import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
 import org.geotoolkit.coverage.grid.GridCoverageFactory;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.geotoolkit.image.io.DimensionSlice;
 import org.geotoolkit.image.io.ImageMetadataException;
 import org.geotoolkit.image.io.NamedImageStore;
 import org.geotoolkit.image.io.SampleConversionType;
@@ -945,13 +948,50 @@ public class ImageCoverageReader extends GridCoverageReader {
             }
             sp.setSampleConversionAllowed(SampleConversionType.REPLACE_FILL_VALUES, true);
             /*
-             * Finally, if the image does not have its own color palette, provides a palette factory
+             * If the image does not have its own color palette, provides a palette factory
              * which will create the IndexColorModel (if needed) from the GridSampleDimension.
              */
             if (bands != null && imageReader instanceof SpatialImageReader) try {
                 usePaletteFactory = !((SpatialImageReader) imageReader).hasColors(index);
             } catch (IOException e) {
                 throw new CoverageStoreException(formatErrorMessage(e), e);
+            }
+            /*
+             * If there is supplemental dimensions (over the usual 2 dimensions) and the subclass
+             * implementation did not defined explicitely some dimension slices, then convert the
+             * envelope bounds in those supplemental dimensions to slices index.
+             *
+             * TODO: there is some duplication between this code and the work done in the parent
+             *       class. We need to refactor geodeticToPixelCoordinates(…) in a new helper
+             *       class for making easier to divide the work in smaller parts.
+             */
+            if (param != null && gridGeometry.isDefined(GridGeometry2D.ENVELOPE) && sp.getDimensionSlices().isEmpty()) {
+                final Envelope envelope = param.getEnvelope();
+                final int geodeticDim = envelope.getDimension();
+                final int gridDim = gridGeometry.getDimension();
+                if (geodeticDim > 2 && gridDim > 2) {
+                    final double[] median = new double[geodeticDim];
+                    for (int i=0; i<geodeticDim; i++) {
+                        median[i] = envelope.getMedian(i);
+                    }
+                    final double[] indices = new double[gridDim];
+                    Arrays.fill(indices, Double.NaN);
+                    try {
+                        gridGeometry.getGridToCRS().inverse().transform(median, 0, indices, 0, 1);
+                    } catch (TransformException e) {
+                        throw new CoverageStoreException(formatErrorMessage(e), e);
+                    }
+                    for (int i=0; i<gridDim; i++) {
+                        if (i != gridGeometry.gridDimensionX && i != gridGeometry.gridDimensionY) {
+                            final double sliceIndex = indices[i];
+                            if (!Double.isNaN(sliceIndex)) {
+                                final DimensionSlice slice = sp.newDimensionSlice();
+                                slice.addDimensionId(i);
+                                slice.setSliceIndex((int) Math.round(sliceIndex));
+                            }
+                        }
+                    }
+                }
             }
         }
         final Map<?,?> properties = getProperties(index);
