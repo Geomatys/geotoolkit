@@ -111,13 +111,13 @@ public class PyramidalModelReader extends GridCoverageReader{
             //we use the first pyramid as default
             final Pyramid pyramid = set.getPyramids().iterator().next();
             
-            final double[] scales = pyramid.getScales();
-            if(scales.length == 0){
+            final List<GridMosaic> mosaics = pyramid.getMosaics();
+            if(mosaics.isEmpty()){
                 //no mosaics
                 gridGeom = new GeneralGridGeometry(null, null, set.getEnvelope());
             }else{
                 //use the last mosaic informations
-                final GridMosaic mosaic = pyramid.getMosaic(scales.length-1);
+                final GridMosaic mosaic = mosaics.get(mosaics.size()-1);
                 final Dimension gridSize = mosaic.getGridSize();
                 final Dimension tileSize = mosaic.getTileSize();
                 

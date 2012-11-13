@@ -16,10 +16,12 @@
  */
 package org.geotoolkit.coverage;
 
-import java.util.Comparator;
-import java.util.Map.Entry;
-import java.util.SortedMap;
-import java.util.TreeMap;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.UUID;
 import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.referencing.IdentifiedObjects;
@@ -37,14 +39,7 @@ public class DefaultPyramid implements Pyramid{
     private final String id;
     private final PyramidSet set;
     private final CoordinateReferenceSystem crs;
-    private final SortedMap<Double,GridMosaic> mosaics = new TreeMap<Double, GridMosaic>(            
-        new Comparator<Double>(){
-            @Override
-            public int compare(Double o1, Double o2) {
-                //reverse order
-                return -o1.compareTo(o2);
-            }
-    });
+    private final List<GridMosaic> mosaics = new ArrayList<GridMosaic>();
 
     public DefaultPyramid(PyramidSet set, CoordinateReferenceSystem crs) {
         this(null,set,crs);
@@ -65,7 +60,10 @@ public class DefaultPyramid implements Pyramid{
         return id;
     }
     
-    public SortedMap<Double, GridMosaic> getMosaics() {
+    /**
+     * Internal list of pyramids, modify with causion.
+     */
+    public List<GridMosaic> getMosaicsInternal() {
         return mosaics;
     }
     
@@ -81,11 +79,17 @@ public class DefaultPyramid implements Pyramid{
 
     @Override
     public double[] getScales() {
-        final double[] scales = new double[mosaics.size()];
+        final SortedSet<Double> scaleSet = new TreeSet<Double>();
+        
+        for(GridMosaic m : mosaics){
+            scaleSet.add(m.getScale());
+        }
+        
+        final double[] scales = new double[scaleSet.size()];
         
         int i=0;
-        for(Entry<Double,?> entry : mosaics.entrySet()){
-            scales[i] = entry.getKey();
+        for(Double d : scaleSet){
+            scales[i] = d;
             i++;
         }
         
@@ -93,15 +97,20 @@ public class DefaultPyramid implements Pyramid{
     }
 
     @Override
-    public GridMosaic getMosaic(int index) {
-        int i=0;
-        for(Entry<Double,GridMosaic> entry : mosaics.entrySet()){
-            if(i == index){
-                return entry.getValue();
+    public Collection<GridMosaic> getMosaics(int index) {
+        final List<GridMosaic> candidates = new ArrayList<GridMosaic>();
+        final double[] scales = getScales();
+        for(GridMosaic m : mosaics){
+            if(m.getScale() == scales[index]){
+                candidates.add(m);
             }
-            i++;
         }
-        return null;
+        return candidates;
+    }
+
+    @Override
+    public List<GridMosaic> getMosaics() {
+        return Collections.unmodifiableList(mosaics);
     }
     
     @Override
@@ -110,7 +119,7 @@ public class DefaultPyramid implements Pyramid{
                 Classes.getShortClassName(this)
                 +" "+IdentifiedObjects.getIdentifier(getCoordinateReferenceSystem()) 
                 +" "+getId(), 
-                getMosaics().values());
+                getMosaicsInternal());
     }
     
 }

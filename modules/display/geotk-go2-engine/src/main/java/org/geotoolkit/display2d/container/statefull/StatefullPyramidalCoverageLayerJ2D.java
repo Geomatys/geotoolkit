@@ -17,13 +17,13 @@
 package org.geotoolkit.display2d.container.statefull;
 
 import java.awt.Dimension;
-import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -39,7 +39,6 @@ import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.storage.DataStoreException;
-import org.geotoolkit.util.XArrays;
 import org.opengis.feature.type.Name;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
@@ -264,13 +263,9 @@ public class StatefullPyramidalCoverageLayerJ2D extends StatefullMapLayerJ2D<Cov
     private Point3d[] getReplacements(Pyramid pyramid, Point3d coord, final GridMosaic mosaicUpdate,
             double qtileMinCol, double qtileMaxCol, double qtileMinRow, double qtileMaxRow){
         double[] tscales = pyramid.getScales();
-        double[] scales = new double[tscales.length];
-        for (int i=tscales.length-1,j=0; i>=0; i--) {
-            scales[j++] = tscales[i];
-        }
         
-        final int indexBase = Arrays.binarySearch(scales, coord.z);        
-        final GridMosaic mosaicBase = pyramid.getMosaic(scales.length-indexBase-1);        
+        final int indexBase = Arrays.binarySearch(tscales, coord.z);        
+        final GridMosaic mosaicBase = pyramid.getMosaics(indexBase).iterator().next();        
         final Envelope env = mosaicBase.getEnvelope((int)coord.y, (int)coord.x);
         
         double bBoxMinX = env.getMinimum(0);

@@ -126,7 +126,7 @@ public class GoogleMapsPyramidSet extends CachedPyramidSet{
                     scale,
                     i);
             
-            pyramid.getMosaics().put(scale, mosaic);
+            pyramid.getMosaicsInternal().add(mosaic);
         }
         
         getPyramids().add(pyramid);    

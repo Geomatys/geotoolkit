@@ -221,10 +221,8 @@ public class PGCoverageReference implements CoverageReference, PyramidalModel{
         pyramidSet.mustUpdate();
         for (final Pyramid p : pyramidSet.getPyramids()) {
             if (p.getId().equals(pyramidId)) {
-                final double[] scales = p.getScales();
-                for (int i = 0; i < scales.length; i++) {
-                    final PGGridMosaic mosaic = (PGGridMosaic) p.getMosaic(i);
-                    if (mosaic.getDatabaseId() == mosaicId) {
+                for(GridMosaic mosaic : p.getMosaics()){
+                    if (((PGGridMosaic)mosaic).getDatabaseId() == mosaicId) {
                         return mosaic;
                     }
                 }

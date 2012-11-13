@@ -124,17 +124,23 @@ public class XMLPyramid implements Pyramid{
     }
 
     @Override
-    public GridMosaic getMosaic(int index) {
+    public Collection<GridMosaic> getMosaics(int index) {
         int i=0;
         for(XMLMosaic mosaic : sorted.values()){
             if(i==index){
-                return mosaic;
+                return Collections.singleton((GridMosaic)mosaic);
             }
             i++;
         }
         throw new ArrayIndexOutOfBoundsException(index);
     }
 
+    
+    @Override
+    public List<GridMosaic> getMosaics() {
+        return new ArrayList<GridMosaic>(sorted.values());
+    }
+    
     @Override
     public String toString(){
         return Trees.toString(

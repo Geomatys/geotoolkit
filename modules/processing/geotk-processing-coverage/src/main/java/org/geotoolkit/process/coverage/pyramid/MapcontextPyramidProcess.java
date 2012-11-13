@@ -125,13 +125,12 @@ public final class MapcontextPyramidProcess extends AbstractProcess {
                 //check if we already have a mosaic at this scale
                 GridMosaic mosaic = null;
                 int index = 0;
-                for (double sc : pyramid.getScales()) {
-                    if (sc == scale) {
-                        mosaic = pyramid.getMosaic(index);
+                for (GridMosaic m : pyramid.getMosaics()) {
+                    if (m.getScale() == scale) {
                         //this mosaic definition replaces the given one
-                        upperleft = mosaic.getUpperLeftCorner();
-                        tileDim = mosaic.getTileSize();
-                        gridSize = mosaic.getGridSize();
+                        upperleft = m.getUpperLeftCorner();
+                        tileDim = m.getTileSize();
+                        gridSize = m.getGridSize();
                         break;
                     }
                     index++;

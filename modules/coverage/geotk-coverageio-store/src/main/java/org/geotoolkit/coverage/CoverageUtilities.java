@@ -17,7 +17,12 @@
 package org.geotoolkit.coverage;
 
 import java.awt.Dimension;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import org.geotoolkit.referencing.CRS;
+import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -28,6 +33,33 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @module pending
  */
 public final class CoverageUtilities {
+    
+    /**
+     * Sort Grid Mosaic according to there scale, then on additional dimensions.
+     */
+    public static final Comparator<GridMosaic> SCALE_COMPARATOR = new Comparator<GridMosaic>() {
+        @Override
+        public int compare(final GridMosaic m1, final GridMosaic m2) {
+            final double res = m1.getScale() - m2.getScale();
+            if(res == 0){
+                //same scale check additional axes
+                final DirectPosition m1ul = m1.getUpperLeftCorner();
+                final DirectPosition m2ul = m2.getUpperLeftCorner();
+                for(int i=2,n=m1ul.getDimension();i<n;i++){
+                    final double ord1 = m1ul.getOrdinate(i);
+                    final double ord2 = m2ul.getOrdinate(i);
+                    final int c = Double.valueOf(ord1).compareTo(ord2);
+                    if(c != 0) return c;
+                }
+                
+                return 0;
+            }else if(res > 0){
+                return 1;
+            }else{
+                return -1;
+            }
+        }
+    };
     
     private CoverageUtilities(){}
     
@@ -72,12 +104,13 @@ public final class CoverageUtilities {
             final double tolerance, final Envelope env, int maxTileNumber){
         
         GridMosaic result = null;        
-        final double[] scales = pyramid.getScales();
-        
-        for(int i=0;i<scales.length;i++){
-            final double scale = scales[i];            
-                        
-            final GridMosaic candidate = pyramid.getMosaic(i);            
+        final List<GridMosaic> mosaics = new ArrayList<GridMosaic>(pyramid.getMosaics());
+        Collections.sort(mosaics, SCALE_COMPARATOR);
+        Collections.reverse(mosaics);
+                
+        for(GridMosaic candidate : mosaics){
+            final double scale = candidate.getScale();
+            
             if(result == null){
                 result = candidate;
             }

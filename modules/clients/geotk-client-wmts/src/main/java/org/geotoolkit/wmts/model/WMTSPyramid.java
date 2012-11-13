@@ -65,7 +65,7 @@ public class WMTSPyramid extends DefaultPyramid{
             }
             
             final WMTSMosaic mosaic = new WMTSMosaic(this, matrix, limit);            
-            getMosaics().put(mosaic.getScale(), mosaic);
+            getMosaicsInternal().add(mosaic);
         }
         
     }

@@ -56,9 +56,7 @@ public class DefaultPyramidSet implements PyramidSet{
     @Override
     public Envelope getEnvelope() {
         for(Pyramid pyramid : getPyramids()){
-            final double[] scales = pyramid.getScales();
-            for(int i=0;i<scales.length;i++){
-                final GridMosaic mosaic = pyramid.getMosaic(i);
+            for(GridMosaic mosaic : pyramid.getMosaics()){
                 final DirectPosition position = mosaic.getUpperLeftCorner();
                 final double minX = position.getOrdinate(0);
                 final double maxY = position.getOrdinate(1);
