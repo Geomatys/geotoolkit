@@ -18,7 +18,6 @@ package org.geotoolkit.coverage.postgresql;
 
 import java.awt.Dimension;
 import java.awt.Image;
-import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
@@ -35,7 +34,6 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.xml.bind.annotation.XmlTransient;
 import net.iharder.Base64;
 import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.coverage.GridMosaic;
@@ -45,11 +43,14 @@ import org.geotoolkit.coverage.PyramidalModel;
 import org.geotoolkit.coverage.PyramidalModelReader;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
+import org.geotoolkit.coverage.postgresql.epsg.EPSGWriter;
 import org.geotoolkit.coverage.postgresql.io.WKBRasterWriter;
 import org.geotoolkit.storage.DataStoreException;
 import org.opengis.feature.type.Name;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.cs.CoordinateSystem;
+import org.opengis.util.FactoryException;
 
 /**
  *
@@ -116,9 +117,11 @@ public class PGCoverageReference implements CoverageReference, PyramidalModel{
         Statement stmt = null;
         ResultSet rs = null;
         try{
-            final String wkt = crs.toWKT();
-            
             cnx = store.getDataSource().getConnection();
+            //find or insert coordinate reference system
+            final EPSGWriter writer = new EPSGWriter(store);
+            final String epsgCode = String.valueOf(writer.getOrCreateCoordinateReferenceSystem(crs));
+            
             stmt = cnx.createStatement();
             
             final int layerId = store.getLayerId(name.getLocalPart());
@@ -126,10 +129,10 @@ public class PGCoverageReference implements CoverageReference, PyramidalModel{
             StringBuilder query = new StringBuilder();
             query.append("INSERT INTO ");
             query.append(store.encodeTableName("Pyramid"));
-            query.append("(\"layerId\",\"crs\") VALUES (");
+            query.append("(\"layerId\",\"epsg\") VALUES (");
             query.append(layerId);
             query.append(",'");
-            query.append(wkt);
+            query.append(epsgCode);
             query.append("')");
             
             stmt.executeUpdate(query.toString(), new String[]{"id"});
@@ -138,8 +141,10 @@ public class PGCoverageReference implements CoverageReference, PyramidalModel{
             if(rs.next()){
                 pyramidId = String.valueOf(rs.getInt(1));
             }
+        }catch(FactoryException ex){
+            throw new DataStoreException(ex);
         }catch(SQLException ex){
-            
+            throw new DataStoreException(ex);
         }finally{
             store.closeSafe(cnx, stmt, rs);
         }
@@ -166,6 +171,7 @@ public class PGCoverageReference implements CoverageReference, PyramidalModel{
         ResultSet rs = null;
         try{            
             cnx = store.getDataSource().getConnection();
+            cnx.setReadOnly(false);
             stmt = cnx.createStatement();
             
             final int pyramidIdInt = Integer.valueOf(pyramidId);
@@ -190,6 +196,22 @@ public class PGCoverageReference implements CoverageReference, PyramidalModel{
             if(rs.next()){
                 mosaicId = rs.getLong(1);
             }
+            
+            final CoordinateReferenceSystem crs = upperleft.getCoordinateReferenceSystem();
+            final CoordinateSystem cs = crs.getCoordinateSystem();
+            for(int i=2,n=cs.getDimension();i<n;i++){
+                final double value = upperleft.getOrdinate(i);
+                query = new StringBuilder();
+                query.append("INSERT INTO ");
+                query.append(store.encodeTableName("MosaicAxis"));
+                query.append("(\"mosaicId\",\"indice\",\"value\") VALUES (");
+                query.append(mosaicId).append(',');
+                query.append(i).append(',');
+                query.append(value);
+                query.append(")");
+                stmt.executeUpdate(query.toString());
+            }
+            
         }catch(SQLException ex){
             throw new DataStoreException(ex.getMessage(), ex);
         }finally{
@@ -267,6 +289,7 @@ public class PGCoverageReference implements CoverageReference, PyramidalModel{
             query.append(row).append(')');
             
             cnx = store.getDataSource().getConnection();
+            cnx.setReadOnly(false);
             stmt = cnx.createStatement();
             
             stmt.executeUpdate(query.toString());

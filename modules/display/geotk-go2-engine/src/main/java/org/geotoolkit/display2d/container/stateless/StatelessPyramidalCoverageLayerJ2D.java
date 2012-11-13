@@ -45,10 +45,14 @@ import org.geotoolkit.display.primitive.SearchArea;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
+import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.display2d.style.CachedRule;
+import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.geotoolkit.geometry.GeneralEnvelope;
+import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.map.CoverageMapLayer;
+import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.util.Cancellable;
@@ -114,13 +118,16 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
         }
         
         final CoordinateReferenceSystem pyramidCRS = pyramid.getCoordinateReferenceSystem();
+        final CoordinateReferenceSystem pyramidCRS2D;
         final GeneralEnvelope wantedEnv;
         try {
-            wantedEnv = new GeneralEnvelope(CRS.transform(canvasEnv, pyramidCRS));
+            pyramidCRS2D = CRSUtilities.getCRS2D(pyramidCRS);
+            wantedEnv = new GeneralEnvelope(CRS.transform(canvasEnv, pyramidCRS2D));
         } catch (TransformException ex) {
             monitor.exceptionOccured(ex, Level.WARNING);
             return;
         }
+        
 
         //ensure we don't go out of the crs envelope
         final Envelope maxExt = CRS.getEnvelope(pyramidCRS);
@@ -221,6 +228,8 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
             return;
         }
         
+        final StatelessContextParams params = new StatelessContextParams(getCanvas(), getUserObject());
+        params.update(context2D);
         while(true){
             Object obj = null;
             try {
@@ -243,7 +252,7 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
             if(obj instanceof TileReference){
                 final TileReference tile = (TileReference)obj;
                 final MathTransform trs = queries.get(tile.getPosition());
-                paintTile(context2D, pyramidCRS, tile, trs);
+                paintTile(context2D, params, rules, pyramidCRS2D, tile, trs);
             }
         }
         
@@ -286,7 +295,7 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
         return graphics;
     }
 
-    private static void paintTile(final RenderingContext2D context, 
+    private void paintTile(final RenderingContext2D context, StatelessContextParams params, CachedRule[] rules,
             final CoordinateReferenceSystem tileCRS ,final TileReference tile, MathTransform trs) {
         final CanvasMonitor monitor = context.getMonitor();
         final CoordinateReferenceSystem objCRS2D = context.getObjectiveCRS2D();
@@ -352,13 +361,17 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
             coverage = gc.create("tile", image, tileCRS, trs, null, null, null);
         }
         
-        try {
-            GO2Utilities.portray(context, coverage);
-        } catch (PortrayalException ex) {
-            monitor.exceptionOccured(ex, Level.WARNING);
-            return;
-        }
-        
+        final CoverageMapLayer tilelayer = MapBuilder.createCoverageLayer(coverage, getUserObject().getStyle(), "");
+        final ProjectedCoverage projectedCoverage = new DefaultProjectedCoverage(params, tilelayer);
+        for(final CachedRule rule : rules){
+            for(final CachedSymbolizer symbol : rule.symbolizers()){
+                try {
+                    GO2Utilities.portray(projectedCoverage, symbol, context);
+                } catch (PortrayalException ex) {
+                    context.getMonitor().exceptionOccured(ex, Level.WARNING);
+                }
+            }
+        }        
     }
-    
+        
 }

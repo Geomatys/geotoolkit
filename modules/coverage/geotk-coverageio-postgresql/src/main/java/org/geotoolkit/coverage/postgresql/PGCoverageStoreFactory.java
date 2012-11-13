@@ -17,23 +17,31 @@
 package org.geotoolkit.coverage.postgresql;
 
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Collections;
 import javax.sql.DataSource;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.geotoolkit.coverage.AbstractCoverageStoreFactory;
 import org.geotoolkit.coverage.CoverageStore;
+import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.jdbc.DBCPDataSource;
 import org.geotoolkit.metadata.iso.DefaultIdentifier;
 import org.geotoolkit.metadata.iso.citation.DefaultCitation;
 import org.geotoolkit.metadata.iso.identification.DefaultServiceIdentification;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
+import org.geotoolkit.referencing.factory.epsg.EpsgInstaller;
 import org.geotoolkit.storage.DataStoreException;
+import org.geotoolkit.util.FileUtilities;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.identification.Identification;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.util.FactoryException;
 
 /**
  * GeotoolKit Coverage Store using PostgreSQL Raster model factory.
@@ -130,7 +138,7 @@ public class PGCoverageStoreFactory extends AbstractCoverageStoreFactory{
     }
 
     @Override
-    public CoverageStore open(ParameterValueGroup params) throws DataStoreException {
+    public PGCoverageStore open(ParameterValueGroup params) throws DataStoreException {
         
         // datasource
         // check if the DATASOURCE parameter was supplied, it takes precendence
@@ -162,8 +170,61 @@ public class PGCoverageStoreFactory extends AbstractCoverageStoreFactory{
     }
 
     @Override
-    public CoverageStore create(ParameterValueGroup params) throws DataStoreException {
-        throw new UnsupportedOperationException("Creation not supported.");
+    public PGCoverageStore create(ParameterValueGroup params) throws DataStoreException {
+        
+        final String jdbcurl = getJDBCUrl(params);
+        
+        //create epsg model
+        final String dbURL      = jdbcurl;
+        final String user       = (String) params.parameter(USER.getName().getCode()).getValue();
+        final String password   = (String) params.parameter(PASSWD.getName().getCode()).getValue();
+
+        final EpsgInstaller installer = new EpsgInstaller();
+        installer.setDatabase(dbURL, user, password);
+        
+        PGCoverageStore store = null;
+        Connection cnx = null;
+        Statement stmt = null;
+        ResultSet rs = null;
+        try {
+            installer.call();
+            
+            store = open(params);
+            String sql = FileUtilities.getStringFromStream(PGCoverageStoreFactory.class
+                    .getResourceAsStream("/org/geotoolkit/coverage/postgresql/pgcoverage.sql"));
+            
+            cnx = store.getDataSource().getConnection();
+            stmt = cnx.createStatement();
+            
+            
+            final String schema = store.getDatabaseSchema();
+            if(schema != null && !schema.isEmpty()){
+                sql = sql.replaceAll("CREATE TABLE ", "CREATE TABLE \""+schema+"\".");
+                
+                //create schema
+                stmt.executeUpdate("CREATE SCHEMA \""+schema+"\";");
+            }
+            
+            final String[] parts = sql.split(";");
+            
+            
+            
+            for(String part : parts){
+                stmt.executeUpdate(part.trim());
+            }
+            
+            return store;
+        } catch (SQLException ex) {
+            throw new DataStoreException(ex);
+        } catch (IOException ex) {
+            throw new DataStoreException(ex);
+        } catch (FactoryException ex) {
+            throw new DataStoreException(ex);
+        }finally{
+            if(store != null){
+                store.closeSafe(cnx, stmt, rs);
+            }
+        }
     }
     
     private String getDriverClassName() {
@@ -174,7 +235,7 @@ public class PGCoverageStoreFactory extends AbstractCoverageStoreFactory{
         return "select now()";
     }
 
-    private String getJDBCUrl(final ParameterValueGroup params) throws IOException {
+    private String getJDBCUrl(final ParameterValueGroup params) {
         final String host = (String) params.parameter(HOST.getName().toString()).getValue();
         final Integer port = (Integer) params.parameter(PORT.getName().toString()).getValue();
         final String db = (String) params.parameter(DATABASE.getName().toString()).getValue();

@@ -31,6 +31,7 @@ import org.geotoolkit.coverage.CoverageStoreFactory;
 import org.geotoolkit.coverage.CoverageStoreFinder;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.jdbc.ManageableDataSource;
+import org.geotoolkit.referencing.factory.epsg.ThreadedEpsgFactory;
 import org.geotoolkit.storage.DataStoreException;
 import org.opengis.feature.type.Name;
 import org.opengis.parameter.ParameterValueGroup;
@@ -42,6 +43,7 @@ import org.opengis.parameter.ParameterValueGroup;
  */
 public class PGCoverageStore extends AbstractCoverageStore{
     
+    private ThreadedEpsgFactory epsgfactory;
     private DataSource source;
     private int fetchSize;
     private String schema;
@@ -49,6 +51,7 @@ public class PGCoverageStore extends AbstractCoverageStore{
     public PGCoverageStore(final ParameterValueGroup params, final DataSource source){
         super(params);
         this.source = source;
+        
     }
 
     public int getFetchSize() {
@@ -69,6 +72,13 @@ public class PGCoverageStore extends AbstractCoverageStore{
 
     public DataSource getDataSource() {
         return source;
+    }
+    
+    public synchronized ThreadedEpsgFactory getEPSGFactory() throws SQLException{
+        if(epsgfactory == null){
+            epsgfactory = new ThreadedEpsgFactory(source);
+        }
+        return epsgfactory;
     }
 
     @Override
@@ -181,13 +191,13 @@ public class PGCoverageStore extends AbstractCoverageStore{
         }
     }
     
-    void closeSafe(final Connection cx, final Statement st, final ResultSet rs){
+    public void closeSafe(final Connection cx, final Statement st, final ResultSet rs){
         closeSafe(cx);
         closeSafe(st);
         closeSafe(rs);
     }
 
-    void closeSafe(final ResultSet rs) {
+    public void closeSafe(final ResultSet rs) {
         if (rs == null) {
             return;
         }
@@ -204,7 +214,7 @@ public class PGCoverageStore extends AbstractCoverageStore{
         }
     }
 
-    void closeSafe(final Statement st) {
+    public void closeSafe(final Statement st) {
         if (st == null) {
             return;
         }
@@ -221,7 +231,7 @@ public class PGCoverageStore extends AbstractCoverageStore{
         }
     }
 
-    void closeSafe(final Connection cx) {
+    public void closeSafe(final Connection cx) {
         if (cx == null) {
             return;
         }

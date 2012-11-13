@@ -34,6 +34,7 @@ import javax.media.jai.RasterFactory;
 import static org.geotoolkit.coverage.postgresql.io.WKBRasterConstants.*;
 import org.geotoolkit.io.LEDataInputStream;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
+import org.geotoolkit.util.XArrays;
 
 /**
  * WKB PostGIS Raster Reader.
@@ -94,13 +95,13 @@ public class WKBRasterReader {
     public BufferedImage read(final InputStream stream) throws IOException{
                 
         final DataInput ds;
-        final int endian = stream.read();
-        if(endian == 0){
+        final boolean littleEndian = stream.read() == 1;
+        if(littleEndian){
             //big endian
-            ds = new DataInputStream(stream);
+            ds = new LEDataInputStream(stream);
         }else{
             //little endian
-            ds = new LEDataInputStream(stream);
+            ds = new DataInputStream(stream);
         }
         
         final int version = ds.readUnsignedShort();
@@ -173,38 +174,92 @@ public class WKBRasterReader {
                 throw new IOException("can not access data which are off database");
             }else{
                 //read values
+                final int nbBytePerPixel = band.getNbBytePerPixel();
                 final byte[] datas = new byte[width*height*band.getNbBytePerPixel()];
                 ds.readFully(datas);
+                if(littleEndian && nbBytePerPixel > 1){
+                    //image databank expect values in big endian so we must flip bytes
+                    byte temp;
+                    for(int k=0;k<datas.length;k+=nbBytePerPixel){
+                        for(int p=0,n=nbBytePerPixel/2; p<n ;p++){
+                            final int index1 = k+p;
+                            final int index2 = k+(nbBytePerPixel-p-1);
+                            temp = datas[index1];
+                            datas[index1] = datas[index2];
+                            datas[index2] = temp;
+                        }
+                    }
+                }
                 band.setDatas(datas);
             }
             
             bands[i] = band;
         }
         
-        //check all band have the same sample model and rebuild data buffer
-        Integer dataType = null;
-        final byte[][] dataArray = new byte[nbBand][0];
-        final int[] bankIndices = new int[nbBand];
-        final int[] bankOffsets = new int[nbBand];
-        for(int i=0;i<bands.length;i++){
-            final WKBRasterBand band = bands[i];
-            if(dataType == null){
-                dataType = band.getDataBufferType();
-            }else if(dataType != band.getDataBufferType()){
-                throw new IOException("Band type differ, can not be mapped to java image.");
+        //we expect all bands to have the same type
+        final int dataBufferType = bands[0].getDataBufferType();
+        
+        //rebuild raster
+        final WritableRaster raster;
+        if(dataBufferType == DataBuffer.TYPE_BYTE){
+            //more efficient but only works for byte type bands
+            //check all band have the same sample model and rebuild data buffer
+            Integer dataType = null;
+            final byte[][] dataArray = new byte[nbBand][0];
+            final int[] bankIndices = new int[nbBand];
+            final int[] bankOffsets = new int[nbBand];
+            for(int i=0;i<bands.length;i++){
+                final WKBRasterBand band = bands[i];
+                if(dataType == null){
+                    dataType = band.getDataBufferType();
+                }else if(dataType != band.getDataBufferType()){
+                    throw new IOException("Band type differ, can not be mapped to java image.");
+                }
+                dataArray[i] = band.getDatas();
+                bankIndices[i] = i;
+                bankOffsets[i] = 0;
             }
-            dataArray[i] = band.getDatas();
-            bankIndices[i] = i;
-            bankOffsets[i] = 0;
+
+            //rebuild data buffer
+            final DataBuffer db = new DataBufferByte(dataArray, dataArray[0].length);
+            final int scanlineStride = width;
+            raster = RasterFactory.createBandedRaster(
+                    db, width, height, scanlineStride, bankIndices, bankOffsets, new Point(0,0));       
+            
+        }else{
+            raster = RasterFactory.createBandedRaster(dataBufferType,width,height,nbBand,new Point(0,0));
+            for(int i=0;i<bands.length;i++){
+                final byte[] datas = bands[i].getDatas();
+                final DataInputStream dds = new DataInputStream(new ByteArrayInputStream(datas));
+                for(int y=0;y<height;y++){
+                    for(int x=0;x<width;x++){
+                        switch (dataBufferType) {
+                            case DataBuffer.TYPE_SHORT:
+                                raster.setSample(x, y, i, dds.readShort());
+                                break;
+                            case DataBuffer.TYPE_USHORT:
+                                raster.setSample(x, y, i, dds.readUnsignedShort());
+                                break;
+                            case DataBuffer.TYPE_INT:
+                                raster.setSample(x, y, i, dds.readInt());
+                                break;
+                            case DataBuffer.TYPE_FLOAT:
+                                raster.setSample(x, y, i, dds.readFloat());
+                                break;
+                            case DataBuffer.TYPE_DOUBLE:
+                                raster.setSample(x, y, i, dds.readDouble());
+                                break;
+                            default:
+                                throw new IllegalArgumentException("unknowned data buffer type : " + dataBufferType);
+                        }
+                    }
+                }
+            }
         }
+                
         
         //rebuild image
-        final DataBuffer db = new DataBufferByte(dataArray, dataArray[0].length);
-        final int scanlineStride = width;
-        final WritableRaster raster = RasterFactory.createBandedRaster(
-                db, width, height, scanlineStride, bankIndices, bankOffsets, new Point(0,0));     
         final SampleModel sm = raster.getSampleModel();
-                
         final ColorModel cm = PlanarImage.getDefaultColorModel(sm.getDataType(), raster.getNumBands());        
         return new BufferedImage(cm, raster, false, null);
     }

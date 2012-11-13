@@ -22,16 +22,22 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.logging.Level;
 import org.geotoolkit.coverage.DefaultPyramid;
 import org.geotoolkit.coverage.DefaultPyramidSet;
 import org.geotoolkit.coverage.Pyramid;
+import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.referencing.cs.DiscreteReferencingFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
 
@@ -77,7 +83,7 @@ public class PGPyramidSet extends DefaultPyramidSet{
             final int layerId = store.getLayerId(ref.getName().getLocalPart());
             
             final StringBuilder query = new StringBuilder();        
-            query.append("SELECT p.id, p.crs FROM ");
+            query.append("SELECT p.id, p.epsg FROM ");
             query.append(store.encodeTableName("Pyramid"));
             query.append(" as p ");
             query.append(" WHERE p.\"layerId\" = ");
@@ -104,18 +110,54 @@ public class PGPyramidSet extends DefaultPyramidSet{
         updated = true;
     }
     
-    private Pyramid readPyramid(final Connection cnx, final int pyramidId, final String wktcrs) throws SQLException, FactoryException{
+    private Pyramid readPyramid(final Connection cnx, final int pyramidId, final String epsgcode) throws SQLException, FactoryException{
         
-        final CoordinateReferenceSystem crs = CRS.parseWKT(wktcrs);
-        final DefaultPyramid pyramid = new DefaultPyramid(String.valueOf(pyramidId), this, crs);
+        final CoordinateReferenceSystem crs = ref.getStore().getEPSGFactory().createCoordinateReferenceSystem(epsgcode);
+        DefaultPyramid pyramid = new DefaultPyramid(String.valueOf(pyramidId), this, crs);
         final PGCoverageStore store = ref.getStore();
         
         Statement stmt = null;
         ResultSet rs = null;
-        try{
+        try{            
             stmt = cnx.createStatement();
             
-            final StringBuilder query = new StringBuilder();        
+            //get mosaic additional axis values to recreate discret axis
+            final SortedSet[] discretValues = new SortedSet[crs.getCoordinateSystem().getDimension()];
+            for(int i=0;i<discretValues.length;i++){
+                discretValues[i] = new TreeSet();
+            }
+            
+            StringBuilder query = new StringBuilder();        
+            query.append("SELECT ma.\"indice\", ma.\"value\" FROM ");
+            query.append(store.encodeTableName("Mosaic"));
+            query.append(" AS m , ");
+            query.append(store.encodeTableName("MosaicAxis"));
+            query.append(" AS ma WHERE m.\"pyramidId\" = ");
+            query.append(pyramidId);
+            query.append(" AND ma.\"mosaicId\" = m.\"id\"");
+            
+            rs = stmt.executeQuery(query.toString());
+            while(rs.next()){
+                final int indice = rs.getInt(1);
+                final double value = rs.getDouble(2);
+                discretValues[indice].add(value);
+            }
+            store.closeSafe(rs);
+            
+            final double[][] table = new double[discretValues.length][0];
+            for(int i=0;i<discretValues.length;i++){
+                final Object[] ds = discretValues[i].toArray();
+                final double[] vals = new double[ds.length];
+                for(int k=0;k<ds.length;k++){
+                    vals[k] = (Double)ds[k];
+                }
+                table[i] = vals;
+            }
+            
+            final CoordinateReferenceSystem dcrs = DiscreteReferencingFactory.createDiscreteCRS(crs, table);
+            pyramid = new DefaultPyramid(String.valueOf(pyramidId), this, dcrs);
+            
+            query = new StringBuilder();        
             query.append("SELECT \"id\",\"upperCornerX\",\"upperCornerY\",\"gridWidth\",\"gridHeight\",\"scale\",\"tileWidth\",\"tileHeight\" FROM ");
             query.append(store.encodeTableName("Mosaic"));
             query.append(" WHERE \"pyramidId\" = ");

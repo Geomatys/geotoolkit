@@ -98,15 +98,14 @@ public abstract class AbstractGridMosaic implements GridMosaic{
     }
     
     @Override
-    public Envelope getEnvelope(int row, int col) {
-        final DirectPosition ul = getUpperLeftCorner();
+    public Envelope getEnvelope(final int row, final int col) {
+        final GeneralDirectPosition ul = new GeneralDirectPosition(getUpperLeftCorner());
         final double minX = ul.getOrdinate(0);
         final double maxY = ul.getOrdinate(1);
         final double spanX = tileSize.width * scale;
         final double spanY = tileSize.height * scale;
         
-        final GeneralEnvelope envelope = new GeneralEnvelope(
-                getPyramid().getCoordinateReferenceSystem());
+        final GeneralEnvelope envelope = new GeneralEnvelope(ul,ul);
         envelope.setRange(0, minX + col*spanX, minX + (col+1)*spanX);
         envelope.setRange(1, maxY - (row+1)*spanY, maxY - row*spanY);
         
@@ -115,14 +114,13 @@ public abstract class AbstractGridMosaic implements GridMosaic{
     
     @Override
     public Envelope getEnvelope(){
-        final DirectPosition ul = getUpperLeftCorner();
+        final GeneralDirectPosition ul = new GeneralDirectPosition(getUpperLeftCorner());
         final double minX = ul.getOrdinate(0);
         final double maxY = ul.getOrdinate(1);
         final double spanX = getTileSize().width * getGridSize().width * getScale();
         final double spanY = getTileSize().height* getGridSize().height* getScale();
         
-        final GeneralEnvelope envelope = new GeneralEnvelope(
-                getPyramid().getCoordinateReferenceSystem());
+        final GeneralEnvelope envelope = new GeneralEnvelope(ul,ul);
         envelope.setRange(0, minX, minX + spanX);
         envelope.setRange(1, maxY - spanY, maxY );
         
