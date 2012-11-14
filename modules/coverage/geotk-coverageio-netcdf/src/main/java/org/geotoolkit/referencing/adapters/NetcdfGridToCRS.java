@@ -148,6 +148,12 @@ class NetcdfGridToCRS extends AbstractMathTransform implements SeparableTransfor
     @SuppressWarnings("serial") // Enclosing class is not serializable.
     private final class Inverse extends AbstractMathTransform.Inverse {
         /**
+         * Creates a new inverse transform.
+         */
+        Inverse() {
+        }
+
+        /**
          * Transforms a single geodetic coordinate value.
          */
         @Override

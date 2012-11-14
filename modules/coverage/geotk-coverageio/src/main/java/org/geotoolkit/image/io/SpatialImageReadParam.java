@@ -162,6 +162,19 @@ public class SpatialImageReadParam extends ImageReadParam implements WarningProd
     }
 
     /**
+     * Returns {@code true} if the parameters contain at least one {@link DimensionSlice}.
+     * Invoking this method is equivalent to testing
+     * <code>!{@linkplain #getDimensionSlices()}.isEmpty()</code>.
+     *
+     * @return If the parameters contain at least one dimension slice.
+     *
+     * @since 3.21
+     */
+    public boolean hasDimensionSlices() {
+        return (dimensionSlices != null) && !dimensionSlices.isEmpty();
+    }
+
+    /**
      * Creates a new handler for selecting a slice of the (<var>x</var>, <var>y</var>) plane to
      * read. This is relevant only for <var>n</var>-dimensional dataset where <var>n</var>&gt;2.
      * The caller should invoke one or many {@link DimensionSlice#addDimensionId(int)

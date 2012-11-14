@@ -79,6 +79,7 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.util.collection.BackingStoreException;
+import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultImageCRS;
 import org.geotoolkit.referencing.operation.matrix.XMatrix;
 import org.geotoolkit.referencing.operation.matrix.Matrices;
@@ -630,7 +631,9 @@ public class ImageCoverageReader extends GridCoverageReader {
                 pointInPixel = PixelOrientation.CENTER;
             }
             /*
-             * Now build the grid geometry.
+             * Now build the grid geometry. Note that the grid extent spans shall be set to 1
+             * for all dimensions other than X and Y, even if the original file has more data,
+             * since this is a GridGeometry2D requirement.
              */
             final int[] lower = new int[dimension];
             final int[] upper = new int[dimension];
@@ -965,30 +968,46 @@ public class ImageCoverageReader extends GridCoverageReader {
              *       class. We need to refactor geodeticToPixelCoordinates(…) in a new helper
              *       class for making easier to divide the work in smaller parts.
              */
-            if (param != null && gridGeometry.isDefined(GridGeometry2D.ENVELOPE) && sp.getDimensionSlices().isEmpty()) {
-                final Envelope envelope = param.getEnvelope();
-                final int geodeticDim = envelope.getDimension();
+            if (param != null && !sp.hasDimensionSlices()) {
                 final int gridDim = gridGeometry.getDimension();
-                if (geodeticDim > 2 && gridDim > 2) {
-                    final double[] median = new double[geodeticDim];
-                    for (int i=0; i<geodeticDim; i++) {
-                        median[i] = envelope.getMedian(i);
-                    }
-                    final double[] indices = new double[gridDim];
-                    Arrays.fill(indices, Double.NaN);
-                    try {
-                        gridGeometry.getGridToCRS().inverse().transform(median, 0, indices, 0, 1);
-                    } catch (TransformException e) {
-                        throw new CoverageStoreException(formatErrorMessage(e), e);
-                    }
-                    for (int i=0; i<gridDim; i++) {
-                        if (i != gridGeometry.gridDimensionX && i != gridGeometry.gridDimensionY) {
-                            final double sliceIndex = indices[i];
-                            if (!Double.isNaN(sliceIndex)) {
-                                final DimensionSlice slice = sp.newDimensionSlice();
-                                slice.addDimensionId(i);
-                                slice.setSliceIndex((int) Math.round(sliceIndex));
+                if (gridDim > 2) { // max(X_DIMENSION, Y_DIMENSION) + 1
+                    final CoordinateReferenceSystem crs = gridGeometry.getCoordinateReferenceSystem();
+                    final int geodeticDim = crs.getCoordinateSystem().getDimension();
+                    if (geodeticDim > 2) {
+                        Envelope envelope = param.getEnvelope();
+                        if (envelope != null && envelope.getDimension() > 2) try {
+                            envelope = CRS.transform(envelope, crs);
+                            final double[] median = new double[geodeticDim];
+                            for (int i=0; i<geodeticDim; i++) {
+                                median[i] = envelope.getMedian(i);
                             }
+                            final double[] indices = new double[gridDim];
+                            Arrays.fill(indices, Double.NaN);
+                            gridGeometry.getGridToCRS().inverse().transform(median, 0, indices, 0, 1);
+                            final GridEnvelope gridExtent;
+                            if (crs instanceof GridGeometry) {
+                                gridExtent = ((GridGeometry) crs).getExtent();
+                            } else {
+                                // We can not fallback on gridGeometry.getExtent(), because
+                                // GridGeometry2D contract forces all extra dimensions to have
+                                // a span of 1.
+                                gridExtent = null;
+                            }
+                            for (int i=0; i<gridDim; i++) {
+                                if (i != gridGeometry.gridDimensionX && i != gridGeometry.gridDimensionY) {
+                                    final double sliceIndex = indices[i];
+                                    if (!Double.isNaN(sliceIndex)) {
+                                        final DimensionSlice slice = sp.newDimensionSlice();
+                                        slice.addDimensionId(i);
+                                        slice.setSliceIndex((int) Math.round(
+                                                Math.max(gridExtent != null ? gridExtent.getLow (i) : Integer.MIN_VALUE,
+                                                Math.min(gridExtent != null ? gridExtent.getHigh(i) : Integer.MAX_VALUE,
+                                                sliceIndex))));
+                                    }
+                                }
+                            }
+                        } catch (TransformException e) {
+                            throw new CoverageStoreException(formatErrorMessage(e), e);
                         }
                     }
                 }
