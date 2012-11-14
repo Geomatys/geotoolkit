@@ -36,6 +36,8 @@ import static org.geotoolkit.parameter.Parameters.*;
 import org.geotoolkit.process.AbstractProcess;
 import org.geotoolkit.process.ProcessException;
 import static org.geotoolkit.process.coverage.copy.CopyCoverageStoreDescriptor.*;
+import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
 import org.geotoolkit.referencing.cs.DiscreteCoordinateSystemAxis;
 import org.geotoolkit.storage.DataStoreException;
 import org.opengis.coverage.grid.GridCoverage;
@@ -44,6 +46,7 @@ import org.opengis.feature.type.Name;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.referencing.crs.CompoundCRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
@@ -94,7 +97,7 @@ public class CopyCoverageStoreProcess extends AbstractProcess {
      * @throws DataStoreException
      * @throws TransformException
      */
-    private static void saveCoverage(final CoverageStore outStore, final CoverageReference inRef)
+    private void saveCoverage(final CoverageStore outStore, final CoverageReference inRef)
             throws DataStoreException, TransformException
     {
         final CoverageReference outRef = outStore.create(inRef.getName());
@@ -190,8 +193,7 @@ public class CopyCoverageStoreProcess extends AbstractProcess {
     /**
      * Iterator on pyramid envelopes.
      */
-    private static class CombineIterator implements Iterator<Envelope> {
-
+    private class CombineIterator implements Iterator<Envelope> {
         private final List<List<Comparable>> values;
         private final int[] positions;
         private final GeneralEnvelope baseEnvelope;
@@ -220,16 +222,31 @@ public class CopyCoverageStoreProcess extends AbstractProcess {
 
             for (int i = 0; i < positions.length; i++) {
                 final Comparable c = values.get(i).get(positions[i]);
-                final Number n;
-                if (c instanceof Number) {
+                Number n;
+                if(c instanceof Number){
                     n = (Number) c;
-                } else if (c instanceof Date) {
-                    n = ((Date) c).getTime();
-                } else {
-                    throw new RuntimeException("Comparable type not supported : " + c);
+                }else if(c instanceof Date){
+                    n = ((Date)c).getTime();
+                    //transform correctly value, unit type might have changed.
+                    final CoordinateReferenceSystem baseCRS = DefaultTemporalCRS.JAVA;
+                    final CoordinateReferenceSystem targetCRS = ((CompoundCRS)baseEnvelope.getCoordinateReferenceSystem()).getComponents().get(1+i);
+
+                    //try to convert from one axis to the other
+                    try{
+                        final MathTransform trs = CRS.findMathTransform(baseCRS, targetCRS);
+                        final double[] bv = new double[]{n.doubleValue()};
+                        trs.transform(bv, 0, bv, 0, 1);
+                        n = bv[0];
+                    }catch(Exception ex){
+                        fireWarningOccurred(ex.getMessage(), 0, ex);
+                    }
+
+                }else{
+                    fireProcessFailed("Comparable type not supported : "+ c, null);
+                    return null;
                 }
 
-                baseEnvelope.setRange(2 + i, n.doubleValue(), n.doubleValue());
+                baseEnvelope.setRange(2+i, n.doubleValue(), n.doubleValue());
 
                 //prepare next iteration
                 if (i == positions.length - 1) {

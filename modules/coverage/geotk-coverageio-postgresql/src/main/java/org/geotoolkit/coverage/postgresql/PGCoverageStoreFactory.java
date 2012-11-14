@@ -25,8 +25,6 @@ import java.util.Collections;
 import javax.sql.DataSource;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.geotoolkit.coverage.AbstractCoverageStoreFactory;
-import org.geotoolkit.coverage.CoverageStore;
-import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.jdbc.DBCPDataSource;
 import org.geotoolkit.metadata.iso.DefaultIdentifier;
 import org.geotoolkit.metadata.iso.citation.DefaultCitation;
@@ -45,7 +43,7 @@ import org.opengis.util.FactoryException;
 
 /**
  * GeotoolKit Coverage Store using PostgreSQL Raster model factory.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public class PGCoverageStoreFactory extends AbstractCoverageStoreFactory{
@@ -60,9 +58,9 @@ public class PGCoverageStoreFactory extends AbstractCoverageStoreFactory{
         citation.setIdentifiers(Collections.singleton(id));
         IDENTIFICATION.setCitation(citation);
     }
-    
+
     public static final ParameterDescriptor<String> IDENTIFIER = createFixedIdentifier(NAME);
-    
+
     /**
      * Parameter for database port
      */
@@ -108,12 +106,12 @@ public class PGCoverageStoreFactory extends AbstractCoverageStoreFactory{
     /** If connections should be validated before using them */
     public static final ParameterDescriptor<Integer> FETCHSIZE =
              new DefaultParameterDescriptor<Integer>("fetch size","number of records read with each iteraction with the dbms",Integer.class,1000,false);
-    
+
     /** Maximum amount of time the pool will wait when trying to grab a new connection **/
     public static final ParameterDescriptor<Integer> MAXWAIT =
              new DefaultParameterDescriptor<Integer>("Connection timeout","number of seconds the connection pool wait for login",Integer.class,20,false);
 
-    
+
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
             new DefaultParameterDescriptorGroup("PGRasterParameters",
                 IDENTIFIER,HOST,PORT,DATABASE,SCHEMA,USER,PASSWD,NAMESPACE,
@@ -139,7 +137,7 @@ public class PGCoverageStoreFactory extends AbstractCoverageStoreFactory{
 
     @Override
     public PGCoverageStore open(ParameterValueGroup params) throws DataStoreException {
-        
+
         // datasource
         // check if the DATASOURCE parameter was supplied, it takes precendence
         DataSource ds = (DataSource) params.parameter(DATASOURCE.getName().toString()).getValue();
@@ -150,9 +148,9 @@ public class PGCoverageStoreFactory extends AbstractCoverageStoreFactory{
                 throw new DataStoreException(ex.getMessage(),ex);
             }
         }
-        
+
         final PGCoverageStore store = new PGCoverageStore(params, ds);
-        
+
         // fetch size
         Integer fetchSize = (Integer) params.parameter(FETCHSIZE.getName().toString()).getValue();
         if (fetchSize != null && fetchSize > 0) {
@@ -165,15 +163,15 @@ public class PGCoverageStoreFactory extends AbstractCoverageStoreFactory{
         if (schema != null) {
             store.setDatabaseSchema(schema);
         }
-        
+
         return store;
     }
 
     @Override
     public PGCoverageStore create(ParameterValueGroup params) throws DataStoreException {
-        
+
         final String jdbcurl = getJDBCUrl(params);
-        
+
         //create epsg model
         final String dbURL      = jdbcurl;
         final String user       = (String) params.parameter(USER.getName().getCode()).getValue();
@@ -181,38 +179,39 @@ public class PGCoverageStoreFactory extends AbstractCoverageStoreFactory{
 
         final EpsgInstaller installer = new EpsgInstaller();
         installer.setDatabase(dbURL, user, password);
-        
+
         PGCoverageStore store = null;
         Connection cnx = null;
         Statement stmt = null;
         ResultSet rs = null;
         try {
             installer.call();
-            
+
             store = open(params);
             String sql = FileUtilities.getStringFromStream(PGCoverageStoreFactory.class
                     .getResourceAsStream("/org/geotoolkit/coverage/postgresql/pgcoverage.sql"));
-            
+
             cnx = store.getDataSource().getConnection();
             stmt = cnx.createStatement();
-            
-            
+
+
             final String schema = store.getDatabaseSchema();
             if(schema != null && !schema.isEmpty()){
                 sql = sql.replaceAll("CREATE TABLE ", "CREATE TABLE \""+schema+"\".");
-                
+                sql = sql.replaceAll("REFERENCES ", "REFERENCES \""+schema+"\".");
+
                 //create schema
                 stmt.executeUpdate("CREATE SCHEMA \""+schema+"\";");
             }
-            
+
             final String[] parts = sql.split(";");
-            
-            
-            
+
+
+
             for(String part : parts){
                 stmt.executeUpdate(part.trim());
             }
-            
+
             return store;
         } catch (SQLException ex) {
             throw new DataStoreException(ex);
@@ -226,11 +225,11 @@ public class PGCoverageStoreFactory extends AbstractCoverageStoreFactory{
             }
         }
     }
-    
+
     private String getDriverClassName() {
         return "org.postgresql.Driver";
     }
-    
+
     private String getValidationQuery() {
         return "select now()";
     }
@@ -241,7 +240,7 @@ public class PGCoverageStoreFactory extends AbstractCoverageStoreFactory{
         final String db = (String) params.parameter(DATABASE.getName().toString()).getValue();
         return "jdbc:postgresql://" + host + ":" + port + "/" + db+"";
     }
-    
+
     /**
      * Creates the datasource for the coverage store.
      */
@@ -293,5 +292,5 @@ public class PGCoverageStoreFactory extends AbstractCoverageStoreFactory{
 
         return new DBCPDataSource(dataSource);
     }
-    
+
 }
