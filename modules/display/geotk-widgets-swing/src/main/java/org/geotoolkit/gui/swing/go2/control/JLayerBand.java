@@ -54,6 +54,7 @@ import org.geotoolkit.map.LayerListener;
 import org.geotoolkit.map.LayerListener.Weak;
 import org.geotoolkit.map.MapItem;
 import org.geotoolkit.map.MapLayer;
+import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.cs.DiscreteCoordinateSystemAxis;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.style.RandomStyleBuilder;
@@ -75,7 +76,10 @@ import org.opengis.referencing.crs.VerticalCRS;
 import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
+import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.TransformException;
 import org.opengis.style.Description;
+import org.opengis.util.FactoryException;
 import org.opengis.util.InternationalString;
 
 /**
@@ -157,9 +161,10 @@ public class JLayerBand extends JNavigatorBand implements LayerListener{
             Double min = null;
             Double max = null;
             
-            final CoordinateSystem cs = env.getCoordinateReferenceSystem().getCoordinateSystem();
-            for(int i=0;i<cs.getDimension();i++){
-                final CoordinateSystemAxis csa = cs.getAxis(i);
+            final CoordinateReferenceSystem dataCRS = env.getCoordinateReferenceSystem();
+            final CoordinateSystem dataCS = dataCRS.getCoordinateSystem();
+            for(int i=0;i<dataCS.getDimension();i++){
+                final CoordinateSystemAxis csa = dataCS.getAxis(i);
                 final AxisDirection direction = csa.getDirection();
                 
                 if(axis instanceof TemporalCRS){
@@ -171,21 +176,36 @@ public class JLayerBand extends JNavigatorBand implements LayerListener{
                 }
                                 
                 if(csa instanceof DiscreteCoordinateSystemAxis){
-                    final DiscreteCoordinateSystemAxis dcsa = (DiscreteCoordinateSystemAxis) csa;
-                    for(int k=0;k<dcsa.length();k++){
-                        final Comparable c = dcsa.getOrdinateAt(k);
-                        final Double d = toValue(c);
-                        if(d != null){
+                    try{
+                        final MathTransform trs = CRS.findMathTransform(dataCRS, axis);
+                        final double[] incoord = new double[dataCS.getDimension()];
+                        final double[] outcoord = new double[dataCS.getDimension()];
+                        final DiscreteCoordinateSystemAxis dcsa = (DiscreteCoordinateSystemAxis) csa;
+                        for(int k=0;k<dcsa.length();k++){
+                            final Comparable c = dcsa.getOrdinateAt(k);
+                            final double d;
+                            if(c instanceof Number){
+                                incoord[i] = ((Number)c).doubleValue();
+                                trs.transform(incoord, 0, outcoord, 0, 1);
+                                d = outcoord[0];
+                            }else if(c instanceof Date){
+                                d = ((Date)c).getTime();
+                            }else{
+                                //not supported
+                                continue;
+                            }
                             ponctuals.add(d);
-                            
                             if(min == null || min>d){
                                 min = d;
                             }
                             if(max == null || max<d){
                                 max = d;
                             }
-                            
                         }
+                    }catch(FactoryException ex){
+                        LOGGER.log(Level.FINE, ex.getMessage());
+                    }catch(TransformException ex){
+                        LOGGER.log(Level.FINE, ex.getMessage());
                     }
                 }
                 

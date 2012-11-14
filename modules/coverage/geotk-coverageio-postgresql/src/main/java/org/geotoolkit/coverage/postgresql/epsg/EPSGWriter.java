@@ -40,6 +40,7 @@ import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.opengis.referencing.operation.Projection;
 import org.opengis.util.FactoryException;
 import static org.geotoolkit.coverage.postgresql.epsg.EPSGQueries.*;
+import org.geotoolkit.temporal.object.TemporalUtilities;
 import org.opengis.metadata.extent.Extent;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.IdentifiedObject;
@@ -391,7 +392,7 @@ public class EPSGWriter {
         final Integer datum_code;
         final String datum_name = candidate.getName().getCode();
         final String datum_type;
-        final String origin_description = "";
+        final String origin_description;
         final Integer realization_epoch;
         final Integer ellipsoid_code;
         final Integer prime_meridian_code;
@@ -414,18 +415,21 @@ public class EPSGWriter {
         
         if(candidate instanceof GeodeticDatum){
             final GeodeticDatum gd = (GeodeticDatum) candidate;
+            origin_description = "";
             datum_type = "geodetic";
             ellipsoid_code = getOrCreateEllipsoid(gd.getEllipsoid());
             prime_meridian_code = getOrCreatePrimeMeridian(gd.getPrimeMeridian());
             
         }else if(candidate instanceof VerticalDatum){
             final VerticalDatum vd = (VerticalDatum) candidate;
+            origin_description = "";
             datum_type = "vertical";
             ellipsoid_code = null;
             prime_meridian_code = null;
             
         }else if(candidate instanceof TemporalDatum){
             final TemporalDatum td = (TemporalDatum) candidate;
+            origin_description = TemporalUtilities.toISO8601Z(td.getOrigin(), null);
             datum_type = "temporal";
             ellipsoid_code = null;
             prime_meridian_code = null;

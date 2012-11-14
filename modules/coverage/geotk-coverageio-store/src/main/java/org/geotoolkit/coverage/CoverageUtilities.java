@@ -108,11 +108,32 @@ public final class CoverageUtilities {
         Collections.sort(mosaics, SCALE_COMPARATOR);
         Collections.reverse(mosaics);
                 
+        mosaicLoop:
         for(GridMosaic candidate : mosaics){
+            final DirectPosition ul = candidate.getUpperLeftCorner();
             final double scale = candidate.getScale();
             
             if(result == null){
+                //set the highest mosaic as base
                 result = candidate;
+            }else{
+                //check additional axis
+                for(int i=2,n=ul.getDimension();i<n;i++){
+                    final double median = env.getMedian(i);
+                    final double currentDistance = Math.abs(
+                            result.getUpperLeftCorner().getOrdinate(i) - median);
+                    final double candidateDistance = Math.abs(
+                            ul.getOrdinate(i) - median);
+                    
+                    if(candidateDistance < currentDistance){
+                        //better mosaic
+                        break;
+                    }else if(candidateDistance > currentDistance){
+                        //less accurate
+                        continue mosaicLoop;
+                    }
+                    //continue on other axes
+                }
             }
             
             //check if it will not requiere too much tiles

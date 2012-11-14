@@ -54,6 +54,8 @@ import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.referencing.operation.MathTransforms;
+import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.util.Cancellable;
 import org.opengis.display.primitive.Graphic;
@@ -61,6 +63,9 @@ import org.opengis.feature.type.Name;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.cs.AxisDirection;
+import org.opengis.referencing.cs.CoordinateSystem;
+import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 
@@ -101,7 +106,8 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
 
         final CanvasMonitor monitor = context2D.getMonitor();
 
-        final Envelope canvasEnv = context2D.getCanvasObjectiveBounds2D();   
+        final Envelope canvasEnv2D = context2D.getCanvasObjectiveBounds2D();   
+        final Envelope canvasEnv = context2D.getCanvasObjectiveBounds();   
         final PyramidSet pyramidSet;
         try {
             pyramidSet = model.getPyramidSet();
@@ -110,7 +116,7 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
             return;
         }
         
-        final Pyramid pyramid = CoverageUtilities.findPyramid(pyramidSet, canvasEnv.getCoordinateReferenceSystem());
+        final Pyramid pyramid = CoverageUtilities.findPyramid(pyramidSet, canvasEnv2D.getCoordinateReferenceSystem());
                 
         if(pyramid == null){
             //no reliable pyramid
@@ -119,10 +125,10 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
         
         final CoordinateReferenceSystem pyramidCRS = pyramid.getCoordinateReferenceSystem();
         final CoordinateReferenceSystem pyramidCRS2D;
-        final GeneralEnvelope wantedEnv;
+        GeneralEnvelope wantedEnv2D;
         try {
             pyramidCRS2D = CRSUtilities.getCRS2D(pyramidCRS);
-            wantedEnv = new GeneralEnvelope(CRS.transform(canvasEnv, pyramidCRS2D));
+            wantedEnv2D = new GeneralEnvelope(CRS.transform(canvasEnv2D, pyramidCRS2D));
         } catch (TransformException ex) {
             monitor.exceptionOccured(ex, Level.WARNING);
             return;
@@ -130,24 +136,64 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
         
 
         //ensure we don't go out of the crs envelope
-        final Envelope maxExt = CRS.getEnvelope(pyramidCRS);
+        final Envelope maxExt = CRS.getEnvelope(pyramidCRS2D);
         if(maxExt != null){
-            wantedEnv.intersect(maxExt);
-            if(Double.isNaN(wantedEnv.getMinimum(0))){ wantedEnv.setRange(0, maxExt.getMinimum(0), wantedEnv.getMaximum(0));  }
-            if(Double.isNaN(wantedEnv.getMaximum(0))){ wantedEnv.setRange(0, wantedEnv.getMinimum(0), maxExt.getMaximum(0));  }
-            if(Double.isNaN(wantedEnv.getMinimum(1))){ wantedEnv.setRange(1, maxExt.getMinimum(1), wantedEnv.getMaximum(1));  }
-            if(Double.isNaN(wantedEnv.getMaximum(1))){ wantedEnv.setRange(1, wantedEnv.getMinimum(1), maxExt.getMaximum(1));  }
+            wantedEnv2D.intersect(maxExt);
+            if(Double.isNaN(wantedEnv2D.getMinimum(0))){ wantedEnv2D.setRange(0, maxExt.getMinimum(0), wantedEnv2D.getMaximum(0));  }
+            if(Double.isNaN(wantedEnv2D.getMaximum(0))){ wantedEnv2D.setRange(0, wantedEnv2D.getMinimum(0), maxExt.getMaximum(0));  }
+            if(Double.isNaN(wantedEnv2D.getMinimum(1))){ wantedEnv2D.setRange(1, maxExt.getMinimum(1), wantedEnv2D.getMaximum(1));  }
+            if(Double.isNaN(wantedEnv2D.getMaximum(1))){ wantedEnv2D.setRange(1, wantedEnv2D.getMinimum(1), maxExt.getMaximum(1));  }
         }
         
         //the wanted image resolution
         final double wantedResolution;
         try {
-            wantedResolution = GO2Utilities.pixelResolution(context2D, wantedEnv);
+            wantedResolution = GO2Utilities.pixelResolution(context2D, wantedEnv2D);
         } catch (TransformException ex) {
             monitor.exceptionOccured(ex, Level.WARNING);
             return;
         }
 
+        final GeneralEnvelope wantedEnv;
+        final CoordinateSystem cs = pyramidCRS.getCoordinateSystem();
+        if(cs.getDimension() > 2){
+            //generate the N Dimension envelope
+            //TODO : we consider the 2D part of the crs to be the first 2 axes
+            wantedEnv = new GeneralEnvelope(pyramidCRS);
+            wantedEnv.setRange(0, wantedEnv2D.getMinimum(0), wantedEnv2D.getMaximum(0));
+            wantedEnv.setRange(1, wantedEnv2D.getMinimum(1), wantedEnv2D.getMaximum(1));
+            final CoordinateReferenceSystem envcrs = canvasEnv.getCoordinateReferenceSystem();
+            final CoordinateSystem envcs = envcrs.getCoordinateSystem();
+            for(int i=2;i<cs.getDimension();i++){
+                final CoordinateSystemAxis baxi = cs.getAxis(i);
+                for(int k=2,n=envcs.getDimension();k<n;k++){
+                    final CoordinateSystemAxis waxi = envcs.getAxis(k);
+                                        
+                    final AxisDirection bdirection = baxi.getDirection();
+                    final AxisDirection wdirection = waxi.getDirection();
+                    if(!bdirection.equals(wdirection)){
+                        continue;
+                    }
+                                        
+                    //try to convert from one axi to the other
+                    try{
+                        final GeneralMatrix gm = new GeneralMatrix(
+                                new AxisDirection[]{bdirection}, 
+                                new AxisDirection[]{wdirection});
+                        final double[] bv = new double[]{canvasEnv.getMinimum(k),canvasEnv.getMaximum(k)};
+                        MathTransforms.linear(gm).transform(bv, 0, bv, 0, 2);
+                        wantedEnv.setRange(i, bv[0], bv[1]);
+                    }catch(Exception ex){
+                        ex.printStackTrace();
+                    }
+                    
+                }
+            }
+            
+        }else{
+            wantedEnv = wantedEnv2D;
+        }
+        
         final GridMosaic mosaic = CoverageUtilities.findMosaic(pyramid, wantedResolution, tolerance, wantedEnv,100);
         if(mosaic == null){
             //no reliable mosaic
