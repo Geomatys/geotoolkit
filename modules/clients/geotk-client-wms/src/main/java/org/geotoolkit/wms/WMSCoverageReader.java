@@ -39,6 +39,7 @@ import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.util.logging.Logging;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.geometry.Envelope;
@@ -188,7 +189,7 @@ public class WMSCoverageReader extends GridCoverageReader{
             
             final CoordinateReferenceSystem crs2d = CRSUtilities.getCRS2D(env.getCoordinateReferenceSystem());
             final Envelope env2D = CRS.transform(env, crs2d);
-            final AffineTransform gridToCRS = GO2Utilities.toAffine(dim, env2D);
+            final AffineTransform gridToCRS = ReferencingUtilities.toAffine(dim, env2D);
             
             final GridCoverageBuilder gcb = new GridCoverageBuilder();
             gcb.setName(ref.getCombinedLayerNames());

@@ -20,10 +20,8 @@ import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -36,8 +34,10 @@ import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.style.CachedRule;
 import org.geotoolkit.geometry.GeneralEnvelope;
+import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.storage.DataStoreException;
 import org.opengis.feature.type.Name;
 import org.opengis.geometry.DirectPosition;
@@ -105,6 +105,7 @@ public class StatefullPyramidalCoverageLayerJ2D extends StatefullMapLayerJ2D<Cov
 
         final CanvasMonitor monitor = context2D.getMonitor();
 
+        final Envelope canvasEnv2D = context2D.getCanvasObjectiveBounds2D();  
         final Envelope canvasEnv = context2D.getCanvasObjectiveBounds2D();   
         final PyramidSet pyramidSet;
         try {
@@ -121,23 +122,30 @@ public class StatefullPyramidalCoverageLayerJ2D extends StatefullMapLayerJ2D<Cov
             return;
         }
         
-        final CoordinateReferenceSystem pyramidCRS = pyramid.getCoordinateReferenceSystem();
-        final GeneralEnvelope wantedEnv;
+        final CoordinateReferenceSystem pyramidCRS = pyramid.getCoordinateReferenceSystem();        
+        final CoordinateReferenceSystem pyramidCRS2D;
+        GeneralEnvelope wantedEnv2D;
+        GeneralEnvelope wantedEnv;
         try {
-            wantedEnv = new GeneralEnvelope(CRS.transform(canvasEnv, pyramidCRS));
+            pyramidCRS2D = CRSUtilities.getCRS2D(pyramidCRS);
+            wantedEnv2D = new GeneralEnvelope(CRS.transform(canvasEnv2D, pyramidCRS2D));
+            wantedEnv = new GeneralEnvelope(ReferencingUtilities.transform(canvasEnv, pyramidCRS));
         } catch (TransformException ex) {
             monitor.exceptionOccured(ex, Level.WARNING);
             return;
         }
+        
 
         //ensure we don't go out of the crs envelope
         final Envelope maxExt = CRS.getEnvelope(pyramidCRS);
         if(maxExt != null){
-            wantedEnv.intersect(maxExt);
-            if(Double.isNaN(wantedEnv.getMinimum(0))){ wantedEnv.setRange(0, maxExt.getMinimum(0), wantedEnv.getMaximum(0));  }
-            if(Double.isNaN(wantedEnv.getMaximum(0))){ wantedEnv.setRange(0, wantedEnv.getMinimum(0), maxExt.getMaximum(0));  }
-            if(Double.isNaN(wantedEnv.getMinimum(1))){ wantedEnv.setRange(1, maxExt.getMinimum(1), wantedEnv.getMaximum(1));  }
-            if(Double.isNaN(wantedEnv.getMaximum(1))){ wantedEnv.setRange(1, wantedEnv.getMinimum(1), maxExt.getMaximum(1));  }
+            wantedEnv2D.intersect(maxExt);
+            if(Double.isNaN(wantedEnv2D.getMinimum(0))){ wantedEnv2D.setRange(0, maxExt.getMinimum(0), wantedEnv2D.getMaximum(0));  }
+            if(Double.isNaN(wantedEnv2D.getMaximum(0))){ wantedEnv2D.setRange(0, wantedEnv2D.getMinimum(0), maxExt.getMaximum(0));  }
+            if(Double.isNaN(wantedEnv2D.getMinimum(1))){ wantedEnv2D.setRange(1, maxExt.getMinimum(1), wantedEnv2D.getMaximum(1));  }
+            if(Double.isNaN(wantedEnv2D.getMaximum(1))){ wantedEnv2D.setRange(1, wantedEnv2D.getMinimum(1), maxExt.getMaximum(1));  }
+            wantedEnv.setRange(0, wantedEnv2D.getMinimum(0), wantedEnv2D.getMaximum(0));
+            wantedEnv.setRange(1, wantedEnv2D.getMinimum(1), wantedEnv2D.getMaximum(1));
         }
         
         //the wanted image resolution
@@ -245,7 +253,7 @@ public class StatefullPyramidalCoverageLayerJ2D extends StatefullMapLayerJ2D<Cov
         
         for(Point3d c : ttiles){
             if(!gtiles.containsKey(c)){
-                gtiles.put(c,new StatefullTileJ2D(mosaic, c, getCanvas(), this, item));
+                gtiles.put(c,new StatefullTileJ2D(mosaic, c, getCanvas(), this, item, rules));
             }
         }
         

@@ -33,6 +33,7 @@ import org.geotoolkit.display.exception.PortrayalException;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.referencing.ReferencingUtilities;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -149,7 +150,7 @@ public class PortrayalCoverageReader extends GridCoverageReader {
                 (int)(paramEnv.getSpan(0) / resolution[0]),
                 (int)(paramEnv.getSpan(1) / resolution[1]));
         //calculate final grid to crs transform
-        final AffineTransform gridToCRS = GO2Utilities.toAffine(dim, paramEnv);
+        final AffineTransform gridToCRS = ReferencingUtilities.toAffine(dim, paramEnv);
 
 
         final CanvasDef canvas = new CanvasDef(dim, null);

@@ -20,6 +20,7 @@ package org.geotoolkit.display2d.service;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
+import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 
 import org.opengis.geometry.Envelope;
@@ -94,7 +95,7 @@ public class ViewDef {
     public ViewDef setLongitudeFirst() throws TransformException, FactoryException{
         final Envelope env = getEnvelope();
         if(env != null){
-            setEnvelope( GO2Utilities.setLongitudeFirst(env) );
+            setEnvelope( ReferencingUtilities.setLongitudeFirst(env) );
         }
         return this;
     }

@@ -38,6 +38,11 @@ import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.processing.Operations;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
+import org.geotoolkit.display2d.style.CachedRule;
+import org.geotoolkit.display2d.style.CachedSymbolizer;
+import org.geotoolkit.display2d.style.renderer.DefaultRasterSymbolizerRenderer;
+import org.geotoolkit.internal.referencing.CRSUtilities;
+import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.MapItem;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
@@ -46,6 +51,7 @@ import org.opengis.geometry.Envelope;
 import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
+import org.opengis.style.RasterSymbolizer;
 
 /**
  *
@@ -57,6 +63,7 @@ public class StatefullTileJ2D extends StatefullMapItemJ2D<MapItem> {
     
     private final GridMosaic mosaic;
     private final Point3d coordinate;
+    private final CachedRule[] rules;
     
     protected volatile GridCoverage2D buffer = null;
     protected AffineTransform2D trs = null;
@@ -67,10 +74,12 @@ public class StatefullTileJ2D extends StatefullMapItemJ2D<MapItem> {
     private volatile boolean obsoleted = false;
     private boolean loaded = false;
 
-    public StatefullTileJ2D(GridMosaic mosaic, Point3d coordinate, J2DCanvas canvas, StatefullMapItemJ2D parent, MapItem item) {
+    public StatefullTileJ2D(GridMosaic mosaic, Point3d coordinate, J2DCanvas canvas, 
+            StatefullPyramidalCoverageLayerJ2D parent, CoverageMapLayer item, CachedRule[] rules) {
         super(canvas, parent, item);
         this.mosaic = mosaic;
         this.coordinate = coordinate;
+        this.rules = rules;
     }
 
     public GridMosaic getMosaic() {
@@ -138,7 +147,7 @@ public class StatefullTileJ2D extends StatefullMapItemJ2D<MapItem> {
     }
     
     
-    protected final class Updater implements Runnable{
+    protected class Updater implements Runnable{
         
         private Envelope env2d;
         
@@ -156,13 +165,29 @@ public class StatefullTileJ2D extends StatefullMapItemJ2D<MapItem> {
                 final MathTransform trs = AbstractGridMosaic.getTileGridToCRS(
                         mosaic, new Point((int)coordinate.x, (int)coordinate.y));
                 final TileReference tr = mosaic.getTile((int)coordinate.x, (int)coordinate.y, null);
-                final GridCoverage2D coverage = prepareTile(env2d.getCoordinateReferenceSystem(), 
-                        mosaic.getPyramid().getCoordinateReferenceSystem(), tr, trs);
+                final CoordinateReferenceSystem pyramidCRS2D = CRSUtilities.getCRS2D(mosaic.getPyramid().getCoordinateReferenceSystem());
+                final GridCoverage2D coverage = prepareTile(env2d.getCoordinateReferenceSystem(), pyramidCRS2D, tr, trs);
                 if(coverage != null){
                     
                     //we copy the image in a buffered image with a well knowed data typeand color model
                     //this can significantly improve performances.
-                    final RenderedImage ri = coverage.getRenderedImage();
+                    RenderedImage ri = null;
+                    
+                    for(final CachedRule rule : rules){
+                        for(final CachedSymbolizer symbol : rule.symbolizers()){
+                            if(symbol.getSource() instanceof RasterSymbolizer){
+                                ri = DefaultRasterSymbolizerRenderer.applyStyle(coverage, (RasterSymbolizer)symbol.getSource(), hints, false);
+                                break;
+                            }
+                        }
+                    }
+                    
+                    if(ri == null){
+                        //should not happen
+                        ri = coverage.getRenderedImage();
+                    }
+                    
+                    
                     final BufferedImage img = new BufferedImage(ri.getWidth(), ri.getHeight(), BufferedImage.TYPE_INT_ARGB);
                     img.createGraphics().drawRenderedImage(ri, new AffineTransform());
                     StatefullTileJ2D.this.img = img;

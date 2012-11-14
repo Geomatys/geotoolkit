@@ -16,38 +16,23 @@
  */
 package org.geotoolkit.wms;
 
-import org.geotoolkit.internal.referencing.AxisDirections;
-import org.opengis.referencing.cs.AxisDirection;
-import org.opengis.referencing.cs.CoordinateSystemAxis;
-import org.opengis.referencing.cs.CoordinateSystem;
-import org.geotoolkit.storage.DataStoreException;
-import org.geotoolkit.wms.xml.WMSVersion;
-import java.awt.geom.NoninvertibleTransformException;
-import org.geotoolkit.display2d.GO2Utilities;
-import java.awt.geom.AffineTransform;
-import org.opengis.referencing.operation.MathTransform;
-import org.opengis.geometry.DirectPosition;
-import org.geotoolkit.geometry.GeneralDirectPosition;
-import java.util.Date;
-import org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis;
-import org.geotoolkit.internal.referencing.CRSUtilities;
-import java.awt.geom.Point2D;
-import org.geotoolkit.geometry.GeneralEnvelope;
-import java.net.MalformedURLException;
-import org.opengis.referencing.operation.TransformException;
-import java.net.URL;
 import java.awt.Dimension;
 import java.awt.Image;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.NoninvertibleTransformException;
+import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import org.geotoolkit.util.StringUtilities;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
-import org.geotoolkit.client.Request;
 import org.geotoolkit.client.CapabilitiesException;
+import org.geotoolkit.client.Request;
 import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
@@ -55,16 +40,30 @@ import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.geometry.Envelope2D;
+import org.geotoolkit.geometry.GeneralDirectPosition;
+import org.geotoolkit.geometry.GeneralEnvelope;
+import org.geotoolkit.internal.referencing.AxisDirections;
+import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis;
+import org.geotoolkit.storage.DataStoreException;
+import static org.geotoolkit.util.ArgumentChecks.*;
+import org.geotoolkit.util.StringUtilities;
 import org.geotoolkit.util.logging.Logging;
+import org.geotoolkit.wms.xml.WMSVersion;
 import org.opengis.feature.type.Name;
+import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.cs.AxisDirection;
+import org.opengis.referencing.cs.CoordinateSystem;
+import org.opengis.referencing.cs.CoordinateSystemAxis;
+import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
-
-import static org.geotoolkit.util.ArgumentChecks.*;
 
 /**
  * Coverage Reference for a WMS layer.
@@ -546,21 +545,21 @@ public class WMSCoverageReference implements CoverageReference{
             if ((server.getVersion() == WMSVersion.v111) && (CRS.equalsIgnoreMetadata(crs2D, DefaultGeographicCRS.WGS84))) {
                 //in case we are asking for a WMS in 1.1.0 and CRS:84
                 //we must change the crs to 4326 but with CRS:84 coordinate
-                final GeneralEnvelope trsEnv = new GeneralEnvelope(GO2Utilities.transform2DCRS(env, DefaultGeographicCRS.WGS84));
+                final GeneralEnvelope trsEnv = new GeneralEnvelope(ReferencingUtilities.transform2DCRS(env, DefaultGeographicCRS.WGS84));
                 env.setEnvelope(trsEnv);
-                final CoordinateReferenceSystem fakeCrs = GO2Utilities.change2DComponent(crs, EPSG_4326);
+                final CoordinateReferenceSystem fakeCrs = ReferencingUtilities.change2DComponent(crs, EPSG_4326);
                 trsEnv.setCoordinateReferenceSystem(fakeCrs);
                 fakeEnv.setEnvelope(trsEnv);
             }else if (server.getVersion() == WMSVersion.v111) {
                 //in case we are asking for a WMS in 1.1.0 and a geographic crs
                 //we must set longitude coordinates first but preserve the crs
-                final CoordinateReferenceSystem lfcrs = GO2Utilities.setLongitudeFirst(crs2D);
-                final GeneralEnvelope trsEnv = new GeneralEnvelope(GO2Utilities.transform2DCRS(env, lfcrs));
+                final CoordinateReferenceSystem lfcrs = ReferencingUtilities.setLongitudeFirst(crs2D);
+                final GeneralEnvelope trsEnv = new GeneralEnvelope(ReferencingUtilities.transform2DCRS(env, lfcrs));
                 env.setEnvelope(trsEnv);
-                trsEnv.setCoordinateReferenceSystem(GO2Utilities.change2DComponent(crs, crs2D));
+                trsEnv.setCoordinateReferenceSystem(ReferencingUtilities.change2DComponent(crs, crs2D));
                 fakeEnv.setEnvelope(trsEnv);
             } else {
-                final GeneralEnvelope  trsEnv = new GeneralEnvelope(GO2Utilities.transform2DCRS(env, crs2D));
+                final GeneralEnvelope  trsEnv = new GeneralEnvelope(ReferencingUtilities.transform2DCRS(env, crs2D));
                 env.setEnvelope(trsEnv);
                 fakeEnv.setEnvelope(trsEnv);
             }
@@ -571,30 +570,30 @@ public class WMSCoverageReference implements CoverageReference{
                 //in case we are asking for a WMS in 1.1.0 and CRS:84
                 //we must change the crs to 4326 but with CRS:84 coordinate
                 final GeneralEnvelope trsEnv = new GeneralEnvelope(env);
-                final CoordinateReferenceSystem fakeCrs = GO2Utilities.change2DComponent(crs, EPSG_4326);
+                final CoordinateReferenceSystem fakeCrs = ReferencingUtilities.change2DComponent(crs, EPSG_4326);
                 trsEnv.setCoordinateReferenceSystem(fakeCrs);
                 fakeEnv.setEnvelope(trsEnv);
             } else if (server.getVersion() == WMSVersion.v111) {
                 //in case we are asking for a WMS in 1.1.0 and a geographic crs
                 //we must set longitude coordinates first but preserve the crs
-                final GeneralEnvelope trsEnv = new GeneralEnvelope(GO2Utilities.setLongitudeFirst(env));
+                final GeneralEnvelope trsEnv = new GeneralEnvelope(ReferencingUtilities.setLongitudeFirst(env));
                 trsEnv.setCoordinateReferenceSystem(crs);
                 fakeEnv.setEnvelope(trsEnv);
             }
         }
 
         //WMS returns images with EAST-WEST axis first, so we ensure we modify the crs as expected
-        final Envelope longFirstEnvelope = GO2Utilities.setLongitudeFirst(env);
+        final Envelope longFirstEnvelope = ReferencingUtilities.setLongitudeFirst(env);
         env.setEnvelope(longFirstEnvelope);
 
 
         //Recalculate pick coordinate according to reverse transformation
         if(pickCoord != null){
-            beforeEnv = (GeneralEnvelope) GO2Utilities.setLongitudeFirst(beforeEnv);
+            beforeEnv = (GeneralEnvelope) ReferencingUtilities.setLongitudeFirst(beforeEnv);
 
             //calculate new coordinate in the reprojected query
-            final AffineTransform beforeTrs = GO2Utilities.toAffine(dim,beforeEnv);
-            final AffineTransform afterTrs = GO2Utilities.toAffine(dim,env);
+            final AffineTransform beforeTrs = ReferencingUtilities.toAffine(dim,beforeEnv);
+            final AffineTransform afterTrs = ReferencingUtilities.toAffine(dim,env);
             try {
                 afterTrs.invert();
             } catch (NoninvertibleTransformException ex) {

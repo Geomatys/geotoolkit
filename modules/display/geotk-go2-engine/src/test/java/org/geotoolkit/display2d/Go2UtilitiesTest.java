@@ -36,6 +36,7 @@ import org.opengis.referencing.operation.TransformException;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
 import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
 import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
@@ -76,7 +77,7 @@ public class Go2UtilitiesTest {
         env.setRange(0, -180, 180);
         env.setRange(1, -90, 90);
 
-        Envelope cenv = GO2Utilities.combine(env,
+        Envelope cenv = ReferencingUtilities.combine(env,
                 new Date[]{new Date(0),new Date(10000000)},
                 new Double[]{-50d,150d});
 
@@ -92,7 +93,7 @@ public class Go2UtilitiesTest {
         env.setRange(1, -90, 90);
         Dimension dim = new Dimension(100, 50);
 
-        AffineTransform trs = GO2Utilities.toAffine(dim,env);
+        AffineTransform trs = ReferencingUtilities.toAffine(dim,env);
 
         Point2D pt = new Point2D.Double(0, 0);
         trs.transform(pt, pt);
@@ -135,7 +136,7 @@ public class Go2UtilitiesTest {
         env.setRange(0, -90, 90);
         env.setRange(1, -180, 180);
 
-        Envelope fliped = GO2Utilities.setLongitudeFirst(env);
+        Envelope fliped = ReferencingUtilities.setLongitudeFirst(env);
         CoordinateReferenceSystem flipedcrs = fliped.getCoordinateReferenceSystem();
         assertTrue(flipedcrs.getCoordinateSystem().getAxis(0).getDirection() == AxisDirection.EAST);
         assertTrue(flipedcrs.getCoordinateSystem().getAxis(1).getDirection() == AxisDirection.NORTH);
@@ -158,7 +159,7 @@ public class Go2UtilitiesTest {
         env.setRange(2, 30, 60);
         env.setRange(3, 1000, 5000);
 
-        fliped = GO2Utilities.setLongitudeFirst(env);
+        fliped = ReferencingUtilities.setLongitudeFirst(env);
         flipedcrs = fliped.getCoordinateReferenceSystem();
         assertFalse( fliped.getCoordinateReferenceSystem().equals(epsg4326) );
         assertEquals(-180, fliped.getMinimum(0),DELTA);

@@ -343,7 +343,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
      * @return
      * @throws PortrayalException
      */
-    private static RenderedImage applyStyle(GridCoverage2D coverage, final RasterSymbolizer styleElement,
+    public static RenderedImage applyStyle(GridCoverage2D coverage, final RasterSymbolizer styleElement,
                 final RenderingHints hints, boolean isReprojected) throws PortrayalException {
 
         //band select ----------------------------------------------------------
