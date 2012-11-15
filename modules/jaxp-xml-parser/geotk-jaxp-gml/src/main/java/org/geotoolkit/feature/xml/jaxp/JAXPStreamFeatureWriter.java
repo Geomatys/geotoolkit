@@ -168,7 +168,7 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
         final String namespace = typeName.getNamespaceURI();
         final String localPart = typeName.getLocalPart();
         final Identifier featureId = feature.getIdentifier();
-        if (namespace != null) {
+        if (namespace != null && !namespace.isEmpty()) {
             final Prefix prefix = getPrefix(namespace);
             writer.writeStartElement(prefix.prefix, localPart, namespace);
             if (featureId != null) {
@@ -338,7 +338,7 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
         FeatureType type = featureCollection.getFeatureType();
         if (type != null && type.getName() != null) {
             String namespace = type.getName().getNamespaceURI();
-            if (namespace != null && !(namespace.equals(Namespaces.GML) || namespace.equals("http://www.opengis.net/gml/3.2"))) {
+            if (namespace != null && !(namespace.equals(Namespaces.GML) || namespace.equals("http://www.opengis.net/gml/3.2")) && !namespace.isEmpty()) {
                 Prefix prefix    = getPrefix(namespace);
                 writer.writeNamespace(prefix.prefix, namespace);
             }
