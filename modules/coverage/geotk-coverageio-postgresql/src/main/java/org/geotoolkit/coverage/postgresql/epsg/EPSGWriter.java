@@ -40,7 +40,9 @@ import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.opengis.referencing.operation.Projection;
 import org.opengis.util.FactoryException;
 import static org.geotoolkit.coverage.postgresql.epsg.EPSGQueries.*;
+import org.geotoolkit.referencing.factory.IdentifiedObjectFinder;
 import org.geotoolkit.temporal.object.TemporalUtilities;
+import org.geotoolkit.util.ComparisonMode;
 import org.opengis.metadata.extent.Extent;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.IdentifiedObject;
@@ -92,10 +94,17 @@ public class EPSGWriter {
         
     }
     
+    private String searchSimilar(Class clazz, IdentifiedObject candidate) throws FactoryException{
+        final IdentifiedObjectFinder finder = factory.getIdentifiedObjectFinder(clazz);
+        finder.setComparisonMode(ComparisonMode.APPROXIMATIVE);
+        final String code = finder.findIdentifier(candidate);
+        return code;
+    }
+    
     public int getOrCreateCoordinateReferenceSystem(final CoordinateReferenceSystem candidate) throws FactoryException{
         
         //search if this object already exist
-        final String code = factory.getIdentifiedObjectFinder(CoordinateReferenceSystem.class).findIdentifier(candidate);
+        final String code = searchSimilar(CoordinateReferenceSystem.class, candidate);
         if(code != null){
             return codeToID(code);
         }
@@ -226,7 +235,7 @@ public class EPSGWriter {
     public int getOrCreateCoordinateSystem(final CoordinateSystem candidate) throws FactoryException{
         
         //search if this object already exist
-        final String code = factory.getIdentifiedObjectFinder(CoordinateSystem.class).findIdentifier(candidate);
+        final String code = searchSimilar(CoordinateSystem.class, candidate);
         if(code != null){
             return codeToID(code);
         }
@@ -296,7 +305,7 @@ public class EPSGWriter {
             final CoordinateSystemAxis candidate) throws FactoryException{
         
         //search if this object already exist
-        final String code = factory.getIdentifiedObjectFinder(CoordinateSystemAxis.class).findIdentifier(candidate);
+        final String code = searchSimilar(CoordinateSystemAxis.class, candidate);
         if(code != null){
             return codeToID(code);
         }
@@ -384,7 +393,7 @@ public class EPSGWriter {
     public int getOrCreateDatum(final Datum candidate) throws FactoryException{
         
         //search if this object already exist
-        final String code = factory.getIdentifiedObjectFinder(Datum.class).findIdentifier(candidate);
+        final String code = searchSimilar(Datum.class, candidate);
         if(code != null){
             return codeToID(code);
         }
@@ -477,7 +486,7 @@ public class EPSGWriter {
     public int getOrCreateProjection(final Projection candidate) throws FactoryException{
         
         //search if this object already exist
-        final String code = factory.getIdentifiedObjectFinder(Projection.class).findIdentifier(candidate);
+        final String code = searchSimilar(Projection.class, candidate);
         if(code != null){
             return codeToID(code);
         }
@@ -556,7 +565,7 @@ public class EPSGWriter {
         
         if(candidate instanceof IdentifiedObject){
             final IdentifiedObject ie = (IdentifiedObject) candidate;
-            final String code = factory.getIdentifiedObjectFinder(ie.getClass()).findIdentifier(ie);
+            final String code = searchSimilar(ie.getClass(), ie);
             if(code != null){
                 return codeToID(code);
             }
@@ -632,7 +641,7 @@ public class EPSGWriter {
  
     public int getOrCreateEllipsoid(final Ellipsoid candidate) throws FactoryException{
         
-        final String code = factory.getIdentifiedObjectFinder(Ellipsoid.class).findIdentifier(candidate);
+        final String code = searchSimilar(Ellipsoid.class, candidate);
         if(code != null){
             return codeToID(code);
         }
@@ -688,7 +697,7 @@ public class EPSGWriter {
     
     public int getOrCreatePrimeMeridian(final PrimeMeridian candidate) throws FactoryException{
         
-        final String code = factory.getIdentifiedObjectFinder(PrimeMeridian.class).findIdentifier(candidate);
+        final String code = searchSimilar(PrimeMeridian.class, candidate);
         if(code != null){
             return codeToID(code);
         }
