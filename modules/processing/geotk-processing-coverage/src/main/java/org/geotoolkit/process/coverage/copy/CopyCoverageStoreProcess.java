@@ -31,6 +31,7 @@ import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
+import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import static org.geotoolkit.parameter.Parameters.*;
 import org.geotoolkit.process.AbstractProcess;
@@ -75,7 +76,7 @@ public class CopyCoverageStoreProcess extends AbstractProcess {
     @Override
     protected void execute() throws ProcessException {
         final CoverageStore inStore = value(STORE_IN, inputParameters);
-        final CoverageStore outStore = value(STORE_IN, inputParameters);
+        final CoverageStore outStore = value(STORE_OUT, inputParameters);
 
         try {
             for(Name n : inStore.getNames()){
@@ -180,7 +181,10 @@ public class CopyCoverageStoreProcess extends AbstractProcess {
         final RenderedImage img = ((GridCoverage2D) coverage).getRenderedImage();
         final Dimension gridSize = new Dimension(1, 1);
         final Dimension TileSize = new Dimension(img.getWidth(), img.getHeight());
-        final DirectPosition upperleft = coverage.getEnvelope().getUpperCorner();
+        final Envelope covEnv = coverage.getEnvelope();
+        final GeneralDirectPosition upperleft = new GeneralDirectPosition(env.getCoordinateReferenceSystem());
+        upperleft.setOrdinate(0, covEnv.getMinimum(0));
+        upperleft.setOrdinate(1, covEnv.getMaximum(1));
         //envelope seems to lost its additional 2D+ values
         for (int i = 0, n = env.getDimension(); i < n; i++) {
             upperleft.setOrdinate(i, env.getMedian(i));
