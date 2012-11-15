@@ -20,6 +20,7 @@ import java.awt.Color;
 import java.awt.image.ColorModel;
 import java.awt.image.ComponentColorModel;
 import java.awt.image.DataBuffer;
+import java.awt.image.DirectColorModel;
 import java.awt.image.IndexColorModel;
 import java.awt.image.RenderedImage;
 import java.util.AbstractList;
@@ -51,7 +52,7 @@ import org.geotoolkit.util.converter.Classes;
 import static org.opengis.filter.expression.Expression.*;
 
 /**
- * 
+ *
  * Implementation of "Interpolation" as a normal function.
  * <p>
  * This implementation is compatible with the Function
@@ -71,7 +72,7 @@ import static org.opengis.filter.expression.Expression.*;
  * <li>Literal: Method
  * </ol>
  * In reality any expression will do.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
@@ -82,8 +83,8 @@ public class DefaultInterpolate extends AbstractExpression implements Interpolat
     private final Method method;
     private final Mode mode;
     private final Literal fallback;
-    
-    
+
+
     /**
      * Make the instance of FunctionName available in
      * a consistent spot.
@@ -118,7 +119,7 @@ public class DefaultInterpolate extends AbstractExpression implements Interpolat
         }
     };
 
-    
+
     public DefaultInterpolate(final Expression ... expressions){
         lookup = expressions[0];
         final List<InterpolationPoint> points = new ArrayList<InterpolationPoint>();
@@ -128,21 +129,21 @@ public class DefaultInterpolate extends AbstractExpression implements Interpolat
             points.add(ip);
         }
         this.points = points.toArray(new InterpolationPoint[points.size()]);
-        
+
         final Method me = Method.parse(expressions[expressions.length-2].evaluate(null, String.class));
         final Mode mo = Mode.parse(expressions[expressions.length-1].evaluate(null, String.class));
         this.method = (me==null) ? Method.COLOR : me;
         this.mode = (mo == null) ? Mode.LINEAR : mo;
         this.fallback = DEFAULT_FALLBACK;
     }
-    
-    public DefaultInterpolate(final Expression LookUpValue, List<InterpolationPoint> values, 
+
+    public DefaultInterpolate(final Expression LookUpValue, List<InterpolationPoint> values,
            final Method method, final Mode mode,final Literal fallback){
-                
+
         if(values == null ){
             values = Collections.emptyList();
         }
-        
+
         this.lookup = (LookUpValue == null || LookUpValue == NIL) ?  DEFAULT_CATEGORIZE_LOOKUP : LookUpValue;
         this.points = values.toArray(new InterpolationPoint[values.size()]);
 
@@ -160,7 +161,7 @@ public class DefaultInterpolate extends AbstractExpression implements Interpolat
                 }else if(v2 instanceof Double && Double.isNaN(v2.doubleValue())){
                     return +1;
                 }
-                
+
                 final double diff = v1.doubleValue() - v2.doubleValue();
                 if(diff < 0){
                     return -1;
@@ -177,7 +178,7 @@ public class DefaultInterpolate extends AbstractExpression implements Interpolat
         this.mode = (mode == null) ? Mode.LINEAR : mode;
         this.fallback = (fallback == null) ? DEFAULT_FALLBACK : fallback;
     }
-    
+
 
     @Override
     public String getName() {
@@ -204,19 +205,19 @@ public class DefaultInterpolate extends AbstractExpression implements Interpolat
 
     @Override
     public Object evaluate(final Object object) {
-        
+
         if (object instanceof RenderedImage) {
             return evaluateImage((RenderedImage) object);
         }
-        
+
         return evaluate(object, Object.class);
     }
 
     @Override
     public Object evaluate(final Object object, final Class c) {
-                
-        final Number value;        
-        if(object instanceof Feature){            
+
+        final Number value;
+        if(object instanceof Feature){
             final Feature f = (Feature)object;
             value = lookup.evaluate(f,Number.class);
         }else if(object instanceof Number){
@@ -224,22 +225,22 @@ public class DefaultInterpolate extends AbstractExpression implements Interpolat
         }else{
             return fallback.evaluate(object,c);
         }
-        
+
         final double dval = value.doubleValue();
-        
+
         InterpolationPoint before = null;
         InterpolationPoint after = null;
         for(InterpolationPoint ip : points){
-            final Number ipnum = ip.getData();            
+            final Number ipnum = ip.getData();
             final double ipval;
-            
-            if(ipnum instanceof Double && Double.isNaN(ipnum.doubleValue())){                
+
+            if(ipnum instanceof Double && Double.isNaN(ipnum.doubleValue())){
                 if(!(value instanceof Double)){
                     continue;
                 }
-                
+
                 ipval = ipnum.doubleValue();
-                
+
                 if(Double.isNaN(ipval)){
                     //if we want exact NaN match use doubleToRawLongBits
                     if(Double.doubleToLongBits(ipval) == Double.doubleToLongBits(dval)){
@@ -253,10 +254,10 @@ public class DefaultInterpolate extends AbstractExpression implements Interpolat
                 if(!(value instanceof Float)){
                     continue;
                 }
-                
+
                 ipval = ipnum.doubleValue();
                 final float ipfloat = ipnum.floatValue();
-                
+
                 if(Float.isNaN(ipfloat)){
                     //if we want exact NaN match use floatToRawLongBits
                     if(Float.floatToIntBits(ipfloat) == Float.floatToIntBits(value.floatValue())){
@@ -269,8 +270,8 @@ public class DefaultInterpolate extends AbstractExpression implements Interpolat
             }else{
                 ipval = ipnum.doubleValue();
             }
-            
-            
+
+
             if(ipval < dval){
                 before = ip;
             }else if(ipval > dval){
@@ -286,7 +287,7 @@ public class DefaultInterpolate extends AbstractExpression implements Interpolat
             //no value associated, surely an NaN value
             //return a translucent color
             return Converters.convert( new Color(0,0,0,0) , c);
-            
+
         }else if(before == null){
             //only have an over value
             return after.getValue().evaluate(object,c);
@@ -330,9 +331,9 @@ public class DefaultInterpolate extends AbstractExpression implements Interpolat
             }
 
         }
-        
+
     }
-    
+
     /**
      * Recolor image
      * @param image
@@ -394,13 +395,39 @@ public class DefaultInterpolate extends AbstractExpression implements Interpolat
                     model = new CompatibleColorModel(nbbit, this);
                 }
 
+            }else if(candidate instanceof DirectColorModel) {
+                final DirectColorModel colors = (DirectColorModel) candidate;
+                final int nbbit = colors.getPixelSize();
+                final int type = image.getSampleModel().getDataType();
+
+                if(type == DataBuffer.TYPE_BYTE || type == DataBuffer.TYPE_USHORT){
+                    final int mapSize = 1 << nbbit;
+                    ARGB = new int[mapSize];
+
+                    for(int j=0; j<mapSize;j++){
+                        int v = j*255/mapSize;
+                        int a = 255 << 24;
+                        int r = v << 16;
+                        int g = v <<  8;
+                        int b = v <<  0;
+                        ARGB[j] = a|r|g|b;
+                    }
+
+                    transformColormap(ARGB);
+                    model = ColorUtilities.getIndexColorModel(ARGB, 1, visibleBand, -1);
+
+                } else {
+                    //we can't handle a index color model when values exceed int max value
+                    model = new CompatibleColorModel(nbbit, this);
+                }
+
             } else {
                 // Current implementation supports only sources that use of index color model
                 // and component color model
                 throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_CLASS_$2,
                         Classes.getClass(candidate), IndexColorModel.class));
             }
-            
+
             /*
             * Gives the color model to the image layout and creates a new image using the Null
             * operation, which merely propagates its first source along the operation chain
@@ -409,7 +436,7 @@ public class DefaultInterpolate extends AbstractExpression implements Interpolat
            final ImageLayout layout = new ImageLayout().setColorModel(model);
            return new NullOpImage(image, layout, null, OpImage.OP_COMPUTE_BOUND);
     }
-    
+
     private int[] transformColormap(final int[] ARGB) {
         final List<InterpolationPoint> points = getInterpolationPoints();
         final double[] SE_VALUES = new double[points.size()];
@@ -495,5 +522,5 @@ public class DefaultInterpolate extends AbstractExpression implements Interpolat
     public Method getMethod() {
         return method;
     }
-    
+
 }

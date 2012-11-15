@@ -90,7 +90,9 @@ public class PGCoverageReference implements CoverageReference, PyramidalModel{
 
     @Override
     public GridCoverageReader createReader() throws DataStoreException {
-        return new PyramidalModelReader();
+        final PyramidalModelReader reader = new PyramidalModelReader();
+        reader.setInput(this);
+        return reader;
     }
 
     @Override

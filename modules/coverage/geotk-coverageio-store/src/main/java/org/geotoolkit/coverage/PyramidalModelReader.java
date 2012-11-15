@@ -19,21 +19,28 @@ package org.geotoolkit.coverage;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
 import java.awt.image.RenderedImage;
+import java.awt.image.SampleModel;
+import java.awt.image.WritableRaster;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
+import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.grid.GridEnvelope2D;
@@ -42,7 +49,13 @@ import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.geometry.GeneralEnvelope;
+import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.referencing.ReferencingUtilities;
+import org.geotoolkit.referencing.cs.DiscreteCoordinateSystemAxis;
+import org.geotoolkit.referencing.operation.MathTransforms;
+import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
+import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.util.Cancellable;
 import org.opengis.coverage.grid.GridCoverage;
@@ -50,6 +63,8 @@ import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.cs.CoordinateSystem;
+import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
@@ -59,26 +74,26 @@ import org.opengis.util.NameSpace;
 
 /**
  * GridCoverage reader on top of a Pyramidal object.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
 public class PyramidalModelReader extends GridCoverageReader{
 
     private CoverageReference ref;
-    
+
     public PyramidalModelReader() {
     }
-    
+
     @Override
     public CoverageReference getInput() {
         return ref;
     }
-    
+
     private PyramidalModel getPyramidalModel(){
         return (PyramidalModel)ref;
     }
-    
+
     @Override
     public void setInput(Object input) throws CoverageStoreException {
         if(!(input instanceof CoverageReference) || !(input instanceof PyramidalModel)){
@@ -87,7 +102,7 @@ public class PyramidalModelReader extends GridCoverageReader{
         this.ref = (CoverageReference) input;
         super.setInput(input);
     }
-    
+
     @Override
     public List<? extends GenericName> getCoverageNames() throws CoverageStoreException, CancellationException {
         final NameFactory dnf = FactoryFinder.getNameFactory(null);
@@ -98,20 +113,24 @@ public class PyramidalModelReader extends GridCoverageReader{
 
     @Override
     public GeneralGridGeometry getGridGeometry(int index) throws CoverageStoreException, CancellationException {
-        
+
         final PyramidSet set;
         try {
             set = getPyramidalModel().getPyramidSet();
         } catch (DataStoreException ex) {
             throw new CoverageStoreException(ex);
         }
-        
+
         final GeneralGridGeometry gridGeom;
         if(!set.getPyramids().isEmpty()){
             //we use the first pyramid as default
             final Pyramid pyramid = set.getPyramids().iterator().next();
-            
-            final List<GridMosaic> mosaics = pyramid.getMosaics();
+            final CoordinateReferenceSystem crs = pyramid.getCoordinateReferenceSystem();
+            final CoordinateSystem cs = crs.getCoordinateSystem();
+
+            final List<GridMosaic> mosaics = new ArrayList<GridMosaic>(pyramid.getMosaics());
+            Collections.sort(mosaics, CoverageUtilities.SCALE_COMPARATOR);
+
             if(mosaics.isEmpty()){
                 //no mosaics
                 gridGeom = new GeneralGridGeometry(null, null, set.getEnvelope());
@@ -120,20 +139,52 @@ public class PyramidalModelReader extends GridCoverageReader{
                 final GridMosaic mosaic = mosaics.get(mosaics.size()-1);
                 final Dimension gridSize = mosaic.getGridSize();
                 final Dimension tileSize = mosaic.getTileSize();
-                
-                final GridEnvelope ge = new GridEnvelope2D(0,0,gridSize.width*tileSize.width, gridSize.height*tileSize.height);
-                
-                final MathTransform trs = AbstractGridMosaic.getTileGridToCRS(mosaic, new Point(0, 0));
-                final CoordinateReferenceSystem crs = pyramid.getCoordinateReferenceSystem();
 
-                gridGeom = new GeneralGridGeometry(ge, PixelInCell.CELL_CORNER, trs, crs);
+                final int nbdim = cs.getDimension();
+
+                final Rectangle bounds = new Rectangle(0, 0,
+                        gridSize.width*tileSize.width,
+                        gridSize.height*tileSize.height);
+                final GeneralGridEnvelope ge = new GeneralGridEnvelope(bounds, nbdim);
+
+                //we expect no rotation
+                final AffineTransform2D gridToCRS2D = AbstractGridMosaic.getTileGridToCRS(mosaic, new Point(0, 0));
+                final List<double[]> axisValues = new ArrayList<double[]>();
+                for(int i=2;i<nbdim;i++){
+                    final CoordinateSystemAxis axis = cs.getAxis(i);
+                    if(axis instanceof DiscreteCoordinateSystemAxis){
+                        final DiscreteCoordinateSystemAxis dca = (DiscreteCoordinateSystemAxis) axis;
+                        final double[] values = new double[dca.length()];
+                        for(int k=0; k<values.length; k++){
+                            final Comparable c = dca.getOrdinateAt(k);
+                            if(c instanceof Number){
+                                values[k] = ((Number)c).doubleValue();
+                            }else if(c instanceof Date){
+                                values[k] = ((Date)c).getTime();
+                            }
+                        }
+                        axisValues.add(values);
+                    }else{
+                        axisValues.add(new double[0]);
+                    }
+                }
+                final MathTransform gridToCRS = ReferencingUtilities.toTransform(gridToCRS2D, axisValues.toArray(new double[0][0]));
+
+
+//                final GeneralMatrix gm = new GeneralMatrix(nbdim+1);
+//                gm.setElement(0, 0, gridToCRS2D.getScaleX());
+//                gm.setElement(0, nbdim, gridToCRS2D.getTranslateX());
+//                gm.setElement(1, 1, gridToCRS2D.getScaleY());
+//                gm.setElement(1, nbdim, gridToCRS2D.getTranslateY());
+//                final MathTransform gridToCRS = MathTransforms.linear(gm);
+                gridGeom = new GeneralGridGeometry(ge, PixelInCell.CELL_CORNER, gridToCRS, crs);
             }
-            
+
         }else{
             //empty pyramid set
             gridGeom = new GeneralGridGeometry(null, null, set.getEnvelope());
         }
-        
+
         return gridGeom;
     }
 
@@ -152,24 +203,24 @@ public class PyramidalModelReader extends GridCoverageReader{
         if(param == null){
             param = new GridCoverageReadParam();
         }
-        
+
         final int[] desBands = param.getDestinationBands();
         final int[] sourceBands = param.getSourceBands();
         if(desBands != null || sourceBands != null){
             throw new CoverageStoreException("Source or destination bands can not be used on pyramide coverages.");
         }
 
-        
+
         CoordinateReferenceSystem crs = param.getCoordinateReferenceSystem();
         Envelope paramEnv = param.getEnvelope();
         double[] resolution = param.getResolution();
 
-        
+
         //verify envelope and crs
         if(crs == null && paramEnv == null){
             //use the max extent
             paramEnv = getGridGeometry(0).getEnvelope();
-            crs = paramEnv.getCoordinateReferenceSystem();            
+            crs = paramEnv.getCoordinateReferenceSystem();
         }else if(crs != null && paramEnv != null){
             //check the envelope crs matches given crs
             if(!CRS.equalsIgnoreMetadata(paramEnv.getCoordinateReferenceSystem(),crs)){
@@ -187,33 +238,37 @@ public class PyramidalModelReader extends GridCoverageReader{
                 throw new CoverageStoreException("Could not transform coverage envelope to given crs.");
             }
         }
-        
+
         //estimate resolution if not given
         if(resolution == null){
             //set resolution to infinite, will select the last mosaic level
             resolution = new double[]{Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY};
         }
-                
-        
+
+
         final PyramidSet pyramidSet;
         try {
             pyramidSet = getPyramidalModel().getPyramidSet();
         } catch (DataStoreException ex) {
             throw new CoverageStoreException(ex);
         }
-        
-        
+
+
         final Pyramid pyramid = CoverageUtilities.findPyramid(pyramidSet, crs);
-                
+
         if(pyramid == null){
             //no reliable pyramid
             throw new CoverageStoreException("No pyramid defined.");
         }
-        
+
         final CoordinateReferenceSystem pyramidCRS = pyramid.getCoordinateReferenceSystem();
-        final GeneralEnvelope wantedEnv;
+        final CoordinateReferenceSystem pyramidCRS2D;
+        GeneralEnvelope wantedEnv2D;
+        GeneralEnvelope wantedEnv;
         try {
-            wantedEnv = new GeneralEnvelope(CRS.transform(paramEnv, pyramidCRS));
+            pyramidCRS2D = CRSUtilities.getCRS2D(pyramidCRS);
+            wantedEnv2D = new GeneralEnvelope(CRS.transform(paramEnv, pyramidCRS2D));
+            wantedEnv = new GeneralEnvelope(ReferencingUtilities.transform(paramEnv, pyramidCRS));
         } catch (TransformException ex) {
             throw new CoverageStoreException(ex.getMessage(),ex);
         }
@@ -221,14 +276,16 @@ public class PyramidalModelReader extends GridCoverageReader{
         //ensure we don't go out of the crs envelope
         final Envelope maxExt = CRS.getEnvelope(pyramidCRS);
         if(maxExt != null){
-            wantedEnv.intersect(maxExt);
-            if(Double.isNaN(wantedEnv.getMinimum(0))){ wantedEnv.setRange(0, maxExt.getMinimum(0), wantedEnv.getMaximum(0));  }
-            if(Double.isNaN(wantedEnv.getMaximum(0))){ wantedEnv.setRange(0, wantedEnv.getMinimum(0), maxExt.getMaximum(0));  }
-            if(Double.isNaN(wantedEnv.getMinimum(1))){ wantedEnv.setRange(1, maxExt.getMinimum(1), wantedEnv.getMaximum(1));  }
-            if(Double.isNaN(wantedEnv.getMaximum(1))){ wantedEnv.setRange(1, wantedEnv.getMinimum(1), maxExt.getMaximum(1));  }
+            wantedEnv2D.intersect(maxExt);
+            if(Double.isNaN(wantedEnv2D.getMinimum(0))){ wantedEnv2D.setRange(0, maxExt.getMinimum(0), wantedEnv2D.getMaximum(0));  }
+            if(Double.isNaN(wantedEnv2D.getMaximum(0))){ wantedEnv2D.setRange(0, wantedEnv2D.getMinimum(0), maxExt.getMaximum(0));  }
+            if(Double.isNaN(wantedEnv2D.getMinimum(1))){ wantedEnv2D.setRange(1, maxExt.getMinimum(1), wantedEnv2D.getMaximum(1));  }
+            if(Double.isNaN(wantedEnv2D.getMaximum(1))){ wantedEnv2D.setRange(1, wantedEnv2D.getMinimum(1), maxExt.getMaximum(1));  }
+            wantedEnv.setRange(0, wantedEnv2D.getMinimum(0), wantedEnv2D.getMaximum(0));
+            wantedEnv.setRange(1, wantedEnv2D.getMinimum(1), wantedEnv2D.getMaximum(1));
         }
-        
-        
+
+
         //the wanted image resolution
         final double wantedResolution = resolution[0];
         final double tolerance = 0.1d;
@@ -238,15 +295,15 @@ public class PyramidalModelReader extends GridCoverageReader{
             //no reliable mosaic
             throw new CoverageStoreException("No mosaic defined.");
         }
-        
-        
+
+
         //we definitly do not want some NaN values
         if(Double.isNaN(wantedEnv.getMinimum(0))){ wantedEnv.setRange(0, Double.NEGATIVE_INFINITY, wantedEnv.getMaximum(0));  }
         if(Double.isNaN(wantedEnv.getMaximum(0))){ wantedEnv.setRange(0, wantedEnv.getMinimum(0), Double.POSITIVE_INFINITY);  }
         if(Double.isNaN(wantedEnv.getMinimum(1))){ wantedEnv.setRange(1, Double.NEGATIVE_INFINITY, wantedEnv.getMaximum(1));  }
         if(Double.isNaN(wantedEnv.getMaximum(1))){ wantedEnv.setRange(1, wantedEnv.getMinimum(1), Double.POSITIVE_INFINITY);  }
-        
-        
+
+
 
         final DirectPosition ul = mosaic.getUpperLeftCorner();
         final double tileMatrixMinX = ul.getOrdinate(0);
@@ -276,12 +333,12 @@ public class PyramidalModelReader extends GridCoverageReader{
         if(tileMaxCol > gridWidth) tileMaxCol = gridWidth;
         if(tileMinRow < 0) tileMinRow = 0;
         if(tileMaxRow > gridHeight) tileMaxRow = gridHeight;
-        
-        
-        //tiles to render, coordinate in grid -> image offset   
+
+
+        //tiles to render, coordinate in grid -> image offset
         final Collection<Point> candidates = new ArrayList<Point>();
-        
-        for(int tileCol=(int)tileMinCol; tileCol<tileMaxCol; tileCol++){   
+
+        for(int tileCol=(int)tileMinCol; tileCol<tileMaxCol; tileCol++){
             for(int tileRow=(int)tileMinRow; tileRow<tileMaxRow; tileRow++){
                 if(mosaic.isMissing(tileCol, tileRow)){
                     //tile not available
@@ -292,22 +349,18 @@ public class PyramidalModelReader extends GridCoverageReader{
 
         //aggregation ----------------------------------------------------------
         final Map hints = Collections.EMPTY_MAP;
-        
-        //create and image in which all tiles will be aggregated
-        final BufferedImage image = new BufferedImage(
-                (int)(tileMaxCol-tileMinCol)*tileSize.width, 
-                (int)(tileMaxRow-tileMinRow)*tileSize.height, 
-                BufferedImage.TYPE_INT_ARGB);
-        final Graphics2D g2d = image.createGraphics();
-        
-        
+
+        //image in which all tiles will be aggregated
+        BufferedImage image = null;
+
+
         final BlockingQueue<Object> queue;
         try {
             queue = mosaic.getTiles(candidates, hints);
         } catch (DataStoreException ex) {
             throw new CoverageStoreException(ex.getMessage(),ex);
         }
-        
+
         while(true){
             Object obj = null;
             try {
@@ -330,10 +383,10 @@ public class PyramidalModelReader extends GridCoverageReader{
             if(obj instanceof TileReference){
                 final TileReference tile = (TileReference)obj;
                 final Point position = tile.getPosition();
-                final Point offset = new Point( 
-                        (int)(position.x-tileMinCol)*tileSize.width, 
+                final Point offset = new Point(
+                        (int)(position.x-tileMinCol)*tileSize.width,
                         (int)(position.y-tileMinRow)*tileSize.height);
-                
+
                 final Object input = tile.getInput();
                 RenderedImage tileImage = null;
                 if(input instanceof RenderedImage){
@@ -365,12 +418,30 @@ public class PyramidalModelReader extends GridCoverageReader{
                         }
                     }
                 }
-                
-                g2d.drawRenderedImage(tileImage, new AffineTransform(1, 0, 0, 1, offset.x, offset.y));
+
+                if(image == null){
+                    final ColorModel cm = tileImage.getColorModel();
+                    final WritableRaster raster = cm.createCompatibleWritableRaster(
+                            (int)(tileMaxCol-tileMinCol)*tileSize.width,
+                            (int)(tileMaxRow-tileMinRow)*tileSize.height);
+
+                    image = new BufferedImage(cm, raster, cm.isAlphaPremultiplied(), null);
+                }
+
+                image.getRaster().setDataElements(offset.x, offset.y, tileImage.getData());
+                //we consider all images have the same data model
+                //g2d.drawRenderedImage(tileImage, new AffineTransform(1, 0, 0, 1, offset.x, offset.y));
             }
         }
-        
-        
+
+        if(image == null){
+            image = new BufferedImage(
+                (int)(tileMaxCol-tileMinCol)*tileSize.width,
+                (int)(tileMaxRow-tileMinRow)*tileSize.height,
+                BufferedImage.TYPE_INT_ARGB);
+        }
+
+
         //build the coverage ---------------------------------------------------
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
         gcb.setName(ref.getName().getLocalPart());
@@ -378,8 +449,8 @@ public class PyramidalModelReader extends GridCoverageReader{
         gcb.setPixelAnchor(PixelInCell.CELL_CORNER);
         gcb.setGridToCRS((AffineTransform)AbstractGridMosaic.
                 getTileGridToCRS(mosaic, new Point((int)tileMinCol,(int)tileMinRow)));
-        gcb.setCoordinateReferenceSystem(mosaic.getPyramid().getCoordinateReferenceSystem());
+        gcb.setCoordinateReferenceSystem(pyramidCRS2D);
         return gcb.build();
     }
-        
+
 }

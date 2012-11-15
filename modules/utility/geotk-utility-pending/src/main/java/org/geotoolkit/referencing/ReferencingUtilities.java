@@ -27,6 +27,12 @@ import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
 import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
 import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
+import org.geotoolkit.referencing.operation.transform.AbstractMathTransform1D;
+import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
+import org.geotoolkit.referencing.operation.transform.ConcatenatedTransform;
+import org.geotoolkit.referencing.operation.transform.LinearTransform1D;
+import org.geotoolkit.referencing.operation.transform.PassThroughTransform;
+import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CompoundCRS;
@@ -37,23 +43,24 @@ import org.opengis.referencing.crs.VerticalCRS;
 import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 
 /**
  * Complementary utility methods for CRS manipulation.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public final class ReferencingUtilities {
-    
+
     private ReferencingUtilities(){}
-    
+
     /**
      * Transform the given envelope to the given crs.
      * Unlike CRS.transform this method handle growing number of dimensions by filling
      * other axes with default values.
-     * 
+     *
      * @param env source Envelope
      * @param targetCRS target CoordinateReferenceSystem
      * @return transformed envelope
@@ -64,11 +71,11 @@ public final class ReferencingUtilities {
         } catch (TransformException ex) {
             //we tryed...
         }
-        
+
         //lazy transform
         final CoordinateReferenceSystem sourceCRS = env.getCoordinateReferenceSystem();
         final GeneralEnvelope result = new GeneralEnvelope(targetCRS);
-        
+
         //decompose crs
         final List<CoordinateReferenceSystem> sourceParts;
         final List<CoordinateReferenceSystem> targetParts;
@@ -82,7 +89,7 @@ public final class ReferencingUtilities {
         }else{
             targetParts = UnmodifiableArrayList.wrap(targetCRS);
         }
-        
+
         int sourceAxeIndex=0;
         loop:
         for(CoordinateReferenceSystem sourcePart : sourceParts){
@@ -90,7 +97,7 @@ public final class ReferencingUtilities {
             int targetAxeIndex=0;
             for(CoordinateReferenceSystem targetPart : targetParts){
                 final int targetPartDimension = targetPart.getCoordinateSystem().getDimension();
-                
+
                 //try conversion
                 try {
                     final MathTransform trs = CRS.findMathTransform(sourcePart, targetPart, true);
@@ -108,17 +115,17 @@ public final class ReferencingUtilities {
                 } catch (FactoryException ex) {
                     //we tryed...
                 }
-                
+
                 targetAxeIndex += targetPartDimension;
             }
             sourceAxeIndex += sourcePartDimension;
         }
-        
-        
-        
+
+
+
         return result;
     }
-    
+
     /**
      * Make a new envelope with vertical and temporal dimensions.
      */
@@ -200,11 +207,11 @@ public final class ReferencingUtilities {
 
     /**
      * Change the 2D CRS part of the CRS.
-     * 
+     *
      * @param originalCRS : base CRS, possible multi-dimension
      * @param crs2D : replacement 2D crs
      * @return CoordinateReferenceSystem
-     * @throws TransformException 
+     * @throws TransformException
      */
     public static CoordinateReferenceSystem change2DComponent( final CoordinateReferenceSystem originalCRS,
             final CoordinateReferenceSystem crs2D) throws TransformException {
@@ -340,5 +347,26 @@ public final class ReferencingUtilities {
         final double scaleY = - env.getSpan(1)/rect.height;
         return new AffineTransform(scaleX, 0, 0, scaleY, minx, maxy);
     }
-    
+
+    public static MathTransform toTransform(final MathTransform base, double[] ... values){
+
+        MathTransform result = PassThroughTransform.create(0, base, values.length);
+        final int baseDim = base.getSourceDimensions();
+        for(int i=0; i<values.length; i++){
+            final double[] array = values[i];
+            final MathTransform1D axistrs;
+            if(array.length == 0){
+                axistrs = LinearTransform1D.create(1, 0);
+            }else if(array.length == 1){
+                axistrs = LinearTransform1D.create(1, array[0]);
+            }else{
+                axistrs = SequenceValueTransform1D.create(array);
+            }
+            final MathTransform mask = PassThroughTransform.create(baseDim, axistrs, values.length-i-1);
+            result = ConcatenatedTransform.create(result, mask);
+        }
+
+        return result;
+    }
+
 }

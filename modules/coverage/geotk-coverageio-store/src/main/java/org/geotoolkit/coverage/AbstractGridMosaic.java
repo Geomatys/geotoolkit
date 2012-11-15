@@ -33,12 +33,12 @@ import org.opengis.geometry.Envelope;
 
 /**
  * Default mosaic grid.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
 public abstract class AbstractGridMosaic implements GridMosaic{
-    
+
     private final String id;
     private final Pyramid pyramid;
     private final DirectPosition upperLeft;
@@ -50,7 +50,7 @@ public abstract class AbstractGridMosaic implements GridMosaic{
             Dimension tileSize, double scale) {
         this(null,pyramid,upperLeft,gridSize,tileSize,scale);
     }
-    
+
     public AbstractGridMosaic(String id, Pyramid pyramid, DirectPosition upperLeft, Dimension gridSize,
             Dimension tileSize, double scale) {
         this.pyramid = pyramid;
@@ -58,20 +58,20 @@ public abstract class AbstractGridMosaic implements GridMosaic{
         this.scale = scale;
         this.gridSize = (Dimension) gridSize.clone();
         this.tileSize = (Dimension) tileSize.clone();
-        
+
         if(id == null){
             this.id = UUID.randomUUID().toString();
         }else{
             this.id = id;
         }
-        
+
     }
 
     @Override
     public String getId() {
         return id;
     }
-    
+
     @Override
     public Pyramid getPyramid() {
         return pyramid;
@@ -91,12 +91,12 @@ public abstract class AbstractGridMosaic implements GridMosaic{
     public Dimension getTileSize() {
         return (Dimension) tileSize.clone(); //defensive copy
     }
-    
+
     @Override
     public double getScale() {
         return scale;
     }
-    
+
     @Override
     public Envelope getEnvelope(final int row, final int col) {
         final GeneralDirectPosition ul = new GeneralDirectPosition(getUpperLeftCorner());
@@ -104,14 +104,14 @@ public abstract class AbstractGridMosaic implements GridMosaic{
         final double maxY = ul.getOrdinate(1);
         final double spanX = tileSize.width * scale;
         final double spanY = tileSize.height * scale;
-        
+
         final GeneralEnvelope envelope = new GeneralEnvelope(ul,ul);
         envelope.setRange(0, minX + col*spanX, minX + (col+1)*spanX);
         envelope.setRange(1, maxY - (row+1)*spanY, maxY - row*spanY);
-        
+
         return envelope;
     }
-    
+
     @Override
     public Envelope getEnvelope(){
         final GeneralDirectPosition ul = new GeneralDirectPosition(getUpperLeftCorner());
@@ -119,25 +119,25 @@ public abstract class AbstractGridMosaic implements GridMosaic{
         final double maxY = ul.getOrdinate(1);
         final double spanX = getTileSize().width * getGridSize().width * getScale();
         final double spanY = getTileSize().height* getGridSize().height* getScale();
-        
+
         final GeneralEnvelope envelope = new GeneralEnvelope(ul,ul);
         envelope.setRange(0, minX, minX + spanX);
         envelope.setRange(1, maxY - spanY, maxY );
-        
+
         return envelope;
     }
-    
+
     @Override
     public boolean isMissing(int col, int row) {
         return false;
     }
 
-    
+
     @Override
     public BlockingQueue<Object> getTiles(Collection<? extends Point> positions, Map hints) throws DataStoreException{
         return getTiles(this, positions, hints);
     }
-    
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder(Classes.getShortClassName(this));
@@ -146,20 +146,20 @@ public abstract class AbstractGridMosaic implements GridMosaic{
         sb.append("   tileSize[").append(getTileSize().width).append(',').append(getTileSize().height).append(']');
         return sb.toString();
     }
-        
-    
+
+
     public static AffineTransform2D getTileGridToCRS(GridMosaic mosaic, Point location){
-        
+
         final Dimension tileSize = mosaic.getTileSize();
         final DirectPosition upperleft = mosaic.getUpperLeftCorner();
         final double scale = mosaic.getScale();
-                
+
         final double offsetX  = upperleft.getOrdinate(0) + location.x * (scale * tileSize.width) ;
         final double offsetY = upperleft.getOrdinate(1) - location.y * (scale * tileSize.height);
 
         return new AffineTransform2D(scale, 0, 0, -scale, offsetX, offsetY);
     }
-    
+
     public static BlockingQueue<Object> getTiles(GridMosaic mosaic, Collection<? extends Point> positions, Map hints) throws DataStoreException{
         final ArrayBlockingQueue queue = new ArrayBlockingQueue(positions.size()+1);
         for(Point p : positions){
@@ -169,5 +169,5 @@ public abstract class AbstractGridMosaic implements GridMosaic{
         queue.offer(END_OF_QUEUE);
         return queue;
     }
-    
+
 }
