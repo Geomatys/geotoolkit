@@ -67,7 +67,7 @@ public class PGCoverageReference implements CoverageReference, PyramidalModel{
         this.name = name;
         this.pyramidSet = new PGPyramidSet(this);
     }
-    
+
     @Override
     public Name getName() {
         return name;
@@ -110,9 +110,9 @@ public class PGCoverageReference implements CoverageReference, PyramidalModel{
 
     @Override
     public Pyramid createPyramid(final CoordinateReferenceSystem crs) throws DataStoreException {
-        
+
         String pyramidId = "";
-            
+
         Connection cnx = null;
         Statement stmt = null;
         ResultSet rs = null;
@@ -121,9 +121,9 @@ public class PGCoverageReference implements CoverageReference, PyramidalModel{
             //find or insert coordinate reference system
             final EPSGWriter writer = new EPSGWriter(store);
             final String epsgCode = String.valueOf(writer.getOrCreateCoordinateReferenceSystem(crs));
-            
+
             stmt = cnx.createStatement();
-            
+
             final int layerId = store.getLayerId(name.getLocalPart());
 
             StringBuilder query = new StringBuilder();
@@ -134,9 +134,9 @@ public class PGCoverageReference implements CoverageReference, PyramidalModel{
             query.append(",'");
             query.append(epsgCode);
             query.append("')");
-            
+
             stmt.executeUpdate(query.toString(), new String[]{"id"});
-            
+
             rs = stmt.getGeneratedKeys();
             if(rs.next()){
                 pyramidId = String.valueOf(rs.getInt(1));
@@ -148,32 +148,32 @@ public class PGCoverageReference implements CoverageReference, PyramidalModel{
         }finally{
             store.closeSafe(cnx, stmt, rs);
         }
-        
+
         pyramidSet.mustUpdate();
         for(Pyramid p : pyramidSet.getPyramids()){
             if(p.getId().equals(pyramidId)){
                 return p;
             }
         }
-        
+
         //should not happen
         throw new DataStoreException("Generated pyramid not found.");
     }
 
     @Override
-    public GridMosaic createMosaic(final String pyramidId, final Dimension gridSize, final Dimension tilePixelSize, 
+    public GridMosaic createMosaic(final String pyramidId, final Dimension gridSize, final Dimension tilePixelSize,
             final DirectPosition upperleft, final double pixelscale) throws DataStoreException {
-            
+
         long mosaicId = 0;
-        
+
         Connection cnx = null;
         Statement stmt = null;
         ResultSet rs = null;
-        try{            
+        try{
             cnx = store.getDataSource().getConnection();
             cnx.setReadOnly(false);
             stmt = cnx.createStatement();
-            
+
             final int pyramidIdInt = Integer.valueOf(pyramidId);
 
             StringBuilder query = new StringBuilder();
@@ -189,14 +189,14 @@ public class PGCoverageReference implements CoverageReference, PyramidalModel{
             query.append(tilePixelSize.width    ).append(',');
             query.append(tilePixelSize.height   );
             query.append(")");
-            
+
             stmt.executeUpdate(query.toString(), new String[]{"id"});
-            
+
             rs = stmt.getGeneratedKeys();
             if(rs.next()){
                 mosaicId = rs.getLong(1);
             }
-            
+
             final CoordinateReferenceSystem crs = upperleft.getCoordinateReferenceSystem();
             final CoordinateSystem cs = crs.getCoordinateSystem();
             for(int i=2,n=cs.getDimension();i<n;i++){
@@ -211,13 +211,13 @@ public class PGCoverageReference implements CoverageReference, PyramidalModel{
                 query.append(")");
                 stmt.executeUpdate(query.toString());
             }
-            
+
         }catch(SQLException ex){
             throw new DataStoreException(ex.getMessage(), ex);
         }finally{
             store.closeSafe(cnx, stmt, rs);
         }
-        
+
         pyramidSet.mustUpdate();
         for (final Pyramid p : pyramidSet.getPyramids()) {
             if (p.getId().equals(pyramidId)) {
@@ -234,25 +234,25 @@ public class PGCoverageReference implements CoverageReference, PyramidalModel{
     }
 
     @Override
-    public void writeTiles(final String pyramidId, final String mosaicId, 
+    public void writeTiles(final String pyramidId, final String mosaicId,
             final RenderedImage image, final boolean onlyMissing) throws DataStoreException {
         final int offsetX = image.getMinTileX();
         final int offsetY = image.getMinTileY();
-        
+
         final RejectedExecutionHandler rejectHandler = new ThreadPoolExecutor.CallerRunsPolicy();
         final BlockingQueue queue = new ArrayBlockingQueue(Runtime.getRuntime().availableProcessors());
         final ThreadPoolExecutor executor = new ThreadPoolExecutor(
             0, Runtime.getRuntime().availableProcessors(), 1, TimeUnit.MINUTES, queue, rejectHandler);
-        
+
         for(int y=0; y<image.getNumYTiles();y++){
             for(int x=0;x<image.getNumXTiles();x++){
                 final Raster raster = image.getTile(offsetX+x, offsetY+y);
-                final RenderedImage img = new BufferedImage(image.getColorModel(), 
+                final RenderedImage img = new BufferedImage(image.getColorModel(),
                         (WritableRaster)raster, image.getColorModel().isAlphaPremultiplied(), null);
-                
+
                 final int tx = offsetX+x;
                 final int ty = offsetY+y;
-                
+
                 executor.submit(new Runnable() {
                     @Override
                     public void run() {
@@ -263,14 +263,14 @@ public class PGCoverageReference implements CoverageReference, PyramidalModel{
                         }
                     }
                 });
-                
+
             }
         }
     }
 
     @Override
     public void writeTile(String pyramidId, String mosaicId, int col, int row, RenderedImage image) throws DataStoreException {
-        
+
         Connection cnx = null;
         Statement stmt = null;
         ResultSet rs = null;
@@ -280,19 +280,21 @@ public class PGCoverageReference implements CoverageReference, PyramidalModel{
             final String base64 = Base64.encodeBytes(wkbimg);
 
             final StringBuilder query = new StringBuilder();
-            query.append("INSERT INTO \"Tile\"(\"raster\",\"mosaicId\",\"positionX\",\"positionY\") VALUES ( (");
+            query.append("INSERT INTO");
+            query.append(store.encodeTableName("Tile"));
+            query.append("(\"raster\",\"mosaicId\",\"positionX\",\"positionY\") VALUES ( (");
             query.append("encode(").append("decode('").append(base64).append("','base64')").append(",'hex')").append(")::raster,");
             query.append(Integer.valueOf(mosaicId)).append(',');
             query.append(col).append(',');
             query.append(row).append(')');
-            
+
             cnx = store.getDataSource().getConnection();
             cnx.setReadOnly(false);
             stmt = cnx.createStatement();
-            
+
             stmt.executeUpdate(query.toString());
-            
-            
+
+
         }catch(IOException ex){
             throw new DataStoreException(ex.getMessage(), ex);
         }catch(SQLException ex){
@@ -300,7 +302,7 @@ public class PGCoverageReference implements CoverageReference, PyramidalModel{
         }finally{
             store.closeSafe(cnx, stmt, rs);
         }
-        
+
     }
-    
+
 }
