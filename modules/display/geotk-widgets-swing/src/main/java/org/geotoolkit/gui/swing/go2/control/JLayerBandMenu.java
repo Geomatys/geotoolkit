@@ -19,6 +19,7 @@ package org.geotoolkit.gui.swing.go2.control;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
@@ -39,10 +40,15 @@ import org.geotoolkit.gui.swing.navigator.JNavigatorBand;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.ContextListener;
+import org.geotoolkit.map.CoverageMapLayer;
+import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapItem;
 import org.geotoolkit.map.MapLayer;
+import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.util.collection.CollectionChangeEvent;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.crs.TemporalCRS;
 
 import org.opengis.style.Description;
 import org.opengis.util.InternationalString;
@@ -58,10 +64,10 @@ public class JLayerBandMenu extends JMenu implements ContextListener{
     private WeakReference<JMap2D> map = null;
 
     public JLayerBandMenu(final JNavigator navigator){
-        super(MessageBundle.getString("layers"));      
+        super(MessageBundle.getString("layers"));
         this.navigator = navigator;
     }
-    
+
     @Override
     public boolean isEnabled() {
         return getMap() != null;
@@ -76,59 +82,98 @@ public class JLayerBandMenu extends JMenu implements ContextListener{
 
     public void setMap(final JMap2D map) {
         this.map = new WeakReference<JMap2D>(map);
-        
+
+        checkBands();
         if(map != null){
             map.getContainer().addPropertyChangeListener(this);
             final MapContext context = map.getContainer().getContext();
             if(context != null){
                 context.addContextListener(new ContextListener.Weak(this));
+                layerChange(new CollectionChangeEvent<MapLayer>(this, context.layers(), CollectionChangeEvent.ITEM_ADDED, null,null));
             }
         }
-        checkBands();
-        layerChange(null);
     }
 
     private void checkBands(){
         for(JNavigatorBand b : new ArrayList<JNavigatorBand>(navigator.getBands())){
-            if(b instanceof JLayerBand){
-                navigator.getBands().remove(b);
-            }
-        }        
-        if(map == null){
-            return;
-        }    
+            navigator.getBands().remove(b);
+        }
     }
-    
+
     @Override
     public void layerChange(CollectionChangeEvent<MapLayer> event) {
-        removeAll();
-                
+
         final JMap2D map2d = getMap();
         if(map2d == null){
             return;
         }
-        
+
         final MapContext context = map2d.getContainer().getContext();
         if(context == null){
             return;
         }
-        
+
         final List<MapLayer> layers = context.layers();
-        
+
+        removeAll();
         for(final MapLayer layer : layers){
             add(new LayerPane(layer));
         }
-        
-        //update the navigator bands
-        for(JNavigatorBand b : new ArrayList<JNavigatorBand>(navigator.getBands())){
-            if(b instanceof JLayerBand){
-                final JLayerBand lb = (JLayerBand) b;
-                if(!layers.contains(lb.getLayer())){
-                    navigator.getBands().remove(b);
+
+        if(event == null){
+            return;
+        }
+
+        final int type = event.getType();
+        if(type == CollectionChangeEvent.ITEM_ADDED && navigator.getModel().getCRS() instanceof TemporalCRS){
+            //automaticaly add temporal layer bands.
+            for(MapLayer ml : event.getItems()){
+                CoordinateReferenceSystem crs = null;
+                if(ml instanceof CoverageMapLayer){
+                    final CoverageMapLayer cml = (CoverageMapLayer) ml;
+                    try {
+                        crs = cml.getCoverageReader().getGridGeometry(cml.getImageIndex()).getCoordinateReferenceSystem();
+                    } catch (Exception ex) {
+                        //we tryed ...
+                    }
+                }else if(ml instanceof FeatureMapLayer){
+                    final FeatureMapLayer fml = (FeatureMapLayer) ml;
+                    crs = fml.getCollection().getFeatureType().getCoordinateReferenceSystem();
+                }
+                if(crs != null){
+                    final TemporalCRS tc = CRS.getTemporalCRS(ml.getBounds().getCoordinateReferenceSystem());
+                    if(tc != null){
+                        //add it in the bands
+                        final JLayerBand band = new JLayerBand(ml);
+                        navigator.getBands().add(band);
+                        for(Component c : getMenuComponents()){
+                            if(!(c instanceof LayerPane)){
+                                continue;
+                            }
+
+                            final LayerPane lp = (LayerPane) c;
+                            if(lp.layer == ml){
+                                lp.update();
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+
+        }else if(type == CollectionChangeEvent.ITEM_REMOVED){
+
+            //update the navigator bands
+            for(JNavigatorBand b : new ArrayList<JNavigatorBand>(navigator.getBands())){
+                if(b instanceof JLayerBand){
+                    final JLayerBand lb = (JLayerBand) b;
+                    if(!layers.contains(lb.getLayer())){
+                        navigator.getBands().remove(b);
+                    }
                 }
             }
         }
-        
+
     }
 
     @Override
@@ -145,7 +190,7 @@ public class JLayerBandMenu extends JMenu implements ContextListener{
             if(map2d == null){
                 return;
             }
-            
+
             final MapContext context = map2d.getContainer().getContext();
             if(context != null){
                 context.addContextListener(new ContextListener.Weak(this));
@@ -155,11 +200,11 @@ public class JLayerBandMenu extends JMenu implements ContextListener{
     }
 
     private final class LayerPane extends JPanel implements ActionListener,org.geotoolkit.map.ItemListener{
-    
+
         private final JCheckBox box = new JCheckBox();
         private final JButton label = new JButton(IconBundle.getIcon("16_style"));
         private final MapLayer layer;
-        
+
         private LayerPane(final MapLayer layer){
             super(new BorderLayout());
             this.layer = layer;
@@ -173,10 +218,10 @@ public class JLayerBandMenu extends JMenu implements ContextListener{
             layer.addItemListener(new Weak(this));
             update();
         }
-        
+
         private void update(){
             label.setText(getLayerName());
-            
+
             for(final JNavigatorBand band : navigator.getBands()){
                 if(band instanceof JLayerBand){
                     final JLayerBand lb = (JLayerBand) band;
@@ -188,17 +233,17 @@ public class JLayerBandMenu extends JMenu implements ContextListener{
                     }
                 }
             }
-            
+
             box.setSelected(false);
         }
-        
+
         private String getLayerName(){
             final Description desc = layer.getDescription();
             if(desc != null){
                 final InternationalString title = desc.getTitle();
                 if(title != null){
                     return title.toString();
-                }            
+                }
             }
             final String name = layer.getName();
             return (name == null)? "" : name;
@@ -229,7 +274,7 @@ public class JLayerBandMenu extends JMenu implements ContextListener{
                             }
                         }
                     }
-                }       
+                }
             }else{
                 Color c = label.getForeground();
                 c = JColorChooser.showDialog(this, "", c);
@@ -258,7 +303,7 @@ public class JLayerBandMenu extends JMenu implements ContextListener{
                 update();
             }
         }
-        
+
     }
-    
+
 }
