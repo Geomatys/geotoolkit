@@ -91,10 +91,12 @@ public final class ReferencingUtilities {
         }
 
         int sourceAxeIndex=0;
-        loop:
+        sourceLoop:
         for(CoordinateReferenceSystem sourcePart : sourceParts){
             final int sourcePartDimension = sourcePart.getCoordinateSystem().getDimension();
             int targetAxeIndex=0;
+
+            targetLoop:
             for(CoordinateReferenceSystem targetPart : targetParts){
                 final int targetPartDimension = targetPart.getCoordinateSystem().getDimension();
 
@@ -111,7 +113,7 @@ public final class ReferencingUtilities {
                     for(int i=0;i<targetPartDimension;i++){
                         result.setRange(targetAxeIndex+i, partResult.getMinimum(i), partResult.getMaximum(i));
                     }
-                    continue loop;
+                    break targetLoop;
                 } catch (FactoryException ex) {
                     //we tryed...
                 }
