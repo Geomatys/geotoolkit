@@ -106,7 +106,7 @@ public class DefaultLineSymbolizerRenderer extends AbstractSymbolizerRenderer<Ca
             if(monitor.stopRequested()){
                 break;
             }
-            
+
             final ProjectedObject projectedFeature = graphics.next();
             final Object feature = projectedFeature.getCandidate();
             final ProjectedGeometry projectedGeometry = projectedFeature.getGeometry(geomPropertyName);
@@ -126,6 +126,11 @@ public class DefaultLineSymbolizerRenderer extends AbstractSymbolizerRenderer<Ca
                                      : projectedGeometry.getObjectiveShape();
             } catch (TransformException ex) {
                 throw new PortrayalException("Could not calculate objective projected geometry",ex);
+            }
+
+            // Do not try to draw this shape if null
+            if (j2dShape == null) {
+                continue;
             }
 
             //handle offset
@@ -212,7 +217,7 @@ public class DefaultLineSymbolizerRenderer extends AbstractSymbolizerRenderer<Ca
         if(j2dShape == null){
             return;
         }
-        
+
         //handle offset
         final float offset = symbol.getOffset(feature, coeff);
         if(offset != 0){
@@ -302,7 +307,7 @@ public class DefaultLineSymbolizerRenderer extends AbstractSymbolizerRenderer<Ca
                 return false;
             }
         }
-        
+
         if(dispGeom){
 
             final Geometry j2dShape;
@@ -333,7 +338,7 @@ public class DefaultLineSymbolizerRenderer extends AbstractSymbolizerRenderer<Ca
             }
             return GO2Utilities.testHit(filter,CRSShape,j2dShape);
 
-        }else{            
+        }else{
             final Shape j2dShape;
             final Shape CRSShape;
             try {
@@ -377,5 +382,5 @@ public class DefaultLineSymbolizerRenderer extends AbstractSymbolizerRenderer<Ca
     public boolean hit(final ProjectedCoverage graphic, final SearchAreaJ2D mask, final VisitFilter filter) {
         return false;
     }
-    
+
 }
