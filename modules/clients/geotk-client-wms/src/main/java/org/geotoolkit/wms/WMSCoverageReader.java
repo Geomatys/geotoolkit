@@ -56,9 +56,9 @@ import org.opengis.util.NameSpace;
  * @module pending
  */
 public class WMSCoverageReader extends GridCoverageReader{
-    
+
     private static final Logger LOGGER = Logging.getLogger(WMSCoverageReader.class);
-    
+
     public WMSCoverageReader(final WMSCoverageReference reference) {
         try {
             setInput(reference);
@@ -80,7 +80,7 @@ public class WMSCoverageReader extends GridCoverageReader{
     public WMSCoverageReference getInput() throws CoverageStoreException {
         return (WMSCoverageReference) super.getInput();
     }
-        
+
     @Override
     public List<? extends GenericName> getCoverageNames() throws CoverageStoreException, CancellationException {
         final NameFactory dnf = FactoryFinder.getNameFactory(null);
@@ -91,8 +91,9 @@ public class WMSCoverageReader extends GridCoverageReader{
 
     @Override
     public GeneralGridGeometry getGridGeometry(final int index) throws CoverageStoreException, CancellationException {
+        final WMSCoverageReference ref = getInput();
         //we only know the envelope,
-        final GeneralGridGeometry gridGeom = new GeneralGridGeometry(null, null, getInput().getBounds());
+        final GeneralGridGeometry gridGeom = new GeneralGridGeometry(null, null, ref.getBounds());
         return gridGeom;
     }
 
@@ -111,7 +112,7 @@ public class WMSCoverageReader extends GridCoverageReader{
         if(param == null){
             param = new GridCoverageReadParam();
         }
-        
+
         final int[] desBands = param.getDestinationBands();
         final int[] sourceBands = param.getSourceBands();
         if(desBands != null || sourceBands != null){
@@ -120,7 +121,7 @@ public class WMSCoverageReader extends GridCoverageReader{
 
         final WMSCoverageReference ref = getInput();
         final WebMapServer server = ref.getStore();
-        
+
         CoordinateReferenceSystem crs = param.getCoordinateReferenceSystem();
         Envelope wantedEnv = param.getEnvelope();
         double[] resolution = param.getResolution();
@@ -129,7 +130,7 @@ public class WMSCoverageReader extends GridCoverageReader{
         if(crs == null && wantedEnv == null){
             //use the max extent
             wantedEnv = ref.getBounds();
-            crs = wantedEnv.getCoordinateReferenceSystem();            
+            crs = wantedEnv.getCoordinateReferenceSystem();
         }else if(crs != null && wantedEnv != null){
             //check the envelope crs matches given crs
             if(!CRS.equalsIgnoreMetadata(wantedEnv.getCoordinateReferenceSystem(),crs)){
@@ -147,7 +148,7 @@ public class WMSCoverageReader extends GridCoverageReader{
                 throw new CoverageStoreException("Could not transform coverage envelope to given crs.");
             }
         }
-        
+
         //estimate resolution if not given
         if(resolution == null){
             //we arbitrarly choose 1000 pixel on first axis, wms layer have infinite resolution.
@@ -155,8 +156,8 @@ public class WMSCoverageReader extends GridCoverageReader{
             resolution[0] = wantedEnv.getSpan(0)/1000;
             resolution[1] = resolution[0] * (wantedEnv.getSpan(1)/wantedEnv.getSpan(0));
         }
-                
-        
+
+
         final GeneralEnvelope env = new GeneralEnvelope(wantedEnv);
         final GetMapRequest request = server.createGetMap();
 
@@ -168,9 +169,9 @@ public class WMSCoverageReader extends GridCoverageReader{
 
         //calculate image dimension
         final Dimension dim = new Dimension(
-                (int)(env.getSpan(0) / resolution[0]), 
+                (int)(env.getSpan(0) / resolution[0]),
                 (int)(env.getSpan(1) / resolution[1]));
-        
+
         try {
             ref.prepareQuery(request, env, dim, null);
             System.out.println(request.getURL());
@@ -179,18 +180,18 @@ public class WMSCoverageReader extends GridCoverageReader{
         } catch (Exception ex) {
             throw new CoverageStoreException(ex.getMessage(), ex);
         }
-        
+
         //read image
         BufferedImage image = null;
         InputStream stream = null;
         try {
             stream = request.getResponseStream();
             image = ImageIO.read(stream);
-            
+
             final CoordinateReferenceSystem crs2d = CRSUtilities.getCRS2D(env.getCoordinateReferenceSystem());
             final Envelope env2D = CRS.transform(env, crs2d);
             final AffineTransform gridToCRS = ReferencingUtilities.toAffine(dim, env2D);
-            
+
             final GridCoverageBuilder gcb = new GridCoverageBuilder();
             gcb.setName(ref.getCombinedLayerNames());
             gcb.setRenderedImage(image);
@@ -198,7 +199,7 @@ public class WMSCoverageReader extends GridCoverageReader{
             gcb.setGridToCRS(gridToCRS);
             gcb.setCoordinateReferenceSystem(crs2d);
             return gcb.build();
-            
+
         } catch (IOException ex) {
             throw new CoverageStoreException(ex.getMessage(), ex);
         } catch (TransformException ex) {
@@ -212,8 +213,8 @@ public class WMSCoverageReader extends GridCoverageReader{
                 }
             }
         }
-        
+
     }
-    
+
 
 }

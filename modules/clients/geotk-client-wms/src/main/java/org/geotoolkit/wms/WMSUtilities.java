@@ -16,9 +16,14 @@
  */
 package org.geotoolkit.wms;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
+import java.util.SortedSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.measure.unit.Unit;
@@ -35,13 +40,14 @@ import org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis;
 import org.geotoolkit.referencing.cs.DiscreteReferencingFactory;
 import org.geotoolkit.referencing.datum.AbstractDatum;
 import org.geotoolkit.temporal.object.ISODateParser;
+import org.geotoolkit.temporal.object.TemporalUtilities;
 import org.geotoolkit.util.ArgumentChecks;
+import org.geotoolkit.util.PeriodUtilities;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.wms.xml.AbstractDimension;
 import org.geotoolkit.wms.xml.AbstractLayer;
 import org.geotoolkit.wms.xml.AbstractWMSCapabilities;
 import org.geotoolkit.wms.xml.Style;
-import org.geotoolkit.wms.xml.v130.Dimension;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.cs.AxisDirection;
@@ -50,16 +56,18 @@ import org.opengis.util.FactoryException;
 
 /**
  * Convinient WMS methods.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
 public final class WMSUtilities {
-    
+
     private static final Logger LOGGER = Logging.getLogger(WMSUtilities.class);
 
+    private static final SimpleDateFormat PERIOD_DATE_FORMAT = new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+
     private WMSUtilities() {}
-    
+
     /**
      * Verify if the server supports the given {@linkplain CoordinateReferenceSystem crs}.
      *
@@ -69,13 +77,13 @@ public final class WMSUtilities {
      * @return {@code True} if the given {@linkplain CoordinateReferenceSystem crs} is present
      *         in the list of supported crs in the GetCapabilities response. {@code False} otherwise.
      * @throws FactoryException
-     * @throws CapabilitiesException if failed to read capabilities or layer name does not exist in document 
+     * @throws CapabilitiesException if failed to read capabilities or layer name does not exist in document
      */
     public static boolean supportCRS(final WebMapServer server, final String layername, final CoordinateReferenceSystem crs)
             throws FactoryException, CapabilitiesException {
         ArgumentChecks.ensureNonNull("server", server);
         ArgumentChecks.ensureNonNull("layer name", layername);
-        
+
         final AbstractLayer[] stack = server.getCapabilities().getLayerStackFromName(layername);
 
         if(stack != null){
@@ -84,7 +92,7 @@ public final class WMSUtilities {
                 //current crs has no knowned id, we can ask the server for this crs
                 return false;
             }
-            
+
             //start by the most accurate layer
             for(int i=stack.length-1; i>=0; i--){
                 for (String str : stack[i].getCRS()) {
@@ -106,18 +114,18 @@ public final class WMSUtilities {
 
     /**
      * Find the best original crs of the data in the capabilities.
-     * 
+     *
      * @param server web map server
      * @param layername wms layer name
      * @return
      * @throws FactoryException
-     * @throws CapabilitiesException  
+     * @throws CapabilitiesException
      */
-    public static CoordinateReferenceSystem findOriginalCRS(final WebMapServer server, 
+    public static CoordinateReferenceSystem findOriginalCRS(final WebMapServer server,
             final String layername) throws CapabilitiesException {
         ArgumentChecks.ensureNonNull("server", server);
         ArgumentChecks.ensureNonNull("layer name", layername);
-        
+
         final AbstractLayer[] stack = server.getCapabilities().getLayerStackFromName(layername);
 
         if(stack != null){
@@ -147,16 +155,16 @@ public final class WMSUtilities {
 
     /**
      * Search in the getCapabilities the closest date.
-     * 
+     *
      * @param server web map server
      * @param layername wms layer name
-     * @return  
+     * @return
      */
     public static Long findClosestDate(final WebMapServer server, final String layername,
             final long date) throws CapabilitiesException {
         ArgumentChecks.ensureNonNull("server", server);
         ArgumentChecks.ensureNonNull("layer name", layername);
-        
+
         final AbstractLayer layer = server.getCapabilities().getLayerFromName(layername);
 
         if(layer != null){
@@ -194,12 +202,11 @@ public final class WMSUtilities {
 
     /**
      * Find layer envelope
-     * 
+     *
      * @param server web map server
      * @param layername wms layer name
      * @return
-     * @throws CapabilitiesException 
-   
+     * @throws CapabilitiesException
      */
     public static Envelope findEnvelope(final WebMapServer server,
             final String layername) throws CapabilitiesException {
@@ -252,16 +259,57 @@ public final class WMSUtilities {
 
                 //extract discret values
                 final String dimValues = dim.getValue();
-                if (dimValues != null && !DefaultTemporalCRS.JAVA.equals(dimCRS)) {
-                    final String[] dimStrArray = dimValues.split(",");
-                    final double[] dblValues = new double[dimStrArray.length];
-                    for (int i = 0; i < dimStrArray.length; i++) {
-                        dblValues[i] = Double.valueOf(dimStrArray[i]).doubleValue();
+                if(dimValues != null){
+                    if (!DefaultTemporalCRS.JAVA.equals(dimCRS)) {
+                        //serie of values
+                        final String[] dimStrArray = dimValues.split(",");
+                        final double[] dblValues = new double[dimStrArray.length];
+                        for (int i = 0; i < dimStrArray.length; i++) {
+                            dblValues[i] = Double.valueOf(dimStrArray[i]).doubleValue();
+                        }
+                        dimCRS = DiscreteReferencingFactory.createDiscreteCRS(dimCRS, dblValues);
+                        minVal = dblValues[0];
+                        maxVal = dblValues[dblValues.length - 1];
+                    }else{
+                        //might be serie of dates or periods
+                        final String[] dimStrArray = dimValues.split(",");
+                        final List<Double> dblValues = new ArrayList<Double>();
+                        for (int i = 0; i < dimStrArray.length; i++) {
+                            final String candidate = dimStrArray[i];
+                            //try to parse a period
+                            synchronized(PERIOD_DATE_FORMAT){
+                                final PeriodUtilities parser = new PeriodUtilities(PERIOD_DATE_FORMAT);
+                                try {
+                                    final SortedSet<Date> dates = parser.getDatesFromPeriodDescription(candidate);
+                                    for(Date date : dates){
+                                        dblValues.add((double)date.getTime());
+                                    }
+                                    continue;
+                                } catch (ParseException ex) {
+                                    Logger.getLogger(WMSUtilities.class.getName()).log(Level.FINER, "Value : {0} is not a period", candidate);
+                                }
+                            }
+
+                            //try to parse a single date
+                            try {
+                                final Date date = TemporalUtilities.parseDate(candidate);
+                                dblValues.add((double)date.getTime());
+                                continue;
+                            } catch (ParseException ex) {
+                                Logger.getLogger(WMSUtilities.class.getName()).log(Level.FINER, "Value : {0} is not a date", candidate);
+                            }
+                        }
+
+                        final double[] values = new double[dblValues.size()];
+                        for(int i=0;i<values.length;i++){
+                            values[i] = dblValues.get(i);
+                        }
+                        dimCRS = DiscreteReferencingFactory.createDiscreteCRS(dimCRS, values);
+                        minVal = values[0];
+                        maxVal = values[values.length - 1];
                     }
-                    dimCRS = DiscreteReferencingFactory.createDiscreteCRS(dimCRS, dblValues);
-                    minVal = dblValues[0];
-                    maxVal = dblValues[dblValues.length - 1];
                 }
+
 
                 //add CRS to list
                 if (dimCRS != null) {
@@ -287,28 +335,28 @@ public final class WMSUtilities {
                 layerEnvelope.setEnvelope(ordinates);
             }
         }
-        
+
         return layerEnvelope;
     }
 
     /**
      * List available styles for given layer
-     * 
+     *
      * @param server web map server
      * @param layername wms layer name
      * @return
-     * @throws CapabilitiesException 
+     * @throws CapabilitiesException
      */
-    public static List<? extends Style> findStyleCandidates(final WebMapServer server, 
+    public static List<? extends Style> findStyleCandidates(final WebMapServer server,
             final String layername) throws CapabilitiesException{
         ArgumentChecks.ensureNonNull("server", server);
         ArgumentChecks.ensureNonNull("layer name", layername);
-        
+
         final AbstractLayer layer = server.getCapabilities().getLayerFromName(layername);
          if(layer != null){
             return layer.getStyle();
         }
         return Collections.emptyList();
     }
-    
+
 }
