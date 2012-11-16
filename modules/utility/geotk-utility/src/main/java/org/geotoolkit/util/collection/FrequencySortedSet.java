@@ -372,6 +372,8 @@ public class FrequencySortedSet<E> extends AbstractSet<E> implements SortedSet<E
     /**
      * The comparator used for sorting map entries. Most be consistent with
      * {@link #compare} implementation.
+     *
+     * @todo Move to a XCollections constant.
      */
     private static final Comparator<Map.Entry<?,Integer>> COMPARATOR = new Comparator<Map.Entry<?,Integer>>() {
         @Override
