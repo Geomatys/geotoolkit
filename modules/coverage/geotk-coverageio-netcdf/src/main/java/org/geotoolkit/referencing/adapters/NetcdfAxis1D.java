@@ -301,6 +301,10 @@ final class NetcdfAxis1D extends NetcdfAxis implements DiscreteCoordinateSystemA
      */
     @Override
     void getOrdinateIndex(final double ordinate, final double[] gridPts, final int dstOff) {
+        if (Double.isNaN(ordinate)) {
+            gridPts[dstOff + iDim] = ordinate;
+            return;
+        }
         final CoordinateAxis1D axis = (CoordinateAxis1D) this.axis;
         final int i = axis.findCoordElementBounded(ordinate);
         double gridOrdinate = i;

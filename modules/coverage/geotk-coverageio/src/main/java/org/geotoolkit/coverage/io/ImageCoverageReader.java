@@ -44,6 +44,7 @@ import org.opengis.coverage.grid.GridGeometry;
 import org.opengis.coverage.grid.RectifiedGrid;
 import org.opengis.metadata.spatial.Georectified;
 import org.opengis.metadata.spatial.PixelOrientation;
+import org.opengis.referencing.crs.CompoundCRS;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
@@ -87,6 +88,7 @@ import org.geotoolkit.referencing.operation.MathTransforms;
 
 import static org.geotoolkit.image.io.MultidimensionalImageStore.*;
 import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMAT_NAME;
+import org.geotoolkit.internal.referencing.CRSUtilities;
 import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
 
 
@@ -976,13 +978,15 @@ public class ImageCoverageReader extends GridCoverageReader {
                     if (geodeticDim > 2) {
                         Envelope envelope = param.getEnvelope();
                         if (envelope != null && envelope.getDimension() > 2) try {
+                            if (crs instanceof CompoundCRS) {
+                                envelope = CRSUtilities.appendMissingDimensions(envelope, (CompoundCRS) crs);
+                            }
                             envelope = CRS.transform(envelope, crs);
                             final double[] median = new double[geodeticDim];
                             for (int i=0; i<geodeticDim; i++) {
                                 median[i] = envelope.getMedian(i);
                             }
                             final double[] indices = new double[gridDim];
-                            Arrays.fill(indices, Double.NaN);
                             gridGeometry.getGridToCRS().inverse().transform(median, 0, indices, 0, 1);
                             final GridEnvelope gridExtent;
                             if (crs instanceof GridGeometry) {

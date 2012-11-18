@@ -687,8 +687,8 @@ public class GeneralEnvelope extends ArrayEnvelope implements Cloneable, Seriali
     /**
      * Sets a sub-domain of this envelope to the same coordinate values than the specified envelope.
      * This method copies the ordinate values of all dimensions from the given envelope to some
-     * dimensions of this envelope. The target dimensions in this envelope range from {@code lower}
-     * inclusive to <code>lower + {@linkplain #getDimension()}</code> exclusive.
+     * dimensions of this envelope. The target dimensions in this envelope range from {@code offset}
+     * inclusive to <code>lower + {@linkplain Envelope#getDimension()}</code> exclusive.
      * <p>
      * This method ignores the Coordinate Reference System of {@code this} and the given envelope.
      *
