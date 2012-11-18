@@ -20,7 +20,6 @@
  */
 package org.geotoolkit.referencing.cs;
 
-import org.opengis.referencing.crs.CompoundCRS;
 import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.cs.EllipsoidalCS;
 import org.opengis.referencing.cs.CoordinateSystem;

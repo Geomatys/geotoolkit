@@ -19,6 +19,7 @@ package org.geotoolkit.internal.referencing;
 
 import java.util.Map;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Collections;
 import javax.measure.unit.Unit;
 import javax.measure.unit.NonSI;
@@ -29,14 +30,17 @@ import org.opengis.referencing.cs.*;
 import org.opengis.referencing.crs.*;
 import org.opengis.referencing.datum.*;
 import org.opengis.referencing.operation.*;
+import org.opengis.geometry.Envelope;
 
 import org.geotoolkit.lang.Static;
+import org.geotoolkit.lang.Workaround;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.cs.AxisRangeType;
 import org.geotoolkit.referencing.cs.DefaultEllipsoidalCS;
 import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
+import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.measure.Measure;
 import org.geotoolkit.resources.Errors;
 
@@ -54,7 +58,7 @@ import static org.geotoolkit.math.XMath.atanh;
  * in any future release.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.20
+ * @version 3.21
  *
  * @since 2.0
  * @module
@@ -292,6 +296,38 @@ public final class CRSUtilities extends Static {
             }
         }
         return Collections.singletonMap(IdentifiedObject.NAME_KEY, name.toString());
+    }
+
+    /**
+     * Returns an envelope containing all dimensions of the given CRS, padding additional dimensions
+     * with NaN values if necessary. This method is a workaround for the current Geotk behavior,
+     * which is to thrown an exception when re-projecting an envelope to another CRS having more
+     * dimensions. This method will hopefully be deleted in a future version.
+     *
+     * @param  envelope The envelope to expand.
+     * @param  crs The target CRS.
+     * @return An envelope having the dimensions of the given CRS.
+     */
+    @Workaround(library="Geotk", version="3.21")
+    public static Envelope appendMissingDimensions(final Envelope envelope, final CompoundCRS crs) {
+        final List<CoordinateReferenceSystem> toAdd = new ArrayList<CoordinateReferenceSystem>(4);
+        final CoordinateReferenceSystem currentCRS = envelope.getCoordinateReferenceSystem();
+        final CoordinateSystem currentCS = currentCRS.getCoordinateSystem();
+        for (final SingleCRS subCRS : DefaultCompoundCRS.getSingleCRS(crs)) {
+            final CoordinateSystem subCS = subCRS.getCoordinateSystem();
+            if (subCS.getDimension() == 1 && dimensionColinearWith(currentCS, subCS) < 0) {
+                toAdd.add(subCRS);
+            }
+        }
+        if (toAdd.isEmpty()) {
+            return envelope;
+        }
+        toAdd.add(0, currentCRS);
+        final GeneralEnvelope expanded = new GeneralEnvelope(new DefaultCompoundCRS("Temporarily expanded",
+                toAdd.toArray(new CoordinateReferenceSystem[toAdd.size()])));
+        expanded.setToNull();
+        expanded.setSubEnvelope(envelope, 0);
+        return expanded;
     }
 
     /**
