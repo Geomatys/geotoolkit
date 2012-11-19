@@ -27,13 +27,9 @@ import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
 import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
 import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
-import org.geotoolkit.referencing.operation.transform.AbstractMathTransform1D;
-import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.geotoolkit.referencing.operation.transform.ConcatenatedTransform;
 import org.geotoolkit.referencing.operation.transform.LinearTransform1D;
 import org.geotoolkit.referencing.operation.transform.PassThroughTransform;
-import org.geotoolkit.util.ArgumentChecks;
-import org.geotoolkit.util.collection.UnmodifiableArrayList;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CompoundCRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -77,18 +73,8 @@ public final class ReferencingUtilities {
         final GeneralEnvelope result = new GeneralEnvelope(targetCRS);
 
         //decompose crs
-        final List<CoordinateReferenceSystem> sourceParts;
-        final List<CoordinateReferenceSystem> targetParts;
-        if(sourceCRS instanceof CompoundCRS){
-            sourceParts = ((CompoundCRS)sourceCRS).getComponents();
-        }else{
-            sourceParts = UnmodifiableArrayList.wrap(sourceCRS);
-        }
-        if(targetCRS instanceof CompoundCRS){
-            targetParts = ((CompoundCRS)targetCRS).getComponents();
-        }else{
-            targetParts = UnmodifiableArrayList.wrap(targetCRS);
-        }
+        final List<CoordinateReferenceSystem> sourceParts = ReferencingUtilities.decompose(sourceCRS);
+        final List<CoordinateReferenceSystem> targetParts = ReferencingUtilities.decompose(targetCRS);
 
         int sourceAxeIndex=0;
         sourceLoop:
@@ -122,8 +108,6 @@ public final class ReferencingUtilities {
             }
             sourceAxeIndex += sourcePartDimension;
         }
-
-
 
         return result;
     }
