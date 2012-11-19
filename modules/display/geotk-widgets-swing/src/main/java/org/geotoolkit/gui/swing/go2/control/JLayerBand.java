@@ -18,6 +18,7 @@ package org.geotoolkit.gui.swing.go2.control;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
@@ -55,6 +56,7 @@ import org.geotoolkit.map.LayerListener.Weak;
 import org.geotoolkit.map.MapItem;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.referencing.cs.DiscreteCoordinateSystemAxis;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.style.RandomStyleBuilder;
@@ -73,8 +75,6 @@ import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.TemporalCRS;
 import org.opengis.referencing.crs.VerticalCRS;
-import org.opengis.referencing.cs.AxisDirection;
-import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
@@ -90,28 +90,30 @@ import org.opengis.util.InternationalString;
 public class JLayerBand extends JNavigatorBand implements LayerListener{
 
     private static final Logger LOGGER = Logging.getLogger(JLayerBand.class);
-    
+
     private final MapLayer layer;
     private Color color = RandomStyleBuilder.randomColor();
     private final float width = 2f;
     private final float circleSize = 8f;
-    
+
     private boolean analyzed = false;
     private List<Range<Double>> ranges = new ArrayList<Range<Double>>();
     private List<Double> ponctuals = new ArrayList<Double>();
     private final ActionMenu popupmenu = new ActionMenu();
     private final passthrought listener = new passthrought();
-    
+
     //used by the popup menu
     private Point mousePosition = null;
-    
+
     public JLayerBand(final MapLayer layer){
         ArgumentChecks.ensureNonNull("layer", layer);
         this.layer = layer;
         layer.addLayerListener(new Weak(this));
         setComponentPopupMenu(popupmenu);
+        setMinimumSize(new Dimension(22, 22));
+        setPreferredSize(new Dimension(22, 22));
     }
-    
+
     @Override
     public JPopupMenu getComponentPopupMenu() {
         if(popupmenu.buildElements()){
@@ -120,8 +122,8 @@ public class JLayerBand extends JNavigatorBand implements LayerListener{
             return popupmenu;
         }
         return null;
-    }    
-    
+    }
+
     public MapLayer getLayer() {
         return layer;
     }
@@ -134,58 +136,50 @@ public class JLayerBand extends JNavigatorBand implements LayerListener{
         this.color = color;
         repaint();
     }
-    
+
     private String getLayerName(){
         final Description desc = layer.getDescription();
         if(desc != null){
             final InternationalString title = desc.getTitle();
             if(title != null){
                 return title.toString();
-            }            
+            }
         }
-        
+
         final String name = layer.getName();
         return (name == null)? "" : name;
     }
-    
+
     private void analyze(){
         if(analyzed) return;
         ranges.clear();
         ponctuals.clear();
-        
+
         final CoordinateReferenceSystem axis = getModel().getCRS();
-        
+
         if(layer instanceof CoverageMapLayer){
-            final Envelope env = layer.getBounds();                        
-            
+            final Envelope env = layer.getBounds();
+
             Double min = null;
             Double max = null;
-            
+
             final CoordinateReferenceSystem dataCRS = env.getCoordinateReferenceSystem();
-            final CoordinateSystem dataCS = dataCRS.getCoordinateSystem();
-            for(int i=0;i<dataCS.getDimension();i++){
-                final CoordinateSystemAxis csa = dataCS.getAxis(i);
-                final AxisDirection direction = csa.getDirection();
-                
-                if(axis instanceof TemporalCRS){
-                    if(!(AxisDirection.FUTURE.equals(direction) || AxisDirection.PAST.equals(direction))){
-                        continue;
-                    }
-                }else if(!csa.getName().getCode().equalsIgnoreCase(axis.getName().getCode())){
-                    continue;
-                }
-                                
-                if(csa instanceof DiscreteCoordinateSystemAxis){
-                    try{
-                        final MathTransform trs = CRS.findMathTransform(dataCRS, axis);
-                        final double[] incoord = new double[dataCS.getDimension()];
-                        final double[] outcoord = new double[dataCS.getDimension()];
-                        final DiscreteCoordinateSystemAxis dcsa = (DiscreteCoordinateSystemAxis) csa;
+            final List<CoordinateReferenceSystem> sourceParts = ReferencingUtilities.decompose(dataCRS);
+
+            for(CoordinateReferenceSystem sourcePart : sourceParts){
+
+                try {
+                    final MathTransform trs = CRS.findMathTransform(sourcePart, axis, true);
+                    final CoordinateSystemAxis sourceAxi = sourcePart.getCoordinateSystem().getAxis(0);
+                    if(sourceAxi instanceof DiscreteCoordinateSystemAxis){
+                        final double[] incoord = new double[1];
+                        final double[] outcoord = new double[1];
+                        final DiscreteCoordinateSystemAxis dcsa = (DiscreteCoordinateSystemAxis) sourceAxi;
                         for(int k=0;k<dcsa.length();k++){
                             final Comparable c = dcsa.getOrdinateAt(k);
                             final double d;
                             if(c instanceof Number){
-                                incoord[i] = ((Number)c).doubleValue();
+                                incoord[0] = ((Number)c).doubleValue();
                                 trs.transform(incoord, 0, outcoord, 0, 1);
                                 d = outcoord[0];
                             }else if(c instanceof Date){
@@ -202,31 +196,28 @@ public class JLayerBand extends JNavigatorBand implements LayerListener{
                                 max = d;
                             }
                         }
-                    }catch(FactoryException ex){
-                        LOGGER.log(Level.FINE, ex.getMessage());
-                    }catch(TransformException ex){
-                        LOGGER.log(Level.FINE, ex.getMessage());
                     }
+                } catch (FactoryException ex) {
+                    //no match, next one
+                } catch (TransformException ex) {
+                    //no match, next one
                 }
-                
-                break;
             }
-            
+
             if(min != null && max != null){
                 ranges.add(NumberRange.create(min, max));
             }
-            
-                        
+
         }else if(layer instanceof FeatureMapLayer){
             final FeatureMapLayer fml = (FeatureMapLayer) layer;
-            
+
             Expression[] er = null;
             if(axis instanceof TemporalCRS){
                 er = fml.getTemporalRange().clone();
             }else if(axis instanceof VerticalCRS){
                 er = fml.getElevationRange().clone();
             }
-            
+
             //iterate on collection and find values
             if(er != null && (er[0] != null || er[1] != null) ){
                 if(er[0] == null){
@@ -235,11 +226,11 @@ public class JLayerBand extends JNavigatorBand implements LayerListener{
                 if(er[1] == null){
                     er[1] = er[0];
                 }
-                
+
                 FeatureCollection col = fml.getCollection();
                 final QueryBuilder qb = new QueryBuilder(col.getFeatureType().getName());
-                qb.setProperties(new String[]{ 
-                    ((PropertyName)er[0]).getPropertyName(), 
+                qb.setProperties(new String[]{
+                    ((PropertyName)er[0]).getPropertyName(),
                     ((PropertyName)er[1]).getPropertyName() });
 
                 FeatureIterator ite = null;
@@ -274,12 +265,12 @@ public class JLayerBand extends JNavigatorBand implements LayerListener{
                     }
                 }
             }
-            
+
         }
-                
+
         analyzed = true;
     }
-    
+
     private static Double toValue(Object candidate){
         if(candidate instanceof Date){
             return (double)((Date)candidate).getTime();
@@ -287,33 +278,33 @@ public class JLayerBand extends JNavigatorBand implements LayerListener{
             return ((Number)candidate).doubleValue();
         }
         return Converters.convert(candidate, Double.class);
-        
+
     }
-    
+
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        analyze();        
+        analyze();
         final Graphics2D g2d = (Graphics2D) g;
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-        
+
         final int orientation = getNavigator().getOrientation();
         final boolean horizontal = (orientation==SwingConstants.NORTH || orientation==SwingConstants.SOUTH);
-        
-        
+
+
         final float extent =  horizontal ? getWidth() : getHeight();
         final float centered = horizontal ? getHeight()/2 : getWidth()/2;
         Double StartPos = null;
         Double endPos = null;
-        
+
         if(!horizontal){
             //we apply a transform on eveyrthing we paint
             g2d.translate(getWidth(), 0);
             g2d.rotate(Math.toRadians(90));
         }
-        
-        
+
+
         //draw range as a line
         if(ranges != null){
             g2d.setColor(color);
@@ -327,17 +318,17 @@ public class JLayerBand extends JNavigatorBand implements LayerListener{
                 if(endPos==null || endPos<end){
                     endPos = end;
                 }
-                
+
                 final Shape shape = new java.awt.geom.Line2D.Double(start, centered, end, centered);
                 g2d.draw(shape);
             }
         }
-        
-        
+
+
         //draw ponctual values as dots
         if(ponctuals != null){
             g2d.setStroke(new BasicStroke(width, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
-            
+
             for(final Double d : ponctuals){
                 double pos = getModel().getGraphicValueAt(d);
                 if(StartPos == null || pos < StartPos){
@@ -346,52 +337,52 @@ public class JLayerBand extends JNavigatorBand implements LayerListener{
                 if(endPos == null || pos > endPos){
                     endPos = pos;
                 }
-                
+
                 final Shape circle = new java.awt.geom.Ellipse2D.Double(pos- circleSize/2, centered - circleSize/2, circleSize, circleSize);
-                
+
                 g2d.setColor(Color.WHITE);
                 g2d.fill(circle);
                 g2d.setColor(color);
                 g2d.draw(circle);
             }
         }
-                
+
         //name
         if(StartPos != null){
             String name = getLayerName();
             if(StartPos-20 < 0){
                 StartPos = 20d;
-                name = " ❮❮ " + name;
+                name = " <  " + name;
             }
             if(endPos > extent){
                 endPos = 0d;
-                name = name + " ❯❯ ";
+                name = name + "  > ";
             }
-                        
-            final Font f = new Font("Dialog", Font.BOLD, 12);
+
+            final Font f = new Font("Dialog", Font.PLAIN, 11);
             final FontMetrics fm = g2d.getFontMetrics();
             final double strWidth = fm.getStringBounds(name, g2d).getWidth() + 20; //20 to keep it far from border
-            
+
             if(StartPos+strWidth > extent){
                 StartPos = extent - strWidth;
             }
-            
+
             //draw halo
             final GlyphVector glyph = f.createGlyphVector(g2d.getFontRenderContext(), name);
             final Shape shape = glyph.getOutline(StartPos.floatValue(), centered-circleSize/2);
             g2d.setPaint(Color.WHITE);
             g2d.setStroke(new BasicStroke(3,BasicStroke.CAP_ROUND,BasicStroke.JOIN_ROUND));
             g2d.draw(shape);
-            
+
             //draw text
             g2d.setColor(color);
             g2d.setFont(f);
             g2d.drawString(name, StartPos.floatValue(), centered-circleSize/2);
         }
-        
+
     }
 
-    
+
     // listen to later changes /////////////////////////////////////////////////
     @Override
     public void styleChange(MapLayer source, EventObject event) {}
@@ -404,11 +395,11 @@ public class JLayerBand extends JNavigatorBand implements LayerListener{
     public void propertyChange(PropertyChangeEvent evt) {
         analyzed = false;
     }
-    
+
     // Forward events to sub components ////////////////////////////////////////
-    
+
     private class passthrought extends SwingEventPassThrough{
-        
+
         private passthrought(){
             super(JLayerBand.this);
         }
@@ -436,32 +427,32 @@ public class JLayerBand extends JNavigatorBand implements LayerListener{
             JLayerBand.this.mousePosition = e.getPoint();
             super.mouseMoved(e);
         }
-        
+
     }
-    
+
     private class ActionMenu extends JPopupMenu{
 
         @Override
         public void setVisible(boolean visible) {
             super.setVisible(visible);
             removeAll();
-            
+
             if(visible){
                 buildElements();
             }
-            
+
         }
-        
+
         public boolean buildElements(){
             ActionMenu.this.removeAll();
-            
+
             //check if we intersect some data at this position
             requestFocus();
             final Point pt = mousePosition;
             if(pt == null){
                 return false;
             }
-            
+
             final int orientation = getNavigator().getOrientation();
             final boolean horizontal = (orientation==SwingConstants.NORTH || orientation==SwingConstants.SOUTH);
 
@@ -475,14 +466,14 @@ public class JLayerBand extends JNavigatorBand implements LayerListener{
                 trs.translate(JLayerBand.this.getWidth(), 0);
                 trs.rotate(Math.toRadians(90));
             }
-            
+
             for(final Double pc : ponctuals){
-                double pos = getModel().getGraphicValueAt(pc);     
-                
+                double pos = getModel().getGraphicValueAt(pc);
+
                 if(pos < 0 || pos > extent){
                     continue;
                 }
-                
+
                 Shape circle = new java.awt.geom.Ellipse2D.Double(pos- circleSize/2, centered - circleSize/2, circleSize, circleSize);
                 circle = trs.createTransformedShape(circle);
                 Rectangle rect = circle.getBounds();
@@ -492,11 +483,11 @@ public class JLayerBand extends JNavigatorBand implements LayerListener{
                 rect.y      -= width;
                 rect.height += width*2;
                 rect.width  += width*2;
-                                
+
                 if(rect.contains(pt)){
                     ActionMenu.this.add(new AbstractAction(MessageBundle.getString("movetoposition")) {
                         @Override
-                        public void actionPerformed(ActionEvent e) {                            
+                        public void actionPerformed(ActionEvent e) {
                             JNavigator navi = JLayerBand.this.getNavigator();
                             if(navi instanceof JMapTimeLine){
                                 ((JMapTimeLine)navi).moveTo(new Date(pc.longValue()));
@@ -507,12 +498,12 @@ public class JLayerBand extends JNavigatorBand implements LayerListener{
                     });
                     break;
                 }
-            }            
-            
+            }
+
             ActionMenu.this.revalidate();
             return getComponentCount() > 0;
         }
-        
+
     }
-    
+
 }

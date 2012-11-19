@@ -18,12 +18,14 @@
 package org.geotoolkit.gui.swing.go2.control;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.Insets;
+import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -46,6 +48,7 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JSeparator;
+import javax.swing.JSplitPane;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
@@ -58,6 +61,8 @@ import org.geotoolkit.gui.swing.go2.JMap2D;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.jdesktop.swingx.JXBusyLabel;
+import org.jdesktop.swingx.JXMultiSplitPane;
+import org.jdesktop.swingx.MultiSplitLayout;
 
 import org.opengis.display.canvas.CanvasEvent;
 import org.opengis.display.canvas.CanvasListener;
@@ -87,7 +92,9 @@ public class JCoordinateBar extends AbstractMapControlBar {
     private final JXBusyLabel guiPainting = new JXBusyLabel();
     private final JToggleButton guiElevation = new JToggleButton(ICON_ELEVATION);
     private final JToggleButton guiTemporal = new JToggleButton(ICON_TEMPORAL);
-    
+
+    private final JSplitPane horizontalSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+    private final JSplitPane verticalSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
     private final JPanel paneTemp = new JPanel(new BorderLayout());
     private final JPanel paneElev = new JPanel(new BorderLayout());
     private final JAdditionalAxisNavigator guiAdditional = new JAdditionalAxisNavigator();
@@ -98,15 +105,16 @@ public class JCoordinateBar extends AbstractMapControlBar {
     }
 
     public JCoordinateBar(final JMap2D candidate) {
+
         setLayout(new BorderLayout(0,1));
         final JToolBar bottom = new JToolBar();
         bottom.setFloatable(false);
         bottom.setLayout(new GridBagLayout());
         add(BorderLayout.SOUTH,bottom);
-        add(BorderLayout.CENTER,paneTemp);
 
         paneTemp.add(BorderLayout.CENTER,guiTimeLine);
         paneElev.add(BorderLayout.CENTER,guiAdditional);
+        paneTemp.setPreferredSize(new Dimension(100, 200));
 
         //the hints menu -------------------------------------------------------
         final JCheckBoxMenuItem guiAxis = new JCheckBoxMenuItem(MessageBundle.getString("map_xy_ratio")){
@@ -276,12 +284,12 @@ public class JCoordinateBar extends AbstractMapControlBar {
         guiCoord.setBorder(null);
         guiCoord.setEditable(false);
         guiCoord.setHorizontalAlignment(SwingConstants.CENTER);
-        
+
         final int defaultInsetTop = guiElevation.getMargin().top;
         final int defaultInsetBottom = guiElevation.getMargin().bottom;
 
         guiHint.setMargin(new Insets(defaultInsetTop, 0, defaultInsetBottom, 0));
-        
+
         guiTemporal.setMargin(new Insets(defaultInsetTop, 0, defaultInsetBottom, 0));
         guiTemporal.setToolTipText(MessageBundle.getString("map_temporal_slider"));
         guiTemporal.addActionListener(new ActionListener() {
@@ -289,6 +297,7 @@ public class JCoordinateBar extends AbstractMapControlBar {
             @Override
             public void actionPerformed(ActionEvent e) {
                 paneTemp.setVisible(guiTemporal.isSelected());
+                verticalSplit.setDividerLocation(baseMapContainer.getHeight()-paneTemp.getPreferredSize().height);
             }
         });
 
@@ -299,14 +308,13 @@ public class JCoordinateBar extends AbstractMapControlBar {
             @Override
             public void actionPerformed(ActionEvent e) {
                 paneElev.setVisible(guiElevation.isSelected());
+                horizontalSplit.setDividerLocation(paneElev.getPreferredSize().width);
             }
         });
 
 
-        paneTemp.setVisible(false);
-        paneElev.setVisible(false);
         guiTimeLine.setPreferredSize(new Dimension(100, 100));
-        
+
         int x = 1;
 
         GridBagConstraints constraints = new GridBagConstraints();
@@ -343,43 +351,58 @@ public class JCoordinateBar extends AbstractMapControlBar {
         bottom.add(guiPainting,constraints);
 
         setMap(candidate);
+        
+        paneElev.setVisible(false);
+        paneTemp.setVisible(false);
+        horizontalSplit.setDividerSize(1);
+        verticalSplit.setDividerSize(1);
+        horizontalSplit.setLeftComponent(paneElev);
+        verticalSplit.setTopComponent(horizontalSplit);
+        verticalSplit.setBottomComponent(paneTemp);
     }
+    
+    private Container baseMapContainer;
+    private Component baseMapComponent;
 
     @Override
-    public void setMap(final JMap2D map) {
-        super.setMap(map);
-        guiCombo.setMap(map);
-        guiTimeLine.setMap(map);
-        guiAdditional.setMap(map);
-        
-        if(this.map != null){
-
-            final Container container = map.getUIContainer();
-            container.remove(paneElev);
-
-            this.map.getComponent().removeMouseMotionListener(listener);
+     public void setMap(final JMap2D map) {
+         super.setMap(map);
+         guiCombo.setMap(map);
+         guiTimeLine.setMap(map);
+         guiAdditional.setMap(map);
+         
+        if(baseMapContainer != null){
+            horizontalSplit.remove(baseMapComponent);
+            baseMapContainer.remove(verticalSplit);
+            baseMapContainer.add(BorderLayout.CENTER, baseMapComponent);
+            baseMapComponent.removeMouseMotionListener(listener);
             this.map.getCanvas().removeCanvasListener(listener);
         }
         
-        this.map = map;
-        guiCRS.setMap(this.map);
-        
-        if(this.map != null){
-            this.map.getComponent().addMouseMotionListener(listener);
+         this.map = map;
+         guiCRS.setMap(this.map);
+         
+         if(this.map != null){
+            baseMapContainer = map.getUIContainer();
+            baseMapComponent = map.getComponent(0);
+            baseMapComponent.addMouseMotionListener(listener);
             this.map.getCanvas().addCanvasListener(listener);
             map.getCanvas().addPropertyChangeListener(J2DCanvas.OBJECTIVE_CRS_PROPERTY, listener);
+ 
+            baseMapContainer.remove(baseMapComponent);
+ 
 
-            final Container container = map.getUIContainer();
-            container.add(BorderLayout.WEST, paneElev);
-            container.repaint();
+            horizontalSplit.setRightComponent(baseMapComponent);
+            //multiSplitPane.setDividerSize(2);
+            baseMapContainer.add(BorderLayout.CENTER, verticalSplit);
+            baseMapContainer.repaint();
 
-            CoordinateReferenceSystem crs = map.getCanvas().getObjectiveCRS();
+            final CoordinateReferenceSystem crs = map.getCanvas().getObjectiveCRS();
             guiCRS.setText(crs.getName().toString());
-
         }
         
         guiCRS.setEnabled(this.map != null);
-    }
+     }
 
     public void setScales(final List<Number> scales){
         guiCombo.setScales(scales);
@@ -410,7 +433,7 @@ public class JCoordinateBar extends AbstractMapControlBar {
         }
 
         private void update(final MouseEvent event){
-            
+
             Point2D coord = new DirectPosition2D();
             try {
                 coord = map.getCanvas().getController().getTransform().inverseTransform(event.getPoint(), coord);
