@@ -21,13 +21,21 @@ package org.geotoolkit.gml.xml.v321;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.gml.xml.Envelope;
+import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.util.Utilities;
+import org.geotoolkit.util.logging.Logging;
+import org.opengis.geometry.Envelope;
+import org.opengis.referencing.NoSuchAuthorityCodeException;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.util.FactoryException;
 
 
 /**
@@ -65,8 +73,10 @@ import org.geotoolkit.gml.xml.Envelope;
 @XmlSeeAlso({
     EnvelopeWithTimePeriodType.class
 })
-public class EnvelopeType implements Envelope{
+public class EnvelopeType implements Envelope, org.geotoolkit.gml.xml.Envelope {
 
+    private static final Logger LOGGER = Logging.getLogger(EnvelopeType.class);
+    
     private DirectPositionType lowerCorner;
     private DirectPositionType upperCorner;
     private List<DirectPositionType> pos;
@@ -76,7 +86,7 @@ public class EnvelopeType implements Envelope{
     private String srsName;
     @XmlAttribute
     @XmlSchemaType(name = "positiveInteger")
-    private BigInteger srsDimension;
+    private Integer srsDimension;
     @XmlAttribute
     private List<String> axisLabels;
     @XmlAttribute
@@ -147,20 +157,6 @@ public class EnvelopeType implements Envelope{
     /**
      * Gets the value of the pos property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the pos property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getPos().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link DirectPositionType }
      * 
@@ -229,7 +225,7 @@ public class EnvelopeType implements Envelope{
      *     {@link BigInteger }
      *     
      */
-    public BigInteger getSrsDimension() {
+    public Integer getSrsDimension() {
         return srsDimension;
     }
 
@@ -241,27 +237,13 @@ public class EnvelopeType implements Envelope{
      *     {@link BigInteger }
      *     
      */
-    public void setSrsDimension(BigInteger value) {
+    public void setSrsDimension(Integer value) {
         this.srsDimension = value;
     }
 
     /**
      * Gets the value of the axisLabels property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the axisLabels property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getAxisLabels().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link String }
      * 
@@ -277,20 +259,6 @@ public class EnvelopeType implements Envelope{
     /**
      * Gets the value of the uomLabels property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the uomLabels property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getUomLabels().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link String }
      * 
@@ -301,6 +269,81 @@ public class EnvelopeType implements Envelope{
             uomLabels = new ArrayList<String>();
         }
         return this.uomLabels;
+    }
+
+    public CoordinateReferenceSystem getCoordinateReferenceSystem() {
+        if (srsName != null) {
+            try {
+                return CRS.decode(srsName);
+            } catch (NoSuchAuthorityCodeException ex) {
+                LOGGER.log(Level.SEVERE, "NoSuchAuthorityCodeException while looking for GML envelope crs:" + srsName, ex);
+            } catch (FactoryException ex) {
+                LOGGER.log(Level.SEVERE, "FactoryException while looking for GML envelope crs:" + srsName, ex);
+            }
+        }
+        return null;
+    }
+
+    public int getDimension() {
+        return srsDimension;
+    }
+
+    public double getMinimum(final int i) throws IndexOutOfBoundsException {
+        if (lowerCorner != null) {
+            return lowerCorner.getOrdinate(i);
+        }
+        return -1;
+    }
+
+    public double getMaximum(int i) throws IndexOutOfBoundsException {
+        if (upperCorner != null) {
+            return upperCorner.getOrdinate(i);
+        }
+        return -1;
+    }
+
+    public double getMedian(int i) throws IndexOutOfBoundsException {
+        throw new UnsupportedOperationException("Not implemented yet.");
+    }
+
+    public double getSpan(int i) throws IndexOutOfBoundsException {
+        throw new UnsupportedOperationException("Not implemented yet.");
+    }
+    
+    /**
+     * Verify if this entry est identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof EnvelopeType) {
+            final EnvelopeType that = (EnvelopeType) object;
+
+            return Utilities.equals(this.getAxisLabels(), that.getAxisLabels()) &&
+                   Utilities.equals(this.coordinates,     that.coordinates)     &&
+                   Utilities.equals(this.lowerCorner,     that.lowerCorner)     &&
+                   Utilities.equals(this.getPos(),        that.getPos())        &&
+                   Utilities.equals(this.srsDimension,    that.srsDimension)    &&
+                   Utilities.equals(this.getUomLabels(),  that.getUomLabels())  &&
+                   Utilities.equals(this.srsName,         that.srsName);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 79 * hash + (this.lowerCorner != null ? this.lowerCorner.hashCode() : 0);
+        hash = 79 * hash + (this.upperCorner != null ? this.upperCorner.hashCode() : 0);
+        hash = 79 * hash + (this.pos != null ? this.pos.hashCode() : 0);
+        hash = 79 * hash + (this.coordinates != null ? this.coordinates.hashCode() : 0);
+        hash = 79 * hash + (this.srsName != null ? this.srsName.hashCode() : 0);
+        hash = 79 * hash + (this.srsDimension != null ? this.srsDimension.hashCode() : 0);
+        hash = 79 * hash + (this.axisLabels != null ? this.axisLabels.hashCode() : 0);
+        hash = 79 * hash + (this.uomLabels != null ? this.uomLabels.hashCode() : 0);
+        return hash;
     }
 
 }

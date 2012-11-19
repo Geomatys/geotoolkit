@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.gml;
+package org.geotoolkit.gml.v321;
 
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -26,13 +26,13 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
 import org.geotoolkit.gml.xml.GMLMarshallerPool;
-import org.geotoolkit.gml.xml.v311.DirectPositionListType;
-import org.geotoolkit.gml.xml.v311.DirectPositionType;
-import org.geotoolkit.gml.xml.v311.EnvelopeType;
-import org.geotoolkit.gml.xml.v311.LineStringSegmentType;
-import org.geotoolkit.gml.xml.v311.ObjectFactory;
-import org.geotoolkit.gml.xml.v311.TimePeriodType;
-import org.geotoolkit.gml.xml.v311.TimePositionType;
+import org.geotoolkit.gml.xml.v321.DirectPositionListType;
+import org.geotoolkit.gml.xml.v321.DirectPositionType;
+import org.geotoolkit.gml.xml.v321.EnvelopeType;
+import org.geotoolkit.gml.xml.v321.LineStringSegmentType;
+import org.geotoolkit.gml.xml.v321.ObjectFactory;
+import org.geotoolkit.gml.xml.v321.TimePeriodType;
+import org.geotoolkit.gml.xml.v321.TimePositionType;
 import org.geotoolkit.util.StringUtilities;
 import org.geotoolkit.xml.MarshallerPool;
 
@@ -87,7 +87,7 @@ public class GmlXMLBindingTest {
 
         DirectPositionType lower = new DirectPositionType(-30.711, 134.196);
         DirectPositionType upper = new DirectPositionType(-30.702, 134.205);
-        EnvelopeType env = new EnvelopeType("bound-1", lower, upper, "urn:ogc:def:crs:EPSG:6.8:4283");
+        EnvelopeType env = new EnvelopeType(lower, upper, "urn:ogc:def:crs:EPSG:6.8:4283");
 
         StringWriter sw = new StringWriter();
         marshaller.marshal(FACTORY.createEnvelope(env), sw);
@@ -98,10 +98,10 @@ public class GmlXMLBindingTest {
         //we remove the xmlmns
         result = StringUtilities.removeXmlns(result);
 
-        String expResult = "<gml:Envelope srsName=\"urn:ogc:def:crs:EPSG:6.8:4283\" gml:id=\"bound-1\" >" + '\n' +
-                           "    <gml:lowerCorner>-30.711 134.196</gml:lowerCorner>" + '\n' +
-                           "    <gml:upperCorner>-30.702 134.205</gml:upperCorner>" + '\n' +
-                           "</gml:Envelope>" + '\n' ;
+        String expResult = "<ns3:Envelope srsName=\"urn:ogc:def:crs:EPSG:6.8:4283\" >" + '\n' +
+                           "    <ns3:lowerCorner>-30.711 134.196</ns3:lowerCorner>" + '\n' +
+                           "    <ns3:upperCorner>-30.702 134.205</ns3:upperCorner>" + '\n' +
+                           "</ns3:Envelope>" + '\n' ;
         assertEquals(expResult, result);
 
         Duration d1 = javax.xml.datatype.DatatypeFactory.newInstance().newDuration("P2D");
@@ -131,9 +131,9 @@ public class GmlXMLBindingTest {
         //we remove the xmlmns
         result = StringUtilities.removeXmlns(result);
 
-        expResult = "<gml:LineStringSegment >" + '\n' +
-                    "    <gml:posList>1.0 1.1 1.2</gml:posList>" + '\n' +
-                    "</gml:LineStringSegment>" + '\n' ;
+        expResult = "<ns3:LineStringSegment >" + '\n' +
+                    "    <ns3:posList>1.0 1.1 1.2</ns3:posList>" + '\n' +
+                    "</ns3:LineStringSegment>" + '\n' ;
         assertEquals(expResult, result);
 
         ls = new LineStringSegmentType();
@@ -151,10 +151,10 @@ public class GmlXMLBindingTest {
         //we remove the xmlmns
         result = StringUtilities.removeXmlns(result);
 
-        expResult = "<gml:LineStringSegment >" + '\n' +
-                    "    <gml:pos>1.1 1.2</gml:pos>" + '\n' +
-                    "    <gml:pos>2.3 48.1</gml:pos>" + '\n' +
-                    "</gml:LineStringSegment>" + '\n' ;
+        expResult = "<ns3:LineStringSegment >" + '\n' +
+                    "    <ns3:pos>1.1 1.2</ns3:pos>" + '\n' +
+                    "    <ns3:pos>2.3 48.1</ns3:pos>" + '\n' +
+                    "</ns3:LineStringSegment>" + '\n' ;
         assertEquals(expResult, result);
 
     }
@@ -166,7 +166,7 @@ public class GmlXMLBindingTest {
         posList.setValue(Arrays.asList(1.0, 1.1, 1.2));
         expResult.setPosList(posList);
 
-        String xml = "<gml:LineStringSegment xmlns:gml=\"http://www.opengis.net/gml\">" + '\n' +
+        String xml = "<gml:LineStringSegment xmlns:gml=\"http://www.opengis.net/gml/3.2\">" + '\n' +
                      "    <gml:posList>1.0 1.1 1.2</gml:posList>" + '\n' +
                      "</gml:LineStringSegment>" + '\n' ;
 
@@ -185,7 +185,7 @@ public class GmlXMLBindingTest {
         expResult.getPos().add(pos2);
 
 
-        xml       = "<gml:LineStringSegment xmlns:gml=\"http://www.opengis.net/gml\">" + '\n' +
+        xml       = "<gml:LineStringSegment xmlns:gml=\"http://www.opengis.net/gml/3.2\">" + '\n' +
                     "    <gml:pos>1.1 1.2</gml:pos>" + '\n' +
                     "    <gml:pos>2.3 48.1</gml:pos>" + '\n' +
                     "</gml:LineStringSegment>" + '\n' ;
@@ -205,7 +205,7 @@ public class GmlXMLBindingTest {
         TimePeriodType expResult = new TimePeriodType(begin, end);
 
 
-        String xml = "<gml:TimePeriod xmlns:gml=\"http://www.opengis.net/gml\">" + '\n' +
+        String xml = "<gml:TimePeriod xmlns:gml=\"http://www.opengis.net/gml/3.2\">" + '\n' +
                      "    <gml:beginPosition>2002-08-01</gml:beginPosition>" + '\n' +
                      "    <gml:endPosition>2003-08-01</gml:endPosition>" + '\n' +
                      "</gml:TimePeriod>" + '\n' ;
@@ -220,7 +220,7 @@ public class GmlXMLBindingTest {
         expResult = new TimePeriodType(begin, null);
 
 
-        xml = "<gml:TimePeriod xmlns:gml=\"http://www.opengis.net/gml\">" + '\n' +
+        xml = "<gml:TimePeriod xmlns:gml=\"http://www.opengis.net/gml/3.2\">" + '\n' +
               "    <gml:beginPosition>2002-08-01</gml:beginPosition>" + '\n' +
               "</gml:TimePeriod>" + '\n' ;
 

@@ -31,6 +31,7 @@ import org.geotoolkit.util.Utilities;
 import org.geotoolkit.internal.sql.table.Entry;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.IdentifiedObjects;
+import org.geotoolkit.util.logging.Logging;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -81,7 +82,7 @@ import org.opengis.util.FactoryException;
 @XmlRootElement(name="Envelope")
 public class EnvelopeType implements Entry, Envelope, org.geotoolkit.gml.xml.Envelope {
 
-    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.gml.xml.v311");
+    private static final Logger LOGGER = Logging.getLogger(EnvelopeType.class);
 
     @XmlAttribute(namespace="http://www.opengis.net/gml")
     private String id;

@@ -293,6 +293,7 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType implement
         this.end = value;
     }
 
+    @Override
     public Instant getBeginning() {
         if (begin != null) {
             return begin.getTimeInstant();
@@ -302,6 +303,7 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType implement
         return null;
     }
 
+    @Override
     public Instant getEnding() {
         if (end != null) {
             return end.getTimeInstant();
@@ -309,6 +311,30 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType implement
             return new TimeInstantType(endPosition);
         }
         return null;
+    }
+    
+    public long getTime() {
+        final long b;
+        if (beginPosition != null && beginPosition.getDate() != null) {
+            b = beginPosition.getDate().getTime();
+        } else if (begin != null &&  begin.getTimeInstant() != null &&
+                   begin.getTimeInstant().getTimePosition() != null && 
+                   begin.getTimeInstant().getTimePosition().getDate() != null) {
+            b = begin.getTimeInstant().getTimePosition().getDate().getTime();
+        } else {
+            return -1;
+        }
+        final long e;
+        if (endPosition != null && endPosition.getDate() != null) {
+            e = endPosition.getDate().getTime();
+        } else if (end != null &&  end.getTimeInstant() != null && 
+                   end.getTimeInstant().getTimePosition() != null && 
+                   end.getTimeInstant().getTimePosition().getDate() != null) {
+            e = end.getTimeInstant().getTimePosition().getDate().getTime();
+        } else {
+            return -1;
+        }
+        return e - b;
     }
     
     /**

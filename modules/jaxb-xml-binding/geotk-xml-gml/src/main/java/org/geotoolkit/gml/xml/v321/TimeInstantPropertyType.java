@@ -85,6 +85,14 @@ public class TimeInstantPropertyType implements Serializable{
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     private String actuate;
 
+     public TimeInstantPropertyType() {
+        
+    }
+    
+    public TimeInstantPropertyType(final TimeInstantType timeInstant) {
+        this.timeInstant = timeInstant;
+    }
+    
     /**
      * Gets the value of the timeInstant property.
      * 

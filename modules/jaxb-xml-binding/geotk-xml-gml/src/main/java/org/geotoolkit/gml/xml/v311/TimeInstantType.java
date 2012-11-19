@@ -22,6 +22,8 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.ComparisonMode;
+import org.geotoolkit.util.Utilities;
 import org.opengis.temporal.Instant;
 import org.opengis.temporal.Period;
 import org.opengis.temporal.Position;
@@ -98,6 +100,7 @@ public class TimeInstantType extends AbstractTimeGeometricPrimitiveType implemen
         this.timePosition = value;
     }
 
+    @Override
     public Position getPosition() {
         return timePosition;
     }
@@ -112,10 +115,19 @@ public class TimeInstantType extends AbstractTimeGeometricPrimitiveType implemen
         }
     }
 
+    public long getTime() {
+        if (this.timePosition != null && this.timePosition.getDate() != null) {
+            return this.timePosition.getDate().getTime();
+        }
+        return -1;
+    }
+    
+    @Override
     public Collection<Period> getBegunBy() {
         return null;
     }
 
+    @Override
     public Collection<Period> getEndedBy() {
         return null;
     }
@@ -127,5 +139,27 @@ public class TimeInstantType extends AbstractTimeGeometricPrimitiveType implemen
             sb.append("timePosition:").append(timePosition).append('\n');
         }
         return sb.toString();
+    }
+    
+    /**
+     * Verify that this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object, final ComparisonMode cm) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof TimeInstantType) {
+            final TimeInstantType that = (TimeInstantType) object;
+            return  Utilities.equals(this.timePosition, that.timePosition);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 37 * hash + (this.timePosition != null ? this.timePosition.hashCode() : 0);
+        return hash;
     }
 }

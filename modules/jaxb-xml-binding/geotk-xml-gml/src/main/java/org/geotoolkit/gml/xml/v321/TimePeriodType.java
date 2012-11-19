@@ -24,6 +24,11 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.Duration;
+import org.geotoolkit.util.ComparisonMode;
+import org.geotoolkit.util.Utilities;
+import org.opengis.temporal.Instant;
+import org.opengis.temporal.Period;
+import org.opengis.temporal.Position;
 
 
 /**
@@ -63,7 +68,7 @@ import javax.xml.datatype.Duration;
     "timeInterval"
 })
 @XmlRootElement(name="TimePeriod")
-public class TimePeriodType extends AbstractTimeGeometricPrimitiveType implements Serializable{
+public class TimePeriodType extends AbstractTimeGeometricPrimitiveType implements Period, Serializable{
 
     private TimePositionType beginPosition;
     private TimeInstantPropertyType begin;
@@ -72,6 +77,66 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType implement
     private Duration duration;
     private TimeIntervalLengthType timeInterval;
 
+    /**
+     * Empty constructor used by JAXB.
+     */
+    TimePeriodType(){}
+
+    /**
+     * Build a new Time period bounded by the begin and end time specified.
+     */
+    public TimePeriodType(final Position beginPosition, final Position endPosition){
+        if (beginPosition instanceof TimePositionType) {
+            this.beginPosition = (TimePositionType) beginPosition;
+        } else if (beginPosition != null) {
+            this.beginPosition = new TimePositionType(beginPosition.getDate());
+        }
+        if (endPosition instanceof TimePositionType) {
+            this.endPosition = (TimePositionType) endPosition;
+        } else if (endPosition != null) {
+            this.endPosition = new TimePositionType(endPosition.getDate());
+        }
+    }
+
+    /**
+     * Build a new Time period bounded by the begin and end time specified.
+     */
+    public TimePeriodType(final String beginValue, final String endValue){
+        this.beginPosition = new TimePositionType(beginValue);
+        this.endPosition   = new TimePositionType(endValue);
+    }
+
+    /**
+     * Build a new Time period bounded by the begin and with the end position "now".
+     */
+    public TimePeriodType(final TimePositionType beginPosition){
+        this.beginPosition = beginPosition;
+        this.endPosition   = new TimePositionType(TimeIndeterminateValueType.NOW);
+    }
+
+    /**
+     * Build a new Time period bounded by the begin and end time specified.
+     */
+    public TimePeriodType(final String beginValue){
+        this.beginPosition = new TimePositionType(beginValue);
+        this.endPosition   = new TimePositionType(TimeIndeterminateValueType.NOW);
+    }
+
+    /**
+     * Build a new Time period bounded by an indeterminate time at begin.
+     */
+    public TimePeriodType(final TimeIndeterminateValueType indeterminateBegin, final TimePositionType endPosition){
+        this.beginPosition = new TimePositionType(indeterminateBegin);
+        this.endPosition   = endPosition;
+    }
+
+    /**
+     * Build a new Time periodwith a duration.
+     */
+    public TimePeriodType(final Duration duration){
+        this.duration = duration;
+    }
+    
     /**
      * Gets the value of the beginPosition property.
      * 
@@ -214,6 +279,109 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType implement
      */
     public void setTimeInterval(TimeIntervalLengthType value) {
         this.timeInterval = value;
+    }
+    
+    @Override
+    public Instant getBeginning() {
+        if (begin != null) {
+            return begin.getTimeInstant();
+        } else if (beginPosition != null) {
+            return new TimeInstantType(beginPosition);
+        }
+        return null;
+    }
+
+    @Override
+    public Instant getEnding() {
+        if (end != null) {
+            return end.getTimeInstant();
+        } else if (endPosition != null) {
+            return new TimeInstantType(endPosition);
+        }
+        return null;
+    }
+    
+    public long getTime() {
+        final long b;
+        if (beginPosition != null && beginPosition.getDate() != null) {
+            b = beginPosition.getDate().getTime();
+        } else if (begin != null &&  begin.getTimeInstant() != null &&
+                   begin.getTimeInstant().getTimePosition() != null && 
+                   begin.getTimeInstant().getTimePosition().getDate() != null) {
+            b = begin.getTimeInstant().getTimePosition().getDate().getTime();
+        } else {
+            return -1;
+        }
+        final long e;
+        if (endPosition != null && endPosition.getDate() != null) {
+            e = endPosition.getDate().getTime();
+        } else if (end != null &&  end.getTimeInstant() != null && 
+                   end.getTimeInstant().getTimePosition() != null && 
+                   end.getTimeInstant().getTimePosition().getDate() != null) {
+            e = end.getTimeInstant().getTimePosition().getDate().getTime();
+        } else {
+            return -1;
+        }
+        return e - b;
+    }
+    
+    /**
+     * Verify if this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object, final ComparisonMode mode) {
+        if (object == this) {
+            return true;
+        }
+        if (!(object instanceof TimePeriodType)) {
+            return false;
+        }
+        final TimePeriodType that = (TimePeriodType) object;
+
+        return Utilities.equals(this.begin,         that.begin)         &&
+               Utilities.equals(this.beginPosition, that.beginPosition) &&
+               Utilities.equals(this.duration,      that.duration)      &&
+               Utilities.equals(this.endPosition,   that.endPosition)   &&
+               Utilities.equals(this.timeInterval,  that.timeInterval)  &&
+               Utilities.equals(this.end,           that.end);
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 37 * hash + (this.beginPosition != null ? this.beginPosition.hashCode() : 0);
+        hash = 37 * hash + (this.begin != null ? this.begin.hashCode() : 0);
+        hash = 37 * hash + (this.endPosition != null ? this.endPosition.hashCode() : 0);
+        hash = 37 * hash + (this.end != null ? this.end.hashCode() : 0);
+        hash = 37 * hash + (this.duration != null ? this.duration.hashCode() : 0);
+        hash = 37 * hash + (this.timeInterval != null ? this.timeInterval.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public String toString() {
+        char lineSeparator = '\n';
+        StringBuilder s = new StringBuilder("TimePeriod:").append(lineSeparator);
+        if (begin != null) {
+            s.append("begin:").append(begin).append(lineSeparator);
+        }
+        if (end != null) {
+            s.append("end  :").append(end).append(lineSeparator);
+        }
+        if (beginPosition != null) {
+            s.append("beginPosition :").append(beginPosition).append(lineSeparator);
+        }
+        if (endPosition != null) {
+            s.append("endPosition   :").append(endPosition);
+        }
+        if (duration != null) {
+            s.append(lineSeparator).append("duration:").append(duration);
+        }
+        if (timeInterval != null) {
+            s.append(lineSeparator).append("timeInterval:").append(timeInterval).append(lineSeparator);
+        }
+
+        return s.toString();
     }
 
 }
