@@ -371,4 +371,26 @@ public final class ReferencingUtilities {
         return result;
     }
 
+    /**
+     * Recursively explor given crs, and return a list of distinct unary CRS.
+     * @param crs
+     * @return List<CoordinateReferenceSystem>
+     */
+    public static List<CoordinateReferenceSystem> decompose(CoordinateReferenceSystem crs){
+        final List<CoordinateReferenceSystem> lst = new ArrayList<CoordinateReferenceSystem>();
+        decompose(crs, lst);
+        return lst;
+    }
+
+    private static void decompose(final CoordinateReferenceSystem crs,
+            final List<CoordinateReferenceSystem> lst){
+        if(crs instanceof CompoundCRS){
+            final List<CoordinateReferenceSystem> parts = ((CompoundCRS)crs).getComponents();
+            for(CoordinateReferenceSystem part : parts){
+                decompose(part, lst);
+            }
+        }else{
+            lst.add(crs);
+        }
+    }
 }
