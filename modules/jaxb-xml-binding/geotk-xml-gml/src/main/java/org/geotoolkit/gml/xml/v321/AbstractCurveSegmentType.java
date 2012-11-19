@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.AbstractCurveSegment;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -152,4 +153,44 @@ public abstract class AbstractCurveSegmentType implements AbstractCurveSegment {
         this.numDerivativeInterior = value;
     }
 
+    /**
+     * Verify that the point is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof AbstractCurveSegmentType) {
+            final AbstractCurveSegmentType that = (AbstractCurveSegmentType) object;
+            return  Utilities.equals(this.numDerivativeInterior, that.numDerivativeInterior) &&
+                    Utilities.equals(this.numDerivativesAtEnd,   that.numDerivativesAtEnd)   &&
+                    Utilities.equals(this.numDerivativesAtStart, that.numDerivativesAtStart);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 31 * hash + (this.numDerivativesAtStart != null ? this.numDerivativesAtStart.hashCode() : 0);
+        hash = 31 * hash + (this.numDerivativesAtEnd   != null ? this.numDerivativesAtEnd.hashCode()   : 0);
+        hash = 31 * hash + (this.numDerivativeInterior != null ? this.numDerivativeInterior.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("[").append(this.getClass().getSimpleName()).append("]\n");
+        if (numDerivativesAtStart != null) {
+            sb.append("numDerivativesAtStart:").append(numDerivativesAtStart).append('\n');
+        }
+        if (numDerivativesAtEnd != null) {
+            sb.append("numDerivativesAtEnd:").append(numDerivativesAtEnd).append('\n');
+        }
+        if (numDerivativeInterior != null) {
+            sb.append("numDerivativeInterior:").append(numDerivativeInterior).append('\n');
+        }
+        return sb.toString();
+    }
 }

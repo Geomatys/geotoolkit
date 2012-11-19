@@ -30,6 +30,7 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.IdentifiedObjects;
+import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.logging.Logging;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
@@ -318,4 +319,54 @@ public class DirectPositionType implements DirectPosition, org.geotoolkit.gml.xm
         return this;
     }
 
+    /**
+     * Return a description of the object.
+     */
+    @Override
+    public String toString() {
+        StringBuilder s = new StringBuilder("[DirectPositionType]:");
+        if (srsName != null) {
+            s.append("srsName = ").append(srsName).append('\n');
+        }
+        if (srsDimension != null) {
+            s.append(" srsDimension = ").append(srsDimension).append('\n');
+        }
+        if (value != null) {
+            s.append(" value: ").append('\n');
+            for(double v :value) {
+                s.append(v).append(", ");
+            }
+        }
+        return s.toString();
+    }
+
+    /**
+     * Verify that this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof DirectPositionType) {
+            final DirectPositionType that = (DirectPositionType) object;
+            return  Utilities.equals(this.getAxisLabels(), that.getAxisLabels()) &&
+                    Utilities.equals(this.srsDimension,    that.srsDimension)    &&
+                    Utilities.equals(this.srsName,         that.srsName)         &&
+                    Utilities.equals(this.getUomLabels(),  that.getUomLabels())  &&
+                    Utilities.equals(this.value,           that.value);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 71 * hash + (this.value != null ? this.value.hashCode() : 0);
+        hash = 71 * hash + (this.srsDimension != null ? this.srsDimension.intValue() : 0);
+        hash = 71 * hash + (this.srsName != null ? this.srsName.hashCode() : 0);
+        hash = 71 * hash + (this.axisLabels != null ? this.axisLabels.hashCode() : 0);
+        hash = 71 * hash + (this.uomLabels != null ? this.uomLabels.hashCode() : 0);
+        return hash;
+    }
 }

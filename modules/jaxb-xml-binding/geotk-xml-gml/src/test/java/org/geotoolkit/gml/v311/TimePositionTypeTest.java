@@ -15,7 +15,7 @@
  *    Lesser General Public License for more details.
  */
 
-package org.geotoolkit.gml;
+package org.geotoolkit.gml.v311;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
