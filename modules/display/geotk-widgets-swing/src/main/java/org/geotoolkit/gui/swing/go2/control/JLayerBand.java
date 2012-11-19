@@ -110,8 +110,8 @@ public class JLayerBand extends JNavigatorBand implements LayerListener{
         this.layer = layer;
         layer.addLayerListener(new Weak(this));
         setComponentPopupMenu(popupmenu);
-        setMinimumSize(new Dimension(22, 22));
-        setPreferredSize(new Dimension(22, 22));
+        setMinimumSize(new Dimension(24, 24));
+        setPreferredSize(new Dimension(24, 24));
     }
 
     @Override
@@ -295,7 +295,7 @@ public class JLayerBand extends JNavigatorBand implements LayerListener{
 
         final float extent =  horizontal ? getWidth() : getHeight();
         final float centered = horizontal ? getHeight()/2 : getWidth()/2;
-        Double StartPos = null;
+        Double startPos = null;
         Double endPos = null;
 
         if(!horizontal){
@@ -312,8 +312,8 @@ public class JLayerBand extends JNavigatorBand implements LayerListener{
             for(Range<Double> range : ranges){
                 double start = getModel().getGraphicValueAt(range.getMinValue());
                 double end = getModel().getGraphicValueAt(range.getMaxValue());
-                if(StartPos == null || StartPos>start){
-                    StartPos = start;
+                if(startPos == null || startPos>start){
+                    startPos = start;
                 }
                 if(endPos==null || endPos<end){
                     endPos = end;
@@ -331,8 +331,8 @@ public class JLayerBand extends JNavigatorBand implements LayerListener{
 
             for(final Double d : ponctuals){
                 double pos = getModel().getGraphicValueAt(d);
-                if(StartPos == null || pos < StartPos){
-                    StartPos = pos;
+                if(startPos == null || pos < startPos){
+                    startPos = pos;
                 }
                 if(endPos == null || pos > endPos){
                     endPos = pos;
@@ -348,28 +348,27 @@ public class JLayerBand extends JNavigatorBand implements LayerListener{
         }
 
         //name
-        if(StartPos != null){
+        if(startPos != null){
             String name = getLayerName();
-            if(StartPos-20 < 0){
-                StartPos = 20d;
+            if(startPos < 0){
+                startPos = 0d;
                 name = " <  " + name;
             }
             if(endPos > extent){
-                endPos = 0d;
                 name = name + "  > ";
             }
 
-            final Font f = new Font("Dialog", Font.PLAIN, 11);
-            final FontMetrics fm = g2d.getFontMetrics();
-            final double strWidth = fm.getStringBounds(name, g2d).getWidth() + 20; //20 to keep it far from border
+            final Font f = new Font("Monospaced", Font.PLAIN, 11);
+            final FontMetrics fm = g2d.getFontMetrics(f);
+            final double strWidth = fm.getStringBounds(name, g2d).getWidth();
 
-            if(StartPos+strWidth > extent){
-                StartPos = extent - strWidth;
+            if(startPos+strWidth > extent){
+                startPos = extent - strWidth;
             }
 
             //draw halo
             final GlyphVector glyph = f.createGlyphVector(g2d.getFontRenderContext(), name);
-            final Shape shape = glyph.getOutline(StartPos.floatValue(), centered-circleSize/2);
+            final Shape shape = glyph.getOutline(startPos.floatValue(), centered-circleSize/2);
             g2d.setPaint(Color.WHITE);
             g2d.setStroke(new BasicStroke(3,BasicStroke.CAP_ROUND,BasicStroke.JOIN_ROUND));
             g2d.draw(shape);
@@ -377,7 +376,7 @@ public class JLayerBand extends JNavigatorBand implements LayerListener{
             //draw text
             g2d.setColor(color);
             g2d.setFont(f);
-            g2d.drawString(name, StartPos.floatValue(), centered-circleSize/2);
+            g2d.drawString(name, startPos.floatValue(), centered-circleSize/2);
         }
 
     }

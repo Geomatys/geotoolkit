@@ -114,7 +114,7 @@ public class JCoordinateBar extends AbstractMapControlBar {
 
         paneTemp.add(BorderLayout.CENTER,guiTimeLine);
         paneElev.add(BorderLayout.CENTER,guiAdditional);
-        paneTemp.setPreferredSize(new Dimension(100, 200));
+        paneTemp.setPreferredSize(new Dimension(120, 120));
 
         //the hints menu -------------------------------------------------------
         final JCheckBoxMenuItem guiAxis = new JCheckBoxMenuItem(MessageBundle.getString("map_xy_ratio")){
@@ -354,8 +354,8 @@ public class JCoordinateBar extends AbstractMapControlBar {
         
         paneElev.setVisible(false);
         paneTemp.setVisible(false);
-        horizontalSplit.setDividerSize(1);
-        verticalSplit.setDividerSize(1);
+        horizontalSplit.setDividerSize(2);
+        verticalSplit.setDividerSize(2);
         horizontalSplit.setLeftComponent(paneElev);
         verticalSplit.setTopComponent(horizontalSplit);
         verticalSplit.setBottomComponent(paneTemp);

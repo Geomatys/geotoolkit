@@ -20,6 +20,8 @@ package org.geotoolkit.gui.swing.go2.control;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
@@ -46,6 +48,7 @@ import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapItem;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.style.RandomStyleBuilder;
 import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.TemporalCRS;
@@ -202,32 +205,35 @@ public class JLayerBandMenu extends JMenu implements ContextListener{
     private final class LayerPane extends JPanel implements ActionListener,org.geotoolkit.map.ItemListener{
 
         private final JCheckBox box = new JCheckBox();
-        private final JButton label = new JButton(IconBundle.getIcon("16_style"));
+        private final JButton colorButton = new JButton();
         private final MapLayer layer;
 
         private LayerPane(final MapLayer layer){
-            super(new BorderLayout());
+            super(new FlowLayout(FlowLayout.LEFT,4,1));
             this.layer = layer;
-            add(BorderLayout.WEST,box);
             box.addActionListener(this);
-            label.setHorizontalTextPosition(SwingConstants.LEFT);
-            label.addActionListener(this);
-            label.setBorderPainted(false);
-            label.setContentAreaFilled(false);
-            add(BorderLayout.CENTER,label);
+            colorButton.setHorizontalTextPosition(SwingConstants.LEFT);
+            colorButton.addActionListener(this);
+            colorButton.setBorderPainted(true);
+            colorButton.setContentAreaFilled(false);
+            colorButton.setOpaque(true);
+            colorButton.setPreferredSize(new Dimension(20, 20));
+            colorButton.setBackground(RandomStyleBuilder.randomColor());
+            add(colorButton);
+            add(box);
             layer.addItemListener(new Weak(this));
             update();
         }
 
         private void update(){
-            label.setText(getLayerName());
+            box.setText(getLayerName());
 
             for(final JNavigatorBand band : navigator.getBands()){
                 if(band instanceof JLayerBand){
                     final JLayerBand lb = (JLayerBand) band;
                     if(lb.getLayer().equals(this.layer)){
                         final Color c = lb.getColor();
-                        label.setForeground(c);
+                        colorButton.setBackground(c);
                         box.setSelected(true);
                         return;
                     }
@@ -263,7 +269,7 @@ public class JLayerBandMenu extends JMenu implements ContextListener{
                         }
                     }
                     final JLayerBand band = new JLayerBand(layer);
-                    band.setColor(label.getForeground());
+                    band.setColor(colorButton.getBackground());
                     navigator.getBands().add(band);
                 }else{
                     for(final Object band : navigator.getBands().toArray()){
@@ -276,10 +282,10 @@ public class JLayerBandMenu extends JMenu implements ContextListener{
                     }
                 }
             }else{
-                Color c = label.getForeground();
+                Color c = colorButton.getBackground();
                 c = JColorChooser.showDialog(this, "", c);
                 if(c != null){
-                    label.setForeground(c);
+                    colorButton.setBackground(c);
                     for(final JNavigatorBand band : navigator.getBands()){
                         if(band instanceof JLayerBand){
                             final JLayerBand lb = (JLayerBand) band;
