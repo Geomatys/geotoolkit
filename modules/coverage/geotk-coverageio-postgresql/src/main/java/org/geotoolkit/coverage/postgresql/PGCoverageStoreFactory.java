@@ -25,6 +25,7 @@ import java.util.Collections;
 import javax.sql.DataSource;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.geotoolkit.coverage.AbstractCoverageStoreFactory;
+import org.geotoolkit.coverage.postgresql.exception.SchemaExistsException;
 import org.geotoolkit.jdbc.DBCPDataSource;
 import org.geotoolkit.metadata.iso.DefaultIdentifier;
 import org.geotoolkit.metadata.iso.citation.DefaultCitation;
@@ -185,17 +186,30 @@ public class PGCoverageStoreFactory extends AbstractCoverageStoreFactory{
         Statement stmt = null;
         ResultSet rs = null;
         try {
-            installer.call();
-
             store = open(params);
+            cnx = store.getDataSource().getConnection();
+            rs = cnx.getMetaData().getSchemas();
+            boolean epsgExists = false;
+            final String schema = store.getDatabaseSchema();
+            while (rs.next()) {
+                final String currentSchema = rs.getString(1);
+                if (currentSchema.contains("epsg")) {
+                    epsgExists = true;
+                } else if (currentSchema.contains(schema)) {
+                    throw new SchemaExistsException(schema);
+                }
+            }
+
+            // Only creates this schema if not present.
+            if (!epsgExists) {
+                installer.call();
+            }
+
             String sql = FileUtilities.getStringFromStream(PGCoverageStoreFactory.class
                     .getResourceAsStream("/org/geotoolkit/coverage/postgresql/pgcoverage.sql"));
 
-            cnx = store.getDataSource().getConnection();
             stmt = cnx.createStatement();
 
-
-            final String schema = store.getDatabaseSchema();
             if(schema != null && !schema.isEmpty()){
                 sql = sql.replaceAll("CREATE TABLE ", "CREATE TABLE \""+schema+"\".");
                 sql = sql.replaceAll("REFERENCES ", "REFERENCES \""+schema+"\".");
@@ -205,8 +219,6 @@ public class PGCoverageStoreFactory extends AbstractCoverageStoreFactory{
             }
 
             final String[] parts = sql.split(";");
-
-
 
             for(String part : parts){
                 stmt.executeUpdate(part.trim());
