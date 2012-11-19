@@ -348,7 +348,7 @@ public final class ReferencingUtilities {
             }else{
                 axistrs = SequenceValueTransform1D.create(array);
             }
-            final MathTransform mask = PassThroughTransform.create(baseDim, axistrs, values.length-i-1);
+            final MathTransform mask = PassThroughTransform.create(baseDim+i, axistrs, values.length-i-1);
             result = ConcatenatedTransform.create(result, mask);
         }
 
