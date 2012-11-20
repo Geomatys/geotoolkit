@@ -164,10 +164,10 @@ public class LocalizationGrid {
      * @param height Number of grid's rows.
      */
     public LocalizationGrid(final int width, final int height) {
-        if (width < 2) {
+        if (width < 1) {
             throw new IllegalArgumentException(String.valueOf(width));
         }
-        if (height < 2) {
+        if (height < 1) {
             throw new IllegalArgumentException(String.valueOf(height));
         }
         this.width  = width;
@@ -403,8 +403,8 @@ public class LocalizationGrid {
 
     /**
      * Makes sure that the grid doesn't contains identical consecutive ordinates. If many
-     * consecutives ordinates are found to be identical in a row or in a column, then
-     * the first one is left inchanged and the other ones are linearly interpolated.
+     * consecutive ordinates are found to be identical in a row or in a column, then
+     * the first one is left unchanged and the other ones are linearly interpolated.
      */
     public void removeSingularities() {
         removeSingularities(gridX, false);

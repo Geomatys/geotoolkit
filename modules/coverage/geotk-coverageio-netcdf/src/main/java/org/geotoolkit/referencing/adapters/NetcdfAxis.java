@@ -18,26 +18,32 @@
 package org.geotoolkit.referencing.adapters;
 
 import java.util.Map;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Collection;
 import javax.imageio.IIOException;
 import javax.measure.unit.Unit;
 
+import ucar.nc2.Attribute;
 import ucar.nc2.Dimension;
 import ucar.nc2.constants.CF;
+import ucar.nc2.constants.CDM;
 import ucar.nc2.constants.AxisType;
 import ucar.nc2.dataset.CoordinateAxis;
 import ucar.nc2.dataset.CoordinateAxis1D;
 import ucar.nc2.dataset.CoordinateAxis2D;
 
-import org.opengis.util.InternationalString;
+import org.opengis.util.GenericName;
 import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.opengis.referencing.cs.RangeMeaning;
 import org.opengis.referencing.operation.TransformException;
 
 import org.geotoolkit.util.Strings;
-import org.geotoolkit.util.SimpleInternationalString;
 import org.geotoolkit.measure.Units;
 
+import org.geotoolkit.metadata.iso.citation.Citations;
+import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.resources.Errors;
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 
@@ -153,6 +159,30 @@ public class NetcdfAxis extends NetcdfIdentifiedObject implements CoordinateSyst
     @Override
     public String getCode() {
         return axis.getShortName();
+    }
+
+    /**
+     * Returns NetCDF axis standard name and long name, if available.
+     */
+    @Override
+    public Collection<GenericName> getAlias() {
+        String standardName = null;
+        final List<GenericName> names = new ArrayList<GenericName>(2);
+        Attribute attribute = axis.findAttributeIgnoreCase(CF.STANDARD_NAME);
+        if (attribute != null) {
+            standardName = attribute.getStringValue();
+            if (standardName != null) {
+                names.add(new NamedIdentifier(Citations.NETCDF_CF, standardName));
+            }
+        }
+        attribute = axis.findAttributeIgnoreCase(CDM.LONG_NAME);
+        if (attribute != null) {
+            final String name = attribute.getStringValue();
+            if (name != null && !name.equals(standardName)) {
+                names.add(new NamedIdentifier(Citations.NETCDF, name));
+            }
+        }
+        return names;
     }
 
     /**
@@ -400,20 +430,5 @@ public class NetcdfAxis extends NetcdfIdentifiedObject implements CoordinateSyst
             }
         }
         return unit;
-    }
-
-    /**
-     * Returns the NetCDF description, or {@code null} if none.
-     * The default implementation delegates to {@link CoordinateAxis1D#getDescription()}.
-     *
-     * @see CoordinateAxis1D#getDescription()
-     */
-    @Override
-    public InternationalString getRemarks() {
-        final String description = axis.getDescription();
-        if (description != null) {
-            return new SimpleInternationalString(description);
-        }
-        return super.getRemarks();
     }
 }

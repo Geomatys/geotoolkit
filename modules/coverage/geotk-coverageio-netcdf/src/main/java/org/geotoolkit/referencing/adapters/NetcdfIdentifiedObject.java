@@ -115,7 +115,8 @@ public abstract class NetcdfIdentifiedObject implements IdentifiedObject, Refere
     }
 
     /**
-     * Returns an empty set, since NetCDF objects don't provide alternative name.
+     * Returns alternative names for the NetCDF object.
+     * The default implementation returns an empty set.
      */
     @Override
     public Collection<GenericName> getAlias() {

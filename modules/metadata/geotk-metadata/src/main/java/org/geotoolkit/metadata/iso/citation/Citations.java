@@ -262,6 +262,23 @@ public final class Citations extends Static {
     }
 
     /**
+     * The <A HREF="http://cf-pcmdi.llnl.gov/">NetCDF Climate and Forecast (CF) Metadata Convention</A> specification.
+     *
+     * @category Specification
+     *
+     * @since 3.21
+     */
+    public static final Citation NETCDF_CF;
+    static {
+        // TODO: Needs its own responsibly party.
+        final CitationConstant c = new CitationConstant(DefaultResponsibleParty.NETCDF, "NETCDF_CF", "NetCDF-CF");
+        c.setPresentationForm(PresentationForm.DOCUMENT_DIGITAL);
+        c.setTitle(new SimpleInternationalString("NetCDF Climate and Forecast (CF) Metadata Convention"));
+        c.freeze();
+        NETCDF_CF = c;
+    }
+
+    /**
      * The <A HREF="http://www.remotesensing.org/geotiff/geotiff.html">GeoTIFF</A> specification.
      *
      * @see org.geotoolkit.io.wkt.Convention#GEOTIFF
