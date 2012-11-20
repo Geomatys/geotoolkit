@@ -29,7 +29,9 @@ import org.opengis.util.InternationalString;
 import org.opengis.coverage.SampleDimension;
 import org.opengis.metadata.content.TransferFunctionType;
 
+import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.NumberRange;
+import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.internal.image.ImageUtilities;
 import org.geotoolkit.image.io.metadata.MetadataNodeAccessor;
 
@@ -48,7 +50,7 @@ import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMA
  * }
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.17
+ * @version 3.21
  *
  * @since 3.06
  * @module
@@ -85,8 +87,30 @@ public final class DimensionAccessor extends MetadataNodeAccessor {
         if (description != null) {
             setDescriptor(description.toString(locale));
         }
-        setValueRange(band.getMinimumValue(), band.getMaximumValue());
-        setFillSampleValues(band.getNoDataValues());
+        final double minimum = band.getMinimumValue();
+        final double maximum = band.getMaximumValue();
+        setValueRange(minimum, maximum);
+        double[] fillValues = band.getNoDataValues();
+        if (fillValues == null && band instanceof GridSampleDimension) {
+            /*
+             * This may happen if the sample dimension is geophysics.  We will accept the fill
+             * values from the non-geophysics view if they are outside the range of geophysics
+             * sample values, so there is no possible confusion. This is needed for example in
+             * NetCDF files, where "fillValues" attribute exists even for geophysics data.
+             */
+            fillValues = ((GridSampleDimension) band).geophysics(false).getNoDataValues();
+            if (fillValues != null) {
+                int n = 0;
+                for (int i=0; i<fillValues.length; i++) {
+                    final double fillValue = fillValues[i];
+                    if (fillValue < minimum || fillValue > maximum) {
+                        fillValues[n++] = fillValue;
+                    }
+                }
+                fillValues = XArrays.resize(fillValues, n);
+            }
+        }
+        setFillSampleValues(fillValues);
         setTransfertFunction(band.getScale(), band.getOffset(), null); // TODO: declare transfer function.
         setUnits(band.getUnits());
     }

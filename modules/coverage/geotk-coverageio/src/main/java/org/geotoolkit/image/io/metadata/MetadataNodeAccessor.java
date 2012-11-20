@@ -421,7 +421,7 @@ public class MetadataNodeAccessor extends MetadataNodeParser {
                     }
                 }
             }
-            text = buffer.toString();
+            text = buffer.length() != 0 ? buffer.toString() : null;
         }
         return text;
     }

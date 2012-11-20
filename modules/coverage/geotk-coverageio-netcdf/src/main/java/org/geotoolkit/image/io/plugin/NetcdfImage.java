@@ -58,7 +58,7 @@ import static org.geotoolkit.image.io.MultidimensionalImageStore.*;
  *
  * @author Johann Sorel (Geomatys)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.20
+ * @version 3.21
  *
  * @since 3.20
  * @module
@@ -258,7 +258,7 @@ final class NetcdfImage extends IIOImageHelper {
                 for (int k=0; k<=6; k++) {
                     final String atn;
                     final Object value;
-                    switch (i) {
+                    switch (k) {
                         case 0: atn = VALID_MIN;     value = sd.getMinValue(); break;
                         case 1: atn = VALID_MAX;     value = sd.getMaxValue(); break;
                         case 2: atn = UNITS;         value = sd.getUnits();    break;
@@ -266,7 +266,7 @@ final class NetcdfImage extends IIOImageHelper {
                         case 4: atn = SCALE_FACTOR;  value = scale;            break;
                         case 5: atn = MISSING_VALUE; value = fillValues;       break;
                         case 6: atn = FILL_VALUE;    value = XArrays.resize(fillValues, 1); break;
-                        default: throw new AssertionError(i);
+                        default: throw new AssertionError(k);
                     }
                     if (value != null) {
                         // The numeric values shall be stored in attributes of the same type than
@@ -274,13 +274,13 @@ final class NetcdfImage extends IIOImageHelper {
                         final Attribute attr;
                         if (value instanceof Number) {
                             final Array array = Array.factory(type, new int[] {1});
-                            array.setDouble(i, ((Number) value).doubleValue());
+                            array.setDouble(0, ((Number) value).doubleValue());
                             attr = new Attribute(atn, array);
                         } else if (value instanceof double[]) {
                             final double[] values = (double[]) value;
                             final Array array = Array.factory(type, new int[] {values.length});
                             for (int j=0; j<values.length; j++) {
-                                array.setDouble(i, fillValues[i]);
+                                array.setDouble(j, fillValues[j]);
                             }
                             attr = new Attribute(atn, array);
                         } else {
