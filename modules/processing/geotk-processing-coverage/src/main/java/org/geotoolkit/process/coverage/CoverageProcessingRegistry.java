@@ -31,6 +31,7 @@ import org.geotoolkit.process.coverage.kriging.KrigingDescriptor;
 import org.geotoolkit.process.coverage.metadataextractor.ExtractionDescriptor;
 import org.geotoolkit.process.coverage.pyramid.MapcontextPyramidDescriptor;
 import org.geotoolkit.process.coverage.resample.ResampleDescriptor;
+import org.geotoolkit.process.coverage.straighten.StraightenDescriptor;
 import org.geotoolkit.process.coverage.tiling.TilingDescriptor;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.identification.Identification;
@@ -65,7 +66,8 @@ public class CoverageProcessingRegistry extends AbstractProcessingRegistry{
               CombinerDescriptor.INSTANCE,
               IsolineDescriptor.INSTANCE,
               ResampleDescriptor.INSTANCE,
-              CopyCoverageStoreDescriptor.INSTANCE);
+              CopyCoverageStoreDescriptor.INSTANCE,
+              StraightenDescriptor.INSTANCE);
     }
 
     @Override

@@ -34,18 +34,18 @@ import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.GeneralEnvelope;
+import org.geotoolkit.parameter.Parameters;
+import org.geotoolkit.process.Process;
 import static org.geotoolkit.parameter.Parameters.*;
 import org.geotoolkit.process.AbstractProcess;
 import org.geotoolkit.process.ProcessException;
 import static org.geotoolkit.process.coverage.copy.CopyCoverageStoreDescriptor.*;
+import org.geotoolkit.process.coverage.straighten.StraightenDescriptor;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
 import org.geotoolkit.referencing.cs.DiscreteCoordinateSystemAxis;
 import org.geotoolkit.storage.DataStoreException;
-import org.opengis.coverage.grid.GridCoverage;
-import org.opengis.coverage.grid.GridGeometry;
 import org.opengis.feature.type.Name;
-import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CompoundCRS;
@@ -60,6 +60,7 @@ import org.opengis.referencing.operation.TransformException;
  * a {@linkplain PyramidalModel pyramid model}.
  *
  * @author Cédric Briançon (Geomatys)
+ * @author Johann Sorel (Geomatys)
  * @module pending
  */
 public class CopyCoverageStoreProcess extends AbstractProcess {
@@ -100,7 +101,7 @@ public class CopyCoverageStoreProcess extends AbstractProcess {
      * @throws TransformException
      */
     private void saveCoverage(final CoverageStore outStore, final CoverageReference inRef)
-            throws DataStoreException, TransformException
+            throws DataStoreException, TransformException, ProcessException
     {
         final CoverageReference outRef = outStore.create(inRef.getName());
         if (!(outRef instanceof PyramidalModel)) {
@@ -163,14 +164,29 @@ public class CopyCoverageStoreProcess extends AbstractProcess {
      * @throws DataStoreException
      * @throws TransformException
      */
-    private static void saveMosaic(final PyramidalModel pm, final Pyramid pyramid, final GridCoverageReader reader,
-            final int imageIndex, final Envelope env) throws DataStoreException, TransformException {
+    private void saveMosaic(final PyramidalModel pm, final Pyramid pyramid, final GridCoverageReader reader,
+            final int imageIndex, final Envelope env) throws DataStoreException, TransformException, ProcessException {
         final GridCoverageReadParam params = new GridCoverageReadParam();
         if (env != null) {
             params.setEnvelope(env);
         }
 
-        final GridCoverage2D coverage = (GridCoverage2D) reader.read(imageIndex, params);
+        final CoordinateReferenceSystem crs = env.getCoordinateReferenceSystem();
+        GridCoverage2D coverage = (GridCoverage2D) reader.read(imageIndex, params);
+
+        //straighten coverage
+        final ParameterValueGroup subParams = StraightenDescriptor.INPUT_DESC.createValue();
+        Parameters.getOrCreate(StraightenDescriptor.COVERAGE_IN, subParams).setValue(coverage);
+        final Process subprocess = StraightenDescriptor.INSTANCE.createProcess(subParams);
+        final ParameterValueGroup result;
+        try{
+            result = subprocess.call();
+        }catch(ProcessException ex){
+            throw new ProcessException(ex.getMessage(), this, ex);
+        }
+
+        coverage = (GridCoverage2D) Parameters.getOrCreate(StraightenDescriptor.COVERAGE_OUT, result).getValue();
+
         final GridGeometry2D gridgeom = coverage.getGridGeometry();
         final MathTransform gridToCRS = gridgeom.getGridToCRS2D();
 
@@ -184,7 +200,7 @@ public class CopyCoverageStoreProcess extends AbstractProcess {
         final Dimension gridSize = new Dimension(1, 1);
         final Dimension TileSize = new Dimension(img.getWidth(), img.getHeight());
         final Envelope covEnv = coverage.getEnvelope();
-        final GeneralDirectPosition upperleft = new GeneralDirectPosition(env.getCoordinateReferenceSystem());
+        final GeneralDirectPosition upperleft = new GeneralDirectPosition(crs);
         upperleft.setOrdinate(0, covEnv.getMinimum(0));
         upperleft.setOrdinate(1, covEnv.getMaximum(1));
         //envelope seems to lost its additional 2D+ values
