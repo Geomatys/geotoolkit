@@ -17,14 +17,11 @@
 package org.geotoolkit.coverage;
 
 import java.awt.Dimension;
-import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.RenderedImage;
-import java.awt.image.SampleModel;
 import java.awt.image.WritableRaster;
 import java.io.IOException;
 import java.io.InputStream;
@@ -37,13 +34,11 @@ import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
 import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
-import org.geotoolkit.coverage.grid.GridEnvelope2D;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
@@ -53,13 +48,10 @@ import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.referencing.cs.DiscreteCoordinateSystemAxis;
-import org.geotoolkit.referencing.operation.MathTransforms;
-import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.util.Cancellable;
 import org.opengis.coverage.grid.GridCoverage;
-import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -125,8 +117,6 @@ public class PyramidalModelReader extends GridCoverageReader{
         if(!set.getPyramids().isEmpty()){
             //we use the first pyramid as default
             final Pyramid pyramid = set.getPyramids().iterator().next();
-            final CoordinateReferenceSystem crs = pyramid.getCoordinateReferenceSystem();
-            final CoordinateSystem cs = crs.getCoordinateSystem();
 
             final List<GridMosaic> mosaics = new ArrayList<GridMosaic>(pyramid.getMosaics());
             Collections.sort(mosaics, CoverageUtilities.SCALE_COMPARATOR);
@@ -135,17 +125,14 @@ public class PyramidalModelReader extends GridCoverageReader{
                 //no mosaics
                 gridGeom = new GeneralGridGeometry(null, null, set.getEnvelope());
             }else{
+                final CoordinateReferenceSystem crs = pyramid.getCoordinateReferenceSystem();
+                final CoordinateSystem cs = crs.getCoordinateSystem();
+                final int nbdim = cs.getDimension();
+
                 //use the last mosaic informations
                 final GridMosaic mosaic = mosaics.get(mosaics.size()-1);
                 final Dimension gridSize = mosaic.getGridSize();
                 final Dimension tileSize = mosaic.getTileSize();
-
-                final int nbdim = cs.getDimension();
-
-                final Rectangle bounds = new Rectangle(0, 0,
-                        gridSize.width*tileSize.width,
-                        gridSize.height*tileSize.height);
-                final GeneralGridEnvelope ge = new GeneralGridEnvelope(bounds, nbdim);
 
                 //we expect no rotation
                 final AffineTransform2D gridToCRS2D = AbstractGridMosaic.getTileGridToCRS(mosaic, new Point(0, 0));
@@ -168,15 +155,23 @@ public class PyramidalModelReader extends GridCoverageReader{
                         axisValues.add(new double[0]);
                     }
                 }
-                final MathTransform gridToCRS = ReferencingUtilities.toTransform(gridToCRS2D, axisValues.toArray(new double[0][0]));
 
+                final double[][] discretValues = axisValues.toArray(new double[0][0]);
+                final MathTransform gridToCRS = ReferencingUtilities.toTransform(gridToCRS2D, discretValues);
 
-//                final GeneralMatrix gm = new GeneralMatrix(nbdim+1);
-//                gm.setElement(0, 0, gridToCRS2D.getScaleX());
-//                gm.setElement(0, nbdim, gridToCRS2D.getTranslateX());
-//                gm.setElement(1, 1, gridToCRS2D.getScaleY());
-//                gm.setElement(1, nbdim, gridToCRS2D.getTranslateY());
-//                final MathTransform gridToCRS = MathTransforms.linear(gm);
+                final int[] low = new int[nbdim];
+                final int[] high = new int[nbdim];
+                low[0] = 0;
+                low[1] = 0;
+                high[0] = gridSize.width*tileSize.width;
+                high[1] = gridSize.height*tileSize.height;
+
+                for(int i=2;i<nbdim;i++){
+                    low[i] = 0;
+                    high[i] = discretValues[i-2].length;
+                }
+                final GeneralGridEnvelope ge = new GeneralGridEnvelope(low,high,false);
+
                 gridGeom = new GeneralGridGeometry(ge, PixelInCell.CELL_CORNER, gridToCRS, crs);
             }
 
