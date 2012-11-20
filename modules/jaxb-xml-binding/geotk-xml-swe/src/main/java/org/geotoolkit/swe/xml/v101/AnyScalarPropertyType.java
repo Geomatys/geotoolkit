@@ -86,15 +86,15 @@ public class AnyScalarPropertyType implements AnyScalar, Entry {
     private String name;
     
     @XmlElement(name = "AbstractDataComponent")
-    protected AbstractDataComponentType abstractDataComponent;
+    private AbstractDataComponentType abstractDataComponent;
     @XmlElement(name = "Time")
-    protected TimeType time;
+    private TimeType time;
     @XmlElement(name = "Boolean")
-    protected BooleanType _boolean;
+    private BooleanType _boolean;
     @XmlElement(name = "Quantity")
-    protected QuantityType quantity;
+    private QuantityType quantity;
     @XmlElement(name = "Text")
-    protected Text text;
+    private Text text;
     
     @XmlAttribute(namespace = "http://www.opengis.net/gml")
     @XmlSchemaType(name = "anyURI")
@@ -303,6 +303,7 @@ public class AnyScalarPropertyType implements AnyScalar, Entry {
                    Utilities.equals(this.show,               that.show)             &&
                    Utilities.equals(this.role,               that.role)             &&
                    Utilities.equals(this.name,               that.name)             &&
+                   Utilities.equals(this.text,               that.text)             &&
                    Utilities.equals(this.title,              that.title);
             }
         return false;
@@ -324,6 +325,7 @@ public class AnyScalarPropertyType implements AnyScalar, Entry {
         hash = 47 * hash + (this.show != null ? this.show.hashCode() : 0);
         hash = 47 * hash + (this.title != null ? this.title.hashCode() : 0);
         hash = 47 * hash + (this.type != null ? this.type.hashCode() : 0);
+        hash = 47 * hash + (this.text != null ? this.text.hashCode() : 0);
         hash = 47 * hash + (this.name != null ? this.name.hashCode() : 0);
         return hash;
     }
@@ -334,19 +336,22 @@ public class AnyScalarPropertyType implements AnyScalar, Entry {
     
     @Override
     public String toString() {
-        StringBuilder s = new StringBuilder();
+        final StringBuilder s = new StringBuilder("[AnyScalarPropertyType\n]");
         if(name != null) {
             s.append("name=").append(name).append('\n');
         }
-        if (abstractDataComponent != null)
+        if (abstractDataComponent != null) {
             s.append(abstractDataComponent).append('\n');
-        if (_boolean != null)
+        }
+        if (_boolean != null) {
             s.append(_boolean).append('\n');
-        if (quantity != null)
+        }
+        if (quantity != null) {
             s.append(quantity).append('\n');
-        if (time != null)
+        }
+        if (time != null) {
             s.append(time).append('\n');
-        
+        }
         if(actuate != null) {
             s.append("actuate=").append(actuate).append('\n');
         }
@@ -365,8 +370,8 @@ public class AnyScalarPropertyType implements AnyScalar, Entry {
         if(title != null) {
             s.append("title=").append(title).append('\n');
         }
-        if(title != null) {
-            s.append("title=").append(title).append('\n');
+        if(text != null) {
+            s.append("text=").append(text).append('\n');
         }
         return s.toString();
     }
