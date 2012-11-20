@@ -27,6 +27,7 @@ import org.junit.Test;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import static org.geotoolkit.test.Assert.*;
 import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.TransformException;
 
 /**
  * Referencing utilities tests.
@@ -34,6 +35,8 @@ import org.opengis.referencing.operation.MathTransform;
  * @author Johann Sorel (Geomatys)
  */
 public class ReferencingUtilitiesTest {
+
+    private static final double DELTA = 0.0000001;
 
     @Test
     public void testDecompose(){
@@ -52,7 +55,7 @@ public class ReferencingUtilitiesTest {
     }
 
     @Test
-    public void testToTransform(){
+    public void testToTransform() throws TransformException{
 
         final AffineTransform2D base = new AffineTransform2D(new AffineTransform());
 
@@ -63,6 +66,16 @@ public class ReferencingUtilitiesTest {
 
         assertEquals(5, trs.getSourceDimensions());
         assertEquals(5, trs.getTargetDimensions());
+
+        final double[] coords = new double[]{35,40, 1, 0, 2};
+        trs.transform(coords, 0, coords, 0, 1);
+
+        assertEquals(35d, coords[0], DELTA);
+        assertEquals(40d, coords[1], DELTA);
+        assertEquals(2d, coords[2], DELTA);
+        assertEquals(-10d, coords[3], DELTA);
+        assertEquals(11d, coords[4], DELTA);
+
     }
 
 }
