@@ -29,6 +29,7 @@ import org.geotoolkit.coverage.Pyramid;
 import org.geotoolkit.coverage.PyramidalModel;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.geometry.GeneralDirectPosition;
@@ -169,13 +170,14 @@ public class CopyCoverageStoreProcess extends AbstractProcess {
             params.setEnvelope(env);
         }
 
-        final GridCoverage coverage = reader.read(imageIndex, params);
-        final GridGeometry gridgeom = coverage.getGridGeometry();
-        final MathTransform gridToCRS = gridgeom.getGridToCRS();
+        final GridCoverage2D coverage = (GridCoverage2D) reader.read(imageIndex, params);
+        final GridGeometry2D gridgeom = coverage.getGridGeometry();
+        final MathTransform gridToCRS = gridgeom.getGridToCRS2D();
 
-        final double[] segment = new double[gridToCRS.getSourceDimensions() * 2];
+        final double[] segment = new double[gridToCRS.getSourceDimensions() * 3];
         segment[gridToCRS.getSourceDimensions()] = 1;
-        gridToCRS.transform(segment, 0, segment, 0, 2);
+        segment[gridToCRS.getSourceDimensions()*2+1] = 1;
+        gridToCRS.transform(segment, 0, segment, 0, 3);
         final double scale = Math.abs(segment[0] - segment[gridToCRS.getTargetDimensions()]);
 
         final RenderedImage img = ((GridCoverage2D) coverage).getRenderedImage();
@@ -186,7 +188,7 @@ public class CopyCoverageStoreProcess extends AbstractProcess {
         upperleft.setOrdinate(0, covEnv.getMinimum(0));
         upperleft.setOrdinate(1, covEnv.getMaximum(1));
         //envelope seems to lost its additional 2D+ values
-        for (int i = 0, n = env.getDimension(); i < n; i++) {
+        for (int i = 2, n = env.getDimension(); i < n; i++) {
             upperleft.setOrdinate(i, env.getMedian(i));
         }
         final GridMosaic mosaic = pm.createMosaic(pyramid.getId(), gridSize, TileSize, upperleft, scale);
