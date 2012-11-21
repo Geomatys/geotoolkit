@@ -17,38 +17,47 @@
  */
 package org.geotoolkit.gui.swing.go2.control;
 
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
+import javax.swing.ListSelectionModel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import org.geotoolkit.gui.swing.go2.CanvasHandler;
 
 import org.geotoolkit.gui.swing.go2.JMap2D;
-import org.geotoolkit.gui.swing.go2.control.edition.JLayerComboBox;
 import org.geotoolkit.gui.swing.go2.control.edition.EditionDelegate;
 import org.geotoolkit.gui.swing.go2.control.edition.EditionHandler;
 import org.geotoolkit.gui.swing.go2.control.edition.EditionTool;
 import org.geotoolkit.gui.swing.go2.control.edition.JEditionToolComboBox;
+import org.geotoolkit.gui.swing.go2.control.edition.JLayerComboBox;
 import org.geotoolkit.gui.swing.go2.control.edition.SessionCommitAction;
 import org.geotoolkit.gui.swing.go2.control.edition.SessionRollbackAction;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.FeatureMapLayer;
+import org.openide.awt.DropDownButtonFactory;
 
 /**
  * 
  * @author Johann Sorel (Puzzle-GIS)
  * @module pending
  */
-public class JEditionBar extends AbstractMapControlBar implements ActionListener,ItemListener,PropertyChangeListener{
+public class JEditionBar extends AbstractMapControlBar implements ActionListener,PropertyChangeListener,ListSelectionListener{
 
     private final SessionCommitAction commitAction = new SessionCommitAction();
     private final SessionRollbackAction rollbackAction = new SessionRollbackAction();
 
-    private final JButton guiEdit = new JButton(IconBundle.getIcon("16_edit_geom"));
+    private final JButton guiEdit;
     private final JEditionToolComboBox guiTools = new JEditionToolComboBox();
     private final JLayerComboBox guiLayers = new JLayerComboBox();
 
@@ -64,20 +73,54 @@ public class JEditionBar extends AbstractMapControlBar implements ActionListener
      * @param pane : related Map2D or null
      */
     public JEditionBar(final JMap2D map) {
+
+        final JPopupMenu menu = new JPopupMenu();
+
+        guiTools.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        guiLayers.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+        final JPanel pane = new JPanel(new GridBagLayout());
+        final JLabel lbl1 = new JLabel(MessageBundle.getString("layers"));
+        final JLabel lbl2 = new JLabel(MessageBundle.getString("editTool"));
+        final JScrollPane pane1 = new JScrollPane(guiLayers);
+        final JScrollPane pane2 = new JScrollPane(guiTools);
+        pane1.setPreferredSize(new Dimension(280, 140));
+        pane2.setPreferredSize(new Dimension(280, 140));
+        pane1.setMaximumSize(new Dimension(280, 140));
+        pane2.setMaximumSize(new Dimension(280, 140));
+
+        int y=1;
+        final GridBagConstraints cst = new GridBagConstraints();
+        cst.fill = GridBagConstraints.HORIZONTAL;
+        cst.gridx = 1;
+        cst.gridy = y++;
+        cst.weighty = 0;
+        pane.add(lbl1,cst);
+        cst.gridy = y++;
+        cst.weighty = 1;
+        pane.add(pane1,cst);
+        cst.gridy = y++;
+        cst.weighty = 0;
+        pane.add(lbl2,cst);
+        cst.gridy = y++;
+        cst.weighty = 1;
+        pane.add(pane2,cst);
+
+        menu.add(pane);
+
+        guiEdit = DropDownButtonFactory.createDropDownButton(IconBundle.getIcon("16_edit_geom"), menu);
         guiEdit.setToolTipText(MessageBundle.getString("map_edit"));
         guiEdit.addActionListener(this);
         add(guiEdit);
-        add(guiTools);
-        add(guiLayers);
         add(commitAction);
         add(rollbackAction);
 
-        guiTools.addItemListener(this);
-        guiLayers.addItemListener(this);
+        guiTools.addListSelectionListener(this);
+        guiLayers.addListSelectionListener(this);
         guiLayers.addPropertyChangeListener("model", this);
         setMap(map);
     }
-    
+
     @Override
     public void setMap(final JMap2D map2d) {
         super.setMap(map2d);
@@ -87,7 +130,7 @@ public class JEditionBar extends AbstractMapControlBar implements ActionListener
         guiTools.setEnabled(map != null);
         guiLayers.setEnabled(map != null);
 
-        final Object candidate = guiLayers.getSelectedItem();
+        final Object candidate = guiLayers.getSelectedValue();
         guiTools.setEdited(candidate);
         if(candidate instanceof FeatureMapLayer){
             commitAction.setLayer((FeatureMapLayer) candidate);
@@ -111,7 +154,7 @@ public class JEditionBar extends AbstractMapControlBar implements ActionListener
     private void updateHandler(boolean set){
         if(map == null) return;
 
-        final Object candidate = guiLayers.getSelectedItem();
+        final Object candidate = guiLayers.getSelectedValue();
         if(candidate == null) return;
 
         final EditionTool tool = guiTools.getSelectedItem();
@@ -128,11 +171,31 @@ public class JEditionBar extends AbstractMapControlBar implements ActionListener
     }
 
     @Override
-    public void itemStateChanged(final ItemEvent e) {
+    public void propertyChange(PropertyChangeEvent e) {
+
         if(e.getSource() == guiLayers){
-            final Object candidate = guiLayers.getSelectedItem();
+            final Object candidate = guiLayers.getSelectedValue();
             guiTools.setEdited(candidate);
-            
+
+            if(candidate instanceof FeatureMapLayer){
+                commitAction.setLayer((FeatureMapLayer) candidate);
+                rollbackAction.setLayer((FeatureMapLayer) candidate);
+            }else{
+                commitAction.setLayer(null);
+                rollbackAction.setLayer(null);
+            }
+
+            //tool changed
+            updateHandler(false);
+        }
+    }
+
+    @Override
+    public void valueChanged(ListSelectionEvent e) {
+        if(e.getSource() == guiLayers){
+            final Object candidate = guiLayers.getSelectedValue();
+            guiTools.setEdited(candidate);
+
             if(candidate instanceof FeatureMapLayer){
                 commitAction.setLayer((FeatureMapLayer) candidate);
                 rollbackAction.setLayer((FeatureMapLayer) candidate);
@@ -150,24 +213,5 @@ public class JEditionBar extends AbstractMapControlBar implements ActionListener
         }
     }
 
-    @Override
-    public void propertyChange(PropertyChangeEvent e) {
-        
-        if(e.getSource() == guiLayers){
-            final Object candidate = guiLayers.getSelectedItem();
-            guiTools.setEdited(candidate);
-            
-            if(candidate instanceof FeatureMapLayer){
-                commitAction.setLayer((FeatureMapLayer) candidate);
-                rollbackAction.setLayer((FeatureMapLayer) candidate);
-            }else{
-                commitAction.setLayer(null);
-                rollbackAction.setLayer(null);
-            }
-
-            //tool changed
-            updateHandler(false);
-        }
-    }
 
 }

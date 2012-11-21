@@ -351,7 +351,7 @@ public class JMapAxisLine extends JNavigator implements PropertyChangeListener{
                 return false;
             }
         });
-        
+
         menu.addSeparator();
         menu.add(minPan);
         menu.add(maxPan);
