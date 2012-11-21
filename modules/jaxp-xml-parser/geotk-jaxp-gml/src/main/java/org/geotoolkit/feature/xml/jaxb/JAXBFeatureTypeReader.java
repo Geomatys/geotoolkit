@@ -19,11 +19,15 @@ package org.geotoolkit.feature.xml.jaxb;
 
 import com.vividsolutions.jts.geom.Geometry;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringReader;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.bind.JAXBException;
@@ -38,15 +42,18 @@ import org.geotoolkit.feature.xml.XmlFeatureTypeReader;
 import org.geotoolkit.xml.AbstractConfigurable;
 import org.geotoolkit.xml.MarshallerPool;
 import org.geotoolkit.xsd.xml.v2001.ComplexContent;
+import org.geotoolkit.xsd.xml.v2001.ComplexType;
 import org.geotoolkit.xsd.xml.v2001.Element;
 import org.geotoolkit.xsd.xml.v2001.ExplicitGroup;
 import org.geotoolkit.xsd.xml.v2001.ExtensionType;
+import org.geotoolkit.xsd.xml.v2001.Import;
+import org.geotoolkit.xsd.xml.v2001.Include;
 import org.geotoolkit.xsd.xml.v2001.LocalSimpleType;
+import org.geotoolkit.xsd.xml.v2001.OpenAttrs;
 import org.geotoolkit.xsd.xml.v2001.Schema;
-import org.geotoolkit.xsd.xml.v2001.TopLevelComplexType;
+import org.geotoolkit.xsd.xml.v2001.SimpleType;
 import org.geotoolkit.xsd.xml.v2001.TopLevelElement;
 import org.geotoolkit.xsd.xml.v2001.XSDMarshallerPool;
-import org.opengis.feature.type.ComplexType;
 
 import org.opengis.feature.type.FeatureType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -64,19 +71,31 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
 
     private static final MarshallerPool POOL = XSDMarshallerPool.getInstance();
 
+    private final Map<String, Schema> knownSchemas = new HashMap<String, Schema>();
+    
+    private final Map<QName, Element> knownElements = new HashMap<QName, Element>();
+    
+    private static final List<String> EXCLUDED_SCHEMA = new ArrayList<String>();
+    static {
+        EXCLUDED_SCHEMA.add("http://schemas.opengis.net/gml/3.1.1/base/gml.xsd");
+        EXCLUDED_SCHEMA.add("http://schemas.opengis.net/gml/3.1.1/base/feature.xsd");
+    }
+    
     public JAXBFeatureTypeReader() {
     }
 
-     /**
+    /**
      * {@inheritDoc }
      */
     @Override
     public List<FeatureType> read(final String xml) throws JAXBException {
         Unmarshaller unmarshaller = null;
         try {
-            unmarshaller        = POOL.acquireUnmarshaller();
-            final Schema schema = (Schema) unmarshaller.unmarshal(new StringReader(xml));
-            return getAllFeatureTypeFromSchema(schema);
+            unmarshaller          = POOL.acquireUnmarshaller();
+            final Schema schema   = (Schema) unmarshaller.unmarshal(new StringReader(xml));
+            knownSchemas.put("unknow location", schema);
+            final String location = null;
+            return getAllFeatureTypeFromSchema(schema, location);
         } catch (SchemaException ex) {
             throw new JAXBException(ex);
         } finally {
@@ -93,10 +112,47 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
     public List<FeatureType> read(final InputStream in) throws JAXBException {
         Unmarshaller unmarshaller = null;
         try {
-            unmarshaller        = POOL.acquireUnmarshaller();
-            final Schema schema = (Schema) unmarshaller.unmarshal(in);
-            return getAllFeatureTypeFromSchema(schema);
+            unmarshaller          = POOL.acquireUnmarshaller();
+            final Schema schema   = (Schema) unmarshaller.unmarshal(in);
+            knownSchemas.put("unknow location", schema);
+            final String location = null;
+            return getAllFeatureTypeFromSchema(schema, location);
         } catch (SchemaException ex) {
+            throw new JAXBException(ex);
+        } finally {
+            if (unmarshaller != null) {
+                POOL.release(unmarshaller);
+            }
+        }
+    }
+    
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public List<FeatureType> read(final URL url) throws JAXBException {
+        Unmarshaller unmarshaller = null;
+        try {
+            unmarshaller          = POOL.acquireUnmarshaller();
+            final Schema schema   = (Schema) unmarshaller.unmarshal(url.openStream());
+            
+            // we build the base url to retrieve imported xsd;
+            final String location = url.toString();
+            knownSchemas.put(location, schema);
+            if (!EXCLUDED_SCHEMA.contains(location)) {
+                final String baseLocation;
+                if (location.lastIndexOf('/') != -1) {
+                    baseLocation = location.substring(0, location.lastIndexOf('/') + 1);
+                } else {
+                    baseLocation = location;
+                }
+                return getAllFeatureTypeFromSchema(schema, baseLocation);
+            } else {
+                return new ArrayList<FeatureType>();
+            }
+        } catch (SchemaException ex) {
+            throw new JAXBException(ex);
+        } catch (IOException ex) {
             throw new JAXBException(ex);
         } finally {
             if (unmarshaller != null) {
@@ -114,7 +170,9 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
         try {
             unmarshaller         = POOL.acquireUnmarshaller();
             final Schema schema  = (Schema) unmarshaller.unmarshal(reader);
-            return getAllFeatureTypeFromSchema(schema);
+            knownSchemas.put("unknow location", schema);
+            final String location = null;
+            return getAllFeatureTypeFromSchema(schema, location);
         } catch (SchemaException ex) {
             throw new JAXBException(ex);
         } finally {
@@ -133,7 +191,9 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
         try {
             unmarshaller         = POOL.acquireUnmarshaller();
             final Schema schema  = (Schema) unmarshaller.unmarshal(element);
-            return getAllFeatureTypeFromSchema(schema);
+            knownSchemas.put("unknow location", schema);
+            final String location = null;
+            return getAllFeatureTypeFromSchema(schema, location);
         } catch (SchemaException ex) {
             throw new JAXBException(ex);
         } finally {
@@ -152,6 +212,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
         try {
             unmarshaller        = POOL.acquireUnmarshaller();
             final Schema schema = (Schema) unmarshaller.unmarshal(new StringReader(xml));
+            knownSchemas.put("unknow location", schema);
             return getFeatureTypeFromSchema(schema, name);
         } catch (SchemaException ex) {
             throw new JAXBException(ex);
@@ -171,6 +232,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
         try {
             unmarshaller        = POOL.acquireUnmarshaller();
             final Schema schema = (Schema) unmarshaller.unmarshal(in);
+            knownSchemas.put("unknow location", schema);
             return getFeatureTypeFromSchema(schema, name);
         } catch (SchemaException ex) {
             throw new JAXBException(ex);
@@ -190,6 +252,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
         try {
             unmarshaller        = POOL.acquireUnmarshaller();
             final Schema schema = (Schema) unmarshaller.unmarshal(reader);
+            knownSchemas.put("unknow location", schema);
             return getFeatureTypeFromSchema(schema, name);
         } catch (SchemaException ex) {
             throw new JAXBException(ex);
@@ -209,6 +272,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
         try {
             unmarshaller        = POOL.acquireUnmarshaller();
             final Schema schema = (Schema) unmarshaller.unmarshal(node);
+            knownSchemas.put("unknow location", schema);
             return getFeatureTypeFromSchema(schema, name);
         } catch (SchemaException ex) {
             throw new JAXBException(ex);
@@ -219,14 +283,39 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
         }
     }
 
-
-    public List<FeatureType> getAllFeatureTypeFromSchema(final Schema schema) throws SchemaException {
+    public List<FeatureType> getAllFeatureTypeFromSchema(final Schema schema, final String baseLocation) throws SchemaException {
         final List<FeatureType> result = new ArrayList<FeatureType>();
+        
+        // first we look for imported xsd
+        for (OpenAttrs attr: schema.getIncludeOrImportOrRedefine()) {
+            if (attr instanceof Import || attr instanceof Include) {
+                final String schemalocation = Utils.getIncludedLocation(baseLocation, attr);
+                if (schemalocation != null && !knownSchemas.containsKey(schemalocation) && !EXCLUDED_SCHEMA.contains(schemalocation)) {
+                    final Schema importedSchema = Utils.getDistantSchema(schemalocation);
+                    if (importedSchema != null) {
+                        knownSchemas.put(schemalocation, importedSchema);
+                        final String newBaseLocation = getNewBaseLocation(schemalocation, baseLocation);
+                        result.addAll(getAllFeatureTypeFromSchema(importedSchema, newBaseLocation));
+                    } else {
+                        LOGGER.log(Level.WARNING, "Unable to retrieve imported schema:{0}", schemalocation);
+                    }
+                }
+            } 
+        }
+        
+        // then we look for feature type
         for (TopLevelElement element : schema.getElements()) {
+            knownElements.put(new QName(schema.getTargetNamespace(), element.getName()), element);
             final QName typeName = element.getType();
             if (typeName != null) {
-                final TopLevelComplexType type = schema.getComplexTypeByName(typeName.getLocalPart());
-                result.add(getFeatureTypeFromSchema(element.getName(), type, typeName.getNamespaceURI(), schema));
+                final ComplexType type = findComplexType(typeName.getLocalPart());
+                if (type != null && type.extendFeature()) {
+                    result.add(getFeatureTypeFromSchema(element.getName(), type, typeName.getNamespaceURI(), schema));
+                
+                } else if (type == null && findSimpleType(typeName.getLocalPart()) == null) {
+                    LOGGER.log(Level.WARNING, "Unable to find a the declaration of type {0} in schemas.", typeName.getLocalPart());
+                    continue;
+                }
             } else {
                 LOGGER.log(Level.WARNING, "null typeName for element:{0}", element.getName());
             }
@@ -240,7 +329,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
         if (element != null) {
             final QName typeName = element.getType();
             if (typeName != null) {
-                final TopLevelComplexType type = schema.getComplexTypeByName(typeName.getLocalPart());
+                final ComplexType type = findComplexType(typeName.getLocalPart());
                 return getFeatureTypeFromSchema(name, type, typeName.getNamespaceURI(), schema);
             } else {
                 LOGGER.log(Level.WARNING, "the element:{0} has no type", name);
@@ -249,7 +338,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
         return null;
     }
 
-    private FeatureType getFeatureTypeFromSchema(final String name, final TopLevelComplexType type, final String namespace, final Schema schema) throws SchemaException {
+    private FeatureType getFeatureTypeFromSchema(final String name, final ComplexType type, final String namespace, final Schema schema) throws SchemaException {
         final FeatureTypeBuilder builder = new FeatureTypeBuilder();
         if (type != null) {
             builder.setName(new DefaultName(namespace, name));
@@ -266,13 +355,15 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
                     }
                 }
             }
+            return builder.buildFeatureType();
         }
-        return builder.buildFeatureType();
+        LOGGER.log(Level.WARNING, "no declared type for:{0}", name);
+        return null;
     }
 
-    private ComplexType getComplexTypeFromSchema(final Schema schema, final String namespace, final String name) throws SchemaException {
-        final TopLevelComplexType complexType = schema.getComplexTypeByName(name);
-        final FeatureTypeBuilder builder      = new FeatureTypeBuilder();
+    private org.opengis.feature.type.ComplexType getComplexTypeFromSchema(final Schema schema, final String namespace, final String name) throws SchemaException {
+        final ComplexType complexType    = schema.getComplexTypeByName(name);
+        final FeatureTypeBuilder builder = new FeatureTypeBuilder();
         if (complexType != null) {
             final String properName;
             if (name.endsWith("Type")) {
@@ -295,19 +386,33 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
     }
 
     private void elementToAttribute(final Element attributeElement, final String namespace, final Schema schema, final FeatureTypeBuilder builder) throws SchemaException {
-        QName elementType = attributeElement.getType();
+        final Element currentElement;
+        if (attributeElement.getRef() != null ) {
+            currentElement = knownElements.get(attributeElement.getRef());
+            if (currentElement == null) {
+                LOGGER.log(Level.WARNING, "unable to find referenced element:{0}", attributeElement.getRef());
+                return;
+            }
+        } else {
+            currentElement = attributeElement;
+        }
+        QName elementType = currentElement.getType();
         // Try to extract base from a SimpleType
-        if (elementType == null && attributeElement.getSimpleType() != null) {
-            final LocalSimpleType simpleType = attributeElement.getSimpleType();
+        if (elementType == null && currentElement.getSimpleType() != null) {
+            final LocalSimpleType simpleType = currentElement.getSimpleType();
             if (simpleType.getRestriction() != null) {
                 elementType = simpleType.getRestriction().getBase();
             }
         }
+        if (elementType == null) {
+            LOGGER.log(Level.WARNING, "unable to find the type of element:{0}", currentElement.getName());
+            return;
+        }
         final String typeName    = elementType.getLocalPart();
-        final String elementName = attributeElement.getName();
-        final Integer minAtt     = attributeElement.getMinOccurs();
-        final String maxxAtt     = attributeElement.getMaxOccurs();
-        final boolean nillable   = attributeElement.isNillable();
+        final String elementName = currentElement.getName();
+        final Integer minAtt     = currentElement.getMinOccurs();
+        final String maxxAtt     = currentElement.getMaxOccurs();
+        final boolean nillable   = currentElement.isNillable();
         final int min = (minAtt == null) ? 1 : minAtt;
         final int max;
         if (maxxAtt == null) {
@@ -317,8 +422,8 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
         } else {
             max = Integer.parseInt(maxxAtt);
         }
+        knownElements.put(new QName(namespace, elementName), currentElement);
         CoordinateReferenceSystem crs = null;
-
         if ((typeName.endsWith("PropertyType") || typeName.endsWith("Type")) && !Utils.isGeometricType(elementType)) {
 
             final String cname;
@@ -327,7 +432,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
             } else {
                 cname = typeName;
             }
-            final ComplexType cType = getComplexTypeFromSchema(schema, namespace, cname);
+            final org.opengis.feature.type.ComplexType cType = getComplexTypeFromSchema(schema, namespace, cname);
             if (cType != null) {
                 builder.add(cType, new DefaultName(namespace, elementName), null, min, max, nillable, null);
             }
@@ -343,5 +448,41 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
                 builder.add(new DefaultName(namespace, elementName), c, min, max, nillable, null);
             }
         }
+    }
+    
+    private String getNewBaseLocation(final String schemalocation, final String oldBaseLocation) {
+        final String newBaseLocation;
+        if (schemalocation.lastIndexOf('/') != -1) {
+            newBaseLocation = schemalocation.substring(0, schemalocation.lastIndexOf('/') + 1);
+        } else {
+            newBaseLocation = oldBaseLocation;
+        }
+        return newBaseLocation;
+    }
+    
+    private ComplexType findComplexType(final String typeName) {
+        for (Schema schema : knownSchemas.values()) {
+            final ComplexType type = schema.getComplexTypeByName(typeName);
+            if (type != null) {
+                return type;
+            }
+        }
+        return null;
+    }
+    
+    private SimpleType findSimpleType(final String typeName) {
+        
+        // look in the schemas
+        for (Schema schema : knownSchemas.values()) {
+            final SimpleType type = schema.getSimpleTypeByName(typeName);
+            if (type != null) {
+                return type;
+            }
+        }
+        // look in primitive types
+        if (Utils.existPrimitiveType(typeName)) {
+            return new LocalSimpleType(typeName);
+        }
+        return null;
     }
 }

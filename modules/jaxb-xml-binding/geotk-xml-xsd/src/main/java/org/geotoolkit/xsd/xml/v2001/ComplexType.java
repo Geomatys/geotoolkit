@@ -28,6 +28,7 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import javax.xml.namespace.QName;
 import org.geotoolkit.util.Utilities;
 
 
@@ -71,6 +72,9 @@ import org.geotoolkit.util.Utilities;
 })
 public abstract class ComplexType extends Annotated {
 
+    private static final QName FEATURE = new QName("http://www.opengis.net/gml", "_Feature");
+    private static final QName FEATURE_TYPE = new QName("http://www.opengis.net/gml", "AbstractFeatureType");
+    
     private SimpleContent simpleContent;
     private ComplexContent complexContent;
     private GroupRef group;
@@ -398,6 +402,13 @@ public abstract class ComplexType extends Annotated {
         return this.block;
     }
 
+    public boolean extendFeature() {
+        if (complexContent != null && complexContent.getExtension() != null) {
+            return FEATURE.equals(complexContent.getExtension().getBase()) ||
+                   FEATURE_TYPE.equals(complexContent.getExtension().getBase());
+        }
+        return false;
+    }
     /**
      * Verify if this entry is identical to the specified object.
      */

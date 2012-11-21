@@ -85,7 +85,7 @@ public abstract class AbstractReferenceInputConverter extends WPSDefaultConverte
 
             if (schema != null) {
                 final URL schemaURL = new URL(schema);
-                final List<FeatureType> featureTypes = xsdReader.read(schemaURL.openStream());
+                final List<FeatureType> featureTypes = xsdReader.read(schemaURL);
                 if (featureTypes != null) {
                     featureReader = new JAXPStreamFeatureReader(featureTypes);
                 }
