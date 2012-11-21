@@ -30,73 +30,73 @@ import org.geotoolkit.io.LEDataOutputStream;
 
 /**
  * WKB PostGIS Raster Writer.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public class WKBRasterWriter {
 
     public WKBRasterWriter() {
     }
-    
+
     /**
      * Reset values before new write call.
      */
     public void reset(){
     }
-    
+
     /**
      * Encode given image in Postgis WKB.
-     * 
+     *
      * @param image : image , not null
      * @param gridToCRS : image grid to crs, can be null
      * @param srid : image srid
      * @return byte[] encoded image
-     * @throws IOException 
+     * @throws IOException
      */
-    public byte[] write(final RenderedImage image, final AffineTransform gridToCRS, 
+    public byte[] write(final RenderedImage image, final AffineTransform gridToCRS,
             final int srid) throws IOException {
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
         write(image, gridToCRS, srid, out);
         return out.toByteArray();
     }
-    
+
     /**
      * Encode given image in Postgis WKB.
-     * 
+     *
      * @param image : image , not null
      * @param gridToCRS : image grid to crs, can be null
      * @param srid : image srid
      * @param stream : output stream to write in
-     * @throws IOException 
+     * @throws IOException
      */
-    public void write(final RenderedImage image, AffineTransform gridToCRS, 
+    public void write(final RenderedImage image, AffineTransform gridToCRS,
             final int srid, final OutputStream stream) throws IOException {
-        write(image, gridToCRS, srid, stream, true);        
+        write(image, gridToCRS, srid, stream, true);
     }
-    
+
     /**
      * Encode given image in Postgis WKB.
-     * 
+     *
      * @param image : image , not null
      * @param gridToCRS : image grid to crs, can be null
      * @param srid : image srid
      * @param stream : output stream to write in
      * @param littleEndian : wanted value encoding
-     * @throws IOException 
+     * @throws IOException
      */
-    public void write(final RenderedImage image, AffineTransform gridToCRS, 
+    public void write(final RenderedImage image, AffineTransform gridToCRS,
             final int srid, final OutputStream stream, final boolean littleEndian) throws IOException {
         if(gridToCRS == null){
             gridToCRS = new AffineTransform();
         }
-        
+
         final DataOutput ds;
         if(littleEndian){
             ds = new LEDataOutputStream(stream);
         }else{
             ds = new DataOutputStream(stream);
         }
-        
+
         final SampleModel sm = image.getSampleModel();
         final Raster raster = image.getData();
         final int nbBand = sm.getNumBands();
@@ -109,10 +109,10 @@ public class WKBRasterWriter {
                 databufferType = DataBuffer.TYPE_BYTE;
             }
         }
-        
+
         final int pixelType = WKBRasterConstants.getPixelType(databufferType);
         final int bytePerpixel = WKBRasterConstants.getNbBytePerPixel(pixelType);
-        
+
         //endianess
         ds.write( littleEndian ? 1 : 0 );
         //version, 0 for now
@@ -125,16 +125,16 @@ public class WKBRasterWriter {
         ds.writeDouble(gridToCRS.getTranslateX());
         ds.writeDouble(gridToCRS.getTranslateY());
         ds.writeDouble(gridToCRS.getShearX());
-        ds.writeDouble(gridToCRS.getShearY());        
+        ds.writeDouble(gridToCRS.getShearY());
         //write srid
         ds.writeInt(srid);
         //width and height
         ds.writeShort(width);
         ds.writeShort(height);
-        
+
         //write each band
         for(int b=0;b<nbBand;b++){
-            
+
             // band description
             final byte flags = (byte) pixelType;
             // OffDatabase = false
@@ -143,13 +143,13 @@ public class WKBRasterWriter {
             // IsNodata = false
             // Reserved = false
             ds.write(flags);
-            
+
             // TODO no data value
             ds.write(new byte[bytePerpixel]);
-            
+
             //write values
-            for(int y=0;y<height;y++){
-                for(int x=0;x<width;x++){
+            for(int y=raster.getMinY(),maxy=raster.getMinY()+height;y<maxy;y++){
+                for(int x=raster.getMinX(),maxx=raster.getMinX()+width;x<maxx;x++){
                     switch(databufferType){
                         case DataBuffer.TYPE_BYTE :     ds.writeByte( (byte)raster.getSample(x, y, b)); break;
                         case DataBuffer.TYPE_SHORT :    ds.writeShort( (short)raster.getSample(x, y, b)); break;
@@ -160,9 +160,9 @@ public class WKBRasterWriter {
                     }
                 }
             }
-                        
+
         }
-        
+
     }
-    
+
 }
