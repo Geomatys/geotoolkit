@@ -125,6 +125,18 @@ public class AllowedValues {
         return this.valueOrRange;
     }
     
+    public List<String> getStringValues() {
+        final List<String> values = new ArrayList<String>();
+        if (valueOrRange != null) {
+            for (Object o : valueOrRange) {
+                if (o instanceof ValueType) {
+                    values.add(((ValueType)o).getValue());
+                }
+            }
+        }
+        return values;
+    }
+    
     /**
      * Verify that this entry is identical to the specified object.
      */

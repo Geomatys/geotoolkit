@@ -26,7 +26,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
-import org.geotoolkit.ogc.xml.v110.SortByType;
+import org.geotoolkit.csw.xml.Query;
+import org.geotoolkit.csw.xml.QueryConstraint;
+import org.geotoolkit.ogc.xml.SortBy;
 import org.geotoolkit.util.Utilities;
 
 
@@ -70,7 +72,7 @@ import org.geotoolkit.util.Utilities;
     "constraint"
 })
 @XmlRootElement(name = "Query")       
-public class QueryType extends AbstractQueryType {
+public class QueryType extends AbstractQueryType implements Query{
 
     @XmlElement(name = "ElementSetName", defaultValue = "summary")
     private ElementSetNameType elementSetName;
@@ -150,10 +152,13 @@ public class QueryType extends AbstractQueryType {
     /**
      * Sets the value of the constraint property.
      */
-    public void setConstraint(final QueryConstraintType value) {
-        this.constraint = value;
+    public void setConstraint(final QueryConstraint value) {
+        if (value instanceof QueryConstraint) {
+            this.constraint = (QueryConstraintType) value;
+        } else {
+            throw new IllegalArgumentException("unexpected version of the query constraint object (not v200)");
+        }
     }
-
     /**
      * Gets the value of the typeNames property.
      */
@@ -173,7 +178,7 @@ public class QueryType extends AbstractQueryType {
      * 
      * @return null.
      */
-    public SortByType getSortBy() {
+    public SortBy getSortBy() {
         return null;
     }
 

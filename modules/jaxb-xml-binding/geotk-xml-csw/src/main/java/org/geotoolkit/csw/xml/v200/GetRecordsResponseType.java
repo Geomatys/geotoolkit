@@ -72,6 +72,24 @@ public class GetRecordsResponseType implements GetRecordsResponse {
     private String version;
 
     /**
+     * An empty constructor used by JAXB
+     */
+    GetRecordsResponseType() {
+        
+    }
+    
+    /**
+     * Build a new response to a getRecords request
+     */
+    public GetRecordsResponseType(final String requestId, final long time, final String version, final SearchResultsType searchResults) {
+        this.requestId     = requestId;
+        this.searchStatus  = new RequestStatusType(time);
+        this.version       = version;
+        this.searchResults = searchResults;
+        
+    }
+    
+    /**
      * Gets the value of the requestId property.
      * 
      */

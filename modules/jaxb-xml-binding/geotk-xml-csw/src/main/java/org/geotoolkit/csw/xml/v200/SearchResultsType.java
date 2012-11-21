@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlSchemaType;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.XMLGregorianCalendar;
 import org.geotoolkit.csw.xml.ElementSetType;
@@ -107,6 +108,64 @@ public class SearchResultsType implements SearchResults {
     @XmlAttribute
     private XMLGregorianCalendar expires;
 
+    @XmlTransient
+    private ObjectFactory factory = new ObjectFactory();
+    
+    /**
+     * An empty constructor used by JAXB 
+     */
+    SearchResultsType() {
+        
+    }
+    
+    /**
+     * build a new search results (HITS MODE).
+     */
+    public SearchResultsType(final String resultSetId, final ElementSetType elementSet, final int numberOfResultMatched, final int nextRecord) {
+        this.resultSetId            = resultSetId;
+        this.elementSet             = elementSet;
+        this.numberOfRecordsMatched = numberOfResultMatched;
+        this.nextRecord             = nextRecord;
+       
+        
+    }
+    
+    /**
+     * build a new search results. (RESULTS mode - OGCCORE mode).
+     * 
+     */
+    public SearchResultsType(final String resultSetId, final ElementSetType elementSet, final int numberOfResultMatched,
+            final List<AbstractRecordType> dcrecords, final List<Object> records, final Integer numberOfRecordsReturned, final int nextRecord) {
+        this.resultSetId             = resultSetId;
+        this.elementSet              = elementSet;
+        this.numberOfRecordsMatched  = numberOfResultMatched;
+        this.numberOfRecordsReturned = numberOfRecordsReturned;
+        this.nextRecord              = nextRecord;
+        this.any                     = records;
+
+        if (dcrecords != null) {
+            abstractRecord = new ArrayList<JAXBElement<? extends AbstractRecordType>>(); 
+            for (int i = 0; i < dcrecords.size(); i++) {
+
+                AbstractRecordType record = dcrecords.get(i);
+
+                if (record == null) {continue;}
+
+                if (record instanceof BriefRecordType) {
+                    abstractRecord.add(factory.createBriefRecord((BriefRecordType)record));
+                } else if (record instanceof RecordType) {
+                    abstractRecord.add(factory.createRecord((RecordType)record));
+                } else if (record instanceof SummaryRecordType) {
+                    abstractRecord.add(factory.createSummaryRecord((SummaryRecordType)record));
+                } else if (record instanceof DCMIRecordType) {
+                    abstractRecord.add(factory.createDCMIRecord((DCMIRecordType)record));
+                } else {
+                    throw new IllegalArgumentException(" unknow AbstractRecord subType:" + record.getClass().getSimpleName());
+                }
+            }
+        }
+    }
+    
     /**
      * Gets the value of the abstractRecord property.
      * 

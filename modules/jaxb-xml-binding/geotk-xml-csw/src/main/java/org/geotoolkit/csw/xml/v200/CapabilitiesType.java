@@ -21,6 +21,10 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.csw.xml.AbstractCapabilities;
 import org.geotoolkit.ows.xml.v100.CapabilitiesBaseType;
+import org.geotoolkit.ows.xml.v100.OperationsMetadata;
+import org.geotoolkit.ows.xml.v100.ServiceIdentification;
+import org.geotoolkit.ows.xml.v100.ServiceProvider;
+import org.opengis.filter.capability.FilterCapabilities;
 
 
 /**
@@ -57,5 +61,28 @@ import org.geotoolkit.ows.xml.v100.CapabilitiesBaseType;
 @XmlType(name = "CapabilitiesType")
 public class CapabilitiesType extends CapabilitiesBaseType implements AbstractCapabilities {
 
+    /**
+     * An empty constructor used by JAXB
+     */
+    public CapabilitiesType(){
+    }
+    
+     /**
+     * Build a new Capabilities document
+     */
+    public CapabilitiesType(final String version, final String updateSequence){
+        super(version, updateSequence);
+    }
+    
+    /**
+     * Build a new Capabilities document
+     */
+    public CapabilitiesType(final ServiceIdentification serviceIdentification, final ServiceProvider serviceProvider,
+            final OperationsMetadata operationsMetadata, final String version, final String updateSequence){
+        super(serviceIdentification, serviceProvider, operationsMetadata, version, updateSequence);
+    }
 
+    public FilterCapabilities getFilterCapabilities() {
+        return null;
+    }
 }

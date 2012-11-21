@@ -28,6 +28,7 @@ import org.geotoolkit.ows.xml.v100.ExceptionReport;
 import org.geotoolkit.metadata.iso.DefaultMetadata;
 import org.geotoolkit.util.FileUtilities;
 import org.geotoolkit.util.StringUtilities;
+import org.geotoolkit.util.Strings;
 
 
 /**
@@ -109,7 +110,7 @@ public class CSWClassesContext {
         try {
             final InputStream stream        = CSWClassesContext.class.getResourceAsStream("extra-classes");
             final String s                  = FileUtilities.getStringFromStream(stream);
-            final List<String> extraClasses = StringUtilities.toStringList(s, '\n');
+            final String[] extraClasses     = Strings.split(s, '\n');
             for (String extraClassName : extraClasses) {
                 try {
                     Class extraClass = Class.forName(extraClassName);

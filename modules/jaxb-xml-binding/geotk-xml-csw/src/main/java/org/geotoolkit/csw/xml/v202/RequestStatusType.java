@@ -64,13 +64,15 @@ public class RequestStatusType implements RequestStatus {
 
     private static final Logger LOGGER = Logging.getLogger(RequestStatusType.class);
 
-    private static DatatypeFactory factory = null;
+    private static final DatatypeFactory factory;
     static {
+        DatatypeFactory candidate = null;
         try {
-            factory = DatatypeFactory.newInstance();
+            candidate = DatatypeFactory.newInstance();
         } catch (DatatypeConfigurationException ex) {
             LOGGER.severe("error at the dataType factory initialisation in request status");
         }
+        factory = candidate;
     }
         
     
