@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2008 - 2010, Geomatys
+ *    (C) 2012, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -14,23 +14,26 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.ows.xml;
+package org.geotoolkit.csw.xml;
 
 import java.util.List;
+import javax.xml.namespace.QName;
+import org.geotoolkit.ogc.xml.SortBy;
 
 /**
- *  Super abstract type for all the different versions of Operation.
  *
- * @author Guilhem Legal
- * @module pending
+ * @author Guilhem Legal (Geomatys)
  */
-public interface AbstractDomain {
-
-    String getName();
-
-    List<? extends AbstractMetadata> getMetadata();
+public interface Query extends AbstractQuery {
     
-    void setValue(final List<String> values);
+    ElementSetName getElementSetName();
     
-    List<String> getValue();
+    List<QName> getElementName();
+    
+    QueryConstraint getConstraint();
+    
+    SortBy getSortBy();
+    
+    List<QName> getTypeNames();
+    
 }

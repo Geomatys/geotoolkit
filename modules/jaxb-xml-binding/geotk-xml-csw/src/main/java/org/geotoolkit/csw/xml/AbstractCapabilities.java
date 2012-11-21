@@ -16,8 +16,13 @@
  */
 package org.geotoolkit.csw.xml;
 
+import org.geotoolkit.ows.xml.AbstractOperationsMetadata;
+import org.geotoolkit.ows.xml.AbstractServiceIdentification;
+import org.geotoolkit.ows.xml.AbstractServiceProvider;
+import org.opengis.filter.capability.FilterCapabilities;
+
 /**
- *
+ * TODO this interface duplicate a lot from AbstractCapabiltiesBase because of CSWResponse.
  * @author Guilhem legal (Geomatys)
  * @module pending
  */
@@ -28,5 +33,29 @@ public interface AbstractCapabilities extends CSWResponse {
      * @return
      */
     String getVersion();
+    
+    FilterCapabilities getFilterCapabilities();
 
+    /**
+     * Gets the value of the serviceIdentification property.
+     *
+     */
+    AbstractServiceIdentification getServiceIdentification();
+
+    /**
+     * Gets the value of the serviceProvider property.
+     *
+     */
+    AbstractServiceProvider getServiceProvider();
+
+    /**
+     * Gets the value of the operationsMetadata property.
+     */
+    AbstractOperationsMetadata getOperationsMetadata();
+
+    /**
+     * Gets the value of the updateSequence property.
+     *
+     */
+    String getUpdateSequence();
 }

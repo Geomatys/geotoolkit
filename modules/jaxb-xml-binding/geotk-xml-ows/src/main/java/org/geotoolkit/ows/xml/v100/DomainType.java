@@ -99,6 +99,7 @@ public class DomainType implements AbstractDomain {
     /**
      * Gets the value of the value property.
      */
+    @Override
     public List<String> getValue() {
         if (value == null) {
             value = new ArrayList<String>();
@@ -106,6 +107,7 @@ public class DomainType implements AbstractDomain {
         return value;
     }
     
+    @Override
     public void setValue(final List<String> value) {
         this.value = value;
     }

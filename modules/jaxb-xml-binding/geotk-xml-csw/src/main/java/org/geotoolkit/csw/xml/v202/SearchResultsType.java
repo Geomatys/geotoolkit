@@ -167,19 +167,20 @@ public class SearchResultsType implements SearchResults {
      * 
      */
     public SearchResultsType(final String resultSetId, final ElementSetType elementSet, final int numberOfResultMatched,
-            final List<AbstractRecordType> records, final Integer numberOfRecordsReturned, final int nextRecord) {
+            final List<AbstractRecordType> dcrecords, final List<Object> records, final Integer numberOfRecordsReturned, final int nextRecord) {
         this.resultSetId             = resultSetId;
         this.elementSet              = elementSet;
         this.numberOfRecordsMatched  = numberOfResultMatched;
         this.numberOfRecordsReturned = numberOfRecordsReturned;
         this.nextRecord              = nextRecord;
+        this.any                     = records;
         
         abstractRecord = new ArrayList<JAXBElement<? extends AbstractRecordType>>(); 
-        for (int i = 0; i < records.size(); i++) {
+        for (int i = 0; i < dcrecords.size(); i++) {
             
-            AbstractRecordType record = records.get(i);
+            AbstractRecordType record = dcrecords.get(i);
             
-            if (record == null) continue;
+            if (record == null) {continue;}
             
             if (record instanceof BriefRecordType) {
                 abstractRecord.add(factory.createBriefRecord((BriefRecordType)record));
@@ -195,22 +196,6 @@ public class SearchResultsType implements SearchResults {
         }
         
     }
-    
-    /**
-     * build a new search results. (RESULTS mode - ISO19139 mode).
-     * 
-     */
-    public SearchResultsType(final String resultSetId, final ElementSetType elementSet, final int numberOfResultMatched,
-            final Integer numberOfRecordsReturned, final List<Object> records, final int nextRecord) {
-        this.resultSetId             = resultSetId;
-        this.elementSet              = elementSet;
-        this.numberOfRecordsMatched  = numberOfResultMatched;
-        this.numberOfRecordsReturned = numberOfRecordsReturned;
-        this.any                     = records;
-        this.nextRecord              = nextRecord;
-        
-    }
-    
     
     /**
      * Gets the value of the abstractRecord property.

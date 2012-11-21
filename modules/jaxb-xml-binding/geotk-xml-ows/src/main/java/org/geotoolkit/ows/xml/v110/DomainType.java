@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.ows.xml.v110;
 
+import java.util.ArrayList;
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -87,6 +89,21 @@ public class DomainType extends UnNamedDomainType implements AbstractDomain {
         return name;
     }
 
+    @Override
+    public List<String> getValue() {
+        if (this.getAllowedValues() != null) {
+            return this.getAllowedValues().getStringValues();
+        }
+        return null;
+    }
+    
+    @Override
+    public void setValue(final List<String> values) {
+        if (values != null) {
+            this.setAllowedValues(new AllowedValues(values));
+        }
+    }
+    
     /**
      * Verify that this entry is identical to the specified object.
      */

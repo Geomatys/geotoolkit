@@ -74,6 +74,7 @@ public class SortByType implements SortBy {
      * 
      * {@link SortPropertyType }
      */
+    @Override
     public List<SortPropertyType> getSortProperty() {
         if (sortProperty == null) {
             sortProperty = new ArrayList<SortPropertyType>();

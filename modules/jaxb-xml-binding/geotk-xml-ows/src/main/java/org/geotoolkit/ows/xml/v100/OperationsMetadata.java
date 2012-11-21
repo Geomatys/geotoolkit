@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.inspire.xml.MultiLingualCapabilities;
+import org.geotoolkit.ows.xml.AbstractDomain;
 import org.geotoolkit.ows.xml.AbstractOperationsMetadata;
 import org.geotoolkit.util.Utilities;
 
@@ -98,14 +99,16 @@ public class OperationsMetadata implements AbstractOperationsMetadata {
      * 
      */
     public List<Operation> getOperation() {
-        if (operation == null)
+        if (operation == null) {
             operation = new ArrayList<Operation>();
+        }
         return operation;
     }
     
     /**
      * Return the operation for the specified name
      */
+    @Override
     public Operation getOperation(final String operationName) {
         for (Operation op: operation){
             if (op.getName().equalsIgnoreCase(operationName)) {
@@ -120,6 +123,7 @@ public class OperationsMetadata implements AbstractOperationsMetadata {
      * 
      * @param operationName the name of the operation to remove.
      */
+    @Override
     public void removeOperation(final String operationName) {
         for (Operation op: operation){
             if (op.getName().equalsIgnoreCase(operationName)) {
@@ -150,8 +154,9 @@ public class OperationsMetadata implements AbstractOperationsMetadata {
      * Gets the value of the parameter property.
      */
     public List<DomainType> getParameter() {
-        if (parameter == null)
+        if (parameter == null) {
             parameter = new ArrayList<DomainType>();
+        }
         return Collections.unmodifiableList(parameter);
     }
 
@@ -159,43 +164,57 @@ public class OperationsMetadata implements AbstractOperationsMetadata {
      * Gets the value of the constraint property.
      */
     public List<DomainType> getConstraint() {
-        if (constraint == null)
+        if (constraint == null) {
             constraint = new ArrayList<DomainType>();
+        }
         return constraint;
     }
     
+    @Override
     public DomainType getConstraint(final String name) {
-        if (constraint == null)
+        if (constraint == null) {
             constraint = new ArrayList<DomainType>();
-        
+        }
         for (DomainType d : constraint) {
-            if (d.getName().equalsIgnoreCase(name))
+            if (d.getName().equalsIgnoreCase(name)) {
                 return d;
+            }
         }
         return null; 
     }
     
+    @Override
+    public void addConstraint(final AbstractDomain domain) {
+        if (constraint == null) {
+            constraint = new ArrayList<DomainType>();
+        }
+        if (domain instanceof DomainType) {
+            constraint.add((DomainType)domain);
+        } else if (domain != null) {
+            throw new IllegalArgumentException("bad version of the domain object");
+        }
+    }
+    
+    @Override
     public void removeConstraint(final String name) {
         if (constraint == null) {
             constraint = new ArrayList<DomainType>();
-            return;
         }
-        
         for (DomainType d : constraint) {
-            if (d.getName().equalsIgnoreCase(name))
+            if (d.getName().equalsIgnoreCase(name)) {
                 constraint.remove(d);
+            }
         }
     }
     
      public void removeConstraint(final DomainType constraint) {
         if (this.constraint == null) {
             this.constraint = new ArrayList<DomainType>();
-            return;
         }
-        
         for (DomainType d : this.constraint) {
-            if (d.equals(constraint))
+            if (d.equals(constraint)) {
                 this.constraint.remove(d);
+            }
         }
     }
 
@@ -211,8 +230,12 @@ public class OperationsMetadata implements AbstractOperationsMetadata {
      * Gets the value of the extendedCapabilities property.
      *
      */
-    public void setExtendedCapabilities(final MultiLingualCapabilities extendedCapabilities) {
-        this.extendedCapabilities = extendedCapabilities;
+    public void setExtendedCapabilities(final Object extendedCapabilities) {
+        if (extendedCapabilities instanceof MultiLingualCapabilities) {
+            this.extendedCapabilities = (MultiLingualCapabilities) extendedCapabilities;
+        } else {
+            throw new IllegalArgumentException("only MultiLingualCapabilities type is accepted in this implementation");
+        }
     }
 
     /**
@@ -259,10 +282,11 @@ public class OperationsMetadata implements AbstractOperationsMetadata {
         if (operation != null) {
             s.append("Operation:").append('\n');
             for (int i = 0; i < operation.size(); i++) {
-                if (operation.get(i) != null)
+                if (operation.get(i) != null) {
                     s.append(operation.get(i)).append('\n');
-                else
+                } else {
                     s.append("operation n").append(i).append(" is null").append('\n');
+                }
             }
         }
         if (parameter != null) {

@@ -16,6 +16,9 @@
  */
 package org.geotoolkit.csw.xml;
 
+import java.util.List;
+import javax.xml.namespace.QName;
+
 /**
  *
  * @author Guilhem Legal (Geomatys)
@@ -23,4 +26,7 @@ package org.geotoolkit.csw.xml;
  */
 public interface AbstractQuery {
 
+    void setTypeNames(final List<QName> typeNames);
+    
+    void setConstraint(final QueryConstraint value);
 }
