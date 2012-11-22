@@ -218,14 +218,11 @@ public class PostGISDialect extends AbstractSQLDialect {
     @Override
     public boolean includeTable(final String schemaName, final String tableName, final Connection cx)
                                 throws SQLException{
-        if (tableName.equals("geometry_columns")) {
-            //table
+        if (tableName.equals("geometry_columns") || tableName.startsWith("spatial_ref_sys")) {
+            //tables
             return false;
-        } else if (tableName.startsWith("spatial_ref_sys")) {
-            //table
-            return false;
-        } else if (tableName.startsWith("geography_columns")) {
-            //view
+        } else if (tableName.startsWith("geography_columns") || tableName.startsWith("raster_columns") || tableName.startsWith("raster_overviews")) {
+            //views
             return false;
         }
 

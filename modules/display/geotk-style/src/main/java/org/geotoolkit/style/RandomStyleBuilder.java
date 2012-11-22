@@ -53,7 +53,7 @@ import org.opengis.style.Symbolizer;
 /**
  * Random style builder. This is a convini class if you dont need special styles.
  * This class will provide you simple et good looking styles for your maps.
- * 
+ *
  * @author Johann Sorel
  * @module pending
  */
@@ -74,61 +74,61 @@ public class RandomStyleBuilder extends Factory {
         Color.ORANGE, Color.RED, Color.YELLOW.darker()
     };
 
-    private static final MutableStyleFactory SF = (MutableStyleFactory) 
+    private static final MutableStyleFactory SF = (MutableStyleFactory)
             FactoryFinder.getStyleFactory(new Hints(Hints.STYLE_FACTORY, MutableStyleFactory.class));
     private static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
-    
+
     private RandomStyleBuilder() {}
 
 
     public  static PointSymbolizer createRandomPointSymbolizer() {
-        
+
         final Unit uom = NonSI.PIXEL;
         final String geom = StyleConstants.DEFAULT_GEOM;
         final String name = null;
-        
+
         final List<GraphicalSymbol> symbols = new ArrayList<GraphicalSymbol>();
-        
+
         final Fill fill =  SF.fill( SF.literal(randomColor()), FF.literal(0.6f) );
         final Stroke stroke =  SF.stroke(randomColor(), 1);
         final Mark mark =  SF.mark(randomMarkShape(), stroke, fill);
         symbols.add(mark);
-        
+
         final Expression opa = FF.literal(1);
         final Expression size = FF.literal(randomPointSize());
         final Expression rotation = FF.literal(0);
         final AnchorPoint anchor =  SF.anchorPoint(0, 0);
         final Displacement displacement =  SF.displacement(0, 0);
-        
+
         final Graphic gra =  SF.graphic(symbols,opa,size,rotation,anchor,displacement);
-        
+
         return  SF.pointSymbolizer(name,geom,StyleConstants.DEFAULT_DESCRIPTION,uom,gra);
     }
 
     public  static LineSymbolizer createRandomLineSymbolizer() {
-        
+
         final Unit uom = NonSI.PIXEL;
         final String geom = StyleConstants.DEFAULT_GEOM;
         final String name = null;
-        
+
         final Stroke stroke =  SF.stroke(randomColor(), 1);
         final Expression offset = FF.literal(0);
-        
+
         return  SF.lineSymbolizer(name,geom,StyleConstants.DEFAULT_DESCRIPTION,uom,stroke,offset);
     }
 
     public  static PolygonSymbolizer createRandomPolygonSymbolizer() {
-        
+
         final Unit uom = NonSI.PIXEL;
         final String geom = StyleConstants.DEFAULT_GEOM;
         final String name = null;
-        
+
         final Fill fill =  SF.fill( SF.literal(randomColor()), FF.literal(0.6f) );
         final Stroke stroke =  SF.stroke(randomColor(), 1);
-        
+
         final Displacement displacement =  SF.displacement(0, 0);
         final Expression offset = FF.literal(0);
-        
+
         return  SF.polygonSymbolizer(name,geom,StyleConstants.DEFAULT_DESCRIPTION,uom,stroke, fill,displacement,offset);
     }
 
@@ -137,6 +137,10 @@ public class RandomStyleBuilder extends Factory {
         final Symbolizer ps;
 
         final AttributeDescriptor att = typ.getGeometryDescriptor();
+        // Can be null
+        if (att == null) {
+            return SF.style();
+        }
         final AttributeType type = att.getType();
 
         final Class cla = type.getBinding();
@@ -155,9 +159,9 @@ public class RandomStyleBuilder extends Factory {
         style.featureTypeStyles().add( SF.featureTypeStyle(ps));
         return style;
     }
-    
+
     public  static MutableStyle createRandomVectorStyle(final FeatureType typ) {
-        
+
         final Symbolizer ps;
         final AttributeDescriptor att = typ.getGeometryDescriptor();
         final AttributeType type = att.getType();
