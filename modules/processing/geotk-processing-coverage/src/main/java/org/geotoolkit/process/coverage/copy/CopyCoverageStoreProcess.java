@@ -50,6 +50,7 @@ import org.opengis.geometry.Envelope;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CompoundCRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.crs.ImageCRS;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.opengis.referencing.operation.MathTransform;
@@ -103,17 +104,24 @@ public class CopyCoverageStoreProcess extends AbstractProcess {
     private void saveCoverage(final CoverageStore outStore, final CoverageReference inRef)
             throws DataStoreException, TransformException, ProcessException
     {
+
+        final GridCoverageReader reader = inRef.createReader();
+        final GeneralGridGeometry globalGeom = reader.getGridGeometry(inRef.getImageIndex());
+        final CoordinateReferenceSystem crs = globalGeom.getCoordinateReferenceSystem();
+        final CoordinateSystem cs = crs.getCoordinateSystem();
+
+        if(crs instanceof ImageCRS){
+            //image is not georeferenced, we can't store it.
+            fireWarningOccurred("Image "+inRef.getName()+" does not have a CoordinateReferenceSystem, insertion is skipped.", 0, null);
+            return;
+        }
+
         final CoverageReference outRef = outStore.create(inRef.getName());
         if (!(outRef instanceof PyramidalModel)) {
             throw new DataStoreException("The given coverage reference is not a pyramidal model, "
                     + "this process only work with this kind of model.");
         }
         final PyramidalModel pm = (PyramidalModel) outRef;
-
-        final GridCoverageReader reader = inRef.createReader();
-        final GeneralGridGeometry globalGeom = reader.getGridGeometry(inRef.getImageIndex());
-        final CoordinateReferenceSystem crs = globalGeom.getCoordinateReferenceSystem();
-        final CoordinateSystem cs = crs.getCoordinateSystem();
 
         final Pyramid pyramid = pm.createPyramid(crs);
 
