@@ -19,6 +19,7 @@ package org.geotoolkit.feature.xml;
 
 import java.io.InputStream;
 import java.io.Reader;
+import java.net.URL;
 import java.util.List;
 import javax.xml.bind.JAXBException;
 import org.opengis.feature.type.FeatureType;
@@ -49,6 +50,15 @@ public interface XmlFeatureTypeReader extends Configurable {
      * @return A Feature type or {@code null}
      */
     public List<FeatureType> read(InputStream in) throws JAXBException;
+    
+    /**
+     * Read a list feature type from the specified XML (XSD) url.
+     *
+     * @param xml An Xml representation of the feature type.
+     *
+     * @return A Feature type or {@code null}
+     */
+    public List<FeatureType> read(URL url) throws JAXBException;
 
     /**
      * Read a feature type from the specified XML  (XSD) reader.

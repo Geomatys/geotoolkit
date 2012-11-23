@@ -34,6 +34,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.math.BigDecimal;
+import java.net.URL;
 import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -70,11 +71,7 @@ import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.xml.DomCompare;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.*;
 
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.type.FeatureType;
@@ -374,6 +371,14 @@ public class XmlFeatureTest {
 
         assertEquals(1, types.size());
         assertEquals(complexType, types.get(0));
+    }
+    
+    @Test
+    public void testReadVeryComplexFeatureType() throws Exception {
+        final XmlFeatureTypeReader reader = new JAXBFeatureTypeReader();
+        final URL url = new URL("http://schemas.opengis.net/gml/3.1.1/base/feature.xsd");
+        final List<FeatureType> types = reader.read(url);
+        System.out.println("RESULT:" + types);
     }
 
     @Test

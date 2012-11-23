@@ -51,7 +51,7 @@
   <!--     Dependencies                                            -->
   <!-- =========================================================== -->
   <properties>
-    <ardor.version>0.8-SNAPSHOT</ardor.version>
+    <ardor.version>0.9-SNAPSHOT</ardor.version>
   </properties>
 
     <dependencies>

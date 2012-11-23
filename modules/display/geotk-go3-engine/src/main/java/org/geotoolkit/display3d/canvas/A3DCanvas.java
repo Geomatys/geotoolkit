@@ -46,7 +46,7 @@ import java.nio.FloatBuffer;
 import java.util.concurrent.Callable;
 import java.util.concurrent.atomic.AtomicInteger;
 import javax.measure.unit.NonSI;
-import javax.media.opengl.GLCanvas;
+import javax.media.opengl.awt.GLCanvas;
 import org.geotoolkit.display.canvas.AbstractCanvas;
 import org.geotoolkit.display.container.AbstractContainer;
 import org.geotoolkit.display3d.container.A3DContainer;

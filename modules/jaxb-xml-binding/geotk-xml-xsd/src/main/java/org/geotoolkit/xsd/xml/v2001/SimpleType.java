@@ -71,6 +71,14 @@ public abstract class SimpleType extends Annotated {
     @XmlSchemaType(name = "NCName")
     private String name;
 
+    public SimpleType() {
+        
+    }
+    
+    public SimpleType(final String name) {
+        this.name = name;
+    }
+    
     /**
      * Gets the value of the restriction property.
      *
