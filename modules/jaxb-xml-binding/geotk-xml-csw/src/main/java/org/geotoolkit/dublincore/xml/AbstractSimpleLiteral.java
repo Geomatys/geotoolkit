@@ -45,4 +45,6 @@ public abstract class AbstractSimpleLiteral {
      * 
     */
     public abstract String getScheme();
+    
+    public abstract String getFirstValue();
 }

@@ -92,6 +92,7 @@ public class DomainType implements AbstractDomain {
     /**
      * return the default value for this domain
      */
+    @Override
     public String getDefaultValue() {
         return defaultValue;
     }

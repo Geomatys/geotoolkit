@@ -30,6 +30,8 @@ public interface AbstractDomain {
 
     List<? extends AbstractMetadata> getMetadata();
     
+    String getDefaultValue();
+    
     void setValue(final List<String> values);
     
     List<String> getValue();

@@ -140,6 +140,7 @@ public class OperationsMetadata implements AbstractOperationsMetadata {
      * @param service the initials of the web serviceType (WMS, SOS, WCS, CSW, ...).
      * This string correspound to the resource name in lower case.
      */
+    @Override
     public void updateURL(final String url) {
        for (Operation op: operation) {
             for (DCP dcp: op.getDCP()) {
@@ -222,6 +223,7 @@ public class OperationsMetadata implements AbstractOperationsMetadata {
      * Gets the value of the extendedCapabilities property.
      * 
      */
+    @Override
     public MultiLingualCapabilities getExtendedCapabilities() {
         return extendedCapabilities;
     }
@@ -230,6 +232,7 @@ public class OperationsMetadata implements AbstractOperationsMetadata {
      * Gets the value of the extendedCapabilities property.
      *
      */
+    @Override
     public void setExtendedCapabilities(final Object extendedCapabilities) {
         if (extendedCapabilities instanceof MultiLingualCapabilities) {
             this.extendedCapabilities = (MultiLingualCapabilities) extendedCapabilities;

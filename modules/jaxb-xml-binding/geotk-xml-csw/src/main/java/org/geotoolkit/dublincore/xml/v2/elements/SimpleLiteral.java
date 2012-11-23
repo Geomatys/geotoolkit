@@ -108,11 +108,20 @@ public class SimpleLiteral extends AbstractSimpleLiteral {
      * 
      * (unmodifiable) 
      */
+    @Override
     public List<String> getContent() {
         if (content == null) {
             content = new ArrayList<String>();
         }
         return Collections.unmodifiableList(content);
+    }
+    
+    @Override
+    public String getFirstValue() {
+        if (content != null && !content.isEmpty()) {
+            return content.get(0);
+        }
+        return null;
     }
     
     public void setContent(final List<String> content) {
@@ -129,6 +138,7 @@ public class SimpleLiteral extends AbstractSimpleLiteral {
     /**
      * Gets the value of the scheme property.
      */
+    @Override
     public String getScheme() {
         return scheme;
     }

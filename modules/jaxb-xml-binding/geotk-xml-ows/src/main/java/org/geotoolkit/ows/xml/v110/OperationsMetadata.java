@@ -157,6 +157,7 @@ public class OperationsMetadata implements AbstractOperationsMetadata {
      *
      * @param url The url of the web application.
      */
+    @Override
     public void updateURL(final String url) {
        for (Operation op: operation) {
             for (DCP dcp: op.getDCP()) {
@@ -228,10 +229,12 @@ public class OperationsMetadata implements AbstractOperationsMetadata {
      * Gets the value of the extendedCapabilities property.
      * 
      */
+    @Override
     public Object getExtendedCapabilities() {
         return extendedCapabilities;
     }
 
+    @Override
     public void setExtendedCapabilities(Object extendedCapabilities) {
         this.extendedCapabilities = extendedCapabilities;
     }

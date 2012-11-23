@@ -35,9 +35,15 @@ public interface DCMIRecord extends AbstractRecord {
     
     AbstractSimpleLiteral getIdentifier();
     
+    String getIdentifierStringValue();
+    
     AbstractSimpleLiteral getTitle();
     
+    String getTitleStringValue();
+    
     AbstractSimpleLiteral getType();
+    
+    String getTypeStringValue();
     
     List<? extends AbstractSimpleLiteral> getSubject();
     
@@ -47,7 +53,11 @@ public interface DCMIRecord extends AbstractRecord {
     
     List< ? extends AbstractSimpleLiteral> getAbstract();
     
+    String getAbstractStringValue();
+    
     List<? extends AbstractSimpleLiteral> getCreator();
+    
+    String getCreatorStringValue();
     
     AbstractSimpleLiteral getLanguage();
     
@@ -59,6 +69,8 @@ public interface DCMIRecord extends AbstractRecord {
     
     AbstractSimpleLiteral getDate();
     
+    String getDateStringValue();
+    
     List<? extends AbstractSimpleLiteral> getRights();
     
     AbstractSimpleLiteral getSpatial();
@@ -67,8 +79,18 @@ public interface DCMIRecord extends AbstractRecord {
     
     List<? extends AbstractSimpleLiteral> getPublisher();
     
+    String getPublisherStringValue();
+    
     List<? extends AbstractSimpleLiteral> getContributor();
     
+    String getContributorStringValue();
+    
     List<? extends AbstractSimpleLiteral> getDescription();
+    
+    String getDescriptionStringValue();
+    
+    List<String> getDescriptionStringValues();
+    
+    AbstractSimpleLiteral getDCProperty(final String property);
 
 }

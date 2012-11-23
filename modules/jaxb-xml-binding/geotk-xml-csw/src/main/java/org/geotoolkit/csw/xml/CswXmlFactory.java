@@ -27,6 +27,7 @@ import org.geotoolkit.ows.xml.AbstractDomain;
 import org.geotoolkit.ows.xml.AbstractOperationsMetadata;
 import org.geotoolkit.ows.xml.AbstractServiceIdentification;
 import org.geotoolkit.ows.xml.AbstractServiceProvider;
+import org.opengis.filter.Filter;
 import org.opengis.filter.capability.FilterCapabilities;
 import org.opengis.filter.sort.SortOrder;
 
@@ -100,6 +101,32 @@ public class CswXmlFactory {
             return null;
         } else if ("2.0.0".equals(version)) {
             return null;
+        } else {
+            throw new IllegalArgumentException("unsupported version:" + version);
+        }
+    }
+    
+    public static QueryConstraint createQueryConstraint(final String version, final Filter filter, final String filterVersion) {
+        if ("2.0.2".equals(version)) {
+            if (filter != null && !(filter instanceof org.geotoolkit.ogc.xml.v110.FilterType)) {
+                 throw new IllegalArgumentException("bad version of filter.");
+            }
+            return new org.geotoolkit.csw.xml.v202.QueryConstraintType((org.geotoolkit.ogc.xml.v110.FilterType) filter, filterVersion);
+        } else if ("2.0.0".equals(version)) {
+            if (filter != null && !(filter instanceof org.geotoolkit.ogc.xml.v110.FilterType)) {
+                 throw new IllegalArgumentException("bad version of filter.");
+            }
+            return new org.geotoolkit.csw.xml.v200.QueryConstraintType((org.geotoolkit.ogc.xml.v110.FilterType) filter, filterVersion);
+        } else {
+            throw new IllegalArgumentException("unsupported version:" + version);
+        }
+    }
+    
+    public static QueryConstraint createQueryConstraint(final String version, final String cqlText, final String filterVersion) {
+        if ("2.0.2".equals(version)) {
+            return new org.geotoolkit.csw.xml.v202.QueryConstraintType(cqlText, filterVersion);
+        } else if ("2.0.0".equals(version)) {
+            return new org.geotoolkit.csw.xml.v200.QueryConstraintType(cqlText, filterVersion);
         } else {
             throw new IllegalArgumentException("unsupported version:" + version);
         }

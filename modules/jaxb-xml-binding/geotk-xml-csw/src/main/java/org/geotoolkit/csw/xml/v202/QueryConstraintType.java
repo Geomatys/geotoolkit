@@ -93,6 +93,7 @@ public class QueryConstraintType implements QueryConstraint {
     /**
      * Gets the value of the filter property.
      */
+    @Override
     public FilterType getFilter() {
         return filter;
     }
@@ -100,6 +101,7 @@ public class QueryConstraintType implements QueryConstraint {
     /**
      * Gets the value of the cqlText property.
      */
+    @Override
     public String getCqlText() {
         return cqlText;
     }

@@ -40,5 +40,7 @@ public interface AbstractOperationsMetadata {
     
     void removeConstraint(final String name);
     
+    Object getExtendedCapabilities();
+    
     void setExtendedCapabilities(final Object extendedCapabilities);
 }

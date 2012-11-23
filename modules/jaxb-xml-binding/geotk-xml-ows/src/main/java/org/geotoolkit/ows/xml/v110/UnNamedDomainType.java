@@ -208,8 +208,11 @@ public class UnNamedDomainType {
      * Optional default value for this quantity, 
      * which should be included when this quantity has a default value. 
      */
-    public ValueType getDefaultValue() {
-        return defaultValue;
+    public String getDefaultValue() {
+        if (defaultValue != null) {
+            return defaultValue.getValue();
+        }
+        return null;
     }
 
     /**
