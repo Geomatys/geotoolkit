@@ -51,6 +51,7 @@ import org.geotoolkit.referencing.cs.DiscreteCoordinateSystemAxis;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.util.Cancellable;
+import org.geotoolkit.util.ImageIOUtilities;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
@@ -394,23 +395,7 @@ public class PyramidalModelReader extends GridCoverageReader{
                     } catch (IOException ex) {
                         throw new CoverageStoreException(ex.getMessage(),ex);
                     }finally{
-                        if(reader != null){
-                            Object readerinput = reader.getInput();
-                            if(readerinput instanceof InputStream){
-                                try {
-                                    ((InputStream)readerinput).close();
-                                } catch (IOException ex) {
-                                    throw new CoverageStoreException(ex);
-                                }
-                            }else if(readerinput instanceof ImageInputStream){
-                                try {
-                                    ((ImageInputStream)readerinput).close();
-                                } catch (IOException ex) {
-                                    throw new CoverageStoreException(ex);
-                                }
-                            }
-                            reader.dispose();
-                        }
+                        ImageIOUtilities.releaseReader(reader);
                     }
                 }
 
