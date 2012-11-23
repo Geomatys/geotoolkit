@@ -155,14 +155,14 @@ public class SequenceValueTransform1DTest {
     /**
      * Test MathTransform.
      *
-     * @param invert apply test on invert transform if true else not.
+     * @param testInvert apply test on invert transform if true else not.
      * @throws NoninvertibleTransformException
      * @throws TransformException
      */
-    private void testMath (boolean invert) throws NoninvertibleTransformException, TransformException {
+    private void testMath (boolean testInvert) throws NoninvertibleTransformException, TransformException {
         final MathTransform1D math1 = SequenceValueTransform1D.create(antecedent, values);
         MathTransform1D mathInvert = null;
-        if (invert) mathInvert = math1.inverse();
+        if (testInvert) mathInvert = math1.inverse();
         int step = 10;
         final int l = antecedent.length;
         for (int i = 0; i < l-1; i++) {
@@ -180,7 +180,7 @@ public class SequenceValueTransform1DTest {
                 //derivative
                 assertTrue(y-(v0+s*pasY) <= 1E-9);
                 if (s != step-1) assertTrue(math1.derivative(x) - deriv <= 1E-9);
-                if (invert) {
+                if (testInvert) {
                     //inverse transform
                     assertTrue(mathInvert.transform(y)-x <= 1E-9);
                     //inverse derivative

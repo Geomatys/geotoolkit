@@ -30,7 +30,7 @@ import org.opengis.referencing.operation.TransformException;
  * @author Johann Sorel (Geomatys)
  * @author Remi Marechal (Geomatys).
  */
-final class SequenceValueTransform1D extends AbstractMathTransform1D {
+public final class SequenceValueTransform1D extends AbstractMathTransform1D {
     private final double[] antecedent;
     private final double[] values;
     private boolean isIncreaseOrder = true;
