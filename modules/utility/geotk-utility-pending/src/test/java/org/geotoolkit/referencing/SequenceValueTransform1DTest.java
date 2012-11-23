@@ -108,6 +108,18 @@ public class SequenceValueTransform1DTest {
     }
 
     /**
+     * <p>antecedents in increasing order.<br/>
+     * values in random order.</p>
+     * @throws TransformException
+     */
+    @Test
+    public void testDcnsPercent() throws TransformException{
+        antecedent = new double[]{5, 6.5, 8, 10, 25, 28, 30, 32};
+        values     = new double[]{100, 66, 33, 0, 0, 33, 66, 100};
+        testMath(false);
+    }
+
+    /**
      * Test fail.
      */
     @Test
