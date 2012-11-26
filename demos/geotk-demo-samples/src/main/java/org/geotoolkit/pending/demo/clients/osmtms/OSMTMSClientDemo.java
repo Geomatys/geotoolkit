@@ -23,18 +23,18 @@ import org.opengis.parameter.ParameterValueGroup;
 
 
 public class OSMTMSClientDemo {
-    
+
     public static final MutableStyleFactory SF = new DefaultStyleFactory();
-    
+
     public static void main(String[] args) throws Exception {
         Demos.init();
-        
+
         final MapContext context = createOSMTMSContext();
-        
-        JMap2DFrame.show(context);
-        
+
+        JMap2DFrame.show(context,true,null);
+
     }
- 
+
     public static MapContext createOSMTMSContext() throws Exception{
         final MapContext context = MapBuilder.createContext(DefaultGeographicCRS.WGS84);
 
@@ -43,24 +43,24 @@ public class OSMTMSClientDemo {
         Parameters.getOrCreate(OSMTMSServerFactory.IMAGE_CACHE, params).setValue(true);
         Parameters.getOrCreate(OSMTMSServerFactory.NIO_QUERIES, params).setValue(true);
         Parameters.getOrCreate(OSMTMSServerFactory.MAX_ZOOM_LEVEL, params).setValue(18);
-        
+
         final CoverageStore store = CoverageStoreFinder.open(params);
-        
+
         for(Name n : store.getNames()){
             final CoverageReference cr = store.getCoverageReference(n);
             final CoverageMapLayer cml = MapBuilder.createCoverageLayer(cr, RandomStyleBuilder.createDefaultRasterStyle(), "");
             cml.setDescription(new DefaultDescription(
-                    new SimpleInternationalString(n.getLocalPart()), 
+                    new SimpleInternationalString(n.getLocalPart()),
                     new SimpleInternationalString("")));
             context.layers().add(cml);
         }
-        
+
         //Other available OSM TMS
         // http://a.tah.openstreetmap.org/Tiles/tile/   17
         // http://tile.opencyclemap.org/cycle/ 18
         // http://tile.cloudmade.com/fd093e52f0965d46bb1c6c6281022199/3/256/ 18
-                
+
         return context;
     }
-    
+
 }

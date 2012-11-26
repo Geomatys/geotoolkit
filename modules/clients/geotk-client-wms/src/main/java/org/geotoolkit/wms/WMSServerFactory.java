@@ -40,7 +40,7 @@ import org.opengis.parameter.*;
 
 /**
  * WMS Server factory.
- * 
+ *
  * @author Johann Sorel (Puzzle-GIS)
  * @module pending
  */
@@ -56,14 +56,14 @@ public class WMSServerFactory extends AbstractServerFactory implements CoverageS
         citation.setIdentifiers(Collections.singleton(id));
         IDENTIFICATION.setCitation(citation);
     }
-    
+
     public static final ParameterDescriptor<String> IDENTIFIER = createFixedIdentifier(NAME);
-    
+
     /**
      * Version, Mandatory.
      */
     public static final ParameterDescriptor<String> VERSION;
-            
+
     static{
         final String code = "version";
         final CharSequence remarks = I18N_VERSION;
@@ -74,20 +74,20 @@ public class WMSServerFactory extends AbstractServerFactory implements CoverageS
         for(WMSVersion version : WMSVersion.values()){
             validValues.add(version.getCode());
         }
-        
-        VERSION = new DefaultParameterDescriptor<String>(params, String.class, 
-                validValues.toArray(new String[validValues.size()]), 
+
+        VERSION = new DefaultParameterDescriptor<String>(params, String.class,
+                validValues.toArray(new String[validValues.size()]),
                 WMSVersion.v130.getCode(), null, null, null, true);
     }
-    
-    public static final ParameterDescriptorGroup PARAMETERS = 
-            new DefaultParameterDescriptorGroup("WMSParameters", IDENTIFIER,URL,VERSION,SECURITY);
+
+    public static final ParameterDescriptorGroup PARAMETERS =
+            new DefaultParameterDescriptorGroup("WMSParameters", IDENTIFIER,URL,VERSION,SECURITY,TIMEOUT);
 
     @Override
     public Identification getIdentification() {
         return IDENTIFICATION;
     }
-    
+
     @Override
     public ParameterDescriptorGroup getParametersDescriptor() {
         return PARAMETERS;
@@ -102,7 +102,7 @@ public class WMSServerFactory extends AbstractServerFactory implements CoverageS
     public CharSequence getDisplayName() {
         return new ResourceInternationalString("org/geotoolkit/wms/bundle", "coverageTitle");
     }
-    
+
     @Override
     public WebMapServer open(ParameterValueGroup params) throws DataStoreException {
         checkCanProcessWithError(params);
@@ -127,5 +127,5 @@ public class WMSServerFactory extends AbstractServerFactory implements CoverageS
     public CoverageStore create(ParameterValueGroup params) throws DataStoreException {
         throw new DataStoreException("Can not create new WMS coverage store.");
     }
-    
+
 }

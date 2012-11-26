@@ -19,6 +19,8 @@ package org.geotoolkit.client.map;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -322,18 +324,27 @@ public abstract class CachedPyramidSet extends DefaultPyramidSet {
 
         final int processors = Runtime.getRuntime().availableProcessors();
         final ExecutorService es = Executors.newFixedThreadPool(processors*2);
+
+        queue.addPropertyChangeListener(new PropertyChangeListener() {
+                    @Override
+                    public void propertyChange(PropertyChangeEvent evt) {
+                        es.shutdownNow();
+                    }
+                });
+
         final CountDownLatch latch = new CountDownLatch(downloadList.size()) {
             @Override
             public void countDown() {
                 super.countDown();
-                if (getCount() <= 0) {
+                if (getCount() <= 0 && !queue.isCancelled()) {
                     try {
                         //put a custom object, this is used in the iterator
                         //to detect the end.
                         queue.put(GridMosaic.END_OF_QUEUE);
                     } catch (InterruptedException ex) {
-                        LOGGER.log(Level.WARNING, ex.getMessage(), ex);
+                        LOGGER.log(Level.INFO, ex.getMessage(), ex);
                     }
+                    es.shutdown();
                 }
             }
         };
@@ -435,7 +446,7 @@ public abstract class CachedPyramidSet extends DefaultPyramidSet {
             final BufferedImage img;
             final ImageReader reader = ref.getImageReader();
             try{
-                img = ref.getImageReader().read(ref.getImageIndex());
+                img = reader.read(ref.getImageIndex());
             }finally{
                 ImageIOUtilities.releaseReader(reader);
             }

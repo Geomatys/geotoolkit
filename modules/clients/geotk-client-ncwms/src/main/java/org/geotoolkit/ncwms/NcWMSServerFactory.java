@@ -42,12 +42,12 @@ import org.opengis.parameter.*;
 
 /**
  * NcWMS Server factory.
- * 
+ *
  * @author Johann Sorel (Puzzle-GIS)
  * @module pending
  */
 public class NcWMSServerFactory extends AbstractServerFactory implements CoverageStoreFactory{
-        
+
     /** factory identification **/
     public static final String NAME = "ncWMS";
     public static final DefaultServiceIdentification IDENTIFICATION;
@@ -60,7 +60,7 @@ public class NcWMSServerFactory extends AbstractServerFactory implements Coverag
     }
 
     public static final ParameterDescriptor<String> IDENTIFIER = createFixedIdentifier(NAME);
-    
+
     /**
      * Version, Mandatory.
      */
@@ -75,20 +75,20 @@ public class NcWMSServerFactory extends AbstractServerFactory implements Coverag
         for(WMSVersion version : WMSVersion.values()){
             validValues.add(version.getCode());
         }
-        
-        VERSION = new DefaultParameterDescriptor<String>(params, String.class, 
-                validValues.toArray(new String[validValues.size()]), 
+
+        VERSION = new DefaultParameterDescriptor<String>(params, String.class,
+                validValues.toArray(new String[validValues.size()]),
                 WMSVersion.v130.getCode(), null, null, null, true);
     }
-    
-    public static final ParameterDescriptorGroup PARAMETERS = 
-            new DefaultParameterDescriptorGroup("NcWMSParameters", IDENTIFIER,URL,VERSION,SECURITY);
-    
+
+    public static final ParameterDescriptorGroup PARAMETERS =
+            new DefaultParameterDescriptorGroup("NcWMSParameters", IDENTIFIER,URL,VERSION,SECURITY,TIMEOUT);
+
     @Override
     public Identification getIdentification() {
         return IDENTIFICATION;
     }
-    
+
     @Override
     public ParameterDescriptorGroup getParametersDescriptor() {
         return PARAMETERS;
@@ -114,7 +114,7 @@ public class NcWMSServerFactory extends AbstractServerFactory implements Coverag
             final ParameterValue val = params.parameter(SECURITY.getName().getCode());
             security = (ClientSecurity) val.getValue();
         }catch(ParameterNotFoundException ex){}
-        
+
         return new NcWebMapServer(url,security,version,null);
     }
 
@@ -122,7 +122,7 @@ public class NcWMSServerFactory extends AbstractServerFactory implements Coverag
     public NcWebMapServer open(Map<String, ? extends Serializable> params) throws DataStoreException {
         return (NcWebMapServer) super.open(params);
     }
-    
+
     @Override
     public CoverageStore create(Map<String, ? extends Serializable> params) throws DataStoreException {
         throw new DataStoreException("Can not create new ncWMS coverage store.");
@@ -132,5 +132,5 @@ public class NcWMSServerFactory extends AbstractServerFactory implements Coverag
     public CoverageStore create(ParameterValueGroup params) throws DataStoreException {
         throw new DataStoreException("Can not create new ncWMS coverage store.");
     }
-    
+
 }

@@ -83,7 +83,7 @@ public class WMTSServerFactory extends AbstractServerFactory implements Coverage
 
     public static final ParameterDescriptorGroup PARAMETERS =
             new DefaultParameterDescriptorGroup("WMTSParameters",
-                IDENTIFIER,URL,VERSION, SECURITY, IMAGE_CACHE,NIO_QUERIES);
+                IDENTIFIER,URL,VERSION, SECURITY, IMAGE_CACHE,NIO_QUERIES,TIMEOUT);
 
     @Override
     public Identification getIdentification() {

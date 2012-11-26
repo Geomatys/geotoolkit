@@ -17,9 +17,7 @@
 package org.geotoolkit.osmtms;
 
 import java.util.logging.Logger;
-
 import org.geotoolkit.client.AbstractRequest;
-import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.util.logging.Logging;
 
 /**
@@ -28,7 +26,7 @@ import org.geotoolkit.util.logging.Logging;
  * @module pending
  */
 public class DefaultGetTile extends AbstractRequest implements GetTileRequest {
-    
+
     /**
      * Default logger for all GetMap requests.
      */
@@ -48,8 +46,8 @@ public class DefaultGetTile extends AbstractRequest implements GetTileRequest {
      *
      * @param serverURL The server url.
      */
-    protected DefaultGetTile(final String serverURL, final ClientSecurity security){
-        super(serverURL,security,null);
+    protected DefaultGetTile(final OSMTileMapServer server){
+        super(server);
     }
 
     @Override
@@ -63,7 +61,7 @@ public class DefaultGetTile extends AbstractRequest implements GetTileRequest {
         return sb.toString();
     }
 
-    
+
     @Override
     public int getScaleLevel() {
         return scale;

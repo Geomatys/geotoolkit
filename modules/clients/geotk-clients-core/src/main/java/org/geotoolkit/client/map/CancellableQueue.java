@@ -16,19 +16,24 @@
  */
 package org.geotoolkit.client.map;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.concurrent.ArrayBlockingQueue;
+import javax.swing.event.EventListenerList;
 import org.geotoolkit.util.Cancellable;
 
 /**
  * Cancellable queue.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
 public class CancellableQueue<T> extends ArrayBlockingQueue<T> implements Cancellable{
 
-    private boolean cancelled = false;
-    
+    private final EventListenerList lst = new EventListenerList();
+
+    private volatile boolean cancelled = false;
+
     public CancellableQueue(int capacity) {
         super(capacity);
     }
@@ -36,11 +41,26 @@ public class CancellableQueue<T> extends ArrayBlockingQueue<T> implements Cancel
     @Override
     public void cancel() {
         cancelled = true;
+        firePropertyChange();
     }
 
     @Override
     public boolean isCancelled() {
         return cancelled;
     }
-    
+
+    private void firePropertyChange(){
+        for(PropertyChangeListener l : lst.getListeners(PropertyChangeListener.class)){
+            l.propertyChange(new PropertyChangeEvent(this, "cancel", false, true));
+        }
+    }
+
+    public void addPropertyChangeListener(PropertyChangeListener l){
+        lst.add(PropertyChangeListener.class, l);
+    }
+
+    public void removePropertyChangeListener(PropertyChangeListener l){
+        lst.remove(PropertyChangeListener.class, l);
+    }
+
 }

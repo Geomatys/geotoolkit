@@ -39,10 +39,10 @@ import org.opengis.parameter.ParameterValueGroup;
  * @module pending
  */
 public class OSMTileMapServer extends AbstractServer implements CoverageStore{
-    
+
     private final OSMTMSPyramidSet pyramidSet;
     private final Name name;
-    
+
     /**
      * Builds a tile map server with the given server url and version.
      *
@@ -52,7 +52,7 @@ public class OSMTileMapServer extends AbstractServer implements CoverageStore{
     public OSMTileMapServer(final URL serverURL, final int maxZoomLevel) {
         this(serverURL,null,maxZoomLevel, false);
     }
-    
+
     /**
      * Builds a tile map server with the given server url, security and max zoom level.
      *
@@ -87,7 +87,7 @@ public class OSMTileMapServer extends AbstractServer implements CoverageStore{
         this.name = new DefaultName(serverURL.toString(),"main");
         pyramidSet = new OSMTMSPyramidSet(this,getMaxZoomLevel(),getCacheImage());
     }
-        
+
     @Override
     public OSMTMSServerFactory getFactory() {
         return (OSMTMSServerFactory)ServerFinder.getFactoryById(OSMTMSServerFactory.NAME);
@@ -96,11 +96,11 @@ public class OSMTileMapServer extends AbstractServer implements CoverageStore{
     public boolean getCacheImage(){
         return (Boolean)Parameters.getOrCreate(OSMTMSServerFactory.IMAGE_CACHE, parameters).getValue();
     }
-    
+
     public PyramidSet getPyramidSet(){
         return pyramidSet;
     }
-    
+
     /**
      * @return maximum scale level available on this server.
      */
@@ -112,7 +112,7 @@ public class OSMTileMapServer extends AbstractServer implements CoverageStore{
      * Returns the request object.
      */
     public GetTileRequest createGetTile() {
-        return new DefaultGetTile(serverURL.toString(),getClientSecurity());
+        return new DefaultGetTile(this);
     }
 
     @Override

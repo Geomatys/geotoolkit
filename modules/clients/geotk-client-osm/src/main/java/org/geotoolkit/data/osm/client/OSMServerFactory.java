@@ -36,7 +36,7 @@ import org.opengis.parameter.*;
 
 /**
  * Open Street Map Server factory.
- * 
+ *
  * @author Johann Sorel (Puzzle-GIS)
  * @module pending
  */
@@ -52,9 +52,9 @@ public class OSMServerFactory extends AbstractServerFactory{
         citation.setIdentifiers(Collections.singleton(id));
         IDENTIFICATION.setCitation(citation);
     }
-    
+
     public static final ParameterDescriptor<String> IDENTIFIER = createFixedIdentifier(NAME);
-    
+
     /**
      * Version, Mandatory.
      */
@@ -69,20 +69,20 @@ public class OSMServerFactory extends AbstractServerFactory{
         for(OSMVersion version : OSMVersion.values()){
             validValues.add(version.getCode());
         }
-        
-        VERSION = new DefaultParameterDescriptor<String>(params, String.class, 
-                validValues.toArray(new String[validValues.size()]), 
+
+        VERSION = new DefaultParameterDescriptor<String>(params, String.class,
+                validValues.toArray(new String[validValues.size()]),
                 OSMVersion.v060.getCode(), null, null, null, true);
     }
-    
-    public static final ParameterDescriptorGroup PARAMETERS = 
-            new DefaultParameterDescriptorGroup("OSMParameters", IDENTIFIER,URL,VERSION,SECURITY);
+
+    public static final ParameterDescriptorGroup PARAMETERS =
+            new DefaultParameterDescriptorGroup("OSMParameters", IDENTIFIER,URL,VERSION,SECURITY,TIMEOUT);
 
     @Override
     public Identification getIdentification() {
         return IDENTIFICATION;
     }
-    
+
     @Override
     public ParameterDescriptorGroup getParametersDescriptor() {
         return PARAMETERS;
@@ -98,11 +98,11 @@ public class OSMServerFactory extends AbstractServerFactory{
         return new ResourceInternationalString("org/geotoolkit/osm/bundle", "serverTitle");
     }
 
-    
+
     @Override
     public Server open(ParameterValueGroup params) throws DataStoreException {
         checkCanProcessWithError(params);
         return new OpenStreetMapServer(params);
     }
-    
+
 }

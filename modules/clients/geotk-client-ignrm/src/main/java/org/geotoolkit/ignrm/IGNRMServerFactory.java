@@ -39,7 +39,7 @@ import org.opengis.parameter.ParameterValueGroup;
 
 /**
  * IGN Right Management Server factory.
- * 
+ *
  * @author Johann Sorel (Puzzle-GIS)
  * @module pending
  */
@@ -55,17 +55,17 @@ public class IGNRMServerFactory extends AbstractServerFactory{
         citation.setIdentifiers(Collections.singleton(id));
         IDENTIFICATION.setCitation(citation);
     }
-    
+
     public static final ParameterDescriptor<String> IDENTIFIER = createFixedIdentifier(NAME);
-    
-    public static final ParameterDescriptorGroup PARAMETERS = 
-            new DefaultParameterDescriptorGroup("IGNRMParameters", IDENTIFIER,URL,SECURITY);
-    
+
+    public static final ParameterDescriptorGroup PARAMETERS =
+            new DefaultParameterDescriptorGroup("IGNRMParameters", IDENTIFIER,URL,SECURITY,TIMEOUT);
+
     @Override
     public Identification getIdentification() {
         return IDENTIFICATION;
     }
-    
+
     @Override
     public ParameterDescriptorGroup getParametersDescriptor() {
         return PARAMETERS;
@@ -90,8 +90,8 @@ public class IGNRMServerFactory extends AbstractServerFactory{
             final ParameterValue val = params.parameter(SECURITY.getName().getCode());
             security = (ClientSecurity) val.getValue();
         }catch(ParameterNotFoundException ex){}
-        
+
         return new IGNRMServer(url,security);
     }
-    
+
 }

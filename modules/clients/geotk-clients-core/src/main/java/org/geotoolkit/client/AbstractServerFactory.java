@@ -51,7 +51,7 @@ public abstract class AbstractServerFactory extends Factory implements ServerFac
      * commonly used translation for version parameters.
      */
     public static final InternationalString I18N_VERSION = new ResourceInternationalString("org/geotoolkit/client/bundle","version");
-    
+
     /**
      * Identifier, Mandatory.
      * Subclasses should redeclared this parameter with a different default value.
@@ -60,30 +60,30 @@ public abstract class AbstractServerFactory extends Factory implements ServerFac
             new DefaultParameterDescriptor<String>("identifier",
                     new ResourceInternationalString("org/geotoolkit/client/bundle", "identifier"),
                     String.class,null,true);
-    
+
     /**
      * Create the identifier descriptor, and set only one valid value, the one in parameter.
-     * 
+     *
      * TODO : Maybe change the string in parameter to string array.
      * @param idValue the value to use for identifier.
-     * 
-     * @return an identifier descriptor. 
+     *
+     * @return an identifier descriptor.
      */
     public static ParameterDescriptor<String> createFixedIdentifier(String idValue) {
             return new DefaultParameterDescriptor<String>(
-            MapUtilities.buildMap(DefaultParameterDescriptor.NAME_KEY,             
-                                 IDENTIFIER.getName().getCode(), 
-                                 DefaultParameterDescriptor.REMARKS_KEY, 
+            MapUtilities.buildMap(DefaultParameterDescriptor.NAME_KEY,
+                                 IDENTIFIER.getName().getCode(),
+                                 DefaultParameterDescriptor.REMARKS_KEY,
                                  AbstractServerFactory.IDENTIFIER.getRemarks()),
-            String.class, 
-            new String[]{idValue}, 
+            String.class,
+            new String[]{idValue},
             idValue,
             null,
             null,
             null,
             true);
     }
-    
+
     /**
      * Server URL, Mandatory.
      */
@@ -98,14 +98,23 @@ public abstract class AbstractServerFactory extends Factory implements ServerFac
             new DefaultParameterDescriptor<ClientSecurity>("security",
                     new ResourceInternationalString("org/geotoolkit/client/bundle", "security"),
                     ClientSecurity.class,null,false);
-    
+
     /**
      * Cache images in memory, Optional.
      */
     public static final ParameterDescriptor<Boolean> IMAGE_CACHE =
-            new DefaultParameterDescriptor<Boolean>("imagecache", 
+            new DefaultParameterDescriptor<Boolean>("imagecache",
                     new ResourceInternationalString("org/geotoolkit/client/bundle", "imageCache"),
                     Boolean.class,false,false);
+
+    /**
+     * Cache images in memory, Optional.
+     * Default value is 20.000 millisecond.
+     */
+    public static final ParameterDescriptor<Integer> TIMEOUT =
+            new DefaultParameterDescriptor<Integer>("timeout",
+                    new ResourceInternationalString("org/geotoolkit/client/bundle", "timeout"),
+                    Integer.class,20000,false);
     /**
      * Use NIO when possible for queries, Optional.
      */
@@ -113,8 +122,8 @@ public abstract class AbstractServerFactory extends Factory implements ServerFac
             new DefaultParameterDescriptor<Boolean>("nio",
                     new ResourceInternationalString("org/geotoolkit/client/bundle", "nio"),
                     Boolean.class,Boolean.FALSE,false);
-    
-    /** 
+
+    /**
      * Default Implementation abuses the naming convention.
      * <p>
      * Will return <code>Foo</code> for
@@ -132,8 +141,8 @@ public abstract class AbstractServerFactory extends Factory implements ServerFac
         }
         return name;
     }
-    
-    /** 
+
+    /**
      * Default Implementation returns the display name.
      * @return return display name
      */
@@ -141,14 +150,14 @@ public abstract class AbstractServerFactory extends Factory implements ServerFac
     public CharSequence getDescription() {
         return getDisplayName();
     }
-    
+
     /**
      * {@inheritDoc }
      */
     @Override
     public Server open(Map<String, ? extends Serializable> params) throws DataStoreException {
         params = forceIdentifier(params);
-        
+
         final ParameterValueGroup prm = FeatureUtilities.toParameter(params,getParametersDescriptor());
         if(prm == null){
             return null;
@@ -166,7 +175,7 @@ public abstract class AbstractServerFactory extends Factory implements ServerFac
     @Override
     public boolean canProcess(Map<String, ? extends Serializable> params) {
         params = forceIdentifier(params);
-        
+
         final ParameterValueGroup prm = FeatureUtilities.toParameter(params,getParametersDescriptor());
         if(prm == null){
             return false;
@@ -186,18 +195,18 @@ public abstract class AbstractServerFactory extends Factory implements ServerFac
         if(params == null){
             return false;
         }
-        
+
         //check identifier value is exist
         final boolean validId = checkIdentifier(params);
         if(!validId){
             return false;
         }
-        
+
         final ParameterDescriptorGroup desc = getParametersDescriptor();
         if(!desc.getName().getCode().equalsIgnoreCase(params.getDescriptor().getName().getCode())){
             return false;
         }
-        
+
         final ConformanceResult result = Parameters.isValid(params, getParametersDescriptor());
         return (result != null) && Boolean.TRUE.equals(result.pass());
     }
@@ -211,12 +220,12 @@ public abstract class AbstractServerFactory extends Factory implements ServerFac
         result.setPass(Boolean.TRUE);
         return result;
     }
-    
+
     /**
      * Set the identifier parameter in the map if not present.
      */
     private Map<String,Serializable> forceIdentifier(Map params){
-        
+
         if(!params.containsKey(IDENTIFIER.getName().getCode())){
             //identifier is not specified, force it
             final ParameterDescriptorGroup desc = getParametersDescriptor();
@@ -226,29 +235,29 @@ public abstract class AbstractServerFactory extends Factory implements ServerFac
         }
         return params;
     }
-            
+
     /**
      * Check if the Identifier parameter exist.
      * if it exist, it must be set to 'value' otherwise return false.
      * if not present, return true;
-     * @return 
+     * @return
      */
     protected boolean checkIdentifier(final ParameterValueGroup params){
         final String expectedId = ((ParameterDescriptor<String>)getParametersDescriptor()
                 .descriptor(IDENTIFIER.getName().getCode())).getDefaultValue();
-        
+
         for(GeneralParameterValue val : params.values()){
             if(val.getDescriptor().getName().getCode().equals(IDENTIFIER.getName().getCode())){
                 final Object candidate = ((ParameterValue)val).getValue();
                 return expectedId.equals(candidate);
             }
         }
-        
+
         return true;
     }
-    
+
     /**
-     * @see #checkIdentifier(org.opengis.parameter.ParameterValueGroup) 
+     * @see #checkIdentifier(org.opengis.parameter.ParameterValueGroup)
      * @throws DataStoreException if identifier is not valid
      */
     protected void checkCanProcessWithError(final ParameterValueGroup params) throws DataStoreException{
@@ -257,5 +266,5 @@ public abstract class AbstractServerFactory extends Factory implements ServerFac
             throw new DataStoreException("Parameter values not supported by this factory.");
         }
     }
-    
+
 }

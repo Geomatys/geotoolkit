@@ -58,9 +58,9 @@ public class WFSDataStoreFactory extends AbstractFeatureStoreFactory implements 
         citation.setIdentifiers(Collections.singleton(id));
         IDENTIFICATION.setCitation(citation);
     }
-    
+
     public static final ParameterDescriptor<String> IDENTIFIER = createFixedIdentifier(NAME);
-    
+
     /**
      * Version, Mandatory.
      */
@@ -75,9 +75,9 @@ public class WFSDataStoreFactory extends AbstractFeatureStoreFactory implements 
         for(WFSVersion version : WFSVersion.values()){
             validValues.add(version.getCode());
         }
-        
-        VERSION = new DefaultParameterDescriptor<String>(params, String.class, 
-                validValues.toArray(new String[validValues.size()]), 
+
+        VERSION = new DefaultParameterDescriptor<String>(params, String.class,
+                validValues.toArray(new String[validValues.size()]),
                 WFSVersion.v110.getCode(), null, null, null, true);
     }
     /**
@@ -86,24 +86,25 @@ public class WFSDataStoreFactory extends AbstractFeatureStoreFactory implements 
     public static final ParameterDescriptor<Boolean> POST_REQUEST =
             new DefaultParameterDescriptor<Boolean>("post",
                     new ResourceInternationalString("org/geotoolkit/wfs/bundle", "post"),
-                    Boolean.class,false,false);    
+                    Boolean.class,false,false);
     /**
      * Optional use true CRS axis ordering.
      */
     public static final ParameterDescriptor<Boolean> LONGITUDE_FIRST =
             new DefaultParameterDescriptor<Boolean>("longitudeFirst",
                     new ResourceInternationalString("org/geotoolkit/wfs/bundle", "longitudeFirst"),
-                    Boolean.class,false,false);    
+                    Boolean.class,false,false);
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
             new DefaultParameterDescriptorGroup("WFSParameters",
-                IDENTIFIER, AbstractServerFactory.URL, VERSION, AbstractServerFactory.SECURITY, LONGITUDE_FIRST,POST_REQUEST);
+                IDENTIFIER, AbstractServerFactory.URL, VERSION, AbstractServerFactory.SECURITY,
+                LONGITUDE_FIRST,POST_REQUEST,AbstractServerFactory.TIMEOUT);
 
     @Override
     public Identification getIdentification() {
         return IDENTIFICATION;
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -116,8 +117,8 @@ public class WFSDataStoreFactory extends AbstractFeatureStoreFactory implements 
     public CharSequence getDisplayName() {
         return new ResourceInternationalString("org/geotoolkit/wfs/bundle", "datastoreTitle");
     }
-    
-    
+
+
 
     /**
      * {@inheritDoc }
@@ -142,7 +143,7 @@ public class WFSDataStoreFactory extends AbstractFeatureStoreFactory implements 
     public WebFeatureServer create(Map<String, ? extends Serializable> params) throws DataStoreException {
         return (WebFeatureServer)super.create(params);
     }
-    
+
     /**
      * {@inheritDoc }
      */
