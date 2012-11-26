@@ -99,7 +99,8 @@ public class PyramidalModelReader extends GridCoverageReader{
     @Override
     public List<? extends GenericName> getCoverageNames() throws CoverageStoreException, CancellationException {
         final NameFactory dnf = FactoryFinder.getNameFactory(null);
-        final NameSpace ns = dnf.createNameSpace(dnf.createGenericName(null, getInput().getName().getNamespaceURI()), null);
+        final String nameSpace = getInput().getName().getNamespaceURI() != null ? getInput().getName().getNamespaceURI() : "http://geotoolkit.org" ;
+        final NameSpace ns = dnf.createNameSpace(dnf.createGenericName(null, nameSpace), null);
         final GenericName gn = dnf.createLocalName(ns, getInput().getName().getLocalPart());
         return Collections.singletonList(gn);
     }
