@@ -42,7 +42,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Johann Sorel (Geomatys)
  */
 public class PGCoverageStore extends AbstractCoverageStore{
-    
+
     private ThreadedEpsgFactory epsgfactory;
     private DataSource source;
     private int fetchSize;
@@ -51,7 +51,7 @@ public class PGCoverageStore extends AbstractCoverageStore{
     public PGCoverageStore(final ParameterValueGroup params, final DataSource source){
         super(params);
         this.source = source;
-        
+
     }
 
     public int getFetchSize() {
@@ -73,7 +73,7 @@ public class PGCoverageStore extends AbstractCoverageStore{
     public DataSource getDataSource() {
         return source;
     }
-    
+
     public synchronized ThreadedEpsgFactory getEPSGFactory() throws SQLException{
         if(epsgfactory == null){
             epsgfactory = new ThreadedEpsgFactory(source);
@@ -90,9 +90,9 @@ public class PGCoverageStore extends AbstractCoverageStore{
     public Set<Name> getNames() throws DataStoreException {
         final Set<Name> names = new HashSet<Name>();
         final String ns = getDefaultNamespace();
-        
+
         final StringBuilder query = new StringBuilder();
-        
+
         query.append("SELECT name FROM ");
         query.append(encodeTableName("Layer"));
 
@@ -122,14 +122,14 @@ public class PGCoverageStore extends AbstractCoverageStore{
 
     @Override
     public CoverageReference create(Name name) throws DataStoreException {
-        
-        final StringBuilder query = new StringBuilder();        
+
+        final StringBuilder query = new StringBuilder();
         query.append("INSERT INTO ");
         query.append(encodeTableName("Layer"));
         query.append("(name) VALUES ('");
         query.append(name.getLocalPart());
         query.append("')");
-        
+
         Connection cnx = null;
         Statement stmt = null;
         ResultSet rs = null;
@@ -142,7 +142,7 @@ public class PGCoverageStore extends AbstractCoverageStore{
         } finally {
             closeSafe(cnx,stmt,rs);
         }
-        
+
         return getCoverageReference(new DefaultName(getDefaultNamespace(), name.getLocalPart()));
     }
 
@@ -152,19 +152,19 @@ public class PGCoverageStore extends AbstractCoverageStore{
     }
 
     int getLayerId(String name) throws SQLException {
-        final StringBuilder query = new StringBuilder();        
+        final StringBuilder query = new StringBuilder();
         query.append("SELECT id FROM ");
         query.append(encodeTableName("Layer"));
         query.append(" WHERE name='");
         query.append(name);
         query.append("'");
-        
+
         Connection cnx = null;
         Statement stmt = null;
         ResultSet rs = null;
         try {
             cnx = source.getConnection();
-            stmt = cnx.createStatement();            
+            stmt = cnx.createStatement();
             rs = stmt.executeQuery(query.toString());
             if(rs.next()){
                 return rs.getInt(1);
@@ -174,10 +174,10 @@ public class PGCoverageStore extends AbstractCoverageStore{
         } finally {
             closeSafe(cnx,stmt,rs);
         }
-        
+
     }
-    
-    
+
+
     ////////////////////////////////////////////////////////////////////////////
     // Connection utils ////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
@@ -190,7 +190,7 @@ public class PGCoverageStore extends AbstractCoverageStore{
             return "\""+schema+"\".\""+name+"\"";
         }
     }
-    
+
     public void closeSafe(final Connection cx, final Statement st, final ResultSet rs){
         closeSafe(cx);
         closeSafe(st);
@@ -248,7 +248,7 @@ public class PGCoverageStore extends AbstractCoverageStore{
             }
         }
     }
-    
+
     @Override
     public void dispose() {
         if (source instanceof ManageableDataSource) {

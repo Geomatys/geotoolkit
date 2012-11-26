@@ -234,6 +234,7 @@ public class PGCoverageStoreFactory extends AbstractCoverageStoreFactory{
         }finally{
             if(store != null){
                 store.closeSafe(cnx, stmt, rs);
+                store.dispose();
             }
         }
     }
