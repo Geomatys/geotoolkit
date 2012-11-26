@@ -28,6 +28,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+import javax.measure.unit.Unit;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -118,11 +119,20 @@ public class JAdditionalAxisNavigator extends JPanel implements ContextListener{
                 if(tmpVal instanceof CoordinateReferenceSystem){
                     final CoordinateReferenceSystem crs = (CoordinateReferenceSystem) tmpVal;
                     final StringBuilder sb = new StringBuilder();
-                    sb.append(crs.getCoordinateSystem().getAxis(0).getDirection().identifier().toUpperCase());
-                    sb.append(" (");
-                    sb.append(crs.getCoordinateSystem().getAxis(0).getUnit());
-                    sb.append(") ");
-                    sb.append(crs.getName().getCode());
+                    final CoordinateSystemAxis axi = crs.getCoordinateSystem().getAxis(0);
+                    if(axi != null){
+                        if(axi.getDirection() != null && axi.getDirection().identifier() != null){
+                            sb.append(axi.getDirection().identifier().toUpperCase());
+                        }
+
+                        final Unit unit = axi.getUnit();
+                        if(unit != null){
+                            sb.append(" (");
+                            sb.append(unit);
+                            sb.append(") ");
+                        }
+                        sb.append(crs.getName().getCode());
+                    }
                     lbl.setText(sb.toString());
                 }
 
