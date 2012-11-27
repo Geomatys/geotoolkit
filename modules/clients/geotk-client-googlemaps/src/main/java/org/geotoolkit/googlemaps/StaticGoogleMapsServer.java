@@ -35,15 +35,15 @@ import org.opengis.parameter.ParameterValueGroup;
 
 /**
  * Client for google static maps.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
 public class StaticGoogleMapsServer extends AbstractServer implements CoverageStore{
-    
+
     public static final URL DEFAULT_GOOGLE_STATIC_MAPS;
     private static final Set<Name> LAYER_NAMES;
-    
+
     static {
         try {
             DEFAULT_GOOGLE_STATIC_MAPS = new URL("http://maps.google.com/maps/api/staticmap");
@@ -51,7 +51,7 @@ public class StaticGoogleMapsServer extends AbstractServer implements CoverageSt
             //will not happen
             throw new RuntimeException(ex.getLocalizedMessage(),ex);
         }
-        
+
         final Set<Name> names = new HashSet<Name>();
         names.add(DefaultName.valueOf("{http://google.com}"+GetMapRequest.TYPE_HYBRID));
         names.add(DefaultName.valueOf("{http://google.com}"+GetMapRequest.TYPE_ROADMAP));
@@ -59,14 +59,14 @@ public class StaticGoogleMapsServer extends AbstractServer implements CoverageSt
         names.add(DefaultName.valueOf("{http://google.com}"+GetMapRequest.TYPE_TERRAIN));
         LAYER_NAMES = Collections.unmodifiableSet(names);
     }
-        
+
     /**
      * Builds a google maps server with the default google server address.
      */
     public StaticGoogleMapsServer() {
         this(DEFAULT_GOOGLE_STATIC_MAPS,null);
     }
-    
+
     /**
      * Builds a google maps server with the given server url.
      *
@@ -76,13 +76,13 @@ public class StaticGoogleMapsServer extends AbstractServer implements CoverageSt
     public StaticGoogleMapsServer(final URL serverURL, final String key) {
         this(serverURL,key,null,false);
     }
-    
-    public StaticGoogleMapsServer(final URL serverURL, final String key, 
+
+    public StaticGoogleMapsServer(final URL serverURL, final String key,
             final ClientSecurity security, boolean cacheImage) {
         super(create(StaticGoogleServerFactory.PARAMETERS, serverURL, security));
         Parameters.getOrCreate(StaticGoogleServerFactory.IMAGE_CACHE, parameters).setValue(cacheImage);
     }
-    
+
     public StaticGoogleMapsServer(ParameterValueGroup params) {
         super(params);
     }
@@ -91,11 +91,11 @@ public class StaticGoogleMapsServer extends AbstractServer implements CoverageSt
     public StaticGoogleServerFactory getFactory() {
         return (StaticGoogleServerFactory) ServerFinder.getFactoryById(StaticGoogleServerFactory.NAME);
     }
-        
+
     public boolean getCacheImage(){
         return (Boolean)Parameters.getOrCreate(AbstractServerFactory.IMAGE_CACHE, parameters).getValue();
     }
-    
+
     @Override
     public Set<Name> getNames() {
         return LAYER_NAMES;
@@ -114,5 +114,9 @@ public class StaticGoogleMapsServer extends AbstractServer implements CoverageSt
     public CoverageReference create(Name name) throws DataStoreException {
         throw new DataStoreException("Can not create new coverage.");
     }
-    
+
+    @Override
+    public void delete(Name name) throws DataStoreException {
+        throw new DataStoreException("Can not create new coverage.");
+    }
 }

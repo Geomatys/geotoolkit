@@ -137,4 +137,8 @@ public class OSMTileMapServer extends AbstractServer implements CoverageStore{
         throw new DataStoreException("Can not create new coverage.");
     }
 
+    @Override
+    public void delete(Name name) throws DataStoreException {
+        throw new DataStoreException("Can not create new coverage.");
+    }
 }
