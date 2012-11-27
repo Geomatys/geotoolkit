@@ -95,7 +95,7 @@ public final class SequenceValueTransform1D extends AbstractMathTransform1D {
         if (d <= antecedent[ida]) return values[ida];
         if (d >= antecedent[idb]) return values[idb];
         double x0, x1;
-        for (int id = 0; id < l; id++) {
+        for (int id = 0; id < l-1; id++) {
             x0 = antecedent[idn];
             x1 = antecedent[idn1];
             if      (d == x0) return values[idn];
