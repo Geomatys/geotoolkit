@@ -147,6 +147,29 @@ public class PGCoverageStore extends AbstractCoverageStore{
     }
 
     @Override
+    public void delete(Name name) throws DataStoreException {
+        final StringBuilder query = new StringBuilder();
+        query.append("DELETE FROM ");
+        query.append(encodeTableName("Layer"));
+        query.append(" WHERE name='");
+        query.append(name.getLocalPart());
+        query.append("'");
+
+        Connection cnx = null;
+        Statement stmt = null;
+        ResultSet rs = null;
+        try {
+            cnx = source.getConnection();
+            stmt = cnx.createStatement();
+            stmt.execute(query.toString());
+        } catch (SQLException ex) {
+            throw new DataStoreException(ex);
+        } finally {
+            closeSafe(cnx,stmt,rs);
+        }
+    }
+
+    @Override
     public Logger getLogger() {
         return super.getLogger();
     }

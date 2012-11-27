@@ -68,6 +68,14 @@ public interface CoverageStore {
     CoverageReference create(Name name) throws DataStoreException;
 
     /**
+     * Delete an existing coverage reference.
+     *
+     * @param name
+     * @throws DataStoreException
+     */
+    void delete(Name name) throws DataStoreException;
+
+    /**
      * Dispose the coveragestore caches and underlying resources.
      * The CoverageStore should not be used after this call or it may raise errors.
      */

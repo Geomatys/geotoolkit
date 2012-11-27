@@ -35,9 +35,9 @@ import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.parameter.Parameters;
-import org.geotoolkit.process.Process;
 import static org.geotoolkit.parameter.Parameters.*;
 import org.geotoolkit.process.AbstractProcess;
+import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessException;
 import static org.geotoolkit.process.coverage.copy.CopyCoverageStoreDescriptor.*;
 import org.geotoolkit.process.coverage.straighten.StraightenDescriptor;
@@ -78,13 +78,14 @@ public class CopyCoverageStoreProcess extends AbstractProcess {
      */
     @Override
     protected void execute() throws ProcessException {
-        final CoverageStore inStore = value(STORE_IN, inputParameters);
+        final CoverageStore inStore  = value(STORE_IN,  inputParameters);
         final CoverageStore outStore = value(STORE_OUT, inputParameters);
+        final Boolean       erase    = value(ERASE,     inputParameters);
 
         try {
             for(Name n : inStore.getNames()){
                 final CoverageReference ref = inStore.getCoverageReference(n);
-                saveCoverage(outStore, ref);
+                saveCoverage(outStore, ref, erase);
             }
         } catch (DataStoreException ex) {
             throw new ProcessException(ex.getLocalizedMessage(), this, ex);
@@ -98,25 +99,33 @@ public class CopyCoverageStoreProcess extends AbstractProcess {
      *
      * @param outStore Coverage store in which to copy values.
      * @param inRef Coverage to store.
+     * @param erase {@code True} if the data must be erased.
+     *
      * @throws DataStoreException
      * @throws TransformException
      */
-    private void saveCoverage(final CoverageStore outStore, final CoverageReference inRef)
+    private void saveCoverage(final CoverageStore outStore, final CoverageReference inRef, final Boolean erase)
             throws DataStoreException, TransformException, ProcessException
     {
 
         final GridCoverageReader reader = inRef.createReader();
-        final GeneralGridGeometry globalGeom = reader.getGridGeometry(inRef.getImageIndex());
+        final int imageIndex = inRef.getImageIndex();
+        final GeneralGridGeometry globalGeom = reader.getGridGeometry(imageIndex);
         final CoordinateReferenceSystem crs = globalGeom.getCoordinateReferenceSystem();
         final CoordinateSystem cs = crs.getCoordinateSystem();
 
+        final Name name = inRef.getName();
         if(crs instanceof ImageCRS){
             //image is not georeferenced, we can't store it.
-            fireWarningOccurred("Image "+inRef.getName()+" does not have a CoordinateReferenceSystem, insertion is skipped.", 0, null);
+            fireWarningOccurred("Image "+name+" does not have a CoordinateReferenceSystem, insertion is skipped.", 0, null);
             return;
         }
 
-        final CoverageReference outRef = outStore.create(inRef.getName());
+        if (erase) {
+            outStore.delete(name);
+        }
+
+        final CoverageReference outRef = outStore.create(name);
         if (!(outRef instanceof PyramidalModel)) {
             throw new DataStoreException("The given coverage reference is not a pyramidal model, "
                     + "this process only work with this kind of model.");
@@ -145,7 +154,7 @@ public class CopyCoverageStoreProcess extends AbstractProcess {
 
         if (possibilities.isEmpty()) {
             //only a single image to insert
-            saveMosaic(pm, pyramid, reader, inRef.getImageIndex(), null);
+            saveMosaic(pm, pyramid, reader, imageIndex, null);
 
         } else {
             //multiple dimensions to insert
@@ -154,7 +163,7 @@ public class CopyCoverageStoreProcess extends AbstractProcess {
 
             Envelope ce = ite.next();
             do {
-                saveMosaic(pm, pyramid, reader, inRef.getImageIndex(), ce);
+                saveMosaic(pm, pyramid, reader, imageIndex, ce);
                 ce = ite.next();
             } while (ce != null);
         }

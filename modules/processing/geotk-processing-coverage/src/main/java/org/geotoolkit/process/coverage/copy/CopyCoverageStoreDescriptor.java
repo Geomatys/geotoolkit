@@ -52,10 +52,17 @@ public class CopyCoverageStoreDescriptor extends AbstractProcessDescriptor {
     public static final ParameterDescriptor<CoverageStore> STORE_OUT =
             new DefaultParameterDescriptor("store_out", "Output coverage store", CoverageStore.class, null, true);
 
+    /**
+     * Mandatory - drop before insertion or not.
+     */
+    public static final ParameterDescriptor<Boolean> ERASE =
+            new DefaultParameterDescriptor("erase", "Erase type if already presents.",
+            Boolean.class, false, true);
+
     /**Input parameters */
     public static final ParameterDescriptorGroup INPUT_DESC =
             new DefaultParameterDescriptorGroup("InputParameters",
-            new GeneralParameterDescriptor[]{STORE_IN, STORE_OUT});
+            new GeneralParameterDescriptor[]{STORE_IN, STORE_OUT, ERASE});
 
     /**Output parameters */
     public static final ParameterDescriptorGroup OUTPUT_DESC =
