@@ -609,7 +609,9 @@ public class EPSGWriter {
                 target_uom_code = uom_code;
                 unit_of_meas_type = "temp";            
             }else{
-                throw new FactoryException("Can not store given uom : " +candidate);
+                //refer to self
+                target_uom_code = uom_code;
+                unit_of_meas_type = "unknow";      
             }
         
             cnx = source.getConnection();
