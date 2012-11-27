@@ -114,9 +114,6 @@ public class JPropertyDialog extends JDialog{
         close.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if(activePanel != null){
-                    activePanel.apply();
-                }
                 dispose();
             }
         });
@@ -138,7 +135,9 @@ public class JPropertyDialog extends JDialog{
             if(panels.size()>1){
                 add(BorderLayout.CENTER,tabs);
             }else if(panels.size() == 1){
-                add(BorderLayout.CENTER,(JComponent)panels.get(0));
+                final JComponent comp = (JComponent)panels.get(0);
+                add(BorderLayout.CENTER,comp);
+                activePanel = (PropertyPane) comp;
             }
         }      
         super.setVisible(b);
