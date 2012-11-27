@@ -77,6 +77,11 @@ public class CoverageSQLStore extends CoverageDatabase implements CoverageStore 
         throw new DataStoreException("Not supported.");
     }
 
+    @Override
+    public void delete(Name name) throws DataStoreException {
+        throw new DataStoreException("Not supported.");
+    }
+
     private class CoverageSQLLayerReference implements CoverageReference {
 
         private final Name name;
