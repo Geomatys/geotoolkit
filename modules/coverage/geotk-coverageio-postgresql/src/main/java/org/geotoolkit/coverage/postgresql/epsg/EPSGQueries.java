@@ -18,6 +18,7 @@
 package org.geotoolkit.coverage.postgresql.epsg;
 
 import java.lang.reflect.Field;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Types;
@@ -33,6 +34,7 @@ import java.util.ResourceBundle;
 public enum EPSGQueries {
 
     NEXT_CODE,
+    
     CREATE_ALIAS,
     CREATE_AREA,
     CREATE_CHANGE,
@@ -53,7 +55,15 @@ public enum EPSGQueries {
     CREATE_PRIME_MERIDIAN,
     CREATE_SUPERSESSION,
     CREATE_UNIT_OF_MEASURE,
-    CREATE_VERSION_HISTORY;
+    CREATE_VERSION_HISTORY,
+    
+    FIND_COORDINATE_REFERENCE_SYSTEM,
+    FIND_COORDINATE_SYSTEM,
+    FIND_DATUM,
+    FIND_ELLIPSOID,
+    FIND_PRIME_MERIDIAN,
+    FIND_UNIT_OF_MEASURE,
+    FIND_UNIT_OF_MEASURE_SELF;
     
     private final String query;
     private final Integer[] parameters;
@@ -100,10 +110,81 @@ public enum EPSGQueries {
         return parameters.length;
     }
 
+    /**
+     * Create and fill prepared statement.
+     * The original query statement may be modified if some parameters are null.
+     * example : SELECT * FROM house WHERE user=[INTEGER]?
+     * will be replaced by : SELECT * FROM house WHERE user IS NULL , if paramter is null.
+     */
+    public PreparedStatement createStatement(final Connection cnx, Object ... params) throws SQLException {
+        
+        final int nb = getNbParameters();        
+        if(nb != params.length){
+            throw new SQLException("Was expecting "+nb+" parameters for query but only received "+params.length);
+        }
+        
+        boolean hasNullValue = false;
+        for(Object obj : params){
+            hasNullValue = (obj==null);
+            if(hasNullValue) break;
+        }
+        
+        String query = this.query;
+        
+        //adapt query for null values
+        if(hasNullValue){
+            final List<Object> noNullParams = new ArrayList<Object>();
+            final StringBuilder sb = new StringBuilder();
+            int before = 0;
+            
+            for(int i=query.indexOf('?',before),k=0; i>=0; i=query.indexOf('?',before),k++){
+                final Object param = params[k];                
+                final String part = query.substring(before, i);
+                
+                nullReplace:
+                if(param == null){
+                    //check if we have a '=' before
+                    for(int t=part.length()-1;t>=0;t--){
+                        final char c = part.charAt(t);
+                        if(c == '='){
+                            sb.append(part.substring(0,t));
+                            sb.append(" IS NULL ");
+                            break nullReplace;
+                        }else if(c != ' '){
+                            break;
+                        }
+                    }
+                    
+                    noNullParams.add(param);
+                    sb.append(part);
+                    sb.append('?');
+                }else{
+                    noNullParams.add(param);
+                    sb.append(part);
+                    sb.append('?');
+                }
+                
+                before = i+1;
+            }
+            
+            //add remaining
+            params = noNullParams.toArray();
+            sb.append(query.substring(before));
+            query = sb.toString();
+        }
+        
+        final PreparedStatement stmt = cnx.prepareStatement(query);
+        fill(stmt, params);
+        return stmt;
+    }
+    
+    /**
+     * Caution : if some arguments may be null consider using 'create' method to
+     * automaticly refactor the query.
+     */
     public void fillStatement(final PreparedStatement stmt, final Object ... params) throws SQLException{
         
-        final int nb = getNbParameters();
-        
+        final int nb = getNbParameters();        
         if(nb != params.length){
             throw new SQLException("Was expecting "+nb+" parameters for query but only received "+params.length);
         }
@@ -113,6 +194,11 @@ public enum EPSGQueries {
             return;
         }
         
+        fill(stmt, params);
+    }
+    
+    private void fill(final PreparedStatement stmt, final Object ... params) throws SQLException{
+                
         for(int i=0;i<params.length;i++){
             final Object param = params[i];
             

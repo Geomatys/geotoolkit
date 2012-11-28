@@ -44,7 +44,6 @@ import org.geotoolkit.referencing.factory.IdentifiedObjectFinder;
 import org.geotoolkit.temporal.object.TemporalUtilities;
 import org.geotoolkit.util.ComparisonMode;
 import org.opengis.metadata.extent.Extent;
-import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.cs.CartesianCS;
 import org.opengis.referencing.cs.EllipsoidalCS;
@@ -58,6 +57,7 @@ import org.opengis.referencing.datum.TemporalDatum;
 import org.opengis.referencing.datum.VerticalDatum;
 
 /**
+ * EPSG Writer.
  * 
  * @author Johann Sorel (Geomatys)
  */
@@ -112,7 +112,6 @@ public class EPSGWriter {
         //all requiered parameters
         final Integer coord_ref_sys_code;
         final String coord_ref_sys_name = candidate.getName().getCode();
-        final Integer area_of_use_code = getOrCreateArea(candidate.getDomainOfValidity());
         final String coord_ref_sys_kind;
         final Integer coord_sys_code;
         final Integer datum_code;
@@ -193,15 +192,25 @@ public class EPSGWriter {
             
         }
         
+        
         //save object
         Connection cnx = null;
         PreparedStatement stmt = null;
         ResultSet rs = null;
-        try{
-            coord_ref_sys_code = getNextCode();
-            
+        try{            
             cnx = source.getConnection();
+            
+            //find similar
+            final Integer similar = findSimilar(cnx, FIND_COORDINATE_REFERENCE_SYSTEM, 
+                    coord_ref_sys_kind,coord_sys_code,datum_code,source_geogcrs_code,
+                    projection_conv_code,cmpd_horizcrs_code,cmpd_vertcrs_code);
+            if(similar != null){ return similar; }
+            
+            
+            final Integer area_of_use_code = getOrCreateArea(candidate.getDomainOfValidity());
+            
             cnx.setReadOnly(false);
+            coord_ref_sys_code = getNextCode();
             stmt = cnx.prepareStatement(CREATE_COORDINATE_REFERENCE_SYSTEM.query());
             CREATE_COORDINATE_REFERENCE_SYSTEM.fillStatement(stmt, 
                     coord_ref_sys_code,
@@ -242,7 +251,7 @@ public class EPSGWriter {
         
         final Integer coord_sys_code;
         final String coord_sys_name = candidate.getName().getCode();
-        final String coord_sys_type;
+        final String coord_sys_type = getCoordinateSystemType(candidate);
         final Integer dimension = candidate.getDimension();
         final String remarks = (candidate.getRemarks() == null)? null : candidate.getRemarks().toString();
         final String information_source = (candidate.getName().getCodeSpace()==null)? null : candidate.getName().getCodeSpace();
@@ -251,27 +260,20 @@ public class EPSGWriter {
         final String change_id = "";
         final Integer deprecated = 0;
         
-        if(candidate instanceof CartesianCS){
-            coord_sys_type = "Cartesian";
-        }else if(candidate instanceof EllipsoidalCS){
-            coord_sys_type = "ellipsoidal";
-        }else if(candidate instanceof TimeCS){
-            coord_sys_type = "temporal";
-        }else if(candidate instanceof VerticalCS){
-            coord_sys_type = "vertical";
-        }else{
-            throw new FactoryException("Can not store given cs : " +candidate);
-        }
-           
+        
         //save object
         Connection cnx = null;
         PreparedStatement stmt = null;
         ResultSet rs = null;
-        try{
-            coord_sys_code = getNextCode();
-            
+        try{            
             cnx = source.getConnection();
+            
+            //find similar
+            final Integer similar = findSimilarCoordinateSystem(candidate, cnx);
+            if(similar != null){ return similar; }
+                        
             cnx.setReadOnly(false);
+            coord_sys_code = getNextCode();
             stmt = cnx.prepareStatement(CREATE_COORDINATE_SYSTEM.query());
             CREATE_COORDINATE_SYSTEM.fillStatement(stmt, 
                     coord_sys_code,
@@ -295,13 +297,13 @@ public class EPSGWriter {
         //generate axis
         for(int i=0;i<dimension;i++){
             final CoordinateSystemAxis axis = candidate.getAxis(i);
-            getOrCreateCoordinateSystemAxis(coord_sys_code,i+1,axis);
+            createCoordinateSystemAxis(coord_sys_code,i+1,axis);
         }
         
         return coord_sys_code;
     }
     
-    private int getOrCreateCoordinateSystemAxis(final int csid, final int axisOrder, 
+    private int createCoordinateSystemAxis(final int csid, final int axisOrder, 
             final CoordinateSystemAxis candidate) throws FactoryException{
         
         //search if this object already exist
@@ -322,8 +324,8 @@ public class EPSGWriter {
         Connection cnx = null;
         PreparedStatement stmt = null;
         ResultSet rs = null;
-        try{
-            coord_axis_code = getNextCode();
+        try{          
+            coord_axis_code = getNextCode();  
             
             cnx = source.getConnection();
             cnx.setReadOnly(false);
@@ -405,7 +407,6 @@ public class EPSGWriter {
         final Integer realization_epoch;
         final Integer ellipsoid_code;
         final Integer prime_meridian_code;
-        final Integer area_of_use_code = getOrCreateArea(candidate.getDomainOfValidity());
         final String datum_scope = (candidate.getRemarks() == null)? "" : candidate.getRemarks().toString();
         final String remarks = (candidate.getRemarks() == null)? null : candidate.getRemarks().toString();
         final String information_source = (candidate.getName().getCodeSpace()==null)? null : candidate.getName().getCodeSpace();
@@ -450,11 +451,17 @@ public class EPSGWriter {
         Connection cnx = null;
         PreparedStatement stmt = null;
         ResultSet rs = null;
-        try{
-            datum_code = getNextCode();
-            
+        try{            
             cnx = source.getConnection();
+            
+            //find similar
+            final Integer similar = findSimilar(cnx, FIND_DATUM, datum_type,origin_description,ellipsoid_code,prime_meridian_code);
+            if(similar != null){ return similar; }
+                        
+            final Integer area_of_use_code = getOrCreateArea(candidate.getDomainOfValidity());
+            
             cnx.setReadOnly(false);
+            datum_code = getNextCode();
             stmt = cnx.prepareStatement(CREATE_DATUM.query());
             CREATE_DATUM.fillStatement(stmt, 
                     datum_code,
@@ -581,7 +588,7 @@ public class EPSGWriter {
         final Integer uom_code;
         final String unit_of_meas_name = candidate.toString();
         final String unit_of_meas_type;
-        final Integer target_uom_code; 
+        Integer target_uom_code = null; 
         final Double factor_b = 1d; //TODO must check if unit is derivate and extract scale
         final Double factor_c = 1d; //TODO must check if unit is derivate and extract offset
         final String remarks = "";
@@ -596,26 +603,43 @@ public class EPSGWriter {
         PreparedStatement stmt = null;
         ResultSet rs = null;
         try{
-            uom_code = getNextCode();
 
+            final boolean selfDefined;
             if(candidate.isCompatible(SI.METRE)){
+                selfDefined = false;
                 target_uom_code = 9001;
                 unit_of_meas_type = "length";
             }else if(candidate.isCompatible(SI.RADIAN)){
+                selfDefined = false;
                 target_uom_code = 9102;
                 unit_of_meas_type = "angle";
             }else if(candidate.isCompatible(SI.SECOND)){
+                selfDefined = true;
                 //refer to self, epsg does not contain any temporal unit we could refer to
-                target_uom_code = uom_code;
                 unit_of_meas_type = "temp";            
             }else{
+                selfDefined = true;
                 //refer to self
-                target_uom_code = uom_code;
                 unit_of_meas_type = "unknow";      
             }
         
             cnx = source.getConnection();
+            
+            //find similar
+            final Integer similar;
+            if(selfDefined){
+                similar = findSimilar(cnx, FIND_UNIT_OF_MEASURE_SELF, unit_of_meas_name, unit_of_meas_type,factor_b,factor_c);
+            }else{
+                similar = findSimilar(cnx, FIND_UNIT_OF_MEASURE, unit_of_meas_name, unit_of_meas_type,target_uom_code,factor_b,factor_c);
+            }
+            if(similar != null){ return similar; }
+            
             cnx.setReadOnly(false);
+            uom_code = getNextCode();
+            if(selfDefined){ 
+                target_uom_code = uom_code; 
+            }
+            
             stmt = cnx.prepareStatement(CREATE_UNIT_OF_MEASURE.query());
             CREATE_UNIT_OF_MEASURE.fillStatement(stmt, 
                     uom_code,
@@ -667,10 +691,15 @@ public class EPSGWriter {
         PreparedStatement stmt = null;
         ResultSet rs = null;
         try{
-            ellipsoid_code = getNextCode();
             
             cnx = source.getConnection();
+            
+            //find similar
+            final Integer similar = findSimilar(cnx, FIND_ELLIPSOID, semi_major_axis,uom_code,inv_flattening,semi_minor_axis,ellipsoid_shape);
+            if(similar != null){ return similar; }
+            
             cnx.setReadOnly(false);
+            ellipsoid_code = getNextCode();
             stmt = cnx.prepareStatement(CREATE_UNIT_OF_MEASURE.query());
             CREATE_UNIT_OF_MEASURE.fillStatement(stmt, 
                     ellipsoid_code,
@@ -720,10 +749,15 @@ public class EPSGWriter {
         PreparedStatement stmt = null;
         ResultSet rs = null;
         try{
-            prime_meridian_code = getNextCode();
             
             cnx = source.getConnection();
+            
+            //find similar
+            final Integer similar = findSimilar(cnx, FIND_PRIME_MERIDIAN, prime_meridian_name,greenwich_longitude,uom_code);
+            if(similar != null){ return similar; }
+            
             cnx.setReadOnly(false);
+            prime_meridian_code = getNextCode();
             stmt = cnx.prepareStatement(CREATE_PRIME_MERIDIAN.query());
             CREATE_PRIME_MERIDIAN.fillStatement(stmt, 
                     prime_meridian_code,
@@ -749,6 +783,101 @@ public class EPSGWriter {
     
     private int codeToID(String code){
         return Integer.valueOf(code.split(":")[1]);
+    }
+    
+    private String getCoordinateSystemType(CoordinateSystem candidate) throws FactoryException{
+        if(candidate instanceof CartesianCS){
+            return "Cartesian";
+        }else if(candidate instanceof EllipsoidalCS){
+            return "ellipsoidal";
+        }else if(candidate instanceof TimeCS){
+            return "temporal";
+        }else if(candidate instanceof VerticalCS){
+            return "vertical";
+        }else{
+            throw new FactoryException("Can not store given cs : " +candidate);
+        }
+    }
+    
+    /**
+     * Search for a similar record in the database.
+     */
+    private Integer findSimilar(final Connection cnx, final EPSGQueries query, final Object ... parameters) throws SQLException{
+        Integer similar = null;
+        
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        
+        try{
+            stmt = query.createStatement(cnx, parameters);
+            rs = stmt.executeQuery();
+            if(rs.next()){
+                similar = rs.getInt(1);
+            }
+        }finally{
+            store.closeSafe(null, stmt, rs);
+        }
+        
+        return similar;
+    }
+    
+    /**
+     * Find a similar Coordinate sysmtem, will check axis
+     */
+    private Integer findSimilarCoordinateSystem(final CoordinateSystem candidate, 
+            final Connection cnx) throws SQLException, FactoryException{
+        Integer similar = null;
+        
+        final String coord_sys_name = candidate.getName().getCode();
+        final String coord_sys_type = getCoordinateSystemType(candidate);
+        final Integer dimension = candidate.getDimension();
+        
+        final int nbDim = candidate.getDimension();
+        
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        
+        try{
+            stmt = FIND_COORDINATE_SYSTEM.createStatement(cnx, coord_sys_name,coord_sys_type,dimension);
+            rs = stmt.executeQuery();
+            
+            search:
+            while(rs.next()){
+                //check each candidate axis
+                
+                boolean match = true;
+                for(int i=0;i<nbDim;i++){
+                    final CoordinateSystemAxis axis = candidate.getAxis(i);
+                    final String expectedOrientation = axis.getDirection().name();
+                    final String expectedAbbreviation = axis.getAbbreviation();
+                    final int expectedUomCode = getOrCreateUOM(axis.getUnit());
+                    
+                    final int coord_sys_code = rs.getInt(1);
+                    final String coord_axis_orientation = rs.getString(2);
+                    final String coord_axis_abbreviation = rs.getString(3);
+                    final int uomCode = rs.getInt(4);
+                    
+                    if(!(expectedOrientation.equalsIgnoreCase(coord_axis_orientation) &&
+                       expectedAbbreviation.equalsIgnoreCase(coord_axis_abbreviation) &&
+                       expectedUomCode == uomCode)){
+                        match = false;
+                    }                    
+                    
+                    if(i==nbDim-1 && match){
+                        //last axis, and all axis match
+                        similar = coord_sys_code;
+                        break search;
+                    }
+                    
+                    if(!rs.next()){ break; }
+                }
+            }
+            
+        }finally{
+            store.closeSafe(null, stmt, rs);
+        }
+        
+        return similar;
     }
     
 }
