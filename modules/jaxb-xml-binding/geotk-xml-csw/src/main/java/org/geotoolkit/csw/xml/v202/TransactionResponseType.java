@@ -25,7 +25,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.csw.xml.CSWResponse;
+import org.geotoolkit.csw.xml.TransactionResponse;
 import org.geotoolkit.util.Utilities;
 
 
@@ -62,7 +62,7 @@ import org.geotoolkit.util.Utilities;
     "insertResult"
 })
 @XmlRootElement(name = "TransactionResponse")
-public class TransactionResponseType implements CSWResponse {
+public class TransactionResponseType implements TransactionResponse {
 
     @XmlElement(name = "TransactionSummary", required = true)
     private TransactionSummaryType transactionSummary;

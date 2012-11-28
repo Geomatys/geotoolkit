@@ -76,6 +76,23 @@ public class SchemaComponentType implements SchemaComponent {
     private String schemaLanguage;
 
     /**
+     * An empty constructor used by JAXB.
+     */
+    public SchemaComponentType() {
+
+    }
+
+    /**
+     * Build a new Schema Component.
+     */
+    public SchemaComponentType(final String targetNamespace, final String schemaLanguage, final Object xsd) {
+        this.targetNamespace = targetNamespace;
+        this.schemaLanguage  = schemaLanguage;
+        this.content         = new ArrayList<Object>();
+        content.add(xsd);
+    }
+    
+    /**
      *  A schema component includes a schema fragment (type definition) or an entire schema from some target namespace;
      *  the schema language is identified by URI. 
      *  If the component is a schema fragment its parent MUST be referenced (parentSchema).
@@ -83,6 +100,7 @@ public class SchemaComponentType implements SchemaComponent {
      *  Gets the value of the content property.
      * 
      */
+    @Override
     public List<Object> getContent() {
         if (content == null) {
             content = new ArrayList<Object>();
@@ -94,6 +112,7 @@ public class SchemaComponentType implements SchemaComponent {
      * Gets the value of the targetNamespace property.
      * 
      */
+    @Override
     public String getTargetNamespace() {
         return targetNamespace;
     }
@@ -110,6 +129,7 @@ public class SchemaComponentType implements SchemaComponent {
      * Gets the value of the parentSchema property.
      * 
      */
+    @Override
     public String getParentSchema() {
         return parentSchema;
     }
@@ -126,6 +146,7 @@ public class SchemaComponentType implements SchemaComponent {
      * Gets the value of the schemaLanguage property.
      * 
      */
+    @Override
     public String getSchemaLanguage() {
         return schemaLanguage;
     }

@@ -235,6 +235,16 @@ public class CswXmlFactory {
         }
     }
     
+    public static AbstractCapabilities createCapabilities(final String version, final String updateSequence) {
+        if ("2.0.2".equals(version)) {
+            return new org.geotoolkit.csw.xml.v202.Capabilities(version, updateSequence);
+        } else if ("2.0.0".equals(version)) {
+            return new org.geotoolkit.csw.xml.v200.CapabilitiesType(version, updateSequence);
+        } else {
+            throw new IllegalArgumentException("unsupported version:" + version);
+        }
+    }
+    
     public static GetRecordsResponse createGetRecordsResponse(final String version, final String requestId, final long time,
                                                        final SearchResults searchResults) {
         if ("2.0.2".equals(version)) {
@@ -250,6 +260,35 @@ public class CswXmlFactory {
             }
             return new org.geotoolkit.csw.xml.v200.GetRecordsResponseType(requestId, time, version,
                                                                           (org.geotoolkit.csw.xml.v200.SearchResultsType)searchResults);
+        } else {
+            throw new IllegalArgumentException("unsupported version:" + version);
+        }
+    }
+    
+    public static GetRecordByIdResponse createGetRecordByIdResponse(final String version, final List<AbstractRecord> dcRecords, final List<Object> any) {
+        if ("2.0.2".equals(version)) {
+            final List<org.geotoolkit.csw.xml.v202.AbstractRecordType> components202 = new ArrayList<org.geotoolkit.csw.xml.v202.AbstractRecordType>();
+            if (dcRecords != null) {
+                for (AbstractRecord sc : dcRecords) {
+                    if (sc instanceof org.geotoolkit.csw.xml.v202.AbstractRecordType) {
+                        components202.add((org.geotoolkit.csw.xml.v202.AbstractRecordType)sc);
+                    } else {
+                        throw new IllegalArgumentException("bad version of dcRecord.");
+                    }
+                }
+            }
+            
+            return new org.geotoolkit.csw.xml.v202.GetRecordByIdResponseType(components202, any);
+        } else if ("2.0.0".equals(version)) {
+            org.geotoolkit.csw.xml.v200.AbstractRecordType component200 = null;
+            if (dcRecords != null && !dcRecords.isEmpty()) {
+                if (dcRecords.get(0) instanceof org.geotoolkit.csw.xml.v200.AbstractRecordType) {
+                    component200 = (org.geotoolkit.csw.xml.v200.AbstractRecordType) dcRecords.get(0);
+                } else {
+                    throw new IllegalArgumentException("bad version of dcRecord.");
+                }
+            }
+            return new org.geotoolkit.csw.xml.v200.GetRecordByIdResponseType(component200, any);
         } else {
             throw new IllegalArgumentException("unsupported version:" + version);
         }
@@ -408,6 +447,120 @@ public class CswXmlFactory {
         } else if ("2.0.0".equals(version)){
             // dont exist ???????
             return null;
+        } else {
+            throw new IllegalArgumentException("unsupported version:" + version);
+        }
+    }
+    
+    public static DescribeRecordResponse createDescribeRecordResponse(final String version, final List<SchemaComponent> components) {
+        if ("2.0.2".equals(version)) {
+            final List<org.geotoolkit.csw.xml.v202.SchemaComponentType> components202 = new ArrayList<org.geotoolkit.csw.xml.v202.SchemaComponentType>();
+            if (components != null) {
+                for (SchemaComponent sc : components) {
+                    if (sc instanceof org.geotoolkit.csw.xml.v202.SchemaComponentType) {
+                        components202.add((org.geotoolkit.csw.xml.v202.SchemaComponentType)sc);
+                    } else {
+                        throw new IllegalArgumentException("bad version of schemaComponent.");
+                    }
+                }
+            }
+            return new org.geotoolkit.csw.xml.v202.DescribeRecordResponseType(components202);
+        } else if ("2.0.0".equals(version)){
+            final List<org.geotoolkit.csw.xml.v200.SchemaComponentType> components200 = new ArrayList<org.geotoolkit.csw.xml.v200.SchemaComponentType>();
+            if (components != null) {
+                for (SchemaComponent sc : components) {
+                    if (sc instanceof org.geotoolkit.csw.xml.v200.SchemaComponentType) {
+                        components200.add((org.geotoolkit.csw.xml.v200.SchemaComponentType)sc);
+                    } else {
+                        throw new IllegalArgumentException("bad version of schemaComponent.");
+                    }
+                }
+            }
+            return new org.geotoolkit.csw.xml.v200.DescribeRecordResponseType(components200);
+        } else {
+            throw new IllegalArgumentException("unsupported version:" + version);
+        }
+    }
+    
+    public static SchemaComponent createSchemaComponent(final String version, final String targetNamespace, final String schemaLanguage, final Object xsd) {
+        if ("2.0.2".equals(version)) {
+            return new org.geotoolkit.csw.xml.v202.SchemaComponentType(targetNamespace, schemaLanguage, xsd);
+        } else if ("2.0.0".equals(version)){
+            return new org.geotoolkit.csw.xml.v200.SchemaComponentType(targetNamespace, schemaLanguage, xsd);
+        } else {
+            throw new IllegalArgumentException("unsupported version:" + version);
+        }
+    }
+    
+    public static TransactionSummary createTransactionSummary(final String version, final int totalInserted, final int totalUpdated, final int totalDeleted, final String requestId) {
+        if ("2.0.2".equals(version)) {
+            return new org.geotoolkit.csw.xml.v202.TransactionSummaryType(totalInserted, totalUpdated, totalDeleted, requestId);
+        } else if ("2.0.0".equals(version)){
+            // dont exist ???????
+            return null;
+        } else {
+            throw new IllegalArgumentException("unsupported version:" + version);
+        }
+    }
+    
+    public static TransactionResponse createTransactionResponse(final String version, final TransactionSummary summary, final List<InsertResult> inserts) {
+        if ("2.0.2".equals(version)) {
+            if (summary != null && !(summary instanceof org.geotoolkit.csw.xml.v202.TransactionSummaryType)) {
+                throw new IllegalArgumentException("bad version of transactionSummary.");
+            }
+            final List<org.geotoolkit.csw.xml.v202.InsertResultType> insert202 = new ArrayList<org.geotoolkit.csw.xml.v202.InsertResultType>();
+            if (inserts != null) {
+                for (InsertResult sc : inserts) {
+                    if (sc instanceof org.geotoolkit.csw.xml.v202.InsertResultType) {
+                        insert202.add((org.geotoolkit.csw.xml.v202.InsertResultType)sc);
+                    } else {
+                        throw new IllegalArgumentException("bad version of insertResult.");
+                    }
+                }
+            }
+            return new org.geotoolkit.csw.xml.v202.TransactionResponseType((org.geotoolkit.csw.xml.v202.TransactionSummaryType)summary,  insert202, version);
+        } else if ("2.0.0".equals(version)){
+            // dont exist ???????
+            return null;
+        } else {
+            throw new IllegalArgumentException("unsupported version:" + version);
+        }
+    }
+
+
+    public static HarvestResponse createHarvestResponse(final String version, final TransactionResponse response) {
+        if ("2.0.2".equals(version)) {
+            if (response != null && !(response instanceof org.geotoolkit.csw.xml.v202.TransactionResponseType)) {
+                throw new IllegalArgumentException("bad version of transactionResponse.");
+            }
+            return new org.geotoolkit.csw.xml.v202.HarvestResponseType((org.geotoolkit.csw.xml.v202.TransactionResponseType)response);
+        } else if ("2.0.0".equals(version)){
+            // dont exist ???????
+            return null;
+        } else {
+            throw new IllegalArgumentException("unsupported version:" + version);
+        }
+    }
+    
+    public static HarvestResponse createHarvestResponse(final String version, final Acknowledgement ack) {
+        if ("2.0.2".equals(version)) {
+            if (ack != null && !(ack instanceof org.geotoolkit.csw.xml.v202.AcknowledgementType)) {
+                throw new IllegalArgumentException("bad version of acknowledgement.");
+            }
+            return new org.geotoolkit.csw.xml.v202.HarvestResponseType((org.geotoolkit.csw.xml.v202.AcknowledgementType)ack);
+        } else if ("2.0.0".equals(version)){
+            // dont exist ???????
+            return null;
+        } else {
+            throw new IllegalArgumentException("unsupported version:" + version);
+        }
+    }
+    
+    public static Acknowledgement createAcknowledgement(final String version, final String requestID, final Object request, final long timestamp) {
+        if ("2.0.2".equals(version)) {
+            return new org.geotoolkit.csw.xml.v202.AcknowledgementType(requestID, new org.geotoolkit.csw.xml.v202.EchoedRequestType(request), timestamp);
+        } else if ("2.0.0".equals(version)){
+            return new org.geotoolkit.csw.xml.v200.AcknowledgementType(requestID, new org.geotoolkit.csw.xml.v200.EchoedRequestType(request), timestamp);
         } else {
             throw new IllegalArgumentException("unsupported version:" + version);
         }

@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.geotoolkit.csw.xml.Insert;
 import org.geotoolkit.util.Utilities;
 
 
@@ -63,7 +64,7 @@ import org.geotoolkit.util.Utilities;
 @XmlType(name = "InsertType", propOrder = {
     "any"
 })
-public class InsertType {
+public class InsertType implements Insert {
 
     @XmlAnyElement(lax = true)
     private List<Object> any;
@@ -95,6 +96,7 @@ public class InsertType {
      * Gets the value of the any property.
      * (unmodifiable)
      */
+    @Override
     public List<Object> getAny() {
         if (any == null) {
             any = new ArrayList<Object>();
@@ -105,6 +107,7 @@ public class InsertType {
     /**
      * Gets the value of the typeName property.
      */
+    @Override
     public String getTypeName() {
         return typeName;
     }
@@ -116,6 +119,7 @@ public class InsertType {
     /**
      * Gets the value of the handle property.
      */
+    @Override
     public String getHandle() {
         return handle;
     }

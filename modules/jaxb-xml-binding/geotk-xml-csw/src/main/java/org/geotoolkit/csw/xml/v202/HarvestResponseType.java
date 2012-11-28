@@ -21,7 +21,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.csw.xml.CSWResponse;
+import org.geotoolkit.csw.xml.HarvestResponse;
 import org.geotoolkit.util.Utilities;
 
 
@@ -52,7 +52,7 @@ import org.geotoolkit.util.Utilities;
     "transactionResponse"
 })
 @XmlRootElement(name = "HarvestResponse")        
-public class HarvestResponseType implements CSWResponse {
+public class HarvestResponseType implements HarvestResponse {
 
     @XmlElement(name = "Acknowledgement")
     private AcknowledgementType acknowledgement;

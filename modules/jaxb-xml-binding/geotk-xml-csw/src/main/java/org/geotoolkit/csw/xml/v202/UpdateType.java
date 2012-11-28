@@ -28,6 +28,7 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.geotoolkit.csw.xml.Update;
 import org.geotoolkit.util.Utilities;
 
 
@@ -74,7 +75,7 @@ import org.geotoolkit.util.Utilities;
     "recordProperty",
     "constraint"
 })
-public class UpdateType {
+public class UpdateType implements Update {
 
     @XmlAnyElement(lax = true)
     private Object any;
@@ -104,6 +105,7 @@ public class UpdateType {
     /**
      * Gets the value of the any property.
      */
+    @Override
     public Object getAny() {
         return any;
     }
@@ -116,6 +118,7 @@ public class UpdateType {
      * Gets the value of the recordProperty property.
      * (unmodifiable)
      */
+    @Override
     public List<RecordPropertyType> getRecordProperty() {
         if (recordProperty == null) {
             recordProperty = new ArrayList<RecordPropertyType>();
@@ -130,6 +133,7 @@ public class UpdateType {
     /**
      * Gets the value of the constraint property.
      */
+    @Override
     public QueryConstraintType getConstraint() {
         return constraint;
     }
@@ -141,6 +145,7 @@ public class UpdateType {
     /**
      * Gets the value of the handle property.
      */
+    @Override
     public String getHandle() {
         return handle;
     }

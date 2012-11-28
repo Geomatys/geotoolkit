@@ -21,14 +21,14 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.csw.xml.TransactionSummary;
 import org.geotoolkit.util.Utilities;
 
 
 /**
- * 
- *          Reports the total number of catalogue items modified by a transaction 
- *          request (i.e, inserted, updated, deleted). If the client did not 
- *          specify a requestId, the server may assign one (a URI value).
+ * Reports the total number of catalogue items modified by a transaction 
+ * request (i.e, inserted, updated, deleted). 
+ * If the client did not specify a requestId, the server may assign one (a URI value).
  *          
  * 
  * <p>Java class for TransactionSummaryType complex type.
@@ -59,7 +59,7 @@ import org.geotoolkit.util.Utilities;
     "totalUpdated",
     "totalDeleted"
 })
-public class TransactionSummaryType {
+public class TransactionSummaryType implements TransactionSummary {
 
     @XmlSchemaType(name = "nonNegativeInteger")
     private int totalInserted;
@@ -91,6 +91,7 @@ public class TransactionSummaryType {
     /**
      * Gets the value of the totalInserted property.
      */
+    @Override
     public int getTotalInserted() {
         return totalInserted;
     }
@@ -98,6 +99,7 @@ public class TransactionSummaryType {
     /**
      * Gets the value of the totalUpdated property.
      */
+    @Override
     public int getTotalUpdated() {
         return totalUpdated;
     }
@@ -105,6 +107,7 @@ public class TransactionSummaryType {
     /**
      * Gets the value of the totalDeleted property.
      */
+    @Override
     public int getTotalDeleted() {
         return totalDeleted;
     }
@@ -112,6 +115,7 @@ public class TransactionSummaryType {
     /**
      * Gets the value of the requestId property.
      */
+    @Override
     public String getRequestId() {
         return requestId;
     }
