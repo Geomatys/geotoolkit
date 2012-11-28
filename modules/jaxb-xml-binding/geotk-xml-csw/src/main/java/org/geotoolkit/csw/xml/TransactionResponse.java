@@ -22,5 +22,6 @@ package org.geotoolkit.csw.xml;
  * @module pending
  */
 public interface TransactionResponse extends CSWResponse {
-    
+
+    TransactionSummary getTransactionSummary();
 }

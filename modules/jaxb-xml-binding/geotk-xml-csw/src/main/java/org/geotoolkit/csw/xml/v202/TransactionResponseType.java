@@ -91,6 +91,7 @@ public class TransactionResponseType implements TransactionResponse {
     /**
      * Gets the value of the transactionSummary property.
      */
+    @Override
     public TransactionSummaryType getTransactionSummary() {
         return transactionSummary;
     }
