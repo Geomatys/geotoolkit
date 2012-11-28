@@ -21,12 +21,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import javax.xml.datatype.Duration;
 import javax.xml.namespace.QName;
 import org.geotoolkit.ogc.xml.SortBy;
 import org.geotoolkit.ows.xml.AbstractDomain;
 import org.geotoolkit.ows.xml.AbstractOperationsMetadata;
 import org.geotoolkit.ows.xml.AbstractServiceIdentification;
 import org.geotoolkit.ows.xml.AbstractServiceProvider;
+import org.geotoolkit.ows.xml.AcceptFormats;
+import org.geotoolkit.ows.xml.AcceptVersions;
+import org.geotoolkit.ows.xml.OWSXmlFactory;
+import org.geotoolkit.ows.xml.Sections;
 import org.opengis.filter.Filter;
 import org.opengis.filter.capability.FilterCapabilities;
 import org.opengis.filter.sort.SortOrder;
@@ -288,6 +293,121 @@ public class CswXmlFactory {
             return new org.geotoolkit.csw.xml.v202.SearchResultsType(resultSetId, elementSet, numberOfResultMatched, nextRecord);
         } else if ("2.0.0".equals(version)) {
             return new org.geotoolkit.csw.xml.v200.SearchResultsType(resultSetId, elementSet, numberOfResultMatched, nextRecord);
+        } else {
+            throw new IllegalArgumentException("unsupported version:" + version);
+        }
+    }
+    
+    public static DescribeRecord createDescribeRecord(final String version, final String service, final List<QName> typeName, final String outputFormat, final String schemaLanguage) {
+        
+        if ("2.0.2".equals(version)) {
+            return new org.geotoolkit.csw.xml.v202.DescribeRecordType(service, version, typeName, outputFormat, schemaLanguage);
+        } else if ("2.0.0".equals(version)) {
+            return new org.geotoolkit.csw.xml.v200.DescribeRecordType(service, version, typeName, outputFormat, schemaLanguage);
+        } else {
+            throw new IllegalArgumentException("unsupported version:" + version);
+        }
+    }
+    
+    public static GetRecordById createGetRecordById(final String version, final String service, final ElementSetName elementSet, final String outputFormat, final String outputSchema, final List<String> id) {
+        
+        if ("2.0.2".equals(version)) {
+            if (elementSet != null && !(elementSet instanceof org.geotoolkit.csw.xml.v202.ElementSetNameType)) {
+                 throw new IllegalArgumentException("bad version of elementset.");
+            }
+            return new org.geotoolkit.csw.xml.v202.GetRecordByIdType(service, version, (org.geotoolkit.csw.xml.v202.ElementSetNameType)elementSet, outputFormat, outputSchema, id);
+        } else if ("2.0.0".equals(version)) {
+            if (elementSet != null && !(elementSet instanceof org.geotoolkit.csw.xml.v200.ElementSetNameType)) {
+                 throw new IllegalArgumentException("bad version of elementset.");
+            }
+            String singleID = null;
+            if (id != null && !id.isEmpty()) {
+                singleID = id.get(0);
+            }
+            return new org.geotoolkit.csw.xml.v200.GetRecordByIdType(service, version, (org.geotoolkit.csw.xml.v200.ElementSetNameType)elementSet, singleID);
+        } else {
+            throw new IllegalArgumentException("unsupported version:" + version);
+        }
+    }
+    
+    public static GetCapabilities createGetCapabilities(final String version, final AcceptVersions acceptVersions, final Sections sections,
+            final AcceptFormats acceptFormats, final String updateSequence, final String service) {
+        
+        if ("2.0.2".equals(version) || "2.0.0".equals(version)) {
+            if (acceptVersions != null && !(acceptVersions instanceof org.geotoolkit.ows.xml.v100.AcceptVersionsType)) {
+                 throw new IllegalArgumentException("bad version of acceptVersions.");
+            }
+            if (sections != null && !(sections instanceof org.geotoolkit.ows.xml.v100.SectionsType)) {
+                 throw new IllegalArgumentException("bad version of sections.");
+            }
+            if (acceptFormats != null && !(acceptFormats instanceof org.geotoolkit.ows.xml.v100.AcceptVersionsType)) {
+                 throw new IllegalArgumentException("bad version of acceptFormats.");
+            }
+        
+            if ("2.0.2".equals(version)) {
+                return new org.geotoolkit.csw.xml.v202.GetCapabilitiesType((org.geotoolkit.ows.xml.v100.AcceptVersionsType)acceptVersions, 
+                                                                           (org.geotoolkit.ows.xml.v100.SectionsType)sections,
+                                                                           (org.geotoolkit.ows.xml.v100.AcceptFormatsType)acceptFormats, 
+                                                                           updateSequence, 
+                                                                           service);
+            
+            } else {
+                return new org.geotoolkit.csw.xml.v200.GetCapabilitiesType((org.geotoolkit.ows.xml.v100.AcceptVersionsType)acceptVersions, 
+                                                                           (org.geotoolkit.ows.xml.v100.SectionsType)sections,
+                                                                           (org.geotoolkit.ows.xml.v100.AcceptFormatsType)acceptFormats, 
+                                                                           updateSequence, 
+                                                                           service);
+            }
+        } else {
+            throw new IllegalArgumentException("unsupported version:" + version);
+        }
+    }
+    
+    public static AcceptVersions buildAcceptVersion(final String currentVersion, final List<String> acceptVersion) {
+        final OWSXmlFactory facto = new OWSXmlFactory();
+        if ("2.0.2".equals(currentVersion) || "2.0.0".equals(currentVersion)) {
+            return facto.buildAcceptVersion("1.0.0", acceptVersion);
+        } else {
+            throw new IllegalArgumentException("unexpected version number:" + currentVersion);
+        }
+    }
+
+    public static AcceptFormats buildAcceptFormat(final String currentVersion, final List<String> acceptFormats) {
+        final OWSXmlFactory facto = new OWSXmlFactory();
+        if ("2.0.2".equals(currentVersion) || "2.0.0".equals(currentVersion)) {
+            return facto.buildAcceptFormat("1.0.0", acceptFormats);
+        } else {
+            throw new IllegalArgumentException("unexpected version number:" + currentVersion);
+        }
+    }
+
+    public static Sections buildSections(final String currentVersion, final List<String> sections) {
+        final OWSXmlFactory facto = new OWSXmlFactory();
+        if ("2.0.2".equals(currentVersion) || "2.0.0".equals(currentVersion)) {
+            return facto.buildSections("1.0.0", sections);
+        } else {
+            throw new IllegalArgumentException("unexpected version number:" + currentVersion);
+        }
+    }
+    
+    public static GetDomain createGetDomain(final String version, final String service, final String propertyName, final String parameterName) {
+        if ("2.0.2".equals(version)) {
+            return new org.geotoolkit.csw.xml.v202.GetDomainType(service, version, propertyName, parameterName);
+        } else if ("2.0.0".equals(version)){
+            final QName propQname = new QName(propertyName);
+            return new org.geotoolkit.csw.xml.v200.GetDomainType(service, version, propQname, parameterName);
+        } else {
+            throw new IllegalArgumentException("unsupported version:" + version);
+        }
+    }
+
+    public static Harvest createHarvest(final String version, final String service, final String source, final String resourceType, 
+            final String resourceFormat, final String handler, final Duration harvestInterval) {
+        if ("2.0.2".equals(version)) {
+            return new org.geotoolkit.csw.xml.v202.HarvestType(service, version, source, resourceType, resourceFormat, handler, harvestInterval);
+        } else if ("2.0.0".equals(version)){
+            // dont exist ???????
+            return null;
         } else {
             throw new IllegalArgumentException("unsupported version:" + version);
         }

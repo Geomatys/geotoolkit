@@ -16,8 +16,7 @@
  */
 package org.geotoolkit.csw.xml;
 
-import org.geotoolkit.util.Version;
-import org.geotoolkit.util.Versioned;
+import org.geotoolkit.ows.xml.RequestBase;
 
 /**
  * An interface containing the common methods to the different version of the operation GetRecords.
@@ -25,7 +24,7 @@ import org.geotoolkit.util.Versioned;
  *  * @author Guilhem Legal
  * @module pending
  */
-public interface AbstractCswRequest extends Versioned {
+public interface AbstractCswRequest extends RequestBase {
 
     /**
      * Gets the value of the outputFormat property.
@@ -38,9 +37,5 @@ public interface AbstractCswRequest extends Versioned {
      *
      */
     void setOutputFormat(String value);
-
-    String getService();
-
-    Version getVersion();
 
 }

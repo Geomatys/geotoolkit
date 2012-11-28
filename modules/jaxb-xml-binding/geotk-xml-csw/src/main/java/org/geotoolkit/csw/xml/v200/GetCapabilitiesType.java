@@ -19,6 +19,7 @@ package org.geotoolkit.csw.xml.v200;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
+import org.geotoolkit.csw.xml.GetCapabilities;
 import org.geotoolkit.ows.xml.v100.AcceptFormatsType;
 import org.geotoolkit.ows.xml.v100.AcceptVersionsType;
 import org.geotoolkit.ows.xml.v100.SectionsType;
@@ -49,7 +50,7 @@ import org.geotoolkit.ows.xml.v100.SectionsType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "GetCapabilities")
-public class GetCapabilitiesType extends org.geotoolkit.ows.xml.v100.GetCapabilitiesType {
+public class GetCapabilitiesType extends org.geotoolkit.ows.xml.v100.GetCapabilitiesType implements GetCapabilities {
 
     /**
      * An empty constructor used by JAXB

@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import javax.xml.namespace.QName;
 
 
 /**
@@ -68,6 +69,13 @@ public class TypeNameType {
     public TypeNameType(final String localName, final String namespace) {
         this.value = localName;
         this.targetNamespace = namespace;
+    }
+    
+    public TypeNameType(final QName qname) {
+        if (qname != null) {
+            this.value = qname.getLocalPart();
+            this.targetNamespace = qname.getNamespaceURI();
+        }
     }
 
     /**

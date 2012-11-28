@@ -500,6 +500,7 @@ public class Layer extends AbstractLayer {
     /**
      * @param name
      */
+    @Override
     public void setName(final String name) {
         this.name = name;
     }
@@ -507,6 +508,7 @@ public class Layer extends AbstractLayer {
     /**
      * @param title the title to set
      */
+    @Override
     public void setTitle(final String title) {
         this.title = title;
     }
