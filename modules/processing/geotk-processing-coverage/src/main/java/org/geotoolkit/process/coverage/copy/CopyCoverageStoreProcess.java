@@ -182,10 +182,12 @@ public class CopyCoverageStoreProcess extends AbstractProcess {
      * @throws TransformException
      */
     private void saveMosaic(final PyramidalModel pm, final Pyramid pyramid, final GridCoverageReader reader,
-            final int imageIndex, final Envelope env) throws DataStoreException, TransformException, ProcessException {
+            final int imageIndex, Envelope env) throws DataStoreException, TransformException, ProcessException {
         final GridCoverageReadParam params = new GridCoverageReadParam();
         if (env != null) {
             params.setEnvelope(env);
+        }else{
+            env = reader.getGridGeometry(imageIndex).getEnvelope();
         }
 
         final CoordinateReferenceSystem crs = env.getCoordinateReferenceSystem();
