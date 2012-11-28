@@ -170,6 +170,7 @@ public abstract class AbstractProcessType extends AbstractSMLType implements Abs
      * Gets the value of the keywords property.
      * 
      */
+    @Override
     public List<Keywords> getKeywords() {
         if (keywords == null) {
             keywords = new ArrayList<Keywords>();
@@ -202,6 +203,7 @@ public abstract class AbstractProcessType extends AbstractSMLType implements Abs
      * Gets the value of the identification property.
      * 
      */
+    @Override
     public List<Identification> getIdentification() {
         if (identification == null) {
             identification = new ArrayList<Identification>();
