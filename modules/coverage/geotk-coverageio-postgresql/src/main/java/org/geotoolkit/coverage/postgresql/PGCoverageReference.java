@@ -120,6 +120,7 @@ public class PGCoverageReference implements CoverageReference, PyramidalModel{
         ResultSet rs = null;
         try{
             cnx = store.getDataSource().getConnection();
+            cnx.setReadOnly(false);
             //find or insert coordinate reference system
             final EPSGWriter writer = new EPSGWriter(store);
             final String epsgCode = String.valueOf(writer.getOrCreateCoordinateReferenceSystem(crs));
