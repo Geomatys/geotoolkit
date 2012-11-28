@@ -26,14 +26,13 @@ import java.util.List;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.namespace.QName;
+import org.geotoolkit.csw.xml.ElementSetName;
 import org.geotoolkit.csw.xml.ElementSetType;
 import org.geotoolkit.csw.xml.ResultType;
 import org.geotoolkit.csw.xml.TypeNames;
-import org.geotoolkit.csw.xml.v202.DistributedSearchType;
-import org.geotoolkit.csw.xml.v202.ElementSetNameType;
-import org.geotoolkit.csw.xml.v202.GetRecordsType;
-import org.geotoolkit.csw.xml.v202.QueryConstraintType;
-import org.geotoolkit.csw.xml.v202.QueryType;
+import org.geotoolkit.csw.xml.Query;
+import org.geotoolkit.csw.xml.DistributedSearch;
+import org.geotoolkit.csw.xml.QueryConstraint;
 import org.geotoolkit.filter.FilterFactoryImpl;
 import org.geotoolkit.filter.text.cql2.CQL;
 import org.geotoolkit.filter.text.cql2.CQLException;
@@ -42,6 +41,7 @@ import org.geotoolkit.ogc.xml.v110.SortByType;
 import org.geotoolkit.security.ClientSecurity;
 import org.opengis.filter.Filter;
 
+import static org.geotoolkit.csw.xml.CswXmlFactory.*;
 
 /**
  * Abstract implementation of {@link GetRecordsRequest}, which defines the
@@ -339,9 +339,9 @@ public abstract class AbstractGetRecords extends AbstractCSWRequest implements G
             /*
              * Getting ElementSetType value used to build QueryType object
              */
-            ElementSetNameType esnt = null;
+            ElementSetName esnt = null;
             if (elementSetName != null) {
-                esnt = new ElementSetNameType(elementSetName);
+                esnt = createElementSetName(version, elementSetName);
             }
 
             /*
@@ -363,25 +363,29 @@ public abstract class AbstractGetRecords extends AbstractCSWRequest implements G
             /*
              * Building QueryType from the cql constraint
              */
-            QueryConstraintType qct = null;
-            if (constraint != null && !constraint.isEmpty()) try {
-                final FilterType filterType;
-                Filter filter = CQL.toFilter(constraint, new FilterFactoryImpl());
-                if (filter instanceof FilterType) {
-                    filterType = (FilterType) filter;
-                } else {
-                    filterType = new FilterType(filter);
+            QueryConstraint qct = null;
+            if (constraint != null && !constraint.isEmpty())  {
+                try {
+                    final FilterType filterType;
+                    Filter filter = CQL.toFilter(constraint, new FilterFactoryImpl());
+                    if (filter instanceof FilterType) {
+                        filterType = (FilterType) filter;
+                    } else {
+                        filterType = new FilterType(filter);
+                    }
+                    qct = createQueryConstraint(version, filterType, constraintLanguageVersion != null ? constraintLanguageVersion : "1.1.0");
+                } catch (CQLException ex) {
+                    //@TODO maybe use another Exception.
+                    throw new IllegalArgumentException("Constraint cannot be parsed to filter, the constraint parameter value is not in OGC CQL format.", ex);
                 }
-                qct = new QueryConstraintType(filterType, constraintLanguageVersion != null ? constraintLanguageVersion : "1.1.0");
-            } catch (CQLException ex) {
-                //@TODO maybe use another Exception.
-                throw new IllegalArgumentException("Constraint cannot be parsed to filter, the constraint parameter value is not in OGC CQL format.", ex);
             }
-            final QueryType queryType = new QueryType(typNames, esnt, sort, qct);
+            final Query queryType = createQuery(version, typNames, esnt, sort, qct);
 
-            final GetRecordsType recordsXml = new GetRecordsType("CSW", version, resultType,
-                    requestId, outputFormat, outputSchema, startPosition, maxRecords,
-                    queryType, new DistributedSearchType(hopcount));
+            final DistributedSearch ds = createDistributedSearch(version, hopcount);
+            final org.geotoolkit.csw.xml.GetRecordsRequest recordsXml = createGetRecord(version, "CSW", resultType, requestId, outputFormat, 
+                    outputSchema, startPosition, maxRecords, queryType, ds);
+                    
+                    
             marsh.marshal(recordsXml, stream);
         } catch (JAXBException ex) {
             throw new IOException(ex);

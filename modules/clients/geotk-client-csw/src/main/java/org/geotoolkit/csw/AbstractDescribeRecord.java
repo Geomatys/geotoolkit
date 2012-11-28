@@ -25,7 +25,8 @@ import java.util.Arrays;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.namespace.QName;
-import org.geotoolkit.csw.xml.v202.DescribeRecordType;
+import org.geotoolkit.csw.xml.CswXmlFactory;
+import org.geotoolkit.csw.xml.DescribeRecord;
 import org.geotoolkit.security.ClientSecurity;
 
 /**
@@ -146,7 +147,7 @@ public abstract class AbstractDescribeRecord extends AbstractCSWRequest implemen
         Marshaller marsh = null;
         try {
             marsh = POOL.acquireMarshaller();
-            final DescribeRecordType describeXml = new DescribeRecordType("CSW", version,
+            final DescribeRecord describeXml = CswXmlFactory.createDescribeRecord(version, "CSW",
                     Arrays.asList(typeNames), outputFormat, schemaLanguage);
             marsh.marshal(describeXml, stream);
         } catch (JAXBException ex) {

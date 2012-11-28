@@ -492,6 +492,66 @@ public class CswXmlFactory {
         }
     }
     
+    public static Transaction createTransaction(final String version, final String service, final Delete delete) {
+        if ("2.0.2".equals(version)) {
+            if (delete != null && !(delete instanceof org.geotoolkit.csw.xml.v202.DeleteType)) {
+                throw new IllegalArgumentException("bad version of delete.");
+            }
+            return new org.geotoolkit.csw.xml.v202.TransactionType(service, version, (org.geotoolkit.csw.xml.v202.DeleteType)delete);
+        } else if ("2.0.0".equals(version)){
+            // dont exist ???????
+            return null;
+        } else {
+            throw new IllegalArgumentException("unsupported version:" + version);
+        }
+    }
+    
+    public static Transaction createTransaction(final String version, final String service, final Insert... inserts) {
+        if ("2.0.2".equals(version)) {
+            final org.geotoolkit.csw.xml.v202.InsertType[] insert202 = new org.geotoolkit.csw.xml.v202.InsertType[inserts.length];
+            if (inserts != null) {
+                int i = 0;
+                for (Insert sc : inserts) {
+                    if (sc instanceof org.geotoolkit.csw.xml.v202.InsertType) {
+                        insert202[i] = (org.geotoolkit.csw.xml.v202.InsertType)sc;
+                    } else {
+                        throw new IllegalArgumentException("bad version of insertResult.");
+                    }
+                    i++;
+                }
+            }
+            return new org.geotoolkit.csw.xml.v202.TransactionType(service, version, insert202);
+        } else if ("2.0.0".equals(version)){
+            // dont exist ???????
+            return null;
+        } else {
+            throw new IllegalArgumentException("unsupported version:" + version);
+        }
+    }
+    
+    public static Transaction createTransaction(final String version, final String service, final Update... updates) {
+        if ("2.0.2".equals(version)) {
+            final org.geotoolkit.csw.xml.v202.UpdateType[] update202 = new org.geotoolkit.csw.xml.v202.UpdateType[updates.length];
+            if (updates != null) {
+                int i = 0;
+                for (Update sc : updates) {
+                    if (sc instanceof org.geotoolkit.csw.xml.v202.UpdateType) {
+                        update202[i] = (org.geotoolkit.csw.xml.v202.UpdateType)sc;
+                    } else {
+                        throw new IllegalArgumentException("bad version of insertResult.");
+                    }
+                    i++;
+                }
+            }
+            return new org.geotoolkit.csw.xml.v202.TransactionType(service, version, update202);
+        } else if ("2.0.0".equals(version)){
+            // dont exist ???????
+            return null;
+        } else {
+            throw new IllegalArgumentException("unsupported version:" + version);
+        }
+    }
+    
     public static TransactionSummary createTransactionSummary(final String version, final int totalInserted, final int totalUpdated, final int totalDeleted, final String requestId) {
         if ("2.0.2".equals(version)) {
             return new org.geotoolkit.csw.xml.v202.TransactionSummaryType(totalInserted, totalUpdated, totalDeleted, requestId);

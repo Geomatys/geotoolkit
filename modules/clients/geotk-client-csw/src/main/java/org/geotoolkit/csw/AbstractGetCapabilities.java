@@ -23,7 +23,8 @@ import java.net.URL;
 import java.net.URLConnection;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
-import org.geotoolkit.csw.xml.v202.GetCapabilitiesType;
+import org.geotoolkit.csw.xml.CswXmlFactory;
+import org.geotoolkit.csw.xml.GetCapabilities;
 import org.geotoolkit.security.ClientSecurity;
 
 
@@ -72,7 +73,7 @@ public abstract class AbstractGetCapabilities extends AbstractCSWRequest impleme
         Marshaller marsh = null;
         try {
             marsh = POOL.acquireMarshaller();
-            final GetCapabilitiesType getCapsXml = new GetCapabilitiesType("CSW");
+            final GetCapabilities getCapsXml = CswXmlFactory.createGetCapabilities(version, null, null, null, null, "CSW");
             marsh.marshal(getCapsXml, stream);
         } catch (JAXBException ex) {
             throw new IOException(ex);

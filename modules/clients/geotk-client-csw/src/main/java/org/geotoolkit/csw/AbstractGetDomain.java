@@ -23,7 +23,8 @@ import java.net.URL;
 import java.net.URLConnection;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
-import org.geotoolkit.csw.xml.v202.GetDomainType;
+import org.geotoolkit.csw.xml.CswXmlFactory;
+import org.geotoolkit.csw.xml.GetDomain;
 import org.geotoolkit.security.ClientSecurity;
 
 
@@ -104,7 +105,7 @@ public abstract class AbstractGetDomain extends AbstractCSWRequest implements Ge
         Marshaller marsh = null;
         try {
             marsh = POOL.acquireMarshaller();
-            final GetDomainType domainXml = new GetDomainType("CSW", version, propertyName, null);
+            final GetDomain domainXml = CswXmlFactory.createGetDomain(version, "CSW",  propertyName, null);
             marsh.marshal(domainXml, stream);
         } catch (JAXBException ex) {
             throw new IOException(ex);
