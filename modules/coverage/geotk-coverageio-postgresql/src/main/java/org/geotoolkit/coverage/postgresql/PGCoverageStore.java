@@ -162,6 +162,7 @@ public class PGCoverageStore extends AbstractCoverageStore{
         ResultSet rs = null;
         try {
             cnx = source.getConnection();
+            cnx.setReadOnly(false);
             stmt = cnx.createStatement();
             stmt.execute(query.toString());
         } catch (SQLException ex) {
