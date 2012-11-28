@@ -17,7 +17,6 @@
 package org.geotoolkit.csw.xml.v202;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -101,6 +100,7 @@ public class GetRecordByIdType extends RequestBaseType implements GetRecordById 
     /**
      * Gets the value of the id property.
      */
+    @Override
     public List<String> getId() {
         if (id == null) {
             id = new ArrayList<String>();
@@ -115,6 +115,7 @@ public class GetRecordByIdType extends RequestBaseType implements GetRecordById 
     /**
      * Gets the value of the elementSetName property.
      */
+    @Override
     public ElementSetNameType getElementSetName() {
         return elementSetName;
     }
@@ -126,6 +127,7 @@ public class GetRecordByIdType extends RequestBaseType implements GetRecordById 
     /**
      * Gets the value of the outputFormat property.
      */
+    @Override
     public String getOutputFormat() {
         return outputFormat;
     }
@@ -133,6 +135,7 @@ public class GetRecordByIdType extends RequestBaseType implements GetRecordById 
     /**
      * Gets the value of the outputFormat property.
      */
+    @Override
     public void setOutputFormat(final String outputFormat) {
         this.outputFormat = outputFormat;
     }
@@ -140,6 +143,7 @@ public class GetRecordByIdType extends RequestBaseType implements GetRecordById 
     /**
      * Gets the value of the outputSchema property.
      */
+    @Override
     public String getOutputSchema() {
         return outputSchema;
     }
