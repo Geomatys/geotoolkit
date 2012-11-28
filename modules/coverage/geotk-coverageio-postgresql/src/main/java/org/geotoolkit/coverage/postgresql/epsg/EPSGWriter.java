@@ -40,11 +40,13 @@ import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.opengis.referencing.operation.Projection;
 import org.opengis.util.FactoryException;
 import static org.geotoolkit.coverage.postgresql.epsg.EPSGQueries.*;
+import org.geotoolkit.referencing.datum.AbstractDatum;
 import org.geotoolkit.referencing.factory.IdentifiedObjectFinder;
 import org.geotoolkit.temporal.object.TemporalUtilities;
 import org.geotoolkit.util.ComparisonMode;
 import org.opengis.metadata.extent.Extent;
 import org.opengis.referencing.IdentifiedObject;
+import org.opengis.referencing.crs.SingleCRS;
 import org.opengis.referencing.cs.CartesianCS;
 import org.opengis.referencing.cs.EllipsoidalCS;
 import org.opengis.referencing.cs.TimeCS;
@@ -186,6 +188,13 @@ public class EPSGWriter {
                 source_geogcrs_code = null;
                 projection_conv_code = null;
                 
+            }else if(candidate instanceof SingleCRS){
+                final SingleCRS singlecrs = (SingleCRS) candidate;
+                coord_ref_sys_kind = "single";
+                datum_code = getOrCreateDatum(singlecrs.getDatum());
+                source_geogcrs_code = null;
+                projection_conv_code = null;
+                
             }else{
                 throw new FactoryException("Can not store given crs : " +candidate);
             }
@@ -305,13 +314,7 @@ public class EPSGWriter {
     
     private int createCoordinateSystemAxis(final int csid, final int axisOrder, 
             final CoordinateSystemAxis candidate) throws FactoryException{
-        
-        //search if this object already exist
-        final String code = searchSimilar(CoordinateSystemAxis.class, candidate);
-        if(code != null){
-            return codeToID(code);
-        }
-        
+                
         final Integer coord_axis_code;
         final Integer coord_sys_code = csid;
         final Integer coord_axis_name_code = createCoordinateSystemAxisName(candidate);
@@ -443,7 +446,13 @@ public class EPSGWriter {
             datum_type = "temporal";
             ellipsoid_code = null;
             prime_meridian_code = null;
-        }else{
+        }else if(candidate instanceof AbstractDatum){
+            final AbstractDatum td = (AbstractDatum) candidate;
+            origin_description = "";
+            datum_type = "abstract";
+            ellipsoid_code = null;
+            prime_meridian_code = null;
+        }else {
             throw new FactoryException("Can not store given datum : " +candidate);
         }
         
@@ -620,7 +629,7 @@ public class EPSGWriter {
             }else{
                 selfDefined = true;
                 //refer to self
-                unit_of_meas_type = "unknow";      
+                unit_of_meas_type = "unknown";      
             }
         
             cnx = source.getConnection();
@@ -795,7 +804,7 @@ public class EPSGWriter {
         }else if(candidate instanceof VerticalCS){
             return "vertical";
         }else{
-            throw new FactoryException("Can not store given cs : " +candidate);
+            return "abstract";
         }
     }
     
