@@ -33,6 +33,7 @@ import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.jdbc.ManageableDataSource;
 import org.geotoolkit.referencing.factory.epsg.ThreadedEpsgFactory;
 import org.geotoolkit.storage.DataStoreException;
+import org.geotoolkit.util.ArgumentChecks;
 import org.opengis.feature.type.Name;
 import org.opengis.parameter.ParameterValueGroup;
 
@@ -50,6 +51,7 @@ public class PGCoverageStore extends AbstractCoverageStore{
 
     public PGCoverageStore(final ParameterValueGroup params, final DataSource source){
         super(params);
+        ArgumentChecks.ensureNonNull("source", source);
         this.source = source;
 
     }

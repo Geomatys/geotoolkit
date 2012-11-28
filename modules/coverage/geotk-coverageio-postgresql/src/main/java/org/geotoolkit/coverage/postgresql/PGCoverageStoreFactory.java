@@ -226,15 +226,23 @@ public class PGCoverageStoreFactory extends AbstractCoverageStoreFactory{
 
             return store;
         } catch (SQLException ex) {
+            if(store != null){
+                store.dispose();
+            }
             throw new DataStoreException(ex);
         } catch (IOException ex) {
+            if(store != null){
+                store.dispose();
+            }
             throw new DataStoreException(ex);
         } catch (FactoryException ex) {
+            if(store != null){
+                store.dispose();
+            }
             throw new DataStoreException(ex);
         }finally{
             if(store != null){
                 store.closeSafe(cnx, stmt, rs);
-                store.dispose();
             }
         }
     }
