@@ -89,9 +89,9 @@ public final class WKBRasterConstants {
             case PT_8BSI:
                 return DataBuffer.TYPE_BYTE;
             case PT_16BSI:
-                return DataBuffer.TYPE_USHORT;
-            case PT_16BUI:
                 return DataBuffer.TYPE_SHORT;
+            case PT_16BUI:
+                return DataBuffer.TYPE_USHORT;
             case PT_32BSI:
                 return DataBuffer.TYPE_INT;
             case PT_32BUI:
