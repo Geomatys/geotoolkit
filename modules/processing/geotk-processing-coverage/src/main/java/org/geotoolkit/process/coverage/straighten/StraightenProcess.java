@@ -24,10 +24,13 @@ import static org.geotoolkit.parameter.Parameters.*;
 import org.geotoolkit.process.AbstractProcess;
 import org.geotoolkit.process.ProcessException;
 import static org.geotoolkit.process.coverage.straighten.StraightenDescriptor.*;
+import org.geotoolkit.referencing.operation.MathTransforms;
+import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.opengis.geometry.Envelope;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 
@@ -68,9 +71,9 @@ public class StraightenProcess extends AbstractProcess {
                     Math.abs(coords[0] - coords[2]),
                     Math.abs(coords[1] - coords[5]));
             
-            final AffineTransform2D outGridToCRS = new AffineTransform2D(scale, 0, 0, -scale, outEnv.getMinimum(0), outEnv.getMaximum(1));
+            final AffineTransform2D outGridToCRS = new AffineTransform2D(scale, 0, 0, -scale, outEnv.getMinimum(0), outEnv.getMaximum(1));            
             final GridEnvelope2D gridEnv = new GridEnvelope2D(0, 0, (int)(outEnv.getSpan(0)/scale), (int)(outEnv.getSpan(1)/scale));
-            final GridGeometry2D outgridGeom = new GridGeometry2D(gridEnv,outGridToCRS,crs);
+            final GridGeometry2D outgridGeom = new GridGeometry2D(gridEnv, PixelInCell.CELL_CORNER, outGridToCRS,crs,null);
             final GridCoverage2D outCoverage = (GridCoverage2D) Operations.DEFAULT.resample(candidate, crs, outgridGeom, null);
             getOrCreate(COVERAGE_OUT, outputParameters).setValue(outCoverage);
         }catch(TransformException ex){
