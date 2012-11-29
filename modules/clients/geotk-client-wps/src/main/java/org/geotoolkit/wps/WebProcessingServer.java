@@ -416,7 +416,7 @@ public class WebProcessingServer extends AbstractServer implements ProcessingReg
                                         supportedIO = false;
                                         break;
                                     }
-                                    inputDescriptors.add(new DefaultParameterDescriptor(properties, clazz, null, null, null, null, null, min == 0));
+                                    inputDescriptors.add(new DefaultParameterDescriptor(properties, clazz, null, null, null, null, null, min != 0));
                                     inputTypes.put(inputName, "complex");
                                 } else {
                                     LOGGER.log(Level.WARNING, "No defaut format for complex input "+inputName+".");
@@ -450,7 +450,7 @@ public class WebProcessingServer extends AbstractServer implements ProcessingReg
                                
                                 //At this state the converter can't be null.
                                 try {
-                                    inputDescriptors.add(new DefaultParameterDescriptor(properties, clazz, null, converter.convert(defaultValue, null), null, null, unit, min == 0));
+                                    inputDescriptors.add(new DefaultParameterDescriptor(properties, clazz, null, converter.convert(defaultValue, null), null, null, unit, min != 0));
                                     inputTypes.put(inputName, "literal");
                                 } catch (NonconvertibleObjectException ex2) {
                                     LOGGER.log(Level.WARNING, "Can't convert the default literal input value.", ex2);
@@ -460,7 +460,7 @@ public class WebProcessingServer extends AbstractServer implements ProcessingReg
                             }
                             
                             if (bboxInput != null) {
-                                inputDescriptors.add(new DefaultParameterDescriptor(properties, Envelope.class, null, null, null, null, null, min == 0));
+                                inputDescriptors.add(new DefaultParameterDescriptor(properties, Envelope.class, null, null, null, null, null, min != 0));
                                 inputTypes.put(inputName, "bbox");
                             }
                         }
