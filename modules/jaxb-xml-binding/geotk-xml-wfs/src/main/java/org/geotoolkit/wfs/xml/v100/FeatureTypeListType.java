@@ -96,6 +96,7 @@ public class FeatureTypeListType implements FeatureTypeList {
      * Gets the value of the featureType property.
      * 
      */
+    @Override
     public List<FeatureTypeType> getFeatureType() {
         if (featureType == null) {
             featureType = new ArrayList<FeatureTypeType>();
@@ -103,6 +104,7 @@ public class FeatureTypeListType implements FeatureTypeList {
         return this.featureType;
     }
     
+    @Override
     public void addFeatureType(final FeatureType ft) {
         if (ft instanceof FeatureTypeType) {
             getFeatureType().add((FeatureTypeType)ft);

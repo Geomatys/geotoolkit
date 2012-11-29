@@ -19,7 +19,6 @@ package org.geotoolkit.data.wfs;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.math.BigInteger;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -62,20 +61,15 @@ import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.feature.xml.XmlFeatureReader;
 import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeReader;
 import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureReader;
-import org.geotoolkit.filter.identity.DefaultFeatureId;
 import org.geotoolkit.geometry.GeneralEnvelope;
-import org.geotoolkit.ogc.xml.v110.FeatureIdType;
-import org.geotoolkit.ows.xml.v100.WGS84BoundingBoxType;
+import org.geotoolkit.ows.xml.BoundingBox;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.geotoolkit.wfs.xml.FeatureTypeList;
+import org.geotoolkit.wfs.xml.TransactionResponse;
+import org.geotoolkit.wfs.xml.WFSCapabilities;
 import org.geotoolkit.wfs.xml.WFSMarshallerPool;
-import org.geotoolkit.wfs.xml.v110.FeatureTypeListType;
-import org.geotoolkit.wfs.xml.v110.FeatureTypeType;
-import org.geotoolkit.wfs.xml.v110.InsertResultsType;
-import org.geotoolkit.wfs.xml.v110.InsertedFeatureType;
-import org.geotoolkit.wfs.xml.v110.TransactionResponseType;
-import org.geotoolkit.wfs.xml.v110.WFSCapabilitiesType;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
@@ -110,10 +104,10 @@ public class WFSDataStore extends AbstractFeatureStore{
         super(server.getConfiguration());
         
         this.server = server;
-        final WFSCapabilitiesType capabilities = server.getCapabilities();
+        final WFSCapabilities capabilities = server.getCapabilities();
 
-        final FeatureTypeListType lst = capabilities.getFeatureTypeList();
-        for(final FeatureTypeType ftt : lst.getFeatureType()){
+        final FeatureTypeList lst = capabilities.getFeatureTypeList();
+        for(final org.geotoolkit.wfs.xml.FeatureType ftt : lst.getFeatureType()){
 
             //extract the name -------------------------------------------------
             QName typeName = ftt.getName();
@@ -131,7 +125,7 @@ public class WFSDataStore extends AbstractFeatureStore{
             CoordinateReferenceSystem crs;
             FeatureType sft;
             try {
-                String defaultCRS = ftt.getDefaultSRS();
+                String defaultCRS = ftt.getDefaultCRS();
                 if(defaultCRS.contains("EPSG")){
                     final int last = defaultCRS.lastIndexOf(':');
                     defaultCRS = "EPSG:"+defaultCRS.substring(last+1);
@@ -181,17 +175,17 @@ public class WFSDataStore extends AbstractFeatureStore{
                 }
 
                 //extract the bounds -----------------------------------------------
-                final WGS84BoundingBoxType bbox = ftt.getWGS84BoundingBox().get(0);
+                final BoundingBox bbox = ftt.getBoundingBox().get(0);
                 try {
                     final String crsVal = bbox.getCrs();
                     crs = crsVal != null ? CRS.decode(crsVal) : DefaultGeographicCRS.WGS84;
                     final GeneralEnvelope env = new GeneralEnvelope(crs);
-                    final BigInteger dims = bbox.getDimensions();
-                    final List<Double> upper = bbox.getUpperCorner();
-                    final List<Double> lower = bbox.getLowerCorner();
+                    final Integer dims        = bbox.getDimensions();
+                    final List<Double> upper  = bbox.getUpperCorner();
+                    final List<Double> lower  = bbox.getLowerCorner();
 
                     //@TODO bbox should be null if there is no bbox in response.
-                    if(dims == null)continue;
+                    if(dims == null) {continue;}
                     for(int i=0,n=dims.intValue();i<n;i++){
                         env.setRange(i, lower.get(i), upper.get(i));
                     }
@@ -258,7 +252,7 @@ public class WFSDataStore extends AbstractFeatureStore{
            && (query.getMaxFeatures() == null || query.getMaxFeatures() == Integer.MAX_VALUE)
            && query.getStartIndex() == 0){
             Envelope env = bounds.get(typeName);
-            if(env != null) return env;
+            if(env != null) {return env;}
         }
         
         return super.getEnvelope(query);
@@ -387,24 +381,9 @@ public class WFSDataStore extends AbstractFeatureStore{
                 obj = ((JAXBElement)obj).getValue();
             }
             
-            if(obj instanceof TransactionResponseType){
-                final List<FeatureId> ids = new ArrayList<FeatureId>();
-                final TransactionResponseType tr = (TransactionResponseType) obj;
-                
-                final InsertResultsType rt = tr.getInsertResults();                
-                if(rt != null){
-                    final List<InsertedFeatureType> inserted = rt.getFeature();
-
-                    if(inserted != null){
-                        for(InsertedFeatureType ift : inserted){
-                            for(FeatureIdType fit : ift.getFeatureId()){
-                                ids.add(new DefaultFeatureId(fit.getFid()));
-                            }
-                        }
-                    }
-                }
-                
-                return ids;
+            if(obj instanceof TransactionResponse){
+                final TransactionResponse tr = (TransactionResponse) obj;
+                return tr.getInsertedFID();
             }else{
                 throw new DataStoreException("Unexpected response : "+ obj.getClass());
             }
@@ -492,7 +471,7 @@ public class WFSDataStore extends AbstractFeatureStore{
                 getLogger().log(Level.INFO, "[WFS Client] request type by POST.");
                 stream = request.getResponseStream();
             } else {
-            getLogger().log(Level.INFO, "[WFS Client] request type : " + request.getURL());
+            getLogger().log(Level.INFO, "[WFS Client] request type : {0}", request.getURL());
                 stream = request.getURL().openStream();
             }
             final List<FeatureType> featureTypes = reader.read(stream);
@@ -541,7 +520,7 @@ public class WFSDataStore extends AbstractFeatureStore{
                 stream = request.getResponseStream();
             } else {
                 final URL url = request.getURL();
-                getLogger().log(Level.INFO, "[WFS Client] request feature : " + url);
+                getLogger().log(Level.INFO, "[WFS Client] request feature : {0}", url);
                 stream = url.openStream();
             }
             final Object result = reader.read(stream);

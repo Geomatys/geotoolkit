@@ -20,6 +20,9 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
+import org.opengis.feature.Attribute;
+import org.opengis.filter.identity.FeatureId;
+import org.opengis.filter.identity.Identifier;
 
 
 /**
@@ -42,7 +45,7 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "FeatureIdType")
-public class FeatureIdType {
+public class FeatureIdType implements FeatureId {
 
     @XmlAttribute(required = true)
     private String fid;
@@ -69,6 +72,11 @@ public class FeatureIdType {
         return fid;
     }
 
+    @Override
+    public String getID() {
+        return fid;
+    }
+    
     /**
      * Sets the value of the fid property.
      * 
@@ -77,4 +85,12 @@ public class FeatureIdType {
         this.fid = value;
     }
 
+    @Override
+    public boolean matches(final Object feature) {
+        if (feature instanceof Attribute) {
+            final Identifier identifier = ((Attribute)feature).getIdentifier();
+            return identifier != null && fid.equals(identifier.getID());
+        }
+        return false;
+    }
 }

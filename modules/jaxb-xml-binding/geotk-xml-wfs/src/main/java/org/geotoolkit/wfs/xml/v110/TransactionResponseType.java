@@ -16,15 +16,19 @@
  */
 package org.geotoolkit.wfs.xml.v110;
 
+import java.util.ArrayList;
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.ogc.xml.v110.FeatureIdType;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.wfs.xml.TransactionResponse;
 import org.geotoolkit.wfs.xml.WFSResponse;
+import org.opengis.filter.identity.FeatureId;
 
 
 /**
@@ -183,6 +187,22 @@ public class TransactionResponseType implements WFSResponse, TransactionResponse
         this.version = value;
     }
 
+    @Override
+    public List<FeatureId> getInsertedFID() {
+        final List<FeatureId> ids = new ArrayList<FeatureId>();
+        if (insertResults != null) {
+            final List<InsertedFeatureType> inserted = insertResults.getFeature();
+            if (inserted != null) {
+                for(InsertedFeatureType ift : inserted){
+                    for(FeatureIdType fit : ift.getFeatureId()){
+                        ids.add(fit);
+                    }
+                }
+            }
+        }
+        return ids;
+    }
+    
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("[TransactionResponseType]\n");

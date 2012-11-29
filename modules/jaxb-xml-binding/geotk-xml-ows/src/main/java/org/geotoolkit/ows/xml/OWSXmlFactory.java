@@ -25,7 +25,7 @@ import java.util.List;
 public class OWSXmlFactory {
     
     
-    public AcceptVersions buildAcceptVersion(final String currentVersion, final List<String> acceptVersion) {
+    public static AcceptVersions buildAcceptVersion(final String currentVersion, final List<String> acceptVersion) {
         if ("1.1.0".equals(currentVersion)) {
             return new org.geotoolkit.ows.xml.v110.AcceptVersionsType(acceptVersion);
         } else if ("1.0.0".equals(currentVersion)) {
@@ -35,7 +35,7 @@ public class OWSXmlFactory {
         }
     }
     
-    public AcceptFormats buildAcceptFormat(final String currentVersion, final List<String> acceptformats) {
+    public static AcceptFormats buildAcceptFormat(final String currentVersion, final List<String> acceptformats) {
         if ("1.1.0".equals(currentVersion)) {
             return new org.geotoolkit.ows.xml.v110.AcceptFormatsType(acceptformats);
         } else if ("1.0.0".equals(currentVersion)) {
@@ -45,7 +45,7 @@ public class OWSXmlFactory {
         }
     }
     
-    public Sections buildSections(final String currentVersion, final List<String> sections) {
+    public static Sections buildSections(final String currentVersion, final List<String> sections) {
         if ("1.1.0".equals(currentVersion)) {
             return new org.geotoolkit.ows.xml.v110.SectionsType(sections);
         } else if ("1.0.0".equals(currentVersion)) {

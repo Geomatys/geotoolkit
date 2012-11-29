@@ -135,6 +135,7 @@ public class FeatureTypeType implements FeatureType {
      *     {@link QName }
      *     
      */
+    @Override
     public QName getName() {
         return name;
     }
@@ -147,6 +148,7 @@ public class FeatureTypeType implements FeatureType {
      *     {@link QName }
      *     
      */
+    @Override
     public void setName(final QName value) {
         this.name = value;
     }
@@ -227,7 +229,8 @@ public class FeatureTypeType implements FeatureType {
      *     {@link String }
      *     
      */
-    public String getDefaultSRS() {
+    @Override
+    public String getDefaultCRS() {
         return defaultSRS;
     }
 
@@ -239,6 +242,7 @@ public class FeatureTypeType implements FeatureType {
      *     {@link String }
      *     
      */
+    @Override
     public void setDefaultCRS(final String value) {
         this.defaultSRS = value;
     }
@@ -256,6 +260,7 @@ public class FeatureTypeType implements FeatureType {
     /**
      * Gets the value of the otherSRS property.
      */
+    @Override
     public void setOtherCRS(final List<String> otherCRS) {
         this.otherSRS = otherCRS;
     }
@@ -335,7 +340,8 @@ public class FeatureTypeType implements FeatureType {
     /**
      * Gets the value of the wgs84BoundingBox property.
      */
-    public List<WGS84BoundingBoxType> getWGS84BoundingBox() {
+    @Override
+    public List<WGS84BoundingBoxType> getBoundingBox() {
         if (wgs84BoundingBox == null) {
             wgs84BoundingBox = new ArrayList<WGS84BoundingBoxType>();
         }
@@ -406,12 +412,15 @@ public class FeatureTypeType implements FeatureType {
         if(name != null) {
             s.append("name:").append(name).append('\n');
         }
-        if (title != null)
+        if (title != null) {
             s.append("title:").append(title).append('\n');
-        if (_abstract != null)
+        }
+        if (_abstract != null) {
             s.append("_abstract:").append(_abstract).append('\n');
-        if (defaultSRS != null)
+        }
+        if (defaultSRS != null) {
             s.append("defaultSRS:").append(defaultSRS).append('\n');
+        }
         if (keywords != null) {
             s.append("keywords:").append('\n');
             for (KeywordsType k : keywords) {
@@ -436,12 +445,15 @@ public class FeatureTypeType implements FeatureType {
                 s.append(k).append('\n');
             }
         }
-        if (noSRS != null)
+        if (noSRS != null) {
             s.append("noSRS:").append(noSRS).append('\n');
-         if (operations != null)
+        }
+        if (operations != null) {
             s.append("operations:").append(operations).append('\n');
-         if (outputFormats != null)
+        }
+        if (outputFormats != null) {
             s.append("outputFormats:").append(outputFormats).append('\n');
+        }
         return s.toString();
     }
 

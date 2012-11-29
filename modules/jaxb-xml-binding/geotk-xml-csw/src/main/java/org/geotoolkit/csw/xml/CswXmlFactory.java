@@ -403,27 +403,24 @@ public class CswXmlFactory {
     }
     
     public static AcceptVersions buildAcceptVersion(final String currentVersion, final List<String> acceptVersion) {
-        final OWSXmlFactory facto = new OWSXmlFactory();
         if ("2.0.2".equals(currentVersion) || "2.0.0".equals(currentVersion)) {
-            return facto.buildAcceptVersion("1.0.0", acceptVersion);
+            return OWSXmlFactory.buildAcceptVersion("1.0.0", acceptVersion);
         } else {
             throw new IllegalArgumentException("unexpected version number:" + currentVersion);
         }
     }
 
     public static AcceptFormats buildAcceptFormat(final String currentVersion, final List<String> acceptFormats) {
-        final OWSXmlFactory facto = new OWSXmlFactory();
         if ("2.0.2".equals(currentVersion) || "2.0.0".equals(currentVersion)) {
-            return facto.buildAcceptFormat("1.0.0", acceptFormats);
+            return OWSXmlFactory.buildAcceptFormat("1.0.0", acceptFormats);
         } else {
             throw new IllegalArgumentException("unexpected version number:" + currentVersion);
         }
     }
 
     public static Sections buildSections(final String currentVersion, final List<String> sections) {
-        final OWSXmlFactory facto = new OWSXmlFactory();
         if ("2.0.2".equals(currentVersion) || "2.0.0".equals(currentVersion)) {
-            return facto.buildSections("1.0.0", sections);
+            return OWSXmlFactory.buildSections("1.0.0", sections);
         } else {
             throw new IllegalArgumentException("unexpected version number:" + currentVersion);
         }

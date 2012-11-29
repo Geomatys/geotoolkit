@@ -29,7 +29,7 @@ import javax.xml.bind.annotation.XmlList;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.ows.xml.BoundingBox;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.util.Utilities;
 import org.opengis.geometry.Envelope;
@@ -71,7 +71,7 @@ import org.opengis.util.FactoryException;
     WGS84BoundingBoxType.class
 })
 @XmlRootElement(name ="BoundingBox")
-public class BoundingBoxType {
+public class BoundingBoxType implements BoundingBox {
 
     private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.ows.xml.v110");
 
@@ -133,6 +133,7 @@ public class BoundingBoxType {
      * Gets the value of the lowerCorner property.
      * (unmodifiable)
      */
+    @Override
     public List<Double> getLowerCorner() {
         return lowerCorner;
     }
@@ -141,6 +142,7 @@ public class BoundingBoxType {
      * Gets the value of the upperCorner property.
      * (unmodifiable)
      */
+    @Override
     public List<Double> getUpperCorner() {
         return upperCorner;
     }
@@ -149,6 +151,7 @@ public class BoundingBoxType {
      * Gets the value of the crs property.
      *
      */
+    @Override
     public String getCrs() {
         return crs;
     }
@@ -156,6 +159,7 @@ public class BoundingBoxType {
     /**
      * Gets the value of the dimensions property.
      */
+    @Override
     public Integer getDimensions() {
         return dimensions;
     }
@@ -190,8 +194,9 @@ public class BoundingBoxType {
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder("[").append(this.getClass().getSimpleName()).append("]:").append('\n');
-        if (crs != null)
+        if (crs != null) {
             s.append("CRS:").append(crs).append('\n');
+        }
         if (dimensions != null) {
             s.append("Dim:").append(dimensions).append('\n');
         }

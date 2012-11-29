@@ -136,6 +136,7 @@ public class FeatureTypeType implements FeatureType {
      *     {@link QName }
      *     
      */
+    @Override
     public QName getName() {
         return name;
     }
@@ -148,6 +149,7 @@ public class FeatureTypeType implements FeatureType {
      *     {@link QName }
      *     
      */
+    @Override
     public void setName(QName value) {
         this.name = value;
     }
@@ -207,6 +209,7 @@ public class FeatureTypeType implements FeatureType {
      *     {@link String }
      *     
      */
+    @Override
     public String getDefaultCRS() {
         return defaultCRS;
     }
@@ -219,6 +222,7 @@ public class FeatureTypeType implements FeatureType {
      *     {@link String }
      *     
      */
+    @Override
     public void setDefaultCRS(String value) {
         this.defaultCRS = value;
     }
@@ -233,6 +237,7 @@ public class FeatureTypeType implements FeatureType {
         return this.otherCRS;
     }
     
+    @Override
     public void setOtherCRS(final List<String> otherCRS) {
         this.otherCRS = otherCRS;
     }
@@ -288,7 +293,8 @@ public class FeatureTypeType implements FeatureType {
     /**
      * Gets the value of the wgs84BoundingBox property.
      */
-    public List<WGS84BoundingBoxType> getWGS84BoundingBox() {
+    @Override
+    public List<WGS84BoundingBoxType> getBoundingBox() {
         if (wgs84BoundingBox == null) {
             wgs84BoundingBox = new ArrayList<WGS84BoundingBoxType>();
         }
@@ -384,19 +390,22 @@ public class FeatureTypeType implements FeatureType {
         if(name != null) {
             s.append("name:").append(name).append('\n');
         }
-        if (title != null)
+        if (title != null) {
             s.append("title:").append(title).append('\n');
-        if (_abstract != null)
+        }
+        if (_abstract != null) {
             s.append("_abstract:").append(_abstract).append('\n');
-        if (defaultCRS != null)
+        }
+        if (defaultCRS != null) {
             s.append("defaultCRS:").append(defaultCRS).append('\n');
+        }
         if (keywords != null) {
             s.append("keywords:").append('\n');
             for (KeywordsType k : keywords) {
                 s.append(k).append('\n');
             }
         }
-       if (metadataURL != null) {
+        if (metadataURL != null) {
             s.append("metadataURL:").append('\n');
             for (MetadataURLType k : metadataURL) {
                 s.append(k).append('\n');
@@ -414,12 +423,15 @@ public class FeatureTypeType implements FeatureType {
                 s.append(k).append('\n');
             }
         }
-        if (noCRS != null)
+        if (noCRS != null) {
             s.append("noCRS:").append(noCRS).append('\n');
-         if (extendedDescription != null)
+        }
+        if (extendedDescription != null) {
             s.append("extendedDescription:").append(extendedDescription).append('\n');
-         if (outputFormats != null)
+        }
+        if (outputFormats != null) {
             s.append("outputFormats:").append(outputFormats).append('\n');
+        }
         return s.toString();
     }
     

@@ -23,8 +23,10 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.ogc.xml.v100.FeatureIdType;
 import org.geotoolkit.wfs.xml.TransactionResponse;
 import org.geotoolkit.wfs.xml.WFSResponse;
+import org.opengis.filter.identity.FeatureId;
 
 
 /**
@@ -142,6 +144,19 @@ public class WFSTransactionResponseType implements WFSResponse, TransactionRespo
      */
     public void setVersion(String value) {
         this.version = value;
+    }
+
+    @Override
+    public List<FeatureId> getInsertedFID() {
+        final List<FeatureId> ids = new ArrayList<FeatureId>();
+        if (insertResult != null) {
+            for(InsertResultType ift : insertResult){
+                for(FeatureIdType fit : ift.getFeatureId()){
+                    ids.add(fit);
+                }
+            }
+        }
+        return ids;
     }
 
 }
