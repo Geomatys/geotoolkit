@@ -64,6 +64,7 @@ propOrder = {
     "narrowerTransitive",
     "modified",
     "example",
+    "inScheme",
     "geometry",
     "count"
 
@@ -172,12 +173,10 @@ public class Concept implements Serializable {
     @XmlElement(namespace="http://www.geomatys.com/count")
     private Integer count;
 
-    /**
-     * An extension for concept theme.
-     */
-    @XmlTransient
-    private String theme;
-
+    
+    @XmlElement(namespace = "http://www.w3.org/2004/02/skos/core#")
+    private List<Concept> inScheme;
+    
     public Concept() {
 
     }
@@ -1114,15 +1113,27 @@ public class Concept implements Serializable {
     /**
      * @return the theme
      */
-    public String getTheme() {
-        return theme;
+    public List<Concept> getInScheme() {
+        if (this.inScheme == null) {
+            this.inScheme = new ArrayList<Concept>();
+        }
+        return inScheme;
     }
 
     /**
      * @param theme the theme to set
      */
-    public void setTheme(String theme) {
-        this.theme = theme;
+    public void setInScheme(final List<Concept> inscheme) {
+        this.inScheme = inscheme;
+    }
+    
+    public void addInScheme(final Concept inScheme) {
+        if (this.inScheme == null) {
+            this.inScheme = new ArrayList<Concept>();
+        }
+        if (inScheme != null) {
+            this.inScheme.add(inScheme);
+        }
     }
 
     @Override
@@ -1212,8 +1223,8 @@ public class Concept implements Serializable {
             sb.append("hasVersion:").append(hasVersion).append('\n');
         if (count != null)
             sb.append("count:").append(count).append('\n');
-        if (theme != null) {
-            sb.append("EXT:theme:").append(theme).append('\n');
+        if (inScheme != null) {
+            sb.append("EXT:theme:").append(inScheme).append('\n');
         }
         return sb.toString();
     }
@@ -1261,7 +1272,7 @@ public class Concept implements Serializable {
                    Utilities.equals(this.example,            that.example)     &&
                    Utilities.equals(this.geometry,           that.geometry)    &&
                    Utilities.equals(this.count,              that.count)       &&
-                   Utilities.equals(this.theme,              that.theme)       &&
+                   Utilities.equals(this.inScheme,           that.inScheme)    &&
                    Utilities.equals(this.value,              that.value);
         }
         return false;
