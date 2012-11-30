@@ -25,6 +25,7 @@ import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.process.ProcessFinder;
+import org.geotoolkit.process.coverage.AbstractProcessTest;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import static org.junit.Assert.*;
@@ -36,25 +37,26 @@ import org.opengis.util.NoSuchIdentifierException;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class ResampleTest {
+public class ResampleTest extends AbstractProcessTest {
 
     static final int WIDTH = 10;
     static final int HEIGHT = 10;
     static final int SIZE = WIDTH*HEIGHT;
 
     public ResampleTest() {
+        super(ResampleDescriptor.NAME);
     }
 
     @Test
     public void testProcess() throws Exception {
-        
+
         final float[][] matrix = new float[][]{
             {0,1,2,3},
             {4,5,6,7},
             {0,1,2,3},
             {4,5,6,7}
         };
-        
+
         final GeneralEnvelope env = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
         env.setRange(0, -180, +180);
         env.setRange(1, -90, +90);
@@ -62,7 +64,7 @@ public class ResampleTest {
         gcb.setRenderedImage(matrix);
         gcb.setEnvelope(env);
         final GridCoverage2D coverage = gcb.getGridCoverage2D();
-        
+
 
         //get the description of the process we want
         ProcessDescriptor desc = null;

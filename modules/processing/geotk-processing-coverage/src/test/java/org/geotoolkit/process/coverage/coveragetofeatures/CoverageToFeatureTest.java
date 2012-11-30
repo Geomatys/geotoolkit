@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2011, Geomatys
+ *    (C) 2011 - 2012, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.process.raster.coveragetofeatures;
+package org.geotoolkit.process.coverage.coveragetofeatures;
 
 import org.opengis.util.GenericName;
 import com.vividsolutions.jts.geom.Coordinate;
@@ -51,6 +51,8 @@ import org.geotoolkit.process.ProcessFinder;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.geotoolkit.internal.image.io.GridDomainAccessor;
+import org.geotoolkit.process.coverage.AbstractProcessTest;
+import org.geotoolkit.process.coverage.coveragetofeatures.CoverageToFeaturesDescriptor;
 
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.feature.Feature;
@@ -72,10 +74,13 @@ import static org.junit.Assert.*;
  * @author Quentin Boileau
  * @module pending
  */
-public class CoverageToFeatureTest {
+public class CoverageToFeatureTest extends AbstractProcessTest {
 
     private static final int max = 5; /* Define the number of row and columns of the generated coverage */
 
+    public CoverageToFeatureTest() {
+        super(CoverageToFeaturesDescriptor.NAME);
+    }
 
     /**
      * Test coverageToFeature process with a PixelInCell.CELL_CENTER coverage
