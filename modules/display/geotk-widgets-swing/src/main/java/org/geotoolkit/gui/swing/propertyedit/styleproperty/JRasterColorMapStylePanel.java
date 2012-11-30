@@ -31,9 +31,12 @@ import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.util.AbstractMap;
 import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.AbstractCellEditor;
@@ -65,6 +68,7 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.gui.swing.propertyedit.PropertyPane;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
+import org.geotoolkit.image.io.PaletteFactory;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapLayer;
@@ -114,20 +118,17 @@ public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
 
     private static final Logger LOGGER = Logging.getLogger(JRasterColorMapStylePanel.class);
     
-    private static final List<Palette> PALETTES;
+    private static final PaletteFactory PF = PaletteFactory.getDefault();
+    private static final List<Object> PALETTES;
 
     static{
-        PALETTES = new ArrayList<Palette>();
+        PALETTES = new ArrayList<Object>();
         PALETTES.add(new DefaultRandomPalette());
-        PALETTES.add(new DefaultIntervalPalette(
-                new Color[]{Color.BLUE,Color.CYAN,Color.GREEN,Color.YELLOW,Color.ORANGE,Color.RED}
-                ));
-        PALETTES.add(new DefaultIntervalPalette(
-                new Color[]{Color.RED,Color.YELLOW}
-                ));
-        PALETTES.add(new DefaultIntervalPalette(
-                new Color[]{Color.BLUE,Color.WHITE}
-                ));
+        final Set<String> paletteNames = PF.getAvailableNames();
+        
+        for (String palName : paletteNames) {
+            PALETTES.add(palName);
+        }
         
         double[] fractions = new double[]{
             -3000,
@@ -166,7 +167,7 @@ public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
         guiTable.setModel(model);
         
         guiPalette.setModel(new ListComboBoxModel(PALETTES));
-        guiPalette.setRenderer(new PaletteRenderer());
+        guiPalette.setRenderer(new PaletteCellRenderer());
         guiPalette.setSelectedIndex(0);
 
         guiTable.getColumnModel().getColumn(0).setCellRenderer(new DefaultTableCellRenderer());
@@ -353,8 +354,24 @@ public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
         }
         
         boolean mustInterpolation = true;        
-        final Palette palette = (Palette) guiPalette.getSelectedItem();
-        List<Entry<Double, Color>> steps = palette.getSteps();
+        final Object paletteValue = (Object) guiPalette.getSelectedItem();
+        List<Entry<Double, Color>> steps = new ArrayList<Entry<Double, Color>>();
+        
+        if (paletteValue instanceof Palette) {
+            final Palette palette = (Palette) paletteValue;
+            steps = palette.getSteps();
+        } else if (paletteValue instanceof String) {
+            try {
+                final Color[] paletteColors = PF.getColors(String.valueOf(paletteValue));
+                for (int i = 0; i < paletteColors.length; i++) {
+                    final double fragment = i/(paletteColors.length-1);
+                    steps.add(new AbstractMap.SimpleEntry<Double, Color>(fragment, paletteColors[i]));
+                }
+            } catch (IOException ex) {
+                LOGGER.log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
+        
         for(int i=0,n=steps.size();i<n;i++){
             final double k = steps.get(i).getKey();
             if(k < -0.01 || k > 1.01){
@@ -512,38 +529,6 @@ public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
     private JPanel jPanel1;
     private JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables
-
-
-    private class PaletteRenderer extends DefaultListCellRenderer{
-
-        private Palette palette = null;
-
-        @Override
-        public Component getListCellRendererComponent(final JList list, final Object value, final int index, final boolean isSelected, final boolean cellHasFocus) {
-            super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-
-            PaletteRenderer.this.setText(" Palette ");
-
-            if(value instanceof Palette){
-                palette = (Palette)value;
-            }
-            return PaletteRenderer.this;
-        }
-
-        @Override
-        protected void paintComponent(final Graphics g) {
-            super.paintComponent(g);
-
-            if(palette != null){
-                Dimension d = PaletteRenderer.this.getSize();
-                Rectangle rect = new Rectangle(d);
-                rect.grow(-2, -2);
-                palette.render((Graphics2D) g, rect);
-            }
-
-        }
-
-    }
 
     private class DeleteRenderer extends DefaultTableCellRenderer{
 

@@ -72,6 +72,7 @@ import org.geotoolkit.gui.swing.propertyedit.PropertyPane;
 import org.geotoolkit.gui.swing.propertyedit.filterproperty.JCQLPropertyPanel;
 import org.geotoolkit.gui.swing.propertyedit.styleproperty.JAdvancedStylePanel;
 import org.geotoolkit.gui.swing.propertyedit.styleproperty.JClassificationIntervalStylePanel;
+import org.geotoolkit.gui.swing.propertyedit.styleproperty.JClassificationJenksPanel;
 import org.geotoolkit.gui.swing.propertyedit.styleproperty.JClassificationSingleStylePanel;
 import org.geotoolkit.gui.swing.propertyedit.styleproperty.JRasterColorMapStylePanel;
 import org.geotoolkit.gui.swing.propertyedit.styleproperty.JSLDImportExportPanel;
@@ -181,6 +182,7 @@ public class JMap2DFrame extends javax.swing.JFrame {
         styles.addPropertyPanel(new JSimpleStylePanel());
         styles.addPropertyPanel(new JClassificationSingleStylePanel());
         styles.addPropertyPanel(new JClassificationIntervalStylePanel());
+        styles.addPropertyPanel(new JClassificationJenksPanel());
         styles.addPropertyPanel(new JRasterColorMapStylePanel());
         styles.addPropertyPanel(new JAdvancedStylePanel());
         styles.addPropertyPanel(new JSLDImportExportPanel());

@@ -29,6 +29,7 @@ import org.geotoolkit.gui.swing.misc.JOptionDialog;
 import org.geotoolkit.gui.swing.propertyedit.LayerStylePropertyPanel;
 import org.geotoolkit.gui.swing.propertyedit.styleproperty.JAdvancedStylePanel;
 import org.geotoolkit.gui.swing.propertyedit.styleproperty.JClassificationIntervalStylePanel;
+import org.geotoolkit.gui.swing.propertyedit.styleproperty.JClassificationJenksPanel;
 import org.geotoolkit.gui.swing.propertyedit.styleproperty.JClassificationSingleStylePanel;
 import org.geotoolkit.gui.swing.propertyedit.styleproperty.JRasterColorMapStylePanel;
 import org.geotoolkit.gui.swing.propertyedit.styleproperty.JSimpleStylePanel;
@@ -99,6 +100,7 @@ public class StyleEditor extends PropertyValueEditor implements ActionListener{
         editors.addPropertyPanel(new JSimpleStylePanel());
         editors.addPropertyPanel(new JClassificationSingleStylePanel());
         editors.addPropertyPanel(new JClassificationIntervalStylePanel());
+        editors.addPropertyPanel(new JClassificationJenksPanel());
         editors.addPropertyPanel(new JRasterColorMapStylePanel());
         editors.addPropertyPanel(new JAdvancedStylePanel());
         editors.setTarget(layer);
