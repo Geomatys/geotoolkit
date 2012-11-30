@@ -23,12 +23,12 @@
   <!--     Module Description                                      -->
   <!-- =========================================================== -->
     <groupId>org.geotoolkit.pending</groupId>
-    <artifactId>geotk-coverageio-postgresql</artifactId>
+    <artifactId>geotk-coverageio-wkb</artifactId>
     <packaging>jar</packaging>
-    <name>Coverage PostgreSQL</name>
+    <name>Coverage WKB</name>
 
     <description>
-    Coverage store for postgis coverage
+    Coverage Reader for WKB
     </description>
 
     <licenses>
@@ -63,39 +63,12 @@
         <dependency>
             <groupId>org.geotoolkit</groupId>
             <artifactId>geotk-coverageio</artifactId>
-        </dependency>
+        </dependency>      
         <dependency>
             <groupId>org.geotoolkit.pending</groupId>
-            <artifactId>geotk-coverageio-wkb</artifactId>
+            <artifactId>geotk-utility-pending</artifactId>
             <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.geotoolkit.pending</groupId>
-            <artifactId>geotk-coverageio-store</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.geotoolkit.pending</groupId>
-            <artifactId>geotk-utility-jdbc</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>postgresql</groupId>
-            <artifactId>postgresql</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.postgis</groupId>
-            <artifactId>postgis-jdbc</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>net.iharder</groupId>
-            <artifactId>base64</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.derby</groupId>
-            <artifactId>derby</artifactId>
-            <scope>test</scope>
-        </dependency>
+        </dependency>    
     </dependencies>
 
 </project>

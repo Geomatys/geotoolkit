@@ -14,10 +14,10 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.coverage.postgresql.io;
+package org.geotoolkit.coverage.wkb;
 
 /**
- * PostGIS Raster band.
+ * WKB Raster band, used in postGIS 2 but can be used elsewhere.
  * 
  * @author Johann Sorel (Geomatys)
  */

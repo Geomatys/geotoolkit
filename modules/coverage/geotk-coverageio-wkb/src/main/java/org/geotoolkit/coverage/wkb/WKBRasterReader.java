@@ -14,14 +14,13 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.coverage.postgresql.io;
+package org.geotoolkit.coverage.wkb;
 
 import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.DataBuffer;
 import java.awt.image.DataBufferByte;
-import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
 import java.awt.image.WritableRaster;
 import java.io.ByteArrayInputStream;
@@ -31,13 +30,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import javax.media.jai.PlanarImage;
 import javax.media.jai.RasterFactory;
-import static org.geotoolkit.coverage.postgresql.io.WKBRasterConstants.*;
+import static org.geotoolkit.coverage.wkb.WKBRasterConstants.*;
 import org.geotoolkit.io.LEDataInputStream;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
-import org.geotoolkit.util.XArrays;
 
 /**
- * WKB PostGIS Raster Reader.
+ * WKB Raster Reader, used in postGIS 2 but can be used elsewhere.
  * 
  * @author Johann Sorel (Geomatys)
  */

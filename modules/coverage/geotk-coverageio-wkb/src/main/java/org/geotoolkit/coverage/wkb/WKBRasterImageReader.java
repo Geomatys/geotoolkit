@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.coverage.postgresql.io;
+package org.geotoolkit.coverage.wkb;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -26,12 +26,11 @@ import javax.imageio.ImageReader;
 import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.spi.ImageReaderSpi;
-import javax.imageio.stream.ImageInputStream;
 import org.geotoolkit.util.Version;
 import org.geotoolkit.util.XArrays;
 
 /**
- * Draft java api image reader for postgis WKB.
+ * Draft java api image reader for WKB, used in postGIS 2 but can be used elsewhere.
  * 
  * @author Johann Sorel (Geomatys)
  */

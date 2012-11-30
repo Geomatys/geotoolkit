@@ -84,6 +84,7 @@
     <module>geotk-coverageio-bil</module>
     <module>geotk-coverageio-dimap</module>
     <module>geotk-coverageio-geotiff</module>
+    <module>geotk-coverageio-wkb</module>
     <module>geotk-coverageio-postgresql</module>
     <module>geotk-coverage</module>
   </modules>

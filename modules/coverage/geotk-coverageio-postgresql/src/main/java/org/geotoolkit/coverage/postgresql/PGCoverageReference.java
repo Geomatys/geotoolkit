@@ -44,7 +44,7 @@ import org.geotoolkit.coverage.PyramidalModelReader;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.coverage.postgresql.epsg.EPSGWriter;
-import org.geotoolkit.coverage.postgresql.io.WKBRasterWriter;
+import org.geotoolkit.coverage.wkb.WKBRasterWriter;
 import org.geotoolkit.storage.DataStoreException;
 import org.opengis.feature.type.Name;
 import org.opengis.geometry.DirectPosition;

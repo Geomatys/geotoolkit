@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.coverage.postgresql.io;
+package org.geotoolkit.coverage.wkb;
 
 import java.awt.geom.AffineTransform;
 import java.awt.image.DataBuffer;
@@ -29,7 +29,7 @@ import java.io.OutputStream;
 import org.geotoolkit.io.LEDataOutputStream;
 
 /**
- * WKB PostGIS Raster Writer.
+ * WKB Raster Writer, used in postGIS 2 but can be used elsewhere.
  *
  * @author Johann Sorel (Geomatys)
  */

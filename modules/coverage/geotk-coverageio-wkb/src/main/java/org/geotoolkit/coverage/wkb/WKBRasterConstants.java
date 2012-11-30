@@ -14,12 +14,12 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.coverage.postgresql.io;
+package org.geotoolkit.coverage.wkb;
 
 import java.awt.image.DataBuffer;
 
 /**
- * PostGIS WKB raster constants.
+ * WKB raster constants, used in postGIS 2 but can be used elsewhere.
  * 
  * @author Johann Sorel (Geomatys)
  */
