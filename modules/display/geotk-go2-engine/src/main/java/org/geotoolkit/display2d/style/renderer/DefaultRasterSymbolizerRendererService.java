@@ -263,18 +263,18 @@ public class DefaultRasterSymbolizerRendererService extends AbstractSymbolizerRe
 
             } else if(fct instanceof Jenks) {
                 final Jenks jenks = (Jenks) fct;
-                final Map<Integer, Color> jenksColorMap = jenks.getColorMap();
-                final Map<Color, List<Integer>> rangeJenksMap = new HashMap<Color, List<Integer>>();
+                final Map<Double, Color> jenksColorMap = jenks.getColorMap();
+                final Map<Color, List<Double>> rangeJenksMap = new HashMap<Color, List<Double>>();
                 
-                for (Map.Entry<Integer, Color> elem : jenksColorMap.entrySet()) {
+                for (Map.Entry<Double, Color> elem : jenksColorMap.entrySet()) {
                     
                     if (rangeJenksMap.containsKey(elem.getValue())) {
-                        final List<Integer> values = (List<Integer>)rangeJenksMap.get(elem.getValue());
+                        final List<Double> values = (List<Double>)rangeJenksMap.get(elem.getValue());
                         values.add(elem.getKey());
                         Collections.sort(values);
                         rangeJenksMap.put(elem.getValue(), values);
                     } else {
-                        final List<Integer> values = new ArrayList<Integer>();
+                        final List<Double> values = new ArrayList<Double>();
                         values.add(elem.getKey());
                         rangeJenksMap.put(elem.getValue(), values);
                     }
@@ -282,10 +282,10 @@ public class DefaultRasterSymbolizerRendererService extends AbstractSymbolizerRe
 
                 //create range sorted map.
                 colorMap = new TreeMap(new RangeComparator());
-                for (Map.Entry<Color, List<Integer>> elem : rangeJenksMap.entrySet()) {
-                    final List<Integer> values = elem.getValue();
+                for (Map.Entry<Color, List<Double>> elem : rangeJenksMap.entrySet()) {
+                    final List<Double> values = elem.getValue();
                     Collections.sort(values);
-                    colorMap.put(new NumberRange<Integer>(Integer.class, values.get(0), true, values.get(values.size()-1), true), elem.getKey());
+                    colorMap.put(new NumberRange<Double>(Double.class, values.get(0), true, values.get(values.size()-1), true), elem.getKey());
                 }
                 
             } else if(fct instanceof Categorize) {
