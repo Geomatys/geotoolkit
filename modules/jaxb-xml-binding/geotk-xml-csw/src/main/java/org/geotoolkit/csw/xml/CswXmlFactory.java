@@ -379,7 +379,7 @@ public class CswXmlFactory {
             if (sections != null && !(sections instanceof org.geotoolkit.ows.xml.v100.SectionsType)) {
                  throw new IllegalArgumentException("bad version of sections.");
             }
-            if (acceptFormats != null && !(acceptFormats instanceof org.geotoolkit.ows.xml.v100.AcceptVersionsType)) {
+            if (acceptFormats != null && !(acceptFormats instanceof org.geotoolkit.ows.xml.v100.AcceptFormatsType)) {
                  throw new IllegalArgumentException("bad version of acceptFormats.");
             }
         
