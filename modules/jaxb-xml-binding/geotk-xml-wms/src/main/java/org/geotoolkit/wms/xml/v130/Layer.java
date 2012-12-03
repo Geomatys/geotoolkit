@@ -95,7 +95,7 @@ import org.opengis.geometry.Envelope;
     "maxScaleDenominator",
     "layer"
 })
-public class Layer extends AbstractLayer {
+public class Layer implements AbstractLayer {
 
     @XmlElement(name = "Name")
     private String name;

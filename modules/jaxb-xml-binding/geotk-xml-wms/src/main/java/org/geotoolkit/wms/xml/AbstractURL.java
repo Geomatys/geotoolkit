@@ -22,15 +22,15 @@ package org.geotoolkit.wms.xml;
  *
  * @module pending
  */
-public abstract class AbstractURL {
+public interface AbstractURL {
     
     /**
      * Gets the value of the format property.
      */
-    public abstract String getFormat();
+    String getFormat();
 
     /**
      * Gets the value of the onlineResource property.
      */
-    public abstract AbstractOnlineResource getOnlineResource();
+    AbstractOnlineResource getOnlineResource();
 }

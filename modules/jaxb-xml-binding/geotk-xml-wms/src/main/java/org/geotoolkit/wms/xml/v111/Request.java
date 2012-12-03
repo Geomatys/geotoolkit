@@ -38,7 +38,7 @@ import org.geotoolkit.wms.xml.AbstractRequest;
     "putStyles"
 })
 @XmlRootElement(name = "Request")
-public class Request extends AbstractRequest {
+public class Request implements AbstractRequest {
 
     @XmlElement(name = "GetCapabilities", required = true)
     private GetCapabilities getCapabilities;

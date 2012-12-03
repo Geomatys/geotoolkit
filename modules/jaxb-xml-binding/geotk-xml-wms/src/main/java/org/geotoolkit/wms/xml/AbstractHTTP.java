@@ -16,18 +16,15 @@
  */
 package org.geotoolkit.wms.xml;
 
-import javax.xml.bind.annotation.XmlTransient;
-
 /**
  *
  * @author Guilhem Legal
  * @module pending
  */
-@XmlTransient
-public abstract class AbstractHTTP {
+public interface AbstractHTTP {
     
-    public abstract AbstractProtocol getGet();
+    AbstractProtocol getGet();
     
-    public abstract AbstractProtocol getPost();
+    AbstractProtocol getPost();
 
 }

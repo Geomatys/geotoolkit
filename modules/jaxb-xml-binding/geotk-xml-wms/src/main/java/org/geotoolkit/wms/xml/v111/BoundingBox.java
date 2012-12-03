@@ -33,7 +33,7 @@ import org.geotoolkit.wms.xml.AbstractBoundingBox;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "")
 @XmlRootElement(name = "BoundingBox")
-public class BoundingBox extends AbstractBoundingBox{
+public class BoundingBox implements AbstractBoundingBox{
 
    
     @XmlAttribute(name = "SRS")

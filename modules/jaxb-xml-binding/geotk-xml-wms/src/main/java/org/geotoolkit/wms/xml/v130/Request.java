@@ -60,7 +60,7 @@ import org.geotoolkit.wms.xml.AbstractRequest;
     "extendedOperation"
 })
 @XmlRootElement(name = "Request")
-public class Request extends AbstractRequest {
+public class Request implements AbstractRequest {
 
     @XmlElement(name = "GetCapabilities", required = true)
     private OperationType getCapabilities;

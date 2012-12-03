@@ -43,7 +43,7 @@ import org.geotoolkit.wms.xml.AbstractWMSCapabilities;
     "capability"
 })
 @XmlRootElement(name = "WMT_MS_Capabilities")
-public class WMT_MS_Capabilities extends AbstractWMSCapabilities {
+public class WMT_MS_Capabilities implements AbstractWMSCapabilities {
 
     @XmlElement(name = "Service", required = true)
     private Service service;
@@ -184,5 +184,24 @@ public class WMT_MS_Capabilities extends AbstractWMSCapabilities {
         return null;
     }
 
+    /**
+     * List all layers recursivly.
+     */
+    public List<AbstractLayer> getLayers() {
+        final AbstractLayer layer = getCapability().getLayer();
+        final List<AbstractLayer> layers = new ArrayList<AbstractLayer>();
+        explore(layers, layer);
+        return layers;
+    }
     
+    private static void explore(List<AbstractLayer> buffer, AbstractLayer candidate){
+        buffer.add(candidate);
+        final List<? extends AbstractLayer> layers = candidate.getLayer();
+        if(layers != null){
+            for(AbstractLayer child : layers){
+                explore(buffer, child);
+            }
+        }
+    }
+
 }

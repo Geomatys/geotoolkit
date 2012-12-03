@@ -43,7 +43,7 @@ import org.geotoolkit.wms.xml.AbstractURL;
     "onlineResource"
 })
 @XmlRootElement(name = "MetadataURL")
-public class MetadataURL extends AbstractMetadataURL {
+public class MetadataURL implements AbstractMetadataURL {
 
     @XmlElement(name = "Format", required = true)
     private String format;

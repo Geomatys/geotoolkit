@@ -17,6 +17,8 @@
 
 package org.geotoolkit.wms.xml;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.bind.JAXBException;
@@ -31,7 +33,10 @@ public class WMSMarshallerPool {
     private static MarshallerPool instance;
     static {
         try {
-            instance = new MarshallerPool("org.geotoolkit.ogc.xml.exception:" +
+            final Map<String, String> properties = new HashMap<String, String>();
+            properties.put(MarshallerPool.ROOT_NAMESPACE_KEY, "http://www.opengis.net/wms");
+            instance = new MarshallerPool(properties,
+                                          "org.geotoolkit.ogc.xml.exception:" +
                                           "org.geotoolkit.wms.xml.v111:" +
                                           "org.geotoolkit.wms.xml.v130:" +
                                           "org.geotoolkit.sld.xml.v110:" +

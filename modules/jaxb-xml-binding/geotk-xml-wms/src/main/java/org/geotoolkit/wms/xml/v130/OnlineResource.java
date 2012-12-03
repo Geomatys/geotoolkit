@@ -45,7 +45,7 @@ import org.geotoolkit.wms.xml.AbstractOnlineResource;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "")
 @XmlRootElement(name = "OnlineResource")
-public class OnlineResource extends AbstractOnlineResource {
+public class OnlineResource implements AbstractOnlineResource {
 
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     private String type;

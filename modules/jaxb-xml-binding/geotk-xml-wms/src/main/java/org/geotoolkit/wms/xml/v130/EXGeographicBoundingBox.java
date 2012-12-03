@@ -55,7 +55,7 @@ import org.opengis.metadata.extent.GeographicBoundingBox;
     "northBoundLatitude"
 })
 @XmlRootElement(name = "EX_GeographicBoundingBox")
-public class EXGeographicBoundingBox extends AbstractGeographicBoundingBox {
+public class EXGeographicBoundingBox implements AbstractGeographicBoundingBox {
 
     private double westBoundLongitude;
     private double eastBoundLongitude;
@@ -122,6 +122,11 @@ public class EXGeographicBoundingBox extends AbstractGeographicBoundingBox {
      */
     public double getNorthBoundLatitude() {
         return northBoundLatitude;
+    }
+    
+    @Override
+    public Boolean getInclusion() {
+        return Boolean.TRUE;
     }
     
     @Override

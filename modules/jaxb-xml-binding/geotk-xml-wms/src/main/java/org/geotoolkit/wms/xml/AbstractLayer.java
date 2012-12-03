@@ -28,96 +28,95 @@ import org.opengis.geometry.Envelope;
  *
  * @module pending
  */
-@XmlTransient
-public abstract class AbstractLayer {
+public interface AbstractLayer {
     /**
      * Gets the abstract value for this layer.
      */
-    public abstract String getAbstract();
+    String getAbstract();
 
     /**
      * Get all Dimensions (TIME,ELEVATION,...) from a specific layer.
      */
-    public abstract List<AbstractDimension> getAbstractDimension();
+    List<AbstractDimension> getAbstractDimension();
 
     /**
      * Unmodifiable list of dimensions contained in this layer.
      */
-    public abstract List<? extends AbstractDimension> getDimension();
+    List<? extends AbstractDimension> getDimension();
 
     /**
      * Gets the value of the keywordList property.
      */
-    public abstract AbstractKeywordList getKeywordList();
+    AbstractKeywordList getKeywordList();
 
     /**
      * List of supported CRS.
      */
-    public abstract List<String> getCRS();
+    List<String> getCRS();
 
     /**
      * Unmodifiable list of layers contained in this layer.
      */
-    public abstract List<? extends AbstractLayer> getLayer();
+    List<? extends AbstractLayer> getLayer();
 
     /**
      * Get the layer name.
      */
-    public abstract String getName();
+    String getName();
 
     /**
      * Set the layer name
      */
-    public abstract void setName(String name);
+    void setName(String name);
     
     /**
      * Get the layer title
      */
-    public abstract String getTitle();
+    String getTitle();
 
     /**
      * Set the layer title
      */
-    public abstract void setTitle(String title);
+    void setTitle(String title);
 
     /**
      * Get the layer envelope
      */
-    public abstract Envelope getEnvelope();
+    Envelope getEnvelope();
 
     /**
      * Get layer styles
      */
-    public abstract List<? extends Style> getStyle();
+    List<? extends Style> getStyle();
 
     /**
      * Get if the layer is queryable or not
      */
-    public abstract boolean isQueryable();
+    boolean isQueryable();
 
     /**
      * Get the layer boundingboxes
      */
-    public abstract List<? extends AbstractBoundingBox> getBoundingBox();
+    List<? extends AbstractBoundingBox> getBoundingBox();
     
     /**
      * Get metadataURLs of the layer
      */
-    public abstract List<? extends AbstractURL> getMetadataURL();
+    List<? extends AbstractURL> getMetadataURL();
     
     /**
      * Get dataURLs of the layer
      */
-    public abstract List<? extends AbstractURL> getDataURL();
+    List<? extends AbstractURL> getDataURL();
     
     /**
      * Get minScaleDenominator of the layer
      */
-    public abstract Double getMinScaleDenominator();
+    Double getMinScaleDenominator();
     
     /**
      * Get maxScaleDenominator of the layer
      */
-    public abstract Double getMaxScaleDenominator();
+    Double getMaxScaleDenominator();
 
 }

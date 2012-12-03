@@ -17,7 +17,6 @@
 package org.geotoolkit.wms.xml;
 
 import java.util.List;
-import javax.xml.bind.annotation.XmlTransient;
 
 /**
  * Abstract main class for capabilities service part.
@@ -25,19 +24,18 @@ import javax.xml.bind.annotation.XmlTransient;
  * @author Guilhem Legal
  * @module pending
  */
-@XmlTransient
-public abstract class AbstractCapability {
+public interface AbstractCapability {
 
-     public abstract AbstractRequest getRequest();
+     AbstractRequest getRequest();
 
-     public abstract AbstractLayer getLayer();
+     AbstractLayer getLayer();
 
-     public abstract void setLayer(AbstractLayer layer);
+     void setLayer(AbstractLayer layer);
 
-     public abstract void setRequest(AbstractRequest request);
+     void setRequest(AbstractRequest request);
 
-     public abstract List<String> getExceptionFormats();
+     List<String> getExceptionFormats();
 
-     public abstract void setExceptionFormats(List<String> formats);
+     void setExceptionFormats(List<String> formats);
 
 }

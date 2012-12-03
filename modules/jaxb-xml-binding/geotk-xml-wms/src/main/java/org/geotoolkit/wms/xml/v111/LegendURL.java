@@ -38,7 +38,7 @@ import org.geotoolkit.wms.xml.AbstractLegendURL;
     "onlineResource"
 })
 @XmlRootElement(name = "LegendURL")
-public class LegendURL extends AbstractLegendURL {
+public class LegendURL implements AbstractLegendURL {
 
     @XmlElement(name = "Format", required = true)
     private String format;

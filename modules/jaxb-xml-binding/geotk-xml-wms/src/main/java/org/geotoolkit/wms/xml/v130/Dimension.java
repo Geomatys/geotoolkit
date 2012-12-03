@@ -54,7 +54,7 @@ import org.geotoolkit.wms.xml.AbstractDimension;
     "value"
 })
 @XmlRootElement(name = "Dimension")
-public class Dimension extends AbstractDimension {
+public class Dimension implements AbstractDimension {
 
     @XmlValue
     private String value;

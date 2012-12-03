@@ -32,7 +32,7 @@ import org.opengis.metadata.extent.GeographicBoundingBox;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "")
 @XmlRootElement(name = "LatLonBoundingBox")
-public class LatLonBoundingBox extends AbstractGeographicBoundingBox {
+public class LatLonBoundingBox implements AbstractGeographicBoundingBox {
 
     @XmlAttribute
     private double minx;
@@ -99,6 +99,11 @@ public class LatLonBoundingBox extends AbstractGeographicBoundingBox {
      */
     public double getNorthBoundLatitude() {
         return maxy;
+    }
+    
+    @Override
+    public Boolean getInclusion() {
+        return Boolean.TRUE;
     }
     
     @Override
