@@ -17,6 +17,7 @@
 package org.geotoolkit.ows.xml.v110;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -147,6 +148,14 @@ public class UnNamedDomainType {
 
     public UnNamedDomainType(final AllowedValues value) {
         this.allowedValues = value;
+    }
+    
+    public UnNamedDomainType(final ValueType defaultvalue) {
+        this.defaultValue = defaultvalue;
+    }
+    
+    public UnNamedDomainType(final String value) {
+        this.allowedValues = new AllowedValues(Arrays.asList(value));
     }
     
     

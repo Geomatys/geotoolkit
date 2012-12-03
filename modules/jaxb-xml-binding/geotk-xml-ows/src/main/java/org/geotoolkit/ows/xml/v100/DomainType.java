@@ -90,6 +90,17 @@ public class DomainType implements AbstractDomain {
     }
     
     /**
+     * Build a new Domain with the a single value.
+     */
+    public DomainType(final String name, final String value) {
+        this.name  = name;
+        if (value != null) {
+            this.value = new ArrayList<String>();
+            this.value.add(value);
+        }
+    }
+    
+    /**
      * return the default value for this domain
      */
     @Override
