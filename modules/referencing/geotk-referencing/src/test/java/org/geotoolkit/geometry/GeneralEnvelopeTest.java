@@ -39,7 +39,8 @@ import static org.geotoolkit.referencing.crs.DefaultGeographicCRS.WGS84;
  * other methods.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.20
+ * @author Johann Sorel (Geomatys)
+ * @version 3.21
  *
  * @since 2.4
  */
@@ -217,6 +218,23 @@ public final strictfp class GeneralEnvelopeTest {
         assertTrue(e.reduceToDomain(useDomainOfCRS));
         assertEquals("Expect positive zero", Double.doubleToLongBits(+0.0), Double.doubleToLongBits(e.getLower(0)));
         assertEquals("Expect negative zero", Double.doubleToLongBits(-0.0), Double.doubleToLongBits(e.getUpper(0)));
+    }
+
+    /**
+     * Tests the {@link GeneralEnvelope#reduceToDomain(boolean)} method
+     * with an envelope having more then 360° of longitude.
+     *
+     * @since 3.21
+     */
+    @Test
+    public void testReduceWorldRoundToDomain() {
+        final GeneralEnvelope env = new GeneralEnvelope(WGS84);
+        env.setRange(0, -195, 170); // -195° is equivalent to 165°
+        env.setRange(1, -90, 90);
+
+        assertTrue(env.reduceToDomain(false));
+        System.out.println(env);
+        assertEnvelopeEquals(env, -180, -90, +180, +90);
     }
 
     /**
