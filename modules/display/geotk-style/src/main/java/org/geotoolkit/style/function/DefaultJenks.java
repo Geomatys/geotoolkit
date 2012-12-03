@@ -18,16 +18,14 @@ package org.geotoolkit.style.function;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
+import java.awt.image.DataBuffer;
 import java.awt.image.IndexColorModel;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -110,6 +108,7 @@ public class DefaultJenks extends AbstractExpression implements Jenks {
         if (object instanceof RenderedImage) {
             
             final RenderedImage image = (RenderedImage) object;
+            final int dataType = image.getSampleModel().getDataType();
             final Raster data = image.getData();
             int classes = (Integer) this.classNumber.getValue();
             final int numBands = data.getNumBands();
@@ -184,7 +183,16 @@ public class DefaultJenks extends AbstractExpression implements Jenks {
                 }
                 lastindex = indexes[i];
             }
-            colorMap.put(Double.NaN, new Color(0, 0, 0, 0));//no data = transparent
+            
+            /*
+             * HACK byte -> no-data = 255 else no-data = Double.NaN 
+             * TODO find more elegent way to support no-data values.
+             */
+            if (dataType == DataBuffer.TYPE_BYTE) {
+                colorMap.put(255.0, new Color(0, 0, 0, 0));
+            } else {
+                colorMap.put(Double.NaN, new Color(0, 0, 0, 0));
+            }
             
             final BufferedImage bufferedImg = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
             
