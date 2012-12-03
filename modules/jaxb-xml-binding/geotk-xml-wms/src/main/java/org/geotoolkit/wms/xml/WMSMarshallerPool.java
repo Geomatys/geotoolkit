@@ -30,13 +30,29 @@ import org.geotoolkit.xml.MarshallerPool;
  */
 public class WMSMarshallerPool {
 
-    private static MarshallerPool instance;
+    /**
+     * we separte the v 1.3.0 instance in order to marshall with no prefix (QGIS issue)
+     */
+    private static MarshallerPool instancev130;
     static {
         try {
             final Map<String, String> properties = new HashMap<String, String>();
             properties.put(MarshallerPool.ROOT_NAMESPACE_KEY, "http://www.opengis.net/wms");
-            instance = new MarshallerPool(properties,
+            instancev130 = new MarshallerPool(properties,
                                           "org.geotoolkit.ogc.xml.exception:" +
+                                          "org.geotoolkit.wms.xml.v130:" +
+                                          "org.geotoolkit.sld.xml.v110:" +
+                                          "org.geotoolkit.inspire.xml.vs:" +
+                                          "org.geotoolkit.internal.jaxb.geometry");
+        } catch (JAXBException ex) {
+            Logger.getLogger(WMSMarshallerPool.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    private static MarshallerPool instance;
+    static {
+        try {
+            instance = new MarshallerPool("org.geotoolkit.ogc.xml.exception:" +
                                           "org.geotoolkit.wms.xml.v111:" +
                                           "org.geotoolkit.wms.xml.v130:" +
                                           "org.geotoolkit.sld.xml.v110:" +
@@ -50,5 +66,9 @@ public class WMSMarshallerPool {
 
     public static MarshallerPool getInstance() {
         return instance;
+    }
+    
+    public static MarshallerPool getInstance130() {
+        return instancev130;
     }
 }
