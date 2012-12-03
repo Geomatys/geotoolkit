@@ -29,6 +29,9 @@ import java.sql.PreparedStatement;
 import java.awt.RenderingHints;
 import java.lang.ref.Reference;
 import java.lang.ref.WeakReference;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.text.ParseException;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import javax.measure.converter.ConversionException;
@@ -121,7 +124,8 @@ import static org.geotoolkit.internal.referencing.CRSUtilities.PARAMETERS_KEY;
  * @author Rueben Schulz (UBC)
  * @author Matthias Basler
  * @author Andrea Aime (TOPP)
- * @version 3.20
+ * @author Johann Sorel (Geomatys)
+ * @version 3.21
  *
  * @see ThreadedEpsgFactory
  * @see <a href="http://www.geotoolkit.org/modules/referencing/supported-codes.html">List of authority codes</a>
@@ -311,6 +315,12 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
      * is approximative anyway.
      */
     private Calendar calendar;
+
+    /**
+     * The object to use for parsing dates, created when first needed. This is used for
+     * parsing the origin of temporal datum. This is Geotk-specific extension.
+     */
+    private DateFormat dateFormat;
 
     /**
      * A pool of prepared statements. Key are {@link String} objects related to their
@@ -1208,7 +1218,8 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                     "SELECT UOM_CODE," +
                           " FACTOR_B," +
                           " FACTOR_C," +
-                          " TARGET_UOM_CODE" +
+                          " TARGET_UOM_CODE," +
+                          " UNIT_OF_MEAS_NAME" +
                     " FROM [Unit of Measure]" +
                     " WHERE UOM_CODE = ?");
             final ResultSet result = executeQuery(stmt, primaryKey);
@@ -1219,17 +1230,34 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                     final double   c = result.getDouble(3);
                     final int target = getInt(result,   4, code);
                     final Unit<?> base = Units.valueOfEPSG(target);
-                    if (base == null) {
+                    /*
+                     * If the unit is a base unit, then b==1, c==1 and source == target. Most
+                     * standard base units are hard-coded in the Units.valueOfEPSG(int) method.
+                     * However we allow the user to define his own base units.
+                     */
+                    if (source == target) {
+                        if (b != 1 || c != 1) {
+                            throw new FactoryException(Errors.format(Errors.Keys.INCONSISTENT_VALUE));
+                        }
+                    } else if (base == null) {
                         throw noSuchAuthorityCode(Unit.class, String.valueOf(target));
                     }
                     Unit<?> unit = Units.valueOfEPSG(source);
                     if (unit != null) {
                         // TODO: check unit consistency here.
+                    } else if (base == null) {
+                        // Unit symbol is self describing, rely on JSR-275 to parse unit.
+                        final String name = result.getString(5);
+                        try {
+                            unit = Units.valueOf(name);
+                        } catch (IllegalArgumentException e) {
+                            // TODO: this error message is not quite accurate...
+                            throw new FactoryException(Errors.format(Errors.Keys.UNKNOWN_UNIT_$1, code), e);
+                        }
                     } else if (b != 0 && c != 0) {
                         unit = Units.multiply(base, b/c);
                     } else {
-                        // TODO: provide a localized message.
-                        throw new FactoryException("Unsupported unit: " + code);
+                        throw new FactoryException(Errors.format(Errors.Keys.UNKNOWN_UNIT_$1, code));
                     }
                     returnValue = ensureSingleton(unit, returnValue, code);
                 }
@@ -1690,6 +1718,23 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                         } else if (type.equalsIgnoreCase("vertical")) {
                             // TODO: Find the right datum type.
                             datum = factory.createVerticalDatum(properties, VerticalDatumType.GEOIDAL);
+                        } else if (type.equalsIgnoreCase("temporal")) {
+                            // Origin date is stored in ORIGIN_DESCRIPTION field. A column of SQL type
+                            // "date" type would have been better, but we can not modify the EPSG model.
+                            final java.util.Date originDate;
+                            if (anchor == null || anchor.isEmpty()) {
+                                throw new FactoryException("A temporal datum origin is required.");
+                            }
+                            if (dateFormat == null) {
+                                dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+                                // TODO: share the this.calendar value?
+                            }
+                            try {
+                                originDate = dateFormat.parse(anchor);
+                            } catch (ParseException e) {
+                                throw new FactoryException("Failed to parse temporal datum origin date: " + e.getMessage(), e);
+                            }
+                            datum = factory.createTemporalDatum(properties, originDate);
                         } else if (type.equalsIgnoreCase("engineering")) {
                             datum = factory.createEngineeringDatum(properties);
                         } else {
@@ -1921,6 +1966,10 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                             switch (dimension) {
                                 case 1: cs=factory.createVerticalCS(properties, axis[0]); break;
                             }
+                        } else if (type.equalsIgnoreCase("temporal") || type.equalsIgnoreCase("time")) {
+                            switch (dimension) {
+                                case 1: cs=factory.createTimeCS(properties, axis[0]); break;
+                            }
                         } else if (type.equalsIgnoreCase("linear")) {
                             switch (dimension) {
                                 case 1: cs=factory.createLinearCS(properties, axis[0]); break;
@@ -2076,6 +2125,21 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                             final Map<String,Object> properties = createProperties(
                                     "[Coordinate Reference System]", name, epsg, area, scope, remarks, deprecated);
                             crs = factory.createVerticalCRS(properties, datum, cs);
+                        }
+                        /* ----------------------------------------------------------------------
+                         *   TEMPORAL CRS
+                         *
+                         *   NOTE : The original EPSG database does not define any temporal CRS.
+                         *          This block is a Geotk-specific extension.
+                         * ---------------------------------------------------------------------- */
+                        else if (type.equalsIgnoreCase("temporal")) {
+                            final String        csCode = getString(result, 8, code);
+                            final String        dmCode = getString(result, 9, code);
+                            final TimeCS        cs     = buffered.createTimeCS(csCode);
+                            final TemporalDatum datum  = buffered.createTemporalDatum(dmCode);
+                            final Map<String,Object> properties = createProperties(
+                                    "[Coordinate Reference System]", name, epsg, area, scope, remarks, deprecated);
+                            crs = factory.createTemporalCRS(properties, datum, cs);
                         }
                         /* ----------------------------------------------------------------------
                          *   COMPOUND CRS

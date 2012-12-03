@@ -18,7 +18,12 @@
 package org.geotoolkit.image.io;
 
 import java.awt.image.*;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics2D;
+import java.awt.LinearGradientPaint;
 import java.awt.Dimension;
+import java.awt.geom.Rectangle2D;
 import java.lang.ref.Reference;
 import java.lang.ref.WeakReference;
 import java.io.IOException;
@@ -46,7 +51,8 @@ import org.geotoolkit.util.NullArgumentException;
  *
  * @author Martin Desruisseaux (IRD)
  * @author Antoine Hnawia (IRD)
- * @version 3.11
+ * @author Quentin Boileau (Geomatys)
+ * @version 3.21
  *
  * @since 2.4
  * @module
@@ -219,6 +225,10 @@ public abstract class Palette {
     /**
      * Returns the color palette as an image of the specified size.
      * This is useful for looking visually at a color palette.
+     * <p>
+     * This method uses the color model created by {@link #getColorModel()} and does not write
+     * any text in the image. Consequently the colors in the returned image should be identical
+     * to the colors of the data rendered using this {@code Palette}.
      *
      * @param size The image size. The palette will be vertical if
      *        <code>size.{@linkplain Dimension#height height}</code> &gt;
@@ -227,12 +237,9 @@ public abstract class Palette {
      * @throws IOException if the color values can't be read.
      */
     public RenderedImage getImage(final Dimension size) throws IOException {
-        final IndexColorModel colors;
-        final BufferedImage   image;
-        final WritableRaster  raster;
-        colors = (IndexColorModel) getColorModel();
-        raster = colors.createCompatibleWritableRaster(size.width, size.height);
-        image  = new BufferedImage(colors, raster, false, null);
+        final IndexColorModel colors = (IndexColorModel) getColorModel();
+        final WritableRaster  raster = colors.createCompatibleWritableRaster(size.width, size.height);
+        final BufferedImage   image  = new BufferedImage(colors, raster, false, null);
         int xmin   = raster.getMinX();
         int ymin   = raster.getMinY();
         int width  = raster.getWidth();
@@ -259,6 +266,51 @@ public abstract class Palette {
                 }
             }
         }
+        return image;
+    }
+
+    /**
+     * Returns the color palette as a smoothed image of the specified size, together with the
+     * palette name. The image returned by this method differs from {@link #getImage(Dimension)}
+     * in three ways:
+     * <p>
+     * <ul>
+     *   <li>The image returned by this method uses a different color model than the images to be
+     *       produced by this {@code Palette}.</li>
+     *   <li>The colors in this image are interpolated in order to produce a smooth image.
+     *       Consequently, some colors in the returned image may not exist in the palette.</li>
+     *   <li>The palette name is written in the returned image.</li>
+     * </ul>
+     *
+     * @param size The image size.
+     * @return The color palette as an image of the given size.
+     * @throws IOException if the color values can't be read.
+     *
+     * @since 3.21
+     */
+    public RenderedImage getLegend(final Dimension size) throws IOException {
+        final BufferedImage image = new BufferedImage(size.width, size.height, BufferedImage.TYPE_INT_ARGB);
+        final Graphics2D g = (Graphics2D) image.getGraphics();
+        final Color[] colors = factory.getColors(name);
+        final float[] fractions = new float[colors.length];
+        for (int i=0; i<colors.length; i++) {
+            fractions[i] = (float) i / (colors.length - 1);
+        }
+        final float centerY = size.height * 0.5f;
+        g.setPaint(new LinearGradientPaint(
+                0, centerY,          // The gradiant axis start in user space.
+                size.width, centerY, // The gradient axis end in user space.
+                fractions,           // Numbers ranging from 0 to 1 specifying the distribution of colors along the grandient.
+                colors));            // Colors corresponding to each fractional values.
+        g.fillRect(0, 0, size.width, size.height);
+        g.setColor(Color.WHITE);
+        final Font font = new Font("Dialog", Font.BOLD, 13);
+        final Rectangle2D nameBounds = g.getFontMetrics(font).getStringBounds(name, g);
+        g.setFont(font);
+        g.drawString(name,
+                (float) (size.width  - nameBounds.getWidth())  / 2,
+                (float) (size.height + nameBounds.getHeight()) / 2);
+        g.dispose();
         return image;
     }
 

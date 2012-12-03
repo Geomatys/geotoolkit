@@ -105,7 +105,8 @@ import static org.geotoolkit.math.XMath.isSameSign;
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Simone Giannecchini (Geosolutions)
- * @version 3.20
+ * @author Johann Sorel (Geomatys)
+ * @version 3.21
  *
  * @see Envelope2D
  * @see org.geotoolkit.geometry.jts.ReferencedEnvelope
@@ -481,23 +482,31 @@ public class GeneralEnvelope extends ArrayEnvelope implements Cloneable, Seriali
                     if (csSpan > 0 && csSpan < Double.POSITIVE_INFINITY) {
                         double o1 = ordinates[i];
                         double o2 = ordinates[j];
-                        if (o1 <= minimum && o2 >= maximum) {
-                            // Avoid replacing [-180 … +180]° by [-180 … -180]°.
-                            changed |= (o1 != minimum || o2 != maximum);
-                            ordinates[i] = minimum;
-                            ordinates[j] = maximum;
+                        if (Math.abs(o2-o1) >= csSpan) {
+                            /*
+                             * If the range exceed the CS span, then we have to replace it by the
+                             * full span, otherwise the range computed by the "else" block is too
+                             * small. The full range will typically be [-180 … 180]°.  However we
+                             * make a special case if the two bounds are multiple of the CS span,
+                             * typically [0 … 360]°. In this case the [0 … -0]° range matches the
+                             * original values and is understood by GeneralEnvelope as a range
+                             * spanning all the world.
+                             */
+                            if (o1 != minimum || o2 != maximum) {
+                                if ((o1 % csSpan) == 0 && (o2 % csSpan) == 0) {
+                                    ordinates[i] = +0.0;
+                                    ordinates[j] = -0.0;
+                                } else {
+                                    ordinates[i] = minimum;
+                                    ordinates[j] = maximum;
+                                }
+                                changed = true;
+                            }
                         } else {
                             o1 = Math.floor((o1 - minimum) / csSpan) * csSpan;
                             o2 = Math.floor((o2 - minimum) / csSpan) * csSpan;
                             if (o1 != 0) {ordinates[i] -= o1; changed = true;}
                             if (o2 != 0) {ordinates[j] -= o2; changed = true;}
-                            if (ordinates[i] == ordinates[j] && o1 != o2) {
-                                // This happen for example if we transformed [0 … 360]° into [0 … 0]°
-                                // The special case [0 … -0]° is understood by GeneralEnvelope as a
-                                // range spanning all the world.
-                                ordinates[i] = +0.0;
-                                ordinates[j] = -0.0;
-                            }
                         }
                     }
                 }
