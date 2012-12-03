@@ -119,6 +119,12 @@ public class BinaryComparisonOpType extends ComparisonOpsType implements BinaryC
         return this.expression;
     }
 
+    public void addValueReference(final String prop) {
+        if (expression == null) {
+            expression = new ArrayList<JAXBElement<?>>();
+        }
+        this.expression.add(FACTORY.createValueReference(prop));
+    }
     /**
      * Gets the value of the matchCase property.
      *
@@ -127,6 +133,7 @@ public class BinaryComparisonOpType extends ComparisonOpsType implements BinaryC
      *     {@link Boolean }
      *
      */
+    @Override
     public boolean isMatchingCase() {
         if (matchCase == null) {
             return true;
