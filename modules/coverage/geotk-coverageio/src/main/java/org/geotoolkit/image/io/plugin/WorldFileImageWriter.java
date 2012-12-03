@@ -248,8 +248,10 @@ public class WorldFileImageWriter extends ImageWriterAdapter {
          * @param  readerSpiName The fully qualified class name of a provider for a reader that
          *         can read the files created by this writer format, or {@code null} if none.
          * @throws IllegalArgumentException If no provider is found for the given format.
+         *
+         * @since 3.21
          */
-        Spi(final String format, final String readerSpiName) throws IllegalArgumentException {
+        protected Spi(final String format, final String readerSpiName) throws IllegalArgumentException {
             this(format);
             readerSpiNames = new String[] {readerSpiName};
         }
