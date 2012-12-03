@@ -123,7 +123,8 @@ import static org.geotoolkit.internal.referencing.CRSUtilities.PARAMETERS_KEY;
  * @author Rueben Schulz (UBC)
  * @author Matthias Basler
  * @author Andrea Aime (TOPP)
- * @version 3.20
+ * @author Johann Sorel (Geomatys)
+ * @version 3.21
  *
  * @see ThreadedEpsgFactory
  * @see <a href="http://www.geotoolkit.org/modules/referencing/supported-codes.html">List of authority codes</a>
