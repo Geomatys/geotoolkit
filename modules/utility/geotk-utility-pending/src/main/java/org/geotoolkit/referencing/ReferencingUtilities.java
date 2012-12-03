@@ -22,6 +22,8 @@ import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
@@ -157,30 +159,67 @@ public final class ReferencingUtilities {
             env = new GeneralEnvelope(crs);
             env.setRange(0, bounds.getMinX(), bounds.getMaxX());
             env.setRange(1, bounds.getMinY(), bounds.getMaxY());
-            env.setRange(2,
-                    (elevation[0] != null) ? elevation[0] : Double.NEGATIVE_INFINITY,
-                    (elevation[1] != null) ? elevation[1] : Double.POSITIVE_INFINITY);
-            env.setRange(3,
-                    (temporal[0] != null) ? temporal[0].getTime() : Double.NEGATIVE_INFINITY,
-                    (temporal[1] != null) ? temporal[1].getTime() : Double.POSITIVE_INFINITY);
+            try {
+                final CoordinateReferenceSystem realTemporal = DefaultTemporalCRS.JAVA;
+                final MathTransform trs = CRS.findMathTransform(realTemporal, temporalDim);
+                final double[] coords = new double[2];
+                coords[0] = (temporal[0] != null) ? temporal[0].getTime() : Double.NEGATIVE_INFINITY;
+                coords[1] = (temporal[1] != null) ? temporal[1].getTime() : Double.POSITIVE_INFINITY;
+                trs.transform(coords, 0, coords, 0, 2);
+                env.setRange(2,coords[0],coords[1]);                
+            } catch (FactoryException ex) {
+                throw new TransformException(ex.getMessage(),ex);
+            }
+            try {
+                final CoordinateReferenceSystem realElevation = DefaultVerticalCRS.ELLIPSOIDAL_HEIGHT;
+                final MathTransform trs = CRS.findMathTransform(realElevation, verticalDim);
+                final double[] coords = new double[2];
+                coords[0] = (elevation[0] != null) ? elevation[0] : Double.NEGATIVE_INFINITY;
+                coords[1] = (elevation[1] != null) ? elevation[1] : Double.POSITIVE_INFINITY;
+                trs.transform(coords, 0, coords, 0, 2);
+                env.setRange(3,coords[0],coords[1]);                
+            } catch (FactoryException ex) {
+                throw new TransformException(ex.getMessage(),ex);
+            }
         }else if(temporalDim != null){
             crs = new DefaultCompoundCRS(crs2D.getName().getCode()+"/"+temporalDim.getName().getCode(),
                     crs2D,  temporalDim);
             env = new GeneralEnvelope(crs);
             env.setRange(0, bounds.getMinX(), bounds.getMaxX());
             env.setRange(1, bounds.getMinY(), bounds.getMaxY());
-            env.setRange(2,
-                    (temporal[0] != null) ? temporal[0].getTime() : Double.NEGATIVE_INFINITY,
-                    (temporal[1] != null) ? temporal[1].getTime() : Double.POSITIVE_INFINITY);
+            
+            try {
+                final CoordinateReferenceSystem realTemporal = DefaultTemporalCRS.JAVA;
+                final MathTransform trs = CRS.findMathTransform(realTemporal, temporalDim);
+                final double[] coords = new double[2];
+                coords[0] = (temporal[0] != null) ? temporal[0].getTime() : Double.NEGATIVE_INFINITY;
+                coords[1] = (temporal[1] != null) ? temporal[1].getTime() : Double.POSITIVE_INFINITY;
+                trs.transform(coords, 0, coords, 0, 2);
+                env.setRange(2,coords[0],coords[1]);                
+            } catch (FactoryException ex) {
+                throw new TransformException(ex.getMessage(),ex);
+            }
+            
+            
         }else if(verticalDim != null){
             crs = new DefaultCompoundCRS(crs2D.getName().getCode()+"/"+verticalDim.getName().getCode(),
                     crs2D, verticalDim);
             env = new GeneralEnvelope(crs);
             env.setRange(0, bounds.getMinX(), bounds.getMaxX());
             env.setRange(1, bounds.getMinY(), bounds.getMaxY());
-            env.setRange(2,
-                    (elevation[0] != null) ? elevation[0] : Double.NEGATIVE_INFINITY,
-                    (elevation[1] != null) ? elevation[1] : Double.POSITIVE_INFINITY);
+            
+            try {
+                final CoordinateReferenceSystem realElevation = DefaultVerticalCRS.ELLIPSOIDAL_HEIGHT;
+                final MathTransform trs = CRS.findMathTransform(realElevation, verticalDim);
+                final double[] coords = new double[2];
+                coords[0] = (elevation[0] != null) ? elevation[0] : Double.NEGATIVE_INFINITY;
+                coords[1] = (elevation[1] != null) ? elevation[1] : Double.POSITIVE_INFINITY;
+                trs.transform(coords, 0, coords, 0, 2);
+                env.setRange(2,coords[0],coords[1]);                
+            } catch (FactoryException ex) {
+                throw new TransformException(ex.getMessage(),ex);
+            }
+            
         }else{
             crs = crs2D;
             env = new GeneralEnvelope(crs);
