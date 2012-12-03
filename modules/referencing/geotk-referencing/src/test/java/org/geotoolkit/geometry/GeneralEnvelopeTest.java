@@ -233,7 +233,6 @@ public final strictfp class GeneralEnvelopeTest {
         env.setRange(1, -90, 90);
 
         assertTrue(env.reduceToDomain(false));
-        System.out.println(env);
         assertEnvelopeEquals(env, -180, -90, +180, +90);
     }
 
