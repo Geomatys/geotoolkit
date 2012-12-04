@@ -120,6 +120,27 @@ public class GetCapabilitiesType implements AbstractGetCapabilities {
     }
     
     /**
+     * inherited method from AbstractGetCapabilties
+     */
+    @Override
+    public Version getVersion() {
+        if (acceptVersions!= null && !acceptVersions.getVersion().isEmpty()) {
+            return new Version(acceptVersions.getVersion().get(0));
+        } return null;
+    }
+    
+    @Override
+    public void setVersion(final String version) {
+        if (version != null) {
+            if (acceptVersions == null) {
+                this.acceptVersions = new AcceptVersionsType(version);
+            } else {
+                 this.acceptVersions.addVersion(version);
+            }
+        }
+    }
+    
+    /**
      * Gets the value of the sections property.
      */
     @Override
@@ -232,15 +253,4 @@ public class GetCapabilitiesType implements AbstractGetCapabilities {
         hash = 73 * hash + (this.updateSequence != null ? this.updateSequence.hashCode() : 0);
         return hash;
     }
-
-    /**
-     * inherited method from AbstractGetCapabilties
-     */
-    @Override
-    public Version getVersion() {
-        if (acceptVersions!= null && !acceptVersions.getVersion().isEmpty()) {
-            return new Version(acceptVersions.getVersion().get(0));
-        } return null;
-    }
-
 }

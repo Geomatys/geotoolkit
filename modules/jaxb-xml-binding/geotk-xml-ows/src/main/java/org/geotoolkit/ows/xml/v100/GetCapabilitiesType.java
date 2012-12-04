@@ -183,6 +183,7 @@ public class GetCapabilitiesType implements AbstractGetCapabilities {
     /**
      * Gets the value of the updateSequence property.
      */
+    @Override
     public String getUpdateSequence() {
         return updateSequence;
     }
@@ -200,7 +201,17 @@ public class GetCapabilitiesType implements AbstractGetCapabilities {
             return new Version(acceptVersions.getVersion().get(0));
         } return null;
     }
-
+    
+    @Override
+    public void setVersion(final String version) {
+        if (version != null) {
+            if (acceptVersions == null) {
+                this.acceptVersions = new AcceptVersionsType(version);
+            } else {
+                 this.acceptVersions.addVersion(version);
+            }
+        }
+    }
     /**
      * Gets the value of the service property.
      */
@@ -209,6 +220,7 @@ public class GetCapabilitiesType implements AbstractGetCapabilities {
         return service;
     }
 
+    @Override
     public void setService(final String service) {
         this.service = service;
     }

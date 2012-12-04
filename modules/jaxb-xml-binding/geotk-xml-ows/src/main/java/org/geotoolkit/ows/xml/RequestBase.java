@@ -28,4 +28,6 @@ public interface RequestBase extends Versioned {
     String getService();
 
     void setService(final String value);
+    
+    void setVersion(final String version);
 }
