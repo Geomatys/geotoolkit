@@ -166,7 +166,7 @@ public final class ReferencingUtilities {
                 coords[0] = (temporal[0] != null) ? temporal[0].getTime() : Double.NEGATIVE_INFINITY;
                 coords[1] = (temporal[1] != null) ? temporal[1].getTime() : Double.POSITIVE_INFINITY;
                 trs.transform(coords, 0, coords, 0, 2);
-                env.setRange(2,coords[0],coords[1]);                
+                env.setRange(3,coords[0],coords[1]);                
             } catch (FactoryException ex) {
                 throw new TransformException(ex.getMessage(),ex);
             }
@@ -177,7 +177,7 @@ public final class ReferencingUtilities {
                 coords[0] = (elevation[0] != null) ? elevation[0] : Double.NEGATIVE_INFINITY;
                 coords[1] = (elevation[1] != null) ? elevation[1] : Double.POSITIVE_INFINITY;
                 trs.transform(coords, 0, coords, 0, 2);
-                env.setRange(3,coords[0],coords[1]);                
+                env.setRange(2,coords[0],coords[1]);                
             } catch (FactoryException ex) {
                 throw new TransformException(ex.getMessage(),ex);
             }
