@@ -26,6 +26,7 @@ import java.util.logging.Logger;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
+import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.primitive.ProjectedCoverage;
@@ -73,7 +74,10 @@ public class DefaultProjectedCoverage implements ProjectedCoverage {
             try {
                 value = handler.peek();
                 if (value == null) {
-                    value = (GridCoverage2D) layer.getCoverageReader().read(layer.getImageIndex(),param);
+                    final GridCoverageReader reader = layer.getCoverageReader();
+                    synchronized(reader){
+                        value = (GridCoverage2D) reader.read(layer.getImageIndex(),param);
+                    }
                 }
             } finally {
                 handler.putAndUnlock(value);

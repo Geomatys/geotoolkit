@@ -20,6 +20,7 @@ import java.awt.*;
 import java.awt.geom.Area;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.image.VolatileImage;
+import java.lang.ref.WeakReference;
 import java.util.logging.Level;
 import org.geotoolkit.display.canvas.CanvasController2D;
 import org.geotoolkit.display.canvas.DefaultCanvasController2D;
@@ -28,6 +29,7 @@ import org.geotoolkit.display.container.AbstractContainer2D;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.painter.SolidColorPainter;
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.internal.Threads;
 import org.opengis.display.canvas.RenderingState;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -42,7 +44,7 @@ import org.opengis.referencing.operation.TransformException;
 public class J2DCanvasVolatile extends J2DCanvas{
 
     private final GraphicsConfiguration GC;
-    private final J2DCanvasVolatile.DrawingThread thread;
+    private final DrawTask drawtask = new DrawTask();
     private final J2DCanvasVolatile.DelayedController controller = new J2DCanvasVolatile.DelayedController(this);
     private VolatileImage buffer0;
     private Dimension dim;
@@ -58,8 +60,6 @@ public class J2DCanvasVolatile extends J2DCanvas{
     
     public J2DCanvasVolatile(final CoordinateReferenceSystem crs, final Dimension dim, final Hints hints){
         super(crs,hints);
-        thread = new J2DCanvasVolatile.DrawingThread();
-        thread.start();
         
         //we might not know our dimension until it is painted by a swing component for exemple.
         if(dim != null){
@@ -74,7 +74,6 @@ public class J2DCanvasVolatile extends J2DCanvas{
     @Override
     public void dispose(){
         super.dispose();
-        thread.dispose();
         buffer0 = null;
         dim = null;
     }
@@ -240,47 +239,26 @@ public class J2DCanvasVolatile extends J2DCanvas{
         
         this.dirtyArea.add(new Area(displayArea));
         mustupdate = true;
-        thread.wake();
+        Threads.executeWork(drawtask);
     }
 
-    private class DrawingThread extends Thread {
-
-        private boolean dispose = false;
-
-        public void dispose(){
-            dispose = true;
-            wake();
-        }
+    private class DrawTask implements Runnable {
 
         @Override
-        public void run() {
+        public synchronized void run() {
 
-            while (!dispose) {
-                while (mustupdate) {
-                    mustupdate = false;
-
-                    final Shape copy;
-                    synchronized(dirtyArea){
-                        copy = (dirtyArea.isEmpty()) ? null : new Area(dirtyArea);
-                        dirtyArea.reset();
-                    }
-
-                    render(copy);
-                }
-                block();
+            if (!mustupdate) {
+                return;
             }
-        }
+            mustupdate = false;
 
-        public synchronized void wake() {
-            notifyAll();
-        }
-
-        private synchronized void block() {
-            try {
-                wait();
-            } catch (InterruptedException ex) {
-                ex.printStackTrace();
+            final Shape copy;
+            synchronized (dirtyArea) {
+                copy = (dirtyArea.isEmpty()) ? null : new Area(dirtyArea);
+                dirtyArea.reset();
             }
+
+            render(copy);
         }
     }
 
