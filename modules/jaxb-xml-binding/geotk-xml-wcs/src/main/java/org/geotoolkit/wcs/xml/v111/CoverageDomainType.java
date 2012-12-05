@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.wcs.xml.v111;
 
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -69,6 +70,11 @@ public class CoverageDomainType {
     public CoverageDomainType(final SpatialDomainType spatialDomain, final TimeSequenceType temporalDomain) {
         this.spatialDomain  = spatialDomain;
         this.temporalDomain = temporalDomain;
+    }
+    
+    public CoverageDomainType(final SpatialDomainType spatialDomain, final List<Object> times) {
+        this.spatialDomain  = spatialDomain;
+        this.temporalDomain = new TimeSequenceType(times);
     }
     
     /**

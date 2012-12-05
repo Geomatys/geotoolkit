@@ -40,6 +40,7 @@ import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
 
 import org.geotoolkit.util.Version;
 import org.geotoolkit.util.logging.Logging;
+import org.geotoolkit.wcs.xml.InterpolationMethod;
 import org.opengis.geometry.Envelope;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -125,6 +126,7 @@ public class GetCoverageType implements GetCoverage {
     /**
      * Gets the value of the domainSubset property.
      */
+    @Override
     public DomainSubsetType getDomainSubset() {
         return domainSubset;
     }
@@ -155,6 +157,7 @@ public class GetCoverageType implements GetCoverage {
         return null;
     }
 
+    @Override
     public void setVersion(final String value) {
         this.version = value;
     }
@@ -259,6 +262,7 @@ public class GetCoverageType implements GetCoverage {
     /**
      * Gets the value of the service property.
      */
+    @Override
     public String getService() {
         if (service == null) {
             return "WCS";
@@ -267,6 +271,7 @@ public class GetCoverageType implements GetCoverage {
         }
     }
 
+    @Override
     public void setService(final String value) {
         this.service = value;
     }
@@ -323,6 +328,14 @@ public class GetCoverageType implements GetCoverage {
      */
     @Override
     public List<Double> getResolutions() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        throw new UnsupportedOperationException("Not Implemented yet.");
+    }
+
+    /**
+     * @todo IMPLEMENT ME
+     */
+    @Override
+    public InterpolationMethod getInterpolationMethod() {
+        throw new UnsupportedOperationException("Not Implemented yet.");
     }
 }

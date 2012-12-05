@@ -78,10 +78,23 @@ public class DomainSetType {
     public DomainSetType(final SpatialDomainType spatialDomain, final TimeSequenceType temporalDomain) {
         ObjectFactory factory = new ObjectFactory();
         content = new ArrayList<JAXBElement<?>>();
-        if (spatialDomain != null)
+        if (spatialDomain != null) {
             content.add(factory.createSpatialDomain(spatialDomain));
-        if (temporalDomain != null)
+        }
+        if (temporalDomain != null) {
             content.add(factory.createTemporalDomain(temporalDomain));
+        }
+    }
+    
+    public DomainSetType(final SpatialDomainType spatialDomain, final List<Object> times) {
+        ObjectFactory factory = new ObjectFactory();
+        content = new ArrayList<JAXBElement<?>>();
+        if (spatialDomain != null) {
+            content.add(factory.createSpatialDomain(spatialDomain));
+        }
+        if (times != null) {
+            content.add(factory.createTemporalDomain(new TimeSequenceType(times)));
+        }
     }
     
     

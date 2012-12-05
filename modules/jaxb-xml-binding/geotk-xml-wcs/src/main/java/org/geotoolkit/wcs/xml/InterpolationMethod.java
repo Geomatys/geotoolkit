@@ -16,16 +16,10 @@
  */
 package org.geotoolkit.wcs.xml;
 
-import org.geotoolkit.ows.xml.AbstractGetCapabilities;
-
 /**
  *
- * @author Cédric Briançon (Geomatys)
- * @module pending
+ * @author Guilhem Legal (Geomatys)
  */
-public interface GetCapabilities extends AbstractGetCapabilities {
-
-    String toKvp();
-
+public interface InterpolationMethod {
+    
 }
-

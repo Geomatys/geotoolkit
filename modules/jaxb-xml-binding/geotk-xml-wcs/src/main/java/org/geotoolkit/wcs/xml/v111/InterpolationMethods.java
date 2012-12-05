@@ -69,9 +69,14 @@ public class InterpolationMethods {
     /**
      * build a new interpolation method.
      */
-    public InterpolationMethods(final List<InterpolationMethodType> interpolationMethod, final String _default){
+    public InterpolationMethods(final List<InterpolationMethod> interpolationMethod, final String _default){
         this._default            = _default;
-        this.interpolationMethod = interpolationMethod;
+        if (interpolationMethod != null) {
+            this.interpolationMethod = new ArrayList<InterpolationMethodType>();
+            for (InterpolationMethod i : interpolationMethod) {
+                this.interpolationMethod.add(new InterpolationMethodType(i.value(), null));
+            }
+        }
     }
     
     /**

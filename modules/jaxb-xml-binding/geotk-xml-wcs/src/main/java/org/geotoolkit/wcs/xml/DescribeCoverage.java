@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.wcs.xml;
 
+import java.util.List;
 import org.geotoolkit.ows.xml.RequestBase;
 
 /**
@@ -25,5 +26,8 @@ import org.geotoolkit.ows.xml.RequestBase;
  * @module pending
  */
 public interface DescribeCoverage extends RequestBase {
+    
     String toKvp();
+    
+    List<String> getIdentifier();
 }

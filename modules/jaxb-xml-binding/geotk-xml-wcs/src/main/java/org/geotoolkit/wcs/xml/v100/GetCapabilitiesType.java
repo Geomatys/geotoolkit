@@ -128,6 +128,7 @@ public class GetCapabilitiesType implements GetCapabilities {
         }
     }
 
+    @Override
     public void setVersion(final String value) {
         this.version = value;
     }

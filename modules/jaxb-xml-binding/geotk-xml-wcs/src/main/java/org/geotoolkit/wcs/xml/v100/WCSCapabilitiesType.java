@@ -121,7 +121,7 @@ public class WCSCapabilitiesType implements GetCapabilitiesResponse {
     /**
      * build a new Capabilities document version 1.0.0 with only the section "ContentMetadata".
      */
-    public WCSCapabilitiesType(final ContentMetadata contentMetadata) {
+    public WCSCapabilitiesType(final ContentMetadata contentMetadata, final String updateSequence) {
         this.contentMetadata = contentMetadata;
         this.version         = "1.0.0";
     }

@@ -25,10 +25,12 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlElementRefs;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.ows.xml.v110.BoundingBoxType;
 import org.geotoolkit.ows.xml.v110.DescriptionType;
 import org.geotoolkit.ows.xml.v110.KeywordsType;
 import org.geotoolkit.ows.xml.v110.LanguageStringType;
 import org.geotoolkit.ows.xml.v110.MetadataType;
+import org.geotoolkit.ows.xml.v110.WGS84BoundingBoxType;
 import org.geotoolkit.wcs.xml.CoverageInfo;
 import org.opengis.geometry.Envelope;
 
@@ -90,6 +92,19 @@ public class CoverageSummaryType extends DescriptionType implements CoverageInfo
     /**
      * An light constructor.
      */
+    public CoverageSummaryType(final String identifier, final String title, final String _abstract, final WGS84BoundingBoxType bbox) {
+        super(title, _abstract, null);
+        if (identifier != null) {
+            setIdentifier(identifier); 
+        }
+        if (bbox != null) {
+            setWGS84BoundingBox(bbox);
+        }
+    }
+    
+    /**
+     * An light constructor.
+     */
     public CoverageSummaryType(final List<LanguageStringType> title, final List<LanguageStringType> _abstract) {
         super(title, _abstract, null);
     }
@@ -104,6 +119,30 @@ public class CoverageSummaryType extends DescriptionType implements CoverageInfo
         this.rest = rest;
     }
     
+    public String getIdentifier() {
+        for (JAXBElement<?> jb : rest) {
+            if ("Identifier".equals(jb.getName().getLocalPart())) {
+                return (String) jb.getValue();
+            }
+        }
+        return null;
+    }
+
+    public final void setIdentifier(final String metadata) {
+        // first we remove the old one
+        for (int i = 0; i < rest.size(); i++) {
+            JAXBElement<?> jb  = rest.get(i);
+            if ("Identifier".equals(jb.getName().getLocalPart())) {
+                rest.remove(i);
+                break;
+            }
+        }
+        if (metadata != null) {
+            ObjectFactory factory = new ObjectFactory();
+            this.rest.add(factory.createIdentifier(metadata));
+        }
+    }
+    
     public MetadataType getMetadata() {
         for (JAXBElement<?> jb : rest) {
             if ("Metadata".equals(jb.getName().getLocalPart())) {
@@ -113,6 +152,12 @@ public class CoverageSummaryType extends DescriptionType implements CoverageInfo
         return null;
     }
 
+    public void setMetadata(final String href) {
+        if (href != null) {
+            setMetadata(new MetadataType(href));
+        }
+    }
+    
     public void setMetadata(final MetadataType metadata) {
         // first we remove the old one
         for (int i = 0; i < rest.size(); i++) {
@@ -148,6 +193,30 @@ public class CoverageSummaryType extends DescriptionType implements CoverageInfo
     public Envelope getLonLatEnvelope() {
         //should return the WGS84BoundingBox from the REST list
         return null;
+    }
+    
+    public WGS84BoundingBoxType getWGS84BoundingBox() {
+        for (JAXBElement<?> jb : rest) {
+            if (jb.getValue() instanceof WGS84BoundingBoxType) {
+                return (WGS84BoundingBoxType) jb.getValue();
+            }
+        }
+        return null;
+    }
+    
+    public final void setWGS84BoundingBox(final WGS84BoundingBoxType metadata) {
+        // first we remove the old one
+        for (int i = 0; i < rest.size(); i++) {
+            JAXBElement<?> jb  = rest.get(i);
+            if (jb.getValue() instanceof WGS84BoundingBoxType) {
+                rest.remove(i);
+                break;
+            }
+        }
+        if (metadata != null) {
+            org.geotoolkit.ows.xml.v110.ObjectFactory factory = new org.geotoolkit.ows.xml.v110.ObjectFactory();
+            this.rest.add(factory.createWGS84BoundingBox(metadata));
+        }
     }
 
 }
