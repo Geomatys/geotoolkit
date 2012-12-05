@@ -16,9 +16,7 @@
  */
 package org.geotoolkit.wms.xml;
 
-import java.net.URL;
 import java.util.List;
-import javax.xml.bind.annotation.XmlTransient;
 import org.opengis.geometry.Envelope;
 
 /**
@@ -34,6 +32,8 @@ public interface AbstractLayer {
      */
     String getAbstract();
 
+    void setAbstract(final String abstrac);
+            
     /**
      * Get all Dimensions (TIME,ELEVATION,...) from a specific layer.
      */
@@ -48,12 +48,16 @@ public interface AbstractLayer {
      * Gets the value of the keywordList property.
      */
     AbstractKeywordList getKeywordList();
+    
+    void setKeywordList(final List<String> kewords);
 
     /**
      * List of supported CRS.
      */
     List<String> getCRS();
 
+    void setCrs(final List<String> crs);
+            
     /**
      * Unmodifiable list of layers contained in this layer.
      */
@@ -88,6 +92,9 @@ public interface AbstractLayer {
      * Get layer styles
      */
     List<? extends Style> getStyle();
+    
+    void updateStyle(final List<Style> styles);
+    
 
     /**
      * Get if the layer is queryable or not
@@ -104,11 +111,17 @@ public interface AbstractLayer {
      */
     List<? extends AbstractURL> getMetadataURL();
     
+    void setMetadataURL(final String format, final String href, final String type);
+    
     /**
      * Get dataURLs of the layer
      */
     List<? extends AbstractURL> getDataURL();
     
+    void setDataURL(final String format, final String href);
+    
+    void setAuthorityURL(final String format, final String href);
+            
     /**
      * Get minScaleDenominator of the layer
      */
@@ -118,5 +131,11 @@ public interface AbstractLayer {
      * Get maxScaleDenominator of the layer
      */
     Double getMaxScaleDenominator();
+    
+    void setIdentifier(final String authority, final String value);
+    
+    void setOpaque(final Integer opaque);
+    
+    void setAttribution(final String title, final String href, final AbstractLogoURL logo);
 
 }

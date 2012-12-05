@@ -67,10 +67,9 @@ public class BoundingBox implements AbstractBoundingBox{
      * @param maxy
      * @param resx
      * @param resy
-     * @param version
      */
     public BoundingBox(final String crs, final double minx, final double miny,
-            final double maxx, final double maxy, final Double resx, final Double resy, final String version) {
+            final double maxx, final double maxy, final Double resx, final Double resy) {
         this.maxx = maxx;
         this.maxy = maxy;
         this.minx = minx;

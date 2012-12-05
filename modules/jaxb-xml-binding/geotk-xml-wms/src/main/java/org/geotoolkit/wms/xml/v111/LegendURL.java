@@ -76,11 +76,25 @@ public class LegendURL implements AbstractLegendURL {
         this.width          = width;
     }
     
+    /**
+     * Build a new Contact person primary object.
+     */
+    public LegendURL(final AbstractLegendURL that) {
+        if (that != null) {
+            this.format         = that.getFormat();
+            if (that.getOnlineResource() != null) {
+                this.onlineResource = new OnlineResource(onlineResource);
+            }
+            this.height = that.getHeight();
+            this.width  = that.getWidth();
+        }
+    }
     
     /**
      * Gets the value of the format property.
      * 
      */
+    @Override
     public String getFormat() {
         return format;
     }
@@ -89,6 +103,7 @@ public class LegendURL implements AbstractLegendURL {
      * Gets the value of the onlineResource property.
      * 
      */
+    @Override
     public OnlineResource getOnlineResource() {
         return onlineResource;
     }
@@ -96,6 +111,7 @@ public class LegendURL implements AbstractLegendURL {
     /**
      * Gets the value of the width property.
      */
+    @Override
     public Integer getWidth() {
         return width;
     }
@@ -104,6 +120,7 @@ public class LegendURL implements AbstractLegendURL {
      * Gets the value of the height property.
      * 
      */
+    @Override
     public Integer getHeight() {
         return height;
     }

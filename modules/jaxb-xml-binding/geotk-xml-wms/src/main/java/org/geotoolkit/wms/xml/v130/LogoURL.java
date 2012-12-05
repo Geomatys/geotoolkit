@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.wms.xml.AbstractLogoURL;
 
 
 /**
@@ -54,7 +55,7 @@ import javax.xml.bind.annotation.XmlType;
     "onlineResource"
 })
 @XmlRootElement(name = "LogoURL")
-public class LogoURL {
+public class LogoURL implements AbstractLogoURL {
 
     @XmlElement(name = "Format", required = true)
     private String format;
@@ -95,11 +96,22 @@ public class LogoURL {
         this.width          = width;
     }
     
+    public LogoURL(final AbstractLogoURL that) {
+        if (that != null) {
+            this.format         = that.getFormat();
+            this.height         = that.getHeight();
+            this.width          = that.getWidth();
+            if (that.getOnlineResource() != null) {
+                this.onlineResource = new OnlineResource(that.getOnlineResource());
+            }
+        }
+    }
     
     /**
      * Gets the value of the format property.
      * 
      */
+    @Override
     public String getFormat() {
         return format;
     }
@@ -107,6 +119,7 @@ public class LogoURL {
     /**
      * Gets the value of the onlineResource property.
      */
+    @Override
     public OnlineResource getOnlineResource() {
         return onlineResource;
     }
@@ -114,6 +127,7 @@ public class LogoURL {
     /**
      * Gets the value of the width property.
      */
+    @Override
     public Integer getWidth() {
         return width;
     }
@@ -121,6 +135,7 @@ public class LogoURL {
     /**
      * Gets the value of the height property.
      */
+    @Override
     public Integer getHeight() {
         return height;
     }

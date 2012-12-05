@@ -82,6 +82,7 @@ public class MetadataURL implements AbstractMetadataURL {
      * Gets the value of the format property.
      * 
      */
+    @Override
     public String getFormat() {
         return format;
     }
@@ -90,6 +91,7 @@ public class MetadataURL implements AbstractMetadataURL {
      * Gets the value of the onlineResource property.
      * 
      */
+    @Override
     public OnlineResource getOnlineResource() {
         return onlineResource;
     }
@@ -98,6 +100,7 @@ public class MetadataURL implements AbstractMetadataURL {
      * Gets the value of the type property.
      * 
      */
+    @Override
     public String getType() {
         return type;
     }

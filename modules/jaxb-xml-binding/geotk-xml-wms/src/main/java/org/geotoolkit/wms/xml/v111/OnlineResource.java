@@ -72,15 +72,15 @@ public class OnlineResource implements AbstractOnlineResource {
     OnlineResource() {
     }
 
-    public OnlineResource(final OnlineResource that) {
+    public OnlineResource(final AbstractOnlineResource that) {
         if (that != null) {
-            this.href    = that.href;
-            this.type    = that.type;
-            this.actuate = that.actuate;
-            this.arcrole = that.arcrole;
-            this.role    = that.role;
-            this.show    = that.show;
-            this.title   = that.title;
+            this.href    = that.getHref();
+            this.type    = that.getType();
+            this.actuate = that.getActuate();
+            this.arcrole = that.getArcrole();
+            this.role    = that.getRole();
+            this.show    = that.getShow();
+            this.title   = that.getTitle();
         }
     }
     
@@ -123,6 +123,7 @@ public class OnlineResource implements AbstractOnlineResource {
      * Gets the value of the type property.
      * 
      */
+    @Override
     public String getType() {
         if (type == null) {
             return "simple";
@@ -154,6 +155,7 @@ public class OnlineResource implements AbstractOnlineResource {
      * Gets the value of the role property.
      *     
      */
+    @Override
     public String getRole() {
         return role;
     }
@@ -162,6 +164,7 @@ public class OnlineResource implements AbstractOnlineResource {
      * Gets the value of the arcrole property.
      * 
      */
+    @Override
     public String getArcrole() {
         return arcrole;
     }
@@ -169,6 +172,7 @@ public class OnlineResource implements AbstractOnlineResource {
     /**
      * Gets the value of the title property.
      */
+    @Override
     public String getTitle() {
         return title;
     }
@@ -176,6 +180,7 @@ public class OnlineResource implements AbstractOnlineResource {
     /**
      * Gets the value of the show property.
      */
+    @Override
     public String getShow() {
         return show;
     }
@@ -183,6 +188,7 @@ public class OnlineResource implements AbstractOnlineResource {
     /**
      * Gets the value of the actuate property.
      */
+    @Override
     public String getActuate() {
         return actuate;
     }

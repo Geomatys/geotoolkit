@@ -34,4 +34,16 @@ public interface AbstractOnlineResource {
      * 
      */
     void setHref(String href);
+    
+    String getType();
+    
+    String getRole();
+    
+    String getArcrole();
+    
+    String getTitle();
+    
+    String getShow();
+    
+    String getActuate();
 }
