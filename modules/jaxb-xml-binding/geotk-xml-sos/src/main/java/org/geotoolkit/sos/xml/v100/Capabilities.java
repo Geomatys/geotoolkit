@@ -21,6 +21,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.ows.xml.AbstractCapabilitiesCore;
+import org.geotoolkit.ows.xml.Sections;
 import org.geotoolkit.ows.xml.v110.CapabilitiesBaseType;
 import org.geotoolkit.ows.xml.v110.OperationsMetadata;
 import org.geotoolkit.ows.xml.v110.ServiceIdentification;
@@ -103,6 +105,42 @@ public class Capabilities extends CapabilitiesBaseType implements SOSResponse {
      */
     public void setContents(final Contents value) {
         this.contents = value;
+    }
+    
+    @Override
+    public AbstractCapabilitiesCore applySections(final Sections sections) {
+        //we prepare the different parts response document
+        ServiceIdentification si = null;
+        ServiceProvider       sp = null;
+        OperationsMetadata    om = null;
+        FilterCapabilities    fc = null;
+        Contents            cont = null;
+
+        //we enter the information for service identification.
+        if (sections.containsSection("ServiceIdentification") || sections.containsSection("All")) {
+            si = getServiceIdentification();
+        }
+
+        //we enter the information for service provider.
+        if (sections.containsSection("ServiceProvider") || sections.containsSection("All")) {
+            sp = getServiceProvider();
+        }
+
+        //we enter the operation Metadata
+        if (sections.containsSection("OperationsMetadata") || sections.containsSection("All")) {
+           om = getOperationsMetadata();
+        }
+
+        //we enter the information filter capablities.
+        if (sections.containsSection("Filter_Capabilities") || sections.containsSection("All")) {
+            fc = filterCapabilities;
+        }
+
+        if (sections.containsSection("Contents") || sections.containsSection("All")) {
+            cont = contents;
+        }
+        // we build and normalize the document
+        return new Capabilities(si, sp, om, "1.0.0", getUpdateSequence(), fc, cont);
     }
     
     /**

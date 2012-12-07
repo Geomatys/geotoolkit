@@ -57,6 +57,14 @@ public class TileMatrixSetLink {
     @XmlElement(name = "TileMatrixSetLimits")
     private TileMatrixSetLimits tileMatrixSetLimits;
 
+    public TileMatrixSetLink() {
+        
+    }
+    
+    public TileMatrixSetLink(final String tileMatrixSet) {
+        this.tileMatrixSet = tileMatrixSet;
+    }
+    
     /**
      * Gets the value of the tileMatrixSet property.
      * 

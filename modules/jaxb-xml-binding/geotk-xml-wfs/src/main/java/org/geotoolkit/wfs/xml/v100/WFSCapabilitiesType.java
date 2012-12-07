@@ -24,9 +24,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ogc.xml.v100.FilterCapabilities;
+import org.geotoolkit.ows.xml.AbstractCapabilitiesBase;
 import org.geotoolkit.ows.xml.AbstractOperationsMetadata;
 import org.geotoolkit.ows.xml.AbstractServiceIdentification;
 import org.geotoolkit.ows.xml.AbstractServiceProvider;
+import org.geotoolkit.ows.xml.Sections;
 import org.geotoolkit.wfs.xml.WFSCapabilities;
 import org.geotoolkit.wfs.xml.WFSResponse;
 
@@ -150,6 +152,7 @@ public class WFSCapabilitiesType implements WFSResponse, WFSCapabilities {
      *     {@link FeatureTypeListType }
      *     
      */
+    @Override
     public FeatureTypeListType getFeatureTypeList() {
         return featureTypeList;
     }
@@ -198,6 +201,7 @@ public class WFSCapabilitiesType implements WFSResponse, WFSCapabilities {
      *     {@link String }
      *     
      */
+    @Override
     public String getVersion() {
         if (version == null) {
             return "1.0.0";
@@ -226,6 +230,7 @@ public class WFSCapabilitiesType implements WFSResponse, WFSCapabilities {
      *     {@link Integer }
      *     
      */
+    @Override
     public String getUpdateSequence() {
         if (updateSequence == null) {
             return "0";
@@ -246,15 +251,23 @@ public class WFSCapabilitiesType implements WFSResponse, WFSCapabilities {
         this.updateSequence = value;
     }
 
+    @Override
     public AbstractServiceProvider getServiceProvider() {
         throw new UnsupportedOperationException("Not supported by this version.");
     }
 
+    @Override
     public AbstractServiceIdentification getServiceIdentification() {
         throw new UnsupportedOperationException("Not supported by this version.");
     }
 
+    @Override
     public AbstractOperationsMetadata getOperationsMetadata() {
+        throw new UnsupportedOperationException("Not supported by this version.");
+    }
+
+    @Override
+    public AbstractCapabilitiesBase applySections(Sections sections) {
         throw new UnsupportedOperationException("Not supported by this version.");
     }
 }

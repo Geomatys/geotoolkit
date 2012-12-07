@@ -16,11 +16,8 @@
  */
 package org.geotoolkit.wms.xml;
 
-import java.util.ArrayList;
 import java.util.List;
-import javax.xml.bind.annotation.XmlSeeAlso;
-import org.geotoolkit.wms.xml.v111.WMT_MS_Capabilities;
-import org.geotoolkit.wms.xml.v130.WMSCapabilities;
+import org.geotoolkit.ows.xml.AbstractCapabilitiesCore;
 
 /**
  * Abstract main class which describe a capabilities document  for all version of WMS.
@@ -28,7 +25,7 @@ import org.geotoolkit.wms.xml.v130.WMSCapabilities;
  * @author Guilhem Legal
  * @module pending
  */
-public interface AbstractWMSCapabilities extends WMSResponse {
+public interface AbstractWMSCapabilities extends AbstractCapabilitiesCore {
 
      /**
      * return the Service part of the capabilities document.

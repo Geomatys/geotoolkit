@@ -20,6 +20,8 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.csw.xml.AbstractCapabilities;
+import org.geotoolkit.csw.xml.CSWResponse;
+import org.geotoolkit.ows.xml.Sections;
 import org.geotoolkit.ows.xml.v100.CapabilitiesBaseType;
 import org.geotoolkit.ows.xml.v100.OperationsMetadata;
 import org.geotoolkit.ows.xml.v100.ServiceIdentification;
@@ -59,7 +61,7 @@ import org.opengis.filter.capability.FilterCapabilities;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "CapabilitiesType")
-public class CapabilitiesType extends CapabilitiesBaseType implements AbstractCapabilities {
+public class CapabilitiesType extends CapabilitiesBaseType implements AbstractCapabilities, CSWResponse {
 
     /**
      * An empty constructor used by JAXB
@@ -82,7 +84,30 @@ public class CapabilitiesType extends CapabilitiesBaseType implements AbstractCa
         super(serviceIdentification, serviceProvider, operationsMetadata, version, updateSequence);
     }
 
+    @Override
     public FilterCapabilities getFilterCapabilities() {
         return null;
+    }
+    
+    @Override
+    public CapabilitiesType applySections(final Sections sections) {
+        ServiceIdentification si = null;
+        ServiceProvider       sp = null;
+        OperationsMetadata    om = null;
+        
+        //we enter the information for service identification.
+        if (sections.containsSection("ServiceIdentification") || sections.containsSection("All")) {
+            si = getServiceIdentification();
+        }
+
+        //we enter the information for service provider.
+        if (sections.containsSection("ServiceProvider") || sections.containsSection("All")) {
+            sp = getServiceProvider();
+        }
+        //we enter the operation Metadata
+        if (sections.containsSection("OperationsMetadata") || sections.containsSection("All")) {
+            om = getOperationsMetadata();
+        }
+        return new CapabilitiesType(si, sp, om, "2.0.2", getUpdateSequence());
     }
 }

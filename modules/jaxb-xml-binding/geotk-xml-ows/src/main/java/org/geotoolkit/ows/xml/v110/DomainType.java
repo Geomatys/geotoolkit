@@ -81,6 +81,14 @@ public class DomainType extends UnNamedDomainType implements AbstractDomain {
         this.name = name;
     }
     
+    /**
+     * Build a new Domain with the specified name.
+     */
+    public DomainType(final String name, final AnyValue values){
+        super(values);
+        this.name = name;
+    }
+    
     public DomainType(final String name, final ValueType value){
         super(value);
         this.name = name;
@@ -92,6 +100,14 @@ public class DomainType extends UnNamedDomainType implements AbstractDomain {
     public DomainType(final String name, final String value){
         super(value);
         this.name = name;
+    }
+    
+    /**
+     * Build a new Domain with the specified list of values.
+     */
+    public DomainType(final String name, final List<String> value) {
+        
+        this.name  = name;
     }
     
     /**
