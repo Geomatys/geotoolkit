@@ -160,6 +160,11 @@ public class Request implements AbstractRequest {
     }
 
     @Override
+    public Request clone() {
+        return new Request(this);
+    }
+    
+    @Override
     public String toString() {
         final StringBuilder s = new StringBuilder();
         if (getCapabilities!= null) {

@@ -43,4 +43,6 @@ public interface AbstractOperationsMetadata {
     Object getExtendedCapabilities();
     
     void setExtendedCapabilities(final Object extendedCapabilities);
+    
+    AbstractOperationsMetadata clone();
 }

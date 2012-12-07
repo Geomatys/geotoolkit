@@ -60,6 +60,17 @@ public class TranslatedCapabilitiesType {
 
     }
 
+    public TranslatedCapabilitiesType(final TranslatedCapabilitiesType that) {
+        if (that != null) {
+            if (that.document != null) {
+                this.document = new ArrayList<DocumentType>();
+                for (DocumentType doc : that.document) {
+                    this.document.add(new DocumentType(doc));
+                }
+            }
+        }
+    }
+    
     public TranslatedCapabilitiesType(final List<DocumentType> document) {
         this.document = document;
     }

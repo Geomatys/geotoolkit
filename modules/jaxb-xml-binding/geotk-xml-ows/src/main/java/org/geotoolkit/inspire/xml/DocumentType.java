@@ -56,6 +56,13 @@ public class DocumentType extends OnlineResourceType {
     public DocumentType() {
 
     }
+    
+    public DocumentType(final DocumentType that) {
+        super(that);
+        if (that != null) {
+            this.language = that.language;
+        }
+    }
 
     public DocumentType(final String href, final String language) {
         super(href);

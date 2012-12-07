@@ -99,6 +99,7 @@ public class Request implements AbstractRequest {
     /**
      * Gets the value of the getCapabilities property.
      */
+    @Override
     public GetCapabilities getGetCapabilities() {
         return getCapabilities;
     }
@@ -106,6 +107,7 @@ public class Request implements AbstractRequest {
     /**
      * Gets the value of the getMap property.
      */
+    @Override
     public GetMap getGetMap() {
         return getMap;
     }
@@ -113,6 +115,7 @@ public class Request implements AbstractRequest {
     /**
      * Gets the value of the getFeatureInfo property.
      */
+    @Override
     public GetFeatureInfo getGetFeatureInfo() {
         return getFeatureInfo;
     }
@@ -157,6 +160,7 @@ public class Request implements AbstractRequest {
     /**
      * update all the dcp ur with the specified one.
      */
+    @Override
     public void updateURL(final String url) {
         if (getCapabilities != null) {
             getCapabilities.updateURL(url);
@@ -179,5 +183,10 @@ public class Request implements AbstractRequest {
         if (putStyles != null) {
             putStyles.updateURL(url);
         }
+    }
+    
+    @Override
+    public Request clone() {
+        return new Request(this);
     }
 }

@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.wps.xml.v100;
 
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -66,10 +67,23 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 public class Languages {
 
     @XmlElement(name = "Default", required = true)
-    protected Languages.Default _default;
+    private Languages.Default _default;
     @XmlElement(name = "Supported", required = true)
-    protected LanguagesType supported;
+    private LanguagesType supported;
 
+    public Languages() {
+        
+    }
+    
+    public Languages(final String _default,  final List<String> supported) {
+        if (_default != null) {
+            this._default = new Default(_default);
+        }
+        if (supported != null) {
+            this.supported = new LanguagesType(supported);
+        }
+    }
+    
     /**
      * Gets the value of the default property.
      * 
@@ -147,8 +161,16 @@ public class Languages {
         @XmlElement(name = "Language", namespace = "http://www.opengis.net/ows/1.1", required = true)
         @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
         @XmlSchemaType(name = "language")
-        protected String language;
+        private String language;
 
+        public Default() {
+           
+        }
+        
+        public Default(final String language) {
+           this.language = language;
+        }
+        
         /**
          * Identifier of the default language supported by the service.  This language identifier shall be as specified in IETF RFC 4646.
          * 

@@ -31,5 +31,7 @@ public interface AbstractRequest {
     AbstractOperation getGetFeatureInfo();
 
     void updateURL(String url);
+    
+    AbstractRequest clone();
 
 }
