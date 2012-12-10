@@ -35,6 +35,7 @@ import java.io.IOException;
 import java.util.AbstractMap;
 import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
@@ -106,6 +107,7 @@ import org.opengis.style.Symbolizer;
 import org.opengis.filter.expression.Function;
 
 import static org.geotoolkit.style.StyleConstants.*;
+import org.geotoolkit.util.XArrays;
 import org.opengis.util.GenericName;
 
 /**
@@ -411,8 +413,11 @@ public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
                         }else{
                             //we explore the image and try to find the min and max
                             Map<String,Object> an = StatisticOp.analyze(reader,cml.getImageIndex());
-                            final double min = (Double)an.get(StatisticOp.MINIMUM);
-                            final double max = (Double)an.get(StatisticOp.MAXIMUM);                
+                            final double[] minArray = (double[])an.get(StatisticOp.MINIMUM);
+                            final double[] maxArray = (double[])an.get(StatisticOp.MAXIMUM); 
+                            final double min = findExtremum(minArray, true);
+                            final double max = findExtremum(maxArray, false);
+                            
                             for(int s=0,l=steps.size();s<l;s++){
                                 final Entry<Double, Color> step = steps.get(s);
                                 model.points.add(SF.interpolationPoint(
@@ -438,6 +443,29 @@ public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
 
     }//GEN-LAST:event_guiGenerateActionPerformed
 
+    /**
+     * Find the min or max values in an array of double
+     * @param data double array
+     * @param min search min values or max values
+     * @return min or max value.
+     */
+    private double findExtremum(final double[] data, final boolean min) {
+        if (data.length > 0) {
+            double extremum = data[0];
+            if (min) {
+                for (int i = 0; i < data.length; i++) {
+                    extremum = Math.min(extremum, data[i]);
+                }
+            } else {
+                for (int i = 0; i < data.length; i++) {
+                    extremum = Math.max(extremum, data[i]);
+                }
+            }
+            return extremum;
+        }
+        throw new IllegalArgumentException("Array of " + (min ? "min" : "max") + " values is empty.");
+    }
+    
     @Override
     public boolean canHandle(Object target) {
         return target instanceof MapLayer && !(target instanceof FeatureMapLayer);

@@ -244,8 +244,10 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
                             try{
                                 final Map<String,Object> analyze = StatisticOp.analyze(
                                         projectedCoverage.getLayer().getCoverageReader(),projectedCoverage.getLayer().getImageIndex());
-                                final double min = (Double)analyze.get(StatisticOp.MINIMUM);
-                                final double max = (Double)analyze.get(StatisticOp.MAXIMUM);
+                                final double[] minArray = (double[])analyze.get(StatisticOp.MINIMUM);
+                                final double[] maxArray = (double[])analyze.get(StatisticOp.MAXIMUM); 
+                                final double min = findExtremum(minArray, true);
+                                final double max = findExtremum(maxArray, false);
 
                                 final List<InterpolationPoint> values = new ArrayList<InterpolationPoint>();
                                 values.add(new DefaultInterpolationPoint(Double.NaN, GO2Utilities.STYLE_FACTORY.literal(new Color(0, 0, 0, 0))));
@@ -675,6 +677,29 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
         pb.addSource(image);
         pb.add(lookup);
         return JAI.create("lookup", pb, null);
+    }
+    
+    /**
+     * Find the min or max values in an array of double
+     * @param data double array
+     * @param min search min values or max values
+     * @return min or max value.
+     */
+    private static double findExtremum(final double[] data, final boolean min) {
+        if (data.length > 0) {
+            double extremum = data[0];
+            if (min) {
+                for (int i = 0; i < data.length; i++) {
+                    extremum = Math.min(extremum, data[i]);
+                }
+            } else {
+                for (int i = 0; i < data.length; i++) {
+                    extremum = Math.max(extremum, data[i]);
+                }
+            }
+            return extremum;
+        }
+        throw new IllegalArgumentException("Array of " + (min ? "min" : "max") + " values is empty.");
     }
 
 }
