@@ -14,16 +14,17 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.process.coverage.copy;
+package org.geotoolkit.process.coverage.reducedodomain;
 
-import org.geotoolkit.coverage.CoverageStore;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.process.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.coverage.CoverageProcessingRegistry;
+import org.geotoolkit.process.coverage.reducetodomain.ReduceToDomainProcess;
 import org.geotoolkit.util.SimpleInternationalString;
+import org.opengis.coverage.Coverage;
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
@@ -32,59 +33,45 @@ import org.opengis.parameter.ParameterValueGroup;
 
 /**
  *
- * @author Cédric Briançon (Geomatys)
+ * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class CopyCoverageStoreDescriptor extends AbstractProcessDescriptor {
+public class ReduceToDomainDescriptor extends AbstractProcessDescriptor {
 
-    /**Process name : copycoveragestore */
-    public static final String NAME = "copycoveragestore";
-
-    /**
-     * Mandatory - CoverageStore
-     */
-    public static final ParameterDescriptor<CoverageStore> STORE_IN =
-            new DefaultParameterDescriptor("store_in", "Input coverage store", CoverageStore.class, null, true);
+    /**Process name : reduceToDomain */
+    public static final String NAME = "reduceToDomain";
 
     /**
-     * Mandatory - CoverageStore
+     * Mandatory - Coverage
      */
-    public static final ParameterDescriptor<CoverageStore> STORE_OUT =
-            new DefaultParameterDescriptor("store_out", "Output coverage store", CoverageStore.class, null, true);
+    public static final ParameterDescriptor<Coverage> COVERAGE_IN =
+            new DefaultParameterDescriptor("coverage_in", "Input coverage ", Coverage.class, null, true);
 
     /**
-     * Mandatory - drop before insertion or not.
+     * Mandatory - Coverage
      */
-    public static final ParameterDescriptor<Boolean> ERASE =
-            new DefaultParameterDescriptor("erase", "Erase type if already presents.",
-            Boolean.class, false, true);
-    
-    /**
-     * Optional - reduce to domain, true by default.
-     */
-    public static final ParameterDescriptor<Boolean> REDUCE_TO_DOMAIN =
-            new DefaultParameterDescriptor("reduceToDomain", "Reduce to domain.",
-            Boolean.class, true, false);
+    public static final ParameterDescriptor<Coverage> COVERAGE_OUT =
+            new DefaultParameterDescriptor("coverage_out", "Output coverage ", Coverage.class, null, true);
 
     /**Input parameters */
     public static final ParameterDescriptorGroup INPUT_DESC =
             new DefaultParameterDescriptorGroup("InputParameters",
-            new GeneralParameterDescriptor[]{STORE_IN, STORE_OUT, ERASE, REDUCE_TO_DOMAIN});
+            new GeneralParameterDescriptor[]{COVERAGE_IN});
 
     /**Output parameters */
     public static final ParameterDescriptorGroup OUTPUT_DESC =
             new DefaultParameterDescriptorGroup("OutputParameters",
-            new GeneralParameterDescriptor[]{});
+            new GeneralParameterDescriptor[]{COVERAGE_OUT});
 
     /**Instance */
-    public static final ProcessDescriptor INSTANCE = new CopyCoverageStoreDescriptor();
+    public static final ProcessDescriptor INSTANCE = new ReduceToDomainDescriptor();
 
     /**
      * Default constructor
      */
-    private CopyCoverageStoreDescriptor() {
+    private ReduceToDomainDescriptor() {
         super(NAME, CoverageProcessingRegistry.IDENTIFICATION,
-                new SimpleInternationalString("Parameter description of Coverage to Feature process."),
+                new SimpleInternationalString("Reduce to CRS domain a coverage, correctly transpose values which cross the anti-meridan."),
                 INPUT_DESC, OUTPUT_DESC);
     }
 
@@ -93,7 +80,7 @@ public class CopyCoverageStoreDescriptor extends AbstractProcessDescriptor {
      */
     @Override
     public Process createProcess(final ParameterValueGroup input) {
-        return new CopyCoverageStoreProcess(input);
+        return new ReduceToDomainProcess(input);
     }
 
 }

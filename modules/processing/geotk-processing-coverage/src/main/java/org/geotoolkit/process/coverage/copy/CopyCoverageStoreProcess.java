@@ -44,6 +44,7 @@ import org.geotoolkit.process.AbstractProcess;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessException;
 import static org.geotoolkit.process.coverage.copy.CopyCoverageStoreDescriptor.*;
+import org.geotoolkit.process.coverage.reducedodomain.ReduceToDomainDescriptor;
 import org.geotoolkit.process.coverage.straighten.StraightenDescriptor;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
@@ -88,11 +89,12 @@ public class CopyCoverageStoreProcess extends AbstractProcess {
         final CoverageStore inStore  = value(STORE_IN,  inputParameters);
         final CoverageStore outStore = value(STORE_OUT, inputParameters);
         final Boolean       erase    = value(ERASE,     inputParameters);
+        final Boolean       reduce   = value(REDUCE_TO_DOMAIN,     inputParameters);
 
         try {
             for(Name n : inStore.getNames()){
                 final CoverageReference ref = inStore.getCoverageReference(n);
-                saveCoverage(outStore, ref, erase);
+                saveCoverage(outStore, ref, erase, reduce);
             }
         } catch (DataStoreException ex) {
             throw new ProcessException(ex.getLocalizedMessage(), this, ex);
@@ -111,10 +113,12 @@ public class CopyCoverageStoreProcess extends AbstractProcess {
      * @throws DataStoreException
      * @throws TransformException
      */
-    private void saveCoverage(final CoverageStore outStore, final CoverageReference inRef, final Boolean erase)
+    private void saveCoverage(final CoverageStore outStore, final CoverageReference inRef, final Boolean erase, Boolean reduce)
             throws DataStoreException, TransformException, ProcessException
     {
 
+        if(reduce == null) reduce = Boolean.TRUE;
+        
         final GridCoverageReader reader = inRef.createReader();
         final int imageIndex = inRef.getImageIndex();
         final GeneralGridGeometry globalGeom = reader.getGridGeometry(imageIndex);
@@ -167,7 +171,7 @@ public class CopyCoverageStoreProcess extends AbstractProcess {
 
         if (possibilities.isEmpty()) {
             //only a single image to insert
-            saveMosaic(pm, pyramid, reader, imageIndex, null);
+            saveMosaic(pm, pyramid, reader, imageIndex, null,reduce);
 
         } else {
             //multiple dimensions to insert
@@ -176,7 +180,7 @@ public class CopyCoverageStoreProcess extends AbstractProcess {
 
             Envelope ce = ite.next();
             do {
-                saveMosaic(pm, pyramid, reader, imageIndex, ce);
+                saveMosaic(pm, pyramid, reader, imageIndex, ce,reduce);
                 ce = ite.next();
             } while (ce != null);
         }
@@ -195,7 +199,7 @@ public class CopyCoverageStoreProcess extends AbstractProcess {
      * @throws TransformException
      */
     private void saveMosaic(final PyramidalModel pm, final Pyramid pyramid, final GridCoverageReader reader,
-            final int imageIndex, Envelope env) throws DataStoreException, TransformException, ProcessException {
+            final int imageIndex, Envelope env, boolean reduce) throws DataStoreException, TransformException, ProcessException {
         final GridCoverageReadParam params = new GridCoverageReadParam();
         if (env != null) {
             params.setEnvelope(env);
@@ -210,15 +214,28 @@ public class CopyCoverageStoreProcess extends AbstractProcess {
         final ParameterValueGroup subParams = StraightenDescriptor.INPUT_DESC.createValue();
         Parameters.getOrCreate(StraightenDescriptor.COVERAGE_IN, subParams).setValue(coverage);
         final Process subprocess = StraightenDescriptor.INSTANCE.createProcess(subParams);
-        final ParameterValueGroup result;
+        ParameterValueGroup result;
         try{
             result = subprocess.call();
         }catch(ProcessException ex){
             throw new ProcessException(ex.getMessage(), this, ex);
         }
-
         coverage = (GridCoverage2D) Parameters.getOrCreate(StraightenDescriptor.COVERAGE_OUT, result).getValue();
 
+        //reduce to valid domain
+        if(reduce){
+            final ParameterValueGroup redParams = ReduceToDomainDescriptor.INPUT_DESC.createValue();
+            Parameters.getOrCreate(ReduceToDomainDescriptor.COVERAGE_IN, redParams).setValue(coverage);
+            final Process redprocess = ReduceToDomainDescriptor.INSTANCE.createProcess(redParams);
+            try{
+                result = redprocess.call();
+                coverage = (GridCoverage2D) Parameters.getOrCreate(StraightenDescriptor.COVERAGE_OUT, result).getValue();
+            }catch(ProcessException ex){
+                throw new ProcessException(ex.getMessage(), this, ex);
+            }
+            
+        }
+        
         final GridGeometry2D gridgeom = coverage.getGridGeometry();
         //we know it's an affine transform since we straighten the coverage
         final AffineTransform2D gridToCRS = (AffineTransform2D) gridgeom.getGridToCRS2D(PixelOrientation.UPPER_LEFT);
