@@ -88,7 +88,7 @@ import static org.geotoolkit.internal.image.io.DimensionAccessor.fixRoundingErro
  * the insertion in the database occurs.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.16
+ * @version 3.21
  *
  * @see CoverageDatabaseListener
  *
@@ -346,6 +346,7 @@ public final class NewGridCoverageReference {
              tile.getImageReaderSpi(),
              tile.getRegion(),
              tile.getGridToCRS(),
+             (tile instanceof NewGridCoverage) ? ((NewGridCoverage) tile).crs : null,
              null);
     }
 
@@ -367,7 +368,7 @@ public final class NewGridCoverageReference {
             throws SQLException, IOException, FactoryException
     {
         this(database, reader, input, imageIndex, reader.getOriginatingProvider(),
-             new Rectangle(reader.getWidth(imageIndex), reader.getHeight(imageIndex)), null,
+             new Rectangle(reader.getWidth(imageIndex), reader.getHeight(imageIndex)), null, null,
              getSpatialMetadata(reader, imageIndex));
         /*
          * Close the reader but do not dispose it (unless we were asked to),
@@ -389,13 +390,14 @@ public final class NewGridCoverageReference {
      * @param  spi           The provider of the {@code reader}, or {@link Tile#getImageReaderSpi()}.
      * @param  imageBounds   The image size (in pixels) and its location (in the case of tiles only).
      * @param  gridToCRS     The transform to real world, or {@code null} for fetching from metadata.
+     * @param  crs           The coordinate reference system, or {@code null} for fetching from metadata.
      * @param  metadata      The metadata, or {@code null} if none,
      * @throws IOException If an error occurred while reading the image.
      */
     private NewGridCoverageReference(final SpatialDatabase database,
             final ImageReader reader, Object input, final int imageIndex, final ImageReaderSpi spi,
-            final Rectangle imageBounds, AffineTransform gridToCRS, SpatialMetadata metadata)
-            throws SQLException, IOException, FactoryException
+            final Rectangle imageBounds, AffineTransform gridToCRS, CoordinateReferenceSystem crs,
+            SpatialMetadata metadata) throws SQLException, IOException, FactoryException
     {
         this.database    = database;
         this.imageIndex  = imageIndex;
@@ -453,73 +455,73 @@ public final class NewGridCoverageReference {
          * This code scan the "spatial_ref_sys" PostGIS table until matches are found,
          * or leaves the SRID to 0 if no match is found.
          */
-        if (metadata != null) {
-            final CoordinateReferenceSystem crs = metadata.getInstanceForType(CoordinateReferenceSystem.class);
-            if (crs != null) {
-                /*
-                 * Horizontal CRS.
-                 */
-                final CRSAuthorityFactory crsFactory = database.getCRSAuthorityFactory();
-                final CoordinateReferenceSystem horizontalCRS = CRS.getHorizontalCRS(crs);
-                if (horizontalCRS != null) {
-                    final Integer id = getIdentifier(horizontalCRS, crsFactory);
-                    if (id != null) {
-                        horizontalSRID = id;
-                    }
+        if (crs == null && metadata != null) {
+            crs = metadata.getInstanceForType(CoordinateReferenceSystem.class);
+        }
+        if (crs != null) {
+            /*
+             * Horizontal CRS.
+             */
+            final CRSAuthorityFactory crsFactory = database.getCRSAuthorityFactory();
+            final CoordinateReferenceSystem horizontalCRS = CRS.getHorizontalCRS(crs);
+            if (horizontalCRS != null) {
+                final Integer id = getIdentifier(horizontalCRS, crsFactory);
+                if (id != null) {
+                    horizontalSRID = id;
                 }
-                /*
-                 * Vertical CRS. Extract also the vertical ordinates, if any.
-                 */
-                final VerticalCRS verticalCRS = CRS.getVerticalCRS(crs);
-                if (verticalCRS != null) {
-                    final Integer id = getIdentifier(verticalCRS, crsFactory);
-                    if (id != null) {
-                        verticalSRID = id;
-                    }
-                    final CoordinateSystemAxis axis = verticalCRS.getCoordinateSystem().getAxis(0);
-                    if (axis instanceof DiscreteCoordinateSystemAxis<?>) {
-                        final DiscreteCoordinateSystemAxis<?> da = (DiscreteCoordinateSystemAxis<?>) axis;
-                        final int length = da.length();
-                        for (int i=0; i<length; i++) {
-                            final Comparable<?> value = da.getOrdinateAt(i);
-                            if (value instanceof Number) {
-                                if (verticalValues == null) {
-                                    verticalValues = new double[length];
-                                    Arrays.fill(verticalValues, Double.NaN);
-                                }
-                                verticalValues[i] = ((Number) value).doubleValue();
+            }
+            /*
+             * Vertical CRS. Extract also the vertical ordinates, if any.
+             */
+            final VerticalCRS verticalCRS = CRS.getVerticalCRS(crs);
+            if (verticalCRS != null) {
+                final Integer id = getIdentifier(verticalCRS, crsFactory);
+                if (id != null) {
+                    verticalSRID = id;
+                }
+                final CoordinateSystemAxis axis = verticalCRS.getCoordinateSystem().getAxis(0);
+                if (axis instanceof DiscreteCoordinateSystemAxis<?>) {
+                    final DiscreteCoordinateSystemAxis<?> da = (DiscreteCoordinateSystemAxis<?>) axis;
+                    final int length = da.length();
+                    for (int i=0; i<length; i++) {
+                        final Comparable<?> value = da.getOrdinateAt(i);
+                        if (value instanceof Number) {
+                            if (verticalValues == null) {
+                                verticalValues = new double[length];
+                                Arrays.fill(verticalValues, Double.NaN);
                             }
+                            verticalValues[i] = ((Number) value).doubleValue();
                         }
                     }
                 }
-                /*
-                 * Temporal CRS. Extract also the time ordinate range, if any.
-                 */
-                final TemporalCRS temporalCRS = CRS.getTemporalCRS(crs);
-                if (temporalCRS != null) {
-                    final CoordinateSystemAxis axis = temporalCRS.getCoordinateSystem().getAxis(0);
-                    if (axis instanceof DiscreteCoordinateSystemAxis<?>) {
-                        final DiscreteCoordinateSystemAxis<?> da = (DiscreteCoordinateSystemAxis<?>) axis;
-                        DefaultTemporalCRS c = null; // To be created when first needed.
-                        dateRanges = new DateRange[da.length()];
-                        for (int i=0; i<dateRanges.length; i++) {
-                            Range<?> r = da.getOrdinateRangeAt(i);
-                            if (!(r instanceof DateRange)) {
-                                if (c == null) {
-                                    c = DefaultTemporalCRS.castOrCopy(temporalCRS);
-                                }
-                                r = new DateRange(
-                                        c.toDate(((Number) r.getMinValue()).doubleValue()), r.isMinIncluded(),
-                                        c.toDate(((Number) r.getMaxValue()).doubleValue()), r.isMaxIncluded());
+            }
+            /*
+             * Temporal CRS. Extract also the time ordinate range, if any.
+             */
+            final TemporalCRS temporalCRS = CRS.getTemporalCRS(crs);
+            if (temporalCRS != null) {
+                final CoordinateSystemAxis axis = temporalCRS.getCoordinateSystem().getAxis(0);
+                if (axis instanceof DiscreteCoordinateSystemAxis<?>) {
+                    final DiscreteCoordinateSystemAxis<?> da = (DiscreteCoordinateSystemAxis<?>) axis;
+                    DefaultTemporalCRS c = null; // To be created when first needed.
+                    dateRanges = new DateRange[da.length()];
+                    for (int i=0; i<dateRanges.length; i++) {
+                        Range<?> r = da.getOrdinateRangeAt(i);
+                        if (!(r instanceof DateRange)) {
+                            if (c == null) {
+                                c = DefaultTemporalCRS.castOrCopy(temporalCRS);
                             }
-                            dateRanges[i] = (DateRange) r;
+                            r = new DateRange(
+                                    c.toDate(((Number) r.getMinValue()).doubleValue()), r.isMinIncluded(),
+                                    c.toDate(((Number) r.getMaxValue()).doubleValue()), r.isMaxIncluded());
                         }
-                    } else {
-                        final DefaultTemporalCRS c = DefaultTemporalCRS.castOrCopy(temporalCRS);
-                        dateRanges = new DateRange[] {
-                            new DateRange(c.toDate(axis.getMinimumValue()), c.toDate(axis.getMaximumValue()))
-                        };
+                        dateRanges[i] = (DateRange) r;
                     }
+                } else {
+                    final DefaultTemporalCRS c = DefaultTemporalCRS.castOrCopy(temporalCRS);
+                    dateRanges = new DateRange[] {
+                        new DateRange(c.toDate(axis.getMinimumValue()), c.toDate(axis.getMaximumValue()))
+                    };
                 }
             }
         }

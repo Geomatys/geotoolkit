@@ -691,7 +691,7 @@ public class ImageCoverageWriter extends GridCoverageWriter {
         final ImageTypeSpecifier imageType = ImageTypeSpecifier.createFromRenderedImage(image);
         final IIOMetadata streamMetadata = isFirst ? imageWriter.getDefaultStreamMetadata(imageParam) : null;
         final IIOMetadata imageMetadata  = imageWriter.getDefaultImageMetadata(imageType, imageParam);
-        if (XArrays.contains(imageMetadata.getMetadataFormatNames(), GEOTK_FORMAT_NAME)) {
+        if (imageMetadata != null && XArrays.contains(imageMetadata.getMetadataFormatNames(), GEOTK_FORMAT_NAME)) {
             CoordinateReferenceSystem crs = null;
             Envelope env = null;
             double[] res = null;

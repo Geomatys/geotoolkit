@@ -65,6 +65,7 @@ import org.geotoolkit.xml.Namespaces;
 import static org.geotoolkit.util.Utilities.deepEquals;
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 import static org.geotoolkit.internal.InternalUtilities.nonEmptySet;
+import static org.geotoolkit.internal.referencing.CRSUtilities.getReferencingGroup;
 
 
 /**
@@ -84,7 +85,7 @@ import static org.geotoolkit.internal.InternalUtilities.nonEmptySet;
  * situation, a plain {@link org.geotoolkit.referencing.cs.AbstractCS} object may be instantiated.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.20
+ * @version 3.21
  *
  * @since 1.2
  * @module
@@ -721,7 +722,7 @@ nextKey:for (final Map.Entry<String,?> entry : properties.entrySet()) {
         if (object == null) {
             return false;
         }
-        final Class<?> thisType = getClass();
+        final Class<? extends IdentifiedObject> thisType = getClass();
         final Class<?> thatType = object.getClass();
         if (thisType == thatType) {
             /*
@@ -740,10 +741,13 @@ nextKey:for (final Map.Entry<String,?> entry : properties.entrySet()) {
                     }
                 }
             }
-        } else if (mode == ComparisonMode.STRICT || // Same classes was required for this mode.
-                !Classes.implementSameInterfaces(thisType, thatType, IdentifiedObject.class))
-        {
-            return false;
+        } else {
+            if (mode == ComparisonMode.STRICT) { // Same classes was required for this mode.
+                return false;
+            }
+            if (!Classes.implementSameInterfaces(thisType, thatType, getReferencingGroup(thisType))) {
+                return false;
+            }
         }
         switch (mode) {
             case STRICT: {

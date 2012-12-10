@@ -513,4 +513,44 @@ public final class CRSUtilities extends Static {
         }
         return crs;
     }
+
+    /**
+     * Returns the group of referencing objects to which the given type belong.
+     * The {@code type} argument can be a GeoAPI interface or an implementation class.
+     * The value returned by this method will be one of {@link CoordinateReferenceSystem},
+     * {@link CoordinateSystem}, {@link CoordinateSystemAxis}, {@link Datum}, {@link Ellipsoid},
+     * {@link PrimeMeridian} or {@link IdentifiedObject} classes. If the given type is assignable
+     * to more than one group, then this method returns {@code IdentifiedObject} class.
+     *
+     * @param  type The type for which to get the referencing group, or {@code null}.
+     * @return The group to which the given type belong, or {@code null} if the given argument
+     *         was {@code null}.
+     */
+    public static Class<? extends IdentifiedObject> getReferencingGroup(final Class<? extends IdentifiedObject> type) {
+        Class<? extends IdentifiedObject> found = null;
+        if (type != null) {
+search:     for (int i=0; ; i++) {
+                final Class<? extends IdentifiedObject> candidate;
+                switch (i) {
+                    case 0:  candidate = CoordinateReferenceSystem.class; break;
+                    case 1:  candidate = CoordinateSystem.class;          break;
+                    case 2:  candidate = CoordinateSystemAxis.class;      break;
+                    case 3:  candidate = Datum.class;                     break;
+                    case 4:  candidate = Ellipsoid.class;                 break;
+                    case 5:  candidate = PrimeMeridian.class;             break;
+                    default: break search;
+                }
+                if (candidate.isAssignableFrom(type)) {
+                    if (found != null) {
+                        return IdentifiedObject.class;
+                    }
+                    found = candidate;
+                }
+            }
+            if (found == null) {
+                return IdentifiedObject.class;
+            }
+        }
+        return found;
+    }
 }

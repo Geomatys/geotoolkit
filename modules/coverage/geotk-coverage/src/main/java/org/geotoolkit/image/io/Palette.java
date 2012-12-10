@@ -281,6 +281,15 @@ public abstract class Palette {
      *       Consequently, some colors in the returned image may not exist in the palette.</li>
      *   <li>The palette name is written in the returned image.</li>
      * </ul>
+     * <p>
+     * <strong>WARNING: Some colors in the returned image may be misleading - they may have no
+     * geophysical meaning.</strong> Consider for instance an image of Sea Surface Temperature
+     * with colors ranging from blue (cold) to red (hot). The correct way to interpolate is to
+     * first interpolate the temperature, then use the color map for fetching the color associated
+     * to that temperature. With this approach, interpolation between cold and hot water will
+     * produce warm water, often displayed in yellow or green. But {@code getLegend} method will
+     * produce purple colors - because it performed the interpolation in ARGB space - which is
+     * wrong.
      *
      * @param size The image size.
      * @return The color palette as an image of the given size.

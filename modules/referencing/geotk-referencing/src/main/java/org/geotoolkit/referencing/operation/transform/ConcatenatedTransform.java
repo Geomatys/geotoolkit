@@ -35,6 +35,7 @@ import org.opengis.referencing.operation.NoninvertibleTransformException;
 
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.referencing.operation.matrix.XMatrix;
+import org.geotoolkit.referencing.operation.matrix.Matrices;
 import org.geotoolkit.referencing.operation.MathTransforms;
 import org.geotoolkit.internal.referencing.Semaphores;
 import org.geotoolkit.util.converter.Classes;
@@ -269,6 +270,17 @@ public class ConcatenatedTransform extends AbstractMathTransform implements Seri
                 final XMatrix matrix = toXMatrix(multiply(matrix2, matrix1));
                 if (matrix.isIdentity(IDENTITY_TOLERANCE)) {
                     matrix.setIdentity();
+                } else if (false) {
+                    /*
+                     * TODO: It is quite tempting to perform the following method call, but it is
+                     * often wrong for datum shift transformation (Molodensky and the like) since
+                     * the datum shift are very small. It may be the order of magnitude of the
+                     * IDENTITY_TOLERANCE constant. We need a plugin mechanism for allowing users
+                     * to specify their rounding behavior: no such rounding when we may be
+                     * concatenating a datum shift, or allow such rounding when we are computing
+                     * a "gridToCRS" transform.
+                     */
+                    Matrices.filterRoundingErrors(matrix, 360, IDENTITY_TOLERANCE);
                 }
                 // May not be really affine, but work anyway...
                 // This call will detect and optimize the special

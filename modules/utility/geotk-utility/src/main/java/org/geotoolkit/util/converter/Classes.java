@@ -21,6 +21,7 @@ import java.util.Set;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.lang.reflect.Type;
 import java.lang.reflect.Field;
@@ -31,6 +32,7 @@ import java.lang.reflect.ParameterizedType;
 
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.util.XArrays;
+import org.geotoolkit.util.collection.XCollections;
 
 
 /**
@@ -309,23 +311,29 @@ public final class Classes extends Static {
      * @since 3.01
      */
     public static Set<Class<?>> getAllInterfaces(Class<?> type) {
-        final Set<Class<?>> interfaces = new LinkedHashSet<Class<?>>();
+        Set<Class<?>> interfaces = null;
         while (type != null) {
-            getAllInterfaces(type, interfaces);
+            interfaces = getAllInterfaces(type, interfaces);
             type = type.getSuperclass();
         }
-        return interfaces;
+        return (interfaces != null) ? interfaces : Collections.<Class<?>>emptySet();
     }
 
     /**
      * Adds to the given collection every interfaces implemented by the given class or interface.
      */
-    private static void getAllInterfaces(final Class<?> type, final Set<Class<?>> interfaces) {
-        for (final Class<?> i : type.getInterfaces()) {
-            if (interfaces.add(i)) {
-                getAllInterfaces(i, interfaces);
+    private static Set<Class<?>> getAllInterfaces(final Class<?> type, Set<Class<?>> addTo) {
+        final Class<?>[] interfaces = type.getInterfaces();
+        for (int i=0; i<interfaces.length; i++) {
+            final Class<?> candidate = interfaces[i];
+            if (addTo == null) {
+                addTo = new LinkedHashSet<Class<?>>(XCollections.hashMapCapacity(interfaces.length - i));
+            }
+            if (addTo.add(candidate)) {
+                getAllInterfaces(candidate, addTo);
             }
         }
+        return addTo;
     }
 
     /**
@@ -346,6 +354,9 @@ public final class Classes extends Static {
      *         If non-null, than the array is guaranteed to contain at least one element.
      *
      * @since 3.18
+     */
+    /*
+     * Warning: contract differs from SIS: the later returns an empty array instead of null.
      */
     @SuppressWarnings("unchecked")
     public static <T> Class<? extends T>[] getLeafInterfaces(Class<?> type, final Class<T> baseInterface) {
@@ -506,7 +517,7 @@ next:       for (final Class<?> candidate : candidates) {
         interfaces.retainAll(buffer);
         for (Iterator<Class<?>> it=interfaces.iterator(); it.hasNext();) {
             final Class<?> candidate = it.next();
-            buffer.clear();
+            buffer.clear(); // Safe because the buffer can not be Collections.EMPTY_SET at this point.
             getAllInterfaces(candidate, buffer);
             if (interfaces.removeAll(buffer)) {
                 it = interfaces.iterator();
@@ -543,28 +554,16 @@ next:       for (final Class<?> candidate : candidates) {
         if (object1 == null || object2 == null) {
             return false;
         }
-        final Class<?>[] c1 = object1.getInterfaces();
-        final Class<?>[] c2 = object2.getInterfaces();
+        final Class<?>[] c1 = getLeafInterfaces(object1, base);
+        final Class<?>[] c2 = getLeafInterfaces(object2, base);
         /*
-         * Trim all interfaces that are not assignable to 'base' in the 'c2' array.
-         * Doing this once will avoid to redo the same test many time in the inner
-         * loops j=[0..n].
+         * For each interface in the 'c1' array, check if
+         * this interface exists also in the 'c2' array.
          */
-        int n = 0;
-        for (int i=0; i<c2.length; i++) {
-            final Class<?> c = c2[i];
-            if (base.isAssignableFrom(c)) {
-                c2[n++] = c;
-            }
-        }
-        /*
-         * For each interface assignable to 'base' in the 'c1' array, check if
-         * this interface exists also in the 'c2' array. Order doesn't matter.
-         */
-compare:for (int i=0; i<c1.length; i++) {
-            final Class<?> c = c1[i];
-            if (base.isAssignableFrom(c)) {
-                for (int j=0; j<n; j++) {
+        int n = (c2 != null) ? c2.length : 0;
+        if (c1 != null) {
+compare:    for (final Class<?> c : c1) {
+                for (int j=n; --j>=0;) {
                     if (c == c2[j]) {
                         System.arraycopy(c2, j+1, c2, j, --n-j);
                         continue compare;

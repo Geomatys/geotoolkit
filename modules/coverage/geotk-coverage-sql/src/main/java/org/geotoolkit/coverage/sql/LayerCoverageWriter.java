@@ -55,7 +55,7 @@ import static org.geotoolkit.internal.InternalUtilities.firstNonNull;
  * {@link GridCoverageWriter} API, with {@linkplain #getOutput() output} of kind {@link Layer}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.20
+ * @version 3.21
  *
  * @see CoverageDatabase#createGridCoverageWriter(String)
  * @see Layer#addCoverageReferences(Collection, CoverageDatabaseController)
@@ -307,7 +307,6 @@ public class LayerCoverageWriter extends GridCoverageWriter {
             for (final GridCoverage coverage : coverages) {
                 final File file;
                 String filename = getName(coverage);
-                String suffix = null;
                 if (filename != null) {
                     if (suffix != null) {
                         filename += suffix;
@@ -333,12 +332,7 @@ public class LayerCoverageWriter extends GridCoverageWriter {
                 if (!(gridToCRS instanceof AffineTransform)) {
                     throw new CoverageStoreException(errors().getString(Errors.Keys.NON_AFFINE_TRANSFORM));
                 }
-                files.add(new Tile(readerSpi, file, 0, gridGeometry.getExtent2D()) {
-                    private static final long serialVersionUID = -9161647875115463421L;
-                    @Override public AffineTransform getGridToCRS() {
-                        return (AffineTransform) gridToCRS;
-                    }
-                });
+                files.add(new NewGridCoverage(readerSpi, file, gridGeometry, (AffineTransform) gridToCRS));
                 writer.setOutput(file);
                 writer.write(coverage, param);
             }
