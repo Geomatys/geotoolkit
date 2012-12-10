@@ -19,12 +19,15 @@ package org.geotoolkit.process.coverage.copy;
 import java.awt.Dimension;
 import java.awt.image.RenderedImage;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.coverage.CoverageStore;
 import org.geotoolkit.coverage.GridMosaic;
+import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.Pyramid;
 import org.geotoolkit.coverage.PyramidalModel;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
@@ -32,6 +35,7 @@ import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
+import org.geotoolkit.display2d.style.raster.StatisticOp;
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.parameter.Parameters;
@@ -45,6 +49,7 @@ import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
 import org.geotoolkit.referencing.cs.DiscreteCoordinateSystemAxis;
 import org.geotoolkit.storage.DataStoreException;
+import org.geotoolkit.util.collection.XCollections;
 import org.opengis.feature.type.Name;
 import org.opengis.geometry.Envelope;
 import org.opengis.parameter.ParameterValueGroup;
@@ -131,7 +136,13 @@ public class CopyCoverageStoreProcess extends AbstractProcess {
                     + "this process only work with this kind of model.");
         }
         final PyramidalModel pm = (PyramidalModel) outRef;
-
+        
+        //create sampleDimensions bands
+        //TODO remove analyse when CoverageImageReader getSampleDimensions will be fix with min/max values.
+        final Map<String, Object> analyse = StatisticOp.analyze(reader, imageIndex);
+        final List<GridSampleDimension> sampleDimensions = reader.getSampleDimensions(imageIndex);
+        pm.createSampleDimension(sampleDimensions, analyse);
+        
         final Pyramid pyramid = pm.createPyramid(crs);
 
         // Stores additional coordinate system axes, to know how many pyramids should be created
@@ -167,7 +178,7 @@ public class CopyCoverageStoreProcess extends AbstractProcess {
                 ce = ite.next();
             } while (ce != null);
         }
-
+        
     }
 
     /**
@@ -225,7 +236,7 @@ public class CopyCoverageStoreProcess extends AbstractProcess {
         //envelope seems to lost its additional 2D+ values
         for (int i = 2, n = env.getDimension(); i < n; i++) {
             upperleft.setOrdinate(i, env.getMedian(i));
-        }
+        } 
         final GridMosaic mosaic = pm.createMosaic(pyramid.getId(), gridSize, TileSize, upperleft, scale);
         pm.writeTile(pyramid.getId(), mosaic.getId(), 0, 0, img);
     }
