@@ -9,7 +9,12 @@ CREATE TABLE "Band"(
   "id" serial NOT NULL,
   "layerId" integer NOT NULL,
   "indice" integer NOT NULL,
+  "description" character varying(500) NOT NULL,
   "dataType" integer NOT NULL,
+  "unit" character varying(30) NOT NULL,
+  "noData" real[],
+  "min" double precision NOT NULL,
+  "max" double precision NOT NULL,
   CONSTRAINT band_pk PRIMARY KEY (id),
   CONSTRAINT band_fk_layer FOREIGN KEY ("layerId")
       REFERENCES "Layer" (id) MATCH SIMPLE

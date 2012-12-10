@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.coverage.postgresql;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
@@ -23,10 +24,16 @@ import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.awt.image.WritableRaster;
 import java.io.IOException;
+import java.sql.Array;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.RejectedExecutionHandler;
@@ -34,9 +41,12 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.measure.unit.Unit;
 import net.iharder.Base64;
+import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.coverage.GridMosaic;
+import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.Pyramid;
 import org.geotoolkit.coverage.PyramidSet;
 import org.geotoolkit.coverage.PyramidalModel;
@@ -44,13 +54,20 @@ import org.geotoolkit.coverage.PyramidalModelReader;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.coverage.postgresql.epsg.EPSGWriter;
+import org.geotoolkit.coverage.wkb.WKBRasterConstants;
 import org.geotoolkit.coverage.wkb.WKBRasterWriter;
+import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.storage.DataStoreException;
+import org.geotoolkit.util.NumberRange;
+import org.geotoolkit.util.StringUtilities;
+import org.opengis.coverage.ColorInterpretation;
+import org.opengis.coverage.SampleDimensionType;
 import org.opengis.feature.type.Name;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.util.FactoryException;
+import org.postgresql.jdbc2.TypeInfoCache;
 
 /**
  *
@@ -306,6 +323,141 @@ public class PGCoverageReference implements CoverageReference, PyramidalModel{
             store.closeSafe(cnx, stmt, rs);
         }
 
+    }
+
+    @Override
+    public List<GridSampleDimension> getSampleDimensions(int index) throws DataStoreException{
+        final List<GridSampleDimension> dimensions = new LinkedList<GridSampleDimension>();
+        
+        Connection cnx = null;
+        Statement stmt = null;
+        ResultSet rs = null;
+        
+        try {
+            final int layerId = store.getLayerId(name.getLocalPart());
+            final StringBuilder query = new StringBuilder();
+            query.append("SELECT \"id\",\"indice\",\"description\",\"dataType\",\"unit\",\"noData\",\"min\",\"max\"");
+            query.append("FROM ").append(store.encodeTableName("Band"));
+            query.append("WHERE ");
+            query.append("\"layerId\"=").append(Integer.valueOf(layerId));
+            query.append("ORDER BY \"indice\" ASC");
+            
+            cnx = store.getDataSource().getConnection();
+            cnx.setReadOnly(false);
+            stmt = cnx.createStatement();
+            rs = stmt.executeQuery(query.toString());
+            
+            while (rs.next()) {
+                final int indice = rs.getInt("indice");
+                final String description = rs.getString("description");
+                final SampleDimensionType type = WKBRasterConstants.getDimensionType(rs.getInt("dataType"));
+                final double min = rs.getDouble("min");
+                final double max = rs.getDouble("max");
+                final String unitStr = rs.getString("unit");
+                Unit unit = null;
+                if(unitStr != null && !unitStr.isEmpty()) {
+                    unit = Unit.valueOf(unitStr);
+                }
+                Array noDataArray = rs.getArray("noData");
+                final Float[] noData = (Float[])noDataArray.getArray();
+                double[] pNoData = null;
+                if (noData != null && noData.length > 0) {
+                    pNoData = new double[noData.length];
+                    for (int j = 0; j < noData.length; j++) {
+                        pNoData[j] = noData[j].doubleValue();
+                    }
+                }
+                
+                final int categoriesSize = (pNoData != null && pNoData.length > 0) ? (pNoData.length + 1) : 2;
+                
+                final Category[] categories = new Category[categoriesSize];
+                categories[0] = new Category("data", Color.BLACK, NumberRange.create(min, max));
+                if (pNoData != null && pNoData.length > 0) {
+                    for (int i = 0; i < pNoData.length; i++) {
+                        categories[i] = new Category(Vocabulary.formatInternational(Vocabulary.Keys.NODATA) + String.valueOf(i), new Color(0,0,0,0), pNoData[i]);
+                    }
+                } else {
+                    categories[1] = new Category(Vocabulary.formatInternational(Vocabulary.Keys.NODATA), new Color(0,0,0,0), Double.NaN);
+                }
+                
+                final GridSampleDimension dim = new GridSampleDimension(description, categories, unit);
+                dimensions.add(indice, dim);
+            }
+             
+        } catch (SQLException ex) {
+            throw new DataStoreException(ex.getMessage(), ex);
+        } finally {
+            store.closeSafe(cnx, stmt, rs);
+        }
+        return dimensions;
+    }
+
+    @Override
+    public void createSampleDimension(List<GridSampleDimension> dimensions, final Map<String, Object> analyse) throws DataStoreException {
+        
+        if (dimensions != null) {
+            double[] maxDimValues = new double[dimensions.size()];
+            double[] minDimValues =  new double[dimensions.size()]; 
+            
+            if (analyse != null) {
+                maxDimValues = (double[]) analyse.get("max");
+                minDimValues = (double[]) analyse.get("min");
+            } else {
+                Arrays.fill(maxDimValues, Double.MAX_VALUE);
+                Arrays.fill(minDimValues, Double.MIN_VALUE);
+            }
+            
+            Connection cnx = null;
+            PreparedStatement pstmt = null;
+            ResultSet rs = null;
+            try{
+                
+                final int layerId = store.getLayerId(name.getLocalPart());
+                for (int i = 0; i < dimensions.size(); i++) {
+                    
+                    final GridSampleDimension dim = dimensions.get(i);
+                    final String description = dim.getDescription() != null ? dim.getDescription().toString() : "";
+                    final String unit = dim.getUnits() != null ? dim.getUnits().toString() : "";
+                    final double min = Double.isInfinite(dim.getMinimumValue()) ? minDimValues[i] : dim.getMinimumValue();
+                    final double max = Double.isInfinite(dim.getMaximumValue()) ? maxDimValues[i] : dim.getMaximumValue();
+                    final double[] pNoData = dim.getNoDataValues();
+                    Double[] noData = new Double[0];
+                    if (pNoData != null) {
+                        noData = new Double[pNoData.length];
+                        for (int j = 0; j < noData.length; j++) {
+                            noData[j] = Double.valueOf(pNoData[j]);
+                        }
+                    }
+                    
+                    final StringBuilder query = new StringBuilder();
+                    query.append("INSERT INTO ");
+                    query.append(store.encodeTableName("Band"));
+                    query.append(" (\"layerId\",\"indice\",\"description\",\"dataType\",\"unit\",\"noData\", \"min\", \"max\") ");
+                    query.append("VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+                    
+                    cnx = store.getDataSource().getConnection();
+                    cnx.setReadOnly(false);
+                    pstmt = cnx.prepareStatement(query.toString());
+                    
+                    pstmt.setInt(1, layerId);
+                    pstmt.setInt(2, i);
+                    pstmt.setString(3, description);
+                    pstmt.setInt(4, (WKBRasterConstants.getPixelType(dim.getSampleDimensionType())) );
+                    pstmt.setString(5, unit);
+                    pstmt.setArray(6, cnx.createArrayOf("float8", noData));
+                    pstmt.setDouble(7, min);
+                    pstmt.setDouble(8, max);
+                    
+                    System.out.println(pstmt);
+                    pstmt.executeUpdate();
+                }
+
+            }catch(SQLException ex){
+                throw new DataStoreException(ex.getMessage(), ex);
+            }finally{
+                store.closeSafe(cnx, pstmt, rs);
+            }
+        }
     }
 
 }

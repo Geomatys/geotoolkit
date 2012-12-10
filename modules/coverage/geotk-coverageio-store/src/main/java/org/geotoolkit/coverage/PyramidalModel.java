@@ -17,8 +17,9 @@
 package org.geotoolkit.coverage;
 
 import java.awt.Dimension;
-import java.awt.geom.Point2D;
 import java.awt.image.RenderedImage;
+import java.util.List;
+import java.util.Map;
 import org.geotoolkit.storage.DataStoreException;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -34,11 +35,21 @@ public interface PyramidalModel {
     
     PyramidSet getPyramidSet() throws DataStoreException;
     
+    List<GridSampleDimension> getSampleDimensions(int index) throws DataStoreException;
+    
     /**
      * 
      * @return true if model can be modified
      */
     boolean isWritable() throws DataStoreException;
+    
+    /**
+     * Create SampleDimension.
+     * @param dimensions samples
+     * @param analyse a map of min/max values per bands (can be null)
+     * @throws DataStoreException 
+     */
+    void createSampleDimension(final List<GridSampleDimension> dimensions, final Map<String, Object> analyse) throws DataStoreException;
     
     /**
      * 

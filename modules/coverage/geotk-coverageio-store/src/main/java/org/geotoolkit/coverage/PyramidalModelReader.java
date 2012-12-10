@@ -187,8 +187,11 @@ public class PyramidalModelReader extends GridCoverageReader{
 
     @Override
     public List<GridSampleDimension> getSampleDimensions(int index) throws CoverageStoreException, CancellationException {
-        //unknowned
-        return null;
+        try {
+            return getPyramidalModel().getSampleDimensions(index);
+        } catch (DataStoreException ex) {
+            throw new CoverageStoreException(ex.getMessage(), ex);
+        }
     }
 
     @Override
@@ -426,11 +429,16 @@ public class PyramidalModelReader extends GridCoverageReader{
         //build the coverage ---------------------------------------------------
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
         gcb.setName(ref.getName().getLocalPart());
+        final List<GridSampleDimension> dimensions = getSampleDimensions(ref.getImageIndex());
+        if (dimensions != null) {
+            gcb.setSampleDimensions(dimensions.toArray(new GridSampleDimension[dimensions.size()]));
+        }
         gcb.setRenderedImage(image);
         gcb.setPixelAnchor(PixelInCell.CELL_CORNER);
         gcb.setGridToCRS((AffineTransform)AbstractGridMosaic.
                 getTileGridToCRS(mosaic, new Point((int)tileMinCol,(int)tileMinRow)));
         gcb.setCoordinateReferenceSystem(pyramidCRS2D);
+        
         return gcb.build();
     }
 

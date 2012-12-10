@@ -20,6 +20,8 @@ import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.geom.Point2D;
 import java.awt.image.RenderedImage;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.bind.JAXBException;
@@ -138,6 +140,16 @@ public class XMlCoverageReference implements CoverageReference, PyramidalModel{
 
     public Image getLegend() throws DataStoreException {
         return null;
+    }
+
+    @Override
+    public List<GridSampleDimension> getSampleDimensions(int index) throws DataStoreException {
+        throw new DataStoreException("Not supported.");
+    }
+
+    @Override
+    public void createSampleDimension(List<GridSampleDimension> dimensions, final Map<String, Object> analyse) throws DataStoreException {
+        throw new DataStoreException("Not supported.");
     }
 
 }

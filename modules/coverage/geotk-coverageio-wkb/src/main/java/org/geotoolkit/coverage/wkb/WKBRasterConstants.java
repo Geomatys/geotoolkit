@@ -17,6 +17,7 @@
 package org.geotoolkit.coverage.wkb;
 
 import java.awt.image.DataBuffer;
+import org.opengis.coverage.SampleDimensionType;
 
 /**
  * WKB raster constants, used in postGIS 2 but can be used elsewhere.
@@ -24,7 +25,7 @@ import java.awt.image.DataBuffer;
  * @author Johann Sorel (Geomatys)
  */
 public final class WKBRasterConstants {
-    
+      
     /** 1-bit boolean            */
     public static final int PT_1BB = 0;     
     /** 2-bit unsigned integer   */
@@ -121,6 +122,74 @@ public final class WKBRasterConstants {
                 return PT_64BF;
             default:
                 throw new IllegalArgumentException("unknowned data buffer type : " + dataBufferType);
+        }
+    }
+    
+    /**
+     * Mapping from SampleDimensionType to WKBRAsterConstants
+     * @param type SampleDimensionType
+     * @return WKBRAsterConstants type 
+     */
+    public static int getPixelType(SampleDimensionType type) {
+        if (SampleDimensionType.UNSIGNED_1BIT.equals(type)) {
+            return PT_1BB;
+        } else if (SampleDimensionType.UNSIGNED_2BITS.equals(type)) {
+            return PT_2BUI;
+        } else if (SampleDimensionType.UNSIGNED_4BITS.equals(type)) {
+            return PT_4BUI;
+        } else if (SampleDimensionType.UNSIGNED_8BITS.equals(type)) {
+            return PT_8BUI;
+        } else if (SampleDimensionType.UNSIGNED_16BITS.equals(type)) {
+            return PT_16BUI;
+        } else if (SampleDimensionType.UNSIGNED_32BITS.equals(type)) {
+            return PT_32BUI;
+        } else if (SampleDimensionType.SIGNED_8BITS.equals(type)) {
+            return PT_8BSI;
+        } else if (SampleDimensionType.SIGNED_16BITS.equals(type)) {
+            return PT_16BSI;
+        } else if (SampleDimensionType.SIGNED_32BITS.equals(type)) {
+            return PT_32BSI;
+        } else if (SampleDimensionType.REAL_32BITS.equals(type)) {
+            return PT_32BF;
+        } else if (SampleDimensionType.REAL_64BITS.equals(type)) {
+            return PT_64BF;
+        } else {
+            return PT_32BF;
+        }
+    }
+    
+    /**
+     * Mapping to SampleDimentionType
+     * @param type WKBRAsterConstants type
+     * @return SampleDimensionType 
+     */
+    public static SampleDimensionType getDimensionType(int type) {
+        
+        switch(type) {
+            case PT_1BB : 
+                return SampleDimensionType.UNSIGNED_1BIT;
+            case PT_2BUI : 
+                return SampleDimensionType.UNSIGNED_2BITS;
+            case PT_4BUI : 
+                return SampleDimensionType.UNSIGNED_4BITS;
+            case PT_8BUI : 
+                return SampleDimensionType.UNSIGNED_8BITS;
+            case PT_16BUI : 
+                return SampleDimensionType.UNSIGNED_16BITS;
+            case PT_32BUI : 
+                return SampleDimensionType.UNSIGNED_32BITS;
+            case PT_8BSI : 
+                return SampleDimensionType.SIGNED_8BITS;
+            case PT_16BSI : 
+                return SampleDimensionType.SIGNED_16BITS;
+            case PT_32BSI : 
+                return SampleDimensionType.SIGNED_32BITS;
+            case PT_32BF : 
+                return SampleDimensionType.REAL_32BITS;
+            case PT_64BF : 
+                return SampleDimensionType.REAL_64BITS;
+            default : 
+                return SampleDimensionType.REAL_32BITS;
         }
     }
     
