@@ -365,8 +365,9 @@ public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
         } else if (paletteValue instanceof String) {
             try {
                 final Color[] paletteColors = PF.getColors(String.valueOf(paletteValue));
+                final double stepValue = 1.0f/(paletteColors.length-1);
                 for (int i = 0; i < paletteColors.length; i++) {
-                    final double fragment = i/(paletteColors.length-1);
+                    final double fragment = i * stepValue;
                     steps.add(new AbstractMap.SimpleEntry<Double, Color>(fragment, paletteColors[i]));
                 }
             } catch (IOException ex) {
@@ -399,7 +400,7 @@ public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
                 if(mustInterpolation){
                     for(int i=0,n=names.size();i<n;i++){
                         final List<MeasurementRange<?>> ranges = reader.getSampleValueRanges(i);
-                        if(ranges != null){
+                        if(ranges != null && !ranges.isEmpty()){
                             for(MeasurementRange r : ranges){
                                 final double min = r.getMinimum();
                                 final double max = r.getMaximum();                    

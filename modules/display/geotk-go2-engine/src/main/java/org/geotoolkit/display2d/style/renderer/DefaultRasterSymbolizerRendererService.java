@@ -195,7 +195,7 @@ public class DefaultRasterSymbolizerRendererService extends AbstractSymbolizerRe
                 //ensure we have at least 2 colors
                 if(colors.length == 1){
                     colors = new Color[]{colors[0],colors[0]};
-                    fractions = new float[]{fractions[0],fractions[0]};
+                    fractions = new float[]{fractions[0], 1.0f};
                 }
                 
                 //create gradient
