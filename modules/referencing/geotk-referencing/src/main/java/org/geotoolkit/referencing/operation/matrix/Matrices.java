@@ -27,7 +27,9 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
 
 import org.geotoolkit.lang.Static;
+import org.geotoolkit.math.XMath;
 import org.geotoolkit.util.Utilities;
+import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.referencing.operation.transform.LinearTransform;
@@ -42,7 +44,7 @@ import static org.geotoolkit.internal.InternalUtilities.COMPARISON_THRESHOLD;
  * time, it may be more efficient to invoke directly the constructor of the appropriate class instead.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.20
+ * @version 3.21
  *
  * @since 3.20 (derived from 2.2)
  * @module
@@ -662,6 +664,63 @@ search:     for (int j=numRow; --j>=0;) {
             }
         }
         return matrix;
+    }
+
+    /**
+     * Rounds the coefficients that are relatively close to integers, given a threshold value.
+     * "Relatively" means that the given threshold is relative to the magnitude of each vector,
+     * assuming that the given matrix define an affine transform.
+     * More specifically:
+     * <p>
+     * <ul>
+     *   <li>The last column in the given matrix is assumed to contain translation terms,
+     *       and will be ignored in the vector magnitude calculation described below.</li>
+     *   <li>For each row:<ul>
+     *     <li>Compute the {@linkplain XMath#magnitude(double[]) magnitude} of the vector
+     *         formed by the coefficients in all columns except the last one.</li>
+     *     <li>Multiply the given {@code tolerance} value by the given vector magnitude.</li>
+     *     <li>For each element in the current row:<ul>
+     *       <li>Compute an adjusted value as {@code adjusted = Math.round(element*scale)/scale}.</li>
+     *       <li>If the difference between the element and the above adjusted value is not greater
+     *           than the tolerance threshold adjusted for vector magnitude, replace that element
+     *           by the adjusted value.</li>
+     *     </ul></li>
+     *   </ul></li>
+     * </ul>
+     * <p>
+     * In other words, the {@code tolerance} argument given to this method is the value that we
+     * would use if we knew that the matrix was close to an identity matrix, without worrying
+     * about the {@code scale} argument. This method will take care of adjusting the tolerance
+     * threshold for the actual matrix values. However this algorithm is designed for matrix
+     * representing affine transforms (not general matrix).
+     *
+     * @param matrix    The matrix in which to filter rounding errors in-place.
+     * @param scale     A scale factor by which to multiply each element before to round the scaled value.
+     *                  For example a value of 10 will allow this method to round 0.2000…1 as 0.2.
+     * @param tolerance The relative tolerance threshold.
+     *
+     * @since 3.21
+     */
+    public static void filterRoundingErrors(final XMatrix matrix, final int scale, double tolerance) {
+        ArgumentChecks.ensureStrictlyPositive("scale", scale);
+        ArgumentChecks.ensureStrictlyPositive("tolerance", tolerance);
+        tolerance *= scale;
+        final int numRow = matrix.getNumRow();
+        final int numCol = matrix.getNumCol();
+        final double[] vector = new double[numCol - 1]; // Exclude translation term.
+        for (int j=0; j<numRow; j++) {
+            for (int i=0; i<vector.length; i++) {
+                vector[i] = matrix.getElement(j, i);
+            }
+            final double eps = XMath.magnitude(vector) * tolerance;
+            for (int i=0; i<numCol; i++) {
+                final double value = matrix.getElement(j, i) * scale;
+                final double round = Math.rint(value);
+                if (Math.abs(value - round) <= eps) {
+                    matrix.setElement(j, i, round / scale);
+                }
+            }
+        }
     }
 
     /**

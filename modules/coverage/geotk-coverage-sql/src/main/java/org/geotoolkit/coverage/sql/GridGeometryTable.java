@@ -33,6 +33,7 @@ import org.opengis.referencing.ReferenceIdentifier;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransformFactory;
 
+import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.util.collection.WeakHashSet;
 import org.geotoolkit.internal.sql.table.Column;
 import org.geotoolkit.internal.sql.table.Database;
@@ -364,6 +365,7 @@ final class GridGeometryTable extends SingletonTable<GridGeometryEntry> {
                      final double[] verticalOrdinates, final int verticalSRID)
             throws SQLException
     {
+        ArgumentChecks.ensureStrictlyPositive("horizontalSRID", horizontalSRID);
         Integer id;
         final LocalCache lc = getLocalCache();
         synchronized (lc) {

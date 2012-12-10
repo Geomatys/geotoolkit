@@ -276,7 +276,7 @@ public final strictfp class WritableGridCoverageTableTest extends CatalogTestBas
                 assertEquals (-0.0026991,              reference.gridToCRS.getScaleY(),     EPS);
                 assertEquals (-5.3390946,              reference.gridToCRS.getTranslateX(), EPS);
                 assertEquals (48.7933655,              reference.gridToCRS.getTranslateY(), EPS);
-                assertEquals ("TODO", 0,               reference.horizontalSRID);
+                assertEquals ("Horizontal",  4326,     reference.horizontalSRID);
                 assertEquals ("Expected no z.", 0,     reference.verticalSRID);
                 assertNull   ("Expected no z.",        reference.verticalValues);
                 assertNotNull("Expected dates",        reference.dateRanges);
