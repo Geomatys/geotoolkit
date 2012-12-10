@@ -448,7 +448,6 @@ public class PGCoverageReference implements CoverageReference, PyramidalModel{
                     pstmt.setDouble(7, min);
                     pstmt.setDouble(8, max);
                     
-                    System.out.println(pstmt);
                     pstmt.executeUpdate();
                 }
 
