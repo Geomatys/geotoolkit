@@ -18,11 +18,8 @@ package org.geotoolkit.display2d.container.stateless;
 
 import java.awt.Dimension;
 import java.awt.Point;
-import java.awt.geom.AffineTransform;
-import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -31,12 +28,11 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import javax.imageio.ImageReader;
-import javax.imageio.stream.ImageInputStream;
 import org.geotoolkit.coverage.*;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.grid.GridCoverageFactory;
-import org.geotoolkit.coverage.grid.ViewType;
-import org.geotoolkit.coverage.processing.Operations;
+import org.geotoolkit.coverage.grid.GridCoverageBuilder;
+import org.geotoolkit.coverage.grid.GridEnvelope2D;
+import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
@@ -57,10 +53,12 @@ import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.util.Cancellable;
+import org.geotoolkit.util.ImageIOUtilities;
 import org.opengis.display.primitive.Graphic;
 import org.opengis.feature.type.Name;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
+import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
@@ -311,7 +309,7 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
         }
         
         Object input = tile.getInput();
-        RenderedImage image = null;
+        final RenderedImage image;
         if(input instanceof RenderedImage){
             image = (RenderedImage) input;
         }else{
@@ -324,48 +322,20 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
                 return;
             } finally {
                 //dispose reader and substream
-                if(reader != null){
-                    Object readerinput = reader.getInput();
-                    if(readerinput instanceof InputStream){
-                        try {
-                            ((InputStream)readerinput).close();
-                        } catch (IOException ex) {
-                            monitor.exceptionOccured(ex, Level.WARNING);
-                            return;
-                        }
-                    }else if(readerinput instanceof ImageInputStream){
-                        try {
-                            ((ImageInputStream)readerinput).close();
-                        } catch (IOException ex) {
-                            monitor.exceptionOccured(ex, Level.WARNING);
-                            return;
-                        }
-                    }
-                    reader.dispose();
-                }
+                ImageIOUtilities.releaseReader(reader);
             }
         }
                 
-        final GridCoverageFactory gc = new GridCoverageFactory();
-        GridCoverage2D coverage;
+        //build the coverage ---------------------------------------------------
+        final GridCoverageBuilder gcb = new GridCoverageBuilder();
+        gcb.setName("tile");
         
-        //check the crs
-        if(!CRS.equalsIgnoreMetadata(tileCRS,objCRS2D) ){
-            
-            //will be reprojected, we must check that image has alpha support
-            //otherwise we will have black borders after reprojection
-            if(!image.getColorModel().hasAlpha()){
-                final BufferedImage buffer = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
-                buffer.createGraphics().drawRenderedImage(image, new AffineTransform());
-                image = buffer;
-            }
-            
-            coverage = gc.create("tile", image, tileCRS, trs, null, null, null);            
-            coverage = (GridCoverage2D) Operations.DEFAULT.resample(coverage.view(ViewType.NATIVE), objCRS2D);
-            
-        }else{
-            coverage = gc.create("tile", image, tileCRS, trs, null, null, null);
-        }
+        final GridEnvelope2D ge = new GridEnvelope2D(0, 0, image.getWidth(), image.getHeight());
+        final GridGeometry2D gridgeo = new GridGeometry2D(ge, PixelOrientation.UPPER_LEFT, trs, tileCRS, null);
+        gcb.setGridGeometry(gridgeo);
+        gcb.setRenderedImage(image);        
+        final GridCoverage2D coverage = (GridCoverage2D) gcb.build();
+        
         
         final CoverageMapLayer tilelayer = MapBuilder.createCoverageLayer(coverage, getUserObject().getStyle(), "");
         final ProjectedCoverage projectedCoverage = new DefaultProjectedCoverage(params, tilelayer);

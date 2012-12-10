@@ -22,18 +22,18 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageReader;
-import javax.imageio.stream.ImageInputStream;
 import javax.vecmath.Point3d;
 import org.geotoolkit.coverage.AbstractGridMosaic;
 import org.geotoolkit.coverage.GridMosaic;
 import org.geotoolkit.coverage.TileReference;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.grid.GridCoverageFactory;
+import org.geotoolkit.coverage.grid.GridCoverageBuilder;
+import org.geotoolkit.coverage.grid.GridEnvelope2D;
+import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.processing.Operations;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
@@ -46,6 +46,7 @@ import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.MapItem;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
+import org.geotoolkit.util.ImageIOUtilities;
 import org.geotoolkit.util.logging.Logging;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.spatial.PixelOrientation;
@@ -225,35 +226,13 @@ public class StatefullTileJ2D extends StatefullMapItemJ2D<MapItem> {
                 LOGGER.log(Level.INFO, ex.getMessage());
                 return null;
             } finally {
-                //dispose reader and substream
-                if(reader != null){
-                    Object readerinput = reader.getInput();
-                    if(readerinput instanceof InputStream){
-                        try {
-                            ((InputStream)readerinput).close();
-                        } catch (IOException ex) {
-                            ex.printStackTrace();
-                            return null;
-                        }
-                    }else if(readerinput instanceof ImageInputStream){
-                        try {
-                            ((ImageInputStream)readerinput).close();
-                        } catch (IOException ex) {
-                            ex.printStackTrace();
-                            return null;
-                        }
-                    }
-                    reader.dispose();
-                }
+                ImageIOUtilities.releaseReader(reader);
             }
         }
-                
-        final GridCoverageFactory gc = new GridCoverageFactory();
-        GridCoverage2D coverage;
         
-        //check the crs
-        if(!CRS.equalsIgnoreMetadata(tileCRS,objCRS2D) ){
-            
+        final boolean needReproject = !CRS.equalsIgnoreMetadata(tileCRS,objCRS2D);
+        
+        if(needReproject){
             //will be reprojected, we must check that image has alpha support
             //otherwise we will have black borders after reprojection
             if(!image.getColorModel().hasAlpha()){
@@ -261,14 +240,21 @@ public class StatefullTileJ2D extends StatefullMapItemJ2D<MapItem> {
                 buffer.createGraphics().drawRenderedImage(image, new AffineTransform());
                 image = buffer;
             }
-            
-            coverage = gc.create("tile", image, tileCRS, trs, null, null, null);            
-            coverage = (GridCoverage2D) Operations.DEFAULT.resample(coverage.view(ViewType.NATIVE), objCRS2D);
-            
-        }else{
-            coverage = gc.create("tile", image, tileCRS, trs, null, null, null);
         }
         
+        //build the coverage
+        final GridCoverageBuilder gcb = new GridCoverageBuilder();
+        final GridEnvelope2D ge = new GridEnvelope2D(0, 0, image.getWidth(), image.getHeight());
+        final GridGeometry2D gridgeo = new GridGeometry2D(ge, PixelOrientation.UPPER_LEFT, trs, tileCRS, null);
+        gcb.setName("tile");
+        gcb.setGridGeometry(gridgeo);
+        gcb.setRenderedImage(image);        
+        GridCoverage2D coverage = (GridCoverage2D) gcb.build();
+        
+        if(needReproject){
+            coverage = (GridCoverage2D) Operations.DEFAULT.resample(coverage.view(ViewType.NATIVE), objCRS2D);
+        }
+                
         return coverage;        
     }
 }

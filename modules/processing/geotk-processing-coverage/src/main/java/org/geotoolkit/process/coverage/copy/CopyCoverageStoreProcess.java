@@ -48,10 +48,12 @@ import org.geotoolkit.process.coverage.straighten.StraightenDescriptor;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
 import org.geotoolkit.referencing.cs.DiscreteCoordinateSystemAxis;
+import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.util.collection.XCollections;
 import org.opengis.feature.type.Name;
 import org.opengis.geometry.Envelope;
+import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CompoundCRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -218,13 +220,9 @@ public class CopyCoverageStoreProcess extends AbstractProcess {
         coverage = (GridCoverage2D) Parameters.getOrCreate(StraightenDescriptor.COVERAGE_OUT, result).getValue();
 
         final GridGeometry2D gridgeom = coverage.getGridGeometry();
-        final MathTransform gridToCRS = gridgeom.getGridToCRS2D();
-
-        final double[] segment = new double[gridToCRS.getSourceDimensions() * 3];
-        segment[gridToCRS.getSourceDimensions()] = 1;
-        segment[gridToCRS.getSourceDimensions()*2+1] = 1;
-        gridToCRS.transform(segment, 0, segment, 0, 3);
-        final double scale = Math.abs(segment[0] - segment[gridToCRS.getTargetDimensions()]);
+        //we know it's an affine transform since we straighten the coverage
+        final AffineTransform2D gridToCRS = (AffineTransform2D) gridgeom.getGridToCRS2D(PixelOrientation.UPPER_LEFT);
+        final double scale = gridToCRS.getScaleX();
 
         final RenderedImage img = ((GridCoverage2D) coverage).getRenderedImage();
         final Dimension gridSize = new Dimension(1, 1);

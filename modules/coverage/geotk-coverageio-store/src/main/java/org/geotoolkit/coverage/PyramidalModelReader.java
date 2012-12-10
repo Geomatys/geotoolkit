@@ -18,13 +18,11 @@ package org.geotoolkit.coverage;
 
 import java.awt.Dimension;
 import java.awt.Point;
-import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.RenderedImage;
 import java.awt.image.WritableRaster;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -35,10 +33,11 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.TimeUnit;
 import javax.imageio.ImageReader;
-import javax.imageio.stream.ImageInputStream;
 import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
+import org.geotoolkit.coverage.grid.GridEnvelope2D;
+import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
@@ -55,6 +54,7 @@ import org.geotoolkit.util.ImageIOUtilities;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
+import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
@@ -428,16 +428,17 @@ public class PyramidalModelReader extends GridCoverageReader{
 
         //build the coverage ---------------------------------------------------
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
-        gcb.setName(ref.getName().getLocalPart());
+        gcb.setName(ref.getName().getLocalPart());        
         final List<GridSampleDimension> dimensions = getSampleDimensions(ref.getImageIndex());
         if (dimensions != null) {
             gcb.setSampleDimensions(dimensions.toArray(new GridSampleDimension[dimensions.size()]));
         }
+        
+        final MathTransform gtc = AbstractGridMosaic.getTileGridToCRS(mosaic, new Point((int)tileMinCol,(int)tileMinRow));
+        final GridEnvelope2D ge = new GridEnvelope2D(0, 0, image.getWidth(), image.getHeight());
+        final GridGeometry2D gridgeo = new GridGeometry2D(ge, PixelOrientation.UPPER_LEFT, gtc, pyramidCRS2D, null);
+        gcb.setGridGeometry(gridgeo);
         gcb.setRenderedImage(image);
-        gcb.setPixelAnchor(PixelInCell.CELL_CORNER);
-        gcb.setGridToCRS((AffineTransform)AbstractGridMosaic.
-                getTileGridToCRS(mosaic, new Point((int)tileMinCol,(int)tileMinRow)));
-        gcb.setCoordinateReferenceSystem(pyramidCRS2D);
         
         return gcb.build();
     }
