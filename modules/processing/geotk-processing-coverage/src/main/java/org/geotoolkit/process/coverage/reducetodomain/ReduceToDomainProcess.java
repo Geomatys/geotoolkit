@@ -17,9 +17,12 @@
 package org.geotoolkit.process.coverage.reducetodomain;
 
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
+import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
 import java.awt.image.WritableRaster;
@@ -153,11 +156,13 @@ public class ReduceToDomainProcess extends AbstractProcess {
                     candidate.getGridGeometry().getGridToCRS2D(PixelOrientation.UPPER_LEFT);
             final RenderedImage img = candidate.getRenderedImage();
             final ColorModel cm = img.getColorModel();
+            final Raster baseRaster = img.getData();
             final BufferedImage resimg;
             final AffineTransform2D gtc;
+            final WritableRaster raster;
             if(xWrap && yWrap){
                 //wrap both axes
-                final WritableRaster raster = cm.createCompatibleWritableRaster((int)(spanX/scale), (int)(spanY/scale));
+                raster = baseRaster.createCompatibleWritableRaster((int)(spanX/scale), (int)(spanY/scale));
                 resimg = new BufferedImage(cm, raster, cm.isAlphaPremultiplied(), null);
                 gtc = new AffineTransform2D(
                         scale, 0, 0, 
@@ -167,7 +172,7 @@ public class ReduceToDomainProcess extends AbstractProcess {
                 
             }else if(xWrap){
                 //wrap x axes
-                final WritableRaster raster = cm.createCompatibleWritableRaster((int)(spanX/scale), img.getHeight());
+                raster = baseRaster.createCompatibleWritableRaster((int)(spanX/scale), img.getHeight());
                 resimg = new BufferedImage(cm, raster, cm.isAlphaPremultiplied(), null);
                 gtc = new AffineTransform2D(
                         scale, 0, 0, 
@@ -177,7 +182,7 @@ public class ReduceToDomainProcess extends AbstractProcess {
                 
             }else{
                 //wrap y axes
-                final WritableRaster raster = cm.createCompatibleWritableRaster(img.getWidth(), (int)(spanY/scale));
+                raster = baseRaster.createCompatibleWritableRaster(img.getWidth(), (int)(spanY/scale));
                 resimg = new BufferedImage(cm, raster, cm.isAlphaPremultiplied(), null);
                 gtc = new AffineTransform2D(
                         scale, 0, 0, 
@@ -188,58 +193,76 @@ public class ReduceToDomainProcess extends AbstractProcess {
             final AffineTransform2D baseInv = (AffineTransform2D) baseTrs.inverse();
             final AffineTransform2D resInv = (AffineTransform2D) gtc.inverse();
             
-            final Graphics2D g = resimg.createGraphics();
             //draw base image
+            final Point2D pt = new Point2D.Double();
             AffineTransform tmp = new AffineTransform(resInv);
             tmp.concatenate(baseTrs);
-            g.drawRenderedImage(img,tmp);
+            tmp.transform(pt, pt);
+            raster.setRect((int)pt.getX(), (int)pt.getY(), baseRaster);
             
             final double crsSpanX = axiXMaxValue - axiXMinValue;
             final double crsSpanY = axiYMaxValue - axiYMinValue;
                             
             if(xWrap){
+                pt.setLocation(0, 0);                
                 tmp = new AffineTransform(resInv);
-                tmp.concatenate(baseTrs);
                 tmp.translate(-crsSpanX, 0);
-                g.drawRenderedImage(img,tmp);                
-                tmp = new AffineTransform(resInv);
                 tmp.concatenate(baseTrs);
+                tmp.transform(pt, pt);
+                raster.setRect((int)pt.getX(), (int)pt.getY(), baseRaster);
+                
+                pt.setLocation(0, 0);
+                tmp = new AffineTransform(resInv);
                 tmp.translate(+crsSpanX, 0);
-                g.drawRenderedImage(img,tmp);
+                tmp.concatenate(baseTrs);
+                tmp.transform(pt, pt);
+                raster.setRect((int)pt.getX(), (int)pt.getY(), baseRaster);
                 
             }
             if(yWrap){
+                pt.setLocation(0, 0);
                 tmp = new AffineTransform(resInv);
-                tmp.concatenate(baseTrs);
                 tmp.translate(0,-crsSpanY);
-                g.drawRenderedImage(img,tmp);                
-                tmp = new AffineTransform(resInv);
                 tmp.concatenate(baseTrs);
+                tmp.transform(pt, pt);
+                raster.setRect((int)pt.getX(), (int)pt.getY(), baseRaster);  
+                
+                pt.setLocation(0, 0);       
+                tmp = new AffineTransform(resInv);
                 tmp.translate(0,+crsSpanY);
-                g.drawRenderedImage(img,tmp);
+                tmp.concatenate(baseTrs);
+                tmp.transform(pt, pt);
+                raster.setRect((int)pt.getX(), (int)pt.getY(), baseRaster);
             }
             if(xWrap && yWrap){
+                pt.setLocation(0, 0);
                 tmp = new AffineTransform(resInv);
-                tmp.concatenate(baseTrs);
                 tmp.translate(-crsSpanX,-crsSpanY);
-                g.drawRenderedImage(img,tmp);                
-                tmp = new AffineTransform(resInv);
                 tmp.concatenate(baseTrs);
-                tmp.translate(-crsSpanX,+crsSpanY);
-                g.drawRenderedImage(img,tmp);
+                tmp.transform(pt, pt);
+                raster.setRect((int)pt.getX(), (int)pt.getY(), baseRaster);
                 
+                pt.setLocation(0, 0);       
                 tmp = new AffineTransform(resInv);
+                tmp.translate(-crsSpanX,+crsSpanY);
                 tmp.concatenate(baseTrs);
+                tmp.transform(pt, pt);
+                raster.setRect((int)pt.getX(), (int)pt.getY(), baseRaster);
+                
+                pt.setLocation(0, 0);
+                tmp = new AffineTransform(resInv);
                 tmp.translate(+crsSpanX,-crsSpanY);
-                g.drawRenderedImage(img,tmp);                
-                tmp = new AffineTransform(resInv);
                 tmp.concatenate(baseTrs);
+                tmp.transform(pt, pt);
+                raster.setRect((int)pt.getX(), (int)pt.getY(), baseRaster);
+                
+                pt.setLocation(0, 0);       
+                tmp = new AffineTransform(resInv);
                 tmp.translate(+crsSpanX,+crsSpanY);
-                g.drawRenderedImage(img,tmp);
+                tmp.concatenate(baseTrs);
+                tmp.transform(pt, pt);
+                raster.setRect((int)pt.getX(), (int)pt.getY(), baseRaster);
             }
-                        
-            g.dispose();
-            
             
             
             final GridCoverageBuilder gcb = new GridCoverageBuilder();
