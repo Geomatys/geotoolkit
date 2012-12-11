@@ -208,7 +208,7 @@ public class GetCapabilitiesType implements AbstractGetCapabilities {
             if (acceptVersions == null) {
                 this.acceptVersions = new AcceptVersionsType(version);
             } else {
-                 this.acceptVersions.addVersion(version);
+                 this.acceptVersions.addFirstVersion(version);
             }
         }
     }

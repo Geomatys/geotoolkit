@@ -154,6 +154,11 @@ public class UnNamedDomainType {
         this.defaultValue = defaultvalue;
     }
     
+    public UnNamedDomainType(final NoValues nv, final ValueType defaultvalue) {
+        this.noValues     = nv;
+        this.defaultValue = defaultvalue;
+    }
+    
     public UnNamedDomainType(final String value) {
         this.allowedValues = new AllowedValues(Arrays.asList(value));
     }

@@ -22,7 +22,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *
  * @author Guilhem Legal (Geomatys)
  */
-public interface ValueCollection {
+public interface ValueCollection extends WFSResponse {
 
     XMLGregorianCalendar getTimeStamp();
 

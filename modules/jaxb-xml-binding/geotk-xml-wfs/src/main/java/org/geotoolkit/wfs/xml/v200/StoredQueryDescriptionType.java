@@ -150,6 +150,7 @@ public class StoredQueryDescriptionType implements StoredQueryDescription {
      * Objects of the following type(s) are allowed in the list
      * {@link Title }
      */
+    @Override
     public List<Title> getTitle() {
         if (title == null) {
             title = new ArrayList<Title>();
@@ -162,6 +163,7 @@ public class StoredQueryDescriptionType implements StoredQueryDescription {
      *
      * {@link Abstract }
      */
+    @Override
     public List<Abstract> getAbstract() {
         if (_abstract == null) {
             _abstract = new ArrayList<Abstract>();
@@ -175,6 +177,7 @@ public class StoredQueryDescriptionType implements StoredQueryDescription {
      * Objects of the following type(s) are allowed in the list
      * {@link MetadataType }
      */
+    @Override
     public List<MetadataType> getMetadata() {
         if (metadata == null) {
             metadata = new ArrayList<MetadataType>();
@@ -188,6 +191,7 @@ public class StoredQueryDescriptionType implements StoredQueryDescription {
      * Objects of the following type(s) are allowed in the list
      * {@link ParameterExpressionType }
      */
+    @Override
     public List<ParameterExpressionType> getParameter() {
         if (parameter == null) {
             parameter = new ArrayList<ParameterExpressionType>();
@@ -195,11 +199,23 @@ public class StoredQueryDescriptionType implements StoredQueryDescription {
         return this.parameter;
     }
 
+    @Override
+    public List<String> getParameterNames() {
+        final List<String> results = new ArrayList<String>();
+        if (parameter != null) {
+            for (ParameterExpressionType param : parameter) {
+                results.add(param.getName());
+            }
+        }
+        return results;
+    }
+    
     /**
      * Gets the value of the queryExpressionText property.
      * Objects of the following type(s) are allowed in the list
      * {@link QueryExpressionTextType }
      */
+    @Override
     public List<QueryExpressionTextType> getQueryExpressionText() {
         if (queryExpressionText == null) {
             queryExpressionText = new ArrayList<QueryExpressionTextType>();
@@ -215,6 +231,7 @@ public class StoredQueryDescriptionType implements StoredQueryDescription {
      *     {@link String }
      *
      */
+    @Override
     public String getId() {
         return id;
     }
@@ -270,10 +287,12 @@ public class StoredQueryDescriptionType implements StoredQueryDescription {
         if(id != null) {
             s.append("id:").append(id).append('\n');
         }
-        if (title != null)
+        if (title != null) {
             s.append("title:").append(title).append('\n');
-        if (_abstract != null)
+        }
+        if (_abstract != null) {
             s.append("_abstract:").append(_abstract).append('\n');
+        }
         if (metadata != null) {
             s.append("metadata:").append('\n');
             for (MetadataType k : metadata) {
@@ -294,5 +313,4 @@ public class StoredQueryDescriptionType implements StoredQueryDescription {
         }
         return s.toString();
     }
-
 }

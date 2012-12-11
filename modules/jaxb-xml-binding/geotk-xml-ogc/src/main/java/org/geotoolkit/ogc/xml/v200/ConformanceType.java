@@ -55,26 +55,19 @@ public class ConformanceType {
     @XmlElement(name = "Constraint", required = true)
     private List<DomainType> constraint;
 
+    public ConformanceType() {
+        
+    }
+    
+    public ConformanceType(final List<DomainType> constraint) {
+        this.constraint = constraint;
+    }
+    
     /**
      * Gets the value of the constraint property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the constraint property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getConstraint().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link DomainType }
-     * 
      * 
      */
     public List<DomainType> getConstraint() {

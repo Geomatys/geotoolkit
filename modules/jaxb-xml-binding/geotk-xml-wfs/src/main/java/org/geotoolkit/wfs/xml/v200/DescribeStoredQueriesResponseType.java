@@ -23,6 +23,7 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.wfs.xml.DescribeStoredQueriesResponse;
@@ -51,6 +52,7 @@ import org.geotoolkit.wfs.xml.DescribeStoredQueriesResponse;
 @XmlType(name = "DescribeStoredQueriesResponseType", propOrder = {
     "storedQueryDescription"
 })
+@XmlRootElement(name="DescribeStoredQueriesResponse", namespace="http://www.opengis.net/wfs/2.0")
 public class DescribeStoredQueriesResponseType implements DescribeStoredQueriesResponse {
 
     @XmlElement(name = "StoredQueryDescription")

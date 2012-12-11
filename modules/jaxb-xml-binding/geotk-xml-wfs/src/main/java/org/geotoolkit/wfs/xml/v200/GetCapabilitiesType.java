@@ -20,6 +20,7 @@ package org.geotoolkit.wfs.xml.v200;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ows.xml.v110.AcceptFormatsType;
 import org.geotoolkit.ows.xml.v110.AcceptVersionsType;
@@ -46,6 +47,7 @@ import org.geotoolkit.wfs.xml.GetCapabilities;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "GetCapabilitiesType")
+@XmlRootElement(name = "GetCapabilities", namespace= "http://www.opengis.net/wfs/2.0")
 public class GetCapabilitiesType extends org.geotoolkit.ows.xml.v110.GetCapabilitiesType implements GetCapabilities {
 
     /**
