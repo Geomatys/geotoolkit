@@ -230,23 +230,33 @@ public class MetadataHelper implements Localized {
      * @return The range of sample values, or {@code null}.
      */
     public NumberRange<?> getValidSampleValues(final SampleDimension dimension) {
-        if (dimension == null) {
-            return null;
+        NumberRange<?> range = null;
+        if (dimension != null) {
+            range = dimension.getValidSampleValues();
+            if (range == null) {
+                range = getSampleValues(dimension, dimension.getFillSampleValues(), false);
+            }
         }
-        return getValidSampleValues(dimension, dimension.getFillSampleValues());
+        return range;
     }
 
     /**
      * Returns the range of sample values defined in the given {@code SampleDimension} object.
      * This method performs the same work than {@link #getValidSampleValues(SampleDimension)},
-     * except that the fill sample values are given explicitly. Note that the fill sample values
-     * is not an ISO 19115-2 attribute.
+     * except that the band index and fill sample values are given explicitly.
+     * Note that the fill sample values is not an ISO 19115-2 attribute.
+     * <p>
+     * This method is invoked by {@link #getSampleValues(SampleDimension, double[], boolean)}.
+     * Subclasses can override it for forcing the usage of a different range of sample values.
      *
+     * @param  bandIndex Index of the band for which to get the valid sample values.
      * @param  dimension The object from which to extract the range.
      * @param  fillSampleValues The no-data values, or {@code null} if none.
      * @return The range of sample values, or {@code null}.
      */
-    public NumberRange<?> getValidSampleValues(final SampleDimension dimension, final double[] fillSampleValues) {
+    public NumberRange<?> getValidSampleValues(final int bandIndex,
+            final SampleDimension dimension, final double[] fillSampleValues)
+    {
         NumberRange<?> range = null;
         if (dimension != null) {
             range = dimension.getValidSampleValues();
@@ -695,7 +705,7 @@ public class MetadataHelper implements Localized {
                  * If there is no offset and scale factor, then the values are assumed
                  * geophysics values (the scale is set to 1 and the offset to 0).
                  */
-                final NumberRange<?> range = getValidSampleValues(sd, fillValues);
+                final NumberRange<?> range = getValidSampleValues(i, sd, fillValues);
                 if (range != null) {
                     final Double scale  = sd.getScaleFactor();
                     final Double offset = sd.getOffset();

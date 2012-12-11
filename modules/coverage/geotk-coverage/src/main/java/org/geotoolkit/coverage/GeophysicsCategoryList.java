@@ -60,16 +60,12 @@ final class GeophysicsCategoryList extends CategoryList {
     private static final double EPS = 1E-6;
 
     /**
-     * Unités des mesures géophysiques représentées par les catégories.
-     * Ce champ peut être nul s'il ne s'applique pas ou si les unités
-     * ne sont pas connues.
+     * Units of measurement of geophysical values, or {@code null} if not applicable.
      */
     private final Unit<?> unit;
 
     /**
-     * Nombre de chiffres significatifs après la virgule.
-     * Cette information est utilisée pour les écritures
-     * des valeurs géophysiques des catégories.
+     * Number of significant digits, used for formatting geophysical values.
      */
     private final int ndigits;
 
@@ -80,15 +76,9 @@ final class GeophysicsCategoryList extends CategoryList {
     private transient Locale locale;
 
     /**
-     * Format à utiliser pour écrire les
-     * valeurs géophysiques des thèmes.
+     * Format to use for writing geophysical values.
      */
     private transient NumberFormat format;
-
-    /**
-     * Objet temporaire pour {@link NumberFormat}.
-     */
-    private transient FieldPosition dummy;
 
     /**
      * Constructs a category list using the specified array of categories.
@@ -119,7 +109,7 @@ final class GeophysicsCategoryList extends CategoryList {
      */
     private static int getFractionDigitCount(final Category[] categories) {
         int ndigits = 0;
-        final int length=categories.length;
+        final int length = categories.length;
         for (int i=0; i<length; i++) {
             final Category category   = categories[i];
             final Category geophysics = category.geophysics(true);
@@ -127,7 +117,7 @@ final class GeophysicsCategoryList extends CategoryList {
             final double ln = Math.log10((geophysics.maximum - geophysics.minimum)/
                                          (    packed.maximum -     packed.minimum));
             if (!Double.isNaN(ln)) {
-                final int n = -(int)(Math.floor(ln + EPS));
+                final int n = -(int) Math.floor(ln + EPS);
                 if (n > ndigits) {
                     ndigits = Math.min(n, MAX_DIGITS);
                 }
@@ -177,15 +167,14 @@ final class GeophysicsCategoryList extends CategoryList {
     synchronized StringBuffer format(final double value, final boolean writeUnits,
                                      final Locale locale, StringBuffer buffer)
     {
-        if (format==null || !Utilities.equals(this.locale, locale)) {
+        if (format == null || !Utilities.equals(this.locale, locale)) {
             this.locale = locale;
-            format=(locale!=null) ? NumberFormat.getNumberInstance(locale) :
-                                    NumberFormat.getNumberInstance();
+            format = (locale != null) ? NumberFormat.getNumberInstance(locale) :
+                                        NumberFormat.getNumberInstance();
             format.setMinimumFractionDigits(ndigits);
             format.setMaximumFractionDigits(ndigits);
-            dummy = new FieldPosition(0);
         }
-        buffer = format.format(value, buffer, dummy);
+        buffer = format.format(value, buffer, new FieldPosition(0));
         if (writeUnits && unit!=null) {
             final int position = buffer.length();
             buffer.append('\u00A0').append(unit);  // No-break space
