@@ -778,7 +778,7 @@ public abstract class SpatialImageReader extends ImageReader implements WarningP
                     if (helper == null) {
                         helper = new MetadataHelper(this);
                     }
-                    range = helper.getValidSampleValues((SampleDimension) band, fillValues);
+                    range = helper.getValidSampleValues(bandIndex, (SampleDimension) band, fillValues);
                 } else {
                     range = band.getValidSampleValues();
                 }

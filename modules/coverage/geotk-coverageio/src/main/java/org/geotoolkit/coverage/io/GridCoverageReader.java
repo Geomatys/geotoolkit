@@ -236,7 +236,11 @@ public abstract class GridCoverageReader extends GridCoverageStore {
      *         the execution of this method.
      *
      * @since 3.10
+     *
+     * @deprecated Not used in practice. Could be a convenience static method working on any
+     * sample dimensions.
      */
+    @Deprecated
     public List<MeasurementRange<?>> getSampleValueRanges(final int index)
             throws CoverageStoreException, CancellationException
     {

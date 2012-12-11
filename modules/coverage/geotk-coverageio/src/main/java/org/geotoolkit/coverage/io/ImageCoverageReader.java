@@ -55,12 +55,11 @@ import org.opengis.util.NameFactory;
 
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.coverage.CoverageFactoryFinder;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
-import org.geotoolkit.coverage.grid.GridCoverageFactory;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.image.io.DimensionSlice;
 import org.geotoolkit.image.io.ImageMetadataException;
 import org.geotoolkit.image.io.NamedImageStore;
@@ -75,6 +74,7 @@ import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
 import org.geotoolkit.image.io.mosaic.MosaicImageReader;
 import org.geotoolkit.image.io.mosaic.MosaicImageReadParam;
 import org.geotoolkit.internal.io.IOUtilities;
+import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.internal.image.io.CheckedImageInputStream;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.XArrays;
@@ -88,7 +88,6 @@ import org.geotoolkit.referencing.operation.MathTransforms;
 
 import static org.geotoolkit.image.io.MultidimensionalImageStore.*;
 import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMAT_NAME;
-import org.geotoolkit.internal.referencing.CRSUtilities;
 import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
 
 
@@ -129,7 +128,7 @@ import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Johann Sorel (Geomatys)
- * @version 3.20
+ * @version 3.21
  *
  * @since 3.09 (derived from 2.2)
  * @module
@@ -218,17 +217,32 @@ public class ImageCoverageReader extends GridCoverageReader {
     private transient Map<Integer,List<GridSampleDimension>> sampleDimensions;
 
     /**
+     * The metadata for the image at index {@link #imageMetadataIndex}, cached for avoiding to
+     * compute it many time. Note that {@code null} if a valid value - we need to check the image
+     * index in order to determine if the value is valid.
+     *
+     * @see #getImageMetadata(ImageReader, int)
+     */
+    private transient SpatialMetadata imageMetadata;
+
+    /**
+     * The image index of {@link #imageMetadata}, or -1 if not yet computed.
+     *
+     * @see #getImageMetadata(ImageReader, int)
+     */
+    private transient int imageMetadataIndex;
+
+    /**
      * Helper utilities for parsing metadata. Created only when needed.
      */
     private transient MetadataHelper helper;
 
     /**
-     * The grid coverage factory to use for building {@link GridCoverage2D} instances.
-     * This factory can be specified at construction time in the {@link Hints} map.
+     * The grid coverage builder to use for building {@link GridCoverage2D} instances.
      *
-     * @since 3.20
+     * @since 3.21
      */
-    private final GridCoverageFactory coverageFactory;
+    private final GridCoverageBuilder coverageBuilder;
 
     /**
      * The name factory to use for building {@link GenericName} instances.
@@ -254,8 +268,9 @@ public class ImageCoverageReader extends GridCoverageReader {
      *        or {@code null} for the default hints.
      */
     public ImageCoverageReader(final Hints hints) {
-        coverageFactory = CoverageFactoryFinder.getGridCoverageFactory(hints);
+        coverageBuilder = new GridCoverageBuilder(hints);
         nameFactory = FactoryFinder.getNameFactory(hints);
+        imageMetadataIndex = -1;
     }
 
     /**
@@ -532,30 +547,6 @@ public class ImageCoverageReader extends GridCoverageReader {
     }
 
     /**
-     * Gets the spatial metadata from the given image reader, or return {@code null}
-     * if none were found. This method asks only for the metadata nodes listed in the
-     * {@link #METADATA_NODES} collection. Note however that most {@link ImageReader}
-     * implementations will return all metadata anyway.
-     *
-     * @param  imageReader The image reader from which to get the metadata.
-     * @param  index The index of the image to be queried.
-     * @return The metadata of the given index, or {@code null} if none.
-     * @throws IOException If an error occurred while reading the metadata.
-     */
-    private static SpatialMetadata getSpatialMetadata(final ImageReader imageReader, final int index)
-            throws IOException
-    {
-        final IIOMetadata metadata = imageReader.getImageMetadata(index, GEOTK_FORMAT_NAME, METADATA_NODES);
-        if (metadata instanceof SpatialMetadata) {
-            return (SpatialMetadata) metadata;
-        } else if (metadata != null) {
-            return new SpatialMetadata(false, imageReader, metadata);
-        } else {
-            return null;
-        }
-    }
-
-    /**
      * Returns a helper object for parsing metadata.
      */
     private MetadataHelper getMetadataHelper() {
@@ -597,7 +588,7 @@ public class ImageCoverageReader extends GridCoverageReader {
             try {
                 width  = imageReader.getWidth(index);
                 height = imageReader.getHeight(index);
-                final SpatialMetadata metadata = getSpatialMetadata(imageReader, index);
+                final SpatialMetadata metadata = getImageMetadata(imageReader, index);
                 if (metadata != null) {
                     crs = metadata.getInstanceForType(CoordinateReferenceSystem.class);
                     if (crs instanceof GridGeometry) { // Some formats (e.g. NetCDF) do that.
@@ -698,7 +689,7 @@ public class ImageCoverageReader extends GridCoverageReader {
              */
             List<SampleDimension> bands = null;
             try {
-                final SpatialMetadata metadata = getSpatialMetadata(imageReader, index);
+                final SpatialMetadata metadata = getImageMetadata(imageReader, index);
                 if (metadata != null) {
                     bands = metadata.getListForType(SampleDimension.class);
                 }
@@ -838,6 +829,32 @@ public class ImageCoverageReader extends GridCoverageReader {
         } catch (IOException e) {
             throw new CoverageStoreException(formatErrorMessage(e), e);
         }
+    }
+
+    /**
+     * Gets the spatial metadata from the given image reader, or return {@code null}
+     * if none were found. This method asks only for the metadata nodes listed in the
+     * {@link #METADATA_NODES} collection. Note however that most {@link ImageReader}
+     * implementations will return all metadata anyway.
+     *
+     * @param  imageReader The image reader from which to get the metadata.
+     * @param  index The index of the image to be queried.
+     * @return The metadata of the given index, or {@code null} if none.
+     * @throws IOException If an error occurred while reading the metadata.
+     *
+     * @see #getCoverageMetadata(int)
+     */
+    private SpatialMetadata getImageMetadata(final ImageReader imageReader, final int index) throws IOException {
+        if (imageMetadataIndex != index) {
+            final IIOMetadata metadata = imageReader.getImageMetadata(index, GEOTK_FORMAT_NAME, METADATA_NODES);
+            if (metadata == null || metadata instanceof SpatialMetadata) {
+                imageMetadata = (SpatialMetadata) metadata;
+            } else if (metadata != null) {
+                imageMetadata = new SpatialMetadata(false, imageReader, metadata);
+            }
+            imageMetadataIndex = index;
+        }
+        return imageMetadata;
     }
 
     /**
@@ -1026,7 +1043,7 @@ public class ImageCoverageReader extends GridCoverageReader {
          * that it requires to keep the ImageReader with its input stream open.
          */
         final String name;
-        final RenderedImage image;
+        RenderedImage image;
         try {
             final List<? extends GenericName> names = getCoverageNames();
             try {
@@ -1083,7 +1100,18 @@ public class ImageCoverageReader extends GridCoverageReader {
                         newGridToCRS, gridGeometry.getCoordinateReferenceSystem(), null);
             }
         }
-        final GridCoverage2D coverage = coverageFactory.create(name, image, gridGeometry, bands, null, properties);
+        final GridCoverage2D coverage;
+        final GridCoverageBuilder builder = coverageBuilder;
+        try {
+            builder.setName(name);
+            builder.setRenderedImage(image);
+            builder.setSampleDimensions(bands);
+            builder.setGridGeometry(gridGeometry);
+            builder.setProperties(properties);
+            coverage = builder.getGridCoverage2D();
+        } finally {
+            builder.reset();
+        }
         if (loggingEnabled) {
             fullTime = System.nanoTime() - fullTime;
             final Level level = getLogLevel(fullTime);
@@ -1157,7 +1185,9 @@ public class ImageCoverageReader extends GridCoverageReader {
         if (imageReader != null) {
             imageReader.reset();
         }
-        helper = null;
+        helper             = null;
+        imageMetadata      = null;
+        imageMetadataIndex = -1;
         super.reset();
     }
 

@@ -48,6 +48,12 @@ import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.AbstractInternationalString;
 import org.geotoolkit.util.NumberRange;
 
+import static java.lang.Double.NaN;
+import static java.lang.Double.isNaN;
+import static java.lang.Double.POSITIVE_INFINITY;
+import static java.lang.Double.NEGATIVE_INFINITY;
+import static java.lang.Double.doubleToRawLongBits;
+
 
 /**
  * An immutable list of categories. Categories are sorted by their sample values.
@@ -146,18 +152,9 @@ class CategoryList extends AbstractList<Category> implements MathTransform1D, Co
     private final boolean hasGaps;
 
     /**
-     * The name for this category list. Will be constructed only when first needed.
-     * This is given to {@link GridSampleDimension} only if the user did not specified
-     * explicitly a description.
-     *
-     * @see #getName
-     */
-    private transient volatile InternationalString name;
-
-    /**
      * Constructs a category list using the specified array of categories.
      *
-     * @param  categories The list of categories.
+     * @param  categories The list of categories. May be empty, but can not be null.
      * @param  units The geophysics unit, or {@code null} if none.
      * @throws IllegalArgumentException if two or more categories
      *         have overlapping sample value range.
@@ -176,7 +173,7 @@ class CategoryList extends AbstractList<Category> implements MathTransform1D, Co
      *
      * It is not private only because {@link GeophysicsCategoryList} needs this constructor.
      *
-     * @param  categories The list of categories.
+     * @param  categories The list of categories. May be empty, but can not be null.
      * @param  units The geophysics unit, or {@code null} if none.
      * @param  searchNearest The policy when {@link #getCategory} doesn't find an exact match
      *         for a sample value. {@code true} means that it should search for the nearest
@@ -198,7 +195,10 @@ class CategoryList extends AbstractList<Category> implements MathTransform1D, Co
          */
         final boolean geophysics = (inverse != null);
         assert geophysics == (this instanceof GeophysicsCategoryList) : geophysics;
-        this.categories = categories = categories.clone();
+        if (categories.length != 0) {
+            categories = categories.clone();
+        }
+        this.categories = categories;
         for (int i=0; i<categories.length; i++) {
             categories[i] = categories[i].geophysics(geophysics);
         }
@@ -238,7 +238,7 @@ class CategoryList extends AbstractList<Category> implements MathTransform1D, Co
                     throw new IllegalArgumentException(Errors.format(Errors.Keys.RANGE_OVERLAP_$4, args));
                 }
                 // Checks if there is a gap between this category and the previous one.
-                if (!Double.isNaN(minimum) && minimum != previous.getRange().getMaximum(false)) {
+                if (!isNaN(minimum) && minimum != previous.getRange().getMaximum(false)) {
                     hasGaps = true;
                 }
             }
@@ -250,13 +250,13 @@ class CategoryList extends AbstractList<Category> implements MathTransform1D, Co
          * for a qualitative category with the NaN value.
          */
         Category nodata = Category.NODATA;
-        final long nodataBits = Double.doubleToRawLongBits(Double.NaN);
+        final long nodataBits = doubleToRawLongBits(NaN);
         for (int i=categories.length; --i>=0;) {
             final Category candidate = categories[i];
             final double value = candidate.geophysics(true).minimum;
-            if (Double.isNaN(value)) {
+            if (isNaN(value)) {
                 nodata = candidate;
-                if (Double.doubleToRawLongBits(value) == nodataBits) {
+                if (doubleToRawLongBits(value) == nodataBits) {
                     // Give a preference for the standard Double.NaN.
                     // We should have only one such value, since the
                     // range check above prevents range overlapping.
@@ -293,7 +293,7 @@ class CategoryList extends AbstractList<Category> implements MathTransform1D, Co
         if (searchNearest) {
             for (int i=categories.length; --i>=0;) {
                 final Category category = categories[i];
-                if (!Double.isNaN(category.maximum)) {
+                if (!isNaN(category.maximum)) {
                     overflowFallback = category;
                     break;
                 }
@@ -328,9 +328,9 @@ class CategoryList extends AbstractList<Category> implements MathTransform1D, Co
      * NaN values. Remind that NaN values are sorted last.
      */
     private static int compare(final double v1, final double v2) {
-        if (Double.isNaN(v1) && Double.isNaN(v2)) {
-            final long bits1  = Double.doubleToRawLongBits(v1);
-            final long bits2  = Double.doubleToRawLongBits(v2);
+        if (isNaN(v1) && isNaN(v2)) {
+            final long bits1  = doubleToRawLongBits(v1);
+            final long bits2  = doubleToRawLongBits(v2);
             if (bits1 < bits2) return -1;
             if (bits1 > bits2) return +1;
         }
@@ -363,7 +363,7 @@ class CategoryList extends AbstractList<Category> implements MathTransform1D, Co
     static int binarySearch(final double[] array, final double key) {
         int low  = 0;
         int high = array.length - 1;
-        final boolean keyIsNaN = Double.isNaN(key);
+        final boolean keyIsNaN = isNaN(key);
         while (low <= high) {
             final int mid = (low + high) >>> 1;
             final double midVal = array[mid];
@@ -391,12 +391,12 @@ class CategoryList extends AbstractList<Category> implements MathTransform1D, Co
              *     array since a signaling NaN passed as an argument to binarySearch may
              *     get replaced by a quiet NaN.
              */
-            final long midRawBits = Double.doubleToRawLongBits(midVal);
-            final long keyRawBits = Double.doubleToRawLongBits(key);
+            final long midRawBits = doubleToRawLongBits(midVal);
+            final long keyRawBits = doubleToRawLongBits(key);
             if (midRawBits == keyRawBits) {
                 return mid; // key found
             }
-            final boolean midIsNaN = Double.isNaN(midVal);
+            final boolean midIsNaN = isNaN(midVal);
             final boolean adjustLow;
             if (keyIsNaN) {
                 // If (mid,key)==(!NaN, NaN): mid is lower.
@@ -458,22 +458,12 @@ class CategoryList extends AbstractList<Category> implements MathTransform1D, Co
     }
 
     /**
-     * Returns the name of this object. This method returns the name of what seems to be the "main"
+     * The name of the enclosing list of category. This is the name of what seems to be the "main"
      * category (i.e. the quantitative category with the widest range of sample values) concatenated
      * with the geophysics value range. This is given to {@link GridSampleDimension} only if the
      * user did not specified explicitly a description.
      */
-    public final InternationalString getName() {
-        if (name == null) {
-            name = new Name();
-        }
-        return name;
-    }
-
-    /**
-     * The name for this category list. Will be created only when first needed.
-     */
-    private final class Name extends AbstractInternationalString {
+    final class Name extends AbstractInternationalString {
         /** Returns the name in the specified locale. */
         @Override public String toString(Locale locale) {
             Locale fmtLoc = locale;
@@ -540,7 +530,7 @@ class CategoryList extends AbstractList<Category> implements MathTransform1D, Co
         if (range == null) {
             for (final Category category : categories) {
                 final NumberRange<?> extent = category.getRange();
-                if (!Double.isNaN(extent.getMinimum()) && !Double.isNaN(extent.getMaximum())) {
+                if (!isNaN(extent.getMinimum()) && !isNaN(extent.getMaximum())) {
                     if (range != null) {
                         range = range.union(extent);
                     } else {
@@ -668,10 +658,10 @@ class CategoryList extends AbstractList<Category> implements MathTransform1D, Co
         if (i >= 0) {
             // The value is exactly equals to one of Category.minimum,
             // or is one of NaN values. There is nothing else to do.
-            assert Double.doubleToRawLongBits(sample) == Double.doubleToRawLongBits(minimums[i]);
+            assert doubleToRawLongBits(sample) == doubleToRawLongBits(minimums[i]);
             return categories[i];
         }
-        if (Double.isNaN(sample)) {
+        if (isNaN(sample)) {
             // The value is NaN, but not one of the registered ones.
             // Consequently, we can't map a category to this value.
             return null;
@@ -702,7 +692,7 @@ class CategoryList extends AbstractList<Category> implements MathTransform1D, Co
             // the first category (except if there is only NaN categories).
             if (categories.length != 0) {
                 final Category category = categories[0];
-                if (!Double.isNaN(category.minimum)) {
+                if (!isNaN(category.minimum)) {
                     return category;
                 }
             }
@@ -720,10 +710,10 @@ class CategoryList extends AbstractList<Category> implements MathTransform1D, Co
      * @return A string representation of the sample value.
      */
     public final String format(final double value, final Locale locale) {
-        if (Double.isNaN(value)) {
+        if (isNaN(value)) {
             Category category = last;
             if (!(value >= category.minimum  &&  value <= category.maximum) &&
-                 Double.doubleToRawLongBits(value) != Double.doubleToRawLongBits(category.minimum))
+                 doubleToRawLongBits(value) != doubleToRawLongBits(category.minimum))
             {
                 category = getCategory(value);
                 if (category == null) {
@@ -765,7 +755,11 @@ class CategoryList extends AbstractList<Category> implements MathTransform1D, Co
      */
     @Override
     public final Category[] toArray() {
-        return categories.clone();
+        Category[] array = categories;
+        if (array.length != 0) {
+            array = array.clone();
+        }
+        return array;
     }
 
     /**
@@ -787,7 +781,7 @@ class CategoryList extends AbstractList<Category> implements MathTransform1D, Co
         final String lineSeparator = System.lineSeparator();
         final StringBuffer buffer = new StringBuffer(64);
         buffer.append(Classes.getShortClassName(owner)).append('(');
-        if (description != null && description != name) {
+        if (description != null && !(description instanceof Name)) {
             buffer.append('"').append(description).append("\":");
         }
         formatRange(buffer, null);
@@ -920,7 +914,7 @@ class CategoryList extends AbstractList<Category> implements MathTransform1D, Co
     public final double derivative(final double value) throws TransformException {
         Category category = last;
         if (!(value >= category.minimum  &&  value <= category.maximum) &&
-             Double.doubleToRawLongBits(value) != Double.doubleToRawLongBits(category.minimum))
+             doubleToRawLongBits(value) != doubleToRawLongBits(category.minimum))
         {
             category = getCategory(value);
             if (category == null) {
@@ -942,7 +936,7 @@ class CategoryList extends AbstractList<Category> implements MathTransform1D, Co
     public final double transform(double value) throws TransformException {
         Category category = last;
         if (!(value >= category.minimum  &&  value <= category.maximum) &&
-             Double.doubleToRawLongBits(value) != Double.doubleToRawLongBits(category.minimum))
+             doubleToRawLongBits(value) != doubleToRawLongBits(category.minimum))
         {
             category = getCategory(value);
             if (category == null) {
@@ -979,7 +973,7 @@ class CategoryList extends AbstractList<Category> implements MathTransform1D, Co
         Category  category = last;
         double     maximum = category.maximum;
         double     minimum = category.minimum;
-        long       rawBits = Double.doubleToRawLongBits(minimum);
+        long       rawBits = doubleToRawLongBits(minimum);
         final int direction;
         if (srcOff >= dstOff || (srcFloat != null ? srcFloat != dstFloat : srcPts != dstPts)) {
             direction = +1;
@@ -999,7 +993,7 @@ class CategoryList extends AbstractList<Category> implements MathTransform1D, Co
             while (--numPts >= 0) {
                 value = (srcFloat != null) ? srcFloat[peekOff] : srcPts[peekOff];
                 if ((value >= minimum && value <= maximum) ||
-                    Double.doubleToRawLongBits(value) == rawBits)
+                    doubleToRawLongBits(value) == rawBits)
                 {
                     peekOff += direction;
                     continue;
@@ -1085,7 +1079,7 @@ class CategoryList extends AbstractList<Category> implements MathTransform1D, Co
             }
             maximum = category.maximum;
             minimum = category.minimum;
-            rawBits = Double.doubleToRawLongBits(minimum);
+            rawBits = doubleToRawLongBits(minimum);
             srcOff  = peekOff;
         }
         last = category;
@@ -1147,7 +1141,7 @@ class CategoryList extends AbstractList<Category> implements MathTransform1D, Co
          */
         Category categoryMin=null, categoryMax=null;
         for (int i=categories.length; --i>=0;) {
-            if (!Double.isNaN(categories[i].maximum)) {
+            if (!isNaN(categories[i].maximum)) {
                 categoryMax = categories[i];
                 categoryMin = categories[0];
                 break;
@@ -1159,12 +1153,12 @@ class CategoryList extends AbstractList<Category> implements MathTransform1D, Co
         }
         double maximum = category.maximum;
         double minimum = category.minimum;
-        long   rawBits = Double.doubleToRawLongBits(minimum);
+        long   rawBits = doubleToRawLongBits(minimum);
         MathTransform1D tr = category.transform;
         double maxTr, minTr;
         if (overflowFallback == null) {
-            maxTr = Double.POSITIVE_INFINITY;
-            minTr = Double.NEGATIVE_INFINITY;
+            maxTr = POSITIVE_INFINITY;
+            minTr = NEGATIVE_INFINITY;
         } else {
             maxTr = category.inverse.maximum;
             minTr = category.inverse.minimum;
@@ -1175,17 +1169,17 @@ class CategoryList extends AbstractList<Category> implements MathTransform1D, Co
                 iterator.startPixels();
                 if (!iterator.finishedPixels()) do {
                     double value = iterator.getSampleDouble();
-                    if (!(value>=minimum && value<=maximum) &&          // 'true' if value is NaN...
-                          Double.doubleToRawLongBits(value) != rawBits) // and the NaN bits changed.
+                    if (!(value>=minimum && value<=maximum) &&   // 'true' if value is NaN...
+                          doubleToRawLongBits(value) != rawBits) // and the NaN bits changed.
                     {
                         // Category has changed. Find the new category.
                         category = getCategory(value);
                         if (category == null) {
                             category = nodata;
                         }
-                        maximum = (category!=categoryMax) ? category.maximum : Double.POSITIVE_INFINITY;
-                        minimum = (category!=categoryMin) ? category.minimum : Double.NEGATIVE_INFINITY;
-                        rawBits = Double.doubleToRawLongBits(minimum);
+                        maximum = (category!=categoryMax) ? category.maximum : POSITIVE_INFINITY;
+                        minimum = (category!=categoryMin) ? category.minimum : NEGATIVE_INFINITY;
+                        rawBits = doubleToRawLongBits(minimum);
                         tr      = category.transform;
                         if (overflowFallback != null) {
                             maxTr = category.inverse.maximum;
@@ -1203,8 +1197,8 @@ class CategoryList extends AbstractList<Category> implements MathTransform1D, Co
                      *       for range inclusion should use the exclusive extremas.
                      */
                     assert hasGaps || (category==nodata) || // Disable assertion in those cases
-                           (Double.isNaN(value) ? Double.doubleToRawLongBits(value) == rawBits
-                                                : (value>=minimum && value<=maximum)) : value;
+                           (isNaN(value) ? doubleToRawLongBits(value) == rawBits
+                                         : (value >= minimum && value <= maximum)) : value;
                     value = tr.transform(value);
                     if (value > maxTr) {
                         value = maxTr;

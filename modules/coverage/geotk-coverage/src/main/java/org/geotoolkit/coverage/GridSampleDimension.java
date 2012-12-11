@@ -99,8 +99,10 @@ public class GridSampleDimension implements SampleDimension, Serializable {
     private GridSampleDimension inverse;
 
     /**
-     * The category list for this sample dimension, or {@code null} if this sample
-     * dimension has no category. This field is read by {@code SampleTranscoder} only.
+     * The category list for this sample dimension, or {@code null} if this sample dimension
+     * has no category and no units. Note that it may happen in some occasions that this field
+     * is a non-null empty list. This happen if the users specified units of measurement but no
+     * range of values, in which case it was not possible to build {@link Category} instances.
      */
     final CategoryList categories;
 
@@ -615,9 +617,14 @@ public class GridSampleDimension implements SampleDimension, Serializable {
     }
 
     /** Constructs a list of categories. Used by constructors only. */
-    private static CategoryList list(final Category[] categories, final Unit<?> units) {
+    private static CategoryList list(Category[] categories, final Unit<?> units) {
         if (categories == null || categories.length == 0) {
-            return null;
+            if (units == null) {
+                return null;
+            }
+            if (categories == null) {
+                categories = new Category[0];
+            }
         }
         final CategoryList list = new CategoryList(categories, units);
         if (CategoryList.isGeophysics(categories, false)) return list;
@@ -648,7 +655,7 @@ public class GridSampleDimension implements SampleDimension, Serializable {
             // we need to build one. Let's use the category list in
             // order to build the name of the sample dimension
             if (list != null) {
-                this.description = list.getName();
+                this.description = list.new Name();
             } else {
                 this.description = Vocabulary.formatInternational(Vocabulary.Keys.UNTITLED);
             }
@@ -1442,7 +1449,7 @@ public class GridSampleDimension implements SampleDimension, Serializable {
      */
     @Override
     public int hashCode() {
-        return (categories!=null) ? categories.hashCode() : (int) serialVersionUID;
+        return (categories != null) ? categories.hashCode() : (int) serialVersionUID;
     }
 
     /**
