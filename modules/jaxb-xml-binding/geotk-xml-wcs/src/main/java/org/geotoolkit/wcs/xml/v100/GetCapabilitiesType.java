@@ -154,6 +154,11 @@ public class GetCapabilitiesType implements GetCapabilities {
             public List<String> getVersion() {
                 return Arrays.asList(version);
             }
+
+            @Override
+            public void addVersion(final String v) {
+                version = v;
+            }
         };
     }
 
