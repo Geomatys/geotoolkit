@@ -67,8 +67,7 @@ public class JAXBFeatureTypeWriter extends AbstractConfigurable implements XmlFe
     private static final Import GML_IMPORT_321 = new Import("http://www.opengis.net/gml/3.2", "http://schemas.opengis.net/gml/3.2.1/gml.xsd");
 
     private static final QName FEATURE_NAME_311 = new QName("http://www.opengis.net/gml", "_Feature");
-
-    private static final QName FEATURE_NAME_321 = new QName("http://www.opengis.net/gml/3.2", "_Feature");
+    private static final QName FEATURE_NAME_321 = new QName("http://www.opengis.net/gml/3.2", "AbstractFeatureType");
 
     private int lastUnknowPrefix = 0;
 
@@ -260,7 +259,7 @@ public class JAXBFeatureTypeWriter extends AbstractConfigurable implements XmlFe
         } else {
             extension = new ExtensionType(FEATURE_NAME_311, sequence);
         }
-        return  new ComplexContent(extension);
+        return new ComplexContent(extension);
     }
 
      /**

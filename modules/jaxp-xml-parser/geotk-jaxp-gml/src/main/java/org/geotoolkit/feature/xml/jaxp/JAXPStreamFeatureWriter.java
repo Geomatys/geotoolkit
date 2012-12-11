@@ -88,6 +88,8 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
 
     private final String gmlVersion;
 
+    private final String wfsVersion;
+    
     private final String wfsNamespace;
 
     private final String gmlNamespace;
@@ -98,6 +100,7 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
 
     public JAXPStreamFeatureWriter(final String gmlVersion, final String wfsVersion, final Map<String, String> schemaLocations)  {
         this.gmlVersion = gmlVersion;
+        this.wfsVersion = wfsVersion;
         if (schemaLocations != null && schemaLocations.size() > 0) {
             final StringBuilder sb = new StringBuilder();
             for (Entry<String, String> entry : schemaLocations.entrySet()) {
@@ -354,7 +357,11 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
             while (iterator.hasNext()) {
                 final Feature f = iterator.next();
 
-                writer.writeStartElement("gml", "featureMember", gmlNamespace);
+                if ("2.0.0".equals(wfsVersion)) {
+                    writer.writeStartElement("wfs", "member", wfsNamespace);
+                } else {
+                    writer.writeStartElement("gml", "featureMember", gmlNamespace);
+                }
                 writeFeature(f, false);
                 writer.writeEndElement();
             }
