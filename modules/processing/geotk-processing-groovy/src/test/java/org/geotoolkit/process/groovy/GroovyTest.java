@@ -49,7 +49,7 @@ public class GroovyTest extends AbstractProcessTest{
         final String  expression = "(i>2)";
         variables.put("i",new Integer(3)) ;
         // Process
-        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("groovy", "condition");
+        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(GroovyProcessingRegistry.NAME, "condition");
 
         final ParameterValueGroup in = desc.getInputDescriptor().createValue();
         in.parameter("variables").setValue(variables);

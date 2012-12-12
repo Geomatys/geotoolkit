@@ -31,7 +31,7 @@ import static org.junit.Assert.assertNotNull;
  */
 public abstract class AbstractProcessTest {
 
-    private static final String factory = "groovy";
+    private static final String factory = GroovyProcessingRegistry.NAME;
     private String process;
 
 
