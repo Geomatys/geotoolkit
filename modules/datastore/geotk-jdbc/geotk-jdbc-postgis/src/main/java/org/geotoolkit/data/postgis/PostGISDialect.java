@@ -393,7 +393,7 @@ public class PostGISDialect extends AbstractSQLDialect {
         }
 
         // decode the type
-        Class geometryClass = (Class) TYPE_TO_CLASS_MAP.get(gType);
+        Class geometryClass = (Class) TYPE_TO_CLASS_MAP.get(gType.replaceFirst("ST_", "").toUpperCase());
         if (geometryClass == null) {
             geometryClass = Geometry.class;
         }
