@@ -273,7 +273,7 @@ public abstract class AbstractGetFeature extends AbstractRequest implements GetF
 
         final Query query = WFSXmlFactory.buildQuery(version, xmlFilter, typeNames, "1.1.0", null, null, propName);
 
-        final GetFeature request = WFSXmlFactory.buildGetFeature(version, "WFS", null, maxFeatures, null, query, ResultTypeType.RESULTS, outputFormat);
+        final GetFeature request = WFSXmlFactory.buildGetFeature(version, "WFS", null, maxFeatures, query, ResultTypeType.RESULTS, outputFormat);
 
         final URL url = new URL(serverURL);
         URLConnection conec = url.openConnection();

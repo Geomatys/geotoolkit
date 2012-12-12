@@ -106,34 +106,11 @@ public class GetFeatureType extends BaseRequestType implements GetFeature {
         this.outputFormat = outputformat;
     }
 
-    public GetFeatureType(final String service, final String version, final String handle, final Integer maxFeatures,
-            final String featureId, final List<QueryType> query, final ResultTypeType resultType, final String outputformat) {
+    public GetFeatureType(final String service, final String version, final String handle, final List<StoredQueryType> query, 
+            final Integer maxFeatures, final ResultTypeType resultType, final String outputformat) {
         super(service, version, handle);
         if (maxFeatures !=  null) {
             this.count  = maxFeatures;
-        }
-        if (featureId != null) {
-            // TODO featureId?
-        }
-        this.resultType   = resultType;
-        this.outputFormat = outputformat;
-        if (query != null) {
-            this.abstractQueryExpression = new ArrayList<JAXBElement<? extends AbstractQueryExpressionType>>();
-            final ObjectFactory factory = new ObjectFactory();
-            for (QueryType q : query) {
-                this.abstractQueryExpression.add(factory.createQuery(q));
-            }
-        }
-    }
-    
-    public GetFeatureType(final String service, final String version, final String handle, final Integer maxFeatures,
-            final List<StoredQueryType> query, final String featureId, final ResultTypeType resultType, final String outputformat) {
-        super(service, version, handle);
-        if (maxFeatures !=  null) {
-            this.count  = maxFeatures;
-        }
-        if (featureId != null) {
-            // TODO featureId?
         }
         this.resultType   = resultType;
         this.outputFormat = outputformat;
@@ -396,10 +373,5 @@ public class GetFeatureType extends BaseRequestType implements GetFeature {
      */
     public void setResolveTimeout(int value) {
         this.resolveTimeout = value;
-    }
-
-    @Override
-    public String getFeatureId() {
-        return null;
     }
 }
