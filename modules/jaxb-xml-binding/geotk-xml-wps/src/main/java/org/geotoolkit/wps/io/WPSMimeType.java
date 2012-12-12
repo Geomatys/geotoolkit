@@ -39,7 +39,7 @@ public enum WPSMimeType {
     APP_GML("application/gml+xml"),
     APP_SHP("application/x-zipped-shp"),
 
-    OGC_WFS("application/x‐ogc-wfs"),
+    OGC_WFS("application/x-ogc-wfs"),
     OGC_WMS("application/x-ogc-wms"),
 
     //not recommended in paper

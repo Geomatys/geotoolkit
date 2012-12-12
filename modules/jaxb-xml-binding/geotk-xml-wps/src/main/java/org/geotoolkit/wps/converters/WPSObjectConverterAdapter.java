@@ -84,7 +84,7 @@ public class WPSObjectConverterAdapter<S, T> implements WPSObjectConverter<S, T>
      */
     @Override
     public T convert(S source) throws NonconvertibleObjectException {
-        return null;
+        return this.convert(source, null);
     }
 
     /**
