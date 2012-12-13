@@ -40,6 +40,7 @@ import javax.media.jai.OpImage;
 import javax.media.jai.RenderedOp;
 import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.geotoolkit.coverage.grid.GridEnvelope2D;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.CoverageStoreException;
@@ -58,11 +59,14 @@ import org.geotoolkit.style.function.CompatibleColorModel;
 import org.geotoolkit.display2d.style.raster.ShadedReliefOp;
 import org.geotoolkit.display2d.style.raster.StatisticOp;
 import org.geotoolkit.filter.visitor.DefaultFilterVisitor;
+import org.geotoolkit.geometry.Envelope2D;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.image.jai.FloodFill;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.map.DefaultCoverageMapLayer;
+import org.geotoolkit.metadata.iso.spatial.PixelTranslation;
 import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.geotoolkit.referencing.operation.transform.LinearTransform;
 import org.geotoolkit.style.StyleConstants;
 import org.geotoolkit.style.function.Categorize;
@@ -83,6 +87,7 @@ import org.opengis.geometry.Envelope;
 import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
+import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.style.ChannelSelection;
 import org.opengis.style.ColorMap;
@@ -199,12 +204,39 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
                 final CoordinateReferenceSystem candidate2D = CRSUtilities.getCRS2D(coverageCRS);
                 if(!CRS.equalsIgnoreMetadata(candidate2D,targetCRS) ){
 
-                    final GridGeometry2D gridgeom = new GridGeometry2D(
-                            new GeneralGridEnvelope(renderingContext.getPaintingDisplayBounds(), 2),
-                            renderingContext.getPaintingObjectiveBounds2D());
+                    //calculate best intersection area
+                    final Envelope2D covEnv = dataCoverage.getEnvelope2D();
+                    final GeneralEnvelope tmp = new GeneralEnvelope(renderingContext.getPaintingObjectiveBounds2D());                    
+                    tmp.intersect(CRS.transform(covEnv, targetCRS));
+                    
+                    if(tmp.isNull() || tmp.isEmpty()){
+                        dataCoverage = null;
+                    }else{
+                        //calculate gridgeometry
+                        final AffineTransform2D trs = renderingContext.getObjectiveToDisplay();
+                        final GeneralEnvelope dispEnv = CRS.transform(trs, tmp);
+                        final int width = (int)Math.round(dispEnv.getSpan(0));
+                        final int height = (int)Math.round(dispEnv.getSpan(1));
+                        
+                        if(width<=0 || height<=0){
+                            dataCoverage = null;
+                        }else{
+                            final GeneralGridEnvelope ge = new GeneralGridEnvelope(
+                                    new int[]{0,0}, 
+                                    new int[]{width,height},
+                                    false);
+                            final AffineTransform gridToCrs = new AffineTransform(renderingContext.getDisplayToObjective());
+                            gridToCrs.translate((int)dispEnv.getMinimum(0), (int)dispEnv.getMinimum(1));
+                            final GridGeometry2D gridgeom = new GridGeometry2D(
+                                    ge, PixelOrientation.UPPER_LEFT, 
+                                    new AffineTransform2D(gridToCrs), targetCRS, null);
 
-                    isReprojected = true;
-                    dataCoverage = (GridCoverage2D) Operations.DEFAULT.resample(dataCoverage, targetCRS, gridgeom, null);
+                            isReprojected = true;
+                            //TODO we should provide the gridgeometry, but there is a 1/2 pixel displacement
+                            //dataCoverage = (GridCoverage2D) Operations.DEFAULT.resample(dataCoverage, targetCRS, gridgeom, null);
+                            dataCoverage = (GridCoverage2D) Operations.DEFAULT.resample(dataCoverage, targetCRS, null, null);
+                        }
+                    }
                 }
             } catch (CoverageProcessingException ex) {
                 monitor.exceptionOccured(ex, Level.WARNING);

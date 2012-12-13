@@ -18,6 +18,8 @@ package org.geotoolkit.display2d.container.stateless;
 
 import java.awt.Dimension;
 import java.awt.Point;
+import java.awt.geom.AffineTransform;
+import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -309,7 +311,7 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
         }
         
         Object input = tile.getInput();
-        final RenderedImage image;
+        RenderedImage image;
         if(input instanceof RenderedImage){
             image = (RenderedImage) input;
         }else{
@@ -325,7 +327,18 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
                 ImageIOUtilities.releaseReader(reader);
             }
         }
-                
+        
+        //check the crs
+        if(!CRS.equalsIgnoreMetadata(tileCRS,objCRS2D) ){            
+            //will be reprojected, we must check that image has alpha support
+            //otherwise we will have black borders after reprojection
+            if(!image.getColorModel().hasAlpha()){
+                final BufferedImage buffer = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
+                buffer.createGraphics().drawRenderedImage(image, new AffineTransform());
+                image = buffer;
+            }            
+        }
+        
         //build the coverage ---------------------------------------------------
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
         gcb.setName("tile");
