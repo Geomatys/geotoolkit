@@ -144,12 +144,12 @@ public class XMlCoverageReference implements CoverageReference, PyramidalModel{
 
     @Override
     public List<GridSampleDimension> getSampleDimensions(int index) throws DataStoreException {
-        throw new DataStoreException("Not supported.");
+        return null;
     }
 
     @Override
     public void createSampleDimension(List<GridSampleDimension> dimensions, final Map<String, Object> analyse) throws DataStoreException {
-        throw new DataStoreException("Not supported.");
+        throw new DataStoreException("Writing not supported.");
     }
 
 }
