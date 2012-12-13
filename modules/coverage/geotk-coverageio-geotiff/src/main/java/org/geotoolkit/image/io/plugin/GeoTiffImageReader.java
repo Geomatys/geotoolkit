@@ -111,33 +111,23 @@ public class GeoTiffImageReader extends ImageReaderAdapter {
             if(super.canDecodeInput(source)){
                 //todo must find a way to check that this tiff has the geo tags.
                 try{
-                    source = IOUtilities.tryToFile(source);
-                    final String str = IOUtilities.extension(source);
-                    if(str != null){
-                        if(!(str.equalsIgnoreCase("tif") ||
-                             str.equalsIgnoreCase("tiff"))){
-                            return false;
-                        }
-
-                        try{
-                            final GeoTiffImageReader reader = new GeoTiffImageReader(this);
-                            reader.setInput(source);
-                            reader.getImageMetadata(0);
-                        }catch(IOException ex){
-                            //failed to read metadatas
-                            return false;
-                        }
-                        //ok
-                    }else{
-                        return false;
+                    final GeoTiffImageReader reader = new GeoTiffImageReader(this);
+                    if (source instanceof ImageInputStream) {
+                       ((ImageInputStream) source).mark();
                     }
+                    reader.setInput(source);
+                    reader.getImageMetadata(0);
+                     if (source instanceof ImageInputStream) {
+                       ((ImageInputStream) source).reset();
+                    }
+                    return true;                    
                 }catch(IOException ex){
+                    return false;
                     //maybe it's a stream
                 }
-                return true;
-            }else{
-                return false;
             }
+            
+            return false;
         }
 
         @Override
