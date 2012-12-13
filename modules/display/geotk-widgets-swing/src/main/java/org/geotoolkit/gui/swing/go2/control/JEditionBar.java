@@ -82,6 +82,7 @@ public class JEditionBar extends AbstractMapControlBar implements ActionListener
         final JPanel pane = new JPanel(new GridBagLayout());
         final JLabel lbl1 = new JLabel(MessageBundle.getString("layers"));
         final JLabel lbl2 = new JLabel(MessageBundle.getString("editTool"));
+        final JButton active = new JButton(MessageBundle.getString("ok"));
         final JScrollPane pane1 = new JScrollPane(guiLayers);
         final JScrollPane pane2 = new JScrollPane(guiTools);
         pane1.setPreferredSize(new Dimension(280, 140));
@@ -105,12 +106,18 @@ public class JEditionBar extends AbstractMapControlBar implements ActionListener
         cst.gridy = y++;
         cst.weighty = 1;
         pane.add(pane2,cst);
+        cst.gridy = y++;
+        cst.gridx = 1;
+        cst.weighty = 1;
+        cst.weightx = 0;
+        pane.add(active,cst);
 
         menu.add(pane);
 
         guiEdit = DropDownButtonFactory.createDropDownButton(IconBundle.getIcon("16_edit_geom"), menu);
         guiEdit.setToolTipText(MessageBundle.getString("map_edit"));
         guiEdit.addActionListener(this);
+        active.addActionListener(this);
         add(guiEdit);
         add(commitAction);
         add(rollbackAction);
