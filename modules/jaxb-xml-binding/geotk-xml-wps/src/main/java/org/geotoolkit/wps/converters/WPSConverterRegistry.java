@@ -63,6 +63,7 @@ public class WPSConverterRegistry {
         register(ComplexToGeometryArrayConverter            .getInstance());
         register(ComplexToGeometryConverter                 .getInstance());
         register(ComplexToRendredImageConverter             .getInstance());
+        register(ComplexToCoverageConverter                 .getInstance());
 
         //ReferenceType -> Object Converters
         register(ReferenceToAffineTransformConverter        .getInstance());
@@ -82,6 +83,7 @@ public class WPSConverterRegistry {
         register(GeometryArrayToComplexConverter            .getInstance());
         register(GeometryToComplexConverter                 .getInstance());
         register(RenderedImageToComplexConverter            .getInstance());
+        register(CoverageToComplexConverter                 .getInstance());
 
         //Object -> ReferenceType converters
         register(CoverageToReferenceConverter               .getInstance());

@@ -24,6 +24,7 @@ import java.io.File;
 import java.util.*;
 import javax.imageio.ImageIO;
 import javax.measure.unit.Unit;
+import org.geotoolkit.coverage.grid.GridCoverage2D;
 
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.ows.xml.v110.BoundingBoxType;
@@ -40,6 +41,7 @@ import org.geotoolkit.wps.xml.v100.ComplexDataType;
 import org.geotoolkit.wps.xml.v100.DataType;
 import org.geotoolkit.wps.xml.v100.ReferenceType;
 import org.opengis.coverage.Coverage;
+import org.opengis.coverage.grid.GridCoverage;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
@@ -107,26 +109,18 @@ public final class WPSIO {
         }
 
         //  Coverage
-        for (final String readerMime : ImageIO.getReaderMIMETypes()) {
-            if (!readerMime.isEmpty()) {
-                if (readerMime.equals("image/png")) {
-                    FORMATSUPPORTS.add(new FormatSupport(Coverage.class, IOType.INPUT, readerMime, null, null, true));
-                } else {
-                    FORMATSUPPORTS.add(new FormatSupport(Coverage.class, IOType.INPUT, readerMime, null, null, false));
-                }
-            }
-        }
-
-        for (final String writerMime : ImageIO.getWriterMIMETypes()) {
-            if (!writerMime.isEmpty()) {
-                if (writerMime.equals("image/png")) {
-                    FORMATSUPPORTS.add(new FormatSupport(Coverage.class, IOType.OUTPUT, writerMime, null, null, true));
-                } else {
-                    FORMATSUPPORTS.add(new FormatSupport(Coverage.class, IOType.OUTPUT, writerMime, null, null, false));
-                }
-            }
-        }
-
+        FORMATSUPPORTS.add(new FormatSupport(GridCoverage2D.class, IOType.BOTH, WPSMimeType.IMG_GEOTIFF.val(), null, null, true));
+        FORMATSUPPORTS.add(new FormatSupport(GridCoverage2D.class, IOType.BOTH, WPSMimeType.IMG_GEOTIFF.val(),  WPSEncoding.BASE64.getValue(), null, false));
+        FORMATSUPPORTS.add(new FormatSupport(GridCoverage2D.class, IOType.BOTH, WPSMimeType.IMG_GEOTIFF_BIS.val(), null, null, false));
+        FORMATSUPPORTS.add(new FormatSupport(GridCoverage2D.class, IOType.BOTH, WPSMimeType.IMG_GEOTIFF_BIS.val(), WPSEncoding.BASE64.getValue(), null, false));
+        
+        //TODO test NetCDF & GRIB in base64
+        FORMATSUPPORTS.add(new FormatSupport(GridCoverage2D.class, IOType.INPUT, WPSMimeType.APP_NETCDF.val(), null, null, false));
+        //FORMATSUPPORTS.add(new FormatSupport(GridCoverage2D.class, IOType.INPUT, WPSMimeType.APP_NETCDF.val(), WPSEncoding.BASE64.getValue(), null, false));
+        FORMATSUPPORTS.add(new FormatSupport(GridCoverage2D.class, IOType.INPUT, WPSMimeType.APP_GRIB.val(), null, null, false));
+        //FORMATSUPPORTS.add(new FormatSupport(GridCoverage2D.class, IOType.INPUT, WPSMimeType.APP_GRIB.val(), WPSEncoding.BASE64.getValue(), null, false));
+        
+        
         FORMATSUPPORTS.add(new FormatSupport(AffineTransform.class, IOType.INPUT, WPSMimeType.TEXT_XML.val(), WPSEncoding.UTF8.getValue(), WPSSchema.MATHML_3.getValue(), true));
 
         FORMATSUPPORTS.add(new FormatSupport(Number.class, IOType.BOTH, null, WPSEncoding.UTF8.getValue(), null, true));

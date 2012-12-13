@@ -16,12 +16,10 @@
  */
 package org.geotoolkit.wps.converters.inputs.complex;
 import java.awt.image.RenderedImage;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
-import javax.imageio.ImageIO;
 import org.geotoolkit.util.FileUtilities;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
 import org.geotoolkit.wps.converters.WPSConverterRegistry;
@@ -30,6 +28,7 @@ import org.geotoolkit.wps.xml.v100.ComplexDataType;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import static org.geotoolkit.test.Assert.*;
+import org.geotoolkit.wps.converters.ConvertersTestUtils;
 
 /**
  * 
@@ -42,24 +41,23 @@ public class ComplexToRenderedImageConvereterTest {
     public void testConversion() throws NonconvertibleObjectException, IOException  {
         final WPSObjectConverter<ComplexDataType, RenderedImage> converter = WPSConverterRegistry.getInstance().getConverter(ComplexDataType.class, RenderedImage.class);
         
-        final InputStream expectedStream = ComplexToRenderedImageConvereterTest.class.getResourceAsStream("/expected/clouds_base64");
+        final InputStream expectedStream = ComplexToRenderedImageConvereterTest.class.getResourceAsStream("/expected/image_base64");
         String encodedImage = FileUtilities.getStringFromStream(expectedStream);
         
         final Map<String, Object> param = new HashMap<String, Object>();
-        param.put(WPSObjectConverter.MIME, "img/jpg");
+        param.put(WPSObjectConverter.MIME, "img/tiff");
         param.put(WPSObjectConverter.ENCODING, "base64");
         
         final ComplexDataType complex = new ComplexDataType();
         complex.setEncoding("base64");
-        complex.setMimeType("image/jpg");
+        complex.setMimeType("image/tiff");
         complex.setSchema(null);
         complex.getContent().add(encodedImage);
         
         final RenderedImage convertedImage = converter.convert(complex, param);
         assertNotNull(convertedImage);
         
-        final InputStream inStream = ComplexToRenderedImageConvereterTest.class.getResourceAsStream("/data/coverage/clouds.jpg");
-        final RenderedImage expectedImage = ImageIO.read(inStream);
+        final RenderedImage expectedImage = ConvertersTestUtils.makeRendredImage();
         
         assertRasterEquals(expectedImage, convertedImage);
         

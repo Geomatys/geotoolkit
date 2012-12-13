@@ -16,47 +16,52 @@
  */
 package org.geotoolkit.wps.converters.inputs.complex;
 
-import java.awt.image.BufferedImage;
-import java.awt.image.RenderedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.imageio.ImageIO;
+import javax.imageio.stream.ImageInputStream;
+import javax.imageio.stream.MemoryCacheImageInputStream;
 import net.iharder.Base64;
+import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.geotoolkit.coverage.io.CoverageIO;
+import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
 import org.geotoolkit.wps.io.WPSEncoding;
 import org.geotoolkit.wps.xml.v100.ComplexDataType;
 
 /**
- * Convert an base64 encoded coverage into a RenderedImage.
+ * Convert an base64 encoded coverage into a GridCoverage2D.
  * 
- * @author Quentin Boileau (Geomatys)
+ * @author Quentin Boileau (Geomatys).
  */
-public class ComplexToRendredImageConverter extends AbstractComplexInputConverter {
+public class ComplexToCoverageConverter extends AbstractComplexInputConverter {
 
-    private static ComplexToRendredImageConverter INSTANCE;
+    private static ComplexToCoverageConverter INSTANCE;
 
-    private ComplexToRendredImageConverter(){
+    private ComplexToCoverageConverter(){
     }
 
-    public static synchronized ComplexToRendredImageConverter getInstance(){
+    public static synchronized ComplexToCoverageConverter getInstance(){
         if(INSTANCE == null){
-            INSTANCE = new ComplexToRendredImageConverter();
+            INSTANCE = new ComplexToCoverageConverter();
         }
         return INSTANCE;
     }
-    
+
     @Override
     public Class<? extends Object> getTargetClass() {
-        return RenderedImage.class;
+        return GridCoverage2D.class;
     }
 
     @Override
-    public RenderedImage convert(ComplexDataType source, Map<String, Object> params) throws NonconvertibleObjectException {
+    public GridCoverage2D convert(ComplexDataType source, Map<String, Object> params) throws NonconvertibleObjectException {
         
-        try {
+          try {
             if (params.get(ENCODING).equals(WPSEncoding.BASE64.getValue())) {
                 final List<Object> data = source.getContent();
                 if (data.size() != 1) {
@@ -67,17 +72,21 @@ public class ComplexToRendredImageConverter extends AbstractComplexInputConverte
                 if (byteData != null && byteData.length > 0) {
                     final InputStream is = new ByteArrayInputStream(byteData);
                     if (is != null) {
-                        final BufferedImage outImg = ImageIO.read(is);
-                        return outImg;
+                        final ImageInputStream inStream = ImageIO.createImageInputStream(is);
+                        final GridCoverage2D outCoverage = (GridCoverage2D) CoverageIO.read(inStream);
+                        return outCoverage;
                     }
                 }
                 throw new NonconvertibleObjectException("Error during base64 decoding.");
             } else {
                 throw new NonconvertibleObjectException("Encoding should be in \"base64\"");
             }
+        } catch (CoverageStoreException ex) {
+            throw new NonconvertibleObjectException(ex.getMessage(), ex);
         } catch (IOException ex) {
             throw new NonconvertibleObjectException(ex.getMessage(), ex);
         }
+        
     }
     
 }

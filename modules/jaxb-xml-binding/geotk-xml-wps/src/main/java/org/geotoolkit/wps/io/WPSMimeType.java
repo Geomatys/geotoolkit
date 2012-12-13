@@ -38,12 +38,15 @@ public enum WPSMimeType {
     APP_GEOJSON("application/geojson"),
     APP_GML("application/gml+xml"),
     APP_SHP("application/x-zipped-shp"),
-
+    APP_NETCDF("application/netcdf"),
+    APP_GRIB("application/x-ogc-grib"),
+    
     OGC_WFS("application/x-ogc-wfs"),
     OGC_WMS("application/x-ogc-wms"),
 
     //not recommended in paper
     TEXT_XML("text/xml"),
+    IMG_GEOTIFF_BIS("image/geotiff"),
     TEXT_GML("text/gml"),
     TEXT_PLAIN("text/plain");
     private String mime;
@@ -57,7 +60,7 @@ public enum WPSMimeType {
     }
 
     /**
-     * Search a WPSMimeType from a Sring code.
+     * Search a WPSMimeType from a String code.
      * @param str
      * @return the searched WPSMimeType or {@code null} if not found.
      */

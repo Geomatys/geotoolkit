@@ -15,12 +15,18 @@
  *    Lesser General Public License for more details.
  */
 package org.geotoolkit.wps.converters.outputs.complex;
-import java.awt.image.RenderedImage;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.geotoolkit.coverage.io.CoverageIO;
+import org.geotoolkit.coverage.io.CoverageStoreException;
+import org.geotoolkit.lang.Setup;
 import org.geotoolkit.util.FileUtilities;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
 import org.geotoolkit.wps.converters.ConvertersTestUtils;
@@ -35,29 +41,33 @@ import static org.junit.Assert.*;
  * 
  * @author Quentin Boileau (Geomatys)
  */
-public class RenderedImageToComplexConverterTest {
+public class CoverageToComplexConverterTest {
     
     
     @Test
     public void testConversion() throws NonconvertibleObjectException, IOException  {
-        final WPSObjectConverter<RenderedImage, ComplexDataType> converter = WPSConverterRegistry.getInstance().getConverter(RenderedImage.class, ComplexDataType.class);
+        Setup.initialize(null);
         
-        //final InputStream inStream = RenderedImageToComplexConverterTest.class.getResourceAsStream("/data/coverage/clouds.jpg");
-        final RenderedImage img = ConvertersTestUtils.makeRendredImage();
+        final WPSObjectConverter<GridCoverage2D, ComplexDataType> converter = WPSConverterRegistry.getInstance().getConverter(GridCoverage2D.class, ComplexDataType.class);
+        
+        final GridCoverage2D coverage = ConvertersTestUtils.makeCoverage();
         final Map<String, Object> param = new HashMap<String, Object>();
-        param.put(WPSObjectConverter.MIME, WPSMimeType.IMG_TIFF.val());
+        param.put(WPSObjectConverter.MIME, WPSMimeType.IMG_GEOTIFF.val());
         param.put(WPSObjectConverter.ENCODING, "base64");
         
-        final ComplexDataType complex = converter.convert(img, param);
+        final ComplexDataType complex = converter.convert(coverage, param);
         final List<Object> content = complex.getContent();
-        final String encodedImage = (String) content.get(0);
+        final String encodedCvg = (String) content.get(0);
+        FileUtilities.stringToFile(new File("/home/qboileau/coverage_base64"), encodedCvg);
         
-        final InputStream expectedStream = RenderedImageToComplexConverterTest.class.getResourceAsStream("/expected/image_base64");
+        final InputStream expectedStream = RenderedImageToComplexConverterTest.class.getResourceAsStream("/expected/coverage_base64");
         String expectedString = FileUtilities.getStringFromStream(expectedStream);
         expectedString = expectedString.trim();
         
-        assertEquals(expectedString, encodedImage);
+        assertEquals(expectedString, encodedCvg);
         
     }
+    
+    
     
 }
