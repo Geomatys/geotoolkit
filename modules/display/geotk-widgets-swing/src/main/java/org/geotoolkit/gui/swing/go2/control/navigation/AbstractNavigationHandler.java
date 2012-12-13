@@ -25,6 +25,7 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 
 import org.geotoolkit.display2d.canvas.J2DCanvas;
+import org.geotoolkit.display2d.canvas.J2DCanvasSwing;
 import org.geotoolkit.gui.swing.go2.JMap2D;
 import org.geotoolkit.gui.swing.go2.decoration.InformationDecoration.LEVEL;
 
@@ -44,6 +45,11 @@ public class AbstractNavigationHandler implements CanvasHandler{
         this.map = map;
     }
 
+    protected boolean isStateFull(){
+        if(map == null) return false;
+        return map.getCanvas() instanceof J2DCanvasSwing;
+    }    
+    
     /**
      * Make a zoom on the map at the given point
      */

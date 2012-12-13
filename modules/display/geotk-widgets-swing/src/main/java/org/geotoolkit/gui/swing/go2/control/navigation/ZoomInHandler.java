@@ -107,8 +107,10 @@ public class ZoomInHandler extends AbstractNavigationHandler {
             if (mousebutton == MouseEvent.BUTTON1) {
 
             } else if (mousebutton == MouseEvent.BUTTON3) {
-                decorationPane.setBuffer(map.getCanvas().getSnapShot());
-                decorationPane.setCoord(0, 0, map.getComponent().getWidth(), map.getComponent().getHeight(), true);
+                if(!isStateFull()){
+                    decorationPane.setBuffer(map.getCanvas().getSnapShot());
+                    decorationPane.setCoord(0, 0, map.getComponent().getWidth(), map.getComponent().getHeight(), true);
+                }
             }
 
         }
@@ -139,9 +141,13 @@ public class ZoomInHandler extends AbstractNavigationHandler {
 
             } //right mouse button : pan action
             else if (mousebutton == MouseEvent.BUTTON3) {
-                decorationPane.setFill(false);
-                decorationPane.setCoord(-10, -10,-10, -10, false);
-                processDrag(startX, startY, endX, endY);
+                
+                if(!isStateFull()){
+                    decorationPane.setBuffer(null);
+                    decorationPane.setFill(false);
+                    decorationPane.setCoord(-10, -10,-10, -10, false);
+                    processDrag(startX, startY, endX, endY);
+                }
             }
 
             lastX = 0;
@@ -182,8 +188,13 @@ public class ZoomInHandler extends AbstractNavigationHandler {
                 if ((lastX > 0) && (lastY > 0)) {
                     int dx = lastX - startX;
                     int dy = lastY - startY;
-                    decorationPane.setFill(false);
-                    decorationPane.setCoord(dx, dy, map.getComponent().getWidth(), map.getComponent().getHeight(), true);
+                    
+                    if(isStateFull()){
+                        processDrag(lastX, lastY, x, y);
+                    }else{
+                        decorationPane.setFill(true);
+                        decorationPane.setCoord(dx, dy, map.getComponent().getWidth(), map.getComponent().getHeight(), true);
+                    }
                 }
                 lastX = x;
                 lastY = y;
