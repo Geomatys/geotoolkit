@@ -38,4 +38,6 @@ public interface Query {
     SortBy getSortBy();
     
     List<Object> getPropertyNames();
+    
+    List<String> getAliases();
 }

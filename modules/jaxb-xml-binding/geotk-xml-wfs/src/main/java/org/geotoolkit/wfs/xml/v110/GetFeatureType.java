@@ -66,8 +66,7 @@ import org.geotoolkit.wfs.xml.StoredQuery;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "GetFeatureType", propOrder = {
-    "query",
-    "featureId"
+    "query"
 })
 @XmlRootElement(name = "GetFeature")
 public class GetFeatureType extends BaseRequestType implements GetFeature {
@@ -86,9 +85,6 @@ public class GetFeatureType extends BaseRequestType implements GetFeature {
     @XmlAttribute
     @XmlSchemaType(name = "positiveInteger")
     private Integer traverseXlinkExpiry;
-    private String featureId;
-
-
 
     public GetFeatureType() {
 
@@ -101,16 +97,6 @@ public class GetFeatureType extends BaseRequestType implements GetFeature {
         this.query        = query;
         this.resultType   = resultType;
         this.outputFormat = outputformat;
-    }
-
-    public GetFeatureType(final String service, final String version, final String handle, final Integer maxFeatures,
-            final String featureId, final List<QueryType> query, final ResultTypeType resultType, final String outputformat) {
-        super(service, version, handle);
-        this.maxFeatures  = maxFeatures;
-        this.featureId    = featureId;
-        this.resultType   = resultType;
-        this.outputFormat = outputformat;
-        this.query        = query;
     }
 
     public GetFeatureType(final String service, final String version, final String handle, final Integer maxFeatures,
@@ -278,32 +264,22 @@ public class GetFeatureType extends BaseRequestType implements GetFeature {
         this.traverseXlinkExpiry = value;
     }
 
-    /**
-     * @return the featureId
-     */
-    public String getFeatureId() {
-        return featureId;
-    }
-
-    /**
-     * @param featureId the featureId to set
-     */
-    public void setFeatureId(final String featureId) {
-        this.featureId = featureId;
-    }
-
+    @Override
     public List<? extends StoredQuery> getStoredQuery() {
         return new ArrayList();
     }
 
+    @Override
     public ResolveValueType getResolve() {
         return null;
     }
 
+    @Override
     public String getResolveDepth() {
         return null;
     }
 
+    @Override
     public int getResolveTimeout() {
         return -1;
     }
@@ -311,9 +287,6 @@ public class GetFeatureType extends BaseRequestType implements GetFeature {
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder(super.toString());
-        if (featureId != null) {
-            sb.append("featureId").append(featureId).append('\n');
-        }
         if (maxFeatures != null) {
             sb.append("maxFeatures").append(maxFeatures).append('\n');
         }
@@ -347,7 +320,6 @@ public class GetFeatureType extends BaseRequestType implements GetFeature {
         hash = 17 * hash + (this.maxFeatures != null ? this.maxFeatures.hashCode() : 0);
         hash = 17 * hash + (this.traverseXlinkDepth != null ? this.traverseXlinkDepth.hashCode() : 0);
         hash = 17 * hash + (this.traverseXlinkExpiry != null ? this.traverseXlinkExpiry.hashCode() : 0);
-        hash = 17 * hash + (this.featureId != null ? this.featureId.hashCode() : 0);
         return hash;
     }
 
@@ -359,8 +331,7 @@ public class GetFeatureType extends BaseRequestType implements GetFeature {
 
         if (obj instanceof GetFeatureType && super.equals(obj)) {
             GetFeatureType that = (GetFeatureType) obj;
-            return Utilities.equals(this.featureId, that.featureId) &&
-                   Utilities.equals(this.maxFeatures, that.maxFeatures) &&
+            return Utilities.equals(this.maxFeatures, that.maxFeatures) &&
                    Utilities.equals(this.outputFormat, that.outputFormat) &&
                    Utilities.equals(this.query, that.query) &&
                    Utilities.equals(this.resultType, that.resultType) &&

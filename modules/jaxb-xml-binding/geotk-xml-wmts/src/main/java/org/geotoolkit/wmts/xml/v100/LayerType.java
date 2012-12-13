@@ -79,8 +79,8 @@ public class LayerType extends DatasetDescriptionSummaryBaseType {
 
     }
 
-    public LayerType(final String layerName, final String remarks, final BoundingBoxType bbox, final List<Style> style, final List<Dimension> dimension) {
-        super(layerName, remarks, Arrays.asList(bbox));
+    public LayerType(final String identifier, final String title, final String remarks, final BoundingBoxType bbox, final List<Style> style, final List<Dimension> dimension) {
+        super(identifier, title, remarks, Arrays.asList(bbox));
         this.style     = style;
         this.dimension = dimension;
     }
@@ -135,6 +135,15 @@ public class LayerType extends DatasetDescriptionSummaryBaseType {
             tileMatrixSetLink = new ArrayList<TileMatrixSetLink>();
         }
         return this.tileMatrixSetLink;
+    }
+    
+    public void addTileMatrixSetLink(final TileMatrixSetLink tmsl) {
+        if (tmsl != null) {
+            if (tileMatrixSetLink == null) {
+                tileMatrixSetLink = new ArrayList<TileMatrixSetLink>();
+            }
+            this.tileMatrixSetLink.add(tmsl);
+        }
     }
 
     /**

@@ -87,8 +87,8 @@ public class ParameterType implements Parameter {
      * {@link Object }
      * {@link String }
      * 
-     * 
      */
+    @Override
     public List<Object> getContent() {
         if (content == null) {
             content = new ArrayList<Object>();
@@ -98,26 +98,32 @@ public class ParameterType implements Parameter {
 
     /**
      * Gets the value of the name property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
      */
+    @Override
     public String getName() {
         return name;
     }
 
     /**
      * Sets the value of the name property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
      */
+    @Override
     public void setName(final String value) {
         this.name = value;
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("[ParameterType]\n");
+        if (name != null) {
+            sb.append("name:").append(name);
+        }
+        if (content != null) {
+            sb.append("content:\n");
+            for (Object o : content) {
+                sb.append(o).append('\n');
+            }
+        }
+        return sb.toString();
+    }
 }

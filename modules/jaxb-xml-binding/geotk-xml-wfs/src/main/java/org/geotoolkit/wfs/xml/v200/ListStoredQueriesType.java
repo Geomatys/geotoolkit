@@ -20,6 +20,7 @@ package org.geotoolkit.wfs.xml.v200;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.wfs.xml.ListStoredQueries;
 
@@ -42,6 +43,7 @@ import org.geotoolkit.wfs.xml.ListStoredQueries;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ListStoredQueriesType")
+@XmlRootElement(name="ListStoredQueries", namespace="http://www.opengis.net/wfs/2.0")
 public class ListStoredQueriesType extends BaseRequestType implements ListStoredQueries {
 
     public ListStoredQueriesType() {

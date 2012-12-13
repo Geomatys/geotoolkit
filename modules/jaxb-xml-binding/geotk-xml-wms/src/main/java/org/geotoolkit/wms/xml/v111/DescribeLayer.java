@@ -37,7 +37,7 @@ import org.geotoolkit.wms.xml.AbstractOperation;
     "dcpType"
 })
 @XmlRootElement(name = "DescribeLayer")
-public class DescribeLayer extends AbstractOperation {
+public class DescribeLayer implements AbstractOperation {
 
     @XmlElement(name = "Format", required = true)
     private List<Format> format;

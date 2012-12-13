@@ -36,7 +36,6 @@ import javax.xml.bind.Unmarshaller;
 import org.geotoolkit.inspire.xml.vs.ExtendedCapabilitiesType;
 import org.geotoolkit.inspire.xml.vs.LanguagesType;
 import org.geotoolkit.inspire.xml.vs.ObjectFactory;
-import org.geotoolkit.internal.jaxb.UUIDs;
 import org.geotoolkit.metadata.iso.DefaultIdentifier;
 import org.geotoolkit.metadata.iso.citation.DefaultCitation;
 import org.geotoolkit.metadata.iso.citation.DefaultContact;
@@ -134,7 +133,7 @@ public class WmsXmlBindingTest {
         org.geotoolkit.wms.xml.v111.Capability expResult = new org.geotoolkit.wms.xml.v111.Capability(null, null,null,null);
         VendorSpecificCapabilities spec = new VendorSpecificCapabilities();
 
-        BoundingBox bb1 = new BoundingBox("EPSG:310024802", -1048576, 3670016, 2621440, 8388608, null, null, null);
+        BoundingBox bb1 = new BoundingBox("EPSG:310024802", -1048576, 3670016, 2621440, 8388608, null, null);
         List<Double> res = new ArrayList<Double>();
         res.add(0.5);
         res.add(1.0);
@@ -145,7 +144,7 @@ public class WmsXmlBindingTest {
         TileSet ts = new TileSet("EPSG:310024802", bb1, res, 256, 256, "image/png", Arrays.asList("ADMINISTRATIVEUNITS.BOUNDARIES"));
         spec.getTileSet().add(ts);
 
-        BoundingBox bb2 = new BoundingBox("EPSG:310915814", -6791168, 1761280, -6553600, 2023424, null, null, null);
+        BoundingBox bb2 = new BoundingBox("EPSG:310915814", -6791168, 1761280, -6553600, 2023424, null, null);
         List<Double> res2 = new ArrayList<Double>();
         res2.add(0.5);
         res2.add(1.0);
@@ -194,7 +193,7 @@ public class WmsXmlBindingTest {
         org.geotoolkit.wms.xml.v111.Capability capa = new org.geotoolkit.wms.xml.v111.Capability(null, null,null,null);
         VendorSpecificCapabilities spec = new VendorSpecificCapabilities();
 
-        BoundingBox bb1 = new BoundingBox("EPSG:310024802", -1048576, 3670016, 2621440, 8388608, null, null, null);
+        BoundingBox bb1 = new BoundingBox("EPSG:310024802", -1048576, 3670016, 2621440, 8388608, null, null);
         List<Double> res = new ArrayList<Double>();
         res.add(0.5);
         res.add(1.0);
@@ -205,7 +204,7 @@ public class WmsXmlBindingTest {
         TileSet ts = new TileSet("EPSG:310024802", bb1, res, 256, 256, "image/png", Arrays.asList("ADMINISTRATIVEUNITS.BOUNDARIES"));
         spec.getTileSet().add(ts);
 
-        BoundingBox bb2 = new BoundingBox("EPSG:310915814", -6791168, 1761280, -6553600, 2023424, null, null, null);
+        BoundingBox bb2 = new BoundingBox("EPSG:310915814", -6791168, 1761280, -6553600, 2023424, null, null);
         List<Double> res2 = new ArrayList<Double>();
         res2.add(0.5);
         res2.add(1.0);

@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.wms.xml.AbstractStyleURL;
 
 
 /**
@@ -37,7 +38,7 @@ import javax.xml.bind.annotation.XmlType;
     "onlineResource"
 })
 @XmlRootElement(name = "StyleURL")
-public class StyleURL {
+public class StyleURL implements AbstractStyleURL {
 
     @XmlElement(name = "Format", required = true)
     private String format;
@@ -56,6 +57,18 @@ public class StyleURL {
     public StyleURL(final String format, final OnlineResource onlineResource) {
         this.format         = format;
         this.onlineResource = onlineResource;
+    }
+    
+    /**
+     * Build a new Contact person primary object.
+     */
+    public StyleURL(final AbstractStyleURL that) {
+        if (that != null) {
+            this.format         = that.getFormat();
+            if (that.getOnlineResource() != null) {
+                this.onlineResource = new OnlineResource(onlineResource);
+            }
+        }
     }
     
     /**

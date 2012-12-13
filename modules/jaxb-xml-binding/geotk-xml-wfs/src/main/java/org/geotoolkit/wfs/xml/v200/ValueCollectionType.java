@@ -23,6 +23,7 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.XMLGregorianCalendar;
@@ -58,6 +59,7 @@ import org.geotoolkit.wfs.xml.ValueCollection;
     "additionalValues",
     "truncatedResponse"
 })
+@XmlRootElement(name="ValueCollection" , namespace= "http://www.opengis.net/wfs/2.0")
 public class ValueCollectionType implements ValueCollection {
 
     private List<MemberPropertyType> member;
@@ -233,6 +235,7 @@ public class ValueCollectionType implements ValueCollection {
      *     {@link String }
      *
      */
+    @Override
     public String getNext() {
         return next;
     }
@@ -257,6 +260,7 @@ public class ValueCollectionType implements ValueCollection {
      *     {@link String }
      *
      */
+    @Override
     public String getPrevious() {
         return previous;
     }
@@ -275,7 +279,7 @@ public class ValueCollectionType implements ValueCollection {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder(super.toString());
+        final StringBuilder sb = new StringBuilder("[ValueCollectionType]");
         if (additionalValues != null) {
             sb.append("additionalValues:").append(additionalValues).append('\n');
         }

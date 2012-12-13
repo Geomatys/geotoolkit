@@ -17,6 +17,7 @@
 package org.geotoolkit.wms.xml.v130;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -28,6 +29,7 @@ import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.wms.xml.AbstractDimension;
 import org.geotoolkit.wms.xml.AbstractGeographicBoundingBox;
 import org.geotoolkit.wms.xml.AbstractLayer;
+import org.geotoolkit.wms.xml.AbstractLogoURL;
 import org.opengis.geometry.Envelope;
 
 
@@ -95,7 +97,7 @@ import org.opengis.geometry.Envelope;
     "maxScaleDenominator",
     "layer"
 })
-public class Layer extends AbstractLayer {
+public class Layer implements AbstractLayer {
 
     @XmlElement(name = "Name")
     private String name;
@@ -331,6 +333,7 @@ public class Layer extends AbstractLayer {
      * Gets the value of the boundingBox property.
      * 
      */
+    @Override
     public List<BoundingBox> getBoundingBox() {
         return boundingBox;
     }
@@ -516,6 +519,7 @@ public class Layer extends AbstractLayer {
     /**
      * @param abstract the _abstract to set
      */
+    @Override
     public void setAbstract(final String abstrac) {
         this._abstract = abstrac;
     }
@@ -526,10 +530,18 @@ public class Layer extends AbstractLayer {
     public void setKeywordList(final KeywordList keywordList) {
         this.keywordList = keywordList;
     }
+    
+    @Override
+    public void setKeywordList(final List<String> keywordList) {
+        if (keywordList != null) {
+            this.keywordList = new KeywordList(keywordList.toArray(new String[keywordList.size()]));
+        }
+    }
 
     /**
      * @param crs the crs to set
      */
+    @Override
     public void setCrs(final List<String> crs) {
         this.crs = crs;
     }
@@ -562,6 +574,15 @@ public class Layer extends AbstractLayer {
         this.attribution = attribution;
     }
 
+    @Override
+    public void setAttribution(final String title, final String href, final AbstractLogoURL logo) {
+        LogoURL l = null;
+        if (logo != null) {
+            l = new LogoURL(logo);
+        }
+        this.attribution = new Attribution(title, href, l);
+    }
+    
     /**
      * @param authorityURL the authorityURL to set
      */
@@ -569,11 +590,24 @@ public class Layer extends AbstractLayer {
         this.authorityURL = authorityURL;
     }
 
+    @Override
+    public void setAuthorityURL(final String format, final String href) {
+        this.authorityURL.add(new AuthorityURL(format, href));
+    }
+    
     /**
      * @param identifier the identifier to set
      */
     public void setIdentifier(final List<Identifier> identifier) {
         this.identifier = identifier;
+    }
+    
+    /**
+     * @param identifier the identifier to set
+     */
+    @Override
+    public void setIdentifier(final String authority, final String value) {
+        this.identifier = Arrays.asList(new Identifier(value, authority));
     }
 
     /**
@@ -583,6 +617,11 @@ public class Layer extends AbstractLayer {
         this.metadataURL = metadataURL;
     }
 
+    @Override
+    public void setMetadataURL(final String format, final String href, final String type) {
+        this.metadataURL.add(new MetadataURL(format, href, type));
+    }
+    
     /**
      * @param dataURL the dataURL to set
      */
@@ -590,6 +629,11 @@ public class Layer extends AbstractLayer {
         this.dataURL = dataURL;
     }
 
+    @Override
+    public void setDataURL(final String format, final String href) {
+        this.dataURL.add(new DataURL(format, href));
+    }
+    
     /**
      * @param featureListURL the featureListURL to set
      */
@@ -604,6 +648,20 @@ public class Layer extends AbstractLayer {
         this.style = style;
     }
 
+    @Override
+    public void updateStyle(final List<org.geotoolkit.wms.xml.Style> styles) {
+        if (styles != null) {
+            this.style = new ArrayList<Style>();
+            for (org.geotoolkit.wms.xml.Style s : styles) {
+                if (s instanceof Style) {
+                    this.style.add((Style)s);
+                } else {
+                    this.style.add(new Style(s));
+                }
+            }
+        }
+    }
+    
     /**
      * @param minScaleDenominator the minScaleDenominator to set
      */
@@ -642,6 +700,7 @@ public class Layer extends AbstractLayer {
     /**
      * @param opaque the opaque to set
      */
+    @Override
     public void setOpaque(final Integer opaque) {
         this.opaque = opaque;
     }

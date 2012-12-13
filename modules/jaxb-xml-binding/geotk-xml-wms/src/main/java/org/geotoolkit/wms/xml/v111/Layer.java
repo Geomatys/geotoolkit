@@ -17,6 +17,7 @@
 package org.geotoolkit.wms.xml.v111;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -28,6 +29,7 @@ import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.wms.xml.AbstractDimension;
 import org.geotoolkit.wms.xml.AbstractGeographicBoundingBox;
 import org.geotoolkit.wms.xml.AbstractLayer;
+import org.geotoolkit.wms.xml.AbstractLogoURL;
 import org.opengis.geometry.Envelope;
 
 
@@ -57,7 +59,7 @@ import org.opengis.geometry.Envelope;
     "scaleHint",
     "layer"
 })
-public class Layer extends AbstractLayer {
+public class Layer implements AbstractLayer {
 
     @XmlElement(name = "Name")
     private String name;
@@ -300,6 +302,7 @@ public class Layer extends AbstractLayer {
      * Gets the value of the boundingBox property.
      * 
      */
+    @Override
     public List<BoundingBox> getBoundingBox() {
         return boundingBox;
     }
@@ -388,9 +391,8 @@ public class Layer extends AbstractLayer {
      */
     @Override
     public Double getMinScaleDenominator() {
-        if (getScaleInt() != null && (getScaleInt().getMin() != null) 
-                && (!getScaleInt().getMin().isEmpty())) 
-            return (Double.valueOf(getScaleInt().getMin()) * 2525.38136138052696);
+        if (getScaleInt() != null && (getScaleInt().getMin() != null)   && (!getScaleInt().getMin().isEmpty())) 
+            {return (Double.valueOf(getScaleInt().getMin()) * 2525.38136138052696);}
         return null;
     }
 
@@ -399,9 +401,8 @@ public class Layer extends AbstractLayer {
      */
     @Override
     public Double getMaxScaleDenominator() {
-        if (getScaleInt() != null && (getScaleInt().getMax() != null) 
-                && (!getScaleInt().getMax().isEmpty())) 
-            return (Double.valueOf(getScaleInt().getMax()) * 2525.38136138052696);
+        if (getScaleInt() != null && (getScaleInt().getMax() != null)  && (!getScaleInt().getMax().isEmpty())) 
+            {return (Double.valueOf(getScaleInt().getMax()) * 2525.38136138052696);}
         return null;
     }
 
@@ -486,8 +487,9 @@ public class Layer extends AbstractLayer {
         for (int i=0;i<listExt.size();i++){  
             AbstractDimension dimTmp = list.get(i);
             Extent extTmp = listExt.get(i);
-            if(dimTmp.getDefault() == null)
+            if(dimTmp.getDefault() == null){
                 dimTmp.setDefault(extTmp.getDefault());
+            }
             dimTmp.setValue(extTmp.getvalue());
         }
    
@@ -511,6 +513,7 @@ public class Layer extends AbstractLayer {
     /**
      * @param name the name to set
      */
+    @Override
     public void setName(final String name) {
         this.name = name;
     }
@@ -518,6 +521,7 @@ public class Layer extends AbstractLayer {
     /**
      * @param title the title to set
      */
+    @Override
     public void setTitle(final String title) {
         this.title = title;
     }
@@ -525,6 +529,7 @@ public class Layer extends AbstractLayer {
     /**
      * @param abstract the _abstract to set
      */
+    @Override
     public void setAbstract(final String abstrac) {
         this._abstract = abstrac;
     }
@@ -534,6 +539,13 @@ public class Layer extends AbstractLayer {
      */
     public void setKeywordList(final KeywordList keywordList) {
         this.keywordList = keywordList;
+    }
+    
+    @Override
+    public void setKeywordList(final List<String> keywordList) {
+        if (keywordList != null) {
+            this.keywordList = new KeywordList(keywordList.toArray(new String[keywordList.size()]));
+        }
     }
 
     /**
@@ -547,6 +559,11 @@ public class Layer extends AbstractLayer {
      * @param srs the srs to set
      */
     public void setSrs(final List<String> srs) {
+        this.srs = srs;
+    }
+    
+    @Override
+    public void setCrs(final List<String> srs) {
         this.srs = srs;
     }
 
@@ -577,6 +594,15 @@ public class Layer extends AbstractLayer {
     public void setAttribution(final Attribution attribution) {
         this.attribution = attribution;
     }
+    
+    @Override
+    public void setAttribution(final String title, final String href, final AbstractLogoURL logo) {
+        LogoURL l = null;
+        if (logo != null) {
+            l = new LogoURL(logo);
+        }
+        this.attribution = new Attribution(title, href, l);
+    }
 
     /**
      * @param authorityURL the authorityURL to set
@@ -584,12 +610,25 @@ public class Layer extends AbstractLayer {
     public void setAuthorityURL(final List<AuthorityURL> authorityURL) {
         this.authorityURL = authorityURL;
     }
+    
+    @Override
+    public void setAuthorityURL(final String format, final String href) {
+        this.authorityURL.add(new AuthorityURL(format, href));
+    }
 
     /**
      * @param identifier the identifier to set
      */
     public void setIdentifier(final List<Identifier> identifier) {
         this.identifier = identifier;
+    }
+    
+    /**
+     * @param identifier the identifier to set
+     */
+    @Override
+    public void setIdentifier(final String authority, final String value) {
+        this.identifier = Arrays.asList(new Identifier(value, authority));
     }
 
     /**
@@ -599,11 +638,20 @@ public class Layer extends AbstractLayer {
         this.metadataURL = metadataURL;
     }
 
+    @Override
+    public void setMetadataURL(final String format, final String href, final String type) {
+        this.metadataURL.add(new MetadataURL(format, href, type));
+    }
     /**
      * @param dataURL the dataURL to set
      */
     public void setDataURL(final List<DataURL> dataURL) {
         this.dataURL = dataURL;
+    }
+    
+    @Override
+    public void setDataURL(final String format, final String href) {
+        this.dataURL.add(new DataURL(format, href));
     }
 
     /**
@@ -620,6 +668,20 @@ public class Layer extends AbstractLayer {
         this.style = style;
     }
 
+    @Override
+    public void updateStyle(final List<org.geotoolkit.wms.xml.Style> styles) {
+        if (styles != null) {
+            this.style = new ArrayList<Style>();
+            for (org.geotoolkit.wms.xml.Style s : styles) {
+                if (s instanceof Style) {
+                    this.style.add((Style)s);
+                } else {
+                    this.style.add(new Style(s));
+                }
+            }
+        }
+    }
+    
     /**
      * @param scaleHint the scaleHint to set
      */
@@ -651,6 +713,7 @@ public class Layer extends AbstractLayer {
     /**
      * @param opaque the opaque to set
      */
+    @Override
     public void setOpaque(final Integer opaque) {
         this.opaque = opaque;
     }

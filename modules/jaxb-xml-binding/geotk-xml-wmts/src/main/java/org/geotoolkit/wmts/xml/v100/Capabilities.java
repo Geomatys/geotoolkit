@@ -23,6 +23,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.ows.xml.AbstractCapabilitiesBase;
+import org.geotoolkit.ows.xml.Sections;
 import org.geotoolkit.ows.xml.v110.CapabilitiesBaseType;
 import org.geotoolkit.ows.xml.v110.OnlineResourceType;
 import org.geotoolkit.ows.xml.v110.OperationsMetadata;
@@ -156,4 +158,28 @@ public class Capabilities extends CapabilitiesBaseType implements WMTSResponse {
         return this.serviceMetadataURL;
     }
 
+    @Override
+    public AbstractCapabilitiesBase applySections(final Sections sections) {
+        ServiceIdentification si = null;
+        ServiceProvider       sp = null;
+        OperationsMetadata    om = null;
+        ContentsType        cont = null;
+        List<Themes>          th = null;
+        if (sections.containsSection("ServiceIdentification") || sections.containsSection("All")) {
+            si = getServiceIdentification();
+        }
+        if (sections.containsSection("ServiceProvider") || sections.containsSection("All")) {
+            sp = getServiceProvider();
+        }
+        if (sections.containsSection("OperationsMetadata") || sections.containsSection("All")) {
+            om = getOperationsMetadata();
+        }
+        if (sections.containsSection("Contents") || sections.containsSection("All")) {
+            cont = contents;
+        }
+        if (sections.containsSection("Themes") || sections.containsSection("All")) {
+            th = themes;
+        }
+        return new Capabilities(si, sp, om, "1.0.0", getUpdateSequence(), cont, th);
+    }
 }

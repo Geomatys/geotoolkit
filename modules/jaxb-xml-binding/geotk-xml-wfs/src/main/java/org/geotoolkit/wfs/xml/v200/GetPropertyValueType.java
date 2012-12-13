@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElementRef;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ogc.xml.v200.AbstractQueryExpressionType;
@@ -61,6 +62,7 @@ import org.geotoolkit.wfs.xml.StoredQuery;
 @XmlType(name = "GetPropertyValueType", propOrder = {
     "abstractQueryExpression"
 })
+@XmlRootElement(name="GetPropertyValue", namespace="http://www.opengis.net/wfs/2.0")
 public class GetPropertyValueType extends BaseRequestType implements GetPropertyValue {
 
     @XmlElementRef(name = "AbstractQueryExpression", namespace = "http://www.opengis.net/fes/2.0", type = JAXBElement.class)

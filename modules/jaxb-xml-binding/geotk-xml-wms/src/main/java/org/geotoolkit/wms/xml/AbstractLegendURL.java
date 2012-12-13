@@ -22,25 +22,25 @@ package org.geotoolkit.wms.xml;
  *
  * @module pending
  */
-public abstract class AbstractLegendURL extends AbstractURL {
+public interface AbstractLegendURL extends AbstractURL {
     
     /**
      * Gets the value of the format property.
      */
-    public abstract String getFormat();
+    String getFormat();
 
     /**
      * Gets the value of the onlineResource property.
      */
-    public abstract AbstractOnlineResource getOnlineResource();
+    AbstractOnlineResource getOnlineResource();
 
     /**
      * Gets the value of the width property.
      */
-    public abstract Integer getWidth();
+    Integer getWidth();
 
     /**
      * Gets the value of the height property.
      */
-    public abstract Integer getHeight();
+    Integer getHeight();
 }

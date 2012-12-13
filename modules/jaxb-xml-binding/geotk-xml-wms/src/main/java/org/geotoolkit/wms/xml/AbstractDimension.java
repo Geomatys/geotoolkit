@@ -24,20 +24,20 @@ import javax.xml.bind.annotation.XmlTransient;
  * @module pending
  */
 @XmlTransient
-public abstract class AbstractDimension {
+public interface AbstractDimension {
     
-    public abstract String getValue();
+    String getValue();
     
-    public abstract void setValue(String value);
+    void setValue(String value);
     
-    public abstract String getName();
+    String getName();
     
-    public abstract String getUnits();
+    String getUnits();
     
-    public abstract String getUnitSymbol();
+    String getUnitSymbol();
     
-    public abstract String getDefault();
+    String getDefault();
     
-    public abstract void setDefault(String _default);
+    void setDefault(String _default);
 
 }

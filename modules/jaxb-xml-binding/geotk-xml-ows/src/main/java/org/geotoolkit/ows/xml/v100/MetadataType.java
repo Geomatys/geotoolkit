@@ -83,11 +83,29 @@ public class MetadataType implements AbstractMetadata {
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     private String actuate;
 
-    // TODO make constructor
+    public MetadataType() {
+        
+    }
+    
+    public MetadataType(final MetadataType that) {
+        if (that != null) {
+            this.href    = that.href;
+            this.actuate = that.actuate;
+            this.arcrole = that.arcrole;
+            this.role    = that.role;
+            this.show    = that.show;
+            this.title   = that.title;
+            this.type    = that.type;
+            this.about   = that.about;
+            // unable to clone Object
+            this.abstractMetaData = that.abstractMetaData;
+        }
+    }
     
     /**
      * Gets the value of the abstractMetaData property.
      */
+    @Override
     public Object getAbstractMetaData() {
         return abstractMetaData;
     }
@@ -95,6 +113,7 @@ public class MetadataType implements AbstractMetadata {
     /**
      * Gets the value of the about property.
      */
+    @Override
     public String getAbout() {
         return about;
     }
@@ -102,6 +121,7 @@ public class MetadataType implements AbstractMetadata {
     /**
      * Gets the value of the type property.
      */
+    @Override
     public String getType() {
         if (type == null) {
             return "simple";
@@ -113,6 +133,7 @@ public class MetadataType implements AbstractMetadata {
     /**
      * Gets the value of the href property.
      */
+    @Override
     public String getHref() {
         return href;
     }
@@ -120,6 +141,7 @@ public class MetadataType implements AbstractMetadata {
     /**
      * Gets the value of the role property.
      */
+    @Override
     public String getRole() {
         return role;
     }
@@ -128,6 +150,7 @@ public class MetadataType implements AbstractMetadata {
      * Gets the value of the arcrole property.
      * 
      */
+    @Override
     public String getArcrole() {
         return arcrole;
     }
@@ -136,6 +159,7 @@ public class MetadataType implements AbstractMetadata {
      * Gets the value of the title property.
      * 
      */
+    @Override
     public String getTitle() {
         return title;
     }
@@ -144,6 +168,7 @@ public class MetadataType implements AbstractMetadata {
     * Gets the value of the show property.
     * 
     */
+    @Override
     public String getShow() {
         return show;
     }
@@ -151,6 +176,7 @@ public class MetadataType implements AbstractMetadata {
     /**
      * Gets the value of the actuate property.
      */
+    @Override
     public String getActuate() {
         return actuate;
     }
@@ -197,25 +223,33 @@ public class MetadataType implements AbstractMetadata {
     public String toString() {
         StringBuilder s = new StringBuilder();
         s.append("clas: MetadataType").append('\n');
-        if (abstractMetaData != null)
+        if (abstractMetaData != null) {
             s.append("abstractMetadata= ").append(abstractMetaData.toString());
-        if (about != null)
+        }
+        if (about != null) {
             s.append("about=").append(about).append('\n');
-        if (actuate != null)
+        }
+        if (actuate != null) {
             s.append("actuate=").append(actuate).append('\n');
-        if (arcrole != null)
+        }
+        if (arcrole != null){
             s.append("arcrole=").append(arcrole).append('\n');
-        if (href != null)
+        }
+        if (href != null) {
             s.append("href=").append(href).append('\n');
-        if (role != null)
+        }
+        if (role != null) {
             s.append("role=").append(role).append('\n');
-        if (show != null)
+        }
+        if (show != null) {
             s.append("show=").append(show).append('\n');
-        if (title != null)
+        }
+        if (title != null) {
             s.append("title=").append(title).append('\n');
-        if (type != null)
+        }
+        if (type != null) {
             s.append("type=").append(type).append('\n');
-        
+        }
         return s.toString();
     }
 }

@@ -22,8 +22,10 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlRootElement;
+import org.geotoolkit.ows.xml.Sections;
 import org.geotoolkit.wcs.xml.Content;
 import org.geotoolkit.wcs.xml.GetCapabilitiesResponse;
+import org.geotoolkit.wcs.xml.WCSResponse;
 
 
 /**
@@ -63,7 +65,7 @@ import org.geotoolkit.wcs.xml.GetCapabilitiesResponse;
     "contentMetadata"
 })
 @XmlRootElement(name="WCS_Capabilities")        
-public class WCSCapabilitiesType implements GetCapabilitiesResponse {
+public class WCSCapabilitiesType implements GetCapabilitiesResponse, WCSResponse {
 
     @XmlElement(name = "Service", required = true)
     private ServiceType service;
@@ -121,7 +123,7 @@ public class WCSCapabilitiesType implements GetCapabilitiesResponse {
     /**
      * build a new Capabilities document version 1.0.0 with only the section "ContentMetadata".
      */
-    public WCSCapabilitiesType(final ContentMetadata contentMetadata) {
+    public WCSCapabilitiesType(final ContentMetadata contentMetadata, final String updateSequence) {
         this.contentMetadata = contentMetadata;
         this.version         = "1.0.0";
     }
@@ -162,6 +164,7 @@ public class WCSCapabilitiesType implements GetCapabilitiesResponse {
     /**
      * Gets the value of the version property.
      */
+    @Override
     public String getVersion() {
         if (version == null) {
             return "1.0.0";
@@ -186,5 +189,25 @@ public class WCSCapabilitiesType implements GetCapabilitiesResponse {
     @Override
     public Content getContents() {
         return contentMetadata;
+    }
+
+    @Override
+    public WCSCapabilitiesType applySections(final Sections sections) {
+        final String requestedSection;
+        if (sections != null && !sections.getSection().isEmpty()) {
+            requestedSection = sections.getSection().get(0);
+        } else {
+            requestedSection = "/";
+        }
+        
+        if ("/WCS_Capabilities/Capability".equals(requestedSection)) {
+            return new WCSCapabilitiesType(capability);
+        } else if ("/WCS_Capabilities/Service".equals(requestedSection)) {
+            return new WCSCapabilitiesType(service);
+        } else if ("/WCS_Capabilities/ContentMetadata".equals(requestedSection)) {
+            return new WCSCapabilitiesType(contentMetadata, updateSequence);
+        } else {
+            return new WCSCapabilitiesType(service, capability, contentMetadata, updateSequence);
+        }
     }
 }

@@ -164,6 +164,10 @@ public class RandomStyleBuilder extends Factory {
 
         final Symbolizer ps;
         final AttributeDescriptor att = typ.getGeometryDescriptor();
+        // Can be null
+        if (att == null) {
+            return SF.style();
+        }
         final AttributeType type = att.getType();
         final Class cla = type.getBinding();
 

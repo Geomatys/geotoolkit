@@ -128,6 +128,7 @@ public class GetCapabilitiesType implements GetCapabilities {
         }
     }
 
+    @Override
     public void setVersion(final String value) {
         this.version = value;
     }
@@ -152,6 +153,11 @@ public class GetCapabilitiesType implements GetCapabilities {
             @Override
             public List<String> getVersion() {
                 return Arrays.asList(version);
+            }
+
+            @Override
+            public void addVersion(final String v) {
+                version = v;
             }
         };
     }

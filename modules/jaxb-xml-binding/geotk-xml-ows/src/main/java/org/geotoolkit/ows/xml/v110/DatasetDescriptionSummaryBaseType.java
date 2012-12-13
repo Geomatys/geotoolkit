@@ -77,8 +77,8 @@ public class DatasetDescriptionSummaryBaseType extends DescriptionType {
 
     }
 
-    public DatasetDescriptionSummaryBaseType(final String identifier, final String remarks, final List<BoundingBoxType> boundingBox) {
-        super(new LanguageStringType(identifier), new LanguageStringType(remarks), null);
+    public DatasetDescriptionSummaryBaseType(final String identifier, final String title, final String remarks, final List<BoundingBoxType> boundingBox) {
+        super(title, remarks, null);
         this.identifier  = new CodeType(identifier);
         this.boundingBox = boundingBox;
     }

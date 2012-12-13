@@ -16,26 +16,23 @@
  */
 package org.geotoolkit.wms.xml;
 
-import javax.xml.bind.annotation.XmlTransient;
-
 /**
  * Abstract main class for capabilities service part.
  * 
  * @author Guilhem Legal
  * @module pending
  */
-@XmlTransient
-public abstract class AbstractService {
+public interface AbstractService {
     
-    public abstract AbstractOnlineResource getOnlineResource();
+    AbstractOnlineResource getOnlineResource();
     
-    public abstract String getName();
+    String getName();
     
-    public abstract String getTitle();
+    String getTitle();
     
-    public abstract String getAbstract();
+    String getAbstract();
 
-    public abstract String getAccessConstraints();
+    String getAccessConstraints();
 
-    public abstract void setAccessConstraints(final String constraint);
+    void setAccessConstraints(final String constraint);
 }

@@ -23,7 +23,12 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.ows.xml.AbstractCapabilitiesCore;
+import org.geotoolkit.ows.xml.Sections;
 import org.geotoolkit.ows.xml.v110.CapabilitiesBaseType;
+import org.geotoolkit.ows.xml.v110.OperationsMetadata;
+import org.geotoolkit.ows.xml.v110.ServiceIdentification;
+import org.geotoolkit.ows.xml.v110.ServiceProvider;
 import org.geotoolkit.wps.xml.WPSResponse;
 
 
@@ -78,6 +83,17 @@ public class WPSCapabilitiesType extends CapabilitiesBaseType implements WPSResp
     
     public WPSCapabilitiesType(final String version, final String updateSequence) {
         super(version, updateSequence);
+    }
+    
+    public WPSCapabilitiesType(final ServiceIdentification serviceIdentification, final ServiceProvider serviceProvider,
+            final OperationsMetadata operationsMetadata, final String version, final String updateSequence, final ProcessOfferings processOfferings,
+            final Languages languages, final WSDL wsdl) {
+        super(serviceIdentification, serviceProvider, operationsMetadata, version, updateSequence);
+        this.processOfferings = processOfferings;
+        this.languages        = languages;
+        this.service          = "WPS";
+        this.lang             = "en-EN";
+        this.wsdl             = wsdl;
     }
     
     /**
@@ -202,6 +218,11 @@ public class WPSCapabilitiesType extends CapabilitiesBaseType implements WPSResp
      */
     public void setLang(final String value) {
         this.lang = value;
+    }
+
+    @Override
+    public AbstractCapabilitiesCore applySections(Sections sections) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
 }

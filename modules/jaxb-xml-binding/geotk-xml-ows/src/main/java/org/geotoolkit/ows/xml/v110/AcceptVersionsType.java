@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -80,6 +81,7 @@ public class AcceptVersionsType implements org.geotoolkit.ows.xml.AcceptVersions
     /**
      * Gets the value of the version property.
      */
+    @Override
     public List<String> getVersion() {
         if (version == null) {
             version = new ArrayList<String>();
@@ -92,8 +94,45 @@ public class AcceptVersionsType implements org.geotoolkit.ows.xml.AcceptVersions
      * 
      * @param version a number of version.
      */
+    @Override
     public void addVersion(final String version) {
         this.version.add(version);
     }
+    
+    public void addFirstVersion(final String version) {
+        this.version.add(0, version);
+    }
 
+    /**
+     * Verify that this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof AcceptVersionsType) {
+            final AcceptVersionsType that = (AcceptVersionsType) object;
+            return Utilities.equals(this.version, that.version);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 17 * hash + (this.version != null ? this.version.hashCode() : 0);
+        return hash;
+    }
+    
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("[AcceptVersionsType]\n");
+        if (version != null) {
+            for (String v : version) {
+                sb.append(v).append('\n');
+            }
+        }
+        return sb.toString();
+    }
 }

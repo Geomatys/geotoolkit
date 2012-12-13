@@ -21,11 +21,14 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.ows.xml.Sections;
 import org.geotoolkit.ows.xml.v110.CapabilitiesBaseType;
 import org.geotoolkit.ows.xml.v110.OperationsMetadata;
+import org.geotoolkit.ows.xml.v110.SectionsType;
 import org.geotoolkit.ows.xml.v110.ServiceIdentification;
 import org.geotoolkit.ows.xml.v110.ServiceProvider;
 import org.geotoolkit.wcs.xml.GetCapabilitiesResponse;
+import org.geotoolkit.wcs.xml.WCSResponse;
 
 
 /**
@@ -53,7 +56,7 @@ import org.geotoolkit.wcs.xml.GetCapabilitiesResponse;
     "contents"
 })
 @XmlRootElement(name = "Capabilities")
-public class Capabilities extends CapabilitiesBaseType implements GetCapabilitiesResponse {
+public class Capabilities extends CapabilitiesBaseType implements GetCapabilitiesResponse, WCSResponse {
 
     @XmlElement(name = "Contents")
     private Contents contents;
@@ -83,11 +86,38 @@ public class Capabilities extends CapabilitiesBaseType implements GetCapabilitie
      * Gets the value of the contents property.
      * 
      */
+    @Override
     public Contents getContents() {
         return contents;
     }
     
     public void setContents(final Contents contents) {
         this.contents = contents;
+    }
+
+    @Override
+    public Capabilities applySections(Sections sections) {
+        if (sections == null) {
+            sections = new SectionsType("All");
+        }
+        ServiceIdentification si = null;
+        ServiceProvider sp       = null;
+        OperationsMetadata om    = null;
+        Contents ct              = null;
+        //we add the static sections if the are included in the requested sections
+        if (sections.containsSection("ServiceProvider") || sections.containsSection("All")) {
+            sp = getServiceProvider();
+        }
+        if (sections.containsSection("ServiceIdentification") || sections.containsSection("All")) {
+            si = getServiceIdentification();
+        }
+        if (sections.containsSection("OperationsMetadata") || sections.containsSection("All")) {
+            om = getOperationsMetadata();
+        }
+        // if the user does not request the contents section we can return the result.
+        if (sections.containsSection("Contents") || sections.containsSection("All")) {
+            ct = contents;
+        }
+        return new Capabilities(si, sp, om, "1.1.1", getUpdateSequence(), ct);
     }
 }

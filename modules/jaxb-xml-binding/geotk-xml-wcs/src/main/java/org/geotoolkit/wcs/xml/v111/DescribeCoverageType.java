@@ -112,10 +112,12 @@ public class DescribeCoverageType implements DescribeCoverage {
      /**
      * Gets the value of the service property.
      */
+    @Override
     public String getService() {
         return this.service;
     }
     
+    @Override
     public void setService(final String value) {
         this.service = value;
     }
@@ -131,6 +133,7 @@ public class DescribeCoverageType implements DescribeCoverage {
         return null;
     }
     
+    @Override
     public void setVersion(final String value) {
         this.version = value;
     }

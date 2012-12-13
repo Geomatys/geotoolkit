@@ -34,4 +34,14 @@ public class WCSXmlFactory {
             throw new IllegalArgumentException("unsupported version:" + version);
         }
     }
+    
+    public static GetCapabilitiesResponse createCapabilitiesResponse(final String version, final String updateSequence) {
+        if ("1.1.1".equals(version)) {
+            return new org.geotoolkit.wcs.xml.v111.Capabilities(version, updateSequence);
+        } else if ("1.0.0".equals(version)) {
+            return new org.geotoolkit.wcs.xml.v100.WCSCapabilitiesType(updateSequence);
+        } else {
+            throw new IllegalArgumentException("unsupported version:" + version);
+        }
+    }
 }

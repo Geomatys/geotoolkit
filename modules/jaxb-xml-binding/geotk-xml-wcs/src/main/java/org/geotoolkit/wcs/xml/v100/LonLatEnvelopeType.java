@@ -17,6 +17,7 @@
 package org.geotoolkit.wcs.xml.v100;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -76,6 +77,17 @@ public class LonLatEnvelopeType extends LonLatEnvelopeBaseType {
             timePosition = new ArrayList<TimePositionType>();
         }
         return this.timePosition;
+    }
+    
+    public void addTimePosition(final String... dates) {
+        if (dates != null) {
+            if (timePosition == null) {
+                timePosition = new ArrayList<TimePositionType>();
+            }
+            for (String d : dates) {
+                this.timePosition.add(new TimePositionType(d));
+            }
+        }
     }
 
 }

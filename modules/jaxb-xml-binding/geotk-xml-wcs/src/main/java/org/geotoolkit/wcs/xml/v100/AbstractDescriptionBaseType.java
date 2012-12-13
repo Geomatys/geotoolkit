@@ -103,5 +103,10 @@ public abstract class AbstractDescriptionBaseType {
     public void setMetadataLink(final List<MetadataLinkType> ml) {
         this.metadataLink = ml;
     }
+    
+    public void setMetadataLink(final String link) {
+        this.metadataLink = new ArrayList<MetadataLinkType>();
+        this.metadataLink.add(new MetadataLinkType(link));
+    }
 
 }

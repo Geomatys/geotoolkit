@@ -42,7 +42,7 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlType(name = "InterpolationMethod")
 @XmlEnum
-public enum InterpolationMethod {
+public enum InterpolationMethod implements org.geotoolkit.wcs.xml.InterpolationMethod {
 
     @XmlEnumValue("nearest neighbor")
     NEAREST_NEIGHBOR("nearest neighbor"),

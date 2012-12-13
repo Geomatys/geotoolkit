@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.wms.xml;
 
-import javax.xml.bind.annotation.XmlTransient;
 import org.opengis.metadata.extent.GeographicBoundingBox;
 
 /**
@@ -24,11 +23,6 @@ import org.opengis.metadata.extent.GeographicBoundingBox;
  * @author Guilhem Legal
  * @module pending
  */
-@XmlTransient
-public abstract class AbstractGeographicBoundingBox implements GeographicBoundingBox {
-    @Override
-    public Boolean getInclusion() {
-        return Boolean.TRUE;
-    }
+public interface AbstractGeographicBoundingBox extends GeographicBoundingBox {
 
 }

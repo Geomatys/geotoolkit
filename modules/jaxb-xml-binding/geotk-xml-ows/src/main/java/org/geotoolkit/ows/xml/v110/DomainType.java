@@ -82,6 +82,40 @@ public class DomainType extends UnNamedDomainType implements AbstractDomain {
     }
     
     /**
+     * Build a new Domain with the specified name.
+     */
+    public DomainType(final String name, final AnyValue values){
+        super(values);
+        this.name = name;
+    }
+    
+    public DomainType(final String name, final ValueType defaultValue){
+        super(defaultValue);
+        this.name = name;
+    }
+    
+    public DomainType(final String name, final NoValues noValues, final ValueType defaultValue){
+        super(noValues, defaultValue);
+        this.name = name;
+    }
+    
+    /**
+     * Build a new Domain with the specified name.
+     */
+    public DomainType(final String name, final String value){
+        super(value);
+        this.name = name;
+    }
+    
+    /**
+     * Build a new Domain with the specified list of values.
+     */
+    public DomainType(final String name, final List<String> value) {
+        
+        this.name  = name;
+    }
+    
+    /**
      * Gets the value of the name property.
      */
     @Override

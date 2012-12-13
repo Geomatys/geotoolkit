@@ -37,7 +37,7 @@ import org.geotoolkit.wms.xml.AbstractOperation;
     "dcpType"
 })
 @XmlRootElement(name = "GetFeatureInfo")
-public class GetFeatureInfo extends AbstractOperation {
+public class GetFeatureInfo implements AbstractOperation {
 
     @XmlElement(name = "Format", required = true)
     private List<Format> format;

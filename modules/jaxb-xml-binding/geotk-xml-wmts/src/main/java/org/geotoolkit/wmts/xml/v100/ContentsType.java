@@ -55,6 +55,15 @@ public class ContentsType extends ContentsBaseType {
     @XmlElement(name = "TileMatrixSet")
     private List<TileMatrixSet> tileMatrixSet;
 
+    public ContentsType() {
+        
+    }
+    
+    public ContentsType(final List<LayerType> outputLayers, final List<TileMatrixSet> tileMatrixSet) {
+        setLayers(outputLayers);
+        this.tileMatrixSet = tileMatrixSet;
+    }
+    
     /**
      * A description of the geometry of a tile fragmentation Gets the value of the tileMatrixSet property.
      * 
@@ -105,7 +114,7 @@ public class ContentsType extends ContentsBaseType {
         return layers;
     }
 
-    public void setLayers(final List<LayerType> layers) {
+    public final void setLayers(final List<LayerType> layers) {
         final ObjectFactory factory = new ObjectFactory();
         this.datasetDescriptionSummary = new ArrayList<JAXBElement<? extends DatasetDescriptionSummaryBaseType>>(layers.size());
         for (LayerType elem : layers) {

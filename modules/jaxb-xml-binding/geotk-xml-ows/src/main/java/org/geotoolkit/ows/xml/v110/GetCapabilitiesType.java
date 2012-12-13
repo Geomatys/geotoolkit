@@ -120,6 +120,27 @@ public class GetCapabilitiesType implements AbstractGetCapabilities {
     }
     
     /**
+     * inherited method from AbstractGetCapabilties
+     */
+    @Override
+    public Version getVersion() {
+        if (acceptVersions!= null && !acceptVersions.getVersion().isEmpty()) {
+            return new Version(acceptVersions.getVersion().get(0));
+        } return null;
+    }
+    
+    @Override
+    public void setVersion(final String version) {
+        if (version != null) {
+            if (acceptVersions == null) {
+                this.acceptVersions = new AcceptVersionsType(version);
+            } else {
+                 this.acceptVersions.addFirstVersion(version);
+            }
+        }
+    }
+    
+    /**
      * Gets the value of the sections property.
      */
     @Override
@@ -218,6 +239,7 @@ public class GetCapabilitiesType implements AbstractGetCapabilities {
         return Utilities.equals(this.acceptFormats,  that.acceptFormats)  &&
                Utilities.equals(this.acceptVersions, that.acceptVersions) &&
                Utilities.equals(this.sections,       that.sections)       &&
+               Utilities.equals(this.service,        that.service)       &&
                Utilities.equals(this.updateSequence, that.updateSequence);
         }
         return false;
@@ -230,17 +252,28 @@ public class GetCapabilitiesType implements AbstractGetCapabilities {
         hash = 73 * hash + (this.sections != null ? this.sections.hashCode() : 0);
         hash = 73 * hash + (this.acceptFormats != null ? this.acceptFormats.hashCode() : 0);
         hash = 73 * hash + (this.updateSequence != null ? this.updateSequence.hashCode() : 0);
+        hash = 73 * hash + (this.service != null ? this.service.hashCode() : 0);
         return hash;
     }
-
-    /**
-     * inherited method from AbstractGetCapabilties
-     */
+    
     @Override
-    public Version getVersion() {
-        if (acceptVersions!= null && !acceptVersions.getVersion().isEmpty()) {
-            return new Version(acceptVersions.getVersion().get(0));
-        } return null;
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("[").append(this.getClass().getSimpleName()).append("]\n");
+        if (service != null) {
+            sb.append("service:").append(service).append('\n');
+        }
+        if (updateSequence != null) {
+            sb.append("updateSequence:").append(updateSequence).append('\n');
+        }
+        if (acceptVersions != null) {
+            sb.append("acceptVersions:").append(acceptVersions).append('\n');
+        }
+        if (sections != null) {
+            sb.append("sections:").append(sections).append('\n');
+        }
+        if (acceptFormats != null) {
+            sb.append("acceptFormats:").append(acceptFormats).append('\n');
+        }
+        return sb.toString();
     }
-
 }

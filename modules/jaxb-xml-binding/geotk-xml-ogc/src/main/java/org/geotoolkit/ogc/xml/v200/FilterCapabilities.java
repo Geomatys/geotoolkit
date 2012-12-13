@@ -92,11 +92,11 @@ public class FilterCapabilities implements org.opengis.filter.capability.FilterC
     /**
      * Build a new filter capabilities (light version)
      */
-    public FilterCapabilities(final ScalarCapabilities scalar, final SpatialCapabilities spatial, final IdCapabilities id) {
+    public FilterCapabilities(final ScalarCapabilities scalar, final SpatialCapabilities spatial, final IdCapabilities id, final ConformanceType conformance) {
         this.spatialCapabilities = (SpatialCapabilitiesType) spatial;
         this.idCapabilities      = (IdCapabilitiesType)      id;
         this.scalarCapabilities  = (ScalarCapabilitiesType)  scalar;
-
+        this.conformance = conformance;
     }
 
     /**
@@ -131,6 +131,7 @@ public class FilterCapabilities implements org.opengis.filter.capability.FilterC
      *     {@link IdCapabilitiesType }
      *
      */
+    @Override
     public IdCapabilitiesType getIdCapabilities() {
         return idCapabilities;
     }
@@ -155,6 +156,7 @@ public class FilterCapabilities implements org.opengis.filter.capability.FilterC
      *     {@link ScalarCapabilitiesType }
      *
      */
+    @Override
     public ScalarCapabilitiesType getScalarCapabilities() {
         return scalarCapabilities;
     }
@@ -179,6 +181,7 @@ public class FilterCapabilities implements org.opengis.filter.capability.FilterC
      *     {@link SpatialCapabilitiesType }
      *
      */
+    @Override
     public SpatialCapabilitiesType getSpatialCapabilities() {
         return spatialCapabilities;
     }
@@ -203,6 +206,7 @@ public class FilterCapabilities implements org.opengis.filter.capability.FilterC
      *     {@link TemporalCapabilitiesType }
      *
      */
+    @Override
     public TemporalCapabilitiesType getTemporalCapabilities() {
         return temporalCapabilities;
     }
@@ -267,6 +271,7 @@ public class FilterCapabilities implements org.opengis.filter.capability.FilterC
         this.extendedCapabilities = value;
     }
 
+    @Override
     public String getVersion() {
         return "2.0.0";
     }

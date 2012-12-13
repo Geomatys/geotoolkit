@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElementRef;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
@@ -60,6 +61,7 @@ import org.geotoolkit.wfs.xml.*;
 @XmlSeeAlso({
     GetFeatureWithLockType.class
 })
+@XmlRootElement(name="GetFeature", namespace="http://www.opengis.net/wfs/2.0")
 public class GetFeatureType extends BaseRequestType implements GetFeature {
 
 
@@ -104,22 +106,19 @@ public class GetFeatureType extends BaseRequestType implements GetFeature {
         this.outputFormat = outputformat;
     }
 
-    public GetFeatureType(final String service, final String version, final String handle, final Integer maxFeatures,
-            final String featureId, final List<QueryType> query, final ResultTypeType resultType, final String outputformat) {
+    public GetFeatureType(final String service, final String version, final String handle, final List<StoredQueryType> query, 
+            final Integer maxFeatures, final ResultTypeType resultType, final String outputformat) {
         super(service, version, handle);
         if (maxFeatures !=  null) {
             this.count  = maxFeatures;
-        }
-        if (featureId != null) {
-            // TODO featureId?
         }
         this.resultType   = resultType;
         this.outputFormat = outputformat;
         if (query != null) {
             this.abstractQueryExpression = new ArrayList<JAXBElement<? extends AbstractQueryExpressionType>>();
             final ObjectFactory factory = new ObjectFactory();
-            for (QueryType q : query) {
-                this.abstractQueryExpression.add(factory.createQuery(q));
+            for (StoredQueryType q : query) {
+                this.abstractQueryExpression.add(factory.createStoredQuery(q));
             }
         }
     }
@@ -374,10 +373,5 @@ public class GetFeatureType extends BaseRequestType implements GetFeature {
      */
     public void setResolveTimeout(int value) {
         this.resolveTimeout = value;
-    }
-
-    @Override
-    public String getFeatureId() {
-        return null;
     }
 }

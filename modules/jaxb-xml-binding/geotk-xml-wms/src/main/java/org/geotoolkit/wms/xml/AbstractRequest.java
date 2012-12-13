@@ -16,22 +16,22 @@
  */
 package org.geotoolkit.wms.xml;
 
-import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
  * @author Guilhem Legal
  * @module pending
  */
-@XmlTransient
-public abstract class AbstractRequest {
+public interface AbstractRequest {
     
-     public abstract AbstractOperation getGetCapabilities();
+    AbstractOperation getGetCapabilities();
      
-     public abstract AbstractOperation getGetMap();
+    AbstractOperation getGetMap();
      
-     public abstract AbstractOperation getGetFeatureInfo();
+    AbstractOperation getGetFeatureInfo();
 
-     public abstract void updateURL(String url);
+    void updateURL(String url);
+    
+    AbstractRequest clone();
 
 }

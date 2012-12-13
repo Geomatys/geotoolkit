@@ -51,7 +51,7 @@ import org.geotoolkit.wms.xml.AbstractURL;
     "onlineResource"
 })
 @XmlRootElement(name = "DataURL")
-public class DataURL extends AbstractURL {
+public class DataURL implements AbstractURL {
 
     @XmlElement(name = "Format", required = true)
     private String format;

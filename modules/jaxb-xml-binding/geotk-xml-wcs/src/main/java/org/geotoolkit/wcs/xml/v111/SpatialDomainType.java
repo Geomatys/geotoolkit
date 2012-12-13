@@ -28,6 +28,7 @@ import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.v311.AbstractCoordinateOperationType;
 import org.geotoolkit.gml.xml.v311.PolygonType;
 import org.geotoolkit.ows.xml.v110.BoundingBoxType;
+import org.geotoolkit.ows.xml.v110.WGS84BoundingBoxType;
 
 /**
  * Definition of the spatial domain of a coverage. 
@@ -109,6 +110,25 @@ public class SpatialDomainType {
     public SpatialDomainType(final List<JAXBElement<? extends BoundingBoxType>> boundingBox, final GridCrsType gridCRS,
             final AbstractCoordinateOperationType transformation, final ImageCRSRefType imageCRS, final List<PolygonType> polygon) {
        this.boundingBox    = boundingBox;
+       this.gridCRS        = gridCRS;
+       this.imageCRS       = imageCRS;
+       this.polygon        = polygon;
+       this.transformation = transformation;
+    }
+    
+    /**
+     * Build a new full Spatial Domain type version 1.1.1
+     */
+    public SpatialDomainType(final WGS84BoundingBoxType geoboundingBox, final BoundingBoxType bbox, final GridCrsType gridCRS,
+            final AbstractCoordinateOperationType transformation, final ImageCRSRefType imageCRS, final List<PolygonType> polygon) {
+       this.boundingBox    = new ArrayList<JAXBElement<? extends BoundingBoxType>>();
+       final org.geotoolkit.ows.xml.v110.ObjectFactory factory = new org.geotoolkit.ows.xml.v110.ObjectFactory();
+       if (geoboundingBox != null) {
+           this.boundingBox.add(factory.createWGS84BoundingBox(geoboundingBox));
+       }
+       if (bbox != null) {
+           this.boundingBox.add(factory.createBoundingBox(bbox));
+       }
        this.gridCRS        = gridCRS;
        this.imageCRS       = imageCRS;
        this.polygon        = polygon;

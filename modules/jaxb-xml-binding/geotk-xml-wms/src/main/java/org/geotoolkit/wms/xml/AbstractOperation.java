@@ -24,12 +24,11 @@ import javax.xml.bind.annotation.XmlTransient;
  * @author Guilhem Legal
  * @module pending
  */
-@XmlTransient
-public abstract class AbstractOperation {
+public interface AbstractOperation {
     
     
-    public abstract List<String> getFormats();
+    List<String> getFormats();
     
-    public abstract List<? extends AbstractDCP> getDCPType();
+    List<? extends AbstractDCP> getDCPType();
 
 }

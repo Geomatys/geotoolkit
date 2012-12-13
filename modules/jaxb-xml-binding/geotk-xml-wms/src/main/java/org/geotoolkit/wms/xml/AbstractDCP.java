@@ -16,16 +16,13 @@
  */
 package org.geotoolkit.wms.xml;
 
-import javax.xml.bind.annotation.XmlTransient;
-
 /**
  *
  * @author Guilhem Legal
  * @module pending
  */
-@XmlTransient
-public abstract class AbstractDCP {
+public interface AbstractDCP {
     
-    public abstract AbstractHTTP getHTTP();
+    AbstractHTTP getHTTP();
 
 }

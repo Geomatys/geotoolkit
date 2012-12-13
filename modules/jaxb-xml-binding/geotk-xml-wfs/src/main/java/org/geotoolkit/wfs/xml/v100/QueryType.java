@@ -32,9 +32,7 @@ import org.geotoolkit.wfs.xml.Query;
 
 
 /**
- * 
- *             The Query element is of type QueryType.
- *          
+ * The Query element is of type QueryType.
  * 
  * <p>Java class for QueryType complex type.
  * 
@@ -121,6 +119,7 @@ public class QueryType implements Query {
         return this.propertyName;
     }
 
+    @Override
     public List<Object> getPropertyNames() {
         return (List) getPropertyName();
     }
@@ -256,5 +255,10 @@ public class QueryType implements Query {
     @Override
     public SortBy getSortBy() {
         return null; // not implemented in 1.0.0
+    }
+
+    @Override
+    public List<String> getAliases() {
+        return new ArrayList<String>(); // not implemented in 1.0.0
     }
 }

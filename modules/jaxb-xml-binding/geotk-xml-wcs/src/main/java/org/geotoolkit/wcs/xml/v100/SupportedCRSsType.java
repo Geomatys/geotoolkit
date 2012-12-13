@@ -92,6 +92,13 @@ public class SupportedCRSsType {
         }
     }
     
+    public SupportedCRSsType(final String... requestResponseCRS){
+        this.requestResponseCRSs = new ArrayList<CodeListType>();
+        for (String element:requestResponseCRS) {
+            requestResponseCRSs.add(new CodeListType(element));
+        }
+    }
+    
     /**
      * Build a new full Supported Crs element.
      */
@@ -175,5 +182,12 @@ public class SupportedCRSsType {
             this.nativeCRSs = new ArrayList<CodeListType>();
         }
         this.nativeCRSs.add(nativeCRSs);
+    }
+    
+    public void addNativeCRSs(final String nativeCRSs) {
+        if (this.nativeCRSs == null) {
+            this.nativeCRSs = new ArrayList<CodeListType>();
+        }
+        this.nativeCRSs.add(new CodeListType(nativeCRSs));
     }
 }

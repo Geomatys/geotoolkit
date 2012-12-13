@@ -115,13 +115,20 @@ public class DescribeCoverageType implements DescribeCoverage {
         return Collections.unmodifiableList(coverage);
     }
     
+    @Override
+    public List<String> getIdentifier() {
+        return getCoverage();
+    }
+    
     /**
      * return the service type here always WCS.
      */
+    @Override
     public String getService() {
         return this.service;
     }
     
+    @Override
     public void setService(final String value) {
         this.service = value;
     }
@@ -137,6 +144,7 @@ public class DescribeCoverageType implements DescribeCoverage {
         return null;
     }
     
+    @Override
     public void setVersion(final String value) {
         this.version = value;
     }

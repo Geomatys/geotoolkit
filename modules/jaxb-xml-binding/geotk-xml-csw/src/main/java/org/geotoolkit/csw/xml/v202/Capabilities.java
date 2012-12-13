@@ -22,7 +22,10 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.csw.xml.AbstractCapabilities;
+import org.geotoolkit.csw.xml.CSWResponse;
 import org.geotoolkit.ogc.xml.v110.FilterCapabilities;
+import org.geotoolkit.ows.xml.AbstractCapabilitiesBase;
+import org.geotoolkit.ows.xml.Sections;
 import org.geotoolkit.ows.xml.v100.CapabilitiesBaseType;
 import org.geotoolkit.ows.xml.v100.OperationsMetadata;
 import org.geotoolkit.ows.xml.v100.ServiceIdentification;
@@ -59,7 +62,7 @@ import org.geotoolkit.util.Utilities;
     "filterCapabilities"
 })
 @XmlRootElement(name="Capabilities")
-public class Capabilities extends CapabilitiesBaseType implements AbstractCapabilities {
+public class Capabilities extends CapabilitiesBaseType implements AbstractCapabilities, CSWResponse {
 
     @XmlElement(name = "Filter_Capabilities", namespace = "http://www.opengis.net/ogc", required = true)
     private FilterCapabilities filterCapabilities;
@@ -122,5 +125,33 @@ public class Capabilities extends CapabilitiesBaseType implements AbstractCapabi
             sb.append("filter capabilities:").append(filterCapabilities).append('\n');
         }
         return sb.toString();
+    }
+
+    @Override
+    public Capabilities applySections(final Sections sections) {
+        ServiceIdentification si = null;
+        ServiceProvider       sp = null;
+        OperationsMetadata    om = null;
+        FilterCapabilities    fc = null;
+        
+        //we enter the information for service identification.
+        if (sections.containsSection("ServiceIdentification") || sections.containsSection("All")) {
+            si = getServiceIdentification();
+        }
+
+        //we enter the information for service provider.
+        if (sections.containsSection("ServiceProvider") || sections.containsSection("All")) {
+            sp = getServiceProvider();
+        }
+        //we enter the operation Metadata
+        if (sections.containsSection("OperationsMetadata") || sections.containsSection("All")) {
+            om = getOperationsMetadata();
+        }
+
+        //we enter the information filter capablities.
+        if (sections.containsSection("Filter_Capabilities") || sections.containsSection("All")) {
+            fc = filterCapabilities;
+        }
+        return new Capabilities(si, sp, om, "2.0.2", getUpdateSequence(), fc);
     }
 }

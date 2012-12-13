@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.wms.xml.AbstractLegendURL;
 
 
 /**
@@ -98,6 +99,26 @@ public class Style implements org.geotoolkit.wms.xml.Style{
         }
     }
     
+    public Style(final org.geotoolkit.wms.xml.Style that) {
+        
+        if (that != null) {
+            this._abstract     = that.getAbstract();
+            this.name          = that.getName();
+            this.title         = that.getTitle();
+            if (that.getStyleSheetURL() != null) {
+                this.styleSheetURL = new StyleSheetURL(that.getStyleSheetURL());
+            }
+            if (that.getStyleURL() != null) {
+                this.styleURL = new StyleURL(that.getStyleURL());
+            }
+            if (that.getLegendURL() != null) {
+                this.legendURL = new ArrayList<LegendURL>();
+                for (final AbstractLegendURL element : that.getLegendURL()) {
+                    this.legendURL.add(new LegendURL(element));
+                }
+            }
+        }
+    }
     
     /**
      * Gets the value of the name property.
@@ -129,6 +150,7 @@ public class Style implements org.geotoolkit.wms.xml.Style{
      * Gets the value of the legendURL property.
      * 
      */
+    @Override
     public List<LegendURL> getLegendURL() {
         return Collections.unmodifiableList(legendURL);
     }
@@ -136,6 +158,7 @@ public class Style implements org.geotoolkit.wms.xml.Style{
     /**
      * Gets the value of the styleSheetURL property.
      */
+    @Override
     public StyleSheetURL getStyleSheetURL() {
         return styleSheetURL;
     }
@@ -144,6 +167,7 @@ public class Style implements org.geotoolkit.wms.xml.Style{
      * Gets the value of the styleURL property.
      * 
      */
+    @Override
     public StyleURL getStyleURL() {
         return styleURL;
     }

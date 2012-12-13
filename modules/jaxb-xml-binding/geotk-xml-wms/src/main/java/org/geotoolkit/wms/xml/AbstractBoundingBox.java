@@ -22,41 +22,41 @@ package org.geotoolkit.wms.xml;
  *
  * @module pending
  */
-public abstract class AbstractBoundingBox {
+public interface AbstractBoundingBox {
     
     /**
      * Gets the value of the crs or srs property.
      */
-    public abstract String getCRSCode();
+    String getCRSCode();
 
     /**
      * Gets the value of the minx property.
      */
-    public abstract double getMinx();
+    double getMinx();
 
     /**
      * Gets the value of the miny property.
      */
-    public abstract double getMiny();
+    double getMiny();
 
     /**
      * Gets the value of the maxx property.
      */
-    public abstract double getMaxx();
+    double getMaxx();
 
     /**
      * Gets the value of the maxy property.
      */
-    public abstract double getMaxy();
+    double getMaxy();
 
     /**
      * Gets the value of the resx property.
      */
-    public abstract Double getResx();
+    Double getResx();
 
     /**
      * Gets the value of the resy property.
      */
-    public abstract Double getResy();
+    Double getResy();
 
 }

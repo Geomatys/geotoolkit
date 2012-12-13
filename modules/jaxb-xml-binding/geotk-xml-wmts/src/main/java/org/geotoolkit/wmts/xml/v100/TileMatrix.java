@@ -205,6 +205,13 @@ public class TileMatrix extends DescriptionType {
         this.tileHeight = value;
     }
 
+    public void setTileDimension(final java.awt.Dimension dim) {
+         if (dim != null) {
+            this.tileWidth  = dim.width;
+            this.tileHeight = dim.height;
+         }
+    }
+    
     /**
      * Gets the value of the matrixWidth property.
      * 
@@ -240,7 +247,7 @@ public class TileMatrix extends DescriptionType {
     public Integer getMatrixHeight() {
         return matrixHeight;
     }
-
+    
     /**
      * Sets the value of the matrixHeight property.
      * 
@@ -253,6 +260,13 @@ public class TileMatrix extends DescriptionType {
         this.matrixHeight = value;
     }
 
+    public void setMatrixDimension(final java.awt.Dimension dim) {
+         if (dim != null) {
+            this.matrixWidth  = dim.width;
+            this.matrixHeight = dim.height;
+         }
+    }
+    
     /**
      * Vérifie que cette station est identique à l'objet spécifié
      */

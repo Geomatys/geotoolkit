@@ -16,11 +16,8 @@
  */
 package org.geotoolkit.wms.xml;
 
-import java.util.ArrayList;
 import java.util.List;
-import javax.xml.bind.annotation.XmlSeeAlso;
-import org.geotoolkit.wms.xml.v111.WMT_MS_Capabilities;
-import org.geotoolkit.wms.xml.v130.WMSCapabilities;
+import org.geotoolkit.ows.xml.AbstractCapabilitiesCore;
 
 /**
  * Abstract main class which describe a capabilities document  for all version of WMS.
@@ -28,64 +25,48 @@ import org.geotoolkit.wms.xml.v130.WMSCapabilities;
  * @author Guilhem Legal
  * @module pending
  */
-@XmlSeeAlso({WMT_MS_Capabilities.class, WMSCapabilities.class})
-public abstract class AbstractWMSCapabilities implements WMSResponse {
+public interface AbstractWMSCapabilities extends AbstractCapabilitiesCore {
 
      /**
      * return the Service part of the capabilities document.
      * 
      */
-    public abstract AbstractService getService(); 
+    AbstractService getService(); 
     
     /**
      *return the capability part of the capabilities document.
      * 
      */
-    public abstract AbstractCapability getCapability();
+    AbstractCapability getCapability();
 
     /**
      * get the version number.
      * 
      */
-    public abstract String getVersion(); 
+    String getVersion(); 
 
     /**
      * Gets the value of the updateSequence property.
      * 
      */
-    public abstract String getUpdateSequence();
+    String getUpdateSequence();
     
     /**
      * Get a specific layer from the capabilities document.
      * 
      */
-    public abstract AbstractLayer getLayerFromName(String name);
+    AbstractLayer getLayerFromName(String name);
 
     /**
      * Get a specific layer from the capabilities document.
      * The Layer may be contain in other layers, so this is a stack which last
      * element is the wanted layer.
      */
-    public abstract AbstractLayer[] getLayerStackFromName(String name);
+    AbstractLayer[] getLayerStackFromName(String name);
     
     /**
      * List all layers recursivly.
      */
-    public List<AbstractLayer> getLayers() {
-        final AbstractLayer layer = getCapability().getLayer();
-        final List<AbstractLayer> layers = new ArrayList<AbstractLayer>();
-        explore(layers, layer);
-        return layers;
-    }
+    List<AbstractLayer> getLayers();
     
-    private static void explore(List<AbstractLayer> buffer, AbstractLayer candidate){
-        buffer.add(candidate);
-        final List<? extends AbstractLayer> layers = candidate.getLayer();
-        if(layers != null){
-            for(AbstractLayer child : layers){
-                explore(buffer, child);
-            }
-        }
-    }
-
 }

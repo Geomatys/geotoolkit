@@ -92,6 +92,33 @@ public class OperationsMetadata implements AbstractOperationsMetadata {
         this.parameter            = parameter;
     }
     
+    public OperationsMetadata(final OperationsMetadata that){
+        if (that != null)  {
+            if (that.constraint != null) {
+                this.constraint = new ArrayList<DomainType>();
+                for (DomainType d : that.constraint) {
+                    this.constraint.add(new DomainType(d));
+                }
+            }
+            if (that.parameter != null) {
+                this.parameter = new ArrayList<DomainType>();
+                for (DomainType d : that.parameter) {
+                    this.parameter.add(new DomainType(d));
+                }
+            }
+            if (that.operation != null) {
+                this.operation = new ArrayList<Operation>();
+                for (Operation d : that.operation) {
+                    this.operation.add(new Operation(d));
+                }
+            }
+            // unable to clone this attribute of type object
+            if (that.extendedCapabilities != null) {
+                this.extendedCapabilities = new MultiLingualCapabilities(that.extendedCapabilities);
+            }
+        }
+    }
+    
     /**
      * Metadata for unordered list of all the (requests for) operations that this server interface implements. 
      * The list of required and optional operations implemented shall be specified in the Implementation Specification for this service. 
@@ -239,6 +266,11 @@ public class OperationsMetadata implements AbstractOperationsMetadata {
         } else {
             throw new IllegalArgumentException("only MultiLingualCapabilities type is accepted in this implementation");
         }
+    }
+    
+    @Override
+    public OperationsMetadata clone() {
+        return new OperationsMetadata(this);
     }
 
     /**

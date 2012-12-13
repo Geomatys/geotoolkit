@@ -37,7 +37,7 @@ import org.geotoolkit.wms.xml.AbstractOperation;
     "dcpType"
 })
 @XmlRootElement(name = "GetMap")
-public class GetMap extends AbstractOperation {
+public class GetMap implements AbstractOperation {
 
     @XmlElement(name = "Format", required = true)
     private List<Format> format;

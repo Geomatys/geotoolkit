@@ -22,6 +22,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ogc.xml.v110.FilterCapabilities;
+import org.geotoolkit.ows.xml.AbstractCapabilitiesBase;
+import org.geotoolkit.ows.xml.Sections;
 import org.geotoolkit.ows.xml.v100.CapabilitiesBaseType;
 import org.geotoolkit.ows.xml.v100.OperationsMetadata;
 import org.geotoolkit.ows.xml.v100.ServiceIdentification;
@@ -235,12 +237,36 @@ public class WFSCapabilitiesType extends CapabilitiesBaseType implements WFSResp
         if(featureTypeList != null) {
             s.append("featureTypeList:").append(featureTypeList).append('\n');
         }
-        if (servesGMLObjectTypeList != null)
+        if (servesGMLObjectTypeList != null) {
             s.append("servesGMLObjectTypeList:").append(servesGMLObjectTypeList).append('\n');
-        if (supportsGMLObjectTypeList != null)
+        }
+        if (supportsGMLObjectTypeList != null) {
             s.append("supportsGMLObjectTypeList:").append(supportsGMLObjectTypeList).append('\n');
-        if (filterCapabilities != null)
+        }
+        if (filterCapabilities != null) {
             s.append("filterCapabilities:").append(filterCapabilities).append('\n');
+        }
         return s.toString();
+    }
+
+    @Override
+    public AbstractCapabilitiesBase applySections(Sections sections) {
+        FeatureTypeListType ftl     = null;
+        OperationsMetadata om       = null;
+        ServiceProvider sp          = null;
+        ServiceIdentification si    = null;
+        if (sections.containsSection("featureTypeList")|| sections.containsSection("All")) {
+            ftl = featureTypeList;
+        }
+        if (sections.containsSection("operationsMetadata")|| sections.containsSection("All")) {
+            om =  getOperationsMetadata();
+        }
+        if (sections.containsSection("serviceProvider")|| sections.containsSection("All")) {
+            sp = getServiceProvider();
+        }
+        if (sections.containsSection("serviceIdentification")|| sections.containsSection("All")) {
+            si = getServiceIdentification();
+        }
+        return new WFSCapabilitiesType("1.1.0", si, sp, om, ftl, filterCapabilities);
     }
 }

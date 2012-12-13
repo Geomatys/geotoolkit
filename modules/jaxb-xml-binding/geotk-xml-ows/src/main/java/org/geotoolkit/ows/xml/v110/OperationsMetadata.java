@@ -239,6 +239,11 @@ public class OperationsMetadata implements AbstractOperationsMetadata {
         this.extendedCapabilities = extendedCapabilities;
     }
     
+    @Override
+    public OperationsMetadata clone() {
+        return new OperationsMetadata(this);
+    }
+    
     /**
      * Verify that this entry is identical to the specified object.
      */

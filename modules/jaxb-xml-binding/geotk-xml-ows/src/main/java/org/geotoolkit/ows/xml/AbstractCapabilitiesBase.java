@@ -21,7 +21,7 @@ package org.geotoolkit.ows.xml;
  *
  * @author Guilhem Legal (Geomatys)
  */
-public interface AbstractCapabilitiesBase {
+public interface AbstractCapabilitiesBase extends AbstractCapabilitiesCore {
 
     /**
      * Gets the value of the serviceIdentification property.
