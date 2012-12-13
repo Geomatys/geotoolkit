@@ -147,21 +147,22 @@ public class FileCoverageStoreFactory extends AbstractCoverageStoreFactory{
         while (it.hasNext()) {
             final ImageReaderSpi spi = it.next();
 
+            String temp = null;
+            
             String longFormat = null;
             for (String format : spi.getFormatNames()) {
-                String formatLower = new String(format);
-                formatLower = formatLower.toLowerCase();
-                if (!formatLower.equals(format)) {
-                    if (!formatsDone.add(format)) {
-                        // Avoid declaring the same format twice (e.g. declaring
-                        // both the JSE and JAI ImageReaders for the PNG format).
-                        continue skip;
-                    }
-                    // Remember the longuest format string. If two of them
-                    // have the same length, favor the one in upper case.
-                    longFormat = longest(longFormat, format);
+                if(temp == null){
+                    temp = format;
+                    continue;
                 }
+                
+                // Remember the longuest format string. If two of them
+                // have the same length, favor the one in upper case.
+                temp = longest(temp, format);
             }
+            
+            if(temp != null && !formatsDone.contains(temp)) formatsDone.add(temp);
+            
         }
         return formatsDone;
     }
