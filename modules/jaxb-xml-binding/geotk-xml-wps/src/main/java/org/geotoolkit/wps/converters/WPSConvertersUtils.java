@@ -17,15 +17,22 @@
 package org.geotoolkit.wps.converters;
 
 import com.vividsolutions.jts.geom.Geometry;
+import java.awt.image.RenderedImage;
+import java.net.URL;
 import java.util.List;
 import java.util.*;
 import javax.xml.bind.JAXBElement;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
+import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.feature.FeatureTypeBuilder;
+import org.geotoolkit.feature.FeatureTypeUtilities;
+import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.feature.type.DefaultFeatureType;
 import org.geotoolkit.feature.type.DefaultGeometryType;
 import org.geotoolkit.feature.type.DefaultPropertyDescriptor;
+import org.geotoolkit.feature.type.DefaultPropertyType;
+import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeWriter;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.mathml.xml.*;
 import org.geotoolkit.ows.xml.v110.DomainMetadataType;
@@ -38,10 +45,18 @@ import org.geotoolkit.wps.xml.v100.ComplexDataType;
 import org.geotoolkit.wps.xml.v100.InputReferenceType;
 import org.geotoolkit.wps.xml.v100.OutputReferenceType;
 import org.geotoolkit.wps.xml.v100.ReferenceType;
+import org.geotoolkit.xsd.xml.v2001.Schema;
+import org.opengis.coverage.Coverage;
 import org.opengis.feature.Feature;
 import org.opengis.feature.Property;
+import org.opengis.feature.type.ComplexType;
+import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.GeometryDescriptor;
+import org.opengis.feature.type.Name;
 import org.opengis.feature.type.PropertyDescriptor;
+import org.opengis.feature.type.PropertyType;
+import org.opengis.parameter.GeneralParameterDescriptor;
+import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
 
@@ -446,4 +461,51 @@ public class WPSConvertersUtils {
         
         return cellsArray;
     }
+    
+    /**
+     * A function to transform a {@link ParameterDescriptorGroup} into {@link FeatureType}.
+     * 
+     * This function care about wps constraints, so if our feature contains
+     * heavy object type as coverages, we replace them with reference type.
+     * 
+     * @param toConvert The group to convert.
+     * @return A complex feature type which is the equivalent of the descriptor input.
+     */
+    public static FeatureType descriptorGroupToFeatureType(ParameterDescriptorGroup toConvert) {
+        final ComplexType ct = FeatureTypeUtilities.toPropertyType(toConvert);
+        final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
+        ftb.copy(ct);
+        List<PropertyDescriptor> properties = ftb.getProperties();
+        
+        for(int i = 0 ; i < properties.size(); i++) {
+            final PropertyDescriptor desc = properties.get(i);
+            final PropertyType type = desc.getType();
+            Class binded = type.getBinding();
+            if(RenderedImage.class.isAssignableFrom(binded) ||
+                    Coverage.class.isAssignableFrom(binded)) {
+                final DefaultPropertyType newType = new DefaultPropertyType(type.getName(), 
+                        URL.class, 
+                        false, 
+                        type.getRestrictions(), 
+                        type.getSuper(), 
+                        type.getDescription());
+                final PropertyDescriptor newDesc = new DefaultPropertyDescriptor(newType, 
+                        desc.getName(), 
+                        desc.getMinOccurs(), 
+                        desc.getMaxOccurs(), 
+                        desc.isNillable());
+                properties.remove(i);
+                properties.add(i, newDesc);
+                
+            }
+        }        
+        return ftb.buildFeatureType();
+    }
+    
+    public static Schema createFeatureSchema(FeatureType toGet) {        
+        JAXBFeatureTypeWriter writer = new JAXBFeatureTypeWriter();
+        Schema s = writer.getSchemaFromFeatureType(toGet);
+        return s;
+    }
+
 }
