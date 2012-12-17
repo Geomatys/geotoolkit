@@ -220,6 +220,7 @@ public class Utils {
         NAME_BINDING.put(int.class,           new QName("http://www.w3.org/2001/XMLSchema", "int"));
         NAME_BINDING.put(QName.class,         new QName("http://www.w3.org/2001/XMLSchema", "QName"));
         NAME_BINDING.put(URI.class,           new QName("http://www.w3.org/2001/XMLSchema", "anyURI"));
+        NAME_BINDING.put(URL.class,           new QName("http://www.w3.org/2001/XMLSchema", "anyURI"));
         NAME_BINDING.put(Byte.class,          new QName("http://www.w3.org/2001/XMLSchema", "byte"));
         NAME_BINDING.put(byte[].class,        new QName("http://www.w3.org/2001/XMLSchema", "base64Binary"));
 
