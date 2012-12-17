@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.image.io.plugin;
 
+import java.util.Date;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Collections;
@@ -39,6 +40,8 @@ import ucar.nc2.constants.AxisType;
 import ucar.nc2.constants._Coordinate;
 
 import org.opengis.coverage.grid.GridEnvelope;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.crs.TemporalCRS;
 import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
@@ -49,7 +52,10 @@ import org.geotoolkit.measure.Units;
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.ComparisonMode;
+import org.geotoolkit.resources.Errors;
+import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.IdentifiedObjects;
+import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
 import org.geotoolkit.referencing.cs.DiscreteCoordinateSystemAxis;
 import org.geotoolkit.internal.referencing.AxisDirections;
 import org.geotoolkit.internal.image.io.IIOImageHelper;
@@ -159,7 +165,7 @@ final class NetcdfDimension {
         int[] sourceIndices = null; // Source ordinate values, or null for [index:subsampling:...]
         int   subsampling   = 1;    // The grid ordinates increment. Must be equals or greater than 1.
         int   length        = 1;    // Number of ordinate values to write in the NetCDF file.
-        int   index         = 0;    // Grid ordinate value, from lower inclusive to lower+length×subsampling exclusive.
+        int   index         = 0;    // Grid ordinate value, from lower inclusive to lower + length × subsampling exclusive.
         switch (api) {
             case COLUMNS: index=image.sourceRegion.x; subsampling=image.sourceXSubsampling; length=(image.sourceRegion.width +subsampling-1)/subsampling; break;
             case ROWS:    index=image.sourceRegion.y; subsampling=image.sourceYSubsampling; length=(image.sourceRegion.height+subsampling-1)/subsampling; break;
@@ -189,20 +195,32 @@ final class NetcdfDimension {
         if (axis instanceof DiscreteCoordinateSystemAxis<?>) {
             final DiscreteCoordinateSystemAxis<?> ds = (DiscreteCoordinateSystemAxis<?>) axis;
             final Class<?> type = ds.getElementType();
-            if (Number.class.isAssignableFrom(type)) {
-                dataType = DataType.getType(type);
+            final boolean isNumeric = Number.class.isAssignableFrom(type);
+            if (isNumeric || Date.class.isAssignableFrom(type)) {
+                dataType  = isNumeric ? DataType.getType(type) : DataType.DOUBLE;
                 ordinates = Array.factory(dataType, new int[] {length});
+                DefaultTemporalCRS converter = null;
+                if (!isNumeric) {
+                    final CoordinateReferenceSystem subCRS = CRS.getSubCRS(
+                            image.getCoordinateReferenceSystem(), dimension, dimension+1);
+                    if (subCRS instanceof TemporalCRS) {
+                        converter = DefaultTemporalCRS.castOrCopy((TemporalCRS) subCRS);
+                    } else {
+                        throw new ImageMetadataException(Errors.format(Errors.Keys.INCOMPATIBLE_COORDINATE_SYSTEM_TYPE));
+                    }
+                }
                 for (int i=0; i<length; i++) {
                     if (sourceIndices != null) {
                         index = sourceIndices[i];
                     }
                     final Comparable<?> ordinate = ds.getOrdinateAt(index);
-                    ordinates.setDouble(flip ? (length-1)-i : i, ((Number) ordinate).doubleValue());
+                    ordinates.setDouble(flip ? (length-1)-i : i, isNumeric
+                            ? ((Number) ordinate).doubleValue()
+                            : converter.toValue((Date) ordinate));
                     index += subsampling;
                 }
                 return;
             }
-            // TODO: handle the Date case here.
         }
         /*
          * If we reach this point, we have not been able to compute the grid cell coordinates

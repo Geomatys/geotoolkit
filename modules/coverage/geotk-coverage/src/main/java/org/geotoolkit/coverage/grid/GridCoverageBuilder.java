@@ -2166,6 +2166,8 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      *   <li>{@link #setName(CharSequence)} (for instances of {@link GridCoverage2D} only)</li>
      *   <li>{@link #setRenderedImage(RenderedImage)}</li>
      *   <li>{@link #setGridGeometry(GridGeometry)}</li>
+     *   <li>{@link #setGridToCRS(MathTransform)}</li>
+     *   <li>{@link #setExtent(GridEnvelope)}</li>
      *   <li>{@link #setCoordinateReferenceSystem(CoordinateReferenceSystem)}</li>
      *   <li>{@link #setSampleDimensions(SampleDimension[])}</li>
      *   <li>{@link #setSources(GridCoverage[])}</li>
@@ -2209,6 +2211,17 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
             if (im != null) {
                 setRenderedImage(im.createDefaultRendering());
             }
+        }
+        /*
+         * Sets explicitely the 'gridToCRS' and extent, then move the grid geometry from "explicit"
+         * state to "cached" state. The intend is to recompute automatically a new grid geometry if
+         * the user change the 'gridToCRS' transform.
+         */
+        if (gridGeometry != null) {
+            setExtent(gridGeometry.getExtent());
+            setGridToCRS(gridGeometry.getGridToCRS());
+            this.gridGeometry = null;
+            cachedGridGeometry = gridGeometry;
         }
     }
 
