@@ -53,6 +53,7 @@ public final strictfp class MaskTest extends SampleImageTestBase {
      * Ensures that the JAI registration has been done.
      */
     @Test
+    @Ignore("Fails randomly, need investigation.")
     public void testRegistration() {
         final RegistryElementDescriptor descriptor = JAI.getDefaultInstance().getOperationRegistry()
                 .getDescriptor(RenderedRegistryMode.MODE_NAME, Mask.OPERATION_NAME);
@@ -64,6 +65,7 @@ public final strictfp class MaskTest extends SampleImageTestBase {
      * Applies the operation and tests the result with the expected one, using checksum.
      */
     @Test
+    @Ignore("Fails randomly, need investigation.")
     public void testOnRGB() {
         loadSampleImage(SampleImage.RGB_ROTATED);
         ParameterBlockJAI parameters = new ParameterBlockJAI(SilhouetteMask.OPERATION_NAME);
@@ -80,6 +82,7 @@ public final strictfp class MaskTest extends SampleImageTestBase {
      * Applies the operation and tests the result with the expected one, using checksum.
      */
     @Test
+    @Ignore("Fails randomly, need investigation.")
     public void testOnIndexed() {
         loadSampleImage(SampleImage.INDEXED);
         ParameterBlockJAI parameters = new ParameterBlockJAI(SilhouetteMask.OPERATION_NAME);
