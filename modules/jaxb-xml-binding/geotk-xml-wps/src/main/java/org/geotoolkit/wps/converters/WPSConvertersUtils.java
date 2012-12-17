@@ -203,6 +203,11 @@ public class WPSConvertersUtils {
         
         WPSIO.checkSupportedFormat(expectedClass, WPSIO.IOType.INPUT, mime, encoding, schema);
            
+        final Map<String, Object> parameters = new HashMap<String, Object>();
+        parameters.put(WPSObjectConverter.ENCODING, encoding);
+        parameters.put(WPSObjectConverter.MIME, mime);
+        parameters.put(WPSObjectConverter.SCHEMA, schema);
+        
         final List<Object> content = complex.getContent();
         
         //remove white spaces
@@ -222,7 +227,7 @@ public class WPSConvertersUtils {
             throw new NonconvertibleObjectException("Input complex not supported, no converter found.");
         }
 
-        return converter.convert(complex, null);
+        return converter.convert(complex, parameters);
     }
 
     /**
@@ -276,13 +281,18 @@ public class WPSConvertersUtils {
         final String schema = reference.getSchema();
         WPSIO.checkSupportedFormat(expectedClass, WPSIO.IOType.INPUT, mime, encoding, schema);
         
+        final Map<String, Object> parameters = new HashMap<String, Object>();
+        parameters.put(WPSObjectConverter.ENCODING, encoding);
+        parameters.put(WPSObjectConverter.MIME, mime);
+        parameters.put(WPSObjectConverter.SCHEMA, schema);
+        
         final WPSObjectConverter converter = WPSIO.getConverter(expectedClass, WPSIO.IOType.INPUT, WPSIO.FormChoice.REFERENCE);
 
         if (converter == null) {
             throw new NonconvertibleObjectException("Input reference not supported, no converter found.");
         }
 
-        return converter.convert(reference, null);
+        return converter.convert(reference, parameters);
     }
 
     /**

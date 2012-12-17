@@ -18,7 +18,8 @@ package org.geotoolkit.wps.io;
 
 
 /**
- * MimeType list based on OGC 12-029 paper.
+ * MimeType list based on OGC 12-029 paper. 
+ * (http://www.opengis.net/doc/wps1.0-best-practice-dp)
  *
  * @author Quentin Boileau (Geomatys)
  */

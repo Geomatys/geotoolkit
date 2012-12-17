@@ -23,6 +23,7 @@ import java.util.Map;
 import javax.imageio.ImageIO;
 import net.iharder.Base64;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
+import org.geotoolkit.wps.io.WPSEncoding;
 import org.geotoolkit.wps.xml.v100.ComplexDataType;
 
 /**
@@ -61,10 +62,20 @@ public class RenderedImageToComplexConverter extends AbstractComplexOutputConver
         
         final ComplexDataType complex = new ComplexDataType();
         final String mime = (String) params.get(MIME);
-        final String formatName = mime.substring(mime.indexOf("/")+1).toUpperCase();
-        complex.setMimeType((String) params.get(MIME));
-        complex.setEncoding("base64");
+        final String encoding = (String) params.get(ENCODING);
         
+        if (mime == null) {
+            throw new NonconvertibleObjectException("MimeType should be defined to encode image in right format in Base64.");
+        }
+        
+        if (!encoding.equals(WPSEncoding.BASE64.getValue())) {
+            throw new NonconvertibleObjectException("Encoding should be in Base64 for complexe request.");
+        }
+        
+        complex.setMimeType((String) params.get(MIME));
+        complex.setEncoding(encoding);
+        
+        final String formatName = mime.substring(mime.indexOf("/")+1).toUpperCase();
         try {
             final ByteArrayOutputStream baos = new ByteArrayOutputStream();
             ImageIO.write(source, formatName, baos);

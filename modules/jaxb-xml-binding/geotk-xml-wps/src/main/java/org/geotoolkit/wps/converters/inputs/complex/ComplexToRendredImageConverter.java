@@ -63,7 +63,7 @@ public class ComplexToRendredImageConverter extends AbstractComplexInputConverte
                     throw new NonconvertibleObjectException("Only one object in Complex content.");
                 }
                 final String encodedImage = (String) data.get(0);
-                final byte[] byteData = Base64.decode(encodedImage);
+                final byte[] byteData = Base64.decode(encodedImage.trim());
                 if (byteData != null && byteData.length > 0) {
                     final InputStream is = new ByteArrayInputStream(byteData);
                     if (is != null) {

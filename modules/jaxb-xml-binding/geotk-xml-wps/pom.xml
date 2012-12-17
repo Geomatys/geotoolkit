@@ -118,7 +118,7 @@
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
-           <dependency>
+        <dependency>
             <groupId>org.geotoolkit.pending</groupId>
             <artifactId>geotk-coverageio-geotiff</artifactId>
             <version>${project.version}</version>
