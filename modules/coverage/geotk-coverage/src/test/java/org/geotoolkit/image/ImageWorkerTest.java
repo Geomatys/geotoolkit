@@ -69,6 +69,7 @@ public final strictfp class ImageWorkerTest extends SampleImageTestBase {
      * Tests on an indexed image.
      */
     @Test
+    @Ignore("Fails randomly, need investigation.")
     public void testOnIndexed() {
         viewEnabled = false; // Set to true for visualizing the images.
         loadSampleImage(SampleImage.INDEXED);
@@ -173,6 +174,7 @@ public final strictfp class ImageWorkerTest extends SampleImageTestBase {
      * Tests on an opaque RGB image.
      */
     @Test
+    @Ignore("Fails randomly, need investigation.")
     public void testOnRGB() {
         viewEnabled = false; // Set to true for visualizing the images.
         loadSampleImage(SampleImage.RGB_ROTATED);

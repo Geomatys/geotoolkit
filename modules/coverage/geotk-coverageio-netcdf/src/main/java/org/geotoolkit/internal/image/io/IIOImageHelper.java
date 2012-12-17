@@ -115,6 +115,14 @@ public class IIOImageHelper {
     public final SpatialMetadata metadata;
 
     /**
+     * The coordinate reference system of the image to write, or {@code null} if not yet computed.
+     * Note that the CRS may have more than 2 dimensions.
+     *
+     * @see #getCoordinateReferenceSystem()
+     */
+    private CoordinateReferenceSystem crs;
+
+    /**
      * The coordinate system of the image to write, or {@code null} if not yet computed.
      * Note that the CS may have more than 2 dimensions.
      *
@@ -319,6 +327,21 @@ public class IIOImageHelper {
     }
 
     /**
+     * Returns the coordinate reference system of the image to write, or {@code null} if none.
+     * Note that the CRS may have more or less than 2 dimensions; this method does not perform
+     * any dimensionality check.
+     *
+     * @return The image coordinate reference system, or {@code null}.
+     * @throws ImageMetadataException If an error occurred while fetching the coordinate reference system.
+     */
+    public final CoordinateReferenceSystem getCoordinateReferenceSystem() throws ImageMetadataException {
+        if (crs == null && metadata != null) {
+            crs = metadata.getInstanceForType(CoordinateReferenceSystem.class);
+        }
+        return crs;
+    }
+
+    /**
      * Returns the coordinate system of the image to write.
      * Note that the CS may have more than 2 dimensions.
      * <p>
@@ -331,11 +354,9 @@ public class IIOImageHelper {
     public final CoordinateSystem getCoordinateSystem() throws ImageMetadataException {
         CoordinateSystem cs = coordinateSystem;
         if (cs == null) {
-            if (metadata != null) {
-                final CoordinateReferenceSystem crs = metadata.getInstanceForType(CoordinateReferenceSystem.class);
-                if (crs != null) {
-                    cs = crs.getCoordinateSystem();
-                }
+            final CoordinateReferenceSystem crs = getCoordinateReferenceSystem();
+            if (crs != null) {
+                cs = crs.getCoordinateSystem();
             }
             if (cs == null) {
                 cs = DefaultCartesianCS.GRID;
@@ -345,7 +366,7 @@ public class IIOImageHelper {
                     throw new ImageMetadataException(Errors.format(Errors.Keys.ILLEGAL_CS_DIMENSION_$1, dim));
                 }
             }
-            coordinateSystem = cs;
+            coordinateSystem = cs; // Store ony on success.
         }
         return cs;
     }
