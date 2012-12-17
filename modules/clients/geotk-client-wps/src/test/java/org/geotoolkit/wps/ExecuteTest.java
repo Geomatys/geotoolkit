@@ -51,6 +51,7 @@ public class ExecuteTest {
 
     @Test
     public void testRequestAndMarshall() {
+        Marshaller marshaller = null;
         try {
             final List<Double> corner = new ArrayList<Double>();
             corner.add(10.0);
@@ -80,7 +81,7 @@ public class ExecuteTest {
             assertEquals(request.getIdentifier().getValue(), "identifier");
 
             final StringWriter stringWriter = new StringWriter();
-            final Marshaller marshaller = WPSMarshallerPool.getInstance().acquireMarshaller();
+            marshaller = WPSMarshallerPool.getInstance().acquireMarshaller();
             marshaller.marshal(request, stringWriter);
 
             String result = StringUtilities.removeXmlns(stringWriter.toString());
@@ -96,6 +97,8 @@ public class ExecuteTest {
         } catch (JAXBException ex) {
             fail(ex.getLocalizedMessage());
             return;
+        } finally {
+            WPSMarshallerPool.getInstance().release(marshaller);
         }
     }
 

@@ -214,16 +214,21 @@ public class WebProcessingServer extends AbstractServer implements ProcessingReg
 
             @Override
             public void run() {
+                Unmarshaller unmarshaller = null;
                 try {
                     final InputStream is = createGetCapabilities().getResponseStream();
-                    final Unmarshaller unmarhaller = WPSMarshallerPool.getInstance().acquireUnmarshaller();
-                    capabilities = ((JAXBElement<WPSCapabilitiesType>) unmarhaller.unmarshal(is)).getValue();
+                    unmarshaller = WPSMarshallerPool.getInstance().acquireUnmarshaller();
+                    capabilities = ((JAXBElement<WPSCapabilitiesType>) unmarshaller.unmarshal(is)).getValue();
                 } catch (Exception ex) {
                     capabilities = null;
                     try {
                         LOGGER.log(Level.WARNING, "Wrong URL, the server doesn't answer : " + createGetCapabilities().getURL().toString(), ex);
                     } catch (MalformedURLException ex1) {
                         LOGGER.log(Level.WARNING, "Malformed URL, the server doesn't answer. ", ex1);
+                    }
+                } finally {
+                    if (unmarshaller != null) {
+                        WPSMarshallerPool.getInstance().release(unmarshaller);
                     }
                 }
             }
@@ -256,17 +261,21 @@ public class WebProcessingServer extends AbstractServer implements ProcessingReg
             public void run() {
                 final DescribeProcessRequest describe = createDescribeProcess();
                 describe.setIdentifiers(processIDs);
-
+                Unmarshaller unmarshaller = null;
                 try {
                     final InputStream request = describe.getResponseStream();
-                    final Unmarshaller unmarhaller = WPSMarshallerPool.getInstance().acquireUnmarshaller();
-                    description[0] = (ProcessDescriptions) unmarhaller.unmarshal(request);
+                    unmarshaller = WPSMarshallerPool.getInstance().acquireUnmarshaller();
+                    description[0] = (ProcessDescriptions) unmarshaller.unmarshal(request);
                 } catch (Exception ex) {
                     description[0] = null;
                     try {
                         LOGGER.log(Level.WARNING, "Wrong URL, the server doesn't answer : " + describe.getURL().toString(), ex);
                     } catch (MalformedURLException ex1) {
                         LOGGER.log(Level.WARNING, "Malformed URL, the server doesn't answer. ", ex1);
+                    }
+                } finally {
+                    if (unmarshaller != null) {
+                        WPSMarshallerPool.getInstance().release(unmarshaller);
                     }
                 }
             }
@@ -647,7 +656,7 @@ public class WebProcessingServer extends AbstractServer implements ProcessingReg
      * @param exec the request
      * @param process process used for throw ProcessException
      * @return ExecuteResponse.
-     * @throws ProcessException is can't reach the server or if there is an error durring Marshalling/Unmarshalling request 
+     * @throws ProcessException is can't reach the server or if there is an error during Marshalling/Unmarshalling request 
      * or response.
      */
     private ExecuteResponse sendRequest(final Execute exec, final Process process) throws ProcessException {

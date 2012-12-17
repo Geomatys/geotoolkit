@@ -58,6 +58,7 @@ public class GetCapabilitiesTest {
     
    @Test 
    public void testRequestAndMarshall(){
+       Marshaller marshaller = null;
         try {
             final GetCapabilities100 caps100 = new GetCapabilities100("http://test.com",null);
             final GetCapabilities request = caps100.makeRequest();
@@ -65,7 +66,7 @@ public class GetCapabilitiesTest {
             assertEquals("1.0.0", request.getAcceptVersions().getVersion().get(0));
             
             final StringWriter stringWriter = new StringWriter();
-            final Marshaller marshaller = WPSMarshallerPool.getInstance().acquireMarshaller();
+            marshaller = WPSMarshallerPool.getInstance().acquireMarshaller();
             marshaller.marshal(request,stringWriter);
             
             final String expectedMarshalledRequest = 
@@ -82,6 +83,8 @@ public class GetCapabilitiesTest {
         } catch (JAXBException ex) {
             fail(ex.getLocalizedMessage());
             return;
+        } finally {
+            WPSMarshallerPool.getInstance().release(marshaller);
         }
    }
 }
