@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE book [
+  <!ENTITY % book.entities SYSTEM "../../book.entities">
+  %book.entities;
+]>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0"
+         xmlns:xlink = "http://www.w3.org/1999/xlink"
+         lang="en">
+          
+    <title>
+        MapContext
+    </title>
+    
+    <section>
+        <title>Structure</title>
+    
+        <para>  Une carte est représentée par un object 
+            <emphasis>MapContext</emphasis>.
+        </para>
+  
+        <para>
+
+            Cet objet définit trois éléments importants.
+            <orderedlist>
+                <listitem>Une projection, il s'agit de la projection 'préférée' de la carte, mais pas nécessairement celle utilisée pour le rendu. C'est aussi la projection utilisée par l'enveloppe retournée par la méthode 
+                    <emphasis>getBounds()</emphasis> 
+                </listitem>
+                <listitem>Une zone d’intérêt, il s'agit de la zone 'préférée' a afficher, généralement l'étendue que l'on souhaite voir lors du première affichage de la carte</listitem>
+                <listitem>Une série de couche de données stylées : 
+                    <emphasis>MapLayer</emphasis> 
+                </listitem>
+            </orderedlist>
+        </para>
+
+
+        <para>Un Maplayer définit une source de données (image, vecteur ou distante) combinée à un filtre et un style.</para>
+
+        <para>
+            Il existe plusieurs implémentations de MapLayer, mais on en distingue deux en particulier :
+            <itemizedlist>
+                <listitem>
+                    <emphasis>FeatureMapLayer</emphasis> : définit une couche contenant une collection de 
+                    <emphasis>Feature</emphasis> 
+                </listitem>
+                <listitem>
+                    <emphasis>CoverageMapLayer</emphasis> : définit une couche contenant un 
+                    <emphasis>Coverage</emphasis> 
+                </listitem>
+            </itemizedlist>
+        </para>
+        <para>
+            Parmi les autres types existants, on trouve les couches distantes comme 
+            <emphasis>WMSMapLayer</emphasis> ou 
+            <emphasis>OSMMapLayer</emphasis>.
+        </para>
+    
+        <figure> 
+            <title>Classes relatives aux maps</title>
+            <mediaobject>
+                <imageobject>
+                    <imagedata fileref="../images/mapcontext_classes.png" format="png"></imagedata>
+                </imageobject>
+                <textobject>
+                    <phrase> Classes relatives aux maps
+                    </phrase>
+                </textobject>
+            </mediaobject>
+        </figure>
+        
+    </section>
+    
+    <section>
+        <title>Création</title>
+        
+        <example>
+            <title>Création d'un MapContext </title>
+            <link xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/mapmodel/MapContextDemo.java">
+                <acronym>geotoolkit-pending/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/mapmodel/MapContextDemo.java</acronym>
+            </link>        
+        </example>
+        
+        <para>
+            A l'exception des couches spécifiques, 
+            <emphasis>MapContext</emphasis>, 
+            <emphasis>FeatureMapLayer</emphasis> et 
+            <emphasis>CoverageMapLayer</emphasis> sont créés en utilisant la classe 
+            <emphasis>MapBuilder</emphasis>.
+        </para>
+        <para>
+            Voici un exemple de création d'un MapContext avec différents types de couches :
+        </para>
+
+            <programlisting>
+                
+                    //create a map context
+                    final MapContext context = MapBuilder.createContext();
+ 
+                    //create a feature layer
+                    final FeatureCollection features = openShapeFile();
+                    final MutableStyle featureStyle = styleFactory.style(StyleConstants.DEFAULT_LINE_SYMBOLIZER);
+                    final FeatureMapLayer featureLayer = MapBuilder.createFeatureLayer(features, featureStyle);
+ 
+                    //create a coverage layer
+                    final GridCoverageReader reader = openWorldFile();
+                    final MutableStyle coverageStyle = styleFactory.style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER);
+                    final CoverageMapLayer coverageLayer = MapBuilder.createCoverageLayer(reader, coverageStyle,"background");
+ 
+                    //create a WMS layer
+                    final WebMapServer server = new WebMapServer(new URL("http://demo.geomatys.com/constellation/WS/wms"), WMSVersion.v130);
+                    final WMSMapLayer wmsLayer = new WMSMapLayer(server, "BlueMarble");
+ 
+                    //add all layers in the context
+                    context.layers().add(wmsLayer);
+                    context.layers().add(coverageLayer);
+                    context.layers().add(featureLayer);
+ 
+                    //check the result
+                    JMap2DFrame.show(context);
+                
+            </programlisting>
+        
+        <para>Il est aussi possible de créer une arborescence plutot qu'une liste. Les éléments utilisés pour symbolizer des noeuds sont des 
+            <emphasis>MapItem</emphasis>.
+        </para>
+    
+        <example>
+            <title>Création d'un MapContext</title>
+            <programlisting>
+                
+                    final MapItem bggroup = MapBuilder.createItem();
+                    bggroup.setDescription(SF.description("Background", ""));
+                    final MapItem datagroup = MapBuilder.createItem();
+                    datagroup.setDescription(SF.description("Datas", ""));
+ 
+                    bggroup.items().add(wmsLayer);
+                    datagroup.items().add(coverageLayer);
+                    datagroup.items().add(featureLayer);
+  
+                    context.items().add(bggroup);
+                    context.items().add(datagroup);
+                
+            </programlisting>
+        </example>
+    </section>
+</section>

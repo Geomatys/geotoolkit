@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE book [
+  <!ENTITY % book.entities SYSTEM "../../../../book.entities">
+  %book.entities;
+]>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0"
+         xmlns:xlink = "http://www.w3.org/1999/xlink"
+         id="gpx" xreflabel="GPX" lang="en">
+             
+    <title>Format GPX</title>
+    <example>
+        <title>Reading GPX files</title>
+        <link xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/datamodel/gpx/GPXDemo.java">
+            <acronym>geotoolkit-pending/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/datamodel/gpx/GPXDemo.java</acronym>
+        </link>
+        
+    </example>
+    <para>
+        GPX is using to interchange data between GPS devices.
+    </para>
+    <para>
+        It's an XML schema which describe three complex featuretypes.
+    </para>
+    <itemizedlist>
+        <listitem>
+            Track
+            <programlisting>
+                    
+                DefaultFeatureType {http://www.topografix.com}Track identified extends GPXEntity
+                ╔══════════════════════════════════════════════════╤══════╤════════════╤═══════════╤═════════════════╤════════╤═══════════╗
+                ║ name                                             │  min │        max │  nillable │            type │    CRS │  UserData ║
+                ╟──────────────────────────────────────────────────┼──────┼────────────┼───────────┼─────────────────┼────────┼───────────╢
+                ║ {http://www.topografix.com}index                 │ 1    │ 1          │ false     │ Integer         │        │           ║
+                ║ {http://www.topografix.com}geometry              │ 1    │ 1          │ false     │ MultiLineString │ CRS:84 │           ║
+                ║ {http://www.topografix.com}name                  │ 0    │ 1          │ true      │ String          │        │           ║
+                ║ {http://www.topografix.com}cmt                   │ 0    │ 1          │ true      │ String          │        │           ║
+                ║ {http://www.topografix.com}desc                  │ 0    │ 1          │ true      │ String          │        │           ║
+                ║ {http://www.topografix.com}src                   │ 0    │ 1          │ true      │ String          │        │           ║
+                ║ {http://www.topografix.com}link                  │ 0    │ 2147483647 │ true      │ URI             │        │           ║
+                ║ {http://www.topografix.com}number                │ 0    │ 1          │ true      │ Integer         │        │           ║
+                ║ {http://www.topografix.com}type                  │ 0    │ 1          │ true      │ String          │        │           ║
+                ║ {http://www.topografix.com}trkseg                │ 0    │ 2147483647 │ true      │ CX:TrackSegment │        │           ║
+                ║   ├─{http://www.topografix.com}index             │ 1    │ 1          │ false     │ Integer         │        │           ║
+                ║   ├─{http://www.topografix.com}geometry          │ 1    │ 1          │ false     │ LineString      │ CRS:84 │           ║
+                ║   └─{http://www.topografix.com}trkpt             │ 0    │ 2147483647 │ true      │ CX:WayPoint     │        │           ║
+                ��       ├─{http://www.topografix.com}index         │ 1    │ 1          │ false     │ Integer         │        │           ║
+                ║       ├─{http://www.topografix.com}geometry      │ 1    │ 1          │ false     │ Point           │ CRS:84 │           ║
+                ║       ├─{http://www.topografix.com}ele           │ 0    │ 1          │ true      │ Double          │        │           ║
+                ║       ├─{http://www.topografix.com}time          │ 0    │ 1          │ true      │ Date            │        │           ║
+                ║       ├─{http://www.topografix.com}magvar        │ 0    │ 1          │ true      │ Double          │        │           ║
+                ║       ├─{http://www.topografix.com}geoidheight   │ 0    │ 1          │ true      │ Double          │        │           ║
+                ║       ├─{http://www.topografix.com}name          │ 0    │ 1          │ true      │ String          │        │           ║
+                ║       ├─{http://www.topografix.com}cmt           │ 0    │ 1          │ true      │ String          │        │           ║
+                ║       ├─{http://www.topografix.com}desc          │ 0    │ 1          │ true      │ String          │        │           ║
+                ║       ├─{http://www.topografix.com}src           │ 0    │ 1          │ true      │ String          │        │           ║
+                ║       ├─{http://www.topografix.com}link          │ 0    │ 2147483647 │ true      │ URI             │        │           ║
+                ║       ├─{http://www.topografix.com}sym           │ 0    │ 1          │ true      │ String          │        │           ║
+                ║       ├─{http://www.topografix.com}type          │ 0    │ 1          │ true      │ String          │        │           ║
+                ║       ├─{http://www.topografix.com}fix           │ 0    │ 1          │ true      │ String          │        │           ║
+                ║       ├─{http://www.topografix.com}sat           │ 0    │ 1          │ true      │ Integer         │        │           ║
+                ║       ├─{http://www.topografix.com}hdop          │ 0    │ 1          │ true      │ Double          │        │           ║
+                ║       ├─{http://www.topografix.com}vdop          │ 0    │ 1          │ true      │ Double          │        │           ║
+                ║       ├─{http://www.topografix.com}pdop          │ 0    │ 1          │ true      │ Double          │        │           ║
+                ║       ├─{http://www.topografix.com}ageofdgpsdata │ 0    │ 1          │ true      │ Double          │        │           ║
+                ║       └─{http://www.topografix.com}dgpsid        │ 0    │ 1          │ true      │ Integer         │        │           ║
+                ╚══════════════════════════════════════════════════╧══════╧════════════╧═══════════╧═════════════════╧════════╧═══════════╝
+                crs=WGS84(DD)
+            </programlisting>
+        </listitem>
+        <listitem>
+            WayPoint
+            <programlisting>
+                    
+                DefaultFeatureType {http://www.topografix.com}WayPoint identified extends GPXEntity
+                ╔══════════════════════════════════════════╤══════╤════════════╤═══════════╤═════════╤════════╤═══════════╗
+                ║ name                                     │ min  │ max        │ nillable  │ type    │ CRS    │ UserData  ║
+                ╟──────────────────────────────────────────┼──────┼────────────┼───────────┼─────────┼────────┼───────────╢
+                ║ {http://www.topografix.com}index         │ 1    │ 1          │ false     │ Integer │        │           ║
+                ║ {http://www.topografix.com}geometry      │ 1    │ 1          │ false     │ Point   │ CRS:84 │           ║
+                ║ {http://www.topografix.com}ele           │ 0    │ 1          │ true      │ Double  │        │           ║
+                ║ {http://www.topografix.com}time          │ 0    │ 1          │ true      │ Date    │        │           ║
+                ║ {http://www.topografix.com}magvar        │ 0    │ 1          │ true      │ Double  │        │           ║
+                ║ {http://www.topografix.com}geoidheight   │ 0    │ 1          │ true      │ Double  │        │           ║
+                ║ {http://www.topografix.com}name          │ 0    │ 1          │ true      │ String  │        │           ║
+                ║ {http://www.topografix.com}cmt           │ 0    │ 1          │ true      │ String  │        │           ║
+                ║ {http://www.topografix.com}desc          │ 0    │ 1          │ true      │ String  │        │           ║
+                ║ {http://www.topografix.com}src           │ 0    │ 1          │ true      │ String  │        │           ║
+                ║ {http://www.topografix.com}link          │ 0    │ 2147483647 │ true      │ URI     │        │           ║
+                ║ {http://www.topografix.com}sym           │ 0    │ 1          │ true      │ String  │        │           ║
+                ║ {http://www.topografix.com}type          │ 0    │ 1          │ true      │ String  │        │           ║
+                ║ {http://www.topografix.com}fix           │ 0    │ 1          │ true      │ String  │        │           ║
+                ║ {http://www.topografix.com}sat           │ 0    │ 1          │ true      │ Integer │        │           ║
+                ║ {http://www.topografix.com}hdop          │ 0    │ 1          │ true      │ Double  │        │           ║
+                ║ {http://www.topografix.com}vdop          │ 0    │ 1          │ true      │ Double  │        │           ║
+                ║ {http://www.topografix.com}pdop          │ 0    │ 1          │ true      │ Double  │        │           ║
+                ║ {http://www.topografix.com}ageofdgpsdata │ 0    │ 1          │ true      │ Double  │        │           ║
+                ║ {http://www.topografix.com}dgpsid        │ 0    │ 1          │ true      │ Integer │        │           ║
+                ╚══════════════════════════════════════════╧══════╧════════════╧═══════════╧═════════╧════════╧═══════════╝
+                crs=WGS84(DD)
+            </programlisting>
+        </listitem>
+        <listitem>
+            Routes
+            <programlisting>
+                    
+                DefaultFeatureType {http://www.topografix.com}Route identified extends GPXEntity
+                ╔══════════════════════════════════════════════╤══════╤════════════╤═══════════╤═════════════╤════════╤═══════════╗
+                ║ name                                         │ min  │ max        │ nillable  │ type        │ CRS    │ UserData  ║
+                ╟──────────────────────────────────────────────┼──────┼────────────┼───────────┼─────────────┼────────┼───────────╢
+                ║ {http://www.topografix.com}index             │ 1    │ 1          │ false     │ Integer     │        │           ║
+                ║ {http://www.topografix.com}geometry          │ 1    │ 1          │ false     │ LineString  │ CRS:84 │           ║
+                ║ {http://www.topografix.com}name              │ 0    │ 1          │ true      │ String      │        │           ║
+                ║ {http://www.topografix.com}cmt               │ 0    │ 1          │ true      │ String      │        │           ║
+                ║ {http://www.topografix.com}desc              │ 0    │ 1          │ true      │ String      │        │           ║
+                ║ {http://www.topografix.com}src               │ 0    │ 1          │ true      │ String      │        │           ║
+                ║ {http://www.topografix.com}link              │ 0    │ 2147483647 │ true      │ URI         │        │           ║
+                ║ {http://www.topografix.com}number            │ 0    │ 1          │ true      │ Integer     │        │           ║
+                ║ {http://www.topografix.com}type              │ 0    │ 1          │ true      │ String      │        │           ║
+                ║ {http://www.topografix.com}rtept             │ 0    │ 2147483647 │ true      │ CX:WayPoint │        │           ║
+                ║   ├─{http://www.topografix.com}index         │ 1    │ 1          │ false     │ Integer     │        │           ║
+                ║   ├─{http://www.topografix.com}geometry      │ 1    │ 1          │ false     │ Point       │ CRS:84 │           ║
+                ║   ├─{http://www.topografix.com}ele           │ 0    │ 1          │ true      │ Double      │        │           ║
+                ║   ├─{http://www.topografix.com}time          │ 0    │ 1          │ true      │ Date        │        │           ║
+                ║   ├─{http://www.topografix.com}magvar        │ 0    │ 1          │ true      │ Double      │        │           ║
+                ║   ├─{http://www.topografix.com}geoidheight   │ 0    │ 1          │ true      │ Double      │        │           ║
+                ║   ├─{http://www.topografix.com}name          │ 0    │ 1          │ true      │ String      │        │           ║
+                ║   ├─{http://www.topografix.com}cmt           │ 0    │ 1          │ true      │ String      │        │           ║
+                ║   ├─{http://www.topografix.com}desc          │ 0    │ 1          │ true      │ String      │        │           ║
+                ║   ├─{http://www.topografix.com}src           │ 0    │ 1          │ true      │ String      │        │           ║
+                ║   ├─{http://www.topografix.com}link          │ 0    │ 2147483647 │ true      │ URI         │        │           ║
+                ║   ├─{http://www.topografix.com}sym           │ 0    │ 1          │ true      │ String      │        │           ║
+                ║   ├─{http://www.topografix.com}type          │ 0    │ 1          │ true      │ String      │        │           ║
+                ║   ├─{http://www.topografix.com}fix           │ 0    │ 1          │ true      │ String      │        │           ║
+                ║   ├─{http://www.topografix.com}sat           │ 0    │ 1          │ true      │ Integer     │        │           ║
+                ║   ├─{http://www.topografix.com}hdop          │ 0    │ 1          │ true      │ Double      │        │           ║
+                ║   ├─{http://www.topografix.com}vdop          │ 0    │ 1          │ true      │ Double      │        │           ║
+                ║   ├─{http://www.topografix.com}pdop          │ 0    │ 1          │ true      │ Double      │        │           ║
+                ║   ├─{http://www.topografix.com}ageofdgpsdata │ 0    │ 1          │ true      │ Double      │        │           ║
+                ║   └─{http://www.topografix.com}dgpsid        │ 0    │ 1          │ true      │ Integer     │        │           ║
+                ╚══════════════════════════════════════════════╧══════╧════════════╧═══════════╧═════════════╧════════╧═══════════╝
+                crs=WGS84(DD)
+            </programlisting>
+        </listitem>
+    </itemizedlist>
+    
+    <example>
+        <title>Reading GPX files</title>
+        <programlisting>
+            
+            final Map&lt;String, Serializable&gt; parameters = new HashMap&lt;String,Serializable&gt;();
+            parameters.put("url", GPXDemo.class.getResource("/data/sampleGPX.gpx"));
+ 
+            final DataStore store = DataStoreFinder.getDataStore(parameters);
+        </programlisting>
+    </example>
+</section>

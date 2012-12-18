@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE book [
+  <!ENTITY % book.entities SYSTEM "../../book.entities">
+  %book.entities;
+]>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0"
+         xmlns:xlink = "http://www.w3.org/1999/xlink">
+
+    <title>
+        Process Shell
+    </title>
+
+    <para>
+        Une partie des processus sont exécutables en ligne de commande. Ces outils servent principalement dans les environnements dépourvus d'interface utilisateur,
+        mais peuvent aussi bien être utilisés pour faire du traitement en fond de plan.
+    </para>
+    <para>
+        Trois outils sont disponibles :
+        <orderedlist>
+            <listitem>CRS : permet de rechercher des projections, obtenir des conversions ou encore une console pour faire de la reprojection de coordonnées.</listitem>
+            <listitem>EPSG : un raccourci pour l’outil CRS ci-dessus utilisé avec l'autorité EPSG. Défini par commodité uniquement parce qu'il est de loin le plus utilisé.</listitem>
+            <listitem>geotk : regroupe dynamiquement les différents processus disponibles. Pour ajouter un nouvel outil, il suffit d'ajouter le .jar dans le dossier lib.</listitem>
+        </orderedlist>
+    </para>
+
+    <section>
+        <title>Installation</title>
+        <section>
+            <title>Récupération de l'archive nécessaire</title>
+            <section>
+                <title>Précompilé</title>
+                <para>
+                    Dans le <link xlink:href="http://jenkins.geotoolkit.org">dépôt Jenkins</link>,
+                    aller dans le projet geotoolkit-pending et prendre l'archive
+                    <emphasis>geotk-shell.zip</emphasis>
+                </para>
+            </section>
+
+            <section>
+                <title>Compilation locale</title>
+                <para>
+                    Suivre les instructions de la page ressource, puis déplacez-vous dans le dossier
+                    <emphasis>build/shell</emphasis> et exécuter la commande :
+                    <programlisting>
+                        mvn clean install
+                    </programlisting>
+                    L'archive
+                    <emphasis>geotk-shell.zip</emphasis> sera ajoutée dans le dossier
+                    <emphasis>target/bundles</emphasis> à la racine du projet geotk-pending.
+                </para>
+            </section>
+        </section>
+        <section>
+            <title>Configuration sous linux et Mac</title>
+            <orderedlist>
+                <listitem>Dézipper l'archive dans le répertoire de votre choix</listitem>
+                <listitem>Rendre les scripts EPSG,CRS,geotk du dossier bin executable (chmod 775)</listitem>
+                <listitem>Ajouter le dossier bin dans le chemin du système (export PATH=/path/to/geotk-shell/bin:"$PATH")</listitem>
+            </orderedlist>
+        </section>
+
+        <section>
+            <title>Configuration sous Windows</title>
+            <para>
+                Non disponible.
+            </para>
+        </section>
+    </section>
+
+    <section>
+        <title>Utilisation</title>
+        <itemizedlist>
+            <listitem>
+                Outil CRS
+                <para>
+                    Le cas d'utilisation le plus courant est l'affichage de la définition d'un système de référence des coordonnées (CRS) au format Well Known Text (WKT).
+                    L'exemple ci-dessous affiche la définition du CRS pour le code EPSG 27573.
+                </para>
+
+                <example>
+                    <title>CRS EPSG:27573</title>
+                    <programlisting>
+
+                        PROJCS["NTF (Paris) / Lambert zone III",
+                        GEOGCS["NTF (Paris)",
+                        DATUM["Nouvelle Triangulation Francaise (Paris)",
+                        SPHEROID["Clarke 1880 (IGN)", 6378249.2, 293.4660212936269, AUTHORITY["EPSG","7011"]],
+                        AUTHORITY["EPSG","6807"]],
+                        PRIMEM["Paris", 2.5969213, AUTHORITY["EPSG","8903"]],
+                        UNIT["grade", 0.015707963267948967],
+                        AXIS["Geodetic latitude", NORTH],
+                        AXIS["Geodetic longitude", EAST],
+                        AUTHORITY["EPSG","4807"]],
+                        PROJECTION["Lambert Conic Conformal (1SP)", AUTHORITY["EPSG","9801"]],
+                        PARAMETER["central_meridian", 0.0],
+                        PARAMETER["latitude_of_origin", 49.0],
+                        PARAMETER["scale_factor", 0.999877499],
+                        PARAMETER["false_easting", 600000.0],
+                        PARAMETER["false_northing", 3200000.0],
+                        UNIT["metre", 1.0],
+                        AXIS["Easting", EAST],
+                        AXIS["Northing", NORTH],
+                        AUTHORITY["EPSG","27573"]]
+                    </programlisting>
+                </example>
+
+                <para>
+                    La commande
+                    <emphasis>transform</emphasis> affiche la transformation entre les deux CRS indiqués (note: il ne s'agit pas d'une option mais d'une commande, ce qui
+                    explique qu'il n'y ait pas de tirets avant le nom de commande. Nous appliquons la même idée que les commandes SVN par exemple).
+                </para>
+                <example>
+                    <title>CRS transform EPSG:27573 EPSG:4326</title>
+                    <programlisting>
+
+                        CONCAT_MT[INVERSE_MT[PARAM_MT["Lambert_Conformal_Conic_1SP",
+                        PARAMETER["semi_major", 6378249.2],
+                        PARAMETER["semi_minor", 6356515.0],
+                        PARAMETER["central_meridian", 0.0],
+                        PARAMETER["latitude_of_origin", 44.1],
+                        PARAMETER["scale_factor", 0.999877499],
+                        PARAMETER["false_easting", 600000.0],
+                        PARAMETER["false_northing", 3200000.0]]],
+                        PARAM_MT["Affine",
+                        PARAMETER["num_row", 3],
+                        PARAMETER["num_col", 3],
+                        PARAMETER["elt_0_2", 2.33722917]],
+                        PARAM_MT["Ellipsoid_To_Geocentric",
+                        PARAMETER["dim", 2],
+                        PARAMETER["semi_major", 6378249.2],
+                        PARAMETER["semi_minor", 6356515.0]],
+                        PARAM_MT["Geocentric translations (geog2D domain)",
+                        PARAMETER["dx", -168.0],
+                        PARAMETER["dy", -60.0],
+                        PARAMETER["dz", 320.0]],
+                        PARAM_MT["Geocentric_To_Ellipsoid",
+                        PARAMETER["dim", 2],
+                        PARAMETER["semi_major", 6378137.0],
+                        PARAMETER["semi_minor", 6356752.314245179]],
+                        PARAM_MT["Affine",
+                        PARAMETER["num_row", 3],
+                        PARAMETER["num_col", 3],
+                        PARAMETER["elt_0_0", 0.0],
+                        PARAMETER["elt_0_1", 1.0],
+                        PARAMETER["elt_1_0", 1.0],
+                        PARAMETER["elt_1_1", 0.0]]]
+
+                    </programlisting>
+                </example>
+            </listitem>
+
+            <listitem>
+                Outil EPSG
+                <para>
+                    Identique à l'outil CRS ci-dessus excepté que l'autorité EPSG est sous-entendu. On peut donc écrire EPSG 27573 au lieu de CRS EPSG:27573.
+                </para>
+            </listitem>
+
+            <listitem>
+                Outil Geotk
+                <para>
+                    Afin d'obtenir la liste des processus disponibles :
+                </para>
+                <programlisting>
+                    geotk -list
+                </programlisting>
+
+                <para>
+                    Et afficher l'aide sur un outil en particulier :
+                </para>
+
+                <programlisting>
+                    geotk -help &lt;command&gt;
+                </programlisting>
+                <example>
+                    <title>Execution de process en ligne de commande</title>
+                    <itemizedlist>
+                        <listitem>
+                            Tuilage
+                            <programlisting>
+
+                                geotk coverage.tiling -source file/to/tile.tif -target tiles/folder
+
+                                #S'il n'y a qu'un seul outil dont le nom est 'tiling' on peut ignorer le nom de la fabrique
+                                geotk tiling -source file/to/tile.tif -target tiles/folder
+
+                                #Si vous ne voulez pas voir le result de sortie
+                                geotk -silent tiling -source file/to/tile.tif -target tiles/folder
+                                geotk -s tiling -source file/to/tile.tif -target tiles/folder
+
+                            </programlisting>
+                        </listitem>
+                        <listitem>
+                            Copy between datastores
+                            <programlisting>
+
+                                #Copier un ShapeFile dans PostGIS
+                                geotk datastore.copy -source_params {url=file:/home/user/file.shp} -target_params {host=localhost, port=5432, database=shptest, user=postgres, passwd=secret}
+                                #Copier tous les ShapeFile d'un dossier dans PostGIS
+                                geotk datastore.copy -source_params {url=file:/home/user/*.shp} -target_params {host=localhost, port=5432, database=shptest, user=postgres, passwd=secret}
+                                #Copier toutes les tables PostGIS dans des ShapeFile
+                                geotk datastore.copy -source_params {host=localhost, port=5432, database=shptest, user=postgres, passwd=secret} -target_params{url=file:/home/user/*.shp}
+                                #Copier une seule table PostGIS dans un fichier CSV
+                                geotk datastore.copy -source_params {host=localhost, port=5432, database=shptest, user=postgres, passwd=secret} -target_params{url=file:/home/user/temp.csv} -type_name SURFACE_EAU
+
+                            </programlisting>
+                        </listitem>
+                    </itemizedlist>
+                </example>
+
+            </listitem>
+        </itemizedlist>
+    </section>
+
+</section>

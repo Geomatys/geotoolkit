@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE book [
+  <!ENTITY % book.entities SYSTEM "../../book.entities">
+  %book.entities;
+]>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0"
+         xmlns:xlink = "http://www.w3.org/1999/xlink"
+	 lang="en">
+          
+    <title>
+        Engine
+    </title>
+
+    <section>
+        <title>Specification</title>
+    
+        <para>
+	    The	<emphasis>OGC Graphical Object</emphasis> standard defined model of objects to draw. However, this standard depreciated and any other ISO or OGC covers this part.
+        </para>
+        <para>
+		A new model is defining inside GeoAPI and GeotoolKit. This model can be using in 2D and 3D.
+        </para>
+        <para>
+		GeotoolKit has rendering engine called "GO2" which "se basant" on a variation of Graphical Object standard.
+            GeotoolKit vient avec un moteur de rendu 2D appelé "GO2" se basant sur un modèle modifié de la norme Graphical Object.
+        </para>
+        <para>
+            This model is light for the moment. 
+        </para> 
+       
+        <figure> 
+            <title>Enging 2D class</title>
+            <mediaobject>
+                <imageobject>
+                    <imagedata fileref="../images/engine_classes.png" format="png"></imagedata>
+                </imageobject>
+                <textobject>
+                    <phrase> class about rendering enging 2D
+                    </phrase>
+                </textobject>
+            </mediaobject>
+        </figure>
+    </section>
+    
+    <section>
+        <title>Rendering steps</title>
+        
+        <para>
+            The pipeline has divided in four steps :
+        </para>
+        
+        <figure> 
+            <title>Rendering steps</title>
+            <mediaobject>
+                <imageobject>
+                    <imagedata fileref="../images/engine_etapes.png" format="png"></imagedata>
+                </imageobject>
+                <textobject>
+                    <phrase> Rendering steps
+                    </phrase>
+                </textobject>
+            </mediaobject>
+        </figure>
+        
+        <orderedlist>
+		<listitem><emphasis>CRS data</emphasis> is the original projection of datas. We can have often some layers with differents projections.
+		</listitem>
+    		<listitem>
+		We realize the projection of drawing map. In this part, we project datas to <emphasis>Objective CRS</emphasis>.  
+		</listitem>
+		<listitem>
+		Another transformation is adding to get the <emphasis>Display CRS</emphasis>. It's often an affine transformation use to treat the geometrics operations (translations, rotations and scaling operators) in 2D.  
+		</listitem>
+		<listitem>A last transform is using to adapt the model for the <emphasis>Device CRS</emphasis> (output device). It's Java2D which apply automaticly this step.
+		</listitem>
+	</orderedlist>
+    </section>
+    
+    </section>

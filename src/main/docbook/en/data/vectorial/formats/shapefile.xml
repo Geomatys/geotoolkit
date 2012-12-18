@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE book [
+  <!ENTITY % book.entities SYSTEM "../../../../book.entities">
+  %book.entities;
+]>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0"
+         xmlns:xlink = "http://www.w3.org/1999/xlink"
+         id="shapefile" xreflabel="Shapefile" lang="en">
+             
+    <title>Shapefile format</title>
+    
+    <para>
+        Shapefile file Un fichier shapefile est en fait une combinaison de plusieurs fichiers :
+        <itemizedlist>
+            <listitem>.shp - Mandatory - contient les données attributaires relatives aux objets contenus dans le shapefile</listitem>
+            <listitem>.dbf - Optional -  stocke l'index de la géométrie</listitem>
+            <listitem>.prj - Optional -  the coordinate system and projection information, using WKT (Well Known Text) format.</listitem>
+            <listitem>.shx - Mandatory - link between shp and dbf records.</listitem>
+            <listitem>.shp.xml - Optional - shapefile metadata..</listitem>
+            <listitem>.qix - Optional - Quad tree</listitem>
+        </itemizedlist>
+        It is also the GIS storage model the most used in GIS. It can store only one FeatureType.
+    </para>
+    
+    <example>
+        <title>Reading shapefile files</title>
+            <programlisting>
+                
+                    final Map&lt;String,Serializable&gt; map = new HashMap&lt;String, Serializable&gt;();
+                    map.put("url", ShapefileDemo.class.getResource("/data/world/Countries.shp"));
+  
+                    final DataStore store = DataStoreFinder.getDataStore(map);
+                
+            </programlisting>
+    </example>
+</section>

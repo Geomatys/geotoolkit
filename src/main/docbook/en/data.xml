@@ -6,10 +6,59 @@
 ]>
 <chapter xmlns="http://docbook.org/ns/docbook" version="5.0"
          xmlns:xi    = "http://www.w3.org/2001/XInclude"
-         xmlns:xlink = "http://www.w3.org/1999/xlink">
+         xmlns:xlink = "http://www.w3.org/1999/xlink"
+         lang="eng">
           
     <title>
         Datas
     </title>
-        
+    
+    <para>
+        Geotooltik implements
+        <link xlink:href="http://www.opengeospatial.org/standards/geoapi">
+            <acronym>The OGC standard </acronym>
+        </link> and 
+        <link xlink:href="http://www.geoapi.org/">
+            <acronym>GeoAPI 3</acronym>
+        </link>. 
+    </para>
+    <para>
+        In fact, we will use specific models for images and vectorial datas whatever the sources used.
+        <itemizedlist>
+            <listitem>
+                <emphasis>Coverage / Coveragestore </emphasis>for raster images.
+            </listitem>
+            <listitem>
+                <emphasis>Feature / Datastore </emphasis>for vectorial datas and attributes. 
+            </listitem>
+            <listitem>
+                <emphasis>Client / Server </emphasis>for remotes connection. 
+            </listitem>
+        </itemizedlist>   
+    </para>
+    <para>
+        All formats are not always standardized, or can't be used in specific models. Particularly, results sent by some remote services which are standardized are not coverage or feature.
+        We will find server which implements Datastore or CoverageStore. Geotoolkit manages communication between these services, provides authentication diposal, sending request, and traitment results.
+        <itemizedlist>
+            <listitem>
+                Coverage : 
+                <xref linkend="coverage"/>
+            </listitem>
+            <listitem>
+                Feature and Datastore : 
+                <xref linkend="vectorial"/>
+            </listitem>
+            <listitem>
+                Remote client : 
+                <xref linkend="client"/>
+            </listitem>
+        </itemizedlist>   
+    </para>
+    
+    <xi:include href="data/vectorial.xml"/>
+  
+    <xi:include href="data/coverage.xml"/>
+  
+    <xi:include href="data/client.xml"/>
+    
 </chapter>

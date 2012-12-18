@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE book [
+  <!ENTITY % book.entities SYSTEM "../../book.entities">
+  %book.entities;
+]>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0"
+         xmlns:xlink = "http://www.w3.org/1999/xlink">
+
+    <title>
+        Using process
+    </title>
+    <para>
+        In this part, we will see how find and execute a simple process then another more complex like Union.
+        You will find the links to the different examples.
+    </para>
+
+    <example>
+        <title>Example 1 : Finding process.</title>
+        <link
+            xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/processing/FindProcessDemo.java"
+        >
+            geotoolkit-pending/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/processing/FindProcessDemo.java
+        </link>
+    </example>
+    <example>
+        <title>Example 2 : Execution of a simple process.</title>
+        <link
+            xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/processing/AddDemo.java"
+        >
+            geotoolkit-pending/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/processing/AddDemo.java
+        </link>
+    </example>
+    <example>
+        <title>Exemple 3 : Execution of a complex process</title>
+        <link
+            xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/processing/UnionDemo.java"
+        >
+            geotoolkit-pending/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/processing/UnionDemo.java
+        </link>
+    </example>
+
+    <section>
+        <title>Finding process</title>
+        <para> To execute a process, you need before get its description. GeotoolKit has the utility class 
+            <link xlink:href="http://pending.geotoolkit.org/apidocs/org/geotoolkit/process/ProcessFinder.html"> ProcessFinder </link>
+            which contain a set of static methods. This class get all ProcessingRegistry defined in files resources/META-INF/services/org.geotoolkit.process.ProcessingRegistry. 
+            And all descriptions that each ProcessFactory contains.
+        </para>
+        <para>
+            Dans l'exemple suivant on voit la récupération de la liste des ProcessingRegistry  puis pour chaque registry la liste des ProcessDesciptor qu'elle contient.
+        </para>
+        <example>
+            <title>Récupération de la liste des ProcessingRegistry et des ProcessDescriptor</title>
+            <programlisting>
+    //Itérateur sur les ProcessingRegistry
+    Iterator&lt;ProcessingRegistry&gt; factoryIte = ProcessFinder.getProcessFactories();
+
+    while (factoryIte.hasNext()) {
+    // Une registry
+    final ProcessingRegistry registry = factoryIte.next();
+    System.out.println("Registry : "+registry.getIdentification().getCitation().getTitle().toString());
+
+    //Liste des ProcessDescriptor
+    List&lt;ProcessDescriptor&gt; descriptorList = registry.getDescriptors();
+
+        for (ProcessDescriptor descriptor : descriptorList) {
+            System.out.println("    Process : "+descriptor.getIdentifier().getCode());
+        }
+    }
+            </programlisting>
+        </example>
+
+        <para>
+            On peux également récupérer plus rapidement un process en particulier en connaissant son nom et le nom de sa registry. Comme dans l'example suivant.
+        </para>
+
+        <example>
+            <title>Récupération d'un ProcessDescriptor en particulier</title>
+            <programlisting>
+    //Récupération de la description du processus "processName" appartenant à la registry "registryName".
+    ProcessDescriptor descriptor = ProcessFinder.getProcessDescriptor("registryName", "processName");
+            </programlisting>
+        </example>
+
+        <para>
+            Une fois que l'on a une registry on peut appeler différentes méthodes dessus :
+        </para>
+
+        <example>
+            <title>Registry méthodes</title>
+            <programlisting>
+    //Récupération du nom de la registry.
+    final String registryName = registry.getIdentification().getCitation().getTitle().toString();
+
+    //Récupération de la liste des descriptions des process.
+    final List&lt;ProcessDescriptor&gt; descriptorList = registry.getDescriptors();
+
+    //Récupération des noms des process de la registery seulement.
+    final List&lt;String&gt; processNameList = registry.getNames();
+
+    //Récupération de la description d'un process en particulier.
+    final ProcessDescriptor cosProcessDescriptor = registry.getDescriptor("cos");
+            </programlisting>
+        </example>
+
+    </section>
+
+    <section xml:id="execProcess">
+        <title>Exécution d'un processus</title>
+        <para>
+            Une fois que l'on a la description d'un processus, il suffit de passer des valeurs aux paramètres d'entrées.
+            Pour cela, il faut commencer par créer le groupe de paramètres d'entrée (
+            <link xlink:href="http://www.geoapi.org/snapshot/javadoc/org/opengis/parameter/ParameterValueGroup.html">ParameterValueGroup</link>)
+            à partir de leurs descriptions (
+            <link xlink:href="http://www.geoapi.org/snapshot/javadoc/org/opengis/parameter/ParameterDescriptorGroup.html">ParameterDescriptorGroup</link>)
+            (définie dans la description complète du processus).
+        </para>
+        <para>
+            Pour cela on appel la méthode createValue() sur le descripteur du group de paramètre
+            d'entrée. Comme dans l'exemple suivant.
+        </para>
+        <example>
+            <title>Création des paramètres d'entrées</title>
+            <programlisting>
+    //Récupération des paramètres d'entrées
+    ParameterValueGroup input = descriptor.getInputDescriptor().createValue();
+            </programlisting>
+        </example>
+
+        <para>
+            Une fois qu'on a le ParameterValueGroup, il suffit de remplir les paramètres d'entrée avec les valeurs voulus. La récupération d'un parametre en particulier ce fait par
+            son nom définie lors de la description de l'entrée dans le ProcessDescriptor.
+        </para>
+
+        <example>
+            <title>Remplissage des paramètres d'entrées.</title>
+            <programlisting>
+    //Set des paramètres
+    input.parameter("first").setValue(15.0);
+    input.parameter("second").setValue(52.2);
+            </programlisting>
+        </example>
+
+        <para>
+            Les paramètres d'entrée créer il ne reste plus qu'à créer et à exécuter processus et la récupération de la (des) donnée(s) en sortie.
+            La création du processus ce fait à partir du descripteur avec la méthode createProcess() à laquelle on donne nos paramètres d'entrées.
+        </para>
+
+        <example>
+            <title>Création du processus.</title>
+            <programlisting>
+    //Création du processus
+    final Process process = descriptor.createProcess(in);
+            </programlisting>
+        </example>
+
+        <para>
+            L'exécution du traitement ce fait simplement par l'appel à la méthode call() sur l'objet process. Lequel retourne dans un ParameterValueGroup le groupe de
+            paramètre de sortie. Il suffit alors de récupérer le paramètre voulu par le biai de son nom et ensuite d'extraire sa valeur.
+        </para>
+
+        <example>
+            <title>Exécution et récupération de la sortie du processus.</title>
+            <programlisting>
+    //Récupération de la sortie de l'addition
+    double result = (Double) process.call().parameter("result").getValue();
+            </programlisting>
+        </example>
+    </section>
+</section>

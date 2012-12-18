@@ -6,10 +6,18 @@
 ]>
 <chapter xmlns="http://docbook.org/ns/docbook" version="5.0"
          xmlns:xi    = "http://www.w3.org/2001/XInclude"
-         xmlns:xlink = "http://www.w3.org/1999/xlink">
+         xmlns:xlink = "http://www.w3.org/1999/xlink"
+         lang="en">
           
     <title>
         Map
     </title>
-        
+    
+    <xi:include href="map/mapcontext.xml"/>
+    
+    <xi:include href="map/symbology.xml"/>
+    
+    <xi:include href="map/engine.xml"/>
+    
+    <xi:include href="map/2dengine.xml"/>
 </chapter>

@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE book [
+  <!ENTITY % book.entities SYSTEM "../../../book.entities">
+  %book.entities;
+]>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0"
+         xmlns:xlink = "http://www.w3.org/1999/xlink"
+         lang="en">
+          
+    <title>
+        Service-report
+    </title>
+    
+    <para>
+        GeotoolKit uses <emphasis>JasperReports</emphasis> API to generate report and atlas.
+	It's the best Java API for generating report and has its own editor, IReport. We had to paint specials elements for maps, captions, scale bar...we need to edit specific report.  
+    </para>
+    
+    <section>
+        <title>IReport editor</title>
+        
+        <para>
+            You can download IReport here : 
+            <link xlink:href="http://jasperforge.org/projects/ireport">http://jasperforge.org/projects/ireport</link>
+        </para>
+        <para>
+            Application preview :
+        </para>
+        
+        <figure> 
+            <title>iReport 3.7.4 homepage</title>
+            <mediaobject>
+                <imageobject>
+                    <imagedata fileref="../images/capture-ireport_3.7.4.png" format="png"></imagedata>
+                </imageobject>
+                <textobject>
+                    <phrase> iReport 3.7.4 homepage
+                    </phrase>
+                </textobject>
+            </mediaobject>
+        </figure>
+        
+        <para>
+            If you don't know JasperReports or IReport, the documentations is available  
+            <link xlink:href="http://jasperforge.org//website/ireportwebsite/IR%20Website/ir_documentation.html?header=project&amp;target=ireport">here</link>.
+        </para>
+        
+        <section>
+            <title>Fields</title>
+            <para>
+                When we create a report, we will use two types of informations during generating :
+                <orderedlist>
+                    <listitem>Parameters</listitem>
+                    <listitem>Fields</listitem>
+                </orderedlist>
+                When we finish our report, parameters will be giving with a Map object, and fields will be converting in		FeatureType.
+            </para>
+        
+            <figure> 
+                <title>Source fields</title>
+                <mediaobject>
+                    <imageobject>
+                        <imagedata fileref="../images/reportfields.png" format="png"></imagedata>
+                    </imageobject>
+                    <textobject>
+                        <phrase> source fields
+                        </phrase>
+                    </textobject>
+                </mediaobject>
+            </figure>
+        
+            <para>
+                will be processiong in FeatureType : 
+            </para>
+            <para>
+                <programlisting>
+                
+                    ╔═════════════╤══════╤══════╤═══════════╤═══════════════╤══════╤════════════╗
+                    ║ name        │  min │  max │  nillable │  type         │  CRS │  UserData  ║
+                    ╟─────────────┼──────┼──────┼───────────┼───────────────┼──────┼────────────╢
+                    ║ CNTRY_NAME  │ 1    │ 1    │ true      │ String        │      │            ║
+                    ║ POP_CNTRY   │ 1    │ 1    │ true      │ Integer       │      │            ║
+                    ║ map3        │ 1    │ 1    │ true      │ MapDef        │      │            ║
+                    ║ chart4      │ 1    │ 1    │ true      │ ChartDef      │      │            ║
+                    ║ legend5     │ 1    │ 1    │ true      │ LegendDef     │      │ map=map3   ║
+                    ║ scalebar6   │ 1    │ 1    │ true      │ ScaleBarDef   │      │ map=map3   ║
+                    ║ northarrow7 │ 1    │ 1    │ true      │ NorthArrowDef │      │ map=map3   ║
+                    ║ table8      │ 1    │ 1    │ true      │ JRDataSource  │      │            ║
+                    ║ minimap     │ 1    │ 1    │ true      │ MapDef        │      │            ║
+                    ╚═════════════╧══════╧══════╧═══════════╧═══════════════╧══════╧════════════╝
+                </programlisting>
+            </para>
+            <para>
+                If we look binding of FeatureType, we see MapDef, ChartDef, LegendDef ... 
+            </para>
+            <para>
+                They are types that GeotoolKit knows.
+            </para>
+            <para>
+                To define these types, we must edit class field in IReport : 
+            </para>
+        
+            <figure> 
+                <title>Field class</title>
+                <mediaobject>
+                    <imageobject>
+                        <imagedata fileref="../images/service-report_Field_Class.png" format="png"></imagedata>
+                    </imageobject>
+                    <textobject>
+                        <phrase>class definition field
+                        </phrase>
+                    </textobject>
+                </mediaobject>
+            </figure>
+        
+            <para>
+                The list of the recognized fields is :
+                <itemizedlist>
+                    <listitem>org.geotoolkit.report.graphic.map.MapDef</listitem>
+                    <listitem>org.geotoolkit.report.graphic.chart.ChartDef</listitem>
+                    <listitem>org.geotoolkit.report.graphic.legend.LegendDef</listitem>
+                    <listitem>org.geotoolkit.report.graphic.scalebar.ScaleBarDef</listitem>
+                    <listitem>org.geotoolkit.report.graphic.northarrow.NorthArrowDef</listitem>
+                </itemizedlist>
+                For the types legend, scalebar and north arrow, It's necessary to indicate to which map the type relates.		 This information defines itself in the properties of the field: 
+            </para>
+        
+            <figure> 
+                <title>fields properties window</title>
+                <mediaobject>
+                    <imageobject>
+                        <imagedata fileref="../images/service-report_properties.png" format="png"></imagedata>
+                    </imageobject>
+                    <textobject>
+                        <phrase> fields properties window
+                        </phrase>
+                    </textobject>
+                </mediaobject>
+            </figure>
+        </section>
+        <section>
+        
+            <title>Report detail</title>
+            <para>
+                <literallayout>
+                    Above classes are subclass of net.sf.jasperreports.engine.JRRenderable.
+
+                    JasperReport has created JRRenderable for this case. We can use the capacity of rendering engine			directly in JasperReports.capacités du moteur de rendu directement dans JasperReports.
+
+                    When we generate report, JasperReport will let JRRenderable in charge of drawing process, and		     indirectly the rendering engine.
+
+                    Each field JRRenderable like an image :
+                </literallayout>
+            </para>
+        
+            <figure> 
+                <title>Fields properties</title>
+                <mediaobject>
+                    <imageobject>
+                        <imagedata fileref="../images/service-report_detailclass.png" format="png"></imagedata>
+                    </imageobject>
+                    <textobject>
+                        <phrase> Fields properties
+                        </phrase>
+                    </textobject>
+                </mediaobject>
+            </figure>
+        </section>
+    </section>
+    
+    <section>
+        <title>JasperReportService</title>
+        
+        <example>
+            <title>Generating report with JasperReport</title>
+            <para>
+                <link xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/rendering/ReportDemo.java">
+                    <acronym>geotoolkit-pending/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/rendering/ReportDemo.java</acronym>
+                </link> 
+            </para>
+            <para>
+                <link xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/files/tip/demos/geotk-demo-samples/src/main/resources/data/report/simpleReport.jrxml">
+                    <acronym>geotoolkit-pending/demos/geotk-demo-samples/src/main/resources/data/report/simpleReport.jrxml</acronym>
+                </link>
+            </para> 
+            <para>
+                <link xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/files/tip/demos/geotk-demo-samples/src/main/resources/data/report/complexReport.jrxml">
+                    <acronym>geotoolkit-pending/demos/geotk-demo-samples/src/main/java/resources/data/report/complexReport.jrxml</acronym>
+                </link>
+            </para>
+        </example>
+        
+        <para>
+            resources/data/report/complexReport.jrxml
+            
+            <orderedlist>
+                <listitem>
+                    Template parser
+                        
+                    <programlisting>
+                        
+                        final File template = ...
+                        final Entry&lt;JasperReport,FeatureType&gt; entry = JasperReportService.prepareTemplate(template);
+                        final JasperReport report = entry.getKey();
+                        final FeatureType type = entry.getValue();
+                    </programlisting>
+                    <para>
+                        This step will generate the FeatureType for the template.
+                    </para>   
+                </listitem>
+                <listitem>
+                    
+                    Prepare datas
+                        
+                    <para>
+                        <para>
+                            This part is depending of your template.
+                        </para>
+                        <para>
+                            We want create a FeatureCollection with the featuretype provided. This step depends of your template and your datas entered.
+                        </para>
+                        <para>
+                            Featuretype can be uniform, missing properties are replacing by null .
+                        </para>
+                        <para>
+                            You can specifiy the case when value is null.
+                        </para>
+                    </para>  
+                </listitem>
+                <listitem>
+                    To generate report
+                    <programlisting>
+                        
+                        final OutputDef output = new OutputDef(JasperReportService.MIME_PDF, new File("atlas.pdf"));
+                        JasperReportService.generateReport(report, featureCollection, parameters, output);
+                    </programlisting>
+                    <para>
+                        Duration of this step can be shorter or longer and use more memory or depending on the complexity of the relationship and the amount of data to be processed
+                    </para>
+                </listitem>
+            </orderedlist>
+        </para>
+    </section>
+
+</section>

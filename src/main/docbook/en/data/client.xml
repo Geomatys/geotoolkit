@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this template, choose Tools | Templates
+and open the template in the editor.
+-->
 
 <!DOCTYPE book [
   <!ENTITY % book.entities SYSTEM "../../book.entities">
@@ -7,49 +11,49 @@
 <section xmlns="http://docbook.org/ns/docbook" version="5.0"
          xmlns:xi    = "http://www.w3.org/2001/XInclude"
          xmlns:xlink = "http://www.w3.org/1999/xlink"
-        id="client" xreflabel="client" lang="fr">
-          
+         id="client" xreflabel="client" lang="en">
+    
     <title>
         Client
     </title>
     
     <para>
-        GeotoolKit contient plus d'une dizaine de modules permettant de se connecter à différents services distants.
+        GeotoolKit contains a large number of modules to connect to different remote services.
     </para>
     <para>
-        Chaque client s'appuie sur une classe implémentant 
-        <emphasis>Server</emphasis>. On trouvera dans cette classe :
+        Each client work with class implement 
+        <emphasis>Server</emphasis>. We will find in this class :
         <itemizedlist>
-            <listitem>Un object 
-                <emphasis>ClientSecurity</emphasis> : permettant de gérer l'authentification, les jetons ou le cryptage
+            <listitem>A  
+                <emphasis>ClientSecurity</emphasis> object : manage l'authentication, tokens or encryption
             </listitem>
-            <listitem>Une méthode 
-                <emphasis>getCapabilities</emphasis> : la majorité des services étant spécifiés par l'OGC, un objet 
-                <emphasis>capability</emphasis> est souvent mis en cache.
+            <listitem>A 
+                <emphasis>getCapabilities</emphasis> method : most of services are providing by OGC, an object 
+                <emphasis>capability</emphasis> is often caching
             </listitem>
-            <listitem>Diverses méthodes 
-                <emphasis>create</emphasis> : pour la création de chaque type de requête 
+            <listitem>Various methods 
+                <emphasis>create</emphasis> : to create each request type 
             </listitem>
         </itemizedlist>
     </para>
     
     <section>
         <title>
-            Sécurité
+            Security
         </title>
         <para>
-            Tout service peut être sécurisé ou crypté. L'objet responsable de cette tâche doit être une implémentation de ClientSecurity .
+            Service can provide secured or encrypted. An object must be a ClientSecurity implementation to be in charge of this task.
         </para>
         <para>
-            Actuellement, GeotoolKit contient trois façon de sécuriser les clients :
+	    Geotoolkit has currently three methods to secure its clients :
             <itemizedlist>
-                <listitem>BasicAuthenticationSecurity : pour les connexions avec login et mot de passe.</listitem>
-                <listitem>RefererClientSecurity : permet de spécifier un referer lors des requêtes</listitem>
-                <listitem>TokenClientSecurity :  spécifique à l'IGN, permet de gérer les jetons</listitem>
+                <listitem>BasicAuthenticationSecurity : for connection with login and password.</listitem>
+                <listitem>RefererClientSecurity : specify a referer during request</listitem>
+                <listitem>TokenClientSecurity :  only used by IGN, manage tokens</listitem>
             </itemizedlist>
         </para>
         <para>
-            Les sécurités peuvent être combinées en utilisant :
+            Safety can be combined with :
         </para>
         <programlisting>
             ClientSecurityStack.wrap(security1, security2, ...);

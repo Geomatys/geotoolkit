@@ -1,18 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this template, choose Tools | Templates
+and open the template in the editor.
+-->
 
 <!DOCTYPE book [
   <!ENTITY % book.entities SYSTEM "../../book.entities">
   %book.entities;
 ]>
+
 <section xmlns="http://docbook.org/ns/docbook" version="5.0"
          xmlns:xi    = "http://www.w3.org/2001/XInclude"
          xmlns:xlink = "http://www.w3.org/1999/xlink"
-        id="vectoriel" xreflabel="vectoriel" lang="fr">
-          
-    <title>
-        Vectoriel
+         id="vectorial" xreflabel="vectorial" lang="en">
+
+<!--    <title>
+        Vectorial
     </title>
-    
     <section>
         <title>
             Structure et manipulation
@@ -130,17 +134,17 @@
         </para>
     </section>
     
-    <xi:include href="vectoriel/datastore.xml"/>
+    <xi:include href="vectorial/datastore.xml"/>
     
-    <xi:include href="vectoriel/geometry-jts.xml"/>
+    <xi:include href="vectorial/geometry-jts.xml"/>
     
-    <xi:include href="vectoriel/featuretype.xml"/>
+    <xi:include href="vectorial/featuretype.xml"/>
     
-    <xi:include href="vectoriel/feature.xml"/>
+    <xi:include href="vectorial/feature.xml"/>
     
-    <xi:include href="vectoriel/filter-expression.xml"/>
+    <xi:include href="vectorial/filter-expression.xml"/>
     
-    <xi:include href="vectoriel/filter-cql.xml"/>
+    <xi:include href="vectorial/filter-cql.xml"/>
     
-    <xi:include href="vectoriel/formats.xml"/>
+    <xi:include href="vectorial/formats.xml"/>-->
 </section>
