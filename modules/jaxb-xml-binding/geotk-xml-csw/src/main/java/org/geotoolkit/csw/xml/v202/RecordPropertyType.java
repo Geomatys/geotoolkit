@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.csw.xml.RecordProperty;
 
 // xerces dependencies
 import org.w3c.dom.Element;
@@ -52,7 +53,7 @@ import org.w3c.dom.Node;
     "name",
     "value"
 })
-public class RecordPropertyType {
+public class RecordPropertyType implements RecordProperty{
 
     @XmlElement(name = "Name", required = true)
     private String name;
@@ -71,6 +72,7 @@ public class RecordPropertyType {
     /**
      * Gets the value of the name property.
      */
+    @Override
     public String getName() {
         return name;
     }
@@ -78,6 +80,7 @@ public class RecordPropertyType {
     /**
      * Gets the value of the value property.
      */
+    @Override
     public Object getValue() {
         if (value instanceof Element) {
             value = getXMLFromElement((Element)value);

@@ -16,12 +16,18 @@
  */
 package org.geotoolkit.csw.xml.v200;
 
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.logging.Logger;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 import org.geotoolkit.csw.xml.RequestStatus;
+import org.geotoolkit.util.logging.Logging;
 
 
 /**
@@ -53,11 +59,49 @@ import org.geotoolkit.csw.xml.RequestStatus;
 @XmlType(name = "RequestStatusType")
 public class RequestStatusType implements RequestStatus {
 
+    private static final Logger LOGGER = Logging.getLogger(RequestStatusType.class);
+    
     @XmlAttribute(required = true)
     private StatusType status;
     @XmlAttribute
     private XMLGregorianCalendar timestamp;
 
+    private static final DatatypeFactory factory;
+    static {
+        DatatypeFactory candidate = null;
+        try {
+            candidate = DatatypeFactory.newInstance();
+        } catch (DatatypeConfigurationException ex) {
+            LOGGER.severe("error at the dataType factory initialisation in request status");
+        }
+        factory = candidate;
+    }
+    
+     /**
+     * An empty constructor used by JAXB
+     */
+    RequestStatusType() {
+        
+    }
+    
+    /**
+     * Build a new request statuc with the specified XML gregorian calendar.
+     */
+    public RequestStatusType(final XMLGregorianCalendar timestamp) {
+        this.timestamp = timestamp;
+    }
+    
+    /**
+     * Build a new request statuc with the specified .
+     */
+    public RequestStatusType(final long time) {
+        final Date d = new Date(time);
+        final GregorianCalendar cal = new  GregorianCalendar();
+        cal.setTime(d);
+        synchronized (factory) {
+            this.timestamp = factory.newXMLGregorianCalendar(cal);
+        }
+    }
     /**
      * Gets the value of the status property.
      * 

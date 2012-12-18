@@ -57,7 +57,7 @@ import org.geotoolkit.ows.xml.AbstractCapabilitiesBase;
     "serviceProvider",
     "operationsMetadata"
 })
-public class CapabilitiesBaseType implements AbstractCapabilitiesBase {
+public abstract class CapabilitiesBaseType implements AbstractCapabilitiesBase {
 
     @XmlElement(name = "ServiceIdentification")
     private ServiceIdentification serviceIdentification;
@@ -99,6 +99,7 @@ public class CapabilitiesBaseType implements AbstractCapabilitiesBase {
      * Gets the value of the serviceIdentification property.
      * 
      */
+    @Override
     public ServiceIdentification getServiceIdentification() {
         return serviceIdentification;
     }
@@ -112,6 +113,7 @@ public class CapabilitiesBaseType implements AbstractCapabilitiesBase {
      * Gets the value of the serviceProvider property.
      * 
      */
+    @Override
     public ServiceProvider getServiceProvider() {
         return serviceProvider;
     }
@@ -123,6 +125,7 @@ public class CapabilitiesBaseType implements AbstractCapabilitiesBase {
     /**
      * Gets the value of the operationsMetadata property.
      */
+    @Override
     public OperationsMetadata getOperationsMetadata() {
         return operationsMetadata;
     }
@@ -131,6 +134,7 @@ public class CapabilitiesBaseType implements AbstractCapabilitiesBase {
      * Gets the value of the version property.
      * 
      */
+    @Override
     public String getVersion() {
         return version;
     }
@@ -139,6 +143,7 @@ public class CapabilitiesBaseType implements AbstractCapabilitiesBase {
      * Gets the value of the updateSequence property.
      * 
      */
+    @Override
     public String getUpdateSequence() {
         return updateSequence;
     }
@@ -146,7 +151,6 @@ public class CapabilitiesBaseType implements AbstractCapabilitiesBase {
     public void setUpdateSequence(final String updateSequence) {
         this.updateSequence = updateSequence;
     }
-
 
     /**
      * Verify that this entry is identical to the specified object.
@@ -182,28 +186,31 @@ public class CapabilitiesBaseType implements AbstractCapabilitiesBase {
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder("[").append(this.getClass().getSimpleName()).append("]\n");
-        if (operationsMetadata != null)
+        if (operationsMetadata != null) {
             s.append(operationsMetadata.toString()).append('\n');
-        else
+        } else {
             s.append("OperationMetadata is null").append('\n');
-        if (serviceIdentification != null)
+        }
+        if (serviceIdentification != null) {
             s.append(serviceIdentification.toString()).append('\n');
-        else
+        } else {
             s.append("serviceIdentification is null").append('\n');
-        if (serviceProvider != null)
+        }
+        if (serviceProvider != null) {
             s.append(serviceProvider.toString()).append('\n');
-        else
+        } else {
             s.append("serviceProvider is null").append('\n');
-        if (updateSequence != null)
+        }
+        if (updateSequence != null) {
             s.append(updateSequence.toString()).append('\n');
-        else
+        } else {
             s.append("updateSequence is null").append('\n');
-        if (version != null)
+        }
+        if (version != null) {
             s.append(version.toString()).append('\n');
-        else
+        } else {
             s.append("version is null").append('\n');
-        
+        }
         return s.toString();
     }
-
 }    

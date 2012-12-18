@@ -25,6 +25,7 @@ import javax.imageio.stream.ImageInputStream;
 import org.geotoolkit.client.Request;
 import org.geotoolkit.coverage.DefaultTileReference;
 import org.geotoolkit.image.io.XImageIO;
+import org.geotoolkit.util.ImageIOUtilities;
 
 /**
  *
@@ -41,18 +42,21 @@ public class RequestTileReference extends DefaultTileReference {
     @Override
     public ImageReader getImageReader() throws IOException {
 
-        ImageReaderSpi spi = this.spi;
-        ImageReader reader = null;
 
         if(spi == null){
-
-            reader = XImageIO.getReader(((Request)input).getResponseStream(), Boolean.TRUE, Boolean.TRUE);
-            if (reader.getClass().getName().startsWith("com.sun.media")) {
+            //try to find reader
+            ImageReader reader = XImageIO.getReader(((Request)input).getResponseStream(), Boolean.TRUE, Boolean.TRUE);
+            if (!reader.getClass().getName().startsWith("com.sun.media")) {
+                return reader;
+            }else{
+                //reader is JAI, we don't want this implementation
+                //we use an ImageInputStream, this will avoid JAI readers since
+                //pure java reader should be first.
+                ImageIOUtilities.releaseReader(reader);
                 final ImageInputStream ninput = ImageIO.createImageInputStream(((Request)input).getResponseStream());
                 reader = XImageIO.getReader(ninput, Boolean.TRUE, Boolean.TRUE);
-                ninput.close();
+                return reader;
             }
-            spi = reader.getOriginatingProvider();
         }
 
         final Class[] supportedTypes = spi.getInputTypes();
@@ -72,10 +76,7 @@ public class RequestTileReference extends DefaultTileReference {
             in = ImageIO.createImageInputStream(inputTmp);
         }
 
-        if(reader == null){
-            reader = spi.createReaderInstance();
-        }
-
+        final ImageReader reader = spi.createReaderInstance();
         reader.setInput(in, true, true);
         return reader;
     }

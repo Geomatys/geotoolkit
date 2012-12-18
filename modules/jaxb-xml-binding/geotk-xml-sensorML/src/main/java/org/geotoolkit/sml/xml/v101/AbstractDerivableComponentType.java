@@ -118,10 +118,12 @@ public abstract class AbstractDerivableComponentType extends AbstractProcessType
         }
     }
 
+    @Override
     public Location getSMLLocation() {
         return location;
     }
     
+    @Override
     public void setSMLLocation(final AbstractLocation location) {
         if (location != null) {
             this.location = new Location(location);
@@ -131,10 +133,12 @@ public abstract class AbstractDerivableComponentType extends AbstractProcessType
     /**
      * @return the position
      */
+    @Override
     public Position getPosition() {
         return position;
     }
     
+    @Override
     public void setPosition(final AbstractPosition position) {
         if (position != null) {
             this.position = new Position(position);
@@ -144,6 +148,7 @@ public abstract class AbstractDerivableComponentType extends AbstractProcessType
     /**
      * @return the spatialReferenceFrame
      */
+    @Override
     public SpatialReferenceFrame getSpatialReferenceFrame() {
         return spatialReferenceFrame;
     }
@@ -158,6 +163,7 @@ public abstract class AbstractDerivableComponentType extends AbstractProcessType
     /**
      * @return the timePosition
      */
+    @Override
     public TimePosition getTimePosition() {
         return timePosition;
     }
@@ -172,6 +178,7 @@ public abstract class AbstractDerivableComponentType extends AbstractProcessType
     /**
      * @return the temporalReferenceFrame
      */
+    @Override
     public TemporalReferenceFrame getTemporalReferenceFrame() {
         return temporalReferenceFrame;
     }
@@ -186,6 +193,7 @@ public abstract class AbstractDerivableComponentType extends AbstractProcessType
     /**
      * @return the interfaces
      */
+    @Override
     public Interfaces getInterfaces() {
         return interfaces;
     }

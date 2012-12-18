@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.geotoolkit.csw.xml.Delete;
 
 
 /**
@@ -57,7 +58,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 @XmlType(name = "DeleteType", propOrder = {
     "constraint"
 })
-public class DeleteType {
+public class DeleteType implements Delete {
 
     @XmlElement(name = "Constraint", required = true)
     private QueryConstraintType constraint;
@@ -82,6 +83,7 @@ public class DeleteType {
     /**
      * Gets the value of the constraint property.
      */
+    @Override
     public QueryConstraintType getConstraint() {
         return constraint;
     }
@@ -93,6 +95,7 @@ public class DeleteType {
     /**
      * Gets the value of the typeName property.
      */
+    @Override
     public String getTypeName() {
         return typeName;
     }
@@ -105,6 +108,7 @@ public class DeleteType {
     /**
      * Gets the value of the handle property.
      */
+    @Override
     public String getHandle() {
         return handle;
     }

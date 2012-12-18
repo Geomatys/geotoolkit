@@ -24,6 +24,8 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import org.opengis.temporal.Duration;
+import org.opengis.temporal.TemporalGeometricPrimitive;
 
 
 /**
@@ -49,9 +51,7 @@ import javax.xml.bind.annotation.XmlType;
     TimeInstantType.class,
     TimePeriodType.class
 })
-public abstract class AbstractTimeGeometricPrimitiveType
-    extends AbstractTimePrimitiveType
-{
+public abstract class AbstractTimeGeometricPrimitiveType extends AbstractTimePrimitiveType implements TemporalGeometricPrimitive {
 
     @XmlAttribute
     @XmlSchemaType(name = "anyURI")
@@ -85,4 +85,11 @@ public abstract class AbstractTimeGeometricPrimitiveType
         this.frame = value;
     }
 
+    public Duration distance(final TemporalGeometricPrimitive tgp) {
+        return null;
+    }
+
+    public Duration length() {
+        return null;
+    }
 }

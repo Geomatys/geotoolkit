@@ -92,6 +92,35 @@ public class Operation implements AbstractOperation {
         this.parameter  = parameter;
     }
     
+    public Operation(final Operation that){
+        if (that != null) {
+            if (that.constraint != null) {
+                this.constraint = new ArrayList<DomainType>();
+                for (DomainType d : that.constraint) {
+                    this.constraint.add(new DomainType(d));
+                }
+            }
+            if (that.dcp != null) {
+                this.dcp        = new ArrayList<DCP>();
+                for (DCP d : that.dcp) {
+                    this.dcp.add(new DCP(d));
+                }
+            }
+            if (that.metadata != null) {
+                this.metadata   = new ArrayList<MetadataType>();
+                for (MetadataType m : that.metadata) {
+                    this.metadata.add(new MetadataType(m));
+                }
+            }
+            this.name       = that.name;
+            if (that.parameter != null) {
+                this.parameter = new ArrayList<DomainType>();
+                for (DomainType d : that.parameter) {
+                    this.parameter.add(new DomainType(d));
+                }
+            }
+        }
+    }
     
     /**
      * Unordered list of Distributed Computing Platforms (DCPs) supported for this operation. 
@@ -123,8 +152,9 @@ public class Operation implements AbstractOperation {
             return null;
         } else {
             for (DomainType domain: parameter) {
-                if (domain.getName().equals(name))
+                if (domain.getName().equals(name)) {
                     return domain;
+                }
             }
             return null;
         }
@@ -139,8 +169,9 @@ public class Operation implements AbstractOperation {
             return null;
         } else {
             for (DomainType domain: parameter) {
-                if (domain.getName().equalsIgnoreCase(name))
+                if (domain.getName().equalsIgnoreCase(name)) {
                     return domain;
+                }
             }
             return null;
         }
@@ -161,10 +192,11 @@ public class Operation implements AbstractOperation {
     public DomainType getConstraint(final String name) {
         if (constraint != null) {
             for (DomainType d : constraint) {
-                if (d.getName().equals(name))
+                if (d.getName().equals(name)) {
                     return d;
+                }
             }
-            DomainType d = new DomainType(name, new ArrayList<String>());
+            final DomainType d = new DomainType(name, new ArrayList<String>());
             constraint.add(d);
             return d;
         } else {
@@ -176,10 +208,11 @@ public class Operation implements AbstractOperation {
     public DomainType getConstraintIgnoreCase(final String name) {
         if (constraint != null) {
             for (DomainType d : constraint) {
-                if (d.getName().equalsIgnoreCase(name))
+                if (d.getName().equalsIgnoreCase(name)) {
                     return d;
+                }
             }
-            DomainType d = new DomainType(name, new ArrayList<String>());
+            final DomainType d = new DomainType(name, new ArrayList<String>());
             constraint.add(d);
             return d;
         } else {

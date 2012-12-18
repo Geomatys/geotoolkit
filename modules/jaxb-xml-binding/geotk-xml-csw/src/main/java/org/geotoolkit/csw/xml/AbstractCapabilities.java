@@ -16,17 +16,16 @@
  */
 package org.geotoolkit.csw.xml;
 
+import org.geotoolkit.ows.xml.AbstractCapabilitiesBase;
+import org.opengis.filter.capability.FilterCapabilities;
+
 /**
- *
+ * TODO this interface duplicate a lot from AbstractCapabiltiesBase because of CSWResponse.
  * @author Guilhem legal (Geomatys)
  * @module pending
  */
-public interface AbstractCapabilities extends CSWResponse {
+public interface AbstractCapabilities extends AbstractCapabilitiesBase {
 
-    /**
-     * Returns version of this {@link AbstractCapabilities} instance.
-     * @return
-     */
-    String getVersion();
+    FilterCapabilities getFilterCapabilities();
 
 }

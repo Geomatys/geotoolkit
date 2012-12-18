@@ -265,6 +265,7 @@ public class GetFeatureType implements GetFeature {
     /**
      * @return the prefixMapping
      */
+    @Override
     public Map<String, String> getPrefixMapping() {
         return prefixMapping;
     }
@@ -272,6 +273,7 @@ public class GetFeatureType implements GetFeature {
     /**
      * @param prefixMapping the prefixMapping to set
      */
+    @Override
     public void setPrefixMapping(Map<String, String> prefixMapping) {
         this.prefixMapping = prefixMapping;
     }
@@ -290,22 +292,21 @@ public class GetFeatureType implements GetFeature {
     }
 
     @Override
-    public String getFeatureId() {
-        return null;
-    }
-
     public List<? extends StoredQuery> getStoredQuery() {
         throw new UnsupportedOperationException("Not supported in V1.0.0");
     }
 
+    @Override
     public ResolveValueType getResolve() {
         return null;
     }
 
+    @Override
     public String getResolveDepth() {
         return null;
     }
 
+    @Override
     public int getResolveTimeout() {
         return -1;
     }

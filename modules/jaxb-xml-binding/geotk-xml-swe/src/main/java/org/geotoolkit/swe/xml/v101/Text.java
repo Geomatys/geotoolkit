@@ -106,5 +106,13 @@ public class Text extends AbstractDataComponentType implements AbstractText {
         hash = 79 * hash + (this.value != null ? this.value.hashCode() : 0);
         return hash;
     }
-
+    
+    @Override
+    public String toString() {
+        final StringBuilder s = new StringBuilder(super.toString());
+        if (value != null) {
+            s.append("value=").append(value).append('\n');
+        }
+        return s.toString();
+    }
 }

@@ -22,13 +22,15 @@ import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Arrays;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import org.geotoolkit.client.AbstractRequest;
-import org.geotoolkit.ows.xml.v100.AcceptVersionsType;
 import org.geotoolkit.security.ClientSecurity;
+import org.geotoolkit.ows.xml.AcceptVersions;
 import org.geotoolkit.wfs.xml.WFSMarshallerPool;
-import org.geotoolkit.wfs.xml.v110.GetCapabilitiesType;
+import org.geotoolkit.wfs.xml.GetCapabilities;
+import org.geotoolkit.wfs.xml.WFSXmlFactory;
 
 
 /**
@@ -63,8 +65,8 @@ public abstract class AbstractGetCapabilities extends AbstractRequest implements
     @Override
     public InputStream getResponseStream() throws IOException {
 
-        final GetCapabilitiesType request = new GetCapabilitiesType("WFS");
-        request.setAcceptVersions(new AcceptVersionsType(version));
+        final AcceptVersions versions = WFSXmlFactory.buildAcceptVersion(version, Arrays.asList(version));
+        final GetCapabilities request = WFSXmlFactory.buildGetCapabilities(version, versions, null, null, null, "WFS");
 
         final URL url = new URL(serverURL);
         URLConnection conec = url.openConnection();

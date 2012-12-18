@@ -118,13 +118,15 @@ public class SummaryRecordType extends AbstractRecordType implements SummaryReco
             final List<SimpleLiteral> subject, final SimpleLiteral format, final SimpleLiteral modified, final SimpleLiteral _abstract){
         
         this.identifier = new ArrayList<SimpleLiteral>();
-        if (identifier == null)
+        if (identifier == null) {
             identifier = new SimpleLiteral();
+        }
         this.identifier.add(identifier);
         
         this.title = new ArrayList<SimpleLiteral>();
-        if (title == null)
+        if (title == null) {
             title = new SimpleLiteral();
+        }
         this.title.add(title);
         
         this.type = type;
@@ -132,10 +134,11 @@ public class SummaryRecordType extends AbstractRecordType implements SummaryReco
         this.boundingBox = new ArrayList<JAXBElement<? extends BoundingBoxType>>();
         if (bboxes != null) {
             for (BoundingBoxType bbox: bboxes) {
-                if (bbox instanceof WGS84BoundingBoxType)
-                    this.boundingBox.add(owsFactory.createWGS84BoundingBox((WGS84BoundingBoxType)bbox));
-                else if (bbox != null)
+                if (bbox instanceof WGS84BoundingBoxType) {
+                    this.boundingBox.add(owsFactory.createWGS84BoundingBox((WGS84BoundingBoxType) bbox));
+                } else if (bbox != null) {
                     this.boundingBox.add(owsFactory.createBoundingBox(bbox));
+                }
             }
         }
         this.subject = subject;
@@ -146,12 +149,14 @@ public class SummaryRecordType extends AbstractRecordType implements SummaryReco
         }
         
         this.modified = new ArrayList<SimpleLiteral>();
-        if (modified != null)
+        if (modified != null) {
             this.modified.add(modified);
+        }
         
         this._abstract = new ArrayList<SimpleLiteral>();
-        if (_abstract != null)
+        if (_abstract != null) {
             this._abstract.add(_abstract);
+        }
     }
     
     /**
@@ -161,13 +166,15 @@ public class SummaryRecordType extends AbstractRecordType implements SummaryReco
             final List<SimpleLiteral> subject, final List<SimpleLiteral> formats, final SimpleLiteral modified, final List<SimpleLiteral> _abstract){
         
         this.identifier = new ArrayList<SimpleLiteral>();
-        if (identifier == null)
+        if (identifier == null) {
             identifier = new SimpleLiteral();
+        }
         this.identifier.add(identifier);
         
         this.title = new ArrayList<SimpleLiteral>();
-        if (title == null)
+        if (title == null) {
             title = new SimpleLiteral();
+        }
         this.title.add(title);
         
         this.type = type;
@@ -175,10 +182,11 @@ public class SummaryRecordType extends AbstractRecordType implements SummaryReco
         this.boundingBox = new ArrayList<JAXBElement<? extends BoundingBoxType>>();
         if (bboxes != null) {
             for (BoundingBoxType bbox: bboxes) {
-                if (bbox instanceof WGS84BoundingBoxType)
-                    this.boundingBox.add(owsFactory.createWGS84BoundingBox((WGS84BoundingBoxType)bbox));
-                else if (bbox != null)
+                if (bbox instanceof WGS84BoundingBoxType) {
+                    this.boundingBox.add(owsFactory.createWGS84BoundingBox((WGS84BoundingBoxType) bbox));
+                } else if (bbox != null) {
                     this.boundingBox.add(owsFactory.createBoundingBox(bbox));
+                }
             }
         }
         this.subject = subject;
@@ -186,8 +194,9 @@ public class SummaryRecordType extends AbstractRecordType implements SummaryReco
         this.format = formats;
         
         this.modified = new ArrayList<SimpleLiteral>();
-        if (modified != null)
+        if (modified != null) {
             this.modified.add(modified);
+        }
         
         this._abstract = _abstract;
     }
@@ -209,10 +218,11 @@ public class SummaryRecordType extends AbstractRecordType implements SummaryReco
         this.boundingBox = new ArrayList<JAXBElement<? extends BoundingBoxType>>();
         if (bboxes != null) {
             for (BoundingBoxType bbox: bboxes) {
-                if (bbox instanceof WGS84BoundingBoxType)
-                    this.boundingBox.add(owsFactory.createWGS84BoundingBox((WGS84BoundingBoxType)bbox));
-                else if (bbox != null)
+                if (bbox instanceof WGS84BoundingBoxType) {
+                    this.boundingBox.add(owsFactory.createWGS84BoundingBox((WGS84BoundingBoxType) bbox));
+                } else if (bbox != null) {
                     this.boundingBox.add(owsFactory.createBoundingBox(bbox));
+                }
             }
         }
     }
@@ -222,17 +232,27 @@ public class SummaryRecordType extends AbstractRecordType implements SummaryReco
      * Gets the value of the identifier property.
      * (unmodifiable)
      */
+    @Override
     public List<SimpleLiteral> getIdentifier() {
         if (identifier == null) {
             identifier = new ArrayList<SimpleLiteral>();
         }
         return Collections.unmodifiableList(identifier);
     }
+    
+    @Override
+    public String getIdentifierStringValue() {
+        if (identifier != null && !identifier.isEmpty()) {
+            return identifier.get(0).getFirstValue();
+        }
+        return null;
+    }
 
     /**
      * Gets the value of the title property.
      * (unmodifiable)
      */
+    @Override
     public List<SimpleLiteral> getTitle() {
         if (title == null) {
             title = new ArrayList<SimpleLiteral>();
@@ -240,17 +260,34 @@ public class SummaryRecordType extends AbstractRecordType implements SummaryReco
         return Collections.unmodifiableList(title);
     }
 
+    @Override
+    public String getTitleStringValue() {
+        if (title != null && !title.isEmpty()) {
+            return title.get(0).getFirstValue();
+        }
+        return null;
+    }
+    
     /**
      * Gets the value of the type property.
      */
+    @Override
     public SimpleLiteral getType() {
         return type;
     }
 
+    @Override
+    public String getTypeStringValue() {
+        if (type != null) {
+            return type.getFirstValue();
+        }
+        return null;
+    }
     /**
      * Gets the value of the subject property.
      * (unmodifiable) 
      */
+    @Override
     public List<SimpleLiteral> getSubject() {
         if (subject == null) {
             subject = new ArrayList<SimpleLiteral>();
@@ -258,10 +295,19 @@ public class SummaryRecordType extends AbstractRecordType implements SummaryReco
         return Collections.unmodifiableList(subject);
     }
 
+    
+    @Override
+    public List<String> getSubjectStringValues() {
+        if (subject != null && !subject.isEmpty()) {
+            return subject.get(0).getContent();
+        }
+        return new ArrayList<String>();
+    }
     /**
      * Gets the value of the format property.
      * (unmodifiable)
      */
+    @Override
     public List<SimpleLiteral> getFormat() {
         if (format == null) {
             format = new ArrayList<SimpleLiteral>();
@@ -273,6 +319,7 @@ public class SummaryRecordType extends AbstractRecordType implements SummaryReco
      * Gets the value of the relation property.
      * (unmodifiable)
      */
+    @Override
     public List<SimpleLiteral> getRelation() {
         if (relation == null) {
             relation = new ArrayList<SimpleLiteral>();
@@ -284,6 +331,7 @@ public class SummaryRecordType extends AbstractRecordType implements SummaryReco
      * Gets the value of the modified property.
      * (unmodifiable)
      */
+    @Override
     public List<SimpleLiteral> getModified() {
         if (modified == null) {
             modified = new ArrayList<SimpleLiteral>();
@@ -291,10 +339,19 @@ public class SummaryRecordType extends AbstractRecordType implements SummaryReco
         return Collections.unmodifiableList(modified);
     }
 
+    @Override
+    public String getModifiedStringValue() {
+        if (modified != null && !modified.isEmpty()) {
+            return modified.get(0).getFirstValue();
+        }
+        return null;
+    }
+    
     /**
      * Gets the value of the abstract property.
      * (unmodifiable)
      */
+    @Override
     public List<SimpleLiteral> getAbstract() {
         if (_abstract == null) {
             _abstract = new ArrayList<SimpleLiteral>();
@@ -302,10 +359,19 @@ public class SummaryRecordType extends AbstractRecordType implements SummaryReco
         return Collections.unmodifiableList(_abstract);
     }
 
+    @Override
+    public String getAbstractStringValue() {
+        if (_abstract != null && !_abstract.isEmpty()) {
+            return _abstract.get(0).getFirstValue();
+        }
+        return null;
+    }
+    
     /**
      * Gets the value of the spatial property.
      * (unmodifiable)
      */
+    @Override
     public List<SimpleLiteral> getSpatial() {
         if (spatial == null) {
             spatial = new ArrayList<SimpleLiteral>();
@@ -317,6 +383,7 @@ public class SummaryRecordType extends AbstractRecordType implements SummaryReco
      * Gets the value of the boundingBox property.
      * (unmodifiable)
      */
+    @Override
     public List<JAXBElement<? extends BoundingBoxType>> getBoundingBox() {
         if (boundingBox == null) {
             boundingBox = new ArrayList<JAXBElement<? extends BoundingBoxType>>();

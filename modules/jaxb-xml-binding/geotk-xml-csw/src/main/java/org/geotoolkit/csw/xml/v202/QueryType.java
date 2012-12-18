@@ -27,6 +27,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
+import org.geotoolkit.csw.xml.Query;
+import org.geotoolkit.csw.xml.QueryConstraint;
 import org.geotoolkit.ogc.xml.v110.SortByType;
 
 
@@ -72,7 +74,7 @@ import org.geotoolkit.ogc.xml.v110.SortByType;
     "sortBy"
 })
 @XmlRootElement(name = "Query")        
-public class QueryType extends AbstractQueryType {
+public class QueryType extends AbstractQueryType implements Query {
 
     @XmlElement(name = "ElementSetName", defaultValue = "summary")
     private ElementSetNameType elementSetName;
@@ -129,6 +131,7 @@ public class QueryType extends AbstractQueryType {
     /**
      * Gets the value of the elementSetName property.
      */
+    @Override
     public ElementSetNameType getElementSetName() {
         return elementSetName;
     }
@@ -144,6 +147,7 @@ public class QueryType extends AbstractQueryType {
      * Gets the value of the elementName property.
      * (unmodifiable)
      */
+    @Override
     public List<QName> getElementName() {
         if (elementName == null) {
             elementName = new ArrayList<QName>();
@@ -171,18 +175,24 @@ public class QueryType extends AbstractQueryType {
     /**
      * Gets the value of the constraint property.
      */
+    @Override
     public QueryConstraintType getConstraint() {
         return constraint;
     }
     
     @Override
-    public void setConstraint(final QueryConstraintType value) {
-       this.constraint = value;
+    public void setConstraint(final QueryConstraint value) {
+        if (value instanceof QueryConstraint) {
+            this.constraint = (QueryConstraintType) value;
+        } else {
+            throw new IllegalArgumentException("unexpected version of the query constraint object (not v202)");
+        }
     }
 
     /**
      * Gets the value of the sortBy property.
      */
+    @Override
     public SortByType getSortBy() {
         return sortBy;
     }
@@ -198,6 +208,7 @@ public class QueryType extends AbstractQueryType {
      * Gets the value of the typeNames property.
      * (unmodifiable)
      */
+    @Override
     public List<QName> getTypeNames() {
         if (typeNames == null) {
             typeNames = new ArrayList<QName>();
@@ -205,6 +216,7 @@ public class QueryType extends AbstractQueryType {
         return Collections.unmodifiableList(typeNames);
     }
     
+    @Override
     public void setTypeNames(final List<QName> typeNames) {
         this.typeNames = typeNames;
     }

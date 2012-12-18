@@ -49,7 +49,7 @@ public class WMSCPyramid extends DefaultPyramid{
         }
         
         for(Double res : tileset.getResolutions()){
-            getMosaics().put(res, new WMSCMosaic(this, res));
+            getMosaicsInternal().add(new WMSCMosaic(this, res));
         }
         
     }

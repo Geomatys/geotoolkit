@@ -110,11 +110,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link WCSCapabilityType.Request.DescribeCoverage }
+     * Create an instance of {@link Request.DescribeCoverage }
      * 
      */
-    public WCSCapabilityType.Request.DescribeCoverage createWCSCapabilityTypeRequestDescribeCoverage() {
-        return new WCSCapabilityType.Request.DescribeCoverage();
+    public Request.DescribeCoverage createWCSCapabilityTypeRequestDescribeCoverage() {
+        return new Request.DescribeCoverage();
     }
 
     /**
@@ -190,19 +190,19 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link WCSCapabilityType.Request }
+     * Create an instance of {@link Request }
      * 
      */
-    public WCSCapabilityType.Request createWCSCapabilityTypeRequest() {
-        return new WCSCapabilityType.Request();
+    public Request createWCSCapabilityTypeRequest() {
+        return new Request();
     }
 
     /**
-     * Create an instance of {@link WCSCapabilityType.Request.GetCoverage }
+     * Create an instance of {@link Request.GetCoverage }
      * 
      */
-    public WCSCapabilityType.Request.GetCoverage createWCSCapabilityTypeRequestGetCoverage() {
-        return new WCSCapabilityType.Request.GetCoverage();
+    public Request.GetCoverage createWCSCapabilityTypeRequestGetCoverage() {
+        return new Request.GetCoverage();
     }
 
     /**
@@ -214,11 +214,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link WCSCapabilityType.Request.GetCapabilities }
+     * Create an instance of {@link Request.GetCapabilities }
      * 
      */
-    public WCSCapabilityType.Request.GetCapabilities createWCSCapabilityTypeRequestGetCapabilities() {
-        return new WCSCapabilityType.Request.GetCapabilities();
+    public Request.GetCapabilities createWCSCapabilityTypeRequestGetCapabilities() {
+        return new Request.GetCapabilities();
     }
 
     /**

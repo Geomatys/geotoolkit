@@ -46,7 +46,7 @@ import org.opengis.filter.FilterFactory;
 public interface JDBCDataStore extends FeatureStore {
 
     public static final Key RESAMPLING = new org.geotoolkit.factory.Hints.Key(Object.class);
-    
+
     public static final String CUSTOM_SQL = "CUSTOM-SQL";
 
     /**

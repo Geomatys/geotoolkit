@@ -41,8 +41,8 @@ import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.wfs.xml.WFSBindingUtilities;
+import org.geotoolkit.wfs.xml.WFSCapabilities;
 import org.geotoolkit.wfs.xml.WFSVersion;
-import org.geotoolkit.wfs.xml.v110.WFSCapabilitiesType;
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.Name;
@@ -63,7 +63,7 @@ public class WebFeatureServer extends AbstractServer implements FeatureStore{
 
     private static final Logger LOGGER = Logging.getLogger(WebFeatureServer.class);
 
-    private WFSCapabilitiesType capabilities;
+    private WFSCapabilities capabilities;
     private WFSDataStore store = null; //created when needed
 
     public WebFeatureServer(final URL serverURL, final String version) {
@@ -124,7 +124,7 @@ public class WebFeatureServer extends AbstractServer implements FeatureStore{
     /**
      * @return WFSCapabilitiesType : WFS server capabilities
      */
-    public WFSCapabilitiesType getCapabilities() {
+    public WFSCapabilities getCapabilities() {
 
         if (capabilities != null) {
             return capabilities;
@@ -134,7 +134,7 @@ public class WebFeatureServer extends AbstractServer implements FeatureStore{
             @Override
             public void run() {
                 try {
-                    capabilities = (WFSCapabilitiesType) WFSBindingUtilities.unmarshall(createGetCapabilities().getResponseStream(), getVersion());
+                    capabilities = (WFSCapabilities) WFSBindingUtilities.unmarshall(createGetCapabilities().getResponseStream(), getVersion());
                 } catch (Exception ex) {
                     capabilities = null;
                     try {

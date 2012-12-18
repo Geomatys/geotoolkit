@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.wps.converters.inputs.references;
 
+import com.sun.media.imageioimpl.plugins.tiff.TIFFImageReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -70,7 +71,15 @@ public final class ReferenceToGridCoverage2DConverter extends AbstractReferenceI
         try {
             //We used to work with an ImageInputStream, but the url choice have been prefered.
 //            imageStream = ImageIO.createImageInputStream(stream);
-            imgReader = XImageIO.getReader/*ByMIMEType(source.getMimeType(), */(new URL(source.getHref()), Boolean.FALSE, Boolean.FALSE);
+            URL imgRef = new URL(source.getHref());
+            imgReader = XImageIO.getReader/*ByMIMEType(source.getMimeType(), */(imgRef, Boolean.FALSE, Boolean.FALSE);
+            if(imgReader instanceof TIFFImageReader) {
+                ImageReader imgReader2 = XImageIO.getReaderByFormatName("geotiff", null, Boolean.FALSE, Boolean.FALSE);
+                if(imgReader2 != null) {
+                    imgReader2.setInput(imgRef);
+                    imgReader = imgReader2;
+                }
+            }
             reader = CoverageIO.createSimpleReader(imgReader);
             return (GridCoverage2D) reader.read(0, null);
 

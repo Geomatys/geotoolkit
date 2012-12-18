@@ -26,6 +26,7 @@ import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import javax.swing.event.MouseInputListener;
+import org.geotoolkit.display2d.canvas.J2DCanvasSwing;
 import org.geotoolkit.gui.swing.go2.JMap2D;
 import org.geotoolkit.gui.swing.go2.decoration.InformationDecoration.LEVEL;
 import org.geotoolkit.gui.swing.go2.decoration.MapDecoration;
@@ -54,6 +55,11 @@ public class MouseNavigatonListener implements MouseInputListener, MouseWheelLis
         this.map = map;
     }
 
+    protected boolean isStateFull(){
+        if(map == null) return false;
+        return map.getCanvas() instanceof J2DCanvasSwing;
+    }
+    
     public void setMap(final JMap2D map) {
         this.map = map;
     }
@@ -170,8 +176,10 @@ public class MouseNavigatonListener implements MouseInputListener, MouseWheelLis
         mousebutton = e.getButton();
         if (mousebutton == panButton) {
             //pan action on right mouse button
-            decorationPane.setBuffer(map.getCanvas().getSnapShot());
-            decorationPane.setCoord(0, 0, map.getComponent().getWidth(), map.getComponent().getHeight(), true);
+            if(!isStateFull()){
+                decorationPane.setBuffer(map.getCanvas().getSnapShot());
+                decorationPane.setCoord(0, 0, map.getComponent().getWidth(), map.getComponent().getHeight(), true);
+            }
         }
 
     }
@@ -185,9 +193,12 @@ public class MouseNavigatonListener implements MouseInputListener, MouseWheelLis
 
         if (mousebutton == panButton) {
             //right mouse button : pan action
-            decorationPane.setFill(false);
-            decorationPane.setCoord(-10, -10,-10, -10, false);
-            processDrag(startX, startY, endX, endY);
+            if(!isStateFull()){
+                decorationPane.setBuffer(null);
+                decorationPane.setFill(false);
+                decorationPane.setCoord(-10, -10,-10, -10, false);
+                processDrag(startX, startY, endX, endY);
+            }
         }
 
         lastX = 0;
@@ -213,8 +224,13 @@ public class MouseNavigatonListener implements MouseInputListener, MouseWheelLis
             if ((lastX > 0) && (lastY > 0)) {
                 int dx = lastX - startX;
                 int dy = lastY - startY;
-                decorationPane.setFill(false);
-                decorationPane.setCoord(dx, dy, map.getComponent().getWidth(), map.getComponent().getHeight(), true);
+                
+                if(isStateFull()){
+                    processDrag(lastX, lastY, x, y);
+                }else{
+                    decorationPane.setFill(true);
+                    decorationPane.setCoord(dx, dy, map.getComponent().getWidth(), map.getComponent().getHeight(), true);
+                }
             }
             lastX = x;
             lastY = y;

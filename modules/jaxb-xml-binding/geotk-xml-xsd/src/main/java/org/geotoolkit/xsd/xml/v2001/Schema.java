@@ -209,12 +209,28 @@ public class Schema extends OpenAttrs {
         return result;
     }
 
-    public TopLevelComplexType getComplexTypeByName(final String name) {
+    public ComplexType getComplexTypeByName(final String name) {
         if (name != null) {
             if (simpleTypeOrComplexTypeOrGroup != null) {
                 for (OpenAttrs element : simpleTypeOrComplexTypeOrGroup) {
-                    if (element instanceof TopLevelComplexType) {
-                        TopLevelComplexType tLElement = (TopLevelComplexType) element;
+                    if (element instanceof ComplexType) {
+                        ComplexType tLElement = (ComplexType) element;
+                        if (tLElement.getName().equals(name)) {
+                            return tLElement;
+                        }
+                    }
+                }
+            }
+        }
+        return null;
+    }
+    
+    public SimpleType getSimpleTypeByName(final String name) {
+        if (name != null) {
+            if (simpleTypeOrComplexTypeOrGroup != null) {
+                for (OpenAttrs element : simpleTypeOrComplexTypeOrGroup) {
+                    if (element instanceof SimpleType) {
+                        final SimpleType tLElement = (SimpleType) element;
                         if (tLElement.getName().equals(name)) {
                             return tLElement;
                         }

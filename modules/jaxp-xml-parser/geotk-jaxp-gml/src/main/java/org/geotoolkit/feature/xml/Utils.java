@@ -27,8 +27,10 @@ import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URI;
+import java.net.URL;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -41,10 +43,16 @@ import java.util.Map;
 import java.util.TimeZone;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
 import javax.xml.namespace.QName;
 import javax.xml.stream.events.XMLEvent;
 import net.iharder.Base64;
 import org.geotoolkit.feature.DefaultName;
+import org.geotoolkit.xsd.xml.v2001.Import;
+import org.geotoolkit.xsd.xml.v2001.Include;
+import org.geotoolkit.xsd.xml.v2001.Schema;
+import org.geotoolkit.xsd.xml.v2001.XSDMarshallerPool;
 import org.opengis.feature.type.ComplexType;
 import org.opengis.feature.type.Name;
 import org.opengis.feature.type.PropertyType;
@@ -119,7 +127,13 @@ public class Utils {
         CLASS_BINDING.put("double",   Double.class);
         CLASS_BINDING.put("float",    Float.class);
         CLASS_BINDING.put("base64Binary",byte[].class);
-
+        
+        CLASS_BINDING.put("nonNegativeInteger", Integer.class);
+        CLASS_BINDING.put("positiveInteger",    Integer.class); 
+        CLASS_BINDING.put("integerList",        Integer.class);
+        CLASS_BINDING.put("time",               Date.class);
+        CLASS_BINDING.put("duration",           String.class);
+        
         // GML geometry types
         CLASS_BINDING.put("GeometryPropertyType",          Geometry.class);
         CLASS_BINDING.put("MultiPoint",                    MultiPoint.class);
@@ -171,6 +185,19 @@ public class Utils {
         }
         return null;
     }
+    
+    /**
+     * Return a primitive Class from the specified XML QName (extracted from an xsd file).
+     *
+     * @param name A XML QName.
+     * @return A Class.
+     */
+    public static boolean existPrimitiveType(final String name) {
+        if (name != null) {
+            return CLASS_BINDING.get(name) != null;
+        }
+        return false;
+    }
 
     private static final Map<Class, QName> NAME_BINDING = new HashMap<Class, QName>();
     static {
@@ -218,15 +245,15 @@ public class Utils {
     private static final Map<Class, QName> GEOMETRY_NAME_BINDING_321 = new HashMap<Class, QName>();
     static {
 
-        GEOMETRY_NAME_BINDING_321.put(MultiPoint.class,         new QName(GML_321_NAMESPACE, "MultiPoint"));
-        GEOMETRY_NAME_BINDING_321.put(Point.class,              new QName(GML_321_NAMESPACE, "Point"));
-        GEOMETRY_NAME_BINDING_321.put(LineString.class,         new QName(GML_321_NAMESPACE, "Curve"));
-        GEOMETRY_NAME_BINDING_321.put(GeometryCollection.class, new QName(GML_321_NAMESPACE, "MultiGeometry"));
-        GEOMETRY_NAME_BINDING_321.put(MultiLineString.class,    new QName(GML_321_NAMESPACE, "CompositeCurve"));
-        GEOMETRY_NAME_BINDING_321.put(Envelope.class,           new QName(GML_321_NAMESPACE, "Envelope"));
-        GEOMETRY_NAME_BINDING_321.put(MultiPolygon.class,       new QName(GML_321_NAMESPACE, "MultiGeometry"));
-        GEOMETRY_NAME_BINDING_321.put(Polygon.class,            new QName(GML_321_NAMESPACE, "Polygon"));
-        GEOMETRY_NAME_BINDING_321.put(LinearRing.class,         new QName(GML_321_NAMESPACE, "Ring"));
+        GEOMETRY_NAME_BINDING_321.put(MultiPoint.class,         new QName(GML_321_NAMESPACE, "MultiPointType"));
+        GEOMETRY_NAME_BINDING_321.put(Point.class,              new QName(GML_321_NAMESPACE, "PointType"));
+        GEOMETRY_NAME_BINDING_321.put(LineString.class,         new QName(GML_321_NAMESPACE, "CurveType"));
+        GEOMETRY_NAME_BINDING_321.put(GeometryCollection.class, new QName(GML_321_NAMESPACE, "MultiGeometryType"));
+        GEOMETRY_NAME_BINDING_321.put(MultiLineString.class,    new QName(GML_321_NAMESPACE, "CompositeCurveType"));
+        GEOMETRY_NAME_BINDING_321.put(Envelope.class,           new QName(GML_321_NAMESPACE, "EnvelopeTypr"));
+        GEOMETRY_NAME_BINDING_321.put(MultiPolygon.class,       new QName(GML_321_NAMESPACE, "MultiGeometryType"));
+        GEOMETRY_NAME_BINDING_321.put(Polygon.class,            new QName(GML_321_NAMESPACE, "PolygonType"));
+        GEOMETRY_NAME_BINDING_321.put(LinearRing.class,         new QName(GML_321_NAMESPACE, "RingType"));
     }
     /**
      * Return a QName intended to be used in a xsd XML file fro mthe specified class.
@@ -348,5 +375,62 @@ public class Utils {
             result.add(Utils.getNameFromQname(typeName));
         }
         return result;
+    }
+    
+     /**
+     * Retrieve an XSD schema from a http location
+     * @param location
+     * @return 
+     */
+    public static Schema getDistantSchema(final String location) {
+        if (location.startsWith("http://")) {
+            Unmarshaller u = null;
+            try {
+                LOGGER.log(Level.INFO, "retrieving:{0}", location);
+                final URL schemaUrl = new URL(location);
+                u = XSDMarshallerPool.getInstance().acquireUnmarshaller();
+                final Object obj = u.unmarshal(schemaUrl.openStream());
+                if (obj instanceof Schema) {
+                    return (Schema) obj;
+                } else {
+                    LOGGER.log(Level.WARNING, "Bad content for imported schema:{0}", location);
+                }
+                
+            } catch (IOException ex) {
+                LOGGER.log(Level.WARNING, "IO exception trying to retrieve imported schema:" + location, ex);
+            } catch (JAXBException ex) {
+                LOGGER.log(Level.WARNING, "JAXB exception while reading imported schema:" + location, ex);
+            } finally {
+                if (u != null) {
+                    XSDMarshallerPool.getInstance().release(u);
+                }
+            }
+        }
+        return null;
+    }
+    
+    /**
+     * Return the location a the Import/include element.
+     * 
+     * if the location is local, the base location will be added to the result.
+     * 
+     * @param baseLocation
+     * @param attr
+     * @return 
+     */
+    public static String getIncludedLocation(final String baseLocation, final Object attr) {
+        final String schemaLocation;
+        if (attr instanceof Import) {
+             schemaLocation = ((Import)attr).getSchemaLocation();
+         } else if (attr instanceof Include) {
+             schemaLocation = ((Include)attr).getSchemaLocation();
+         } else {
+             return null;
+         }
+         if (schemaLocation != null  && baseLocation != null && baseLocation.startsWith("http://") && !schemaLocation.startsWith("http://")) {
+            return baseLocation + schemaLocation;
+        } else {
+            return schemaLocation;
+        }
     }
 }

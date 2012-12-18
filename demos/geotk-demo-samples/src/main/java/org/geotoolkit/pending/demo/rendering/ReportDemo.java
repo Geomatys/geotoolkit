@@ -2,8 +2,10 @@
 package org.geotoolkit.pending.demo.rendering;
 
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.io.File;
 import java.io.InputStream;
 import java.util.Collections;
@@ -23,8 +25,16 @@ import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.memory.GenericMappingFeatureIterator;
 import org.geotoolkit.data.memory.mapping.FeatureMapper;
 import org.geotoolkit.data.query.QueryBuilder;
+import org.geotoolkit.display.exception.PortrayalException;
+import org.geotoolkit.display2d.canvas.J2DCanvas;
+import org.geotoolkit.display2d.ext.DecorationXMLParser;
+import org.geotoolkit.display2d.ext.grid.DefaultGridTemplate;
+import org.geotoolkit.display2d.ext.grid.GraphicGridJ2D;
+import org.geotoolkit.display2d.ext.grid.GridTemplate;
+import org.geotoolkit.display2d.primitive.GraphicJ2D;
 import org.geotoolkit.display2d.service.CanvasDef;
 import org.geotoolkit.display2d.service.OutputDef;
+import org.geotoolkit.display2d.service.PortrayalExtension;
 import org.geotoolkit.display2d.service.SceneDef;
 import org.geotoolkit.display2d.service.ViewDef;
 import org.geotoolkit.factory.FactoryFinder;
@@ -36,6 +46,7 @@ import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.report.FeatureCollectionDataSource;
 import org.geotoolkit.report.JasperReportService;
 import org.geotoolkit.report.graphic.chart.ChartDef;
@@ -112,12 +123,37 @@ public class ReportDemo {
                 final MutableStyle style = RandomStyleBuilder.createRandomVectorStyle(col.getFeatureType());
                 context.layers().add(MapBuilder.createFeatureLayer(col, style));
 
+                
                 try{
-                    modified.getProperty("map3").setValue(new MapDef(
-                        new CanvasDef(new Dimension(1, 1), Color.WHITE,false),
-                        new SceneDef(context,null),
-                        new ViewDef(CRS.transform(context.getBounds(), CRS.decode("EPSG:3395")),0), //set this map in 3395
-                        null));
+                    //add a custom decoration on our map.
+                    final GridTemplate gridTemplate = new DefaultGridTemplate(
+                        DefaultGeographicCRS.WGS84,
+                        new BasicStroke(1.5f),
+                        new Color(120,120,120,200),
+
+                        new BasicStroke(1,BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 3, new float[]{5,5}, 0),
+                        new Color(120,120,120,60),
+
+                        new Font("serial", Font.BOLD, 12),
+                        Color.GRAY,
+                        0,
+                        Color.WHITE,
+
+                        new Font("serial", Font.ITALIC, 10),
+                        Color.GRAY,
+                        0,
+                        Color.WHITE);
+                    final PortrayalExtension ext = new PortrayalExtension() {
+                        @Override
+                        public void completeCanvas(J2DCanvas canvas) throws PortrayalException {
+                            canvas.getContainer().add(new GraphicGridJ2D(canvas, gridTemplate));
+                        }
+                    };
+                    final CanvasDef canvasDef = new CanvasDef(new Dimension(1, 1), Color.WHITE,false);
+                    final SceneDef sceneDef = new SceneDef(context,null,ext);
+                    final ViewDef viewDef = new ViewDef(CRS.transform(context.getBounds(), CRS.decode("EPSG:3395")),0);
+                    final MapDef mapdef = new MapDef(canvasDef,sceneDef,viewDef,null);
+                    modified.getProperty("map3").setValue(mapdef);
                 }catch(Exception ex){ex.printStackTrace();}
 
 

@@ -30,6 +30,7 @@ import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.measure.unit.SI;
@@ -112,7 +113,7 @@ public class JMapAxisLine extends JNavigator implements PropertyChangeListener{
                 }
             }
         };
-    
+
     private final JLayerBandMenu layers = new JLayerBandMenu(this);
 
     private volatile JMap2D map = null;
@@ -127,7 +128,7 @@ public class JMapAxisLine extends JNavigator implements PropertyChangeListener{
             return -1;
         }
     };
-    
+
     public JMapAxisLine(final CoordinateReferenceSystem crs){
         this.crs = crs;
         animation.setSpeedFactor(10);
@@ -175,7 +176,7 @@ public class JMapAxisLine extends JNavigator implements PropertyChangeListener{
             }
 
         };
-        
+
         menu.add(layers);
 
         menu.addSeparator();
@@ -259,10 +260,10 @@ public class JMapAxisLine extends JNavigator implements PropertyChangeListener{
                 return false;
             }
         });
-        
-        
+
+
         menu.addSeparator();
-        
+
         menu.add(new JMenuItem(
                 new AbstractAction(MessageBundle.getString("map_remove_elevation")) {
                     @Override
@@ -289,7 +290,7 @@ public class JMapAxisLine extends JNavigator implements PropertyChangeListener{
                 return false;
             }
         });
-        
+
         menu.add(new JMenuItem(
                 new AbstractAction(MessageBundle.getString("map_remove_elevation_maximum")) {
                     @Override
@@ -350,21 +351,21 @@ public class JMapAxisLine extends JNavigator implements PropertyChangeListener{
                 return false;
             }
         });
-        
+
         menu.addSeparator();
         menu.add(minPan);
         menu.add(maxPan);
 
 
         setComponentPopupMenu(menu);
-        AreaBand band = new AreaBand();
-        band.setComponentPopupMenu(menu);
-        band.addMouseListener(this);
-        band.addMouseMotionListener(this);
-        band.addMouseWheelListener(this);
-        band.addKeyListener(this);
-
-        getBands().add(band);
+//        AreaBand band = new AreaBand();
+//        band.setComponentPopupMenu(menu);
+//        band.addMouseListener(this);
+//        band.addMouseMotionListener(this);
+//        band.addMouseWheelListener(this);
+//        band.addKeyListener(this);
+//
+//        getBands().add(band);
     }
 
     public CoordinateReferenceSystem getCrs() {
@@ -374,7 +375,7 @@ public class JMapAxisLine extends JNavigator implements PropertyChangeListener{
     public Comparator<CoordinateSystemAxis> getAxisIndexFinder() {
         return axisIndexFinder;
     }
-    
+
     /**
      * Disable spinner the time to update there values, otherwise
      * the listener will cause the canvas to be repainted.
@@ -402,7 +403,7 @@ public class JMapAxisLine extends JNavigator implements PropertyChangeListener{
         this.map = map;
         animation.setMap(map);
         layers.setMap(map);
-        
+
         if(map != null){
             this.map.getCanvas().addPropertyChangeListener(this);
         }
@@ -552,70 +553,63 @@ public class JMapAxisLine extends JNavigator implements PropertyChangeListener{
         }
     }
 
-    private class AreaBand extends JNavigatorBand{
 
-        public AreaBand(){
-            setPreferredSize(new Dimension(50, 50));
+    @Override
+    protected void paintChildren(final Graphics g) {
+        super.paintChildren(g);
+
+        if(map == null) return;
+
+        final Double[] range = ((DefaultCanvasController2D)map.getCanvas().getController()).getAxisRange(axisIndexFinder);
+
+        if(range == null) return;
+
+        if(range[0] == null && range[1] == null) return;
+
+        double start = getHeight() +5;
+        double end = -5;
+        double center = -5;
+
+        if(range[0] != null) start = getModel().getGraphicValueAt(range[0]);
+        if(range[1] != null) end = getModel().getGraphicValueAt(range[1]);
+
+
+        //apply change if there are some
+        if(edit != null){
+            if(selected == 0){
+                start = getModel().getGraphicValueAt(edit);
+            }else if(selected == 2){
+                end = getModel().getGraphicValueAt(edit);
+            }else if(selected == 1){
+                double middleDate = (range[0] + range[1]) / 2l;
+                double step = edit - middleDate;
+                start = getModel().getGraphicValueAt(range[0] + step);
+                end = getModel().getGraphicValueAt(range[1] + step);
+            }
         }
 
-        @Override
-        protected void paintComponent(final Graphics g) {
-            super.paintComponent(g);
-
-            if(map == null) return;
-
-            final Double[] range = ((DefaultCanvasController2D)map.getCanvas().getController()).getAxisRange(axisIndexFinder);
-
-            if(range == null) return;
-
-            if(range[0] == null && range[1] == null) return;
-
-            double start = getHeight() +5;
-            double end = -5;
-            double center = -5;
-
-            if(range[0] != null) start = getModel().getGraphicValueAt(range[0]);
-            if(range[1] != null) end = getModel().getGraphicValueAt(range[1]);
-
-
-            //apply change if there are some
-            if(edit != null){
-                if(selected == 0){
-                    start = getModel().getGraphicValueAt(edit);
-                }else if(selected == 2){
-                    end = getModel().getGraphicValueAt(edit);
-                }else if(selected == 1){
-                    double middleDate = (range[0] + range[1]) / 2l;
-                    double step = edit - middleDate;
-                    start = getModel().getGraphicValueAt(range[0] + step);
-                    end = getModel().getGraphicValueAt(range[1] + step);
-                }
-            }
-
-            if(start>end){
-                double n = start;
-                start = end;
-                end = n;
-            }
-
-            if(range[0] != null && range[1] != null){
-                center = (start+end)/2;
-            }
-
-
-            final Graphics2D g2d = (Graphics2D) g;
-            g2d.setColor(SECOND);
-            g2d.fillRect(0,(int)start,getWidth(),(int)(end-start));
-
-            g2d.setColor(MAIN);
-            g2d.setStroke(new BasicStroke(LIMIT_WIDTH*2));
-            g2d.drawLine(0, (int)start, getWidth(), (int)start);
-            g2d.drawLine(0, (int)end,  getWidth(), (int)end);
-
-            g2d.setStroke(new BasicStroke(LIMIT_WIDTH*4));
-            g2d.drawLine(0, (int)center, getWidth(), (int)center);
+        if(start>end){
+            double n = start;
+            start = end;
+            end = n;
         }
 
+        if(range[0] != null && range[1] != null){
+            center = (start+end)/2;
+        }
+
+
+        final Graphics2D g2d = (Graphics2D) g;
+        g2d.setColor(SECOND);
+        g2d.fillRect(0,(int)start,getWidth(),(int)(end-start));
+
+        g2d.setColor(MAIN);
+        g2d.setStroke(new BasicStroke(LIMIT_WIDTH*2));
+        g2d.drawLine(0, (int)start, getWidth(), (int)start);
+        g2d.drawLine(0, (int)end,  getWidth(), (int)end);
+
+        g2d.setStroke(new BasicStroke(LIMIT_WIDTH*4));
+        g2d.drawLine(0, (int)center, getWidth(), (int)center);
     }
 
 }

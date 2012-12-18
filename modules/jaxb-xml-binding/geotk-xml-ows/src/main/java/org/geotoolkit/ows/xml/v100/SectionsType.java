@@ -59,7 +59,7 @@ public class SectionsType implements Sections {
     private List<String> section = new ArrayList<String>();
     
     @XmlTransient
-    private static List<String> existingSections = new ArrayList<String>(4);
+    private static final List<String> existingSections = new ArrayList<String>(4);
     static {
         existingSections.add("ServiceIdentification");
         existingSections.add("ServiceProvider");
@@ -99,6 +99,7 @@ public class SectionsType implements Sections {
     /**
      * return the list of section names (unmodifiable).
      */
+    @Override
     public List<String> getSection() {
         if (section == null){
             section = new ArrayList<String>();
@@ -112,9 +113,14 @@ public class SectionsType implements Sections {
      * @param sectionName The name of the searched section.
      * @return true if the Section contains the specified section.
      */
+    @Override
     public boolean containsSection(final String sectionName) {
         if (section != null) {
-            return section.contains(sectionName);
+            for (String s : section) {
+                if (s.equalsIgnoreCase(sectionName)) {
+                    return true;
+                }
+            }
         }
         return false;
     }
@@ -124,6 +130,7 @@ public class SectionsType implements Sections {
      * 
      * @param section a new section.
      */
+    @Override
     public void add(final String section) {
         this.section.add(section);
     }

@@ -43,7 +43,7 @@ import org.geotoolkit.wms.xml.AbstractRequest;
     "layer"
 })
 @XmlRootElement(name = "Capability")
-public class Capability extends AbstractCapability {
+public class Capability implements AbstractCapability {
 
     @XmlElement(name = "Request", required = true)
     private Request request;

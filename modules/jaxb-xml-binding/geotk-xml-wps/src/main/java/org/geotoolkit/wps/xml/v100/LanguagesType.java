@@ -58,28 +58,18 @@ public class LanguagesType {
     @XmlElement(name = "Language", namespace = "http://www.opengis.net/ows/1.1", required = true)
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlSchemaType(name = "language")
-    protected List<String> language;
+    private List<String> language;
 
+    public LanguagesType() {
+        
+    }
+    
+    public LanguagesType(final List<String> language) {
+        this.language = language;
+    }
+    
     /**
      * Identifier of a language supported by the service.  This language identifier shall be as specified in IETF RFC 4646.Gets the value of the language property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the language property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getLanguage().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link String }
-     * 
      * 
      */
     public List<String> getLanguage() {
@@ -87,6 +77,10 @@ public class LanguagesType {
             language = new ArrayList<String>();
         }
         return this.language;
+    }
+    
+    public void setLanguage(List<String> language) {
+        this.language = language;
     }
 
 }

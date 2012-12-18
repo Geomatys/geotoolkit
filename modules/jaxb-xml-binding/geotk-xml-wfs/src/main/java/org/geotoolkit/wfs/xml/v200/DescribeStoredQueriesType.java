@@ -23,6 +23,7 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.wfs.xml.DescribeStoredQueries;
@@ -51,6 +52,7 @@ import org.geotoolkit.wfs.xml.DescribeStoredQueries;
 @XmlType(name = "DescribeStoredQueriesType", propOrder = {
     "storedQueryId"
 })
+@XmlRootElement(name="DescribeStoredQueries", namespace="http://www.opengis.net/wfs/2.0")
 public class DescribeStoredQueriesType extends BaseRequestType implements DescribeStoredQueries {
 
     @XmlElement(name = "StoredQueryId")
@@ -78,4 +80,14 @@ public class DescribeStoredQueriesType extends BaseRequestType implements Descri
         return this.storedQueryId;
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder(super.toString());
+        if (storedQueryId != null) {
+            for (String sq : storedQueryId) {
+                sb.append(sq).append('\n');
+            }
+        }
+        return sb.toString();
+    }
 }

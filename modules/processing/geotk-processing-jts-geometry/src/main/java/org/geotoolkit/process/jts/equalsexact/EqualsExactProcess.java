@@ -18,9 +18,9 @@ package org.geotoolkit.process.jts.equalsexact;
 
 import com.vividsolutions.jts.geom.Geometry;
 
+import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.process.AbstractProcess;
 import org.geotoolkit.process.ProcessException;
-import org.geotoolkit.process.jts.JTSProcessingUtils;
 
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -49,12 +49,12 @@ public class EqualsExactProcess extends AbstractProcess {
             Geometry geom2 = value(GEOM2, inputParameters);
 
              // ensure geometries are in the same CRS
-            final CoordinateReferenceSystem resultCRS = JTSProcessingUtils.getCommonCRS(geom1, geom2);
-            if (JTSProcessingUtils.isConversionNeeded(geom1, geom2)) {
-                geom2 = JTSProcessingUtils.convertToCRS(geom2, resultCRS);
+            final CoordinateReferenceSystem resultCRS = JTS.getCommonCRS(geom1, geom2);
+            if (JTS.isConversionNeeded(geom1, geom2)) {
+                geom2 = JTS.convertToCRS(geom2, resultCRS);
             }
 
-            Boolean result = false;
+            final Boolean result;
 
             if (value(TOLERANCE, inputParameters) != null) {
                 final Double tolerance = value(TOLERANCE, inputParameters);

@@ -16,13 +16,20 @@
  */
 package org.geotoolkit.csw.xml.v200;
 
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
+import org.geotoolkit.csw.xml.Acknowledgement;
 
 
 /**
@@ -61,7 +68,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
     "echoedRequest",
     "requestId"
 })
-public class AcknowledgementType {
+public class AcknowledgementType implements Acknowledgement {
 
     @XmlElement(name = "EchoedRequest", required = true)
     private EchoedRequestType echoedRequest;
@@ -71,6 +78,31 @@ public class AcknowledgementType {
     @XmlAttribute(required = true)
     private XMLGregorianCalendar timeStamp;
 
+    /**
+     * An empty constructor used by JAXB 
+     */
+    public AcknowledgementType() {
+        
+    }
+    
+    /**
+     * Build a new Anknowledgement message. 
+     */
+    public AcknowledgementType(final String requestId, final EchoedRequestType echoedRequest, final Long timeStamp) {
+        this.requestId     = requestId;
+        this.echoedRequest = echoedRequest;
+        if (timeStamp != null) {
+            Date d = new Date(timeStamp);
+            GregorianCalendar cal = new  GregorianCalendar();
+            cal.setTime(d);
+            try {
+                DatatypeFactory factory = DatatypeFactory.newInstance();
+                this.timeStamp = factory.newXMLGregorianCalendar(cal);
+            } catch (DatatypeConfigurationException ex) {
+                Logger.getLogger(AcknowledgementType.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
     /**
      * Gets the value of the echoedRequest property.
      * 

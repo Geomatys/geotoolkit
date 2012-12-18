@@ -56,21 +56,21 @@ import org.geotoolkit.wms.xml.AbstractRequest;
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
+@XmlType(name = "CapabilityType", propOrder = {
     "request",
     "exception",
     "extendedCapabilities",
     "layer"
 })
 @XmlRootElement(name = "Capability")
-public class Capability extends AbstractCapability {
+public class Capability implements AbstractCapability {
 
     @XmlElement(name = "Request", required = true)
     private Request request;
     @XmlElement(name = "Exception", required = true)
     private Exception exception;
     @XmlElementRef(name = "_ExtendedCapabilities", namespace = "http://www.opengis.net/wms", type = JAXBElement.class)
-    protected List<JAXBElement<?>> extendedCapabilities;
+    private List<JAXBElement<?>> extendedCapabilities;
     @XmlElement(name = "Layer")
     private Layer layer;
 

@@ -109,15 +109,25 @@ public class FilterCapabilities implements org.opengis.filter.capability.FilterC
     /**
      * Gets the value of the spatialCapabilities property.
      */
+    @Override
     public SpatialCapabilitiesType getSpatialCapabilities() {
         return spatialCapabilities;
+    }
+    
+    public void setSpatialCapabilities(final SpatialCapabilitiesType spatialCapabilities) {
+        this.spatialCapabilities = spatialCapabilities;
     }
 
     /**
      * Gets the value of the temporalCapabilities property.
     */
+    @Override
     public TemporalCapabilitiesType getTemporalCapabilities() {
         return temporalCapabilities;
+    }
+    
+    public void setTemporalCapabilities(final TemporalCapabilitiesType temporalCapabilities) {
+        this.temporalCapabilities = temporalCapabilities;
     }
 
     /**
@@ -127,6 +137,10 @@ public class FilterCapabilities implements org.opengis.filter.capability.FilterC
         return existenceCapabilities;
     }
 
+    public void setExistenceCapabilities(final ExistenceCapabilitiesType existenceCapabilities) {
+        this.existenceCapabilities = existenceCapabilities;
+    }
+    
     /**
      * Gets the value of the classificationCapabilities property.
      */
@@ -134,21 +148,35 @@ public class FilterCapabilities implements org.opengis.filter.capability.FilterC
         return classificationCapabilities;
     }
 
-
+    public void setClassificationCapabilities(final ClassificationCapabilitiesType classificationCapabilities) {
+        this.classificationCapabilities = classificationCapabilities;
+    }
+    
     /**
      * Gets the value of the scalarCapabilities property.
      */
+    @Override
     public ScalarCapabilitiesType getScalarCapabilities() {
         return scalarCapabilities;
+    }
+    
+    public void setScalarCapabilities(final ScalarCapabilitiesType scalarCapabilities) {
+        this.scalarCapabilities = scalarCapabilities;
     }
 
     /**
      * Gets the value of the idCapabilities property.
      */
+    @Override
     public IdCapabilitiesType getIdCapabilities() {
         return idCapabilities;
     }
+    
+    public void setIdCapabilities(final IdCapabilitiesType idCapabilities) {
+        this.idCapabilities = idCapabilities;
+    }
 
+    @Override
     public String getVersion() {
         return "1.1.0";
     }

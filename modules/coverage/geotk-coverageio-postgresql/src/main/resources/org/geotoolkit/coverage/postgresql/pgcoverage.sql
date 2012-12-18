@@ -9,7 +9,12 @@ CREATE TABLE "Band"(
   "id" serial NOT NULL,
   "layerId" integer NOT NULL,
   "indice" integer NOT NULL,
+  "description" character varying(500) NOT NULL,
   "dataType" integer NOT NULL,
+  "unit" character varying(30) NOT NULL,
+  "noData" real[],
+  "min" double precision NOT NULL,
+  "max" double precision NOT NULL,
   CONSTRAINT band_pk PRIMARY KEY (id),
   CONSTRAINT band_fk_layer FOREIGN KEY ("layerId")
       REFERENCES "Layer" (id) MATCH SIMPLE
@@ -20,22 +25,12 @@ CREATE TABLE "Band"(
 CREATE TABLE "Pyramid"(
   "id" serial NOT NULL,
   "layerId" integer NOT NULL,
-  "crs" character varying(3000) NOT NULL,
+  "epsg" character varying(500) NOT NULL,
   CONSTRAINT pyramid_pk PRIMARY KEY (id),
   CONSTRAINT pyramid_fk_layer FOREIGN KEY ("layerId")
       REFERENCES "Layer" (id) MATCH SIMPLE
       ON UPDATE CASCADE ON DELETE CASCADE
 );
-
--- CREATE TABLE "PyramidCRS"(
---  "id" serial NOT NULL,
---  "pyramidId" integer NOT NULL,
---  "wkt" character varying(3000) NOT NULL,
---  CONSTRAINT crs_pk PRIMARY KEY (id),
---  CONSTRAINT crs_fk_pyramid FOREIGN KEY ("pyramidId")
---      REFERENCES "Pyramid" (id) MATCH SIMPLE
---      ON UPDATE CASCADE ON DELETE CASCADE
--- );
 
 CREATE TABLE "PyramidProperty"(
   "id" serial NOT NULL,
@@ -62,8 +57,7 @@ CREATE TABLE "Mosaic"(
   CONSTRAINT mosaic_pk PRIMARY KEY (id),
   CONSTRAINT mosaic_fk_pyramid FOREIGN KEY ("pyramidId")
       REFERENCES "Pyramid" (id) MATCH SIMPLE
-      ON UPDATE CASCADE ON DELETE CASCADE,
-  CONSTRAINT mosaic_unique_scale UNIQUE ("pyramidId","scale")
+      ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 CREATE TABLE "MosaicAxis"(
@@ -90,3 +84,10 @@ CREATE TABLE "Tile"(
       ON UPDATE CASCADE ON DELETE CASCADE,
   CONSTRAINT tile_unique_position UNIQUE ("mosaicId","positionX","positionY")
 );
+
+CREATE SEQUENCE epsg.extension_code_sequence
+  INCREMENT 1
+  MINVALUE 32768
+  MAXVALUE 60000000
+  START 32768
+  CACHE 1;

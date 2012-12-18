@@ -26,6 +26,9 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.XMLGregorianCalendar;
 import org.geotoolkit.util.Utilities;
+import org.opengis.feature.Attribute;
+import org.opengis.filter.identity.FeatureId;
+import org.opengis.filter.identity.Identifier;
 
 
 /**
@@ -51,7 +54,7 @@ import org.geotoolkit.util.Utilities;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ResourceIdType")
-public class ResourceIdType extends AbstractIdType {
+public class ResourceIdType extends AbstractIdType  implements FeatureId {
 
     @XmlAttribute(required = true)
     private String rid;
@@ -243,5 +246,19 @@ public class ResourceIdType extends AbstractIdType {
         hash = 19 * hash + (this.version != null ? this.version.hashCode() : 0);
         hash = 19 * hash + (this.startDate != null ? this.startDate.hashCode() : 0);
         return hash;
+    }
+
+    @Override
+    public String getID() {
+        return rid;
+    }
+
+    @Override
+    public boolean matches(Object feature) {
+        if (feature instanceof Attribute) {
+            final Identifier identifier = ((Attribute)feature).getIdentifier();
+            return identifier != null && rid.equals(identifier.getID());
+        }
+        return false;
     }
 }

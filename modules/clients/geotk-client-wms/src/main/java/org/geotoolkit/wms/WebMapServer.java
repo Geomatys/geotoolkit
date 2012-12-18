@@ -25,7 +25,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.geotoolkit.client.AbstractServer;
 import org.geotoolkit.client.CapabilitiesException;
-import org.geotoolkit.client.ServerFactory;
 import org.geotoolkit.client.ServerFinder;
 import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.coverage.CoverageStore;
@@ -96,7 +95,7 @@ public class WebMapServer extends AbstractServer implements CoverageStore{
     public WebMapServer(final URL serverURL, final WMSVersion version) {
         this(serverURL, version, null);
     }
-    
+
     /**
      * Builds a web map server with the given server url and version.
      *
@@ -127,11 +126,11 @@ public class WebMapServer extends AbstractServer implements CoverageStore{
      * @param version A string representation of the service version.
      * @param capabilities A getCapabilities response.
      */
-    public WebMapServer(final URL serverURL, final WMSVersion version, 
+    public WebMapServer(final URL serverURL, final WMSVersion version,
             final AbstractWMSCapabilities capabilities) {
         this(serverURL,null,version,capabilities);
     }
-    
+
     /**
      * Builds a web map server with the given server url, version and getCapabilities response.
      *
@@ -140,7 +139,7 @@ public class WebMapServer extends AbstractServer implements CoverageStore{
      * @param version A string representation of the service version.
      * @param capabilities A getCapabilities response.
      */
-    public WebMapServer(final URL serverURL, final ClientSecurity security, 
+    public WebMapServer(final URL serverURL, final ClientSecurity security,
             final WMSVersion version, final AbstractWMSCapabilities capabilities) {
         super(create(WMSServerFactory.PARAMETERS, serverURL, security));
         Parameters.getOrCreate(WMSServerFactory.VERSION, parameters).setValue(version.getCode());
@@ -155,7 +154,7 @@ public class WebMapServer extends AbstractServer implements CoverageStore{
     public WMSServerFactory getFactory() {
         return (WMSServerFactory)ServerFinder.getFactoryById(WMSServerFactory.NAME);
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -168,7 +167,7 @@ public class WebMapServer extends AbstractServer implements CoverageStore{
         }
         return null;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -197,16 +196,16 @@ public class WebMapServer extends AbstractServer implements CoverageStore{
      *
      * @param timeout Timeout in milliseconds
      * @return {@linkplain AbstractWMSCapabilities capabilities} response but never {@code null}.
-     * @throws CapabilitiesException  
+     * @throws CapabilitiesException
      */
     public AbstractWMSCapabilities getCapabilities(final long timeout) throws CapabilitiesException{
 
         if (capabilities != null) {
             return capabilities;
         }
-        
+
         final CapabilitiesException[] exception = new CapabilitiesException[1];
-        
+
         //Thread to prevent infinite request on a server
         final Thread thread = new Thread() {
             @Override
@@ -231,7 +230,7 @@ public class WebMapServer extends AbstractServer implements CoverageStore{
                 }
             }
         };
-        
+
         thread.start();
         final long start = System.currentTimeMillis();
         try {
@@ -239,11 +238,11 @@ public class WebMapServer extends AbstractServer implements CoverageStore{
         } catch (InterruptedException ex) {
             throw new CapabilitiesException("The thread to obtain GetCapabilities doesn't answer.");
         }
-        
+
         if(exception[0] != null){
             throw exception[0];
         }
-        
+
         if ((System.currentTimeMillis() - start) > timeout) {
             throw new CapabilitiesException("TimeOut error, the server takes too much time to answer.");
         }
@@ -258,7 +257,7 @@ public class WebMapServer extends AbstractServer implements CoverageStore{
 
     /**
      * Returns the request version.
-     * @return 
+     * @return
      */
     public WMSVersion getVersion() {
         return WMSVersion.getVersion(Parameters.value(WMSServerFactory.VERSION, parameters));
@@ -267,7 +266,7 @@ public class WebMapServer extends AbstractServer implements CoverageStore{
     /**
      * Returns the request object, in the version chosen.
      *
-     * @return 
+     * @return
      * @throws IllegalArgumentException if the version requested is not supported.
      */
     public GetMapRequest createGetMap() {
@@ -284,7 +283,7 @@ public class WebMapServer extends AbstractServer implements CoverageStore{
     /**
      * Returns the request object, in the version chosen.
      *
-     * @return 
+     * @return
      * @throws IllegalArgumentException if the version requested is not supported.
      */
     public GetCapabilitiesRequest createGetCapabilities() {
@@ -301,7 +300,7 @@ public class WebMapServer extends AbstractServer implements CoverageStore{
     /**
      * Returns the request object, in the version chosen.
      *
-     * @return 
+     * @return
      * @throws IllegalArgumentException if the version requested is not supported.
      */
     public GetLegendRequest createGetLegend(){
@@ -318,7 +317,7 @@ public class WebMapServer extends AbstractServer implements CoverageStore{
     /**
      * Returns the request object, in the version chosen.
      *
-     * @return 
+     * @return
      * @throws IllegalArgumentException if the version requested is not supported.
      */
     public GetFeatureInfoRequest createGetFeatureInfo() {
@@ -350,7 +349,7 @@ public class WebMapServer extends AbstractServer implements CoverageStore{
             } catch (CapabilitiesException ex) {
                 throw new DataStoreException(ex);
             }
-                        
+
             final List<AbstractLayer> layers = capa.getLayers();
             for(AbstractLayer al : layers){
                 final String name = al.getName();
@@ -358,7 +357,7 @@ public class WebMapServer extends AbstractServer implements CoverageStore{
                     names.add(DefaultName.valueOf(name));
                 }
             }
-            
+
             names = Collections.unmodifiableSet(names);
         }
         return names;
@@ -380,7 +379,12 @@ public class WebMapServer extends AbstractServer implements CoverageStore{
     public CoverageReference create(Name name) throws DataStoreException {
         throw new DataStoreException("Can not create new coverage.");
     }
-    
+
+    @Override
+    public void delete(Name name) throws DataStoreException {
+        throw new DataStoreException("Can not create new coverage.");
+    }
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("WebMapServer[");

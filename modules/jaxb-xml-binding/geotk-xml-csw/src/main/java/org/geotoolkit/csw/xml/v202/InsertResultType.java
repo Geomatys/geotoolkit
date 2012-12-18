@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.csw.xml.InsertResult;
 
 
 /**
@@ -58,7 +59,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "InsertResultType", propOrder = {
     "briefRecord"
 })
-public class InsertResultType {
+public class InsertResultType implements InsertResult {
 
     @XmlElement(name = "BriefRecord", required = true)
     private List<BriefRecordType> briefRecord;

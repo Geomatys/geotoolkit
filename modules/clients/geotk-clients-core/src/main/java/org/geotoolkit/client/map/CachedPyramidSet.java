@@ -19,6 +19,8 @@ package org.geotoolkit.client.map;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -37,16 +39,15 @@ import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.MemoryCacheImageInputStream;
 import org.geotoolkit.client.Request;
 import org.geotoolkit.client.Server;
 import org.geotoolkit.coverage.*;
-import org.geotoolkit.factory.Hints;
-import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.security.DefaultClientSecurity;
 import org.geotoolkit.storage.DataStoreException;
-import org.geotoolkit.util.FileUtilities;
+import org.geotoolkit.util.ImageIOUtilities;
 import org.geotoolkit.util.collection.Cache;
 import org.geotoolkit.util.logging.Logging;
 import org.jboss.netty.bootstrap.ClientBootstrap;
@@ -199,7 +200,7 @@ public abstract class CachedPyramidSet extends DefaultPyramidSet {
         if(!useNIO){
             return queryUnoptimizedIO(mosaic, locations, hints);
         }
-                
+
         final URL url = server.getURL();
         final String protocol = url.getProtocol();
 
@@ -249,7 +250,7 @@ public abstract class CachedPyramidSet extends DefaultPyramidSet {
         }
 
         queryUsingNIO(url, queue, downloadList);
-        
+
         return queue;
     }
 
@@ -323,18 +324,27 @@ public abstract class CachedPyramidSet extends DefaultPyramidSet {
 
         final int processors = Runtime.getRuntime().availableProcessors();
         final ExecutorService es = Executors.newFixedThreadPool(processors*2);
+
+        queue.addPropertyChangeListener(new PropertyChangeListener() {
+                    @Override
+                    public void propertyChange(PropertyChangeEvent evt) {
+                        es.shutdownNow();
+                    }
+                });
+
         final CountDownLatch latch = new CountDownLatch(downloadList.size()) {
             @Override
             public void countDown() {
                 super.countDown();
-                if (getCount() <= 0) {
+                if (getCount() <= 0 && !queue.isCancelled()) {
                     try {
                         //put a custom object, this is used in the iterator
                         //to detect the end.
                         queue.put(GridMosaic.END_OF_QUEUE);
                     } catch (InterruptedException ex) {
-                        LOGGER.log(Level.WARNING, ex.getMessage(), ex);
+                        LOGGER.log(Level.INFO, ex.getMessage(), ex);
                     }
+                    es.shutdown();
                 }
             }
         };
@@ -362,7 +372,7 @@ public abstract class CachedPyramidSet extends DefaultPyramidSet {
      * When service is secured or has other constraints we can only use standard IO.
      */
     private CancellableQueue queryUnoptimizedIO(GridMosaic mosaic, Collection<? extends Point> locations, Map hints){
-        
+
         final CancellableQueue<Object> queue = new CancellableQueue<Object>(1000);
 
         //compose the requiered queries
@@ -397,10 +407,10 @@ public abstract class CachedPyramidSet extends DefaultPyramidSet {
             return queue;
         }
 
-        queryUsingIO(queue, downloadList);        
+        queryUsingIO(queue, downloadList);
         return queue;
     }
-    
+
     /**
      * Used is NIO queries, act as an information container for each query.
      */
@@ -417,13 +427,13 @@ public abstract class CachedPyramidSet extends DefaultPyramidSet {
             this.mosaic = mosaic;
             this.pt = pt;
         }
-        
+
         public ImagePack(GridMosaic mosaic, Point pt) {
             this.requestPath = null;
             this.mosaic = mosaic;
             this.pt = pt;
         }
-        
+
         public String getRequestPath() {
             return requestPath;
         }
@@ -433,7 +443,14 @@ public abstract class CachedPyramidSet extends DefaultPyramidSet {
             if(ref.getInput() instanceof RenderedImage){
                 return ref;
             }
-            final BufferedImage img = ref.getImageReader().read(0);
+            final BufferedImage img;
+            final ImageReader reader = ref.getImageReader();
+            try{
+                img = reader.read(ref.getImageIndex());
+            }finally{
+                ImageIOUtilities.releaseReader(reader);
+            }
+
             final TileReference tr = new DefaultTileReference(ref.getImageReaderSpi(), img, 0, ref.getPosition());
             return tr;
         }

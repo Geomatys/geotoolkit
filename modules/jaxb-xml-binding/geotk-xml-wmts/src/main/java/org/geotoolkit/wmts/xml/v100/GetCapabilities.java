@@ -54,6 +54,10 @@ public class GetCapabilities extends GetCapabilitiesType {
      * An empty constructor used by JAXB
      */
     GetCapabilities() {}
+    
+    public GetCapabilities(final String service) {
+        super(service);
+    }
 
     /**
      * Build a new getCapabilities request with the specified service

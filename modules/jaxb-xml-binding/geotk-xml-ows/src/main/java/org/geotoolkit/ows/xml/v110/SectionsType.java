@@ -57,7 +57,7 @@ public class SectionsType implements Sections {
     private List<String> section = new ArrayList<String>();
     
     @XmlTransient
-    private static List<String> existingSections111 = new ArrayList<String>(6);
+    private static final List<String> existingSections111 = new ArrayList<String>(6);
     static {
         existingSections111.add("ServiceIdentification");
         existingSections111.add("ServiceProvider");
@@ -68,7 +68,7 @@ public class SectionsType implements Sections {
     }
     
     @XmlTransient
-    private static List<String> existingSections100 = new ArrayList<String>(4);
+    private static final List<String> existingSections100 = new ArrayList<String>(4);
     static {
         existingSections100.add("/");
         existingSections100.add("/WCS_Capabilities/Service");
@@ -98,6 +98,7 @@ public class SectionsType implements Sections {
     /**
      * Gets the value of the section property.
      */
+    @Override
     public List<String> getSection() {
         if (section == null){
             section = new ArrayList<String>();
@@ -111,9 +112,14 @@ public class SectionsType implements Sections {
      * @param sectionName The name of the searched section.
      * @return true if the Section contains the specified section.
      */
+    @Override
     public boolean containsSection(final String sectionName) {
         if (section != null) {
-            return section.contains(sectionName);
+            for (String s : section) {
+                if (s.equalsIgnoreCase(sectionName)) {
+                    return true;
+                }
+            }
         }
         return false;
     }
@@ -123,6 +129,7 @@ public class SectionsType implements Sections {
      * 
      * @param section a new section.
      */
+    @Override
     public void add(final String section) {
         this.section.add(section);
     }
@@ -131,12 +138,13 @@ public class SectionsType implements Sections {
      * Return a List of all the existing sections. 
      */
     public static List<String> getExistingSections(final String v) {
-        if (v.equals("1.0.0"))
+        if (v.equals("1.0.0")) {
             return Collections.unmodifiableList(existingSections100);
-        else if (v.equals("1.1.1"))
+        } else if (v.equals("1.1.1")) {
             return Collections.unmodifiableList(existingSections111);
-        else
+        } else {
             return null;
+        }
     }
     
     /**

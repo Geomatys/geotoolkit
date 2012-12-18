@@ -109,6 +109,7 @@ public class SimpleLiteral extends AbstractSimpleLiteral {
      * Gets the value of the content property.
      * 
      */
+    @Override
     public List<String> getContent() {
         if (content == null) {
             content = new ArrayList<String>();
@@ -116,10 +117,19 @@ public class SimpleLiteral extends AbstractSimpleLiteral {
         return this.content;
     }
 
+    @Override
+    public String getFirstValue() {
+        if (content != null && !content.isEmpty()) {
+            return content.get(0);
+        }
+        return null;
+    }
+    
     /**
      * Gets the value of the scheme property.
      * 
     */
+    @Override
     public String getScheme() {
         return scheme;
     }

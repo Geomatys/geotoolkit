@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.ows.xml.AbstractDomain;
 import org.geotoolkit.ows.xml.AbstractOperationsMetadata;
 
 
@@ -128,6 +129,7 @@ public class OperationsMetadata implements AbstractOperationsMetadata {
      * 
      * @param operationName the name of the operation to remove.
      */
+    @Override
     public void removeOperation(final String operationName) {
         for (Operation op: operation){
             if (op.getName().equals(operationName)) {
@@ -140,6 +142,7 @@ public class OperationsMetadata implements AbstractOperationsMetadata {
     /**
      * Return the operation for the specified name
      */
+    @Override
     public Operation getOperation(final String operationName) {
         for (Operation op: operation){
             if (op.getName().equalsIgnoreCase(operationName)) {
@@ -154,6 +157,7 @@ public class OperationsMetadata implements AbstractOperationsMetadata {
      *
      * @param url The url of the web application.
      */
+    @Override
     public void updateURL(final String url) {
        for (Operation op: operation) {
             for (DCP dcp: op.getDCP()) {
@@ -183,15 +187,63 @@ public class OperationsMetadata implements AbstractOperationsMetadata {
         }
         return null;
     }
-
+    
+    @Override
+    public DomainType getConstraint(final String name) {
+        if (constraint == null) {
+            constraint = new ArrayList<DomainType>();
+        }
+        for (DomainType d : constraint) {
+            if (d.getName().equalsIgnoreCase(name)) {
+                return d;
+            }
+        }
+        return null; 
+    }
+    
+    @Override
+    public void addConstraint(final AbstractDomain domain) {
+        if (constraint == null) {
+            constraint = new ArrayList<DomainType>();
+        }
+        if (domain instanceof DomainType) {
+            constraint.add((DomainType)domain);
+        } else if (domain != null) {
+            throw new IllegalArgumentException("bad version of the domain object");
+        }
+    }
+    
+    @Override
+    public void removeConstraint(final String name) {
+        if (constraint == null) {
+            constraint = new ArrayList<DomainType>();
+        }
+        for (DomainType d : constraint) {
+            if (d.getName().equalsIgnoreCase(name)) {
+                constraint.remove(d);
+            }
+        }
+    }
+    
     /**
      * Gets the value of the extendedCapabilities property.
      * 
      */
+    @Override
     public Object getExtendedCapabilities() {
         return extendedCapabilities;
     }
 
+    @Override
+    public void setExtendedCapabilities(Object extendedCapabilities) {
+        this.extendedCapabilities = extendedCapabilities;
+    }
+    
+    @Override
+    public OperationsMetadata clone() {
+        return new OperationsMetadata(this);
+    }
+    
     /**
      * Verify that this entry is identical to the specified object.
      */
@@ -240,10 +292,11 @@ public class OperationsMetadata implements AbstractOperationsMetadata {
             s.append("null");
         } else {
             for (int i = 0; i < operation.size(); i++) {
-                if (operation.get(i)!= null)
+                if (operation.get(i)!= null) {
                     s.append(operation.get(i).toString()).append('\n');
-                else
+                } else {
                     s.append("operation n").append(i).append(" is null").append('\n');
+                }
             }
         }
         s.append("Parameter:").append('\n');

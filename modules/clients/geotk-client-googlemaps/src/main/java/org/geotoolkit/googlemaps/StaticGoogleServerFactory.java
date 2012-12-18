@@ -37,12 +37,12 @@ import org.opengis.parameter.*;
 
 /**
  * Google Static Map Server factory.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
 public class StaticGoogleServerFactory extends AbstractServerFactory implements CoverageStoreFactory{
-    
+
     /** factory identification **/
     public static final String NAME = "googleStaticMaps";
     public static final DefaultServiceIdentification IDENTIFICATION;
@@ -53,19 +53,19 @@ public class StaticGoogleServerFactory extends AbstractServerFactory implements 
         citation.setIdentifiers(Collections.singleton(id));
         IDENTIFICATION.setCitation(citation);
     }
-    
+
     public static final ParameterDescriptor<String> IDENTIFIER = createFixedIdentifier(NAME);
-    
-    
+
+
     public static final ParameterDescriptorGroup PARAMETERS =
             new DefaultParameterDescriptorGroup("GSParameters",
-                IDENTIFIER,URL,SECURITY,IMAGE_CACHE,NIO_QUERIES);
+                IDENTIFIER,URL,SECURITY,IMAGE_CACHE,NIO_QUERIES,TIMEOUT);
 
     @Override
     public Identification getIdentification() {
         return IDENTIFICATION;
     }
-    
+
     @Override
     public ParameterDescriptorGroup getParametersDescriptor() {
         return PARAMETERS;
@@ -85,13 +85,13 @@ public class StaticGoogleServerFactory extends AbstractServerFactory implements 
     public StaticGoogleMapsServer open(ParameterValueGroup params) throws DataStoreException {
         checkCanProcessWithError(params);
         final StaticGoogleMapsServer server = new StaticGoogleMapsServer(params);
-        
+
         try{
             final ParameterValue val = params.parameter(NIO_QUERIES.getName().getCode());
             boolean useNIO = Boolean.TRUE.equals(val.getValue());
             server.setUserProperty(CachedPyramidSet.PROPERTY_NIO, useNIO);
         }catch(ParameterNotFoundException ex){}
-        
+
         return server;
     }
 
@@ -113,5 +113,5 @@ public class StaticGoogleServerFactory extends AbstractServerFactory implements 
     public CoverageStore create(ParameterValueGroup params) throws DataStoreException {
         throw new DataStoreException("Can not create new Google Static coverage store.");
     }
-    
+
 }

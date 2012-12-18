@@ -65,7 +65,7 @@ import org.geotoolkit.ows.xml.AbstractCapabilitiesBase;
     "serviceProvider",
     "operationsMetadata"
 })
-public class CapabilitiesBaseType implements AbstractCapabilitiesBase {
+public abstract class CapabilitiesBaseType implements AbstractCapabilitiesBase {
 
     @XmlElement(name = "ServiceIdentification")
     private ServiceIdentification serviceIdentification;

@@ -110,7 +110,7 @@ public class PostGISDialect extends AbstractSQLDialect {
         CLASS_TO_TYPE_MAP.put(MultiLineString.class, "MULTILINESTRING");
         CLASS_TO_TYPE_MAP.put(MultiPolygon.class, "MULTIPOLYGON");
         CLASS_TO_TYPE_MAP.put(GeometryCollection.class, "GEOMETRYCOLLECTION");
-        
+
         TYPE_TO_ST_TYPE_MAP.put("GEOMETRY","ST_Geometry");
         TYPE_TO_ST_TYPE_MAP.put("POINT","ST_Point");
         TYPE_TO_ST_TYPE_MAP.put("LINESTRING","ST_LineString");
@@ -119,7 +119,7 @@ public class PostGISDialect extends AbstractSQLDialect {
         TYPE_TO_ST_TYPE_MAP.put("MULTILINESTRING","ST_MultiLineString");
         TYPE_TO_ST_TYPE_MAP.put("MULTIPOLYGON","ST_MultiPolygon");
         TYPE_TO_ST_TYPE_MAP.put("GEOMETRYCOLLECTION","ST_GeometryCollection");
-        
+
         //array types
         CLASS_TO_TYPE_MAP.put(float[].class, "float[]");
     }
@@ -203,10 +203,10 @@ public class PostGISDialect extends AbstractSQLDialect {
                 return "date[]";
             }
         }
-        
+
         return getSqlTypeToSqlTypeNameOverrides().get(sqlType);
     }
-    
+
     public boolean isLooseBBOXEnabled(){
         return looseBBOXEnabled;
     }
@@ -218,14 +218,11 @@ public class PostGISDialect extends AbstractSQLDialect {
     @Override
     public boolean includeTable(final String schemaName, final String tableName, final Connection cx)
                                 throws SQLException{
-        if (tableName.equals("geometry_columns")) {
-            //table
+        if (tableName.equals("geometry_columns") || tableName.startsWith("spatial_ref_sys")) {
+            //tables
             return false;
-        } else if (tableName.startsWith("spatial_ref_sys")) {
-            //table
-            return false;
-        } else if (tableName.startsWith("geography_columns")) {
-            //view
+        } else if (tableName.startsWith("geography_columns") || tableName.startsWith("raster_columns") || tableName.startsWith("raster_overviews")) {
+            //views
             return false;
         }
 
@@ -396,7 +393,10 @@ public class PostGISDialect extends AbstractSQLDialect {
         }
 
         // decode the type
-        Class geometryClass = (Class) TYPE_TO_CLASS_MAP.get(gType);
+        Class geometryClass = null;
+        if (gType != null) {
+            geometryClass = (Class) TYPE_TO_CLASS_MAP.get(gType.replaceFirst("ST_", "").toUpperCase());
+        }
         if (geometryClass == null) {
             geometryClass = Geometry.class;
         }
@@ -541,6 +541,32 @@ public class PostGISDialect extends AbstractSQLDialect {
     @Override
     public String getGeometryTypeName(final Integer type) {
         return "geometry";
+    }
+
+    @Override
+    public String getVersion(final String schemaName, final Connection cx) throws SQLException {
+        final Statement st = cx.createStatement();
+        try {
+            final StringBuilder request = new StringBuilder();
+            request.append("SELECT ");
+            if (schemaName != null && !"".equals(schemaName)) {
+                request.append(schemaName).append(".");
+            }
+            request.append("postgis_version()");
+            dataStore.getLogger().fine(request.toString());
+
+            final ResultSet rs = st.executeQuery(request.toString());
+            try {
+                if (rs.next()) {
+                    return rs.getString(1);
+                }
+            } finally {
+                dataStore.closeSafe(rs);
+            }
+        } finally {
+            dataStore.closeSafe(st);
+        }
+        return null;
     }
 
     @Override

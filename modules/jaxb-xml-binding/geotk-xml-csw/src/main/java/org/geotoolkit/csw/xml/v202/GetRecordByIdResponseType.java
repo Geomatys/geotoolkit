@@ -91,6 +91,7 @@ public class GetRecordByIdResponseType implements GetRecordByIdResponse {
      * Gets the value of the abstractRecord property.
      * (unmodifiable) 
      */
+    @Override
     public List<? extends AbstractRecordType> getAbstractRecord() {
         if (abstractRecord == null) {
             abstractRecord = new ArrayList<AbstractRecordType>();
@@ -102,6 +103,7 @@ public class GetRecordByIdResponseType implements GetRecordByIdResponse {
      * Gets the value of the any property.
      * (unmodifiable)
      */
+    @Override
     public List<Object> getAny() {
         if (any == null) {
             any = new ArrayList<Object>();
@@ -112,7 +114,7 @@ public class GetRecordByIdResponseType implements GetRecordByIdResponse {
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder();
-        if (abstractRecord != null && abstractRecord.size() != 0) {
+        if (abstractRecord != null && !abstractRecord.isEmpty()) {
             s.append("records:").append('\n');
             for (Object ar : abstractRecord) {
                 s.append(ar.toString()).append('\n');
@@ -120,7 +122,7 @@ public class GetRecordByIdResponseType implements GetRecordByIdResponse {
         }
 
 
-        if (any != null && any.size() != 0) {
+        if (any != null && !any.isEmpty()) {
             s.append("anys:").append('\n');
             for (Object obj : any) {
                 s.append(obj.toString()).append('\n');

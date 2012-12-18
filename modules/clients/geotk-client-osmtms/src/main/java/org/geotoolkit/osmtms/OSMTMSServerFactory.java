@@ -37,12 +37,12 @@ import org.opengis.parameter.*;
 
 /**
  * OSM TMS Server factory.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
 public class OSMTMSServerFactory extends AbstractServerFactory implements CoverageStoreFactory{
-    
+
     /** factory identification **/
     public static final String NAME = "osm-tms";
     public static final DefaultServiceIdentification IDENTIFICATION;
@@ -53,9 +53,9 @@ public class OSMTMSServerFactory extends AbstractServerFactory implements Covera
         citation.setIdentifiers(Collections.singleton(id));
         IDENTIFICATION.setCitation(citation);
     }
-    
+
     public static final ParameterDescriptor<String> IDENTIFIER = createFixedIdentifier(NAME);
-    
+
     /**
      * Mandatory - the serveur max zoom level
      */
@@ -63,16 +63,16 @@ public class OSMTMSServerFactory extends AbstractServerFactory implements Covera
             new DefaultParameterDescriptor<Integer>("maxZoomLevel",
                     new ResourceInternationalString("org/geotoolkit/osmtms/bundle", "maxZoomLevel"),
                     Integer.class,18,true);
-    
+
     public static final ParameterDescriptorGroup PARAMETERS =
             new DefaultParameterDescriptorGroup("OSMTMSParameters",
-                IDENTIFIER,URL,MAX_ZOOM_LEVEL,SECURITY,IMAGE_CACHE,NIO_QUERIES);
+                IDENTIFIER,URL,MAX_ZOOM_LEVEL,SECURITY,IMAGE_CACHE,NIO_QUERIES,TIMEOUT);
 
     @Override
     public Identification getIdentification() {
         return IDENTIFICATION;
     }
-    
+
     @Override
     public ParameterDescriptorGroup getParametersDescriptor() {
         return PARAMETERS;
@@ -91,15 +91,15 @@ public class OSMTMSServerFactory extends AbstractServerFactory implements Covera
     @Override
     public OSMTileMapServer open(ParameterValueGroup params) throws DataStoreException {
         checkCanProcessWithError(params);
-        
+
         final OSMTileMapServer server = new OSMTileMapServer(params);
-        
+
         try{
             final ParameterValue val = params.parameter(NIO_QUERIES.getName().getCode());
             boolean useNIO = Boolean.TRUE.equals(val.getValue());
             server.setUserProperty(CachedPyramidSet.PROPERTY_NIO, useNIO);
         }catch(ParameterNotFoundException ex){}
-        
+
         return server;
     }
 
@@ -121,5 +121,5 @@ public class OSMTMSServerFactory extends AbstractServerFactory implements Covera
     public CoverageStore create(ParameterValueGroup params) throws DataStoreException {
         throw new DataStoreException("Can not create new OSM TMS coverage store.");
     }
-    
+
 }

@@ -18,15 +18,18 @@
 
 package org.geotoolkit.wfs.xml.v200;
 
-import java.util.Objects;
+import java.util.ArrayList;
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.ogc.xml.v200.ResourceIdType;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.wfs.xml.TransactionResponse;
 import org.geotoolkit.wfs.xml.WFSResponse;
+import org.opengis.filter.identity.FeatureId;
 
 
 /**
@@ -208,6 +211,22 @@ public class TransactionResponseType implements WFSResponse, TransactionResponse
     }
     
     @Override
+    public List<FeatureId> getInsertedFID() {
+        final List<FeatureId> ids = new ArrayList<FeatureId>();
+        if (insertResults != null) {
+            final List<CreatedOrModifiedFeatureType> inserted = insertResults.getFeature();
+            if (inserted != null) {
+                for(CreatedOrModifiedFeatureType ift : inserted){
+                    for(ResourceIdType fit : ift.getResourceId()){
+                        ids.add(fit);
+                    }
+                }
+            }
+        }
+        return ids;
+    }
+    
+    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("[TransactionResponseType]\n");
         if (version != null) {
@@ -238,11 +257,11 @@ public class TransactionResponseType implements WFSResponse, TransactionResponse
         }
         if (object instanceof TransactionResponseType) {
             final TransactionResponseType that = (TransactionResponseType) object;
-            return Objects.equals(this.insertResults,      that.insertResults)        &&
-                   Objects.equals(this.updateResults,      that.updateResults)   &&
-                   Objects.equals(this.replaceResults,     that.replaceResults)   &&
-                   Objects.equals(this.transactionSummary, that.transactionSummary)   &&
-                   Objects.equals(this.version,            that.version) ;
+            return Utilities.equals(this.insertResults,      that.insertResults)        &&
+                   Utilities.equals(this.updateResults,      that.updateResults)   &&
+                   Utilities.equals(this.replaceResults,     that.replaceResults)   &&
+                   Utilities.equals(this.transactionSummary, that.transactionSummary)   &&
+                   Utilities.equals(this.version,            that.version) ;
         }
         return false;
     }

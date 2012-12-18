@@ -88,6 +88,7 @@ public abstract class BaseRequestType implements BaseRequest {
      *     {@link String }
      *     
      */
+    @Override
     public String getService() {
         if (service == null) {
             return "WFS";
@@ -104,6 +105,7 @@ public abstract class BaseRequestType implements BaseRequest {
      *     {@link String }
      *     
      */
+    @Override
     public void setService(final String value) {
         this.service = value;
     }
@@ -116,6 +118,7 @@ public abstract class BaseRequestType implements BaseRequest {
      *     {@link String }
      *     
      */
+    @Override
     public Version getVersion() {
         if (version != null) {
             return new Version(version);
@@ -131,6 +134,7 @@ public abstract class BaseRequestType implements BaseRequest {
      *     {@link String }
      *     
      */
+    @Override
     public void setVersion(final String value) {
         this.version = value;
     }
@@ -143,6 +147,7 @@ public abstract class BaseRequestType implements BaseRequest {
      *     {@link String }
      *     
      */
+    @Override
     public String getHandle() {
         return handle;
     }
@@ -155,6 +160,7 @@ public abstract class BaseRequestType implements BaseRequest {
      *     {@link String }
      *     
      */
+    @Override
     public void setHandle(final String value) {
         this.handle = value;
     }
@@ -162,6 +168,7 @@ public abstract class BaseRequestType implements BaseRequest {
     /**
      * @return the prefixMapping
      */
+    @Override
     public Map<String, String> getPrefixMapping() {
         return prefixMapping;
     }
@@ -169,6 +176,7 @@ public abstract class BaseRequestType implements BaseRequest {
     /**
      * @param prefixMapping the prefixMapping to set
      */
+    @Override
     public void setPrefixMapping(Map<String, String> prefixMapping) {
         this.prefixMapping = prefixMapping;
     }

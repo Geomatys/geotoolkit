@@ -115,15 +115,16 @@ public class TransactionType extends RequestBaseType implements Transaction {
     public TransactionType(final String service, final String version, final DeleteType delete) {
         super(service, version);
         insertOrUpdateOrDelete = new ArrayList<Object>();
-        if (delete != null)
+        if (delete != null) {
             insertOrUpdateOrDelete.add(delete);
-
+        }
         verboseResponse = false;
     }
     
     /**
      * Gets the value of the insertOrUpdateOrDelete property.
      */
+    @Override
     public List<Object> getInsertOrUpdateOrDelete() {
         if (insertOrUpdateOrDelete == null) {
             insertOrUpdateOrDelete = new ArrayList<Object>();
@@ -145,14 +146,17 @@ public class TransactionType extends RequestBaseType implements Transaction {
     /**
      * Gets the value of the requestId property.
      */
+    @Override
     public String getRequestId() {
         return requestId;
     }
 
+    @Override
     public String getOutputFormat() {
         return "application/xml";
     }
 
+    @Override
     public void setOutputFormat(final String value) {}
 
     /**

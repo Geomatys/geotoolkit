@@ -42,12 +42,12 @@ import org.opengis.parameter.ParameterValueGroup;
 
 /**
  * WMS-C Server factory.
- * 
+ *
  * @author Johann Sorel (Puzzle-GIS)
  * @module pending
  */
 public class WMSCServerFactory extends AbstractServerFactory implements CoverageStoreFactory{
-    
+
     /** factory identification **/
     public static final String NAME = "wmsc";
     public static final DefaultServiceIdentification IDENTIFICATION;
@@ -58,17 +58,17 @@ public class WMSCServerFactory extends AbstractServerFactory implements Coverage
         citation.setIdentifiers(Collections.singleton(id));
         IDENTIFICATION.setCitation(citation);
     }
-    
+
     public static final ParameterDescriptor<String> IDENTIFIER = createFixedIdentifier(NAME);
-    
-    public static final ParameterDescriptorGroup PARAMETERS = 
-            new DefaultParameterDescriptorGroup("WMSCParameters", IDENTIFIER,URL,SECURITY,IMAGE_CACHE,NIO_QUERIES);
+
+    public static final ParameterDescriptorGroup PARAMETERS =
+            new DefaultParameterDescriptorGroup("WMSCParameters", IDENTIFIER,URL,SECURITY,IMAGE_CACHE,NIO_QUERIES,TIMEOUT);
 
     @Override
     public Identification getIdentification() {
         return IDENTIFICATION;
     }
-    
+
     @Override
     public ParameterDescriptorGroup getParametersDescriptor() {
         return PARAMETERS;
@@ -93,21 +93,21 @@ public class WMSCServerFactory extends AbstractServerFactory implements Coverage
             final ParameterValue val = params.parameter(SECURITY.getName().getCode());
             security = (ClientSecurity) val.getValue();
         }catch(ParameterNotFoundException ex){}
-        
+
         boolean cacheImage = false;
         try{
             final ParameterValue val = params.parameter(IMAGE_CACHE.getName().getCode());
             cacheImage = Boolean.TRUE.equals(val.getValue());
         }catch(ParameterNotFoundException ex){}
-        
+
         final WebMapServerCached server = new WebMapServerCached(url,security,cacheImage);
-        
+
         try{
             final ParameterValue val = params.parameter(NIO_QUERIES.getName().getCode());
             boolean useNIO = Boolean.TRUE.equals(val.getValue());
             server.setUserProperty(CachedPyramidSet.PROPERTY_NIO, useNIO);
         }catch(ParameterNotFoundException ex){}
-        
+
         return server;
     }
 
@@ -125,5 +125,5 @@ public class WMSCServerFactory extends AbstractServerFactory implements Coverage
     public WebMapServerCached create(ParameterValueGroup params) throws DataStoreException {
         throw new DataStoreException("Can not create new WMSC coverage store.");
     }
-    
+
 }

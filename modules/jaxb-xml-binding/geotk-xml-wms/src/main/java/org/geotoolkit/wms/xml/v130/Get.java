@@ -49,7 +49,7 @@ import org.geotoolkit.wms.xml.AbstractProtocol;
     "onlineResource"
 })
 @XmlRootElement(name = "Get")
-public class Get  extends AbstractProtocol {
+public class Get  implements AbstractProtocol {
 
     @XmlElement(name = "OnlineResource", required = true)
     private OnlineResource onlineResource;

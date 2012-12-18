@@ -361,7 +361,10 @@ public final class WPSIO {
      * @return true if supported, false otherwise.
      */
     public static boolean isSupportedBBoxInputClass(final Class clazz) {
-        return isSupportedClass(clazz, IOType.INPUT, FormChoice.BBOX);
+        if (clazz.isAssignableFrom(Envelope.class)) {
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -401,7 +404,10 @@ public final class WPSIO {
      * @return true if supported, false otherwise.
      */
     public static boolean isSupportedBBoxOutputClass(final Class clazz) {
-        return isSupportedClass(clazz, IOType.OUTPUT, FormChoice.BBOX);
+        if (clazz.isAssignableFrom(Envelope.class)) {
+            return true;
+        }
+        return false;
     }
 
     /**

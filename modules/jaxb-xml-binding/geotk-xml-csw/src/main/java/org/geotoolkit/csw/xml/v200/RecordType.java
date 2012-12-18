@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.csw.xml.Record;
+import org.geotoolkit.dublincore.xml.AbstractSimpleLiteral;
 import org.geotoolkit.dublincore.xml.v1.elements.SimpleLiteral;
 import org.geotoolkit.ows.xml.v100.BoundingBoxType;
 import org.geotoolkit.ows.xml.v100.WGS84BoundingBoxType;
@@ -81,18 +82,18 @@ public class RecordType extends DCMIRecordType implements Record {
         
         super(identifier, title,type, subject, format, modified, _abstract, creator, distributor, language, spatial, references);
         
-        if (bbox instanceof WGS84BoundingBoxType)
+        if (bbox instanceof WGS84BoundingBoxType) {
             this.boundingBox = owsFactory.createWGS84BoundingBox((WGS84BoundingBoxType)bbox);
-        else
+        } else {
             this.boundingBox = owsFactory.createBoundingBox(bbox);
-        
-        
+        }
     }
     
     /**
      * Gets the value of the boundingBox property.
      * 
      */
+    @Override
     public JAXBElement<? extends BoundingBoxType> getBoundingBox() {
         return boundingBox;
     }

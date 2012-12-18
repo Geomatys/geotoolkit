@@ -28,12 +28,17 @@ import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
+import java.io.BufferedReader;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
+import java.net.URL;
+import java.net.URLConnection;
 import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -70,11 +75,7 @@ import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.xml.DomCompare;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.*;
 
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.type.FeatureType;
@@ -89,6 +90,8 @@ import org.geotoolkit.data.AbstractFeatureCollection;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.feature.xml.jaxp.ElementFeatureWriter;
 import org.geotoolkit.util.FileUtilities;
+import org.geotoolkit.util.StringUtilities;
+import org.geotoolkit.util.logging.Logging;
 import org.opengis.feature.ComplexAttribute;
 import org.opengis.feature.Feature;
 import org.opengis.feature.Property;
@@ -375,6 +378,14 @@ public class XmlFeatureTest {
         assertEquals(1, types.size());
         assertEquals(complexType, types.get(0));
     }
+    
+    @Test
+    public void testReadVeryComplexFeatureType() throws Exception {
+        final XmlFeatureTypeReader reader = new JAXBFeatureTypeReader();
+        final URL url = new URL("http://schemas.opengis.net/gml/3.1.1/base/feature.xsd");
+        final List<FeatureType> types = reader.read(url);
+        System.out.println("RESULT:" + types);
+    }
 
     @Test
     public void testWriteSimpleFeatureType() throws JAXBException, IOException, ParserConfigurationException, SAXException{
@@ -570,6 +581,16 @@ public class XmlFeatureTest {
 
     @Test
     public void testReadSimpleCollectionEmbeddedFT() throws JAXBException, IOException, XMLStreamException{
+        
+        // verify that distant service is working properly
+        
+        URL url = new URL("http://www.ifremer.fr/services/wfs1?SERVICE=WFS&VERSION=1.1.0&REQUEST=DescribeFeatureType&TYPENAME=quadrige&OUTPUTFORMAT=text/xml;%20subtype=gml/3.1.1");
+        final String response = getStringResponse(url.openConnection());
+        if (response.contains("<!-- ERROR: Failed opening layer (null) -->")) {
+            Logging.getLogger(this.getClass()).warning("Skipping embedded test. external service not responding correctly");
+            return;
+        }
+        
         JAXPStreamFeatureReader reader = new JAXPStreamFeatureReader();
         reader.getProperties().put(JAXPStreamFeatureReader.READ_EMBEDDED_FEATURE_TYPE, true);
 
@@ -669,5 +690,16 @@ public class XmlFeatureTest {
 
         result =  (Feature) obj;
         assertEquals(complexFeature, result);
+    }
+    
+    protected static String getStringResponse(URLConnection conec) throws UnsupportedEncodingException, IOException {
+        final StringWriter sw     = new StringWriter();
+        final BufferedReader in   = new BufferedReader(new InputStreamReader(conec.getInputStream(), "UTF-8"));
+        char [] buffer = new char[1024];
+        int size;
+        while ((size = in.read(buffer, 0, 1024)) > 0) {
+            sw.append(new String(buffer, 0, size));
+        }
+        return sw.toString();
     }
 }

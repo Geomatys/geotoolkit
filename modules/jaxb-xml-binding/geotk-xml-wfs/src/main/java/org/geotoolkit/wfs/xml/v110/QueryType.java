@@ -32,7 +32,6 @@ import org.geotoolkit.ogc.xml.v110.FilterType;
 import org.geotoolkit.ogc.xml.v110.FunctionType;
 import org.geotoolkit.ogc.xml.v110.SortByType;
 import org.geotoolkit.wfs.xml.Query;
-import org.opengis.filter.sort.SortBy;
 
 
 /**
@@ -130,6 +129,7 @@ public class QueryType implements Query {
         return this.propertyNameOrXlinkPropertyNameOrFunction;
     }
     
+    @Override
     public List<Object> getPropertyNames() {
         return getPropertyNameOrXlinkPropertyNameOrFunction();
     }
@@ -281,8 +281,14 @@ public class QueryType implements Query {
      *     {@link String }
      *     
      */
+    @Override
     public void setSrsName(final String value) {
         this.srsName = value;
+    }
+    
+    @Override
+    public List<String> getAliases() {
+        return new ArrayList<String>();
     }
 
     @Override

@@ -24,10 +24,11 @@ import java.net.URL;
 import java.net.URLConnection;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
-import org.geotoolkit.csw.xml.v202.DeleteType;
-import org.geotoolkit.csw.xml.v202.InsertType;
-import org.geotoolkit.csw.xml.v202.TransactionType;
-import org.geotoolkit.csw.xml.v202.UpdateType;
+import org.geotoolkit.csw.xml.CswXmlFactory;
+import org.geotoolkit.csw.xml.Transaction;
+import org.geotoolkit.csw.xml.Delete;
+import org.geotoolkit.csw.xml.Insert;
+import org.geotoolkit.csw.xml.Update;
 import org.geotoolkit.security.ClientSecurity;
 
 
@@ -45,9 +46,9 @@ public class AbstractTransaction extends AbstractCSWRequest implements Transacti
      */
     protected final String version;
 
-    private DeleteType delete = null;
-    private InsertType insert = null;
-    private UpdateType update = null;
+    private Delete delete = null;
+    private Insert insert = null;
+    private Update update = null;
 
     /**
      * Defines the server url and the service version for this kind of request.
@@ -61,32 +62,32 @@ public class AbstractTransaction extends AbstractCSWRequest implements Transacti
     }
 
     @Override
-    public DeleteType getDelete() {
+    public Delete getDelete() {
         return delete;
     }
 
     @Override
-    public void setDelete(final DeleteType delete) {
+    public void setDelete(final Delete delete) {
         this.delete = delete;
     }
 
     @Override
-    public InsertType getInsert() {
+    public Insert getInsert() {
         return insert;
     }
 
     @Override
-    public void setInsert(final InsertType insert) {
+    public void setInsert(final Insert insert) {
         this.insert = insert;
     }
 
     @Override
-    public UpdateType getUpdate() {
+    public Update getUpdate() {
         return update;
     }
 
     @Override
-    public void setUpdate(final UpdateType update) {
+    public void setUpdate(final Update update) {
         this.update = update;
     }
 
@@ -118,13 +119,13 @@ public class AbstractTransaction extends AbstractCSWRequest implements Transacti
         Marshaller marsh = null;
         try {
             marsh = POOL.acquireMarshaller();
-            final TransactionType transactXml;
+            final Transaction transactXml;
             if (delete != null) {
-                transactXml = new TransactionType("CSW", version, delete);
+                transactXml = CswXmlFactory.createTransaction(version, "CSW", delete);
             } else if (insert != null) {
-                transactXml = new TransactionType("CSW", version, insert);
+                transactXml = CswXmlFactory.createTransaction(version, "CSW", insert);
             } else if (update != null) {
-                transactXml = new TransactionType("CSW", version, update);
+                transactXml = CswXmlFactory.createTransaction(version, "CSW", update);
             } else {
                 throw new IllegalArgumentException("The specified requests is not valid. " +
                         "It does not contain any insert, delete or update request.");

@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.coverage;
 
+import java.util.Collection;
+import java.util.List;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
@@ -43,15 +45,24 @@ public interface Pyramid {
     CoordinateReferenceSystem getCoordinateReferenceSystem();
     
     /**
+     * @return unmodifiable list of all mosaics.
+     * Waring : in multidimensional pyramids, multiple mosaic at the same scale
+     * may exist.
+     */
+    List<GridMosaic> getMosaics();
+    
+    /**
      * @return the different scales available in the pyramid.
      * The scale value is expressed in CRS unit by image cell (pixel usually)
      */
     double[] getScales();
     
     /**
-     * @param index of the wanted mosaic, must match an available index of the scales table.
-     * @return  GridMosaic
+     * @param index of the wanted scale, must match an available index of the scales table.
+     * @return Collection<GridMosaic> available mosaics at this scale.
+     * Waring : in multidimensional pyramids, multiple mosaic at the same scale
+     * may exist.
      */
-    GridMosaic getMosaic(int index);
+    Collection<GridMosaic> getMosaics(int index);
     
 }

@@ -17,6 +17,7 @@
 package org.geotoolkit.ows.xml.v110;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -149,6 +150,23 @@ public class UnNamedDomainType {
         this.allowedValues = value;
     }
     
+    public UnNamedDomainType(final ValueType defaultvalue) {
+        this.defaultValue = defaultvalue;
+    }
+    
+    public UnNamedDomainType(final NoValues nv, final ValueType defaultvalue) {
+        this.noValues     = nv;
+        this.defaultValue = defaultvalue;
+    }
+    
+    public UnNamedDomainType(final String value) {
+        this.allowedValues = new AllowedValues(Arrays.asList(value));
+    }
+    
+    public UnNamedDomainType(final List<String> value) {
+        this.allowedValues = new AllowedValues(value);
+    }
+    
     
     /**
      * Build a new Un-named Domain.
@@ -208,8 +226,11 @@ public class UnNamedDomainType {
      * Optional default value for this quantity, 
      * which should be included when this quantity has a default value. 
      */
-    public ValueType getDefaultValue() {
-        return defaultValue;
+    public String getDefaultValue() {
+        if (defaultValue != null) {
+            return defaultValue.getValue();
+        }
+        return null;
     }
 
     /**
@@ -299,33 +320,33 @@ public class UnNamedDomainType {
     @Override
     public String toString(){
         StringBuilder s = new StringBuilder();
-        if (allowedValues != null) 
+        if (allowedValues != null) {
             s.append(allowedValues.toString()).append('\n');
-        
-        if (anyValue != null) 
+        }
+        if (anyValue != null) {
             s.append(anyValue.toString()).append('\n');
-        
-        if (noValues != null) 
+        }
+        if (noValues != null) {
             s.append(noValues.toString()).append('\n');
-       
-        if (valuesReference != null) 
+        }
+        if (valuesReference != null) {
             s.append(valuesReference.toString()).append('\n');
-       
-        if (defaultValue != null) 
+        }
+        if (defaultValue != null) {
             s.append(defaultValue.toString()).append('\n');
-        
-        if (meaning != null) 
+        }
+        if (meaning != null) {
             s.append(meaning.toString()).append('\n');
-        
-        if (dataType != null) 
+        }
+        if (dataType != null) {
             s.append(dataType.toString()).append('\n');
-        
-        if (uom != null) 
+        }
+        if (uom != null) {
             s.append(uom.toString()).append('\n');
-        
-        if (referenceSystem != null) 
+        }
+        if (referenceSystem != null) {
             s.append(referenceSystem.toString()).append('\n');
-       
+        }
         if (metadata != null) {        
             for (MetadataType m:metadata) {
                 s.append(m.toString()).append('\n');

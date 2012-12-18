@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.wfs.xml.v200;
 
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.wfs.xml.DropStoredQueryResponse;
 
@@ -24,6 +25,7 @@ import org.geotoolkit.wfs.xml.DropStoredQueryResponse;
  * @author Guilhem Legal (Geomatys)
  */
 @XmlType(name = "DropStoredQueryResponseType")
+@XmlRootElement(name = "DropStoredQueryResponse", namespace= "http://www.opengis.net/wfs/2.0")
 public class DropStoredQueryResponseType extends ExecutionStatusType implements DropStoredQueryResponse {
     
     public DropStoredQueryResponseType() {

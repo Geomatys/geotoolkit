@@ -70,6 +70,14 @@ public class KeywordList implements AbstractKeywordList{
         this.keyword = keyword;
         
     }
+    
+    public KeywordList(final String... keyword) {
+        if (keyword != null) {
+            for (String s : keyword) {
+                this.keyword.add(new Keyword(s));
+            }
+        }
+    }
 
     /**
      * Build a new Contact person primary object.

@@ -25,10 +25,6 @@ import org.geotoolkit.ows.xml.AbstractGetCapabilities;
  */
 public interface GetCapabilities extends AbstractGetCapabilities {
 
-    String getService();
-    
-    String getUpdateSequence();
-
     String toKvp();
 
 }

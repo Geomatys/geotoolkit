@@ -82,6 +82,22 @@ public class DescriptionType implements AbstractDescription {
     protected DescriptionType() {
     }
     
+    public DescriptionType(final String title,  final String _abstract,
+            final List<String> keywords) {
+        if (title != null) {
+            this.title = new ArrayList<LanguageStringType>();
+            this.title.add(new LanguageStringType(title));
+        }
+        if (_abstract != null) {
+            this._abstract = new ArrayList<LanguageStringType>();
+            this._abstract.add(new LanguageStringType(_abstract));
+        }
+        if (keywords != null) {
+            this.keywords = new ArrayList<KeywordsType>();
+            this.keywords.add(new KeywordsType(keywords));
+        }
+    }
+    
     /**
      * Build a new DescriptionType (full version).
      */
@@ -136,6 +152,7 @@ public class DescriptionType implements AbstractDescription {
         }
     }
 
+    @Override
     public String getFirstTitle() {
         if (title != null && title.size() > 0) {
             return title.get(0).getValue();
@@ -175,6 +192,7 @@ public class DescriptionType implements AbstractDescription {
         }
     }
 
+    @Override
     public String getFirstAbstract() {
         if (_abstract != null && _abstract.size() > 0) {
             return _abstract.get(0).getValue();
@@ -185,6 +203,7 @@ public class DescriptionType implements AbstractDescription {
     /**
      * Gets the value of the keywords property.
      */
+    @Override
     public List<KeywordsType> getKeywords() {
         if (keywords == null) {
             keywords = new ArrayList<KeywordsType>();
@@ -197,6 +216,13 @@ public class DescriptionType implements AbstractDescription {
      */
     public void setKeywords(final List<KeywordsType> keywords) {
         this.keywords = keywords;
+    }
+    
+    public void setKeywordValues(final List<String> keywords) {
+        if (keywords != null) {
+            this.keywords = new ArrayList<KeywordsType>();
+            this.keywords.add(new KeywordsType(keywords));
+        }
     }
     
     /**

@@ -50,5 +50,5 @@ public interface Jenks extends Function {
     * Generated color map. 
     * @return map of value and associated color.
     */
-    Map<Integer, Color> getColorMap();
+    Map<Double, Color> getColorMap();
 }

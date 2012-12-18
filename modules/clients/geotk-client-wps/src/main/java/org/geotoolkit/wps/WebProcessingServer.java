@@ -74,7 +74,7 @@ import org.opengis.util.NoSuchIdentifierException;
 /**
  * WPS server, used to aquiere capabilites and requests process.
  *
- * @author Quentin Boileau @modul pending
+ * @author Quentin Boileau @module pending
  */
 public class WebProcessingServer extends AbstractServer implements ProcessingRegistry {
 
@@ -215,9 +215,9 @@ public class WebProcessingServer extends AbstractServer implements ProcessingReg
             @Override
             public void run() {
                 try {
-                    final URL url = createGetCapabilities().getURL();
+                    final InputStream is = createGetCapabilities().getResponseStream();
                     final Unmarshaller unmarhaller = WPSMarshallerPool.getInstance().acquireUnmarshaller();
-                    capabilities = ((JAXBElement<WPSCapabilitiesType>) unmarhaller.unmarshal(url)).getValue();
+                    capabilities = ((JAXBElement<WPSCapabilitiesType>) unmarhaller.unmarshal(is)).getValue();
                 } catch (Exception ex) {
                     capabilities = null;
                     try {
@@ -258,9 +258,9 @@ public class WebProcessingServer extends AbstractServer implements ProcessingReg
                 describe.setIdentifiers(processIDs);
 
                 try {
-                    final URL url = describe.getURL();
+                    final InputStream request = describe.getResponseStream();
                     final Unmarshaller unmarhaller = WPSMarshallerPool.getInstance().acquireUnmarshaller();
-                    description[0] = (ProcessDescriptions) unmarhaller.unmarshal(url);
+                    description[0] = (ProcessDescriptions) unmarhaller.unmarshal(request);
                 } catch (Exception ex) {
                     description[0] = null;
                     try {
@@ -416,7 +416,7 @@ public class WebProcessingServer extends AbstractServer implements ProcessingReg
                                         supportedIO = false;
                                         break;
                                     }
-                                    inputDescriptors.add(new DefaultParameterDescriptor(properties, clazz, null, null, null, null, null, min == 0));
+                                    inputDescriptors.add(new DefaultParameterDescriptor(properties, clazz, null, null, null, null, null, min != 0));
                                     inputTypes.put(inputName, "complex");
                                 } else {
                                     LOGGER.log(Level.WARNING, "No defaut format for complex input "+inputName+".");
@@ -450,7 +450,7 @@ public class WebProcessingServer extends AbstractServer implements ProcessingReg
                                
                                 //At this state the converter can't be null.
                                 try {
-                                    inputDescriptors.add(new DefaultParameterDescriptor(properties, clazz, null, converter.convert(defaultValue, null), null, null, unit, min == 0));
+                                    inputDescriptors.add(new DefaultParameterDescriptor(properties, clazz, null, converter.convert(defaultValue, null), null, null, unit, min != 0));
                                     inputTypes.put(inputName, "literal");
                                 } catch (NonconvertibleObjectException ex2) {
                                     LOGGER.log(Level.WARNING, "Can't convert the default literal input value.", ex2);
@@ -460,7 +460,7 @@ public class WebProcessingServer extends AbstractServer implements ProcessingReg
                             }
                             
                             if (bboxInput != null) {
-                                inputDescriptors.add(new DefaultParameterDescriptor(properties, Envelope.class, null, null, null, null, null, min == 0));
+                                inputDescriptors.add(new DefaultParameterDescriptor(properties, Envelope.class, null, null, null, null, null, min != 0));
                                 inputTypes.put(inputName, "bbox");
                             }
                         }
@@ -667,19 +667,23 @@ public class WebProcessingServer extends AbstractServer implements ProcessingReg
             marshaller.marshal(exec, content);
 
             // Make request
-            final URLConnection conec = new URL(serverURL.toString()).openConnection();
+            final ClientSecurity security = getClientSecurity();
+            security.secure(serverURL);
+            final URLConnection conec = serverURL.openConnection();
             conec.setRequestProperty("content-type", "text/xml");
             conec.setConnectTimeout(60);
             conec.setDoOutput(true);
+            security.secure(conec);
 
             // Write request content
             requestOS = conec.getOutputStream();
+            security.encrypt(requestOS);
             final OutputStreamWriter writer = new OutputStreamWriter(requestOS);
             writer.write(content.toString());
             writer.flush();
 
             // Parse the response
-            requestIS = conec.getInputStream();
+            requestIS = security.decrypt(conec.getInputStream());
             final Object respObj = unmarshaller.unmarshal(requestIS);
 
             if (respObj instanceof ExecuteResponse) {

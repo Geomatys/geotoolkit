@@ -90,7 +90,9 @@ public class WMCUtilities {
      * @throws JAXBException if the xml cannot be read.
      */
     public static MapContext getMapContext(InputStream source) throws JAXBException {
-        final MarshallerPool pool = new MarshallerPool("org.geotoolkit.ogc.xml.exception:" + "org.geotoolkit.wmc.xml.v110");
+        final MarshallerPool pool = new MarshallerPool("org.geotoolkit.ogc.xml.exception:" +
+                                                        "org.geotoolkit.wmc.xml.v110:" +
+                                                        "org.geotoolkit.ogc.xml.v100");
         final Unmarshaller um = pool.acquireUnmarshaller();
         Object o = um.unmarshal(source);
         if (o instanceof JAXBElement) {
@@ -121,7 +123,7 @@ public class WMCUtilities {
         LayerListType layers = root.getLayerList();
 
         if (general != null) {
-            //Retrieve enveloppe for the map context.        
+            //Retrieve enveloppe for the map context.
             BoundingBoxType bbox = general.getBoundingBox();
             try {
                 srs = CRS.decode(bbox.getSRS(), true);

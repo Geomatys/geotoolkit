@@ -118,6 +118,7 @@ public class StatelessMapLayerJ2D<T extends MapLayer> extends StatelessMapItemJ2
             paintLayer(interContext);
 
             //paint intermediate image
+            context.switchToDisplayCRS();
             final Graphics2D g = context.getGraphics();
             g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float)opacity));
             g.drawImage(inter, 0, 0, null);

@@ -140,7 +140,7 @@ public abstract class AbstractSQLDialect implements SQLDialect{
     protected static final Logger LOGGER = Logging.getLogger(SQLDialect.class);
 
     protected final Map<Integer, CoordinateReferenceSystem> CRS_CACHE = new HashMap<Integer, CoordinateReferenceSystem>();
-    
+
     /**
      * The basic filter capabilities all databases should have
      */
@@ -186,7 +186,7 @@ public abstract class AbstractSQLDialect implements SQLDialect{
             GeometryOperand.Envelope, GeometryOperand.Polygon, GeometryOperand.Point
         };
         final DefaultSpatialCapabilities spatialCaps = new DefaultSpatialCapabilities(geomOperands, spatialOps);
-        
+
         BASE_DBMS_CAPABILITIES = new DefaultFilterCapabilities(null, idCaps, spatialCaps, scalCaps,null);
     }
 
@@ -308,7 +308,7 @@ public abstract class AbstractSQLDialect implements SQLDialect{
                 LOGGER.warning("No mapping for " + clazz.getName());
             }
         }
-        
+
         return mapping;
     }
 
@@ -316,7 +316,7 @@ public abstract class AbstractSQLDialect implements SQLDialect{
     public void buildMapping(final AttributeTypeBuilder atb, final Connection cx,
             final String typeName, final int datatype, final String schemaName,
             final String tableName, final String columnName) throws SQLException {
-        
+
         //determine from type mappings
         Class binding = getMapping(datatype);
         if(Array.class.equals(binding)){
@@ -326,7 +326,7 @@ public abstract class AbstractSQLDialect implements SQLDialect{
                 binding = subType;
             }
         }
-        
+
         if (binding == null) {
             //determine from type name mappings
             binding = getMapping(typeName);
@@ -567,6 +567,14 @@ public abstract class AbstractSQLDialect implements SQLDialect{
      * {@inheritDoc }
      */
     @Override
+    public String getVersion(final String schemaName, final Connection cx) throws SQLException {
+        return null;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public boolean isLimitOffsetSupported() {
         return false;
     }
@@ -578,16 +586,16 @@ public abstract class AbstractSQLDialect implements SQLDialect{
     public void applyLimitOffset(final StringBuilder sql, final int limit, final int offset) {
         throw new UnsupportedOperationException("Override this method when isLimitOffsetSupported returns true");
     }
-    
+
     /**
      * {@inheritDoc }
      */
     @Override
-    public void analyzeResult(final DataBaseModel model, final FeatureTypeBuilder ftb, 
+    public void analyzeResult(final DataBaseModel model, final FeatureTypeBuilder ftb,
             final ResultSet result) throws SQLException,DataStoreException{
         //do nothing more
     }
-    
+
     ////////////////////////////////////////////////////////////////////////////
     // Static //////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
@@ -637,7 +645,7 @@ public abstract class AbstractSQLDialect implements SQLDialect{
         mappings.put(Types.TIMESTAMP, Timestamp.class);
         mappings.put(Types.BINARY, byte[].class);
         mappings.put(Types.VARBINARY, byte[].class);
-        
+
         mappings.put(Types.ARRAY, Array.class);
     }
 
@@ -684,7 +692,7 @@ public abstract class AbstractSQLDialect implements SQLDialect{
      */
     protected static void initBaseSqlTypeToSqlTypeNameOverrides(final Map<Integer,String> overrides) {
     }
-    
-    
+
+
 
 }

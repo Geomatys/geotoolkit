@@ -85,11 +85,11 @@ public class GetCapabilitiesType implements GetCapabilities {
         this.version = "1.0.0";
         this.updateSequence = updateSequence;
         if (section == null) {
-            section = "/";
+            this.section = "/";
         } else {
-            this.section        = section;
+            this.section = section;
         }
-        this.service        = "WCS";
+        this.service = "WCS";
     }
     
     /**
@@ -111,6 +111,7 @@ public class GetCapabilitiesType implements GetCapabilities {
         }
     }
     
+    @Override
     public void setService(final String value) {
         this.service = value;
     }
@@ -127,6 +128,7 @@ public class GetCapabilitiesType implements GetCapabilities {
         }
     }
 
+    @Override
     public void setVersion(final String value) {
         this.version = value;
     }
@@ -134,6 +136,7 @@ public class GetCapabilitiesType implements GetCapabilities {
     /**
      * Gets the value of the updateSequence property.
      */
+    @Override
     public String getUpdateSequence() {
         return updateSequence;
     }
@@ -143,8 +146,6 @@ public class GetCapabilitiesType implements GetCapabilities {
      *  method added for compatibility with the upper version
      *
      */
-
-
     @Override
     public AcceptVersions getAcceptVersions() {
         return new AcceptVersions() {
@@ -152,6 +153,11 @@ public class GetCapabilitiesType implements GetCapabilities {
             @Override
             public List<String> getVersion() {
                 return Arrays.asList(version);
+            }
+
+            @Override
+            public void addVersion(final String v) {
+                version = v;
             }
         };
     }
@@ -173,8 +179,9 @@ public class GetCapabilitiesType implements GetCapabilities {
 
             @Override
             public void add(String sec) {
-                if (sec != null)
+                if (sec != null) {
                     section = section + ',' + sec;
+                }
             }
 
             @Override

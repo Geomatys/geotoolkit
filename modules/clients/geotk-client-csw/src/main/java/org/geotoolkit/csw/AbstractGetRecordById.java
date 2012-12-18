@@ -24,9 +24,10 @@ import java.net.URLConnection;
 import java.util.Arrays;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
+import org.geotoolkit.csw.xml.CswXmlFactory;
 import org.geotoolkit.csw.xml.ElementSetType;
-import org.geotoolkit.csw.xml.v202.ElementSetNameType;
-import org.geotoolkit.csw.xml.v202.GetRecordByIdType;
+import org.geotoolkit.csw.xml.ElementSetName;
+import org.geotoolkit.csw.xml.GetRecordById;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.util.StringUtilities;
 
@@ -142,9 +143,9 @@ public abstract class AbstractGetRecordById extends AbstractCSWRequest implement
         Marshaller marsh = null;
         try {
             marsh = POOL.acquireMarshaller();
-            final GetRecordByIdType recordByIdXml = new GetRecordByIdType("CSW", version,
-                    new ElementSetNameType(elementSetName), outputFormat, outputSchema,
-                    Arrays.asList(ids));
+            final ElementSetName set = CswXmlFactory.createElementSetName(version, elementSetName);
+            final GetRecordById recordByIdXml = CswXmlFactory.createGetRecordById(version, "CSW",
+                     set, outputFormat, outputSchema, Arrays.asList(ids));
             marsh.marshal(recordByIdXml, stream);
         } catch (JAXBException ex) {
             throw new IOException(ex);

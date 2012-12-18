@@ -158,7 +158,7 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
     public FeatureType getFeatureType(final Query query) throws DataStoreException, SchemaException {
 
         if(CUSTOM_SQL.equalsIgnoreCase(query.getLanguage())){
-            
+
             final TextStatement txt = (TextStatement) query.getSource();
             final String sql = txt.getStatement();
 
@@ -371,8 +371,8 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
         Filter baseFilter = query.getFilter();
         final FIDFixVisitor visitor = new FIDFixVisitor();
         baseFilter = (Filter) baseFilter.accept(visitor, null);
-        
-        
+
+
         // split the filter
         final Filter[] split = splitFilter(baseFilter,type);
         final Filter preFilter = split[0];
@@ -472,10 +472,10 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
         //if we need to resample
 //        final double[] resampling = query.getResolution();
 //        if(resampling != null){
-//            reader = GenericTransformFeatureIterator.wrap(reader, 
+//            reader = GenericTransformFeatureIterator.wrap(reader,
 //                    new GeometryScaleTransformer(resampling[0], resampling[1]),query.getHints());
-//        }        
-        
+//        }
+
         //if we need to reproject data
         final CoordinateReferenceSystem reproject = query.getCoordinateSystemReproject();
         if(reproject != null && !CRS.equalsIgnoreMetadata(reproject,type.getCoordinateReferenceSystem())){
@@ -500,7 +500,7 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
 
         final TextStatement stmt = (TextStatement) query.getSource();
         final String sql = stmt.getStatement();
-        
+
         try {
             final PrimaryKey pk = new NullPrimaryKey(query.getTypeName().getLocalPart());
             final Connection cx = getDataSource().getConnection();
@@ -536,7 +536,7 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
         }
     }
 
-    private FeatureWriter getFeatureWriterInternal(final Name typeName, final Filter filter, 
+    private FeatureWriter getFeatureWriterInternal(final Name typeName, final Filter filter,
             final EditMode mode, final Hints hints) throws DataStoreException, IOException {
 
         if(!isWritable(typeName)){
@@ -720,7 +720,7 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
                 reader.close();
             }
         }
-        
+
         typeCheck(query.getTypeName());
         final SimpleFeatureType type = (SimpleFeatureType) getFeatureType(query.getTypeName());
 
@@ -802,12 +802,24 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
                     throw new DataStoreException(ex);
                 }
             }
-            
+
             return bbox;
         } catch (SQLException e) {
             throw new DataStoreException("Error occured calculating bounds", e);
         } finally {
             closeSafe(cx, st, rs);
+        }
+    }
+
+    public String getVersion() throws DataStoreException {
+        Connection cx = null;
+        try {
+            cx = getDataSource().getConnection();
+            return dialect.getVersion(databaseSchema, cx);
+        } catch (SQLException e) {
+            throw new DataStoreException("Error occured calculating bounds", e);
+        } finally {
+            closeSafe(cx);
         }
     }
 
@@ -826,11 +838,11 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
             Statement st = null;
             try {
                 st = cx.createStatement();
-                
+
                 final List<Object> nextKeyValues = getNextValues(key, cx);
                 final String sql = queryBuilder.insertSQL(featureType, features, nextKeyValues, cx);
                 st.executeUpdate(sql);
-                
+
             } catch (SQLException e) {
                 throw new DataStoreException("Error inserting features",e);
             } catch (IOException e) {
@@ -839,10 +851,10 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
                 closeSafe(st);
             }
         }
-        
+
         fireFeaturesAdded(featureType.getName(), null);
     }
-    
+
     /**
      * Inserts a collection of new features into the database for a particular
      * feature type / table.
@@ -1030,47 +1042,47 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
     @Override
     public void updateSchema(final Name typeName, final FeatureType newft) throws DataStoreException {
         final FeatureType oldft = getFeatureType(typeName);
-        
+
         //we only handle adding or removing columns
         final List<PropertyDescriptor> toRemove = new ArrayList<PropertyDescriptor>();
         final List<PropertyDescriptor> toAdd = new ArrayList<PropertyDescriptor>();
-        
+
         toRemove.addAll(oldft.getDescriptors());
         toRemove.removeAll(newft.getDescriptors());
         toAdd.addAll(newft.getDescriptors());
         toAdd.removeAll(oldft.getDescriptors());
-        
+
         Connection cx = null;
-        
-        try{            
+
+        try{
             cx = getDataSource().getConnection();
-            
+
             for(PropertyDescriptor remove : toRemove){
-                final String sql = queryBuilder.AlterTableDropColumnSQL(oldft, remove, cx);                
+                final String sql = queryBuilder.AlterTableDropColumnSQL(oldft, remove, cx);
                 final Statement st = cx.createStatement();
                 try {
                     st.execute(sql);
                 } finally {
                     closeSafe(st);
-                }                
+                }
             }
-            
+
             for(PropertyDescriptor add : toAdd){
-                final String sql = queryBuilder.AlterTableAddColumnSQL(oldft, add, cx);                
+                final String sql = queryBuilder.AlterTableAddColumnSQL(oldft, add, cx);
                 final Statement st = cx.createStatement();
                 try {
                     st.execute(sql);
                 } finally {
                     closeSafe(st);
-                }                
+                }
             }
-            
+
         } catch (final Exception e) {
             throw new DataStoreException("Error occurred updating table", e);
         } finally{
             closeSafe(cx);
         }
-        
+
         // reset the type name cache, will be recreated when needed.
         dbmodel.clearCache();
     }
@@ -1081,7 +1093,7 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
     @Override
     public void deleteSchema(final Name typeName) throws DataStoreException {
         final FeatureType featureType = getFeatureType(typeName);
-        
+
         //execute the drop table statement
         Connection cx = null;
 
@@ -1097,7 +1109,7 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
             } finally {
                 closeSafe(st);
             }
-            
+
             // reset the type name cache, will be recreated when needed.
             dbmodel.clearCache();
 
@@ -1250,7 +1262,7 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
      * {@inheritDoc }
      */
     @Override
-    public List<FeatureId> addFeatures(final Name groupName, final Collection<? extends Feature> newFeatures, 
+    public List<FeatureId> addFeatures(final Name groupName, final Collection<? extends Feature> newFeatures,
             final Hints hints) throws DataStoreException {
         return handleAddWithFeatureWriter(groupName, newFeatures, hints);
     }

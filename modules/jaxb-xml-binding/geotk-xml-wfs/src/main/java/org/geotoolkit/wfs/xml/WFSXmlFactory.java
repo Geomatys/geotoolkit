@@ -34,9 +34,9 @@ import org.opengis.filter.sort.SortOrder;
  *
  * @author Guilhem Legal (Geomatys)
  */
-public class WFSXmlFactory extends OWSXmlFactory {
+public class WFSXmlFactory {
 
-    public FeatureTypeList buildFeatureTypeList(final String version) {
+    public static FeatureTypeList buildFeatureTypeList(final String version) {
         if ("2.0.0".equals(version)) {
             return new org.geotoolkit.wfs.xml.v200.FeatureTypeListType();
         } else if ("1.1.0".equals(version)) {
@@ -48,7 +48,7 @@ public class WFSXmlFactory extends OWSXmlFactory {
         }
     }
 
-    public WFSCapabilities buildWFSCapabilities(final String version, final String updateSequence) {
+    public static WFSCapabilities buildWFSCapabilities(final String version, final String updateSequence) {
         if ("2.0.0".equals(version)) {
             return new org.geotoolkit.wfs.xml.v200.WFSCapabilitiesType(version, updateSequence);
         } else if ("1.1.0".equals(version)) {
@@ -60,7 +60,7 @@ public class WFSXmlFactory extends OWSXmlFactory {
         }
     }
 
-    public FeatureType buildFeatureType(final String version, final QName name, final String title, final String defaultCRS, final List<String> otherCRS, final Object bbox) {
+    public static FeatureType buildFeatureType(final String version, final QName name, final String title, final String defaultCRS, final List<String> otherCRS, final Object bbox) {
         if ("2.0.0".equals(version)) {
             final List<org.geotoolkit.ows.xml.v110.WGS84BoundingBoxType> bboxes = new ArrayList<org.geotoolkit.ows.xml.v110.WGS84BoundingBoxType>();
             if (bbox != null && !(bbox instanceof org.geotoolkit.ows.xml.v110.WGS84BoundingBoxType)) {
@@ -90,7 +90,7 @@ public class WFSXmlFactory extends OWSXmlFactory {
         }
     }
 
-    public Object buildBBOX(final String version, final String crsName, final double minx, final double miny, final double maxx, final double maxy) {
+    public static Object buildBBOX(final String version, final String crsName, final double minx, final double miny, final double maxx, final double maxy) {
         if ("2.0.0".equals(version)) {
             return new org.geotoolkit.ows.xml.v110.WGS84BoundingBoxType(
                        crsName,
@@ -112,7 +112,7 @@ public class WFSXmlFactory extends OWSXmlFactory {
         }
     }
 
-    public WFSCapabilities buildWFSCapabilities(final String version,  final AbstractServiceIdentification si, final AbstractServiceProvider sp,
+    public static WFSCapabilities buildWFSCapabilities(final String version,  final AbstractServiceIdentification si, final AbstractServiceProvider sp,
             final AbstractOperationsMetadata om, FeatureTypeList ftl, final FilterCapabilities fc) {
 
         if ("2.0.0".equals(version)) {
@@ -156,7 +156,7 @@ public class WFSXmlFactory extends OWSXmlFactory {
         }
     }
 
-    public WFSFeatureCollection buildFeatureCollection(final String version, final String id, final Integer numberOfFeatures, final XMLGregorianCalendar timeStamp) {
+    public static WFSFeatureCollection buildFeatureCollection(final String version, final String id, final Integer numberOfFeatures, final XMLGregorianCalendar timeStamp) {
         if ("2.0.0".equals(version)) {
             return new org.geotoolkit.wfs.xml.v200.FeatureCollectionType(numberOfFeatures, timeStamp);
         } else if ("1.1.0".equals(version)) {
@@ -170,7 +170,7 @@ public class WFSXmlFactory extends OWSXmlFactory {
         }
     }
 
-    public ValueCollection buildValueCollection(final String version, final Integer numberOfFeatures, final XMLGregorianCalendar timeStamp) {
+    public static ValueCollection buildValueCollection(final String version, final Integer numberOfFeatures, final XMLGregorianCalendar timeStamp) {
         if ("2.0.0".equals(version)) {
             return new org.geotoolkit.wfs.xml.v200.ValueCollectionType(numberOfFeatures, timeStamp);
         } else if ("1.1.0".equals(version)) {
@@ -182,7 +182,7 @@ public class WFSXmlFactory extends OWSXmlFactory {
         }
     }
 
-    public TransactionResponse buildTransactionResponse(final String version, final Integer totalInserted, final Integer totalUpdated, final Integer totalDeleted, final Map<String, String> inserted) {
+    public static TransactionResponse buildTransactionResponse(final String version, final Integer totalInserted, final Integer totalUpdated, final Integer totalDeleted, final Map<String, String> inserted) {
         if ("2.0.0".equals(version)) {
             org.geotoolkit.wfs.xml.v200.ActionResultsType insertResults = null;
             if (inserted.size() > 0) {
@@ -219,7 +219,7 @@ public class WFSXmlFactory extends OWSXmlFactory {
         }
     }
 
-    public GetGmlObject buildGetGmlObject(final String version, final String id, final String service, final String handle, final String outputFormat) {
+    public static GetGmlObject buildGetGmlObject(final String version, final String id, final String service, final String handle, final String outputFormat) {
         if ("2.0.0".equals(version)) {
             throw new IllegalArgumentException("The operation GetGmlObject is not available in version:" + version);
         } else if ("1.1.0".equals(version)) {
@@ -232,7 +232,7 @@ public class WFSXmlFactory extends OWSXmlFactory {
         }
     }
 
-    public DescribeFeatureType buildDecribeFeatureType(final String version, final String service, final String handle, final List<QName> typeNames, String outputFormat) {
+    public static DescribeFeatureType buildDecribeFeatureType(final String version, final String service, final String handle, final List<QName> typeNames, String outputFormat) {
         if ("2.0.0".equals(version)) {
             if (outputFormat == null) {
                outputFormat = "application/gml+xml; version=3.2";
@@ -253,7 +253,7 @@ public class WFSXmlFactory extends OWSXmlFactory {
         }
     }
 
-    public DeleteElement buildDeleteElement(final String version, final XMLFilter filter, final String handle, final QName typeName) {
+    public static DeleteElement buildDeleteElement(final String version, final XMLFilter filter, final String handle, final QName typeName) {
         if ("2.0.0".equals(version)) {
             if (filter != null && !(filter instanceof org.geotoolkit.ogc.xml.v200.FilterType)) {
                 throw new IllegalArgumentException("unexpected object version for filter element");
@@ -274,7 +274,7 @@ public class WFSXmlFactory extends OWSXmlFactory {
         }
     }
 
-    public Transaction buildTransaction(final String version,  final String service, final String handle, final AllSomeType releaseAction, final DeleteElement deleteElement) {
+    public static Transaction buildTransaction(final String version,  final String service, final String handle, final AllSomeType releaseAction, final DeleteElement deleteElement) {
         if ("2.0.0".equals(version)) {
             if (deleteElement != null && !(deleteElement instanceof org.geotoolkit.wfs.xml.v200.DeleteType)) {
                 throw new IllegalArgumentException("unexpected object version for delete element");
@@ -296,7 +296,7 @@ public class WFSXmlFactory extends OWSXmlFactory {
     }
 
 
-    public LockFeature buildLockFeature(final String version,  final String service, final String handle, final AllSomeType releaseAction, final XMLFilter filter,
+    public static LockFeature buildLockFeature(final String version,  final String service, final String handle, final AllSomeType releaseAction, final XMLFilter filter,
             final QName typeName, final int expiry) {
         if ("2.0.0".equals(version)) {
             final List<org.geotoolkit.wfs.xml.v200.QueryType> queries = new ArrayList<org.geotoolkit.wfs.xml.v200.QueryType>();
@@ -330,7 +330,11 @@ public class WFSXmlFactory extends OWSXmlFactory {
         }
     }
 
-    public GetCapabilities buildGetCapabilities(final String version, final AcceptVersions versions, final Sections sections, final AcceptFormats formats, final String updateSequence, final String service) {
+    public static GetCapabilities buildGetCapabilities(final String version, final String service) {
+        return buildGetCapabilities(version, null, null, null, null, service);
+    }
+    
+    public static GetCapabilities buildGetCapabilities(final String version, final AcceptVersions versions, final Sections sections, final AcceptFormats formats, final String updateSequence, final String service) {
         if ("2.0.0".equals(version)) {
             if (versions != null && !(versions instanceof org.geotoolkit.ows.xml.v110.AcceptVersionsType)) {
                 throw new IllegalArgumentException("unexpected object version for AcceptVersion element");
@@ -368,46 +372,58 @@ public class WFSXmlFactory extends OWSXmlFactory {
         }
     }
 
-    @Override
-    public AcceptVersions buildAcceptVersion(final String currentVersion, final List<String> acceptVersion) {
+    public static AcceptVersions buildAcceptVersion(final String currentVersion, final List<String> acceptVersion) {
         if ("2.0.0".equals(currentVersion)) {
-            return super.buildAcceptVersion("1.1.0", acceptVersion);
+            return OWSXmlFactory.buildAcceptVersion("1.1.0", acceptVersion);
         } else if ("1.1.0".equals(currentVersion)) {
-            return super.buildAcceptVersion("1.0.0", acceptVersion);
+            return OWSXmlFactory.buildAcceptVersion("1.0.0", acceptVersion);
         } else if ("1.0.0".equals(currentVersion)) {
-            return super.buildAcceptVersion("1.0.0", acceptVersion);
+            return OWSXmlFactory.buildAcceptVersion("1.0.0", acceptVersion);
         } else {
             throw new IllegalArgumentException("unexpected version number:" + currentVersion);
         }
     }
 
-    @Override
-    public AcceptFormats buildAcceptFormat(final String currentVersion, final List<String> acceptFormats) {
+    public static AcceptFormats buildAcceptFormat(final String currentVersion, final List<String> acceptFormats) {
         if ("2.0.0".equals(currentVersion)) {
-            return super.buildAcceptFormat("1.1.0", acceptFormats);
+            return OWSXmlFactory.buildAcceptFormat("1.1.0", acceptFormats);
         } else if ("1.1.0".equals(currentVersion)) {
-            return super.buildAcceptFormat("1.0.0", acceptFormats);
+            return OWSXmlFactory.buildAcceptFormat("1.0.0", acceptFormats);
         } else if ("1.0.0".equals(currentVersion)) {
-            return super.buildAcceptFormat("1.0.0", acceptFormats);
+            return OWSXmlFactory.buildAcceptFormat("1.0.0", acceptFormats);
         } else {
             throw new IllegalArgumentException("unexpected version number:" + currentVersion);
         }
     }
 
-    @Override
-    public Sections buildSections(final String currentVersion, final List<String> sections) {
+    public static Sections buildSections(final String currentVersion, final List<String> sections) {
         if ("2.0.0".equals(currentVersion)) {
-            return super.buildSections("1.1.0", sections);
+            return OWSXmlFactory.buildSections("1.1.0", sections);
         } else if ("1.1.0".equals(currentVersion)) {
-            return super.buildSections("1.0.0", sections);
+            return OWSXmlFactory.buildSections("1.0.0", sections);
         } else if ("1.0.0".equals(currentVersion)) {
-            return super.buildSections("1.0.0", sections);
+            return OWSXmlFactory.buildSections("1.0.0", sections);
+        } else {
+            throw new IllegalArgumentException("unexpected version number:" + currentVersion);
+        }
+    }
+    
+    public static StoredQuery buildStoredQuery(final String currentVersion, final String id, final String handle, final List<Parameter> parameters) {
+        if ("2.0.0".equals(currentVersion)) {
+            final List<org.geotoolkit.wfs.xml.v200.ParameterType> params = new ArrayList<org.geotoolkit.wfs.xml.v200.ParameterType>();
+            for (Parameter p : parameters) {
+                if (!(p instanceof org.geotoolkit.wfs.xml.v200.ParameterType)) {
+                    throw new IllegalArgumentException("bad object version for parameter");
+                }
+                params.add((org.geotoolkit.wfs.xml.v200.ParameterType)p);
+            }
+            return new org.geotoolkit.wfs.xml.v200.StoredQueryType(id, handle, params);
         } else {
             throw new IllegalArgumentException("unexpected version number:" + currentVersion);
         }
     }
 
-    public Query buildQuery(final String currentVersion, final XMLFilter filter, final List<QName> typeNames, final String featureVersion,
+    public static Query buildQuery(final String currentVersion, final XMLFilter filter, final List<QName> typeNames, final String featureVersion,
             final String srsName, final SortBy sortBy, final List<String> propertyNames) {
         if ("2.0.0".equals(currentVersion)) {
             if (filter != null && !(filter instanceof org.geotoolkit.ogc.xml.v200.FilterType)) {
@@ -446,7 +462,7 @@ public class WFSXmlFactory extends OWSXmlFactory {
         }
     }
 
-    public SortBy buildSortBy(final String currentVersion, final String sortByParam, final SortOrder order) {
+    public static SortBy buildSortBy(final String currentVersion, final String sortByParam, final SortOrder order) {
         if ("2.0.0".equals(currentVersion)) {
             final List<org.geotoolkit.ogc.xml.v200.SortPropertyType> sortProperties = new ArrayList<org.geotoolkit.ogc.xml.v200.SortPropertyType>();
             sortProperties.add(new org.geotoolkit.ogc.xml.v200.SortPropertyType(sortByParam, order));
@@ -462,7 +478,7 @@ public class WFSXmlFactory extends OWSXmlFactory {
         }
     }
 
-    public XMLFilter buildBBOXFilter(final String currentVersion, String propertyName, double minx, double miny, double maxx, double maxy, String srs) {
+    public static XMLFilter buildBBOXFilter(final String currentVersion, String propertyName, double minx, double miny, double maxx, double maxy, String srs) {
         if ("2.0.0".equals(currentVersion)) {
             final  org.geotoolkit.ogc.xml.v200.BBOXType bbox = new org.geotoolkit.ogc.xml.v200.BBOXType(propertyName, minx, miny, maxx, maxy, srs);
             return new org.geotoolkit.ogc.xml.v200.FilterType(bbox);
@@ -477,20 +493,28 @@ public class WFSXmlFactory extends OWSXmlFactory {
         }
     }
 
-    public GetFeature buildGetFeature(final String currentVersion, final String service, final String handle, final Integer maxFeature, final String featureId,
+    public static Parameter buildParameter(final String currentVersion, final String name, final Object value) {
+        if ("2.0.0".equals(currentVersion)) {
+            return new org.geotoolkit.wfs.xml.v200.ParameterType(name, value);
+        } else {
+            throw new IllegalArgumentException("unexpected version number:" + currentVersion);
+        }
+    }
+    
+    public static GetFeature buildGetFeature(final String currentVersion, final String service, final String handle, final Integer maxFeature,
         final Query query, final ResultTypeType resultType, String outputFormat) {
         if ("2.0.0".equals(currentVersion)) {
             if (query != null && !(query instanceof org.geotoolkit.wfs.xml.v200.QueryType)) {
                 throw new IllegalArgumentException("unexpected object version for query element");
             }
-            return new org.geotoolkit.wfs.xml.v200.GetFeatureType(service, currentVersion, handle, maxFeature, featureId,
+            return new org.geotoolkit.wfs.xml.v200.GetFeatureType(service, currentVersion, handle, maxFeature,
                                                                   Arrays.asList((org.geotoolkit.wfs.xml.v200.QueryType)query),
                                                                   resultType, outputFormat);
         } else if ("1.1.0".equals(currentVersion)) {
             if (query != null && !(query instanceof org.geotoolkit.wfs.xml.v110.QueryType)) {
                 throw new IllegalArgumentException("unexpected object version for query element");
             }
-            return new org.geotoolkit.wfs.xml.v110.GetFeatureType(service, currentVersion, handle, maxFeature, featureId,
+            return new org.geotoolkit.wfs.xml.v110.GetFeatureType(service, currentVersion, handle, maxFeature,
                                                                   Arrays.asList((org.geotoolkit.wfs.xml.v110.QueryType)query),
                                                                   resultType, outputFormat);
         } else if ("1.0.0".equals(currentVersion)) {
@@ -504,8 +528,23 @@ public class WFSXmlFactory extends OWSXmlFactory {
             throw new IllegalArgumentException("unexpected version number:" + currentVersion);
         }
     }
+    
+    public static GetFeature buildGetFeature(final String currentVersion, final String service, final String handle, final Integer maxFeature,
+        final StoredQuery query, final ResultTypeType resultType, String outputFormat) {
+        if ("2.0.0".equals(currentVersion)) {
+            if (query != null && !(query instanceof org.geotoolkit.wfs.xml.v200.StoredQueryType)) {
+                throw new IllegalArgumentException("unexpected object version for query element");
+            }
+            return new org.geotoolkit.wfs.xml.v200.GetFeatureType(service, currentVersion, handle, 
+                                                                  Arrays.asList((org.geotoolkit.wfs.xml.v200.StoredQueryType)query),
+                                                                  maxFeature,
+                                                                  resultType, outputFormat);
+        } else {
+            throw new IllegalArgumentException("unexpected version number:" + currentVersion);
+        }
+    }
 
-    public ListStoredQueries buildListStoredQueries(final String version, final String service, final String handle) {
+    public static ListStoredQueries buildListStoredQueries(final String version, final String service, final String handle) {
         if ("2.0.0".equals(version)) {
             return new org.geotoolkit.wfs.xml.v200.ListStoredQueriesType(service, version, handle);
 
@@ -520,7 +559,7 @@ public class WFSXmlFactory extends OWSXmlFactory {
         }
     }
 
-    public DescribeStoredQueries buildDescribeStoredQueries(final String version, final String service, final String handle, final List<String> storedQueryId) {
+    public static DescribeStoredQueries buildDescribeStoredQueries(final String version, final String service, final String handle, final List<String> storedQueryId) {
         if ("2.0.0".equals(version)) {
             return new org.geotoolkit.wfs.xml.v200.DescribeStoredQueriesType(service, version, handle, storedQueryId);
 
@@ -535,7 +574,7 @@ public class WFSXmlFactory extends OWSXmlFactory {
         }
     }
 
-    public GetPropertyValue buildGetPropertyValue(final String currentVersion, final String service, final String handle, final Integer maxFeature, final String featureId,
+    public static GetPropertyValue buildGetPropertyValue(final String currentVersion, final String service, final String handle, final Integer maxFeature, final String featureId,
         final Query query, final ResultTypeType resultType, String outputFormat) {
         if ("2.0.0".equals(currentVersion)) {
             if (query != null && !(query instanceof org.geotoolkit.wfs.xml.v200.QueryType)) {
@@ -555,7 +594,7 @@ public class WFSXmlFactory extends OWSXmlFactory {
         }
     }
 
-    public DropStoredQuery buildDropStoredQuery(final String currentVersion, final String service, final String handle, final String id) {
+    public static DropStoredQuery buildDropStoredQuery(final String currentVersion, final String service, final String handle, final String id) {
         if ("2.0.0".equals(currentVersion)) {
             return new org.geotoolkit.wfs.xml.v200.DropStoredQueryType(service, currentVersion, handle, id);
 
@@ -570,7 +609,7 @@ public class WFSXmlFactory extends OWSXmlFactory {
         }
     }
 
-    public ListStoredQueriesResponse buildListStoredQueriesResponse(final String currentVersion, final List<StoredQueryDescription> descriptions) {
+    public static ListStoredQueriesResponse buildListStoredQueriesResponse(final String currentVersion, final List<StoredQueryDescription> descriptions) {
         if ("2.0.0".equals(currentVersion)) {
             final List<org.geotoolkit.wfs.xml.v200.StoredQueryListItemType> storedQuery = new ArrayList<org.geotoolkit.wfs.xml.v200.StoredQueryListItemType>();
             for (StoredQueryDescription description : descriptions) {
@@ -595,7 +634,7 @@ public class WFSXmlFactory extends OWSXmlFactory {
         }
     }
 
-    public DescribeStoredQueriesResponse buildDescribeStoredQueriesResponse(final String currentVersion, final List<StoredQueryDescription> descriptions) {
+    public static DescribeStoredQueriesResponse buildDescribeStoredQueriesResponse(final String currentVersion, final List<StoredQueryDescription> descriptions) {
         if ("2.0.0".equals(currentVersion)) {
             final List<org.geotoolkit.wfs.xml.v200.StoredQueryDescriptionType> storedQuery = new ArrayList<org.geotoolkit.wfs.xml.v200.StoredQueryDescriptionType>();
             for (StoredQueryDescription description : descriptions) {
@@ -618,7 +657,7 @@ public class WFSXmlFactory extends OWSXmlFactory {
         }
     }
 
-    public CreateStoredQueryResponse buildCreateStoredQueryResponse(final String currentVersion, final String status) {
+    public static CreateStoredQueryResponse buildCreateStoredQueryResponse(final String currentVersion, final String status) {
         if ("2.0.0".equals(currentVersion)) {
 
             return new org.geotoolkit.wfs.xml.v200.CreateStoredQueryResponseType(status);
@@ -634,7 +673,7 @@ public class WFSXmlFactory extends OWSXmlFactory {
         }
     }
 
-    public DropStoredQueryResponse buildDropStoredQueryResponse(final String currentVersion, final String status) {
+    public static DropStoredQueryResponse buildDropStoredQueryResponse(final String currentVersion, final String status) {
         if ("2.0.0".equals(currentVersion)) {
 
             return new org.geotoolkit.wfs.xml.v200.DropStoredQueryResponseType(status);

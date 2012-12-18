@@ -49,8 +49,4 @@ import org.geotoolkit.csw.xml.AbstractQuery;
 })
 public abstract class AbstractQueryType implements AbstractQuery {
 
-    public abstract void setTypeNames(List<QName> typeNames);
-    
-    public abstract void setConstraint(QueryConstraintType value);
-
 }

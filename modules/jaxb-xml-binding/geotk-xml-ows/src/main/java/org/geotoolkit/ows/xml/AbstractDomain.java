@@ -29,4 +29,10 @@ public interface AbstractDomain {
     String getName();
 
     List<? extends AbstractMetadata> getMetadata();
+    
+    String getDefaultValue();
+    
+    void setValue(final List<String> values);
+    
+    List<String> getValue();
 }

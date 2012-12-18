@@ -53,6 +53,7 @@ import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
@@ -397,7 +398,7 @@ public class PortrayalServiceTest {
         for(final Envelope env : envelopes){
             for(Date[] drange : dates){
                 for(Double[] erange : elevations){
-                    final Envelope cenv = GO2Utilities.combine(env, drange, erange);
+                    final Envelope cenv = ReferencingUtilities.combine(env, drange, erange);
                     final BufferedImage img = DefaultPortrayalService.portray(
                         new CanvasDef(new Dimension(800, 600), null),
                         new SceneDef(context),

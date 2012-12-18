@@ -24,7 +24,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -39,14 +38,14 @@ import org.geotoolkit.ogc.xml.v110.FilterType;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.sld.xml.StyleXmlIO;
 import org.geotoolkit.util.logging.Logging;
+import org.geotoolkit.wfs.xml.GetFeature;
+import org.geotoolkit.wfs.xml.Query;
 import org.geotoolkit.wfs.xml.WFSMarshallerPool;
-import org.geotoolkit.wfs.xml.v110.GetFeatureType;
-import org.geotoolkit.wfs.xml.v110.QueryType;
 import org.geotoolkit.wfs.xml.ResultTypeType;
+import org.geotoolkit.wfs.xml.WFSXmlFactory;
 
 import org.opengis.feature.type.Name;
 import org.opengis.filter.Filter;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 
 /**
@@ -138,6 +137,7 @@ public abstract class AbstractGetFeature extends AbstractRequest implements GetF
     /**
      * {@inheritDoc }
      */
+    @Override
     public String getOutputFormat() {
        return outputFormat;
     }
@@ -145,6 +145,7 @@ public abstract class AbstractGetFeature extends AbstractRequest implements GetF
     /**
      * {@inheritDoc }
      */
+    @Override
     public void setOutputFormat(final String outputFormat) {
         this.outputFormat = outputFormat;
     }
@@ -261,19 +262,18 @@ public abstract class AbstractGetFeature extends AbstractRequest implements GetF
         } else {
             xmlFilter = null;
         }
-
-        QueryType query = new QueryType(xmlFilter, typeNames, "1.1.0");
-
+        
+        final List<String> propName = new ArrayList<String>();
         if(propertyNames != null){
-            final StringBuilder sb = new StringBuilder();
-
             // TODO handle prefix/namespace
             for(final Name prop : propertyNames){
-                query.getPropertyNameOrXlinkPropertyNameOrFunction().add(prop.getLocalPart());
+                propName.add(prop.getLocalPart());
             }
         }
 
-        final GetFeatureType request = new GetFeatureType("WFS", version, null, maxFeatures, Arrays.asList(query), ResultTypeType.RESULTS, outputFormat);
+        final Query query = WFSXmlFactory.buildQuery(version, xmlFilter, typeNames, "1.1.0", null, null, propName);
+
+        final GetFeature request = WFSXmlFactory.buildGetFeature(version, "WFS", null, maxFeatures, query, ResultTypeType.RESULTS, outputFormat);
 
         final URL url = new URL(serverURL);
         URLConnection conec = url.openConnection();
@@ -288,7 +288,6 @@ public abstract class AbstractGetFeature extends AbstractRequest implements GetF
         try {
             marshaller = WFSMarshallerPool.getInstance().acquireMarshaller();
             marshaller.marshal(request, stream);
-            //marshaller.marshal(request, System.out);
         } catch (JAXBException ex) {
             throw new IOException(ex);
         } finally {

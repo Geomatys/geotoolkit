@@ -17,6 +17,8 @@
 package org.geotoolkit.wfs.xml;
 
 import java.util.List;
+import javax.xml.namespace.QName;
+import org.geotoolkit.ows.xml.BoundingBox;
 
 
 /**
@@ -24,7 +26,13 @@ import java.util.List;
  * @author Guilhem Legal (Geomatys)
  */
 public interface FeatureType {
+
+    QName getName();
     
+    void setName(final QName value);
+    
+    String getDefaultCRS();
+            
     void setDefaultCRS(final String CRS);
     
     void setOtherCRS(final List<String> otherCRS);
@@ -34,4 +42,6 @@ public interface FeatureType {
     void addKeywords(final List<String> values);
     
     void addMetadataURL(final String value, final String type, final String format);
+    
+    List<? extends BoundingBox> getBoundingBox();
 }

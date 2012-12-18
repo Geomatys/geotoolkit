@@ -59,6 +59,12 @@ public class LanguagesType {
     public LanguagesType() {
 
     }
+    
+    public LanguagesType(final LanguagesType that) {
+        if (that != null && that.language != null) {
+            this.language = new ArrayList<String>(that.language);
+        }
+    }
 
     public LanguagesType(final List<String> language) {
         this.language = language;

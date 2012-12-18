@@ -16,11 +16,17 @@
  */
 package org.geotoolkit.wfs.xml.v100;
 
-import java.util.Objects;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.ows.xml.BoundingBox;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -45,7 +51,7 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "LatLongBoundingBoxType")
-public class LatLongBoundingBoxType {
+public class LatLongBoundingBoxType implements BoundingBox {
 
     @XmlAttribute(required = true)
     private String minx;
@@ -178,10 +184,10 @@ public class LatLongBoundingBoxType {
         }
         if (object instanceof LatLongBoundingBoxType) {
             final LatLongBoundingBoxType that = (LatLongBoundingBoxType) object;
-            return Objects.equals(this.minx        , that.minx)         &&
-                   Objects.equals(this.maxx , that.maxx)  &&
-                   Objects.equals(this.miny, that.miny) &&
-                   Objects.equals(this.maxy, that.maxy);
+            return Utilities.equals(this.minx        , that.minx)         &&
+                   Utilities.equals(this.maxx , that.maxx)  &&
+                   Utilities.equals(this.miny, that.miny) &&
+                   Utilities.equals(this.maxy, that.maxy);
         }
         return false;
     }
@@ -201,15 +207,54 @@ public class LatLongBoundingBoxType {
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder("[").append(this.getClass().getSimpleName()).append("]:").append('\n');
-        if (minx != null)
+        if (minx != null) {
             s.append("minx:").append(minx).append('\n');
-        if (miny != null)
+        }
+        if (miny != null) {
             s.append("miny:").append(miny).append('\n');
-        if (maxx != null)
+        }
+        if (maxx != null) {
             s.append("maxx:").append(maxx).append('\n');
-        if (maxy != null)
+        }
+        if (maxy != null) {
             s.append("maxy:").append(maxy).append('\n');
-        
+        }
         return s.toString();
+    }
+
+    @Override
+    public List<Double> getLowerCorner() {
+        if (minx != null && miny != null) {
+            try {
+                return Arrays.asList(Double.parseDouble(minx), 
+                                     Double.parseDouble(miny));
+            } catch (NumberFormatException ex) {
+                Logger.getLogger(LatLongBoundingBoxType.class.getName()).log(Level.WARNING, "error while parsing LatLong bbox", ex);
+            }
+        }
+        return new ArrayList<Double>();
+    }
+
+    @Override
+    public List<Double> getUpperCorner() {
+        if (maxx != null && maxy != null) {
+            try {
+                return Arrays.asList(Double.parseDouble(maxx), 
+                                     Double.parseDouble(maxy));
+            } catch (NumberFormatException ex) {
+                Logger.getLogger(LatLongBoundingBoxType.class.getName()).log(Level.WARNING, "error while parsing LatLong bbox", ex);
+            }
+        }
+        return new ArrayList<Double>();
+    }
+
+    @Override
+    public Integer getDimensions() {
+        return 2;
+    }
+
+    @Override
+    public String getCrs() {
+        return "CRS:84";
     }
 }

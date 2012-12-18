@@ -71,10 +71,17 @@ public class DCP implements AbstractDCP {
     public DCP(final HTTP http){
         this.http = http;
     }
+    
+    public DCP(final DCP that){
+        if (that != null && that.http != null) { 
+            this.http = new HTTP(that.http);
+        }
+    }
 
     /**
      * Gets the value of the http property.
      */
+    @Override
     public HTTP getHTTP() {
         return http;
     }

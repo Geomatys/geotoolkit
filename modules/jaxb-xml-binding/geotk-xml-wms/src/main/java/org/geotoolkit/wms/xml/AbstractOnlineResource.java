@@ -16,25 +16,34 @@
  */
 package org.geotoolkit.wms.xml;
 
-import javax.xml.bind.annotation.XmlTransient;
-
 /**
- * Abstract class for Online resource object.
+ * Interface for Online resource object.
  * 
  * @author Guilhem Legal
  * @module pending
  */
-@XmlTransient
-public abstract class AbstractOnlineResource {
+public interface AbstractOnlineResource {
     
      /**
      * Gets the value of the href property.
      * 
      */
-    public abstract String getHref();
+    String getHref();
     /**
      * Gets the value of the href property.
      * 
      */
-    public abstract void setHref(String href);
+    void setHref(String href);
+    
+    String getType();
+    
+    String getRole();
+    
+    String getArcrole();
+    
+    String getTitle();
+    
+    String getShow();
+    
+    String getActuate();
 }

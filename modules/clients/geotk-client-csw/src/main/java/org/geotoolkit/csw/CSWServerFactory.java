@@ -40,7 +40,7 @@ import org.opengis.parameter.*;
 
 /**
  * CSW Server factory.
- * 
+ *
  * @author Johann Sorel (Puzzle-GIS)
  * @module pending
  */
@@ -56,9 +56,9 @@ public class CSWServerFactory extends AbstractServerFactory{
         citation.setIdentifiers(Collections.singleton(id));
         IDENTIFICATION.setCitation(citation);
     }
-    
+
     public static final ParameterDescriptor<String> IDENTIFIER = createFixedIdentifier(NAME);
-    
+
     /**
      * Version, Mandatory.
      */
@@ -73,20 +73,20 @@ public class CSWServerFactory extends AbstractServerFactory{
         for(CSWVersion version : CSWVersion.values()){
             validValues.add(version.getCode());
         }
-        
-        VERSION = new DefaultParameterDescriptor<String>(params, String.class, 
-                validValues.toArray(new String[validValues.size()]), 
+
+        VERSION = new DefaultParameterDescriptor<String>(params, String.class,
+                validValues.toArray(new String[validValues.size()]),
                 CSWVersion.v202.getCode(), null, null, null, true);
     }
-    
-    public static final ParameterDescriptorGroup PARAMETERS = 
-            new DefaultParameterDescriptorGroup("CSWParameters", IDENTIFIER,URL,VERSION,SECURITY);
+
+    public static final ParameterDescriptorGroup PARAMETERS =
+            new DefaultParameterDescriptorGroup("CSWParameters", IDENTIFIER,URL,VERSION,SECURITY,TIMEOUT);
 
     @Override
     public Identification getIdentification() {
         return IDENTIFICATION;
     }
-    
+
     @Override
     public ParameterDescriptorGroup getParametersDescriptor() {
         return PARAMETERS;
@@ -112,8 +112,8 @@ public class CSWServerFactory extends AbstractServerFactory{
             final ParameterValue val = params.parameter(SECURITY.getName().getCode());
             security = (ClientSecurity) val.getValue();
         }catch(ParameterNotFoundException ex){}
-        
+
         return new CatalogServicesServer(url,security,version);
     }
-    
+
 }

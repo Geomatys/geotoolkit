@@ -303,7 +303,7 @@ public abstract class AbstractReferencedCanvas2D extends AbstractCanvas implemen
                     final double centerX = displayBounds.getCenterX();
                     final double centerY = displayBounds.getCenterY();
                     final AffineTransform change = objToDisp.createInverse();
-                    
+
                     change.translate(+centerX, +centerY);
                     change.rotate(rotation);
                     change.translate(-centerX, -centerY);

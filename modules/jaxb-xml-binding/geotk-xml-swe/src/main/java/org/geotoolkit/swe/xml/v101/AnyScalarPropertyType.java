@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.swe.xml.v101;
 
-import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -31,6 +30,7 @@ import org.geotoolkit.swe.xml.AbstractText;
 import org.geotoolkit.swe.xml.AbstractTime;
 import org.geotoolkit.swe.xml.AnyScalar;
 import org.geotoolkit.swe.xml.Quantity;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -86,15 +86,15 @@ public class AnyScalarPropertyType implements AnyScalar, Entry {
     private String name;
     
     @XmlElement(name = "AbstractDataComponent")
-    protected AbstractDataComponentType abstractDataComponent;
+    private AbstractDataComponentType abstractDataComponent;
     @XmlElement(name = "Time")
-    protected TimeType time;
+    private TimeType time;
     @XmlElement(name = "Boolean")
-    protected BooleanType _boolean;
+    private BooleanType _boolean;
     @XmlElement(name = "Quantity")
-    protected QuantityType quantity;
+    private QuantityType quantity;
     @XmlElement(name = "Text")
-    protected Text text;
+    private Text text;
     
     @XmlAttribute(namespace = "http://www.opengis.net/gml")
     @XmlSchemaType(name = "anyURI")
@@ -291,19 +291,20 @@ public class AnyScalarPropertyType implements AnyScalar, Entry {
         if (object instanceof AnyScalarPropertyType) {
             final AnyScalarPropertyType that = (AnyScalarPropertyType) object;
 
-            return Objects.equals(this._boolean,           that._boolean)         &&
-                   Objects.equals(this.abstractDataComponent, that.abstractDataComponent)          &&
-                   Objects.equals(this.quantity,           that.quantity)         &&
-                   Objects.equals(this.time,               that.time)             &&
-                   Objects.equals(this.actuate,            that.actuate)          &&
-                   Objects.equals(this.arcrole,            that.arcrole)          &&
-                   Objects.equals(this.type,               that.type)             &&
-                   Objects.equals(this.href,               that.href)             &&
-                   Objects.equals(this.remoteSchema,       that.remoteSchema)     &&
-                   Objects.equals(this.show,               that.show)             &&
-                   Objects.equals(this.role,               that.role)             &&
-                   Objects.equals(this.name,               that.name)             &&
-                   Objects.equals(this.title,              that.title);
+            return Utilities.equals(this._boolean,           that._boolean)         &&
+                   Utilities.equals(this.abstractDataComponent, that.abstractDataComponent)          &&
+                   Utilities.equals(this.quantity,           that.quantity)         &&
+                   Utilities.equals(this.time,               that.time)             &&
+                   Utilities.equals(this.actuate,            that.actuate)          &&
+                   Utilities.equals(this.arcrole,            that.arcrole)          &&
+                   Utilities.equals(this.type,               that.type)             &&
+                   Utilities.equals(this.href,               that.href)             &&
+                   Utilities.equals(this.remoteSchema,       that.remoteSchema)     &&
+                   Utilities.equals(this.show,               that.show)             &&
+                   Utilities.equals(this.role,               that.role)             &&
+                   Utilities.equals(this.name,               that.name)             &&
+                   Utilities.equals(this.text,               that.text)             &&
+                   Utilities.equals(this.title,              that.title);
             }
         return false;
     }
@@ -324,6 +325,7 @@ public class AnyScalarPropertyType implements AnyScalar, Entry {
         hash = 47 * hash + (this.show != null ? this.show.hashCode() : 0);
         hash = 47 * hash + (this.title != null ? this.title.hashCode() : 0);
         hash = 47 * hash + (this.type != null ? this.type.hashCode() : 0);
+        hash = 47 * hash + (this.text != null ? this.text.hashCode() : 0);
         hash = 47 * hash + (this.name != null ? this.name.hashCode() : 0);
         return hash;
     }
@@ -334,19 +336,22 @@ public class AnyScalarPropertyType implements AnyScalar, Entry {
     
     @Override
     public String toString() {
-        StringBuilder s = new StringBuilder();
+        final StringBuilder s = new StringBuilder("[AnyScalarPropertyType\n]");
         if(name != null) {
             s.append("name=").append(name).append('\n');
         }
-        if (abstractDataComponent != null)
+        if (abstractDataComponent != null) {
             s.append(abstractDataComponent).append('\n');
-        if (_boolean != null)
+        }
+        if (_boolean != null) {
             s.append(_boolean).append('\n');
-        if (quantity != null)
+        }
+        if (quantity != null) {
             s.append(quantity).append('\n');
-        if (time != null)
+        }
+        if (time != null) {
             s.append(time).append('\n');
-        
+        }
         if(actuate != null) {
             s.append("actuate=").append(actuate).append('\n');
         }
@@ -365,8 +370,8 @@ public class AnyScalarPropertyType implements AnyScalar, Entry {
         if(title != null) {
             s.append("title=").append(title).append('\n');
         }
-        if(title != null) {
-            s.append("title=").append(title).append('\n');
+        if(text != null) {
+            s.append("text=").append(text).append('\n');
         }
         return s.toString();
     }

@@ -82,7 +82,7 @@ public class JOptionDialog extends JDialog implements ActionListener {
         final Action[] actions;
         if(JOptionPane.OK_OPTION == optionType){
             actions = new Action[]{
-                new NoEventAction(MessageBundle.getString("ok"), JOptionPane.OK_OPTION, UIManager.getIcon("OptionPane.informationIcon"))
+                new NoEventAction(MessageBundle.getString("ok"), JOptionPane.OK_OPTION)
             };
         }else if(JOptionPane.OK_CANCEL_OPTION == optionType){
             actions = new Action[]{

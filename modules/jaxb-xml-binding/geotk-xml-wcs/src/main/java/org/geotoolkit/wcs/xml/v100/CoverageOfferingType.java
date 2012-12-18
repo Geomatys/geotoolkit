@@ -82,6 +82,23 @@ public class CoverageOfferingType extends CoverageOfferingBriefType {
         this.supportedInterpolations = supportedInterpolations;
 
     }
+    
+    /**
+     * build a new CoverageOffering type used in describeCoverage response.
+     */
+    public CoverageOfferingType(final List<MetadataLinkType> metadataLink, final String name, final String label, final String description,
+            final LonLatEnvelopeType lonLatEnvelope, final List<String> keywords, final DomainSetType domainSet, final RangeSetType rangeSet,
+            final SupportedCRSsType supportedCRSs, final SupportedFormatsType supportedFormats, final SupportedInterpolationsType supportedInterpolations){
+        super(metadataLink, name, label, description, lonLatEnvelope, keywords);
+        this.domainSet               = domainSet;
+        if (rangeSet != null) {
+            this.rangeSet            = new RangeSet(rangeSet);
+        }
+        this.supportedCRSs           = supportedCRSs;
+        this.supportedFormats        = supportedFormats;
+        this.supportedInterpolations = supportedInterpolations;
+
+    }
 
     /**
      * Return the domainSet property

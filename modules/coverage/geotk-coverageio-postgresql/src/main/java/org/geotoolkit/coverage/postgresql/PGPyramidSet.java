@@ -17,7 +17,6 @@
 package org.geotoolkit.coverage.postgresql;
 
 import java.awt.Dimension;
-import java.awt.geom.Point2D;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -26,12 +25,15 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.logging.Level;
+import javax.sql.DataSource;
 import org.geotoolkit.coverage.DefaultPyramid;
 import org.geotoolkit.coverage.DefaultPyramidSet;
 import org.geotoolkit.coverage.Pyramid;
 import org.geotoolkit.geometry.GeneralDirectPosition;
-import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.referencing.cs.DiscreteReferencingFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
 
@@ -77,7 +79,7 @@ public class PGPyramidSet extends DefaultPyramidSet{
             final int layerId = store.getLayerId(ref.getName().getLocalPart());
             
             final StringBuilder query = new StringBuilder();        
-            query.append("SELECT p.id, p.crs FROM ");
+            query.append("SELECT p.id, p.epsg FROM ");
             query.append(store.encodeTableName("Pyramid"));
             query.append(" as p ");
             query.append(" WHERE p.\"layerId\" = ");
@@ -90,7 +92,7 @@ public class PGPyramidSet extends DefaultPyramidSet{
             }
             store.closeSafe(null,stmt,rs);
             for(Entry<Integer,String> entry : map.entrySet()){
-                super.getPyramids().add(readPyramid(cnx, entry.getKey(), entry.getValue()));
+                super.getPyramids().add(readPyramid(store.getDataSource(), entry.getKey(), entry.getValue()));
             }
             
         }catch(SQLException ex){
@@ -104,18 +106,55 @@ public class PGPyramidSet extends DefaultPyramidSet{
         updated = true;
     }
     
-    private Pyramid readPyramid(final Connection cnx, final int pyramidId, final String wktcrs) throws SQLException, FactoryException{
+    private Pyramid readPyramid(final DataSource source, final int pyramidId, final String epsgcode) throws SQLException, FactoryException{
         
-        final CoordinateReferenceSystem crs = CRS.parseWKT(wktcrs);
-        final DefaultPyramid pyramid = new DefaultPyramid(String.valueOf(pyramidId), this, crs);
+        final CoordinateReferenceSystem crs = ref.getStore().getEPSGFactory().createCoordinateReferenceSystem(epsgcode);
+        DefaultPyramid pyramid = new DefaultPyramid(String.valueOf(pyramidId), this, crs);
         final PGCoverageStore store = ref.getStore();
         
+        Connection cnx = source.getConnection();
         Statement stmt = null;
         ResultSet rs = null;
-        try{
+        try{            
             stmt = cnx.createStatement();
             
-            final StringBuilder query = new StringBuilder();        
+            //get mosaic additional axis values to recreate discret axis
+            final SortedSet[] discretValues = new SortedSet[crs.getCoordinateSystem().getDimension()];
+            for(int i=0;i<discretValues.length;i++){
+                discretValues[i] = new TreeSet();
+            }
+            
+            StringBuilder query = new StringBuilder();        
+            query.append("SELECT ma.\"indice\", ma.\"value\" FROM ");
+            query.append(store.encodeTableName("Mosaic"));
+            query.append(" AS m , ");
+            query.append(store.encodeTableName("MosaicAxis"));
+            query.append(" AS ma WHERE m.\"pyramidId\" = ");
+            query.append(pyramidId);
+            query.append(" AND ma.\"mosaicId\" = m.\"id\"");
+            
+            rs = stmt.executeQuery(query.toString());
+            while(rs.next()){
+                final int indice = rs.getInt(1);
+                final double value = rs.getDouble(2);
+                discretValues[indice].add(value);
+            }
+            store.closeSafe(rs);
+            
+            final double[][] table = new double[discretValues.length][0];
+            for(int i=0;i<discretValues.length;i++){
+                final Object[] ds = discretValues[i].toArray();
+                final double[] vals = new double[ds.length];
+                for(int k=0;k<ds.length;k++){
+                    vals[k] = (Double)ds[k];
+                }
+                table[i] = vals;
+            }
+            
+            final CoordinateReferenceSystem dcrs = DiscreteReferencingFactory.createDiscreteCRS(crs, table);
+            pyramid = new DefaultPyramid(String.valueOf(pyramidId), this, dcrs);
+            
+            query = new StringBuilder();        
             query.append("SELECT \"id\",\"upperCornerX\",\"upperCornerY\",\"gridWidth\",\"gridHeight\",\"scale\",\"tileWidth\",\"tileHeight\" FROM ");
             query.append(store.encodeTableName("Mosaic"));
             query.append(" WHERE \"pyramidId\" = ");
@@ -136,17 +175,40 @@ public class PGPyramidSet extends DefaultPyramidSet{
                 position.setOrdinate(0, cornerX);
                 position.setOrdinate(1, cornerY);
                 
+                
+                if(crs.getCoordinateSystem().getDimension() > 2){
+                    //retrieve additional axis value
+                    Connection cnx2 = source.getConnection();
+                    Statement stmt2 = null;
+                    ResultSet rs2 = null;
+                    try{
+                        stmt2 = cnx2.createStatement();
+                        query = new StringBuilder();        
+                        query.append("SELECT \"indice\",\"value\" FROM ");
+                        query.append(store.encodeTableName("MosaicAxis"));
+                        query.append(" WHERE \"mosaicId\" = ");
+                        query.append(mosaicId);
+                        rs2 = stmt2.executeQuery(query.toString());
+                        while(rs2.next()){
+                            position.setOrdinate(rs2.getInt(1), rs2.getDouble(2));
+                        }
+                    }finally{
+                        store.closeSafe(cnx2, stmt2, rs2);
+                    }
+                }
+                
+                
                 final PGGridMosaic mosaic = new PGGridMosaic(ref, 
                         mosaicId, pyramid, position, 
                         new Dimension(gridWidth, gridHeight),
                         new Dimension(tileWidth, tileHeight), scale);
-                pyramid.getMosaics().put(scale, mosaic);
+                pyramid.getMosaicsInternal().add(mosaic);
             }
             
         }catch(SQLException ex){
             store.getLogger().log(Level.WARNING, ex.getMessage(),ex);
         }finally{
-            store.closeSafe(null, stmt, rs);
+            store.closeSafe(cnx, stmt, rs);
         }
         
         return pyramid;

@@ -29,7 +29,8 @@ import javax.xml.namespace.QName;
 import org.geotoolkit.client.AbstractRequest;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.wfs.xml.WFSMarshallerPool;
-import org.geotoolkit.wfs.xml.v110.DescribeFeatureTypeType;
+import org.geotoolkit.wfs.xml.DescribeFeatureType;
+import org.geotoolkit.wfs.xml.WFSXmlFactory;
 
 
 /**
@@ -70,6 +71,7 @@ public abstract class AbstractDescribeFeatureType extends AbstractRequest implem
     /**
      * {@inheritDoc }
      */
+    @Override
     public String getOutputFormat() {
        return outputFormat;
     }
@@ -77,6 +79,7 @@ public abstract class AbstractDescribeFeatureType extends AbstractRequest implem
     /**
      * {@inheritDoc }
      */
+    @Override
     public void setOutputFormat(final String outputFormat) {
         this.outputFormat = outputFormat;
     }
@@ -119,7 +122,7 @@ public abstract class AbstractDescribeFeatureType extends AbstractRequest implem
 
     @Override
     public InputStream getResponseStream() throws IOException {
-        DescribeFeatureTypeType request = new DescribeFeatureTypeType("WFS", version, null, typeNames, outputFormat);
+        DescribeFeatureType request = WFSXmlFactory.buildDecribeFeatureType(version, "WFS", null, typeNames, outputFormat);
 
         final URL url = new URL(serverURL);
         URLConnection conec = url.openConnection();

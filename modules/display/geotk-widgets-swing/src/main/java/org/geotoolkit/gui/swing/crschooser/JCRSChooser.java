@@ -38,7 +38,6 @@ import javax.swing.event.ListSelectionListener;
 import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.display2d.GO2Hints;
-import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.painter.BackgroundPainter;
 import org.geotoolkit.display2d.canvas.painter.BackgroundPainterGroup;
 import org.geotoolkit.display2d.canvas.painter.SolidColorPainter;
@@ -61,6 +60,7 @@ import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.resources.Vocabulary;
@@ -184,7 +184,7 @@ public class JCRSChooser extends javax.swing.JDialog {
             CoordinateReferenceSystem crs = liste.getCRS();
             if(guiForceLongitudeFirst.isSelected()){
                 try {
-                    crs = GO2Utilities.setLongitudeFirst(crs);
+                    crs = ReferencingUtilities.setLongitudeFirst(crs);
                 } catch (FactoryException ex) {
                     Logger.getLogger(JCRSChooser.class.getName()).log(Level.SEVERE, null, ex);
                 }

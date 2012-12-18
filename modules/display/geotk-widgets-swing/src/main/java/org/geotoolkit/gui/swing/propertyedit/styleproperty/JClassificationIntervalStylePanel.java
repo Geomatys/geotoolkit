@@ -21,17 +21,19 @@ package org.geotoolkit.gui.swing.propertyedit.styleproperty;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.AbstractCellEditor;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListCellRenderer;
@@ -65,6 +67,7 @@ import org.geotoolkit.gui.swing.propertyedit.JPropertyDialog;
 import org.geotoolkit.gui.swing.propertyedit.PropertyPane;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
+import org.geotoolkit.image.io.PaletteFactory;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;
@@ -73,7 +76,7 @@ import org.geotoolkit.style.interval.DefaultIntervalPalette;
 import org.geotoolkit.style.interval.IntervalPalette;
 import org.geotoolkit.style.interval.IntervalStyleBuilder;
 import org.geotoolkit.style.interval.IntervalStyleBuilder.METHOD;
-import org.geotoolkit.style.interval.Palette;
+import org.geotoolkit.util.logging.Logging;
 
 import org.jdesktop.swingx.JXTable;
 import org.jdesktop.swingx.combobox.EnumComboBoxModel;
@@ -99,19 +102,25 @@ import org.opengis.style.Symbolizer;
  */
 public class JClassificationIntervalStylePanel extends JPanel implements PropertyPane{
 
+    private static final Logger LOGGER = Logging.getLogger(JClassificationIntervalStylePanel.class);
     private static NumberFormat FORMAT = NumberFormat.getNumberInstance();
 
     private final Dimension GLYPH_DIMENSION = new Dimension(30, 20);
 
+    private static final PaletteFactory PF = PaletteFactory.getDefault();
     private static final List<IntervalPalette> PALETTES;
 
     static{
         PALETTES = new ArrayList<IntervalPalette>();
-        PALETTES.add(new DefaultIntervalPalette(new Color[]{Color.BLUE,Color.RED}));
-        PALETTES.add(new DefaultIntervalPalette(new Color[]{Color.GREEN,Color.WHITE,Color.BLUE}));
-        PALETTES.add(new DefaultIntervalPalette(new Color[]{Color.GREEN,Color.WHITE}));
-        PALETTES.add(new DefaultIntervalPalette(new Color[]{Color.RED,Color.YELLOW,Color.WHITE}));
-        PALETTES.add(new DefaultIntervalPalette(new Color[]{Color.BLACK,Color.CYAN}));
+        final Set<String> paletteNames = PF.getAvailableNames();
+        
+        for (String palName : paletteNames) {
+            try {
+                PALETTES.add(new DefaultIntervalPalette(PF.getColors(palName)));
+            } catch (IOException ex) {
+                LOGGER.log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
     }
 
     private static final MutableStyleFactory SF = (MutableStyleFactory) FactoryFinder.getStyleFactory(new Hints(Hints.STYLE_FACTORY, MutableStyleFactory.class));
@@ -128,7 +137,7 @@ public class JClassificationIntervalStylePanel extends JPanel implements Propert
         guiProperty.setRenderer(new PropertyRenderer());
 
         guiPalette.setModel(new ListComboBoxModel(PALETTES));
-        guiPalette.setRenderer(new PaletteRenderer());
+        guiPalette.setRenderer(new PaletteCellRenderer());
         guiPalette.setSelectedIndex(0);
 
         guiTable.getColumnModel().getColumn(0).setCellRenderer(new RuleStyleRenderer());
@@ -578,37 +587,6 @@ public class JClassificationIntervalStylePanel extends JPanel implements Propert
             }
             return PropertyRenderer.this;
         }
-    }
-
-    private class PaletteRenderer extends DefaultListCellRenderer{
-
-        private Palette palette = null;
-
-        @Override
-        public Component getListCellRendererComponent(final JList list, final Object value, final int index, final boolean isSelected, final boolean cellHasFocus) {
-            super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-
-            PaletteRenderer.this.setText(" Random ");
-
-            if(value instanceof Palette){
-                palette = (Palette)value;
-            }
-            return PaletteRenderer.this;
-        }
-
-        @Override
-        protected void paintComponent(final Graphics g) {
-            super.paintComponent(g);
-
-            if(palette != null){
-                Dimension d = PaletteRenderer.this.getSize();
-                Rectangle rect = new Rectangle(d);
-                rect.grow(-2, -2);
-                palette.render((Graphics2D) g, rect);
-            }
-
-        }
-
     }
 
     private class MethodRenderer extends DefaultListCellRenderer{

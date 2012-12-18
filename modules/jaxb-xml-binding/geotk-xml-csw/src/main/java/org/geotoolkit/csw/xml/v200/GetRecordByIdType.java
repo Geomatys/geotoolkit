@@ -66,9 +66,26 @@ public class GetRecordByIdType extends RequestBaseType implements GetRecordById 
     private ElementSetNameType elementSetName;
 
     /**
+     * An empty constructor used by JAXB
+     */
+     GetRecordByIdType(){
+         
+     }
+     
+     /**
+     * An empty constructor used by JAXB
+     */
+     public GetRecordByIdType(final String service, final String version, final ElementSetNameType elementSetName, final String id){
+         super(service, version);
+         this.elementSetName = elementSetName;
+         this.id             = id;
+     }
+     
+    /**
      * Gets the value of the id property.
      * 
      */
+    @Override
     public List<String> getId() {
         return Arrays.asList(id);
     }
@@ -85,6 +102,7 @@ public class GetRecordByIdType extends RequestBaseType implements GetRecordById 
      * Gets the value of the elementSetName property.
      * 
      */
+    @Override
     public ElementSetNameType getElementSetName() {
         return elementSetName;
     }
@@ -97,14 +115,17 @@ public class GetRecordByIdType extends RequestBaseType implements GetRecordById 
         this.elementSetName = value;
     }
 
+    @Override
     public String getOutputSchema() {
         return "http://www.opengis.net/cat/csw";
     }
 
+    @Override
     public String getOutputFormat() {
         return "application/xml";
     }
 
+    @Override
     public void setOutputFormat(final String value) {}
 
 }

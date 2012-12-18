@@ -209,6 +209,7 @@ public class SensorML extends AbstractSensorML {
     /**
      * Gets the value of the keywords property.
      */
+    @Override
     public List<Keywords> getKeywords() {
         if (keywords == null) {
             keywords = new ArrayList<Keywords>();
@@ -219,6 +220,7 @@ public class SensorML extends AbstractSensorML {
     /**
      * Gets the value of the identification property.
      */
+    @Override
     public List<Identification> getIdentification() {
         if (identification == null) {
             identification = new ArrayList<Identification>();
@@ -227,8 +229,30 @@ public class SensorML extends AbstractSensorML {
     }
 
     /**
+     * Sets the value of the keywords property.
+     *
+     */
+    public void setIdentification(final List<Identification> identification) {
+        this.identification = identification;
+    }
+
+    /**
+     * Sets the value of the keywords property.
+     *
+     */
+    public void setIdentification(final Identification identification) {
+        if (identification != null) {
+            if (this.identification == null) {
+                this.identification = new ArrayList<Identification>();
+            }
+            this.identification.add(identification);
+        }
+    }
+
+    /**
      * Gets the value of the classification property.
      */
+    @Override
     public List<Classification> getClassification() {
         if (classification == null) {
             classification = new ArrayList<Classification>();
@@ -244,6 +268,7 @@ public class SensorML extends AbstractSensorML {
      *     {@link ValidTime }
      *     
      */
+    @Override
     public ValidTime getValidTime() {
         return validTime;
     }
@@ -258,6 +283,7 @@ public class SensorML extends AbstractSensorML {
     /**
      * Gets the value of the securityConstraint property.
      */
+    @Override
     public SecurityConstraint getSecurityConstraint() {
         return securityConstraint;
     }
@@ -272,6 +298,7 @@ public class SensorML extends AbstractSensorML {
     /**
      * Gets the value of the legalConstraint property.
      */
+    @Override
     public List<LegalConstraint> getLegalConstraint() {
         if (legalConstraint == null) {
             legalConstraint = new ArrayList<LegalConstraint>();
@@ -283,6 +310,7 @@ public class SensorML extends AbstractSensorML {
      * Gets the value of the characteristics property.
      * 
      */
+    @Override
     public List<Characteristics> getCharacteristics() {
         if (characteristics == null) {
             characteristics = new ArrayList<Characteristics>();
@@ -293,6 +321,7 @@ public class SensorML extends AbstractSensorML {
     /**
      * Gets the value of the capabilities property.
      */
+    @Override
     public List<Capabilities> getCapabilities() {
         if (capabilities == null) {
             capabilities = new ArrayList<Capabilities>();
@@ -303,6 +332,7 @@ public class SensorML extends AbstractSensorML {
     /**
      * Gets the value of the contact property.
      */
+    @Override
     public List<Contact> getContact() {
         if (contact == null) {
             contact = new ArrayList<Contact>();
@@ -313,6 +343,7 @@ public class SensorML extends AbstractSensorML {
     /**
      * Gets the value of the documentation property.
      */
+    @Override
     public List<Documentation> getDocumentation() {
         if (documentation == null) {
             documentation = new ArrayList<Documentation>();
@@ -323,6 +354,7 @@ public class SensorML extends AbstractSensorML {
     /**
      * Gets the value of the history property.
      */
+    @Override
     public List<History> getHistory() {
         if (history == null) {
             history = new ArrayList<History>();
@@ -333,6 +365,7 @@ public class SensorML extends AbstractSensorML {
     /**
      * Gets the value of the member property.
      */
+    @Override
     public List<SensorML.Member> getMember() {
         if (member == null) {
             member = new ArrayList<SensorML.Member>();
@@ -343,6 +376,7 @@ public class SensorML extends AbstractSensorML {
     /**
      * Gets the value of the version property.
      */
+    @Override
     public String getVersion() {
         if (version == null) {
             return "1.0.1";

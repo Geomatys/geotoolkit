@@ -35,7 +35,6 @@ import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.sql.Types;
 
 import org.geotoolkit.feature.AttributeTypeBuilder;
 import org.geotoolkit.feature.AttributeDescriptorBuilder;
@@ -196,7 +195,9 @@ public final class DataBaseModel {
 
 
         } catch (SQLException e) {
-            throw new DataStoreException("Error occurred analyzing database model.", e);
+            final String message = (e.getLocalizedMessage() != null && !e.getLocalizedMessage().isEmpty()) ?
+                    e.getLocalizedMessage() : "Error occurred analyzing database model.";
+            throw new DataStoreException(message, e);
         } finally {
             store.closeSafe(schemaSet);
             store.closeSafe(cx);
@@ -444,7 +445,7 @@ public final class DataBaseModel {
         final int columnDataType    = columnSet.getInt(Column.DATA_TYPE);
         final String columnTypeName = columnSet.getString(Column.TYPE_NAME);
         final String columnNullable = columnSet.getString(Column.IS_NULLABLE);
-        
+
         atb.setName(columnName);
         adb.setName(columnName);
 

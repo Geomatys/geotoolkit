@@ -113,10 +113,10 @@ public class ObjectFactory {
     /**
      * Create an instance of {@link CapabilitiesBaseType }
      * 
-     */
+     
     public CapabilitiesBaseType createCapabilitiesBaseType() {
         return new CapabilitiesBaseType();
-    }
+    }*/
 
     /**
      * Create an instance of {@link ReferenceGroupType }

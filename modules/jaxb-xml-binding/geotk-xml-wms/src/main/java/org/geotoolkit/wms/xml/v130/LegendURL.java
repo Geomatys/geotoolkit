@@ -55,7 +55,7 @@ import org.geotoolkit.wms.xml.AbstractLegendURL;
     "onlineResource"
 })
 @XmlRootElement(name = "LegendURL")
-public class LegendURL  extends AbstractLegendURL {
+public class LegendURL implements AbstractLegendURL {
 
     @XmlElement(name = "Format", required = true)
     private String format;
@@ -93,11 +93,25 @@ public class LegendURL  extends AbstractLegendURL {
         this.width          = width;
     }
     
+    /**
+     * Build a new Contact person primary object.
+     */
+    public LegendURL(final AbstractLegendURL that) {
+        if (that != null) {
+            this.format         = that.getFormat();
+            if (that.getOnlineResource() != null) {
+                this.onlineResource = new OnlineResource(onlineResource);
+            }
+            this.height = that.getHeight();
+            this.width  = that.getWidth();
+        }
+    }
     
     /**
      * Gets the value of the format property.
      * 
      */
+    @Override
     public String getFormat() {
         return format;
     }
@@ -106,6 +120,7 @@ public class LegendURL  extends AbstractLegendURL {
      * Gets the value of the onlineResource property.
      * 
      */
+    @Override
     public OnlineResource getOnlineResource() {
         return onlineResource;
     }
@@ -113,6 +128,7 @@ public class LegendURL  extends AbstractLegendURL {
     /**
      * Gets the value of the width property.
      */
+    @Override
     public Integer getWidth() {
         return width;
     }
@@ -121,6 +137,7 @@ public class LegendURL  extends AbstractLegendURL {
      * Gets the value of the height property.
      * 
      */
+    @Override
     public Integer getHeight() {
         return height;
     }

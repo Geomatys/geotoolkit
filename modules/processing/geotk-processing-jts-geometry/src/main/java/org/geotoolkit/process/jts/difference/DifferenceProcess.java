@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2011, Geomatys
+ *    (C) 2011 - 2012, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -22,7 +22,6 @@ import com.vividsolutions.jts.geom.Geometry;
 import java.util.Collections;
 
 import org.geotoolkit.geometry.jts.JTS;
-import org.geotoolkit.process.jts.JTSProcessingUtils;
 import org.geotoolkit.process.AbstractProcess;
 import org.geotoolkit.process.ProcessException;
 
@@ -56,9 +55,9 @@ public class DifferenceProcess extends AbstractProcess {
             Geometry result = new GeometryFactory().buildGeometry(Collections.emptyList());
 
             // ensure geometries are in the same CRS
-            final CoordinateReferenceSystem resultCRS = JTSProcessingUtils.getCommonCRS(geom1, geom2);
-            if (JTSProcessingUtils.isConversionNeeded(geom1, geom2)) {
-                geom2 = JTSProcessingUtils.convertToCRS(geom2, resultCRS);
+            final CoordinateReferenceSystem resultCRS = JTS.getCommonCRS(geom1, geom2);
+            if (JTS.isConversionNeeded(geom1, geom2)) {
+                geom2 = JTS.convertToCRS(geom2, resultCRS);
             }
 
             result = (Geometry) geom1.difference(geom2);

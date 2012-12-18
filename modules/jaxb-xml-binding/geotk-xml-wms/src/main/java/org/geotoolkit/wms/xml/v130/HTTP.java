@@ -51,7 +51,7 @@ import org.geotoolkit.wms.xml.AbstractHTTP;
     "post"
 })
 @XmlRootElement(name = "HTTP")
-public class HTTP extends AbstractHTTP {
+public class HTTP implements AbstractHTTP {
 
     @XmlElement(name = "Get", required = true)
     private Get get;

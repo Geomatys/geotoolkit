@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2011, Geomatys
+ *    (C) 2011 - 2012, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -18,7 +18,7 @@ package org.geotoolkit.process.jts.crosses;
 
 import com.vividsolutions.jts.geom.Geometry;
 
-import org.geotoolkit.process.jts.JTSProcessingUtils;
+import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.process.AbstractProcess;
 
@@ -51,9 +51,9 @@ public class CrossesProcess extends AbstractProcess{
             Geometry geom2 = value(GEOM2, inputParameters);
 
             // ensure geometries are in the same CRS
-            final CoordinateReferenceSystem resultCRS = JTSProcessingUtils.getCommonCRS(geom1, geom2);
-            if (JTSProcessingUtils.isConversionNeeded(geom1, geom2)) {
-                geom2 = JTSProcessingUtils.convertToCRS(geom2, resultCRS);
+            final CoordinateReferenceSystem resultCRS = JTS.getCommonCRS(geom1, geom2);
+            if (JTS.isConversionNeeded(geom1, geom2)) {
+                geom2 = JTS.convertToCRS(geom2, resultCRS);
             }
 
             final Boolean result = (Boolean) geom1.crosses(geom2);

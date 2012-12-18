@@ -37,7 +37,7 @@ import org.opengis.parameter.*;
 
 /**
  * Web Coverage Service Server factory.
- * 
+ *
  * @author Johann Sorel (Puzzle-GIS)
  * @module pending
  */
@@ -53,9 +53,9 @@ public class WCSServerFactory extends AbstractServerFactory{
         citation.setIdentifiers(Collections.singleton(id));
         IDENTIFICATION.setCitation(citation);
     }
-    
+
     public static final ParameterDescriptor<String> IDENTIFIER = createFixedIdentifier(NAME);
-    
+
     /**
      * Version, Mandatory.
      */
@@ -70,20 +70,20 @@ public class WCSServerFactory extends AbstractServerFactory{
         for(WCSVersion version : WCSVersion.values()){
             validValues.add(version.getCode());
         }
-        
-        VERSION = new DefaultParameterDescriptor<String>(params, String.class, 
-                validValues.toArray(new String[validValues.size()]), 
+
+        VERSION = new DefaultParameterDescriptor<String>(params, String.class,
+                validValues.toArray(new String[validValues.size()]),
                 WCSVersion.v111.getCode(), null, null, null, true);
     }
-    
-    public static final ParameterDescriptorGroup PARAMETERS = 
-            new DefaultParameterDescriptorGroup("WCSParameters", IDENTIFIER,URL,VERSION,SECURITY);
+
+    public static final ParameterDescriptorGroup PARAMETERS =
+            new DefaultParameterDescriptorGroup("WCSParameters", IDENTIFIER,URL,VERSION,SECURITY,TIMEOUT);
 
     @Override
     public Identification getIdentification() {
         return IDENTIFICATION;
     }
-    
+
     @Override
     public ParameterDescriptorGroup getParametersDescriptor() {
         return PARAMETERS;
@@ -104,5 +104,5 @@ public class WCSServerFactory extends AbstractServerFactory{
         checkCanProcessWithError(params);
         return new WebCoverageServer(params);
     }
-    
+
 }

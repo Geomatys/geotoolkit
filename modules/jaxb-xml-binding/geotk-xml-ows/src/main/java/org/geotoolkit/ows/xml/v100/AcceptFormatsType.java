@@ -77,8 +77,9 @@ public class AcceptFormatsType implements AcceptFormats {
     public AcceptFormatsType(final String... outputFormat) {
         this.outputFormat = new ArrayList<String>();
         for (String element: outputFormat) {
-            if (element != null)
+            if (element != null) {
                 this.outputFormat.add(element);
+            }
         }
     }
     
@@ -86,6 +87,7 @@ public class AcceptFormatsType implements AcceptFormats {
      * Gets the value of the outputFormat property.
      * (unmodifable)
      */
+    @Override
     public List<String> getOutputFormat() {
         if (outputFormat == null) {
             outputFormat = new ArrayList<String>();

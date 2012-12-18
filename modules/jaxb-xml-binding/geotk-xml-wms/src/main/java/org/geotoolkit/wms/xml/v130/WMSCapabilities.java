@@ -24,10 +24,13 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.ows.xml.AbstractCapabilitiesCore;
+import org.geotoolkit.ows.xml.Sections;
 import org.geotoolkit.wms.xml.AbstractCapability;
 import org.geotoolkit.wms.xml.AbstractLayer;
 import org.geotoolkit.wms.xml.AbstractService;
 import org.geotoolkit.wms.xml.AbstractWMSCapabilities;
+import org.geotoolkit.wms.xml.WMSResponse;
 
 
 /**
@@ -59,7 +62,7 @@ import org.geotoolkit.wms.xml.AbstractWMSCapabilities;
     "capability"
 })
 @XmlRootElement(name = "WMS_Capabilities", namespace = "http://www.opengis.net/wms")
-public class WMSCapabilities extends AbstractWMSCapabilities {
+public class WMSCapabilities implements AbstractWMSCapabilities, WMSResponse {
 
     @XmlElement(name = "Service", required = true)
     private Service service;
@@ -108,10 +111,11 @@ public class WMSCapabilities extends AbstractWMSCapabilities {
     }
     
     public void setService(final AbstractService service) {
-        if (service instanceof Service)
+        if (service instanceof Service){
             this.service = (Service) service;
-        else
+        } else {
             throw new IllegalArgumentException("not the good version object, expected 1.3.0"); 
+        }
     }
 
     /**
@@ -226,6 +230,32 @@ public class WMSCapabilities extends AbstractWMSCapabilities {
             sb.append("version:").append(version).append("\n");
         }
         return sb.toString();
+    }
+
+    /**
+     * List all layers recursivly.
+     */
+    @Override
+    public List<AbstractLayer> getLayers() {
+        final AbstractLayer layer = getCapability().getLayer();
+        final List<AbstractLayer> layers = new ArrayList<AbstractLayer>();
+        explore(layers, layer);
+        return layers;
+    }
+    
+    private static void explore(List<AbstractLayer> buffer, AbstractLayer candidate){
+        buffer.add(candidate);
+        final List<? extends AbstractLayer> layers = candidate.getLayer();
+        if(layers != null){
+            for(AbstractLayer child : layers){
+                explore(buffer, child);
+            }
+        }
+    }
+
+    @Override
+    public AbstractCapabilitiesCore applySections(Sections sections) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
 }

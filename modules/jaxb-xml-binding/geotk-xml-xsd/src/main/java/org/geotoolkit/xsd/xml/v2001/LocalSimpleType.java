@@ -46,5 +46,12 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "localSimpleType")
 public class LocalSimpleType extends SimpleType {
 
+    public LocalSimpleType() {
+        
+    }
+    
+    public LocalSimpleType(final String name) {
+         super(name);
+    }
 
 }

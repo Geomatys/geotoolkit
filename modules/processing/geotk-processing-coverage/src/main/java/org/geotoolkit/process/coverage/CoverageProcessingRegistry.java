@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2009-2012, Geomatys
+ *    (C) 2009 - 2012, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -23,20 +23,25 @@ import org.geotoolkit.metadata.iso.citation.DefaultCitation;
 import org.geotoolkit.metadata.iso.identification.DefaultServiceIdentification;
 import org.geotoolkit.process.AbstractProcessingRegistry;
 import org.geotoolkit.process.coverage.bandcombiner.CombinerDescriptor;
+import org.geotoolkit.process.coverage.copy.CopyCoverageStoreDescriptor;
 import org.geotoolkit.process.coverage.coveragetofeatures.CoverageToFeaturesDescriptor;
 import org.geotoolkit.process.coverage.coveragetovector.CoverageToVectorDescriptor;
 import org.geotoolkit.process.coverage.isoline.IsolineDescriptor;
 import org.geotoolkit.process.coverage.kriging.KrigingDescriptor;
 import org.geotoolkit.process.coverage.metadataextractor.ExtractionDescriptor;
 import org.geotoolkit.process.coverage.pyramid.MapcontextPyramidDescriptor;
+import org.geotoolkit.process.coverage.reducedodomain.ReduceToDomainDescriptor;
 import org.geotoolkit.process.coverage.resample.ResampleDescriptor;
+import org.geotoolkit.process.coverage.straighten.StraightenDescriptor;
 import org.geotoolkit.process.coverage.tiling.TilingDescriptor;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.identification.Identification;
 
 /**
+ * Declare loading of coverage processes.
  *
  * @author Johann sorel (Geomatys)
+ * @author Cédric Briançon (Geomatys)
  * @module pending
  */
 public class CoverageProcessingRegistry extends AbstractProcessingRegistry{
@@ -61,7 +66,10 @@ public class CoverageProcessingRegistry extends AbstractProcessingRegistry{
               ExtractionDescriptor.INSTANCE,
               CombinerDescriptor.INSTANCE,
               IsolineDescriptor.INSTANCE,
-              ResampleDescriptor.INSTANCE);
+              ResampleDescriptor.INSTANCE,
+              CopyCoverageStoreDescriptor.INSTANCE,
+              StraightenDescriptor.INSTANCE,
+              ReduceToDomainDescriptor.INSTANCE);
     }
 
     @Override

@@ -52,6 +52,20 @@ public class EchoedRequestType {
     private Object any;
 
     /**
+     * An empty constructor used by JAXB
+     */
+    public EchoedRequestType() {
+        
+    }
+    
+    /**
+     * Build a new Echoed request
+     */
+    public EchoedRequestType(final Object request) {
+        this.any = request;
+    }
+    
+    /**
      * Gets the value of the any property.
      * 
      */

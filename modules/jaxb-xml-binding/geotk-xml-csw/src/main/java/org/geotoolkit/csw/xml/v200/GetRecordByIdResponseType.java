@@ -65,9 +65,34 @@ public class GetRecordByIdResponseType implements GetRecordByIdResponse {
     private List<? extends Object> any;
 
     /**
+     * An empty constructor used by JAXB
+     */
+    GetRecordByIdResponseType() {
+    }
+
+    /**
+     * Build a new response to a getRecordById request.
+     * one of the two list mustn't be null
+     */
+    public GetRecordByIdResponseType(final AbstractRecordType abstractRecord, final List<? extends Object> others) {
+        final ObjectFactory factory = new ObjectFactory();
+        if (abstractRecord instanceof RecordType) {
+            this.abstractRecord = factory.createRecord((RecordType)abstractRecord);
+        } else if (abstractRecord instanceof SummaryRecordType) {
+            this.abstractRecord = factory.createSummaryRecord((SummaryRecordType)abstractRecord);
+        } else if (abstractRecord instanceof BriefRecordType) {
+            this.abstractRecord = factory.createBriefRecord((BriefRecordType)abstractRecord);
+        } else if (abstractRecord instanceof DCMIRecordType) {
+            this.abstractRecord = factory.createDCMIRecord((DCMIRecordType)abstractRecord);
+        }
+        this.any = others;
+    }
+    
+    /**
      * Gets the value of the abstractRecord property.
      * 
      */
+    @Override
     public JAXBElement<? extends AbstractRecordType> getAbstractRecord() {
         return abstractRecord;
     }
@@ -84,6 +109,7 @@ public class GetRecordByIdResponseType implements GetRecordByIdResponse {
      * Gets the value of the any property.
      * (unmodifiable)
      */
+    @Override
     public List<Object> getAny() {
         if (any == null) {
             any = new ArrayList<Object>();

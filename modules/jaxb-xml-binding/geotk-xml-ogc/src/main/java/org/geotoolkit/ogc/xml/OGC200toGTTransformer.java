@@ -285,6 +285,9 @@ public class OGC200toGTTransformer {
         if (ops instanceof org.geotoolkit.ogc.xml.v200.BinaryComparisonOpType) {
             final org.geotoolkit.ogc.xml.v200.BinaryComparisonOpType binary = (org.geotoolkit.ogc.xml.v200.BinaryComparisonOpType) ops;
 
+            if (binary.getExpression().size() < 2) {
+                throw new IllegalArgumentException("comparison operator must have two expression (valueReference and literal)");
+            }
             final Expression left = visitExpression(binary.getExpression().get(0));
             final Expression right = visitExpression(binary.getExpression().get(1));
             Boolean match = binary.isMatchingCase();

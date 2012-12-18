@@ -74,6 +74,7 @@ public class DescribeFeatureTypeType extends BaseRequestType implements Describe
      * Gets the value of the typeName property.
      * 
      */
+    @Override
     public List<QName> getTypeName() {
         if (typeName == null) {
             typeName = new ArrayList<QName>();
@@ -89,6 +90,7 @@ public class DescribeFeatureTypeType extends BaseRequestType implements Describe
      *     {@link String }
      *     
      */
+    @Override
     public String getOutputFormat() {
         if (outputFormat == null) {
             return "application/gml+xml; version=3.2";

@@ -22,8 +22,6 @@ import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +31,6 @@ import javax.swing.AbstractAction;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JRadioButtonMenuItem;
@@ -60,18 +57,18 @@ import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.util.GeotkClipboard;
 import org.geotoolkit.util.logging.Logging;
 import org.opengis.filter.Filter;
+import org.openide.awt.DropDownButtonFactory;
 
 /**
- * 
+ *
  * @author Johann Sorel (Puzzle-GIS)
  * @module pending
  */
 public class JSelectionBar extends AbstractMapControlBar implements ActionListener{
 
     private static final Logger LOGGER = Logging.getLogger(JSelectionBar.class);
-    
+
     private static final ImageIcon ICON_SELECT = IconBundle.getIcon("16_select");
-    private static final ImageIcon ICON_CONFIG = IconBundle.getIcon("16_vertical_next");
     private static final ImageIcon ICON_INTERSECT = IconBundle.getIcon("16_select_intersect");
     private static final ImageIcon ICON_WITHIN = IconBundle.getIcon("16_select_within");
     private static final ImageIcon ICON_LASSO = IconBundle.getIcon("16_select_lasso");
@@ -83,8 +80,7 @@ public class JSelectionBar extends AbstractMapControlBar implements ActionListen
     private final ButtonGroup groupZone = new ButtonGroup();
     private final ButtonGroup groupVisit = new ButtonGroup();
 
-    private final JButton guiSelect = new JButton(ICON_SELECT);
-    private final JLabel guiConfig = new JLabel(" ",ICON_CONFIG, SwingConstants.RIGHT);
+    private final JButton guiSelect;
     private final JRadioButtonMenuItem guiIntersect = new JRadioButtonMenuItem(MessageBundle.getString("select_intersect"),ICON_INTERSECT);
     private final JRadioButtonMenuItem guiWithin = new JRadioButtonMenuItem(MessageBundle.getString("select_within"),ICON_WITHIN);
     private final JRadioButtonMenuItem guiLasso = new JRadioButtonMenuItem(MessageBundle.getString("select_lasso"),ICON_LASSO);
@@ -99,9 +95,6 @@ public class JSelectionBar extends AbstractMapControlBar implements ActionListen
      */
     public JSelectionBar() {
         this(null);
-
-        guiSelect.setToolTipText(MessageBundle.getString("map_select"));
-        guiConfig.setToolTipText(MessageBundle.getString("map_select_config"));
     }
 
     /**
@@ -109,7 +102,6 @@ public class JSelectionBar extends AbstractMapControlBar implements ActionListen
      * @param pane : related Map2D or null
      */
     public JSelectionBar(final JMap2D map) {
-        setMap(map);
 
         final JPopupMenu menu = new JPopupMenu();
         menu.add(guiLasso);
@@ -134,23 +126,10 @@ public class JSelectionBar extends AbstractMapControlBar implements ActionListen
             }
         }));
 
-        guiConfig.setComponentPopupMenu(menu);
-        guiConfig.addMouseListener(new MouseListener() {
-            @Override
-            public void mouseClicked(MouseEvent event) {
-                if(event.getButton() == MouseEvent.BUTTON1){
-                    menu.show(guiConfig.getParent(), guiConfig.getX(), guiConfig.getY()+guiConfig.getHeight());
-                }
-            }
-            @Override
-            public void mousePressed(MouseEvent arg0) {}
-            @Override
-            public void mouseReleased(MouseEvent arg0) {}
-            @Override
-            public void mouseEntered(MouseEvent arg0) {}
-            @Override
-            public void mouseExited(MouseEvent arg0) {}
-        });
+        guiSelect = DropDownButtonFactory.createDropDownButton(ICON_SELECT, menu);
+        guiSelect.setToolTipText(MessageBundle.getString("map_select"));
+        setMap(map);
+
         handler.setMenu(menu);
 
         guiIntersect.setSelected(true);
@@ -174,8 +153,7 @@ public class JSelectionBar extends AbstractMapControlBar implements ActionListen
         guiVisual.addActionListener(this);
 
         add(guiSelect);
-        add(guiConfig);
-        
+
     }
 
     @Override
@@ -200,7 +178,7 @@ public class JSelectionBar extends AbstractMapControlBar implements ActionListen
         if(container instanceof ContextContainer2D){
             final ContextContainer2D cc = (ContextContainer2D) container;
             final MapContext context = cc.getContext();
-            
+
             final List<FeatureCollection> selections = new ArrayList<FeatureCollection>();
             final StringBuilder sb = new StringBuilder();
             for(MapLayer layer : context.layers()){
@@ -232,25 +210,25 @@ public class JSelectionBar extends AbstractMapControlBar implements ActionListen
                     }
                 }
             }
-            
+
             if(systemclipboard){
                 GeotkClipboard.setSystemClipboardValue(sb.toString());
             }else{
                 Transferable trs = GeotkClipboard.INSTANCE.getContents(this);
-                
+
                 if(append && trs instanceof FeatureCollectionListTransferable){
                     final List lst = ((FeatureCollectionListTransferable)trs).selections;
-                    lst.addAll(selections);                    
+                    lst.addAll(selections);
                 }else{
                     trs = new FeatureCollectionListTransferable(selections);
                     GeotkClipboard.INSTANCE.setContents(trs, null);
                 }
             }
-            
+
         }
     }
-    
-    
+
+
     private static class FeatureCollectionListTransferable implements Transferable{
 
         private static final String MIME = "geotk/featurecollectionList";
@@ -260,7 +238,7 @@ public class JSelectionBar extends AbstractMapControlBar implements ActionListen
         public FeatureCollectionListTransferable(List<FeatureCollection> selections) {
             this.selections = selections;
         }
-        
+
         @Override
         public DataFlavor[] getTransferDataFlavors() {
             return new DataFlavor[]{FLAVOR};
@@ -275,7 +253,7 @@ public class JSelectionBar extends AbstractMapControlBar implements ActionListen
         public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException, IOException {
             return selections;
         }
-    
+
     }
-    
+
 }

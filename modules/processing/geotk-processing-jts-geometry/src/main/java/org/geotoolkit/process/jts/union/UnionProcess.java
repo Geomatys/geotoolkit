@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2011, Geomatys
+ *    (C) 2011 - 2012, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -17,13 +17,9 @@
 package org.geotoolkit.process.jts.union;
 
 import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryFactory;
-
-import java.util.Collections;
 
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.process.AbstractProcess;
-import org.geotoolkit.process.jts.JTSProcessingUtils;
 import org.geotoolkit.process.ProcessException;
 
 import org.opengis.parameter.ParameterValueGroup;
@@ -53,15 +49,13 @@ public class UnionProcess extends AbstractProcess {
             Geometry geom1 = value(GEOM1, inputParameters);
             Geometry geom2 = value(GEOM2, inputParameters);
 
-            Geometry result = new GeometryFactory().buildGeometry(Collections.emptyList());
-
             // ensure geometries are in the same CRS
-            final CoordinateReferenceSystem resultCRS = JTSProcessingUtils.getCommonCRS(geom1, geom2);
-            if (JTSProcessingUtils.isConversionNeeded(geom1, geom2)) {
-                geom2 = JTSProcessingUtils.convertToCRS(geom2, resultCRS);
+            final CoordinateReferenceSystem resultCRS = JTS.getCommonCRS(geom1, geom2);
+            if (JTS.isConversionNeeded(geom1, geom2)) {
+                geom2 = JTS.convertToCRS(geom2, resultCRS);
             }
 
-            result = (Geometry) geom1.union(geom2);
+            final Geometry result = (Geometry) geom1.union(geom2);
             if (resultCRS != null) {
                 JTS.setCRS(result, resultCRS);
             }
@@ -70,7 +64,7 @@ public class UnionProcess extends AbstractProcess {
 
         } catch (Exception ex) {
             throw new ProcessException(ex.getMessage(), this, ex);
-        } 
+        }
     }
 
 }

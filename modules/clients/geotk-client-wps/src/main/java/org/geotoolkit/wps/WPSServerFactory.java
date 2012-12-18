@@ -37,7 +37,7 @@ import org.opengis.parameter.*;
 
 /**
  * WPS Server factory.
- * 
+ *
  * @author Johann Sorel (Puzzle-GIS)
  * @module pending
  */
@@ -53,9 +53,9 @@ public class WPSServerFactory extends AbstractServerFactory{
         citation.setIdentifiers(Collections.singleton(id));
         IDENTIFICATION.setCitation(citation);
     }
-    
+
     public static final ParameterDescriptor<String> IDENTIFIER = createFixedIdentifier(NAME);
-    
+
     /**
      * Version, Mandatory.
      */
@@ -70,20 +70,20 @@ public class WPSServerFactory extends AbstractServerFactory{
         for(WPSVersion version : WPSVersion.values()){
             validValues.add(version.getCode());
         }
-        
-        VERSION = new DefaultParameterDescriptor<String>(params, String.class, 
-                validValues.toArray(new String[validValues.size()]), 
+
+        VERSION = new DefaultParameterDescriptor<String>(params, String.class,
+                validValues.toArray(new String[validValues.size()]),
                 WPSVersion.v100.getCode(), null, null, null, true);
     }
-    
-    public static final ParameterDescriptorGroup PARAMETERS = 
-            new DefaultParameterDescriptorGroup("WPSParameters", IDENTIFIER, URL,VERSION,SECURITY);
+
+    public static final ParameterDescriptorGroup PARAMETERS =
+            new DefaultParameterDescriptorGroup("WPSParameters", IDENTIFIER, URL,VERSION,SECURITY,TIMEOUT);
 
     @Override
     public Identification getIdentification() {
         return IDENTIFICATION;
     }
-    
+
     @Override
     public ParameterDescriptorGroup getParametersDescriptor() {
         return PARAMETERS;
@@ -99,11 +99,11 @@ public class WPSServerFactory extends AbstractServerFactory{
         return new ResourceInternationalString("org/geotoolkit/wps/bundle", "serverTitle");
     }
 
-    
+
     @Override
     public Server open(ParameterValueGroup params) throws DataStoreException {
         checkCanProcessWithError(params);
         return new WebProcessingServer(params);
     }
-    
+
 }

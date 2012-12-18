@@ -57,7 +57,7 @@ import org.geotoolkit.wms.xml.AbstractOperation;
     "format",
     "dcpType"
 })
-public class OperationType extends AbstractOperation {
+public class OperationType implements AbstractOperation {
 
     @XmlElement(name = "Format", required = true)
     private List<String> format   = new ArrayList<String>();
@@ -88,8 +88,10 @@ public class OperationType extends AbstractOperation {
      */
     public OperationType(final List<String> format, final DCPType... dcpTypes) {
         this.format  = format;
-        for (final DCPType element : dcpTypes) {
-            this.dcpType.add(element);
+        if (dcpTypes != null) {
+            for (final DCPType element : dcpTypes) {
+                this.dcpType.add(element);
+            }
         }
     }
     /**

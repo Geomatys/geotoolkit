@@ -40,11 +40,11 @@ public abstract class AbstractCoverageStore implements CoverageStore{
 
     private final String defaultNamespace;
     protected final ParameterValueGroup parameters;
-    
+
     protected AbstractCoverageStore(final ParameterValueGroup params) {
         this.parameters = params;
         String namespace = Parameters.value(AbstractCoverageStoreFactory.NAMESPACE, params);
-        
+
         if (namespace == null) {
             defaultNamespace = "http://geotoolkit.org";
         } else if (namespace.equals(NO_NAMESPACE)) {
@@ -70,6 +70,11 @@ public abstract class AbstractCoverageStore implements CoverageStore{
     @Override
     public CoverageReference create(Name name) throws DataStoreException {
         throw new DataStoreException("Creation of new coverage not supported.");
+    }
+
+    @Override
+    public void delete(Name name) throws DataStoreException {
+        throw new DataStoreException("Deletion of coverage not supported.");
     }
 
     ////////////////////////////////////////////////////////////////////////////

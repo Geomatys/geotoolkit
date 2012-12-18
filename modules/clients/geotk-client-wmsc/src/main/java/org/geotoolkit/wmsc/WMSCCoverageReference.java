@@ -19,6 +19,8 @@ package org.geotoolkit.wmsc;
 import java.awt.Dimension;
 import java.awt.geom.Point2D;
 import java.awt.image.RenderedImage;
+import java.util.List;
+import java.util.Map;
 import org.geotoolkit.client.CapabilitiesException;
 import org.geotoolkit.coverage.*;
 import org.geotoolkit.coverage.io.CoverageStoreException;
@@ -79,6 +81,16 @@ public class WMSCCoverageReference extends WMSCoverageReference implements Pyram
 
     @Override
     public void writeTiles(String pyramidId, String mosaicId, RenderedImage image, boolean onlyMissing) throws DataStoreException {
+        throw new DataStoreException("Model is not writeable.");
+    }
+
+    @Override
+    public List<GridSampleDimension> getSampleDimensions(int index) throws DataStoreException {
+        throw new DataStoreException("Not supported.");
+    }
+
+    @Override
+    public void createSampleDimension(List<GridSampleDimension> dimensions, final Map<String, Object> analyse) throws DataStoreException {
         throw new DataStoreException("Model is not writeable.");
     }
 

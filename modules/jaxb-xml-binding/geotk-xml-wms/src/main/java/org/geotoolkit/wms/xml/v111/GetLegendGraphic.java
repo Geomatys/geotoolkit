@@ -37,7 +37,7 @@ import org.geotoolkit.wms.xml.AbstractOperation;
     "dcpType"
 })
 @XmlRootElement(name = "GetLegendGraphic")
-public class GetLegendGraphic extends AbstractOperation {
+public class GetLegendGraphic implements AbstractOperation {
 
     @XmlElement(name = "Format", required = true)
     private List<Format> format;

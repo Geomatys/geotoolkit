@@ -16,18 +16,16 @@
  */
 package org.geotoolkit.csw.xml;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.imageio.spi.ServiceRegistry;
 
 import org.geotoolkit.ows.xml.v100.ExceptionReport;
 import org.geotoolkit.metadata.iso.DefaultMetadata;
-import org.geotoolkit.util.FileUtilities;
-import org.geotoolkit.util.StringUtilities;
 
 
 /**
@@ -106,23 +104,21 @@ public class CSWClassesContext {
 
 
 
-        try {
-            final InputStream stream        = CSWClassesContext.class.getResourceAsStream("extra-classes");
-            final String s                  = FileUtilities.getStringFromStream(stream);
-            final List<String> extraClasses = StringUtilities.toStringList(s, '\n');
-            for (String extraClassName : extraClasses) {
-                try {
-                    Class extraClass = Class.forName(extraClassName);
-                    classeList.add(extraClass);
-                } catch (ClassNotFoundException ex) {
-                    LOGGER.log(Level.FINER, "unable to find extra class:" + extraClassName, ex);
-                }
-
-            }
-        } catch (IOException ex) {
-            LOGGER.log(Level.SEVERE, "IO exception while getting extra-classes file", ex);
+        final List<String> extraClasses = new ArrayList<String>();
+        final Iterator<CSWClassesFactory> ite = ServiceRegistry.lookupProviders(CSWClassesFactory.class);
+        while (ite.hasNext()) {
+            final CSWClassesFactory currentFactory = ite.next();
+            extraClasses.addAll(currentFactory.getExtraClasses());
         }
+        for (String extraClassName : extraClasses) {
+            try {
+                Class extraClass = Class.forName(extraClassName);
+                classeList.add(extraClass);
+            } catch (ClassNotFoundException ex) {
+                LOGGER.log(Level.FINER, "unable to find extra class:" + extraClassName, ex);
+            }
 
+        }
         return classeList;
     }
 

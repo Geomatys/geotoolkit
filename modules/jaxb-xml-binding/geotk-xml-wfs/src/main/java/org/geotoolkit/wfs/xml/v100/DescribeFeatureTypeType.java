@@ -95,6 +95,7 @@ public class DescribeFeatureTypeType implements DescribeFeatureType {
      * Gets the value of the typeName property.
      * 
      */
+    @Override
     public List<QName> getTypeName() {
         if (typeName == null) {
             typeName = new ArrayList<QName>();
@@ -110,6 +111,7 @@ public class DescribeFeatureTypeType implements DescribeFeatureType {
      *     {@link String }
      *     
      */
+    @Override
     public Version getVersion() {
         if (version == null) {
             return new Version("1.0.0");
@@ -126,6 +128,7 @@ public class DescribeFeatureTypeType implements DescribeFeatureType {
      *     {@link String }
      *     
      */
+    @Override
     public void setVersion(String value) {
         this.version = value;
     }
@@ -138,6 +141,7 @@ public class DescribeFeatureTypeType implements DescribeFeatureType {
      *     {@link String }
      *     
      */
+    @Override
     public String getService() {
         if (service == null) {
             return "WFS";
@@ -154,6 +158,7 @@ public class DescribeFeatureTypeType implements DescribeFeatureType {
      *     {@link String }
      *     
      */
+    @Override
     public void setService(String value) {
         this.service = value;
     }
@@ -166,6 +171,7 @@ public class DescribeFeatureTypeType implements DescribeFeatureType {
      *     {@link String }
      *     
      */
+    @Override
     public String getOutputFormat() {
         if (outputFormat == null) {
             return "XMLSCHEMA";
@@ -182,22 +188,27 @@ public class DescribeFeatureTypeType implements DescribeFeatureType {
      *     {@link String }
      *     
      */
+    @Override
     public void setOutputFormat(String value) {
         this.outputFormat = value;
     }
 
+    @Override
     public String getHandle() {
         return null; // not implemented in 1.0.0 version
     }
 
+    @Override
     public void setHandle(String value) {
         // do nothing
     }
 
+    @Override
     public Map<String, String> getPrefixMapping() {
         return prefixMapping;
     }
 
+    @Override
     public void setPrefixMapping(Map<String, String> prefixMapping) {
         this.prefixMapping = prefixMapping;
     }

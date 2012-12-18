@@ -31,12 +31,12 @@ import org.jdesktop.swingx.combobox.ListComboBoxModel;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class JEditionToolComboBox extends JComboBox {
+public class JEditionToolComboBox extends JList {
 
     private Object edited = null;
 
     public JEditionToolComboBox() {
-        setRenderer(new ToolRenderer());
+        setCellRenderer(new ToolRenderer());
     }
 
     public Object getEdited() {
@@ -48,9 +48,8 @@ public class JEditionToolComboBox extends JComboBox {
         reloadModel();
     }
 
-    @Override
     public EditionTool getSelectedItem() {
-        return (EditionTool) super.getSelectedItem();
+        return (EditionTool) super.getSelectedValue();
     }
 
     private void reloadModel(){
@@ -72,7 +71,7 @@ public class JEditionToolComboBox extends JComboBox {
         public Component getListCellRendererComponent(final JList list, final Object value, final int index, final boolean isSelected, final boolean cellHasFocus) {
             final JLabel lbl = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
             lbl.setIcon(null);
-            
+
             if(value instanceof EditionTool){
                 final EditionTool tool = (EditionTool) value;
                 lbl.setText(tool.getTitle().toString());

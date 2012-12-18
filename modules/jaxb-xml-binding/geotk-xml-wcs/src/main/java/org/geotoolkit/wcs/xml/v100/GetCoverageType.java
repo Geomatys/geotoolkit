@@ -133,6 +133,7 @@ public class GetCoverageType implements GetCoverage {
     /**
      * Gets the value of the domainSubset property.
      */
+    @Override
     public DomainSubsetType getDomainSubset() {
         return domainSubset;
     }
@@ -150,8 +151,12 @@ public class GetCoverageType implements GetCoverage {
      * form to the requested CRS and/or grid size. 
      * Method shall be among those listed for the requested coverage in the DescribeCoverage response.
      */
-    public String getInterpolationMethod() {
-        return interpolationMethod;
+    @Override
+    public InterpolationMethod getInterpolationMethod() {
+        if (interpolationMethod != null) {
+            return InterpolationMethod.fromValue(interpolationMethod);
+        }
+        return null;
     }
 
     /**
@@ -164,6 +169,7 @@ public class GetCoverageType implements GetCoverage {
     /**
      * Gets the value of the service property.
      */
+    @Override
     public String getService() {
         if (service == null) {
             return "WCS";
@@ -172,6 +178,7 @@ public class GetCoverageType implements GetCoverage {
         }
     }
 
+    @Override
     public void setService(final String value) {
         this.service = value;
     }
@@ -187,6 +194,7 @@ public class GetCoverageType implements GetCoverage {
         return null;
     }
 
+    @Override
     public void setVersion(final String value) {
         this.version = value;
     }

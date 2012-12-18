@@ -92,7 +92,7 @@ public class FilterType implements Filter, XMLFilter {
     }
     
     /**
-     * build a new FilterType with the specified logical operator
+     * build a new FilterType
      */
     public FilterType(final Object obj) {
         

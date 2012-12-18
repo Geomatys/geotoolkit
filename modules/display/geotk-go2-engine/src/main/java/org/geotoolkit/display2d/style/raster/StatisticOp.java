@@ -17,6 +17,8 @@
 package org.geotoolkit.display2d.style.raster;
 
 import java.awt.image.RenderedImage;
+import java.awt.image.SampleModel;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import javax.media.jai.iterator.RectIter;
@@ -28,6 +30,7 @@ import org.geotoolkit.coverage.io.GridCoverageReader;
 /**
  *
  * @author Johann Sorel (Geomatys)
+ * @author Quentin Boileau (Geomatys)
  * @module pending
  */
 public class StatisticOp{
@@ -39,19 +42,38 @@ public class StatisticOp{
     private StatisticOp(){
     }
 
+    /**
+     * Analyse image to return min and max value per bands.
+     * @param reader
+     * @param imageIndex 
+     * @return A Map with two Entry. 
+     * Each Entry have a name ("min", "max") and values are an double[] for each bands.
+     * @throws CoverageStoreException 
+     */
     public static Map<String,Object> analyze(GridCoverageReader reader, int imageIndex) throws CoverageStoreException {
         return analyze( ((GridCoverage2D)reader.read(imageIndex, null)).getRenderedImage() );
     }
     
+    /**
+     * Analyse image to return min and max value per bands.
+     * @param image
+     * @return A Map with two Entry. 
+     * Each Entry have a name ("min", "max") and values are an double[] for each bands.
+     */
     public static Map<String,Object> analyze(RenderedImage image) {
         final Map<String,Object> analyze = new HashMap<String, Object>();
-        
-        double max = Double.MIN_VALUE;
-        double min = Double.MAX_VALUE;
+
+        final SampleModel sm = image.getSampleModel();
+        final int nbBands = sm.getNumBands();
+        double[] min = new double[nbBands];
+        double[] max = new double[nbBands];
+        Arrays.fill(min, Double.MAX_VALUE);
+        Arrays.fill(max, Double.MIN_VALUE);
         
         final RectIter ite = RectIterFactory.create(image, null);        
+        
+        int bandIndex = 0;
         ite.startBands();
-
         if (!ite.finishedBands()) do {
             
             ite.startLines();
@@ -61,16 +83,15 @@ public class StatisticOp{
                 if (!ite.finishedPixels()) do {
                     
                     final double sample = ite.getSampleDouble() ;
-                    min = Math.min(min, sample);
-                    max = Math.max(max, sample);
-                    ite.nextPixel();
-                    
+                    if (!Double.isNaN(sample)) {
+                        min[bandIndex] = Math.min( min[bandIndex], sample);
+                        max[bandIndex] = Math.max( max[bandIndex], sample);
+                    }
                 } while (!ite.nextPixelDone());
-                ite.nextLine();
                 
             } while (!ite.nextLineDone());
-            ite.nextBand();
             
+            bandIndex++;
         } while (!ite.nextBandDone());
 
         analyze.put(MINIMUM, min);

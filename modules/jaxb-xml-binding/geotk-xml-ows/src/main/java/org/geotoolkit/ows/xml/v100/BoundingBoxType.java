@@ -29,6 +29,7 @@ import javax.xml.bind.annotation.XmlList;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.ows.xml.BoundingBox;
 
 
 /**
@@ -64,7 +65,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlSeeAlso({
     WGS84BoundingBoxType.class
 })
-public class BoundingBoxType {
+public class BoundingBoxType implements BoundingBox {
 
     @XmlList
     @XmlElement(name = "LowerCorner", type = Double.class)
@@ -77,7 +78,7 @@ public class BoundingBoxType {
     private String crs;
     @XmlAttribute
     @XmlSchemaType(name = "positiveInteger")
-    private BigInteger dimensions;
+    private Integer dimensions;
 
     public BoundingBoxType(){
     }
@@ -92,7 +93,7 @@ public class BoundingBoxType {
      * @param miny
      */
     public BoundingBoxType(final String crs, final double minx, final double miny, final double maxx, final double maxy){
-        this.dimensions = new BigInteger("2");
+        this.dimensions = 2;
         this.lowerCorner.add(minx);
         this.lowerCorner.add(miny);
         this.upperCorner.add(maxx);
@@ -104,6 +105,7 @@ public class BoundingBoxType {
      * Gets the value of the lowerCorner property.
      * (unmodifiable)
      */
+    @Override
     public List<Double> getLowerCorner() {
        return Collections.unmodifiableList(lowerCorner);
     }
@@ -140,6 +142,7 @@ public class BoundingBoxType {
      * Gets the value of the upperCorner property.
      * (unmodifiable)
      */
+    @Override
     public List<Double> getUpperCorner() {
         return Collections.unmodifiableList(upperCorner);
     }
@@ -148,6 +151,7 @@ public class BoundingBoxType {
      * Gets the value of the crs property.
      * 
      */
+    @Override
     public String getCrs() {
         return crs;
     }
@@ -162,7 +166,8 @@ public class BoundingBoxType {
     /**
      * Gets the value of the dimensions property.
      */
-    public BigInteger getDimensions() {
+    @Override
+    public Integer getDimensions() {
         return dimensions;
     }
     
@@ -195,9 +200,10 @@ public class BoundingBoxType {
     
     @Override
     public String toString() {
-        StringBuilder s = new StringBuilder("[").append(this.getClass().getSimpleName()).append("]:").append('\n');
-        if (crs != null)
+        final StringBuilder s = new StringBuilder("[").append(this.getClass().getSimpleName()).append("]:").append('\n');
+        if (crs != null) {
             s.append("CRS:").append(crs).append('\n');
+        }
         if (dimensions != null) {
             s.append("Dim:").append(dimensions).append('\n');
         }

@@ -82,7 +82,7 @@ public class PanHandler extends AbstractNavigationHandler {
         private int lastX;
         private int lastY;
         private int mousebutton = 0;
-
+        
         @Override
         public void mouseClicked(final MouseEvent e) {
             startX = e.getX();
@@ -97,10 +97,12 @@ public class PanHandler extends AbstractNavigationHandler {
             startY = e.getY();
             lastX = 0;
             lastY = 0;
-
-            decorationPane.setBuffer(map.getCanvas().getSnapShot());
             mousebutton = e.getButton();
-            decorationPane.setCoord(0, 0, map.getComponent().getWidth(), map.getComponent().getHeight(), true);
+
+            if(!isStateFull()){
+                decorationPane.setBuffer(map.getCanvas().getSnapShot());
+                decorationPane.setCoord(0, 0, map.getComponent().getWidth(), map.getComponent().getHeight(), true);
+            }
         }
 
         @Override
@@ -108,18 +110,20 @@ public class PanHandler extends AbstractNavigationHandler {
             int endX = e.getX();
             int endY = e.getY();
 
-            decorationPane.setBuffer(null);
+            if(!isStateFull()){
+                decorationPane.setBuffer(null);
 
-            if (mousebutton == MouseEvent.BUTTON1) {
-                decorationPane.setFill(false);
-                decorationPane.setCoord(-10, -10,-10, -10, false);
-                processDrag(startX, startY, endX, endY);
+                if (mousebutton == MouseEvent.BUTTON1) {
+                    decorationPane.setFill(false);
+                    decorationPane.setCoord(-10, -10,-10, -10, false);
+                    processDrag(startX, startY, endX, endY);
 
-            } //right mouse button : pan action
-            else if (mousebutton == MouseEvent.BUTTON3) {
-                decorationPane.setFill(false);
-                decorationPane.setCoord(-10, -10,-10, -10, false);
-                processDrag(startX, startY, endX, endY);
+                } //right mouse button : pan action
+                else if (mousebutton == MouseEvent.BUTTON3) {
+                    decorationPane.setFill(false);
+                    decorationPane.setCoord(-10, -10,-10, -10, false);
+                    processDrag(startX, startY, endX, endY);
+                }
             }
 
             lastX = 0;
@@ -145,8 +149,20 @@ public class PanHandler extends AbstractNavigationHandler {
             if ((lastX > 0) && (lastY > 0)) {
                 int dx = lastX - startX;
                 int dy = lastY - startY;
-                decorationPane.setFill(true);
-                decorationPane.setCoord(dx, dy, map.getComponent().getWidth(), map.getComponent().getHeight(), true);
+                
+                if(isStateFull()){
+
+                    if (mousebutton == MouseEvent.BUTTON1) {
+                        processDrag(lastX, lastY, x, y);
+
+                    } //right mouse button : pan action
+                    else if (mousebutton == MouseEvent.BUTTON3) {
+                        processDrag(lastX, lastY, x, y);
+                    }
+                }else{
+                    decorationPane.setFill(true);
+                    decorationPane.setCoord(dx, dy, map.getComponent().getWidth(), map.getComponent().getHeight(), true);
+                }
             }
 
             lastX = x;

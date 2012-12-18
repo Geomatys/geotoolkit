@@ -81,6 +81,7 @@ public class AcceptVersionsType implements org.geotoolkit.ows.xml.AcceptVersions
     /**
      * Gets the value of the version property.
      */
+    @Override
     public List<String> getVersion() {
         if (version == null) {
             version = new ArrayList<String>();
@@ -93,10 +94,15 @@ public class AcceptVersionsType implements org.geotoolkit.ows.xml.AcceptVersions
      * 
      * @param version a number of version.
      */
+    @Override
     public void addVersion(final String version) {
         this.version.add(version);
     }
 
+    public void addFirstVersion(final String version) {
+        this.version.add(0, version);
+    }
+    
     /**
      * Verify that this entry is identical to the specified object.
      */
@@ -112,4 +118,21 @@ public class AcceptVersionsType implements org.geotoolkit.ows.xml.AcceptVersions
         return false;
     }
 
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 17 * hash + (this.version != null ? this.version.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("[AcceptVersionsType]\n");
+        if (version != null) {
+            for (String v : version) {
+                sb.append(v).append('\n');
+            }
+        }
+        return sb.toString();
+    }
 }

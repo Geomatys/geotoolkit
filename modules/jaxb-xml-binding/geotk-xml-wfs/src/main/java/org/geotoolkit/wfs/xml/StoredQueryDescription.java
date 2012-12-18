@@ -35,5 +35,7 @@ public interface StoredQueryDescription {
     
     List<? extends ParameterExpression> getParameter();
     
+    List<String> getParameterNames();
+    
     List<? extends QueryExpressionText> getQueryExpressionText();
 }

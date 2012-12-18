@@ -69,6 +69,18 @@ public class WebMapTileServer extends AbstractServer implements CoverageStore{
     }
 
     /**
+     * Builds a web map server with the given server url, a security and version.
+     *
+     * @param serverURL The server base url.
+     * @param security The server security.
+     * @param version The service version.
+     * @throws IllegalArgumentException if the version specified is not applyable.
+     */
+    public WebMapTileServer(final URL serverURL, final ClientSecurity security, final WMTSVersion version) {
+        this(serverURL, security, version, null, false);
+    }
+
+    /**
      * Builds a web map server with the given server url and version.
      *
      * @param serverURL The server base url.
@@ -105,6 +117,7 @@ public class WebMapTileServer extends AbstractServer implements CoverageStore{
      * Builds a web map server with the given server url, version and getCapabilities response.
      *
      * @param serverURL The server base url.
+     * @param security The server security.
      * @param version A string representation of the service version.
      * @param capabilities A getCapabilities response.
      */
@@ -239,4 +252,8 @@ public class WebMapTileServer extends AbstractServer implements CoverageStore{
         throw new DataStoreException("Can not create new coverage.");
     }
 
+    @Override
+    public void delete(Name name) throws DataStoreException {
+        throw new DataStoreException("Can not create new coverage.");
+    }
 }

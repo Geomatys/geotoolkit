@@ -37,7 +37,7 @@ import org.geotoolkit.wms.xml.AbstractOperation;
     "dcpType"
 })
 @XmlRootElement(name = "PutStyles")
-public class PutStyles extends AbstractOperation {
+public class PutStyles implements AbstractOperation {
 
     @XmlElement(name = "Format", required = true)
     private List<Format> format;

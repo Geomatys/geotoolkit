@@ -20,9 +20,11 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -81,7 +83,7 @@ public class FileCoverageStoreFactory extends AbstractCoverageStoreFactory{
         final Map<String,Object> params = new HashMap<String, Object>();
         params.put(DefaultParameterDescriptor.NAME_KEY, code);
         params.put(DefaultParameterDescriptor.REMARKS_KEY, remarks);
-        final List<String> validValues = new ArrayList(getReaderTypeList());
+        final LinkedList<String> validValues = new LinkedList<String>(getReaderTypeList());
         validValues.add("AUTO");
         Collections.sort(validValues);
         
@@ -135,29 +137,33 @@ public class FileCoverageStoreFactory extends AbstractCoverageStoreFactory{
     /**
      * List all available formats.
      */
-    private static Set<String> getReaderTypeList(){
+    private static LinkedList<String> getReaderTypeList(){
 
         final IIORegistry registry = IIORegistry.getDefaultInstance();
         final Iterator<? extends ImageReaderSpi> it = registry.getServiceProviders(ImageReaderSpi.class, true);
-        final Set<String> formatsDone = new HashSet<String>();
+        final LinkedList<String> formatsDone = new LinkedList<String>();
 
         skip:
         while (it.hasNext()) {
             final ImageReaderSpi spi = it.next();
 
+            String temp = null;
+            
             String longFormat = null;
-            for (final String format : spi.getFormatNames()) {
-                if (!formatsDone.add(format)) {
-                    // Avoid declaring the same format twice (e.g. declaring
-                    // both the JSE and JAI ImageReaders for the PNG format).
-                    continue skip;
+            for (String format : spi.getFormatNames()) {
+                if(temp == null){
+                    temp = format;
+                    continue;
                 }
+                
                 // Remember the longuest format string. If two of them
                 // have the same length, favor the one in upper case.
-                longFormat = longest(longFormat, format);
+                temp = longest(temp, format);
             }
+            
+            if(temp != null && !formatsDone.contains(temp)) formatsDone.add(temp);
+            
         }
-
         return formatsDone;
     }
     

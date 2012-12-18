@@ -40,6 +40,10 @@ public interface Style {
      * Gets the value of the abstract property.
      */
     String getAbstract();
+    
+    AbstractStyleSheetURL getStyleSheetURL();
+    
+    AbstractStyleURL getStyleURL();
 
     /**
      * Gets the value of the legendURL property.

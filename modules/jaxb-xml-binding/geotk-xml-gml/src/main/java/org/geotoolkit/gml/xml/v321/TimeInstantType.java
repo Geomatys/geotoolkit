@@ -19,10 +19,16 @@
 package org.geotoolkit.gml.xml.v321;
 
 import java.io.Serializable;
+import java.util.Collection;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.ComparisonMode;
+import org.geotoolkit.util.Utilities;
+import org.opengis.temporal.Instant;
+import org.opengis.temporal.Period;
+import org.opengis.temporal.Position;
 
 
 /**
@@ -48,13 +54,27 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "TimeInstantType", propOrder = {
     "timePosition"
 })
-public class TimeInstantType
-    extends AbstractTimeGeometricPrimitiveType implements Serializable
-{
+public class TimeInstantType extends AbstractTimeGeometricPrimitiveType implements Instant, Serializable{
 
     @XmlElement(required = true)
     private TimePositionType timePosition;
 
+    /**
+     * Empty constructor used by JAXB.
+     */
+    TimeInstantType(){}
+
+    /**
+     * Build a new time instant with the specified timeposition.
+     */
+    public TimeInstantType(final Position timePosition) {
+        if (timePosition instanceof TimePositionType) {
+            this.timePosition = (TimePositionType) timePosition;
+        } else if (timePosition != null) {
+            this.timePosition = new TimePositionType(timePosition.getDate());
+        }
+    }
+    
     /**
      * Gets the value of the timePosition property.
      * 
@@ -67,6 +87,38 @@ public class TimeInstantType
         return timePosition;
     }
 
+    @Override
+    public Position getPosition() {
+        return timePosition;
+    }
+    
+    public void setPosition(final Position value) {
+        if (value instanceof TimePositionType) {
+            this.timePosition = (TimePositionType)value;
+        } else if (value != null) {
+            this.timePosition = new TimePositionType(value);
+        } else {
+            this.timePosition = null;
+        }
+    }
+
+    public long getTime() {
+        if (this.timePosition != null && this.timePosition.getDate() != null) {
+            return this.timePosition.getDate().getTime();
+        }
+        return -1;
+    }
+    
+    @Override
+    public Collection<Period> getBegunBy() {
+        return null;
+    }
+
+    @Override
+    public Collection<Period> getEndedBy() {
+        return null;
+    }
+    
     /**
      * Sets the value of the timePosition property.
      * 
@@ -78,5 +130,35 @@ public class TimeInstantType
     public void setTimePosition(TimePositionType value) {
         this.timePosition = value;
     }
+    
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("[TimeInstantType]").append('\n');
+        if (timePosition != null) {
+            sb.append("timePosition:").append(timePosition).append('\n');
+        }
+        return sb.toString();
+    }
+    
+    /**
+     * Verify that this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object, final ComparisonMode cm) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof TimeInstantType) {
+            final TimeInstantType that = (TimeInstantType) object;
+            return  Utilities.equals(this.timePosition, that.timePosition);
+        }
+        return false;
+    }
 
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 37 * hash + (this.timePosition != null ? this.timePosition.hashCode() : 0);
+        return hash;
+    }
 }

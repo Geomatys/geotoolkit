@@ -32,6 +32,7 @@ import java.util.List;
 import org.geotoolkit.display.axis.Graduation;
 import org.geotoolkit.display.axis.NumberGraduation;
 import org.geotoolkit.display.axis.TickIterator;
+import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.container.stateless.DefaultProjectedGeometry;
 import org.geotoolkit.display2d.container.stateless.StatelessContextParams;
@@ -65,7 +66,9 @@ public class J2DGridUtilities {
         if(gridCRS == null) gridCRS = context.getObjectiveCRS();
 
         final Graphics2D g = context.getGraphics();
+        context.switchToDisplayCRS();
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g.setComposite(GO2Utilities.ALPHA_COMPOSITE_1F);
 
         final Shape shp = context.getCanvasObjectiveShape();
         final List<Coordinate> coords = new ArrayList<Coordinate>();
@@ -88,7 +91,7 @@ public class J2DGridUtilities {
         final RenderingHints tickHint = new RenderingHints(null);
         tickHint.put(Graduation.VISUAL_AXIS_LENGTH, context.getCanvasDisplayBounds().width);
         tickHint.put(Graduation.VISUAL_TICK_SPACING, 200);
-
+        
         //number of point by line
         final int nbPoint = 20;
         

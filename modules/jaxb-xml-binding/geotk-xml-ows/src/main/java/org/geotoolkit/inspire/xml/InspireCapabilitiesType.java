@@ -63,6 +63,17 @@ public class InspireCapabilitiesType {
 
     }
 
+    public InspireCapabilitiesType(final InspireCapabilitiesType that) {
+        if (that != null) {
+            if (that.languages != null) {
+                this.languages = new LanguagesType(that.languages);
+            }
+            if (that.translatedCapabilities != null) {
+                this.translatedCapabilities = new TranslatedCapabilitiesType(that.translatedCapabilities);
+            }
+        }
+    }
+    
     public InspireCapabilitiesType(final List<String> languages) {
         this.languages = new LanguagesType(languages);
         this.translatedCapabilities = null;

@@ -31,42 +31,46 @@ import org.opengis.parameter.ParameterValueGroup;
  * @module pending
  */
 public interface Server {
-    
+
     /**
      * Get the parameters used to initialize this source from it's factory.
-     * 
+     *
      * @return source configuration parameters
      */
     ParameterValueGroup getConfiguration();
-    
+
     /**
      * Get the factory which created this source.
-     * 
+     *
      * @return this source original factory
      */
     ServerFactory getFactory();
-    
+
     /**
      * @return the server url as an {@link URI}, or {@code null} il the uri syntax
      * is not respected.
      */
     URI getURI();
-    
+
     /**
      * @return the server url as an {@link URL}.
      */
     URL getURL();
-    
+
     /**
      * @return ClientSecurity used by this server. never null.
      */
     ClientSecurity getClientSecurity();
-    
-    
+
+    /**
+     * @return recommanded timeout value for this server.
+     */
+    int getTimeOutValue();
+
     /**
      * Store a value for this server in a hashmap using the given key.
      * @param key
-     * @param value  
+     * @param value
      */
     void setUserProperty(String key,Object value);
 
@@ -82,5 +86,5 @@ public interface Server {
      *          This is the live map.
      */
     Map<String,Object> getUserProperties();
-    
+
 }

@@ -37,25 +37,25 @@ import org.opengis.parameter.ParameterValueGroup;
 
 /**
  * Default implementation of a Server.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
 public abstract class AbstractServer implements Server{
 
     private static final Logger LOGGER = Logging.getLogger(AbstractServer.class);
-    
+
     protected final ParameterValueGroup parameters;
     protected final URL serverURL;
-    
-    private final Map<String,Object> userProperties = new HashMap<String,Object>();    
+
+    private final Map<String,Object> userProperties = new HashMap<String,Object>();
     private String sessionId = null;
 
 
     public AbstractServer(final ParameterValueGroup params) {
         this.parameters = params;
         this.serverURL = Parameters.value(AbstractServerFactory.URL,params);
-        ArgumentChecks.ensureNonNull("server url", serverURL);        
+        ArgumentChecks.ensureNonNull("server url", serverURL);
     }
 
     @Override
@@ -66,7 +66,7 @@ public abstract class AbstractServer implements Server{
         }
         return null;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -74,7 +74,7 @@ public abstract class AbstractServer implements Server{
     public URL getURL() {
         return serverURL;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -95,14 +95,25 @@ public abstract class AbstractServer implements Server{
     public ClientSecurity getClientSecurity() {
         ClientSecurity securityManager = null;
         try {
-            securityManager = Parameters.value(AbstractServerFactory.SECURITY,parameters); 
+            securityManager = Parameters.value(AbstractServerFactory.SECURITY,parameters);
         } catch (ParameterNotFoundException ex) {
             // do nothing
         }
         return (securityManager == null) ?  DefaultClientSecurity.NO_SECURITY : securityManager;
     }
-    
-     /**
+
+    @Override
+    public int getTimeOutValue() {
+        Integer timeout = null;
+        try {
+            timeout = Parameters.value(AbstractServerFactory.TIMEOUT,parameters);
+        } catch (ParameterNotFoundException ex) {
+            // do nothing
+        }
+        return (timeout == null) ?  AbstractServerFactory.TIMEOUT.getDefaultValue() : timeout;
+    }
+
+    /**
      * {@inheritDoc }
      */
     @Override
@@ -125,20 +136,20 @@ public abstract class AbstractServer implements Server{
     public Map<String, Object> getUserProperties() {
         return userProperties;
     }
-    
+
     /**
      * @return default server logger.
      */
     protected Logger getLogger(){
         return LOGGER;
     }
-    
+
     protected void applySessionId(final URLConnection conec) {
         if (sessionId != null) {
             conec.setRequestProperty("Cookie", sessionId);
-        } 
+        }
     }
-    
+
     protected void readSessionId(final URLConnection conec) {
         if (sessionId == null) {
             final Map<String, List<String>> headers = conec.getHeaderFields();
@@ -152,7 +163,7 @@ public abstract class AbstractServer implements Server{
             }
         }
     }
-    
+
     protected static ParameterValueGroup create(final ParameterDescriptorGroup desc,
             final URL url, final ClientSecurity security){
         final ParameterValueGroup param = desc.createValue();

@@ -1310,7 +1310,7 @@ public final class FeatureTypeUtilities {
             final ParameterDescriptor desc = (ParameterDescriptor) descriptor;
             
             final AttributeTypeBuilder atb = new AttributeTypeBuilder();
-            atb.setName(desc.getName().getCode());
+            atb.setName(DefaultName.valueOf(desc.getName().getCode()));
             atb.setDescription(desc.getRemarks());
             atb.setBinding(desc.getValueClass());
             final Set validValues = desc.getValidValues();
@@ -1335,7 +1335,7 @@ public final class FeatureTypeUtilities {
             final ParameterDescriptorGroup desc = (ParameterDescriptorGroup) descriptor;
             
             final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
-            ftb.setName(desc.getName().getCode());
+            ftb.setName(DefaultName.valueOf(desc.getName().getCode()));
             
             for(GeneralParameterDescriptor sd : desc.descriptors()){
                 final PropertyType pt = toPropertyType(sd);

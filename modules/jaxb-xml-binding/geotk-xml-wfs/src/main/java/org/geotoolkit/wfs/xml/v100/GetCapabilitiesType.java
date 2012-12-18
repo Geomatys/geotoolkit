@@ -85,6 +85,7 @@ public class GetCapabilitiesType implements GetCapabilities {
      *     {@link String }
      *     
      */
+    @Override
     public Version getVersion() {
         if (version == null) {
             return new Version("1.0.0");
@@ -101,6 +102,7 @@ public class GetCapabilitiesType implements GetCapabilities {
      *     {@link String }
      *     
      */
+    @Override
     public void setVersion(String value) {
         this.version = value;
     }
@@ -113,6 +115,7 @@ public class GetCapabilitiesType implements GetCapabilities {
      *     {@link String }
      *     
      */
+    @Override
     public String getService() {
         if (service == null) {
             return "WFS";
@@ -129,31 +132,50 @@ public class GetCapabilitiesType implements GetCapabilities {
      *     {@link String }
      *     
      */
+    @Override
     public void setService(String value) {
         this.service = value;
     }
 
+    @Override
     public AcceptVersions getAcceptVersions() {
         return null; // not implemented in 1.0.0
     }
 
+    @Override
     public Sections getSections() {
         return null; // not implemented in 1.0.0
     }
 
+    @Override
     public String getFirstAcceptFormat() {
         return null; // not implemented in 1.0.0
     }
 
+    @Override
     public boolean containsSection(String sectionName) {
         return false;
     }
 
+    @Override
     public AcceptFormats getAcceptFormats() {
         return null; // not implemented in 1.0.0
     }
 
+    @Override
     public String getUpdateSequence() {
         return null; // not implemented in 1.0.0
+    }
+    
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("[GetCapabilitiesType]\n");
+        if (version != null) {
+            sb.append("version:").append(version).append('\n');
+        }
+        if (service != null) {
+            sb.append("service:").append(service).append('\n');
+        }
+        return sb.toString();
     }
 }

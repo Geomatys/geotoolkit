@@ -239,6 +239,10 @@ public abstract class AbstractAdhocQueryExpressionType extends AbstractQueryExpr
         }
         return this.aliases;
     }
+    
+    public void setAliases(final List<String> aliases) {
+        this.aliases = aliases;
+    }
 
     /**
      * Verify if this entry is identical to specified object.

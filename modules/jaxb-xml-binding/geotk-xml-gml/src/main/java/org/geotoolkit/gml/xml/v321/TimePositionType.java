@@ -20,10 +20,13 @@ package org.geotoolkit.gml.xml.v321;
 
 import java.io.Serializable;
 import java.sql.Time;
+import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -36,6 +39,7 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
 import org.geotoolkit.gml.xml.AbstractTimePosition;
 import org.geotoolkit.util.SimpleInternationalString;
+import org.opengis.temporal.Position;
 import org.opengis.util.InternationalString;
 
 
@@ -82,25 +86,59 @@ public class TimePositionType extends AbstractTimePosition implements Serializab
     @XmlAttribute
     private TimeIndeterminateValueType indeterminatePosition;
 
+     /**
+     * empty constructor used by JAXB.
+     */
+    TimePositionType() {}
+
+    /**
+     * build a simple Timposition with only a value.
+     *
+     * @param value a date.
+     */
+    public TimePositionType(final String value){
+        if (value != null) {
+            this.value = Arrays.asList(value);
+        }
+    }
+
+    public TimePositionType(final Position value){
+        this(value.getDate());
+    }
+
+    /**
+     * build a simple Timposition with an indeterminate value.
+     *
+     */
+    public TimePositionType(final TimeIndeterminateValueType indeterminatePosition){
+        this.indeterminatePosition = indeterminatePosition;
+    }
+
+    /**
+     * build a simple Timposition with only a value from a timestamp.
+     *
+     * @param value a date.
+     */
+    public TimePositionType(final Timestamp time){
+        if (time != null) {
+            this.value = Arrays.asList(time.toString());
+        }
+    }
+
+    /**
+     * build a simple Timposition with only a value from a timestamp.
+     *
+     * @param value a date.
+     */
+    public TimePositionType(final Date time){
+        setValue(time);
+    }
+    
     /**
      * The simple type gml:TimePositionUnion is a union of XML Schema simple types which instantiate the subtypes for temporal position described in ISO 19108.
      *  An ordinal era may be referenced via URI.  A decimal value may be used to indicate the distance from the scale origin .  time is used for a position that recurs daily (see ISO 19108:2002 5.4.4.2).
      *  Finally, calendar and clock forms that support the representation of time in systems based on years, months, days, hours, minutes and seconds, in a notation following ISO 8601, are assembled by gml:CalDate Gets the value of the value property.
      *
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the value property.
-     *
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getValue().add(newItem);
-     * </pre>
-     *
-     *
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link String }
      *
@@ -113,6 +151,22 @@ public class TimePositionType extends AbstractTimePosition implements Serializab
         return this.value;
     }
 
+    public final void setValue(final Date value) {
+        final Calendar c = Calendar.getInstance();
+        c.setTime(value);
+        if (c.get(Calendar.HOUR) == 0 && c.get(Calendar.MINUTE) == 0 && c.get(Calendar.SECOND) == 0) {
+            final DateFormat df = FORMATTERS.get(2);
+            synchronized (df) {
+                this.value = Arrays.asList(df.format(value));
+            }
+        } else {
+            final DateFormat df = FORMATTERS.get(0);
+            synchronized (df) {
+                this.value = Arrays.asList(df.format(value));
+            }
+        }
+    }
+    
     /**
      * Gets the value of the frame property.
      *

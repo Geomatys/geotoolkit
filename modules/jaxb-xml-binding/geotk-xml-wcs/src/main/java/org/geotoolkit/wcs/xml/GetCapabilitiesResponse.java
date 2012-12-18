@@ -16,16 +16,20 @@
  */
 package org.geotoolkit.wcs.xml;
 
+import org.geotoolkit.ows.xml.AbstractCapabilitiesCore;
+
 /**
  *
  * @author Cédric Briançon
  * @module pending
  */
-public interface GetCapabilitiesResponse extends WCSResponse {
+public interface GetCapabilitiesResponse extends AbstractCapabilitiesCore {
 
     Content getContents();
     
     String getUpdateSequence();
+    
+    String getVersion();
     
     void setUpdateSequence(final String updateSequence);
 

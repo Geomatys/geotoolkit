@@ -86,4 +86,6 @@ public interface GetCoverage extends RequestBase {
     DomainSubset getDomainSubset();
 
     String toKvp();
+    
+    InterpolationMethod getInterpolationMethod();
 }

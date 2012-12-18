@@ -77,14 +77,17 @@ public abstract class AbstractRequest implements Request {
      */
     protected final Map<String,String> headerMap = new HashMap<String, String>();
 
+    protected int timeout;
+
     protected AbstractRequest(final Server server) {
         this(server, null);
     }
 
     protected AbstractRequest(final Server server, final String subPath) {
         this(server.getURL().toString(), server.getClientSecurity(), subPath);
+        this.timeout = server.getTimeOutValue();
     }
-    
+
     protected AbstractRequest(final String serverURL) {
         this(serverURL,null);
     }
@@ -97,6 +100,7 @@ public abstract class AbstractRequest implements Request {
         this.serverURL = serverURL;
         this.security = (security==null) ? DefaultClientSecurity.NO_SECURITY : security ;
         this.subPath = subPath;
+        this.timeout = AbstractServerFactory.TIMEOUT.getDefaultValue();
     }
 
     /**
@@ -233,12 +237,17 @@ public abstract class AbstractRequest implements Request {
     }
 
     protected InputStream openRichException(final URLConnection cnx) throws IOException {
-        return openRichException(cnx, security);
+        return openRichException(cnx, security, timeout);
     }
 
     public static InputStream openRichException(final URLConnection cnx, final ClientSecurity security) throws IOException {
+        return openRichException(cnx, security, AbstractServerFactory.TIMEOUT.getDefaultValue());
+    }
+
+    public static InputStream openRichException(final URLConnection cnx, final ClientSecurity security, int timeout) throws IOException {
         try {
-            cnx.setConnectTimeout(20000);
+            cnx.setConnectTimeout(timeout);
+            cnx.setReadTimeout(timeout*2);
             InputStream stream = cnx.getInputStream();
             //security
             stream = security.decrypt(stream);

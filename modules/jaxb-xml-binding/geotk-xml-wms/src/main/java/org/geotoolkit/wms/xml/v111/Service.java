@@ -43,7 +43,7 @@ import org.geotoolkit.wms.xml.AbstractService;
     "accessConstraints"
 })
 @XmlRootElement(name = "Service")
-public class Service extends AbstractService {
+public class Service implements AbstractService {
 
     @XmlElement(name = "Name", required = true)
     private String name;

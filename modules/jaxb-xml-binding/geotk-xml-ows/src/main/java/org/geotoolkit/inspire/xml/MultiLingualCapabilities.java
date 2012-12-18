@@ -41,6 +41,12 @@ public class MultiLingualCapabilities extends AbstractExtendedCapabilitiesType {
 
     }
 
+    public MultiLingualCapabilities(final MultiLingualCapabilities that) {
+        if (that != null && that.multiLingualCapabilities != null) {
+            this.multiLingualCapabilities = new InspireCapabilitiesType(that.multiLingualCapabilities);
+        }
+    }
+    
     public MultiLingualCapabilities(final InspireCapabilitiesType multiLingualCapabilities) {
         this.multiLingualCapabilities = multiLingualCapabilities;
     }

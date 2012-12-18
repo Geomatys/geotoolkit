@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.wfs.xml;
 
+import java.util.List;
+
 /**
  *
  * @author Guilhem Legal (Geomatys)
@@ -23,5 +25,7 @@ package org.geotoolkit.wfs.xml;
 public interface FeatureTypeList {
     
     void addFeatureType(final FeatureType ft);
+    
+    List<? extends FeatureType> getFeatureType();
     
 }

@@ -25,6 +25,7 @@ import java.beans.PropertyChangeEvent;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JComboBox;
+import javax.swing.JList;
 import org.geotoolkit.display2d.container.ContextContainer2D;
 import org.geotoolkit.gui.swing.go2.JMap2D;
 import org.geotoolkit.gui.swing.misc.LayerListRenderer;
@@ -41,7 +42,7 @@ import org.jdesktop.swingx.combobox.ListComboBoxModel;
  * @author Johann Sorel
  * @module pending
  */
-public class JLayerComboBox extends JComboBox implements ContextListener{
+public class JLayerComboBox extends JList implements ContextListener{
 
     private final ContextListener.Weak weaklistener = new ContextListener.Weak(this);
     private JMap2D map = null;
@@ -51,7 +52,7 @@ public class JLayerComboBox extends JComboBox implements ContextListener{
     }
 
     public JLayerComboBox(final JMap2D map){
-        setRenderer(new LayerListRenderer());
+        setCellRenderer(new LayerListRenderer());
         setMap(map);
     }
 
@@ -105,13 +106,13 @@ public class JLayerComboBox extends JComboBox implements ContextListener{
         }
 
         setModel(new ListComboBoxModel(objects));
-        
+
         final Dimension minSize = getMinimumSize();
         if(minSize.width>150){
             minSize.width = 150;
             setMinimumSize(minSize);
         }
-        
+
     }
 
     @Override

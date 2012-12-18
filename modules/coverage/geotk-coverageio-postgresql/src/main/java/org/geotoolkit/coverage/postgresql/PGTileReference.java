@@ -24,12 +24,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.imageio.ImageReader;
 import javax.imageio.spi.ImageReaderSpi;
 import net.iharder.Base64;
 import org.geotoolkit.coverage.TileReference;
-import org.geotoolkit.coverage.postgresql.io.WKBRasterImageReader;
+import org.geotoolkit.coverage.wkb.WKBRasterImageReader;
 
 /**
  *

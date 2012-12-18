@@ -16,12 +16,14 @@
  */
 package org.geotoolkit.ows.xml.v110;
 
-import java.util.Objects;
+import java.util.ArrayList;
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ows.xml.AbstractDomain;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -80,6 +82,40 @@ public class DomainType extends UnNamedDomainType implements AbstractDomain {
     }
     
     /**
+     * Build a new Domain with the specified name.
+     */
+    public DomainType(final String name, final AnyValue values){
+        super(values);
+        this.name = name;
+    }
+    
+    public DomainType(final String name, final ValueType defaultValue){
+        super(defaultValue);
+        this.name = name;
+    }
+    
+    public DomainType(final String name, final NoValues noValues, final ValueType defaultValue){
+        super(noValues, defaultValue);
+        this.name = name;
+    }
+    
+    /**
+     * Build a new Domain with the specified name.
+     */
+    public DomainType(final String name, final String value){
+        super(value);
+        this.name = name;
+    }
+    
+    /**
+     * Build a new Domain with the specified list of values.
+     */
+    public DomainType(final String name, final List<String> value) {
+        
+        this.name  = name;
+    }
+    
+    /**
      * Gets the value of the name property.
      */
     @Override
@@ -87,6 +123,21 @@ public class DomainType extends UnNamedDomainType implements AbstractDomain {
         return name;
     }
 
+    @Override
+    public List<String> getValue() {
+        if (this.getAllowedValues() != null) {
+            return this.getAllowedValues().getStringValues();
+        }
+        return null;
+    }
+    
+    @Override
+    public void setValue(final List<String> values) {
+        if (values != null) {
+            this.setAllowedValues(new AllowedValues(values));
+        }
+    }
+    
     /**
      * Verify that this entry is identical to the specified object.
      */
@@ -97,7 +148,7 @@ public class DomainType extends UnNamedDomainType implements AbstractDomain {
         }
         if (object instanceof DomainType && super.equals(object)) {
             final DomainType that = (DomainType) object;
-            return Objects.equals(this.name, that.name);
+            return Utilities.equals(this.name, that.name);
         } 
         return false;
     }

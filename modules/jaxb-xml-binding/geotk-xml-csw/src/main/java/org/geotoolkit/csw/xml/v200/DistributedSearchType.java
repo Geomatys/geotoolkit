@@ -61,6 +61,20 @@ public class DistributedSearchType implements DistributedSearch {
     private Integer hopCount;
 
     /**
+     * An empty constructor used by JAXB
+     */
+    public DistributedSearchType(){
+        
+    }
+    
+    /**
+     * Build a new Distributed search
+     */
+    public DistributedSearchType(final Integer hopCount){
+        this.hopCount = hopCount;
+    }
+    
+    /**
      * Gets the value of the hopCount property.
      * 
      */

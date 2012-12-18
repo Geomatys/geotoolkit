@@ -22,7 +22,6 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -31,12 +30,11 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import javax.imageio.ImageReader;
-import javax.imageio.stream.ImageInputStream;
 import org.geotoolkit.coverage.*;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.grid.GridCoverageFactory;
-import org.geotoolkit.coverage.grid.ViewType;
-import org.geotoolkit.coverage.processing.Operations;
+import org.geotoolkit.coverage.grid.GridCoverageBuilder;
+import org.geotoolkit.coverage.grid.GridEnvelope2D;
+import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
@@ -45,17 +43,24 @@ import org.geotoolkit.display.primitive.SearchArea;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
+import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.display2d.style.CachedRule;
+import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.geotoolkit.geometry.GeneralEnvelope;
+import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.map.CoverageMapLayer;
+import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.util.Cancellable;
+import org.geotoolkit.util.ImageIOUtilities;
 import org.opengis.display.primitive.Graphic;
 import org.opengis.feature.type.Name;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
+import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
@@ -97,7 +102,8 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
 
         final CanvasMonitor monitor = context2D.getMonitor();
 
-        final Envelope canvasEnv = context2D.getCanvasObjectiveBounds2D();   
+        final Envelope canvasEnv2D = context2D.getCanvasObjectiveBounds2D();   
+        final Envelope canvasEnv = context2D.getCanvasObjectiveBounds();   
         final PyramidSet pyramidSet;
         try {
             pyramidSet = model.getPyramidSet();
@@ -106,7 +112,7 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
             return;
         }
         
-        final Pyramid pyramid = CoverageUtilities.findPyramid(pyramidSet, canvasEnv.getCoordinateReferenceSystem());
+        final Pyramid pyramid = CoverageUtilities.findPyramid(pyramidSet, canvasEnv2D.getCoordinateReferenceSystem());
                 
         if(pyramid == null){
             //no reliable pyramid
@@ -114,22 +120,29 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
         }
         
         final CoordinateReferenceSystem pyramidCRS = pyramid.getCoordinateReferenceSystem();
-        final GeneralEnvelope wantedEnv;
+        final CoordinateReferenceSystem pyramidCRS2D;
+        GeneralEnvelope wantedEnv2D;
+        GeneralEnvelope wantedEnv;
         try {
-            wantedEnv = new GeneralEnvelope(CRS.transform(canvasEnv, pyramidCRS));
+            pyramidCRS2D = CRSUtilities.getCRS2D(pyramidCRS);
+            wantedEnv2D = new GeneralEnvelope(CRS.transform(canvasEnv2D, pyramidCRS2D));
+            wantedEnv = new GeneralEnvelope(ReferencingUtilities.transform(canvasEnv, pyramidCRS));
         } catch (TransformException ex) {
             monitor.exceptionOccured(ex, Level.WARNING);
             return;
         }
+        
 
         //ensure we don't go out of the crs envelope
         final Envelope maxExt = CRS.getEnvelope(pyramidCRS);
         if(maxExt != null){
-            wantedEnv.intersect(maxExt);
-            if(Double.isNaN(wantedEnv.getMinimum(0))){ wantedEnv.setRange(0, maxExt.getMinimum(0), wantedEnv.getMaximum(0));  }
-            if(Double.isNaN(wantedEnv.getMaximum(0))){ wantedEnv.setRange(0, wantedEnv.getMinimum(0), maxExt.getMaximum(0));  }
-            if(Double.isNaN(wantedEnv.getMinimum(1))){ wantedEnv.setRange(1, maxExt.getMinimum(1), wantedEnv.getMaximum(1));  }
-            if(Double.isNaN(wantedEnv.getMaximum(1))){ wantedEnv.setRange(1, wantedEnv.getMinimum(1), maxExt.getMaximum(1));  }
+            wantedEnv2D.intersect(maxExt);
+            if(Double.isNaN(wantedEnv2D.getMinimum(0))){ wantedEnv2D.setRange(0, maxExt.getMinimum(0), wantedEnv2D.getMaximum(0));  }
+            if(Double.isNaN(wantedEnv2D.getMaximum(0))){ wantedEnv2D.setRange(0, wantedEnv2D.getMinimum(0), maxExt.getMaximum(0));  }
+            if(Double.isNaN(wantedEnv2D.getMinimum(1))){ wantedEnv2D.setRange(1, maxExt.getMinimum(1), wantedEnv2D.getMaximum(1));  }
+            if(Double.isNaN(wantedEnv2D.getMaximum(1))){ wantedEnv2D.setRange(1, wantedEnv2D.getMinimum(1), maxExt.getMaximum(1));  }
+            wantedEnv.setRange(0, wantedEnv2D.getMinimum(0), wantedEnv2D.getMaximum(0));
+            wantedEnv.setRange(1, wantedEnv2D.getMinimum(1), wantedEnv2D.getMaximum(1));
         }
         
         //the wanted image resolution
@@ -221,6 +234,8 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
             return;
         }
         
+        final StatelessContextParams params = new StatelessContextParams(getCanvas(), getUserObject());
+        params.update(context2D);
         while(true){
             Object obj = null;
             try {
@@ -243,7 +258,7 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
             if(obj instanceof TileReference){
                 final TileReference tile = (TileReference)obj;
                 final MathTransform trs = queries.get(tile.getPosition());
-                paintTile(context2D, pyramidCRS, tile, trs);
+                paintTile(context2D, params, rules, pyramidCRS2D, tile, trs);
             }
         }
         
@@ -286,7 +301,7 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
         return graphics;
     }
 
-    private static void paintTile(final RenderingContext2D context, 
+    private void paintTile(final RenderingContext2D context, StatelessContextParams params, CachedRule[] rules,
             final CoordinateReferenceSystem tileCRS ,final TileReference tile, MathTransform trs) {
         final CanvasMonitor monitor = context.getMonitor();
         final CoordinateReferenceSystem objCRS2D = context.getObjectiveCRS2D();
@@ -296,7 +311,7 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
         }
         
         Object input = tile.getInput();
-        RenderedImage image = null;
+        RenderedImage image;
         if(input instanceof RenderedImage){
             image = (RenderedImage) input;
         }else{
@@ -309,56 +324,43 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
                 return;
             } finally {
                 //dispose reader and substream
-                if(reader != null){
-                    Object readerinput = reader.getInput();
-                    if(readerinput instanceof InputStream){
-                        try {
-                            ((InputStream)readerinput).close();
-                        } catch (IOException ex) {
-                            monitor.exceptionOccured(ex, Level.WARNING);
-                            return;
-                        }
-                    }else if(readerinput instanceof ImageInputStream){
-                        try {
-                            ((ImageInputStream)readerinput).close();
-                        } catch (IOException ex) {
-                            monitor.exceptionOccured(ex, Level.WARNING);
-                            return;
-                        }
-                    }
-                    reader.dispose();
-                }
+                ImageIOUtilities.releaseReader(reader);
             }
         }
-                
-        final GridCoverageFactory gc = new GridCoverageFactory();
-        GridCoverage2D coverage;
         
         //check the crs
-        if(!CRS.equalsIgnoreMetadata(tileCRS,objCRS2D) ){
-            
+        if(!CRS.equalsIgnoreMetadata(tileCRS,objCRS2D) ){            
             //will be reprojected, we must check that image has alpha support
             //otherwise we will have black borders after reprojection
             if(!image.getColorModel().hasAlpha()){
                 final BufferedImage buffer = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
                 buffer.createGraphics().drawRenderedImage(image, new AffineTransform());
                 image = buffer;
+            }            
+        }
+        
+        //build the coverage ---------------------------------------------------
+        final GridCoverageBuilder gcb = new GridCoverageBuilder();
+        gcb.setName("tile");
+        
+        final GridEnvelope2D ge = new GridEnvelope2D(0, 0, image.getWidth(), image.getHeight());
+        final GridGeometry2D gridgeo = new GridGeometry2D(ge, PixelOrientation.UPPER_LEFT, trs, tileCRS, null);
+        gcb.setGridGeometry(gridgeo);
+        gcb.setRenderedImage(image);        
+        final GridCoverage2D coverage = (GridCoverage2D) gcb.build();
+        
+        
+        final CoverageMapLayer tilelayer = MapBuilder.createCoverageLayer(coverage, getUserObject().getStyle(), "");
+        final ProjectedCoverage projectedCoverage = new DefaultProjectedCoverage(params, tilelayer);
+        for(final CachedRule rule : rules){
+            for(final CachedSymbolizer symbol : rule.symbolizers()){
+                try {
+                    GO2Utilities.portray(projectedCoverage, symbol, context);
+                } catch (PortrayalException ex) {
+                    context.getMonitor().exceptionOccured(ex, Level.WARNING);
+                }
             }
-            
-            coverage = gc.create("tile", image, tileCRS, trs, null, null, null);            
-            coverage = (GridCoverage2D) Operations.DEFAULT.resample(coverage.view(ViewType.NATIVE), objCRS2D);
-            
-        }else{
-            coverage = gc.create("tile", image, tileCRS, trs, null, null, null);
         }
-        
-        try {
-            GO2Utilities.portray(context, coverage);
-        } catch (PortrayalException ex) {
-            monitor.exceptionOccured(ex, Level.WARNING);
-            return;
-        }
-        
     }
-    
+        
 }

@@ -36,7 +36,7 @@ import org.geotoolkit.wms.xml.AbstractDCP;
     "http"
 })
 @XmlRootElement(name = "DCPType")
-public class DCPType extends AbstractDCP {
+public class DCPType implements AbstractDCP {
 
     @XmlElement(name = "HTTP", required = true)
     private HTTP http;

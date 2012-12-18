@@ -103,6 +103,7 @@ public class FeatureTypeType implements FeatureType {
      *     {@link QName }
      *     
      */
+    @Override
     public QName getName() {
         return name;
     }
@@ -115,7 +116,8 @@ public class FeatureTypeType implements FeatureType {
      *     {@link QName }
      *     
      */
-    public void setName(QName value) {
+    @Override
+    public void setName(final QName value) {
         this.name = value;
     }
 
@@ -194,8 +196,9 @@ public class FeatureTypeType implements FeatureType {
     
     @Override
     public void addKeywords(final List<String> values) {
-        if (values != null && !values.isEmpty())
-        this.keywords = values.get(0);
+        if (values != null && !values.isEmpty()) {
+            this.keywords = values.get(0);
+        }
     }
 
     /**
@@ -206,7 +209,8 @@ public class FeatureTypeType implements FeatureType {
      *     {@link String }
      *     
      */
-    public String getSRS() {
+    @Override
+    public String getDefaultCRS() {
         return srs;
     }
 
@@ -255,7 +259,8 @@ public class FeatureTypeType implements FeatureType {
      * Gets the value of the latLongBoundingBox property.
      * 
      */
-    public List<LatLongBoundingBoxType> getLatLongBoundingBox() {
+    @Override
+    public List<LatLongBoundingBoxType> getBoundingBox() {
         if (latLongBoundingBox == null) {
             latLongBoundingBox = new ArrayList<LatLongBoundingBoxType>();
         }
@@ -321,16 +326,19 @@ public class FeatureTypeType implements FeatureType {
         if(name != null) {
             s.append("name:").append(name).append('\n');
         }
-        if (title != null)
+        if (title != null) {
             s.append("title:").append(title).append('\n');
-        if (_abstract != null)
+        }
+        if (_abstract != null) {
             s.append("_abstract:").append(_abstract).append('\n');
-        if (srs != null)
+        }
+        if (srs != null) {
             s.append("srs:").append(srs).append('\n');
+        }
         if (keywords != null) {
             s.append("keywords:").append(keywords).append('\n');
         }
-       if (metadataURL != null) {
+        if (metadataURL != null) {
             s.append("metadataURL:").append('\n');
             for (MetadataURLType k : metadataURL) {
                 s.append(k).append('\n');
@@ -342,8 +350,9 @@ public class FeatureTypeType implements FeatureType {
                 s.append(k).append('\n');
             }
         }
-        if (operations != null)
+        if (operations != null) {
            s.append("operations:").append(operations).append('\n');
+        }
         return s.toString();
     }
 

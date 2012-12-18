@@ -45,7 +45,7 @@ import org.geotoolkit.wms.xml.AbstractOnlineResource;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "")
 @XmlRootElement(name = "OnlineResource")
-public class OnlineResource extends AbstractOnlineResource {
+public class OnlineResource implements AbstractOnlineResource {
 
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     private String type;
@@ -71,15 +71,15 @@ public class OnlineResource extends AbstractOnlineResource {
     OnlineResource() {
     }
     
-    public OnlineResource(final OnlineResource that) {
+    public OnlineResource(final AbstractOnlineResource that) {
         if (that != null) {
-            this.href    = that.href;
-            this.type    = that.type;
-            this.actuate = that.actuate;
-            this.arcrole = that.arcrole;
-            this.role    = that.role;
-            this.show    = that.show;
-            this.title   = that.title;
+            this.href    = that.getHref();
+            this.type    = that.getType();
+            this.actuate = that.getActuate();
+            this.arcrole = that.getArcrole();
+            this.role    = that.getRole();
+            this.show    = that.getShow();
+            this.title   = that.getTitle();
         }
     }
 
@@ -110,6 +110,7 @@ public class OnlineResource extends AbstractOnlineResource {
      * Gets the value of the type property.
      * 
      */
+    @Override
     public String getType() {
         if (type == null) {
             return "simple";
@@ -122,6 +123,7 @@ public class OnlineResource extends AbstractOnlineResource {
      * Gets the value of the href property.
      * 
      */
+    @Override
     public String getHref() {
         return href;
     }
@@ -130,6 +132,7 @@ public class OnlineResource extends AbstractOnlineResource {
      * Gets the value of the href property.
      * 
      */
+    @Override
     public void setHref(final String href) {
         this.href = href;
     }
@@ -139,6 +142,7 @@ public class OnlineResource extends AbstractOnlineResource {
      * Gets the value of the role property.
      *     
      */
+    @Override
     public String getRole() {
         return role;
     }
@@ -147,6 +151,7 @@ public class OnlineResource extends AbstractOnlineResource {
      * Gets the value of the arcrole property.
      * 
      */
+    @Override
     public String getArcrole() {
         return arcrole;
     }
@@ -154,6 +159,7 @@ public class OnlineResource extends AbstractOnlineResource {
     /**
      * Gets the value of the title property.
      */
+    @Override
     public String getTitle() {
         return title;
     }
@@ -161,6 +167,7 @@ public class OnlineResource extends AbstractOnlineResource {
     /**
      * Gets the value of the show property.
      */
+    @Override
     public String getShow() {
         return show;
     }
@@ -168,6 +175,7 @@ public class OnlineResource extends AbstractOnlineResource {
     /**
      * Gets the value of the actuate property.
      */
+    @Override
     public String getActuate() {
         return actuate;
     }

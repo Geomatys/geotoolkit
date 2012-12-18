@@ -74,9 +74,40 @@ public class DescribeRecordType extends RequestBaseType implements DescribeRecor
     private String schemaLanguage;
 
     /**
+     * An empty constructor used by JAXB
+     */
+    DescribeRecordType() {
+
+    }
+
+    /**
+     * Build a new DescribeRecord Request
+     *
+     * @param service Fixed at "CSW".
+     * @param version The version of the service.
+     * @param typeName A list of QName
+     * @param outputFormat The desired MIME type of the response
+     * @param schemaLanguage sefault value is http://www.w3.org/XML/Schema
+     */
+    public DescribeRecordType(final String service, final String version, final List<QName> typeName,
+            final String outputFormat, final String schemaLanguage) {
+        super(service, version);
+        this.outputFormat   = outputFormat;
+        this.schemaLanguage = schemaLanguage;
+        if (typeName != null) {
+            this.typeName       = new ArrayList<TypeNameType>();
+            for (QName qn : typeName) {
+                this.typeName.add(new TypeNameType(qn));
+            }
+        }
+
+    }
+    
+    /**
      * Gets the value of the typeName property.
      * 
      */
+    @Override
     public List<TypeNameType> getTypeName() {
         if (typeName == null) {
             typeName = new ArrayList<TypeNameType>();
@@ -84,6 +115,7 @@ public class DescribeRecordType extends RequestBaseType implements DescribeRecor
         return this.typeName;
     }
 
+    @Override
     public void setTypeName(final List<QName> typeNames) {
         if (typeName == null) {
             typeName = new ArrayList<TypeNameType>();
@@ -98,6 +130,7 @@ public class DescribeRecordType extends RequestBaseType implements DescribeRecor
      * Gets the value of the outputFormat property.
      * 
      */
+    @Override
     public String getOutputFormat() {
         if (outputFormat == null) {
             return "text/xml";
@@ -110,6 +143,7 @@ public class DescribeRecordType extends RequestBaseType implements DescribeRecor
      * Sets the value of the outputFormat property.
      * 
      */
+    @Override
     public void setOutputFormat(final String value) {
         this.outputFormat = value;
     }
@@ -118,6 +152,7 @@ public class DescribeRecordType extends RequestBaseType implements DescribeRecor
      * Gets the value of the schemaLanguage property.
      * 
      */
+    @Override
     public String getSchemaLanguage() {
         if (schemaLanguage == null) {
             return "http://www.w3.org/XML/Schema";
@@ -130,6 +165,7 @@ public class DescribeRecordType extends RequestBaseType implements DescribeRecor
      * Sets the value of the schemaLanguage property.
      * 
      */
+    @Override
     public void setSchemaLanguage(final String value) {
         this.schemaLanguage = value;
     }

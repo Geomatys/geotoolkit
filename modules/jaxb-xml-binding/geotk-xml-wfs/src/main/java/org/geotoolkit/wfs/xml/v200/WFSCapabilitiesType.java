@@ -20,6 +20,8 @@ package org.geotoolkit.wfs.xml.v200;
 
 import javax.xml.bind.annotation.*;
 import org.geotoolkit.ogc.xml.v200.FilterCapabilities;
+import org.geotoolkit.ows.xml.AbstractCapabilitiesBase;
+import org.geotoolkit.ows.xml.Sections;
 import org.geotoolkit.ows.xml.v110.CapabilitiesBaseType;
 import org.geotoolkit.ows.xml.v110.OperationsMetadata;
 import org.geotoolkit.ows.xml.v110.ServiceIdentification;
@@ -119,6 +121,7 @@ public class WFSCapabilitiesType extends CapabilitiesBaseType implements WFSResp
      *     {@link FeatureTypeListType }
      *     
      */
+    @Override
     public FeatureTypeListType getFeatureTypeList() {
         return featureTypeList;
     }
@@ -157,6 +160,27 @@ public class WFSCapabilitiesType extends CapabilitiesBaseType implements WFSResp
      */
     public void setFilterCapabilities(FilterCapabilities value) {
         this.filterCapabilities = value;
+    }
+
+    @Override
+    public AbstractCapabilitiesBase applySections(final Sections sections) {
+        FeatureTypeListType ftl     = null;
+        OperationsMetadata om       = null;
+        ServiceProvider sp          = null;
+        ServiceIdentification si    = null;
+        if (sections.containsSection("featureTypeList") || sections.containsSection("All")) {
+            ftl = featureTypeList;
+        }
+        if (sections.containsSection("operationsMetadata")|| sections.containsSection("All")) {
+            om =  getOperationsMetadata();
+        }
+        if (sections.containsSection("serviceProvider")|| sections.containsSection("All")) {
+            sp = getServiceProvider();
+        }
+        if (sections.containsSection("serviceIdentification")|| sections.containsSection("All")) {
+            si = getServiceIdentification();
+        }
+        return new WFSCapabilitiesType("2.0.0", si, sp, om, ftl, filterCapabilities);
     }
 
 

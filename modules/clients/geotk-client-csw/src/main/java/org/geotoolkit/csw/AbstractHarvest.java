@@ -26,7 +26,8 @@ import javax.xml.bind.Marshaller;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.Duration;
-import org.geotoolkit.csw.xml.v202.HarvestType;
+import org.geotoolkit.csw.xml.CswXmlFactory;
+import org.geotoolkit.csw.xml.Harvest;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.temporal.object.DefaultPeriodDuration;
 import org.geotoolkit.temporal.object.TemporalUtilities;
@@ -183,7 +184,7 @@ public class AbstractHarvest extends AbstractCSWRequest implements HarvestReques
                         Integer.parseInt(periodDuration.getHours().toString()),
                         Integer.parseInt(periodDuration.getMinutes().toString()),
                         Integer.parseInt(periodDuration.getSeconds().toString()));
-            final HarvestType harvestXml = new HarvestType("CSW", version, source, resourceType,
+            final Harvest harvestXml = CswXmlFactory.createHarvest(version, "CSW", source, resourceType,
                     resourceFormat, responseHandler, duration);
             marsh.marshal(harvestXml, stream);
         } catch (DatatypeConfigurationException ex) {

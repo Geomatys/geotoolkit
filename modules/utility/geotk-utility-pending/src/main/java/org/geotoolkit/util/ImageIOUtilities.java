@@ -20,6 +20,7 @@ package org.geotoolkit.util;
 
 import java.awt.image.RenderedImage;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Locale;
@@ -27,14 +28,17 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.IIOException;
 import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
 import javax.imageio.ImageWriter;
 import javax.imageio.spi.IIORegistry;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.spi.ImageWriterSpi;
+import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.ImageOutputStream;
 import org.geotoolkit.lang.Static;
 
 import static org.geotoolkit.util.ArgumentChecks.*;
+import org.geotoolkit.util.logging.Logging;
 
 
 /**
@@ -45,6 +49,8 @@ import static org.geotoolkit.util.ArgumentChecks.*;
  * @module pending
  */
 public final class ImageIOUtilities extends Static {
+
+    private static final Logger LOGGER = Logging.getLogger(ImageIOUtilities.class);
 
     private ImageIOUtilities(){}
 
@@ -207,6 +213,30 @@ public final class ImageIOUtilities extends Static {
             }
         }
         throw new IIOException("No available image reader able to handle the mime type specified: "+ mimeType);
+    }
+
+    /**
+     * Close reader and close input if it's an ImageInputStream or InputStream.
+     * @param reader
+     */
+    public static void releaseReader(ImageReader reader){
+        if(reader == null) return;
+
+        Object readerinput = reader.getInput();
+        if(readerinput instanceof InputStream){
+            try {
+                ((InputStream)readerinput).close();
+            } catch (IOException ex) {
+                LOGGER.log(Level.INFO, ex.getMessage(),ex);
+            }
+        }else if(readerinput instanceof ImageInputStream){
+            try {
+                ((ImageInputStream)readerinput).close();
+            } catch (IOException ex) {
+                LOGGER.log(Level.INFO, ex.getMessage(),ex);
+            }
+        }
+        reader.dispose();
     }
 
 }
