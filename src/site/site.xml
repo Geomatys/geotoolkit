@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/DECORATION/1.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/DECORATION/1.0.0
+                             http://maven.apache.org/xsd/decoration-1.0.0.xsd">
+  <bannerLeft>
+    <name>Geotoolkit.org</name>
+    <alt>Geotoolkit.org</alt>
+    <src>http://www.geotoolkit.org/images/logos/Geotoolkit.png</src>
+    <href>http://www.geotoolkit.org/index.html</href>
+  </bannerLeft>
+
+  <body>
+    <!-- ==================================================== -->
+    <!--     Links to appears just below the right banner     -->
+    <!-- ==================================================== -->
+    <links>
+      <item name="OGC"     href="http://www.opengeospatial.org"/>
+      <item name="OSGEO"   href="http://www.osgeo.org"         />
+      <item name="GeoAPI"  href="http://www.geoapi.org"/>
+      <item name="Javadoc" href="http://javadoc.geotoolkit.org"/>
+    </links>
+
+    <!-- ==================================================== -->
+    <!--     Menus to appears on the left side of each page   -->
+    <!-- ==================================================== -->
+    <menu name="Quick links" inherit="none">
+      <item name="Download"        href="http://jenkins.geotoolkit.org/job/Geotoolkit-pending"/>
+      <item name="Javadoc"         href="http://javadoc.geotoolkit.org"/>
+      <item name="Developer guide (FR)" href="./book/fr.xhtml"/>
+      <item name="Developer guide (EN)" href="./book/en.xhtml"/>
+      <item name="Mailing list"    href="http://www.geotoolkit.org/mail-lists.html"/>
+    </menu>
+
+    <menu ref="modules" inherit="bottom"/> <!-- Replaced by menu for submodules. -->
+    <menu ref="reports" inherit="bottom"/> <!-- Replaced by menus for any configured reports (mailing lists, etc.) -->
+
+  </body>
+</project>
