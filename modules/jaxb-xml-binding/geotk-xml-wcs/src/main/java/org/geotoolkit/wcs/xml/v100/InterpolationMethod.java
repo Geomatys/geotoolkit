@@ -78,6 +78,7 @@ public enum InterpolationMethod implements org.geotoolkit.wcs.xml.InterpolationM
                     return c;
                 }
             }
+            throw new IllegalArgumentException("Unknow interpolation method:" + v);
         }
         return null;
     }
