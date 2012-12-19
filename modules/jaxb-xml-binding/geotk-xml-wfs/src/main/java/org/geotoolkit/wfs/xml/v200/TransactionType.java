@@ -130,6 +130,7 @@ public class TransactionType extends BaseRequestType implements Transaction {
         return this.abstractTransactionAction;
     }
 
+    @Override
     public List<Object> getTransactionAction() {
         final List<Object> result = new ArrayList<Object>();
         if (abstractTransactionAction != null) {
