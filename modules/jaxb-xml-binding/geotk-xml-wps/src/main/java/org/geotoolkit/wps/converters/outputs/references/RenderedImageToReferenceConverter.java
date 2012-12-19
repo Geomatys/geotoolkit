@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 import java.util.UUID;
+import javax.imageio.ImageIO;
 import javax.imageio.ImageWriter;
 import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
@@ -85,26 +86,20 @@ public class RenderedImageToReferenceConverter extends AbstractReferenceOutputCo
         reference.setSchema((String) params.get(SCHEMA));
 
         final String mime = (String) params.get(MIME) != null ? (String) params.get(MIME) : "image/png";
-        
+        final String formatName = mime.substring(mime.indexOf("/")+1).toUpperCase();
         reference.setMimeType(mime);
         reference.setEncoding((String) params.get(ENCODING));
         reference.setSchema((String) params.get(SCHEMA));
 
         final String randomFileName = UUID.randomUUID().toString();
-        ImageWriter writer = null;
         try {
             //create file
             final File imageFile = new File((String) params.get(TMP_DIR_PATH), randomFileName);
-            writer = XImageIO.getWriterByMIMEType(mime, imageFile, source);
-            writer.write(source);
+            ImageIO.write(source, formatName, imageFile);
             reference.setHref((String) params.get(TMP_DIR_URL) + "/" + randomFileName);
             
         } catch (IOException ex) {
-            throw new NonconvertibleObjectException("Error occure during image writing.", ex);
-        } finally {
-            if (writer != null) {
-                writer.dispose();
-            }
+            throw new NonconvertibleObjectException("Error occured during image writing.", ex);
         }
         
         return reference;
