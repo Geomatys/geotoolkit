@@ -106,5 +106,5 @@ Running Geotoolkit.org
 +---------------------------------------------+
 
   Note that the version number in the later example is <<<3.20>>> rather <<<3.20-geoapi-3.0>>>
-  because those Geotk modules depend on GeoAPI version <<<3.1-SNAPSHOT>>>, which is not yet
+  because those Geotk modules depend on GeoAPI version <<<3.1-M04>>>, which is not yet
   standardized by OGC.
