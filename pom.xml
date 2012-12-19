@@ -170,7 +170,7 @@
     <javadoc.exclude>
       org.geotoolkit.build:org.geotoolkit.test:org.geotoolkit.demo:org.geotoolkit.maven:org.geotoolkit.openoffice:org.geotoolkit.internal:org.geotoolkit.resources:org.geotoolkit.legacy:org.geotoolkit.metadata.fra:org.opengis:com
     </javadoc.exclude>
-    <geoapi.version>3.1-SNAPSHOT</geoapi.version>
+    <geoapi.version>3.1-M04</geoapi.version>
     <derby.version>10.8.2.2</derby.version> <!-- If updated, need to search occurrences in APT files. -->
     <netcdf.version>4.3.10</netcdf.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

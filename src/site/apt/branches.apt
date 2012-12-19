@@ -11,7 +11,7 @@ Geotoolkit.org branches
 * The JDK7 branch
 
   The JDK7 branch is the current main development branch. This branch implements the interfaces
-  defined in the {{{http://www.geoapi.org/snapshot/index.html}GeoAPI 3.1-SNAPSHOT}} milestones
+  defined in the {{{http://www.geoapi.org/snapshot/index.html}GeoAPI 3.1-M04}} milestone
   and uses some JDK7-specific features like:
 
     * Syntax enhancements, mostly in exceptions handling (<try-with-resources>, <multi-catches>)
@@ -35,7 +35,7 @@ hg update JDK7
   Maven repository.
 
   Like the JDK7 branch, the default branch implements the interfaces defined in the
-  {{{http://www.geoapi.org/snapshot/index.html}GeoAPI 3.1-SNAPSHOT}} milestones.
+  {{{http://www.geoapi.org/snapshot/index.html}GeoAPI 3.1-M04}} milestones.
 
 
 
