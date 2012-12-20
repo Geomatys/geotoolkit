@@ -16,21 +16,20 @@
  */
 package org.geotoolkit.wps.converters.outputs.references;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.UUID;
-import javax.imageio.ImageIO;
-import javax.imageio.ImageWriter;
+import net.iharder.Base64;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageIO;
 import org.geotoolkit.coverage.io.CoverageStoreException;
-import org.geotoolkit.coverage.io.GridCoverageWriteParam;
-import org.geotoolkit.coverage.io.GridCoverageWriter;
-import org.geotoolkit.image.io.XImageIO;
+import org.geotoolkit.util.FileUtilities;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
+import org.geotoolkit.wps.io.WPSEncoding;
 import org.geotoolkit.wps.io.WPSIO;
+import org.geotoolkit.wps.io.WPSMimeType;
 import org.geotoolkit.wps.xml.v100.InputReferenceType;
 import org.geotoolkit.wps.xml.v100.OutputReferenceType;
 import org.geotoolkit.wps.xml.v100.ReferenceType;
@@ -61,7 +60,7 @@ public class CoverageToReferenceConverter extends AbstractReferenceOutputConvert
     }
     
     /**
-     * {@inheritDoc}
+     * {@inheritDoc} 
      */
     @Override
     public ReferenceType convert(final GridCoverage2D source, final Map<String, Object> params) throws NonconvertibleObjectException {
@@ -86,34 +85,43 @@ public class CoverageToReferenceConverter extends AbstractReferenceOutputConvert
             reference = new OutputReferenceType();
         }
 
-        reference.setMimeType((String) params.get(MIME));
-        reference.setEncoding((String) params.get(ENCODING));
+        final String encodingStr = (String) params.get(ENCODING);
+        final String mimeStr = (String) params.get(MIME) != null ? (String) params.get(MIME) : WPSMimeType.IMG_GEOTIFF.val();
+        final WPSMimeType mime = WPSMimeType.customValueOf(mimeStr);
+        
+        if (!mime.equals(WPSMimeType.IMG_GEOTIFF) && !mime.equals(WPSMimeType.IMG_GEOTIFF_BIS)) {
+            throw new NonconvertibleObjectException("Only support geotiff writing.");
+        }
+        
+        reference.setMimeType(mimeStr);
+        reference.setEncoding(encodingStr);
         reference.setSchema((String) params.get(SCHEMA));
-
+       
+        final String formatName = "GEOTIFF";
         final String randomFileName = UUID.randomUUID().toString();
-        GridCoverageWriter writer = null;
 
         try {
-            final File imageFile = new File((String) params.get(TMP_DIR_PATH), randomFileName);
-            ImageWriter imgWriter = XImageIO.getWriterByMIMEType(reference.getMimeType(), imageFile, source.getRenderedImage());
             
-            //CoverageIO.write(source, reference.getMimeType(), imageFile); 
-            writer = CoverageIO.createSimpleWriter(imgWriter);           
-            writer.write(source, null);
+            final File imageFile = new File((String) params.get(TMP_DIR_PATH), randomFileName);
+            
+            if (encodingStr != null && encodingStr.equals(WPSEncoding.BASE64.getValue())) {
+                final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                CoverageIO.write(source, formatName, baos);
+                baos.flush();
+                byte[] bytesOut = baos.toByteArray();
+                FileUtilities.stringToFile(imageFile, Base64.encodeBytes(bytesOut));
+                baos.close();
+                
+            } else {
+                CoverageIO.write(source, formatName, imageFile); 
+            }
+            
             reference.setHref((String) params.get(TMP_DIR_URL) + "/" +randomFileName);
             
+        } catch (IOException ex) {
+            throw new NonconvertibleObjectException("Error during writing the coverage in the output file.",ex);
         } catch (CoverageStoreException ex) {
             throw new NonconvertibleObjectException("Error during writing the coverage in the output file.",ex);
-        } catch (IOException ex) {
-            throw new NonconvertibleObjectException("No writer found for mime type "+reference.getMimeType(), ex);
-        } finally {
-            if (writer != null) {
-                try {
-                    writer.dispose();
-                } catch (CoverageStoreException ex) {
-                    throw new NonconvertibleObjectException("Error during release the coverage writer.",ex);
-                }
-            }
         }
 
         return reference;

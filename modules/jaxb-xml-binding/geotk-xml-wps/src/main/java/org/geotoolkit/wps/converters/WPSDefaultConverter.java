@@ -5,9 +5,11 @@
 package org.geotoolkit.wps.converters;
 
 import java.util.Map;
+import java.util.logging.Logger;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
+import org.geotoolkit.util.logging.Logging;
 
 /**
  * Default abstract class for {@link WPSObjectConverter}.
@@ -15,6 +17,8 @@ import org.geotoolkit.util.converter.NonconvertibleObjectException;
  */
 public abstract class WPSDefaultConverter<S, T> implements WPSObjectConverter<S, T> {
 
+    protected static final Logger LOGGER = Logging.getLogger(WPSObjectConverter.class);
+    
     /**
      * Default constructor.
      */

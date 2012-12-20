@@ -21,11 +21,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.imageio.stream.ImageInputStream;
-import javax.imageio.stream.MemoryCacheImageInputStream;
 import net.iharder.Base64;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageIO;
@@ -86,7 +83,5 @@ public class ComplexToCoverageConverter extends AbstractComplexInputConverter {
         } catch (IOException ex) {
             throw new NonconvertibleObjectException(ex.getMessage(), ex);
         }
-        
     }
-    
 }

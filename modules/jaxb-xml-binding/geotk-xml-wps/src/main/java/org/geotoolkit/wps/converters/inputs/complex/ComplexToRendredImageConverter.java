@@ -79,5 +79,4 @@ public class ComplexToRendredImageConverter extends AbstractComplexInputConverte
             throw new NonconvertibleObjectException(ex.getMessage(), ex);
         }
     }
-    
 }
