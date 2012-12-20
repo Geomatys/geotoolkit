@@ -19,9 +19,11 @@ package org.geotoolkit.index.tree;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import junit.framework.Assert;
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.index.tree.io.DefaultTreeVisitor;
+import org.geotoolkit.referencing.crs.DefaultEngineeringCRS;
 import org.geotoolkit.util.ArgumentChecks;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
@@ -114,6 +116,15 @@ public abstract class SpatialTreeTest extends TreeTest{
         final List<Envelope> listSearch = new ArrayList<Envelope>();
         tree.search(gr, new DefaultTreeVisitor(listSearch));
         assertTrue(listSearch.size() == lData.size());
+        try {
+            GeneralEnvelope ge = new GeneralEnvelope(DefaultEngineeringCRS.CARTESIAN_2D);
+            ge.setEnvelope(Double.NaN, 10, 5, Double.NaN);
+            tree.insert(ge);
+            Assert.fail("test should have fail");
+        } catch (Exception ex) {
+            assertTrue(ex instanceof IllegalArgumentException);
+            //ok
+        }
     }
 
     /**
