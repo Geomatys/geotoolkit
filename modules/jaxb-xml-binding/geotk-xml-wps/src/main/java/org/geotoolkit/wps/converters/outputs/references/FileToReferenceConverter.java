@@ -17,7 +17,11 @@
 package org.geotoolkit.wps.converters.outputs.references;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.geotoolkit.util.FileUtilities;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
 import org.geotoolkit.wps.io.WPSIO;
 import org.geotoolkit.wps.xml.v100.InputReferenceType;
@@ -70,13 +74,13 @@ public class FileToReferenceConverter extends AbstractReferenceOutputConverter<F
         reference.setMimeType((String) params.get(MIME));
         reference.setEncoding((String) params.get(ENCODING));
         reference.setSchema((String) params.get(SCHEMA));
-
         final File targetDirectory = new File((String) params.get(TMP_DIR_PATH));
-        boolean success = source.renameTo(new File(targetDirectory, source.getName()));
-        if (!success) {
-            throw new NonconvertibleObjectException("Error during moving file to output directory.");
+        try {
+            FileUtilities.copy(source, new File(targetDirectory, source.getName()));
+            reference.setHref((String) params.get(TMP_DIR_URL) + "/" +source.getName());
+        } catch (IOException ex) {
+            throw new NonconvertibleObjectException("Error during moving file to output directory.", ex);
         }
-        reference.setHref((String) params.get(TMP_DIR_URL) + "/" +source.getName());
 
         return reference;
     }
