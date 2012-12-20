@@ -31,7 +31,7 @@ import org.geotoolkit.xml.IdentifierMap;
 import org.geotoolkit.xml.IdentifierSpace;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.Utilities;
-import org.geotoolkit.internal.Citations;
+import org.apache.sis.internal.util.Citations;
 
 
 /**

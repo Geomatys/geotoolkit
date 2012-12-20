@@ -52,7 +52,7 @@ import org.geotoolkit.util.Strings;
 import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.util.converter.Numbers;
 import org.geotoolkit.internal.InternalUtilities;
-import org.geotoolkit.internal.Citations;
+import org.apache.sis.internal.util.Citations;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.resources.Errors;
 

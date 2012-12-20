@@ -47,7 +47,7 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.gui.swing.tree.TreeFormat;
 import org.geotoolkit.image.io.WarningProducer;
-import org.geotoolkit.internal.CodeLists;
+import org.apache.sis.util.iso.Types;
 import org.geotoolkit.internal.image.io.Warnings;
 import org.geotoolkit.internal.jaxb.XmlUtilities;
 import org.geotoolkit.measure.Units;
@@ -1069,7 +1069,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      */
     public <T extends CodeList<T>> T getAttributeAsCode(final String attribute, final Class<T> codeType) {
         final String value = getAttribute(attribute);
-        final T code = CodeLists.valueOf(codeType, value, false);
+        final T code = Types.forCodeName(codeType, value, false);
         if (code == null && value != null) {
             warning("getAttributeAsCode", Errors.Keys.ILLEGAL_PARAMETER_VALUE_$2, attribute, value);
         }

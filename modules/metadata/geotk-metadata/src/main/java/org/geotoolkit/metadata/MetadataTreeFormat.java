@@ -56,7 +56,7 @@ import org.geotoolkit.gui.swing.tree.DefaultMutableTreeNode;
 import org.geotoolkit.gui.swing.tree.TreeFormat;
 import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.internal.InternalUtilities;
-import org.geotoolkit.internal.CodeLists;
+import org.apache.sis.util.iso.Types;
 import org.geotoolkit.resources.Errors;
 
 import static org.geotoolkit.metadata.AbstractMetadata.LOGGER;
@@ -752,7 +752,7 @@ public class MetadataTreeFormat extends Format {
                     } else if (element instanceof InternationalString) {
                         name = ((InternationalString) element).toString(displayLocale);
                     } else if (element instanceof CodeList<?>) {
-                        name = CodeLists.localize((CodeList<?>) element, displayLocale);
+                        name = Types.getCodeTitle((CodeList<?>) element, displayLocale);
                     } else {
                         name = element.toString();
                     }

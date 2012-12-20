@@ -34,7 +34,7 @@ import org.opengis.metadata.Identifier;
 import org.opengis.referencing.IdentifiedObject;
 
 import org.geotoolkit.io.X364;
-import org.geotoolkit.internal.Citations;
+import org.apache.sis.internal.util.Citations;
 
 import static org.geotoolkit.io.X364.*;
 import static org.geotoolkit.util.Strings.spaces;

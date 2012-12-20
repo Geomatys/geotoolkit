@@ -19,7 +19,7 @@ package org.geotoolkit.internal.jaxb.code;
 
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 import org.opengis.util.CodeList;
-import org.geotoolkit.internal.CodeLists;
+import org.apache.sis.util.iso.Types;
 
 
 /**
@@ -118,7 +118,7 @@ public abstract class CodeListAdapter<ValueType extends CodeListAdapter<ValueTyp
         if (adapter == null) {
             return null;
         }
-        return CodeLists.valueOf(getCodeListClass(), adapter.proxy.identifier());
+        return Types.forCodeName(getCodeListClass(), adapter.proxy.identifier(), true);
     }
 
     /**
@@ -133,7 +133,7 @@ public abstract class CodeListAdapter<ValueType extends CodeListAdapter<ValueTyp
         if (value == null) {
             return null;
         }
-        return wrap(isEnum() ? new CodeListProxy(CodeLists.identifier(value)) : new CodeListProxy(value));
+        return wrap(isEnum() ? new CodeListProxy(Types.getCodeName(value)) : new CodeListProxy(value));
     }
 
     /**

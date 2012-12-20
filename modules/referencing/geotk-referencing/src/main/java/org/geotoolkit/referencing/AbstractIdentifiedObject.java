@@ -52,7 +52,7 @@ import org.geotoolkit.util.LenientComparable;
 import org.geotoolkit.util.DefaultInternationalString;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.converter.Classes;
-import org.geotoolkit.internal.Citations;
+import org.apache.sis.internal.util.Citations;
 import org.geotoolkit.internal.jaxb.gco.StringConverter;
 import org.geotoolkit.internal.jaxb.referencing.RS_Identifier;
 import org.geotoolkit.io.wkt.FormattableObject;
@@ -502,13 +502,13 @@ nextKey:for (final Map.Entry<String,?> entry : properties.entrySet()) {
      *   <li><p>If the name or alias implements the {@link ReferenceIdentifier} interface,
      *       then this method compares the {@linkplain ReferenceIdentifier#getAuthority()
      *       identifier authority} against the specified citation using the
-     *       {@link Citations#identifierMatches(Citation,Citation) identifierMatches}
+     *       {@link org.geotoolkit.metadata.iso.citation.Citations#identifierMatches(Citation,Citation) identifierMatches}
      *       method. If a matching is found, then this method returns the
      *       {@linkplain ReferenceIdentifier#getCode identifier code} of this object.</p></li>
      *
      *   <li><p>Otherwise, if the alias implements the {@link GenericName} interface, then this
      *       method compares the {@linkplain GenericName#scope name scope} against the specified
-     *       citation using the {@linkplain Citations#identifierMatches(Citation,String)
+     *       citation using the {@linkplain org.geotoolkit.metadata.iso.citation.Citations#identifierMatches(Citation,String)
      *       identifierMatches} method. If a matching is found, then this method returns the
      *       {@linkplain GenericName#tip name tip} of this object.</p></li>
      * </ul>

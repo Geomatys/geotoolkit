@@ -27,7 +27,7 @@ import javax.xml.bind.annotation.XmlValue;
 import org.opengis.util.CodeList;
 
 import org.geotoolkit.util.logging.Logging;
-import org.geotoolkit.internal.CodeLists;
+import org.apache.sis.util.iso.Types;
 import org.geotoolkit.internal.jaxb.MarshalContext;
 import org.geotoolkit.resources.Locales;
 
@@ -145,8 +145,8 @@ public final class CodeListProxy {
      * @param code The code list to wrap.
      */
     public CodeListProxy(final CodeList<?> code) {
-        final String classID = CodeLists.classname(code);
-        final String fieldID = CodeLists.identifier(code);
+        final String classID = Types.getListName(code);
+        final String fieldID = Types.getCodeName(code);
         codeList = schemaURL("gmxCodelists.xml", classID);
 
         // Get the localized name of the field identifier, if possible.
@@ -166,7 +166,7 @@ public final class CodeListProxy {
             // Fallback when no value is defined for the code list. Build a value from the
             // most descriptive name (excluding the field name), which is usually the UML
             // name except for CharacterSet in which case it is a string like "UTF-8".
-            value = CodeLists.sentence(code);
+            value = Types.getCodeTitle(code);
         }
         codeListValue = fieldID;
     }

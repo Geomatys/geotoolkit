@@ -34,7 +34,7 @@ import org.opengis.annotation.UML;
 import org.opengis.util.CodeList;
 
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.internal.CodeLists;
+import org.apache.sis.util.iso.Types;
 import org.geotoolkit.internal.sql.SQLBuilder;
 import org.geotoolkit.internal.sql.StatementPool;
 import org.geotoolkit.internal.sql.DefaultDataSource;
@@ -487,7 +487,7 @@ public class MetadataSource implements AutoCloseable {
      */
     @SuppressWarnings({"unchecked","rawtypes"})
     private static CodeList<?> getCodeList(final Class<?> type, final String name) {
-        return CodeLists.valueOf((Class) type, name);
+        return Types.forCodeName((Class) type, name, true);
     }
 
     /**

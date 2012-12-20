@@ -31,7 +31,7 @@ import org.opengis.util.CodeList;
 import org.opengis.metadata.citation.Citation;
 
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.internal.CodeLists;
+import org.apache.sis.util.iso.Types;
 import org.geotoolkit.internal.jaxb.XmlUtilities;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.converter.Classes;
@@ -525,7 +525,7 @@ public class MetadataNodeAccessor extends MetadataNodeParser {
      * @since 3.06
      */
     public void setAttribute(final String attribute, final CodeList<?> value) {
-        setAttribute(attribute, CodeLists.identifier(value));
+        setAttribute(attribute, Types.getCodeName(value));
     }
 
     /**

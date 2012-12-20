@@ -72,7 +72,7 @@ import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.naming.DefaultNameSpace;
 import org.geotoolkit.image.io.WarningProducer;
-import org.geotoolkit.internal.CodeLists;
+import org.apache.sis.util.iso.Types;
 import org.geotoolkit.internal.image.io.Warnings;
 import org.geotoolkit.internal.image.io.NetcdfVariable;
 import org.geotoolkit.metadata.iso.DefaultMetadata;
@@ -552,7 +552,7 @@ public class NetcdfMetadataReader extends NetcdfMetadata {
         if (individualName == null && organisationName == null && email == null && url == null) {
             return null;
         }
-        Role role = CodeLists.valueOf(Role.class, getStringValue(group, keys.ROLE));
+        Role role = Types.forCodeName(Role.class, getStringValue(group, keys.ROLE), true);
         if (role == null) {
             role = isPointOfContact ? Role.POINT_OF_CONTACT : keys.DEFAULT_ROLE;
         }
@@ -676,8 +676,8 @@ public class NetcdfMetadataReader extends NetcdfMetadata {
                 if (identification == null) {
                     identification = new DefaultDataIdentification();
                 }
-                if (topic    != null) addIfAbsent(identification.getTopicCategories(), CodeLists.valueOf(TopicCategory.class, topic));
-                if (type     != null) addIfAbsent(identification.getSpatialRepresentationTypes(), CodeLists.valueOf(SpatialRepresentationType.class, type));
+                if (topic    != null) addIfAbsent(identification.getTopicCategories(), Types.forCodeName(TopicCategory.class, topic, true));
+                if (type     != null) addIfAbsent(identification.getSpatialRepresentationTypes(), Types.forCodeName(SpatialRepresentationType.class, type, true));
                 if (standard != null) addIfAbsent(identification.getDescriptiveKeywords(), standard);
                 if (keywords != null) addIfAbsent(identification.getDescriptiveKeywords(), keywords);
                 if (credits  != null) addIfAbsent(identification.getCredits(), credits);
@@ -688,7 +688,7 @@ public class NetcdfMetadataReader extends NetcdfMetadata {
                             if (constraints == null) {
                                 identification.getResourceConstraints().add(constraints = new DefaultLegalConstraints());
                             }
-                            addIfAbsent(constraints.getAccessConstraints(), CodeLists.valueOf(Restriction.class, token));
+                            addIfAbsent(constraints.getAccessConstraints(), Types.forCodeName(Restriction.class, token, true));
                         }
                     }
                 }
@@ -731,7 +731,7 @@ public class NetcdfMetadataReader extends NetcdfMetadata {
     {
         if (words != null) {
             final DefaultKeywords keywords = new DefaultKeywords(words);
-            keywords.setType(CodeLists.valueOf(KeywordType.class, type));
+            keywords.setType(Types.forCodeName(KeywordType.class, type, true));
             addTo.getDescriptiveKeywords().add(keywords);
         }
     }

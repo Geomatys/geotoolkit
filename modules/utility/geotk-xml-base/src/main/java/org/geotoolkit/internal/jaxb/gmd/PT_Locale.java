@@ -29,7 +29,7 @@ import org.opengis.metadata.identification.CharacterSet;
 
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.resources.Locales;
-import org.geotoolkit.internal.CodeLists;
+import org.apache.sis.util.iso.Types;
 import org.geotoolkit.internal.jaxb.MarshalContext;
 import org.geotoolkit.internal.jaxb.code.MD_CharacterSetCode;
 
@@ -146,7 +146,7 @@ public final class PT_Locale extends XmlAdapter<PT_Locale, Locale> {
                 return;
             }
             if (encoding instanceof String) {
-                characterEncoding = CodeLists.valueOf(CharacterSet.class, (String) encoding);
+                characterEncoding = Types.forCodeName(CharacterSet.class, (String) encoding, true);
             }
         }
     }

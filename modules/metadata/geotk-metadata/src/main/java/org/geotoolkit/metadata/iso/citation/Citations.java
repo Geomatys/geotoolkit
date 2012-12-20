@@ -626,7 +626,7 @@ public final class Citations extends Static {
     public static boolean titleMatches(final Citation c1, final Citation c2) {
         ArgumentChecks.ensureNonNull("c1", c1);
         ArgumentChecks.ensureNonNull("c2", c2);
-        return org.geotoolkit.internal.Citations.titleMatches(c1, c2);
+        return org.apache.sis.internal.util.Citations.titleMatches(c1, c2);
     }
 
     /**
@@ -642,7 +642,7 @@ public final class Citations extends Static {
     public static boolean titleMatches(final Citation citation, String title) {
         ArgumentChecks.ensureNonNull("citation", citation);
         ArgumentChecks.ensureNonNull("title", title);
-        return org.geotoolkit.internal.Citations.titleMatches(citation, title);
+        return org.apache.sis.internal.util.Citations.titleMatches(citation, title);
     }
 
     /**
@@ -662,7 +662,7 @@ public final class Citations extends Static {
     public static boolean identifierMatches(final Citation c1, final Citation c2) {
         ArgumentChecks.ensureNonNull("c1", c1);
         ArgumentChecks.ensureNonNull("c2", c2);
-        return org.geotoolkit.internal.Citations.identifierMatches(c1, c2);
+        return org.apache.sis.internal.util.Citations.identifierMatches(c1, c2);
     }
 
     /**
@@ -680,7 +680,7 @@ public final class Citations extends Static {
     public static boolean identifierMatches(final Citation citation, final String identifier) {
         ArgumentChecks.ensureNonNull("citation", citation);
         ArgumentChecks.ensureNonNull("identifier", identifier);
-        return org.geotoolkit.internal.Citations.identifierMatches(citation, identifier);
+        return org.apache.sis.internal.util.Citations.identifierMatches(citation, identifier);
     }
 
     /**
@@ -695,6 +695,6 @@ public final class Citations extends Static {
      * @since 2.4
      */
     public static String getIdentifier(final Citation citation) {
-        return org.geotoolkit.internal.Citations.getIdentifier(citation);
+        return org.apache.sis.internal.util.Citations.getIdentifier(citation);
     }
 }

@@ -54,7 +54,7 @@ import org.geotoolkit.util.Strings;
 import org.geotoolkit.util.Version;
 import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.image.io.WarningProducer;
-import org.geotoolkit.internal.CodeLists;
+import org.apache.sis.util.iso.Types;
 import org.geotoolkit.internal.image.io.Warnings;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.resources.Errors;
@@ -358,7 +358,7 @@ public class NetcdfMetadataWriter extends NetcdfMetadata {
      * @throws IOException If an I/O operation was required and failed.
      */
     private boolean setAttribute(final CodeList<?> code) throws IOException {
-        return (code != null) && setAttribute(CodeLists.identifier(code));
+        return (code != null) && setAttribute(Types.getCodeName(code));
     }
 
     /**
@@ -689,7 +689,7 @@ nextDate:       for (final CitationDate date : nonNull(citation.getDates())) {
             }
             if (constraint instanceof LegalConstraints) {
                 for (final Restriction r : nonNull(((LegalConstraints) constraint).getAccessConstraints())) {
-                    restrictions = addTo(restrictions, CodeLists.identifier(r));
+                    restrictions = addTo(restrictions, Types.getCodeName(r));
                 }
             }
         }

@@ -24,7 +24,7 @@ import net.jcip.annotations.Immutable;
 
 import org.opengis.referencing.cs.AxisDirection;
 
-import org.geotoolkit.internal.CodeLists;
+import org.apache.sis.util.iso.Types;
 import org.geotoolkit.internal.referencing.AxisDirections;
 
 
@@ -176,7 +176,7 @@ final class DirectionAlongMeridian implements Comparable<DirectionAlongMeridian>
                  */
                 direction = Directions.find(name);
                 if (direction == null) {
-                    direction = CodeLists.valueOf(AxisDirection.class, name);
+                    direction = Types.forCodeName(AxisDirection.class, name, true);
                 }
                 this.direction = direction;
             }

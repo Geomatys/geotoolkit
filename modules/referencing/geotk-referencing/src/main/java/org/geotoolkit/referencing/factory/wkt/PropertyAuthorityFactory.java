@@ -39,7 +39,7 @@ import org.opengis.referencing.datum.DatumAuthorityFactory;
 
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.io.wkt.Symbols;
-import org.geotoolkit.internal.Citations;
+import org.apache.sis.internal.util.Citations;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.util.logging.Logging;
 
