@@ -18,6 +18,7 @@ package org.geotoolkit.wps.converters;
 
 import com.vividsolutions.jts.geom.Geometry;
 import java.awt.image.RenderedImage;
+import java.net.URI;
 import java.net.URL;
 import java.util.List;
 import java.util.*;
@@ -36,6 +37,7 @@ import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeWriter;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.mathml.xml.*;
 import org.geotoolkit.ows.xml.v110.DomainMetadataType;
+import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.util.converter.ConverterRegistry;
@@ -47,6 +49,7 @@ import org.geotoolkit.wps.xml.v100.OutputReferenceType;
 import org.geotoolkit.wps.xml.v100.ReferenceType;
 import org.geotoolkit.xsd.xml.v2001.Schema;
 import org.opengis.coverage.Coverage;
+import org.opengis.feature.ComplexAttribute;
 import org.opengis.feature.Feature;
 import org.opengis.feature.Property;
 import org.opengis.feature.type.ComplexType;
@@ -56,7 +59,9 @@ import org.opengis.feature.type.Name;
 import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.feature.type.PropertyType;
 import org.opengis.parameter.GeneralParameterDescriptor;
+import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
+import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
 
@@ -516,6 +521,70 @@ public class WPSConvertersUtils {
         JAXBFeatureTypeWriter writer = new JAXBFeatureTypeWriter();
         Schema s = writer.getSchemaFromFeatureType(toGet);
         return s;
+    }
+    
+    /**
+     * Convert a feature into a ParameterValueGroup.
+     * 
+     * This function will try to convert objects if their types doesn't match between feature and parameter.
+     * 
+     * @param toConvert The feature to transform.
+     * @param groupTemplate The descriptor of the ParameterValueGroup which will be created.
+     * @return A ParameterValueGroup which contains data of the feature in parameter.
+     */
+    public static ParameterValueGroup featureToParameterGroup(ComplexAttribute toConvert, ParameterDescriptorGroup groupTemplate) throws NonconvertibleObjectException {
+        ArgumentChecks.ensureNonNull("feature", toConvert);
+        ArgumentChecks.ensureNonNull("descriptor", groupTemplate);
+        
+        final WPSConverterRegistry registry = WPSConverterRegistry.getInstance();
+        
+        FeatureUtilities.toParameter(toConvert, groupTemplate);
+        final ParameterValueGroup group = groupTemplate.createValue();
+        
+        for(final GeneralParameterDescriptor gpd : group.getDescriptor().descriptors()){
+
+            final Property prop = toConvert.getProperty(gpd.getName().getCode());
+            if(gpd instanceof ParameterDescriptor) {
+                final ParameterDescriptor desc = (ParameterDescriptor) gpd;
+              if(!prop.getValue().getClass().isAssignableFrom(desc.getValueClass())) {
+                  if(prop.getValue().getClass().isAssignableFrom(URI.class)) {
+                      ReferenceType type = UriToReference((URI)prop.getValue(), WPSIO.IOType.INPUT, null);
+                      WPSObjectConverter converter = registry.getConverter(type.getClass(), desc.getValueClass());
+                      Parameters.getOrCreate(desc, group).setValue(converter.convert(type));
+                  }
+              } else {
+                  Parameters.getOrCreate(desc, group).setValue(prop.getValue());
+              }
+            } else if(gpd instanceof ParameterDescriptorGroup && prop instanceof ComplexAttribute){                
+                featureToParameterGroup((ComplexAttribute)prop, (ParameterDescriptorGroup)gpd);
+                
+            } else {
+                throw new NonconvertibleObjectException();
+            }
+        }
+        return group;
+    }
+    
+    
+    /**
+     * Convert an URI into a wps reference.
+     * @param toConvert The source URI.
+     * @param type The type of reference (input or output), can be null.
+     * @param mimeType Mime type of the data pointed by the URI, can be null.
+     * @return A reference equivalent to the input URI.
+     */
+    public static ReferenceType UriToReference(URI toConvert, WPSIO.IOType type, String mimeType) {
+        ReferenceType ref;
+        if(WPSIO.IOType.INPUT.equals(type)) {
+            ref = new InputReferenceType();
+        } else {
+            ref = new OutputReferenceType();
+        }
+        ref.setHref(toConvert.getPath());
+        ref.setMimeType(mimeType);
+        ref.setEncoding("UTF-8");        
+        
+        return ref;
     }
 
 }
