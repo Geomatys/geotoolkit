@@ -19,6 +19,7 @@ package org.geotoolkit.io;
 
 import java.io.StringWriter;
 import java.io.Writer;
+import org.apache.sis.io.IO;
 
 
 /**
@@ -30,7 +31,10 @@ import java.io.Writer;
  *
  * @since 3.20
  * @module
+ *
+ * @deprecated To remove after we removed the deprecated subclasses.
  */
+@Deprecated
 abstract class FilterWriter extends java.io.FilterWriter {
     /**
      * Create a new filtered writer.
@@ -51,6 +55,10 @@ abstract class FilterWriter extends java.io.FilterWriter {
         }
         if (out instanceof FilterWriter) {
             return ((FilterWriter) out).content();
+        }
+        final CharSequence cs = IO.content(out);
+        if (cs != null) {
+            return cs.toString();
         }
         return null;
     }

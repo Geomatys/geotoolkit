@@ -206,34 +206,7 @@ public enum X364 {
      *         it didn't contained any escape codes.
      */
     public static String plain(final String text) {
-        int i = text.indexOf(START);
-        if (i >= 0) {
-            StringBuilder buffer = null;
-            int last = 0;
-search:     do {
-                final int start = i;
-                i += START.length();
-                final int end = text.indexOf(END, i);
-                if (end < 0) {
-                    break;
-                }
-                while (i < end) {
-                    final char c = text.charAt(i++);
-                    if (c < '0' || c > '9') {
-                        continue search;
-                    }
-                }
-                if (buffer == null) {
-                    buffer = new StringBuilder(text.length() - last);
-                }
-                buffer.append(text, last, start);
-                last = ++i; // The ++ is for skipping the END character.
-            } while ((i = text.indexOf(START, i)) >= 0);
-            if (buffer != null) {
-                return buffer.append(text, last, text.length()).toString();
-            }
-        }
-        return text;
+        return org.apache.sis.internal.util.X364.plain(text, 0, text.length()).toString();
     }
 
     /**
@@ -245,31 +218,7 @@ search:     do {
      * @return The length of the given string without escape codes.
      */
     public static int lengthOfPlain(final String text) {
-        int i = text.indexOf(START);
-        if (i < 0) {
-            return text.length();
-        }
-        int last   = 0;
-        int length = 0;
-search: do {
-            final int start = i;
-            i += START.length();
-            final int end = text.indexOf(END, i);
-            if (end < 0) {
-                break;
-            }
-            while (i < end) {
-                final char c = text.charAt(i++);
-                if (c < '0' || c > '9') {
-                    continue search;
-                }
-            }
-            length += start - last;
-            last = ++i; // The ++ is for skipping the END character.
-        } while ((i = text.indexOf(START, i)) >= 0);
-        length += text.length() - last;
-        assert plain(text).length() == length : text;
-        return length;
+        return org.apache.sis.internal.util.X364.lengthOfPlain(text, 0, text.length());
     }
 
     /**
@@ -286,22 +235,6 @@ search: do {
      *         This method may conservatively returns {@code false} in case of doubt.
      */
     public static boolean isSupported() {
-        String terminal;
-        try {
-            terminal = System.getenv("COLORTERM");
-            if (terminal != null) {
-                // Non-numerical value - don't try to parse that.
-                return true;
-            }
-            terminal = System.getenv("CLICOLOR");
-        } catch (SecurityException e) {
-            return false; // Okay according javadoc.
-        }
-        if (terminal != null) try {
-            return Integer.parseInt(terminal) != 0;
-        } catch (NumberFormatException e) {
-            // Okay to ignore according our javadoc.
-        }
-        return false;
+        return org.apache.sis.internal.util.X364.isAnsiSupported();
     }
 }
