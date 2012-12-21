@@ -35,7 +35,7 @@ import org.opengis.feature.type.FeatureType;
  *
  * @author Quentin Boileau (Geomatys).
  */
-public final class ReferenceToFeatureTypeConverter extends AbstractReferenceInputConverter {
+public final class ReferenceToFeatureTypeConverter extends AbstractReferenceInputConverter<FeatureType> {
 
     private static ReferenceToFeatureTypeConverter INSTANCE;
 
@@ -50,7 +50,7 @@ public final class ReferenceToFeatureTypeConverter extends AbstractReferenceInpu
     }
  
     @Override
-    public Class<? extends Object> getTargetClass() {
+    public Class<? extends FeatureType> getTargetClass() {
         return FeatureType.class;
     }
     

@@ -35,7 +35,7 @@ import org.geotoolkit.wps.xml.v100.ReferenceType;
  * 
  * @author Quentin Boileau (Geomatys).
  */
-public class ReferenceToRenderedImageConverter extends AbstractReferenceInputConverter {
+public class ReferenceToRenderedImageConverter extends AbstractReferenceInputConverter<RenderedImage> {
 
     private static ReferenceToRenderedImageConverter INSTANCE;
 
@@ -50,7 +50,7 @@ public class ReferenceToRenderedImageConverter extends AbstractReferenceInputCon
     }
 
     @Override
-    public Class<? extends Object> getTargetClass() {
+    public Class<? extends RenderedImage> getTargetClass() {
         return RenderedImage.class;
     }
 

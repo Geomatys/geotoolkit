@@ -47,7 +47,7 @@ import org.opengis.feature.type.FeatureType;
  *
  * @author Quentin Boileau (Geomatys).
  */
-public abstract class AbstractReferenceInputConverter extends WPSDefaultConverter<ReferenceType, Object> {
+public abstract class AbstractReferenceInputConverter<T> extends WPSDefaultConverter<ReferenceType, T> {
 
     @Override
     public Class<? super ReferenceType> getSourceClass() {
@@ -55,7 +55,7 @@ public abstract class AbstractReferenceInputConverter extends WPSDefaultConverte
     }
 
     @Override
-    public abstract Class<? extends Object> getTargetClass();
+    public abstract Class<? extends T> getTargetClass();
 
     /**
      * Convert a ReferenceType {@link InputReferenceType input} or {@link OutputReferenceType output} into the requested {@code Object}.
@@ -64,7 +64,7 @@ public abstract class AbstractReferenceInputConverter extends WPSDefaultConverte
      * @throws NonconvertibleObjectException
      */
     @Override
-    public abstract Object convert(final ReferenceType source, Map<String, Object> params) throws NonconvertibleObjectException;
+    public abstract T convert(final ReferenceType source, Map<String, Object> params) throws NonconvertibleObjectException;
 
      /**
      * Get the JAXPStreamFeatureReader to read feature. If there is a schema defined, the JAXPStreamFeatureReader will

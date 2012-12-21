@@ -36,7 +36,7 @@ import org.opengis.util.FactoryException;
  *
  * @author Quentin Boileau (Geomatys).
  */
-public final class ReferenceToGeometryConverter extends AbstractReferenceInputConverter {
+public final class ReferenceToGeometryConverter extends AbstractReferenceInputConverter<Geometry> {
 
     private static ReferenceToGeometryConverter INSTANCE;
 
@@ -51,7 +51,7 @@ public final class ReferenceToGeometryConverter extends AbstractReferenceInputCo
     }
 
     @Override
-    public Class<? extends Object> getTargetClass() {
+    public Class<? extends Geometry> getTargetClass() {
         return Geometry.class;
     }
 

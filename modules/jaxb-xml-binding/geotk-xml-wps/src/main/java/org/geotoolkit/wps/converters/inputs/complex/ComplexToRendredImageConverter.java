@@ -34,7 +34,7 @@ import org.geotoolkit.wps.xml.v100.ComplexDataType;
  * 
  * @author Quentin Boileau (Geomatys)
  */
-public class ComplexToRendredImageConverter extends AbstractComplexInputConverter {
+public class ComplexToRendredImageConverter extends AbstractComplexInputConverter<RenderedImage> {
 
     private static ComplexToRendredImageConverter INSTANCE;
 
@@ -49,7 +49,7 @@ public class ComplexToRendredImageConverter extends AbstractComplexInputConverte
     }
     
     @Override
-    public Class<? extends Object> getTargetClass() {
+    public Class<? extends RenderedImage> getTargetClass() {
         return RenderedImage.class;
     }
 

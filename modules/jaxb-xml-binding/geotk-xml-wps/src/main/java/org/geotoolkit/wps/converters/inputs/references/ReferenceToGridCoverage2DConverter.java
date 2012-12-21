@@ -37,7 +37,7 @@ import org.geotoolkit.wps.xml.v100.ReferenceType;
  *
  * @author Quentin Boileau (Geomatys).
  */
-public final class ReferenceToGridCoverage2DConverter extends AbstractReferenceInputConverter {
+public final class ReferenceToGridCoverage2DConverter extends AbstractReferenceInputConverter<GridCoverage2D> {
 
     private static ReferenceToGridCoverage2DConverter INSTANCE;
 
@@ -52,7 +52,7 @@ public final class ReferenceToGridCoverage2DConverter extends AbstractReferenceI
     }
 
     @Override
-    public Class<? extends Object> getTargetClass() {
+    public Class<? extends GridCoverage2D> getTargetClass() {
         return GridCoverage2D.class;
     }
 

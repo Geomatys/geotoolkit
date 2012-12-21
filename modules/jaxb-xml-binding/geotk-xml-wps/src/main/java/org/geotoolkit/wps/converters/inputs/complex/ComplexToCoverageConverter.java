@@ -36,7 +36,7 @@ import org.geotoolkit.wps.xml.v100.ComplexDataType;
  * 
  * @author Quentin Boileau (Geomatys).
  */
-public class ComplexToCoverageConverter extends AbstractComplexInputConverter {
+public class ComplexToCoverageConverter extends AbstractComplexInputConverter<GridCoverage2D> {
 
     private static ComplexToCoverageConverter INSTANCE;
 
@@ -51,7 +51,7 @@ public class ComplexToCoverageConverter extends AbstractComplexInputConverter {
     }
 
     @Override
-    public Class<? extends Object> getTargetClass() {
+    public Class<? extends GridCoverage2D> getTargetClass() {
         return GridCoverage2D.class;
     }
 
