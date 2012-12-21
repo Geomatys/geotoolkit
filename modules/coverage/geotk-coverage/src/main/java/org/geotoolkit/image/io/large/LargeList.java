@@ -28,16 +28,22 @@ public class LargeList {
     LinkedList<LargeRaster> list;
     private static String TEMPORARY_PATH = System.getProperty("java.io.tmpdir");
     private static String FORMAT = "tiff";
+    private final int numXTiles;
+    private final int numYTiles;
 //    File temp = new File(System.getProperty("java.io.tmpdir"));
     String dirPath;
     ColorModel cm;
 
-    public LargeList(String directoryName, long memoryCapacity, ColorModel cm) {
+    public LargeList(String directoryName, long memoryCapacity, int numXTiles, int numYTiles, ColorModel cm) {
         this.list           = new LinkedList<LargeRaster>();
         this.memoryCapacity = memoryCapacity;
         this.cm = cm;
         this.remainingCapacity = memoryCapacity;
+        this.numXTiles = numXTiles;
+        this.numYTiles = numYTiles;
         this.dirPath = TEMPORARY_PATH+"/"+directoryName;
+//        //quad tree
+//        create4rchitecture(dirPath, numXTiles, numYTiles);
     }
 
     public void add(int x, int y, WritableRaster raster) throws IOException {
@@ -50,10 +56,13 @@ public class LargeList {
             final WritableRaster r = lr.getRaster();
             remainingCapacity   += lr.getWeight();
 
+//            //quad tree
+//            writeRaster(lr);
+
             final File dirFile   = new File(dirPath);
             if (!dirFile.exists()) {
                 dirFile.mkdir();
-                dirFile.deleteOnExit();
+//                dirFile.deleteOnExit();//le temp de voir 4 tree
             }
 
             final StringBuilder sb = new StringBuilder(dirPath);
@@ -63,7 +72,6 @@ public class LargeList {
             sb.append(lr.getGridY());
             sb.append(".");
             sb.append(FORMAT);
-//            final String wrPath = dirPath+"/"+lr.getGridX()+"_"+lr.getGridY()+".tiff";
             final String wrPath = sb.toString();
             final File wrFile = new File(wrPath);
             if (!wrFile.exists()) {
@@ -92,8 +100,9 @@ public class LargeList {
         sb.append(y);
         sb.append(".");
         sb.append(FORMAT);
-//        final File removeFile = new File(dirPath+"/"+x+"_"+y+".tiff");
         final File removeFile = new File(sb.toString());
+//        //quad tree
+//        final File removeFile = new File(getPath(x, y));
         if (removeFile.exists()) removeFile.delete();
     }
 
@@ -111,8 +120,10 @@ public class LargeList {
         sb.append(y);
         sb.append(".");
         sb.append(FORMAT);
-//        final File getFile = new File(dirPath+"/"+x+"_"+y+".tiff");
         final File getFile = new File(sb.toString());
+//        //quad tree
+//        final File getFile = new File(getPath(x, y));
+
         if (getFile.exists()) {
             ImageReader imgRead = XImageIO.getReaderByFormatName(FORMAT, getFile, Boolean.FALSE, Boolean.TRUE);
             BufferedImage buff = imgRead.read(0);
@@ -188,6 +199,118 @@ public class LargeList {
         imgWriter.dispose();
     }
 
+    //a debugger le quad tree
+
+
+//    private void create4rchitecture(String path, int numXTiles, int numYTiles) {
+//        if (numXTiles <= 2 && numYTiles <= 2) {
+//            return;
+//        }
+//        //ensuite plusieur cas
+//        //3 cas
+//        //width et height sup a 2 faire 4 sous dossiers
+//        //width == 1 faire 2 sous dossiers
+//        //height ==1 faire 2 sous dossiers
+//        if (numXTiles == 1) {
+//            //on decoupe dans la hauteur
+//            int nyt = (numYTiles+1)/2;
+//            //on creer 2 dossiers
+//            String path0 = path+"/0";
+//            new File(path0).mkdirs();
+//            create4rchitecture(path0, numXTiles, nyt);
+//            String path1 = path+"/1";
+//            new File(path1).mkdirs();
+//            create4rchitecture(path1, numXTiles, numYTiles-nyt);
+//        } else if (numYTiles == 1) {
+//            //on decoupe dans la longueur
+//            int nxt = (numXTiles+1)/2;
+//            //on creer 2 dossiers
+//            String path0 = path+"/0";
+//            new File(path0).mkdirs();
+//            create4rchitecture(path0, nxt, numYTiles);
+//            String path1 = path+"/1";
+//            new File(path1).mkdirs();
+//            create4rchitecture(path1, numXTiles-nxt, numYTiles);
+//        } else {
+//            //on decoupe en 4
+//            int nxt = (numXTiles+1)/2;
+//            int nyt = (numYTiles+1)/2;
+//            //on creer 4 dossiers
+//            String path00 = path+"/00";
+//            new File(path00).mkdirs();
+//            create4rchitecture(path00, nxt, nyt);
+//
+//            String path10 = path+"/10";
+//            new File(path10).mkdirs();
+//            create4rchitecture(path10, numXTiles-nxt, nyt);
+//
+//            String path01 = path+"/01";
+//            new File(path01).mkdirs();
+//            create4rchitecture(path01, nxt, numYTiles-nyt);
+//
+//            String path11 = path+"/11";
+//            new File(path11).mkdirs();
+//            create4rchitecture(path11, numXTiles-nxt, numYTiles-nyt);
+//
+//        }
+//    }
+//
+//    private String getPath(int tileX, int tileY) {
+//        return getPath(dirPath, 0, 0, numXTiles, numYTiles, tileX, tileY);
+//    }
+//
+//    private String getPath(String path, int mintx, int minty, int maxtx, int maxty, int tileX, int tileY){
+//        if ((maxtx-mintx) <= 2 && (maxty-mintx) <= 2) {
+//            return (path+"/"+tileX+"_"+tileY+"."+FORMAT);
+//        }
+//        int w = maxtx-mintx;
+//        int h = maxty-minty;
+//        int w2 = (w+1)/2;
+//        int h2 = (h+1)/2;
+//
+//        if (w==1) {
+//            //il y a 2 sous dossiers en hauteur
+//            String path0 = path+"/0";
+//            int demy = minty+h2;
+//            if (intersect(mintx, minty, maxtx, demy, tileX, tileY)) return getPath(path0, mintx, minty, maxtx, demy, tileX, tileY);
+//
+//            String path1 = path+"/1";
+//            if (intersect(mintx, demy, maxtx, maxty, tileX, tileY)) return getPath(path1, mintx, demy, maxtx, maxty, tileX, tileY);
+//        } else if (h==1) {
+//            //il y a 2 sous dossiers en largeur
+//            String path0 = path+"/0";
+//            int demx = mintx+w2;
+//            if (intersect(mintx, minty, demx, maxty, tileX, tileY)) return getPath(path0, mintx, minty, demx, maxty, tileX, tileY);
+//
+//            String path1 = path+"/1";
+//            if (intersect( demx, minty, maxtx, maxty, tileX, tileY)) return getPath(path1, demx, minty, maxtx, maxty, tileX, tileY);
+//        } else {
+//            int demx = mintx+w2;
+//            int demy = minty+h2;
+//            //4 cas
+//            String path00 = path+"/00";
+//            if (intersect(mintx, minty, demx, demy, tileX, tileY)) return getPath(path00, mintx, minty, demx, demy, tileX, tileY);
+//            String path10 = path+"/10";
+//            if (intersect(demx, minty, maxtx, demy, tileX, tileY)) return getPath(path10, demx, minty, maxtx, demy, tileX, tileY);
+//            String path01 = path+"/01";
+//            if (intersect(mintx, demy, demx, maxty, tileX, tileY)) return getPath(path01, mintx, demy, demx, maxty, tileX, tileY);
+//            String path11 = path+"/11";
+//            if (intersect(demx, demy, maxtx, maxty, tileX, tileY)) return getPath(path11, demx, demy, maxtx, maxty, tileX, tileY);
+//        }
+//        throw new IllegalStateException("undefine path");
+//    }
+//
+//    private boolean intersect(int minx, int miny, int maxx, int maxy, int tx, int ty){
+//        final boolean x = ((tx >= minx) && (tx <= maxx));
+//        final boolean y = ((ty >= miny) && (ty <= maxy));
+//        return x && y;
+//    }
+//
+//    private void writeRaster(LargeRaster lRaster) throws IOException {
+//        String rastPath = getPath(dirPath, 0, 0, numXTiles, numYTiles, lRaster.getGridX(), lRaster.getGridY());
+//        writeRaster(new File(rastPath), lRaster.getRaster());
+//    }
+
     /**
      * Clean all subDirectory of {@link parentDirectory}.
      *
@@ -209,6 +332,9 @@ public class LargeList {
             final WritableRaster r = lr.getRaster();
             remainingCapacity   += lr.getWeight();
 
+            //quad tree
+//            writeRaster(lr);
+
             final File dirFile   = new File(dirPath);
             if (!dirFile.exists()) {
                 dirFile.mkdir();
@@ -222,7 +348,6 @@ public class LargeList {
             sb.append(lr.getGridY());
             sb.append(".");
             sb.append(FORMAT);
-//            final String wrPath = dirPath+"/"+lr.getGridX()+"_"+lr.getGridY()+".tiff";
             final String wrPath = sb.toString();
             final File wrFile = new File(wrPath);
             if (!wrFile.exists()) {

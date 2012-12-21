@@ -480,7 +480,142 @@ public class PGCoverageBuilder {
         }
     }
 
-    public void create(GridCoverage gridCoverage, CoverageStore coverageStore, Name coverageName, List<Envelope> pyramids, double[] pixelScales) throws CoverageStoreException, DataStoreException, NoninvertibleTransformException, TransformException {
+//    public void create(GridCoverage gridCoverage, CoverageStore coverageStore, Name coverageName, List<Envelope> pyramids, double[] pixelScales) throws CoverageStoreException, DataStoreException, NoninvertibleTransformException, TransformException {
+//        //pixel scale corespond a la valeur d'un pixel pour x km ou degré
+//        //exemple une tuile de 256x256 avec scale 1/100 -> 25600x25600 km
+//        Dimension tileSize = new Dimension(tileWidth, tileHeight);
+//        //utiliser le reader pour lire dans l'image de base
+////        GridCoverageReadParam gcrp = new GridCoverageReadParam();
+//
+////        GridCoverage gc = reader.read(0, null);
+//        //pour resamplé le coverage
+////        Operations.DEFAULT.resample(null, null);
+//
+//        GridGeometry gg = gridCoverage.getGridGeometry();
+//        if (!(gg instanceof GridGeometry2D)) throw new IllegalArgumentException("GridGeometry not instance of GridGeometry2D");
+//        GridGeometry2D gg2d = (GridGeometry2D)gg;
+//        GridEnvelope globaleArea = gg2d.getExtent2D();
+//
+//        CoverageReference cv = coverageStore.create(coverageName);
+//        if (!(cv instanceof PyramidalModel)) throw new IllegalArgumentException("CoverageStore parameter not instance of PyramidalModel");
+//        PyramidalModel pm = (PyramidalModel) cv;
+//
+//        ColorModel cm = null;
+//
+//        //une pyramid par envelope
+//        for (Envelope pyramidBase : pyramids) {
+//            CoordinateReferenceSystem crsDest = pyramidBase.getCoordinateReferenceSystem();
+//            //on projete le coverage du reader dans le crs courant
+//            Pyramid pyram = pm.createPyramid(crsDest);
+//            GridCoverage2D gcDest = (GridCoverage2D) Operations.DEFAULT.resample(gridCoverage, crsDest);
+//
+//            GridGeometry2D ggDest2D = (GridGeometry2D) gcDest.getGridGeometry();
+//
+//            final int[] xyAxis = getXYiD(ggDest2D.getCoordinateReferenceSystem2D());
+//
+//            if (cm == null) cm = gcDest.getRenderableImage(xyAxis[0], xyAxis[1]).createDefaultRendering().getColorModel();
+//
+//
+//            //taille du coverage dans l'espace du crs
+//            final double envWidth  = pyramidBase.getSpan(xyAxis[0]);
+//            final double envHeight = pyramidBase.getSpan(xyAxis[1]);
+//
+//            ///////////////CROP/////////////
+//
+//            final double[] res = ggDest2D.getResolution();
+//            final double  resX = res[xyAxis[0]];
+//            final double  resY = res[xyAxis[1]];
+//
+////            final int baseWidth  = (int) ((pyramidBase.getSpan(xyAxis[0])) / resX);
+////            final int baseHeight = (int) ((pyramidBase.getSpan(xyAxis[1])) / resY);
+//
+////            final WritableRenderedImage baseImg = new TiledImage(0, 0, baseWidth, baseHeight, 0, 0, cm.createCompatibleSampleModel(tileWidth, tileHeight), cm);
+////            PixelIterator pixBase = PixelIteratorFactory.createRowMajorWriteableIterator(baseImg, baseImg);
+////
+////            //evaluate
+////            final Point2D pt = new Point2D.Double();
+////            double[] evaluate = null;
+////            int nb = 0;
+////
+////            DirectPosition2D dp2d = new DirectPosition2D();
+////            MathTransform mtcrop = new AffineTransform2D(resX, 0, 0, -resY, pyramidBase.getMinimum(xyAxis[0]), pyramidBase.getMaximum(xyAxis[1]));
+////            for (int by = 0; by < baseHeight; by++) {
+////                for (int bx = 0; bx < baseWidth; bx++) {
+////                    dp2d.setLocation(bx, by);
+////                    mtcrop.transform(dp2d, dp2d);
+////                    pt.setLocation(dp2d.getOrdinate(0), dp2d.getOrdinate(1));
+////                    if (evaluate == null) {
+////                        evaluate = gcDest.evaluate(pt, (double[])null);
+////                        nb = evaluate.length;
+////                    } else {
+////                        gcDest.evaluate(pt, evaluate);
+////                    }
+////                    for(int b = 0; b < nb; b++){
+////                        pixBase.next();
+////                        pixBase.setSampleDouble(evaluate[b]);
+////                    }
+////                }
+////            }
+//
+//            final RenderedImage baseImg = gcDest.getRenderedImage();
+//            final int baseWidth  = baseImg.getWidth();
+//            final int baseHeight = baseImg.getHeight();
+//
+//            GeneralDirectPosition upperleft = new GeneralDirectPosition(crsDest);
+//            upperleft.setLocation(pyramidBase.getMinimum(xyAxis[0]), pyramidBase.getMaximum(xyAxis[1]));
+//
+//
+//            //une mosaic par niveau d'echelle
+//            for (double pixelScal : pixelScales) {
+//
+//                //taille de l'image en sortie
+//                int imgWidth  = (int) (envWidth  / pixelScal);
+//                int imgHeight = (int) (envHeight / pixelScal);
+//                double sx = ((double)imgWidth)/baseWidth;
+//                double sy = ((double)imgHeight)/baseHeight;
+//
+//                //nbre tuile
+//                int nbrTileX = (imgWidth  + tileWidth  - 1) / tileWidth;
+//                int nbrTileY = (imgHeight + tileHeight - 1) / tileHeight;
+//
+//                //Creation de la mosaic
+//                Dimension gridSize = new Dimension(nbrTileX, nbrTileY);
+//                GridMosaic mosaic = pm.createMosaic(pyram.getId(), gridSize, tileSize, upperleft, pixelScal);
+//                String mosaicId = mosaic.getId();
+//                SampleModel sm = null;
+//
+//                for (int cTY = 0; cTY < nbrTileY; cTY++) {
+//                    for (int cTX = 0; cTX < nbrTileX; cTX++) {
+//
+//                        if (sm == null) sm = cm.createCompatibleSampleModel(tileWidth, tileHeight);
+//
+//                        System.out.println("rast : "+cTX+"_"+cTY);
+//                        int destMinX = cTX*tileWidth;
+//                        int destMinY = cTY*tileHeight;
+//                        int cuTWidth = Math.min(destMinX + tileWidth, imgWidth);
+//                        int cuTHeight = Math.min(destMinY + tileHeight, imgHeight);
+//
+//                        WritableRenderedImage destImg = new TiledImage(destMinX, destMinY, cuTWidth-destMinX, cuTHeight-destMinY, destMinX, destMinY, cm.createCompatibleSampleModel(cuTWidth-destMinX, cuTHeight-destMinY), cm);
+//
+//                        ////////// resampling
+//                        //definir mathtransform
+//                        final MathTransform mt  = new AffineTransform2D(sx, 0, 0, sy, 0, 0);
+//                        final Interpolation interpolation = Interpolation.create(PixelIteratorFactory.createRowMajorIterator(baseImg), interpolationCase, lanczosWindow);
+//                        //definir l'interpolateur
+//                        ////////// fin
+//
+//                        Resample resample = new Resample(mt, destImg, interpolation, fillValue);
+//                        resample.fillImage();
+//
+//                        pm.writeTile(pyram.getId(), mosaicId, cTX, cTY, destImg);
+//                    }
+//                }
+//            }
+//
+//        }
+//    }
+
+    public void create(GridCoverage gridCoverage, CoverageStore coverageStore, Name coverageName, List<CoordinateReferenceSystem> crsDest, double[] pixelScales) throws CoverageStoreException, DataStoreException, NoninvertibleTransformException, TransformException {
         //pixel scale corespond a la valeur d'un pixel pour x km ou degré
         //exemple une tuile de 256x256 avec scale 1/100 -> 25600x25600 km
         Dimension tileSize = new Dimension(tileWidth, tileHeight);
@@ -503,66 +638,32 @@ public class PGCoverageBuilder {
         ColorModel cm = null;
 
         //une pyramid par envelope
-        for (Envelope pyramidBase : pyramids) {
-            CoordinateReferenceSystem crsDest = pyramidBase.getCoordinateReferenceSystem();
+        for (CoordinateReferenceSystem crs : crsDest) {
+//            CoordinateReferenceSystem crsDest = pyramidBase.getCoordinateReferenceSystem();
             //on projete le coverage du reader dans le crs courant
-            Pyramid pyram = pm.createPyramid(crsDest);
-            GridCoverage2D gcDest = (GridCoverage2D) Operations.DEFAULT.resample(gridCoverage, crsDest);
+            Pyramid pyram = pm.createPyramid(crs);
+//            GridCoverage2D gcDest = (GridCoverage2D) Operations.DEFAULT.resample(gridCoverage, crs);
+            GridCoverage2D gcDest = (GridCoverage2D)gridCoverage;
 
             GridGeometry2D ggDest2D = (GridGeometry2D) gcDest.getGridGeometry();
 
             final int[] xyAxis = getXYiD(ggDest2D.getCoordinateReferenceSystem2D());
 
-            if (cm == null) cm = gcDest.getRenderableImage(xyAxis[0], xyAxis[1]).createDefaultRendering().getColorModel();
-
-
-            //taille du coverage dans l'espace du crs
-            final double envWidth  = pyramidBase.getSpan(xyAxis[0]);
-            final double envHeight = pyramidBase.getSpan(xyAxis[1]);
-
-            ///////////////CROP/////////////
-
-            final double[] res = ggDest2D.getResolution();
-            final double  resX = res[xyAxis[0]];
-            final double  resY = res[xyAxis[1]];
-
-            final int baseWidth  = (int) ((pyramidBase.getSpan(xyAxis[0])) / resX);
-            final int baseHeight = (int) ((pyramidBase.getSpan(xyAxis[1])) / resY);
-
-//            final WritableRenderedImage baseImg = new TiledImage(0, 0, baseWidth, baseHeight, 0, 0, cm.createCompatibleSampleModel(tileWidth, tileHeight), cm);
-//            PixelIterator pixBase = PixelIteratorFactory.createRowMajorWriteableIterator(baseImg, baseImg);
-//
-//            //evaluate
-//            final Point2D pt = new Point2D.Double();
-//            double[] evaluate = null;
-//            int nb = 0;
-//
-//            DirectPosition2D dp2d = new DirectPosition2D();
-//            MathTransform mtcrop = new AffineTransform2D(resX, 0, 0, -resY, pyramidBase.getMinimum(xyAxis[0]), pyramidBase.getMaximum(xyAxis[1]));
-//            for (int by = 0; by < baseHeight; by++) {
-//                for (int bx = 0; bx < baseWidth; bx++) {
-//                    dp2d.setLocation(bx, by);
-//                    mtcrop.transform(dp2d, dp2d);
-//                    pt.setLocation(dp2d.getOrdinate(0), dp2d.getOrdinate(1));
-//                    if (evaluate == null) {
-//                        evaluate = gcDest.evaluate(pt, (double[])null);
-//                        nb = evaluate.length;
-//                    } else {
-//                        gcDest.evaluate(pt, evaluate);
-//                    }
-//                    for(int b = 0; b < nb; b++){
-//                        pixBase.next();
-//                        pixBase.setSampleDouble(evaluate[b]);
-//                    }
-//                }
-//            }
-
             final RenderedImage baseImg = gcDest.getRenderedImage();
 
+            if (cm == null) cm = baseImg.getColorModel();
 
+            Envelope envDest = ggDest2D.getEnvelope2D();
 
-            GeneralDirectPosition upperleft = new GeneralDirectPosition(crsDest);
-            upperleft.setLocation(pyramidBase.getMinimum(xyAxis[0]), pyramidBase.getMaximum(xyAxis[1]));
+            //taille du coverage dans l'espace du crs
+            final double envWidth  = envDest.getSpan(xyAxis[0]);
+            final double envHeight = envDest.getSpan(xyAxis[1]);
+
+            final int baseWidth  = baseImg.getWidth();
+            final int baseHeight = baseImg.getHeight();
+
+            GeneralDirectPosition upperleft = new GeneralDirectPosition(crs);
+            upperleft.setLocation(envDest.getMinimum(xyAxis[0]), envDest.getMaximum(xyAxis[1]));
 
 
             //une mosaic par niveau d'echelle
@@ -584,23 +685,23 @@ public class PGCoverageBuilder {
                 String mosaicId = mosaic.getId();
                 SampleModel sm = null;
 
+                final MathTransform mt  = new AffineTransform2D(sx, 0, 0, sy, 0, 0);
+                final Interpolation interpolation = Interpolation.create(PixelIteratorFactory.createRowMajorIterator(baseImg), interpolationCase, lanczosWindow);
                 for (int cTY = 0; cTY < nbrTileY; cTY++) {
                     for (int cTX = 0; cTX < nbrTileX; cTX++) {
 
                         if (sm == null) sm = cm.createCompatibleSampleModel(tileWidth, tileHeight);
 
-
+                        System.out.println("rast : "+cTX+"_"+cTY);
                         int destMinX = cTX*tileWidth;
                         int destMinY = cTY*tileHeight;
                         int cuTWidth = Math.min(destMinX + tileWidth, imgWidth);
                         int cuTHeight = Math.min(destMinY + tileHeight, imgHeight);
 
-                        WritableRenderedImage destImg = new TiledImage(destMinX, destMinY, cuTWidth-destMinX, cuTHeight-destMinY, destMinX, destMinY, sm, cm);
+                        WritableRenderedImage destImg = new TiledImage(destMinX, destMinY, cuTWidth-destMinX, cuTHeight-destMinY, destMinX, destMinY, cm.createCompatibleSampleModel(cuTWidth-destMinX, cuTHeight-destMinY), cm);
 
                         ////////// resampling
                         //definir mathtransform
-                        final MathTransform mt  = new AffineTransform2D(sx, 0, 0, sy, 0, 0);
-                        final Interpolation interpolation = Interpolation.create(PixelIteratorFactory.createRowMajorIterator(baseImg), interpolationCase, lanczosWindow);
                         //definir l'interpolateur
                         ////////// fin
 

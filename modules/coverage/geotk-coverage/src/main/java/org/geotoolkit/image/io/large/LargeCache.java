@@ -53,7 +53,7 @@ public class LargeCache implements TileCache {
         } else {
             final long mC = memoryCapacity/(map.size()+1);
             updateLList(mC);
-            lL = new LargeList("img_"+ri.hashCode(), mC, ri.getColorModel());
+            lL = new LargeList("img_"+ri.hashCode(), mC, ri.getNumXTiles(), ri.getNumYTiles(), ri.getColorModel());
             map.put(ri, lL);
         }
         try {
@@ -117,7 +117,7 @@ public class LargeCache implements TileCache {
         if (map.containsKey(ri)) {
             lL = map.get(ri);
         } else {
-            lL = new LargeList("img_"+ri.hashCode(), memoryCapacity/(map.size()+1), ri.getColorModel());
+            lL = new LargeList("img_"+ri.hashCode(), memoryCapacity/(map.size()+1), ri.getNumXTiles(), ri.getNumYTiles(), ri.getColorModel());
             map.put(ri, lL);
         }
         try {
