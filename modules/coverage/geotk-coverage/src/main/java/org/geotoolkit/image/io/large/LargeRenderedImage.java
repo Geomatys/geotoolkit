@@ -204,9 +204,10 @@ public class LargeRenderedImage implements RenderedImage {
 
     @Override
     public Raster getTile(int tileX, int tileY) {
-//        debug[tileY][tileX]++;
-//        if (debug[tileY][tileX] % 256 == 0) System.out.println("tile "+tileX+"_"+tileY+" : "+debug[tileY][tileX]);
-        if (isRead[tileY][tileX]) return tilecache.getTile(this, tileX, tileY);
+        if (isRead[tileY][tileX]) {
+            final Raster rast = tilecache.getTile(this, tileX, tileY);
+            return Raster.createWritableRaster(rast.getSampleModel(), rast.getDataBuffer(), new Point(tileX*tileWidth, tileY*tileHeight));
+        }
         // si elle na pas ete demandée :
         // 1 : la demandée au reader
         final int minRx = tileX*tileWidth;
