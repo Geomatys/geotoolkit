@@ -23,6 +23,7 @@ package org.geotoolkit.parameter;
 import java.util.Set;
 import java.util.Objects;
 import java.io.Writer;
+import java.io.FilterWriter;
 import java.io.IOException;
 import java.io.Serializable;
 import java.lang.reflect.Array;
@@ -287,7 +288,9 @@ public abstract class AbstractParameter extends FormattableObject
             for (final GeneralParameterValue value : ((ParameterValueGroup) this).values()) {
                 if (value instanceof AbstractParameter) {
                     if (inner == null) {
-                        inner = new TableWriter(table, 1);
+                        inner = new TableWriter(new FilterWriter(table) {
+                            @Override public void flush() {} // To be removed after migration to Apache SIS.
+                        }, 1);
                         inner.setMultiLinesCells(true);
                     }
                     ((AbstractParameter) value).write(inner);

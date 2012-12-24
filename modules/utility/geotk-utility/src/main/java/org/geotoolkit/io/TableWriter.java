@@ -18,17 +18,13 @@
 package org.geotoolkit.io;
 
 import java.io.IOException;
-import java.io.StringWriter;
 import java.io.Writer;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.StringTokenizer;
 import javax.swing.text.StyleConstants;
 import net.jcip.annotations.ThreadSafe;
+import org.apache.sis.io.TableFormatter;
+import org.apache.sis.io.IO;
 
 import org.geotoolkit.util.Strings;
-import org.geotoolkit.util.XArrays;
 import org.geotoolkit.lang.Decorator;
 
 
@@ -65,7 +61,10 @@ import org.geotoolkit.lang.Decorator;
  *
  * @since 1.0
  * @module
+ *
+ * @deprecated Moved to Apache SIS as {@link TableFormatter}.
  */
+@Deprecated
 @ThreadSafe
 @Decorator(Writer.class)
 public class TableWriter extends FilterWriter {
@@ -116,114 +115,18 @@ public class TableWriter extends FilterWriter {
     public static final char DOUBLE_HORIZONTAL_LINE = '\u2550';
 
     /**
-     * Drawing-box characters. The last two characters
-     * are horizontal and vertical line respectively.
+     * The Apache SIS formatter on which to delegate the work.
      */
-    private static final char[][] BOX = new char[][] {
-        {// [0000]: single horizontal, single vertical
-            '\u250C','\u252C','\u2510',
-            '\u251C','\u253C','\u2524',
-            '\u2514','\u2534','\u2518',
-            '\u2500','\u2502'
-        },
-        {// [0001]: single horizontal, double vertical
-            '\u2553','\u2565','\u2556',
-            '\u255F','\u256B','\u2562',
-            '\u2559','\u2568','\u255C',
-            '\u2500','\u2551'
-        },
-        {// [0010]: double horizontal, single vertical
-            '\u2552','\u2564','\u2555',
-            '\u255E','\u256A','\u2561',
-            '\u2558','\u2567','\u255B',
-            '\u2550','\u2502'
-        },
-        {// [0011]: double horizontal, double vertical
-            '\u2554','\u2566','\u2557',
-            '\u2560','\u256C','\u2563',
-            '\u255A','\u2569','\u255D',
-            '\u2550','\u2551'
-        },
-        {// [0100]: ASCII characters only
-            '+','+','+',
-            '+','+','+',
-            '+','+','+',
-            '-','|'
-        }
-    };
+    private final TableFormatter formatter;
 
     /**
-     * Default character for space.
+     * Workaround for RFE #4093999 ("Relax constraint on placement of this()/super()
+     * call in constructors")
      */
-    private static final char SPACE = ' ';
-
-    /**
-     * Temporary string buffer. This buffer contains only one cell content.
-     */
-    private final StringBuilder buffer = new StringBuilder();
-
-    /**
-     * List of {@link Cell} objects, from left to right and top to bottom.
-     * By convention, a {@code null} value or a {@link Cell} object
-     * with <code>{@link Cell#text}==null</code> are move to the next line.
-     */
-    private final List<Cell> cells = new ArrayList<>();
-
-    /**
-     * Alignment for current and next cells.
-     */
-    private int alignment = ALIGN_LEFT;
-
-    /**
-     * Column position of the cell currently being written. The field
-     * is incremented each time {@link #nextColumn()} is invoked.
-     */
-    private int column;
-
-    /**
-     * Line position of the cell currently being written. The field
-     * is incremented each time {@link #nextLine()} is invoked.
-     */
-    private int row;
-
-    /**
-     * Maximum width for each columns. This array length must
-     * be equal to the number of columns in this table.
-     */
-    private int[] width = XArrays.EMPTY_INT;
-
-    /**
-     * The column separator.
-     */
-    private final String separator;
-
-    /**
-     * The left table border.
-     */
-    private final String leftBorder;
-
-    /**
-     * The right table border.
-     */
-    private final String rightBorder;
-
-    /**
-     * Tells if cells can span more than one line. If {@code true}, then EOL characters likes
-     * {@code '\n'} move to the next line <em>inside</em> the current cell. If {@code false},
-     * then EOL characters move to the next table row. Default value is {@code false}.
-     */
-    private boolean multiLinesCells;
-
-    /**
-     * {@code true} if this {@code TableWriter} has been constructed with the no-arg constructor.
-     */
-    private final boolean stringOnly;
-
-    /**
-     * Tells if the next {@code '\n'} character must be ignored. This field is
-     * used in order to avoid writing two EOL in place of {@code "\r\n"}.
-     */
-    private boolean skipCR;
+    private TableWriter(final TableFormatter formatter) {
+        super(IO.asWriter(formatter));
+        this.formatter = formatter;
+    }
 
     /**
      * Creates a new table writer with a default column separator. The default is a double
@@ -240,11 +143,7 @@ public class TableWriter extends FilterWriter {
      *        only way to get the table content.
      */
     public TableWriter(final Writer out) {
-        super(out!=null ? out : new StringWriter());
-        stringOnly  = (out==null);
-        leftBorder  =  "\u2551 ";
-        rightBorder = " \u2551" ;
-        separator   = " \u2502 ";
+        this(out != null ? new TableFormatter(out) : new TableFormatter());
     }
 
     /**
@@ -272,77 +171,7 @@ public class TableWriter extends FilterWriter {
      * @see #DOUBLE_VERTICAL_LINE
      */
     public TableWriter(final Writer out, final String separator) {
-        super(out!=null ? out : new StringWriter());
-        stringOnly = (out == null);
-        final int length = separator.length();
-        int lower = 0;
-        int upper = length;
-        while (lower<length && Character.isSpaceChar(separator.charAt(lower  ))) lower++;
-        while (upper>0      && Character.isSpaceChar(separator.charAt(upper-1))) upper--;
-        this.leftBorder  = separator.substring(lower);
-        this.rightBorder = separator.substring(0, upper);
-        this.separator   = separator;
-    }
-
-    /**
-     * Writes a border or a corner to the specified stream.
-     *
-     * @param out              The destination stream.
-     * @param horizontalBorder -1 for left border, +1 for right border,  0 for center.
-     * @param verticalBorder   -1 for top  border, +1 for bottom border, 0 for center.
-     * @param horizontalChar   Character to use for horizontal line.
-     * @throws IOException     if the writing operation failed.
-     */
-    private void writeBorder(final Writer out,
-                             final int horizontalBorder,
-                             final int verticalBorder,
-                             final char horizontalChar) throws IOException
-    {
-        /*
-         * Obtient les ensembles de caractères qui
-         * conviennent pour la ligne horizontale.
-         */
-        int boxCount = 0;
-        final char[][] box = new char[BOX.length][];
-        for (int i=0; i<BOX.length; i++) {
-            if (BOX[i][9] == horizontalChar) {
-                box[boxCount++] = BOX[i];
-            }
-        }
-        /*
-         * Obtient une chaine contenant les lignes verticales à
-         * dessiner à gauche, à droite ou au centre de la table.
-         */
-        final String border;
-        switch (horizontalBorder) {
-            case -1: border = leftBorder;  break;
-            case +1: border = rightBorder; break;
-            case  0: border = separator;   break;
-            default: throw new IllegalArgumentException(String.valueOf(horizontalBorder));
-        }
-        if (verticalBorder<-1 || verticalBorder>+1) {
-            throw new IllegalArgumentException(String.valueOf(verticalBorder));
-        }
-        /*
-         * Remplace les espaces par la ligne horizontale,
-         * et les lignes verticales par une intersection.
-         */
-        final int index = (horizontalBorder+1) + (verticalBorder+1)*3;
-        final int borderLength = border.length();
-        for (int i=0; i<borderLength; i++) {
-            char c=border.charAt(i);
-            if (Character.isSpaceChar(c)) {
-                c = horizontalChar;
-            } else {
-                for (int j=0; j<boxCount; j++) {
-                    if (box[j][10] == c) {
-                        c = box[j][index];
-                        break;
-                    }
-                }
-            }
-            out.write(c);
-        }
+        this(out != null ? new TableFormatter(out, separator) : new TableFormatter(separator));
     }
 
     /**
@@ -363,7 +192,7 @@ public class TableWriter extends FilterWriter {
      */
     public void setMultiLinesCells(final boolean multiLines) {
         synchronized (lock) {
-            multiLinesCells = multiLines;
+            formatter.setMultiLinesCells(multiLines);
         }
     }
 
@@ -374,7 +203,7 @@ public class TableWriter extends FilterWriter {
      */
     public boolean isMultiLinesCells() {
         synchronized (lock) {
-            return multiLinesCells;
+            return formatter.isMultiLinesCells();
         }
     }
 
@@ -385,27 +214,12 @@ public class TableWriter extends FilterWriter {
      * @param column The 0-based column number.
      * @param alignment Cell alignment. Must be {@link #ALIGN_LEFT}
      *        {@link #ALIGN_RIGHT} or {@link #ALIGN_CENTER}.
+     *
+     * @deprecated Not effective anymore, because no equivalent method in SIS.
      */
+    @Deprecated
     public void setColumnAlignment(final int column, final int alignment) {
-        if (alignment != ALIGN_LEFT  &&
-            alignment != ALIGN_RIGHT &&
-            alignment != ALIGN_CENTER)
-        {
-            throw new IllegalArgumentException(String.valueOf(alignment));
-        }
-        synchronized (lock) {
-            int current = 0;
-            for (final Cell cell : cells) {
-                if (cell==null || cell.text==null) {
-                    current = 0;
-                    continue;
-                }
-                if (current == column) {
-                    cell.alignment = alignment;
-                }
-                current++;
-            }
-        }
+        // No corresponding method is SIS.
     }
 
     /**
@@ -417,14 +231,15 @@ public class TableWriter extends FilterWriter {
      *        {@link #ALIGN_RIGHT} or {@link #ALIGN_CENTER}.
      */
     public void setAlignment(final int alignment) {
-        if (alignment != ALIGN_LEFT  &&
-            alignment != ALIGN_RIGHT &&
-            alignment != ALIGN_CENTER)
-        {
-            throw new IllegalArgumentException(String.valueOf(alignment));
+        final byte a;
+        switch (alignment) {
+            case ALIGN_LEFT:   a = TableFormatter.ALIGN_LEFT;   break;
+            case ALIGN_RIGHT:  a = TableFormatter.ALIGN_RIGHT;  break;
+            case ALIGN_CENTER: a = TableFormatter.ALIGN_CENTER; break;
+            default: throw new IllegalArgumentException(String.valueOf(alignment));
         }
         synchronized (lock) {
-            this.alignment = alignment;
+            formatter.setCellAlignment(a);
         }
     }
 
@@ -435,8 +250,15 @@ public class TableWriter extends FilterWriter {
      *         {@link #ALIGN_RIGHT} or {@link #ALIGN_CENTER}.
      */
     public int getAlignment() {
+        final byte alignment;
         synchronized (lock) {
-            return alignment;
+            alignment = formatter.getCellAlignment();
+        }
+        switch (alignment) {
+            case TableFormatter.ALIGN_LEFT:   return ALIGN_LEFT;
+            case TableFormatter.ALIGN_RIGHT:  return ALIGN_RIGHT;
+            case TableFormatter.ALIGN_CENTER: return ALIGN_CENTER;
+            default: throw new IllegalArgumentException(String.valueOf(alignment));
         }
     }
 
@@ -448,22 +270,22 @@ public class TableWriter extends FilterWriter {
      * @since 2.5
      */
     public int getRowCount() {
-        int count = row;
-        if (column != 0) {
-            count++;
+        synchronized (lock) {
+            return formatter.getRowCount();
         }
-        return count;
     }
 
     /**
      * Returns the number of columns in this table.
      *
-     * @return The number of colunms in this table.
+     * @return The number of columns in this table.
      *
      * @since 2.5
      */
     public int getColumnCount() {
-        return width.length;
+        synchronized (lock) {
+            return formatter.getColumnCount();
+        }
     }
 
     /**
@@ -479,33 +301,10 @@ public class TableWriter extends FilterWriter {
      */
     @Override
     public void write(final int c) {
-        synchronized (lock) {
-            if (!multiLinesCells) {
-                switch (c) {
-                    case '\t': {
-                        nextColumn();
-                        skipCR = false;
-                        return;
-                    }
-                    case '\r': {
-                        nextLine();
-                        skipCR = true;
-                        return;
-                    }
-                    case '\n': {
-                        if (!skipCR) {
-                            nextLine();
-                        }
-                        skipCR = false;
-                        return;
-                    }
-                }
-            }
-            if (c<Character.MIN_VALUE || c>Character.MAX_VALUE) {
-                throw new IllegalArgumentException(String.valueOf(c));
-            }
-            buffer.append((char)c);
-            skipCR = false;
+        try {
+            super.write(c);
+        } catch (IOException e) {
+            throw new AssertionError(e);
         }
     }
 
@@ -516,7 +315,11 @@ public class TableWriter extends FilterWriter {
      */
     @Override
     public void write(final String string) {
-        write(string, 0, string.length());
+        try {
+            super.write(string);
+        } catch (IOException e) {
+            throw new AssertionError(e);
+        }
     }
 
     /**
@@ -529,49 +332,10 @@ public class TableWriter extends FilterWriter {
      */
     @Override
     public void write(final String string, int offset, int length) {
-        if (offset<0 || length<0 || (offset+length)>string.length()) {
-            throw new IndexOutOfBoundsException();
-        }
-        if (length == 0) {
-            return;
-        }
-        synchronized (lock) {
-            if (skipCR && string.charAt(offset)=='\n') {
-                offset++;
-                length--;
-            }
-            if (!multiLinesCells) {
-                int upper = offset;
-                for (; length!=0; length--) {
-                    switch (string.charAt(upper++)) {
-                        case '\t': {
-                            buffer.append(string, offset, upper-1);
-                            nextColumn();
-                            offset = upper;
-                            break;
-                        }
-                        case '\r': {
-                            buffer.append(string, offset, upper-1);
-                            nextLine();
-                            if (length!=0 && string.charAt(upper)=='\n') {
-                                upper++;
-                                length--;
-                            }
-                            offset = upper;
-                            break;
-                        }
-                        case '\n': {
-                            buffer.append(string, offset, upper-1);
-                            nextLine();
-                            offset = upper;
-                            break;
-                        }
-                    }
-                }
-                length = upper-offset;
-            }
-            skipCR = (string.charAt(offset+length-1) == '\r');
-            buffer.append(string, offset, offset+length);
+        try {
+            super.write(string, offset, length);
+        } catch (IOException e) {
+            throw new AssertionError(e);
         }
     }
 
@@ -583,7 +347,11 @@ public class TableWriter extends FilterWriter {
      */
     @Override
     public void write(final char[] cbuf) {
-        write(cbuf, 0, cbuf.length);
+        try {
+            super.write(cbuf);
+        } catch (IOException e) {
+            throw new AssertionError(e);
+        }
     }
 
     /**
@@ -596,49 +364,10 @@ public class TableWriter extends FilterWriter {
      */
     @Override
     public void write(final char[] cbuf, int offset, int length) {
-        if (offset<0 || length<0 || (offset+length)>cbuf.length) {
-            throw new IndexOutOfBoundsException();
-        }
-        if (length == 0) {
-            return;
-        }
-        synchronized (lock) {
-            if (skipCR && cbuf[offset]=='\n') {
-                offset++;
-                length--;
-            }
-            if (!multiLinesCells) {
-                int upper = offset;
-                for (; length!=0; length--) {
-                    switch (cbuf[upper++]) {
-                        case '\t': {
-                            buffer.append(cbuf, offset, upper-offset-1);
-                            nextColumn();
-                            offset = upper;
-                            break;
-                        }
-                        case '\r': {
-                            buffer.append(cbuf, offset, upper-offset-1);
-                            nextLine();
-                            if (length!=0 && cbuf[upper]=='\n') {
-                                upper++;
-                                length--;
-                            }
-                            offset = upper;
-                            break;
-                        }
-                        case '\n': {
-                            buffer.append(cbuf, offset, upper-offset-1);
-                            nextLine();
-                            offset = upper;
-                            break;
-                        }
-                    }
-                }
-                length = upper-offset;
-            }
-            skipCR = (cbuf[offset+length-1] == '\r');
-            buffer.append(cbuf, offset, length);
+        try {
+            super.write(cbuf, offset, length);
+        } catch (IOException e) {
+            throw new AssertionError(e);
         }
     }
 
@@ -647,10 +376,7 @@ public class TableWriter extends FilterWriter {
      */
     public void writeHorizontalSeparator() {
         synchronized (lock) {
-            if (column!=0 || buffer.length()!=0) {
-                nextLine();
-            }
-            nextLine(SINGLE_HORIZONTAL_LINE);
+            formatter.writeHorizontalSeparator();
         }
     }
 
@@ -659,7 +385,9 @@ public class TableWriter extends FilterWriter {
      * same row.
      */
     public void nextColumn() {
-        nextColumn(SPACE);
+        synchronized (lock) {
+            formatter.nextColumn();
+        }
     }
 
     /**
@@ -672,24 +400,7 @@ public class TableWriter extends FilterWriter {
      */
     public void nextColumn(final char fill) {
         synchronized (lock) {
-            final String cellText = buffer.toString();
-            cells.add(new Cell(cellText, alignment, fill));
-            if (column >= width.length) {
-                width = Arrays.copyOf(width, column+1);
-            }
-            int length = 0;
-            final StringTokenizer tk = new StringTokenizer(cellText, "\r\n");
-            while (tk.hasMoreTokens()) {
-                final int lg = X364.lengthOfPlain(tk.nextToken());
-                if (lg > length) {
-                    length = lg;
-                }
-            }
-            if (length > width[column]) {
-                width[column] = length;
-            }
-            column++;
-            buffer.setLength(0);
+            formatter.nextColumn(fill);
         }
     }
 
@@ -698,7 +409,9 @@ public class TableWriter extends FilterWriter {
      * Next write operations will occur on a new row.
      */
     public void nextLine() {
-        nextLine(SPACE);
+        synchronized (lock) {
+            formatter.nextLine();
+        }
     }
 
     /**
@@ -715,216 +428,7 @@ public class TableWriter extends FilterWriter {
      */
     public void nextLine(final char fill) {
         synchronized (lock) {
-            if (buffer.length() != 0) {
-                nextColumn(fill);
-            }
-            assert buffer.length() == 0;
-            cells.add(!Character.isSpaceChar(fill) ? new Cell(null, alignment, fill) : null);
-            column = 0;
-            row++;
-        }
-    }
-
-    /**
-     * Flushes the table content to the underlying stream. This method should not be called
-     * before the table is completed (otherwise, columns may have the wrong width).
-     *
-     * @throws IOException if an output operation failed.
-     */
-    @Override
-    public void flush() throws IOException {
-        synchronized (lock) {
-            if (buffer.length() != 0) {
-                nextLine();
-                assert buffer.length() == 0;
-            }
-            flushTo(out);
-            row = column = 0;
-            cells.clear();
-            if (!(out instanceof TableWriter)) {
-                /*
-                 * Flush only if this table is not included in an outer (bigger) table.
-                 * This is because flushing the outer table would break its formatting.
-                 */
-                out.flush();
-            }
-        }
-    }
-
-    /**
-     * Flushes the table content and closes the underlying stream.
-     *
-     * @throws IOException if an output operation failed.
-     */
-    @Override
-    public void close() throws IOException {
-        synchronized (lock) {
-            flush();
-            out.close();
-        }
-    }
-
-    /**
-     * Écrit vers le flot spécifié toutes les cellules qui avaient été disposées
-     * dans le tableau. Ces cellules seront automatiquement alignées en colonnes.
-     * Cette méthode peut être appelée plusieurs fois pour écrire le même tableau
-     * par exemple vers plusieurs flots.
-     *
-     * @param  out Flot vers où écrire les données.
-     * @throws IOException si une erreur est survenue lors de l'écriture dans {@code out}.
-     */
-    private void flushTo(final Writer out) throws IOException {
-        final String columnSeparator = this.separator;
-        final String   lineSeparator = System.lineSeparator();
-        final Cell[]     currentLine = new Cell[width.length];
-        final int          cellCount = cells.size();
-        for (int cellIndex=0; cellIndex<cellCount; cellIndex++) {
-            /*
-             * Copie dans  {@code currentLine}  toutes les données qui seront à écrire
-             * sur la ligne courante de la table. Ces données excluent le {@code null}
-             * terminal.  La liste {@code currentLine} ne contiendra donc initialement
-             * aucun élément nul, mais ses éléments seront progressivement modifiés (et mis
-             * à {@code null}) pendant l'écriture de la ligne dans la boucle qui suit.
-             */
-            Cell lineFill = null;
-            int currentCount = 0;
-            do {
-                final Cell cell = cells.get(cellIndex);
-                if (cell == null) {
-                    break;
-                }
-                if (cell.text == null) {
-                    lineFill = new Cell("", cell.alignment, cell.fill);
-                    break;
-                }
-                currentLine[currentCount++] = cell;
-            }
-            while (++cellIndex < cellCount);
-            Arrays.fill(currentLine, currentCount, currentLine.length, lineFill);
-            /*
-             * La boucle suivante sera exécutée tant qu'il reste des lignes à écrire
-             * (c'est-à-dire tant qu'au moins un élément de {@code currentLine}
-             * est non-nul). Si une cellule contient un texte avec des caractères EOL,
-             * alors cette cellule devra s'écrire sur plusieurs lignes dans la cellule
-             * courante.
-             */
-            while (!isEmpty(currentLine)) {
-                for (int j=0; j<currentLine.length; j++) {
-                    final boolean isFirstColumn = (j   == 0);
-                    final boolean isLastColumn  = (j+1 == currentLine.length);
-                    final Cell cell = currentLine[j];
-                    final int cellWidth = width[j];
-                    if (cell == null) {
-                        if (isFirstColumn) {
-                            out.write(leftBorder);
-                        }
-                        repeat(out, SPACE, cellWidth);
-                        out.write(isLastColumn ? rightBorder : columnSeparator);
-                        continue;
-                    }
-                    String cellText = cell.toString();
-                    int endCR = cellText.indexOf('\r');
-                    int endLF = cellText.indexOf('\n');
-                    int end   = (endCR<0) ? endLF : (endLF<0) ? endCR : Math.min(endCR,endLF);
-                    if (end >= 0) {
-                        /*
-                         * Si un retour chariot a été trouvé, n'écrit que la première
-                         * ligne de la cellule. L'élément {@code currentLine[j]}
-                         * sera modifié pour ne contenir que les lignes restantes qui
-                         * seront écrites lors d'un prochain passage dans la boucle.
-                         */
-                        int top = end+1;
-                        if (endCR >= 0 && endCR+1 == endLF) top++;
-                        int scan = top;
-                        final int textLength = cellText.length();
-                        while (scan<textLength && Character.isWhitespace(cellText.charAt(scan))) {
-                            scan++;
-                        }
-                        currentLine[j] = (scan < textLength) ? cell.substring(top) : null;
-                        cellText = cellText.substring(0, end);
-                    }
-                    else currentLine[j] = null;
-                    final int textLength = X364.lengthOfPlain(cellText);
-                    /*
-                     * Si la cellule à écrire est en fait une bordure,
-                     * on fera un traitement spécial pour utiliser les
-                     * caractres de jointures {@link #BOX}.
-                     */
-                    if (currentCount == 0) {
-                        assert textLength == 0;
-                        final int verticalBorder;
-                        if      (cellIndex == 0)           verticalBorder = -1;
-                        else if (cellIndex >= cellCount-1) verticalBorder = +1;
-                        else                               verticalBorder =  0;
-                        if (isFirstColumn) {
-                            writeBorder(out, -1, verticalBorder, cell.fill);
-                        }
-                        repeat(out, cell.fill, cellWidth);
-                        writeBorder(out, isLastColumn ? +1 : 0, verticalBorder, cell.fill);
-                        continue;
-                    }
-                    /*
-                     * Si la cellule n'est pas une bordure, il s'agit
-                     * d'une cellule "normale".  Procde maintenant à
-                     * l'écriture d'une ligne de la cellule.
-                     */
-                    if (isFirstColumn) {
-                        out.write(leftBorder);
-                    }
-                    final Writer tabExpander = (cellText.indexOf('\t')>=0) ?
-                                               new ExpandedTabWriter(out) : out;
-                    switch (cell.alignment) {
-                        default: {
-                            // Should not happen.
-                            throw new AssertionError(cell.alignment);
-                        }
-                        case ALIGN_LEFT: {
-                            tabExpander.write(cellText);
-                            repeat(tabExpander, cell.fill, cellWidth-textLength);
-                            break;
-                        }
-                        case ALIGN_RIGHT: {
-                            repeat(tabExpander, cell.fill, cellWidth-textLength);
-                            tabExpander.write(cellText);
-                            break;
-                        }
-                        case ALIGN_CENTER: {
-                            final int rightMargin = (cellWidth-textLength)/2;
-                            repeat(tabExpander, cell.fill, rightMargin);
-                            tabExpander.write(cellText);
-                            repeat(tabExpander, cell.fill, (cellWidth-rightMargin)-textLength);
-                            break;
-                        }
-                    }
-                    out.write(isLastColumn ? rightBorder : columnSeparator);
-                }
-                out.write(lineSeparator);
-            }
-        }
-    }
-
-    /**
-     * Checks if {@code array} contains only {@code null} elements.
-     */
-    private static boolean isEmpty(final Object[] array) {
-        for (int i=array.length; --i>=0;) {
-            if (array[i] != null) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    /**
-     * Repeats a character.
-     *
-     * @param out   The destination stream.
-     * @param car   Character to write (usually ' ').
-     * @param count Number of repetition.
-     */
-    private static void repeat(final Writer out, final char car, int count) throws IOException {
-        while (--count >= 0) {
-            out.write(car);
+            formatter.nextLine(fill);
         }
     }
 
@@ -934,27 +438,7 @@ public class TableWriter extends FilterWriter {
     @Override
     public String toString() {
         synchronized (lock) {
-            int capacity = 2; // Room for EOL.
-            for (int i=0; i<width.length; i++) {
-                capacity += width[i];
-            }
-            capacity *= getRowCount();
-            final StringWriter writer;
-            if (stringOnly) {
-                writer = (StringWriter) out;
-                final StringBuffer buffer = writer.getBuffer();
-                buffer.setLength(0);
-                buffer.ensureCapacity(capacity);
-            } else {
-                writer = new StringWriter(capacity);
-            }
-            try {
-                flushTo(writer);
-            } catch (IOException exception) {
-                // Should not happen
-                throw new AssertionError(exception);
-            }
-            return writer.toString();
+            return formatter.toString();
         }
     }
 
@@ -964,56 +448,5 @@ public class TableWriter extends FilterWriter {
     @Override
     final String content() {
         return toString();
-    }
-
-    /**
-     * A class wrapping a cell content and its text alignment.
-     * This class if for internal use only.
-     *
-     * @author Martin Desruisseaux (IRD)
-     * @version 3.00
-     *
-     * @since 2.0
-     */
-    private static final class Cell {
-        /**
-         * The text to write inside the cell.
-         */
-        public final String text;
-
-        /**
-         * The alignment for {@link #text} inside the cell.
-         */
-        public int alignment;
-
-        /**
-         * The fill character, used for filling space inside the cell.
-         */
-        public final char fill;
-
-        /**
-         * Returns a new cell wrapping the specified string with the
-         * specified alignment and fill character.
-         */
-        public Cell(final String text, final int alignment, final char fill) {
-            this.text      = text;
-            this.alignment = alignment;
-            this.fill      = fill;
-        }
-
-        /**
-         * Returns a new cell which contains substring of this cell.
-         */
-        public Cell substring(final int lower) {
-            return new Cell(text.substring(lower), alignment, fill);
-        }
-
-        /**
-         * Returns the cell's content.
-         */
-        @Override
-        public String toString() {
-            return text;
-        }
     }
 }
