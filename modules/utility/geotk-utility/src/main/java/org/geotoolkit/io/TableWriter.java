@@ -21,7 +21,7 @@ import java.io.IOException;
 import java.io.Writer;
 import javax.swing.text.StyleConstants;
 import net.jcip.annotations.ThreadSafe;
-import org.apache.sis.io.TableFormatter;
+import org.apache.sis.io.TableAppender;
 import org.apache.sis.io.IO;
 
 import org.geotoolkit.util.Strings;
@@ -62,7 +62,7 @@ import org.geotoolkit.lang.Decorator;
  * @since 1.0
  * @module
  *
- * @deprecated Moved to Apache SIS as {@link TableFormatter}.
+ * @deprecated Moved to Apache SIS as {@link TableAppender}.
  */
 @Deprecated
 @ThreadSafe
@@ -117,13 +117,13 @@ public class TableWriter extends FilterWriter {
     /**
      * The Apache SIS formatter on which to delegate the work.
      */
-    private final TableFormatter formatter;
+    private final TableAppender formatter;
 
     /**
      * Workaround for RFE #4093999 ("Relax constraint on placement of this()/super()
      * call in constructors")
      */
-    private TableWriter(final TableFormatter formatter) {
+    private TableWriter(final TableAppender formatter) {
         super(IO.asWriter(formatter));
         this.formatter = formatter;
     }
@@ -143,7 +143,7 @@ public class TableWriter extends FilterWriter {
      *        only way to get the table content.
      */
     public TableWriter(final Writer out) {
-        this(out != null ? new TableFormatter(out) : new TableFormatter());
+        this(out != null ? new TableAppender(out) : new TableAppender());
     }
 
     /**
@@ -171,7 +171,7 @@ public class TableWriter extends FilterWriter {
      * @see #DOUBLE_VERTICAL_LINE
      */
     public TableWriter(final Writer out, final String separator) {
-        this(out != null ? new TableFormatter(out, separator) : new TableFormatter(separator));
+        this(out != null ? new TableAppender(out, separator) : new TableAppender(separator));
     }
 
     /**
@@ -233,9 +233,9 @@ public class TableWriter extends FilterWriter {
     public void setAlignment(final int alignment) {
         final byte a;
         switch (alignment) {
-            case ALIGN_LEFT:   a = TableFormatter.ALIGN_LEFT;   break;
-            case ALIGN_RIGHT:  a = TableFormatter.ALIGN_RIGHT;  break;
-            case ALIGN_CENTER: a = TableFormatter.ALIGN_CENTER; break;
+            case ALIGN_LEFT:   a = TableAppender.ALIGN_LEFT;   break;
+            case ALIGN_RIGHT:  a = TableAppender.ALIGN_RIGHT;  break;
+            case ALIGN_CENTER: a = TableAppender.ALIGN_CENTER; break;
             default: throw new IllegalArgumentException(String.valueOf(alignment));
         }
         synchronized (lock) {
@@ -255,9 +255,9 @@ public class TableWriter extends FilterWriter {
             alignment = formatter.getCellAlignment();
         }
         switch (alignment) {
-            case TableFormatter.ALIGN_LEFT:   return ALIGN_LEFT;
-            case TableFormatter.ALIGN_RIGHT:  return ALIGN_RIGHT;
-            case TableFormatter.ALIGN_CENTER: return ALIGN_CENTER;
+            case TableAppender.ALIGN_LEFT:   return ALIGN_LEFT;
+            case TableAppender.ALIGN_RIGHT:  return ALIGN_RIGHT;
+            case TableAppender.ALIGN_CENTER: return ALIGN_CENTER;
             default: throw new IllegalArgumentException(String.valueOf(alignment));
         }
     }

@@ -36,7 +36,7 @@ import org.geotoolkit.internal.io.IOUtilities;
  * @since 2.1
  * @module
  *
- * @deprecated Moved to Apache SIS as {@link org.apache.sis.io.LineFormatter}
+ * @deprecated Moved to Apache SIS as {@link org.apache.sis.io.LineAppender}
  * (developers need to override {@code onLineBegin(boolean)}).
  */
 @Deprecated

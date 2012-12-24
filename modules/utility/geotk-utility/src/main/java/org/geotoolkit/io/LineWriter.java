@@ -20,7 +20,7 @@ package org.geotoolkit.io;
 import java.io.Writer;
 import net.jcip.annotations.ThreadSafe;
 import org.apache.sis.io.IO;
-import org.apache.sis.io.LineFormatter;
+import org.apache.sis.io.LineAppender;
 
 import org.geotoolkit.lang.Decorator;
 
@@ -38,7 +38,7 @@ import org.geotoolkit.lang.Decorator;
  * @since 2.0
  * @module
  *
- * @deprecated Moved to Apache SIS as {@link LineFormatter}.
+ * @deprecated Moved to Apache SIS as {@link LineAppender}.
  */
 @Deprecated
 @ThreadSafe
@@ -47,13 +47,13 @@ public class LineWriter extends FilterWriter {
     /**
      * The Apache SIS formatter on which to delegate the work.
      */
-    private final LineFormatter formatter;
+    private final LineAppender formatter;
 
     /**
      * Workaround for RFE #4093999 ("Relax constraint on placement of this()/super()
      * call in constructors")
      */
-    private LineWriter(final LineFormatter formatter) {
+    private LineWriter(final LineAppender formatter) {
         super(IO.asWriter(formatter));
         this.formatter = formatter;
     }
@@ -76,7 +76,7 @@ public class LineWriter extends FilterWriter {
      * @param  lineSeparator String to use as line separator.
      */
     public LineWriter(final Writer out, final String lineSeparator) {
-        this(new LineFormatter(out));
+        this(new LineAppender(out));
         formatter.setLineSeparator(lineSeparator);
     }
 

@@ -21,7 +21,7 @@ import java.io.IOException;
 import java.io.Writer;
 import net.jcip.annotations.ThreadSafe;
 import org.apache.sis.io.IO;
-import org.apache.sis.io.LineFormatter;
+import org.apache.sis.io.LineAppender;
 import org.apache.sis.util.ArgumentChecks;
 
 import org.geotoolkit.util.Strings;
@@ -39,7 +39,7 @@ import org.geotoolkit.lang.Decorator;
  * @since 2.4
  * @module
  *
- * @deprecated Moved to Apache SIS as {@link LineFormatter}.
+ * @deprecated Moved to Apache SIS as {@link LineAppender}.
  */
 @Deprecated
 @ThreadSafe
@@ -49,7 +49,7 @@ public class IndentedLineWriter extends FilterWriter {
      * The Apache SIS formatter on which to delegate the work, with delegation of
      * {@link #onLineBegin(boolean)} calls to the Geotk {@link #beginNewLine()}.
      */
-    private static class Formatter extends LineFormatter {
+    private static class Formatter extends LineAppender {
         IndentedLineWriter enclosing;
 
         Formatter(final Writer out) {

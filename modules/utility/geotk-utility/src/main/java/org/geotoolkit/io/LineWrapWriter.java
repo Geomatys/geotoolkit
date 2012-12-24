@@ -21,7 +21,7 @@ import java.io.Writer;
 import net.jcip.annotations.ThreadSafe;
 import org.geotoolkit.lang.Decorator;
 import org.apache.sis.io.IO;
-import org.apache.sis.io.LineFormatter;
+import org.apache.sis.io.LineAppender;
 import org.apache.sis.util.Characters;
 
 
@@ -36,7 +36,7 @@ import org.apache.sis.util.Characters;
  * @since 3.00
  * @module
  *
- * @deprecated Moved to Apache SIS as {@link LineFormatter}.
+ * @deprecated Moved to Apache SIS as {@link LineAppender}.
  */
 @Deprecated
 @ThreadSafe
@@ -67,13 +67,13 @@ public class LineWrapWriter extends FilterWriter {
     /**
      * The Apache SIS formatter on which to delegate the work.
      */
-    private final LineFormatter formatter;
+    private final LineAppender formatter;
 
     /**
      * Workaround for RFE #4093999 ("Relax constraint on placement of this()/super()
      * call in constructors")
      */
-    private LineWrapWriter(final LineFormatter formatter) {
+    private LineWrapWriter(final LineAppender formatter) {
         super(IO.asWriter(formatter));
         this.formatter = formatter;
     }
@@ -97,7 +97,7 @@ public class LineWrapWriter extends FilterWriter {
      * @param length The maximal line length.
      */
     public LineWrapWriter(final Writer out, final int length) {
-        this(new LineFormatter(out));
+        this(new LineAppender(out));
         setMaximalLineLength(length);
     }
 

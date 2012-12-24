@@ -20,7 +20,7 @@ package org.geotoolkit.io;
 import java.io.Writer;
 import net.jcip.annotations.ThreadSafe;
 import org.apache.sis.io.IO;
-import org.apache.sis.io.LineFormatter;
+import org.apache.sis.io.LineAppender;
 
 import org.geotoolkit.lang.Decorator;
 
@@ -34,7 +34,7 @@ import org.geotoolkit.lang.Decorator;
  * @since 1.0
  * @module
  *
- * @deprecated Moved to Apache SIS as {@link LineFormatter}.
+ * @deprecated Moved to Apache SIS as {@link LineAppender}.
  */
 @Deprecated
 @ThreadSafe
@@ -43,13 +43,13 @@ public class ExpandedTabWriter extends FilterWriter {
     /**
      * The Apache SIS formatter on which to delegate the work.
      */
-    private final LineFormatter formatter;
+    private final LineAppender formatter;
 
     /**
      * Workaround for RFE #4093999 ("Relax constraint on placement of this()/super()
      * call in constructors")
      */
-    private ExpandedTabWriter(final LineFormatter formatter) {
+    private ExpandedTabWriter(final LineAppender formatter) {
         super(IO.asWriter(formatter));
         this.formatter = formatter;
         formatter.setTabulationExpanded(true);
@@ -62,7 +62,7 @@ public class ExpandedTabWriter extends FilterWriter {
      * @param out A writer object to provide the underlying stream.
      */
     public ExpandedTabWriter(final Writer out) {
-        this(new LineFormatter(out));
+        this(new LineAppender(out));
     }
 
     /**
