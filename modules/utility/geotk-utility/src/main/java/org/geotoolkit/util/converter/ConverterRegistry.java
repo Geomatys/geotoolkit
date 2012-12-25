@@ -24,6 +24,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.ServiceLoader;
 import net.jcip.annotations.ThreadSafe;
+import org.apache.sis.measure.Angle;
 
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.logging.Logging;
@@ -133,6 +134,20 @@ public class ConverterRegistry {
             register(URIConverter   .URL                .INSTANCE); // The preferred target for URI.
             register(URIConverter   .File               .INSTANCE);
             register(URIConverter   .String             .INSTANCE);
+            /*
+             * Following converters were declared in the Angle static initializer.
+             * They temporarily moved here as converters are not yet ported to SIS.
+             */
+            register(new SimpleConverter<Angle,Double>() {
+                @Override public Class<Angle>  getSourceClass()      {return Angle .class;}
+                @Override public Class<Double> getTargetClass()      {return Double.class;}
+                @Override public Double        convert(Angle o)      {return o.degrees();}
+            });
+            register(new SimpleConverter<Double,Angle>() {
+                @Override public Class<Double> getSourceClass()      {return Double.class;}
+                @Override public Class<Angle>  getTargetClass()      {return Angle .class;}
+                @Override public Angle         convert(Double value) {return new org.geotoolkit.measure.Angle(value);}
+            });
             /*
              * Registration of converter working on interfaces
              * (more tricky than class, see javadoc).

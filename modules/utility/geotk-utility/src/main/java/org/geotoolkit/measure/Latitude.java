@@ -32,8 +32,11 @@ import net.jcip.annotations.Immutable;
  *
  * @since 1.0
  * @module
+ *
+ * @deprecated Moved to Apache SIS {@link org.apache.sis.measure.Latitude}.
  */
 @Immutable
+@Deprecated
 public final class Latitude extends Angle {
     /**
      * Serial number for inter-operability with different versions.
@@ -51,7 +54,7 @@ public final class Latitude extends Angle {
     public static final double MAX_VALUE = +90;
 
     /**
-     * Contruct a new latitude with the specified value.
+     * Constructs a new latitude with the specified value.
      *
      * @param theta Angle in degrees.
      */
