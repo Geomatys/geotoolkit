@@ -76,7 +76,7 @@ import org.geotoolkit.internal.CodeLists;
 import org.geotoolkit.resources.Errors;
 
 import static javax.imageio.metadata.IIOMetadataFormat.*;
-import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
+import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.toElementName;
 import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.NAME_POLICY;
 import static org.geotoolkit.internal.image.io.GridDomainAccessor.ARRAY_ATTRIBUTE_NAME;

@@ -23,7 +23,7 @@ import javax.swing.event.ChangeListener;
 
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.util.XArrays;
-import org.geotoolkit.util.ArgumentChecks;
+import org.apache.sis.util.ArgumentChecks;
 
 
 /**

@@ -23,7 +23,7 @@ import java.util.AbstractList;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.NullArgumentException;
 
-import static org.geotoolkit.util.ArgumentChecks.ensureValidIndex;
+import static org.apache.sis.util.ArgumentChecks.ensureValidIndex;
 
 
 /**

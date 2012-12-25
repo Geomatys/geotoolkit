@@ -56,7 +56,7 @@ import org.geotoolkit.internal.sql.StatementPool;
 import org.geotoolkit.internal.sql.DefaultDataSource;
 import org.geotoolkit.internal.sql.AuthenticatedDataSource;
 
-import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
+import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 
 
 /**

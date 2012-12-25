@@ -40,7 +40,7 @@ import org.geotoolkit.internal.image.ImageUtilities;
 import static java.awt.color.ColorSpace.CS_GRAY;
 import static java.awt.color.ColorSpace.CS_sRGB;
 import static java.awt.image.DataBuffer.TYPE_BYTE;
-import static org.geotoolkit.util.ArgumentChecks.*;
+import static org.apache.sis.util.ArgumentChecks.*;
 
 
 /**

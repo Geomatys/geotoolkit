@@ -44,7 +44,7 @@ import org.geotoolkit.util.DefaultInternationalString;
 import org.geotoolkit.util.collection.WeakHashSet;
 import org.geotoolkit.metadata.iso.citation.Citations;
 
-import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
+import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 import static org.geotoolkit.naming.DefaultNameSpace.DEFAULT_SEPARATOR_STRING;
 
 

@@ -36,7 +36,7 @@ import org.geotoolkit.util.Cloneable;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 
-import static org.geotoolkit.util.ArgumentChecks.ensurePositive;
+import static org.apache.sis.util.ArgumentChecks.ensurePositive;
 
 
 /**

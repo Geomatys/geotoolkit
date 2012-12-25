@@ -22,8 +22,8 @@ import org.geotoolkit.lang.ValueRange;
 import org.geotoolkit.resources.Errors;
 
 import static org.geotoolkit.util.converter.Numbers.*;
-import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
-import static org.geotoolkit.util.ArgumentChecks.ensureCanCast;
+import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
+import static org.apache.sis.util.ArgumentChecks.ensureCanCast;
 
 
 /**

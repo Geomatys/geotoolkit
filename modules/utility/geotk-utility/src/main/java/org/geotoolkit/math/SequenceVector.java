@@ -21,7 +21,7 @@ import java.io.Serializable;
 import org.geotoolkit.resources.Errors;
 
 import static org.geotoolkit.util.converter.Numbers.*;
-import static org.geotoolkit.util.ArgumentChecks.ensureValidIndex;
+import static org.apache.sis.util.ArgumentChecks.ensureValidIndex;
 
 
 /**

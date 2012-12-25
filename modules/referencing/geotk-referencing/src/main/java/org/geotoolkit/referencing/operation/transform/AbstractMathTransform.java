@@ -58,7 +58,7 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
 
 import static org.geotoolkit.util.Utilities.hash;
-import static org.geotoolkit.util.ArgumentChecks.ensureDimensionMatches;
+import static org.apache.sis.util.ArgumentChecks.ensureDimensionMatches;
 
 
 /**
@@ -275,9 +275,9 @@ public abstract class AbstractMathTransform extends FormattableObject
     {
         final int dimSource = getSourceDimensions();
         final int dimTarget = getTargetDimensions();
-        ensureDimensionMatches("ptSrc", ptSrc, dimSource);
+        ensureDimensionMatches("ptSrc", dimSource, ptSrc);
         if (ptDst != null) {
-            ensureDimensionMatches("ptDst", ptDst, dimTarget);
+            ensureDimensionMatches("ptDst", dimTarget, ptDst);
             /*
              * Transforms the coordinates using a temporary 'double[]' buffer,
              * and copies the transformation result in the destination position.

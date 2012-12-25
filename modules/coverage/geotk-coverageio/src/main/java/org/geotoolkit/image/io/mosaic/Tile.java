@@ -57,7 +57,7 @@ import org.geotoolkit.internal.image.io.CheckedImageInputStream;
 
 import static java.lang.Math.min;
 import static java.lang.Math.max;
-import static org.geotoolkit.util.ArgumentChecks.*;
+import static org.apache.sis.util.ArgumentChecks.*;
 
 
 /**

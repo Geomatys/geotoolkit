@@ -26,7 +26,7 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.LenientComparable;
 import org.geotoolkit.internal.jaxb.gco.ObjectIdentification;
 
-import static org.geotoolkit.util.ArgumentChecks.*;
+import static org.apache.sis.util.ArgumentChecks.*;
 
 
 /**

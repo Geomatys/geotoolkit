@@ -26,7 +26,7 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.collection.CheckedContainer;
 
 import static org.geotoolkit.util.converter.Numbers.isInteger;
-import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
+import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 
 
 /**

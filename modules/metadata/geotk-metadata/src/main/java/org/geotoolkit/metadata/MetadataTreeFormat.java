@@ -43,7 +43,7 @@ import org.opengis.metadata.spatial.Dimension;
 import org.opengis.metadata.spatial.GridSpatialRepresentation;
 
 import org.geotoolkit.util.Strings;
-import org.geotoolkit.util.ArgumentChecks;
+import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.util.MeasurementRange;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.converter.Numbers;

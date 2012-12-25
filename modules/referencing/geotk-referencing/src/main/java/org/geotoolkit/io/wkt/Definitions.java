@@ -31,7 +31,7 @@ import org.geotoolkit.io.TableWriter;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.util.converter.Classes;
-import org.geotoolkit.util.ArgumentChecks;
+import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.util.Strings;
 
 import static java.lang.Character.isJavaIdentifierPart;

@@ -45,7 +45,7 @@ import org.geotoolkit.measure.Units;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.resources.Errors;
-import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
+import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 
 
 /**

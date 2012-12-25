@@ -28,7 +28,7 @@ import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.geometry.DirectPosition;
 
 import org.geotoolkit.lang.Decorator;
-import org.geotoolkit.util.ArgumentChecks;
+import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.io.wkt.Formattable;
 import org.geotoolkit.io.wkt.UnformattableObjectException;

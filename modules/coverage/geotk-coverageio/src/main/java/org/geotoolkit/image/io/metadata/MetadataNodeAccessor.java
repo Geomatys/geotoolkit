@@ -39,7 +39,7 @@ import org.geotoolkit.util.converter.Numbers;
 import org.geotoolkit.util.UnsupportedImplementationException;
 import org.geotoolkit.metadata.iso.citation.Citations;
 
-import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
+import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 
 
 /**

@@ -32,7 +32,7 @@ import org.opengis.referencing.operation.OperationMethod;
 import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.referencing.IdentifiedObjects;
 
-import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
+import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 
 
 /**

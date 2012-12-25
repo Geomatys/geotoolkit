@@ -46,7 +46,7 @@ import org.geotoolkit.image.io.mosaic.Tile;
 import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.resources.Errors;
 
-import static org.geotoolkit.util.ArgumentChecks.*;
+import static org.apache.sis.util.ArgumentChecks.*;
 import static org.geotoolkit.internal.InternalUtilities.firstNonNull;
 
 

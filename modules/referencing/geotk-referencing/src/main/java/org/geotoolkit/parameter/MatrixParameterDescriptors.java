@@ -43,7 +43,7 @@ import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.resources.Errors;
 
 import static org.geotoolkit.util.Utilities.hash;
-import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
+import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 
 
 /**

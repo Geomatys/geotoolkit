@@ -46,8 +46,8 @@ import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.metadata.iso.citation.Citations;
 
 import static org.geotoolkit.util.Utilities.*;
-import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
-import static org.geotoolkit.util.ArgumentChecks.ensureCanCast;
+import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
+import static org.apache.sis.util.ArgumentChecks.ensureCanCast;
 
 
 /**

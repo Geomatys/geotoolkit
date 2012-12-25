@@ -59,7 +59,7 @@ import org.geotoolkit.util.converter.Numbers;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.resources.IndexedResourceBundle;
 
-import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
+import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 
 
 /**

@@ -66,7 +66,7 @@ import org.geotoolkit.gui.swing.tree.TreeTableNode;
 import org.geotoolkit.internal.image.io.DataTypes;
 import org.geotoolkit.resources.Errors;
 
-import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
+import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 
 
 /**

@@ -55,7 +55,7 @@ import org.geotoolkit.internal.image.io.CheckedImageInputStream;
 import org.geotoolkit.util.Strings;
 import org.geotoolkit.util.XArrays;
 
-import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
+import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 
 
 /**

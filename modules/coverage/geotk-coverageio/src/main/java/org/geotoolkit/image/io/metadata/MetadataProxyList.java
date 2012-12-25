@@ -24,7 +24,7 @@ import java.util.logging.Level;
 
 import org.geotoolkit.util.collection.CheckedCollection;
 
-import static org.geotoolkit.util.ArgumentChecks.ensureValidIndex;
+import static org.apache.sis.util.ArgumentChecks.ensureValidIndex;
 import static org.geotoolkit.internal.image.io.GridDomainAccessor.ARRAY_ATTRIBUTE_NAME;
 
 

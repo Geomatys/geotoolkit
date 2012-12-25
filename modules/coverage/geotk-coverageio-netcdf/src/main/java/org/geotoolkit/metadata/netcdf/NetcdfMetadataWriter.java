@@ -52,7 +52,7 @@ import org.opengis.util.CodeList;
 
 import org.geotoolkit.util.Strings;
 import org.geotoolkit.util.Version;
-import org.geotoolkit.util.ArgumentChecks;
+import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.image.io.WarningProducer;
 import org.apache.sis.util.iso.Types;
 import org.geotoolkit.internal.image.io.Warnings;

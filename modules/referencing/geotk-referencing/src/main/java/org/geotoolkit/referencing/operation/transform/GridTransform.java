@@ -41,7 +41,7 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.referencing.operation.matrix.Matrices;
 
 import static org.geotoolkit.util.Utilities.hash;
-import static org.geotoolkit.util.ArgumentChecks.ensureStrictlyPositive;
+import static org.apache.sis.util.ArgumentChecks.ensureStrictlyPositive;
 
 
 /**

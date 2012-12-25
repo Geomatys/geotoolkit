@@ -51,7 +51,7 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.io.wkt.Formatter;
 
 import static org.geotoolkit.util.Utilities.hash;
-import static org.geotoolkit.util.ArgumentChecks.*;
+import static org.apache.sis.util.ArgumentChecks.*;
 
 
 /**

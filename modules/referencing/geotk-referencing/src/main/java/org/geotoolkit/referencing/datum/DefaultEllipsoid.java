@@ -54,7 +54,7 @@ import org.geotoolkit.resources.Errors;
 import static java.lang.Math.*;
 import static java.lang.Double.*;
 import static org.geotoolkit.util.Utilities.hash;
-import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
+import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 import static org.geotoolkit.internal.InternalUtilities.epsilonEqual;
 
 

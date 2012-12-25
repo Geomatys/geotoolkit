@@ -68,7 +68,7 @@ import org.opengis.util.NameFactory;
 import org.geotoolkit.measure.Units;
 import org.geotoolkit.util.Strings;
 import org.geotoolkit.util.XArrays;
-import org.geotoolkit.util.ArgumentChecks;
+import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.naming.DefaultNameSpace;
 import org.geotoolkit.image.io.WarningProducer;

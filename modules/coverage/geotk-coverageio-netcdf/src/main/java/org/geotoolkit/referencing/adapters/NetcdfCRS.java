@@ -70,7 +70,7 @@ import org.geotoolkit.referencing.cs.DiscreteCoordinateSystemAxis;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
 
-import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
+import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 
 
 /**

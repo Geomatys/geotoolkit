@@ -28,7 +28,7 @@ import org.opengis.util.MemberName;
 import org.opengis.util.NameSpace;
 import org.opengis.util.TypeName;
 
-import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
+import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 
 
 /**

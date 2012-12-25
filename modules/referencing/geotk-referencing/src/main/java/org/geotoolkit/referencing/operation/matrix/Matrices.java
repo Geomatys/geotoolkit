@@ -29,7 +29,7 @@ import org.opengis.referencing.operation.NoninvertibleTransformException;
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.math.XMath;
 import org.geotoolkit.util.Utilities;
-import org.geotoolkit.util.ArgumentChecks;
+import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.referencing.operation.transform.LinearTransform;

@@ -62,7 +62,7 @@ import static javax.measure.unit.SI.METRE;
 import static javax.measure.unit.SI.RADIAN;
 import static javax.measure.unit.NonSI.DEGREE_ANGLE;
 
-import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
+import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 import static org.geotoolkit.util.collection.XCollections.hashMapCapacity;
 import static org.geotoolkit.referencing.datum.DefaultGeodeticDatum.WGS84;
 import static org.geotoolkit.referencing.datum.DefaultPrimeMeridian.GREENWICH;

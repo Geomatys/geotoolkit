@@ -39,7 +39,7 @@ import org.geotoolkit.referencing.operation.matrix.Matrices;
 import org.geotoolkit.referencing.operation.provider.Molodensky;
 import org.geotoolkit.referencing.operation.provider.AbridgedMolodensky;
 
-import org.geotoolkit.util.ArgumentChecks;
+import org.apache.sis.util.ArgumentChecks;
 import static java.lang.Math.*;
 import static org.geotoolkit.util.Utilities.hash;
 
@@ -640,7 +640,7 @@ public class MolodenskyTransform extends AbstractMathTransform implements Ellips
     @Override
     public Matrix derivative(final DirectPosition point) {
         final boolean source3D = (type & SOURCE_DIMENSION_MASK) != 0;
-        ArgumentChecks.ensureDimensionMatches("point", point, source3D ? 3 : 2);
+        ArgumentChecks.ensureDimensionMatches("point", source3D ? 3 : 2, point);
         return derivative(
                 toRadians (point.getOrdinate(0)),     // λ: Longitude
                 toRadians (point.getOrdinate(1)),     // φ: Latitude

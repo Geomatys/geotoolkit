@@ -41,7 +41,7 @@ import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
 import org.geotoolkit.referencing.operation.matrix.Matrices;
 
-import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
+import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 
 
 /**

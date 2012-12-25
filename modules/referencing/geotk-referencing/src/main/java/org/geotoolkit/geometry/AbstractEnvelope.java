@@ -37,7 +37,7 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.display.shape.XRectangle2D;
 
 import static org.geotoolkit.internal.InternalUtilities.epsilonEqual;
-import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
+import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 import static org.geotoolkit.util.Strings.trimFractionalPart;
 import static org.geotoolkit.math.XMath.SIGN_BIT_MASK;
 import static org.geotoolkit.math.XMath.isNegative;

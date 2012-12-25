@@ -32,7 +32,7 @@ import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
 import org.geotoolkit.referencing.operation.transform.WarpTransform2D;
 import org.geotoolkit.referencing.operation.MathTransforms;
 
-import static org.geotoolkit.util.ArgumentChecks.ensureBetween;
+import static org.apache.sis.util.ArgumentChecks.ensureBetween;
 
 
 /**

@@ -49,8 +49,8 @@ import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.lang.Workaround;
 
-import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
-import static org.geotoolkit.util.ArgumentChecks.ensureStrictlyPositive;
+import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
+import static org.apache.sis.util.ArgumentChecks.ensureStrictlyPositive;
 import static org.geotoolkit.metadata.KeyNamePolicy.UML_IDENTIFIER;
 import static org.geotoolkit.metadata.TypeValuePolicy.ELEMENT_TYPE;
 import static org.geotoolkit.metadata.TypeValuePolicy.DECLARING_INTERFACE;

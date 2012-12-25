@@ -38,7 +38,7 @@ import org.geotoolkit.io.wkt.PrjFiles;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.lang.Debug;
 
-import static org.geotoolkit.util.ArgumentChecks.*;
+import static org.apache.sis.util.ArgumentChecks.*;
 
 
 /**

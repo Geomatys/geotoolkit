@@ -30,7 +30,7 @@ import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.internal.InternalUtilities;
 
 import static org.geotoolkit.io.X364.*;
-import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
+import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 
 
 /**

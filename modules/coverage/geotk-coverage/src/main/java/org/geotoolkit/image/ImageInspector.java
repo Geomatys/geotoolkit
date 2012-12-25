@@ -39,7 +39,7 @@ import org.geotoolkit.internal.image.ColorUtilities;
 import org.geotoolkit.util.collection.XCollections;
 
 import static java.awt.image.DataBuffer.TYPE_BYTE;
-import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
+import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 
 
 /**

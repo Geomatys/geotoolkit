@@ -44,7 +44,7 @@ import org.geotoolkit.util.Version;
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.Disposable;
 import org.geotoolkit.util.NumberRange;
-import org.geotoolkit.util.ArgumentChecks;
+import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.resources.Locales;
 import org.geotoolkit.resources.Errors;

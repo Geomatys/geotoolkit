@@ -33,7 +33,7 @@ import javax.imageio.spi.ImageReaderSpi;
 
 import org.geotoolkit.util.collection.FrequencySortedSet;
 
-import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
+import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 
 
 /**

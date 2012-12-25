@@ -29,7 +29,7 @@ import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.Cloneable;
 import org.geotoolkit.resources.Errors;
 
-import static org.geotoolkit.util.ArgumentChecks.*;
+import static org.apache.sis.util.ArgumentChecks.*;
 
 
 /**

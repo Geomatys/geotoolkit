@@ -51,7 +51,7 @@ import org.geotoolkit.referencing.factory.AbstractAuthorityFactory;
 
 import static org.opengis.referencing.IdentifiedObject.NAME_KEY;
 import static org.opengis.referencing.IdentifiedObject.IDENTIFIERS_KEY;
-import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
+import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 import static org.geotoolkit.internal.Citations.iterator;
 import static org.apache.sis.internal.util.Citations.identifierMatches;
 

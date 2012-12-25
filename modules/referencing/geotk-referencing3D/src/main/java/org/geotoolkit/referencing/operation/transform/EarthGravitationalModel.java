@@ -42,7 +42,7 @@ import org.geotoolkit.util.ComparisonMode;
 
 import static java.lang.Math.*;
 import static org.geotoolkit.util.Utilities.hash;
-import static org.geotoolkit.util.ArgumentChecks.*;
+import static org.apache.sis.util.ArgumentChecks.*;
 import static org.geotoolkit.referencing.operation.provider.EllipsoidToGeoid.*;
 
 

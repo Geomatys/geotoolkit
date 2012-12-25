@@ -26,7 +26,7 @@ import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.MathTransform;
 
-import org.geotoolkit.util.ArgumentChecks;
+import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.referencing.operation.provider.Affine;
@@ -146,11 +146,11 @@ final class IdentityTransform extends AbstractMathTransform implements LinearTra
      */
     @Override
     public DirectPosition transform(final DirectPosition ptSrc, final DirectPosition ptDst) {
-        ArgumentChecks.ensureDimensionMatches("ptSrc", ptSrc, dimension);
+        ArgumentChecks.ensureDimensionMatches("ptSrc", dimension, ptSrc);
         if (ptDst == null) {
             return new GeneralDirectPosition(ptSrc);
         }
-        ArgumentChecks.ensureDimensionMatches("ptDst", ptDst, dimension);
+        ArgumentChecks.ensureDimensionMatches("ptDst", dimension, ptDst);
         for (int i=0; i<dimension; i++) {
             ptDst.setOrdinate(i, ptSrc.getOrdinate(i));
         }

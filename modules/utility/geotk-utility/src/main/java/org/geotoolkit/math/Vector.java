@@ -27,7 +27,7 @@ import org.geotoolkit.util.converter.Numbers;
 import org.geotoolkit.util.collection.WeakHashSet;
 import org.geotoolkit.util.collection.CheckedCollection;
 
-import static org.geotoolkit.util.ArgumentChecks.ensureValidIndex;
+import static org.apache.sis.util.ArgumentChecks.ensureValidIndex;
 
 
 /**

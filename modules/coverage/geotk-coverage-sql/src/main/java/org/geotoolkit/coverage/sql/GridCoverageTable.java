@@ -40,7 +40,7 @@ import org.geotoolkit.internal.UnmodifiableArraySortedSet;
 import org.geotoolkit.image.io.mosaic.TileManager;
 import org.geotoolkit.resources.Errors;
 
-import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
+import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 
 
 /**

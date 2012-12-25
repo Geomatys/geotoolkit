@@ -49,7 +49,7 @@ import org.geotoolkit.internal.image.ImageUtilities;
 import org.geotoolkit.internal.image.io.Formats;
 import org.geotoolkit.referencing.operation.builder.GridToEnvelopeMapper;
 
-import static org.geotoolkit.util.ArgumentChecks.ensureBetween;
+import static org.apache.sis.util.ArgumentChecks.ensureBetween;
 
 
 /**

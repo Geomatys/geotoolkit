@@ -63,7 +63,7 @@ import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.internal.referencing.AxisDirections;
 import org.geotoolkit.resources.Errors;
 
-import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
+import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 
 
 /**

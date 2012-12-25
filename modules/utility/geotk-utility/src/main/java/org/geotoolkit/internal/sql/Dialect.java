@@ -35,7 +35,7 @@ import java.util.Properties;
 import java.util.Locale;
 
 import org.geotoolkit.util.XArrays;
-import org.geotoolkit.util.ArgumentChecks;
+import org.apache.sis.util.ArgumentChecks;
 
 
 /**

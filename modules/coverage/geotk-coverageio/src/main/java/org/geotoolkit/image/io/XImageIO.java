@@ -52,7 +52,7 @@ import org.geotoolkit.internal.image.io.CheckedImageInputStream;
 import org.geotoolkit.factory.Factories;
 import org.geotoolkit.resources.Errors;
 
-import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
+import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 import org.geotoolkit.util.logging.Logging;
 
 

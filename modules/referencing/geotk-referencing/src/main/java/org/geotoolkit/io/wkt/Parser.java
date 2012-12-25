@@ -23,7 +23,7 @@ import java.text.DecimalFormat;
 import java.text.ParsePosition;
 import java.text.ParseException;
 
-import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
+import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 
 
 /**

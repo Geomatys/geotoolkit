@@ -63,7 +63,7 @@ import net.jcip.annotations.Immutable;
 import org.geotoolkit.xml.Namespaces;
 
 import static org.geotoolkit.util.Utilities.deepEquals;
-import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
+import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 import static org.geotoolkit.internal.InternalUtilities.nonEmptySet;
 import static org.geotoolkit.internal.referencing.CRSUtilities.getReferencingGroup;
 

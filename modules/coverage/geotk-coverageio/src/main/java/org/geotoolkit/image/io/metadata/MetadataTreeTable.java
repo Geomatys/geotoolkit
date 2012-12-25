@@ -32,7 +32,7 @@ import org.geotoolkit.util.converter.AnyConverter;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
 import org.geotoolkit.gui.swing.tree.Trees;
 
-import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
+import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 
 
 /**

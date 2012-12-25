@@ -57,7 +57,7 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
 
 import static org.geotoolkit.image.io.mosaic.Tile.LOGGER;
-import static org.geotoolkit.util.ArgumentChecks.ensureValidIndex;
+import static org.apache.sis.util.ArgumentChecks.ensureValidIndex;
 
 
 /**

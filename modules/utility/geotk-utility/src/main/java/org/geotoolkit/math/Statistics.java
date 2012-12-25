@@ -27,7 +27,7 @@ import org.apache.sis.math.StatisticsFormat;
 
 import org.geotoolkit.io.TableWriter;
 import org.geotoolkit.util.Cloneable;
-import org.geotoolkit.util.ArgumentChecks;
+import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.resources.Descriptions;
 import org.geotoolkit.internal.io.IOUtilities;
 

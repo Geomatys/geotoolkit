@@ -26,7 +26,7 @@ import net.jcip.annotations.ThreadSafe;
 import org.geotoolkit.math.Statistics;
 import org.geotoolkit.resources.Errors;
 
-import static org.geotoolkit.util.ArgumentChecks.ensureStrictlyPositive;
+import static org.apache.sis.util.ArgumentChecks.ensureStrictlyPositive;
 
 
 /**

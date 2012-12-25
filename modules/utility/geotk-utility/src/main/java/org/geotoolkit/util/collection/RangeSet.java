@@ -45,7 +45,7 @@ import org.geotoolkit.resources.Errors;
 
 import static org.geotoolkit.util.converter.Numbers.*;
 import static org.geotoolkit.util.converter.Classes.getShortClassName;
-import static org.geotoolkit.util.ArgumentChecks.ensureCanCast;
+import static org.apache.sis.util.ArgumentChecks.ensureCanCast;
 
 
 /**

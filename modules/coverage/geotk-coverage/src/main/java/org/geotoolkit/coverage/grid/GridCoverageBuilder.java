@@ -68,7 +68,7 @@ import org.opengis.referencing.operation.TransformException;
 import org.geotoolkit.lang.Builder;
 import org.geotoolkit.util.Cloneable;
 import org.geotoolkit.util.NumberRange;
-import org.geotoolkit.util.ArgumentChecks;
+import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.util.collection.BackingStoreException;
 import org.geotoolkit.factory.Hints;

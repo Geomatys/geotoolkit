@@ -33,7 +33,7 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 
-import static org.geotoolkit.util.ArgumentChecks.*;
+import static org.apache.sis.util.ArgumentChecks.*;
 import static org.geotoolkit.math.XMath.isNegative;
 import static org.geotoolkit.internal.InternalUtilities.isPoleToPole;
 
