@@ -37,7 +37,7 @@ import org.opengis.geometry.MismatchedDimensionException;
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.Strings;
 import org.geotoolkit.util.ComparisonMode;
-import org.geotoolkit.math.XMath;
+import org.apache.sis.math.MathFunctions;
 import org.geotoolkit.math.Statistics;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.io.ContentFormatException;
@@ -483,7 +483,7 @@ public class GeneralMatrix extends GMatrix implements XMatrix {
         final double[] column = new double[getNumRow()];
         for (int i=getNumCol(); --i>=0;) {
             getColumn(i, column);
-            final double m = XMath.magnitude(column);
+            final double m = MathFunctions.magnitude(column);
             for (int j=0; j<column.length; j++) {
                 column[j] /= m;
             }

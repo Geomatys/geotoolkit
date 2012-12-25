@@ -30,7 +30,7 @@ import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.util.InternationalString;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
 
-import org.geotoolkit.measure.Units;
+import org.apache.sis.measure.Units;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.internal.referencing.AxisDirections;
 

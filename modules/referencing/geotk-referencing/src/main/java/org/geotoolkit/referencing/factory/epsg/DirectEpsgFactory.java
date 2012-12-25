@@ -60,7 +60,7 @@ import org.opengis.metadata.quality.EvaluationMethodType;
 import org.opengis.metadata.quality.PositionalAccuracy;
 
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.measure.Units;
+import org.apache.sis.measure.Units;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.metadata.iso.citation.DefaultCitation;
 import org.geotoolkit.metadata.iso.extent.DefaultExtent;

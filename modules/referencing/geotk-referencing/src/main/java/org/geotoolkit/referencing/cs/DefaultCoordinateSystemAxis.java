@@ -41,7 +41,7 @@ import org.opengis.referencing.cs.RangeMeaning;
 import org.opengis.util.InternationalString;
 
 import org.geotoolkit.io.wkt.Formatter;
-import org.geotoolkit.measure.Units;
+import org.apache.sis.measure.Units;
 import org.geotoolkit.internal.referencing.AxisDirections;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.referencing.IdentifiedObjects;

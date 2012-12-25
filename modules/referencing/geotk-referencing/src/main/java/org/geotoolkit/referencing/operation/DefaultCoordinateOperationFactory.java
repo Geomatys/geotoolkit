@@ -57,7 +57,7 @@ import org.geotoolkit.internal.referencing.AxisDirections;
 import org.geotoolkit.internal.referencing.VerticalDatumTypes;
 
 import static java.util.Collections.singletonList;
-import static org.geotoolkit.measure.Units.MILLISECOND;
+import static org.apache.sis.measure.Units.MILLISECOND;
 import static org.geotoolkit.referencing.CRS.equalsIgnoreMetadata;
 import static org.geotoolkit.referencing.CRS.equalsApproximatively;
 import static org.geotoolkit.referencing.IdentifiedObjects.nameMatches;

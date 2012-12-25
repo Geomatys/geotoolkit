@@ -422,7 +422,7 @@ public final class CRS extends Static {
      * @throws FactoryException if the CRS creation failed for an other reason.
      *
      * @see #getSupportedCodes(String)
-     * @see org.geotoolkit.measure.Units#valueOfEPSG(int)
+     * @see org.apache.sis.measure.Units#valueOfEPSG(int)
      * @see <a href="http://www.geotoolkit.org/modules/referencing/supported-codes.html">List of authority codes</a>
      *
      * @category factory

@@ -26,7 +26,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.RectangularShape;
 import java.awt.geom.NoninvertibleTransformException;
 
-import org.geotoolkit.math.XMath;
+import org.apache.sis.math.MathFunctions;
 import org.geotoolkit.resources.Errors;
 import org.opengis.referencing.operation.MathTransform2D; // For Javadoc
 
@@ -707,10 +707,10 @@ public class XAffineTransform extends AffineTransform {
      * @return -1 if an axis has been flipped, +1 if no flipping, or 0 if unknown.
      */
     public static int getFlip(final AffineTransform tr) {
-        final int scaleX = XMath.sgn(tr.getScaleX());
-        final int scaleY = XMath.sgn(tr.getScaleY());
-        final int shearX = XMath.sgn(tr.getShearX());
-        final int shearY = XMath.sgn(tr.getShearY());
+        final int scaleX = MathFunctions.sgn(tr.getScaleX());
+        final int scaleY = MathFunctions.sgn(tr.getScaleY());
+        final int shearX = MathFunctions.sgn(tr.getShearX());
+        final int shearY = MathFunctions.sgn(tr.getShearY());
         if (scaleX ==  scaleY && shearX == -shearY) return +1;
         if (scaleX == -scaleY && shearX ==  shearY) return -1;
         return 0;

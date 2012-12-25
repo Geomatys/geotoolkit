@@ -37,7 +37,7 @@ import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.InvalidParameterTypeException;
 import org.opengis.parameter.InvalidParameterValueException;
 
-import org.geotoolkit.measure.Units;
+import org.apache.sis.measure.Units;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.internal.io.IOUtilities;
 

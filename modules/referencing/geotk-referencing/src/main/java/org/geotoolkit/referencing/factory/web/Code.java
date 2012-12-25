@@ -23,9 +23,9 @@ import net.jcip.annotations.Immutable;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
-import org.geotoolkit.measure.Units;
-import org.geotoolkit.measure.Latitude;
-import org.geotoolkit.measure.Longitude;
+import org.apache.sis.measure.Units;
+import org.apache.sis.measure.Latitude;
+import org.apache.sis.measure.Longitude;
 import org.geotoolkit.resources.Errors;
 
 

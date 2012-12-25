@@ -20,7 +20,7 @@ package org.geotoolkit.image.io;
 import java.awt.image.Raster;
 import net.jcip.annotations.Immutable;
 
-import org.geotoolkit.math.XMath;
+import org.apache.sis.math.MathFunctions;
 import org.geotoolkit.util.converter.Classes;
 
 
@@ -386,7 +386,7 @@ public abstract class SampleConverter {
             NaNs          = new float [padValues.length];
             for (int i=0; i<padValues.length; i++) {
                 floatValues[i] = (float) (doubleValues[i] = padValues[i]);
-                NaNs[i] = XMath.toNaN(i);
+                NaNs[i] = MathFunctions.toNanFloat(i);
             }
         }
 

@@ -45,8 +45,8 @@ import org.opengis.referencing.operation.TransformException;
 
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.measure.Latitude;
-import org.geotoolkit.measure.Longitude;
+import org.apache.sis.measure.Latitude;
+import org.apache.sis.measure.Longitude;
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.Deprecable;
@@ -62,8 +62,8 @@ import org.geotoolkit.referencing.operation.transform.AbstractMathTransform2D;
 
 import static java.lang.Math.*;
 import static java.lang.Double.*;
-import static org.geotoolkit.math.XMath.atanh;
-import static org.geotoolkit.math.XMath.xorSign;
+import static org.apache.sis.math.MathFunctions.atanh;
+import static org.apache.sis.math.MathFunctions.xorSign;
 import static org.geotoolkit.util.Utilities.hash;
 import static org.geotoolkit.internal.InternalUtilities.epsilonEqual;
 import static org.geotoolkit.parameter.Parameters.getOrCreate;

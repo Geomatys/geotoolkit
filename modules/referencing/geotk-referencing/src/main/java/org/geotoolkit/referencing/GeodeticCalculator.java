@@ -43,9 +43,9 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.geometry.coordinate.Position;
 import org.opengis.geometry.DirectPosition;
 
-import org.geotoolkit.measure.Angle;
-import org.geotoolkit.measure.Latitude;
-import org.geotoolkit.measure.Longitude;
+import org.apache.sis.measure.Angle;
+import org.apache.sis.measure.Latitude;
+import org.apache.sis.measure.Longitude;
 import org.geotoolkit.measure.CoordinateFormat;
 import org.geotoolkit.geometry.DirectPosition2D;
 import org.geotoolkit.geometry.TransformedDirectPosition;

@@ -25,7 +25,7 @@ import java.util.Locale;
 import java.util.UUID;
 import javax.measure.unit.Unit;
 
-import org.geotoolkit.measure.Units;
+import org.apache.sis.measure.Units;
 import org.geotoolkit.resources.Locales;
 import org.geotoolkit.internal.io.IOUtilities;
 

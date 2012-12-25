@@ -40,7 +40,7 @@ import org.opengis.referencing.cs.RangeMeaning;
 import org.opengis.referencing.operation.TransformException;
 
 import org.geotoolkit.util.Strings;
-import org.geotoolkit.measure.Units;
+import org.apache.sis.measure.Units;
 
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.referencing.NamedIdentifier;

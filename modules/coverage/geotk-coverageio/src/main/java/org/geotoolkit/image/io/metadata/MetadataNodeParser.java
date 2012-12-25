@@ -50,7 +50,7 @@ import org.geotoolkit.image.io.WarningProducer;
 import org.apache.sis.util.iso.Types;
 import org.geotoolkit.internal.image.io.Warnings;
 import org.geotoolkit.internal.jaxb.XmlUtilities;
-import org.geotoolkit.measure.Units;
+import org.apache.sis.measure.Units;
 import org.geotoolkit.util.Strings;
 import org.geotoolkit.util.Localized;
 import org.geotoolkit.util.NumberRange;

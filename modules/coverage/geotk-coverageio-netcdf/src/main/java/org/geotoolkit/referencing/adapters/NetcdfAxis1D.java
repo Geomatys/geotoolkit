@@ -35,7 +35,7 @@ import org.geotoolkit.referencing.cs.DiscreteCoordinateSystemAxis;
 import org.geotoolkit.lang.Workaround;
 import org.geotoolkit.resources.Errors;
 
-import static org.geotoolkit.math.XMath.xorSign;
+import static org.apache.sis.math.MathFunctions.xorSign;
 
 
 /**

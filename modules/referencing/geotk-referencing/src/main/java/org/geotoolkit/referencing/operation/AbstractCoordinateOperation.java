@@ -46,7 +46,7 @@ import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.metadata.iso.quality.AbstractPositionalAccuracy;
 import org.geotoolkit.internal.referencing.Semaphores;
-import org.geotoolkit.measure.Units;
+import org.apache.sis.measure.Units;
 
 import static org.geotoolkit.util.Utilities.hash;
 import static org.geotoolkit.util.Utilities.deepEquals;

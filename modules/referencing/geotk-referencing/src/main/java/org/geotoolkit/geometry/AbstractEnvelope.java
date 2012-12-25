@@ -40,8 +40,8 @@ import static org.geotoolkit.internal.InternalUtilities.epsilonEqual;
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 import static org.geotoolkit.util.Strings.trimFractionalPart;
 import static org.geotoolkit.math.XMath.SIGN_BIT_MASK;
-import static org.geotoolkit.math.XMath.isNegative;
-import static org.geotoolkit.math.XMath.isPositive;
+import static org.apache.sis.math.MathFunctions.isNegative;
+import static org.apache.sis.math.MathFunctions.isPositive;
 
 
 /**

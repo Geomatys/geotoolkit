@@ -47,7 +47,7 @@ import org.opengis.util.CodeList;
 
 import org.geotoolkit.io.X364;
 import org.geotoolkit.lang.Visitor;
-import org.geotoolkit.measure.Units;
+import org.apache.sis.measure.Units;
 import org.geotoolkit.util.Strings;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.util.converter.Numbers;

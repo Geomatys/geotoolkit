@@ -28,7 +28,7 @@ import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.crs.ProjectedCRS;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 
-import org.geotoolkit.measure.Units;
+import org.apache.sis.measure.Units;
 import org.geotoolkit.referencing.cs.DefaultCartesianCS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.operation.DefiningConversion;

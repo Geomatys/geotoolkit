@@ -29,7 +29,7 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.referencing.operation.MathTransforms;
 
 import static java.lang.Math.*;
-import static org.geotoolkit.math.XMath.SQRT2;
+import static org.apache.sis.math.MathFunctions.SQRT_2;
 
 
 /**
@@ -375,7 +375,7 @@ final class ProjectedPathIterator extends Point2D.Double implements PathIterator
         }
 
         // Segment projection form circle bow, can be replaced by quadratique curve.
-        if (s1 >= SQRT2/2 && abs(s1-s2) <= TOLERANCE) {
+        if (s1 >= SQRT_2 / 2 && abs(s1-s2) <= TOLERANCE) {
             /*
              * Reference to Thomas W. Sederberg article : COMPUTER AIDED GEOMETRIC DESIGN
              * Computes α as a weight coefficient of the delta to add to the starting point.

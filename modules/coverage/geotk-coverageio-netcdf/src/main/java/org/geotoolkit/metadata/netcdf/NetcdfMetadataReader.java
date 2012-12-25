@@ -65,7 +65,7 @@ import org.opengis.metadata.extent.Extent;
 import org.opengis.util.InternationalString;
 import org.opengis.util.NameFactory;
 
-import org.geotoolkit.measure.Units;
+import org.apache.sis.measure.Units;
 import org.geotoolkit.util.Strings;
 import org.geotoolkit.util.XArrays;
 import org.apache.sis.util.ArgumentChecks;

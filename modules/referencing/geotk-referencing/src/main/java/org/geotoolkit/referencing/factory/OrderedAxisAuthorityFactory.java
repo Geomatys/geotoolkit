@@ -27,7 +27,7 @@ import net.jcip.annotations.ThreadSafe;
 import org.opengis.referencing.cs.*;
 import org.opengis.referencing.crs.CRSAuthorityFactory;
 
-import org.geotoolkit.measure.Units;
+import org.apache.sis.measure.Units;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.factory.FactoryRegistryException;

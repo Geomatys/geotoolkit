@@ -72,7 +72,7 @@ import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.util.collection.BackingStoreException;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.measure.Units;
+import org.apache.sis.measure.Units;
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.geometry.Envelopes;

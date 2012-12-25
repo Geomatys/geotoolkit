@@ -34,7 +34,7 @@ import javax.imageio.spi.IIORegistry;
 import javax.imageio.spi.ImageReaderSpi;
 import net.jcip.annotations.ThreadSafe;
 
-import org.geotoolkit.math.XMath;
+import org.apache.sis.math.MathFunctions;
 import org.geotoolkit.math.Fraction;
 import org.geotoolkit.lang.Builder;
 import org.geotoolkit.util.logging.LogProducer;
@@ -428,7 +428,7 @@ public class MosaicBuilder extends Builder<TileManager> implements LogProducer {
      * {@linkplain Dimension#height height}) for the given image size. This
      * method searches for a value <var>x</var> inside the {@code [minSize...maxSize]}
      * range where {@code imageSize}/<var>x</var> has the largest amount of
-     * {@linkplain XMath#divisors divisors}. If more than one value have the same amount
+     * {@linkplain MathFunctions#divisors divisors}. If more than one value have the same amount
      * of divisors, then the one which is the closest to {@code tileSize} is returned.
      *
      * @param  imageSize The image size.
@@ -458,7 +458,7 @@ public class MosaicBuilder extends Builder<TileManager> implements LogProducer {
                 continue;
             }
             // Note: Fraction rounding mode must be the same than in getSubsamplings().
-            final int n = XMath.divisors(Fraction.round(imageSize, i)).length;
+            final int n = MathFunctions.divisors(Fraction.round(imageSize, i)).length;
             if (n < numDivisors) {
                 continue;
             }

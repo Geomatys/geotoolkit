@@ -54,7 +54,7 @@ import org.geotoolkit.referencing.cs.AbstractCS;
 import org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis;
 import org.geotoolkit.referencing.operation.DefiningConversion;
 import org.geotoolkit.referencing.factory.ReferencingFactoryContainer;
-import org.geotoolkit.measure.Units;
+import org.apache.sis.measure.Units;
 import org.geotoolkit.resources.Errors;
 
 import static java.util.Collections.singletonMap;

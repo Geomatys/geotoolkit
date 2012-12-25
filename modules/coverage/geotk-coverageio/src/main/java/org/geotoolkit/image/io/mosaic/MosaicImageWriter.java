@@ -49,7 +49,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.lang.reflect.UndeclaredThrowableException;
 
-import org.geotoolkit.math.XMath;
+import org.apache.sis.math.MathFunctions;
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.Version;
 import org.geotoolkit.util.Disposable;
@@ -1594,7 +1594,7 @@ search: for (final Tile tile : tiles) {
      * @return The suggested tile size.
      */
     private static int imageTileSize(final int imageSize) {
-        final int[] divisors = XMath.divisors(imageSize);
+        final int[] divisors = MathFunctions.divisors(imageSize);
         int i = Arrays.binarySearch(divisors, IMAGE_TILE_SIZE);
         if (i < 0) i = ~i;
         return (i < divisors.length) ? divisors[i] : imageSize;

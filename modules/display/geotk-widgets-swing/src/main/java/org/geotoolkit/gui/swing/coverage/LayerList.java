@@ -65,11 +65,11 @@ import org.opengis.metadata.extent.GeographicBoundingBox;
 import org.geotoolkit.util.DateRange;
 import org.geotoolkit.util.MeasurementRange;
 import org.geotoolkit.math.Statistics;
-import org.geotoolkit.measure.Units;
-import org.geotoolkit.measure.Angle;
-import org.geotoolkit.measure.Latitude;
-import org.geotoolkit.measure.Longitude;
-import org.geotoolkit.measure.AngleFormat;
+import org.apache.sis.measure.Units;
+import org.apache.sis.measure.Angle;
+import org.apache.sis.measure.Latitude;
+import org.apache.sis.measure.Longitude;
+import org.geotoolkit.measure.AngleFormat; // Can't use SIS because of Number formatting.
 import org.geotoolkit.measure.RangeFormat;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.sql.CoverageDatabase;

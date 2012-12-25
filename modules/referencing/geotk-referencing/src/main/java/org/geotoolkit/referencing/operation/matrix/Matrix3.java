@@ -21,7 +21,7 @@ import javax.vecmath.Matrix3d;
 import java.awt.geom.AffineTransform;
 import org.opengis.referencing.operation.Matrix;
 
-import org.geotoolkit.math.XMath;
+import org.apache.sis.math.MathFunctions;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.ComparisonMode;
@@ -211,9 +211,9 @@ public class Matrix3 extends Matrix3d implements XMatrix {
     public final void normalizeColumns() {
         double m;
         final double[] v = new double[3];
-        v[0]=m00; v[1]=m10; v[2]=m20; m = XMath.magnitude(v); m00 /= m; m10 /= m; m20 /= m;
-        v[0]=m01; v[1]=m11; v[2]=m21; m = XMath.magnitude(v); m01 /= m; m11 /= m; m21 /= m;
-        v[0]=m02; v[1]=m12; v[2]=m22; m = XMath.magnitude(v); m02 /= m; m12 /= m; m22 /= m;
+        v[0]=m00; v[1]=m10; v[2]=m20; m = MathFunctions.magnitude(v); m00 /= m; m10 /= m; m20 /= m;
+        v[0]=m01; v[1]=m11; v[2]=m21; m = MathFunctions.magnitude(v); m01 /= m; m11 /= m; m21 /= m;
+        v[0]=m02; v[1]=m12; v[2]=m22; m = MathFunctions.magnitude(v); m02 /= m; m12 /= m; m22 /= m;
     }
 
     /**

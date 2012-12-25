@@ -40,7 +40,7 @@ import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.util.Utilities;
-import org.geotoolkit.measure.Units;
+import org.apache.sis.measure.Units;
 
 import static org.geotoolkit.util.Utilities.hash;
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;

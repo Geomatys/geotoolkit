@@ -40,7 +40,7 @@ import org.geotoolkit.metadata.iso.citation.DefaultCitation;
 import org.geotoolkit.referencing.factory.DirectAuthorityFactory;
 
 // Following are for Javadoc only.
-import org.geotoolkit.measure.Units;
+import org.apache.sis.measure.Units;
 import org.geotoolkit.referencing.operation.projection.Orthographic;
 import org.geotoolkit.referencing.operation.projection.Equirectangular;
 import org.geotoolkit.referencing.operation.projection.TransverseMercator;

@@ -48,7 +48,7 @@ import org.geotoolkit.internal.image.io.IIOImageHelper;
 import org.geotoolkit.resources.Errors;
 
 import static ucar.nc2.constants.CDM.*;
-import static org.geotoolkit.math.XMath.divisors;
+import static org.apache.sis.math.MathFunctions.divisors;
 import static org.geotoolkit.internal.image.io.NetcdfVariable.*;
 import static org.geotoolkit.image.io.MultidimensionalImageStore.*;
 

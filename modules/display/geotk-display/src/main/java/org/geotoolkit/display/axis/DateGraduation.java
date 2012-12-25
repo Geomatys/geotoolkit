@@ -27,9 +27,9 @@ import javax.measure.unit.Unit;
 import javax.measure.quantity.Duration;
 import javax.measure.converter.UnitConverter;
 
-import org.geotoolkit.measure.Units;
+import org.apache.sis.measure.Units;
 
-import static org.geotoolkit.measure.Units.MILLISECOND;
+import static org.apache.sis.measure.Units.MILLISECOND;
 
 
 /**

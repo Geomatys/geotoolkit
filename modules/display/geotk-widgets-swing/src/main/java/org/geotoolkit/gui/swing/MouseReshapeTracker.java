@@ -52,7 +52,7 @@ import java.text.SimpleDateFormat;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 
-import org.geotoolkit.math.XMath;
+import org.apache.sis.math.MathFunctions;
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.converter.Classes;
@@ -447,11 +447,11 @@ class MouseReshapeTracker extends MouseInputAdapter implements Shape {
             tmp.x /= normalize;
             tmp.y /= normalize;
             adjusting = 0;
-            switch (XMath.sgn(Math.rint(tmp.x))) {
+            switch (MathFunctions.sgn(Math.rint(tmp.x))) {
                 case -1: adjusting |= WEST; break;
                 case +1: adjusting |= EAST; break;
             }
-            switch (XMath.sgn(Math.rint(tmp.y))) {
+            switch (MathFunctions.sgn(Math.rint(tmp.y))) {
                 case -1: adjusting |= NORTH; break;
                 case +1: adjusting |= SOUTH; break;
             }

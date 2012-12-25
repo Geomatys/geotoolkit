@@ -60,7 +60,7 @@ import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.spi.ServiceRegistry;
 
-import org.geotoolkit.math.XMath;
+import org.apache.sis.math.MathFunctions;
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.image.SampleModels;
@@ -709,7 +709,7 @@ public class RawTiffImageReader extends SpatialImageReader {
      */
     private static final Comparator<long[]> OFFSET_COMPARATOR = new Comparator<long[]>() {
         @Override public int compare(final long[] o1, final long[] o2) {
-            return XMath.sgn(o1[0] - o2[0]);
+            return MathFunctions.sgn(o1[0] - o2[0]);
         }
     };
 
@@ -813,7 +813,7 @@ public class RawTiffImageReader extends SpatialImageReader {
 
         /** Compares this tile with the specified tile for order of file position. */
         @Override public int compareTo(final Tile other) {
-            return XMath.sgn(position - other.position);
+            return MathFunctions.sgn(position - other.position);
         }
     }
 

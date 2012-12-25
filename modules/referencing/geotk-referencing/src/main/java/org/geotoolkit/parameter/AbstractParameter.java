@@ -38,7 +38,7 @@ import org.opengis.parameter.InvalidParameterValueException;
 
 import org.geotoolkit.util.Cloneable;
 import org.geotoolkit.io.TableWriter;
-import org.geotoolkit.measure.Units;
+import org.apache.sis.measure.Units;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.io.wkt.FormattableObject;
