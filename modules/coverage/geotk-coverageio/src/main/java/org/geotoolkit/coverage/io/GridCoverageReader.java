@@ -48,7 +48,6 @@ import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.util.GenericName;
 
 import org.geotoolkit.util.MeasurementRange;
-import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.collection.BackingStoreException;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.measure.Measure;
@@ -63,6 +62,7 @@ import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.resources.Vocabulary;
 
+import static org.apache.sis.util.Arrays.contains;
 import static org.geotoolkit.util.collection.XCollections.addIfNonNull;
 import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
 import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.ISO_FORMAT_NAME;
@@ -268,7 +268,7 @@ public abstract class GridCoverageReader extends GridCoverageStore {
      */
     private static DefaultMetadata createMetadata(final IIOMetadata streamMetadata) throws CoverageStoreException {
         if (streamMetadata != null) try {
-            if (XArrays.contains(streamMetadata.getExtraMetadataFormatNames(), ISO_FORMAT_NAME)) {
+            if (contains(streamMetadata.getExtraMetadataFormatNames(), ISO_FORMAT_NAME)) {
                 final Node root = streamMetadata.getAsTree(ISO_FORMAT_NAME);
                 if (root instanceof IIOMetadataNode) {
                     final Object userObject = ((IIOMetadataNode) root).getUserObject();

@@ -77,7 +77,6 @@ import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.internal.image.io.CheckedImageInputStream;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.util.collection.BackingStoreException;
 import org.geotoolkit.referencing.CRS;
@@ -86,6 +85,7 @@ import org.geotoolkit.referencing.operation.matrix.XMatrix;
 import org.geotoolkit.referencing.operation.matrix.Matrices;
 import org.geotoolkit.referencing.operation.MathTransforms;
 
+import static org.apache.sis.util.Arrays.containsIgnoreCase;
 import static org.geotoolkit.image.io.MultidimensionalImageStore.*;
 import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMAT_NAME;
 import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
@@ -464,7 +464,7 @@ public class ImageCoverageReader extends GridCoverageReader {
     protected boolean canReuseImageReader(final ImageReaderSpi provider, final Object input) throws IOException {
         if (IOUtilities.canProcessAsPath(input)) {
             final String[] suffixes = provider.getFileSuffixes();
-            return (suffixes != null) && XArrays.containsIgnoreCase(suffixes, IOUtilities.extension(input));
+            return (suffixes != null) && containsIgnoreCase(suffixes, IOUtilities.extension(input));
         } else {
             return provider.canDecodeInput(input);
         }

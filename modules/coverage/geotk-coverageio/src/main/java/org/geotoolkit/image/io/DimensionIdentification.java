@@ -26,10 +26,10 @@ import java.util.logging.LogRecord;
 
 import org.opengis.util.CodeList;
 import org.opengis.referencing.cs.AxisDirection;
+import org.apache.sis.util.Arrays;
 
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.IndexedResourceBundle;
-import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.internal.image.io.Warnings;
@@ -273,7 +273,7 @@ public class DimensionIdentification implements WarningProducer {
                 identifiers[count++] = entry.getKey();
             }
         }
-        return XArrays.resize(identifiers, count);
+        return Arrays.resize(identifiers, count);
     }
 
     /**

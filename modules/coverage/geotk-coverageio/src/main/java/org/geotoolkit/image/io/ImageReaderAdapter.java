@@ -44,6 +44,7 @@ import javax.imageio.event.IIOReadWarningListener;
 import javax.imageio.event.IIOReadProgressListener;
 
 import org.opengis.coverage.grid.GridEnvelope;
+import org.apache.sis.util.Arrays;
 
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
@@ -53,7 +54,6 @@ import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.internal.image.io.Formats;
 import org.geotoolkit.internal.image.io.CheckedImageInputStream;
 import org.geotoolkit.util.Strings;
-import org.geotoolkit.util.XArrays;
 
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 
@@ -1266,7 +1266,7 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
                     }
                 }
             }
-            return (count != 0) ? XArrays.resize(types, count) : null;
+            return (count != 0) ? Arrays.resize(types, count) : null;
         }
 
         /**

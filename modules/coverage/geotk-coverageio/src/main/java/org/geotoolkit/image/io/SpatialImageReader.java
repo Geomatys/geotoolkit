@@ -41,7 +41,6 @@ import javax.imageio.metadata.IIOMetadataFormat;
 import org.opengis.coverage.grid.GridEnvelope;
 
 import org.geotoolkit.util.Version;
-import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.Disposable;
 import org.geotoolkit.util.NumberRange;
 import org.apache.sis.util.ArgumentChecks;
@@ -57,6 +56,8 @@ import org.geotoolkit.image.io.metadata.MetadataHelper;
 import org.geotoolkit.image.io.metadata.SampleDomain;
 import org.geotoolkit.internal.image.io.Warnings;
 
+import static org.apache.sis.util.Arrays.append;
+import static org.apache.sis.util.Arrays.contains;
 import static org.geotoolkit.image.io.SampleConversionType.*;
 import static org.geotoolkit.image.io.MultidimensionalImageStore.*;
 import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
@@ -1345,7 +1346,7 @@ public abstract class SpatialImageReader extends ImageReader implements WarningP
          */
         static String[] addExtraMetadataFormat(final String formatName, final String nativeName, final String[] formatNames) {
             ArgumentChecks.ensureNonNull("formatName", formatName);
-            if (formatName.equals(nativeName) || XArrays.contains(formatNames, formatName)) {
+            if (formatName.equals(nativeName) || contains(formatNames, formatName)) {
                 return formatNames;
             }
             if (formatNames == null || formatNames.length == 0) {
@@ -1354,7 +1355,7 @@ public abstract class SpatialImageReader extends ImageReader implements WarningP
             if ((GEOTK_FORMAT_NAME.equals(formatNames[0]) && formatName.equals(ISO_FORMAT_NAME))) {
                 return GEOTK_ISO;
             }
-            return XArrays.append(formatNames, formatName);
+            return append(formatNames, formatName);
         }
 
         /**

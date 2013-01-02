@@ -34,7 +34,6 @@ import net.jcip.annotations.ThreadSafe;
 import org.opengis.annotation.UML;
 
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.Strings;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.ComparisonMode;
@@ -47,6 +46,7 @@ import org.geotoolkit.util.converter.ConverterRegistry;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
 import org.geotoolkit.xml.IdentifiedObject;
 
+import static org.apache.sis.util.Arrays.resize;
 import static org.geotoolkit.internal.InternalUtilities.floatEpsilonEqual;
 
 
@@ -473,7 +473,7 @@ final class PropertyAccessor {
                     }
                     getters[count++] = EXTRA_GETTER;
                 }
-                getters = XArrays.resize(getters, count);
+                getters = resize(getters, count);
                 SHARED_GETTERS.put(type, getters);
             }
             return getters;
