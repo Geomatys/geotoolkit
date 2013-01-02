@@ -33,10 +33,10 @@ public class QuadTreeDirectory {
     private final StringBuilder strBuilder;
     private final int nbrElementX;
     private final int nbrElementY;
-    private final String treeRootPath;
     private final int treeRootPathLength;
     private final String extension;
     private final boolean isDeleteOnExit;
+    private boolean archiscreate = false;
 
     /**
      * Recursive necessary attributes.
@@ -53,7 +53,6 @@ public class QuadTreeDirectory {
      * @param isDeleteOnExit true if user want delete all tree directory at end of JVM else false.
      */
     public QuadTreeDirectory(String treeRootPath, int nbrElementX, int nbrElementY, String extension, boolean isDeleteOnExit) {
-        this.treeRootPath       = treeRootPath;
         this.treeRootPathLength = treeRootPath.length();
         this.strBuilder         = new StringBuilder(treeRootPath);
         this.nbrElementX        = nbrElementX;
@@ -66,6 +65,7 @@ public class QuadTreeDirectory {
      * Create tree directory.
      */
     public void create4rchitecture() {
+        archiscreate = true;
         new File(strBuilder.toString()).mkdir();
         create4rchitecture(nbrElementX, nbrElementY);
         strBuilder.setLength(treeRootPathLength);
@@ -155,6 +155,8 @@ public class QuadTreeDirectory {
      * @return appropriate path of element at X, Y position.
      */
     public String getPath(int x, int y) {
+        if (!archiscreate)
+            throw new IllegalStateException("user must call create4rchitecture() method before");
         final String path = getPath(strBuilder, 0, 0, nbrElementX-1, nbrElementY-1, x, y);
         strBuilder.setLength(treeRootPathLength);
         return path;
