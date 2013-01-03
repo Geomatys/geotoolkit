@@ -78,6 +78,7 @@ public class DeleteType extends AbstractTransactionActionType implements DeleteE
      *     {@link FilterType }
      *     
      */
+    @Override
     public FilterType getFilter() {
         return filter;
     }
@@ -102,6 +103,7 @@ public class DeleteType extends AbstractTransactionActionType implements DeleteE
      *     {@link QName }
      *     
      */
+    @Override
     public QName getTypeName() {
         return typeName;
     }

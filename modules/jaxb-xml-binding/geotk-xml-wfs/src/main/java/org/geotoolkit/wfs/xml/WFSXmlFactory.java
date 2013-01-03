@@ -182,7 +182,8 @@ public class WFSXmlFactory {
         }
     }
 
-    public static TransactionResponse buildTransactionResponse(final String version, final Integer totalInserted, final Integer totalUpdated, final Integer totalDeleted, final Map<String, String> inserted) {
+    public static TransactionResponse buildTransactionResponse(final String version, final Integer totalInserted, final Integer totalUpdated, final Integer totalDeleted, final Integer totalReplaced,
+            final Map<String, String> inserted, final Map<String, String> replaced) {
         if ("2.0.0".equals(version)) {
             org.geotoolkit.wfs.xml.v200.ActionResultsType insertResults = null;
             if (inserted.size() > 0) {
@@ -192,9 +193,17 @@ public class WFSXmlFactory {
                 }
                 insertResults = new org.geotoolkit.wfs.xml.v200.ActionResultsType(ift);
             }
+            org.geotoolkit.wfs.xml.v200.ActionResultsType replaceResults = null;
+            if (replaced.size() > 0) {
+                final List<org.geotoolkit.wfs.xml.v200.CreatedOrModifiedFeatureType> ift = new ArrayList<org.geotoolkit.wfs.xml.v200.CreatedOrModifiedFeatureType>();
+                for (Entry<String, String> id : replaced.entrySet()) {
+                    ift.add(new org.geotoolkit.wfs.xml.v200.CreatedOrModifiedFeatureType(new org.geotoolkit.ogc.xml.v200.ResourceIdType(id.getKey()), id.getValue()));
+                }
+                replaceResults = new org.geotoolkit.wfs.xml.v200.ActionResultsType(ift);
+            }
 
-            final org.geotoolkit.wfs.xml.v200.TransactionSummaryType ts = new org.geotoolkit.wfs.xml.v200.TransactionSummaryType(totalInserted, totalUpdated, totalDeleted);
-            return new org.geotoolkit.wfs.xml.v200.TransactionResponseType(ts, null, insertResults, version);
+            final org.geotoolkit.wfs.xml.v200.TransactionSummaryType ts = new org.geotoolkit.wfs.xml.v200.TransactionSummaryType(totalInserted, totalUpdated, totalDeleted, totalReplaced);
+            return new org.geotoolkit.wfs.xml.v200.TransactionResponseType(ts, null, insertResults, replaceResults, version);
         } else if ("1.1.0".equals(version)) {
             org.geotoolkit.wfs.xml.v110.InsertResultsType insertResults = null;
             if (inserted.size() > 0) {

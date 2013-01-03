@@ -76,6 +76,7 @@ public class InsertType extends AbstractTransactionActionType implements InsertE
         return this.any;
     }
     
+    @Override
     public List getFeature() {
         return getAny();
     }
@@ -88,6 +89,7 @@ public class InsertType extends AbstractTransactionActionType implements InsertE
      *     {@link String }
      *     
      */
+    @Override
     public String getInputFormat() {
         if (inputFormat == null) {
             return "application/gml+xml; version=3.2";
@@ -116,6 +118,7 @@ public class InsertType extends AbstractTransactionActionType implements InsertE
      *     {@link String }
      *     
      */
+    @Override
     public String getSrsName() {
         return srsName;
     }

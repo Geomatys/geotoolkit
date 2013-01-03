@@ -69,10 +69,11 @@ public class TransactionSummaryType {
 
     }
 
-    public TransactionSummaryType(final Integer totalInserted, final Integer totalUpdated, final Integer totalDeleted) {
+    public TransactionSummaryType(final Integer totalInserted, final Integer totalUpdated, final Integer totalDeleted, final Integer totalReplaced) {
         this.totalDeleted  = totalDeleted;
         this.totalInserted = totalInserted;
         this.totalUpdated  = totalUpdated;
+        this.totalReplaced = totalReplaced;
     }
 
     /**
@@ -176,7 +177,8 @@ public class TransactionSummaryType {
         final StringBuilder sb = new StringBuilder("[TransactionSummaryType]\n");
         sb.append("totalDeleted: ").append(totalDeleted).append('\n');
         sb.append("totalInserted: ").append(totalInserted).append('\n');
-        sb.append("totalUpdated: ").append(totalUpdated ).append('\n');
+        sb.append("totalUpdated: ").append(totalUpdated).append('\n');
+        sb.append("totalReplaced: ").append(totalReplaced).append('\n');
         return sb.toString();
     }
 
@@ -192,6 +194,7 @@ public class TransactionSummaryType {
             final TransactionSummaryType that = (TransactionSummaryType) object;
             return Utilities.equals(this.totalDeleted,   that.totalDeleted)  &&
                    Utilities.equals(this.totalInserted,  that.totalInserted) &&
+                   Utilities.equals(this.totalReplaced,  that.totalReplaced) &&
                    Utilities.equals(this.totalUpdated,   that.totalUpdated);
         }
         return false;
@@ -203,6 +206,7 @@ public class TransactionSummaryType {
         hash = 59 * hash + this.totalInserted;
         hash = 59 * hash + this.totalUpdated;
         hash = 59 * hash + this.totalDeleted;
+        hash = 59 * hash + this.totalReplaced;
         return hash;
     }
 

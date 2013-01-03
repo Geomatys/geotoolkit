@@ -81,10 +81,11 @@ public class TransactionResponseType implements WFSResponse, TransactionResponse
 
     }
 
-    public TransactionResponseType(final TransactionSummaryType transactionSummary, final ActionResultsType updateResults, final ActionResultsType insertResults, final String version) {
+    public TransactionResponseType(final TransactionSummaryType transactionSummary, final ActionResultsType updateResults, final ActionResultsType insertResults, final ActionResultsType replaceResults, final String version) {
         this.transactionSummary = transactionSummary;
         this.updateResults      = updateResults;
         this.insertResults      = insertResults;
+        this.replaceResults     = replaceResults;
         this.version            = version;
     }
     
