@@ -1,6 +1,18 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ *    Geotoolkit.org - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
+ *
+ *    (C) 2012, Geomatys
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation;
+ *    version 2.1 of the License.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
  */
 package org.geotoolkit.image.io.large;
 
@@ -34,9 +46,6 @@ public class LargeRenderedImage implements RenderedImage {
     private final int minIndex;
     private final int numImages;
     private final ImageReader imageReader;
-//    private final Boolean isTiled;
-//    private final int tileWidth;
-//    private final int tileHeight;
     private final int imageIndex;
     private final int width;
     private final int height;
@@ -44,10 +53,6 @@ public class LargeRenderedImage implements RenderedImage {
     private final int tileHeight;
     private final int tileGridXOffset;
     private final int tileGridYOffset;
-//    private final boolean isTiled;
-
-//    private final int tileGridXOffset;
-//    private final int tileGridYOffset;
     private Vector<RenderedImage> vector = null;
     private final ImageReadParam imgParam;
 
@@ -70,11 +75,7 @@ public class LargeRenderedImage implements RenderedImage {
         this.numImages   = imageReader.getNumImages(true);
         this.width       = imageReader.getWidth(imageIndex);
         this.height      = imageReader.getHeight(imageIndex);
-        if (tilecache != null) {
-            this.tilecache = tilecache;
-        } else {
-            this.tilecache = LargeCache.getInstance(DEFAULT_MEMORY_CAPACITY);
-        }
+        this.tilecache = (tilecache != null) ? tilecache : LargeCache.getInstance(DEFAULT_MEMORY_CAPACITY);
         this.tileGridXOffset = 0;
         this.tileGridYOffset = 0;
         if (tileSize != null) {
@@ -90,19 +91,6 @@ public class LargeRenderedImage implements RenderedImage {
         for (boolean[] bool : isRead) {
             Arrays.fill(bool, false);
         }
-
-//        this.isTiled        = imageReader.isImageTiled(imageIndex);
-//        if (isTiled) {
-//            tileWidth       = imageReader.getTileWidth(imageIndex);
-//            tileHeight      = imageReader.getTileHeight(imageIndex);
-//            tileGridXOffset = imageReader.getTileGridXOffset(imageIndex);
-//            tileGridYOffset = imageReader.getTileGridYOffset(imageIndex);
-//        } else {
-//            tileWidth       = DEFAULT_TILE_SIZE;
-//            tileHeight      = DEFAULT_TILE_SIZE;
-//            tileGridXOffset = 0;
-//            tileGridYOffset = 0;
-//        }
     }
 
     @Override
@@ -137,7 +125,6 @@ public class LargeRenderedImage implements RenderedImage {
 
     @Override
     public SampleModel getSampleModel() {
-//        if (sm == null) sm = getColorModel().createCompatibleSampleModel(width, height);
         if (sm == null) sm = getColorModel().createCompatibleSampleModel(tileWidth, tileHeight);
         return sm;
     }
@@ -204,10 +191,7 @@ public class LargeRenderedImage implements RenderedImage {
 
     @Override
     public Raster getTile(int tileX, int tileY) {
-        if (isRead[tileY][tileX]) {
-            final Raster rast = tilecache.getTile(this, tileX, tileY);
-            return Raster.createWritableRaster(rast.getSampleModel(), rast.getDataBuffer(), new Point(tileX*tileWidth, tileY*tileHeight));
-        }
+        if (isRead[tileY][tileX]) return tilecache.getTile(this, tileX, tileY);
         // si elle na pas ete demandée :
         // 1 : la demandée au reader
         final int minRx = tileX*tileWidth;
@@ -237,9 +221,6 @@ public class LargeRenderedImage implements RenderedImage {
 
     @Override
     public Raster getData(Rectangle rect) {
-
-//        System.out.println(rect);
-//        return null;
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

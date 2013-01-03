@@ -72,9 +72,8 @@ public class QuadTreeDirectory {
     }
 
     private void create4rchitecture( int numXTiles, int numYTiles) {
-        if (numXTiles <= 2 && numYTiles <= 2) {
-            return;
-        }
+        if (numXTiles <= 2 && numYTiles <= 2) return;
+
         final int pathLength = strBuilder.length();
         final int nxt = (numXTiles + 1) / 2;
         final int nyt = (numYTiles + 1) / 2;
@@ -214,8 +213,6 @@ public class QuadTreeDirectory {
     }
 
     private boolean intersect(int minx, int miny, int maxx, int maxy, int tx, int ty){
-        final boolean x = ((tx >= minx) && (tx <= maxx));
-        final boolean y = ((ty >= miny) && (ty <= maxy));
-        return x && y;
+        return (tx >= minx) && (tx <= maxx) && (ty >= miny) && (ty <= maxy);
     }
 }

@@ -1,10 +1,21 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ *    Geotoolkit.org - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
+ *
+ *    (C) 2012, Geomatys
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation;
+ *    version 2.1 of the License.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
  */
 package org.geotoolkit.image.io.large;
 
-import com.sun.media.imageioimpl.plugins.tiff.TIFFAttrInfo;
 import java.awt.Point;
 import java.awt.image.*;
 import java.io.File;
@@ -21,7 +32,7 @@ import org.geotoolkit.util.ArgumentChecks;
  *
  * @author Rémi Maréchal (Geomatys).
  */
-public class LargeList {
+class LargeList {
 
     private long memoryCapacity;
     private long remainingCapacity;
@@ -32,87 +43,84 @@ public class LargeList {
     private final int numYTiles;
     private final QuadTreeDirectory qTD;
     String dirPath;
-    ColorModel cm;
+    private final ColorModel cm;
+    private final int riMinX;
+    private final int riMinY;
+    private final int riTileWidth;
+    private final int riTileHeight;
 
-    public LargeList(String directoryName, long memoryCapacity, int numXTiles, int numYTiles, ColorModel cm) {
+
+    LargeList(RenderedImage ri, long memoryCapacity) {
+        //cache properties.
         this.list           = new LinkedList<LargeRaster>();
         this.memoryCapacity = memoryCapacity;
-        this.cm = cm;
+
+        //image owner properties.
+        this.cm                = ri.getColorModel();
         this.remainingCapacity = memoryCapacity;
-        this.numXTiles = numXTiles;
-        this.numYTiles = numYTiles;
-        this.dirPath = TEMPORARY_PATH+"/"+directoryName;
-        System.out.println(directoryName);
-        this.qTD = new QuadTreeDirectory(dirPath, numXTiles, numYTiles, FORMAT, false);
+        this.numXTiles         = ri.getNumXTiles();
+        this.numYTiles         = ri.getNumYTiles();
+        this.riMinX            = ri.getMinX();
+        this.riMinY            = ri.getMinY();
+        this.riTileWidth       = ri.getTileWidth();
+        this.riTileHeight      = ri.getTileHeight();
+
+        //quad tree directory architecture.
+        this.dirPath = TEMPORARY_PATH + "/img_"+ri.hashCode();
+        this.qTD     = new QuadTreeDirectory(dirPath, numXTiles, numYTiles, FORMAT, true);
         qTD.create4rchitecture();
     }
 
-    public void add(int x, int y, WritableRaster raster) throws IOException {
+    void add(int x, int y, WritableRaster raster) throws IOException {
         final long rastWeight = getRasterWeight(raster);
-        list.addLast(new LargeRaster(x, y, rastWeight, raster));
+        list.addLast(new LargeRaster(x, y, rastWeight, checkRaster(raster, x, y)));
         remainingCapacity -= rastWeight;
         checkList();
     }
 
-    public void remove(int x, int y) {
-        for (int id = 0; id < list.size(); id++) {
+    void remove(int x, int y) {
+        for (int id = 0, s = list.size(); id < s; id++) {
             final LargeRaster lr = list.get(id);
             if (lr.getGridX() == x && lr.getGridY() == y) {
                 list.remove(id);
                 break;
             }
         }
-//        final StringBuilder sb = new StringBuilder(dirPath);
-//        sb.append("/");
-//        sb.append(x);
-//        sb.append("_");
-//        sb.append(y);
-//        sb.append(".");
-//        sb.append(FORMAT);
-//        final File removeFile = new File(sb.toString());
-        
         //delete on hard disk if exist.
-//        //quad tree
+        //quad tree
         final File removeFile = new File(qTD.getPath(x, y));
         if (removeFile.exists()) removeFile.delete();
     }
 
-    public Raster getRaster(int x, int y) throws IOException {
-        //sil est dans la liste on le retourn sans l'enlever de la liste
+    Raster getRaster(int x, int y) throws IOException {
         for (int id = 0; id < list.size(); id++) {
             final LargeRaster lr = list.get(id);
             if (lr.getGridX() == x && lr.getGridY() == y) return lr.getRaster();
         }
-//        //s'il ny est pas on va le chercher dans le fichier temp et on le reinsere dans la liste
-//        final StringBuilder sb = new StringBuilder(dirPath);
-//        sb.append("/");
-//        sb.append(x);
-//        sb.append("_");
-//        sb.append(y);
-//        sb.append(".");
-//        sb.append(FORMAT);
-//        final File getFile = new File(sb.toString());
-
-//        //quad tree
-//        final File getFile = new File(getPath(x, y));
         final File getFile = new File(qTD.getPath(x, y));
-
         if (getFile.exists()) {
             ImageReader imgRead = XImageIO.getReaderByFormatName(FORMAT, getFile, Boolean.FALSE, Boolean.TRUE);
             BufferedImage buff = imgRead.read(0);
             imgRead.dispose(); //on le delete pas la jvm delete
             //on le rajoute en cache car il peut etre tres vite redemandé
-            final WritableRaster wr = buff.getRaster();
+            final WritableRaster wr = checkRaster(buff.getRaster(), x, y);
             add(x, y, wr);
             return wr;
         }
         return null;
     }
 
-    public Raster[] getTiles() throws IOException {
-        int tabLength = list.size();
+    /**
+     * Return all raster within this cache system.
+     *
+     * @return all raster within this cache system.
+     * @throws IOException if impossible to read raster from disk.
+     */
+    Raster[] getTiles() throws IOException {
+        //a revoir
+        final int tabLength = numXTiles*numYTiles;
         final File dirdir = new File(dirPath);
-        if (dirdir.exists()) tabLength += dirdir.listFiles().length;
+//        if (dirdir.exists()) tabLength += dirdir.listFiles().length;
         int id = 0;
         final Raster[] rasters = new Raster[tabLength];
         for (LargeRaster lRast : list) {
@@ -129,7 +137,10 @@ public class LargeList {
         return rasters;
     }
 
-    public void removeTiles() {
+    /**
+     * Remove all file and directory relevant to this cache system.
+     */
+    void removeTiles() {
         remainingCapacity = memoryCapacity;
         list.clear();
         File removeFile = new File(dirPath);
@@ -137,7 +148,14 @@ public class LargeList {
         removeFile.delete();
     }
 
-    public void setCapacity(long memoryCapacity) throws IllegalImageDimensionException, IOException {
+    /**
+     * Affect a new memory capacity and update raster list from new memory capacity set.
+     *
+     * @param memoryCapacity new memory capacity.
+     * @throws IllegalImageDimensionException if capacity is too low from raster weight.
+     * @throws IOException if impossible to write raster on disk.
+     */
+    void setCapacity(long memoryCapacity) throws IllegalImageDimensionException, IOException {
         ArgumentChecks.ensurePositive("LargeList : memory capacity", memoryCapacity);
         final long diff = this.memoryCapacity - memoryCapacity;
         remainingCapacity -= diff;
@@ -145,6 +163,12 @@ public class LargeList {
         this.memoryCapacity = memoryCapacity;
     }
 
+    /**
+     * Define the weight of a raster.
+     *
+     * @param raster raster which will be weigh.
+     * @return raster weight.
+     */
     private long getRasterWeight(Raster raster) {
         long dataWeight;
         int type = raster.getDataBuffer().getDataType();
@@ -163,6 +187,13 @@ public class LargeList {
         return width * raster.getHeight() * dataWeight ;
     }
 
+    /**
+     * Write raster on hard disk.
+     *
+     * @param path emplacement to write.
+     * @param raster raster which will be writing.
+     * @throws IOException if impossible to write raster on disk.
+     */
     private void writeRaster(File path, WritableRaster raster) throws IOException {
         WritableRaster wr = RasterFactory.createWritableRaster(raster.getSampleModel(), raster.getDataBuffer(), new Point(0, 0));
         final RenderedImage rast    = new BufferedImage(cm, wr, true, null);
@@ -172,113 +203,14 @@ public class LargeList {
         path.deleteOnExit();
     }
 
-    {
-
-//    public static void create4rchitecture(String path, int numXTiles, int numYTiles) {
-//        if (numXTiles <= 2 && numYTiles <= 2) {
-//            return;
-//        }
-//        //ensuite plusieur cas
-//        //3 cas
-//        //width et height sup a 2 faire 4 sous dossiers
-//        //width == 1 faire 2 sous dossiers
-//        //height ==1 faire 2 sous dossiers
-//        if (numXTiles <= 2) {
-//            //on decoupe dans la hauteur
-//            int nyt = (numYTiles+1)/2;
-//            //on creer 2 dossiers
-//            String path0 = path+"/0";
-//            new File(path0).mkdirs();
-//            create4rchitecture(path0, numXTiles, nyt);
-//            String path1 = path+"/1";
-//            new File(path1).mkdirs();
-//            create4rchitecture(path1, numXTiles, numYTiles-nyt);
-//        } else if (numYTiles <= 2) {
-//            //on decoupe dans la longueur
-//            int nxt = (numXTiles+1)/2;
-//            //on creer 2 dossiers
-//            String path0 = path+"/0";
-//            new File(path0).mkdirs();
-//            create4rchitecture(path0, nxt, numYTiles);
-//            String path1 = path+"/1";
-//            new File(path1).mkdirs();
-//            create4rchitecture(path1, numXTiles-nxt, numYTiles);
-//        } else {
-//            //on decoupe en 4
-//            int nxt = (numXTiles+1)/2;
-//            int nyt = (numYTiles+1)/2;
-//            //on creer 4 dossiers
-//            String path00 = path+"/00";
-//            new File(path00).mkdirs();
-//            create4rchitecture(path00, nxt, nyt);
-//
-//            String path10 = path+"/10";
-//            new File(path10).mkdirs();
-//            create4rchitecture(path10, numXTiles-nxt, nyt);
-//
-//            String path01 = path+"/01";
-//            new File(path01).mkdirs();
-//            create4rchitecture(path01, nxt, numYTiles-nyt);
-//
-//            String path11 = path+"/11";
-//            new File(path11).mkdirs();
-//            create4rchitecture(path11, numXTiles-nxt, numYTiles-nyt);
-//
-//        }
-//    }
-////
-//    public String getPath(int tileX, int tileY) {
-//        return getPath(dirPath, 0, 0, numXTiles-1, numYTiles-1, tileX, tileY);
-//    }
-//
-//    public static String getPath(String path, int mintx, int minty, int maxtx, int maxty, int tileX, int tileY) {
-//        if ((maxtx-mintx) <= 1 && (maxty-minty) <= 1) {
-//            return (path+"/"+tileX+"_"+tileY+"."+FORMAT);
-//        }
-//        if (!new File(path).exists()) throw new IllegalStateException("path undefine : tx = "+tileX+" ty = "+tileY+" : "+path);
-//        int w = maxtx-mintx+1;
-//        int h = maxty-minty+1;
-//        int w2 = (w+1)/2;
-//        int h2 = (h+1)/2;
-//        int demx = mintx+w2;
-//        int demy = minty+h2;
-//
-//        if ((maxtx-mintx)<=1) {
-//            //il y a 2 sous dossiers en hauteur
-//            String path0 = path+"/0";
-//            if (intersect(mintx, minty, maxtx, demy-1, tileX, tileY)) return getPath(path0, mintx, minty, maxtx, demy-1, tileX, tileY);
-//            String path1 = path+"/1";
-//            if (intersect(mintx, demy, maxtx, maxty, tileX, tileY)) return getPath(path1, mintx, demy, maxtx, maxty, tileX, tileY);
-//        } else if ((maxty-minty)<=1) {
-//            //il y a 2 sous dossiers en largeur
-//            String path0 = path+"/0";
-//            if (intersect(mintx, minty, demx-1, maxty, tileX, tileY)) return getPath(path0, mintx, minty, demx-1, maxty, tileX, tileY);
-//
-//            String path1 = path+"/1";
-//            if (intersect( demx, minty, maxtx, maxty, tileX, tileY)) return getPath(path1, demx, minty, maxtx, maxty, tileX, tileY);
-//        } else {
-//            //4 cas
-//            String path00 = path+"/00";
-//            if (intersect(mintx, minty, demx-1, demy-1, tileX, tileY)) return getPath(path00, mintx, minty, demx-1, demy-1, tileX, tileY);
-//            String path10 = path+"/10";
-//            if (intersect(demx, minty, maxtx, demy-1, tileX, tileY)) return getPath(path10, demx, minty, maxtx, demy-1, tileX, tileY);
-//            String path01 = path+"/01";
-//            if (intersect(mintx, demy, demx-1, maxty, tileX, tileY)) return getPath(path01, mintx, demy, demx-1, maxty, tileX, tileY);
-//            String path11 = path+"/11";
-//            if (intersect(demx, demy, maxtx, maxty, tileX, tileY)) return getPath(path11, demx, demy, maxtx, maxty, tileX, tileY);
-//        }
-//        throw new IllegalStateException("undefine path");
-//    }
-//
-//    public static boolean intersect(int minx, int miny, int maxx, int maxy, int tx, int ty){
-//        final boolean x = ((tx >= minx) && (tx <= maxx));
-//        final boolean y = ((ty >= miny) && (ty <= maxy));
-//        return x && y;
-//    }
-    }
+    /**
+     * Write raster within {@link LargeRaster} object on hard disk at appropriate quad tree emplacement.
+     *
+     * @param lRaster object which contain raster.
+     * @throws IOException if impossible to write raster on disk.
+     */
     private void writeRaster(LargeRaster lRaster) throws IOException {
-        String rastPath = qTD.getPath(lRaster.getGridX(), lRaster.getGridY());
-        writeRaster(new File(rastPath), lRaster.getRaster());
+        writeRaster(new File(qTD.getPath(lRaster.getGridX(), lRaster.getGridY())), lRaster.getRaster());
     }
 
     /**
@@ -293,13 +225,38 @@ public class LargeList {
         }
     }
 
+    /**
+     * <p>Verify that raster coordinate is agree from renderedImage location.<br/>
+     * If location is correct return raster else return new raster with correct<br/>
+     * location but with same internal value from raster.</p>
+     *
+     * @param raster raster will be checked.
+     * @param tx tile location within renderedImage owner in X direction.
+     * @param ty tile location within renderedImage owner in Y direction.
+     * @return raster with correct coordinate from its image owner.
+     */
+    private WritableRaster checkRaster(WritableRaster raster, int tx, int ty) {
+        final int mx = riTileWidth*tx+riMinX;
+        final int my = riTileHeight*ty+riMinY;
+        if (raster.getMinX() != mx || raster.getMinY() != my)
+            return Raster.createWritableRaster(raster.getSampleModel(), raster.getDataBuffer(), new Point(mx, my));
+        return raster;
+    }
+
+    /**
+     * <p>Verify that list weight do not exceed memory capacity.<br/>
+     * If memory capacity is exceed write raster on hard disk up to don't exceed memory capacity.</p>
+     *
+     * @throws IllegalImageDimensionException if raster too large for this Tilecache.
+     * @throws IOException if impossible to write raster.
+     */
     private void checkList() throws IllegalImageDimensionException, IOException {
         while (remainingCapacity < 0) {
             if (list.isEmpty())
                 throw new IllegalImageDimensionException("raster too large");
             final LargeRaster lr = list.pollFirst();
             remainingCapacity   += lr.getWeight();
-//            quad tree
+            //quad tree
             writeRaster(lr);
         }
     }
@@ -311,6 +268,14 @@ class LargeRaster {
     private final long weight;
     private final WritableRaster raster;
 
+    /**
+     * Object to wrap raster and different raster properties.
+     *
+     * @param gridX raster position in X direction.
+     * @param gridY raster position in Y direction.
+     * @param weight raster weight.
+     * @param raster
+     */
     public LargeRaster(int gridX, int gridY, long weight, WritableRaster raster) {
         this.gridX  = gridX;
         this.gridY  = gridY;

@@ -1,6 +1,18 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ *    Geotoolkit.org - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
+ *
+ *    (C) 2012, Geomatys
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation;
+ *    version 2.1 of the License.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
  */
 package org.geotoolkit.image.io.large;
 
@@ -53,7 +65,7 @@ public class LargeCache implements TileCache {
         } else {
             final long mC = memoryCapacity/(map.size()+1);
             updateLList(mC);
-            lL = new LargeList("img_"+ri.hashCode(), mC, ri.getNumXTiles(), ri.getNumYTiles(), ri.getColorModel());
+            lL = new LargeList(ri, mC);
             map.put(ri, lL);
         }
         try {
@@ -103,7 +115,7 @@ public class LargeCache implements TileCache {
     @Override
     public void removeTiles(RenderedImage ri) {
         if (map.containsKey(ri)) {
-            LargeList lL = map.get(ri);
+            final LargeList lL = map.get(ri);
             lL.removeTiles();
             map.remove(ri);
         }
@@ -117,7 +129,7 @@ public class LargeCache implements TileCache {
         if (map.containsKey(ri)) {
             lL = map.get(ri);
         } else {
-            lL = new LargeList("img_"+ri.hashCode(), memoryCapacity/(map.size()+1), ri.getNumXTiles(), ri.getNumYTiles(), ri.getColorModel());
+            lL = new LargeList(ri, memoryCapacity/(map.size()+1));
             map.put(ri, lL);
         }
         try {
