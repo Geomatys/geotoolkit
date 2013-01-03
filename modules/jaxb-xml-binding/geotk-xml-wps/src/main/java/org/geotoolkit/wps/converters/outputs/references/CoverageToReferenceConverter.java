@@ -25,6 +25,7 @@ import net.iharder.Base64;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageIO;
 import org.geotoolkit.coverage.io.CoverageStoreException;
+import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.util.FileUtilities;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
 import org.geotoolkit.wps.io.WPSEncoding;
@@ -89,15 +90,13 @@ public class CoverageToReferenceConverter extends AbstractReferenceOutputConvert
         final String mimeStr = (String) params.get(MIME) != null ? (String) params.get(MIME) : WPSMimeType.IMG_GEOTIFF.val();
         final WPSMimeType mime = WPSMimeType.customValueOf(mimeStr);
         
-        if (!mime.equals(WPSMimeType.IMG_GEOTIFF) && !mime.equals(WPSMimeType.IMG_GEOTIFF_BIS)) {
-            throw new NonconvertibleObjectException("Only support geotiff writing.");
-        }
-        
         reference.setMimeType(mimeStr);
         reference.setEncoding(encodingStr);
         reference.setSchema((String) params.get(SCHEMA));
        
-        final String formatName = "GEOTIFF";
+        final String formatName;
+        final String[] formatNames = XImageIO.getFormatNamesByMimeType(mimeStr, true, true);
+        formatName = (formatNames.length < 1)? "GEOTIFF" : formatNames[0];
         final String randomFileName = UUID.randomUUID().toString();
 
         try {
