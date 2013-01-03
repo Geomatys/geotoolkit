@@ -444,10 +444,15 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
      * @param srid coordinate spatial reference identifier.
      */
     protected void addBoundingBox(final Document doc, final List<Double> minx, final List<Double> maxx, final List<Double> miny, final List<Double> maxy, final int srid) {
-        final Polygon[] polygons = new Polygon[minx.size()];
+        final List<Polygon> polygonList = new ArrayList<Polygon>();
         for (int i = 0; i < minx.size(); i++) {
-            polygons[i] = getPolygon(minx.get(i), maxx.get(i), miny.get(i), maxy.get(i),srid);
+            if (Double.isNaN(minx.get(i)) || Double.isNaN(maxx.get(i)) || Double.isNaN(miny.get(i)) || Double.isNaN(maxy.get(i))) {
+                LOGGER.info("skip NaN envelope");
+            } else {
+                polygonList.add(getPolygon(minx.get(i), maxx.get(i), miny.get(i), maxy.get(i),srid));
+            }
         }
+        final Polygon[] polygons = polygonList.toArray(new Polygon[polygonList.size()]);
         Geometry geom;
         if (polygons.length == 1) {
             geom = polygons[0];
