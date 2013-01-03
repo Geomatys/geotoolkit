@@ -26,7 +26,7 @@ import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.media.jai.TileCache;
-import org.geotoolkit.image.io.IllegalImageDimensionException;
+import org.geotoolkit.util.logging.Logging;
 
 /**
  *
@@ -34,6 +34,7 @@ import org.geotoolkit.image.io.IllegalImageDimensionException;
  */
 public class LargeCache implements TileCache {
 
+    private static final Logger LOGGER = Logging.getLogger(LargeCache.class.getName());
     private long memoryCapacity;
     private HashMap<RenderedImage, LargeList> map  = new HashMap<RenderedImage, LargeList>();
 
@@ -59,19 +60,23 @@ public class LargeCache implements TileCache {
         if (!(raster instanceof WritableRaster))
             throw new IllegalArgumentException("raster must be WritableRaster instance");
         final WritableRaster wRaster = (WritableRaster) raster;
-        LargeList lL;
+        LargeList lL = null;
         if (map.containsKey(ri)) {
             lL = map.get(ri);
         } else {
-            final long mC = memoryCapacity/(map.size()+1);
+            final long mC = memoryCapacity / (map.size() + 1);
             updateLList(mC);
-            lL = new LargeList(ri, mC);
+            try {
+                lL = new LargeList(ri, mC);
+            } catch (IOException ex) {
+                LOGGER.log(Level.SEVERE, "impossible to create cache list", ex);
+            }
             map.put(ri, lL);
         }
         try {
             lL.add(i, i1, wRaster);
         } catch (IOException ex) {
-            Logger.getLogger(LargeCache.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, "impossible to add raster (write raster on disk)", ex);
         }
     }
 
@@ -102,14 +107,15 @@ public class LargeCache implements TileCache {
 
     @Override
     public Raster[] getTiles(RenderedImage ri) {
-        if (!map.containsKey(ri))
-            throw new IllegalArgumentException("renderedImage don't exist in this "+LargeCache.class.getName());
-        try {
-            return map.get(ri).getTiles();
-        } catch (IOException ex) {
-            Logger.getLogger(LargeCache.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return null;
+        throw new UnsupportedOperationException("Not supported yet.");
+//        if (!map.containsKey(ri))
+//            throw new IllegalArgumentException("renderedImage don't exist in this "+LargeCache.class.getName());
+//        try {
+//            return map.get(ri).getTiles();
+//        } catch (IOException ex) {
+//            Logger.getLogger(LargeCache.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+//        return null;
     }
 
     @Override
@@ -125,21 +131,25 @@ public class LargeCache implements TileCache {
     public void addTiles(RenderedImage ri, Point[] points, Raster[] rasters, Object o) {
         if (points.length != rasters.length)
             throw new IllegalArgumentException("points and rasters tables must have same length.");
-        LargeList lL;
+        LargeList lL = null;
         if (map.containsKey(ri)) {
             lL = map.get(ri);
         } else {
-            lL = new LargeList(ri, memoryCapacity/(map.size()+1));
+            try {
+                lL = new LargeList(ri, memoryCapacity/(map.size()+1));
+            } catch (IOException ex) {
+                LOGGER.log(Level.SEVERE, "impossible to create cache list", ex);
+            }
             map.put(ri, lL);
         }
-        try {
-            for (int id = 0, l = points.length; id < l; id++) {
-                if (!(rasters[id] instanceof WritableRaster))
-                    throw new IllegalArgumentException("raster must be WritableRaster instance");
+        for (int id = 0, l = points.length; id < l; id++) {
+            if (!(rasters[id] instanceof WritableRaster))
+                throw new IllegalArgumentException("raster must be WritableRaster instance");
+            try {
                 lL.add(points[id].x, points[id].y, (WritableRaster) rasters[id]);
+            } catch (IOException ex) {
+                LOGGER.log(Level.SEVERE, "impossible to add raster (write raster on disk)", ex);
             }
-        } catch (IOException ex) {
-            Logger.getLogger(LargeCache.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -150,12 +160,12 @@ public class LargeCache implements TileCache {
         final LargeList lL = map.get(ri);
         final int l        = points.length;
         final Raster[] rasters = new Raster[l];
-        try {
-            for (int id = 0; id < l; id++) {
+        for (int id = 0; id < l; id++) {
+            try {
                 rasters[id] = lL.getRaster(points[id].x, points[id].y);
+            } catch (IOException ex) {
+                LOGGER.log(Level.SEVERE, null, ex);
             }
-        } catch (IOException ex) {
-            Logger.getLogger(LargeCache.class.getName()).log(Level.SEVERE, null, ex);
         }
         return rasters;
     }
@@ -189,12 +199,12 @@ public class LargeCache implements TileCache {
     }
 
     private void updateLList(long listMemoryCapacity) {
-        try {
-            for (RenderedImage r : map.keySet()) map.get(r).setCapacity(listMemoryCapacity);
-        } catch (IllegalImageDimensionException ex) {
-            Logger.getLogger(LargeCache.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(LargeCache.class.getName()).log(Level.SEVERE, null, ex);
+        for (RenderedImage r : map.keySet()) {
+            try {
+                map.get(r).setCapacity(listMemoryCapacity);
+            } catch (IOException ex) {
+                LOGGER.log(Level.SEVERE, "updateLList method : raster too large from remaining capacity memory", ex);
+            }
         }
     }
 

@@ -21,6 +21,7 @@ import java.awt.image.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.LinkedList;
+import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageWriter;
 import javax.media.jai.RasterFactory;
@@ -34,23 +35,26 @@ import org.geotoolkit.util.ArgumentChecks;
  */
 class LargeList {
 
-    private long memoryCapacity;
-    private long remainingCapacity;
-    LinkedList<LargeRaster> list;
     private static String TEMPORARY_PATH = System.getProperty("java.io.tmpdir");
     private static String FORMAT = "tiff";
+    private long memoryCapacity;
+    private long remainingCapacity;
+    private final LinkedList<LargeRaster> list;
     private final int numXTiles;
     private final int numYTiles;
     private final QuadTreeDirectory qTD;
-    String dirPath;
+    private final String dirPath;
     private final ColorModel cm;
     private final int riMinX;
     private final int riMinY;
     private final int riTileWidth;
     private final int riTileHeight;
 
+    private final ImageReader imgReader;
+    private final ImageWriter imgWriter;
 
-    LargeList(RenderedImage ri, long memoryCapacity) {
+
+    LargeList(RenderedImage ri, long memoryCapacity) throws IOException {
         //cache properties.
         this.list           = new LinkedList<LargeRaster>();
         this.memoryCapacity = memoryCapacity;
@@ -69,10 +73,15 @@ class LargeList {
         this.dirPath = TEMPORARY_PATH + "/img_"+ri.hashCode();
         this.qTD     = new QuadTreeDirectory(dirPath, numXTiles, numYTiles, FORMAT, true);
         qTD.create4rchitecture();
+
+        //reader writer
+        this.imgReader = XImageIO.getReaderByFormatName(FORMAT, null, Boolean.FALSE, Boolean.TRUE);
+        this.imgWriter = XImageIO.getWriterByFormatName(FORMAT, null, null);
     }
 
     void add(int x, int y, WritableRaster raster) throws IOException {
         final long rastWeight = getRasterWeight(raster);
+        if (rastWeight > memoryCapacity) throw new IllegalImageDimensionException("raster too large");
         list.addLast(new LargeRaster(x, y, rastWeight, checkRaster(raster, x, y)));
         remainingCapacity -= rastWeight;
         checkList();
@@ -99,10 +108,10 @@ class LargeList {
         }
         final File getFile = new File(qTD.getPath(x, y));
         if (getFile.exists()) {
-            ImageReader imgRead = XImageIO.getReaderByFormatName(FORMAT, getFile, Boolean.FALSE, Boolean.TRUE);
-            BufferedImage buff = imgRead.read(0);
-            imgRead.dispose(); //on le delete pas la jvm delete
-            //on le rajoute en cache car il peut etre tres vite redemandé
+            imgReader.setInput(ImageIO.createImageInputStream(getFile));
+            final BufferedImage buff = imgReader.read(0);
+            imgReader.dispose();
+            //add in cache list.
             final WritableRaster wr = checkRaster(buff.getRaster(), x, y);
             add(x, y, wr);
             return wr;
@@ -117,23 +126,10 @@ class LargeList {
      * @throws IOException if impossible to read raster from disk.
      */
     Raster[] getTiles() throws IOException {
-        //a revoir
-        final int tabLength = numXTiles*numYTiles;
-        final File dirdir = new File(dirPath);
-//        if (dirdir.exists()) tabLength += dirdir.listFiles().length;
         int id = 0;
-        final Raster[] rasters = new Raster[tabLength];
-        for (LargeRaster lRast : list) {
-            rasters[id++] = lRast.getRaster();
-        }
-        if (dirdir.exists()) {
-            for (File f : dirdir.listFiles()) {
-                ImageReader imgRead = XImageIO.getReaderByFormatName(FORMAT, f, Boolean.FALSE, Boolean.TRUE);
-                BufferedImage buff = imgRead.read(0);
-                imgRead.dispose();
-                rasters[id++] = buff.getRaster();
-            }
-        }
+        final Raster[] rasters = new Raster[numXTiles * numYTiles];
+        for (int y = 0; y < numYTiles; y++)
+            for (int x = 0; x < numXTiles; x++) rasters[id++] = getRaster(x, y);
         return rasters;
     }
 
@@ -143,7 +139,7 @@ class LargeList {
     void removeTiles() {
         remainingCapacity = memoryCapacity;
         list.clear();
-        File removeFile = new File(dirPath);
+        final File removeFile = new File(dirPath);
         cleanDirectory(removeFile);
         removeFile.delete();
     }
@@ -195,9 +191,9 @@ class LargeList {
      * @throws IOException if impossible to write raster on disk.
      */
     private void writeRaster(File path, WritableRaster raster) throws IOException {
-        WritableRaster wr = RasterFactory.createWritableRaster(raster.getSampleModel(), raster.getDataBuffer(), new Point(0, 0));
-        final RenderedImage rast    = new BufferedImage(cm, wr, true, null);
-        final ImageWriter imgWriter = XImageIO.getWriterByFormatName(FORMAT, path, null);
+        final WritableRaster wr  = RasterFactory.createWritableRaster(raster.getSampleModel(), raster.getDataBuffer(), new Point(0, 0));
+        final RenderedImage rast = new BufferedImage(cm, wr, true, null);
+        imgWriter.setOutput(ImageIO.createImageOutputStream(path));
         imgWriter.write(rast);
         imgWriter.dispose();
         path.deleteOnExit();
@@ -236,8 +232,8 @@ class LargeList {
      * @return raster with correct coordinate from its image owner.
      */
     private WritableRaster checkRaster(WritableRaster raster, int tx, int ty) {
-        final int mx = riTileWidth*tx+riMinX;
-        final int my = riTileHeight*ty+riMinY;
+        final int mx = riTileWidth * tx  + riMinX;
+        final int my = riTileHeight * ty + riMinY;
         if (raster.getMinX() != mx || raster.getMinY() != my)
             return Raster.createWritableRaster(raster.getSampleModel(), raster.getDataBuffer(), new Point(mx, my));
         return raster;
@@ -250,7 +246,7 @@ class LargeList {
      * @throws IllegalImageDimensionException if raster too large for this Tilecache.
      * @throws IOException if impossible to write raster.
      */
-    private void checkList() throws IllegalImageDimensionException, IOException {
+    private void checkList() throws IOException {
         while (remainingCapacity < 0) {
             if (list.isEmpty())
                 throw new IllegalImageDimensionException("raster too large");

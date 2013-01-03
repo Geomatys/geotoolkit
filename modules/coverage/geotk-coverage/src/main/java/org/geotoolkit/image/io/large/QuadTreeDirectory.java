@@ -66,7 +66,11 @@ public class QuadTreeDirectory {
      */
     public void create4rchitecture() {
         archiscreate = true;
-        new File(strBuilder.toString()).mkdir();
+        final File root = new File(strBuilder.toString());
+        if (!root.exists()) {
+            root.mkdir();
+            if (isDeleteOnExit) root.deleteOnExit();
+        }
         create4rchitecture(nbrElementX, nbrElementY);
         strBuilder.setLength(treeRootPathLength);
     }
