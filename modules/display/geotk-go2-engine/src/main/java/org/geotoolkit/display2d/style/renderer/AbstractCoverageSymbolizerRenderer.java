@@ -19,13 +19,21 @@ package org.geotoolkit.display2d.style.renderer;
 import java.awt.Shape;
 import java.awt.geom.Area;
 import java.util.logging.Level;
+import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.exception.PortrayalException;
+import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
+import org.geotoolkit.display2d.container.stateless.DefaultProjectedCoverage;
+import org.geotoolkit.display2d.container.stateless.StatelessContextParams;
 import org.geotoolkit.display2d.primitive.ProjectedCoverage;
+import org.geotoolkit.display2d.primitive.ProjectedFeature;
 import org.geotoolkit.display2d.primitive.ProjectedObject;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
+import org.geotoolkit.map.CoverageMapLayer;
+import org.geotoolkit.map.MapBuilder;
+import org.opengis.coverage.Coverage;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.style.Symbolizer;
 
@@ -45,12 +53,34 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
 
     @Override
     public void portray(final ProjectedObject graphic) throws PortrayalException {
-        //nothing to paint
+        if(graphic instanceof ProjectedFeature){
+            final ProjectedFeature pf = (ProjectedFeature) graphic;
+            final Object obj = GO2Utilities.evaluate(GO2Utilities.FILTER_FACTORY.property(
+                    symbol.getSource().getGeometryPropertyName()), pf.getCandidate(), null, null);
+            if(obj instanceof GridCoverage2D){
+                final CoverageMapLayer ml = MapBuilder.createCoverageLayer((GridCoverage2D)obj, GO2Utilities.STYLE_FACTORY.style(), "");
+                final StatelessContextParams params = new StatelessContextParams(renderingContext.getCanvas(),ml);
+                params.update(renderingContext);
+                final DefaultProjectedCoverage pc = new DefaultProjectedCoverage(params, ml);
+                portray(pc);
+            }
+        }
     }
 
     @Override
     public boolean hit(final ProjectedObject graphic, final SearchAreaJ2D mask, final VisitFilter filter) {
-        //nothing to hit
+        if(graphic instanceof ProjectedFeature){
+            final ProjectedFeature pf = (ProjectedFeature) graphic;
+            final Object obj = GO2Utilities.evaluate(GO2Utilities.FILTER_FACTORY.property(
+                    symbol.getSource().getGeometryPropertyName()), pf.getCandidate(), null, null);
+            if(obj instanceof GridCoverage2D){
+                final CoverageMapLayer ml = MapBuilder.createCoverageLayer((GridCoverage2D)obj, GO2Utilities.STYLE_FACTORY.style(), "");
+                final StatelessContextParams params = new StatelessContextParams(renderingContext.getCanvas(),ml);
+                params.update(renderingContext);
+                final DefaultProjectedCoverage pc = new DefaultProjectedCoverage(params, ml);
+                return hit(pc,mask,filter);
+            }
+        }
         return false;
     }
     

@@ -29,14 +29,20 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
+import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.awt.image.WritableRaster;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import javax.imageio.ImageIO;
+import javax.measure.unit.NonSI;
+import javax.measure.unit.Unit;
 
 import org.geotoolkit.coverage.CoverageStack;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.grid.GridCoverageFactory;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.data.FeatureStoreUtilities;
@@ -45,9 +51,9 @@ import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.display.canvas.control.StopOnErrorMonitor;
 import org.geotoolkit.display.exception.PortrayalException;
 import org.geotoolkit.display2d.GO2Hints;
-import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.FeatureTypeBuilder;
+import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
@@ -58,7 +64,9 @@ import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
 import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
+import org.geotoolkit.style.DefaultSelectedChannelType;
 import org.geotoolkit.style.DefaultStyleFactory;
+import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
 
 import org.junit.AfterClass;
@@ -76,6 +84,20 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 
 import static org.junit.Assert.*;
+import org.opengis.feature.Feature;
+import org.opengis.feature.type.FeatureType;
+import org.opengis.filter.expression.Expression;
+import org.opengis.style.ChannelSelection;
+import org.opengis.style.ColorMap;
+import org.opengis.style.ContrastEnhancement;
+import org.opengis.style.Description;
+import org.opengis.style.OverlapBehavior;
+import org.opengis.style.RasterSymbolizer;
+import org.opengis.style.ShadedRelief;
+import org.opengis.style.Symbolizer;
+
+import static org.geotoolkit.style.StyleConstants.*;
+import org.opengis.style.SelectedChannelType;
 
 /**
  * Testing portrayal service.
@@ -262,6 +284,73 @@ public class PortrayalServiceTest {
         }
     }
 
+    /**
+     * Test rendering of a coverage inside a feature property.
+     */
+    @Test
+    public void testCoveragePropertyRendering() throws Exception{
+        final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
+        ftb.setName("test");
+        ftb.add("coverage", GridCoverage2D.class, DefaultGeographicCRS.WGS84);
+        final FeatureType ft = ftb.buildFeatureType();
+        
+        final BufferedImage img = new BufferedImage(90, 90, BufferedImage.TYPE_INT_ARGB);
+        final Graphics2D g = img.createGraphics();
+        g.setColor(Color.GREEN);
+        g.fillRect(0, 0, 90, 90);
+        g.dispose();
+        
+        final GridCoverageBuilder gcb = new GridCoverageBuilder();
+        gcb.setName("propcov");
+        gcb.setCoordinateReferenceSystem(DefaultGeographicCRS.WGS84);
+        gcb.setGridToCRS(1, 0, 0, 1, 0, 0);
+        gcb.setRenderedImage(img);
+        
+        final Feature f = FeatureUtilities.defaultFeature(ft, "id0");                
+        f.getProperty("coverage").setValue(gcb.getGridCoverage2D());
+        final FeatureCollection collection = FeatureStoreUtilities.collection(f);
+        
+                
+        final String name = "mySymbol";
+        final Description desc = DEFAULT_DESCRIPTION;
+        final String geometry = "coverage";
+        final Unit unit = NonSI.PIXEL;
+        final Expression opacity = LITERAL_ONE_FLOAT;
+        final ChannelSelection channels = StyleConstants.DEFAULT_RASTER_CHANNEL_RGB;
+        final OverlapBehavior overlap = null;
+        final ColorMap colormap = null;
+        final ContrastEnhancement enhance = null;
+        final ShadedRelief relief = null;
+        final Symbolizer outline = null;
+
+        final RasterSymbolizer symbol = SF.rasterSymbolizer(
+                name,geometry,desc,unit,opacity,
+                channels,overlap,colormap,enhance,relief,outline);
+        final MutableStyle style = SF.style(symbol);
+        
+        final MapLayer layer = MapBuilder.createFeatureLayer(collection, style);
+        final MapContext context = MapBuilder.createContext();
+        context.layers().add(layer);
+        
+        final CanvasDef cdef = new CanvasDef(new Dimension(360, 180), null);
+        final SceneDef sdef = new SceneDef(context);
+        final GeneralEnvelope env = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
+        env.setRange(0, -180, +180);
+        env.setRange(1, -90, +90);
+        final ViewDef vdef = new ViewDef(env);
+        
+        final BufferedImage result = DefaultPortrayalService.portray(cdef, sdef, vdef);
+        final Raster raster = result.getData();
+        final int[] pixel = new int[4];
+        final int[] trans = new int[]{0,0,0,0};
+        final int[] green = new int[]{0,255,0,255};
+        assertNotNull(result);
+        raster.getPixel(0, 0, pixel);       assertArrayEquals(trans, pixel);
+        raster.getPixel(178, 45, pixel);       assertArrayEquals(trans, pixel);
+        raster.getPixel(181, 45, pixel);       assertArrayEquals(green, pixel);
+        
+    }
+    
     @Test
     public void testCoverageRendering() throws Exception{
         for(GridCoverage2D col : coverages){
