@@ -312,9 +312,6 @@ public class ShapefileDataStore extends AbstractFeatureStore{
         final CoordinateReferenceSystem reproject = query.getCoordinateSystemReproject();
         final boolean read3D = (reproject==null || (reproject != null && CRS.getVerticalCRS(reproject)!=null));
 
-        if (!QueryBuilder.isNaturalSortBy(query.getSortBy())) {
-            throw new DataStoreException("The ShapeFileDatastore does not support sortby query");
-        }
         // gather attributes needed by the query tool, they will be used by the
         // query filter
         final FilterAttributeExtractor extractor = new FilterAttributeExtractor();
@@ -341,6 +338,9 @@ public class ShapefileDataStore extends AbstractFeatureStore{
                 remaining.setFilter(query.getFilter());
                 remaining.setHints(query.getHints());
                 remaining.setCRS(query.getCoordinateSystemReproject());
+                remaining.setSortBy(query.getSortBy());
+                remaining.setStartIndex(query.getStartIndex());
+                remaining.setMaxFeatures(query.getMaxFeatures());
                 reader = handleRemaining(reader, remaining.buildQuery());
 
                 return reader;
@@ -364,6 +364,9 @@ public class ShapefileDataStore extends AbstractFeatureStore{
                 query2.setFilter(query.getFilter());
                 query2.setHints(query.getHints());
                 query2.setCRS(query.getCoordinateSystemReproject());
+                query2.setSortBy(query.getSortBy());
+                query2.setStartIndex(query.getStartIndex());
+                query2.setMaxFeatures(query.getMaxFeatures());
                 reader = handleRemaining(reader, query2.buildQuery());
 
                 return reader;
