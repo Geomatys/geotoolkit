@@ -26,7 +26,12 @@ import java.io.DataOutput;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.io.LEDataOutputStream;
+import org.geotoolkit.referencing.IdentifiedObjects;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.MathTransform2D;
+import org.opengis.util.FactoryException;
 
 /**
  * WKB Raster Writer, used in postGIS 2 but can be used elsewhere.
@@ -44,6 +49,54 @@ public class WKBRasterWriter {
     public void reset(){
     }
 
+    /**
+     * Encode given coverage in Postgis WKB.
+     *
+     * @param coverage : grid coverage 2d , not null
+     * @return byte[] encoded image
+     * @throws IOException
+     */
+    public byte[] write(final GridCoverage2D coverage) throws IOException, FactoryException {
+        final ByteArrayOutputStream out = new ByteArrayOutputStream();
+        write(coverage, out);
+        return out.toByteArray();
+    }
+    
+    /**
+     * Encode given coverage in Postgis WKB.
+     *
+     * @param coverage : grid coverage 2d , not null
+     * @param stream : output stream to write in
+     * @throws IOException
+     */
+    public void write(final GridCoverage2D coverage, final OutputStream stream) throws IOException, FactoryException {
+        write(coverage, stream, true);
+    }
+    
+    /**
+     * Encode given coverage in Postgis WKB.
+     *
+     * @param coverage : grid coverage 2d , not null
+     * @param stream : output stream to write in
+     * @param littleEndian : wanted value encoding
+     * @throws IOException
+     */
+    public void write(final GridCoverage2D coverage, final OutputStream stream, final boolean littleEndian) 
+            throws IOException, FactoryException {
+        final CoordinateReferenceSystem crs = coverage.getCoordinateReferenceSystem2D();
+        final Integer srid = IdentifiedObjects.lookupEpsgCode(crs, true);
+        if(srid == null){
+            throw new IOException("CoordinateReferenceSystem does not have an EPSG code.");
+        }
+        final MathTransform2D gridToCRS = coverage.getGridGeometry().getGridToCRS2D();
+        if(!(gridToCRS instanceof AffineTransform)){
+            throw new IOException("Coverage GridToCRS transform is not affine.");
+        }
+        final RenderedImage image = coverage.getRenderedImage();
+        
+        write(image, (AffineTransform)gridToCRS, srid, stream);
+    }
+    
     /**
      * Encode given image in Postgis WKB.
      *

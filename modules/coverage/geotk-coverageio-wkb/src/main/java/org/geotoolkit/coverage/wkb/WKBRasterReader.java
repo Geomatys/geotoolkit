@@ -30,9 +30,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import javax.media.jai.PlanarImage;
 import javax.media.jai.RasterFactory;
+import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import static org.geotoolkit.coverage.wkb.WKBRasterConstants.*;
 import org.geotoolkit.io.LEDataInputStream;
+import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
+import org.opengis.referencing.NoSuchAuthorityCodeException;
+import org.opengis.referencing.crs.CRSAuthorityFactory;
+import org.opengis.referencing.operation.MathTransform;
+import org.opengis.util.FactoryException;
 
 /**
  * WKB Raster Reader, used in postGIS 2 but can be used elsewhere.
@@ -69,6 +76,41 @@ public class WKBRasterReader {
      */
     public int getSRID(){
         return srid;
+    }
+    
+    /**
+     * Parse given byte[] and rebuild a GridCoverage2D.
+     * 
+     * @param data
+     * @return
+     * @throws IOException 
+     */
+    public GridCoverage2D readCoverage(byte[] data, CRSAuthorityFactory authorityFactory) 
+            throws IOException, NoSuchAuthorityCodeException, FactoryException{
+        final InputStream stream = new ByteArrayInputStream(data);
+        return readCoverage(stream,authorityFactory);
+    }
+    
+    /**
+     * Parse given InputStream and rebuild a GridCoverage2D.
+     * 
+     * @param stream
+     * @return
+     * @throws IOException 
+     */
+    public GridCoverage2D readCoverage(final InputStream stream, CRSAuthorityFactory authorityFactory) 
+            throws IOException, NoSuchAuthorityCodeException, FactoryException{
+        final BufferedImage image = read(stream);
+        final GridCoverageBuilder gcb = new GridCoverageBuilder();
+        final String epsgCode = "EPSG:"+srid;
+        if(authorityFactory != null){
+            gcb.setCoordinateReferenceSystem(authorityFactory.createCoordinateReferenceSystem(epsgCode));
+        }else{
+            gcb.setCoordinateReferenceSystem(CRS.decode(epsgCode));
+        }        
+        gcb.setGridToCRS((MathTransform)getGridToCRS());
+        gcb.setRenderedImage(image);
+        return gcb.getGridCoverage2D();
     }
     
     /**
