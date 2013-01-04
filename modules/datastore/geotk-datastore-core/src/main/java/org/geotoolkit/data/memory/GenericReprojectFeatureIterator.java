@@ -24,6 +24,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.geotoolkit.coverage.processing.Operations;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.FeatureReader;
@@ -44,6 +45,7 @@ import org.geotoolkit.referencing.CRS;
 import static org.geotoolkit.util.ArgumentChecks.*;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.logging.Logging;
+import org.opengis.coverage.Coverage;
 import org.opengis.feature.Feature;
 import org.opengis.feature.GeometryAttribute;
 import org.opengis.feature.Property;
@@ -150,7 +152,10 @@ public abstract class GenericReprojectFeatureIterator<F extends Feature, R exten
                         prop = FF.createGeometryAttribute(value, (GeometryDescriptor)
                                 schema.getDescriptor(prop.getDescriptor().getName()), null, null);
 
-                        if(transformer != null){
+                        if(value instanceof Coverage){
+                            value = Operations.DEFAULT.resample((Coverage)value, targetCRS);
+                            prop.setValue(value);
+                        }else if(transformer != null){
                             //the transform applies to all feature
                             try {
                                 prop.setValue(transformer.transform((Geometry) value));
@@ -234,7 +239,10 @@ public abstract class GenericReprojectFeatureIterator<F extends Feature, R exten
                         prop = FF.createGeometryAttribute(value, (GeometryDescriptor)
                                 schema.getDescriptor(prop.getDescriptor().getName()), null, null);
 
-                        if(transformer != null){
+                        if(value instanceof Coverage){
+                            value = Operations.DEFAULT.resample((Coverage)value, targetCRS);
+                            prop.setValue(value);
+                        }else if(transformer != null){
                             //the transform applies to all feature
                             try {
                                 prop.setValue(transformer.transform((Geometry) value));
@@ -323,7 +331,9 @@ public abstract class GenericReprojectFeatureIterator<F extends Feature, R exten
                     if(value != null){
                         //create a new property with the projected type
 
-                        if(transformer != null){
+                        if(value instanceof Coverage){
+                            values[i] = Operations.DEFAULT.resample((Coverage)value, targetCRS);
+                        }else if(transformer != null){
                             //the transform applies to all feature
                             try {
                                 values[i] = transformer.transform((Geometry) value);
@@ -478,7 +488,10 @@ public abstract class GenericReprojectFeatureIterator<F extends Feature, R exten
                     prop = FF.createGeometryAttribute(value, (GeometryDescriptor)
                             schema.getDescriptor(prop.getDescriptor().getName()), null, null);
 
-                    if(geoTransformer != null){
+                    if(value instanceof Coverage){
+                        value = Operations.DEFAULT.resample((Coverage)value, targetCRS);
+                        prop.setValue(value);
+                    }else if(geoTransformer != null){
                         //the transform applies to all feature
                         try {
                             prop.setValue(geoTransformer.transform((Geometry) value));

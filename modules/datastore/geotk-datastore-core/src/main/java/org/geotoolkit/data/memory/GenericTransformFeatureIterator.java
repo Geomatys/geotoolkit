@@ -123,7 +123,7 @@ public abstract class GenericTransformFeatureIterator<F extends Feature, R exten
             for(Property prop : next.getProperties()){
                 if(prop instanceof GeometryAttribute){
                     Object value = prop.getValue();
-                    if(value != null){
+                    if(value instanceof Geometry){
                         try {
                             //transform the geometry
                             prop.setValue(transformer.transform((Geometry) value));
@@ -131,6 +131,8 @@ public abstract class GenericTransformFeatureIterator<F extends Feature, R exten
                             throw new FeatureStoreRuntimeException("A transformation exception occurred while reprojecting data on the fly", e);
                         }
 
+                    }else{
+                        prop.setValue(value);
                     }
                 }
             }
@@ -194,7 +196,7 @@ public abstract class GenericTransformFeatureIterator<F extends Feature, R exten
                 if(prop instanceof GeometryAttribute){
                     prop = FeatureUtilities.deepCopy(prop);
                     Object value = prop.getValue();
-                    if(value != null){
+                    if(value instanceof Geometry){
                         try {
                             //transform the geometry
                             prop.setValue(transformer.transform((Geometry) value));
@@ -202,6 +204,8 @@ public abstract class GenericTransformFeatureIterator<F extends Feature, R exten
                             throw new FeatureStoreRuntimeException("A transformation exception occurred while reprojecting data on the fly", e);
                         }
 
+                    }else{
+                        prop.setValue(value);
                     }
                 }
                 properties.add(prop);
