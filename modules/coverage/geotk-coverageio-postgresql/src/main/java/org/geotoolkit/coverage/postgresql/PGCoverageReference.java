@@ -53,7 +53,7 @@ import org.geotoolkit.coverage.PyramidalModel;
 import org.geotoolkit.coverage.PyramidalModelReader;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
-import org.geotoolkit.coverage.postgresql.epsg.EPSGWriter;
+import org.geotoolkit.coverage.postgresql.epsg.PGEPSGWriter;
 import org.geotoolkit.coverage.wkb.WKBRasterConstants;
 import org.geotoolkit.coverage.wkb.WKBRasterWriter;
 import org.geotoolkit.resources.Vocabulary;
@@ -139,7 +139,7 @@ public class PGCoverageReference implements CoverageReference, PyramidalModel{
             cnx = store.getDataSource().getConnection();
             cnx.setReadOnly(false);
             //find or insert coordinate reference system
-            final EPSGWriter writer = new EPSGWriter(store);
+            final PGEPSGWriter writer = new PGEPSGWriter(store);
             final String epsgCode = String.valueOf(writer.getOrCreateCoordinateReferenceSystem(crs));
 
             stmt = cnx.createStatement();

@@ -31,7 +31,7 @@ import java.util.ResourceBundle;
  *
  * @author Johann Sorel (Geomatys)
  */
-public enum EPSGQueries {
+public enum PGEPSGQueries {
 
     NEXT_CODE,
     
@@ -68,7 +68,7 @@ public enum EPSGQueries {
     private final String query;
     private final Integer[] parameters;
 
-    private EPSGQueries() {
+    private PGEPSGQueries() {
         final String stmt = ResourceBundle.getBundle("org/geotoolkit/coverage/postgresql/epsg_queries").getString(name());
         
         final StringBuilder sb = new StringBuilder();

@@ -39,7 +39,8 @@ import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.opengis.referencing.operation.Projection;
 import org.opengis.util.FactoryException;
-import static org.geotoolkit.coverage.postgresql.epsg.EPSGQueries.*;
+import static org.geotoolkit.coverage.postgresql.epsg.PGEPSGQueries.*;
+import org.geotoolkit.referencing.EPSGWriter;
 import org.geotoolkit.referencing.datum.AbstractDatum;
 import org.geotoolkit.referencing.factory.IdentifiedObjectFinder;
 import org.geotoolkit.temporal.object.TemporalUtilities;
@@ -63,13 +64,13 @@ import org.opengis.referencing.datum.VerticalDatum;
  * 
  * @author Johann Sorel (Geomatys)
  */
-public class EPSGWriter {
+public class PGEPSGWriter implements EPSGWriter {
     
     private final PGCoverageStore store;
     private final DataSource source;
     private final ThreadedEpsgFactory factory;
 
-    public EPSGWriter(final PGCoverageStore store) throws SQLException {
+    public PGEPSGWriter(final PGCoverageStore store) throws SQLException {
         this.store = store;
         this.source = store.getDataSource();
         this.factory = store.getEPSGFactory();
@@ -811,7 +812,7 @@ public class EPSGWriter {
     /**
      * Search for a similar record in the database.
      */
-    private Integer findSimilar(final Connection cnx, final EPSGQueries query, final Object ... parameters) throws SQLException{
+    private Integer findSimilar(final Connection cnx, final PGEPSGQueries query, final Object ... parameters) throws SQLException{
         Integer similar = null;
         
         PreparedStatement stmt = null;
