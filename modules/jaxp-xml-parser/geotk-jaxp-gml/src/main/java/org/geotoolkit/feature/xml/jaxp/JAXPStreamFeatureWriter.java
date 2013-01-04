@@ -142,14 +142,20 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
      * {@inheritDoc}
      */
     @Override
-    public void write(final Object candidate, final Object output) throws IOException,
-                                               XMLStreamException, DataStoreException
-    {
+    public void write(final Object candidate, final Object output) throws IOException, XMLStreamException, DataStoreException {
+        this.write(candidate, output, null);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void write(final Object candidate, final Object output, final Integer nbMatched) throws IOException, XMLStreamException, DataStoreException {
         setOutput(output);
         if (candidate instanceof ComplexAttribute) {
             writeFeature((ComplexAttribute) candidate,true);
         } else if (candidate instanceof FeatureCollection) {
-            writeFeatureCollection((FeatureCollection) candidate,false);
+            writeFeatureCollection((FeatureCollection) candidate,false, nbMatched);
         } else {
             throw new IllegalArgumentException("The given object is not a Feature or a" +
                     " FeatureCollection: "+ candidate);
@@ -315,7 +321,7 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
      * @param fragment : true if we write in a stream, dont write start and end elements
      * @throws DataStoreException
      */
-    public void writeFeatureCollection(final FeatureCollection featureCollection, final boolean fragment)
+    public void writeFeatureCollection(final FeatureCollection featureCollection, final boolean fragment, final Integer nbMatched)
                                                             throws DataStoreException, XMLStreamException
     {
 
@@ -336,6 +342,18 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
         if (schemaLocation != null && !schemaLocation.equals("")) {
             writer.writeNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance");
             writer.writeAttribute("xsi", "http://www.w3.org/2001/XMLSchema-instance", "schemaLocation", schemaLocation);
+        }
+        
+        /*
+         * Other version dependant WFS feature collection attribute
+         */
+        if ("2.0.0".equals(wfsVersion)) {
+            writer.writeAttribute("numberReturned", Integer.toString(featureCollection.size()));
+            if (nbMatched != null) {
+                writer.writeAttribute("numberMatched", Integer.toString(nbMatched));
+            }
+        } else {
+            writer.writeAttribute("numberOfFeatures", Integer.toString(featureCollection.size()));
         }
 
         FeatureType type = featureCollection.getFeatureType();

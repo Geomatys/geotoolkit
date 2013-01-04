@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
 import org.geotoolkit.wfs.xml.DescribeFeatureType;
@@ -53,6 +54,7 @@ import org.geotoolkit.wfs.xml.DescribeFeatureType;
 @XmlType(name = "DescribeFeatureTypeType", propOrder = {
     "typeName"
 })
+@XmlRootElement(name="DescribeFeatureType")
 public class DescribeFeatureTypeType extends BaseRequestType implements DescribeFeatureType {
 
     @XmlElement(name = "TypeName")

@@ -107,7 +107,7 @@ public final class FeatureCollectionToComplexConverter extends AbstractComplexOu
         try {
 
             final ElementFeatureWriter efw = new ElementFeatureWriter(schemaLocation);
-            complex.getContent().add(efw.writeFeatureCollection(source, true, false));
+            complex.getContent().add(efw.writeFeatureCollection(source, true, false, null));
 
         } catch (DataStoreException ex) {
             throw new NonconvertibleObjectException("Can't write FeatureCollection into ResponseDocument.", ex);

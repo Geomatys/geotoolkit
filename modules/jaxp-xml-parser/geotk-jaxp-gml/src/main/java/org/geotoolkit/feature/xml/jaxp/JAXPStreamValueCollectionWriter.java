@@ -83,9 +83,15 @@ public class JAXPStreamValueCollectionWriter extends StaxStreamWriter implements
      * {@inheritDoc}
      */
     @Override
-    public void write(final Object candidate, final Object output) throws IOException,
-                                               XMLStreamException, DataStoreException
-    {
+    public void write(final Object candidate, final Object output) throws IOException, XMLStreamException, DataStoreException {
+        write(candidate, output, null);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void write(final Object candidate, final Object output, final Integer nbMatched) throws IOException, XMLStreamException, DataStoreException {
         setOutput(output);
         FeatureCollection collection;
         if (candidate instanceof Feature) {
@@ -96,7 +102,7 @@ public class JAXPStreamValueCollectionWriter extends StaxStreamWriter implements
             throw new IllegalArgumentException("The given object is not a Feature or a" +
                     " FeatureCollection: "+ candidate);
         }
-        writeValueCollection(collection);
+        writeValueCollection(collection, nbMatched);
     }
 
     /**
@@ -205,7 +211,7 @@ public class JAXPStreamValueCollectionWriter extends StaxStreamWriter implements
      * @param fragment : true if we write in a stream, dont write start and end elements
      * @throws DataStoreException
      */
-    public void writeValueCollection(final FeatureCollection featureCollection) throws DataStoreException, XMLStreamException {
+    public void writeValueCollection(final FeatureCollection featureCollection, final Integer nbMatched) throws DataStoreException, XMLStreamException {
 
         // the XML header
         writer.writeStartDocument("UTF-8", "1.0");
@@ -220,6 +226,15 @@ public class JAXPStreamValueCollectionWriter extends StaxStreamWriter implements
             writer.writeNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance");
             writer.writeAttribute("xsi", "http://www.w3.org/2001/XMLSchema-instance", "schemaLocation", schemaLocation);
         }*/
+        
+        /*
+         * Other WFS value collection attribute
+         */
+        writer.writeAttribute("numberReturned", Integer.toString(featureCollection.size()));
+        if (nbMatched != null) {
+            writer.writeAttribute("numberMatched", Integer.toString(nbMatched));
+        }
+        
 
         FeatureType type = featureCollection.getFeatureType();
         if (type != null && type.getName() != null) {

@@ -101,16 +101,20 @@ public class ElementFeatureWriter {
              schemaLocation = sb.toString();
          }
     }
+    
+     public Element write(final Object candidate, final boolean fragment) throws IOException, DataStoreException, ParserConfigurationException {
+         return write(candidate, fragment, null);
+     }
 
     /**
      * {@inheritDoc}
      */
-    public Element write(final Object candidate, final boolean fragment) throws IOException, DataStoreException, ParserConfigurationException {
+    public Element write(final Object candidate, final boolean fragment, final Integer nbMatched) throws IOException, DataStoreException, ParserConfigurationException {
 
         if (candidate instanceof Feature) {
             return writeFeature((Feature) candidate, null, fragment);
         } else if (candidate instanceof FeatureCollection) {
-            return writeFeatureCollection((FeatureCollection) candidate, fragment, true);
+            return writeFeatureCollection((FeatureCollection) candidate, fragment, true, nbMatched);
         } else {
             throw new IllegalArgumentException("The given object is not a Feature or a" +
                     " FeatureCollection: "+ candidate);
@@ -280,7 +284,7 @@ public class ElementFeatureWriter {
      * @param fragment : true if we write in a stream, dont write start and end elements
      * @throws DataStoreException
      */
-    public Element writeFeatureCollection(final FeatureCollection featureCollection, final boolean fragment, final boolean wfs) throws DataStoreException, ParserConfigurationException {
+    public Element writeFeatureCollection(final FeatureCollection featureCollection, final boolean fragment, final boolean wfs, final Integer nbMatched) throws DataStoreException, ParserConfigurationException {
 
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         // then we have to create document-loader:
@@ -317,6 +321,12 @@ public class ElementFeatureWriter {
         idAttribute.setPrefix("gml");
         rootElement.setAttributeNodeNS(idAttribute);
 
+        rootElement.setAttribute("numberOfFeatures", Integer.toString(featureCollection.size()));
+            
+        if (nbMatched != null) {
+            rootElement.setAttribute("numberMatched", Integer.toString(nbMatched));
+        }
+        
         if (schemaLocation != null && !schemaLocation.equals("")) {
             rootElement.setAttributeNS("http://www.w3.org/2001/XMLSchema-instance", "schemaLocation", schemaLocation);
         }
