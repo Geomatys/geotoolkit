@@ -490,6 +490,9 @@ public class WPSConvertersUtils {
         final ComplexType ct = FeatureTypeUtilities.toPropertyType(toConvert);
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.copy(ct);
+        if(ftb.getName().getNamespaceURI() == null) {
+            ftb.setName("constellation-sdi/WS/wps", ftb.getName().getLocalPart());
+        }
         List<PropertyDescriptor> properties = ftb.getProperties();
         
         for(int i = 0 ; i < properties.size(); i++) {
@@ -529,40 +532,36 @@ public class WPSConvertersUtils {
      * This function will try to convert objects if their types doesn't match between feature and parameter.
      * 
      * @param toConvert The feature to transform.
-     * @param groupTemplate The descriptor of the ParameterValueGroup which will be created.
+     * @param toFill The descriptor of the ParameterValueGroup which will be created.
      * @return A ParameterValueGroup which contains data of the feature in parameter.
      */
-    public static ParameterValueGroup featureToParameterGroup(ComplexAttribute toConvert, ParameterDescriptorGroup groupTemplate) throws NonconvertibleObjectException {
+    public static void featureToParameterGroup(ComplexAttribute toConvert, ParameterValueGroup toFill) throws NonconvertibleObjectException {
         ArgumentChecks.ensureNonNull("feature", toConvert);
-        ArgumentChecks.ensureNonNull("descriptor", groupTemplate);
+        ArgumentChecks.ensureNonNull("ParameterGroup", toFill);
         
         final WPSConverterRegistry registry = WPSConverterRegistry.getInstance();
-        
-        FeatureUtilities.toParameter(toConvert, groupTemplate);
-        final ParameterValueGroup group = groupTemplate.createValue();
-        
-        for(final GeneralParameterDescriptor gpd : group.getDescriptor().descriptors()){
+        for(final GeneralParameterDescriptor gpd : toFill.getDescriptor().descriptors()){
 
             final Property prop = toConvert.getProperty(gpd.getName().getCode());
             if(gpd instanceof ParameterDescriptor) {
                 final ParameterDescriptor desc = (ParameterDescriptor) gpd;
-              if(!prop.getValue().getClass().isAssignableFrom(desc.getValueClass())) {
+              if(prop.getValue().getClass().isAssignableFrom(desc.getValueClass()) || desc.getValueClass().isAssignableFrom(prop.getValue().getClass())) {                  
+                  Parameters.getOrCreate(desc, toFill).setValue(prop.getValue());
+              } else {
                   if(prop.getValue().getClass().isAssignableFrom(URI.class)) {
                       ReferenceType type = UriToReference((URI)prop.getValue(), WPSIO.IOType.INPUT, null);
                       WPSObjectConverter converter = registry.getConverter(type.getClass(), desc.getValueClass());
-                      Parameters.getOrCreate(desc, group).setValue(converter.convert(type));
+                      Parameters.getOrCreate(desc, toFill).setValue(converter.convert(type, null));
                   }
-              } else {
-                  Parameters.getOrCreate(desc, group).setValue(prop.getValue());
               }
-            } else if(gpd instanceof ParameterDescriptorGroup && prop instanceof ComplexAttribute){                
-                featureToParameterGroup((ComplexAttribute)prop, (ParameterDescriptorGroup)gpd);
+            } else if(gpd instanceof ParameterDescriptorGroup && prop instanceof ComplexAttribute){
+                ParameterValueGroup childGroup = toFill.addGroup(gpd.getName().getCode());
+                featureToParameterGroup((ComplexAttribute)prop, childGroup);
                 
             } else {
                 throw new NonconvertibleObjectException();
             }
         }
-        return group;
     }
     
     
@@ -580,7 +579,7 @@ public class WPSConvertersUtils {
         } else {
             ref = new OutputReferenceType();
         }
-        ref.setHref(toConvert.getPath());
+        ref.setHref(toConvert.toString());
         ref.setMimeType(mimeType);
         ref.setEncoding("UTF-8");        
         

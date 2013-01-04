@@ -67,7 +67,11 @@ public final class ReferenceToGridCoverageReaderConverter extends AbstractRefere
     public GridCoverageReader convert(final ReferenceType source, final Map<String, Object> params) throws NonconvertibleObjectException {
 
         final InputStream stream = getInputStreamFromReference(source);
-        final String encoding = (String)params.get(ENCODING);
+        
+        String encoding = null;
+        if(params != null && params.get(ENCODING) != null) {
+            encoding = (String) params.get(ENCODING);
+        }
         ImageInputStream imageStream = null;
         try {
 
