@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2010, Geomatys
+ *    (C) 2010-2012, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -14,7 +14,6 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-
 package org.geotoolkit.filter;
 
 import com.vividsolutions.jts.geom.Coordinate;
@@ -52,31 +51,27 @@ public class ISOGeomTest {
     public static void tearDownClass() throws Exception {
     }
 
-    // TODO add test methods here.
-    // The methods must be annotated with annotation @Test. For example:
-    //
-     @Test
-     public void hello() throws NoSuchAuthorityCodeException, FactoryException {
+    @Test
+    public void hello() throws NoSuchAuthorityCodeException, FactoryException {
 
-         GeometryFactory factory = new GeometryFactory();
-         Point[] points = new Point[3];
-         points[0] = factory.createPoint(new Coordinate(70.83, 29.86));
-         points[1] = factory.createPoint(new Coordinate(68.87, 31.08));
-         points[2] = factory.createPoint(new Coordinate(71.96, 32.19));
-         Geometry jtsGeom = factory.createMultiPoint(points);
+        GeometryFactory factory = new GeometryFactory();
+        Point[] points = new Point[3];
+        points[0] = factory.createPoint(new Coordinate(70.83, 29.86));
+        points[1] = factory.createPoint(new Coordinate(68.87, 31.08));
+        points[2] = factory.createPoint(new Coordinate(71.96, 32.19));
+        Geometry jtsGeom = factory.createMultiPoint(points);
 
 
-         CoordinateReferenceSystem crs = CRS.decode("EPSG:4326");
+        CoordinateReferenceSystem crs = CRS.decode("EPSG:4326");
 
-         JTSMultiPoint isoGeom = new JTSMultiPoint();
-         isoGeom.getElements().add(new JTSPoint(new GeneralDirectPosition(70.83, 29.86), crs));
-         isoGeom.getElements().add(new JTSPoint(new GeneralDirectPosition(68.87, 31.08), crs));
-         isoGeom.getElements().add(new JTSPoint(new GeneralDirectPosition(71.96, 32.19), crs));
-         Equals filter = FF.equal(FF.literal(jtsGeom), FF.literal(isoGeom));
-         boolean match = filter.evaluate(null);
+        JTSMultiPoint isoGeom = new JTSMultiPoint();
+        isoGeom.getElements().add(new JTSPoint(new GeneralDirectPosition(70.83, 29.86), crs));
+        isoGeom.getElements().add(new JTSPoint(new GeneralDirectPosition(68.87, 31.08), crs));
+        isoGeom.getElements().add(new JTSPoint(new GeneralDirectPosition(71.96, 32.19), crs));
+        Equals filter = FF.equal(FF.literal(jtsGeom), FF.literal(isoGeom));
+        boolean match = filter.evaluate(null);
 
-         assertTrue(match);
+        assertTrue(match);
 
-     }
-
+    }
 }
