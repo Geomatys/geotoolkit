@@ -29,6 +29,7 @@ import javax.media.jai.TileCache;
 import org.geotoolkit.util.logging.Logging;
 
 /**
+ * Manage {@link RenderedImage} and its {@link Raster} to don't exceed JVM memory capacity.
  *
  * @author Rémi Maréchal (Geomatys).
  */
@@ -55,6 +56,9 @@ public class LargeCache implements TileCache {
         return INSTANCE;
     }
 
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public void add(RenderedImage ri, int i, int i1, Raster raster) {
         if (!(raster instanceof WritableRaster))
@@ -80,11 +84,17 @@ public class LargeCache implements TileCache {
         }
     }
 
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public void add(RenderedImage ri, int i, int i1, Raster raster, Object o) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public void remove(RenderedImage ri, int i, int i1) {
         if (!map.containsKey(ri))
@@ -93,6 +103,9 @@ public class LargeCache implements TileCache {
         lL.remove(i, i1);
     }
 
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public Raster getTile(RenderedImage ri, int i, int i1) {
         if (!map.containsKey(ri))
@@ -105,6 +118,9 @@ public class LargeCache implements TileCache {
         return null;
     }
 
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public Raster[] getTiles(RenderedImage ri) {
         throw new UnsupportedOperationException("Not supported yet.");
@@ -118,6 +134,9 @@ public class LargeCache implements TileCache {
 //        return null;
     }
 
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public void removeTiles(RenderedImage ri) {
         if (map.containsKey(ri)) {
@@ -127,6 +146,9 @@ public class LargeCache implements TileCache {
         }
     }
 
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public void addTiles(RenderedImage ri, Point[] points, Raster[] rasters, Object o) {
         if (points.length != rasters.length)
@@ -153,6 +175,9 @@ public class LargeCache implements TileCache {
         }
     }
 
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public Raster[] getTiles(RenderedImage ri, Point[] points) {
         if (!map.containsKey(ri))
@@ -170,34 +195,56 @@ public class LargeCache implements TileCache {
         return rasters;
     }
 
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public void flush() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public void memoryControl() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     @Deprecated
     public void setTileCapacity(int i) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     @Deprecated
     public int getTileCapacity() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public void setMemoryCapacity(long l) {
         this.memoryCapacity = l;
         updateLList(memoryCapacity / map.size());
     }
 
+    /**
+     * Affect a new memory capacity and update {@link Raster} list from new memory capacity set.
+     *
+     * @param listMemoryCapacity new memory capacity.
+     * @throws IllegalImageDimensionException if capacity is too low from raster weight.
+     * @throws IOException if impossible to write raster on disk.
+     */
     private void updateLList(long listMemoryCapacity) {
         for (RenderedImage r : map.keySet()) {
             try {
@@ -208,26 +255,41 @@ public class LargeCache implements TileCache {
         }
     }
 
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public long getMemoryCapacity() {
         return memoryCapacity;
     }
 
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public void setMemoryThreshold(float f) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public float getMemoryThreshold() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public void setTileComparator(Comparator cmprtr) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public Comparator getTileComparator() {
         throw new UnsupportedOperationException("Not supported yet.");

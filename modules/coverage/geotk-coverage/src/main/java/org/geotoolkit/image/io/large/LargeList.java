@@ -30,13 +30,17 @@ import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.util.ArgumentChecks;
 
 /**
+ * Stock all {@link Raster} contained from define {@link RenderedImage}.
  *
  * @author Rémi Maréchal (Geomatys).
  */
 class LargeList {
 
-    private static String TEMPORARY_PATH = System.getProperty("java.io.tmpdir");
-    private static String FORMAT = "tiff";
+    private static final String TEMPORARY_PATH = System.getProperty("java.io.tmpdir");
+    private static final String FORMAT = "tiff";
+    private static final Point WPOINT = new Point(0, 0);
+    private static final Point RPOINT = new Point();
+
     private long memoryCapacity;
     private long remainingCapacity;
     private final LinkedList<LargeRaster> list;
@@ -49,11 +53,23 @@ class LargeList {
     private final int riMinY;
     private final int riTileWidth;
     private final int riTileHeight;
+    private final int dataTypeWeight;
 
     private final ImageReader imgReader;
     private final ImageWriter imgWriter;
 
 
+    /**
+     * <p>List which contain {@link Raster} from {@link RenderedImage} owner.<br/>
+     * If somme of {@link Raster} weight within list exceed memory capacity, {@link Raster} are stored
+     * on hard disk at appropriate quad tree emplacement in temporary system directory.<br/><br/>
+     *
+     * Note : {@link Raster} are stored in tiff format to avoid onerous, compression decompression, cost during disk writing reading.</p>
+     *
+     * @param ri {@link RenderedImage} which contain all raster in list.
+     * @param memoryCapacity storage capacity in Byte.
+     * @throws IOException if impossible to create {@link ImageReader} or {@link ImageWriter}.
+     */
     LargeList(RenderedImage ri, long memoryCapacity) throws IOException {
         //cache properties.
         this.list           = new LinkedList<LargeRaster>();
@@ -77,50 +93,87 @@ class LargeList {
         //reader writer
         this.imgReader = XImageIO.getReaderByFormatName(FORMAT, null, Boolean.FALSE, Boolean.TRUE);
         this.imgWriter = XImageIO.getWriterByFormatName(FORMAT, null, null);
+
+        final int datatype = cm.createCompatibleSampleModel(riTileWidth, riTileHeight).getDataType();
+        switch (datatype) {
+            case DataBuffer.TYPE_BYTE      : dataTypeWeight = 1; break;
+            case DataBuffer.TYPE_DOUBLE    : dataTypeWeight = 8; break;
+            case DataBuffer.TYPE_FLOAT     : dataTypeWeight = 4; break;
+            case DataBuffer.TYPE_INT       : dataTypeWeight = 4; break;
+            case DataBuffer.TYPE_SHORT     : dataTypeWeight = 2; break;
+            case DataBuffer.TYPE_UNDEFINED : dataTypeWeight = 8; break;
+            case DataBuffer.TYPE_USHORT    : dataTypeWeight = 2; break;
+            default : throw new IllegalStateException("unknow raster data type");
+        }
     }
 
-    void add(int x, int y, WritableRaster raster) throws IOException {
+    /**
+     * Add a {@link Raster} in list and check list to don't exceed memory capacity.
+     *
+     * @param tileX mosaic index in X direction of raster will be stocked.
+     * @param tileY mosaic index in Y direction of raster will be stocked.
+     * @param raster raster will be stocked in list.
+     * @throws IOException if an error occurs during writing.
+     */
+    void add(int tileX, int tileY, WritableRaster raster) throws IOException {
         final long rastWeight = getRasterWeight(raster);
         if (rastWeight > memoryCapacity) throw new IllegalImageDimensionException("raster too large");
-        list.addLast(new LargeRaster(x, y, rastWeight, checkRaster(raster, x, y)));
+        list.addLast(new LargeRaster(tileX, tileY, rastWeight, checkRaster(raster, tileX, tileY)));
         remainingCapacity -= rastWeight;
         checkList();
     }
 
-    void remove(int x, int y) {
+    /**
+     * Remove {@link Raster} at tileX tileY mosaic coordinates.
+     *
+     * @param tileX mosaic coordinate in X direction.
+     * @param tileY mosaic coordinate in Y direction.
+     */
+    void remove(int tileX, int tileY) {
         for (int id = 0, s = list.size(); id < s; id++) {
             final LargeRaster lr = list.get(id);
-            if (lr.getGridX() == x && lr.getGridY() == y) {
+            if (lr.getGridX() == tileX && lr.getGridY() == tileY) {
                 list.remove(id);
                 break;
             }
         }
-        //delete on hard disk if exist.
         //quad tree
-        final File removeFile = new File(qTD.getPath(x, y));
+        final File removeFile = new File(qTD.getPath(tileX, tileY));
+        //delete on hard disk if exist.
         if (removeFile.exists()) removeFile.delete();
     }
 
-    Raster getRaster(int x, int y) throws IOException {
+    /**
+     * Return {@link Raster} at tileX tileY mosaic coordinates.
+     *
+     * @param tileX mosaic coordinate in X direction.
+     * @param tileY mosaic coordinate in Y direction.
+     * @return Raster at tileX tileY mosaic coordinates.
+     * @throws IOException if an error occurs during reading..
+     */
+    Raster getRaster(int tileX, int tileY) throws IOException {
         for (int id = 0; id < list.size(); id++) {
             final LargeRaster lr = list.get(id);
-            if (lr.getGridX() == x && lr.getGridY() == y) return lr.getRaster();
+            if (lr.getGridX() == tileX && lr.getGridY() == tileY) return lr.getRaster();
         }
-        final File getFile = new File(qTD.getPath(x, y));
+        final File getFile = new File(qTD.getPath(tileX, tileY));
         if (getFile.exists()) {
             imgReader.setInput(ImageIO.createImageInputStream(getFile));
             final BufferedImage buff = imgReader.read(0);
             imgReader.dispose();
             //add in cache list.
-            final WritableRaster wr = checkRaster(buff.getRaster(), x, y);
-            add(x, y, wr);
+            final Raster wr       = checkRaster(buff.getRaster(), tileX, tileY);
+            final long rastWeight = getRasterWeight(wr);
+            list.addLast(new LargeRaster(tileX, tileY, rastWeight, wr));
+            remainingCapacity -= rastWeight;
+            checkList();
             return wr;
         }
         return null;
     }
 
     /**
-     * Return all raster within this cache system.
+     * Return all {@link Raster} within this cache system.
      *
      * @return all raster within this cache system.
      * @throws IOException if impossible to read raster from disk.
@@ -145,7 +198,7 @@ class LargeList {
     }
 
     /**
-     * Affect a new memory capacity and update raster list from new memory capacity set.
+     * Affect a new memory capacity and update {@link Raster} list from new memory capacity set.
      *
      * @param memoryCapacity new memory capacity.
      * @throws IllegalImageDimensionException if capacity is too low from raster weight.
@@ -153,46 +206,34 @@ class LargeList {
      */
     void setCapacity(long memoryCapacity) throws IllegalImageDimensionException, IOException {
         ArgumentChecks.ensurePositive("LargeList : memory capacity", memoryCapacity);
-        final long diff = this.memoryCapacity - memoryCapacity;
+        final long diff    = this.memoryCapacity - memoryCapacity;
         remainingCapacity -= diff;
         checkList();
         this.memoryCapacity = memoryCapacity;
     }
 
     /**
-     * Define the weight of a raster.
+     * Define the weight of a {@link Raster}.
      *
      * @param raster raster which will be weigh.
      * @return raster weight.
      */
     private long getRasterWeight(Raster raster) {
-        long dataWeight;
-        int type = raster.getDataBuffer().getDataType();
-        switch (type) {
-            case DataBuffer.TYPE_BYTE      : dataWeight = 1; break;
-            case DataBuffer.TYPE_DOUBLE    : dataWeight = 8; break;
-            case DataBuffer.TYPE_FLOAT     : dataWeight = 4; break;
-            case DataBuffer.TYPE_INT       : dataWeight = 4; break;
-            case DataBuffer.TYPE_SHORT     : dataWeight = 2; break;
-            case DataBuffer.TYPE_UNDEFINED : dataWeight = 8; break;
-            case DataBuffer.TYPE_USHORT    : dataWeight = 2; break;
-            default : throw new IllegalStateException("unknow raster data type");
-        }
         final SampleModel rsm = raster.getSampleModel();
         final int width = (rsm instanceof ComponentSampleModel) ? ((ComponentSampleModel) rsm).getScanlineStride() : raster.getWidth()*rsm.getNumDataElements();
-        return width * raster.getHeight() * dataWeight ;
+        return width * raster.getHeight() * dataTypeWeight;
     }
 
     /**
-     * Write raster on hard disk.
+     * Write {@link Raster} on hard disk.
      *
      * @param path emplacement to write.
      * @param raster raster which will be writing.
      * @throws IOException if impossible to write raster on disk.
      */
-    private void writeRaster(File path, WritableRaster raster) throws IOException {
-        final WritableRaster wr  = RasterFactory.createWritableRaster(raster.getSampleModel(), raster.getDataBuffer(), new Point(0, 0));
-        final RenderedImage rast = new BufferedImage(cm, wr, true, null);
+    private void writeRaster(File path, Raster raster) throws IOException {
+        final WritableRaster wr  = RasterFactory.createWritableRaster(raster.getSampleModel(), raster.getDataBuffer(), WPOINT);
+        final BufferedImage rast = new BufferedImage(cm, wr, true, null);
         imgWriter.setOutput(ImageIO.createImageOutputStream(path));
         imgWriter.write(rast);
         imgWriter.dispose();
@@ -200,13 +241,14 @@ class LargeList {
     }
 
     /**
-     * Write raster within {@link LargeRaster} object on hard disk at appropriate quad tree emplacement.
+     * Write {@link Raster} within {@link LargeRaster} object on hard disk at appropriate quad tree emplacement.
      *
      * @param lRaster object which contain raster.
      * @throws IOException if impossible to write raster on disk.
      */
     private void writeRaster(LargeRaster lRaster) throws IOException {
-        writeRaster(new File(qTD.getPath(lRaster.getGridX(), lRaster.getGridY())), lRaster.getRaster());
+        final File file = new File(qTD.getPath(lRaster.getGridX(), lRaster.getGridY()));
+        if (!file.exists()) writeRaster(file, lRaster.getRaster());
     }
 
     /**
@@ -222,26 +264,28 @@ class LargeList {
     }
 
     /**
-     * <p>Verify that raster coordinate is agree from renderedImage location.<br/>
-     * If location is correct return raster else return new raster with correct<br/>
-     * location but with same internal value from raster.</p>
+     * <p>Verify that {@link Raster} coordinate is agree from {@link RenderedImage} location.<br/>
+     * If location is correct return {@link Raster} else return new {@link Raster} with correct<br/>
+     * location but with same internal value from {@link Raster}.</p>
      *
      * @param raster raster will be checked.
      * @param tx tile location within renderedImage owner in X direction.
      * @param ty tile location within renderedImage owner in Y direction.
      * @return raster with correct coordinate from its image owner.
      */
-    private WritableRaster checkRaster(WritableRaster raster, int tx, int ty) {
-        final int mx = riTileWidth * tx  + riMinX;
+    private Raster checkRaster(WritableRaster raster, int tx, int ty) {
+        final int mx = riTileWidth  * tx + riMinX;
         final int my = riTileHeight * ty + riMinY;
-        if (raster.getMinX() != mx || raster.getMinY() != my)
-            return Raster.createWritableRaster(raster.getSampleModel(), raster.getDataBuffer(), new Point(mx, my));
+        if (raster.getMinX() != mx || raster.getMinY() != my) {
+            RPOINT.setLocation(mx, my);
+            return Raster.createRaster(raster.getSampleModel(), raster.getDataBuffer(), RPOINT);
+        }
         return raster;
     }
 
     /**
      * <p>Verify that list weight do not exceed memory capacity.<br/>
-     * If memory capacity is exceed write raster on hard disk up to don't exceed memory capacity.</p>
+     * If memory capacity is exceed write {@link Raster} on hard disk up to don't exceed memory capacity.</p>
      *
      * @throws IllegalImageDimensionException if raster too large for this Tilecache.
      * @throws IOException if impossible to write raster.
@@ -257,41 +301,65 @@ class LargeList {
         }
     }
 }
-
+/**
+ * Contain {@link Raster} and different raster properties.
+ *
+ * @author remi Marechal (Geomatys).
+ */
 class LargeRaster {
     private final int gridX;
     private final int gridY;
     private final long weight;
-    private final WritableRaster raster;
+    private final Raster raster;
 
     /**
-     * Object to wrap raster and different raster properties.
+     * Object to wrap {@link Raster} and different raster properties.
      *
      * @param gridX raster position in X direction.
      * @param gridY raster position in Y direction.
      * @param weight raster weight.
      * @param raster
      */
-    public LargeRaster(int gridX, int gridY, long weight, WritableRaster raster) {
+    LargeRaster(int gridX, int gridY, long weight, Raster raster) {
         this.gridX  = gridX;
         this.gridY  = gridY;
         this.weight = weight;
         this.raster = raster;
     }
 
-    public int getGridX() {
+    /**
+     * Return stocked {@link Raster} mosaic coordinate in X direction.
+     *
+     * @return stocked {@link Raster} mosaic coordinate in X direction.
+     */
+    int getGridX() {
         return gridX;
     }
 
-    public int getGridY() {
+    /**
+     * Return stocked {@link Raster} mosaic coordinate in Y direction.
+     *
+     * @return stocked {@link Raster} mosaic coordinate in Y direction.
+     */
+    int getGridY() {
         return gridY;
     }
 
-    public WritableRaster getRaster() {
+    /**
+     * Return stocked {@link Raster}.
+     *
+     * @return stocked {@link Raster}.
+     */
+    Raster getRaster() {
         return raster;
     }
 
-    public long getWeight() {
+    /**
+     * Return stocked {@link Raster} weight.
+     *
+     * @return stocked {@link Raster} weight.
+     */
+    long getWeight() {
         return weight;
     }
 

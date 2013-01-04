@@ -28,12 +28,12 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
-import javax.media.jai.RasterFactory;
 import javax.media.jai.TileCache;
 
 /**
  *
- * @author rmarech
+ *
+ * @author Remi Marechal (Geomatys).
  */
 public class LargeRenderedImage implements RenderedImage {
 
@@ -41,8 +41,9 @@ public class LargeRenderedImage implements RenderedImage {
 
     private static final int DEFAULT_TILE_SIZE = 256;
     private static final int MIN_TILE_SIZE = 64;
-
+    private static final Point ptOffset = new Point();
     private static final long DEFAULT_MEMORY_CAPACITY = 16000000;
+
     private final int minIndex;
     private final int numImages;
     private final ImageReader imageReader;
@@ -60,13 +61,19 @@ public class LargeRenderedImage implements RenderedImage {
     private final int nbrTileY;
 
     private final boolean[][] isRead;
-    private final int[][] debug;
-
     private final Rectangle srcRegion = new Rectangle();
 
     private ColorModel cm = null;
     private SampleModel sm = null;
 
+    /**
+     *
+     * @param imageReader reader which target at image stored on disk.
+     * @param imageIndex the index of the image to be retrieved.
+     * @param tilecache cache mechanic class.
+     * @param tileSize internal {@link Raster} (tile) dimension.
+     * @throws IOException if an error occurs during reading.
+     */
     public LargeRenderedImage(ImageReader imageReader, int imageIndex, TileCache tilecache, Dimension tileSize) throws IOException {
         this.imageReader = imageReader;
         this.imageIndex  = imageIndex;
@@ -87,12 +94,12 @@ public class LargeRenderedImage implements RenderedImage {
         this.nbrTileX = (width + tileWidth - 1)   / tileWidth;
         this.nbrTileY = (height + tileHeight - 1) / tileHeight;
         isRead = new boolean[nbrTileY][nbrTileX];
-        debug = new int[nbrTileY][nbrTileX];
-        for (boolean[] bool : isRead) {
-            Arrays.fill(bool, false);
-        }
+        for (boolean[] bool : isRead) Arrays.fill(bool, false);
     }
 
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public Vector<RenderedImage> getSources() {
         if (vector != null) return vector;
@@ -107,88 +114,139 @@ public class LargeRenderedImage implements RenderedImage {
         return vector;
     }
 
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public Object getProperty(String name) {
         return Image.UndefinedProperty;
     }
 
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public String[] getPropertyNames() {
         return null;
     }
 
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public ColorModel getColorModel() {
         if (cm == null) getTile(0, 0);
         return cm;
     }
 
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public SampleModel getSampleModel() {
         if (sm == null) sm = getColorModel().createCompatibleSampleModel(tileWidth, tileHeight);
         return sm;
     }
 
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public int getWidth() {
         return width;
     }
 
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public int getHeight() {
         return height;
     }
 
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public int getMinX() {
         return 0;
     }
 
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public int getMinY() {
         return 0;
     }
 
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public int getNumXTiles() {
         return nbrTileX;
     }
 
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public int getNumYTiles() {
         return nbrTileY;
     }
 
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public int getMinTileX() {
         return (int) - (tileGridXOffset + (tileWidth - 1) * Math.signum(tileGridXOffset)) / tileWidth;
     }
 
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public int getMinTileY() {
         return (int) - (tileGridYOffset + (tileHeight - 1) * Math.signum(tileGridYOffset)) / tileHeight;
     }
 
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public int getTileWidth() {
         return tileWidth;
     }
 
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public int getTileHeight() {
         return tileHeight;
     }
 
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public int getTileGridXOffset() {
         return tileGridXOffset;
     }
 
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public int getTileGridYOffset() {
         return tileGridYOffset;
     }
 
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public Raster getTile(int tileX, int tileY) {
         if (isRead[tileY][tileX]) return tilecache.getTile(this, tileX, tileY);
@@ -208,27 +266,40 @@ public class LargeRenderedImage implements RenderedImage {
         }
         // 2 : la setter au tile cache
         if (cm == null) cm = buff.getColorModel();
-        final WritableRaster wRaster = Raster.createWritableRaster(buff.getSampleModel(), buff.getRaster().getDataBuffer(), new Point(tileX*tileWidth, tileY*tileHeight));
+        ptOffset.setLocation(minRx, minRy);
+        final WritableRaster wRaster = Raster.createWritableRaster(buff.getSampleModel(), buff.getRaster().getDataBuffer(), ptOffset);
         tilecache.add(this, tileX, tileY, wRaster);
         isRead[tileY][tileX] = true;
         return wRaster;
     }
 
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public Raster getData() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public Raster getData(Rectangle rect) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public WritableRaster copyData(WritableRaster raster) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     protected void finalize() throws Throwable {
         tilecache.removeTiles(this);
