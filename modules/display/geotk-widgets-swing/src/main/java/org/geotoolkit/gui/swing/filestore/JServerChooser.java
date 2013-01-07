@@ -334,11 +334,15 @@ private void guiConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
             icon = IconBundle.getIcon("24_google");
         }else if(name.contains("osm")){
             icon = IconBundle.getIcon("24_osm");
+        }else if(name.contains("orient")){
+            icon = IconBundle.getIcon("24_orientdb");
         }else if(name.contains("ign")){
             icon = IconBundle.getIcon("24_ign");
         }else if(name.contains("ogc")){
             icon = IconBundle.getIcon("24_ogc");
         }else if(classname.contains("coveragesql")){
+            icon = IconBundle.getIcon("24_database");
+        }else if(classname.contains("mysql")){
             icon = IconBundle.getIcon("24_database");
         }else if(classname.contains("post")){
             icon = IconBundle.getIcon("24_database");
