@@ -18,7 +18,6 @@ package org.geotoolkit.googlemaps;
 
 import java.awt.Dimension;
 import java.awt.Image;
-import java.awt.geom.Point2D;
 import java.awt.image.RenderedImage;
 import java.util.List;
 import java.util.Map;
@@ -37,7 +36,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class GoogleCoverageReference implements CoverageReference, PyramidalModel{
+public class GoogleCoverageReference extends AbstractCoverageReference implements PyramidalModel{
 
     private final StaticGoogleMapsServer server;
     private final GoogleMapsPyramidSet set;

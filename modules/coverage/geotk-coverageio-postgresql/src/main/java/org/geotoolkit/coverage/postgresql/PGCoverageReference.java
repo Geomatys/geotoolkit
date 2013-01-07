@@ -43,8 +43,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.measure.unit.Unit;
 import net.iharder.Base64;
+import org.geotoolkit.coverage.AbstractCoverageReference;
 import org.geotoolkit.coverage.Category;
-import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.coverage.GridMosaic;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.Pyramid;
@@ -59,21 +59,18 @@ import org.geotoolkit.coverage.wkb.WKBRasterWriter;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.util.NumberRange;
-import org.geotoolkit.util.StringUtilities;
-import org.opengis.coverage.ColorInterpretation;
 import org.opengis.coverage.SampleDimensionType;
 import org.opengis.feature.type.Name;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.util.FactoryException;
-import org.postgresql.jdbc2.TypeInfoCache;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
-public class PGCoverageReference implements CoverageReference, PyramidalModel{
+public class PGCoverageReference extends AbstractCoverageReference implements PyramidalModel{
 
     private final PGCoverageStore store;
     private final PGPyramidSet pyramidSet;

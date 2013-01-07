@@ -17,10 +17,10 @@
 
 package org.geotoolkit.data;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -52,8 +52,8 @@ import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.geometry.jts.transform.GeometryScaleTransformer;
 import org.geotoolkit.parameter.Parameters;
+import org.geotoolkit.storage.AbstractStorage;
 import org.geotoolkit.storage.DataStoreException;
-import org.geotoolkit.storage.StorageListener;
 import org.geotoolkit.util.logging.Logging;
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.AttributeDescriptor;
@@ -79,7 +79,7 @@ import org.opengis.util.FactoryException;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public abstract class AbstractFeatureStore implements FeatureStore{
+public abstract class AbstractFeatureStore extends AbstractStorage implements FeatureStore{
 
     /**
      * Static variables refering to GML model.
@@ -92,7 +92,6 @@ public abstract class AbstractFeatureStore implements FeatureStore{
 
     private final Logger Logger = Logging.getLogger(getClass().getPackage().getName());
 
-    private final Set<StorageListener> listeners = new HashSet<StorageListener>();
     protected final ParameterValueGroup parameters;
     protected String defaultNamespace;
 
@@ -329,33 +328,13 @@ public abstract class AbstractFeatureStore implements FeatureStore{
     ////////////////////////////////////////////////////////////////////////////
 
     /**
-     * {@inheritDoc }
-     */
-    @Override
-    public void addStorageListener(final StorageListener listener) {
-        synchronized (listeners) {
-            listeners.add(listener);
-        }
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public void removeStorageListener(final StorageListener listener) {
-        synchronized (listeners) {
-            listeners.remove(listener);
-        }
-    }
-
-    /**
      * Fires a schema add event to all listeners.
      * 
      * @param name added schema name
      * @param type added feature type
      */
     protected void fireSchemaAdded(final Name name, final FeatureType type){
-        sendEvent(FeatureStoreManagementEvent.createAddEvent(this, name, type));
+        sendStructureEvent(FeatureStoreManagementEvent.createAddEvent(this, name, type));
     }
 
     /**
@@ -366,7 +345,7 @@ public abstract class AbstractFeatureStore implements FeatureStore{
      * @param newType featuretype after change
      */
     protected void fireSchemaUpdated(final Name name, final FeatureType oldType, final FeatureType newType){
-        sendEvent(FeatureStoreManagementEvent.createUpdateEvent(this, name, oldType, newType));
+        sendStructureEvent(FeatureStoreManagementEvent.createUpdateEvent(this, name, oldType, newType));
     }
 
     /**
@@ -376,7 +355,7 @@ public abstract class AbstractFeatureStore implements FeatureStore{
      * @param type feature type of the deleted schema
      */
     protected void fireSchemaDeleted(final Name name, final FeatureType type){
-        sendEvent(FeatureStoreManagementEvent.createDeleteEvent(this, name, type));
+        sendStructureEvent(FeatureStoreManagementEvent.createDeleteEvent(this, name, type));
     }
 
     /**
@@ -386,7 +365,7 @@ public abstract class AbstractFeatureStore implements FeatureStore{
      * @param ids modified feature ids
      */
     protected void fireFeaturesAdded(final Name name, final Id ids){
-        sendEvent(FeatureStoreContentEvent.createAddEvent(this, name, ids));
+        sendContentEvent(FeatureStoreContentEvent.createAddEvent(this, name, ids));
     }
 
     /**
@@ -396,7 +375,7 @@ public abstract class AbstractFeatureStore implements FeatureStore{
      * @param ids modified feature ids
      */
     protected void fireFeaturesUpdated(final Name name, final Id ids){
-        sendEvent(FeatureStoreContentEvent.createUpdateEvent(this, name, ids));
+        sendContentEvent(FeatureStoreContentEvent.createUpdateEvent(this, name, ids));
     }
 
     /**
@@ -406,37 +385,8 @@ public abstract class AbstractFeatureStore implements FeatureStore{
      * @param ids modified feature ids
      */
     protected void fireFeaturesDeleted(final Name name, final Id ids){
-        sendEvent(FeatureStoreContentEvent.createDeleteEvent(this, name, ids));
+        sendContentEvent(FeatureStoreContentEvent.createDeleteEvent(this, name, ids));
     }
-
-    /**
-     * Forward a schema event to all listeners.
-     * @param event , event to send to listeners.
-     */
-    protected void sendEvent(final FeatureStoreManagementEvent event){
-        final StorageListener[] lst;
-        synchronized (listeners) {
-            lst = listeners.toArray(new StorageListener[listeners.size()]);
-        }
-        for(final StorageListener listener : lst){
-            listener.structureChanged(event);
-        }
-    }
-
-    /**
-     * Forward a features event to all listeners.
-     * @param event , event to send to listeners.
-     */
-    protected void sendEvent(final FeatureStoreContentEvent event){
-        final StorageListener[] lst;
-        synchronized (listeners) {
-            lst = listeners.toArray(new StorageListener[listeners.size()]);
-        }
-        for(final StorageListener listener : lst){
-            listener.contentChanged(event);
-        }
-    }
-
 
     ////////////////////////////////////////////////////////////////////////////
     // useful methods for feature store that doesn't implement all query parameters/

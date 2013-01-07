@@ -18,14 +18,18 @@ package org.geotoolkit.coverage.filestore;
 
 import java.awt.Dimension;
 import java.awt.Image;
-import java.awt.geom.Point2D;
 import java.awt.image.RenderedImage;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.bind.JAXBException;
-import org.geotoolkit.coverage.*;
+import org.geotoolkit.coverage.AbstractCoverageReference;
+import org.geotoolkit.coverage.GridMosaic;
+import org.geotoolkit.coverage.GridSampleDimension;
+import org.geotoolkit.coverage.Pyramid;
+import org.geotoolkit.coverage.PyramidalModel;
+import org.geotoolkit.coverage.PyramidalModelReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
@@ -39,7 +43,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class XMlCoverageReference implements CoverageReference, PyramidalModel{
+public class XMlCoverageReference extends AbstractCoverageReference implements PyramidalModel{
 
     private final XMLCoverageStore store;
     private final Name name;

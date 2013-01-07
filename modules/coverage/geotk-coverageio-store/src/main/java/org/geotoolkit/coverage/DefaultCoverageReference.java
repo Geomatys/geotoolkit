@@ -33,7 +33,7 @@ import org.opengis.util.GenericName;
  * 
  * @author Johann Sorel
  */
-public final class DefaultCoverageReference implements CoverageReference{
+public final class DefaultCoverageReference extends AbstractCoverageReference{
     
     private final GridCoverageReader reader;
     private final int imageIndex;

@@ -18,9 +18,13 @@
 package org.geotoolkit.coverage;
 
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.logging.Logger;
 import org.geotoolkit.parameter.Parameters;
+import org.geotoolkit.storage.AbstractStorage;
 import org.geotoolkit.storage.DataStoreException;
+import org.geotoolkit.storage.StorageListener;
 import org.geotoolkit.util.logging.Logging;
 import org.opengis.feature.type.Name;
 import org.opengis.parameter.ParameterValueGroup;
@@ -31,13 +35,13 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public abstract class AbstractCoverageStore implements CoverageStore{
+public abstract class AbstractCoverageStore extends AbstractStorage implements CoverageStore{
 
 
     protected static final String NO_NAMESPACE = "no namespace";
 
     private final Logger Logger = Logging.getLogger(getClass().getPackage().getName());
-
+    private final Set<StorageListener> listeners = new HashSet<StorageListener>();
     private final String defaultNamespace;
     protected final ParameterValueGroup parameters;
 
@@ -76,7 +80,7 @@ public abstract class AbstractCoverageStore implements CoverageStore{
     public void delete(Name name) throws DataStoreException {
         throw new DataStoreException("Deletion of coverage not supported.");
     }
-
+    
     ////////////////////////////////////////////////////////////////////////////
     // useful methods for datastore that doesn't implement all query parameters/
     ////////////////////////////////////////////////////////////////////////////

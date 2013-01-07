@@ -19,14 +19,18 @@ package org.geotoolkit.coverage.sql;
 import java.awt.Image;
 import java.util.HashSet;
 import java.util.Set;
+import org.geotoolkit.coverage.AbstractCoverageReference;
 import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.coverage.CoverageStore;
+import org.geotoolkit.coverage.CoverageStoreContentEvent;
 import org.geotoolkit.coverage.CoverageStoreFactory;
 import org.geotoolkit.coverage.CoverageStoreFinder;
+import org.geotoolkit.coverage.CoverageStoreManagementEvent;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.storage.DataStoreException;
+import org.geotoolkit.storage.StorageListener;
 import org.opengis.feature.type.Name;
 import org.opengis.parameter.ParameterValueGroup;
 
@@ -40,6 +44,7 @@ import org.opengis.parameter.ParameterValueGroup;
  */
 public class CoverageSQLStore extends CoverageDatabase implements CoverageStore {
 
+    private final Set<StorageListener> listeners = new HashSet<StorageListener>();
     private final ParameterValueGroup parameters;
 
     public CoverageSQLStore(ParameterValueGroup parameters) {
@@ -82,7 +87,59 @@ public class CoverageSQLStore extends CoverageDatabase implements CoverageStore 
         throw new DataStoreException("Not supported.");
     }
 
-    private class CoverageSQLLayerReference implements CoverageReference {
+    ////////////////////////////////////////////////////////////////////////////
+    // listeners methods ///////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void addStorageListener(final StorageListener listener) {
+        synchronized (listeners) {
+            listeners.add(listener);
+        }
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void removeStorageListener(final StorageListener listener) {
+        synchronized (listeners) {
+            listeners.remove(listener);
+        }
+    }
+
+    /**
+     * Forward a structure event to all listeners.
+     * @param event , event to send to listeners.
+     */
+    protected void sendEvent(final CoverageStoreManagementEvent event){
+        final StorageListener[] lst;
+        synchronized (listeners) {
+            lst = listeners.toArray(new StorageListener[listeners.size()]);
+        }
+        for(final StorageListener listener : lst){
+            listener.structureChanged(event);
+        }
+    }
+
+    /**
+     * Forward a data event to all listeners.
+     * @param event , event to send to listeners.
+     */
+    protected void sendEvent(final CoverageStoreContentEvent event){
+        final StorageListener[] lst;
+        synchronized (listeners) {
+            lst = listeners.toArray(new StorageListener[listeners.size()]);
+        }
+        for(final StorageListener listener : lst){
+            listener.contentChanged(event);
+        }
+    }
+    
+    private class CoverageSQLLayerReference extends AbstractCoverageReference {
 
         private final Name name;
 

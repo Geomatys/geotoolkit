@@ -33,7 +33,7 @@ import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import org.geotoolkit.client.CapabilitiesException;
 import org.geotoolkit.client.Request;
-import org.geotoolkit.coverage.CoverageReference;
+import org.geotoolkit.coverage.AbstractCoverageReference;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
@@ -72,7 +72,7 @@ import org.opengis.util.FactoryException;
  * @author Cédric Briançon (Geomatys)
  * @module pending
  */
-public class WMSCoverageReference implements CoverageReference{
+public class WMSCoverageReference extends AbstractCoverageReference{
 
     protected static final Logger LOGGER = Logging.getLogger(WMSCoverageReference.class);
 
