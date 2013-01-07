@@ -68,4 +68,22 @@ public abstract class AbstractStorage {
         }
     }
     
+    /**
+     * Forward given event, changing the source by this object.
+     * For implementation use only.
+     * @param event 
+     */
+    public void forwardStructureEvent(StorageEvent event){
+        sendContentEvent(event.copy(this));
+    }
+    
+    /**
+     * Forward given event, changing the source by this object.
+     * For implementation use only.
+     * @param event 
+     */
+    public void forwardContentEvent(StorageEvent event){
+        sendStructureEvent(event.copy(this));
+    }
+    
 }

@@ -33,10 +33,10 @@ import org.opengis.util.GenericName;
  * 
  * @author Johann Sorel
  */
-public final class DefaultCoverageReference extends AbstractCoverageReference{
+public class DefaultCoverageReference extends AbstractCoverageReference{
     
-    private final GridCoverageReader reader;
-    private final int imageIndex;
+    private GridCoverageReader reader;
+    private int imageIndex;
 
     public DefaultCoverageReference(final GridCoverageReader reader, final int imageIndex) {
         this.reader = reader;

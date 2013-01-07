@@ -24,10 +24,16 @@ import java.util.EventObject;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class StorageEvent extends EventObject{
+public abstract class StorageEvent extends EventObject{
 
     public StorageEvent(final Object source){
         super(source);
     }
 
+    /**
+     * Copy this event changing it's source.
+     * @param source new source
+     * @return StorageEvent
+     */
+    public abstract StorageEvent copy(Object source);
 }

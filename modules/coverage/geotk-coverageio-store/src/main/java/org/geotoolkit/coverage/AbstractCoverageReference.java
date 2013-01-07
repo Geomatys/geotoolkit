@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.coverage;
 
+import java.awt.Point;
+import java.util.List;
 import org.geotoolkit.storage.AbstractStorage;
 
 /**
@@ -24,4 +26,64 @@ import org.geotoolkit.storage.AbstractStorage;
  */
 public abstract class AbstractCoverageReference extends AbstractStorage implements CoverageReference {
         
+    protected CoverageStoreManagementEvent firePyramidAdded(final String pyramidId){
+        final CoverageStoreManagementEvent event = CoverageStoreManagementEvent.createPyramidAddEvent(this, getName(), pyramidId);
+        sendStructureEvent(event);
+        return event;
+    }
+    
+    protected CoverageStoreManagementEvent firePyramidUpdated(final String pyramidId){
+        final CoverageStoreManagementEvent event = CoverageStoreManagementEvent.createPyramidUpdateEvent(this, getName(), pyramidId);
+        sendStructureEvent(event);
+        return event;
+    }
+    
+    protected CoverageStoreManagementEvent firePyramidDeleted(final String pyramidId){
+        final CoverageStoreManagementEvent event = CoverageStoreManagementEvent.createPyramidDeleteEvent(this, getName(), pyramidId);
+        sendStructureEvent(event);
+        return event;
+    }
+    
+    protected CoverageStoreManagementEvent fireMosaicAdded(final String pyramidId, final String mosaicId){
+        final CoverageStoreManagementEvent event = CoverageStoreManagementEvent.createMosaicAddEvent(this, getName(), pyramidId, mosaicId);
+        sendStructureEvent(event);
+        return event;
+    }
+    
+    protected CoverageStoreManagementEvent fireMosaicUpdated(final String pyramidId, final String mosaicId){
+        final CoverageStoreManagementEvent event = CoverageStoreManagementEvent.createMosaicUpdateEvent(this, getName(), pyramidId, mosaicId);
+        sendStructureEvent(event);
+        return event;
+    }
+    
+    protected CoverageStoreManagementEvent fireMosaicDeleted(final String pyramidId, final String mosaicId){
+        final CoverageStoreManagementEvent event = CoverageStoreManagementEvent.createMosaicDeleteEvent(this, getName(), pyramidId, mosaicId);
+        sendStructureEvent(event);
+        return event;
+    }
+        
+    protected CoverageStoreContentEvent fireDataUpdated(){
+        final CoverageStoreContentEvent event = CoverageStoreContentEvent.createDataUpdateEvent(this, getName());
+        sendContentEvent(event);
+        return event;
+    }
+        
+    protected CoverageStoreContentEvent fireTileAdded(final String pyramidId, final String mosaicId, final List<Point> tiles){
+        final CoverageStoreContentEvent event = CoverageStoreContentEvent.createTileAddEvent(this, getName(), pyramidId, mosaicId, tiles);
+        sendContentEvent(event);
+        return event;
+    }
+    
+    protected CoverageStoreContentEvent fireTileUpdated(final String pyramidId, final String mosaicId, final List<Point> tiles){
+        final CoverageStoreContentEvent event = CoverageStoreContentEvent.createTileUpdateEvent(this, getName(), pyramidId, mosaicId, tiles);
+        sendContentEvent(event);
+        return event;
+    }
+    
+    protected CoverageStoreContentEvent fireTileDeleted(final String pyramidId, final String mosaicId, final List<Point> tiles){
+        final CoverageStoreContentEvent event = CoverageStoreContentEvent.createTileDeleteEvent(this, getName(), pyramidId, mosaicId, tiles);
+        sendContentEvent(event);
+        return event;
+    }
+
 }

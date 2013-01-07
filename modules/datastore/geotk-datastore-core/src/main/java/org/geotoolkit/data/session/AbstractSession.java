@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2009-2010, Geomatys
+ *    (C) 2009-2012, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -18,14 +18,12 @@
 package org.geotoolkit.data.session;
 
 import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
 import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.FeatureStoreContentEvent;
 import org.geotoolkit.data.FeatureStoreListener;
 import org.geotoolkit.data.FeatureStoreManagementEvent;
+import org.geotoolkit.storage.AbstractStorage;
 import org.geotoolkit.storage.DataStoreException;
-import org.geotoolkit.storage.StorageListener;
 import static org.geotoolkit.util.ArgumentChecks.*;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.Name;
@@ -38,9 +36,8 @@ import org.opengis.filter.Id;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public abstract class AbstractSession implements Session, FeatureStoreListener{
+public abstract class AbstractSession extends AbstractStorage implements Session, FeatureStoreListener{
 
-    private final Set<StorageListener> listeners = new HashSet<StorageListener>();
     private final FeatureStoreListener.Weak weakListener = new Weak(this);
     protected final FeatureStore store;
 
@@ -78,14 +75,8 @@ public abstract class AbstractSession implements Session, FeatureStoreListener{
      */
     @Override
     public void structureChanged(FeatureStoreManagementEvent event){
-        event = FeatureStoreManagementEvent.resetSource(this, event);
-        final FeatureStoreListener[] lst;
-        synchronized (listeners) {
-            lst = listeners.toArray(new FeatureStoreListener[listeners.size()]);
-        }
-        for(final FeatureStoreListener listener : lst){
-            listener.structureChanged(event);
-        }
+        event = event.copy(this);
+        sendStructureEvent(event);
     }
 
     /**
@@ -93,27 +84,7 @@ public abstract class AbstractSession implements Session, FeatureStoreListener{
      */
     @Override
     public void contentChanged(final FeatureStoreContentEvent event){
-        sendEvent(FeatureStoreContentEvent.resetSource(this, event));
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public void addStorageListener(final StorageListener listener) {
-        synchronized (listeners) {
-            listeners.add(listener);
-        }
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public void removeStorageListener(final StorageListener listener) {
-        synchronized (listeners) {
-            listeners.remove(listener);
-        }
+        sendContentEvent(event.copy(this));
     }
 
     /**
@@ -123,7 +94,7 @@ public abstract class AbstractSession implements Session, FeatureStoreListener{
      * @param ids modified feature ids.
      */
     protected void fireFeaturesAdded(final Name name, final Id ids){
-        sendEvent(FeatureStoreContentEvent.createAddEvent(this, name, ids));
+        sendContentEvent(FeatureStoreContentEvent.createAddEvent(this, name, ids));
     }
 
     /**
@@ -133,7 +104,7 @@ public abstract class AbstractSession implements Session, FeatureStoreListener{
      * @param ids modified feature ids.
      */
     protected void fireFeaturesUpdated(final Name name, final Id ids){
-        sendEvent(FeatureStoreContentEvent.createUpdateEvent(this, name, ids));
+        sendContentEvent(FeatureStoreContentEvent.createUpdateEvent(this, name, ids));
     }
 
     /**
@@ -143,28 +114,14 @@ public abstract class AbstractSession implements Session, FeatureStoreListener{
      * @param ids modified feature ids.
      */
     protected void fireFeaturesDeleted(final Name name, final Id ids){
-        sendEvent(FeatureStoreContentEvent.createDeleteEvent(this, name, ids));
+        sendContentEvent(FeatureStoreContentEvent.createDeleteEvent(this, name, ids));
     }
 
     /**
      * Fires a session event. when new pending changes are added.
      */
     protected void fireSessionChanged(){
-        sendEvent(FeatureStoreContentEvent.createSessionEvent(this));
-    }
-
-    /**
-     * Forward a features event to all listeners.
-     * @param event , event to send to listeners.
-     */
-    protected void sendEvent(final FeatureStoreContentEvent event){
-        final StorageListener[] lst;
-        synchronized (listeners) {
-            lst = listeners.toArray(new StorageListener[listeners.size()]);
-        }
-        for(final StorageListener listener : lst){
-            listener.contentChanged(event);
-        }
+        sendContentEvent(FeatureStoreContentEvent.createSessionEvent(this));
     }
 
 }

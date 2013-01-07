@@ -16,7 +16,10 @@
  */
 package org.geotoolkit.coverage;
 
+import java.awt.Point;
+import java.util.List;
 import org.geotoolkit.storage.StorageEvent;
+import org.opengis.feature.type.Name;
 
 /**
  *
@@ -24,8 +27,77 @@ import org.geotoolkit.storage.StorageEvent;
  */
 public class CoverageStoreContentEvent extends StorageEvent {
 
-    public CoverageStoreContentEvent(Object source) {
+    public static enum Type{
+        /** unspecific data change */
+        DATA_UPDATE,
+        /** tiles added */
+        TILE_ADD,
+        /** tiles updated */
+        TILE_UPDATE,
+        /** tiles deleted */
+        TILE_DELETE
+    };
+
+    private final Type type;    
+    private final Name coverageName;
+    private final String pyramidId;
+    private final String mosaicId;
+    private final List<Point> tiles;
+    
+    
+    public CoverageStoreContentEvent(Object source, Type type, 
+            Name name, String pyramidId, String mosaicId, List<Point> tiles) {
         super(source);
+        this.type = type;
+        this.coverageName = name;
+        this.pyramidId = pyramidId;
+        this.mosaicId = mosaicId;
+        this.tiles = tiles;
+    }
+
+    public Type getType() {
+        return type;
+    }
+    
+    public Name getCoverageName() {
+        return coverageName;
+    }
+
+    public String getPyramidId() {
+        return pyramidId;
+    }
+
+    public String getMosaicId() {
+        return mosaicId;
+    }
+
+    public List<Point> getTiles() {
+        return tiles;
+    }
+    
+    @Override
+    public CoverageStoreContentEvent copy(final Object source){
+        return new CoverageStoreContentEvent(source, type, coverageName, pyramidId, mosaicId, tiles);
+    }
+    
+    public static CoverageStoreContentEvent createDataUpdateEvent(
+            final Object source, final Name name){
+        return new CoverageStoreContentEvent(source, Type.DATA_UPDATE, name, null, null,null);
+    }
+        
+    public static CoverageStoreContentEvent createTileAddEvent(final Object source, 
+            final Name name, final String pyramidId, final String mosaicId, final List<Point> tiles){
+        return new CoverageStoreContentEvent(source, Type.TILE_ADD, name, pyramidId, mosaicId, tiles);
+    }
+    
+    public static CoverageStoreContentEvent createTileUpdateEvent(final Object source, 
+            final Name name, final String pyramidId, final String mosaicId, final List<Point> tiles){
+        return new CoverageStoreContentEvent(source, Type.TILE_UPDATE, name, pyramidId, mosaicId, tiles);
+    }
+    
+    public static CoverageStoreContentEvent createTileDeleteEvent(final Object source, 
+            final Name name, final String pyramidId, final String mosaicId, final List<Point> tiles){
+        return new CoverageStoreContentEvent(source, Type.TILE_DELETE, name, pyramidId, mosaicId, tiles);
     }
     
 }

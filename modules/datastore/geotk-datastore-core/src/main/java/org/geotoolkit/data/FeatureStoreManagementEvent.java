@@ -90,6 +90,11 @@ public class FeatureStoreManagementEvent extends StorageEvent{
         return oldType;
     }
 
+    @Override
+    public FeatureStoreManagementEvent copy(Object source) {
+        return new FeatureStoreManagementEvent(source, type, name, oldType, newType);
+    }
+
     public static FeatureStoreManagementEvent createAddEvent(final Object source, final Name name, final FeatureType type){
         return new FeatureStoreManagementEvent(source, Type.ADD, name, null, type);
     }
@@ -100,10 +105,6 @@ public class FeatureStoreManagementEvent extends StorageEvent{
 
     public static FeatureStoreManagementEvent createDeleteEvent(final Object source, final Name name, final FeatureType type){
         return new FeatureStoreManagementEvent(source, Type.DELETE, name, type, null);
-    }
-
-    public static FeatureStoreManagementEvent resetSource(final Object source, final FeatureStoreManagementEvent event){
-        return new FeatureStoreManagementEvent(source, event.type, event.name, event.oldType, event.newType);
     }
 
 }

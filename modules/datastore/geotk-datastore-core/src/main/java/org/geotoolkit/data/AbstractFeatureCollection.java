@@ -358,7 +358,7 @@ public abstract class AbstractFeatureCollection<F extends Feature> extends Abstr
 
         //forward events only if the collection is typed and match the type name
         if(currentType != null && currentType.getName().equals(event.getFeatureTypeName())){
-            event = FeatureStoreManagementEvent.resetSource(this, event);
+            event = event.copy(this);
             final FeatureStoreListener[] lst;
             synchronized (listeners) {
                 lst = listeners.toArray(new FeatureStoreListener[listeners.size()]);
@@ -378,7 +378,7 @@ public abstract class AbstractFeatureCollection<F extends Feature> extends Abstr
 
         //forward events only if the collection is typed and match the type name
         if(currentType != null && currentType.getName().equals(event.getFeatureTypeName())){
-            sendEvent(FeatureStoreContentEvent.resetSource(this, event));
+            sendEvent(event.copy(this));
         }
     }
 

@@ -79,7 +79,9 @@ public class FeatureStoreContentEvent extends StorageEvent {
         return ids;
     }
 
-
+    public FeatureStoreContentEvent copy(final Object source){
+        return new FeatureStoreContentEvent(source, type, name, ids);
+    }
 
     public static FeatureStoreContentEvent createAddEvent(final Object source, final Name name, final Id ids){
         return new FeatureStoreContentEvent(source, Type.ADD, name, ids);
@@ -95,10 +97,6 @@ public class FeatureStoreContentEvent extends StorageEvent {
 
     public static FeatureStoreContentEvent createSessionEvent(final Object source){
         return new FeatureStoreContentEvent(source, Type.SESSION, null, null);
-    }
-
-    public static FeatureStoreContentEvent resetSource(final Object source, final FeatureStoreContentEvent event){
-        return new FeatureStoreContentEvent(source, event.type, event.name, event.ids);
     }
 
 }
