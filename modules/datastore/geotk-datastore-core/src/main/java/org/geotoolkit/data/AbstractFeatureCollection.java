@@ -65,10 +65,10 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @module pending
  */
 public abstract class AbstractFeatureCollection<F extends Feature> extends AbstractCollection<F>
-        implements FeatureCollection<F>, StorageListener{
+        implements FeatureCollection<F>, FeatureStoreListener{
 
-    private final Set<StorageListener> listeners = new HashSet<StorageListener>();
-    private final StorageListener.Weak weakListener = new Weak(this);
+    private final Set<FeatureStoreListener> listeners = new HashSet<FeatureStoreListener>();
+    private final FeatureStoreListener.Weak weakListener = new Weak(this);
 
     protected String id;
     protected final Source source;
@@ -353,17 +353,17 @@ public abstract class AbstractFeatureCollection<F extends Feature> extends Abstr
      * Forward event to listeners by changing source.
      */
     @Override
-    public void structureChanged(StorageManagementEvent event){
+    public void structureChanged(FeatureStoreManagementEvent event){
         final FeatureType currentType = getFeatureType();
 
         //forward events only if the collection is typed and match the type name
         if(currentType != null && currentType.getName().equals(event.getFeatureTypeName())){
-            event = StorageManagementEvent.resetSource(this, event);
-            final StorageListener[] lst;
+            event = FeatureStoreManagementEvent.resetSource(this, event);
+            final FeatureStoreListener[] lst;
             synchronized (listeners) {
-                lst = listeners.toArray(new StorageListener[listeners.size()]);
+                lst = listeners.toArray(new FeatureStoreListener[listeners.size()]);
             }
-            for (final StorageListener listener : lst) {
+            for (final FeatureStoreListener listener : lst) {
                 listener.structureChanged(event);
             }
         }
@@ -373,12 +373,12 @@ public abstract class AbstractFeatureCollection<F extends Feature> extends Abstr
      * Forward event to listeners by changing source.
      */
     @Override
-    public void contentChanged(final StorageContentEvent event){
+    public void contentChanged(final FeatureStoreContentEvent event){
         final FeatureType currentType = getFeatureType();
 
         //forward events only if the collection is typed and match the type name
         if(currentType != null && currentType.getName().equals(event.getFeatureTypeName())){
-            sendEvent(StorageContentEvent.resetSource(this, event));
+            sendEvent(FeatureStoreContentEvent.resetSource(this, event));
         }
     }
 
@@ -386,7 +386,7 @@ public abstract class AbstractFeatureCollection<F extends Feature> extends Abstr
      * {@inheritDoc }
      */
     @Override
-    public void addStorageListener(final StorageListener listener) {
+    public void addStorageListener(final FeatureStoreListener listener) {
         synchronized (listeners) {
             listeners.add(listener);
         }
@@ -396,7 +396,7 @@ public abstract class AbstractFeatureCollection<F extends Feature> extends Abstr
      * {@inheritDoc }
      */
     @Override
-    public void removeStorageListener(final StorageListener listener) {
+    public void removeStorageListener(final FeatureStoreListener listener) {
         synchronized (listeners) {
             listeners.remove(listener);
         }
@@ -409,7 +409,7 @@ public abstract class AbstractFeatureCollection<F extends Feature> extends Abstr
      * @param ids modified feature ids.
      */
     protected void fireFeaturesAdded(final Name name, final Id ids){
-        sendEvent(StorageContentEvent.createAddEvent(this, name,ids));
+        sendEvent(FeatureStoreContentEvent.createAddEvent(this, name,ids));
     }
 
     /**
@@ -419,7 +419,7 @@ public abstract class AbstractFeatureCollection<F extends Feature> extends Abstr
      * @param ids modified feature ids.
      */
     protected void fireFeaturesUpdated(final Name name, final Id ids){
-        sendEvent(StorageContentEvent.createUpdateEvent(this, name, ids));
+        sendEvent(FeatureStoreContentEvent.createUpdateEvent(this, name, ids));
     }
 
     /**
@@ -429,19 +429,19 @@ public abstract class AbstractFeatureCollection<F extends Feature> extends Abstr
      * @param ids modified feature ids.
      */
     protected void fireFeaturesDeleted(final Name name, final Id ids){
-        sendEvent(StorageContentEvent.createDeleteEvent(this, name, ids));
+        sendEvent(FeatureStoreContentEvent.createDeleteEvent(this, name, ids));
     }
 
     /**
      * Forward a features event to all listeners.
      * @param event , event to send to listeners.
      */
-    protected void sendEvent(final StorageContentEvent event) {
-        final StorageListener[] lst;
+    protected void sendEvent(final FeatureStoreContentEvent event) {
+        final FeatureStoreListener[] lst;
         synchronized (listeners) {
-            lst = listeners.toArray(new StorageListener[listeners.size()]);
+            lst = listeners.toArray(new FeatureStoreListener[listeners.size()]);
         }
-        for (final StorageListener listener : lst) {
+        for (final FeatureStoreListener listener : lst) {
             listener.contentChanged(event);
         }
     }

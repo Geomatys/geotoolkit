@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2010, Geomatys
+ *    (C) 2010-2012, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -17,7 +17,7 @@
 
 package org.geotoolkit.data;
 
-import java.util.EventObject;
+import org.geotoolkit.storage.StorageEvent;
 import static org.geotoolkit.util.ArgumentChecks.*;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.Name;
@@ -28,7 +28,7 @@ import org.opengis.feature.type.Name;
  * @todo work in progress
  * @author Johann Sorel (Geomatys)
  */
-public class StorageManagementEvent extends EventObject{
+public class FeatureStoreManagementEvent extends StorageEvent{
 
     public static enum Type{
         ADD,
@@ -41,7 +41,7 @@ public class StorageManagementEvent extends EventObject{
     private final FeatureType oldType;
     private final FeatureType newType;
 
-    private StorageManagementEvent(final Object source, final Type type, final Name name, final FeatureType oldtype, final FeatureType newtype){
+    private FeatureStoreManagementEvent(final Object source, final Type type, final Name name, final FeatureType oldtype, final FeatureType newtype){
         super(source);
 
         ensureNonNull("type", type);
@@ -90,20 +90,20 @@ public class StorageManagementEvent extends EventObject{
         return oldType;
     }
 
-    public static StorageManagementEvent createAddEvent(final Object source, final Name name, final FeatureType type){
-        return new StorageManagementEvent(source, Type.ADD, name, null, type);
+    public static FeatureStoreManagementEvent createAddEvent(final Object source, final Name name, final FeatureType type){
+        return new FeatureStoreManagementEvent(source, Type.ADD, name, null, type);
     }
 
-    public static StorageManagementEvent createUpdateEvent(final Object source, final Name name, final FeatureType oldType, final FeatureType newType){
-        return new StorageManagementEvent(source, Type.UPDATE, name, oldType, newType);
+    public static FeatureStoreManagementEvent createUpdateEvent(final Object source, final Name name, final FeatureType oldType, final FeatureType newType){
+        return new FeatureStoreManagementEvent(source, Type.UPDATE, name, oldType, newType);
     }
 
-    public static StorageManagementEvent createDeleteEvent(final Object source, final Name name, final FeatureType type){
-        return new StorageManagementEvent(source, Type.DELETE, name, type, null);
+    public static FeatureStoreManagementEvent createDeleteEvent(final Object source, final Name name, final FeatureType type){
+        return new FeatureStoreManagementEvent(source, Type.DELETE, name, type, null);
     }
 
-    public static StorageManagementEvent resetSource(final Object source, final StorageManagementEvent event){
-        return new StorageManagementEvent(source, event.type, event.name, event.oldType, event.newType);
+    public static FeatureStoreManagementEvent resetSource(final Object source, final FeatureStoreManagementEvent event){
+        return new FeatureStoreManagementEvent(source, event.type, event.name, event.oldType, event.newType);
     }
 
 }

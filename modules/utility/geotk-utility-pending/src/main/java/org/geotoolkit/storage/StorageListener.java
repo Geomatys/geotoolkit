@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2010, Geomatys
+ *    (C) 2010-2012, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -15,7 +15,7 @@
  *    Lesser General Public License for more details.
  */
 
-package org.geotoolkit.data;
+package org.geotoolkit.storage;
 
 import java.lang.ref.WeakReference;
 import java.lang.reflect.InvocationTargetException;
@@ -24,27 +24,38 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EventListener;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.geotoolkit.internal.ReferenceQueueConsumer;
 import org.geotoolkit.util.Disposable;
+import org.geotoolkit.util.logging.Logging;
 
 /**
- * Listener for feature store, session and feature collection.
+ * Listener for storage objects. 
+ * 
+ * Events are divided in :
+ * - structure changes (like a new table or a field change)
+ * - content changes (like a new record)
+ * 
+ * Used in : FeatureStore,Session,FeatureCollection,CoverageStore,CoverageReference,...
  *
  * @author Johann Sorel (Geomatys)
  */
-public interface StorageListener extends EventListener{
+public interface StorageListener<S extends StorageEvent,C extends StorageEvent> extends EventListener{
 
+    static final Logger LOGGER = Logging.getLogger(StorageListener.class);
+    
     /**
-     * Fired when a feature type has been created, modified or deleted.
+     * Fired when the internal structure of the storage has changed.
      * @param event
      */
-    void structureChanged(StorageManagementEvent event);
+    void structureChanged(S event);
+    
 
     /**
-     * Fired when some features has been added, modified or deleted.
+     * Fired when datas have been added,changed or deleted.
      * @param event
      */
-    void contentChanged(StorageContentEvent event);
+    void contentChanged(C event);
 
     /**
      * Weak style listener. Use it when you are not
@@ -78,15 +89,15 @@ public interface StorageListener extends EventListener{
                     final Method method = source.getClass().getMethod("addStorageListener", StorageListener.class);
                     method.invoke(source, this);
                 } catch (IllegalAccessException ex) {
-                    FeatureStoreUtilities.LOGGER.log(Level.WARNING, ERROR_MSG, source);
+                    LOGGER.log(Level.WARNING, ERROR_MSG, source);
                 } catch (IllegalArgumentException ex) {
-                    FeatureStoreUtilities.LOGGER.log(Level.WARNING, ERROR_MSG, source);
+                    LOGGER.log(Level.WARNING, ERROR_MSG, source);
                 } catch (InvocationTargetException ex) {
-                    FeatureStoreUtilities.LOGGER.log(Level.WARNING, ERROR_MSG, source);
+                    LOGGER.log(Level.WARNING, ERROR_MSG, source);
                 } catch (NoSuchMethodException ex) {
-                    FeatureStoreUtilities.LOGGER.log(Level.WARNING, ERROR_MSG, source);
+                    LOGGER.log(Level.WARNING, ERROR_MSG, source);
                 } catch (SecurityException ex) {
-                    FeatureStoreUtilities.LOGGER.log(Level.WARNING, ERROR_MSG, source);
+                    LOGGER.log(Level.WARNING, ERROR_MSG, source);
                 }
             }
         }
@@ -113,15 +124,15 @@ public interface StorageListener extends EventListener{
                 final Method method = source.getClass().getMethod("removeStorageListener", StorageListener.class);
                 method.invoke(source, this);
             } catch (IllegalAccessException ex) {
-                FeatureStoreUtilities.LOGGER.log(Level.WARNING, ERROR_MSG, source);
+                LOGGER.log(Level.WARNING, ERROR_MSG, source);
             } catch (IllegalArgumentException ex) {
-                FeatureStoreUtilities.LOGGER.log(Level.WARNING, ERROR_MSG, source);
+                LOGGER.log(Level.WARNING, ERROR_MSG, source);
             } catch (InvocationTargetException ex) {
-                FeatureStoreUtilities.LOGGER.log(Level.WARNING, ERROR_MSG, source);
+                LOGGER.log(Level.WARNING, ERROR_MSG, source);
             } catch (NoSuchMethodException ex) {
-                FeatureStoreUtilities.LOGGER.log(Level.WARNING, ERROR_MSG, source);
+                LOGGER.log(Level.WARNING, ERROR_MSG, source);
             } catch (SecurityException ex) {
-                FeatureStoreUtilities.LOGGER.log(Level.WARNING, ERROR_MSG, source);
+                LOGGER.log(Level.WARNING, ERROR_MSG, source);
             }
         }
 
@@ -134,7 +145,7 @@ public interface StorageListener extends EventListener{
         }
 
         @Override
-        public void structureChanged(final StorageManagementEvent event) {
+        public void structureChanged(final StorageEvent event) {
             final StorageListener listener = get();
             if (listener != null) {
                 listener.structureChanged(event);
@@ -142,7 +153,7 @@ public interface StorageListener extends EventListener{
         }
 
         @Override
-        public void contentChanged(final StorageContentEvent event) {
+        public void contentChanged(final StorageEvent event) {
             final StorageListener listener = get();
             if (listener != null) {
                 listener.contentChanged(event);

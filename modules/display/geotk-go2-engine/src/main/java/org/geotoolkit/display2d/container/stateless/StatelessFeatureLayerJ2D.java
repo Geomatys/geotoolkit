@@ -30,9 +30,9 @@ import java.util.regex.Pattern;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
-import org.geotoolkit.data.StorageContentEvent;
-import org.geotoolkit.data.StorageListener;
-import org.geotoolkit.data.StorageManagementEvent;
+import org.geotoolkit.data.FeatureStoreContentEvent;
+import org.geotoolkit.data.FeatureStoreListener;
+import org.geotoolkit.data.FeatureStoreManagementEvent;
 import org.geotoolkit.data.memory.GenericCachedFeatureIterator;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
@@ -94,9 +94,9 @@ import org.opengis.style.Rule;
  * @author johann sorel (Geomatys)
  * @module pending
  */
-public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<FeatureMapLayer> implements StorageListener{
+public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<FeatureMapLayer> implements FeatureStoreListener{
 
-    protected StorageListener.Weak weakSessionListener = new StorageListener.Weak(this);
+    protected FeatureStoreListener.Weak weakSessionListener = new FeatureStoreListener.Weak(this);
 
     protected Query currentQuery = null;
 
@@ -108,11 +108,11 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
     }
 
     @Override
-    public void structureChanged(StorageManagementEvent event) {
+    public void structureChanged(FeatureStoreManagementEvent event) {
     }
 
     @Override
-    public void contentChanged(StorageContentEvent event) {
+    public void contentChanged(FeatureStoreContentEvent event) {
         if(item.isVisible() && getCanvas().getController().isAutoRepaint()){
             //TODO should call a repaint only on this graphic
             getCanvas().getController().repaint();

@@ -21,9 +21,9 @@ package org.geotoolkit.gui.swing.go2.control.edition;
 import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
 
-import org.geotoolkit.data.StorageContentEvent;
-import org.geotoolkit.data.StorageListener;
-import org.geotoolkit.data.StorageManagementEvent;
+import org.geotoolkit.data.FeatureStoreContentEvent;
+import org.geotoolkit.data.FeatureStoreListener;
+import org.geotoolkit.data.FeatureStoreManagementEvent;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.FeatureMapLayer;
@@ -33,9 +33,9 @@ import org.geotoolkit.map.FeatureMapLayer;
  * @author Johann Sorel
  * @module pending
  */
-public class SessionRollbackAction extends AbstractAction implements StorageListener {
+public class SessionRollbackAction extends AbstractAction implements FeatureStoreListener {
 
-    private final StorageListener.Weak weakListener = new Weak(this);
+    private final FeatureStoreListener.Weak weakListener = new Weak(this);
     private FeatureMapLayer layer;
 
     public SessionRollbackAction() {
@@ -92,12 +92,12 @@ public class SessionRollbackAction extends AbstractAction implements StorageList
     }
 
     @Override
-    public void structureChanged(final StorageManagementEvent event) {
+    public void structureChanged(final FeatureStoreManagementEvent event) {
     }
 
     @Override
-    public void contentChanged(final StorageContentEvent event) {
-        if(event.getType() == StorageContentEvent.Type.SESSION){
+    public void contentChanged(final FeatureStoreContentEvent event) {
+        if(event.getType() == FeatureStoreContentEvent.Type.SESSION){
             //refresh enable state
             setLayer(layer);
         }

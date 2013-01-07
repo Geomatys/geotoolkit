@@ -24,7 +24,7 @@ import java.util.Map;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
-import org.geotoolkit.data.StorageListener;
+import org.geotoolkit.data.FeatureStoreListener;
 import org.geotoolkit.data.memory.mapping.DefaultFeatureMapper;
 import org.geotoolkit.data.memory.mapping.FeatureMapper;
 import org.geotoolkit.data.query.Query;
@@ -117,12 +117,12 @@ public class GenericMappingFeatureCollection<F extends Feature> extends Abstract
     }
 
     @Override
-    public void addStorageListener(final StorageListener listener) {
+    public void addStorageListener(final FeatureStoreListener listener) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public void removeStorageListener(final StorageListener listener) {
+    public void removeStorageListener(final FeatureStoreListener listener) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

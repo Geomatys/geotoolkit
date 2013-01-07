@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2010, Geomatys
+ *    (C) 2010-2012, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -17,7 +17,7 @@
 
 package org.geotoolkit.data;
 
-import java.util.EventObject;
+import org.geotoolkit.storage.StorageEvent;
 import org.opengis.feature.type.Name;
 import org.opengis.filter.Id;
 
@@ -30,7 +30,7 @@ import org.opengis.filter.Id;
  * list of ids for delete ?
  * @author Johann Sorel (Geomatys)
  */
-public class StorageContentEvent extends EventObject{
+public class FeatureStoreContentEvent extends StorageEvent {
 
     public static enum Type{
         ADD,
@@ -46,7 +46,7 @@ public class StorageContentEvent extends EventObject{
     private final Name name;
     private Id ids;
 
-    public StorageContentEvent(final Object source, final Type type, final Name name, final Id candidates){
+    public FeatureStoreContentEvent(final Object source, final Type type, final Name name, final Id candidates){
         super(source);
 
         this.type = type;
@@ -81,24 +81,24 @@ public class StorageContentEvent extends EventObject{
 
 
 
-    public static StorageContentEvent createAddEvent(final Object source, final Name name, final Id ids){
-        return new StorageContentEvent(source, Type.ADD, name, ids);
+    public static FeatureStoreContentEvent createAddEvent(final Object source, final Name name, final Id ids){
+        return new FeatureStoreContentEvent(source, Type.ADD, name, ids);
     }
 
-    public static StorageContentEvent createUpdateEvent(final Object source, final Name name, final Id ids){
-        return new StorageContentEvent(source, Type.UPDATE, name, ids);
+    public static FeatureStoreContentEvent createUpdateEvent(final Object source, final Name name, final Id ids){
+        return new FeatureStoreContentEvent(source, Type.UPDATE, name, ids);
     }
 
-    public static StorageContentEvent createDeleteEvent(final Object source, final Name name, final Id ids){
-        return new StorageContentEvent(source, Type.DELETE, name, ids);
+    public static FeatureStoreContentEvent createDeleteEvent(final Object source, final Name name, final Id ids){
+        return new FeatureStoreContentEvent(source, Type.DELETE, name, ids);
     }
 
-    public static StorageContentEvent createSessionEvent(final Object source){
-        return new StorageContentEvent(source, Type.SESSION, null, null);
+    public static FeatureStoreContentEvent createSessionEvent(final Object source){
+        return new FeatureStoreContentEvent(source, Type.SESSION, null, null);
     }
 
-    public static StorageContentEvent resetSource(final Object source, final StorageContentEvent event){
-        return new StorageContentEvent(source, event.type, event.name, event.ids);
+    public static FeatureStoreContentEvent resetSource(final Object source, final FeatureStoreContentEvent event){
+        return new FeatureStoreContentEvent(source, event.type, event.name, event.ids);
     }
 
 }
