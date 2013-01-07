@@ -105,7 +105,7 @@ public class MemoryCoverageStore extends AbstractCoverageStore {
         if(layers.containsKey(name)){
             throw new DataStoreException("Layer "+name+" already exist");
         }
-        layers.put(name, new MemoryCoverageReference());
+        layers.put(name, new MemoryCoverageReference(name));
         fireCoverageAdded(name);
         return getCoverageReference(name);
     }
@@ -119,14 +119,21 @@ public class MemoryCoverageStore extends AbstractCoverageStore {
 
     private class MemoryCoverageReference extends DefaultCoverageReference{
 
+        private final Name name;
         private GridCoverage2D coverage;
         
-        public MemoryCoverageReference() {
+        public MemoryCoverageReference(Name name) {
             super(null, 0);
+            this.name = name;
         }
 
         @Override
-        public CoverageStore getStore() {
+        public Name getName() {
+            return name;
+        }
+        
+        @Override
+        public MemoryCoverageStore getStore() {
             return MemoryCoverageStore.this;
         }
 
@@ -149,7 +156,7 @@ public class MemoryCoverageStore extends AbstractCoverageStore {
         public MemoryCoverageReader(MemoryCoverageReference ref){
             this.ref = ref;
         }
-        
+                
         @Override
         public GeneralGridGeometry getGridGeometry(final int i) throws CoverageStoreException, CancellationException {
             return (GeneralGridGeometry) ref.coverage.getGridGeometry();
@@ -187,7 +194,8 @@ public class MemoryCoverageStore extends AbstractCoverageStore {
         @Override
         public void write(GridCoverage coverage, GridCoverageWriteParam param) throws CoverageStoreException, CancellationException {
             ref.coverage = (GridCoverage2D) coverage;
-            ref.fireDataUpdated();
+            final CoverageStoreContentEvent event = ref.fireDataUpdated();
+            ref.getStore().forwardContentEvent(event);
         }
         
     }

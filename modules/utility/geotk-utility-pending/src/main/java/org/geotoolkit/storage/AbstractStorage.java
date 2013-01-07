@@ -74,7 +74,7 @@ public abstract class AbstractStorage {
      * @param event 
      */
     public void forwardStructureEvent(StorageEvent event){
-        sendContentEvent(event.copy(this));
+        sendStructureEvent(event.copy(this));
     }
     
     /**
@@ -83,7 +83,7 @@ public abstract class AbstractStorage {
      * @param event 
      */
     public void forwardContentEvent(StorageEvent event){
-        sendStructureEvent(event.copy(this));
+        sendContentEvent(event.copy(this));
     }
     
 }

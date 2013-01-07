@@ -14,27 +14,27 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.data;
+package org.geotoolkit.coverage;
 
 /**
  * Test storage listener, count the number of events and store the last event objects.
- * @author Johann Sorel (Puzzle-GIS)
+ * @author Johann Sorel (Geomatys)
  */
-public final class StorageCountListener implements FeatureStoreListener {
+public final class StorageCountListener implements CoverageStoreListener {
 
     public int numManageEvent = 0;
     public int numContentEvent = 0;
-    public FeatureStoreManagementEvent lastManagementEvent = null;
-    public FeatureStoreContentEvent lastContentEvent = null;
+    public CoverageStoreManagementEvent lastManagementEvent = null;
+    public CoverageStoreContentEvent lastContentEvent = null;
 
     @Override
-    public void structureChanged(final FeatureStoreManagementEvent event) {
+    public void structureChanged(final CoverageStoreManagementEvent event) {
         numManageEvent++;
         this.lastManagementEvent = event;
     }
 
     @Override
-    public void contentChanged(final FeatureStoreContentEvent event) {
+    public void contentChanged(final CoverageStoreContentEvent event) {
         numContentEvent++;
         this.lastContentEvent = event;
     }
