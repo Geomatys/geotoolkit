@@ -71,7 +71,7 @@ abstract class DefaultDirectIterator extends PixelIterator{
     /**
      * Tile scanLineStride from Raster or RenderedImage Sample model.
      */
-    private final int scanLineStride;
+    private int scanLineStride;
 
     /**
      * Current raster lower corner X coordinate;
@@ -170,6 +170,7 @@ abstract class DefaultDirectIterator extends PixelIterator{
         this.currentRaster = renderedImage.getTile(tileX, tileY);
         this.crMinX = currentRaster.getMinX();
         this.crMinY = currentRaster.getMinY();
+        this.scanLineStride = ((ComponentSampleModel)currentRaster.getSampleModel()).getScanlineStride();
 
         //update min max from subArea and raster boundary
         final int minx  = Math.max(areaIterateMinX, crMinX) - crMinX;
@@ -229,9 +230,15 @@ abstract class DefaultDirectIterator extends PixelIterator{
         if (renderedImage != null) {
             final int riMinX = renderedImage.getMinX();
             final int riMinY = renderedImage.getMinY();
-            tX = (x - riMinX) / rasterWidth                   + renderedImage.getMinTileX();
-            tY = (y - riMinY) / renderedImage.getTileHeight() + renderedImage.getMinTileY();
-            updateCurrentRaster(tX, tY);
+//            tX = (x - riMinX) / rasterWidth                   + renderedImage.getMinTileX();
+//            tY = (y - riMinY) / renderedImage.getTileHeight() + renderedImage.getMinTileY();
+            final int tTempX = (x - riMinX) / rasterWidth                   + renderedImage.getMinTileX();
+            final int tTempY = (y - riMinY) / renderedImage.getTileHeight() + renderedImage.getMinTileY();
+            if (tTempX != tX || tTempY != tY) {
+                tX = tTempX;
+                tY = tTempY;
+                updateCurrentRaster(tX, tY);
+            }
         }
         this.dataCursor = (x - crMinX) * numBand        + (y - crMinY) * scanLineStride + b;// - 1;
         this.maxX       = (y - crMinY) * scanLineStride + (Math.min(areaIterateMaxX, crMinX + rasterWidth) - crMinX)*numBand;
