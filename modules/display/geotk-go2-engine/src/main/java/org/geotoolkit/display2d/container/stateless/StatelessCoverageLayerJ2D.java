@@ -21,6 +21,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.geotoolkit.coverage.CoverageStoreContentEvent;
+import org.geotoolkit.coverage.CoverageStoreListener;
+import org.geotoolkit.coverage.CoverageStoreManagementEvent;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.display.canvas.RenderingContext;
@@ -30,7 +33,6 @@ import org.geotoolkit.display.primitive.SearchArea;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.display2d.container.stateless.StatelessMapLayerJ2D;
 import org.geotoolkit.display2d.primitive.DefaultSearchAreaJ2D;
 import org.geotoolkit.display2d.primitive.GraphicJ2D;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
@@ -49,8 +51,10 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class StatelessCoverageLayerJ2D extends StatelessMapLayerJ2D<CoverageMapLayer>{
+public class StatelessCoverageLayerJ2D extends StatelessMapLayerJ2D<CoverageMapLayer> implements CoverageStoreListener{
 
+    protected CoverageStoreListener.Weak weakStoreListener = new CoverageStoreListener.Weak(this);
+    
     private final DefaultProjectedCoverage projectedCoverage;
     private final boolean ignoreBuilders;
     
@@ -78,8 +82,9 @@ public class StatelessCoverageLayerJ2D extends StatelessMapLayerJ2D<CoverageMapL
             Logger.getLogger(StatelessCoverageLayerJ2D.class.getName()).log(Level.WARNING, null, ex);
         }
 
-        params = new StatelessContextParams(canvas,null);
-        this.projectedCoverage = new DefaultProjectedCoverage(params, layer);
+        this.params = new StatelessContextParams(canvas,null);
+        this.projectedCoverage = new DefaultProjectedCoverage(params, layer);        
+        this.weakStoreListener.registerSource(layer.getCoverageReference());
     }
 
     private synchronized void updateCache(final RenderingContext2D context){
@@ -228,6 +233,19 @@ public class StatelessCoverageLayerJ2D extends StatelessMapLayerJ2D<CoverageMapL
         return graphics;
     }
 
+    @Override
+    public void structureChanged(CoverageStoreManagementEvent event) {
+    }
+
+    @Override
+    public void contentChanged(CoverageStoreContentEvent event) {
+        if(item.isVisible() && getCanvas().getController().isAutoRepaint()){
+            //TODO should call a repaint only on this graphic
+            projectedCoverage.clearObjectiveCache();
+            getCanvas().getController().repaint();
+        }
+    }
+    
     @Override
     public void dispose() {
         projectedCoverage.dispose();

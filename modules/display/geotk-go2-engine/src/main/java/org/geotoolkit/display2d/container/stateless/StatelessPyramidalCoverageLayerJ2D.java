@@ -35,6 +35,7 @@ import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.grid.GridEnvelope2D;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
+import org.geotoolkit.data.FeatureStoreListener;
 import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
@@ -71,7 +72,9 @@ import org.opengis.referencing.operation.TransformException;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<CoverageMapLayer>{
+public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<CoverageMapLayer> implements CoverageStoreListener{
+    
+    protected CoverageStoreListener.Weak weakStoreListener = new CoverageStoreListener.Weak(this);
     
     private final PyramidalModel model;
     private final double tolerance;
@@ -81,6 +84,7 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
         
         model = (PyramidalModel)layer.getCoverageReference();
         tolerance = 0.1; // in % , TODO use a flag to allow change value
+        this.weakStoreListener.registerSource(layer.getCoverageReference());
     }
 
     /**
@@ -362,5 +366,17 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
             }
         }
     }
-        
+ 
+    @Override
+    public void structureChanged(CoverageStoreManagementEvent event) {
+    }
+
+    @Override
+    public void contentChanged(CoverageStoreContentEvent event) {
+        if(item.isVisible() && getCanvas().getController().isAutoRepaint()){
+            //TODO should call a repaint only on this graphic
+            getCanvas().getController().repaint();
+        }
+    }
+    
 }
