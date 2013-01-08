@@ -184,6 +184,11 @@ public class PGCoverageReference extends AbstractCoverageReference implements Py
     }
 
     @Override
+    public void deletePyramid(String pyramidId) throws DataStoreException {
+        throw new DataStoreException("Not supported yet.");
+    }
+    
+    @Override
     public GridMosaic createMosaic(final String pyramidId, final Dimension gridSize, final Dimension tilePixelSize,
             final DirectPosition upperleft, final double pixelscale) throws DataStoreException {
 
@@ -259,6 +264,11 @@ public class PGCoverageReference extends AbstractCoverageReference implements Py
     }
 
     @Override
+    public void deleteMosaic(String pyramidId, String mosaicId) throws DataStoreException {
+        throw new DataStoreException("Not supported yet.");
+    }
+    
+    @Override
     public void writeTiles(final String pyramidId, final String mosaicId,
             final RenderedImage image, final boolean onlyMissing) throws DataStoreException {
         final int offsetX = image.getMinTileX();
@@ -330,6 +340,11 @@ public class PGCoverageReference extends AbstractCoverageReference implements Py
 
     }
 
+    @Override
+    public void deleteTile(String pyramidId, String mosaicId, int col, int row) throws DataStoreException {
+        throw new DataStoreException("Not supported yet.");
+    }
+    
     @Override
     public List<GridSampleDimension> getSampleDimensions(int index) throws DataStoreException{
         final List<GridSampleDimension> dimensions = new LinkedList<GridSampleDimension>();

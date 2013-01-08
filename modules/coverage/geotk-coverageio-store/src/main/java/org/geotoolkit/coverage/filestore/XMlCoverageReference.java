@@ -102,6 +102,11 @@ public class XMlCoverageReference extends AbstractCoverageReference implements P
     }
 
     @Override
+    public void deletePyramid(String pyramidId) throws DataStoreException {
+        throw new DataStoreException("Not supported yet.");
+    }
+    
+    @Override
     public GridMosaic createMosaic(String pyramidId, Dimension gridSize,
     Dimension tilePixelSize, DirectPosition upperleft, double pixelscale) throws DataStoreException {
         final XMLPyramidSet set = getPyramidSet();
@@ -111,6 +116,11 @@ public class XMlCoverageReference extends AbstractCoverageReference implements P
         return mosaic;
     }
 
+    @Override
+    public void deleteMosaic(String pyramidId, String mosaicId) throws DataStoreException {
+        throw new DataStoreException("Not supported yet.");
+    }
+    
     @Override
     public void writeTile(String pyramidId, String mosaicId, int col, int row, RenderedImage image) throws DataStoreException {
         final XMLPyramidSet set = getPyramidSet();
@@ -142,6 +152,11 @@ public class XMlCoverageReference extends AbstractCoverageReference implements P
         save();
     }
 
+    @Override
+    public void deleteTile(String pyramidId, String mosaicId, int col, int row) throws DataStoreException {
+        throw new DataStoreException("Not supported yet.");
+    }
+    
     public Image getLegend() throws DataStoreException {
         return null;
     }
@@ -155,5 +170,7 @@ public class XMlCoverageReference extends AbstractCoverageReference implements P
     public void createSampleDimension(List<GridSampleDimension> dimensions, final Map<String, Object> analyse) throws DataStoreException {
         throw new DataStoreException("Writing not supported.");
     }
+
+    
 
 }

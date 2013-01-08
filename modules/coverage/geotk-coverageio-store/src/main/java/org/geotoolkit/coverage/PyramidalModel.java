@@ -26,7 +26,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  * May be implemented by Coverage reference when the underlying structure is a 
- * paramid.
+ * pyramid.
  * 
  * @author Johann Sorel (Geomatys)
  * @module pending
@@ -60,6 +60,13 @@ public interface PyramidalModel {
     Pyramid createPyramid(CoordinateReferenceSystem crs) throws DataStoreException;
     
     /**
+     * Delete given pyramid.
+     * 
+     * @throws DataStoreException 
+     */
+    void deletePyramid(String pyramidId) throws DataStoreException;
+    
+    /**
      * 
      * @param pyramidId : pyramid id in which to insert the mosaic
      * @param gridSize : size in number of column and row
@@ -71,6 +78,13 @@ public interface PyramidalModel {
      */
     GridMosaic createMosaic(String pyramidId, Dimension gridSize, 
             Dimension tilePixelSize, DirectPosition upperleft, double pixelscale) throws DataStoreException;
+    
+    /**
+     * Delete given mosaic.
+     * 
+     * @throws DataStoreException 
+     */
+    void deleteMosaic(String pyramidId, String mosaicId) throws DataStoreException;
     
     /**
      * Write a complete mosaic level used the given rendered image.
@@ -98,4 +112,5 @@ public interface PyramidalModel {
     void writeTile(String pyramidId, String mosaicId, int col, int row, 
             RenderedImage image) throws DataStoreException;
     
+    void deleteTile(String pyramidId, String mosaicId, int col, int row) throws DataStoreException;
 }

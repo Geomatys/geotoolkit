@@ -68,9 +68,19 @@ public class WMSCCoverageReference extends WMSCoverageReference implements Pyram
     public Pyramid createPyramid(CoordinateReferenceSystem crs) throws DataStoreException {
         throw new DataStoreException("Model is not writeable.");
     }
+    
+    @Override
+    public void deletePyramid(String pyramidId) throws DataStoreException {
+        throw new DataStoreException("Model is not writeable.");
+    }
 
     @Override
     public GridMosaic createMosaic(String pyramidId, Dimension gridSize, Dimension tilePixelSize, DirectPosition upperleft, double pixelscale) throws DataStoreException {
+        throw new DataStoreException("Model is not writeable.");
+    }
+    
+    @Override
+    public void deleteMosaic(String pyramidId, String mosaicId) throws DataStoreException {
         throw new DataStoreException("Model is not writeable.");
     }
 
@@ -81,6 +91,11 @@ public class WMSCCoverageReference extends WMSCoverageReference implements Pyram
 
     @Override
     public void writeTiles(String pyramidId, String mosaicId, RenderedImage image, boolean onlyMissing) throws DataStoreException {
+        throw new DataStoreException("Model is not writeable.");
+    }
+    
+    @Override
+    public void deleteTile(String pyramidId, String mosaicId, int col, int row) throws DataStoreException {
         throw new DataStoreException("Model is not writeable.");
     }
 
