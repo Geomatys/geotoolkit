@@ -104,6 +104,7 @@ public class PGEPSGWriter implements EPSGWriter {
         return code;
     }
     
+    @Override
     public int getOrCreateCoordinateReferenceSystem(final CoordinateReferenceSystem candidate) throws FactoryException{
         
         //search if this object already exist
@@ -251,6 +252,7 @@ public class PGEPSGWriter implements EPSGWriter {
         return coord_ref_sys_code;
     }
     
+    @Override
     public int getOrCreateCoordinateSystem(final CoordinateSystem candidate) throws FactoryException{
         
         //search if this object already exist
@@ -396,6 +398,7 @@ public class PGEPSGWriter implements EPSGWriter {
         return coord_axis_name_code;
     }
     
+    @Override
     public int getOrCreateDatum(final Datum candidate) throws FactoryException{
         
         //search if this object already exist
@@ -500,6 +503,7 @@ public class PGEPSGWriter implements EPSGWriter {
         return datum_code;
     }
     
+    @Override
     public int getOrCreateProjection(final Projection candidate) throws FactoryException{
         
         //search if this object already exist
@@ -574,6 +578,7 @@ public class PGEPSGWriter implements EPSGWriter {
 //        return coord_op_code;
     }
     
+    @Override
     public int getOrCreateArea(final Extent candidate) throws FactoryException{
         if(candidate == null){
             //world extent
@@ -593,6 +598,7 @@ public class PGEPSGWriter implements EPSGWriter {
         return 1262;
     }
     
+    @Override
     public int getOrCreateUOM(final Unit candidate) throws FactoryException{
         
         final Integer uom_code;
@@ -675,6 +681,7 @@ public class PGEPSGWriter implements EPSGWriter {
         return uom_code;
     }
  
+    @Override
     public int getOrCreateEllipsoid(final Ellipsoid candidate) throws FactoryException{
         
         final String code = searchSimilar(Ellipsoid.class, candidate);
@@ -736,6 +743,7 @@ public class PGEPSGWriter implements EPSGWriter {
         return ellipsoid_code;
     }
     
+    @Override
     public int getOrCreatePrimeMeridian(final PrimeMeridian candidate) throws FactoryException{
         
         final String code = searchSimilar(PrimeMeridian.class, candidate);
