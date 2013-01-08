@@ -52,4 +52,6 @@ public abstract class LogicOpsType implements Filter {
     public String toString() {
         return "class: " + this.getClass().getSimpleName() + '\n';
     }
+    
+    public abstract LogicOpsType getClone();
 }

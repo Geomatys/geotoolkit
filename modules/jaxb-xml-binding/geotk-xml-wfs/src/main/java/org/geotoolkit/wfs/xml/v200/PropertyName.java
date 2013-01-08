@@ -68,6 +68,16 @@ public class PropertyName {
         
     }
     
+    public PropertyName(final PropertyName that) {
+        if (that != null) {
+            this.resolve        = that.resolve;
+            this.resolveDepth   = that.resolveDepth;
+            this.resolvePath    = that.resolvePath;
+            this.resolveTimeout = that.resolveTimeout;
+            this.value          = that.value;
+        }
+    }
+    
     public PropertyName(final QName value) {
         this.value = value;
     }

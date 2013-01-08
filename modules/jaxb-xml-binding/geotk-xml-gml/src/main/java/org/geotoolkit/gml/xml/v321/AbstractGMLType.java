@@ -100,6 +100,34 @@ public abstract class AbstractGMLType extends AbstractMetadata implements Abstra
         this.id = id;
     }
     
+    public AbstractGMLType(final AbstractGMLType that) {
+        super(that);
+        if (that != null) {
+            if (that.description != null) {
+                this.description = new StringOrRefType(that.description);
+            }
+            if (that.descriptionReference != null) {
+                this.descriptionReference = new ReferenceType(that.descriptionReference);
+            }
+            this.id = that.id;
+            if (that.identifier != null) {
+                this.identifier = new CodeWithAuthorityType(that.identifier);
+            }
+            if (that.metaDataProperty != null) {
+                this.metaDataProperty = new ArrayList<MetaDataPropertyType>();
+                for (MetaDataPropertyType m : that.metaDataProperty) {
+                    this.metaDataProperty.add(new MetaDataPropertyType(m));
+                }
+            }
+            if (that.name != null) {
+                this.name = new ArrayList<CodeType>();
+                for (CodeType cd : that.name) {
+                    this.name.add(new CodeType(cd));
+                }
+            }
+        }
+    }
+    
     @Override
     public MetadataStandard getStandard() {
         return null;
@@ -126,6 +154,7 @@ public abstract class AbstractGMLType extends AbstractMetadata implements Abstra
      *     {@link StringOrRefType }
      *     
      */
+    @Override
     public String getDescription() {
         if (description != null) {
             return description.getValue();
@@ -145,6 +174,7 @@ public abstract class AbstractGMLType extends AbstractMetadata implements Abstra
         this.description = value;
     }
     
+    @Override
     public void setDescription(final String value) {
         this.description = new StringOrRefType(value);
     }
@@ -157,6 +187,7 @@ public abstract class AbstractGMLType extends AbstractMetadata implements Abstra
      *     {@link ReferenceType }
      *     
      */
+    @Override
     public ReferenceType getDescriptionReference() {
         return descriptionReference;
     }
@@ -181,6 +212,7 @@ public abstract class AbstractGMLType extends AbstractMetadata implements Abstra
      *     {@link CodeWithAuthorityType }
      *     
      */
+    @Override
     public String getIdentifier() {
         return id;
     }
@@ -212,6 +244,7 @@ public abstract class AbstractGMLType extends AbstractMetadata implements Abstra
         return this.name;
     }
     
+    @Override
     public String getName() {
         if (name != null && !name.isEmpty()) {
             return name.get(0).getValue();
@@ -222,6 +255,7 @@ public abstract class AbstractGMLType extends AbstractMetadata implements Abstra
     /**
      *
      */
+    @Override
     public void setName(final String name) {
         if (this.name == null) {
             this.name = new ArrayList<CodeType>();
@@ -237,6 +271,7 @@ public abstract class AbstractGMLType extends AbstractMetadata implements Abstra
      *     {@link String }
      *     
      */
+    @Override
     public String getId() {
         return id;
     }
@@ -249,10 +284,12 @@ public abstract class AbstractGMLType extends AbstractMetadata implements Abstra
      *     {@link String }
      *     
      */
+    @Override
     public void setId(String value) {
         this.id = value;
     }
 
+    @Override
     public org.geotoolkit.gml.xml.v311.CodeType getParameterName() {
         return null; // not implemented in 3.2.1
     }

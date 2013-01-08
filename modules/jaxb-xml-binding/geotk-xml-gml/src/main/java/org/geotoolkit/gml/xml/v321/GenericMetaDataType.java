@@ -44,9 +44,13 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "GenericMetaDataType")
-public class GenericMetaDataType
-    extends AbstractMetaDataType
-{
+public class GenericMetaDataType extends AbstractMetaDataType {
 
+  public GenericMetaDataType() {
+      
+  }
 
+  public GenericMetaDataType(final AbstractMetaDataType that) {
+      super(that);
+  }
 }

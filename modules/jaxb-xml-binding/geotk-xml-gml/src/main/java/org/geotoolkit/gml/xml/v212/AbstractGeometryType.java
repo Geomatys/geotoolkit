@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.gml.xml.v212;
 
+import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -81,6 +82,13 @@ public abstract class AbstractGeometryType {
         this.srsName = srsName;
     }
     
+    public AbstractGeometryType(final AbstractGeometryType that) {
+        if (that != null) {
+            this.gid     = that.gid;
+            this.srsName = that.srsName;
+        }
+    }
+    
     /**
      * Gets the value of the gid property.
      * 
@@ -129,4 +137,26 @@ public abstract class AbstractGeometryType {
         this.srsName = value;
     }
 
+    public JAXBElement<? extends AbstractGeometryType> getXmlElement() {
+        final ObjectFactory factory = new ObjectFactory();
+        if (this instanceof PolygonType) {
+            return  factory.createPolygon((PolygonType) this);
+        } else if (this instanceof LinearRingType) {
+            return  factory.createLinearRing((LinearRingType) this);
+        } else if (this instanceof PointType) {
+            return  factory.createPoint((PointType) this);
+        } else if (this instanceof LineStringType) {
+            return  factory.createLineString((LineStringType) this);
+        } else if (this instanceof MultiLineStringType) {
+            return  factory.createMultiLineString((MultiLineStringType) this);
+        } else if (this instanceof MultiPointType) {
+            return  factory.createMultiPoint((MultiPointType) this);
+        } else if (this instanceof MultiPolygonType) {
+            return  factory.createMultiPolygon((MultiPolygonType) this);
+        } else {
+            throw new IllegalArgumentException("unexpected geometry type:" + this);
+        }
+    }
+    
+    public abstract AbstractGeometryType getClone();
 }

@@ -479,8 +479,8 @@ public class ObjectFactory {
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/fes/2.0", name = "PropertyIsGreaterThan", substitutionHeadNamespace = "http://www.opengis.net/fes/2.0", substitutionHeadName = "comparisonOps")
-    public JAXBElement<BinaryComparisonOpType> createPropertyIsGreaterThan(BinaryComparisonOpType value) {
-        return new JAXBElement<BinaryComparisonOpType>(_PropertyIsGreaterThan_QNAME, BinaryComparisonOpType.class, null, value);
+    public JAXBElement<PropertyIsGreaterThanType> createPropertyIsGreaterThan(PropertyIsGreaterThanType value) {
+        return new JAXBElement<PropertyIsGreaterThanType>(_PropertyIsGreaterThan_QNAME, PropertyIsGreaterThanType.class, null, value);
     }
 
     /**
@@ -488,8 +488,8 @@ public class ObjectFactory {
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/fes/2.0", name = "TContains", substitutionHeadNamespace = "http://www.opengis.net/fes/2.0", substitutionHeadName = "temporalOps")
-    public JAXBElement<BinaryTemporalOpType> createTContains(BinaryTemporalOpType value) {
-        return new JAXBElement<BinaryTemporalOpType>(_TContains_QNAME, BinaryTemporalOpType.class, null, value);
+    public JAXBElement<TimeContainsType> createTContains(TimeContainsType value) {
+        return new JAXBElement<TimeContainsType>(_TContains_QNAME, TimeContainsType.class, null, value);
     }
 
     /**
@@ -497,8 +497,8 @@ public class ObjectFactory {
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/fes/2.0", name = "Meets", substitutionHeadNamespace = "http://www.opengis.net/fes/2.0", substitutionHeadName = "temporalOps")
-    public JAXBElement<BinaryTemporalOpType> createMeets(BinaryTemporalOpType value) {
-        return new JAXBElement<BinaryTemporalOpType>(_Meets_QNAME, BinaryTemporalOpType.class, null, value);
+    public JAXBElement<TimeMeetsType> createMeets(TimeMeetsType value) {
+        return new JAXBElement<TimeMeetsType>(_Meets_QNAME, TimeMeetsType.class, null, value);
     }
 
     /**
@@ -506,8 +506,8 @@ public class ObjectFactory {
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/fes/2.0", name = "PropertyIsNotEqualTo", substitutionHeadNamespace = "http://www.opengis.net/fes/2.0", substitutionHeadName = "comparisonOps")
-    public JAXBElement<BinaryComparisonOpType> createPropertyIsNotEqualTo(BinaryComparisonOpType value) {
-        return new JAXBElement<BinaryComparisonOpType>(_PropertyIsNotEqualTo_QNAME, BinaryComparisonOpType.class, null, value);
+    public JAXBElement<PropertyIsNotEqualToType> createPropertyIsNotEqualTo(PropertyIsNotEqualToType value) {
+        return new JAXBElement<PropertyIsNotEqualToType>(_PropertyIsNotEqualTo_QNAME, PropertyIsNotEqualToType.class, null, value);
     }
 
     /**
@@ -524,8 +524,8 @@ public class ObjectFactory {
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/fes/2.0", name = "PropertyIsLessThanOrEqualTo", substitutionHeadNamespace = "http://www.opengis.net/fes/2.0", substitutionHeadName = "comparisonOps")
-    public JAXBElement<BinaryComparisonOpType> createPropertyIsLessThanOrEqualTo(BinaryComparisonOpType value) {
-        return new JAXBElement<BinaryComparisonOpType>(_PropertyIsLessThanOrEqualTo_QNAME, BinaryComparisonOpType.class, null, value);
+    public JAXBElement<PropertyIsLessThanOrEqualToType> createPropertyIsLessThanOrEqualTo(PropertyIsLessThanOrEqualToType value) {
+        return new JAXBElement<PropertyIsLessThanOrEqualToType>(_PropertyIsLessThanOrEqualTo_QNAME, PropertyIsLessThanOrEqualToType.class, null, value);
     }
 
     /**
@@ -560,8 +560,8 @@ public class ObjectFactory {
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/fes/2.0", name = "Contains", substitutionHeadNamespace = "http://www.opengis.net/fes/2.0", substitutionHeadName = "spatialOps")
-    public JAXBElement<BinarySpatialOpType> createContains(BinarySpatialOpType value) {
-        return new JAXBElement<BinarySpatialOpType>(_Contains_QNAME, BinarySpatialOpType.class, null, value);
+    public JAXBElement<ContainsType> createContains(ContainsType value) {
+        return new JAXBElement<ContainsType>(_Contains_QNAME, ContainsType.class, null, value);
     }
 
     /**
@@ -578,8 +578,8 @@ public class ObjectFactory {
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/fes/2.0", name = "PropertyIsEqualTo", substitutionHeadNamespace = "http://www.opengis.net/fes/2.0", substitutionHeadName = "comparisonOps")
-    public JAXBElement<BinaryComparisonOpType> createPropertyIsEqualTo(BinaryComparisonOpType value) {
-        return new JAXBElement<BinaryComparisonOpType>(_PropertyIsEqualTo_QNAME, BinaryComparisonOpType.class, null, value);
+    public JAXBElement<PropertyIsEqualToType> createPropertyIsEqualTo(PropertyIsEqualToType value) {
+        return new JAXBElement<PropertyIsEqualToType>(_PropertyIsEqualTo_QNAME, PropertyIsEqualToType.class, null, value);
     }
 
     /**
@@ -587,8 +587,8 @@ public class ObjectFactory {
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/fes/2.0", name = "Begins", substitutionHeadNamespace = "http://www.opengis.net/fes/2.0", substitutionHeadName = "temporalOps")
-    public JAXBElement<BinaryTemporalOpType> createBegins(BinaryTemporalOpType value) {
-        return new JAXBElement<BinaryTemporalOpType>(_Begins_QNAME, BinaryTemporalOpType.class, null, value);
+    public JAXBElement<TimeBeginsType> createBegins(TimeBeginsType value) {
+        return new JAXBElement<TimeBeginsType>(_Begins_QNAME, TimeBeginsType.class, null, value);
     }
 
     /**
@@ -596,8 +596,8 @@ public class ObjectFactory {
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/fes/2.0", name = "During", substitutionHeadNamespace = "http://www.opengis.net/fes/2.0", substitutionHeadName = "temporalOps")
-    public JAXBElement<BinaryTemporalOpType> createDuring(BinaryTemporalOpType value) {
-        return new JAXBElement<BinaryTemporalOpType>(_During_QNAME, BinaryTemporalOpType.class, null, value);
+    public JAXBElement<TimeDuringType> createDuring(TimeDuringType value) {
+        return new JAXBElement<TimeDuringType>(_During_QNAME, TimeDuringType.class, null, value);
     }
 
     /**
@@ -632,8 +632,8 @@ public class ObjectFactory {
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/fes/2.0", name = "Not", substitutionHeadNamespace = "http://www.opengis.net/fes/2.0", substitutionHeadName = "logicOps")
-    public JAXBElement<UnaryLogicOpType> createNot(UnaryLogicOpType value) {
-        return new JAXBElement<UnaryLogicOpType>(_Not_QNAME, UnaryLogicOpType.class, null, value);
+    public JAXBElement<NotType> createNot(NotType value) {
+        return new JAXBElement<NotType>(_Not_QNAME, NotType.class, null, value);
     }
 
     /**
@@ -641,8 +641,8 @@ public class ObjectFactory {
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/fes/2.0", name = "Beyond", substitutionHeadNamespace = "http://www.opengis.net/fes/2.0", substitutionHeadName = "spatialOps")
-    public JAXBElement<DistanceBufferType> createBeyond(DistanceBufferType value) {
-        return new JAXBElement<DistanceBufferType>(_Beyond_QNAME, DistanceBufferType.class, null, value);
+    public JAXBElement<BeyondType> createBeyond(BeyondType value) {
+        return new JAXBElement<BeyondType>(_Beyond_QNAME, BeyondType.class, null, value);
     }
 
     /**
@@ -650,8 +650,8 @@ public class ObjectFactory {
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/fes/2.0", name = "DWithin", substitutionHeadNamespace = "http://www.opengis.net/fes/2.0", substitutionHeadName = "spatialOps")
-    public JAXBElement<DistanceBufferType> createDWithin(DistanceBufferType value) {
-        return new JAXBElement<DistanceBufferType>(_DWithin_QNAME, DistanceBufferType.class, null, value);
+    public JAXBElement<DWithinType> createDWithin(DWithinType value) {
+        return new JAXBElement<DWithinType>(_DWithin_QNAME, DWithinType.class, null, value);
     }
 
     /**
@@ -668,8 +668,8 @@ public class ObjectFactory {
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/fes/2.0", name = "EndedBy", substitutionHeadNamespace = "http://www.opengis.net/fes/2.0", substitutionHeadName = "temporalOps")
-    public JAXBElement<BinaryTemporalOpType> createEndedBy(BinaryTemporalOpType value) {
-        return new JAXBElement<BinaryTemporalOpType>(_EndedBy_QNAME, BinaryTemporalOpType.class, null, value);
+    public JAXBElement<TimeEndedByType> createEndedBy(TimeEndedByType value) {
+        return new JAXBElement<TimeEndedByType>(_EndedBy_QNAME, TimeEndedByType.class, null, value);
     }
 
     /**
@@ -677,8 +677,8 @@ public class ObjectFactory {
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/fes/2.0", name = "Within", substitutionHeadNamespace = "http://www.opengis.net/fes/2.0", substitutionHeadName = "spatialOps")
-    public JAXBElement<BinarySpatialOpType> createWithin(BinarySpatialOpType value) {
-        return new JAXBElement<BinarySpatialOpType>(_Within_QNAME, BinarySpatialOpType.class, null, value);
+    public JAXBElement<WithinType> createWithin(WithinType value) {
+        return new JAXBElement<WithinType>(_Within_QNAME, WithinType.class, null, value);
     }
 
     /**
@@ -686,8 +686,8 @@ public class ObjectFactory {
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/fes/2.0", name = "Or", substitutionHeadNamespace = "http://www.opengis.net/fes/2.0", substitutionHeadName = "logicOps")
-    public JAXBElement<BinaryLogicOpType> createOr(BinaryLogicOpType value) {
-        return new JAXBElement<BinaryLogicOpType>(_Or_QNAME, BinaryLogicOpType.class, null, value);
+    public JAXBElement<OrType> createOr(OrType value) {
+        return new JAXBElement<OrType>(_Or_QNAME, OrType.class, null, value);
     }
 
     /**
@@ -713,8 +713,8 @@ public class ObjectFactory {
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/fes/2.0", name = "And", substitutionHeadNamespace = "http://www.opengis.net/fes/2.0", substitutionHeadName = "logicOps")
-    public JAXBElement<BinaryLogicOpType> createAnd(BinaryLogicOpType value) {
-        return new JAXBElement<BinaryLogicOpType>(_And_QNAME, BinaryLogicOpType.class, null, value);
+    public JAXBElement<AndType> createAnd(AndType value) {
+        return new JAXBElement<AndType>(_And_QNAME, AndType.class, null, value);
     }
 
     /**
@@ -722,8 +722,8 @@ public class ObjectFactory {
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/fes/2.0", name = "Touches", substitutionHeadNamespace = "http://www.opengis.net/fes/2.0", substitutionHeadName = "spatialOps")
-    public JAXBElement<BinarySpatialOpType> createTouches(BinarySpatialOpType value) {
-        return new JAXBElement<BinarySpatialOpType>(_Touches_QNAME, BinarySpatialOpType.class, null, value);
+    public JAXBElement<TouchesType> createTouches(TouchesType value) {
+        return new JAXBElement<TouchesType>(_Touches_QNAME, TouchesType.class, null, value);
     }
 
     /**
@@ -749,8 +749,8 @@ public class ObjectFactory {
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/fes/2.0", name = "Ends", substitutionHeadNamespace = "http://www.opengis.net/fes/2.0", substitutionHeadName = "temporalOps")
-    public JAXBElement<BinaryTemporalOpType> createEnds(BinaryTemporalOpType value) {
-        return new JAXBElement<BinaryTemporalOpType>(_Ends_QNAME, BinaryTemporalOpType.class, null, value);
+    public JAXBElement<TimeEndsType> createEnds(TimeEndsType value) {
+        return new JAXBElement<TimeEndsType>(_Ends_QNAME, TimeEndsType.class, null, value);
     }
 
     /**
@@ -758,8 +758,8 @@ public class ObjectFactory {
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/fes/2.0", name = "TOverlaps", substitutionHeadNamespace = "http://www.opengis.net/fes/2.0", substitutionHeadName = "temporalOps")
-    public JAXBElement<BinaryTemporalOpType> createTOverlaps(BinaryTemporalOpType value) {
-        return new JAXBElement<BinaryTemporalOpType>(_TOverlaps_QNAME, BinaryTemporalOpType.class, null, value);
+    public JAXBElement<TimeOverlapsType> createTOverlaps(TimeOverlapsType value) {
+        return new JAXBElement<TimeOverlapsType>(_TOverlaps_QNAME, TimeOverlapsType.class, null, value);
     }
 
     /**
@@ -785,8 +785,8 @@ public class ObjectFactory {
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/fes/2.0", name = "MetBy", substitutionHeadNamespace = "http://www.opengis.net/fes/2.0", substitutionHeadName = "temporalOps")
-    public JAXBElement<BinaryTemporalOpType> createMetBy(BinaryTemporalOpType value) {
-        return new JAXBElement<BinaryTemporalOpType>(_MetBy_QNAME, BinaryTemporalOpType.class, null, value);
+    public JAXBElement<TimeMetByType> createMetBy(TimeMetByType value) {
+        return new JAXBElement<TimeMetByType>(_MetBy_QNAME, TimeMetByType.class, null, value);
     }
 
     /**
@@ -794,8 +794,8 @@ public class ObjectFactory {
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/fes/2.0", name = "Equals", substitutionHeadNamespace = "http://www.opengis.net/fes/2.0", substitutionHeadName = "spatialOps")
-    public JAXBElement<BinarySpatialOpType> createEquals(BinarySpatialOpType value) {
-        return new JAXBElement<BinarySpatialOpType>(_Equals_QNAME, BinarySpatialOpType.class, null, value);
+    public JAXBElement<EqualsType> createEquals(EqualsType value) {
+        return new JAXBElement<EqualsType>(_Equals_QNAME, EqualsType.class, null, value);
     }
 
     /**
@@ -821,8 +821,8 @@ public class ObjectFactory {
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/fes/2.0", name = "Disjoint", substitutionHeadNamespace = "http://www.opengis.net/fes/2.0", substitutionHeadName = "spatialOps")
-    public JAXBElement<BinarySpatialOpType> createDisjoint(BinarySpatialOpType value) {
-        return new JAXBElement<BinarySpatialOpType>(_Disjoint_QNAME, BinarySpatialOpType.class, null, value);
+    public JAXBElement<DisjointType> createDisjoint(DisjointType value) {
+        return new JAXBElement<DisjointType>(_Disjoint_QNAME, DisjointType.class, null, value);
     }
 
     /**
@@ -839,8 +839,8 @@ public class ObjectFactory {
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/fes/2.0", name = "Overlaps", substitutionHeadNamespace = "http://www.opengis.net/fes/2.0", substitutionHeadName = "spatialOps")
-    public JAXBElement<BinarySpatialOpType> createOverlaps(BinarySpatialOpType value) {
-        return new JAXBElement<BinarySpatialOpType>(_Overlaps_QNAME, BinarySpatialOpType.class, null, value);
+    public JAXBElement<OverlapsType> createOverlaps(OverlapsType value) {
+        return new JAXBElement<OverlapsType>(_Overlaps_QNAME, OverlapsType.class, null, value);
     }
 
     /**
@@ -848,8 +848,8 @@ public class ObjectFactory {
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/fes/2.0", name = "OverlappedBy", substitutionHeadNamespace = "http://www.opengis.net/fes/2.0", substitutionHeadName = "temporalOps")
-    public JAXBElement<BinaryTemporalOpType> createOverlappedBy(BinaryTemporalOpType value) {
-        return new JAXBElement<BinaryTemporalOpType>(_OverlappedBy_QNAME, BinaryTemporalOpType.class, null, value);
+    public JAXBElement<TimeOverlappedByType> createOverlappedBy(TimeOverlappedByType value) {
+        return new JAXBElement<TimeOverlappedByType>(_OverlappedBy_QNAME, TimeOverlappedByType.class, null, value);
     }
 
     /**
@@ -857,8 +857,8 @@ public class ObjectFactory {
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/fes/2.0", name = "BegunBy", substitutionHeadNamespace = "http://www.opengis.net/fes/2.0", substitutionHeadName = "temporalOps")
-    public JAXBElement<BinaryTemporalOpType> createBegunBy(BinaryTemporalOpType value) {
-        return new JAXBElement<BinaryTemporalOpType>(_BegunBy_QNAME, BinaryTemporalOpType.class, null, value);
+    public JAXBElement<TimeBegunByType> createBegunBy(TimeBegunByType value) {
+        return new JAXBElement<TimeBegunByType>(_BegunBy_QNAME, TimeBegunByType.class, null, value);
     }
 
     /**
@@ -866,8 +866,8 @@ public class ObjectFactory {
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/fes/2.0", name = "PropertyIsLessThan", substitutionHeadNamespace = "http://www.opengis.net/fes/2.0", substitutionHeadName = "comparisonOps")
-    public JAXBElement<BinaryComparisonOpType> createPropertyIsLessThan(BinaryComparisonOpType value) {
-        return new JAXBElement<BinaryComparisonOpType>(_PropertyIsLessThan_QNAME, BinaryComparisonOpType.class, null, value);
+    public JAXBElement<PropertyIsLessThanType> createPropertyIsLessThan(PropertyIsLessThanType value) {
+        return new JAXBElement<PropertyIsLessThanType>(_PropertyIsLessThan_QNAME, PropertyIsLessThanType.class, null, value);
     }
 
     /**
@@ -875,8 +875,8 @@ public class ObjectFactory {
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/fes/2.0", name = "Crosses", substitutionHeadNamespace = "http://www.opengis.net/fes/2.0", substitutionHeadName = "spatialOps")
-    public JAXBElement<BinarySpatialOpType> createCrosses(BinarySpatialOpType value) {
-        return new JAXBElement<BinarySpatialOpType>(_Crosses_QNAME, BinarySpatialOpType.class, null, value);
+    public JAXBElement<CrossesType> createCrosses(CrossesType value) {
+        return new JAXBElement<CrossesType>(_Crosses_QNAME, CrossesType.class, null, value);
     }
 
     /**
@@ -884,8 +884,8 @@ public class ObjectFactory {
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/fes/2.0", name = "PropertyIsGreaterThanOrEqualTo", substitutionHeadNamespace = "http://www.opengis.net/fes/2.0", substitutionHeadName = "comparisonOps")
-    public JAXBElement<BinaryComparisonOpType> createPropertyIsGreaterThanOrEqualTo(BinaryComparisonOpType value) {
-        return new JAXBElement<BinaryComparisonOpType>(_PropertyIsGreaterThanOrEqualTo_QNAME, BinaryComparisonOpType.class, null, value);
+    public JAXBElement<PropertyIsGreaterThanOrEqualToType> createPropertyIsGreaterThanOrEqualTo(PropertyIsGreaterThanOrEqualToType value) {
+        return new JAXBElement<PropertyIsGreaterThanOrEqualToType>(_PropertyIsGreaterThanOrEqualTo_QNAME, PropertyIsGreaterThanOrEqualToType.class, null, value);
     }
 
     /**
@@ -893,8 +893,8 @@ public class ObjectFactory {
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/fes/2.0", name = "Before", substitutionHeadNamespace = "http://www.opengis.net/fes/2.0", substitutionHeadName = "temporalOps")
-    public JAXBElement<BinaryTemporalOpType> createBefore(BinaryTemporalOpType value) {
-        return new JAXBElement<BinaryTemporalOpType>(_Before_QNAME, BinaryTemporalOpType.class, null, value);
+    public JAXBElement<TimeBeforeType> createBefore(TimeBeforeType value) {
+        return new JAXBElement<TimeBeforeType>(_Before_QNAME, TimeBeforeType.class, null, value);
     }
 
     /**
@@ -902,8 +902,8 @@ public class ObjectFactory {
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/fes/2.0", name = "After", substitutionHeadNamespace = "http://www.opengis.net/fes/2.0", substitutionHeadName = "temporalOps")
-    public JAXBElement<BinaryTemporalOpType> createAfter(BinaryTemporalOpType value) {
-        return new JAXBElement<BinaryTemporalOpType>(_After_QNAME, BinaryTemporalOpType.class, null, value);
+    public JAXBElement<TimeAfterType> createAfter(TimeAfterType value) {
+        return new JAXBElement<TimeAfterType>(_After_QNAME, TimeAfterType.class, null, value);
     }
 
     /**
@@ -920,8 +920,8 @@ public class ObjectFactory {
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/fes/2.0", name = "Intersects", substitutionHeadNamespace = "http://www.opengis.net/fes/2.0", substitutionHeadName = "spatialOps")
-    public JAXBElement<BinarySpatialOpType> createIntersects(BinarySpatialOpType value) {
-        return new JAXBElement<BinarySpatialOpType>(_Intersects_QNAME, BinarySpatialOpType.class, null, value);
+    public JAXBElement<IntersectsType> createIntersects(IntersectsType value) {
+        return new JAXBElement<IntersectsType>(_Intersects_QNAME, IntersectsType.class, null, value);
     }
 
     /**
@@ -938,8 +938,8 @@ public class ObjectFactory {
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/fes/2.0", name = "AnyInteracts", substitutionHeadNamespace = "http://www.opengis.net/fes/2.0", substitutionHeadName = "temporalOps")
-    public JAXBElement<BinaryTemporalOpType> createAnyInteracts(BinaryTemporalOpType value) {
-        return new JAXBElement<BinaryTemporalOpType>(_AnyInteracts_QNAME, BinaryTemporalOpType.class, null, value);
+    public JAXBElement<TimeAnyInteractsType> createAnyInteracts(TimeAnyInteractsType value) {
+        return new JAXBElement<TimeAnyInteractsType>(_AnyInteracts_QNAME, TimeAnyInteractsType.class, null, value);
     }
 
     /**
@@ -965,8 +965,8 @@ public class ObjectFactory {
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/fes/2.0", name = "TEquals", substitutionHeadNamespace = "http://www.opengis.net/fes/2.0", substitutionHeadName = "temporalOps")
-    public JAXBElement<BinaryTemporalOpType> createTEquals(BinaryTemporalOpType value) {
-        return new JAXBElement<BinaryTemporalOpType>(_TEquals_QNAME, BinaryTemporalOpType.class, null, value);
+    public JAXBElement<TimeEqualsType> createTEquals(TimeEqualsType value) {
+        return new JAXBElement<TimeEqualsType>(_TEquals_QNAME, TimeEqualsType.class, null, value);
     }
 
 }

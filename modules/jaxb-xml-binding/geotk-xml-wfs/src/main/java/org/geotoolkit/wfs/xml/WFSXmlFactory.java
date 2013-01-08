@@ -697,4 +697,18 @@ public class WFSXmlFactory {
             throw new IllegalArgumentException("unexpected version number:" + currentVersion);
         }
     }
+    
+    public static Query cloneQuery(final Query query) {
+        if (query instanceof org.geotoolkit.wfs.xml.v200.QueryType) {
+            return new org.geotoolkit.wfs.xml.v200.QueryType((org.geotoolkit.wfs.xml.v200.QueryType)query);
+        } else if (query instanceof org.geotoolkit.wfs.xml.v110.QueryType) {
+            return new org.geotoolkit.wfs.xml.v110.QueryType((org.geotoolkit.wfs.xml.v110.QueryType)query);
+        } else if (query instanceof org.geotoolkit.wfs.xml.v100.QueryType) {
+            return new org.geotoolkit.wfs.xml.v100.QueryType((org.geotoolkit.wfs.xml.v100.QueryType)query);
+        } else if (query == null) {
+            return null;
+        } else {
+            throw new IllegalArgumentException("unexpected query implementation:" + query.getClass().getName());
+        }
+    } 
 }

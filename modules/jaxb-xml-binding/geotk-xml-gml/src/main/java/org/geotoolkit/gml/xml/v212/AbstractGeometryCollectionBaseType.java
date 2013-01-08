@@ -53,4 +53,11 @@ import javax.xml.bind.annotation.XmlType;
 })
 public abstract class AbstractGeometryCollectionBaseType extends AbstractGeometryType {
 
+    public AbstractGeometryCollectionBaseType() {
+        
+    }
+    
+    public AbstractGeometryCollectionBaseType(final AbstractGeometryCollectionBaseType that) {
+        super(that);
+    }
 }

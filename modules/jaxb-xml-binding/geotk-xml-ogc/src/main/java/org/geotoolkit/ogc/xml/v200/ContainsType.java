@@ -38,4 +38,13 @@ public class ContainsType extends BinarySpatialOpType implements Contains {
     public ContainsType(final String propertyName, final Object geometry) {
         super(propertyName, geometry);
     }
+    
+    public ContainsType(final ContainsType that) {
+        super(that);
+    }
+    
+    @Override
+    public SpatialOpsType getClone() {
+        return new ContainsType(this);
+    }
 }

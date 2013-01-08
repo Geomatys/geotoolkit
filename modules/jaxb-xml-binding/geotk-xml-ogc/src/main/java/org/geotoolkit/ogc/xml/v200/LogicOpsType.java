@@ -49,5 +49,5 @@ import org.opengis.filter.Filter;
 })
 public abstract class LogicOpsType implements Filter {
 
-
+    public abstract LogicOpsType getClone();
 }

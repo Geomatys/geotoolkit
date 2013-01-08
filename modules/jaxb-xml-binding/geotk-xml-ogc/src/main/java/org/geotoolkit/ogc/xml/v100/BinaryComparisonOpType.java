@@ -54,6 +54,32 @@ public class BinaryComparisonOpType extends ComparisonOpsType {
     @XmlElementRef(name = "expression", namespace = "http://www.opengis.net/ogc", type = JAXBElement.class)
     private List<JAXBElement<?>> expression;
 
+    public BinaryComparisonOpType() {
+
+    }
+    
+    public BinaryComparisonOpType(final BinaryComparisonOpType that) {
+        if (that != null) {
+            if (that.expression != null) {
+                this.expression = new ArrayList<JAXBElement<?>>();
+                final ObjectFactory factory = new ObjectFactory();
+                for (JAXBElement jb : that.expression) {
+                    final Object exp = jb.getValue();
+                    if (exp instanceof PropertyNameType) {
+                        this.expression.add(factory.createPropertyName((PropertyNameType)exp));
+                    } else if (exp instanceof LiteralType) {
+                        final LiteralType lit = new LiteralType((LiteralType)exp);
+                        this.expression.add(factory.createLiteral(lit));
+                    } else if (exp instanceof FunctionType) {
+                        final FunctionType func = new FunctionType((FunctionType)exp);
+                        this.expression.add(factory.createFunction(func));
+                    } else {
+                        throw new IllegalArgumentException("Unexpected type for expression in BinaryComparisonOpType:" + expression.getClass().getName());
+                    }
+                }
+            }
+        }
+    }
     /**
      * Gets the value of the expression property.
      * 
@@ -63,6 +89,11 @@ public class BinaryComparisonOpType extends ComparisonOpsType {
             expression = new ArrayList<JAXBElement<?>>();
         }
         return this.expression;
+    }
+
+    @Override
+    public ComparisonOpsType getClone() {
+        throw new IllegalArgumentException("Must be overriden by sub-class");
     }
 
 }

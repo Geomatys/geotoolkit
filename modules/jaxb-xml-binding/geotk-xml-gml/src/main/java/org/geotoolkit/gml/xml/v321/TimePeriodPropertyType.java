@@ -85,6 +85,28 @@ public class TimePeriodPropertyType implements Serializable {
     @XmlAttribute
     private java.lang.Boolean owns;
 
+    public TimePeriodPropertyType() {
+        
+    }
+    
+    public TimePeriodPropertyType(final TimePeriodPropertyType that) {
+        if (that != null) {
+            this.actuate      = that.actuate;
+            this.arcrole      = that.arcrole;
+            this.href         = that.href;
+            this.nilReason    = new ArrayList<String>(that.nilReason);
+            this.owns         = that.owns;
+            this.remoteSchema = that.remoteSchema;
+            this.role         = that.role;
+            this.show         = that.show;
+            this.title        = that.title;
+            this.type         = that.type;
+            if (that.timePeriod != null) {
+                this.timePeriod = new TimePeriodType(that.timePeriod);
+            }
+        }
+    }
+    
     /**
      * Gets the value of the timePeriod property.
      * 
@@ -112,20 +134,6 @@ public class TimePeriodPropertyType implements Serializable {
     /**
      * Gets the value of the nilReason property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the nilReason property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getNilReason().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link String }
      * 

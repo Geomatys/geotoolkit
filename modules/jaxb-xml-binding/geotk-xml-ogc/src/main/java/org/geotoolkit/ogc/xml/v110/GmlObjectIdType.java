@@ -69,10 +69,18 @@ public class GmlObjectIdType extends AbstractIdType implements GmlObjectId {
         this.id = id;
     }
     
+    public GmlObjectIdType(final GmlObjectIdType that) {
+        if (that != null) {
+            this.id = that.id;
+        }
+    }
+    
+    @Override
     public String getID() {
         return id;
     }
 
+    @Override
     public boolean matches(final Object object) {
         throw new UnsupportedOperationException("Not supported yet.");
     }

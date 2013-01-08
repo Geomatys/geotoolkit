@@ -105,6 +105,45 @@ public class UnaryLogicOpType extends LogicOpsType {
          } else if (obj instanceof TemporalOpsType) {
              this.temporalOps = FilterType.createTemporalOps((TemporalOpsType) obj);
 
+         // clone    
+         } else if (obj instanceof UnaryLogicOpType) {
+             final UnaryLogicOpType that = (UnaryLogicOpType) obj;
+             final ObjectFactory factory = new ObjectFactory();
+             if (that.comparisonOps != null) {
+                 final ComparisonOpsType comp = that.comparisonOps.getValue().getClone();
+                 this.comparisonOps = FilterType.createComparisonOps(comp);
+             }
+             if (that.extensionOps != null) {
+                 this.extensionOps = that.extensionOps.getClone();
+             }
+             if (that.function != null) {
+                 this.function = new FunctionType(that.function);
+             }
+             if (that.id != null) {
+                 this.id = new ArrayList<JAXBElement<? extends AbstractIdType>>();
+                 for (JAXBElement<? extends AbstractIdType> jb : that.id) {
+                     AbstractIdType aid = jb.getValue();
+                     if (aid instanceof ResourceIdType) {
+                         final ResourceIdType raid = (ResourceIdType) aid;
+                         this.id.add(factory.createResourceId(new ResourceIdType(raid)));
+                     } else {
+                         throw new IllegalArgumentException("exexpected ID type in filter:" + aid.getClass().getName());
+                     }
+                 }
+             }
+             if (that.logicOps != null) {
+                 final LogicOpsType log = that.logicOps.getValue().getClone();
+                 this.logicOps = FilterType.createLogicOps(log);
+            }
+            if (that.spatialOps != null) {
+                final SpatialOpsType spa = that.spatialOps.getValue().getClone();
+                this.spatialOps = FilterType.createSpatialOps(spa);
+            }
+            if (that.temporalOps != null) {
+                final TemporalOpsType temp = that.temporalOps.getValue().getClone();
+                this.temporalOps = FilterType.createTemporalOps(temp);
+            }
+
          } else {
              throw new IllegalArgumentException("This kind of object is not allowed:" + obj.getClass().getSimpleName());
          }
@@ -334,20 +373,6 @@ public class UnaryLogicOpType extends LogicOpsType {
     /**
      * Gets the value of the id property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the id property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getId().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link ResourceIdType }{@code >}
      * {@link JAXBElement }{@code <}{@link AbstractIdType }{@code >}
@@ -367,23 +392,31 @@ public class UnaryLogicOpType extends LogicOpsType {
      * @return 
      */
     public Filter getFilter() {
-        if (comparisonOps != null)
+        if (comparisonOps != null) {
             return comparisonOps.getValue();
-        else if (logicOps != null)
+        } else if (logicOps != null) {
             return logicOps.getValue();
-        else if (spatialOps != null)
+        } else if (spatialOps != null) {
             return spatialOps.getValue();
-        else if (spatialOps != null)
+        } else if (spatialOps != null) {
             return temporalOps.getValue();
-        else return null;
-        
+        } else {
+            return null;
+        }
     }
 
+    @Override
     public boolean evaluate(final Object object) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public Object accept(final FilterVisitor visitor, final Object extraData) {
         throw new UnsupportedOperationException("Not supported yet.");
+    }
+    
+    @Override
+    public LogicOpsType getClone() {
+        throw new UnsupportedOperationException("Must be overriden in sub-class.");
     }
 }

@@ -45,4 +45,12 @@ public class OrType extends  BinaryLogicOpType implements Or  {
          
      }
 
+     public OrType(final BinaryLogicOpType that) {
+         super(that);
+     }
+
+     @Override
+     public LogicOpsType getClone() {
+        return new OrType(this);
+     }
 }

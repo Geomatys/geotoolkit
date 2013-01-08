@@ -53,4 +53,5 @@ public abstract class ComparisonOpsType implements Filter {
         return "class: " + this.getClass().getSimpleName() + '\n';
     }
 
+    public abstract ComparisonOpsType getClone();
 }

@@ -41,6 +41,13 @@ public class DisjointType extends BinarySpatialOpType implements Disjoint {
         super(propertyName, geometry);
     }
     
+    public DisjointType(final DisjointType that) {
+        super(that);
+    }
     
+    @Override
+    public SpatialOpsType getClone() {
+        return new DisjointType(this);
+    }
 
 }

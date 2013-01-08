@@ -29,4 +29,16 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "Disjoint")
 public class DisjointType extends BinarySpatialOpType {
     
+    public DisjointType() {
+        
+    }
+    
+    public DisjointType(final DisjointType that) {
+        super(that);
+    }
+    
+    @Override
+    public SpatialOpsType getClone() {
+        return new DisjointType(this);
+    }
 }

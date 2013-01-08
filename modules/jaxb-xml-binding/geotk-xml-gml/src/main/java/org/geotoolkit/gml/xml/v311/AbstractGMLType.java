@@ -159,6 +159,7 @@ public abstract class AbstractGMLType extends AbstractMetadata implements Abstra
     /**
      *
      */
+    @Override
     public String getName() {
         return name;
     }
@@ -166,6 +167,7 @@ public abstract class AbstractGMLType extends AbstractMetadata implements Abstra
     /**
      *
      */
+    @Override
     public void setName(final String name) {
         this.name = name;
     }
@@ -183,6 +185,7 @@ public abstract class AbstractGMLType extends AbstractMetadata implements Abstra
         return id;
     }
 
+    @Override
     public String getIdentifier() {
         return id;
     }
@@ -234,20 +237,25 @@ public abstract class AbstractGMLType extends AbstractMetadata implements Abstra
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("[").append(this.getClass().getSimpleName()).append(']').append('\n');
-        if (id != null)
+        if (id != null) {
             sb.append("id:").append(id).append('\n');
-        if (name != null)
+        }
+        if (name != null) {
             sb.append("name:").append(name).append('\n');
-        if (description != null)
+        }
+        if (description != null) {
             sb.append("description:").append(description).append('\n');
-        if (descriptionReference != null)
+        }
+        if (descriptionReference != null) {
             sb.append("description reference:").append(descriptionReference).append('\n');
+        }
         return sb.toString();
     }
 
     /**
      * @return the parameterName
      */
+    @Override
     public CodeType getParameterName() {
         return parameterName;
     }

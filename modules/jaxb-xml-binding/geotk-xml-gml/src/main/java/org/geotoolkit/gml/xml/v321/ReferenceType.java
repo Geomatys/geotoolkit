@@ -79,10 +79,30 @@ public class ReferenceType implements Reference {
     @XmlAttribute
     private java.lang.Boolean owns;
 
+    public ReferenceType() {
+        
+    }
+    
+    public ReferenceType(final ReferenceType that) {
+        if (that != null) {
+            this.actuate      = that.actuate;
+            this.arcrole      = that.arcrole;
+            this.href         = that.href;
+            this.nilReason    = new ArrayList<String>(that.nilReason);
+            this.owns         = that.owns;
+            this.remoteSchema = that.remoteSchema;
+            this.role         = that.role;
+            this.show         = that.show;
+            this.title        = that.title;
+            this.type         = that.type;
+        }
+    }
+    
     /**
      * Gets the value of the nilReason property.
      * 
      */
+    @Override
     public List<String> getNilReason() {
         if (nilReason == null) {
             nilReason = new ArrayList<String>();
@@ -98,6 +118,7 @@ public class ReferenceType implements Reference {
      *     {@link String }
      *     
      */
+    @Override
     public String getRemoteSchema() {
         return remoteSchema;
     }
@@ -122,6 +143,7 @@ public class ReferenceType implements Reference {
      *     {@link String }
      *     
      */
+    @Override
     public String getType() {
         if (type == null) {
             return "simple";
@@ -150,6 +172,7 @@ public class ReferenceType implements Reference {
      *     {@link String }
      *     
      */
+    @Override
     public String getHref() {
         return href;
     }
@@ -174,6 +197,7 @@ public class ReferenceType implements Reference {
      *     {@link String }
      *     
      */
+    @Override
     public String getRole() {
         return role;
     }
@@ -198,6 +222,7 @@ public class ReferenceType implements Reference {
      *     {@link String }
      *     
      */
+    @Override
     public String getArcrole() {
         return arcrole;
     }
@@ -222,6 +247,7 @@ public class ReferenceType implements Reference {
      *     {@link String }
      *     
      */
+    @Override
     public String getTitle() {
         return title;
     }
@@ -246,6 +272,7 @@ public class ReferenceType implements Reference {
      *     {@link String }
      *     
      */
+    @Override
     public String getShow() {
         return show;
     }
@@ -270,6 +297,7 @@ public class ReferenceType implements Reference {
      *     {@link String }
      *     
      */
+    @Override
     public String getActuate() {
         return actuate;
     }
@@ -294,6 +322,7 @@ public class ReferenceType implements Reference {
      *     {@link java.lang.Boolean }
      *     
      */
+    @Override
     public java.lang.Boolean getOwns() {
         if (owns == null) {
             return false;

@@ -63,6 +63,37 @@ public class PropertyIsBetweenType extends ComparisonOpsType {
     @XmlElement(name = "UpperBoundary", required = true)
     private UpperBoundaryType upperBoundary;
 
+    public PropertyIsBetweenType() {
+        
+    }
+    
+    public PropertyIsBetweenType(final PropertyIsBetweenType that) {
+        if (that != null) {
+            if (that.expression != null) {
+                final ObjectFactory factory = new ObjectFactory();
+                final Object exp = that.expression.getValue();
+                if (exp instanceof String) {
+                    this.expression = factory.createValueReference((String)exp);
+                } else if (exp instanceof LiteralType) {
+                    final LiteralType lit = new LiteralType((LiteralType)exp);
+                    this.expression = factory.createLiteral(lit);
+                } else if (exp instanceof FunctionType) {
+                    final FunctionType func = new FunctionType((FunctionType)exp);
+                    this.expression = factory.createFunction(func);
+                } else {
+                    throw new IllegalArgumentException("Unexpected type for expression in PropertyIsBetweenType:" + expression.getClass().getName());
+                }
+            }
+            
+            if (that.lowerBoundary != null) {
+                this.lowerBoundary = new LowerBoundaryType(that.lowerBoundary);
+            }
+            if (that.upperBoundary != null) {
+                this.upperBoundary = new UpperBoundaryType(that.upperBoundary);
+            }
+        }
+    }
+    
     /**
      * Gets the value of the expression property.
      * 
@@ -149,5 +180,10 @@ public class PropertyIsBetweenType extends ComparisonOpsType {
     @Override
     public Object accept(final FilterVisitor visitor, final Object extraData) {
         throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public ComparisonOpsType getClone() {
+        return new PropertyIsBetweenType(this);
     }
 }

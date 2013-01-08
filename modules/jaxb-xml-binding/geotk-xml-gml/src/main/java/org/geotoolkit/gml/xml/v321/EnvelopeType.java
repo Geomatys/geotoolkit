@@ -105,6 +105,34 @@ public class EnvelopeType implements Envelope, org.geotoolkit.gml.xml.Envelope {
         this.upperCorner = upperCorner;
         this.srsName     = srsName;
     }
+    
+    public EnvelopeType(final EnvelopeType that) {
+        if (that != null) {
+            if (that.axisLabels != null) {
+                this.axisLabels = new ArrayList<String>(that.axisLabels);
+            }
+            if (that.uomLabels != null) {
+                this.uomLabels = new ArrayList<String>(that.uomLabels);
+            }
+            if (that.coordinates != null) {
+                this.coordinates = new CoordinatesType(that.coordinates);
+            }
+            if (that.lowerCorner != null) {
+                this.lowerCorner = new DirectPositionType(that.lowerCorner);
+            }
+            if (that.upperCorner != null) {
+                this.upperCorner = new DirectPositionType(that.upperCorner);
+            }
+            if (that.pos != null) {
+                this.pos = new ArrayList<DirectPositionType>();
+                for (DirectPositionType dp : that.pos) {
+                    this.pos.add(new DirectPositionType(dp));
+                }
+            }
+            this.srsDimension = that.srsDimension;
+            this.srsName      = that.srsName;
+        }
+    }
 
     /**
      * Gets the value of the lowerCorner property.
@@ -114,6 +142,7 @@ public class EnvelopeType implements Envelope, org.geotoolkit.gml.xml.Envelope {
      *     {@link DirectPositionType }
      *     
      */
+    @Override
     public DirectPositionType getLowerCorner() {
         return lowerCorner;
     }
@@ -138,6 +167,7 @@ public class EnvelopeType implements Envelope, org.geotoolkit.gml.xml.Envelope {
      *     {@link DirectPositionType }
      *     
      */
+    @Override
     public DirectPositionType getUpperCorner() {
         return upperCorner;
     }
@@ -201,6 +231,7 @@ public class EnvelopeType implements Envelope, org.geotoolkit.gml.xml.Envelope {
      *     {@link String }
      *     
      */
+    @Override
     public String getSrsName() {
         return srsName;
     }
@@ -271,6 +302,7 @@ public class EnvelopeType implements Envelope, org.geotoolkit.gml.xml.Envelope {
         return this.uomLabels;
     }
 
+    @Override
     public CoordinateReferenceSystem getCoordinateReferenceSystem() {
         if (srsName != null) {
             try {
@@ -284,10 +316,12 @@ public class EnvelopeType implements Envelope, org.geotoolkit.gml.xml.Envelope {
         return null;
     }
 
+    @Override
     public int getDimension() {
         return srsDimension;
     }
 
+    @Override
     public double getMinimum(final int i) throws IndexOutOfBoundsException {
         if (lowerCorner != null) {
             return lowerCorner.getOrdinate(i);
@@ -295,6 +329,7 @@ public class EnvelopeType implements Envelope, org.geotoolkit.gml.xml.Envelope {
         return -1;
     }
 
+    @Override
     public double getMaximum(int i) throws IndexOutOfBoundsException {
         if (upperCorner != null) {
             return upperCorner.getOrdinate(i);
@@ -302,10 +337,12 @@ public class EnvelopeType implements Envelope, org.geotoolkit.gml.xml.Envelope {
         return -1;
     }
 
+    @Override
     public double getMedian(int i) throws IndexOutOfBoundsException {
         throw new UnsupportedOperationException("Not implemented yet.");
     }
 
+    @Override
     public double getSpan(int i) throws IndexOutOfBoundsException {
         throw new UnsupportedOperationException("Not implemented yet.");
     }

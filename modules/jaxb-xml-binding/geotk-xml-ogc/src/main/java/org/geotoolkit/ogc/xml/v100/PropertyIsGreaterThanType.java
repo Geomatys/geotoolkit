@@ -28,5 +28,17 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "PropertyIsGreaterThan")
 public class PropertyIsGreaterThanType extends BinaryComparisonOpType {
+
+    public PropertyIsGreaterThanType() {
+        
+    }
     
+    public PropertyIsGreaterThanType(final PropertyIsGreaterThanType that) {
+        super(that);
+    }
+
+    @Override
+    public ComparisonOpsType getClone() {
+        return new PropertyIsGreaterThanType(this);
+    }
 }

@@ -59,6 +59,32 @@ public class PropertyIsNilType extends ComparisonOpsType {
     @XmlAttribute
     private String nilReason;
 
+    public PropertyIsNilType() {
+        
+    }
+    
+    public PropertyIsNilType(final PropertyIsNilType that) {
+        if (that != null) {
+            if (that.expression != null) {
+                final ObjectFactory factory = new ObjectFactory();
+                final Object exp = that.expression.getValue();
+                if (exp instanceof String) {
+                    this.expression = factory.createValueReference((String)exp);
+                } else if (exp instanceof LiteralType) {
+                    final LiteralType lit = new LiteralType((LiteralType)exp);
+                    this.expression = factory.createLiteral(lit);
+                } else if (exp instanceof FunctionType) {
+                    final FunctionType func = new FunctionType((FunctionType)exp);
+                    this.expression = factory.createFunction(func);
+                } else {
+                    throw new IllegalArgumentException("Unexpected type for expression in PropertyIsNilType:" + expression.getClass().getName());
+                }
+            }
+            
+            this.nilReason = that.nilReason;
+        }
+    }
+    
     /**
      * Gets the value of the expression property.
      * 
@@ -113,6 +139,11 @@ public class PropertyIsNilType extends ComparisonOpsType {
         this.nilReason = value;
     }
 
+    @Override
+    public ComparisonOpsType getClone() {
+        return new PropertyIsNilType(this);
+    }
+    
     @Override
     public boolean evaluate(final Object object) {
         throw new UnsupportedOperationException("Not supported yet.");

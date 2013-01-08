@@ -78,10 +78,11 @@ public class PropertyIsLikeType extends ComparisonOpsType {
      */
     public PropertyIsLikeType(final Expression expr, final String pattern, final String wildcard, final String singleChar, final String escape) {
         this.escape   = escape;
-        if (expr instanceof PropertyNameType)
+        if (expr instanceof PropertyNameType) {
             this.propertyName = (PropertyNameType) expr;
-        else
+        } else {
             throw new IllegalArgumentException("expr must be of type PropertyNameType.");
+        }
         this.singleChar   = singleChar;
         this.wildCard     = wildcard;
         this.literal      = new LiteralType(pattern);
@@ -91,13 +92,27 @@ public class PropertyIsLikeType extends ComparisonOpsType {
      *Build a new Property is like operator
      */
     public PropertyIsLikeType(final String expr, final String pattern, final String wildcard, final String singleChar, final String escape) {
-        this.escape   = escape;
+        this.escape       = escape;
         this.propertyName =  new PropertyNameType(expr);
         this.singleChar   = singleChar;
         this.wildCard     = wildcard;
         this.literal      = new LiteralType(pattern);
     }
 
+    public PropertyIsLikeType(final PropertyIsLikeType that) {
+        if (that != null) {
+            this.escape = that.escape;
+            if (that.literal != null) {
+                this.literal = new LiteralType(that.literal);
+            }
+            if (that.propertyName != null) {
+                this.propertyName = new PropertyNameType(that.propertyName);
+            }
+            this.singleChar = that.singleChar;
+            this.wildCard   = that.wildCard;
+        }
+    }
+    
     /**
      * Gets the value of the propertyName property.
      * 
@@ -178,4 +193,8 @@ public class PropertyIsLikeType extends ComparisonOpsType {
         this.wildCard = value;
     }
 
+    @Override
+    public ComparisonOpsType getClone() {
+        return new PropertyIsLikeType(this);
+    }
 }

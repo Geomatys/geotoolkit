@@ -48,5 +48,16 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "LineStringMemberType")
 public class LineStringMemberType extends GeometryAssociationType {
 
-
+    public LineStringMemberType() {
+        
+    }
+    
+    public LineStringMemberType(LineStringMemberType that) {
+        super(that);
+    }
+    
+    @Override
+    public GeometryAssociationType getClone() {
+        return new LineStringMemberType(this);
+    }
 }

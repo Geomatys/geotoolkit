@@ -69,6 +69,21 @@ public class BoxType extends AbstractGeometryType {
         this.coord = coord;
     }
     
+    public BoxType(final BoxType that) {
+        super(that);
+        if (that != null) {
+            if (that.coordinates != null) {
+                this.coordinates = new CoordinatesType(that.coordinates);
+            }
+            if (that.coord != null) {
+                this.coord = new ArrayList<CoordType>();
+                for (CoordType c : that.coord) {
+                    this.coord.add(new CoordType(c));
+                }
+            }
+        }
+    }
+    
     /**
      * Gets the value of the coord property.
      * 
@@ -106,6 +121,11 @@ public class BoxType extends AbstractGeometryType {
      */
     public void setCoordinates(final CoordinatesType value) {
         this.coordinates = value;
+    }
+
+    @Override
+    public AbstractGeometryType getClone() {
+        return new BoxType(this);
     }
 
 }

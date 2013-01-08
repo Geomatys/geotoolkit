@@ -53,6 +53,28 @@ public class LowerBoundaryType {
     @XmlElementRef(name = "expression", namespace = "http://www.opengis.net/fes/2.0", type = JAXBElement.class)
     private JAXBElement<?> expression;
 
+    public LowerBoundaryType() {
+        
+    }
+    
+    public LowerBoundaryType(final LowerBoundaryType that) {
+        if (that != null && that.expression != null) {
+            final ObjectFactory factory = new ObjectFactory();
+            final Object exp = that.expression.getValue();
+            if (exp instanceof String) {
+                this.expression = factory.createValueReference((String)exp);
+            } else if (exp instanceof LiteralType) {
+                final LiteralType lit = new LiteralType((LiteralType)exp);
+                this.expression = factory.createLiteral(lit);
+            } else if (exp instanceof FunctionType) {
+                final FunctionType func = new FunctionType((FunctionType)exp);
+                this.expression = factory.createFunction(func);
+            } else {
+                throw new IllegalArgumentException("Unexpected type for expression in lowerBoundary:" + expression.getClass().getName());
+            }
+        }
+    }
+    
     /**
      * Gets the value of the expression property.
      * 

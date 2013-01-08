@@ -55,6 +55,30 @@ public class PropertyIsNullType extends ComparisonOpsType {
     @XmlElementRef(name = "expression", namespace = "http://www.opengis.net/fes/2.0", type = JAXBElement.class)
     private JAXBElement<?> expression;
 
+    public PropertyIsNullType() {
+        
+    }
+    
+    public PropertyIsNullType(final PropertyIsNullType that) {
+        if (that != null) {
+            if (that.expression != null) {
+                final ObjectFactory factory = new ObjectFactory();
+                final Object exp = that.expression.getValue();
+                if (exp instanceof String) {
+                    this.expression = factory.createValueReference((String)exp);
+                } else if (exp instanceof LiteralType) {
+                    final LiteralType lit = new LiteralType((LiteralType)exp);
+                    this.expression = factory.createLiteral(lit);
+                } else if (exp instanceof FunctionType) {
+                    final FunctionType func = new FunctionType((FunctionType)exp);
+                    this.expression = factory.createFunction(func);
+                } else {
+                    throw new IllegalArgumentException("Unexpected type for expression in PropertyIsNullType:" + expression.getClass().getName());
+                }
+            }
+        }
+    }
+    
     public String getPropertyName() {
         if (expression != null && expression.getValue() instanceof String) {
             return (String)expression.getValue();
@@ -100,6 +124,11 @@ public class PropertyIsNullType extends ComparisonOpsType {
     @Override
     public Object accept(final FilterVisitor visitor, final Object extraData) {
         throw new UnsupportedOperationException("Not supported yet.");
+    }
+    
+    @Override
+    public ComparisonOpsType getClone() {
+        return new PropertyIsNullType(this);
     }
     
     @Override

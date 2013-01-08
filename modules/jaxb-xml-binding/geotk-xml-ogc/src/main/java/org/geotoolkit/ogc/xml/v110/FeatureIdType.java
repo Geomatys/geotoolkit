@@ -72,6 +72,12 @@ public class FeatureIdType extends AbstractIdType implements FeatureId {
         this.fid = fid;
     }
     
+    public FeatureIdType(final FeatureIdType that) {
+        if (that != null) {
+            this.fid = that.fid;
+        }
+    }
+    
     /**
      * Gets the value of the fid property.
      */

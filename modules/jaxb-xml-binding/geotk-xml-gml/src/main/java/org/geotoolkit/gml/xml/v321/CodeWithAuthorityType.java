@@ -44,9 +44,13 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "CodeWithAuthorityType")
-public class CodeWithAuthorityType
-    extends CodeType
-{
+public class CodeWithAuthorityType extends CodeType {
 
+    public CodeWithAuthorityType() {
+        
+    }
 
+    public CodeWithAuthorityType(final CodeWithAuthorityType that) {
+        super(that);
+    }
 }

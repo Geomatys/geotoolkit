@@ -43,4 +43,8 @@ public class PropertyIsNotEqualToType  extends BinaryComparisonOpType implements
     public PropertyIsNotEqualToType(final LiteralType literal, final String propertyName, final Boolean matchCase) {
         super(literal, propertyName, matchCase);
     }
+    
+    public PropertyIsNotEqualToType(final PropertyIsNotEqualToType that) {
+        super(that);
+    }
 }

@@ -52,9 +52,7 @@ import javax.xml.bind.annotation.XmlType;
     "end",
     "extent"
 })
-public class TimeEdgeType
-    extends AbstractTimeTopologyPrimitiveType implements Serializable
-{
+public class TimeEdgeType extends AbstractTimeTopologyPrimitiveType implements Serializable {
 
     @XmlElement(required = true)
     private TimeNodePropertyType start;
@@ -62,6 +60,25 @@ public class TimeEdgeType
     private TimeNodePropertyType end;
     private TimePeriodPropertyType extent;
 
+    public TimeEdgeType() {
+        
+    }
+    
+    public TimeEdgeType(final TimeEdgeType that) {
+        super(that);
+        if (that != null) {
+            if (that.end != null) {
+                this.end = new TimeNodePropertyType(that.end);
+            }
+            if (that.extent != null) {
+                this.extent = new TimePeriodPropertyType(that.extent);
+            }
+            if (that.start != null) {
+                this.start = new TimeNodePropertyType(that.start);
+            }
+        }
+    }
+    
     /**
      * Gets the value of the start property.
      * 
@@ -132,6 +149,11 @@ public class TimeEdgeType
      */
     public void setExtent(TimePeriodPropertyType value) {
         this.extent = value;
+    }
+
+    @Override
+    public AbstractTimeObjectType getClone() {
+        return new TimeEdgeType(this);
     }
 
 }

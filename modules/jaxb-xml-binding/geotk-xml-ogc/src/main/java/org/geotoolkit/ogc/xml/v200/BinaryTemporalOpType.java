@@ -21,6 +21,7 @@ package org.geotoolkit.ogc.xml.v200;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Level;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -29,6 +30,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlMixed;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.gml.xml.v321.AbstractTimeObjectType;
 import org.geotoolkit.util.Utilities;
 import org.opengis.filter.FilterVisitor;
 import org.opengis.filter.expression.Expression;
@@ -93,6 +95,40 @@ public class BinaryTemporalOpType extends TemporalOpsType  implements BinaryTemp
             this.any = Arrays.asList(temporal);
         }
 
+    }
+    
+    public BinaryTemporalOpType(final BinaryTemporalOpType that) {
+        if (that != null) {
+            final ObjectFactory factory = new ObjectFactory();
+            if (that.expression != null) {
+                final Object exp = that.expression.getValue();
+                if (exp instanceof String) {
+                    this.expression = factory.createValueReference((String)exp);
+                } else if (exp instanceof LiteralType) {
+                    final LiteralType lit = new LiteralType((LiteralType)exp);
+                    this.expression = factory.createLiteral(lit);
+                } else if (exp instanceof FunctionType) {
+                    final FunctionType func = new FunctionType((FunctionType)exp);
+                    this.expression = factory.createFunction(func);
+                } else {
+                    throw new IllegalArgumentException("Unexpected type for expression in BinaryTemporalOpType:" + expression.getClass().getName());
+                }
+            }
+            
+            if (that.any != null) {
+                this.any = new ArrayList<Object>();
+                for (Object obj : that.any) {
+                    if (obj instanceof AbstractTimeObjectType) {
+                        this.any.add(((AbstractTimeObjectType)obj).getClone());
+                    } else {
+                        this.any.add(obj);
+                        LOGGER.log(Level.INFO, "Unable to clone:{0}", obj.getClass().getName());
+                    }
+                }
+            }
+            
+            this.valueReference = that.valueReference;
+        }
     }
 
     /**
@@ -199,34 +235,42 @@ public class BinaryTemporalOpType extends TemporalOpsType  implements BinaryTemp
         }
     }
 
+    @Override
     public boolean evaluate(final Object object) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public Object accept(final FilterVisitor visitor, final Object extraData) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public Expression getExpression1() {
         return new PropertyName(){
+            @Override
             public String getPropertyName() {
                 return valueReference;
             }
 
+            @Override
             public Object evaluate(Object o) {
                 throw new UnsupportedOperationException("Not supported yet.");
             }
 
+            @Override
             public <T> T evaluate(Object o, Class<T> type) {
                 throw new UnsupportedOperationException("Not supported yet.");
             }
 
+            @Override
             public Object accept(ExpressionVisitor ev, Object o) {
                 throw new UnsupportedOperationException("Not supported yet.");
             }
         };
     }
 
+    @Override
     public Expression getExpression2() {
         if (expression != null && expression.getValue() instanceof Expression) {
             return (Expression) expression.getValue();
@@ -236,6 +280,12 @@ public class BinaryTemporalOpType extends TemporalOpsType  implements BinaryTemp
         }
         return null;
     }
+    
+    @Override
+    public TemporalOpsType getClone() {
+        throw new UnsupportedOperationException("Must be overriden in sub-class.");
+    }
+    
     /**
      * Verify that this entry is identical to the specified object.
      */

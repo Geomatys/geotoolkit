@@ -65,6 +65,25 @@ public class BinarySpatialOpType extends SpatialOpsType {
     @XmlElement(name = "Box", namespace = "http://www.opengis.net/gml")
     private BoxType box;
 
+    public BinarySpatialOpType() {
+        
+    }
+    
+    public BinarySpatialOpType(final BinarySpatialOpType that) {
+        if (that != null) {
+            if (that.box != null) {
+                this.box = new BoxType(that.box);
+            }
+            if (that.propertyName != null) {
+                this.propertyName = new PropertyNameType(that.propertyName);
+            }
+            if (that.geometry != null) {
+                final AbstractGeometryType geom = that.geometry.getValue().getClone();
+                this.geometry = geom.getXmlElement();
+            }
+        }
+    }
+    
     /**
      * Gets the value of the propertyName property.
      * 
@@ -113,4 +132,8 @@ public class BinarySpatialOpType extends SpatialOpsType {
         this.box = value;
     }
 
+    @Override
+    public SpatialOpsType getClone() {
+        throw new UnsupportedOperationException("Must be overriden by sub-class");
+    }
 }

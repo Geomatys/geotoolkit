@@ -61,6 +61,24 @@ public class PolygonType extends AbstractGeometryType {
     private LinearRingMemberType outerBoundaryIs;
     private List<LinearRingMemberType> innerBoundaryIs;
 
+    public PolygonType() {
+        
+    }
+    
+    public PolygonType(final PolygonType that) {
+        super(that);
+        if (that != null) {
+            if (that.outerBoundaryIs != null) {
+                this.outerBoundaryIs = new LinearRingMemberType(that.outerBoundaryIs);
+            }
+            if (that.innerBoundaryIs != null) {
+                this.innerBoundaryIs = new ArrayList<LinearRingMemberType>();
+                for (LinearRingMemberType lrm : that.innerBoundaryIs) {
+                    this.innerBoundaryIs.add(new LinearRingMemberType(lrm));
+                }
+            }
+        }
+    }
     /**
      * Gets the value of the outerBoundaryIs property.
      * 
@@ -88,20 +106,6 @@ public class PolygonType extends AbstractGeometryType {
     /**
      * Gets the value of the innerBoundaryIs property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the innerBoundaryIs property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getInnerBoundaryIs().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link LinearRingMemberType }
      * 
@@ -114,4 +118,8 @@ public class PolygonType extends AbstractGeometryType {
         return this.innerBoundaryIs;
     }
 
+    @Override
+    public AbstractGeometryType getClone() {
+        return new PolygonType(this);
+    }
 }

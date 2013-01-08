@@ -52,4 +52,16 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "LineStringPropertyType")
 public class LineStringPropertyType extends GeometryAssociationType {
 
+    public LineStringPropertyType() {
+        
+    }
+    
+    public LineStringPropertyType(LineStringPropertyType that) {
+        super(that);
+    }
+    
+    @Override
+    public GeometryAssociationType getClone() {
+        return new LineStringPropertyType(this);
+    }
 }

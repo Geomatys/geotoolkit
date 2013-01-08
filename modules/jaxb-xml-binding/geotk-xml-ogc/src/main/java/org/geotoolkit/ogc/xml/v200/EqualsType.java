@@ -38,4 +38,13 @@ public class EqualsType extends BinarySpatialOpType implements Equals {
     public EqualsType(final String propertyName, final Object geometry) {
         super(propertyName, geometry);
     }
+    
+    public EqualsType(final EqualsType that) {
+        super(that);
+    }
+    
+    @Override
+    public SpatialOpsType getClone() {
+        return new EqualsType(this);
+    }
 }

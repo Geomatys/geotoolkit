@@ -21,6 +21,7 @@ package org.geotoolkit.ogc.xml.v200;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Level;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -29,6 +30,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlMixed;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.gml.xml.v321.EnvelopeType;
 import org.geotoolkit.util.Utilities;
 import org.opengis.filter.FilterVisitor;
 import org.opengis.filter.expression.Expression;
@@ -91,6 +93,41 @@ public class BinarySpatialOpType extends SpatialOpsType {
         }
 
     }
+    
+    public BinarySpatialOpType(final BinarySpatialOpType that) {
+        if (that != null) {
+            final ObjectFactory factory = new ObjectFactory();
+            if (that.expression != null) {
+                final Object exp = that.expression.getValue();
+                if (exp instanceof String) {
+                    this.expression = factory.createValueReference((String)exp);
+                } else if (exp instanceof LiteralType) {
+                    final LiteralType lit = new LiteralType((LiteralType)exp);
+                    this.expression = factory.createLiteral(lit);
+                } else if (exp instanceof FunctionType) {
+                    final FunctionType func = new FunctionType((FunctionType)exp);
+                    this.expression = factory.createFunction(func);
+                } else {
+                    throw new IllegalArgumentException("Unexpected type for expression in BinarySpatialOpType:" + expression.getClass().getName());
+                }
+            }
+            
+            if (that.any != null) {
+                this.any = new ArrayList<Object>();
+                for (Object obj : that.any) {
+                    if (obj instanceof EnvelopeType) {
+                        this.any.add(new EnvelopeType((EnvelopeType)obj));
+                    } else {
+                        this.any.add(obj);
+                        LOGGER.log(Level.INFO, "Unable to clone:{0}", obj.getClass().getName());
+                    }
+                }
+            }
+            
+            this.valueReference = that.valueReference;
+        }
+    }
+    
     /**
      * Gets the value of the valueReference property.
      *
@@ -195,12 +232,19 @@ public class BinarySpatialOpType extends SpatialOpsType {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public boolean evaluate(final Object object) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public Object accept(final FilterVisitor visitor, final Object extraData) {
         throw new UnsupportedOperationException("Not supported yet.");
+    }
+    
+    @Override
+    public SpatialOpsType getClone() {
+        throw new UnsupportedOperationException("Must be overriden in sub-class.");
     }
 
     /**
@@ -255,18 +299,15 @@ public class BinarySpatialOpType extends SpatialOpsType {
         return hash;
     }
 
-
-
-
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder("[").append(this.getClass().getSimpleName()).append("]");
-        if (valueReference != null)
+        if (valueReference != null) {
             s.append("valueReference: ").append(valueReference).append('\n');
-
-        if (expression != null && expression.getValue() != null)
+        }
+        if (expression != null && expression.getValue() != null) {
             s.append("expression: ").append(expression.getValue().toString()).append('\n');
-
+        }
         cleanAny();
         if (any != null) {
             for (Object obj : any) {

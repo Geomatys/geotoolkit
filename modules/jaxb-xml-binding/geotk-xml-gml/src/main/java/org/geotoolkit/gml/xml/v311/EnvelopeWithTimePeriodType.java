@@ -62,6 +62,23 @@ public class EnvelopeWithTimePeriodType extends EnvelopeType {
     @XmlSchemaType(name = "anyURI")
     protected String frame;
 
+    public EnvelopeWithTimePeriodType() {
+        
+    }
+    
+    public EnvelopeWithTimePeriodType(final EnvelopeWithTimePeriodType that) {
+        super(that);
+        if (that != null) {
+            if (that.beginPosition != null) {
+                this.beginPosition = new TimePositionType(that.beginPosition);
+            }
+            if (that.endPosition != null) {
+                this.endPosition = new TimePositionType(that.endPosition);
+            }
+            this.frame = that.frame;
+        }
+    }
+    
     /**
      * Gets the value of the beginPosition property.
      */

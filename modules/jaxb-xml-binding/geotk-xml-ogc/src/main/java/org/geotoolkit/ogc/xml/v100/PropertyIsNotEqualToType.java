@@ -29,4 +29,16 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "PropertyIsNotEqualTo")
 public class PropertyIsNotEqualToType extends BinaryComparisonOpType {
     
+    public PropertyIsNotEqualToType() {
+        
+    }
+    
+    public PropertyIsNotEqualToType(final PropertyIsNotEqualToType that) {
+        super(that);
+    }
+
+    @Override
+    public ComparisonOpsType getClone() {
+        return new PropertyIsNotEqualToType(this);
+    }
 }

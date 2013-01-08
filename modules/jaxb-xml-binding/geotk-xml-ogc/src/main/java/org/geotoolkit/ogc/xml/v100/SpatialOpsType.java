@@ -42,5 +42,5 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "SpatialOpsType")
 public abstract class SpatialOpsType {
 
-
+    public abstract SpatialOpsType getClone();
 }

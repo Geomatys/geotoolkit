@@ -62,6 +62,12 @@ public abstract class AbstractQueryExpressionType {
         this.handle = handle;
     }
     
+    public AbstractQueryExpressionType(final AbstractQueryExpressionType that) {
+        if (that != null) {
+            this.handle = that.handle;
+        }
+    }
+    
     /**
      * Gets the value of the handle property.
      * 

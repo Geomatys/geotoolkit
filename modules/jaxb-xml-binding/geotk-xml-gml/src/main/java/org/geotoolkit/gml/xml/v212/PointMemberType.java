@@ -47,5 +47,17 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "PointMemberType")
 public class PointMemberType extends GeometryAssociationType {
-
+    
+    public PointMemberType() {
+        
+    }
+    
+    public PointMemberType(PointMemberType that) {
+        super(that);
+    }
+    
+    @Override
+    public GeometryAssociationType getClone() {
+        return new PointMemberType(this);
+    }
 }

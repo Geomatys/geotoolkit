@@ -59,6 +59,20 @@ public abstract class AbstractTimePrimitiveType extends AbstractTimeObjectType i
 
     private List<RelatedTimeType> relatedTime;
 
+    public AbstractTimePrimitiveType() {
+        
+    }
+    
+    public AbstractTimePrimitiveType(final AbstractTimePrimitiveType that) {
+        super(that);
+        if (that != null && that.relatedTime != null) {
+            this.relatedTime = new ArrayList<RelatedTimeType>();
+            for (RelatedTimeType r : that.relatedTime) {
+                this.relatedTime.add(new RelatedTimeType(r));
+            }
+        }
+    }
+    
     /**
      * Gets the value of the relatedTime property.
      * 

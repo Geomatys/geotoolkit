@@ -55,6 +55,21 @@ public class PropertyIsNullType extends ComparisonOpsType {
     @XmlElement(name = "Literal")
     private LiteralType literal;
 
+    public PropertyIsNullType() {
+        
+    }
+    
+    public PropertyIsNullType(final PropertyIsNullType that) {
+        if (that != null) {
+            if (that.literal != null) {
+                this.literal = new LiteralType(that.literal);
+            }
+            if (that.propertyName != null) {
+                this.propertyName = new PropertyNameType(that.propertyName);
+            }
+        }
+    }
+    
     /**
      * Gets the value of the propertyName property.
      * 
@@ -85,6 +100,11 @@ public class PropertyIsNullType extends ComparisonOpsType {
      */
     public void setLiteral(final LiteralType value) {
         this.literal = value;
+    }
+
+    @Override
+    public ComparisonOpsType getClone() {
+        return new PropertyIsNullType(this);
     }
 
 }

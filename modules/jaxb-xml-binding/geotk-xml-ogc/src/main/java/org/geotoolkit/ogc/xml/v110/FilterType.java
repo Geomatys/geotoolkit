@@ -17,6 +17,7 @@
 package org.geotoolkit.ogc.xml.v110;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.xml.bind.JAXBElement;
@@ -112,6 +113,39 @@ public class FilterType implements Filter, XMLFilter {
             this.id = new ArrayList<JAXBElement<? extends AbstractIdType>>();
             this.id.add(createIdOps((AbstractIdType) obj));
 
+        // clone
+        } else if (obj instanceof FilterType) {
+            final FilterType that = (FilterType) obj;
+            if (that.comparisonOps != null) {
+                final ComparisonOpsType comp = that.comparisonOps.getValue().getClone();
+                this.comparisonOps = createComparisonOps(comp);
+            }
+            if (that.id != null) {
+                this.id = new ArrayList<JAXBElement<? extends AbstractIdType>>();
+                for (JAXBElement<? extends AbstractIdType> jb : that.id) {
+                    AbstractIdType aid = jb.getValue();
+                    if (aid instanceof FeatureIdType) {
+                        final FeatureIdType raid = (FeatureIdType) aid;
+                        this.id.add(FACTORY.createFeatureId(new FeatureIdType(raid)));
+                    } else if (aid instanceof GmlObjectIdType) {
+                        final GmlObjectIdType raid = (GmlObjectIdType) aid;
+                        this.id.add(FACTORY.createGmlObjectId(new GmlObjectIdType(raid)));
+                    } else {
+                        throw new IllegalArgumentException("exexpected ID type in filter:" + aid.getClass().getName());
+                    }
+                }
+            }
+            if (that.logicOps != null) {
+                final LogicOpsType log = that.logicOps.getValue().getClone();
+                this.logicOps = createLogicOps(log);
+            }
+            if (that.prefixMapping != null) {
+                this.prefixMapping = new HashMap<String, String>(that.prefixMapping);
+            }
+            if (that.spatialOps != null) {
+                final SpatialOpsType spa = that.spatialOps.getValue().getClone();
+                this.spatialOps = createSpatialOps(spa);
+            }
         } else {
             throw new IllegalArgumentException("This kind of object is not allowed:" + obj.getClass().getSimpleName());
         }
@@ -206,6 +240,7 @@ public class FilterType implements Filter, XMLFilter {
         return id;
     }
     
+    @Override
     public Object getFilterObject() {
         if (comparisonOps != null) {
             return comparisonOps.getValue();
@@ -246,10 +281,12 @@ public class FilterType implements Filter, XMLFilter {
         return s.toString();
     }
 
+    @Override
     public boolean evaluate(final Object object) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public Object accept(final FilterVisitor visitor, final Object extraData) {
         return extraData;
     }
@@ -276,7 +313,9 @@ public class FilterType implements Filter, XMLFilter {
             return FACTORY.createPropertyIsLike((PropertyIsLikeType) operator);
         } else if (operator instanceof ComparisonOpsType) {
             return FACTORY.createComparisonOps((ComparisonOpsType) operator);
-        } else return null;
+        } else {
+            return null;
+        }
     }
     
     public static JAXBElement<? extends LogicOpsType> createLogicOps(final LogicOpsType operator) {
@@ -289,7 +328,9 @@ public class FilterType implements Filter, XMLFilter {
             return FACTORY.createAnd((AndType) operator);
         } else if (operator instanceof LogicOpsType) {
             return FACTORY.createLogicOps((LogicOpsType) operator);
-        } else return null;
+        } else {
+            return null;
+        }
     }
     
     public static JAXBElement<? extends SpatialOpsType> createSpatialOps(final SpatialOpsType operator) {
@@ -326,6 +367,7 @@ public class FilterType implements Filter, XMLFilter {
     /**
      * @return the prefixMapping
      */
+    @Override
     public Map<String, String> getPrefixMapping() {
         return prefixMapping;
     }
@@ -333,6 +375,7 @@ public class FilterType implements Filter, XMLFilter {
     /**
      * @param prefixMapping the prefixMapping to set
      */
+    @Override
     public void setPrefixMapping(Map<String, String> prefixMapping) {
         this.prefixMapping = prefixMapping;
     }
@@ -362,14 +405,16 @@ public class FilterType implements Filter, XMLFilter {
             boolean comp = false;
             if (this.comparisonOps != null && that.comparisonOps != null) {
                 comp = Utilities.equals(this.comparisonOps.getValue(), that.comparisonOps.getValue());
-            } else if (this.comparisonOps == null && that.comparisonOps == null)
+            } else if (this.comparisonOps == null && that.comparisonOps == null) {
                 comp = true;
+            }
             
             boolean log = false;
             if (this.logicOps != null && that.logicOps != null) {
                 log = Utilities.equals(this.logicOps.getValue(), that.logicOps.getValue());
-            } else if (this.logicOps == null && that.logicOps == null)
+            } else if (this.logicOps == null && that.logicOps == null) {
                 log = true;
+            }
             
             boolean spa = false;
             if (this.spatialOps != null && that.spatialOps != null) {

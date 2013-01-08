@@ -119,6 +119,35 @@ public class QueryType implements Query {
         }
     }
     
+    public QueryType(final QueryType that) {
+        if (that != null) {
+            this.featureVersion = that.featureVersion;
+            this.srsName        = that.srsName;
+            this.handle         = that.handle;
+            if (that.filter != null) {
+                this.filter = new FilterType(that.filter);
+            }
+            if (that.typeName != null) {
+                this.typeName = new ArrayList<QName>(that.typeName);
+            }
+            if (that.sortBy != null) {
+                this.sortBy = new SortByType(that.sortBy);
+            }
+            if (that.propertyNameOrXlinkPropertyNameOrFunction != null) {
+                this.propertyNameOrXlinkPropertyNameOrFunction = new ArrayList<Object>();
+                for (Object obj : that.propertyNameOrXlinkPropertyNameOrFunction) {
+                    if (obj instanceof XlinkPropertyName) {
+                        this.propertyNameOrXlinkPropertyNameOrFunction.add(new XlinkPropertyName((XlinkPropertyName)obj));
+                    } else if (obj instanceof FunctionType) {
+                        this.propertyNameOrXlinkPropertyNameOrFunction.add(new FunctionType((FunctionType)obj));
+                    } else {
+                        this.propertyNameOrXlinkPropertyNameOrFunction.add(obj);
+                    }
+                }
+            }
+        }
+    }
+    
     /**
      * Gets the value of the propertyNameOrXlinkPropertyNameOrFunction property.
      */

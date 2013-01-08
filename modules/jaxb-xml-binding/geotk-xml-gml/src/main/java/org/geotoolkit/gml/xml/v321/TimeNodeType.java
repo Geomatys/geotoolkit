@@ -53,31 +53,41 @@ import javax.xml.bind.annotation.XmlType;
     "nextEdge",
     "position"
 })
-public class TimeNodeType
-    extends AbstractTimeTopologyPrimitiveType implements Serializable
-{
+public class TimeNodeType extends AbstractTimeTopologyPrimitiveType implements Serializable {
 
     private List<TimeEdgePropertyType> previousEdge;
     private List<TimeEdgePropertyType> nextEdge;
     private TimeInstantPropertyType position;
 
+    public TimeNodeType() {
+        
+    }
+    
+    public TimeNodeType(final TimeNodeType that) {
+        super(that);
+        if (that != null) {
+            if (that.position != null) {
+                this.position = new TimeInstantPropertyType(that.position);
+            }
+            if (that.nextEdge != null) {
+                this.nextEdge = new ArrayList<TimeEdgePropertyType>();
+                for (TimeEdgePropertyType te : that.nextEdge) {
+                    final TimeEdgePropertyType nte = new TimeEdgePropertyType(te);
+                    this.nextEdge.add(nte);
+                }
+            }
+            if (that.previousEdge != null) {
+                this.previousEdge = new ArrayList<TimeEdgePropertyType>();
+                for (TimeEdgePropertyType te : that.previousEdge) {
+                    final TimeEdgePropertyType nte = new TimeEdgePropertyType(te);
+                    this.previousEdge.add(nte);
+                }
+            }
+        }
+    }
     /**
      * Gets the value of the previousEdge property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the previousEdge property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getPreviousEdge().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link TimeEdgePropertyType }
      * 
@@ -93,20 +103,6 @@ public class TimeNodeType
     /**
      * Gets the value of the nextEdge property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the nextEdge property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getNextEdge().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link TimeEdgePropertyType }
      * 
@@ -141,6 +137,11 @@ public class TimeNodeType
      */
     public void setPosition(TimeInstantPropertyType value) {
         this.position = value;
+    }
+
+    @Override
+    public AbstractTimeObjectType getClone() {
+        return new TimeNodeType(this);
     }
 
 }

@@ -57,6 +57,17 @@ public abstract class AbstractTimeGeometricPrimitiveType extends AbstractTimePri
     @XmlSchemaType(name = "anyURI")
     private String frame;
 
+    public AbstractTimeGeometricPrimitiveType() {
+        
+    }
+    
+    public AbstractTimeGeometricPrimitiveType(final AbstractTimeGeometricPrimitiveType that) {
+        super(that);
+        if (that != null) {
+            this.frame = that.frame;
+        }
+    }
+    
     /**
      * Gets the value of the frame property.
      * 

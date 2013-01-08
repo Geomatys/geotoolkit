@@ -44,4 +44,12 @@ public class PropertyIsEqualToType extends BinaryComparisonOpType implements Pro
         super(literal, propertyName, matchCase);
     }
 
+    public PropertyIsEqualToType(final PropertyIsEqualToType that) {
+        super(that);
+    }
+    
+    @Override
+    public ComparisonOpsType getClone() {
+        return new PropertyIsEqualToType(this);
+    }
 }

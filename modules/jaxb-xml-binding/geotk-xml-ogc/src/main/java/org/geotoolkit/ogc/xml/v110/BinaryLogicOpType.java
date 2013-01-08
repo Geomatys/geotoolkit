@@ -105,7 +105,45 @@ public class BinaryLogicOpType extends LogicOpsType implements BinaryLogicOperat
          }
          
      }
-     
+
+     /**
+      * Build a new Binary logic operator 
+      */
+     public BinaryLogicOpType(final BinaryLogicOpType that) {
+         if (that != null) {
+            // comparison operator
+            if (that.comparisonOps != null) {
+                this.comparisonOps = new ArrayList<JAXBElement<? extends ComparisonOpsType>>();
+            
+                for (JAXBElement<?> jb: that.comparisonOps) {
+                    final Object obj = jb.getValue();
+                    final ComparisonOpsType co = ((ComparisonOpsType)obj).getClone();
+                    this.comparisonOps.add(FilterType.createComparisonOps(co));
+                }
+            }
+
+            // logical operator
+            if (that.logicOps != null) {
+                this.logicOps = new ArrayList<JAXBElement<? extends LogicOpsType>>();
+            
+                for (JAXBElement<?> jb: that.logicOps) {
+                    final Object obj = jb.getValue();
+                    final LogicOpsType co = ((LogicOpsType)obj).getClone();
+                    this.logicOps.add(FilterType.createLogicOps(co));
+                }
+            }
+            // spatial operator    
+            if (that.spatialOps != null) {
+                this.spatialOps = new ArrayList<JAXBElement<? extends SpatialOpsType>>();
+            
+                for (JAXBElement<?> jb: that.spatialOps) {
+                    final Object obj = jb.getValue();
+                    final SpatialOpsType co = ((SpatialOpsType)obj).getClone();
+                    this.spatialOps.add(FilterType.createSpatialOps(co));
+                }
+            }
+         }
+     }
     
     @Override
     public String toString() {
@@ -135,6 +173,7 @@ public class BinaryLogicOpType extends LogicOpsType implements BinaryLogicOperat
         return s.toString();
     }
 
+    @Override
     public List<Filter> getChildren() {
         List<Filter> result = new ArrayList<Filter>();
         for (JAXBElement jb: getComparisonOps()) {
@@ -149,10 +188,12 @@ public class BinaryLogicOpType extends LogicOpsType implements BinaryLogicOperat
         return result;
     }
 
+    @Override
     public boolean evaluate(final Object object) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public Object accept(final FilterVisitor visitor, final Object extraData) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
@@ -211,6 +252,11 @@ public class BinaryLogicOpType extends LogicOpsType implements BinaryLogicOperat
         this.logicOps.add(FilterType.createLogicOps(logicOp));
     }
 
+    @Override
+    public LogicOpsType getClone() {
+        throw new UnsupportedOperationException("Must be overriden in sub-class.");
+    }
+    
     @Override
     public boolean equals(final Object obj) {
         if (obj == this) {

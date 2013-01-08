@@ -67,6 +67,13 @@ public class CodeType {
         
     }
     
+    public CodeType(final CodeType that) {
+        if (that != null) {
+            this.codeSpace = that.codeSpace;
+            this.value     = that.value;
+        }
+    }
+    
     public CodeType(final String value) {
         this.value = value;
     }

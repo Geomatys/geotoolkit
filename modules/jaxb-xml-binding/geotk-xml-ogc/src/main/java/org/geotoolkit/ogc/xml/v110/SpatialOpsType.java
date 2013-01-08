@@ -50,4 +50,5 @@ public abstract class SpatialOpsType implements Filter {
         return "class: " + this.getClass().getSimpleName() + '\n';
     }
 
+    public abstract SpatialOpsType getClone();
 }

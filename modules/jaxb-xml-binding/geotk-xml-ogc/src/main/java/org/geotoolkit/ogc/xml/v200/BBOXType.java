@@ -101,6 +101,38 @@ public class BBOXType extends SpatialOpsType {
         this.any = Arrays.asList(any);
     }
 
+    public BBOXType(final BBOXType that) {
+        if (that != null) {
+            if (that.expression != null) {
+                final ObjectFactory factory = new ObjectFactory();
+                final Object exp = that.expression.getValue();
+                if (exp instanceof String) {
+                    this.expression = factory.createValueReference((String)exp);
+                } else if (exp instanceof LiteralType) {
+                    final LiteralType lit = new LiteralType((LiteralType)exp);
+                    this.expression = factory.createLiteral(lit);
+                } else if (exp instanceof FunctionType) {
+                    final FunctionType func = new FunctionType((FunctionType)exp);
+                    this.expression = factory.createFunction(func);
+                } else {
+                    throw new IllegalArgumentException("Unexpected type for expression in PropertyIsBetweenType:" + expression.getClass().getName());
+                }
+            }
+            
+            if (that.any != null) {
+                this.any = new ArrayList<Object>();
+                for (Object obj : that.any) {
+                    if (obj instanceof EnvelopeType) {
+                        this.any.add(new EnvelopeType((EnvelopeType)obj));
+                    } else {
+                        this.any.add(obj);
+                        LOGGER.info("Unable to clone:" + obj.getClass().getName());
+                    }
+                }
+            }
+        }
+    }
+    
     /**
      * Gets the value of the expression property.
      *
@@ -198,6 +230,11 @@ public class BBOXType extends SpatialOpsType {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
+    public SpatialOpsType getClone() {
+        return new BBOXType(this);
+    }
+    
     @Override
     public String toString() {
         final StringBuilder s = new StringBuilder("[BBOXType]");

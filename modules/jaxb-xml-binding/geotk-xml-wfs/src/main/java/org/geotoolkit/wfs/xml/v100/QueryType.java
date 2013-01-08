@@ -85,6 +85,22 @@ public class QueryType implements Query {
         setPropertyNames(properties);
     }
     
+    public QueryType(final QueryType that) {
+        if (that != null) {
+            this.featureVersion = that.featureVersion;
+            this.typeName       = that.typeName;
+            this.handle         = that.handle;
+            if (that.filter != null) {
+                this.filter = new FilterType(that.filter);
+            }
+            if (that.propertyName != null) {
+                this.propertyName = new ArrayList<PropertyNameType>();
+                for (PropertyNameType pn : that.propertyName) {
+                    this.propertyName.add(new PropertyNameType(pn));
+                }
+            }
+        }
+    }
     
     /**
      * The PropertyName element is used to specify one or more properties 

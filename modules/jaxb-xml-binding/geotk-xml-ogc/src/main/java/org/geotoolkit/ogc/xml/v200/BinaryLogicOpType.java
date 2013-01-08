@@ -100,6 +100,60 @@ public class BinaryLogicOpType extends LogicOpsType implements BinaryLogicOperat
          }
          
      }
+     
+     /**
+      * Build a new Binary logic operator 
+      */
+     public BinaryLogicOpType(final BinaryLogicOpType that) {
+         if (that != null && that.comparisonOpsOrSpatialOpsOrTemporalOps != null) {
+            this.comparisonOpsOrSpatialOpsOrTemporalOps = new ArrayList<JAXBElement<?>>();
+            final ObjectFactory factory = new ObjectFactory();
+            for (JAXBElement<?> jb: that.comparisonOpsOrSpatialOpsOrTemporalOps) {
+
+                final Object obj = jb.getValue();
+
+                // comparison operator
+                if (obj instanceof ComparisonOpsType)  {
+                    final ComparisonOpsType co = ((ComparisonOpsType)obj).getClone();
+                    this.comparisonOpsOrSpatialOpsOrTemporalOps.add(FilterType.createComparisonOps(co));
+
+                // logical operator    
+                } else if (obj instanceof LogicOpsType) {
+                    final LogicOpsType lo = ((LogicOpsType)obj).getClone();
+                    this.comparisonOpsOrSpatialOpsOrTemporalOps.add(FilterType.createLogicOps(lo));
+
+                // spatial operator    
+                } else if (obj instanceof SpatialOpsType) {
+                    final SpatialOpsType so = ((SpatialOpsType)obj).getClone();
+                    this.comparisonOpsOrSpatialOpsOrTemporalOps.add(FilterType.createSpatialOps(so));
+                    
+                // temporal operator    
+                } else if (obj instanceof TemporalOpsType) {
+                    final TemporalOpsType to = ((TemporalOpsType)obj).getClone();
+                    this.comparisonOpsOrSpatialOpsOrTemporalOps.add(FilterType.createTemporalOps(to));
+                    
+                // function   
+                } else if (obj instanceof FunctionType) {
+                    final FunctionType fu = new FunctionType((FunctionType)obj);
+                    this.comparisonOpsOrSpatialOpsOrTemporalOps.add(factory.createFunction(fu));
+
+                // extension
+                } else if (obj instanceof ExtensionOpsType) {
+                    final ExtensionOpsType ext = ((ExtensionOpsType)obj).getClone();
+                    this.comparisonOpsOrSpatialOpsOrTemporalOps.add(factory.createExtensionOps(ext));
+                
+                // id
+                } else if (obj instanceof ResourceIdType) {
+                    final ResourceIdType rid =  new ResourceIdType((ResourceIdType)obj);
+                    this.comparisonOpsOrSpatialOpsOrTemporalOps.add(factory.createResourceId(rid));
+                    
+                } else {
+                    throw new IllegalArgumentException("This kind of object is not allowed:" + obj.getClass().getSimpleName());
+                }
+            }
+         }
+     }
+     
     /**
      * Gets the value of the comparisonOpsOrSpatialOpsOrTemporalOps property.
      * 
@@ -174,6 +228,7 @@ public class BinaryLogicOpType extends LogicOpsType implements BinaryLogicOperat
         return this.comparisonOpsOrSpatialOpsOrTemporalOps;
     }
 
+    @Override
     public List<Filter> getChildren() {
         List<Filter> result = new ArrayList<Filter>();
         for (JAXBElement jb: getComparisonOpsOrSpatialOpsOrTemporalOps()) {
@@ -182,11 +237,18 @@ public class BinaryLogicOpType extends LogicOpsType implements BinaryLogicOperat
         return result;
     }
     
+    @Override
     public boolean evaluate(final Object object) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public Object accept(final FilterVisitor visitor, final Object extraData) {
         throw new UnsupportedOperationException("Not supported yet.");
+    }
+    
+    @Override
+    public LogicOpsType getClone() {
+        throw new UnsupportedOperationException("Must be overriden in sub-class.");
     }
 }

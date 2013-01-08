@@ -42,5 +42,5 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "ComparisonOpsType")
 public abstract class ComparisonOpsType {
 
-
+    public abstract ComparisonOpsType getClone();
 }

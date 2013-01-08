@@ -69,6 +69,24 @@ public class LowerBoundaryType implements Expression {
         this.expression = factory.createLiteral(literal);
     }
 
+    public LowerBoundaryType(final LowerBoundaryType that) {
+        if (that != null && that.expression != null) {
+            final ObjectFactory factory = new ObjectFactory();
+            final Object exp = that.expression.getValue();
+            if (exp instanceof PropertyNameType) {
+                this.expression = factory.createPropertyName((PropertyNameType)exp);
+            } else if (exp instanceof LiteralType) {
+                final LiteralType lit = new LiteralType((LiteralType)exp);
+                this.expression = factory.createLiteral(lit);
+            } else if (exp instanceof FunctionType) {
+                final FunctionType func = new FunctionType((FunctionType)exp);
+                this.expression = factory.createFunction(func);
+            } else {
+                throw new IllegalArgumentException("Unexpected type for expression in lowerBoundary:" + expression.getClass().getName());
+            }
+        }
+    }
+    
     /**
      * Gets the value of the expression property.
      *
@@ -168,14 +186,17 @@ public class LowerBoundaryType implements Expression {
         return null;
     }
 
+    @Override
     public Object evaluate(final Object object) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public <T> T evaluate(final Object object, final Class<T> context) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public Object accept(final ExpressionVisitor visitor, final Object extraData) {
         return extraData;
     }

@@ -84,10 +84,11 @@ public class PropertyIsLikeType extends ComparisonOpsType implements PropertyIsL
      */
     public PropertyIsLikeType(final Expression expr, final String pattern, final String wildcard, final String singleChar, final String escape) {
         this.escapeChar   = escape;
-        if (expr instanceof PropertyNameType)
+        if (expr instanceof PropertyNameType) {
             this.propertyName = (PropertyNameType) expr;
-        else
+        } else {
             throw new IllegalArgumentException("expr must be of type PropertyNameType.");
+        }
         this.singleChar   = singleChar;
         this.wildCard     = wildcard;
         this.literal      = new LiteralType(pattern);
@@ -109,16 +110,31 @@ public class PropertyIsLikeType extends ComparisonOpsType implements PropertyIsL
      */
     public PropertyIsLikeType(final Expression expr, final String pattern, final String wildcard, final String singleChar, final String escape, final Boolean matchCase) {
         this.escapeChar   = escape;
-        if (expr instanceof PropertyNameType)
+        if (expr instanceof PropertyNameType) {
             this.propertyName = (PropertyNameType) expr;
-        else
+        } else {
             throw new IllegalArgumentException("expr must be of type PropertyNameType.");
+        }
         this.singleChar   = singleChar;
         this.wildCard     = wildcard;
         this.literal      = new LiteralType(pattern);
         this.matchCase    = matchCase;
     }
-
+    
+    public PropertyIsLikeType(final PropertyIsLikeType that) {
+        if (that != null) {
+            this.matchCase  = that.matchCase;
+            this.escapeChar = that.escapeChar;
+            this.singleChar = that.singleChar;
+            this.wildCard   = that.wildCard;
+            if (that.literal != null) {
+                this.literal = new LiteralType(that.literal);
+            }
+            if (that.propertyName != null) {
+                this.propertyName = new PropertyNameType(that.propertyName);
+            }
+        }
+    }
     /**
      * Gets the value of the propertyName property.
      */
@@ -136,6 +152,7 @@ public class PropertyIsLikeType extends ComparisonOpsType implements PropertyIsL
     /**
      * Gets the value of the literal property.
      */
+    @Override
     public String getLiteral() {
         if (literal != null) {
             return literal.getStringValue();
@@ -158,9 +175,9 @@ public class PropertyIsLikeType extends ComparisonOpsType implements PropertyIsL
      * Gets the value of the escapeChar property.
      */
     public String getEscapeChar() {
-        if (escapeChar == null)
+        if (escapeChar == null) {
             escapeChar = "\\";
-        
+        }
         return escapeChar;
     }
 
@@ -168,15 +185,16 @@ public class PropertyIsLikeType extends ComparisonOpsType implements PropertyIsL
      * Sets the value of the escapeChar property.
      */
     public void setEscapeChar(String escapeChar) {
-        if (escapeChar == null)
+        if (escapeChar == null) {
             escapeChar = "\\";
-
+        }
         this.escapeChar = escapeChar;
     }
 
     /**
      * Gets the value of the matchCase property.
     */
+    @Override
     public boolean isMatchingCase() {
         if (matchCase == null) {
             return true;
@@ -188,6 +206,7 @@ public class PropertyIsLikeType extends ComparisonOpsType implements PropertyIsL
     /**
      * Gets the value of the singleChar property.
      */
+    @Override
     public String getSingleChar() {
         return singleChar;
     }
@@ -202,6 +221,7 @@ public class PropertyIsLikeType extends ComparisonOpsType implements PropertyIsL
     /**
      * Gets the value of the wildCard property.
      */
+    @Override
     public String getWildCard() {
         return wildCard;
     }
@@ -252,11 +272,15 @@ public class PropertyIsLikeType extends ComparisonOpsType implements PropertyIsL
         StringBuilder s = new StringBuilder(super.toString());
         if (propertyName != null) {
             s.append("PropertyName= ").append(propertyName.toString()).append('\n');
-        } else s.append("PropertyName null").append('\n');
+        } else {
+            s.append("PropertyName null").append('\n');
+        }
         
         if (literal != null) {
            s.append("Litteral= ").append(literal.toString()).append('\n');
-        } else s.append("Literal null").append('\n');
+        } else {
+            s.append("Literal null").append('\n');
+        }
         
         s.append("matchCase= ").append(matchCase).append(" escape=").append(escapeChar);
         s.append(" single=").append(singleChar).append(" wildCard=").append(wildCard);
@@ -264,19 +288,28 @@ public class PropertyIsLikeType extends ComparisonOpsType implements PropertyIsL
         return s.toString();
     }
 
+    @Override
     public Expression getExpression() {
         return propertyName;
     }
 
+    @Override
     public String getEscape() {
         return escapeChar;
     }
 
+    @Override
     public boolean evaluate(final Object object) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public Object accept(final FilterVisitor visitor, final Object extraData) {
         return visitor.visit(this,extraData);
+    }
+
+    @Override
+    public ComparisonOpsType getClone() {
+        return new PropertyIsLikeType(this);
     }
 }

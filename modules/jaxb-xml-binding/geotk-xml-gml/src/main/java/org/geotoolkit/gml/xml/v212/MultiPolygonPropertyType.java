@@ -51,5 +51,17 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "MultiPolygonPropertyType")
 public class MultiPolygonPropertyType extends GeometryAssociationType {
-
+    
+    public MultiPolygonPropertyType() {
+        
+    }
+    
+    public MultiPolygonPropertyType(MultiPolygonPropertyType that) {
+        super(that);
+    }
+    
+    @Override
+    public GeometryAssociationType getClone() {
+        return new MultiPolygonPropertyType(this);
+    }
 }

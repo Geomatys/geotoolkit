@@ -37,6 +37,14 @@ public class TimeEndedByType extends BinaryTemporalOpType implements EndedBy{
         super(propertyName, temporal);
     }
 
+    public TimeEndedByType(final TimeEndedByType that) {
+        super(that);
+    }
+
+    @Override
+    public TemporalOpsType getClone() {
+        return new TimeEndedByType(this);
+    }
 
     @Override
     public boolean evaluate(Object o) {

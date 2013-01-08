@@ -49,5 +49,16 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "MultiGeometryPropertyType")
 public class MultiGeometryPropertyType extends GeometryAssociationType {
 
-
+    public MultiGeometryPropertyType() {
+        
+    }
+    
+    public MultiGeometryPropertyType(MultiGeometryPropertyType that) {
+        super(that);
+    }
+    
+    @Override
+    public GeometryAssociationType getClone() {
+        return new MultiGeometryPropertyType(this);
+    }
 }

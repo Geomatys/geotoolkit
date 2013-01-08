@@ -88,9 +88,24 @@ public class BBOXType extends SpatialOpsType implements BBOX {
         }
         this.envelope = new EnvelopeType(null, lower, upper, srs);
     }
+    
+    public BBOXType(final BBOXType that) {
+        if (that != null) {
+            this.propertyName = that.propertyName;
+            
+            if (that.envelope != null) {
+                this.envelope = new EnvelopeType(envelope);
+            }
+            if (that.envelopeWithTimePeriod != null) {
+                this.envelopeWithTimePeriod = new EnvelopeWithTimePeriodType(that.envelopeWithTimePeriod);
+            }
+        }
+    }
+    
     /**
      * Gets the value of the propertyName property.
      */
+    @Override
     public String getPropertyName() {
         return propertyName;
     }
@@ -126,6 +141,7 @@ public class BBOXType extends SpatialOpsType implements BBOX {
         return s.toString();
     }
 
+    @Override
     public String getSRS() {
         if (envelope != null) {
             return (envelope.getSrsName() != null) ? envelope.getSrsName() : DEFAULT_SRS;
@@ -135,6 +151,7 @@ public class BBOXType extends SpatialOpsType implements BBOX {
         return null;
     }
 
+    @Override
     public double getMinX() {
         DirectPositionType pos = null;
         if (envelope != null) {
@@ -148,6 +165,7 @@ public class BBOXType extends SpatialOpsType implements BBOX {
         return -1;
     }
 
+    @Override
     public double getMinY() {
        DirectPositionType pos = null;
         if (envelope != null) {
@@ -161,6 +179,7 @@ public class BBOXType extends SpatialOpsType implements BBOX {
         return -1;
     }
 
+    @Override
     public double getMaxX() {
         DirectPositionType pos = null;
         if (envelope != null) {
@@ -174,6 +193,7 @@ public class BBOXType extends SpatialOpsType implements BBOX {
         return -1;
     }
 
+    @Override
     public double getMaxY() {
         DirectPositionType pos = null;
         if (envelope != null) {
@@ -187,20 +207,29 @@ public class BBOXType extends SpatialOpsType implements BBOX {
         return -1;
     }
 
+    @Override
     public Expression getExpression1() {
         return new PropertyNameType(propertyName);
     }
 
+    @Override
     public Expression getExpression2() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public boolean evaluate(final Object object) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public Object accept(final FilterVisitor visitor, final Object extraData) {
         return visitor.visit(this,extraData);
+    }
+    
+    @Override
+    public SpatialOpsType getClone() {
+        return new BBOXType(this);
     }
 
     @Override

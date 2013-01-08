@@ -84,6 +84,21 @@ public class StringOrRefType {
        this.value = value;
     }
     
+    public StringOrRefType(final StringOrRefType that) {
+        if (that != null) {
+            this.actuate      = that.actuate;
+            this.arcrole      = that.arcrole;
+            this.href         = that.href;
+            this.nilReason    = new ArrayList<String>(that.nilReason);
+            this.value        = that.value;
+            this.remoteSchema = that.remoteSchema;
+            this.role         = that.role;
+            this.show         = that.show;
+            this.title        = that.title;
+            this.type         = that.type;
+        }
+    }
+    
     /**
      * Gets the value of the value property.
      * 

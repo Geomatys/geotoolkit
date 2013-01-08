@@ -63,6 +63,51 @@ public class UnaryLogicOpType extends LogicOpsType {
     private JAXBElement<? extends LogicOpsType> logicOps;
 
     /**
+     * An empty constructor used by JAXB
+     */
+     public UnaryLogicOpType() {
+         
+     }
+     
+     /**
+      * Build a new Binary logic operator 
+      */
+     public UnaryLogicOpType(final Object obj) {
+         
+         // comparison operator
+         if (obj instanceof ComparisonOpsType) {
+             this.comparisonOps = FilterType.createComparisonOps((ComparisonOpsType) obj);
+
+         // logical operator    
+         } else if (obj instanceof LogicOpsType) {
+             this.logicOps = FilterType.createLogicOps((LogicOpsType) obj);
+
+         // spatial operator    
+         } else if (obj instanceof SpatialOpsType) {
+             this.spatialOps = FilterType.createSpatialOps((SpatialOpsType) obj);
+             
+         // clone    
+         } else if (obj instanceof UnaryLogicOpType) {
+            final UnaryLogicOpType that = (UnaryLogicOpType) obj;
+            if (that.comparisonOps != null) {
+                final ComparisonOpsType comp = that.comparisonOps.getValue().getClone();
+                this.comparisonOps = FilterType.createComparisonOps(comp);
+            }
+            if (that.logicOps != null) {
+                 final LogicOpsType log = that.logicOps.getValue().getClone();
+                 this.logicOps = FilterType.createLogicOps(log);
+            }
+            if (that.spatialOps != null) {
+                final SpatialOpsType spa = that.spatialOps.getValue().getClone();
+                this.spatialOps = FilterType.createSpatialOps(spa);
+            }
+         } else {
+             throw new IllegalArgumentException("This kind of object is not allowed:" + obj.getClass().getSimpleName());
+         }
+         
+     }
+     
+    /**
      * Gets the value of the comparisonOps property.
      * 
     */
@@ -108,6 +153,11 @@ public class UnaryLogicOpType extends LogicOpsType {
      */
     public void setLogicOps(final JAXBElement<? extends LogicOpsType> value) {
         this.logicOps = ((JAXBElement<? extends LogicOpsType> ) value);
+    }
+
+    @Override
+    public LogicOpsType getClone() {
+        throw new UnsupportedOperationException("Must be overriden by sub-class");
     }
 
 }

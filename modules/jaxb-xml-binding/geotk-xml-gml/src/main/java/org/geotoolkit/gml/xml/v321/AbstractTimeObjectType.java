@@ -46,9 +46,15 @@ import javax.xml.bind.annotation.XmlType;
     AbstractTimeComplexType.class,
     AbstractTimePrimitiveType.class
 })
-public abstract class AbstractTimeObjectType
-    extends AbstractGMLType
-{
+public abstract class AbstractTimeObjectType extends AbstractGMLType {
 
-
+    public AbstractTimeObjectType() {
+        
+    }
+    
+    public AbstractTimeObjectType(final AbstractTimeObjectType that) {
+        super(that);
+    }
+    
+    public abstract AbstractTimeObjectType getClone();
 }
