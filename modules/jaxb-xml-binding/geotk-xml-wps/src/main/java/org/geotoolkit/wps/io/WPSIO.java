@@ -22,6 +22,8 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.RenderedImage;
 import java.io.File;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.measure.unit.Unit;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
@@ -33,6 +35,7 @@ import org.geotoolkit.ows.xml.v110.DomainMetadataType;
 import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.util.converter.ConverterRegistry;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
+import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.wps.converters.WPSConverterRegistry;
 import org.geotoolkit.wps.converters.WPSConvertersUtils;
 import org.geotoolkit.wps.converters.WPSObjectConverter;
@@ -55,6 +58,7 @@ import org.opengis.geometry.Envelope;
  */
 public final class WPSIO {
 
+    private static final Logger LOGGER = Logging.getLogger(WPSIO.class);
     private static final List<FormatSupport> FORMATSUPPORTS = Collections.synchronizedList(new ArrayList<FormatSupport>());
 
     static {

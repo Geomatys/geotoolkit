@@ -76,7 +76,7 @@ public class WPSConvertersUtils {
      *
      * @param dataValue a Feature or a FeatureCollection
      * @return the sale Feature/FeatureCollection fixed
-     * @throws CstlServiceException
+     * @throws NonconvertibleObjectException
      */
     public static Object fixFeature(final Object dataValue) throws FactoryException {
 
@@ -110,7 +110,7 @@ public class WPSConvertersUtils {
      *
      * @param featureIN feature with geometry used to fix the geometry descriptor
      * @param type the featureType to fix
-     * @throws CstlServiceException
+     * @throws NonconvertibleObjectException
      */
     private static void fixFeatureType(final Feature featureIN, DefaultFeatureType type) throws FactoryException {
 
@@ -146,7 +146,7 @@ public class WPSConvertersUtils {
      * @param data string to convert
      * @param binding wanted class
      * @return converted object
-     * @throws CstlServiceException if there is no match found
+     * @throws NonconvertibleObjectException if there is no match found
      */
     public static <T> Object convertFromString(final String data, final Class binding) throws NonconvertibleObjectException {
 
@@ -198,7 +198,7 @@ public class WPSConvertersUtils {
      * @param expectedClass
      * @param complex
      * @return
-     * @throws CstlServiceException
+     * @throws NonconvertibleObjectException
      */
     public static Object convertFromComplex(final ComplexDataType complex, final Class expectedClass) throws NonconvertibleObjectException {
 
@@ -341,7 +341,7 @@ public class WPSConvertersUtils {
      *
      * @param clazz
      * @return
-     * @throws CstlServiceException
+     * @throws NonconvertibleObjectException
      */
     public static DomainMetadataType createDataType(final Class clazz) {
 

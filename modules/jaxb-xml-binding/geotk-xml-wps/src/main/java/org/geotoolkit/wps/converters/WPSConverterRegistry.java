@@ -16,24 +16,20 @@
  */
 package org.geotoolkit.wps.converters;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
+import java.util.logging.Logger;
+
 import org.geotoolkit.gml.xml.v311.BoundingShapeType;
 import org.geotoolkit.ows.xml.v110.BoundingBoxType;
 import org.geotoolkit.process.converters.*;
 import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
+import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.wps.converters.inputs.complex.*;
-import org.geotoolkit.wps.converters.inputs.literal.StringToDoubleArrayConverter;
-import org.geotoolkit.wps.converters.inputs.literal.StringToFloatArrayConverter;
-import org.geotoolkit.wps.converters.inputs.literal.StringToIntegerArrayConverter;
+import org.geotoolkit.wps.converters.inputs.literal.*;
 import org.geotoolkit.wps.converters.inputs.references.*;
 import org.geotoolkit.wps.converters.outputs.complex.*;
-import org.geotoolkit.wps.converters.outputs.literal.DoubleArrayToStringConverter;
-import org.geotoolkit.wps.converters.outputs.literal.FloatArrayToStringConverter;
-import org.geotoolkit.wps.converters.outputs.literal.IntegerArrayToStringConverter;
+import org.geotoolkit.wps.converters.outputs.literal.*;
 import org.geotoolkit.wps.converters.outputs.references.*;
 import org.geotoolkit.wps.xml.v100.ComplexDataType;
 import org.geotoolkit.wps.xml.v100.ReferenceType;
@@ -45,6 +41,7 @@ import org.geotoolkit.wps.xml.v100.ReferenceType;
  */
 public class WPSConverterRegistry {
 
+    private static final Logger LOGGER = Logging.getLogger(WPSConverterRegistry.class);
     private final List<WPSObjectConverter> converters;
     private static WPSConverterRegistry INSTANCE;
 
@@ -106,11 +103,17 @@ public class WPSConverterRegistry {
         register(new WPSObjectConverterAdapter(new StringToDoubleArrayConverter()));
         register(new WPSObjectConverterAdapter(new StringToFloatArrayConverter()));
         register(new WPSObjectConverterAdapter(new StringToIntegerArrayConverter()));
+        register(new WPSObjectConverterAdapter(new StringToDoubleWArrayConverter()));
+        register(new WPSObjectConverterAdapter(new StringToFloatWArrayConverter()));
+        register(new WPSObjectConverterAdapter(new StringToIntegerWArrayConverter()));
         
         // Object -> String converters
         register(new WPSObjectConverterAdapter(new DoubleArrayToStringConverter()));
         register(new WPSObjectConverterAdapter(new IntegerArrayToStringConverter()));
         register(new WPSObjectConverterAdapter(new FloatArrayToStringConverter()));
+        register(new WPSObjectConverterAdapter(new DoubleWArrayToStringConverter()));
+        register(new WPSObjectConverterAdapter(new IntegerWArrayToStringConverter()));
+        register(new WPSObjectConverterAdapter(new FloatWArrayToStringConverter()));
 
     }
 
@@ -128,7 +131,7 @@ public class WPSConverterRegistry {
     }
 
     /**
-     * Search the most suitable converter registred with a source and target class.
+     * Search the most suitable converter registered with a source and target class.
      *
      * @param source
      * @param target
@@ -174,7 +177,7 @@ public class WPSConverterRegistry {
      * Return all converter that match a possible source class used by WPS OUPTUT.
      * e.g. : {@link BoundingShapeType}, {@link ComplexDataType}, {@link ReferenceType}, {@link String}
      *
-     * @param target
+     * @param source
      * @return all input converter for the source class.
      */
     public List<WPSObjectConverter> getOutputConvertersForSourceClass (final Class source) {
