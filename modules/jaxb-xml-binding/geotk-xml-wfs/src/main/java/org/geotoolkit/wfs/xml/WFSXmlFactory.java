@@ -584,13 +584,13 @@ public class WFSXmlFactory {
     }
 
     public static GetPropertyValue buildGetPropertyValue(final String currentVersion, final String service, final String handle, final Integer maxFeature, final String featureId,
-        final Query query, final ResultTypeType resultType, String outputFormat) {
+        final Query query, final ResultTypeType resultType, final String outputFormat, final String valueReference) {
         if ("2.0.0".equals(currentVersion)) {
             if (query != null && !(query instanceof org.geotoolkit.wfs.xml.v200.QueryType)) {
                 throw new IllegalArgumentException("unexpected object version for query element");
             }
             return new org.geotoolkit.wfs.xml.v200.GetPropertyValueType(service, currentVersion, handle, maxFeature, featureId,
-                    (org.geotoolkit.wfs.xml.v200.QueryType)query, resultType, outputFormat);
+                    (org.geotoolkit.wfs.xml.v200.QueryType)query, resultType, outputFormat, valueReference);
 
         } else if ("1.1.0".equals(currentVersion)) {
             throw new IllegalArgumentException("GetPropertyValue is not available in version 1.1.0");
@@ -625,6 +625,9 @@ public class WFSXmlFactory {
                 final List<QName> returnTypes = new ArrayList<QName>();
                 for (QueryExpressionText queryEx : description.getQueryExpressionText()) {
                     returnTypes.addAll(queryEx.getReturnFeatureTypes());
+                }
+                if (returnTypes.isEmpty()) {
+                    returnTypes.add(new QName(""));
                 }
                 storedQuery.add(new org.geotoolkit.wfs.xml.v200.StoredQueryListItemType(description.getId(),
                                                             (List<org.geotoolkit.wfs.xml.v200.Title>)description.getTitle(),

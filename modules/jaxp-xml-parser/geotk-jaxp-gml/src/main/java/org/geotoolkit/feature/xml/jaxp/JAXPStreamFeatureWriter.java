@@ -414,7 +414,11 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
                     LOGGER.log(Level.WARNING, null, ex);
                 }
             }
-            streamWriter.writeStartElement("gml", "boundedBy", gmlNamespace);
+            if ("2.0.0".equals(wfsVersion)) {
+                streamWriter.writeStartElement("wfs", "boundedBy", wfsNamespace);
+            } else {
+                streamWriter.writeStartElement("gml", "boundedBy", gmlNamespace);
+            }
             streamWriter.writeStartElement("gml", "Envelope", gmlNamespace);
             if (srsName != null) {
                 streamWriter.writeAttribute("srsName", srsName);

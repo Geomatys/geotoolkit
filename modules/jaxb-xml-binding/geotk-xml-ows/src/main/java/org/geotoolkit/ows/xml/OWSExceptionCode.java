@@ -70,6 +70,11 @@ public class OWSExceptionCode extends CodeList<OWSExceptionCode> {
      * Invalid parameter value.
      */
     public static final OWSExceptionCode INVALID_PARAMETER_VALUE = new OWSExceptionCode("InvalidParameterValue");
+    
+    /**
+     * Invalid parameter value.
+     */
+    public static final OWSExceptionCode INVALID_VALUE = new OWSExceptionCode("InvalidValue");
 
     /**
      * Operation not supported.

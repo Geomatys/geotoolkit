@@ -116,6 +116,7 @@ public class QueryExpressionTextType implements org.geotoolkit.wfs.xml.QueryExpr
      * {@link String }
      *
      */
+    @Override
     public List<Object> getContent() {
         if (content == null) {
             content = new ArrayList<Object>();
@@ -141,6 +142,7 @@ public class QueryExpressionTextType implements org.geotoolkit.wfs.xml.QueryExpr
      * Objects of the following type(s) are allowed in the list
      * {@link QName }
      */
+    @Override
     public List<QName> getReturnFeatureTypes() {
         if (returnFeatureTypes == null) {
             returnFeatureTypes = new ArrayList<QName>();
@@ -156,6 +158,7 @@ public class QueryExpressionTextType implements org.geotoolkit.wfs.xml.QueryExpr
      *     {@link String }
      *
      */
+    @Override
     public String getLanguage() {
         return language;
     }
@@ -180,6 +183,7 @@ public class QueryExpressionTextType implements org.geotoolkit.wfs.xml.QueryExpr
      *     {@link Boolean }
      *
      */
+    @Override
     public boolean isIsPrivate() {
         if (isPrivate == null) {
             return false;
