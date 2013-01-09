@@ -18,7 +18,10 @@
 package org.geotoolkit.feature.xml.jaxp;
 
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Level;
@@ -93,6 +96,8 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
     private final String wfsNamespace;
 
     private final String gmlNamespace;
+    
+    private static final DateFormat FORMATTER = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 
     public JAXPStreamFeatureWriter() {
         this("3.1.1", "1.1.0", null);
@@ -332,11 +337,20 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
 
         // the root Element
         writer.writeStartElement("wfs", "FeatureCollection", wfsNamespace);
-        String collectionID = "";
-        if (featureCollection.getID() != null) {
-            collectionID = featureCollection.getID();
+        
+        // id does not appear in WFS 2
+        if (!"2.0.0".equals(wfsVersion)) {
+            String collectionID = "";
+            if (featureCollection.getID() != null) {
+                collectionID = featureCollection.getID();
+            }
+            writer.writeAttribute("gml", gmlNamespace, "id", collectionID);
         }
-        writer.writeAttribute("gml", gmlNamespace, "id", collectionID);
+        // timestamp
+        synchronized(FORMATTER) {
+            writer.writeAttribute("timeStamp", FORMATTER.format(new Date(System.currentTimeMillis())));
+        }
+        
         writer.writeNamespace("gml", gmlNamespace);
         writer.writeNamespace("wfs", wfsNamespace);
         if (schemaLocation != null && !schemaLocation.equals("")) {

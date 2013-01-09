@@ -17,11 +17,14 @@
 package org.geotoolkit.feature.xml.jaxp;
 
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Logger;
 import java.util.Collection;
+import java.util.Date;
 import java.util.logging.Level;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -84,6 +87,7 @@ public class ElementFeatureWriter {
 
     private final Map<String, String> unknowNamespaces = new HashMap<String, String>();
 
+    private static final DateFormat FORMATTER = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 
     public ElementFeatureWriter() {
     }
@@ -169,7 +173,7 @@ public class ElementFeatureWriter {
         idAttr.setValue(feature.getIdentifier().getID());
         idAttr.setPrefix("gml");
         rootElement.setAttributeNodeNS(idAttr);
-
+        
         if (rootDocument == null) {
             document.appendChild(rootElement);
         }
@@ -325,6 +329,11 @@ public class ElementFeatureWriter {
             
         if (nbMatched != null) {
             rootElement.setAttribute("numberMatched", Integer.toString(nbMatched));
+        }
+        
+        // timestamp
+        synchronized(FORMATTER) {
+            rootElement.setAttribute("timeStamp", FORMATTER.format(new Date(System.currentTimeMillis())));
         }
         
         if (schemaLocation != null && !schemaLocation.equals("")) {
