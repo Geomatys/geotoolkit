@@ -32,12 +32,12 @@ import org.opengis.geometry.Envelope;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class DefaultPyramidSet implements PyramidSet{
+public class DefaultPyramidSet extends AbstractPyramidSet{
     
     private final String id = UUID.randomUUID().toString();
     private final List<Pyramid> pyramids = new ArrayList<Pyramid>();
     private final List<String> formats = new ArrayList<String>();
-    
+
     @Override
     public Collection<Pyramid> getPyramids() {
         return pyramids;

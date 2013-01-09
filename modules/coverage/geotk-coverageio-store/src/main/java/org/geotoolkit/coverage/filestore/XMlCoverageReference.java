@@ -110,7 +110,7 @@ public class XMlCoverageReference extends AbstractCoverageReference implements P
     public GridMosaic createMosaic(String pyramidId, Dimension gridSize,
     Dimension tilePixelSize, DirectPosition upperleft, double pixelscale) throws DataStoreException {
         final XMLPyramidSet set = getPyramidSet();
-        final XMLPyramid pyramid = set.getPyramid(pyramidId);
+        final XMLPyramid pyramid = (XMLPyramid) set.getPyramid(pyramidId);
         final XMLMosaic mosaic = pyramid.createMosaic(gridSize, tilePixelSize, upperleft, pixelscale);
         save();
         return mosaic;
@@ -124,7 +124,7 @@ public class XMlCoverageReference extends AbstractCoverageReference implements P
     @Override
     public void writeTile(String pyramidId, String mosaicId, int col, int row, RenderedImage image) throws DataStoreException {
         final XMLPyramidSet set = getPyramidSet();
-        final XMLPyramid pyramid = set.getPyramid(pyramidId);
+        final XMLPyramid pyramid = (XMLPyramid) set.getPyramid(pyramidId);
         final XMLMosaic mosaic = pyramid.getMosaic(mosaicId);
         mosaic.createTile(col,row,image);
         save();
@@ -146,7 +146,7 @@ public class XMlCoverageReference extends AbstractCoverageReference implements P
     @Override
     public void writeTiles(String pyramidId, String mosaicId, RenderedImage image, boolean onlyMissing) throws DataStoreException {
         final XMLPyramidSet set = getPyramidSet();
-        final XMLPyramid pyramid = set.getPyramid(pyramidId);
+        final XMLPyramid pyramid = (XMLPyramid) set.getPyramid(pyramidId);
         final XMLMosaic mosaic = pyramid.getMosaic(mosaicId);
         mosaic.writeTiles(image,onlyMissing);
         save();

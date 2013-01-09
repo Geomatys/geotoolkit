@@ -39,6 +39,23 @@ public interface PyramidSet {
     String getId();
     
     /**
+     * Get a pyramid from id.
+     * 
+     * @param pyramidId
+     * @return 
+     */
+    Pyramid getPyramid(String pyramidId);
+    
+    /**
+     * Get a mosaic from id.
+     * 
+     * @param pyramidId
+     * @param mosaicId
+     * @return 
+     */
+    GridMosaic getMosaic(String pyramidId, String mosaicId);
+    
+    /**
      * 
      * @return Collection of pyramid, each pyramid has a different CRS.
      */

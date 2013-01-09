@@ -28,8 +28,8 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.*;
+import org.geotoolkit.coverage.AbstractPyramidSet;
 import org.geotoolkit.coverage.Pyramid;
-import org.geotoolkit.coverage.PyramidSet;
 import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.referencing.IdentifiedObjects;
@@ -46,7 +46,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 @XmlRootElement(name="PyramidSet")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class XMLPyramidSet implements PyramidSet{
+public class XMLPyramidSet extends AbstractPyramidSet{
     
     @XmlTransient
     private static MarshallerPool POOL;
@@ -160,24 +160,7 @@ public class XMLPyramidSet implements PyramidSet{
     public String toString(){
         return Trees.toString(Classes.getShortClassName(this)+" "+getId(), getPyramids());
     }
-    
-    /**
-     * Get the pyramid for with given id.
-     * 
-     * @param pyramidId
-     * @return
-     * @throws DataStoreException 
-     */
-    XMLPyramid getPyramid(String pyramidId) throws DataStoreException{
-        for(final Pyramid py : getPyramids()){
-            if(pyramidId.equals(py.getId())){
-                final XMLPyramid pyramid = (XMLPyramid) py;
-                return pyramid;
-            }
-        }
-        throw new DataStoreException("No pyramid for ID : " + pyramidId);
-    }
-    
+        
     /**
      * Create and register a new pyramid in the set.
      * 
