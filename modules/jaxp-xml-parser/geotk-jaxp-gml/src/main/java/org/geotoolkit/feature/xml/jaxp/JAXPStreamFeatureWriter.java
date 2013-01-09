@@ -94,8 +94,10 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
     private final String wfsVersion;
     
     private final String wfsNamespace;
+    private final String wfsLocation;
 
     private final String gmlNamespace;
+    private final String gmlLocation;
     
     private static final DateFormat FORMATTER = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 
@@ -106,26 +108,32 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
     public JAXPStreamFeatureWriter(final String gmlVersion, final String wfsVersion, final Map<String, String> schemaLocations)  {
         this.gmlVersion = gmlVersion;
         this.wfsVersion = wfsVersion;
+        if ("2.0.0".equals(wfsVersion)) {
+            wfsNamespace = "http://www.opengis.net/wfs/2.0";
+            wfsLocation  = "http://schemas.opengis.net/wfs/2.0/wfs.xsd";
+        } else {
+            wfsNamespace = "http://www.opengis.net/wfs";
+            wfsLocation  = "http://schemas.opengis.net/wfs/1.1.0/wfs.xsd";
+        }
+        if ("3.2.1".equals(gmlVersion)) {
+            gmlNamespace = "http://www.opengis.net/gml/3.2";
+            gmlLocation  = "http://schemas.opengis.net/gml/3.2.1/gml.xsd";
+        } else {
+            gmlNamespace = Namespaces.GML;
+            gmlLocation  = "http://schemas.opengis.net/gml/3.1.1/base/gml.xsd";
+        }
+        
         if (schemaLocations != null && schemaLocations.size() > 0) {
             final StringBuilder sb = new StringBuilder();
             for (Entry<String, String> entry : schemaLocations.entrySet()) {
                 sb.append(entry.getKey()).append(' ').append(entry.getValue()).append(' ');
             }
-            if (sb.length() > 0) {
-                sb.setLength(sb.length() - 1); //remove last ' '
-            }
+            // add wfs schema Location
+            sb.append(wfsNamespace).append(' ').append(wfsLocation).append(' ');
+            sb.append(gmlNamespace).append(' ').append(gmlLocation).append(' ');
             schemaLocation = sb.toString();
         }
-        if ("2.0.0".equals(wfsVersion)) {
-            wfsNamespace = "http://www.opengis.net/wfs/2.0";
-        } else {
-            wfsNamespace = "http://www.opengis.net/wfs";
-        }
-        if ("3.2.1".equals(gmlVersion)) {
-            gmlNamespace = "http://www.opengis.net/gml/3.2";
-        } else {
-            gmlNamespace = Namespaces.GML;
-        }
+        
     }
 
     public JAXPStreamFeatureWriter(final Map<String, String> schemaLocations)  {
