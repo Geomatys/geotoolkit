@@ -4,9 +4,6 @@
  */
 package org.geotoolkit.wmc;
 
-import java.io.FileInputStream;
-import java.io.InputStream;
-import org.geotoolkit.gui.swing.go2.JMap2DFrame;
 import org.geotoolkit.map.MapContext;
 import org.junit.AfterClass;
 import org.junit.Test;
