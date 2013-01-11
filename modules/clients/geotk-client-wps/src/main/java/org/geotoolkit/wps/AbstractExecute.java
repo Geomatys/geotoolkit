@@ -21,9 +21,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
@@ -405,9 +403,12 @@ public abstract class AbstractExecute extends AbstractRequest implements Execute
         final String mime      = in.getMime();
         final String schema    = in.getSchema();
         final Object inputData = in.getData();
-        
+
+        final Map<String,Object> parameters = new HashMap<String, Object>();
+        parameters.put(WPSConvertersUtils.OUT_STORAGE_URL, storageURL);
+        parameters.put(WPSConvertersUtils.OUT_STORAGE_DIR, storageDirectory);
         //Try to convert the complex input.
-        final ComplexDataType complex = WPSConvertersUtils.convertToComplex(inputData, mime, echoding, schema, storageDirectory, storageURL);
+        final ComplexDataType complex = WPSConvertersUtils.convertToComplex(inputData, mime, echoding, schema, parameters);
         
         datatype.setComplexData(complex);
         inputType.setData(datatype);
