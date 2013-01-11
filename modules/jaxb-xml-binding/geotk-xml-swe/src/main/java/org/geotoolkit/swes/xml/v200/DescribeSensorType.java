@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.v321.AbstractTimeGeometricPrimitiveType;
 import org.geotoolkit.gml.xml.v321.TimeInstantType;
 import org.geotoolkit.gml.xml.v321.TimePeriodType;
+import org.geotoolkit.swes.xml.DescribeSensor;
 
 
 /**
@@ -66,9 +67,7 @@ import org.geotoolkit.gml.xml.v321.TimePeriodType;
     "procedureDescriptionFormat",
     "validTime"
 })
-public class DescribeSensorType
-    extends ExtensibleRequestType
-{
+public class DescribeSensorType extends ExtensibleRequestType implements DescribeSensor {
 
     @XmlElement(required = true)
     @XmlSchemaType(name = "anyURI")
@@ -86,6 +85,7 @@ public class DescribeSensorType
      *     {@link String }
      *     
      */
+    @Override
     public String getProcedure() {
         return procedure;
     }
@@ -102,6 +102,11 @@ public class DescribeSensorType
         this.procedure = value;
     }
 
+    @Override
+    public String getOutputFormat() {
+        return procedureDescriptionFormat;
+    }
+    
     /**
      * Gets the value of the procedureDescriptionFormat property.
      * 

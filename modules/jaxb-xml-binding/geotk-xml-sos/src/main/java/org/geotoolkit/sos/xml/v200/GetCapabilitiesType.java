@@ -23,6 +23,10 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.ows.xml.v110.AcceptFormatsType;
+import org.geotoolkit.ows.xml.v110.AcceptVersionsType;
+import org.geotoolkit.ows.xml.v110.SectionsType;
+import org.geotoolkit.sos.xml.GetCapabilities;
 
 
 /**
@@ -49,12 +53,34 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "GetCapabilitiesType", propOrder = {
     "extension"
 })
-public class GetCapabilitiesType extends org.geotoolkit.ows.xml.v110.GetCapabilitiesType {
+public class GetCapabilitiesType extends org.geotoolkit.ows.xml.v110.GetCapabilitiesType implements GetCapabilities {
 
     private List<Object> extension;
     @XmlAttribute
     private String service;
 
+    /**
+     * minimal getCapabilities request.
+     */
+    public GetCapabilitiesType() {
+        super("SOS");
+    }
+    
+    /**
+     * Build a new getCapabilities request with the specified service
+     */
+    public GetCapabilitiesType(final AcceptVersionsType acceptVersions, final SectionsType sections,
+            final AcceptFormatsType acceptFormats, final String updateSequence, final String service) {
+        super(acceptVersions, sections, acceptFormats, updateSequence, service);
+    }
+
+     /**
+     * Build a new getCapabilities (simplified version).
+     */
+    public GetCapabilitiesType(final String acceptVersions, final String acceptFormats) {
+        super(acceptVersions, acceptFormats, "SOS");
+    }
+    
     /**
      * Gets the value of the extension property.
      * 

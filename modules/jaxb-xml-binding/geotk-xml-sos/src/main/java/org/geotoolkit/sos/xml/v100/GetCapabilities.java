@@ -49,7 +49,7 @@ import org.geotoolkit.ows.xml.v110.SectionsType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "GetCapabilities")
 @XmlRootElement(name = "GetCapabilities")
-public class GetCapabilities extends GetCapabilitiesType {
+public class GetCapabilities extends GetCapabilitiesType implements org.geotoolkit.sos.xml.GetCapabilities {
 
     /**
      * minimal getCapabilities request.

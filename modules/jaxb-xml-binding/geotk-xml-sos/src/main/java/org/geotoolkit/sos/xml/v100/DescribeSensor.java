@@ -52,7 +52,7 @@ import org.geotoolkit.util.Utilities;
     "procedure"
 })
 @XmlRootElement(name = "DescribeSensor")
-public class DescribeSensor extends RequestBaseType {
+public class DescribeSensor extends RequestBaseType implements org.geotoolkit.swes.xml.DescribeSensor {
 
     /**
      * Identifier of the sensor, for which detailed metadata is requested.
@@ -98,6 +98,7 @@ public class DescribeSensor extends RequestBaseType {
     /**
      * Return the value of the sensorId property.
      */
+    @Override
     public String getProcedure() {
         return procedure;
     }
@@ -105,8 +106,9 @@ public class DescribeSensor extends RequestBaseType {
     /**
      * Return the value of the outputFormat property.
      */
+    @Override
     public String getOutputFormat() {
-            return outputFormat;
+        return outputFormat;
     }
 
     /**

@@ -29,6 +29,8 @@ import org.geotoolkit.ows.xml.v110.CapabilitiesBaseType;
 import org.geotoolkit.ows.xml.v110.OperationsMetadata;
 import org.geotoolkit.ows.xml.v110.ServiceIdentification;
 import org.geotoolkit.ows.xml.v110.ServiceProvider;
+import org.geotoolkit.sos.xml.Capabilities;
+import org.geotoolkit.sos.xml.SOSResponse;
 
 
 /**
@@ -78,10 +80,10 @@ import org.geotoolkit.ows.xml.v110.ServiceProvider;
     "filterCapabilities",
     "contents"
 })
-public class CapabilitiesType extends CapabilitiesBaseType {
+public class CapabilitiesType extends CapabilitiesBaseType implements Capabilities, SOSResponse {
 
     private List<Object> extension;
-    private CapabilitiesType.FilterCapabilities filterCapabilities;
+    private FilterCapabilities filterCapabilities;
     private CapabilitiesType.Contents contents;
 
     /**
@@ -126,7 +128,8 @@ public class CapabilitiesType extends CapabilitiesBaseType {
      *     {@link CapabilitiesType.FilterCapabilities }
      *     
      */
-    public CapabilitiesType.FilterCapabilities getFilterCapabilities() {
+    @Override
+    public FilterCapabilities getFilterCapabilities() {
         return filterCapabilities;
     }
 
@@ -138,7 +141,7 @@ public class CapabilitiesType extends CapabilitiesBaseType {
      *     {@link CapabilitiesType.FilterCapabilities }
      *     
      */
-    public void setFilterCapabilities(CapabilitiesType.FilterCapabilities value) {
+    public void setFilterCapabilities(FilterCapabilities value) {
         this.filterCapabilities = value;
     }
 
@@ -150,6 +153,7 @@ public class CapabilitiesType extends CapabilitiesBaseType {
      *     {@link CapabilitiesType.Contents }
      *     
      */
+    @Override
     public CapabilitiesType.Contents getContents() {
         return contents;
     }
@@ -226,7 +230,7 @@ public class CapabilitiesType extends CapabilitiesBaseType {
     @XmlType(name = "", propOrder = {
         "contents"
     })
-    public static class Contents {
+    public static class Contents implements org.geotoolkit.sos.xml.Contents {
 
         @XmlElement(name = "Contents", required = true)
         private ContentsType contents;
@@ -255,61 +259,12 @@ public class CapabilitiesType extends CapabilitiesBaseType {
             this.contents = value;
         }
 
-    }
-
-
-    /**
-     * <p>Java class for anonymous complex type.
-     * 
-     * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
-     * <pre>
-     * &lt;complexType>
-     *   &lt;complexContent>
-     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-     *       &lt;sequence>
-     *         &lt;element ref="{http://www.opengis.net/fes/2.0}Filter_Capabilities"/>
-     *       &lt;/sequence>
-     *     &lt;/restriction>
-     *   &lt;/complexContent>
-     * &lt;/complexType>
-     * </pre>
-     * 
-     * 
-     */
-    @XmlAccessorType(XmlAccessType.FIELD)
-    @XmlType(name = "", propOrder = {
-        "filterCapabilities"
-    })
-    public static class FilterCapabilities {
-
-        @XmlElement(name = "Filter_Capabilities", namespace = "http://www.opengis.net/fes/2.0", required = true)
-        private org.geotoolkit.ogc.xml.v200.FilterCapabilities filterCapabilities;
-
-        /**
-         * Gets the value of the filterCapabilities property.
-         * 
-         * @return
-         *     possible object is
-         *     {@link net.opengis.fes._2.FilterCapabilities }
-         *     
-         */
-        public org.geotoolkit.ogc.xml.v200.FilterCapabilities getFilterCapabilities() {
-            return filterCapabilities;
+        @Override
+        public List<ObservationOfferingType> getOfferings() {
+            if (contents != null) {
+                return this.contents.getOfferings();
+            }
+            return new ArrayList<ObservationOfferingType>();
         }
-
-        /**
-         * Sets the value of the filterCapabilities property.
-         * 
-         * @param value
-         *     allowed object is
-         *     {@link net.opengis.fes._2.FilterCapabilities }
-         *     
-         */
-        public void setFilterCapabilities(org.geotoolkit.ogc.xml.v200.FilterCapabilities value) {
-            this.filterCapabilities = value;
-        }
-
     }
-
 }

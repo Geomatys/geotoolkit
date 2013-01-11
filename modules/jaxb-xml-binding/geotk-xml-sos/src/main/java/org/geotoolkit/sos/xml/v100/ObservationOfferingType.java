@@ -18,7 +18,6 @@ package org.geotoolkit.sos.xml.v100;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -33,6 +32,7 @@ import org.geotoolkit.gml.xml.v311.AbstractFeatureType;
 import org.geotoolkit.gml.xml.v311.AbstractTimeGeometricPrimitiveType;
 import org.geotoolkit.gml.xml.v311.BoundingShapeType;
 import org.geotoolkit.gml.xml.v311.ReferenceType;
+import org.geotoolkit.sos.xml.ObservationOffering;
 import org.geotoolkit.swe.xml.v101.PhenomenonType;
 import org.geotoolkit.swe.xml.v101.PhenomenonPropertyType;
 import org.geotoolkit.swe.xml.v101.TimeGeometricPrimitivePropertyType;
@@ -57,7 +57,7 @@ import org.geotoolkit.util.Utilities;
     "responseMode"
 })
 @XmlRootElement(name = "ObservationOffering")
-public class ObservationOfferingType extends AbstractFeatureType {
+public class ObservationOfferingType extends AbstractFeatureType implements ObservationOffering {
 
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlSchemaType(name = "token")
@@ -141,10 +141,11 @@ public class ObservationOfferingType extends AbstractFeatureType {
      * Sets the value of the eventTime property.
      */
     public void setTime(final AbstractTimeGeometricPrimitiveType value) {
-        if (time != null)
+        if (time != null) {
             this.time.setTimeGeometricPrimitive(value);
-        else
+        } else {
             this.time = new TimeGeometricPrimitivePropertyType(value);
+        }
     }
 
     /**
@@ -155,6 +156,18 @@ public class ObservationOfferingType extends AbstractFeatureType {
             procedure = new ArrayList<ReferenceType>();
         }
         return procedure;
+    }
+    
+    @Override
+    public List<String> getProcedures() {
+        if (procedure == null) {
+            procedure = new ArrayList<ReferenceType>();
+        }
+        final List<String> result = new ArrayList<String>();
+        for (ReferenceType ref : procedure) {
+            result.add(ref.getHref());
+        }
+        return result;
     }
     
     
@@ -172,6 +185,15 @@ public class ObservationOfferingType extends AbstractFeatureType {
             }
             return result;
         }
+    }
+    
+    @Override
+    public List<String> getObservedProperties() {
+        final List<String> result = new ArrayList<String>();
+        for (PhenomenonType phen : getObservedProperty()) {
+            result.add(phen.getId());
+        }
+        return result;
     }
     
     /**
@@ -197,6 +219,17 @@ public class ObservationOfferingType extends AbstractFeatureType {
         return featureOfInterest;
     }
 
+    @Override
+    public List<String> getFeatureOfInterestIds() {
+        if (featureOfInterest == null) {
+            featureOfInterest = new ArrayList<ReferenceType>();
+        }
+        final List<String> result = new ArrayList<String>();
+        for (ReferenceType ref : featureOfInterest) {
+            result.add(ref.getHref());
+        }
+        return result;
+    }
    
     /**
      * Return the value of the resultFormat property.
@@ -213,6 +246,7 @@ public class ObservationOfferingType extends AbstractFeatureType {
      * Return the value of the resultModel property.
      * 
      */
+    @Override
     public List<QName> getResultModel() {
         if (resultModel == null){
             resultModel = new ArrayList<QName>();
@@ -270,7 +304,7 @@ public class ObservationOfferingType extends AbstractFeatureType {
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder(super.toString()).append('\n');
-        s.append("time=" + time ).append('\n');
+        s.append("time=").append(time).append('\n');
         if (intendedApplication != null){
             s.append('\n').append("intendedApplication:").append('\n');
             for (String ss:intendedApplication){

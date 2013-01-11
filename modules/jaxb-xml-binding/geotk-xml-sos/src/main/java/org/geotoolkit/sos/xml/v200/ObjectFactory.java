@@ -331,8 +331,8 @@ public class ObjectFactory {
      * Create an instance of {@link CapabilitiesType.FilterCapabilities }
      * 
      */
-    public CapabilitiesType.FilterCapabilities createCapabilitiesTypeFilterCapabilities() {
-        return new CapabilitiesType.FilterCapabilities();
+    public FilterCapabilities createCapabilitiesTypeFilterCapabilities() {
+        return new FilterCapabilities();
     }
 
     /**

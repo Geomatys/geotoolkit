@@ -58,7 +58,7 @@ import org.geotoolkit.util.Utilities;
     "contents"
 })
 @XmlRootElement(name="Capabilities")
-public class Capabilities extends CapabilitiesBaseType implements SOSResponse {
+public class Capabilities extends CapabilitiesBaseType implements org.geotoolkit.sos.xml.Capabilities, SOSResponse {
 
     @XmlElement(name = "Filter_Capabilities")
     private FilterCapabilities filterCapabilities;
@@ -88,6 +88,7 @@ public class Capabilities extends CapabilitiesBaseType implements SOSResponse {
      * Return the value of the filterCapabilities property.
      * 
      */
+    @Override
     public FilterCapabilities getFilterCapabilities() {
         return filterCapabilities;
     }
@@ -95,6 +96,7 @@ public class Capabilities extends CapabilitiesBaseType implements SOSResponse {
     /**
      * Return the value of the contents property.
      */
+    @Override
     public Contents getContents() {
         return contents;
     }

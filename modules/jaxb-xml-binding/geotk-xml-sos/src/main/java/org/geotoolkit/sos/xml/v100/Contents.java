@@ -62,7 +62,7 @@ import org.geotoolkit.util.Utilities;
     "observationOfferingList"
 })
 @XmlRootElement(name = "Contents")
-public class Contents {
+public class Contents implements org.geotoolkit.sos.xml.Contents {
 
     @XmlElement(name = "ObservationOfferingList", required = true)
     private Contents.ObservationOfferingList observationOfferingList;
@@ -81,11 +81,23 @@ public class Contents {
         this.observationOfferingList = observationOfferingList;
     }
     
+    public Contents(final List<ObservationOfferingType> offerings) {
+        this.observationOfferingList = new ObservationOfferingList(offerings);
+    }
+    
     /**
      * Return the value of the observationOfferingList property.
      */
     public ObservationOfferingList getObservationOfferingList() {
         return observationOfferingList;
+    }
+    
+    @Override
+    public List<ObservationOfferingType> getOfferings() {
+        if (observationOfferingList != null) {
+            return observationOfferingList.getObservationOffering();
+        }
+        return new ArrayList<ObservationOfferingType>();
     }
 
     /**

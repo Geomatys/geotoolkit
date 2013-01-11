@@ -18,6 +18,7 @@
 package org.geotoolkit.sos.xml.v200;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -26,9 +27,11 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.namespace.QName;
 import org.geotoolkit.gml.xml.v321.EnvelopeType;
 import org.geotoolkit.gml.xml.v321.EnvelopeWithTimePeriodType;
 import org.geotoolkit.gml.xml.v321.TimePeriodType;
+import org.geotoolkit.sos.xml.ObservationOffering;
 import org.geotoolkit.swes.xml.v200.AbstractOfferingType;
 
 
@@ -95,7 +98,7 @@ import org.geotoolkit.swes.xml.v200.AbstractOfferingType;
     "observationType",
     "featureOfInterestType"
 })
-public class ObservationOfferingType extends AbstractOfferingType {
+public class ObservationOfferingType extends AbstractOfferingType implements ObservationOffering {
 
     private ObservationOfferingType.ObservedArea observedArea;
     private ObservationOfferingType.PhenomenonTime phenomenonTime;
@@ -221,6 +224,45 @@ public class ObservationOfferingType extends AbstractOfferingType {
         return this.featureOfInterestType;
     }
 
+    @Override
+    public List<String> getObservedProperties() {
+        return getObservableProperty();
+    }
+    
+    /**
+     * compatibility with SOS 1.0.0
+     */ 
+    @Override
+    public List<String> getProcedures() {
+        if (getProcedure() != null) {
+            return Arrays.asList(getProcedure());
+        }
+        return new ArrayList<String>();
+    }
+    
+    /**
+     * compatibility with SOS 1.0.0
+     */ 
+    @Override
+    public List<String> getSrsName() {
+        return new ArrayList<String>();
+    }
+
+    /**
+     * compatibility with SOS 1.0.0
+     */ 
+    @Override
+    public List<String> getFeatureOfInterestIds() {
+        return new ArrayList<String>();
+    }
+
+    /**
+     * compatibility with SOS 1.0.0
+     */
+    @Override
+    public List<QName> getResultModel() {
+        return new ArrayList<QName>();
+    }
 
     /**
      * <p>Java class for anonymous complex type.

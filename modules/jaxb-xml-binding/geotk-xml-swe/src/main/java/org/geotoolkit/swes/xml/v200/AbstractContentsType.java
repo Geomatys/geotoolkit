@@ -89,6 +89,17 @@ public abstract class AbstractContentsType extends AbstractSWESType {
     private List<AbstractContentsType.RelatedFeature> relatedFeature;
     private List<AbstractContentsType.Offering> offering;
 
+    public AbstractContentsType() {
+        
+    }
+    
+    public AbstractContentsType(final List<JAXBElement<? extends AbstractOfferingType>> offerings) {
+        this.offering = new ArrayList<Offering>();
+        for (JAXBElement<? extends AbstractOfferingType> off : offerings) {
+            this.offering.add(new Offering(off));
+        }
+    }
+    
     /**
      * Gets the value of the procedureDescriptionFormat property.
      * 
@@ -174,6 +185,16 @@ public abstract class AbstractContentsType extends AbstractSWESType {
 
         @XmlElementRef(name = "AbstractOffering", namespace = "http://www.opengis.net/swes/2.0", type = JAXBElement.class)
         private JAXBElement<? extends AbstractOfferingType> abstractOffering;
+
+        public Offering() {
+            
+        }
+        
+        public Offering(final JAXBElement<? extends AbstractOfferingType> off) {
+            if (off != null) {
+                this.abstractOffering = off;
+            }
+        }
 
         /**
          * Gets the value of the abstractOffering property.

@@ -96,6 +96,7 @@ public abstract class AbstractFeatureType extends AbstractGMLType implements Abs
     /**
      * Gets the value of the boundedBy property.
      */
+    @Override
     public BoundingShapeType getBoundedBy() {
         return boundedBy;
     }
@@ -117,6 +118,7 @@ public abstract class AbstractFeatureType extends AbstractGMLType implements Abs
     /**
      * Gets the value of the location property.
      */
+    @Override
     public LocationPropertyType getLocation() {
         return location;
     }
@@ -124,6 +126,7 @@ public abstract class AbstractFeatureType extends AbstractGMLType implements Abs
     /**
      * Get srs name list
      */
+    @Override
     public List<String> getSrsName(){
         if (srsName == null) {
             srsName = new ArrayList<String>();
@@ -212,13 +215,15 @@ public abstract class AbstractFeatureType extends AbstractGMLType implements Abs
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder(super.toString());
-        if (boundedBy != null)
+        if (boundedBy != null) {
             s.append("boundedBy:").append(boundedBy);
-        if (location != null)
+        }
+        if (location != null) {
             s.append("location:").append(location);
-        if (location != null)
+        }
+        if (location != null) {
             s.append("srsName:").append(srsName);
-
+        }
         return s.toString();
     }
 

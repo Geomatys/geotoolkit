@@ -19,11 +19,13 @@ package org.geotoolkit.sos.xml.v200;
 
 import java.util.ArrayList;
 import java.util.List;
+import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.swes.xml.v200.AbstractContentsType;
+import org.geotoolkit.swes.xml.v200.AbstractOfferingType;
 
 
 /**
@@ -53,7 +55,7 @@ import org.geotoolkit.swes.xml.v200.AbstractContentsType;
     "observationType",
     "featureOfInterestType"
 })
-public class ContentsType extends AbstractContentsType {
+public class ContentsType extends AbstractContentsType implements org.geotoolkit.sos.xml.Contents {
 
     @XmlSchemaType(name = "anyURI")
     private List<String> responseFormat;
@@ -62,6 +64,23 @@ public class ContentsType extends AbstractContentsType {
     @XmlSchemaType(name = "anyURI")
     private List<String> featureOfInterestType;
 
+    public ContentsType() {
+        
+    }
+    
+    public ContentsType(final List<ObservationOfferingType> offerings) {
+        super(buildJAXBList(offerings));
+    }
+    
+    private static List<JAXBElement<? extends AbstractOfferingType>> buildJAXBList(final List<ObservationOfferingType> offerings) {
+        final ObjectFactory factory = new ObjectFactory();
+        final List<JAXBElement<? extends AbstractOfferingType>> result = new ArrayList<JAXBElement<? extends AbstractOfferingType>>();
+        for (ObservationOfferingType off : offerings) {
+            result.add(factory.createObservationOffering(off));
+        }
+        return result;
+    }
+    
     /**
      * Gets the value of the responseFormat property.
      * 
@@ -104,4 +123,14 @@ public class ContentsType extends AbstractContentsType {
         return this.featureOfInterestType;
     }
 
+    @Override
+    public List<ObservationOfferingType> getOfferings() {
+        final List<ObservationOfferingType> result = new ArrayList<ObservationOfferingType>();
+        for (Offering off : super.getOffering()) {
+            if (off.getAbstractOffering() != null && off.getAbstractOffering().getValue() != null) {
+                result.add((ObservationOfferingType)off.getAbstractOffering().getValue());
+            }
+        }
+        return result;
+    }
 }
