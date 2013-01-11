@@ -60,7 +60,7 @@ public class ComplexToCoverageConverter extends AbstractComplexInputConverter<Gr
     @Override
     public GridCoverage2D convert(ComplexDataType source, Map<String, Object> params) throws NonconvertibleObjectException {
         
-          try {
+        try {
             if (params.get(ENCODING).equals(WPSEncoding.BASE64.getValue())) {
                 final List<Object> data = source.getContent();
                 if (data.size() != 1) {
@@ -72,7 +72,12 @@ public class ComplexToCoverageConverter extends AbstractComplexInputConverter<Gr
                     final InputStream is = new ByteArrayInputStream(byteData);
                     if (is != null) {
                         final ImageInputStream inStream = ImageIO.createImageInputStream(is);
-                        final ImageReader reader = XImageIO.getReaderByMIMEType((String)params.get(MIME), inStream, null, null);
+                        final ImageReader reader;
+                        if (source.getMimeType() != null) {
+                            reader = XImageIO.getReaderByMIMEType(source.getMimeType(), inStream, null, null);
+                        } else {
+                            reader = XImageIO.getReader(inStream, null, Boolean.FALSE);
+                        }
                         return (GridCoverage2D) CoverageIO.read(reader);
                     }
                 }

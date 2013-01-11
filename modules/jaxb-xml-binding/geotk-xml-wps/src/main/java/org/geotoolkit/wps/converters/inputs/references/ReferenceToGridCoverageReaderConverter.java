@@ -93,7 +93,12 @@ public final class ReferenceToGridCoverageReaderConverter extends AbstractRefere
             }
             
             if (imageStream != null) {
-                final ImageReader reader = XImageIO.getReaderByMIMEType(source.getMimeType(), imageStream, null, null);
+                final ImageReader reader;
+                if (source.getMimeType() != null) {
+                    reader = XImageIO.getReaderByMIMEType(source.getMimeType(), imageStream, null, null);
+                } else {
+                    reader = XImageIO.getReader(imageStream, null, Boolean.FALSE);
+                }
                 return CoverageIO.createSimpleReader(reader);
             } else {
                 throw new NonconvertibleObjectException("Error during image stream acquisition.");

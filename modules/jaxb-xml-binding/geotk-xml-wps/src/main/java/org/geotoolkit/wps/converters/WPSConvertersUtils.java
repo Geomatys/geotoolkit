@@ -598,7 +598,8 @@ public class WPSConvertersUtils {
             final PropertyType type = desc.getType();
             Class binded = type.getBinding();
             if(RenderedImage.class.isAssignableFrom(binded) ||
-                    Coverage.class.isAssignableFrom(binded)) {
+                    Coverage.class.isAssignableFrom(binded) ||
+                    File.class.isAssignableFrom(binded)) {
                 final DefaultPropertyType newType = new DefaultPropertyType(type.getName(), 
                         URL.class, 
                         false, 

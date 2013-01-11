@@ -90,7 +90,12 @@ public final class ReferenceToGridCoverage2DConverter extends AbstractReferenceI
             }
             
             if (imageStream != null) {
-                final ImageReader reader = XImageIO.getReaderByMIMEType(source.getMimeType(), imageStream, null, null);
+                final ImageReader reader;
+                if (source.getMimeType() != null) {
+                    reader = XImageIO.getReaderByMIMEType(source.getMimeType(), imageStream, null, null);
+                } else {
+                    reader = XImageIO.getReader(imageStream, null, Boolean.FALSE);
+                }
                 return (GridCoverage2D) CoverageIO.read(reader);
             } else {
                 throw new NonconvertibleObjectException("Error during image stream acquisition.");
