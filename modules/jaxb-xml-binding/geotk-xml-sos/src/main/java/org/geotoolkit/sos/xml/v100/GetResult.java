@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.util.Utilities;
+import org.opengis.filter.Filter;
 
 
 /**
@@ -102,6 +103,17 @@ public class GetResult extends RequestBaseType {
             eventTime = new ArrayList<EventTime>();
         }
         return eventTime;
+    }
+    
+    public List<Filter> getTemporalFilter() {
+        if (eventTime != null) {
+            final List<Filter> temporalFilter = new ArrayList<Filter>();
+            for (EventTime time : eventTime) {
+                temporalFilter.add(time.getFilter());
+            }
+            return temporalFilter;
+        }
+        return new ArrayList<Filter>();
     }
     
     /**

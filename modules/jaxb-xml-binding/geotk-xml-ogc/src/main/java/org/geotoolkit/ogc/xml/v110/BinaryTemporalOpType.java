@@ -91,7 +91,8 @@ public class BinaryTemporalOpType extends TemporalOpsType implements BinaryTempo
     /**
      * Build a new temporal operator with the specified objects.
      */
-    public BinaryTemporalOpType(final Object... elements){
+    public BinaryTemporalOpType(final String propertyName, final Object... elements){
+        this.propertyName = propertyName;
         rest = new ArrayList<Object>();
         for (Object obj: elements){
             rest.add(obj);
@@ -137,18 +138,22 @@ public class BinaryTemporalOpType extends TemporalOpsType implements BinaryTempo
         return sb.toString();
     }
 
+    @Override
     public boolean evaluate(Object o) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public Object accept(FilterVisitor fv, Object o) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public Expression getExpression1() {
         return new PropertyNameType(propertyName);
     }
 
+    @Override
     public Expression getExpression2() {
         if (rest != null && !rest.isEmpty()) {
             return (Expression) rest.get(0);

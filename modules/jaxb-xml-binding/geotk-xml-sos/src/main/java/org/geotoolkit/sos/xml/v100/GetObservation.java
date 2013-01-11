@@ -17,6 +17,7 @@
 package org.geotoolkit.sos.xml.v100;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -37,6 +38,7 @@ import org.geotoolkit.ogc.xml.v110.PropertyIsLikeType;
 import org.geotoolkit.ogc.xml.v110.PropertyIsNullType;
 import org.geotoolkit.ogc.xml.v110.SpatialOpsType;
 import org.geotoolkit.util.Utilities;
+import org.opengis.filter.Filter;
 import org.opengis.filter.PropertyIsBetween;
 import org.opengis.filter.PropertyIsEqualTo;
 import org.opengis.filter.PropertyIsGreaterThan;
@@ -121,7 +123,7 @@ import org.opengis.filter.PropertyIsNull;
     "responseMode"
 })
 @XmlRootElement(name = "GetObservation")
-public class GetObservation extends RequestBaseType {
+public class GetObservation extends RequestBaseType implements org.geotoolkit.sos.xml.GetObservation {
 
     @XmlSchemaType(name = "anyURI")
     private String offering;
@@ -175,6 +177,18 @@ public class GetObservation extends RequestBaseType {
     public String getOffering() {
         return offering;
     }
+    
+    /**
+     * compatibility with SOS 2.0.0
+     * @return 
+     */
+    @Override
+    public List<String> getOfferings() {
+        if (offering != null) {
+            return Arrays.asList(offering);
+        }
+        return new ArrayList<String>();
+    }
 
     /**
      * Gets the value of the eventTime property.
@@ -190,6 +204,7 @@ public class GetObservation extends RequestBaseType {
      * Gets the value of the procedure property.
      * (unmodifiable)
      */
+    @Override
     public List<String> getProcedure() {
         if (procedure == null) {
             procedure = new ArrayList<String>();
@@ -201,6 +216,7 @@ public class GetObservation extends RequestBaseType {
      * Gets the value of the observedProperty property.
      * (unmodifiable)
      */
+    @Override
     public List<String> getObservedProperty() {
         if (observedProperty == null) {
             observedProperty = new ArrayList<String>();
@@ -225,6 +241,7 @@ public class GetObservation extends RequestBaseType {
     /**
      * Gets the value of the responseFormat property.
      */
+    @Override
     public String getResponseFormat() {
         return responseFormat;
     }
@@ -232,6 +249,7 @@ public class GetObservation extends RequestBaseType {
     /**
      * Gets the value of the resultModel property.
      */
+    @Override
     public QName getResultModel() {
         return resultModel;
     }
@@ -239,6 +257,7 @@ public class GetObservation extends RequestBaseType {
     /**
      * Gets the value of the responseMode property.
      */
+    @Override
     public String getResponseMode() {
         return responseMode;
     }
@@ -246,10 +265,47 @@ public class GetObservation extends RequestBaseType {
     /**
      * Gets the value of the srsName property.
      */
+    @Override
     public String getSrsName() {
         return srsName;
     }
 
+    @Override
+    public List<String> getFeatureIds() {
+        if (featureOfInterest != null) {
+            return featureOfInterest.getObjectID();
+        }
+        return new ArrayList<String>();
+    }
+    
+    @Override
+    public Filter getSpatialFilter() {
+        if (featureOfInterest != null) {
+            return featureOfInterest.getSpatialOps();
+        }
+        return null;
+    }
+
+    @Override
+    public Filter getComparisonFilter() {
+        if (result != null) {
+            return result.getFilter();
+        }
+        return null;
+    }
+    
+    @Override
+    public List<Filter> getTemporalFilter() {
+        if (eventTime != null) {
+            final List<Filter> temporalFilter = new ArrayList<Filter>();
+            for (EventTime time : eventTime) {
+                temporalFilter.add(time.getFilter());
+            }
+            return temporalFilter;
+        }
+        return new ArrayList<Filter>();
+    }
+    
     /**
      * Verify if this entry is identical to�the specified object.
      */
@@ -296,14 +352,18 @@ public class GetObservation extends RequestBaseType {
         s.append('\n').append("offering=").append(offering).append('\n');
         s.append("Response format:").append(responseFormat).append('\n');
         s.append("SRS name:").append(srsName).append('\n');
-        if (featureOfInterest != null)
+        if (featureOfInterest != null) {
             s.append("featureOfInterest:").append('\n').append(featureOfInterest.toString()).append('\n');
-        if (responseMode != null)
+        }
+        if (responseMode != null) {
              s.append("response mode:").append('\n').append(responseMode.toString()).append('\n');
-        if (result != null) 
+        }
+        if (result != null) {
              s.append("result:").append('\n').append(result.toString()).append('\n');
-        if (resultModel != null) 
+        }
+        if (resultModel != null) {
              s.append("result model:").append('\n').append(resultModel.toString()).append('\n');
+        }
         
         s.append("observed properties:").append('\n');
         if (observedProperty != null) {
@@ -323,7 +383,7 @@ public class GetObservation extends RequestBaseType {
         }
         return s.toString();
     }
-    
+
    /**
      * <p>Java class for anonymous complex type.
      * 
@@ -424,29 +484,29 @@ public class GetObservation extends RequestBaseType {
          *     
          */
         public SpatialOpsType getSpatialOps() {
-            if (bbox != null)
+            if (bbox != null) {
                 return bbox;
-            else if (intersects != null)
+            } else if (intersects != null) {
                 return intersects;
-            else if (touches != null)
+            } else if (touches != null) {
                 return touches;
-            else if (dWithin != null)
+            } else if (dWithin != null) {
                 return dWithin;
-            else if (disjoint != null)
+            } else if (disjoint != null) {
                 return disjoint;
-            else if (crosses != null)
+            } else if (crosses != null) {
                 return crosses;
-            else if (contains != null)
+            } else if (contains != null) {
                 return contains;
-            else if (beyond != null)
+            } else if (beyond != null) {
                 return beyond;
-            else if (equals != null)
+            } else if (equals != null) {
                 return equals;
-            else if (overlaps != null)
+            } else if (overlaps != null) {
                 return overlaps;
-            else if (within != null)
+            } else if (within != null) {
                 return within;
-            
+            }
             return spatialOps;
         }
 
@@ -748,6 +808,31 @@ public class GetObservation extends RequestBaseType {
             return propertyIsNull;
         }
 
+        public Filter getFilter() {
+            if (this.propertyIsLessThan != null) {
+                return this.propertyIsLessThan;
+            } else if (this.propertyIsGreaterThanOrEqualTo != null) {
+                return this.propertyIsGreaterThanOrEqualTo;
+            } else if (this.propertyIsBetween != null) {
+                return this.propertyIsBetween;
+            } else if (this.propertyIsEqualTo != null) {
+                return this.propertyIsEqualTo;
+            } else if (this.propertyIsGreaterThan != null) {
+                return this.propertyIsGreaterThan;
+            } else if (this.propertyIsLessThan != null) {
+                return this.propertyIsLessThan;
+            } else if (this.propertyIsLessThanOrEqualTo != null) {
+                return this.propertyIsLessThanOrEqualTo;
+            } else if (this.propertyIsLike != null) {
+                return this.propertyIsLike;
+            } else if (this.propertyIsNotEqualTo != null) {
+                return this.propertyIsNotEqualTo;
+            } else if (this.propertyIsNull != null) {
+                return this.propertyIsNull;
+            } else {
+                return comparisonOps;
+            }
+        }
         
         /**
          * Verify if this entry is identical to�the specified object.

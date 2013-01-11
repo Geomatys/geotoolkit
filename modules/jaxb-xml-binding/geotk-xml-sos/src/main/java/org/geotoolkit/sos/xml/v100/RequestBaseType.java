@@ -24,7 +24,6 @@ import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ows.xml.RequestBase;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.Version;
-import org.geotoolkit.util.Versioned;
 
 
 /**
@@ -113,6 +112,7 @@ public class RequestBaseType implements RequestBase {
         return null;
     }
     
+    @Override
     public void setVersion(final String version) {
         this.version = version;
     }

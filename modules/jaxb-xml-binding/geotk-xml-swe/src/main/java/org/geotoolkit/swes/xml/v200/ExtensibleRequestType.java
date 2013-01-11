@@ -24,6 +24,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.ows.xml.RequestBase;
+import org.geotoolkit.util.Version;
 
 
 /**
@@ -65,7 +67,7 @@ import javax.xml.bind.annotation.XmlType;
     InsertSensorType.class,
     UpdateSensorDescriptionType.class
 })
-public abstract class ExtensibleRequestType {
+public abstract class ExtensibleRequestType implements RequestBase {
 
     private List<Object> extension;
     @XmlAttribute(required = true)
@@ -96,8 +98,12 @@ public abstract class ExtensibleRequestType {
      *     {@link String }
      *     
      */
-    public String getVersion() {
-        return version;
+    @Override
+    public Version getVersion() {
+        if (version != null) {
+            return new Version(version);
+        }
+        return null;
     }
 
     /**
@@ -108,6 +114,7 @@ public abstract class ExtensibleRequestType {
      *     {@link String }
      *     
      */
+    @Override
     public void setVersion(String value) {
         this.version = value;
     }
@@ -120,6 +127,7 @@ public abstract class ExtensibleRequestType {
      *     {@link String }
      *     
      */
+    @Override
     public String getService() {
         return service;
     }
@@ -132,6 +140,7 @@ public abstract class ExtensibleRequestType {
      *     {@link String }
      *     
      */
+    @Override
     public void setService(String value) {
         this.service = value;
     }

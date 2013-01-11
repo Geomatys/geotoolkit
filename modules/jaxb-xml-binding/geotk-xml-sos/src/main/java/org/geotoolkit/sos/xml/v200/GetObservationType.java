@@ -25,13 +25,12 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.ogc.xml.v200.BBOXType;
-import org.geotoolkit.ogc.xml.v200.BinarySpatialOpType;
-import org.geotoolkit.ogc.xml.v200.BinaryTemporalOpType;
-import org.geotoolkit.ogc.xml.v200.DistanceBufferType;
+import javax.xml.namespace.QName;
 import org.geotoolkit.ogc.xml.v200.SpatialOpsType;
 import org.geotoolkit.ogc.xml.v200.TemporalOpsType;
+import org.geotoolkit.sos.xml.GetObservation;
 import org.geotoolkit.swes.xml.v200.ExtensibleRequestType;
+import org.opengis.filter.Filter;
 
 
 /**
@@ -89,7 +88,7 @@ import org.geotoolkit.swes.xml.v200.ExtensibleRequestType;
     "spatialFilter",
     "responseFormat"
 })
-public class GetObservationType extends ExtensibleRequestType {
+public class GetObservationType extends ExtensibleRequestType implements GetObservation {
 
     @XmlSchemaType(name = "anyURI")
     private List<String> procedure;
@@ -111,6 +110,7 @@ public class GetObservationType extends ExtensibleRequestType {
      * {@link String }
      * 
      */
+    @Override
     public List<String> getProcedure() {
         if (procedure == null) {
             procedure = new ArrayList<String>();
@@ -125,7 +125,8 @@ public class GetObservationType extends ExtensibleRequestType {
      * {@link String }
      * 
      */
-    public List<String> getOffering() {
+    @Override
+    public List<String> getOfferings() {
         if (offering == null) {
             offering = new ArrayList<String>();
         }
@@ -139,6 +140,7 @@ public class GetObservationType extends ExtensibleRequestType {
      * {@link String }
      * 
      */
+    @Override
     public List<String> getObservedProperty() {
         if (observedProperty == null) {
             observedProperty = new ArrayList<String>();
@@ -153,11 +155,18 @@ public class GetObservationType extends ExtensibleRequestType {
      * {@link GetObservationType.TemporalFilter }
      * 
      */
-    public List<GetObservationType.TemporalFilter> getTemporalFilter() {
+    @Override
+    public List<Filter> getTemporalFilter() {
         if (temporalFilter == null) {
             temporalFilter = new ArrayList<GetObservationType.TemporalFilter>();
         }
-        return this.temporalFilter;
+        final List<Filter> result = new ArrayList<Filter>();
+        for (GetObservationType.TemporalFilter tf : temporalFilter) {
+            if (tf.temporalOps != null) {
+                result.add(tf.temporalOps.getValue());
+            }
+        }
+        return result;
     }
 
     /**
@@ -167,23 +176,12 @@ public class GetObservationType extends ExtensibleRequestType {
      * {@link String }
      * 
      */
-    public List<String> getFeatureOfInterest() {
+    @Override
+    public List<String> getFeatureIds() {
         if (featureOfInterest == null) {
             featureOfInterest = new ArrayList<String>();
         }
         return this.featureOfInterest;
-    }
-
-    /**
-     * Gets the value of the spatialFilter property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link GetObservationType.SpatialFilter }
-     *     
-     */
-    public GetObservationType.SpatialFilter getSpatialFilter() {
-        return spatialFilter;
     }
 
     /**
@@ -206,6 +204,7 @@ public class GetObservationType extends ExtensibleRequestType {
      *     {@link String }
      *     
      */
+    @Override
     public String getResponseFormat() {
         return responseFormat;
     }
@@ -222,7 +221,38 @@ public class GetObservationType extends ExtensibleRequestType {
         this.responseFormat = value;
     }
 
+    /**
+     * retro-compatibility with SOS 1.0.0
+     * @return always {@code null}
+     */
+    @Override
+    public QName getResultModel() {
+        return null;
+    }
 
+    @Override
+    public String getResponseMode() {
+        return "inline";
+    }
+
+    @Override
+    public String getSrsName() {
+        return "urn:ogc:def:crs:EPSG::4326";
+    }
+
+    @Override
+    public Filter getSpatialFilter() {
+        if (spatialFilter != null && spatialFilter.spatialOps != null) {
+            return spatialFilter.spatialOps.getValue();
+        }
+        return null;
+    }
+
+    @Override
+    public Filter getComparisonFilter() {
+        return null;
+    }
+    
     /**
      * <p>Java class for anonymous complex type.
      * 
