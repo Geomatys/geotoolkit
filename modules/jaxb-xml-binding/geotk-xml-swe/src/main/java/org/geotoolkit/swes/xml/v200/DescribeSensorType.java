@@ -77,6 +77,16 @@ public class DescribeSensorType extends ExtensibleRequestType implements Describ
     private String procedureDescriptionFormat;
     private DescribeSensorType.ValidTime validTime;
 
+    public DescribeSensorType() {
+        
+    }
+    
+    public DescribeSensorType(final String version, final String service, final String procedure, final String procedureDescriptionFormat) {
+        super(version, service);
+        this.procedureDescriptionFormat = procedureDescriptionFormat;
+        this.procedure = procedure;
+    }
+    
     /**
      * Gets the value of the procedure property.
      * 

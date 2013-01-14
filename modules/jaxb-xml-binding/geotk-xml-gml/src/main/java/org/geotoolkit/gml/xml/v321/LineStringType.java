@@ -97,7 +97,7 @@ public class LineStringType extends AbstractCurveType implements LineString {
         this.pointPropertyOrPointRep = new ArrayList<JAXBElement<?>>();
         final ObjectFactory factory = new ObjectFactory();
         for (DirectPosition currentPos : positions) {
-            final DirectPositionType position = new DirectPositionType(currentPos);
+            final DirectPositionType position = new DirectPositionType(currentPos, true);
             pointPropertyOrPointRep.add(factory.createPos(position));
         }
     }

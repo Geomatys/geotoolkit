@@ -162,15 +162,6 @@ public class DirectPositionType implements DirectPosition, org.geotoolkit.gml.xm
      *
      * @param values a List of coordinates.
      */
-    public DirectPositionType(final DirectPosition position) {
-        this(position, true);
-    }
-
-    /**
-     * Build a light direct position.
-     *
-     * @param values a List of coordinates.
-     */
     public DirectPositionType(final DirectPosition position, final boolean srsInfo) {
         if (position != null) {
             this.value = new ArrayList<Double>();
@@ -192,9 +183,26 @@ public class DirectPositionType implements DirectPosition, org.geotoolkit.gml.xm
     }
     
     /**
+     * Build a light direct position.
+     *
+     * @param values a List of coordinates.
+     */
+    public DirectPositionType(final org.geotoolkit.gml.xml.DirectPosition position) {
+        if (position != null) {
+            this.axisLabels   = position.getAxisLabels();
+            this.srsDimension = position.getSrsDimension();
+            this.srsName      = position.getSrsName();
+            this.uomLabels    = position.getUomLabels();
+            this.value        = position.getValue();
+        }
+    }
+
+    
+    /**
      * A type for a list of values of the respective simple type.Gets the value of the value property.
      * 
      */
+    @Override
     public List<Double> getValue() {
         if (value == null) {
             value = new ArrayList<Double>();
@@ -210,6 +218,7 @@ public class DirectPositionType implements DirectPosition, org.geotoolkit.gml.xm
      *     {@link String }
      *     
      */
+    @Override
     public String getSrsName() {
         return srsName;
     }
@@ -234,6 +243,7 @@ public class DirectPositionType implements DirectPosition, org.geotoolkit.gml.xm
      *     {@link Integer }
      *     
      */
+    @Override
     public Integer getSrsDimension() {
         return srsDimension;
     }
@@ -254,6 +264,7 @@ public class DirectPositionType implements DirectPosition, org.geotoolkit.gml.xm
      * Gets the value of the axisLabels property.
      * 
      */
+    @Override
     public List<String> getAxisLabels() {
         if (axisLabels == null) {
             axisLabels = new ArrayList<String>();
@@ -265,6 +276,7 @@ public class DirectPositionType implements DirectPosition, org.geotoolkit.gml.xm
      * Gets the value of the uomLabels property.
      * 
      */
+    @Override
     public List<String> getUomLabels() {
         if (uomLabels == null) {
             uomLabels = new ArrayList<String>();

@@ -31,5 +31,6 @@ public interface Coordinates {
     String getCs();
 
     String getTs();
-
+    
+    String getDecimal();
 }

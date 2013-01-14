@@ -18,7 +18,6 @@
 
 package org.geotoolkit.gml.xml.v321;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -29,6 +28,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.gml.xml.DirectPosition;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.logging.Logging;
@@ -133,6 +133,30 @@ public class EnvelopeType implements Envelope, org.geotoolkit.gml.xml.Envelope {
             this.srsName      = that.srsName;
         }
     }
+    
+    public EnvelopeType(final org.geotoolkit.gml.xml.Envelope that) {
+        if (that != null) {
+            if (that.getLowerCorner() != null) {
+                this.lowerCorner = new DirectPositionType(that.getLowerCorner());
+            }
+            if (that.getUpperCorner() != null) {
+                this.upperCorner = new DirectPositionType(that.getUpperCorner());
+            }
+            this.srsDimension = that.getSrsDimension();
+            this.srsName      = that.getSrsName();
+            this.axisLabels   = that.getAxisLabels();
+            this.uomLabels    = that.getUomLabels();
+            if (that.getCoordinates() != null) {
+                this.coordinates  = new CoordinatesType(that.getCoordinates());
+            }
+            if (that.getPos() != null) {
+                this.pos = new ArrayList<DirectPositionType>();
+                for (DirectPosition p : that.getPos()) {
+                    this.pos.add(new DirectPositionType(p));
+                }
+            }
+        }
+    }
 
     /**
      * Gets the value of the lowerCorner property.
@@ -192,6 +216,7 @@ public class EnvelopeType implements Envelope, org.geotoolkit.gml.xml.Envelope {
      * 
      * 
      */
+    @Override
     public List<DirectPositionType> getPos() {
         if (pos == null) {
             pos = new ArrayList<DirectPositionType>();
@@ -207,6 +232,7 @@ public class EnvelopeType implements Envelope, org.geotoolkit.gml.xml.Envelope {
      *     {@link CoordinatesType }
      *     
      */
+    @Override
     public CoordinatesType getCoordinates() {
         return coordinates;
     }
@@ -256,6 +282,7 @@ public class EnvelopeType implements Envelope, org.geotoolkit.gml.xml.Envelope {
      *     {@link BigInteger }
      *     
      */
+    @Override
     public Integer getSrsDimension() {
         return srsDimension;
     }
@@ -280,6 +307,7 @@ public class EnvelopeType implements Envelope, org.geotoolkit.gml.xml.Envelope {
      * 
      * 
      */
+    @Override
     public List<String> getAxisLabels() {
         if (axisLabels == null) {
             axisLabels = new ArrayList<String>();
@@ -295,6 +323,7 @@ public class EnvelopeType implements Envelope, org.geotoolkit.gml.xml.Envelope {
      * 
      * 
      */
+    @Override
     public List<String> getUomLabels() {
         if (uomLabels == null) {
             uomLabels = new ArrayList<String>();

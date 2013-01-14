@@ -75,6 +75,15 @@ public abstract class ExtensibleRequestType implements RequestBase {
     @XmlAttribute(required = true)
     private String service;
 
+    public ExtensibleRequestType() {
+        
+    }
+    
+    public ExtensibleRequestType(final String version, final String service) {
+        this.service = service;
+        this.version = version;
+    }
+    
     /**
      * Gets the value of the extension property.
      * 

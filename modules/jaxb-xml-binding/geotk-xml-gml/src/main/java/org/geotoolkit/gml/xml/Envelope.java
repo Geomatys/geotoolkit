@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.gml.xml;
 
+import java.util.List;
+
 /**
  *
  * @author Guilhem Legal (Geomatys)
@@ -24,7 +26,17 @@ public interface Envelope {
     
     String getSrsName();
     
+    Integer getSrsDimension();
+            
     DirectPosition getLowerCorner();
     
     DirectPosition getUpperCorner();
+    
+    List<String> getAxisLabels();
+    
+    List<String> getUomLabels();
+    
+    Coordinates getCoordinates();
+    
+     List<? extends DirectPosition> getPos();
 }

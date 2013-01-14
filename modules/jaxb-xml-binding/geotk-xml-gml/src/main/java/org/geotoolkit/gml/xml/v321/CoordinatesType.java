@@ -78,12 +78,12 @@ public class CoordinatesType implements Coordinates {
         
     }
     
-    public CoordinatesType(final CoordinatesType that) {
+    public CoordinatesType(final Coordinates that) {
         if (that != null) {
-            this.cs      = that.cs;
-            this.decimal = that.decimal;
-            this.ts      = that.cs;
-            this.value   = that.value;
+            this.cs      = that.getCs();
+            this.decimal = that.getDecimal();
+            this.ts      = that.getTs();
+            this.value   = that.getValue();
         }
     }
     /**
@@ -157,6 +157,7 @@ public class CoordinatesType implements Coordinates {
      *     {@link String }
      *
      */
+    @Override
     public String getDecimal() {
         if (decimal == null) {
             return ".";

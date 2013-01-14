@@ -28,4 +28,12 @@ public interface DirectPosition {
     
     double getOrdinate(final int dimension);
     
+    String getSrsName();
+    
+    Integer getSrsDimension();
+    
+    List<String> getAxisLabels();
+    
+    List<String> getUomLabels();
+    
 }
