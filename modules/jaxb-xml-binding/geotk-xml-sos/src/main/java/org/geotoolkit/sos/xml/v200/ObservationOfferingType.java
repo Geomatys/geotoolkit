@@ -110,6 +110,26 @@ public class ObservationOfferingType extends AbstractOfferingType implements Obs
     @XmlSchemaType(name = "anyURI")
     private List<String> featureOfInterestType;
 
+    public ObservationOfferingType() {
+        
+    }
+    
+    /**
+     *  Build a new offering.
+     */ 
+    public ObservationOfferingType(final String id, final String name, final String description, final EnvelopeType observedArea, 
+            final TimePeriodType phenomenonTime, final String procedure, final List<String> observedProperty, final List<String> featureOfInterest,
+            final List<String> responseFormat, final List<String> resultModel) {
+        
+        super(id, name, description, procedure, observedProperty, featureOfInterest);
+        this.responseFormat    = responseFormat;
+        this.observationType   = resultModel;
+        if (phenomenonTime != null) {
+            this.phenomenonTime    = new PhenomenonTime();
+        }
+    }
+
+    
     /**
      * Gets the value of the observedArea property.
      * 
@@ -349,6 +369,14 @@ public class ObservationOfferingType extends AbstractOfferingType implements Obs
         @XmlElement(name = "TimePeriod", namespace = "http://www.opengis.net/gml/3.2", required = true)
         private TimePeriodType timePeriod;
 
+        public PhenomenonTime() {
+        
+        }
+        
+        public PhenomenonTime(final TimePeriodType timePeriod) {
+            this.timePeriod = timePeriod;
+        }
+        
         /**
          * Gets the value of the timePeriod property.
          * 

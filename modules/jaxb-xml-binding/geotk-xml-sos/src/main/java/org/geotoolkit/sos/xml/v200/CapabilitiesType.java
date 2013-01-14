@@ -98,9 +98,11 @@ public class CapabilitiesType extends CapabilitiesBaseType implements Capabiliti
     
     public CapabilitiesType(final ServiceIdentification serviceIdentification, final ServiceProvider serviceProvider,
             final OperationsMetadata operationsMetadata, final String version, final String updateSequence, final FilterCapabilities filterCapabilities,
-            final Contents contents) {
+            final ContentsType contents) {
         super(serviceIdentification, serviceProvider, operationsMetadata, version, updateSequence);
-        this.contents           = contents;
+        if (contents != null) {
+            this.contents           = new Contents(contents);
+        }
         this.filterCapabilities = filterCapabilities;
                     
     }
@@ -178,7 +180,7 @@ public class CapabilitiesType extends CapabilitiesBaseType implements Capabiliti
         ServiceProvider       sp = null;
         OperationsMetadata    om = null;
         FilterCapabilities    fc = null;
-        Contents            cont = null;
+        ContentsType        cont = null;
 
         //we enter the information for service identification.
         if (sections.containsSection("ServiceIdentification") || sections.containsSection("All")) {
@@ -201,7 +203,9 @@ public class CapabilitiesType extends CapabilitiesBaseType implements Capabiliti
         }
 
         if (sections.containsSection("Contents") || sections.containsSection("All")) {
-            cont = contents;
+            if (contents != null) {
+                cont = contents.contents;
+            }
         }
         // we build and normalize the document
         return new CapabilitiesType(si, sp, om, "2.0.0", getUpdateSequence(), fc, cont);
@@ -235,6 +239,14 @@ public class CapabilitiesType extends CapabilitiesBaseType implements Capabiliti
         @XmlElement(name = "Contents", required = true)
         private ContentsType contents;
 
+        public Contents() {
+            
+        }
+        
+        public Contents(final ContentsType contents) {
+            this.contents = contents;
+        }
+        
         /**
          * Gets the value of the contents property.
          * 

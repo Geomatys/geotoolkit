@@ -125,7 +125,7 @@ public class SOSXmlFactory {
             if (filterCapabilities != null && !(filterCapabilities instanceof org.geotoolkit.sos.xml.v200.FilterCapabilities)) {
                 throw new IllegalArgumentException("unexpected object version for filterCapabilities element");
             }
-            if (contents != null && !(contents instanceof org.geotoolkit.sos.xml.v200.CapabilitiesType.Contents)) {
+            if (contents != null && !(contents instanceof org.geotoolkit.sos.xml.v200.ContentsType)) {
                 throw new IllegalArgumentException("unexpected object version for contents element");
             }
             return new org.geotoolkit.sos.xml.v200.CapabilitiesType((org.geotoolkit.ows.xml.v110.ServiceIdentification)serviceIdentification, 
@@ -134,7 +134,7 @@ public class SOSXmlFactory {
                                                                     version, 
                                                                     updateSequence, 
                                                                     (org.geotoolkit.sos.xml.v200.FilterCapabilities)filterCapabilities,
-                                                                    (org.geotoolkit.sos.xml.v200.CapabilitiesType.Contents)contents);
+                                                                    (org.geotoolkit.sos.xml.v200.ContentsType)contents);
         } else if ("1.0.0".equals(version)) {
             if (filterCapabilities != null && !(filterCapabilities instanceof org.geotoolkit.sos.xml.v100.FilterCapabilities)) {
                 throw new IllegalArgumentException("unexpected object version for filterCapabilities element");

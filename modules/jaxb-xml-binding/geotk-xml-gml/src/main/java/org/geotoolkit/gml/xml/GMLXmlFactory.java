@@ -19,6 +19,7 @@ package org.geotoolkit.gml.xml;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.opengis.temporal.Period;
 
 /**
  *
@@ -102,7 +103,6 @@ public class GMLXmlFactory {
     
     public LinearRing buildLinearRing(final String version,  final List<Double> coordList, final String srsName) {
         if ("3.2.1".equals(version)) {
-    
             final org.geotoolkit.gml.xml.v321.DirectPositionListType dpList = new org.geotoolkit.gml.xml.v321.DirectPositionListType(coordList);
             return new org.geotoolkit.gml.xml.v321.LinearRingType(srsName, dpList);
         } else if ("3.1.1".equals(version)) {
@@ -143,5 +143,22 @@ public class GMLXmlFactory {
         }
     }
     
+    public static Period createTimePeriod(final String version, final String dateBegin, final String dateEnd) {
+        if ("3.2.1".equals(version)) {
+            if (dateEnd == null) {
+                return new org.geotoolkit.gml.xml.v321.TimePeriodType(dateBegin);
+            } else {
+                return new org.geotoolkit.gml.xml.v321.TimePeriodType(dateBegin, dateEnd);
+            }
+        } else if ("3.1.1".equals(version)) {
+            if (dateEnd == null) {
+                return new org.geotoolkit.gml.xml.v311.TimePeriodType(dateBegin);
+            } else {
+                return new org.geotoolkit.gml.xml.v311.TimePeriodType(dateBegin, dateEnd);
+            }
+        } else {
+            throw new IllegalArgumentException("unexpected gml version number:" + version);
+        }
+    }
 
 }

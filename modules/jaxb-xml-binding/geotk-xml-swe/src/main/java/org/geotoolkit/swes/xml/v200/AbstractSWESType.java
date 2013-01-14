@@ -82,6 +82,19 @@ public abstract class AbstractSWESType {
     @XmlSchemaType(name = "ID")
     private String id;
 
+    public AbstractSWESType() {
+        
+    }
+    
+    public AbstractSWESType(final String id, final String name, final String description) {
+        this.id = id;
+        if (name != null) {
+            this.name = new ArrayList<CodeType>();
+            this.name.add(new CodeType(name));
+        }
+        this.description = description;
+    }
+    
     /**
      * Gets the value of the description property.
      * 

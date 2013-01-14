@@ -79,6 +79,17 @@ public abstract class AbstractOfferingType extends AbstractSWESType {
     private List<String> observableProperty;
     private List<AbstractOfferingType.RelatedFeature> relatedFeature;
 
+    public AbstractOfferingType() {
+        
+    }
+    
+    public AbstractOfferingType(final String id, final String name, final String description, final String procedure,
+            final List<String> observableProperty, final List<String> relatedFeature) {
+        super(id, name, description);
+        this.procedure = procedure;
+        this.observableProperty = observableProperty;
+    }
+    
     /**
      * Gets the value of the procedure property.
      * 

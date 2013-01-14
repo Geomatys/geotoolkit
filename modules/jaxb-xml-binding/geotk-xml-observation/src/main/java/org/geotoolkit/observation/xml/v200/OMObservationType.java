@@ -23,11 +23,14 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.gml.xml.v321.AbstractFeatureType;
 import org.geotoolkit.gml.xml.v321.FeaturePropertyType;
 import org.geotoolkit.gml.xml.v321.ReferenceType;
 import org.geotoolkit.gml.xml.v321.TimeInstantPropertyType;
 import org.geotoolkit.gml.xml.v321.TimePeriodPropertyType;
+import org.geotoolkit.internal.jaxb.metadata.DQ_Element;
+import org.geotoolkit.internal.jaxb.metadata.direct.MetadataAdapter;
 import org.opengis.metadata.Metadata;
 import org.opengis.metadata.quality.Element;
 
@@ -75,6 +78,7 @@ import org.opengis.metadata.quality.Element;
 public class OMObservationType extends AbstractFeatureType {
 
     private ReferenceType type;
+    @XmlJavaTypeAdapter(MetadataAdapter.class)
     private Metadata metadata;
     private List<ObservationContextPropertyType> relatedObservation;
     @XmlElement(required = true)
@@ -89,6 +93,7 @@ public class OMObservationType extends AbstractFeatureType {
     private ReferenceType observedProperty;
     @XmlElement(required = true, nillable = true)
     private FeaturePropertyType featureOfInterest;
+    @XmlJavaTypeAdapter(DQ_Element.class)
     private List<Element> resultQuality;
     @XmlElement(required = true)
     private Object result;
