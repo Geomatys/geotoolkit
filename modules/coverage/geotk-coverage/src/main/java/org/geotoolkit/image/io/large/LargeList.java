@@ -44,6 +44,8 @@ class LargeList {
     private long memoryCapacity;
     private long remainingCapacity;
     private final LinkedList<LargeRaster> list;
+    private final int minTileX;
+    private final int minTileY;
     private final int numXTiles;
     private final int numYTiles;
     private final QuadTreeDirectory qTD;
@@ -57,6 +59,7 @@ class LargeList {
 
     private final ImageReader imgReader;
     private final ImageWriter imgWriter;
+    private final boolean isWritableRenderedImage;
 
 
     /**
@@ -74,7 +77,7 @@ class LargeList {
         //cache properties.
         this.list           = new LinkedList<LargeRaster>();
         this.memoryCapacity = memoryCapacity;
-
+        isWritableRenderedImage = ri instanceof WritableRenderedImage;
         //image owner properties.
         this.cm                = ri.getColorModel();
         this.remainingCapacity = memoryCapacity;
@@ -84,6 +87,8 @@ class LargeList {
         this.riMinY            = ri.getMinY();
         this.riTileWidth       = ri.getTileWidth();
         this.riTileHeight      = ri.getTileHeight();
+        this.minTileX      = ri.getMinTileX();
+        this.minTileY      = ri.getMinTileY();
 
         //quad tree directory architecture.
         this.dirPath = TEMPORARY_PATH + "/img_"+ri.hashCode();
@@ -116,9 +121,11 @@ class LargeList {
      * @throws IOException if an error occurs during writing.
      */
     void add(int tileX, int tileY, WritableRaster raster) throws IOException {
+        final int tX = tileX - minTileX;
+        final int tY = tileY - minTileY;
         final long rastWeight = getRasterWeight(raster);
         if (rastWeight > memoryCapacity) throw new IllegalImageDimensionException("raster too large");
-        list.addLast(new LargeRaster(tileX, tileY, rastWeight, checkRaster(raster, tileX, tileY)));
+        list.addLast(new LargeRaster(tX, tY, rastWeight, checkRaster(raster, tX, tY)));
         remainingCapacity -= rastWeight;
         checkList();
     }
@@ -126,19 +133,21 @@ class LargeList {
     /**
      * Remove {@link Raster} at tileX tileY mosaic coordinates.
      *
-     * @param tileX mosaic coordinate in X direction.
-     * @param tileY mosaic coordinate in Y direction.
+     * @param tX mosaic index in X direction.
+     * @param tY mosaic index in Y direction.
      */
     void remove(int tileX, int tileY) {
+        final int tX = tileX - minTileX;
+        final int tY = tileY - minTileY;
         for (int id = 0, s = list.size(); id < s; id++) {
             final LargeRaster lr = list.get(id);
-            if (lr.getGridX() == tileX && lr.getGridY() == tileY) {
+            if (lr.getGridX() == tX && lr.getGridY() == tY) {
                 list.remove(id);
                 break;
             }
         }
         //quad tree
-        final File removeFile = new File(qTD.getPath(tileX, tileY));
+        final File removeFile = new File(qTD.getPath(tX, tY));
         //delete on hard disk if exist.
         if (removeFile.exists()) removeFile.delete();
     }
@@ -146,25 +155,27 @@ class LargeList {
     /**
      * Return {@link Raster} at tileX tileY mosaic coordinates.
      *
-     * @param tileX mosaic coordinate in X direction.
-     * @param tileY mosaic coordinate in Y direction.
+     * @param tileX mosaic index in X direction.
+     * @param tileY mosaic index in Y direction.
      * @return Raster at tileX tileY mosaic coordinates.
      * @throws IOException if an error occurs during reading..
      */
     Raster getRaster(int tileX, int tileY) throws IOException {
+        final int tX = tileX - minTileX;
+        final int tY = tileY - minTileY;
         for (int id = 0; id < list.size(); id++) {
             final LargeRaster lr = list.get(id);
-            if (lr.getGridX() == tileX && lr.getGridY() == tileY) return lr.getRaster();
+            if (lr.getGridX() == tX && lr.getGridY() == tY) return lr.getRaster();
         }
-        final File getFile = new File(qTD.getPath(tileX, tileY));
+        final File getFile = new File(qTD.getPath(tX, tY));
         if (getFile.exists()) {
             imgReader.setInput(ImageIO.createImageInputStream(getFile));
             final BufferedImage buff = imgReader.read(0);
             imgReader.dispose();
             //add in cache list.
-            final Raster wr       = checkRaster(buff.getRaster(), tileX, tileY);
+            final Raster wr       = checkRaster(buff.getRaster(), tX, tY);
             final long rastWeight = getRasterWeight(wr);
-            list.addLast(new LargeRaster(tileX, tileY, rastWeight, wr));
+            list.addLast(new LargeRaster(tX, tY, rastWeight, wr));
             remainingCapacity -= rastWeight;
             checkList();
             return wr;
@@ -181,8 +192,11 @@ class LargeList {
     Raster[] getTiles() throws IOException {
         int id = 0;
         final Raster[] rasters = new Raster[numXTiles * numYTiles];
-        for (int y = 0; y < numYTiles; y++)
-            for (int x = 0; x < numXTiles; x++) rasters[id++] = getRaster(x, y);
+        for (int ty = minTileY, tmy = minTileY+numYTiles; ty < tmy; ty++) {
+            for (int tx = minTileX, tmx = minTileX+numXTiles; tx < tmx; tx++) {
+                rasters[id++] = getRaster(tx, ty);
+            }
+        }
         return rasters;
     }
 
@@ -248,7 +262,9 @@ class LargeList {
      */
     private void writeRaster(LargeRaster lRaster) throws IOException {
         final File file = new File(qTD.getPath(lRaster.getGridX(), lRaster.getGridY()));
-        if (!file.exists()) writeRaster(file, lRaster.getRaster());
+        if (!file.exists() || isWritableRenderedImage) {
+            writeRaster(file, lRaster.getRaster());
+        }
     }
 
     /**
@@ -278,7 +294,7 @@ class LargeList {
         final int my = riTileHeight * ty + riMinY;
         if (raster.getMinX() != mx || raster.getMinY() != my) {
             RPOINT.setLocation(mx, my);
-            return Raster.createRaster(raster.getSampleModel(), raster.getDataBuffer(), RPOINT);
+            return Raster.createWritableRaster(raster.getSampleModel(), raster.getDataBuffer(), RPOINT);
         }
         return raster;
     }
@@ -304,7 +320,7 @@ class LargeList {
 /**
  * Contain {@link Raster} and different raster properties.
  *
- * @author remi Marechal (Geomatys).
+ * @author Remi Marechal (Geomatys).
  */
 class LargeRaster {
     private final int gridX;

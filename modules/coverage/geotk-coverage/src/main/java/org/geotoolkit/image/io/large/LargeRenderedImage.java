@@ -42,10 +42,10 @@ public class LargeRenderedImage implements RenderedImage {
     private static final int DEFAULT_TILE_SIZE = 256;
     private static final int MIN_TILE_SIZE = 64;
     private static final Point ptOffset = new Point();
-    private static final long DEFAULT_MEMORY_CAPACITY = 16000000;
+    private static final long DEFAULT_MEMORY_CAPACITY = 64000000;
 
     private final int minIndex;
-    private final int numImages;
+//    private final int numImages;
     private final ImageReader imageReader;
     private final int imageIndex;
     private final int width;
@@ -79,7 +79,7 @@ public class LargeRenderedImage implements RenderedImage {
         this.imageIndex  = imageIndex;
         this.minIndex    = imageReader.getMinIndex();
         this.imgParam    = new ImageReadParam();
-        this.numImages   = imageReader.getNumImages(true);
+//        this.numImages   = imageReader.getNumImages(true);
         this.width       = imageReader.getWidth(imageIndex);
         this.height      = imageReader.getHeight(imageIndex);
         this.tilecache = (tilecache != null) ? tilecache : LargeCache.getInstance(DEFAULT_MEMORY_CAPACITY);
@@ -102,16 +102,17 @@ public class LargeRenderedImage implements RenderedImage {
      */
     @Override
     public Vector<RenderedImage> getSources() {
-        if (vector != null) return vector;
-        vector = new Vector<RenderedImage>(numImages);
-        for (int id = minIndex; id < numImages; id++) {
-            try {
-                vector.add(new LargeRenderedImage(imageReader, id, tilecache, new Dimension(tileWidth, tileHeight)));
-            } catch (IOException ex) {
-                Logger.getLogger(LargeRenderedImage.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-        return vector;
+//        if (vector != null) return vector;
+//        vector = new Vector<RenderedImage>(numImages);
+//        for (int id = minIndex; id < numImages; id++) {
+//            try {
+//                vector.add(new LargeRenderedImage(imageReader, id, tilecache, new Dimension(tileWidth, tileHeight)));
+//            } catch (IOException ex) {
+//                Logger.getLogger(LargeRenderedImage.class.getName()).log(Level.SEVERE, null, ex);
+//            }
+//        }
+//        return vector;
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     /**

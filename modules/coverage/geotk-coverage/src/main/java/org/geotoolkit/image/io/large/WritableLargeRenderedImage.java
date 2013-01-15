@@ -22,6 +22,8 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.*;
 import java.util.Vector;
+import org.geotoolkit.image.iterator.PixelIterator;
+import org.geotoolkit.image.iterator.PixelIteratorFactory;
 
 /**
  *
@@ -45,6 +47,7 @@ public class WritableLargeRenderedImage implements WritableRenderedImage {
     private final int tileGridYOffset;
     private int minTileGridX;
     private int minTileGridY;
+    private boolean isCreate = false;
     private Vector<RenderedImage> vector = null;
 
     private final int nbrTileX;
@@ -263,11 +266,67 @@ public class WritableLargeRenderedImage implements WritableRenderedImage {
 
     @Override
     public Raster getData() {
+        //debug
+        if (width <= 5000 && height <= 5000) {
+            ptOffset.setLocation(minX, minY);
+            final WritableRaster wr = Raster.createWritableRaster(cm.createCompatibleSampleModel(width, height), ptOffset);
+            final Rectangle rect = new Rectangle();
+            int my = minY;
+            for (int ty = minTileGridY, tmy = minTileGridY + nbrTileY; ty < tmy; ty++) {
+                int mx = minX;
+                for (int tx = minTileGridX, tmx = minTileGridX + nbrTileX; tx < tmx; tx++) {
+                    final Raster r = tilecache.getTile(this, tx, ty);
+                    rect.setBounds(mx, my, tileWidth, tileHeight);
+                    //recopie
+                    final PixelIterator copix = PixelIteratorFactory.createDefaultWriteableIterator(wr, wr, rect);
+                    final PixelIterator pix = PixelIteratorFactory.createDefaultIterator(r, rect);
+                    while (copix.next()) {
+                        pix.next();
+                        copix.setSampleDouble(pix.getSampleDouble());
+                    }
+                    mx += tileWidth;
+                }
+                my += tileHeight;
+            }
+            return wr;
+        }
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public Raster getData(Rectangle rect) {
+        final int rx = Math.max(rect.x, minX);
+        final int ry = Math.max(rect.y, minY);
+        final int rw = Math.min(rect.x+rect.width, minX+width)-rx;
+        final int rh = Math.min(rect.y+rect.height, minY+height)-ry;
+        if (rw <= 5000 && rh <= 5000) {
+            ptOffset.setLocation(rx, ry);
+            final WritableRaster wr = Raster.createWritableRaster(cm.createCompatibleSampleModel(rw, rh), ptOffset);
+            final Rectangle area = new Rectangle();
+
+            int ty = minTileGridY  + (ry - minY) / tileHeight;
+            int tbx = minTileGridX + (rx - minX) / tileWidth;
+            int tmaxY = (ry+rh-minY+tileHeight-1)/tileHeight;
+            int tmaxX = (rx+rw-minX+tileWidth-1)/tileWidth;
+            for (; ty < tmaxY; ty++) {
+                for (int tx = tbx; tx < tmaxX; tx++) {
+                    final Raster r = tilecache.getTile(this, tx, ty);
+                    final int ix = Math.max(rx, minX + (tx-minTileGridX) * tileWidth);
+                    final int iy = Math.max(ry, minY + (ty-minTileGridY) * tileHeight);
+                    final int imx = Math.min(rx + rw, minX + (tx + 1 - minTileGridX) * tileWidth);
+                    final int imy = Math.min(ry + rh, minY + (ty + 1 - minTileGridY) * tileHeight);
+                    area.setBounds(ix, iy, imx-ix, imy-iy);
+                    //recopie
+                    final PixelIterator copix = PixelIteratorFactory.createDefaultWriteableIterator(wr, wr, area);
+                    final PixelIterator pix = PixelIteratorFactory.createDefaultIterator(r, area);
+                    while (copix.next()) {
+                        pix.next();
+                            copix.setSampleDouble(pix.getSampleDouble());
+                    }
+                }
+            }
+            return wr;
+        }
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

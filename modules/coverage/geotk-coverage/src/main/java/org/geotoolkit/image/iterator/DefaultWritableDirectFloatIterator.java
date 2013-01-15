@@ -82,6 +82,7 @@ class DefaultWritableDirectFloatIterator extends DefaultDirectFloatIterator {
         super(raster, subArea);
         checkRasters(raster, writableRaster, subArea);
         this.currentWritableRaster = writableRaster;
+        this.currentWritableDataArray = ((DataBufferFloat) writableRaster.getDataBuffer()).getData();
     }
 
     /**
