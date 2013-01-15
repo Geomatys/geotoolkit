@@ -27,6 +27,8 @@ import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
+import java.io.Reader;
+import java.io.StringReader;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -34,6 +36,9 @@ import java.util.List;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.xml.bind.JAXBElement;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
 import org.geotoolkit.geometry.jts.JTS;
 
 import org.geotoolkit.gml.xml.*;
@@ -68,6 +73,40 @@ public class GeometrytoJTS {
         return CRS.decode(name, true);
     }
 
+    /**
+     * Unmarshall given GML String and transform it in a JTS geometry.
+     * 
+     * @param gmlString
+     * @return
+     * @throws JAXBException
+     * @throws FactoryException 
+     */
+    public static Geometry toJTS(String gmlString) throws JAXBException, FactoryException{
+        final Reader reader = new StringReader(gmlString);
+        
+        Unmarshaller unmarshaller = null;
+        final Geometry geom;
+        try{
+            unmarshaller = GMLMarshallerPool.getInstance().acquireUnmarshaller();
+            Object jax = unmarshaller.unmarshal(reader);
+            
+            if(jax instanceof JAXBElement){
+                jax = ((JAXBElement)jax).getValue();
+            }
+            
+            if(jax instanceof AbstractGeometry){
+                geom = GeometrytoJTS.toJTS((AbstractGeometry)jax);
+            }else{
+                throw new JAXBException("Object is not a valid GML "+jax);
+            }
+        }finally{
+            if(unmarshaller != null){
+                GMLMarshallerPool.getInstance().release(unmarshaller);
+            }
+        }
+        return geom;
+    }
+    
     /**
      * Transform A GML envelope into JTS Polygon
      *
