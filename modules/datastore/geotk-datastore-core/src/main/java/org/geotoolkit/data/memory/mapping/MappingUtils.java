@@ -270,7 +270,7 @@ public final class MappingUtils {
     }
 
     private static Polygon convertToPolygon(final Point pt){
-        LinearRing ring = GF.createLinearRing(new Coordinate[]{pt.getCoordinate(),pt.getCoordinate(),pt.getCoordinate()});
+        LinearRing ring = GF.createLinearRing(new Coordinate[]{pt.getCoordinate(),pt.getCoordinate(),pt.getCoordinate(),pt.getCoordinate()});
         return GF.createPolygon(ring, new LinearRing[0]);
     }
 
