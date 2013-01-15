@@ -19,6 +19,7 @@ package org.geotoolkit.data.memory.mapping;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryCollection;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.LinearRing;
@@ -58,6 +59,8 @@ public final class MappingUtils {
             return convertToPolygon(geom);
         }else if(targetClass == MultiPolygon.class){
             return convertToMultiPolygon(geom);
+        }else if(targetClass == GeometryCollection.class){
+            return convertToGeometryCollection(geom);
         }
 
         return null;
@@ -334,6 +337,20 @@ public final class MappingUtils {
         return pt;
     }
 
+    private static GeometryCollection convertToGeometryCollection(final Geometry geom){
+        if(geom instanceof GeometryCollection){
+            return (GeometryCollection) geom;
+        }
+        
+        if(geom instanceof Point){
+            return convertToMultiPoint(geom);
+        }else if(geom instanceof LineString){
+            return convertToMultiLineString(geom);
+        }else if(geom instanceof Polygon){
+            return convertToMultiPolygon(geom);
+        }
+        return null;
+    }
 
 
 
