@@ -16,7 +16,7 @@
  */
 
 
-package org.geotoolkit.gml.xml.v321;
+package org.geotoolkit.gml.xml;
 
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
