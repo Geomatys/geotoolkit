@@ -16,14 +16,19 @@
  */
 package org.geotoolkit.gml;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Date;
 import org.geotoolkit.gml.xml.v311.TimeInstantType;
 import org.geotoolkit.gml.xml.v311.TimePeriodType;
 import org.geotoolkit.gml.xml.v311.TimePositionType;
+import org.geotoolkit.gts.xml.PeriodDurationType;
 import org.geotoolkit.temporal.factory.DefaultTemporalFactory;
 import org.opengis.temporal.Instant;
 import org.opengis.temporal.Period;
+import org.opengis.temporal.PeriodDuration;
 import org.opengis.temporal.Position;
+import org.opengis.util.InternationalString;
 
 /**
  *
@@ -65,4 +70,37 @@ public class GMLTemporalFactory extends DefaultTemporalFactory {
         }
         return null;
     }
+
+    @Override
+    public PeriodDuration createPeriodDuration(final InternationalString years, final InternationalString months, 
+        final InternationalString week, final InternationalString days, final InternationalString hours, 
+        final InternationalString minutes, final InternationalString seconds) {
+        BigInteger iyears = null;
+        if (years != null) {
+            iyears = new BigInteger(years.toString());
+        }
+        BigInteger imonths = null;
+        if (months != null) {
+            imonths = new BigInteger(months.toString());
+        }
+        BigInteger idays = null;
+        if (days != null) {
+            idays = new BigInteger(days.toString());
+        }
+        BigInteger ihours = null;
+        if (hours != null) {
+            ihours = new BigInteger(hours.toString());
+        }
+        BigInteger iminutes = null;
+        if (minutes != null) {
+            iminutes = new BigInteger(minutes.toString());
+        }
+        BigDecimal iseconds = null;
+        if (seconds != null) {
+            iseconds = new BigDecimal(seconds.toString());
+        }
+        return new PeriodDurationType(true, iyears, imonths, idays, ihours, iminutes, iseconds);
+    }
+    
+    
 }

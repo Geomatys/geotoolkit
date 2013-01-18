@@ -54,8 +54,8 @@ public class ObjectFactory {
      * Create an instance of {@link TMPeriodDurationPropertyType }
      * 
      */
-    public TMPeriodDurationPropertyType createTMPeriodDurationPropertyType() {
-        return new TMPeriodDurationPropertyType();
+    public PeriodDurationType createTMPeriodDurationPropertyType() {
+        return new PeriodDurationType();
     }
 
     /**
