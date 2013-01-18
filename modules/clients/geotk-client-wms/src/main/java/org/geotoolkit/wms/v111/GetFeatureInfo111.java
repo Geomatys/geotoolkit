@@ -25,6 +25,7 @@ import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.wms.AbstractGetFeatureInfo;
+import org.geotoolkit.wms.WebMapServer;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
@@ -45,6 +46,10 @@ public class GetFeatureInfo111 extends AbstractGetFeatureInfo {
      */
     public GetFeatureInfo111(final String serverURL, final ClientSecurity security){
         super(serverURL, "1.1.1", security);
+    }
+
+    public GetFeatureInfo111(final WebMapServer server, final ClientSecurity security){
+        super(server,"1.1.1", security);
     }
 
     /**

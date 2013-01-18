@@ -323,9 +323,9 @@ public class WebMapServer extends AbstractServer implements CoverageStore{
     public GetFeatureInfoRequest createGetFeatureInfo() {
         switch (getVersion()) {
             case v111:
-                return new GetFeatureInfo111(serverURL.toString(),getClientSecurity());
+                return new GetFeatureInfo111(this,getClientSecurity());
             case v130:
-                return new GetFeatureInfo130(serverURL.toString(),getClientSecurity());
+                return new GetFeatureInfo130(this,getClientSecurity());
             default:
                 throw new IllegalArgumentException("Version was not defined");
         }
