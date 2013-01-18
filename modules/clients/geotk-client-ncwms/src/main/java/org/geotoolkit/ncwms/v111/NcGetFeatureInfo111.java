@@ -19,12 +19,14 @@ package org.geotoolkit.ncwms.v111;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
+import org.geotoolkit.internal.referencing.CRSUtilities;
 
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.ncwms.AbstractNcGetFeatureInfo;
 import org.geotoolkit.security.ClientSecurity;
 
 import org.opengis.geometry.Envelope;
+import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 
 
@@ -63,8 +65,14 @@ public class NcGetFeatureInfo111 extends AbstractNcGetFeatureInfo {
         map.put("BBOX", sb.toString());
 
         try {
-            map.put("SRS", IdentifiedObjects.lookupIdentifier(env.getCoordinateReferenceSystem(), true));
+            String code = IdentifiedObjects.lookupIdentifier(env.getCoordinateReferenceSystem(), true);
+            if (code == null) {
+                code = IdentifiedObjects.lookupIdentifier(CRSUtilities.getCRS2D(env.getCoordinateReferenceSystem()), true);
+            }
+            map.put("SRS", code);
         } catch (FactoryException ex) {
+            LOGGER.log(Level.WARNING, null, ex);
+        } catch (TransformException ex) {
             LOGGER.log(Level.WARNING, null, ex);
         }
 

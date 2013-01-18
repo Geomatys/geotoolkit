@@ -20,28 +20,26 @@ package org.geotoolkit.gui.swing.propertyedit;
 import java.awt.Component;
 import java.awt.Font;
 import java.awt.Image;
-import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.ImageIcon;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.LayoutStyle.ComponentPlacement;
 
 import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.gui.swing.style.JTextExpressionPane;
 import org.geotoolkit.util.SimpleInternationalString;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
+import org.geotoolkit.gui.swing.style.JTextExpressionPane;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapLayer;
 
-import org.opengis.filter.expression.Expression;
-import org.opengis.filter.expression.Literal;
 
 /**
  * layer general information panel
- * 
+ *
  * @author Johann Sorel
  * @module pending
  */
@@ -53,7 +51,9 @@ public class LayerGeneralPanel extends javax.swing.JPanel implements PropertyPan
     /** Creates new form LayerGeneralPanel */
     public LayerGeneralPanel() {
         initComponents();
-        title = MessageBundle.getString("property_general_title");        
+        // TODO: finish implementation for extra dimensions and then, display this panel
+        jPanel1.setVisible(false);
+        title = MessageBundle.getString("property_general_title");
     }
 
     /** This method is called from within the constructor to
@@ -64,91 +64,65 @@ public class LayerGeneralPanel extends javax.swing.JPanel implements PropertyPan
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-
-
-
-
         jLabel15 = new JLabel();
         gui_jtf_name = new JTextField();
-        paneTemp = new JPanel();
+        jPanel1 = new JPanel();
+        guiTextExpressionUpper = new JTextExpressionPane();
+        guiTextExpressionLower = new JTextExpressionPane();
+        jComboBox1 = new JComboBox();
         jLabel1 = new JLabel();
         jLabel2 = new JLabel();
-        guiStartTemp = new JTextExpressionPane();
-        guiEndTemp = new JTextExpressionPane();
-        paneTemp1 = new JPanel();
         jLabel3 = new JLabel();
-        jLabel4 = new JLabel();
-        guiStartElev = new JTextExpressionPane();
-        guiEndElev = new JTextExpressionPane();
 
         jLabel15.setFont(jLabel15.getFont().deriveFont(jLabel15.getFont().getStyle() | Font.BOLD));
         jLabel15.setText(MessageBundle.getString("property_title")); // NOI18N
-        paneTemp.setBorder(BorderFactory.createTitledBorder(MessageBundle.getString("temporal_configuration"))); // NOI18N
-        jLabel1.setText(MessageBundle.getString("temporal_start")); // NOI18N
-        jLabel2.setText(MessageBundle.getString("temporal_end")); // NOI18N
-        GroupLayout paneTempLayout = new GroupLayout(paneTemp);
-        paneTemp.setLayout(paneTempLayout);
 
+        jPanel1.setName("New attribute"); // NOI18N
 
+        jLabel1.setText("Crs");
 
-        paneTempLayout.setHorizontalGroup(
-            paneTempLayout.createParallelGroup(Alignment.LEADING)
-            .addGroup(paneTempLayout.createSequentialGroup()
+        jLabel2.setText("lower");
+
+        jLabel3.setText("upper");
+
+        GroupLayout jPanel1Layout = new GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(paneTempLayout.createParallelGroup(Alignment.LEADING)
-                    .addGroup(paneTempLayout.createSequentialGroup()
+                .addGroup(jPanel1Layout.createParallelGroup(Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel1)
-                        .addPreferredGap(ComponentPlacement.RELATED)
-                        .addComponent(guiStartTemp, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                    .addGroup(paneTempLayout.createSequentialGroup()
-                        .addComponent(jLabel2)
-                        .addPreferredGap(ComponentPlacement.RELATED)
-                        .addComponent(guiEndTemp, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(33, 33, 33)
+                        .addComponent(jComboBox1, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addContainerGap())
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(Alignment.TRAILING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(jLabel3)
+                                .addPreferredGap(ComponentPlacement.RELATED, 16, Short.MAX_VALUE)
+                                .addComponent(guiTextExpressionUpper, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(jLabel2)
+                                .addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(guiTextExpressionLower, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
+                        .addGap(21, 122, Short.MAX_VALUE))))
         );
-        paneTempLayout.setVerticalGroup(
-            paneTempLayout.createParallelGroup(Alignment.LEADING)
-            .addGroup(paneTempLayout.createSequentialGroup()
-                .addGroup(paneTempLayout.createParallelGroup(Alignment.LEADING, false)
-                    .addComponent(jLabel1, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(guiStartTemp, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGroup(jPanel1Layout.createParallelGroup(Alignment.BASELINE)
+                    .addComponent(jComboBox1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel1))
                 .addPreferredGap(ComponentPlacement.RELATED)
-                .addGroup(paneTempLayout.createParallelGroup(Alignment.LEADING, false)
-                    .addComponent(jLabel2, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(guiEndTemp, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
-        paneTemp1.setBorder(BorderFactory.createTitledBorder(MessageBundle.getString("elevation_configuration"))); // NOI18N
-        jLabel3.setText(MessageBundle.getString("temporal_start")); // NOI18N
-        jLabel4.setText(MessageBundle.getString("temporal_end")); // NOI18N
-        GroupLayout paneTemp1Layout = new GroupLayout(paneTemp1);
-        paneTemp1.setLayout(paneTemp1Layout);
-        paneTemp1Layout.setHorizontalGroup(
-            paneTemp1Layout.createParallelGroup(Alignment.LEADING)
-            .addGroup(paneTemp1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(paneTemp1Layout.createParallelGroup(Alignment.LEADING)
-                    .addGroup(paneTemp1Layout.createSequentialGroup()
-                        .addComponent(jLabel3)
-                        .addPreferredGap(ComponentPlacement.RELATED)
-                        .addComponent(guiStartElev, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                    .addGroup(paneTemp1Layout.createSequentialGroup()
-                        .addComponent(jLabel4)
-                        .addPreferredGap(ComponentPlacement.RELATED)
-                        .addComponent(guiEndElev, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        paneTemp1Layout.setVerticalGroup(
-            paneTemp1Layout.createParallelGroup(Alignment.LEADING)
-            .addGroup(paneTemp1Layout.createSequentialGroup()
-                .addGroup(paneTemp1Layout.createParallelGroup(Alignment.LEADING, false)
-                    .addComponent(jLabel3, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(guiStartElev, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                .addGroup(jPanel1Layout.createParallelGroup(Alignment.LEADING)
+                    .addComponent(guiTextExpressionLower, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel2))
                 .addPreferredGap(ComponentPlacement.RELATED)
-                .addGroup(paneTemp1Layout.createParallelGroup(Alignment.LEADING, false)
-                    .addComponent(jLabel4, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(guiEndElev, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                .addGroup(jPanel1Layout.createParallelGroup(Alignment.LEADING)
+                    .addComponent(guiTextExpressionUpper, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel3))
                 .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -159,16 +133,12 @@ public class LayerGeneralPanel extends javax.swing.JPanel implements PropertyPan
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(Alignment.LEADING)
-                    .addGroup(Alignment.TRAILING, layout.createSequentialGroup()
+                    .addComponent(jPanel1, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel15)
                         .addPreferredGap(ComponentPlacement.RELATED)
-                        .addComponent(gui_jtf_name, GroupLayout.DEFAULT_SIZE, 220, Short.MAX_VALUE)
-                        .addContainerGap())
-                    .addGroup(Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(Alignment.TRAILING)
-                            .addComponent(paneTemp1, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(paneTemp, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addContainerGap())))
+                        .addComponent(gui_jtf_name)))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(Alignment.LEADING)
@@ -177,18 +147,13 @@ public class LayerGeneralPanel extends javax.swing.JPanel implements PropertyPan
                 .addGroup(layout.createParallelGroup(Alignment.BASELINE)
                     .addComponent(jLabel15)
                     .addComponent(gui_jtf_name, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(ComponentPlacement.RELATED)
-                .addComponent(paneTemp, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(ComponentPlacement.RELATED)
-                .addComponent(paneTemp1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(jPanel1, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
+
+        jPanel1.getAccessibleContext().setAccessibleName("New attribute");
     }// </editor-fold>//GEN-END:initComponents
     private void parse() {
-        guiStartTemp.setLayer(layer);
-        guiEndTemp.setLayer(layer);
-        guiStartElev.setLayer(layer);
-        guiEndElev.setLayer(layer);
 
         if (layer != null) {
             gui_jtf_name.setText(layer.getDescription().getTitle().toString());
@@ -197,22 +162,9 @@ public class LayerGeneralPanel extends javax.swing.JPanel implements PropertyPan
             gui_jtf_name.setText("");
         }
 
-        paneTemp.setVisible(layer instanceof FeatureMapLayer);
-
         if(layer instanceof FeatureMapLayer){
-            Expression[] temp = ((FeatureMapLayer)layer).getTemporalRange();
-            Expression[] elev = ((FeatureMapLayer)layer).getElevationRange();
-            guiStartTemp.parse(temp[0]);
-            guiEndTemp.parse(temp[1]);
-            guiStartElev.parse(elev[0]);
-            guiEndElev.parse(elev[1]);
-        }else{
-            guiStartTemp.parse(null);
-            guiEndTemp.parse(null);
-            guiStartElev.parse(null);
-            guiEndElev.parse(null);
+            // TODO: implements it
         }
-
     }
 
     @Override
@@ -233,18 +185,7 @@ public class LayerGeneralPanel extends javax.swing.JPanel implements PropertyPan
                     new SimpleInternationalString("")));
 
             if(layer instanceof FeatureMapLayer){
-                Expression t1 = guiStartTemp.create();
-                Expression t2 = guiEndTemp.create();
-                if(t1 instanceof Literal && ((Literal)t1).getValue().equals("") ) t1 = null;
-                if(t2 instanceof Literal && ((Literal)t2).getValue().equals("") ) t2 = null;
-                ((FeatureMapLayer)layer).setTemporalRange(t1,t2);
-
-                Expression e1 = guiStartElev.create();
-                Expression e2 = guiEndElev.create();
-                if(e1 instanceof Literal && ((Literal)e1).getValue().equals("") ) e1 = null;
-                if(e2 instanceof Literal && ((Literal)e2).getValue().equals("") ) e2 = null;
-                ((FeatureMapLayer)layer).setElevationRange(e1,e2);
-
+                // TODO: implements it
             }
 
         }
@@ -259,7 +200,7 @@ public class LayerGeneralPanel extends javax.swing.JPanel implements PropertyPan
     public boolean canHandle(Object target) {
         return true;
     }
-    
+
     @Override
     public String getTitle() {
         return title;
@@ -274,7 +215,7 @@ public class LayerGeneralPanel extends javax.swing.JPanel implements PropertyPan
     public Image getPreview() {
         return null;
     }
-    
+
     @Override
     public String getToolTip() {
         return title;
@@ -285,17 +226,14 @@ public class LayerGeneralPanel extends javax.swing.JPanel implements PropertyPan
         return this;
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private JTextExpressionPane guiEndElev;
-    private JTextExpressionPane guiEndTemp;
-    private JTextExpressionPane guiStartElev;
-    private JTextExpressionPane guiStartTemp;
+    private JTextExpressionPane guiTextExpressionLower;
+    private JTextExpressionPane guiTextExpressionUpper;
     private JTextField gui_jtf_name;
+    private JComboBox jComboBox1;
     private JLabel jLabel1;
     private JLabel jLabel15;
     private JLabel jLabel2;
     private JLabel jLabel3;
-    private JLabel jLabel4;
-    private JPanel paneTemp;
-    private JPanel paneTemp1;
+    private JPanel jPanel1;
     // End of variables declaration//GEN-END:variables
 }

@@ -20,7 +20,6 @@ import java.awt.RenderingHints;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -78,7 +77,6 @@ import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.feature.type.Name;
 import org.opengis.filter.Filter;
-import org.opengis.filter.expression.Expression;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.geometry.BoundingBox;
 import org.opengis.geometry.Envelope;
@@ -399,71 +397,23 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
             filter = FILTER_FACTORY.and(filter,layer.getQuery().getFilter());
         }
 
-
         //concatenate with temporal range if needed ----------------------------
-        final Filter temporalFilter;
-        final Date[] temporal = renderingContext.getTemporalRange().clone();
-        final Expression[] layerTemporalRange = layer.getTemporalRange().clone();
+        for (final FeatureMapLayer.DimensionDef def : layer.getExtraDimensions()) {
+            final CoordinateReferenceSystem crs = def.getCrs();
+            final Envelope canvasEnv = renderingContext.getCanvasObjectiveBounds();
+            final Envelope dimEnv;
+            try {
+                dimEnv = CRS.transform(canvasEnv, crs);
+            } catch (TransformException ex) {
+                continue;
+            }
 
-        if(temporal[0] == null){
-            temporal[0] = new Date(Long.MIN_VALUE);
-        }
-        if(temporal[1] == null){
-            temporal[1] = new Date(Long.MAX_VALUE);
-        }
+            final Filter dimFilter = FILTER_FACTORY.and(
+                    FILTER_FACTORY.lessOrEqual(FILTER_FACTORY.literal(dimEnv.getMinimum(0)), def.getLower()),
+                    FILTER_FACTORY.greaterOrEqual(FILTER_FACTORY.literal(dimEnv.getMaximum(0)), def.getUpper()));
 
-        if(layerTemporalRange[0] != null && layerTemporalRange[1] != null){
-            temporalFilter = FILTER_FACTORY.and(
-                    FILTER_FACTORY.lessOrEqual(layerTemporalRange[0], FILTER_FACTORY.literal(temporal[1])),
-                    FILTER_FACTORY.greaterOrEqual(layerTemporalRange[1], FILTER_FACTORY.literal(temporal[0])));
-        }else if(layerTemporalRange[0] != null){
-            temporalFilter = FILTER_FACTORY.and(
-                    FILTER_FACTORY.lessOrEqual(layerTemporalRange[0], FILTER_FACTORY.literal(temporal[1])),
-                    FILTER_FACTORY.greaterOrEqual(layerTemporalRange[0], FILTER_FACTORY.literal(temporal[0])));
-        }else if(layerTemporalRange[1] != null){
-            temporalFilter = FILTER_FACTORY.and(
-                    FILTER_FACTORY.lessOrEqual(layerTemporalRange[1], FILTER_FACTORY.literal(temporal[1])),
-                    FILTER_FACTORY.greaterOrEqual(layerTemporalRange[1], FILTER_FACTORY.literal(temporal[0])));
-        }else{
-            temporalFilter = Filter.INCLUDE;
+            filter = FILTER_FACTORY.and(filter, dimFilter);
         }
-
-        if(temporalFilter != Filter.INCLUDE){
-            filter = FILTER_FACTORY.and(filter,temporalFilter);
-        }
-
-        //concatenate with elevation range if needed ---------------------------
-        final Filter verticalFilter;
-        final Double[] vertical = renderingContext.getElevationRange().clone();
-        final Expression[] layerVerticalRange = layer.getElevationRange().clone();
-
-        if(vertical[0] == null){
-            vertical[0] = Double.NEGATIVE_INFINITY;
-        }
-        if(vertical[1] == null){
-            vertical[1] = Double.POSITIVE_INFINITY;
-        }
-
-        if(layerVerticalRange[0] != null && layerVerticalRange[1] != null){
-            verticalFilter = FILTER_FACTORY.and(
-                    FILTER_FACTORY.lessOrEqual(layerVerticalRange[0], FILTER_FACTORY.literal(vertical[1])),
-                    FILTER_FACTORY.greaterOrEqual(layerVerticalRange[1], FILTER_FACTORY.literal(vertical[0])));
-        }else if(layerVerticalRange[0] != null){
-            verticalFilter = FILTER_FACTORY.and(
-                    FILTER_FACTORY.lessOrEqual(layerVerticalRange[0], FILTER_FACTORY.literal(vertical[1])),
-                    FILTER_FACTORY.greaterOrEqual(layerVerticalRange[0], FILTER_FACTORY.literal(vertical[0])));
-        }else if(layerVerticalRange[1] != null){
-            verticalFilter = FILTER_FACTORY.and(
-                    FILTER_FACTORY.lessOrEqual(layerVerticalRange[1], FILTER_FACTORY.literal(vertical[1])),
-                    FILTER_FACTORY.greaterOrEqual(layerVerticalRange[1], FILTER_FACTORY.literal(vertical[0])));
-        }else{
-            verticalFilter = Filter.INCLUDE;
-        }
-
-        if(verticalFilter != Filter.INCLUDE){
-            filter = FILTER_FACTORY.and(filter,verticalFilter);
-        }
-
 
         final Set<String> attributs = styleRequieredAtts;
         final Set<String> copy = new HashSet<String>(attributs);

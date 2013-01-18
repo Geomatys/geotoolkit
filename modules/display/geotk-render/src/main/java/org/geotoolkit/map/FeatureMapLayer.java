@@ -16,10 +16,16 @@
  */
 package org.geotoolkit.map;
 
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.query.Query;
+import org.geotoolkit.storage.DataStoreException;
+import org.geotoolkit.util.Range;
 import org.opengis.feature.Feature;
 import org.opengis.filter.expression.Expression;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  * MapLayer holding a collection of features.
@@ -29,6 +35,8 @@ import org.opengis.filter.expression.Expression;
  */
 public interface FeatureMapLayer extends CollectionMapLayer{
 
+    public static final String PROP_EXTRA_DIMENSIONS = "extra_dims";
+
     /**
      * The feature collection of this layer.
      *
@@ -36,8 +44,8 @@ public interface FeatureMapLayer extends CollectionMapLayer{
      */
     @Override
     FeatureCollection<? extends Feature> getCollection();
-    
-    
+
+
     /**
      * Returns the definition query (filter) for this layer. If no definition
      * query has  been defined {@link Query#ALL} is returned.
@@ -56,16 +64,42 @@ public interface FeatureMapLayer extends CollectionMapLayer{
      */
     void setQuery(Query query);
 
-    Expression getHeight();
+    /**
+     * Manage extra dimensions.
+     *
+     * @return live list of dimensiondef, never null.
+     */
+    List<DimensionDef> getExtraDimensions();
 
-    void setHeight(Expression height);
+    /**
+     * Get all values of given extra dimension.
+     * @param def
+     * @return collection never null, can be empty.
+     */
+    Collection<Range> getDimensionRange(DimensionDef def) throws DataStoreException;
 
-    Expression[] getElevationRange();
+    public static final class DimensionDef {
+        private final CoordinateReferenceSystem crs;
+        private final Expression lower;
+        private final Expression upper;
 
-    void setElevationRange(Expression from, Expression to);
+        public DimensionDef(CoordinateReferenceSystem crs, Expression lower, Expression upper) {
+            this.crs = crs;
+            this.lower = lower;
+            this.upper = upper;
+        }
 
-    Expression[] getTemporalRange();
+        public CoordinateReferenceSystem getCrs() {
+            return crs;
+        }
 
-    void setTemporalRange(Expression from, Expression to);
+        public Expression getLower() {
+            return lower;
+        }
+
+        public Expression getUpper() {
+            return upper;
+        }
+    }
 
 }

@@ -21,10 +21,12 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
+import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.wms.AbstractGetFeatureInfo;
 import org.opengis.geometry.Envelope;
+import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 
 
@@ -62,8 +64,14 @@ public class GetFeatureInfo130 extends AbstractGetFeatureInfo {
         map.put("BBOX", sb.toString());
 
         try {
-            map.put("CRS", IdentifiedObjects.lookupIdentifier(env.getCoordinateReferenceSystem(), true));
+            String code = IdentifiedObjects.lookupIdentifier(env.getCoordinateReferenceSystem(), true);
+            if (code == null) {
+                code = IdentifiedObjects.lookupIdentifier(CRSUtilities.getCRS2D(env.getCoordinateReferenceSystem()), true);
+            }
+            map.put("CRS", code);
         } catch (FactoryException ex) {
+            LOGGER.log(Level.WARNING, null, ex);
+        } catch (TransformException ex) {
             LOGGER.log(Level.WARNING, null, ex);
         }
 

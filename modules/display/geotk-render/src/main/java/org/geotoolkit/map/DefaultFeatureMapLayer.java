@@ -16,16 +16,25 @@
  */
 package org.geotoolkit.map;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 import java.util.logging.Level;
 import org.geotoolkit.data.FeatureCollection;
+import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
+import org.geotoolkit.filter.visitor.ListingPropertyVisitor;
 import org.geotoolkit.geometry.Envelope2D;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.style.MutableStyle;
 import static org.geotoolkit.util.ArgumentChecks.*;
+import org.geotoolkit.util.NumberRange;
+import org.geotoolkit.util.Range;
+import org.geotoolkit.util.collection.NotifiedCheckedList;
 import org.opengis.feature.Feature;
 import org.opengis.filter.expression.Expression;
 import org.opengis.geometry.Envelope;
@@ -41,9 +50,33 @@ final class DefaultFeatureMapLayer extends DefaultCollectionMapLayer implements 
 
     private Query query = null;
 
-    private Expression height;
-    private Expression[] elevationRange;
-    private Expression[] temporalRange;
+    private final List<DimensionDef> extraDims = new NotifiedCheckedList<DimensionDef>(DimensionDef.class) {
+
+        @Override
+        protected void notifyAdd(DimensionDef item, int index) {
+            firePropertyChange(PROP_EXTRA_DIMENSIONS, null, extraDims);
+        }
+
+        @Override
+        protected void notifyAdd(Collection<? extends DimensionDef> items, NumberRange<Integer> range) {
+            firePropertyChange(PROP_EXTRA_DIMENSIONS, null, extraDims);
+        }
+
+        @Override
+        protected void notifyChange(DimensionDef oldItem, DimensionDef newItem, int index) {
+            firePropertyChange(PROP_EXTRA_DIMENSIONS, null, extraDims);
+        }
+
+        @Override
+        protected void notifyRemove(DimensionDef item, int index) {
+            firePropertyChange(PROP_EXTRA_DIMENSIONS, null, extraDims);
+        }
+
+        @Override
+        protected void notifyRemove(Collection<? extends DimensionDef> items, NumberRange<Integer> range) {
+            firePropertyChange(PROP_EXTRA_DIMENSIONS, null, extraDims);
+        }
+    };
 
     /**
      * Creates a new instance of DefaultFeatureMapLayer
@@ -130,46 +163,35 @@ final class DefaultFeatureMapLayer extends DefaultCollectionMapLayer implements 
     }
 
     @Override
-    public Expression getHeight() {
-        return height;
+    public List<DimensionDef> getExtraDimensions() {
+        return extraDims;
     }
 
     @Override
-    public void setHeight(final Expression height) {
-        this.elevationRange = null;
-        this.height = height;
-    }
+    public Collection<Range> getDimensionRange(final DimensionDef def) throws DataStoreException{
+        final List<Range> values = new ArrayList<Range>();
+        final Expression lower = def.getLower();
+        final Expression upper = def.getUpper();
 
-    @Override
-    public Expression[] getElevationRange() {
-        if(elevationRange == null){
-            return new Expression[2];
-        }else{
-            return elevationRange.clone();
+        final List<String> properties = new ArrayList<String>();
+        lower.accept(ListingPropertyVisitor.VISITOR, properties);
+        upper.accept(ListingPropertyVisitor.VISITOR, properties);
+
+        final QueryBuilder qb = new QueryBuilder();
+        qb.setTypeName(getCollection().getFeatureType().getName());
+        qb.setProperties(properties.toArray(new String[properties.size()]));
+        final FeatureCollection col = getCollection().subCollection(qb.buildQuery());
+
+        final FeatureIterator ite = col.iterator();
+        while(ite.hasNext()){
+            Feature f = ite.next();
+            final Comparable c1 = (Comparable) lower.evaluate(f);
+            final Comparable c2 = (Comparable) upper.evaluate(f);
+            values.add( new Range(Comparable.class, c1, c2));
         }
-    }
+        ite.close();
 
-    @Override
-    public void setElevationRange(final Expression from, final Expression to) {
-        height = null;
-        final Expression[] old = elevationRange;
-        elevationRange = new Expression[]{from,to};
-        firePropertyChange(MapLayer.ELEVATION_PROPERTY, old, elevationRange);
+        return values;
     }
-
-    @Override
-    public Expression[] getTemporalRange() {
-        if(temporalRange == null){
-            return new Expression[2];
-        }else{
-            return temporalRange.clone();
-        }
-    }
-
-    @Override
-    public void setTemporalRange(final Expression from, final Expression to) {
-        temporalRange = new Expression[]{from,to};
-    }
-
 
 }
