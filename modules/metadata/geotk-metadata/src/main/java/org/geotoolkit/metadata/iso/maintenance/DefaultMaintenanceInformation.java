@@ -44,14 +44,15 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Touraïvane (IRD)
  * @author Cédric Briançon (Geomatys)
- * @version 3.19
+ * @author Guilhem Legal (Geomatys)
+ * @version 3.21
  *
  * @since 2.1
  * @module
  */
 @ThreadSafe
 @XmlType(name = "MD_MaintenanceInformation_Type", propOrder={
-    "maintenanceAndUpdateFrequency", "dateOfNextUpdate",
+    "maintenanceAndUpdateFrequency", "dateOfNextUpdate", "userDefinedMaintenanceFrequency",
     "updateScopes", "updateScopeDescriptions", "maintenanceNotes", "contacts"
 })
 @XmlRootElement(name = "MD_MaintenanceInformation")
@@ -201,6 +202,7 @@ public class DefaultMaintenanceInformation extends MetadataEntity implements Mai
      * @todo needs an implementation of org.opengis.temporal modules to anntote this parameter.
      */
     @Override
+    @XmlElement(name = "userDefinedMaintenanceFrequency")
     public synchronized PeriodDuration getUserDefinedMaintenanceFrequency() {
         return userDefinedMaintenanceFrequency;
     }
