@@ -66,6 +66,8 @@ import static javax.xml.stream.events.XMLEvent.*;
 import net.iharder.Base64;
 import org.geotoolkit.feature.DefaultComplexAttribute;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
+import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSLineString;
+import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.gml.GeometrytoJTS;
 import org.geotoolkit.gml.xml.AbstractGeometry;
 import org.geotoolkit.gml.xml.GMLMarshallerPool;
@@ -328,9 +330,17 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                             }
                             jtsGeom = isoGeom.getJTSGeometry();
                         } else if (geometry instanceof PolygonType) {
-                            jtsGeom = ((PolygonType)geometry).getJTSPolygon().getJTSGeometry();
+                            final PolygonType polygon = ((PolygonType)geometry);
+                            jtsGeom = polygon.getJTSPolygon().getJTSGeometry();
+                            if(polygon.getCoordinateReferenceSystem() != null) {
+                                JTS.setCRS(jtsGeom, polygon.getCoordinateReferenceSystem());
+                            }
                         } else if (geometry instanceof LineStringPosListType) {
-                            jtsGeom = ((LineStringPosListType)geometry).getJTSLineString().getJTSGeometry();
+                            final JTSLineString line = ((LineStringPosListType)geometry).getJTSLineString();
+                            jtsGeom = line.getJTSGeometry();
+                            if(line.getCoordinateReferenceSystem() != null) {
+                                JTS.setCRS(jtsGeom, line.getCoordinateReferenceSystem());
+                            }
                         } else if (geometry instanceof AbstractGeometry) {
                             try {
                                 jtsGeom = GeometrytoJTS.toJTS((AbstractGeometry) geometry);
