@@ -75,7 +75,7 @@ public final class XmlUtilities extends Static {
      *
      * @since 3.03
      */
-    private static synchronized DatatypeFactory getDatatypeFactory() throws FactoryNotFoundException {
+    public static synchronized DatatypeFactory getDatatypeFactory() throws FactoryNotFoundException {
         if (factory == null) try {
             factory = DatatypeFactory.newInstance();
         } catch (DatatypeConfigurationException e) {
