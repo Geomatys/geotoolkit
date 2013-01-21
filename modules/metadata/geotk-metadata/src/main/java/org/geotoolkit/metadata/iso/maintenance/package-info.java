@@ -54,6 +54,7 @@
     @XmlJavaTypeAdapter(MD_MaintenanceInformation.class),
     @XmlJavaTypeAdapter(MD_ScopeCode.class),
     @XmlJavaTypeAdapter(MD_ScopeDescription.class),
+    @XmlJavaTypeAdapter(TM_PeriodDuration.class),
 
     // Java types, primitive types and basic OGC types handling
     @XmlJavaTypeAdapter(GO_DateTime.class),
@@ -73,4 +74,5 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapters;
 import org.geotoolkit.xml.Namespaces;
 import org.geotoolkit.internal.jaxb.gco.*;
 import org.geotoolkit.internal.jaxb.code.*;
+import org.geotoolkit.internal.jaxb.gts.TM_PeriodDuration;
 import org.geotoolkit.internal.jaxb.metadata.*;

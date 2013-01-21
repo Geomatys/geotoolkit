@@ -147,7 +147,7 @@ public final class TM_Primitive extends PropertyType<TM_Primitive, TemporalPrimi
                 } catch (FactoryNotFoundException e) {
                     record = TemporalUtilities.createLog(e);
                 }
-                log("setTimePeriod", record);
+                log(TemporalPrimitive.class, "setTimePeriod", record);
             }
         }
     }
@@ -168,7 +168,7 @@ public final class TM_Primitive extends PropertyType<TM_Primitive, TemporalPrimi
                 metadata = TemporalUtilities.createInstant(position);
                 instant.copyIdTo(metadata);
             } catch (FactoryNotFoundException e) {
-                log("setTimeInstant", TemporalUtilities.createLog(e));
+                log(TemporalPrimitive.class, "setTimeInstant", TemporalUtilities.createLog(e));
             }
         }
     }
@@ -183,11 +183,12 @@ public final class TM_Primitive extends PropertyType<TM_Primitive, TemporalPrimi
     /**
      * Logs the given record. This method is invoked in case of failure or warning.
      *
+     * @param classe The class to declare in the log record.
      * @param method The name of the method to declare in the log record.
      * @param record The record to log.
      */
-    private static void log(final String method, final LogRecord record) {
-        record.setSourceClassName(TemporalPrimitive.class.getName());
+    public static void log(final Class<?> classe, final String method, final LogRecord record) {
+        record.setSourceClassName(classe.getName());
         record.setSourceMethodName(method);
         record.setLoggerName("org.geotoolkit.xml");
         Logging.getLogger("org.geotoolkit.xml").log(record);

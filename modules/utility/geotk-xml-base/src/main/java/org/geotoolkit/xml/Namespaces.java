@@ -30,7 +30,8 @@ import org.geotoolkit.lang.Static;
  *
  * @author Cédric Briançon (Geomatys)
  * @author Quentin Boileau (Geomatys)
- * @version 3.20
+ * @author  Guilhem Legal (Geomatys)
+ * @version 3.21
  *
  * @since 3.00
  * @module
@@ -72,6 +73,15 @@ public final class Namespaces extends Static {
      * @since 3.07
      */
     public static final String GMI = "http://www.isotc211.org/2005/gmi";
+
+    /**
+     * The <code>{@value}</code> URL.
+     *
+     * @category ISO
+     *
+     * @since 3.21
+     */
+    public static final String GTS = "http://www.isotc211.org/2005/gts";
 
     /**
      * The <code>{@value}</code> URL.
