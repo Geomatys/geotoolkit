@@ -631,28 +631,40 @@ public class WPSConvertersUtils {
     public static void featureToParameterGroup(ComplexAttribute toConvert, ParameterValueGroup toFill) throws NonconvertibleObjectException {
         ArgumentChecks.ensureNonNull("feature", toConvert);
         ArgumentChecks.ensureNonNull("ParameterGroup", toFill);
-        
-        final WPSConverterRegistry registry = WPSConverterRegistry.getInstance();
-        for(final GeneralParameterDescriptor gpd : toFill.getDescriptor().descriptors()){
 
-            final Property prop = toConvert.getProperty(gpd.getName().getCode());
-            if(gpd instanceof ParameterDescriptor) {
+        final WPSConverterRegistry registry = WPSConverterRegistry.getInstance();
+        for (final GeneralParameterDescriptor gpd : toFill.getDescriptor().descriptors()) {
+
+            if (gpd instanceof ParameterDescriptor) {
+                final Property prop = toConvert.getProperty(gpd.getName().getCode());
+                if (prop == null && gpd.getMinimumOccurs() > 0) {
+                    throw new NonconvertibleObjectException("A mandatory attribute can't be found");
+                }
                 final ParameterDescriptor desc = (ParameterDescriptor) gpd;
-              if(prop.getValue().getClass().isAssignableFrom(desc.getValueClass()) || desc.getValueClass().isAssignableFrom(prop.getValue().getClass())) {                  
-                  Parameters.getOrCreate(desc, toFill).setValue(prop.getValue());
-              } else {
-                  if(prop.getValue().getClass().isAssignableFrom(URI.class)) {
-                      ReferenceType type = UriToReference((URI)prop.getValue(), WPSIO.IOType.INPUT, null);
-                      WPSObjectConverter converter = registry.getConverter(type.getClass(), desc.getValueClass());
-                      Parameters.getOrCreate(desc, toFill).setValue(converter.convert(type, null));
-                  }
-              }
-            } else if(gpd instanceof ParameterDescriptorGroup && prop instanceof ComplexAttribute){
-                ParameterValueGroup childGroup = toFill.addGroup(gpd.getName().getCode());
-                featureToParameterGroup((ComplexAttribute)prop, childGroup);
-                
+                if (prop.getValue().getClass().isAssignableFrom(desc.getValueClass()) || desc.getValueClass().isAssignableFrom(prop.getValue().getClass())) {
+                    Parameters.getOrCreate(desc, toFill).setValue(prop.getValue());
+                } else {
+                    if (prop.getValue().getClass().isAssignableFrom(URI.class)) {
+                        ReferenceType type = UriToReference((URI) prop.getValue(), WPSIO.IOType.INPUT, null);
+                        WPSObjectConverter converter = registry.getConverter(type.getClass(), desc.getValueClass());
+                        Parameters.getOrCreate(desc, toFill).setValue(converter.convert(type, null));
+                    }
+                }
+            } else if (gpd instanceof ParameterDescriptorGroup) {
+                final Collection<Property> propCollection = toConvert.getProperties(gpd.getName().getCode());
+                int filledGroups = 0;
+                for (Property complex : propCollection) {
+                    if (complex instanceof ComplexAttribute) {
+                        ParameterValueGroup childGroup = toFill.addGroup(gpd.getName().getCode());
+                        featureToParameterGroup((ComplexAttribute) complex, childGroup);
+                        filledGroups++;
+                    }
+                }
+                if(filledGroups < gpd.getMinimumOccurs()) {
+                    throw new NonconvertibleObjectException("Not enough attributes have been found.");
+                }
             } else {
-                throw new NonconvertibleObjectException();
+                throw new NonconvertibleObjectException("Parameter type is not managed.");
             }
         }
     }
