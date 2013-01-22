@@ -305,7 +305,9 @@ public class JLayerBandMenu extends JMenu implements ContextListener{
 
         @Override
         public void propertyChange(PropertyChangeEvent evt) {
-            if(MapItem.NAME_PROPERTY.equalsIgnoreCase(evt.getPropertyName())){
+            if(MapItem.NAME_PROPERTY.equalsIgnoreCase(evt.getPropertyName()) ||
+               FeatureMapLayer.PROP_EXTRA_DIMENSIONS.equalsIgnoreCase(evt.getPropertyName()))
+            {
                 update();
             }
         }

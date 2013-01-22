@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2008 - 2009, Geomatys
+ *    (C) 2008 - 2013, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -17,10 +17,10 @@
 package org.geotoolkit.map;
 
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.query.Query;
+import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.util.Range;
 import org.opengis.feature.Feature;
@@ -31,6 +31,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * MapLayer holding a collection of features.
  *
  * @author Johann Sorel (Geomatys)
+ * @author Cédric Briançon (Geomatys)
  * @module pending
  */
 public interface FeatureMapLayer extends CollectionMapLayer{
@@ -99,6 +100,36 @@ public interface FeatureMapLayer extends CollectionMapLayer{
 
         public Expression getUpper() {
             return upper;
+        }
+
+        @Override
+        public int hashCode() {
+            int hash = 7;
+            hash = 71 * hash + (this.crs != null ? this.crs.hashCode() : 0);
+            hash = 71 * hash + (this.lower != null ? this.lower.hashCode() : 0);
+            hash = 71 * hash + (this.upper != null ? this.upper.hashCode() : 0);
+            return hash;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (obj == null) {
+                return false;
+            }
+            if (getClass() != obj.getClass()) {
+                return false;
+            }
+            final DimensionDef other = (DimensionDef) obj;
+            if (!CRS.equalsIgnoreMetadata(this.crs, other.crs)) {
+                return false;
+            }
+            if (this.lower != other.lower && (this.lower == null || !this.lower.equals(other.lower))) {
+                return false;
+            }
+            if (this.upper != other.upper && (this.upper == null || !this.upper.equals(other.upper))) {
+                return false;
+            }
+            return true;
         }
     }
 
