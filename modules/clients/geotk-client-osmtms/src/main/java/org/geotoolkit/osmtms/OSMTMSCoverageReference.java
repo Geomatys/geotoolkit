@@ -125,7 +125,7 @@ public class OSMTMSCoverageReference extends AbstractCoverageReference implement
 
     @Override
     public List<GridSampleDimension> getSampleDimensions(int index) throws DataStoreException {
-        throw new DataStoreException("Not supported yet.");
+        return null;
     }
 
     @Override
