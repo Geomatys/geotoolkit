@@ -29,7 +29,9 @@ import org.geotoolkit.ogc.xml.v200.BBOXType;
 import org.geotoolkit.ogc.xml.v200.BinarySpatialOpType;
 import org.geotoolkit.ogc.xml.v200.DistanceBufferType;
 import org.geotoolkit.ogc.xml.v200.SpatialOpsType;
+import org.geotoolkit.sos.xml.GetFeatureOfInterest;
 import org.geotoolkit.swes.xml.v200.ExtensibleRequestType;
+import org.opengis.filter.Filter;
 
 
 /**
@@ -71,7 +73,7 @@ import org.geotoolkit.swes.xml.v200.ExtensibleRequestType;
     "featureOfInterest",
     "spatialFilter"
 })
-public class GetFeatureOfInterestType extends ExtensibleRequestType {
+public class GetFeatureOfInterestType extends ExtensibleRequestType implements GetFeatureOfInterest {
 
     @XmlSchemaType(name = "anyURI")
     private List<String> procedure;
@@ -116,7 +118,8 @@ public class GetFeatureOfInterestType extends ExtensibleRequestType {
      * {@link String }
      * 
      */
-    public List<String> getFeatureOfInterest() {
+    @Override
+    public List<String> getFeatureOfInterestId() {
         if (featureOfInterest == null) {
             featureOfInterest = new ArrayList<String>();
         }
@@ -130,11 +133,31 @@ public class GetFeatureOfInterestType extends ExtensibleRequestType {
      * {@link GetFeatureOfInterestType.SpatialFilter }
      * 
      */
-    public List<GetFeatureOfInterestType.SpatialFilter> getSpatialFilter() {
+    public List<GetFeatureOfInterestType.SpatialFilter> getRealSpatialFilter() {
         if (spatialFilter == null) {
             spatialFilter = new ArrayList<GetFeatureOfInterestType.SpatialFilter>();
         }
         return this.spatialFilter;
+    }
+
+    @Override
+    public List<Filter> getSpatialFilters() {
+        final List<Filter> results = new ArrayList<Filter>();
+        if (spatialFilter != null) {
+            for (SpatialFilter sp : spatialFilter) {
+                results.add(sp.getSpatialOperator());
+            }
+        }
+        return results;
+    }
+
+    /**
+     * SOS 1.0.0 compatibility
+     * @return 
+     */
+    @Override
+    public List<Filter> getTemporalFilters() {
+        return new ArrayList<Filter>();
     }
 
 
@@ -166,6 +189,13 @@ public class GetFeatureOfInterestType extends ExtensibleRequestType {
         @XmlElementRef(name = "spatialOps", namespace = "http://www.opengis.net/fes/2.0", type = JAXBElement.class)
         private JAXBElement<? extends SpatialOpsType> spatialOps;
 
+        public SpatialOpsType getSpatialOperator() {
+            if (spatialOps != null) {
+                return spatialOps.getValue();
+            }
+            return null;
+        }
+        
         /**
          * Gets the value of the spatialOps property.
          * 

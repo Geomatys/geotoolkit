@@ -25,6 +25,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
 import org.opengis.filter.FilterVisitor;
+import org.opengis.filter.PropertyIsBetween;
+import org.opengis.filter.expression.Expression;
 
 
 /**
@@ -54,7 +56,7 @@ import org.opengis.filter.FilterVisitor;
     "lowerBoundary",
     "upperBoundary"
 })
-public class PropertyIsBetweenType extends ComparisonOpsType {
+public class PropertyIsBetweenType extends ComparisonOpsType  implements PropertyIsBetween {
 
     @XmlElementRef(name = "expression", namespace = "http://www.opengis.net/fes/2.0", type = JAXBElement.class)
     private JAXBElement<?> expression;
@@ -105,7 +107,7 @@ public class PropertyIsBetweenType extends ComparisonOpsType {
      *     {@link JAXBElement }{@code <}{@link FunctionType }{@code >}
      *     
      */
-    public JAXBElement<?> getExpression() {
+    public JAXBElement<?> getExpressionType() {
         return expression;
     }
 
@@ -132,6 +134,7 @@ public class PropertyIsBetweenType extends ComparisonOpsType {
      *     {@link LowerBoundaryType }
      *     
      */
+    @Override
     public LowerBoundaryType getLowerBoundary() {
         return lowerBoundary;
     }
@@ -156,6 +159,7 @@ public class PropertyIsBetweenType extends ComparisonOpsType {
      *     {@link UpperBoundaryType }
      *     
      */
+    @Override
     public UpperBoundaryType getUpperBoundary() {
         return upperBoundary;
     }
@@ -172,6 +176,20 @@ public class PropertyIsBetweenType extends ComparisonOpsType {
         this.upperBoundary = value;
     }
 
+    /**
+     * Gets the value of the expression property.
+     */
+    @Override
+    public Expression getExpression() {
+        final Object value = expression.getValue();
+        if (value instanceof LiteralType) {
+            return (LiteralType)value;
+        } else if (value != null) {
+            return new LiteralType(value);
+        }
+        return null;
+    }
+    
     @Override
     public boolean evaluate(final Object object) {
         throw new UnsupportedOperationException("Not supported yet.");

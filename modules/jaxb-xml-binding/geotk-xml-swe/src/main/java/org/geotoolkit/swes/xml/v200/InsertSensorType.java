@@ -27,6 +27,9 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.swes.xml.InsertSensor;
+import org.geotoolkit.swes.xml.ObservationTemplate;
+import org.opengis.observation.Observation;
 import org.w3c.dom.Element;
 
 
@@ -91,7 +94,7 @@ import org.w3c.dom.Element;
     "relatedFeature",
     "metadata"
 })
-public class InsertSensorType extends ExtensibleRequestType {
+public class InsertSensorType extends ExtensibleRequestType implements InsertSensor {
 
     @XmlElement(required = true)
     @XmlSchemaType(name = "anyURI")
@@ -140,6 +143,14 @@ public class InsertSensorType extends ExtensibleRequestType {
         return procedureDescription;
     }
 
+    @Override
+    public Object getSensorMetadata() {
+        if (procedureDescription != null) {
+            return procedureDescription.getAny();
+        }
+        return null;
+    }
+    
     /**
      * Sets the value of the procedureDescription property.
      * 
@@ -191,6 +202,62 @@ public class InsertSensorType extends ExtensibleRequestType {
         return this.metadata;
     }
 
+    @Override
+    public ObservationTemplate getObservationTemplate() {
+        return new ObservationTemplateType(observableProperty);
+    }
+
+    /**
+     * Used to retro compatibility with SOS 1.0.0
+     */
+    public static class ObservationTemplateType implements ObservationTemplate {
+
+        private List<String> observableProperty;
+        
+        public ObservationTemplateType(final List<String> properties) {
+            this.observableProperty = properties;
+        }
+        
+        @Override
+        public String getProcedure() {
+            return null;
+        }
+
+        @Override
+        public boolean isComplete() {
+            return true;
+        }
+
+        @Override
+        public boolean isTemplateSpecified() {
+            return true;
+        }
+
+        @Override
+        public void setProcedure(final String process) {
+            // do nothing
+        }
+
+        @Override
+        public void setName(String name) {
+            // do nothing
+        }
+
+        @Override
+        public List<String> getObservedProperties() {
+            return observableProperty;
+        }
+
+        @Override
+        public String getFeatureOfInterest() {
+            return null;
+        }
+
+        @Override
+        public Observation getObservation() {
+            return null;
+        }
+    }
 
     /**
      * <p>Java class for anonymous complex type.

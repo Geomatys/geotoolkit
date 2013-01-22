@@ -23,6 +23,8 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
+import org.opengis.filter.expression.Expression;
+import org.opengis.filter.expression.ExpressionVisitor;
 
 
 /**
@@ -48,7 +50,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "LowerBoundaryType", propOrder = {
     "expression"
 })
-public class LowerBoundaryType {
+public class LowerBoundaryType implements Expression {
 
     @XmlElementRef(name = "expression", namespace = "http://www.opengis.net/fes/2.0", type = JAXBElement.class)
     private JAXBElement<?> expression;
@@ -105,4 +107,18 @@ public class LowerBoundaryType {
         this.expression = ((JAXBElement<?> ) value);
     }
 
+    @Override
+    public Object evaluate(final Object object) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public <T> T evaluate(final Object object, final Class<T> context) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Object accept(final ExpressionVisitor visitor, final Object extraData) {
+        return extraData;
+    }
 }

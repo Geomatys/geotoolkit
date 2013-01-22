@@ -364,6 +364,7 @@ public class ObservationType implements Observation, Entry {
         return this.name;
     }
 
+    @Override
     public String getIdentifier() {
         return name;
     }
@@ -373,10 +374,10 @@ public class ObservationType implements Observation, Entry {
      */
     @Override
     @Deprecated
-    public SamplingFeature getFeatureOfInterest() {
+    public SamplingFeatureType getFeatureOfInterest() {
         if (featureOfInterest != null) {
             if (featureOfInterest.getAbstractFeature() instanceof SamplingFeature) {
-                return (SamplingFeature)featureOfInterest.getAbstractFeature();
+                return (SamplingFeatureType)featureOfInterest.getAbstractFeature();
             } else {
                 LOGGER.warning("information lost getFeatureOfInterest() is deprecated use getPropertyFeatureOfInterest() instead");
             }
@@ -412,7 +413,7 @@ public class ObservationType implements Observation, Entry {
      * {@inheritDoc}
      */
     @Override
-    public Phenomenon getObservedProperty() {
+    public PhenomenonType getObservedProperty() {
         if (observedProperty != null) {
             return observedProperty.getPhenomenon();
         } else {
@@ -509,8 +510,9 @@ public class ObservationType implements Observation, Entry {
      */
     @Override
     public AbstractTimeGeometricPrimitiveType getSamplingTime() {
-        if (samplingTime != null)
+        if (samplingTime != null) {
             return samplingTime.getTimeGeometricPrimitive();
+        }
         return null;
         
     }
@@ -557,8 +559,9 @@ public class ObservationType implements Observation, Entry {
      */
     @Override
     public AbstractTimeGeometricPrimitiveType getProcedureTime() {
-        if (procedureTime != null)
+        if (procedureTime != null) {
             return procedureTime.getTimeGeometricPrimitive();
+        }
         return null;
         
     }
@@ -686,25 +689,31 @@ public class ObservationType implements Observation, Entry {
         char lineSeparator = '\n';
         s.append(lineSeparator);
         s.append("name = ").append(name);
-        if (definition != null)
+        if (definition != null) {
             s.append("definition = ").append(definition);
+        }
         s.append(lineSeparator);
-        if (samplingTime != null)
+        if (samplingTime != null) {
             s.append("samplingTime = ").append(samplingTime.toString()).append(lineSeparator);
-       if (procedure != null)
+        }
+        if (procedure != null) {
             s.append("procedure = ").append(procedure.toString()).append(lineSeparator);
-        else
+        } else {
             s.append("procedure is null!").append(lineSeparator);
-        
-        if (observedProperty != null)
+        }
+        if (observedProperty != null) {
             s.append("observedProperty = ").append(observedProperty.toString()).append(lineSeparator);
-        else s.append("observed property is null!").append(lineSeparator);
-        if (featureOfInterest != null)
-            s.append("feature Of Interest = ").append(featureOfInterest.toString()).append(lineSeparator); 
-        else
+        } else {
+            s.append("observed property is null!").append(lineSeparator);
+        }
+        if (featureOfInterest != null) {
+            s.append("feature Of Interest = ").append(featureOfInterest.toString()).append(lineSeparator);
+        } else {
             s.append("feature Of Interest is null!").append(lineSeparator);
-        if (result != null)       
+        }
+        if (result != null) {
             s.append(" result = ").append(result.getValue()).append(lineSeparator);
+        }
         return s.toString();
     }
 

@@ -29,6 +29,7 @@ import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ogc.xml.v110.BBOXType;
 import org.geotoolkit.ogc.xml.v110.SpatialOpsType;
 import org.geotoolkit.util.Utilities;
+import org.opengis.filter.Filter;
 
 
 /**
@@ -82,7 +83,7 @@ import org.geotoolkit.util.Utilities;
     "eventTime"
 })
 @XmlRootElement(name = "GetFeatureOfInterest")
-public class GetFeatureOfInterest extends RequestBaseType {
+public class GetFeatureOfInterest extends RequestBaseType implements org.geotoolkit.sos.xml.GetFeatureOfInterest {
 
     /**
      * Identifier of the feature of interest, for which detailed information is requested.
@@ -131,6 +132,7 @@ public class GetFeatureOfInterest extends RequestBaseType {
     /**
      * Gets the value of the featureOfInterestId property.
      */
+    @Override
     public List<String> getFeatureOfInterestId() {
         if (featureOfInterestId == null) {
             featureOfInterestId = new ArrayList<String>();
@@ -163,6 +165,25 @@ public class GetFeatureOfInterest extends RequestBaseType {
      */
     public void setLocation(final GetFeatureOfInterest.Location location) {
         this.location = location;
+    }
+    
+    @Override
+    public List<Filter> getSpatialFilters() {
+        final List<Filter> results = new ArrayList<Filter>();
+        if (location != null) {
+            results.add(location.getSpatialOperator());
+        }
+        return results;
+    }
+    
+    public List<Filter> getTemporalFilters() {
+        final List<Filter> results = new ArrayList<Filter>();
+        if (eventTime != null) {
+            for (EventTime time : eventTime) {
+                results.add(time.getFilter());
+            }
+        }
+        return results;
     }
     
     /**
@@ -235,6 +256,13 @@ public class GetFeatureOfInterest extends RequestBaseType {
             }
         }
 
+        public SpatialOpsType getSpatialOperator() {
+            if (spatialOps != null) {
+                return spatialOps.getValue();
+            }
+            return null;
+        }
+        
         /**
          * Gets the value of the spatialOps property.
          */

@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.swes.xml.InsertSensor;
 import org.geotoolkit.util.Utilities;
 
 
@@ -62,7 +63,7 @@ import org.geotoolkit.util.Utilities;
     "observationTemplate"
 })
 @XmlRootElement(name = "RegisterSensor")
-public class RegisterSensor extends RequestBaseType {
+public class RegisterSensor extends RequestBaseType implements InsertSensor {
 
     @XmlElement(name = "SensorDescription", required = true)
     private RegisterSensor.SensorDescription sensorDescription;
@@ -72,19 +73,18 @@ public class RegisterSensor extends RequestBaseType {
     /**
      * An empty constructor used by JAXB
      */
-     RegisterSensor(){
-         
-     }
-     
-     /**
+    RegisterSensor() {
+    }
+
+    /**
      * Build a new registerSensor request.
      */
-     public RegisterSensor(final String version, final Object sensorDescription, final ObservationTemplate observationTemplate){
-         super(version);
-         this.observationTemplate = observationTemplate;
-         this.sensorDescription = new SensorDescription(sensorDescription);
-     }
-     
+    public RegisterSensor(final String version, final Object sensorDescription, final ObservationTemplate observationTemplate) {
+        super(version);
+        this.observationTemplate = observationTemplate;
+        this.sensorDescription = new SensorDescription(sensorDescription);
+    }
+
     /**
      * Gets the value of the sensorDescription property.
      */
@@ -95,10 +95,19 @@ public class RegisterSensor extends RequestBaseType {
     /**
      * Gets the value of the observationTemplate property.
      */
+    @Override
     public ObservationTemplate getObservationTemplate() {
         return observationTemplate;
     }
 
+    @Override
+    public Object getSensorMetadata() {
+        if (sensorDescription != null) {
+            return sensorDescription.getAny();
+        }
+        return null;
+    }
+    
     /**
      * Verify if this entry is identical to the specified object.
      */
@@ -125,13 +134,14 @@ public class RegisterSensor extends RequestBaseType {
     
     @Override
     public String toString() {
-        StringBuilder s = new StringBuilder("Register sensor:");
+        final StringBuilder s = new StringBuilder("Register sensor:");
         s.append('\n').append("sensor description:").append('\n').append(sensorDescription);
-        if (observationTemplate != null)
+        if (observationTemplate != null) {
             s.append('\n').append("observation template:").append('\n').append(observationTemplate.toString());
+        }
         return s.toString();
     }
-    
+
     /**
      * <p>Java class for anonymous complex type.
      * 
