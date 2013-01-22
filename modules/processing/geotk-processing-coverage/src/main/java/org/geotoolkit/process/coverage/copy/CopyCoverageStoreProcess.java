@@ -32,6 +32,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.imageio.ImageReader;
 import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.coverage.CoverageStore;
@@ -146,112 +151,141 @@ public class CopyCoverageStoreProcess extends AbstractProcess {
                 nb += inGM.getGridSize().height*inGM.getGridSize().width;
             }
         }
+        final long total = nb;
         
-        final long before = System.currentTimeMillis();
-        long estimatedTime = 0;
-        
-        long count = 0;
-        //copy pyramids
-        for(final Pyramid inPY : inPS.getPyramids()){
-            final Pyramid outPY = outPM.createPyramid(inPY.getCoordinateReferenceSystem());
-            //copy mosaics
-            for(final GridMosaic inGM : inPY.getMosaics()){
-                final Dimension gridDimension = inGM.getGridSize();
-                final GridMosaic outGM = outPM.createMosaic(outPY.getId(), 
-                        gridDimension, inGM.getTileSize(), 
-                        inGM.getUpperLeftCorner(), inGM.getScale());
-                
-                //collection of all tile points
-                final Collection<Point> allPoints = new AbstractCollection<Point>() {
-                    @Override
-                    public Iterator<Point> iterator() {
-                        return new Iterator<Point>() {
-                            int index = 0;
-                            Point next = null;
-                            
-                            @Override
-                            public boolean hasNext() {
-                                findNext();
-                                return next != null;
-                            }
+        final int processors = Runtime.getRuntime().availableProcessors();
+        final ExecutorService es = Executors.newFixedThreadPool(processors);
+        try{
+            final long before = System.currentTimeMillis();
 
-                            @Override
-                            public Point next() {
-                                findNext();
-                                Point cp = next;
-                                next = null;
-                                if(cp == null){
-                                    throw new NoSuchElementException("no more element");
-                                }
-                                return cp;
-                            }
+            final AtomicLong count = new AtomicLong();
+            //copy pyramids
+            for(final Pyramid inPY : inPS.getPyramids()){
+                final Pyramid outPY = outPM.createPyramid(inPY.getCoordinateReferenceSystem());
+                //copy mosaics
+                for(final GridMosaic inGM : inPY.getMosaics()){
+                    final Dimension gridDimension = inGM.getGridSize();
+                    final GridMosaic outGM = outPM.createMosaic(outPY.getId(), 
+                            gridDimension, inGM.getTileSize(), 
+                            inGM.getUpperLeftCorner(), inGM.getScale());
 
-                            private void findNext(){
-                                if(next != null) return;
-                                
-                                final int x = index % gridDimension.width;
-                                final int y = index / gridDimension.width;
-                                if(x>=gridDimension.width || y>=gridDimension.height){
-                                    //reached the end
-                                    return;
+
+                    //collection of all tile points
+                    final Collection<Point> allPoints = new AbstractCollection<Point>() {
+                        @Override
+                        public Iterator<Point> iterator() {
+                            return new Iterator<Point>() {
+                                int x = 0;
+                                int y = 0;
+                                Point next = null;
+
+                                @Override
+                                public boolean hasNext() {
+                                    findNext();
+                                    return next != null;
                                 }
-                                next = new Point(x, y);
-                                index++;
-                            }
-                            
-                            @Override
-                            public void remove() {
-                            }
-                        };
-                    }
-                    @Override
-                    public int size() {
-                        return gridDimension.height*gridDimension.width;
-                    }
-                };
-                
-                final BlockingQueue<Object> queue = inGM.getTiles(allPoints, null);
-                while(true){
-                    final Object obj = queue.poll();
-                    if(obj == GridMosaic.END_OF_QUEUE){
-                        break;
-                    }else if(obj == null){
-                        continue;
-                    }
-                    final TileReference inTR = (TileReference) obj;
-                    final int x = inTR.getPosition().x;
-                    final int y = inTR.getPosition().y;
-                    ImageReader inReader = null;
-                    try{
-                        Object input = inTR.getInput();
-                        RenderedImage image;
-                        if(input instanceof RenderedImage){
-                            image = (RenderedImage) input;
-                            if(image.getColorModel() instanceof IndexColorModel){
-                                final BufferedImage bg = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
-                                bg.createGraphics().drawRenderedImage(image, new AffineTransform());
-                                image = bg;
-                            }
-                        }else{
-                            inReader = inTR.getImageReader();
-                            image = inReader.read(inTR.getImageIndex());
+
+                                @Override
+                                public Point next() {
+                                    findNext();
+                                    Point cp = next;
+                                    next = null;
+                                    if(cp == null){
+                                        throw new NoSuchElementException("no more element");
+                                    }
+                                    return cp;
+                                }
+
+                                private void findNext(){
+                                    if(next != null) return;
+
+                                    if(x>=gridDimension.width){
+                                        x=0;
+                                        y++;
+                                    }
+                                    if(y>=gridDimension.height){
+                                        //reached the end
+                                        return;
+                                    }
+
+                                    next = new Point(x, y);
+                                    x++;
+                                }
+
+                                @Override
+                                public void remove() {
+                                }
+                            };
                         }
-                        outPM.writeTile(outPY.getId(), outGM.getId(), x, y, image);
-                        count++;
-                        final long current = System.currentTimeMillis();
-                        final long oneTileTime = (current-before) / count;
-                        final long remaining = (nb-count) * oneTileTime;
-                        final String remtext = TemporalUtilities.durationToString(remaining);
-                        fireProgressing(count+" / "+nb+ " ("+remtext+")", count/nb, false);
-                    }catch(IOException ex){
-                        throw new DataStoreException(ex);
-                    }finally{
-                        //dispose reader and substream
-                        ImageIOUtilities.releaseReader(inReader);
+                        @Override
+                        public int size() {
+                            return gridDimension.height*gridDimension.width;
+                        }
+                    };
+
+                    final BlockingQueue<Object> queue = inGM.getTiles(allPoints, null);
+                    while(true){
+                        final Object obj;
+                        try {
+                            obj = queue.take();
+                        } catch (InterruptedException ex) {
+                            Logger.getLogger(CopyCoverageStoreProcess.class.getName()).log(Level.SEVERE, null, ex);
+                            continue;
+                        }
+                        if(obj == GridMosaic.END_OF_QUEUE){
+                            break;
+                        }else if(obj == null){
+                            continue;
+                        }
+                        final TileReference inTR = (TileReference) obj;
+                        final int x = inTR.getPosition().x;
+                        final int y = inTR.getPosition().y;
+                        ImageReader inReader = null;
+                        try{
+                            Object input = inTR.getInput();
+                            RenderedImage image;
+                            if(input instanceof RenderedImage){
+                                image = (RenderedImage) input;
+                                if(image.getColorModel() instanceof IndexColorModel){
+                                    final BufferedImage bg = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
+                                    bg.createGraphics().drawRenderedImage(image, new AffineTransform());
+                                    image = bg;
+                                }
+                            }else{
+                                inReader = inTR.getImageReader();
+                                image = inReader.read(inTR.getImageIndex());
+                            }
+                            final RenderedImage img = image;
+                            es.submit(new Runnable() {
+                                @Override
+                                public void run() {
+                                    try {
+                                        outPM.writeTile(outPY.getId(), outGM.getId(), x, y, img);
+                                    } catch (DataStoreException ex) {
+                                        CopyCoverageStoreProcess.this.fireWarningOccurred(ex.getMessage(), 0, ex);
+                                        return;
+                                    }
+                                    final long inc = count.incrementAndGet();
+                                    final long current = System.currentTimeMillis();
+                                    final long oneTileTime = (current-before) / inc;
+                                    final long remaining = (total-inc) * oneTileTime;
+                                    final String remtext = TemporalUtilities.durationToString(remaining);
+                                    fireProgressing(inc+" / "+total+ " ("+remtext+")", inc/total, false);
+                                }
+                            });
+
+                        }catch(IOException ex){
+                            throw new DataStoreException(ex);
+                        }finally{
+                            //dispose reader and substream
+                            ImageIOUtilities.releaseReader(inReader);
+                        }
                     }
+
                 }
-                
             }
+        }finally{
+            es.shutdown();
         }
     }
     
