@@ -205,7 +205,7 @@ public class PGCoverageBuilder {
         final RenderedImage baseImg = ((GridCoverage2D)gridCoverage).getRenderedImage();
         final ColorModel cm = baseImg.getColorModel();
         final int datatype  = cm.getColorSpace().getType();
-        final double[] fill = (fillValue == null) ? new double[cm.getPixelSize()] : fillValue;
+        final double[] fill = (fillValue == null) ? new double[cm.getNumComponents()] : fillValue;
 
         final CoordinateReferenceSystem coverageCRS = gridCoverage.getCoordinateReferenceSystem();
         final MathTransform covCRS_to_grid = gg.getGridToCRS().inverse();
