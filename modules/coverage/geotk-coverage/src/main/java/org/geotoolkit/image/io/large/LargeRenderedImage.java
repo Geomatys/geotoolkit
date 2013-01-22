@@ -29,6 +29,8 @@ import java.util.logging.Logger;
 import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
 import javax.media.jai.TileCache;
+import org.geotoolkit.image.iterator.PixelIterator;
+import org.geotoolkit.image.iterator.PixelIteratorFactory;
 
 /**
  *
@@ -279,6 +281,31 @@ public class LargeRenderedImage implements RenderedImage {
      */
     @Override
     public Raster getData() {
+        // in contradiction with this class aim.
+        // in attempt to replace JAI dependencies.
+        if (width <= 5000 && height <= 5000) {
+            ptOffset.setLocation(0, 0);
+            final WritableRaster wr = Raster.createWritableRaster(cm.createCompatibleSampleModel(width, height), ptOffset);
+            final Rectangle rect = new Rectangle();
+            int my = 0;
+            for (int ty = 0, tmy = 0 + nbrTileY; ty < tmy; ty++) {
+                int mx = 0;
+                for (int tx = 0, tmx = 0 + nbrTileX; tx < tmx; tx++) {
+                    final Raster r = tilecache.getTile(this, tx, ty);
+                    rect.setBounds(mx, my, tileWidth, tileHeight);
+                    //recopie
+                    final PixelIterator copix = PixelIteratorFactory.createDefaultWriteableIterator(wr, wr, rect);
+                    final PixelIterator pix = PixelIteratorFactory.createDefaultIterator(r, rect);
+                    while (copix.next()) {
+                        pix.next();
+                        copix.setSampleDouble(pix.getSampleDouble());
+                    }
+                    mx += tileWidth;
+                }
+                my += tileHeight;
+            }
+            return wr;
+        }
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -287,6 +314,44 @@ public class LargeRenderedImage implements RenderedImage {
      */
     @Override
     public Raster getData(Rectangle rect) {
+        // in contradiction with this class aim.
+        // in attempt to replace JAI dependencies.
+        final int minX = 0;
+        final int minY = 0;
+        final int minTileGridY = 0;
+        final int minTileGridX = 0;
+        final int rx = Math.max(rect.x, minX);
+        final int ry = Math.max(rect.y, minY);
+        final int rw = Math.min(rect.x+rect.width, minX+width)-rx;
+        final int rh = Math.min(rect.y+rect.height, minY+height)-ry;
+        if (rw <= 5000 && rh <= 5000) {
+            ptOffset.setLocation(rx, ry);
+            final WritableRaster wr = Raster.createWritableRaster(cm.createCompatibleSampleModel(rw, rh), ptOffset);
+            final Rectangle area = new Rectangle();
+
+            int ty = minTileGridY  + (ry - minY) / tileHeight;
+            int tbx = minTileGridX + (rx - minX) / tileWidth;
+            int tmaxY = (ry+rh-minY+tileHeight-1)/tileHeight;
+            int tmaxX = (rx+rw-minX+tileWidth-1)/tileWidth;
+            for (; ty < tmaxY; ty++) {
+                for (int tx = tbx; tx < tmaxX; tx++) {
+                    final Raster r = tilecache.getTile(this, tx, ty);
+                    final int ix = Math.max(rx, minX + (tx-minTileGridX) * tileWidth);
+                    final int iy = Math.max(ry, minY + (ty-minTileGridY) * tileHeight);
+                    final int imx = Math.min(rx + rw, minX + (tx + 1 - minTileGridX) * tileWidth);
+                    final int imy = Math.min(ry + rh, minY + (ty + 1 - minTileGridY) * tileHeight);
+                    area.setBounds(ix, iy, imx-ix, imy-iy);
+                    //recopie
+                    final PixelIterator copix = PixelIteratorFactory.createDefaultWriteableIterator(wr, wr, area);
+                    final PixelIterator pix = PixelIteratorFactory.createDefaultIterator(r, area);
+                    while (copix.next()) {
+                        pix.next();
+                            copix.setSampleDouble(pix.getSampleDouble());
+                    }
+                }
+            }
+            return wr;
+        }
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

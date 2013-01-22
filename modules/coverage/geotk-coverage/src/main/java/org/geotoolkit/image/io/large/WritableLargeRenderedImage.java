@@ -266,7 +266,8 @@ public class WritableLargeRenderedImage implements WritableRenderedImage {
 
     @Override
     public Raster getData() {
-        //debug
+        // in contradiction with this class aim.
+        // in attempt to replace JAI dependencies.
         if (width <= 5000 && height <= 5000) {
             ptOffset.setLocation(minX, minY);
             final WritableRaster wr = Raster.createWritableRaster(cm.createCompatibleSampleModel(width, height), ptOffset);
@@ -290,11 +291,13 @@ public class WritableLargeRenderedImage implements WritableRenderedImage {
             }
             return wr;
         }
-        throw new UnsupportedOperationException("Not supported yet.");
+        throw new UnsupportedOperationException("Not supported yet. Raster weight too expensive.");
     }
 
     @Override
     public Raster getData(Rectangle rect) {
+        // in contradiction with this class aim.
+        // in attempt to replace JAI dependencies.
         final int rx = Math.max(rect.x, minX);
         final int ry = Math.max(rect.y, minY);
         final int rw = Math.min(rect.x+rect.width, minX+width)-rx;
@@ -327,7 +330,7 @@ public class WritableLargeRenderedImage implements WritableRenderedImage {
             }
             return wr;
         }
-        throw new UnsupportedOperationException("Not supported yet.");
+        throw new UnsupportedOperationException("Not supported yet.Raster weight too expensive.");
     }
 
     @Override
