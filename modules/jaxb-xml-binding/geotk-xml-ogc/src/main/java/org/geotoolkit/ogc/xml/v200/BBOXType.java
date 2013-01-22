@@ -246,7 +246,10 @@ public class BBOXType extends SpatialOpsType implements BBOX {
 
     @Override
     public Expression getExpression2() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        if (this.any != null && !this.any.isEmpty()) {
+            return new LiteralType(this.any.get(0));
+        }
+        return null;
     }
     
     @Override

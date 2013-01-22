@@ -214,7 +214,12 @@ public class BBOXType extends SpatialOpsType implements BBOX {
 
     @Override
     public Expression getExpression2() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        if (envelope != null) {
+            return new LiteralType(envelope);
+        } else if (envelopeWithTimePeriod != null) {
+            return new LiteralType(envelopeWithTimePeriod);
+        }
+        return null;
     }
 
     @Override
