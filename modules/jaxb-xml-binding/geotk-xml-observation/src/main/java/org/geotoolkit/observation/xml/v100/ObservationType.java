@@ -49,6 +49,7 @@ import org.geotoolkit.swe.xml.v101.PhenomenonPropertyType;
 import org.geotoolkit.swe.xml.v101.TimeGeometricPrimitivePropertyType;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.metadata.iso.DefaultMetadata;
+import org.geotoolkit.observation.xml.AbstractObservation;
 import org.geotoolkit.sampling.xml.v100.SamplingCurveType;
 import org.geotoolkit.sampling.xml.v100.SamplingSolidType;
 import org.geotoolkit.sampling.xml.v100.SamplingSurfaceType;
@@ -77,7 +78,7 @@ import org.geotoolkit.util.logging.Logging;
 })
 @XmlRootElement(name = "Observation")
 @XmlSeeAlso({ MeasurementType.class})
-public class ObservationType implements Observation, Entry {
+public class ObservationType implements Entry, AbstractObservation {
     /**
      * Pour compatibilités entre les enregistrements binaires de différentes versions.
      */
@@ -355,6 +356,7 @@ public class ObservationType implements Observation, Entry {
     
     /**
      */
+    @Override
     public void setName(final String name) {
         this.name  = name;
     }
@@ -444,6 +446,13 @@ public class ObservationType implements Observation, Entry {
     @Override
     public Process getProcedure() {
         return procedure;
+    }
+    
+    @Override
+    public void setProcedure(final String procedureID) {
+        if (procedureID != null) {
+            this.procedure = new ProcessType(procedureID);
+        }
     }
     
     /**
@@ -586,9 +595,13 @@ public class ObservationType implements Observation, Entry {
     /**
      * Return true if the observation match the specified template.
      */ 
-    public boolean matchTemplate(final ObservationType template) {
-        
-        boolean obsProperty = false;
+    @Override
+    public boolean matchTemplate(final Observation abstractTemplate) {
+        if (!(abstractTemplate instanceof ObservationType)) {
+            throw new IllegalArgumentException("Unexpected object version");
+        }
+        final ObservationType template = (ObservationType) abstractTemplate;
+        final boolean obsProperty;
         if (this.observedProperty != null && template.observedProperty != null) {
             obsProperty = Utilities.equals(this.observedProperty.getPhenomenon(),    template.observedProperty.getPhenomenon());
             if (!obsProperty) {
@@ -599,7 +612,7 @@ public class ObservationType implements Observation, Entry {
             obsProperty = this.observedProperty == null && template.observedProperty == null;
         }
         
-        boolean obsFoi = false;
+        final boolean obsFoi;
         if (this.featureOfInterest != null && template.featureOfInterest != null) {
             obsFoi = Utilities.equals(this.featureOfInterest.getAbstractFeature(),    template.featureOfInterest.getAbstractFeature());
             if (!obsFoi) {
@@ -618,14 +631,14 @@ public class ObservationType implements Observation, Entry {
                         Utilities.equals(this.procedureParameter,  template.procedureParameter)  &&
                         obsProperty;
         if (!match) {
-            LOGGER.severe("error matching template report:" + '\n' +
-                   "FOI  =>" + obsFoi                                                                   + '\n' +
-                   "PROC =>" + Utilities.equals(this.procedure,           template.procedure)           + '\n' +
-                   "QUAL =>" + Utilities.equals(this.resultQuality,       template.resultQuality)       + '\n' + 
-                   "META =>" + Utilities.equals(this.observationMetadata, template.observationMetadata) + '\n' +
-                   "PTI  =>" + Utilities.equals(this.procedureTime,       template.procedureTime)       + '\n' +
-                   "PPAM =>" + Utilities.equals(this.procedureParameter,  template.procedureParameter)  + '\n' +
-                   "PHEN =>" + obsProperty);
+            LOGGER.severe("error matching template report:" +
+                   "\nFOI  =>" + obsFoi                                                                   + 
+                   "\nPROC =>" + Utilities.equals(this.procedure,           template.procedure)           + 
+                   "\nQUAL =>" + Utilities.equals(this.resultQuality,       template.resultQuality)       + 
+                   "\nMETA =>" + Utilities.equals(this.observationMetadata, template.observationMetadata) + 
+                   "\nPTI  =>" + Utilities.equals(this.procedureTime,       template.procedureTime)       + 
+                   "\nPPAM =>" + Utilities.equals(this.procedureParameter,  template.procedureParameter)  + 
+                   "\nPHEN =>" + obsProperty);
         }
         return match;
         

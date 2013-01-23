@@ -31,8 +31,14 @@ import org.geotoolkit.gml.xml.v321.TimeInstantPropertyType;
 import org.geotoolkit.gml.xml.v321.TimePeriodPropertyType;
 import org.geotoolkit.internal.jaxb.metadata.DQ_Element;
 import org.geotoolkit.internal.jaxb.metadata.direct.MetadataAdapter;
+import org.geotoolkit.observation.xml.AbstractObservation;
+import org.geotoolkit.sampling.xml.v200.SFSamplingFeatureType;
 import org.opengis.metadata.Metadata;
 import org.opengis.metadata.quality.Element;
+import org.opengis.observation.Observation;
+import org.opengis.observation.Phenomenon;
+import org.opengis.observation.sampling.SamplingFeature;
+import org.opengis.temporal.TemporalObject;
 
 
 /**
@@ -75,7 +81,7 @@ import org.opengis.metadata.quality.Element;
     "resultQuality",
     "result"
 })
-public class OMObservationType extends AbstractFeatureType {
+public class OMObservationType extends AbstractFeatureType implements AbstractObservation {
 
     private ReferenceType type;
     @XmlJavaTypeAdapter(MetadataAdapter.class)
@@ -98,6 +104,12 @@ public class OMObservationType extends AbstractFeatureType {
     @XmlElement(required = true)
     private Object result;
 
+    
+    @Override
+    public String getDefinition() {
+        return null; // not defined in SOS 2.0.0
+    }
+    
     /**
      * Gets the value of the type property.
      * 
@@ -130,7 +142,8 @@ public class OMObservationType extends AbstractFeatureType {
      *     {@link MDMetadataPropertyType }
      *     
      */
-    public Metadata getMetadata() {
+    @Override
+    public Metadata getObservationMetadata() {
         return metadata;
     }
 
@@ -142,7 +155,7 @@ public class OMObservationType extends AbstractFeatureType {
      *     {@link MDMetadataPropertyType }
      *     
      */
-    public void setMetadata(Metadata value) {
+    public void setObservationMetadata(Metadata value) {
         this.metadata = value;
     }
 
@@ -184,7 +197,20 @@ public class OMObservationType extends AbstractFeatureType {
     public void setPhenomenonTime(TimeObjectPropertyType value) {
         this.phenomenonTime = value;
     }
+    
+    @Override
+    public TemporalObject getSamplingTime() {
+        if (phenomenonTime != null) {
+            return phenomenonTime.getTimeObject();
+        }
+        return null;
+    }
 
+    @Override
+    public TemporalObject getProcedureTime() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+    
     /**
      * Gets the value of the resultTime property.
      * 
@@ -241,6 +267,7 @@ public class OMObservationType extends AbstractFeatureType {
      *     {@link OMProcessPropertyType }
      *     
      */
+    @Override
     public OMProcessPropertyType getProcedure() {
         return procedure;
     }
@@ -253,8 +280,15 @@ public class OMObservationType extends AbstractFeatureType {
      *     {@link OMProcessPropertyType }
      *     
      */
-    public void setProcedure(OMProcessPropertyType value) {
+    public void setProcedure(final OMProcessPropertyType value) {
         this.procedure = value;
+    }
+    
+    @Override
+    public void setProcedure(final String procedureID) {
+        if (procedureID != null) {
+            this.procedure = new OMProcessPropertyType(procedureID);
+        }
     }
 
     /**
@@ -272,6 +306,14 @@ public class OMObservationType extends AbstractFeatureType {
         return this.parameter;
     }
 
+    @Override
+    public Object getProcedureParameter() {
+        if (parameter != null && !parameter.isEmpty()) {
+            return parameter.get(0);
+        }
+        return null;
+    }
+    
     /**
      * Gets the value of the observedProperty property.
      * 
@@ -280,8 +322,13 @@ public class OMObservationType extends AbstractFeatureType {
      *     {@link ReferenceType }
      *     
      */
-    public ReferenceType getObservedProperty() {
+    public ReferenceType getObservedPropertyRef() {
         return observedProperty;
+    }
+    
+    @Override
+    public Phenomenon getObservedProperty() {
+        throw new UnsupportedOperationException("there is no full Phenonon in O&M v2.0.0");
     }
 
     /**
@@ -304,8 +351,20 @@ public class OMObservationType extends AbstractFeatureType {
      *     {@link FeaturePropertyType }
      *     
      */
-    public FeaturePropertyType getFeatureOfInterest() {
+    public FeaturePropertyType getFeatureOfInterestProperty() {
         return featureOfInterest;
+    }
+    
+    @Override
+    public SamplingFeature getFeatureOfInterest() {
+         if (featureOfInterest != null) {
+            if (featureOfInterest.getAbstractFeature() instanceof SamplingFeature) {
+                return (SFSamplingFeatureType)featureOfInterest.getAbstractFeature();
+            } else {
+                LOGGER.warning("information lost getFeatureOfInterest() is deprecated use getPropertyFeatureOfInterest() instead");
+            }
+        }
+        return null;
     }
 
     /**
@@ -334,6 +393,13 @@ public class OMObservationType extends AbstractFeatureType {
         return this.resultQuality;
     }
 
+    @Override
+    public Element getQuality() {
+        if (resultQuality != null && !resultQuality.isEmpty()) {
+            return resultQuality.get(0);
+        }
+        return null;
+    }
     /**
      * Gets the value of the result property.
      * 
@@ -342,6 +408,7 @@ public class OMObservationType extends AbstractFeatureType {
      *     {@link Object }
      *     
      */
+    @Override
     public Object getResult() {
         return result;
     }
@@ -358,4 +425,8 @@ public class OMObservationType extends AbstractFeatureType {
         this.result = value;
     }
 
+    @Override
+    public boolean matchTemplate(final Observation abstractTemplate) {
+        return true;
+    }
 }

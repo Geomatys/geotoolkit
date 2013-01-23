@@ -107,8 +107,11 @@ public class FeaturePropertyType {
      *     {@link JAXBElement }{@code <}{@link DiscreteCoverageType }{@code >}
      *     
      */
-    public JAXBElement<? extends AbstractFeatureType> getAbstractFeature() {
-        return abstractFeature;
+    public AbstractFeatureType getAbstractFeature() {
+        if (abstractFeature != null) {
+            return abstractFeature.getValue();
+        }
+        return null;
     }
 
     /**

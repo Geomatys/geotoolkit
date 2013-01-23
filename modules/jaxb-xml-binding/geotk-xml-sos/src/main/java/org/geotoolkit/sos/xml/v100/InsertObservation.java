@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.sos.xml.v100;
 
+import java.util.Arrays;
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -24,6 +26,7 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.observation.xml.v100.ObservationType;
 import org.geotoolkit.util.Utilities;
+import org.opengis.observation.Observation;
 
 
 /**
@@ -53,7 +56,7 @@ import org.geotoolkit.util.Utilities;
     "observation"
 })
 @XmlRootElement(name = "InsertObservation")
-public class InsertObservation extends RequestBaseType {
+public class InsertObservation extends RequestBaseType implements org.geotoolkit.sos.xml.InsertObservation {
 
     @XmlElement(name = "AssignedSensorId", required = true)
     @XmlSchemaType(name = "anyURI")
@@ -83,6 +86,7 @@ public class InsertObservation extends RequestBaseType {
      * Gets the value of the insertId property.
      * 
      */
+    @Override
     public String getAssignedSensorId() {
         return assignedSensorId;
     }
@@ -95,6 +99,11 @@ public class InsertObservation extends RequestBaseType {
         return observation;
     }
 
+    @Override
+    public List<ObservationType> getObservations() {
+        return Arrays.asList(observation);
+    }
+    
     /**
      * Verify if this entry is identical to the specified object.
      */
@@ -121,10 +130,11 @@ public class InsertObservation extends RequestBaseType {
     
     @Override
     public String toString() {
-        StringBuilder s = new StringBuilder("[Insert Observation]").append('\n');
+        final StringBuilder s = new StringBuilder("[Insert Observation]\n");
         s.append("assigned sensor id=").append(assignedSensorId).append('\n');
-        if (observation != null)
-            s.append("observation:").append('\n').append(observation.toString()).append('\n');
+        if (observation != null) {
+            s.append("observation:\n").append(observation).append('\n');
+        }
         return s.toString();
     }
 }

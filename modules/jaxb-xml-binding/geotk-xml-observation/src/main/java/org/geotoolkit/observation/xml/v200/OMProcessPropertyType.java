@@ -65,7 +65,7 @@ import org.w3c.dom.Element;
 @XmlType(name = "OM_ProcessPropertyType", propOrder = {
     "any"
 })
-public class OMProcessPropertyType {
+public class OMProcessPropertyType implements org.opengis.observation.Process {
 
     @XmlAnyElement(lax = true)
     private Object any;
@@ -89,6 +89,14 @@ public class OMProcessPropertyType {
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     private ActuateType actuate;
 
+    public OMProcessPropertyType() {
+        
+    }
+    
+    public OMProcessPropertyType(final String href) {
+        this.href = href;
+    }
+    
     /**
      * Gets the value of the any property.
      * 

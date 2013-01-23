@@ -64,9 +64,7 @@ import javax.xml.bind.annotation.XmlType;
     DynamicFeatureType.class,
     BoundedFeatureType.class
 })
-public abstract class AbstractFeatureType
-    extends AbstractGMLType
-{
+public abstract class AbstractFeatureType extends AbstractGMLType {
 
     @XmlElement(nillable = true)
     private BoundingShapeType boundedBy;

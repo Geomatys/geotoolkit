@@ -63,7 +63,7 @@ import org.geotoolkit.swes.xml.v200.ExtensibleRequestType;
     "offering",
     "observation"
 })
-public class InsertObservationType extends ExtensibleRequestType {
+public class InsertObservationType extends ExtensibleRequestType implements org.geotoolkit.sos.xml.InsertObservation {
 
     @XmlElement(required = true)
     @XmlSchemaType(name = "anyURI")
@@ -97,6 +97,20 @@ public class InsertObservationType extends ExtensibleRequestType {
             observation = new ArrayList<InsertObservationType.Observation>();
         }
         return this.observation;
+    }
+
+    @Override
+    public String getAssignedSensorId() {
+        return null;
+    }
+
+    @Override
+    public List<OMObservationType> getObservations() {
+        final List<OMObservationType> result = new ArrayList<OMObservationType>();
+        for (InsertObservationType.Observation obs : observation) {
+            result.add(obs.omObservation);
+        }
+        return result;
     }
 
 
