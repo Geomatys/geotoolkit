@@ -32,6 +32,7 @@ import org.geotoolkit.wms.xml.AbstractWMSCapabilities;
 import org.geotoolkit.wms.xml.WMSVersion;
 import org.geotoolkit.wms.WebMapServer;
 import org.opengis.feature.type.Name;
+import org.opengis.parameter.ParameterValueGroup;
 
 
 /**
@@ -77,7 +78,11 @@ public class NcWebMapServer extends WebMapServer{
             final WMSVersion version, final AbstractWMSCapabilities capabilities) {
         super(serverURL, security, version, capabilities);
     }
-    
+
+    public NcWebMapServer(ParameterValueGroup params){
+        super(params);
+    }
+
     /**
      * Create a NcWebMapServer from a WebMapServer
      * 
