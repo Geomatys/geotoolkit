@@ -19,6 +19,7 @@ package org.geotoolkit.sos.xml;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.geotoolkit.gml.xml.Envelope;
 import org.geotoolkit.ows.xml.AbstractOperationsMetadata;
 import org.geotoolkit.ows.xml.AbstractServiceIdentification;
 import org.geotoolkit.ows.xml.AbstractServiceProvider;
@@ -26,6 +27,8 @@ import org.geotoolkit.ows.xml.AcceptFormats;
 import org.geotoolkit.ows.xml.AcceptVersions;
 import org.geotoolkit.ows.xml.Range;
 import org.geotoolkit.ows.xml.Sections;
+import org.opengis.observation.Observation;
+import org.opengis.observation.ObservationCollection;
 
 /**
  *
@@ -149,6 +152,57 @@ public class SOSXmlFactory {
                                                                 updateSequence, 
                                                                 (org.geotoolkit.sos.xml.v100.FilterCapabilities)filterCapabilities,
                                                                 (org.geotoolkit.sos.xml.v100.Contents)contents);
+        } else {
+            throw new IllegalArgumentException("unexpected version number:" + version);
+        }
+    }
+    
+    public static InsertObservationResponse buildInsertObservationResponse(final String version, final List<String> assignedObservationIds) {
+        if ("2.0.0".equals(version)) {
+            return new org.geotoolkit.sos.xml.v200.InsertObservationResponseType(assignedObservationIds);
+        } else if ("1.0.0".equals(version)) {
+            final String id;
+            if (assignedObservationIds != null && !assignedObservationIds.isEmpty()) {
+                id = assignedObservationIds.get(0);
+            } else {
+                id = null;
+            }
+            return new org.geotoolkit.sos.xml.v100.InsertObservationResponse(id);
+        } else {
+            throw new IllegalArgumentException("unexpected version number:" + version);
+        }
+    }
+    
+    public static ObservationCollection buildObservationCollection(final String version, final String id, final Envelope bounds, final List<Observation> observations) {
+        if ("2.0.0".equals(version)) {
+            final List<org.geotoolkit.observation.xml.v200.OMObservationType> obs200 = new ArrayList<org.geotoolkit.observation.xml.v200.OMObservationType>();
+            if (observations != null) {
+                for (Observation obs : observations) {
+                    if (obs instanceof org.geotoolkit.observation.xml.v200.OMObservationType) {
+                        obs200.add((org.geotoolkit.observation.xml.v200.OMObservationType) obs);
+                    } else {
+                        throw new IllegalArgumentException("unexpected object version for observation element");
+                    }
+                }
+            }
+            return new org.geotoolkit.sos.xml.v200.GetObservationResponseType(obs200);
+        } else if ("1.0.0".equals(version)) {
+            final List<org.geotoolkit.observation.xml.v100.ObservationType> obs100 = new ArrayList<org.geotoolkit.observation.xml.v100.ObservationType>();
+            if (observations != null) {
+                for (Observation obs : observations) {
+                    if (obs instanceof org.geotoolkit.observation.xml.v100.ObservationType) {
+                        obs100.add((org.geotoolkit.observation.xml.v100.ObservationType) obs);
+                    } else {
+                        throw new IllegalArgumentException("unexpected object version for observation element");
+                    }
+                }
+            }
+            if (bounds != null && !(bounds instanceof org.geotoolkit.gml.xml.v311.EnvelopeType)) {
+                throw new IllegalArgumentException("unexpected object version for bounds element");
+            }
+            return new org.geotoolkit.observation.xml.v100.ObservationCollectionType(id, 
+                                                                                     (org.geotoolkit.gml.xml.v311.EnvelopeType)bounds,
+                                                                                     obs100);
         } else {
             throw new IllegalArgumentException("unexpected version number:" + version);
         }

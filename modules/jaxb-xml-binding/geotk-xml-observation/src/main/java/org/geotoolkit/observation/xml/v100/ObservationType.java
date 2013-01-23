@@ -54,6 +54,7 @@ import org.geotoolkit.sampling.xml.v100.SamplingCurveType;
 import org.geotoolkit.sampling.xml.v100.SamplingSolidType;
 import org.geotoolkit.sampling.xml.v100.SamplingSurfaceType;
 import org.geotoolkit.util.logging.Logging;
+import org.opengis.temporal.TemporalGeometricPrimitive;
 
 
 /**
@@ -328,7 +329,8 @@ public class ObservationType implements Entry, AbstractObservation {
      * Construit un nouveau template temporaire d'observation a partir d'un template fournit en argument.
      * On y rajoute un samplingTime et un id temporaire. 
      */
-    public ObservationType getTemporaryTemplate(final String temporaryName, AbstractTimeGeometricPrimitiveType time) {
+    @Override
+    public ObservationType getTemporaryTemplate(final String temporaryName, TemporalGeometricPrimitive time) {
         if (time == null) { 
             TimePositionType begin = new  TimePositionType("1900-01-01T00:00:00");
             time = new TimePeriodType(begin);
@@ -350,7 +352,7 @@ public class ObservationType implements Entry, AbstractObservation {
                                     this.observedProperty,
                                     this.procedure,
                                     res,
-                                    time);
+                                    (AbstractTimeGeometricPrimitiveType)time);
         
     }
     

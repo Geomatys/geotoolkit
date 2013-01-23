@@ -25,6 +25,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.observation.xml.v200.OMObservationType;
 import org.geotoolkit.swes.xml.v200.ExtensibleResponseType;
+import org.opengis.observation.Observation;
+import org.opengis.observation.ObservationCollection;
 
 
 /**
@@ -60,10 +62,23 @@ import org.geotoolkit.swes.xml.v200.ExtensibleResponseType;
 @XmlType(name = "GetObservationResponseType", propOrder = {
     "observationData"
 })
-public class GetObservationResponseType extends ExtensibleResponseType {
+public class GetObservationResponseType extends ExtensibleResponseType implements ObservationCollection {
 
     private List<GetObservationResponseType.ObservationData> observationData;
 
+    public GetObservationResponseType() {
+        
+    }
+    
+    public GetObservationResponseType(final List<OMObservationType> observations) {
+        if (observations != null) {
+            this.observationData = new ArrayList<ObservationData>();
+            for (OMObservationType observation : observations) {
+                this.observationData.add(new ObservationData(observation));
+            }
+        }
+    }
+    
     /**
      * Gets the value of the observationData property.
      * 
@@ -76,6 +91,17 @@ public class GetObservationResponseType extends ExtensibleResponseType {
             observationData = new ArrayList<GetObservationResponseType.ObservationData>();
         }
         return this.observationData;
+    }
+
+    @Override
+    public List<Observation> getMember() {
+        final List<Observation> observations = new ArrayList<Observation>();
+        if (observationData != null) {
+            for (ObservationData data : observationData) {
+                observations.add(data.omObservation);
+            }
+        } 
+        return observations;
     }
 
 
@@ -107,6 +133,14 @@ public class GetObservationResponseType extends ExtensibleResponseType {
         @XmlElement(name = "OM_Observation", namespace = "http://www.opengis.net/om/2.0", required = true)
         private OMObservationType omObservation;
 
+        public ObservationData() {
+            
+        }
+        
+        public ObservationData(final OMObservationType omObservation) {
+            this.omObservation = omObservation;
+        }
+        
         /**
          * Gets the value of the omObservation property.
          * 

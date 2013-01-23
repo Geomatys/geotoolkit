@@ -38,6 +38,7 @@ import org.opengis.metadata.quality.Element;
 import org.opengis.observation.Observation;
 import org.opengis.observation.Phenomenon;
 import org.opengis.observation.sampling.SamplingFeature;
+import org.opengis.temporal.TemporalGeometricPrimitive;
 import org.opengis.temporal.TemporalObject;
 
 
@@ -428,5 +429,10 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
     @Override
     public boolean matchTemplate(final Observation abstractTemplate) {
         return true;
+    }
+
+    @Override
+    public Observation getTemporaryTemplate(final String temporaryName, final TemporalGeometricPrimitive time) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

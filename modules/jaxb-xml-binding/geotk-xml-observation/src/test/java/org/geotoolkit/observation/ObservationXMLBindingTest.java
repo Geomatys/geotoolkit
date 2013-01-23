@@ -46,6 +46,7 @@ import org.geotoolkit.swe.xml.v101.PhenomenonType;
 import org.geotoolkit.swe.xml.v101.SimpleDataRecordType;
 import org.geotoolkit.swe.xml.v101.Text;
 import org.geotoolkit.swe.xml.v101.TextBlockType;
+import org.geotoolkit.util.StringUtilities;
 import org.geotoolkit.xml.MarshallerPool;
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -117,13 +118,9 @@ public class ObservationXMLBindingTest {
         //we remove the first line
         result = result.substring(result.indexOf("?>") + 3);
         //we remove the xmlmns
-        result = result.replace(" xmlns:xlink=\"http://www.w3.org/1999/xlink\"", "");
-        result = result.replace(" xmlns:gml=\"http://www.opengis.net/gml\"", "");
-        result = result.replace(" xmlns:swe=\"http://www.opengis.net/swe/1.0.1\"", "");
-        result = result.replace(" xmlns:sampling=\"http://www.opengis.net/sampling/1.0\"", "");
-        result = result.replace(" xmlns:om=\"http://www.opengis.net/om/1.0\"", "");
+        result = StringUtilities.removeXmlns(result);
 
-        String expResult = "<om:Observation>" + '\n' +
+        String expResult = "<om:Observation >" + '\n' +
                            "    <gml:name>urn:Observation-007</gml:name>" + '\n' +
                            "    <om:samplingTime>" + '\n' +
                            "        <gml:TimePeriod gml:id=\"t1\">" + '\n' +
@@ -152,7 +149,7 @@ public class ObservationXMLBindingTest {
                            "            </sampling:position>" + '\n' +
                            "        </sampling:SamplingPoint>" + '\n' +
                            "    </om:featureOfInterest>" + '\n' +
-                           "    <om:result xsi:type=\"swe:DataArrayPropertyType\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">" + '\n' +
+                           "    <om:result xsi:type=\"swe:DataArrayPropertyType\" >" + '\n' +
                            "        <swe:DataArray gml:id=\"array-001\">" + '\n' +
                            "            <swe:elementCount>" + '\n' +
                            "                <swe:Count>" + '\n' +
@@ -189,13 +186,9 @@ public class ObservationXMLBindingTest {
         //we remove the first line
         result = result.substring(result.indexOf("?>") + 3);
         //we remove the xmlmns
-        result = result.replace(" xmlns:xlink=\"http://www.w3.org/1999/xlink\"", "");
-        result = result.replace(" xmlns:gml=\"http://www.opengis.net/gml\"", "");
-        result = result.replace(" xmlns:swe=\"http://www.opengis.net/swe/1.0.1\"", "");
-        result = result.replace(" xmlns:sampling=\"http://www.opengis.net/sampling/1.0\"", "");
-        result = result.replace(" xmlns:om=\"http://www.opengis.net/om/1.0\"", "");
+        result = StringUtilities.removeXmlns(result);
 
-        expResult =        "<om:Measurement>" + '\n' +
+        expResult =        "<om:Measurement >" + '\n' +
                            "    <gml:name>urn:Observation-007</gml:name>" + '\n' +
                            "    <om:samplingTime>" + '\n' +
                            "        <gml:TimePeriod gml:id=\"t1\">" + '\n' +
@@ -224,7 +217,7 @@ public class ObservationXMLBindingTest {
                            "            </sampling:position>" + '\n' +
                            "        </sampling:SamplingPoint>" + '\n' +
                            "    </om:featureOfInterest>" + '\n' +
-                           "    <om:result xsi:type=\"om:Measure\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">" + '\n' +
+                           "    <om:result xsi:type=\"om:Measure\" >" + '\n' +
                            "        <om:name>result-1</om:name>" + '\n' +
                            "        <om:uom id=\"m\">" + '\n' +
                            "            <gml:name>meters</gml:name>" + '\n' +

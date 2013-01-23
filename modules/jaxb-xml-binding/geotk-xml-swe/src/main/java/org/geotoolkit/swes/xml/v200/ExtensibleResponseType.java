@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 
 
 
@@ -67,6 +68,14 @@ public abstract class ExtensibleResponseType {
 
     private List<Object> extension;
 
+    public ExtensibleResponseType() {
+        
+    }
+    
+    public ExtensibleResponseType(final List<Object> extension) {
+        this.extension = extension;
+    }
+    
     /**
      * Gets the value of the extension property.
      * 
@@ -80,5 +89,39 @@ public abstract class ExtensibleResponseType {
         }
         return this.extension;
     }
+    
+    public void setExtension(final List<Object> extension) {
+        this.extension = extension;
+    }
 
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 89 * hash + (this.extension != null ? this.extension.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj instanceof ExtensibleResponseType) {
+            final ExtensibleResponseType that = (ExtensibleResponseType) obj;
+            return Utilities.equals(this.extension, that.extension);
+        }
+        return false;
+    }
+    
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("[").append(this.getClass().getSimpleName()).append("]\n");
+        if (extension != null) {
+            sb.append("extension:\n");
+            for (Object ext : extension) {
+                sb.append(ext).append('\n');
+            }
+        }
+        return sb.toString();
+    }
 }
