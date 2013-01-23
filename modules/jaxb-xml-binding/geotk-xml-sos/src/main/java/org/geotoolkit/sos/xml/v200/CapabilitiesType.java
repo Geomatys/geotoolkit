@@ -30,7 +30,7 @@ import org.geotoolkit.ows.xml.v110.OperationsMetadata;
 import org.geotoolkit.ows.xml.v110.ServiceIdentification;
 import org.geotoolkit.ows.xml.v110.ServiceProvider;
 import org.geotoolkit.sos.xml.Capabilities;
-import org.geotoolkit.sos.xml.SOSResponse;
+import org.geotoolkit.swes.xml.SOSResponse;
 
 
 /**

@@ -20,6 +20,7 @@ package org.geotoolkit.sos.xml;
 import java.util.ArrayList;
 import java.util.List;
 import org.geotoolkit.gml.xml.Envelope;
+import org.geotoolkit.gml.xml.GMLXmlFactory;
 import org.geotoolkit.ows.xml.AbstractOperationsMetadata;
 import org.geotoolkit.ows.xml.AbstractServiceIdentification;
 import org.geotoolkit.ows.xml.AbstractServiceProvider;
@@ -27,6 +28,7 @@ import org.geotoolkit.ows.xml.AcceptFormats;
 import org.geotoolkit.ows.xml.AcceptVersions;
 import org.geotoolkit.ows.xml.Range;
 import org.geotoolkit.ows.xml.Sections;
+import org.geotoolkit.swes.xml.InsertSensorResponse;
 import org.opengis.observation.Observation;
 import org.opengis.observation.ObservationCollection;
 
@@ -205,6 +207,39 @@ public class SOSXmlFactory {
                                                                                      obs100);
         } else {
             throw new IllegalArgumentException("unexpected version number:" + version);
+        }
+    }
+    
+    public static InsertSensorResponse buildInsertSensorResponse(final String version, final String assignedProcedure, final String assignedOffering) {
+        if ("2.0.0".equals(version)) {
+            return new org.geotoolkit.swes.xml.v200.InsertSensorResponseType(assignedProcedure, assignedOffering);
+        } else if ("1.0.0".equals(version)) {
+            return new org.geotoolkit.sos.xml.v100.RegisterSensorResponse(assignedProcedure);
+        } else {
+            throw new IllegalArgumentException("unexpected version number:" + version);
+        }
+    }
+    
+    public static GetResultResponse buildGetResultResponse(final String version, final Object result, final String rs) {
+        if ("2.0.0".equals(version)) {
+            return new org.geotoolkit.sos.xml.v200.GetResultResponseType(result);
+        } else if ("1.0.0".equals(version)) {
+            if (result != null && !(result instanceof String)) {
+                throw new IllegalArgumentException("unexpected object version for result element");
+            }
+            return new org.geotoolkit.sos.xml.v100.GetResultResponse((String)result, rs);
+        } else {
+            throw new IllegalArgumentException("unexpected version number:" + version);
+        }
+    }
+    
+    public static Envelope buildEnvelope(final String version, final double minx, final double miny, final double maxx, final double maxy, final String srs) {
+        if ("2.0.0".equals(version)) {
+            return GMLXmlFactory.buildEnvelope("3.2.1", minx, miny, maxx, maxy, srs);
+        } else if ("1.0.0".equals(version)) {
+            return GMLXmlFactory.buildEnvelope("3.1.1", minx, miny, maxx, maxy, srs);
+        } else {
+            throw new IllegalArgumentException("unexpected gml version number:" + version);
         }
     }
 }

@@ -22,6 +22,6 @@ import org.geotoolkit.swes.xml.SOSResponse;
  *
  * @author Guilhem Legal (Geomatys)
  */
-public interface InsertObservationResponse extends SOSResponse {
+public interface GetResultResponse extends SOSResponse {
     
 }

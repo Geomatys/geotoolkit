@@ -143,6 +143,20 @@ public class GMLXmlFactory {
         }
     }
     
+    public static Envelope buildEnvelope(final String version, final double minx, final double miny, final double maxx, final double maxy, final String srs) {
+        if ("3.2.1".equals(version)) {
+            final org.geotoolkit.gml.xml.v321.DirectPositionType lowerCorner = new org.geotoolkit.gml.xml.v321.DirectPositionType(minx, miny);
+            final org.geotoolkit.gml.xml.v321.DirectPositionType upperCorner = new org.geotoolkit.gml.xml.v321.DirectPositionType(maxx, maxy);
+            return new org.geotoolkit.gml.xml.v321.EnvelopeType(lowerCorner, upperCorner, srs);
+        } else if ("3.1.1".equals(version)) {
+            final org.geotoolkit.gml.xml.v311.DirectPositionType lowerCorner = new org.geotoolkit.gml.xml.v311.DirectPositionType(minx, miny);
+            final org.geotoolkit.gml.xml.v311.DirectPositionType upperCorner = new org.geotoolkit.gml.xml.v311.DirectPositionType(maxx, maxy);
+            return new org.geotoolkit.gml.xml.v311.EnvelopeType(null, lowerCorner, upperCorner, srs);
+        } else {
+            throw new IllegalArgumentException("unexpected gml version number:" + version);
+        }
+    }
+    
     public static Period createTimePeriod(final String version, final String dateBegin, final String dateEnd) {
         if ("3.2.1".equals(version)) {
             if (dateEnd == null) {

@@ -132,8 +132,9 @@ public class SamplingPointType extends SamplingFeatureType implements SamplingPo
      */
     @Override
     public PointType getPosition(){
-        if (position != null)
+        if (position != null) {
             return position.getPoint();
+        }
         return null;
     }
     

@@ -33,6 +33,7 @@ import org.geotoolkit.gml.xml.v311.AbstractTimeGeometricPrimitiveType;
 import org.geotoolkit.gml.xml.v311.BoundingShapeType;
 import org.geotoolkit.gml.xml.v311.ReferenceType;
 import org.geotoolkit.sos.xml.ObservationOffering;
+import org.geotoolkit.sos.xml.ResponseModeType;
 import org.geotoolkit.swe.xml.v101.PhenomenonType;
 import org.geotoolkit.swe.xml.v101.PhenomenonPropertyType;
 import org.geotoolkit.swe.xml.v101.TimeGeometricPrimitivePropertyType;
@@ -100,17 +101,19 @@ public class ObservationOfferingType extends AbstractFeatureType implements Obse
     /**
      *  Build a new offering.
      */
-    public ObservationOfferingType(final String id, final String name, final String description, final List<String> srsName, final AbstractTimeGeometricPrimitiveType time, final ReferenceType procedure,
-            final PhenomenonType observedProperty, final ReferenceType featureOfInterest,
+    public ObservationOfferingType(final String id, final String name, final String description, final List<String> srsName, final AbstractTimeGeometricPrimitiveType time, 
+            final String procedure, final PhenomenonType observedProperty, final String featureOfInterest,
             final List<String> responseFormat, final List<QName> resultModel, final List<ResponseModeType> responseMode) {
 
         super(id, name, description, null, null, srsName);
-        this.procedure         = Arrays.asList(procedure);
+        if (procedure != null) {
+            this.procedure     = Arrays.asList(new ReferenceType(null, procedure));
+        }
         if(observedProperty != null){
             this.observedProperty = Arrays.asList(new PhenomenonPropertyType(observedProperty));
         }
         if (featureOfInterest != null) {
-            this.featureOfInterest = Arrays.asList(featureOfInterest);
+            this.featureOfInterest = Arrays.asList(new ReferenceType(null, featureOfInterest));
         }
         this.responseFormat    = responseFormat;
         this.resultModel       = resultModel;

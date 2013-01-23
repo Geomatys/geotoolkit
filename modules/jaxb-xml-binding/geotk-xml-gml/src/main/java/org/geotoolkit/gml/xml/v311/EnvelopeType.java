@@ -228,6 +228,7 @@ public class EnvelopeType implements Entry, Envelope, org.geotoolkit.gml.xml.Env
      *     {@link String }
      *
      */
+    @Override
     public String getSrsName() {
         return srsName;
     }
@@ -252,6 +253,7 @@ public class EnvelopeType implements Entry, Envelope, org.geotoolkit.gml.xml.Env
      *     {@link Integer }
      *
      */
+    @Override
     public Integer getSrsDimension() {
         return srsDimension;
     }
@@ -271,6 +273,7 @@ public class EnvelopeType implements Entry, Envelope, org.geotoolkit.gml.xml.Env
     /**
      * Gets the value of the axisLabels property.
      */
+    @Override
     public List<String> getAxisLabels() {
         if (axisLabels == null) {
             axisLabels = new ArrayList<String>();
@@ -291,10 +294,10 @@ public class EnvelopeType implements Entry, Envelope, org.geotoolkit.gml.xml.Env
         }
     }
 
-
     /**
      * Gets the value of the uomLabels property.
      */
+    @Override
     public List<String> getUomLabels() {
         if (uomLabels == null) {
             uomLabels = new ArrayList<String>();
@@ -302,11 +305,11 @@ public class EnvelopeType implements Entry, Envelope, org.geotoolkit.gml.xml.Env
         return this.uomLabels;
     }
 
-
     /**
      * return true if the envelope is fill with x and y coordinates in upper and lower corner.
      * @return
      */
+    @Override
     public boolean isCompleteEnvelope2D() {
         return getLowerCorner() != null && getUpperCorner() != null &&
                getLowerCorner().getValue().size() == 2 && getUpperCorner().getValue().size() == 2;
@@ -317,6 +320,7 @@ public class EnvelopeType implements Entry, Envelope, org.geotoolkit.gml.xml.Env
      * Gets the value of the pos property.
      */
     @Deprecated
+    @Override
     public List<DirectPositionType> getPos() {
         if (pos == null) {
             pos = new ArrayList<DirectPositionType>();
@@ -334,6 +338,7 @@ public class EnvelopeType implements Entry, Envelope, org.geotoolkit.gml.xml.Env
      *
      */
     @Deprecated
+    @Override
     public CoordinatesType getCoordinates() {
         return coordinates;
     }

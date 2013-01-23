@@ -37,6 +37,7 @@ import org.geotoolkit.ogc.xml.v110.PropertyIsBetweenType;
 import org.geotoolkit.ogc.xml.v110.PropertyIsLikeType;
 import org.geotoolkit.ogc.xml.v110.PropertyIsNullType;
 import org.geotoolkit.ogc.xml.v110.SpatialOpsType;
+import org.geotoolkit.sos.xml.ResponseModeType;
 import org.geotoolkit.util.Utilities;
 import org.opengis.filter.Filter;
 import org.opengis.filter.PropertyIsBetween;

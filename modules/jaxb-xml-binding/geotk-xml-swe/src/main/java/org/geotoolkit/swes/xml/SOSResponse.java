@@ -15,7 +15,7 @@
  *    Lesser General Public License for more details.
  */
 
-package org.geotoolkit.sos.xml;
+package org.geotoolkit.swes.xml;
 
 /**
  *

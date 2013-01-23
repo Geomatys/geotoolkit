@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.swes.xml.InsertSensorResponse;
 
 
 /**
@@ -49,7 +50,7 @@ import javax.xml.bind.annotation.XmlType;
     "assignedProcedure",
     "assignedOffering"
 })
-public class InsertSensorResponseType extends ExtensibleResponseType {
+public class InsertSensorResponseType extends ExtensibleResponseType implements InsertSensorResponse {
 
     @XmlElement(required = true)
     @XmlSchemaType(name = "anyURI")
@@ -58,6 +59,15 @@ public class InsertSensorResponseType extends ExtensibleResponseType {
     @XmlSchemaType(name = "anyURI")
     private String assignedOffering;
 
+    public InsertSensorResponseType() {
+        
+    }
+    
+    public InsertSensorResponseType(final String assignedProcedure, final String assignedOffering) {
+        this.assignedProcedure = assignedProcedure;
+        this.assignedOffering  = assignedOffering;
+    }
+    
     /**
      * Gets the value of the assignedProcedure property.
      * 
@@ -66,6 +76,7 @@ public class InsertSensorResponseType extends ExtensibleResponseType {
      *     {@link String }
      *     
      */
+    @Override
     public String getAssignedProcedure() {
         return assignedProcedure;
     }

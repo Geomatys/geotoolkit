@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2013, Geomatys
+ *    (C) 2012, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -14,14 +14,13 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.sos.xml;
-
-import org.geotoolkit.swes.xml.SOSResponse;
+package org.geotoolkit.swes.xml;
 
 /**
  *
  * @author Guilhem Legal (Geomatys)
  */
-public interface InsertObservationResponse extends SOSResponse {
-    
+public interface InsertSensorResponse extends SOSResponse {
+
+    String getAssignedProcedure();
 }

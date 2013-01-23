@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.sos.xml.GetResultResponse;
 import org.geotoolkit.swes.xml.v200.ExtensibleResponseType;
 
 
@@ -47,11 +48,19 @@ import org.geotoolkit.swes.xml.v200.ExtensibleResponseType;
 @XmlType(name = "GetResultResponseType", propOrder = {
     "resultValues"
 })
-public class GetResultResponseType extends ExtensibleResponseType {
+public class GetResultResponseType extends ExtensibleResponseType implements GetResultResponse {
 
     @XmlElement(required = true)
     private Object resultValues;
 
+    public GetResultResponseType() {
+        
+    }
+    
+    public GetResultResponseType(final Object resultValues) {
+        this.resultValues = resultValues;
+    }
+    
     /**
      * Gets the value of the resultValues property.
      * 

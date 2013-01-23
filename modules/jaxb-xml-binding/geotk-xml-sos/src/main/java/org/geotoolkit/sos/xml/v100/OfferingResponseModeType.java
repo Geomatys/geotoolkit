@@ -17,6 +17,7 @@
 package org.geotoolkit.sos.xml.v100;
 
 import org.geotoolkit.internal.sql.table.Entry;
+import org.geotoolkit.sos.xml.ResponseModeType;
 import org.geotoolkit.util.Utilities;
 
 /**
@@ -51,6 +52,7 @@ public class OfferingResponseModeType implements Entry {
         return null;
     }
 
+    @Override
     public String getIdentifier() {
         if (mode != null) {
             return mode.value();

@@ -377,6 +377,16 @@ public class EnvelopeType implements Envelope, org.geotoolkit.gml.xml.Envelope {
     }
     
     /**
+     * return true if the envelope is fill with x and y coordinates in upper and lower corner.
+     * @return
+     */
+    @Override
+    public boolean isCompleteEnvelope2D() {
+        return getLowerCorner() != null && getUpperCorner() != null &&
+               getLowerCorner().getValue().size() == 2 && getUpperCorner().getValue().size() == 2;
+    }
+    
+    /**
      * Verify if this entry est identical to the specified object.
      */
     @Override

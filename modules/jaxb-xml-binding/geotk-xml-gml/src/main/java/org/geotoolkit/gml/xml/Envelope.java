@@ -38,5 +38,7 @@ public interface Envelope {
     
     Coordinates getCoordinates();
     
-     List<? extends DirectPosition> getPos();
+    List<? extends DirectPosition> getPos();
+     
+    boolean isCompleteEnvelope2D();
 }
