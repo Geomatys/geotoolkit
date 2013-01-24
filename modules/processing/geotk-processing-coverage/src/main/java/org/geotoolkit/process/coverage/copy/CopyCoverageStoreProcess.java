@@ -350,8 +350,7 @@ public class CopyCoverageStoreProcess extends AbstractProcess {
         } else {
             //multiple dimensions to insert
             final GeneralEnvelope env = new GeneralEnvelope(globalGeom.getEnvelope());
-            final CopyCoverageStoreProcess.CombineIterator ite = new CopyCoverageStoreProcess.CombineIterator(possibilities, env);
-
+            final CombineIterator ite = new CombineIterator(possibilities, env);
             Envelope ce = ite.next();
             do {
                 saveMosaic(outPM, pyramid, reader, imageIndex, ce,reduce);
@@ -428,103 +427,5 @@ public class CopyCoverageStoreProcess extends AbstractProcess {
         } 
         final GridMosaic mosaic = pm.createMosaic(pyramid.getId(), gridSize, TileSize, upperleft, scale);
         pm.writeTile(pyramid.getId(), mosaic.getId(), 0, 0, img);
-    }
-
-
-    /**
-     * Iterator on pyramid envelopes.
-     */
-    private class CombineIterator implements Iterator<Envelope> {
-        private final List<List<Comparable>> values;
-        private final int[] positions;
-        private final GeneralEnvelope baseEnvelope;
-        private boolean finish = false;
-
-        /**
-         * Defines an iterator on given values with the given base envelope.
-         *
-         * @param values Values to iterate. Must not be {@code null}.
-         * @param baseEnvelope Base envelope. Must not be {@code null}.
-         */
-        public CombineIterator(final List<List<Comparable>> values, final GeneralEnvelope baseEnvelope) {
-            this.values = values;
-            this.positions = new int[values.size()];
-            this.baseEnvelope = baseEnvelope;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public Envelope next() {
-            if (finish) {
-                return null;
-            }
-
-            for (int i = 0; i < positions.length; i++) {
-                final Comparable c = values.get(i).get(positions[i]);
-                Number n;
-                if(c instanceof Number){
-                    n = (Number) c;
-                }else if(c instanceof Date){
-                    n = ((Date)c).getTime();
-                    //transform correctly value, unit type might have changed.
-                    final CoordinateReferenceSystem baseCRS = DefaultTemporalCRS.JAVA;
-                    final CoordinateReferenceSystem targetCRS = ((CompoundCRS)baseEnvelope.getCoordinateReferenceSystem()).getComponents().get(1+i);
-
-                    //try to convert from one axis to the other
-                    try{
-                        final MathTransform trs = CRS.findMathTransform(baseCRS, targetCRS);
-                        final double[] bv = new double[]{n.doubleValue()};
-                        trs.transform(bv, 0, bv, 0, 1);
-                        n = bv[0];
-                    }catch(Exception ex){
-                        fireWarningOccurred(ex.getMessage(), 0, ex);
-                    }
-
-                }else{
-                    fireProcessFailed("Comparable type not supported : "+ c, null);
-                    return null;
-                }
-
-                baseEnvelope.setRange(2+i, n.doubleValue(), n.doubleValue());
-
-                //prepare next iteration
-                if (i == positions.length - 1) {
-                    positions[i] = positions[i] + 1;
-                }
-            }
-
-            //prepare next iteration
-            for (int i = positions.length - 1; i >= 0; i--) {
-                if (positions[i] >= values.get(i).size()) {
-                    if (i == 0) {
-                        finish = true;
-                        break;
-                    }
-                    //increment previous, restart this level at zero
-                    positions[i] = 0;
-                    positions[i - 1]++;
-                }
-            }
-
-            return baseEnvelope;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public boolean hasNext() {
-            return !finish;
-        }
-
-        /**
-         * Not implemented in this implementation.
-         */
-        @Override
-        public void remove() {
-            throw new UnsupportedOperationException("Not supported yet.");
-        }
     }
 }
