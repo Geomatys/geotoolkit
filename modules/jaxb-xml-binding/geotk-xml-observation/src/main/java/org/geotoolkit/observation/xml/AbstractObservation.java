@@ -29,7 +29,9 @@ public interface AbstractObservation extends Observation {
     
     void setProcedure(final String procedureID);
     
+    void emptySamplingTime();
+    
     boolean matchTemplate(final Observation template);
     
-    Observation getTemporaryTemplate(final String temporaryName, TemporalGeometricPrimitive time);
+    AbstractObservation getTemporaryTemplate(final String temporaryName, TemporalGeometricPrimitive time);
 }

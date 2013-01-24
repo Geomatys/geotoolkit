@@ -528,6 +528,11 @@ public class ObservationType implements Entry, AbstractObservation {
         
     }
     
+    @Override
+    public void emptySamplingTime() {
+        this.samplingTime = null;
+    }
+    
     /**
      * {@inheritDoc}
      */
@@ -731,7 +736,4 @@ public class ObservationType implements Entry, AbstractObservation {
         }
         return s.toString();
     }
-
-    
-
 }

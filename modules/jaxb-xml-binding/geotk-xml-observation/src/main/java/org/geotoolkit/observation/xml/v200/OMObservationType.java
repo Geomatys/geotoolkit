@@ -208,6 +208,11 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
     }
 
     @Override
+    public void emptySamplingTime() {
+        this.phenomenonTime = null;
+    }
+    
+    @Override
     public TemporalObject getProcedureTime() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
@@ -432,7 +437,7 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
     }
 
     @Override
-    public Observation getTemporaryTemplate(final String temporaryName, final TemporalGeometricPrimitive time) {
+    public OMObservationType getTemporaryTemplate(final String temporaryName, final TemporalGeometricPrimitive time) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 }

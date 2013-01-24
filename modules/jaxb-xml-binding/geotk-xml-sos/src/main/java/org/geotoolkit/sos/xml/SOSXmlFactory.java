@@ -18,7 +18,9 @@
 package org.geotoolkit.sos.xml;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import javax.xml.namespace.QName;
 import org.geotoolkit.gml.xml.Envelope;
 import org.geotoolkit.gml.xml.GMLXmlFactory;
 import org.geotoolkit.ows.xml.AbstractOperationsMetadata;
@@ -31,6 +33,9 @@ import org.geotoolkit.ows.xml.Sections;
 import org.geotoolkit.swes.xml.InsertSensorResponse;
 import org.opengis.observation.Observation;
 import org.opengis.observation.ObservationCollection;
+import org.opengis.observation.sampling.SamplingFeature;
+import org.opengis.temporal.Period;
+import org.opengis.temporal.TemporalGeometricPrimitive;
 
 /**
  *
@@ -210,6 +215,18 @@ public class SOSXmlFactory {
         }
     }
     
+    public static ObservationCollection buildObservationCollection(final String version, final String nillValue) {
+        if ("2.0.0".equals(version)) {
+            
+            return new org.geotoolkit.sos.xml.v200.GetObservationResponseType();
+        } else if ("1.0.0".equals(version)) {
+           
+            return new org.geotoolkit.observation.xml.v100.ObservationCollectionType(nillValue);
+        } else {
+            throw new IllegalArgumentException("unexpected version number:" + version);
+        }
+    }
+    
     public static InsertSensorResponse buildInsertSensorResponse(final String version, final String assignedProcedure, final String assignedOffering) {
         if ("2.0.0".equals(version)) {
             return new org.geotoolkit.swes.xml.v200.InsertSensorResponseType(assignedProcedure, assignedOffering);
@@ -239,7 +256,77 @@ public class SOSXmlFactory {
         } else if ("1.0.0".equals(version)) {
             return GMLXmlFactory.buildEnvelope("3.1.1", minx, miny, maxx, maxy, srs);
         } else {
+            throw new IllegalArgumentException("unexpected version number:" + version);
+        }
+    }
+    
+    public static Period buildTimePeriod(final String version, final String dateBegin, final String dateEnd) {
+        if ("2.0.0".equals(version)) {
+            return GMLXmlFactory.createTimePeriod("3.2.1", dateBegin, dateEnd);
+        } else if ("1.0.0".equals(version)) {
+            return GMLXmlFactory.createTimePeriod("3.1.1", dateBegin, dateEnd);
+        } else {
+            throw new IllegalArgumentException("unexpected version number:" + version);
+        }
+    }
+    
+    public static ObservationOffering buildOffering(final String version, final String id, final String name, final String description, final List<String> srsName, 
+            final TemporalGeometricPrimitive time,  final String procedure, final List<String> observedProperties, 
+            final String featureOfInterest, final List<String> responseFormat, final List<QName> resultModel, final List<ResponseModeType> responseMode) {
+        if ("2.0.0".equals(version)) {
+            if (time != null && !(time instanceof org.geotoolkit.gml.xml.v321.TimePeriodType)) {
+                throw new IllegalArgumentException("unexpected object version for time element");
+            }
+            return new org.geotoolkit.sos.xml.v200.ObservationOfferingType(
+                                            id,
+                                            name,
+                                            description,
+                                            null,
+                                            (org.geotoolkit.gml.xml.v321.TimePeriodType)time,
+                                            procedure,
+                                            observedProperties,
+                                            Arrays.asList(featureOfInterest),
+                                            responseFormat,
+                                            null);
+        } else if ("1.0.0".equals(version)) {
+            if (time != null && !(time instanceof org.geotoolkit.gml.xml.v311.AbstractTimeGeometricPrimitiveType)) {
+                throw new IllegalArgumentException("unexpected object version for time element");
+            }
+            return new org.geotoolkit.sos.xml.v100.ObservationOfferingType(
+                                            id,
+                                            name,
+                                            description,
+                                            srsName,
+                                            (org.geotoolkit.gml.xml.v311.AbstractTimeGeometricPrimitiveType)time,
+                                            procedure,
+                                            observedProperties,
+                                            featureOfInterest,
+                                            responseFormat,
+                                            resultModel,
+                                            responseMode);
+        } else {
             throw new IllegalArgumentException("unexpected gml version number:" + version);
+        }
+    }
+    
+    /**
+     * Build the correct featurePropertyType from a sampling feature
+     *
+     * @param feature
+     * @return
+     */
+    public static org.geotoolkit.gml.xml.v311.FeaturePropertyType buildFeatureProperty(final SamplingFeature feature) {
+        final org.geotoolkit.sampling.xml.v100.ObjectFactory samplingFactory = new org.geotoolkit.sampling.xml.v100.ObjectFactory();
+        if (feature instanceof org.geotoolkit.sampling.xml.v100.SamplingPointType) {
+            return new org.geotoolkit.gml.xml.v311.FeaturePropertyType(samplingFactory.createSamplingPoint((org.geotoolkit.sampling.xml.v100.SamplingPointType)feature));
+        } else if (feature instanceof org.geotoolkit.sampling.xml.v100.SamplingCurveType) {
+            return new org.geotoolkit.gml.xml.v311.FeaturePropertyType(samplingFactory.createSamplingCurve((org.geotoolkit.sampling.xml.v100.SamplingCurveType)feature));
+        } else if (feature instanceof org.geotoolkit.sampling.xml.v100.SamplingSolidType) {
+            return new org.geotoolkit.gml.xml.v311.FeaturePropertyType(samplingFactory.createSamplingSolid((org.geotoolkit.sampling.xml.v100.SamplingSolidType)feature));
+        } else if (feature instanceof org.geotoolkit.sampling.xml.v100.SamplingSurfaceType) {
+            return new org.geotoolkit.gml.xml.v311.FeaturePropertyType(samplingFactory.createSamplingSurface((org.geotoolkit.sampling.xml.v100.SamplingSurfaceType)feature));
+        } else {
+            throw new IllegalArgumentException("unexpected object version");
         }
     }
 }

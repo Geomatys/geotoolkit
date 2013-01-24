@@ -244,7 +244,10 @@ public class TimePositionType extends AbstractTimePosition implements Serializab
 
     @Override
     public InternationalString getDateTime() {
-        return new SimpleInternationalString(value);
+        if (value != null) {
+            return new SimpleInternationalString(value);
+        }
+        return null;
     }
 
     /**

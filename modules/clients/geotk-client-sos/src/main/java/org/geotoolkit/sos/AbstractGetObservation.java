@@ -28,7 +28,7 @@ import javax.xml.bind.Marshaller;
 import javax.xml.namespace.QName;
 import org.geotoolkit.sos.xml.v100.EventTime;
 import org.geotoolkit.sos.xml.v100.GetObservation;
-import org.geotoolkit.sos.xml.v100.ResponseModeType;
+import org.geotoolkit.sos.xml.ResponseModeType;
 
 
 /**
