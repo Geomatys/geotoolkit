@@ -32,7 +32,7 @@ import org.opengis.geometry.Envelope;
 import org.opengis.parameter.ParameterValueGroup;
 
 /**
- * <p>Build and stock a image pyramid.<br/><br/>
+ * <p>Build and store a image pyramid.<br/><br/>
  * 
  * For more explanations about input output objects see {@link PGCoverageBuilder} javadoc.
  * 
@@ -62,7 +62,7 @@ public class PyramidProcess extends AbstractProcess {
             if (!(obj instanceof Envelope))
                 throw new ProcessException("Map key must be instance of Envelope", this, null);
             if (!(resolution_per_envelope.get(obj) instanceof double[]))
-                throw new ProcessException("Map stocked objects must be instance of double[]", this, null);
+                throw new ProcessException("Map store objects must be instance of double[]", this, null);
         }
         
         final PyramidCoverageBuilder pgcb = new PyramidCoverageBuilder(tilesize, interpolationcase, 2);

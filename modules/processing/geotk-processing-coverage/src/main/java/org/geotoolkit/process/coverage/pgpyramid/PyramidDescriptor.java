@@ -51,11 +51,11 @@ public class PyramidDescriptor extends AbstractProcessDescriptor{
             "Coverage which will be tile.", GridCoverage.class, null, true);
     
     /**
-     * Coverage store within pyramid will be stock.
+     * Coverage store within pyramid will be store.
      */
     public static final ParameterDescriptor<CoverageStore> IN_COVERAGESTORE =
             new DefaultParameterDescriptor<CoverageStore>("in_coverage_store",
-            "Coverage store within tiled coverage is stocked.", CoverageStore.class, null, true);
+            "Coverage store within tiled coverage is stored.", CoverageStore.class, null, true);
     
     /**
      * Tile size of pyramid mosaic.
@@ -96,11 +96,11 @@ public class PyramidDescriptor extends AbstractProcessDescriptor{
                                       /*OUTPUT*/
     /**************************************************************************/
     /**
-     * Datastore where pyrami is stocked.
+     * Datastore where pyrami is stored.
      */
     public static final ParameterDescriptor<CoverageStore> OUT_COVERAGESTORE =
             new DefaultParameterDescriptor<CoverageStore>("out_coverage_store",
-            "Coverage store within tiled coverage is stocked.", CoverageStore.class, null, true);
+            "Coverage store within tiled coverage is stored.", CoverageStore.class, null, true);
     /**************************************************************************/
     
                                       /*GROUP*/

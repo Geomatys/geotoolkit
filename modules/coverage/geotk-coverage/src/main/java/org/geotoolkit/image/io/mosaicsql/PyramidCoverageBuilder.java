@@ -73,7 +73,7 @@ import org.opengis.util.FactoryException;
  * We define appropriate scale level from envelope size.<br/>
  * {@code final double[] scaleLvlCRS4329 = new double[]{val0, val1, ... , valn};}<br/>
  * {@code final double[] scaleLvlCRS2163 = new double[]{val0, val1, ... , valn};}<br/>
- * Note : output stocked image size : <br/>
+ * Note : output stored image size : <br/>
  * output image width  = {@link Envelope#getSpan(0) } / {val0, &#133; , valn}.<br/>
  * output image height = {@link Envelope#getSpan(1) } / {val0, &#133; , valn}.<br/><br/>
  * 
@@ -155,8 +155,8 @@ public class PyramidCoverageBuilder {
     * If fill value is {@code null} a table of zero value with appropriate lenght is use.
     * </p>
     * 
-    * @param reader {@link GridCoverageReader} which contain {@link GridCoverage} will be stocked.
-    * @param coverageStore {@link CoverageStore} where operation on {@link GridCoverage} are stocked.
+    * @param reader {@link GridCoverageReader} which contain {@link GridCoverage} will be stored.
+    * @param coverageStore {@link CoverageStore} where operation on {@link GridCoverage} are stored.
     * @param coverageName name given to the set of operations results, performed on the coverage in the datastore.
     * @param resolution_Per_Envelope reprojection and resampling attibuts.
      * @param fillValue contains value use when pixel transformation is out of source image boundary.
@@ -179,8 +179,8 @@ public class PyramidCoverageBuilder {
     * fillValue parameter must have same lenght than pixel size from image within coverage.
     * If fill value is {@code null} a table of zero value with appropriate lenght is use.
     * </p>
-    * @param gridCoverage {@link GridCoverage} which will be stocked.
-    * @param coverageStore {@link CoverageStore} where operation on {@link GridCoverage} are stocked.
+    * @param gridCoverage {@link GridCoverage} which will be stored.
+    * @param coverageStore {@link CoverageStore} where operation on {@link GridCoverage} are stored.
     * @param coverageName name given to the set of operations results, performed on the coverage in the datastore.
     * @param resolution_Per_Envelope reprojection and resampling attibuts.
     * @param fillValue contains value use when pixel transformation is out of source image boundary.
