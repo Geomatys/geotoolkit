@@ -22,6 +22,8 @@ import java.util.Arrays;
 import java.util.List;
 import javax.xml.namespace.QName;
 import org.geotoolkit.gml.xml.Envelope;
+import org.geotoolkit.gml.xml.FeatureCollection;
+import org.geotoolkit.gml.xml.FeatureProperty;
 import org.geotoolkit.gml.xml.GMLXmlFactory;
 import org.geotoolkit.ows.xml.AbstractOperationsMetadata;
 import org.geotoolkit.ows.xml.AbstractServiceIdentification;
@@ -327,6 +329,17 @@ public class SOSXmlFactory {
             return new org.geotoolkit.gml.xml.v311.FeaturePropertyType(samplingFactory.createSamplingSurface((org.geotoolkit.sampling.xml.v100.SamplingSurfaceType)feature));
         } else {
             throw new IllegalArgumentException("unexpected object version");
+        }
+    }
+    
+    public static FeatureCollection buildFeatureCollection(final String version, final String id, final String name, final String description, 
+            final List<FeatureProperty> features) {
+        if ("2.0.0".equals(version)) {
+            return GMLXmlFactory.createFeatureCollection("3.2.1", id, name, description, features);
+        } else if ("1.0.0".equals(version)) {
+            return GMLXmlFactory.createFeatureCollection("3.1.1", id, name, description, features);
+        } else {
+            throw new IllegalArgumentException("unexpected sos version number:" + version);
         }
     }
 }

@@ -22,15 +22,15 @@ import java.util.List;
  *
  * @author Guilhem Legal (Geomatys)
  */
-public interface Envelope {
+public interface Envelope extends org.opengis.geometry.Envelope {
     
     String getSrsName();
     
     Integer getSrsDimension();
             
-    DirectPosition getLowerCorner();
+    //DirectPosition getLowerCorner();
     
-    DirectPosition getUpperCorner();
+    //DirectPosition getUpperCorner();
     
     List<String> getAxisLabels();
     

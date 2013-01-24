@@ -137,10 +137,10 @@ public class EnvelopeType implements Envelope, org.geotoolkit.gml.xml.Envelope {
     public EnvelopeType(final org.geotoolkit.gml.xml.Envelope that) {
         if (that != null) {
             if (that.getLowerCorner() != null) {
-                this.lowerCorner = new DirectPositionType(that.getLowerCorner());
+                this.lowerCorner = new DirectPositionType(that.getLowerCorner(), false);
             }
             if (that.getUpperCorner() != null) {
-                this.upperCorner = new DirectPositionType(that.getUpperCorner());
+                this.upperCorner = new DirectPositionType(that.getUpperCorner(), false);
             }
             this.srsDimension = that.getSrsDimension();
             this.srsName      = that.getSrsName();
@@ -314,7 +314,20 @@ public class EnvelopeType implements Envelope, org.geotoolkit.gml.xml.Envelope {
         }
         return this.axisLabels;
     }
+    
+    public void setAxisLabels(final List<String> axisLabels) {
+        this.axisLabels = axisLabels;
+    }
 
+    public void setAxisLabels(final String axisLabel) {
+        if (axisLabel != null) {
+            if (axisLabels == null) {
+                axisLabels = new ArrayList<String>();
+            }
+            this.axisLabels.add(axisLabel);
+        }
+    }
+    
     /**
      * Gets the value of the uomLabels property.
      * 

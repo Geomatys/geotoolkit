@@ -65,9 +65,19 @@ public abstract class AbstractFeatureType extends AbstractGMLType implements Abs
     public AbstractFeatureType(final AbstractFeature af) {
         super(af);
         if (af != null) {
-            this.srsName   = af.getSrsName();
-            this.boundedBy = af.getBoundedBy();
-            this.location  = af.getLocation();
+            if (af.getSrsName() != null) {
+                this.srsName = new ArrayList<String>(af.getSrsName());
+            }
+            if (af.getBoundedBy() != null) {
+                this.boundedBy = new BoundingShapeType(af.getBoundedBy());
+            }
+            if (af.getLocation() != null) {
+                if (af.getLocation() instanceof LocationPropertyType) {
+                    this.location  = (LocationPropertyType)af.getLocation();
+                } else  {
+                    throw new IllegalArgumentException("LocationProperty clone not implemented yet");
+                }
+            }
         }
     }
 

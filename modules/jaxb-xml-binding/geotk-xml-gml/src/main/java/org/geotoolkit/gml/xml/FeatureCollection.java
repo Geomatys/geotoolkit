@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2008 - 2010, Geomatys
+ *    (C) 2013, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -16,18 +16,13 @@
  */
 package org.geotoolkit.gml.xml;
 
-import java.util.List;
 
 /**
  *
  * @author Guilhem Legal (Geomatys)
  * @module pending
  */
-public interface AbstractFeature extends AbstractGML {
-
-    BoundingShape getBoundedBy();
-
-    LocationProperty getLocation();
+public interface FeatureCollection extends AbstractFeature {
     
-    List<String> getSrsName();
+    void computeBounds();
 }

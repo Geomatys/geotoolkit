@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.gml.xml.EnvelopeWithTimePeriod;
 
 
 /**
@@ -52,7 +53,7 @@ import javax.xml.bind.annotation.XmlType;
     "beginPosition",
     "endPosition"
 })
-public class EnvelopeWithTimePeriodType extends EnvelopeType {
+public class EnvelopeWithTimePeriodType extends EnvelopeType implements EnvelopeWithTimePeriod {
 
     @XmlElement(required = true)
     private TimePositionType beginPosition;
@@ -66,22 +67,23 @@ public class EnvelopeWithTimePeriodType extends EnvelopeType {
         
     }
     
-    public EnvelopeWithTimePeriodType(final EnvelopeWithTimePeriodType that) {
+    public EnvelopeWithTimePeriodType(final EnvelopeWithTimePeriod that) {
         super(that);
         if (that != null) {
-            if (that.beginPosition != null) {
-                this.beginPosition = new TimePositionType(that.beginPosition);
+            if (that.getBeginPosition() != null) {
+                this.beginPosition = new TimePositionType(that.getBeginPosition());
             }
-            if (that.endPosition != null) {
-                this.endPosition = new TimePositionType(that.endPosition);
+            if (that.getEndPosition() != null) {
+                this.endPosition = new TimePositionType(that.getEndPosition());
             }
-            this.frame = that.frame;
+            this.frame = that.getFrame();
         }
     }
     
     /**
      * Gets the value of the beginPosition property.
      */
+    @Override
     public TimePositionType getBeginPosition() {
         return beginPosition;
     }
@@ -89,6 +91,7 @@ public class EnvelopeWithTimePeriodType extends EnvelopeType {
     /**
      * Gets the value of the endPosition property.
      */
+    @Override
     public TimePositionType getEndPosition() {
         return endPosition;
     }
@@ -101,6 +104,7 @@ public class EnvelopeWithTimePeriodType extends EnvelopeType {
      *     {@link String }
      *     
      */
+    @Override
     public String getFrame() {
         return frame;
     }

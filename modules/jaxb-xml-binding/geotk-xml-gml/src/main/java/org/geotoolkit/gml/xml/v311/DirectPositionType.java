@@ -193,6 +193,7 @@ public class DirectPositionType implements DirectPosition, org.geotoolkit.gml.xm
      * An element of this type contains a space-separated list of double values Gets the value of the value property.
      *
      */
+    @Override
     public List<Double> getValue() {
         if (value == null) {
             value = new ArrayList<Double>();
@@ -229,6 +230,7 @@ public class DirectPositionType implements DirectPosition, org.geotoolkit.gml.xm
      *     {@link String }
      *
      */
+    @Override
     public String getSrsName() {
         return srsName;
     }
@@ -253,6 +255,7 @@ public class DirectPositionType implements DirectPosition, org.geotoolkit.gml.xm
      *     {@link Integer }
      *
      */
+    @Override
     public Integer getSrsDimension() {
         return srsDimension;
     }
@@ -273,6 +276,7 @@ public class DirectPositionType implements DirectPosition, org.geotoolkit.gml.xm
      * Gets the value of the axisLabels property.
      *
      */
+    @Override
     public List<String> getAxisLabels() {
         if (axisLabels == null) {
             axisLabels = new ArrayList<String>();
@@ -283,6 +287,7 @@ public class DirectPositionType implements DirectPosition, org.geotoolkit.gml.xm
     /**
      * Gets the value of the uomLabels property.
      */
+    @Override
     public List<String> getUomLabels() {
         if (uomLabels == null) {
             uomLabels = new ArrayList<String>();

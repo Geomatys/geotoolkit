@@ -29,7 +29,6 @@ import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlMixed;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.gml.xml.DirectPosition;
 import org.geotoolkit.gml.xml.Envelope;
 import org.geotoolkit.gml.xml.v321.DirectPositionType;
 import org.geotoolkit.gml.xml.v321.EnvelopeType;
@@ -38,6 +37,7 @@ import org.geotoolkit.util.Utilities;
 import org.opengis.filter.FilterVisitor;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.spatial.BBOX;
+import org.opengis.geometry.DirectPosition;
 
 
 /**
@@ -273,8 +273,8 @@ public class BBOXType extends SpatialOpsType implements BBOX {
             final Envelope env = (Envelope) any.get(0);
             pos = env.getLowerCorner();
         }
-        if (pos != null && pos.getValue() != null && pos.getValue().size() > 1) {
-            return pos.getValue().get(0);
+        if (pos != null && pos.getCoordinate() != null && pos.getCoordinate().length > 1) {
+            return pos.getCoordinate()[0];
         }
         return -1;
     }
@@ -286,8 +286,8 @@ public class BBOXType extends SpatialOpsType implements BBOX {
             final Envelope env = (Envelope) any.get(0);
             pos = env.getLowerCorner();
         }
-        if (pos != null && pos.getValue() != null && pos.getValue().size() > 1) {
-            return pos.getValue().get(1);
+        if (pos != null && pos.getCoordinate() != null && pos.getCoordinate().length > 1) {
+            return pos.getCoordinate()[1];
         }
         return -1;
     }
@@ -299,8 +299,8 @@ public class BBOXType extends SpatialOpsType implements BBOX {
             final Envelope env = (Envelope) any.get(0);
             pos = env.getUpperCorner();
         }
-        if (pos != null && pos.getValue() != null && pos.getValue().size() > 1) {
-            return pos.getValue().get(0);
+        if (pos != null && pos.getCoordinate() != null && pos.getCoordinate().length > 1) {
+            return pos.getCoordinate()[0];
         }
         return -1;
     }
@@ -312,8 +312,8 @@ public class BBOXType extends SpatialOpsType implements BBOX {
             final Envelope env = (Envelope) any.get(0);
             pos = env.getUpperCorner();
         }
-        if (pos != null && pos.getValue() != null && pos.getValue().size() > 1) {
-            return pos.getValue().get(1);
+        if (pos != null && pos.getCoordinate() != null && pos.getCoordinate().length > 1) {
+            return pos.getCoordinate()[1];
         }
         return -1;
     }

@@ -123,17 +123,8 @@ public class GeometrytoJTS {
             throw new IllegalArgumentException("An operator BBOX must specified a CRS (coordinate Reference system) for the envelope.");
         }
 
-        final List<Double> lmin = gmlEnvelope.getLowerCorner().getValue();
-        final double[] min      = new double[lmin.size()];
-        for (int i = 0; i < min.length; i++) {
-            min[i] = lmin.get(i);
-        }
-
-        final List<Double> lmax = gmlEnvelope.getUpperCorner().getValue();
-        final double[] max = new double[lmax.size()];
-        for (int i = 0; i < min.length; i++) {
-            max[i] = lmax.get(i);
-        }
+        final double[] min = gmlEnvelope.getLowerCorner().getCoordinate();
+        final double[] max = gmlEnvelope.getUpperCorner().getCoordinate();
 
         final LinearRing ring = GF.createLinearRing(new Coordinate[]{
             new Coordinate(min[0], min[1]),

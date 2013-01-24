@@ -27,12 +27,12 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.gml.xml.Envelope;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.internal.sql.table.Entry;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.util.logging.Logging;
-import org.opengis.geometry.Envelope;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
@@ -80,7 +80,7 @@ import org.opengis.util.FactoryException;
     EnvelopeWithTimePeriodType.class
 })
 @XmlRootElement(name="Envelope")
-public class EnvelopeType implements Entry, Envelope, org.geotoolkit.gml.xml.Envelope {
+public class EnvelopeType implements Entry, Envelope {
 
     private static final Logger LOGGER = Logging.getLogger(EnvelopeType.class);
 
@@ -127,7 +127,7 @@ public class EnvelopeType implements Entry, Envelope, org.geotoolkit.gml.xml.Env
         this.srsDimension = null;
     }
 
-    public EnvelopeType(final Envelope env) {
+    public EnvelopeType(final org.opengis.geometry.Envelope env) {
         this.pos = new ArrayList<DirectPositionType>();
         if (env != null) {
             this.pos.add(new DirectPositionType(env.getLowerCorner(), false));

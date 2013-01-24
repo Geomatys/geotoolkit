@@ -100,33 +100,47 @@ public abstract class AbstractGMLType extends AbstractMetadata implements Abstra
         this.id = id;
     }
     
-    public AbstractGMLType(final AbstractGMLType that) {
+    public AbstractGMLType(final AbstractGML that) {
         super(that);
         if (that != null) {
-            if (that.description != null) {
-                this.description = new StringOrRefType(that.description);
+            if (that.getDescription() != null) {
+                this.description = new StringOrRefType(that.getDescription());
             }
-            if (that.descriptionReference != null) {
-                this.descriptionReference = new ReferenceType(that.descriptionReference);
+            if (that.getDescriptionReference() != null) {
+                this.descriptionReference = new ReferenceType(that.getDescriptionReference());
             }
-            this.id = that.id;
-            if (that.identifier != null) {
-                this.identifier = new CodeWithAuthorityType(that.identifier);
-            }
-            if (that.metaDataProperty != null) {
-                this.metaDataProperty = new ArrayList<MetaDataPropertyType>();
-                for (MetaDataPropertyType m : that.metaDataProperty) {
-                    this.metaDataProperty.add(new MetaDataPropertyType(m));
-                }
-            }
-            if (that.name != null) {
+            this.id = that.getId();
+            if (that.getName() != null) {
                 this.name = new ArrayList<CodeType>();
-                for (CodeType cd : that.name) {
-                    this.name.add(new CodeType(cd));
+                this.name.add(new CodeType(that.getName()));
+            }
+            if (that instanceof AbstractGMLType) {
+                final AbstractGMLType thatGML = (AbstractGMLType) that;
+                if (thatGML.identifier != null) {
+                    this.identifier = new CodeWithAuthorityType(thatGML.identifier);
+                }
+                if (thatGML.metaDataProperty != null) {
+                    this.metaDataProperty = new ArrayList<MetaDataPropertyType>();
+                    for (MetaDataPropertyType m : thatGML.metaDataProperty) {
+                        this.metaDataProperty.add(new MetaDataPropertyType(m));
+                    }
                 }
             }
         }
     }
+    
+    public AbstractGMLType(final String id, final String name, final String description, final ReferenceType descriptionReference) {
+        this.id = id;
+        if (name != null) {
+            this.name = new ArrayList<CodeType>();
+            this.name.add(new CodeType(name));
+        }
+        if (description != null) {
+            this.description = new StringOrRefType(description);
+        }
+        this.descriptionReference = descriptionReference;
+    }
+
     
     @Override
     public MetadataStandard getStandard() {

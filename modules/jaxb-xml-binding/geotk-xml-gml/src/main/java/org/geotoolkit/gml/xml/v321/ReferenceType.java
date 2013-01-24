@@ -83,18 +83,20 @@ public class ReferenceType implements Reference {
         
     }
     
-    public ReferenceType(final ReferenceType that) {
+    public ReferenceType(final Reference that) {
         if (that != null) {
-            this.actuate      = that.actuate;
-            this.arcrole      = that.arcrole;
-            this.href         = that.href;
-            this.nilReason    = new ArrayList<String>(that.nilReason);
-            this.owns         = that.owns;
-            this.remoteSchema = that.remoteSchema;
-            this.role         = that.role;
-            this.show         = that.show;
-            this.title        = that.title;
-            this.type         = that.type;
+            this.actuate      = that.getActuate();
+            this.arcrole      = that.getArcrole();
+            this.href         = that.getHref();
+            if (that.getNilReason() != null) {
+                this.nilReason    = new ArrayList<String>(that.getNilReason());
+            }
+            this.owns         = that.getOwns();
+            this.remoteSchema = that.getRemoteSchema();
+            this.role         = that.getRole();
+            this.show         = that.getShow();
+            this.title        = that.getTitle();
+            this.type         = that.getType();
         }
     }
     

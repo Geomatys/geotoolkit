@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.gml.xml.FeatureProperty;
 import org.geotoolkit.util.Utilities;
 
 
@@ -56,7 +57,7 @@ import org.geotoolkit.util.Utilities;
     "abstractFeature",
     "unknowFeature"
 })
-public class FeaturePropertyType {
+public class FeaturePropertyType implements FeatureProperty {
 
     @XmlElementRef(name = "AbstractFeature", namespace = "http://www.opengis.net/gml", type = JAXBElement.class)
     private JAXBElement<? extends AbstractFeatureType> abstractFeature;
