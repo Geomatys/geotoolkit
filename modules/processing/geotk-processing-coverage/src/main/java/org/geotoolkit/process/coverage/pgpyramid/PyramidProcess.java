@@ -21,7 +21,7 @@ import java.util.Map;
 import org.geotoolkit.coverage.CoverageStore;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.image.interpolation.InterpolationCase;
-import org.geotoolkit.image.io.mosaicsql.PGCoverageBuilder;
+import org.geotoolkit.image.io.mosaicsql.PyramidCoverageBuilder;
 import static org.geotoolkit.parameter.Parameters.*;
 import org.geotoolkit.process.AbstractProcess;
 import org.geotoolkit.process.ProcessException;
@@ -65,7 +65,7 @@ public class PyramidProcess extends AbstractProcess {
                 throw new ProcessException("Map stocked objects must be instance of double[]", this, null);
         }
         
-        final PGCoverageBuilder pgcb = new PGCoverageBuilder(tilesize, interpolationcase, 2);
+        final PyramidCoverageBuilder pgcb = new PyramidCoverageBuilder(tilesize, interpolationcase, 2);
         try {
             pgcb.create(coverage, coverageStore, new DefaultName(pyramid_name), resolution_per_envelope, fillvalue);
             getOrCreate(OUT_COVERAGESTORE, outputParameters).setValue(coverageStore);

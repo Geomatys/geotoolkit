@@ -92,7 +92,7 @@ import org.opengis.util.FactoryException;
  * 
  * @author Rémi Marechal (Geomatys).
  */
-public class PGCoverageBuilder {
+public class PyramidCoverageBuilder {
 
     /**
      * The default tile size in pixels.
@@ -132,7 +132,7 @@ public class PGCoverageBuilder {
      * @see LanczosInterpolation#LanczosInterpolation(org.geotoolkit.image.iterator.PixelIterator, int)
      * @see InterpolationCase
      */
-    public PGCoverageBuilder(Dimension tileSize, InterpolationCase interpolation, int lanczosWindow) {
+    public PyramidCoverageBuilder(Dimension tileSize, InterpolationCase interpolation, int lanczosWindow) {
         ArgumentChecks.ensureNonNull("interpolation", interpolation);
         ArgumentChecks.ensureStrictlyPositive("lanczosWindow", lanczosWindow);
         if (tileSize == null) {
