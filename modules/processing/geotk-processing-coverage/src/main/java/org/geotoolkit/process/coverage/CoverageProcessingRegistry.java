@@ -29,6 +29,7 @@ import org.geotoolkit.process.coverage.coveragetovector.CoverageToVectorDescript
 import org.geotoolkit.process.coverage.isoline.IsolineDescriptor;
 import org.geotoolkit.process.coverage.kriging.KrigingDescriptor;
 import org.geotoolkit.process.coverage.metadataextractor.ExtractionDescriptor;
+import org.geotoolkit.process.coverage.pgpyramid.PyramidDescriptor;
 import org.geotoolkit.process.coverage.pyramid.MapcontextPyramidDescriptor;
 import org.geotoolkit.process.coverage.reducedodomain.ReduceToDomainDescriptor;
 import org.geotoolkit.process.coverage.resample.ResampleDescriptor;
@@ -69,7 +70,8 @@ public class CoverageProcessingRegistry extends AbstractProcessingRegistry{
               ResampleDescriptor.INSTANCE,
               CopyCoverageStoreDescriptor.INSTANCE,
               StraightenDescriptor.INSTANCE,
-              ReduceToDomainDescriptor.INSTANCE);
+              ReduceToDomainDescriptor.INSTANCE,
+              PyramidDescriptor.INSTANCE);
     }
 
     @Override
