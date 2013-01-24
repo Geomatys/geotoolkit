@@ -252,7 +252,7 @@ public class PyramidCoverageBuilder {
                         final WritableRenderedImage destImg = new BufferedImage(cuTWidth, cuTHeight, datatype);
 
                         //dest grid --> dest envelope coordinate --> base envelope --> base grid
-                        //concatene : dest grid_to_crs, dest_crs_to_coverageCRS, coverage grid_to_crs 
+                        //concatene : dest grid_to_crs, dest_crs_to_coverageCRS, coverageCRS_to_grid coverage 
                         final MathTransform2D gridDest_to_crs = new AffineTransform2D(sx, 0, 0, -sy, min0 + sx * destMinX, max1 - sy * destMinY);
                         final MathTransform mt  = MathTransforms.concatenate(gridDest_to_crs, crs_to_CRS, covCRS_to_grid).inverse();
                         
