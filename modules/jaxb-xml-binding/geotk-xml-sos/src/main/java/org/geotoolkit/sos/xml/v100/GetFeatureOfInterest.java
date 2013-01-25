@@ -26,7 +26,7 @@ import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.ogc.xml.v110.BBOXType;
+import org.geotoolkit.ogc.xml.v110.FilterType;
 import org.geotoolkit.ogc.xml.v110.SpatialOpsType;
 import org.geotoolkit.util.Utilities;
 import org.opengis.filter.Filter;
@@ -124,9 +124,11 @@ public class GetFeatureOfInterest extends RequestBaseType implements org.geotool
         this.featureOfInterestId = featureId;
      }
 
-     public GetFeatureOfInterest(final String version, final String service, final GetFeatureOfInterest.Location location) {
+     public GetFeatureOfInterest(final String version, final String service, final Filter location) {
         super(version, service);
-        this.location = location;
+        if (location != null) {
+            this.location = new Location(location);
+        }
      }
 
     /**
@@ -176,6 +178,7 @@ public class GetFeatureOfInterest extends RequestBaseType implements org.geotool
         return results;
     }
     
+    @Override
     public List<Filter> getTemporalFilters() {
         final List<Filter> results = new ArrayList<Filter>();
         if (eventTime != null) {
@@ -249,10 +252,11 @@ public class GetFeatureOfInterest extends RequestBaseType implements org.geotool
             this.spatialOps = spatialOps;
         }
 
-        public Location(final BBOXType bboxFilter) {
-            if (bboxFilter != null) {
-                org.geotoolkit.ogc.xml.v110.ObjectFactory factory = new org.geotoolkit.ogc.xml.v110.ObjectFactory();
-                this.spatialOps = factory.createBBOX(bboxFilter);
+        public Location(final Filter filter) {
+            if (filter instanceof SpatialOpsType) {
+                this.spatialOps = FilterType.createSpatialOps((SpatialOpsType)filter);
+            } else if (filter != null) {
+                throw new IllegalArgumentException("Unexpected spatial filter type:" + filter);
             }
         }
 

@@ -25,9 +25,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.ogc.xml.v200.BBOXType;
-import org.geotoolkit.ogc.xml.v200.BinarySpatialOpType;
-import org.geotoolkit.ogc.xml.v200.DistanceBufferType;
+import org.geotoolkit.ogc.xml.v200.FilterType;
 import org.geotoolkit.ogc.xml.v200.SpatialOpsType;
 import org.geotoolkit.sos.xml.GetFeatureOfInterest;
 import org.geotoolkit.swes.xml.v200.ExtensibleRequestType;
@@ -83,6 +81,30 @@ public class GetFeatureOfInterestType extends ExtensibleRequestType implements G
     private List<String> featureOfInterest;
     private List<GetFeatureOfInterestType.SpatialFilter> spatialFilter;
 
+    public GetFeatureOfInterestType() {
+        
+    }
+    
+    public GetFeatureOfInterestType(final String version, final String service, final String featureId) {
+        super(version, service);
+        if (featureId != null) {
+            this.featureOfInterest.add(featureId);
+        }
+    }
+    
+    public GetFeatureOfInterestType(final String version, final String service, final List<String> featureId) {
+        super(version, service);
+        this.featureOfInterest = featureId;
+    }
+    
+    public GetFeatureOfInterestType(final String version, final String service, final Filter location) {
+        super(version, service);
+        if (location != null) {
+            this.spatialFilter = new ArrayList<SpatialFilter>();
+            this.spatialFilter.add(new SpatialFilter());
+        }
+     }
+    
     /**
      * Gets the value of the procedure property.
      * 
@@ -189,6 +211,22 @@ public class GetFeatureOfInterestType extends ExtensibleRequestType implements G
         @XmlElementRef(name = "spatialOps", namespace = "http://www.opengis.net/fes/2.0", type = JAXBElement.class)
         private JAXBElement<? extends SpatialOpsType> spatialOps;
 
+        public SpatialFilter() {
+
+        }
+
+        public SpatialFilter(final JAXBElement<? extends SpatialOpsType> spatialOps) {
+            this.spatialOps = spatialOps;
+        }
+
+        public SpatialFilter(final Filter filter) {
+            if (filter instanceof SpatialOpsType) {
+                this.spatialOps = FilterType.createSpatialOps((SpatialOpsType)filter);
+            } else if (filter != null) {
+                throw new IllegalArgumentException("Unexpected spatial filter type:" + filter);
+            }
+        }
+        
         public SpatialOpsType getSpatialOperator() {
             if (spatialOps != null) {
                 return spatialOps.getValue();
