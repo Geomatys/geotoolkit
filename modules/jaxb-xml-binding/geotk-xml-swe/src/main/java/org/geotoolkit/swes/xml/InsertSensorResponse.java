@@ -23,4 +23,6 @@ package org.geotoolkit.swes.xml;
 public interface InsertSensorResponse extends SOSResponse {
 
     String getAssignedProcedure();
+    
+    String getAssignedOffering();
 }

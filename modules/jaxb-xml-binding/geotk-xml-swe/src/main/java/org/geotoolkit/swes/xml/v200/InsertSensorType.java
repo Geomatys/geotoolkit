@@ -107,6 +107,18 @@ public class InsertSensorType extends ExtensibleRequestType implements InsertSen
     private List<InsertSensorType.RelatedFeature> relatedFeature;
     private List<InsertSensorType.Metadata> metadata;
 
+    public InsertSensorType() {
+        
+    }
+    
+    public InsertSensorType(final String version, final Object sensorDescription, final String procedureDescriptionFormat) {
+        super(version, "SOS");
+        if (sensorDescription != null) {
+            this.procedureDescription = new ProcedureDescription(sensorDescription);
+        }
+        this.procedureDescriptionFormat = procedureDescriptionFormat;
+    }
+    
     /**
      * Gets the value of the procedureDescriptionFormat property.
      * 
@@ -115,6 +127,7 @@ public class InsertSensorType extends ExtensibleRequestType implements InsertSen
      *     {@link String }
      *     
      */
+    @Override
     public String getProcedureDescriptionFormat() {
         return procedureDescriptionFormat;
     }
@@ -344,6 +357,14 @@ public class InsertSensorType extends ExtensibleRequestType implements InsertSen
         @XmlAnyElement(lax = true)
         private Object any;
 
+        public ProcedureDescription() {
+            
+        }
+        
+        public ProcedureDescription(final Object any) {
+            this.any = any;
+        }
+        
         /**
          * Gets the value of the any property.
          * 

@@ -33,6 +33,10 @@ import org.geotoolkit.ows.xml.AcceptVersions;
 import org.geotoolkit.ows.xml.Range;
 import org.geotoolkit.ows.xml.Sections;
 import org.geotoolkit.swes.xml.InsertSensorResponse;
+import org.opengis.filter.temporal.After;
+import org.opengis.filter.temporal.Before;
+import org.opengis.filter.temporal.During;
+import org.opengis.filter.temporal.TEquals;
 import org.opengis.observation.Observation;
 import org.opengis.observation.ObservationCollection;
 import org.opengis.observation.sampling.SamplingFeature;
@@ -340,6 +344,46 @@ public class SOSXmlFactory {
             return GMLXmlFactory.createFeatureCollection("3.1.1", id, name, description, features);
         } else {
             throw new IllegalArgumentException("unexpected sos version number:" + version);
+        }
+    }
+    
+    public static After buildTimeAfter(final String currentVersion, final String propertyName, final Object temporal) {
+        if ("2.0.0".equals(currentVersion)) {
+            return new org.geotoolkit.ogc.xml.v200.TimeAfterType(propertyName, temporal);
+        } else if ("1.0.0".equals(currentVersion)) {
+            return new org.geotoolkit.ogc.xml.v110.TimeAfterType(propertyName, temporal);
+        } else {
+            throw new IllegalArgumentException("unexpected version number:" + currentVersion);
+        }
+    }
+    
+    public static During buildTimeDuring(final String currentVersion, final String propertyName, final Object temporal) {
+        if ("2.0.0".equals(currentVersion)) {
+            return new org.geotoolkit.ogc.xml.v200.TimeDuringType(propertyName, temporal);
+        } else if ("1.0.0".equals(currentVersion)) {
+            return new org.geotoolkit.ogc.xml.v110.TimeDuringType(propertyName, temporal);
+        } else {
+            throw new IllegalArgumentException("unexpected version number:" + currentVersion);
+        }
+    }
+    
+    public static Before buildTimeBefore(final String currentVersion, final String propertyName, final Object temporal) {
+        if ("2.0.0".equals(currentVersion)) {
+            return new org.geotoolkit.ogc.xml.v200.TimeBeforeType(propertyName, temporal);
+        } else if ("1.0.0".equals(currentVersion)) {
+            return new org.geotoolkit.ogc.xml.v110.TimeBeforeType(propertyName, temporal);
+        } else {
+            throw new IllegalArgumentException("unexpected version number:" + currentVersion);
+        }
+    }
+    
+    public static TEquals buildTimeEquals(final String currentVersion, final String propertyName, final Object temporal) {
+        if ("2.0.0".equals(currentVersion)) {
+            return new org.geotoolkit.ogc.xml.v200.TimeEqualsType(propertyName, temporal);
+        } else if ("1.0.0".equals(currentVersion)) {
+            return new org.geotoolkit.ogc.xml.v110.TimeEqualsType(propertyName, temporal);
+        } else {
+            throw new IllegalArgumentException("unexpected version number:" + currentVersion);
         }
     }
 }

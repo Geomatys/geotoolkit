@@ -143,6 +143,15 @@ public class RegisterSensor extends RequestBaseType implements InsertSensor {
     }
 
     /**
+     * compatibility with SOS 1.0.0
+     * @return 
+     */
+    @Override
+    public String getProcedureDescriptionFormat() {
+        return null;
+    }
+
+    /**
      * <p>Java class for anonymous complex type.
      * 
      * <p>The following schema fragment specifies the expected content contained within this class.

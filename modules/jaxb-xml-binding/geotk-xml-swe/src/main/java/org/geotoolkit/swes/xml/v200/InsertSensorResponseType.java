@@ -101,6 +101,7 @@ public class InsertSensorResponseType extends ExtensibleResponseType implements 
      *     {@link String }
      *     
      */
+    @Override
     public String getAssignedOffering() {
         return assignedOffering;
     }

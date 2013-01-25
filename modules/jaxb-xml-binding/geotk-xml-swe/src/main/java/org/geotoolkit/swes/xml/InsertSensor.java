@@ -28,4 +28,6 @@ public interface InsertSensor extends RequestBase {
     
     ObservationTemplate getObservationTemplate();
     
+    String getProcedureDescriptionFormat();
+    
 }

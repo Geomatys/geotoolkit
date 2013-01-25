@@ -79,6 +79,11 @@ public class RegisterSensorResponse implements InsertSensorResponse {
     public String getAssignedProcedure() {
         return assignedSensorId;
     }
+    
+    @Override
+    public String getAssignedOffering() {
+        return null; // no assigned offering in SOS 1.0.0
+    }
 
     /**
      * Verify if this entry is identical to the specified object.
