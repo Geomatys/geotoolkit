@@ -28,6 +28,8 @@ import org.geotoolkit.gml.xml.v321.ReferenceType;
 import org.geotoolkit.observation.xml.v200.NamedValuePropertyType;
 import org.geotoolkit.observation.xml.v200.OMObservationPropertyType;
 import org.geotoolkit.observation.xml.v200.OMObservationType;
+import org.geotoolkit.util.ComparisonMode;
+import org.geotoolkit.util.Utilities;
 import org.opengis.metadata.lineage.Lineage;
 import org.opengis.observation.AnyFeature;
 import org.opengis.observation.Observation;
@@ -235,4 +237,71 @@ public class SFSamplingFeatureType extends AbstractFeatureType implements Sampli
         throw new UnsupportedOperationException("Not supported in O&M 2.0.0");
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder(super.toString()).append("\n");
+        if (lineage != null) {
+            sb.append("lineage: ").append(lineage).append('\n');
+        }
+        if (sampledFeature != null) {
+            sb.append("sampledFeature: ").append(sampledFeature).append('\n');
+        }
+        if (type != null) {
+            sb.append("type: ").append(type).append('\n');
+        }
+        if (parameter != null) {
+            sb.append("parameter:\n");
+            for (NamedValuePropertyType param : parameter) {
+                sb.append(param).append('\n');
+            }
+        }
+        if (relatedObservation != null) {
+            sb.append("relatedObservation:\n");
+            for (OMObservationPropertyType process : relatedObservation) {
+                sb.append(process).append('\n');
+            }
+        }
+        if (relatedSamplingFeature != null) {
+            sb.append("relatedSamplingFeature:\n");
+            for (SamplingFeatureComplexPropertyType process : relatedSamplingFeature) {
+                sb.append(process).append('\n');
+            }
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Verify if this entry is identical to specified object.
+     */
+    @Override
+    public boolean equals(final Object object, final ComparisonMode mode) {
+        if (object == this) {
+            return true;
+        }
+
+        if (object instanceof SFSamplingFeatureType && super.equals(object, mode)) {
+            final SFSamplingFeatureType that = (SFSamplingFeatureType) object;
+
+            return Utilities.equals(this.lineage,                that.lineage)               &&
+                   Utilities.equals(this.parameter,              that.parameter)             &&
+                   Utilities.equals(this.relatedObservation,     that.relatedObservation)    &&
+                   Utilities.equals(this.relatedSamplingFeature, that.relatedSamplingFeature)&&
+                   Utilities.equals(this.sampledFeature,         that.sampledFeature)        &&
+                   Utilities.equals(this.type,                   that.type);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 83 * hash + super.hashCode();
+        hash = 83 * hash + (this.lineage != null ? this.lineage.hashCode() : 0);
+        hash = 83 * hash + (this.parameter != null ? this.parameter.hashCode() : 0);
+        hash = 83 * hash + (this.relatedObservation != null ? this.relatedObservation.hashCode() : 0);
+        hash = 83 * hash + (this.relatedSamplingFeature != null ? this.relatedSamplingFeature.hashCode() : 0);
+        hash = 83 * hash + (this.sampledFeature != null ? this.sampledFeature.hashCode() : 0);
+        hash = 83 * hash + (this.type != null ? this.type.hashCode() : 0);
+        return hash;
+    }
 }

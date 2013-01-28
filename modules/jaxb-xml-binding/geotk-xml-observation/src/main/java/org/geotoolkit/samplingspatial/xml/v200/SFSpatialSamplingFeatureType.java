@@ -23,8 +23,12 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.geotoolkit.internal.jaxb.metadata.DQ_Element;
 import org.geotoolkit.observation.xml.v200.OMProcessPropertyType;
 import org.geotoolkit.sampling.xml.v200.SFSamplingFeatureType;
+import org.geotoolkit.util.ComparisonMode;
+import org.geotoolkit.util.Utilities;
 import org.opengis.metadata.quality.PositionalAccuracy;
 
 
@@ -69,6 +73,7 @@ import org.opengis.metadata.quality.PositionalAccuracy;
 public class SFSpatialSamplingFeatureType extends SFSamplingFeatureType {
 
     private List<OMProcessPropertyType> hostedProcedure;
+    @XmlJavaTypeAdapter(DQ_Element.class)
     private List<PositionalAccuracy> positionalAccuracy;
     @XmlElement(required = true)
     private ShapeType shape;
@@ -128,5 +133,54 @@ public class SFSpatialSamplingFeatureType extends SFSamplingFeatureType {
     public void setShape(ShapeType value) {
         this.shape = value;
     }
+    
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder(super.toString()).append("\n");
+        if (hostedProcedure != null) {
+            sb.append("hostedProcedure:\n");
+            for (OMProcessPropertyType process : hostedProcedure) {
+                sb.append(process).append('\n');
+            }
+        }
+        if (positionalAccuracy != null) {
+            sb.append("positionalAccuracy:\n");
+            for (PositionalAccuracy process : positionalAccuracy) {
+                sb.append(process).append('\n');
+            }
+        }
+        if (shape != null) {
+            sb.append("shape: ").append(shape).append('\n');
+        }
+        return sb.toString();
+    }
 
+    /**
+     * Verify if this entry is identical to specified object.
+     */
+    @Override
+    public boolean equals(final Object object, final ComparisonMode mode) {
+        if (object == this) {
+            return true;
+        }
+
+        if (object instanceof SFSpatialSamplingFeatureType && super.equals(object, mode)) {
+            final SFSpatialSamplingFeatureType that = (SFSpatialSamplingFeatureType) object;
+
+            return Utilities.equals(this.hostedProcedure,    that.hostedProcedure)    &&
+                   Utilities.equals(this.positionalAccuracy, that.positionalAccuracy) &&
+                   Utilities.equals(this.shape,              that.shape);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 83 * hash + super.hashCode();
+        hash = 83 * hash + (this.hostedProcedure != null ? this.hostedProcedure.hashCode() : 0);
+        hash = 83 * hash + (this.positionalAccuracy != null ? this.positionalAccuracy.hashCode() : 0);
+        hash = 83 * hash + (this.shape != null ? this.shape.hashCode() : 0);
+        return hash;
+    }
 }

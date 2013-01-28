@@ -94,6 +94,7 @@ public class CodeSpacePropertyType implements AbstractCodeSpaceProperty {
     /**
      * Gets the value of the remoteSchema property.
      */
+    @Override
     public String getRemoteSchema() {
         return remoteSchema;
     }
@@ -108,6 +109,7 @@ public class CodeSpacePropertyType implements AbstractCodeSpaceProperty {
     /**
      * Gets the value of the type property.
      */
+    @Override
     public String getType() {
         return type;
     }
@@ -122,6 +124,7 @@ public class CodeSpacePropertyType implements AbstractCodeSpaceProperty {
     /**
      * Gets the value of the href property.
      */
+    @Override
     public String getHref() {
         return href;
     }
@@ -136,6 +139,7 @@ public class CodeSpacePropertyType implements AbstractCodeSpaceProperty {
     /**
      * Gets the value of the role property.
      */
+    @Override
     public String getRole() {
         return role;
     }
@@ -150,6 +154,7 @@ public class CodeSpacePropertyType implements AbstractCodeSpaceProperty {
     /**
      * Gets the value of the arcrole property.
      */
+    @Override
     public String getArcrole() {
         return arcrole;
     }
@@ -164,6 +169,7 @@ public class CodeSpacePropertyType implements AbstractCodeSpaceProperty {
     /**
      * Gets the value of the title property.
      */
+    @Override
     public String getTitle() {
         return title;
     }
@@ -178,6 +184,7 @@ public class CodeSpacePropertyType implements AbstractCodeSpaceProperty {
     /**
      * Gets the value of the show property.
      */
+    @Override
     public String getShow() {
         return show;
     }
@@ -192,6 +199,7 @@ public class CodeSpacePropertyType implements AbstractCodeSpaceProperty {
     /**
      * Gets the value of the actuate property.
      */
+    @Override
     public String getActuate() {
         return actuate;
     }
@@ -206,22 +214,30 @@ public class CodeSpacePropertyType implements AbstractCodeSpaceProperty {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("[CodeSpacePropertyType]").append("\n");
-        if (remoteSchema != null)
+        if (remoteSchema != null) {
             sb.append("remoteSchema: ").append(remoteSchema).append('\n');
-        if (actuate != null)
+        }
+        if (actuate != null) {
             sb.append("actuate: ").append(actuate).append('\n');
-        if (arcrole != null)
+        }
+        if (arcrole != null) {
             sb.append("actuate: ").append(arcrole).append('\n');
-        if (href != null)
+        }
+        if (href != null) {
             sb.append("href: ").append(href).append('\n');
-        if (role != null)
+        }
+        if (role != null) {
             sb.append("role: ").append(role).append('\n');
-        if (show != null)
+        }
+        if (show != null) {
             sb.append("show: ").append(show).append('\n');
-        if (title != null)
+        }
+        if (title != null) {
             sb.append("title: ").append(title).append('\n');
-        if (type != null)
+        }
+        if (type != null) {
             sb.append("type: ").append(type).append('\n');
+        }
         return sb.toString();
     }
 

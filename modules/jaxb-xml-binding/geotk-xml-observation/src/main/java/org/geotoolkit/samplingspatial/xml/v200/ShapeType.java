@@ -51,6 +51,7 @@ import org.geotoolkit.gml.xml.v321.RectifiedGridType;
 import org.geotoolkit.gml.xml.v321.SolidType;
 import org.geotoolkit.gml.xml.v321.SurfaceType;
 import org.geotoolkit.gml.xml.v321.TinType;
+import org.geotoolkit.util.Utilities;
 import org.geotoolkit.xlink.xml.v100.ActuateType;
 import org.geotoolkit.xlink.xml.v100.ShowType;
 
@@ -394,4 +395,86 @@ public class ShapeType {
         this.actuate = value;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("[ShapeType]").append("\n");
+        if (abstractGeometry != null) {
+            sb.append("abstractGeometry: ").append(abstractGeometry.getValue()).append('\n');
+        }
+        if (remoteSchema != null) {
+            sb.append("remoteSchema: ").append(remoteSchema).append('\n');
+        }
+        if (actuate != null) {
+            sb.append("actuate: ").append(actuate).append('\n');
+        }
+        if (arcrole != null) {
+            sb.append("actuate: ").append(arcrole).append('\n');
+        }
+        if (href != null) {
+            sb.append("href: ").append(href).append('\n');
+        }
+        if (role != null) {
+            sb.append("role: ").append(role).append('\n');
+        }
+        if (show != null) {
+            sb.append("show: ").append(show).append('\n');
+        }
+        if (nilReason != null) {
+            sb.append("nilReason: ").append(nilReason).append('\n');
+        }
+        if (type != null) {
+            sb.append("type: ").append(type).append('\n');
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Verify if this entry is identical to specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+
+        if (object instanceof ShapeType) {
+            final ShapeType that = (ShapeType) object;
+
+            AbstractGeometryType thatgeom = null;
+            if (that.abstractGeometry != null) {
+                thatgeom = that.abstractGeometry.getValue();
+            }
+            
+            AbstractGeometryType thisgeom = null;
+            if (this.abstractGeometry != null) {
+                thisgeom = this.abstractGeometry.getValue();
+            }
+            
+            return Utilities.equals(thisgeom,          thatgeom)          &&
+                   Utilities.equals(this.actuate,      that.actuate)      &&
+                   Utilities.equals(this.href,         that.href)         &&
+                   Utilities.equals(this.remoteSchema, that.remoteSchema) &&
+                   Utilities.equals(this.role,         that.role)         &&
+                   Utilities.equals(this.show,         that.show)         &&
+                   Utilities.equals(this.nilReason,    that.nilReason)    &&
+                   Utilities.equals(this.type,         that.type)         &&
+                   Utilities.equals(this.arcrole,      that.arcrole);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 83 * hash + (this.abstractGeometry != null ? this.abstractGeometry.hashCode() : 0);
+        hash = 83 * hash + (this.remoteSchema != null ? this.remoteSchema.hashCode() : 0);
+        hash = 83 * hash + (this.type != null ? this.type.hashCode() : 0);
+        hash = 83 * hash + (this.href != null ? this.href.hashCode() : 0);
+        hash = 83 * hash + (this.role != null ? this.role.hashCode() : 0);
+        hash = 83 * hash + (this.arcrole != null ? this.arcrole.hashCode() : 0);
+        hash = 83 * hash + (this.nilReason != null ? this.nilReason.hashCode() : 0);
+        hash = 83 * hash + (this.show != null ? this.show.hashCode() : 0);
+        hash = 83 * hash + (this.actuate != null ? this.actuate.hashCode() : 0);
+        return hash;
+    }
 }
