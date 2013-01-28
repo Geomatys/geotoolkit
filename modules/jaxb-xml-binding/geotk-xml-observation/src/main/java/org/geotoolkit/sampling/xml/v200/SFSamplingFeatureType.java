@@ -22,9 +22,13 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.gml.xml.v321.AbstractFeatureType;
+import org.geotoolkit.gml.xml.v321.BoundingShapeType;
+import org.geotoolkit.gml.xml.v321.EnvelopeType;
 import org.geotoolkit.gml.xml.v321.FeaturePropertyType;
 import org.geotoolkit.gml.xml.v321.ReferenceType;
+import org.geotoolkit.internal.jaxb.metadata.LI_Lineage;
 import org.geotoolkit.observation.xml.v200.NamedValuePropertyType;
 import org.geotoolkit.observation.xml.v200.OMObservationPropertyType;
 import org.geotoolkit.observation.xml.v200.OMObservationType;
@@ -73,11 +77,27 @@ public class SFSamplingFeatureType extends AbstractFeatureType implements Sampli
     private ReferenceType type;
     @XmlElement(required = true, nillable = true)
     private FeaturePropertyType sampledFeature;
+    @XmlJavaTypeAdapter(LI_Lineage.class)
     private Lineage lineage;
     private List<OMObservationPropertyType> relatedObservation;
     private List<SamplingFeatureComplexPropertyType> relatedSamplingFeature;
     private List<NamedValuePropertyType> parameter;
 
+    protected SFSamplingFeatureType(){}
+    
+    
+    public SFSamplingFeatureType(final String id, final String name, final String description,
+                                 final String type, final FeaturePropertyType sampledFeature, final EnvelopeType bound) {
+        super(id, name, description);
+        if (type != null) {
+            this.type = new ReferenceType(type);
+        }
+        this.sampledFeature = sampledFeature;
+        if (bound != null) {
+            setBoundedBy(new BoundingShapeType(bound));
+        }
+    }
+    
     /**
      * Gets the value of the type property.
      * 

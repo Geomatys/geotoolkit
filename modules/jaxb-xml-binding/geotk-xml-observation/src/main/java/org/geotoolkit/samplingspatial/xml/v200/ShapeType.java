@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.gml.xml.v321.ObjectFactory;
 import org.geotoolkit.gml.xml.v321.AbstractCurveType;
 import org.geotoolkit.gml.xml.v321.AbstractGeometricAggregateType;
 import org.geotoolkit.gml.xml.v321.AbstractGeometricPrimitiveType;
@@ -38,6 +39,7 @@ import org.geotoolkit.gml.xml.v321.CurveType;
 import org.geotoolkit.gml.xml.v321.GeometricComplexType;
 import org.geotoolkit.gml.xml.v321.GridType;
 import org.geotoolkit.gml.xml.v321.LineStringType;
+import org.geotoolkit.gml.xml.v321.LinearRingType;
 import org.geotoolkit.gml.xml.v321.MultiCurveType;
 import org.geotoolkit.gml.xml.v321.MultiGeometryType;
 import org.geotoolkit.gml.xml.v321.MultiPointType;
@@ -48,6 +50,7 @@ import org.geotoolkit.gml.xml.v321.OrientableSurfaceType;
 import org.geotoolkit.gml.xml.v321.PointType;
 import org.geotoolkit.gml.xml.v321.PolygonType;
 import org.geotoolkit.gml.xml.v321.RectifiedGridType;
+import org.geotoolkit.gml.xml.v321.RingType;
 import org.geotoolkit.gml.xml.v321.SolidType;
 import org.geotoolkit.gml.xml.v321.SurfaceType;
 import org.geotoolkit.gml.xml.v321.TinType;
@@ -104,6 +107,41 @@ public class ShapeType {
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     private ActuateType actuate;
 
+    public ShapeType() {
+        
+    }
+    
+    public ShapeType(final AbstractGeometryType value) {
+        final ObjectFactory factory = new ObjectFactory();
+        if (value instanceof PolygonType) {
+            abstractGeometry = factory.createPolygon((PolygonType) value);
+        } else if (value instanceof OrientableSurfaceType) {
+            abstractGeometry = factory.createOrientableSurface((OrientableSurfaceType) value);
+        } else if (value instanceof LinearRingType) {
+            abstractGeometry = factory.createLinearRing((LinearRingType) value);
+        } else if (value instanceof RingType) {
+            abstractGeometry = factory.createRing((RingType) value);
+        } else if (value instanceof SurfaceType) {
+            abstractGeometry = factory.createPolyhedralSurface((SurfaceType) value);
+        } else if (value instanceof CurveType) {
+            abstractGeometry = factory.createCurve((CurveType) value);
+        } else if (value instanceof PointType) {
+            abstractGeometry = factory.createPoint((PointType) value);
+        } else if (value instanceof LineStringType) {
+            abstractGeometry = factory.createLineString((LineStringType) value);
+        } else if (value instanceof MultiCurveType) {
+            abstractGeometry = factory.createMultiCurve((MultiCurveType) value);
+        } else if (value instanceof MultiPointType) {
+            abstractGeometry = factory.createMultiPoint((MultiPointType) value);
+        } else if (value instanceof MultiSolidType) {
+            abstractGeometry = factory.createMultiSolid((MultiSolidType) value);
+        } else if (value instanceof MultiSurfaceType) {
+            abstractGeometry = factory.createMultiSurface((MultiSurfaceType) value);
+        } else {
+            throw new IllegalArgumentException("unexpected geometry type:" + value);
+        }
+    }
+    
     /**
      * Gets the value of the abstractGeometry property.
      * 

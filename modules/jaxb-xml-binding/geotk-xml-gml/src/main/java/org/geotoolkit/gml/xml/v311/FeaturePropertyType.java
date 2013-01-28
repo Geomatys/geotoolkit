@@ -404,9 +404,9 @@ public class FeaturePropertyType implements FeatureProperty {
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder("[FeaturePropertyType]");
-        if (abstractFeature != null && abstractFeature.getValue() != null)
+        if (abstractFeature != null && abstractFeature.getValue() != null) {
             s.append(abstractFeature.getValue().toString()).append('\n');
-
+        }
         if(actuate != null) {
             s.append("actuate=").append(actuate).append('\n');
         }

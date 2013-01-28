@@ -88,6 +88,7 @@ public class GetFeatureOfInterestType extends ExtensibleRequestType implements G
     public GetFeatureOfInterestType(final String version, final String service, final String featureId) {
         super(version, service);
         if (featureId != null) {
+            this.featureOfInterest = new ArrayList<String>();
             this.featureOfInterest.add(featureId);
         }
     }
@@ -101,7 +102,7 @@ public class GetFeatureOfInterestType extends ExtensibleRequestType implements G
         super(version, service);
         if (location != null) {
             this.spatialFilter = new ArrayList<SpatialFilter>();
-            this.spatialFilter.add(new SpatialFilter());
+            this.spatialFilter.add(new SpatialFilter(location));
         }
      }
     

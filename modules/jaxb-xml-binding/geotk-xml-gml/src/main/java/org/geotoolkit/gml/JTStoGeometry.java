@@ -380,7 +380,7 @@ public final class JTStoGeometry {
         //Test if it's a 2D Geometry from CRS
         isValideGeometry(crs);
 
-        final org.geotoolkit.gml.xml.Point gmlPoint = buildPoint(gmlVersion, coordinateToDirectPosition(jtsPoint.getCoordinate(), crs));
+        final org.geotoolkit.gml.xml.Point gmlPoint = buildPoint(gmlVersion, null, coordinateToDirectPosition(jtsPoint.getCoordinate(), crs));
 
         gmlPoint.setSrsName(getSRS(crs));
         return gmlPoint;

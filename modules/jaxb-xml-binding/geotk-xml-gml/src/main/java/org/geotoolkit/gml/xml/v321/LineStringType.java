@@ -28,6 +28,8 @@ import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlElementRefs;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.LineString;
+import org.geotoolkit.util.ComparisonMode;
+import org.geotoolkit.util.Utilities;
 import org.opengis.geometry.DirectPosition;
 
 
@@ -89,16 +91,20 @@ public class LineStringType extends AbstractCurveType implements LineString {
     public LineStringType(final CoordinatesType coordinates) {
         this.coordinates = coordinates;
     }
+    
+    public LineStringType(final String id, final List<DirectPositionType> pos) {
+        super(id, null);
+        this.pos = pos;
+    }
 
     /**
      * Build a new LineString with the specified coordinates
      */
     public LineStringType(final List<DirectPosition> positions) {
-        this.pointPropertyOrPointRep = new ArrayList<JAXBElement<?>>();
-        final ObjectFactory factory = new ObjectFactory();
+        this.pos = new ArrayList<DirectPositionType>();
         for (DirectPosition currentPos : positions) {
             final DirectPositionType position = new DirectPositionType(currentPos, true);
-            pointPropertyOrPointRep.add(factory.createPos(position));
+            pos.add(position);
         }
     }
 
@@ -118,6 +124,7 @@ public class LineStringType extends AbstractCurveType implements LineString {
         return this.pointPropertyOrPointRep;
     }
 
+    @Override
     public List<DirectPositionType> getPos() {
         if (pos == null) {
             pos = new ArrayList<DirectPositionType>();
@@ -133,6 +140,7 @@ public class LineStringType extends AbstractCurveType implements LineString {
      *     {@link DirectPositionListType }
      *
      */
+    @Override
     public DirectPositionListType getPosList() {
         return posList;
     }
@@ -157,6 +165,7 @@ public class LineStringType extends AbstractCurveType implements LineString {
      *     {@link CoordinatesType }
      *
      */
+    @Override
     public CoordinatesType getCoordinates() {
         return coordinates;
     }
@@ -173,4 +182,77 @@ public class LineStringType extends AbstractCurveType implements LineString {
         this.coordinates = value;
     }
 
+    /**
+     * Verify if this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object, final ComparisonMode mode) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof LineStringType) {
+            final LineStringType that = (LineStringType) object;
+
+            boolean jb = false;
+            if (this.getPointPropertyOrPointRep().size() == that.getPointPropertyOrPointRep().size()) {
+                jb = true;
+                for (int i = 0; i < this.getPointPropertyOrPointRep().size(); i++) {
+                    if (!JAXBElementEquals(this.getPointPropertyOrPointRep().get(i), that.getPointPropertyOrPointRep().get(i))) {
+                        jb = false;
+                    }
+                }
+            }
+            return Utilities.equals(this.coordinates, that.coordinates) &&
+                   Utilities.equals(this.posList,     that.posList)     &&
+                   Utilities.equals(this.pos,         that.pos)         &&
+                   jb;
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 79 * hash + (this.pointPropertyOrPointRep != null ? this.pointPropertyOrPointRep.hashCode() : 0);
+        hash = 79 * hash + (this.posList != null ? this.posList.hashCode() : 0);
+        hash = 79 * hash + (this.coordinates != null ? this.coordinates.hashCode() : 0);
+        hash = 79 * hash + (this.pos != null ? this.pos.hashCode() : 0);
+        return hash;
+    }
+
+    private boolean JAXBElementEquals(final JAXBElement a, final JAXBElement b) {
+        if (a  != null && b != null) {
+            return Utilities.equals(a.getValue(), b.getValue());
+        } else if (a == null && b == null) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Retourne une representation de l'objet.
+     */
+    @Override
+    public String toString() {
+        StringBuilder s = new StringBuilder(super.toString());
+        if (posList != null) {
+            s.append("posList").append(posList).append('\n');
+        }
+        if(coordinates != null) {
+            s.append("coordinates=").append(coordinates).append('\n');
+        }
+        if(pointPropertyOrPointRep != null) {
+            s.append("point :").append('\n');
+            for (JAXBElement jb : pointPropertyOrPointRep) {
+                s.append(jb.getValue()).append('\n');
+            }
+        }
+        if(pos != null) {
+            s.append("pos :").append('\n');
+            for (DirectPositionType jb : pos) {
+                s.append(jb).append('\n');
+            }
+        }
+        return s.toString();
+    }
 }

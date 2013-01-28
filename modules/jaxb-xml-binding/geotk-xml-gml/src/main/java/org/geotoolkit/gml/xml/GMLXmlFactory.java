@@ -27,11 +27,21 @@ import org.opengis.temporal.Period;
  */
 public class GMLXmlFactory {
  
-    public static Point buildPoint(final String version, final org.opengis.geometry.DirectPosition pos) {
+    public static Point buildPoint(final String version, final String id, final org.opengis.geometry.DirectPosition pos) {
         if ("3.2.1".equals(version)) {
-            return new org.geotoolkit.gml.xml.v321.PointType(pos);
+            return new org.geotoolkit.gml.xml.v321.PointType(id, pos);
         } else if ("3.1.1".equals(version)) {
-            return new org.geotoolkit.gml.xml.v311.PointType(pos);
+            return new org.geotoolkit.gml.xml.v311.PointType(id, pos);
+        } else {
+            throw new IllegalArgumentException("unexpected gml version number:" + version);
+        }
+    }
+    
+    public static org.opengis.geometry.DirectPosition buildDirectPosition(final String version, final String srsName, final int srsDimension, final List<Double> value) {
+        if ("3.2.1".equals(version)) {
+            return new org.geotoolkit.gml.xml.v321.DirectPositionType(srsName, srsDimension, value);
+        } else if ("3.1.1".equals(version)) {
+            return new org.geotoolkit.gml.xml.v311.DirectPositionType(srsName, srsDimension, value);
         } else {
             throw new IllegalArgumentException("unexpected gml version number:" + version);
         }

@@ -84,7 +84,7 @@ public class SamplingXMLBindingTest {
 
         final DirectPositionType pos = new DirectPositionType("urn:ogc:crs:espg:4326", 2, Arrays.asList(3.2, 6.5));
         final PointType location = new PointType("point-ID", pos);
-        final SamplingPointType sp = new SamplingPointType("samplingID-007", "urn:sampling:test:007", "a sampling Test", new FeaturePropertyType(""), new PointPropertyType(location));
+        final SamplingPointType sp = new SamplingPointType("samplingID-007", "urn:sampling:test:007", "a sampling Test", new FeaturePropertyType(""), location);
 
         StringWriter sw = new StringWriter();
         marshaller.marshal(sp, sw);
@@ -180,7 +180,7 @@ public class SamplingXMLBindingTest {
 
         final DirectPositionType pos = new DirectPositionType("urn:ogc:crs:espg:4326", 2, Arrays.asList(3.2, 6.5));
         final PointType location = new PointType("point-ID", pos);
-        final SamplingPointType expResult = new SamplingPointType("samplingID-007", "urn:sampling:test:007", "a sampling Test", new FeaturePropertyType(""), new PointPropertyType(location));
+        final SamplingPointType expResult = new SamplingPointType("samplingID-007", "urn:sampling:test:007", "a sampling Test", new FeaturePropertyType(""), location);
 
         assertEquals(expResult.getPosition(), result.getPosition());
         assertEquals(expResult, result);

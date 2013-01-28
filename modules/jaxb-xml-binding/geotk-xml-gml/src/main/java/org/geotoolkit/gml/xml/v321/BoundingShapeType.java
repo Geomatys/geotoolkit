@@ -31,6 +31,7 @@ import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.BoundingShape;
 import org.geotoolkit.gml.xml.Envelope;
 import org.geotoolkit.gml.xml.EnvelopeWithTimePeriod;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -176,6 +177,55 @@ public class BoundingShapeType implements BoundingShape {
             nilReason = new ArrayList<String>();
         }
         return this.nilReason;
+    }
+
+    /**
+     * Verify if this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof BoundingShapeType) {
+            
+            final BoundingShapeType that = (BoundingShapeType) object;
+
+            return Utilities.equals(this.getNull(),              that.getNull())              &&
+                   Utilities.equals(this.getEnvelope(),          that.getEnvelope())          &&
+                   Utilities.equals(this.getNilReason(),         that.getNilReason());
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 47 * hash + (this.envelope != null ? this.envelope.hashCode() : 0);
+        hash = 47 * hash + (this._null != null ? this._null.hashCode() : 0);
+        hash = 47 * hash + (this.nilReason != null ? this.nilReason.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder s = new StringBuilder("[BoundingshapeEntry]").append('\n');
+        if (envelope != null) {
+            s.append("envelope:").append(envelope.getValue());
+        }
+        if (_null != null) {
+            s.append("_null: ");
+            for (String ss: _null) {
+                s.append("       ").append(ss).append('\n');
+            }
+        }
+        if (nilReason != null) {
+            s.append("nilReason:").append('\n');
+            for (String ss: nilReason) {
+                s.append(ss).append('\n');
+            }
+        }
+        return s.toString();
     }
 
 }

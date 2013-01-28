@@ -435,4 +435,48 @@ public class EnvelopeType implements Envelope, org.geotoolkit.gml.xml.Envelope {
         return hash;
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder s = new StringBuilder();
+        if (srsDimension != null) {
+            s.append("srsDImension:").append(srsDimension).append(" ");
+        }
+        if (srsName != null) {
+            s.append("srsName:").append(srsName).append(" ");
+        }
+        if (lowerCorner != null) {
+            s.append('\n').append("lowerCorner:").append(lowerCorner.toString());
+        }
+        if (upperCorner != null) {
+            s.append('\n').append("upperCorner:").append(upperCorner.toString());
+        }
+        if (pos != null) {
+            int i = 0;
+            for (DirectPositionType posi: pos) {
+                s.append('\n').append("pos").append(i).append(":").append(posi.toString());
+                i++;
+            }
+            s.append('\n');
+        }
+        if (coordinates != null) {
+            s.append("coordinates:").append(coordinates.toString());
+        }
+        if (axisLabels != null) {
+            int i = 0;
+            for (String axis: axisLabels) {
+                s.append('\n').append("axis").append(i).append(":").append(axis);
+                i++;
+            }
+            s.append('\n');
+        }
+        if (uomLabels != null) {
+            int i = 0;
+            for (String uom: uomLabels) {
+                s.append('\n').append("uom").append(i).append(":").append(uom);
+                i++;
+            }
+            s.append('\n');
+        }
+        return s.toString();
+    }
 }

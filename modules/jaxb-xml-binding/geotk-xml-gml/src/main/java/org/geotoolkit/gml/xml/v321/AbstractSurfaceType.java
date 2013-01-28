@@ -58,7 +58,7 @@ public abstract class AbstractSurfaceType extends AbstractGeometricPrimitiveType
     }
     
     public AbstractSurfaceType(final String srsName) {
-        super(srsName);
+        super(null, srsName);
     }
 
 }

@@ -92,14 +92,16 @@ public class SamplingPointType extends SamplingFeatureType implements SamplingPo
       * adapted for the BRGM model.
       * 
       */
-    public SamplingPointType(final String               identifier,
+    public SamplingPointType(final String                identifier,
                               final String               name,
                               final String               remarks,
                               final FeaturePropertyType  sampledFeature,
-                              final PointPropertyType    location)
+                              final PointType            location)
     {
         super(identifier, name, remarks, sampledFeature);
-        this.position = location;
+        if (location != null) {
+            this.position = new PointPropertyType(location);
+        }
     }
 
     /**

@@ -95,7 +95,7 @@ public class ObservationXMLBindingTest {
 
         DirectPositionType pos = new DirectPositionType("urn:ogc:crs:espg:4326", 2, Arrays.asList(3.2, 6.5));
         PointType location     = new PointType("point-ID", pos);
-        SamplingPointType sp  = new SamplingPointType("samplingID-007", "urn:sampling:test:007", "a sampling Test", new FeaturePropertyType(""), new PointPropertyType(location));
+        SamplingPointType sp  = new SamplingPointType("samplingID-007", "urn:sampling:test:007", "a sampling Test", new FeaturePropertyType(""), location);
 
         PhenomenonType observedProperty = new PhenomenonType("phenomenon-007", "urn:OGC:phenomenon-007");
         ProcessType procedure           = new ProcessType("urn:sensor:007");
@@ -323,7 +323,7 @@ public class ObservationXMLBindingTest {
 
         DirectPositionType pos = new DirectPositionType("urn:ogc:crs:espg:4326", 2, Arrays.asList(3.2, 6.5));
         PointType location = new PointType("point-ID", pos);
-        SamplingPointType sp = new SamplingPointType("samplingID-007", "urn:sampling:test:007", "a sampling Test", new FeaturePropertyType("urn:sampling:sampledFeature"), new PointPropertyType(location));
+        SamplingPointType sp = new SamplingPointType("samplingID-007", "urn:sampling:test:007", "a sampling Test", new FeaturePropertyType("urn:sampling:sampledFeature"), location);
 
         PhenomenonType observedProperty = new PhenomenonType("phenomenon-007", "urn:OGC:phenomenon-007");
         ProcessType procedure = new ProcessType("urn:sensor:007");

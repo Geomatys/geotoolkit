@@ -24,6 +24,9 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.geotoolkit.gml.xml.v321.AbstractGeometryType;
+import org.geotoolkit.gml.xml.v321.EnvelopeType;
+import org.geotoolkit.gml.xml.v321.FeaturePropertyType;
 import org.geotoolkit.internal.jaxb.metadata.DQ_Element;
 import org.geotoolkit.observation.xml.v200.OMProcessPropertyType;
 import org.geotoolkit.sampling.xml.v200.SFSamplingFeatureType;
@@ -78,6 +81,23 @@ public class SFSpatialSamplingFeatureType extends SFSamplingFeatureType {
     @XmlElement(required = true)
     private ShapeType shape;
 
+    public SFSpatialSamplingFeatureType() {
+        
+    }
+    
+    public SFSpatialSamplingFeatureType(final String               identifier,
+                                        final String               name,
+                                        final String               remarks,
+                                        final String               type,
+                                        final FeaturePropertyType  sampledFeature,
+                                        final AbstractGeometryType location,
+                                        final EnvelopeType bound) {
+        super(identifier, name, remarks, type, sampledFeature, bound);
+        if (location != null) {
+            this.shape = new ShapeType(location);
+        }
+    }
+    
     /**
      * Gets the value of the hostedProcedure property.
      * 

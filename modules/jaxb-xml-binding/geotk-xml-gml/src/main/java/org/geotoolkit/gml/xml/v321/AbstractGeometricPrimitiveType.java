@@ -63,8 +63,8 @@ public abstract class AbstractGeometricPrimitiveType extends AbstractGeometryTyp
         
     }
     
-    public AbstractGeometricPrimitiveType(final String srsName) {
-        super(srsName);
+    public AbstractGeometricPrimitiveType(final String id, final String srsName) {
+        super(id, srsName);
     }
     
     @Override

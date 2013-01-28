@@ -34,6 +34,8 @@ import org.geotoolkit.gml.xml.AbstractGML;
 import org.geotoolkit.internal.sql.table.Entry;
 import org.geotoolkit.metadata.AbstractMetadata;
 import org.geotoolkit.metadata.MetadataStandard;
+import org.geotoolkit.util.ComparisonMode;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -306,5 +308,62 @@ public abstract class AbstractGMLType extends AbstractMetadata implements Abstra
     @Override
     public org.geotoolkit.gml.xml.v311.CodeType getParameterName() {
         return null; // not implemented in 3.2.1
+    }
+    
+     @Override
+    public boolean equals(final Object obj, final ComparisonMode mode) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj instanceof AbstractGMLType) {
+            final AbstractGMLType that = (AbstractGMLType) obj;
+            return Utilities.equals(this.description,          that.description)          &&
+                   Utilities.equals(this.descriptionReference, that.descriptionReference) &&
+                   Utilities.equals(this.id,                   that.id)                   &&
+                   Utilities.equals(this.identifier,           that.identifier)           &&
+                   Utilities.equals(this.metaDataProperty,     that.metaDataProperty)     &&
+                   Utilities.equals(this.getName(),            that.getName());
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 67 * hash + (this.description != null ? this.description.hashCode() : 0);
+        hash = 67 * hash + (this.descriptionReference != null ? this.descriptionReference.hashCode() : 0);
+        hash = 67 * hash + (this.name != null ? this.name.hashCode() : 0);
+        hash = 67 * hash + (this.id != null ? this.id.hashCode() : 0);
+        hash = 67 * hash + (this.identifier != null ? this.identifier.hashCode() : 0);
+        hash = 67 * hash + (this.metaDataProperty != null ? this.metaDataProperty.hashCode() : 0);
+        return hash;
+    }
+
+    
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("[").append(this.getClass().getSimpleName()).append(']').append('\n');
+        if (id != null) {
+            sb.append("id:").append(id).append('\n');
+        }
+        if (name != null) {
+            sb.append("name:").append(name).append('\n');
+        }
+        if (description != null) {
+            sb.append("description:").append(description).append('\n');
+        }
+        if (descriptionReference != null) {
+            sb.append("description reference:").append(descriptionReference).append('\n');
+        }
+        if (identifier != null) {
+            sb.append("identifier:").append(identifier).append('\n');
+        }
+        if (metaDataProperty != null) {
+            sb.append("metaDataProperty:\n");
+            for (MetaDataPropertyType process : metaDataProperty) {
+                sb.append(process).append('\n');
+            }
+        }
+        return sb.toString();
     }
 }

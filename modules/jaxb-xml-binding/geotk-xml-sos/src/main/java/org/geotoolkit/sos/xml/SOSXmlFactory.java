@@ -25,6 +25,7 @@ import org.geotoolkit.gml.xml.Envelope;
 import org.geotoolkit.gml.xml.FeatureCollection;
 import org.geotoolkit.gml.xml.FeatureProperty;
 import org.geotoolkit.gml.xml.GMLXmlFactory;
+import org.geotoolkit.gml.xml.Point;
 import org.geotoolkit.ows.xml.AbstractOperationsMetadata;
 import org.geotoolkit.ows.xml.AbstractServiceIdentification;
 import org.geotoolkit.ows.xml.AbstractServiceProvider;
@@ -37,6 +38,7 @@ import org.opengis.filter.temporal.After;
 import org.opengis.filter.temporal.Before;
 import org.opengis.filter.temporal.During;
 import org.opengis.filter.temporal.TEquals;
+import org.opengis.geometry.DirectPosition;
 import org.opengis.observation.Observation;
 import org.opengis.observation.ObservationCollection;
 import org.opengis.observation.sampling.SamplingFeature;
@@ -321,20 +323,85 @@ public class SOSXmlFactory {
      * @param feature
      * @return
      */
-    public static org.geotoolkit.gml.xml.v311.FeaturePropertyType buildFeatureProperty(final SamplingFeature feature) {
-        final org.geotoolkit.sampling.xml.v100.ObjectFactory samplingFactory = new org.geotoolkit.sampling.xml.v100.ObjectFactory();
-        if (feature instanceof org.geotoolkit.sampling.xml.v100.SamplingPointType) {
-            return new org.geotoolkit.gml.xml.v311.FeaturePropertyType(samplingFactory.createSamplingPoint((org.geotoolkit.sampling.xml.v100.SamplingPointType)feature));
-        } else if (feature instanceof org.geotoolkit.sampling.xml.v100.SamplingCurveType) {
-            return new org.geotoolkit.gml.xml.v311.FeaturePropertyType(samplingFactory.createSamplingCurve((org.geotoolkit.sampling.xml.v100.SamplingCurveType)feature));
-        } else if (feature instanceof org.geotoolkit.sampling.xml.v100.SamplingSolidType) {
-            return new org.geotoolkit.gml.xml.v311.FeaturePropertyType(samplingFactory.createSamplingSolid((org.geotoolkit.sampling.xml.v100.SamplingSolidType)feature));
-        } else if (feature instanceof org.geotoolkit.sampling.xml.v100.SamplingSurfaceType) {
-            return new org.geotoolkit.gml.xml.v311.FeaturePropertyType(samplingFactory.createSamplingSurface((org.geotoolkit.sampling.xml.v100.SamplingSurfaceType)feature));
+    public static FeatureProperty buildFeatureProperty(final String version, final SamplingFeature feature) {
+        if ("1.0.0".equals(version)) {
+            final org.geotoolkit.sampling.xml.v100.ObjectFactory samplingFactory = new org.geotoolkit.sampling.xml.v100.ObjectFactory();
+            if (feature instanceof org.geotoolkit.sampling.xml.v100.SamplingPointType) {
+                return new org.geotoolkit.gml.xml.v311.FeaturePropertyType(samplingFactory.createSamplingPoint((org.geotoolkit.sampling.xml.v100.SamplingPointType)feature));
+            } else if (feature instanceof org.geotoolkit.sampling.xml.v100.SamplingCurveType) {
+                return new org.geotoolkit.gml.xml.v311.FeaturePropertyType(samplingFactory.createSamplingCurve((org.geotoolkit.sampling.xml.v100.SamplingCurveType)feature));
+            } else if (feature instanceof org.geotoolkit.sampling.xml.v100.SamplingSolidType) {
+                return new org.geotoolkit.gml.xml.v311.FeaturePropertyType(samplingFactory.createSamplingSolid((org.geotoolkit.sampling.xml.v100.SamplingSolidType)feature));
+            } else if (feature instanceof org.geotoolkit.sampling.xml.v100.SamplingSurfaceType) {
+                return new org.geotoolkit.gml.xml.v311.FeaturePropertyType(samplingFactory.createSamplingSurface((org.geotoolkit.sampling.xml.v100.SamplingSurfaceType)feature));
+            } else {
+                throw new IllegalArgumentException("unexpected object version");
+            }
+        } else if ("2.0.0".equals(version)) {
+             final org.geotoolkit.sampling.xml.v200.ObjectFactory samplingFactory = new org.geotoolkit.sampling.xml.v200.ObjectFactory();
+             final org.geotoolkit.samplingspatial.xml.v200.ObjectFactory spatialFactory = new org.geotoolkit.samplingspatial.xml.v200.ObjectFactory();
+             if (feature instanceof org.geotoolkit.samplingspatial.xml.v200.SFSpatialSamplingFeatureType) {
+                return new org.geotoolkit.gml.xml.v321.FeaturePropertyType(spatialFactory.createSFSpatialSamplingFeature((org.geotoolkit.samplingspatial.xml.v200.SFSpatialSamplingFeatureType)feature));
+             } else if (feature instanceof org.geotoolkit.sampling.xml.v200.SFSamplingFeatureType) {
+                 return new org.geotoolkit.gml.xml.v321.FeaturePropertyType(samplingFactory.createSFSamplingFeature((org.geotoolkit.sampling.xml.v200.SFSamplingFeatureType)feature));
+             } else {
+                throw new IllegalArgumentException("unexpected object version");
+             }
         } else {
-            throw new IllegalArgumentException("unexpected object version");
+            throw new IllegalArgumentException("unexpected sos version number:" + version);
         }
     }
+    
+    /**
+     * Build the correct featurePropertyType from a sampling feature id
+     *
+     * @param feature
+     * @return
+     */
+    public static FeatureProperty buildFeatureProperty(final String version, final String featureid) {
+        if ("2.0.0".equals(version)) {
+            return new org.geotoolkit.gml.xml.v321.FeaturePropertyType(featureid);
+        } else if ("1.0.0".equals(version)) {
+            return new org.geotoolkit.gml.xml.v311.FeaturePropertyType(featureid);
+        } else {
+            throw new IllegalArgumentException("unexpected sos version number:" + version);
+        }
+    }
+    
+    /**
+     * Build the correct featurePropertyType from a sampling feature id
+     *
+     * @param feature
+     * @return
+     */
+    public static SamplingFeature buildSamplingPoint(final String version, final String id, final String name, final String description, final FeatureProperty sampledFeature,
+                              final Point location) {
+        if ("1.0.0".equals(version)) {
+            if (sampledFeature != null && !(sampledFeature instanceof org.geotoolkit.gml.xml.v311.FeaturePropertyType)) {
+                throw new IllegalArgumentException("unexpected object version for sampled feature element");
+            }
+            if (location != null && !(location instanceof org.geotoolkit.gml.xml.v311.PointType)) {
+                throw new IllegalArgumentException("unexpected object version for location element");
+            }
+            return new org.geotoolkit.sampling.xml.v100.SamplingPointType(id, name, description, 
+                                                                          (org.geotoolkit.gml.xml.v311.FeaturePropertyType)sampledFeature, 
+                                                                          (org.geotoolkit.gml.xml.v311.PointType)location);
+        } else if ("2.0.0".equals(version)) {
+            if (sampledFeature != null && !(sampledFeature instanceof org.geotoolkit.gml.xml.v321.FeaturePropertyType)) {
+                throw new IllegalArgumentException("unexpected object version for sampled feature element");
+            }
+            if (location != null && !(location instanceof org.geotoolkit.gml.xml.v321.PointType)) {
+                throw new IllegalArgumentException("unexpected object version for location element");
+            }
+            return new org.geotoolkit.samplingspatial.xml.v200.SFSpatialSamplingFeatureType(id, name, description, "http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingPoint",
+                                                                          (org.geotoolkit.gml.xml.v321.FeaturePropertyType)sampledFeature, 
+                                                                          (org.geotoolkit.gml.xml.v321.PointType)location,
+                                                                          null);
+        } else {
+            throw new IllegalArgumentException("unexpected sos version number:" + version);
+        }
+    }
+    
     
     public static FeatureCollection buildFeatureCollection(final String version, final String id, final String name, final String description, 
             final List<FeatureProperty> features) {
@@ -384,6 +451,26 @@ public class SOSXmlFactory {
             return new org.geotoolkit.ogc.xml.v110.TimeEqualsType(propertyName, temporal);
         } else {
             throw new IllegalArgumentException("unexpected version number:" + currentVersion);
+        }
+    }
+    
+    public static Point buildPoint(final String currentVersion, final String id, final org.opengis.geometry.DirectPosition pos) {
+        if ("2.0.0".equals(currentVersion)) {
+            return GMLXmlFactory.buildPoint("3.2.1", id, pos);
+        } else if ("1.0.0".equals(currentVersion)) {
+            return GMLXmlFactory.buildPoint("3.1.1", id, pos);
+        } else {
+            throw new IllegalArgumentException("unexpected version number:" + currentVersion);
+        }
+    }
+    
+    public static DirectPosition buildDirectPosition(final String version, final String srsName, final int srsDimension, final List<Double> value) {
+        if ("2.0.0".equals(version)) {
+            return GMLXmlFactory.buildDirectPosition("3.2.1", srsName, srsDimension, value);
+        } else if ("1.0.0".equals(version)) {
+            return GMLXmlFactory.buildDirectPosition("3.1.1", srsName, srsDimension, value);
+        } else {
+            throw new IllegalArgumentException("unexpected gml version number:" + version);
         }
     }
 }
