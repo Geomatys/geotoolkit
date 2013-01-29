@@ -21,6 +21,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.Utilities;
 
@@ -115,15 +116,15 @@ public class DefaultPropertyDescriptor<T extends PropertyType> implements Proper
      */
     @Override
     public boolean equals(final Object obj) {
-        if (!(obj instanceof DefaultPropertyDescriptor)) {
+        if (!(obj instanceof PropertyDescriptor)) {
             return false;
         }
 
-        DefaultPropertyDescriptor other = (DefaultPropertyDescriptor) obj;
-        return Utilities.equals(type, other.type) &&
-                Utilities.equals(name, other.name) &&
-                (minOccurs == other.minOccurs) && (maxOccurs == other.maxOccurs) &&
-                (isNillable == other.isNillable);
+        PropertyDescriptor other = (PropertyDescriptor) obj;
+        return Utilities.equals(type, other.getType()) &&
+                Utilities.equals(name, other.getName()) &&
+                (minOccurs == other.getMinOccurs()) && (maxOccurs == other.getMaxOccurs()) &&
+                (isNillable == other.isNillable());
     }
 
     /**

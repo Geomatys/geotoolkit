@@ -78,20 +78,20 @@ public class DefaultAttributeDescriptor<T extends AttributeType> extends Default
      */
     @Override
     public boolean equals(final Object o) {
-        if (!(o instanceof DefaultAttributeDescriptor)) {
+        if (!(o instanceof AttributeDescriptor)) {
             return false;
         }
 
-        final DefaultAttributeDescriptor d = (DefaultAttributeDescriptor) o;
+        final AttributeDescriptor d = (AttributeDescriptor) o;
 
         if(!super.equals(o)){
             return false;
         }
 
-        if(defaultValue instanceof Geometry && d.defaultValue instanceof Geometry){
-            return ((Geometry)defaultValue).equalsExact((Geometry) d.defaultValue);
+        if(defaultValue instanceof Geometry && d.getDefaultValue() instanceof Geometry){
+            return ((Geometry)defaultValue).equalsExact((Geometry) d.getDefaultValue());
         }else{
-            return Utilities.deepEquals(defaultValue, d.defaultValue);
+            return Utilities.deepEquals(defaultValue, d.getDefaultValue());
         }
     }
 
