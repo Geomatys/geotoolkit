@@ -96,6 +96,6 @@ public abstract class WPSDefaultConverter<S, T> implements WPSObjectConverter<S,
      */
     @Override
     public final T convert(S source) throws NonconvertibleObjectException {
-        return null;
+        throw new UnsupportedOperationException("Operation not allowed. Use ObjectConverter.convert(source, parameters) instead.");
     }
 }
