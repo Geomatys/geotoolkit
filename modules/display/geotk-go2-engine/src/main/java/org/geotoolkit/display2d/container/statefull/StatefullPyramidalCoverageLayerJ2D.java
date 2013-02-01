@@ -26,8 +26,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.vecmath.Point3d;
 import org.geotoolkit.coverage.*;
+import org.geotoolkit.coverage.finder.CoverageFinder;
+import org.geotoolkit.coverage.finder.CoverageFinderFactory;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
@@ -45,6 +48,7 @@ import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
+import org.opengis.util.FactoryException;
 
 /**
  * Graphic for pyramidal coverage layers.
@@ -58,6 +62,7 @@ public class StatefullPyramidalCoverageLayerJ2D extends StatefullMapLayerJ2D<Cov
     
     private final PyramidalModel model;
     private final double tolerance;
+    private final CoverageFinder coverageFinder;
     private final Map<Point3d,StatefullTileJ2D> gtiles = new TreeMap<Point3d, StatefullTileJ2D>(new Comparator<Point3d>() {
         @Override
         public int compare(Point3d c1, Point3d c2) {            
@@ -80,9 +85,18 @@ public class StatefullPyramidalCoverageLayerJ2D extends StatefullMapLayerJ2D<Cov
         }
     });
 
-    public StatefullPyramidalCoverageLayerJ2D(final J2DCanvas canvas, final StatefullMapItemJ2D parent, final CoverageMapLayer layer){
+    @Deprecated
+    public StatefullPyramidalCoverageLayerJ2D(final J2DCanvas canvas, final StatefullMapItemJ2D parent, final CoverageMapLayer layer) {
         super(canvas, parent, layer);
-        
+        this.coverageFinder = CoverageFinderFactory.createDefaultCoverageFinder();
+        model = (PyramidalModel)layer.getCoverageReference();
+        tolerance = 0.1; // in % , TODO use a flag to allow change value
+        weakStoreListener.registerSource(layer.getCoverageReference());
+    }
+    
+    public StatefullPyramidalCoverageLayerJ2D(final J2DCanvas canvas, final StatefullMapItemJ2D parent, final CoverageMapLayer layer, CoverageFinder coverageFinder) {
+        super(canvas, parent, layer);
+        this.coverageFinder = coverageFinder;
         model = (PyramidalModel)layer.getCoverageReference();
         tolerance = 0.1; // in % , TODO use a flag to allow change value
         weakStoreListener.registerSource(layer.getCoverageReference());
@@ -119,7 +133,13 @@ public class StatefullPyramidalCoverageLayerJ2D extends StatefullMapLayerJ2D<Cov
             return;
         }
         
-        final Pyramid pyramid = CoverageUtilities.findPyramid(pyramidSet, canvasEnv.getCoordinateReferenceSystem());
+        Pyramid pyramid = null;
+        try {
+            pyramid = coverageFinder.findPyramid(pyramidSet, canvasEnv.getCoordinateReferenceSystem());
+        } catch (FactoryException ex) {
+            monitor.exceptionOccured(ex, Level.WARNING);
+            return;
+        }
                 
         if(pyramid == null){
             //no reliable pyramid
@@ -161,7 +181,13 @@ public class StatefullPyramidalCoverageLayerJ2D extends StatefullMapLayerJ2D<Cov
             return;
         }
 
-        final GridMosaic mosaic = CoverageUtilities.findMosaic(pyramid, wantedResolution, tolerance, wantedEnv,100);
+        GridMosaic mosaic = null;
+        try {
+            mosaic = coverageFinder.findMosaic(pyramid, wantedResolution, tolerance, wantedEnv,100);
+        } catch (FactoryException ex) {
+            monitor.exceptionOccured(ex, Level.WARNING);
+            return;
+        }
         if(mosaic == null){
             //no reliable mosaic
             return;

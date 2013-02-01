@@ -422,7 +422,7 @@ public class DefaultCanvasController2D extends AbstractCanvasController implemen
 
         if (index >= 0) {
             
-            if(startDate!=null || startDate!=null){
+            if(startDate!=null || endDate!=null){
                 canvas.setRange(index, 
                     (startDate!=null)?startDate.getTime():Double.NEGATIVE_INFINITY,
                     (endDate!=null)?endDate.getTime():Double.POSITIVE_INFINITY);
