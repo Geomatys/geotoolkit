@@ -32,6 +32,7 @@ import java.lang.reflect.UndeclaredThrowableException;
 import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.annotation.UML;
+import org.apache.sis.util.ArraysExt;
 
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.Strings;
@@ -46,7 +47,6 @@ import org.geotoolkit.util.converter.ConverterRegistry;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
 import org.geotoolkit.xml.IdentifiedObject;
 
-import static org.apache.sis.util.Arrays.resize;
 import static org.geotoolkit.internal.InternalUtilities.floatEpsilonEqual;
 
 
@@ -473,7 +473,7 @@ final class PropertyAccessor {
                     }
                     getters[count++] = EXTRA_GETTER;
                 }
-                getters = resize(getters, count);
+                getters = ArraysExt.resize(getters, count);
                 SHARED_GETTERS.put(type, getters);
             }
             return getters;

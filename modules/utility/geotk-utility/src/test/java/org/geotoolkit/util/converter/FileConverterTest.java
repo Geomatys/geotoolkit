@@ -22,7 +22,7 @@ import java.net.URI;
 import java.net.URL;
 import java.net.URISyntaxException;
 import java.net.MalformedURLException;
-import org.apache.sis.util.Arrays;
+import org.apache.sis.util.ArraysExt;
 
 import org.geotoolkit.test.PlatformDependentTest;
 
@@ -46,7 +46,7 @@ public final strictfp class FileConverterTest {
      * which are not correctly tested by this class.
      */
     private static void assumeUnixRoot() {
-        assumeTrue(Arrays.contains(File.listRoots(), new File("/")));
+        assumeTrue(ArraysExt.contains(File.listRoots(), new File("/")));
     }
 
     /**

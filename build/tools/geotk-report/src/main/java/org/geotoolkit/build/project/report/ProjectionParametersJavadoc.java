@@ -35,7 +35,7 @@ import org.opengis.metadata.extent.GeographicBoundingBox;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.GeneralParameterDescriptor;
-import org.apache.sis.util.Arrays;
+import org.apache.sis.util.ArraysExt;
 
 import org.geotoolkit.util.Deprecable;
 import org.geotoolkit.util.NumberRange;
@@ -359,11 +359,11 @@ public final class ProjectionParametersJavadoc extends JavadocUpdater {
                 return "{@code \"" + defaultValue + "\"}";
             }
         } else if (param.getMinimumOccurs() == 0) {
-            if (Arrays.contains(defaultToLatitudeOfOrigin, param)) {
+            if (ArraysExt.contains(defaultToLatitudeOfOrigin, param)) {
                 return "<var>latitude of origin</var>";
-            } else if (Arrays.contains(defaultToStandardParallel1, param)) {
+            } else if (ArraysExt.contains(defaultToStandardParallel1, param)) {
                 return "<var>standard parallel 1</var>";
-            } else if (Arrays.contains(defaultToAzimuth, param)) {
+            } else if (ArraysExt.contains(defaultToAzimuth, param)) {
                 return "<var>Azimuth of initial line</var>";
             } else if (param.getValueClass() == Boolean.class) {
                 defaultValue = Boolean.FALSE;

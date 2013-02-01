@@ -18,7 +18,7 @@
 package org.geotoolkit.referencing.datum;
 
 import java.lang.reflect.Field;
-import org.apache.sis.util.Arrays;
+import org.apache.sis.util.ArraysExt;
 import org.opengis.referencing.datum.VerticalDatumType;
 import org.geotoolkit.internal.referencing.VerticalDatumTypes;
 import org.geotoolkit.test.referencing.ReferencingTestBase;
@@ -43,7 +43,7 @@ public final strictfp class VerticalDatumTest extends ReferencingTestBase {
     public void testVerticalDatumTypes() {
         final VerticalDatumType[] types = VerticalDatumTypes.values();
         assertEquals("Check for first code list element.", VerticalDatumType.OTHER_SURFACE, types[0]);
-        assertTrue(Arrays.contains(types, VerticalDatumTypes.ELLIPSOIDAL));
+        assertTrue(ArraysExt.contains(types, VerticalDatumTypes.ELLIPSOIDAL));
     }
 
     /**

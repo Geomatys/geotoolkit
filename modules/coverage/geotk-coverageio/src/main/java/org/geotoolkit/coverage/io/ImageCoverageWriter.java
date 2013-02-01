@@ -53,6 +53,7 @@ import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.apache.sis.util.ArraysExt;
 
 import org.geotoolkit.io.TableWriter;
 import org.geotoolkit.image.io.XImageIO;
@@ -69,8 +70,6 @@ import org.geotoolkit.internal.image.io.GridDomainAccessor;
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.resources.Errors;
 
-import static org.apache.sis.util.Arrays.contains;
-import static org.apache.sis.util.Arrays.containsIgnoreCase;
 import static org.geotoolkit.image.io.MultidimensionalImageStore.*;
 import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMAT_NAME;
 
@@ -339,7 +338,7 @@ public class ImageCoverageWriter extends GridCoverageWriter {
     {
         if (formatName != null) {
             final String[] formats = provider.getFormatNames();
-            if (formats == null || !containsIgnoreCase(formats, formatName)) {
+            if (formats == null || !ArraysExt.containsIgnoreCase(formats, formatName)) {
                 return false;
             }
         }
@@ -692,7 +691,7 @@ public class ImageCoverageWriter extends GridCoverageWriter {
         final ImageTypeSpecifier imageType = ImageTypeSpecifier.createFromRenderedImage(image);
         final IIOMetadata streamMetadata = isFirst ? imageWriter.getDefaultStreamMetadata(imageParam) : null;
         final IIOMetadata imageMetadata  = imageWriter.getDefaultImageMetadata(imageType, imageParam);
-        if (imageMetadata != null && contains(imageMetadata.getMetadataFormatNames(), GEOTK_FORMAT_NAME)) {
+        if (imageMetadata != null && ArraysExt.contains(imageMetadata.getMetadataFormatNames(), GEOTK_FORMAT_NAME)) {
             CoordinateReferenceSystem crs = null;
             Envelope env = null;
             double[] res = null;

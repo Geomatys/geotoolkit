@@ -20,6 +20,7 @@ package org.geotoolkit.util;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.Comparator;
+import org.apache.sis.util.ArraysExt;
 
 import org.geotoolkit.lang.Static;
 
@@ -73,8 +74,8 @@ import org.geotoolkit.lang.Static;
  * @since 2.0
  * @module
  *
- * @deprecated Moved to Apache SIS {@link org.apache.sis.util.Arrays}. All methods have been ported with
- * the exact same name, except {@link #unionSorted(int[], int[])} which is renamed {@code unionOfSorted}.
+ * @deprecated Moved to Apache SIS {@link ArraysExt}. All methods have been ported with the exact
+ * same name, except {@link #unionSorted(int[], int[])} which is renamed {@code unionOfSorted}.
  */
 @Deprecated
 public final class XArrays extends Static {
@@ -84,7 +85,7 @@ public final class XArrays extends Static {
      *
      * @since 3.20
      */
-    public static final double[] EMPTY_DOUBLE = org.apache.sis.util.Arrays.EMPTY_DOUBLE;
+    public static final double[] EMPTY_DOUBLE = ArraysExt.EMPTY_DOUBLE;
 
     /**
      * An empty array of {@code float} primitive type.
@@ -92,7 +93,7 @@ public final class XArrays extends Static {
      *
      * @since 3.20
      */
-    public static final float[] EMPTY_FLOAT = org.apache.sis.util.Arrays.EMPTY_FLOAT;
+    public static final float[] EMPTY_FLOAT = ArraysExt.EMPTY_FLOAT;
 
     /**
      * An empty array of {@code long} primitive type.
@@ -100,7 +101,7 @@ public final class XArrays extends Static {
      *
      * @since 3.20
      */
-    public static final long[] EMPTY_LONG = org.apache.sis.util.Arrays.EMPTY_LONG;
+    public static final long[] EMPTY_LONG = ArraysExt.EMPTY_LONG;
 
     /**
      * An empty array of {@code int} primitive type.
@@ -108,7 +109,7 @@ public final class XArrays extends Static {
      *
      * @since 3.20
      */
-    public static final int[] EMPTY_INT = org.apache.sis.util.Arrays.EMPTY_INT;
+    public static final int[] EMPTY_INT = ArraysExt.EMPTY_INT;
 
     /**
      * An empty array of {@code short} primitive type.
@@ -116,7 +117,7 @@ public final class XArrays extends Static {
      *
      * @since 3.20
      */
-    public static final short[] EMPTY_SHORT = org.apache.sis.util.Arrays.EMPTY_SHORT;
+    public static final short[] EMPTY_SHORT = ArraysExt.EMPTY_SHORT;
 
     /**
      * An empty array of {@code byte} primitive type.
@@ -124,7 +125,7 @@ public final class XArrays extends Static {
      *
      * @since 3.20
      */
-    public static final byte[] EMPTY_BYTE = org.apache.sis.util.Arrays.EMPTY_BYTE;
+    public static final byte[] EMPTY_BYTE = ArraysExt.EMPTY_BYTE;
 
     /**
      * An empty array of {@code char} primitive type.
@@ -132,7 +133,7 @@ public final class XArrays extends Static {
      *
      * @since 3.20
      */
-    public static final char[] EMPTY_CHAR = org.apache.sis.util.Arrays.EMPTY_CHAR;
+    public static final char[] EMPTY_CHAR = ArraysExt.EMPTY_CHAR;
 
     /**
      * An empty array of {@code boolean} primitive type.
@@ -140,7 +141,7 @@ public final class XArrays extends Static {
      *
      * @since 3.20
      */
-    public static final boolean[] EMPTY_BOOLEAN = org.apache.sis.util.Arrays.EMPTY_BOOLEAN;
+    public static final boolean[] EMPTY_BOOLEAN = ArraysExt.EMPTY_BOOLEAN;
 
     /**
      * Do not allow instantiation of this class.
@@ -178,7 +179,7 @@ public final class XArrays extends Static {
      * @see Arrays#copyOf(Object[],int)
      */
     public static <E> E[] resize(final E[] array, final int length) {
-        return org.apache.sis.util.Arrays.resize(array, length);
+        return ArraysExt.resize(array, length);
     }
 
     /**
@@ -195,7 +196,7 @@ public final class XArrays extends Static {
      * @see Arrays#copyOf(double[],int)
      */
     public static double[] resize(final double[] array, final int length) {
-        return org.apache.sis.util.Arrays.resize(array, length);
+        return ArraysExt.resize(array, length);
     }
 
     /**
@@ -212,7 +213,7 @@ public final class XArrays extends Static {
      * @see Arrays#copyOf(float[],int)
      */
     public static float[] resize(final float[] array, final int length) {
-        return org.apache.sis.util.Arrays.resize(array, length);
+        return ArraysExt.resize(array, length);
     }
 
     /**
@@ -229,7 +230,7 @@ public final class XArrays extends Static {
      * @see Arrays#copyOf(long[],int)
      */
     public static long[] resize(final long[] array, final int length) {
-        return org.apache.sis.util.Arrays.resize(array, length);
+        return ArraysExt.resize(array, length);
     }
 
     /**
@@ -246,7 +247,7 @@ public final class XArrays extends Static {
      * @see Arrays#copyOf(int[],int)
      */
     public static int[] resize(final int[] array, final int length) {
-        return org.apache.sis.util.Arrays.resize(array, length);
+        return ArraysExt.resize(array, length);
     }
 
     /**
@@ -263,7 +264,7 @@ public final class XArrays extends Static {
      * @see Arrays#copyOf(short[],int)
      */
     public static short[] resize(final short[] array, final int length) {
-        return org.apache.sis.util.Arrays.resize(array, length);
+        return ArraysExt.resize(array, length);
     }
 
     /**
@@ -280,7 +281,7 @@ public final class XArrays extends Static {
      * @see Arrays#copyOf(byte[],int)
      */
     public static byte[] resize(final byte[] array, final int length) {
-        return org.apache.sis.util.Arrays.resize(array, length);
+        return ArraysExt.resize(array, length);
     }
 
    /**
@@ -297,7 +298,7 @@ public final class XArrays extends Static {
      * @see Arrays#copyOf(char[],int)
     */
     public static char[] resize(final char[] array, final int length) {
-        return org.apache.sis.util.Arrays.resize(array, length);
+        return ArraysExt.resize(array, length);
     }
 
     /**
@@ -314,7 +315,7 @@ public final class XArrays extends Static {
      * @see Arrays#copyOf(boolean[],int)
      */
     public static boolean[] resize(final boolean[] array, final int length) {
-        return org.apache.sis.util.Arrays.resize(array, length);
+        return ArraysExt.resize(array, length);
     }
 
     /**
@@ -333,7 +334,7 @@ public final class XArrays extends Static {
      * @see #insert(Object[], int, int)
      */
     public static <E> E[] remove(final E[] array, final int first, final int length) {
-        return org.apache.sis.util.Arrays.remove(array, first, length);
+        return ArraysExt.remove(array, first, length);
     }
 
     /**
@@ -351,7 +352,7 @@ public final class XArrays extends Static {
      * @see #insert(double[], int, int)
      */
     public static double[] remove(final double[] array, final int first, final int length) {
-        return org.apache.sis.util.Arrays.remove(array, first, length);
+        return ArraysExt.remove(array, first, length);
     }
 
     /**
@@ -369,7 +370,7 @@ public final class XArrays extends Static {
      * @see #insert(float[], int, int)
      */
     public static float[] remove(final float[] array, final int first, final int length) {
-        return org.apache.sis.util.Arrays.remove(array, first, length);
+        return ArraysExt.remove(array, first, length);
     }
 
     /**
@@ -387,7 +388,7 @@ public final class XArrays extends Static {
      * @see #insert(long[], int, int)
      */
     public static long[] remove(final long[] array, final int first, final int length) {
-        return org.apache.sis.util.Arrays.remove(array, first, length);
+        return ArraysExt.remove(array, first, length);
     }
 
     /**
@@ -405,7 +406,7 @@ public final class XArrays extends Static {
      * @see #insert(int[], int, int)
      */
     public static int[] remove(final int[] array, final int first, final int length) {
-        return org.apache.sis.util.Arrays.remove(array, first, length);
+        return ArraysExt.remove(array, first, length);
     }
 
     /**
@@ -423,7 +424,7 @@ public final class XArrays extends Static {
      * @see #insert(short[], int, int)
      */
     public static short[] remove(final short[] array, final int first, final int length) {
-        return org.apache.sis.util.Arrays.remove(array, first, length);
+        return ArraysExt.remove(array, first, length);
     }
 
     /**
@@ -441,7 +442,7 @@ public final class XArrays extends Static {
      * @see #insert(byte[], int, int)
      */
     public static byte[] remove(final byte[] array, final int first, final int length) {
-        return org.apache.sis.util.Arrays.remove(array, first, length);
+        return ArraysExt.remove(array, first, length);
     }
 
     /**
@@ -459,7 +460,7 @@ public final class XArrays extends Static {
      * @see #insert(char[], int, int)
      */
     public static char[] remove(final char[] array, final int first, final int length) {
-        return org.apache.sis.util.Arrays.remove(array, first, length);
+        return ArraysExt.remove(array, first, length);
     }
 
     /**
@@ -477,7 +478,7 @@ public final class XArrays extends Static {
      * @see #insert(boolean[], int, int)
      */
     public static boolean[] remove(final boolean[] array, final int first, final int length) {
-        return org.apache.sis.util.Arrays.remove(array, first, length);
+        return ArraysExt.remove(array, first, length);
     }
 
     /**
@@ -500,7 +501,7 @@ public final class XArrays extends Static {
      * @see #remove(Object[], int, int)
      */
     public static <E> E[] insert(final E[] array, final int first, final int length) {
-        return org.apache.sis.util.Arrays.insert(array, first, length);
+        return ArraysExt.insert(array, first, length);
     }
 
     /**
@@ -523,7 +524,7 @@ public final class XArrays extends Static {
      * @see #remove(double[], int, int)
      */
     public static double[] insert(final double[] array, final int first, final int length) {
-        return org.apache.sis.util.Arrays.insert(array, first, length);
+        return ArraysExt.insert(array, first, length);
     }
 
     /**
@@ -546,7 +547,7 @@ public final class XArrays extends Static {
      * @see #remove(float[], int, int)
      */
     public static float[] insert(final float[] array, final int first, final int length) {
-        return org.apache.sis.util.Arrays.insert(array, first, length);
+        return ArraysExt.insert(array, first, length);
     }
 
     /**
@@ -569,7 +570,7 @@ public final class XArrays extends Static {
      * @see #remove(long[], int, int)
      */
     public static long[] insert(final long[] array, final int first, final int length) {
-        return org.apache.sis.util.Arrays.insert(array, first, length);
+        return ArraysExt.insert(array, first, length);
     }
 
     /**
@@ -592,7 +593,7 @@ public final class XArrays extends Static {
      * @see #remove(int[], int, int)
      */
     public static int[] insert(final int[] array, final int first, final int length) {
-        return org.apache.sis.util.Arrays.insert(array, first, length);
+        return ArraysExt.insert(array, first, length);
     }
 
     /**
@@ -615,7 +616,7 @@ public final class XArrays extends Static {
      * @see #remove(short[], int, int)
      */
     public static short[] insert(final short[] array, final int first, final int length) {
-        return org.apache.sis.util.Arrays.insert(array, first, length);
+        return ArraysExt.insert(array, first, length);
     }
 
     /**
@@ -638,7 +639,7 @@ public final class XArrays extends Static {
      * @see #remove(byte[], int, int)
      */
     public static byte[] insert(final byte[] array, final int first, final int length) {
-        return org.apache.sis.util.Arrays.insert(array, first, length);
+        return ArraysExt.insert(array, first, length);
     }
 
     /**
@@ -661,7 +662,7 @@ public final class XArrays extends Static {
      * @see #remove(char[], int, int)
      */
     public static char[] insert(final char[] array, final int first, final int length) {
-        return org.apache.sis.util.Arrays.insert(array, first, length);
+        return ArraysExt.insert(array, first, length);
     }
 
     /**
@@ -684,7 +685,7 @@ public final class XArrays extends Static {
      * @see #remove(boolean[], int, int)
      */
     public static boolean[] insert(final boolean[] array, final int first, final int length) {
-        return org.apache.sis.util.Arrays.insert(array, first, length);
+        return ArraysExt.insert(array, first, length);
     }
 
     /**
@@ -710,7 +711,7 @@ public final class XArrays extends Static {
     public static <E> E[] insert(final E[] src, final int srcOff,
                                  final E[] dst, final int dstOff, final int length)
     {
-        return org.apache.sis.util.Arrays.insert(src, srcOff, dst, dstOff, length);
+        return ArraysExt.insert(src, srcOff, dst, dstOff, length);
     }
 
     /**
@@ -735,7 +736,7 @@ public final class XArrays extends Static {
     public static double[] insert(final double[] src, final int srcOff,
                                   final double[] dst, final int dstOff, final int length)
     {
-        return org.apache.sis.util.Arrays.insert(src, srcOff, dst, dstOff, length);
+        return ArraysExt.insert(src, srcOff, dst, dstOff, length);
     }
 
     /**
@@ -760,7 +761,7 @@ public final class XArrays extends Static {
     public static float[] insert(final float[] src, final int srcOff,
                                  final float[] dst, final int dstOff, final int length)
     {
-        return org.apache.sis.util.Arrays.insert(src, srcOff, dst, dstOff, length);
+        return ArraysExt.insert(src, srcOff, dst, dstOff, length);
     }
 
     /**
@@ -785,7 +786,7 @@ public final class XArrays extends Static {
     public static long[] insert(final long[] src, final int srcOff,
                                 final long[] dst, final int dstOff, final int length)
     {
-        return org.apache.sis.util.Arrays.insert(src, srcOff, dst, dstOff, length);
+        return ArraysExt.insert(src, srcOff, dst, dstOff, length);
     }
 
     /**
@@ -810,7 +811,7 @@ public final class XArrays extends Static {
     public static int[] insert(final int[] src, final int srcOff,
                                final int[] dst, final int dstOff, final int length)
     {
-        return org.apache.sis.util.Arrays.insert(src, srcOff, dst, dstOff, length);
+        return ArraysExt.insert(src, srcOff, dst, dstOff, length);
     }
 
     /**
@@ -835,7 +836,7 @@ public final class XArrays extends Static {
     public static short[] insert(final short[] src, final int srcOff,
                                  final short[] dst, final int dstOff, final int length)
     {
-        return org.apache.sis.util.Arrays.insert(src, srcOff, dst, dstOff, length);
+        return ArraysExt.insert(src, srcOff, dst, dstOff, length);
     }
 
     /**
@@ -860,7 +861,7 @@ public final class XArrays extends Static {
     public static byte[] insert(final byte[] src, final int srcOff,
                                 final byte[] dst, final int dstOff, final int length)
     {
-        return org.apache.sis.util.Arrays.insert(src, srcOff, dst, dstOff, length);
+        return ArraysExt.insert(src, srcOff, dst, dstOff, length);
     }
 
     /**
@@ -885,7 +886,7 @@ public final class XArrays extends Static {
     public static char[] insert(final char[] src, final int srcOff,
                                 final char[] dst, final int dstOff, final int length)
     {
-        return org.apache.sis.util.Arrays.insert(src, srcOff, dst, dstOff, length);
+        return ArraysExt.insert(src, srcOff, dst, dstOff, length);
     }
 
     /**
@@ -910,7 +911,7 @@ public final class XArrays extends Static {
     public static boolean[] insert(final boolean[] src, final int srcOff,
                                    final boolean[] dst, final int dstOff, final int length)
     {
-        return org.apache.sis.util.Arrays.insert(src, srcOff, dst, dstOff, length);
+        return ArraysExt.insert(src, srcOff, dst, dstOff, length);
     }
 
     /**
@@ -928,7 +929,7 @@ public final class XArrays extends Static {
      * @since 3.20
      */
     public static <T> T[] append(final T[] array, final T element) {
-        return org.apache.sis.util.Arrays.append(array, element);
+        return ArraysExt.append(array, element);
     }
 
     /**
@@ -961,7 +962,7 @@ public final class XArrays extends Static {
      * @since 3.20
      */
     public static int removeDuplicated(final Object[] array) {
-        return org.apache.sis.util.Arrays.removeDuplicated(array);
+        return ArraysExt.removeDuplicated(array);
     }
 
     /**
@@ -974,7 +975,7 @@ public final class XArrays extends Static {
      * @since 3.11
      */
     public static void reverse(final Object[] entries) {
-        org.apache.sis.util.Arrays.reverse(entries);
+        ArraysExt.reverse(entries);
     }
 
     /**
@@ -987,7 +988,7 @@ public final class XArrays extends Static {
      * @since 3.20
      */
     public static void reverse(final int[] values) {
-        org.apache.sis.util.Arrays.reverse(values);
+        ArraysExt.reverse(values);
     }
 
     /**
@@ -998,7 +999,7 @@ public final class XArrays extends Static {
      *         {@code null} if the given array was null.
      */
     public static float[] copyAsFloats(final double[] data) {
-        return org.apache.sis.util.Arrays.copyAsFloats(data);
+        return ArraysExt.copyAsFloats(data);
     }
 
     /**
@@ -1010,7 +1011,7 @@ public final class XArrays extends Static {
      *         {@code null} if the given array was null.
      */
     public static int[] copyAsInts(final double[] data) {
-        return org.apache.sis.util.Arrays.copyAsInts(data);
+        return ArraysExt.copyAsInts(data);
     }
 
     /**
@@ -1025,7 +1026,7 @@ public final class XArrays extends Static {
      * @return {@code true} if all elements in the given array are sorted in increasing order.
      */
     public static <E> boolean isSorted(final E[] array, final Comparator<E> comparator, final boolean strict) {
-        return org.apache.sis.util.Arrays.isSorted(array, comparator, strict);
+        return ArraysExt.isSorted(array, comparator, strict);
     }
 
     /**
@@ -1039,7 +1040,7 @@ public final class XArrays extends Static {
      * @return {@code true} if all elements in the given array are sorted in increasing order.
      */
     public static boolean isSorted(final double[] array, final boolean strict) {
-        return org.apache.sis.util.Arrays.isSorted(array, strict);
+        return ArraysExt.isSorted(array, strict);
     }
 
     /**
@@ -1053,7 +1054,7 @@ public final class XArrays extends Static {
      * @return {@code true} if all elements in the given array are sorted in increasing order.
      */
     public static boolean isSorted(final float[] array, final boolean strict) {
-        return org.apache.sis.util.Arrays.isSorted(array, strict);
+        return ArraysExt.isSorted(array, strict);
     }
 
     /**
@@ -1066,7 +1067,7 @@ public final class XArrays extends Static {
      * @return {@code true} if all elements in the given array are sorted in increasing order.
      */
     public static boolean isSorted(final long[] array, final boolean strict) {
-        return org.apache.sis.util.Arrays.isSorted(array, strict);
+        return ArraysExt.isSorted(array, strict);
     }
 
     /**
@@ -1079,7 +1080,7 @@ public final class XArrays extends Static {
      * @return {@code true} if all elements in the given array are sorted in increasing order.
      */
     public static boolean isSorted(final int[] array, final boolean strict) {
-        return org.apache.sis.util.Arrays.isSorted(array, strict);
+        return ArraysExt.isSorted(array, strict);
     }
 
     /**
@@ -1092,7 +1093,7 @@ public final class XArrays extends Static {
      * @return {@code true} if all elements in the given array are sorted in increasing order.
      */
     public static boolean isSorted(final short[] array, final boolean strict) {
-        return org.apache.sis.util.Arrays.isSorted(array, strict);
+        return ArraysExt.isSorted(array, strict);
     }
 
     /**
@@ -1105,7 +1106,7 @@ public final class XArrays extends Static {
      * @return {@code true} if all elements in the given array are sorted in increasing order.
      */
     public static boolean isSorted(final byte[] array, final boolean strict) {
-        return org.apache.sis.util.Arrays.isSorted(array, strict);
+        return ArraysExt.isSorted(array, strict);
     }
 
     /**
@@ -1118,7 +1119,7 @@ public final class XArrays extends Static {
      * @return {@code true} if all elements in the given array are sorted in increasing order.
      */
     public static boolean isSorted(final char[] array, final boolean strict) {
-        return org.apache.sis.util.Arrays.isSorted(array, strict);
+        return ArraysExt.isSorted(array, strict);
     }
 
     /**
@@ -1130,7 +1131,7 @@ public final class XArrays extends Static {
      * @return {@code true} if all elements in the given array are equal to the given value.
      */
     public static boolean allEquals(final double[] array, final double value) {
-        return org.apache.sis.util.Arrays.allEquals(array, value);
+        return ArraysExt.allEquals(array, value);
     }
 
     /**
@@ -1142,7 +1143,7 @@ public final class XArrays extends Static {
      * @return {@code true} if all elements in the given array are equal to the given value.
      */
     public static boolean allEquals(final float[] array, final float value) {
-        return org.apache.sis.util.Arrays.allEquals(array, value);
+        return ArraysExt.allEquals(array, value);
     }
 
     /**
@@ -1153,7 +1154,7 @@ public final class XArrays extends Static {
      * @return {@code true} if the given array is non-null and contains at least one NaN value.
      */
     public static boolean hasNaN(final double[] array) {
-        return org.apache.sis.util.Arrays.hasNaN(array);
+        return ArraysExt.hasNaN(array);
     }
 
     /**
@@ -1164,7 +1165,7 @@ public final class XArrays extends Static {
      * @return {@code true} if the given array is non-null and contains at least one NaN value.
      */
     public static boolean hasNaN(final float[] array) {
-        return org.apache.sis.util.Arrays.hasNaN(array);
+        return ArraysExt.hasNaN(array);
     }
 
     /**
@@ -1177,7 +1178,7 @@ public final class XArrays extends Static {
      *         or {@code false} otherwise.
      */
     public static boolean containsIgnoreCase(final String[] array, final String value) {
-        return org.apache.sis.util.Arrays.containsIgnoreCase(array, value);
+        return ArraysExt.containsIgnoreCase(array, value);
     }
 
     /**
@@ -1196,7 +1197,7 @@ public final class XArrays extends Static {
      * @since 3.17
      */
     public static boolean containsIdentity(final Object[] array, final Object value) {
-        return org.apache.sis.util.Arrays.containsIdentity(array, value);
+        return ArraysExt.containsIdentity(array, value);
     }
 
     /**
@@ -1215,7 +1216,7 @@ public final class XArrays extends Static {
      * @see #intersects(Object[], Object[])
      */
     public static boolean contains(final Object[] array, final Object value) {
-        return org.apache.sis.util.Arrays.contains(array, value);
+        return ArraysExt.contains(array, value);
     }
 
     /**
@@ -1234,7 +1235,7 @@ public final class XArrays extends Static {
      * @see #contains(Object[], Object)
      */
     public static boolean intersects(final Object[] array1, final Object[] array2) {
-        return org.apache.sis.util.Arrays.intersects(array1, array2);
+        return ArraysExt.intersects(array1, array2);
     }
 
     /**
@@ -1262,7 +1263,7 @@ public final class XArrays extends Static {
      */
     @SafeVarargs
     public static <T> T[] concatenate(final T[]... arrays) {
-        return org.apache.sis.util.Arrays.concatenate(arrays);
+        return ArraysExt.concatenate(arrays);
     }
 
     /**
@@ -1281,6 +1282,6 @@ public final class XArrays extends Static {
      * @see #concatenate(Object[][])
      */
     public static int[] unionSorted(final int[] array1, final int[] array2) {
-        return org.apache.sis.util.Arrays.unionOfSorted(array1, array2);
+        return ArraysExt.unionOfSorted(array1, array2);
     }
 }

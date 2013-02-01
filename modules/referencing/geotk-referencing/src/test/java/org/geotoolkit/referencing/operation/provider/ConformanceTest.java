@@ -27,7 +27,7 @@ import org.opengis.referencing.operation.OperationMethod;
 import org.opengis.referencing.operation.SingleOperation;
 import org.opengis.referencing.operation.MathTransformFactory;
 import org.opengis.referencing.operation.CoordinateOperationAuthorityFactory;
-import org.apache.sis.util.Arrays;
+import org.apache.sis.util.ArraysExt;
 
 import org.geotoolkit.util.Deprecable;
 import org.geotoolkit.factory.FactoryFinder;
@@ -125,7 +125,7 @@ skip:   for (final OperationMethod method : mtFactory.getAvailableMethods(Single
             for (final GenericName alias : aliases) {
                 if (Citations.identifierMatches(authority, alias.head().toString())) {
                     final String name = alias.tip().toString().trim();
-                    if (Arrays.contains(IGNORE, name)) {
+                    if (ArraysExt.contains(IGNORE, name)) {
                         assertTrue(name, ((Deprecable) alias).isDeprecated());
                         continue;
                     }

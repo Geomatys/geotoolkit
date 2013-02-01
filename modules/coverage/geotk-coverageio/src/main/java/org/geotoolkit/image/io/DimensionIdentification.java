@@ -26,7 +26,7 @@ import java.util.logging.LogRecord;
 
 import org.opengis.util.CodeList;
 import org.opengis.referencing.cs.AxisDirection;
-import org.apache.sis.util.Arrays;
+import org.apache.sis.util.ArraysExt;
 
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.IndexedResourceBundle;
@@ -273,7 +273,7 @@ public class DimensionIdentification implements WarningProducer {
                 identifiers[count++] = entry.getKey();
             }
         }
-        return Arrays.resize(identifiers, count);
+        return ArraysExt.resize(identifiers, count);
     }
 
     /**
