@@ -110,6 +110,7 @@ public class DataArrayType extends AbstractDataArrayType implements DataArray {
         return null;
     }
     
+    @Override
     public DataComponentPropertyType getPropertyElementType(){
         return elementType;
     }
@@ -121,6 +122,7 @@ public class DataArrayType extends AbstractDataArrayType implements DataArray {
     /**
      * Gets the value of the encoding property.
      */
+    @Override
     public AbstractEncodingType getEncoding() {
         if (encoding != null) {
             return encoding.getEncoding();
@@ -128,6 +130,7 @@ public class DataArrayType extends AbstractDataArrayType implements DataArray {
         return null;
     }
     
+    @Override
     public AbstractEncodingPropertyType getPropertyEncoding(){
         return encoding;
     }
@@ -139,6 +142,7 @@ public class DataArrayType extends AbstractDataArrayType implements DataArray {
     /**
      * Gets the value of the values property.
      */
+    @Override
     public String getValues() {
         return values;
     }
@@ -146,6 +150,7 @@ public class DataArrayType extends AbstractDataArrayType implements DataArray {
     /**
      * Sets the value of the values property.
      */
+    @Override
     public void setValues(final String values) {
         this.values = values;
     }
@@ -155,6 +160,7 @@ public class DataArrayType extends AbstractDataArrayType implements DataArray {
         this.setElementCount(nbValues);
     }
     
+    @Override
     public AbstractDataValueProperty getDataValues() {
         return null;
     }
@@ -192,10 +198,12 @@ public class DataArrayType extends AbstractDataArrayType implements DataArray {
     public String toString() {
         StringBuilder s    = new StringBuilder(super.toString());
         char lineSeparator = '\n';
-        if (elementType != null)
+        if (elementType != null) {
             s.append(" elementType=").append(elementType.toString()).append(lineSeparator);
-        if (encoding != null)
+        }
+        if (encoding != null) {
             s.append(" encoding:").append(encoding.toString()).append(lineSeparator);
+        }
         if (values != null) {
             //we format a little the result
             String formatedValues = values;
@@ -208,6 +216,4 @@ public class DataArrayType extends AbstractDataArrayType implements DataArray {
         }
         return s.toString();
     }
-
-    
 }

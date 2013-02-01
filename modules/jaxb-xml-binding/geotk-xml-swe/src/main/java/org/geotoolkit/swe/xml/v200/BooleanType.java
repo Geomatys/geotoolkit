@@ -20,6 +20,7 @@ package org.geotoolkit.swe.xml.v200;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.swe.xml.AbstractBoolean;
 
 
 /**
@@ -45,10 +46,19 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "BooleanType", propOrder = {
     "value"
 })
-public class BooleanType extends AbstractSimpleComponentType {
+public class BooleanType extends AbstractSimpleComponentType implements AbstractBoolean {
 
     private Boolean value;
 
+    public BooleanType() {
+        
+    }
+    
+    public BooleanType(final Boolean value, final String definition) {
+        super(null, definition);
+        this.value = value;
+    }
+    
     /**
      * Gets the value of the value property.
      * 
@@ -57,6 +67,7 @@ public class BooleanType extends AbstractSimpleComponentType {
      *     {@link Boolean }
      *     
      */
+    @Override
     public Boolean isValue() {
         return value;
     }

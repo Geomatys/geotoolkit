@@ -99,12 +99,16 @@ public class Count extends AbstractDataComponentType implements AbstractCount {
             }
         }
     }
-
+    
+    public Count(final int value) {
+        this.value = value;
+    }
 
     /**
      * Gets the value of the constraint property.
      * 
      */
+    @Override
     public AllowedValuesPropertyType getConstraint() {
         return constraint;
     }

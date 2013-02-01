@@ -273,7 +273,15 @@ public class ObservationOfferingType extends AbstractOfferingType implements Obs
      */ 
     @Override
     public List<String> getFeatureOfInterestIds() {
-        return new ArrayList<String>();
+        final List<String> results = new ArrayList<String>();
+        for (RelatedFeature feat : getRelatedFeature()) {
+            if (feat.getFeatureRelationship() != null &&
+                feat.getFeatureRelationship().getTarget() != null &&
+                feat.getFeatureRelationship().getTarget().getHref() != null) {
+                results.add(feat.getFeatureRelationship().getTarget().getHref());
+            }
+        }
+        return results;
     }
 
     /**
@@ -284,6 +292,38 @@ public class ObservationOfferingType extends AbstractOfferingType implements Obs
         return new ArrayList<QName>();
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder(super.toString());
+        if (observedArea != null) {
+            sb.append("observedArea:").append(observedArea).append('\n');
+        }
+        if (phenomenonTime != null) {
+            sb.append("phenomenonTime:").append(phenomenonTime).append('\n');
+        }
+        if (resultTime != null) {
+            sb.append("resultTime:").append(resultTime).append('\n');
+        }
+        if (featureOfInterestType != null) {
+            sb.append("featureOfInterestType:\n");
+            for (String foit : featureOfInterestType) {
+                sb.append(foit).append('\n');
+            }
+        }
+        if (observationType != null) {
+            sb.append("observationType:\n");
+            for (String foit : observationType) {
+                sb.append(foit).append('\n');
+            }
+        }
+        if (responseFormat != null) {
+            sb.append("responseFormat:\n");
+            for (String foit : responseFormat) {
+                sb.append(foit).append('\n');
+            }
+        }
+        return sb.toString();
+    }
     /**
      * <p>Java class for anonymous complex type.
      * 
@@ -338,6 +378,14 @@ public class ObservationOfferingType extends AbstractOfferingType implements Obs
             this.envelope = ((JAXBElement<? extends EnvelopeType> ) value);
         }
 
+        @Override
+        public String toString() {
+            final StringBuilder sb = new StringBuilder("[ObservedArea]\n");
+            if (envelope != null) {
+                sb.append("envelope:").append(envelope.getValue()).append('\n');
+            }
+            return sb.toString();
+        }
     }
 
 
@@ -401,6 +449,14 @@ public class ObservationOfferingType extends AbstractOfferingType implements Obs
             this.timePeriod = value;
         }
 
+        @Override
+        public String toString() {
+            final StringBuilder sb = new StringBuilder("[PhenomenonTime]\n");
+            if (timePeriod != null) {
+                sb.append("timePeriod:").append(timePeriod).append('\n');
+            }
+            return sb.toString();
+        }
     }
 
 
@@ -456,6 +512,14 @@ public class ObservationOfferingType extends AbstractOfferingType implements Obs
             this.timePeriod = value;
         }
 
+        @Override
+        public String toString() {
+            final StringBuilder sb = new StringBuilder("[ResultTime]\n");
+            if (timePeriod != null) {
+                sb.append("timePeriod:").append(timePeriod).append('\n');
+            }
+            return sb.toString();
+        }
     }
 
 }

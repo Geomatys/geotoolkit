@@ -104,6 +104,7 @@ public class AllowedValuesPropertyType implements AbstractAllowedValuesProperty 
      *     {@link AllowedValues }
      *     
      */
+    @Override
     public AllowedValues getAllowedValues() {
         return allowedValues;
     }
@@ -128,6 +129,7 @@ public class AllowedValuesPropertyType implements AbstractAllowedValuesProperty 
      *     {@link String }
      *     
      */
+    @Override
     public String getRemoteSchema() {
         return remoteSchema;
     }
@@ -140,6 +142,7 @@ public class AllowedValuesPropertyType implements AbstractAllowedValuesProperty 
      *     {@link String }
      *     
      */
+    @Override
     public void setRemoteSchema(final String value) {
         this.remoteSchema = value;
     }
@@ -152,6 +155,7 @@ public class AllowedValuesPropertyType implements AbstractAllowedValuesProperty 
      *     {@link String }
      *     
      */
+    @Override
     public String getType() {
         return type;
     }
@@ -164,6 +168,7 @@ public class AllowedValuesPropertyType implements AbstractAllowedValuesProperty 
      *     {@link String }
      *     
      */
+    @Override
     public void setType(final String value) {
         this.type = value;
     }
@@ -176,6 +181,7 @@ public class AllowedValuesPropertyType implements AbstractAllowedValuesProperty 
      *     {@link String }
      *     
      */
+    @Override
     public String getHref() {
         return href;
     }
@@ -188,6 +194,7 @@ public class AllowedValuesPropertyType implements AbstractAllowedValuesProperty 
      *     {@link String }
      *     
      */
+    @Override
     public void setHref(final String value) {
         this.href = value;
     }
@@ -200,6 +207,7 @@ public class AllowedValuesPropertyType implements AbstractAllowedValuesProperty 
      *     {@link String }
      *     
      */
+    @Override
     public String getRole() {
         return role;
     }
@@ -212,6 +220,7 @@ public class AllowedValuesPropertyType implements AbstractAllowedValuesProperty 
      *     {@link String }
      *     
      */
+    @Override
     public void setRole(final String value) {
         this.role = value;
     }
@@ -224,6 +233,7 @@ public class AllowedValuesPropertyType implements AbstractAllowedValuesProperty 
      *     {@link String }
      *     
      */
+    @Override
     public String getArcrole() {
         return arcrole;
     }
@@ -236,6 +246,7 @@ public class AllowedValuesPropertyType implements AbstractAllowedValuesProperty 
      *     {@link String }
      *     
      */
+    @Override
     public void setArcrole(final String value) {
         this.arcrole = value;
     }
@@ -248,6 +259,7 @@ public class AllowedValuesPropertyType implements AbstractAllowedValuesProperty 
      *     {@link String }
      *     
      */
+    @Override
     public String getTitle() {
         return title;
     }
@@ -260,6 +272,7 @@ public class AllowedValuesPropertyType implements AbstractAllowedValuesProperty 
      *     {@link String }
      *     
      */
+    @Override
     public void setTitle(final String value) {
         this.title = value;
     }
@@ -272,6 +285,7 @@ public class AllowedValuesPropertyType implements AbstractAllowedValuesProperty 
      *     {@link String }
      *     
      */
+    @Override
     public String getShow() {
         return show;
     }
@@ -284,6 +298,7 @@ public class AllowedValuesPropertyType implements AbstractAllowedValuesProperty 
      *     {@link String }
      *     
      */
+    @Override
     public void setShow(final String value) {
         this.show = value;
     }
@@ -296,6 +311,7 @@ public class AllowedValuesPropertyType implements AbstractAllowedValuesProperty 
      *     {@link String }
      *     
      */
+    @Override
     public String getActuate() {
         return actuate;
     }
@@ -308,6 +324,7 @@ public class AllowedValuesPropertyType implements AbstractAllowedValuesProperty 
      *     {@link String }
      *     
      */
+    @Override
     public void setActuate(final String value) {
         this.actuate = value;
     }

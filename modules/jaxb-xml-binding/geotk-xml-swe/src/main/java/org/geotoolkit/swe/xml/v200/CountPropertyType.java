@@ -22,6 +22,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.swe.xml.AbstractElementCount;
+import org.geotoolkit.util.Utilities;
 import org.geotoolkit.xlink.xml.v100.ActuateType;
 import org.geotoolkit.xlink.xml.v100.ShowType;
 import org.geotoolkit.xlink.xml.v100.TypeType;
@@ -51,7 +53,7 @@ import org.geotoolkit.xlink.xml.v100.TypeType;
 @XmlType(name = "CountPropertyType", propOrder = {
     "count"
 })
-public class CountPropertyType {
+public class CountPropertyType implements AbstractElementCount {
 
     @XmlElement(name = "Count")
     private CountType count;
@@ -64,12 +66,31 @@ public class CountPropertyType {
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     private String arcrole;
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
-    private String titleTemp;
+    private String title;
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     private ShowType show;
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     private ActuateType actuate;
 
+    public CountPropertyType() {
+        
+    }
+    
+    public CountPropertyType(final int value) {
+        this.count = new CountType(null, value);
+    }
+    
+    public CountPropertyType(final CountPropertyType that) {
+        this.count   = that.count;
+        this.actuate = that.actuate;
+        this.arcrole = that.arcrole;
+        this.href    = that.href;
+        this.role    = that.role;
+        this.show    = that.show;
+        this.title   = that.title;
+        this.type    = that.type;
+    }
+    
     /**
      * Gets the value of the count property.
      * 
@@ -78,6 +99,7 @@ public class CountPropertyType {
      *     {@link CountType }
      *     
      */
+    @Override
     public CountType getCount() {
         return count;
     }
@@ -131,6 +153,11 @@ public class CountPropertyType {
      *     
      */
     public String getHref() {
+        return href;
+    }
+
+    @Override
+    public Object getRef() {
         return href;
     }
 
@@ -202,8 +229,8 @@ public class CountPropertyType {
      *     {@link String }
      *     
      */
-    public String getTitleTemp() {
-        return titleTemp;
+    public String getTitle() {
+        return title;
     }
 
     /**
@@ -214,8 +241,8 @@ public class CountPropertyType {
      *     {@link String }
      *     
      */
-    public void setTitleTemp(String value) {
-        this.titleTemp = value;
+    public void setTitle(String value) {
+        this.title = value;
     }
 
     /**
@@ -266,4 +293,75 @@ public class CountPropertyType {
         this.actuate = value;
     }
 
+     /**
+     * Verify if this entry is identical to specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+
+        if (object instanceof CountPropertyType) {
+            final CountPropertyType that = (CountPropertyType) object;
+            return Utilities.equals(this.count,              that.count)     &&
+                   Utilities.equals(this.actuate,            that.actuate)          &&
+                   Utilities.equals(this.arcrole,            that.arcrole)          &&
+                   Utilities.equals(this.type,               that.type)             &&
+                   Utilities.equals(this.href,               that.href)             &&
+                   Utilities.equals(this.show,               that.show)             &&
+                   Utilities.equals(this.role,               that.role)             &&
+                   Utilities.equals(this.title,              that.title);
+        }
+        return false;
+    }
+
+    
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 47 * hash + (this.count != null ? this.count.hashCode() : 0);
+        hash = 47 * hash + (this.actuate != null ? this.actuate.hashCode() : 0);
+        hash = 47 * hash + (this.arcrole != null ? this.arcrole.hashCode() : 0);
+        hash = 47 * hash + (this.href != null ? this.href.hashCode() : 0);
+        hash = 47 * hash + (this.role != null ? this.role.hashCode() : 0);
+        hash = 47 * hash + (this.show != null ? this.show.hashCode() : 0);
+        hash = 47 * hash + (this.title != null ? this.title.hashCode() : 0);
+        hash = 47 * hash + (this.type != null ? this.type.hashCode() : 0);
+        return hash;
+    }
+
+    /**
+     * Retourne une representation de l'objet.
+     */
+    
+    @Override
+    public String toString() {
+        final StringBuilder s = new StringBuilder("[CountPropertyType]\n");
+        if(count != null) {
+            s.append("count=").append(count).append('\n');
+        }
+        if(actuate != null) {
+            s.append("actuate=").append(actuate).append('\n');
+        }
+        if(arcrole != null) {
+            s.append("arcrole=").append(arcrole).append('\n');
+        }
+        if(href != null) {
+            s.append("href=").append(href).append('\n');
+        }
+        if(role != null) {
+            s.append("role=").append(role).append('\n');
+        }
+        if(show != null) {
+            s.append("show=").append(show).append('\n');
+        }
+        if(title != null) {
+            s.append("title=").append(title).append('\n');
+        }
+        if(type != null) {
+            s.append("type=").append(type).append('\n');
+        }
+        return s.toString();
+    }
 }

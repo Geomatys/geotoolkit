@@ -24,4 +24,6 @@ package org.geotoolkit.swe.xml;
 public interface AbstractDataArray extends AbstractDataComponent {
 
     public AbstractElementCount getElementCount();
+    
+    void setElementCount(final int count);
 }

@@ -178,10 +178,18 @@ public class ShapeType {
      *     {@link JAXBElement }{@code <}{@link OrientableSurfaceType }{@code >}
      *     
      */
-    public JAXBElement<? extends AbstractGeometryType> getAbstractGeometry() {
+    public JAXBElement<? extends AbstractGeometryType> getJbAbstractGeometry() {
         return abstractGeometry;
     }
 
+    public AbstractGeometryType getAbstractGeometry() {
+        if (abstractGeometry != null) {
+            return abstractGeometry.getValue();
+        }
+        return null;
+    }
+
+    
     /**
      * Sets the value of the abstractGeometry property.
      * 

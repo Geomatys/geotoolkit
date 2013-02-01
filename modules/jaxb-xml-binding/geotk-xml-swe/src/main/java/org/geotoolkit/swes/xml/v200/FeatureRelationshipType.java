@@ -58,6 +58,16 @@ public class FeatureRelationshipType {
     @XmlElement(required = true)
     private FeaturePropertyType target;
 
+    public FeatureRelationshipType() {
+        
+    }
+    
+    public FeatureRelationshipType(final String target) {
+        if (target != null) {
+            this.target = new FeaturePropertyType(target);
+        }
+    }
+    
     /**
      * Gets the value of the role property.
      * 

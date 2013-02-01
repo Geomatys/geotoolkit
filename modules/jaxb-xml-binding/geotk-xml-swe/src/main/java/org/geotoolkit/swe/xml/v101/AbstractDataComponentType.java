@@ -147,11 +147,10 @@ public class AbstractDataComponentType extends AbstractGMLType implements Abstra
     
     @Override
     public String toString() {
-        StringBuilder s = new StringBuilder(super.toString());
-       
-        if (definition != null)
+        final StringBuilder s = new StringBuilder(super.toString());
+        if (definition != null) {
             s.append(" definition = ").append(definition);
-        
+        }
         s.append(" fixed = ").append(fixed).append('\n');
         return s.toString();
     }

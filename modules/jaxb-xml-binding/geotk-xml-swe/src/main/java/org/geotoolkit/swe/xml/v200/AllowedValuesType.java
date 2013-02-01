@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.swe.xml.AbstractAllowedValues;
 
 
 /**
@@ -55,7 +56,7 @@ import javax.xml.bind.annotation.XmlType;
     "interval",
     "significantFigures"
 })
-public class AllowedValuesType extends AbstractSWEType {
+public class AllowedValuesType extends AbstractSWEType implements AbstractAllowedValues {
 
     @XmlElement(type = Double.class)
     private List<Double> value;
@@ -77,6 +78,18 @@ public class AllowedValuesType extends AbstractSWEType {
         return this.value;
     }
 
+    @Override
+    public List<Double> getInterval() {
+        for (JAXBElement<List<Double>> jb : getJbInterval()) {
+            if (jb.getName().getLocalPart().equals("interval")) {
+                return jb.getValue();
+            } else {
+                System.out.println("locpart:" + jb.getName().getLocalPart());
+            }
+        }
+        return null;
+    }
+    
     /**
      * Gets the value of the interval property.
      * 
@@ -84,7 +97,7 @@ public class AllowedValuesType extends AbstractSWEType {
      * {@link JAXBElement }{@code <}{@link List }{@code <}{@link Double }{@code >}{@code >}
      * 
      */
-    public List<JAXBElement<List<Double>>> getInterval() {
+    public List<JAXBElement<List<Double>>> getJbInterval() {
         if (interval == null) {
             interval = new ArrayList<JAXBElement<List<Double>>>();
         }
@@ -115,4 +128,28 @@ public class AllowedValuesType extends AbstractSWEType {
         this.significantFigures = value;
     }
 
+    @Override
+    public Double getMin() {
+        return null;
+    }
+
+    @Override
+    public void setMin(Double value) {
+        // do nothing
+    }
+
+    @Override
+    public Double getMax() {
+        return null;
+    }
+
+    @Override
+    public void setMax(Double value) {
+        //do nothing
+    }
+
+    @Override
+    public List<Double> getValueList() {
+        return value;
+    }
 }

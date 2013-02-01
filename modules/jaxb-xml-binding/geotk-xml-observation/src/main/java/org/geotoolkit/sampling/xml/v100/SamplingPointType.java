@@ -34,6 +34,7 @@ import org.geotoolkit.observation.xml.v100.ObservationType;
 import org.geotoolkit.observation.xml.v100.SurveyProcedureType;
 import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.util.Utilities;
+import org.opengis.geometry.Geometry;
 import org.opengis.observation.sampling.SamplingPoint;
 
 /**
@@ -138,6 +139,11 @@ public class SamplingPointType extends SamplingFeatureType implements SamplingPo
             return position.getPoint();
         }
         return null;
+    }
+    
+    @Override
+    public Geometry getGeometry() {
+       return getPosition();
     }
     
     /**

@@ -27,6 +27,8 @@ import javax.xml.bind.annotation.XmlList;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.XMLGregorianCalendar;
+import org.geotoolkit.swe.xml.AbstractTime;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -58,7 +60,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
     "constraint",
     "value"
 })
-public class TimeType extends AbstractSimpleComponentType {
+public class TimeType extends AbstractSimpleComponentType implements AbstractTime {
 
     @XmlElement(required = true)
     private UnitReference uom;
@@ -72,6 +74,14 @@ public class TimeType extends AbstractSimpleComponentType {
     @XmlSchemaType(name = "anyURI")
     private String localFrame;
 
+    public TimeType() {
+        
+    }
+    
+    public TimeType(final String definition) {
+        super(null, definition);
+    }
+    
     /**
      * Gets the value of the uom property.
      * 
@@ -80,6 +90,7 @@ public class TimeType extends AbstractSimpleComponentType {
      *     {@link UnitReference }
      *     
      */
+    @Override
     public UnitReference getUom() {
         return uom;
     }
@@ -123,25 +134,12 @@ public class TimeType extends AbstractSimpleComponentType {
     /**
      * Gets the value of the value property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the value property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getValue().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link String }
      * 
      * 
      */
+    @Override
     public List<String> getValue() {
         if (value == null) {
             value = new ArrayList<String>();
@@ -157,8 +155,16 @@ public class TimeType extends AbstractSimpleComponentType {
      *     {@link XMLGregorianCalendar }
      *     
      */
-    public XMLGregorianCalendar getReferenceTime() {
+    public XMLGregorianCalendar getReferenceTimeCalendar() {
         return referenceTime;
+    }
+    
+    @Override
+    public String getReferenceTime() {
+        if (referenceTime != null) {
+            return referenceTime.toXMLFormat();
+        }
+        return null;
     }
 
     /**
@@ -181,6 +187,7 @@ public class TimeType extends AbstractSimpleComponentType {
      *     {@link String }
      *     
      */
+    @Override
     public String getLocalFrame() {
         return localFrame;
     }
@@ -197,4 +204,58 @@ public class TimeType extends AbstractSimpleComponentType {
         this.localFrame = value;
     }
 
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof TimeType && super.equals(object)) {
+            final TimeType that = (TimeType) object;
+
+            return Utilities.equals(this.constraint,    that.constraint) &&
+                   Utilities.equals(this.localFrame,    that.localFrame) &&
+                   Utilities.equals(this.referenceTime, that.referenceTime) &&
+                   Utilities.equals(this.value,         that.value) &&
+                   Utilities.equals(this.uom,           that.uom);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 47 * hash + (this.constraint != null ? this.constraint.hashCode() : 0);
+        hash = 47 * hash + (this.localFrame != null ? this.localFrame.hashCode() : 0);
+        hash = 47 * hash + (this.referenceTime != null ? this.referenceTime.hashCode() : 0);
+        hash = 47 * hash + (this.uom != null ? this.uom.hashCode() : 0);
+        hash = 47 * hash + (this.value != null ? this.value.hashCode() : 0);
+        return hash;
+    }
+
+    /**
+     * Retourne une representation de l'objet.
+     */
+    @Override
+    public String toString() {
+        final StringBuilder s = new StringBuilder(super.toString());
+        if (constraint != null) {
+            s.append("constraint=").append(constraint).append('\n');
+        }
+        if (localFrame != null) {
+            s.append("localFrame=").append(localFrame).append('\n');
+        }
+        if (referenceTime != null) {
+            s.append("referenceTime=").append(referenceTime).append('\n');
+        }
+        if (uom != null) {
+            s.append("uom=").append(uom).append('\n');
+        }
+        if (value != null) {
+            s.append("value:\n");
+            for (String q : value) {
+                s.append(q).append('\n');
+            }
+        }
+        return s.toString();
+    }
 }

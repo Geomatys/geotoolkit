@@ -32,13 +32,14 @@ import org.geotoolkit.gml.xml.v311.AbstractFeatureType;
 import org.geotoolkit.gml.xml.v311.FeaturePropertyType;
 import org.geotoolkit.observation.xml.v100.ObservationType;
 import org.geotoolkit.observation.xml.v100.SurveyProcedureType;
+import org.geotoolkit.sampling.xml.SamplingFeature;
 import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.util.Utilities;
+import org.opengis.geometry.Geometry;
 
 // openGis dependencies
 import org.opengis.observation.AnyFeature;
 import org.opengis.observation.Observation;
-import org.opengis.observation.sampling.SamplingFeature;
 import org.opengis.observation.sampling.SamplingFeatureRelation;
 
 /**
@@ -209,5 +210,9 @@ public class SamplingFeatureType extends AbstractFeatureType implements Sampling
     public List<AnyFeature> getSampledFeature() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-   
+
+    @Override
+    public Geometry getGeometry() {
+       return null; // no geometry in that class
+    }
 }

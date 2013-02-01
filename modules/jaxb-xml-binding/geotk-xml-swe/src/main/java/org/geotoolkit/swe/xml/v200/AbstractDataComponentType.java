@@ -23,6 +23,10 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.gml.xml.Code;
+import org.geotoolkit.gml.xml.Reference;
+import org.geotoolkit.swe.xml.AbstractDataComponent;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -53,7 +57,7 @@ import javax.xml.bind.annotation.XmlType;
     DataRecordType.class,
     VectorType.class
 })
-public abstract class AbstractDataComponentType extends AbstractSWEIdentifiableType {
+public abstract class AbstractDataComponentType extends AbstractSWEIdentifiableType implements AbstractDataComponent {
 
     @XmlAttribute
     private Boolean updatable;
@@ -63,6 +67,22 @@ public abstract class AbstractDataComponentType extends AbstractSWEIdentifiableT
     @XmlSchemaType(name = "anyURI")
     private String definition;
 
+    public AbstractDataComponentType() {
+        
+    }
+    
+    public AbstractDataComponentType(final String id, final String definition) {
+        super(id);
+        this.definition = definition;
+    }
+    
+    public AbstractDataComponentType(final AbstractDataComponentType that) {
+        super(that);
+        this.definition = that.definition;
+        this.optional   = that.optional;
+        this.updatable  = that.updatable;
+    }
+    
     /**
      * Gets the value of the updatable property.
      * 
@@ -102,6 +122,14 @@ public abstract class AbstractDataComponentType extends AbstractSWEIdentifiableT
             return optional;
         }
     }
+    
+    @Override
+    public Boolean isFixed() {
+        if (updatable != null) {
+            return !updatable;
+        }
+        return null;
+    }
 
     /**
      * Sets the value of the optional property.
@@ -123,6 +151,7 @@ public abstract class AbstractDataComponentType extends AbstractSWEIdentifiableT
      *     {@link String }
      *     
      */
+    @Override
     public String getDefinition() {
         return definition;
     }
@@ -139,4 +168,55 @@ public abstract class AbstractDataComponentType extends AbstractSWEIdentifiableT
         this.definition = value;
     }
 
+    @Override
+    public Code getParameterName() {
+        return null;
+    }
+    
+    @Override
+    public Reference getDescriptionReference() {
+        return null;
+    }
+    
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof AbstractDataComponentType && super.equals(object)) {
+            final AbstractDataComponentType that = (AbstractDataComponentType) object;
+
+            return Utilities.equals(this.definition,  that.definition) &&
+                   Utilities.equals(this.optional,    that.optional) &&
+                   Utilities.equals(this.updatable,   that.updatable);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 47 * hash + (this.definition != null ? this.definition.hashCode() : 0);
+        hash = 47 * hash + (this.optional != null ? this.optional.hashCode() : 0);
+        hash = 47 * hash + (this.updatable != null ? this.updatable.hashCode() : 0);
+        return hash;
+    }
+
+    /**
+     * Retourne une representation de l'objet.
+     */
+    @Override
+    public String toString() {
+        final StringBuilder s = new StringBuilder(super.toString());
+        if (definition != null) {
+            s.append("definition=").append(definition).append('\n');
+        }
+        if (optional != null) {
+            s.append("optional=").append(optional).append('\n');
+        }
+        if (updatable != null) {
+            s.append("updatable=").append(updatable).append('\n');
+        }
+        return s.toString();
+    }
 }

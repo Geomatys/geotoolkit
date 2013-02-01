@@ -27,5 +27,5 @@ public interface AbstractAllowedTokens {
 
     String getId();
 
-     List<JAXBElement<List<String>>> getValueList();
+    List<JAXBElement<List<String>>> getValueList();
 }

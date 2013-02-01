@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlList;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.swe.xml.AbstractQuantityRange;
 
 
 /**
@@ -53,9 +54,7 @@ import javax.xml.bind.annotation.XmlType;
     "constraint",
     "value"
 })
-public class QuantityRangeType
-    extends AbstractSimpleComponentType
-{
+public class QuantityRangeType extends AbstractSimpleComponentType implements AbstractQuantityRange {
 
     @XmlElement(required = true)
     private UnitReference uom;
@@ -64,6 +63,15 @@ public class QuantityRangeType
     @XmlElement(type = Double.class)
     private List<Double> value;
 
+    public QuantityRangeType() {
+        
+    }
+    
+    public QuantityRangeType(final String definition, final List<Double> value) {
+        super(null, definition);
+        this.value = value;
+    }
+    
     /**
      * Gets the value of the uom property.
      * 
@@ -72,6 +80,7 @@ public class QuantityRangeType
      *     {@link UnitReference }
      *     
      */
+    @Override
     public UnitReference getUom() {
         return uom;
     }
@@ -96,6 +105,7 @@ public class QuantityRangeType
      *     {@link AllowedValuesPropertyType }
      *     
      */
+    @Override
     public AllowedValuesPropertyType getConstraint() {
         return constraint;
     }
@@ -115,25 +125,12 @@ public class QuantityRangeType
     /**
      * Gets the value of the value property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the value property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getValue().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link Double }
      * 
      * 
      */
+    @Override
     public List<Double> getValue() {
         if (value == null) {
             value = new ArrayList<Double>();

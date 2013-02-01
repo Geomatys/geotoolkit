@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAnyAttribute;
@@ -28,6 +29,7 @@ import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
+import org.geotoolkit.swe.xml.AbstractDataValueProperty;
 import org.geotoolkit.xlink.xml.v100.ActuateType;
 import org.geotoolkit.xlink.xml.v100.ShowType;
 import org.geotoolkit.xlink.xml.v100.TypeType;
@@ -56,7 +58,7 @@ import org.w3c.dom.Element;
 @XmlType(name = "EncodedValuesPropertyType", propOrder = {
     "any"
 })
-public class EncodedValuesPropertyType {
+public class EncodedValuesPropertyType implements AbstractDataValueProperty {
 
     @XmlAnyElement
     private List<Element> any;
@@ -69,7 +71,7 @@ public class EncodedValuesPropertyType {
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     private String arcrole;
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
-    private String titleTemp;
+    private String title;
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     private ShowType show;
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
@@ -77,6 +79,22 @@ public class EncodedValuesPropertyType {
     @XmlAnyAttribute
     private Map<QName, String> otherAttributes = new HashMap<QName, String>();
 
+    public EncodedValuesPropertyType() {
+        
+    }
+    
+    public EncodedValuesPropertyType(final EncodedValuesPropertyType that) {
+        this.actuate = that.actuate;
+        this.any     = that.any;
+        this.arcrole = that.arcrole;
+        this.href    = that.href;
+        this.otherAttributes = that.otherAttributes;
+        this.role    = that.role;
+        this.show    = that.show;
+        this.title   = that.title;
+        this.type    = that.type;
+    }
+    
     /**
      * Gets the value of the any property.
      * 
@@ -84,6 +102,7 @@ public class EncodedValuesPropertyType {
      * {@link Element }
      * 
      */
+    @Override
     public List<Element> getAny() {
         if (any == null) {
             any = new ArrayList<Element>();
@@ -99,11 +118,12 @@ public class EncodedValuesPropertyType {
      *     {@link TypeType }
      *     
      */
-    public TypeType getType() {
+    @Override
+    public String getType() {
         if (type == null) {
-            return TypeType.SIMPLE;
+            return TypeType.SIMPLE.toString();
         } else {
-            return type;
+            return type.toString();
         }
     }
 
@@ -127,6 +147,7 @@ public class EncodedValuesPropertyType {
      *     {@link String }
      *     
      */
+    @Override
     public String getHref() {
         return href;
     }
@@ -151,6 +172,7 @@ public class EncodedValuesPropertyType {
      *     {@link String }
      *     
      */
+    @Override
     public String getRole() {
         return role;
     }
@@ -175,6 +197,7 @@ public class EncodedValuesPropertyType {
      *     {@link String }
      *     
      */
+    @Override
     public String getArcrole() {
         return arcrole;
     }
@@ -199,8 +222,9 @@ public class EncodedValuesPropertyType {
      *     {@link String }
      *     
      */
-    public String getTitleTemp() {
-        return titleTemp;
+    @Override
+    public String getTitle() {
+        return title;
     }
 
     /**
@@ -211,8 +235,8 @@ public class EncodedValuesPropertyType {
      *     {@link String }
      *     
      */
-    public void setTitleTemp(String value) {
-        this.titleTemp = value;
+    public void setTitle(String value) {
+        this.title = value;
     }
 
     /**
@@ -223,8 +247,12 @@ public class EncodedValuesPropertyType {
      *     {@link ShowType }
      *     
      */
-    public ShowType getShow() {
-        return show;
+    @Override
+    public String getShow() {
+        if (show != null) {
+            return show.toString();
+        }
+        return null;
     }
 
     /**
@@ -247,8 +275,12 @@ public class EncodedValuesPropertyType {
      *     {@link ActuateType }
      *     
      */
-    public ActuateType getActuate() {
-        return actuate;
+    @Override
+    public String getActuate() {
+        if (actuate != null) {
+            return actuate.toString();
+        }
+        return null;
     }
 
     /**
@@ -269,8 +301,58 @@ public class EncodedValuesPropertyType {
      * @return
      *     always non-null
      */
+    @Override
     public Map<QName, String> getOtherAttributes() {
         return otherAttributes;
     }
 
+    @Override
+    public String getRemoteSchema() {
+        return null;
+    }
+
+    @Override
+    public Integer getRecordCount() {
+        return -1;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("[EncodedValuesPropertyType]").append("\n");
+        if (any != null) {
+            sb.append("any::\n");
+            int i = 0;
+            for (Element e : any) {
+                sb.append(i).append(':').append(e).append('\n');
+            }       
+        }
+        if (otherAttributes != null) {
+            sb.append("otherAttributes:\n");
+            for (Entry<QName, String> attribute : otherAttributes.entrySet()) {
+                sb.append("key:").append(attribute.getKey()).append(" value:").append(attribute.getValue()).append('\n');
+            }
+        }
+        if (actuate != null) {
+            sb.append("actuate: ").append(actuate).append('\n');
+        }
+        if (arcrole != null) {
+            sb.append("actuate: ").append(arcrole).append('\n');
+        }
+        if (href != null) {
+            sb.append("href: ").append(href).append('\n');
+        }
+        if (role != null) {
+            sb.append("role: ").append(role).append('\n');
+        }
+        if (show != null) {
+            sb.append("show: ").append(show).append('\n');
+        }
+        if (title != null) {
+            sb.append("title: ").append(title).append('\n');
+        }
+        if (type != null) {
+            sb.append("type: ").append(type).append('\n');
+        }
+        return sb.toString();
+    }
 }

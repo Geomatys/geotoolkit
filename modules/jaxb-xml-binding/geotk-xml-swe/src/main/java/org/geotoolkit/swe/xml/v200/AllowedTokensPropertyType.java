@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.swe.xml.AbstractAllowedTokensProperty;
 import org.geotoolkit.xlink.xml.v100.ActuateType;
 import org.geotoolkit.xlink.xml.v100.ShowType;
 import org.geotoolkit.xlink.xml.v100.TypeType;
@@ -51,7 +52,7 @@ import org.geotoolkit.xlink.xml.v100.TypeType;
 @XmlType(name = "AllowedTokensPropertyType", propOrder = {
     "allowedTokens"
 })
-public class AllowedTokensPropertyType {
+public class AllowedTokensPropertyType implements AbstractAllowedTokensProperty {
 
     @XmlElement(name = "AllowedTokens")
     private AllowedTokensType allowedTokens;
@@ -64,7 +65,7 @@ public class AllowedTokensPropertyType {
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     private String arcrole;
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
-    private String titleTemp;
+    private String title;
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     private ShowType show;
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
@@ -78,6 +79,7 @@ public class AllowedTokensPropertyType {
      *     {@link AllowedTokensType }
      *     
      */
+    @Override
     public AllowedTokensType getAllowedTokens() {
         return allowedTokens;
     }
@@ -102,11 +104,12 @@ public class AllowedTokensPropertyType {
      *     {@link TypeType }
      *     
      */
-    public TypeType getType() {
+    @Override
+    public String getType() {
         if (type == null) {
-            return TypeType.SIMPLE;
+            return TypeType.SIMPLE.toString();
         } else {
-            return type;
+            return type.toString();
         }
     }
 
@@ -118,8 +121,11 @@ public class AllowedTokensPropertyType {
      *     {@link TypeType }
      *     
      */
-    public void setType(TypeType value) {
-        this.type = value;
+    @Override
+    public void setType(final String value) {
+        if (value != null) {
+            this.type = TypeType.valueOf(value);
+        }
     }
 
     /**
@@ -130,6 +136,7 @@ public class AllowedTokensPropertyType {
      *     {@link String }
      *     
      */
+    @Override
     public String getHref() {
         return href;
     }
@@ -142,6 +149,7 @@ public class AllowedTokensPropertyType {
      *     {@link String }
      *     
      */
+    @Override
     public void setHref(String value) {
         this.href = value;
     }
@@ -154,6 +162,7 @@ public class AllowedTokensPropertyType {
      *     {@link String }
      *     
      */
+    @Override
     public String getRole() {
         return role;
     }
@@ -166,6 +175,7 @@ public class AllowedTokensPropertyType {
      *     {@link String }
      *     
      */
+    @Override
     public void setRole(String value) {
         this.role = value;
     }
@@ -178,6 +188,7 @@ public class AllowedTokensPropertyType {
      *     {@link String }
      *     
      */
+    @Override
     public String getArcrole() {
         return arcrole;
     }
@@ -190,6 +201,7 @@ public class AllowedTokensPropertyType {
      *     {@link String }
      *     
      */
+    @Override
     public void setArcrole(String value) {
         this.arcrole = value;
     }
@@ -202,8 +214,9 @@ public class AllowedTokensPropertyType {
      *     {@link String }
      *     
      */
-    public String getTitleTemp() {
-        return titleTemp;
+    @Override
+    public String getTitle() {
+        return title;
     }
 
     /**
@@ -214,8 +227,9 @@ public class AllowedTokensPropertyType {
      *     {@link String }
      *     
      */
-    public void setTitleTemp(String value) {
-        this.titleTemp = value;
+    @Override
+    public void setTitle(String value) {
+        this.title = value;
     }
 
     /**
@@ -226,8 +240,12 @@ public class AllowedTokensPropertyType {
      *     {@link ShowType }
      *     
      */
-    public ShowType getShow() {
-        return show;
+    @Override
+    public String getShow() {
+        if (show != null) {
+            return show.toString();
+        }
+        return null;
     }
 
     /**
@@ -238,8 +256,11 @@ public class AllowedTokensPropertyType {
      *     {@link ShowType }
      *     
      */
-    public void setShow(ShowType value) {
-        this.show = value;
+    @Override
+    public void setShow(String value) {
+        if (value != null) {
+            this.show = ShowType.valueOf(value);
+        }
     }
 
     /**
@@ -250,8 +271,12 @@ public class AllowedTokensPropertyType {
      *     {@link ActuateType }
      *     
      */
-    public ActuateType getActuate() {
-        return actuate;
+    @Override
+    public String getActuate() {
+        if (actuate != null) {
+            return actuate.toString();
+        }
+        return null;
     }
 
     /**
@@ -262,8 +287,21 @@ public class AllowedTokensPropertyType {
      *     {@link ActuateType }
      *     
      */
-    public void setActuate(ActuateType value) {
-        this.actuate = value;
+    @Override
+    public void setActuate(String value) {
+        if (value != null) {
+            this.actuate = ActuateType.valueOf(value);
+        }
+    }
+
+    @Override
+    public String getRemoteSchema() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void setRemoteSchema(String value) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
 }

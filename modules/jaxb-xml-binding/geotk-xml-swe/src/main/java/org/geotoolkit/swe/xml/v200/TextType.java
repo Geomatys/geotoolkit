@@ -20,6 +20,7 @@ package org.geotoolkit.swe.xml.v200;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.swe.xml.AbstractText;
 
 
 /**
@@ -47,11 +48,20 @@ import javax.xml.bind.annotation.XmlType;
     "constraint",
     "value"
 })
-public class TextType extends AbstractSimpleComponentType {
+public class TextType extends AbstractSimpleComponentType implements AbstractText {
 
     private AllowedTokensPropertyType constraint;
     private String value;
 
+    public TextType() {
+        
+    }
+    
+    public TextType(final String definition, final String value) {
+        super(null, definition);
+        this.value = value;
+    }
+    
     /**
      * Gets the value of the constraint property.
      * 
@@ -84,6 +94,7 @@ public class TextType extends AbstractSimpleComponentType {
      *     {@link String }
      *     
      */
+    @Override
     public String getValue() {
         return value;
     }

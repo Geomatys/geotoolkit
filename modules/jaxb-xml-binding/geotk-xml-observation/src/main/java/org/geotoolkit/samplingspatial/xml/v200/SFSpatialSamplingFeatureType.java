@@ -32,6 +32,7 @@ import org.geotoolkit.observation.xml.v200.OMProcessPropertyType;
 import org.geotoolkit.sampling.xml.v200.SFSamplingFeatureType;
 import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.util.Utilities;
+import org.opengis.geometry.Geometry;
 import org.opengis.metadata.quality.PositionalAccuracy;
 
 
@@ -142,6 +143,14 @@ public class SFSpatialSamplingFeatureType extends SFSamplingFeatureType {
         return shape;
     }
 
+    @Override
+    public Geometry getGeometry() {
+        if (shape != null) {
+            return shape.getAbstractGeometry();
+        }
+        return null;
+    }
+    
     /**
      * Sets the value of the shape property.
      * 

@@ -28,6 +28,7 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -73,6 +74,21 @@ public class AbstractSWEType {
     @XmlSchemaType(name = "ID")
     private String id;
 
+    public AbstractSWEType() {
+        
+    }
+    
+    public AbstractSWEType(final String id) {
+        this.id = id;
+    }
+    
+    public AbstractSWEType(final AbstractSWEType that) {
+        this.id = that.id;
+        if (that.extension != null) {
+            this.extension = new ArrayList<Object>(that.extension);
+        }
+    }
+    
     /**
      * Gets the value of the extension property.
      * 
@@ -112,4 +128,43 @@ public class AbstractSWEType {
         this.id = value;
     }
 
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof AbstractSWEType) {
+            final AbstractSWEType that = (AbstractSWEType) object;
+
+            return Utilities.equals(this.extension, that.extension) &&
+                   Utilities.equals(this.id,        that.id);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 47 * hash + (this.extension != null ? this.extension.hashCode() : 0);
+        hash = 47 * hash + (this.id != null ? this.id.hashCode() : 0);
+        return hash;
+    }
+
+    /**
+     * Retourne une representation de l'objet.
+     */
+    @Override
+    public String toString() {
+        final StringBuilder s = new StringBuilder("[").append(this.getClass().getSimpleName()).append("]\n");
+        if (id != null) {
+            s.append("id=").append(id).append('\n');
+        }
+        if(extension != null) {
+            s.append("extension:\n");
+            for (Object ext : extension) {
+                s.append(ext).append('\n');
+            }
+        }
+        return s.toString();
+    }
 }

@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.gml.xml.v321.ObjectFactory;
 import org.geotoolkit.gml.xml.v321.AbstractTimeComplexType;
 import org.geotoolkit.gml.xml.v321.AbstractTimeGeometricPrimitiveType;
 import org.geotoolkit.gml.xml.v321.AbstractTimeObjectType;
@@ -36,6 +37,7 @@ import org.geotoolkit.gml.xml.v321.TimeInstantType;
 import org.geotoolkit.gml.xml.v321.TimeNodeType;
 import org.geotoolkit.gml.xml.v321.TimePeriodType;
 import org.geotoolkit.gml.xml.v321.TimeTopologyComplexType;
+import org.geotoolkit.util.Utilities;
 import org.geotoolkit.xlink.xml.v100.ActuateType;
 import org.geotoolkit.xlink.xml.v100.ShowType;
 
@@ -84,12 +86,31 @@ public class TimeObjectPropertyType {
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     private String arcrole;
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
-    private String titleTemp;
+    private String title;
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     private ShowType show;
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     private ActuateType actuate;
 
+    public TimeObjectPropertyType() {
+        
+    }
+    
+    public TimeObjectPropertyType(final AbstractTimeObjectType value) {
+        final ObjectFactory factory = new ObjectFactory();
+        if (value instanceof TimePeriodType) {
+            this.abstractTimeObject = factory.createTimePeriod((TimePeriodType)value);
+        } else if (value instanceof TimeInstantType) {
+            this.abstractTimeObject = factory.createTimeInstant((TimeInstantType)value);
+        } else if (value instanceof TimeEdgeType) {
+            this.abstractTimeObject = factory.createTimeEdge((TimeEdgeType)value);
+        } else if (value instanceof TimeNodeType) {
+            this.abstractTimeObject = factory.createTimeNode((TimeNodeType)value);
+        } else if (value instanceof TimeTopologyComplexType) {
+            this.abstractTimeObject = factory.createTimeTopologyComplex((TimeTopologyComplexType)value);
+        }
+    }
+    
     /**
      * Gets the value of the abstractTimeObject property.
      * 
@@ -142,20 +163,6 @@ public class TimeObjectPropertyType {
     /**
      * Gets the value of the nilReason property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the nilReason property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getNilReason().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link String }
      * 
@@ -300,8 +307,8 @@ public class TimeObjectPropertyType {
      *     {@link String }
      *     
      */
-    public String getTitleTemp() {
-        return titleTemp;
+    public String getTitle() {
+        return title;
     }
 
     /**
@@ -312,8 +319,8 @@ public class TimeObjectPropertyType {
      *     {@link String }
      *     
      */
-    public void setTitleTemp(String value) {
-        this.titleTemp = value;
+    public void setTitle(String value) {
+        this.title = value;
     }
 
     /**
@@ -364,4 +371,45 @@ public class TimeObjectPropertyType {
         this.actuate = value;
     }
 
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof TimeObjectPropertyType) {
+            final TimeObjectPropertyType that = (TimeObjectPropertyType) object;
+
+            boolean feat = false;
+            if (this.abstractTimeObject == null && that.abstractTimeObject == null) {
+                feat = true;
+            } else if (this.abstractTimeObject != null && that.abstractTimeObject != null) {
+                feat = Utilities.equals(this.abstractTimeObject.getValue(),    that.abstractTimeObject.getValue());
+            }
+            return feat                                                             &&
+                   Utilities.equals(this.actuate,            that.actuate)          &&
+                   Utilities.equals(this.arcrole,            that.arcrole)          &&
+                   Utilities.equals(this.type,               that.type)             &&
+                   Utilities.equals(this.href,               that.href)             &&
+                   Utilities.equals(this.remoteSchema,       that.remoteSchema)     &&
+                   Utilities.equals(this.show,               that.show)             &&
+                   Utilities.equals(this.role,               that.role)             &&
+                   Utilities.equals(this.title,              that.title);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 47 * hash + (this.abstractTimeObject != null ? this.abstractTimeObject.hashCode() : 0);
+        hash = 47 * hash + (this.remoteSchema != null ? this.remoteSchema.hashCode() : 0);
+        hash = 47 * hash + (this.actuate != null ? this.actuate.hashCode() : 0);
+        hash = 47 * hash + (this.arcrole != null ? this.arcrole.hashCode() : 0);
+        hash = 47 * hash + (this.href != null ? this.href.hashCode() : 0);
+        hash = 47 * hash + (this.role != null ? this.role.hashCode() : 0);
+        hash = 47 * hash + (this.show != null ? this.show.hashCode() : 0);
+        hash = 47 * hash + (this.title != null ? this.title.hashCode() : 0);
+        hash = 47 * hash + (this.type != null ? this.type.hashCode() : 0);
+        return hash;
+    }
 }

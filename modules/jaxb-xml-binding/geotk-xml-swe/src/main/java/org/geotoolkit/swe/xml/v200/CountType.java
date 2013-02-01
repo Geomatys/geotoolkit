@@ -17,10 +17,11 @@
 
 package org.geotoolkit.swe.xml.v200;
 
-import java.math.BigInteger;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.swe.xml.AbstractCount;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -48,11 +49,18 @@ import javax.xml.bind.annotation.XmlType;
     "constraint",
     "value"
 })
-public class CountType extends AbstractSimpleComponentType {
+public class CountType extends AbstractSimpleComponentType implements AbstractCount {
 
     private AllowedValuesPropertyType constraint;
-    private BigInteger value;
+    private Integer value;
 
+    public CountType() {
+    }
+    
+    public CountType(final String definition, final int value) {
+        this.value = value;
+    }
+    
     /**
      * Gets the value of the constraint property.
      * 
@@ -61,6 +69,7 @@ public class CountType extends AbstractSimpleComponentType {
      *     {@link AllowedValuesPropertyType }
      *     
      */
+    @Override
     public AllowedValuesPropertyType getConstraint() {
         return constraint;
     }
@@ -82,10 +91,11 @@ public class CountType extends AbstractSimpleComponentType {
      * 
      * @return
      *     possible object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public BigInteger getValue() {
+    @Override
+    public Integer getValue() {
         return value;
     }
 
@@ -94,11 +104,53 @@ public class CountType extends AbstractSimpleComponentType {
      * 
      * @param value
      *     allowed object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public void setValue(BigInteger value) {
+    public void setValue(Integer value) {
         this.value = value;
     }
 
+    /**
+     * Verify if this entry is identical to specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+
+        if (object instanceof CountType && super.equals(object)) {
+            final CountType that = (CountType) object;
+            return Utilities.equals(this.constraint, that.constraint)     &&
+                   Utilities.equals(this.value,      that.value);
+        }
+        return false;
+    }
+
+    
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 47 * hash + super.hashCode();
+        hash = 47 * hash + (this.constraint != null ? this.constraint.hashCode() : 0);
+        hash = 47 * hash + (this.value != null ? this.value.hashCode() : 0);
+        return hash;
+    }
+
+    /**
+     * Retourne une representation de l'objet.
+     */
+    
+    @Override
+    public String toString() {
+        final StringBuilder s = new StringBuilder(super.toString());
+        if(constraint != null) {
+            s.append("constraint=").append(constraint).append('\n');
+        }
+        if(value != null) {
+            s.append("value=").append(value).append('\n');
+        }
+        return s.toString();
+    }
 }

@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlList;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.XMLGregorianCalendar;
+import org.geotoolkit.swe.xml.AbstractTimeRange;
 
 
 /**
@@ -58,7 +59,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
     "constraint",
     "value"
 })
-public class TimeRangeType extends AbstractSimpleComponentType {
+public class TimeRangeType extends AbstractSimpleComponentType implements AbstractTimeRange {
 
     @XmlElement(required = true)
     private UnitReference uom;
@@ -72,6 +73,15 @@ public class TimeRangeType extends AbstractSimpleComponentType {
     @XmlSchemaType(name = "anyURI")
     private String localFrame;
 
+    public TimeRangeType() {
+        
+    }
+    
+    public TimeRangeType(final String definition, final List<String> value) {
+        super(null, definition);
+        this.value = value;
+    }
+    
     /**
      * Gets the value of the uom property.
      * 
@@ -80,6 +90,7 @@ public class TimeRangeType extends AbstractSimpleComponentType {
      *     {@link UnitReference }
      *     
      */
+    @Override
     public UnitReference getUom() {
         return uom;
     }
@@ -123,25 +134,12 @@ public class TimeRangeType extends AbstractSimpleComponentType {
     /**
      * Gets the value of the value property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the value property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getValue().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link String }
      * 
      * 
      */
+    @Override
     public List<String> getValue() {
         if (value == null) {
             value = new ArrayList<String>();
@@ -157,8 +155,16 @@ public class TimeRangeType extends AbstractSimpleComponentType {
      *     {@link XMLGregorianCalendar }
      *     
      */
-    public XMLGregorianCalendar getReferenceTime() {
+    public XMLGregorianCalendar getReferenceTimeCalendar() {
         return referenceTime;
+    }
+    
+    @Override
+    public String getReferenceTime() {
+        if (referenceTime != null) {
+            return referenceTime.toXMLFormat();
+        }
+        return null;
     }
 
     /**
@@ -181,6 +187,7 @@ public class TimeRangeType extends AbstractSimpleComponentType {
      *     {@link String }
      *     
      */
+    @Override
     public String getLocalFrame() {
         return localFrame;
     }

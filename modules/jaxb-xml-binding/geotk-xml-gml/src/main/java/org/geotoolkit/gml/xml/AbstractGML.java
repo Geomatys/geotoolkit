@@ -16,8 +16,6 @@
  */
 package org.geotoolkit.gml.xml;
 
-import org.geotoolkit.gml.xml.v311.CodeType;
-
 /**
  *
  * @author Guilhem Legal (Geomatys)
@@ -39,5 +37,5 @@ public interface AbstractGML {
 
     Reference getDescriptionReference();
 
-    CodeType getParameterName();
+    Code getParameterName();
 }

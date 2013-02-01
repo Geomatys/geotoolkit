@@ -83,6 +83,7 @@ public class DataArrayType extends AbstractDataArrayType implements DataArray {
         return elementType;
     }
 
+    @Override
     public DataComponentPropertyType getPropertyElementType(){
         return elementType;
     }
@@ -97,6 +98,7 @@ public class DataArrayType extends AbstractDataArrayType implements DataArray {
     /**
      * Gets the value of the encoding property.
      */
+    @Override
     public AbstractEncodingType getEncoding() {
         if (encoding != null) {
             return encoding.getEncoding();
@@ -104,6 +106,7 @@ public class DataArrayType extends AbstractDataArrayType implements DataArray {
         return null;
     }
 
+    @Override
     public BlockEncodingPropertyType getPropertyEncoding(){
         return encoding;
     }
@@ -118,6 +121,7 @@ public class DataArrayType extends AbstractDataArrayType implements DataArray {
     /**
      * Gets the value of the values property.
      */
+    @Override
     public String getValues() {
 
         //TODO
@@ -127,6 +131,7 @@ public class DataArrayType extends AbstractDataArrayType implements DataArray {
     /**
      * Gets the value of the values property.
      */
+    @Override
     public DataValuePropertyType getDataValues() {
         return values;
     }
@@ -136,6 +141,11 @@ public class DataArrayType extends AbstractDataArrayType implements DataArray {
      */
     public void setValues(final DataValuePropertyType value) {
         this.values = value;
+    }
+
+    @Override
+    public void setValues(String values) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
 }

@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.v311.MeasureType;
 import org.geotoolkit.gml.xml.v311.SurfacePropertyType;
+import org.opengis.geometry.Geometry;
 
 
 /**
@@ -109,4 +110,11 @@ public class SamplingSurfaceType extends SpatiallyExtensiveSamplingFeatureType {
         this.area = value;
     }
 
+    @Override
+    public Geometry getGeometry() {
+       if (shape != null) {
+           return shape.getAbstractSurface();
+       }
+       return null;
+    }
 }

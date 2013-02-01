@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.gml.xml.v321.AbstractFeatureType;
+import org.geotoolkit.gml.xml.v321.AbstractTimeObjectType;
 import org.geotoolkit.gml.xml.v321.FeaturePropertyType;
 import org.geotoolkit.gml.xml.v321.ReferenceType;
 import org.geotoolkit.gml.xml.v321.TimeInstantPropertyType;
@@ -33,6 +34,9 @@ import org.geotoolkit.internal.jaxb.metadata.DQ_Element;
 import org.geotoolkit.internal.jaxb.metadata.direct.MetadataAdapter;
 import org.geotoolkit.observation.xml.AbstractObservation;
 import org.geotoolkit.sampling.xml.v200.SFSamplingFeatureType;
+import org.geotoolkit.swe.xml.v200.DataArrayPropertyType;
+import org.geotoolkit.util.ComparisonMode;
+import org.geotoolkit.util.Utilities;
 import org.opengis.metadata.Metadata;
 import org.opengis.metadata.quality.Element;
 import org.opengis.observation.Observation;
@@ -105,6 +109,53 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
     @XmlElement(required = true)
     private Object result;
 
+    
+    public OMObservationType() {
+    }
+    
+    public OMObservationType(final String name, final String type, final AbstractTimeObjectType phenomenonTime, 
+            final String procedure, final String observedProperty, final FeaturePropertyType foi, final Object result) {
+        super(null, name, null);
+        this.type = new ReferenceType(type);
+        if (phenomenonTime != null) {
+            this.phenomenonTime = new TimeObjectPropertyType(phenomenonTime);
+        }
+        if (procedure != null) {
+            this.procedure      = new OMProcessPropertyType(procedure);
+        }
+        this.observedProperty    = new ReferenceType(observedProperty);
+        this.featureOfInterest   = foi;
+        this.result = result;
+    }
+    
+    /**
+     * Build a clone of an observation
+     */
+    public OMObservationType(final OMObservationType observation) {
+        super(observation);
+        this.type                = observation.type;
+        this.metadata            = observation.metadata;
+        if (observation.relatedObservation != null) {
+            this.relatedObservation  = new ArrayList<ObservationContextPropertyType>(observation.relatedObservation);
+        }
+        this.phenomenonTime      = observation.phenomenonTime;
+        this.validTime           = observation.validTime;
+        this.resultTime          = observation.resultTime;
+        this.procedure           = observation.procedure;
+        if (observation.parameter != null) {
+            this.parameter       = new ArrayList<NamedValuePropertyType>(observation.parameter);
+        }
+        this.observedProperty    = observation.observedProperty;
+        this.featureOfInterest   = observation.featureOfInterest;
+        if (observation.resultQuality != null) {
+            this.resultQuality   = new ArrayList<Element>(observation.resultQuality);
+        }
+        if (observation.result instanceof DataArrayPropertyType) {
+            this.result = new DataArrayPropertyType((DataArrayPropertyType)observation.result);
+        } else {
+            this.result = observation.result;
+        }
+    }
     
     @Override
     public String getDefinition() {
@@ -197,6 +248,12 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
      */
     public void setPhenomenonTime(TimeObjectPropertyType value) {
         this.phenomenonTime = value;
+    }
+    
+    public void setPhenomenonTime(AbstractTimeObjectType value) {
+        if (value != null) {
+            this.phenomenonTime = new TimeObjectPropertyType(value);
+        }
     }
     
     @Override
@@ -334,7 +391,37 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
     
     @Override
     public Phenomenon getObservedProperty() {
-        throw new UnsupportedOperationException("there is no full Phenonon in O&M v2.0.0");
+        return new org.geotoolkit.swe.xml.Phenomenon() {
+
+            @Override
+            public String getName() {
+                if (observedProperty != null) {
+                    return observedProperty.getHref();
+                }
+                return null;
+            }
+            
+            @Override
+            public boolean equals(final Object obj) {
+                if (obj instanceof Phenomenon) {
+                    final org.geotoolkit.swe.xml.Phenomenon that = (org.geotoolkit.swe.xml.Phenomenon) obj;
+                    return Utilities.equals(this.getName(), that.getName());
+                }
+                return false;
+            }
+            
+            @Override
+            public String toString() {
+                return "[Anonymous Phenomenon] id:" + getId();
+            }
+
+            @Override
+            public int hashCode() {
+                int hash = 7;
+                hash = 7 * hash + (this.getName() != null ? this.getName().hashCode() : 0);
+                return hash;
+            }
+        };
     }
 
     /**
@@ -439,5 +526,102 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
     @Override
     public OMObservationType getTemporaryTemplate(final String temporaryName, final TemporalGeometricPrimitive time) {
         throw new UnsupportedOperationException("Not supported yet.");
+    }
+    
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder(super.toString());
+        if (featureOfInterest != null) {
+            sb.append("featureOfInterest:").append(featureOfInterest).append('\n');
+        }
+        if (metadata != null) {
+            sb.append("metadata:").append(metadata).append('\n');
+        }
+        if (observedProperty != null) {
+            sb.append("observedProperty:").append(observedProperty).append('\n');
+        }
+        if (parameter != null) {
+            sb.append("parameter:\n");
+            for (NamedValuePropertyType p: parameter) {
+                sb.append(p).append('\n');
+            }
+        }
+        if (phenomenonTime != null) {
+            sb.append("phenomenonTime:").append(phenomenonTime).append('\n');
+        }
+        if (procedure != null) {
+            sb.append("procedure:").append(procedure).append('\n');
+        }
+        if (relatedObservation != null) {
+            sb.append("relatedObservation:\n");
+            for (ObservationContextPropertyType p: relatedObservation) {
+                sb.append(p).append('\n');
+            }
+        }
+        if (result != null) {
+            sb.append("result:").append(result).append('\n');
+        }
+        if (resultQuality != null) {
+            sb.append("resultQuality:\n");
+            for (Element p: resultQuality) {
+                sb.append(p).append('\n');
+            }
+        }
+        if (resultTime != null) {
+            sb.append("resultTime:").append(resultTime).append('\n');
+        }
+        if (type != null) {
+            sb.append("type:").append(type).append('\n');
+        }
+        if (validTime != null) {
+            sb.append("validTime:").append(validTime).append('\n');
+        }
+        return sb.toString();
+    }
+    
+    /**
+     * Vérifie que cette station est identique à l'objet spécifié
+     */
+    @Override
+    public boolean equals(final Object object, final ComparisonMode mode) {
+        if (object == this) {
+            return true;
+        }
+
+        if (object instanceof OMObservationType && super.equals(object, mode)) {
+            final OMObservationType that = (OMObservationType) object;
+            return Utilities.equals(this.featureOfInterest,  that.featureOfInterest)   &&
+                   Utilities.equals(this.metadata,           that.metadata)   &&
+                   Utilities.equals(this.observedProperty,   that.observedProperty)   &&
+                   Utilities.equals(this.parameter,          that.parameter)   &&
+                   Utilities.equals(this.phenomenonTime,     that.phenomenonTime)   &&
+                   Utilities.equals(this.procedure,          that.procedure)   &&
+                   Utilities.equals(this.relatedObservation, that.relatedObservation)   &&
+                   Utilities.equals(this.result,             that.result)   &&
+                   Utilities.equals(this.resultQuality,      that.resultQuality)   &&
+                   Utilities.equals(this.resultTime,         that.resultTime)   &&
+                   Utilities.equals(this.type,               that.type)   &&
+                   Utilities.equals(this.validTime,          that.validTime);
+        } 
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 37 * hash + super.hashCode();
+        hash = 37 * hash + (this.featureOfInterest != null ? this.featureOfInterest.hashCode() : 0);
+        hash = 37 * hash + (this.metadata != null ? this.metadata.hashCode() : 0);
+        hash = 37 * hash + (this.observedProperty != null ? this.observedProperty.hashCode() : 0);
+        hash = 37 * hash + (this.parameter != null ? this.parameter.hashCode() : 0);
+        hash = 37 * hash + (this.phenomenonTime != null ? this.phenomenonTime.hashCode() : 0);
+        hash = 37 * hash + (this.procedure != null ? this.procedure.hashCode() : 0);
+        hash = 37 * hash + (this.relatedObservation != null ? this.relatedObservation.hashCode() : 0);
+        hash = 37 * hash + (this.result != null ? this.result.hashCode() : 0);
+        hash = 37 * hash + (this.resultQuality != null ? this.resultQuality.hashCode() : 0);
+        hash = 37 * hash + (this.resultTime != null ? this.resultTime.hashCode() : 0);
+        hash = 37 * hash + (this.type != null ? this.type.hashCode() : 0);
+        hash = 37 * hash + (this.validTime != null ? this.validTime.hashCode() : 0);
+        return hash;
     }
 }

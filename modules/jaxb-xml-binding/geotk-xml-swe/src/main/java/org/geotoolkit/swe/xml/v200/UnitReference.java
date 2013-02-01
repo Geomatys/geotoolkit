@@ -21,6 +21,10 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.gml.xml.v311.BaseUnitType;
+import org.geotoolkit.gml.xml.v311.UnitDefinitionType;
+import org.geotoolkit.swe.xml.UomProperty;
+import org.geotoolkit.util.Utilities;
 import org.geotoolkit.xlink.xml.v100.ActuateType;
 import org.geotoolkit.xlink.xml.v100.ShowType;
 import org.geotoolkit.xlink.xml.v100.TypeType;
@@ -46,7 +50,7 @@ import org.geotoolkit.xlink.xml.v100.TypeType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "UnitReference")
-public class UnitReference {
+public class UnitReference implements UomProperty {
 
     @XmlAttribute
     private String code;
@@ -59,12 +63,20 @@ public class UnitReference {
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     private String arcrole;
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
-    private String titleTemp;
+    private String title;
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     private ShowType show;
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     private ActuateType actuate;
 
+    public UnitReference() {
+        
+    }
+    
+    public UnitReference(final String code) {
+        this.code = code;
+    }
+    
     /**
      * Gets the value of the code property.
      * 
@@ -73,6 +85,7 @@ public class UnitReference {
      *     {@link String }
      *     
      */
+    @Override
     public String getCode() {
         return code;
     }
@@ -97,11 +110,12 @@ public class UnitReference {
      *     {@link TypeType }
      *     
      */
-    public TypeType getType() {
+    @Override
+    public String getType() {
         if (type == null) {
-            return TypeType.SIMPLE;
+            return TypeType.SIMPLE.toString();
         } else {
-            return type;
+            return type.toString();
         }
     }
 
@@ -125,6 +139,7 @@ public class UnitReference {
      *     {@link String }
      *     
      */
+    @Override
     public String getHref() {
         return href;
     }
@@ -149,6 +164,7 @@ public class UnitReference {
      *     {@link String }
      *     
      */
+    @Override
     public String getRole() {
         return role;
     }
@@ -173,6 +189,7 @@ public class UnitReference {
      *     {@link String }
      *     
      */
+    @Override
     public String getArcrole() {
         return arcrole;
     }
@@ -197,8 +214,9 @@ public class UnitReference {
      *     {@link String }
      *     
      */
-    public String getTitleTemp() {
-        return titleTemp;
+    @Override
+    public String getTitle() {
+        return title;
     }
 
     /**
@@ -209,8 +227,8 @@ public class UnitReference {
      *     {@link String }
      *     
      */
-    public void setTitleTemp(String value) {
-        this.titleTemp = value;
+    public void setTitle(String value) {
+        this.title = value;
     }
 
     /**
@@ -221,8 +239,12 @@ public class UnitReference {
      *     {@link ShowType }
      *     
      */
-    public ShowType getShow() {
-        return show;
+    @Override
+    public String getShow() {
+        if (show != null) {
+            return show.toString();
+        }
+        return null;
     }
 
     /**
@@ -245,8 +267,12 @@ public class UnitReference {
      *     {@link ActuateType }
      *     
      */
-    public ActuateType getActuate() {
-        return actuate;
+    @Override
+    public String getActuate() {
+        if (actuate != null) {
+            return actuate.toString();
+        }
+        return null;
     }
 
     /**
@@ -261,4 +287,85 @@ public class UnitReference {
         this.actuate = value;
     }
 
+    @Override
+    public UnitDefinitionType getUnitDefinition() {
+        return null;
+    }
+
+    @Override
+    public BaseUnitType getBaseUnit() {
+        return null;
+    }
+
+    @Override
+    public String getRemoteSchema() {
+        return null;
+    }
+
+    /**
+     * Verify if this entry is identical to specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+
+        if (object instanceof UnitReference) {
+            final UnitReference that = (UnitReference) object;
+            return Utilities.equals(this.actuate,            that.actuate)          &&
+                   Utilities.equals(this.arcrole,            that.arcrole)          &&
+                   Utilities.equals(this.type,               that.type)             &&
+                   Utilities.equals(this.href,               that.href)             &&
+                   Utilities.equals(this.show,               that.show)             &&
+                   Utilities.equals(this.role,               that.role)             &&
+                   Utilities.equals(this.title,              that.title);
+        }
+        return false;
+    }
+
+    
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 47 * hash + (this.actuate != null ? this.actuate.hashCode() : 0);
+        hash = 47 * hash + (this.arcrole != null ? this.arcrole.hashCode() : 0);
+        hash = 47 * hash + (this.href != null ? this.href.hashCode() : 0);
+        hash = 47 * hash + (this.role != null ? this.role.hashCode() : 0);
+        hash = 47 * hash + (this.show != null ? this.show.hashCode() : 0);
+        hash = 47 * hash + (this.title != null ? this.title.hashCode() : 0);
+        hash = 47 * hash + (this.type != null ? this.type.hashCode() : 0);
+        return hash;
+    }
+
+    /**
+     * Retourne une representation de l'objet.
+     */
+    
+    @Override
+    public String toString() {
+        final StringBuilder s = new StringBuilder();
+        if(actuate != null) {
+            s.append("actuate=").append(actuate).append('\n');
+        }
+        if(arcrole != null) {
+            s.append("arcrole=").append(arcrole).append('\n');
+        }
+        if(href != null) {
+            s.append("href=").append(href).append('\n');
+        }
+        if(role != null) {
+            s.append("role=").append(role).append('\n');
+        }
+        if(show != null) {
+            s.append("show=").append(show).append('\n');
+        }
+        if(title != null) {
+            s.append("title=").append(title).append('\n');
+        }
+        if(type != null) {
+            s.append("type=").append(type).append('\n');
+        }
+        return s.toString();
+    }
 }

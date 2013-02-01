@@ -26,6 +26,7 @@ import org.geotoolkit.gml.xml.FeatureCollection;
 import org.geotoolkit.gml.xml.FeatureProperty;
 import org.geotoolkit.gml.xml.GMLXmlFactory;
 import org.geotoolkit.gml.xml.Point;
+import org.geotoolkit.gml.xml.TimeIndeterminateValueType;
 import org.geotoolkit.ows.xml.AbstractOperationsMetadata;
 import org.geotoolkit.ows.xml.AbstractServiceIdentification;
 import org.geotoolkit.ows.xml.AbstractServiceProvider;
@@ -42,7 +43,9 @@ import org.opengis.geometry.DirectPosition;
 import org.opengis.observation.Observation;
 import org.opengis.observation.ObservationCollection;
 import org.opengis.observation.sampling.SamplingFeature;
+import org.opengis.temporal.Instant;
 import org.opengis.temporal.Period;
+import org.opengis.temporal.Position;
 import org.opengis.temporal.TemporalGeometricPrimitive;
 
 /**
@@ -225,11 +228,25 @@ public class SOSXmlFactory {
     
     public static ObservationCollection buildObservationCollection(final String version, final String nillValue) {
         if ("2.0.0".equals(version)) {
-            
             return new org.geotoolkit.sos.xml.v200.GetObservationResponseType();
         } else if ("1.0.0".equals(version)) {
-           
             return new org.geotoolkit.observation.xml.v100.ObservationCollectionType(nillValue);
+        } else {
+            throw new IllegalArgumentException("unexpected version number:" + version);
+        }
+    }
+    
+    public static Observation cloneObservation(final String version, final Observation observation) {
+        if ("2.0.0".equals(version)) {
+            if (!(observation instanceof org.geotoolkit.observation.xml.v200.OMObservationType)) {
+                throw new IllegalArgumentException("unexpected object version for observation");
+            }
+            return new org.geotoolkit.observation.xml.v200.OMObservationType((org.geotoolkit.observation.xml.v200.OMObservationType)observation);
+        } else if ("1.0.0".equals(version)) {
+            if (!(observation instanceof org.geotoolkit.observation.xml.v100.ObservationType)) {
+                throw new IllegalArgumentException("unexpected object version for observation");
+            }
+            return new org.geotoolkit.observation.xml.v100.ObservationType((org.geotoolkit.observation.xml.v100.ObservationType)observation);
         } else {
             throw new IllegalArgumentException("unexpected version number:" + version);
         }
@@ -273,6 +290,47 @@ public class SOSXmlFactory {
             return GMLXmlFactory.createTimePeriod("3.2.1", dateBegin, dateEnd);
         } else if ("1.0.0".equals(version)) {
             return GMLXmlFactory.createTimePeriod("3.1.1", dateBegin, dateEnd);
+        } else {
+            throw new IllegalArgumentException("unexpected version number:" + version);
+        }
+    }
+    
+    public static Period buildTimePeriod(final String version, final TimeIndeterminateValueType value, final Position dateEnd) {
+        if ("2.0.0".equals(version)) {
+            return GMLXmlFactory.createTimePeriod("3.2.1", value, dateEnd);
+        } else if ("1.0.0".equals(version)) {
+            return GMLXmlFactory.createTimePeriod("3.1.1", value, dateEnd);
+        } else {
+            throw new IllegalArgumentException("unexpected version number:" + version);
+        }
+    }
+    
+    public static Period buildTimePeriod(final String version, final Position dateBegin, final Position dateEnd) {
+        if ("2.0.0".equals(version)) {
+            return GMLXmlFactory.createTimePeriod("3.2.1", dateBegin, dateEnd);
+        } else if ("1.0.0".equals(version)) {
+            return GMLXmlFactory.createTimePeriod("3.1.1", dateBegin, dateEnd);
+        } else {
+            throw new IllegalArgumentException("unexpected version number:" + version);
+        }
+    }
+    
+    
+    public static Instant buildTimeInstant(final String version, final Position date) {
+        if ("2.0.0".equals(version)) {
+            return GMLXmlFactory.createTimeInstant("3.2.1", date);
+        } else if ("1.0.0".equals(version)) {
+            return GMLXmlFactory.createTimeInstant("3.1.1", date);
+        } else {
+            throw new IllegalArgumentException("unexpected version number:" + version);
+        }
+    }
+    
+    public static Instant buildTimeInstant(final String version, final String date) {
+        if ("2.0.0".equals(version)) {
+            return GMLXmlFactory.createTimeInstant("3.2.1", date);
+        } else if ("1.0.0".equals(version)) {
+            return GMLXmlFactory.createTimeInstant("3.1.1", date);
         } else {
             throw new IllegalArgumentException("unexpected version number:" + version);
         }

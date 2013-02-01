@@ -28,16 +28,17 @@ import org.geotoolkit.gml.xml.v321.BoundingShapeType;
 import org.geotoolkit.gml.xml.v321.EnvelopeType;
 import org.geotoolkit.gml.xml.v321.FeaturePropertyType;
 import org.geotoolkit.gml.xml.v321.ReferenceType;
+import org.geotoolkit.sampling.xml.SamplingFeature;
 import org.geotoolkit.internal.jaxb.metadata.LI_Lineage;
 import org.geotoolkit.observation.xml.v200.NamedValuePropertyType;
 import org.geotoolkit.observation.xml.v200.OMObservationPropertyType;
 import org.geotoolkit.observation.xml.v200.OMObservationType;
 import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.util.Utilities;
+import org.opengis.geometry.Geometry;
 import org.opengis.metadata.lineage.Lineage;
 import org.opengis.observation.AnyFeature;
 import org.opengis.observation.Observation;
-import org.opengis.observation.sampling.SamplingFeature;
 import org.opengis.observation.sampling.SamplingFeatureRelation;
 import org.opengis.observation.sampling.SurveyProcedure;
 
@@ -257,6 +258,11 @@ public class SFSamplingFeatureType extends AbstractFeatureType implements Sampli
         throw new UnsupportedOperationException("Not supported in O&M 2.0.0");
     }
 
+    @Override
+    public Geometry getGeometry() {
+        return null;
+    }
+    
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder(super.toString()).append("\n");

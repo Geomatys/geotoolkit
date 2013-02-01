@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.swe.xml.AbstractQualityProperty;
 import org.geotoolkit.xlink.xml.v100.ActuateType;
 import org.geotoolkit.xlink.xml.v100.ShowType;
 import org.geotoolkit.xlink.xml.v100.TypeType;
@@ -54,7 +55,7 @@ import org.geotoolkit.xlink.xml.v100.TypeType;
     "category",
     "text"
 })
-public class QualityPropertyType {
+public class QualityPropertyType implements AbstractQualityProperty {
 
     @XmlElement(name = "Quantity")
     private QuantityType quantity;
@@ -73,7 +74,7 @@ public class QualityPropertyType {
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     private String arcrole;
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
-    private String titleTemp;
+    private String title;
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     private ShowType show;
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
@@ -87,6 +88,7 @@ public class QualityPropertyType {
      *     {@link QuantityType }
      *     
      */
+    @Override
     public QuantityType getQuantity() {
         return quantity;
     }
@@ -111,6 +113,7 @@ public class QualityPropertyType {
      *     {@link QuantityRangeType }
      *     
      */
+    @Override
     public QuantityRangeType getQuantityRange() {
         return quantityRange;
     }
@@ -135,6 +138,7 @@ public class QualityPropertyType {
      *     {@link CategoryType }
      *     
      */
+    @Override
     public CategoryType getCategory() {
         return category;
     }
@@ -159,6 +163,7 @@ public class QualityPropertyType {
      *     {@link TextType }
      *     
      */
+    @Override
     public TextType getText() {
         return text;
     }
@@ -183,11 +188,11 @@ public class QualityPropertyType {
      *     {@link TypeType }
      *     
      */
-    public TypeType getType() {
+    public String getType() {
         if (type == null) {
-            return TypeType.SIMPLE;
+            return TypeType.SIMPLE.toString();
         } else {
-            return type;
+            return type.toString();
         }
     }
 
@@ -211,6 +216,7 @@ public class QualityPropertyType {
      *     {@link String }
      *     
      */
+    @Override
     public String getHref() {
         return href;
     }
@@ -235,6 +241,7 @@ public class QualityPropertyType {
      *     {@link String }
      *     
      */
+    @Override
     public String getRole() {
         return role;
     }
@@ -259,6 +266,7 @@ public class QualityPropertyType {
      *     {@link String }
      *     
      */
+    @Override
     public String getArcrole() {
         return arcrole;
     }
@@ -283,8 +291,9 @@ public class QualityPropertyType {
      *     {@link String }
      *     
      */
-    public String getTitleTemp() {
-        return titleTemp;
+    @Override
+    public String getTitle() {
+        return title;
     }
 
     /**
@@ -295,8 +304,8 @@ public class QualityPropertyType {
      *     {@link String }
      *     
      */
-    public void setTitleTemp(String value) {
-        this.titleTemp = value;
+    public void setTitle(String value) {
+        this.title = value;
     }
 
     /**
@@ -307,8 +316,12 @@ public class QualityPropertyType {
      *     {@link ShowType }
      *     
      */
-    public ShowType getShow() {
-        return show;
+    @Override
+    public String getShow() {
+        if (show != null) {
+            return show.toString();
+        }
+        return null;
     }
 
     /**
@@ -331,8 +344,12 @@ public class QualityPropertyType {
      *     {@link ActuateType }
      *     
      */
-    public ActuateType getActuate() {
-        return actuate;
+    @Override
+    public String getActuate() {
+        if (actuate != null) {
+            return actuate.toString();
+        }
+        return null;
     }
 
     /**
@@ -347,4 +364,8 @@ public class QualityPropertyType {
         this.actuate = value;
     }
 
+    @Override
+    public String getRemoteSchema() {
+        return null;
+    }
 }

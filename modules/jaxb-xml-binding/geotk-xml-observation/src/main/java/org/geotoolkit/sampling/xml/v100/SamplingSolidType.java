@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.v311.MeasureType;
 import org.geotoolkit.gml.xml.v311.SolidPropertyType;
+import org.opengis.geometry.Geometry;
 
 /**
  * A "SamplingSolid" is an identified 3-D spatial feature used in sampling.
@@ -106,4 +107,11 @@ public class SamplingSolidType extends SpatiallyExtensiveSamplingFeatureType {
         this.volume = value;
     }
 
+    @Override
+    public Geometry getGeometry() {
+       if (shape != null) {
+           return shape.getAbstractSolid();
+       }
+       return null;
+    }
 }

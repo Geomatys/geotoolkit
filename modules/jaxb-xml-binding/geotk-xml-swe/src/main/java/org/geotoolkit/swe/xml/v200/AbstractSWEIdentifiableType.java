@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -62,6 +63,20 @@ public class AbstractSWEIdentifiableType extends AbstractSWEType {
     private String label;
     private String description;
 
+    public AbstractSWEIdentifiableType() {
+        
+    }
+    
+    public AbstractSWEIdentifiableType(final String id) {
+        super(id);
+    }
+    
+    public AbstractSWEIdentifiableType(final AbstractSWEIdentifiableType that) {
+        super(that);
+        this.description = that.description;
+        this.identifier  = that.identifier;
+        this.label       = that.label;
+    }
     /**
      * Gets the value of the identifier property.
      * 
@@ -134,4 +149,53 @@ public class AbstractSWEIdentifiableType extends AbstractSWEType {
         this.description = value;
     }
 
+    public void setName(final String name) {
+        //do nothing
+    }
+    
+    public String getName() {
+        return null;
+    }
+    
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof AbstractSWEIdentifiableType && super.equals(object)) {
+            final AbstractSWEIdentifiableType that = (AbstractSWEIdentifiableType) object;
+
+            return Utilities.equals(this.description, that.description) &&
+                   Utilities.equals(this.label,       that.label) &&
+                   Utilities.equals(this.identifier,  that.identifier);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 47 * hash + (this.description != null ? this.description.hashCode() : 0);
+        hash = 47 * hash + (this.label != null ? this.label.hashCode() : 0);
+        hash = 47 * hash + (this.identifier != null ? this.identifier.hashCode() : 0);
+        return hash;
+    }
+
+    /**
+     * Retourne une representation de l'objet.
+     */
+    @Override
+    public String toString() {
+        final StringBuilder s = new StringBuilder(super.toString());
+        if (description != null) {
+            s.append("description=").append(description).append('\n');
+        }
+        if (label != null) {
+            s.append("label=").append(label).append('\n');
+        }
+        if (identifier != null) {
+            s.append("identifier=").append(identifier).append('\n');
+        }
+        return s.toString();
+    }
 }

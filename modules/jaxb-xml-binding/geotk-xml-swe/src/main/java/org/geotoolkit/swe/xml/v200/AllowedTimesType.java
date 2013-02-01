@@ -17,7 +17,6 @@
 
 package org.geotoolkit.swe.xml.v200;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.JAXBElement;
@@ -60,7 +59,7 @@ public class AllowedTimesType extends AbstractSWEType {
     private List<JAXBElement<List<String>>> value;
     @XmlElementRef(name = "interval", namespace = "http://www.opengis.net/swe/2.0", type = JAXBElement.class)
     private List<JAXBElement<List<String>>> interval;
-    private BigInteger significantFigures;
+    private Integer significantFigures;
 
     /**
      * Gets the value of the value property.
@@ -95,10 +94,10 @@ public class AllowedTimesType extends AbstractSWEType {
      * 
      * @return
      *     possible object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public BigInteger getSignificantFigures() {
+    public Integer getSignificantFigures() {
         return significantFigures;
     }
 
@@ -107,10 +106,10 @@ public class AllowedTimesType extends AbstractSWEType {
      * 
      * @param value
      *     allowed object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public void setSignificantFigures(BigInteger value) {
+    public void setSignificantFigures(Integer value) {
         this.significantFigures = value;
     }
 

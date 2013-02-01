@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.v321.ReferenceType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -111,4 +112,28 @@ public class ObservationContextType {
         this.relatedObservation = value;
     }
 
+    /**
+     * Vérifie que cette station est identique à l'objet spécifié
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+
+        if (object instanceof ObservationContextType && super.equals(object)) {
+            final ObservationContextType that = (ObservationContextType) object;
+            return Utilities.equals(this.relatedObservation,  that.relatedObservation) &&
+                   Utilities.equals(this.role,                that.role);
+        } 
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 37 * hash + (this.relatedObservation != null ? this.relatedObservation.hashCode() : 0);
+        hash = 37 * hash + (this.role != null ? this.role.hashCode() : 0);
+        return hash;
+    }
 }

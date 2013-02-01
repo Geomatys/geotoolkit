@@ -92,6 +92,7 @@ public class TimeType extends AbstractDataComponentType implements AbstractTime 
     /**
      * Gets the value of the uom property.
      */
+    @Override
     public UomPropertyType getUom() {
         return uom;
     }
@@ -100,6 +101,7 @@ public class TimeType extends AbstractDataComponentType implements AbstractTime 
      * Gets the value of the value property.
      * 
      */
+    @Override
     public List<String> getValue() {
         if (value == null) {
             value = new ArrayList<String>();
@@ -110,6 +112,7 @@ public class TimeType extends AbstractDataComponentType implements AbstractTime 
     /**
      * Gets the value of the localFrame property.
      */
+    @Override
     public String getLocalFrame() {
         return localFrame;
     }
@@ -117,6 +120,7 @@ public class TimeType extends AbstractDataComponentType implements AbstractTime 
     /**
      * Gets the value of the referenceFrame property.
      */
+    @Override
     public String getReferenceFrame() {
         return referenceFrame;
     }
@@ -124,6 +128,7 @@ public class TimeType extends AbstractDataComponentType implements AbstractTime 
     /**
      * Gets the value of the referenceTime property.
      */
+    @Override
     public String getReferenceTime() {
         return referenceTime;
     }
@@ -141,8 +146,8 @@ public class TimeType extends AbstractDataComponentType implements AbstractTime 
 
             boolean valueEqorEmpty = Utilities.equals(this.value, that.value);
             if (!valueEqorEmpty) {
-                if (this.value == null && (that.value != null && that.value.size() == 0) ||
-                    that.value == null && (this.value != null && this.value.size() == 0)) {
+                if (this.value == null && (that.value != null && that.value.isEmpty()) ||
+                    that.value == null && (this.value != null && this.value.isEmpty())) {
                     valueEqorEmpty = true;
                 }
             }
@@ -169,13 +174,15 @@ public class TimeType extends AbstractDataComponentType implements AbstractTime 
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder(super.toString()).append('\n');
-        if (localFrame != null)
+        if (localFrame != null) {
             s.append("localFrame:").append(localFrame).append('\n');
-        if (referenceFrame != null)
+        }
+        if (referenceFrame != null) {
             s.append("referenceFrame:").append(referenceFrame).append('\n');
-        if (referenceTime != null)
+        }
+        if (referenceTime != null) {
             s.append("referenceTime:").append(referenceTime).append('\n');
-        
+        }
         if (value != null) {
             s.append("value:").append('\n');
             for (String ss:value){

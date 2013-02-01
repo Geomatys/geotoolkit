@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlSchemaType;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.FeatureProperty;
 import org.geotoolkit.util.Utilities;
@@ -60,6 +61,13 @@ public class FeaturePropertyType implements FeatureProperty {
 
     @XmlElementRef(name = "AbstractFeature", namespace = "http://www.opengis.net/gml/3.2", type = JAXBElement.class)
     private JAXBElement<? extends AbstractFeatureType> abstractFeature;
+    
+    /**
+     * Allow to record the feature when its in href mode
+     */
+    @XmlTransient
+    AbstractFeatureType  hiddenFeature;
+    
     @XmlAttribute
     private java.lang.Boolean owns;
     @XmlAttribute
@@ -98,6 +106,18 @@ public class FeaturePropertyType implements FeatureProperty {
     }
     
     /**
+     * Set the feature into href mode.
+     */
+    @Override
+    public void setToHref() {
+        if (abstractFeature != null && abstractFeature.getValue() != null) {
+            this.href       = abstractFeature.getValue().getName();
+            hiddenFeature   = abstractFeature.getValue();
+            abstractFeature = null;
+        }
+    }
+    
+    /**
      * Gets the value of the abstractFeature property.
      * 
      * @return
@@ -124,6 +144,8 @@ public class FeaturePropertyType implements FeatureProperty {
     public AbstractFeatureType getAbstractFeature() {
         if (abstractFeature != null) {
             return abstractFeature.getValue();
+        }  else if (hiddenFeature != null) {
+            return hiddenFeature;
         }
         return null;
     }

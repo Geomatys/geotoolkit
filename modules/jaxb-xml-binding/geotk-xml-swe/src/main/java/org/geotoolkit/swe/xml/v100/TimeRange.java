@@ -17,6 +17,7 @@
 package org.geotoolkit.swe.xml.v100;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -90,8 +91,8 @@ public class TimeRange extends AbstractDataComponentType implements AbstractTime
            /* if (q.getConstraint() != null) {
                 this.constraint = new AllowedValuesPropertyType(q.getConstraint());
             }*/
-            if (q.getQuality() != null) {
-                this.quality = new QualityPropertyType(q.getQuality());
+            if (q.getQuality() != null && !q.getQuality().isEmpty()) {
+                this.quality = new QualityPropertyType(q.getQuality().get(0));
             }
             this.referenceFrame = q.getReferenceFrame();
             this.referenceTime  = q.getReferenceTime();
@@ -106,6 +107,7 @@ public class TimeRange extends AbstractDataComponentType implements AbstractTime
     /**
      * Gets the value of the uom property.
      */
+    @Override
     public UomPropertyType getUom() {
         return uom;
     }
@@ -134,8 +136,12 @@ public class TimeRange extends AbstractDataComponentType implements AbstractTime
     /**
      * Gets the value of the quality property.
      */
-    public QualityPropertyType getQuality() {
-        return quality;
+    @Override
+    public List<QualityPropertyType> getQuality() {
+        if (quality != null) {
+            return Arrays.asList(quality);
+        }
+        return null;
     }
 
     /**
@@ -148,6 +154,7 @@ public class TimeRange extends AbstractDataComponentType implements AbstractTime
     /**
      * Gets the value of the value property.
      */
+    @Override
     public List<String> getValue() {
         if (value == null) {
             value = new ArrayList<String>();
@@ -175,6 +182,7 @@ public class TimeRange extends AbstractDataComponentType implements AbstractTime
     /**
      * Gets the value of the referenceTime property.
      */
+    @Override
     public String getReferenceTime() {
         return referenceTime;
     }
@@ -189,6 +197,7 @@ public class TimeRange extends AbstractDataComponentType implements AbstractTime
     /**
      * Gets the value of the referenceFrame property.
      */
+    @Override
     public String getReferenceFrame() {
         return referenceFrame;
     }
@@ -203,6 +212,7 @@ public class TimeRange extends AbstractDataComponentType implements AbstractTime
     /**
      * Gets the value of the localFrame property.
      */
+    @Override
     public String getLocalFrame() {
         return localFrame;
     }

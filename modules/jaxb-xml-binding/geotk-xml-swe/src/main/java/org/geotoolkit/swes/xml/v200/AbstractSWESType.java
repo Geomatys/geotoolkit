@@ -195,4 +195,30 @@ public abstract class AbstractSWESType {
         this.id = value;
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("[").append(this.getClass().getSimpleName()).append("]\n");
+        if (id != null) {
+            sb.append("id:").append(id).append('\n');
+        }
+        if (identifier != null) {
+            sb.append("identifier:").append(identifier).append('\n');
+        }
+        if (description != null) {
+            sb.append("description:").append(description).append('\n');
+        }
+        if (name != null) {
+            sb.append("name:\n");
+            for (CodeType foit : name) {
+                sb.append(foit).append('\n');
+            }
+        }
+        if (extension != null) {
+            sb.append("extension:\n");
+            for (Object foit : extension) {
+                sb.append(foit).append('\n');
+            }
+        }
+        return sb.toString();
+    }
 }

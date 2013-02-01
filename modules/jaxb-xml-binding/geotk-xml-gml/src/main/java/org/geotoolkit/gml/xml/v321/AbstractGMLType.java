@@ -103,7 +103,6 @@ public abstract class AbstractGMLType extends AbstractMetadata implements Abstra
     }
     
     public AbstractGMLType(final AbstractGML that) {
-        super(that);
         if (that != null) {
             if (that.getDescription() != null) {
                 this.description = new StringOrRefType(that.getDescription());

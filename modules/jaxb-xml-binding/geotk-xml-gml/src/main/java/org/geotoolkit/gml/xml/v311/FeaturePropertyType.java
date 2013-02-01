@@ -114,6 +114,7 @@ public class FeaturePropertyType implements FeatureProperty {
     /**
      * Set the feature into href mode.
      */
+    @Override
     public void setToHref() {
         if (abstractFeature != null && abstractFeature.getValue() != null) {
             this.href       = abstractFeature.getValue().getName();

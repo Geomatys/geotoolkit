@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.v321.ReferenceType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -107,4 +108,25 @@ public class NamedValueType {
         this.value = value;
     }
 
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof NamedValueType) {
+            final NamedValueType that = (NamedValueType) object;
+
+            return Utilities.equals(this.name,   that.name) &&
+                   Utilities.equals(this.value,  that.value);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 47 * hash + (this.name != null ? this.name.hashCode() : 0);
+        hash = 47 * hash + (this.value != null ? this.value.hashCode() : 0);
+        return hash;
+    }
 }

@@ -19,9 +19,11 @@ package org.geotoolkit.swe.xml.v200;
 
 import java.util.ArrayList;
 import java.util.List;
+import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.swe.xml.AbstractAllowedTokens;
 
 
 /**
@@ -49,7 +51,7 @@ import javax.xml.bind.annotation.XmlType;
     "value",
     "pattern"
 })
-public class AllowedTokensType extends AbstractSWEType {
+public class AllowedTokensType extends AbstractSWEType implements AbstractAllowedTokens {
 
     private List<String> value;
     private String pattern;
@@ -93,4 +95,8 @@ public class AllowedTokensType extends AbstractSWEType {
         this.pattern = value;
     }
 
+    @Override
+    public List<JAXBElement<List<String>>> getValueList() {
+        return null;
+    }
 }

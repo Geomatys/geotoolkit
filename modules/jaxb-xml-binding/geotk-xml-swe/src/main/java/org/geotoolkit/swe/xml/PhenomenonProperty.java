@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2008 - 2010, Geomatys
+ *    (C) 2013, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -14,26 +14,16 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-
 package org.geotoolkit.swe.xml;
-
-import java.util.List;
 
 /**
  *
- * @author Mehdi Sidhoum (Geomatys).
+ * @author Guilhem Legal (Geomatys)
+ * @module pending
  */
-public interface AbstractCategory extends AbstractDataComponent {
-
-    public AbstractCodeSpaceProperty getCodeSpace();
-
-    public List<? extends AbstractQualityProperty> getQuality();
-
-    public String getValue();
-
-    public String getReferenceFrame();
-
-    public String getAxisID();
-
-    public AbstractAllowedTokensProperty getConstraint();
+public interface PhenomenonProperty {
+ 
+    void setToHref();
+    
+    Phenomenon getPhenomenon();
 }

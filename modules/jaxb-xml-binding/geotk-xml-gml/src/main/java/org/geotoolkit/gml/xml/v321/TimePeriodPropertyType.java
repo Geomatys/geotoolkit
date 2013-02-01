@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -370,4 +371,39 @@ public class TimePeriodPropertyType implements Serializable {
         this.owns = value;
     }
 
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof TimePeriodPropertyType) {
+            final TimePeriodPropertyType that = (TimePeriodPropertyType) object;
+
+            return Utilities.equals(this.timePeriod,         that.timePeriod)      &&
+                   Utilities.equals(this.actuate,            that.actuate)          &&
+                   Utilities.equals(this.arcrole,            that.arcrole)          &&
+                   Utilities.equals(this.type,               that.type)             &&
+                   Utilities.equals(this.href,               that.href)             &&
+                   Utilities.equals(this.remoteSchema,       that.remoteSchema)     &&
+                   Utilities.equals(this.show,               that.show)             &&
+                   Utilities.equals(this.role,               that.role)             &&
+                   Utilities.equals(this.title,              that.title);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 47 * hash + (this.timePeriod != null ? this.timePeriod.hashCode() : 0);
+        hash = 47 * hash + (this.remoteSchema != null ? this.remoteSchema.hashCode() : 0);
+        hash = 47 * hash + (this.actuate != null ? this.actuate.hashCode() : 0);
+        hash = 47 * hash + (this.arcrole != null ? this.arcrole.hashCode() : 0);
+        hash = 47 * hash + (this.href != null ? this.href.hashCode() : 0);
+        hash = 47 * hash + (this.role != null ? this.role.hashCode() : 0);
+        hash = 47 * hash + (this.show != null ? this.show.hashCode() : 0);
+        hash = 47 * hash + (this.title != null ? this.title.hashCode() : 0);
+        hash = 47 * hash + (this.type != null ? this.type.hashCode() : 0);
+        return hash;
+    }
 }

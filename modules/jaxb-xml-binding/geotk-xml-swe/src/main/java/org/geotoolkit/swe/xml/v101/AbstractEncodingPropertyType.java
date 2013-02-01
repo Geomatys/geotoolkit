@@ -193,6 +193,7 @@ public class AbstractEncodingPropertyType implements AbstractEncodingProperty {
         
     }
     
+    @Override
     public void setToHref() {
         if (encoding != null) {
             this.href = encoding.getValue().getId();
@@ -204,6 +205,7 @@ public class AbstractEncodingPropertyType implements AbstractEncodingProperty {
     /**
      * Gets the value of the encoding property.
      */
+    @Override
     public AbstractEncodingType getEncoding() {
         if (encoding != null) {
             return encoding.getValue();
@@ -216,6 +218,7 @@ public class AbstractEncodingPropertyType implements AbstractEncodingProperty {
     /**
      * Gets the value of the remoteSchema property.
      */
+    @Override
     public String getRemoteSchema() {
         return remoteSchema;
     }
@@ -223,6 +226,7 @@ public class AbstractEncodingPropertyType implements AbstractEncodingProperty {
     /**
      * Gets the value of the type property.
      */
+    @Override
     public String getType() {
         return type;
     }
@@ -230,6 +234,7 @@ public class AbstractEncodingPropertyType implements AbstractEncodingProperty {
     /**
      * Gets the value of the href property.
      */
+    @Override
     public String getHref() {
         return href;
     }
@@ -237,6 +242,7 @@ public class AbstractEncodingPropertyType implements AbstractEncodingProperty {
     /**
      * Gets the value of the role property.
      */
+    @Override
     public String getRole() {
         return role;
     }
@@ -244,6 +250,7 @@ public class AbstractEncodingPropertyType implements AbstractEncodingProperty {
     /**
      * Gets the value of the arcrole property.
      */
+    @Override
     public String getArcrole() {
         return arcrole;
     }
@@ -251,6 +258,7 @@ public class AbstractEncodingPropertyType implements AbstractEncodingProperty {
     /**
      * Gets the value of the title property.
      */
+    @Override
     public String getTitle() {
         return title;
     }
@@ -258,6 +266,7 @@ public class AbstractEncodingPropertyType implements AbstractEncodingProperty {
     /**
      * Gets the value of the show property.
      */
+    @Override
     public String getShow() {
         return show;
     }
@@ -265,6 +274,7 @@ public class AbstractEncodingPropertyType implements AbstractEncodingProperty {
     /**
      * Gets the value of the actuate property.
      */
+    @Override
     public String getActuate() {
         return actuate;
     }
@@ -280,24 +290,19 @@ public class AbstractEncodingPropertyType implements AbstractEncodingProperty {
 
         if (object instanceof AbstractEncodingPropertyType) {
             final AbstractEncodingPropertyType that = (AbstractEncodingPropertyType) object;
-            boolean enc = false;
+            final boolean enc;
             if (this.encoding != null && that.encoding != null) {
                 enc = Utilities.equals(this.encoding.getValue(), that.encoding.getValue());
-                //System.out.println("encoding NOT NULL :" + pheno);
             } else {
                 enc = (this.encoding == null && that.encoding == null);
-                //System.out.println("encoding NULL :" + pheno);
             }
 
-            boolean hiddenEnc = false;
+            final boolean hiddenEnc;
             if (this.hiddenEncoding != null && that.hiddenEncoding != null) {
                 hiddenEnc = Utilities.equals(this.hiddenEncoding.getValue(), that.hiddenEncoding.getValue());
-                //System.out.println("feature NOT NULL :" + pheno);
             } else {
                 hiddenEnc = (this.hiddenEncoding == null && that.hiddenEncoding == null);
-                //System.out.println("feature NULL :" + pheno);
             }
-
             return enc                                                              &&
                    hiddenEnc                                                        &&
                    Utilities.equals(this.actuate,            that.actuate)          &&
@@ -336,9 +341,9 @@ public class AbstractEncodingPropertyType implements AbstractEncodingProperty {
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder();
-        if (encoding != null)
+        if (encoding != null) {
             s.append(encoding.getValue().toString()).append('\n');
-        
+        }
         if(actuate != null) {
             s.append("actuate=").append(actuate).append('\n');
         }

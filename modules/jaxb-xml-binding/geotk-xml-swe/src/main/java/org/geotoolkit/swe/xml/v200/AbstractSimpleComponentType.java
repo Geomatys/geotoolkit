@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -76,6 +77,14 @@ public abstract class AbstractSimpleComponentType extends AbstractDataComponentT
     @XmlAttribute
     private String axisID;
 
+    public AbstractSimpleComponentType() {
+        
+    }
+    
+    public AbstractSimpleComponentType(final String id, final String definition) {
+        super(id, definition);
+    }
+    
     /**
      * Gets the value of the quality property.
      * 
@@ -163,4 +172,53 @@ public abstract class AbstractSimpleComponentType extends AbstractDataComponentT
         this.axisID = value;
     }
 
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof AbstractSimpleComponentType && super.equals(object)) {
+            final AbstractSimpleComponentType that = (AbstractSimpleComponentType) object;
+
+            return Utilities.equals(this.axisID,         that.axisID) &&
+                   Utilities.equals(this.nilValues,      that.nilValues) &&
+                   Utilities.equals(this.referenceFrame, that.referenceFrame) &&
+                   Utilities.equals(this.quality,        that.quality);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 47 * hash + (this.axisID != null ? this.axisID.hashCode() : 0);
+        hash = 47 * hash + (this.nilValues != null ? this.nilValues.hashCode() : 0);
+        hash = 47 * hash + (this.referenceFrame != null ? this.referenceFrame.hashCode() : 0);
+        hash = 47 * hash + (this.quality != null ? this.quality.hashCode() : 0);
+        return hash;
+    }
+
+    /**
+     * Retourne une representation de l'objet.
+     */
+    @Override
+    public String toString() {
+        final StringBuilder s = new StringBuilder(super.toString());
+        if (axisID != null) {
+            s.append("axisID=").append(axisID).append('\n');
+        }
+        if (nilValues != null) {
+            s.append("nilValues=").append(nilValues).append('\n');
+        }
+        if (referenceFrame != null) {
+            s.append("referenceFrame=").append(referenceFrame).append('\n');
+        }
+        if (quality != null) {
+            s.append("quality:\n");
+            for (QualityPropertyType q : quality) {
+                s.append(q).append('\n');
+            }
+        }
+        return s.toString();
+    }
 }

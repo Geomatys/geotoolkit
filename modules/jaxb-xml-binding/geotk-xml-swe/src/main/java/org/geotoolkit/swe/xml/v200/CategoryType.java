@@ -21,6 +21,7 @@ package org.geotoolkit.swe.xml.v200;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.swe.xml.AbstractCategory;
 
 
 /**
@@ -50,12 +51,21 @@ import javax.xml.bind.annotation.XmlType;
     "constraint",
     "value"
 })
-public class CategoryType extends AbstractSimpleComponentType {
+public class CategoryType extends AbstractSimpleComponentType implements AbstractCategory {
 
     private Reference codeSpace;
     private AllowedTokensPropertyType constraint;
     private String value;
 
+    public CategoryType() {
+        
+    }
+    
+    public CategoryType(final String definition, final String value) {
+        super(null, definition);
+        this.value = value;
+    }
+    
     /**
      * Gets the value of the codeSpace property.
      * 
@@ -64,6 +74,7 @@ public class CategoryType extends AbstractSimpleComponentType {
      *     {@link Reference }
      *     
      */
+    @Override
     public Reference getCodeSpace() {
         return codeSpace;
     }
@@ -88,6 +99,7 @@ public class CategoryType extends AbstractSimpleComponentType {
      *     {@link AllowedTokensPropertyType }
      *     
      */
+    @Override
     public AllowedTokensPropertyType getConstraint() {
         return constraint;
     }
@@ -112,6 +124,7 @@ public class CategoryType extends AbstractSimpleComponentType {
      *     {@link String }
      *     
      */
+    @Override
     public String getValue() {
         return value;
     }

@@ -27,6 +27,8 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.geotoolkit.swe.xml.DataRecord;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -60,11 +62,19 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 @XmlType(name = "DataRecordType", propOrder = {
     "field"
 })
-public class DataRecordType extends AbstractDataComponentType {
+public class DataRecordType extends AbstractDataComponentType implements DataRecord {
 
     @XmlElement(required = true)
     private List<DataRecordType.Field> field;
 
+    public DataRecordType() {
+        
+    }
+    
+    public DataRecordType(final List<Field> fields) {
+        this.field = fields;
+    }
+    
     /**
      * Gets the value of the field property.
      * 
@@ -72,6 +82,7 @@ public class DataRecordType extends AbstractDataComponentType {
      * {@link DataRecordType.Field }
      * 
      */
+    @Override
     public List<DataRecordType.Field> getField() {
         if (field == null) {
             field = new ArrayList<DataRecordType.Field>();
@@ -79,7 +90,39 @@ public class DataRecordType extends AbstractDataComponentType {
         return this.field;
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder(super.toString());
+        if (field != null) {
+            sb.append("fields:\n");
+            for (DataRecordType.Field f : field) {
+                sb.append(f).append('\n');
+            }
+        }
+        return sb.toString();
+    }
+    
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof DataRecordType && super.equals(object)) {
+            final DataRecordType that = (DataRecordType) object;
 
+            return Utilities.equals(this.field,    that.field);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 71 * hash + super.hashCode();
+        hash = 71 * hash + (this.field != null ? this.field.hashCode() : 0);
+        return hash;
+    }
+    
     /**
      * <p>Java class for anonymous complex type.
      * 
@@ -106,6 +149,14 @@ public class DataRecordType extends AbstractDataComponentType {
         @XmlSchemaType(name = "NCName")
         private String name;
 
+        public Field() {
+            
+        }
+        
+        public Field(final String name, final AbstractDataComponentType compo) {
+            super(compo);
+            this.name = name;
+        }
         /**
          * Gets the value of the name property.
          * 
@@ -114,6 +165,7 @@ public class DataRecordType extends AbstractDataComponentType {
          *     {@link String }
          *     
          */
+        @Override
         public String getName() {
             return name;
         }
@@ -129,7 +181,34 @@ public class DataRecordType extends AbstractDataComponentType {
         public void setName(String value) {
             this.name = value;
         }
+        
+        @Override
+        public String toString() {
+            final StringBuilder sb = new StringBuilder(super.toString());
+            if (name != null) {
+                sb.append("name=").append(name).append('\n');
+            }
+            return sb.toString();
+        }
 
+        @Override
+        public boolean equals(final Object object) {
+            if (object == this) {
+                return true;
+            }
+            if (object instanceof Field && super.equals(object)) {
+                final Field that = (Field) object;
+                return Utilities.equals(this.name, that.name);
+            }
+            return false;
+        }
+
+        @Override
+        public int hashCode() {
+            int hash = 7;
+            hash = 71 * hash + super.hashCode();
+            hash = 71 * hash + (this.name != null ? this.name.hashCode() : 0);
+            return hash;
+        }
     }
-
 }

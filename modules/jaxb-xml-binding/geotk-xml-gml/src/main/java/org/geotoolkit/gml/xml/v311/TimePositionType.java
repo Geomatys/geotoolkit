@@ -216,6 +216,7 @@ public class TimePositionType extends AbstractTimePosition implements Serializab
      *     {@link TimeIndeterminateValueType }
      *
      */
+    @Override
     public TimeIndeterminateValueType getIndeterminatePosition() {
         return indeterminatePosition;
     }

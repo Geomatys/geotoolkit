@@ -28,6 +28,9 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.geotoolkit.swe.xml.DataArray;
+import org.geotoolkit.swe.xml.DataComponentProperty;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -80,15 +83,51 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 @XmlSeeAlso({
     MatrixType.class
 })
-public class DataArrayType extends AbstractDataComponentType {
+public class DataArrayType extends AbstractDataComponentType implements DataArray {
 
     @XmlElement(required = true)
     private CountPropertyType elementCount;
     @XmlElement(required = true)
     private DataArrayType.ElementType elementType;
     private DataArrayType.Encoding encoding;
-    private EncodedValuesPropertyType values;
+    //private EncodedValuesPropertyType values;
+    private String values;
 
+    /**
+     * An empty constructor used by JAXB.
+     */
+    DataArrayType() {
+        
+    }
+
+    /**
+     * Clone a new data array.
+     */
+    public DataArrayType(final DataArrayType array) {
+        super(array);
+        if (array != null) {
+            if (array.elementType != null) {
+                this.elementType = new ElementType(array.elementType);
+            }
+            if (array.encoding != null) {
+                this.encoding = new Encoding(array.encoding);
+            }
+            this.values = array.values;
+            if (array.elementCount != null) {
+               this.elementCount = new CountPropertyType(array.elementCount); 
+            }
+        }
+
+    }
+    
+    public DataArrayType(final String id, final int count, final Encoding encoding, final String values, final ElementType elementType) {
+        super(id, null);
+        this.elementCount = new CountPropertyType(count); 
+        this.encoding     = encoding;
+        this.values       = values;
+        this.elementType  = elementType;
+    }
+    
     /**
      * Gets the value of the elementCount property.
      * 
@@ -97,6 +136,7 @@ public class DataArrayType extends AbstractDataComponentType {
      *     {@link CountPropertyType }
      *     
      */
+    @Override
     public CountPropertyType getElementCount() {
         return elementCount;
     }
@@ -112,6 +152,11 @@ public class DataArrayType extends AbstractDataComponentType {
     public void setElementCount(CountPropertyType value) {
         this.elementCount = value;
     }
+    
+    @Override
+    public void setElementCount(final int value) {
+        this.elementCount = new CountPropertyType(value);
+    }
 
     /**
      * Gets the value of the elementType property.
@@ -125,6 +170,14 @@ public class DataArrayType extends AbstractDataComponentType {
         return elementType;
     }
 
+    /**
+     * Gets the value of the elementType property.
+     */
+    @Override
+    public DataComponentProperty getPropertyElementType() {
+        return elementType;
+    }
+    
     /**
      * Sets the value of the elementType property.
      * 
@@ -145,7 +198,15 @@ public class DataArrayType extends AbstractDataComponentType {
      *     {@link DataArrayType.Encoding }
      *     
      */
-    public DataArrayType.Encoding getEncoding() {
+    @Override
+    public AbstractEncodingType getEncoding() {
+        if (encoding != null && encoding.abstractEncoding != null) {
+            return encoding.abstractEncoding.getValue();
+        }
+        return null;
+    }
+    
+    public DataArrayType.Encoding getJbEncoding() {
         return encoding;
     }
 
@@ -169,8 +230,9 @@ public class DataArrayType extends AbstractDataComponentType {
      *     {@link EncodedValuesPropertyType }
      *     
      */
-    public EncodedValuesPropertyType getValues() {
-        return values;
+    @Override
+    public EncodedValuesPropertyType getDataValues() {
+        return null;
     }
 
     /**
@@ -181,11 +243,71 @@ public class DataArrayType extends AbstractDataComponentType {
      *     {@link EncodedValuesPropertyType }
      *     
      */
-    public void setValues(EncodedValuesPropertyType value) {
+    @Override
+    public void setValues(String value) {
         this.values = value;
     }
 
+    @Override
+    public AbstractEncodingPropertyType getPropertyEncoding() {
+        if (encoding != null) {
+            return new AbstractEncodingPropertyType(encoding.abstractEncoding);
+        }
+        return null;
+    }
 
+    @Override
+    public String getValues() {
+        return values;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder(super.toString());
+        if (elementCount != null) {
+            sb.append("elementCount:").append(elementCount).append('\n');
+        }
+        if (elementType != null) {
+            sb.append("elementType:").append(elementType).append('\n');
+        }
+        if (encoding != null) {
+            sb.append("encoding:").append(encoding).append('\n');
+        }
+        if (values != null) {
+            sb.append("values:").append(values).append('\n');
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Verify if this entry is identical to specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof DataArrayType && super.equals(object)) {
+            final DataArrayType that = (DataArrayType) object;
+            return Utilities.equals(this.elementCount,   that.elementCount)   &&
+                   Utilities.equals(this.elementType,    that.elementType)   &&
+                   Utilities.equals(this.encoding,       that.encoding)    &&
+                   Utilities.equals(this.values,         that.values);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 29 * hash + super.hashCode();
+        hash = 29 * hash + (this.elementCount != null ? this.elementCount.hashCode() : 0);
+        hash = 29 * hash + (this.elementType != null ? this.elementType.hashCode() : 0);
+        hash = 29 * hash + (this.encoding != null ? this.encoding.hashCode() : 0);
+        hash = 29 * hash + (this.values != null ? this.values.hashCode() : 0);
+        return hash;
+    }
+    
     /**
      * <p>Java class for anonymous complex type.
      * 
@@ -205,15 +327,27 @@ public class DataArrayType extends AbstractDataComponentType {
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "")
-    public static class ElementType
-        extends AbstractDataComponentPropertyType
-    {
+    public static class ElementType extends AbstractDataComponentPropertyType {
 
         @XmlAttribute(required = true)
         @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
         @XmlSchemaType(name = "NCName")
         private String name;
 
+        public ElementType() {
+            
+        }
+        
+        public ElementType(final ElementType that) {
+            super(that);
+            this.name = that.name;
+        }
+        
+        public ElementType(final String name, final AbstractDataComponentType datacompo) {
+            super(datacompo);
+            this.name = name;
+        }
+        
         /**
          * Gets the value of the name property.
          * 
@@ -222,6 +356,7 @@ public class DataArrayType extends AbstractDataComponentType {
          *     {@link String }
          *     
          */
+        @Override
         public String getName() {
             return name;
         }
@@ -238,6 +373,37 @@ public class DataArrayType extends AbstractDataComponentType {
             this.name = value;
         }
 
+        @Override
+        public String toString() {
+            final StringBuilder sb = new StringBuilder(super.toString());
+            if (name != null) {
+                sb.append("name:").append(name).append('\n');
+            }
+            return sb.toString();
+        }
+
+        /**
+         * Verify if this entry is identical to specified object.
+         */
+        @Override
+        public boolean equals(final Object object) {
+            if (object == this) {
+                return true;
+            }
+            if (object instanceof ElementType && super.equals(object)) {
+                final ElementType that = (ElementType) object;
+                return Utilities.equals(this.name, that.name);
+            }
+            return false;
+        }
+
+        @Override
+        public int hashCode() {
+            int hash = 7;
+            hash = 29 * hash + super.hashCode();
+            hash = 29 * hash + (this.name != null ? this.name.hashCode() : 0);
+            return hash;
+        }
     }
 
 
@@ -269,6 +435,20 @@ public class DataArrayType extends AbstractDataComponentType {
         @XmlElementRef(name = "AbstractEncoding", namespace = "http://www.opengis.net/swe/2.0", type = JAXBElement.class)
         private JAXBElement<? extends AbstractEncodingType> abstractEncoding;
 
+        public Encoding() {
+            
+        }
+        
+        public Encoding(final String id, final String decimalSeparator, final String tokenSeparator,
+            final String blockSeparator) {
+            final ObjectFactory factory = new ObjectFactory();
+            this.abstractEncoding = factory.createTextEncoding(new TextEncodingType(id, decimalSeparator, tokenSeparator, blockSeparator));
+        }
+        
+        public Encoding(final Encoding that) {
+            this.abstractEncoding = that.abstractEncoding;
+        }
+        
         /**
          * Gets the value of the abstractEncoding property.
          * 
@@ -299,6 +479,40 @@ public class DataArrayType extends AbstractDataComponentType {
             this.abstractEncoding = ((JAXBElement<? extends AbstractEncodingType> ) value);
         }
 
+        @Override
+        public String toString() {
+            final StringBuilder sb = new StringBuilder("[Encoding]\n");
+            if (abstractEncoding != null) {
+                sb.append("abstractEncoding:").append(abstractEncoding.getValue()).append('\n');
+            }
+            return sb.toString();
+        }
+
+        /**
+         * Verify if this entry is identical to specified object.
+         */
+        @Override
+        public boolean equals(final Object object) {
+            if (object == this) {
+                return true;
+            }
+            if (object instanceof Encoding) {
+                final Encoding that = (Encoding) object;
+                if (this.abstractEncoding == null && that.abstractEncoding == null) {
+                    return true;
+                } else if (this.abstractEncoding != null && that.abstractEncoding != null) {
+                    return Utilities.equals(this.abstractEncoding.getValue(), that.abstractEncoding.getValue());
+                }
+            }
+            return false;
+        }
+
+        @Override
+        public int hashCode() {
+            int hash = 7;
+            hash = 29 * hash + (this.abstractEncoding != null ? this.abstractEncoding.hashCode() : 0);
+            return hash;
+        }
     }
 
 }

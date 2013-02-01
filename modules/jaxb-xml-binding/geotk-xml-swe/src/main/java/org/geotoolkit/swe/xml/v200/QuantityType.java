@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.swe.xml.Quantity;
 
 
 /**
@@ -50,13 +51,25 @@ import javax.xml.bind.annotation.XmlType;
     "constraint",
     "value"
 })
-public class QuantityType extends AbstractSimpleComponentType {
+public class QuantityType extends AbstractSimpleComponentType implements Quantity {
 
     @XmlElement(required = true)
     private UnitReference uom;
     private AllowedValuesPropertyType constraint;
     private Double value;
 
+    public QuantityType() {
+        
+    }
+    
+    public QuantityType(final String definition, final String uomCode, final Double value) {
+        super(null, definition);
+        if (uomCode != null) {
+            this.uom = new UnitReference(uomCode);
+        }
+        this.value = value;
+    }
+    
     /**
      * Gets the value of the uom property.
      * 
@@ -65,6 +78,7 @@ public class QuantityType extends AbstractSimpleComponentType {
      *     {@link UnitReference }
      *     
      */
+    @Override
     public UnitReference getUom() {
         return uom;
     }
@@ -89,6 +103,7 @@ public class QuantityType extends AbstractSimpleComponentType {
      *     {@link AllowedValuesPropertyType }
      *     
      */
+    @Override
     public AllowedValuesPropertyType getConstraint() {
         return constraint;
     }
@@ -113,6 +128,7 @@ public class QuantityType extends AbstractSimpleComponentType {
      *     {@link Double }
      *     
      */
+    @Override
     public Double getValue() {
         return value;
     }

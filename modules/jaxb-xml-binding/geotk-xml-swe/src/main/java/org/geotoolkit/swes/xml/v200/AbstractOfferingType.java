@@ -88,6 +88,12 @@ public abstract class AbstractOfferingType extends AbstractSWESType {
         super(id, name, description);
         this.procedure = procedure;
         this.observableProperty = observableProperty;
+        if (relatedFeature != null) {
+            this.relatedFeature = new ArrayList<RelatedFeature>();
+            for (String feature : relatedFeature) {
+                this.relatedFeature.add(new RelatedFeature(feature));
+            }
+        }
     }
     
     /**
@@ -155,7 +161,33 @@ public abstract class AbstractOfferingType extends AbstractSWESType {
         }
         return this.relatedFeature;
     }
-
+    
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder(super.toString());
+        if (procedure != null) {
+            sb.append("procedure:").append(procedure).append('\n');
+        }
+        if (observableProperty != null) {
+            sb.append("observableProperty:\n");
+            for (String foit : observableProperty) {
+                sb.append(foit).append('\n');
+            }
+        }
+        if (procedureDescriptionFormat != null) {
+            sb.append("procedureDescriptionFormat:\n");
+            for (String foit : procedureDescriptionFormat) {
+                sb.append(foit).append('\n');
+            }
+        }
+        if (relatedFeature != null) {
+            sb.append("responseFormat:\n");
+            for (RelatedFeature foit : relatedFeature) {
+                sb.append(foit).append('\n');
+            }
+        }
+        return sb.toString();
+    }
 
     /**
      * <p>Java class for anonymous complex type.
@@ -184,6 +216,16 @@ public abstract class AbstractOfferingType extends AbstractSWESType {
 
         @XmlElement(name = "FeatureRelationship", required = true)
         private FeatureRelationshipType featureRelationship;
+        
+        public RelatedFeature() {
+            
+        }
+        
+        public RelatedFeature(final String target) {
+            if (target != null) {
+                this.featureRelationship = new FeatureRelationshipType(target);
+            }
+        }
 
         /**
          * Gets the value of the featureRelationship property.
@@ -207,6 +249,15 @@ public abstract class AbstractOfferingType extends AbstractSWESType {
          */
         public void setFeatureRelationship(FeatureRelationshipType value) {
             this.featureRelationship = value;
+        }
+        
+        @Override
+        public String toString() {
+            final StringBuilder sb = new StringBuilder("[RelatedFeature]");
+            if (featureRelationship != null) {
+                sb.append("featureRelationship:").append(featureRelationship).append('\n');
+            }
+            return sb.toString();
         }
 
     }

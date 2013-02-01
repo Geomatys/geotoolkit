@@ -18,6 +18,7 @@
 package org.geotoolkit.sos.xml.v200;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -26,6 +27,7 @@ import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
+import org.geotoolkit.ogc.xml.v200.FilterType;
 import org.geotoolkit.ogc.xml.v200.SpatialOpsType;
 import org.geotoolkit.ogc.xml.v200.TemporalOpsType;
 import org.geotoolkit.sos.xml.GetObservation;
@@ -103,6 +105,49 @@ public class GetObservationType extends ExtensibleRequestType implements GetObse
     @XmlSchemaType(name = "anyURI")
     private String responseFormat;
 
+    public GetObservationType() {
+        
+    }
+    
+    public GetObservationType(final String version, final String offering, final List<TemporalOpsType> eventTime, 
+            final List<String> procedure, final List<String> observedProperty, final SpatialOpsType spatialFilter, final String responseFormat) {
+        super(version, "SOS");
+        if (offering != null) {
+            this.offering = Arrays.asList(offering);
+        }
+        if (eventTime != null) {
+            temporalFilter = new ArrayList<TemporalFilter>();
+            for (TemporalOpsType temporal : eventTime) {
+                this.temporalFilter.add(new TemporalFilter(temporal));
+            }
+        }
+        this.procedure = procedure;
+        this.observedProperty = observedProperty;
+        if (spatialFilter != null) {
+            this.spatialFilter = new SpatialFilter(spatialFilter);
+        }
+        this.responseFormat = responseFormat;
+    }
+    
+    public GetObservationType(final String version, final String offering, final List<TemporalOpsType> eventTime, 
+            final List<String> procedure, final List<String> observedProperty, final List<String> foi, final String responseFormat) {
+        super(version, "SOS");
+        if (offering != null) {
+            this.offering = Arrays.asList(offering);
+        }
+        if (eventTime != null) {
+            temporalFilter = new ArrayList<TemporalFilter>();
+            for (TemporalOpsType temporal : eventTime) {
+                this.temporalFilter.add(new TemporalFilter(temporal));
+            }
+        }
+        this.procedure = procedure;
+        this.observedProperty = observedProperty;
+        this.featureOfInterest = foi;
+        this.responseFormat = responseFormat;
+    }
+    
+    
     /**
      * Gets the value of the procedure property.
      * 
@@ -237,7 +282,7 @@ public class GetObservationType extends ExtensibleRequestType implements GetObse
 
     @Override
     public String getSrsName() {
-        return "urn:ogc:def:crs:EPSG::4326";
+        return null;
     }
 
     @Override
@@ -281,6 +326,16 @@ public class GetObservationType extends ExtensibleRequestType implements GetObse
         @XmlElementRef(name = "spatialOps", namespace = "http://www.opengis.net/fes/2.0", type = JAXBElement.class)
         private JAXBElement<? extends SpatialOpsType> spatialOps;
 
+        public SpatialFilter() {
+            
+        }
+        
+        public SpatialFilter(final SpatialOpsType spa) {
+            if (spa != null) {
+                spatialOps = FilterType.createSpatialOps(spa);
+            }
+        }
+        
         /**
          * Gets the value of the spatialOps property.
          * 
@@ -358,6 +413,16 @@ public class GetObservationType extends ExtensibleRequestType implements GetObse
         @XmlElementRef(name = "temporalOps", namespace = "http://www.opengis.net/fes/2.0", type = JAXBElement.class)
         private JAXBElement<? extends TemporalOpsType> temporalOps;
 
+        public TemporalFilter() {
+            
+        }
+        
+        public TemporalFilter(final TemporalOpsType temporalOp) {
+            if (temporalOp != null) {
+                this.temporalOps = FilterType.createTemporalOps(temporalOp);
+            }
+        }
+        
         /**
          * Gets the value of the temporalOps property.
          * 

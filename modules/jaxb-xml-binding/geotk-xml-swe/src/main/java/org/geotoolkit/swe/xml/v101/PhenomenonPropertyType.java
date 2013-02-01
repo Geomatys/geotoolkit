@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.swe.xml.PhenomenonProperty;
 import org.geotoolkit.util.Utilities;
 
 
@@ -53,7 +54,7 @@ import org.geotoolkit.util.Utilities;
    "compoundPhenomenon",
    "compositePhenomenon"
 })
-public class PhenomenonPropertyType {
+public class PhenomenonPropertyType implements PhenomenonProperty {
 
     @XmlElement(name = "Phenomenon")
     private PhenomenonType phenomenon;
@@ -122,6 +123,7 @@ public class PhenomenonPropertyType {
     /**
      * Set the phenomenon into href mode.
      */
+    @Override
     public void setToHref() {
         PhenomenonType pheno = getPhenomenon();
         if (pheno != null) {
@@ -134,6 +136,7 @@ public class PhenomenonPropertyType {
     /**
      * Gets the value of the phenomenon property.
      */
+    @Override
     public PhenomenonType getPhenomenon() {
         if (phenomenon != null) {
             return phenomenon;

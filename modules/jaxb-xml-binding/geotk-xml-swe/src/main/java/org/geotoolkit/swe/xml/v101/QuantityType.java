@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.swe.xml.v101;
 
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -48,7 +47,7 @@ public class QuantityType extends AbstractDataComponentType implements Quantity 
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     private String axisID;
     @XmlAttribute
-    private URI referenceFrame;
+    private String referenceFrame;
 
     /**
      * A empty contructor used by JAXB
@@ -111,6 +110,7 @@ public class QuantityType extends AbstractDataComponentType implements Quantity 
     /**
      * Gets the value of the uom property.
     */
+    @Override
     public UomPropertyType getUom() {
         return uom;
     }
@@ -118,6 +118,7 @@ public class QuantityType extends AbstractDataComponentType implements Quantity 
     /**
      * Gets the value of the value property.
      */
+    @Override
     public Double getValue() {
         return value;
     }
@@ -125,6 +126,7 @@ public class QuantityType extends AbstractDataComponentType implements Quantity 
     /**
      * Gets the value of the axisID property.
      */
+    @Override
     public String getAxisID() {
         return axisID;
     }
@@ -132,6 +134,7 @@ public class QuantityType extends AbstractDataComponentType implements Quantity 
     /**
      * Sets the value of the axisID property.
      */
+    @Override
     public void setAxisID(final String value) {
         this.axisID = value;
     }
@@ -139,13 +142,15 @@ public class QuantityType extends AbstractDataComponentType implements Quantity 
     /**
      * Gets the value of the referenceFrame property.
      */
-    public URI getReferenceFrame() {
+    @Override
+    public String getReferenceFrame() {
         return referenceFrame;
     }
 
     /**
      * @return the constraint
      */
+    @Override
     public AllowedValuesPropertyType getConstraint() {
         return constraint;
     }
@@ -160,6 +165,7 @@ public class QuantityType extends AbstractDataComponentType implements Quantity 
     /**
      * @return the quality
      */
+    @Override
     public List<QualityPropertyType> getQuality() {
         return quality;
     }
@@ -219,13 +225,15 @@ public class QuantityType extends AbstractDataComponentType implements Quantity 
     public String toString() {
         StringBuilder s = new StringBuilder();
         s.append("[QuantityType]").append('\n').append("super:").append(super.toString()).append('\n');
-        if (axisID != null)
+        if (axisID != null) {
             s.append("axisId:").append(axisID).append('\n');
-        if (referenceFrame != null)
+        }
+        if (referenceFrame != null) {
             s.append("referenceFrame:").append(referenceFrame).append('\n');
-        if (value != null)
+        }
+        if (value != null) {
             s.append("value:").append(value).append('\n');
-        
+        }
         if (uom != null) {
             s.append("uom: ").append(uom.toString());
         }

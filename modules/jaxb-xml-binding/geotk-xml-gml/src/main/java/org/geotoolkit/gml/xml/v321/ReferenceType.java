@@ -396,8 +396,7 @@ public class ReferenceType implements Reference {
      */
     @Override
     public String toString() {
-        final StringBuilder s = new StringBuilder("id=");
-
+        final StringBuilder s = new StringBuilder("[Reference]\n");
         if(actuate != null) {
             s.append("actuate=").append(actuate).append('\n');
         }

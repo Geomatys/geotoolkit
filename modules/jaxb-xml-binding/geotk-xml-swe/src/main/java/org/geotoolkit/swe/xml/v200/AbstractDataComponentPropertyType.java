@@ -24,6 +24,19 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.swe.xml.AbstractBoolean;
+import org.geotoolkit.swe.xml.AbstractCategory;
+import org.geotoolkit.swe.xml.AbstractCount;
+import org.geotoolkit.swe.xml.AbstractCountRange;
+import org.geotoolkit.swe.xml.AbstractDataArray;
+import org.geotoolkit.swe.xml.AbstractDataRecord;
+import org.geotoolkit.swe.xml.AbstractQuantityRange;
+import org.geotoolkit.swe.xml.AbstractText;
+import org.geotoolkit.swe.xml.AbstractTime;
+import org.geotoolkit.swe.xml.AbstractTimeRange;
+import org.geotoolkit.swe.xml.DataComponentProperty;
+import org.geotoolkit.swe.xml.Quantity;
+import org.geotoolkit.util.Utilities;
 import org.geotoolkit.xlink.xml.v100.ActuateType;
 import org.geotoolkit.xlink.xml.v100.ShowType;
 import org.geotoolkit.xlink.xml.v100.TypeType;
@@ -59,7 +72,7 @@ import org.geotoolkit.xlink.xml.v100.TypeType;
     DataChoiceType.Item.class,
     DataRecordType.Field.class
 })
-public class AbstractDataComponentPropertyType {
+public class AbstractDataComponentPropertyType implements DataComponentProperty {
 
     @XmlElementRef(name = "AbstractDataComponent", namespace = "http://www.opengis.net/swe/2.0", type = JAXBElement.class)
     private JAXBElement<? extends AbstractDataComponentType> abstractDataComponent;
@@ -72,12 +85,66 @@ public class AbstractDataComponentPropertyType {
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     private String arcrole;
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
-    private String titleTemp;
+    private String title;
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     private ShowType show;
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     private ActuateType actuate;
 
+    public AbstractDataComponentPropertyType() {
+        
+    }
+    
+    public AbstractDataComponentPropertyType(final AbstractDataComponentPropertyType that) {
+        this.abstractDataComponent = that.abstractDataComponent;
+        this.actuate = that.actuate;
+        this.arcrole = that.arcrole;
+        this.href    = that.href;
+        this.role    = that.role;
+        this.show    = that.show;
+        this.title   = that.title;
+        this.type    = that.type;
+    }
+    
+    public AbstractDataComponentPropertyType(final AbstractDataComponentType data) {
+        final ObjectFactory factory = new ObjectFactory();
+        if (data instanceof BooleanType) {
+            this.abstractDataComponent = factory.createBoolean((BooleanType)data);
+        } else if (data instanceof VectorType) {
+            this.abstractDataComponent = factory.createVector((VectorType)data);
+        } else if (data instanceof TimeType) {
+            this.abstractDataComponent = factory.createTime((TimeType)data);
+        } else if (data instanceof CategoryRangeType) {
+            this.abstractDataComponent = factory.createCategoryRange((CategoryRangeType)data);
+        } else if (data instanceof DataChoiceType) {
+            this.abstractDataComponent = factory.createDataChoice((DataChoiceType)data);
+        } else if (data instanceof MatrixType) {
+            this.abstractDataComponent = factory.createMatrix((MatrixType)data);
+        } else if (data instanceof TimeRangeType) {
+            this.abstractDataComponent = factory.createTimeRange((TimeRangeType)data);
+        } else if (data instanceof CategoryType) {
+            this.abstractDataComponent = factory.createCategory((CategoryType)data);
+        } else if (data instanceof DataRecordType) {
+            this.abstractDataComponent = factory.createDataRecord((DataRecordType)data);
+        } else if (data instanceof DataArrayType) {
+            this.abstractDataComponent = factory.createDataArray((DataArrayType)data);
+        } else if (data instanceof QuantityRangeType) {
+            this.abstractDataComponent = factory.createQuantityRange((QuantityRangeType)data);
+        } else if (data instanceof CountRangeType) {
+            this.abstractDataComponent = factory.createCountRange((CountRangeType)data);
+        } else if (data instanceof QuantityType) {
+            this.abstractDataComponent = factory.createQuantity((QuantityType)data);
+        } else if (data instanceof TextType) {
+            this.abstractDataComponent = factory.createText((TextType)data);
+        } else if (data instanceof CountType) {
+            this.abstractDataComponent = factory.createCount((CountType)data);
+        } else if (data instanceof AbstractSimpleComponentType) {
+            this.abstractDataComponent = factory.createAbstractSimpleComponent((AbstractSimpleComponentType)data);
+        } else if (data instanceof AbstractDataComponentType) {
+            this.abstractDataComponent = factory.createAbstractDataComponent((AbstractDataComponentType)data);
+        }
+    }
+    
     /**
      * Gets the value of the abstractDataComponent property.
      * 
@@ -142,11 +209,12 @@ public class AbstractDataComponentPropertyType {
      *     {@link TypeType }
      *     
      */
-    public TypeType getType() {
+    @Override
+    public String getType() {
         if (type == null) {
-            return TypeType.SIMPLE;
+            return TypeType.SIMPLE.toString();
         } else {
-            return type;
+            return type.toString();
         }
     }
 
@@ -170,6 +238,7 @@ public class AbstractDataComponentPropertyType {
      *     {@link String }
      *     
      */
+    @Override
     public String getHref() {
         return href;
     }
@@ -194,6 +263,7 @@ public class AbstractDataComponentPropertyType {
      *     {@link String }
      *     
      */
+    @Override
     public String getRole() {
         return role;
     }
@@ -218,6 +288,7 @@ public class AbstractDataComponentPropertyType {
      *     {@link String }
      *     
      */
+    @Override
     public String getArcrole() {
         return arcrole;
     }
@@ -242,8 +313,9 @@ public class AbstractDataComponentPropertyType {
      *     {@link String }
      *     
      */
-    public String getTitleTemp() {
-        return titleTemp;
+    @Override
+    public String getTitle() {
+        return title;
     }
 
     /**
@@ -254,8 +326,8 @@ public class AbstractDataComponentPropertyType {
      *     {@link String }
      *     
      */
-    public void setTitleTemp(String value) {
-        this.titleTemp = value;
+    public void setTitle(String value) {
+        this.title = value;
     }
 
     /**
@@ -266,8 +338,12 @@ public class AbstractDataComponentPropertyType {
      *     {@link ShowType }
      *     
      */
-    public ShowType getShow() {
-        return show;
+    @Override
+    public String getShow() {
+        if (show != null) {
+            return show.toString(); 
+        }
+        return null;
     }
 
     /**
@@ -290,8 +366,12 @@ public class AbstractDataComponentPropertyType {
      *     {@link ActuateType }
      *     
      */
-    public ActuateType getActuate() {
-        return actuate;
+    @Override
+    public String getActuate() {
+        if (actuate != null) {
+            return actuate.toString();
+        }
+        return null;
     }
 
     /**
@@ -306,4 +386,206 @@ public class AbstractDataComponentPropertyType {
         this.actuate = value;
     }
 
+    @Override
+    public String getRemoteSchema() {
+        return null;
+    }
+    
+    @Override
+    public void setToHref() {
+        // do nothing
+    }
+
+    @Override
+    public String getName() {
+        return null;
+    }
+
+    @Override
+    public AbstractCount getCount() {
+        if (abstractDataComponent != null) {
+            if (abstractDataComponent.getValue() instanceof CountType) {
+                return (CountType)abstractDataComponent.getValue();
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public Quantity getQuantity() {
+        if (abstractDataComponent != null) {
+            if (abstractDataComponent.getValue() instanceof QuantityType) {
+                return (QuantityType)abstractDataComponent.getValue();
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public AbstractTime getTime() {
+        if (abstractDataComponent != null) {
+            if (abstractDataComponent.getValue() instanceof TimeType) {
+                return (TimeType)abstractDataComponent.getValue();
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public AbstractBoolean getBoolean() {
+        if (abstractDataComponent != null) {
+            if (abstractDataComponent.getValue() instanceof BooleanType) {
+                return (BooleanType)abstractDataComponent.getValue();
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public AbstractCategory getCategory() {
+        if (abstractDataComponent != null) {
+            if (abstractDataComponent.getValue() instanceof CategoryType) {
+                return (CategoryType)abstractDataComponent.getValue();
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public AbstractText getText() {
+        if (abstractDataComponent != null) {
+            if (abstractDataComponent.getValue() instanceof TextType) {
+                return (TextType)abstractDataComponent.getValue();
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public AbstractQuantityRange getQuantityRange() {
+        if (abstractDataComponent != null) {
+            if (abstractDataComponent.getValue() instanceof QuantityRangeType) {
+                return (QuantityRangeType)abstractDataComponent.getValue();
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public AbstractCountRange getCountRange() {
+        if (abstractDataComponent != null) {
+            if (abstractDataComponent.getValue() instanceof CountRangeType) {
+                return (CountRangeType)abstractDataComponent.getValue();
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public AbstractTimeRange getTimeRange() {
+        if (abstractDataComponent != null) {
+            if (abstractDataComponent.getValue() instanceof TimeRangeType) {
+                return (TimeRangeType)abstractDataComponent.getValue();
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public AbstractDataRecord getAbstractRecord() {
+        if (abstractDataComponent != null) {
+            if (abstractDataComponent.getValue() instanceof DataRecordType) {
+                return (DataRecordType)abstractDataComponent.getValue();
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public AbstractDataArray getAbstractArray() {
+        if (abstractDataComponent != null) {
+            if (abstractDataComponent.getValue() instanceof DataArrayType) {
+                return (DataArrayType)abstractDataComponent.getValue();
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Verify if this entry is identical to specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+
+        if (object instanceof AbstractDataComponentPropertyType) {
+            final AbstractDataComponentPropertyType that = (AbstractDataComponentPropertyType) object;
+            boolean compo = false;
+            if (this.abstractDataComponent == null && that.abstractDataComponent == null) {
+                compo = true;
+            } else if (this.abstractDataComponent != null && that.abstractDataComponent != null) {
+                compo = Utilities.equals(this.abstractDataComponent.getValue(), that.abstractDataComponent.getValue());
+            }
+            return compo     &&
+                   Utilities.equals(this.actuate,            that.actuate)          &&
+                   Utilities.equals(this.arcrole,            that.arcrole)          &&
+                   Utilities.equals(this.type,               that.type)             &&
+                   Utilities.equals(this.href,               that.href)             &&
+                   Utilities.equals(this.show,               that.show)             &&
+                   Utilities.equals(this.role,               that.role)             &&
+                   Utilities.equals(this.title,              that.title);
+        }
+        return false;
+    }
+
+    
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 47 * hash + (this.abstractDataComponent != null ? this.abstractDataComponent.hashCode() : 0);
+        hash = 47 * hash + (this.actuate != null ? this.actuate.hashCode() : 0);
+        hash = 47 * hash + (this.arcrole != null ? this.arcrole.hashCode() : 0);
+        hash = 47 * hash + (this.href != null ? this.href.hashCode() : 0);
+        hash = 47 * hash + (this.role != null ? this.role.hashCode() : 0);
+        hash = 47 * hash + (this.show != null ? this.show.hashCode() : 0);
+        hash = 47 * hash + (this.title != null ? this.title.hashCode() : 0);
+        hash = 47 * hash + (this.type != null ? this.type.hashCode() : 0);
+        return hash;
+    }
+
+    /**
+     * Retourne une representation de l'objet.
+     */
+    
+    @Override
+    public String toString() {
+        final StringBuilder s = new StringBuilder("[AbstractDataComponentPropertyType]\n");
+        if(abstractDataComponent != null) {
+            s.append("abstractDataComponent=").append(abstractDataComponent.getValue()).append('\n');
+        }
+        if(actuate != null) {
+            s.append("actuate=").append(actuate).append('\n');
+        }
+        if(arcrole != null) {
+            s.append("arcrole=").append(arcrole).append('\n');
+        }
+        if(href != null) {
+            s.append("href=").append(href).append('\n');
+        }
+        if(role != null) {
+            s.append("role=").append(role).append('\n');
+        }
+        if(show != null) {
+            s.append("show=").append(show).append('\n');
+        }
+        if(title != null) {
+            s.append("title=").append(title).append('\n');
+        }
+        if(type != null) {
+            s.append("type=").append(type).append('\n');
+        }
+        return s.toString();
+    }
 }

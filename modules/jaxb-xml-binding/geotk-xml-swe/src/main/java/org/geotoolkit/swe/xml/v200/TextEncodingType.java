@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -56,6 +57,18 @@ public class TextEncodingType extends AbstractEncodingType {
     @XmlAttribute(required = true)
     private String blockSeparator;
 
+    public TextEncodingType() {
+        
+    }
+    
+    public TextEncodingType(final String id, final String decimalSeparator, final String tokenSeparator,
+            final String blockSeparator) {
+        super(id);
+        this.blockSeparator   = blockSeparator;
+        this.decimalSeparator = decimalSeparator;
+        this.tokenSeparator   = tokenSeparator;
+    }
+            
     /**
      * Gets the value of the collapseWhiteSpaces property.
      * 
@@ -160,4 +173,56 @@ public class TextEncodingType extends AbstractEncodingType {
         this.blockSeparator = value;
     }
 
+    /**
+     * Verify if this entry is identical to specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+
+        if (object instanceof TextEncodingType && super.equals(object)) {
+            final TextEncodingType that = (TextEncodingType) object;
+            return Utilities.equals(this.blockSeparator,      that.blockSeparator)      &&
+                   Utilities.equals(this.collapseWhiteSpaces, that.collapseWhiteSpaces) &&
+                   Utilities.equals(this.decimalSeparator,    that.decimalSeparator)    &&
+                   Utilities.equals(this.tokenSeparator,      that.tokenSeparator);
+        }
+        return false;
+    }
+
+    
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 47 * hash + super.hashCode();
+        hash = 47 * hash + (this.blockSeparator != null ? this.blockSeparator.hashCode() : 0);
+        hash = 47 * hash + (this.collapseWhiteSpaces != null ? this.collapseWhiteSpaces.hashCode() : 0);
+        hash = 47 * hash + (this.decimalSeparator != null ? this.decimalSeparator.hashCode() : 0);
+        hash = 47 * hash + (this.tokenSeparator != null ? this.tokenSeparator.hashCode() : 0);
+        return hash;
+    }
+
+    /**
+     * Retourne une representation de l'objet.
+     */
+    
+    @Override
+    public String toString() {
+        final StringBuilder s = new StringBuilder(super.toString());
+        if(blockSeparator != null) {
+            s.append("blockSeparator=").append(blockSeparator).append('\n');
+        }
+        if(collapseWhiteSpaces != null) {
+            s.append("collapseWhiteSpaces=").append(collapseWhiteSpaces).append('\n');
+        }
+        if(decimalSeparator != null) {
+            s.append("decimalSeparator=").append(decimalSeparator).append('\n');
+        }
+        if(tokenSeparator != null) {
+            s.append("tokenSeparator=").append(tokenSeparator).append('\n');
+        }
+        return s.toString();
+    }
 }

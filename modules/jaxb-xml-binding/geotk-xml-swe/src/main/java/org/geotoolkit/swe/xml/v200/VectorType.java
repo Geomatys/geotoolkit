@@ -62,9 +62,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 @XmlType(name = "VectorType", propOrder = {
     "coordinate"
 })
-public class VectorType
-    extends AbstractDataComponentType
-{
+public class VectorType extends AbstractDataComponentType {
 
     @XmlElement(required = true)
     private List<VectorType.Coordinate> coordinate;

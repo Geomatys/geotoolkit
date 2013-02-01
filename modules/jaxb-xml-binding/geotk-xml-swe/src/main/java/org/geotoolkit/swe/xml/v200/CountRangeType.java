@@ -17,13 +17,13 @@
 
 package org.geotoolkit.swe.xml.v200;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlList;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.swe.xml.AbstractCountRange;
 
 
 /**
@@ -51,12 +51,21 @@ import javax.xml.bind.annotation.XmlType;
     "constraint",
     "value"
 })
-public class CountRangeType extends AbstractSimpleComponentType {
+public class CountRangeType extends AbstractSimpleComponentType implements AbstractCountRange {
 
     private AllowedValuesPropertyType constraint;
     @XmlList
-    private List<BigInteger> value;
+    private List<Integer> value;
 
+    public CountRangeType() {
+        
+    }
+    
+    public CountRangeType(final String definition, final List<Integer> value) {
+        super(null, definition);
+        this.value = value;
+    }
+    
     /**
      * Gets the value of the constraint property.
      * 
@@ -65,6 +74,7 @@ public class CountRangeType extends AbstractSimpleComponentType {
      *     {@link AllowedValuesPropertyType }
      *     
      */
+    @Override
     public AllowedValuesPropertyType getConstraint() {
         return constraint;
     }
@@ -84,28 +94,15 @@ public class CountRangeType extends AbstractSimpleComponentType {
     /**
      * Gets the value of the value property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the value property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getValue().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link BigInteger }
+     * {@link Integer }
      * 
      * 
      */
-    public List<BigInteger> getValue() {
+    @Override
+    public List<Integer> getValue() {
         if (value == null) {
-            value = new ArrayList<BigInteger>();
+            value = new ArrayList<Integer>();
         }
         return this.value;
     }

@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.swe.xml.AbstractCodeSpaceProperty;
 import org.geotoolkit.xlink.xml.v100.ActuateType;
 import org.geotoolkit.xlink.xml.v100.ShowType;
 import org.geotoolkit.xlink.xml.v100.TypeType;
@@ -45,7 +46,7 @@ import org.geotoolkit.xlink.xml.v100.TypeType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Reference")
-public class Reference {
+public class Reference implements AbstractCodeSpaceProperty {
 
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     private TypeType type;
@@ -56,7 +57,7 @@ public class Reference {
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     private String arcrole;
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
-    private String titleTemp;
+    private String title;
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     private ShowType show;
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
@@ -70,11 +71,12 @@ public class Reference {
      *     {@link TypeType }
      *     
      */
-    public TypeType getType() {
+    @Override
+    public String getType() {
         if (type == null) {
-            return TypeType.SIMPLE;
+            return TypeType.SIMPLE.toString();
         } else {
-            return type;
+            return type.toString();
         }
     }
 
@@ -98,6 +100,7 @@ public class Reference {
      *     {@link String }
      *     
      */
+    @Override
     public String getHref() {
         return href;
     }
@@ -122,6 +125,7 @@ public class Reference {
      *     {@link String }
      *     
      */
+    @Override
     public String getRole() {
         return role;
     }
@@ -146,6 +150,7 @@ public class Reference {
      *     {@link String }
      *     
      */
+    @Override
     public String getArcrole() {
         return arcrole;
     }
@@ -170,8 +175,9 @@ public class Reference {
      *     {@link String }
      *     
      */
-    public String getTitleTemp() {
-        return titleTemp;
+    @Override
+    public String getTitle() {
+        return title;
     }
 
     /**
@@ -182,8 +188,8 @@ public class Reference {
      *     {@link String }
      *     
      */
-    public void setTitleTemp(String value) {
-        this.titleTemp = value;
+    public void setTitle(String value) {
+        this.title = value;
     }
 
     /**
@@ -194,8 +200,12 @@ public class Reference {
      *     {@link ShowType }
      *     
      */
-    public ShowType getShow() {
-        return show;
+    @Override
+    public String getShow() {
+        if (show != null) {
+            return show.toString();
+        }
+        return null;
     }
 
     /**
@@ -218,8 +228,12 @@ public class Reference {
      *     {@link ActuateType }
      *     
      */
-    public ActuateType getActuate() {
-        return actuate;
+    @Override
+    public String getActuate() {
+        if (actuate != null) { 
+            return actuate.toString();
+        }
+        return null;
     }
 
     /**
@@ -234,4 +248,8 @@ public class Reference {
         this.actuate = value;
     }
 
+    @Override
+    public String getRemoteSchema() {
+        return null;
+    }
 }

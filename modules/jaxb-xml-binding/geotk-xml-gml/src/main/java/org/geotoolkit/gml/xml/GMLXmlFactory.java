@@ -19,7 +19,9 @@ package org.geotoolkit.gml.xml;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.opengis.temporal.Instant;
 import org.opengis.temporal.Period;
+import org.opengis.temporal.Position;
 
 /**
  *
@@ -180,6 +182,83 @@ public class GMLXmlFactory {
             } else {
                 return new org.geotoolkit.gml.xml.v311.TimePeriodType(dateBegin, dateEnd);
             }
+        } else {
+            throw new IllegalArgumentException("unexpected gml version number:" + version);
+        }
+    }
+    
+    public static Period createTimePeriod(final String version, final Position dateBegin, final Position dateEnd) {
+        if ("3.2.1".equals(version)) {
+            if (dateEnd != null && !(dateEnd instanceof org.geotoolkit.gml.xml.v321.TimePositionType)) {
+                throw new IllegalArgumentException("unexpected gml version for date end.");
+            }
+            if (dateBegin != null && !(dateBegin instanceof org.geotoolkit.gml.xml.v321.TimePositionType)) {
+                throw new IllegalArgumentException("unexpected gml version for date begin.");
+            }
+            if (dateEnd == null) {
+                return new org.geotoolkit.gml.xml.v321.TimePeriodType((org.geotoolkit.gml.xml.v321.TimePositionType)dateBegin);
+            } else {
+                return new org.geotoolkit.gml.xml.v321.TimePeriodType((org.geotoolkit.gml.xml.v321.TimePositionType)dateBegin, 
+                                                                      (org.geotoolkit.gml.xml.v321.TimePositionType)dateEnd);
+            }
+        } else if ("3.1.1".equals(version)) {
+            if (dateEnd != null && !(dateEnd instanceof org.geotoolkit.gml.xml.v311.TimePositionType)) {
+                throw new IllegalArgumentException("unexpected gml version for date end.");
+            }
+            if (dateBegin != null && !(dateBegin instanceof org.geotoolkit.gml.xml.v311.TimePositionType)) {
+                throw new IllegalArgumentException("unexpected gml version for date begin.");
+            }
+            if (dateEnd == null) {
+                return new org.geotoolkit.gml.xml.v311.TimePeriodType((org.geotoolkit.gml.xml.v311.TimePositionType)dateBegin);
+            } else {
+                return new org.geotoolkit.gml.xml.v311.TimePeriodType((org.geotoolkit.gml.xml.v311.TimePositionType)dateBegin, 
+                                                                      (org.geotoolkit.gml.xml.v311.TimePositionType)dateEnd);
+            }
+        } else {
+            throw new IllegalArgumentException("unexpected gml version number:" + version);
+        }
+    }
+    
+    public static Instant createTimeInstant(final String version, final Position date) {
+        if ("3.2.1".equals(version)) {
+            if (date != null && !(date instanceof org.geotoolkit.gml.xml.v321.TimePositionType)) {
+                throw new IllegalArgumentException("unexpected gml version for date position.");
+            }
+            return new org.geotoolkit.gml.xml.v321.TimeInstantType((org.geotoolkit.gml.xml.v321.TimePositionType)date);
+            
+        } else if ("3.1.1".equals(version)) {
+            if (date != null && !(date instanceof org.geotoolkit.gml.xml.v311.TimePositionType)) {
+                throw new IllegalArgumentException("unexpected gml version for date end.");
+            }
+            return new org.geotoolkit.gml.xml.v311.TimeInstantType((org.geotoolkit.gml.xml.v311.TimePositionType)date);
+        } else {
+            throw new IllegalArgumentException("unexpected gml version number:" + version);
+        }
+    }
+    
+    public static Instant createTimeInstant(final String version, final String date) {
+        if ("3.2.1".equals(version)) {
+            return new org.geotoolkit.gml.xml.v321.TimeInstantType(date);
+            
+        } else if ("3.1.1".equals(version)) {
+            return new org.geotoolkit.gml.xml.v311.TimeInstantType(date);
+        } else {
+            throw new IllegalArgumentException("unexpected gml version number:" + version);
+        }
+    }
+    
+    public static Period createTimePeriod(final String version, final TimeIndeterminateValueType dateBegin, final Position dateEnd) {
+        if ("3.2.1".equals(version)) {
+            if (dateEnd != null && !(dateEnd instanceof org.geotoolkit.gml.xml.v321.TimePositionType)) {
+                    throw new IllegalArgumentException("unexpected gml version for date end.");
+            }
+            return new org.geotoolkit.gml.xml.v321.TimePeriodType(dateBegin, (org.geotoolkit.gml.xml.v321.TimePositionType)dateEnd);
+            
+        } else if ("3.1.1".equals(version)) {
+            if (dateEnd != null && !(dateEnd instanceof org.geotoolkit.gml.xml.v311.TimePositionType)) {
+                    throw new IllegalArgumentException("unexpected gml version for date end.");
+            }
+            return new org.geotoolkit.gml.xml.v311.TimePeriodType(dateBegin, (org.geotoolkit.gml.xml.v311.TimePositionType)dateEnd);
         } else {
             throw new IllegalArgumentException("unexpected gml version number:" + version);
         }

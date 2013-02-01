@@ -102,7 +102,9 @@ public abstract class AbstractGMLType extends AbstractMetadata implements Abstra
             }
             this.id = a.getId();
             this.name = a.getName();
-            this.parameterName = a.getParameterName();
+            if (a.getParameterName() != null){
+                this.parameterName = new CodeType(a.getParameterName().getValue(), a.getParameterName().getCodeSpace());
+            }
         }
     }
 

@@ -27,6 +27,7 @@ import org.geotoolkit.gml.xml.v311.FeaturePropertyType;
 import org.geotoolkit.gml.xml.v311.MeasureType;
 import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.util.Utilities;
+import org.opengis.geometry.Geometry;
 
 
 /**
@@ -110,6 +111,14 @@ public class SamplingCurveType extends SpatiallyExtensiveSamplingFeatureType {
         this.length = value;
     }
 
+    @Override
+    public Geometry getGeometry() {
+       if (shape != null) {
+           return shape.getAbstractCurve();
+       }
+       return null;
+    }
+    
     /**
      * Vérifie que cette station est identique à l'objet spécifié
      */

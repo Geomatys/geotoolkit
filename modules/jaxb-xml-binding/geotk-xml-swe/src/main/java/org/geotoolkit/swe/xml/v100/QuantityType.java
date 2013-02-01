@@ -73,7 +73,7 @@ public class QuantityType extends AbstractDataComponentType implements Quantity 
     private Double value;
     @XmlAttribute
     @XmlSchemaType(name = "anyURI")
-    private URI referenceFrame;
+    private String referenceFrame;
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlSchemaType(name = "token")
@@ -121,6 +121,7 @@ public class QuantityType extends AbstractDataComponentType implements Quantity 
     /**
      * Gets the value of the uom property.
      */
+    @Override
     public UomPropertyType getUom() {
         return uom;
     }
@@ -135,6 +136,7 @@ public class QuantityType extends AbstractDataComponentType implements Quantity 
     /**
      * Gets the value of the constraint property.
      */
+    @Override
     public AllowedValuesPropertyType getConstraint() {
         return constraint;
     }
@@ -149,6 +151,7 @@ public class QuantityType extends AbstractDataComponentType implements Quantity 
     /**
      * Gets the value of the quality property.
      */
+    @Override
     public List<QualityPropertyType> getQuality() {
         if (quality == null) {
             quality = new ArrayList<QualityPropertyType>();
@@ -172,6 +175,7 @@ public class QuantityType extends AbstractDataComponentType implements Quantity 
     /**
      * Gets the value of the value property.
      */
+    @Override
     public Double getValue() {
         return value;
     }
@@ -186,20 +190,22 @@ public class QuantityType extends AbstractDataComponentType implements Quantity 
     /**
      * Gets the value of the referenceFrame property.
      */
-    public URI getReferenceFrame() {
+    @Override
+    public String getReferenceFrame() {
         return referenceFrame;
     }
 
     /**
      * Sets the value of the referenceFrame property.
      */
-    public void setReferenceFrame(final URI value) {
+    public void setReferenceFrame(final String value) {
         this.referenceFrame = value;
     }
 
     /**
      * Gets the value of the axisID property.
      */
+    @Override
     public String getAxisID() {
         return axisID;
     }
@@ -207,6 +213,7 @@ public class QuantityType extends AbstractDataComponentType implements Quantity 
     /**
      * Sets the value of the axisID property.
      */
+    @Override
     public void setAxisID(final String value) {
         this.axisID = value;
     }

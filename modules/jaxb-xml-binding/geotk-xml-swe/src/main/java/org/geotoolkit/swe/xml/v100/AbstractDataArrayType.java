@@ -91,6 +91,7 @@ public abstract class AbstractDataArrayType extends AbstractDataComponentType im
     /**
      * Gets the value of the elementCount property.
      */
+    @Override
     public ElementCount getElementCount() {
         return elementCount;
     }
@@ -102,6 +103,11 @@ public abstract class AbstractDataArrayType extends AbstractDataComponentType im
         this.elementCount = value;
     }
 
+    @Override
+    public void setElementCount(int count) {
+        this.elementCount = new ElementCount(count);
+    }
+    
     /**
      * Verify if this entry is identical to specified object.
      */

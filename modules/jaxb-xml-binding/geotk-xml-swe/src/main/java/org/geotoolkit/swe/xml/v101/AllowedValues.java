@@ -102,6 +102,7 @@ public class AllowedValues implements AbstractAllowedValues {
     /**
      * Gets the value of the min property.
      */
+    @Override
     public Double getMin() {
         return min;
     }
@@ -109,6 +110,7 @@ public class AllowedValues implements AbstractAllowedValues {
     /**
      * Sets the value of the min property.
      */
+    @Override
     public void setMin(final Double value) {
         this.min = value;
     }
@@ -116,6 +118,7 @@ public class AllowedValues implements AbstractAllowedValues {
     /**
      * Gets the value of the max property.
      */
+    @Override
     public Double getMax() {
         return max;
     }
@@ -123,6 +126,7 @@ public class AllowedValues implements AbstractAllowedValues {
     /**
      * Sets the value of the max property.
      */
+    @Override
     public void setMax(final Double value) {
         this.max = value;
     }
@@ -137,6 +141,7 @@ public class AllowedValues implements AbstractAllowedValues {
         return this.intervalOrValueList;
     }
 
+    @Override
     public List<Double> getInterval() {
         for (JAXBElement<List<Double>> jb : getIntervalOrValueList()) {
             if (jb.getName().getLocalPart().equals("interval")) {
@@ -186,6 +191,7 @@ public class AllowedValues implements AbstractAllowedValues {
         }
     }
 
+    @Override
     public List<Double> getValueList() {
         for (JAXBElement<List<Double>> jb : getIntervalOrValueList()) {
             if (jb.getName().getLocalPart().equals("valueList")) {
@@ -236,6 +242,7 @@ public class AllowedValues implements AbstractAllowedValues {
     /**
      * Gets the value of the id property.
      */
+    @Override
     public String getId() {
         return id;
     }
@@ -243,6 +250,7 @@ public class AllowedValues implements AbstractAllowedValues {
     /**
      * Sets the value of the id property.
      */
+    @Override
     public void setId(final String value) {
         this.id = value;
     }
