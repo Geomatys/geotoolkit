@@ -21,6 +21,7 @@ import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.*;
+import java.util.Arrays;
 import java.util.Vector;
 import org.geotoolkit.image.iterator.PixelIterator;
 import org.geotoolkit.image.iterator.PixelIteratorFactory;
@@ -47,7 +48,6 @@ public class WritableLargeRenderedImage implements WritableRenderedImage {
     private final int tileGridYOffset;
     private int minTileGridX;
     private int minTileGridY;
-    private boolean isCreate = false;
     private Vector<RenderedImage> vector = null;
 
     private final int nbrTileX;
@@ -55,6 +55,7 @@ public class WritableLargeRenderedImage implements WritableRenderedImage {
     private final ColorModel cm;
     private final SampleModel sm;
     private Point[] tileIndices = null;
+    private final boolean[][] isWrite;
 
     public WritableLargeRenderedImage(int minX, int minY, int width, int height,
             Dimension tileSize, int tileGridXOffset, int tileGridYOffset, ColorModel colorModel) {
@@ -81,47 +82,55 @@ public class WritableLargeRenderedImage implements WritableRenderedImage {
         this.minTileGridY = (minY - tileGridYOffset) / tileHeight;
         if (tileGridXOffset < minX) minTileGridX--;
         if (tileGridYOffset < minY) minTileGridY--;
-        //remplissage de raster vide
-        final int mx = minX+width;
-        final int my = minY+height;
-        int ry = minY;
-        for (int ty = minTileGridY, tmy = minTileGridY+nbrTileY; ty < tmy; ty++){
-            int rx = minX;
-            for (int tx = minTileGridX, tmx = minTileGridX+nbrTileX; tx < tmx; tx++) {
-                final int rw = Math.min(rx+tileWidth, mx)-rx;
-                final int rh = Math.min(ry+tileHeight, my)-ry;
-                ptOffset.setLocation(rx, ry);
-                this.tilecache.add(this, tx, ty, Raster.createWritableRaster(cm.createCompatibleSampleModel(rw, rh), ptOffset));
-                rx+=tileWidth;
-            }
-            ry+=tileHeight;
-        }
+        
+        isWrite = new boolean[nbrTileY][nbrTileX];
+        for (boolean[] bool : isWrite) Arrays.fill(bool, false);
     }
 
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public void addTileObserver(TileObserver to) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public void removeTileObserver(TileObserver to) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public WritableRaster getWritableTile(int tileX, int tileY) {
+        if (!isWrite[tileY - minTileGridY][tileX - minTileGridX]) fillWritableImage();
         return (WritableRaster) tilecache.getTile(this, tileX, tileY);
     }
 
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public void releaseWritableTile(int tileX, int tileY) {
     }
 
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public boolean isTileWritable(int tileX, int tileY) {
+        if (!isWrite[tileY - minTileGridY][tileX - minTileGridX]) fillWritableImage();
         return (tilecache.getTile(this, tileX, tileY) instanceof WritableRaster);
     }
 
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public Point[] getWritableTileIndices() {
         if (tileIndices == null) {
@@ -136,11 +145,17 @@ public class WritableLargeRenderedImage implements WritableRenderedImage {
         return tileIndices;
     }
 
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public boolean hasTileWriters() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public void setData(Raster r) {
         final int rminX = r.getMinX();
@@ -170,100 +185,161 @@ public class WritableLargeRenderedImage implements WritableRenderedImage {
         }
         final int tx = minTileGridX + (rminX-minX) / tileWidth;
         final int ty = minTileGridY + (rminY-minY) / tileHeight;
-        tilecache.remove(this, tx, ty);
+        final int isRow = ty - minTileGridY;
+        final int isCol = tx - minTileGridX;
+        if (isWrite[isRow][isCol]) tilecache.remove(this, tx, ty);
         tilecache.add(this, tx, ty, r);
+        isWrite[isRow][isCol] = true;
     }
 
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public Vector<RenderedImage> getSources() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public Object getProperty(String name) {
         return Image.UndefinedProperty;
     }
 
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public String[] getPropertyNames() {
         return null;
     }
 
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public ColorModel getColorModel() {
         return cm;
     }
 
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public SampleModel getSampleModel() {
         return sm;
     }
 
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public int getWidth() {
         return width;
     }
 
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public int getHeight() {
         return height;
     }
 
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public int getMinX() {
         return minX;
     }
 
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public int getMinY() {
         return minY;
     }
 
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public int getNumXTiles() {
         return nbrTileX;
     }
 
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public int getNumYTiles() {
         return nbrTileY;
     }
 
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public int getMinTileX() {
         return minTileGridX;
     }
 
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public int getMinTileY() {
         return minTileGridY;
     }
 
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public int getTileWidth() {
         return tileWidth;
     }
 
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public int getTileHeight() {
         return tileHeight;
     }
 
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public int getTileGridXOffset() {
         return tileGridXOffset;
     }
 
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public int getTileGridYOffset() {
         return tileGridYOffset;
     }
 
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public Raster getTile(int tileX, int tileY) {
+        if (!isWrite[tileY - minTileGridY][tileX - minTileGridX]) fillWritableImage();
         return tilecache.getTile(this, tileX, tileY);
     }
 
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public Raster getData() {
         // in contradiction with this class aim.
@@ -294,6 +370,9 @@ public class WritableLargeRenderedImage implements WritableRenderedImage {
         throw new UnsupportedOperationException("Not supported yet. Raster weight too expensive.");
     }
 
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public Raster getData(Rectangle rect) {
         // in contradiction with this class aim.
@@ -333,9 +412,46 @@ public class WritableLargeRenderedImage implements WritableRenderedImage {
         throw new UnsupportedOperationException("Not supported yet.Raster weight too expensive.");
     }
 
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public WritableRaster copyData(WritableRaster raster) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    /**
+     * {@inheritDoc }.
+     */
+    @Override
+    protected void finalize() throws Throwable {
+        tilecache.removeTiles(this);
+        super.finalize();
+    }
+    
+    /**
+     * Fill image by writable raster.
+     */
+    private void fillWritableImage() {
+        //remplissage de raster vide
+        final int mx = minX + width;
+        final int my = minY + height;
+        int ry = minY;
+        for (int ty = minTileGridY, tmy = minTileGridY+nbrTileY; ty < tmy; ty++){
+            int rx = minX;
+            int row = ty - minTileGridY;
+            for (int tx = minTileGridX, tmx = minTileGridX+nbrTileX; tx < tmx; tx++) {
+                int col = tx - minTileGridX;
+                if (!isWrite[row][col]) {
+                    final int rw = Math.min(rx + tileWidth, mx)  - rx;
+                    final int rh = Math.min(ry + tileHeight, my) - ry;
+                    ptOffset.setLocation(rx, ry);
+                    this.tilecache.add(this, tx, ty, Raster.createWritableRaster(cm.createCompatibleSampleModel(rw, rh), ptOffset));
+                    isWrite[row][col] = true;
+                }
+                rx += tileWidth;
+            }
+            ry += tileHeight;
+        }
+    }
 }

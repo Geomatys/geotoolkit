@@ -255,8 +255,8 @@ public class LargeRenderedImage implements RenderedImage {
         if (isRead[tileY][tileX]) return tilecache.getTile(this, tileX, tileY);
         // si elle na pas ete demandée :
         // 1 : la demandée au reader
-        final int minRx = tileX*tileWidth;
-        final int minRy = tileY*tileHeight;
+        final int minRx = tileX * tileWidth;
+        final int minRy = tileY * tileHeight;
         int wRx = Math.min(minRx + tileWidth, width) - minRx;
         int hRy = Math.min(minRy + tileHeight, height) - minRy;
         srcRegion.setBounds(minRx, minRy, wRx, hRy);
