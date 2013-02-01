@@ -45,6 +45,7 @@ public class ModifiableFeaturetype extends DefaultFeatureType implements Modifia
     @Override
     public void changeProperty(final int index, PropertyDescriptor desc) {
         descriptors[index] = desc;
+        rebuildPropertyMap();
     }
 
     @Override

@@ -34,6 +34,7 @@ import org.geotoolkit.data.query.SortByComparator;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.FeatureTypeBuilder;
+import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.geometry.DefaultBoundingBox;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.storage.DataStoreException;
@@ -152,10 +153,7 @@ public class FeatureStoreUtilities {
             while(ite.hasNext()){
                 final Feature f = ite.next();
                 final Feature candidate = writer.next();
-
-                for(Property property : f.getProperties()){
-                    candidate.getProperty(property.getName()).setValue(property.getValue());
-                }
+                FeatureUtilities.copy(f,candidate,false);
                 writer.write();
                 ids.add(candidate.getIdentifier());
             }

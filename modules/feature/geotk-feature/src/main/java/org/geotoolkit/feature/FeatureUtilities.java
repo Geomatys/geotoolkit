@@ -163,6 +163,63 @@ public final class FeatureUtilities {
         return copy(property,false,newId);
     }
 
+    /**
+     * Copy values from one property to another.
+     * Based on cardinalities, only value or the complete property might be copied.
+     * Types migth not be exactly the same, this is a best effort copy.
+     *
+     * @param source : not null
+     * @param target : not null
+     * @param <T>
+     */
+    public static void copy(final Property source, final Property target, final boolean deep){
+
+        if(source instanceof ComplexAttribute && target instanceof ComplexAttribute){
+            final ComplexAttribute sourceComplex = (ComplexAttribute)source;
+            final ComplexAttribute targetComplex = (ComplexAttribute)target;
+            final ComplexType targetType = targetComplex.getType();
+            for(final Property p : sourceComplex.getProperties()){
+                //find or build the property to copy to
+                final PropertyDescriptor sourceDesc = p.getDescriptor();
+                final Name name = sourceDesc.getName();
+                Property targetCopy = null;
+                if(sourceDesc.getMaxOccurs() == 1){
+                    //single property, try to reuse existing target property
+                    final PropertyDescriptor targetDesc = targetType.getDescriptor(name);
+                    if(targetDesc != null){
+                        targetCopy = targetComplex.getProperty(name);
+                        if(targetCopy == null){
+                            //create it
+                            targetCopy = FeatureUtilities.defaultProperty(targetDesc);
+                            targetComplex.getProperties().add(targetCopy);
+                        }
+                    }else{
+                        //no match in target type, skip this property
+                        continue;
+                    }
+                }else{
+                    //create
+                    final PropertyDescriptor targetDesc = targetType.getDescriptor(name);
+                    if(targetDesc != null){
+                        //create it
+                        targetCopy = FeatureUtilities.defaultProperty(targetDesc);
+                        targetComplex.getProperties().add(targetCopy);
+                    }else{
+                        //no match in target type, skip this property
+                        continue;
+                    }
+                }
+
+                copy(p,targetCopy,deep);
+            }
+        }else if(source instanceof Attribute && target instanceof Attribute){
+            Object value = source.getValue();
+            if(deep) value = duplicate(value);
+            target.setValue(value);
+        }
+
+    }
+
     public static <T extends Property> T deepCopy(final T property){
         return copy(property,true,null);
     }

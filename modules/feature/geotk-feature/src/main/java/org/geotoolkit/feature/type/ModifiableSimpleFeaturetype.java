@@ -47,6 +47,7 @@ public class ModifiableSimpleFeaturetype extends DefaultSimpleFeatureType implem
     public void changeProperty(final int index, PropertyDescriptor desc) {
         descriptors[index] = desc;
         types[index] = (AttributeType) desc.getType();
+        rebuildPropertyMap();
     }
 
     @Override

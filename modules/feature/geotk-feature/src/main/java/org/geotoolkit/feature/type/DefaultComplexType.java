@@ -104,6 +104,22 @@ public class DefaultComplexType extends DefaultAttributeType<AttributeType> impl
         this.descriptorsList = UnmodifiableArrayList.wrap(this.descriptors);
     }
 
+    protected void rebuildPropertyMap(){
+        propertyMap.clear();
+        for(int i=descriptors.length-1 ;i>=0;i--){
+            PropertyDescriptor pd = descriptors[i];
+            if (pd == null) {
+                // descriptor entry may be null if a request was made for a property that does not exist
+                throw new NullPointerException("PropertyDescriptor is null - did you request a property that does not exist?");
+            }
+            final Name pn = pd.getName();
+            this.propertyMap.put(pn, pd);
+            this.propertyMap.put(pn.getLocalPart(), pd);
+            this.propertyMap.put(DefaultName.toExtendedForm(pn), pd);
+            this.propertyMap.put(DefaultName.toJCRExtendedForm(pn), pd);
+        }
+    }
+
     /**
      * {@inheritDoc }
      */
