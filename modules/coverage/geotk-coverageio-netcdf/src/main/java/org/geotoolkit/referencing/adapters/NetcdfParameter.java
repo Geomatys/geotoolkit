@@ -30,7 +30,7 @@ import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.InvalidParameterTypeException;
 import org.opengis.parameter.InvalidParameterValueException;
 
-import org.geotoolkit.util.XArrays;
+import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.util.Cloneable;
 import org.geotoolkit.resources.Errors;
 
@@ -345,7 +345,7 @@ final class NetcdfParameter<T> extends NetcdfIdentifiedObject implements
     @Override
     public int[] intValueList() throws InvalidParameterTypeException {
         final double[] values = doubleValueList();
-        final int[] result = XArrays.copyAsInts(values);
+        final int[] result = ArraysExt.copyAsInts(values);
         for (int i=0; i<result.length; i++) {
             if (result[i] != values[i]) {
                 throw invalidType(parameter, int[].class);

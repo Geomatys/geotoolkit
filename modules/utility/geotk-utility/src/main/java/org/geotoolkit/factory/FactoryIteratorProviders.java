@@ -21,7 +21,7 @@ import java.util.Set;
 import java.util.LinkedHashSet;
 import net.jcip.annotations.ThreadSafe;
 
-import org.geotoolkit.util.XArrays;
+import org.apache.sis.util.ArraysExt;
 
 
 /**
@@ -116,7 +116,7 @@ final class FactoryIteratorProviders {
             }
         }
         // Note: newProviders may be null.
-        return XArrays.resize(newProviders, count);
+        return ArraysExt.resize(newProviders, count);
     }
 
     /**

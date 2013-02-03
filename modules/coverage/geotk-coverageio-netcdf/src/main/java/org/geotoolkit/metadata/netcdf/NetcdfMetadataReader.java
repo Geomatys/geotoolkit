@@ -67,7 +67,7 @@ import org.opengis.util.NameFactory;
 
 import org.apache.sis.measure.Units;
 import org.geotoolkit.util.Strings;
-import org.geotoolkit.util.XArrays;
+import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.naming.DefaultNameSpace;
@@ -212,7 +212,7 @@ public class NetcdfMetadataReader extends NetcdfMetadata {
             }
             count++;
         }
-        this.groups = XArrays.resize(groups, count);
+        this.groups = ArraysExt.resize(groups, count);
     }
 
     /**

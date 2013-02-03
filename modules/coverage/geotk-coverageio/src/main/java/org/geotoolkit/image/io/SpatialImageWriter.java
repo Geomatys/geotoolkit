@@ -39,7 +39,7 @@ import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
 import org.geotoolkit.internal.image.ImageUtilities;
 import org.geotoolkit.util.Version;
-import org.geotoolkit.util.XArrays;
+import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.util.Disposable;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.resources.Errors;
@@ -634,7 +634,7 @@ public abstract class SpatialImageWriter extends ImageWriter implements WarningP
                 nativeFormat = nativeImageMetadataFormatName;
                 extraFormats = extraImageMetadataFormatNames;
             }
-            return GEOTK_FORMAT_NAME.equals(nativeFormat) || XArrays.contains(extraFormats, GEOTK_FORMAT_NAME);
+            return GEOTK_FORMAT_NAME.equals(nativeFormat) || ArraysExt.contains(extraFormats, GEOTK_FORMAT_NAME);
         }
 
         /**

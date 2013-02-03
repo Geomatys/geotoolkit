@@ -53,7 +53,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 
 import org.apache.sis.math.MathFunctions;
-import org.geotoolkit.util.XArrays;
+import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.internal.swing.ExceptionMonitor;
@@ -1412,7 +1412,7 @@ class MouseReshapeTracker extends MouseInputAdapter implements Shape {
         if (editors != null) {
             for (int i = 0; i < editors.length; i++) {
                 if (editors[i].editor == editor) {
-                    editors = XArrays.remove(editors, i, 1);
+                    editors = ArraysExt.remove(editors, i, 1);
                     /*
                      * In principal, there should be no more objects to
                      * remove from the table.  But we let the loop continue

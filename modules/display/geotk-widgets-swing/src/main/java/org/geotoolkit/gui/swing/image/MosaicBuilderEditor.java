@@ -47,7 +47,7 @@ import javax.swing.event.ListSelectionListener;
 import org.jdesktop.swingx.JXTitledPanel;
 
 import org.apache.sis.math.MathFunctions;
-import org.geotoolkit.util.XArrays;
+import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.coverage.grid.ImageGeometry;
 import org.geotoolkit.image.io.mosaic.TileManager;
@@ -312,7 +312,7 @@ public class MosaicBuilderEditor extends JComponent implements MosaicPerformance
                         selected[count++] = row;
                     }
                 }
-                selected = XArrays.resize(selected, count);
+                selected = ArraysExt.resize(selected, count);
                 ((Subsamplings) subsamplingTable.getModel()).remove(selected);
             }
 

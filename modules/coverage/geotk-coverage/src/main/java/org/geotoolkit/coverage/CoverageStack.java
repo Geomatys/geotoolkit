@@ -53,7 +53,7 @@ import org.opengis.geometry.MismatchedReferenceSystemException;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 
-import org.geotoolkit.util.XArrays;
+import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.converter.Classes;
@@ -592,7 +592,7 @@ public class CoverageStack extends AbstractCoverage {
                           final Element[] elements) throws IOException
     {
         super(name, envelope.getCoordinateReferenceSystem(), null, null);
-        assert XArrays.isSorted(elements, COMPARATOR, false);
+        assert ArraysExt.isSorted(elements, COMPARATOR, false);
         this.elements = elements;
         this.envelope = envelope;
         zDimension = envelope.getDimension() - 1;

@@ -66,7 +66,7 @@ import org.geotoolkit.image.jai.Registry;
 import org.geotoolkit.internal.image.ImageUtilities;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
-import org.geotoolkit.util.XArrays;
+import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.AbstractInternationalString;
@@ -465,7 +465,7 @@ public class OperationJAI extends Operation2D {
                 if (headCRS != null) components[count++] = headCRS;
                                      components[count++] = crs2D;
                 if (tailCRS != null) components[count++] = tailCRS;
-                components = XArrays.resize(components, count);
+                components = ArraysExt.resize(components, count);
                 if (count == 1) {
                     targetCRS = components[0];
                 } else try {

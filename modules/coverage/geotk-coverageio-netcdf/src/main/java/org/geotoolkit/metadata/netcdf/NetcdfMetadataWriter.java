@@ -58,7 +58,7 @@ import org.apache.sis.util.iso.Types;
 import org.geotoolkit.internal.image.io.Warnings;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.XArrays;
+import org.apache.sis.util.ArraysExt;
 
 
 /**
@@ -585,10 +585,10 @@ public class NetcdfMetadataWriter extends NetcdfMetadata {
                     }
                 } else {
                     final String[] names = type.names();
-                    if (!isDefined(PROJECT) && XArrays.containsIgnoreCase(names, "project")) {
+                    if (!isDefined(PROJECT) && ArraysExt.containsIgnoreCase(names, "project")) {
                         setAttribute(toString(kset.getKeywords()));
                     }
-                    if (dataCenter == null && XArrays.containsIgnoreCase(names, "dataCenter")) {
+                    if (dataCenter == null && ArraysExt.containsIgnoreCase(names, "dataCenter")) {
                         dataCenter = toString(kset.getKeywords());
                     }
                 }

@@ -37,7 +37,7 @@ import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterNotFoundException;
 
 import org.geotoolkit.io.TableWriter;
-import org.geotoolkit.util.XArrays;
+import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
 import org.geotoolkit.referencing.operation.matrix.Matrices;
 
@@ -316,7 +316,7 @@ public class MatrixParameters extends ParameterGroup implements ParameterDescrip
                 }
             }
         }
-        return UnmodifiableArrayList.wrap((GeneralParameterValue[]) XArrays.resize(parameters, k));
+        return UnmodifiableArrayList.wrap((GeneralParameterValue[]) ArraysExt.resize(parameters, k));
     }
 
     /**

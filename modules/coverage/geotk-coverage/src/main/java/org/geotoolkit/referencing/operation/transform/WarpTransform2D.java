@@ -38,7 +38,7 @@ import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
 
 import org.geotoolkit.lang.Workaround;
-import org.geotoolkit.util.XArrays;
+import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.parameter.Parameter;
 import org.geotoolkit.parameter.ParameterGroup;
@@ -340,7 +340,7 @@ public class WarpTransform2D extends AbstractMathTransform2D implements Serializ
             if ((s=poly.getPreScaleY ()) != 1) p[c++] = new Parameter<>(PRE_SCALE_Y,  s);
             if ((s=poly.getPostScaleX()) != 1) p[c++] = new Parameter<>(POST_SCALE_X, s);
             if ((s=poly.getPostScaleY()) != 1) p[c++] = new Parameter<>(POST_SCALE_Y, s);
-            return new ParameterGroup(getParameterDescriptors(), XArrays.resize(p, c));
+            return new ParameterGroup(getParameterDescriptors(), ArraysExt.resize(p, c));
         } else {
             return null;
         }

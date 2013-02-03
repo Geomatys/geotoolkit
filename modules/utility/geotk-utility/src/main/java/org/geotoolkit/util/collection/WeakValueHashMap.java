@@ -31,7 +31,7 @@ import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 import net.jcip.annotations.ThreadSafe;
 
-import org.geotoolkit.util.XArrays;
+import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.util.Disposable;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.NullArgumentException;
@@ -584,7 +584,7 @@ public class WeakValueHashMap<K,V> extends AbstractMap<K,V> {
                         }
                     }
                 }
-                return XArrays.resize(elements, index);
+                return ArraysExt.resize(elements, index);
             }
         }
 

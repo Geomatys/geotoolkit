@@ -44,7 +44,7 @@ import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.internal.Threads;
-import org.geotoolkit.util.XArrays;
+import org.apache.sis.util.ArraysExt;
 
 
 /**
@@ -413,7 +413,7 @@ public class DatumAliases extends ReferencingFactory implements DatumFactory {
                 names[count++] = new NamedIdentifier(authority, alias);
             }
         }
-        names = XArrays.resize(names, count);
+        names = ArraysExt.resize(names, count);
         for (int i=0; i<names.length; i++) {
             final String alias = names[i].tip().toString();
             final Object[] previous = aliasMap.put(toCaseless(alias), names);

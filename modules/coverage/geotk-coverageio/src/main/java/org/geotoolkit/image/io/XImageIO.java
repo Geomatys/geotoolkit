@@ -41,7 +41,7 @@ import javax.imageio.stream.ImageOutputStream;
 import java.awt.image.RenderedImage;
 
 import org.geotoolkit.lang.Static;
-import org.geotoolkit.util.XArrays;
+import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.util.collection.DeferringIterator;
 import org.geotoolkit.util.collection.FrequencySortedSet;
 import org.geotoolkit.image.io.mosaic.MosaicImageReader;
@@ -203,9 +203,9 @@ public final class XImageIO extends Static {
         final class Filter extends IdentityHashMap<Object,Object> implements IIORegistry.Filter {
             @Override public boolean filter(final Object provider) {
                 final String[] identifiers = getIdentifiers((ImageReaderWriterSpi) provider, mode);
-                boolean found = XArrays.contains(identifiers, name);
+                boolean found = ArraysExt.contains(identifiers, name);
                 if (!found) {
-                    found = XArrays.containsIgnoreCase(identifiers, name);
+                    found = ArraysExt.containsIgnoreCase(identifiers, name);
                     if (found) {
                         // Remember that this provider matches only when ignoring case.
                         put(provider, null);
@@ -960,7 +960,7 @@ public final class XImageIO extends Static {
         final Iterator<? extends ImageReaderWriterSpi> it = registry.getServiceProviders(type, false);
         while (it.hasNext()) {
             final ImageReaderWriterSpi spi = it.next();
-            if (XArrays.containsIgnoreCase(spi.getMIMETypes(), mime)) {
+            if (ArraysExt.containsIgnoreCase(spi.getMIMETypes(), mime)) {
                 final String[] names = spi.getFormatNames();
                 if (names != null) {
                     addTo.addAll(Arrays.asList(names));

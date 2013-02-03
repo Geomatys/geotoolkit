@@ -18,7 +18,7 @@
 package org.geotoolkit.internal.swing;
 
 import javax.swing.AbstractListModel;
-import org.geotoolkit.util.XArrays;
+import org.apache.sis.util.ArraysExt;
 
 
 /**
@@ -84,7 +84,7 @@ public final class ArrayListModel<E> extends AbstractListModel<E> {
                     return;
                 }
                 final int numRemoved = (upper - lower) + 1;
-                elements = XArrays.remove(old, lower, numRemoved);
+                elements = ArraysExt.remove(old, lower, numRemoved);
                 fireIntervalRemoved(this, lower, upper);
                 keept = old.length - numRemoved;
             }

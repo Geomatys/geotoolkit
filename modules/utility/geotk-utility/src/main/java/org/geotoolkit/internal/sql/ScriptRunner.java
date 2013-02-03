@@ -45,7 +45,7 @@ import java.sql.DatabaseMetaData;
 
 import org.geotoolkit.util.Strings;
 import org.geotoolkit.util.Version;
-import org.geotoolkit.util.XArrays;
+import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
 
@@ -304,7 +304,7 @@ public class ScriptRunner implements FilenameFilter {
                 files[count++] = files[i];
             }
         }
-        files = XArrays.resize(files, count);
+        files = ArraysExt.resize(files, count);
         Arrays.sort(files, new Comparator<String>() {
             @Override public int compare(final String o1, final String o2) {
                 final Integer i1 = order.get(o1);

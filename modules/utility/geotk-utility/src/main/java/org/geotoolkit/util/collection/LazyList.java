@@ -23,7 +23,7 @@ import java.util.ListIterator;
 import java.util.AbstractSequentialList;
 import java.util.NoSuchElementException;
 
-import org.geotoolkit.util.XArrays;
+import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.resources.Errors;
 
 
@@ -168,7 +168,7 @@ public class LazyList<E> extends AbstractSequentialList<E> {
      */
     private void trimToSize() {
         iterator = null; // Lets GC do its work.
-        elements = XArrays.resize(elements, next);
+        elements = ArraysExt.resize(elements, next);
     }
 
     /**

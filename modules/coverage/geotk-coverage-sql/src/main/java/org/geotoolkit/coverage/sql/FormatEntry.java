@@ -35,7 +35,7 @@ import org.geotoolkit.gui.swing.tree.MutableTreeNode;
 import org.geotoolkit.gui.swing.tree.DefaultMutableTreeNode;
 import org.geotoolkit.image.io.metadata.SampleDomain;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
-import org.geotoolkit.util.XArrays;
+import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.util.MeasurementRange;
 import org.geotoolkit.internal.sql.table.DefaultEntry;
 
@@ -186,8 +186,8 @@ final class FormatEntry extends DefaultEntry {
             final ImageReaderSpi spi = it.next();
             final String[] candidates = spi.getFormatNames();
             final String[] mimeTypes  = spi.getMIMETypes();
-            if (XArrays.containsIgnoreCase(candidates, imageFormat) ||
-                XArrays.containsIgnoreCase(mimeTypes,  imageFormat))
+            if (ArraysExt.containsIgnoreCase(candidates, imageFormat) ||
+                ArraysExt.containsIgnoreCase(mimeTypes,  imageFormat))
             {
                 names.addAll(Arrays.asList(candidates));
                 names.addAll(Arrays.asList(mimeTypes));

@@ -49,7 +49,7 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 
 import org.apache.sis.measure.Units;
-import org.geotoolkit.util.XArrays;
+import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.resources.Errors;
@@ -239,7 +239,7 @@ final class NetcdfDimension {
                 if (sourceIndices == image.sourceBands) {
                     sourceIndices = sourceIndices.clone();
                 }
-                XArrays.reverse(sourceIndices);
+                ArraysExt.reverse(sourceIndices);
             }
             ordinates = Array.factory(dataType = DataType.INT, new int[] {length}, sourceIndices);
         } else {

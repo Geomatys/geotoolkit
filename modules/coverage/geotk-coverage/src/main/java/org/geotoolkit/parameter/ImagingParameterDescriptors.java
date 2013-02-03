@@ -55,7 +55,7 @@ import org.opengis.util.GenericName;
 import org.opengis.util.NameFactory;
 import org.opengis.util.NameSpace;
 
-import org.geotoolkit.util.XArrays;
+import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.resources.Errors;
@@ -501,7 +501,7 @@ public class ImagingParameterDescriptors extends DefaultParameterDescriptorGroup
          * have been removed from the 'replacements' map before we reach this point.
          */
         int i = desc.length;
-        desc = XArrays.resize(desc, i + replacements.size());
+        desc = ArraysExt.resize(desc, i + replacements.size());
         for (final ParameterDescriptor<?> d : replacements.values()) {
             desc[i++] = d;
         }

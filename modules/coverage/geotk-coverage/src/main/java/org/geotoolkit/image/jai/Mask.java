@@ -31,7 +31,7 @@ import javax.media.jai.iterator.RectIter;
 import javax.media.jai.iterator.RectIterFactory;
 import javax.media.jai.iterator.WritableRectIter;
 
-import org.geotoolkit.util.XArrays;
+import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.image.TransfertRectIter;
 
 import static javax.media.jai.ImageLayout.COLOR_MODEL_MASK;
@@ -163,7 +163,7 @@ public class Mask extends PointOpImage {
              * Every integer types.
              */
             default: {
-                final int[] replacement = XArrays.copyAsInts(newValues);
+                final int[] replacement = ArraysExt.copyAsInts(newValues);
                 final int[] buffer = new int[numBands];
                 do {
                     mit.startPixels();

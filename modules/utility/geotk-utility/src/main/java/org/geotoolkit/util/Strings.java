@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.util;
 
+import org.apache.sis.util.ArraysExt;
 import java.util.Arrays;
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.resources.Errors;
@@ -264,7 +265,7 @@ public final class Strings extends Static {
                 strings[count++] = item;
             }
         }
-        return XArrays.resize(strings, count);
+        return ArraysExt.resize(strings, count);
     }
 
     /**
@@ -1466,6 +1467,6 @@ search: for (; fromIndex <= stopAt; fromIndex++) {
             splitted = Arrays.copyOf(splitted, count+1);
         }
         splitted[count++] = text.substring(last);
-        return XArrays.resize(splitted, count);
+        return ArraysExt.resize(splitted, count);
     }
 }

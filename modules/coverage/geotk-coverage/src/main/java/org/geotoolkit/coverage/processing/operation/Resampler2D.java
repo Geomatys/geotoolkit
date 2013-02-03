@@ -55,7 +55,7 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.geometry.Envelope;
 
-import org.geotoolkit.util.XArrays;
+import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.io.LineFormat;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.FactoryFinder;
@@ -472,7 +472,7 @@ final class Resampler2D extends GridCoverage2D {
         if (background != null && background.length != 0) {
             if (!automaticGR) {
                 final BorderExtender borderExtender;
-                if (XArrays.allEquals(background, 0)) {
+                if (ArraysExt.allEquals(background, 0)) {
                     borderExtender = BorderExtender.createInstance(BorderExtender.BORDER_ZERO);
                 } else {
                     borderExtender = new BorderExtenderConstant(background);

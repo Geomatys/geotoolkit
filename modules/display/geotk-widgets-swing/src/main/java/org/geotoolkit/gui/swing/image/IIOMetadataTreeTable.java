@@ -27,7 +27,7 @@ import org.jdesktop.swingx.table.TableColumnExt;
 import org.jdesktop.swingx.renderer.StringValue;
 import org.jdesktop.swingx.renderer.DefaultTableRenderer;
 
-import org.geotoolkit.util.XArrays;
+import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.gui.swing.tree.TreeTableNode;
 import org.geotoolkit.image.io.metadata.MetadataTreeNode;
@@ -93,7 +93,7 @@ final class IIOMetadataTreeTable extends JXTreeTable implements StringValue {
         int c = columns.getColumnCount();
         String[] identifiers = Model.IDENTIFIERS;
         if (c != COLUMN_COUNT) {
-            identifiers = XArrays.remove(identifiers, VALUE_COLUMN, 1);
+            identifiers = ArraysExt.remove(identifiers, VALUE_COLUMN, 1);
         }
         JTables.setIdentifiers(columns, (Object[]) identifiers);
         /*

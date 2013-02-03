@@ -30,7 +30,7 @@ import javax.xml.validation.Schema;
 
 import org.geotoolkit.util.Version;
 import org.geotoolkit.util.Strings;
-import org.geotoolkit.util.XArrays;
+import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.internal.InternalUtilities;
 import org.geotoolkit.internal.jaxb.MarshalContext;
@@ -244,8 +244,8 @@ abstract class Pooled {
                 case XML.STRING_SUBSTITUTES: {
                     int mask = 0;
                     final String[] substitutes = Strings.split((String) value, ',');
-                    if (XArrays.containsIgnoreCase(substitutes, "language")) mask |= SUBSTITUTE_LANGUAGE;
-                    if (XArrays.containsIgnoreCase(substitutes, "country"))  mask |= SUBSTITUTE_COUNTRY;
+                    if (ArraysExt.containsIgnoreCase(substitutes, "language")) mask |= SUBSTITUTE_LANGUAGE;
+                    if (ArraysExt.containsIgnoreCase(substitutes, "country"))  mask |= SUBSTITUTE_COUNTRY;
                     bitMasks = mask;
                     return;
                 }

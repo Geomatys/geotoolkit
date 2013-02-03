@@ -65,7 +65,7 @@ import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.util.collection.WeakHashSet;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.XArrays;
+import org.apache.sis.util.ArraysExt;
 
 import static org.geotoolkit.naming.DefaultNameSpace.DEFAULT_SEPARATOR;
 
@@ -204,7 +204,7 @@ public class DefaultMathTransformFactory extends ReferencingFactory implements M
                         }
                         methods[count++] = it.next();
                     }
-                    providers = methods = XArrays.resize(methods, count);
+                    providers = methods = ArraysExt.resize(methods, count);
                 }
             }
         }

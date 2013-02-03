@@ -45,7 +45,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
 
 import org.geotoolkit.util.Range;
-import org.geotoolkit.util.XArrays;
+import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.util.Localized;
 import org.geotoolkit.util.DateRange;
 import org.geotoolkit.util.NumberRange;
@@ -759,7 +759,7 @@ public final class NewGridCoverageReference {
                         alternativeFormats[count++] = candidate;
                     }
                 }
-                alternativeFormats = XArrays.resize(alternativeFormats, count);
+                alternativeFormats = ArraysExt.resize(alternativeFormats, count);
             }
             this.alternativeFormats = alternativeFormats;
         }

@@ -31,7 +31,7 @@ import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.ParameterizedType;
 
 import org.geotoolkit.lang.Static;
-import org.geotoolkit.util.XArrays;
+import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.util.collection.XCollections;
 
 
@@ -392,7 +392,7 @@ next:       for (final Class<?> candidate : candidates) {
             }
             type = type.getSuperclass();
         }
-        return (Class[]) XArrays.resize(types, count);
+        return (Class[]) ArraysExt.resize(types, count);
     }
 
     /**
@@ -691,6 +691,6 @@ compare:    for (final Class<?> c : c1) {
                method.getParameterTypes().length == 0 &&
               !method.isSynthetic() &&
               !method.isAnnotationPresent(Deprecated.class) &&
-              !XArrays.contains(EXCLUDES, method.getName());
+              !ArraysExt.contains(EXCLUDES, method.getName());
     }
 }

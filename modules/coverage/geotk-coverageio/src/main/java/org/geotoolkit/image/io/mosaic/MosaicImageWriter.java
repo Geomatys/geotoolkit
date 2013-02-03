@@ -50,7 +50,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.lang.reflect.UndeclaredThrowableException;
 
 import org.apache.sis.math.MathFunctions;
-import org.geotoolkit.util.XArrays;
+import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.util.Version;
 import org.geotoolkit.util.Disposable;
 import org.geotoolkit.util.logging.Logging;
@@ -1511,7 +1511,7 @@ search: for (final Tile tile : tiles) {
                     canIgnore = false;
                 }
                 spi = it.next();
-                if (!XArrays.intersects(formatNames, spi.getFormatNames())) {
+                if (!ArraysExt.intersects(formatNames, spi.getFormatNames())) {
                     // Not a provider for the format we are looking for.
                     continue;
                 }

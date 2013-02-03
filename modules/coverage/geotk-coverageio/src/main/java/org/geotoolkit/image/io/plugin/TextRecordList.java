@@ -20,7 +20,7 @@ package org.geotoolkit.image.io.plugin;
 import java.util.Arrays;
 import javax.imageio.IIOException;
 
-import org.geotoolkit.util.XArrays;
+import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
 
@@ -149,7 +149,7 @@ final class TextRecordList {
      * because {@link TextRecordImageReader#seekForwardOnly} is {@code false}.
      */
     public void trimToSize() {
-        data = XArrays.resize(data, upper);
+        data = ArraysExt.resize(data, upper);
     }
 
     /**

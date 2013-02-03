@@ -27,7 +27,7 @@ import java.text.ParseException;
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageReadParam;
 
-import org.geotoolkit.util.XArrays;
+import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.io.LineFormat;
 
 
@@ -344,7 +344,7 @@ scan:   while (lower < readAheadLimit) {
             if (rows == null) {
                 rows = new double[0][];
             } else {
-                rows = XArrays.resize(rows, rowCount);
+                rows = ArraysExt.resize(rows, rowCount);
             }
             return spi.isValidContent(rows);
         }

@@ -31,7 +31,7 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.datum.PixelInCell;
 
-import org.geotoolkit.util.XArrays;
+import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.image.io.metadata.MetadataHelper;
 import org.geotoolkit.image.io.metadata.MetadataNodeAccessor;
@@ -140,7 +140,7 @@ public final class GridDomainAccessor extends MetadataNodeAccessor {
                 }
                 try {
                     gridToCRS.transform(center, 0, center, 0, 1);
-                    center = fixRoundingError(XArrays.resize(center, crsDimension));
+                    center = fixRoundingError(ArraysExt.resize(center, crsDimension));
                     setSpatialRepresentation(center, cellGeometry, PixelTranslation.getPixelOrientation(pixelInCell));
                 } catch (TransformException e) {
                     // Should not happen. If it happen anyway, this is not a fatal error.

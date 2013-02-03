@@ -30,7 +30,7 @@ import ucar.nc2.VariableSimpleIF;
 import ucar.nc2.dataset.VariableEnhanced;
 import ucar.nc2.dataset.EnhanceScaleMissing;
 
-import org.geotoolkit.util.XArrays;
+import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.internal.InternalUtilities;
 import static org.geotoolkit.internal.image.io.DimensionAccessor.fixRoundingError;
 
@@ -272,7 +272,7 @@ scan:   for (int i=0; i<missingCount; i++) {
                 }
             }
         }
-        fillValues = (count != 0) ? XArrays.resize(missings, count) : null;
+        fillValues = (count != 0) ? ArraysExt.resize(missings, count) : null;
     }
 
     /**

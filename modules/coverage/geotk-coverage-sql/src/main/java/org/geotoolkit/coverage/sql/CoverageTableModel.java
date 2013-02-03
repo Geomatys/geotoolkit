@@ -57,7 +57,7 @@ import javax.swing.undo.CannotRedoException;
 
 import org.opengis.coverage.Coverage;
 
-import org.geotoolkit.util.XArrays;
+import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.util.DateRange;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.collection.XCollections;
@@ -240,7 +240,7 @@ public class CoverageTableModel extends AbstractTableModel {
             entries = refs.toArray(new GridCoverageReference[refs.size()]);
             rewrapEntries();
             if (REVERSE_ORDER) {
-                XArrays.reverse(entries);
+                ArraysExt.reverse(entries);
             }
         }
     }
@@ -289,7 +289,7 @@ public class CoverageTableModel extends AbstractTableModel {
     public void setCoverageReferences(final Collection<? extends GridCoverageReference> references) {
         final GridCoverageReference[] newEntries = references.toArray(new GridCoverageReference[references.size()]);
         if (REVERSE_ORDER) {
-            XArrays.reverse(newEntries);
+            ArraysExt.reverse(newEntries);
         }
         final GridCoverageReference[] oldEntries = entries;
         /*
@@ -426,7 +426,7 @@ public class CoverageTableModel extends AbstractTableModel {
             if (index != null) {
                 // In case the same name is requested more than once.
                 final int length = index.length;
-                index = XArrays.resize(index, length+1);
+                index = ArraysExt.resize(index, length+1);
                 index[length] = i;
                 map.put(names[i], index);
             }
@@ -450,7 +450,7 @@ public class CoverageTableModel extends AbstractTableModel {
                 // of this name will leave the index of the previous occurrence unchanged, and
                 // update the indices of the other occurrences.
                 if (index.length > 1) {
-                    map.put(name, XArrays.remove(index, 0, 1));
+                    map.put(name, ArraysExt.remove(index, 0, 1));
                 }
             }
         }
@@ -503,7 +503,7 @@ public class CoverageTableModel extends AbstractTableModel {
                 if (upper != lower) {
                     if (entries == oldEntries) {
                         // Create a copy, so we don't modify the original array.
-                        entries = XArrays.remove(entries, lower, upper-lower);
+                        entries = ArraysExt.remove(entries, lower, upper-lower);
                     } else {
                         // Work directly on the array only if we known that it is a copy.
                         System.arraycopy(entries, upper, entries, lower, entriesLength-upper);
@@ -514,7 +514,7 @@ public class CoverageTableModel extends AbstractTableModel {
                 upper = i;
             }
         }
-        this.entries = XArrays.resize(entries, entriesLength);
+        this.entries = ArraysExt.resize(entries, entriesLength);
         commitEdit(oldEntries, this.entries, Vocabulary.Keys.DELETE);
     }
 

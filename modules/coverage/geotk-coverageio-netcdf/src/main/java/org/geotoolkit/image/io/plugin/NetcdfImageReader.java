@@ -85,7 +85,7 @@ import org.geotoolkit.referencing.adapters.NetcdfCRSBuilder;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.lang.Workaround;
 import org.geotoolkit.util.Version;
-import org.geotoolkit.util.XArrays;
+import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.util.collection.BackingStoreException;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
 
@@ -944,7 +944,7 @@ public class NetcdfImageReader extends FileImageReader implements
                 // If we didn't found any variable with a length of at least 2 along
                 // 2 dimensions, try again but be less strict (require a length of 1).
             }
-            variableNames = UnmodifiableArrayList.wrap(XArrays.resize(filtered, count));
+            variableNames = UnmodifiableArrayList.wrap(ArraysExt.resize(filtered, count));
         }
         return variableNames;
     }
@@ -1437,7 +1437,7 @@ public class NetcdfImageReader extends FileImageReader implements
         @Override
         public boolean canDecodeInput(final Object source) throws IOException {
             if (IOUtilities.canProcessAsPath(source)) {
-                return XArrays.containsIgnoreCase(SUFFIXES, IOUtilities.extension(source));
+                return ArraysExt.containsIgnoreCase(SUFFIXES, IOUtilities.extension(source));
                 /*
                  * If a future version wants to use NetcdfFile.canOpen(String),
                  * then please verify that the following issues are resolved:

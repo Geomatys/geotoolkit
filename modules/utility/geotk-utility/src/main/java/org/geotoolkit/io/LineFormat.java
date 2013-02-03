@@ -29,7 +29,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.IOException;
 
-import org.geotoolkit.util.XArrays;
+import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.converter.ClassFilter;
 import org.geotoolkit.util.converter.ObjectConverter;
@@ -337,8 +337,8 @@ load:   while (true) {
      */
     public void setValues(final Object values) throws IllegalArgumentException {
         final int length = Array.getLength(values);
-        data   = XArrays.resize(data,   length);
-        limits = XArrays.resize(limits, length + 1);
+        data   = ArraysExt.resize(data,   length);
+        limits = ArraysExt.resize(limits, length + 1);
         for (int i=0; i<length; i++) {
             data[i] = Array.get(values, i);
         }
@@ -719,8 +719,8 @@ load:   while (true) {
      * Invoked on serialization. Trims the data array to the minimum requested length.
      */
     private void writeObject(final ObjectOutputStream out) throws IOException {
-        data = XArrays.resize(data, count);
-        limits = XArrays.resize(limits, count + 1);
+        data = ArraysExt.resize(data, count);
+        limits = ArraysExt.resize(limits, count + 1);
     }
 
     /**

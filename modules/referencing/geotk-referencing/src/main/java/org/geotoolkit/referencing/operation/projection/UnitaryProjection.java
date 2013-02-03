@@ -47,7 +47,7 @@ import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.measure.Latitude;
 import org.apache.sis.measure.Longitude;
-import org.geotoolkit.util.XArrays;
+import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.Deprecable;
 import org.geotoolkit.util.ComparisonMode;
@@ -892,7 +892,7 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
             yScale            = doubleValue(expected, Y_SCALE,             values);
             xyPlaneRotation   = doubleValue(expected, XY_PLANE_ROTATION,   values);
             switch ((isNaN(standardParallel1) ? 0 : 1) | (isNaN(standardParallel2) ? 0 : 2)) {
-                case  0: standardParallels = XArrays.EMPTY_DOUBLE; break;
+                case  0: standardParallels = ArraysExt.EMPTY_DOUBLE; break;
                 case  1: standardParallels = new double[] {standardParallel1}; break;
                 case  2: standardParallels = new double[] {standardParallel2}; break;
                 case  3: standardParallels = new double[] {standardParallel1, standardParallel2}; break;
@@ -917,7 +917,7 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
             for (final GenericName name : reference.getAlias()) {
                 if (name instanceof Identifier) {
                     final Identifier identifier = (Identifier) name;
-                    if (!XArrays.containsIdentity(AMBIGUOUS, identifier.getAuthority()) &&
+                    if (!ArraysExt.containsIdentity(AMBIGUOUS, identifier.getAuthority()) &&
                             IdentifiedObjects.nameMatches(descriptor, identifier.getCode()))
                     {
                         if (identifier instanceof Deprecable && ((Deprecable) identifier).isDeprecated()) {

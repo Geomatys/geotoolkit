@@ -49,7 +49,7 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
 
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.util.XArrays;
+import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.coverage.Category;
@@ -553,9 +553,9 @@ testLinear: for (int i=0; i<numBands; i++) {
                     expectedSource = range.getMaximum(false);
                     expectedTarget = expectedSource * scale + offset;
                 }
-                breakpoints[i][0] = sourceBreakpoints = XArrays.resize(sourceBreakpoints, jbp);
-                breakpoints[i][1] = targetBreakpoints = XArrays.resize(targetBreakpoints, jbp);
-                assert XArrays.isSorted(sourceBreakpoints, false);
+                breakpoints[i][0] = sourceBreakpoints = ArraysExt.resize(sourceBreakpoints, jbp);
+                breakpoints[i][1] = targetBreakpoints = ArraysExt.resize(targetBreakpoints, jbp);
+                assert ArraysExt.isSorted(sourceBreakpoints, false);
             }
             if (canRescale && scales!=null && (!conditional || isZeroExcluded(image, scales, offsets))) {
                 /*

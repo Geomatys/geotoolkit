@@ -34,7 +34,7 @@ import org.opengis.referencing.operation.Matrix;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.MismatchedDimensionException;
 
-import org.geotoolkit.util.XArrays;
+import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.util.Strings;
 import org.geotoolkit.util.ComparisonMode;
 import org.apache.sis.math.MathFunctions;
@@ -589,7 +589,7 @@ public class GeneralMatrix extends GMatrix implements XMatrix {
             numRow++;
             assert numData % numRow == 0 : numData;
         }
-        data = (data != null) ? XArrays.resize(data, numData) : XArrays.EMPTY_DOUBLE;
+        data = (data != null) ? ArraysExt.resize(data, numData) : ArraysExt.EMPTY_DOUBLE;
         return new GeneralMatrix(numRow, numData/numRow, data);
     }
 

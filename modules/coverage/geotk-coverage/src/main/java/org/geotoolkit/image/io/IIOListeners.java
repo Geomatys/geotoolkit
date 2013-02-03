@@ -29,7 +29,7 @@ import javax.imageio.event.IIOWriteWarningListener;
 import javax.imageio.event.IIOWriteProgressListener;
 import net.jcip.annotations.ThreadSafe;
 
-import org.geotoolkit.util.XArrays;
+import org.apache.sis.util.ArraysExt;
 
 
 /**
@@ -272,7 +272,7 @@ public class IIOListeners implements Serializable {
                 }
             }
         }
-        return XArrays.resize(listeners, count);
+        return ArraysExt.resize(listeners, count);
     }
 
     /**

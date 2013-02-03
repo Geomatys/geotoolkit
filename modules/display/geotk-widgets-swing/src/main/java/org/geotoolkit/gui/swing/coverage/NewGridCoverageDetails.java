@@ -53,7 +53,7 @@ import org.opengis.referencing.crs.CRSAuthorityFactory;
 
 import org.geotoolkit.resources.Widgets;
 import org.geotoolkit.resources.Vocabulary;
-import org.geotoolkit.util.XArrays;
+import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.util.Disposable;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.SimpleInternationalString;
@@ -424,7 +424,7 @@ final class NewGridCoverageDetails extends WindowCreator implements CoverageData
                 try {
                     final String[] alternatives = newReference.getAlternativeFormats();
                     final DefaultComboBoxModel<CharSequence> model = new DefaultComboBoxModel<CharSequence>(alternatives);
-                    if (!XArrays.contains(alternatives, newReference.format)) {
+                    if (!ArraysExt.contains(alternatives, newReference.format)) {
                         /*
                          * InternationalString is used as a sentinal value meaning "New Format",
                          * to be replaced by NewGridCoverageDetails.this.defaultFormatName when

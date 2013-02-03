@@ -52,7 +52,7 @@ import javax.media.jai.JAI;
 
 import org.geotoolkit.util.Version;
 import org.geotoolkit.util.Strings;
-import org.geotoolkit.util.XArrays;
+import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.internal.Threads;
@@ -536,7 +536,7 @@ public class About extends JComponent implements Dialog {
                         threadNames[c++] = threadArray[i].getName();
                     }
                 }
-                threadNames = XArrays.resize(threadNames, c);
+                threadNames = ArraysExt.resize(threadNames, c);
                 if (Arrays.equals(names, threadNames)) {
                     threadNames = null;
                 }

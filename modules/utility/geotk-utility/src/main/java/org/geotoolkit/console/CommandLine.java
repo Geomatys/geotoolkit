@@ -32,7 +32,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.annotation.Annotation;
 
 import org.geotoolkit.io.X364;
-import org.geotoolkit.util.XArrays;
+import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.util.Strings;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.converter.Classes;
@@ -327,7 +327,7 @@ public abstract class CommandLine implements Runnable {
                 }
             }
         }
-        arguments = XArrays.resize(arguments, count);
+        arguments = ArraysExt.resize(arguments, count);
         Logging.GEOTOOLKIT.forceMonolineConsoleOutput(debug ? Level.FINER : null);
         if (explicitEncoding) {
             for (final Handler handler : Logging.getLogger(Logging.GEOTOOLKIT.name).getHandlers()) {
@@ -581,7 +581,7 @@ public abstract class CommandLine implements Runnable {
         }
         final String[] old = arguments;
         final String action = old[0].trim();
-        arguments = XArrays.remove(old, 0, 1);
+        arguments = ArraysExt.remove(old, 0, 1);
         Class<?> classe = getClass();
         do {
             for (final Method method : classe.getDeclaredMethods()) {

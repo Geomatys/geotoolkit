@@ -33,7 +33,7 @@ import javax.media.jai.TileRequest;
 import javax.media.jai.TileScheduler;
 import javax.media.jai.TileComputationListener;
 
-import org.geotoolkit.util.XArrays;
+import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.util.Disposable;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.converter.Classes;
@@ -536,7 +536,7 @@ public final class DeferredPlanarImage extends PlanarImage
             if (observers == null) {
                 observers = new TileObserver[] {observer};
             } else {
-                observers = XArrays.append(observers, observer);
+                observers = ArraysExt.append(observers, observer);
             }
         }
     }
@@ -553,7 +553,7 @@ public final class DeferredPlanarImage extends PlanarImage
         if (observers != null) {
             for (int i=observers.length; --i>=0;) {
                 if (observers[i] == observer) {
-                    observers = XArrays.remove(observers, i, 1);
+                    observers = ArraysExt.remove(observers, i, 1);
                     break;
                 }
             }
@@ -631,7 +631,7 @@ public final class DeferredPlanarImage extends PlanarImage
                 }
             }
             if (indices != null) {
-                indices = XArrays.resize(indices, count);
+                indices = ArraysExt.resize(indices, count);
             }
         }
         return indices;

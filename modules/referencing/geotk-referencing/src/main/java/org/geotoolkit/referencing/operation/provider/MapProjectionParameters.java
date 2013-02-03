@@ -25,7 +25,7 @@ import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterNotFoundException;
 
-import org.geotoolkit.util.XArrays;
+import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.parameter.Parameter;
 import org.geotoolkit.parameter.Parameters;
@@ -225,7 +225,7 @@ final class MapProjectionParameters extends ParameterGroup {
             final double standardParallel1 = get(STANDARD_PARALLEL_1);
             final double standardParallel2 = get(STANDARD_PARALLEL_2);
             if (Double.isNaN(standardParallel2)) {
-                return Double.isNaN(standardParallel1) ? XArrays.EMPTY_DOUBLE : new double[] {standardParallel1};
+                return Double.isNaN(standardParallel1) ? ArraysExt.EMPTY_DOUBLE : new double[] {standardParallel1};
             }
             return new double[] {standardParallel1, standardParallel2};
         }

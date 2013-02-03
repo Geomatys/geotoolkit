@@ -61,7 +61,7 @@ import org.geotoolkit.image.io.WarningProducer;
 import org.geotoolkit.internal.image.io.Warnings;
 import org.geotoolkit.internal.image.io.IrregularAxesConverter;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
-import org.geotoolkit.util.XArrays;
+import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.referencing.datum.DefaultTemporalDatum;
 import org.geotoolkit.referencing.datum.DefaultVerticalDatum;
 import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
@@ -189,7 +189,7 @@ public class NetcdfCRS extends NetcdfIdentifiedObject implements CoordinateRefer
      */
     private static Dimension[] getDomain(final CoordinateSystem netcdfCS) {
         final Dimension[] domain = netcdfCS.getDomain().toArray(new Dimension[netcdfCS.getRankDomain()]);
-        XArrays.reverse(domain);
+        ArraysExt.reverse(domain);
         return domain;
     }
 

@@ -28,7 +28,7 @@ import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 import net.jcip.annotations.ThreadSafe;
 
-import org.geotoolkit.util.XArrays;
+import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.Disposable;
 import org.geotoolkit.util.logging.Logging;
@@ -504,7 +504,7 @@ public class WeakHashSet<E> extends AbstractSet<E> implements CheckedCollection<
                 }
             }
         }
-        return XArrays.resize(elements, index);
+        return ArraysExt.resize(elements, index);
     }
 
     /**

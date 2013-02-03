@@ -25,7 +25,7 @@ import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.spi.ImageReaderWriterSpi;
 import javax.imageio.spi.ServiceRegistry;
 
-import org.geotoolkit.util.XArrays;
+import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.image.io.plugin.RawImageReader;
 
 
@@ -88,6 +88,6 @@ public final class RawFiles implements ServiceRegistry.Filter {
      */
     @Override
     public boolean filter(final Object provider) {
-        return XArrays.contains(((ImageReaderWriterSpi) provider).getFormatNames(), "raw");
+        return ArraysExt.contains(((ImageReaderWriterSpi) provider).getFormatNames(), "raw");
     }
 }

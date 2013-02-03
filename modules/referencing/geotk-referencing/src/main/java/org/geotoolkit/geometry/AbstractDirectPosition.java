@@ -24,7 +24,7 @@ import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.geometry.MismatchedReferenceSystemException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
-import org.geotoolkit.util.XArrays;
+import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.resources.Errors;
@@ -290,7 +290,7 @@ scan:   while (true) {
                 c = wkt.charAt(i);
             }
         }
-        return XArrays.resize(ordinates, dimension);
+        return ArraysExt.resize(ordinates, dimension);
     }
 
     /**

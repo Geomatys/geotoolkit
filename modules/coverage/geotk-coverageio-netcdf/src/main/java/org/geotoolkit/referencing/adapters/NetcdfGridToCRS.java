@@ -27,7 +27,7 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
 
-import org.geotoolkit.util.XArrays;
+import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.internal.referencing.SeparableTransform;
 import org.geotoolkit.referencing.operation.MathTransforms;
@@ -262,7 +262,7 @@ class NetcdfGridToCRS extends AbstractMathTransform implements SeparableTransfor
                 return null;
             }
         }
-        domain = XArrays.resize(domain, n);
+        domain = ArraysExt.resize(domain, n);
         n = 0;
         try {
             for (int i=0; i<target.length; i++) {
@@ -278,7 +278,7 @@ class NetcdfGridToCRS extends AbstractMathTransform implements SeparableTransfor
             Logging.unexpectedException(NetcdfGridToCRS.class, "subTransform", e);
             return null;
         }
-        target = XArrays.resize(target, n);
+        target = ArraysExt.resize(target, n);
         return create(domain, target);
     }
 

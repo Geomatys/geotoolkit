@@ -21,7 +21,7 @@ import java.awt.geom.Line2D;
 import java.io.Serializable;
 import javax.vecmath.MismatchedSizeException;
 
-import org.geotoolkit.util.XArrays;
+import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.resources.Errors;
 
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
@@ -154,7 +154,7 @@ public class VectorPair implements Serializable {
                 }
             }
             if (indices != null) {
-                indices = XArrays.resize(indices, count);
+                indices = ArraysExt.resize(indices, count);
                 this.X = X.view(indices);
                 this.Y = Y.view(indices);
             }
@@ -252,8 +252,8 @@ public class VectorPair implements Serializable {
                 Xi[j]   = swap ? i : i+1;
                 Yi[j++] = swap ? i+1 : i;
             }
-            assert XArrays.isSorted(Xi, false);
-            assert XArrays.isSorted(Yi, false);
+            assert ArraysExt.isSorted(Xi, false);
+            assert ArraysExt.isSorted(Yi, false);
             /*
              * At this point we are done. However if 'direction' is different than 0, then the
              * index swapping may have caused situations where a Y value goes down, then up at
@@ -276,8 +276,8 @@ public class VectorPair implements Serializable {
                         }
                     }
                 }
-                Xi = XArrays.resize(Xi, size);
-                Yi = XArrays.resize(Yi, size);
+                Xi = ArraysExt.resize(Xi, size);
+                Yi = ArraysExt.resize(Yi, size);
             }
         }
         this.X = X.view(Xi);

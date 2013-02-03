@@ -54,7 +54,7 @@ import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.resources.Wizards;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.XArrays;
+import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.util.logging.Logging;
 
 
@@ -252,7 +252,7 @@ public final class Main extends JFrame implements ActionListener {
      * @param args The command line arguments.
      */
     public static void main(final String[] args) {
-        if (XArrays.containsIgnoreCase(args, "--nimbus")) try {
+        if (ArraysExt.containsIgnoreCase(args, "--nimbus")) try {
             UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
         } catch (ReflectiveOperationException | UnsupportedLookAndFeelException e) {
             Logging.recoverableException(Main.class, "<init>", e);

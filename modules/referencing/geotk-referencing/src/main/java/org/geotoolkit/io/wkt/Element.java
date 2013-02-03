@@ -25,7 +25,7 @@ import java.text.ParsePosition;
 import java.text.ParseException;
 
 import org.geotoolkit.lang.Debug;
-import org.geotoolkit.util.XArrays;
+import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.util.Strings;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.logging.LoggedFormat;
@@ -338,7 +338,7 @@ final class Element {
         StackTraceElement[] trace = exception.getStackTrace();
         if (trace!=null && trace.length!=0) {
             if (factory.equals(trace[0].getMethodName())) {
-                trace = XArrays.remove(trace, 0, 1);
+                trace = ArraysExt.remove(trace, 0, 1);
                 exception.setStackTrace(trace);
             }
         }

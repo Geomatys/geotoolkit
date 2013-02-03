@@ -21,7 +21,7 @@ import java.util.Iterator;
 import javax.imageio.spi.ServiceRegistry;
 import net.jcip.annotations.ThreadSafe;
 
-import org.geotoolkit.util.XArrays;
+import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.internal.Threads;
 import org.geotoolkit.internal.io.TemporaryFile;
 
@@ -64,7 +64,7 @@ final class ShutdownHook extends Thread {
         if (registries == null) {
             registries = new ServiceRegistry[] {registry};
         } else {
-            registries = XArrays.append(registries, registry);
+            registries = ArraysExt.append(registries, registry);
         }
         ShutdownHook.registries = registries;
     }
