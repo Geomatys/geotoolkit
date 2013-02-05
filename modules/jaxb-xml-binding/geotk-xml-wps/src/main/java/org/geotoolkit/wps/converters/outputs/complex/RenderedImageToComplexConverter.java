@@ -69,7 +69,7 @@ public class RenderedImageToComplexConverter extends AbstractComplexOutputConver
         }
         
         if (!encoding.equals(WPSEncoding.BASE64.getValue())) {
-            throw new NonconvertibleObjectException("Encoding should be in Base64 for complexe request.");
+            throw new NonconvertibleObjectException("Encoding should be in Base64 for complex request.");
         }
         
         complex.setMimeType((String) params.get(MIME));
