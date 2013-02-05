@@ -106,7 +106,7 @@ public class SweXMLBindingTest {
         AnyScalarPropertyType any = new AnyScalarPropertyType("id-1", "any name", text);
         TextBlockType encoding = new TextBlockType("encoding-1", ",", "@@", ".");
         elementType.setField(Arrays.asList(any));
-        DataArrayType array = new DataArrayType("array-id-1", 0, elementType, encoding, null);
+        DataArrayType array = new DataArrayType("array-id-1", 0, "array-id-1", elementType, encoding, null);
 
 
         sw = new StringWriter();
@@ -153,7 +153,7 @@ public class SweXMLBindingTest {
         marshaller.marshal(factory.createDataBlockDefinition(definition), System.out);
         
         org.geotoolkit.swe.xml.v200.ObjectFactory factoryV200 = new org.geotoolkit.swe.xml.v200.ObjectFactory();
-        org.geotoolkit.swe.xml.v200.DataArrayType arrayV200 = new org.geotoolkit.swe.xml.v200.DataArrayType("test-id", 2, null, "balbbla", null);
+        org.geotoolkit.swe.xml.v200.DataArrayType arrayV200 = new org.geotoolkit.swe.xml.v200.DataArrayType("test-id", 2, null, "balbbla", "test-id", null);
         marshaller.marshal(factoryV200.createDataArray(arrayV200), System.out);
     }
     

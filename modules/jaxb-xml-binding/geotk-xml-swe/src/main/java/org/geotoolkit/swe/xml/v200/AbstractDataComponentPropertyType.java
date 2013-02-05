@@ -172,6 +172,13 @@ public class AbstractDataComponentPropertyType implements DataComponentProperty 
     public JAXBElement<? extends AbstractDataComponentType> getAbstractDataComponent() {
         return abstractDataComponent;
     }
+    
+    public AbstractDataComponentType getValue() {
+        if (abstractDataComponent != null) {
+            return abstractDataComponent.getValue();
+        }
+        return null;
+    }
 
     /**
      * Sets the value of the abstractDataComponent property.

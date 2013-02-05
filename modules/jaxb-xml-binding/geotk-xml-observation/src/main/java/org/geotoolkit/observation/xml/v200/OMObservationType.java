@@ -412,7 +412,7 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
             
             @Override
             public String toString() {
-                return "[Anonymous Phenomenon] id:" + getId();
+                return "[Anonymous Phenomenon] name:" + getName();
             }
 
             @Override

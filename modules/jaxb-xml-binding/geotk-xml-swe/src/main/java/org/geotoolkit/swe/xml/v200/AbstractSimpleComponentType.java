@@ -82,7 +82,7 @@ public abstract class AbstractSimpleComponentType extends AbstractDataComponentT
     }
     
     public AbstractSimpleComponentType(final String id, final String definition) {
-        super(id, definition);
+        super(id, definition, null);
     }
     
     /**

@@ -108,34 +108,9 @@ public class AnyScalarPropertyType implements AnyScalar {
 
     }
 
-    public AnyScalarPropertyType(final String name, final Count count) {
+    public AnyScalarPropertyType(final String name, final AbstractDataComponentType component) {
         this.name  = name;
-        this.count = count;
-    }
-
-    public AnyScalarPropertyType(final String name, final QuantityType quantity) {
-        this.name     = name;
-        this.quantity = quantity;
-    }
-
-    public AnyScalarPropertyType(final String name, final TimeType time) {
-        this.name  = name;
-        this.time  = time;
-    }
-
-    public AnyScalarPropertyType(final String name, final BooleanType _boolean) {
-        this.name  = name;
-        this._boolean = _boolean;
-    }
-
-    public AnyScalarPropertyType(final String name, final Category category) {
-        this.name  = name;
-        this.category = category;
-    }
-
-    public AnyScalarPropertyType(final String name, final Text text) {
-        this.name  = name;
-        this.text  = text;
+        setValue(component);
     }
 
     public AnyScalarPropertyType(final AnyScalar sc) {
@@ -168,7 +143,7 @@ public class AnyScalarPropertyType implements AnyScalar {
         }
     }
     
-    public void setValue(Object obj) {
+    public final void setValue(Object obj) {
         if (obj instanceof JAXBElement) {
             obj = ((JAXBElement) obj).getValue();
         }
@@ -185,13 +160,13 @@ public class AnyScalarPropertyType implements AnyScalar {
         } else if (obj instanceof Text) {
             text = (Text) obj;
         } else {
-            System.out.println("UNINPLEMENTED CASE:" + obj.getClass().getName());
+            throw new IllegalArgumentException("UNINPLEMENTED CASE:" + obj.getClass().getName());
         }
 
     }
 
+    @Override
     public AbstractDataComponentType getValue() {
-
         if (count != null) {
             return count;
         } else if (quantity != null) {
@@ -361,6 +336,7 @@ public class AnyScalarPropertyType implements AnyScalar {
      *     {@link String }
      *     
      */
+    @Override
     public String getName() {
         return name;
     }
@@ -385,6 +361,7 @@ public class AnyScalarPropertyType implements AnyScalar {
      *     {@link String }
      *     
      */
+    @Override
     public String getRemoteSchema() {
         return remoteSchema;
     }
@@ -409,6 +386,7 @@ public class AnyScalarPropertyType implements AnyScalar {
      *     {@link String }
      *     
      */
+    @Override
     public String getType() {
         return type;
     }
@@ -433,6 +411,7 @@ public class AnyScalarPropertyType implements AnyScalar {
      *     {@link String }
      *     
      */
+    @Override
     public String getHref() {
         return href;
     }
@@ -457,6 +436,7 @@ public class AnyScalarPropertyType implements AnyScalar {
      *     {@link String }
      *     
      */
+    @Override
     public String getRole() {
         return role;
     }
@@ -481,6 +461,7 @@ public class AnyScalarPropertyType implements AnyScalar {
      *     {@link String }
      *     
      */
+    @Override
     public String getArcrole() {
         return arcrole;
     }
@@ -505,6 +486,7 @@ public class AnyScalarPropertyType implements AnyScalar {
      *     {@link String }
      *     
      */
+    @Override
     public String getTitle() {
         return title;
     }
@@ -529,6 +511,7 @@ public class AnyScalarPropertyType implements AnyScalar {
      *     {@link String }
      *     
      */
+    @Override
     public String getShow() {
         return show;
     }
@@ -553,6 +536,7 @@ public class AnyScalarPropertyType implements AnyScalar {
      *     {@link String }
      *     
      */
+    @Override
     public String getActuate() {
         return actuate;
     }

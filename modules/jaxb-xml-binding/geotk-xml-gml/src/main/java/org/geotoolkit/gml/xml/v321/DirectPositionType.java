@@ -93,11 +93,11 @@ public class DirectPositionType implements DirectPosition, org.geotoolkit.gml.xm
      * @param value
      * @param uomLabels
      */
-    public DirectPositionType(final String srsName, final int srsDimension, final List<String> axisLabels,
+    public DirectPositionType(final String srsName, final Integer srsDimension, final List<String> axisLabels,
             final List<Double> value, final List<String> uomLabels)
     {
         this.srsName      = srsName;
-        this.srsDimension = Integer.valueOf(srsDimension);
+        this.srsDimension = srsDimension;
         this.axisLabels   = axisLabels;
         this.value        = value;
         this.uomLabels    = uomLabels;
@@ -110,11 +110,11 @@ public class DirectPositionType implements DirectPosition, org.geotoolkit.gml.xm
      * @param axisLabels
      * @param value
      */
-    public DirectPositionType(final String srsName, final int srsDimension, final List<String> axisLabels,
+    public DirectPositionType(final String srsName, final Integer srsDimension, final List<String> axisLabels,
             final List<Double> value)
     {
         this.srsName      = srsName;
-        this.srsDimension = Integer.valueOf(srsDimension);
+        this.srsDimension = srsDimension;
         this.axisLabels   = axisLabels;
         this.value        = value;
     }
@@ -125,9 +125,9 @@ public class DirectPositionType implements DirectPosition, org.geotoolkit.gml.xm
      * @param srsDimension
      * @param value
      */
-    public DirectPositionType(final String srsName, final int srsDimension, final List<Double> value) {
+    public DirectPositionType(final String srsName, final Integer srsDimension, final List<Double> value) {
         this.srsName      = srsName;
-        this.srsDimension = Integer.valueOf(srsDimension);
+        this.srsDimension = srsDimension;
         this.value        = value;
     }
 

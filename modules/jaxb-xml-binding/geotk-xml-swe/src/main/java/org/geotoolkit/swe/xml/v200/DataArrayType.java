@@ -120,12 +120,16 @@ public class DataArrayType extends AbstractDataComponentType implements DataArra
 
     }
     
-    public DataArrayType(final String id, final int count, final Encoding encoding, final String values, final ElementType elementType) {
-        super(id, null);
+    public DataArrayType(final String id, final int count, final AbstractEncodingType encoding, final String values, final String elementName, final AbstractDataComponentType elementType) {
+        super(id, null, null);
         this.elementCount = new CountPropertyType(count); 
-        this.encoding     = encoding;
+        if (encoding != null) {
+            this.encoding = new Encoding(encoding);
+        }
         this.values       = values;
-        this.elementType  = elementType;
+        if (elementType != null) {
+            this.elementType  = new ElementType(elementName, elementType);
+        }
     }
     
     /**
@@ -447,6 +451,18 @@ public class DataArrayType extends AbstractDataComponentType implements DataArra
         
         public Encoding(final Encoding that) {
             this.abstractEncoding = that.abstractEncoding;
+        }
+        public Encoding(final AbstractEncodingType encoding) {
+            final ObjectFactory factory = new ObjectFactory();
+            if (encoding instanceof TextEncodingType) {
+                this.abstractEncoding = factory.createTextEncoding((TextEncodingType)encoding);
+            } else if (encoding instanceof XMLEncodingType) {
+                this.abstractEncoding = factory.createXMLEncoding((XMLEncodingType)encoding);
+            } else if (encoding instanceof BinaryEncodingType) {
+                this.abstractEncoding = factory.createBinaryEncoding((BinaryEncodingType)encoding);
+            } else {
+                this.abstractEncoding = factory.createAbstractEncoding(encoding);
+            }
         }
         
         /**

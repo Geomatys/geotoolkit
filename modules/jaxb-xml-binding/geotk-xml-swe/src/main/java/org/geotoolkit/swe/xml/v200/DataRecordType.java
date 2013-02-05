@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.geotoolkit.swe.xml.AnyScalar;
 import org.geotoolkit.swe.xml.DataRecord;
 import org.geotoolkit.util.Utilities;
 
@@ -71,7 +72,8 @@ public class DataRecordType extends AbstractDataComponentType implements DataRec
         
     }
     
-    public DataRecordType(final List<Field> fields) {
+    public DataRecordType(final String id, final String definition, final boolean fixed, final List<Field> fields) {
+        super(id, definition, !fixed);
         this.field = fields;
     }
     
@@ -142,7 +144,7 @@ public class DataRecordType extends AbstractDataComponentType implements DataRec
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "")
-    public static class Field extends AbstractDataComponentPropertyType {
+    public static class Field extends AbstractDataComponentPropertyType implements AnyScalar {
 
         @XmlAttribute(required = true)
         @XmlJavaTypeAdapter(CollapsedStringAdapter.class)

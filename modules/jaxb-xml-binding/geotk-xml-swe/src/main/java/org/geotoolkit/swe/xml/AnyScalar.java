@@ -39,7 +39,7 @@ public interface AnyScalar {
 
     String getTitle();
 
-    String getShow();;
+    String getShow();
 
     String getActuate();
 }

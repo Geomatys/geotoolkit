@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.v311.CurvePropertyType;
+import org.geotoolkit.gml.xml.v311.EnvelopeType;
 import org.geotoolkit.gml.xml.v311.FeaturePropertyType;
 import org.geotoolkit.gml.xml.v311.MeasureType;
 import org.geotoolkit.util.ComparisonMode;
@@ -80,6 +81,19 @@ public class SamplingCurveType extends SpatiallyExtensiveSamplingFeatureType {
         super(id, name, description, sampledFeature);
         this.length = length;
         this.shape  = shape;
+    }
+    
+    public SamplingCurveType(final String               id,
+                             final String               name,
+                             final String               description,
+                             final FeaturePropertyType sampledFeature,
+                             final CurvePropertyType shape,
+                             final MeasureType length,
+                             final EnvelopeType env){
+        super(id, name, description, sampledFeature);
+        this.length = length;
+        this.shape  = shape;
+        setBoundedBy(env);
     }
 
     /**

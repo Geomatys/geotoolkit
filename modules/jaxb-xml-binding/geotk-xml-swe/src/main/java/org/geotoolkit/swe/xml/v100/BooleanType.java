@@ -74,8 +74,9 @@ public class BooleanType extends AbstractDataComponentType implements AbstractBo
 
     }
 
-    public BooleanType(final URI definition) {
+    public BooleanType(final String definition, final Boolean value) {
         super(definition);
+        this.value = value;
     }
 
     /**

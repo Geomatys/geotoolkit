@@ -81,6 +81,11 @@ public class TimeType extends AbstractDataComponentType implements AbstractTime 
             this.uom = new UomPropertyType(uomCode, uomHref);
         }
     }
+    
+    public TimeType(final String definition, final UomPropertyType uom) {
+        super(null, definition, null);
+        this.uom = uom;
+    }
 
     /**
      * Build a new TimeType

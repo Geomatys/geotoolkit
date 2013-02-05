@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.swe.xml.TextBlock;
 import org.geotoolkit.util.Utilities;
 
 
@@ -46,7 +47,7 @@ import org.geotoolkit.util.Utilities;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "TextEncodingType")
-public class TextEncodingType extends AbstractEncodingType {
+public class TextEncodingType extends AbstractEncodingType implements TextBlock {
 
     @XmlAttribute
     private Boolean collapseWhiteSpaces;

@@ -25,6 +25,7 @@ import org.geotoolkit.gml.xml.Envelope;
 import org.geotoolkit.gml.xml.FeatureCollection;
 import org.geotoolkit.gml.xml.FeatureProperty;
 import org.geotoolkit.gml.xml.GMLXmlFactory;
+import org.geotoolkit.gml.xml.LineString;
 import org.geotoolkit.gml.xml.Point;
 import org.geotoolkit.gml.xml.TimeIndeterminateValueType;
 import org.geotoolkit.ows.xml.AbstractOperationsMetadata;
@@ -34,6 +35,17 @@ import org.geotoolkit.ows.xml.AcceptFormats;
 import org.geotoolkit.ows.xml.AcceptVersions;
 import org.geotoolkit.ows.xml.Range;
 import org.geotoolkit.ows.xml.Sections;
+import org.geotoolkit.swe.xml.AbstractBoolean;
+import org.geotoolkit.swe.xml.AbstractDataComponent;
+import org.geotoolkit.swe.xml.AbstractDataRecord;
+import org.geotoolkit.swe.xml.AbstractEncoding;
+import org.geotoolkit.swe.xml.AbstractTime;
+import org.geotoolkit.swe.xml.AnyScalar;
+import org.geotoolkit.swe.xml.DataArray;
+import org.geotoolkit.swe.xml.Quantity;
+import org.geotoolkit.swe.xml.SweXmlFactory;
+import org.geotoolkit.swe.xml.TextBlock;
+import org.geotoolkit.swe.xml.UomProperty;
 import org.geotoolkit.swes.xml.InsertSensorResponse;
 import org.opengis.filter.temporal.After;
 import org.opengis.filter.temporal.Before;
@@ -392,7 +404,7 @@ public class SOSXmlFactory {
                 return new org.geotoolkit.gml.xml.v311.FeaturePropertyType(samplingFactory.createSamplingSolid((org.geotoolkit.sampling.xml.v100.SamplingSolidType)feature));
             } else if (feature instanceof org.geotoolkit.sampling.xml.v100.SamplingSurfaceType) {
                 return new org.geotoolkit.gml.xml.v311.FeaturePropertyType(samplingFactory.createSamplingSurface((org.geotoolkit.sampling.xml.v100.SamplingSurfaceType)feature));
-            } else {
+            } else if (feature != null) {
                 throw new IllegalArgumentException("unexpected object version");
             }
         } else if ("2.0.0".equals(version)) {
@@ -402,12 +414,13 @@ public class SOSXmlFactory {
                 return new org.geotoolkit.gml.xml.v321.FeaturePropertyType(spatialFactory.createSFSpatialSamplingFeature((org.geotoolkit.samplingspatial.xml.v200.SFSpatialSamplingFeatureType)feature));
              } else if (feature instanceof org.geotoolkit.sampling.xml.v200.SFSamplingFeatureType) {
                  return new org.geotoolkit.gml.xml.v321.FeaturePropertyType(samplingFactory.createSFSamplingFeature((org.geotoolkit.sampling.xml.v200.SFSamplingFeatureType)feature));
-             } else {
+             } else if (feature != null) { 
                 throw new IllegalArgumentException("unexpected object version");
              }
         } else {
             throw new IllegalArgumentException("unexpected sos version number:" + version);
         }
+        return null;
     }
     
     /**
@@ -455,6 +468,39 @@ public class SOSXmlFactory {
                                                                           (org.geotoolkit.gml.xml.v321.FeaturePropertyType)sampledFeature, 
                                                                           (org.geotoolkit.gml.xml.v321.PointType)location,
                                                                           null);
+        } else {
+            throw new IllegalArgumentException("unexpected sos version number:" + version);
+        }
+    }
+    
+    public static SamplingFeature buildSamplingCurve(final String version, final String id, final String name, final String description, final FeatureProperty sampledFeature,
+                              final LineString location, final Double lengthValue, final String uom, final Envelope env) {
+        if ("1.0.0".equals(version)) {
+            if (sampledFeature != null && !(sampledFeature instanceof org.geotoolkit.gml.xml.v311.FeaturePropertyType)) {
+                throw new IllegalArgumentException("unexpected object version for sampled feature element");
+            }
+            if (location != null && !(location instanceof org.geotoolkit.gml.xml.v311.LineStringType)) {
+                throw new IllegalArgumentException("unexpected object version for location element");
+            }
+            if (env != null && !(env instanceof org.geotoolkit.gml.xml.v311.EnvelopeType)) {
+                throw new IllegalArgumentException("unexpected object version for env element");
+            }
+            return new org.geotoolkit.sampling.xml.v100.SamplingCurveType(id, name, description, 
+                                                                          (org.geotoolkit.gml.xml.v311.FeaturePropertyType)sampledFeature, 
+                                                                          new org.geotoolkit.gml.xml.v311.CurvePropertyType((org.geotoolkit.gml.xml.v311.LineStringType)location),
+                                                                          new org.geotoolkit.gml.xml.v311.MeasureType(lengthValue, uom),
+                                                                          (org.geotoolkit.gml.xml.v311.EnvelopeType)env);
+        } else if ("2.0.0".equals(version)) {
+            if (sampledFeature != null && !(sampledFeature instanceof org.geotoolkit.gml.xml.v321.FeaturePropertyType)) {
+                throw new IllegalArgumentException("unexpected object version for sampled feature element");
+            }
+            if (location != null && !(location instanceof org.geotoolkit.gml.xml.v321.LineStringType)) {
+                throw new IllegalArgumentException("unexpected object version for location element");
+            }
+            return new org.geotoolkit.samplingspatial.xml.v200.SFSpatialSamplingFeatureType(id, name, description, "http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingCurve",
+                                                                          (org.geotoolkit.gml.xml.v321.FeaturePropertyType)sampledFeature, 
+                                                                          (org.geotoolkit.gml.xml.v321.LineStringType)location,
+                                                                          (org.geotoolkit.gml.xml.v321.EnvelopeType)env);
         } else {
             throw new IllegalArgumentException("unexpected sos version number:" + version);
         }
@@ -522,13 +568,103 @@ public class SOSXmlFactory {
         }
     }
     
-    public static DirectPosition buildDirectPosition(final String version, final String srsName, final int srsDimension, final List<Double> value) {
+    public static DirectPosition buildDirectPosition(final String version, final String srsName, final Integer srsDimension, final List<Double> value) {
         if ("2.0.0".equals(version)) {
             return GMLXmlFactory.buildDirectPosition("3.2.1", srsName, srsDimension, value);
         } else if ("1.0.0".equals(version)) {
             return GMLXmlFactory.buildDirectPosition("3.1.1", srsName, srsDimension, value);
         } else {
-            throw new IllegalArgumentException("unexpected gml version number:" + version);
+            throw new IllegalArgumentException("unexpected SOS version number:" + version);
+        }
+    }
+    
+    public static LineString buildLineString(final String version, final List<DirectPosition> position) {
+        if ("2.0.0".equals(version)) {
+            return GMLXmlFactory.buildLineString("3.2.1", position);
+        } else if ("1.0.0".equals(version)) {
+            return GMLXmlFactory.buildLineString("3.1.1", position);
+        } else {
+            throw new IllegalArgumentException("unexpected SOS version number:" + version);
+        }
+    }
+    
+    public static TextBlock buildTextBlock(final String version, final String id, final String tokenSeparator, final String blockSeparator, final String decimalSeparator) {
+        if ("2.0.0".equals(version)) {
+            return SweXmlFactory.createTextBlock("2.0.0", id, tokenSeparator, blockSeparator, decimalSeparator);
+        } else if ("1.0.0".equals(version)) {
+            return SweXmlFactory.createTextBlock("1.0.1", id, tokenSeparator, blockSeparator, decimalSeparator);
+        } else {
+            throw new IllegalArgumentException("unexpected SOS version number:" + version);
+        }
+    }
+    
+    public static Quantity buildQuantity(final String version,  final String definition, final UomProperty uom, final Double value) {
+        if ("2.0.0".equals(version)) {
+            return SweXmlFactory.createQuantity("2.0.0", definition, uom, value);
+        } else if ("1.0.0".equals(version)) {
+            return SweXmlFactory.createQuantity("1.0.1", definition, uom, value);
+        } else {
+            throw new IllegalArgumentException("unexpected SOS version number:" + version);
+        }
+    }
+    
+    public static UomProperty buildUomProperty(final String version, final String code, final String href) {
+        if ("2.0.0".equals(version)) {
+            return SweXmlFactory.createUomProperty("2.0.0", code, href);
+        } else if ("1.0.0".equals(version)) {
+            return SweXmlFactory.createUomProperty("1.0.0", code, href);
+        } else {
+            throw new IllegalArgumentException("Unexpected SOS version:" + version);
+        }
+    }
+    
+    public static AbstractTime buildTime(final String version, final String definition, final UomProperty uom) {
+        if ("2.0.0".equals(version)) {
+            return SweXmlFactory.createTime("2.0.0", definition, uom);
+        } else if ("1.0.0".equals(version)) {
+            return SweXmlFactory.createTime("1.0.1", definition, uom);
+        } else {
+            throw new IllegalArgumentException("Unexpected SOS version:" + version);
+        }
+    }
+    
+    public static AbstractBoolean buildBoolean(final String version, final String definition, final Boolean value) {
+        if ("2.0.0".equals(version)) {
+            return SweXmlFactory.createBoolean("2.0.0", definition, value);
+        } else if ("1.0.0".equals(version)) {
+            return SweXmlFactory.createBoolean("1.0.1", definition, value);
+        } else {
+            throw new IllegalArgumentException("Unexpected SOS version:" + version);
+        }
+    }
+    
+    public static AnyScalar buildAnyScalar(final String version, final String id, final String name, final AbstractDataComponent compo) {
+        if ("2.0.0".equals(version)) {
+            return SweXmlFactory.buildAnyScalar("2.0.0", id, name, compo);
+        } else if ("1.0.0".equals(version)) {
+            return SweXmlFactory.buildAnyScalar("1.0.1", id, name, compo);
+        } else {
+            throw new IllegalArgumentException("Unexpected SOS version:" + version);
+        }
+    }
+    
+    public static AbstractDataRecord buildSimpleDatarecord(final String version,  final String blockid, final String id, final String definition, final boolean fixed, final List<AnyScalar> components) {
+        if ("2.0.0".equals(version)) {
+            return SweXmlFactory.buildSimpleDataRecord("2.0.0",  blockid, id, definition, fixed, components);
+        } else if ("1.0.0".equals(version)) {
+            return SweXmlFactory.buildSimpleDataRecord("1.0.1", blockid, id, definition, fixed, components);
+        } else {
+            throw new IllegalArgumentException("Unexpected SOS version:" + version);
+        }
+    }
+    
+    public static DataArray buildDataArray(final String version, final String id, final int count, final String elementName, final AbstractDataRecord elementType, final AbstractEncoding encoding, final String values) {
+        if ("2.0.0".equals(version)) {
+            return SweXmlFactory.buildDataArray("2.0.0",  id, count, elementName, elementType, encoding, values);
+        } else if ("1.0.0".equals(version)) {
+            return SweXmlFactory.buildDataArray("1.0.1",  id, count, elementName, elementType, encoding, values);
+        } else {
+            throw new IllegalArgumentException("Unexpected SOS version:" + version);
         }
     }
 }

@@ -107,7 +107,7 @@ public class ObservationXMLBindingTest {
         AnyScalarPropertyType field        = new AnyScalarPropertyType("text-field-001", new Text("urn:something", "some value"));
         fields.add(field);
         SimpleDataRecordType record       = new SimpleDataRecordType(fields);
-        DataArrayType array               = new DataArrayType("array-001", 1, record, encoding, "somevalue");
+        DataArrayType array               = new DataArrayType("array-001", 1, "array-001", record, encoding, "somevalue");
         DataArrayPropertyType arrayProp    = new DataArrayPropertyType(array);
         ObservationType obs = new ObservationType("urn:Observation-007", "observation definition", sp, observedProperty, procedure, arrayProp, samplingTime);
 
@@ -334,7 +334,7 @@ public class ObservationXMLBindingTest {
         AnyScalarPropertyType field        = new AnyScalarPropertyType("text-field-001", new Text("urn:something", "some value"));
         fields.add(field);
         SimpleDataRecordType record       = new SimpleDataRecordType(fields);
-        DataArrayType array               = new DataArrayType("array-001", 1, record, encoding, "somevalue");
+        DataArrayType array               = new DataArrayType("array-001", 1, "array-001", record, encoding, "somevalue");
         DataArrayPropertyType arrayProp    = new DataArrayPropertyType(array);
         
         ObservationType expResult = new ObservationType("urn:Observation-007", null, sp, observedProperty, procedure, arrayProp, samplingTime);

@@ -200,6 +200,18 @@ public class DataComponentPropertyType implements DataComponentProperty {
         this.abstractDataRecord = factory.createDataRecord(dataRecord);
     }
     
+    public DataComponentPropertyType(final AbstractDataRecordType component, final String name) {
+        this.name = name;
+        final ObjectFactory sweFactory = new ObjectFactory();
+        if (component instanceof SimpleDataRecordType) {
+            this.abstractDataRecord = sweFactory.createSimpleDataRecord((SimpleDataRecordType)component);
+        }else if (component instanceof DataRecordType) {
+            this.abstractDataRecord = sweFactory.createDataRecord((DataRecordType)component);
+        } else {
+            throw new IllegalArgumentException("this type is not yet handled in dataComponentPropertyType:" + component);
+        }
+    }
+    
     public DataComponentPropertyType(final String name, final String role, final QuantityRange quantityRange) {
         this.name      = name;
         this.role      = role;
@@ -350,6 +362,7 @@ public class DataComponentPropertyType implements DataComponentProperty {
         }
     }
     
+    @Override
     public void setToHref() {
         if (abstractDataRecord != null) {
             this.href = abstractDataRecord.getValue().getId();

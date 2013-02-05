@@ -48,6 +48,7 @@ import org.geotoolkit.swe.xml.DataArray;
 @XmlType(name = "DataArrayType", propOrder = {
     "elementType",
     "encoding",
+    "dataValues",
     "values"
 })
 public class DataArrayType extends AbstractDataArrayType implements DataArray {
@@ -55,7 +56,8 @@ public class DataArrayType extends AbstractDataArrayType implements DataArray {
     @XmlElement(required = true)
     private DataComponentPropertyType elementType;
     private BlockEncodingPropertyType encoding;
-    private DataValuePropertyType values;
+    private DataValuePropertyType dataValues;
+    private String values;
 
     public DataArrayType() {
 
@@ -70,10 +72,22 @@ public class DataArrayType extends AbstractDataArrayType implements DataArray {
             if (ar.getPropertyElementType() != null) {
                 this.elementType = new DataComponentPropertyType(ar.getPropertyElementType());
             }
-            if (ar.getValues() != null) {
-                this.values = new DataValuePropertyType(ar.getDataValues());
+            if (ar.getDataValues() != null) {
+                this.dataValues = new DataValuePropertyType(ar.getDataValues());
             }
+            this.values = ar.getValues();
         }
+    }
+    
+    public DataArrayType(final String id, final int count, final String elementName, final AbstractDataRecordType elementType,
+            final AbstractEncodingType encoding, final String values) {
+        super(id, count);
+        if (elementType != null) {
+            this.elementType = new DataComponentPropertyType(elementType, elementName);
+        }
+        this.encoding    = new BlockEncodingPropertyType(encoding);
+        this.values      = values;
+        
     }
 
     /**
@@ -123,9 +137,7 @@ public class DataArrayType extends AbstractDataArrayType implements DataArray {
      */
     @Override
     public String getValues() {
-
-        //TODO
-        return "";
+        return values;
     }
 
     /**
@@ -133,19 +145,19 @@ public class DataArrayType extends AbstractDataArrayType implements DataArray {
      */
     @Override
     public DataValuePropertyType getDataValues() {
-        return values;
+        return dataValues;
     }
 
     /**
      * Sets the value of the values property.
      */
-    public void setValues(final DataValuePropertyType value) {
-        this.values = value;
+    public void setDataValues(final DataValuePropertyType value) {
+        this.dataValues = value;
     }
-
+    
     @Override
-    public void setValues(String values) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public void setValues(final String values) {
+        this.values = values;
     }
 
 }

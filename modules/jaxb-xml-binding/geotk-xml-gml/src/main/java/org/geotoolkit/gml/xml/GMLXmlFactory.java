@@ -39,7 +39,7 @@ public class GMLXmlFactory {
         }
     }
     
-    public static org.opengis.geometry.DirectPosition buildDirectPosition(final String version, final String srsName, final int srsDimension, final List<Double> value) {
+    public static org.opengis.geometry.DirectPosition buildDirectPosition(final String version, final String srsName, final Integer srsDimension, final List<Double> value) {
         if ("3.2.1".equals(version)) {
             return new org.geotoolkit.gml.xml.v321.DirectPositionType(srsName, srsDimension, value);
         } else if ("3.1.1".equals(version)) {

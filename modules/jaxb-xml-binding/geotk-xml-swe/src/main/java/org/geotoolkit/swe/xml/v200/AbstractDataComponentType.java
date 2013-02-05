@@ -71,7 +71,7 @@ public abstract class AbstractDataComponentType extends AbstractSWEIdentifiableT
         
     }
     
-    public AbstractDataComponentType(final String id, final String definition) {
+    public AbstractDataComponentType(final String id, final String definition, final Boolean updatable) {
         super(id);
         this.definition = definition;
     }
