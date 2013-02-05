@@ -76,8 +76,13 @@ public class FileToReferenceConverter extends AbstractReferenceOutputConverter<F
         reference.setSchema((String) params.get(SCHEMA));
         final File targetDirectory = new File((String) params.get(TMP_DIR_PATH));
         try {
-            FileUtilities.copy(source, new File(targetDirectory, source.getName()));
-            reference.setHref((String) params.get(TMP_DIR_URL) + "/" +source.getName());
+            final File target = new File(targetDirectory, source.getName());
+            if(source.getAbsolutePath().startsWith((String) params.get(TMP_DIR_PATH))) {
+                reference.setHref(source.getAbsolutePath().replace((String) params.get(TMP_DIR_PATH), (String) params.get(TMP_DIR_URL)));
+            } else {
+                FileUtilities.copy(source, new File(targetDirectory, source.getName()));
+                reference.setHref((String) params.get(TMP_DIR_URL) + "/" +source.getName());
+            }
         } catch (IOException ex) {
             throw new NonconvertibleObjectException("Error during moving file to output directory.", ex);
         }
