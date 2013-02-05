@@ -85,6 +85,7 @@ public class WPSConverterRegistry {
         //Object -> ReferenceType converters
         register(CoverageToReferenceConverter               .getInstance());
         register(FeatureToReferenceConverter                .getInstance());
+        register(FeatureCollectionToReferenceConverter      .getInstance());
         register(FeatureTypeToReferenceConverter            .getInstance());
         register(GeometryToReferenceConverter               .getInstance());
         register(RenderedImageToReferenceConverter          .getInstance());
