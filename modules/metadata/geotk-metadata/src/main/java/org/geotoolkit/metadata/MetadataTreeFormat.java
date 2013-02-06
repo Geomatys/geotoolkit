@@ -42,7 +42,7 @@ import org.opengis.metadata.content.Band;
 import org.opengis.metadata.spatial.Dimension;
 import org.opengis.metadata.spatial.GridSpatialRepresentation;
 
-import org.geotoolkit.util.Strings;
+import org.apache.sis.util.CharSequences;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.util.MeasurementRange;
 import org.geotoolkit.util.converter.Classes;
@@ -617,7 +617,7 @@ public class MetadataTreeFormat extends Format {
             // String formatted below must comply with the isCollectionElement(...) condition.
             final StringBuilder buffer = new StringBuilder(32);
             buffer.append(OPEN_BRACKET).append(formatNumber(number)).append(CLOSE_BRACKET).append(' ');
-            buffer.append(Strings.camelCaseToSentence(Classes.getShortName(type)));
+            buffer.append(CharSequences.camelCaseToSentence(Classes.getShortName(type)));
             String title = getTitleForSpecialCases(value);
             if (title == null) {
                 title = getTitle(asMap.values());

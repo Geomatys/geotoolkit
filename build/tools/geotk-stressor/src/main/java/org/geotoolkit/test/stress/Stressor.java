@@ -28,7 +28,7 @@ import org.opengis.coverage.grid.GridEnvelope;
 
 import org.geotoolkit.math.Statistics;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
-import org.geotoolkit.util.Strings;
+import org.apache.sis.util.CharSequences;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.logging.LogProducer;
 import org.geotoolkit.util.logging.PerformanceLevel;
@@ -147,7 +147,7 @@ public abstract class Stressor extends RequestGenerator implements Callable<Stat
         final int bufferBase;
         if (isLoggable()) {
             buffer = new StringBuilder("Thread ").append(threadName);
-            buffer.append(Strings.spaces(THREAD_NAME_FIELD_LENGTH - buffer.length())).append(": ");
+            buffer.append(CharSequences.spaces(THREAD_NAME_FIELD_LENGTH - buffer.length())).append(": ");
             bufferBase = buffer.length();
         } else {
             buffer = null;
@@ -224,7 +224,7 @@ public abstract class Stressor extends RequestGenerator implements Callable<Stat
      * in a field of the given length.
      */
     private static void insertSpaces(final int pos, final StringBuilder buffer, final int length) {
-        buffer.insert(pos, Strings.spaces(length - (buffer.length() - pos)));
+        buffer.insert(pos, CharSequences.spaces(length - (buffer.length() - pos)));
     }
 
     /**

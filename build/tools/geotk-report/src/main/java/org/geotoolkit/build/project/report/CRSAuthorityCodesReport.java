@@ -38,7 +38,7 @@ import org.opengis.referencing.crs.CRSAuthorityFactory;
 import org.opengis.referencing.datum.VerticalDatumType;
 import org.opengis.test.report.AuthorityCodesReport;
 
-import org.geotoolkit.util.Strings;
+import org.apache.sis.util.CharSequences;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
@@ -130,7 +130,7 @@ public final class CRSAuthorityCodesReport extends AuthorityCodesReport {
         }
         if (crs instanceof VerticalCRS) {
             final VerticalDatumType type = ((VerticalCRS) crs).getDatum().getVerticalDatumType();
-            return Strings.camelCaseToSentence(type.name().toLowerCase(getLocale())) + " height";
+            return CharSequences.camelCaseToSentence(type.name().toLowerCase(getLocale())) + " height";
         }
         if (crs instanceof CompoundCRS) {
             final StringBuilder buffer = new StringBuilder();
@@ -187,7 +187,7 @@ public final class CRSAuthorityCodesReport extends AuthorityCodesReport {
                     final int start = remark.lastIndexOf('.', s) + 1;
                     final int end = remark.indexOf('.', s);
                     remark = (end >= 0) ? remark.substring(start, end) : remark.substring(start);
-                    remark = Strings.trim(remark.replace('¶', '\n').trim());
+                    remark = CharSequences.trimWhitespaces(remark.replace('¶', '\n').trim());
                     if (!remark.isEmpty()) {
                         row.remark = remark;
                     }

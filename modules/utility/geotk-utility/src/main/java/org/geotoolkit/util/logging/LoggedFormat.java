@@ -29,7 +29,7 @@ import java.util.logging.LogRecord;
 
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.converter.Classes;
-import org.geotoolkit.util.Strings;
+import org.apache.sis.util.CharSequences;
 
 
 /**
@@ -348,7 +348,7 @@ public class LoggedFormat<T> extends Format {
             }
             return resources.getString(Errors.Keys.UNEXPECTED_END_OF_STRING);
         }
-        final String error = Strings.token(text, errorIndex).toString();
+        final String error = CharSequences.token(text, errorIndex).toString();
         text = text.substring(index);
         if (level != null) {
             return resources.getLogRecord(level, Errors.Keys.UNPARSABLE_STRING_$2, text, error);

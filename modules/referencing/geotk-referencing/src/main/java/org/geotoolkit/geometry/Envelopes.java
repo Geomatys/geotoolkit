@@ -49,7 +49,7 @@ import org.geotoolkit.internal.referencing.DirectPositionView;
 import org.geotoolkit.resources.Errors;
 
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
-import static org.geotoolkit.util.Strings.trimFractionalPart;
+import static org.apache.sis.util.StringBuilders.trimFractionalPart;
 
 
 /**

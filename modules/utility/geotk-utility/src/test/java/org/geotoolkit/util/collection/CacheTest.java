@@ -26,7 +26,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.io.IOException;
 
-import org.geotoolkit.util.Strings;
+import org.apache.sis.util.CharSequences;
 import org.geotoolkit.io.TableWriter;
 import org.geotoolkit.math.Statistics;
 import org.geotoolkit.test.TestBase;
@@ -216,7 +216,7 @@ public final strictfp class CacheTest extends TestBase {
             out.println("Number of times a cached value has been reused, for each thread:");
             for (int i=0; i<threads.length;) {
                 final String n = String.valueOf(threads[i++].hit);
-                out.print(Strings.spaces(6 - n.length()));
+                out.print(CharSequences.spaces(6 - n.length()));
                 out.print(n);
                 if ((i % 10) == 0) {
                     out.println();

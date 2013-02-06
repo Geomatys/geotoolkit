@@ -30,7 +30,7 @@ import java.io.PrintWriter;
 
 import org.opengis.referencing.IdentifiedObject;
 
-import org.geotoolkit.util.Strings;
+import org.apache.sis.util.CharSequences;
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.internal.InternalUtilities;
 
@@ -131,10 +131,10 @@ final class CacheRecord implements Comparable<CacheRecord> {
         }
         for (final CacheRecord record : records) {
             out.print(record.key);
-            out.print(Strings.spaces(codeLength - record.key.length()));
+            out.print(CharSequences.spaces(codeLength - record.key.length()));
             out.print(record.identity);
             if (record.value != null) {
-                out.print(Strings.spaces(identityLength - record.identity.length()));
+                out.print(CharSequences.spaces(identityLength - record.identity.length()));
                 out.println(record.value);
             } else {
                 out.println();

@@ -27,7 +27,7 @@ import net.jcip.annotations.NotThreadSafe;
 import org.opengis.metadata.quality.ConformanceResult;
 
 import org.geotoolkit.lang.Debug;
-import org.geotoolkit.util.Strings;
+import org.apache.sis.util.CharSequences;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.collection.XCollections;
@@ -486,7 +486,7 @@ public class FactoryRegistry extends ServiceRegistry {
             final Hints.Key key, final String message, final Class<?> type)
     {
         final StringBuilder buffer = new StringBuilder(status);
-        buffer.append(Strings.spaces(Math.max(1, 7-status.length())))
+        buffer.append(CharSequences.spaces(Math.max(1, 7-status.length())))
               .append('(').append(Classes.getShortName(category));
         if (key != null) {
             buffer.append(", ").append(key);

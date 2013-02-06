@@ -39,7 +39,7 @@ import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.MeasurementRange;
 import org.geotoolkit.util.converter.AnyConverter;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
-import org.geotoolkit.util.Strings;
+import org.apache.sis.util.CharSequences;
 import org.geotoolkit.resources.Errors;
 
 import static org.geotoolkit.util.converter.Numbers.*;
@@ -498,7 +498,7 @@ public class RangeFormat extends Format {
         }
         final int errorIndex = pos.getErrorIndex();
         final ParseException e = new ParseException(Errors.format(Errors.Keys.UNPARSABLE_STRING_$2,
-                source, Strings.token(source, errorIndex)), errorIndex);
+                source, CharSequences.token(source, errorIndex)), errorIndex);
         e.initCause(failure);
         throw e;
     }

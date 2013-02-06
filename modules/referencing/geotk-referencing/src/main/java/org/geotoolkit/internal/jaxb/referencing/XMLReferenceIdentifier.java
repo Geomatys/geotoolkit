@@ -21,7 +21,7 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
 import javax.xml.bind.annotation.XmlAttribute;
 import org.opengis.referencing.ReferenceIdentifier;
-import org.geotoolkit.util.Strings;
+import org.apache.sis.util.StringBuilders;
 
 
 /**
@@ -71,7 +71,7 @@ public final class XMLReferenceIdentifier {
             if (buffer.length() != 0) {
                 buffer.append('_');
             }
-            Strings.remove(buffer.append('v').append(version), ".");
+            StringBuilders.remove(buffer.append('v').append(version), ".");
             codeSpace = buffer.toString();
         }
     }

@@ -17,7 +17,7 @@
  */
 package org.geotoolkit.internal.sql;
 
-import org.geotoolkit.util.Strings;
+import org.apache.sis.util.CharSequences;
 
 
 /**
@@ -85,11 +85,11 @@ public enum CreateStatementType {
                  * Found the first word. Verify that this word is "CREATE" followed
                  * by a space. The hard-coded constant 6 is the length of "CREATE".
                  */
-                if (Strings.regionMatches(statement, i, "CREATE") && (i += 6) < length &&
+                if (CharSequences.regionMatches(statement, i, "CREATE") && (i += 6) < length &&
                         Character.isWhitespace(statement.charAt(i)))
                 {
                     for (final CreateStatementType candidate : values()) {
-                        final int p = Strings.indexOf(statement, candidate.name(), i);
+                        final int p = CharSequences.indexOf(statement, candidate.name(), i, statement.length());
                         if (p >= 0 && Character.isWhitespace(statement.charAt(p-1))) {
                             return candidate;
                         }

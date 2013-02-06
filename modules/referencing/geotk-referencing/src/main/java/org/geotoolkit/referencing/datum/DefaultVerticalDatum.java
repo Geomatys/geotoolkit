@@ -32,7 +32,7 @@ import org.opengis.referencing.datum.VerticalDatum;
 import org.opengis.referencing.datum.VerticalDatumType;
 
 import org.geotoolkit.io.wkt.Formatter;
-import org.geotoolkit.util.Strings;
+import org.apache.sis.util.StringBuilders;
 import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.internal.jaxb.MarshalContext;
@@ -223,7 +223,7 @@ public class DefaultVerticalDatum extends AbstractDatum implements VerticalDatum
             final String s = getName(null);
             if (s != null) {
                 final StringBuilder name = new StringBuilder(s);
-                Strings.toASCII(name);
+                StringBuilders.toASCII(name);
                 for (int i=name.length(); --i>=0;) {
                     // Following algorithm doesn't work for all Locale, but it should
                     // be okay since we removed many non-ASCII characters above.

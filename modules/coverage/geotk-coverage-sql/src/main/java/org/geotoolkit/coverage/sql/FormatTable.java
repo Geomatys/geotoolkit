@@ -27,7 +27,7 @@ import java.sql.SQLException;
 
 import org.opengis.referencing.operation.MathTransform1D;
 
-import org.geotoolkit.util.Strings;
+import org.apache.sis.util.CharSequences;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.converter.Numbers;
 import org.geotoolkit.resources.Errors;
@@ -180,7 +180,7 @@ final class FormatTable extends SingletonTable<FormatEntry> {
         switch (type) {
             case LIST: {
                 if (imageFormats == null) {
-                    imageFormats = Strings.EMPTY;
+                    imageFormats = CharSequences.EMPTY_ARRAY;
                 }
                 final Array array = statement.getConnection().createArrayOf("varchar", imageFormats);
                 final FormatQuery query = (FormatQuery) super.query;

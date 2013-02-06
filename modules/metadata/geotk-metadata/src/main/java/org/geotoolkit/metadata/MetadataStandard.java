@@ -31,7 +31,7 @@ import net.jcip.annotations.ThreadSafe;
 import org.opengis.annotation.UML;
 
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.Strings;
+import org.apache.sis.util.CharSequences;
 import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.util.LenientComparable;
 import org.geotoolkit.util.logging.Logging;
@@ -398,7 +398,7 @@ public final class MetadataStandard {
                     if (acronyms != null) {
                         for (int i=0; i<acronyms.length; i+=2) {
                             final String acronym = acronyms[i];
-                            if (Strings.endsWith(buffer, acronym, false)) {
+                            if (CharSequences.endsWith(buffer, acronym, false)) {
                                 buffer.setLength(buffer.length() - acronym.length());
                                 buffer.append(acronyms[i+1]);
                                 break;

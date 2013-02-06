@@ -17,7 +17,7 @@
  */
 package org.geotoolkit.io;
 
-import org.geotoolkit.util.Strings;
+import org.apache.sis.util.StringBuilders;
 
 
 /**
@@ -143,9 +143,9 @@ public enum X364 {
      */
     public static String toHTML(final String text) {
         final StringBuilder buffer = new StringBuilder(text);
-        Strings.replace(buffer, "&", "&amp;");
-        Strings.replace(buffer, "<", "&lt;");
-        Strings.replace(buffer, ">", "&gt;");
+        StringBuilders.replace(buffer, "&", "&amp;");
+        StringBuilders.replace(buffer, "<", "&lt;");
+        StringBuilders.replace(buffer, ">", "&gt;");
         boolean fontApplied = false;
         StringBuilder tmp = null;
         for (int i=buffer.indexOf(START); i>=0; i=buffer.indexOf(START, i)) {

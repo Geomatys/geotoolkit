@@ -27,7 +27,8 @@ import java.sql.SQLException;
 
 import org.opengis.util.FactoryException;
 
-import org.geotoolkit.util.Strings;
+import org.apache.sis.util.CharSequences;
+import org.apache.sis.util.StringBuilders;
 import org.geotoolkit.internal.io.Host;
 import org.geotoolkit.coverage.sql.CoverageDatabase;
 import org.geotoolkit.referencing.factory.epsg.EpsgInstaller;
@@ -276,7 +277,7 @@ public class CoverageDatabaseInstaller extends ScriptRunner {
             case TABLE: {
                 if (!supportsEnumType) {
                     for (final String e : ENUMS) {
-                        Strings.replace(sql, e, "varchar");
+                        StringBuilders.replace(sql, e, "varchar");
                     }
                 }
                 break;
@@ -285,12 +286,12 @@ public class CoverageDatabaseInstaller extends ScriptRunner {
         /*
          * We can't add comments on enum, since they were not created.
          */
-        if (!supportsEnumType && Strings.regionMatches(sql, 0, "COMMENT ON TYPE")) {
+        if (!supportsEnumType && CharSequences.regionMatches(sql, 0, "COMMENT ON TYPE")) {
             return 0;
         }
-        Strings.replace(sql, USER,          user);
-        Strings.replace(sql, ADMINISTRATOR, admin);
-        Strings.replace(sql, SCHEMA,        schema);
+        StringBuilders.replace(sql, USER,          user);
+        StringBuilders.replace(sql, ADMINISTRATOR, admin);
+        StringBuilders.replace(sql, SCHEMA,        schema);
         return super.execute(sql);
     }
 

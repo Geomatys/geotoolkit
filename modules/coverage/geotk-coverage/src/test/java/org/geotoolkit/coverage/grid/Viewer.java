@@ -35,7 +35,7 @@ import javax.media.jai.PlanarImage;
 
 import org.opengis.util.InternationalString;
 
-import org.geotoolkit.util.Strings;
+import org.apache.sis.util.CharSequences;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.coverage.GridSampleDimension;
 
@@ -250,7 +250,7 @@ public strictfp class Viewer extends JPanel {
      */
     private static void format(final PrintWriter out, final int value) {
         final String str = String.valueOf(value);
-        out.print(Strings.spaces(3 - str.length()));
+        out.print(CharSequences.spaces(3 - str.length()));
         out.print(str);
     }
 }

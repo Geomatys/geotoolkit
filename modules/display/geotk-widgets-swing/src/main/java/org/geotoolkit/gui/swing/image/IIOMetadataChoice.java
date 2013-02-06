@@ -30,7 +30,7 @@ import javax.imageio.metadata.IIOMetadataFormatImpl;
 import org.geotoolkit.image.io.metadata.MetadataTreeTable;
 import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
 import org.geotoolkit.resources.Vocabulary;
-import org.geotoolkit.util.Strings;
+import org.apache.sis.util.CharSequences;
 
 
 /**
@@ -158,7 +158,7 @@ final class IIOMetadataChoice implements Serializable {
         final StringBuilder buffer = new StringBuilder("<html><b>").append(rootName)
                 .append("</b> \u00A0\u2014\u00A0 ").append(part);
         if (name != null) {
-            buffer.append(" \u00A0(<i>").append(Strings.camelCaseToSentence(name)).append("</i>)");
+            buffer.append(" \u00A0(<i>").append(CharSequences.camelCaseToSentence(name)).append("</i>)");
         }
         return buffer.append("</html>").toString();
     }

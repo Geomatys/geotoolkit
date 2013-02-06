@@ -30,7 +30,7 @@ import javax.imageio.spi.ImageWriterSpi;
 import javax.imageio.metadata.IIOMetadata;
 import javax.media.jai.iterator.RectIter;
 
-import org.geotoolkit.util.Strings;
+import org.apache.sis.util.CharSequences;
 import org.geotoolkit.image.ImageDimension;
 import org.geotoolkit.image.io.TextImageWriter;
 import org.geotoolkit.resources.Descriptions;
@@ -111,9 +111,9 @@ public class TextMatrixImageWriter extends TextImageWriter {
                     buffer.setLength(0);
                     String n = format.format(iterator.getSampleDouble(), buffer, pos).toString();
                     final int fractionOffset = Math.max(0, fractionWidth - (pos.getEndIndex() - pos.getBeginIndex()));
-                    out.write(Strings.spaces(width - n.length() - fractionOffset));
+                    out.append(CharSequences.spaces(width - n.length() - fractionOffset));
                     out.write(n);
-                    out.write(Strings.spaces(fractionOffset));
+                    out.append(CharSequences.spaces(fractionOffset));
                 } while (!iterator.nextPixelDone());
                 out.write(lineSeparator);
                 numSampleValues += size.width;

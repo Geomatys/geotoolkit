@@ -36,7 +36,7 @@ import java.util.logging.LogRecord;
 
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.io.TableWriter;
-import org.geotoolkit.util.Strings;
+import org.apache.sis.util.CharSequences;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.collection.XCollections;
 
@@ -188,7 +188,7 @@ public final class Synchronizer {
         final String schema  = targetSchema;
         String[] columns;
         try (ResultSet results = targetMetadata.getPrimaryKeys(catalog, schema, table)) {
-            columns = Strings.EMPTY;
+            columns = CharSequences.EMPTY_ARRAY;
             while (results.next()) {
                 if (catalog!=null && !catalog.equals(results.getString("TABLE_CAT"))) {
                     continue;

@@ -26,7 +26,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 
 import org.geotoolkit.lang.Static;
-import org.geotoolkit.util.Strings;
+import org.apache.sis.util.CharSequences;
 
 
 /**
@@ -53,7 +53,7 @@ public final class LineReaders extends Static {
      * @return A line reader for each line in the given text.
      */
     public static LineReader wrap(final String text) {
-        return wrap(Arrays.asList(Strings.getLinesFromMultilines(text)));
+        return wrap(Arrays.asList(CharSequences.splitOnEOL(text)));
     }
 
     /**

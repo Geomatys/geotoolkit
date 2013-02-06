@@ -26,7 +26,7 @@ import org.opengis.util.LocalName;
 import org.opengis.util.ScopedName;
 import org.opengis.util.GenericName;
 
-import org.geotoolkit.util.Strings;
+import org.apache.sis.util.CharSequences;
 import org.geotoolkit.test.TestBase;
 import org.geotoolkit.naming.DefaultNameFactory;
 import org.geotoolkit.metadata.iso.content.DefaultFeatureCatalogueDescription;
@@ -68,10 +68,10 @@ public final strictfp class NameMarshallingTest extends TestBase {
          */
         int startAt = xml.indexOf("<gmd:featureTypes>");
         assertTrue("<gmd:featureTypes> not found.", startAt >= 0);
-        startAt = Strings.skipLines(xml, 1, startAt);
+        startAt = CharSequences.indexOfLineStart(xml, 1, startAt);
         int endAt = xml.indexOf("</gmd:featureTypes>");
         assertTrue("</gmd:featureTypes> not found.", endAt >= 0);
-        endAt = Strings.skipLines(xml, -1, endAt);
+        endAt = CharSequences.indexOfLineStart(xml, 0, endAt);
         return xml.substring(startAt, endAt);
     }
 
