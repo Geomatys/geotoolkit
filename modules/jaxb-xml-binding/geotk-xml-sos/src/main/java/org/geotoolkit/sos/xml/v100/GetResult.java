@@ -65,7 +65,7 @@ import org.opengis.filter.Filter;
     "eventTime"
 })
 @XmlRootElement(name = "GetResult")
-public class GetResult extends RequestBaseType {
+public class GetResult extends RequestBaseType implements org.geotoolkit.sos.xml.GetResult {
 
     @XmlElement(name = "ObservationTemplateId", required = true)
     @XmlSchemaType(name = "anyURI")
@@ -80,16 +80,22 @@ public class GetResult extends RequestBaseType {
     /**
      * Build a new request GetResult.
      */
-     public GetResult(final String observationTemplateId, final List<EventTime> eventTime, final String version){
-        super(version);
-        this.eventTime             = eventTime;
-        this.observationTemplateId = observationTemplateId;
-     }
+    public GetResult(final String observationTemplateId, final List<EventTime> eventTime, final String version){
+       super(version);
+       this.eventTime             = eventTime;
+       this.observationTemplateId = observationTemplateId;
+    }
+     
+    @Override
+    public String getOffering() {
+        return null;
+    }
      
     /**
      * Gets the value of the observationTemplateId property.
      * 
     */
+    @Override
     public String getObservationTemplateId() {
         return observationTemplateId;
     }
@@ -105,6 +111,7 @@ public class GetResult extends RequestBaseType {
         return eventTime;
     }
     
+    @Override
     public List<Filter> getTemporalFilter() {
         if (eventTime != null) {
             final List<Filter> temporalFilter = new ArrayList<Filter>();

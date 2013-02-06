@@ -30,9 +30,12 @@ import org.geotoolkit.ogc.xml.v200.BBOXType;
 import org.geotoolkit.ogc.xml.v200.BinarySpatialOpType;
 import org.geotoolkit.ogc.xml.v200.BinaryTemporalOpType;
 import org.geotoolkit.ogc.xml.v200.DistanceBufferType;
+import org.geotoolkit.ogc.xml.v200.FilterType;
 import org.geotoolkit.ogc.xml.v200.SpatialOpsType;
 import org.geotoolkit.ogc.xml.v200.TemporalOpsType;
+import org.geotoolkit.sos.xml.GetResult;
 import org.geotoolkit.swes.xml.v200.ExtensibleRequestType;
+import org.opengis.filter.Filter;
 
 
 /**
@@ -86,7 +89,7 @@ import org.geotoolkit.swes.xml.v200.ExtensibleRequestType;
     "featureOfInterest",
     "spatialFilter"
 })
-public class GetResultType extends ExtensibleRequestType {
+public class GetResultType extends ExtensibleRequestType implements GetResult {
 
     @XmlElement(required = true)
     @XmlSchemaType(name = "anyURI")
@@ -99,6 +102,25 @@ public class GetResultType extends ExtensibleRequestType {
     private List<String> featureOfInterest;
     private GetResultType.SpatialFilter spatialFilter;
 
+    /*
+     * An empty constructor used by jaxB
+     */
+     GetResultType(){}
+     
+    /**
+     * Build a new request GetResult.
+     */
+    public GetResultType(final String offering, final List<TemporalOpsType> timeFilter, final String version){
+       super(version, "SOS");
+       if (timeFilter != null) {
+            this.temporalFilter = new ArrayList<TemporalFilter>();
+            for (TemporalOpsType tfilter : timeFilter) {
+                this.temporalFilter.add(new TemporalFilter(tfilter));
+            }
+       }
+       this.offering = offering;
+    }
+    
     /**
      * Gets the value of the offering property.
      * 
@@ -107,6 +129,7 @@ public class GetResultType extends ExtensibleRequestType {
      *     {@link String }
      *     
      */
+    @Override
     public String getOffering() {
         return offering;
     }
@@ -147,20 +170,26 @@ public class GetResultType extends ExtensibleRequestType {
         this.observedProperty = value;
     }
 
-    /**
-     * Gets the value of the temporalFilter property.
-     * 
-     * Objects of the following type(s) are allowed in the list
-     * {@link GetResultType.TemporalFilter }
-     * 
-     */
-    public List<GetResultType.TemporalFilter> getTemporalFilter() {
+    @Override
+    public List<Filter> getTemporalFilter() {
         if (temporalFilter == null) {
             temporalFilter = new ArrayList<GetResultType.TemporalFilter>();
         }
-        return this.temporalFilter;
+        final List<Filter> result = new ArrayList<Filter>();
+        for (GetResultType.TemporalFilter tf : temporalFilter) {
+            if (tf.temporalOps != null) {
+                result.add(tf.temporalOps.getValue());
+            }
+        }
+        return result;
     }
-
+    
+    public void addTemporalFilter(final TemporalOpsType temporal) {
+        if (temporalFilter == null) {
+            temporalFilter = new ArrayList<GetResultType.TemporalFilter>();
+        }
+        temporalFilter.add(new TemporalFilter(temporal));
+    }
     /**
      * Gets the value of the featureOfInterest property.
      * 
@@ -197,6 +226,16 @@ public class GetResultType extends ExtensibleRequestType {
      */
     public void setSpatialFilter(GetResultType.SpatialFilter value) {
         this.spatialFilter = value;
+    }
+
+    /**
+     * 1.0.0 compatibility
+     * 
+     * @return 
+     */
+    @Override
+    public String getObservationTemplateId() {
+        return null;
     }
 
 
@@ -305,6 +344,16 @@ public class GetResultType extends ExtensibleRequestType {
         @XmlElementRef(name = "temporalOps", namespace = "http://www.opengis.net/fes/2.0", type = JAXBElement.class)
         private JAXBElement<? extends TemporalOpsType> temporalOps;
 
+        public TemporalFilter() {
+            
+        }
+        
+        public TemporalFilter(final TemporalOpsType temporalOp) {
+            if (temporalOp != null) {
+                this.temporalOps = FilterType.createTemporalOps(temporalOp);
+            }
+        }
+        
         /**
          * Gets the value of the temporalOps property.
          * 
