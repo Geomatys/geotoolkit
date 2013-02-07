@@ -25,7 +25,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
-import org.geotoolkit.sos.xml.SOSResponse;
 
 
 /**
@@ -61,7 +60,7 @@ import org.geotoolkit.sos.xml.SOSResponse;
     "result"
 })
 @XmlRootElement(name = "GetResultResponse")
-public class GetResultResponse implements SOSResponse {
+public class GetResultResponse implements org.geotoolkit.sos.xml.GetResultResponse {
 
     @XmlElement(required = true)
     private GetResultResponse.Result result;
@@ -76,6 +75,10 @@ public class GetResultResponse implements SOSResponse {
      */
      public GetResultResponse(final GetResultResponse.Result result){
          this.result = result;
+     }
+     
+     public GetResultResponse(final String value, final String rs){
+         this.result = new GetResultResponse.Result(value, rs);
      }
      
     /**
@@ -109,10 +112,11 @@ public class GetResultResponse implements SOSResponse {
     
     @Override
     public String toString() {
-        if (result != null)
+        if (result != null) {
             return "GetResultResponse: " + result.toString();
-        else
+        } else {
             return "GetResultResponse: result is null";
+        }
     }
 
     /**

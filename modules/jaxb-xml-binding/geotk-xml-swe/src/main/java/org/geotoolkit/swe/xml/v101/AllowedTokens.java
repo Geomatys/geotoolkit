@@ -89,6 +89,7 @@ public class AllowedTokens implements AbstractAllowedTokens {
      * Gets the value of the valueList property.
      * 
      */
+    @Override
     public List<JAXBElement<List<String>>> getValueList() {
         if (valueList == null) {
             valueList = new ArrayList<JAXBElement<List<String>>>();
@@ -102,7 +103,7 @@ public class AllowedTokens implements AbstractAllowedTokens {
                 valueList = new ArrayList<JAXBElement<List<String>>>();
             }
             ObjectFactory factory = new ObjectFactory();
-            if (valueList.size() == 0) {
+            if (valueList.isEmpty()) {
                 valueList.add(factory.createAllowedTokensValueList(Arrays.asList(value)));
             } else {
                 JAXBElement<List<String>> firstList = valueList.get(0);
@@ -132,6 +133,7 @@ public class AllowedTokens implements AbstractAllowedTokens {
      * Gets the value of the id property.
      * 
      */
+    @Override
     public String getId() {
         return id;
     }

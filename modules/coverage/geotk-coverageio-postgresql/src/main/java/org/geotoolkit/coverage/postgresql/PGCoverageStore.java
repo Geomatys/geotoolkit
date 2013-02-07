@@ -27,8 +27,10 @@ import java.util.logging.Logger;
 import javax.sql.DataSource;
 import org.geotoolkit.coverage.AbstractCoverageStore;
 import org.geotoolkit.coverage.CoverageReference;
+import org.geotoolkit.coverage.CoverageStoreContentEvent;
 import org.geotoolkit.coverage.CoverageStoreFactory;
 import org.geotoolkit.coverage.CoverageStoreFinder;
+import org.geotoolkit.coverage.CoverageStoreManagementEvent;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.jdbc.ManageableDataSource;
 import org.geotoolkit.referencing.factory.epsg.ThreadedEpsgFactory;
@@ -145,7 +147,8 @@ public class PGCoverageStore extends AbstractCoverageStore{
         } finally {
             closeSafe(cnx,stmt,rs);
         }
-
+        
+        fireCoverageAdded(name);
         return getCoverageReference(new DefaultName(getDefaultNamespace(), name.getLocalPart()));
     }
 
@@ -171,6 +174,8 @@ public class PGCoverageStore extends AbstractCoverageStore{
         } finally {
             closeSafe(cnx,stmt,rs);
         }
+        
+        fireCoverageDeleted(name);
     }
 
     @Override
@@ -203,8 +208,7 @@ public class PGCoverageStore extends AbstractCoverageStore{
         }
 
     }
-
-
+    
     ////////////////////////////////////////////////////////////////////////////
     // Connection utils ////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////

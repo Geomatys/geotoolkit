@@ -111,7 +111,7 @@ public class DomainType extends UnNamedDomainType implements AbstractDomain {
      * Build a new Domain with the specified list of values.
      */
     public DomainType(final String name, final List<String> value) {
-        
+        super(value);
         this.name  = name;
     }
     

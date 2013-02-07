@@ -59,6 +59,10 @@ public class TopLevelElement extends Element {
     public TopLevelElement(final String name, final QName type) {
         super(name, type);
     }
+    
+    public TopLevelElement(final String name, final QName type, final QName substitutionGroup) {
+        super(name, type, substitutionGroup);
+    }
 
     public TopLevelElement(final String name, final QName type, final Integer minOccurs, final String maxOccurs) {
         this(name, type, minOccurs, maxOccurs, null);

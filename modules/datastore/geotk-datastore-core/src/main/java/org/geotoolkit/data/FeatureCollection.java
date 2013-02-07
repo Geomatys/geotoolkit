@@ -169,12 +169,12 @@ public interface FeatureCollection<F extends Feature> extends Collection<F> {
      * and when features are added, modified or deleted.
      * @param listener to add
      */
-    void addStorageListener(StorageListener listener);
+    void addStorageListener(FeatureStoreListener listener);
 
     /**
      * Remove a storage listener
      * @param listener to remove
      */
-    void removeStorageListener(StorageListener listener);
+    void removeStorageListener(FeatureStoreListener listener);
 
 }

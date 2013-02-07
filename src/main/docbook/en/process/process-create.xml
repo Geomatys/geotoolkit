@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE book [
+  <!ENTITY % book.entities SYSTEM "../../book.entities">
+  %book.entities;
+]>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0"
+         xmlns:xlink = "http://www.w3.org/1999/xlink">
+
+    <title>
+        Create his process
+    </title>
+    
+    <para>
+        To create a new treatment, you had to implement three things :
+    </para>
+
+    <itemizedlist>
+        <listitem> The registry : contains Treatment.</listitem>
+        <listitem> The description of your Treatment.</listitem>
+        <listitem> The Treatment itself.</listitem>
+    </itemizedlist>
+    
+    <section>
+        <title>The registry</title>
+        <para>
+            Registry are using inside the proccessing module of GeotoolKit to organize process which do the same type of treatment. For example, registry "math" contains
+            only calculation process, the vector registry all process which work on vector layers.
+        </para>
+        <para>
+            Each registy contains an instance list describing process it contains. We can get the description of a process easily. 
+        </para>
+        <example>
+            <title>Code to create a registry</title>
+            <link xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/processing/registry/DemoProcessRegistry.java" >
+                geotoolkit-pending/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/processing/registry/DemoProcessRegistry.java
+            </link>
+        </example>
+
+        <para>
+            To create it factory, you can extend 
+            <link xlink:href="http://pending.geotoolkit.org/apidocs/org/geotoolkit/process/AbstractProcessingRegistry.html">AbstractProcessingRegistry</link> class and redefine the method getIdentification().
+            which allow to identify own our registry.
+            Registy is identifying with an <link xlink:href="http://www.geoapi.org/snapshot/javadoc/org/opengis/metadata/identification/Identification.html">Identification</link> object like in the next example.
+            
+        </para>
+
+        <example>
+            <title>Registry Identification</title>
+            <programlisting>
+    public static final String NAME = "demo"; //Nom unique de notre registry
+    public static final DefaultServiceIdentification IDENTIFICATION; //Objet Idenfication
+
+    static {
+        IDENTIFICATION = new DefaultServiceIdentification();
+        final Identifier id = new DefaultIdentifier(NAME);
+        final DefaultCitation citation = new DefaultCitation(NAME);
+        citation.setIdentifiers(Collections.singleton(id));
+        IDENTIFICATION.setCitation(citation);
+    }
+
+        @Override
+    public Identification getIdentification() {
+        return IDENTIFICATION;
+    }
+            </programlisting>
+        </example>
+
+        <para>
+            You must initialize your Registy with it the treatment list (processus) that Registry contains. It must be an <emphasis role="bold">instance</emphasis> list of describer of each process.
+            The easiest method is that each describer implements singleton pattern. And when we add a process, we add it descripber to registry initialization.
+            The following example illustrates this principle
+        </para>
+
+        <example>
+            <title>Identifies Registry</title>
+            <programlisting>
+    public DemoProcessRegistry() {
+        super(AddDescriptor.INSTANCE, SubDescriptor.INSTANCE, MultDesciptor.INSTANCE, ...);
+    }
+            </programlisting>
+        </example>
+
+        <para>
+            It's possible to make a dynamic initialization. You list available process into META-INF/service file and an iterator of the class ServiceRegistry on ProcessDescriptor interface like in the next example.
+            You need to have the constructors of describers in public.
+        </para>
+
+        <example>
+            <title>Identifies Registry</title>
+            <programlisting>
+    public MyProcessRegistry() {
+        super( findDescriptors() );
+    }
+
+    // find all ProcessDescriptor in META-INF/service directories
+    private static synchronized ProcessDescriptor[] findDescriptors() {
+        final Iterator&lt;ProcessDescriptor&gt; ite = ServiceRegistry.lookupProviders(ProcessDescriptor.class);
+        final List&lt;ProcessDescriptor&gt; descriptors = new ArrayList&lt;ProcessDescriptor&gt;();
+        while (ite.hasNext()) {
+            descriptors.add(ite.next());
+        }
+
+        return descriptors.toArray(new ProcessDescriptor[descriptors.size()]);
+    }
+            </programlisting>
+        </example>
+
+        <para>
+            To finish the creating of your registry, you have to declare your class into org.geotoolkit.process.ProcessingRegistry file in
+            a resources/META-INF/service folder of module.
+            You have to do this to enable that the utility class <link xlink:href="http://pending.geotoolkit.org/apidocs/org/geotoolkit/process/ProcessFinder.html"> ProcessFinder </link> find 
+            your Registry and its process.
+        </para>
+    </section>
+    
+    <section>
+        <title>Description</title>
+
+        <para>
+            You have to describe your process during the creating process.
+            This description must contain all input/output of your process, its name and few sentences about its work.
+            It must allow to instantiate treatment itself by passing input parameters.
+        </para>
+
+        <example>
+            <title>Code to create ProcessDescriptor for an Addition</title>
+            <link xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/processing/registry/AddDescriptor.java" >
+                geotoolkit-pending/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/processing/registry/AddDesciptor.java
+            </link>
+        </example>
+
+        <para>
+            For input and output managing, we use in GeotoolKit the <link xlink:href="http://www.geoapi.org/snapshot/javadoc/org/opengis/parameter/GeneralParameterDescriptor.html">GeneralParameterDescriptor</link> 
+            which was first an object of ISO_19111 standard.
+        </para>
+
+        <section xml:id="parameters">
+            <title>ParametersDesciptor and ParametersValue</title>
+            <para>
+                Input and Output description is doing by <link xlink:href="http://www.geoapi.org/snapshot/javadoc/org/opengis/parameter/ParameterDescriptorGroup.html">ParameterDescriptorGroup</link> creation.
+                which regroup a set of GeneralParameterDescriptor.
+                These GeneralParameterDesciptor can be sub-ParameterDescriptorGroup or <link xlink:href="http://www.geoapi.org/snapshot/javadoc/org/opengis/parameter/ParameterDescriptor.html">ParameterDescriptor</link>
+                which discribe a parameter.
+            </para>
+            <para>
+                The next pseudo class diagram describes hierarchy among class and interfaces which define GeneralParameterDescriptor.
+            </para>
+
+            <figure>
+                <title>Parameter description class and interface</title>
+                <mediaobject>
+                    <imageobject>
+                        <imagedata fileref="../images/org.opengis.parameter.GeneralParameterDescriptor.png" format="png"></imagedata>
+                    </imageobject>
+                    <textobject>
+                        <phrase> arameter description class and interface </phrase>
+                    </textobject>
+                </mediaobject>
+            </figure>
+
+            <para>
+                To create ParameterDescriptor or ParameterDescriptorGroup, we use default implementation of GeotoolKit 
+                <link xlink:href="http://www.geotoolkit.org/apidocs/org/geotoolkit/parameter/DefaultParameterDescriptor.html">DefaultParameterDescriptor</link> and
+                <link xlink:href="http://www.geotoolkit.org/apidocs/org/geotoolkit/parameter/DefaultParameterDescriptorGroup.html">DefaultParameterDescriptorgourp</link>.
+            </para>
+
+            <para>
+                In the next example, we will create input parameter of a process which calculate addition of two numbers.
+                We have two ParameterDescriptor, one for each input number, and another ParameterDescriptorGroup to regroup them like INPUT.
+            </para>
+
+            <example>
+                <title>Describing input</title>
+                <programlisting>
+    //Premier nombre de type Double
+    public static final ParameterDescriptor&lt;Double&gt; FIRST_NUMBER = new DefaultParameterDescriptor("first", "first number", Double.class, null, true);
+
+    //Deuxieme nombre de type Double
+    public static final ParameterDescriptor&lt;Double&gt; SECOND_NUMBER = new DefaultParameterDescriptor("second", "second number", Double.class, null, true);
+
+    //Groupe d'entrée.
+    public static final ParameterDescriptorGroup INPUT_DESC = new DefaultParameterDescriptorGroup("InputParameters", new GeneralParameterDescriptor[]{FIRST_NUMBER, SECOND_NUMBER});
+                </programlisting>
+            </example>
+
+            <para>
+                DefaultParameterDescriptor has some constructor which depend of informations about parameter wanted.voulu.
+                In previous example, we build our numbers by passing in order:
+            </para>
+            <itemizedlist>
+                <listitem> A unique name "first"</listitem>
+                <listitem> A description "Fisrt number"</listitem>
+                <listitem> Their binding class "Double.class"</listitem>
+                <listitem> Their default value. "null"</listitem>
+                <listitem> A boolean to say if this parameter is optionnal. "Double.class"</listitem>
+            </itemizedlist>
+
+            <para>
+                But we can also give the multiplicity for each parameter, aliases, their units or the list of allowed values.
+                For more information refer to the Javadoc
+                <link xlink:href="http://www.geotoolkit.org/apidocs/org/geotoolkit/parameter/DefaultParameterDescriptor.html">DefaultParameterDescriptor</link> and
+                <link xlink:href="http://www.geotoolkit.org/apidocs/org/geotoolkit/parameter/DefaultParameterDescriptorGroup.html">DefaultParameterDescriptorgourp</link>.
+                This information is used when creating the input parameters to check insert values​​.
+            </para>
+
+            <para>
+                We can have translate for parameters descriptions of process like in the demo. 
+                We must have too created bundles in resources folder, and create ResourceInternationalString objects with the key defines by one translation.
+                For parameters, we must build a Map of "properties" like in the next example.
+            </para>
+
+             <example>
+                <title>Description of an entry with translation bunlde</title>
+                <programlisting>
+    public static final ParameterDescriptor&lt;Double&gt; FIRST_NUMBER;
+    static {
+        final Map&lt;String, Object&gt; propertiesFirst = new HashMap&lt;String, Object&gt;();
+        propertiesFirst.put(IdentifiedObject.NAME_KEY, "first");
+        propertiesFirst.put(IdentifiedObject.REMARKS_KEY, new ResourceInternationalString(BUNDLE, ADD_FIRST));
+        FIRST_NUMBER = new DefaultParameterDescriptor&lt;Double&gt;(propertiesFirst, Double.class, null, null, null, null, null, true);
+    }
+                </programlisting>
+            </example>
+
+            <para>
+                Thereafter when you want to create the parameter values ​​to enter for giving our process, simply call the method createValue () on ParameterDescriptorGroup representing the process inputs.
+                Then this method will return ParameterValueGroup built from ParameterDescriptor.  
+            </para>
+
+            <figure>
+                <title>Class and interfaces of parameters values</title>
+                <mediaobject>
+                    <imageobject>
+                        <imagedata fileref="../images/org.opengis.parameter.GeneralParameterValue.png" format="png"></imagedata>
+                    </imageobject>
+                    <textobject>
+                        <phrase>Class and interfaces of parameters values</phrase>
+                    </textobject>
+                </mediaobject>
+            </figure>
+        </section>
+
+        <para>
+            It only remains to finish the descriptor to implement the constructor with the identification and description of the process
+            and its inputs / outputs and redefine CreateProcess () method as in the following example.
+        </para>
+
+        <example>
+            <title>Description entries</title>
+            <programlisting>
+        /**Process name : addition */
+        public static final String NAME = "addition";
+        public static final String ABSRACT = "Adds two double.";
+
+        private AddDescriptor() {
+            super(NAME,                                 //Nom du traitement.
+                DemoProcessRegistry.IDENTIFICATION,     //Identification de la registry a laquel il appartient.
+                new SimpleInternationalString(ABSRACT), //Description de ce que réalise le traitement.
+                INPUT_DESC,                             //ParametereDescriptorGroup des entrées.
+                OUTPUT_DESC);                           //ParametereDescriptorGroup des sorties.
+        }
+
+        @Override
+        public Process createProcess(final ParameterValueGroup input) {
+            return new AddProcess(input); // création d'un nouveau traitement avec les paramètres d'entrées.
+        }
+            </programlisting>
+        </example>
+    </section>
+</section>

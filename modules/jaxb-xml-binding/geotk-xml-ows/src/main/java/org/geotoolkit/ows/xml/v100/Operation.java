@@ -17,6 +17,7 @@
 package org.geotoolkit.ows.xml.v100;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -27,6 +28,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ows.xml.AbstractOperation;
+import org.geotoolkit.ows.xml.Range;
 
 
 /**
@@ -218,6 +220,26 @@ public class Operation implements AbstractOperation {
         } else {
             return null;
         }
+    }
+    
+    /**
+     * Update the specified parameter with the list of values.
+     */
+    @Override
+    public void updateParameter(final String parameterName, final Collection<String> values) {
+        for (DomainType dom: parameter) {
+            if (dom.getName().equals(parameterName)) {
+                dom.setValue(new ArrayList<String>(values));
+            }
+        }
+    }
+    
+    /**
+     * Update the specified parameter with the specified range.
+     */
+    @Override
+    public void updateParameter(final String parameterName, final Range range) {
+        throw new UnsupportedOperationException("unsupported in OWS version 1.0.0");
     }
 
     /**

@@ -143,6 +143,7 @@ public class CurvePropertyType implements CurveProperty {
      *     {@link JAXBElement }{@code <}{@link OrientableCurveType }{@code >}
      *
      */
+    @Override
     public AbstractCurveType getAbstractCurve() {
         if (abstractCurve != null) {
             return abstractCurve.getValue();

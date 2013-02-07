@@ -62,6 +62,24 @@ public class DistanceBufferType extends SpatialOpsType {
     @XmlElement(name = "Distance", required = true)
     private DistanceType distance;
 
+    public DistanceBufferType() {
+        
+    }
+    
+    public DistanceBufferType(final DistanceBufferType that) {
+        if (that != null) {
+            if (that.propertyName != null) {
+                this.propertyName = new PropertyNameType(that.propertyName);
+            }
+            if (that.geometry != null) {
+                final AbstractGeometryType geom = that.geometry.getValue().getClone();
+                this.geometry = geom.getXmlElement();
+            }
+            if (that.distance != null) {
+                this.distance = new DistanceType(that.distance.getContent(), that.distance.getUnits());
+            }
+        }
+    }
     /**
      * Gets the value of the propertyName property.
      * 
@@ -110,4 +128,8 @@ public class DistanceBufferType extends SpatialOpsType {
         this.distance = value;
     }
 
+    @Override
+    public SpatialOpsType getClone() {
+        throw new UnsupportedOperationException("Must be overriden by sub-class");
+    }
 }

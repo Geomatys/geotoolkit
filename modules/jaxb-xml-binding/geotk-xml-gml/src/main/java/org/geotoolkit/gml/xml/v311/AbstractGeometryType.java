@@ -160,6 +160,7 @@ public abstract class AbstractGeometryType extends AbstractGMLType implements Ge
      *     {@link String }
      *     
      */
+    @Override
     public String getSrsName() {
         return srsName;
     }
@@ -172,6 +173,7 @@ public abstract class AbstractGeometryType extends AbstractGMLType implements Ge
      *     {@link String }
      *     
      */
+    @Override
     public void setSrsName(final String value) {
         this.srsName = value;
     }

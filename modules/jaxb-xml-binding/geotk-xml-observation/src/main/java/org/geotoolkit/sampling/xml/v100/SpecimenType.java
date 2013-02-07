@@ -31,6 +31,7 @@ import org.geotoolkit.gml.xml.v311.LocationPropertyType;
 import org.geotoolkit.gml.xml.v311.MeasureType;
 import org.geotoolkit.gml.xml.v311.ReferenceType;
 import org.geotoolkit.gml.xml.v311.TimePrimitivePropertyType;
+import org.opengis.geometry.Geometry;
 
 
 /**
@@ -216,20 +217,6 @@ public class SpecimenType extends SamplingFeatureType {
     /**
      * Gets the value of the processingDetails property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the processingDetails property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getProcessingDetails().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link ReferenceType }
      * 
@@ -241,6 +228,14 @@ public class SpecimenType extends SamplingFeatureType {
         }
         return this.processingDetails;
     }
+    @Override
+    public Geometry getGeometry() {
+       if (currentLocation != null) {
+           return currentLocation.getAbstractGeometry();
+       }
+       return null;
+    }
+    
 
 
     /**

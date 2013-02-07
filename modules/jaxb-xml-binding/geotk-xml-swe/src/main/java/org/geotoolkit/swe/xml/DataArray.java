@@ -23,13 +23,15 @@ package org.geotoolkit.swe.xml;
  */
 public interface DataArray extends AbstractDataArray {
 
-    public String getValues();
+    String getValues();
+    
+    void setValues(final String values);
 
-    public AbstractDataValueProperty getDataValues();
+    AbstractDataValueProperty getDataValues();
 
-    public AbstractEncoding getEncoding();
+    AbstractEncoding getEncoding();
 
-    public DataComponentProperty getPropertyElementType();
+    DataComponentProperty getPropertyElementType();
 
-    public AbstractEncodingProperty getPropertyEncoding();
+    AbstractEncodingProperty getPropertyEncoding();
 }

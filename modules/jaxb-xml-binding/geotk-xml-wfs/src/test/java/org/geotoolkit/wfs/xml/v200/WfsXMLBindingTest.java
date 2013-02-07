@@ -201,5 +201,21 @@ public class WfsXMLBindingTest {
         marshaller.marshal(storesQueries, sw);
 
         //System.out.println(sw.toString());
+        
+        StoredQueryListItemType item = new StoredQueryListItemType("someid", Arrays.asList(new Title("some title")), null);
+        ListStoredQueriesResponseType lsqr = new ListStoredQueriesResponseType(Arrays.asList(item));
+        
+        sw = new StringWriter();
+        marshaller.marshal(lsqr, sw);
+
+        System.out.println(sw.toString());
+        
+        item = new StoredQueryListItemType("someid", Arrays.asList(new Title("some title")),Arrays.asList(new QName("")));
+        lsqr = new ListStoredQueriesResponseType(Arrays.asList(item));
+        
+        sw = new StringWriter();
+        marshaller.marshal(lsqr, sw);
+
+        System.out.println(sw.toString());
     }
 }

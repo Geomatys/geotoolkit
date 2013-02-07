@@ -18,6 +18,7 @@ package org.geotoolkit.coverage;
 
 import java.util.Set;
 import org.geotoolkit.storage.DataStoreException;
+import org.geotoolkit.storage.StorageListener;
 import org.opengis.feature.type.Name;
 import org.opengis.parameter.ParameterValueGroup;
 
@@ -81,4 +82,18 @@ public interface CoverageStore {
      */
     void dispose();
 
+    
+    /**
+     * Add a storage listener which will be notified when structure changes or
+     * when coverage data changes.
+     * @param listener to add
+     */
+    void addStorageListener(StorageListener listener);
+
+    /**
+     * Remove a storage listener
+     * @param listener to remove
+     */
+    void removeStorageListener(StorageListener listener);
+    
 }

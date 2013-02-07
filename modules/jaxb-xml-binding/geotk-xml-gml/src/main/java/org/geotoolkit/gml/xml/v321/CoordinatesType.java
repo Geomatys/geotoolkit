@@ -30,7 +30,6 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
 import org.geotoolkit.gml.xml.Coordinates;
-import org.geotoolkit.util.Strings;
 import org.geotoolkit.util.Utilities;
 
 
@@ -76,6 +75,18 @@ public class CoordinatesType implements Coordinates {
     @XmlAttribute
     private String ts;
 
+    public CoordinatesType() {
+        
+    }
+    
+    public CoordinatesType(final Coordinates that) {
+        if (that != null) {
+            this.cs      = that.getCs();
+            this.decimal = that.getDecimal();
+            this.ts      = that.getTs();
+            this.value   = that.getValue();
+        }
+    }
     /**
      * Gets the value of the value property.
      *
@@ -84,6 +95,7 @@ public class CoordinatesType implements Coordinates {
      *     {@link String }
      *
      */
+    @Override
     public String getValue() {
         return value;
     }
@@ -146,6 +158,7 @@ public class CoordinatesType implements Coordinates {
      *     {@link String }
      *
      */
+    @Override
     public String getDecimal() {
         if (decimal == null) {
             return ".";
@@ -174,6 +187,7 @@ public class CoordinatesType implements Coordinates {
      *     {@link String }
      *
      */
+    @Override
     public String getCs() {
         if (cs == null) {
             return ",";
@@ -202,6 +216,7 @@ public class CoordinatesType implements Coordinates {
      *     {@link String }
      *
      */
+    @Override
     public String getTs() {
         if (ts == null) {
             return " ";

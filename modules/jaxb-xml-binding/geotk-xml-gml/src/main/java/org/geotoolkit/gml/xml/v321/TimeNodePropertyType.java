@@ -85,6 +85,28 @@ public class TimeNodePropertyType implements Serializable{
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     private String actuate;
 
+    public TimeNodePropertyType() {
+        
+    }
+    
+    public TimeNodePropertyType(final TimeNodePropertyType that) {
+        if (that != null) {
+            this.actuate      = that.actuate;
+            this.arcrole      = that.arcrole;
+            this.href         = that.href;
+            this.nilReason    = new ArrayList<String>(that.nilReason);
+            this.owns         = that.owns;
+            this.remoteSchema = that.remoteSchema;
+            this.role         = that.role;
+            this.show         = that.show;
+            this.title        = that.title;
+            this.type         = that.type;
+            if (that.timeNode != null) {
+                this.timeNode = new TimeNodeType(that.timeNode);
+            }
+        }
+    }
+    
     /**
      * Gets the value of the timeNode property.
      * 

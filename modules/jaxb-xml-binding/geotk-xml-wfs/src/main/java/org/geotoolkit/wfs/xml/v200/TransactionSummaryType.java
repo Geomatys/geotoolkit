@@ -23,7 +23,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -74,6 +73,13 @@ public class TransactionSummaryType {
         this.totalDeleted  = totalDeleted;
         this.totalInserted = totalInserted;
         this.totalUpdated  = totalUpdated;
+    }
+    
+    public TransactionSummaryType(final Integer totalInserted, final Integer totalUpdated, final Integer totalDeleted, final Integer totalReplaced) {
+        this.totalDeleted  = totalDeleted;
+        this.totalInserted = totalInserted;
+        this.totalUpdated  = totalUpdated;
+        this.totalReplaced  = totalReplaced;
     }
 
     /**

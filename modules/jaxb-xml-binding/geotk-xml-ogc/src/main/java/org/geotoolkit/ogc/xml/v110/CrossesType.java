@@ -46,4 +46,13 @@ public class CrossesType extends BinarySpatialOpType implements Crosses {
     public CrossesType(final PropertyNameType propertyName, final Object geometry) {
         super(propertyName, geometry);
     }
+    
+    public CrossesType(final CrossesType that) {
+        super(that);
+    }
+    
+    @Override
+    public SpatialOpsType getClone() {
+        return new CrossesType(this);
+    }
 }

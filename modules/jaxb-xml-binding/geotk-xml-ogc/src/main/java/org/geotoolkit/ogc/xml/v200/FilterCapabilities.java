@@ -99,6 +99,13 @@ public class FilterCapabilities implements org.opengis.filter.capability.FilterC
         this.scalarCapabilities  = (ScalarCapabilitiesType)  scalar;
         this.conformance = conformance;
     }
+    
+    public FilterCapabilities(final ScalarCapabilities scalar, final SpatialCapabilities spatial, final TemporalCapabilitiesType temporal, final ConformanceType conformance) {
+        this.spatialCapabilities  = (SpatialCapabilitiesType) spatial;
+        this.temporalCapabilities = temporal;
+        this.scalarCapabilities   = (ScalarCapabilitiesType)  scalar;
+        this.conformance = conformance;
+    }
 
     /**
      * Gets the value of the conformance property.

@@ -34,7 +34,7 @@ public interface AbstractDataComponent extends AbstractGML {
      * Points to semantics information defining the precise nature of the component
      */
     @UML(identifier="definition", obligation=OPTIONAL, specification=UNSPECIFIED )
-    Object getDefinition();
+    String getDefinition();
     
     /**
      * Specifies if the value of a component stays fixed in time or is variable. Default is variable.

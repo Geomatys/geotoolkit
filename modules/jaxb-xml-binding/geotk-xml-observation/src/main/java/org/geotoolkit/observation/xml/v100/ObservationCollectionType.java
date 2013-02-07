@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.v311.AbstractFeatureType;
+import org.geotoolkit.gml.xml.v311.EnvelopeType;
 import org.geotoolkit.util.ComparisonMode;
 import org.opengis.observation.Observation;
 import org.opengis.observation.ObservationCollection;
@@ -50,14 +51,27 @@ public class ObservationCollectionType extends AbstractFeatureType implements Ob
      */
     public ObservationCollectionType() {
         super(null, null, null);
-        member = new ArrayList<ObservationPropertyType>();
+        this.member = new ArrayList<ObservationPropertyType>();
     }
     
     
     public ObservationCollectionType(final String title) {
         super(null, null, null);
-        member = new ArrayList<ObservationPropertyType>();
-        member.add(new ObservationPropertyType(title));
+        this.member = new ArrayList<ObservationPropertyType>();
+        this.member.add(new ObservationPropertyType(title));
+    }
+    
+    public ObservationCollectionType(final String id, final EnvelopeType env, final List<ObservationType> observations) {
+        super(id, null, null);
+        if (observations != null) {
+            this.member = new ArrayList<ObservationPropertyType>();
+            for (ObservationType observation : observations) {
+                this.member.add(new ObservationPropertyType(observation));
+            }
+        }
+        if (env != null) {
+            setBoundedBy(env);
+        }
     }
     
     /**
@@ -93,15 +107,17 @@ public class ObservationCollectionType extends AbstractFeatureType implements Ob
         if (object instanceof ObservationCollectionType && super.equals(object, mode)) {
             final ObservationCollectionType that = (ObservationCollectionType) object;
             if (this.member != null && that.member != null) {
-                if (this.member.size() != that.member.size())
+                if (this.member.size() != that.member.size()) {
                     return false;
+                }
             } else if (this.member == null && that.member == null) {
                 return true;
             }
             int i = 0;
             for (ObservationPropertyType thisOp: this.member) {
-                if (!Objects.equals(thisOp.getObservation(), that.member.get(i).getObservation()))
-                     return false ;  
+                if (!Objects.equals(thisOp.getObservation(), that.member.get(i).getObservation())) {
+                    return false;
+                }  
                 i++;        
             }
             return true;
@@ -123,7 +139,7 @@ public class ObservationCollectionType extends AbstractFeatureType implements Ob
         s.append("super:").append(super.toString());
         int i = 1;
         for (ObservationPropertyType obs:member) {
-            s.append("observation n" + i + ":").append('\n').append(obs.getObservation());
+            s.append("observation n").append(i).append(":\n").append(obs.getObservation());
             i++;
         }
         return s.toString();

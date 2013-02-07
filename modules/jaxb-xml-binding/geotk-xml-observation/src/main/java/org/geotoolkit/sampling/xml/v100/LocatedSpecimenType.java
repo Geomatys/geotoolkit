@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.v311.GeometryPropertyType;
+import org.opengis.geometry.Geometry;
 
 
 /**
@@ -76,5 +77,12 @@ public class LocatedSpecimenType extends SpecimenType {
     public void setSamplingLocation(final GeometryPropertyType value) {
         this.samplingLocation = value;
     }
-
+    
+    @Override
+    public Geometry getGeometry() {
+       if (samplingLocation != null) {
+           return samplingLocation.getAbstractGeometry();
+       }
+       return null;
+    }
 }

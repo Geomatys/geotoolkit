@@ -6,10 +6,10 @@
     xmlns:wfs="http://www.opengis.net/wfs">
 
     <xsd:import schemaLocation="http://schemas.opengis.net/gml/3.1.1/base/gml.xsd" namespace="http://www.opengis.net/gml"/>
-    <xsd:element name="TestSimple" type="gml:TestSimpleType" />
+    <xsd:element name="TestSimple" type="gml:TestSimpleType" substitutionGroup="gml:_Feature"/>
     <xsd:complexType name="TestSimpleType">
         <xsd:complexContent>
-            <xsd:extension base="gml:_Feature" >
+            <xsd:extension base="gml:AbstractFeatureType" >
                 <xsd:sequence>
                     <xsd:element name="ID"                  maxOccurs="1" minOccurs="1" nillable="true" type="xsd:integer"/>
                     <xsd:element name="attString"           maxOccurs="1" minOccurs="1" nillable="true">

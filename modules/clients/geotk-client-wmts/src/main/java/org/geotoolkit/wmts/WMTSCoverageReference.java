@@ -18,7 +18,6 @@ package org.geotoolkit.wmts;
 
 import java.awt.Dimension;
 import java.awt.Image;
-import java.awt.geom.Point2D;
 import java.awt.image.RenderedImage;
 import java.util.List;
 import java.util.Map;
@@ -37,7 +36,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class WMTSCoverageReference implements CoverageReference, PyramidalModel{
+public class WMTSCoverageReference extends AbstractCoverageReference implements PyramidalModel{
 
     private final WebMapTileServer server;
     private final Name name;
@@ -90,9 +89,19 @@ public class WMTSCoverageReference implements CoverageReference, PyramidalModel{
     public Pyramid createPyramid(CoordinateReferenceSystem crs) throws DataStoreException {
         throw new DataStoreException("Model is not writeable.");
     }
+    
+    @Override
+    public void deletePyramid(String pyramidId) throws DataStoreException {
+        throw new DataStoreException("Model is not writeable.");
+    }
 
     @Override
     public GridMosaic createMosaic(String pyramidId, Dimension gridSize, Dimension tilePixelSize, DirectPosition upperleft, double pixelscale) throws DataStoreException {
+        throw new DataStoreException("Model is not writeable.");
+    }
+    
+    @Override
+    public void deleteMosaic(String pyramidId, String mosaicId) throws DataStoreException {
         throw new DataStoreException("Model is not writeable.");
     }
 
@@ -106,6 +115,11 @@ public class WMTSCoverageReference implements CoverageReference, PyramidalModel{
         throw new DataStoreException("Model is not writeable.");
     }
 
+    @Override
+    public void deleteTile(String pyramidId, String mosaicId, int col, int row) throws DataStoreException {
+        throw new DataStoreException("Model is not writeable.");
+    }
+    
     public Image getLegend() throws DataStoreException {
         return null;
     }

@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.ows.xml;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -39,4 +40,8 @@ public interface AbstractOperation {
     AbstractDomain getConstraint(String name);
 
     AbstractDomain getConstraintIgnoreCase(String name);
+    
+    void updateParameter(final String parameterName, final Collection<String> values);
+    
+    void updateParameter(final String parameterName, final Range range);
 }

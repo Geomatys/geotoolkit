@@ -84,6 +84,30 @@ public class MetaDataPropertyType {
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     private String actuate;
 
+    public MetaDataPropertyType() {
+        
+    }
+    
+    public MetaDataPropertyType(final MetaDataPropertyType that) {
+        if (that != null) {
+            this.actuate      = that.actuate;
+            this.arcrole      = that.arcrole;
+            this.href         = that.href;
+            this.nilReason    = new ArrayList<String>(that.nilReason);
+            this.about        = that.about;
+            this.remoteSchema = that.remoteSchema;
+            this.role         = that.role;
+            this.show         = that.show;
+            this.title        = that.title;
+            this.type         = that.type;
+            if (that.abstractMetaData != null) {
+                final ObjectFactory factory = new ObjectFactory();
+                final GenericMetaDataType am = new GenericMetaDataType(that.abstractMetaData.getValue());
+                this.abstractMetaData = factory.createGenericMetaData(am);
+            }
+        }
+    }
+    
     /**
      * Gets the value of the abstractMetaData property.
      * 

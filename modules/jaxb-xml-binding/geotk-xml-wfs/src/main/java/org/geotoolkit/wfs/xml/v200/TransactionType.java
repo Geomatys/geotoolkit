@@ -111,6 +111,17 @@ public class TransactionType extends BaseRequestType implements Transaction {
         }
     }
     
+    public TransactionType(final String service, final String version, final String handle, final AllSomeType releaseAction, final ReplaceType replace) {
+        super(service, version, handle);
+        this.releaseAction = releaseAction;
+        this.abstractTransactionAction = new ArrayList<JAXBElement<?>>();
+        if (replace != null) {
+            final ObjectFactory factory = new ObjectFactory();
+            final JAXBElement<?> jb = factory.createReplace(replace);
+            this.abstractTransactionAction.add(jb);
+        }
+    }
+    
     /**
      * Gets the value of the abstractTransactionAction property.
      *
@@ -131,6 +142,7 @@ public class TransactionType extends BaseRequestType implements Transaction {
         return this.abstractTransactionAction;
     }
 
+    @Override
     public List<Object> getTransactionAction() {
         final List<Object> result = new ArrayList<Object>();
         if (abstractTransactionAction != null) {

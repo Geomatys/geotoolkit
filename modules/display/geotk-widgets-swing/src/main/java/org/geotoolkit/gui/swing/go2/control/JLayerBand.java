@@ -51,6 +51,7 @@ import org.geotoolkit.gui.swing.navigator.JNavigatorBand;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.FeatureMapLayer;
+import org.geotoolkit.map.FeatureMapLayer.DimensionDef;
 import org.geotoolkit.map.LayerListener;
 import org.geotoolkit.map.LayerListener.Weak;
 import org.geotoolkit.map.MapItem;
@@ -73,8 +74,6 @@ import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.PropertyName;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.crs.TemporalCRS;
-import org.opengis.referencing.crs.VerticalCRS;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
@@ -212,12 +211,17 @@ public class JLayerBand extends JNavigatorBand implements LayerListener{
             final FeatureMapLayer fml = (FeatureMapLayer) layer;
 
             Expression[] er = null;
-            if(axis instanceof TemporalCRS){
-                er = fml.getTemporalRange().clone();
-            }else if(axis instanceof VerticalCRS){
-                er = fml.getElevationRange().clone();
+            for (DimensionDef dimDef : fml.getExtraDimensions()) {
+                try {
+                    // Test if a math transform can be found.
+                    CRS.findMathTransform(axis, dimDef.getCrs());
+                    er = new Expression[]{dimDef.getLower(), dimDef.getUpper()};
+                    break;
+                } catch (FactoryException ex) {
+                    // no math transform = nothing to do
+                    continue;
+                }
             }
-
             //iterate on collection and find values
             if(er != null && (er[0] != null || er[1] != null) ){
                 if(er[0] == null){

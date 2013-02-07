@@ -3,6 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C)2009, Johann Sorel
+ *    (C) 2010 - 2013, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -17,7 +18,6 @@
 
 package org.geotoolkit.gui.swing.go2.control;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -39,7 +39,6 @@ import org.geotoolkit.display2d.container.ContextContainer2D;
 import org.geotoolkit.gui.swing.go2.JMap2D;
 import org.geotoolkit.gui.swing.navigator.JNavigator;
 import org.geotoolkit.gui.swing.navigator.JNavigatorBand;
-import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.ContextListener;
 import org.geotoolkit.map.CoverageMapLayer;

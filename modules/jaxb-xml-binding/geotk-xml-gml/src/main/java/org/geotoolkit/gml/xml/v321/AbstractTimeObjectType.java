@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import org.opengis.temporal.TemporalObject;
 
 
 /**
@@ -46,9 +47,15 @@ import javax.xml.bind.annotation.XmlType;
     AbstractTimeComplexType.class,
     AbstractTimePrimitiveType.class
 })
-public abstract class AbstractTimeObjectType
-    extends AbstractGMLType
-{
+public abstract class AbstractTimeObjectType extends AbstractGMLType implements TemporalObject {
 
-
+    public AbstractTimeObjectType() {
+        
+    }
+    
+    public AbstractTimeObjectType(final AbstractTimeObjectType that) {
+        super(that);
+    }
+    
+    public abstract AbstractTimeObjectType getClone();
 }

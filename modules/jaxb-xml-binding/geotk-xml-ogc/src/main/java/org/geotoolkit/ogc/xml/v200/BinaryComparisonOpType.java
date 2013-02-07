@@ -102,6 +102,31 @@ public class BinaryComparisonOpType extends ComparisonOpsType implements BinaryC
         this.matchCase = matchCase;
     }
 
+    public BinaryComparisonOpType(final BinaryComparisonOpType that) {
+        if (that != null) {
+            if (that.expression != null) {
+                this.expression = new ArrayList<JAXBElement<?>>();
+                final ObjectFactory factory = new ObjectFactory();
+                for (JAXBElement jb : that.expression) {
+                    final Object exp = jb.getValue();
+                    if (exp instanceof String) {
+                        this.expression.add(factory.createValueReference((String)exp));
+                    } else if (exp instanceof LiteralType) {
+                        final LiteralType lit = new LiteralType((LiteralType)exp);
+                        this.expression.add(factory.createLiteral(lit));
+                    } else if (exp instanceof FunctionType) {
+                        final FunctionType func = new FunctionType((FunctionType)exp);
+                        this.expression.add(factory.createFunction(func));
+                    } else {
+                        throw new IllegalArgumentException("Unexpected type for expression in BinaryComparisonOpType:" + expression.getClass().getName());
+                    }
+                }
+            }
+            this.matchAction = that.matchAction;
+            this.matchCase   = that.matchCase;
+        }
+    }
+    
     /**
      * Gets the value of the expression property.
      *
@@ -285,4 +310,8 @@ public class BinaryComparisonOpType extends ComparisonOpsType implements BinaryC
         return false;
     }
 
+    @Override
+    public ComparisonOpsType getClone() {
+        throw new UnsupportedOperationException("Must be overriden in sub-class.");
+    }
 }

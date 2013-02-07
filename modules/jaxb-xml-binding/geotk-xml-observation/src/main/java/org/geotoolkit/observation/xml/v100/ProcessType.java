@@ -22,7 +22,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.internal.sql.table.Entry;
-import org.opengis.observation.Process;
+import org.geotoolkit.observation.xml.Process;
 
 
 /**
@@ -75,6 +75,7 @@ public class ProcessType implements Process, Entry {
         return href;
     }
 
+    @Override
     public String getIdentifier() {
         return href;
     }

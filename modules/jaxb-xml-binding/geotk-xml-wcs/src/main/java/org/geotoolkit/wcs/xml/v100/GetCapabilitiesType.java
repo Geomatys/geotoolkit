@@ -168,11 +168,13 @@ public class GetCapabilitiesType implements GetCapabilities {
 
             @Override
             public List<String> getSection() {
-                final StringTokenizer tokens = new StringTokenizer(section, ",");
-                List<String> sections = new ArrayList<String>();
-                while (tokens.hasMoreTokens()) {
-                    final String token = tokens.nextToken().trim();
-                    sections.add(token);
+                final List<String> sections = new ArrayList<String>();
+                if (section != null) {
+                    final StringTokenizer tokens = new StringTokenizer(section, ",");
+                    while (tokens.hasMoreTokens()) {
+                        final String token = tokens.nextToken().trim();
+                        sections.add(token);
+                    }
                 }
                 return sections;
             }

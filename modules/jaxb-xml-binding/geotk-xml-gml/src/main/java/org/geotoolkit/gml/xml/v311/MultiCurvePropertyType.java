@@ -342,9 +342,9 @@ public class MultiCurvePropertyType {
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder("[MultiCurvePropertyType]");
-        if (multiCurve != null)
+        if (multiCurve != null) {
             s.append("multiCurve").append(multiCurve).append('\n');
-
+        }
         if(actuate != null) {
             s.append("actuate=").append(actuate).append('\n');
         }

@@ -17,7 +17,6 @@
 package org.geotoolkit.ogc.xml.v200;
 
 import javax.xml.bind.annotation.XmlRootElement;
-import org.geotoolkit.gml.xml.v311.AbstractGeometryType;
 import org.opengis.filter.spatial.Overlaps;
 
 /**
@@ -40,5 +39,14 @@ public class OverlapsType extends BinarySpatialOpType implements Overlaps {
      */
     public OverlapsType(final String propertyName, final Object geometry) {
         super(propertyName, geometry);
+    }
+    
+    public OverlapsType(final OverlapsType that) {
+        super(that);
+    }
+    
+    @Override
+    public SpatialOpsType getClone() {
+        return new OverlapsType(this);
     }
 }

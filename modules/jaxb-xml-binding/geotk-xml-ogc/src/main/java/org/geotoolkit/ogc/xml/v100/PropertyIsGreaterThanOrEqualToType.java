@@ -29,4 +29,16 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "PropertyIsGreaterThanOrEqualTo")
 public class PropertyIsGreaterThanOrEqualToType extends BinaryComparisonOpType {
     
+    public PropertyIsGreaterThanOrEqualToType() {
+        
+    }
+    
+    public PropertyIsGreaterThanOrEqualToType(final PropertyIsGreaterThanOrEqualToType that) {
+        super(that);
+    }
+
+    @Override
+    public ComparisonOpsType getClone() {
+        return new PropertyIsGreaterThanOrEqualToType(this);
+    }
 }

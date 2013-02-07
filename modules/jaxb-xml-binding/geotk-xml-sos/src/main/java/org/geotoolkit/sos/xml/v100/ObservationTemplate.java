@@ -16,6 +16,9 @@
  */
 package org.geotoolkit.sos.xml.v100;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -23,6 +26,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.observation.xml.v100.ObservationType;
+import org.geotoolkit.observation.xml.v100.ProcessType;
 
 
 /**
@@ -50,7 +54,7 @@ import org.geotoolkit.observation.xml.v100.ObservationType;
     "observation"
 })
 @XmlRootElement(name = "ObservationTemplate")
-public class ObservationTemplate {
+public class ObservationTemplate implements org.geotoolkit.swes.xml.ObservationTemplate {
 
     @XmlElement(name = "Observation", namespace = "http://www.opengis.net/om/1.0", required = true)
     private ObservationType observation;
@@ -72,10 +76,67 @@ public class ObservationTemplate {
     /**
      * Gets the value of the observation property.
      */
+    @Override
     public ObservationType getObservation() {
         return observation;
     }
 
+    @Override
+    public String getProcedure() {
+        if (observation != null && observation.getProcedure() instanceof ProcessType) {
+            return ((ProcessType)observation.getProcedure()).getHref();
+        }
+        return null;
+    }
+
+    @Override
+    public boolean isComplete() {
+        if (observation != null) {
+            return observation.isComplete();
+        }
+        return false;
+    }
+
+    @Override
+    public boolean isTemplateSpecified() {
+        return observation != null;
+    }
+
+    @Override
+    public void setProcedure(final String id) {
+        if (id != null) {
+            final ProcessType p = new ProcessType(id);
+            if (observation != null) {
+                observation.setProcedure(p);
+            }
+        }
+    }
+    
+    @Override
+    public void setName(final String name) {
+        if (name != null) {
+            if (observation != null) {
+                observation.setName(name);
+            }
+        }
+    }
+    
+    @Override
+    public List<String> getObservedProperties() {
+        if (observation != null && observation.getObservedProperty() != null) {
+            return Arrays.asList(observation.getObservedProperty().getId());
+        }
+        return new ArrayList<String>();
+    }
+    
+    @Override
+    public String getFeatureOfInterest() {
+        if (observation != null && observation.getFeatureOfInterest() != null) {
+            return observation.getFeatureOfInterest().getId();
+        }
+        return null;
+    }
+    
     /**
      * Verifie si cette entree est identique a l'objet specifie.
      */

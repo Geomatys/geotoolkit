@@ -94,8 +94,9 @@ public class GetPropertyValueType extends BaseRequestType implements GetProperty
     }
 
     public GetPropertyValueType(final String service, final String version, final String handle, final Integer maxFeatures,
-            final QueryType query, final ResultTypeType resultType, final String outputformat) {
+            final QueryType query, final ResultTypeType resultType, final String outputformat, final String valueReference) {
         super(service, version, handle);
+        this.valueReference = valueReference;
         if (maxFeatures !=  null) {
             this.count        = maxFeatures;
         }
@@ -108,8 +109,9 @@ public class GetPropertyValueType extends BaseRequestType implements GetProperty
     }
 
     public GetPropertyValueType(final String service, final String version, final String handle, final Integer maxFeatures,
-            final String featureId, final QueryType query, final ResultTypeType resultType, final String outputformat) {
+            final String featureId, final QueryType query, final ResultTypeType resultType, final String outputformat, final String valueReference) {
         super(service, version, handle);
+        this.valueReference = valueReference;
         if (maxFeatures !=  null) {
             this.count  = maxFeatures;
         }
@@ -200,6 +202,7 @@ public class GetPropertyValueType extends BaseRequestType implements GetProperty
      *     {@link String }
      *
      */
+    @Override
     public String getValueReference() {
         return valueReference;
     }
@@ -224,6 +227,7 @@ public class GetPropertyValueType extends BaseRequestType implements GetProperty
      *     {@link String }
      *
      */
+    @Override
     public String getResolvePath() {
         return resolvePath;
     }
@@ -248,6 +252,7 @@ public class GetPropertyValueType extends BaseRequestType implements GetProperty
      *     {@link ResolveValueType }
      *
      */
+    @Override
     public ResolveValueType getResolve() {
         if (resolve == null) {
             return ResolveValueType.NONE;
@@ -276,6 +281,7 @@ public class GetPropertyValueType extends BaseRequestType implements GetProperty
      *     {@link String }
      *
      */
+    @Override
     public String getResolveDepth() {
         if (resolveDepth == null) {
             return "*";
@@ -304,6 +310,7 @@ public class GetPropertyValueType extends BaseRequestType implements GetProperty
      *     {@link int }
      *
      */
+    @Override
     public int getResolveTimeout() {
         return resolveTimeout;
     }
@@ -328,6 +335,7 @@ public class GetPropertyValueType extends BaseRequestType implements GetProperty
      *     {@link int }
      *
      */
+    @Override
     public int getStartIndex() {
         return startIndex;
     }
@@ -352,6 +360,7 @@ public class GetPropertyValueType extends BaseRequestType implements GetProperty
      *     {@link int }
      *
      */
+    @Override
     public int getCount() {
         return count;
     }
@@ -376,6 +385,7 @@ public class GetPropertyValueType extends BaseRequestType implements GetProperty
      *     {@link ResultTypeType }
      *
      */
+    @Override
     public ResultTypeType getResultType() {
         if (resultType == null) {
             return ResultTypeType.RESULTS;
@@ -404,6 +414,7 @@ public class GetPropertyValueType extends BaseRequestType implements GetProperty
      *     {@link String }
      *
      */
+    @Override
     public String getOutputFormat() {
         if (outputFormat == null) {
             return "application/gml+xml; version=3.2";

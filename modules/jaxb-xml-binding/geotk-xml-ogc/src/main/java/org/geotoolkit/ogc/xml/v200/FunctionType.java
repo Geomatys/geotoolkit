@@ -59,23 +59,38 @@ public class FunctionType {
     @XmlAttribute(required = true)
     private String name;
 
+    public FunctionType() {
+        
+    }
+    
+    public FunctionType(final FunctionType that) {
+        if (that != null) {
+            this.name = that.name;
+            
+            if (that.expression != null) {
+                this.expression = new ArrayList<JAXBElement<?>>();
+                final ObjectFactory factory = new ObjectFactory();
+                for (JAXBElement<?> jb : that.expression) {
+                    final Object exp = jb.getValue();
+                    if (exp instanceof String) {
+                        this.expression.add(factory.createValueReference((String)exp));
+                    } else if (exp instanceof LiteralType) {
+                        final LiteralType lit = new LiteralType((LiteralType)exp);
+                        this.expression.add(factory.createLiteral(lit));
+                    } else if (exp instanceof FunctionType) {
+                        final FunctionType func = new FunctionType((FunctionType)exp);
+                        this.expression.add(factory.createFunction(func));
+                    } else {
+                        throw new IllegalArgumentException("Unexpected type for expression in FunctionType:" + expression.getClass().getName());
+                    }
+                }
+            }
+        }
+    }
+    
     /**
      * Gets the value of the expression property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the expression property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getExpression().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link LiteralType }{@code >}
      * {@link JAXBElement }{@code <}{@link Object }{@code >}

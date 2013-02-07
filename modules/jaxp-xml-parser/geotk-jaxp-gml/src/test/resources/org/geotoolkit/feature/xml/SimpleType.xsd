@@ -3,10 +3,10 @@
     targetNamespace="http://www.opengis.net/gml"
     xmlns:xsd="http://www.w3.org/2001/XMLSchema">
     <xsd:import schemaLocation="http://schemas.opengis.net/gml/3.1.1/base/gml.xsd" namespace="http://www.opengis.net/gml"/>
-    <xsd:element xmlns:gml="http://www.opengis.net/gml" name="TestSimple" type="gml:TestSimpleType" />
+    <xsd:element xmlns:gml="http://www.opengis.net/gml" name="TestSimple" type="gml:TestSimpleType" substitutionGroup="gml:_Feature"/>
     <xsd:complexType name="TestSimpleType">
         <xsd:complexContent>
-            <xsd:extension xmlns:gml="http://www.opengis.net/gml" base="gml:_Feature" >
+            <xsd:extension xmlns:gml="http://www.opengis.net/gml" base="gml:AbstractFeatureType" >
                 <xsd:sequence>
                     <xsd:element name="ID"                  maxOccurs="1" minOccurs="1" nillable="true" type="xsd:integer"/>
                     <xsd:element name="attString"           maxOccurs="1" minOccurs="1" nillable="true" type="xsd:string"/>

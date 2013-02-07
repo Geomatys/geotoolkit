@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.gml.xml.FeatureProperty;
 import org.geotoolkit.util.Utilities;
 
 
@@ -57,7 +58,7 @@ import org.geotoolkit.util.Utilities;
     "abstractFeature",
     "unknowFeature"
 })
-public class FeaturePropertyType {
+public class FeaturePropertyType implements FeatureProperty {
 
     @XmlElementRef(name = "AbstractFeature", namespace = "http://www.opengis.net/gml", type = JAXBElement.class)
     private JAXBElement<? extends AbstractFeatureType> abstractFeature;
@@ -114,6 +115,7 @@ public class FeaturePropertyType {
     /**
      * Set the feature into href mode.
      */
+    @Override
     public void setToHref() {
         if (abstractFeature != null && abstractFeature.getValue() != null) {
             this.href       = abstractFeature.getValue().getName();
@@ -404,9 +406,9 @@ public class FeaturePropertyType {
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder("[FeaturePropertyType]");
-        if (abstractFeature != null && abstractFeature.getValue() != null)
+        if (abstractFeature != null && abstractFeature.getValue() != null) {
             s.append(abstractFeature.getValue().toString()).append('\n');
-
+        }
         if(actuate != null) {
             s.append("actuate=").append(actuate).append('\n');
         }

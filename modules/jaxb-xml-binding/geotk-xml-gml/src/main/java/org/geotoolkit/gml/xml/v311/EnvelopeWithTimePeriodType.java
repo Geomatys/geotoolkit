@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.gml.xml.EnvelopeWithTimePeriod;
 
 
 /**
@@ -52,7 +53,7 @@ import javax.xml.bind.annotation.XmlType;
     "beginPosition",
     "endPosition"
 })
-public class EnvelopeWithTimePeriodType extends EnvelopeType {
+public class EnvelopeWithTimePeriodType extends EnvelopeType implements EnvelopeWithTimePeriod {
 
     @XmlElement(required = true)
     private TimePositionType beginPosition;
@@ -62,9 +63,27 @@ public class EnvelopeWithTimePeriodType extends EnvelopeType {
     @XmlSchemaType(name = "anyURI")
     protected String frame;
 
+    public EnvelopeWithTimePeriodType() {
+        
+    }
+    
+    public EnvelopeWithTimePeriodType(final EnvelopeWithTimePeriod that) {
+        super(that);
+        if (that != null) {
+            if (that.getBeginPosition() != null) {
+                this.beginPosition = new TimePositionType(that.getBeginPosition());
+            }
+            if (that.getEndPosition() != null) {
+                this.endPosition = new TimePositionType(that.getEndPosition());
+            }
+            this.frame = that.getFrame();
+        }
+    }
+    
     /**
      * Gets the value of the beginPosition property.
      */
+    @Override
     public TimePositionType getBeginPosition() {
         return beginPosition;
     }
@@ -72,6 +91,7 @@ public class EnvelopeWithTimePeriodType extends EnvelopeType {
     /**
      * Gets the value of the endPosition property.
      */
+    @Override
     public TimePositionType getEndPosition() {
         return endPosition;
     }
@@ -84,6 +104,7 @@ public class EnvelopeWithTimePeriodType extends EnvelopeType {
      *     {@link String }
      *     
      */
+    @Override
     public String getFrame() {
         return frame;
     }

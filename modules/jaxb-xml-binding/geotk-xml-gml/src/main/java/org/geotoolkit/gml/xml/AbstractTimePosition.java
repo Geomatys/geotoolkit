@@ -67,4 +67,6 @@ public abstract class AbstractTimePosition implements Position {
         LOGGER.log(Level.WARNING, "Unable to parse date value:{0}", value);
         return null;
     }
+    
+    public abstract TimeIndeterminateValueType getIndeterminatePosition();
 }

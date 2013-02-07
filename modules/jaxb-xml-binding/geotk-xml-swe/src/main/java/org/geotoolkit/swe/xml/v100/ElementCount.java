@@ -76,9 +76,14 @@ public class ElementCount implements AbstractElementCount {
         }
     }
     
+    public ElementCount(final int value) {
+        this.count = new Count();
+    }
+    
     /**
      * Gets the value of the count property.
      */
+    @Override
     public Count getCount() {
         return count;
     }
@@ -93,6 +98,7 @@ public class ElementCount implements AbstractElementCount {
     /**
      * Gets the value of the ref property.
      */
+    @Override
     public Object getRef() {
         return ref;
     }

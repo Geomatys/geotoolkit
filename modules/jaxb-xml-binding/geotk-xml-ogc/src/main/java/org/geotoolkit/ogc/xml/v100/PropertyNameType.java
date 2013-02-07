@@ -76,6 +76,12 @@ public class PropertyNameType {
         }
     }
     
+    public PropertyNameType(final PropertyNameType that) {
+        if (that != null) {
+            this.content = that.content;
+        }
+    }
+    
     /**
      * Gets the value of the content property.
      * 

@@ -17,19 +17,34 @@
 package org.geotoolkit.process.coverage.copy;
 
 import java.awt.Dimension;
+import java.awt.Point;
+import java.awt.geom.AffineTransform;
+import java.awt.image.BufferedImage;
+import java.awt.image.IndexColorModel;
 import java.awt.image.RenderedImage;
+import java.io.IOException;
+import java.util.AbstractCollection;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.imageio.ImageReader;
 import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.coverage.CoverageStore;
 import org.geotoolkit.coverage.GridMosaic;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.Pyramid;
+import org.geotoolkit.coverage.PyramidSet;
 import org.geotoolkit.coverage.PyramidalModel;
+import org.geotoolkit.coverage.TileReference;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
@@ -38,6 +53,7 @@ import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.display2d.style.raster.StatisticOp;
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.GeneralEnvelope;
+import org.geotoolkit.image.coverage.CombineIterator;
 import org.geotoolkit.parameter.Parameters;
 import static org.geotoolkit.parameter.Parameters.*;
 import org.geotoolkit.process.AbstractProcess;
@@ -46,22 +62,19 @@ import org.geotoolkit.process.ProcessException;
 import static org.geotoolkit.process.coverage.copy.CopyCoverageStoreDescriptor.*;
 import org.geotoolkit.process.coverage.reducedodomain.ReduceToDomainDescriptor;
 import org.geotoolkit.process.coverage.straighten.StraightenDescriptor;
-import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
 import org.geotoolkit.referencing.cs.DiscreteCoordinateSystemAxis;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.geotoolkit.storage.DataStoreException;
-import org.geotoolkit.util.collection.XCollections;
+import org.geotoolkit.temporal.object.TemporalUtilities;
+import org.geotoolkit.util.ImageIOUtilities;
 import org.opengis.feature.type.Name;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.parameter.ParameterValueGroup;
-import org.opengis.referencing.crs.CompoundCRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.ImageCRS;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
-import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 
 /**
@@ -93,8 +106,21 @@ public class CopyCoverageStoreProcess extends AbstractProcess {
 
         try {
             for(Name n : inStore.getNames()){
-                final CoverageReference ref = inStore.getCoverageReference(n);
-                saveCoverage(outStore, ref, erase, reduce);
+                final CoverageReference inRef = inStore.getCoverageReference(n);
+                final Name name = inRef.getName();
+                if (erase) {
+                    outStore.delete(name);
+                }
+                final CoverageReference outRef = outStore.create(name);
+                
+                if(inRef instanceof PyramidalModel && outRef instanceof PyramidalModel){
+                    savePMtoPM((PyramidalModel)inRef, (PyramidalModel)outRef);
+                }else if(outRef instanceof PyramidalModel){
+                    savePlainToPM(inRef, (PyramidalModel)outRef, reduce);
+                }else{
+                    throw new DataStoreException("The given coverage reference is not a pyramidal model, "
+                    + "this process only work with this kind of model.");
+                }
             }
         } catch (DataStoreException ex) {
             throw new ProcessException(ex.getLocalizedMessage(), this, ex);
@@ -103,6 +129,162 @@ public class CopyCoverageStoreProcess extends AbstractProcess {
         }
     }
 
+    /**
+     * If both source and target are pyramid model, we can copy each tiles.
+     */
+    private void savePMtoPM(final PyramidalModel inPM, final PyramidalModel outPM) throws DataStoreException{   
+        final PyramidSet inPS = inPM.getPyramidSet();
+        
+        final List<GridSampleDimension> sampleDimensions = inPM.getSampleDimensions(0);
+        if(sampleDimensions != null){
+            outPM.createSampleDimension(sampleDimensions, null);
+        }
+        
+        //count total number of tiles
+        long nb = 0;
+        for(final Pyramid inPY : inPS.getPyramids()){
+            for(final GridMosaic inGM : inPY.getMosaics()){
+                nb += inGM.getGridSize().height*inGM.getGridSize().width;
+            }
+        }
+        final long total = nb;
+        
+        final int processors = Runtime.getRuntime().availableProcessors();
+        final ExecutorService es = Executors.newFixedThreadPool(processors);
+        try{
+            final long before = System.currentTimeMillis();
+
+            final AtomicLong count = new AtomicLong();
+            //copy pyramids
+            for(final Pyramid inPY : inPS.getPyramids()){
+                final Pyramid outPY = outPM.createPyramid(inPY.getCoordinateReferenceSystem());
+                //copy mosaics
+                for(final GridMosaic inGM : inPY.getMosaics()){
+                    final Dimension gridDimension = inGM.getGridSize();
+                    final GridMosaic outGM = outPM.createMosaic(outPY.getId(), 
+                            gridDimension, inGM.getTileSize(), 
+                            inGM.getUpperLeftCorner(), inGM.getScale());
+
+
+                    //collection of all tile points
+                    final Collection<Point> allPoints = new AbstractCollection<Point>() {
+                        @Override
+                        public Iterator<Point> iterator() {
+                            return new Iterator<Point>() {
+                                int x = 0;
+                                int y = 0;
+                                Point next = null;
+
+                                @Override
+                                public boolean hasNext() {
+                                    findNext();
+                                    return next != null;
+                                }
+
+                                @Override
+                                public Point next() {
+                                    findNext();
+                                    Point cp = next;
+                                    next = null;
+                                    if(cp == null){
+                                        throw new NoSuchElementException("no more element");
+                                    }
+                                    return cp;
+                                }
+
+                                private void findNext(){
+                                    if(next != null) return;
+
+                                    if(x>=gridDimension.width){
+                                        x=0;
+                                        y++;
+                                    }
+                                    if(y>=gridDimension.height){
+                                        //reached the end
+                                        return;
+                                    }
+
+                                    next = new Point(x, y);
+                                    x++;
+                                }
+
+                                @Override
+                                public void remove() {
+                                }
+                            };
+                        }
+                        @Override
+                        public int size() {
+                            return gridDimension.height*gridDimension.width;
+                        }
+                    };
+
+                    final BlockingQueue<Object> queue = inGM.getTiles(allPoints, null);
+                    while(true){
+                        final Object obj;
+                        try {
+                            obj = queue.take();
+                        } catch (InterruptedException ex) {
+                            Logger.getLogger(CopyCoverageStoreProcess.class.getName()).log(Level.SEVERE, null, ex);
+                            continue;
+                        }
+                        if(obj == GridMosaic.END_OF_QUEUE){
+                            break;
+                        }else if(obj == null){
+                            continue;
+                        }
+                        final TileReference inTR = (TileReference) obj;
+                        final int x = inTR.getPosition().x;
+                        final int y = inTR.getPosition().y;
+                        ImageReader inReader = null;
+                        try{
+                            Object input = inTR.getInput();
+                            RenderedImage image;
+                            if(input instanceof RenderedImage){
+                                image = (RenderedImage) input;
+                                if(image.getColorModel() instanceof IndexColorModel){
+                                    final BufferedImage bg = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
+                                    bg.createGraphics().drawRenderedImage(image, new AffineTransform());
+                                    image = bg;
+                                }
+                            }else{
+                                inReader = inTR.getImageReader();
+                                image = inReader.read(inTR.getImageIndex());
+                            }
+                            final RenderedImage img = image;
+                            es.submit(new Runnable() {
+                                @Override
+                                public void run() {
+                                    try {
+                                        outPM.writeTile(outPY.getId(), outGM.getId(), x, y, img);
+                                    } catch (DataStoreException ex) {
+                                        CopyCoverageStoreProcess.this.fireWarningOccurred(ex.getMessage(), 0, ex);
+                                        return;
+                                    }
+                                    final long inc = count.incrementAndGet();
+                                    final long current = System.currentTimeMillis();
+                                    final long oneTileTime = (current-before) / inc;
+                                    final long remaining = (total-inc) * oneTileTime;
+                                    final String remtext = TemporalUtilities.durationToString(remaining);
+                                    fireProgressing(inc+" / "+total+ " ("+remtext+")", inc/total, false);
+                                }
+                            });
+
+                        }catch(IOException ex){
+                            throw new DataStoreException(ex);
+                        }finally{
+                            //dispose reader and substream
+                            ImageIOUtilities.releaseReader(inReader);
+                        }
+                    }
+
+                }
+            }
+        }finally{
+            es.shutdown();
+        }
+    }
+    
     /**
      * Save a {@linkplain CoverageReference coverage} into a {@linkplain CoverageStore coverage store}.
      *
@@ -113,9 +295,8 @@ public class CopyCoverageStoreProcess extends AbstractProcess {
      * @throws DataStoreException
      * @throws TransformException
      */
-    private void saveCoverage(final CoverageStore outStore, final CoverageReference inRef, final Boolean erase, Boolean reduce)
-            throws DataStoreException, TransformException, ProcessException
-    {
+    private void savePlainToPM(final CoverageReference inRef, final PyramidalModel outPM, Boolean reduce)
+            throws DataStoreException, TransformException, ProcessException {
 
         if(reduce == null) reduce = Boolean.TRUE;
         
@@ -131,25 +312,14 @@ public class CopyCoverageStoreProcess extends AbstractProcess {
             fireWarningOccurred("Image "+name+" does not have a CoordinateReferenceSystem, insertion is skipped.", 0, null);
             return;
         }
-
-        if (erase) {
-            outStore.delete(name);
-        }
-
-        final CoverageReference outRef = outStore.create(name);
-        if (!(outRef instanceof PyramidalModel)) {
-            throw new DataStoreException("The given coverage reference is not a pyramidal model, "
-                    + "this process only work with this kind of model.");
-        }
-        final PyramidalModel pm = (PyramidalModel) outRef;
         
         //create sampleDimensions bands
         //TODO remove analyse when CoverageImageReader getSampleDimensions will be fix with min/max values.
         final Map<String, Object> analyse = StatisticOp.analyze(reader, imageIndex);
         final List<GridSampleDimension> sampleDimensions = reader.getSampleDimensions(imageIndex);
-        pm.createSampleDimension(sampleDimensions, analyse);
+        outPM.createSampleDimension(sampleDimensions, analyse);
         
-        final Pyramid pyramid = pm.createPyramid(crs);
+        final Pyramid pyramid = outPM.createPyramid(crs);
 
         // Stores additional coordinate system axes, to know how many pyramids should be created
         final List<List<Comparable>> possibilities = new ArrayList<List<Comparable>>();
@@ -171,16 +341,15 @@ public class CopyCoverageStoreProcess extends AbstractProcess {
 
         if (possibilities.isEmpty()) {
             //only a single image to insert
-            saveMosaic(pm, pyramid, reader, imageIndex, null,reduce);
+            saveMosaic(outPM, pyramid, reader, imageIndex, null,reduce);
 
         } else {
             //multiple dimensions to insert
             final GeneralEnvelope env = new GeneralEnvelope(globalGeom.getEnvelope());
-            final CopyCoverageStoreProcess.CombineIterator ite = new CopyCoverageStoreProcess.CombineIterator(possibilities, env);
-
+            final CombineIterator ite = new CombineIterator(possibilities, env);
             Envelope ce = ite.next();
             do {
-                saveMosaic(pm, pyramid, reader, imageIndex, ce,reduce);
+                saveMosaic(outPM, pyramid, reader, imageIndex, ce,reduce);
                 ce = ite.next();
             } while (ce != null);
         }
@@ -254,103 +423,5 @@ public class CopyCoverageStoreProcess extends AbstractProcess {
         } 
         final GridMosaic mosaic = pm.createMosaic(pyramid.getId(), gridSize, TileSize, upperleft, scale);
         pm.writeTile(pyramid.getId(), mosaic.getId(), 0, 0, img);
-    }
-
-
-    /**
-     * Iterator on pyramid envelopes.
-     */
-    private class CombineIterator implements Iterator<Envelope> {
-        private final List<List<Comparable>> values;
-        private final int[] positions;
-        private final GeneralEnvelope baseEnvelope;
-        private boolean finish = false;
-
-        /**
-         * Defines an iterator on given values with the given base envelope.
-         *
-         * @param values Values to iterate. Must not be {@code null}.
-         * @param baseEnvelope Base envelope. Must not be {@code null}.
-         */
-        public CombineIterator(final List<List<Comparable>> values, final GeneralEnvelope baseEnvelope) {
-            this.values = values;
-            this.positions = new int[values.size()];
-            this.baseEnvelope = baseEnvelope;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public Envelope next() {
-            if (finish) {
-                return null;
-            }
-
-            for (int i = 0; i < positions.length; i++) {
-                final Comparable c = values.get(i).get(positions[i]);
-                Number n;
-                if(c instanceof Number){
-                    n = (Number) c;
-                }else if(c instanceof Date){
-                    n = ((Date)c).getTime();
-                    //transform correctly value, unit type might have changed.
-                    final CoordinateReferenceSystem baseCRS = DefaultTemporalCRS.JAVA;
-                    final CoordinateReferenceSystem targetCRS = ((CompoundCRS)baseEnvelope.getCoordinateReferenceSystem()).getComponents().get(1+i);
-
-                    //try to convert from one axis to the other
-                    try{
-                        final MathTransform trs = CRS.findMathTransform(baseCRS, targetCRS);
-                        final double[] bv = new double[]{n.doubleValue()};
-                        trs.transform(bv, 0, bv, 0, 1);
-                        n = bv[0];
-                    }catch(Exception ex){
-                        fireWarningOccurred(ex.getMessage(), 0, ex);
-                    }
-
-                }else{
-                    fireProcessFailed("Comparable type not supported : "+ c, null);
-                    return null;
-                }
-
-                baseEnvelope.setRange(2+i, n.doubleValue(), n.doubleValue());
-
-                //prepare next iteration
-                if (i == positions.length - 1) {
-                    positions[i] = positions[i] + 1;
-                }
-            }
-
-            //prepare next iteration
-            for (int i = positions.length - 1; i >= 0; i--) {
-                if (positions[i] >= values.get(i).size()) {
-                    if (i == 0) {
-                        finish = true;
-                        break;
-                    }
-                    //increment previous, restart this level at zero
-                    positions[i] = 0;
-                    positions[i - 1]++;
-                }
-            }
-
-            return baseEnvelope;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public boolean hasNext() {
-            return !finish;
-        }
-
-        /**
-         * Not implemented in this implementation.
-         */
-        @Override
-        public void remove() {
-            throw new UnsupportedOperationException("Not supported yet.");
-        }
     }
 }

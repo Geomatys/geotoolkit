@@ -57,12 +57,6 @@
             <artifactId>geotk-xml-sld</artifactId>
             <version>${project.version}</version>
         </dependency>
-      
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>geotk-widgets-swing-pending</artifactId>
-            <version>${project.version}</version>            
-        </dependency>
             
         <dependency>
             <groupId>${project.groupId}</groupId>

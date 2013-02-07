@@ -177,12 +177,7 @@ public class DefaultBBox extends AbstractBinarySpatialOperator<PropertyName,Defa
      */
     @Override
     public boolean evaluate(final Object object) {
-        Geometry candidate;
-        if (object instanceof Feature && left.getPropertyName().isEmpty()) {
-            candidate = (Geometry) ((Feature)object).getDefaultGeometryProperty().getValue();
-        } else {
-            candidate = left.evaluate(object, Geometry.class);
-        }
+        Geometry candidate = toGeometry(object, left);
 
         if(candidate == null){
             return false;

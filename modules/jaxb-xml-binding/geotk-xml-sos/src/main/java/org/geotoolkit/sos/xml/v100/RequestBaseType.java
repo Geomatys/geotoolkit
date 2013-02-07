@@ -112,6 +112,7 @@ public class RequestBaseType implements RequestBase {
         return null;
     }
     
+    @Override
     public void setVersion(final String version) {
         this.version = version;
     }

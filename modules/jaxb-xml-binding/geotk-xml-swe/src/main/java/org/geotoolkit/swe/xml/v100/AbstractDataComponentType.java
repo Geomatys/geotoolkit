@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.swe.xml.v100;
 
-import java.net.URI;
 import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -73,26 +72,30 @@ public abstract class AbstractDataComponentType extends AbstractGMLType implemen
     private java.lang.Boolean fixed;
     @XmlAttribute
     @XmlSchemaType(name = "anyURI")
-    private URI definition;
+    private String definition;
 
     public AbstractDataComponentType() {
 
     }
 
-    public AbstractDataComponentType(final URI definition) {
+    public AbstractDataComponentType(final String definition) {
         this.definition = definition;
     }
 
     public AbstractDataComponentType(final AbstractDataComponent component) {
         super(component);
         if (component != null) {
-            if (component.getDefinition() instanceof String) {
-                this.definition = URI.create((String)component.getDefinition());
-            } else if (component.getDefinition() instanceof URI) {
-                this.definition = (URI) component.getDefinition();
-            }
+            this.definition = component.getDefinition();
             this.fixed      = component.isFixed();
         }
+    }
+    
+    public AbstractDataComponentType(final String id, final String definition, final Boolean fixed) {
+        super(id);
+        if (definition != null) {
+            this.definition = definition;
+        }
+        this.fixed      = fixed;
     }
     
     /**
@@ -114,26 +117,15 @@ public abstract class AbstractDataComponentType extends AbstractGMLType implemen
      * Gets the value of the definition property.
      */
     @Override
-    public URI getDefinition() {
+    public String getDefinition() {
         return definition;
     }
 
     /**
      * Sets the value of the definition property.
       */
-    public void setDefinition(final URI value) {
-        this.definition = value;
-    }
-
-    /**
-     * Sets the value of the definition property.
-      */
     public void setDefinition(final String value) {
-        if (value != null) {
-            this.definition = URI.create(value);
-        } else {
-            this.definition = null;
-        }
+        this.definition = value;
     }
 
     /**

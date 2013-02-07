@@ -33,6 +33,8 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.TimeUnit;
 import javax.imageio.ImageReader;
+import org.geotoolkit.coverage.finder.CoverageFinder;
+import org.geotoolkit.coverage.finder.CoverageFinderFactory;
 import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
@@ -61,6 +63,7 @@ import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
+import org.opengis.util.FactoryException;
 import org.opengis.util.GenericName;
 import org.opengis.util.NameFactory;
 import org.opengis.util.NameSpace;
@@ -74,8 +77,15 @@ import org.opengis.util.NameSpace;
 public class PyramidalModelReader extends GridCoverageReader{
 
     private CoverageReference ref;
+    private final CoverageFinder coverageFinder;
 
+    @Deprecated
     public PyramidalModelReader() {
+        this.coverageFinder = CoverageFinderFactory.createDefaultCoverageFinder();
+    }
+    
+    public PyramidalModelReader(CoverageFinder coverageFinder) {
+        this.coverageFinder = coverageFinder;
     }
 
     @Override
@@ -121,7 +131,7 @@ public class PyramidalModelReader extends GridCoverageReader{
             final Pyramid pyramid = set.getPyramids().iterator().next();
 
             final List<GridMosaic> mosaics = new ArrayList<GridMosaic>(pyramid.getMosaics());
-            Collections.sort(mosaics, CoverageUtilities.SCALE_COMPARATOR);
+            Collections.sort(mosaics, CoverageFinder.SCALE_COMPARATOR);
 
             if(mosaics.isEmpty()){
                 //no mosaics
@@ -254,7 +264,13 @@ public class PyramidalModelReader extends GridCoverageReader{
         }
 
 
-        final Pyramid pyramid = CoverageUtilities.findPyramid(pyramidSet, crs);
+        Pyramid pyramid = null;
+        try {
+//            pyramid = CoverageUtilities.findPyramid(pyramidSet, crs);
+            pyramid = coverageFinder.findPyramid(pyramidSet, crs);
+        } catch (FactoryException ex) {
+            throw new CoverageStoreException(ex);
+        }
 
         if(pyramid == null){
             //no reliable pyramid
@@ -290,7 +306,14 @@ public class PyramidalModelReader extends GridCoverageReader{
         final double wantedResolution = resolution[0];
         final double tolerance = 0.1d;
 
-        final GridMosaic mosaic = CoverageUtilities.findMosaic(pyramid, wantedResolution, tolerance, wantedEnv,100);
+        GridMosaic mosaic = null;
+        try {
+//            mosaic = CoverageUtilities.findMosaic(pyramid, wantedResolution, tolerance, wantedEnv,100);
+            mosaic = coverageFinder.findMosaic(pyramid, wantedResolution, tolerance, wantedEnv,100);
+        } catch (FactoryException ex) {
+            throw new CoverageStoreException(ex.getMessage(),ex);
+        }
+        
         if(mosaic == null){
             //no reliable mosaic
             throw new CoverageStoreException("No mosaic defined.");

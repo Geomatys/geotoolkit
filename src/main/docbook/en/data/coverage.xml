@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this template, choose Tools | Templates
+and open the template in the editor.
+-->
+
+<!DOCTYPE book [
+  <!ENTITY % book.entities SYSTEM "../../book.entities">
+  %book.entities;
+]>
+
+<section xmlns="http://docbook.org/ns/docbook" version="5.0"
+         xmlns:xi    = "http://www.w3.org/2001/XInclude"
+         xmlns:xlink = "http://www.w3.org/1999/xlink"
+        id="coverage" xreflabel="coverage" lang="en">
+    
+    <title>
+        Coverage
+    </title>
+    
+    <para>
+        GeotoolKit uses Java standard API for image processing.
+
+        Image describes storage method and color space.
+
+        Coverages add georeferencing informations and metadata.
+    </para>
+    
+    <section>
+        <title>Batch handling</title>
+        
+        <para>
+            Only one model know managing multi-coverage in the same time : Coverage-SQL (or PostGrid). 
+            However, this model hasn't interface and <emphasis role="bold">fait le lien avec un mode de stockage qui lui est propre.</emphasis>
+            A new interface, CoverageStore, is being developped in Geotoolkit-pending for resolve these problems.
+            This new model is describing in <xref linkend="coveragereader"/>.
+        </para>
+    </section>
+    
+    <section>
+        <title>
+            Manipulation with Reader/Writer
+        </title>
+        <para>
+            You must use this functions to use a coverage :
+            <itemizedlist>
+                <listitem>CoverageReader : for reading </listitem>
+                <listitem>CoverageWriter : for writing </listitem>
+            </itemizedlist>
+        </para>
+    </section>
+    
+    <xi:include href="coverage/coveragestore.xml"/>    
+    <xi:include href="coverage/coveragereader.xml"/>
+</section>

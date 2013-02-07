@@ -128,6 +128,15 @@ public abstract class DefaultAbstractTree implements Tree{
         this.crs = crs;
     }
 
+    @Override
+    public void insert(Envelope entry) throws IllegalArgumentException {
+        ArgumentChecks.ensureNonNull("insert : entry", entry);
+        final int dim = entry.getDimension();
+        for (int d = 0; d < dim; d++)
+            if (Double.isNaN(entry.getMinimum(d)) || Double.isNaN(entry.getMaximum(d)))
+                throw new IllegalArgumentException("entry Envelope contain at least one NAN value");
+    }
+
     /**
      * {@inheritDoc}
      */

@@ -18,6 +18,8 @@ package org.geotoolkit.sampling.xml.v100;
 
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.geotoolkit.internal.jaxb.gco.GO_GenericName;
 import org.opengis.observation.sampling.SamplingFeatureRelation;
 import org.opengis.util.GenericName;
 
@@ -30,7 +32,8 @@ import org.opengis.util.GenericName;
 @XmlType(name="SamplingFeatureRelation")
 public class SamplingFeatureRelationType implements SamplingFeatureRelation {
     
-    // JAXBISSUE private GenericNameType role;
+    @XmlJavaTypeAdapter(GO_GenericName.class)
+    private GenericName role;
     
     private SamplingFeatureType target;
     
@@ -54,8 +57,7 @@ public class SamplingFeatureRelationType implements SamplingFeatureRelation {
      */
     @Override
     public GenericName getRole(){
-        throw new UnsupportedOperationException("Not supported yet.");
-        //return role;
+        return role;
     }
 
     public String getName() {

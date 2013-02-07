@@ -19,6 +19,9 @@ package org.geotoolkit.gml.xml;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.opengis.temporal.Instant;
+import org.opengis.temporal.Period;
+import org.opengis.temporal.Position;
 
 /**
  *
@@ -26,17 +29,27 @@ import java.util.List;
  */
 public class GMLXmlFactory {
  
-    public Point buildPoint(final String version, final org.opengis.geometry.DirectPosition pos) {
+    public static Point buildPoint(final String version, final String id, final org.opengis.geometry.DirectPosition pos) {
         if ("3.2.1".equals(version)) {
-            return new org.geotoolkit.gml.xml.v321.PointType(pos);
+            return new org.geotoolkit.gml.xml.v321.PointType(id, pos);
         } else if ("3.1.1".equals(version)) {
-            return new org.geotoolkit.gml.xml.v311.PointType(pos);
+            return new org.geotoolkit.gml.xml.v311.PointType(id, pos);
+        } else {
+            throw new IllegalArgumentException("unexpected gml version number:" + version);
+        }
+    }
+    
+    public static org.opengis.geometry.DirectPosition buildDirectPosition(final String version, final String srsName, final Integer srsDimension, final List<Double> value) {
+        if ("3.2.1".equals(version)) {
+            return new org.geotoolkit.gml.xml.v321.DirectPositionType(srsName, srsDimension, value);
+        } else if ("3.1.1".equals(version)) {
+            return new org.geotoolkit.gml.xml.v311.DirectPositionType(srsName, srsDimension, value);
         } else {
             throw new IllegalArgumentException("unexpected gml version number:" + version);
         }
     }
 
-    public MultiPoint buildMultiPoint(final String version, final List<Point> points, final String srsName) {
+    public static MultiPoint buildMultiPoint(final String version, final List<Point> points, final String srsName) {
         if ("3.2.1".equals(version)) {
             final List<org.geotoolkit.gml.xml.v321.PointPropertyType> pointList = new ArrayList<org.geotoolkit.gml.xml.v321.PointPropertyType>();
             for (Point pt : points) {
@@ -54,7 +67,7 @@ public class GMLXmlFactory {
         }
     }
     
-    public LineString buildLineString(final String version, final List<org.opengis.geometry.DirectPosition> pos) {
+    public static LineString buildLineString(final String version, final List<org.opengis.geometry.DirectPosition> pos) {
         if ("3.2.1".equals(version)) {
             return new org.geotoolkit.gml.xml.v321.LineStringType(pos);
         } else if ("3.1.1".equals(version)) {
@@ -64,7 +77,7 @@ public class GMLXmlFactory {
         }
     }
     
-    public AbstractGeometricAggregate buildMultiLineString(final String version, final List<LineString> lines, final String srsName) {
+    public static AbstractGeometricAggregate buildMultiLineString(final String version, final List<LineString> lines, final String srsName) {
         if ("3.2.1".equals(version)) {
             final List<org.geotoolkit.gml.xml.v321.CurvePropertyType> lineList = new ArrayList<org.geotoolkit.gml.xml.v321.CurvePropertyType>();
             for (LineString ls : lines) {
@@ -82,7 +95,7 @@ public class GMLXmlFactory {
         }
     }
     
-    public AbstractGeometricAggregate buildMultiPolygon(final String version, final List<Polygon> polygons, final String srsName) {
+    public static AbstractGeometricAggregate buildMultiPolygon(final String version, final List<Polygon> polygons, final String srsName) {
         if ("3.2.1".equals(version)) {
             final List<org.geotoolkit.gml.xml.v321.SurfacePropertyType> polyList = new ArrayList<org.geotoolkit.gml.xml.v321.SurfacePropertyType>();
             for (Polygon p : polygons) {
@@ -100,9 +113,8 @@ public class GMLXmlFactory {
         }
     }
     
-    public LinearRing buildLinearRing(final String version,  final List<Double> coordList, final String srsName) {
+    public static LinearRing buildLinearRing(final String version,  final List<Double> coordList, final String srsName) {
         if ("3.2.1".equals(version)) {
-    
             final org.geotoolkit.gml.xml.v321.DirectPositionListType dpList = new org.geotoolkit.gml.xml.v321.DirectPositionListType(coordList);
             return new org.geotoolkit.gml.xml.v321.LinearRingType(srsName, dpList);
         } else if ("3.1.1".equals(version)) {
@@ -113,7 +125,7 @@ public class GMLXmlFactory {
         }
     }
     
-    public Polygon buildPolygon(final String version, final AbstractRing gmlExterior, final List<AbstractRing> gmlInterior, final String srsName) {
+    public static Polygon buildPolygon(final String version, final AbstractRing gmlExterior, final List<AbstractRing> gmlInterior, final String srsName) {
         if ("3.2.1".equals(version)) {
             final List<org.geotoolkit.gml.xml.v321.AbstractRingType> interiors = new ArrayList<org.geotoolkit.gml.xml.v321.AbstractRingType>();
             if (gmlInterior != null) {
@@ -143,5 +155,139 @@ public class GMLXmlFactory {
         }
     }
     
-
+    public static Envelope buildEnvelope(final String version, final double minx, final double miny, final double maxx, final double maxy, final String srs) {
+        if ("3.2.1".equals(version)) {
+            final org.geotoolkit.gml.xml.v321.DirectPositionType lowerCorner = new org.geotoolkit.gml.xml.v321.DirectPositionType(minx, miny);
+            final org.geotoolkit.gml.xml.v321.DirectPositionType upperCorner = new org.geotoolkit.gml.xml.v321.DirectPositionType(maxx, maxy);
+            return new org.geotoolkit.gml.xml.v321.EnvelopeType(lowerCorner, upperCorner, srs);
+        } else if ("3.1.1".equals(version)) {
+            final org.geotoolkit.gml.xml.v311.DirectPositionType lowerCorner = new org.geotoolkit.gml.xml.v311.DirectPositionType(minx, miny);
+            final org.geotoolkit.gml.xml.v311.DirectPositionType upperCorner = new org.geotoolkit.gml.xml.v311.DirectPositionType(maxx, maxy);
+            return new org.geotoolkit.gml.xml.v311.EnvelopeType(null, lowerCorner, upperCorner, srs);
+        } else {
+            throw new IllegalArgumentException("unexpected gml version number:" + version);
+        }
+    }
+    
+    public static Period createTimePeriod(final String version, final String dateBegin, final String dateEnd) {
+        if ("3.2.1".equals(version)) {
+            if (dateEnd == null) {
+                return new org.geotoolkit.gml.xml.v321.TimePeriodType(dateBegin);
+            } else {
+                return new org.geotoolkit.gml.xml.v321.TimePeriodType(dateBegin, dateEnd);
+            }
+        } else if ("3.1.1".equals(version)) {
+            if (dateEnd == null) {
+                return new org.geotoolkit.gml.xml.v311.TimePeriodType(dateBegin);
+            } else {
+                return new org.geotoolkit.gml.xml.v311.TimePeriodType(dateBegin, dateEnd);
+            }
+        } else {
+            throw new IllegalArgumentException("unexpected gml version number:" + version);
+        }
+    }
+    
+    public static Period createTimePeriod(final String version, final Position dateBegin, final Position dateEnd) {
+        if ("3.2.1".equals(version)) {
+            if (dateEnd != null && !(dateEnd instanceof org.geotoolkit.gml.xml.v321.TimePositionType)) {
+                throw new IllegalArgumentException("unexpected gml version for date end.");
+            }
+            if (dateBegin != null && !(dateBegin instanceof org.geotoolkit.gml.xml.v321.TimePositionType)) {
+                throw new IllegalArgumentException("unexpected gml version for date begin.");
+            }
+            if (dateEnd == null) {
+                return new org.geotoolkit.gml.xml.v321.TimePeriodType((org.geotoolkit.gml.xml.v321.TimePositionType)dateBegin);
+            } else {
+                return new org.geotoolkit.gml.xml.v321.TimePeriodType((org.geotoolkit.gml.xml.v321.TimePositionType)dateBegin, 
+                                                                      (org.geotoolkit.gml.xml.v321.TimePositionType)dateEnd);
+            }
+        } else if ("3.1.1".equals(version)) {
+            if (dateEnd != null && !(dateEnd instanceof org.geotoolkit.gml.xml.v311.TimePositionType)) {
+                throw new IllegalArgumentException("unexpected gml version for date end.");
+            }
+            if (dateBegin != null && !(dateBegin instanceof org.geotoolkit.gml.xml.v311.TimePositionType)) {
+                throw new IllegalArgumentException("unexpected gml version for date begin.");
+            }
+            if (dateEnd == null) {
+                return new org.geotoolkit.gml.xml.v311.TimePeriodType((org.geotoolkit.gml.xml.v311.TimePositionType)dateBegin);
+            } else {
+                return new org.geotoolkit.gml.xml.v311.TimePeriodType((org.geotoolkit.gml.xml.v311.TimePositionType)dateBegin, 
+                                                                      (org.geotoolkit.gml.xml.v311.TimePositionType)dateEnd);
+            }
+        } else {
+            throw new IllegalArgumentException("unexpected gml version number:" + version);
+        }
+    }
+    
+    public static Instant createTimeInstant(final String version, final Position date) {
+        if ("3.2.1".equals(version)) {
+            if (date != null && !(date instanceof org.geotoolkit.gml.xml.v321.TimePositionType)) {
+                throw new IllegalArgumentException("unexpected gml version for date position.");
+            }
+            return new org.geotoolkit.gml.xml.v321.TimeInstantType((org.geotoolkit.gml.xml.v321.TimePositionType)date);
+            
+        } else if ("3.1.1".equals(version)) {
+            if (date != null && !(date instanceof org.geotoolkit.gml.xml.v311.TimePositionType)) {
+                throw new IllegalArgumentException("unexpected gml version for date end.");
+            }
+            return new org.geotoolkit.gml.xml.v311.TimeInstantType((org.geotoolkit.gml.xml.v311.TimePositionType)date);
+        } else {
+            throw new IllegalArgumentException("unexpected gml version number:" + version);
+        }
+    }
+    
+    public static Instant createTimeInstant(final String version, final String date) {
+        if ("3.2.1".equals(version)) {
+            return new org.geotoolkit.gml.xml.v321.TimeInstantType(date);
+            
+        } else if ("3.1.1".equals(version)) {
+            return new org.geotoolkit.gml.xml.v311.TimeInstantType(date);
+        } else {
+            throw new IllegalArgumentException("unexpected gml version number:" + version);
+        }
+    }
+    
+    public static Period createTimePeriod(final String version, final TimeIndeterminateValueType dateBegin, final Position dateEnd) {
+        if ("3.2.1".equals(version)) {
+            if (dateEnd != null && !(dateEnd instanceof org.geotoolkit.gml.xml.v321.TimePositionType)) {
+                    throw new IllegalArgumentException("unexpected gml version for date end.");
+            }
+            return new org.geotoolkit.gml.xml.v321.TimePeriodType(dateBegin, (org.geotoolkit.gml.xml.v321.TimePositionType)dateEnd);
+            
+        } else if ("3.1.1".equals(version)) {
+            if (dateEnd != null && !(dateEnd instanceof org.geotoolkit.gml.xml.v311.TimePositionType)) {
+                    throw new IllegalArgumentException("unexpected gml version for date end.");
+            }
+            return new org.geotoolkit.gml.xml.v311.TimePeriodType(dateBegin, (org.geotoolkit.gml.xml.v311.TimePositionType)dateEnd);
+        } else {
+            throw new IllegalArgumentException("unexpected gml version number:" + version);
+        }
+    }
+    
+    public static FeatureCollection createFeatureCollection(final String version, final String id, final String name, final String description, 
+            final List<FeatureProperty> features) {
+        if ("3.2.1".equals(version)) {
+            final List<org.geotoolkit.gml.xml.v321.FeaturePropertyType> features321 = new ArrayList<org.geotoolkit.gml.xml.v321.FeaturePropertyType>();
+            for (FeatureProperty fp : features) {
+                if (fp != null && !(fp instanceof org.geotoolkit.gml.xml.v321.FeaturePropertyType)) {
+                    throw new IllegalArgumentException("unexpected gml version for feature property.");
+                } else if (fp != null) {
+                    features321.add((org.geotoolkit.gml.xml.v321.FeaturePropertyType)fp);
+                }
+            }
+            return new org.geotoolkit.gml.xml.v321.FeatureCollectionType(id, name, description, features321);
+        } else if ("3.1.1".equals(version)) {
+            final List<org.geotoolkit.gml.xml.v311.FeaturePropertyType> features311 = new ArrayList<org.geotoolkit.gml.xml.v311.FeaturePropertyType>();
+            for (FeatureProperty fp : features) {
+                if (fp != null && !(fp instanceof org.geotoolkit.gml.xml.v311.FeaturePropertyType)) {
+                    throw new IllegalArgumentException("unexpected gml version for feature property.");
+                } else if (fp != null) {
+                    features311.add((org.geotoolkit.gml.xml.v311.FeaturePropertyType)fp);
+                }
+            }
+            return new org.geotoolkit.gml.xml.v311.FeatureCollectionType(id, name, description, features311);
+        } else {
+            throw new IllegalArgumentException("unexpected gml version number:" + version);
+        }
+    }
 }

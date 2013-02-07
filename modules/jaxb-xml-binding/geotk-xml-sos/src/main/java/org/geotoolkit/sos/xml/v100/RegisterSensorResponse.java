@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.sos.xml.SOSResponse;
+import org.geotoolkit.swes.xml.InsertSensorResponse;
 
 
 /**
@@ -51,7 +51,7 @@ import org.geotoolkit.sos.xml.SOSResponse;
     "assignedSensorId"
 })
 @XmlRootElement(name = "RegisterSensorResponse")
-public class RegisterSensorResponse implements SOSResponse {
+public class RegisterSensorResponse implements InsertSensorResponse {
 
     @XmlElement(name = "AssignedSensorId", required = true)
     @XmlSchemaType(name = "anyURI")
@@ -65,17 +65,24 @@ public class RegisterSensorResponse implements SOSResponse {
     /**
      * Build a new response with the specified sensor ID.
      *
-     * @param assignedSensorId The id of the sensor whitch have been inserted previously. 
+     * @param assignedSensorId The id of the sensor whitch have been inserted
+     * previously.
      */
-     public RegisterSensorResponse (final String assignedSensorId) {
-         this.assignedSensorId = assignedSensorId;
-     }
+    public RegisterSensorResponse(final String assignedSensorId) {
+        this.assignedSensorId = assignedSensorId;
+    }
      
     /**
      * Gets the value of the assignedSensorId property.
      */
-    public String getAssignedSensorId() {
+    @Override
+    public String getAssignedProcedure() {
         return assignedSensorId;
+    }
+    
+    @Override
+    public String getAssignedOffering() {
+        return null; // no assigned offering in SOS 1.0.0
     }
 
     /**

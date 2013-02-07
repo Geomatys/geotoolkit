@@ -18,6 +18,8 @@
 
 package org.geotoolkit.gml.xml.v321;
 
+import java.util.ArrayList;
+import java.util.List;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -25,6 +27,9 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.gml.xml.AbstractFeature;
+import org.geotoolkit.util.ComparisonMode;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -64,14 +69,57 @@ import javax.xml.bind.annotation.XmlType;
     DynamicFeatureType.class,
     BoundedFeatureType.class
 })
-public abstract class AbstractFeatureType
-    extends AbstractGMLType
-{
+public abstract class AbstractFeatureType extends AbstractGMLType implements AbstractFeature {
 
     @XmlElement(nillable = true)
     private BoundingShapeType boundedBy;
     @XmlElementRef(name = "location", namespace = "http://www.opengis.net/gml/3.2", type = JAXBElement.class)
     private JAXBElement<? extends LocationPropertyType> location;
+
+    /**
+     *  Empty constructor used by JAXB.
+     */
+    public AbstractFeatureType() {}
+
+    public AbstractFeatureType(final AbstractFeature af) {
+        super(af);
+        if (af != null) {
+            if (af.getBoundedBy() != null) {
+                this.boundedBy = new BoundingShapeType(af.getBoundedBy());
+            }
+            if (af.getLocation() != null) {
+                final ObjectFactory factory = new ObjectFactory();
+                if (af.getLocation() instanceof LocationPropertyType) {
+                    this.location  = factory.createLocation((LocationPropertyType)af.getLocation());
+                } else if (af.getLocation() instanceof PriorityLocationPropertyType) {
+                    this.location  = factory.createPriorityLocation((PriorityLocationPropertyType)af.getLocation());
+                } else  {
+                    throw new IllegalArgumentException("LocationProperty clone not implemented yet");
+                }
+            }
+        }
+    }
+
+    /**
+     * Build a new light "Feature"
+     */
+    public AbstractFeatureType(final String id, final String name, final String description) {
+        super(id, name, description, null);
+        //this.boundedBy = new BoundingShapeType("not_bounded"); not mandatory
+    }
+
+    /**
+     * Build a new "Feature"
+     */
+    public AbstractFeatureType(final String id, final String name, final String description, final ReferenceType descriptionReference,
+            final BoundingShapeType boundedBy) {
+        super(id, name, description, descriptionReference);
+        if (boundedBy == null) {
+            this.boundedBy = new BoundingShapeType("not_bounded");
+        } else {
+            this.boundedBy = boundedBy;
+        }
+    }
 
     /**
      * Gets the value of the boundedBy property.
@@ -81,6 +129,7 @@ public abstract class AbstractFeatureType
      *     {@link BoundingShapeType }
      *     
      */
+    @Override
     public BoundingShapeType getBoundedBy() {
         return boundedBy;
     }
@@ -106,10 +155,19 @@ public abstract class AbstractFeatureType
      *     {@link JAXBElement }{@code <}{@link PriorityLocationPropertyType }{@code >}
      *     
      */
-    public JAXBElement<? extends LocationPropertyType> getLocation() {
+    public JAXBElement<? extends LocationPropertyType> getjbLocation() {
         return location;
     }
 
+    @Override
+    public LocationPropertyType getLocation() {
+        if (location != null) {
+            return location.getValue();
+        }
+        return null;
+    }
+
+    
     /**
      * Sets the value of the location property.
      * 
@@ -123,4 +181,53 @@ public abstract class AbstractFeatureType
         this.location = ((JAXBElement<? extends LocationPropertyType> ) value);
     }
 
+    @Override
+    public List<String> getSrsName(){
+        return new ArrayList<String>();
+    }
+    
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder(super.toString()).append("\n");
+        if (location != null) {
+            sb.append("location:\n").append(location.getValue()).append('\n');
+        }
+        if (boundedBy != null) {
+            sb.append("boundedBy: ").append(boundedBy).append('\n');
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Verify if this entry is identical to specified object.
+     */
+    @Override
+    public boolean equals(final Object object, final ComparisonMode mode) {
+        if (object == this) {
+            return true;
+        }
+
+        if (object instanceof AbstractFeatureType && super.equals(object, mode)) {
+            final AbstractFeatureType that = (AbstractFeatureType) object;
+
+            boolean loc = false;
+            if (this.location != null && that.location != null) {
+                loc = Utilities.equals(this.location.getValue(), that.location.getValue());
+            } else if (this.location == null && that.location == null) {
+                loc = true;
+            }
+            return Utilities.equals(this.boundedBy,    that.boundedBy)    &&
+                   loc;
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 83 * hash + super.hashCode();
+        hash = 83 * hash + (this.boundedBy != null ? this.boundedBy.hashCode() : 0);
+        hash = 83 * hash + (this.location != null ? this.location.hashCode() : 0);
+        return hash;
+    }
 }

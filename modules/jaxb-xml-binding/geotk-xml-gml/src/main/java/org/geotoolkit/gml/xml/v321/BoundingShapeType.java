@@ -28,6 +28,10 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlList;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.gml.xml.BoundingShape;
+import org.geotoolkit.gml.xml.Envelope;
+import org.geotoolkit.gml.xml.EnvelopeWithTimePeriod;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -58,7 +62,7 @@ import javax.xml.bind.annotation.XmlType;
     "envelope",
     "_null"
 })
-public class BoundingShapeType {
+public class BoundingShapeType implements BoundingShape {
 
     @XmlElementRef(name = "Envelope", namespace = "http://www.opengis.net/gml/3.2", type = JAXBElement.class)
     private JAXBElement<? extends EnvelopeType> envelope;
@@ -68,6 +72,55 @@ public class BoundingShapeType {
     @XmlAttribute
     private List<String> nilReason;
 
+    public BoundingShapeType() {
+    }
+    
+    public BoundingShapeType(final String nul) {
+        this._null = new ArrayList<String>();
+        this._null.add(nul);
+    }
+    
+    public BoundingShapeType(final BoundingShape that) {
+        if (that != null) {
+            if (that.getEnvelope() != null) {
+                final ObjectFactory factory = new ObjectFactory();
+                if (that.getEnvelope() instanceof EnvelopeWithTimePeriod) {
+                    this.envelope = factory.createEnvelopeWithTimePeriod(new EnvelopeWithTimePeriodType((EnvelopeWithTimePeriod)that.getEnvelope()));
+                } else if (that.getEnvelope() instanceof Envelope) {
+                    this.envelope = factory.createEnvelope(new EnvelopeType(that.getEnvelope()));
+                }
+            }
+           if (that.getNull() != null) {
+               this._null = new ArrayList<String>(that.getNull());
+           }
+           if (that.getNilReason() != null) {
+               this.nilReason = new ArrayList<String>(that.getNilReason());
+           }
+        }
+    }
+    
+    public BoundingShapeType(final EnvelopeType envelope) {
+        final ObjectFactory factory = new ObjectFactory();
+        if (envelope instanceof EnvelopeWithTimePeriodType) {
+            this.envelope = factory.createEnvelopeWithTimePeriod((EnvelopeWithTimePeriodType)envelope);
+        } else if (envelope instanceof EnvelopeType) {
+            this.envelope = factory.createEnvelope(envelope);
+        }
+        if (envelope == null) {
+            this._null = new ArrayList<String>();
+            this._null.add("not_bounded");
+        }
+
+    }
+    
+    @Override
+    public EnvelopeType getEnvelope() {
+        if (envelope != null) {
+            return envelope.getValue();
+        }
+        return null;
+    }
+    
     /**
      * Gets the value of the envelope property.
      * 
@@ -77,7 +130,7 @@ public class BoundingShapeType {
      *     {@link JAXBElement }{@code <}{@link EnvelopeType }{@code >}
      *     
      */
-    public JAXBElement<? extends EnvelopeType> getEnvelope() {
+    public JAXBElement<? extends EnvelopeType> getjbEnvelope() {
         return envelope;
     }
 
@@ -97,25 +150,12 @@ public class BoundingShapeType {
     /**
      * Gets the value of the null property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the null property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getNull().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link String }
      * 
      * 
      */
+    @Override
     public List<String> getNull() {
         if (_null == null) {
             _null = new ArrayList<String>();
@@ -126,30 +166,66 @@ public class BoundingShapeType {
     /**
      * Gets the value of the nilReason property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the nilReason property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getNilReason().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link String }
      * 
      * 
      */
+    @Override
     public List<String> getNilReason() {
         if (nilReason == null) {
             nilReason = new ArrayList<String>();
         }
         return this.nilReason;
+    }
+
+    /**
+     * Verify if this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof BoundingShapeType) {
+            
+            final BoundingShapeType that = (BoundingShapeType) object;
+
+            return Utilities.equals(this.getNull(),              that.getNull())              &&
+                   Utilities.equals(this.getEnvelope(),          that.getEnvelope())          &&
+                   Utilities.equals(this.getNilReason(),         that.getNilReason());
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 47 * hash + (this.envelope != null ? this.envelope.hashCode() : 0);
+        hash = 47 * hash + (this._null != null ? this._null.hashCode() : 0);
+        hash = 47 * hash + (this.nilReason != null ? this.nilReason.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder s = new StringBuilder("[BoundingshapeEntry]").append('\n');
+        if (envelope != null) {
+            s.append("envelope:").append(envelope.getValue());
+        }
+        if (_null != null) {
+            s.append("_null: ");
+            for (String ss: _null) {
+                s.append("       ").append(ss).append('\n');
+            }
+        }
+        if (nilReason != null) {
+            s.append("nilReason:").append('\n');
+            for (String ss: nilReason) {
+                s.append(ss).append('\n');
+            }
+        }
+        return s.toString();
     }
 
 }

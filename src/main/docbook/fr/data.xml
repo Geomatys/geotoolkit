@@ -6,7 +6,8 @@
 ]>
 <chapter xmlns="http://docbook.org/ns/docbook" version="5.0"
          xmlns:xi    = "http://www.w3.org/2001/XInclude"
-         xmlns:xlink = "http://www.w3.org/1999/xlink">
+         xmlns:xlink = "http://www.w3.org/1999/xlink"
+        lang="fr">
           
     <title>
         Données
@@ -16,7 +17,7 @@
         GeotoolKit implémente 
         <link xlink:href="http://www.opengeospatial.org/standards/geoapi">
             <acronym>la norme OGC </acronym>
-        </link> 
+        </link> et 
         <link xlink:href="http://www.geoapi.org/">
             <acronym>GeoAPI 3</acronym>
         </link>. 
@@ -43,21 +44,15 @@
         <itemizedlist>
             <listitem>
                 Coverage : 
-                <ulink
-                    url="data/coverage.xml">coverage
-                </ulink>
+                <xref linkend="coverage"/>
             </listitem>
             <listitem>
-                Feature et Datastore : 
-                <ulink
-                    url="data/vectoriel.xml">vectoriel
-                </ulink>
+                Feature et Datastore :
+                <xref linkend="vectoriel"/>
             </listitem>
             <listitem>
-                Client distant : 
-                <ulink
-                    url="data/client.xml">client
-                </ulink>
+                Client distant :
+                <xref linkend="client"/>
             </listitem>
         </itemizedlist>
     </para>
@@ -396,13 +391,12 @@
                 </tbody>
             </tgroup>
         </table>
-    </section>
-     
+    </section>     
      
     <xi:include href="data/vectoriel.xml"/>
   
     <xi:include href="data/coverage.xml"/>
   
     <xi:include href="data/client.xml"/>
-    
+        
 </chapter>

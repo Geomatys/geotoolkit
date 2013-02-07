@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
+import org.geotoolkit.ows.xml.Value;
 
 
 /**
@@ -46,7 +47,7 @@ import javax.xml.bind.annotation.XmlValue;
 @XmlType(name = "ValueType", propOrder = {
     "value"
 })
-public class ValueType {
+public class ValueType implements Value {
 
     @XmlValue
     private String value;
@@ -57,9 +58,9 @@ public class ValueType {
     ValueType(){
     }
     
-    public ValueType(final ValueType that){
+    public ValueType(final Value that){
         if (that != null) {
-            this.value = that.value;
+            this.value = that.getValue();
         }
     }
     
@@ -73,6 +74,7 @@ public class ValueType {
     /**
      * Gets the value of the value property.
      */
+    @Override
     public String getValue() {
         return value;
     }

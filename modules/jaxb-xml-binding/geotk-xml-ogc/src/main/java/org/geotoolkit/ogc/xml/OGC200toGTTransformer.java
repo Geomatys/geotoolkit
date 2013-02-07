@@ -330,7 +330,7 @@ public class OGC200toGTTransformer {
 
             final Expression lower = visitExpression( property.getLowerBoundary().getExpression() );
             final Expression upper = visitExpression( property.getUpperBoundary().getExpression() );
-            final Expression expr  = visitExpression( property.getExpression() );
+            final Expression expr  = visitExpression( property.getExpressionType() );
 
             if (OGCJAXBStatics.FILTER_COMPARISON_ISBETWEEN.equalsIgnoreCase(OpName)) {
                 return filterFactory.between(expr, lower, upper);

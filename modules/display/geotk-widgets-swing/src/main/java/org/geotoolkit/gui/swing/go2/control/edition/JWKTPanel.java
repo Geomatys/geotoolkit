@@ -19,6 +19,8 @@ package org.geotoolkit.gui.swing.go2.control.edition;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.io.WKTReader;
 import com.vividsolutions.jts.io.WKTWriter;
+import java.awt.BorderLayout;
+import org.geotoolkit.cql.JCQLTextPane;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 
 /**
@@ -32,18 +34,24 @@ public class JWKTPanel extends javax.swing.JPanel {
     
     private final WKTReader reader = new WKTReader();
     private final WKTWriter writer = new WKTWriter();
+    private final JCQLTextPane guiText = new JCQLTextPane();
     
     private Geometry original = null;
     private Geometry current = null;
     
     public JWKTPanel() {
         initComponents();
+        guiPane.add(BorderLayout.CENTER,guiText);
     }
     
     public void setGeometry(Geometry geom){
         this.original = geom;
         if(original != null){
-            guiText.setText(writer.write(original));
+            String str = writer.write(original);
+            str = str.replaceAll("\\(", "\\(\n");
+            str = str.replaceAll(",", ",\n");
+            str = str.replaceAll("\\)", "\n\\)");
+            guiText.setText(str);
         }else{
             guiText.setText("");
         }
@@ -83,14 +91,10 @@ public class JWKTPanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jScrollPane1 = new javax.swing.JScrollPane();
-        guiText = new javax.swing.JTextArea();
         guiRollback = new javax.swing.JButton();
         guiApply = new javax.swing.JButton();
         guiError = new javax.swing.JLabel();
-
-        guiText.setColumns(20);
-        jScrollPane1.setViewportView(guiText);
+        guiPane = new javax.swing.JPanel();
 
         guiRollback.setText(MessageBundle.getString("cancel")); // NOI18N
         guiRollback.addActionListener(new java.awt.event.ActionListener() {
@@ -109,19 +113,19 @@ public class JWKTPanel extends javax.swing.JPanel {
         guiError.setForeground(new java.awt.Color(255, 0, 0));
         guiError.setText(" ");
 
+        guiPane.setLayout(new java.awt.BorderLayout());
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 224, Short.MAX_VALUE)
+                .addComponent(guiPane, javax.swing.GroupLayout.DEFAULT_SIZE, 305, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(guiApply, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(guiRollback, javax.swing.GroupLayout.Alignment.TRAILING)))
-            .addGroup(layout.createSequentialGroup()
-                .addGap(12, 12, 12)
-                .addComponent(guiError, javax.swing.GroupLayout.DEFAULT_SIZE, 272, Short.MAX_VALUE))
+            .addComponent(guiError, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {guiApply, guiRollback});
@@ -133,8 +137,9 @@ public class JWKTPanel extends javax.swing.JPanel {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(guiApply)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(guiRollback, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 62, Short.MAX_VALUE))
+                        .addComponent(guiRollback, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 19, Short.MAX_VALUE))
+                    .addComponent(guiPane, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(guiError))
         );
@@ -149,7 +154,11 @@ public class JWKTPanel extends javax.swing.JPanel {
 
     private void guiRollbackActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guiRollbackActionPerformed
         if(original != null){
-            guiText.setText(writer.write(original));
+            String str = writer.write(original);
+            str = str.replaceAll("\\(", "\\(\n");
+            str = str.replaceAll(",", ",\n");
+            str = str.replaceAll("\\)", "\n\\)");
+            guiText.setText(str);
             guiError.setText("");
         }
         final Geometry old = getGeometry();
@@ -160,8 +169,7 @@ public class JWKTPanel extends javax.swing.JPanel {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton guiApply;
     private javax.swing.JLabel guiError;
+    private javax.swing.JPanel guiPane;
     private javax.swing.JButton guiRollback;
-    private javax.swing.JTextArea guiText;
-    private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables
 }

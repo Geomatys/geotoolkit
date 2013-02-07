@@ -121,6 +121,7 @@ public class ReferenceType implements Reference, Entry {
         return id;
     }
 
+    @Override
     public String getIdentifier() {
         return id;
     }

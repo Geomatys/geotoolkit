@@ -28,5 +28,17 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Contains")
 public class ContainsType extends BinarySpatialOpType {
+
+    public ContainsType() {
+        
+    }
     
+    public ContainsType(final ContainsType that) {
+        super(that);
+    }
+    
+    @Override
+    public SpatialOpsType getClone() {
+        return new ContainsType(this);
+    }
 }

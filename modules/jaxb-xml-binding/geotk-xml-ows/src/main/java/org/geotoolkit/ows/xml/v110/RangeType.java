@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.ows.xml.Range;
 
 
 /**
@@ -58,7 +59,7 @@ import javax.xml.bind.annotation.XmlType;
     "maximumValue",
     "spacing"
 })
-public class RangeType {
+public class RangeType implements Range {
 
     @XmlElement(name = "MinimumValue")
     private ValueType minimumValue;
@@ -75,19 +76,19 @@ public class RangeType {
     RangeType(){
     }
     
-    public RangeType(final RangeType that){
+    public RangeType(final Range that){
         if (that != null)  {
-            if (that.maximumValue != null) {
-                this.maximumValue = new ValueType(that.maximumValue);
+            if (that.getMaximumValue() != null) {
+                this.maximumValue = new ValueType(that.getMaximumValue());
             }
-            if (that.minimumValue != null) {
-                this.minimumValue = new ValueType(that.minimumValue);
+            if (that.getMinimumValue() != null) {
+                this.minimumValue = new ValueType(that.getMinimumValue());
             }
-            if (that.rangeClosure != null) {
-                this.rangeClosure = new ArrayList<String>(that.rangeClosure);
+            if (that.getRangeClosure() != null) {
+                this.rangeClosure = new ArrayList<String>(that.getRangeClosure());
             }
-            if (that.spacing != null) {
-                this.spacing      = new ValueType(that.spacing);
+            if (that.getSpacing() != null) {
+                this.spacing      = new ValueType(that.getSpacing());
             }
         }
     }
@@ -114,6 +115,7 @@ public class RangeType {
     /**
      * Gets the value of the minimumValue property.
      */
+    @Override
     public ValueType getMinimumValue() {
         return minimumValue;
     }
@@ -122,6 +124,7 @@ public class RangeType {
      * Gets the value of the maximumValue property.
      * 
      */
+    @Override
     public ValueType getMaximumValue() {
         return maximumValue;
     }
@@ -131,6 +134,7 @@ public class RangeType {
      * Shall not be included when the allowed values are continuous in this range. 
      * 
      */
+    @Override
     public ValueType getSpacing() {
         return spacing;
     }
@@ -140,8 +144,12 @@ public class RangeType {
      * Gets the value of the rangeClosure property.
      * 
      */
+    @Override
     public List<String> getRangeClosure() {
-        return Collections.unmodifiableList(rangeClosure);
+        if (rangeClosure != null) {
+            return Collections.unmodifiableList(rangeClosure);
+        }
+        return new ArrayList<String>();
     }
     
     /**

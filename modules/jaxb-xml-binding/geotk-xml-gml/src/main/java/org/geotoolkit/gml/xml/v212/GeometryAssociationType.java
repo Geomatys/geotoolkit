@@ -98,6 +98,28 @@ public class GeometryAssociationType {
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     private String actuate;
 
+    public GeometryAssociationType() {
+        
+    }
+    
+    public GeometryAssociationType(final GeometryAssociationType that) {
+        if (that != null) {
+            this.actuate      = that.actuate;
+            this.arcrole      = that.arcrole;
+            this.href         = that.href;
+            this.remoteSchema = that.remoteSchema;
+            this.role         = that.role;
+            this.show         = that.show;
+            this.title        = that.title;
+            this.type         = that.type;
+            
+            if (that.abstractGeometry != null) {
+                AbstractGeometryType geom = that.abstractGeometry.getValue().getClone();
+                this.abstractGeometry = geom.getXmlElement();
+            }
+        }
+    } 
+    
     /**
      * Gets the value of the abstractGeometry property.
      * 
@@ -336,4 +358,34 @@ public class GeometryAssociationType {
         this.actuate = value;
     }
 
+    public GeometryAssociationType getClone() {
+        throw new UnsupportedOperationException("Must be overriden by sub-class");
+    }
+    
+    public JAXBElement<? extends GeometryAssociationType> getXmlElement() {
+        final ObjectFactory factory = new ObjectFactory();
+        if (this instanceof PointPropertyType) {
+            return  factory.createPointProperty((PointPropertyType) this);
+        } else if (this instanceof MultiPolygonPropertyType) {
+            return  factory.createMultiPolygonProperty((MultiPolygonPropertyType) this);
+        } else if (this instanceof LineStringPropertyType) {
+            return  factory.createLineStringProperty((LineStringPropertyType) this);
+        } else if (this instanceof MultiPointPropertyType) {
+            return  factory.createMultiPointProperty((MultiPointPropertyType) this);
+        } else if (this instanceof LineStringMemberType) {
+            return  factory.createLineStringMember((LineStringMemberType) this);
+        } else if (this instanceof PointMemberType) {
+            return  factory.createPointMember((PointMemberType) this);
+        } else if (this instanceof PolygonPropertyType) {
+            return  factory.createPolygonProperty((PolygonPropertyType) this);
+        } else if (this instanceof MultiLineStringPropertyType) {
+            return  factory.createMultiLineStringProperty((MultiLineStringPropertyType) this);
+        } else if (this instanceof PolygonMemberType) {
+            return  factory.createPolygonMember((PolygonMemberType) this);
+         } else if (this instanceof MultiGeometryPropertyType) {
+            return  factory.createMultiGeometryProperty((MultiGeometryPropertyType) this);
+        } else {
+            throw new IllegalArgumentException("unexpected geometry type:" + this);
+        }
+    }
 }

@@ -48,4 +48,16 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "PolygonMemberType")
 public class PolygonMemberType extends GeometryAssociationType {
 
+    public PolygonMemberType() {
+        
+    }
+    
+    public PolygonMemberType(PolygonMemberType that) {
+        super(that);
+    }
+    
+    @Override
+    public GeometryAssociationType getClone() {
+        return new PolygonMemberType(this);
+    }
 }

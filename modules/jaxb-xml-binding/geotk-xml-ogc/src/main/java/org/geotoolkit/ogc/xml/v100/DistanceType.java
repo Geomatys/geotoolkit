@@ -52,6 +52,15 @@ public class DistanceType {
     @XmlAttribute(required = true)
     private String units;
 
+    public DistanceType() {
+        
+    }
+    
+    public DistanceType(final String content, final String units) {
+        this.content = content;
+        this.units   = units;
+    }
+    
     /**
      * Gets the value of the content property.
      * 

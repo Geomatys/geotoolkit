@@ -59,7 +59,7 @@ import org.geotoolkit.ogc.xml.v110.TemporalCapabilitiesType;
     "idCapabilities"
 })
 @XmlRootElement(name = "Filter_Capabilities")
-public class FilterCapabilities {
+public class FilterCapabilities implements org.geotoolkit.sos.xml.FilterCapabilities {
 
     @XmlElement(name = "Spatial_Capabilities", namespace = "http://www.opengis.net/ogc", required = true)
     private SpatialCapabilitiesType spatialCapabilities;

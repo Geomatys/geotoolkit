@@ -20,7 +20,6 @@ package org.geotoolkit.gml.xml.v321;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -60,10 +59,23 @@ public class TimeIntervalLengthType implements Serializable{
     private String unit;
     @XmlAttribute
     @XmlSchemaType(name = "positiveInteger")
-    private BigInteger radix;
+    private Integer radix;
     @XmlAttribute
-    private BigInteger factor;
+    private Integer factor;
 
+    public TimeIntervalLengthType() {
+        
+    }
+    
+    public TimeIntervalLengthType(final TimeIntervalLengthType that) {
+        if (that != null) {
+            this.factor = that.factor;
+            this.radix  = that.radix;
+            this.unit   = that.unit;
+            this.value  = that.value;
+        }
+    }
+    
     /**
      * Gets the value of the value property.
      * 
@@ -117,10 +129,10 @@ public class TimeIntervalLengthType implements Serializable{
      * 
      * @return
      *     possible object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public BigInteger getRadix() {
+    public Integer getRadix() {
         return radix;
     }
 
@@ -129,10 +141,10 @@ public class TimeIntervalLengthType implements Serializable{
      * 
      * @param value
      *     allowed object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public void setRadix(BigInteger value) {
+    public void setRadix(Integer value) {
         this.radix = value;
     }
 
@@ -141,10 +153,10 @@ public class TimeIntervalLengthType implements Serializable{
      * 
      * @return
      *     possible object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public BigInteger getFactor() {
+    public Integer getFactor() {
         return factor;
     }
 
@@ -153,10 +165,10 @@ public class TimeIntervalLengthType implements Serializable{
      * 
      * @param value
      *     allowed object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public void setFactor(BigInteger value) {
+    public void setFactor(Integer value) {
         this.factor = value;
     }
 

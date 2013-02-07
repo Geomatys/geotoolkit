@@ -42,5 +42,5 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "LogicOpsType")
 public abstract class LogicOpsType {
 
-
+    public abstract LogicOpsType getClone();
 }

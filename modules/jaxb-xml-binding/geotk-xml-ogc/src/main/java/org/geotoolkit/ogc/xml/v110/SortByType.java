@@ -71,6 +71,15 @@ public class SortByType implements SortBy {
         this.sortProperty = sortProperty;
     }
     
+    public SortByType(final SortByType that) {
+        if (that != null && that.sortProperty != null) {
+            this.sortProperty = new ArrayList<SortPropertyType>();
+            for (SortPropertyType sp : that.sortProperty) {
+                this.sortProperty.add(new SortPropertyType(sp));
+            }
+        }
+    }
+    
     /**
      * Gets the value of the sortProperty property.
      * (unmodifiable)

@@ -43,6 +43,10 @@
       <artifactId>geotk-storage</artifactId>
     </dependency>
     <dependency>
+      <groupId>org.geotoolkit</groupId>
+      <artifactId>geotk-coverage</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.geotoolkit.pending</groupId>
       <artifactId>geotk-feature</artifactId>
       <version>${project.version}</version>

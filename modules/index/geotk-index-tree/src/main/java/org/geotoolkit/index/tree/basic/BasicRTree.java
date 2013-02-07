@@ -76,7 +76,7 @@ public class BasicRTree extends DefaultAbstractTree {
      */
     @Override
     public void insert(final Envelope entry) throws IllegalArgumentException {
-        ArgumentChecks.ensureNonNull("insert : entry", entry);
+        super.insert(entry);
         if(!CRS.equalsIgnoreMetadata(crs, entry.getCoordinateReferenceSystem())) throw new MismatchedReferenceSystemException();
         super.eltCompteur++;
         final Node root = getRoot();

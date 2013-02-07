@@ -48,6 +48,17 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "LinearRingMemberType")
 public class LinearRingMemberType extends GeometryAssociationType {
-
-
+    
+    public LinearRingMemberType() {
+        
+    }
+    
+    public LinearRingMemberType(final LinearRingMemberType that) {
+        super(that);
+    }
+    
+    @Override
+    public GeometryAssociationType getClone() {
+        return new LinearRingMemberType(this);
+    }
 }

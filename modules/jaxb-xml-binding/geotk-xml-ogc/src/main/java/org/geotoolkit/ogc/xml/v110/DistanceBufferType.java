@@ -97,6 +97,26 @@ public class DistanceBufferType extends SpatialOpsType {
         this.distance         = new DistanceType(distance, unit);
         this.abstractGeometry = getCorrectJaxbElement(geometry);
     }
+    
+    public DistanceBufferType(final DistanceBufferType that) {
+        if (that != null) {
+            if (that.propertyName != null) {
+                this.propertyName = new PropertyNameType(that.propertyName);
+            }
+            
+            if (that.abstractGeometry != null) {
+                try {
+                    final AbstractGeometryType geom = that.abstractGeometry.getValue().clone();
+                } catch (CloneNotSupportedException ex) {
+                    throw new IllegalArgumentException("Clone is not supported on type:" + that.abstractGeometry.getValue().getClass().getName());
+                }
+            }
+            
+            if (that.distance != null) {
+                this.distance = new DistanceType(that.distance.getValue(), that.distance.getUnits());
+            }
+        }
+    }
 
     private JAXBElement<? extends AbstractGeometryType> getCorrectJaxbElement(final Object geometry) {
         if (geometry instanceof PointType) {
@@ -172,14 +192,16 @@ public class DistanceBufferType extends SpatialOpsType {
     }
 
     public double getDistance() {
-        if (distance != null)
+        if (distance != null) {
             return distance.getValue();
+        }
         return 0.0;
     }
 
     public String getDistanceUnits() {
-        if (distance != null)
+        if (distance != null) {
             return distance.getUnits();
+        }
         return null;
     }
 
@@ -188,8 +210,9 @@ public class DistanceBufferType extends SpatialOpsType {
     }
 
     public Expression getExpression2() {
-        if (abstractGeometry != null)
+        if (abstractGeometry != null) {
             return abstractGeometry.getValue();
+        }
         return null;
     }
 
@@ -197,8 +220,9 @@ public class DistanceBufferType extends SpatialOpsType {
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder(super.toString());
-        if (propertyName != null)
+        if (propertyName != null) {
             s.append("PropertyName=").append(propertyName.getContent()).append('\n');
+        }
         if (abstractGeometry != null) {
             s.append("abstract Geometry= ").append(abstractGeometry.getValue().toString()).append('\n');
         } else {
@@ -250,5 +274,10 @@ public class DistanceBufferType extends SpatialOpsType {
         hash = 23 * hash + (this.abstractGeometry != null ? this.abstractGeometry.hashCode() : 0);
         hash = 23 * hash + (this.distance != null ? this.distance.hashCode() : 0);
         return hash;
+    }
+
+    @Override
+    public SpatialOpsType getClone() {
+        throw new UnsupportedOperationException("Must be overriden by sub-class.");
     }
 }

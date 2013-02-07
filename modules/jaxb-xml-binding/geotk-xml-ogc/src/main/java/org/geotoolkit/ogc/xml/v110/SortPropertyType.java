@@ -91,6 +91,15 @@ public class SortPropertyType implements SortBy {
         this.propertyName = new PropertyNameType(propertyName);
         this.sortOrder    = sortOrder;
     }
+    
+    public SortPropertyType(final SortPropertyType that){
+        if (that != null) {
+            if (that.propertyName != null) {
+                this.propertyName = new PropertyNameType(that.propertyName);
+            }
+            this.sortOrder = that.sortOrder;
+        }
+    }
 
     /**
      * Gets the value of the propertyName property.
@@ -105,12 +114,13 @@ public class SortPropertyType implements SortBy {
      */
     @Override
     public SortOrder getSortOrder() {
-        if (sortOrder != null && sortOrder.equals(SortOrderType.ASC))
+        if (sortOrder != null && sortOrder.equals(SortOrderType.ASC)) {
             return SortOrder.ASCENDING;
-        else if (sortOrder != null && sortOrder.equals(SortOrderType.DESC))
+        } else if (sortOrder != null && sortOrder.equals(SortOrderType.DESC)) {
             return SortOrder.DESCENDING;
-        else
+        } else {
             return SortOrder.ASCENDING;
+        }
     }
     
     /**

@@ -79,18 +79,18 @@ public class WeakListenerTest {
 
         final FeatureStore store = new MemoryFeatureStore();
 
-        StorageListener listener = new StorageListener() {
+        FeatureStoreListener listener = new FeatureStoreListener() {
             @Override
-            public void structureChanged(StorageManagementEvent event) {
+            public void structureChanged(FeatureStoreManagementEvent event) {
                 count.incrementAndGet();
             }
             @Override
-            public void contentChanged(StorageContentEvent event) {
+            public void contentChanged(FeatureStoreContentEvent event) {
                 throw new UnsupportedOperationException("Not supported yet.");
             }
         };
 
-        final StorageListener.Weak ref = new StorageListener.Weak(listener);
+        final FeatureStoreListener.Weak ref = new FeatureStoreListener.Weak(listener);
         ref.registerSource(store);
 
         store.createSchema(type1.getName(), type1);

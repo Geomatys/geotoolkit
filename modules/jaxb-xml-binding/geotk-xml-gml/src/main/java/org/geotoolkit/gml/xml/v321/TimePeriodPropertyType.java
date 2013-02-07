@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -85,6 +86,28 @@ public class TimePeriodPropertyType implements Serializable {
     @XmlAttribute
     private java.lang.Boolean owns;
 
+    public TimePeriodPropertyType() {
+        
+    }
+    
+    public TimePeriodPropertyType(final TimePeriodPropertyType that) {
+        if (that != null) {
+            this.actuate      = that.actuate;
+            this.arcrole      = that.arcrole;
+            this.href         = that.href;
+            this.nilReason    = new ArrayList<String>(that.nilReason);
+            this.owns         = that.owns;
+            this.remoteSchema = that.remoteSchema;
+            this.role         = that.role;
+            this.show         = that.show;
+            this.title        = that.title;
+            this.type         = that.type;
+            if (that.timePeriod != null) {
+                this.timePeriod = new TimePeriodType(that.timePeriod);
+            }
+        }
+    }
+    
     /**
      * Gets the value of the timePeriod property.
      * 
@@ -112,20 +135,6 @@ public class TimePeriodPropertyType implements Serializable {
     /**
      * Gets the value of the nilReason property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the nilReason property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getNilReason().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link String }
      * 
@@ -362,4 +371,39 @@ public class TimePeriodPropertyType implements Serializable {
         this.owns = value;
     }
 
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof TimePeriodPropertyType) {
+            final TimePeriodPropertyType that = (TimePeriodPropertyType) object;
+
+            return Utilities.equals(this.timePeriod,         that.timePeriod)      &&
+                   Utilities.equals(this.actuate,            that.actuate)          &&
+                   Utilities.equals(this.arcrole,            that.arcrole)          &&
+                   Utilities.equals(this.type,               that.type)             &&
+                   Utilities.equals(this.href,               that.href)             &&
+                   Utilities.equals(this.remoteSchema,       that.remoteSchema)     &&
+                   Utilities.equals(this.show,               that.show)             &&
+                   Utilities.equals(this.role,               that.role)             &&
+                   Utilities.equals(this.title,              that.title);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 47 * hash + (this.timePeriod != null ? this.timePeriod.hashCode() : 0);
+        hash = 47 * hash + (this.remoteSchema != null ? this.remoteSchema.hashCode() : 0);
+        hash = 47 * hash + (this.actuate != null ? this.actuate.hashCode() : 0);
+        hash = 47 * hash + (this.arcrole != null ? this.arcrole.hashCode() : 0);
+        hash = 47 * hash + (this.href != null ? this.href.hashCode() : 0);
+        hash = 47 * hash + (this.role != null ? this.role.hashCode() : 0);
+        hash = 47 * hash + (this.show != null ? this.show.hashCode() : 0);
+        hash = 47 * hash + (this.title != null ? this.title.hashCode() : 0);
+        hash = 47 * hash + (this.type != null ? this.type.hashCode() : 0);
+        return hash;
+    }
 }

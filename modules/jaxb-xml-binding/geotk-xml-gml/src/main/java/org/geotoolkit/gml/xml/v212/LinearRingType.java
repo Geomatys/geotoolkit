@@ -24,10 +24,8 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * 
- *         A LinearRing is defined by four or more coordinate tuples, with 
- *         linear interpolation between them; the first and last coordinates 
- *         must be coincident.
+ * A LinearRing is defined by four or more coordinate tuples,
+ * with linear interpolation between them; the first and last coordinates must be coincident.
  *       
  * 
  * <p>Java class for LinearRingType complex type.
@@ -62,26 +60,30 @@ public class LinearRingType extends AbstractGeometryType {
     private List<CoordType> coord;
     private CoordinatesType coordinates;
 
+    public LinearRingType() {
+        
+    }
+    
+    public LinearRingType(final LinearRingType that) {
+        super(that);
+        if (that != null) {
+            if (that.coordinates != null) {
+                this.coordinates = new CoordinatesType(that.coordinates);
+            }
+            if (that.coord != null) {
+                this.coord = new ArrayList<CoordType>();
+                for (CoordType co : coord) {
+                    this.coord.add(new CoordType(co));
+                }
+            }
+        }
+    }
+    
     /**
      * Gets the value of the coord property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the coord property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getCoord().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link CoordType }
-     * 
      * 
      */
     public List<CoordType> getCoord() {
@@ -115,4 +117,8 @@ public class LinearRingType extends AbstractGeometryType {
         this.coordinates = value;
     }
 
+    @Override
+    public AbstractGeometryType getClone() {
+        return new LinearRingType(this);
+    }
 }

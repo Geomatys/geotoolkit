@@ -39,4 +39,12 @@ public class DWithinType extends DistanceBufferType implements DWithin {
         super(propertyName, geometry, distance, unit);
     }
 
+    public DWithinType(final DWithinType that) {
+        super(that);
+    }
+    
+    @Override
+    public SpatialOpsType getClone() {
+        return new DWithinType(this);
+    }
 }

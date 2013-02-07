@@ -58,10 +58,14 @@ public abstract class AbstractDataRecordType extends AbstractDataComponentType i
 
     }
 
-    public AbstractDataRecordType(final URI definition) {
+    public AbstractDataRecordType(final String definition) {
         super(definition);
     }
 
+    public AbstractDataRecordType(final String id, final String definition, final boolean fixed) {
+        super(id, definition, fixed);
+    }
+    
     @Override
     public String toString() {
         return super.toString();

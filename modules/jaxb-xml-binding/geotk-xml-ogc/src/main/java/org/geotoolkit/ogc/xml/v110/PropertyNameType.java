@@ -79,6 +79,12 @@ public class PropertyNameType implements PropertyName {
         }
     }
     
+    public PropertyNameType(final PropertyNameType that) {
+        if (that != null && that.content != null) {
+            this.content = that.content;
+        }
+    }
+    
     /**
      * Gets the value of the content property.
      */
@@ -98,18 +104,22 @@ public class PropertyNameType implements PropertyName {
         return "content: " + content;
     }
 
+    @Override
     public String getPropertyName() {
         return content;
     }
 
+    @Override
     public Object evaluate(final Object object) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public <T> T evaluate(final Object object, final Class<T> context) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public Object accept(final ExpressionVisitor visitor, final Object extraData) {
         return visitor.visit(this,extraData);
     }

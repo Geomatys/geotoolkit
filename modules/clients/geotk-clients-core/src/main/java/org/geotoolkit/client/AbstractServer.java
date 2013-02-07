@@ -29,6 +29,7 @@ import java.util.Map;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.security.DefaultClientSecurity;
+import org.geotoolkit.storage.AbstractStorage;
 import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.util.logging.Logging;
 import org.opengis.parameter.ParameterDescriptorGroup;
@@ -41,7 +42,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public abstract class AbstractServer implements Server{
+public abstract class AbstractServer extends AbstractStorage implements Server{
 
     private static final Logger LOGGER = Logging.getLogger(AbstractServer.class);
 

@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -84,6 +85,21 @@ public class StringOrRefType {
        this.value = value;
     }
     
+    public StringOrRefType(final StringOrRefType that) {
+        if (that != null) {
+            this.actuate      = that.actuate;
+            this.arcrole      = that.arcrole;
+            this.href         = that.href;
+            this.nilReason    = new ArrayList<String>(that.nilReason);
+            this.value        = that.value;
+            this.remoteSchema = that.remoteSchema;
+            this.role         = that.role;
+            this.show         = that.show;
+            this.title        = that.title;
+            this.type         = that.type;
+        }
+    }
+    
     /**
      * Gets the value of the value property.
      * 
@@ -111,20 +127,6 @@ public class StringOrRefType {
     /**
      * Gets the value of the nilReason property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the nilReason property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getNilReason().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link String }
      * 
@@ -333,4 +335,75 @@ public class StringOrRefType {
         this.actuate = value;
     }
 
+    /**
+     * Verify if this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof StringOrRefType) {
+            final StringOrRefType that = (StringOrRefType) object;
+
+            return Utilities.equals(this.actuate,            that.actuate)          &&
+                   Utilities.equals(this.arcrole,            that.arcrole)          &&
+                   Utilities.equals(this.type,               that.type)             &&
+                   Utilities.equals(this.href,               that.href)             &&
+                   Utilities.equals(this.remoteSchema,       that.remoteSchema)     &&
+                   Utilities.equals(this.show,               that.show)             &&
+                   Utilities.equals(this.role,               that.role)             &&
+                   Utilities.equals(this.title,              that.title)            &&
+                   Utilities.equals(this.value,              that.value);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 47 * hash + (this.value != null ? this.value.hashCode() : 0);
+        hash = 47 * hash + (this.remoteSchema != null ? this.remoteSchema.hashCode() : 0);
+        hash = 47 * hash + (this.type != null ? this.type.hashCode() : 0);
+        hash = 47 * hash + (this.href != null ? this.href.hashCode() : 0);
+        hash = 47 * hash + (this.role != null ? this.role.hashCode() : 0);
+        hash = 47 * hash + (this.arcrole != null ? this.arcrole.hashCode() : 0);
+        hash = 47 * hash + (this.title != null ? this.title.hashCode() : 0);
+        hash = 47 * hash + (this.show != null ? this.show.hashCode() : 0);
+        hash = 47 * hash + (this.actuate != null ? this.actuate.hashCode() : 0);
+        return hash;
+    }
+
+    /**
+     * Retourne une representation de l'objet.
+     */
+    @Override
+    public String toString() {
+        StringBuilder s = new StringBuilder("[StringOrRefType]");
+        if (value != null) {
+            s.append("value").append(value).append('\n');
+        }
+        if(actuate != null) {
+            s.append("actuate=").append(actuate).append('\n');
+        }
+        if(arcrole != null) {
+            s.append("arcrole=").append(arcrole).append('\n');
+        }
+        if(href != null) {
+            s.append("href=").append(href).append('\n');
+        }
+        if(role != null) {
+            s.append("role=").append(role).append('\n');
+        }
+        if(show != null) {
+            s.append("show=").append(show).append('\n');
+        }
+        if(title != null) {
+            s.append("title=").append(title).append('\n');
+        }
+        if(title != null) {
+            s.append("title=").append(title).append('\n');
+        }
+        return s.toString();
+    }
 }

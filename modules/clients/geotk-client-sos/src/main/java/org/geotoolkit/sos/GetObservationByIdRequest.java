@@ -18,7 +18,7 @@ package org.geotoolkit.sos;
 
 import javax.xml.namespace.QName;
 import org.geotoolkit.client.Request;
-import org.geotoolkit.sos.xml.v100.ResponseModeType;
+import org.geotoolkit.sos.xml.ResponseModeType;
 
 
 /**

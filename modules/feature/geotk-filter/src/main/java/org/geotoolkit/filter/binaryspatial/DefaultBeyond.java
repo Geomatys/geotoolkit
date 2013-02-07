@@ -70,8 +70,8 @@ public class DefaultBeyond extends AbstractBinarySpatialOperator<Expression,Expr
      */
     @Override
     public boolean evaluate(final Object object) {
-        final Geometry leftGeom = left.evaluate(object, Geometry.class);
-        final Geometry rightGeom = right.evaluate(object, Geometry.class);
+        final Geometry leftGeom = toGeometry(object, left);
+        final Geometry rightGeom = toGeometry(object, right);
 
         if(leftGeom == null || rightGeom == null){
             return false;

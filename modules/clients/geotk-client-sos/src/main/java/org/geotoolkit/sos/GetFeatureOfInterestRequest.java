@@ -18,7 +18,7 @@ package org.geotoolkit.sos;
 
 import org.geotoolkit.client.Request;
 import org.geotoolkit.sos.xml.v100.EventTime;
-import org.geotoolkit.sos.xml.v100.GetFeatureOfInterest;
+import org.opengis.filter.Filter;
 
 
 /**
@@ -29,13 +29,13 @@ import org.geotoolkit.sos.xml.v100.GetFeatureOfInterest;
 public interface GetFeatureOfInterestRequest extends Request {
     EventTime getEventTime();
 
-    GetFeatureOfInterest.Location getLocation();
+    Filter getLocation();
 
     String getFeatureOfInterestId();
 
     void setEventTime(EventTime eventTime);
 
-    void setLocation(GetFeatureOfInterest.Location location);
+    void setLocation(Filter location);
 
     void setFeatureOfInterestId(String featureOfInterestId);
 

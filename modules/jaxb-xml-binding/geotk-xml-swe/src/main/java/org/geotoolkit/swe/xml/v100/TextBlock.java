@@ -68,6 +68,16 @@ public class TextBlock extends AbstractEncodingType implements org.geotoolkit.sw
             this.tokenSeparator   = tb.getTokenSeparator();
         }
     }
+    
+    /**
+     * Crée un nouveau encodage de texte.
+     */
+    public TextBlock(final String id, final String tokenSeparator, final String blockSeparator, final String decimalSeparator) {
+        super(id);
+        this.tokenSeparator   = tokenSeparator;
+        this.blockSeparator   = blockSeparator;
+        this.decimalSeparator = decimalSeparator;
+    }
 
     /**
      * Gets the value of the tokenSeparator property.
@@ -77,6 +87,7 @@ public class TextBlock extends AbstractEncodingType implements org.geotoolkit.sw
      *     {@link String }
      *     
      */
+    @Override
     public String getTokenSeparator() {
         return tokenSeparator;
     }
@@ -101,6 +112,7 @@ public class TextBlock extends AbstractEncodingType implements org.geotoolkit.sw
      *     {@link String }
      *     
      */
+    @Override
     public String getBlockSeparator() {
         return blockSeparator;
     }
@@ -125,6 +137,7 @@ public class TextBlock extends AbstractEncodingType implements org.geotoolkit.sw
      *     {@link String }
      *     
      */
+    @Override
     public String getDecimalSeparator() {
         return decimalSeparator;
     }

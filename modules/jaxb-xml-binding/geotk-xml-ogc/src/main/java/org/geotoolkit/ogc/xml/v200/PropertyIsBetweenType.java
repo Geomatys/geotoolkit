@@ -25,6 +25,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
 import org.opengis.filter.FilterVisitor;
+import org.opengis.filter.PropertyIsBetween;
+import org.opengis.filter.expression.Expression;
 
 
 /**
@@ -54,7 +56,7 @@ import org.opengis.filter.FilterVisitor;
     "lowerBoundary",
     "upperBoundary"
 })
-public class PropertyIsBetweenType extends ComparisonOpsType {
+public class PropertyIsBetweenType extends ComparisonOpsType  implements PropertyIsBetween {
 
     @XmlElementRef(name = "expression", namespace = "http://www.opengis.net/fes/2.0", type = JAXBElement.class)
     private JAXBElement<?> expression;
@@ -63,6 +65,37 @@ public class PropertyIsBetweenType extends ComparisonOpsType {
     @XmlElement(name = "UpperBoundary", required = true)
     private UpperBoundaryType upperBoundary;
 
+    public PropertyIsBetweenType() {
+        
+    }
+    
+    public PropertyIsBetweenType(final PropertyIsBetweenType that) {
+        if (that != null) {
+            if (that.expression != null) {
+                final ObjectFactory factory = new ObjectFactory();
+                final Object exp = that.expression.getValue();
+                if (exp instanceof String) {
+                    this.expression = factory.createValueReference((String)exp);
+                } else if (exp instanceof LiteralType) {
+                    final LiteralType lit = new LiteralType((LiteralType)exp);
+                    this.expression = factory.createLiteral(lit);
+                } else if (exp instanceof FunctionType) {
+                    final FunctionType func = new FunctionType((FunctionType)exp);
+                    this.expression = factory.createFunction(func);
+                } else {
+                    throw new IllegalArgumentException("Unexpected type for expression in PropertyIsBetweenType:" + expression.getClass().getName());
+                }
+            }
+            
+            if (that.lowerBoundary != null) {
+                this.lowerBoundary = new LowerBoundaryType(that.lowerBoundary);
+            }
+            if (that.upperBoundary != null) {
+                this.upperBoundary = new UpperBoundaryType(that.upperBoundary);
+            }
+        }
+    }
+    
     /**
      * Gets the value of the expression property.
      * 
@@ -74,7 +107,7 @@ public class PropertyIsBetweenType extends ComparisonOpsType {
      *     {@link JAXBElement }{@code <}{@link FunctionType }{@code >}
      *     
      */
-    public JAXBElement<?> getExpression() {
+    public JAXBElement<?> getExpressionType() {
         return expression;
     }
 
@@ -101,6 +134,7 @@ public class PropertyIsBetweenType extends ComparisonOpsType {
      *     {@link LowerBoundaryType }
      *     
      */
+    @Override
     public LowerBoundaryType getLowerBoundary() {
         return lowerBoundary;
     }
@@ -125,6 +159,7 @@ public class PropertyIsBetweenType extends ComparisonOpsType {
      *     {@link UpperBoundaryType }
      *     
      */
+    @Override
     public UpperBoundaryType getUpperBoundary() {
         return upperBoundary;
     }
@@ -141,6 +176,20 @@ public class PropertyIsBetweenType extends ComparisonOpsType {
         this.upperBoundary = value;
     }
 
+    /**
+     * Gets the value of the expression property.
+     */
+    @Override
+    public Expression getExpression() {
+        final Object value = expression.getValue();
+        if (value instanceof LiteralType) {
+            return (LiteralType)value;
+        } else if (value != null) {
+            return new LiteralType(value);
+        }
+        return null;
+    }
+    
     @Override
     public boolean evaluate(final Object object) {
         throw new UnsupportedOperationException("Not supported yet.");
@@ -149,5 +198,10 @@ public class PropertyIsBetweenType extends ComparisonOpsType {
     @Override
     public Object accept(final FilterVisitor visitor, final Object extraData) {
         throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public ComparisonOpsType getClone() {
+        return new PropertyIsBetweenType(this);
     }
 }

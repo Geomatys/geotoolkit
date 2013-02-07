@@ -49,10 +49,12 @@ import org.geotoolkit.swe.xml.v101.PhenomenonType;
 import org.geotoolkit.swe.xml.v101.PhenomenonPropertyType;
 import org.geotoolkit.swe.xml.v101.TimeGeometricPrimitivePropertyType;
 import org.geotoolkit.metadata.iso.DefaultMetadata;
+import org.geotoolkit.observation.xml.AbstractObservation;
 import org.geotoolkit.sampling.xml.v100.SamplingCurveType;
 import org.geotoolkit.sampling.xml.v100.SamplingSolidType;
 import org.geotoolkit.sampling.xml.v100.SamplingSurfaceType;
 import org.geotoolkit.util.logging.Logging;
+import org.opengis.temporal.TemporalGeometricPrimitive;
 
 
 /**
@@ -77,7 +79,7 @@ import org.geotoolkit.util.logging.Logging;
 })
 @XmlRootElement(name = "Observation")
 @XmlSeeAlso({ MeasurementType.class})
-public class ObservationType implements Observation, Entry {
+public class ObservationType implements Entry, AbstractObservation {
     /**
      * Pour compatibilités entre les enregistrements binaires de différentes versions.
      */
@@ -327,7 +329,8 @@ public class ObservationType implements Observation, Entry {
      * Construit un nouveau template temporaire d'observation a partir d'un template fournit en argument.
      * On y rajoute un samplingTime et un id temporaire. 
      */
-    public ObservationType getTemporaryTemplate(final String temporaryName, AbstractTimeGeometricPrimitiveType time) {
+    @Override
+    public ObservationType getTemporaryTemplate(final String temporaryName, TemporalGeometricPrimitive time) {
         if (time == null) { 
             TimePositionType begin = new  TimePositionType("1900-01-01T00:00:00");
             time = new TimePeriodType(begin);
@@ -349,12 +352,13 @@ public class ObservationType implements Observation, Entry {
                                     this.observedProperty,
                                     this.procedure,
                                     res,
-                                    time);
+                                    (AbstractTimeGeometricPrimitiveType)time);
         
     }
     
     /**
      */
+    @Override
     public void setName(final String name) {
         this.name  = name;
     }
@@ -364,6 +368,7 @@ public class ObservationType implements Observation, Entry {
         return this.name;
     }
 
+    @Override
     public String getIdentifier() {
         return name;
     }
@@ -373,10 +378,10 @@ public class ObservationType implements Observation, Entry {
      */
     @Override
     @Deprecated
-    public SamplingFeature getFeatureOfInterest() {
+    public SamplingFeatureType getFeatureOfInterest() {
         if (featureOfInterest != null) {
             if (featureOfInterest.getAbstractFeature() instanceof SamplingFeature) {
-                return (SamplingFeature)featureOfInterest.getAbstractFeature();
+                return (SamplingFeatureType)featureOfInterest.getAbstractFeature();
             } else {
                 LOGGER.warning("information lost getFeatureOfInterest() is deprecated use getPropertyFeatureOfInterest() instead");
             }
@@ -412,7 +417,7 @@ public class ObservationType implements Observation, Entry {
      * {@inheritDoc}
      */
     @Override
-    public Phenomenon getObservedProperty() {
+    public PhenomenonType getObservedProperty() {
         if (observedProperty != null) {
             return observedProperty.getPhenomenon();
         } else {
@@ -443,6 +448,13 @@ public class ObservationType implements Observation, Entry {
     @Override
     public Process getProcedure() {
         return procedure;
+    }
+    
+    @Override
+    public void setProcedure(final String procedureID) {
+        if (procedureID != null) {
+            this.procedure = new ProcessType(procedureID);
+        }
     }
     
     /**
@@ -509,10 +521,16 @@ public class ObservationType implements Observation, Entry {
      */
     @Override
     public AbstractTimeGeometricPrimitiveType getSamplingTime() {
-        if (samplingTime != null)
+        if (samplingTime != null) {
             return samplingTime.getTimeGeometricPrimitive();
+        }
         return null;
         
+    }
+    
+    @Override
+    public void emptySamplingTime() {
+        this.samplingTime = null;
     }
     
     /**
@@ -557,8 +575,9 @@ public class ObservationType implements Observation, Entry {
      */
     @Override
     public AbstractTimeGeometricPrimitiveType getProcedureTime() {
-        if (procedureTime != null)
+        if (procedureTime != null) {
             return procedureTime.getTimeGeometricPrimitive();
+        }
         return null;
         
     }
@@ -583,9 +602,13 @@ public class ObservationType implements Observation, Entry {
     /**
      * Return true if the observation match the specified template.
      */ 
-    public boolean matchTemplate(final ObservationType template) {
-        
-        boolean obsProperty = false;
+    @Override
+    public boolean matchTemplate(final Observation abstractTemplate) {
+        if (!(abstractTemplate instanceof ObservationType)) {
+            throw new IllegalArgumentException("Unexpected object version");
+        }
+        final ObservationType template = (ObservationType) abstractTemplate;
+        final boolean obsProperty;
         if (this.observedProperty != null && template.observedProperty != null) {
             obsProperty = Objects.equals(this.observedProperty.getPhenomenon(),    template.observedProperty.getPhenomenon());
             if (!obsProperty) {
@@ -596,7 +619,7 @@ public class ObservationType implements Observation, Entry {
             obsProperty = this.observedProperty == null && template.observedProperty == null;
         }
         
-        boolean obsFoi = false;
+        final boolean obsFoi;
         if (this.featureOfInterest != null && template.featureOfInterest != null) {
             obsFoi = Objects.equals(this.featureOfInterest.getAbstractFeature(),    template.featureOfInterest.getAbstractFeature());
             if (!obsFoi) {
@@ -615,14 +638,14 @@ public class ObservationType implements Observation, Entry {
                         Objects.equals(this.procedureParameter,  template.procedureParameter)  &&
                         obsProperty;
         if (!match) {
-            LOGGER.severe("error matching template report:" + '\n' +
-                   "FOI  =>" + obsFoi                                                                   + '\n' +
-                   "PROC =>" + Objects.equals(this.procedure,           template.procedure)           + '\n' +
-                   "QUAL =>" + Objects.equals(this.resultQuality,       template.resultQuality)       + '\n' + 
-                   "META =>" + Objects.equals(this.observationMetadata, template.observationMetadata) + '\n' +
-                   "PTI  =>" + Objects.equals(this.procedureTime,       template.procedureTime)       + '\n' +
-                   "PPAM =>" + Objects.equals(this.procedureParameter,  template.procedureParameter)  + '\n' +
-                   "PHEN =>" + obsProperty);
+            LOGGER.severe("error matching template report:" +
+                   "\nFOI  =>" + obsFoi                                                                   + 
+                   "\nPROC =>" + Objects.equals(this.procedure,           template.procedure)           + 
+                   "\nQUAL =>" + Objects.equals(this.resultQuality,       template.resultQuality)       + 
+                   "\nMETA =>" + Objects.equals(this.observationMetadata, template.observationMetadata) + 
+                   "\nPTI  =>" + Objects.equals(this.procedureTime,       template.procedureTime)       + 
+                   "\nPPAM =>" + Objects.equals(this.procedureParameter,  template.procedureParameter)  + 
+                   "\nPHEN =>" + obsProperty);
         }
         return match;
         
@@ -686,28 +709,31 @@ public class ObservationType implements Observation, Entry {
         char lineSeparator = '\n';
         s.append(lineSeparator);
         s.append("name = ").append(name);
-        if (definition != null)
+        if (definition != null) {
             s.append("definition = ").append(definition);
+        }
         s.append(lineSeparator);
-        if (samplingTime != null)
+        if (samplingTime != null) {
             s.append("samplingTime = ").append(samplingTime.toString()).append(lineSeparator);
-       if (procedure != null)
+        }
+        if (procedure != null) {
             s.append("procedure = ").append(procedure.toString()).append(lineSeparator);
-        else
+        } else {
             s.append("procedure is null!").append(lineSeparator);
-        
-        if (observedProperty != null)
+        }
+        if (observedProperty != null) {
             s.append("observedProperty = ").append(observedProperty.toString()).append(lineSeparator);
-        else s.append("observed property is null!").append(lineSeparator);
-        if (featureOfInterest != null)
-            s.append("feature Of Interest = ").append(featureOfInterest.toString()).append(lineSeparator); 
-        else
+        } else {
+            s.append("observed property is null!").append(lineSeparator);
+        }
+        if (featureOfInterest != null) {
+            s.append("feature Of Interest = ").append(featureOfInterest.toString()).append(lineSeparator);
+        } else {
             s.append("feature Of Interest is null!").append(lineSeparator);
-        if (result != null)       
+        }
+        if (result != null) {
             s.append(" result = ").append(result.getValue()).append(lineSeparator);
+        }
         return s.toString();
     }
-
-    
-
 }

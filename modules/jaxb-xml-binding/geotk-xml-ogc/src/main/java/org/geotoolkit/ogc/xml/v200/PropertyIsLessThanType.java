@@ -43,5 +43,12 @@ public class PropertyIsLessThanType extends BinaryComparisonOpType implements Pr
         super(literal, propertyName, matchCase);
     }
     
-
+    public PropertyIsLessThanType(final PropertyIsLessThanType that) {
+        super(that);
+    }
+    
+    @Override
+    public ComparisonOpsType getClone() {
+        return new PropertyIsLessThanType(this);
+    }
 }

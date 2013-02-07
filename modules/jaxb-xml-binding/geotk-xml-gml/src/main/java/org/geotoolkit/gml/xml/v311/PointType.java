@@ -128,6 +128,7 @@ public class PointType extends AbstractGeometricPrimitiveType implements Point, 
      *     {@link DirectPositionType }
      *     
      */
+    @Override
     public DirectPositionType getPos() {
         return pos;
     }
@@ -155,6 +156,7 @@ public class PointType extends AbstractGeometricPrimitiveType implements Point, 
      *     {@link CoordinatesType }
      *     
      */
+    @Override
     public CoordinatesType getCoordinates() {
         return coordinates;
     }

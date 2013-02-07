@@ -27,7 +27,7 @@ public interface AbstractTimeRange  extends AbstractDataComponent {
 
     public UomProperty getUom();
 
-    public AbstractQualityProperty getQuality();
+    public List<? extends AbstractQualityProperty> getQuality();
 
     public List<String> getValue();
 

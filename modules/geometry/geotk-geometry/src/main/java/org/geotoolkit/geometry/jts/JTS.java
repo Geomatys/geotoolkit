@@ -580,6 +580,19 @@ public final class JTS {
                 }), null);
     }
 
+    public static Polygon toGeometry(final org.opengis.geometry.Envelope env){
+        final GeometryFactory gf = new GeometryFactory();
+        final Coordinate[] coordinates = new Coordinate[]{
+            new Coordinate(env.getMinimum(0), env.getMinimum(1)),
+            new Coordinate(env.getMinimum(0), env.getMaximum(1)),
+            new Coordinate(env.getMaximum(0), env.getMaximum(1)),
+            new Coordinate(env.getMaximum(0), env.getMinimum(1)),
+            new Coordinate(env.getMinimum(0), env.getMinimum(1)),
+        };
+        final LinearRing ring = gf.createLinearRing(coordinates);
+        return gf.createPolygon(ring, new LinearRing[0]);
+    }
+    
     /**
      * Create a ReferencedEnvelope from the provided geometry, we will do our
      * best to guess the CoordinateReferenceSystem making use of getUserData()

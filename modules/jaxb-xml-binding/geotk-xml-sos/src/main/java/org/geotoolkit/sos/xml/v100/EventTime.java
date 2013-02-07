@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ogc.xml.v110.BinaryTemporalOpType;
 import org.geotoolkit.ogc.xml.v110.TemporalOpsType;
+import org.opengis.filter.Filter;
 
 /**
  *
@@ -197,6 +198,52 @@ public class EventTime {
         return tDuring;
     }
 
+    public Filter getFilter() {
+        if (tOveralps != null) {
+            return tOveralps;
+        }
+        if (tEquals != null) {
+            return tEquals;
+        }
+        if (tMeets != null) {
+            return tMeets;
+        }
+        if (tOverlappedBy != null) {
+            return tOverlappedBy;
+        }
+        if (tEndedBy != null) {
+            return tEndedBy;
+        }
+        if (tEnds != null) {
+            return tEnds;
+        }
+        if (tAfter != null) {
+            return tAfter;
+        }
+        if (tMetBy != null) {
+            return tMetBy;
+        }
+        if (tBegins != null) {
+            return tBegins;
+        }
+        if (tBefore != null) {
+            return tBefore;
+        }
+        if (tBegunBy != null) {
+            return tBegunBy;
+        }
+        if (tContains != null) {
+            return tContains;
+        }
+        if (tDuring != null) {
+            return tDuring;
+        }
+        if (temporalOps != null) {
+            return temporalOps;
+        }
+        return null;
+    }
+    
     /**
      * Verify if this entry is identical to the specified object.
      */

@@ -182,7 +182,8 @@ public class WFSXmlFactory {
         }
     }
 
-    public static TransactionResponse buildTransactionResponse(final String version, final Integer totalInserted, final Integer totalUpdated, final Integer totalDeleted, final Map<String, String> inserted) {
+    public static TransactionResponse buildTransactionResponse(final String version, final Integer totalInserted, final Integer totalUpdated, final Integer totalDeleted, final Integer totalReplaced,
+            final Map<String, String> inserted, final Map<String, String> replaced) {
         if ("2.0.0".equals(version)) {
             org.geotoolkit.wfs.xml.v200.ActionResultsType insertResults = null;
             if (inserted.size() > 0) {
@@ -192,9 +193,18 @@ public class WFSXmlFactory {
                 }
                 insertResults = new org.geotoolkit.wfs.xml.v200.ActionResultsType(ift);
             }
+            org.geotoolkit.wfs.xml.v200.ActionResultsType replaceResults = null;
+            if (replaced.size() > 0) {
+                final List<org.geotoolkit.wfs.xml.v200.CreatedOrModifiedFeatureType> ift = new ArrayList<org.geotoolkit.wfs.xml.v200.CreatedOrModifiedFeatureType>();
+                for (Entry<String, String> id : replaced.entrySet()) {
+                    ift.add(new org.geotoolkit.wfs.xml.v200.CreatedOrModifiedFeatureType(new org.geotoolkit.ogc.xml.v200.ResourceIdType(id.getKey()), id.getValue()));
+                }
+                replaceResults = new org.geotoolkit.wfs.xml.v200.ActionResultsType(ift);
+            }
 
-            final org.geotoolkit.wfs.xml.v200.TransactionSummaryType ts = new org.geotoolkit.wfs.xml.v200.TransactionSummaryType(totalInserted, totalUpdated, totalDeleted);
-            return new org.geotoolkit.wfs.xml.v200.TransactionResponseType(ts, null, insertResults, version);
+            final org.geotoolkit.wfs.xml.v200.TransactionSummaryType ts = new org.geotoolkit.wfs.xml.v200.TransactionSummaryType(
+                    totalInserted, totalUpdated, totalDeleted, totalReplaced);
+            return new org.geotoolkit.wfs.xml.v200.TransactionResponseType(ts, null, insertResults, replaceResults, version);
         } else if ("1.1.0".equals(version)) {
             org.geotoolkit.wfs.xml.v110.InsertResultsType insertResults = null;
             if (inserted.size() > 0) {
@@ -575,13 +585,13 @@ public class WFSXmlFactory {
     }
 
     public static GetPropertyValue buildGetPropertyValue(final String currentVersion, final String service, final String handle, final Integer maxFeature, final String featureId,
-        final Query query, final ResultTypeType resultType, String outputFormat) {
+        final Query query, final ResultTypeType resultType, final String outputFormat, final String valueReference) {
         if ("2.0.0".equals(currentVersion)) {
             if (query != null && !(query instanceof org.geotoolkit.wfs.xml.v200.QueryType)) {
                 throw new IllegalArgumentException("unexpected object version for query element");
             }
             return new org.geotoolkit.wfs.xml.v200.GetPropertyValueType(service, currentVersion, handle, maxFeature, featureId,
-                    (org.geotoolkit.wfs.xml.v200.QueryType)query, resultType, outputFormat);
+                    (org.geotoolkit.wfs.xml.v200.QueryType)query, resultType, outputFormat, valueReference);
 
         } else if ("1.1.0".equals(currentVersion)) {
             throw new IllegalArgumentException("GetPropertyValue is not available in version 1.1.0");
@@ -616,6 +626,9 @@ public class WFSXmlFactory {
                 final List<QName> returnTypes = new ArrayList<QName>();
                 for (QueryExpressionText queryEx : description.getQueryExpressionText()) {
                     returnTypes.addAll(queryEx.getReturnFeatureTypes());
+                }
+                if (returnTypes.isEmpty()) {
+                    returnTypes.add(new QName(""));
                 }
                 storedQuery.add(new org.geotoolkit.wfs.xml.v200.StoredQueryListItemType(description.getId(),
                                                             (List<org.geotoolkit.wfs.xml.v200.Title>)description.getTitle(),
@@ -688,4 +701,18 @@ public class WFSXmlFactory {
             throw new IllegalArgumentException("unexpected version number:" + currentVersion);
         }
     }
+    
+    public static Query cloneQuery(final Query query) {
+        if (query instanceof org.geotoolkit.wfs.xml.v200.QueryType) {
+            return new org.geotoolkit.wfs.xml.v200.QueryType((org.geotoolkit.wfs.xml.v200.QueryType)query);
+        } else if (query instanceof org.geotoolkit.wfs.xml.v110.QueryType) {
+            return new org.geotoolkit.wfs.xml.v110.QueryType((org.geotoolkit.wfs.xml.v110.QueryType)query);
+        } else if (query instanceof org.geotoolkit.wfs.xml.v100.QueryType) {
+            return new org.geotoolkit.wfs.xml.v100.QueryType((org.geotoolkit.wfs.xml.v100.QueryType)query);
+        } else if (query == null) {
+            return null;
+        } else {
+            throw new IllegalArgumentException("unexpected query implementation:" + query.getClass().getName());
+        }
+    } 
 }

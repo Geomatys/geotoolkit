@@ -21,6 +21,8 @@ import java.util.List;
 import java.util.Set;
 import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.FeatureCollection;
+import org.geotoolkit.data.FeatureStoreRuntimeException;
+import org.geotoolkit.data.memory.WrapFeatureCollection;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.session.Session;
@@ -32,6 +34,7 @@ import org.geotoolkit.process.ProcessException;
 import static org.geotoolkit.process.datastore.copy.CopyDescriptor.*;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
+import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.Name;
 import org.opengis.parameter.ParameterValueGroup;
@@ -101,7 +104,7 @@ public class Copy extends AbstractProcess {
         final float size = names.size();
         int inc = 0;
         for (Name n : names) {
-            fireProgressing("Copying "+n+".", (int)((inc*100f)/size), false);
+            fireProgressing("Copying "+n.getLocalPart()+".", (int)((inc*100f)/size), false);
             try {
                 insert(n, sourceDS, targetDS, eraseParam);
             } catch (DataStoreException ex) {
@@ -119,6 +122,17 @@ public class Copy extends AbstractProcess {
         final Session session = source.createSession(false);
         final FeatureCollection collection = session.getFeatureCollection(QueryBuilder.all(name));
 
+        final FeatureCollection wrap = new WrapFeatureCollection(collection) {
+
+            long count = 0;
+            @Override
+            protected Feature modify(Feature original) throws FeatureStoreRuntimeException {
+                fireProgressing(name.getLocalPart()+":"+(count++),0, false);
+                return original;
+            }
+        };
+
+
         if(target.getNames().contains(name)) {
             if(erase) {
                 target.deleteSchema(name);
@@ -130,7 +144,7 @@ public class Copy extends AbstractProcess {
 
         final Hints hints = new Hints();
         hints.put(HintsPending.UPDATE_ID_ON_INSERT, Boolean.FALSE);
-        target.addFeatures(name, collection, hints);
+        target.addFeatures(name, wrap, hints);
 
     }
 

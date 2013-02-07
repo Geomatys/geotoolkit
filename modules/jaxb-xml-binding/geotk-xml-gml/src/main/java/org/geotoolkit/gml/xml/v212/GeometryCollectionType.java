@@ -27,11 +27,10 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * 
- *         A geometry collection must include one or more geometries, referenced 
- *         through geometryMember elements. User-defined geometry collections 
- *         that accept GML geometry classes as members must instantiate--or 
- *         derive from--this type.
+ * A geometry collection must include one or more geometries, 
+ * referenced through geometryMember elements. 
+ * User-defined geometry collections that accept GML geometry classes as members must 
+ * instantiate--or derive from--this type.
  *       
  * 
  * <p>Java class for GeometryCollectionType complex type.
@@ -67,23 +66,24 @@ public class GeometryCollectionType extends AbstractGeometryCollectionBaseType {
     @XmlElementRef(name = "geometryMember", namespace = "http://www.opengis.net/gml", type = JAXBElement.class)
     private List<JAXBElement<? extends GeometryAssociationType>> geometryMember;
 
+    public GeometryCollectionType() {
+        
+    }
+    
+    public GeometryCollectionType(final GeometryCollectionType that) {
+        super(that);
+        if (that != null && that.geometryMember != null) {
+            this.geometryMember = new ArrayList<JAXBElement<? extends GeometryAssociationType>>();
+            for (JAXBElement<? extends GeometryAssociationType> jb : that.geometryMember) {
+                final GeometryAssociationType geom = jb.getValue().getClone();
+                this.geometryMember.add(geom.getXmlElement());
+            }
+        }
+    }
+    
     /**
      * Gets the value of the geometryMember property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the geometryMember property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getGeometryMember().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link PointMemberType }{@code >}
      * {@link JAXBElement }{@code <}{@link PolygonMemberType }{@code >}
@@ -97,6 +97,11 @@ public class GeometryCollectionType extends AbstractGeometryCollectionBaseType {
             geometryMember = new ArrayList<JAXBElement<? extends GeometryAssociationType>>();
         }
         return this.geometryMember;
+    }
+
+    @Override
+    public AbstractGeometryType getClone() {
+        return new GeometryCollectionType(this);
     }
 
 }

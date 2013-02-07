@@ -29,7 +29,7 @@ import org.geotoolkit.client.ServerFinder;
 import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureWriter;
-import org.geotoolkit.data.StorageListener;
+import org.geotoolkit.storage.StorageListener;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.data.session.Session;

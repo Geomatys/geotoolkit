@@ -40,5 +40,12 @@ public class BeyondType extends DistanceBufferType implements Beyond {
         super(propertyName, geometry, distance, unit);
     }
     
-
+    public BeyondType(final BeyondType that) {
+        super(that);
+    }
+    
+    @Override
+    public SpatialOpsType getClone() {
+        return new BeyondType(this);
+    }
 }

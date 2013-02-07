@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE book [
+  <!ENTITY % book.entities SYSTEM "../../../book.entities">
+  %book.entities;
+]>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0"
+         xmlns:xlink = "http://www.w3.org/1999/xlink"
+        id="coverageStore" lang="en">
+             
+    <title>CoverageStore</title>
+    <para>
+	CoverageStore are still in incubation. They have been developped to give us a level of abstraction higher than CoverageReaders in order to manipulate N Coverages at the same time. The database class from Coverage-SQL will implement this interface. It's possible that this model could change with the time.
+    </para>
+
+    <section>
+        <title>
+            CoverageStoreFactory
+        </title>
+        <para>
+	    The factory are using to make CoverageStores. Each factory have its own name and the definition of  its input paramaters that it need to create a new CoverageStore instance.
+        </para>
+        <para>
+           Factory implementations are registered in the Java Service Registry (META-INF/services). They enable automatic discovery of new implementations. The utility class  <emphasis>CoveragestoreFinder</emphasis> give us the possibity to get them quickly. 
+        </para>
+        
+        <example>
+            <title>List the different factories coverage</title>
+            <link xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/coverage/ListAllFactoriesDemo.java">
+                <acronym>geotoolkit-pending/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/coverage/ListAllFactoriesDemo.java</acronym>
+            </link>        
+        </example>
+        
+    </section>
+</section>

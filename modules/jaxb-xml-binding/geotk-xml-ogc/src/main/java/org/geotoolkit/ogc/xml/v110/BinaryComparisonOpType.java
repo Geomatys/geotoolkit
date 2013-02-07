@@ -101,23 +101,34 @@ public class BinaryComparisonOpType extends ComparisonOpsType implements BinaryC
         }
         this.matchCase = matchCase;
     }
+
+    public BinaryComparisonOpType(final BinaryComparisonOpType that) {
+        if (that != null) {
+            if (that.expression != null) {
+                this.expression = new ArrayList<JAXBElement<?>>();
+                final ObjectFactory factory = new ObjectFactory();
+                for (JAXBElement jb : that.expression) {
+                    final Object exp = jb.getValue();
+                    if (exp instanceof PropertyNameType) {
+                        this.expression.add(factory.createPropertyName((PropertyNameType)exp));
+                    } else if (exp instanceof LiteralType) {
+                        final LiteralType lit = new LiteralType((LiteralType)exp);
+                        this.expression.add(factory.createLiteral(lit));
+                    } else if (exp instanceof FunctionType) {
+                        final FunctionType func = new FunctionType((FunctionType)exp);
+                        this.expression.add(factory.createFunction(func));
+                    } else {
+                        throw new IllegalArgumentException("Unexpected type for expression in BinaryComparisonOpType:" + expression.getClass().getName());
+                    }
+                }
+            }
+            this.matchCase   = that.matchCase;
+        }
+    }
+    
     /**
      * Gets the value of the expression property.
      *
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the expression property.
-     *
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getExpression().add(newItem);
-     * </pre>
-     *
-     *
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link BinaryOperatorType }{@code >}
      * {@link JAXBElement }{@code <}{@link MapItemType }{@code >}
@@ -161,9 +172,11 @@ public class BinaryComparisonOpType extends ComparisonOpsType implements BinaryC
     /**
      * Gets the value of the matchCase property.
      */
+    @Override
     public boolean isMatchingCase() {
-        if (matchCase == null)
+        if (matchCase == null) {
             return false;
+        }
         return matchCase;
     }
 
@@ -262,6 +275,7 @@ public class BinaryComparisonOpType extends ComparisonOpsType implements BinaryC
         getExpression().add(FACTORY.createPropertyName(propertyName));
     }
 
+    @Override
     public MatchAction getMatchAction() {
         return MatchAction.ANY;
     }
@@ -301,5 +315,10 @@ public class BinaryComparisonOpType extends ComparisonOpsType implements BinaryC
                    Objects.equals(this.getExpressionType(), that.getExpressionType());
         }
         return false;
+    }
+
+    @Override
+    public ComparisonOpsType getClone() {
+        throw new UnsupportedOperationException("Must be overriden by sub-class");
     }
 }

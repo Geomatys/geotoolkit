@@ -84,6 +84,7 @@ public class DataArrayPropertyType implements DataArrayProperty {
     /**
      * Gets the value of the dataArray property.
      */
+    @Override
     public DataArrayType getDataArray() {
         if (dataArray != null) {
             return dataArray.getValue(); 

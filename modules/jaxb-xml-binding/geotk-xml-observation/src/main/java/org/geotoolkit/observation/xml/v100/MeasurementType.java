@@ -28,6 +28,7 @@ import org.geotoolkit.swe.xml.v101.PhenomenonType;
 import org.geotoolkit.metadata.iso.DefaultMetadata;
 import org.opengis.observation.Measurement;
 import org.opengis.observation.Measure;
+import org.opengis.temporal.TemporalGeometricPrimitive;
 
 /**
  * Implémentation d'une entrée représentant une {@linkplain Measurement mesure}.
@@ -113,7 +114,7 @@ public class MeasurementType extends ObservationType implements Measurement {
      * On y rajoute un samplingTime et un id temporaire.
      */
     @Override
-    public MeasurementType getTemporaryTemplate(final String temporaryName, AbstractTimeGeometricPrimitiveType time) {
+    public MeasurementType getTemporaryTemplate(final String temporaryName, TemporalGeometricPrimitive time) {
         if (time == null) {
             TimePositionType begin = new  TimePositionType("1900-01-01T00:00:00");
             time = new TimePeriodType(begin);
@@ -133,7 +134,7 @@ public class MeasurementType extends ObservationType implements Measurement {
                                     pheno,
                                     (ProcessType)getProcedure(),
                                     (MeasureType) getResult(),
-                                    time);
+                                    (AbstractTimeGeometricPrimitiveType)time);
 
     }
 

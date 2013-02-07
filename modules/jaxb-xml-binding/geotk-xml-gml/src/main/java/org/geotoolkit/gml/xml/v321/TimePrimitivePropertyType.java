@@ -90,6 +90,42 @@ public class TimePrimitivePropertyType implements Serializable{
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     private String actuate;
 
+    public TimePrimitivePropertyType() {
+        
+    }
+    
+    public TimePrimitivePropertyType(final TimePrimitivePropertyType that) {
+        if (that != null) {
+            this.actuate      = that.actuate;
+            this.arcrole      = that.arcrole;
+            this.href         = that.href;
+            this.nilReason    = new ArrayList<String>(that.nilReason);
+            this.owns         = that.owns;
+            this.remoteSchema = that.remoteSchema;
+            this.role         = that.role;
+            this.show         = that.show;
+            this.title        = that.title;
+            this.type         = that.type;
+            if (that.abstractTimePrimitive != null) {
+                final ObjectFactory factory = new ObjectFactory();
+                final AbstractTimePrimitiveType tp = that.abstractTimePrimitive.getValue();
+                if (tp instanceof TimeInstantType) {
+                    final TimeInstantType ti = new TimeInstantType((TimeInstantType)tp);
+                    this.abstractTimePrimitive = factory.createTimeInstant(ti);
+                } else if (tp instanceof TimePeriodType) {
+                    final TimePeriodType ti = new TimePeriodType((TimePeriodType)tp);
+                    this.abstractTimePrimitive = factory.createTimePeriod(ti);
+                } else if (tp instanceof TimeEdgeType) {
+                    final TimeEdgeType ti = new TimeEdgeType((TimeEdgeType)tp);
+                    this.abstractTimePrimitive = factory.createTimeEdge(ti);
+                } else if (tp instanceof TimeNodeType) {
+                    final TimeNodeType ti = new TimeNodeType((TimeNodeType)tp);
+                    this.abstractTimePrimitive = factory.createTimeNode(ti);
+                }
+            }
+        }
+    }
+    
     /**
      * Gets the value of the abstractTimePrimitive property.
      * 

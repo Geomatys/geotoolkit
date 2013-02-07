@@ -22,10 +22,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.logging.Level;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.*;
 import org.geotoolkit.gml.xml.v321.AbstractGeometryType;
-import org.geotoolkit.util.Utilities;
+import org.geotoolkit.gml.xml.v321.EnvelopeType;
 import org.opengis.filter.FilterVisitor;
 import org.opengis.filter.expression.Expression;
 
@@ -69,9 +70,6 @@ public class DistanceBufferType extends SpatialOpsType {
     private MeasureType distance;
 
     @XmlTransient
-    private static final org.geotoolkit.gml.xml.v321.ObjectFactory gmlFactory = new org.geotoolkit.gml.xml.v321.ObjectFactory();
-
-    @XmlTransient
     private static final ObjectFactory factory = new ObjectFactory();
 
     public DistanceBufferType() {
@@ -89,6 +87,41 @@ public class DistanceBufferType extends SpatialOpsType {
         this.any            = Arrays.asList((Object)geometry);
     }
 
+    public DistanceBufferType(final DistanceBufferType that) {
+        if (that != null) {
+            if (that.expression != null) {
+                final Object exp = that.expression.getValue();
+                if (exp instanceof String) {
+                    this.expression = factory.createValueReference((String)exp);
+                } else if (exp instanceof LiteralType) {
+                    final LiteralType lit = new LiteralType((LiteralType)exp);
+                    this.expression = factory.createLiteral(lit);
+                } else if (exp instanceof FunctionType) {
+                    final FunctionType func = new FunctionType((FunctionType)exp);
+                    this.expression = factory.createFunction(func);
+                } else {
+                    throw new IllegalArgumentException("Unexpected type for expression in PropertyIsBetweenType:" + expression.getClass().getName());
+                }
+            }
+            
+            if (that.any != null) {
+                this.any = new ArrayList<Object>();
+                for (Object obj : that.any) {
+                    if (obj instanceof EnvelopeType) {
+                        this.any.add(new EnvelopeType((EnvelopeType)obj));
+                    } else {
+                        this.any.add(obj);
+                        LOGGER.log(Level.INFO, "Unable to clone:{0}", obj.getClass().getName());
+                    }
+                }
+            }
+            
+            if (that.distance != null) {
+                this.distance = new MeasureType(that.distance.getValue(), that.distance.getUom());
+            }
+        }
+    }
+    
     public String getPropertyName() {
         if (expression != null && expression.getValue() instanceof String) {
             return (String)expression.getValue();
@@ -189,8 +222,9 @@ public class DistanceBufferType extends SpatialOpsType {
     }
 
     public double getDistance() {
-        if (distance != null)
+        if (distance != null) {
             return distance.getValue();
+        }
         return 0.0;
     }
 
@@ -207,8 +241,9 @@ public class DistanceBufferType extends SpatialOpsType {
     }
 
     public String getDistanceUnits() {
-        if (distance != null)
+        if (distance != null) {
             return distance.getUom();
+        }
         return null;
     }
 
@@ -236,6 +271,10 @@ public class DistanceBufferType extends SpatialOpsType {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
+    public SpatialOpsType getClone() {
+        throw new UnsupportedOperationException("Must be overriden in sub-class.");
+    }
 
     /**
      * Verify that this entry is identical to the specified object.
@@ -295,12 +334,13 @@ public class DistanceBufferType extends SpatialOpsType {
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder("[").append(this.getClass().getSimpleName()).append("]");
-        if (distance != null)
+        if (distance != null) {
             s.append("distance: ").append(distance).append('\n');
+        }
 
-        if (expression != null && expression.getValue() != null)
+        if (expression != null && expression.getValue() != null) {
             s.append("expression: ").append(expression.getValue().toString()).append('\n');
-
+        }
         cleanAny();
         if (any != null) {
             for (Object obj : any) {

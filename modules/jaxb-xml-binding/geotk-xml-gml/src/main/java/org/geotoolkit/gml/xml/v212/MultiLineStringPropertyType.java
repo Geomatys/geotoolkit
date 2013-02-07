@@ -51,6 +51,17 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "MultiLineStringPropertyType")
 public class MultiLineStringPropertyType extends GeometryAssociationType {
-
-
+    
+    public MultiLineStringPropertyType() {
+        
+    }
+    
+    public MultiLineStringPropertyType(MultiLineStringPropertyType that) {
+        super(that);
+    }
+    
+    @Override
+    public GeometryAssociationType getClone() {
+        return new MultiLineStringPropertyType(this);
+    }
 }

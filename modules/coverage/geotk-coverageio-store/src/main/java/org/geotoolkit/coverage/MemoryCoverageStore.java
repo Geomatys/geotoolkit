@@ -17,14 +17,19 @@
 package org.geotoolkit.coverage;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CancellationException;
+import java.util.logging.Level;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
+import org.geotoolkit.coverage.io.GridCoverageWriteParam;
+import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
@@ -48,21 +53,29 @@ public class MemoryCoverageStore extends AbstractCoverageStore {
      */
     private static final ParameterDescriptorGroup desc = new DefaultParameterDescriptorGroup("", AbstractCoverageStoreFactory.NAMESPACE);
 
-    /**
-     * Grid coverage to store.
-     */
-    private final GridCoverage2D gridCov;
+    private final Map<Name, CoverageReference> layers = new HashMap<Name, CoverageReference>();
+    
 
-    private final String name;
+    public MemoryCoverageStore() {
+        super(desc.createValue());
+    }
 
     public MemoryCoverageStore(final GridCoverage2D gridCov) {
         this(gridCov, null);
     }
 
     public MemoryCoverageStore(final GridCoverage2D gridCov, final String name) {
-        super(desc.createValue());
-        this.gridCov = gridCov;
-        this.name = name;
+        this();
+        try {
+            final CoverageReference ref = create(new DefaultName(getDefaultNamespace(), name));
+            ref.createWriter().write(gridCov, null);
+        } catch (CoverageStoreException ex) {
+            getLogger().log(Level.WARNING, ex.getMessage(), ex);
+        } catch (CancellationException ex) {
+            getLogger().log(Level.WARNING, ex.getMessage(), ex);
+        } catch (DataStoreException ex) {
+            getLogger().log(Level.WARNING, ex.getMessage(), ex);
+        }
     }
 
     /**
@@ -75,15 +88,26 @@ public class MemoryCoverageStore extends AbstractCoverageStore {
 
     @Override
     public Set<Name> getNames() throws DataStoreException {
-        final String covName = (name != null) ? name : "memory";
-        final Name n = new DefaultName(covName);
-        return Collections.singleton(n);
+        return layers.keySet();
     }
 
     @Override
-    public CoverageReference getCoverageReference(Name name) throws DataStoreException {
-        final SimpleCoverageReader reader = new SimpleCoverageReader(gridCov, this.name);
-        return new DefaultCoverageReference(reader, 0);
+    public CoverageReference getCoverageReference(final Name name) throws DataStoreException {
+        final CoverageReference cr = layers.get(name);
+        if(cr == null){
+            throw new DataStoreException("CoverageReference for name "+name+" does not exist.");
+        }
+        return cr;
+    }
+
+    @Override
+    public CoverageReference create(final Name name) throws DataStoreException {
+        if(layers.containsKey(name)){
+            throw new DataStoreException("Layer "+name+" already exist");
+        }
+        layers.put(name, new MemoryCoverageReference(name));
+        fireCoverageAdded(name);
+        return getCoverageReference(name);
     }
 
     /**
@@ -93,37 +117,59 @@ public class MemoryCoverageStore extends AbstractCoverageStore {
     public void dispose() {
     }
 
+    private class MemoryCoverageReference extends DefaultCoverageReference{
 
-    /**
-     *
-     */
-    private static class SimpleCoverageReader extends GridCoverageReader {
-
-        private final GridCoverage2D coverage;
-        private final String name;
-
-        public SimpleCoverageReader(final GridCoverage2D coverage) {
-            this(coverage, null);
-        }
-
-        public SimpleCoverageReader(final GridCoverage2D coverage, final String name) {
-            this.coverage = coverage;
+        private final Name name;
+        private GridCoverage2D coverage;
+        
+        public MemoryCoverageReference(Name name) {
+            super(null, 0);
             this.name = name;
         }
 
         @Override
+        public Name getName() {
+            return name;
+        }
+        
+        @Override
+        public MemoryCoverageStore getStore() {
+            return MemoryCoverageStore.this;
+        }
+
+        @Override
+        public GridCoverageWriter createWriter() throws DataStoreException {
+            return new MemoryCoverageWriter(this);
+        }
+
+        @Override
+        public GridCoverageReader createReader() throws DataStoreException {
+            return new MemoryCoverageReader(this);
+        }
+        
+    }
+
+    private static class MemoryCoverageReader extends GridCoverageReader {
+
+        private final MemoryCoverageReference ref;
+
+        public MemoryCoverageReader(MemoryCoverageReference ref){
+            this.ref = ref;
+        }
+                
+        @Override
         public GeneralGridGeometry getGridGeometry(final int i) throws CoverageStoreException, CancellationException {
-            return (GeneralGridGeometry) coverage.getGridGeometry();
+            return (GeneralGridGeometry) ref.coverage.getGridGeometry();
         }
 
         @Override
         public List<GridSampleDimension> getSampleDimensions(final int i) throws CoverageStoreException, CancellationException {
-            return Collections.singletonList(coverage.getSampleDimension(i));
+            return Collections.singletonList(ref.coverage.getSampleDimension(i));
         }
 
         @Override
         public GridCoverage read(final int i, final GridCoverageReadParam gcrp) throws CoverageStoreException, CancellationException {
-            return coverage;
+            return ref.coverage;
         }
 
         @Override
@@ -131,9 +177,27 @@ public class MemoryCoverageStore extends AbstractCoverageStore {
             final NameFactory dnf = FactoryFinder.getNameFactory(null);
             final String nameSpace = "http://geotoolkit.org" ;
             final NameSpace ns = dnf.createNameSpace(dnf.createGenericName(null, nameSpace), null);
-            final String covName = (name != null) ? name : "memory";
+            final String covName = ref.getName().getLocalPart();
             final GenericName gn = dnf.createLocalName(ns, covName);
             return Collections.singletonList(gn);
         }
     }
+
+    private static class MemoryCoverageWriter extends GridCoverageWriter{
+
+        private final MemoryCoverageReference ref;
+        
+        public MemoryCoverageWriter(MemoryCoverageReference ref){
+            this.ref = ref;
+        }
+        
+        @Override
+        public void write(GridCoverage coverage, GridCoverageWriteParam param) throws CoverageStoreException, CancellationException {
+            ref.coverage = (GridCoverage2D) coverage;
+            final CoverageStoreContentEvent event = ref.fireDataUpdated();
+            ref.getStore().forwardContentEvent(event);
+        }
+        
+    }
+    
 }

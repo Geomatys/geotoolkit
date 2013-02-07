@@ -17,8 +17,6 @@
 
 package org.geotoolkit.data;
 
-import junit.framework.TestCase;
-
 import org.geotoolkit.data.iterator.CheckCloseFeatureIterator;
 import org.geotoolkit.data.memory.MemoryFeatureStore;
 import org.geotoolkit.data.query.QueryBuilder;
@@ -27,6 +25,7 @@ import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.storage.DataStoreException;
 
 import org.junit.Test;
+import static org.junit.Assert.*;
 
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.FeatureType;
@@ -37,7 +36,7 @@ import org.opengis.feature.type.Name;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class DataUtilitiesTest extends TestCase{
+public class DataUtilitiesTest {
 
     private final FeatureStore store;
     private final Name name1;

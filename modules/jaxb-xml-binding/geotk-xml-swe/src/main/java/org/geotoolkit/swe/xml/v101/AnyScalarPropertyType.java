@@ -192,10 +192,12 @@ public class AnyScalarPropertyType implements AnyScalar, Entry {
     /**
      * Gets the value of name.
      */
+    @Override
     public String getName() {
         return this.name;
     }
 
+    @Override
      public String getIdentifier() {
         return this.name;
     }
@@ -210,6 +212,7 @@ public class AnyScalarPropertyType implements AnyScalar, Entry {
     /**
      * Gets the value of the phenomenon property.
      */
+    @Override
     public AbstractDataComponentType getValue() {
         if (abstractDataComponent != null) {
             return abstractDataComponent;
@@ -227,6 +230,7 @@ public class AnyScalarPropertyType implements AnyScalar, Entry {
     /**
      * Gets the value of the remoteSchema property.
      */
+    @Override
     public String getRemoteSchema() {
         return remoteSchema;
     }
@@ -234,6 +238,7 @@ public class AnyScalarPropertyType implements AnyScalar, Entry {
     /**
      * Gets the value of the type property.
      */
+    @Override
     public String getType() {
         return type;
     }
@@ -241,6 +246,7 @@ public class AnyScalarPropertyType implements AnyScalar, Entry {
     /**
      * Gets the value of the href property.
      */
+    @Override
     public String getHref() {
         return href;
     }
@@ -248,6 +254,7 @@ public class AnyScalarPropertyType implements AnyScalar, Entry {
     /**
      * Gets the value of the role property.
      */
+    @Override
     public String getRole() {
         return role;
     }
@@ -255,6 +262,7 @@ public class AnyScalarPropertyType implements AnyScalar, Entry {
     /**
      * Gets the value of the arcrole property.
      */
+    @Override
     public String getArcrole() {
         return arcrole;
     }
@@ -262,6 +270,7 @@ public class AnyScalarPropertyType implements AnyScalar, Entry {
     /**
      * Gets the value of the title property.
      */
+    @Override
     public String getTitle() {
         return title;
     }
@@ -269,6 +278,7 @@ public class AnyScalarPropertyType implements AnyScalar, Entry {
     /**
      * Gets the value of the show property.
      */
+    @Override
     public String getShow() {
         return show;
     }
@@ -276,6 +286,7 @@ public class AnyScalarPropertyType implements AnyScalar, Entry {
     /**
      * Gets the value of the actuate property.
      */
+    @Override
     public String getActuate() {
         return actuate;
     }

@@ -29,12 +29,16 @@ import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.imageio.ImageReader;
 import org.geotoolkit.coverage.*;
+import org.geotoolkit.coverage.finder.CoverageFinder;
+import org.geotoolkit.coverage.finder.CoverageFinderFactory;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.grid.GridEnvelope2D;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
+import org.geotoolkit.data.FeatureStoreListener;
 import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
@@ -64,6 +68,7 @@ import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
+import org.opengis.util.FactoryException;
 
 /**
  * Graphic for pyramidal coverage layers.
@@ -71,16 +76,29 @@ import org.opengis.referencing.operation.TransformException;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<CoverageMapLayer>{
+public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<CoverageMapLayer> implements CoverageStoreListener{
+    
+    protected CoverageStoreListener.Weak weakStoreListener = new CoverageStoreListener.Weak(this);
     
     private final PyramidalModel model;
     private final double tolerance;
+    private final CoverageFinder coverageFinder;
 
+    @Deprecated
     public StatelessPyramidalCoverageLayerJ2D(final J2DCanvas canvas, final CoverageMapLayer layer){
         super(canvas, layer);
-        
+        this.coverageFinder = CoverageFinderFactory.createDefaultCoverageFinder();
         model = (PyramidalModel)layer.getCoverageReference();
         tolerance = 0.1; // in % , TODO use a flag to allow change value
+        this.weakStoreListener.registerSource(layer.getCoverageReference());
+    }
+    
+    public StatelessPyramidalCoverageLayerJ2D(final J2DCanvas canvas, final CoverageMapLayer layer, CoverageFinder coverageFinder){
+        super(canvas, layer);
+        this.coverageFinder = coverageFinder;
+        model = (PyramidalModel)layer.getCoverageReference();
+        tolerance = 0.1; // in % , TODO use a flag to allow change value
+        this.weakStoreListener.registerSource(layer.getCoverageReference());
     }
 
     /**
@@ -112,7 +130,13 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
             return;
         }
         
-        final Pyramid pyramid = CoverageUtilities.findPyramid(pyramidSet, canvasEnv2D.getCoordinateReferenceSystem());
+        Pyramid pyramid = null;
+        try {
+            pyramid = coverageFinder.findPyramid(pyramidSet, canvasEnv2D.getCoordinateReferenceSystem());
+        } catch (FactoryException ex) {
+            monitor.exceptionOccured(ex, Level.WARNING);
+            return;
+        }
                 
         if(pyramid == null){
             //no reliable pyramid
@@ -154,7 +178,13 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
             return;
         }
 
-        final GridMosaic mosaic = CoverageUtilities.findMosaic(pyramid, wantedResolution, tolerance, wantedEnv,100);
+        GridMosaic mosaic = null;
+        try {
+            mosaic = coverageFinder.findMosaic(pyramid, wantedResolution, tolerance, wantedEnv,100);
+        } catch (FactoryException ex) {
+            monitor.exceptionOccured(ex, Level.WARNING);
+            return;
+        }
         if(mosaic == null){
             //no reliable mosaic
             return;
@@ -362,5 +392,17 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
             }
         }
     }
-        
+ 
+    @Override
+    public void structureChanged(CoverageStoreManagementEvent event) {
+    }
+
+    @Override
+    public void contentChanged(CoverageStoreContentEvent event) {
+        if(item.isVisible() && getCanvas().getController().isAutoRepaint()){
+            //TODO should call a repaint only on this graphic
+            getCanvas().getController().repaint();
+        }
+    }
+    
 }

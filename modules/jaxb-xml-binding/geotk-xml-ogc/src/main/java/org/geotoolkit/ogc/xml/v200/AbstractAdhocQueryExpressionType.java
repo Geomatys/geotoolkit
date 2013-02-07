@@ -84,6 +84,7 @@ public abstract class AbstractAdhocQueryExpressionType extends AbstractQueryExpr
 
 
     public AbstractAdhocQueryExpressionType(final AbstractAdhocQueryExpressionType that) {
+        super(that);
         if (that != null) {
             if (that.aliases != null) {
                 this.aliases = new ArrayList<String>(that.aliases);
@@ -92,14 +93,30 @@ public abstract class AbstractAdhocQueryExpressionType extends AbstractQueryExpr
                 this.typeNames = new ArrayList<QName>(that.typeNames);
             }
             if (that.abstractProjectionClause != null) {
-                this.abstractProjectionClause = new ArrayList<JAXBElement<?>>();
-                for (JAXBElement<?> prjClause : that.abstractProjectionClause) {
-                    final Object value = prjClause.getValue();
-                    throw new UnsupportedOperationException("not supported yet"); //TODO
+                this.abstractProjectionClause = cloneProjectionClause(that.abstractProjectionClause);
+            }
+            if (that.abstractSelectionClause != null) {
+                final Object value = that.abstractSelectionClause.getValue();
+                if (value instanceof FilterType) {
+                    final ObjectFactory factory = new ObjectFactory();
+                    final FilterType ft = new FilterType((FilterType)value);
+                    this.abstractSelectionClause = factory.createFilter(ft);
+                } else {
+                    throw new IllegalArgumentException("Unexpected Selection type:" + value.getClass().getName());
                 }
+                
+            }
+            if (that.abstractSortingClause != null) {
+                final Object value = that.abstractSortingClause.getValue();
+                if (value instanceof SortByType) {
+                    final ObjectFactory factory = new ObjectFactory();
+                    this.abstractSortingClause = factory.createSortBy((SortByType)value);
+                } else {
+                    throw new IllegalArgumentException("Unexpected Sorting type:" + value.getClass().getName());
+                }
+                
             }
         }
-        throw new UnsupportedOperationException("not supported yet"); //TODO
     }
 
     public AbstractAdhocQueryExpressionType(final FilterType filter, final List<QName> typeName) {
@@ -124,6 +141,10 @@ public abstract class AbstractAdhocQueryExpressionType extends AbstractQueryExpr
             abstractProjectionClause = new ArrayList<JAXBElement<?>>();
         }
         return this.abstractProjectionClause;
+    }
+    
+    protected  List<JAXBElement<?>> cloneProjectionClause(List<JAXBElement<?>> toClone) {
+        throw new UnsupportedOperationException("Must be overriden in sub-class"); 
     }
 
     public List<Object> getPropertyNames() {

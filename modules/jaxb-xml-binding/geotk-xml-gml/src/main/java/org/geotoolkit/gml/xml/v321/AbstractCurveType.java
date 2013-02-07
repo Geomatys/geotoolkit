@@ -53,5 +53,12 @@ import org.geotoolkit.gml.xml.AbstractCurve;
 })
 public abstract class AbstractCurveType extends AbstractGeometricPrimitiveType implements AbstractCurve {
 
+    public AbstractCurveType() {
+
+    }
+
+    public AbstractCurveType(final String id, final String srsName) {
+        super(id, srsName);
+    }
 
 }

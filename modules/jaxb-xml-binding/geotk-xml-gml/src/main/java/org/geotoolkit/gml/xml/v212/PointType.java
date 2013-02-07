@@ -70,6 +70,18 @@ public class PointType extends AbstractGeometryType {
         this.coordinates = coord;
     }
     
+    public PointType(final PointType that) {
+        super(that);
+        if (that != null) {
+            if (that.coordinates != null) {
+                this.coordinates = new CoordinatesType(that.coordinates);
+            }
+            if (that.coord != null) {
+                this.coord = new CoordType(that.coord);
+            }
+        }
+    }
+    
     /**
      * Gets the value of the coord property.
      * 
@@ -118,4 +130,8 @@ public class PointType extends AbstractGeometryType {
         this.coordinates = value;
     }
 
+    @Override
+    public AbstractGeometryType getClone() {
+        return new PointType(this);
+    }
 }

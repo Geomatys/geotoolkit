@@ -36,6 +36,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
@@ -353,13 +354,24 @@ public abstract class CachedPyramidSet extends DefaultPyramidSet {
             es.submit(new Runnable() {
                 @Override
                 public void run() {
-                    try {
-                        queue.offer(pack.readNow());
-                    } catch (IOException ex) {
-                        ex.printStackTrace();
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                    } finally {
+                    try{
+                        final TileReference tr;
+                        try {
+                            tr = pack.readNow();
+                        } catch (Exception ex) {
+                            LOGGER.log(Level.WARNING, ex.getMessage(),ex);
+                            return;
+                        }
+
+                        boolean added = false;
+                        while(!added && !queue.isCancelled()){
+                            try {
+                                added = queue.offer(tr,200, TimeUnit.MILLISECONDS);
+                            } catch (InterruptedException ex) {
+                                LOGGER.log(Level.FINE, ex.getMessage());
+                            }
+                        }
+                    }finally{
                         latch.countDown();
                     }
                 }

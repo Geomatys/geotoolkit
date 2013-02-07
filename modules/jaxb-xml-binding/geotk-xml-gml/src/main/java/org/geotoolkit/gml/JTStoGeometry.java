@@ -36,9 +36,9 @@ import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.gml.xml.AbstractGeometricAggregate;
 import org.geotoolkit.gml.xml.AbstractGeometry;
 import org.geotoolkit.gml.xml.AbstractRing;
-import org.geotoolkit.gml.xml.GMLXmlFactory;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.referencing.IdentifiedObjects;
+import static org.geotoolkit.gml.xml.GMLXmlFactory.*;
 
 import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
@@ -58,8 +58,6 @@ public final class JTStoGeometry {
      */
     private JTStoGeometry(){}
 
-    private static final GMLXmlFactory gmlFactory = new GMLXmlFactory();
-    
     /**
      * Transform A JTS geometry into GML geometry
      *
@@ -224,7 +222,7 @@ public final class JTStoGeometry {
         }
 
         final String srs = getSRS(crs);
-        return gmlFactory.buildMultiPoint(gmlVersion, pointList, srs);
+        return buildMultiPoint(gmlVersion, pointList, srs);
     }
 
     /**
@@ -251,7 +249,7 @@ public final class JTStoGeometry {
         }
 
         final String srs = getSRS(crs);
-        return gmlFactory.buildMultiLineString(gmlVersion, lineList, srs);
+        return buildMultiLineString(gmlVersion, lineList, srs);
     }
 
     /**
@@ -277,7 +275,7 @@ public final class JTStoGeometry {
         }
 
         final String srs = getSRS(crs);
-        return gmlFactory.buildMultiPolygon(gmlVersion, polyList, srs);
+        return buildMultiPolygon(gmlVersion, polyList, srs);
     }
 
     /**
@@ -304,7 +302,7 @@ public final class JTStoGeometry {
         for (int i = 0; i < jtsGeom.getNumInteriorRing(); i++) {
             gmlInterior.add(toGML(gmlVersion, (LinearRing) jtsGeom.getInteriorRingN(i), crs));
         }
-        return gmlFactory.buildPolygon(gmlVersion, gmlExterior, gmlInterior, getSRS(crs));
+        return buildPolygon(gmlVersion, gmlExterior, gmlInterior, getSRS(crs));
     }
 
     /**
@@ -331,7 +329,7 @@ public final class JTStoGeometry {
             dpList.add(coordinateToDirectPosition(c, crs));
         }
 
-        final org.geotoolkit.gml.xml.LineString gmlString = gmlFactory.buildLineString(gmlVersion, dpList);
+        final org.geotoolkit.gml.xml.LineString gmlString = buildLineString(gmlVersion, dpList);
         gmlString.setSrsName(getSRS(crs));
 
         return gmlString;
@@ -362,7 +360,7 @@ public final class JTStoGeometry {
             coordList.add(c.y);
         }
 
-        return gmlFactory.buildLinearRing(gmlVersion, coordList, getSRS(crs));
+        return buildLinearRing(gmlVersion, coordList, getSRS(crs));
     }
 
     /**
@@ -382,7 +380,7 @@ public final class JTStoGeometry {
         //Test if it's a 2D Geometry from CRS
         isValideGeometry(crs);
 
-        final org.geotoolkit.gml.xml.Point gmlPoint = gmlFactory.buildPoint(gmlVersion, coordinateToDirectPosition(jtsPoint.getCoordinate(), crs));
+        final org.geotoolkit.gml.xml.Point gmlPoint = buildPoint(gmlVersion, null, coordinateToDirectPosition(jtsPoint.getCoordinate(), crs));
 
         gmlPoint.setSrsName(getSRS(crs));
         return gmlPoint;

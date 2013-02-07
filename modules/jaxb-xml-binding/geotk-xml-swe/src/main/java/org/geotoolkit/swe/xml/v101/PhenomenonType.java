@@ -26,7 +26,7 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.v311.DefinitionType;
 import org.geotoolkit.util.ComparisonMode;
-import org.opengis.observation.Phenomenon;
+import org.geotoolkit.swe.xml.Phenomenon;
 
 
 /**
@@ -77,27 +77,6 @@ public class PhenomenonType extends DefinitionType implements Phenomenon {
         super(id, name, description);
     }
 
-    /**
-     * Retourne l'identifiant du phénomène.
-    
-    public String getId() {
-        return id;
-    }
-
-    /**
-     * Retoune la description du phénomène.
-     
-    public String getDescription() {
-        return description;
-    }
-    
-    /**
-     * Retourne le nom du phenomene (une URN le plus souvent).
-     
-    public String getPhenomenonName(){
-        return name;
-    } 
-    
     /**
      * Retourne un code représentant ce phenomene.
      */

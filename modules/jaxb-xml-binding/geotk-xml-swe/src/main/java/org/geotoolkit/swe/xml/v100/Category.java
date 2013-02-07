@@ -16,8 +16,8 @@
  */
 package org.geotoolkit.swe.xml.v100;
 
-import java.net.URI;
-import java.util.Objects;
+import java.util.Arrays;
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -28,6 +28,7 @@ import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.swe.xml.AbstractCategory;
 import org.geotoolkit.util.ComparisonMode;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -82,7 +83,7 @@ public class Category extends AbstractDataComponentType implements AbstractCateg
 
     }
 
-    public Category(final URI definition, final String value) {
+    public Category(final String definition, final String value) {
         super(definition);
         this.value = value;
     }
@@ -97,8 +98,8 @@ public class Category extends AbstractDataComponentType implements AbstractCateg
             if (cat.getConstraint() != null) {
                 this.constraint = new AllowedTokensPropertyType(cat.getConstraint());
             }
-            if (cat.getQuality() != null) {
-                this.quality = new QualityPropertyType(cat.getQuality());
+            if (cat.getQuality() != null && !cat.getQuality().isEmpty()) {
+                this.quality = new QualityPropertyType(cat.getQuality().get(0));
             }
             this.value          = cat.getValue();
             this.referenceFrame = cat.getReferenceFrame();
@@ -123,6 +124,7 @@ public class Category extends AbstractDataComponentType implements AbstractCateg
     /**
      * Gets the value of the constraint property.
      */
+    @Override
     public AllowedTokensPropertyType getConstraint() {
         return constraint;
     }
@@ -138,8 +140,11 @@ public class Category extends AbstractDataComponentType implements AbstractCateg
      * Gets the value of the quality property.
      */
     @Override
-    public QualityPropertyType getQuality() {
-        return quality;
+    public List<QualityPropertyType> getQuality() {
+        if (quality != null) {
+            return Arrays.asList(quality);
+        }
+        return null;
     }
 
     /**
@@ -167,6 +172,7 @@ public class Category extends AbstractDataComponentType implements AbstractCateg
     /**
      * Gets the value of the referenceFrame property.
      */
+    @Override
     public String getReferenceFrame() {
         return referenceFrame;
     }
@@ -181,6 +187,7 @@ public class Category extends AbstractDataComponentType implements AbstractCateg
     /**
      * Gets the value of the axisID property.
      */
+    @Override
     public String getAxisID() {
         return axisID;
     }
@@ -203,12 +210,12 @@ public class Category extends AbstractDataComponentType implements AbstractCateg
         if (object instanceof Category) {
             final Category that = (Category) object;
 
-            return Objects.equals(this.axisID, that.axisID)                 &&
-                   Objects.equals(this.codeSpace, that.codeSpace)           &&
-                   Objects.equals(this.constraint, that.constraint)         &&
-                   Objects.equals(this.quality, that.quality)               &&
-                   Objects.equals(this.referenceFrame, that.referenceFrame) &&
-                   Objects.equals(this.value, that.value);
+            return Utilities.equals(this.axisID, that.axisID)                 &&
+                   Utilities.equals(this.codeSpace, that.codeSpace)           &&
+                   Utilities.equals(this.constraint, that.constraint)         &&
+                   Utilities.equals(this.quality, that.quality)               &&
+                   Utilities.equals(this.referenceFrame, that.referenceFrame) &&
+                   Utilities.equals(this.value, that.value);
         }
         return false;
     }

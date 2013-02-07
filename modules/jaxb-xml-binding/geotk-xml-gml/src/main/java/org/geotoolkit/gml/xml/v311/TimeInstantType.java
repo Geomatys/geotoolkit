@@ -75,6 +75,10 @@ public class TimeInstantType extends AbstractTimeGeometricPrimitiveType implemen
             this.timePosition = new TimePositionType(timePosition.getDate());
         }
     }
+    
+    public TimeInstantType(final String timePosition) {
+        this.timePosition = new TimePositionType(timePosition);
+    }
 
     /**
      * Gets the value of the timePosition property.

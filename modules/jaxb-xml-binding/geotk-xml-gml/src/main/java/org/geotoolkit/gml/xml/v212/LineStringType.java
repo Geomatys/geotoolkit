@@ -24,9 +24,8 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * 
- *         A LineString is defined by two or more coordinate tuples, with 
- *         linear interpolation between them. 
+ * A LineString is defined by two or more coordinate tuples,
+ * with linear interpolation between them. 
  *       
  * 
  * <p>Java class for LineStringType complex type.
@@ -61,23 +60,28 @@ public class LineStringType extends AbstractGeometryType {
     private List<CoordType> coord;
     private CoordinatesType coordinates;
 
+    public LineStringType() {
+        
+    }
+    
+    public LineStringType(final LineStringType that) {
+        super(that);
+        if (that != null) {
+            if (that.coordinates != null) {
+                this.coordinates = new CoordinatesType(that.coordinates);
+            }
+            if (that.coord != null) {
+                this.coord = new ArrayList<CoordType>();
+                for (CoordType co : coord) {
+                    this.coord.add(new CoordType(co));
+                }
+            }
+        }
+    }
+    
     /**
      * Gets the value of the coord property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the coord property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getCoord().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link CoordType }
      * 
@@ -114,4 +118,8 @@ public class LineStringType extends AbstractGeometryType {
         this.coordinates = value;
     }
 
+    @Override
+    public AbstractGeometryType getClone() {
+        return new LineStringType(this);
+    }
 }

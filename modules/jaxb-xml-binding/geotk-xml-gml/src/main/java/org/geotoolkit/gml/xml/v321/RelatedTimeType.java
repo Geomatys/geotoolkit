@@ -63,13 +63,21 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "RelatedTimeType")
-public class RelatedTimeType
-    extends TimePrimitivePropertyType
-{
+public class RelatedTimeType extends TimePrimitivePropertyType {
 
     @XmlAttribute
     private String relativePosition;
 
+    public RelatedTimeType() {
+        
+    }
+    
+    public RelatedTimeType(final RelatedTimeType that) {
+        super(that);
+        if (that != null) {
+            this.relativePosition = that.relativePosition;
+        }
+    }
     /**
      * Gets the value of the relativePosition property.
      * 

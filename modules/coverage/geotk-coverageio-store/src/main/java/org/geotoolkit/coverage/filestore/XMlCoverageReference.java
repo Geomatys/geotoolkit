@@ -18,14 +18,18 @@ package org.geotoolkit.coverage.filestore;
 
 import java.awt.Dimension;
 import java.awt.Image;
-import java.awt.geom.Point2D;
 import java.awt.image.RenderedImage;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.bind.JAXBException;
-import org.geotoolkit.coverage.*;
+import org.geotoolkit.coverage.AbstractCoverageReference;
+import org.geotoolkit.coverage.GridMosaic;
+import org.geotoolkit.coverage.GridSampleDimension;
+import org.geotoolkit.coverage.Pyramid;
+import org.geotoolkit.coverage.PyramidalModel;
+import org.geotoolkit.coverage.PyramidalModelReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
@@ -39,7 +43,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class XMlCoverageReference implements CoverageReference, PyramidalModel{
+public class XMlCoverageReference extends AbstractCoverageReference implements PyramidalModel{
 
     private final XMLCoverageStore store;
     private final Name name;
@@ -98,19 +102,29 @@ public class XMlCoverageReference implements CoverageReference, PyramidalModel{
     }
 
     @Override
+    public void deletePyramid(String pyramidId) throws DataStoreException {
+        throw new DataStoreException("Not supported yet.");
+    }
+    
+    @Override
     public GridMosaic createMosaic(String pyramidId, Dimension gridSize,
     Dimension tilePixelSize, DirectPosition upperleft, double pixelscale) throws DataStoreException {
         final XMLPyramidSet set = getPyramidSet();
-        final XMLPyramid pyramid = set.getPyramid(pyramidId);
+        final XMLPyramid pyramid = (XMLPyramid) set.getPyramid(pyramidId);
         final XMLMosaic mosaic = pyramid.createMosaic(gridSize, tilePixelSize, upperleft, pixelscale);
         save();
         return mosaic;
     }
 
     @Override
+    public void deleteMosaic(String pyramidId, String mosaicId) throws DataStoreException {
+        throw new DataStoreException("Not supported yet.");
+    }
+    
+    @Override
     public void writeTile(String pyramidId, String mosaicId, int col, int row, RenderedImage image) throws DataStoreException {
         final XMLPyramidSet set = getPyramidSet();
-        final XMLPyramid pyramid = set.getPyramid(pyramidId);
+        final XMLPyramid pyramid = (XMLPyramid) set.getPyramid(pyramidId);
         final XMLMosaic mosaic = pyramid.getMosaic(mosaicId);
         mosaic.createTile(col,row,image);
         save();
@@ -132,12 +146,17 @@ public class XMlCoverageReference implements CoverageReference, PyramidalModel{
     @Override
     public void writeTiles(String pyramidId, String mosaicId, RenderedImage image, boolean onlyMissing) throws DataStoreException {
         final XMLPyramidSet set = getPyramidSet();
-        final XMLPyramid pyramid = set.getPyramid(pyramidId);
+        final XMLPyramid pyramid = (XMLPyramid) set.getPyramid(pyramidId);
         final XMLMosaic mosaic = pyramid.getMosaic(mosaicId);
         mosaic.writeTiles(image,onlyMissing);
         save();
     }
 
+    @Override
+    public void deleteTile(String pyramidId, String mosaicId, int col, int row) throws DataStoreException {
+        throw new DataStoreException("Not supported yet.");
+    }
+    
     public Image getLegend() throws DataStoreException {
         return null;
     }
@@ -151,5 +170,7 @@ public class XMlCoverageReference implements CoverageReference, PyramidalModel{
     public void createSampleDimension(List<GridSampleDimension> dimensions, final Map<String, Object> analyse) throws DataStoreException {
         throw new DataStoreException("Writing not supported.");
     }
+
+    
 
 }

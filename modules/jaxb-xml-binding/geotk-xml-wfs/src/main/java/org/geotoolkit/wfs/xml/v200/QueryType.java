@@ -102,6 +102,23 @@ public class QueryType extends AbstractAdhocQueryExpressionType implements Query
             }
         }
     }
+    
+    @Override
+    protected  List<JAXBElement<?>> cloneProjectionClause(final List<JAXBElement<?>> toClone) {
+        final List<JAXBElement<?>> result = new ArrayList<JAXBElement<?>>();
+        for (JAXBElement<?> prjClause : toClone) {
+            final Object value = prjClause.getValue();
+            if (value instanceof PropertyName) {
+                final ObjectFactory factory = new ObjectFactory();
+                final PropertyName pn = new PropertyName((PropertyName)value);
+                result.add(factory.createPropertyName(pn));
+            } else {
+                throw new IllegalArgumentException("Unexpected abstract Projection type:" + value.getClass().getName());
+            }
+        }
+        return result;
+    }
+    
     /**
      * Gets the value of the srsName property.
      *
@@ -123,6 +140,7 @@ public class QueryType extends AbstractAdhocQueryExpressionType implements Query
      *     {@link String }
      *
      */
+    @Override
     public void setSrsName(String value) {
         this.srsName = value;
     }

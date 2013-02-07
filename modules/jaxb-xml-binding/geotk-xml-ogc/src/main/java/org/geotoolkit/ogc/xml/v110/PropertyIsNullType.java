@@ -68,6 +68,12 @@ public class PropertyIsNullType extends ComparisonOpsType implements PropertyIsN
          this.propertyName = prop;
      }
      
+     public PropertyIsNullType(final PropertyIsNullType that) {
+        if (that != null && that.propertyName != null) {
+            this.propertyName = new PropertyNameType(that.propertyName);
+        }
+    }
+
     /**
      * Gets the value of the propertyName property.
      */
@@ -87,23 +93,32 @@ public class PropertyIsNullType extends ComparisonOpsType implements PropertyIsN
         StringBuilder s = new StringBuilder(super.toString());
         if (propertyName != null) {
             s.append("PropertyName= ").append(propertyName.toString()).append('\n');
-        } else s.append(" PropertyName is null");
-        
+        } else { 
+            s.append(" PropertyName is null");
+        }
         return s.toString();
     }
 
     /**
      * implements PropertyIsNull GeoAPI interface
      */
+    @Override
     public Expression getExpression() {
         return propertyName;
     }
 
+    @Override
     public boolean evaluate(final Object object) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public Object accept(final FilterVisitor visitor, final Object extraData) {
         return visitor.visit( this, extraData );
+    }
+
+    @Override
+    public ComparisonOpsType getClone() {
+        return new PropertyIsNullType(this);
     }
 }

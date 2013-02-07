@@ -77,6 +77,16 @@ public class ResourceIdType extends AbstractIdType  implements FeatureId {
         this.rid = rid;
     }
     
+    public ResourceIdType(final ResourceIdType that) {
+        if (that != null) {
+            this.rid         = that.rid;
+            this.previousRid = that.previousRid;
+            this.endDate     = that.endDate;
+            this.startDate   = that.startDate;
+            this.version     = that.version;
+        }
+    }
+    
     /**
      * Gets the value of the rid property.
      * 

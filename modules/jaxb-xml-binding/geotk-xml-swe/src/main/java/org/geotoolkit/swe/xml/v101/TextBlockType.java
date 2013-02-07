@@ -86,6 +86,7 @@ public class TextBlockType extends AbstractEncodingType implements TextBlock {
     /**
      * {@inheritDoc}
      */
+    @Override
     public String getTokenSeparator() {
         return tokenSeparator;
     }
@@ -93,6 +94,7 @@ public class TextBlockType extends AbstractEncodingType implements TextBlock {
     /**
      * {@inheritDoc}
      */
+    @Override
     public String getBlockSeparator() {
         return blockSeparator;
     }
@@ -100,6 +102,7 @@ public class TextBlockType extends AbstractEncodingType implements TextBlock {
     /**
      * {@inheritDoc}
      */
+    @Override
     public String getDecimalSeparator() {
         return decimalSeparator;
     }

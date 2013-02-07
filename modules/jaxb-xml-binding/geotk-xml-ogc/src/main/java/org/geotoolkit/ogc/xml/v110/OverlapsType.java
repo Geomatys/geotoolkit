@@ -48,4 +48,13 @@ public class OverlapsType extends BinarySpatialOpType implements Overlaps {
     public OverlapsType(final PropertyNameType propertyName, final Object geometry) {
         super(propertyName, geometry);
     }
+    
+    public OverlapsType(final OverlapsType that) {
+        super(that);
+    }
+    
+    @Override
+    public SpatialOpsType getClone() {
+        return new OverlapsType(this);
+    }
 }

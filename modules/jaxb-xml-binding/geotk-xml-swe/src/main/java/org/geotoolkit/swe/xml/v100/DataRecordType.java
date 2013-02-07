@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.swe.xml.v100;
 
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -60,7 +59,7 @@ public class DataRecordType extends AbstractDataRecordType implements DataRecord
 
     }
 
-    public DataRecordType(final URI definition, final List<DataComponentPropertyType> field) {
+    public DataRecordType(final String definition, final List<DataComponentPropertyType> field) {
         super(definition);
         this.field = field;
     }
@@ -167,8 +166,9 @@ public class DataRecordType extends AbstractDataRecordType implements DataRecord
     public String toString() {
         StringBuilder sb = new StringBuilder(super.toString()).append('\n');
         if (field != null) {
-            for (DataComponentPropertyType d : field)
+            for (DataComponentPropertyType d : field) {
                 sb.append(d).append('\n');
+            }
         }
         return sb.toString();
     }

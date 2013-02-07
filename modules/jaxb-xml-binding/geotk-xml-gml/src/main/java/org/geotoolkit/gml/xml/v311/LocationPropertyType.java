@@ -29,6 +29,7 @@ import javax.xml.bind.annotation.XmlList;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.gml.xml.LocationProperty;
 import org.geotoolkit.util.Utilities;
 
 
@@ -70,7 +71,7 @@ import org.geotoolkit.util.Utilities;
 @XmlSeeAlso({
     PriorityLocationPropertyType.class
 })
-public class LocationPropertyType {
+public class LocationPropertyType implements LocationProperty {
 
     @XmlElementRef(name = "AbstractGeometry", namespace = "http://www.opengis.net/gml", type = JAXBElement.class)
     protected JAXBElement<? extends AbstractGeometryType> abstractGeometry;
@@ -104,6 +105,13 @@ public class LocationPropertyType {
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     protected String actuate;
 
+    public AbstractGeometryType getAbstractGeometry() {
+        if (abstractGeometry != null) {
+            return this.abstractGeometry.getValue();
+        }
+        return null;
+    }
+    
     /**
      * Gets the value of the abstractGeometry property.
      * 
@@ -138,7 +146,7 @@ public class LocationPropertyType {
      *     {@link JAXBElement }{@code <}{@link MultiSolidType }{@code >}
      *     
      */
-    public JAXBElement<? extends AbstractGeometryType> getAbstractGeometry() {
+    public JAXBElement<? extends AbstractGeometryType> getjbAbstractGeometry() {
         return abstractGeometry;
     }
 
@@ -188,6 +196,7 @@ public class LocationPropertyType {
      *     {@link CodeType }
      *     
      */
+    @Override
     public CodeType getLocationKeyWord() {
         return locationKeyWord;
     }
@@ -231,6 +240,7 @@ public class LocationPropertyType {
     /**
      * Gets the value of the nilReason property.
      */
+    @Override
     public List<String> getNilReason() {
         if (nilReason == null) {
             nilReason = new ArrayList<String>();
@@ -241,20 +251,6 @@ public class LocationPropertyType {
     /**
      * Gets the value of the null property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the null property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getNull().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link String }
      * 
@@ -275,6 +271,7 @@ public class LocationPropertyType {
      *     {@link String }
      *     
      */
+    @Override
     public String getRemoteSchema() {
         return remoteSchema;
     }
@@ -299,6 +296,7 @@ public class LocationPropertyType {
      *     {@link String }
      *     
      */
+    @Override
     public String getType() {
         if (type == null) {
             return "simple";
@@ -327,6 +325,7 @@ public class LocationPropertyType {
      *     {@link String }
      *     
      */
+    @Override
     public String getHref() {
         return href;
     }
@@ -351,6 +350,7 @@ public class LocationPropertyType {
      *     {@link String }
      *     
      */
+    @Override
     public String getRole() {
         return role;
     }
@@ -375,6 +375,7 @@ public class LocationPropertyType {
      *     {@link String }
      *     
      */
+    @Override
     public String getArcrole() {
         return arcrole;
     }
@@ -399,6 +400,7 @@ public class LocationPropertyType {
      *     {@link String }
      *     
      */
+    @Override
     public String getTitle() {
         return title;
     }
@@ -423,6 +425,7 @@ public class LocationPropertyType {
      *     {@link String }
      *     
      */
+    @Override
     public String getShow() {
         return show;
     }
@@ -447,6 +450,7 @@ public class LocationPropertyType {
      *     {@link String }
      *     
      */
+    @Override
     public String getActuate() {
         return actuate;
     }

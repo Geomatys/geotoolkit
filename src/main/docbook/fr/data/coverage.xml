@@ -6,7 +6,7 @@
 ]>
 <section xmlns="http://docbook.org/ns/docbook" version="5.0"
          xmlns:xi    = "http://www.w3.org/2001/XInclude"
-         xmlns:xlink = "http://www.w3.org/1999/xlink">
+         xmlns:xlink = "http://www.w3.org/1999/xlink" id="coverage" xreflabel="coverage" lang="fr">
           
     <title>
         Coverage
@@ -29,8 +29,7 @@
             pas d'interface et fait le lien avec un mode de stockage qui lui est propre. Afin de rendre 
             le modèle plus généraliste et permettre sa réutilisation par d'autre mode de stockage une 
             nouvelle interface CoverageStore est en court d'élaboration dans Geotoolkit-pending. Ce nouveau
-            modèle est expliqué plus en détail 
-            <ulink url="coverage/coveragestore">ici</ulink>.
+            modèle est expliqué plus en détail <xref linkend="coverageReader"/>.
         </para>
     </section>
     
@@ -40,18 +39,14 @@
         </title>
         <para>
             La manipulation d'un coverage ce fait en utilisant :
-
             <itemizedlist>
-                <listitem>
-                    <ulink url="coverage/coveragereader">CoverageReader : pour la lecture</ulink>
-                </listitem>
+                <listitem>CoverageReader : pour la lecture </listitem>
                 <listitem>CoverageWriter : pour l'ecriture </listitem>
             </itemizedlist>
         </para>
     </section>
     
-    <xi:include href="coverage/coveragestore.xml"/>
-    
+    <xi:include href="coverage/coveragestore.xml"/>    
     <xi:include href="coverage/coveragereader.xml"/>
     
 </section>

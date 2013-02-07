@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.swe.xml.v101;
 
-import java.net.URI;
 import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -58,12 +57,8 @@ public class AbstractDataComponentType extends AbstractGMLType implements Abstra
     public AbstractDataComponentType(final AbstractDataComponent component) {
         super(component);
         if (component != null) {
-            if (component.getDefinition() instanceof String) {
-                this.definition = (String)component.getDefinition();
-            } else if (component.getDefinition() instanceof URI) {
-                this.definition = component.getDefinition().toString();
-            }
-            this.fixed  = component.isFixed();
+            this.definition = component.getDefinition();
+            this.fixed      = component.isFixed();
         }
     }
 
@@ -147,11 +142,10 @@ public class AbstractDataComponentType extends AbstractGMLType implements Abstra
     
     @Override
     public String toString() {
-        StringBuilder s = new StringBuilder(super.toString());
-       
-        if (definition != null)
+        final StringBuilder s = new StringBuilder(super.toString());
+        if (definition != null) {
             s.append(" definition = ").append(definition);
-        
+        }
         s.append(" fixed = ").append(fixed).append('\n');
         return s.toString();
     }

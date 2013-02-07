@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.geotoolkit.factory.FactoryFinder;
+import org.opengis.coverage.Coverage;
 
 import org.opengis.feature.type.AssociationDescriptor;
 import org.opengis.feature.type.AssociationType;
@@ -299,7 +300,8 @@ public class AttributeDescriptorBuilder {
 
         final PropertyType at;
         if(Geometry.class.isAssignableFrom(binding) ||
-                org.opengis.geometry.Geometry.class.isAssignableFrom(binding)){
+           org.opengis.geometry.Geometry.class.isAssignableFrom(binding) ||
+           Coverage.class.isAssignableFrom(binding)){
             at = factory.createGeometryType(name, binding, crs, false, false, null, null, null);
         }
 //TODO must check that we can allow collection as simple attribut types

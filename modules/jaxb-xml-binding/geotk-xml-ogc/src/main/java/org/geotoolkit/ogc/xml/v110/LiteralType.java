@@ -28,7 +28,6 @@ import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ogc.xml.XMLLiteral;
 import org.geotoolkit.util.Utilities;
 import org.opengis.filter.expression.ExpressionVisitor;
-import org.opengis.filter.expression.Literal;
 
 
 /**
@@ -83,6 +82,12 @@ public class LiteralType implements XMLLiteral {
         this.content.add(content);
     }
     
+    public LiteralType(final LiteralType that) {
+        if (that != null && that.content != null) {
+            this.content = new ArrayList<Object>(that.content); 
+        }
+    }
+    
     /**
      * build a new Literal with the specified String
      */
@@ -95,6 +100,7 @@ public class LiteralType implements XMLLiteral {
      * Gets the value of the content property.
      * (unmodifiable)
      */
+    @Override
     public List<Object> getContent() {
         if (content == null) {
             content = new ArrayList<Object>();
@@ -105,6 +111,7 @@ public class LiteralType implements XMLLiteral {
     /**
      * Sets the value of the content property.
      */
+    @Override
     public void setContent(final Object content) {
         if (content != null) {
             if (this.content == null) {
@@ -117,6 +124,7 @@ public class LiteralType implements XMLLiteral {
     /**
      * Sets the value of the content property.
      */
+    @Override
     public void setContent(final List<Object> content) {
         this.content = content;
     }
@@ -157,11 +165,11 @@ public class LiteralType implements XMLLiteral {
             literal = content.get(0);
        } 
        
-       if(literal == null || literal.getClass().equals(context))
+       if (literal == null || literal.getClass().equals(context)) {
             return context.cast( literal );
-       else
+       } else {
             return null;
-        
+       }
     }
 
     @Override
@@ -207,6 +215,7 @@ public class LiteralType implements XMLLiteral {
      * @param visitor The visitor which requires access to this filter, the
      *        method must call visitor.visit(this);
      */
+    @Override
     public Object accept(final ExpressionVisitor visitor, final Object extraData) {
     	return visitor.visit(this,extraData);
     }

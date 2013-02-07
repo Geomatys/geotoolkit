@@ -32,13 +32,18 @@ public class SOSMarshallerPool {
     static {
         try {
             instance = new MarshallerPool("org.geotoolkit.sos.xml.v100:" +
-                                        "org.geotoolkit.gml.xml.v311:" +
-                                        "org.geotoolkit.swe.xml.v101:" +
-                                        "org.geotoolkit.sml.xml.v100:" +
-                                        "org.geotoolkit.sml.xml.v101:" +
-                                        "org.geotoolkit.observation.xml.v100:" +
-                                        "org.geotoolkit.sampling.xml.v100:" +
-                                        "org.geotoolkit.internal.jaxb.geometry");
+                                          "org.geotoolkit.sos.xml.v200:" +
+                                          "org.geotoolkit.ogc.xml.v200:" +
+                                          "org.geotoolkit.gml.xml.v311:" +
+                                          "org.geotoolkit.swe.xml.v101:" +
+                                          "org.geotoolkit.swe.xml.v200:" +
+                                          "org.geotoolkit.sml.xml.v100:" +
+                                          "org.geotoolkit.sml.xml.v101:" +
+                                          "org.geotoolkit.observation.xml.v100:" +
+                                          "org.geotoolkit.sampling.xml.v100:" +
+                                          "org.geotoolkit.sampling.xml.v200:" +
+                                          "org.geotoolkit.samplingspatial.xml.v200:" +
+                                          "org.geotoolkit.internal.jaxb.geometry");
         } catch (JAXBException ex) {
             Logger.getLogger(SOSMarshallerPool.class.getName()).log(Level.SEVERE, null, ex);
         }

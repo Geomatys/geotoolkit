@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.gml.xml.FeatureCollection;
 
 
 /**
@@ -54,30 +55,27 @@ import javax.xml.bind.annotation.XmlType;
 @XmlSeeAlso({
     FeatureCollectionType.class
 })
-public abstract class AbstractFeatureCollectionType
-    extends AbstractFeatureType
-{
+public abstract class AbstractFeatureCollectionType extends AbstractFeatureType implements FeatureCollection {
 
     private List<FeaturePropertyType> featureMember;
     private FeatureArrayPropertyType featureMembers;
 
+    public AbstractFeatureCollectionType() {
+
+    }
+    
+    public AbstractFeatureCollectionType(final String id) {
+        super(id, null, null);
+    }
+
+    public AbstractFeatureCollectionType(final String id, final String name, final String description, final List<FeaturePropertyType> featureMember) {
+        super(id, name, description);
+        this.featureMember = featureMember;
+    }
+    
     /**
      * Gets the value of the featureMember property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the featureMember property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getFeatureMember().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link FeaturePropertyType }
      * 
@@ -114,4 +112,61 @@ public abstract class AbstractFeatureCollectionType
         this.featureMembers = value;
     }
 
+    @Override
+    public void computeBounds() {
+        double minx = Double.MAX_VALUE;
+        double miny = Double.MAX_VALUE;
+        double maxx = -Double.MAX_VALUE;
+        double maxy = -Double.MAX_VALUE;
+        
+        for (FeaturePropertyType memberProp : featureMember) {
+            final AbstractFeatureType member = memberProp.getAbstractFeature();
+            if (member != null) {
+                final BoundingShapeType bound = member.getBoundedBy();
+                if (bound != null) {
+                    if (bound.getEnvelope() != null) {
+                        if (bound.getEnvelope().getLowerCorner() != null
+                            && bound.getEnvelope().getLowerCorner().getValue() != null
+                            && bound.getEnvelope().getLowerCorner().getValue().size() > 1 ) {
+                            final List<Double> lower = bound.getEnvelope().getLowerCorner().getValue();
+                            if (lower.get(0) < minx) {
+                                minx = lower.get(0);
+                            }
+                            if (lower.get(1) < miny) {
+                                miny = lower.get(1);
+                            }
+                        }
+                        if (bound.getEnvelope().getUpperCorner() != null
+                            && bound.getEnvelope().getUpperCorner().getValue() != null
+                            && bound.getEnvelope().getUpperCorner().getValue().size() > 1 ) {
+                            final List<Double> upper = bound.getEnvelope().getUpperCorner().getValue();
+                            if (upper.get(0) > maxx) {
+                                maxx = upper.get(0);
+                            }
+                            if (upper.get(1) > maxy) {
+                                maxy = upper.get(1);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        if (minx == Double.MAX_VALUE) {
+            minx = -180.0;
+        }
+        if (miny == Double.MAX_VALUE) {
+            miny = -90.0;
+        }
+        if (maxx == (-Double.MAX_VALUE)) {
+            maxx = 180.0;
+        }
+        if (maxy == (-Double.MAX_VALUE)) {
+            maxy = 90.0;
+        }
+        final EnvelopeType env =  new EnvelopeType(new DirectPositionType(minx, miny), new DirectPositionType(maxx, maxy), "EPSG:4326");
+        env.setSrsDimension(2);
+        env.setAxisLabels("Y X");
+        setBoundedBy(new BoundingShapeType(env));
+    }
 }

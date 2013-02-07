@@ -123,6 +123,26 @@ public class BinarySpatialOpType extends SpatialOpsType {
         }
 
     }
+    
+    public BinarySpatialOpType(final BinarySpatialOpType that) {
+        if (that != null) {
+            if (that.propertyName != null) {
+                final PropertyNameType prop = new PropertyNameType(that.propertyName.getValue());
+                this.propertyName = ogcFactory.createPropertyName(prop);
+            }
+            if (that.envelope != null) {
+                final EnvelopeType env = new EnvelopeType(that.envelope.getValue());
+                this.envelope = gmlFactory.createEnvelope(env);
+            }
+            if (that.abstractGeometry != null) {
+                try {
+                    this.abstractGeometry = getCorrectJaxbElement(that.abstractGeometry.getValue().clone());
+                } catch (CloneNotSupportedException ex) {
+                    throw new IllegalArgumentException("Clone is not supported byt this type:" + that.abstractGeometry.getValue().getClass().getName());
+                }
+            }
+        }
+    }
 
     private JAXBElement<? extends AbstractGeometryType> getCorrectJaxbElement(final Object geometry) {
         if (geometry instanceof PointType) {
@@ -170,10 +190,12 @@ public class BinarySpatialOpType extends SpatialOpsType {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public boolean evaluate(final Object object) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public Object accept(final FilterVisitor visitor, final Object extraData) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
@@ -216,15 +238,15 @@ public class BinarySpatialOpType extends SpatialOpsType {
             boolean pname = false;
             if (this.propertyName != null && that.propertyName != null) {
                 pname = Objects.equals(this.propertyName.getValue(), that.propertyName.getValue());
-            } else if (this.propertyName == null && that.propertyName == null)
+            } else if (this.propertyName == null && that.propertyName == null) {
                 pname = true;
-
+            }
             boolean env = false;
             if (this.envelope != null && that.envelope != null) {
                 env = Objects.equals(this.envelope.getValue(), that.envelope.getValue());
-            } else if (this.envelope == null && that.envelope == null)
+            } else if (this.envelope == null && that.envelope == null) {
                 env = true;
-
+            }
             boolean abgeo = false;
             if (this.abstractGeometry != null && that.abstractGeometry != null) {
                 abgeo = Objects.equals(this.abstractGeometry.getValue(), that.abstractGeometry.getValue());
@@ -251,15 +273,20 @@ public class BinarySpatialOpType extends SpatialOpsType {
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder(super.toString());
-        if (propertyName != null && propertyName.getValue() != null)
+        if (propertyName != null && propertyName.getValue() != null) {
             s.append("PropertyName: ").append(propertyName.getValue().getPropertyName()).append('\n');
-
-        if (envelope != null && envelope.getValue() != null)
+        }
+        if (envelope != null && envelope.getValue() != null) {
             s.append("envelope: ").append(envelope.getValue().toString()).append('\n');
-
-        if (abstractGeometry != null && abstractGeometry.getValue() != null)
+        }
+        if (abstractGeometry != null && abstractGeometry.getValue() != null) {
             s.append("abstract Geometry: ").append(abstractGeometry.getValue().toString()).append('\n');
-
+        }
         return s.toString();
+    }
+
+    @Override
+    public SpatialOpsType getClone() {
+        throw new UnsupportedOperationException("Must be overriden by sub-class");
     }
 }

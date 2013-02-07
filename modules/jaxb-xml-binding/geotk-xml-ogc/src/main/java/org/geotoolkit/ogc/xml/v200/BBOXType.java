@@ -261,4 +261,9 @@ public class BBOXType extends SpatialOpsType {
         hash = 97 * hash + (this.any != null ? this.any.hashCode() : 0);
         return hash;
     }
+
+    @Override
+    public SpatialOpsType getClone() {
+        return new BBOXType(null, any);
+    }
 }

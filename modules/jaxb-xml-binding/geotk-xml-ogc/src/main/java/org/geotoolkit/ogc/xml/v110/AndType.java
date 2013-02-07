@@ -45,4 +45,12 @@ public class AndType extends BinaryLogicOpType implements And {
          
      }
 
+     public AndType(final BinaryLogicOpType that) {
+         super(that);
+     }
+
+     @Override
+     public LogicOpsType getClone() {
+        return new AndType(this);
+     }
 }

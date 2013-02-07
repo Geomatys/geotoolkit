@@ -18,17 +18,16 @@
 package org.geotoolkit.data;
 
 import java.util.List;
-import junit.framework.TestCase;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.feature.FeatureTypeBuilder;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.storage.DataStoreException;
 import org.junit.Test;
+import static org.junit.Assert.*;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.Name;
 import org.opengis.filter.FilterFactory;
-import org.opengis.filter.Id;
 
 /**
  * Generic schema manipulation tests
@@ -37,7 +36,7 @@ import org.opengis.filter.Id;
  * @author Johann Sorel (Geomatys)
  * todo make more generic tests
  */
-public abstract class AbstractModelTests extends TestCase{
+public abstract class AbstractModelTests {
 
     private static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
 
@@ -69,7 +68,7 @@ public abstract class AbstractModelTests extends TestCase{
             final String name = "testname";
             sftb.reset();
             sftb.setName(name);            
-            sftb.add("att_geometry", geomType, DefaultGeographicCRS.WGS84);
+            sftb.add("att_geometry", geomType, CRS.decode("EPSG:4326"));
             sftb.setDefaultGeometry("att_geometry");            
             for(int i=0; i<bindinds.size(); i++){
                 sftb.add("att"+i, bindinds.get(i));

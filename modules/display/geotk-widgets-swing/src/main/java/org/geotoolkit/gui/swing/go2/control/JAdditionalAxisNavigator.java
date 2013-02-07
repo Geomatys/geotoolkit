@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C)2012, Geomatys
+ *    (C)2012 - 2013, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -27,7 +27,6 @@ import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.TreeSet;
 import javax.measure.unit.Unit;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JButton;
@@ -40,6 +39,8 @@ import org.geotoolkit.display.canvas.DefaultCanvasController2D;
 import org.geotoolkit.gui.swing.go2.JMap2D;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.map.ContextListener;
+import org.geotoolkit.map.FeatureMapLayer;
+import org.geotoolkit.map.FeatureMapLayer.DimensionDef;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapItem;
 import org.geotoolkit.map.MapLayer;
@@ -54,6 +55,7 @@ import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.opengis.referencing.operation.TransformException;
 
 /**
+ * Component that allows to browse data on an additional axis.
  *
  * @author Johann Sorel (Geomatys)
  */
@@ -170,6 +172,15 @@ public class JAdditionalAxisNavigator extends JPanel implements ContextListener{
                             if(part.getCoordinateSystem().getDimension() == 1
                                && part.getCoordinateSystem().getAxis(0).getDirection() != AxisDirection.FUTURE){
                                 values.add(part);
+                            }
+                        }
+                    }
+                    // Handle extra dimensions of feature map layer
+                    if (mapLayer instanceof FeatureMapLayer) {
+                        final FeatureMapLayer fml = (FeatureMapLayer)mapLayer;
+                        for (final DimensionDef extraDim : fml.getExtraDimensions()) {
+                            if (extraDim.getCrs() != null) {
+                                values.add(extraDim.getCrs());
                             }
                         }
                     }

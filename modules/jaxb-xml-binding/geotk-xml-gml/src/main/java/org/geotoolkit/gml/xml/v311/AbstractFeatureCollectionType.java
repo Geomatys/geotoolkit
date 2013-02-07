@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.gml.xml.FeatureCollection;
 import org.geotoolkit.util.ComparisonMode;
 
 
@@ -57,7 +58,7 @@ import org.geotoolkit.util.ComparisonMode;
 @XmlSeeAlso({
     FeatureCollectionType.class
 })
-public abstract class AbstractFeatureCollectionType extends AbstractFeatureType {
+public abstract class AbstractFeatureCollectionType extends AbstractFeatureType implements FeatureCollection {
 
     private List<FeaturePropertyType> featureMember;
     private FeatureArrayPropertyType featureMembers;
@@ -136,6 +137,7 @@ public abstract class AbstractFeatureCollectionType extends AbstractFeatureType 
         this.featureMembers = value;
     }
     
+    @Override
     public void computeBounds() {
         double minx = Double.MAX_VALUE;
         double miny = Double.MAX_VALUE;

@@ -51,12 +51,21 @@ import javax.xml.bind.annotation.XmlType;
     TimeNodeType.class,
     TimeEdgeType.class
 })
-public abstract class AbstractTimeTopologyPrimitiveType
-    extends AbstractTimePrimitiveType
-{
+public abstract class AbstractTimeTopologyPrimitiveType extends AbstractTimePrimitiveType {
 
     private ReferenceType complex;
 
+    public AbstractTimeTopologyPrimitiveType() {
+        
+    }
+    
+    public AbstractTimeTopologyPrimitiveType(final AbstractTimeTopologyPrimitiveType that) {
+        super(that);
+        if (that != null) {
+            this.complex = new ReferenceType(that.complex);
+        }
+    }
+    
     /**
      * Gets the value of the complex property.
      * 

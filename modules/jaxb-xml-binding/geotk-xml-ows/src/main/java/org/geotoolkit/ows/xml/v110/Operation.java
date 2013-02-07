@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ows.xml.AbstractOperation;
+import org.geotoolkit.ows.xml.Range;
 
 
 /**
@@ -150,8 +151,9 @@ public class Operation implements AbstractOperation {
             return null;
         } else {
             for (DomainType domain: parameter) {
-                if (domain.getName().equals(name))
+                if (domain.getName().equals(name)) {
                     return domain;
+                }
             }
             return null;
         }
@@ -166,8 +168,9 @@ public class Operation implements AbstractOperation {
             return null;
         } else {
             for (DomainType domain: parameter) {
-                if (domain.getName().equalsIgnoreCase(name))
+                if (domain.getName().equalsIgnoreCase(name)) {
                     return domain;
+                }
             }
             return null;
         }
@@ -176,6 +179,7 @@ public class Operation implements AbstractOperation {
     /**
      * Update the specified parameter with the list of values.
      */
+    @Override
     public void updateParameter(final String parameterName, final Collection<String> values) {
         for (DomainType dom: parameter) {
             if (dom.getName().equals(parameterName)) {
@@ -187,11 +191,11 @@ public class Operation implements AbstractOperation {
     /**
      * Update the specified parameter with the specified range.
      */
-    public void updateParameter(final String parameterName, final RangeType range) {
+    @Override
+    public void updateParameter(final String parameterName, final Range range) {
         for (DomainType dom: parameter) {
             if (dom.getName().equals(parameterName)) {
-                AllowedValues av = dom.getAllowedValues();
-                dom.setAllowedValues(new AllowedValues(range)); 
+                dom.setAllowedValues(new AllowedValues(new RangeType(range))); 
             }
         }
     }
@@ -199,6 +203,7 @@ public class Operation implements AbstractOperation {
     /**
      * Gets the value of the constraint property.
      */
+    @Override
     public List<DomainType> getConstraint() {
         if (constraint == null) {
             constraint = new ArrayList<DomainType>();
@@ -210,8 +215,9 @@ public class Operation implements AbstractOperation {
     public DomainType getConstraint(final String name) {
         if (constraint != null) {
             for (DomainType d : constraint) {
-                if (d.getName().equals(name))
+                if (d.getName().equals(name)) {
                     return d;
+                }
             }
         }
         return null;
@@ -222,8 +228,9 @@ public class Operation implements AbstractOperation {
     public DomainType getConstraintIgnoreCase(final String name) {
         if (constraint != null) {
             for (DomainType d : constraint) {
-                if (d.getName().equalsIgnoreCase(name))
+                if (d.getName().equalsIgnoreCase(name)) {
                     return d;
+                }
             }
         }
         return null;

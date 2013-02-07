@@ -123,6 +123,18 @@ public class BlockEncodingPropertyType implements BlockEncodingProperty, Abstrac
             }
         }
     }
+    
+    public BlockEncodingPropertyType(final AbstractEncodingType enc) {
+        if (enc instanceof BinaryBlock) {
+            this.binaryBlock = (BinaryBlock) enc;
+        } else if (enc instanceof StandardFormat) {
+            this.standardFormat = (StandardFormat) enc;
+        } else if (enc instanceof TextBlock) {
+            this.textBlock = (TextBlock) enc;
+        } else if (enc instanceof XMLBlockType) {
+            this.xmlBlock = (XMLBlockType) enc;
+        }
+    }
 
     public BlockEncodingPropertyType(final AbstractEncodingProperty be) {
         if (be != null) {
@@ -146,18 +158,21 @@ public class BlockEncodingPropertyType implements BlockEncodingProperty, Abstrac
         }
     }
 
+    @Override
     public AbstractEncodingType getEncoding() {
-        if (standardFormat != null)
+        if (standardFormat != null) {
             return standardFormat;
-        else if (binaryBlock != null)
+        } else if (binaryBlock != null) {
             return binaryBlock;
-        else if (textBlock != null)
+        } else if (textBlock != null) {
             return textBlock;
-        else if (xmlBlock != null)
+        } else if (xmlBlock != null) {
             return xmlBlock;
+        }
         return null;
     }
 
+    @Override
     public void setToHref(){
         if (getEncoding() != null) {
             this.href = getEncoding().getId();
@@ -176,6 +191,7 @@ public class BlockEncodingPropertyType implements BlockEncodingProperty, Abstrac
     /**
      * Gets the value of the standardFormat property.
      */
+    @Override
     public StandardFormat getStandardFormat() {
         return standardFormat;
     }
@@ -190,6 +206,7 @@ public class BlockEncodingPropertyType implements BlockEncodingProperty, Abstrac
     /**
      * Gets the value of the binaryBlock property.
      */
+    @Override
     public BinaryBlock getBinaryBlock() {
         return binaryBlock;
     }
@@ -204,6 +221,7 @@ public class BlockEncodingPropertyType implements BlockEncodingProperty, Abstrac
     /**
      * Gets the value of the textBlock property.
      */
+    @Override
     public TextBlock getTextBlock() {
         return textBlock;
     }
@@ -218,6 +236,7 @@ public class BlockEncodingPropertyType implements BlockEncodingProperty, Abstrac
     /**
      * Gets the value of the xmlBlock property.
      */
+    @Override
     public XMLBlockType getXMLBlock() {
         return xmlBlock;
     }
@@ -232,6 +251,7 @@ public class BlockEncodingPropertyType implements BlockEncodingProperty, Abstrac
     /**
      * Gets the value of the remoteSchema property.
      */
+    @Override
     public String getRemoteSchema() {
         return remoteSchema;
     }
@@ -241,6 +261,7 @@ public class BlockEncodingPropertyType implements BlockEncodingProperty, Abstrac
      * 
      * @param value
      */
+    @Override
     public void setRemoteSchema(final String value) {
         this.remoteSchema = value;
     }
@@ -248,6 +269,7 @@ public class BlockEncodingPropertyType implements BlockEncodingProperty, Abstrac
     /**
      * Gets the value of the type property.
      */
+    @Override
     public String getType() {
         return type;
     }
@@ -255,6 +277,7 @@ public class BlockEncodingPropertyType implements BlockEncodingProperty, Abstrac
     /**
      * Sets the value of the type property.
      */
+    @Override
     public void setType(final String value) {
         this.type = value;
     }
@@ -262,6 +285,7 @@ public class BlockEncodingPropertyType implements BlockEncodingProperty, Abstrac
     /**
      * Gets the value of the href property.
      */
+    @Override
     public String getHref() {
         return href;
     }
@@ -269,6 +293,7 @@ public class BlockEncodingPropertyType implements BlockEncodingProperty, Abstrac
     /**
      * Sets the value of the href property.
      */
+    @Override
     public void setHref(final String value) {
         this.href = value;
     }
@@ -277,6 +302,7 @@ public class BlockEncodingPropertyType implements BlockEncodingProperty, Abstrac
      * Gets the value of the role property.
      * 
      */
+    @Override
     public String getRole() {
         return role;
     }
@@ -284,6 +310,7 @@ public class BlockEncodingPropertyType implements BlockEncodingProperty, Abstrac
     /**
      * Sets the value of the role property.
      */
+    @Override
     public void setRole(final String value) {
         this.role = value;
     }
@@ -291,6 +318,7 @@ public class BlockEncodingPropertyType implements BlockEncodingProperty, Abstrac
     /**
      * Gets the value of the arcrole property.
      */
+    @Override
     public String getArcrole() {
         return arcrole;
     }
@@ -298,6 +326,7 @@ public class BlockEncodingPropertyType implements BlockEncodingProperty, Abstrac
     /**
      * Sets the value of the arcrole property.
      */
+    @Override
     public void setArcrole(final String value) {
         this.arcrole = value;
     }
@@ -305,6 +334,7 @@ public class BlockEncodingPropertyType implements BlockEncodingProperty, Abstrac
     /**
      * Gets the value of the title property.
      */
+    @Override
     public String getTitle() {
         return title;
     }
@@ -312,6 +342,7 @@ public class BlockEncodingPropertyType implements BlockEncodingProperty, Abstrac
     /**
      * Sets the value of the title property.
      */
+    @Override
     public void setTitle(final String value) {
         this.title = value;
     }
@@ -319,6 +350,7 @@ public class BlockEncodingPropertyType implements BlockEncodingProperty, Abstrac
     /**
      * Gets the value of the show property.
      */
+    @Override
     public String getShow() {
         return show;
     }
@@ -326,6 +358,7 @@ public class BlockEncodingPropertyType implements BlockEncodingProperty, Abstrac
     /**
      * Sets the value of the show property.
      */
+    @Override
     public void setShow(final String value) {
         this.show = value;
     }
@@ -333,6 +366,7 @@ public class BlockEncodingPropertyType implements BlockEncodingProperty, Abstrac
     /**
      * Gets the value of the actuate property.
      */
+    @Override
     public String getActuate() {
         return actuate;
     }
@@ -340,6 +374,7 @@ public class BlockEncodingPropertyType implements BlockEncodingProperty, Abstrac
     /**
      * Sets the value of the actuate property.
      */
+    @Override
     public void setActuate(final String value) {
         this.actuate = value;
     }

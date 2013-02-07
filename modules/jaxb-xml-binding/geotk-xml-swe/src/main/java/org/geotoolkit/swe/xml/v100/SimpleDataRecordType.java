@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.swe.xml.AnyScalar;
 import org.geotoolkit.swe.xml.SimpleDataRecord;
@@ -53,13 +54,21 @@ import org.geotoolkit.util.ComparisonMode;
 })
 public class SimpleDataRecordType extends AbstractDataRecordType implements SimpleDataRecord {
 
+    /**
+     * The datablock identifier containing this data record. still needed ?
+     */
+    @XmlTransient
+    private String blockId;
+    
     private List<AnyScalarPropertyType> field;
 
     public SimpleDataRecordType() {
 
     }
 
-    public SimpleDataRecordType(final List<AnyScalarPropertyType> field) {
+    public SimpleDataRecordType(final String blockId, final String id, final String definition, final boolean fixed, final List<AnyScalarPropertyType> field) {
+        super(id, definition, fixed);
+        this.blockId = blockId;        
         this.field = field;
     }
 

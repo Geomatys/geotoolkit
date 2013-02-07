@@ -21,7 +21,6 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElementRef;
-import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterVisitor;
@@ -89,6 +88,22 @@ public class UnaryLogicOpType extends LogicOpsType {
          // spatial operator    
          } else if (obj instanceof SpatialOpsType) {
              this.spatialOps = FilterType.createSpatialOps((SpatialOpsType) obj);
+
+         // clone    
+         } else if (obj instanceof UnaryLogicOpType) {
+             final UnaryLogicOpType that = (UnaryLogicOpType) obj;
+             if (that.comparisonOps != null) {
+                 final ComparisonOpsType comp = that.comparisonOps.getValue().getClone();
+                 this.comparisonOps = FilterType.createComparisonOps(comp);
+             }
+             if (that.logicOps != null) {
+                 final LogicOpsType log = that.logicOps.getValue().getClone();
+                 this.logicOps = FilterType.createLogicOps(log);
+            }
+            if (that.spatialOps != null) {
+                final SpatialOpsType spa = that.spatialOps.getValue().getClone();
+                this.spatialOps = FilterType.createSpatialOps(spa);
+            }
 
          } else {
              throw new IllegalArgumentException("This kind of object is not allowed:" + obj.getClass().getSimpleName());
@@ -166,14 +181,15 @@ public class UnaryLogicOpType extends LogicOpsType {
      * @return 
      */
     public Filter getFilter() {
-        if (comparisonOps != null)
+        if (comparisonOps != null) {
             return comparisonOps.getValue();
-        else if (logicOps != null)
+        } else if (logicOps != null) {
             return logicOps.getValue();
-        else if (spatialOps != null)
+        } else if (spatialOps != null) {
             return spatialOps.getValue();
-        else return null;
-        
+        } else {
+            return null;
+        }
     }
 
      /**
@@ -190,14 +206,16 @@ public class UnaryLogicOpType extends LogicOpsType {
             boolean comp = false;
             if (this.comparisonOps != null && that.comparisonOps != null) {
                 comp = Objects.equals(this.comparisonOps.getValue(), that.comparisonOps.getValue());
-            } else if (this.comparisonOps == null && that.comparisonOps == null)
+            } else if (this.comparisonOps == null && that.comparisonOps == null) {
                 comp = true;
+            }
 
             boolean log = false;
             if (this.logicOps != null && that.logicOps != null) {
                 log = Objects.equals(this.logicOps.getValue(), that.logicOps.getValue());
-            } else if (this.logicOps == null && that.logicOps == null)
+            } else if (this.logicOps == null && that.logicOps == null) {
                 log = true;
+            }
 
             boolean spa = false;
             if (this.spatialOps != null && that.spatialOps != null) {
@@ -237,11 +255,18 @@ public class UnaryLogicOpType extends LogicOpsType {
         return s.toString();
     }
 
+    @Override
     public boolean evaluate(final Object object) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public Object accept(final FilterVisitor visitor, final Object extraData) {
         throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public LogicOpsType getClone() {
+        throw new UnsupportedOperationException("Must be overriden by sub-class");
     }
 }

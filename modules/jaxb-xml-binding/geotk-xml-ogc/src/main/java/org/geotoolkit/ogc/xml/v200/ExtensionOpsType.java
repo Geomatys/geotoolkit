@@ -44,4 +44,5 @@ import javax.xml.bind.annotation.XmlType;
 public abstract class ExtensionOpsType {
 
 
+    public abstract ExtensionOpsType getClone();
 }

@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this template, choose Tools | Templates
+and open the template in the editor.
+-->
+
+<!DOCTYPE book [
+  <!ENTITY % book.entities SYSTEM "../../book.entities">
+  %book.entities;
+]>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0"
+         xmlns:xi    = "http://www.w3.org/2001/XInclude"
+         xmlns:xlink = "http://www.w3.org/1999/xlink"
+         id="client" xreflabel="client" lang="en">
+    
+    <title>
+        Client
+    </title>
+    
+    <para>
+        GeotoolKit contains a large number of modules to connect to different remote services.
+    </para>
+    <para>
+        Each client work with class implement 
+        <emphasis>Server</emphasis>. We will find in this class :
+        <itemizedlist>
+            <listitem>A  
+                <emphasis>ClientSecurity</emphasis> object : manage l'authentication, tokens or encryption
+            </listitem>
+            <listitem>A 
+                <emphasis>getCapabilities</emphasis> method : most of services are providing by OGC, an object 
+                <emphasis>capability</emphasis> is often caching
+            </listitem>
+            <listitem>Various methods 
+                <emphasis>create</emphasis> : to create each request type 
+            </listitem>
+        </itemizedlist>
+    </para>
+    
+    <section>
+        <title>
+            Security
+        </title>
+        <para>
+            Service can provide secured or encrypted. An object must be a ClientSecurity implementation to be in charge of this task.
+        </para>
+        <para>
+	    Geotoolkit has currently three methods to secure its clients :
+            <itemizedlist>
+                <listitem>BasicAuthenticationSecurity : for connection with login and password.</listitem>
+                <listitem>RefererClientSecurity : specify a referer during request</listitem>
+                <listitem>TokenClientSecurity :  only used by IGN, manage tokens</listitem>
+            </itemizedlist>
+        </para>
+        <para>
+            Safety can be combined with :
+        </para>
+        <programlisting>
+            ClientSecurityStack.wrap(security1, security2, ...);
+        </programlisting>
+    </section>
+    
+    <section>
+        <title>Clients</title>
+        <para>
+            <simplelist>
+                <member>CSW</member>
+
+                <member>OSM</member>
+
+                <member>OSM-TMS</member>
+
+                <member>SOS</member>
+
+                <member>WCS</member>
+
+                <member>WFS</member>
+
+                <member>WMS</member>
+
+                <member>WMS-C</member>
+
+                <member>ncWMS</member>
+
+                <member>WMTS</member>
+
+                <member>WPS</member>
+
+                <member>IGN RM</member>
+
+                <member>Google Static Maps</member>            
+            </simplelist>
+        </para>
+    </section>
+    
+    <xi:include href="client/serverstore.xml"/>
+    
+    <xi:include href="client/csw.xml"/>
+    
+    <xi:include href="client/ignrm.xml"/>
+    
+    <xi:include href="client/osmtms.xml"/>
+    
+    <xi:include href="client/sos.xml"/>
+    
+    <xi:include href="client/wms.xml"/>
+    
+</section>

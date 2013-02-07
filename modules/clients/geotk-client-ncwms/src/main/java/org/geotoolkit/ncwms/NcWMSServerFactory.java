@@ -107,15 +107,7 @@ public class NcWMSServerFactory extends AbstractServerFactory implements Coverag
     @Override
     public NcWebMapServer open(ParameterValueGroup params) throws DataStoreException {
         checkCanProcessWithError(params);
-        final URL url = (URL)Parameters.getOrCreate(URL, params).getValue();
-        final WMSVersion version = (WMSVersion)Parameters.getOrCreate(VERSION, params).getValue();
-        ClientSecurity security = null;
-        try{
-            final ParameterValue val = params.parameter(SECURITY.getName().getCode());
-            security = (ClientSecurity) val.getValue();
-        }catch(ParameterNotFoundException ex){}
-
-        return new NcWebMapServer(url,security,version,null);
+        return new NcWebMapServer(params);
     }
 
     @Override

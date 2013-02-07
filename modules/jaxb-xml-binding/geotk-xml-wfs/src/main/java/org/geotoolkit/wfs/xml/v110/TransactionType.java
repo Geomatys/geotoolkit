@@ -169,6 +169,7 @@ public class TransactionType extends BaseRequestType implements Transaction {
         return this.insertOrUpdateOrDelete;
     }
     
+    @Override
     public List<Object> getTransactionAction() {
         return getInsertOrUpdateOrDelete();
     }

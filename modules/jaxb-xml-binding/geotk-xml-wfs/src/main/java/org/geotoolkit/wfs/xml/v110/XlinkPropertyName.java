@@ -60,6 +60,18 @@ public class XlinkPropertyName {
     @XmlSchemaType(name = "positiveInteger")
     private BigInteger traverseXlinkExpiry;
 
+    public XlinkPropertyName() {
+        
+    }
+    
+    public XlinkPropertyName(final XlinkPropertyName that) {
+        if (that != null) {
+            this.value               = that.value;
+            this.traverseXlinkDepth  = that.traverseXlinkDepth;
+            this.traverseXlinkExpiry = that.traverseXlinkExpiry;
+        }
+    }
+    
     /**
      * Gets the value of the value property.
      * 

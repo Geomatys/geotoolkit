@@ -17,9 +17,9 @@
 
 package org.geotoolkit.data;
 
-import junit.framework.TestCase;
 import org.geotoolkit.factory.FactoryFinder;
 import org.junit.Test;
+import static org.junit.Assert.*;
 import org.opengis.filter.FilterFactory;
 
 /**
@@ -29,7 +29,7 @@ import org.opengis.filter.FilterFactory;
  * @author Johann Sorel (Geomatys)
  * todo make generic tests
  */
-public abstract class AbstractWritingTests extends TestCase{
+public abstract class AbstractWritingTests {
 
     private static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
 

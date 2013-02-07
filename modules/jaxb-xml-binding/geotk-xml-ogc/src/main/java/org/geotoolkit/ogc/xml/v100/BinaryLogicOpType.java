@@ -61,6 +61,48 @@ public class BinaryLogicOpType extends LogicOpsType {
     })
     private List<JAXBElement<?>> comparisonOpsOrSpatialOpsOrLogicOps;
 
+    public BinaryLogicOpType() {
+        
+    }
+    
+    /**
+      * Build a new Binary logic operator 
+      */
+    public BinaryLogicOpType(final BinaryLogicOpType that) {
+         if (that != null && that.comparisonOpsOrSpatialOpsOrLogicOps != null) {
+            this.comparisonOpsOrSpatialOpsOrLogicOps = new ArrayList<JAXBElement<?>>();
+            final ObjectFactory factory = new ObjectFactory();
+            for (JAXBElement<?> jb: that.comparisonOpsOrSpatialOpsOrLogicOps) {
+
+                final Object obj = jb.getValue();
+
+                // comparison operator
+                if (obj instanceof ComparisonOpsType)  {
+                    final ComparisonOpsType co = ((ComparisonOpsType)obj).getClone();
+                    this.comparisonOpsOrSpatialOpsOrLogicOps.add(FilterType.createComparisonOps(co));
+
+                // logical operator    
+                } else if (obj instanceof LogicOpsType) {
+                    final LogicOpsType lo = ((LogicOpsType)obj).getClone();
+                    this.comparisonOpsOrSpatialOpsOrLogicOps.add(FilterType.createLogicOps(lo));
+
+                // spatial operator    
+                } else if (obj instanceof SpatialOpsType) {
+                    final SpatialOpsType so = ((SpatialOpsType)obj).getClone();
+                    this.comparisonOpsOrSpatialOpsOrLogicOps.add(FilterType.createSpatialOps(so));
+                    
+                // function   
+                } else if (obj instanceof FunctionType) {
+                    final FunctionType fu = new FunctionType((FunctionType)obj);
+                    this.comparisonOpsOrSpatialOpsOrLogicOps.add(factory.createFunction(fu));
+
+                } else {
+                    throw new IllegalArgumentException("This kind of object is not allowed:" + obj.getClass().getSimpleName());
+                }
+            }
+         }
+     }
+     
     /**
      * Gets the value of the comparisonOpsOrSpatialOpsOrLogicOps property.
      * 
@@ -70,6 +112,11 @@ public class BinaryLogicOpType extends LogicOpsType {
             comparisonOpsOrSpatialOpsOrLogicOps = new ArrayList<JAXBElement<?>>();
         }
         return this.comparisonOpsOrSpatialOpsOrLogicOps;
+    }
+
+    @Override
+    public LogicOpsType getClone() {
+        throw new UnsupportedOperationException("Must be overrident by sub-cless");
     }
 
 }

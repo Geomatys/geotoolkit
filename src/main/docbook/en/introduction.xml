@@ -8,6 +8,9 @@
 
 <title>Introduction</title>
   <para>
-    TODO
+Geotookit is a library dedicated to mapping, however this area overlaps with many other areas. Included are the manipulating images, metadata geometries, the reverse engineering Mechanisms of databases, secure connection or user interfaces.
+  </para>
+  <para>
+Today the project has more than one hundred modules.
   </para>
 </chapter>

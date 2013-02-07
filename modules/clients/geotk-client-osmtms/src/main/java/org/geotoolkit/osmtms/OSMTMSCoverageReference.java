@@ -36,7 +36,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class OSMTMSCoverageReference implements CoverageReference, PyramidalModel{
+public class OSMTMSCoverageReference extends AbstractCoverageReference implements PyramidalModel{
 
     private final OSMTileMapServer server;
     private final Name name;
@@ -87,9 +87,19 @@ public class OSMTMSCoverageReference implements CoverageReference, PyramidalMode
     public Pyramid createPyramid(CoordinateReferenceSystem crs) throws DataStoreException {
         throw new DataStoreException("Model is not writeable.");
     }
+    
+    @Override
+    public void deletePyramid(String pyramidId) throws DataStoreException {
+        throw new DataStoreException("Model is not writeable.");
+    }
 
     @Override
     public GridMosaic createMosaic(String pyramidId, Dimension gridSize, Dimension tilePixelSize, DirectPosition upperleft, double pixelscale) throws DataStoreException {
+        throw new DataStoreException("Model is not writeable.");
+    }
+    
+    @Override
+    public void deleteMosaic(String pyramidId, String mosaicId) throws DataStoreException {
         throw new DataStoreException("Model is not writeable.");
     }
 
@@ -104,13 +114,18 @@ public class OSMTMSCoverageReference implements CoverageReference, PyramidalMode
     }
 
     @Override
+    public void deleteTile(String pyramidId, String mosaicId, int col, int row) throws DataStoreException {
+        throw new DataStoreException("Model is not writeable.");
+    }
+    
+    @Override
     public Image getLegend() throws DataStoreException {
         return null;
     }
 
     @Override
     public List<GridSampleDimension> getSampleDimensions(int index) throws DataStoreException {
-        throw new DataStoreException("Not supported yet.");
+        return null;
     }
 
     @Override

@@ -6,7 +6,8 @@
 ]>
 <section xmlns="http://docbook.org/ns/docbook" version="5.0"
          xmlns:xi    = "http://www.w3.org/2001/XInclude"
-         xmlns:xlink = "http://www.w3.org/1999/xlink">
+         xmlns:xlink = "http://www.w3.org/1999/xlink"
+        id="vectoriel" xreflabel="vectoriel" lang="fr">
           
     <title>
         Vectoriel
@@ -36,10 +37,8 @@
             </emphasis>
             <itemizedlist>
                 <listitem>
-                    Consulter la page : 
-                    <ulink
-                        url="vectoriel/geometry-jts.xml">geometry-jts
-                    </ulink>
+                    Consulter la page :
+                    <xref linkend="geometry-jts" />
                 </listitem>
             </itemizedlist>
             <emphasis>
@@ -48,9 +47,7 @@
             <itemizedlist>
                 <listitem>
                     Consulter la page : 
-                    <ulink
-                        url="vectoriel/featuretype.xml">featuretype
-                    </ulink>
+                    <xref linkend="featuretype" />
                 </listitem>
             </itemizedlist>
             <emphasis>
@@ -59,9 +56,7 @@
             <itemizedlist>
                 <listitem>
                     Consulter la page : 
-                    <ulink
-                        url="vectoriel/feature.xml">feature
-                    </ulink>
+                    <xref linkend="feature" />
                 </listitem>
             </itemizedlist>
             <emphasis>
@@ -70,9 +65,7 @@
             <itemizedlist>
                 <listitem>
                     Consulter la page :  
-                    <ulink
-                        url="vectoriel/datastore.xml">datastore
-                    </ulink>
+                    <xref linkend="datastore" />
                 </listitem>
             </itemizedlist>
         </para>
@@ -87,16 +80,12 @@
             Afin de requêter plus efficacement les données, on utilise des filtres et des expressions.
 
             Consulter la page : 
-            <ulink
-                url="vectoriel/filter-expression.xml">filter-expression
-            </ulink>
+            <xref linkend="filter-expression" />
             <emphasis>
                 Les filtres peuvent aussi être exprimés textuellement :
             </emphasis>
             Consulter la page : 
-            <ulink
-                url="vectoriel/filter-cql.xml"> filter-cql
-            </ulink>
+            <xref linkend="filter-cql" />
         </para>
     </section>
             
@@ -108,14 +97,10 @@
         <para>
             <simplelist type='vert'>
                 <member>
-                    <ulink
-                        url="vectoriel/shapefile.xml"> Shapefile
-                    </ulink>
+                    <xref linkend="shapefile" />
                 </member>
                 <member>
-                    <ulink
-                        url="vectoriel/gpx.xml"> GPX
-                    </ulink>
+                    <xref linkend="gpx" />
                 </member>
                 <member>
                     CSV
@@ -139,9 +124,7 @@
                     OSM
                 </member>
                 <member>
-                    <ulink
-                        url="vectoriel/postgis.xml"> PostGIS
-                    </ulink>
+                    <xref linkend="postgis" />
                 </member>                        
             </simplelist>
         </para>

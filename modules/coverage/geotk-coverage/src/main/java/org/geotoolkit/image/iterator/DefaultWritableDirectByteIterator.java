@@ -81,7 +81,8 @@ class DefaultWritableDirectByteIterator extends DefaultDirectByteIterator{
     public DefaultWritableDirectByteIterator(final Raster raster, final WritableRaster writableRaster, final Rectangle subArea) {
         super(raster, subArea);
         checkRasters(raster, writableRaster, subArea);
-        this.currentWritableRaster = writableRaster;
+        this.currentWritableRaster    = writableRaster;
+        this.currentWritableDataArray = ((DataBufferByte) writableRaster.getDataBuffer()).getData();
     }
 
     /**

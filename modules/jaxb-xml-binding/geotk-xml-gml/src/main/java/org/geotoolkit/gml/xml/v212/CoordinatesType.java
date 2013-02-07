@@ -66,6 +66,19 @@ public class CoordinatesType {
     @XmlAttribute
     private String ts;
 
+    public CoordinatesType() {
+        
+    }
+    
+    public CoordinatesType(final CoordinatesType that) {
+        if (that != null) {
+            this.cs      = that.cs;
+            this.decimal = that.decimal;
+            this.ts      = that.cs;
+            this.value   = that.value;
+        }
+    }
+    
     /**
      * Gets the value of the value property.
      * 

@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.Reference;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -79,10 +80,36 @@ public class ReferenceType implements Reference {
     @XmlAttribute
     private java.lang.Boolean owns;
 
+    public ReferenceType() {
+        
+    }
+    
+    public ReferenceType(final String href) {
+        this.href = href;
+    }
+    
+    public ReferenceType(final Reference that) {
+        if (that != null) {
+            this.actuate      = that.getActuate();
+            this.arcrole      = that.getArcrole();
+            this.href         = that.getHref();
+            if (that.getNilReason() != null) {
+                this.nilReason    = new ArrayList<String>(that.getNilReason());
+            }
+            this.owns         = that.getOwns();
+            this.remoteSchema = that.getRemoteSchema();
+            this.role         = that.getRole();
+            this.show         = that.getShow();
+            this.title        = that.getTitle();
+            this.type         = that.getType();
+        }
+    }
+    
     /**
      * Gets the value of the nilReason property.
      * 
      */
+    @Override
     public List<String> getNilReason() {
         if (nilReason == null) {
             nilReason = new ArrayList<String>();
@@ -98,6 +125,7 @@ public class ReferenceType implements Reference {
      *     {@link String }
      *     
      */
+    @Override
     public String getRemoteSchema() {
         return remoteSchema;
     }
@@ -122,6 +150,7 @@ public class ReferenceType implements Reference {
      *     {@link String }
      *     
      */
+    @Override
     public String getType() {
         if (type == null) {
             return "simple";
@@ -150,6 +179,7 @@ public class ReferenceType implements Reference {
      *     {@link String }
      *     
      */
+    @Override
     public String getHref() {
         return href;
     }
@@ -174,6 +204,7 @@ public class ReferenceType implements Reference {
      *     {@link String }
      *     
      */
+    @Override
     public String getRole() {
         return role;
     }
@@ -198,6 +229,7 @@ public class ReferenceType implements Reference {
      *     {@link String }
      *     
      */
+    @Override
     public String getArcrole() {
         return arcrole;
     }
@@ -222,6 +254,7 @@ public class ReferenceType implements Reference {
      *     {@link String }
      *     
      */
+    @Override
     public String getTitle() {
         return title;
     }
@@ -246,6 +279,7 @@ public class ReferenceType implements Reference {
      *     {@link String }
      *     
      */
+    @Override
     public String getShow() {
         return show;
     }
@@ -270,6 +304,7 @@ public class ReferenceType implements Reference {
      *     {@link String }
      *     
      */
+    @Override
     public String getActuate() {
         return actuate;
     }
@@ -294,6 +329,7 @@ public class ReferenceType implements Reference {
      *     {@link java.lang.Boolean }
      *     
      */
+    @Override
     public java.lang.Boolean getOwns() {
         if (owns == null) {
             return false;
@@ -314,4 +350,77 @@ public class ReferenceType implements Reference {
         this.owns = value;
     }
 
+    /**
+     * Verify if this entry is identical to specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof ReferenceType) {
+            final ReferenceType that = (ReferenceType) object;
+
+            return Utilities.equals(this.actuate,            that.actuate)          &&
+                   Utilities.equals(this.arcrole,            that.arcrole)          &&
+                   Utilities.equals(this.type,               that.type)             &&
+                   Utilities.equals(this.href,               that.href)             &&
+                   Utilities.equals(this.nilReason,          that.nilReason)        &&
+                   Utilities.equals(this.remoteSchema,       that.remoteSchema)     &&
+                   Utilities.equals(this.show,               that.show)             &&
+                   Utilities.equals(this.role,               that.role)             &&
+                   Utilities.equals(this.title,              that.title)            &&
+                   Utilities.equals(this.owns,               that.owns);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 47 * hash + (this.nilReason != null ? this.nilReason.hashCode() : 0);
+        hash = 47 * hash + (this.remoteSchema != null ? this.remoteSchema.hashCode() : 0);
+        hash = 47 * hash + (this.actuate != null ? this.actuate.hashCode() : 0);
+        hash = 47 * hash + (this.arcrole != null ? this.arcrole.hashCode() : 0);
+        hash = 47 * hash + (this.href != null ? this.href.hashCode() : 0);
+        hash = 47 * hash + (this.role != null ? this.role.hashCode() : 0);
+        hash = 47 * hash + (this.show != null ? this.show.hashCode() : 0);
+        hash = 47 * hash + (this.title != null ? this.title.hashCode() : 0);
+        hash = 47 * hash + (this.type != null ? this.type.hashCode() : 0);
+        hash = 47 * hash + (this.owns != null ? this.owns.hashCode() : 0);
+        return hash;
+    }
+
+    /**
+     * Retourne une representation de l'objet.
+     */
+    @Override
+    public String toString() {
+        final StringBuilder s = new StringBuilder("[Reference]\n");
+        if(actuate != null) {
+            s.append("actuate=").append(actuate).append('\n');
+        }
+        if(arcrole != null) {
+            s.append("arcrole=").append(arcrole).append('\n');
+        }
+        if(href != null) {
+            s.append("href=").append(href).append('\n');
+        }
+        if(role != null) {
+            s.append("role=").append(role).append('\n');
+        }
+        if(show != null) {
+            s.append("show=").append(show).append('\n');
+        }
+        if(title != null) {
+            s.append("title=").append(title).append('\n');
+        }
+        if(owns != null) {
+            s.append("owns=").append(owns).append('\n');
+        }
+        if(type != null) {
+            s.append("type=").append(type).append('\n');
+        }
+        return s.toString();
+    }
 }

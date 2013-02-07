@@ -28,7 +28,7 @@ import org.geotoolkit.ows.xml.v110.CapabilitiesBaseType;
 import org.geotoolkit.ows.xml.v110.OperationsMetadata;
 import org.geotoolkit.ows.xml.v110.ServiceIdentification;
 import org.geotoolkit.ows.xml.v110.ServiceProvider;
-import org.geotoolkit.sos.xml.SOSResponse;
+import org.geotoolkit.swes.xml.SOSResponse;
 
 
 /**
@@ -58,7 +58,7 @@ import org.geotoolkit.sos.xml.SOSResponse;
     "contents"
 })
 @XmlRootElement(name="Capabilities")
-public class Capabilities extends CapabilitiesBaseType implements SOSResponse {
+public class Capabilities extends CapabilitiesBaseType implements org.geotoolkit.sos.xml.Capabilities, SOSResponse {
 
     @XmlElement(name = "Filter_Capabilities")
     private FilterCapabilities filterCapabilities;
@@ -88,6 +88,7 @@ public class Capabilities extends CapabilitiesBaseType implements SOSResponse {
      * Return the value of the filterCapabilities property.
      * 
      */
+    @Override
     public FilterCapabilities getFilterCapabilities() {
         return filterCapabilities;
     }
@@ -95,6 +96,7 @@ public class Capabilities extends CapabilitiesBaseType implements SOSResponse {
     /**
      * Return the value of the contents property.
      */
+    @Override
     public Contents getContents() {
         return contents;
     }

@@ -62,9 +62,9 @@ import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
-import org.geotoolkit.data.StorageContentEvent;
-import org.geotoolkit.data.StorageListener;
-import org.geotoolkit.data.StorageManagementEvent;
+import org.geotoolkit.data.FeatureStoreContentEvent;
+import org.geotoolkit.data.FeatureStoreListener;
+import org.geotoolkit.data.FeatureStoreManagementEvent;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.display.exception.PortrayalException;
 import org.geotoolkit.display2d.primitive.GraphicJ2D;
@@ -640,7 +640,7 @@ public class JContextTree extends JScrollPane {
         }
     }
 
-    private class MapItemTreeNode extends DefaultMutableTreeNode implements ItemListener, StorageListener{
+    private class MapItemTreeNode extends DefaultMutableTreeNode implements ItemListener, FeatureStoreListener{
 
         private MapItemTreeNode(final MapItem item){
             super(item);
@@ -649,7 +649,7 @@ public class JContextTree extends JScrollPane {
 
             if(item instanceof FeatureMapLayer){
                 final FeatureMapLayer fml = (FeatureMapLayer) item;
-                fml.getCollection().getSession().addStorageListener(new StorageListener.Weak(this));
+                fml.getCollection().getSession().addStorageListener(new FeatureStoreListener.Weak(this));
             }
 
             resetStructure();
@@ -784,12 +784,12 @@ public class JContextTree extends JScrollPane {
         }
 
         @Override
-        public void structureChanged(StorageManagementEvent event) {
+        public void structureChanged(FeatureStoreManagementEvent event) {
         }
 
         @Override
-        public void contentChanged(StorageContentEvent event) {
-            if(event.getType() == StorageContentEvent.Type.SESSION){
+        public void contentChanged(FeatureStoreContentEvent event) {
+            if(event.getType() == FeatureStoreContentEvent.Type.SESSION){
                 //pending changes, refresh node to add a small * to specify
                 //some changes are made
                 ((DefaultTreeModel)tree.getModel()).nodeChanged(this);

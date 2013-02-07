@@ -43,5 +43,13 @@ public class PropertyIsGreaterThanType extends BinaryComparisonOpType implements
     public PropertyIsGreaterThanType(final LiteralType literal, final String propertyName, final Boolean matchCase) {
         super(literal, propertyName, matchCase);
     }
+    
+    public PropertyIsGreaterThanType(final PropertyIsGreaterThanType that) {
+        super(that);
+    }
 
+    @Override
+    public ComparisonOpsType getClone() {
+        return new PropertyIsGreaterThanType(this);
+    }
 }

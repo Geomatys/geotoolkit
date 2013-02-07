@@ -74,9 +74,14 @@ public class AbstractEncodingType implements AbstractEncoding {
         }
     }
     
+    public AbstractEncodingType(final String id) {
+        this.id = id;
+    }
+    
     /**
      * Gets the value of the id property.
      */
+    @Override
     public String getId() {
         return id;
     }

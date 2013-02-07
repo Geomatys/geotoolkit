@@ -37,6 +37,15 @@ public class TimeMeetsType extends BinaryTemporalOpType implements Meets {
         super(propertyName, temporal);
     }
 
+    public TimeMeetsType(final TimeMeetsType that) {
+        super(that);
+    }
+
+    @Override
+    public TemporalOpsType getClone() {
+        return new TimeMeetsType(this);
+    }
+    
     @Override
     public boolean evaluate(Object o) {
         throw new UnsupportedOperationException("Not supported yet.");

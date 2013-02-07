@@ -26,7 +26,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import org.geotoolkit.sos.xml.v100.EventTime;
 import org.geotoolkit.sos.xml.v100.GetFeatureOfInterest;
-import org.geotoolkit.sos.xml.v100.GetFeatureOfInterest.Location;
+import org.opengis.filter.Filter;
 
 
 /**
@@ -45,7 +45,7 @@ public abstract class AbstractGetFeatureOfInterest extends AbstractSOSRequest im
 
     private String featureOfInterestId = null;
     private EventTime eventTime = null;
-    private GetFeatureOfInterest.Location location = null;
+    private Filter location = null;
 
     /**
      * Defines the server url and the service version for this kind of request.
@@ -69,7 +69,7 @@ public abstract class AbstractGetFeatureOfInterest extends AbstractSOSRequest im
     }
 
     @Override
-    public Location getLocation() {
+    public Filter getLocation() {
         return location;
     }
 
@@ -84,7 +84,7 @@ public abstract class AbstractGetFeatureOfInterest extends AbstractSOSRequest im
     }
 
     @Override
-    public void setLocation(final Location location) {
+    public void setLocation(final Filter location) {
         this.location = location;
     }
 

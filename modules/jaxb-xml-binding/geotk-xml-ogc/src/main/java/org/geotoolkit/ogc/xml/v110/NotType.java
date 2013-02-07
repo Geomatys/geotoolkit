@@ -39,5 +39,13 @@ public class NotType extends UnaryLogicOpType implements Not {
          super(operators);
          
      }
-
+     
+     public NotType(final UnaryLogicOpType that) {
+         super(that);
+     }
+     
+     @Override
+     public LogicOpsType getClone() {
+        return new NotType(this);
+     }
 }

@@ -52,5 +52,17 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "MultiPointPropertyType")
 public class MultiPointPropertyType extends GeometryAssociationType {
-
+    
+    public MultiPointPropertyType() {
+        
+    }
+    
+    public MultiPointPropertyType(MultiPointPropertyType that) {
+        super(that);
+    }
+    
+    @Override
+    public GeometryAssociationType getClone() {
+        return new MultiPointPropertyType(this);
+    }
 }

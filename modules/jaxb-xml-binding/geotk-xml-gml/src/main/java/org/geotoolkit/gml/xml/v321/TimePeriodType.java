@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.Duration;
+import org.geotoolkit.gml.xml.TimeIndeterminateValueType;
 import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.util.Utilities;
 import org.opengis.temporal.Instant;
@@ -135,6 +136,26 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType implement
      */
     public TimePeriodType(final Duration duration){
         this.duration = duration;
+    }
+    
+    public TimePeriodType(final TimePeriodType that){
+        super(that);
+        if (that.begin != null) {
+            this.begin = new TimeInstantPropertyType(that.begin);
+        }
+        if (that.beginPosition != null) {
+            that.beginPosition = new TimePositionType(that.beginPosition);
+        }
+        this.duration = that.duration;
+        if (that.end != null) {
+            this.end = new TimeInstantPropertyType(that.end);
+        } 
+        if (that.endPosition != null) {
+            this.endPosition = new TimePositionType(that.endPosition);
+        }
+        if (that.timeInterval != null) {
+            this.timeInterval = new TimeIntervalLengthType(that.timeInterval);
+        }
     }
     
     /**
@@ -325,6 +346,11 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType implement
         return e - b;
     }
     
+    @Override
+    public AbstractTimeObjectType getClone() {
+        return new TimePeriodType(this);
+    }
+    
     /**
      * Verify if this entry is identical to the specified object.
      */
@@ -383,5 +409,4 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType implement
 
         return s.toString();
     }
-
 }

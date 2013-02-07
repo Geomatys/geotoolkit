@@ -35,6 +35,7 @@ import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.referencing.factory.epsg.EpsgInstaller;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.util.FileUtilities;
+import org.geotoolkit.util.ResourceInternationalString;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.identification.Identification;
 import org.opengis.parameter.ParameterDescriptor;
@@ -130,12 +131,17 @@ public class PGCoverageStoreFactory extends AbstractCoverageStoreFactory{
     public ParameterDescriptorGroup getParametersDescriptor() {
         return PARAMETERS_DESCRIPTOR;
     }
-
+    
     @Override
     public CharSequence getDescription() {
-        return "GeotoolKit PostGIS Raster model.";
+        return new ResourceInternationalString("org/geotoolkit/coverage/postgresql/bundle", "description");
     }
 
+    @Override
+    public CharSequence getDisplayName() {
+        return new ResourceInternationalString("org/geotoolkit/coverage/postgresql/bundle", "title");
+    }
+    
     @Override
     public PGCoverageStore open(ParameterValueGroup params) throws DataStoreException {
 

@@ -69,7 +69,7 @@ abstract class RowMajorDirectIterator extends PixelIterator {
     /**
      * Tile scanLineStride from Raster or RenderedImage Sample model.
      */
-    protected final int scanLineStride;
+    protected int scanLineStride;
 
     /**
      * Create default rendered image iterator.
@@ -86,7 +86,7 @@ abstract class RowMajorDirectIterator extends PixelIterator {
         if (sampleM instanceof ComponentSampleModel) {
             this.scanLineStride = ((ComponentSampleModel)sampleM).getScanlineStride();
         } else {
-            throw new IllegalArgumentException("DefaultDirectIterator constructor : sample model not conform");
+            throw new IllegalArgumentException("RowMajorDirectIterator constructor : sample model not conform");
         }
         this.rasterWidth = renderedImage.getTileWidth();
         this.numBand = sampleM.getNumBands();
@@ -131,6 +131,7 @@ abstract class RowMajorDirectIterator extends PixelIterator {
      */
     protected void updateCurrentRaster(int tileX, int tileY) {
         this.currentRaster = renderedImage.getTile(tileX, tileY);
+        this.scanLineStride = ((ComponentSampleModel)currentRaster.getSampleModel()).getScanlineStride();
     }
 
     /**
@@ -168,12 +169,18 @@ abstract class RowMajorDirectIterator extends PixelIterator {
     @Override
     public void moveTo(int x, int y, int b) {
         super.moveTo(x, y, b);
-        tX = (x - renderedImage.getMinX())/renderedImage.getTileWidth() + renderedImage.getMinTileX();
-        tY = (y - renderedImage.getMinY())/renderedImage.getTileHeight() + renderedImage.getMinTileY();
-
-        updateCurrentRaster(tX, tY);
-        this.cRMinX = currentRaster.getMinX();
-        this.cRMinY = currentRaster.getMinY();
+        final int tTempX = (x - renderedImage.getMinX())/renderedImage.getTileWidth() + renderedImage.getMinTileX();
+        final int tTempY = (y - renderedImage.getMinY())/renderedImage.getTileHeight() + renderedImage.getMinTileY();
+        if (tTempX != tX || tTempY != tY) {
+            tX = tTempX;
+            tY = tTempY;
+            updateCurrentRaster(tX, tY);
+            this.cRMinX = currentRaster.getMinX();
+            this.cRMinY = currentRaster.getMinY();
+        }
+//        updateCurrentRaster(tX, tY);
+//        this.cRMinX = currentRaster.getMinX();
+//        this.cRMinY = currentRaster.getMinY();
         this.row = y;
         final int step = (row - cRMinY) * scanLineStride;
         this.maxX = (Math.min(areaIterateMaxX, cRMinX + rasterWidth) - cRMinX) * numBand;

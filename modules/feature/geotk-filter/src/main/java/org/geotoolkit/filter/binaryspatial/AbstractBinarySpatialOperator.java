@@ -18,19 +18,18 @@
 package org.geotoolkit.filter.binaryspatial;
 
 import org.opengis.feature.Feature;
-import java.util.logging.Level;
 import com.vividsolutions.jts.geom.Geometry;
 
 import java.io.Serializable;
 import java.util.logging.Logger;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
+import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.AbstractJTSGeometry;
 
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.measure.Units;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.util.logging.Logging;
-import org.opengis.feature.ComplexAttribute;
 
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.PropertyName;
@@ -42,6 +41,8 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 
 import static org.geotoolkit.util.ArgumentChecks.*;
+import org.geotoolkit.util.Converters;
+import org.opengis.coverage.Coverage;
 
 /**
  * Immutable abstract binary spatial operator.
@@ -96,6 +97,33 @@ public abstract class AbstractBinarySpatialOperator<E extends Expression,F exten
         return Units.valueOf(str);
     }
 
+    protected static Geometry toGeometry(final Object object, Expression exp){
+        Object value;
+        if ((exp instanceof PropertyName) && object instanceof Feature && ((PropertyName)exp).getPropertyName().isEmpty()) {
+            value = ((Feature)object).getDefaultGeometryProperty().getValue();
+        } else {
+            value = exp.evaluate(object);
+        }
+
+        Geometry candidate;
+        if(value instanceof Coverage){
+            //use the coverage envelope
+            final Coverage coverage = (Coverage) value;
+            candidate = JTS.toGeometry(coverage.getEnvelope());
+        }else if(value instanceof org.opengis.geometry.Geometry){
+            final org.opengis.geometry.Geometry geo = (org.opengis.geometry.Geometry) value;
+            if(geo instanceof AbstractJTSGeometry) {
+                candidate = ((AbstractJTSGeometry)geo).getJTSGeometry();
+            }else{
+                candidate = null;
+            }
+        }else{
+            candidate = Converters.convert(value, Geometry.class);
+        }
+        
+        return candidate;
+    }
+    
     /**
      * Reproject geometries to the same CRS if needed and if possible.
      */

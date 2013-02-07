@@ -50,4 +50,16 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "PolygonPropertyType")
 public class PolygonPropertyType extends GeometryAssociationType {
 
+    public PolygonPropertyType() {
+        
+    }
+    
+    public PolygonPropertyType(PolygonPropertyType that) {
+        super(that);
+    }
+    
+    @Override
+    public GeometryAssociationType getClone() {
+        return new PolygonPropertyType(this);
+    }
 }

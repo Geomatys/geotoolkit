@@ -47,4 +47,12 @@ public class TouchesType extends BinarySpatialOpType implements Touches {
         super(propertyName, geometry);
     }
 
+    public TouchesType(final TouchesType that) {
+        super(that);
+    }
+    
+    @Override
+    public SpatialOpsType getClone() {
+        return new TouchesType(this);
+    }
 }

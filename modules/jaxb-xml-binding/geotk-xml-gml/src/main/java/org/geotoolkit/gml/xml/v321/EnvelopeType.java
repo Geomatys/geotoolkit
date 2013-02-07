@@ -18,7 +18,6 @@
 
 package org.geotoolkit.gml.xml.v321;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -29,6 +28,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.gml.xml.DirectPosition;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.logging.Logging;
@@ -105,6 +105,58 @@ public class EnvelopeType implements Envelope, org.geotoolkit.gml.xml.Envelope {
         this.upperCorner = upperCorner;
         this.srsName     = srsName;
     }
+    
+    public EnvelopeType(final EnvelopeType that) {
+        if (that != null) {
+            if (that.axisLabels != null) {
+                this.axisLabels = new ArrayList<String>(that.axisLabels);
+            }
+            if (that.uomLabels != null) {
+                this.uomLabels = new ArrayList<String>(that.uomLabels);
+            }
+            if (that.coordinates != null) {
+                this.coordinates = new CoordinatesType(that.coordinates);
+            }
+            if (that.lowerCorner != null) {
+                this.lowerCorner = new DirectPositionType(that.lowerCorner);
+            }
+            if (that.upperCorner != null) {
+                this.upperCorner = new DirectPositionType(that.upperCorner);
+            }
+            if (that.pos != null) {
+                this.pos = new ArrayList<DirectPositionType>();
+                for (DirectPositionType dp : that.pos) {
+                    this.pos.add(new DirectPositionType(dp));
+                }
+            }
+            this.srsDimension = that.srsDimension;
+            this.srsName      = that.srsName;
+        }
+    }
+    
+    public EnvelopeType(final org.geotoolkit.gml.xml.Envelope that) {
+        if (that != null) {
+            if (that.getLowerCorner() != null) {
+                this.lowerCorner = new DirectPositionType(that.getLowerCorner(), false);
+            }
+            if (that.getUpperCorner() != null) {
+                this.upperCorner = new DirectPositionType(that.getUpperCorner(), false);
+            }
+            this.srsDimension = that.getSrsDimension();
+            this.srsName      = that.getSrsName();
+            this.axisLabels   = that.getAxisLabels();
+            this.uomLabels    = that.getUomLabels();
+            if (that.getCoordinates() != null) {
+                this.coordinates  = new CoordinatesType(that.getCoordinates());
+            }
+            if (that.getPos() != null) {
+                this.pos = new ArrayList<DirectPositionType>();
+                for (DirectPosition p : that.getPos()) {
+                    this.pos.add(new DirectPositionType(p));
+                }
+            }
+        }
+    }
 
     /**
      * Gets the value of the lowerCorner property.
@@ -114,6 +166,7 @@ public class EnvelopeType implements Envelope, org.geotoolkit.gml.xml.Envelope {
      *     {@link DirectPositionType }
      *     
      */
+    @Override
     public DirectPositionType getLowerCorner() {
         return lowerCorner;
     }
@@ -138,6 +191,7 @@ public class EnvelopeType implements Envelope, org.geotoolkit.gml.xml.Envelope {
      *     {@link DirectPositionType }
      *     
      */
+    @Override
     public DirectPositionType getUpperCorner() {
         return upperCorner;
     }
@@ -162,6 +216,7 @@ public class EnvelopeType implements Envelope, org.geotoolkit.gml.xml.Envelope {
      * 
      * 
      */
+    @Override
     public List<DirectPositionType> getPos() {
         if (pos == null) {
             pos = new ArrayList<DirectPositionType>();
@@ -177,6 +232,7 @@ public class EnvelopeType implements Envelope, org.geotoolkit.gml.xml.Envelope {
      *     {@link CoordinatesType }
      *     
      */
+    @Override
     public CoordinatesType getCoordinates() {
         return coordinates;
     }
@@ -201,6 +257,7 @@ public class EnvelopeType implements Envelope, org.geotoolkit.gml.xml.Envelope {
      *     {@link String }
      *     
      */
+    @Override
     public String getSrsName() {
         return srsName;
     }
@@ -225,6 +282,7 @@ public class EnvelopeType implements Envelope, org.geotoolkit.gml.xml.Envelope {
      *     {@link BigInteger }
      *     
      */
+    @Override
     public Integer getSrsDimension() {
         return srsDimension;
     }
@@ -249,13 +307,27 @@ public class EnvelopeType implements Envelope, org.geotoolkit.gml.xml.Envelope {
      * 
      * 
      */
+    @Override
     public List<String> getAxisLabels() {
         if (axisLabels == null) {
             axisLabels = new ArrayList<String>();
         }
         return this.axisLabels;
     }
+    
+    public void setAxisLabels(final List<String> axisLabels) {
+        this.axisLabels = axisLabels;
+    }
 
+    public void setAxisLabels(final String axisLabel) {
+        if (axisLabel != null) {
+            if (axisLabels == null) {
+                axisLabels = new ArrayList<String>();
+            }
+            this.axisLabels.add(axisLabel);
+        }
+    }
+    
     /**
      * Gets the value of the uomLabels property.
      * 
@@ -264,6 +336,7 @@ public class EnvelopeType implements Envelope, org.geotoolkit.gml.xml.Envelope {
      * 
      * 
      */
+    @Override
     public List<String> getUomLabels() {
         if (uomLabels == null) {
             uomLabels = new ArrayList<String>();
@@ -271,6 +344,7 @@ public class EnvelopeType implements Envelope, org.geotoolkit.gml.xml.Envelope {
         return this.uomLabels;
     }
 
+    @Override
     public CoordinateReferenceSystem getCoordinateReferenceSystem() {
         if (srsName != null) {
             try {
@@ -284,10 +358,12 @@ public class EnvelopeType implements Envelope, org.geotoolkit.gml.xml.Envelope {
         return null;
     }
 
+    @Override
     public int getDimension() {
         return srsDimension;
     }
 
+    @Override
     public double getMinimum(final int i) throws IndexOutOfBoundsException {
         if (lowerCorner != null) {
             return lowerCorner.getOrdinate(i);
@@ -295,6 +371,7 @@ public class EnvelopeType implements Envelope, org.geotoolkit.gml.xml.Envelope {
         return -1;
     }
 
+    @Override
     public double getMaximum(int i) throws IndexOutOfBoundsException {
         if (upperCorner != null) {
             return upperCorner.getOrdinate(i);
@@ -302,12 +379,24 @@ public class EnvelopeType implements Envelope, org.geotoolkit.gml.xml.Envelope {
         return -1;
     }
 
+    @Override
     public double getMedian(int i) throws IndexOutOfBoundsException {
         throw new UnsupportedOperationException("Not implemented yet.");
     }
 
+    @Override
     public double getSpan(int i) throws IndexOutOfBoundsException {
         throw new UnsupportedOperationException("Not implemented yet.");
+    }
+    
+    /**
+     * return true if the envelope is fill with x and y coordinates in upper and lower corner.
+     * @return
+     */
+    @Override
+    public boolean isCompleteEnvelope2D() {
+        return getLowerCorner() != null && getUpperCorner() != null &&
+               getLowerCorner().getValue().size() == 2 && getUpperCorner().getValue().size() == 2;
     }
     
     /**
@@ -346,4 +435,48 @@ public class EnvelopeType implements Envelope, org.geotoolkit.gml.xml.Envelope {
         return hash;
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder s = new StringBuilder();
+        if (srsDimension != null) {
+            s.append("srsDImension:").append(srsDimension).append(" ");
+        }
+        if (srsName != null) {
+            s.append("srsName:").append(srsName).append(" ");
+        }
+        if (lowerCorner != null) {
+            s.append('\n').append("lowerCorner:").append(lowerCorner.toString());
+        }
+        if (upperCorner != null) {
+            s.append('\n').append("upperCorner:").append(upperCorner.toString());
+        }
+        if (pos != null) {
+            int i = 0;
+            for (DirectPositionType posi: pos) {
+                s.append('\n').append("pos").append(i).append(":").append(posi.toString());
+                i++;
+            }
+            s.append('\n');
+        }
+        if (coordinates != null) {
+            s.append("coordinates:").append(coordinates.toString());
+        }
+        if (axisLabels != null) {
+            int i = 0;
+            for (String axis: axisLabels) {
+                s.append('\n').append("axis").append(i).append(":").append(axis);
+                i++;
+            }
+            s.append('\n');
+        }
+        if (uomLabels != null) {
+            int i = 0;
+            for (String uom: uomLabels) {
+                s.append('\n').append("uom").append(i).append(":").append(uom);
+                i++;
+            }
+            s.append('\n');
+        }
+        return s.toString();
+    }
 }

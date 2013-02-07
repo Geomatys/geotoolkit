@@ -78,6 +78,14 @@ public class CoordType {
         this.y = y;
     }
     
+    public CoordType(final CoordType that) {
+        if (that != null) {
+            this.x = that.x;
+            this.y = that.y;
+            this.z = that.z;
+        }
+    }
+    
     /**
      * Gets the value of the x property.
      * 

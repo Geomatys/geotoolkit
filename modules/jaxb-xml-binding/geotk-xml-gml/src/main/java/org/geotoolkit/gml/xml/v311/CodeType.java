@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
+import org.geotoolkit.gml.xml.Code;
 
 
 /**
@@ -53,7 +54,7 @@ import javax.xml.bind.annotation.XmlValue;
 @XmlType(name = "CodeType", propOrder = {
     "value"
 })
-public class CodeType {
+public class CodeType implements Code {
 
     @XmlValue
     protected String value;
@@ -89,6 +90,7 @@ public class CodeType {
      *     {@link String }
      *     
      */
+    @Override
     public String getValue() {
         return value;
     }
@@ -113,6 +115,7 @@ public class CodeType {
      *     {@link String }
      *     
      */
+    @Override
     public String getCodeSpace() {
         return codeSpace;
     }

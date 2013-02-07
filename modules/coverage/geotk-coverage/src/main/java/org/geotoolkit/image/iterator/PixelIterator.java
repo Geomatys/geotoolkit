@@ -322,8 +322,10 @@ public abstract class PixelIterator {
      * @return the number of bands (samples per pixel) from current raster or Image.
      */
     public int getNumBands() {
+//        return (renderedImage == null) ? currentRaster.getNumBands()
+//              : renderedImage.getTile(renderedImage.getMinTileX(), renderedImage.getMinTileY()).getNumBands();
         return (renderedImage == null) ? currentRaster.getNumBands()
-              : renderedImage.getTile(renderedImage.getMinTileX(), renderedImage.getMinTileY()).getNumBands();
+              : renderedImage.getSampleModel().getNumBands();
     }
 
     /**

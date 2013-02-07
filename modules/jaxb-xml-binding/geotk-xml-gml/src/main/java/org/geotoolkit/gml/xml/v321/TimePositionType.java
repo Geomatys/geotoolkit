@@ -38,6 +38,7 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
 import org.geotoolkit.gml.xml.AbstractTimePosition;
+import org.geotoolkit.gml.xml.TimeIndeterminateValueType;
 import org.geotoolkit.util.SimpleInternationalString;
 import org.opengis.temporal.Position;
 import org.opengis.util.InternationalString;
@@ -227,6 +228,7 @@ public class TimePositionType extends AbstractTimePosition implements Serializab
      *     {@link TimeIndeterminateValueType }
      *
      */
+    @Override
     public TimeIndeterminateValueType getIndeterminatePosition() {
         return indeterminatePosition;
     }
@@ -243,6 +245,7 @@ public class TimePositionType extends AbstractTimePosition implements Serializab
         this.indeterminatePosition = value;
     }
 
+    @Override
     public Date getDate() {
         if (value!= null && !value.isEmpty()) {
             return parseDate(value.get(0));
@@ -250,6 +253,7 @@ public class TimePositionType extends AbstractTimePosition implements Serializab
         return null;
     }
 
+    @Override
     public Time getTime() {
         if (value != null && !value.isEmpty()) {
             return Time.valueOf(value.get(0));
@@ -257,6 +261,7 @@ public class TimePositionType extends AbstractTimePosition implements Serializab
         return null;
     }
 
+    @Override
     public InternationalString getDateTime() {
         if (value != null && !value.isEmpty()) {
             return new SimpleInternationalString(value.get(0));

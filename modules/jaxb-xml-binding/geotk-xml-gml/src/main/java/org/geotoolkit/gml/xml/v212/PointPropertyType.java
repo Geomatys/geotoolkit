@@ -52,4 +52,16 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "PointPropertyType")
 public class PointPropertyType extends GeometryAssociationType {
 
+    public PointPropertyType() {
+        
+    }
+    
+    public PointPropertyType(PointPropertyType that) {
+        super(that);
+    }
+    
+    @Override
+    public GeometryAssociationType getClone() {
+        return new PointPropertyType(this);
+    }
 }

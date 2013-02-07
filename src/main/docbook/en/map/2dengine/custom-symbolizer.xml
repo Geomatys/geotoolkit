@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE book [
+  <!ENTITY % book.entities SYSTEM "../../../book.entities">
+  %book.entities;
+]>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0"
+         xmlns:xlink = "http://www.w3.org/1999/xlink"
+         lang="en">
+
+    <title>
+        Custom Symbolizer
+    </title>
+
+    <example>
+        <title>Make a new symbolizer</title>
+        <link xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/rendering/customsymbolizer/CustomSymbolizerDemo.java">
+            <acronym>geotoolkit-pending/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/rendering/customsymbolizer/CustomSymbolizerDemo.java</acronym>
+        </link>
+        <link xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/rendering/customsymbolizer/CrystallizeSymbolizer.java">
+            <acronym>geotoolkit-pending/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/rendering/customsymbolizer/CrystallizeSymbolizer.java</acronym>
+        </link>
+        <link xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/rendering/customsymbolizer/CrystallizeSymbolizerRenderer.java">
+            <acronym>geotoolkit-pending/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/rendering/customsymbolizer/CrystallizeSymbolizerRenderer.java</acronym>
+        </link>
+        <link xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/rendering/customsymbolizer/CrystallizeSymbolizerRendererService.java">
+            <acronym>geotoolkit-pending/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/rendering/customsymbolizer/CrystallizeSymbolizerRendererService.java</acronym>
+        </link>
+        <link xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/rendering/customsymbolizer/CrystallizeCachedSymbolizer.java ">
+            <acronym>geotoolkit-pending/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/rendering/customsymbolizer/CrystallizeCachedSymbolizer.java </acronym>
+        </link>
+    </example>
+
+    <section>
+        <title>When to use a symbolizer ?</title>
+        <para>
+            <emphasis>Symbology Encoding</emphasis> standard isn't perfect and will never able to support
+            all possible cases. But this standard gives a structure interesting  
+            
+            La norme
+            <emphasis>Symbology Encoding</emphasis> n'est pas parfaite et ne sera jamais capable de supporter tous les cas
+            possibles. Mais cette norme offre une bonne structure basée sur les règles et les symboliseur. 
+            Donc si nous souhaitons réutiliser cette structure en y ajoutant de nouvelles façons de dessiner, créer de 
+            nouveaux symboliseur est la solution.
+        </para>
+    </section>
+
+    <section>
+        <title>How to create one ?</title>
+        <para>
+            You must implement for interfaces to create a new
+            <emphasis>symboliser</emphasis> :
+            <itemizedlist>
+                <listitem>Symbolizer</listitem>
+                <listitem>CachedSymbolizer</listitem>
+                <listitem>SymbolizerRenderer</listitem>
+                <listitem>SymbolizerRendererService</listitem>
+            </itemizedlist>
+        </para>
+    </section>
+
+    <section>
+        <title>Symbolizer</title>
+        <para>
+            Symbolizer contents description about the draw method and Which resources must be used.
+            He does not have to contain heavy objects, but definitions and parameters only.
+        </para>
+        <para>
+            Our symbolisers are not standard. They must implement 
+            <emphasis>ExtensionSymbolizer</emphasis> interface or
+            <emphasis>abstract class AbstractExtensionSymbolizer</emphasis>.
+        </para>
+    </section>
+
+    <section>
+        <title>CachedSymbolizer</title>
+        <para>CachedSymbolizer is responsible of resources loading. If symbolizer defines an image path, the CachedSymbolizer must copy it into the cache.
+        </para>
+        <para>It's possible to implements the symbolizer and CachedSymbolizer in one class if it hasn't differents between them.
+        </para>
+    </section>
+
+    <section>
+        <title>SymbolizerRenderer</title>
+        <para>
+            SymbolizerRenderer will be in charge to draw features or coverages when engine make the rendering.
+            To push the most elements in cache, the Renderer is for only one canvas and one CachedSymbolizer.
+        </para>
+        <para>
+            It must implement four methods :
+            <itemizedlist>
+                <listitem>two methods portray (for coverage and feature) to draw datas.</listitem>
+                <listitem>two methods hit (for coverage and feature) to manage selections.</listitem>
+            </itemizedlist>
+        </para>
+    </section>
+
+    <section>
+        <title>SymbolizerRendererService</title>
+        <para>
+            This service is in charge of the CachedSymbolizers and SymbolizerRenderers creation and glyph making.
+
+            To be find by the rendering enging GO2, the new service must be registered in 
+            <emphasis>META-INF services</emphasis>.
+
+            <programlisting>
+                org.geotoolkit.display2d.style.renderer.SymbolizerRendererService
+            </programlisting>
+
+            Engine will call the appropriate functions to create caches and renderer.
+        </para>
+    </section>
+
+</section>

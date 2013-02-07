@@ -36,6 +36,15 @@ public class TimeEndsType extends BinaryTemporalOpType implements Ends {
     public TimeEndsType(final String propertyName, final Object temporal) {
         super(propertyName, temporal);
     }
+    
+    public TimeEndsType(final TimeEndsType that) {
+        super(that);
+    }
+
+    @Override
+    public TemporalOpsType getClone() {
+        return new TimeEndsType(this);
+    }
 
     @Override
     public boolean evaluate(Object o) {

@@ -43,4 +43,13 @@ public class PropertyIsLessThanOrEqualToType extends BinaryComparisonOpType impl
     public  PropertyIsLessThanOrEqualToType(final LiteralType literal, final String propertyName, final Boolean matchCase) {
         super(literal, propertyName, matchCase);
     }
+    
+    public PropertyIsLessThanOrEqualToType(final PropertyIsLessThanOrEqualToType that) {
+        super(that);
+    }
+    
+    @Override
+    public ComparisonOpsType getClone() {
+        return new PropertyIsLessThanOrEqualToType(this);
+    }
 }

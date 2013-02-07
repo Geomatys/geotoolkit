@@ -48,4 +48,12 @@ public class IntersectsType extends BinarySpatialOpType implements Intersects {
         super(propertyName, geometry);
     }
 
+    public IntersectsType(final IntersectsType that) {
+        super(that);
+    }
+    
+    @Override
+    public SpatialOpsType getClone() {
+        return new IntersectsType(this);
+    }
 }

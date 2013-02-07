@@ -75,6 +75,17 @@ public class TimeInstantType extends AbstractTimeGeometricPrimitiveType implemen
         }
     }
     
+    public TimeInstantType(final String timePosition) {
+       this.timePosition = new TimePositionType(timePosition);
+    }
+    
+    public TimeInstantType(final TimeInstantType that) {
+        super(that);
+        if (that != null && that.timePosition != null) {
+            this.timePosition = new TimePositionType(that.timePosition);
+        }
+    }
+    
     /**
      * Gets the value of the timePosition property.
      * 
@@ -160,5 +171,10 @@ public class TimeInstantType extends AbstractTimeGeometricPrimitiveType implemen
         int hash = 5;
         hash = 37 * hash + (this.timePosition != null ? this.timePosition.hashCode() : 0);
         return hash;
+    }
+
+    @Override
+    public AbstractTimeObjectType getClone() {
+        return new TimeInstantType(this);
     }
 }

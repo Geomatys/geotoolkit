@@ -75,6 +75,17 @@ public class BBOXType extends SpatialOpsType {
         this.box = new BoxType(Arrays.asList(lower, upper), srs);
         
     }
+    
+    public BBOXType(final BBOXType that) {
+        if (that != null) {
+            if (that.propertyName != null) {
+                this.propertyName = new PropertyNameType(that.propertyName);
+            }
+            if (that.box != null) {
+                this.box = new BoxType(that.box);
+            }
+        }
+    }
     /**
      * Gets the value of the propertyName property.
      * 
@@ -107,4 +118,8 @@ public class BBOXType extends SpatialOpsType {
         this.box = value;
     }
 
+    @Override
+    public SpatialOpsType getClone() {
+        return new BBOXType(this);
+    }
 }

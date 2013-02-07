@@ -27,7 +27,7 @@ public interface AbstractCount extends AbstractDataComponent {
 
     public List<? extends AbstractQualityProperty> getQuality();
 
-    public Number getValue();
+    public Integer getValue();
 
     public String getReferenceFrame();
 

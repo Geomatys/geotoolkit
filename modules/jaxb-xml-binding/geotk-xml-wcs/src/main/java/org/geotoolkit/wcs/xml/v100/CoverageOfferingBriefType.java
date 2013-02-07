@@ -77,7 +77,7 @@ public class CoverageOfferingBriefType extends AbstractDescriptionType implement
             final LonLatEnvelopeType lonLatEnvelope, final List<String> keywords) {
         super(metadataLink, name, label, description);
         this.lonLatEnvelope = lonLatEnvelope;
-        if (keywords != null) {
+        if (keywords != null && !keywords.isEmpty()) {
             this.keywords = new Keywords(keywords);
         }
     }

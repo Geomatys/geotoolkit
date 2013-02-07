@@ -19,6 +19,7 @@ package org.geotoolkit.coverage.postgresql;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Image;
+import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
@@ -31,6 +32,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -43,8 +45,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.measure.unit.Unit;
 import net.iharder.Base64;
+import org.geotoolkit.coverage.AbstractCoverageReference;
 import org.geotoolkit.coverage.Category;
-import org.geotoolkit.coverage.CoverageReference;
+import org.geotoolkit.coverage.CoverageStoreContentEvent;
+import org.geotoolkit.coverage.CoverageStoreManagementEvent;
 import org.geotoolkit.coverage.GridMosaic;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.Pyramid;
@@ -53,27 +57,24 @@ import org.geotoolkit.coverage.PyramidalModel;
 import org.geotoolkit.coverage.PyramidalModelReader;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
-import org.geotoolkit.coverage.postgresql.epsg.EPSGWriter;
+import org.geotoolkit.coverage.postgresql.epsg.PGEPSGWriter;
 import org.geotoolkit.coverage.wkb.WKBRasterConstants;
 import org.geotoolkit.coverage.wkb.WKBRasterWriter;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.util.NumberRange;
-import org.geotoolkit.util.StringUtilities;
-import org.opengis.coverage.ColorInterpretation;
 import org.opengis.coverage.SampleDimensionType;
 import org.opengis.feature.type.Name;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.util.FactoryException;
-import org.postgresql.jdbc2.TypeInfoCache;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
-public class PGCoverageReference implements CoverageReference, PyramidalModel{
+public class PGCoverageReference extends AbstractCoverageReference implements PyramidalModel{
 
     private final PGCoverageStore store;
     private final PGPyramidSet pyramidSet;
@@ -139,7 +140,7 @@ public class PGCoverageReference implements CoverageReference, PyramidalModel{
             cnx = store.getDataSource().getConnection();
             cnx.setReadOnly(false);
             //find or insert coordinate reference system
-            final EPSGWriter writer = new EPSGWriter(store);
+            final PGEPSGWriter writer = new PGEPSGWriter(store);
             final String epsgCode = String.valueOf(writer.getOrCreateCoordinateReferenceSystem(crs));
 
             stmt = cnx.createStatement();
@@ -170,6 +171,8 @@ public class PGCoverageReference implements CoverageReference, PyramidalModel{
         }
 
         pyramidSet.mustUpdate();
+        final CoverageStoreManagementEvent event = firePyramidAdded(pyramidId);
+        getStore().forwardStructureEvent(event);
         for(Pyramid p : pyramidSet.getPyramids()){
             if(p.getId().equals(pyramidId)){
                 return p;
@@ -180,6 +183,11 @@ public class PGCoverageReference implements CoverageReference, PyramidalModel{
         throw new DataStoreException("Generated pyramid not found.");
     }
 
+    @Override
+    public void deletePyramid(String pyramidId) throws DataStoreException {
+        throw new DataStoreException("Not supported yet.");
+    }
+    
     @Override
     public GridMosaic createMosaic(final String pyramidId, final Dimension gridSize, final Dimension tilePixelSize,
             final DirectPosition upperleft, final double pixelscale) throws DataStoreException {
@@ -239,6 +247,8 @@ public class PGCoverageReference implements CoverageReference, PyramidalModel{
         }
 
         pyramidSet.mustUpdate();
+        final CoverageStoreManagementEvent event = fireMosaicAdded(pyramidId, String.valueOf(mosaicId));
+        getStore().forwardStructureEvent(event);
         for (final Pyramid p : pyramidSet.getPyramids()) {
             if (p.getId().equals(pyramidId)) {
                 for(GridMosaic mosaic : p.getMosaics()){
@@ -253,6 +263,11 @@ public class PGCoverageReference implements CoverageReference, PyramidalModel{
         throw new DataStoreException("Generated mosaic not found.");
     }
 
+    @Override
+    public void deleteMosaic(String pyramidId, String mosaicId) throws DataStoreException {
+        throw new DataStoreException("Not supported yet.");
+    }
+    
     @Override
     public void writeTiles(final String pyramidId, final String mosaicId,
             final RenderedImage image, final boolean onlyMissing) throws DataStoreException {
@@ -313,8 +328,8 @@ public class PGCoverageReference implements CoverageReference, PyramidalModel{
             stmt = cnx.createStatement();
 
             stmt.executeUpdate(query.toString());
-
-
+            final CoverageStoreContentEvent event = fireTileUpdated(pyramidId, mosaicId, Collections.singletonList(new Point(col,row)));
+            getStore().forwardContentEvent(event);
         }catch(IOException ex){
             throw new DataStoreException(ex.getMessage(), ex);
         }catch(SQLException ex){
@@ -325,6 +340,11 @@ public class PGCoverageReference implements CoverageReference, PyramidalModel{
 
     }
 
+    @Override
+    public void deleteTile(String pyramidId, String mosaicId, int col, int row) throws DataStoreException {
+        throw new DataStoreException("Not supported yet.");
+    }
+    
     @Override
     public List<GridSampleDimension> getSampleDimensions(int index) throws DataStoreException{
         final List<GridSampleDimension> dimensions = new LinkedList<GridSampleDimension>();

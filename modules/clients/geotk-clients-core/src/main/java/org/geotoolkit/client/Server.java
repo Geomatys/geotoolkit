@@ -20,6 +20,7 @@ import java.net.URI;
 import java.net.URL;
 import java.util.Map;
 import org.geotoolkit.security.ClientSecurity;
+import org.geotoolkit.storage.StorageListener;
 import org.opengis.parameter.ParameterValueGroup;
 
 
@@ -87,4 +88,17 @@ public interface Server {
      */
     Map<String,Object> getUserProperties();
 
+    /**
+     * Add a storage listener which will be notified when structure changes or
+     * when data changes.
+     * @param listener to add
+     */
+    void addStorageListener(StorageListener listener);
+
+    /**
+     * Remove a storage listener
+     * @param listener to remove
+     */
+    void removeStorageListener(StorageListener listener);
+    
 }

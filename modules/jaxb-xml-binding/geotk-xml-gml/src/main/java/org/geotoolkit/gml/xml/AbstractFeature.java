@@ -17,8 +17,6 @@
 package org.geotoolkit.gml.xml;
 
 import java.util.List;
-import org.geotoolkit.gml.xml.v311.BoundingShapeType;
-import org.geotoolkit.gml.xml.v311.LocationPropertyType;
 
 /**
  *
@@ -27,9 +25,9 @@ import org.geotoolkit.gml.xml.v311.LocationPropertyType;
  */
 public interface AbstractFeature extends AbstractGML {
 
-    BoundingShapeType getBoundedBy();
+    BoundingShape getBoundedBy();
 
-    LocationPropertyType getLocation();
+    LocationProperty getLocation();
     
     List<String> getSrsName();
 }

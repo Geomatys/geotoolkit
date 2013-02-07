@@ -21,7 +21,7 @@ import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageWriter;
-import org.geotoolkit.coverage.CoverageReference;
+import org.geotoolkit.coverage.AbstractCoverageReference;
 import org.geotoolkit.coverage.CoverageStore;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
@@ -36,7 +36,7 @@ import org.opengis.feature.type.Name;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class FileCoverageReference implements CoverageReference{
+public class FileCoverageReference extends AbstractCoverageReference{
 
     private final FileCoverageStore store;
     private final Name name;

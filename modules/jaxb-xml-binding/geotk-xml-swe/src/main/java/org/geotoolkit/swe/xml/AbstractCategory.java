@@ -17,6 +17,8 @@
 
 package org.geotoolkit.swe.xml;
 
+import java.util.List;
+
 /**
  *
  * @author Mehdi Sidhoum (Geomatys).
@@ -25,7 +27,7 @@ public interface AbstractCategory extends AbstractDataComponent {
 
     public AbstractCodeSpaceProperty getCodeSpace();
 
-    public AbstractQualityProperty getQuality();
+    public List<? extends AbstractQualityProperty> getQuality();
 
     public String getValue();
 

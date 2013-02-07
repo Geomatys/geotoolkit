@@ -95,7 +95,7 @@ public class FunctionType extends ExpressionType implements Function {
          this.expression = new ArrayList<JAXBElement<?>>();
          StringBuilder report = new StringBuilder();
          for (Expression e:expression)  {
-             report.append(e.getClass().getSimpleName() + " "); 
+             report.append(e.getClass().getSimpleName()); 
          }
          throw new UnsupportedOperationException("TODO Not supported yet real type of arg1:" + report.toString());
      }
@@ -108,6 +108,30 @@ public class FunctionType extends ExpressionType implements Function {
          
          throw new UnsupportedOperationException("Operation Not supported yet");
      }
+     
+     public FunctionType(final FunctionType that) {
+        if (that != null) {
+            this.name = that.name;
+            
+            if (that.expression != null) {
+                this.expression = new ArrayList<JAXBElement<?>>();
+                for (JAXBElement<?> jb : that.expression) {
+                    final Object exp = jb.getValue();
+                    if (exp instanceof PropertyNameType) {
+                        this.expression.add(factory.createPropertyName((PropertyNameType)exp));
+                    } else if (exp instanceof LiteralType) {
+                        final LiteralType lit = new LiteralType((LiteralType)exp);
+                        this.expression.add(factory.createLiteral(lit));
+                    } else if (exp instanceof FunctionType) {
+                        final FunctionType func = new FunctionType((FunctionType)exp);
+                        this.expression.add(factory.createFunction(func));
+                    } else {
+                        throw new IllegalArgumentException("Unexpected type for expression in FunctionType:" + expression.getClass().getName());
+                    }
+                }
+            }
+        }
+    }
      
     /**
      * Gets the value of the expression property.
@@ -122,6 +146,7 @@ public class FunctionType extends ExpressionType implements Function {
     /**
      * Gets the value of the name property.
      */
+    @Override
     public String getName() {
         return name;
     }
@@ -133,22 +158,27 @@ public class FunctionType extends ExpressionType implements Function {
         this.name = value;
     }
 
+    @Override
     public LiteralType getFallbackValue() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public Object evaluate(final Object object) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public <T> T evaluate(final Object object, final Class<T> context) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public Object accept(final ExpressionVisitor visitor, final Object extraData) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public List<Expression> getParameters() {
         throw new UnsupportedOperationException("Not supported yet.");
     }

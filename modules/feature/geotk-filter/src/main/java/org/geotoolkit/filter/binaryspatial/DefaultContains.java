@@ -46,8 +46,8 @@ public class DefaultContains extends AbstractBinarySpatialOperator<Expression,Ex
      */
     @Override
     public boolean evaluate(final Object object) {
-        Geometry leftGeom = left.evaluate(object, Geometry.class);
-        Geometry rightGeom = right.evaluate(object, Geometry.class);
+        Geometry leftGeom = toGeometry(object, left);
+        Geometry rightGeom = toGeometry(object, right);
 
         if(leftGeom == null || rightGeom == null){
             return false;

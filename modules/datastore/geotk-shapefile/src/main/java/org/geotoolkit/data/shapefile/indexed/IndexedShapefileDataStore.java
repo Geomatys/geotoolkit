@@ -207,9 +207,6 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
         if (queryFilter == Filter.EXCLUDE){
             return GenericEmptyFeatureIterator.createReader(originalSchema);
         }
-        if (!QueryBuilder.isNaturalSortBy(query.getSortBy())) {
-            throw new DataStoreException("The ShapeFileDatastore does not support sortby query");
-        }
 
         //find the properties we will read and return --------------------------
         List<PropertyDescriptor> readProperties;
@@ -302,6 +299,9 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
         qb.setFilter(queryFilter);
         qb.setHints(queryHints);
         qb.setCRS(query.getCoordinateSystemReproject());
+        qb.setSortBy(query.getSortBy());
+        qb.setStartIndex(query.getStartIndex());
+        qb.setMaxFeatures(query.getMaxFeatures());
         return handleRemaining(reader, qb.buildQuery());
     }
 

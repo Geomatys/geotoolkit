@@ -620,21 +620,20 @@ public class XmlFeatureTest {
     @Test
     public void testWriteSimpleCollection() throws JAXBException, IOException, XMLStreamException,
             DataStoreException, ParserConfigurationException, SAXException{
-        final File temp = File.createTempFile("gml", ".xml");
-        temp.deleteOnExit();
+        final StringWriter temp = new StringWriter();
         final XmlFeatureWriter writer = new JAXPStreamFeatureWriter();
         writer.write(collectionSimple, temp);
         writer.dispose();
-
-        DomCompare.compare(XmlFeatureTest.class
-                .getResourceAsStream("/org/geotoolkit/feature/xml/CollectionSimple.xml"), temp);
+        
+        String s = temp.toString();
+        s = s.replaceAll("timeStamp=\"[^\"]*\" ", "timeStamp=\"\" ");
+        DomCompare.compare(FileUtilities.getStringFromStream(XmlFeatureTest.class.getResourceAsStream("/org/geotoolkit/feature/xml/CollectionSimple.xml")), s);
     }
 
     @Test
     public void testWriteSimplCollectionElement() throws JAXBException, IOException, XMLStreamException,
             DataStoreException, ParserConfigurationException, SAXException, TransformerConfigurationException, TransformerException{
-        final File temp = File.createTempFile("gml", ".xml");
-        temp.deleteOnExit();
+        final StringWriter temp = new StringWriter();
         final ElementFeatureWriter writer = new ElementFeatureWriter();
         Element result = writer.write(collectionSimple, false);
 
@@ -650,7 +649,10 @@ public class XmlFeatureTest {
 
         String expResult = FileUtilities.getStringFromStream(XmlFeatureTest.class.getResourceAsStream("/org/geotoolkit/feature/xml/CollectionSimple.xml"));
         expResult = expResult.replace("EPSG_VERSION", EPSG_VERSION);
-        DomCompare.compare(expResult, temp);
+
+        String s = temp.toString();
+        s = s.replaceAll("timeStamp=\"[^\"]*\" ", "timeStamp=\"\" ");
+        DomCompare.compare(expResult, s);
     }
 
     @Test

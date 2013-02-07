@@ -653,11 +653,11 @@ public class ObjectFactory {
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link WCSCapabilitiesType }{@code >}}
      * 
-     */
+     
     @XmlElementDecl(namespace = "http://www.opengis.net/wcs", name = "WCS_Capabilities")
     public JAXBElement<WCSCapabilitiesType> createWCSCapabilities(final WCSCapabilitiesType value) {
         return new JAXBElement<WCSCapabilitiesType>(_WCSCapabilities_QNAME, WCSCapabilitiesType.class, null, value);
-    }
+    }*/
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link LonLatEnvelopeType }{@code >}}

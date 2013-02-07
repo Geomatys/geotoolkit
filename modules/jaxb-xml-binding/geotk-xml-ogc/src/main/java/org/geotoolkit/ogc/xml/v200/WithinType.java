@@ -38,4 +38,13 @@ public class WithinType extends BinarySpatialOpType implements Within {
     public WithinType(final String propertyName, final Object geometry) {
         super(propertyName, geometry);
     }
+    
+    public WithinType(final WithinType that) {
+        super(that);
+    }
+    
+    @Override
+    public WithinType getClone() {
+        return new WithinType(this);
+    }
 }

@@ -27,8 +27,9 @@ import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.ogc.xml.v110.BBOXType;
+import org.geotoolkit.ogc.xml.v110.FilterType;
 import org.geotoolkit.ogc.xml.v110.SpatialOpsType;
+import org.opengis.filter.Filter;
 
 
 /**
@@ -82,7 +83,7 @@ import org.geotoolkit.ogc.xml.v110.SpatialOpsType;
     "eventTime"
 })
 @XmlRootElement(name = "GetFeatureOfInterest")
-public class GetFeatureOfInterest extends RequestBaseType {
+public class GetFeatureOfInterest extends RequestBaseType implements org.geotoolkit.sos.xml.GetFeatureOfInterest {
 
     /**
      * Identifier of the feature of interest, for which detailed information is requested.
@@ -123,14 +124,17 @@ public class GetFeatureOfInterest extends RequestBaseType {
         this.featureOfInterestId = featureId;
      }
 
-     public GetFeatureOfInterest(final String version, final String service, final GetFeatureOfInterest.Location location) {
+     public GetFeatureOfInterest(final String version, final String service, final Filter location) {
         super(version, service);
-        this.location = location;
+        if (location != null) {
+            this.location = new Location(location);
+        }
      }
 
     /**
      * Gets the value of the featureOfInterestId property.
      */
+    @Override
     public List<String> getFeatureOfInterestId() {
         if (featureOfInterestId == null) {
             featureOfInterestId = new ArrayList<String>();
@@ -163,6 +167,26 @@ public class GetFeatureOfInterest extends RequestBaseType {
      */
     public void setLocation(final GetFeatureOfInterest.Location location) {
         this.location = location;
+    }
+    
+    @Override
+    public List<Filter> getSpatialFilters() {
+        final List<Filter> results = new ArrayList<Filter>();
+        if (location != null) {
+            results.add(location.getSpatialOperator());
+        }
+        return results;
+    }
+    
+    @Override
+    public List<Filter> getTemporalFilters() {
+        final List<Filter> results = new ArrayList<Filter>();
+        if (eventTime != null) {
+            for (EventTime time : eventTime) {
+                results.add(time.getFilter());
+            }
+        }
+        return results;
     }
     
     /**
@@ -228,13 +252,21 @@ public class GetFeatureOfInterest extends RequestBaseType {
             this.spatialOps = spatialOps;
         }
 
-        public Location(final BBOXType bboxFilter) {
-            if (bboxFilter != null) {
-                org.geotoolkit.ogc.xml.v110.ObjectFactory factory = new org.geotoolkit.ogc.xml.v110.ObjectFactory();
-                this.spatialOps = factory.createBBOX(bboxFilter);
+        public Location(final Filter filter) {
+            if (filter instanceof SpatialOpsType) {
+                this.spatialOps = FilterType.createSpatialOps((SpatialOpsType)filter);
+            } else if (filter != null) {
+                throw new IllegalArgumentException("Unexpected spatial filter type:" + filter);
             }
         }
 
+        public SpatialOpsType getSpatialOperator() {
+            if (spatialOps != null) {
+                return spatialOps.getValue();
+            }
+            return null;
+        }
+        
         /**
          * Gets the value of the spatialOps property.
          */

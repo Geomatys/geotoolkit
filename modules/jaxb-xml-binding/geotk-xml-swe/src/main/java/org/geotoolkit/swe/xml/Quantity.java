@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.swe.xml;
 
-import java.net.URI;
 import java.util.List;
 
 /**
@@ -32,7 +31,7 @@ public interface Quantity  extends AbstractDataComponent {
 
     Double getValue();
 
-    URI getReferenceFrame();
+    String getReferenceFrame();
 
     String getAxisID();
 

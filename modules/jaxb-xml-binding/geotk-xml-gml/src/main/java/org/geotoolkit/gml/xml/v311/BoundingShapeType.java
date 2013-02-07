@@ -25,6 +25,9 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlList;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.gml.xml.BoundingShape;
+import org.geotoolkit.gml.xml.Envelope;
+import org.geotoolkit.gml.xml.EnvelopeWithTimePeriod;
 
 
 /**
@@ -58,7 +61,7 @@ import javax.xml.bind.annotation.XmlType;
     "envelopeWithTimePeriod",
     "_null"
 })
-public class BoundingShapeType {
+public class BoundingShapeType implements BoundingShape {
 
     @XmlElement(name = "Envelope")
     private EnvelopeType envelope;
@@ -72,6 +75,24 @@ public class BoundingShapeType {
 
     BoundingShapeType() {}
 
+     public BoundingShapeType(final BoundingShape that) {
+        if (that != null) {
+            if (that.getEnvelope() != null) {
+                if (that.getEnvelope() instanceof EnvelopeWithTimePeriod) {
+                    this.envelopeWithTimePeriod = new EnvelopeWithTimePeriodType((EnvelopeWithTimePeriod)that.getEnvelope());
+                } else if (that.getEnvelope() instanceof Envelope) {
+                    this.envelope = new EnvelopeType(that.getEnvelope());
+                }
+            }
+           if (that.getNull() != null) {
+               this._null = new ArrayList<String>(that.getNull());
+           }
+           if (that.getNilReason() != null) {
+               this.nilReason = new ArrayList<String>(that.getNilReason());
+           }
+        }
+    }
+     
     public BoundingShapeType(final EnvelopeType envelope) {
         this.envelope = envelope;
         if (envelope == null) {
@@ -89,8 +110,14 @@ public class BoundingShapeType {
     /**
      * Gets the value of the envelope property.  
      */
+    @Override
     public EnvelopeType getEnvelope() {
-        return envelope;
+        if (envelope != null) {
+            return envelope;
+        } else if (envelopeWithTimePeriod != null) {
+            return envelopeWithTimePeriod;
+        }
+        return null;
     }
 
     /**
@@ -101,15 +128,9 @@ public class BoundingShapeType {
     }
 
     /**
-     * Gets the value of the envelopeWithTimePeriod property.
-     */
-    public EnvelopeWithTimePeriodType getEnvelopeWithTimePeriod() {
-        return envelopeWithTimePeriod;
-    }
-
-    /**
      * Gets the value of the null property.
      */
+    @Override
     public List<String> getNull() {
         if (_null == null) {
             _null = new ArrayList<String>();
@@ -121,6 +142,7 @@ public class BoundingShapeType {
      * Gets the value of the nilReason property.
      *
      */
+    @Override
     public List<String> getNilReason() {
         if (nilReason == null) {
             nilReason = new ArrayList<String>();

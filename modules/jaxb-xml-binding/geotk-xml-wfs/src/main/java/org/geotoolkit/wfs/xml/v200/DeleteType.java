@@ -26,7 +26,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
 import org.geotoolkit.ogc.xml.v200.FilterType;
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.wfs.xml.DeleteElement;
 
 
@@ -79,6 +78,7 @@ public class DeleteType extends AbstractTransactionActionType implements DeleteE
      *     {@link FilterType }
      *     
      */
+    @Override
     public FilterType getFilter() {
         return filter;
     }
@@ -103,6 +103,7 @@ public class DeleteType extends AbstractTransactionActionType implements DeleteE
      *     {@link QName }
      *     
      */
+    @Override
     public QName getTypeName() {
         return typeName;
     }

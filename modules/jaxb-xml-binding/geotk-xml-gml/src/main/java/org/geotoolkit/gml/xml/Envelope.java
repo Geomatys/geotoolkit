@@ -16,15 +16,33 @@
  */
 package org.geotoolkit.gml.xml;
 
+import java.util.List;
+
 /**
  *
  * @author Guilhem Legal (Geomatys)
  */
-public interface Envelope {
+public interface Envelope extends org.opengis.geometry.Envelope {
     
     String getSrsName();
     
-    DirectPosition getLowerCorner();
+    Integer getSrsDimension();
     
-    DirectPosition getUpperCorner();
+    void setSrsDimension(Integer dim);
+            
+    //DirectPosition getLowerCorner();
+    
+    //DirectPosition getUpperCorner();
+    
+    List<String> getAxisLabels();
+    
+    void setAxisLabels(final List<String> axisLabels);
+    
+    List<String> getUomLabels();
+    
+    Coordinates getCoordinates();
+    
+    List<? extends DirectPosition> getPos();
+     
+    boolean isCompleteEnvelope2D();
 }

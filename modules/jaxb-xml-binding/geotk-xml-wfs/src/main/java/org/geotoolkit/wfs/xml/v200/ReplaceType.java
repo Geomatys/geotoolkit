@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ogc.xml.v200.FilterType;
+import org.geotoolkit.wfs.xml.ReplaceElement;
 
 
 /**
@@ -54,7 +55,7 @@ import org.geotoolkit.ogc.xml.v200.FilterType;
     "any",
     "filter"
 })
-public class ReplaceType extends AbstractTransactionActionType {
+public class ReplaceType extends AbstractTransactionActionType implements ReplaceElement {
 
     @XmlAnyElement(lax = true)
     private Object any;
@@ -66,6 +67,18 @@ public class ReplaceType extends AbstractTransactionActionType {
     @XmlSchemaType(name = "anyURI")
     private String srsName;
 
+    public ReplaceType() {
+        
+    }
+
+    public ReplaceType(final String handle, final FilterType filter, final Object any, final String inputFormat, final String srsName) {
+        super(handle);
+        this.filter      = filter;
+        this.any         = any;
+        this.inputFormat = inputFormat;
+        this.srsName     = srsName;
+    }
+
     /**
      * Gets the value of the any property.
      * 
@@ -75,6 +88,11 @@ public class ReplaceType extends AbstractTransactionActionType {
      *     
      */
     public Object getAny() {
+        return any;
+    }
+    
+    @Override
+    public Object getFeature() {
         return any;
     }
 
@@ -98,6 +116,7 @@ public class ReplaceType extends AbstractTransactionActionType {
      *     {@link FilterType }
      *     
      */
+    @Override
     public FilterType getFilter() {
         return filter;
     }
@@ -122,6 +141,7 @@ public class ReplaceType extends AbstractTransactionActionType {
      *     {@link String }
      *     
      */
+    @Override
     public String getInputFormat() {
         if (inputFormat == null) {
             return "application/gml+xml; version=3.2";
@@ -150,6 +170,7 @@ public class ReplaceType extends AbstractTransactionActionType {
      *     {@link String }
      *     
      */
+    @Override
     public String getSrsName() {
         return srsName;
     }

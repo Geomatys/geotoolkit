@@ -34,6 +34,7 @@ import org.geotoolkit.gml.xml.v311.PointType;
 import org.geotoolkit.observation.xml.v100.ObservationType;
 import org.geotoolkit.observation.xml.v100.SurveyProcedureType;
 import org.geotoolkit.util.ComparisonMode;
+import org.opengis.geometry.Geometry;
 import org.opengis.observation.sampling.SamplingPoint;
 
 /**
@@ -92,14 +93,16 @@ public class SamplingPointType extends SamplingFeatureType implements SamplingPo
       * adapted for the BRGM model.
       * 
       */
-    public SamplingPointType(final String               identifier,
+    public SamplingPointType(final String                identifier,
                               final String               name,
                               final String               remarks,
                               final FeaturePropertyType  sampledFeature,
-                              final PointPropertyType    location)
+                              final PointType            location)
     {
         super(identifier, name, remarks, sampledFeature);
-        this.position = location;
+        if (location != null) {
+            this.position = new PointPropertyType(location);
+        }
     }
 
     /**
@@ -132,9 +135,15 @@ public class SamplingPointType extends SamplingFeatureType implements SamplingPo
      */
     @Override
     public PointType getPosition(){
-        if (position != null)
+        if (position != null) {
             return position.getPoint();
+        }
         return null;
+    }
+    
+    @Override
+    public Geometry getGeometry() {
+       return getPosition();
     }
     
     /**
