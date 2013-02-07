@@ -133,7 +133,9 @@ public class SweXmlFactory {
      * @return
      */
     public static UomProperty createUomProperty(final String version, final String code, final String href) {
-        if ("1.0.0".equals(version)) {
+        if ("2.0.0".equals(version)) {
+            return new org.geotoolkit.swe.xml.v200.UnitReference(code, href);
+        } else if ("1.0.0".equals(version)) {
             return new org.geotoolkit.swe.xml.v100.UomPropertyType(code, href);
         } else if ("1.0.1".equals(version)) {
             return new org.geotoolkit.swe.xml.v101.UomPropertyType(code, href);

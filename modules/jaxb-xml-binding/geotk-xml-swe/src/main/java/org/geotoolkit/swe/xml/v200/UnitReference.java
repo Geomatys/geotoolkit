@@ -77,6 +77,11 @@ public class UnitReference implements UomProperty {
         this.code = code;
     }
     
+    public UnitReference(final String code, final String href) {
+        this.code = code;
+        this.href = href;
+    }
+    
     /**
      * Gets the value of the code property.
      * 

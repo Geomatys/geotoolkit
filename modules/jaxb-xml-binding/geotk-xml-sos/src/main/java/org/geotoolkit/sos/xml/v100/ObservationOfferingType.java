@@ -102,21 +102,22 @@ public class ObservationOfferingType extends AbstractFeatureType implements Obse
      *  Build a new offering.
      */
     public ObservationOfferingType(final String id, final String name, final String description, final List<String> srsName, final AbstractTimeGeometricPrimitiveType time, 
-            final String procedure, final List<String> observedProperties, final String featureOfInterest,
+            final List<String> procedure, final List<PhenomenonPropertyType> observedProperties, final List<String> featureOfInterest,
             final List<String> responseFormat, final List<QName> resultModel, final List<ResponseModeType> responseMode) {
 
         super(id, name, description, null, null, srsName);
         if (procedure != null) {
-            this.procedure     = Arrays.asList(new ReferenceType(null, procedure));
-        }
-        if(observedProperty != null){
-            this.observedProperty = new ArrayList<PhenomenonPropertyType>();
-            for (String observedProperty : observedProperties) {
-                this.observedProperty.add(new PhenomenonPropertyType(observedProperty));
+            this.procedure = new ArrayList<ReferenceType>();
+            for (String proc : procedure) {
+                this.procedure.add(new ReferenceType(null, proc));
             }
         }
+        this.observedProperty = observedProperties;
         if (featureOfInterest != null) {
-            this.featureOfInterest = Arrays.asList(new ReferenceType(null, featureOfInterest));
+            this.featureOfInterest = new ArrayList<ReferenceType>();
+            for (String foi : featureOfInterest) {
+                this.featureOfInterest.add(new ReferenceType(null, foi));
+            }
         }
         this.responseFormat    = responseFormat;
         this.resultModel       = resultModel;

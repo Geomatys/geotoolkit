@@ -104,7 +104,12 @@ public class LineStringType extends AbstractCurveType implements LineString {
     public LineStringType(final List<DirectPosition> positions) {
         this.pos = new ArrayList<DirectPositionType>();
         for (DirectPosition currentPos : positions) {
-            DirectPositionType position = new DirectPositionType(currentPos);
+            DirectPositionType position;
+            if (currentPos instanceof DirectPositionType) {
+                position = (DirectPositionType) currentPos;
+            } else {
+                position = new DirectPositionType(currentPos);
+            }
             pos.add(position);
         }
     }

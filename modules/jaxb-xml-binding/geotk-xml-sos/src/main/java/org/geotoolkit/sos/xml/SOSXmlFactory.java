@@ -18,7 +18,6 @@
 package org.geotoolkit.sos.xml;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import javax.xml.namespace.QName;
 import org.geotoolkit.gml.xml.Envelope;
@@ -42,6 +41,7 @@ import org.geotoolkit.swe.xml.AbstractEncoding;
 import org.geotoolkit.swe.xml.AbstractTime;
 import org.geotoolkit.swe.xml.AnyScalar;
 import org.geotoolkit.swe.xml.DataArray;
+import org.geotoolkit.swe.xml.PhenomenonProperty;
 import org.geotoolkit.swe.xml.Quantity;
 import org.geotoolkit.swe.xml.SweXmlFactory;
 import org.geotoolkit.swe.xml.TextBlock;
@@ -287,11 +287,11 @@ public class SOSXmlFactory {
         }
     }
     
-    public static Envelope buildEnvelope(final String version, final double minx, final double miny, final double maxx, final double maxy, final String srs) {
+    public static Envelope buildEnvelope(final String version, final String id, final double minx, final double miny, final double maxx, final double maxy, final String srs) {
         if ("2.0.0".equals(version)) {
-            return GMLXmlFactory.buildEnvelope("3.2.1", minx, miny, maxx, maxy, srs);
+            return GMLXmlFactory.buildEnvelope("3.2.1", id, minx, miny, maxx, maxy, srs);
         } else if ("1.0.0".equals(version)) {
-            return GMLXmlFactory.buildEnvelope("3.1.1", minx, miny, maxx, maxy, srs);
+            return GMLXmlFactory.buildEnvelope("3.1.1", id, minx, miny, maxx, maxy, srs);
         } else {
             throw new IllegalArgumentException("unexpected version number:" + version);
         }
@@ -349,11 +349,15 @@ public class SOSXmlFactory {
     }
     
     public static ObservationOffering buildOffering(final String version, final String id, final String name, final String description, final List<String> srsName, 
-            final TemporalGeometricPrimitive time,  final String procedure, final List<String> observedProperties, 
-            final String featureOfInterest, final List<String> responseFormat, final List<QName> resultModel, final List<ResponseModeType> responseMode) {
+            final TemporalGeometricPrimitive time,  final List<String> procedure, final List<PhenomenonProperty> observedProperties, final List<String> observedPropertiesv200, 
+            final List<String> featureOfInterest, final List<String> responseFormat, final List<QName> resultModel, final List<String> resultModelV200, final List<ResponseModeType> responseMode) {
         if ("2.0.0".equals(version)) {
             if (time != null && !(time instanceof org.geotoolkit.gml.xml.v321.TimePeriodType)) {
                 throw new IllegalArgumentException("unexpected object version for time element");
+            }
+            String singleProcedure = null;
+            if (!procedure.isEmpty()) {
+                singleProcedure = procedure.get(0);
             }
             return new org.geotoolkit.sos.xml.v200.ObservationOfferingType(
                                             id,
@@ -361,14 +365,21 @@ public class SOSXmlFactory {
                                             description,
                                             null,
                                             (org.geotoolkit.gml.xml.v321.TimePeriodType)time,
-                                            procedure,
-                                            observedProperties,
-                                            Arrays.asList(featureOfInterest),
+                                            singleProcedure,
+                                            observedPropertiesv200,
+                                            featureOfInterest,
                                             responseFormat,
-                                            null);
+                                            resultModelV200);
         } else if ("1.0.0".equals(version)) {
             if (time != null && !(time instanceof org.geotoolkit.gml.xml.v311.AbstractTimeGeometricPrimitiveType)) {
                 throw new IllegalArgumentException("unexpected object version for time element");
+            }
+            final List<org.geotoolkit.swe.xml.v101.PhenomenonPropertyType> phenProp = new ArrayList<org.geotoolkit.swe.xml.v101.PhenomenonPropertyType>();
+            for (PhenomenonProperty phen : observedProperties) {
+                if (!(phen instanceof org.geotoolkit.swe.xml.v101.PhenomenonPropertyType)) {
+                     throw new IllegalArgumentException("unexpected object version for phenomenon element");
+                }
+                phenProp.add((org.geotoolkit.swe.xml.v101.PhenomenonPropertyType)phen);
             }
             return new org.geotoolkit.sos.xml.v100.ObservationOfferingType(
                                             id,
@@ -377,7 +388,7 @@ public class SOSXmlFactory {
                                             srsName,
                                             (org.geotoolkit.gml.xml.v311.AbstractTimeGeometricPrimitiveType)time,
                                             procedure,
-                                            observedProperties,
+                                            phenProp,
                                             featureOfInterest,
                                             responseFormat,
                                             resultModel,
@@ -612,7 +623,7 @@ public class SOSXmlFactory {
         if ("2.0.0".equals(version)) {
             return SweXmlFactory.createUomProperty("2.0.0", code, href);
         } else if ("1.0.0".equals(version)) {
-            return SweXmlFactory.createUomProperty("1.0.0", code, href);
+            return SweXmlFactory.createUomProperty("1.0.1", code, href);
         } else {
             throw new IllegalArgumentException("Unexpected SOS version:" + version);
         }
