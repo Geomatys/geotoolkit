@@ -61,9 +61,7 @@ import javax.xml.bind.annotation.XmlType;
     "procedureDescriptionFormat",
     "description"
 })
-public class DescribeSensorResponseType
-    extends ExtensibleResponseType
-{
+public class DescribeSensorResponseType extends ExtensibleResponseType {
 
     @XmlElement(required = true)
     @XmlSchemaType(name = "anyURI")

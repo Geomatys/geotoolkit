@@ -47,6 +47,8 @@ import org.geotoolkit.swe.xml.Quantity;
 import org.geotoolkit.swe.xml.SweXmlFactory;
 import org.geotoolkit.swe.xml.TextBlock;
 import org.geotoolkit.swe.xml.UomProperty;
+import org.geotoolkit.swes.xml.DeleteSensorResponse;
+import org.geotoolkit.swes.xml.DescribeSensor;
 import org.geotoolkit.swes.xml.InsertSensorResponse;
 import org.opengis.filter.temporal.After;
 import org.opengis.filter.temporal.Before;
@@ -295,6 +297,36 @@ public class SOSXmlFactory {
                 throw new IllegalArgumentException("unexpected object version for observation");
             }
             return new org.geotoolkit.observation.xml.v100.ObservationType((org.geotoolkit.observation.xml.v100.ObservationType)observation);
+        } else {
+            throw new IllegalArgumentException("unexpected version number:" + version);
+        }
+    }
+    
+    public static DeleteSensorResponse buildDeleteSensorResponse(final String version, final String deletedProcedure) {
+        if ("2.0.0".equals(version)) {
+            return new org.geotoolkit.swes.xml.v200.DeleteSensorResponseType(deletedProcedure);
+        } else if ("1.0.0".equals(version)) {
+            throw new IllegalArgumentException("deleteSensor is not implemented in SOS v100");
+        } else {
+            throw new IllegalArgumentException("unexpected version number:" + version);
+        }
+    }
+    
+    public static DescribeSensor buildDescribeSensor(final String version, final String service, final String procedure, final String outputFormat) {
+        if ("2.0.0".equals(version)) {
+            return new org.geotoolkit.swes.xml.v200.DescribeSensorType(version, service, procedure, outputFormat);
+        } else if ("1.0.0".equals(version)) {
+            return new org.geotoolkit.sos.xml.v100.DescribeSensor(version, service, procedure, outputFormat);
+        } else {
+            throw new IllegalArgumentException("unexpected version number:" + version);
+        }
+    }
+    
+    public static GetFeatureOfInterest buildGetFeatureOfInterest(final String version, final String service, final List<String> featureId) {
+        if ("2.0.0".equals(version)) {
+            return new org.geotoolkit.sos.xml.v200.GetFeatureOfInterestType(version, service, featureId);
+        } else if ("1.0.0".equals(version)) {
+            return new org.geotoolkit.sos.xml.v100.GetFeatureOfInterest(version, service, featureId);
         } else {
             throw new IllegalArgumentException("unexpected version number:" + version);
         }
