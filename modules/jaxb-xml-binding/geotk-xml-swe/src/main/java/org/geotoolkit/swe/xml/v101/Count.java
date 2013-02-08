@@ -171,6 +171,7 @@ public class Count extends AbstractDataComponentType implements AbstractCount {
     /**
      * @return the constraint
      */
+    @Override
     public AllowedValuesPropertyType getConstraint() {
         return constraint;
     }
@@ -187,7 +188,7 @@ public class Count extends AbstractDataComponentType implements AbstractCount {
             final Count that = (Count) object;
             return Utilities.equals(this.axisID, that.axisID) &&
                     Utilities.equals(this.constraint, that.constraint) &&
-                    Utilities.equals(this.quality, that.quality) &&
+                    Utilities.equals(this.getQuality(), that.getQuality()) &&
                     Utilities.equals(this.referenceFrame, that.referenceFrame) &&
                     Utilities.equals(this.value, that.value);
         }

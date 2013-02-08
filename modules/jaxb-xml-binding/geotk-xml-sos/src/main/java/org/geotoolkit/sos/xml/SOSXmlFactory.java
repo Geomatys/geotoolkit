@@ -204,7 +204,7 @@ public class SOSXmlFactory {
         }
     }
     
-    public static ObservationCollection buildObservationCollection(final String version, final String id, final Envelope bounds, final List<Observation> observations) {
+    public static ObservationCollection buildGetObservationResponse(final String version, final String id, final Envelope bounds, final List<Observation> observations) {
         if ("2.0.0".equals(version)) {
             final List<org.geotoolkit.observation.xml.v200.OMObservationType> obs200 = new ArrayList<org.geotoolkit.observation.xml.v200.OMObservationType>();
             if (observations != null) {
@@ -217,6 +217,41 @@ public class SOSXmlFactory {
                 }
             }
             return new org.geotoolkit.sos.xml.v200.GetObservationResponseType(obs200);
+        } else if ("1.0.0".equals(version)) {
+            final List<org.geotoolkit.observation.xml.v100.ObservationType> obs100 = new ArrayList<org.geotoolkit.observation.xml.v100.ObservationType>();
+            if (observations != null) {
+                for (Observation obs : observations) {
+                    if (obs instanceof org.geotoolkit.observation.xml.v100.ObservationType) {
+                        obs100.add((org.geotoolkit.observation.xml.v100.ObservationType) obs);
+                    } else {
+                        throw new IllegalArgumentException("unexpected object version for observation element");
+                    }
+                }
+            }
+            if (bounds != null && !(bounds instanceof org.geotoolkit.gml.xml.v311.EnvelopeType)) {
+                throw new IllegalArgumentException("unexpected object version for bounds element");
+            }
+            return new org.geotoolkit.observation.xml.v100.ObservationCollectionType(id, 
+                                                                                     (org.geotoolkit.gml.xml.v311.EnvelopeType)bounds,
+                                                                                     obs100);
+        } else {
+            throw new IllegalArgumentException("unexpected version number:" + version);
+        }
+    }
+    
+    public static ObservationCollection buildGetObservationByIdResponse(final String version, final String id, final Envelope bounds, final List<Observation> observations) {
+        if ("2.0.0".equals(version)) {
+            final List<org.geotoolkit.observation.xml.v200.OMObservationType> obs200 = new ArrayList<org.geotoolkit.observation.xml.v200.OMObservationType>();
+            if (observations != null) {
+                for (Observation obs : observations) {
+                    if (obs instanceof org.geotoolkit.observation.xml.v200.OMObservationType) {
+                        obs200.add((org.geotoolkit.observation.xml.v200.OMObservationType) obs);
+                    } else {
+                        throw new IllegalArgumentException("unexpected object version for observation element");
+                    }
+                }
+            }
+            return new org.geotoolkit.sos.xml.v200.GetObservationByIdResponseType(obs200);
         } else if ("1.0.0".equals(version)) {
             final List<org.geotoolkit.observation.xml.v100.ObservationType> obs100 = new ArrayList<org.geotoolkit.observation.xml.v100.ObservationType>();
             if (observations != null) {

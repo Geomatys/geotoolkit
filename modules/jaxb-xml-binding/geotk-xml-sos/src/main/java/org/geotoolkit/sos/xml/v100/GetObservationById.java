@@ -16,6 +16,9 @@
  */
 package org.geotoolkit.sos.xml.v100;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -60,7 +63,7 @@ import org.geotoolkit.util.Utilities;
     "responseMode"
 })
 @XmlRootElement(name = "GetObservationById")
-public class GetObservationById extends RequestBaseType {
+public class GetObservationById extends RequestBaseType implements org.geotoolkit.sos.xml.GetObservationById {
 
     @XmlElement(name = "ObservationId", required = true)
     @XmlSchemaType(name = "anyURI")
@@ -91,6 +94,14 @@ public class GetObservationById extends RequestBaseType {
         this.srsName = srsName;
     }
 
+    @Override
+    public List<String> getObservation() {
+        if (observationId != null) {
+            return Arrays.asList(observationId);
+        }
+        return new ArrayList<String>();
+    }
+    
     /**
      * Gets the value of the observationId property.
      */
