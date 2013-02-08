@@ -44,6 +44,11 @@ public class OfferingProcedureType implements Entry{
         this.idOffering = idOffering;
         this.component  = component;
     }
+    
+    public OfferingProcedureType(final String idOffering, final String componentRef) {
+        this.idOffering = idOffering;
+        this.component  = new ReferenceType(null, componentRef);
+    }
 
      public String getName() {
         if (component != null) {
@@ -52,6 +57,7 @@ public class OfferingProcedureType implements Entry{
         return null;
     }
 
+    @Override
      public String getIdentifier() {
         if (component != null) {
             return component.getHref();

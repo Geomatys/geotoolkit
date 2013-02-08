@@ -26,7 +26,6 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.observation.xml.v100.ObservationType;
 import org.geotoolkit.util.Utilities;
-import org.opengis.observation.Observation;
 
 
 /**
@@ -136,5 +135,10 @@ public class InsertObservation extends RequestBaseType implements org.geotoolkit
             s.append("observation:\n").append(observation).append('\n');
         }
         return s.toString();
+    }
+
+    @Override
+    public List<String> getOffering() {
+        return null;
     }
 }

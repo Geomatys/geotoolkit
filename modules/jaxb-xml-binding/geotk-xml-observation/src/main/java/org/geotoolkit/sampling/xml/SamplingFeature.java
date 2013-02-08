@@ -24,5 +24,7 @@ import org.opengis.geometry.Geometry;
  */
 public interface SamplingFeature extends org.opengis.observation.sampling.SamplingFeature {
 
+    String getId();
+    
     Geometry getGeometry();
 }

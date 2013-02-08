@@ -64,6 +64,7 @@ public class ProcessType implements Process, Entry {
     /**
      * Retourne la reference du capteur.
      */
+    @Override
     public String getHref() {
         return href;
     }

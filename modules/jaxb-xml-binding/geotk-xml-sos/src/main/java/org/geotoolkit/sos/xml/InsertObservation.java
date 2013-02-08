@@ -30,4 +30,6 @@ public interface InsertObservation extends RequestBase {
     
     List<? extends Observation> getObservations();
     
+    List<String> getOffering();
+    
 }

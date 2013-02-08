@@ -27,6 +27,7 @@ import org.geotoolkit.gml.xml.GMLXmlFactory;
 import org.geotoolkit.gml.xml.LineString;
 import org.geotoolkit.gml.xml.Point;
 import org.geotoolkit.gml.xml.TimeIndeterminateValueType;
+import org.geotoolkit.observation.xml.OMXmlFactory;
 import org.geotoolkit.ows.xml.AbstractOperationsMetadata;
 import org.geotoolkit.ows.xml.AbstractServiceIdentification;
 import org.geotoolkit.ows.xml.AbstractServiceProvider;
@@ -405,33 +406,7 @@ public class SOSXmlFactory {
      * @return
      */
     public static FeatureProperty buildFeatureProperty(final String version, final SamplingFeature feature) {
-        if ("1.0.0".equals(version)) {
-            final org.geotoolkit.sampling.xml.v100.ObjectFactory samplingFactory = new org.geotoolkit.sampling.xml.v100.ObjectFactory();
-            if (feature instanceof org.geotoolkit.sampling.xml.v100.SamplingPointType) {
-                return new org.geotoolkit.gml.xml.v311.FeaturePropertyType(samplingFactory.createSamplingPoint((org.geotoolkit.sampling.xml.v100.SamplingPointType)feature));
-            } else if (feature instanceof org.geotoolkit.sampling.xml.v100.SamplingCurveType) {
-                return new org.geotoolkit.gml.xml.v311.FeaturePropertyType(samplingFactory.createSamplingCurve((org.geotoolkit.sampling.xml.v100.SamplingCurveType)feature));
-            } else if (feature instanceof org.geotoolkit.sampling.xml.v100.SamplingSolidType) {
-                return new org.geotoolkit.gml.xml.v311.FeaturePropertyType(samplingFactory.createSamplingSolid((org.geotoolkit.sampling.xml.v100.SamplingSolidType)feature));
-            } else if (feature instanceof org.geotoolkit.sampling.xml.v100.SamplingSurfaceType) {
-                return new org.geotoolkit.gml.xml.v311.FeaturePropertyType(samplingFactory.createSamplingSurface((org.geotoolkit.sampling.xml.v100.SamplingSurfaceType)feature));
-            } else if (feature != null) {
-                throw new IllegalArgumentException("unexpected object version");
-            }
-        } else if ("2.0.0".equals(version)) {
-             final org.geotoolkit.sampling.xml.v200.ObjectFactory samplingFactory = new org.geotoolkit.sampling.xml.v200.ObjectFactory();
-             final org.geotoolkit.samplingspatial.xml.v200.ObjectFactory spatialFactory = new org.geotoolkit.samplingspatial.xml.v200.ObjectFactory();
-             if (feature instanceof org.geotoolkit.samplingspatial.xml.v200.SFSpatialSamplingFeatureType) {
-                return new org.geotoolkit.gml.xml.v321.FeaturePropertyType(spatialFactory.createSFSpatialSamplingFeature((org.geotoolkit.samplingspatial.xml.v200.SFSpatialSamplingFeatureType)feature));
-             } else if (feature instanceof org.geotoolkit.sampling.xml.v200.SFSamplingFeatureType) {
-                 return new org.geotoolkit.gml.xml.v321.FeaturePropertyType(samplingFactory.createSFSamplingFeature((org.geotoolkit.sampling.xml.v200.SFSamplingFeatureType)feature));
-             } else if (feature != null) { 
-                throw new IllegalArgumentException("unexpected object version");
-             }
-        } else {
-            throw new IllegalArgumentException("unexpected sos version number:" + version);
-        }
-        return null;
+        return OMXmlFactory.buildFeatureProperty(version, feature);
     }
     
     /**
