@@ -33,6 +33,7 @@ import org.geotoolkit.ows.xml.AbstractServiceIdentification;
 import org.geotoolkit.ows.xml.AbstractServiceProvider;
 import org.geotoolkit.ows.xml.AcceptFormats;
 import org.geotoolkit.ows.xml.AcceptVersions;
+import org.geotoolkit.ows.xml.OWSXmlFactory;
 import org.geotoolkit.ows.xml.Range;
 import org.geotoolkit.ows.xml.Sections;
 import org.geotoolkit.swe.xml.AbstractBoolean;
@@ -719,5 +720,9 @@ public class SOSXmlFactory {
         } else {
             throw new IllegalArgumentException("Unexpected SOS version:" + version);
         }
+    }
+    
+    public static AcceptVersions buildAcceptVersion(final String currentVersion, final List<String> acceptVersion) {
+       return OWSXmlFactory.buildAcceptVersion("1.1.0", acceptVersion);
     }
 }

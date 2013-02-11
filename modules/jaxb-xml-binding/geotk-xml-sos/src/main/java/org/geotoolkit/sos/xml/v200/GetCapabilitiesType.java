@@ -22,6 +22,7 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ows.xml.v110.AcceptFormatsType;
 import org.geotoolkit.ows.xml.v110.AcceptVersionsType;
@@ -53,6 +54,7 @@ import org.geotoolkit.sos.xml.GetCapabilities;
 @XmlType(name = "GetCapabilitiesType", propOrder = {
     "extension"
 })
+@XmlRootElement(name="GetCapabilities")
 public class GetCapabilitiesType extends org.geotoolkit.ows.xml.v110.GetCapabilitiesType implements GetCapabilities {
 
     private List<Object> extension;
