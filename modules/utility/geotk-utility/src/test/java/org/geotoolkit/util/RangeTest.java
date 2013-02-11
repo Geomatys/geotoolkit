@@ -36,34 +36,34 @@ import static org.geotoolkit.test.Assert.*;
 @Depend(ClassesTest.class)
 public final strictfp class RangeTest {
     /** [-1,1] */
-    private final Range<Integer> UNIT = new Range<>(Integer.class, -1, 1);
+    private final Range<Integer> UNIT = new Range<>(Integer.class, -1, 1); // LGPL
 
     /** Anything invalid is considered Empty; ie (1,-1) or (0,0) or (unbounded,unbounded) */
-    private final Range<Integer> EMPTY = new Range<>(Integer.class, 1, -1);
+    private final Range<Integer> EMPTY = new Range<>(Integer.class, 1, -1); // LGPL
 
     /** [0,0] */
-    private final Range<Integer> ZERO = new Range<>(Integer.class, 0, 0);
+    private final Range<Integer> ZERO = new Range<>(Integer.class, 0, 0); // LGPL
 
     /** 1, 2, 3, 4, ... positive integers   Z-+ */
-    private final Range<Integer> POSITIVE = new Range<>(Integer.class, 0, false, null, true);
+    private final Range<Integer> POSITIVE = new Range<>(Integer.class, 0, false, null, true); // LGPL
 
     /** 0, 1, 2, 3, 4, ...  nonnegative integers    Z-* */
-    private final Range<Integer> NON_NEGATIVE= new Range<>(Integer.class, 0, true, null, true);
+    private final Range<Integer> NON_NEGATIVE= new Range<>(Integer.class, 0, true, null, true); // LGPL
 
     /** -1, -2, -3, -4, ... negative integers   Z-- */
-    private final Range<Integer> NEGATIVE = new Range<>(Integer.class, null, true, 0, false);
+    private final Range<Integer> NEGATIVE = new Range<>(Integer.class, null, true, 0, false); // LGPL
 
     /** 0, -1, -2, -3, -4, ...  nonpositive integers */
-    private final Range<Integer> NON_POSITIVE = new Range<>(Integer.class, null, true, 0, true);
+    private final Range<Integer> NON_POSITIVE = new Range<>(Integer.class, null, true, 0, true); // LGPL
 
     /** ..., -2, -1, 0, 1, 2, ...    integers    Z */
-    private final Range<Integer> INTEGERS = new Range<>(Integer.class, null, null);
+    private final Range<Integer> INTEGERS = new Range<>(Integer.class, null, null); // LGPL
 
     /** [A,B) */
-    private final Range<String> A = new Range<>(String.class, "A", true, "B", false);
+    private final Range<String> A = new Range<>(String.class, "A", true, "B", false); // LGPL
 
     /** [B,C) */
-    private final Range<String> B = new Range<>(String.class, "B", true, "C", false);
+    private final Range<String> B = new Range<>(String.class, "B", true, "C", false); // LGPL
 
     /**
      * The {@link Range} class has a number of assertions that are valuable for our
@@ -78,7 +78,7 @@ public final strictfp class RangeTest {
      * Tests internal utility methods to make sure the class is ticking over as expected.
      */
     @Test
-    public void testInternals() {
+    public void testInternals() { // LGPL
         assertEquals(  0, UNIT.compareMinTo( -1,  0));
         assertEquals( -1, UNIT.compareMinTo( -1, +1));
         assertEquals(  0, UNIT.compareMaxTo(  1,  0));
@@ -89,7 +89,7 @@ public final strictfp class RangeTest {
      * Tests ranges that are expected to be empty.
      */
     @Test
-    public void testIsEmpty() {
+    public void testIsEmpty() { // LGPL
         // easy
         assertTrue (new Range<>(Integer.class, 0, -1  ).isEmpty());
         assertFalse(new Range<>(Integer.class, 0, 0   ).isEmpty());
@@ -118,7 +118,7 @@ public final strictfp class RangeTest {
      * Tests string representations.
      */
     @Test
-    public void testToString() {
+    public void testToString() { // LGPL
         assertEquals("[-1 … 1]", UNIT    .toString());
         assertEquals("0",        ZERO    .toString());
         assertEquals("[A … B)",  A       .toString());
@@ -131,7 +131,7 @@ public final strictfp class RangeTest {
      * Tests the comparison of ranges for equality.
      */
     @Test
-    public void testEquals() {
+    public void testEquals() { // LGPL
         assertEquals(EMPTY, new Range<>(Integer.class, 2, -2));
         assertEquals(UNIT,  new Range<>(Integer.class, -1, 1));
     }
@@ -140,7 +140,7 @@ public final strictfp class RangeTest {
      * Tests {@link Range#contains}.
      */
     @Test
-    public void testContains() {
+    public void testContains() { // LGPL
         assertTrue (UNIT.contains( 0));
         assertTrue (UNIT.contains( 1));
         assertTrue (UNIT.contains(-1));
@@ -171,7 +171,7 @@ public final strictfp class RangeTest {
     @Test
     public void testUnion() {
         Range<?> range = UNIT.union(POSITIVE);
-        assertEquals(new Range<>(Integer.class, -1, null), range);
+        assertEquals(new Range<>(Integer.class, -1, null), range); // LGPL
 
         range = new Range<>(Integer.class, 0);
         assertEquals(new Range<>(Integer.class, 0), range);
@@ -190,7 +190,7 @@ public final strictfp class RangeTest {
      * Tests {@link Range#intersect}.
      */
     @Test
-    public void testIntersects() {
+    public void testIntersects() { // LGPL
         assertEquals("(0,1]",  new Range<>(Integer.class, 0, false, 1, true ), UNIT.intersect(POSITIVE));
         assertEquals("[-1,0)", new Range<>(Integer.class,-1, true,  0, false), UNIT.intersect(NEGATIVE));
         assertEquals(EMPTY, POSITIVE.intersect(NEGATIVE));
