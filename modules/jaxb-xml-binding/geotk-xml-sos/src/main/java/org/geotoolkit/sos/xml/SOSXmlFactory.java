@@ -756,4 +756,21 @@ public class SOSXmlFactory {
             throw new IllegalArgumentException("Unexpected SOS version:" + version);
         }
     }
+    
+    public static GetResultTemplateResponse buildGetResultTemplateResponse(final String version, final AbstractDataComponent resultStructure, final AbstractEncoding encoding) {
+        if (resultStructure != null && !(resultStructure instanceof org.geotoolkit.swe.xml.v200.AbstractDataComponentType)) {
+            throw new IllegalArgumentException("unexpected object version for resultStructure element");
+        }
+        if (encoding != null && !(encoding instanceof org.geotoolkit.swe.xml.v200.AbstractEncodingType)) {
+            throw new IllegalArgumentException("unexpected object version for encoding element");
+        }
+        if ("2.0.0".equals(version)) {
+            return new org.geotoolkit.sos.xml.v200.GetResultTemplateResponseType((org.geotoolkit.swe.xml.v200.AbstractDataComponentType)resultStructure,
+                                                                                 (org.geotoolkit.swe.xml.v200.AbstractEncodingType)encoding);
+        } else if ("1.0.0".equals(version)) {
+            throw new IllegalArgumentException("GetResultTemplateResponse is not supported in 1.0.0");
+        } else {
+            throw new IllegalArgumentException("Unexpected SOS version:" + version);
+        }
+    }
 }

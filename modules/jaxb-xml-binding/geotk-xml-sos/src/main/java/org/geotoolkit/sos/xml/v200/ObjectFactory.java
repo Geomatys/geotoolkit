@@ -99,8 +99,8 @@ public class ObjectFactory {
      * Create an instance of {@link ResultTemplateType.ResultEncoding }
      * 
      */
-    public ResultTemplateType.ResultEncoding createResultTemplateTypeResultEncoding() {
-        return new ResultTemplateType.ResultEncoding();
+    public ResultEncoding createResultTemplateTypeResultEncoding() {
+        return new ResultEncoding();
     }
 
     /**
@@ -163,8 +163,8 @@ public class ObjectFactory {
      * Create an instance of {@link GetResultTemplateResponseType.ResultStructure }
      * 
      */
-    public GetResultTemplateResponseType.ResultStructure createGetResultTemplateResponseTypeResultStructure() {
-        return new GetResultTemplateResponseType.ResultStructure();
+    public ResultStructure createGetResultTemplateResponseTypeResultStructure() {
+        return new ResultStructure();
     }
 
     /**
@@ -187,8 +187,8 @@ public class ObjectFactory {
      * Create an instance of {@link GetResultTemplateResponseType.ResultEncoding }
      * 
      */
-    public GetResultTemplateResponseType.ResultEncoding createGetResultTemplateResponseTypeResultEncoding() {
-        return new GetResultTemplateResponseType.ResultEncoding();
+    public ResultEncoding createGetResultTemplateResponseTypeResultEncoding() {
+        return new ResultEncoding();
     }
 
     /**
@@ -443,8 +443,8 @@ public class ObjectFactory {
      * Create an instance of {@link ResultTemplateType.ResultStructure }
      * 
      */
-    public ResultTemplateType.ResultStructure createResultTemplateTypeResultStructure() {
-        return new ResultTemplateType.ResultStructure();
+    public ResultStructure createResultTemplateTypeResultStructure() {
+        return new ResultStructure();
     }
 
     /**
