@@ -316,7 +316,7 @@ public class TimePositionType extends AbstractTimePosition implements Serializab
                 try {
                     final Date date;
                     synchronized (FORMATTERS.get(0)) {
-                        date = sdf.parse(v);
+                        date = FORMATTERS.get(0).parse(v);
                     }
                     s.append(sdf.format(date));
                 } catch (ParseException ex) {

@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.sos.xml.InsertResult;
 import org.geotoolkit.swes.xml.v200.ExtensibleRequestType;
 
 
@@ -50,14 +51,24 @@ import org.geotoolkit.swes.xml.v200.ExtensibleRequestType;
     "template",
     "resultValues"
 })
-public class InsertResultType extends ExtensibleRequestType {
+public class InsertResultType extends ExtensibleRequestType implements InsertResult {
 
     @XmlElement(required = true)
     @XmlSchemaType(name = "anyURI")
     private String template;
     @XmlElement(required = true)
-    private Object resultValues;
+    private String resultValues;
 
+    public InsertResultType() {
+        
+    }
+    
+    public InsertResultType(final String version, final String template, final String resultValues) {
+        super(version, "SOS");
+        this.template = template;
+        this.resultValues = resultValues;
+    }
+    
     /**
      * Gets the value of the template property.
      * 
@@ -66,6 +77,7 @@ public class InsertResultType extends ExtensibleRequestType {
      *     {@link String }
      *     
      */
+    @Override
     public String getTemplate() {
         return template;
     }
@@ -90,7 +102,8 @@ public class InsertResultType extends ExtensibleRequestType {
      *     {@link Object }
      *     
      */
-    public Object getResultValues() {
+    @Override
+    public String getResultValues() {
         return resultValues;
     }
 
@@ -102,7 +115,7 @@ public class InsertResultType extends ExtensibleRequestType {
      *     {@link Object }
      *     
      */
-    public void setResultValues(Object value) {
+    public void setResultValues(String value) {
         this.resultValues = value;
     }
 

@@ -21,6 +21,11 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.observation.xml.v200.OMObservationType;
+import org.geotoolkit.sos.xml.InsertResultTemplate;
+import org.geotoolkit.sos.xml.ResultTemplate;
+import org.geotoolkit.swe.xml.v200.AbstractDataComponentType;
+import org.geotoolkit.swe.xml.v200.AbstractEncodingType;
 import org.geotoolkit.swes.xml.v200.ExtensibleRequestType;
 
 
@@ -57,11 +62,21 @@ import org.geotoolkit.swes.xml.v200.ExtensibleRequestType;
 @XmlType(name = "InsertResultTemplateType", propOrder = {
     "proposedTemplate"
 })
-public class InsertResultTemplateType extends ExtensibleRequestType {
+public class InsertResultTemplateType extends ExtensibleRequestType implements InsertResultTemplate {
 
     @XmlElement(required = true)
     private InsertResultTemplateType.ProposedTemplate proposedTemplate;
 
+    public InsertResultTemplateType() {
+        
+    }
+    
+    public InsertResultTemplateType(final String version, final String offering, final OMObservationType template,  final AbstractDataComponentType resultStructure,
+            final AbstractEncodingType encoding) {
+        super(version, "SOS");
+        this.proposedTemplate = new ProposedTemplate(offering, template, resultStructure, encoding);
+    }
+    
     /**
      * Gets the value of the proposedTemplate property.
      * 
@@ -84,6 +99,14 @@ public class InsertResultTemplateType extends ExtensibleRequestType {
      */
     public void setProposedTemplate(InsertResultTemplateType.ProposedTemplate value) {
         this.proposedTemplate = value;
+    }
+
+    @Override
+    public ResultTemplate getTemplate() {
+        if (proposedTemplate != null) {
+            return proposedTemplate.resultTemplate;
+        }
+        return null;
     }
 
 
@@ -115,6 +138,15 @@ public class InsertResultTemplateType extends ExtensibleRequestType {
         @XmlElement(name = "ResultTemplate", required = true)
         private ResultTemplateType resultTemplate;
 
+        public ProposedTemplate() {
+            
+        }
+        
+        public ProposedTemplate(final String offering, final OMObservationType template,  final AbstractDataComponentType resultStructure,
+            final AbstractEncodingType encoding) {
+            this.resultTemplate = new ResultTemplateType(offering, template, resultStructure, encoding);
+        }
+        
         /**
          * Gets the value of the resultTemplate property.
          * 

@@ -20,6 +20,7 @@ package org.geotoolkit.sos.xml.v200;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.sos.xml.InsertResultResponse;
 import org.geotoolkit.swes.xml.v200.ExtensibleResponseType;
 
 
@@ -41,6 +42,6 @@ import org.geotoolkit.swes.xml.v200.ExtensibleResponseType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "InsertResultResponseType")
-public class InsertResultResponseType extends ExtensibleResponseType {
+public class InsertResultResponseType extends ExtensibleResponseType implements InsertResultResponse {
 
 }

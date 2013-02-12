@@ -32,6 +32,7 @@ import org.geotoolkit.gml.xml.v321.FeaturePropertyType;
 import org.geotoolkit.gml.xml.v321.ReferenceType;
 import org.geotoolkit.gml.xml.v321.TimeInstantPropertyType;
 import org.geotoolkit.gml.xml.v321.TimePeriodPropertyType;
+import org.geotoolkit.gml.xml.v321.TimePeriodType;
 import org.geotoolkit.internal.jaxb.metadata.DQ_Element;
 import org.geotoolkit.internal.jaxb.metadata.MD_Metadata;
 import org.geotoolkit.observation.xml.AbstractObservation;
@@ -45,6 +46,7 @@ import org.opengis.metadata.quality.Element;
 import org.opengis.observation.Observation;
 import org.opengis.observation.Phenomenon;
 import org.opengis.observation.sampling.SamplingFeature;
+import org.opengis.temporal.Period;
 import org.opengis.temporal.TemporalGeometricPrimitive;
 import org.opengis.temporal.TemporalObject;
 
@@ -273,6 +275,15 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
     public void emptySamplingTime() {
         this.phenomenonTime = null;
     }
+    @Override
+    public void setSamplingTimePeriod(final Period period) {
+        if (period instanceof TimePeriodType) {
+            this.phenomenonTime = new TimeObjectPropertyType((TimePeriodType)period);
+        } else if (period != null) {
+            final TimePeriodType pt = new TimePeriodType(period.getBeginning().getPosition(), period.getEnding().getPosition());
+            this.phenomenonTime = new TimeObjectPropertyType(pt);
+        }
+    }
     
     @Override
     public TemporalObject getProcedureTime() {
@@ -492,7 +503,8 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
      *     {@link Object }
      *     
      */
-    public void setResult(Object value) {
+    @Override
+    public void setResult(final Object value) {
         this.result = value;
     }
 
@@ -602,7 +614,7 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
         hash = 37 * hash + (this.validTime != null ? this.validTime.hashCode() : 0);
         return hash;
     }
-    
+
     @XmlRootElement
     protected static class InternalPhenomenon implements org.geotoolkit.swe.xml.Phenomenon {
     

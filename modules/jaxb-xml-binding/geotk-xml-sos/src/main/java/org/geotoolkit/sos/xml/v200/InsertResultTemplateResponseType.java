@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.sos.xml.InsertResultTemplateResponse;
 import org.geotoolkit.swes.xml.v200.ExtensibleResponseType;
 
 
@@ -48,12 +49,20 @@ import org.geotoolkit.swes.xml.v200.ExtensibleResponseType;
 @XmlType(name = "InsertResultTemplateResponseType", propOrder = {
     "acceptedTemplate"
 })
-public class InsertResultTemplateResponseType extends ExtensibleResponseType {
+public class InsertResultTemplateResponseType extends ExtensibleResponseType implements InsertResultTemplateResponse {
 
     @XmlElement(required = true)
     @XmlSchemaType(name = "anyURI")
     private String acceptedTemplate;
 
+    public InsertResultTemplateResponseType() {
+        
+    }
+    
+    public InsertResultTemplateResponseType(final String acceptedTemplate) {
+        this.acceptedTemplate = acceptedTemplate;
+    }
+    
     /**
      * Gets the value of the acceptedTemplate property.
      * 

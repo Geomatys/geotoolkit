@@ -24,6 +24,8 @@ import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.observation.xml.v200.OMObservationType;
+import org.geotoolkit.sos.xml.ResultTemplate;
+import org.geotoolkit.swe.xml.v200.AbstractDataComponentPropertyType;
 import org.geotoolkit.swe.xml.v200.AbstractDataComponentType;
 import org.geotoolkit.swe.xml.v200.AbstractEncodingType;
 import org.geotoolkit.swe.xml.v200.AbstractSimpleComponentType;
@@ -107,7 +109,7 @@ import org.geotoolkit.swes.xml.v200.AbstractSWESType;
     "resultStructure",
     "resultEncoding"
 })
-public class ResultTemplateType extends AbstractSWESType {
+public class ResultTemplateType extends AbstractSWESType implements ResultTemplate {
 
     @XmlElement(required = true)
     @XmlSchemaType(name = "anyURI")
@@ -119,6 +121,24 @@ public class ResultTemplateType extends AbstractSWESType {
     @XmlElement(required = true)
     private ResultTemplateType.ResultEncoding resultEncoding;
 
+    public ResultTemplateType() {
+        
+    }
+    
+    public ResultTemplateType(final String offering, final OMObservationType template,  final AbstractDataComponentType resultStructure,
+            final AbstractEncodingType encoding) {
+        this.offering = offering;
+        if (template != null) {
+            this.observationTemplate = new ObservationTemplate(template);
+        }
+        if (resultStructure != null) {
+            this.resultStructure = new ResultStructure(resultStructure);
+        }
+        if (encoding != null) {
+            this.resultEncoding = new ResultEncoding(encoding);
+        }
+    }
+    
     /**
      * Gets the value of the offering property.
      * 
@@ -127,6 +147,7 @@ public class ResultTemplateType extends AbstractSWESType {
      *     {@link String }
      *     
      */
+    @Override
     public String getOffering() {
         return offering;
     }
@@ -151,8 +172,12 @@ public class ResultTemplateType extends AbstractSWESType {
      *     {@link ResultTemplateType.ObservationTemplate }
      *     
      */
-    public ResultTemplateType.ObservationTemplate getObservationTemplate() {
-        return observationTemplate;
+    @Override
+    public OMObservationType getObservationTemplate() {
+        if (observationTemplate != null) {
+            return observationTemplate.omObservation;
+        }
+        return null;
     }
 
     /**
@@ -163,8 +188,8 @@ public class ResultTemplateType extends AbstractSWESType {
      *     {@link ResultTemplateType.ObservationTemplate }
      *     
      */
-    public void setObservationTemplate(ResultTemplateType.ObservationTemplate value) {
-        this.observationTemplate = value;
+    public void setObservationTemplate(final OMObservationType value) {
+        this.observationTemplate = new ObservationTemplate(value);
     }
 
     /**
@@ -175,8 +200,12 @@ public class ResultTemplateType extends AbstractSWESType {
      *     {@link ResultTemplateType.ResultStructure }
      *     
      */
-    public ResultTemplateType.ResultStructure getResultStructure() {
-        return resultStructure;
+    @Override
+    public AbstractDataComponentType getResultStructure() {
+        if (resultStructure != null && resultStructure.abstractDataComponent != null) {
+            return resultStructure.abstractDataComponent.getValue();
+        }
+        return null;
     }
 
     /**
@@ -187,8 +216,8 @@ public class ResultTemplateType extends AbstractSWESType {
      *     {@link ResultTemplateType.ResultStructure }
      *     
      */
-    public void setResultStructure(ResultTemplateType.ResultStructure value) {
-        this.resultStructure = value;
+    public void setResultStructure(final AbstractDataComponentType value) {
+        this.resultStructure = new ResultStructure(value);
     }
 
     /**
@@ -199,8 +228,12 @@ public class ResultTemplateType extends AbstractSWESType {
      *     {@link ResultTemplateType.ResultEncoding }
      *     
      */
-    public ResultTemplateType.ResultEncoding getResultEncoding() {
-        return resultEncoding;
+    @Override
+    public AbstractEncodingType getResultEncoding() {
+        if (resultEncoding != null && resultEncoding.abstractEncoding != null) {
+            return resultEncoding.abstractEncoding.getValue();
+        }
+        return null;
     }
 
     /**
@@ -211,8 +244,8 @@ public class ResultTemplateType extends AbstractSWESType {
      *     {@link ResultTemplateType.ResultEncoding }
      *     
      */
-    public void setResultEncoding(ResultTemplateType.ResultEncoding value) {
-        this.resultEncoding = value;
+    public void setResultEncoding(final AbstractEncodingType value) {
+        this.resultEncoding = new ResultEncoding(value);
     }
 
 
@@ -243,6 +276,13 @@ public class ResultTemplateType extends AbstractSWESType {
 
         @XmlElement(name = "OM_Observation", namespace = "http://www.opengis.net/om/2.0", required = true)
         private OMObservationType omObservation;
+        
+        public ObservationTemplate() {
+        }
+        
+        public ObservationTemplate(final OMObservationType omObservation) {
+            this.omObservation = omObservation;
+        }
 
         /**
          * Gets the value of the omObservation property.
@@ -299,6 +339,23 @@ public class ResultTemplateType extends AbstractSWESType {
         @XmlElementRef(name = "AbstractEncoding", namespace = "http://www.opengis.net/swe/2.0", type = JAXBElement.class)
         private JAXBElement<? extends AbstractEncodingType> abstractEncoding;
 
+        public ResultEncoding() {
+            
+        }
+        
+        public ResultEncoding(final AbstractEncodingType encoding) {
+            final org.geotoolkit.swe.xml.v200.ObjectFactory factory = new org.geotoolkit.swe.xml.v200.ObjectFactory();
+            if (encoding instanceof TextEncodingType) {
+                this.abstractEncoding = factory.createTextEncoding((TextEncodingType)encoding);
+            } else if (encoding instanceof XMLEncodingType) {
+                this.abstractEncoding = factory.createXMLEncoding((XMLEncodingType)encoding);
+            } else if (encoding instanceof BinaryEncodingType) {
+                this.abstractEncoding = factory.createBinaryEncoding((BinaryEncodingType)encoding);
+            } else {
+                this.abstractEncoding = factory.createAbstractEncoding(encoding);
+            }
+        }
+        
         /**
          * Gets the value of the abstractEncoding property.
          * 
@@ -360,6 +417,14 @@ public class ResultTemplateType extends AbstractSWESType {
         @XmlElementRef(name = "AbstractDataComponent", namespace = "http://www.opengis.net/swe/2.0", type = JAXBElement.class)
         private JAXBElement<? extends AbstractDataComponentType> abstractDataComponent;
 
+        public ResultStructure() {
+            
+        }
+        
+        public ResultStructure(final AbstractDataComponentType value) {
+            this.abstractDataComponent = AbstractDataComponentPropertyType.getJAXBElement(value);
+        }
+        
         /**
          * Gets the value of the abstractDataComponent property.
          * 

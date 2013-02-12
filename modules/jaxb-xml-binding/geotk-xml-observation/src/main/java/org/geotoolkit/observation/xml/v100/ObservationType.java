@@ -54,6 +54,7 @@ import org.geotoolkit.sampling.xml.v100.SamplingCurveType;
 import org.geotoolkit.sampling.xml.v100.SamplingSolidType;
 import org.geotoolkit.sampling.xml.v100.SamplingSurfaceType;
 import org.geotoolkit.util.logging.Logging;
+import org.opengis.temporal.Period;
 import org.opengis.temporal.TemporalGeometricPrimitive;
 
 
@@ -486,6 +487,7 @@ public class ObservationType implements Entry, AbstractObservation {
     /**
      * Set the result of the observation.
      */
+    @Override
     public void setResult(final Object result) {
         if (!(result instanceof ReferenceType) && !(result instanceof AnyResultType) &&
             !(result instanceof DataArrayPropertyType) && !(result instanceof MeasureType)) {
@@ -554,14 +556,21 @@ public class ObservationType implements Entry, AbstractObservation {
                 if (!newEndBound.equals(instant.getTimePosition().getValue())) {
                     final TimePeriodType period = new TimePeriodType(instant.getTimePosition().getValue(), newEndBound);
                     samplingTime.setTimeGeometricPrimitive(period);
-                    System.out.println("not equals updatting: old=" +instant.getTimePosition().getValue());
-                } else {
-                    System.out.println("equals old=" + instant.getTimePosition().getValue());
                 }
             }
         }
     }
 
+    @Override
+    public void setSamplingTimePeriod(final Period period) {
+        if (period instanceof TimePeriodType) {
+            this.samplingTime = new TimeGeometricPrimitivePropertyType((TimePeriodType)period);
+        } else if (period != null) {
+            final TimePeriodType pt = new TimePeriodType(period.getBeginning().getPosition(), period.getEnding().getPosition());
+            this.samplingTime = new TimeGeometricPrimitivePropertyType(pt);
+        }
+    }
+    
     /**
      * {@inheritDoc}
      */

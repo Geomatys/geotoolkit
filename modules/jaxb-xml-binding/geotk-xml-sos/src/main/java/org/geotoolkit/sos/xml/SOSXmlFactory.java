@@ -43,6 +43,7 @@ import org.geotoolkit.swe.xml.AbstractEncoding;
 import org.geotoolkit.swe.xml.AbstractTime;
 import org.geotoolkit.swe.xml.AnyScalar;
 import org.geotoolkit.swe.xml.DataArray;
+import org.geotoolkit.swe.xml.DataArrayProperty;
 import org.geotoolkit.swe.xml.PhenomenonProperty;
 import org.geotoolkit.swe.xml.Quantity;
 import org.geotoolkit.swe.xml.SweXmlFactory;
@@ -721,8 +722,38 @@ public class SOSXmlFactory {
             throw new IllegalArgumentException("Unexpected SOS version:" + version);
         }
     }
+
+    public static DataArrayProperty buildDataArrayProperty(final String version, final String id, final int count, final String elementName, final AbstractDataRecord elementType, final AbstractEncoding encoding, final String values) {
+        if ("2.0.0".equals(version)) {
+            return new org.geotoolkit.swe.xml.v200.DataArrayPropertyType((org.geotoolkit.swe.xml.v200.DataArrayType)SweXmlFactory.buildDataArray("2.0.0",  id, count, elementName, elementType, encoding, values));
+        } else if ("1.0.0".equals(version)) {
+            return new org.geotoolkit.swe.xml.v101.DataArrayPropertyType((org.geotoolkit.swe.xml.v101.DataArrayType)SweXmlFactory.buildDataArray("1.0.1",  id, count, elementName, elementType, encoding, values));
+        } else {
+            throw new IllegalArgumentException("Unexpected SOS version:" + version);
+        }
+    }
     
     public static AcceptVersions buildAcceptVersion(final String currentVersion, final List<String> acceptVersion) {
        return OWSXmlFactory.buildAcceptVersion("1.1.0", acceptVersion);
+    }
+    
+    public static InsertResultTemplateResponse buildInsertResultTemplateResponse(final String version, final String templateID) {
+        if ("2.0.0".equals(version)) {
+            return new org.geotoolkit.sos.xml.v200.InsertResultTemplateResponseType(templateID);
+        } else if ("1.0.0".equals(version)) {
+            throw new IllegalArgumentException("InsertResultTemplateResponse is not supported in 1.0.0");
+        } else {
+            throw new IllegalArgumentException("Unexpected SOS version:" + version);
+        }
+    }
+    
+    public static InsertResultResponse buildInsertResultResponse(final String version) {
+        if ("2.0.0".equals(version)) {
+            return new org.geotoolkit.sos.xml.v200.InsertResultResponseType();
+        } else if ("1.0.0".equals(version)) {
+            throw new IllegalArgumentException("InsertResultResponse is not supported in 1.0.0");
+        } else {
+            throw new IllegalArgumentException("Unexpected SOS version:" + version);
+        }
     }
 }

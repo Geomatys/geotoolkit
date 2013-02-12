@@ -107,42 +107,47 @@ public class AbstractDataComponentPropertyType implements DataComponentProperty 
     }
     
     public AbstractDataComponentPropertyType(final AbstractDataComponentType data) {
+        this.abstractDataComponent = getJAXBElement(data);
+    }
+    
+    public static JAXBElement<? extends AbstractDataComponentType> getJAXBElement(final AbstractDataComponentType data) {
         final ObjectFactory factory = new ObjectFactory();
         if (data instanceof BooleanType) {
-            this.abstractDataComponent = factory.createBoolean((BooleanType)data);
+            return factory.createBoolean((BooleanType)data);
         } else if (data instanceof VectorType) {
-            this.abstractDataComponent = factory.createVector((VectorType)data);
+            return factory.createVector((VectorType)data);
         } else if (data instanceof TimeType) {
-            this.abstractDataComponent = factory.createTime((TimeType)data);
+            return factory.createTime((TimeType)data);
         } else if (data instanceof CategoryRangeType) {
-            this.abstractDataComponent = factory.createCategoryRange((CategoryRangeType)data);
+            return factory.createCategoryRange((CategoryRangeType)data);
         } else if (data instanceof DataChoiceType) {
-            this.abstractDataComponent = factory.createDataChoice((DataChoiceType)data);
+            return factory.createDataChoice((DataChoiceType)data);
         } else if (data instanceof MatrixType) {
-            this.abstractDataComponent = factory.createMatrix((MatrixType)data);
+            return factory.createMatrix((MatrixType)data);
         } else if (data instanceof TimeRangeType) {
-            this.abstractDataComponent = factory.createTimeRange((TimeRangeType)data);
+            return factory.createTimeRange((TimeRangeType)data);
         } else if (data instanceof CategoryType) {
-            this.abstractDataComponent = factory.createCategory((CategoryType)data);
+            return factory.createCategory((CategoryType)data);
         } else if (data instanceof DataRecordType) {
-            this.abstractDataComponent = factory.createDataRecord((DataRecordType)data);
+            return factory.createDataRecord((DataRecordType)data);
         } else if (data instanceof DataArrayType) {
-            this.abstractDataComponent = factory.createDataArray((DataArrayType)data);
+            return factory.createDataArray((DataArrayType)data);
         } else if (data instanceof QuantityRangeType) {
-            this.abstractDataComponent = factory.createQuantityRange((QuantityRangeType)data);
+            return factory.createQuantityRange((QuantityRangeType)data);
         } else if (data instanceof CountRangeType) {
-            this.abstractDataComponent = factory.createCountRange((CountRangeType)data);
+            return factory.createCountRange((CountRangeType)data);
         } else if (data instanceof QuantityType) {
-            this.abstractDataComponent = factory.createQuantity((QuantityType)data);
+            return factory.createQuantity((QuantityType)data);
         } else if (data instanceof TextType) {
-            this.abstractDataComponent = factory.createText((TextType)data);
+            return factory.createText((TextType)data);
         } else if (data instanceof CountType) {
-            this.abstractDataComponent = factory.createCount((CountType)data);
+            return factory.createCount((CountType)data);
         } else if (data instanceof AbstractSimpleComponentType) {
-            this.abstractDataComponent = factory.createAbstractSimpleComponent((AbstractSimpleComponentType)data);
+            return factory.createAbstractSimpleComponent((AbstractSimpleComponentType)data);
         } else if (data instanceof AbstractDataComponentType) {
-            this.abstractDataComponent = factory.createAbstractDataComponent((AbstractDataComponentType)data);
+            return factory.createAbstractDataComponent((AbstractDataComponentType)data);
         }
+        return null;
     }
     
     /**
