@@ -87,7 +87,11 @@ public class OMXmlFactory {
             for (org.geotoolkit.swe.xml.v200.DataRecordType.Field scalar : recordv200.getField()) {
                 fields.add(new org.geotoolkit.swe.xml.v101.AnyScalarPropertyType(scalar));
             }
-            final org.geotoolkit.swe.xml.v101.SimpleDataRecordType record = new org.geotoolkit.swe.xml.v101.SimpleDataRecordType(fields);
+            final org.geotoolkit.swe.xml.v101.SimpleDataRecordType record = new org.geotoolkit.swe.xml.v101.SimpleDataRecordType(null, 
+                                                                                                                                 recordv200.getId(), 
+                                                                                                                                 recordv200.getDefinition(),
+                                                                                                                                 recordv200.isFixed(),
+                                                                                                                                 fields);
                     
             final org.geotoolkit.swe.xml.v101.DataArrayType array = new org.geotoolkit.swe.xml.v101.DataArrayType(id, count, null, record, enc, values);
             final org.geotoolkit.swe.xml.v101.DataArrayPropertyType resultv100 = new org.geotoolkit.swe.xml.v101.DataArrayPropertyType(array);

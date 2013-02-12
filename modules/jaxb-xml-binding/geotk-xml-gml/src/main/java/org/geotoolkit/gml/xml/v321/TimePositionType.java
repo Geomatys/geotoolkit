@@ -279,10 +279,12 @@ public class TimePositionType extends AbstractTimePosition implements Serializab
         }
         if (object instanceof TimePositionType) {
             final TimePositionType that = (TimePositionType) object;
+            
             return Utilities.equals(this.calendarEraName,       that.calendarEraName)       &&
                    Utilities.equals(this.frame,                 that.frame)                 &&
                    Utilities.equals(this.indeterminatePosition, that.indeterminatePosition) &&
-                   Utilities.equals(this.value,                 that.value);
+                   // fix equals issue with diferent facet value, but same dateTime
+                   (Utilities.equals(this.value, that.value) || Utilities.equals(this.getDate(), that.getDate()));
         }
         return false;
     }

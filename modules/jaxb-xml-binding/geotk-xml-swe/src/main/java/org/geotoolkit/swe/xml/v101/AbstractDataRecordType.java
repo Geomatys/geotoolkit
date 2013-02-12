@@ -49,7 +49,7 @@ public class AbstractDataRecordType extends AbstractDataComponentType implements
     /**
      * super-constructor called by sub-classes.
      */
-    public AbstractDataRecordType(final String id, final String definition, final boolean fixed) {
+    public AbstractDataRecordType(final String id, final String definition, final Boolean fixed) {
         super(id, definition, fixed);
     }
 
