@@ -81,7 +81,8 @@ public class PyramidalModelReader extends GridCoverageReader{
 
     @Deprecated
     public PyramidalModelReader() {
-        this.coverageFinder = CoverageFinderFactory.createDefaultCoverageFinder();
+//        this.coverageFinder = CoverageFinderFactory.createDefaultCoverageFinder();
+        this.coverageFinder = CoverageFinderFactory.createStrictlyCoverageFinder();
     }
     
     public PyramidalModelReader(CoverageFinder coverageFinder) {
