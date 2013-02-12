@@ -31,7 +31,7 @@ import org.opengis.referencing.operation.Matrix;
 
 import org.geotoolkit.measure.Latitude;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.ComparisonMode;
+import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.referencing.operation.matrix.Matrix2;
 
 import static java.lang.Math.*;

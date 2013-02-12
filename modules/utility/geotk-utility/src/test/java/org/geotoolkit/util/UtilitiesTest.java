@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.util;
 
+import org.apache.sis.util.ComparisonMode;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;

@@ -41,7 +41,7 @@ import org.opengis.referencing.operation.Matrix;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.util.InternationalString;
 
-import org.geotoolkit.util.ComparisonMode;
+import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.measure.Measure;
 import org.apache.sis.measure.Units;

@@ -48,7 +48,7 @@ import org.geotoolkit.referencing.factory.ThreadedAuthorityFactory;
 import org.geotoolkit.metadata.iso.extent.DefaultGeographicBoundingBox;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.internal.InternalUtilities;
-import org.geotoolkit.util.ComparisonMode;
+import org.apache.sis.util.ComparisonMode;
 
 import org.junit.*;
 import static org.junit.Assume.assumeNotNull;

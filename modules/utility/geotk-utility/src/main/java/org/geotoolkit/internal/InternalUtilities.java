@@ -25,7 +25,7 @@ import java.text.DecimalFormat;
 
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.util.Utilities;
-import org.geotoolkit.util.ComparisonMode;
+import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.resources.Errors;

@@ -33,7 +33,7 @@ import org.opengis.referencing.datum.VerticalDatumType;
 
 import org.geotoolkit.io.wkt.Formatter;
 import org.apache.sis.util.StringBuilders;
-import org.geotoolkit.util.ComparisonMode;
+import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.internal.jaxb.MarshalContext;
 import org.geotoolkit.internal.referencing.VerticalDatumTypes;

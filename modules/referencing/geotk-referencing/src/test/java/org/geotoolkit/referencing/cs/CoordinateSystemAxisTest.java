@@ -23,7 +23,7 @@ import org.opengis.test.Validators;
 import org.opengis.util.InternationalString;
 import org.opengis.referencing.cs.AxisDirection;
 
-import org.geotoolkit.util.ComparisonMode;
+import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.referencing.IdentifiedObjectTest;
 import org.geotoolkit.internal.referencing.AxisDirections;
 

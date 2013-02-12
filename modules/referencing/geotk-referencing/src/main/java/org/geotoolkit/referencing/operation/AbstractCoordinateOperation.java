@@ -40,7 +40,7 @@ import org.opengis.referencing.IdentifiedObject;
 import org.opengis.util.InternationalString;
 import org.opengis.util.Record;
 
-import org.geotoolkit.util.ComparisonMode;
+import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;

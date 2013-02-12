@@ -22,7 +22,7 @@ import org.opengis.referencing.operation.Matrix;
 
 import org.apache.sis.math.MathFunctions;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.ComparisonMode;
+import org.apache.sis.util.ComparisonMode;
 
 
 /**

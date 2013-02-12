@@ -36,7 +36,7 @@ import org.opengis.geometry.MismatchedDimensionException;
 
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.CharSequences;
-import org.geotoolkit.util.ComparisonMode;
+import org.apache.sis.util.ComparisonMode;
 import org.apache.sis.math.MathFunctions;
 import org.geotoolkit.math.Statistics;
 import org.geotoolkit.resources.Errors;

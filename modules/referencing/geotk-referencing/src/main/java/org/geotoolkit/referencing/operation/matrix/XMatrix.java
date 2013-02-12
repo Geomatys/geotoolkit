@@ -23,7 +23,7 @@ import javax.vecmath.SingularMatrixException;
 import org.opengis.referencing.operation.Matrix;
 
 import org.geotoolkit.util.Cloneable;
-import org.geotoolkit.util.ComparisonMode;
+import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.util.LenientComparable;
 
 

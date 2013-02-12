@@ -38,8 +38,14 @@ import org.geotoolkit.lang.Debug;
  *
  * @since 3.18 (derived from 3.14)
  * @module
+ *
+ * @deprecated Moved to Apache SIS {@link org.apache.sis.util.ComparisonMode}.
  */
-public enum ComparisonMode {
+@Deprecated
+public final class ComparisonMode {
+    private ComparisonMode() {
+    }
+
     /**
      * All attributes of the compared objects shall be strictly equal. This comparison mode
      * is equivalent to the {@link Object#equals(Object)} method, and must be compliant with
@@ -58,7 +64,7 @@ public enum ComparisonMode {
      *
      * @see Object#equals(Object)
      */
-    STRICT,
+    public static final org.apache.sis.util.ComparisonMode STRICT = org.apache.sis.util.ComparisonMode.STRICT;
 
     /**
      * Only the attributes published in some contract (typically a GeoAPI interface) need
@@ -78,7 +84,7 @@ public enum ComparisonMode {
      *   <li>Public getter methods are used (no direct access to private fields).</li>
      * </ul>
      */
-    BY_CONTRACT,
+    public static final org.apache.sis.util.ComparisonMode BY_CONTRACT = org.apache.sis.util.ComparisonMode.BY_CONTRACT;
 
     /**
      * Only the attributes relevant to the object functionality are compared. Attributes that
@@ -113,7 +119,7 @@ public enum ComparisonMode {
      *
      * @see org.geotoolkit.referencing.CRS#equalsIgnoreMetadata(Object, Object)
      */
-    IGNORE_METADATA,
+    public static final org.apache.sis.util.ComparisonMode IGNORE_METADATA = org.apache.sis.util.ComparisonMode.IGNORE_METADATA;
 
     /**
      * Only the attributes relevant to the object functionality are compared, with some tolerance
@@ -127,7 +133,7 @@ public enum ComparisonMode {
      * is "small" is implementation dependent - the threshold can not be specified in the current
      * implementation, because of the non-linear nature of map projections.
      */
-    APPROXIMATIVE,
+    public static final org.apache.sis.util.ComparisonMode APPROXIMATIVE = org.apache.sis.util.ComparisonMode.APPROXIMATIVE;
 
     /**
      * Same as {@link #APPROXIMATIVE}, except that an {@link AssertionError} is thrown if the two
@@ -145,7 +151,7 @@ public enum ComparisonMode {
      * @since 3.20
      */
     @Debug
-    DEBUG;
+    public static final org.apache.sis.util.ComparisonMode DEBUG = org.apache.sis.util.ComparisonMode.DEBUG;
 
     /**
      * If the two given objects are equals according one of the mode enumerated in this class,
@@ -157,27 +163,7 @@ public enum ComparisonMode {
      * @return The must suitable comparison mode, or {@code null} if the two given objects
      *         are not equal for any mode in this enumeration.
      */
-    public static ComparisonMode equalityLevel(final Object o1, Object o2) {
-        if (o1 == o2) {
-            return STRICT;
-        }
-        if (o1 != null && o2 != null) {
-            if (o1.equals(o2)) {
-                return STRICT;
-            }
-            final LenientComparable cp;
-            if (o1 instanceof LenientComparable) {
-                cp = (LenientComparable) o1;
-            } else if (o2 instanceof LenientComparable) {
-                cp = (LenientComparable) o2;
-                o2 = o1;
-            } else {
-                return null;
-            }
-            if (cp.equals(o2, BY_CONTRACT))     return BY_CONTRACT;
-            if (cp.equals(o2, IGNORE_METADATA)) return IGNORE_METADATA;
-            if (cp.equals(o2, APPROXIMATIVE))   return APPROXIMATIVE;
-        }
-        return null;
+    public static org.apache.sis.util.ComparisonMode equalityLevel(final Object o1, Object o2) {
+        return org.apache.sis.util.ComparisonMode.equalityLevel(o1, o2);
     }
 }

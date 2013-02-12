@@ -29,7 +29,7 @@ import org.opengis.parameter.GeneralParameterDescriptor;
 
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.io.wkt.Formatter;
-import org.geotoolkit.util.ComparisonMode;
+import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 
 import static org.geotoolkit.util.Utilities.hash;

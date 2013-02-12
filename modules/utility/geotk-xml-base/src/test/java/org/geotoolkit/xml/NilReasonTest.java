@@ -22,8 +22,8 @@ import java.net.URISyntaxException;
 import org.opengis.metadata.citation.Citation;
 import org.opengis.metadata.citation.ResponsibleParty;
 
-import org.geotoolkit.util.LenientComparable;
-import org.geotoolkit.util.ComparisonMode;
+import org.apache.sis.util.LenientComparable;
+import org.apache.sis.util.ComparisonMode;
 import org.apache.sis.util.ArraysExt;
 
 import org.junit.*;

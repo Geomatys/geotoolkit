@@ -37,7 +37,7 @@ import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.Strings;
 import org.geotoolkit.util.Utilities;
-import org.geotoolkit.util.ComparisonMode;
+import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.util.collection.CheckedContainer;
 import org.geotoolkit.util.converter.Classes;

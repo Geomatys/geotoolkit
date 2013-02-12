@@ -38,7 +38,7 @@ import org.geotoolkit.referencing.operation.matrix.Matrix3;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 import org.geotoolkit.referencing.operation.provider.Affine;
 import org.geotoolkit.util.Cloneable;
-import org.geotoolkit.util.ComparisonMode;
+import org.apache.sis.util.ComparisonMode;
 
 import static org.apache.sis.util.ArgumentChecks.ensureDimensionMatches;
 

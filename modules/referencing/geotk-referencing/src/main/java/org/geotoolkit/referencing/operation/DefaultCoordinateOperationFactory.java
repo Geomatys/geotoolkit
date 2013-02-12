@@ -40,7 +40,7 @@ import org.opengis.referencing.operation.*;
 
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.ComparisonMode;
+import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.referencing.IdentifiedObjects;

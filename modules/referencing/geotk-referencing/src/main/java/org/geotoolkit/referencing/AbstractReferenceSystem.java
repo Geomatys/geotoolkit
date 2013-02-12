@@ -30,7 +30,7 @@ import org.opengis.metadata.extent.Extent;
 import org.opengis.util.InternationalString;
 import org.opengis.referencing.ReferenceSystem;
 
-import org.geotoolkit.util.ComparisonMode;
+import org.apache.sis.util.ComparisonMode;
 
 import static org.geotoolkit.util.Utilities.deepEquals;
 

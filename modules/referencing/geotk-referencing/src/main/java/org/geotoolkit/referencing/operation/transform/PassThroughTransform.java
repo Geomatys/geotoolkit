@@ -28,7 +28,7 @@ import org.opengis.referencing.operation.NoninvertibleTransformException;
 import org.opengis.geometry.DirectPosition;
 
 import org.geotoolkit.util.Utilities;
-import org.geotoolkit.util.ComparisonMode;
+import org.apache.sis.util.ComparisonMode;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.geometry.GeneralDirectPosition;

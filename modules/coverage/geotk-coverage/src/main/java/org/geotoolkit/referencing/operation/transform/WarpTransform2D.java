@@ -39,7 +39,7 @@ import org.opengis.referencing.operation.NoninvertibleTransformException;
 
 import org.geotoolkit.lang.Workaround;
 import org.apache.sis.util.ArraysExt;
-import org.geotoolkit.util.ComparisonMode;
+import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.parameter.Parameter;
 import org.geotoolkit.parameter.ParameterGroup;
 
