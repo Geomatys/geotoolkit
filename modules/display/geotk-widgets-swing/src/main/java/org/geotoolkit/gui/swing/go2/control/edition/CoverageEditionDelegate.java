@@ -51,9 +51,11 @@ import javax.swing.SwingConstants;
 import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
+import org.geotoolkit.coverage.io.GridCoverageWriteParam;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.display2d.canvas.DefaultRenderingContext2D;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
+import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.gui.swing.go2.JMap2D;
 import org.geotoolkit.gui.swing.go2.decoration.AbstractMapDecoration;
 import org.geotoolkit.gui.swing.go2.decoration.MapDecoration;
@@ -62,9 +64,9 @@ import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.referencing.crs.DefaultEngineeringCRS;
 import org.geotoolkit.referencing.operation.MathTransforms;
 import org.geotoolkit.storage.DataStoreException;
-import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
@@ -74,7 +76,7 @@ import org.opengis.util.FactoryException;
 
 /**
  * Coverage editor tool.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public class CoverageEditionDelegate extends AbstractEditionDelegate {
@@ -87,11 +89,13 @@ public class CoverageEditionDelegate extends AbstractEditionDelegate {
     private int mouseY = 0;
     private boolean selectAction = false;
     private Rectangle selectRectangle = null;
-    
+
     //coverage edition variables
     private JMap2D map = null;
     private DefaultRenderingContext2D context = null;
-    private GridCoverage2D coverage = null; 
+    private GridCoverage2D coverage = null;
+    // Write parameters discovered when setting the coverage
+    private GridCoverageWriteParam writeParam = null;
     private RenderedImage img;
     private WritableRaster raster;
     private CoordinateReferenceSystem lastObjCRS = null;
@@ -100,8 +104,7 @@ public class CoverageEditionDelegate extends AbstractEditionDelegate {
     private final Rectangle gridSelectionSize = new Rectangle();
     //pixel which value has been changed
     private final List<Point> editedPixels = new ArrayList<Point>();
-    
-    
+
     public CoverageEditionDelegate(JMap2D map, CoverageMapLayer layer) {
         super(map);
         this.layer = layer;
@@ -118,7 +121,7 @@ public class CoverageEditionDelegate extends AbstractEditionDelegate {
         this.mouseX = e.getX();
         this.mouseY = e.getY();
         decoration.getComponent().repaint();
-    }    
+    }
 
     @Override
     public void mouseClicked(MouseEvent e) {
@@ -129,20 +132,20 @@ public class CoverageEditionDelegate extends AbstractEditionDelegate {
         try {
             final Point mouseGridPosition = getMouseGridPosition();
             if(mouseGridPosition != null){
-                
+
                 final JPanel panel = new JPanel(new GridLayout(0, 2));
                 panel.setFocusCycleRoot(true);
                 final int nbSample = img.getSampleModel().getNumBands();
                 final int sampleType = img.getSampleModel().getDataType();
-                                
+
                 final double[] samples = new double[nbSample];
-                raster.getPixel(mouseGridPosition.x, mouseGridPosition.y, samples);    
+                raster.getPixel(mouseGridPosition.x, mouseGridPosition.y, samples);
                 final List<JSpinner> spinners = new ArrayList<JSpinner>();
                 for(int i=0;i<samples.length;i++){
                     panel.add(new JLabel(String.valueOf(i)));
                     final JSpinner spinner = new JSpinner();
                     if(i==0) spinner.requestFocus();
-                    
+
                     switch(sampleType){
                         case DataBuffer.TYPE_BYTE :
                             spinner.setModel(new SpinnerNumberModel((int)samples[i],0,255,1));
@@ -165,11 +168,11 @@ public class CoverageEditionDelegate extends AbstractEditionDelegate {
                         default :
                             spinner.setModel(new SpinnerNumberModel(samples[i],Double.NEGATIVE_INFINITY,Double.POSITIVE_INFINITY,1));
                     }
-                    
+
                     spinners.add(spinner);
                     panel.add(spinner);
                 }
-                
+
                 final int res = JOptionDialog.show(null, panel, JOptionPane.OK_CANCEL_OPTION);
                 if(res == JOptionPane.OK_OPTION){
                     editedPixels.add(mouseGridPosition);
@@ -181,17 +184,17 @@ public class CoverageEditionDelegate extends AbstractEditionDelegate {
                         }
                         raster.setPixel(mouseGridPosition.x, mouseGridPosition.y, samples);
                     }
-                    
+
                 }
-                
+
             }
-            
+
         } catch (FactoryException ex) {
             LOGGER.log(Level.WARNING, ex.getMessage(), ex);
         } catch (TransformException ex) {
             LOGGER.log(Level.WARNING, ex.getMessage(), ex);
         }
-        
+
     }
 
     @Override
@@ -200,7 +203,7 @@ public class CoverageEditionDelegate extends AbstractEditionDelegate {
             if(selectRectangle == null){
                 selectRectangle = new Rectangle(e.getX(),e.getY(),1,1);
             }
-            
+
             selectRectangle.width = e.getX() - selectRectangle.x;
             selectRectangle.height = e.getY() - selectRectangle.y;
             decoration.getComponent().repaint();
@@ -213,20 +216,28 @@ public class CoverageEditionDelegate extends AbstractEditionDelegate {
     public void mouseReleased(MouseEvent e) {
         if(selectAction){
             selectAction = false;
-            
+
             try {
-                GridCoverage cov = layer.getCoverageReader().read(layer.getImageIndex(), null);
-                setCoverage((GridCoverage2D)cov,selectRectangle);
+                GridCoverage2D cov = (GridCoverage2D) layer.getCoverageReader().read(layer.getImageIndex(), null);
+                setCoverage(cov,selectRectangle);
+                writeParam = new GridCoverageWriteParam();
+                MathTransform grid_To_Crs = cov.getGridGeometry().getGridToCRS(PixelInCell.CELL_CORNER);
+                GeneralEnvelope env = new GeneralEnvelope(DefaultEngineeringCRS.CARTESIAN_2D);
+                env.setEnvelope(gridSelectionSize.x, gridSelectionSize.y, gridSelectionSize.x + gridSelectionSize.width, gridSelectionSize.y + gridSelectionSize.height);
+                env = CRS.transform(grid_To_Crs, env);
+                // coordonnée pixel au niveau le plus bas de notre pyramide
+                writeParam.setEnvelope(env);
             } catch (Exception ex) {
                 LOGGER.log(Level.WARNING, ex.getMessage(), ex);
+                writeParam = null;
             }
             selectRectangle = null;
-            
+
             decoration.getComponent().repaint();
         }
         super.mouseReleased(e);
     }
-    
+
     /**
      * return the current editer area points.
      */
@@ -240,7 +251,7 @@ public class CoverageEditionDelegate extends AbstractEditionDelegate {
         return objPoints;
     }
 
-    private void setCoverage(GridCoverage2D coverage, Rectangle selectionRectangle) 
+    private void setCoverage(GridCoverage2D coverage, Rectangle selectionRectangle)
             throws FactoryException, NoninvertibleTransformException, TransformException {
         this.editedPixels.clear();
         this.objPoints = null;
@@ -257,7 +268,7 @@ public class CoverageEditionDelegate extends AbstractEditionDelegate {
         final MathTransform dispToObj = context.getDisplayToObjective();
         final MathTransform objToData = CRS.findMathTransform(context.getObjectiveCRS2D(),coverage.getCoordinateReferenceSystem());
         final MathTransform dataToGrid = gridTodata.inverse();
-        
+
         final double[] coords = new double[8];
         coords[0] = selectionRectangle.x;                       coords[1] = selectionRectangle.y;
         coords[2] = selectionRectangle.x+selectRectangle.width;   coords[3] = selectionRectangle.y;
@@ -276,15 +287,15 @@ public class CoverageEditionDelegate extends AbstractEditionDelegate {
             minY = Math.min(minY,coords[i+1]);
             maxY = Math.max(maxY,coords[i+1]);
         }
-        
+
         final int imageHeight = img.getHeight();
         final int imageWidth = img.getWidth();
-        
+
         final int startX = (int) minX;
-        final int endX   = Math.min( (int)(maxX+0.5), imageWidth);      
+        final int endX   = Math.min( (int)(maxX+0.5), imageWidth);
         final int startY = (int) minY;
-        final int endY   = Math.min( (int)(maxY+0.5), imageHeight);       
-        
+        final int endY   = Math.min( (int)(maxY+0.5), imageHeight);
+
         final int height = endY-startY;
         final int width = endX-startX;
         if(height <=0 || width <=0){
@@ -315,7 +326,7 @@ public class CoverageEditionDelegate extends AbstractEditionDelegate {
         }
 
     }
-    
+
     private Point getMouseGridPosition() throws FactoryException, TransformException{
         if(coverage == null) return null;
         final MathTransform gridTodata = coverage.getGridGeometry().getGridToCRS(PixelInCell.CELL_CORNER);
@@ -337,7 +348,7 @@ public class CoverageEditionDelegate extends AbstractEditionDelegate {
         }
         return null;
     }
-    
+
     private void save() throws DataStoreException{
         final CoverageReference ref = layer.getCoverageReference();
         final GridCoverageWriter writer = ref.createWriter();
@@ -345,12 +356,12 @@ public class CoverageEditionDelegate extends AbstractEditionDelegate {
         gcb.setRenderedImage(img);
         gcb.setCoordinateReferenceSystem(coverage.getCoordinateReferenceSystem2D());
         gcb.setGridToCRS(coverage.getGridGeometry().getGridToCRS2D());
-        writer.write(gcb.getGridCoverage2D(), null);
+        writer.write(gcb.getGridCoverage2D(), writeParam);
         this.editedPixels.clear();
         map.getCanvas().repaint();
     }
-    
-    
+
+
     private class CoverageMapDecoration extends AbstractMapDecoration{
 
         private final JPanel container = new GridComponent();
@@ -363,7 +374,7 @@ public class CoverageEditionDelegate extends AbstractEditionDelegate {
             container.setOpaque(false);
             container.setFocusable(false);
             guiRight.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
-            
+
             final JButton guiSelect = new JButton(MessageBundle.getString("select_area"));
             guiSelect.setIcon(IconBundle.getIcon("16_select"));
             guiSelect.addActionListener(new ActionListener() {
@@ -399,26 +410,26 @@ public class CoverageEditionDelegate extends AbstractEditionDelegate {
             });
             guiApplyPane.add(guiSave);
             guiApplyPane.add(guiCancel);
-            
+
             guiTools.add(BorderLayout.NORTH,new JSeparator(SwingConstants.HORIZONTAL));
             guiTools.add(BorderLayout.SOUTH,new JSeparator(SwingConstants.HORIZONTAL));
-            
+
             guiRight.add(BorderLayout.NORTH, guiSelect);
             guiRight.add(BorderLayout.CENTER, guiTools);
             guiRight.add(BorderLayout.SOUTH, guiApplyPane);
-            
-            container.add(BorderLayout.EAST,guiRight);            
+
+            container.add(BorderLayout.EAST,guiRight);
         }
 
         @Override
         public void refresh() {
         }
-   
+
         @Override
         public void setMap2D(final JMap2D map) {
             super.setMap2D(map);
             CoverageEditionDelegate.this.map = map;
-            
+
             if(map != null && map.getCanvas() != null){
                 context = new DefaultRenderingContext2D(map.getCanvas());
             }else{
@@ -432,9 +443,9 @@ public class CoverageEditionDelegate extends AbstractEditionDelegate {
         }
 
     }
-               
+
     private class GridComponent extends JPanel{
-        
+
         @Override
         protected void paintComponent(final Graphics gg) {
             super.paintComponent(gg);
@@ -452,7 +463,7 @@ public class CoverageEditionDelegate extends AbstractEditionDelegate {
             }
 
         }
-          
+
         /**
          * Paint edit grid and mouse over pixel
          */
@@ -463,26 +474,26 @@ public class CoverageEditionDelegate extends AbstractEditionDelegate {
             if(!(canvas != null)) return;
 
             canvas.prepareContext(context,(Graphics2D) g.create(), null);
-            
+
             if(raster == null) return;
-            
+
             final Rectangle area = context.getCanvasDisplayBounds();
-            
+
             try{
                 final MathTransform gridTodata = coverage.getGridGeometry().getGridToCRS(PixelInCell.CELL_CORNER);
                 final MathTransform dataToObj = CRS.findMathTransform(coverage.getCoordinateReferenceSystem(), context.getObjectiveCRS2D());
-                final MathTransform objToDisp = context.getObjectiveToDisplay();                                
+                final MathTransform objToDisp = context.getObjectiveToDisplay();
                 final MathTransform gridToDisp = MathTransforms.concatenate(gridTodata, dataToObj, objToDisp);
-                
-                
+
+
                 // paint grid --------------------------------------------------
-                g.setColor(Color.GRAY);    
+                g.setColor(Color.GRAY);
                 g.setStroke(new BasicStroke(1));
-                
-                final double[] pointObj = getObjPoints(context.getObjectiveCRS2D());                
+
+                final double[] pointObj = getObjPoints(context.getObjectiveCRS2D());
                 final double[] pointdisp = Arrays.copyOf(pointObj, pointObj.length);
                 objToDisp.transform(pointdisp, 0, pointdisp, 0, pointdisp.length/2);
-                
+
                 final int height = gridSelectionSize.height;
                 final int width = gridSelectionSize.width + 1; //there is one extra point per line
                 final double[] coords = new double[8];
@@ -492,19 +503,19 @@ public class CoverageEditionDelegate extends AbstractEditionDelegate {
                         coords[2] = pointdisp[(    y*width+x+1)*2]; coords[3] = pointdisp[(    y*width+x+1)*2+1];
                         coords[4] = pointdisp[((y+1)*width+x+1)*2]; coords[5] = pointdisp[((y+1)*width+x+1)*2+1];
                         coords[6] = pointdisp[((y+1)*width+x  )*2]; coords[7] = pointdisp[((y+1)*width+x  )*2+1];
-                        
+
                         if( coords[2] < area.x || coords[0] > area.x+area.width
                          || coords[5] < area.y || coords[1] > area.y+area.height){
                             continue;
                         }
-                        
+
                         g.drawLine((int)coords[2], (int)coords[3], (int)coords[4], (int)coords[5]);
-                        if(x==0) g.drawLine((int)coords[6], (int)coords[7], (int)coords[0], (int)coords[1]);                        
+                        if(x==0) g.drawLine((int)coords[6], (int)coords[7], (int)coords[0], (int)coords[1]);
                         g.drawLine((int)coords[4], (int)coords[5], (int)coords[6], (int)coords[7]);
                         if(y==0) g.drawLine((int)coords[0], (int)coords[1], (int)coords[2], (int)coords[3]);
                     }
                 }
-                
+
                 //paint edited pixels ------------------------------------------
                 g.setStroke(new BasicStroke(1));
                 for(Point pt : editedPixels){
@@ -516,7 +527,7 @@ public class CoverageEditionDelegate extends AbstractEditionDelegate {
                     coords[6] = gridX;      coords[7] = gridY+1;
 
                     gridToDisp.transform(coords, 0, coords, 0, 4);
-                    
+
                     final GeneralPath path = new GeneralPath();
                     path.moveTo(coords[0], (int)coords[1]);
                     path.lineTo(coords[2], (int)coords[3]);
@@ -525,14 +536,14 @@ public class CoverageEditionDelegate extends AbstractEditionDelegate {
                     path.lineTo(coords[0], (int)coords[1]);
                     path.closePath();
 
-                    g.setColor(Color.YELLOW);            
+                    g.setColor(Color.YELLOW);
                     g.fill(path);
                     g.setColor(Color.BLACK);
                     g.draw(path);
                     g.drawLine((int)coords[0], (int)coords[1], (int)coords[4], (int)coords[5]);
                     g.drawLine((int)coords[2], (int)coords[3], (int)coords[6], (int)coords[7]);
                 }
-                
+
                 //paint mouse position -----------------------------------------
                 final Point mouseGridPosition = getMouseGridPosition();
                 if(mouseGridPosition != null){
@@ -544,7 +555,7 @@ public class CoverageEditionDelegate extends AbstractEditionDelegate {
                     coords[6] = gridX;      coords[7] = gridY+1;
 
                     gridToDisp.transform(coords, 0, coords, 0, 4);
-                    
+
                     final GeneralPath path = new GeneralPath();
                     path.moveTo(coords[0], (int)coords[1]);
                     path.lineTo(coords[2], (int)coords[3]);
@@ -553,12 +564,12 @@ public class CoverageEditionDelegate extends AbstractEditionDelegate {
                     path.lineTo(coords[0], (int)coords[1]);
                     path.closePath();
 
-                    g.setColor(Color.RED);            
+                    g.setColor(Color.RED);
                     g.fill(path);
-                    
+
                     final int nbSample = img.getSampleModel().getNumBands();
                     final double[] samples = new double[nbSample];
-                    raster.getPixel(gridX, gridY, samples);                
+                    raster.getPixel(gridX, gridY, samples);
                     final String str = Arrays.toString(samples);
                     final FontMetrics fm = g.getFontMetrics();
                     final Rectangle rect = fm.getStringBounds(str, g).getBounds();
@@ -571,11 +582,11 @@ public class CoverageEditionDelegate extends AbstractEditionDelegate {
                     g.setColor(Color.BLACK);
                     g.drawString(str, mouseX+6, mouseY);
                 }
-                
+
             }catch(Exception ex ){
                 LOGGER.log(Level.WARNING, ex.getMessage(), ex);
             }
         }
     }
-    
+
 }

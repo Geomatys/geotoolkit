@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2012, Geomatys
+ *    (C) 2012 - 2013, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -55,6 +55,7 @@ import org.geotoolkit.coverage.Pyramid;
 import org.geotoolkit.coverage.PyramidSet;
 import org.geotoolkit.coverage.PyramidalModel;
 import org.geotoolkit.coverage.PyramidalModelReader;
+import org.geotoolkit.coverage.PyramidalModelWriter;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.coverage.postgresql.epsg.PGEPSGWriter;
@@ -73,6 +74,7 @@ import org.opengis.util.FactoryException;
 /**
  *
  * @author Johann Sorel (Geomatys)
+ * @author Cédric Briançon (Geomatys)
  */
 public class PGCoverageReference extends AbstractCoverageReference implements PyramidalModel{
 
@@ -115,7 +117,7 @@ public class PGCoverageReference extends AbstractCoverageReference implements Py
 
     @Override
     public GridCoverageWriter createWriter() throws DataStoreException {
-        throw new UnsupportedOperationException("Writer not available on pyramidal model.");
+        return new PyramidalModelWriter(this);
     }
 
     @Override
@@ -263,6 +265,9 @@ public class PGCoverageReference extends AbstractCoverageReference implements Py
         throw new DataStoreException("Generated mosaic not found.");
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void deleteMosaic(String pyramidId, String mosaicId) throws DataStoreException {
         throw new DataStoreException("Not supported yet.");
@@ -303,18 +308,44 @@ public class PGCoverageReference extends AbstractCoverageReference implements Py
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void writeTile(String pyramidId, String mosaicId, int col, int row, RenderedImage image) throws DataStoreException {
 
         Connection cnx = null;
-        Statement stmt = null;
+        Statement insertStmt = null;
+        Statement deleteStmt = null;
+        Statement selectStmt = null;
         ResultSet rs = null;
         try{
+            StringBuilder query = new StringBuilder();
+            query.append("SELECT id,\"mosaicId\",\"positionX\",\"positionY\" FROM ")
+                 .append(store.encodeTableName("Tile"))
+                 .append(" WHERE \"mosaicId\"=").append(Integer.valueOf(mosaicId))
+                 .append(" AND \"positionX\"=").append(Integer.valueOf(col))
+                 .append(" AND \"positionY\"=").append(Integer.valueOf(row));
+            cnx = store.getDataSource().getConnection();
+            cnx.setReadOnly(false);
+            selectStmt = cnx.createStatement();
+            rs = selectStmt.executeQuery(query.toString());
+
+            while (rs.next()) {
+                final int id = rs.getInt("id");
+                query = new StringBuilder();
+                query.append("DELETE FROM ")
+                     .append(store.encodeTableName("Tile"))
+                     .append(" WHERE id=").append(id);
+                deleteStmt = cnx.createStatement();
+                deleteStmt.executeUpdate(query.toString());
+            }
+
             final WKBRasterWriter writer = new WKBRasterWriter();
             final byte[] wkbimg = writer.write(image, null, 0);
             final String base64 = Base64.encodeBytes(wkbimg);
 
-            final StringBuilder query = new StringBuilder();
+            query = new StringBuilder();
             query.append("INSERT INTO");
             query.append(store.encodeTableName("Tile"));
             query.append("(\"raster\",\"mosaicId\",\"positionX\",\"positionY\") VALUES ( (");
@@ -323,11 +354,9 @@ public class PGCoverageReference extends AbstractCoverageReference implements Py
             query.append(col).append(',');
             query.append(row).append(')');
 
-            cnx = store.getDataSource().getConnection();
-            cnx.setReadOnly(false);
-            stmt = cnx.createStatement();
+            insertStmt = cnx.createStatement();
+            insertStmt.executeUpdate(query.toString());
 
-            stmt.executeUpdate(query.toString());
             final CoverageStoreContentEvent event = fireTileUpdated(pyramidId, mosaicId, Collections.singletonList(new Point(col,row)));
             getStore().forwardContentEvent(event);
         }catch(IOException ex){
@@ -335,7 +364,9 @@ public class PGCoverageReference extends AbstractCoverageReference implements Py
         }catch(SQLException ex){
             throw new DataStoreException(ex.getMessage(), ex);
         }finally{
-            store.closeSafe(cnx, stmt, rs);
+            store.closeSafe(cnx, selectStmt, rs);
+            store.closeSafe(insertStmt);
+            store.closeSafe(deleteStmt);
         }
 
     }
@@ -348,11 +379,11 @@ public class PGCoverageReference extends AbstractCoverageReference implements Py
     @Override
     public List<GridSampleDimension> getSampleDimensions(int index) throws DataStoreException{
         final List<GridSampleDimension> dimensions = new LinkedList<GridSampleDimension>();
-        
+
         Connection cnx = null;
         Statement stmt = null;
         ResultSet rs = null;
-        
+
         try {
             final int layerId = store.getLayerId(name.getLocalPart());
             final StringBuilder query = new StringBuilder();
@@ -361,12 +392,12 @@ public class PGCoverageReference extends AbstractCoverageReference implements Py
             query.append("WHERE ");
             query.append("\"layerId\"=").append(Integer.valueOf(layerId));
             query.append("ORDER BY \"indice\" ASC");
-            
+
             cnx = store.getDataSource().getConnection();
             cnx.setReadOnly(false);
             stmt = cnx.createStatement();
             rs = stmt.executeQuery(query.toString());
-            
+
             while (rs.next()) {
                 final int indice = rs.getInt("indice");
                 final String description = rs.getString("description");
@@ -387,9 +418,9 @@ public class PGCoverageReference extends AbstractCoverageReference implements Py
                         pNoData[j] = noData[j].doubleValue();
                     }
                 }
-                
+
                 final int categoriesSize = (pNoData != null && pNoData.length > 0) ? (pNoData.length + 1) : 2;
-                
+
                 final Category[] categories = new Category[categoriesSize];
                 categories[0] = new Category("data", Color.BLACK, NumberRange.create(min, max));
                 if (pNoData != null && pNoData.length > 0) {
@@ -399,11 +430,11 @@ public class PGCoverageReference extends AbstractCoverageReference implements Py
                 } else {
                     categories[1] = new Category(Vocabulary.formatInternational(Vocabulary.Keys.NODATA), new Color(0,0,0,0), Double.NaN);
                 }
-                
+
                 final GridSampleDimension dim = new GridSampleDimension(description, categories, unit);
                 dimensions.add(indice, dim);
             }
-             
+
         } catch (SQLException ex) {
             throw new DataStoreException(ex.getMessage(), ex);
         } finally {
@@ -414,11 +445,11 @@ public class PGCoverageReference extends AbstractCoverageReference implements Py
 
     @Override
     public void createSampleDimension(List<GridSampleDimension> dimensions, final Map<String, Object> analyse) throws DataStoreException {
-        
+
         if (dimensions != null) {
             double[] maxDimValues = new double[dimensions.size()];
-            double[] minDimValues =  new double[dimensions.size()]; 
-            
+            double[] minDimValues =  new double[dimensions.size()];
+
             if (analyse != null) {
                 maxDimValues = (double[]) analyse.get("max");
                 minDimValues = (double[]) analyse.get("min");
@@ -426,15 +457,15 @@ public class PGCoverageReference extends AbstractCoverageReference implements Py
                 Arrays.fill(maxDimValues, Double.MAX_VALUE);
                 Arrays.fill(minDimValues, Double.MIN_VALUE);
             }
-            
+
             Connection cnx = null;
             PreparedStatement pstmt = null;
             ResultSet rs = null;
             try{
-                
+
                 final int layerId = store.getLayerId(name.getLocalPart());
                 for (int i = 0; i < dimensions.size(); i++) {
-                    
+
                     final GridSampleDimension dim = dimensions.get(i);
                     final String description = dim.getDescription() != null ? dim.getDescription().toString() : "";
                     final String unit = dim.getUnits() != null ? dim.getUnits().toString() : "";
@@ -448,17 +479,17 @@ public class PGCoverageReference extends AbstractCoverageReference implements Py
                             noData[j] = Double.valueOf(pNoData[j]);
                         }
                     }
-                    
+
                     final StringBuilder query = new StringBuilder();
                     query.append("INSERT INTO ");
                     query.append(store.encodeTableName("Band"));
                     query.append(" (\"layerId\",\"indice\",\"description\",\"dataType\",\"unit\",\"noData\", \"min\", \"max\") ");
                     query.append("VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-                    
+
                     cnx = store.getDataSource().getConnection();
                     cnx.setReadOnly(false);
                     pstmt = cnx.prepareStatement(query.toString());
-                    
+
                     pstmt.setInt(1, layerId);
                     pstmt.setInt(2, i);
                     pstmt.setString(3, description);
@@ -467,7 +498,7 @@ public class PGCoverageReference extends AbstractCoverageReference implements Py
                     pstmt.setArray(6, cnx.createArrayOf("float8", noData));
                     pstmt.setDouble(7, min);
                     pstmt.setDouble(8, max);
-                    
+
                     pstmt.executeUpdate();
                 }
 

@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2012, Geomatys
+ *    (C) 2012 - 2013, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -27,10 +27,9 @@ import java.util.logging.Logger;
 import javax.sql.DataSource;
 import org.geotoolkit.coverage.AbstractCoverageStore;
 import org.geotoolkit.coverage.CoverageReference;
-import org.geotoolkit.coverage.CoverageStoreContentEvent;
+import org.geotoolkit.coverage.CoverageStore;
 import org.geotoolkit.coverage.CoverageStoreFactory;
 import org.geotoolkit.coverage.CoverageStoreFinder;
-import org.geotoolkit.coverage.CoverageStoreManagementEvent;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.jdbc.ManageableDataSource;
 import org.geotoolkit.referencing.factory.epsg.ThreadedEpsgFactory;
@@ -85,11 +84,17 @@ public class PGCoverageStore extends AbstractCoverageStore{
         return epsgfactory;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public CoverageStoreFactory getFactory() {
         return CoverageStoreFinder.getFactoryById(PGCoverageStoreFactory.NAME);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Set<Name> getNames() throws DataStoreException {
         final Set<Name> names = new HashSet<Name>();
@@ -118,6 +123,14 @@ public class PGCoverageStore extends AbstractCoverageStore{
         return names;
     }
 
+    /**
+     * Get the coverage reference for the given name.
+     *
+     * @param name Table name in the {@linkplain CoverageStore coverage store}.
+     *
+     * @return The matching {@linkplain CoverageReference coverage reference}.
+     * @throws DataStoreException if the name was not found in the {@linkplain CoverageStore coverage store}.
+     */
     @Override
     public CoverageReference getCoverageReference(Name name) throws DataStoreException {
         typeCheck(name);
@@ -147,7 +160,7 @@ public class PGCoverageStore extends AbstractCoverageStore{
         } finally {
             closeSafe(cnx,stmt,rs);
         }
-        
+
         fireCoverageAdded(name);
         return getCoverageReference(new DefaultName(getDefaultNamespace(), name.getLocalPart()));
     }
@@ -174,7 +187,7 @@ public class PGCoverageStore extends AbstractCoverageStore{
         } finally {
             closeSafe(cnx,stmt,rs);
         }
-        
+
         fireCoverageDeleted(name);
     }
 
@@ -208,7 +221,7 @@ public class PGCoverageStore extends AbstractCoverageStore{
         }
 
     }
-    
+
     ////////////////////////////////////////////////////////////////////////////
     // Connection utils ////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
