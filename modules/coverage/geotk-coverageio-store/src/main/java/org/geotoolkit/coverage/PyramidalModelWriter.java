@@ -177,7 +177,7 @@ public class PyramidalModelWriter extends GridCoverageWriter {
                 final int idmaxy = (imaxy + tileHeight - 1) / tileHeight;
 
                 //define destination grid to CRS.
-                final MathTransform gridToCrsDest = new AffineTransform2D(res, 0, 0, -res, moUpperLeft.getOrdinate(0) + 0.5, moUpperLeft.getOrdinate(1) - 0.5);
+                final MathTransform gridToCrsDest = new AffineTransform2D(res, 0, 0, -res, moUpperLeft.getOrdinate(0) + 0.5 * res, moUpperLeft.getOrdinate(1) - 0.5 * res);
                 final MathTransform gridToCrsCoverage = MathTransforms.concatenate(gridToCrsDest, crsDestToSrcGrid);
 
                 // browse selected tile.
