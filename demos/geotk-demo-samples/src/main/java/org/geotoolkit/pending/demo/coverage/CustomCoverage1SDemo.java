@@ -1,8 +1,9 @@
 
 package org.geotoolkit.pending.demo.coverage;
 
-import com.sun.java.swing.plaf.gtk.GTKLookAndFeel;
 import javax.swing.UIManager;
+import javax.swing.plaf.metal.MetalLookAndFeel;
+
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.geometry.GeneralEnvelope;
@@ -24,7 +25,7 @@ public class CustomCoverage1SDemo {
     public static void main(String[] args) throws Exception {
         Demos.init();
         
-        UIManager.setLookAndFeel(new GTKLookAndFeel());
+        UIManager.setLookAndFeel(new MetalLookAndFeel());
         
         //first create a matrix table
         final float[][] matrix = new float[100][100];
