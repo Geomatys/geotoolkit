@@ -17,6 +17,7 @@
 package org.geotoolkit.coverage.finder;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import org.geotoolkit.coverage.GridMosaic;
@@ -116,6 +117,7 @@ public abstract class CoverageFinder {
     protected final List<GeneralEnvelope> getValidityDomain(CoordinateReferenceSystem crs) {
         ArgumentChecks.ensureNonNull("crs", crs);
         List<GeneralEnvelope> crsBounds = null;
+        if (crs.getDomainOfValidity() == null) return crsBounds;
         for (GeographicExtent geog : crs.getDomainOfValidity().getGeographicElements()) {
             if (geog instanceof DefaultGeographicBoundingBox) {
                 if (crsBounds == null) crsBounds = new ArrayList<GeneralEnvelope>();
@@ -160,34 +162,44 @@ public abstract class CoverageFinder {
         // envelope with crs geographic.
         final GeneralEnvelope intersection = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
         final List<Pyramid> results = new ArrayList<Pyramid>();
-        for(Pyramid pyramid : set.getPyramids()){
-            double ratioTemp = 0;
-            final List<GeneralEnvelope> pyramidBounds = getValidityDomain(pyramid.getCoordinateReferenceSystem());
-            // compute som of recovery ratio 
-            // from crs validity domain area on pyramid crs validity domain area
-            for(GeneralEnvelope crsBound : crsBounds) {
-                for(GeneralEnvelope pyramidBound : pyramidBounds) {
-                    if (!pyramidBound.intersects(crsBound, true)) continue;// no intersection
-                    intersection.setEnvelope(crsBound);
-                    intersection.intersect(pyramidBound);
-                    for (int d = 0; d < 2; d++) {// dim = 2 because extend geographic2D.
-                        final double pbs = pyramidBound.getSpan(d);
-                        // if intersect a slice part of gridEnvelope.
-                        // avoid divide by zero
-                        if (pbs <= 1E-12) continue;
-                        ratioTemp += intersection.getSpan(d) / pbs;
+        if (crsBounds != null) {
+            noValidityDomainFind :
+            for(Pyramid pyramid : set.getPyramids()) {
+                double ratioTemp = 0;
+                final List<GeneralEnvelope> pyramidBounds = getValidityDomain(pyramid.getCoordinateReferenceSystem());
+                if (pyramidBounds == null) {
+                    results.add(pyramid);
+                    continue noValidityDomainFind;
+                }
+                // compute som of recovery ratio 
+                // from crs validity domain area on pyramid crs validity domain area
+                for(GeneralEnvelope crsBound : crsBounds) {
+                    for(GeneralEnvelope pyramidBound : pyramidBounds) {
+                        if (!pyramidBound.intersects(crsBound, true)) continue;// no intersection
+                        intersection.setEnvelope(crsBound);
+                        intersection.intersect(pyramidBound);
+                        for (int d = 0; d < 2; d++) {// dim = 2 because extend geographic2D.
+                            final double pbs = pyramidBound.getSpan(d);
+                            // if intersect a slice part of gridEnvelope.
+                            // avoid divide by zero
+                            if (pbs <= 1E-12) continue;
+                            ratioTemp += intersection.getSpan(d) / pbs;
+                        }
                     }
                 }
+                //gerer les ratio et renvoyer la pyramide correspondant au ratio le plus elevé
+                 if (ratioTemp > ratio + EPSILON) {
+                     ratio = ratioTemp;
+                     results.clear();
+                     results.add(pyramid);
+                 } else if (Math.abs(ratio - ratioTemp) <= EPSILON) {
+                     results.add(pyramid);
+                 }
             }
-            //gerer les ratio et renvoyer la pyramide correspondant au ratio le plus elevé
-             if (ratioTemp > ratio + EPSILON) {
-                 ratio = ratioTemp;
-                 results.clear();
-                 results.add(pyramid);
-             } else if (Math.abs(ratio - ratioTemp) <= EPSILON) {
-                 results.add(pyramid);
-             }
+        } else {
+            results.addAll(set.getPyramids());
         }
+            
         //paranoaic test
         if (results.isEmpty()) throw new IllegalStateException("pyramid not find");
         if (results.size() == 1) return results.get(0);

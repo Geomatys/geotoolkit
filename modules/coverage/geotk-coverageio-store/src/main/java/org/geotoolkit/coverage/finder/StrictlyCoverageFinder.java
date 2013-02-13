@@ -37,7 +37,7 @@ class StrictlyCoverageFinder extends CoverageFinder {
 
     /**
      * {@inheritDoc }.
-     * <p>Note : Can return null if no mosaic within {@link Envelope} parameter area.</p>
+     * <p>Note : Can return null if no mosaic within {@link Envelope} parameter area exist.</p>
      */
     @Override
     public GridMosaic findMosaic(Pyramid pyramid, double resolution, double tolerance, Envelope env, int maxTileNumber) throws FactoryException {
