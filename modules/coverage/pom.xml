@@ -86,7 +86,7 @@
     <module>geotk-coverageio-geotiff</module>
     <module>geotk-coverageio-wkb</module>
     <module>geotk-coverageio-postgresql</module>
-    <module>geotk-coverage</module>
+    <module>geotk-coverageio-imagery</module>
   </modules>
 
 </project>
