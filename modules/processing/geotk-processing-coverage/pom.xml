@@ -91,7 +91,7 @@
       </dependency>
       <dependency>
           <groupId>org.geotoolkit.pending</groupId>
-          <artifactId>geotk-coverage-pending</artifactId>
+          <artifactId>geotk-coverageio-imagery</artifactId>
           <version>${project.version}</version>
       </dependency>
       <dependency>
