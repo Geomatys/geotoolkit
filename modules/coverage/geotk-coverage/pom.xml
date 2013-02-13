@@ -69,11 +69,6 @@
             <artifactId>geotk-index-tree</artifactId>
             <version>3.x-SNAPSHOT</version>
         </dependency>
-        <dependency>
-            <groupId>org.geotoolkit.pending</groupId>
-            <artifactId>geotk-coverageio-store</artifactId>
-            <version>3.x-SNAPSHOT</version>
-        </dependency>
     </dependencies>
 
 </project>

@@ -21,7 +21,7 @@ import java.util.Map;
 import org.geotoolkit.coverage.CoverageStore;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.image.interpolation.InterpolationCase;
-import org.geotoolkit.image.io.mosaicsql.PyramidCoverageBuilder;
+import org.geotoolkit.coverage.PyramidCoverageBuilder;
 import static org.geotoolkit.parameter.Parameters.*;
 import org.geotoolkit.process.AbstractProcess;
 import org.geotoolkit.process.ProcessException;
@@ -33,9 +33,9 @@ import org.opengis.parameter.ParameterValueGroup;
 
 /**
  * <p>Build and store a image pyramid.<br/><br/>
- * 
+ *
  * For more explanations about input output objects see {@link PGCoverageBuilder} javadoc.
- * 
+ *
  * @author Remi Marechal (Geomatys).
  */
 public class PyramidProcess extends AbstractProcess {
@@ -43,10 +43,10 @@ public class PyramidProcess extends AbstractProcess {
     PyramidProcess(final ParameterValueGroup input) {
         super(INSTANCE, input);
     }
-    
+
     @Override
     protected void execute() throws ProcessException {
-        
+
         ArgumentChecks.ensureNonNull("inputParameters", inputParameters);
 
         final GridCoverage coverage               = value(IN_COVERAGE         , inputParameters);
@@ -56,7 +56,7 @@ public class PyramidProcess extends AbstractProcess {
         final String pyramid_name                 = value(IN_PYRAMID_NAME     , inputParameters);
         final Dimension tilesize                  = value(IN_TILE_SIZE        , inputParameters);
         final double[] fillvalue                  = value(IN_FILLVALUES       , inputParameters);
-       
+
         //check map values
         for(Object obj : resolution_per_envelope.keySet()) {
             if (!(obj instanceof Envelope))
@@ -64,7 +64,7 @@ public class PyramidProcess extends AbstractProcess {
             if (!(resolution_per_envelope.get(obj) instanceof double[]))
                 throw new ProcessException("Map store objects must be instance of double[]", this, null);
         }
-        
+
         final PyramidCoverageBuilder pgcb = new PyramidCoverageBuilder(tilesize, interpolationcase, 2);
         try {
             pgcb.create(coverage, coverageStore, new DefaultName(pyramid_name), resolution_per_envelope, fillvalue);
