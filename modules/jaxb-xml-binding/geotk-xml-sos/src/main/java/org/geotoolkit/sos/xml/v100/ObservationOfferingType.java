@@ -80,6 +80,44 @@ public class ObservationOfferingType extends AbstractFeatureType implements Obse
      */ 
     ObservationOfferingType(){}
     
+    public ObservationOfferingType(final ObservationOfferingType that){
+        super(that);
+        if (that != null) {
+            if (that.intendedApplication != null) {
+                this.intendedApplication = new ArrayList<String>(that.intendedApplication);
+            }
+            this.time = that.time; // todo clone
+            if (that.featureOfInterest != null) {
+                this.featureOfInterest = new ArrayList<ReferenceType>();
+                for (ReferenceType ref : that.featureOfInterest) {
+                    this.featureOfInterest.add(new ReferenceType(ref));
+                }
+            }
+            if (that.procedure != null) {
+                this.procedure = new ArrayList<ReferenceType>();
+                for (ReferenceType ref : that.procedure) {
+                    this.procedure.add(new ReferenceType(ref));
+                }
+            }
+            if (that.observedProperty != null) {
+                this.observedProperty = new ArrayList<PhenomenonPropertyType>();
+                for (PhenomenonPropertyType ref : that.observedProperty) {
+                    this.observedProperty.add(ref); // todo clone
+                }
+            }
+            if (that.responseFormat != null) {
+                this.responseFormat = new ArrayList<String>(that.responseFormat);
+            }
+            if (that.responseMode != null) {
+                this.responseMode = new ArrayList<ResponseModeType>(that.responseMode);
+            }
+            if (that.resultModel != null) {
+                this.resultModel = new ArrayList<QName>(that.resultModel);
+            }
+        }
+    } 
+    
+    
     /**
      *  Build a new offering.
      */ 
