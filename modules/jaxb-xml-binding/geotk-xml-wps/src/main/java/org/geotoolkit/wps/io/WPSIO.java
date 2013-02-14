@@ -59,8 +59,19 @@ import org.opengis.geometry.Envelope;
 public final class WPSIO {
 
     private static final Logger LOGGER = Logging.getLogger(WPSIO.class);
-    private static final List<FormatSupport> FORMATSUPPORTS = Collections.synchronizedList(new ArrayList<FormatSupport>());
 
+    /**
+     * A key for userdata map of an {@link org.geotoolkit.parameter.ExtendedParameterDescriptor} object. The aim is to
+     * link it with a list of {@link FormatSupport} wanted for the parameter.
+     */
+    public static final String SUPPORTED_FORMATS_KEY = "supportedFormats";
+    /**
+     * A key for userdata map of an {@link org.geotoolkit.parameter.ExtendedParameterDescriptor} object. The aim is to
+     * link it with a String, which is an URL to the schema which current parameter must match.
+     */
+    public static final String SCHEMA_KEY = "schema";
+
+    private static final List<FormatSupport> FORMATSUPPORTS = Collections.synchronizedList(new ArrayList<FormatSupport>());
     static {
         FORMATSUPPORTS.add(new FormatSupport(Feature.class, IOType.BOTH, WPSMimeType.TEXT_XML.val(), WPSEncoding.UTF8.getValue(), WPSSchema.OGC_FEATURE_3_1_1.getValue(), false));
         FORMATSUPPORTS.add(new FormatSupport(Feature.class, IOType.BOTH, WPSMimeType.TEXT_GML.val(), WPSEncoding.UTF8.getValue(), WPSSchema.OGC_FEATURE_3_1_1.getValue(), false));
@@ -334,6 +345,9 @@ public final class WPSIO {
      * @return true if supported, false otherwise.
      */
     public static boolean isSupportedInputClass(final Class clazz) {
+        if(isSupportedBBoxInputClass(clazz)) {
+            return true;
+        }
         return isSupportedClass(clazz, IOType.INPUT, FormChoice.ALL);
     }
 
