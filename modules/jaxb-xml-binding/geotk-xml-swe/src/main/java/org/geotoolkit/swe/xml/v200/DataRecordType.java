@@ -21,13 +21,8 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import org.geotoolkit.swe.xml.AnyScalar;
 import org.geotoolkit.swe.xml.DataRecord;
 import org.geotoolkit.util.Utilities;
 
@@ -66,7 +61,7 @@ import org.geotoolkit.util.Utilities;
 public class DataRecordType extends AbstractDataComponentType implements DataRecord {
 
     @XmlElement(required = true)
-    private List<DataRecordType.Field> field;
+    private List<Field> field;
 
     public DataRecordType() {
         
@@ -85,9 +80,9 @@ public class DataRecordType extends AbstractDataComponentType implements DataRec
      * 
      */
     @Override
-    public List<DataRecordType.Field> getField() {
+    public List<Field> getField() {
         if (field == null) {
-            field = new ArrayList<DataRecordType.Field>();
+            field = new ArrayList<Field>();
         }
         return this.field;
     }
@@ -97,7 +92,7 @@ public class DataRecordType extends AbstractDataComponentType implements DataRec
         final StringBuilder sb = new StringBuilder(super.toString());
         if (field != null) {
             sb.append("fields:\n");
-            for (DataRecordType.Field f : field) {
+            for (Field f : field) {
                 sb.append(f).append('\n');
             }
         }
@@ -123,94 +118,5 @@ public class DataRecordType extends AbstractDataComponentType implements DataRec
         hash = 71 * hash + super.hashCode();
         hash = 71 * hash + (this.field != null ? this.field.hashCode() : 0);
         return hash;
-    }
-    
-    /**
-     * <p>Java class for anonymous complex type.
-     * 
-     * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
-     * <pre>
-     * &lt;complexType>
-     *   &lt;complexContent>
-     *     &lt;extension base="{http://www.opengis.net/swe/2.0}AbstractDataComponentPropertyType">
-     *       &lt;attribute name="name" use="required" type="{http://www.w3.org/2001/XMLSchema}NCName" />
-     *     &lt;/extension>
-     *   &lt;/complexContent>
-     * &lt;/complexType>
-     * </pre>
-     * 
-     * 
-     */
-    @XmlAccessorType(XmlAccessType.FIELD)
-    @XmlType(name = "")
-    public static class Field extends AbstractDataComponentPropertyType implements AnyScalar {
-
-        @XmlAttribute(required = true)
-        @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-        @XmlSchemaType(name = "NCName")
-        private String name;
-
-        public Field() {
-            
-        }
-        
-        public Field(final String name, final AbstractDataComponentType compo) {
-            super(compo);
-            this.name = name;
-        }
-        /**
-         * Gets the value of the name property.
-         * 
-         * @return
-         *     possible object is
-         *     {@link String }
-         *     
-         */
-        @Override
-        public String getName() {
-            return name;
-        }
-
-        /**
-         * Sets the value of the name property.
-         * 
-         * @param value
-         *     allowed object is
-         *     {@link String }
-         *     
-         */
-        public void setName(String value) {
-            this.name = value;
-        }
-        
-        @Override
-        public String toString() {
-            final StringBuilder sb = new StringBuilder(super.toString());
-            if (name != null) {
-                sb.append("name=").append(name).append('\n');
-            }
-            return sb.toString();
-        }
-
-        @Override
-        public boolean equals(final Object object) {
-            if (object == this) {
-                return true;
-            }
-            if (object instanceof Field && super.equals(object)) {
-                final Field that = (Field) object;
-                return Utilities.equals(this.name, that.name);
-            }
-            return false;
-        }
-
-        @Override
-        public int hashCode() {
-            int hash = 7;
-            hash = 71 * hash + super.hashCode();
-            hash = 71 * hash + (this.name != null ? this.name.hashCode() : 0);
-            return hash;
-        }
     }
 }

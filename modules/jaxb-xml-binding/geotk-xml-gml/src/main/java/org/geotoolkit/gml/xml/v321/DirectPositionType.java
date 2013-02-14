@@ -65,7 +65,7 @@ import org.opengis.util.FactoryException;
 @XmlSeeAlso({
     VectorType.class
 })
-public class DirectPositionType implements DirectPosition, org.geotoolkit.gml.xml.DirectPosition {
+public class DirectPositionType implements org.geotoolkit.gml.xml.DirectPosition {
 
     @XmlValue
     private List<Double> value;

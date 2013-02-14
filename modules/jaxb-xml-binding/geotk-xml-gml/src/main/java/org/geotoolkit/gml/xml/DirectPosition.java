@@ -22,11 +22,9 @@ import java.util.List;
  *
  * @author Guilhem Legal (Geomatys)
  */
-public interface DirectPosition {
+public interface DirectPosition extends org.opengis.geometry.DirectPosition{
     
     List<Double> getValue();
-    
-    double getOrdinate(final int dimension);
     
     String getSrsName();
     

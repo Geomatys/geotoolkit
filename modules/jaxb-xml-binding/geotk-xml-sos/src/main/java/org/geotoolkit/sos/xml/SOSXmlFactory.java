@@ -924,4 +924,24 @@ public class SOSXmlFactory {
                                            Arrays.asList(OBSERVATION_QNAME, MEASUREMENT_QNAME),
                                            Arrays.asList(ResponseModeType.INLINE, ResponseModeType.RESULT_TEMPLATE));
     }
+    
+    public static TextBlock getDefaultTextEncoding(final String version) {
+        if ("2.0.0".equals(version)) {
+            return org.geotoolkit.swe.xml.v200.TextEncodingType.DEFAULT_ENCODING;
+        } else if ("1.0.0".equals(version)) {
+            return org.geotoolkit.swe.xml.v101.TextBlockType.DEFAULT_ENCODING;
+        } else {
+            throw new IllegalArgumentException("Unexpected SOS version:" + version);
+        }
+    }
+    
+    public static AnyScalar getDefaultTimeField(final String version) {
+        if ("2.0.0".equals(version)) {
+            return org.geotoolkit.swe.xml.v200.Field.TIME_FIELD;
+        } else if ("1.0.0".equals(version)) {
+            return org.geotoolkit.swe.xml.v101.AnyScalarPropertyType.TIME_FIELD;
+        } else {
+            throw new IllegalArgumentException("Unexpected SOS version:" + version);
+        }
+    }
 }

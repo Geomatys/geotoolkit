@@ -1,6 +1,18 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ *    Geotoolkit - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
+ *
+ *    (C) 2013, Geomatys
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation; either
+ *    version 2.1 of the License, or (at your option) any later version.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
  */
 
 package org.geotoolkit.observation.xml;
@@ -11,7 +23,6 @@ import org.geotoolkit.gml.xml.FeatureProperty;
 import org.geotoolkit.gml.xml.GMLXmlFactory;
 import org.geotoolkit.swe.xml.Phenomenon;
 import org.geotoolkit.swe.xml.v101.PhenomenonType;
-import org.opengis.observation.Measure;
 import org.opengis.observation.Measurement;
 import org.opengis.observation.Observation;
 import org.opengis.observation.sampling.SamplingFeature;
@@ -87,7 +98,7 @@ public class OMXmlFactory {
             
             final org.geotoolkit.swe.xml.v200.DataRecordType recordv200 =  (org.geotoolkit.swe.xml.v200.DataRecordType) resultv200.getDataArray().getElementType().getAbstractRecord();
             final List<org.geotoolkit.swe.xml.v101.AnyScalarPropertyType> fields = new ArrayList<org.geotoolkit.swe.xml.v101.AnyScalarPropertyType>();
-            for (org.geotoolkit.swe.xml.v200.DataRecordType.Field scalar : recordv200.getField()) {
+            for (org.geotoolkit.swe.xml.v200.Field scalar : recordv200.getField()) {
                 fields.add(new org.geotoolkit.swe.xml.v101.AnyScalarPropertyType(scalar));
             }
             final org.geotoolkit.swe.xml.v101.SimpleDataRecordType record = new org.geotoolkit.swe.xml.v101.SimpleDataRecordType(null, 
@@ -157,10 +168,10 @@ public class OMXmlFactory {
             final org.geotoolkit.swe.xml.v200.TextEncodingType enc = new org.geotoolkit.swe.xml.v200.TextEncodingType(encodingV100.getId(), encodingV100.getDecimalSeparator(), encodingV100.getTokenSeparator(), encodingV100.getBlockSeparator());
             final String values = resultv100.getDataArray().getValues();
             final org.geotoolkit.swe.xml.v101.SimpleDataRecordType recordv100 =  (org.geotoolkit.swe.xml.v101.SimpleDataRecordType) resultv100.getDataArray().getElementType();
-            final List<org.geotoolkit.swe.xml.v200.DataRecordType.Field> fields = new ArrayList<org.geotoolkit.swe.xml.v200.DataRecordType.Field>();
+            final List<org.geotoolkit.swe.xml.v200.Field> fields = new ArrayList<org.geotoolkit.swe.xml.v200.Field>();
             for (org.geotoolkit.swe.xml.v101.AnyScalarPropertyType scalar : recordv100.getField()) {
                 final org.geotoolkit.swe.xml.v200.AbstractDataComponentType component = convert(scalar.getValue());
-                fields.add(new org.geotoolkit.swe.xml.v200.DataRecordType.Field(scalar.getName(), component));
+                fields.add(new org.geotoolkit.swe.xml.v200.Field(scalar.getName(), component));
             }
             final org.geotoolkit.swe.xml.v200.DataRecordType record = new org.geotoolkit.swe.xml.v200.DataRecordType(recordv100.getId(), recordv100.getDefinition(), recordv100.isFixed(), fields);
             //final ElementType elem = new ElementType(resultv100.getDataArray().getName(), record);

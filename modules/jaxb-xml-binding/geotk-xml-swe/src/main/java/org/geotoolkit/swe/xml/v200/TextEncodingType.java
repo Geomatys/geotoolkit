@@ -49,6 +49,10 @@ import org.geotoolkit.util.Utilities;
 @XmlType(name = "TextEncodingType")
 public class TextEncodingType extends AbstractEncodingType implements TextBlock {
 
+    public final static TextEncodingType DEFAULT_ENCODING = new TextEncodingType("encoding-1", ",", "@@", ".");
+
+    public final static TextEncodingType CSV_ENCODING     = new TextEncodingType("encoding-CSV", ",", "\n", ".");
+    
     @XmlAttribute
     private Boolean collapseWhiteSpaces;
     @XmlAttribute

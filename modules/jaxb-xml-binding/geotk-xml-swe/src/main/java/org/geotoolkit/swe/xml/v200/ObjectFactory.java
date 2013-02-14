@@ -221,8 +221,8 @@ public class ObjectFactory {
      * Create an instance of {@link DataRecordType.Field }
      * 
      */
-    public DataRecordType.Field createDataRecordTypeField() {
-        return new DataRecordType.Field();
+    public Field createDataRecordTypeField() {
+        return new Field();
     }
 
     /**

@@ -70,7 +70,7 @@ import org.geotoolkit.xlink.xml.v100.TypeType;
     DataArrayType.ElementType.class,
     org.geotoolkit.swe.xml.v200.DataStreamType.ElementType.class,
     DataChoiceType.Item.class,
-    DataRecordType.Field.class
+    Field.class
 })
 public class AbstractDataComponentPropertyType implements DataComponentProperty {
 
