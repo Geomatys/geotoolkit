@@ -633,10 +633,10 @@ public final class FileUtilities extends Static {
     }
 
     /**
-     * Write the contents of a file into string.
+     * Write the contents of a string into file.
      *
-     * @param f the file name
-     * @return The file contents as string
+     * @param f the file to write into.
+     * @return The file content as string
      * @throws IOException if the file does not exist or cannot be read.
      */
     public static void stringToFile(final File f, final String s) throws IOException {
