@@ -116,28 +116,12 @@ public final class Exceptions extends Static {
      *         class does not provide public {@code Exception(String)} constructor.
      *
      * @since 3.20
+     *
+     * @deprecated Moved to Apache SIS {@link org.apache.sis.util.Exceptions#setMessage}.
      */
-    @SuppressWarnings("unchecked")
+    @Deprecated
     public static <T extends Throwable> T setMessage(final T exception, String message, final boolean append) {
-        if (append) {
-            String em = exception.getLocalizedMessage();
-            if (em != null && !(em = em.trim()).isEmpty()) {
-                final StringBuilder buffer = new StringBuilder(message.trim());
-                final int length = buffer.length();
-                if (length != 0 && Character.isLetterOrDigit(buffer.charAt(length-1))) {
-                    buffer.append(". ");
-                }
-                message = buffer.append(em).toString();
-            }
-        }
-        final Throwable ne;
-        try {
-            ne = exception.getClass().getConstructor(String.class).newInstance(message);
-        } catch (ReflectiveOperationException e) {
-            return exception;
-        }
-        ne.setStackTrace(exception.getStackTrace());
-        return (T) ne;
+        return org.apache.sis.util.Exceptions.setMessage(exception, message, append);
     }
 
     /**
@@ -158,54 +142,12 @@ public final class Exceptions extends Static {
      *         and no exception provide a message.
      *
      * @since 3.01
+     *
+     * @deprecated Moved to Apache SIS {@link org.apache.sis.util.Exceptions#formatChainedMessages}.
      */
+    @Deprecated
     public static String formatChainedMessages(String header, Throwable cause) {
-        Set<String> done = null;
-        String lineSeparator = null;
-        StringBuilder buffer = null;
-        while (cause != null) {
-            String message = cause.getLocalizedMessage();
-            if (message != null && !(message = message.trim()).isEmpty()) {
-                if (buffer == null) {
-                    done = new HashSet<>();
-                    buffer = new StringBuilder();
-                    lineSeparator = System.lineSeparator();
-                    if (header != null && !(header = header.trim()).isEmpty()) {
-                        buffer.append(header);
-                        done.add(header);
-                        /*
-                         * The folowing is for avoiding to repeat the same message in the
-                         * common case where the header contains the exception class name
-                         * followed by the message, as in:
-                         *
-                         * FooException: InnerException: the inner message.
-                         */
-                        int s=0;
-                        while ((s=header.indexOf(':', s)) >= 0) {
-                            done.add(header.substring(++s).trim());
-                        }
-                    }
-                }
-                if (done.add(message)) {
-                    if (buffer.length() != 0) {
-                        buffer.append(lineSeparator);
-                    }
-                    buffer.append(message);
-                }
-            }
-            if (cause instanceof SQLException) {
-                final SQLException next = ((SQLException) cause).getNextException();
-                if (next != null) {
-                    cause = next;
-                    continue;
-                }
-            }
-            cause = cause.getCause();
-        }
-        if (buffer != null) {
-            header = buffer.toString();
-        }
-        return header;
+        return org.apache.sis.util.Exceptions.formatChainedMessages(null, header, cause);
     }
 
     /**

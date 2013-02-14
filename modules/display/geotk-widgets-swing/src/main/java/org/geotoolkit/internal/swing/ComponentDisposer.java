@@ -28,7 +28,7 @@ import javax.swing.event.AncestorListener;
 import javax.swing.event.InternalFrameEvent;
 import javax.swing.event.InternalFrameListener;
 
-import org.geotoolkit.util.Disposable;
+import org.apache.sis.util.Disposable;
 import org.apache.sis.util.ArraysExt;
 
 

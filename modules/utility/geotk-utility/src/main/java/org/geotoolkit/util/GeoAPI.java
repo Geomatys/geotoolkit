@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.Properties;
 import java.util.MissingResourceException;
 import java.io.InputStream;
+import org.apache.sis.util.iso.Types;
 
 import org.opengis.util.CodeList;
 import org.opengis.annotation.UML;
@@ -37,16 +38,11 @@ import org.geotoolkit.util.collection.BackingStoreException;
  *
  * @since 3.19
  * @module
+ *
+ * @deprecated Moved to Apache SIS {@link Types}.
  */
+@Deprecated
 public final class GeoAPI extends Static {
-    /**
-     * The types for ISO 19115 UML identifiers. The keys are UML identifiers. Values
-     * are either classname as {@link String} object, or the {@link Class} object.
-     *
-     * @see #forName(String)
-     */
-    private static Map<Object,Object> typeForNames;
-
     /**
      * Do not allow instantiation of this class.
      */
@@ -68,33 +64,11 @@ public final class GeoAPI extends Static {
      *
      * @param  identifier The ISO {@linkplain UML} identifier.
      * @return The GeoAPI interface, or {@code null} if the given identifier is unknown.
+     *
+     * @deprecated Moved to Apache SIS {@link Types#forStandardName(String)}.
      */
-    public static synchronized Class<?> forUML(final String identifier) {
-        if (typeForNames == null) {
-            final InputStream in = UML.class.getResourceAsStream("class-index.properties");
-            if (in == null) {
-                throw new MissingResourceException("class-index.properties", UML.class.getName(), identifier);
-            }
-            final Properties props = new Properties();
-            try {
-                props.load(in);
-                in.close();
-            } catch (Exception e) { // Catch IOException and IllegalArgumentException.
-                throw new BackingStoreException(e);
-            }
-            typeForNames = new HashMap<>(props);
-        }
-        final Object value = typeForNames.get(identifier);
-        if (value == null || value instanceof Class<?>) {
-            return (Class<?>) value;
-        }
-        final Class<?> type;
-        try {
-            type = Class.forName((String) value);
-        } catch (ClassNotFoundException e) {
-            throw new TypeNotPresentException((String) value, e);
-        }
-        typeForNames.put(identifier, type);
-        return type;
+    @Deprecated
+    public static Class<?> forUML(final String identifier) {
+        return Types.forStandardName(identifier);
     }
 }
