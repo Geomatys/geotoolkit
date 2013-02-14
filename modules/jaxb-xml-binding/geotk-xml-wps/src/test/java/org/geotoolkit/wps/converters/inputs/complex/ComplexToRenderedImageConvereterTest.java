@@ -20,23 +20,23 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
+import static org.geotoolkit.test.Assert.*;
 import org.geotoolkit.util.FileUtilities;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
+import org.geotoolkit.wps.converters.AbstractWPSConverterTest;
+import org.geotoolkit.wps.converters.ConvertersTestUtils;
 import org.geotoolkit.wps.converters.WPSConverterRegistry;
 import org.geotoolkit.wps.converters.WPSObjectConverter;
 import org.geotoolkit.wps.xml.v100.ComplexDataType;
+import static org.junit.Assert.assertNotNull;
 import org.junit.Test;
-import static org.junit.Assert.*;
-import static org.geotoolkit.test.Assert.*;
-import org.geotoolkit.wps.converters.ConvertersTestUtils;
 
 /**
  * 
  * @author Quentin Boileau (Geomatys)
  */
-public class ComplexToRenderedImageConvereterTest {
-    
-    
+public class ComplexToRenderedImageConvereterTest extends AbstractWPSConverterTest {
+
     @Test
     public void testConversion() throws NonconvertibleObjectException, IOException  {
         final WPSObjectConverter<ComplexDataType, RenderedImage> converter = WPSConverterRegistry.getInstance().getConverter(ComplexDataType.class, RenderedImage.class);
@@ -60,7 +60,5 @@ public class ComplexToRenderedImageConvereterTest {
         final RenderedImage expectedImage = ConvertersTestUtils.makeRendredImage();
         
         assertRasterEquals(expectedImage, convertedImage);
-        
     }
-    
 }

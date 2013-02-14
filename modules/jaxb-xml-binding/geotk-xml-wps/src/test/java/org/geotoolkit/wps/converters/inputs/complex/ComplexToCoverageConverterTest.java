@@ -15,18 +15,11 @@
  *    Lesser General Public License for more details.
  */
 package org.geotoolkit.wps.converters.inputs.complex;
-import java.awt.image.RenderedImage;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.io.CoverageIO;
-import org.geotoolkit.coverage.io.CoverageStoreException;
-import org.geotoolkit.lang.Setup;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.util.FileUtilities;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
@@ -35,19 +28,19 @@ import org.geotoolkit.wps.converters.WPSObjectConverter;
 import org.geotoolkit.wps.xml.v100.ComplexDataType;
 import org.junit.Test;
 import static org.geotoolkit.test.Assert.*;
+import org.geotoolkit.wps.converters.AbstractWPSConverterTest;
 import org.geotoolkit.wps.converters.ConvertersTestUtils;
-import org.geotoolkit.wps.converters.outputs.complex.CoverageToComplexConverterTest;
 import org.opengis.geometry.Envelope;
 
 /**
  *
  * @author Quentin Boileau (Geomatys)
  */
-public class ComplexToCoverageConverterTest {
+public class ComplexToCoverageConverterTest extends AbstractWPSConverterTest {
+
     
     @Test
-    public void testConversion() throws NonconvertibleObjectException, IOException  {
-        Setup.initialize(null);
+    public void testConversion() throws NonconvertibleObjectException, IOException, InterruptedException  {
         
         final WPSObjectConverter<ComplexDataType, GridCoverage2D> converter = WPSConverterRegistry.getInstance().getConverter(ComplexDataType.class, GridCoverage2D.class);
         
@@ -55,12 +48,12 @@ public class ComplexToCoverageConverterTest {
         String encodedCoverage = FileUtilities.getStringFromStream(expectedStream);
         
         final Map<String, Object> param = new HashMap<String, Object>();
-        param.put(WPSObjectConverter.MIME, "img/tiff");
+        param.put(WPSObjectConverter.MIME, "image/x-geotiff");
         param.put(WPSObjectConverter.ENCODING, "base64");
         
         final ComplexDataType complex = new ComplexDataType();
         complex.setEncoding("base64");
-        complex.setMimeType("image/tiff");
+        complex.setMimeType("image/x-geotiff");
         complex.setSchema(null);
         complex.getContent().add(encodedCoverage);
         

@@ -21,32 +21,27 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.io.CoverageIO;
-import org.geotoolkit.coverage.io.CoverageStoreException;
-import org.geotoolkit.lang.Setup;
 import org.geotoolkit.util.FileUtilities;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
+import org.geotoolkit.wps.converters.AbstractWPSConverterTest;
 import org.geotoolkit.wps.converters.ConvertersTestUtils;
 import org.geotoolkit.wps.converters.WPSConverterRegistry;
 import org.geotoolkit.wps.converters.WPSObjectConverter;
 import org.geotoolkit.wps.io.WPSMimeType;
 import org.geotoolkit.wps.xml.v100.ComplexDataType;
-import org.junit.Test;
 import static org.junit.Assert.*;
+import org.junit.Test;
 
 /**
  * 
  * @author Quentin Boileau (Geomatys)
  */
-public class CoverageToComplexConverterTest {
-    
+public class CoverageToComplexConverterTest extends AbstractWPSConverterTest {
+
     
     @Test
     public void testConversion() throws NonconvertibleObjectException, IOException  {
-        Setup.initialize(null);
         
         final WPSObjectConverter<GridCoverage2D, ComplexDataType> converter = WPSConverterRegistry.getInstance().getConverter(GridCoverage2D.class, ComplexDataType.class);
         
@@ -65,9 +60,5 @@ public class CoverageToComplexConverterTest {
         expectedString = expectedString.trim();
         
         assertEquals(expectedString, encodedCvg);
-        
     }
-    
-    
-    
 }

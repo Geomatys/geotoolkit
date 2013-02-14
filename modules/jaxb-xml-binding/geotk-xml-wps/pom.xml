@@ -68,6 +68,9 @@
     </developers>
 
 
+    <properties>
+        <testSuit>**/WPSConverterTestSuit.class</testSuit>
+    </properties>
 
   <!--
     Required dependencies for building. These dependencies will be included
@@ -96,10 +99,8 @@
             <version>2.4</version>
             <classifier>jdk15</classifier>
         </dependency>
-    <!-- 
-        Provided dependencies for converters 
-    -->
-
+        
+        <!-- Provided dependencies for converters -->
         <dependency>
             <groupId>org.geotoolkit.pending</groupId>
             <artifactId>geotk-jaxp-core</artifactId>
@@ -130,7 +131,20 @@
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
-
     </dependencies>
-
+    
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <includes>
+                        <include>${testSuit}</include>
+                    </includes>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+    
 </project>

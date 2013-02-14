@@ -23,20 +23,21 @@ import java.util.List;
 import java.util.Map;
 import org.geotoolkit.util.FileUtilities;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
+import org.geotoolkit.wps.converters.AbstractWPSConverterTest;
 import org.geotoolkit.wps.converters.ConvertersTestUtils;
 import org.geotoolkit.wps.converters.WPSConverterRegistry;
 import org.geotoolkit.wps.converters.WPSObjectConverter;
 import org.geotoolkit.wps.io.WPSMimeType;
 import org.geotoolkit.wps.xml.v100.ComplexDataType;
-import org.junit.Test;
 import static org.junit.Assert.*;
+import org.junit.Test;
 
 /**
  * 
  * @author Quentin Boileau (Geomatys)
  */
-public class RenderedImageToComplexConverterTest {
-    
+public class RenderedImageToComplexConverterTest extends AbstractWPSConverterTest {
+
     
     @Test
     public void testConversion() throws NonconvertibleObjectException, IOException  {

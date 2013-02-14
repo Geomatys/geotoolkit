@@ -127,9 +127,11 @@ public final class WPSIO {
         //Coverage support
         for (final String readerMime : ImageIO.getReaderMIMETypes()) {
             if (!readerMime.isEmpty()) {
-                if (readerMime.equals("image/x-geotiff")) {
+                if (readerMime.equals(WPSMimeType.IMG_GEOTIFF_BIS.val())) {
                     FORMATSUPPORTS.add(new FormatSupport(Coverage.class, IOType.INPUT, readerMime, null, null, true));
                     FORMATSUPPORTS.add(new FormatSupport(Coverage.class, IOType.INPUT, readerMime, WPSEncoding.BASE64.getValue(), null, true));
+                    FORMATSUPPORTS.add(new FormatSupport(Coverage.class, IOType.INPUT, WPSMimeType.IMG_GEOTIFF.val(), null, null, true));
+                    FORMATSUPPORTS.add(new FormatSupport(Coverage.class, IOType.INPUT, WPSMimeType.IMG_GEOTIFF.val(), WPSEncoding.BASE64.getValue(), null, true));
                 } else {
                     FORMATSUPPORTS.add(new FormatSupport(Coverage.class, IOType.INPUT, readerMime, null, null, false));
                     FORMATSUPPORTS.add(new FormatSupport(Coverage.class, IOType.INPUT, readerMime, WPSEncoding.BASE64.getValue(), null, true));
@@ -139,9 +141,11 @@ public final class WPSIO {
 
         for (final String writerMime : ImageIO.getWriterMIMETypes()) {
             if (!writerMime.isEmpty()) {
-                if (writerMime.equals("image/x-geotiff")) {
+                if (writerMime.equals(WPSMimeType.IMG_GEOTIFF_BIS.val())) {
                     FORMATSUPPORTS.add(new FormatSupport(Coverage.class, IOType.OUTPUT, writerMime, null, null, true));
                     FORMATSUPPORTS.add(new FormatSupport(Coverage.class, IOType.OUTPUT, writerMime, WPSEncoding.BASE64.getValue(), null, true));
+                    FORMATSUPPORTS.add(new FormatSupport(Coverage.class, IOType.OUTPUT, WPSMimeType.IMG_GEOTIFF.val(), null, null, true));
+                    FORMATSUPPORTS.add(new FormatSupport(Coverage.class, IOType.OUTPUT, WPSMimeType.IMG_GEOTIFF.val(), WPSEncoding.BASE64.getValue(), null, true));
                 } else {
                     FORMATSUPPORTS.add(new FormatSupport(Coverage.class, IOType.OUTPUT, writerMime, null, null, false));
                     FORMATSUPPORTS.add(new FormatSupport(Coverage.class, IOType.OUTPUT, writerMime, WPSEncoding.BASE64.getValue(), null, false));

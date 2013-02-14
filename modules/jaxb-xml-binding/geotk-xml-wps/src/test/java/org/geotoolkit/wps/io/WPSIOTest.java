@@ -15,14 +15,16 @@
  *    Lesser General Public License for more details.
  */
 package org.geotoolkit.wps.io;
+
 import java.awt.image.RenderedImage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
 import org.geotoolkit.wps.converters.WPSObjectConverter;
 import org.geotoolkit.wps.xml.v100.ComplexDataType;
 import org.geotoolkit.wps.xml.v100.ReferenceType;
-import org.junit.Test;
 import static org.junit.Assert.*;
+import org.junit.Test;
+import org.opengis.coverage.Coverage;
 
 /**
  *
@@ -92,28 +94,28 @@ public class WPSIOTest {
          * GridCoverage2D 
          */
          //GridCoverage2D INPUT
-        WPSIO.checkSupportedFormat(GridCoverage2D.class, WPSIO.IOType.INPUT, WPSMimeType.IMG_GEOTIFF.val(), null, null);
-        WPSIO.checkSupportedFormat(GridCoverage2D.class, WPSIO.IOType.INPUT, WPSMimeType.IMG_GEOTIFF.val(), WPSEncoding.BASE64.getValue(), null);
+        WPSIO.checkSupportedFormat(Coverage.class, WPSIO.IOType.INPUT, WPSMimeType.IMG_GEOTIFF.val(), null, null);
+        WPSIO.checkSupportedFormat(Coverage.class, WPSIO.IOType.INPUT, WPSMimeType.IMG_GEOTIFF.val(), WPSEncoding.BASE64.getValue(), null);
         try {
-             WPSIO.checkSupportedFormat(GridCoverage2D.class, WPSIO.IOType.INPUT, WPSMimeType.IMG_GEOTIFF.val(), WPSEncoding.UTF8.getValue(), null);
+             WPSIO.checkSupportedFormat(Coverage.class, WPSIO.IOType.INPUT, WPSMimeType.IMG_GEOTIFF.val(), WPSEncoding.UTF8.getValue(), null);
              fail();
         } catch (NonconvertibleObjectException ex) { /*do nothing*/ }
         
         try {
-             WPSIO.checkSupportedFormat(GridCoverage2D.class, WPSIO.IOType.INPUT, WPSMimeType.IMG_GEOTIFF.val(), null, "something");
+             WPSIO.checkSupportedFormat(Coverage.class, WPSIO.IOType.INPUT, WPSMimeType.IMG_GEOTIFF.val(), null, "something");
              fail();
         } catch (NonconvertibleObjectException ex) { /*do nothing*/ }
         
         //RenderedImage OUTPUT
-        WPSIO.checkSupportedFormat(GridCoverage2D.class, WPSIO.IOType.OUTPUT, WPSMimeType.IMG_GEOTIFF.val(), null, null);
-        WPSIO.checkSupportedFormat(GridCoverage2D.class, WPSIO.IOType.OUTPUT, WPSMimeType.IMG_GEOTIFF.val(), WPSEncoding.BASE64.getValue(), null);
+        WPSIO.checkSupportedFormat(Coverage.class, WPSIO.IOType.OUTPUT, WPSMimeType.IMG_GEOTIFF.val(), null, null);
+        WPSIO.checkSupportedFormat(Coverage.class, WPSIO.IOType.OUTPUT, WPSMimeType.IMG_GEOTIFF.val(), WPSEncoding.BASE64.getValue(), null);
         try {
-             WPSIO.checkSupportedFormat(GridCoverage2D.class, WPSIO.IOType.OUTPUT, WPSMimeType.IMG_GEOTIFF.val(), WPSEncoding.UTF8.getValue(), null);
+             WPSIO.checkSupportedFormat(Coverage.class, WPSIO.IOType.OUTPUT, WPSMimeType.IMG_GEOTIFF.val(), WPSEncoding.UTF8.getValue(), null);
              fail();
         } catch (NonconvertibleObjectException ex) { /*do nothing*/ }
         
         try {
-             WPSIO.checkSupportedFormat(GridCoverage2D.class, WPSIO.IOType.OUTPUT, WPSMimeType.IMG_GEOTIFF.val(), null, "something");
+             WPSIO.checkSupportedFormat(Coverage.class, WPSIO.IOType.OUTPUT, WPSMimeType.IMG_GEOTIFF.val(), null, "something");
              fail();
         } catch (NonconvertibleObjectException ex) { /*do nothing*/ }
         
@@ -206,16 +208,16 @@ public class WPSIOTest {
          * GridCoverage2D
          */
         classFound = WPSIO.findClass(WPSIO.IOType.INPUT, WPSIO.FormChoice.COMPLEX, WPSMimeType.IMG_GEOTIFF.val(), null, null, null);
-        assertEquals(GridCoverage2D.class, classFound);
+        assertEquals(Coverage.class, classFound);
         
         classFound = WPSIO.findClass(WPSIO.IOType.INPUT, WPSIO.FormChoice.COMPLEX, WPSMimeType.IMG_GEOTIFF.val(), WPSEncoding.BASE64.getValue(), null, null);
-        assertEquals(GridCoverage2D.class, classFound);
+        assertEquals(Coverage.class, classFound);
         
         classFound = WPSIO.findClass(WPSIO.IOType.OUTPUT, WPSIO.FormChoice.COMPLEX, WPSMimeType.IMG_GEOTIFF.val(), null, null, null);
-        assertEquals(GridCoverage2D.class, classFound);
+        assertEquals(Coverage.class, classFound);
         
         classFound = WPSIO.findClass(WPSIO.IOType.OUTPUT, WPSIO.FormChoice.COMPLEX, WPSMimeType.IMG_GEOTIFF.val(), WPSEncoding.BASE64.getValue(), null, null);
-        assertEquals(GridCoverage2D.class, classFound);
+        assertEquals(Coverage.class, classFound);
         
     }
 }

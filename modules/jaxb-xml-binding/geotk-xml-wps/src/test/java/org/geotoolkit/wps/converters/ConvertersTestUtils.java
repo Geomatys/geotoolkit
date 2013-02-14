@@ -50,15 +50,6 @@ public final class ConvertersTestUtils {
     }
     
     public static GridCoverage2D makeCoverage() {
-        //first create a matrix table
-         //allow reprojection even if grid or bursawolf parameters are missing
-        Hints.putSystemDefault(Hints.LENIENT_DATUM_SHIFT, Boolean.TRUE);
-        
-        //global initialization
-        Setup.initialize(null);
-        
-        //force loading all image readers/writers
-        ImageIO.scanForPlugins();
         
         final BufferedImage img = new BufferedImage(500, 500, BufferedImage.TYPE_INT_ARGB);        
         final Graphics2D g2d = img.createGraphics();
