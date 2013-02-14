@@ -138,8 +138,12 @@ public class ObservationOfferingType extends AbstractOfferingType implements Obs
      *     {@link ObservationOfferingType.ObservedArea }
      *     
      */
-    public ObservationOfferingType.ObservedArea getObservedArea() {
-        return observedArea;
+    @Override
+    public EnvelopeType getObservedArea() {
+        if (observedArea != null) {
+            return observedArea.getEnvelope();
+        }
+        return null;
     }
 
     /**
@@ -154,6 +158,14 @@ public class ObservationOfferingType extends AbstractOfferingType implements Obs
         this.observedArea = value;
     }
 
+    @Override
+    public TimePeriodType getTime() {
+        if (phenomenonTime != null) {
+            return phenomenonTime.timePeriod;
+        }
+        return null;
+    }
+    
     /**
      * Gets the value of the phenomenonTime property.
      * 
@@ -209,6 +221,7 @@ public class ObservationOfferingType extends AbstractOfferingType implements Obs
      * {@link String }
      * 
      */
+    @Override
     public List<String> getResponseFormat() {
         if (responseFormat == null) {
             responseFormat = new ArrayList<String>();
@@ -352,6 +365,13 @@ public class ObservationOfferingType extends AbstractOfferingType implements Obs
         @XmlElementRef(name = "Envelope", namespace = "http://www.opengis.net/gml/3.2", type = JAXBElement.class)
         private JAXBElement<? extends EnvelopeType> envelope;
 
+        public EnvelopeType getEnvelope() {
+            if (envelope != null) {
+                return envelope.getValue();
+            }
+            return null;
+        }
+        
         /**
          * Gets the value of the envelope property.
          * 
@@ -361,7 +381,7 @@ public class ObservationOfferingType extends AbstractOfferingType implements Obs
          *     {@link JAXBElement }{@code <}{@link EnvelopeType }{@code >}
          *     
          */
-        public JAXBElement<? extends EnvelopeType> getEnvelope() {
+        public JAXBElement<? extends EnvelopeType> getJbEnvelope() {
             return envelope;
         }
 

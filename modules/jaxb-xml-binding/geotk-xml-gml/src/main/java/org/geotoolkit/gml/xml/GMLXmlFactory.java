@@ -17,6 +17,7 @@
 
 package org.geotoolkit.gml.xml;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import org.opengis.temporal.Instant;
@@ -187,6 +188,24 @@ public class GMLXmlFactory {
         }
     }
     
+    public static Period createTimePeriod(final String version, final Timestamp dateBegin, final Timestamp dateEnd) {
+        if ("3.2.1".equals(version)) {
+            if (dateEnd == null) {
+                return new org.geotoolkit.gml.xml.v321.TimePeriodType(dateBegin);
+            } else {
+                return new org.geotoolkit.gml.xml.v321.TimePeriodType(dateBegin, dateEnd);
+            }
+        } else if ("3.1.1".equals(version)) {
+            if (dateEnd == null) {
+                return new org.geotoolkit.gml.xml.v311.TimePeriodType(dateBegin);
+            } else {
+                return new org.geotoolkit.gml.xml.v311.TimePeriodType(dateBegin, dateEnd);
+            }
+        } else {
+            throw new IllegalArgumentException("unexpected gml version number:" + version);
+        }
+    }
+    
     public static Period createTimePeriod(final String version, final Position dateBegin, final Position dateEnd) {
         if ("3.2.1".equals(version)) {
             if (dateEnd != null && !(dateEnd instanceof org.geotoolkit.gml.xml.v321.TimePositionType)) {
@@ -237,6 +256,17 @@ public class GMLXmlFactory {
     }
     
     public static Instant createTimeInstant(final String version, final String date) {
+        if ("3.2.1".equals(version)) {
+            return new org.geotoolkit.gml.xml.v321.TimeInstantType(date);
+            
+        } else if ("3.1.1".equals(version)) {
+            return new org.geotoolkit.gml.xml.v311.TimeInstantType(date);
+        } else {
+            throw new IllegalArgumentException("unexpected gml version number:" + version);
+        }
+    }
+    
+    public static Instant createTimeInstant(final String version, final Timestamp date) {
         if ("3.2.1".equals(version)) {
             return new org.geotoolkit.gml.xml.v321.TimeInstantType(date);
             

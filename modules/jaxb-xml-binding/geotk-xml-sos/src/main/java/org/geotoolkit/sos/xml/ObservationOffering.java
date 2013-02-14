@@ -19,6 +19,8 @@ package org.geotoolkit.sos.xml;
 
 import java.util.List;
 import javax.xml.namespace.QName;
+import org.geotoolkit.gml.xml.Envelope;
+import org.opengis.temporal.TemporalGeometricPrimitive;
 
 /**
  *
@@ -28,11 +30,17 @@ public interface ObservationOffering {
     
     String getId();
     
+    String getName();
+    
+    String getDescription();
     /*
      * 1.0.0
      */
     List<String> getSrsName();
     
+    TemporalGeometricPrimitive getTime();
+            
+    Envelope getObservedArea();
     /*
      * 1.0.0
      */
@@ -43,4 +51,6 @@ public interface ObservationOffering {
     List<String> getFeatureOfInterestIds();
     
     List<String> getObservedProperties();
+    
+    List<String> getResponseFormat();
 }

@@ -73,10 +73,12 @@ public class UnitOfMeasureEntry implements BaseUnit, Entry {
     /**
      * Retourne l'identifiant.
      */
+    @Override
     public String getId() {
         return id;
     }
 
+    @Override
     public String getIdentifier() {
         return id;
     }
@@ -84,6 +86,7 @@ public class UnitOfMeasureEntry implements BaseUnit, Entry {
     /**
      * Retourne l'identifiant.
      */
+    @Override
     public String getName() {
         return name;
     }
@@ -91,6 +94,7 @@ public class UnitOfMeasureEntry implements BaseUnit, Entry {
     /**
      * retourne le type de l'unité de mesure.
      */
+    @Override
     public String getQuantityType() {
         return quantityType;
     }
@@ -98,6 +102,7 @@ public class UnitOfMeasureEntry implements BaseUnit, Entry {
     /**
      * retourne le nom du systeme qui definit cette unité.
      */
+    @Override
     public String getUnitsSystem() {
         return unitsSystem;
     }

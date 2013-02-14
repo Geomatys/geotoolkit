@@ -143,6 +143,13 @@ public abstract class AbstractSWESType {
         this.identifier = value;
     }
 
+    public String getName() {
+        if (name != null && !name.isEmpty()) {
+            name.get(0).getValue();
+        }
+        return null;
+    }
+    
     /**
      * Gets the value of the name property.
      * 
@@ -150,7 +157,7 @@ public abstract class AbstractSWESType {
      * {@link CodeType }
      * 
      */
-    public List<CodeType> getName() {
+    public List<CodeType> getFullName() {
         if (name == null) {
             name = new ArrayList<CodeType>();
         }

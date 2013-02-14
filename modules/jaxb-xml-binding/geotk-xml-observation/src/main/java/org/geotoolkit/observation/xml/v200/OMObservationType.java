@@ -616,7 +616,7 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
     }
 
     @XmlRootElement
-    protected static class InternalPhenomenon implements org.geotoolkit.swe.xml.Phenomenon {
+    public static class InternalPhenomenon implements org.geotoolkit.swe.xml.Phenomenon {
     
         private final String name;
         

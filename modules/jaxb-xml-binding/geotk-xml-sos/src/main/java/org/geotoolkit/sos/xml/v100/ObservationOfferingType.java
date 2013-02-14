@@ -17,7 +17,6 @@
 package org.geotoolkit.sos.xml.v100;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -28,6 +27,7 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.namespace.QName;
+import org.geotoolkit.gml.xml.Envelope;
 import org.geotoolkit.gml.xml.v311.AbstractFeatureType;
 import org.geotoolkit.gml.xml.v311.AbstractTimeGeometricPrimitiveType;
 import org.geotoolkit.gml.xml.v311.BoundingShapeType;
@@ -125,6 +125,14 @@ public class ObservationOfferingType extends AbstractFeatureType implements Obse
         this.time              = new TimeGeometricPrimitivePropertyType(time);
     }
     
+    @Override
+    public Envelope getObservedArea() {
+        if (getBoundedBy() != null) {
+            return getBoundedBy().getEnvelope();
+        }
+        return null;
+    }
+    
     /**
      * Return the value of the intendedApplication property.
      * 
@@ -140,6 +148,7 @@ public class ObservationOfferingType extends AbstractFeatureType implements Obse
      * Return the value of the eventTime property.
      * 
      */
+    @Override
     public AbstractTimeGeometricPrimitiveType getTime() {
        return time.getTimeGeometricPrimitive();
     }
@@ -177,6 +186,14 @@ public class ObservationOfferingType extends AbstractFeatureType implements Obse
         return result;
     }
     
+    public void setProcedures(final List<String> procedures) {
+        if (procedures != null) {
+            procedure = new ArrayList<ReferenceType>();
+            for (String s : procedures) {
+                procedure.add(new ReferenceType(null, s));
+            }
+        }
+    }
     
     /**
      * Return an unmodifiable list of the observedProperty.
@@ -242,6 +259,7 @@ public class ObservationOfferingType extends AbstractFeatureType implements Obse
      * Return the value of the resultFormat property.
      * 
      */
+    @Override
     public List<String> getResponseFormat() {
         if (responseFormat == null){
             responseFormat = new ArrayList<String>();
@@ -356,6 +374,4 @@ public class ObservationOfferingType extends AbstractFeatureType implements Obse
         }
         return s.toString();
     }
-
-
 }

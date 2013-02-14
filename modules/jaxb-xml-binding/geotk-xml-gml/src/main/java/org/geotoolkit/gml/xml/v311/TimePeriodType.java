@@ -17,6 +17,7 @@
 package org.geotoolkit.gml.xml.v311;
 
 import java.io.Serializable;
+import java.sql.Timestamp;
 import java.util.Date;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -106,6 +107,11 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType implement
         this.beginPosition = new TimePositionType(beginValue);
         this.endPosition   = new TimePositionType(endValue);
     }
+    
+    public TimePeriodType(final Timestamp beginValue, final Timestamp endValue){
+        this.beginPosition = new TimePositionType(beginValue);
+        this.endPosition   = new TimePositionType(endValue);
+    }
 
     /**
      * Build a new Time period bounded by the begin and with the end position "now".
@@ -123,6 +129,11 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType implement
      * Build a new Time period bounded by the begin and end time specified.
      */
     public TimePeriodType(final String beginValue){
+        this.beginPosition = new TimePositionType(beginValue);
+        this.endPosition   = new TimePositionType(TimeIndeterminateValueType.NOW);
+    }
+    
+    public TimePeriodType(final Timestamp beginValue){
         this.beginPosition = new TimePositionType(beginValue);
         this.endPosition   = new TimePositionType(TimeIndeterminateValueType.NOW);
     }

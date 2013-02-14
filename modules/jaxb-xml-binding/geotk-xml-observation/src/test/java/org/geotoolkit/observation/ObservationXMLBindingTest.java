@@ -98,7 +98,6 @@ public class ObservationXMLBindingTest {
         SamplingPointType sp  = new SamplingPointType("samplingID-007", "urn:sampling:test:007", "a sampling Test", new FeaturePropertyType(""), location);
 
         PhenomenonType observedProperty = new PhenomenonType("phenomenon-007", "urn:OGC:phenomenon-007");
-        ProcessType procedure           = new ProcessType("urn:sensor:007");
         TimePeriodType samplingTime      = new TimePeriodType("2007-01-01", "2008-09-09");
         samplingTime.setId("t1");
 
@@ -109,7 +108,7 @@ public class ObservationXMLBindingTest {
         SimpleDataRecordType record       = new SimpleDataRecordType(fields);
         DataArrayType array               = new DataArrayType("array-001", 1, "array-001", record, encoding, "somevalue");
         DataArrayPropertyType arrayProp    = new DataArrayPropertyType(array);
-        ObservationType obs = new ObservationType("urn:Observation-007", "observation definition", sp, observedProperty, procedure, arrayProp, samplingTime);
+        ObservationType obs = new ObservationType("urn:Observation-007", "observation definition", sp, observedProperty, "urn:sensor:007", arrayProp, samplingTime);
 
         StringWriter sw = new StringWriter();
         marshaller.marshal(obs, sw);
@@ -177,7 +176,7 @@ public class ObservationXMLBindingTest {
 
         UnitOfMeasureEntry uom  = new UnitOfMeasureEntry("m", "meters", "distance", null);
         MeasureType meas       = new MeasureType("result-1", uom, 7);
-        MeasurementType measmt = new MeasurementType("urn:Observation-007", "observation definition", sp, observedProperty, procedure, meas, samplingTime);
+        MeasurementType measmt = new MeasurementType("urn:Observation-007", "observation definition", sp, observedProperty, "urn:sensor:007", meas, samplingTime);
 
         sw = new StringWriter();
         marshaller.marshal(measmt, sw);
@@ -326,7 +325,6 @@ public class ObservationXMLBindingTest {
         SamplingPointType sp = new SamplingPointType("samplingID-007", "urn:sampling:test:007", "a sampling Test", new FeaturePropertyType("urn:sampling:sampledFeature"), location);
 
         PhenomenonType observedProperty = new PhenomenonType("phenomenon-007", "urn:OGC:phenomenon-007");
-        ProcessType procedure = new ProcessType("urn:sensor:007");
         TimePeriodType samplingTime = new TimePeriodType("2007-01-01", "2008-09-09");
 
         TextBlockType encoding            = new TextBlockType("encoding-001", ",", "@@", ".");
@@ -337,7 +335,7 @@ public class ObservationXMLBindingTest {
         DataArrayType array               = new DataArrayType("array-001", 1, "array-001", record, encoding, "somevalue");
         DataArrayPropertyType arrayProp    = new DataArrayPropertyType(array);
         
-        ObservationType expResult = new ObservationType("urn:Observation-007", null, sp, observedProperty, procedure, arrayProp, samplingTime);
+        ObservationType expResult = new ObservationType("urn:Observation-007", null, sp, observedProperty, "urn:sensor:007", arrayProp, samplingTime);
 
         assertEquals(expResult.getFeatureOfInterest(), result.getFeatureOfInterest());
         assertEquals(expResult.getDefinition(), result.getDefinition());
@@ -409,7 +407,7 @@ public class ObservationXMLBindingTest {
         UnitOfMeasureEntry uom  = new UnitOfMeasureEntry("m", "meters", "distance", null);
         MeasureType meas       = new MeasureType("result-1", uom, 7);
 
-        MeasurementType expResult2 = new MeasurementType("urn:Observation-007", null, sp, observedProperty, procedure, meas, samplingTime);
+        MeasurementType expResult2 = new MeasurementType("urn:Observation-007", null, sp, observedProperty, "urn:sensor:007", meas, samplingTime);
 
         assertEquals(expResult2.getFeatureOfInterest(), result2.getFeatureOfInterest());
         assertEquals(expResult2.getDefinition(), result2.getDefinition());

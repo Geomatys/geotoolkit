@@ -74,11 +74,19 @@ public class MeasureType implements Measure, Entry{
         this.uom   = uom;
         this.value = value;        
     }
+    
+    public MeasureType(final String uom, final float value) {
+        if (uom != null) {
+            this.uom = new UnitOfMeasureEntry(uom, null, null, null);
+        }
+        this.value = value;        
+    }
 
     public String getName() {
         return name;
     }
 
+    @Override
     public String getIdentifier() {
         return name;
     }

@@ -17,6 +17,7 @@
 package org.geotoolkit.gml.xml.v311;
 
 import java.io.Serializable;
+import java.sql.Timestamp;
 import java.util.Collection;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -74,6 +75,10 @@ public class TimeInstantType extends AbstractTimeGeometricPrimitiveType implemen
         } else if (timePosition != null) {
             this.timePosition = new TimePositionType(timePosition.getDate());
         }
+    }
+    
+    public TimeInstantType(final Timestamp timePosition) {
+        this.timePosition = new TimePositionType(timePosition);
     }
     
     public TimeInstantType(final String timePosition) {

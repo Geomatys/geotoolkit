@@ -250,11 +250,11 @@ public class ObservationType implements Entry, AbstractObservation {
      * @param procedure         The associated procedure.
      */
     public ObservationType(final String                name,
-                            final String                definition,
+                            final String               definition,
                             final SamplingFeatureType  featureOfInterest,
                             final PhenomenonType       observedProperty,
-                            final ProcessType          procedure,
-                            final Object                result,
+                            final String               procedure,
+                            final Object               result,
                             final AbstractTimeGeometricPrimitiveType   samplingTime)
     {
         this.name                = name;
@@ -268,8 +268,12 @@ public class ObservationType implements Entry, AbstractObservation {
         } else if (featureOfInterest instanceof SamplingSurfaceType) {
             this.featureOfInterest   = new FeaturePropertyType(SAMPLING_FACTORY.createSamplingSurface((SamplingSurfaceType)featureOfInterest));
         }
-        this.observedProperty    = new PhenomenonPropertyType(observedProperty);
-        this.procedure           = procedure;
+        if (observedProperty != null) {
+            this.observedProperty = new PhenomenonPropertyType(observedProperty);
+        }
+        if (procedure != null) {
+            this.procedure       = new ProcessType(procedure);
+        }
         this.resultQuality       = null;      
         this.result              = OM_FACTORY.createResult(result);
         this.observationMetadata = null;
@@ -290,7 +294,7 @@ public class ObservationType implements Entry, AbstractObservation {
                             final String                 definition,
                             final FeaturePropertyType    featureOfInterest,
                             final PhenomenonPropertyType observedProperty,
-                            final ProcessType            procedure,
+                            final String                 procedure,
                             final Object                 result,
                             final AbstractTimeGeometricPrimitiveType   samplingTime)
     {
@@ -298,7 +302,9 @@ public class ObservationType implements Entry, AbstractObservation {
         this.definition          = definition;
         this.featureOfInterest   = featureOfInterest;
         this.observedProperty    = observedProperty;
-        this.procedure           = procedure;
+        if (procedure != null) {
+            this.procedure       = new ProcessType(procedure);
+        }
         this.resultQuality       = null;
         this.result              = OM_FACTORY.createResult(result);
         this.observationMetadata = null;
@@ -316,12 +322,12 @@ public class ObservationType implements Entry, AbstractObservation {
      * @param procedure         The associated procedure.
      */
     public ObservationType(final String                name,
-                            final String                definition,
-                            final FeaturePropertyType   featureOfInterest,
-                            final PhenomenonType       observedProperty,
-                            final ProcessType          procedure,
-                            final Object                result,
-                            final AbstractTimeGeometricPrimitiveType   samplingTime)
+                           final String                definition,
+                           final FeaturePropertyType   featureOfInterest,
+                           final PhenomenonType       observedProperty,
+                           final String          procedure,
+                           final Object                result,
+                           final AbstractTimeGeometricPrimitiveType   samplingTime)
     {
        this(name, definition, featureOfInterest, new PhenomenonPropertyType(observedProperty), procedure, result, samplingTime);
     }
@@ -351,7 +357,7 @@ public class ObservationType implements Entry, AbstractObservation {
                                     this.definition,
                                     this.featureOfInterest,
                                     this.observedProperty,
-                                    this.procedure,
+                                    this.procedure.getHref(),
                                     res,
                                     (AbstractTimeGeometricPrimitiveType)time);
         
@@ -447,7 +453,7 @@ public class ObservationType implements Entry, AbstractObservation {
      * {@inheritDoc}
      */
     @Override
-    public Process getProcedure() {
+    public ProcessType getProcedure() {
         return procedure;
     }
     

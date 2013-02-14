@@ -9,12 +9,15 @@ import java.util.ArrayList;
 import java.util.List;
 import org.geotoolkit.gml.xml.FeatureProperty;
 import org.geotoolkit.gml.xml.GMLXmlFactory;
+import org.geotoolkit.swe.xml.Phenomenon;
 import org.geotoolkit.swe.xml.v101.PhenomenonType;
+import org.opengis.observation.Measure;
 import org.opengis.observation.Measurement;
 import org.opengis.observation.Observation;
 import org.opengis.observation.sampling.SamplingFeature;
 import org.opengis.temporal.Instant;
 import org.opengis.temporal.Period;
+import org.opengis.temporal.TemporalGeometricPrimitive;
 
 /**
  *
@@ -67,7 +70,7 @@ public class OMXmlFactory {
         } else {
             time = null;
         }
-        final org.geotoolkit.observation.xml.v100.ProcessType procedure = new org.geotoolkit.observation.xml.v100.ProcessType(((org.geotoolkit.observation.xml.Process)observation.getProcedure()).getHref());
+        final String procedure = ((org.geotoolkit.observation.xml.Process)observation.getProcedure()).getHref();
         final String phenomenonName = ((org.geotoolkit.swe.xml.Phenomenon)observation.getObservedProperty()).getName();
         final org.geotoolkit.swe.xml.v101.PhenomenonType observedProperty = new PhenomenonType(phenomenonName, phenomenonName);
         
@@ -355,5 +358,87 @@ public class OMXmlFactory {
             throw new IllegalArgumentException("unexpected sos version number:" + version);
         }
         return null;
+    }
+    
+    public static Observation buildObservation(final String version, final String name, final String definition, final FeatureProperty sampledFeature, final Phenomenon phen,
+            final String procedure, final Object result, final TemporalGeometricPrimitive time) {
+        if ("1.0.0".equals(version)) {
+            if (sampledFeature != null && !(sampledFeature instanceof org.geotoolkit.gml.xml.v311.FeaturePropertyType)) {
+                throw new IllegalArgumentException("unexpected object version for sampled feature element");
+            }
+            if (phen != null && !(phen instanceof org.geotoolkit.swe.xml.v101.PhenomenonType)) {
+                throw new IllegalArgumentException("unexpected object version for phenomenon element");
+            }
+            if (time != null && !(time instanceof org.geotoolkit.gml.xml.v311.AbstractTimeGeometricPrimitiveType)) {
+                throw new IllegalArgumentException("unexpected object version for time element");
+            }
+            return new org.geotoolkit.observation.xml.v100.ObservationType(name, 
+                                                                           definition, 
+                                                                           (org.geotoolkit.gml.xml.v311.FeaturePropertyType)sampledFeature,
+                                                                           (org.geotoolkit.swe.xml.v101.PhenomenonType)phen, 
+                                                                           procedure , 
+                                                                           result, 
+                                                                           (org.geotoolkit.gml.xml.v311.AbstractTimeGeometricPrimitiveType)time);
+        } else if ("2.0.0".equals(version)) {
+            if (sampledFeature != null && !(sampledFeature instanceof org.geotoolkit.gml.xml.v321.FeaturePropertyType)) {
+                throw new IllegalArgumentException("unexpected object version for sampled feature element");
+            }
+            if (time != null && !(time instanceof org.geotoolkit.gml.xml.v321.TimePeriodType)) {
+                throw new IllegalArgumentException("unexpected object version for time element");
+            }
+           return new org.geotoolkit.observation.xml.v200.OMObservationType(name, 
+                                                                            "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_ComplexObservation", 
+                                                                            (org.geotoolkit.gml.xml.v321.TimePeriodType)time,
+                                                                            procedure,
+                                                                            phen.getName(),
+                                                                            (org.geotoolkit.gml.xml.v321.FeaturePropertyType)sampledFeature,
+                                                                            result);
+        } else {
+            throw new IllegalArgumentException("unexpected sos version number:" + version);
+        }
+    }
+    
+    public static Observation buildMeasurement(final String version, final String name, final String definition, final FeatureProperty sampledFeature, final Phenomenon phen,
+            final String procedure, final Object result, final TemporalGeometricPrimitive time) {
+        if ("1.0.0".equals(version)) {
+            if (sampledFeature != null && !(sampledFeature instanceof org.geotoolkit.gml.xml.v311.FeaturePropertyType)) {
+                throw new IllegalArgumentException("unexpected object version for sampled feature element");
+            }
+            if (phen != null && !(phen instanceof org.geotoolkit.swe.xml.v101.PhenomenonType)) {
+                throw new IllegalArgumentException("unexpected object version for phenomenon element");
+            }
+            if (time != null && !(time instanceof org.geotoolkit.gml.xml.v311.AbstractTimeGeometricPrimitiveType)) {
+                throw new IllegalArgumentException("unexpected object version for time element");
+            }
+            if (result != null && !(result instanceof org.geotoolkit.observation.xml.v100.MeasureType)) {
+                throw new IllegalArgumentException("unexpected object version for result element");
+            }
+            return new org.geotoolkit.observation.xml.v100.MeasurementType(name, 
+                                                                           definition, 
+                                                                           (org.geotoolkit.gml.xml.v311.FeaturePropertyType)sampledFeature,
+                                                                           (org.geotoolkit.swe.xml.v101.PhenomenonType)phen, 
+                                                                           procedure , 
+                                                                           (org.geotoolkit.observation.xml.v100.MeasureType)result, 
+                                                                           (org.geotoolkit.gml.xml.v311.AbstractTimeGeometricPrimitiveType)time);
+        } else if ("2.0.0".equals(version)) {
+            if (sampledFeature != null && !(sampledFeature instanceof org.geotoolkit.gml.xml.v321.FeaturePropertyType)) {
+                throw new IllegalArgumentException("unexpected object version for sampled feature element");
+            }
+            if (time != null && !(time instanceof org.geotoolkit.gml.xml.v321.TimePeriodType)) {
+                throw new IllegalArgumentException("unexpected object version for time element");
+            }
+            if (result != null && !(result instanceof org.geotoolkit.gml.xml.v321.MeasureType)) {
+                throw new IllegalArgumentException("unexpected object version for result element");
+            }
+           return new org.geotoolkit.observation.xml.v200.OMObservationType(name, 
+                                                                            "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement", 
+                                                                            (org.geotoolkit.gml.xml.v321.TimePeriodType)time,
+                                                                            procedure,
+                                                                            phen.getName(),
+                                                                            (org.geotoolkit.gml.xml.v321.FeaturePropertyType)sampledFeature,
+                                                                            result);
+        } else {
+            throw new IllegalArgumentException("unexpected sos version number:" + version);
+        }
     }
 }

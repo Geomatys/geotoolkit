@@ -67,6 +67,15 @@ public class MeasureType {
     @XmlAttribute(required = true)
     private String uom;
 
+    public MeasureType() {
+        
+    }
+    
+    public MeasureType(final String uom, final double value) {
+        this.uom = uom;
+        this.value = value;
+    }
+    
     /**
      * Gets the value of the value property.
      * 

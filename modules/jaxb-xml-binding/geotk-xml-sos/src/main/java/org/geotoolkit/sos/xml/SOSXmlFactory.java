@@ -17,7 +17,9 @@
 
 package org.geotoolkit.sos.xml;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javax.xml.namespace.QName;
 import org.geotoolkit.gml.xml.Envelope;
@@ -44,11 +46,13 @@ import org.geotoolkit.swe.xml.AbstractTime;
 import org.geotoolkit.swe.xml.AnyScalar;
 import org.geotoolkit.swe.xml.DataArray;
 import org.geotoolkit.swe.xml.DataArrayProperty;
+import org.geotoolkit.swe.xml.Phenomenon;
 import org.geotoolkit.swe.xml.PhenomenonProperty;
 import org.geotoolkit.swe.xml.Quantity;
 import org.geotoolkit.swe.xml.SweXmlFactory;
 import org.geotoolkit.swe.xml.TextBlock;
 import org.geotoolkit.swe.xml.UomProperty;
+import org.geotoolkit.swe.xml.v101.PhenomenonPropertyType;
 import org.geotoolkit.swes.xml.DeleteSensorResponse;
 import org.geotoolkit.swes.xml.DescribeSensor;
 import org.geotoolkit.swes.xml.InsertSensorResponse;
@@ -377,6 +381,16 @@ public class SOSXmlFactory {
         }
     }
     
+    public static Period buildTimePeriod(final String version, final Timestamp dateBegin, final Timestamp dateEnd) {
+        if ("2.0.0".equals(version)) {
+            return GMLXmlFactory.createTimePeriod("3.2.1", dateBegin, dateEnd);
+        } else if ("1.0.0".equals(version)) {
+            return GMLXmlFactory.createTimePeriod("3.1.1", dateBegin, dateEnd);
+        } else {
+            throw new IllegalArgumentException("unexpected version number:" + version);
+        }
+    }
+    
     public static Period buildTimePeriod(final String version, final TimeIndeterminateValueType value, final Position dateEnd) {
         if ("2.0.0".equals(version)) {
             return GMLXmlFactory.createTimePeriod("3.2.1", value, dateEnd);
@@ -399,6 +413,16 @@ public class SOSXmlFactory {
     
     
     public static Instant buildTimeInstant(final String version, final Position date) {
+        if ("2.0.0".equals(version)) {
+            return GMLXmlFactory.createTimeInstant("3.2.1", date);
+        } else if ("1.0.0".equals(version)) {
+            return GMLXmlFactory.createTimeInstant("3.1.1", date);
+        } else {
+            throw new IllegalArgumentException("unexpected version number:" + version);
+        }
+    }
+    
+    public static Instant buildTimeInstant(final String version, final Timestamp date) {
         if ("2.0.0".equals(version)) {
             return GMLXmlFactory.createTimeInstant("3.2.1", date);
         } else if ("1.0.0".equals(version)) {
@@ -489,6 +513,45 @@ public class SOSXmlFactory {
             return new org.geotoolkit.gml.xml.v321.FeaturePropertyType(featureid);
         } else if ("1.0.0".equals(version)) {
             return new org.geotoolkit.gml.xml.v311.FeaturePropertyType(featureid);
+        } else {
+            throw new IllegalArgumentException("unexpected sos version number:" + version);
+        }
+    }
+    
+    public static Object buildMeasure(final String version, final String uom, final Double value) {
+        if ("2.0.0".equals(version)) {
+            return new org.geotoolkit.gml.xml.v321.MeasureType(uom, value);
+        } else if ("1.0.0".equals(version)) {
+            return new org.geotoolkit.observation.xml.v100.MeasureType(uom, value.floatValue());
+        } else {
+            throw new IllegalArgumentException("unexpected sos version number:" + version);
+        }
+    }
+    
+    public static Phenomenon buildPhenomenon(final String version, final String phenomenonName) {
+        if ("2.0.0".equals(version)) {
+            return new org.geotoolkit.observation.xml.v200.OMObservationType.InternalPhenomenon(phenomenonName);
+        } else if ("1.0.0".equals(version)) {
+            return new org.geotoolkit.swe.xml.v101.PhenomenonType(null, phenomenonName);
+        } else {
+            throw new IllegalArgumentException("unexpected sos version number:" + version);
+        }
+    }
+    
+    public static SamplingFeature buildSamplingFeature(final String version, final String id, final String name, final String description, final FeatureProperty sampledFeature) {
+        if ("1.0.0".equals(version)) {
+            if (sampledFeature != null && !(sampledFeature instanceof org.geotoolkit.gml.xml.v311.FeaturePropertyType)) {
+                throw new IllegalArgumentException("unexpected object version for sampled feature element");
+            }
+            return new org.geotoolkit.sampling.xml.v100.SamplingFeatureType(id, name, description, 
+                                                                          (org.geotoolkit.gml.xml.v311.FeaturePropertyType)sampledFeature);
+        } else if ("2.0.0".equals(version)) {
+            if (sampledFeature != null && !(sampledFeature instanceof org.geotoolkit.gml.xml.v321.FeaturePropertyType)) {
+                throw new IllegalArgumentException("unexpected object version for sampled feature element");
+            }
+            return new org.geotoolkit.sampling.xml.v200.SFSamplingFeatureType(id, name, description, "http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingPoint",
+                                                                          (org.geotoolkit.gml.xml.v321.FeaturePropertyType)sampledFeature,
+                                                                          null);
         } else {
             throw new IllegalArgumentException("unexpected sos version number:" + version);
         }
@@ -772,5 +835,93 @@ public class SOSXmlFactory {
         } else {
             throw new IllegalArgumentException("Unexpected SOS version:" + version);
         }
+    }
+    
+    public static ObservationOffering convert(final String version, final ObservationOffering offering) {
+        if (version.equals("2.0.0")) {
+            if (offering instanceof org.geotoolkit.sos.xml.v100.ObservationOfferingType) {
+                return convertTo200(offering);
+            } else {
+                return offering;
+            }
+        } else if (version.equals("1.0.0")) {
+            if (offering instanceof org.geotoolkit.sos.xml.v200.ObservationOfferingType) {
+                return convertTo100(offering);
+            } else {
+                return offering;
+            }
+        } else {
+            throw new IllegalArgumentException("unexpected SOS version number:" + version);
+        }
+    }
+    
+    private static ObservationOffering convertTo200(final ObservationOffering off) {
+        
+        final org.geotoolkit.gml.xml.v321.EnvelopeType env;
+        if (off.getObservedArea() != null) {
+            env = new org.geotoolkit.gml.xml.v321.EnvelopeType(off.getObservedArea());
+        } else {
+            env = null;
+        }
+        final org.geotoolkit.gml.xml.v321.TimePeriodType period;
+        if (off.getTime() != null) {
+            final org.geotoolkit.gml.xml.v311.TimePeriodType pv100 = (org.geotoolkit.gml.xml.v311.TimePeriodType) off.getTime();
+            period = new org.geotoolkit.gml.xml.v321.TimePeriodType(pv100.getBeginPosition().getValue(), pv100.getEndPosition().getValue());
+        } else {
+            period = null;
+        }
+        final String singleProcedure;
+        if (!off.getProcedures().isEmpty()) {
+            singleProcedure = off.getProcedures().get(0);
+        } else {
+            singleProcedure = null;
+        }
+        return new org.geotoolkit.sos.xml.v200.ObservationOfferingType(
+                                           off.getId(),
+                                           off.getName(),
+                                           off.getDescription(),
+                                           env,
+                                           period,
+                                           singleProcedure,
+                                           off.getObservedProperties(),
+                                           off.getFeatureOfInterestIds(),
+                                           off.getResponseFormat(),
+                                           Arrays.asList("http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Observation"));
+    }
+    
+    private static ObservationOffering convertTo100(final ObservationOffering off) {
+        
+        final org.geotoolkit.gml.xml.v311.EnvelopeType env;
+        if (off.getObservedArea() != null) {
+            env = new org.geotoolkit.gml.xml.v311.EnvelopeType(off.getObservedArea());
+        } else {
+            env = null;
+        }
+        final org.geotoolkit.gml.xml.v311.TimePeriodType period;
+        if (off.getTime() != null) {
+            final org.geotoolkit.gml.xml.v321.TimePeriodType pv200 = (org.geotoolkit.gml.xml.v321.TimePeriodType) off.getTime();
+            period = new org.geotoolkit.gml.xml.v311.TimePeriodType(pv200.getBeginPosition(), pv200.getEndPosition());
+        } else {
+            period = null;
+        }
+        final List<org.geotoolkit.swe.xml.v101.PhenomenonPropertyType> observedProperties = new ArrayList<org.geotoolkit.swe.xml.v101.PhenomenonPropertyType>();
+        for (String ref : off.getObservedProperties())  {
+            observedProperties.add(new PhenomenonPropertyType(ref));
+        }
+        final QName OBSERVATION_QNAME = new QName("http://www.opengis.net/om/1.0", "Observation", "om");
+        final QName MEASUREMENT_QNAME = new QName("http://www.opengis.net/om/1.0", "Measurement", "om");
+        
+        return new org.geotoolkit.sos.xml.v100.ObservationOfferingType(
+                                           off.getId(),
+                                           off.getName(),
+                                           off.getDescription(),
+                                           null,
+                                           period,
+                                           off.getProcedures(),
+                                           observedProperties,
+                                           off.getFeatureOfInterestIds(),
+                                           off.getResponseFormat(),
+                                           Arrays.asList(OBSERVATION_QNAME, MEASUREMENT_QNAME),
+                                           Arrays.asList(ResponseModeType.INLINE, ResponseModeType.RESULT_TEMPLATE));
     }
 }
