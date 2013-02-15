@@ -49,12 +49,16 @@ import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
 import org.geotoolkit.coverage.CoverageReference;
+import org.geotoolkit.coverage.CoverageUtilities;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
+import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageWriteParam;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
+import org.geotoolkit.display.canvas.CanvasController2D;
 import org.geotoolkit.display2d.canvas.DefaultRenderingContext2D;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
+import org.geotoolkit.geometry.Envelopes;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.gui.swing.go2.JMap2D;
 import org.geotoolkit.gui.swing.go2.decoration.AbstractMapDecoration;
@@ -62,11 +66,15 @@ import org.geotoolkit.gui.swing.go2.decoration.MapDecoration;
 import org.geotoolkit.gui.swing.misc.JOptionDialog;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
+import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.referencing.crs.DefaultEngineeringCRS;
 import org.geotoolkit.referencing.operation.MathTransforms;
+import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.geotoolkit.storage.DataStoreException;
+import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
@@ -96,6 +104,7 @@ public class CoverageEditionDelegate extends AbstractEditionDelegate {
     private GridCoverage2D coverage = null;
     // Write parameters discovered when setting the coverage
     private GridCoverageWriteParam writeParam = null;
+    private final GridCoverageReadParam gcrp = new GridCoverageReadParam();
     private RenderedImage img;
     private WritableRaster raster;
     private CoordinateReferenceSystem lastObjCRS = null;
@@ -217,22 +226,31 @@ public class CoverageEditionDelegate extends AbstractEditionDelegate {
         if(selectAction){
             selectAction = false;
 
+            final Envelope visibleArea = getMap().getCanvas().getController().getVisibleEnvelope();
             try {
-                GridCoverage2D cov = (GridCoverage2D) layer.getCoverageReader().read(layer.getImageIndex(), null);
+                gcrp.clear();
+                gcrp.setEnvelope(visibleArea);
+                final GridCoverage2D cov = (GridCoverage2D) layer.getCoverageReader().read(layer.getImageIndex(), gcrp);
                 setCoverage(cov,selectRectangle);
                 writeParam = new GridCoverageWriteParam();
-                MathTransform grid_To_Crs = cov.getGridGeometry().getGridToCRS(PixelInCell.CELL_CORNER);
+                final MathTransform grid_To_Crs = cov.getGridGeometry().getGridToCRS(PixelInCell.CELL_CORNER);
                 GeneralEnvelope env = new GeneralEnvelope(DefaultEngineeringCRS.CARTESIAN_2D);
                 env.setEnvelope(gridSelectionSize.x, gridSelectionSize.y, gridSelectionSize.x + gridSelectionSize.width, gridSelectionSize.y + gridSelectionSize.height);
                 env = CRS.transform(grid_To_Crs, env);
-                // coordonnée pixel au niveau le plus bas de notre pyramide
-                writeParam.setEnvelope(env);
+                
+                final CoordinateReferenceSystem covCRS = cov.getCoordinateReferenceSystem();
+                GeneralEnvelope vAInCovArea = new GeneralEnvelope(visibleArea);
+                vAInCovArea = new GeneralEnvelope(ReferencingUtilities.transform2DCRS(vAInCovArea, CRSUtilities.getCRS2D(covCRS)));
+                
+                int minOrdinate = CoverageUtilities.getMinOrdinate(vAInCovArea.getCoordinateReferenceSystem());
+                vAInCovArea.setRange(minOrdinate++, env.getMinimum(0), env.getMaximum(0));
+                vAInCovArea.setRange(minOrdinate, env.getMinimum(1), env.getMaximum(1));
+                writeParam.setEnvelope(vAInCovArea);
             } catch (Exception ex) {
                 LOGGER.log(Level.WARNING, ex.getMessage(), ex);
                 writeParam = null;
             }
             selectRectangle = null;
-
             decoration.getComponent().repaint();
         }
         super.mouseReleased(e);
