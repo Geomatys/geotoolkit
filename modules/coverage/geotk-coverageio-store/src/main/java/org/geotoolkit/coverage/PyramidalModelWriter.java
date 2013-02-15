@@ -42,10 +42,6 @@ import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.cs.CartesianCS;
-import org.opengis.referencing.cs.CoordinateSystem;
-import org.opengis.referencing.cs.EllipsoidalCS;
-import org.opengis.referencing.cs.SphericalCS;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
@@ -59,7 +55,7 @@ import org.opengis.referencing.operation.TransformException;
  */
 public class PyramidalModelWriter extends GridCoverageWriter {
     private final CoverageReference reference;
-
+    private static final double EPSILON_ONE_HOUR = 3.6E6;//hack for tests in attempt to correcting
     /**
      * Build a writer on an existing {@linkplain CoverageReference coverage reference}.
      *
@@ -87,7 +83,6 @@ public class PyramidalModelWriter extends GridCoverageWriter {
      */
     @Override
     public void write(GridCoverage coverage, final GridCoverageWriteParam param) throws CoverageStoreException, CancellationException {
-        // todo : algorithm in multi-dimensional
         ArgumentChecks.ensureNonNull("param", param);
         if (coverage == null) {
             return;
@@ -95,12 +90,19 @@ public class PyramidalModelWriter extends GridCoverageWriter {
         //geographic area where pixel values changes.
         Envelope requestedEnvelope = param.getEnvelope();
         ArgumentChecks.ensureNonNull("requestedEnvelope", requestedEnvelope);
-        final CoordinateReferenceSystem crsCoverage = coverage.getCoordinateReferenceSystem();
+        
+        final CoordinateReferenceSystem crsCoverage2D;
+        final CoordinateReferenceSystem envelopeCrs;
+        try {
+            crsCoverage2D = CRSUtilities.getCRS2D(coverage.getCoordinateReferenceSystem());
+            envelopeCrs = CRSUtilities.getCRS2D(requestedEnvelope.getCoordinateReferenceSystem());
+        } catch (TransformException ex) {
+            throw new CoverageStoreException(ex);
+        }
 
-        final CoordinateReferenceSystem envelopeCrs = requestedEnvelope.getCoordinateReferenceSystem();
-        if (!CRS.equalsIgnoreMetadata(crsCoverage, envelopeCrs)) {
+        if (!CRS.equalsIgnoreMetadata(crsCoverage2D, envelopeCrs)) {
             try {
-                requestedEnvelope = CRS.transform(requestedEnvelope, crsCoverage);
+                requestedEnvelope = ReferencingUtilities.transform2DCRS(requestedEnvelope, crsCoverage2D);
             } catch (TransformException ex) {
                 throw new CoverageStoreException(ex);
             }
@@ -126,8 +128,10 @@ public class PyramidalModelWriter extends GridCoverageWriter {
 
         // interpolation neighbourg to find pixel values changed.
         final Interpolation interpolation = Interpolation.create(PixelIteratorFactory.createRowMajorIterator(image), InterpolationCase.NEIGHBOR, 2);
+        
         //to fill value table : see resample.
         final int nbBand = image.getSampleModel().getNumBands();
+        
         final PyramidalModel pm = (PyramidalModel)reference;
         final PyramidSet pyramidSet;
         try {
@@ -135,64 +139,72 @@ public class PyramidalModelWriter extends GridCoverageWriter {
         } catch (DataStoreException ex) {
             throw new CoverageStoreException(ex);
         }
-
+        
         for (Pyramid pyramid : pyramidSet.getPyramids()) {
             //define CRS and mathTransform from current pyramid to source coverage.
-            final CoordinateReferenceSystem destCrs;
+            final CoordinateReferenceSystem destCrs2D;
             final MathTransform crsDestToCrsCoverage;
             final Envelope pyramidEnvelope;
             try {
-                destCrs = CRSUtilities.getCRS2D(pyramid.getCoordinateReferenceSystem());
-                crsDestToCrsCoverage = CRS.findMathTransform(destCrs, CRSUtilities.getCRS2D(crsCoverage));
+                destCrs2D = CRSUtilities.getCRS2D(pyramid.getCoordinateReferenceSystem());
+                crsDestToCrsCoverage = CRS.findMathTransform(destCrs2D, crsCoverage2D);
                 //geographic
-                pyramidEnvelope = CRS.transform(requestedEnvelope, destCrs);
+                pyramidEnvelope = ReferencingUtilities.transform2DCRS(requestedEnvelope, destCrs2D);
             } catch (Exception ex) {
                 throw new CoverageStoreException(ex);
             }
 
             final MathTransform crsDestToSrcGrid = MathTransforms.concatenate(crsDestToCrsCoverage, srcCRSToGrid);
-
+            noIntersection :
             for (GridMosaic mosaic : pyramid.getMosaics()) {
 
                 final double res = mosaic.getScale();
                 final DirectPosition moUpperLeft = mosaic.getUpperLeftCorner();
+                
                 // define geographic intersection
-                final Envelope mosEnv = mosaic.getEnvelope();
-                final GeneralEnvelope mosEnvelope = new GeneralEnvelope(destCrs);
-                final int minOrdinate = getMinOrdinate(mosEnv.getCoordinateReferenceSystem());
-                mosEnvelope.setEnvelope(mosEnv.getMinimum(minOrdinate), mosEnv.getMinimum(minOrdinate+1), mosEnv.getMaximum(minOrdinate), mosEnv.getMaximum(minOrdinate+1));
-                if (!mosEnvelope.intersects(pyramidEnvelope, false)) {
-                    throw new CoverageStoreException("envelope from GridCoverageWriteParam object doesn't intersect mosaic envelope");
+                final GeneralEnvelope intersection = new GeneralEnvelope(mosaic.getEnvelope());
+                final int minOrdinate = CoverageUtilities.getMinOrdinate(intersection.getCoordinateReferenceSystem());
+                if (!intersection.intersects(pyramidEnvelope, true)) {
+                    // supplementary test caused by cast long value in double within renderer.
+                    for (int d = 0; d < moUpperLeft.getDimension(); d++) {
+                        if (d != minOrdinate && d != (minOrdinate+1)) {
+                            final double val = moUpperLeft.getOrdinate(d);
+                            final double pyMin = pyramidEnvelope.getMinimum(d);
+                            final double pyMax = pyramidEnvelope.getMaximum(d);
+                            if (Math.abs(val-pyMin) > EPSILON_ONE_HOUR && Math.abs(val-pyMax) > EPSILON_ONE_HOUR) {
+                                continue noIntersection;
+                            }
+                        }
+                    }
                 }
-
-                final GeneralEnvelope intersection = new GeneralEnvelope(pyramidEnvelope);
-                intersection.intersect(mosEnvelope);
+                
+                intersection.intersect(pyramidEnvelope);
+                
+                // mosaic upper left corner coordinates.
+                final double mosULX = moUpperLeft.getOrdinate(minOrdinate);
+                final double mosULY = moUpperLeft.getOrdinate(minOrdinate+1);
+                
                 //define pixel work area of current mosaic.
-                final int mosAreaX      = (int)Math.round(Math.abs((moUpperLeft.getOrdinate(0)-intersection.getMinimum(0))) /res);
-                final int mosAreaY      = (int)Math.round(Math.abs((moUpperLeft.getOrdinate(1)-intersection.getMaximum(1))) /res);
-                final int mosAreaWidth  = (int)(intersection.getSpan(0)/res);
-                final int mosAreaHeight = (int)(intersection.getSpan(1)/res);
+                final int mosAreaX      = (int) Math.round(Math.abs((mosULX - intersection.getMinimum(minOrdinate))) /res);
+                final int mosAreaY      = (int) Math.round(Math.abs((mosULY - intersection.getMaximum(minOrdinate+1))) /res);
+                final int mosAreaWidth  = (int)(Math.round(intersection.getSpan(minOrdinate) / res));
+                final int mosAreaHeight = (int)(Math.round(intersection.getSpan(minOrdinate+1) / res));
+                final int mosAreaMaxX   = mosAreaX + mosAreaWidth;
+                final int mosAreaMaxY   = mosAreaY + mosAreaHeight;
 
                 // mosaic tiles properties.
-                final Dimension moSize   = mosaic.getGridSize();
                 final Dimension tileSize = mosaic.getTileSize();
                 final int tileWidth      = tileSize.width;
                 final int tileHeight     = tileSize.height;
 
-                // define intersection
-                final int iminx = Math.max(0, mosAreaX);
-                final int iminy = Math.max(0, mosAreaY);
-                final int imaxx = Math.min(moSize.width  * tileWidth,  mosAreaX + mosAreaWidth);
-                final int imaxy = Math.min(moSize.height * tileHeight, mosAreaY + mosAreaHeight);
-
                 // define tiles indexes from current mosaic which will be changed.
-                final int idminx = iminx / tileWidth;
-                final int idminy = iminy / tileHeight;
-                final int idmaxx = (imaxx + tileWidth-1) / tileWidth;
-                final int idmaxy = (imaxy + tileHeight - 1) / tileHeight;
+                final int idminx = mosAreaX / tileWidth;
+                final int idminy = mosAreaY / tileHeight;
+                final int idmaxx = (mosAreaMaxX + tileWidth-1) / tileWidth;
+                final int idmaxy = (mosAreaMaxY + tileHeight - 1) / tileHeight;
 
                 //define destination grid to CRS.
-                final MathTransform gridToCrsDest = new AffineTransform2D(res, 0, 0, -res, moUpperLeft.getOrdinate(0) + 0.5 * res, moUpperLeft.getOrdinate(1) - 0.5 * res);
+                final MathTransform gridToCrsDest     = new AffineTransform2D(res, 0, 0, -res, mosULX + 0.5 * res, mosULY - 0.5 * res);
                 final MathTransform gridToCrsCoverage = MathTransforms.concatenate(gridToCrsDest, crsDestToSrcGrid);
 
                 // browse selected tile.
@@ -212,10 +224,10 @@ public class PyramidalModelWriter extends GridCoverageWriter {
                         final MathTransform destImgToCrsCoverage = MathTransforms.concatenate(destImgToGrid, gridToCrsCoverage);
 
                         // define currently tile work area.
-                        final int tminx = Math.max(iminx, minidx);
-                        final int tminy = Math.max(iminy, minidy);
-                        final int tmaxx = Math.min(imaxx, minidx + tileWidth);
-                        final int tmaxy = Math.min(imaxy, minidy + tileHeight);
+                        final int tminx = Math.max(mosAreaX, minidx);
+                        final int tminy = Math.max(mosAreaY, minidy);
+                        final int tmaxx = Math.min(mosAreaMaxX, minidx + tileWidth);
+                        final int tmaxy = Math.min(mosAreaMaxY, minidy + tileHeight);
                         final Rectangle tileAreaWork = new Rectangle(tminx-minidx, tminy-minidy, tmaxx-tminx, tmaxy-tminy);
 
                         try {
@@ -229,23 +241,5 @@ public class PyramidalModelWriter extends GridCoverageWriter {
                 }
             }
         }
-    }
-
-    /**
-     * Return min geographic index ordinate from {@link CoordinateReferenceSystem} 2d part.
-     *
-     * @param crs
-     * @return
-     */
-    private int getMinOrdinate(final CoordinateReferenceSystem crs) {
-        int tempOrdinate = 0;
-        for(CoordinateReferenceSystem ccrrss : ReferencingUtilities.decompose(crs)) {
-            final CoordinateSystem cs = ccrrss.getCoordinateSystem();
-            if((cs instanceof CartesianCS)
-            || (cs instanceof SphericalCS)
-            || (cs instanceof EllipsoidalCS)) return tempOrdinate;
-            tempOrdinate += cs.getDimension();
-        }
-        throw new IllegalArgumentException("crs doesn't have any geoghaphic crs");
     }
 }
