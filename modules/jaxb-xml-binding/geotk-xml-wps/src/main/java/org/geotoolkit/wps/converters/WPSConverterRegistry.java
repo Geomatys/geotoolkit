@@ -82,6 +82,7 @@ public class WPSConverterRegistry {
         register(GeometryToComplexConverter                 .getInstance());
         register(RenderedImageToComplexConverter            .getInstance());
         register(CoverageToComplexConverter                 .getInstance());
+        register(FileToComplexConverter                     .getInstance());
 
         //Object -> ReferenceType converters
         register(CoverageToReferenceConverter               .getInstance());

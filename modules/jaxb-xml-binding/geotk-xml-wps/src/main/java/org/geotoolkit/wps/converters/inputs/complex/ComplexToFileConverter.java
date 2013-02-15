@@ -16,7 +16,6 @@ import java.util.UUID;
  * Save the content of a WPS complex input into local file.
  *
  * @author Alexis Manin (Geomatys)
- *         Date : 06/02/13
  */
 public class ComplexToFileConverter extends AbstractComplexInputConverter<File> {
 

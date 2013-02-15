@@ -18,8 +18,6 @@ import java.util.logging.Level;
  * A converter to transform a File into ComplexOutput data for wps ExecuteResponse query.
  *
  * @author Alexis Manin (Geomatys)
- *         Date :05/02/13
- *         Time: 09:28
  */
 public class FileToComplexConverter extends AbstractComplexOutputConverter<File> {
 
