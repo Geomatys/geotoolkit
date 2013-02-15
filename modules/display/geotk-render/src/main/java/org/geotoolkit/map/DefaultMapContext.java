@@ -25,6 +25,7 @@ import java.util.EventObject;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
+import org.geotoolkit.geometry.DefaultBoundingBox;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.style.StyleConstants;
@@ -32,6 +33,7 @@ import static org.geotoolkit.util.ArgumentChecks.*;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.opengis.geometry.Envelope;
+import org.opengis.metadata.extent.GeographicExtent;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 
@@ -132,7 +134,7 @@ final class DefaultMapContext extends DefaultMapItem implements MapContext, Laye
                     }
                 }
 
-                if (result == null) {
+                if (result == null ) {
                     result = env;
                 } else {
                     result.add(env);
@@ -140,10 +142,10 @@ final class DefaultMapContext extends DefaultMapItem implements MapContext, Laye
             }
 
         }
-
-        if(result == null){
+        
+        if(result == null|| result.isEmpty() || result.isInfinite() || result.isNull()){
             //we could not find a valid envelope
-            result = new GeneralEnvelope(crs);
+            result = new GeneralEnvelope(CRS.getEnvelope(crs));
         }
         return result;
     }
