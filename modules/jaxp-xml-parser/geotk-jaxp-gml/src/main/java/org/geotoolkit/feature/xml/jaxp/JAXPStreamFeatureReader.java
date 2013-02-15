@@ -394,6 +394,12 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                         }
                     }
 
+                    /**
+                     * TODO : Change to adopt the same behavior than in complexAttribute case :
+                     * Check if the parameter is multi occurence : if ot is, we just create a new property that
+                     * we'll add in property container. Otherwise, if a previous value already exists, we must throw an
+                     * exception (or set value as a list, but I don't think it's a safe behavior).
+                     */
                 } else {
                     final String content = reader.getElementText();
                     final Class typeBinding = propertyType.getBinding();
@@ -431,6 +437,7 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                         multipleValue.add(previous);
                         multipleValue.add(readValue(content, propertyType));                        
                         namedProperties.put(propName, FF.createAttribute(multipleValue, (AttributeDescriptor)pdesc, null));
+                        propertyContainer.remove(prevProp);
                         propertyContainer.add(namedProperties.get(propName));
                     }
 
