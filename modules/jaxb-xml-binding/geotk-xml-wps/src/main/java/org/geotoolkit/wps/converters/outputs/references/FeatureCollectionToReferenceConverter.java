@@ -126,7 +126,7 @@ public final class FeatureCollectionToReferenceConverter extends AbstractReferen
 
             //Write feature collection in file
             featureWriter.setOutput(dataStream);
-            featureWriter.writeFeatureCollection(source, false);
+            featureWriter.writeFeatureCollection(source, false, null);
 
             reference.setHref((String) params.get(TMP_DIR_URL) + "/" +dataFileName);
 
