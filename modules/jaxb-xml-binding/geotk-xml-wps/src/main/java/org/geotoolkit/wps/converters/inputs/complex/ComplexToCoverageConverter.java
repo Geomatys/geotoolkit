@@ -22,11 +22,13 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
 import net.iharder.Base64;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageIO;
 import org.geotoolkit.coverage.io.CoverageStoreException;
+import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
 import org.geotoolkit.wps.io.WPSEncoding;
 import org.geotoolkit.wps.xml.v100.ComplexDataType;
@@ -70,8 +72,8 @@ public class ComplexToCoverageConverter extends AbstractComplexInputConverter<Gr
                     final InputStream is = new ByteArrayInputStream(byteData);
                     if (is != null) {
                         final ImageInputStream inStream = ImageIO.createImageInputStream(is);
-                        final GridCoverage2D outCoverage = (GridCoverage2D) CoverageIO.read(inStream);
-                        return outCoverage;
+                        final ImageReader reader = XImageIO.getReaderByMIMEType((String)params.get(MIME), inStream, null, null);
+                        return (GridCoverage2D) CoverageIO.read(reader);
                     }
                 }
                 throw new NonconvertibleObjectException("Error during base64 decoding.");

@@ -136,7 +136,8 @@ public final class WPSIO {
                     FORMATSUPPORTS.add(new FormatSupport(Coverage.class, IOType.OUTPUT, writerMime, WPSEncoding.BASE64.getValue(), null, false));
                 }
             }
-        }        
+        }
+        FORMATSUPPORTS.add(new FormatSupport(Coverage.class, IOType.OUTPUT, WPSMimeType.OGC_WMS.val(), WPSEncoding.UTF8.getValue(), null, false));
   
         //TODO test NetCDF & GRIB in base64
         //FORMATSUPPORTS.add(new FormatSupport(GridCoverage2D.class, IOType.INPUT, WPSMimeType.APP_NETCDF.val(), null, null, false));

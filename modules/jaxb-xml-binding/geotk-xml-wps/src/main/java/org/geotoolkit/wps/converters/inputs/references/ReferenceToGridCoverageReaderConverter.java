@@ -23,12 +23,14 @@ import java.net.MalformedURLException;
 import java.util.Map;
 import java.util.logging.Level;
 import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
 import net.iharder.Base64;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageIO;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
+import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.util.FileUtilities;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
 import org.geotoolkit.wps.io.WPSEncoding;
@@ -91,7 +93,8 @@ public final class ReferenceToGridCoverageReaderConverter extends AbstractRefere
             }
             
             if (imageStream != null) {
-                return CoverageIO.createSimpleReader(imageStream);
+                final ImageReader reader = XImageIO.getReaderByMIMEType(source.getMimeType(), imageStream, null, null);
+                return CoverageIO.createSimpleReader(reader);
             } else {
                 throw new NonconvertibleObjectException("Error during image stream acquisition.");
             }

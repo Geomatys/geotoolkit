@@ -47,7 +47,7 @@ public enum WPSMimeType {
 
     //not recommended in paper
     TEXT_XML("text/xml"),
-    IMG_GEOTIFF_BIS("image/geotiff"),
+    IMG_GEOTIFF_BIS("image/x-geotiff"),
     TEXT_GML("text/gml"),
     TEXT_PLAIN("text/plain");
     private String mime;

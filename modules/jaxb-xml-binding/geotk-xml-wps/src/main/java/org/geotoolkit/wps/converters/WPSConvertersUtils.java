@@ -18,26 +18,32 @@ package org.geotoolkit.wps.converters;
 
 import com.vividsolutions.jts.geom.Geometry;
 import java.awt.image.RenderedImage;
+import java.io.File;
 import java.net.URI;
 import java.net.URL;
 import java.util.List;
 import java.util.*;
 import javax.xml.bind.JAXBElement;
+import net.sf.json.JSONObject;
+import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.geotoolkit.coverage.io.CoverageIO;
+import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
-import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.FeatureTypeUtilities;
-import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.feature.type.DefaultFeatureType;
 import org.geotoolkit.feature.type.DefaultGeometryType;
 import org.geotoolkit.feature.type.DefaultPropertyDescriptor;
 import org.geotoolkit.feature.type.DefaultPropertyType;
 import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeWriter;
+import org.geotoolkit.geometry.Envelopes;
+import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.mathml.xml.*;
 import org.geotoolkit.ows.xml.v110.DomainMetadataType;
 import org.geotoolkit.parameter.Parameters;
+import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.util.converter.ConverterRegistry;
@@ -55,14 +61,15 @@ import org.opengis.feature.Property;
 import org.opengis.feature.type.ComplexType;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.GeometryDescriptor;
-import org.opengis.feature.type.Name;
 import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.feature.type.PropertyType;
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 
 /**
@@ -70,6 +77,14 @@ import org.opengis.util.FactoryException;
  * @author Quentin Boileau (Geomatys).
  */
 public class WPSConvertersUtils {
+
+    public static final String OUT_STORAGE_DIR      = "OUT_STORAGE_DIR";    //webdav storage directory path
+    public static final String OUT_STORAGE_URL      = "OUT_STORAGE_URL";    //webdav url
+    public static final String WMS_STORAGE_DIR      = "WMS_STORAGE_DIR";    // provider storage directory path
+    public static final String WMS_STORAGE_ID       = "WMS_STORAGE_ID";     // provider name
+    public static final String WMS_INSTANCE_NAME    = "WMS_INSTANCE_NAME";  //WMS instance name
+    public static final String WMS_INSTANCE_URL     = "WMS_INSTANCE_URL";   //WMS instance url
+    public static final String WMS_LAYER_NAME       = "WMS_LAYER_NAME";   //WMS instance url
 
     /**
      * Fix the CRS problem for a Feature or a FeatureCollection
@@ -242,22 +257,20 @@ public class WPSConvertersUtils {
      * @param mime
      * @param encoding
      * @param schema
-     * @param storageDirectory
-     * @param storageURL
+     * @param params
      * @return
      * @throws NonconvertibleObjectException 
      */
     public static ComplexDataType convertToComplex(final Object object, final String mime, final String encoding, final String schema,
-            final String storageDirectory, final String storageURL)
-            throws NonconvertibleObjectException {
+            final Map<String, Object> params) throws NonconvertibleObjectException {
         
         ArgumentChecks.ensureNonNull("Object", object);
         
         WPSIO.checkSupportedFormat(object.getClass(), WPSIO.IOType.INPUT, mime, encoding, schema);
         
         final Map<String, Object> parameters = new HashMap<String, Object>();
-        parameters.put(WPSObjectConverter.TMP_DIR_PATH, storageDirectory);
-        parameters.put(WPSObjectConverter.TMP_DIR_URL, storageURL);
+        parameters.put(WPSObjectConverter.TMP_DIR_PATH, params.get(OUT_STORAGE_DIR));
+        parameters.put(WPSObjectConverter.TMP_DIR_URL, params.get(OUT_STORAGE_URL));
         parameters.put(WPSObjectConverter.ENCODING, encoding);
         parameters.put(WPSObjectConverter.MIME, mime);
         parameters.put(WPSObjectConverter.SCHEMA, schema);
@@ -269,6 +282,67 @@ public class WPSConvertersUtils {
         }
 
         return (ComplexDataType) converter.convert(object, parameters);
+    }
+
+
+    public static ComplexDataType convertToWMSComplex(Object object, String mimeType, String encoding, String schema, Map<String, Object> params)
+            throws NonconvertibleObjectException {
+
+        ArgumentChecks.ensureNonNull("Object", object);
+
+        WPSIO.checkSupportedFormat(object.getClass(), WPSIO.IOType.INPUT, mimeType, encoding, schema);
+
+        final Map<String, Object> parameters = new HashMap<String, Object>();
+        parameters.put(WPSObjectConverter.TMP_DIR_PATH, params.get(OUT_STORAGE_DIR));
+        parameters.put(WPSObjectConverter.TMP_DIR_URL, params.get(OUT_STORAGE_URL));
+        parameters.put(WPSObjectConverter.ENCODING, encoding);
+        parameters.put(WPSObjectConverter.MIME, mimeType);
+        parameters.put(WPSObjectConverter.SCHEMA, schema);
+
+        final ComplexDataType complex = new ComplexDataType();
+        complex.setEncoding(encoding);
+        complex.setMimeType(mimeType);
+        complex.setSchema(schema);
+
+        final GridCoverage2D coverage = (GridCoverage2D) object;
+
+
+        final Map<String,String> jsonMap = new HashMap<String, String>();
+        jsonMap.put("url", (String)params.get(WMS_INSTANCE_URL));
+        jsonMap.put("type", "WMS");
+        jsonMap.put("version", "1.3.0");
+
+        final String layerName = params.get(WMS_LAYER_NAME)+"_"+System.currentTimeMillis();
+        jsonMap.put("title", layerName);
+        jsonMap.put("layers", layerName);
+
+        final File coverageFile = new File((String)params.get(WMS_STORAGE_DIR), layerName+".tiff");
+
+        try {
+            CoverageIO.write(coverage, "GEOTIFF", coverageFile);
+
+            GeneralEnvelope env = (GeneralEnvelope) Envelopes.transform(coverage.getEnvelope2D(), CRS.decode("EPSG:4326"));
+            final double xMin = env.getLower(0);
+            final double xMax = env.getUpper(0);
+            final double yMin = env.getLower(1);
+            final double yMax = env.getUpper(1);
+            jsonMap.put("bbox", xMin+","+yMin+","+xMax+","+yMax);
+            jsonMap.put("srs", "EPSG:4326");
+
+        } catch (CoverageStoreException ex) {
+            throw new NonconvertibleObjectException(ex.getMessage(), ex);
+        } catch (TransformException e) {
+            throw new NonconvertibleObjectException(e.getMessage(), e);
+        } catch (NoSuchAuthorityCodeException e) {
+            throw new NonconvertibleObjectException(e.getMessage(), e);
+        } catch (FactoryException e) {
+            throw new NonconvertibleObjectException(e.getMessage(), e);
+        }
+
+        final String json = JSONObject.fromObject(jsonMap).toString();
+        complex.getContent().add(json);
+        return complex;
+
     }
     
     /**
@@ -307,22 +381,21 @@ public class WPSConvertersUtils {
      * @param mime
      * @param encoding
      * @param schema
-     * @param storageDirectory
-     * @param storageURL
+     * @param params
      * @param iotype the io type requested (INPUT/OUTPUT)
      * @return an {@link InputReferenceType input reference} if ioType is set to INPUT, or an {@link OutputReferenceType output reference} otherwise.
      * @throws NonconvertibleObjectException 
      */
     public static ReferenceType convertToReference(final Object object, final String mime, final String encoding, final String schema,
-            final String storageDirectory, final String storageURL, final WPSIO.IOType iotype) throws NonconvertibleObjectException {
+            final Map<String, Object> params, final WPSIO.IOType iotype) throws NonconvertibleObjectException {
         
         ArgumentChecks.ensureNonNull("Object", object);
         
         WPSIO.checkSupportedFormat(object.getClass(), WPSIO.IOType.INPUT, mime, encoding, schema);
         
         final Map<String, Object> parameters = new HashMap<String, Object>();
-        parameters.put(WPSObjectConverter.TMP_DIR_PATH, storageDirectory);
-        parameters.put(WPSObjectConverter.TMP_DIR_URL, storageURL);
+        parameters.put(WPSObjectConverter.TMP_DIR_PATH, params.get(OUT_STORAGE_DIR));
+        parameters.put(WPSObjectConverter.TMP_DIR_URL, params.get(OUT_STORAGE_URL));
         parameters.put(WPSObjectConverter.ENCODING, encoding);
         parameters.put(WPSObjectConverter.MIME, mime);
         parameters.put(WPSObjectConverter.SCHEMA, schema);
@@ -335,7 +408,7 @@ public class WPSConvertersUtils {
 
         return (ReferenceType) converter.convert(object, parameters);
     }
-    
+
     /**
      * Create the DomaineMetaData object for a literal
      *
