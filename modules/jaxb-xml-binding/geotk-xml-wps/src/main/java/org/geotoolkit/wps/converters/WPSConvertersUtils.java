@@ -18,33 +18,47 @@ package org.geotoolkit.wps.converters;
 
 import com.vividsolutions.jts.geom.Geometry;
 import java.awt.image.RenderedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
 import java.util.List;
 import java.util.*;
+import java.util.Set;
+import javax.imageio.ImageIO;
+import javax.imageio.ImageWriter;
 import javax.xml.bind.JAXBElement;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+
+import net.iharder.Base64;
 import net.sf.json.JSONObject;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageIO;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
+import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.FeatureTypeUtilities;
+import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.feature.type.DefaultFeatureType;
 import org.geotoolkit.feature.type.DefaultGeometryType;
 import org.geotoolkit.feature.type.DefaultPropertyDescriptor;
 import org.geotoolkit.feature.type.DefaultPropertyType;
 import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeWriter;
+import org.geotoolkit.geometry.Envelope2D;
 import org.geotoolkit.geometry.Envelopes;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.geometry.jts.JTS;
+import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.mathml.xml.*;
 import org.geotoolkit.ows.xml.v110.DomainMetadataType;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.IdentifiedObjects;
+import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.util.converter.ConverterRegistry;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
@@ -53,7 +67,9 @@ import org.geotoolkit.wps.xml.v100.ComplexDataType;
 import org.geotoolkit.wps.xml.v100.InputReferenceType;
 import org.geotoolkit.wps.xml.v100.OutputReferenceType;
 import org.geotoolkit.wps.xml.v100.ReferenceType;
+import org.geotoolkit.xml.MarshallerPool;
 import org.geotoolkit.xsd.xml.v2001.Schema;
+import org.geotoolkit.xsd.xml.v2001.XSDMarshallerPool;
 import org.opengis.coverage.Coverage;
 import org.opengis.feature.ComplexAttribute;
 import org.opengis.feature.Feature;
@@ -61,14 +77,20 @@ import org.opengis.feature.Property;
 import org.opengis.feature.type.ComplexType;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.GeometryDescriptor;
+import org.opengis.feature.type.Name;
 import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.feature.type.PropertyType;
+import org.opengis.metadata.Identifier;
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
+import org.opengis.referencing.ReferenceIdentifier;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.cs.AxisDirection;
+import org.opengis.referencing.cs.CoordinateSystem;
+import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 
@@ -307,7 +329,7 @@ public class WPSConvertersUtils {
         final GridCoverage2D coverage = (GridCoverage2D) object;
 
 
-        final Map<String,String> jsonMap = new HashMap<String, String>();
+        final Map<String,Object> jsonMap = new HashMap<String, Object>();
         jsonMap.put("url", (String)params.get(WMS_INSTANCE_URL));
         jsonMap.put("type", "WMS");
         jsonMap.put("version", "1.3.0");
@@ -320,14 +342,17 @@ public class WPSConvertersUtils {
 
         try {
             CoverageIO.write(coverage, "GEOTIFF", coverageFile);
-
-            GeneralEnvelope env = (GeneralEnvelope) Envelopes.transform(coverage.getEnvelope2D(), CRS.decode("EPSG:4326"));
+            final CoordinateReferenceSystem outCRS = CRS.decode("EPSG:4326");
+            final GeneralEnvelope env = (GeneralEnvelope) Envelopes.transform(coverage.getEnvelope2D(), outCRS);
             final double xMin = env.getLower(0);
             final double xMax = env.getUpper(0);
             final double yMin = env.getLower(1);
             final double yMax = env.getUpper(1);
-            jsonMap.put("bbox", xMin+","+yMin+","+xMax+","+yMax);
-            jsonMap.put("srs", "EPSG:4326");
+            final Map<String,String> bboxMap = new HashMap<String, String>();
+            bboxMap.put("bounds", xMin+","+yMin+","+xMax+","+yMax);
+            bboxMap.put("crs", "EPSG:4326");
+            jsonMap.put("bbox", bboxMap);
+            jsonMap.put("srs", "EPSG:3857");
 
         } catch (CoverageStoreException ex) {
             throw new NonconvertibleObjectException(ex.getMessage(), ex);
@@ -593,12 +618,6 @@ public class WPSConvertersUtils {
         return ftb.buildFeatureType();
     }
     
-    public static Schema createFeatureSchema(FeatureType toGet) {        
-        JAXBFeatureTypeWriter writer = new JAXBFeatureTypeWriter();
-        Schema s = writer.getSchemaFromFeatureType(toGet);
-        return s;
-    }
-    
     /**
      * Convert a feature into a ParameterValueGroup.
      * 
@@ -659,4 +678,38 @@ public class WPSConvertersUtils {
         return ref;
     }
 
+
+    /**
+     * Check if a CRS has longitude first or not.
+     * @param crs
+     * @return
+     */
+    public static boolean isLongFirst(CoordinateReferenceSystem crs) {
+
+        final CoordinateReferenceSystem hcrs = CRS.getHorizontalCRS(crs);
+        final CoordinateSystem cs = hcrs.getCoordinateSystem();
+        final CoordinateSystemAxis csa = cs.getAxis(0);
+        if (csa.getDirection().equals(AxisDirection.NORTH) || csa.getDirection().equals(AxisDirection.SOUTH)) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    /**
+     * Extract CRS code like "EPSG:4326".
+     * @param crs
+     * @return
+     */
+    public static String encodeCRS(CoordinateReferenceSystem crs) {
+        final Set<ReferenceIdentifier> identifiers = crs.getIdentifiers();
+        final ReferenceIdentifier id = !identifiers.isEmpty() ? identifiers.iterator().next() : null;
+        if (id != null) {
+            final Collection<Identifier> authIdentifier = (Collection<Identifier>) id.getAuthority().getIdentifiers();
+            final Identifier authId = !authIdentifier.isEmpty() ? authIdentifier.iterator().next() : null;
+            return authId.getCode() + ":" + id.getCode();
+        }
+
+        return null;
+    }
 }
