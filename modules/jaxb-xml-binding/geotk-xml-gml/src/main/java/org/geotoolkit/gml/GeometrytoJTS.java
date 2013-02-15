@@ -176,9 +176,9 @@ public class GeometrytoJTS {
         if (parentCRS == null) {
             crsName = gmlPoint.getSrsName();
 
-            if (crsName == null) {
+            /*if (crsName == null) {
                 throw new IllegalArgumentException("A GML point must specify Coordinate Reference System.");
-            }
+            }*/
         } else {
             crsName = null;
         }
@@ -208,17 +208,16 @@ public class GeometrytoJTS {
             throw new IllegalArgumentException("The GML point is malformed.");
         }
 
+        final com.vividsolutions.jts.geom.Point pt = GF.createPoint(new Coordinate(coordinates[0], coordinates[1]));
         final CoordinateReferenceSystem crs;
         if (crsName != null) {
             crs = toCRS(crsName);
         } else {
             crs = parentCRS;
         }
-
-        final com.vividsolutions.jts.geom.Point pt =
-                GF.createPoint(new Coordinate(coordinates[0], coordinates[1]));        
-        JTS.setCRS(pt, crs);
-
+        if (crs != null) {
+            JTS.setCRS(pt, crs);
+        }
         return pt;
     }
 
