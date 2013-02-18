@@ -53,7 +53,6 @@ public class CoverageToComplexConverterTest extends AbstractWPSConverterTest {
         final ComplexDataType complex = converter.convert(coverage, param);
         final List<Object> content = complex.getContent();
         final String encodedCvg = (String) content.get(0);
-        FileUtilities.stringToFile(new File("/home/qboileau/coverage_base64"), encodedCvg);
         
         final InputStream expectedStream = RenderedImageToComplexConverterTest.class.getResourceAsStream("/expected/coverage_base64");
         String expectedString = FileUtilities.getStringFromStream(expectedStream);
