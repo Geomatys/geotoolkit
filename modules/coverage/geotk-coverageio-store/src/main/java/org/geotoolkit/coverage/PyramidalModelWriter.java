@@ -54,8 +54,10 @@ import org.opengis.referencing.operation.TransformException;
  * @author Rémi Maréchal (Geomatys)
  */
 public class PyramidalModelWriter extends GridCoverageWriter {
+    
     private final CoverageReference reference;
-    private static final double EPSILON_ONE_HOUR = 3.6E6;//hack for tests in attempt to correcting
+    private final Rectangle tileAreaWork = new Rectangle();
+    
     /**
      * Build a writer on an existing {@linkplain CoverageReference coverage reference}.
      *
@@ -90,12 +92,11 @@ public class PyramidalModelWriter extends GridCoverageWriter {
         //geographic area where pixel values changes.
         Envelope requestedEnvelope = param.getEnvelope();
         ArgumentChecks.ensureNonNull("requestedEnvelope", requestedEnvelope);
-        
         final CoordinateReferenceSystem crsCoverage2D;
         final CoordinateReferenceSystem envelopeCrs;
         try {
             crsCoverage2D = CRSUtilities.getCRS2D(coverage.getCoordinateReferenceSystem());
-            envelopeCrs = CRSUtilities.getCRS2D(requestedEnvelope.getCoordinateReferenceSystem());
+            envelopeCrs   = CRSUtilities.getCRS2D(requestedEnvelope.getCoordinateReferenceSystem());
         } catch (TransformException ex) {
             throw new CoverageStoreException(ex);
         }
@@ -113,13 +114,13 @@ public class PyramidalModelWriter extends GridCoverageWriter {
         RenderedImage image = null;
         try {
             if (coverage instanceof GridCoverage2D) {
-                image = ((GridCoverage2D)coverage).getRenderedImage();
+                image        = ((GridCoverage2D)coverage).getRenderedImage();
                 srcCRSToGrid = ((GridCoverage2D)coverage).getGridGeometry().getGridToCRS(PixelInCell.CELL_CENTER).inverse();
             } else {
                 final GridCoverageBuilder gcb = new GridCoverageBuilder();
                 gcb.setGridCoverage(coverage);
                 gcb.setPixelAnchor(PixelInCell.CELL_CENTER);
-                image = gcb.getRenderedImage();
+                image        = gcb.getRenderedImage();
                 srcCRSToGrid = gcb.getGridToCRS().inverse();
             }
         } catch (NoninvertibleTransformException ex) {
@@ -130,7 +131,7 @@ public class PyramidalModelWriter extends GridCoverageWriter {
         final Interpolation interpolation = Interpolation.create(PixelIteratorFactory.createRowMajorIterator(image), InterpolationCase.NEIGHBOR, 2);
         
         //to fill value table : see resample.
-        final int nbBand = image.getSampleModel().getNumBands();
+        final int nbBand        = image.getSampleModel().getNumBands();
         
         final PyramidalModel pm = (PyramidalModel)reference;
         final PyramidSet pyramidSet;
@@ -158,39 +159,28 @@ public class PyramidalModelWriter extends GridCoverageWriter {
             noIntersection :
             for (GridMosaic mosaic : pyramid.getMosaics()) {
 
-                final double res = mosaic.getScale();
+                final double res                 = mosaic.getScale();
                 final DirectPosition moUpperLeft = mosaic.getUpperLeftCorner();
                 
                 // define geographic intersection
                 final GeneralEnvelope intersection = new GeneralEnvelope(mosaic.getEnvelope());
                 final int minOrdinate = CoverageUtilities.getMinOrdinate(intersection.getCoordinateReferenceSystem());
                 if (!intersection.intersects(pyramidEnvelope, true)) {
-                    // supplementary test caused by cast long value in double within renderer.
-                    for (int d = 0; d < moUpperLeft.getDimension(); d++) {
-                        if (d != minOrdinate && d != (minOrdinate+1)) {
-                            final double val = moUpperLeft.getOrdinate(d);
-                            final double pyMin = pyramidEnvelope.getMinimum(d);
-                            final double pyMax = pyramidEnvelope.getMaximum(d);
-                            if (Math.abs(val-pyMin) > EPSILON_ONE_HOUR && Math.abs(val-pyMax) > EPSILON_ONE_HOUR) {
-                                continue noIntersection;
-                            }
-                        }
-                    }
+                    continue noIntersection;
                 }
-                
                 intersection.intersect(pyramidEnvelope);
                 
                 // mosaic upper left corner coordinates.
-                final double mosULX = moUpperLeft.getOrdinate(minOrdinate);
-                final double mosULY = moUpperLeft.getOrdinate(minOrdinate+1);
+                final double mosULX      = moUpperLeft.getOrdinate(minOrdinate);
+                final double mosULY      = moUpperLeft.getOrdinate(minOrdinate+1);
                 
                 //define pixel work area of current mosaic.
-                final int mosAreaX      = (int) Math.round(Math.abs((mosULX - intersection.getMinimum(minOrdinate))) /res);
-                final int mosAreaY      = (int) Math.round(Math.abs((mosULY - intersection.getMaximum(minOrdinate+1))) /res);
-                final int mosAreaWidth  = (int)(Math.round(intersection.getSpan(minOrdinate) / res));
-                final int mosAreaHeight = (int)(Math.round(intersection.getSpan(minOrdinate+1) / res));
-                final int mosAreaMaxX   = mosAreaX + mosAreaWidth;
-                final int mosAreaMaxY   = mosAreaY + mosAreaHeight;
+                final int mosAreaX       = (int) Math.round(Math.abs((mosULX - intersection.getMinimum(minOrdinate))) /res);
+                final int mosAreaY       = (int) Math.round(Math.abs((mosULY - intersection.getMaximum(minOrdinate+1))) /res);
+                final int mosAreaWidth   = (int)(Math.round(intersection.getSpan(minOrdinate) / res));
+                final int mosAreaHeight  = (int)(Math.round(intersection.getSpan(minOrdinate+1) / res));
+                final int mosAreaMaxX    = mosAreaX + mosAreaWidth;
+                final int mosAreaMaxY    = mosAreaY + mosAreaHeight;
 
                 // mosaic tiles properties.
                 final Dimension tileSize = mosaic.getTileSize();
@@ -198,14 +188,10 @@ public class PyramidalModelWriter extends GridCoverageWriter {
                 final int tileHeight     = tileSize.height;
 
                 // define tiles indexes from current mosaic which will be changed.
-                final int idminx = mosAreaX / tileWidth;
-                final int idminy = mosAreaY / tileHeight;
-                final int idmaxx = (mosAreaMaxX + tileWidth-1) / tileWidth;
-                final int idmaxy = (mosAreaMaxY + tileHeight - 1) / tileHeight;
-
-                //define destination grid to CRS.
-                final MathTransform gridToCrsDest     = new AffineTransform2D(res, 0, 0, -res, mosULX + 0.5 * res, mosULY - 0.5 * res);
-                final MathTransform gridToCrsCoverage = MathTransforms.concatenate(gridToCrsDest, crsDestToSrcGrid);
+                final int idminx         = mosAreaX / tileWidth;
+                final int idminy         = mosAreaY / tileHeight;
+                final int idmaxx         = (mosAreaMaxX + tileWidth-1) / tileWidth;
+                final int idmaxy         = (mosAreaMaxY + tileHeight - 1) / tileHeight;
 
                 // browse selected tile.
                 for (int idy = idminy; idy < idmaxy; idy++) {
@@ -220,16 +206,18 @@ public class PyramidalModelWriter extends GridCoverageWriter {
                         // define tile translation from bufferedImage min pixel position to mosaic pixel position.
                         final int minidx = idx * tileWidth;
                         final int minidy = idy * tileHeight;
-                        final MathTransform destImgToGrid        = new AffineTransform2D(1, 0, 0, 1, minidx, minidy);
-                        final MathTransform destImgToCrsCoverage = MathTransforms.concatenate(destImgToGrid, gridToCrsCoverage);
-
+                        
+                        //define destination grid to CRS.
+                        final AffineTransform2D destImgToCRSDest = new AffineTransform2D(res, 0, 0, -res, mosULX + (minidx + 0.5) * res, mosULY - (minidy + 0.5) * res);
+                        final MathTransform destImgToCrsCoverage = MathTransforms.concatenate(destImgToCRSDest, crsDestToSrcGrid);
+                        
                         // define currently tile work area.
-                        final int tminx = Math.max(mosAreaX, minidx);
-                        final int tminy = Math.max(mosAreaY, minidy);
-                        final int tmaxx = Math.min(mosAreaMaxX, minidx + tileWidth);
-                        final int tmaxy = Math.min(mosAreaMaxY, minidy + tileHeight);
-                        final Rectangle tileAreaWork = new Rectangle(tminx-minidx, tminy-minidy, tmaxx-tminx, tmaxy-tminy);
-
+                        final int tminx  = Math.max(mosAreaX, minidx);
+                        final int tminy  = Math.max(mosAreaY, minidy);
+                        final int tmaxx  = Math.min(mosAreaMaxX, minidx + tileWidth);
+                        final int tmaxy  = Math.min(mosAreaMaxY, minidy + tileHeight);
+                        tileAreaWork.setBounds(tminx - minidx, tminy - minidy, tmaxx - tminx, tmaxy - tminy);
+                        
                         try {
                             final Resample resample = new Resample(destImgToCrsCoverage.inverse(), currentlyTile, tileAreaWork, interpolation, new double[nbBand]);
                             resample.fillImage();
