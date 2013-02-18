@@ -368,6 +368,9 @@ public class CoverageEditionDelegate extends AbstractEditionDelegate {
     }
 
     private void save() throws DataStoreException{
+        if (layer == null || coverage == null) {
+            return;
+        }
         final CoverageReference ref = layer.getCoverageReference();
         final GridCoverageWriter writer = ref.createWriter();
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
