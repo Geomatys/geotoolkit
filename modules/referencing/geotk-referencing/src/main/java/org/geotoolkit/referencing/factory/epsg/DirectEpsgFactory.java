@@ -1727,6 +1727,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                             }
                             if (dateFormat == null) {
                                 dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+                                dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
                                 // TODO: share the this.calendar value?
                             }
                             try {
