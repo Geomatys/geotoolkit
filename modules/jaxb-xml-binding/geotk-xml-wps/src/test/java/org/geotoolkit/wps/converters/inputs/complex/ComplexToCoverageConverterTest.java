@@ -45,7 +45,8 @@ public class ComplexToCoverageConverterTest extends AbstractWPSConverterTest {
         final WPSObjectConverter<ComplexDataType, GridCoverage2D> converter = WPSConverterRegistry.getInstance().getConverter(ComplexDataType.class, GridCoverage2D.class);
         
         final InputStream expectedStream = ComplexToRenderedImageConvereterTest.class.getResourceAsStream("/expected/coverage_base64");
-        String encodedCoverage = FileUtilities.getStringFromStream(expectedStream);
+        assertNotNull(expectedStream);
+        final String encodedCoverage = FileUtilities.getStringFromStream(expectedStream);
         
         final Map<String, Object> param = new HashMap<String, Object>();
         param.put(WPSObjectConverter.MIME, "image/x-geotiff");

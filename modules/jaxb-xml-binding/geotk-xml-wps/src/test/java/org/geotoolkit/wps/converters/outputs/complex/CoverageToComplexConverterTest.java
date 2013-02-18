@@ -55,6 +55,7 @@ public class CoverageToComplexConverterTest extends AbstractWPSConverterTest {
         final String encodedCvg = (String) content.get(0);
         
         final InputStream expectedStream = RenderedImageToComplexConverterTest.class.getResourceAsStream("/expected/coverage_base64");
+        assertNotNull(expectedStream);
         String expectedString = FileUtilities.getStringFromStream(expectedStream);
         expectedString = expectedString.trim();
         

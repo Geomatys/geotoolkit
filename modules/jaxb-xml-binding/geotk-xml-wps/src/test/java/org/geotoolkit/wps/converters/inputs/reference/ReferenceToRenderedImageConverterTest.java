@@ -46,6 +46,7 @@ public class ReferenceToRenderedImageConverterTest extends AbstractWPSConverterT
         final WPSObjectConverter<ReferenceType, RenderedImage> converter = WPSConverterRegistry.getInstance().getConverter(ReferenceType.class, RenderedImage.class);
         
         final URL image = ReferenceToRenderedImageConverterTest.class.getResource("/inputs/image.tiff");
+        assertNotNull(image);
         
         final Map<String, Object> parameters = new HashMap<String, Object>();
         parameters.put(AbstractReferenceInputConverter.IOTYPE, WPSIO.IOType.INPUT);
@@ -67,6 +68,7 @@ public class ReferenceToRenderedImageConverterTest extends AbstractWPSConverterT
         final WPSObjectConverter<ReferenceType, RenderedImage> converter = WPSConverterRegistry.getInstance().getConverter(ReferenceType.class, RenderedImage.class);
         
         final URL imageBase64 = ReferenceToRenderedImageConverterTest.class.getResource("/inputs/image_tiff_base64");
+        assertNotNull(imageBase64);
         
         final Map<String, Object> parameters = new HashMap<String, Object>();
         parameters.put(AbstractReferenceInputConverter.IOTYPE, WPSIO.IOType.INPUT);

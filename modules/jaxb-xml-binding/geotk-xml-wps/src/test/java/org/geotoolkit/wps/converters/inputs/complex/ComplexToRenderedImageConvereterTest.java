@@ -42,7 +42,8 @@ public class ComplexToRenderedImageConvereterTest extends AbstractWPSConverterTe
         final WPSObjectConverter<ComplexDataType, RenderedImage> converter = WPSConverterRegistry.getInstance().getConverter(ComplexDataType.class, RenderedImage.class);
         
         final InputStream expectedStream = ComplexToRenderedImageConvereterTest.class.getResourceAsStream("/expected/image_base64");
-        String encodedImage = FileUtilities.getStringFromStream(expectedStream);
+        assertNotNull(expectedStream);
+        final String encodedImage = FileUtilities.getStringFromStream(expectedStream);
         
         final Map<String, Object> param = new HashMap<String, Object>();
         param.put(WPSObjectConverter.MIME, "img/tiff");

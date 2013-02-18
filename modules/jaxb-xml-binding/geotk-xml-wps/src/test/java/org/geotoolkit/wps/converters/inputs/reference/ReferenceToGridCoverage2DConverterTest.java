@@ -49,6 +49,7 @@ public class ReferenceToGridCoverage2DConverterTest extends AbstractWPSConverter
         final WPSObjectConverter<ReferenceType, GridCoverage2D> converter = WPSConverterRegistry.getInstance().getConverter(ReferenceType.class, GridCoverage2D.class);
         
         final URL coverage = ReferenceToRenderedImageConverterTest.class.getResource("/inputs/coverage.tiff");
+        assertNotNull(coverage);
         
         final Map<String, Object> parameters = new HashMap<String, Object>();
         parameters.put(AbstractReferenceInputConverter.IOTYPE, WPSIO.IOType.INPUT);
@@ -80,6 +81,7 @@ public class ReferenceToGridCoverage2DConverterTest extends AbstractWPSConverter
         final WPSObjectConverter<ReferenceType, GridCoverage2D> converter = WPSConverterRegistry.getInstance().getConverter(ReferenceType.class, GridCoverage2D.class);
         
         final URL coverageBase64 = ReferenceToRenderedImageConverterTest.class.getResource("/inputs/coverage_geotiff_base64");
+        assertNotNull(coverageBase64);
         
         final Map<String, Object> parameters = new HashMap<String, Object>();
         parameters.put(AbstractReferenceInputConverter.IOTYPE, WPSIO.IOType.INPUT);

@@ -43,7 +43,6 @@ public class RenderedImageToComplexConverterTest extends AbstractWPSConverterTes
     public void testConversion() throws NonconvertibleObjectException, IOException  {
         final WPSObjectConverter<RenderedImage, ComplexDataType> converter = WPSConverterRegistry.getInstance().getConverter(RenderedImage.class, ComplexDataType.class);
         
-        //final InputStream inStream = RenderedImageToComplexConverterTest.class.getResourceAsStream("/data/coverage/clouds.jpg");
         final RenderedImage img = ConvertersTestUtils.makeRendredImage();
         final Map<String, Object> param = new HashMap<String, Object>();
         param.put(WPSObjectConverter.MIME, WPSMimeType.IMG_TIFF.val());
@@ -54,6 +53,7 @@ public class RenderedImageToComplexConverterTest extends AbstractWPSConverterTes
         final String encodedImage = (String) content.get(0);
         
         final InputStream expectedStream = RenderedImageToComplexConverterTest.class.getResourceAsStream("/expected/image_base64");
+        assertNotNull(expectedStream);
         String expectedString = FileUtilities.getStringFromStream(expectedStream);
         expectedString = expectedString.trim();
         
