@@ -283,6 +283,8 @@ public class GenericCachedFeatureIterator<F extends Feature, R extends FeatureIt
                         }
                     }catch(FeatureStoreRuntimeException ex){
                         subException = ex;
+                        Logging.getLogger(GenericCachedFeatureIterator.class).log(Level.WARNING, subException.getMessage(),ex);
+                        break;
                     }
 
                     boolean success;
