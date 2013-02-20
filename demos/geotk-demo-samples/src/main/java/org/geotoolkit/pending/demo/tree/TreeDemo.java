@@ -14,7 +14,7 @@ import org.geotoolkit.index.tree.io.DefaultTreeVisitor;
 import org.geotoolkit.index.tree.io.TreeReader;
 import org.geotoolkit.index.tree.io.TreeVisitor;
 import org.geotoolkit.index.tree.io.TreeWriter;
-import org.geotoolkit.index.tree.nodefactory.TreeNodeFactory;
+import org.geotoolkit.index.tree.nodefactory.DefaultNodeFactory;
 import org.geotoolkit.index.tree.nodefactory.NodeFactory;
 import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.referencing.crs.DefaultEngineeringCRS;
@@ -51,7 +51,7 @@ public class TreeDemo {
         final SplitCase splitcase = SplitCase.QUADRATIC;
 
         //Create NodeFactory adapted about caller uses.
-        final NodeFactory nodefactory = TreeNodeFactory.DEFAULT_FACTORY;
+        final NodeFactory nodefactory = DefaultNodeFactory.INSTANCE;
 
         //creating tree (R-Tree)------------------------------------------------
         final Tree tree = TreeFactory.createBasicRTree(4, crs, splitcase, nodefactory);

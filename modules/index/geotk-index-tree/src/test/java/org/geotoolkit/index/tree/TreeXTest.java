@@ -23,7 +23,7 @@ import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.index.tree.io.DefaultTreeVisitor;
 import org.geotoolkit.index.tree.io.TreeVisitor;
 import org.geotoolkit.index.tree.io.TreeX;
-import org.geotoolkit.index.tree.nodefactory.TreeNodeFactory;
+import org.geotoolkit.index.tree.nodefactory.DefaultNodeFactory;
 import org.geotoolkit.index.tree.star.StarRTree;
 import org.geotoolkit.referencing.crs.DefaultEngineeringCRS;
 import static org.junit.Assert.assertTrue;
@@ -39,7 +39,7 @@ public class TreeXTest extends TreeTest {
 
     List<Envelope> listSearch = new ArrayList<Envelope>();
     TreeVisitor defVisit = new DefaultTreeVisitor(listSearch);
-    Tree tree = new StarRTree(4, DefaultEngineeringCRS.CARTESIAN_3D, TreeNodeFactory.DEFAULT_FACTORY);
+    Tree tree = new StarRTree(4, DefaultEngineeringCRS.CARTESIAN_3D, DefaultNodeFactory.INSTANCE);
 
     public TreeXTest() {
         final GeneralEnvelope geTemp = new GeneralEnvelope(DefaultEngineeringCRS.CARTESIAN_3D);

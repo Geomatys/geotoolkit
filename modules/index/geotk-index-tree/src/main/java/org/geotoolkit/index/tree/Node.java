@@ -21,20 +21,26 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.swing.event.EventListenerList;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.opengis.geometry.Envelope;
 
-/**Create "generic" Node.
+/**
+ * Create "generic" Node.
  *
  * @author Johann Sorel (Geomatys)
  */
 public abstract class Node {
 
+    public static final String PROP_ISLEAF = "isleaf";
+    public static final String PROP_HILBERT_ORDER = "hilbertOrder";
+    public static final String PROP_HILBERT_TABLE = "tabHV";
+    public static final String PROP_HILBERT_VALUE = "hilbertValue";
+    public static final String PROP_CENTROID = "centroid";
+    public static final String PROP_CENTROIDS = "centroids";
+            
     protected GeneralEnvelope boundary;
     protected Node parent;
     protected Tree tree;
-//    private final EventListenerList listenerList = new EventListenerList();
     private int nblistener = 0;
     private final List<PropertyChangeListener> listenerList = new ArrayList<PropertyChangeListener>(1);
     private Map<String, Object> userProperties;
@@ -78,21 +84,6 @@ public abstract class Node {
             }
         }
     }
-
-//    public void addListener(PropertyChangeListener l) {
-//        listenerList.add(PropertyChangeListener.class, l);
-//    }
-//    
-//    public void removeListener(PropertyChangeListener l) {
-//        listenerList.remove(PropertyChangeListener.class, l);
-//    }
-//
-//    protected void fireCollectionEvent() {
-//        final PropertyChangeListener[] listeners = listenerList.getListeners(PropertyChangeListener.class);
-//        for (PropertyChangeListener l : listeners) {
-//            l.propertyChange(null);
-//        }
-//    }
 
     /**
      * Affect a {@code Node} boundary.

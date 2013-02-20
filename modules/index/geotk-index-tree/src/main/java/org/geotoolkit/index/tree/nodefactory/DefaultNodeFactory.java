@@ -23,12 +23,20 @@ import org.geotoolkit.index.tree.Tree;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 
-/**Create appropriate {@code Node} to R-Tree.
+/**
+ * Create appropriate {@code Node} to R-Tree.
  *
  * @author Rémi Maréchal (Geomatys)
  */
-class DefaultNodeFactory implements NodeFactory {
+public final class DefaultNodeFactory implements NodeFactory {
 
+    /**
+     * Adapted default {@code Node} factory to R-Tree.
+     */
+    public static final NodeFactory INSTANCE = new DefaultNodeFactory();
+    
+    private DefaultNodeFactory(){}
+    
     /**
      * {@inheritDoc }
      */

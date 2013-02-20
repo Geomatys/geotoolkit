@@ -22,6 +22,7 @@ import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import static org.geotoolkit.index.tree.DefaultTreeUtils.getMedian;
 import org.geotoolkit.index.tree.Node;
+import static org.geotoolkit.index.tree.Node.*;
 import org.geotoolkit.index.tree.hilbert.HilbertRTree;
 import org.geotoolkit.util.ArgumentChecks;
 import org.opengis.geometry.DirectPosition;
@@ -281,17 +282,17 @@ public class Calculator2D extends Calculator {
         ArgumentChecks.ensurePositive("impossible to create Hilbert Curve with negative indice", order);
         candidate.getChildren().clear();
         final CoordinateReferenceSystem crs = bound.getCoordinateReferenceSystem();
-        final List<DirectPosition> listOfCentroidChild = (List<DirectPosition>) candidate.getUserProperty("centroids");
+        final List<DirectPosition> listOfCentroidChild = (List<DirectPosition>) candidate.getUserProperty(PROP_CENTROIDS);
         listOfCentroidChild.clear();
-        candidate.setUserProperty("isleaf", true);
-        candidate.setUserProperty("hilbertOrder", order);
+        candidate.setUserProperty(PROP_ISLEAF, true);
+        candidate.setUserProperty(PROP_HILBERT_ORDER, order);
         candidate.setBound(bound);
         final List<Node> listN = candidate.getChildren();
         listN.clear();
         if (order > 0) {
             final double width = bound.getSpan(dims[0]);
             final double height = bound.getSpan(dims[1]);
-            final int dim = 2<<((Integer) candidate.getUserProperty("hilbertOrder"))-1;
+            final int dim = 2<<((Integer) candidate.getUserProperty(PROP_HILBERT_ORDER))-1;
             int[][] tabHV = new int[dim][dim];
 
             double fract, ymin, xmin;
@@ -323,7 +324,7 @@ public class Calculator2D extends Calculator {
                     groundZero[i] = i;
                     listN.add(HilbertRTree.createCell(candidate.getTree(), candidate, listOfCentroidChild.get(i), i, null));
                 }
-                candidate.setUserProperty("tabHV", groundZero);
+                candidate.setUserProperty(PROP_HILBERT_TABLE, groundZero);
             } else {
                 listOfCentroidChild.addAll(createPath(candidate, order, 0,1));
                 for (int i = 0, s = listOfCentroidChild.size(); i < s; i++) {
@@ -333,7 +334,7 @@ public class Calculator2D extends Calculator {
                     tabHV[tabTemp[0]][tabTemp[1]] = i;
                     listN.add(HilbertRTree.createCell(candidate.getTree(), candidate, ptCTemp, i, null));
                 }
-                candidate.setUserProperty("tabHV", tabHV);
+                candidate.setUserProperty(PROP_HILBERT_TABLE, tabHV);
             }
         } else {
             listOfCentroidChild.add(new GeneralDirectPosition(getMedian(bound)));
@@ -374,7 +375,7 @@ public class Calculator2D extends Calculator {
         final GeneralEnvelope bound = new GeneralEnvelope(candidate.getBoundary());
         if (! bound.contains(ptCE)) throw new IllegalArgumentException("entry is out of this node boundary");
         final Calculator calc = candidate.getTree().getCalculator();
-        final int order = (Integer) candidate.getUserProperty("hilbertOrder");
+        final int order = (Integer) candidate.getUserProperty(PROP_HILBERT_ORDER);
         if (calc.getSpace(bound) <= 0) {
             final double w = bound.getSpan(dims[0]);
             final double h = bound.getSpan(dims[1]);
@@ -387,7 +388,7 @@ public class Calculator2D extends Calculator {
             return result;
         } else {
             int[] hCoord = getHilbCoord(candidate, ptCE, bound, order);
-            return ((int[][]) candidate.getUserProperty("tabHV"))[hCoord[0]][hCoord[1]];
+            return ((int[][]) candidate.getUserProperty(PROP_HILBERT_TABLE))[hCoord[0]][hCoord[1]];
         }
     }
 }

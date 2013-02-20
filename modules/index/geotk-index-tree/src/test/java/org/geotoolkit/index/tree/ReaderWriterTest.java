@@ -26,7 +26,7 @@ import org.geotoolkit.index.tree.basic.SplitCase;
 import org.geotoolkit.index.tree.io.DefaultTreeVisitor;
 import org.geotoolkit.index.tree.io.TreeReader;
 import org.geotoolkit.index.tree.io.TreeWriter;
-import org.geotoolkit.index.tree.nodefactory.TreeNodeFactory;
+import org.geotoolkit.index.tree.nodefactory.DefaultNodeFactory;
 import org.geotoolkit.referencing.crs.DefaultEngineeringCRS;
 import org.geotoolkit.util.ArgumentChecks;
 import static org.junit.Assert.assertTrue;
@@ -141,8 +141,8 @@ public class ReaderWriterTest {
      * Affect (Basic) R-Tree on two tree test.
      */
     private void setBasicRTree() throws TransformException {
-        treeRef  = TreeFactory.createBasicRTree(4, DefaultEngineeringCRS.CARTESIAN_3D, SplitCase.LINEAR, TreeNodeFactory.DEFAULT_FACTORY);
-        treeTest = TreeFactory.createBasicRTree(4, DefaultEngineeringCRS.CARTESIAN_3D, SplitCase.LINEAR, TreeNodeFactory.DEFAULT_FACTORY);
+        treeRef  = TreeFactory.createBasicRTree(4, DefaultEngineeringCRS.CARTESIAN_3D, SplitCase.LINEAR, DefaultNodeFactory.INSTANCE);
+        treeTest = TreeFactory.createBasicRTree(4, DefaultEngineeringCRS.CARTESIAN_3D, SplitCase.LINEAR, DefaultNodeFactory.INSTANCE);
         insert();
     }
 
@@ -150,8 +150,8 @@ public class ReaderWriterTest {
      * Affect R*Tree on two tree test.
      */
     private void setStarRTree() throws TransformException {
-        treeRef  = TreeFactory.createStarRTree(4, DefaultEngineeringCRS.CARTESIAN_3D, TreeNodeFactory.DEFAULT_FACTORY);
-        treeTest = TreeFactory.createStarRTree(4, DefaultEngineeringCRS.CARTESIAN_3D, TreeNodeFactory.DEFAULT_FACTORY);
+        treeRef  = TreeFactory.createStarRTree(4, DefaultEngineeringCRS.CARTESIAN_3D, DefaultNodeFactory.INSTANCE);
+        treeTest = TreeFactory.createStarRTree(4, DefaultEngineeringCRS.CARTESIAN_3D, DefaultNodeFactory.INSTANCE);
         insert();
     }
 
@@ -159,8 +159,8 @@ public class ReaderWriterTest {
      * Affect Hilbert RTree on two tree test.
      */
     private void setHilbertRTree() throws TransformException {
-        treeRef  = TreeFactory.createHilbertRTree(4, 2, DefaultEngineeringCRS.CARTESIAN_3D, TreeNodeFactory.DEFAULT_FACTORY);
-        treeTest = TreeFactory.createHilbertRTree(4, 2, DefaultEngineeringCRS.CARTESIAN_3D, TreeNodeFactory.DEFAULT_FACTORY);
+        treeRef  = TreeFactory.createHilbertRTree(4, 2, DefaultEngineeringCRS.CARTESIAN_3D, DefaultNodeFactory.INSTANCE);
+        treeTest = TreeFactory.createHilbertRTree(4, 2, DefaultEngineeringCRS.CARTESIAN_3D, DefaultNodeFactory.INSTANCE);
         insert();
     }
 

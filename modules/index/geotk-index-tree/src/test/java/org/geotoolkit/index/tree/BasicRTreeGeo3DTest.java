@@ -18,7 +18,7 @@ package org.geotoolkit.index.tree;
 
 import org.geotoolkit.index.tree.basic.BasicRTree;
 import org.geotoolkit.index.tree.basic.SplitCase;
-import org.geotoolkit.index.tree.nodefactory.TreeNodeFactory;
+import org.geotoolkit.index.tree.nodefactory.DefaultNodeFactory;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.opengis.referencing.operation.TransformException;
 
@@ -29,6 +29,6 @@ import org.opengis.referencing.operation.TransformException;
 public class BasicRTreeGeo3DTest extends SpatialTreeTest {
 
     public BasicRTreeGeo3DTest() throws TransformException {
-        super(new BasicRTree(4, DefaultGeographicCRS.WGS84_3D, SplitCase.QUADRATIC, TreeNodeFactory.DEFAULT_FACTORY));
+        super(new BasicRTree(4, DefaultGeographicCRS.WGS84_3D, SplitCase.QUADRATIC, DefaultNodeFactory.INSTANCE));
     }
 }

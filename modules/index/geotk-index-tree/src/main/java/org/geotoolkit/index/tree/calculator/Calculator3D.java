@@ -22,6 +22,7 @@ import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import static org.geotoolkit.index.tree.DefaultTreeUtils.getMedian;
 import org.geotoolkit.index.tree.Node;
+import static org.geotoolkit.index.tree.Node.*;
 import org.geotoolkit.index.tree.hilbert.HilbertRTree;
 import org.geotoolkit.util.ArgumentChecks;
 import org.opengis.geometry.DirectPosition;
@@ -323,15 +324,15 @@ public class Calculator3D extends Calculator {
         ArgumentChecks.ensurePositive("impossible to create Hilbert Curve with negative indice", order);
         candidate.getChildren().clear();
         final CoordinateReferenceSystem crs = bound.getCoordinateReferenceSystem();
-        final List<DirectPosition> listOfCentroidChild = (List<DirectPosition>) candidate.getUserProperty("centroids");
+        final List<DirectPosition> listOfCentroidChild = (List<DirectPosition>) candidate.getUserProperty(PROP_CENTROIDS);
         listOfCentroidChild.clear();
-        candidate.setUserProperty("isleaf", true);
-        candidate.setUserProperty("hilbertOrder", order);
+        candidate.setUserProperty(PROP_ISLEAF, true);
+        candidate.setUserProperty(PROP_HILBERT_ORDER, order);
         candidate.setBound(bound);
         final List<Node> listN = candidate.getChildren();
         listN.clear();
         if (order > 0) {
-            final int dim = 2<<((Integer) candidate.getUserProperty("hilbertOrder"))-1;
+            final int dim = 2<<((Integer) candidate.getUserProperty(PROP_HILBERT_ORDER))-1;
             if (getSpace(bound) <= 0) {
                 final int nbCells2D = 2<<(2*order-1);
                 if (getEdge(bound) <= 0) {
@@ -356,7 +357,7 @@ public class Calculator3D extends Calculator {
                         groundZero[i] = i;
                         listN.add(HilbertRTree.createCell(candidate.getTree(), candidate, listOfCentroidChild.get(i), i, null));
                     }
-                    candidate.setUserProperty("tabHV", groundZero);
+                    candidate.setUserProperty(PROP_HILBERT_TABLE, groundZero);
                 }else{
                     int index = -1;
                     for(int i = 0; i<3; i++) {
@@ -380,7 +381,7 @@ public class Calculator3D extends Calculator {
                         tabHV[tabTemp[0]][tabTemp[1]] = i;
                         listN.add(HilbertRTree.createCell(candidate.getTree(), candidate, ptCTemp, i, null));
                     }
-                    candidate.setUserProperty("tabHV", tabHV);
+                    candidate.setUserProperty(PROP_HILBERT_TABLE, tabHV);
                 }
             } else {
 
@@ -393,7 +394,7 @@ public class Calculator3D extends Calculator {
                     tabHV[tabTemp[0]][tabTemp[1]][tabTemp[2]] = i;
                     listN.add(HilbertRTree.createCell(candidate.getTree(), candidate, ptCTemp, i, null));
                 }
-                candidate.setUserProperty("tabHV", tabHV);
+                candidate.setUserProperty(PROP_HILBERT_TABLE, tabHV);
 
             }
         } else {
@@ -457,7 +458,7 @@ public class Calculator3D extends Calculator {
         ArgumentChecks.ensureNonNull("impossible to define Hilbert coordinate with null entry", entry);
         final DirectPosition ptCE = getMedian(entry);
         final GeneralEnvelope bound = new GeneralEnvelope(candidate.getBoundary());
-        final int order = (Integer) candidate.getUserProperty("hilbertOrder");
+        final int order = (Integer) candidate.getUserProperty(PROP_HILBERT_ORDER);
         if (! bound.contains(ptCE)) throw new IllegalArgumentException("entry is out of this node boundary");
         if (getSpace(bound) <= 0) {
             if (getEdge(bound) <= 0) {
@@ -476,9 +477,9 @@ public class Calculator3D extends Calculator {
                 return result;
             }
             int[] hCoord = getHilbCoord(candidate, ptCE, bound, order);
-            return ((int[][]) candidate.getUserProperty("tabHV"))[hCoord[0]][hCoord[1]];
+            return ((int[][]) candidate.getUserProperty(PROP_HILBERT_TABLE))[hCoord[0]][hCoord[1]];
         }
         int[] hCoord = getHilbCoord(candidate, ptCE, bound, order);
-        return ((int[][][]) candidate.getUserProperty("tabHV"))[hCoord[0]][hCoord[1]][hCoord[2]];
+        return ((int[][][]) candidate.getUserProperty(PROP_HILBERT_TABLE))[hCoord[0]][hCoord[1]][hCoord[2]];
     }
 }

@@ -31,8 +31,8 @@ import org.geotoolkit.index.tree.Tree;
 import org.geotoolkit.index.tree.TreeFactory;
 import org.geotoolkit.index.tree.io.TreeReader;
 import org.geotoolkit.index.tree.io.TreeWriter;
+import org.geotoolkit.index.tree.nodefactory.DefaultNodeFactory;
 import org.geotoolkit.index.tree.nodefactory.NodeFactory;
-import org.geotoolkit.index.tree.nodefactory.TreeNodeFactory;
 import org.geotoolkit.lucene.analysis.standard.ClassicAnalyzer;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.util.logging.Logging;
@@ -152,7 +152,7 @@ public abstract class IndexLucene {
         try {
 
             //Create NodeFactory adapted about caller uses.
-            final NodeFactory nodefactory = TreeNodeFactory.DEFAULT_FACTORY;
+            final NodeFactory nodefactory = DefaultNodeFactory.INSTANCE;
 
             final CoordinateReferenceSystem crs = CRS.decode("CRS:84");
             //creating tree (R-Tree)------------------------------------------------

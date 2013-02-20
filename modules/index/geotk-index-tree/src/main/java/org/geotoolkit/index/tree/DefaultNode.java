@@ -23,6 +23,7 @@ import java.util.List;
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.gui.swing.tree.Trees;
+import static org.geotoolkit.index.tree.Node.PROP_ISLEAF;
 import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.collection.NotifiedCheckedList;
@@ -148,7 +149,7 @@ public class DefaultNode extends Node {
      */
     @Override
     public boolean isLeaf() {
-        final Object userPropIsLeaf = getUserProperty("isleaf");
+        final Object userPropIsLeaf = getUserProperty(PROP_ISLEAF);
         if(userPropIsLeaf != null){
             return (Boolean)userPropIsLeaf;
         }
@@ -160,7 +161,7 @@ public class DefaultNode extends Node {
      */
     @Override
     public boolean isEmpty() {
-        final Object userPropIsLeaf = getUserProperty("isleaf");
+        final Object userPropIsLeaf = getUserProperty(PROP_ISLEAF);
         if(userPropIsLeaf != null && ((Boolean)userPropIsLeaf)){
             for(Node cell : getChildren()){
                 if(!cell.isEmpty()){
@@ -177,7 +178,7 @@ public class DefaultNode extends Node {
      */
     @Override
     public boolean isFull() {
-        final Object userPropIsLeaf = getUserProperty("isleaf");
+        final Object userPropIsLeaf = getUserProperty(PROP_ISLEAF);
         if(userPropIsLeaf != null && ((Boolean)userPropIsLeaf)){
             for(Node cell : getChildren()){
                 if(!cell.isFull()){
@@ -278,6 +279,6 @@ public class DefaultNode extends Node {
         col.addAll(children);
         String strparent =  (parent == null)?"null":String.valueOf(parent.hashCode());
         return Trees.toString(Classes.getShortClassName(this)+" : "+this.hashCode()+" parent : "+strparent
-                + " leaf : "+isLeaf()+ " userPropLeaf : "+(Boolean)getUserProperty("isleaf"), col);
+                + " leaf : "+isLeaf()+ " userPropLeaf : "+(Boolean)getUserProperty(PROP_ISLEAF), col);
     }
 }
