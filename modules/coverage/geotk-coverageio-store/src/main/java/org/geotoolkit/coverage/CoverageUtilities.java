@@ -22,14 +22,12 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import org.geotoolkit.geometry.GeneralEnvelope;
-import org.geotoolkit.metadata.iso.extent.DefaultGeographicBoundingBox;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.util.ArgumentChecks;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
-import org.opengis.metadata.extent.GeographicExtent;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.cs.CartesianCS;
 import org.opengis.referencing.cs.CoordinateSystem;
@@ -41,11 +39,12 @@ import org.opengis.util.FactoryException;
 /**
  * Utility functions for coverage and mosaic.
  * 
- * @author Johann Sorel (Geomatys)
+ * @author Johann Sorel  (Geomatys)
+ * @author Rémi Marechal (Geomatys).
  * @module pending
  */
 public final class CoverageUtilities {
-    
+    private static final double EPSILON = 1E-12;
     /**
      * Sort Grid Mosaic according to there scale, then on additional dimensions.
      */
@@ -53,17 +52,16 @@ public final class CoverageUtilities {
         @Override
         public int compare(final GridMosaic m1, final GridMosaic m2) {
             final double res = m1.getScale() - m2.getScale();
-            if(res == 0){
+            if (res == 0) {
                 //same scale check additional axes
                 final DirectPosition m1ul = m1.getUpperLeftCorner();
                 final DirectPosition m2ul = m2.getUpperLeftCorner();
-                for(int i=2,n=m1ul.getDimension();i<n;i++){
+                for(int i = 2, n = m1ul.getDimension(); i < n; i++){
                     final double ord1 = m1ul.getOrdinate(i);
                     final double ord2 = m2ul.getOrdinate(i);
-                    final int c = Double.valueOf(ord1).compareTo(ord2);
-                    if(c != 0) return c;
+                    final int c       = Double.valueOf(ord1).compareTo(ord2);
+                    if (c != 0) return c;
                 }
-                
                 return 0;
             }else if(res > 0){
                 return 1;
@@ -84,42 +82,46 @@ public final class CoverageUtilities {
      * @return Pyramid, never null exept if the pyramid set is empty
      */
     public static Pyramid findPyramid(final PyramidSet set, final CoordinateReferenceSystem crs) throws FactoryException{
-        final List<GeneralEnvelope> crsBounds = getValidityDomain(crs);
+        final GeneralEnvelope crsBound = new GeneralEnvelope(CRS.getEnvelope(crs));
         double ratio = Double.NEGATIVE_INFINITY;
-        final double epsilon = 1E-12;
         // envelope with crs geographic.
         final GeneralEnvelope intersection = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
         final List<Pyramid> results = new ArrayList<Pyramid>();
-        for(Pyramid pyramid : set.getPyramids()){
-            double ratioTemp = 0;
-            final List<GeneralEnvelope> pyramidBounds = getValidityDomain(pyramid.getCoordinateReferenceSystem());
-            // compute som of recovery ratio 
-            // from crs validity domain area on pyramid crs validity domain area
-            for(GeneralEnvelope crsBound : crsBounds) {
-                for(GeneralEnvelope pyramidBound : pyramidBounds) {
-                    if (!pyramidBound.intersects(crsBound, true)) continue;// no intersection
-                    intersection.setEnvelope(crsBound);
-                    intersection.intersect(pyramidBound);
-                    for (int d = 0; d < 2; d++) {// dim = 2 because extend geographic2D.
-                        final double pbs = pyramidBound.getSpan(d);
-                        // if intersect a slice part of gridEnvelope.
-                        // avoid divide by zero
-                        if (pbs <= 1E-12) continue;
-                        ratioTemp += intersection.getSpan(d) / pbs;
-                    }
+        if (crsBound != null) {
+            noValidityDomainFound :
+            for(Pyramid pyramid : set.getPyramids()) {
+                double ratioTemp = 0;
+                final Envelope pyramidBound = CRS.getEnvelope(pyramid.getCoordinateReferenceSystem());
+                if (pyramidBound == null) {
+                    results.add(pyramid);
+                    continue noValidityDomainFound;
                 }
+                // compute sum of recovery ratio 
+                // from crs validity domain area on pyramid crs validity domain area
+                if (!crsBound.intersects(pyramidBound, true)) continue;// no intersection
+                intersection.setEnvelope(crsBound);
+                intersection.intersect(pyramidBound);
+                for (int d = 0; d < 2; d++) {// dim = 2 because extend geographic2D.
+                    final double pbs = pyramidBound.getSpan(d);
+                    // if intersect a slice part of gridEnvelope.
+                    // avoid divide by zero
+                    if (pbs <= 1E-12) continue;
+                    ratioTemp += intersection.getSpan(d) / pbs;
+                }
+                 if (ratioTemp > ratio + EPSILON) {
+                     ratio = ratioTemp;
+                     results.clear();
+                     results.add(pyramid);
+                 } else if (Math.abs(ratio - ratioTemp) <= EPSILON) {
+                     results.add(pyramid);
+                 }
             }
-            //gerer les ratio et renvoyer la pyramide correspondant au ratio le plus elevé
-             if (ratioTemp > ratio + epsilon) {
-                 ratio = ratioTemp;
-                 results.clear();
-                 results.add(pyramid);
-             } else if (Math.abs(ratio - ratioTemp) <= epsilon) {
-                 results.add(pyramid);
-             }
+        } else {
+            results.addAll(set.getPyramids());
         }
-        //paranoaic test
-        if (results.isEmpty()) throw new IllegalStateException("pyramid not find");
+            
+        //paranoiac test
+        if (results.isEmpty())   throw new IllegalStateException("pyramid not find");
         if (results.size() == 1) return results.get(0);
         // if several equal ratio.
         final CoordinateReferenceSystem crs2d = get2Dpart(crs);
@@ -135,6 +137,12 @@ public final class CoverageUtilities {
         return results.get(0);
     }
     
+    /**
+     * Find and return 2D part from multi-dimensional {@link CoordinateReferenceSystem}.
+     * 
+     * @param crs {@link CoordinateReferenceSystem} which is study.
+     * @return 2D part from multi-dimensional {@link CoordinateReferenceSystem}.
+     */
     public static CoordinateReferenceSystem get2Dpart(CoordinateReferenceSystem crs) {
         for(CoordinateReferenceSystem ccrrss : ReferencingUtilities.decompose(crs)) {
             final CoordinateSystem cs = ccrrss.getCoordinateSystem();
@@ -145,26 +153,6 @@ public final class CoverageUtilities {
             }
         }
         throw new IllegalArgumentException("no 2D part exist in this crs : "+crs.toString());
-    }
-    
-    /**
-     * 
-     * @param crs
-     * @return 
-     */
-    public static List<GeneralEnvelope> getValidityDomain(CoordinateReferenceSystem crs) {
-        ArgumentChecks.ensureNonNull("crs", crs);
-        List<GeneralEnvelope> crsBounds = null;
-        for (GeographicExtent geog : crs.getDomainOfValidity().getGeographicElements()) {
-            if (geog instanceof DefaultGeographicBoundingBox) {
-                if (crsBounds == null) crsBounds = new ArrayList<GeneralEnvelope>();
-                final DefaultGeographicBoundingBox dgbb = (DefaultGeographicBoundingBox) geog;
-                final GeneralEnvelope envTemp = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
-                envTemp.setEnvelope(dgbb.getWestBoundLongitude(), dgbb.getSouthBoundLatitude(), dgbb.getEastBoundLongitude(), dgbb.getNorthBoundLatitude());
-                crsBounds.add(envTemp);
-            }
-        }
-        return crsBounds;
     }
     
     /**
@@ -179,7 +167,7 @@ public final class CoverageUtilities {
     public static GridMosaic findMosaic(final Pyramid pyramid, final double resolution, 
             final double tolerance, final Envelope env, int maxTileNumber) throws FactoryException{
              
-        MathTransform mt = CRS.findMathTransform(pyramid.getCoordinateReferenceSystem(), env.getCoordinateReferenceSystem());
+        final MathTransform mt = CRS.findMathTransform(pyramid.getCoordinateReferenceSystem(), env.getCoordinateReferenceSystem());
         if (!mt.isIdentity()) throw new IllegalArgumentException("findMosaic : not same CoordinateReferenceSystem");
         final List<GridMosaic> mosaics = new ArrayList<GridMosaic>(pyramid.getMosaics());
         final List<GridMosaic> goodMosaics;
@@ -252,7 +240,6 @@ public final class CoverageUtilities {
                 break;
             }           
         }
-                
         return result;
     }
     
