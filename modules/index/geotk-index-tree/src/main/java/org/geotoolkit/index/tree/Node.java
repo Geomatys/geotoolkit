@@ -17,6 +17,7 @@
 package org.geotoolkit.index.tree;
 
 import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,7 +34,9 @@ public abstract class Node {
     protected GeneralEnvelope boundary;
     protected Node parent;
     protected Tree tree;
-    private final EventListenerList listenerList = new EventListenerList();
+//    private final EventListenerList listenerList = new EventListenerList();
+    private int nblistener = 0;
+    private final List<PropertyChangeListener> listenerList = new ArrayList<PropertyChangeListener>(1);
     private Map<String, Object> userProperties;
 
     /**
@@ -56,19 +59,40 @@ public abstract class Node {
     }
 
     public void addListener(PropertyChangeListener l) {
-        listenerList.add(PropertyChangeListener.class, l);
+        if(l != null){
+            nblistener++;
+            listenerList.add(l);
+        }
     }
 
     public void removeListener(PropertyChangeListener l) {
-        listenerList.remove(PropertyChangeListener.class, l);
+        if(listenerList.remove(l)){
+            nblistener--;
+        }
     }
 
     protected void fireCollectionEvent() {
-        final PropertyChangeListener[] listeners = listenerList.getListeners(PropertyChangeListener.class);
-        for (PropertyChangeListener l : listeners) {
-            l.propertyChange(null);
+        if(nblistener>0){
+            for (PropertyChangeListener l : listenerList) {
+                l.propertyChange(null);
+            }
         }
     }
+
+//    public void addListener(PropertyChangeListener l) {
+//        listenerList.add(PropertyChangeListener.class, l);
+//    }
+//    
+//    public void removeListener(PropertyChangeListener l) {
+//        listenerList.remove(PropertyChangeListener.class, l);
+//    }
+//
+//    protected void fireCollectionEvent() {
+//        final PropertyChangeListener[] listeners = listenerList.getListeners(PropertyChangeListener.class);
+//        for (PropertyChangeListener l : listeners) {
+//            l.propertyChange(null);
+//        }
+//    }
 
     /**
      * Affect a {@code Node} boundary.

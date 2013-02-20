@@ -228,8 +228,10 @@ public class DefaultNode extends Node {
      * Affect a {@code null} on boundary.
      */
     protected final void clearBounds() {
-        boundary=null;
-        fireCollectionEvent();
+        if(boundary != null){
+            boundary=null;
+            fireCollectionEvent();
+        }
     }
 
     /**

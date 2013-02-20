@@ -35,6 +35,7 @@ import org.geotoolkit.index.tree.nodefactory.NodeFactory;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
+import org.geotoolkit.util.collection.XCollections;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.MismatchedReferenceSystemException;
@@ -678,16 +679,18 @@ public class StarRTree extends DefaultAbstractTree {
      */
     private static void branchGrafting(final Node nodeA, final Node nodeB ) throws IllegalArgumentException {
         if(!nodeA.isLeaf() || !nodeB.isLeaf()) throw new IllegalArgumentException("branchGrafting : not leaf");
-        final List<Envelope> listGlobale = new ArrayList<Envelope>(nodeA.getEntries());
-        listGlobale.addAll(new ArrayList<Envelope>(nodeB.getEntries()));
-        nodeA.getEntries().clear();
-        nodeB.getEntries().clear();
-        if(listGlobale.isEmpty()) throw new IllegalArgumentException("branchGrafting : empty list");
+        final List<Envelope> entriesA = nodeA.getEntries();
+        final List<Envelope> entriesB = nodeB.getEntries();
+        final List<Envelope> listGlobale = new ArrayList<Envelope>(entriesA);
+        listGlobale.addAll(entriesB);
+        entriesA.clear();
+        entriesB.clear();
+        final int size = listGlobale.size();
+        if(size == 0) throw new IllegalArgumentException("branchGrafting : empty list");
         final DefaultAbstractTree tree = (DefaultAbstractTree)nodeA.getTree();
         final Calculator calc = tree.getCalculator();
         final GeneralEnvelope globalE = new GeneralEnvelope(listGlobale.get(0));
         final int[]dims = tree.getDims();
-        final int size = listGlobale.size();
         for(int i = 1;i<size; i++){
             globalE.add(listGlobale.get(i));
         }
@@ -703,16 +706,17 @@ public class StarRTree extends DefaultAbstractTree {
         assert indexSplit != -1 : "BranchGrafting : indexSplit not find"+ indexSplit;
         final Comparator comp = calc.sortFrom(indexSplit, true, false);
         Collections.sort(listGlobale, comp);
-        GeneralEnvelope envB;
         final GeneralEnvelope envA = new GeneralEnvelope(listGlobale.get(0));
+        final GeneralEnvelope envB = new GeneralEnvelope(listGlobale.get(0));
+        int envAInc = 1;
         double overLapsRef = -1;
         int index = -1;
         final int size04 = (int)((size*0.4 >= 1) ? size*0.4 : 1);
-        for(int cut = size04; cut < size-size04; cut++) {
-            for(int i = 1; i<cut; i++) {
-                envA.add(listGlobale.get(i));
+        for(int cut = size04,n=size-size04; cut<n; cut++) {
+            for(;envAInc<cut; envAInc++) {
+                envA.add(listGlobale.get(envAInc));
             }
-            envB = new GeneralEnvelope(listGlobale.get(cut));
+            envB.setEnvelope(listGlobale.get(cut));
             for(int i = cut+1; i<size; i++) {
                 envB.add(listGlobale.get(i));
             }
