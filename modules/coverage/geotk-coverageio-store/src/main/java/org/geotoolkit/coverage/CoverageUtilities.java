@@ -81,8 +81,9 @@ public final class CoverageUtilities {
      * @param crs searched crs
      * @return Pyramid, never null exept if the pyramid set is empty
      */
-    public static Pyramid findPyramid(final PyramidSet set, final CoordinateReferenceSystem crs) throws FactoryException{
-        final GeneralEnvelope crsBound = new GeneralEnvelope(CRS.getEnvelope(CoverageUtilities.get2Dpart(crs)));
+    public static Pyramid findPyramid(final PyramidSet set, final CoordinateReferenceSystem crs) throws FactoryException {
+        final CoordinateReferenceSystem crs2D = get2Dpart(crs);
+        final GeneralEnvelope crsBound = new GeneralEnvelope(CRS.getEnvelope(crs2D));
         double ratio = Double.NEGATIVE_INFINITY;
         // envelope with crs geographic.
         final GeneralEnvelope intersection = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
@@ -91,7 +92,7 @@ public final class CoverageUtilities {
             noValidityDomainFound :
             for(Pyramid pyramid : set.getPyramids()) {
                 double ratioTemp = 0;
-                final Envelope pyramidBound = CRS.getEnvelope(CoverageUtilities.get2Dpart(pyramid.getCoordinateReferenceSystem()));
+                final Envelope pyramidBound = CRS.getEnvelope(get2Dpart(pyramid.getCoordinateReferenceSystem()));
                 if (pyramidBound == null) {
                     results.add(pyramid);
                     continue noValidityDomainFound;
@@ -124,12 +125,11 @@ public final class CoverageUtilities {
         if (results.isEmpty())   throw new IllegalStateException("pyramid not find");
         if (results.size() == 1) return results.get(0);
         // if several equal ratio.
-        final CoordinateReferenceSystem crs2d = get2Dpart(crs);
         for (Pyramid pyramid : results) {
             final CoordinateReferenceSystem pyCrs = get2Dpart(pyramid.getCoordinateReferenceSystem());
-            if (CRS.findMathTransform(pyCrs, crs2d).isIdentity() 
-             || CRS.equalsIgnoreMetadata(crs2d, pyCrs) 
-             || CRS.equalsApproximatively(crs2d, pyCrs)) {
+            if (CRS.findMathTransform(pyCrs, crs2D).isIdentity() 
+             || CRS.equalsIgnoreMetadata(crs2D, pyCrs) 
+             || CRS.equalsApproximatively(crs2D, pyCrs)) {
                 return pyramid;
             }
         }
@@ -251,7 +251,7 @@ public final class CoverageUtilities {
      * @param gridEnvelope mosaic envelope.
      * @return computed ratio.
      */
-    private static double getRatioND(Envelope searchEnvelope, Envelope gridEnvelope) {
+    public static double getRatioND(Envelope searchEnvelope, Envelope gridEnvelope) {
         ArgumentChecks.ensureNonNull("gridEnvelope", gridEnvelope);
         ArgumentChecks.ensureNonNull("findEnvelope", searchEnvelope);
         final CoordinateReferenceSystem crs = gridEnvelope.getCoordinateReferenceSystem();
