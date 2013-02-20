@@ -31,18 +31,18 @@ import org.geotoolkit.index.tree.io.DefaultTreeVisitor;
 import static org.geotoolkit.index.tree.io.TVR.*;
 import org.geotoolkit.index.tree.io.TreeVisitor;
 import org.geotoolkit.index.tree.io.TreeVisitorResult;
-import org.geotoolkit.index.tree.nodefactory.NodeFactory;
+import org.geotoolkit.index.tree.NodeFactory;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
-import org.geotoolkit.util.collection.XCollections;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.MismatchedReferenceSystemException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 
-/**Create R*Tree in Euclidean space.
+/**
+ * Create R*Tree in Euclidean space.
  *
  * @author Rémi Maréchal (Geomatys)
  * @author Johann Sorel  (Geomatys).
@@ -56,10 +56,25 @@ public class StarRTree extends DefaultAbstractTree {
      */
     boolean insertAgain = true;
 
-    /**Create R*Tree.
+    /**
+     * Create a R*Tree using default node factory.
      *
-     * @param maxElements max elements number permit by cells.
-     * @param crs
+     * @param nbMaxElement : max elements number within each tree Node.
+     * @param crs          : associate coordinate system.
+     * @param nodefactory  : made to create tree {@code Node}.
+     * @return R*Tree.
+     */
+    public StarRTree(int nbMaxElement, CoordinateReferenceSystem crs) {
+        this(nbMaxElement, crs, DefaultNodeFactory.INSTANCE);
+    }
+    
+    /**
+     * Create a R*Tree.
+     *
+     * @param nbMaxElement : max elements number within each tree Node.
+     * @param crs          : associate coordinate system.
+     * @param nodefactory  : made to create tree {@code Node}.
+     * @return R*Tree.
      */
     public StarRTree(int nbMaxElement, CoordinateReferenceSystem crs, NodeFactory nodefactory) {
         super(nbMaxElement, crs, nodefactory);

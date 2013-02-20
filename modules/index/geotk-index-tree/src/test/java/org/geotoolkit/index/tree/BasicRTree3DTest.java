@@ -18,7 +18,6 @@ package org.geotoolkit.index.tree;
 
 import org.geotoolkit.index.tree.basic.BasicRTree;
 import org.geotoolkit.index.tree.basic.SplitCase;
-import org.geotoolkit.index.tree.nodefactory.DefaultNodeFactory;
 import org.geotoolkit.referencing.crs.DefaultEngineeringCRS;
 import org.opengis.referencing.operation.TransformException;
 
@@ -30,6 +29,6 @@ import org.opengis.referencing.operation.TransformException;
 public class BasicRTree3DTest extends SpatialTreeTest {
 
     public BasicRTree3DTest() throws IllegalArgumentException, TransformException {
-        super(new BasicRTree(4, DefaultEngineeringCRS.CARTESIAN_3D, SplitCase.QUADRATIC, DefaultNodeFactory.INSTANCE));
+        super(new BasicRTree(4, DefaultEngineeringCRS.CARTESIAN_3D, SplitCase.QUADRATIC));
     }
 }

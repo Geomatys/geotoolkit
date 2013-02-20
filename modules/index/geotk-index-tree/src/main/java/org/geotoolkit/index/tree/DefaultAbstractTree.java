@@ -19,7 +19,6 @@ package org.geotoolkit.index.tree;
 import java.util.Iterator;
 import javax.measure.unit.Unit;
 import org.geotoolkit.index.tree.calculator.*;
-import org.geotoolkit.index.tree.nodefactory.NodeFactory;
 import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.util.converter.Classes;
 import org.opengis.geometry.Envelope;

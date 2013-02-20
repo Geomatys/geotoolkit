@@ -16,8 +16,6 @@
  */
 package org.geotoolkit.index.tree;
 
-import java.beans.PropertyChangeListener;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,8 +39,6 @@ public abstract class Node {
     protected GeneralEnvelope boundary;
     protected Node parent;
     protected Tree tree;
-    private int nblistener = 0;
-    private final List<PropertyChangeListener> listenerList = new ArrayList<PropertyChangeListener>(1);
     private Map<String, Object> userProperties;
 
     /**
@@ -64,32 +60,18 @@ public abstract class Node {
         userProperties.put(key, value);
     }
 
-    public void addListener(PropertyChangeListener l) {
-        if(l != null){
-            nblistener++;
-            listenerList.add(l);
-        }
-    }
-
-    public void removeListener(PropertyChangeListener l) {
-        if(listenerList.remove(l)){
-            nblistener--;
-        }
-    }
-
-    protected void fireCollectionEvent() {
-        if(nblistener>0){
-            for (PropertyChangeListener l : listenerList) {
-                l.propertyChange(null);
-            }
-        }
-    }
-
     /**
      * Affect a {@code Node} boundary.
      */
     public void setBound(Envelope bound){
+        if(boundary == bound){
+            return;
+        }
         boundary = (bound == null) ? null : new GeneralEnvelope(bound);
+        
+        if(parent != null){
+            parent.setBound(null);
+        }
     }
 
     /**<blockquote><font size=-1>
@@ -112,7 +94,12 @@ public abstract class Node {
      * @return subNodes.
      */
     public abstract List<Node> getChildren();
-
+    
+    /**
+     * @return entries.
+     */
+    public abstract List<Envelope> getEntries();
+    
     /**A leaf is a {@code Node} at extremity of {@code Tree} which contains only entries.
      *
      * @return true if it is a leaf else false (branch).
@@ -137,11 +124,6 @@ public abstract class Node {
      * @return boundary.
      */
     public abstract Envelope getBoundary();
-
-    /**
-     * @return entries.
-     */
-    public abstract List<Envelope> getEntries();
 
     /**
      * @return {@code Node} parent pointer.

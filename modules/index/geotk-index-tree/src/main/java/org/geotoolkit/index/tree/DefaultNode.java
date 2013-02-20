@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.index.tree;
 
-import java.beans.PropertyChangeEvent;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -38,65 +37,55 @@ import org.opengis.geometry.Envelope;
  */
 public class DefaultNode extends Node {
 
-    private final List<Node> children = new CrossList<Node>(Node.class) {
+    private final List<Node> children = new NotifiedCheckedList<Node>(Node.class) {
 
         @Override
         protected void notifyAdd(Node e, int i) {
-            super.notifyAdd(e, i);
-            clearBounds();
+            setBound(null);
         }
 
         @Override
         protected void notifyAdd(Collection<? extends Node> clctn, NumberRange<Integer> nr) {
-            super.notifyAdd(clctn, nr);
-            clearBounds();
+            setBound(null);
         }
 
         @Override
         protected void notifyRemove(Node e, int i) {
-            super.notifyRemove(e, i);
-            clearBounds();
+            setBound(null);
         }
 
         @Override
         protected void notifyRemove(Collection<? extends Node> clctn, NumberRange<Integer> nr) {
-            super.notifyRemove(clctn, nr);
-            clearBounds();
-        }
-
-        @Override
-        public void propertyChange(PropertyChangeEvent evt) {
-            clearBounds();
+            setBound(null);
         }
 
         @Override
         protected void notifyChange(Node oldItem, Node newItem, int index) {
-            super.notifyChange(oldItem, newItem, index);
-            clearBounds();
+            setBound(null);
         }
     };
 
     private final List<Envelope> entries = new NotifiedCheckedList<Envelope>(Envelope.class) {
         @Override
         protected void notifyAdd(Envelope e, int i) {
-            clearBounds();
+            setBound(null);
         }
         @Override
         protected void notifyAdd(Collection<? extends Envelope> clctn, NumberRange<Integer> nr) {
-            clearBounds();
+            setBound(null);
         }
         @Override
         protected void notifyRemove(Envelope e, int i) {
-            clearBounds();
+            setBound(null);
         }
         @Override
         protected void notifyRemove(Collection<? extends Envelope> clctn, NumberRange<Integer> nr) {
-            clearBounds();
+            setBound(null);
         }
 
         @Override
         protected void notifyChange(Envelope oldItem, Envelope newItem, int index) {
-            clearBounds();
+            setBound(null);
         }
     };
 
@@ -223,16 +212,6 @@ public class DefaultNode extends Node {
     @Override
     public Tree getTree() {
         return tree;
-    }
-
-    /**
-     * Affect a {@code null} on boundary.
-     */
-    protected final void clearBounds() {
-        if(boundary != null){
-            boundary=null;
-            fireCollectionEvent();
-        }
     }
 
     /**

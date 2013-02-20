@@ -14,35 +14,29 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.index.tree.nodefactory;
+package org.geotoolkit.index.tree;
 
 import java.util.List;
-import org.geotoolkit.index.tree.DefaultNode;
 import org.geotoolkit.index.tree.Node;
 import org.geotoolkit.index.tree.Tree;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 
 /**
- * Create appropriate {@code Node} to R-Tree.
+ * Create {@code Node}.
  *
- * @author Rémi Maréchal (Geomatys)
+ * @author Rémi Marechal (Geomatys).
  */
-public final class DefaultNodeFactory implements NodeFactory {
+public interface NodeFactory {
 
-    /**
-     * Adapted default {@code Node} factory to R-Tree.
+    /**Create a node in accordance with RTree properties.
+     *
+     * @param tree pointer on Tree.
+     * @param parent pointer on parent {@code Node}.
+     * @param children sub {@code Node}.
+     * @param entries entries {@code List} to add in this node.
+     * @param coordinates lower upper bounding box coordinates table.
+     * @return appropriate Node from tree.
      */
-    public static final NodeFactory INSTANCE = new DefaultNodeFactory();
-    
-    private DefaultNodeFactory(){}
-    
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public Node createNode(final Tree tree, final Node parent, final DirectPosition lowerCorner, final DirectPosition upperCorner, final List<Node> children, final List<Envelope> entries) {
-        return new DefaultNode(tree, parent, lowerCorner, upperCorner, children, entries);
-    }
-
+    Node createNode(final Tree tree, final Node parent, final DirectPosition lowerCorner, final DirectPosition upperCorner, final List<Node> children, final List<Envelope> entries);
 }

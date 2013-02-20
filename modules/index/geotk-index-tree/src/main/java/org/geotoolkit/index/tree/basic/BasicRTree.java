@@ -23,6 +23,7 @@ import java.util.List;
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.index.tree.DefaultAbstractTree;
+import org.geotoolkit.index.tree.DefaultNodeFactory;
 import org.geotoolkit.index.tree.DefaultTreeUtils;
 import org.geotoolkit.index.tree.Node;
 import org.geotoolkit.index.tree.Tree;
@@ -30,7 +31,7 @@ import org.geotoolkit.index.tree.calculator.Calculator;
 import static org.geotoolkit.index.tree.io.TVR.*;
 import org.geotoolkit.index.tree.io.TreeVisitor;
 import org.geotoolkit.index.tree.io.TreeVisitorResult;
-import org.geotoolkit.index.tree.nodefactory.NodeFactory;
+import org.geotoolkit.index.tree.NodeFactory;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
@@ -39,19 +40,36 @@ import org.opengis.geometry.Envelope;
 import org.opengis.geometry.MismatchedReferenceSystemException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
-/**Create R-Tree (Basic)
+/**
+ * Create R-Tree (Basic)
  *
  * @author Rémi Marechal (Geomatys)
- * @author Yohann Sorel (Geomatys)
+ * @author Johann Sorel (Geomatys)
  */
 public class BasicRTree extends DefaultAbstractTree {
 
     private SplitCase choice;
 
-    /**Create R-Tree.
+    /**
+     * Create a Basic R-Tree using default node factory.
      *
-     * @param maxElements max value of elements per tree cell.
-     * @param choice Split made "linear" or "quadratic".
+     * @param maxElements           : max elements number within each tree Node.
+     * @param crs                   : associate coordinate system.
+     * @param choice                : made to split "linear" or "quadratic".
+     * @return Basic RTree.
+     */
+    public BasicRTree(final int maxElements, CoordinateReferenceSystem crs, final SplitCase choice) {
+        this(maxElements, crs, choice, DefaultNodeFactory.INSTANCE);
+    }
+    
+    /**
+     * Create a Basic R-Tree.
+     *
+     * @param maxElements           : max elements number within each tree Node.
+     * @param crs                   : associate coordinate system.
+     * @param choice                : made to split "linear" or "quadratic".
+     * @param nodefactory           : made to create tree {@code Node}.
+     * @return Basic RTree.
      */
     public BasicRTree(final int maxElements, CoordinateReferenceSystem crs, final SplitCase choice, NodeFactory nodefactory) {
         super(maxElements, crs, nodefactory);

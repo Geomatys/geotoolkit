@@ -31,7 +31,7 @@ import org.geotoolkit.index.tree.io.DefaultTreeVisitor;
 import static org.geotoolkit.index.tree.io.TVR.*;
 import org.geotoolkit.index.tree.io.TreeVisitor;
 import org.geotoolkit.index.tree.io.TreeVisitorResult;
-import org.geotoolkit.index.tree.nodefactory.NodeFactory;
+import org.geotoolkit.index.tree.NodeFactory;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
@@ -50,11 +50,43 @@ public class HilbertRTree extends DefaultAbstractTree {
 
     int hilbertOrder;
     private static final double LN2 = 0.6931471805599453;
+    
     /**
-     * Create Hilbert RTree.
+     * Create Hilbert R-Tree using default node factory.
      *
-     * @param maxElements max elements number authorized
-     * @param hilbertOrder max order value.
+     * <blockquote><font size=-1> <strong>
+     * NOTE: In HilbertRTree each leaf contains some sub-{@code Node} called cells.
+     * {@code Envelope} entries are contains in their cells.
+     * Cells number per leaf = 2 ^ (dim*hilbertOrder).
+     * Moreother there are maxElements_per_cells 2 ^(dim*hilbertOrder) elements per leaf.
+     * </strong> </font></blockquote>
+     *
+     * @param nbMaxElement          : max elements number within each tree leaf cells.
+     * @param hilbertOrder          : max order value.
+     * @param crs                   : associate coordinate system.
+     * @return Hilbert R-Tree.
+     * @throws IllegalArgumentException if maxElements <= 0.
+     * @throws IllegalArgumentException if hilbertOrder <= 0.
+     */
+    public HilbertRTree(int nbMaxElement, int hilbertOrder, CoordinateReferenceSystem crs) {
+        this(nbMaxElement, hilbertOrder, crs, DefaultNodeFactory.INSTANCE);
+    }
+    
+    /**
+     * Create Hilbert R-Tree.
+     *
+     * <blockquote><font size=-1> <strong>
+     * NOTE: In HilbertRTree each leaf contains some sub-{@code Node} called cells.
+     * {@code Envelope} entries are contains in their cells.
+     * Cells number per leaf = 2 ^ (dim*hilbertOrder).
+     * Moreother there are maxElements_per_cells 2 ^(dim*hilbertOrder) elements per leaf.
+     * </strong> </font></blockquote>
+     *
+     * @param nbMaxElement          : max elements number within each tree leaf cells.
+     * @param hilbertOrder          : max order value.
+     * @param crs                   : associate coordinate system.
+     * @param nodefactory           : made to create tree {@code Node}.
+     * @return Hilbert R-Tree.
      * @throws IllegalArgumentException if maxElements <= 0.
      * @throws IllegalArgumentException if hilbertOrder <= 0.
      */
