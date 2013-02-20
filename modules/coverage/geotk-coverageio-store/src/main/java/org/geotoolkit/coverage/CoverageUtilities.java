@@ -82,7 +82,7 @@ public final class CoverageUtilities {
      * @return Pyramid, never null exept if the pyramid set is empty
      */
     public static Pyramid findPyramid(final PyramidSet set, final CoordinateReferenceSystem crs) throws FactoryException{
-        final GeneralEnvelope crsBound = new GeneralEnvelope(CRS.getEnvelope(crs));
+        final GeneralEnvelope crsBound = new GeneralEnvelope(CRS.getEnvelope(CoverageUtilities.get2Dpart(crs)));
         double ratio = Double.NEGATIVE_INFINITY;
         // envelope with crs geographic.
         final GeneralEnvelope intersection = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
@@ -91,7 +91,7 @@ public final class CoverageUtilities {
             noValidityDomainFound :
             for(Pyramid pyramid : set.getPyramids()) {
                 double ratioTemp = 0;
-                final Envelope pyramidBound = CRS.getEnvelope(pyramid.getCoordinateReferenceSystem());
+                final Envelope pyramidBound = CRS.getEnvelope(CoverageUtilities.get2Dpart(pyramid.getCoordinateReferenceSystem()));
                 if (pyramidBound == null) {
                     results.add(pyramid);
                     continue noValidityDomainFound;
