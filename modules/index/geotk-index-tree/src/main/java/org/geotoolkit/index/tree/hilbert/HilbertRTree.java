@@ -46,7 +46,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  *
  * @author Rémi Maréchal (Geomatys).
  */
-public class HilbertRTree extends DefaultAbstractTree {
+public class HilbertRTree extends AbstractTree {
 
     int hilbertOrder;
     private static final double LN2 = 0.6931471805599453;
@@ -339,7 +339,7 @@ public class HilbertRTree extends DefaultAbstractTree {
         } else {
             eltList = candidate.getChildren();
         }
-        final DefaultAbstractTree tree = (DefaultAbstractTree)candidate.getTree();
+        final AbstractTree tree = (AbstractTree)candidate.getTree();
         final Calculator calc = tree.getCalculator();
         final int dim = tree.getDims().length;
         final int size = eltList.size();
@@ -675,7 +675,7 @@ public class HilbertRTree extends DefaultAbstractTree {
                     }
                 }
                 if (removed) {
-                    final DefaultAbstractTree tree = ((DefaultAbstractTree)candidate.getTree());
+                    final AbstractTree tree = ((AbstractTree)candidate.getTree());
                     tree.setElementsNumber(tree.getElementsNumber()-1);
                     candidate.setBound(null);
                     trim(candidate);
@@ -724,7 +724,7 @@ public class HilbertRTree extends DefaultAbstractTree {
                     if (removed) break;
                 }
                 if (removed) {
-                    final DefaultAbstractTree tree = ((DefaultAbstractTree)candidate.getTree());
+                    final AbstractTree tree = ((AbstractTree)candidate.getTree());
                     tree.setElementsNumber(tree.getElementsNumber()-1);
                     candidate.setBound(null);
                     trim(candidate);
@@ -827,7 +827,7 @@ public class HilbertRTree extends DefaultAbstractTree {
         }
         result.setUserProperty(PROP_ISLEAF, false);
         if (listEntries != null && !listEntries.isEmpty()) {
-            int diment = ((DefaultAbstractTree)tree).getDims().length;
+            int diment = ((AbstractTree)tree).getDims().length;
             if(tree.getCalculator().getSpace(getEnveloppeMin(listEntries))<=0)diment--;
             final int size = listEntries.size();
             final int maxElts = tree.getMaxElements();

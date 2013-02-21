@@ -47,7 +47,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @author Rémi Maréchal (Geomatys)
  * @author Johann Sorel  (Geomatys).
  */
-public class StarRTree extends DefaultAbstractTree {
+public class StarRTree extends AbstractTree {
 
     /**
      * In accordance with R*Tree properties.
@@ -78,7 +78,6 @@ public class StarRTree extends DefaultAbstractTree {
      */
     public StarRTree(int nbMaxElement, CoordinateReferenceSystem crs, NodeFactory nodefactory) {
         super(nbMaxElement, crs, nodefactory);
-        setRoot(null);
     }
 
     /**
@@ -502,11 +501,11 @@ public class StarRTree extends DefaultAbstractTree {
      * @return prefered ordinate index to split.
      */
     private static int defineSplitAxis(final Node candidate) {
-        ArgumentChecks.ensureNonNull("defineSplitAxis : ", candidate);
+        ArgumentChecks.ensureNonNull("candidate : ", candidate);
         final boolean isLeaf = candidate.isLeaf();
         List eltList;
         eltList = (isLeaf)?candidate.getEntries():candidate.getChildren();
-        final DefaultAbstractTree tree = (DefaultAbstractTree)candidate.getTree();
+        final AbstractTree tree = (AbstractTree)candidate.getTree();
         final Calculator calc = tree.getCalculator();
         final int dim = tree.getDims().length;
         final int size = eltList.size();
@@ -590,7 +589,7 @@ public class StarRTree extends DefaultAbstractTree {
             if(candidate.isLeaf()) {
                 final boolean removed = candidate.getEntries().remove(entry);
                 if(removed) {
-                    final DefaultAbstractTree tree = ((DefaultAbstractTree)candidate.getTree());
+                    final AbstractTree tree = ((AbstractTree)candidate.getTree());
                     tree.setElementsNumber(tree.getElementsNumber()-1);
                     trim(candidate);
                     return true;
@@ -632,7 +631,7 @@ public class StarRTree extends DefaultAbstractTree {
                     }
                 }
                 if(removed) {
-                    final DefaultAbstractTree tree = ((DefaultAbstractTree)candidate.getTree());
+                    final AbstractTree tree = ((AbstractTree)candidate.getTree());
                     tree.setElementsNumber(tree.getElementsNumber()-1);
                     trim(candidate);
                     return true;
@@ -657,7 +656,7 @@ public class StarRTree extends DefaultAbstractTree {
     private static void trim(final Node candidate) throws IllegalArgumentException {
         ArgumentChecks.ensureNonNull("trim : Node candidate", candidate);
         final List<Node> children = candidate.getChildren();
-        final DefaultAbstractTree tree = ((DefaultAbstractTree)candidate.getTree());
+        final AbstractTree tree = ((AbstractTree)candidate.getTree());
         final List<Envelope> reinsertList = new ArrayList<Envelope>();
         for(int i = children.size()-1; i>=0; i--) {
             final Node child = children.get(i);
@@ -702,7 +701,7 @@ public class StarRTree extends DefaultAbstractTree {
         entriesB.clear();
         final int size = listGlobale.size();
         if(size == 0) throw new IllegalArgumentException("branchGrafting : empty list");
-        final DefaultAbstractTree tree = (DefaultAbstractTree)nodeA.getTree();
+        final AbstractTree tree = (AbstractTree)nodeA.getTree();
         final Calculator calc = tree.getCalculator();
         final GeneralEnvelope globalE = new GeneralEnvelope(listGlobale.get(0));
         final int[]dims = tree.getDims();
@@ -772,7 +771,7 @@ public class StarRTree extends DefaultAbstractTree {
      */
     private static List<Envelope> getElementAtMore33PerCent(final Node candidate) {
         ArgumentChecks.ensureNonNull("getElementAtMore33PerCent : candidate", candidate);
-        final int[] dims = ((DefaultAbstractTree)candidate.getTree()).getDims();
+        final int[] dims = ((AbstractTree)candidate.getTree()).getDims();
         final Calculator calc =(dims.length<=2)?new Calculator2D(dims):new Calculator3D(dims);
         final List<Envelope> lsh = new ArrayList<Envelope>();
         final TreeVisitor tvrSearch = new DefaultTreeVisitor(lsh);

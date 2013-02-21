@@ -29,13 +29,14 @@ import org.opengis.referencing.cs.*;
 import org.opengis.referencing.datum.Ellipsoid;
 import org.opengis.referencing.datum.GeodeticDatum;
 
-/**Create a "generic" Tree.
+/**
+ * Create an abstract Tree.
  *
  * @author Rémi Marechal       (Geomatys).
  * @author Johann Sorel        (Geomatys).
  * @author Martin Desruisseaux (Geomatys).
  */
-public abstract class DefaultAbstractTree implements Tree{
+public abstract class AbstractTree implements Tree{
 
     protected NodeFactory nodefactory;
     private Node root;
@@ -49,7 +50,7 @@ public abstract class DefaultAbstractTree implements Tree{
     /**
      * To create an R-Tree use {@linkplain TreeFactory}.
      */
-    protected DefaultAbstractTree(int nbMaxElement, CoordinateReferenceSystem crs, NodeFactory nodefactory) {
+    protected AbstractTree(int nbMaxElement, CoordinateReferenceSystem crs, NodeFactory nodefactory) {
         ArgumentChecks.ensureNonNull("Create Tree : CRS", crs);
         ArgumentChecks.ensureNonNull("Create NodeFactory : nodefactory", nodefactory);
         ArgumentChecks.ensureStrictlyPositive("Create Tree : maxElements", nbMaxElement);
@@ -249,7 +250,12 @@ public abstract class DefaultAbstractTree implements Tree{
      */
     @Override
     public Envelope getExtent() {
-        return (getRoot() == null) ? null : getRoot().getBoundary();
+        final Node node = getRoot();
+        if(node == null){
+            return null;
+        }else{
+            return node.getBoundary();
+        }
     }
 
     /**

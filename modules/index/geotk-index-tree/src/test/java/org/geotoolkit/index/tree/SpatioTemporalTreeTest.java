@@ -60,7 +60,7 @@ public class SpatioTemporalTreeTest extends TreeTest{
     public void setTree(Tree tree){
         this.tree = tree;
         this.crs = tree.getCrs();
-        dims = ((DefaultAbstractTree)tree).getDims();
+        dims = ((AbstractTree)tree).getDims();
         final int dim = dims.length;
         final int compDim = crs.getCoordinateSystem().getDimension();
         final boolean[] findOrdTemp = new boolean[compDim];

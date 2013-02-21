@@ -154,7 +154,6 @@ public interface Tree {
      */
     Envelope getExtent();
 
-
     /**Create a node in accordance with this properties.
      *
      * @param tree pointer on Tree.

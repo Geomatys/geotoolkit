@@ -22,7 +22,7 @@ import java.util.Comparator;
 import java.util.List;
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.GeneralEnvelope;
-import org.geotoolkit.index.tree.DefaultAbstractTree;
+import org.geotoolkit.index.tree.AbstractTree;
 import org.geotoolkit.index.tree.DefaultNodeFactory;
 import org.geotoolkit.index.tree.DefaultTreeUtils;
 import org.geotoolkit.index.tree.Node;
@@ -46,7 +46,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @author Rémi Marechal (Geomatys)
  * @author Johann Sorel (Geomatys)
  */
-public class BasicRTree extends DefaultAbstractTree {
+public class BasicRTree extends AbstractTree {
 
     private SplitCase choice;
 
@@ -279,7 +279,7 @@ public class BasicRTree extends DefaultAbstractTree {
         nodeA.getEntries().clear();
         nodeB.getEntries().clear();
         if(listGlobale.isEmpty()) throw new IllegalArgumentException("branchGrafting : empty list");
-        final DefaultAbstractTree tree = (DefaultAbstractTree)nodeA.getTree();
+        final AbstractTree tree = (AbstractTree)nodeA.getTree();
         final int[]dims = tree.getDims();
         final GeneralEnvelope globalE = new GeneralEnvelope(listGlobale.get(0));
         final int size = listGlobale.size();
@@ -528,7 +528,7 @@ public class BasicRTree extends DefaultAbstractTree {
             if(candidate.isLeaf()){
                 final boolean removed = candidate.getEntries().remove(entry);
                 if(removed){
-                    final DefaultAbstractTree tree = ((DefaultAbstractTree)candidate.getTree());
+                    final AbstractTree tree = ((AbstractTree)candidate.getTree());
                     tree.setElementsNumber(tree.getElementsNumber()-1);
                     trim(candidate);
                     return true;
@@ -570,7 +570,7 @@ public class BasicRTree extends DefaultAbstractTree {
                     }
                 }
                 if(removed){
-                    final DefaultAbstractTree tree = ((DefaultAbstractTree)candidate.getTree());
+                    final AbstractTree tree = ((AbstractTree)candidate.getTree());
                     tree.setElementsNumber(tree.getElementsNumber()-1);
                     trim(candidate);
                     return true;
@@ -595,7 +595,7 @@ public class BasicRTree extends DefaultAbstractTree {
     private static void trim(final Node candidate) throws IllegalArgumentException {
         ArgumentChecks.ensureNonNull("trim : Node3D candidate", candidate);
         final List<Node> children = candidate.getChildren();
-        final DefaultAbstractTree tree = ((DefaultAbstractTree)candidate.getTree());
+        final AbstractTree tree = ((AbstractTree)candidate.getTree());
         final List<Envelope> reinsertList = new ArrayList<Envelope>();
         for(int i = children.size()-1; i>=0; i--) {
             final Node child = children.get(i);

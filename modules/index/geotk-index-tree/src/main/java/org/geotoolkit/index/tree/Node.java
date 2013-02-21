@@ -156,12 +156,14 @@ public abstract class Node {
      * @return boundary.
      */
     public Envelope getBoundary() {
-        Envelope env = getBound();
+        GeneralEnvelope env = (GeneralEnvelope) getBound();
         if(env != null){
             return env;
         }
         env = calculateBounds();
-        setBound(env);
+        if(!env.isNull()){
+            setBound(env);
+        }
         return env;
     }
     
@@ -177,6 +179,10 @@ public abstract class Node {
             if(!n2D.isEmpty()){
                 boundary = addBound(boundary,n2D.getBoundary());
             }
+        }
+        if(boundary == null){
+            boundary = new GeneralEnvelope(tree.getCrs());
+            boundary.setToNull();
         }
         return boundary;
     }
