@@ -18,12 +18,13 @@ package org.geotoolkit.index.tree;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.gui.swing.tree.Trees;
 import static org.geotoolkit.index.tree.Node.PROP_ISLEAF;
-import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.collection.NotifiedCheckedList;
 import org.geotoolkit.util.converter.Classes;
@@ -89,6 +90,9 @@ public class DefaultNode extends Node {
         }
     };
 
+    private Map<String, Object> userProperties;
+    private GeneralEnvelope boundary;
+    
     /**Create an empty {@code DefaultNode}.
      *
      * @param tree
@@ -106,8 +110,7 @@ public class DefaultNode extends Node {
      * @throws IllegalArgumentException if tree pointer is null.
      */
     public DefaultNode(final Tree tree, final Node parent, final DirectPosition lowerCorner, final DirectPosition upperCorner, final List<Node> children, final List<Envelope> entries) {
-        ArgumentChecks.ensureNonNull("tree", tree);
-        this.tree = tree;
+        super(tree);
         this.parent = parent;
         if(children!=null){
             for(Node n3d : children){
@@ -123,7 +126,50 @@ public class DefaultNode extends Node {
             this.boundary = new GeneralEnvelope(new GeneralDirectPosition(lowerCorner), new GeneralDirectPosition(upperCorner));
         }
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setBound(Envelope bound){
+        if(boundary == bound){
+            return;
+        }
+        boundary = (bound == null) ? null : new GeneralEnvelope(bound);
+        
+        if(parent != null){
+            parent.setBound(null);
+        }
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Envelope getBound(){
+        return this.boundary;
+    }
+    
+    /**
+     * @param key
+     * @return user property for given key
+     */
+    @Override
+    public Object getUserProperty(final String key) {
+        if (userProperties == null) return null;
+        return userProperties.get(key);
+    }
 
+    /**Add user property with key access.
+     *
+     * @param key
+     * @param value Object will be stocked.
+     */
+    @Override
+    public void setUserProperty(final String key, final Object value) {
+        if (userProperties == null) userProperties = new HashMap<String, Object>();
+        userProperties.put(key, value);
+    }
 
     /**
      * {@inheritDoc}
@@ -137,116 +183,8 @@ public class DefaultNode extends Node {
      * {@inheritDoc}
      */
     @Override
-    public boolean isLeaf() {
-        final Object userPropIsLeaf = getUserProperty(PROP_ISLEAF);
-        if(userPropIsLeaf != null){
-            return (Boolean)userPropIsLeaf;
-        }
-        return getChildren().isEmpty();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean isEmpty() {
-        final Object userPropIsLeaf = getUserProperty(PROP_ISLEAF);
-        if(userPropIsLeaf != null && ((Boolean)userPropIsLeaf)){
-            for(Node cell : getChildren()){
-                if(!cell.isEmpty()){
-                    return false;
-                }
-            }
-            return true;
-        }
-        return (getChildren().isEmpty() && getEntries().isEmpty());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean isFull() {
-        final Object userPropIsLeaf = getUserProperty(PROP_ISLEAF);
-        if(userPropIsLeaf != null && ((Boolean)userPropIsLeaf)){
-            for(Node cell : getChildren()){
-                if(!cell.isFull()){
-                    return false;
-                }
-            }
-            return true;
-        }
-        return (getChildren().size()+getEntries().size())>=getTree().getMaxElements();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Envelope getBoundary() {
-        if(boundary==null){
-            calculateBounds();
-        }
-        return boundary;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public List<Envelope> getEntries() {
         return entries;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Node getParent() {
-        return parent;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Tree getTree() {
-        return tree;
-    }
-
-    /**
-     * Compute {@code Node} boundary from stocked sub-node or entries .
-     */
-    protected void calculateBounds(){
-        for(Envelope ent2D : getEntries()){
-            addBound(ent2D);
-        }
-        for(Node n2D : getChildren()){
-            if(!n2D.isEmpty()){
-                addBound(n2D.getBoundary());
-            }
-        }
-    }
-
-    /**Update boundary size from {@code Envelope}.
-     *
-     * @param env {@code Node} or entry boundary.
-     */
-    protected void addBound(final Envelope env){
-        if(boundary==null){
-            boundary = new GeneralEnvelope(env);
-        }else{
-            boundary.add(env);
-        }
-    }
-
-    /**Affect a new parent pointer.
-     *
-     * @param parent
-     */
-    @Override
-    public void setParent(final Node parent){
-        this.parent = parent;
     }
 
     /**

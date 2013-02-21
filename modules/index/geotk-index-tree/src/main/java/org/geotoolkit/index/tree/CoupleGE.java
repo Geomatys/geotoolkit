@@ -27,7 +27,7 @@ import org.geotoolkit.util.ArgumentChecks;
  *
  * @author Rémi Maréchal (Geomatys).
  */
-public class CoupleGE implements Couple<GeneralEnvelope> {
+public class CoupleGE  {
 
     final private GeneralEnvelope gE1;
     final private GeneralEnvelope gE2;
@@ -52,33 +52,29 @@ public class CoupleGE implements Couple<GeneralEnvelope> {
     }
 
     /**
-     * {@inheritDoc}
+     * @return Object 1.
      */
-    @Override
     public GeneralEnvelope getObject1() {
         return this.gE1;
     }
 
     /**
-     * {@inheritDoc}
+     * @return Object2.
      */
-    @Override
     public GeneralEnvelope getObject2() {
         return this.gE2;
     }
 
     /**
-     * {@inheritDoc}
+     * @return true if the two object intersect them.
      */
-    @Override
     public boolean intersect() {
         return getObject1().intersects(getObject2(), true);
     }
 
     /**
-     * {@inheritDoc}
+     * @return distance between two objects centroids.
      */
-    @Override
     public double getDistance() {
         return calculator.getDistance(getObject1(), getObject2());
     }
@@ -88,7 +84,6 @@ public class CoupleGE implements Couple<GeneralEnvelope> {
      *
      * @return two objects area som.
      */
-    @Override
     public double getEdge() {
         return calculator.getEdge(getObject1()) + calculator.getEdge(getObject2());
     }
@@ -98,17 +93,13 @@ public class CoupleGE implements Couple<GeneralEnvelope> {
      *
      * @return two objects space som.
      */
-    @Override
     public double getSpace() {
         return calculator.getSpace(getObject1()) + calculator.getSpace(getObject2());
     }
 
     /**
-     * {@inheritDoc}.
-     *
      * @return Two objects intersection space.
      */
-    @Override
     public double getOverlaps() {
         return calculator.getOverlaps(getObject1(), getObject2());
     }
