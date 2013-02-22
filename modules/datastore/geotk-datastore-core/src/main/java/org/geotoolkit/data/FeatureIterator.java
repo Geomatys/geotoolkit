@@ -33,7 +33,6 @@ public interface FeatureIterator<F extends Feature> extends CloseableIterator<F>
      * Reduce possibilities to Feature only.
      * @return Feature
      * @throws FeatureStoreRuntimeException if error occured when reading.
-     * @throws NoSuchElementException if there are no more features.
      */
     @Override
     F next() throws FeatureStoreRuntimeException;
