@@ -137,7 +137,9 @@ public class CombineIterator implements Iterator<Envelope> {
                     positions[i - 1]++;
                 }
             }
-
+            if (positions.length == 0) {
+                finish = true;
+            }
             return baseEnvelope;
         }
 
