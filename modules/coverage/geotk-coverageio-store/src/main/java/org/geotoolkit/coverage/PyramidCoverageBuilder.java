@@ -41,6 +41,7 @@ import org.opengis.coverage.grid.GridGeometry;
 import org.opengis.feature.type.Name;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
+import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.*;
 import org.opengis.util.FactoryException;
@@ -238,7 +239,8 @@ public class PyramidCoverageBuilder {
         
         final GridGeometry2D gg2d   = gridCoverage2D.getGridGeometry();
         final RenderedImage baseImg = gridCoverage2D.getRenderedImage();
-        final MathTransform2D coverageCRS_to_grid = gg2d.getGridToCRS2D().inverse();
+        // work on pixels coordinates.
+        final MathTransform2D coverageCRS_to_grid = gg2d.getGridToCRS2D(PixelOrientation.CENTER).inverse();
         final double envWidth       = envDest.getSpan(widthAxis);
         final double envHeight      = envDest.getSpan(heightAxis);
         final ColorModel cm         = baseImg.getColorModel();
@@ -277,7 +279,7 @@ public class PyramidCoverageBuilder {
 
                     //dest grid --> dest envelope coordinate --> base envelope --> base grid
                     //concatene : dest grid_to_crs, dest_crs_to_coverageCRS, coverageCRS_to_grid coverage 
-                    final MathTransform2D gridDest_to_crs = new AffineTransform2D(sx, 0, 0, -sy, min0 + sx * destMinX, max1 - sy * destMinY).inverse();
+                    final MathTransform2D gridDest_to_crs = new AffineTransform2D(sx, 0, 0, -sy, min0 + sx * (destMinX + 0.5), max1 - sy * (destMinY + 0.5)).inverse();
                     final MathTransform mt                = MathTransforms.concatenate(destCrs_to_covGrid, gridDest_to_crs);
 
                     final Resample resample = new Resample(mt, destImg, interpolation, fill);
@@ -309,80 +311,29 @@ public class PyramidCoverageBuilder {
     public void create(GridCoverage gridCoverage, CoverageStore coverageStore, Name coverageName,
             Map<Envelope, double[]> resolution_Per_Envelope, double[] fillValue) 
             throws DataStoreException, TransformException, FactoryException {
-        
-        final Dimension tileSize = new Dimension(tileWidth, tileHeight);
 
         final GridGeometry gg = gridCoverage.getGridGeometry();
         if (!(gg instanceof GridGeometry2D)) throw new IllegalArgumentException("GridGeometry not instance of GridGeometry2D");
 
-        final CoverageReference cv = coverageStore.create(coverageName);
+        final CoverageReference cv  = coverageStore.create(coverageName);
         if (!(cv instanceof PyramidalModel)) throw new IllegalArgumentException("CoverageStore parameter not instance of PyramidalModel");
-        final PyramidalModel pm = (PyramidalModel) cv;
+        final PyramidalModel pm     = (PyramidalModel) cv;
 
         //Image
         final RenderedImage baseImg = ((GridCoverage2D)gridCoverage).getRenderedImage();
-        final ColorModel cm = baseImg.getColorModel();
-        final int datatype  = cm.getColorSpace().getType();
-        final double[] fill = (fillValue == null) ? new double[cm.getNumComponents()] : fillValue;
-
-        final CoordinateReferenceSystem coverageCRS = ((GridGeometry2D)gg).getCoordinateReferenceSystem2D();
-        final MathTransform covCRS_to_grid = gg.getGridToCRS().inverse();
-        //one pyramid for each envelope.
+        final ColorModel cm         = baseImg.getColorModel();
+        final double[] fill         = (fillValue == null) ? new double[cm.getNumComponents()] : fillValue;
         for (Envelope envDest : resolution_Per_Envelope.keySet()) {
 
             final CoordinateReferenceSystem crs = envDest.getCoordinateReferenceSystem();
-            int minOrdinate = CoverageUtilities.getMinOrdinate(crs);
-            final Pyramid pyram = pm.createPyramid(crs);
-            
-            final MathTransform destCrs_to_coverageCRS = CRS.findMathTransform(CRSUtilities.getCRS2D(crs), coverageCRS, true);
-            final MathTransform destCRS_to_covGrid = MathTransforms.concatenate(destCrs_to_coverageCRS, covCRS_to_grid);
-            //coverage size in CoordinateReferenceSystem space.
-            final double envWidth  = envDest.getSpan(minOrdinate);
-            final double min0 = envDest.getMinimum(minOrdinate);
-            minOrdinate++;
-            final double envHeight = envDest.getSpan(minOrdinate);
-            final double max1 = envDest.getMaximum(minOrdinate);
-
-            final GeneralDirectPosition upperleft = new GeneralDirectPosition(crs);
-            final double[] pixelScales = resolution_Per_Envelope.get(envDest);
-            
-            upperleft.setLocation(min0, max1);
-            //one mosaic for each level scale
-            for (double pixelScal : pixelScales) {
-                //output image size
-                final int imgWidth  = (int) ((envWidth+pixelScal-1)  / pixelScal);
-                final int imgHeight = (int) ((envHeight+pixelScal-1) / pixelScal);
-                final double sx     = envWidth  / ((double)imgWidth);
-                final double sy     = envHeight / ((double)imgHeight);
-
-                //mosaic size
-                final int nbrTileX = (imgWidth  + tileWidth  - 1) / tileWidth;
-                final int nbrTileY = (imgHeight + tileHeight - 1) / tileHeight;
-
-                final GridMosaic mosaic = pm.createMosaic(pyram.getId(), new Dimension(nbrTileX, nbrTileY), tileSize, upperleft, pixelScal);
-                final String mosaicId   = mosaic.getId();
-
-                final Interpolation interpolation = Interpolation.create(PixelIteratorFactory.createRowMajorIterator(baseImg), interpolationCase, lanczosWindow);
-
-                for (int cTY = 0; cTY < nbrTileY; cTY++) {
-                    for (int cTX = 0; cTX < nbrTileX; cTX++) {
-                        final int destMinX  = cTX * tileWidth;
-                        final int destMinY  = cTY * tileHeight;
-                        final int cuTWidth  = Math.min(destMinX + tileWidth, imgWidth)-destMinX;
-                        final int cuTHeight = Math.min(destMinY + tileHeight, imgHeight)-destMinY;
-                        final WritableRenderedImage destImg = new BufferedImage(cuTWidth, cuTHeight, datatype);
-
-                        //dest grid --> dest envelope coordinate --> base envelope --> base grid
-                        //concatene : dest grid_to_crs, dest_crs_to_coverageCRS, coverageCRS_to_grid coverage 
-                        final MathTransform2D gridDest_to_crs = new AffineTransform2D(sx, 0, 0, -sy, min0 + sx * destMinX, max1 - sy * destMinY);
-                        final MathTransform mt  = MathTransforms.concatenate(gridDest_to_crs, destCRS_to_covGrid).inverse();
-                        
-                        final Resample resample = new Resample(mt, destImg, interpolation, fill);
-                        resample.fillImage();
-                        pm.writeTile(pyram.getId(), mosaicId, cTX, cTY, destImg);
-                    }
-                }
-            }
+            final int minOrdi0                  = CoverageUtilities.getMinOrdinate(crs);
+            final int minOrdi1                  = minOrdi0 + 1;
+            final DirectPosition upperLeft      = new GeneralDirectPosition(crs);
+            upperLeft.setOrdinate(minOrdi0, envDest.getMinimum(minOrdi0));
+            upperLeft.setOrdinate(minOrdi1, envDest.getMaximum(minOrdi1));
+            //one pyramid for each CoordinateReferenceSystem.
+            final Pyramid pyram                 = pm.createPyramid(crs);
+            resample(pm, pyram.getId(), ((GridCoverage2D)gridCoverage), resolution_Per_Envelope.get(envDest), upperLeft, envDest, minOrdi0, minOrdi1, fill);
         }
     }
 }
