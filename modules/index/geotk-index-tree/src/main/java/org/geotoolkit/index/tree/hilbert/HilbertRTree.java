@@ -94,7 +94,6 @@ public class HilbertRTree extends AbstractTree {
         super(nbMaxElement, crs, nodefactory);
         ArgumentChecks.ensureStrictlyPositive("impossible to create Hilbert Rtree with order <= 0", hilbertOrder);
         this.hilbertOrder = hilbertOrder;
-        setRoot(null);
     }
 
     /**
