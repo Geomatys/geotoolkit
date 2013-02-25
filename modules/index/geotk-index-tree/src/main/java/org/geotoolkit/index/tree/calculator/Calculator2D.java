@@ -326,7 +326,7 @@ public class Calculator2D extends Calculator {
                 }
                 candidate.setUserProperty(PROP_HILBERT_TABLE, groundZero);
             } else {
-                listOfCentroidChild.addAll(createPath(candidate, order, 0,1));
+                listOfCentroidChild.addAll(createPath(candidate, order, dims[0], dims[1]));
                 for (int i = 0, s = listOfCentroidChild.size(); i < s; i++) {
                     final DirectPosition ptCTemp = listOfCentroidChild.get(i);
                     ArgumentChecks.ensureNonNull("the crs ptCTemp", ptCTemp.getCoordinateReferenceSystem());

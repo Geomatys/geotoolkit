@@ -56,8 +56,8 @@ public class GeoCalculator2D extends GeoCalculator{
         final List<Node> listN = candidate.getChildren();
         listN.clear();
         if (order > 0) {
-            final double width  = bound.getSpan(0);
-            final double height = bound.getSpan(1);
+            final double width  = bound.getSpan(dims[0]);
+            final double height = bound.getSpan(dims[1]);
             final int dimH      = 2 << order - 1;
             int[] tabHV         = new int[dimH << 1];
 
@@ -66,22 +66,22 @@ public class GeoCalculator2D extends GeoCalculator{
             if (width * height <= 0) {
                 if (width <= 0) {
                     fract = height / (2 * nbCells);
-                    ymin  = bound.getLowerCorner().getOrdinate(1);
-                    xmin  = bound.getLowerCorner().getOrdinate(0);
+                    ymin  = bound.getLowerCorner().getOrdinate(dims[1]);
+                    xmin  = bound.getLowerCorner().getOrdinate(dims[0]);
                     for (int i = 1; i < 2 * nbCells; i += 2) {
                         final DirectPosition dpt = new GeneralDirectPosition(crs);
-                        dpt.setOrdinate(0, xmin);
-                        dpt.setOrdinate(1, ymin + i * fract);
+                        dpt.setOrdinate(dims[0], xmin);
+                        dpt.setOrdinate(dims[1], ymin + i * fract);
                         listOfCentroidChild.add(dpt);
                     }
                 } else {
                     fract = width / (2 * nbCells);
-                    ymin  = bound.getLowerCorner().getOrdinate(1);
-                    xmin  = bound.getLowerCorner().getOrdinate(0);
+                    ymin  = bound.getLowerCorner().getOrdinate(dims[1]);
+                    xmin  = bound.getLowerCorner().getOrdinate(dims[0]);
                     for (int i = 1; i < 2 * nbCells; i += 2) {
                         final DirectPosition dpt = new GeneralDirectPosition(crs);
-                        dpt.setOrdinate(0, xmin + i * fract);
-                        dpt.setOrdinate(1, ymin);
+                        dpt.setOrdinate(dims[0], xmin + i * fract);
+                        dpt.setOrdinate(dims[1], ymin);
                         listOfCentroidChild.add(dpt);
                     }
                 }
@@ -92,7 +92,7 @@ public class GeoCalculator2D extends GeoCalculator{
                 }
                 candidate.setUserProperty(PROP_HILBERT_TABLE, groundZero);
             } else {
-                listOfCentroidChild.addAll(createPath(candidate, order, 0,1));
+                listOfCentroidChild.addAll(createPath(candidate, order, dims[0], dims[1]));
                 for (int i = 0, s = listOfCentroidChild.size(); i < s; i++) {
                     final DirectPosition ptCTemp = listOfCentroidChild.get(i);
                     ArgumentChecks.ensureNonNull("the crs ptCTemp", ptCTemp.getCoordinateReferenceSystem());
@@ -118,16 +118,16 @@ public class GeoCalculator2D extends GeoCalculator{
      * @throws IllegalArgumentException if parameter dPt is null.
      * @return int[] table of length 2 which contains two coordinates.
      */
-    public static int[] getHilbCoord(final Node candidate, final DirectPosition dPt, final Envelope envelop, final int hilbertOrder) {
+    public int[] getHilbCoord(final Node candidate, final DirectPosition dPt, final Envelope envelop, final int hilbertOrder) {
         ArgumentChecks.ensureNonNull("DirectPosition dPt : ", dPt);
         if (!new GeneralEnvelope(envelop).contains(dPt)) {
             throw new IllegalArgumentException("Point is out of this node boundary");
         }
         final double div  = 2 << (hilbertOrder - 1);
-        final double divX = envelop.getSpan(0) / div;
-        final double divY = envelop.getSpan(1) / div;
-        final double hdx  = (Math.abs(dPt.getOrdinate(0) - envelop.getLowerCorner().getOrdinate(0)) / divX);
-        final double hdy  = (Math.abs(dPt.getOrdinate(1) - envelop.getLowerCorner().getOrdinate(1)) / divY);
+        final double divX = envelop.getSpan(dims[0]) / div;
+        final double divY = envelop.getSpan(dims[1]) / div;
+        final double hdx  = (Math.abs(dPt.getOrdinate(dims[0]) - envelop.getLowerCorner().getOrdinate(dims[0])) / divX);
+        final double hdy  = (Math.abs(dPt.getOrdinate(dims[1]) - envelop.getLowerCorner().getOrdinate(dims[1])) / divY);
         final int hx      = (hdx <= 1) ? 0 : 1;
         final int hy      = (hdy <= 1) ? 0 : 1;
         return new int[]{hx, hy};
@@ -148,8 +148,8 @@ public class GeoCalculator2D extends GeoCalculator{
         final int order       = (Integer) candidate.getUserProperty(PROP_HILBERT_ORDER);
         final int dimH        = 2 << order - 1; 
         if (calc.getSpace(bound) <= 0) {
-            final double w      = bound.getSpan(0);
-            final double h      = bound.getSpan(1);
+            final double w      = bound.getSpan(dims[0]);
+            final double h      = bound.getSpan(dims[1]);
             final int ordinate  = (w > h) ? 0 : 1;
             final int nbCells   = 2 << (2 * order - 1);
             final double fract  = bound.getSpan(ordinate) / nbCells;

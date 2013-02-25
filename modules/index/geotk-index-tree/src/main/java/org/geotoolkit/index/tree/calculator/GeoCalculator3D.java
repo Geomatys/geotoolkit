@@ -115,7 +115,7 @@ public class GeoCalculator3D extends GeoCalculator{
 
                 int[] tabHV = new int[dimH * dimH2];
 
-                listOfCentroidChild.addAll(createPath(candidate, order, 0, 1, 2));
+                listOfCentroidChild.addAll(createPath(candidate, order, dims[0], dims[1], dims[2]));
 
                 for (int i = 0, s = listOfCentroidChild.size(); i < s; i++) {
                     final DirectPosition ptCTemp = listOfCentroidChild.get(i);
