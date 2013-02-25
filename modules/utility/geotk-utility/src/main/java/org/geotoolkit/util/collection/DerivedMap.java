@@ -47,7 +47,10 @@ import org.geotoolkit.lang.Decorator;
  *
  * @since 2.0
  * @module
+ *
+ * @deprecated Replaced by {@link org.apache.sis.util.ObjectConverters#derivedMap}.
  */
+@Deprecated
 @Decorator(Map.class)
 public abstract class DerivedMap<BK,K,V> extends AbstractMap<K,V> implements Serializable {
     /**

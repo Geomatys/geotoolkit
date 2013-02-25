@@ -17,12 +17,7 @@
  */
 package org.geotoolkit.util;
 
-import java.util.Map;
-import java.util.Set;
 import java.util.Arrays;
-import java.util.Iterator;
-import java.util.Collection;
-import java.util.LinkedList;
 import java.util.Objects;
 import java.io.Serializable;
 import org.apache.sis.util.ComparisonMode;

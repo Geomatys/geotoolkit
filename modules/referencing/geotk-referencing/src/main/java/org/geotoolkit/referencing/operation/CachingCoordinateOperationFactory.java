@@ -35,7 +35,7 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.FactoryNotFoundException;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.collection.Cache;
+import org.apache.sis.util.collection.Cache;
 
 
 /**

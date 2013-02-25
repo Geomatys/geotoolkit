@@ -89,7 +89,6 @@ public final strictfp class CacheTest extends TestBase {
                 // Try to get the value 1 from the cache.
                 try {
                     final Cache.Handler<String> handler = cache.lock(key1);
-                    assertTrue(handler instanceof Cache<?,?>.Work.Wait);
                     value = handler.peek();
                     assertNotNull(value);
                     handler.putAndUnlock(value);
@@ -101,7 +100,6 @@ public final strictfp class CacheTest extends TestBase {
                 // Put value 2 in the cache.
                 try {
                     final Cache.Handler<String> handler = cache.lock(key2);
-                    assertTrue(handler instanceof Cache<?,?>.Work);
                     assertNull(handler.peek());
                     handler.putAndUnlock(value2);
                     assertSame(value2, cache.peek(key2));
@@ -115,7 +113,6 @@ public final strictfp class CacheTest extends TestBase {
          * Locks the cache as if we were writing.
          */
         final Cache.Handler<String> handler = cache.lock(key1);
-        assertTrue(handler instanceof Cache<?,?>.Work);
         /*
          * Creates another thread which starts writing and blocks. Lets this thread
          * sleep a bit for making sure that the other thread is really blocked.

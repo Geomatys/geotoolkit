@@ -48,9 +48,12 @@ import static org.apache.sis.util.ArgumentChecks.ensureValidIndex;
  *
  * @since 2.1
  * @module
+ *
+ * @deprecated Replaced by {@link org.apache.sis.util.collection.UnmodifiableArrayList}.
  */
+@Deprecated
 public class UnmodifiableArrayList<E> extends AbstractList<E>
-        implements CheckedCollection<E>, Serializable
+        implements CheckedCollection<E>, org.apache.sis.util.collection.CheckedContainer<E>, Serializable
 {
     /**
      * For compatibility with different versions.

@@ -81,8 +81,11 @@ import org.geotoolkit.internal.ReferenceQueueConsumer;
  *
  * @since 2.0
  * @module
+ *
+ * @deprecated Replaced by Apache SIS {@link org.apache.sis.util.collection.WeakValueHashMap}.
  */
 @ThreadSafe
+@Deprecated
 public class WeakValueHashMap<K,V> extends AbstractMap<K,V> {
     /**
      * Minimal capacity for {@link #table}.

@@ -24,7 +24,7 @@ import java.lang.reflect.UndeclaredThrowableException;
 import org.opengis.util.FactoryException;
 
 import org.geotoolkit.util.Utilities;
-import org.geotoolkit.util.collection.Cache;
+import org.apache.sis.util.collection.Cache;
 import org.geotoolkit.util.converter.Classes;
 
 

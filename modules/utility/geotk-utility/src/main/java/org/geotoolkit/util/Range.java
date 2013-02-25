@@ -72,7 +72,9 @@ import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
  * @module
  */
 @Immutable
-public class Range<T extends Comparable<? super T>> implements CheckedContainer<T>, Serializable  {
+public class Range<T extends Comparable<? super T>> implements CheckedContainer<T>,
+        org.apache.sis.util.collection.CheckedContainer<T>, Serializable
+{
     /**
      * For cross-version compatibility.
      */

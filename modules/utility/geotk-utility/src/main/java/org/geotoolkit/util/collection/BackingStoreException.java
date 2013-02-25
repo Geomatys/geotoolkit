@@ -48,11 +48,11 @@ import java.sql.SQLException;
  * @since 3.09 (derived from 2.3)
  * @module
  */
-public class BackingStoreException extends RuntimeException {
+public class BackingStoreException extends org.apache.sis.util.collection.BackingStoreException {
     /**
      * For cross-version compatibility.
      */
-    private static final long serialVersionUID = -1714319767053628606L;
+    private static final long serialVersionUID = -1714319767053628605L;
 
     /**
      * Constructs a new exception with no detail message.
@@ -86,52 +86,5 @@ public class BackingStoreException extends RuntimeException {
      */
     public BackingStoreException(final String message, final Throwable cause) {
         super(message, cause);
-    }
-
-    /**
-     * Returns the underlying {@linkplain #getCause() cause} as an exception of the given type,
-     * or rethrow the exception. More specifically, this method makes the following choices:
-     * <p>
-     * <ul>
-     *   <li>If the cause {@linkplain Class#isInstance(Object) is an instance} of the given
-     *       type, returns the cause.</li>
-     *   <li>Otherwise if the cause is an instance of {@link RuntimeException}, throws
-     *       that exception.</li>
-     *   <li>Otherwise rethrows {@code this}.</li>
-     * </ul>
-     * <p>
-     * This method should be used as in the example below:
-     *
-     * {@preformat java
-     *     void myMethod() throws IOException {
-     *         Collection c = ...;
-     *         try {
-     *             c.doSomeStuff();
-     *         } catch (BackingStoreException e) {
-     *             throw e.unwrapOrRethrow(IOException.class);
-     *         }
-     *     }
-     * }
-     *
-     * @param  <E>  The type of the exception to unwrap.
-     * @param  type The type of the exception to unwrap.
-     * @return The cause as an exception of the given type (never {@code null}).
-     * @throws RuntimeException If the cause is an instance of {@code RuntimeException},
-     *         in which case that instance is rethrown.
-     * @throws BackingStoreException if the cause is neither the given type or an instance
-     *         of {@link RuntimeException}, in which case {@code this} exception is rethrown.
-     */
-    @SuppressWarnings("unchecked")
-    public <E extends Exception> E unwrapOrRethrow(final Class<E> type)
-            throws RuntimeException, BackingStoreException
-    {
-        final Throwable cause = getCause();
-        if (type.isInstance(cause)) {
-            return (E) cause;
-        } else if (cause instanceof RuntimeException) {
-            throw (RuntimeException) cause;
-        } else {
-            throw this;
-        }
     }
 }

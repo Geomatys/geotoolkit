@@ -40,8 +40,6 @@ public final strictfp class VersionTest {
         assertEquals( 6, version.getMajor());
         assertEquals(11, version.getMinor());
         assertEquals( 2, version.getRevision());
-        assertSame(version.getRevision(), version.getComponent(2));
-        assertNull(version.getComponent(3));
 
         assertTrue(version.compareTo(new Version("6.11.2")) == 0);
         assertTrue(version.compareTo(new Version("6.8"   )) >  0);
@@ -59,8 +57,6 @@ public final strictfp class VersionTest {
         assertEquals( 1, version.getMajor());
         assertEquals( 6, version.getMinor());
         assertEquals("b2", version.getRevision());
-        assertSame(version.getRevision(), version.getComponent(2));
-        assertNull(version.getComponent(3));
 
         assertTrue(version.compareTo(new Version("1.6.b2")) == 0);
         assertTrue(version.compareTo(new Version("1.6.b1"))  > 0);

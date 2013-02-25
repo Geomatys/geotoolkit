@@ -43,7 +43,15 @@ import org.geotoolkit.util.collection.CheckedContainer;
  * @since 3.15
  * @module
  */
-public interface DiscreteCoordinateSystemAxis<T extends Comparable<? super T>> extends CheckedContainer<T> {
+public interface DiscreteCoordinateSystemAxis<T extends Comparable<? super T>> extends CheckedContainer<T>,
+        org.apache.sis.util.collection.CheckedContainer<T>
+{
+    /**
+     * Returns the type of values in this discrete axis.
+     */
+    @Override
+    Class<T> getElementType();
+
     /**
      * Returns the number of ordinate values.
      *
