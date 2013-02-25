@@ -700,15 +700,16 @@ public class ImageCoverageWriter extends GridCoverageWriter {
                 env = param.getEnvelope();
                 res = param.getResolution();
             }
+            final boolean hack = imageWriter.getClass().getName().equals("org.geotoolkit.image.io.plugin.NetcdfImageWriter"); // TODO, temporary hack!!
             if (crs == null && gridGeometry.isDefined(GridGeometry2D.CRS)) {
-                if (imageWriter instanceof MultidimensionalImageStore) {
+                if (imageWriter instanceof MultidimensionalImageStore || hack) {
                     crs = gridGeometry.getCoordinateReferenceSystem();
                 } else {
                     crs = gridGeometry.getCoordinateReferenceSystem2D();
                 }
             }
             if (env == null && gridGeometry.isDefined(GridGeometry2D.ENVELOPE)) {
-                if (imageWriter instanceof MultidimensionalImageStore) {
+                if (imageWriter instanceof MultidimensionalImageStore || hack) {
                     env = gridGeometry.getEnvelope();
                 } else {
                     env = gridGeometry.getEnvelope2D();

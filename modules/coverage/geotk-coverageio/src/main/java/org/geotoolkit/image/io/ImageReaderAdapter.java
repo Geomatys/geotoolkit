@@ -1120,12 +1120,6 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
         final boolean acceptStream;
 
         /**
-         * {@code true} if the {@link #main} provider accepts other kind of inputs than
-         * {@link ImageInputStream}.
-         */
-        private final boolean acceptOther;
-
-        /**
          * Creates an {@code ImageReaderAdapter.Spi} wrapping the given provider. The fields are
          * initialized as documented in the <a href="#skip-navbar_top">class javadoc</a>. It is up
          * to the subclass to initialize all other instance variables in order to provide working
@@ -1150,16 +1144,13 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
             extraStreamMetadataFormatNames       = main.getExtraStreamMetadataFormatNames();
             extraImageMetadataFormatNames        = main.getExtraImageMetadataFormatNames();
             boolean acceptStream = false;
-            boolean acceptOther  = false;
             for (final Class<?> type : main.getInputTypes()) {
                 if (type.isAssignableFrom(ImageInputStream.class)) {
                     acceptStream = true;
-                } else {
-                    acceptOther = true;
+                    break;
                 }
             }
             this.acceptStream = acceptStream;
-            this.acceptOther  = acceptOther;
         }
 
         /**
@@ -1284,10 +1275,10 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
             ensureNonNull("source", source);
             for (final Class<?> type : inputTypes) {
                 if (type.isInstance(source)) {
-                    if (acceptOther && main.canDecodeInput(source)) {
+                    if (main.canDecodeInput(source)) {
                         return true;
                     }
-                    if (acceptStream) {
+                    if (acceptStream && !ImageInputStream.class.isInstance(source)) {
                         final ImageInputStream in = Formats.createUncachedImageInputStream(source);
                         if (in != null) try {
                             return main.canDecodeInput(in);
