@@ -42,7 +42,7 @@ import org.geotoolkit.util.converter.NonconvertibleObjectException;
 import org.apache.sis.util.CharSequences;
 import org.geotoolkit.resources.Errors;
 
-import static org.geotoolkit.util.converter.Numbers.*;
+import static org.apache.sis.util.Numbers.*;
 
 
 /**
@@ -67,8 +67,11 @@ import static org.geotoolkit.util.converter.Numbers.*;
  *
  * @since 3.06
  * @module
+ *
+ * @deprecated Moved to Apache SIS {@link org.apache.sis.measure.RangeFormat}.
  */
-public class RangeFormat extends Format {
+@Deprecated
+public class RangeFormat extends org.apache.sis.measure.RangeFormat {
     /**
      * For cross-version compatibility.
      */
@@ -227,6 +230,7 @@ public class RangeFormat extends Format {
      * @throws IllegalArgumentException If the given type is not recognized by this constructor.
      */
     public RangeFormat(final Locale locale, final Class<?> elementClass) throws IllegalArgumentException {
+        super(locale, elementClass);
         this.elementClass = elementClass;
         if (Angle.class.isAssignableFrom(elementClass)) {
             elementFormat = AngleFormat.getInstance(locale);
@@ -686,7 +690,7 @@ public class RangeFormat extends Format {
             Number min = (Number) minValue;
             Number max = (Number) maxValue;
             if (type == Number.class) {
-                type = widestClass(finestClass(min), finestClass(max));
+                type = widestClass(narrowestClass(min), narrowestClass(max));
                 min  = cast(min, type);
                 max  = cast(max, type);
             }

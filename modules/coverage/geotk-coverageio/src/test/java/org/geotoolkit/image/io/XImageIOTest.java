@@ -30,7 +30,7 @@ import org.geotoolkit.image.SampleModels;
 import org.geotoolkit.internal.io.TemporaryFile;
 import org.geotoolkit.image.io.plugin.WorldFileImageReader;
 import org.geotoolkit.image.io.plugin.WorldFileImageWriter;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 import org.apache.sis.util.CharSequences;
 import org.geotoolkit.test.image.ImageTestBase;
 import org.geotoolkit.test.TestData;

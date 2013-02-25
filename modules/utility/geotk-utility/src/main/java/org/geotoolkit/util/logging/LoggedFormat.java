@@ -28,7 +28,7 @@ import java.util.logging.Logger;
 import java.util.logging.LogRecord;
 
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 import org.apache.sis.util.CharSequences;
 
 

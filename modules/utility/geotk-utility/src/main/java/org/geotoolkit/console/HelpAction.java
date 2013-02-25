@@ -29,7 +29,7 @@ import org.geotoolkit.io.LineWriter;
 import org.geotoolkit.io.TableWriter;
 import org.geotoolkit.io.LineWrapWriter;
 import org.geotoolkit.io.IndentedLineWriter;
-import org.geotoolkit.util.converter.Numbers;
+import org.apache.sis.util.Numbers;
 import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.resources.Descriptions;
 import org.geotoolkit.resources.Vocabulary;

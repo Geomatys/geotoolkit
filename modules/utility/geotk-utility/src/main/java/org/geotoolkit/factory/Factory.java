@@ -38,7 +38,7 @@ import org.opengis.metadata.quality.ConformanceResult;
 import org.geotoolkit.io.TableWriter;
 import org.geotoolkit.util.Strings;
 import org.geotoolkit.util.logging.Logging;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 import org.geotoolkit.resources.Descriptions;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.resources.Errors;

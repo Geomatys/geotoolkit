@@ -29,7 +29,7 @@ import org.opengis.metadata.maintenance.ScopeDescription;
 import org.opengis.metadata.identification.AggregateInformation;
 import org.opengis.metadata.identification.RepresentativeFraction;
 
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 import org.geotoolkit.util.collection.CheckedContainer;
 import org.geotoolkit.metadata.iso.DefaultMetadata;
 import org.geotoolkit.test.TestBase;

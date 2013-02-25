@@ -51,7 +51,7 @@ import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.util.LenientComparable;
 import org.geotoolkit.util.DefaultInternationalString;
 import org.geotoolkit.util.logging.Logging;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 import org.apache.sis.internal.util.Citations;
 import org.geotoolkit.internal.jaxb.gco.StringConverter;
 import org.geotoolkit.internal.jaxb.referencing.RS_Identifier;
@@ -825,12 +825,9 @@ nextKey:for (final Map.Entry<String,?> entry : properties.entrySet()) {
     protected int computeHashCode() {
         // Subclasses need to overrides this!!!!
         int code = (int) serialVersionUID;
-        final Class<?>[] types = Classes.getLeafInterfaces(getClass(), IdentifiedObject.class);
-        if (types != null) {
-            for (final Class<?> type : types) {
-                // Use a plain addition in order to be insensitive to array element order.
-                code += type.hashCode();
-            }
+        for (final Class<?> type : Classes.getLeafInterfaces(getClass(), IdentifiedObject.class)) {
+            // Use a plain addition in order to be insensitive to array element order.
+            code += type.hashCode();
         }
         return code;
     }

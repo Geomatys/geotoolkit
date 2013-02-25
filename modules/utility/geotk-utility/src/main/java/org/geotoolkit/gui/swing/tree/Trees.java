@@ -37,7 +37,7 @@ import org.w3c.dom.Node;
 import org.geotoolkit.lang.Debug;
 import org.geotoolkit.lang.Static;
 import org.apache.sis.util.ArraysExt;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 import org.geotoolkit.internal.io.IOUtilities;
 
 
@@ -182,7 +182,7 @@ public final class Trees extends Static {
         }
         if (iterator != null) {
             final Class<?>[] types = Classes.getLeafInterfaces(object.getClass(), baseInterface);
-            node = new DefaultMutableTreeNode(Classes.getShortName(types != null ? types[0] : null));
+            node = new DefaultMutableTreeNode(Classes.getShortName(types.length != 0 ? types[0] : null));
             while (iterator.hasNext()) {
                 node.add(objectToSwing(iterator.next()));
             }

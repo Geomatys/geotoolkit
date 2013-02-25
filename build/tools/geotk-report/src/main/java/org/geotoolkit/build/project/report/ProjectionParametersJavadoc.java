@@ -39,7 +39,7 @@ import org.apache.sis.util.ArraysExt;
 
 import org.geotoolkit.util.Deprecable;
 import org.geotoolkit.util.NumberRange;
-import org.geotoolkit.util.converter.Numbers;
+import org.apache.sis.util.Numbers;
 import org.geotoolkit.measure.Latitude;
 import org.geotoolkit.measure.Longitude;
 import org.geotoolkit.metadata.iso.extent.DefaultGeographicBoundingBox;
@@ -354,7 +354,7 @@ public final class ProjectionParametersJavadoc extends JavadocUpdater {
         if (defaultValue != null) {
             if (defaultValue instanceof Number) {
                 // Trim the fractional part if unnecessary (e.g. "0.0" to "0").
-                defaultValue = Numbers.finestNumber((Number) defaultValue);
+                defaultValue = Numbers.narrowestNumber((Number) defaultValue);
             } else if (defaultValue instanceof String) {
                 return "{@code \"" + defaultValue + "\"}";
             }

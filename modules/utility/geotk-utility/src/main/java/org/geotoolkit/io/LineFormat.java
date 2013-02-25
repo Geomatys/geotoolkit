@@ -30,7 +30,7 @@ import java.io.ObjectOutputStream;
 import java.io.IOException;
 
 import org.apache.sis.util.ArraysExt;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 import org.geotoolkit.util.converter.ClassFilter;
 import org.geotoolkit.util.converter.ObjectConverter;
 import org.geotoolkit.util.converter.ConverterRegistry;

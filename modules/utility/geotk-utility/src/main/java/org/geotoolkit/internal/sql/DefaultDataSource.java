@@ -33,7 +33,7 @@ import javax.sql.DataSource;
 import org.geotoolkit.resources.Loggings;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.util.logging.Logging;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 
 
 /**

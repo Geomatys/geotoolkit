@@ -25,7 +25,7 @@ import net.jcip.annotations.Immutable;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.collection.CheckedContainer;
 
-import static org.geotoolkit.util.converter.Numbers.isInteger;
+import static org.apache.sis.util.Numbers.isInteger;
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 
 
@@ -70,10 +70,13 @@ import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
  *
  * @since 2.5
  * @module
+ *
+ * @deprecated Moved to Apache SIS {@link org.apache.sis.measure.Range}.
  */
 @Immutable
-public class Range<T extends Comparable<? super T>> implements CheckedContainer<T>,
-        org.apache.sis.util.collection.CheckedContainer<T>, Serializable
+@Deprecated
+public class Range<T extends Comparable<? super T>> extends org.apache.sis.measure.Range
+        implements CheckedContainer<T>, Serializable
 {
     /**
      * For cross-version compatibility.
@@ -137,6 +140,7 @@ public class Range<T extends Comparable<? super T>> implements CheckedContainer<
                  final T minValue, final boolean isMinIncluded,
                  final T maxValue, final boolean isMaxIncluded)
     {
+        super(elementClass, minValue, isMinIncluded, maxValue, isMaxIncluded);
         ensureNonNull("elementClass", elementClass);
         this.elementClass = elementClass;
         /*
@@ -266,28 +270,6 @@ public class Range<T extends Comparable<? super T>> implements CheckedContainer<
     }
 
     /**
-     * Returns {@code true} if this range is empty. A range is empty if the
-     * {@linkplain #getMinValue minimum value} is smaller than the
-     * {@linkplain #getMaxValue maximum value}, or if they are equals while
-     * at least one of them is exclusive.
-     *
-     * @return {@code true} if this range is empty.
-     *
-     * @see javax.media.jai.util.Range#isEmpty
-     */
-    public boolean isEmpty() {
-        if (minValue == null || maxValue == null) {
-            return false; // Unbounded: can't be empty.
-        }
-        final int c = minValue.compareTo(maxValue);
-        if (c < 0) {
-            return false; // Minimum is smaller than maximum.
-        }
-        // If min and max are equal, empty if at least one of them is exclusive.
-        return c != 0 || !isMinIncluded || !isMaxIncluded;
-    }
-
-    /**
      * Returns {@code true} if this range contains the given value. A range never contains the
      * {@code null} value. This is consistent with the <a href="#skip-navbar_top">class javadoc</a>
      * stating that null {@linkplain #getMinValue minimum} or {@linkplain #getMaxValue maximum}
@@ -298,7 +280,8 @@ public class Range<T extends Comparable<? super T>> implements CheckedContainer<
      * @throws IllegalArgumentException is the given value can not be converted to a valid type
      *         through widening conversion.
      */
-    public boolean contains(final Comparable<?> value) throws IllegalArgumentException {
+    @Override
+    public boolean contains(final Comparable value) throws IllegalArgumentException {
         if (value == null) {
             return false;
         }

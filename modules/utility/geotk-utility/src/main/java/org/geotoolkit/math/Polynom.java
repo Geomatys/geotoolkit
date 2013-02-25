@@ -22,7 +22,7 @@ import java.util.Arrays;
 import static java.lang.Math.*;
 
 import org.apache.sis.util.ArraysExt;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 
 
 /**

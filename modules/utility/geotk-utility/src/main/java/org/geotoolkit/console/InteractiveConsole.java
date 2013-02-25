@@ -26,7 +26,7 @@ import javax.vecmath.MismatchedSizeException;
 import org.geotoolkit.io.X364;
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.util.ArraysExt;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 import org.geotoolkit.internal.InternalUtilities;
 
 import static org.geotoolkit.io.X364.*;

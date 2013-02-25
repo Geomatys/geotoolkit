@@ -29,7 +29,7 @@ import org.opengis.metadata.quality.ConformanceResult;
 import org.geotoolkit.lang.Debug;
 import org.apache.sis.util.CharSequences;
 import org.geotoolkit.util.logging.Logging;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;

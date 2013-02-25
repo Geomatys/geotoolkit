@@ -23,7 +23,7 @@ import java.lang.ref.ReferenceQueue;
 
 import org.apache.sis.util.Disposable;
 import org.geotoolkit.util.logging.Logging;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 
 
 /**

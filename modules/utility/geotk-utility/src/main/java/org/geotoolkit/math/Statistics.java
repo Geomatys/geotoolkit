@@ -33,7 +33,7 @@ import org.geotoolkit.internal.io.IOUtilities;
 
 import static java.lang.Math.*;
 import static java.lang.Double.isNaN;
-import static org.geotoolkit.util.converter.Numbers.isInteger;
+import static org.apache.sis.util.Numbers.isInteger;
 
 
 /**

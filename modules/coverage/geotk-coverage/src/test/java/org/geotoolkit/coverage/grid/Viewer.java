@@ -36,7 +36,7 @@ import javax.media.jai.PlanarImage;
 import org.opengis.util.InternationalString;
 
 import org.apache.sis.util.CharSequences;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 import org.geotoolkit.coverage.GridSampleDimension;
 
 

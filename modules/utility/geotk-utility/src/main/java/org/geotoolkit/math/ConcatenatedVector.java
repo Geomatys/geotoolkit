@@ -18,7 +18,7 @@
 package org.geotoolkit.math;
 
 import java.io.Serializable;
-import org.geotoolkit.util.converter.Numbers;
+import org.apache.sis.util.Numbers;
 
 
 /**

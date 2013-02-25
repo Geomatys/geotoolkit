@@ -19,20 +19,12 @@ package org.geotoolkit.util.converter;
 
 import java.util.Set;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.lang.reflect.Type;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.lang.reflect.WildcardType;
-import java.lang.reflect.GenericArrayType;
-import java.lang.reflect.ParameterizedType;
 
 import org.geotoolkit.lang.Static;
 import org.apache.sis.util.ArraysExt;
-import org.geotoolkit.util.collection.XCollections;
 
 
 /**
@@ -57,7 +49,10 @@ import org.geotoolkit.util.collection.XCollections;
  *
  * @since 2.5
  * @module
+ *
+ * @deprecated Moved to {@link org.apache.sis.util.Classes}.
  */
+@Deprecated
 public final class Classes extends Static {
     /**
      * Methods to be rejected by {@link #isGetter(Method)}. They are mostly methods inherited
@@ -110,33 +105,12 @@ public final class Classes extends Static {
      *         number of dimensions (which may be negative), or {@code null}.
      *
      * @since 3.03
+     *
+     * @deprecated Moved to {@link org.apache.sis.util.Classes#changeArrayDimension(java.lang.Class, int)}.
      */
+    @Deprecated
     public static Class<?> changeArrayDimension(Class<?> element, int dimension) {
-        if (dimension != 0 && element != null) {
-            if (dimension < 0) {
-                do element = element.getComponentType();
-                while (element!=null && ++dimension != 0);
-            } else if (element != Void.TYPE) {
-                final StringBuilder buffer = new StringBuilder();
-                do buffer.insert(0, '[');
-                while (--dimension != 0);
-                if (element.isPrimitive()) {
-                    buffer.append(Numbers.getInternal(element));
-                } else if (element.isArray()) {
-                    buffer.append(element.getName());
-                } else {
-                    buffer.append('L').append(element.getName()).append(';');
-                }
-                final String name = buffer.toString();
-                try {
-                    element = Class.forName(name);
-                } catch (ClassNotFoundException e) {
-                    throw new TypeNotPresentException(name, e);
-                    // Should never happen because we are creating an array of an existing class.
-                }
-            }
-        }
-        return element;
+        return org.apache.sis.util.Classes.changeArrayDimension(element, dimension);
     }
 
     /**
@@ -164,9 +138,12 @@ public final class Classes extends Static {
      * @param  field The field for which to obtain the parameterized type.
      * @return The upper bound of parameterized type, or {@code null} if the given field
      *         is not of a parameterized type.
+     *
+     * @deprecated Moved to {@link org.apache.sis.util.Classes#boundOfParameterizedAttribute(Field)}.
      */
+    @Deprecated
     public static Class<?> boundOfParameterizedAttribute(final Field field) {
-        return getActualTypeArgument(field.getGenericType());
+        return org.apache.sis.util.Classes.boundOfParameterizedAttribute(field);
     }
 
     /**
@@ -183,48 +160,12 @@ public final class Classes extends Static {
      * @param  method The getter or setter method for which to obtain the parameterized type.
      * @return The upper bound of parameterized type, or {@code null} if the given method
      *         do not operate on an object of a parameterized type.
+     *
+     * @deprecated Moved to {@link org.apache.sis.util.Classes#boundOfParameterizedAttribute(Method)}.
      */
+    @Deprecated
     public static Class<?> boundOfParameterizedAttribute(final Method method) {
-        Class<?> c = getActualTypeArgument(method.getGenericReturnType());
-        if (c == null) {
-            final Type[] parameters = method.getGenericParameterTypes();
-            if (parameters != null && parameters.length == 1) {
-                c = getActualTypeArgument(parameters[0]);
-            }
-        }
-        return c;
-    }
-
-    /**
-     * Delegates to {@link ParameterizedType#getActualTypeArguments} and returns the result as a
-     * {@link Class}, provided that every objects are of the expected classes and the result was
-     * an array of length 1 (so there is no ambiguity). Otherwise returns {@code null}.
-     */
-    private static Class<?> getActualTypeArgument(Type type) {
-        if (type instanceof ParameterizedType) {
-            Type[] p = ((ParameterizedType) type).getActualTypeArguments();
-            while (p != null && p.length == 1) {
-                type = p[0];
-                if (type instanceof WildcardType) {
-                    p = ((WildcardType) type).getUpperBounds();
-                    continue;
-                }
-                /*
-                 * At this point we are not going to continue the loop anymore.
-                 * Check if we have an array, then check the (component) class.
-                 */
-                int dimension = 0;
-                while (type instanceof GenericArrayType) {
-                    type = ((GenericArrayType) type).getGenericComponentType();
-                    dimension++;
-                }
-                if (type instanceof Class<?>) {
-                    return changeArrayDimension((Class<?>) type, dimension);
-                }
-                break; // Unknown type.
-            }
-        }
-        return null;
+        return org.apache.sis.util.Classes.boundOfParameterizedAttribute(method);
     }
 
     /**
@@ -245,14 +186,11 @@ public final class Classes extends Static {
      *
      * @see Class#asSubclass(Class)
      *
-     * @since 3.09
+     * @deprecated Moved to {@link org.apache.sis.util.Classes#asSubclassOrNull(Class, Class)}.
      */
-    @SuppressWarnings({"unchecked","rawtypes"})
+    @Deprecated
     public static <U> Class<? extends U> asSubclassOrNull(final Class<?> type, final Class<U> sub) {
-        // Design note: We are required to return null if 'sub' is null (not to return 'type'
-        // unchanged), because if we returned 'type', we would have an unsafe cast if this
-        // method is invoked indirectly from a parameterized method.
-        return (type != null && sub != null && sub.isAssignableFrom(type)) ? (Class) type : null;
+        return org.apache.sis.util.Classes.asSubclassOrNull(type, sub);
     }
 
     /**
@@ -273,7 +211,7 @@ public final class Classes extends Static {
      */
     @SuppressWarnings("unchecked")
     public static <T> Class<? extends T> getClass(final T object) {
-        return (object != null) ? (Class<? extends T>) object.getClass() : null;
+        return org.apache.sis.util.Classes.getClass(object);
     }
 
     /**
@@ -290,11 +228,7 @@ public final class Classes extends Static {
      * @since 3.00
      */
     public static <T> Set<Class<? extends T>> getClasses(final Collection<? extends T> objects) {
-        final Set<Class<? extends T>> types = new LinkedHashSet<>();
-        for (final T object : objects) {
-            types.add(getClass(object));
-        }
-        return types;
+        return org.apache.sis.util.Classes.getClasses(objects);
     }
 
     /**
@@ -311,29 +245,7 @@ public final class Classes extends Static {
      * @since 3.01
      */
     public static Set<Class<?>> getAllInterfaces(Class<?> type) {
-        Set<Class<?>> interfaces = null;
-        while (type != null) {
-            interfaces = getAllInterfaces(type, interfaces);
-            type = type.getSuperclass();
-        }
-        return (interfaces != null) ? interfaces : Collections.<Class<?>>emptySet();
-    }
-
-    /**
-     * Adds to the given collection every interfaces implemented by the given class or interface.
-     */
-    private static Set<Class<?>> getAllInterfaces(final Class<?> type, Set<Class<?>> addTo) {
-        final Class<?>[] interfaces = type.getInterfaces();
-        for (int i=0; i<interfaces.length; i++) {
-            final Class<?> candidate = interfaces[i];
-            if (addTo == null) {
-                addTo = new LinkedHashSet<>(XCollections.hashMapCapacity(interfaces.length - i));
-            }
-            if (addTo.add(candidate)) {
-                getAllInterfaces(candidate, addTo);
-            }
-        }
-        return addTo;
+        return org.apache.sis.util.Classes.getAllInterfaces(type);
     }
 
     /**
@@ -409,43 +321,7 @@ next:       for (final Class<?> candidate : candidates) {
      * @since 3.01 (derived from 2.5)
      */
     public static Class<?> findSpecializedClass(final Collection<?> objects) {
-        final Set<Class<?>> types = getClasses(objects);
-        types.remove(null);
-        /*
-         * Removes every classes in the types collection which are assignable from an other
-         * class from the same collection. As a result, the collection should contains only
-         * leaf classes.
-         */
-        for (final Iterator<Class<?>> it=types.iterator(); it.hasNext();) {
-            final Class<?> candidate = it.next();
-            for (final Class<?> type : types) {
-                if (candidate != type && candidate.isAssignableFrom(type)) {
-                    it.remove();
-                    break;
-                }
-            }
-        }
-        return common(types);
-    }
-
-    /**
-     * Returns the most specific class which is a common parent of all the specified classes.
-     * This method is not public in order to make sure that it contains only classes, not
-     * interfaces, since our implementation is not designed for multi-inheritances.
-     *
-     * @param  types The collection where to search for a common parent.
-     * @return The common parent, or {@code null} if the given collection is empty.
-     */
-    private static Class<?> common(final Set<Class<?>> types) {
-        final Iterator<Class<?>> it = types.iterator();
-        if (!it.hasNext()) {
-            return null;
-        }
-        Class<?> type = it.next();
-        while (it.hasNext()) {
-            type = findCommonClass(type, it.next());
-        }
-        return type;
+        return org.apache.sis.util.Classes.findSpecializedClass(objects);
     }
 
     /**
@@ -463,9 +339,7 @@ next:       for (final Class<?> candidate : candidates) {
      * @since 3.01 (derived from 2.5)
      */
     public static Class<?> findCommonClass(final Collection<?> objects) {
-        final Set<Class<?>> types = getClasses(objects);
-        types.remove(null);
-        return common(types);
+        return org.apache.sis.util.Classes.findCommonClass(objects);
     }
 
     /**
@@ -483,19 +357,7 @@ next:       for (final Class<?> candidate : candidates) {
      * @since 3.01 (derived from 3.00)
      */
     public static Class<?> findCommonClass(Class<?> c1, Class<?> c2) {
-        if (c1 == null) return c2;
-        if (c2 == null) return c1;
-        do {
-            if (c1.isAssignableFrom(c2)) {
-                return c1;
-            }
-            if (c2.isAssignableFrom(c1)) {
-                return c2;
-            }
-            c1 = c1.getSuperclass();
-            c2 = c2.getSuperclass();
-        } while (c1 != null && c2 != null);
-        return Object.class;
+        return org.apache.sis.util.Classes.findCommonClass(c1, c2);
     }
 
     /**
@@ -512,18 +374,7 @@ next:       for (final Class<?> candidate : candidates) {
      * @since 3.01
      */
     public static Set<Class<?>> findCommonInterfaces(final Class<?> c1, final Class<?> c2) {
-        final Set<Class<?>> interfaces = getAllInterfaces(c1);
-        final Set<Class<?>> buffer     = getAllInterfaces(c2); // To be recycled.
-        interfaces.retainAll(buffer);
-        for (Iterator<Class<?>> it=interfaces.iterator(); it.hasNext();) {
-            final Class<?> candidate = it.next();
-            buffer.clear(); // Safe because the buffer can not be Collections.EMPTY_SET at this point.
-            getAllInterfaces(candidate, buffer);
-            if (interfaces.removeAll(buffer)) {
-                it = interfaces.iterator();
-            }
-        }
-        return interfaces;
+        return org.apache.sis.util.Classes.findCommonInterfaces(c1, c2);
     }
 
     /**
@@ -548,31 +399,7 @@ next:       for (final Class<?> candidate : candidates) {
      * @since 3.01 (derived from 2.5)
      */
     public static boolean implementSameInterfaces(final Class<?> object1, final Class<?> object2, final Class<?> base) {
-        if (object1 == object2) {
-            return true;
-        }
-        if (object1 == null || object2 == null) {
-            return false;
-        }
-        final Class<?>[] c1 = getLeafInterfaces(object1, base);
-        final Class<?>[] c2 = getLeafInterfaces(object2, base);
-        /*
-         * For each interface in the 'c1' array, check if
-         * this interface exists also in the 'c2' array.
-         */
-        int n = (c2 != null) ? c2.length : 0;
-        if (c1 != null) {
-compare:    for (final Class<?> c : c1) {
-                for (int j=n; --j>=0;) {
-                    if (c == c2[j]) {
-                        System.arraycopy(c2, j+1, c2, j, --n-j);
-                        continue compare;
-                    }
-                }
-                return false; // Interface not found in 'c2'.
-            }
-        }
-        return n == 0; // If n>0, at least one interface was not found in 'c1'.
+        return org.apache.sis.util.Classes.implementSameInterfaces(object1, object2, base);
     }
 
     /**
@@ -595,18 +422,7 @@ compare:    for (final Class<?> c : c1) {
      * @see Class#getSimpleName()
      */
     public static String getShortName(Class<?> classe) {
-        if (classe == null) {
-            return "<*>";
-        }
-        Class<?> enclosing = classe.getEnclosingClass();
-        while (classe.isAnonymousClass()) {
-            classe = classe.getSuperclass();
-        }
-        String name = classe.getSimpleName();
-        if (enclosing != null) {
-            name = getShortName(enclosing) + '.' + name;
-        }
-        return name;
+        return org.apache.sis.util.Classes.getShortName(classe);
     }
 
     /**
@@ -620,7 +436,7 @@ compare:    for (final Class<?> c : c1) {
      * @see #getShortName(Class)
      */
     public static String getShortClassName(final Object object) {
-        return getShortName(getClass(object));
+        return org.apache.sis.util.Classes.getShortClassName(object);
     }
 
     /**
@@ -644,17 +460,7 @@ compare:    for (final Class<?> c : c1) {
      * @since 3.12
      */
     public static boolean isAssignableTo(final Class<?> type, final Class<?>... allowedTypes) {
-        if (type != null) {
-            if (allowedTypes == null) {
-                return true;
-            }
-            for (final Class<?> candidate : allowedTypes) {
-                if (candidate != null && candidate.isAssignableFrom(type)) {
-                    return true;
-                }
-            }
-        }
-        return false;
+        return org.apache.sis.util.Classes.isAssignableTo(type, allowedTypes);
     }
 
     /**
@@ -687,10 +493,6 @@ compare:    for (final Class<?> c : c1) {
      * @since 3.20
      */
     public static boolean isPossibleGetter(final Method method) {
-        return method.getReturnType() != Void.TYPE &&
-               method.getParameterTypes().length == 0 &&
-              !method.isSynthetic() &&
-              !method.isAnnotationPresent(Deprecated.class) &&
-              !ArraysExt.contains(EXCLUDES, method.getName());
+        return org.apache.sis.util.Classes.isPossibleGetter(method);
     }
 }

@@ -32,7 +32,7 @@ import org.geotoolkit.lang.Configuration;
 import org.geotoolkit.lang.Static;
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.Exceptions;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 
 
 /**

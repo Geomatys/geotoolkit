@@ -27,7 +27,7 @@ import org.geotoolkit.internal.sql.Dialect;
 import org.geotoolkit.io.X364;
 import org.geotoolkit.util.Version;
 import org.apache.sis.util.CharSequences;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.resources.Loggings;
 

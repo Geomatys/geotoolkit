@@ -31,8 +31,8 @@ import org.geotoolkit.referencing.factory.AbstractAuthorityFactory;
 import org.geotoolkit.referencing.operation.AuthorityBackedFactory;
 import org.geotoolkit.referencing.operation.AbstractCoordinateOperation;
 import org.geotoolkit.referencing.operation.CachingCoordinateOperationFactory;
-import org.geotoolkit.util.converter.Classes;
 
+import org.apache.sis.util.Classes;
 import org.junit.*;
 import static org.junit.Assume.*;
 import static org.geotoolkit.test.Assert.*;

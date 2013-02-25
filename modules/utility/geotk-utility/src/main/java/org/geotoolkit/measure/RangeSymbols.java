@@ -30,7 +30,10 @@ import org.geotoolkit.util.Cloneable;
  *
  * @since 3.06
  * @module
+ *
+ * @deprecated No replacement.
  */
+@Deprecated
 public class RangeSymbols implements Cloneable {
     /**
      * The character opening a range in which the minimal value is inclusive.

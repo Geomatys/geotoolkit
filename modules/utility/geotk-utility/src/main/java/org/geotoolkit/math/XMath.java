@@ -21,7 +21,7 @@ import java.util.Arrays;
 import org.apache.sis.math.MathFunctions;
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.lang.Workaround;
-import org.geotoolkit.util.converter.Numbers;
+import org.apache.sis.util.Numbers;
 import org.geotoolkit.resources.Errors;
 
 
