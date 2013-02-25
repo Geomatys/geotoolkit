@@ -48,7 +48,7 @@ import org.apache.sis.internal.util.Citations;
 import org.apache.sis.util.iso.Types;
 import org.geotoolkit.internal.image.io.DataTypes;
 import org.geotoolkit.util.Strings;
-import org.geotoolkit.util.NullArgumentException;
+import org.apache.sis.util.NullArgumentException;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.naming.DefaultNameSpace;
 import org.geotoolkit.lang.Builder;

@@ -46,7 +46,7 @@ import org.opengis.referencing.cs.CoordinateSystemAxis;
 
 import org.geotoolkit.util.Range;
 import org.apache.sis.util.ArraysExt;
-import org.geotoolkit.util.Localized;
+import org.apache.sis.util.Localized;
 import org.geotoolkit.util.DateRange;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.converter.Classes;

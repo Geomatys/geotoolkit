@@ -35,8 +35,11 @@ package org.geotoolkit.util;
  *
  * @since 3.00
  * @module
+ *
+ * @deprecated Replaced by Apache SIS {@link org.apache.sis.util.NullArgumentException}.
  */
-public class NullArgumentException extends NullPointerException {
+@Deprecated
+public class NullArgumentException extends org.apache.sis.util.NullArgumentException {
     /**
      * For cross-version compatibility.
      */

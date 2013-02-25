@@ -17,17 +17,11 @@
  */
 package org.geotoolkit.util;
 
-import java.util.Map;
-import java.util.HashMap;
-import java.util.Properties;
-import java.util.MissingResourceException;
-import java.io.InputStream;
 import org.apache.sis.util.iso.Types;
 
 import org.opengis.util.CodeList;
 import org.opengis.annotation.UML;
 import org.geotoolkit.lang.Static;
-import org.geotoolkit.util.collection.BackingStoreException;
 
 
 /**

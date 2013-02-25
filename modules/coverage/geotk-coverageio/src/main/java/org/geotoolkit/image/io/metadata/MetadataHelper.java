@@ -89,7 +89,7 @@ public class MetadataHelper implements Localized {
     /**
      * The image reader or writer for which we are creating metadata, or {@code null} if none.
      */
-    private final Localized owner;
+    private final org.apache.sis.util.Localized owner;
 
     /**
      * The math transform factory, fetched only if needed.
@@ -107,7 +107,7 @@ public class MetadataHelper implements Localized {
      * @param owner The image reader or writer for which we are creating metadata,
      *        or {@code null} if none.
      */
-    public MetadataHelper(final Localized owner) {
+    public MetadataHelper(final org.apache.sis.util.Localized owner) {
         this.owner = owner;
     }
 

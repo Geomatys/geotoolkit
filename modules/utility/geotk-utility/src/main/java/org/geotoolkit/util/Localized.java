@@ -28,8 +28,11 @@ import java.util.Locale;
  *
  * @since 3.05
  * @module
+ *
+ * @deprecated Moved to Apache SIS {@link org.apache.sis.util.Localized}.
  */
-public interface Localized {
+@Deprecated
+public interface Localized extends org.apache.sis.util.Localized {
     /**
      * Returns the locale of the implemented service. Some implementations may return
      * {@code null} if no locale is explicitly defined. In such case, the locale to use
@@ -37,5 +40,6 @@ public interface Localized {
      *
      * @return The locale, or {@code null} if not explicitly defined.
      */
+    @Override
     Locale getLocale();
 }
