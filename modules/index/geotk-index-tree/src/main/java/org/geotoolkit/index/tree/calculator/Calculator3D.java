@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.index.tree.calculator;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import org.geotoolkit.geometry.GeneralDirectPosition;
@@ -324,8 +325,7 @@ public class Calculator3D extends Calculator {
         ArgumentChecks.ensurePositive("impossible to create Hilbert Curve with negative indice", order);
         candidate.getChildren().clear();
         final CoordinateReferenceSystem crs = bound.getCoordinateReferenceSystem();
-        final List<DirectPosition> listOfCentroidChild = (List<DirectPosition>) candidate.getUserProperty(PROP_CENTROIDS);
-        listOfCentroidChild.clear();
+        final List<DirectPosition> listOfCentroidChild = new ArrayList<DirectPosition>();
         candidate.setUserProperty(PROP_ISLEAF, true);
         candidate.setUserProperty(PROP_HILBERT_ORDER, order);
         candidate.setBound(bound);

@@ -248,7 +248,6 @@ public class HilbertRTree extends AbstractTree {
             if (lSp != null) {
                 final Node lsp0 = lSp.get(0);
                 final Node lsp1 = lSp.get(1);
-                ((List<DirectPosition>) candidate.getUserProperty(PROP_CENTROIDS)).clear();
                 candidate.getChildren().clear();
                 candidate.setUserProperty(PROP_ISLEAF, false);
                 candidate.setUserProperty(PROP_HILBERT_ORDER, 0);
@@ -792,7 +791,6 @@ public class HilbertRTree extends AbstractTree {
     public static Node createCell(final Tree tree, final Node parent, final DirectPosition centroid, final int hilbertValue, final List<Envelope> entries) {
         final Node cell = tree.getNodeFactory().createNode(tree, parent, centroid, centroid, null, entries);
         cell.setUserProperty(PROP_HILBERT_VALUE, hilbertValue);
-        cell.setUserProperty(PROP_CENTROID, centroid);
         return cell;
     }
 
@@ -833,7 +831,6 @@ public class HilbertRTree extends AbstractTree {
             final int hOrder = (size <= maxElts) ? 0 : (int)((Math.log(size-1)-Math.log(maxElts))/(diment*LN2)) + 1;
             assert hOrder <= ((HilbertRTree)tree).getHilbertOrder() : "too much elements to stock in tree leaf : hilbertOrder computed = "+hOrder;
             result.setUserProperty(PROP_ISLEAF, true);
-            result.setUserProperty(PROP_CENTROIDS, new ArrayList<DirectPosition>());
             final Envelope bound = DefaultTreeUtils.getEnveloppeMin(listEntries);
             tree.getCalculator().createBasicHL(result, hOrder, bound);
             for (Envelope ent : listEntries) {

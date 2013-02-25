@@ -34,8 +34,6 @@ public abstract class Node {
     public static final String PROP_HILBERT_ORDER = "hilbertOrder";
     public static final String PROP_HILBERT_TABLE = "tabHV";
     public static final String PROP_HILBERT_VALUE = "hilbertValue";
-    public static final String PROP_CENTROID = "centroid";
-    public static final String PROP_CENTROIDS = "centroids";
             
     protected Node parent;
     protected final Tree tree;
