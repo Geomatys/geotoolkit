@@ -217,7 +217,7 @@ public class Calculator3D extends Calculator {
     public double getEdge(final Envelope envelop) {
         double result = 0;
         for(int i = 0,l = dims.length;i<l; i++) {
-            for(int j = i+1; j<l; j++) {
+            for(int j = i + 1; j<l; j++) {
                 result += envelop.getSpan(dims[i]) * envelop.getSpan(dims[j]);
             }
         }
@@ -332,22 +332,23 @@ public class Calculator3D extends Calculator {
         final List<Node> listN = candidate.getChildren();
         listN.clear();
         if (order > 0) {
-            final int dim = 2<<((Integer) candidate.getUserProperty(PROP_HILBERT_ORDER))-1;
+            final int dimH  = 2 << order - 1;
+            final int dimH2 = dimH << 1; // equal to Math.pow(dimH, 2); or dimH * dimH.
             if (getSpace(bound) <= 0) {
-                final int nbCells2D = 2<<(2*order-1);
+                final int nbCells2D = 2 << (2 * order - 1);
                 if (getEdge(bound) <= 0) {
                     int index = -1;
-                    for(int i = 0; i<3; i++) {
+                    for(int i = 0; i < 3; i++) {
                         if(bound.getSpan(dims[i]) > 0) {
                             index = dims[i];break;
                         }
                     }
-                    final double fract = bound.getSpan(index)/(2*nbCells2D);
-                    final double valMin = bound.getLowerCorner().getOrdinate(index);
+                    final double fract       = bound.getSpan(index) / (2 * nbCells2D);
+                    final double valMin      = bound.getLowerCorner().getOrdinate(index);
                     final DirectPosition dpt = new GeneralDirectPosition(crs);
-                    for(int i = 1; i<2*nbCells2D; i+= 2) {
-                        for(int j = 0, spacedim = bound.getDimension(); j<spacedim; j++) {
-                            if (j!=index) dpt.setOrdinate(j, bound.getMedian(j));
+                    for(int i = 1, imax = 2 * nbCells2D; i < imax; i += 2) {
+                        for(int j = 0, spacedim = bound.getDimension(); j < spacedim; j++) {
+                            if (j != index) dpt.setOrdinate(j, bound.getMedian(j));
                         }
                         dpt.setOrdinate(index, valMin + i * fract);
                         listOfCentroidChild.add(dpt);
@@ -360,12 +361,12 @@ public class Calculator3D extends Calculator {
                     candidate.setUserProperty(PROP_HILBERT_TABLE, groundZero);
                 }else{
                     int index = -1;
-                    for(int i = 0; i<3; i++) {
+                    for(int i = 0; i < 3; i++) {
                         if(bound.getSpan(dims[i]) <= 0) {
                             index = i;break;
                         }
                     }
-                    int[][] tabHV = new int[dim][dim];
+                    int[] tabHV = new int[dimH2]; //in 2D
                     int  d0, d1;
                     switch(index){
                         case 0  : d0 = 1; d1 = 2; break;//defined on yz plan
@@ -378,24 +379,23 @@ public class Calculator3D extends Calculator {
                         final DirectPosition ptCTemp = listOfCentroidChild.get(i);
                         ArgumentChecks.ensureNonNull("the crs ptCTemp", ptCTemp.getCoordinateReferenceSystem());
                         int[] tabTemp = getHilbCoord(candidate, ptCTemp, bound, order);
-                        tabHV[tabTemp[0]][tabTemp[1]] = i;
+                        tabHV[tabTemp[0] + tabTemp[1] * dimH] = i;
                         listN.add(HilbertRTree.createCell(candidate.getTree(), candidate, ptCTemp, i, null));
                     }
                     candidate.setUserProperty(PROP_HILBERT_TABLE, tabHV);
                 }
             } else {
 
-                int[][][] tabHV = new int[dim][dim][dim];
+                int[] tabHV = new int[dimH2 << 1];
                 listOfCentroidChild.addAll(createPath(candidate, order, dims[0], dims[1],dims[2]));
                 for (int i = 0, s = listOfCentroidChild.size(); i < s; i++) {
                     final DirectPosition ptCTemp = listOfCentroidChild.get(i);
                     ArgumentChecks.ensureNonNull("the crs ptCTemp", ptCTemp.getCoordinateReferenceSystem());
                     int[] tabTemp = getHilbCoord(candidate, ptCTemp, bound, order);
-                    tabHV[tabTemp[0]][tabTemp[1]][tabTemp[2]] = i;
+                    tabHV[tabTemp[0] + tabTemp[1] * dimH + tabTemp[2] * dimH2] = i;
                     listN.add(HilbertRTree.createCell(candidate.getTree(), candidate, ptCTemp, i, null));
                 }
                 candidate.setUserProperty(PROP_HILBERT_TABLE, tabHV);
-
             }
         } else {
             listOfCentroidChild.add(new GeneralDirectPosition(getMedian(bound)));
@@ -421,20 +421,20 @@ public class Calculator3D extends Calculator {
         }
         final Calculator calc = candidate.getTree().getCalculator();
         assert calc instanceof Calculator3D : "getHilbertCoord : calculator3D type required";
-        final double div = 2<<hilbertOrder-1;
+        final double div  = 2 << hilbertOrder - 1;
         final double divX = envelop.getSpan(dims[0]) / div;
         final double divY = envelop.getSpan(dims[1]) / div;
         final double divZ = envelop.getSpan(dims[2]) / div;
-        double hdx = (Math.abs(dPt.getOrdinate(dims[0]) - envelop.getLowerCorner().getOrdinate(dims[0])) / divX);
-        double hdy = (Math.abs(dPt.getOrdinate(dims[1]) - envelop.getLowerCorner().getOrdinate(dims[1])) / divY);
-        double hdz = (Math.abs(dPt.getOrdinate(dims[2]) - envelop.getLowerCorner().getOrdinate(dims[2])) / divZ);
-        final int hx = (hdx <= 1) ? 0 : 1;
-        final int hy = (hdy <= 1) ? 0 : 1;
-        final int hz = (hdz <= 1) ? 0 : 1;
+        double hdx        = (Math.abs(dPt.getOrdinate(dims[0]) - envelop.getLowerCorner().getOrdinate(dims[0])) / divX);
+        double hdy        = (Math.abs(dPt.getOrdinate(dims[1]) - envelop.getLowerCorner().getOrdinate(dims[1])) / divY);
+        double hdz        = (Math.abs(dPt.getOrdinate(dims[2]) - envelop.getLowerCorner().getOrdinate(dims[2])) / divZ);
+        final int hx      = (hdx <= 1) ? 0 : 1;
+        final int hy      = (hdy <= 1) ? 0 : 1;
+        final int hz      = (hdz <= 1) ? 0 : 1;
 
         if (calc.getSpace(envelop) <= 0) {
             int index = -1;
-            for(int i = 0; i<3; i++) {
+            for(int i = 0; i < 3; i++) {
                 if (envelop.getSpan(dims[i]) <= 0) {
                     index = i; break;
                 }
@@ -459,27 +459,28 @@ public class Calculator3D extends Calculator {
         final DirectPosition ptCE = getMedian(entry);
         final GeneralEnvelope bound = new GeneralEnvelope(candidate.getBoundary());
         final int order = (Integer) candidate.getUserProperty(PROP_HILBERT_ORDER);
+        final int dimH  = 2 << order - 1;
         if (! bound.contains(ptCE)) throw new IllegalArgumentException("entry is out of this node boundary");
         if (getSpace(bound) <= 0) {
             if (getEdge(bound) <= 0) {
-                final int nbCells = 2 << 2*order-1;
+                final int nbCells = 2 << 2 * order - 1;
                 int index = -1;
-                for(int i = 0, d = dims.length; i<d; i++) {
+                for(int i = 0, d = dims.length; i < d; i++) {
                     if(bound.getSpan(dims[i]) > 0) {
                         index = dims[i];
                         break;
                     }
                 }
-                final double fract = bound.getSpan(index) / nbCells;
+                final double fract  = bound.getSpan(index) / nbCells;
                 final double lenght = Math.abs(bound.getLowerCorner().getOrdinate(index) - ptCE.getOrdinate(index));
-                int result = (int) (lenght / fract);
+                int result          = (int) (lenght / fract);
                 if (result == nbCells) result--;
                 return result;
             }
             int[] hCoord = getHilbCoord(candidate, ptCE, bound, order);
-            return ((int[][]) candidate.getUserProperty(PROP_HILBERT_TABLE))[hCoord[0]][hCoord[1]];
+            return ((int[]) candidate.getUserProperty(PROP_HILBERT_TABLE))[hCoord[0] + hCoord[1] * dimH];
         }
         int[] hCoord = getHilbCoord(candidate, ptCE, bound, order);
-        return ((int[][][]) candidate.getUserProperty(PROP_HILBERT_TABLE))[hCoord[0]][hCoord[1]][hCoord[2]];
+        return ((int[]) candidate.getUserProperty(PROP_HILBERT_TABLE))[hCoord[0] + hCoord[1] * dimH + hCoord[2] * (dimH << 1)];
     }
 }

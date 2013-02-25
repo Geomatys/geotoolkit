@@ -30,10 +30,10 @@ import org.opengis.geometry.Envelope;
  *
  * @author Rémi Maréchal (Geomatys).
  */
-public abstract class GeoCalculator extends Calculator{
+public abstract class GeoCalculator extends Calculator {
 
     final double radius;
-    private final static double TO_RAD = Math.PI/180;
+    private final static double TO_RAD = Math.PI / 180;
     public GeoCalculator(double radius, int...dims) {
         super(dims);
         this.radius = radius;
@@ -51,8 +51,8 @@ public abstract class GeoCalculator extends Calculator{
         public int compare(Node o1, Node o2) {
             final DirectPosition o1LC = o1.getBoundary().getLowerCorner();
             final DirectPosition o2LC = o2.getBoundary().getLowerCorner();
-            final double λ1 = o1LC.getOrdinate(dims[0])*TO_RAD*cos(TO_RAD*o1LC.getOrdinate(dims[1]));
-            final double λ2 = o2LC.getOrdinate(dims[0])*TO_RAD*cos(TO_RAD*o1LC.getOrdinate(dims[1]));
+            final double λ1 = o1LC.getOrdinate(dims[0]) * TO_RAD * cos(TO_RAD * o1LC.getOrdinate(dims[1]));
+            final double λ2 = o2LC.getOrdinate(dims[0]) * TO_RAD * cos(TO_RAD * o1LC.getOrdinate(dims[1]));
             return Double.compare(λ1, λ2);
         }
     };
@@ -66,8 +66,8 @@ public abstract class GeoCalculator extends Calculator{
 
         @Override
         public int compare(Node o1, Node o2) {
-            final double φ1 = TO_RAD*o1.getBoundary().getLowerCorner().getOrdinate(dims[1]);
-            final double φ2 = TO_RAD*o2.getBoundary().getLowerCorner().getOrdinate(dims[1]);
+            final double φ1 = TO_RAD * o1.getBoundary().getLowerCorner().getOrdinate(dims[1]);
+            final double φ2 = TO_RAD * o2.getBoundary().getLowerCorner().getOrdinate(dims[1]);
             return Double.compare(φ1, φ2);
         }
     };
@@ -82,8 +82,8 @@ public abstract class GeoCalculator extends Calculator{
 
         @Override
         public int compare(Node o1, Node o2) {
-            final double h1 = TO_RAD*o1.getBoundary().getLowerCorner().getOrdinate(dims[2]);
-            final double h2 = TO_RAD*o2.getBoundary().getLowerCorner().getOrdinate(dims[2]);
+            final double h1 = TO_RAD * o1.getBoundary().getLowerCorner().getOrdinate(dims[2]);
+            final double h2 = TO_RAD * o2.getBoundary().getLowerCorner().getOrdinate(dims[2]);
             return Double.compare(h1, h2);
         }
     };
@@ -101,8 +101,8 @@ public abstract class GeoCalculator extends Calculator{
         public int compare(Envelope o1, Envelope o2) {
             final DirectPosition o1LC = o1.getLowerCorner();
             final DirectPosition o2LC = o2.getLowerCorner();
-            final double λ1 = TO_RAD*o1LC.getOrdinate(dims[0])*cos(TO_RAD*o1LC.getOrdinate(dims[1]));
-            final double λ2 = TO_RAD*o2LC.getOrdinate(dims[0])*cos(TO_RAD*o1LC.getOrdinate(dims[1]));
+            final double λ1 = TO_RAD * o1LC.getOrdinate(dims[0]) * cos(TO_RAD*o1LC.getOrdinate(dims[1]));
+            final double λ2 = TO_RAD * o2LC.getOrdinate(dims[0]) * cos(TO_RAD*o1LC.getOrdinate(dims[1]));
             return Double.compare(λ1, λ2);
         }
     };
@@ -116,8 +116,8 @@ public abstract class GeoCalculator extends Calculator{
 
         @Override
         public int compare(Envelope o1, Envelope o2) {
-            final double φ1 = TO_RAD*o1.getLowerCorner().getOrdinate(dims[1]);
-            final double φ2 = TO_RAD*o2.getLowerCorner().getOrdinate(dims[1]);
+            final double φ1 = TO_RAD * o1.getLowerCorner().getOrdinate(dims[1]);
+            final double φ2 = TO_RAD * o2.getLowerCorner().getOrdinate(dims[1]);
             return Double.compare(φ1, φ2);
         }
     };
@@ -131,8 +131,8 @@ public abstract class GeoCalculator extends Calculator{
 
         @Override
         public int compare(Envelope o1, Envelope o2) {
-            final double h1 = TO_RAD*o1.getLowerCorner().getOrdinate(dims[2]);
-            final double h2 = TO_RAD*o2.getLowerCorner().getOrdinate(dims[2]);
+            final double h1 = TO_RAD * o1.getLowerCorner().getOrdinate(dims[2]);
+            final double h2 = TO_RAD * o2.getLowerCorner().getOrdinate(dims[2]);
             return Double.compare(h1, h2);
         }
     };
@@ -148,8 +148,8 @@ public abstract class GeoCalculator extends Calculator{
         public int compare(Node o1, Node o2) {
             final DirectPosition o1UC = o1.getBoundary().getUpperCorner();
             final DirectPosition o2UC = o2.getBoundary().getUpperCorner();
-            final double λ1 = TO_RAD*o1UC.getOrdinate(dims[0])*cos(TO_RAD*o1UC.getOrdinate(dims[1]));
-            final double λ2 = TO_RAD*o2UC.getOrdinate(dims[0])*cos(TO_RAD*o1UC.getOrdinate(dims[1]));
+            final double λ1 = TO_RAD * o1UC.getOrdinate(dims[0]) * cos(TO_RAD * o1UC.getOrdinate(dims[1]));
+            final double λ2 = TO_RAD * o2UC.getOrdinate(dims[0]) * cos(TO_RAD * o1UC.getOrdinate(dims[1]));
             return Double.compare(λ1, λ2);
         }
     };
@@ -163,8 +163,8 @@ public abstract class GeoCalculator extends Calculator{
 
         @Override
         public int compare(Node o1, Node o2) {
-            final double φ1 = TO_RAD*o1.getBoundary().getUpperCorner().getOrdinate(dims[1]);
-            final double φ2 = TO_RAD*o2.getBoundary().getUpperCorner().getOrdinate(dims[1]);
+            final double φ1 = TO_RAD * o1.getBoundary().getUpperCorner().getOrdinate(dims[1]);
+            final double φ2 = TO_RAD * o2.getBoundary().getUpperCorner().getOrdinate(dims[1]);
             return Double.compare(φ1, φ2);
         }
     };
@@ -178,8 +178,8 @@ public abstract class GeoCalculator extends Calculator{
 
         @Override
         public int compare(Node o1, Node o2) {
-            final double h1 = TO_RAD*o1.getBoundary().getUpperCorner().getOrdinate(dims[2]);
-            final double h2 = TO_RAD*o2.getBoundary().getUpperCorner().getOrdinate(dims[2]);
+            final double h1 = TO_RAD * o1.getBoundary().getUpperCorner().getOrdinate(dims[2]);
+            final double h2 = TO_RAD * o2.getBoundary().getUpperCorner().getOrdinate(dims[2]);
             return Double.compare(h1, h2);
         }
     };
@@ -195,8 +195,8 @@ public abstract class GeoCalculator extends Calculator{
         public int compare(Envelope o1, Envelope o2) {
             final DirectPosition o1UC = o1.getUpperCorner();
             final DirectPosition o2UC = o2.getUpperCorner();
-            final double λ1 = TO_RAD*o1UC.getOrdinate(dims[0])*cos(TO_RAD*o1UC.getOrdinate(dims[1]));
-            final double λ2 = TO_RAD*o2UC.getOrdinate(dims[0])*cos(TO_RAD*o1UC.getOrdinate(dims[1]));
+            final double λ1 = TO_RAD * o1UC.getOrdinate(dims[0]) * cos(TO_RAD * o1UC.getOrdinate(dims[1]));
+            final double λ2 = TO_RAD * o2UC.getOrdinate(dims[0]) * cos(TO_RAD * o1UC.getOrdinate(dims[1]));
             return Double.compare(λ1, λ2);
         }
     };
@@ -210,8 +210,8 @@ public abstract class GeoCalculator extends Calculator{
 
         @Override
         public int compare(Envelope o1, Envelope o2) {
-            final double φ1 = TO_RAD*o1.getUpperCorner().getOrdinate(dims[1]);
-            final double φ2 = TO_RAD*o2.getUpperCorner().getOrdinate(dims[1]);
+            final double φ1 = TO_RAD * o1.getUpperCorner().getOrdinate(dims[1]);
+            final double φ2 = TO_RAD * o2.getUpperCorner().getOrdinate(dims[1]);
             return Double.compare(φ1, φ2);
         }
     };
@@ -225,8 +225,8 @@ public abstract class GeoCalculator extends Calculator{
 
         @Override
         public int compare(Envelope o1, Envelope o2) {
-            final double h1 = TO_RAD*o1.getUpperCorner().getOrdinate(dims[2]);
-            final double h2 = TO_RAD*o2.getUpperCorner().getOrdinate(dims[2]);
+            final double h1 = TO_RAD * o1.getUpperCorner().getOrdinate(dims[2]);
+            final double h2 = TO_RAD * o2.getUpperCorner().getOrdinate(dims[2]);
             return Double.compare(h1, h2);
         }
     };
@@ -238,16 +238,16 @@ public abstract class GeoCalculator extends Calculator{
     public double getSpace(final Envelope envelop) {
         final DirectPosition dpL = envelop.getLowerCorner();
         final DirectPosition dpU = envelop.getUpperCorner();
-        double dλ = Math.abs(TO_RAD*(dpU.getOrdinate(dims[0]) - dpL.getOrdinate(dims[0])));
-        dλ*=cos(TO_RAD*((dpL.getOrdinate(dims[1]) + dpU.getOrdinate(dims[1]))/2));
+        double dλ = Math.abs(TO_RAD * (dpU.getOrdinate(dims[0]) - dpL.getOrdinate(dims[0])));
+        dλ*=cos(TO_RAD * ((dpL.getOrdinate(dims[1]) + dpU.getOrdinate(dims[1])) / 2));
         dλ = Math.abs(dλ);
-        double dφ = Math.abs(TO_RAD*(dpU.getOrdinate(dims[1]) - dpL.getOrdinate(dims[1])));
-        double ray = (dims.length>2)?Math.min(dpL.getOrdinate(dims[2]),dpU.getOrdinate(dims[2]))+radius:radius;
-        dλ*=ray;dφ*=ray;
-        assert dλ >=0:"dλ<0"+dλ;
-        assert dφ >=0:"dφ<0"+dφ;
-        assert ray >=0:"ray<0"+ray;
-        return (dims.length>2)?dλ*dφ*Math.abs(dpU.getOrdinate(dims[2]) - dpL.getOrdinate(dims[2])):dλ*dφ;
+        double dφ  = Math.abs(TO_RAD * (dpU.getOrdinate(dims[1]) - dpL.getOrdinate(dims[1])));
+        double ray = (dims.length > 2) ? Math.min(dpL.getOrdinate(dims[2]),dpU.getOrdinate(dims[2])) + radius : radius;
+        dλ *= ray; dφ *= ray;
+        assert dλ >=0  : "dλ<0" + dλ;
+        assert dφ >=0  : "dφ<0" + dφ;
+        assert ray >=0 :"ray<0" + ray;
+        return (dims.length > 2) ? dλ * dφ * Math.abs(dpU.getOrdinate(dims[2]) - dpL.getOrdinate(dims[2])) : dλ * dφ;
     }
 
     /**
@@ -257,18 +257,18 @@ public abstract class GeoCalculator extends Calculator{
     public double getEdge(final Envelope envelop) {
         final DirectPosition dpL = envelop.getLowerCorner();
         final DirectPosition dpU = envelop.getUpperCorner();
-        double dλ = Math.abs(TO_RAD*(dpU.getOrdinate(dims[0]) - dpL.getOrdinate(dims[0])));
-        dλ*=cos(TO_RAD*((dpL.getOrdinate(dims[1]) + dpU.getOrdinate(dims[1]))/2.0f));
+        double dλ = Math.abs(TO_RAD * (dpU.getOrdinate(dims[0]) - dpL.getOrdinate(dims[0])));
+        dλ*=cos(TO_RAD * ((dpL.getOrdinate(dims[1]) + dpU.getOrdinate(dims[1])) / 2.0f));
         dλ = Math.abs(dλ);
-        double dφ = Math.abs(TO_RAD*(dpU.getOrdinate(dims[1]) - dpL.getOrdinate(dims[1])));
-        final double ray = (dims.length>2)?Math.min(dpL.getOrdinate(dims[2]),dpU.getOrdinate(dims[2]))+radius:radius;
-        dλ*=ray;dφ*=ray;
-        assert dλ >=0:"dλ<0"+dλ;
-        assert dφ >=0:"dφ<0"+dφ;
-        assert ray >=0:"ray<0"+ray;
-        if(dims.length>2){
+        double dφ = Math.abs(TO_RAD * (dpU.getOrdinate(dims[1]) - dpL.getOrdinate(dims[1])));
+        final double ray = (dims.length > 2) ? Math.min(dpL.getOrdinate(dims[2]), dpU.getOrdinate(dims[2])) + radius : radius;
+        dλ *= ray; dφ *= ray;
+        assert dλ  >= 0 : "dλ<0"  + dλ;
+        assert dφ  >= 0 : "dφ<0"  + dφ;
+        assert ray >= 0 : "ray<0" + ray;
+        if(dims.length > 2){
             double dR = Math.abs(dpL.getOrdinate(dims[2]) - dpU.getOrdinate(dims[2]));
-            return 2*(dλ*dφ+dλ*dR+dφ*dR);
+            return 2 * (dλ * dφ + dλ * dR + dφ * dR);
         }
         return 2*(dλ+dφ);
     }
@@ -286,13 +286,13 @@ public abstract class GeoCalculator extends Calculator{
      */
     @Override
     public double getDistance(final DirectPosition positionA, final DirectPosition positionB) {
-        double dλ = Math.abs(TO_RAD*(positionB.getOrdinate(dims[0]) - positionA.getOrdinate(dims[0])));
-        dλ*=cos(TO_RAD*((positionA.getOrdinate(dims[1])+positionB.getOrdinate(dims[1]))/2));
-        double dφ = TO_RAD*(positionA.getOrdinate(dims[1])-positionB.getOrdinate(dims[1]));
-        double dR = (dims.length>2)?Math.abs(positionA.getOrdinate(dims[2])-positionB.getOrdinate(dims[2])):0;
-        double ray = (dims.length>2)?Math.min(positionA.getOrdinate(dims[2]),positionB.getOrdinate(dims[2]))+radius:radius;
-        dλ*=dλ;ray*=ray;dR*=dR;dφ*=dφ;
-        return Math.sqrt(dλ*ray+dφ*ray+dR);
+        double dλ = Math.abs(TO_RAD * (positionB.getOrdinate(dims[0]) - positionA.getOrdinate(dims[0])));
+        dλ        *= cos(TO_RAD * ((positionA.getOrdinate(dims[1]) + positionB.getOrdinate(dims[1])) / 2));
+        double dφ  = TO_RAD * (positionA.getOrdinate(dims[1]) - positionB.getOrdinate(dims[1]));
+        double dR  = (dims.length > 2) ? Math.abs(positionA.getOrdinate(dims[2]) - positionB.getOrdinate(dims[2])) : 0;
+        double ray = (dims.length > 2) ? Math.min(positionA.getOrdinate(dims[2]), positionB.getOrdinate(dims[2])) + radius : radius;
+        dλ *= dλ; ray *= ray; dR *= dR; dφ *= dφ;
+        return Math.sqrt(dλ * ray + dφ * ray + dR);
     }
 
     /**
