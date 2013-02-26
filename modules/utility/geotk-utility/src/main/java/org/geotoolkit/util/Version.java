@@ -54,7 +54,7 @@ public class Version extends org.apache.sis.util.Version implements CharSequence
     /**
      * The version of this Geotoolkit.org distribution.
      */
-    public static final Version GEOTOOLKIT = new Version("3.20-SNAPSHOT");
+    public static final Version GEOTOOLKIT = new Version("4.00-SNAPSHOT");
 
     /**
      * The separator characters between {@linkplain #getMajor major}, {@linkplain #getMinor minor}
