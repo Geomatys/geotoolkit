@@ -37,7 +37,7 @@ public final class Module implements Taglet {
     /**
      * Geotoolkit.org version to be referenced by this taglet.
      */
-    private static final String VERSION = "3.x-SNAPSHOT";
+    private static final String VERSION = "4.x-SNAPSHOT";
 
     /**
      * Register this taglet.

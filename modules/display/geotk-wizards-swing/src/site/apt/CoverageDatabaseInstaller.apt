@@ -25,11 +25,11 @@ Installing the Coverage-SQL database
 
   Download the latest version of "<<<geotk-bundle.pack.gz>>>" from {{{http://download.geotoolkit.org}http://download.geotoolkit.org}}.
   Open a command-line window and set the current directory to the directory where the Geotk bundle has
-  been saved. Uncompress the file using the command below (replace <<<3.x-SNAPSHOT>>> by the actual version
+  been saved. Uncompress the file using the command below (replace <<<4.x-SNAPSHOT>>> by the actual version
   number), then execute:
 
 ------------------------------------------------------------------------
-unpack200 --remove-pack-file geotk-bundle-3.x-SNAPSHOT.pack.gz geotk.jar
+unpack200 --remove-pack-file geotk-bundle-4.x-SNAPSHOT.pack.gz geotk.jar
 java -jar geotk.jar
 ------------------------------------------------------------------------
 

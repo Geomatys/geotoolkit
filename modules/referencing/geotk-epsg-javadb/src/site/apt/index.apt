@@ -20,7 +20,7 @@ EPSG database on JavaDB
   Use the following for more information:
 
 -------------------------------------------------
-java -jar geotk-epsg-javadb-3.x-SNAPSHOT.jar help
+java -jar geotk-epsg-javadb-4.x-SNAPSHOT.jar help
 -------------------------------------------------
 
 

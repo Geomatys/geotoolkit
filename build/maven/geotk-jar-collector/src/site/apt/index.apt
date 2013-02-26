@@ -38,7 +38,7 @@ JAR collector
   option, otherwise the Mojo will waste CPU by executing itself many time.
 
 +------------------------------------------------------------------------------------------
-  mvn org.geotoolkit.project:geotk-jar-collector:3.x-SNAPSHOT:pack --non-recursive
+  mvn org.geotoolkit.project:geotk-jar-collector:4.x-SNAPSHOT:pack --non-recursive
 +------------------------------------------------------------------------------------------
 
   The above command packs everything found in the <<<target/binaries>>> directory.
@@ -47,5 +47,5 @@ JAR collector
   goal:
 
 +------------------------------------------------------------------------------------------
-  mvn org.geotoolkit.project:geotk-jar-collector:3.x-SNAPSHOT:pack-specific --non-recursive
+  mvn org.geotoolkit.project:geotk-jar-collector:4.x-SNAPSHOT:pack-specific --non-recursive
 +------------------------------------------------------------------------------------------

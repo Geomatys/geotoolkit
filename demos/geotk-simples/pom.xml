@@ -14,7 +14,7 @@
   <parent>
     <groupId>org.geotoolkit.demo</groupId>
     <artifactId>demos</artifactId>
-    <version>3.x-SNAPSHOT</version>
+    <version>4.x-SNAPSHOT</version>
   </parent>
 
 
