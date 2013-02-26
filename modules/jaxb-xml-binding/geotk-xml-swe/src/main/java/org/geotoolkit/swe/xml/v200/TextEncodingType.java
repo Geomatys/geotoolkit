@@ -49,9 +49,9 @@ import org.geotoolkit.util.Utilities;
 @XmlType(name = "TextEncodingType")
 public class TextEncodingType extends AbstractEncodingType implements TextBlock {
 
-    public final static TextEncodingType DEFAULT_ENCODING = new TextEncodingType("encoding-1", ",", "@@", ".");
+    public final static TextEncodingType DEFAULT_ENCODING = new TextEncodingType("encoding-1", ".", ",", "@@");
 
-    public final static TextEncodingType CSV_ENCODING     = new TextEncodingType("encoding-CSV", ",", "\n", ".");
+    public final static TextEncodingType CSV_ENCODING     = new TextEncodingType("encoding-CSV", ".", ",", "\n");
     
     @XmlAttribute
     private Boolean collapseWhiteSpaces;
@@ -110,6 +110,7 @@ public class TextEncodingType extends AbstractEncodingType implements TextBlock 
      *     {@link String }
      *     
      */
+    @Override
     public String getDecimalSeparator() {
         if (decimalSeparator == null) {
             return ".";
@@ -138,6 +139,7 @@ public class TextEncodingType extends AbstractEncodingType implements TextBlock 
      *     {@link String }
      *     
      */
+    @Override
     public String getTokenSeparator() {
         return tokenSeparator;
     }
@@ -162,6 +164,7 @@ public class TextEncodingType extends AbstractEncodingType implements TextBlock 
      *     {@link String }
      *     
      */
+    @Override
     public String getBlockSeparator() {
         return blockSeparator;
     }

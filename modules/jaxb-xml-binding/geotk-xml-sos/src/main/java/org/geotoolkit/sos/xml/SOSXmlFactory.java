@@ -613,10 +613,16 @@ public class SOSXmlFactory {
             if (env != null && !(env instanceof org.geotoolkit.gml.xml.v311.EnvelopeType)) {
                 throw new IllegalArgumentException("unexpected object version for env element");
             }
+            final org.geotoolkit.gml.xml.v311.MeasureType length;
+            if (lengthValue != null) {
+                length = new org.geotoolkit.gml.xml.v311.MeasureType(lengthValue, uom);
+            } else {
+                length = new org.geotoolkit.gml.xml.v311.MeasureType(0.0, uom);
+            }
             return new org.geotoolkit.sampling.xml.v100.SamplingCurveType(id, name, description, 
                                                                           (org.geotoolkit.gml.xml.v311.FeaturePropertyType)sampledFeature, 
                                                                           new org.geotoolkit.gml.xml.v311.CurvePropertyType((org.geotoolkit.gml.xml.v311.LineStringType)location),
-                                                                          new org.geotoolkit.gml.xml.v311.MeasureType(lengthValue, uom),
+                                                                          length,
                                                                           (org.geotoolkit.gml.xml.v311.EnvelopeType)env);
         } else if ("2.0.0".equals(version)) {
             if (sampledFeature != null && !(sampledFeature instanceof org.geotoolkit.gml.xml.v321.FeaturePropertyType)) {

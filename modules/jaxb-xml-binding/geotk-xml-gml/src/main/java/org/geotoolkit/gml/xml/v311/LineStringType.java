@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlElementRefs;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.gml.xml.Envelope;
 import org.geotoolkit.gml.xml.LineString;
 import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.util.Utilities;
@@ -125,6 +126,7 @@ public class LineStringType extends AbstractCurveType implements LineString {
         }
     }
 
+    @Override
     public List<DirectPositionType> getPos() {
         if (pos == null) {
             pos = new ArrayList<DirectPositionType>();
@@ -157,6 +159,7 @@ public class LineStringType extends AbstractCurveType implements LineString {
      *     {@link DirectPositionListType }
      *
      */
+    @Override
     public DirectPositionListType getPosList() {
         return posList;
     }
@@ -181,6 +184,7 @@ public class LineStringType extends AbstractCurveType implements LineString {
      *     {@link CoordinatesType }
      *
      */
+    @Override
     public CoordinatesType getCoordinates() {
         return coordinates;
     }
@@ -197,6 +201,44 @@ public class LineStringType extends AbstractCurveType implements LineString {
         this.coordinates = value;
     }
 
+    @Override
+    public Envelope getBounds() {
+        double minx =  Double.MAX_VALUE;
+        double miny =  Double.MAX_VALUE;
+        double maxx = -Double.MAX_VALUE;
+        double maxy = -Double.MAX_VALUE;
+        
+        if (pos != null && !pos.isEmpty()) {
+            for (DirectPositionType p : pos) {
+                final double x = p.getOrdinate(0);
+                final double y = p.getOrdinate(1);
+                if (x < minx) { minx = x; }
+                if (x > maxx) { maxx = x; }
+                if (y < miny) { miny = y; }
+                if (y > maxy) { maxy = y; }
+            }
+            final DirectPositionType lowerCorner = new DirectPositionType(minx, miny);
+            final DirectPositionType upperCorner = new DirectPositionType(maxx, maxy);
+            return new EnvelopeType("bound-1", lowerCorner, upperCorner, getSrsName());
+        }
+        return null;
+        
+        // TODO try with posList and coordinates if pos is null or empty
+    }
+    
+    @Override
+    public void emptySrsNameOnChild() {
+         if (pos != null && !pos.isEmpty()) {
+            for (DirectPositionType p : pos) {
+                p.srsName      = null;
+                p.srsDimension = null;
+            }
+        } else if (posList != null) {
+            posList.setSrsName(null);
+            posList.setSrsDimension(null);
+        } 
+    }
+    
     /**
      * Verify if this entry is identical to the specified object.
      */
