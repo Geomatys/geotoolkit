@@ -294,6 +294,23 @@ public class GMLXmlFactory {
         }
     }
     
+    public static Period createTimePeriod(final String version, final Position dateBegin, final TimeIndeterminateValueType dateEnd) {
+        if ("3.2.1".equals(version)) {
+            if (dateBegin != null && !(dateBegin instanceof org.geotoolkit.gml.xml.v321.TimePositionType)) {
+                throw new IllegalArgumentException("unexpected gml version for date begin.");
+            }
+            return new org.geotoolkit.gml.xml.v321.TimePeriodType((org.geotoolkit.gml.xml.v321.TimePositionType)dateBegin, dateEnd);
+            
+        } else if ("3.1.1".equals(version)) {
+            if (dateBegin != null && !(dateBegin instanceof org.geotoolkit.gml.xml.v311.TimePositionType)) {
+                throw new IllegalArgumentException("unexpected gml version for date end.");
+            }
+            return new org.geotoolkit.gml.xml.v311.TimePeriodType((org.geotoolkit.gml.xml.v311.TimePositionType)dateBegin, dateEnd);
+        } else {
+            throw new IllegalArgumentException("unexpected gml version number:" + version);
+        }
+    }
+    
     public static FeatureCollection createFeatureCollection(final String version, final String id, final String name, final String description, 
             final List<FeatureProperty> features) {
         if ("3.2.1".equals(version)) {

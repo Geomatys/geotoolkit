@@ -401,6 +401,16 @@ public class SOSXmlFactory {
         }
     }
     
+    public static Period buildTimePeriod(final String version, final Position dateBegin, final TimeIndeterminateValueType value) {
+        if ("2.0.0".equals(version)) {
+            return GMLXmlFactory.createTimePeriod("3.2.1", dateBegin, value);
+        } else if ("1.0.0".equals(version)) {
+            return GMLXmlFactory.createTimePeriod("3.1.1", dateBegin, value);
+        } else {
+            throw new IllegalArgumentException("unexpected version number:" + version);
+        }
+    }
+    
     public static Period buildTimePeriod(final String version, final Position dateBegin, final Position dateEnd) {
         if ("2.0.0".equals(version)) {
             return GMLXmlFactory.createTimePeriod("3.2.1", dateBegin, dateEnd);
@@ -528,11 +538,11 @@ public class SOSXmlFactory {
         }
     }
     
-    public static Phenomenon buildPhenomenon(final String version, final String phenomenonName) {
+    public static Phenomenon buildPhenomenon(final String version, final String id, final String phenomenonName) {
         if ("2.0.0".equals(version)) {
             return new org.geotoolkit.observation.xml.v200.OMObservationType.InternalPhenomenon(phenomenonName);
         } else if ("1.0.0".equals(version)) {
-            return new org.geotoolkit.swe.xml.v101.PhenomenonType(null, phenomenonName);
+            return new org.geotoolkit.swe.xml.v101.PhenomenonType(id, phenomenonName);
         } else {
             throw new IllegalArgumentException("unexpected sos version number:" + version);
         }
@@ -940,6 +950,16 @@ public class SOSXmlFactory {
             return org.geotoolkit.swe.xml.v200.Field.TIME_FIELD;
         } else if ("1.0.0".equals(version)) {
             return org.geotoolkit.swe.xml.v101.AnyScalarPropertyType.TIME_FIELD;
+        } else {
+            throw new IllegalArgumentException("Unexpected SOS version:" + version);
+        }
+    }
+    
+    public static String getGMLVersion(final String version) {
+        if ("2.0.0".equals(version)) {
+            return "3.2.1";
+        } else if ("1.0.0".equals(version)) {
+            return "3.1.1";
         } else {
             throw new IllegalArgumentException("Unexpected SOS version:" + version);
         }

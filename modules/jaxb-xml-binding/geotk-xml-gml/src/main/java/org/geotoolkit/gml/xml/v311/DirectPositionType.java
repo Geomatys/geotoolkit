@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
+import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.util.Utilities;
@@ -178,7 +179,7 @@ public class DirectPositionType implements org.geotoolkit.gml.xml.DirectPosition
                 CoordinateReferenceSystem crs = position.getCoordinateReferenceSystem();
                 if ( crs != null) {
                     try {
-                        this.srsName = IdentifiedObjects.lookupIdentifier(crs, true);
+                        this.srsName = IdentifiedObjects.lookupIdentifier(Citations.URN_OGC, crs, true);
                     } catch (FactoryException ex) {
                         Logging.getLogger(DirectPositionType.class).log(Level.WARNING, null, ex);
                     }

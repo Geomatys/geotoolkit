@@ -142,6 +142,15 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType implement
         this.endPosition   = endPosition;
     }
 
+    public TimePeriodType(final Position beginPosition, final TimeIndeterminateValueType indeterminateEnd){
+        this.endPosition = new TimePositionType(indeterminateEnd);
+        if (beginPosition instanceof TimePositionType) {
+            this.beginPosition = (TimePositionType) beginPosition;
+        } else if (beginPosition != null) {
+            this.beginPosition = new TimePositionType(beginPosition);
+        }
+    }
+    
     /**
      * Build a new Time periodwith a duration.
      */

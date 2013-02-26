@@ -64,6 +64,7 @@ public class TimePeriodTypeTest {
     
     @Test
     public void getTime2Test() throws Exception {
+        TimePositionType tn = null;
         TimePositionType tb = new TimePositionType("2008-11-01T02:00:00");
         TimePositionType te = new TimePositionType("2008-11-01T02:01:00");
         TimePeriodType tp = new TimePeriodType(tb, te);
@@ -74,7 +75,7 @@ public class TimePeriodTypeTest {
         tp = new TimePeriodType(tb, te);
         assertEquals(3600000, tp.getTime());
         
-        tp = new TimePeriodType(tb, null);
+        tp = new TimePeriodType(tb, tn);
         assertEquals(-1, tp.getTime());
         
         tb = null;
