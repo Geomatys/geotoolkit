@@ -90,13 +90,10 @@ public class ExecuteTest {
 
         } catch (FactoryException ex) {
             fail(ex.getLocalizedMessage());
-            return;
         } catch (NonconvertibleObjectException ex) {
             fail(ex.getLocalizedMessage());
-            return;
         } catch (JAXBException ex) {
             fail(ex.getLocalizedMessage());
-            return;
         } finally {
             WPSMarshallerPool.getInstance().release(marshaller);
         }
@@ -128,7 +125,7 @@ public class ExecuteTest {
                 +"            <wps:Data>\n"
                 +"                <wps:ComplexData>\n"
                 +"                    <gml:Point srsName=\"urn:ogc:def:crs:epsg:" + EPSG_VERSION + ":4326\">\n"
-                +"                        <gml:pos srsName=\"EPSG:4326\" srsDimension=\"2\">0.0 0.0</gml:pos>\n"
+                +"                        <gml:pos srsName=\"urn:ogc:def:crs:epsg:" + EPSG_VERSION + ":4326\" srsDimension=\"2\">0.0 0.0</gml:pos>\n"
                 +"                    </gml:Point>\n"
                 +"                </wps:ComplexData>\n"
                 +"            </wps:Data>\n"
