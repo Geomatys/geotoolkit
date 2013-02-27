@@ -46,25 +46,16 @@ The Geotoolkit.org library
 
 * Apache SIS and Geotk 3.<x>/4.<x> series
 
-  Large part of Geotoolkit.org code is moving to the Apache SIS project.
-  This migration results in deprecation of massive amount of classes in the Geotk project,
-  which will be replaced by the SIS equivalent. In many cases, migrating to SIS is just a
-  matter of replacing the <<<org.geotoolkit>>> package name by <<<org.apache.sis>>> in the
-  <<<import>>> declarations. However in some cases, the changes are more consistent.
-  Non-trivial replacements are indicated in the comments of the <<<@deprecated>>> tags.
-
-  To reduce the annoyance, this replacement is performed only on the 4.<x> series of Geotk versions.
-  The Geotk 3.<x> series still have no dependency to SIS, and their classes are not deprecated.
-  However we expect that most future developments will happen in the Apache SIS project together
-  with the Geotk 4.<x> series, and the Geotk 3.<x> series may receive only occasional bug fixes.
-
-  Furthermore, the <<<geotoolkit>>> and <<<geotoolkit-pending>>> repositories will be merged in a
-  single project in the 4.<x> series.
+  This is the Geotk 3.x branch, which is kept for compatibility reasons.
+  The Geotk development moved to the 4.x branch, which is featuring the migration of
+  many Geotk code to the Apache SIS project and the merging of <<<geotoolkit>>> with
+  <<<geotoolkit-pending>>> source code repositories. The 3.x branch is not expected
+  to evolve much. For up-to-date functionalities and bug fixes, please see the 4.x branch.
 
 
 * Latest releases
 
-  Latest Geotoolkit.org release is Geotk-3.21, released February 2013.
+  Latest release of Geotoolkit.org 3.x branch is Geotk-3.21, released February 2013.
 
     * The <<<3.21>>> version, which depends on GeoAPI 3.1-M04, is available on the
       {{{http://maven.geotoolkit.org/}project's Maven repository}}.
