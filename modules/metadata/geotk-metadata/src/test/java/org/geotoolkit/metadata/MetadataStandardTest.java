@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.metadata;
 
+import org.apache.sis.metadata.KeyNamePolicy;
 import java.util.Map;
 import java.util.Set;
 import java.util.List;

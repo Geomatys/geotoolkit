@@ -611,7 +611,7 @@ final class PropertyAccessor {
      *         index is out of bounds.
      */
     @SuppressWarnings("fallthrough")
-    final String name(final int index, final KeyNamePolicy keyName) {
+    final String name(final int index, final org.apache.sis.metadata.KeyNamePolicy keyName) {
         if (index >= 0 && index < names.length) {
             switch (keyName) {
                 case UML_IDENTIFIER: {

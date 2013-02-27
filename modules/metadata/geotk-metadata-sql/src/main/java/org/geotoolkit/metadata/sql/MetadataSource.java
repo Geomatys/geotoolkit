@@ -40,7 +40,7 @@ import org.geotoolkit.internal.sql.StatementPool;
 import org.geotoolkit.internal.sql.DefaultDataSource;
 import org.geotoolkit.internal.sql.StatementEntry;
 import org.geotoolkit.metadata.NullValuePolicy;
-import org.geotoolkit.metadata.KeyNamePolicy;
+import org.apache.sis.metadata.KeyNamePolicy;
 import org.geotoolkit.metadata.MetadataStandard;
 import org.geotoolkit.util.collection.WeakValueHashMap;
 import org.geotoolkit.util.converter.Classes;

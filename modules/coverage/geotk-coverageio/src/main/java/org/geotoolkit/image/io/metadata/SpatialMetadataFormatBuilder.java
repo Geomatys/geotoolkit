@@ -66,7 +66,7 @@ import org.opengis.util.GenericName;
 import org.geotoolkit.lang.Builder;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.converter.Numbers;
-import org.geotoolkit.metadata.KeyNamePolicy;
+import org.apache.sis.metadata.KeyNamePolicy;
 import org.geotoolkit.metadata.NullValuePolicy;
 import org.geotoolkit.metadata.TypeValuePolicy;
 import org.geotoolkit.metadata.ValueRestriction;

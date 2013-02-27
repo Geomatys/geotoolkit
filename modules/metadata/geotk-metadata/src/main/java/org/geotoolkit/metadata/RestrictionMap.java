@@ -55,7 +55,7 @@ final class RestrictionMap extends MetadataMap<ValueRestriction> {
      * @param keyNames Determines the string representation of keys in the map.
      */
     RestrictionMap(final PropertyAccessor accessor, final Object metadata,
-            final NullValuePolicy content, final KeyNamePolicy keyNames)
+            final NullValuePolicy content, final org.apache.sis.metadata.KeyNamePolicy keyNames)
     {
         super(accessor, keyNames);
         this.metadata = metadata;

@@ -26,7 +26,7 @@ import org.geotoolkit.test.Depend;
 
 import org.junit.*;
 import static org.junit.Assert.*;
-import static org.geotoolkit.metadata.KeyNamePolicy.*;
+import static org.apache.sis.metadata.KeyNamePolicy.*;
 
 
 /**

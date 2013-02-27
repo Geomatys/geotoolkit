@@ -56,7 +56,7 @@ import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.coverage.grid.RectifiedGrid;
 
 import org.geotoolkit.util.NumberRange;
-import org.geotoolkit.metadata.KeyNamePolicy;
+import org.apache.sis.metadata.KeyNamePolicy;
 import org.geotoolkit.metadata.MetadataStandard;
 import org.geotoolkit.referencing.cs.*;
 import org.geotoolkit.referencing.crs.*;

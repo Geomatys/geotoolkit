@@ -458,7 +458,7 @@ public final class MetadataStandard {
      * @since 3.03
      */
     public Map<String,Class<?>> asTypeMap(Class<?> type, final TypeValuePolicy typeValues,
-            final KeyNamePolicy keyNames) throws ClassCastException
+            final org.apache.sis.metadata.KeyNamePolicy keyNames) throws ClassCastException
     {
         ensureNonNull("type",       type);
         ensureNonNull("typeValues", typeValues);
@@ -492,8 +492,8 @@ public final class MetadataStandard {
      *
      * @since 3.04
      */
-    public Map<String,String> asNameMap(Class<?> type, final KeyNamePolicy valueNames,
-            final KeyNamePolicy keyNames) throws ClassCastException
+    public Map<String,String> asNameMap(Class<?> type, final org.apache.sis.metadata.KeyNamePolicy valueNames,
+            final org.apache.sis.metadata.KeyNamePolicy keyNames) throws ClassCastException
     {
         ensureNonNull("type",       type);
         ensureNonNull("typeValues", valueNames);
@@ -534,7 +534,7 @@ public final class MetadataStandard {
      * @since 3.05
      */
     public Map<String,String> asDescriptionMap(Class<?> type, final Locale locale,
-            final KeyNamePolicy keyNames) throws ClassCastException
+            final org.apache.sis.metadata.KeyNamePolicy keyNames) throws ClassCastException
     {
         ensureNonNull("type",     type);
         ensureNonNull("locale",   locale);
@@ -578,7 +578,7 @@ public final class MetadataStandard {
      * @since 3.04
      */
     public Map<String,ValueRestriction> asRestrictionMap(Object metadata,
-            final NullValuePolicy content, final KeyNamePolicy keyNames) throws ClassCastException
+            final NullValuePolicy content, final org.apache.sis.metadata.KeyNamePolicy keyNames) throws ClassCastException
     {
         ensureNonNull("metadata", metadata);
         ensureNonNull("content",  content);
@@ -619,7 +619,7 @@ public final class MetadataStandard {
      * @since 3.03
      */
     public Map<String,Object> asMap(final Object metadata, final NullValuePolicy content,
-            final KeyNamePolicy keyNames) throws ClassCastException
+            final org.apache.sis.metadata.KeyNamePolicy keyNames) throws ClassCastException
     {
         ensureNonNull("metadata", metadata);
         ensureNonNull("content",  content);

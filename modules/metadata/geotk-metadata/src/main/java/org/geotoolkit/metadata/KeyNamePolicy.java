@@ -38,14 +38,21 @@ import org.opengis.annotation.UML;
  *
  * @since 3.03
  * @module
+ *
+ * @deprecated Moved to Apache SIS {@link org.apache.sis.metadata.KeyNamePolicy}.
  */
-public enum KeyNamePolicy {
+@Deprecated
+public final class KeyNamePolicy {
+    private KeyNamePolicy() {
+    }
+
     /**
      * The keys in the map are the {@linkplain UML#identifier() UML identifier} of the metadata
      * properties. If a property has no UML annotation, then the Javabeans property name is used
      * as a fallback.
      */
-    UML_IDENTIFIER,
+    public static final org.apache.sis.metadata.KeyNamePolicy UML_IDENTIFIER =
+            org.apache.sis.metadata.KeyNamePolicy.UML_IDENTIFIER;
 
     /**
      * The keys in the map are the Javabeans property names. This is the method name with
@@ -53,12 +60,14 @@ public enum KeyNamePolicy {
      * <p>
      * This is the default type of names returned by {@link AbstractMetadata#asMap()}.
      */
-    JAVABEANS_PROPERTY,
+    public static final org.apache.sis.metadata.KeyNamePolicy JAVABEANS_PROPERTY =
+            org.apache.sis.metadata.KeyNamePolicy.JAVABEANS_PROPERTY;
 
     /**
      * The keys in the map are the plain {@linkplain java.lang.reflect.Method#getName() method names}.
      */
-    METHOD_NAME,
+    public static final org.apache.sis.metadata.KeyNamePolicy METHOD_NAME =
+            org.apache.sis.metadata.KeyNamePolicy.METHOD_NAME;
 
     /**
      * The keys in the map are sentences inferred from the UML identifiers. This policy starts
@@ -69,5 +78,6 @@ public enum KeyNamePolicy {
      *
      * @since 3.04
      */
-    SENTENCE
+    public static final org.apache.sis.metadata.KeyNamePolicy SENTENCE =
+            org.apache.sis.metadata.KeyNamePolicy.SENTENCE;
 }

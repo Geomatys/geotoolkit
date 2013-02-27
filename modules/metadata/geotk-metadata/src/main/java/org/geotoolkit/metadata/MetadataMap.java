@@ -44,7 +44,7 @@ abstract class MetadataMap<V> extends AbstractMap<String,V> {
     /**
      * Determines the string representation of keys in the map.
      */
-    final KeyNamePolicy keyNames;
+    final org.apache.sis.metadata.KeyNamePolicy keyNames;
 
     /**
      * A view of the mappings contained in this map.
@@ -54,7 +54,7 @@ abstract class MetadataMap<V> extends AbstractMap<String,V> {
     /**
      * Creates a new map backed by the given accessor.
      */
-    MetadataMap(final PropertyAccessor accessor, final KeyNamePolicy keyNames) {
+    MetadataMap(final PropertyAccessor accessor, final org.apache.sis.metadata.KeyNamePolicy keyNames) {
         this.accessor = accessor;
         this.keyNames = keyNames;
     }
