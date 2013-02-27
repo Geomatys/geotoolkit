@@ -27,7 +27,7 @@
   <groupId>org.geotoolkit.pending</groupId>
   <artifactId>geotoolkit</artifactId>
   <packaging>pom</packaging>
-  <version>3.x-SNAPSHOT</version>
+  <version>4.x-SNAPSHOT</version>
   <name>Geotoolkit-pending</name>
   <url>http://pending.geotoolkit.org/</url>
 
@@ -120,7 +120,7 @@
   <!-- =========================================================== -->
 
   <properties>
-    <geotoolkit.version>3.x-SNAPSHOT</geotoolkit.version>
+    <geotoolkit.version>4.x-SNAPSHOT</geotoolkit.version>
   </properties>
 
   <dependencyManagement>
