@@ -9,10 +9,10 @@ Performing a Geotoolkit.org release
   Geotoolkit.org Maven artifacts, create the bundles, javadoc, list of API changes and push
   those documents on the web server. The content of this page is:
 
-  * List of requirements
-  * Setup (to be executed only once)
-  * Performing a GeoAPI release
-  * Performing a Geotk release
+   * List of requirements
+   * Setup (to be executed only once)
+   * Performing a GeoAPI release
+   * Performing a Geotk release
 
 
 
@@ -20,16 +20,16 @@ Performing a Geotoolkit.org release
 
   Before to perform a release, make sure that the following conditions holds:
 
-  * Maven, Ant, Java and the Java compiler shall be available on the path.
+   * Maven, Ant, Java and the Java compiler shall be available on the path.
 
-  * The <Setup> section below must have been executed once.
+   * The <Setup> section below must have been executed once.
 
-  * In the "<<<release>>>" directory created by the <Setup> section, the <<<$OLD_VERSION>>> directory
-    shall exist (where <<<$OLD_VERSION>>> is defined below) and shall contain the source code of the
-    previous version, as processed by the <<<Move>>> program described below.
+   * In the "<<<release>>>" directory created by the <Setup> section, the <<<$OLD_VERSION>>> directory
+     shall exist (where <<<$OLD_VERSION>>> is defined below) and shall contain the source code of the
+     previous version, as processed by the <<<Move>>> program described below.
 
-  * The home directory on <<<$GEOTK_SERVER>>> (defined below) shall contains a "<<<geotk-release>>>"
-    directory with a "<<<packs>>>" sub-directory. They are used temporarily for files transfer.
+   * The home directory on <<<$GEOTK_SERVER>>> (defined below) shall contains a "<<<geotk-release>>>"
+     directory with a "<<<packs>>>" sub-directory. They are used temporarily for files transfer.
 
 
 
@@ -92,15 +92,15 @@ hg status
   modified files, then stop the release process or revert the local modifications.
   Otherwise:
 
-  * <<manually>> search (for example using the <Find> contextual menu of your IDE on the
-    "<<<clone>>>" directory) for the old version number (the value of <<<$OLD_VERSION>>>)
-    in all <<<.apt>>>, <<<.xml>>> and <<<.entities>>> files.
-    Do <<not>> include <<<.java>>> files in the search.
+   * <<manually>> search (for example using the <Find> contextual menu of your IDE on the
+     "<<<clone>>>" directory) for the old version number (the value of <<<$OLD_VERSION>>>)
+     in all <<<.apt>>>, <<<.xml>>> and <<<.entities>>> files.
+     Do <<not>> include <<<.java>>> files in the search.
 
-  * For any occurrence found, <<read the surrounding text>> for making sure that this is a Geotk
-    version number, update the version number to the value of <<<$NEW_VERSION>>> if appropriate,
-    and eventually edit the text surrounding text. Some text may be specific to a particular
-    version number (for example a notice about an EPSG database update, <etc.>).
+   * For any occurrence found, <<read the surrounding text>> for making sure that this is a Geotk
+     version number, update the version number to the value of <<<$NEW_VERSION>>> if appropriate,
+     and eventually edit the text surrounding text. Some text may be specific to a particular
+     version number (for example a notice about an EPSG database update, <etc.>).
 
   The files to be updated include the <<<download.apt>>> page, the <<<run.apt>>> page,
   the OpenOffice.org addin <<<description.xml>>> and <<<update.xml>>> files, and various
