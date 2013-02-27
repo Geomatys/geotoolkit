@@ -649,7 +649,7 @@ final class PropertyAccessor {
      * @param  policy The kind of type to return.
      * @return The type of property values, or {@code null} if unknown.
      */
-    final Class<?> type(final int index, final TypeValuePolicy policy) {
+    final Class<?> type(final int index, final org.apache.sis.metadata.TypeValuePolicy policy) {
         if (index >= 0 && index < standardCount) {
             switch (policy) {
                 case ELEMENT_TYPE: {

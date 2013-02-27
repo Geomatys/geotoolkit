@@ -457,7 +457,7 @@ public final class MetadataStandard {
      *
      * @since 3.03
      */
-    public Map<String,Class<?>> asTypeMap(Class<?> type, final TypeValuePolicy typeValues,
+    public Map<String,Class<?>> asTypeMap(Class<?> type, final org.apache.sis.metadata.TypeValuePolicy typeValues,
             final org.apache.sis.metadata.KeyNamePolicy keyNames) throws ClassCastException
     {
         ensureNonNull("type",       type);
@@ -578,7 +578,8 @@ public final class MetadataStandard {
      * @since 3.04
      */
     public Map<String,ValueRestriction> asRestrictionMap(Object metadata,
-            final NullValuePolicy content, final org.apache.sis.metadata.KeyNamePolicy keyNames) throws ClassCastException
+            final org.apache.sis.metadata.NullValuePolicy content,
+            final org.apache.sis.metadata.KeyNamePolicy keyNames) throws ClassCastException
     {
         ensureNonNull("metadata", metadata);
         ensureNonNull("content",  content);
@@ -618,7 +619,8 @@ public final class MetadataStandard {
      *
      * @since 3.03
      */
-    public Map<String,Object> asMap(final Object metadata, final NullValuePolicy content,
+    public Map<String,Object> asMap(final Object metadata,
+            final org.apache.sis.metadata.NullValuePolicy content,
             final org.apache.sis.metadata.KeyNamePolicy keyNames) throws ClassCastException
     {
         ensureNonNull("metadata", metadata);
