@@ -29,7 +29,7 @@
   <groupId>org.geotoolkit</groupId>
   <artifactId>geotoolkit</artifactId>
   <packaging>pom</packaging>
-  <version>3.x-SNAPSHOT</version>
+  <version>4.x-SNAPSHOT</version>
   <name>Geotoolkit.org</name>
   <url>http://www.geotoolkit.org/</url>
 

@@ -48,7 +48,7 @@ public class PackerSpecificMojo extends AbstractMojo {
     /**
      * The Geotoolkit.org version.
      */
-    static final String VERSION = "3.x-SNAPSHOT";
+    static final String VERSION = "4.x-SNAPSHOT";
 
     /**
      * The Maven project running this plugin.

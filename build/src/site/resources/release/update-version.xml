@@ -22,7 +22,7 @@
       <include name="**/pom.xml"/>
       <include name="**/setenv.sh"/>
       <exclude name="modules/utility/geotk-utility/src/main/java/org/geotoolkit/util/Version.java"/>
-      <replacefilter token="3.x-SNAPSHOT" value="${geotk.version}"/>
+      <replacefilter token="4.x-SNAPSHOT" value="${geotk.version}"/>
     </replace>
   </target>
 </project>

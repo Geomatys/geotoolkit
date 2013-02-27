@@ -103,10 +103,10 @@ mvn site
 * Building the PACK200 bundles
 
   Execute the following command after a successful build of JAR files and javadoc
-  (replace <<<3.x-SNAPSHOT>>> by the actual Geotk version number to be built):
+  (replace <<<4.x-SNAPSHOT>>> by the actual Geotk version number to be built):
 
 -----------------------------------------------------------------------------------------
-mvn org.geotoolkit.project:geotk-jar-collector:3.x-SNAPSHOT:pack-specific --non-recursive
+mvn org.geotoolkit.project:geotk-jar-collector:4.x-SNAPSHOT:pack-specific --non-recursive
 -----------------------------------------------------------------------------------------
 
 
