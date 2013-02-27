@@ -396,7 +396,7 @@ public final class Numbers extends Static {
     public static <T> T valueOf(final Class<T> type, final String value)
             throws IllegalArgumentException, NumberFormatException
     {
-        return org.apache.sis.util.Numbers.valueOf(type, value);
+        return org.apache.sis.util.Numbers.valueOf(value, type);
     }
 
     /**
