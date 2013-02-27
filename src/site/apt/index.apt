@@ -46,7 +46,7 @@ The Geotoolkit.org library
 
 * Apache SIS and Geotk 3.<x>/4.<x> series
 
-  Large part of Geotoolkit.org code is moving to the Apache SIS project.
+  Large part of Geotoolkit.org code is moving to the {{{http://builds.apache.org/job/sis-trunk/site/}Apache SIS}} project.
   This migration results in deprecation of massive amount of classes in the Geotk project,
   which will be replaced by the SIS equivalent. In many cases, migrating to SIS is just a
   matter of replacing the <<<org.geotoolkit>>> package name by <<<org.apache.sis>>> in the

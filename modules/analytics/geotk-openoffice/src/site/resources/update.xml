@@ -3,7 +3,7 @@
   <identifier value="org.geotoolkit.openoffice"/>
   <version value="3.21"/>
   <update-download>
-    <src xlink:href="http://jenkins.geotoolkit.org/job/Geotoolkit/lastSuccessfulBuild/artifact/modules/analytics/geotk-openoffice/target/geotk-3.x-SNAPSHOT.oxt"/>
+    <src xlink:href="http://download.geotoolkit.org/3.21/geotk-3.21.oxt"/>
   </update-download>
   <publisher>
     <name lang="en" xlink:href="http://www.geotoolkit.org/modules/analytics/geotk-openoffice/index.html">Geotoolkit.org</name>
