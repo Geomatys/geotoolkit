@@ -282,5 +282,11 @@ public class DefaultFolderFeatureStore extends AbstractFeatureStore{
         }
     }
 
+	@Override
+	public void refreshMetaModel() {
+		stores=null;
+		
+	}
+
 
 }

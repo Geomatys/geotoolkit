@@ -1314,4 +1314,10 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
         }
     }
 
+	@Override
+	public void refreshMetaModel() {
+		dbmodel.clearCache();
+		
+	}
+
 }

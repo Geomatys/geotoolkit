@@ -464,4 +464,10 @@ public class MemoryFeatureStore extends AbstractFeatureStore{
         groups.clear();
     }
 
+	@Override
+	public void refreshMetaModel() {
+		return;
+		
+	}
+
 }

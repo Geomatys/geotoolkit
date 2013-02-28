@@ -515,4 +515,10 @@ public class OMDataStore extends AbstractFeatureStore {
             throw new FeatureStoreRuntimeException("Not supported.");
         }
     }
+
+	@Override
+	public void refreshMetaModel() {
+		return;
+		
+	}
 }

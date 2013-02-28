@@ -280,4 +280,10 @@ public final class ExtendedFeatureStore extends AbstractFeatureStore{
 
     }
 
+	@Override
+	public void refreshMetaModel() {
+		wrapped.refreshMetaModel();
+		
+	}
+
 }

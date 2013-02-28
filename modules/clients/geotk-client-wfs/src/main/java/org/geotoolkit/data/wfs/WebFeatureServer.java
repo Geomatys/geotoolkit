@@ -382,4 +382,10 @@ public class WebFeatureServer extends AbstractServer implements FeatureStore{
         getStore().removeStorageListener(listener);
     }
 
+	@Override
+	public void refreshMetaModel() {
+		getStore().refreshMetaModel();
+		
+	}
+
 }

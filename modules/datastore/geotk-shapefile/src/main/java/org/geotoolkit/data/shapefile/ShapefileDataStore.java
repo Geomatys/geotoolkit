@@ -694,4 +694,11 @@ public class ShapefileDataStore extends AbstractFeatureStore{
         handleRemoveWithFeatureWriter(groupName, filter);
     }
 
+	@Override
+	public void refreshMetaModel() {
+		name = null;
+		schema = null;
+		
+	}
+
 }

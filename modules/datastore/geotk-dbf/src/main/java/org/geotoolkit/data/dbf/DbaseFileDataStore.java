@@ -345,4 +345,10 @@ public class DbaseFileDataStore extends AbstractFeatureStore{
 
     }
 
+	@Override
+	public void refreshMetaModel() {
+		featureType=null;
+		
+	}
+
 }

@@ -306,5 +306,11 @@ public interface FeatureStore {
      * @param listener to remove
      */
     void removeStorageListener(StorageListener listener);
+    
+    /**
+     * refresh metaModel (in case someone else had changed by an other way)
+     * @param listener to remove
+     */
+    void refreshMetaModel();
 
 }

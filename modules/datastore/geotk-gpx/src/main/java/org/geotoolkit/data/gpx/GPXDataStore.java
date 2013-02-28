@@ -449,4 +449,10 @@ public class GPXDataStore extends AbstractFeatureStore{
 
     }
 
+	@Override
+	public void refreshMetaModel() {
+		return;
+		
+	}
+
 }
