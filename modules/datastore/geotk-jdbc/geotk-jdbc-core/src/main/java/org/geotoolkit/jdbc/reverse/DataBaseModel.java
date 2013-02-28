@@ -65,6 +65,8 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import static org.geotoolkit.jdbc.reverse.MetaDataConstants.*;
 import static org.geotoolkit.jdbc.AbstractJDBCDataStore.*;
+import org.geotoolkit.jdbc.JDBCDataStoreFactory;
+import org.geotoolkit.parameter.Parameters;
 
 /**
  * Represent the structure of the database. The work done here is similar to
@@ -238,7 +240,8 @@ public final class DataBaseModel {
             cx = store.getDataSource().getConnection();
 
             final DatabaseMetaData metadata = cx.getMetaData();
-            tableSet = metadata.getTables(null, schemaName, "%",
+            String tableNamePattern = (Parameters.getOrCreate(JDBCDataStoreFactory.TABLE,store.getConfiguration()).getValue()!=null)?Parameters.getOrCreate(JDBCDataStoreFactory.TABLE,store.getConfiguration()).getValue().toString():"%";
+            tableSet = metadata.getTables(null, schemaName, tableNamePattern,
                     new String[]{Table.VALUE_TYPE_TABLE, Table.VALUE_TYPE_VIEW});
 
             while (tableSet.next()) {

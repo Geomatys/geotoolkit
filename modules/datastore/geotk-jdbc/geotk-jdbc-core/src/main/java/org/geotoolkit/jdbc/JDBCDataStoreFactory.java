@@ -100,6 +100,10 @@ public abstract class JDBCDataStoreFactory extends AbstractFeatureStoreFactory {
     /** Maximum amount of time the pool will wait when trying to grab a new connection **/
     public static final ParameterDescriptor<Integer> MAXWAIT =
              new DefaultParameterDescriptor<Integer>("Connection timeout","number of seconds the connection pool wait for login",Integer.class,20,false);
+    
+    /** parameter for table to load **/
+    public static final ParameterDescriptor<String> TABLE =
+             new DefaultParameterDescriptor<String>("Table Name","Table Name",String.class,null,false);
 
     @Override
     public CharSequence getDisplayName() {
