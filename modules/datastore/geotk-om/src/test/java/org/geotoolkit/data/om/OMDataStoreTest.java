@@ -1,3 +1,4 @@
+package org.geotoolkit.data.om;
 /*
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
