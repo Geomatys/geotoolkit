@@ -24,12 +24,8 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.bind.JAXBException;
-import org.geotoolkit.coverage.AbstractCoverageReference;
-import org.geotoolkit.coverage.GridMosaic;
-import org.geotoolkit.coverage.GridSampleDimension;
-import org.geotoolkit.coverage.Pyramid;
-import org.geotoolkit.coverage.PyramidalModel;
-import org.geotoolkit.coverage.PyramidalModelReader;
+
+import org.geotoolkit.coverage.*;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
@@ -43,50 +39,19 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class XMlCoverageReference extends AbstractCoverageReference implements PyramidalModel{
+public class XMlCoverageReference extends AbstractPyramidalModel {
 
-    private final XMLCoverageStore store;
-    private final Name name;
     private final XMLPyramidSet set;
 
 
     public XMlCoverageReference(XMLCoverageStore store, Name name, XMLPyramidSet set) {
-        this.store = store;
-        this.name = name;
+        super(store,name,0);
         this.set = set;
-    }
-
-    @Override
-    public Name getName() {
-        return name;
     }
 
     @Override
     public boolean isWritable() throws DataStoreException {
         return true;
-    }
-
-    @Override
-    public int getImageIndex() {
-        return 0;
-    }
-        
-    @Override
-    public GridCoverageWriter createWriter() throws DataStoreException {
-        //TODO
-        throw new DataStoreException("Not supported yet.");
-    }
-
-    @Override
-    public XMLCoverageStore getStore() {
-        return store;
-    }
-
-    @Override
-    public GridCoverageReader createReader() throws CoverageStoreException {
-        final PyramidalModelReader reader = new PyramidalModelReader();
-        reader.setInput(this);
-        return reader;
     }
 
     @Override
@@ -155,10 +120,6 @@ public class XMlCoverageReference extends AbstractCoverageReference implements P
     @Override
     public void deleteTile(String pyramidId, String mosaicId, int col, int row) throws DataStoreException {
         throw new DataStoreException("Not supported yet.");
-    }
-    
-    public Image getLegend() throws DataStoreException {
-        return null;
     }
 
     @Override

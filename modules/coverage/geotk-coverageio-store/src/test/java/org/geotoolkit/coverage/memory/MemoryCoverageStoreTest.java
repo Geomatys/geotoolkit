@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2010, Geomatys
+ *    (C) 2013, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -16,19 +16,18 @@
  */
 package org.geotoolkit.coverage.memory;
 
-import org.geotoolkit.coverage.DefaultPyramidSet;
+import org.geotoolkit.coverage.CoverageStore;
+import org.geotoolkit.coverage.PyramidalModelStoreTest;
 
 /**
- *
- * @author rmarechal
+ * @author Johann Sorel (Geomatys)
  */
-public class MPPyramidSet extends DefaultPyramidSet {
+public class MemoryCoverageStoreTest extends PyramidalModelStoreTest {
 
-    private final MPCoverageReference ref;
-    
-    public MPPyramidSet(MPCoverageReference ref) {
-        this.ref = ref;
+    @Override
+    protected CoverageStore createStore() throws Exception{
+        final MPCoverageStore store = new MPCoverageStore();
+        return store;
     }
-    
-    
+
 }

@@ -31,7 +31,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public interface PyramidalModel {
+public interface PyramidalModel extends CoverageReference{
 
     PyramidSet getPyramidSet() throws DataStoreException;
 
