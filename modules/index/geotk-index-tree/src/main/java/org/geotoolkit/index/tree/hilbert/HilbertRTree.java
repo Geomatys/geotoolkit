@@ -266,7 +266,7 @@ public class HilbertRTree extends AbstractTree {
                 Envelope envelope = getEnveloppeMin(lS);
                 candidate.getTree().getCalculator().createBasicHL(candidate, (Integer) candidate.getUserProperty(PROP_HILBERT_ORDER), envelope);
                 for (Envelope sh : lS) {
-                    candidate.setBound(envelope);
+                    candidate.setBound(envelope);//to avoid recomputing of candidate boundary.
                     chooseSubtree(candidate, entry).getEntries().add(sh);
                 }
             } else {
@@ -296,7 +296,7 @@ public class HilbertRTree extends AbstractTree {
             final Envelope boundT = getEnveloppeMin(lS);
             calc.createBasicHL(candidate, cHO + 1, boundT);
             for (Envelope sh : lS) {
-                candidate.setBound(boundT);
+                candidate.setBound(boundT);//to avoid candidate boundary re-computing.
                 chooseSubtree(candidate, sh).getEntries().add(sh);
             }
             return null;
@@ -338,19 +338,37 @@ public class HilbertRTree extends AbstractTree {
             eltList = candidate.getChildren();
         }
         final AbstractTree tree = (AbstractTree)candidate.getTree();
-        final Calculator calc = tree.getCalculator();
-        final int dim = tree.getDims().length;
-        final int size = eltList.size();
-        final double size04 = size * 0.4;
-        final int demiSize = (int) ((size04 >= 1) ? size04 : 1);
-        final List splitListA = new ArrayList();
-        final List splitListB = new ArrayList();
+        final Calculator calc   = tree.getCalculator();
+        final int dim           = tree.getDims().length;
+        final int size          = eltList.size();
+        final double size04     = size * 0.4;
+        final int demiSize      = (int) ((size04 >= 1) ? size04 : 1);
+        final List splitListA   = new ArrayList();
+        final List splitListB   = new ArrayList();
+        double bulkRef          = Double.POSITIVE_INFINITY;
+        int index               = 0;
         GeneralEnvelope gESPLA, gESPLB;
-        double bulkTemp, bulkRef = -1;
-        int index = 0;
-        int cut2;
         Comparator comp;
+        double bulkTemp; 
+        
+        final GeneralEnvelope globalEltsArea = getEnveloppeMin(eltList);
+        
+        // if glogaleArea.span(currentDim) == 0 || if all elements have same span
+        // value as global area on current ordinate, impossible to split on this axis.
+        unappropriateOrdinate : 
         for (int indOrg = 0; indOrg < dim; indOrg++) {
+            final double globalSpan = globalEltsArea.getSpan(indOrg);
+            boolean isSameSpan = true;
+            //check if its possible to split on this currently ordinate.
+            for (Object elt : eltList) {
+                final Envelope envElt = (isLeaf) ? (Envelope) elt : ((Node)elt).getBoundary();
+                if (!(Math.abs(envElt.getSpan(indOrg) - globalSpan) <= 1E-9)) {
+                    isSameSpan = false;
+                    break;
+                }
+            }
+            if (globalSpan <= 1E-9 || isSameSpan) continue unappropriateOrdinate; 
+            
             bulkTemp = 0;
             for (int left_or_right = 0; left_or_right < 2; left_or_right++) {
                 comp = (isLeaf) ? ((left_or_right == 0) ? calc.sortFrom(indOrg, true, false) : calc.sortFrom(indOrg, false, false))
@@ -365,38 +383,15 @@ public class HilbertRTree extends AbstractTree {
                     for (int j = cut; j < size; j++) {
                         splitListB.add(eltList.get(j));
                     }
-                    cut2 = size - cut;
-                    if (isLeaf) {
-                        gESPLA = new GeneralEnvelope((Envelope) splitListA.get(0));
-                        gESPLB = new GeneralEnvelope((Envelope) splitListB.get(0));
-                        for (int i = 1; i < cut; i++) {
-                            gESPLA.add((Envelope) splitListA.get(i));
-                        }
-                        for (int i = 1; i < cut2; i++) {
-                            gESPLB.add((Envelope) splitListB.get(i));
-                        }
-                    } else {
-                        gESPLA = new GeneralEnvelope(((Node) splitListA.get(0)).getBoundary());
-                        gESPLB = new GeneralEnvelope(((Node) splitListB.get(0)).getBoundary());
-                        for (int i = 1; i < cut; i++) {
-                            gESPLA.add(((Node) splitListA.get(i)).getBoundary());
-                        }
-                        for (int i = 1; i < cut2; i++) {
-                            gESPLB.add(((Node) splitListB.get(i)).getBoundary());
-                        }
-                    }
+                    gESPLA = getEnveloppeMin(splitListA);
+                    gESPLB = getEnveloppeMin(splitListB);
                     bulkTemp += calc.getEdge(gESPLA);
                     bulkTemp += calc.getEdge(gESPLB);
                 }
             }
-            if (indOrg == 0) {
+            if (bulkTemp < bulkRef) {
                 bulkRef = bulkTemp;
                 index = indOrg;
-            } else {
-                if (bulkTemp < bulkRef) {
-                    bulkRef = bulkTemp;
-                    index = indOrg;
-                }
             }
         }
         return index;
@@ -418,9 +413,9 @@ public class HilbertRTree extends AbstractTree {
      */
     private static List<Node> hilbertNodeSplit(final Node candidate) throws IllegalArgumentException{
 
-        final int splitIndex = defineSplitAxis(candidate);
-        final boolean isLeaf = candidate.isLeaf();
-        final Tree tree = candidate.getTree();
+        final int splitIndex  = defineSplitAxis(candidate);
+        final boolean isLeaf  = candidate.isLeaf();
+        final Tree tree       = candidate.getTree();
         final Calculator calc = tree.getCalculator();
         List eltList;
         if (isLeaf) {
@@ -432,62 +427,46 @@ public class HilbertRTree extends AbstractTree {
         } else {
             eltList = candidate.getChildren();
         }
-        final int size = eltList.size();
-        final double size04 = size * 0.4;
-        final int demiSize = (int) ((size04 >= 1) ? size04 : 1);
+        final int size        = eltList.size();
+        //to find best split combinaison follow list elements from 1/3 th elts to 2/3th elts.
+        final double size033  = size * 0.333;
+        final int tierSize    = (int) ((size033 >= 1) ? size033 : 1);
+        double bulkRef = Double.POSITIVE_INFINITY;
         final List splitListA = new ArrayList();
         final List splitListB = new ArrayList();
+        int index             = 0;
+        int lower_or_upper    = 0;
         final List<CoupleGE> listCGE = new ArrayList<CoupleGE>();
         GeneralEnvelope gESPLA, gESPLB;
-        double bulkTemp;
-        double bulkRef = -1;
         CoupleGE coupleGE;
-        int index = 0;
-        int lower_or_upper = 0;
-        int cut2;
         Comparator comp;
+        double bulkTemp;
+        // if (lu == 0) organize list elements from their lower corner boundary else organize from their upper corner.
         for (int lu = 0; lu < 2; lu++) {
             comp = (isLeaf) ? ((lu == 0) ? calc.sortFrom(splitIndex, true, false) : calc.sortFrom(splitIndex, false, false))
                             : ((lu == 0) ? calc.sortFrom(splitIndex, true, true)  : calc.sortFrom(splitIndex, false, true));
             Collections.sort(eltList, comp);
 
-            for (int cut = demiSize; cut <= size - demiSize; cut++) {
+            for (int cut = tierSize; cut <= size - tierSize; cut++) {
                 for (int i = 0; i < cut; i++) {
                     splitListA.add(eltList.get(i));
                 }
                 for (int j = cut; j < size; j++) {
                     splitListB.add(eltList.get(j));
                 }
-                cut2 = size - cut;
-                if (isLeaf) {
-                    gESPLA = new GeneralEnvelope((Envelope) splitListA.get(0));
-                    gESPLB = new GeneralEnvelope((Envelope) splitListB.get(0));
-                    for (int i = 1; i < cut; i++) {
-                        gESPLA.add((Envelope) splitListA.get(i));
-                    }
-                    for (int i = 1; i < cut2; i++) {
-                        gESPLB.add((Envelope) splitListB.get(i));
-                    }
-                } else {
-                    gESPLA = new GeneralEnvelope(((Node) splitListA.get(0)).getBoundary());
-                    gESPLB = new GeneralEnvelope(((Node) splitListB.get(0)).getBoundary());
-                    for (int i = 1; i < cut; i++) {
-                        gESPLA.add(((Node) splitListA.get(i)).getBoundary());
-                    }
-                    for (int i = 1; i < cut2; i++) {
-                        gESPLB.add(((Node) splitListB.get(i)).getBoundary());
-                    }
-                }
+                gESPLA = getEnveloppeMin(splitListA);
+                gESPLB = getEnveloppeMin(splitListB);
                 coupleGE = new CoupleGE(gESPLA, gESPLB, calc);
                 bulkTemp = coupleGE.getOverlaps();
-                if (bulkTemp < bulkRef || bulkRef == -1) {
-                    bulkRef = bulkTemp;
-                    index = cut;
-                    lower_or_upper = lu;
-                } else if (bulkTemp == 0) {
+                
+                if (Double.isNaN(bulkTemp) || bulkTemp == 0) {
                     coupleGE.setUserProperty("cut", cut);
                     coupleGE.setUserProperty("lower_or_upper", lu);
                     listCGE.add(coupleGE);
+                } else if (bulkTemp < bulkRef && listCGE.isEmpty()) {
+                    bulkRef = bulkTemp;
+                    index = cut;
+                    lower_or_upper = lu;
                 }
                 splitListA.clear();
                 splitListB.clear();
@@ -495,11 +474,11 @@ public class HilbertRTree extends AbstractTree {
         }
 
         if (!listCGE.isEmpty()) {
-            double areaRef = -1;
+            double areaRef = Double.POSITIVE_INFINITY;
             double areaTemp;
             for (CoupleGE cge : listCGE) {
                 areaTemp = cge.getEdge();
-                if (areaTemp < areaRef || areaRef == -1) {
+                if (areaTemp < areaRef) {
                     areaRef = areaTemp;
                     index = (Integer) cge.getUserProperty("cut");
                     lower_or_upper = (Integer) cge.getUserProperty("lower_or_upper");
@@ -515,6 +494,11 @@ public class HilbertRTree extends AbstractTree {
         for (int i = index; i < size; i++) {
             splitListB.add(eltList.get(i));
         }
+        
+        //paranoiac assertion.
+        assert (!splitListA.isEmpty()) :"split list A should not be empty";
+        assert (!splitListB.isEmpty()) :"split list B should not be empty";
+        
         if (isLeaf) return UnmodifiableArrayList.wrap(tree.createNode(tree, null, null, splitListA), tree.createNode(tree, null, null, splitListB));
         final Node resultA = (Node) ((splitListA.size() == 1) ? splitListA.get(0) : tree.createNode(tree, null, splitListA, null));
         final Node resultB = (Node) ((splitListB.size() == 1) ? splitListB.get(0) : tree.createNode(tree, null, splitListB, null));
@@ -764,7 +748,7 @@ public class HilbertRTree extends AbstractTree {
             final Calculator calc = tree.getCalculator();
             final List<Envelope> lS = new ArrayList<Envelope>();
             searchHilbertNode(candidate, candidate.getBoundary(), new DefaultTreeVisitor(lS));
-
+            
             if (lS.size() <= tree.getMaxElements() * Math.pow(2, tree.getHilbertOrder() * 2) && !lS.isEmpty()) {
                 final Envelope bound = getEnveloppeMin(lS);
                 calc.createBasicHL(candidate, tree.getHilbertOrder(), bound);
