@@ -17,6 +17,7 @@
 package org.geotoolkit.index.tree.calculator;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import org.geotoolkit.geometry.GeneralDirectPosition;
@@ -169,7 +170,7 @@ public class Calculator2D extends Calculator {
     @Override
     public double getSpace(final Envelope envelop) {
         double result = 1;
-        for(int i = 0, l=dims.length; i<l; i++) {
+        for (int i = 0, l = dims.length; i < l; i++) {
             result *= envelop.getSpan(dims[i]);
         }
         return result;
@@ -181,7 +182,7 @@ public class Calculator2D extends Calculator {
     @Override
     public double getEdge(final Envelope envelop) {
         double result = 0;
-        for(int i = 0,l = dims.length; i<l; i++) {
+        for (int i = 0,l = dims.length; i < l; i++) {
             result += envelop.getSpan(dims[i]);
         }
         return 2 * result;
@@ -202,7 +203,7 @@ public class Calculator2D extends Calculator {
     public double getDistance(final DirectPosition positionA, final DirectPosition positionB) {
         final int l = dims.length;
         double[] tab = new double[l];
-        for(int i = 0; i<l; i++) {
+        for(int i = 0; i < l; i++) {
             tab[i] = positionB.getOrdinate(dims[i]) - positionA.getOrdinate(dims[i]);
         }
         double result = 0;
@@ -292,11 +293,11 @@ public class Calculator2D extends Calculator {
         if (order > 0) {
             final double width  = bound.getSpan(dims[0]);
             final double height = bound.getSpan(dims[1]);
+            final int nbCells   = 2 << (2 * order - 1);
             final int dimH      = 2 << order - 1;
-            int[] tabHV         = new int[dimH << 1];
+            int[] tabHV         = new int[nbCells];
             
             double fract, ymin, xmin;
-            final int nbCells = 2 << (2 * order - 1);
             if (width * height <= 0) {
                 if (width <= 0) {
                     fract = height / (2 * nbCells);
@@ -358,11 +359,11 @@ public class Calculator2D extends Calculator {
         final double div  = 2 << (hilbertOrder - 1);
         final double divX = envelop.getSpan(dims[0]) / div;
         final double divY = envelop.getSpan(dims[1]) / div;
-        double hdx        = (Math.abs(dPt.getOrdinate(dims[0]) - envelop.getLowerCorner().getOrdinate(dims[0])) / divX);
-        double hdy        = (Math.abs(dPt.getOrdinate(dims[1]) - envelop.getLowerCorner().getOrdinate(dims[1])) / divY);
-        final int hx      = (hdx <= 1) ? 0 : 1;
-        final int hy      = (hdy <= 1) ? 0 : 1;
-        return new int[]{hx, hy};
+        int hdx        = (int) (Math.abs(dPt.getOrdinate(dims[0]) - envelop.getLowerCorner().getOrdinate(dims[0])) / divX);
+        int hdy        = (int) (Math.abs(dPt.getOrdinate(dims[1]) - envelop.getLowerCorner().getOrdinate(dims[1])) / divY);
+        if (hdx == div) hdx--;
+        if (hdy == div) hdy--;
+        return new int[]{hdx, hdy};
     }
 
     /**

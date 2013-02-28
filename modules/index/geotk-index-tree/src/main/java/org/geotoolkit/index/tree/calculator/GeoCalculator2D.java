@@ -58,11 +58,11 @@ public class GeoCalculator2D extends GeoCalculator{
         if (order > 0) {
             final double width  = bound.getSpan(dims[0]);
             final double height = bound.getSpan(dims[1]);
+            final int nbCells   = 2 << (2 * order - 1);
             final int dimH      = 2 << order - 1;
-            int[] tabHV         = new int[dimH << 1];
+            int[] tabHV         = new int[nbCells];
 
             double fract, ymin, xmin;
-            final int nbCells = 2 << (2 * order - 1);
             if (width * height <= 0) {
                 if (width <= 0) {
                     fract = height / (2 * nbCells);
@@ -126,11 +126,11 @@ public class GeoCalculator2D extends GeoCalculator{
         final double div  = 2 << (hilbertOrder - 1);
         final double divX = envelop.getSpan(dims[0]) / div;
         final double divY = envelop.getSpan(dims[1]) / div;
-        final double hdx  = (Math.abs(dPt.getOrdinate(dims[0]) - envelop.getLowerCorner().getOrdinate(dims[0])) / divX);
-        final double hdy  = (Math.abs(dPt.getOrdinate(dims[1]) - envelop.getLowerCorner().getOrdinate(dims[1])) / divY);
-        final int hx      = (hdx <= 1) ? 0 : 1;
-        final int hy      = (hdy <= 1) ? 0 : 1;
-        return new int[]{hx, hy};
+        int hdx        = (int) (Math.abs(dPt.getOrdinate(dims[0]) - envelop.getLowerCorner().getOrdinate(dims[0])) / divX);
+        int hdy        = (int) (Math.abs(dPt.getOrdinate(dims[1]) - envelop.getLowerCorner().getOrdinate(dims[1])) / divY);
+        if (hdx == div) hdx--;
+        if (hdy == div) hdy--;
+        return new int[]{hdx, hdy};
     }
 
     /**
