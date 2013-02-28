@@ -60,6 +60,34 @@ public abstract class TreeTest {
         }
         return true;
     }
+    
+    /**
+     * Find all entries number in a {@link Tree}.
+     * 
+     * @param tree where to looking for entries.
+     * @return all entries number in a {@link Tree}.
+     */
+    protected boolean checkTreeElts(Tree tree) {
+        return tree.getElementsNumber() == countElement(tree.getRoot(), 0);
+    }
+    
+    /**
+     * Compute recursively entries number contained in a {@link Node}.
+     * 
+     * @param node current within entries are. 
+     * @param count current count.
+     * @return entries number contained in a {@link Node}.
+     */
+    private int countElement(Node node, int count){
+        if ((node.getEntries() == null || node.getEntries().isEmpty()) && !node.getChildren().isEmpty()) {
+            for (Node nod : node.getChildren()) {
+                count = countElement(nod, count);
+            }
+        } else {
+            count += node.getEntries().size();
+        }
+        return count;
+    }
 
     /**Create a default adapted test entry({@code GeneralEnvelope}).
      *

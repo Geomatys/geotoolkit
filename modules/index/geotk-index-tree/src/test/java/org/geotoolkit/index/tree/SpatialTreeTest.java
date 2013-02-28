@@ -26,6 +26,7 @@ import org.geotoolkit.index.tree.io.DefaultTreeVisitor;
 import org.geotoolkit.referencing.crs.DefaultEngineeringCRS;
 import org.geotoolkit.util.ArgumentChecks;
 import static org.junit.Assert.assertTrue;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
@@ -125,6 +126,7 @@ public abstract class SpatialTreeTest extends TreeTest{
             assertTrue(ex instanceof IllegalArgumentException);
             //ok
         }
+        assertTrue(checkTreeElts(tree));
     }
 
     /**
@@ -190,6 +192,7 @@ public abstract class SpatialTreeTest extends TreeTest{
         final List<Envelope> lGES = new ArrayList<Envelope>();
         tree.search(gR, new DefaultTreeVisitor(lGES));
         assertTrue(compareList(lGERef, lGES));
+        assertTrue(checkTreeElts(tree));
     }
 
     /**
@@ -229,6 +232,7 @@ public abstract class SpatialTreeTest extends TreeTest{
         final List<Envelope> listSearch = new ArrayList<Envelope>();
         tree.search(DefaultTreeUtils.getEnveloppeMin(lData), new DefaultTreeVisitor(listSearch));
         assertTrue(compareList(lData, listSearch));
+        assertTrue(checkTreeElts(tree));
     }
 
     /**
@@ -245,6 +249,7 @@ public abstract class SpatialTreeTest extends TreeTest{
         final List<Envelope> listSearch = new ArrayList<Envelope>();
         tree.search(areaSearch, new DefaultTreeVisitor(listSearch));
         assertTrue(listSearch.isEmpty());
+        assertTrue(checkTreeElts(tree));
     }
 
     /**
@@ -263,9 +268,11 @@ public abstract class SpatialTreeTest extends TreeTest{
         final List<Envelope> listSearch = new ArrayList<Envelope>();
         tree.search(areaSearch, new DefaultTreeVisitor(listSearch));
         assertTrue(listSearch.isEmpty());
-        assertTrue(tree.getElementsNumber()==0);
+        assertTrue(tree.getElementsNumber() == 0);
+        assertTrue(checkTreeElts(tree));
         insert();
         tree.search(areaSearch, new DefaultTreeVisitor(listSearch));
         assertTrue(compareList(listSearch, lData));
+        assertTrue(checkTreeElts(tree));
     }
 }
