@@ -752,7 +752,8 @@ public class MetadataTreeFormat extends Format {
                     } else if (element instanceof InternationalString) {
                         name = ((InternationalString) element).toString(displayLocale);
                     } else if (element instanceof CodeList<?>) {
-                        name = Types.getCodeTitle((CodeList<?>) element, displayLocale);
+                        final InternationalString text = Types.getCodeTitle((CodeList<?>) element);
+                        name = (text != null) ? text.toString(displayLocale) : null;
                     } else {
                         name = element.toString();
                     }

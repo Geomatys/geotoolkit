@@ -22,6 +22,7 @@ import java.util.Locale;
 import org.opengis.util.CodeList;
 import org.opengis.annotation.UML;
 
+import org.opengis.util.InternationalString;
 import org.geotoolkit.lang.Static;
 import org.apache.sis.util.iso.Types;
 
@@ -112,11 +113,11 @@ public final class CodeLists extends Static {
      *
      * @since 3.18
      *
-     * @deprecated Moved to {@link Types#getCodeTitle(CodeList)}.
+     * @deprecated Moved to {@link Types#getCodeLabel(CodeList)}.
      */
     @Deprecated
     public static String sentence(final CodeList<?> code) {
-        return Types.getCodeTitle(code);
+        return Types.getCodeLabel(code);
     }
 
     /**
@@ -131,11 +132,12 @@ public final class CodeLists extends Static {
      *
      * @since 3.18
      *
-     * @deprecated Moved to {@link Types#getCodeTitle(CodeList, Locale)}.
+     * @deprecated Moved to {@link Types#getCodeTitle(CodeList)}.
      */
     @Deprecated
     public static String localize(final CodeList<?> code, final Locale locale) {
-        return Types.getCodeTitle(code, locale);
+        final InternationalString text = Types.getCodeTitle(code);
+        return (text != null) ? text.toString(locale) : null;
     }
 
     /**
