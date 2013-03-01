@@ -17,6 +17,9 @@ package org.geotoolkit.data.om;
  */
 
 import com.vividsolutions.jts.geom.Point;
+import java.io.InputStream;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 
 import java.sql.Connection;
 import java.util.ArrayList;
@@ -59,8 +62,8 @@ public class OMDataStoreTest extends AbstractReadingTests{
             Connection con = ds.getConnection();
 
             final ScriptRunner exec = new ScriptRunner(con);
-            exec.run(OMDataStoreTest.class.getResourceAsStream("org/geotoolkit/sql/structure-observations.sql"));
-            exec.run(OMDataStoreTest.class.getResourceAsStream("org/geotoolkit/sql/sos-data.sql"));
+            exec.run(getResourceAsStream("org/geotoolkit/sql/structure-observations.sql"));
+            exec.run(getResourceAsStream("org/geotoolkit/sql/sos-data.sql"));
 
             final Map params = new HashMap<String, Object>();
             params.put("dbtype", "OM");
@@ -132,4 +135,17 @@ public class OMDataStoreTest extends AbstractReadingTests{
         return expecteds;
     }
 
+    public static InputStream getResourceAsStream(final String url) {
+        final ClassLoader cl = getContextClassLoader();
+        return cl.getResourceAsStream(url);
+    }
+    
+    public static ClassLoader getContextClassLoader() {
+        return AccessController.doPrivileged(new PrivilegedAction<ClassLoader>() {
+            @Override
+            public ClassLoader run() {
+                return Thread.currentThread().getContextClassLoader();
+            }
+        });
+    }
 }
