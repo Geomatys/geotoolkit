@@ -26,7 +26,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.swe.xml.AnyScalar;
 import org.geotoolkit.swe.xml.SimpleDataRecord;
-import org.geotoolkit.util.ComparisonMode;
+import org.apache.sis.util.ComparisonMode;
 
 /**
  * Liste de valeur scalaire ou textuelle utilisé dans le resultat d'une observation.

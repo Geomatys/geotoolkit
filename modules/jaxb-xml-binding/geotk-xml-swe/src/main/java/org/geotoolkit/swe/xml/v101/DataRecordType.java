@@ -24,7 +24,7 @@ import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.swe.xml.DataComponentProperty;
 import org.geotoolkit.swe.xml.DataRecord;
 import org.geotoolkit.util.Utilities;
-import org.geotoolkit.util.ComparisonMode;
+import org.apache.sis.util.ComparisonMode;
 
 /**
  * <p>Java class for DataRecordType complex type.

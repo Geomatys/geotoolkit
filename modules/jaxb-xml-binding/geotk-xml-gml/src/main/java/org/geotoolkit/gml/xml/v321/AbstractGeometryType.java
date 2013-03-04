@@ -27,7 +27,7 @@ import java.util.logging.Logger;
 import javax.xml.bind.annotation.*;
 import org.geotoolkit.gml.xml.AbstractGeometry;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.util.ComparisonMode;
+import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.util.Utilities;
 import org.opengis.filter.expression.Expression;
 import org.opengis.geometry.*;

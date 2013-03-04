@@ -6,7 +6,7 @@ package org.geotoolkit.feature;
 
 import java.util.Map;
 import org.geotoolkit.referencing.crs.AbstractCRS;
-import org.geotoolkit.util.ComparisonMode;
+import org.apache.sis.util.ComparisonMode;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**

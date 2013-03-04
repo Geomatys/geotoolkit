@@ -33,7 +33,7 @@ import org.geotoolkit.internal.jaxb.metadata.LI_Lineage;
 import org.geotoolkit.observation.xml.v200.NamedValuePropertyType;
 import org.geotoolkit.observation.xml.v200.OMObservationPropertyType;
 import org.geotoolkit.observation.xml.v200.OMObservationType;
-import org.geotoolkit.util.ComparisonMode;
+import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.util.Utilities;
 import org.opengis.geometry.Geometry;
 import org.opengis.metadata.lineage.Lineage;

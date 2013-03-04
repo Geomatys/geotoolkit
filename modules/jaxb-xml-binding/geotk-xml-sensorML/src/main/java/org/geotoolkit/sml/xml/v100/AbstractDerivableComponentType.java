@@ -24,7 +24,7 @@ import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.sml.xml.AbstractDerivableComponent;
 import org.geotoolkit.sml.xml.AbstractLocation;
 import org.geotoolkit.sml.xml.AbstractPosition;
-import org.geotoolkit.util.ComparisonMode;
+import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.util.Utilities;
 
 

@@ -39,7 +39,7 @@ import org.geotoolkit.observation.xml.AbstractObservation;
 import org.geotoolkit.observation.xml.v200.OMObservationType.InternalPhenomenon;
 import org.geotoolkit.sampling.xml.v200.SFSamplingFeatureType;
 import org.geotoolkit.swe.xml.v200.DataArrayPropertyType;
-import org.geotoolkit.util.ComparisonMode;
+import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.util.Utilities;
 import org.opengis.metadata.Metadata;
 import org.opengis.metadata.quality.Element;

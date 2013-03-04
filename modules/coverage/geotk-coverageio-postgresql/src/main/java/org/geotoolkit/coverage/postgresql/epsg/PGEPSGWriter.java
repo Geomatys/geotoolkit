@@ -44,7 +44,7 @@ import org.geotoolkit.referencing.EPSGWriter;
 import org.geotoolkit.referencing.datum.AbstractDatum;
 import org.geotoolkit.referencing.factory.IdentifiedObjectFinder;
 import org.geotoolkit.temporal.object.TemporalUtilities;
-import org.geotoolkit.util.ComparisonMode;
+import org.apache.sis.util.ComparisonMode;
 import org.opengis.metadata.extent.Extent;
 import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.crs.SingleCRS;

@@ -24,7 +24,7 @@ import org.geotoolkit.sml.xml.AbstractComponent;
 import org.geotoolkit.sml.xml.AbstractInputs;
 import org.geotoolkit.sml.xml.AbstractOutputs;
 import org.geotoolkit.sml.xml.AbstractParameters;
-import org.geotoolkit.util.ComparisonMode;
+import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.util.Utilities;
 
 
