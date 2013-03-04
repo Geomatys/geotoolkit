@@ -32,12 +32,12 @@ import java.lang.reflect.UndeclaredThrowableException;
 import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.annotation.UML;
+import org.apache.sis.util.ArraysExt;
 
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.Strings;
 import org.geotoolkit.util.Utilities;
-import org.geotoolkit.util.ComparisonMode;
+import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.util.collection.CheckedContainer;
 import org.geotoolkit.util.converter.Classes;
@@ -473,7 +473,7 @@ final class PropertyAccessor {
                     }
                     getters[count++] = EXTRA_GETTER;
                 }
-                getters = XArrays.resize(getters, count);
+                getters = ArraysExt.resize(getters, count);
                 SHARED_GETTERS.put(type, getters);
             }
             return getters;
@@ -611,7 +611,7 @@ final class PropertyAccessor {
      *         index is out of bounds.
      */
     @SuppressWarnings("fallthrough")
-    final String name(final int index, final KeyNamePolicy keyName) {
+    final String name(final int index, final org.apache.sis.metadata.KeyNamePolicy keyName) {
         if (index >= 0 && index < names.length) {
             switch (keyName) {
                 case UML_IDENTIFIER: {
@@ -649,7 +649,7 @@ final class PropertyAccessor {
      * @param  policy The kind of type to return.
      * @return The type of property values, or {@code null} if unknown.
      */
-    final Class<?> type(final int index, final TypeValuePolicy policy) {
+    final Class<?> type(final int index, final org.apache.sis.metadata.TypeValuePolicy policy) {
         if (index >= 0 && index < standardCount) {
             switch (policy) {
                 case ELEMENT_TYPE: {

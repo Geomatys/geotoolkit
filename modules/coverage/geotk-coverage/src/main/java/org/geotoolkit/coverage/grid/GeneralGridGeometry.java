@@ -32,7 +32,7 @@ import org.opengis.geometry.Envelope;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.metadata.spatial.PixelOrientation; // For javadoc
 
-import org.geotoolkit.math.XMath;
+import org.apache.sis.math.MathFunctions;
 import org.geotoolkit.util.Cloneable;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.geometry.Envelopes;
@@ -43,7 +43,7 @@ import org.geotoolkit.referencing.operation.transform.LinearTransform;
 import org.geotoolkit.referencing.operation.builder.GridToEnvelopeMapper;
 import org.geotoolkit.resources.Errors;
 
-import static org.geotoolkit.util.ArgumentChecks.*;
+import static org.apache.sis.util.ArgumentChecks.*;
 
 
 /**
@@ -626,7 +626,7 @@ public class GeneralGridGeometry implements GridGeometry, Serializable {
                     for (int i=0; i<buffer.length; i++) {
                         buffer[i] = mat.getElement(j,i);
                     }
-                    resolution[j] = XMath.magnitude(buffer);
+                    resolution[j] = MathFunctions.magnitude(buffer);
                 }
                 this.resolution = resolution;
             }

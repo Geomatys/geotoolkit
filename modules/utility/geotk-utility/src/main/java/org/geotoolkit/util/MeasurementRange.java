@@ -24,7 +24,7 @@ import net.jcip.annotations.Immutable;
 
 import org.geotoolkit.resources.Errors;
 
-import static org.geotoolkit.util.converter.Numbers.*;
+import static org.apache.sis.util.Numbers.*;
 
 
 /**
@@ -140,7 +140,7 @@ public class MeasurementRange<T extends Number & Comparable<? super T>> extends 
             final Number maximum, final boolean isMaxIncluded, final Unit<?> units)
     {
         final Class<? extends Number> type = widestClass(
-                finestClass(minimum), finestClass(maximum));
+                narrowestClass(minimum), narrowestClass(maximum));
         return (type == null) ? null :
             new MeasurementRange(type, cast(minimum, type), isMinIncluded,
                                        cast(maximum, type), isMaxIncluded, units);

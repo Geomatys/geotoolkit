@@ -50,6 +50,18 @@
 
 
   <!-- ===========================================================
+           Dependency Management
+       =========================================================== -->
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.sis</groupId>
+      <artifactId>sis-utility</artifactId>
+      <version>${sis.version}</version>
+    </dependency>
+  </dependencies>
+
+
+  <!-- ===========================================================
            Modules included in the build
        =========================================================== -->
   <modules>

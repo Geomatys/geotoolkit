@@ -33,7 +33,10 @@ import java.lang.annotation.RetentionPolicy;
  *
  * @since 3.04
  * @module
+ *
+ * @deprecated Replaced by the Apache SIS {@link org.apache.sis.measure.ValueRange}.
  */
+@Deprecated
 @Documented
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)

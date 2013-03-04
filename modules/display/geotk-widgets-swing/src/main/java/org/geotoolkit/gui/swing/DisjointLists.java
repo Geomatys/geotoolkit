@@ -40,7 +40,7 @@ import java.util.Arrays;
 import java.util.Locale;
 import java.text.ParseException;
 
-import org.geotoolkit.util.XArrays;
+import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.resources.Widgets;
 import org.geotoolkit.internal.swing.SwingUtilities;
 
@@ -496,7 +496,7 @@ public class DisjointLists extends JComponent implements Dialog {
             }
             indice++;
         }
-        indices = XArrays.resize(indices, count);
+        indices = ArraysExt.resize(indices, count);
         target.move(source, indices);
     }
 

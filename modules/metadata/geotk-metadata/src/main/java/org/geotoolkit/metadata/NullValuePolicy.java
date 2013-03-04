@@ -32,24 +32,33 @@ package org.geotoolkit.metadata;
  *
  * @since 3.03
  * @module
+ *
+ * @deprecated Moved to Apache SIS {@link org.apache.sis.metadata.NullValuePolicy}.
  */
-public enum NullValuePolicy {
+@Deprecated
+public final class NullValuePolicy {
+    private NullValuePolicy() {
+    }
+
     /**
      * Includes all entries in the map, including those having a null value or an
      * empty collection.
      */
-    ALL,
+    public static final org.apache.sis.metadata.NullValuePolicy ALL =
+            org.apache.sis.metadata.NullValuePolicy.ALL;
 
     /**
      * Includes only the non-null attributes. Collections are included no matter if
      * they are empty or not.
      */
-    NON_NULL,
+    public static final org.apache.sis.metadata.NullValuePolicy NON_NULL =
+            org.apache.sis.metadata.NullValuePolicy.NON_NULL;
 
     /**
      * Includes only the attributes that are non-null and, in the case of collections,
      * non-{@linkplain java.util.Collection#isEmpty() empty}. This is the default behavior
      * of {@link AbstractMetadata#asMap()}.
      */
-    NON_EMPTY
+    public static final org.apache.sis.metadata.NullValuePolicy NON_EMPTY =
+            org.apache.sis.metadata.NullValuePolicy.NON_EMPTY;
 }

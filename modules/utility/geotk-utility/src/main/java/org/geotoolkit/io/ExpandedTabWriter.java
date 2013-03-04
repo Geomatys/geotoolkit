@@ -17,11 +17,11 @@
  */
 package org.geotoolkit.io;
 
-import java.io.IOException;
 import java.io.Writer;
 import net.jcip.annotations.ThreadSafe;
+import org.apache.sis.io.IO;
+import org.apache.sis.io.LineAppender;
 
-import org.geotoolkit.util.Strings;
 import org.geotoolkit.lang.Decorator;
 
 
@@ -33,19 +33,27 @@ import org.geotoolkit.lang.Decorator;
  *
  * @since 1.0
  * @module
+ *
+ * @deprecated Moved to Apache SIS as {@link LineAppender}.
  */
+@Deprecated
 @ThreadSafe
 @Decorator(Writer.class)
 public class ExpandedTabWriter extends FilterWriter {
     /**
-     * Tab width (in number of spaces).
+     * The Apache SIS formatter on which to delegate the work.
      */
-    private int tabWidth = 8;
+    private final LineAppender formatter;
 
     /**
-     * Current column position. Columns are numbered from 0.
+     * Workaround for RFE #4093999 ("Relax constraint on placement of this()/super()
+     * call in constructors")
      */
-    private int column = 0;
+    private ExpandedTabWriter(final LineAppender formatter) {
+        super(IO.asWriter(formatter));
+        this.formatter = formatter;
+        formatter.setTabulationExpanded(true);
+    }
 
     /**
      * Constructs a filter which replaces tab characters ({@code '\t'})
@@ -54,7 +62,7 @@ public class ExpandedTabWriter extends FilterWriter {
      * @param out A writer object to provide the underlying stream.
      */
     public ExpandedTabWriter(final Writer out) {
-        super(out);
+        this(new LineAppender(out));
     }
 
     /**
@@ -66,7 +74,7 @@ public class ExpandedTabWriter extends FilterWriter {
      * @throws IllegalArgumentException if {@code tabWidth} is not greater than 0.
      */
     public ExpandedTabWriter(final Writer out, final int tabWidth) throws IllegalArgumentException {
-        super(out);
+        this(out);
         setTabWidth(tabWidth);
     }
 
@@ -78,11 +86,7 @@ public class ExpandedTabWriter extends FilterWriter {
      */
     public void setTabWidth(final int tabWidth) throws IllegalArgumentException {
         synchronized (lock) {
-            if (tabWidth > 0) {
-                this.tabWidth = tabWidth;
-            } else {
-                throw new IllegalArgumentException(Integer.toString(tabWidth));
-            }
+            formatter.setTabulationWidth(tabWidth);
         }
     }
 
@@ -92,101 +96,8 @@ public class ExpandedTabWriter extends FilterWriter {
      * @return The tabulation width.
      */
     public int getTabWidth() {
-        return tabWidth;
-    }
-
-    /**
-     * Writes spaces for a tab character.
-     *
-     * @throws IOException If an I/O error occurs.
-     */
-    private void expand() throws IOException {
-        final int width = tabWidth - (column % tabWidth);
-        out.write(Strings.spaces(width));
-        column += width;
-    }
-
-    /**
-     * Writes a single character.
-     *
-     * @throws IOException If an I/O error occurs.
-     */
-    @Override
-    public void write(final int c) throws IOException {
         synchronized (lock) {
-            switch (c) {
-                case '\r': // fall through
-                case '\n': column=0; break;
-                case '\t': expand(); return;
-                default  : column++; break;
-            }
-            out.write(c);
-        }
-    }
-
-    /**
-     * Writes a portion of an array of characters.
-     *
-     * @param  buffer  Buffer of characters to be written
-     * @param  offset  Offset from which to start reading characters
-     * @param  length  Number of characters to be written
-     * @throws IOException If an I/O error occurs.
-     */
-    @Override
-    public void write(final char[] buffer, final int offset, int length) throws IOException {
-        synchronized (lock) {
-            int start = offset;
-            length += offset;
-            for (int end=offset; end<length; end++) {
-                final char c = buffer[end];
-                switch (c) {
-                    case '\r': // fall through
-                    case '\n': column = 0;
-                               break;
-
-                    case '\t': out.write(buffer, start, end-start);
-                               start = end+1;
-                               expand();
-                               break;
-
-                    default  : column++;
-                               break;
-                }
-            }
-            out.write(buffer, start, length-start);
-        }
-    }
-
-    /**
-     * Writes a portion of a string.
-     *
-     * @param  string  String to be written
-     * @param  offset  Offset from which to start reading characters
-     * @param  length  Number of characters to be written
-     * @throws IOException If an I/O error occurs.
-     */
-    @Override
-    public void write(final String string, final int offset, int length) throws IOException {
-        synchronized (lock) {
-            int start = offset;
-            length += offset;
-            for (int end=offset; end<length; end++) {
-                final char c = string.charAt(end);
-                switch (c) {
-                    case '\r': // fall through
-                    case '\n': column = 0;
-                               break;
-
-                    case '\t': out.write(string, start, end-start);
-                               start = end+1;
-                               expand();
-                               break;
-
-                    default  : column++;
-                               break;
-                }
-            }
-            out.write(string, start, length-start);
+            return formatter.getTabulationWidth();
         }
     }
 }

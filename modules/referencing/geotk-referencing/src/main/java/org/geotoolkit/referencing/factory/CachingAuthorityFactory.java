@@ -57,10 +57,10 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.util.Utilities;
-import org.geotoolkit.util.Exceptions;
-import org.geotoolkit.util.ComparisonMode;
+import org.apache.sis.util.Exceptions;
+import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.util.logging.Logging;
-import org.geotoolkit.util.collection.Cache;
+import org.apache.sis.util.collection.Cache;
 import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.internal.referencing.NilReferencingObject;
 
@@ -370,7 +370,7 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
         if (title == null) {
             title = Vocabulary.formatInternational(Vocabulary.Keys.UNTITLED);
         }
-        final LogRecord record = new LogRecord(level, Exceptions.formatChainedMessages(Loggings.getResources(null).
+        final LogRecord record = new LogRecord(level, Exceptions.formatChainedMessages(null, Loggings.getResources(null).
                 getString(Loggings.Keys.UNAVAILABLE_AUTHORITY_FACTORY_$1, title), exception));
         record.setSourceClassName(getClass().getCanonicalName());
         record.setSourceMethodName("availability");

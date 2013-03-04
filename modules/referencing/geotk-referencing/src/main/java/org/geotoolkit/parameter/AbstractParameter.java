@@ -22,6 +22,7 @@ package org.geotoolkit.parameter;
 
 import java.util.Set;
 import java.io.Writer;
+import java.io.FilterWriter;
 import java.io.IOException;
 import java.io.Serializable;
 import java.lang.reflect.Array;
@@ -37,13 +38,13 @@ import org.opengis.parameter.InvalidParameterValueException;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.Cloneable;
 import org.geotoolkit.io.TableWriter;
-import org.geotoolkit.measure.Units;
+import org.apache.sis.measure.Units;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.io.wkt.FormattableObject;
 import org.geotoolkit.naming.DefaultNameSpace;
 
-import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
+import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 
 
 /**
@@ -287,7 +288,9 @@ public abstract class AbstractParameter extends FormattableObject
             for (final GeneralParameterValue value : ((ParameterValueGroup) this).values()) {
                 if (value instanceof AbstractParameter) {
                     if (inner == null) {
-                        inner = new TableWriter(table, 1);
+                        inner = new TableWriter(new FilterWriter(table) {
+                            @Override public void flush() {} // To be removed after migration to Apache SIS.
+                        }, 1);
                         inner.setMultiLinesCells(true);
                     }
                     ((AbstractParameter) value).write(inner);

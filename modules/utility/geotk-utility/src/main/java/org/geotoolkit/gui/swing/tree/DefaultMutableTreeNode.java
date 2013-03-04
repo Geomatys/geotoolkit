@@ -99,8 +99,8 @@ public class DefaultMutableTreeNode extends javax.swing.tree.DefaultMutableTreeN
     public Locale getLocale() {
         javax.swing.tree.TreeNode parent = getParent();
         while (parent != null) {
-            if (parent instanceof Localized) {
-                return ((Localized) parent).getLocale();
+            if (parent instanceof org.apache.sis.util.Localized) {
+                return ((org.apache.sis.util.Localized) parent).getLocale();
             }
             parent = parent.getParent();
         }

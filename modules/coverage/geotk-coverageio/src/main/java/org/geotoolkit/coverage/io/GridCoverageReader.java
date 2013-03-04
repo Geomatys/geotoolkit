@@ -46,9 +46,9 @@ import org.opengis.metadata.extent.Extent;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.util.GenericName;
+import org.apache.sis.util.ArraysExt;
 
 import org.geotoolkit.util.MeasurementRange;
-import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.collection.BackingStoreException;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.measure.Measure;
@@ -268,7 +268,7 @@ public abstract class GridCoverageReader extends GridCoverageStore {
      */
     private static DefaultMetadata createMetadata(final IIOMetadata streamMetadata) throws CoverageStoreException {
         if (streamMetadata != null) try {
-            if (XArrays.contains(streamMetadata.getExtraMetadataFormatNames(), ISO_FORMAT_NAME)) {
+            if (ArraysExt.contains(streamMetadata.getExtraMetadataFormatNames(), ISO_FORMAT_NAME)) {
                 final Node root = streamMetadata.getAsTree(ISO_FORMAT_NAME);
                 if (root instanceof IIOMetadataNode) {
                     final Object userObject = ((IIOMetadataNode) root).getUserObject();

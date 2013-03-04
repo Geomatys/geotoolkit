@@ -27,7 +27,7 @@ import java.util.ListIterator;
 import java.lang.reflect.Array;
 import javax.swing.table.AbstractTableModel;
 
-import org.geotoolkit.util.XArrays;
+import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.internal.swing.SwingUtilities;
 
 
@@ -290,7 +290,7 @@ public abstract class ListTableModel<E> extends AbstractTableModel {
         // index after the removed elements will change.
         int i = indices.length;
         if (i != 0) {
-            if (!XArrays.isSorted(indices, false)) {
+            if (!ArraysExt.isSorted(indices, false)) {
                 indices = indices.clone();
                 Arrays.sort(indices);
             }
@@ -331,7 +331,7 @@ public abstract class ListTableModel<E> extends AbstractTableModel {
             }
         }
         if (count != 0) {
-            remove(XArrays.resize(indices, count));
+            remove(ArraysExt.resize(indices, count));
         }
         return count;
     }

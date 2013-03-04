@@ -19,7 +19,7 @@ package org.geotoolkit.internal.jaxb.code;
 
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 import org.opengis.metadata.Obligation;
-import org.geotoolkit.internal.CodeLists;
+import org.apache.sis.util.iso.Types;
 
 
 /**
@@ -43,7 +43,7 @@ public final class MD_ObligationCode extends XmlAdapter<String, Obligation> {
      */
     @Override
     public Obligation unmarshal(String value) {
-        return CodeLists.valueOf(Obligation.class, value);
+        return Types.forCodeName(Obligation.class, value, true);
     }
 
     /**

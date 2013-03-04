@@ -22,7 +22,7 @@ import java.util.Iterator;
 import java.util.ArrayList;
 
 import org.geotoolkit.lang.Decorator;
-import org.geotoolkit.util.ArgumentChecks;
+import org.apache.sis.util.ArgumentChecks;
 
 
 /**

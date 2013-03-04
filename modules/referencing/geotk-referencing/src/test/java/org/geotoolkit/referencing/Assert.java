@@ -23,7 +23,7 @@ import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.MathTransform;
 
 import org.geotoolkit.util.Utilities;
-import org.geotoolkit.util.ComparisonMode;
+import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.io.wkt.Convention;
 import org.geotoolkit.io.wkt.WKTFormat;
 import org.geotoolkit.io.wkt.FormattableObject;

@@ -28,7 +28,10 @@ import org.geotoolkit.lang.Static;
  *
  * @since 2.1
  * @module
+ *
+ * @deprecated Moved to Apache SIS {@link org.apache.sis.util.Characters}.
  */
+@Deprecated
 public final class Characters extends Static {
     /**
      * Do not allow instantiation of this class.
@@ -50,15 +53,7 @@ public final class Characters extends Static {
      * @return {@code true} if the given character is a superscript.
      */
     public static boolean isSuperScript(final char c) {
-        switch (c) {
-            /*1*/case '\u2071':
-            /*2*/case '\u2072':
-            /*3*/case '\u2073': return false;
-            /*1*/case '\u00B9':
-            /*2*/case '\u00B2':
-            /*3*/case '\u00B3': return true;
-        }
-        return (c>='\u2070' && c<='\u207F');
+        return org.apache.sis.util.Characters.isSuperScript(c);
     }
 
     /**
@@ -75,7 +70,7 @@ public final class Characters extends Static {
      * @return {@code true} if the given character is a subscript.
      */
     public static boolean isSubScript(final char c) {
-        return (c>='\u2080' && c<='\u208E');
+        return org.apache.sis.util.Characters.isSubScript(c);
     }
 
     /**
@@ -92,24 +87,7 @@ public final class Characters extends Static {
      *         given character was not a digit.
      */
     public static char toSuperScript(char c) {
-        switch (c) {
-            case '1': c = '\u00B9'; break;
-            case '2': c = '\u00B2'; break;
-            case '3': c = '\u00B3'; break;
-            case '+': c = '\u207A'; break;
-            case '-': c = '\u207B'; break;
-            case '=': c = '\u207C'; break;
-            case '(': c = '\u207D'; break;
-            case ')': c = '\u207E'; break;
-            case 'n': c = '\u207F'; break;
-            default: {
-                if (c >= '0' && c <= '9') {
-                    c += ('\u2070' - '0');
-                }
-                break;
-            }
-        }
-        return c;
+        return org.apache.sis.util.Characters.toSuperScript(c);
     }
 
     /**
@@ -126,20 +104,7 @@ public final class Characters extends Static {
      *         given character was not a digit.
      */
     public static char toSubScript(char c) {
-        switch (c) {
-            case '+': c = '\u208A'; break;
-            case '-': c = '\u208B'; break;
-            case '=': c = '\u208C'; break;
-            case '(': c = '\u208D'; break;
-            case ')': c = '\u208E'; break;
-            default: {
-                if (c >= '0' && c <= '9') {
-                    c += ('\u2080' - '0');
-                }
-                break;
-            }
-        }
-        return c;
+        return org.apache.sis.util.Characters.toSubScript(c);
     }
 
     /**
@@ -150,33 +115,6 @@ public final class Characters extends Static {
      *         given character was not a superscript or a subscript.
      */
     public static char toNormalScript(char c) {
-        switch (c) {
-            case '\u00B9': c = '1'; break;
-            case '\u00B2': c = '2'; break;
-            case '\u00B3': c = '3'; break;
-            case '\u2071':
-            case '\u2072':
-            case '\u2073':          break;
-            case '\u207A': c = '+'; break;
-            case '\u207B': c = '-'; break;
-            case '\u207C': c = '='; break;
-            case '\u207D': c = '('; break;
-            case '\u207E': c = ')'; break;
-            case '\u207F': c = 'n'; break;
-            case '\u208A': c = '+'; break;
-            case '\u208B': c = '-'; break;
-            case '\u208C': c = '='; break;
-            case '\u208D': c = '('; break;
-            case '\u208E': c = ')'; break;
-            default: {
-                if (c >= '\u2070' && c <= '\u2079') {
-                    c -= ('\u2070' - '0');
-                } else if (c >= '\u2080' && c <= '\u2089') {
-                    c -= ('\u2080'-'0');
-                }
-                break;
-            }
-        }
-        return c;
+        return org.apache.sis.util.Characters.toNormalScript(c);
     }
 }

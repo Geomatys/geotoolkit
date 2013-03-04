@@ -30,7 +30,10 @@ package org.geotoolkit.util.collection;
  *
  * @since 3.20
  * @module
+ *
+ * @deprecated Replaced by {@link org.apache.sis.util.collection.CheckedContainer}.
  */
+@Deprecated
 public interface CheckedContainer<E> {
     /**
      * Returns the base type of all elements in this container.

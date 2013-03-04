@@ -26,7 +26,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 
 import org.geotoolkit.lang.Static;
-import org.geotoolkit.util.XArrays;
+import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.util.logging.Logging;
 import static org.geotoolkit.util.collection.XCollections.hashMapCapacity;
 
@@ -114,7 +114,7 @@ public final class Locales extends Static {
                 locales[count++] = locale;
             }
         }
-        locales = XArrays.resize(locales, count);
+        locales = ArraysExt.resize(locales, count);
         return locales;
     }
 

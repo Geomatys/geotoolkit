@@ -42,7 +42,7 @@ import org.opengis.referencing.cs.CoordinateSystemAxis;
 
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.util.Strings;
-import org.geotoolkit.util.ArgumentChecks;
+import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.referencing.datum.BursaWolfParameters;
 import org.geotoolkit.io.ContentFormatException;

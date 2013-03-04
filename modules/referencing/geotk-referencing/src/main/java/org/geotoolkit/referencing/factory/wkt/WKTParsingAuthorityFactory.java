@@ -53,7 +53,7 @@ import org.geotoolkit.referencing.factory.DirectAuthorityFactory;
 import org.geotoolkit.referencing.factory.IdentifiedObjectFinder;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.XArrays;
+import org.apache.sis.util.ArraysExt;
 
 
 /**
@@ -242,7 +242,7 @@ public class WKTParsingAuthorityFactory extends DirectAuthorityFactory {
             if (pkAuthority != null) {
                 for (int i=0; i<authorities.length; i++) {
                     if (pkAuthority.equals(authorities[i])) {
-                        authorities = XArrays.remove(authorities, i, 1);
+                        authorities = ArraysExt.remove(authorities, i, 1);
                         break;
                     }
                 }

@@ -28,7 +28,7 @@ import org.opengis.metadata.citation.Citation;
 import org.opengis.referencing.crs.GeographicCRS;
 import org.opengis.util.InternationalString;
 
-import org.geotoolkit.util.ComparisonMode;
+import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.util.SimpleInternationalString;
 import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.metadata.iso.citation.Citations;
@@ -36,7 +36,7 @@ import org.geotoolkit.metadata.iso.citation.DefaultCitation;
 
 import org.junit.*;
 import static org.junit.Assert.*;
-import static org.geotoolkit.metadata.KeyNamePolicy.*;
+import static org.apache.sis.metadata.KeyNamePolicy.*;
 
 
 /**

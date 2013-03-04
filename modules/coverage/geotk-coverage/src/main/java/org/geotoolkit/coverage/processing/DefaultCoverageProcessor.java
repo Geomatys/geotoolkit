@@ -48,7 +48,7 @@ import org.geotoolkit.internal.FactoryUtilities;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Errors;
 
-import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
+import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 
 
 /**

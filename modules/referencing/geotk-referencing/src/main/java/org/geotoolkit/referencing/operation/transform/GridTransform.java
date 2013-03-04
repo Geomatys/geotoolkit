@@ -36,12 +36,12 @@ import net.jcip.annotations.Immutable;
 import org.opengis.referencing.operation.Matrix;
 
 import org.geotoolkit.util.Utilities;
-import org.geotoolkit.util.ComparisonMode;
+import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.referencing.operation.matrix.Matrices;
 
 import static org.geotoolkit.util.Utilities.hash;
-import static org.geotoolkit.util.ArgumentChecks.ensureStrictlyPositive;
+import static org.apache.sis.util.ArgumentChecks.ensureStrictlyPositive;
 
 
 /**

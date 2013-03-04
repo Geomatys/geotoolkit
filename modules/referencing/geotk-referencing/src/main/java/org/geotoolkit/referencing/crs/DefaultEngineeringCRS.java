@@ -38,7 +38,7 @@ import org.geotoolkit.referencing.cs.DefaultCartesianCS;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.util.Utilities;
-import org.geotoolkit.util.ComparisonMode;
+import org.apache.sis.util.ComparisonMode;
 
 
 /**

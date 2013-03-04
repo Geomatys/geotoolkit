@@ -66,7 +66,7 @@ import org.opengis.util.GenericName;
 import org.geotoolkit.lang.Builder;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.converter.Numbers;
-import org.geotoolkit.metadata.KeyNamePolicy;
+import org.apache.sis.metadata.KeyNamePolicy;
 import org.geotoolkit.metadata.NullValuePolicy;
 import org.geotoolkit.metadata.TypeValuePolicy;
 import org.geotoolkit.metadata.ValueRestriction;
@@ -76,7 +76,7 @@ import org.geotoolkit.internal.CodeLists;
 import org.geotoolkit.resources.Errors;
 
 import static javax.imageio.metadata.IIOMetadataFormat.*;
-import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
+import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.toElementName;
 import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.NAME_POLICY;
 import static org.geotoolkit.internal.image.io.GridDomainAccessor.ARRAY_ATTRIBUTE_NAME;

@@ -39,21 +39,21 @@ import org.geotoolkit.geometry.DirectPosition2D;
 import org.geotoolkit.internal.jaxb.referencing.SecondDefiningParameter;
 import org.geotoolkit.internal.jaxb.gco.Measure;
 import org.geotoolkit.internal.referencing.CRSUtilities;
-import org.geotoolkit.measure.Units;
+import org.apache.sis.measure.Units;
 import org.geotoolkit.measure.CoordinateFormat;
 import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.io.wkt.Formatter;
-import org.geotoolkit.util.ComparisonMode;
+import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.resources.Errors;
 
 import static java.lang.Math.*;
 import static java.lang.Double.*;
 import static org.geotoolkit.util.Utilities.hash;
-import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
+import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 import static org.geotoolkit.internal.InternalUtilities.epsilonEqual;
 
 

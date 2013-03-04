@@ -17,7 +17,7 @@
  */
 package org.geotoolkit.math;
 
-import org.geotoolkit.util.XArrays;
+import org.apache.sis.util.ArraysExt;
 import static org.geotoolkit.math.XMath.*;
 
 import org.junit.*;
@@ -111,7 +111,7 @@ public final strictfp class XMathTest {
     public void testDivisors() {
         for (int i=0; i<10000; i++) {
             final int[] divisors = divisors(i);
-            assertTrue(XArrays.isSorted(divisors, true));
+            assertTrue(ArraysExt.isSorted(divisors, true));
             for (int j=0; j<divisors.length; j++) {
                 assertEquals(0, i % divisors[j]);
             }

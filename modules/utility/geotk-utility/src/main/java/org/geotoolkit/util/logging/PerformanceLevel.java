@@ -21,7 +21,7 @@ import java.util.logging.Level;
 import java.util.concurrent.TimeUnit;
 import org.geotoolkit.lang.Configuration;
 
-import static org.geotoolkit.util.ArgumentChecks.ensurePositive;
+import static org.apache.sis.util.ArgumentChecks.ensurePositive;
 
 
 /**

@@ -41,7 +41,7 @@ import java.lang.reflect.Field;
 import org.opengis.metadata.spatial.PixelOrientation;
 
 import org.geotoolkit.io.TableWriter;
-import org.geotoolkit.util.XArrays;
+import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.converter.Classes;
@@ -56,7 +56,7 @@ import org.geotoolkit.internal.image.io.CheckedImageInputStream;
 
 import static java.lang.Math.min;
 import static java.lang.Math.max;
-import static org.geotoolkit.util.ArgumentChecks.*;
+import static org.apache.sis.util.ArgumentChecks.*;
 
 
 /**
@@ -737,7 +737,7 @@ public class Tile implements Comparable<Tile>, Serializable {
                         .getServiceProviders(ImageReaderSpi.class, true);
                 while (it.hasNext()) {
                     final ImageReaderSpi candidate = it.next();
-                    if (XArrays.containsIgnoreCase(candidate.getFileSuffixes(), suffix)) {
+                    if (ArraysExt.containsIgnoreCase(candidate.getFileSuffixes(), suffix)) {
                         if (!ignore(candidate)) {
                             return candidate;
                         }

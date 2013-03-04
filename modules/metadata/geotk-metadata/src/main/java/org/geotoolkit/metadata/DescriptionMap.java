@@ -65,7 +65,7 @@ final class DescriptionMap extends MetadataMap<String> implements Localized {
      * @throws MissingResourceException If no resource bundle is found.
      */
     DescriptionMap(final PropertyAccessor accessor, final String packageBase,
-            final Locale locale, final KeyNamePolicy keyNames) throws MissingResourceException
+            final Locale locale, final org.apache.sis.metadata.KeyNamePolicy keyNames) throws MissingResourceException
     {
         super(accessor, keyNames);
         final Class<?> type = accessor.type;
@@ -146,7 +146,7 @@ final class DescriptionMap extends MetadataMap<String> implements Localized {
             final UML uml = decl.getAnnotation(UML.class);
             base = (uml != null) ? uml.identifier() : decl.getSimpleName();
         }
-        return base + '.' + accessor.name(index, KeyNamePolicy.UML_IDENTIFIER);
+        return base + '.' + accessor.name(index, org.apache.sis.metadata.KeyNamePolicy.UML_IDENTIFIER);
     }
 
     /**

@@ -30,9 +30,9 @@ import java.util.logging.SimpleFormatter;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.lang.Configuration;
 import org.geotoolkit.lang.Static;
-import org.geotoolkit.util.XArrays;
-import org.geotoolkit.util.Exceptions;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.ArraysExt;
+import org.apache.sis.util.Exceptions;
+import org.apache.sis.util.Classes;
 
 
 /**
@@ -275,7 +275,7 @@ public final class Logging extends Static {
                         break;
                     }
                     i = ~i;
-                    children = XArrays.insert(children, i, 1);
+                    children = ArraysExt.insert(children, i, 1);
                     children[i] = new Logging(logging, name);
                     logging.children = children;
                 }
@@ -629,7 +629,7 @@ public final class Logging extends Static {
             buffer.append(": ").append(message);
         }
         message = buffer.toString();
-        message = Exceptions.formatChainedMessages(message, error);
+        message = Exceptions.formatChainedMessages(null, message, error);
         final LogRecord record = new LogRecord(level, message);
         if (classe != null) {
             record.setSourceClassName(classe);

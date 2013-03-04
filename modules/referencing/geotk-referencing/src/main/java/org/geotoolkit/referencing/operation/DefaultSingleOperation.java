@@ -42,12 +42,12 @@ import org.geotoolkit.internal.referencing.ParameterizedAffine;
 import org.geotoolkit.internal.referencing.Semaphores;
 import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.util.Utilities;
-import org.geotoolkit.util.ComparisonMode;
+import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.UnsupportedImplementationException;
 
 import static org.geotoolkit.util.Utilities.deepEquals;
-import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
+import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 import static org.geotoolkit.internal.referencing.CRSUtilities.PARAMETERS_KEY;
 
 

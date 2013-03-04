@@ -45,10 +45,13 @@ import org.geotoolkit.lang.Decorator;
  *
  * @since 2.0
  * @module
+ *
+ * @deprecated Replaced by {@link org.apache.sis.util.ObjectConverters#derivedMap}.
  */
+@Deprecated
 @Decorator(Set.class)
 public abstract class DerivedSet<B,E> extends AbstractSet<E>
-        implements CheckedCollection<E>, Serializable
+        implements CheckedCollection<E>, org.apache.sis.util.collection.CheckedContainer<E>, Serializable
 {
     /**
      * Serial number for inter-operability with different versions.

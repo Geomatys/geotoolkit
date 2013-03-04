@@ -30,7 +30,7 @@ import org.opengis.metadata.citation.CitationDate;
 import org.opengis.metadata.citation.ResponsibleParty;
 import org.opengis.metadata.identification.TopicCategory;
 
-import org.geotoolkit.util.Strings;
+import org.apache.sis.util.CharSequences;
 import org.geotoolkit.test.LocaleDependantTestBase;
 import org.geotoolkit.metadata.iso.identification.DefaultDataIdentification;
 
@@ -177,8 +177,8 @@ public final strictfp class CodeListMarshallingTest extends LocaleDependantTestB
         pool.release(marshaller);
 
         // "OCEANS" is marshalled as "oceans" because is contains a UML id, which is lower-case.
-        assertEquals(2, Strings.count(xml, "<gmd:MD_TopicCategoryCode>oceans</gmd:MD_TopicCategoryCode>"));
-        assertEquals(0, Strings.count(xml, "<gmd:MD_TopicCategoryCode>OCEANS</gmd:MD_TopicCategoryCode>"));
-        assertEquals(1, Strings.count(xml, "<gmd:MD_TopicCategoryCode>test</gmd:MD_TopicCategoryCode>"));
+        assertEquals(2, CharSequences.count(xml, "<gmd:MD_TopicCategoryCode>oceans</gmd:MD_TopicCategoryCode>"));
+        assertEquals(0, CharSequences.count(xml, "<gmd:MD_TopicCategoryCode>OCEANS</gmd:MD_TopicCategoryCode>"));
+        assertEquals(1, CharSequences.count(xml, "<gmd:MD_TopicCategoryCode>test</gmd:MD_TopicCategoryCode>"));
     }
 }

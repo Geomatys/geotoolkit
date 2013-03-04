@@ -23,7 +23,7 @@ import javax.measure.converter.UnitConverter;
 import javax.measure.converter.ConversionException;
 import net.jcip.annotations.Immutable;
 
-import org.geotoolkit.measure.Units;
+import org.apache.sis.measure.Units;
 import org.geotoolkit.resources.Errors;
 
 

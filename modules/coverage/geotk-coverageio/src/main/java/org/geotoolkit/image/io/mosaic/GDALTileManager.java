@@ -29,7 +29,7 @@ import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.io.IOException;
 
-import org.geotoolkit.math.XMath;
+import org.apache.sis.math.MathFunctions;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.util.collection.FrequencySortedSet;
@@ -67,7 +67,7 @@ final class GDALTileManager extends TileManager implements Comparator<Rectangle>
         @Override public int compare(final Tile tile1, final Tile tile2) {
             final Dimension s1 = tile1.getSubsampling();
             final Dimension s2 = tile2.getSubsampling();
-            return XMath.sgn(s2.width * (long) s2.height - s1.width * (long) s1.height);
+            return MathFunctions.sgn(s2.width * (long) s2.height - s1.width * (long) s1.height);
         }
     };
 
@@ -211,7 +211,7 @@ final class GDALTileManager extends TileManager implements Comparator<Rectangle>
      */
     @Override
     public int compare(final Rectangle r1, final Rectangle r2) {
-        return XMath.sgn(compare(r1, r2.x, r2.y));
+        return MathFunctions.sgn(compare(r1, r2.x, r2.y));
     }
 
     /**

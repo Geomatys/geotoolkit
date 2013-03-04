@@ -42,9 +42,9 @@ import org.geotoolkit.util.converter.ConverterRegistry;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
 import org.geotoolkit.resources.Errors;
 
-import static org.geotoolkit.util.converter.Numbers.*;
-import static org.geotoolkit.util.converter.Classes.getShortClassName;
-import static org.geotoolkit.util.ArgumentChecks.ensureCanCast;
+import static org.apache.sis.util.Numbers.*;
+import static org.apache.sis.util.Classes.getShortClassName;
+import static org.apache.sis.util.ArgumentChecks.ensureCanCast;
 
 
 /**
@@ -65,7 +65,10 @@ import static org.geotoolkit.util.ArgumentChecks.ensureCanCast;
  *
  * @since 2.0
  * @module
+ *
+ * @deprecated Replaced by Apache SIS {@link org.apache.sis.util.collection.RangeSet}.
  */
+@Deprecated
 public class RangeSet<T extends Comparable<? super T>> extends AbstractSet<Range<T>>
         implements CheckedCollection<Range<T>>, SortedSet<Range<T>>, Cloneable, Serializable
 {

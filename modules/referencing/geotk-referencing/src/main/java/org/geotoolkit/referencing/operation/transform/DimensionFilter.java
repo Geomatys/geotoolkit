@@ -31,7 +31,7 @@ import org.geotoolkit.referencing.operation.matrix.Matrices;
 import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
 import org.geotoolkit.internal.referencing.SeparableTransform;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.XArrays;
+import org.apache.sis.util.ArraysExt;
 
 
 /**
@@ -334,7 +334,7 @@ public class DimensionFilter {
         }
         final int[] target = targetDimensions;
         transform = separateInput(transform);
-        assert XArrays.isSorted(targetDimensions, true);
+        assert ArraysExt.isSorted(targetDimensions, true);
         if (target != null) {
             final int[] step = targetDimensions;
             targetDimensions = new int[target.length];
@@ -390,7 +390,7 @@ public class DimensionFilter {
         final int dimInput  = sourceDimensions.length;
         final int lower     = sourceDimensions[0];
         final int upper     = sourceDimensions[dimInput-1] + 1;
-        assert XArrays.isSorted(sourceDimensions, true);
+        assert ArraysExt.isSorted(sourceDimensions, true);
         if (upper > dimSource) {
             throw new IllegalArgumentException(Errors.format(
                     Errors.Keys.ILLEGAL_ARGUMENT_$2, "sourceDimensions", upper-1));
@@ -523,7 +523,7 @@ reduce:     for (int j=0; j<rows.length; j++) {
                 }
                 rows[nRows++] = row;
             }
-            rows = XArrays.resize(rows, nRows);
+            rows = ArraysExt.resize(rows, nRows);
             if (hasLastRow) {
                 return factory.createAffineTransform(new GeneralMatrix(rows));
             }
@@ -555,7 +555,7 @@ reduce:     for (int j=0; j<rows.length; j++) {
         final int dimOutput = targetDimensions.length;
         final int lower     = targetDimensions[0];
         final int upper     = targetDimensions[dimOutput-1];
-        assert XArrays.isSorted(targetDimensions, true);
+        assert ArraysExt.isSorted(targetDimensions, true);
         if (upper > dimTarget) {
             throw new IllegalArgumentException(Errors.format(
                     Errors.Keys.ILLEGAL_ARGUMENT_$2, "targetDimensions", upper));
@@ -623,7 +623,7 @@ reduce:     for (int j=0; j<rows.length; j++) {
             return true;
         }
         if (sequence != null) {
-            assert XArrays.isSorted(sequence, true);
+            assert ArraysExt.isSorted(sequence, true);
             int index = Arrays.binarySearch(sequence, lower);
             if (index >= 0) {
                 index += --upper - lower;
@@ -648,7 +648,7 @@ reduce:     for (int j=0; j<rows.length; j++) {
             return true;
         }
         if (sequence != null) {
-            assert XArrays.isSorted(sequence, true);
+            assert ArraysExt.isSorted(sequence, true);
             int index = Arrays.binarySearch(sequence, lower);
             if (index >= 0) {
                 return true;
@@ -673,11 +673,11 @@ reduce:     for (int j=0; j<rows.length; j++) {
         if (sequence == null) {
             return new int[] {dimension};
         }
-        assert XArrays.isSorted(sequence, true);
+        assert ArraysExt.isSorted(sequence, true);
         int i = Arrays.binarySearch(sequence, dimension);
         if (i < 0) {
             i = ~i;   // Tild, not the minus sign.
-            sequence = XArrays.insert(sequence, i, 1);
+            sequence = ArraysExt.insert(sequence, i, 1);
             sequence[i] = dimension;
         }
         assert Arrays.binarySearch(sequence, dimension) == i;

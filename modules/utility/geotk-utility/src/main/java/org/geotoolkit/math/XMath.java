@@ -18,10 +18,10 @@
 package org.geotoolkit.math;
 
 import java.util.Arrays;
+import org.apache.sis.math.MathFunctions;
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.lang.Workaround;
-import org.geotoolkit.util.XArrays;
-import org.geotoolkit.util.converter.Numbers;
+import org.apache.sis.util.Numbers;
 import org.geotoolkit.resources.Errors;
 
 
@@ -39,8 +39,11 @@ public final class XMath extends Static {
      * The square root of 2, which is {@value}.
      *
      * @since 3.20
+     *
+     * @deprecated Moved to Apache SIS {@link MathFunctions#SQRT_2}.
      */
-    public static final double SQRT2 = 1.4142135623730951;
+    @Deprecated
+    public static final double SQRT2 = MathFunctions.SQRT_2;
 
     /**
      * Bit mask to isolate the sign bit of non-{@link Double#NaN NaN} values in a {@code double}.
@@ -58,19 +61,11 @@ public final class XMath extends Static {
      * @see #isNegative(double)
      *
      * @since 3.20
+     *
+     * @deprecated No replacement (this is considered internal mechanic).
      */
-    public static final long SIGN_BIT_MASK = Long.MIN_VALUE;
-
-    /**
-     * Table of some integer powers of 10. Used for fast computation of {@link #pow10(int)}.
-     */
-    private static final double[] POW10 = {
-        1E+00, 1E+01, 1E+02, 1E+03, 1E+04, 1E+05, 1E+06, 1E+07, 1E+08, 1E+09,
-        1E+10, 1E+11, 1E+12, 1E+13, 1E+14, 1E+15, 1E+16, 1E+17, 1E+18, 1E+19,
-        1E+20, 1E+21, 1E+22
-        // Do not add more elements, unless we verified that 1/x is accurate.
-        // Last time we tried, it was not accurate anymore starting at 1E+23.
-    };
+    @Deprecated
+    public static final long SIGN_BIT_MASK = org.apache.sis.internal.util.Utilities.SIGN_BIT_MASK;
 
     /**
      * The sequence of prime numbers computed so far. Will be expanded as needed.
@@ -84,11 +79,6 @@ public final class XMath extends Static {
      * of the first prime number that can not be stored as 16 bits unsigned.
      */
     private static final int MAX_PRIMES_LENGTH = 6542;
-
-    /**
-     * Small tolerance factor for working around floating point rounding errors.
-     */
-    private static final double EPS = 1E-6;
 
     /**
      * Do not allow instantiation of this class.
@@ -118,32 +108,12 @@ public final class XMath extends Static {
      * @see Math#hypot(double, double)
      *
      * @since 3.09
+     *
+     * @deprecated Moved to Apache SIS {@link MathFunctions#magnitude(double[])}.
      */
+    @Deprecated
     public static double magnitude(final double... vector) {
-        int i = vector.length;
-
-        // If every elements in the array are zero, returns zero.
-        double sum;
-        do if (i == 0) return 0;
-        while ((sum = vector[--i]) == 0);
-
-        // We have found a non-zero element. If it is the only one, returns it directly.
-        double v;
-        do if (i == 0) return Math.abs(sum);
-        while ((v = vector[--i]) == 0);
-
-        // If there is exactly 2 elements, use Math.hypot which is more robust than our algorithm.
-        double v2;
-        do if (i == 0) return Math.hypot(sum, v);
-        while ((v2 = vector[--i]) == 0);
-
-        // Usual magnitude computation.
-        sum = sum*sum + v*v + v2*v2;
-        while (i != 0) {
-            v = vector[--i];
-            sum += v*v;
-        }
-        return Math.sqrt(sum);
+        return MathFunctions.magnitude(vector);
     }
 
     /**
@@ -157,14 +127,12 @@ public final class XMath extends Static {
      *
      * @see #pow10(int)
      * @see Math#pow(double, double)
+     *
+     * @deprecated Moved to Apache SIS {@link MathFunctions#pow10(double)}.
      */
+    @Deprecated
     public static double pow10(final double x) {
-        final int ix = (int) x;
-        if (ix == x) {
-            return pow10(ix);
-        } else {
-            return Math.pow(10, x);
-        }
+        return MathFunctions.pow10(x);
     }
 
     /**
@@ -179,29 +147,13 @@ public final class XMath extends Static {
      *
      * @param x The exponent.
      * @return 10 raised to the given exponent.
+     *
+     * @deprecated Moved to Apache SIS {@link MathFunctions#pow10(int)}.
      */
+    @Deprecated
     @Workaround(library="JDK", version="1.4")
     public static strictfp double pow10(final int x) {
-        if (x >= 0) {
-            if (x < POW10.length) {
-                return POW10[x];
-            }
-        } else if (x != Integer.MIN_VALUE) {
-            final int nx = -x;
-            if (nx < POW10.length) {
-                return 1 / POW10[nx];
-            }
-        }
-        try {
-            /*
-             * Double.parseDouble("1E"+x) gives as good or better numbers than Math.pow(10,x)
-             * for ALL integer powers, but is slower. We hope that the current workaround is only
-             * temporary. See http://developer.java.sun.com/developer/bugParade/bugs/4358794.html
-             */
-            return Double.parseDouble("1E" + x);
-        } catch (NumberFormatException exception) {
-            return StrictMath.pow(10, x);
-        }
+        return MathFunctions.pow10(x);
     }
 
     /**
@@ -221,13 +173,12 @@ public final class XMath extends Static {
      * @see Math#tanh(double)
      *
      * @since 3.20
+     *
+     * @deprecated Moved to Apache SIS {@link MathFunctions#atanh(double)}.
      */
+    @Deprecated
     public static double atanh(final double x) {
-        /*
-         * The classical formulas is log((1+x)/(1-x))/2, but the following is more
-         * accurate if the (1+x)/(1-x) ratio is close to 1, i.e. if x is close to 0.
-         */
-        return 0.5 * Math.log1p(2*x / (1-x));
+        return MathFunctions.atanh(x);
     }
 
     /**
@@ -248,9 +199,12 @@ public final class XMath extends Static {
      * @return {@code true} if the given value is positive, excluding negative zero.
      *
      * @since 3.20
+     *
+     * @deprecated Moved to Apache SIS {@link MathFunctions#isPositive(double)}.
      */
+    @Deprecated
     public static boolean isPositive(final double value) {
-        return (Double.doubleToRawLongBits(value) & SIGN_BIT_MASK) == 0 && !Double.isNaN(value);
+        return MathFunctions.isPositive(value);
     }
 
     /**
@@ -271,9 +225,12 @@ public final class XMath extends Static {
      * @return {@code true} if the given value is negative, including negative zero.
      *
      * @since 3.20
+     *
+     * @deprecated Moved to Apache SIS {@link MathFunctions#isNegative(double)}.
      */
+    @Deprecated
     public static boolean isNegative(final double value) {
-        return (Double.doubleToRawLongBits(value) & SIGN_BIT_MASK) != 0 && !Double.isNaN(value);
+        return MathFunctions.isNegative(value);
     }
 
     /**
@@ -293,10 +250,12 @@ public final class XMath extends Static {
      * @see Math#signum(double)
      *
      * @since 3.20
+     *
+     * @deprecated Moved to Apache SIS {@link MathFunctions#isSameSign(double, double)}.
      */
+    @Deprecated
     public static boolean isSameSign(final double v1, final double v2) {
-        return !Double.isNaN(v1) && !Double.isNaN(v2) &&
-                ((Double.doubleToRawLongBits(v1) ^ Double.doubleToRawLongBits(v2)) & SIGN_BIT_MASK) == 0;
+        return MathFunctions.isSameSign(v1, v2);
     }
 
     /**
@@ -309,11 +268,12 @@ public final class XMath extends Static {
      * @return {@code +1} if <var>x</var> is positive, {@code -1} if negative, or 0 otherwise.
      *
      * @see Math#signum(double)
+     *
+     * @deprecated Moved to Apache SIS {@link MathFunctions#sgn(double)}.
      */
+    @Deprecated
     public static int sgn(final double x) {
-        if (x > 0) return +1;
-        if (x < 0) return -1;
-        else       return  0;
+        return MathFunctions.sgn(x);
     }
 
     /**
@@ -326,11 +286,12 @@ public final class XMath extends Static {
      * @return {@code +1} if <var>x</var> is positive, {@code -1} if negative, or 0 otherwise.
      *
      * @see Math#signum(float)
+     *
+     * @deprecated Moved to Apache SIS {@link MathFunctions#sgn(float)}.
      */
+    @Deprecated
     public static int sgn(final float x) {
-        if (x > 0) return +1;
-        if (x < 0) return -1;
-        else       return  0;
+        return MathFunctions.sgn(x);
     }
 
     /**
@@ -341,11 +302,12 @@ public final class XMath extends Static {
      *
      * @param x The number from which to get the sign.
      * @return {@code +1} if <var>x</var> is positive, {@code -1} if negative, or 0 otherwise.
+     *
+     * @deprecated Moved to Apache SIS {@link MathFunctions#sgn(long)}.
      */
+    @Deprecated
     public static int sgn(long x) {
-        if (x > 0) return +1;
-        if (x < 0) return -1;
-        else       return  0;
+        return MathFunctions.sgn(x);
     }
 
     /**
@@ -356,11 +318,12 @@ public final class XMath extends Static {
      *
      * @param x The number from which to get the sign.
      * @return {@code +1} if <var>x</var> is positive, {@code -1} if negative, or 0 otherwise.
+     *
+     * @deprecated Moved to Apache SIS {@link MathFunctions#sgn(int)}.
      */
+    @Deprecated
     public static int sgn(int x) {
-        if (x > 0) return +1;
-        if (x < 0) return -1;
-        else       return  0;
+        return MathFunctions.sgn(x);
     }
 
     /**
@@ -371,11 +334,12 @@ public final class XMath extends Static {
      *
      * @param x The number from which to get the sign.
      * @return {@code +1} if <var>x</var> is positive, {@code -1} if negative, or 0 otherwise.
+     *
+     * @deprecated Moved to Apache SIS {@link MathFunctions#sgn(short)}.
      */
+    @Deprecated
     public static short sgn(short x) {
-        if (x > 0) return (short) +1;
-        if (x < 0) return (short) -1;
-        else       return (short)  0;
+        return MathFunctions.sgn(x);
     }
 
     /**
@@ -386,11 +350,12 @@ public final class XMath extends Static {
      *
      * @param x The number from which to get the sign.
      * @return {@code +1} if <var>x</var> is positive, {@code -1} if negative, or 0 otherwise.
+     *
+     * @deprecated Moved to Apache SIS {@link MathFunctions#sgn(byte)}.
      */
+    @Deprecated
     public static byte sgn(byte x) {
-        if (x > 0) return (byte) +1;
-        if (x < 0) return (byte) -1;
-        else       return (byte)  0;
+        return MathFunctions.sgn(x);
     }
 
     /**
@@ -414,10 +379,12 @@ public final class XMath extends Static {
      * @see Math#copySign(double, double)
      *
      * @since 3.00
+     *
+     * @deprecated Moved to Apache SIS {@link MathFunctions#xorSign(double, double)}.
      */
+    @Deprecated
     public static double xorSign(final double value, final double sign) {
-        return Double.longBitsToDouble(Double.doubleToRawLongBits(value) ^
-                (Double.doubleToRawLongBits(sign) & SIGN_BIT_MASK));
+        return MathFunctions.xorSign(value, sign);
     }
 
     /**
@@ -503,15 +470,12 @@ public final class XMath extends Static {
      * @throws IndexOutOfBoundsException if the specified index is out of bounds.
      *
      * @see Float#intBitsToFloat
+     *
+     * @deprecated Moved to Apache SIS {@link MathFunctions#toNanFloat(int)}.
      */
+    @Deprecated
     public static float toNaN(int index) throws IndexOutOfBoundsException {
-        index += 0x200000;
-        if (index<0 || index>0x3FFFFF) {
-            throw new IndexOutOfBoundsException(String.valueOf(index));
-        }
-        final float value = Float.intBitsToFloat(0x7FC00000 + index);
-        assert Float.isNaN(value) : value;
-        return value;
+        return MathFunctions.toNanFloat(index);
     }
 
     /**
@@ -523,6 +487,7 @@ public final class XMath extends Static {
      * @return The prime number at the specified index.
      * @throws IndexOutOfBoundsException if the specified index is too large.
      *
+     * @ess MathFunctions#nextPrimeNumber(int)
      * @see java.math.BigInteger#isProbablePrime
      */
     public static synchronized int primeNumber(final int index) throws IndexOutOfBoundsException {
@@ -563,73 +528,12 @@ next:           while (true) {
      *
      * @param number The number for which to compute the divisors.
      * @return The divisors in strictly increasing order.
+     *
+     * @deprecated Moved to Apache SIS {@link MathFunctions#divisors(int)}.
      */
+    @Deprecated
     public static int[] divisors(int number) {
-        if (number == 0) {
-            return XArrays.EMPTY_INT;
-        }
-        number = Math.abs(number);
-        int[] divisors = new int[16];
-        divisors[0] = 1;
-        int count = 1;
-        /*
-         * Searches for the first divisors among the prime numbers. We stop the search at the
-         * square root of 'n' because every values above that point can be inferred from the
-         * values before that point, i.e. if n=p1*p2 and p2 is greater than 'sqrt', than p1
-         * most be lower than 'sqrt'.
-         */
-        final int sqrt = (int) (Math.sqrt(number) + EPS); // Really wants rounding toward 0.
-        for (int p,i=0; (p=primeNumber(i)) <= sqrt; i++) {
-            if (number % p == 0) {
-                if (count == divisors.length) {
-                    divisors = Arrays.copyOf(divisors, count*2);
-                }
-                divisors[count++] = p;
-            }
-        }
-        /*
-         * Completes the divisors past 'sqrt'. The numbers added here may or may not be prime
-         * numbers. Side note: checking that they are prime numbers would be costly, but this
-         * algorithm doesn't need that.
-         */
-        int source = count;
-        if (count*2 > divisors.length) {
-            divisors = Arrays.copyOf(divisors, count*2);
-        }
-        int d1 = divisors[--source];
-        int d2 = number / d1;
-        if (d1 != d2) {
-            divisors[count++] = d2;
-        }
-        while (--source >= 0) {
-            divisors[count++] = number / divisors[source];
-        }
-        /*
-         * Checks the products of divisors found so far. For example if 2 and 3 are divisors,
-         * checks if 6 is a divisor as well. The products found will themself be used for
-         * computing new products.
-         */
-        for (int i=1; i<count; i++) {
-            d1 = divisors[i];
-            for (int j=i; j<count; j++) {
-                d2 = d1 * divisors[j];
-                if (number % d2 == 0) {
-                    int p = Arrays.binarySearch(divisors, j, count, d2);
-                    if (p < 0) {
-                        p = ~p; // ~ operator, not minus
-                        if (count == divisors.length) {
-                            divisors = Arrays.copyOf(divisors, count*2);
-                        }
-                        System.arraycopy(divisors, p, divisors, p+1, count-p);
-                        divisors[p] = d2;
-                        count++;
-                    }
-                }
-            }
-        }
-        divisors = XArrays.resize(divisors, count);
-        assert XArrays.isSorted(divisors, true);
-        return divisors;
+        return MathFunctions.divisors(number);
     }
 
     /**
@@ -639,39 +543,11 @@ next:           while (true) {
      * @return The divisors common to all the given numbers, in strictly increasing order.
      *
      * @since 3.15
+     *
+     * @deprecated Moved to Apache SIS {@link MathFunctions#commonDivisors(int[])}.
      */
+    @Deprecated
     public static int[] commonDivisors(final int... numbers) {
-        if (numbers.length == 0) {
-            return XArrays.EMPTY_INT;
-        }
-        /*
-         * Get the smallest value. We will compute the divisors only for this value,
-         * since we know that any value greater that the minimal value can not be a
-         * common divisor.
-         */
-        int minValue = Integer.MAX_VALUE;
-        for (int i=0; i<numbers.length; i++) {
-            final int n = Math.abs(numbers[i]);
-            if (n <= minValue) {
-                minValue = n;
-            }
-        }
-        int[] divisors = divisors(minValue);
-        /*
-         * Tests if the divisors we just found are also divisors of all other numbers.
-         * Removes those which are not.
-         */
-        int count = divisors.length;
-        for (int i=0; i<numbers.length; i++) {
-            final int n = Math.abs(numbers[i]);
-            if (n != minValue) {
-                for (int j=count; --j>0;) { // Do not test j==0, since divisors[0] ==  1.
-                    if (n % divisors[j] != 0) {
-                        System.arraycopy(divisors, j+1, divisors, j, --count - j);
-                    }
-                }
-            }
-        }
-        return XArrays.resize(divisors, count);
+        return MathFunctions.commonDivisors(numbers);
     }
 }

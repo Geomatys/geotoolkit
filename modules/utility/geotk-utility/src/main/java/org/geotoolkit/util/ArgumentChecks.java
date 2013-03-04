@@ -68,13 +68,14 @@ public final class ArgumentChecks extends Static {
      * @param  name The name of the argument to be checked. Used only in case an exception is thrown.
      * @param  object The user argument to check against null value.
      * @throws NullArgumentException if {@code object} is null.
+     *
+     * @deprecated Moved to Apache SIS {@link org.apache.sis.util.ArgumentChecks}.
      */
+    @Deprecated
     public static void ensureNonNull(final String name, final Object object)
             throws NullArgumentException
     {
-        if (object == null) {
-            throw new NullArgumentException(Errors.format(Errors.Keys.NULL_ARGUMENT_$1, name));
-        }
+        org.apache.sis.util.ArgumentChecks.ensureNonNull(name, object);
     }
 
     /**
@@ -112,25 +113,14 @@ public final class ArgumentChecks extends Static {
      *         to the given type.
      *
      * @since 3.18
+     *
+     * @deprecated Moved to Apache SIS {@link org.apache.sis.util.ArgumentChecks}.
      */
+    @Deprecated
     public static <T> void ensureCanCast(final String name, final Class<? extends T> expectedType, final T value)
             throws IllegalArgumentException
     {
-        if (value != null) {
-            final Class<?> valueClass = value.getClass();
-            if (!expectedType.isAssignableFrom(valueClass)) {
-                final int key;
-                final Object[] args;
-                if (name != null) {
-                    key = Errors.Keys.ILLEGAL_ARGUMENT_CLASS_$3;
-                    args = new Object[] {name, valueClass, expectedType};
-                } else {
-                    key = Errors.Keys.ILLEGAL_CLASS_$2;
-                    args = new Object[] {valueClass, expectedType};
-                }
-                throw new IllegalArgumentException(Errors.format(key, args));
-            }
-        }
+        org.apache.sis.util.ArgumentChecks.ensureCanCast(name, expectedType, value);
     }
 
     /**
@@ -142,11 +132,12 @@ public final class ArgumentChecks extends Static {
      * @param  index The index to check.
      * @throws IndexOutOfBoundsException If the given index is negative or not lower than the
      *         given upper value.
+     *
+     * @deprecated Moved to Apache SIS {@link org.apache.sis.util.ArgumentChecks}.
      */
+    @Deprecated
     public static void ensureValidIndex(final int upper, final int index) throws IndexOutOfBoundsException {
-        if (index < 0 || index >= upper) {
-            throw new IndexOutOfBoundsException(Errors.format(Errors.Keys.INDEX_OUT_OF_BOUNDS_$1, index));
-        }
+        org.apache.sis.util.ArgumentChecks.ensureValidIndex(upper, index);
     }
 
     /**
@@ -155,14 +146,14 @@ public final class ArgumentChecks extends Static {
      * @param  name   The name of the argument to be checked, used only if an exception is thrown.
      * @param  value  The user argument to check.
      * @throws IllegalArgumentException if the given value is negative.
+     *
+     * @deprecated Moved to Apache SIS {@link org.apache.sis.util.ArgumentChecks}.
      */
+    @Deprecated
     public static void ensurePositive(final String name, final int value)
             throws IllegalArgumentException
     {
-        if (value < 0) {
-            throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.ILLEGAL_ARGUMENT_$2, name, value));
-        }
+        org.apache.sis.util.ArgumentChecks.ensurePositive(name, value);
     }
 
     /**
@@ -171,14 +162,14 @@ public final class ArgumentChecks extends Static {
      * @param  name   The name of the argument to be checked, used only if an exception is thrown.
      * @param  value  The user argument to check.
      * @throws IllegalArgumentException if the given value is negative.
+     *
+     * @deprecated Moved to Apache SIS {@link org.apache.sis.util.ArgumentChecks}.
      */
+    @Deprecated
     public static void ensurePositive(final String name, final long value)
             throws IllegalArgumentException
     {
-        if (value < 0) {
-            throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.ILLEGAL_ARGUMENT_$2, name, value));
-        }
+        org.apache.sis.util.ArgumentChecks.ensurePositive(name, value);
     }
 
     /**
@@ -187,14 +178,14 @@ public final class ArgumentChecks extends Static {
      * @param  name   The name of the argument to be checked, used only if an exception is thrown.
      * @param  value  The user argument to check.
      * @throws IllegalArgumentException if the given value is {@linkplain Float#NaN NaN} or negative.
+     *
+     * @deprecated Moved to Apache SIS {@link org.apache.sis.util.ArgumentChecks}.
      */
+    @Deprecated
     public static void ensurePositive(final String name, final float value)
             throws IllegalArgumentException
     {
-        if (!(value >= 0)) {
-            throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.ILLEGAL_ARGUMENT_$2, name, value));
-        }
+        org.apache.sis.util.ArgumentChecks.ensurePositive(name, value);
     }
 
     /**
@@ -203,14 +194,14 @@ public final class ArgumentChecks extends Static {
      * @param  name   The name of the argument to be checked, used only if an exception is thrown.
      * @param  value  The user argument to check.
      * @throws IllegalArgumentException if the given value is {@linkplain Double#NaN NaN} or negative.
+     *
+     * @deprecated Moved to Apache SIS {@link org.apache.sis.util.ArgumentChecks}.
      */
+    @Deprecated
     public static void ensurePositive(final String name, final double value)
             throws IllegalArgumentException
     {
-        if (!(value >= 0)) {
-            throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.ILLEGAL_ARGUMENT_$2, name, value));
-        }
+        org.apache.sis.util.ArgumentChecks.ensurePositive(name, value);
     }
 
     /**
@@ -219,14 +210,14 @@ public final class ArgumentChecks extends Static {
      * @param  name   The name of the argument to be checked, used only if an exception is thrown.
      * @param  value  The user argument to check.
      * @throws IllegalArgumentException if the given value is negative or equals to zero.
+     *
+     * @deprecated Moved to Apache SIS {@link org.apache.sis.util.ArgumentChecks}.
      */
+    @Deprecated
     public static void ensureStrictlyPositive(final String name, final int value)
             throws IllegalArgumentException
     {
-        if (value <= 0) {
-            throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.NOT_GREATER_THAN_ZERO_$2, name, value));
-        }
+        org.apache.sis.util.ArgumentChecks.ensureStrictlyPositive(name, value);
     }
 
     /**
@@ -235,14 +226,14 @@ public final class ArgumentChecks extends Static {
      * @param  name   The name of the argument to be checked, used only if an exception is thrown.
      * @param  value  The user argument to check.
      * @throws IllegalArgumentException if the given value is negative or equals to zero.
+     *
+     * @deprecated Moved to Apache SIS {@link org.apache.sis.util.ArgumentChecks}.
      */
+    @Deprecated
     public static void ensureStrictlyPositive(final String name, final long value)
             throws IllegalArgumentException
     {
-        if (value <= 0) {
-            throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.NOT_GREATER_THAN_ZERO_$2, name, value));
-        }
+        org.apache.sis.util.ArgumentChecks.ensureStrictlyPositive(name, value);
     }
 
     /**
@@ -252,14 +243,14 @@ public final class ArgumentChecks extends Static {
      * @param  value  The user argument to check.
      * @throws IllegalArgumentException if the given value is {@linkplain Float#NaN NaN},
      *         zero or negative.
+     *
+     * @deprecated Moved to Apache SIS {@link org.apache.sis.util.ArgumentChecks}.
      */
+    @Deprecated
     public static void ensureStrictlyPositive(final String name, final float value)
             throws IllegalArgumentException
     {
-        if (!(value > 0)) {
-            throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.NOT_GREATER_THAN_ZERO_$2, name, value));
-        }
+        org.apache.sis.util.ArgumentChecks.ensureStrictlyPositive(name, value);
     }
 
     /**
@@ -269,14 +260,14 @@ public final class ArgumentChecks extends Static {
      * @param  value  The user argument to check.
      * @throws IllegalArgumentException if the given value is {@linkplain Double#NaN NaN},
      *         zero or negative.
+     *
+     * @deprecated Moved to Apache SIS {@link org.apache.sis.util.ArgumentChecks}.
      */
+    @Deprecated
     public static void ensureStrictlyPositive(final String name, final double value)
             throws IllegalArgumentException
     {
-        if (!(value > 0)) {
-            throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.NOT_GREATER_THAN_ZERO_$2, name, value));
-        }
+        org.apache.sis.util.ArgumentChecks.ensureStrictlyPositive(name, value);
     }
 
     /**
@@ -290,14 +281,14 @@ public final class ArgumentChecks extends Static {
      * @throws IllegalArgumentException if the given value is not in the given range.
      *
      * @see #ensureValidIndex(int, int)
+     *
+     * @deprecated Moved to Apache SIS {@link org.apache.sis.util.ArgumentChecks}.
      */
+    @Deprecated
     public static void ensureBetween(final String name, final int min, final int max, final int value)
             throws IllegalArgumentException
     {
-        if (value < min || value > max) {
-            throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.VALUE_OUT_OF_BOUNDS_$4, name, value, min, max));
-        }
+        org.apache.sis.util.ArgumentChecks.ensureBetween(name, min, max, value);
     }
 
     /**
@@ -308,14 +299,14 @@ public final class ArgumentChecks extends Static {
      * @param  max   The maximal value, inclusive.
      * @param  value The value to be tested.
      * @throws IllegalArgumentException if the given value is not in the given range.
+     *
+     * @deprecated Moved to Apache SIS {@link org.apache.sis.util.ArgumentChecks}.
      */
+    @Deprecated
     public static void ensureBetween(final String name, final long min, final long max, final long value)
             throws IllegalArgumentException
     {
-        if (value < min || value > max) {
-            throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.VALUE_OUT_OF_BOUNDS_$4, name, value, min, max));
-        }
+        org.apache.sis.util.ArgumentChecks.ensureBetween(name, min, max, value);
     }
 
     /**
@@ -327,14 +318,14 @@ public final class ArgumentChecks extends Static {
      * @param  value The value to be tested.
      * @throws IllegalArgumentException if the given value is {@linkplain Float#NaN NaN}
      *         or not in the given range.
+     *
+     * @deprecated Moved to Apache SIS {@link org.apache.sis.util.ArgumentChecks}.
      */
+    @Deprecated
     public static void ensureBetween(final String name, final float min, final float max, final float value)
             throws IllegalArgumentException
     {
-        if (!(value >= min && value <= max)) {
-            throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.VALUE_OUT_OF_BOUNDS_$4, name, value, min, max));
-        }
+        org.apache.sis.util.ArgumentChecks.ensureBetween(name, min, max, value);
     }
 
     /**
@@ -346,14 +337,14 @@ public final class ArgumentChecks extends Static {
      * @param  value The value to be tested.
      * @throws IllegalArgumentException if the given value is {@linkplain Float#NaN NaN}
      *         or not in the given range.
+     *
+     * @deprecated Moved to Apache SIS {@link org.apache.sis.util.ArgumentChecks}.
      */
+    @Deprecated
     public static void ensureBetween(final String name, final double min, final double max, final double value)
             throws IllegalArgumentException
     {
-        if (!(value >= min && value <= max)) {
-            throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.VALUE_OUT_OF_BOUNDS_$4, name, value, min, max));
-        }
+        org.apache.sis.util.ArgumentChecks.ensureBetween(name, min, max, value);
     }
 
     /**
@@ -367,15 +358,13 @@ public final class ArgumentChecks extends Static {
      *         not have the expected number of dimensions.
      *
      * @since 3.20
+     *
+     * @deprecated Moved to Apache SIS {@link org.apache.sis.util.ArgumentChecks}.
      */
+    @Deprecated
     public static void ensureDimensionMatches(final String name, final DirectPosition position, final int expected)
             throws MismatchedDimensionException
     {
-        if (position != null) {
-            final int dimension = position.getDimension();
-            if (dimension != expected) {
-                throw new MismatchedDimensionException(Errors.format(Errors.Keys.MISMATCHED_DIMENSION_$3, name, dimension, expected));
-            }
-        }
+        org.apache.sis.util.ArgumentChecks.ensureDimensionMatches(name, expected, position);
     }
 }

@@ -21,9 +21,9 @@ import net.jcip.annotations.Immutable;
 import org.geotoolkit.lang.ValueRange;
 import org.geotoolkit.resources.Errors;
 
-import static org.geotoolkit.util.converter.Numbers.*;
-import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
-import static org.geotoolkit.util.ArgumentChecks.ensureCanCast;
+import static org.apache.sis.util.Numbers.*;
+import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
+import static org.apache.sis.util.ArgumentChecks.ensureCanCast;
 
 
 /**
@@ -281,7 +281,7 @@ public class NumberRange<T extends Number & Comparable<? super T>> extends Range
                                                final Number maximum, final boolean isMaxIncluded)
     {
         final Class<? extends Number> type = widestClass(
-                finestClass(minimum), finestClass(maximum));
+                narrowestClass(minimum), narrowestClass(maximum));
         return (type == null) ? null :
             new NumberRange(type, cast(minimum, type), isMinIncluded,
                                   cast(maximum, type), isMaxIncluded);
@@ -507,9 +507,8 @@ public class NumberRange<T extends Number & Comparable<? super T>> extends Range
      *
      * @throws IllegalArgumentException if the given value is not a subclass of {@link Number}.
      */
-    @Override
     @SuppressWarnings({"unchecked","rawtypes"})
-    public boolean contains(Comparable<?> value) throws IllegalArgumentException {
+    public boolean contains(Comparable value) throws IllegalArgumentException {
         if (value == null) {
             return false;
         }
@@ -591,9 +590,9 @@ public class NumberRange<T extends Number & Comparable<? super T>> extends Range
          * may have reduced the range), but not finer than the finest type of
          * the ranges used in the intersection calculation.
          */
-        type = finestClass(elementClass, rangeType);
-        type = widestClass(type, finestClass((Number) range.minValue));
-        type = widestClass(type, finestClass((Number) range.maxValue));
+        type = narrowestClass(elementClass, rangeType);
+        type = widestClass(type, narrowestClass((Number) range.minValue));
+        type = widestClass(type, narrowestClass((Number) range.maxValue));
         return convertAndCast((Range) range, (Class) type);
     }
 

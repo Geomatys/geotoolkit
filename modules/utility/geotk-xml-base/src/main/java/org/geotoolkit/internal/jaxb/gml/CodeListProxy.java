@@ -20,7 +20,7 @@ package org.geotoolkit.internal.jaxb.gml;
 import javax.xml.bind.annotation.XmlValue;
 import javax.xml.bind.annotation.XmlAttribute;
 import org.opengis.util.CodeList;
-import org.geotoolkit.internal.CodeLists;
+import org.apache.sis.util.iso.Types;
 
 
 /**
@@ -60,6 +60,6 @@ public final class CodeListProxy {
      */
     CodeListProxy(final String codeSpace, final CodeList<?> value) {
        this.codeSpace  = codeSpace;
-       this.identifier = CodeLists.identifier(value);
+       this.identifier = Types.getCodeName(value);
     }
 }

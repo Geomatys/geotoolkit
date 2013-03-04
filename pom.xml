@@ -171,6 +171,7 @@
       org.geotoolkit.build:org.geotoolkit.test:org.geotoolkit.demo:org.geotoolkit.maven:org.geotoolkit.openoffice:org.geotoolkit.internal:org.geotoolkit.resources:org.geotoolkit.legacy:org.geotoolkit.metadata.fra:org.opengis:com
     </javadoc.exclude>
     <geoapi.version>3.1-M04</geoapi.version>
+    <sis.version>0.3-jdk6-SNAPSHOT</sis.version>
     <derby.version>10.8.2.2</derby.version> <!-- If updated, need to search occurrences in APT files. -->
     <netcdf.version>4.3.10</netcdf.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -858,7 +859,15 @@
        ================================================================== -->
   <repositories>
     <repository>
-      <id>geotoolkit</id>
+      <id>apache.snapshots</id>
+      <name>Apache Snapshot Repository</name>
+      <url>http://repository.apache.org/snapshots</url>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+    </repository>
+    <repository>
+      <id>geotoolkit.org</id>
       <name>Geotoolkit.org repository</name>
       <url>http://maven.geotoolkit.org</url>
     </repository>
@@ -866,7 +875,15 @@
 
   <pluginRepositories>
     <pluginRepository>
-      <id>geotoolkit</id>
+      <id>apache.snapshots</id>
+      <name>Apache Snapshot Repository</name>
+      <url>http://repository.apache.org/snapshots</url>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+    </pluginRepository>
+    <pluginRepository>
+      <id>geotoolkit.org</id>
       <name>Geotoolkit.org repository</name>
       <url>http://maven.geotoolkit.org</url>
     </pluginRepository>

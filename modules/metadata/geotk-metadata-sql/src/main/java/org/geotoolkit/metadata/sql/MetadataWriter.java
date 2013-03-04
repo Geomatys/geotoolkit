@@ -38,9 +38,9 @@ import org.opengis.metadata.Identifier;
 import org.opengis.metadata.citation.Citation;
 import org.opengis.metadata.citation.ResponsibleParty;
 
-import org.geotoolkit.metadata.NullValuePolicy;
+import org.apache.sis.metadata.NullValuePolicy;
 import org.geotoolkit.metadata.MetadataStandard;
-import org.geotoolkit.internal.Citations;
+import org.apache.sis.internal.util.Citations;
 import org.geotoolkit.internal.sql.DefaultDataSource;
 import org.geotoolkit.internal.sql.IdentifierGenerator;
 import org.geotoolkit.internal.sql.StatementEntry;
@@ -49,9 +49,9 @@ import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.lang.Workaround;
 
-import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
-import static org.geotoolkit.util.ArgumentChecks.ensureStrictlyPositive;
-import static org.geotoolkit.metadata.KeyNamePolicy.UML_IDENTIFIER;
+import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
+import static org.apache.sis.util.ArgumentChecks.ensureStrictlyPositive;
+import static org.apache.sis.metadata.KeyNamePolicy.UML_IDENTIFIER;
 import static org.geotoolkit.metadata.TypeValuePolicy.ELEMENT_TYPE;
 import static org.geotoolkit.metadata.TypeValuePolicy.DECLARING_INTERFACE;
 

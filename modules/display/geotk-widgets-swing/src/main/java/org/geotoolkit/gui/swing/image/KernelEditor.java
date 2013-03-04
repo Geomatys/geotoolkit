@@ -55,7 +55,7 @@ import java.util.Arrays;
 import java.util.Locale;
 import java.text.ParseException;
 
-import org.geotoolkit.util.XArrays;
+import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.gui.swing.Dialog;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.internal.swing.SwingUtilities;
@@ -630,12 +630,12 @@ public class KernelEditor extends JComponent implements Dialog {
             final int oldRowCount = elements.length;
             final int oldColCount = oldRowCount!=0 ? elements[0].length : 0;
             if (rowCount!=oldRowCount || colCount!=oldColCount) {
-                elements = XArrays.resize(elements, rowCount);
+                elements = ArraysExt.resize(elements, rowCount);
                 for (int i=0; i<elements.length; i++) {
                     if (elements[i] == null) {
                         elements[i] = new float[colCount];
                     } else {
-                        elements[i] = XArrays.resize(elements[i], colCount);
+                        elements[i] = ArraysExt.resize(elements[i], colCount);
                     }
                 }
                 if (colCount != oldColCount) {
@@ -793,7 +793,7 @@ public class KernelEditor extends JComponent implements Dialog {
                     }
                 }
                 names[count++] = getString(Vocabulary.Keys.PERSONALIZED);
-                names = XArrays.resize(names, count);
+                names = ArraysExt.resize(names, count);
             }
             return names;
         }

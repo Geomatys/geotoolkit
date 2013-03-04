@@ -18,7 +18,7 @@
 package org.geotoolkit.display.axis;
 
 import java.text.NumberFormat;
-import org.geotoolkit.math.XMath;
+import org.apache.sis.math.MathFunctions;
 
 
 /**
@@ -89,6 +89,6 @@ final class LogarithmicNumberIterator extends NumberIterator {
      */
     @Override
     public double currentValue() {
-        return XMath.pow10(super.currentValue());
+        return MathFunctions.pow10(super.currentValue());
     }
 }

@@ -55,13 +55,13 @@ import org.opengis.referencing.datum.GeodeticDatum;
 import org.opengis.coverage.grid.GridGeometry;
 import org.opengis.coverage.grid.GridEnvelope;
 
-import org.geotoolkit.measure.Units;
+import org.apache.sis.measure.Units;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.image.io.WarningProducer;
 import org.geotoolkit.internal.image.io.Warnings;
 import org.geotoolkit.internal.image.io.IrregularAxesConverter;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
-import org.geotoolkit.util.XArrays;
+import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.referencing.datum.DefaultTemporalDatum;
 import org.geotoolkit.referencing.datum.DefaultVerticalDatum;
 import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
@@ -70,7 +70,7 @@ import org.geotoolkit.referencing.cs.DiscreteCoordinateSystemAxis;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
 
-import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
+import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 
 
 /**
@@ -189,7 +189,7 @@ public class NetcdfCRS extends NetcdfIdentifiedObject implements CoordinateRefer
      */
     private static Dimension[] getDomain(final CoordinateSystem netcdfCS) {
         final Dimension[] domain = netcdfCS.getDomain().toArray(new Dimension[netcdfCS.getRankDomain()]);
-        XArrays.reverse(domain);
+        ArraysExt.reverse(domain);
         return domain;
     }
 

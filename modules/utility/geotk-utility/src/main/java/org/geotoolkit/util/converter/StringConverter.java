@@ -26,7 +26,7 @@ import net.jcip.annotations.Immutable;
 
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Locales;
-import org.geotoolkit.internal.CodeLists;
+import org.apache.sis.util.iso.Types;
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.internal.InternalUtilities;
 import org.geotoolkit.util.SimpleInternationalString;
@@ -821,7 +821,7 @@ abstract class StringConverter<T> extends SimpleConverter<String,T> implements S
             if (source == null) {
                 return null;
             }
-            return CodeLists.valueOf(targetType, source);
+            return Types.forCodeName(targetType, source, true);
         }
     }
 }

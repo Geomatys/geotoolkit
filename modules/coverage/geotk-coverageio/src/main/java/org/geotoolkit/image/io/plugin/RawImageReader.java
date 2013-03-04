@@ -51,7 +51,7 @@ import org.geotoolkit.image.io.SpatialImageReader;
 import org.geotoolkit.lang.SystemOverride;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Descriptions;
-import org.geotoolkit.util.XArrays;
+import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.image.io.UnsupportedImageFormatException;
@@ -561,7 +561,7 @@ public class RawImageReader extends SpatialImageReader {
             if (category.equals(ImageReaderSpi.class)) {
                 for (Iterator<ImageReaderSpi> it = registry.getServiceProviders(ImageReaderSpi.class, false); it.hasNext();) {
                     ImageReaderSpi other = it.next();
-                    if (other != this && XArrays.contains(other.getFormatNames(), "raw")) {
+                    if (other != this && ArraysExt.contains(other.getFormatNames(), "raw")) {
                         // Found an other RAW format. For now we process only
                         // the Sun one and leave the others (if any) untouched.
                         if (other.getClass().getName().startsWith("com.sun.media.")) {

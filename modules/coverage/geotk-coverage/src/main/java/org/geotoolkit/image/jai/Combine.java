@@ -34,7 +34,7 @@ import javax.media.jai.iterator.RectIterFactory;
 import javax.media.jai.iterator.WritableRectIter;
 import javax.vecmath.MismatchedSizeException;
 
-import org.geotoolkit.util.XArrays;
+import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.internal.image.ImageUtilities;
 
 
@@ -239,9 +239,9 @@ public class Combine extends PointOpImage {
                 }
             }
             copy[count] = row[row.length-1];
-            this.matrix [j] = XArrays.resize(copy,    count+1);
-            this.sources[j] = XArrays.resize(sources, count  );
-            this.bands  [j] = XArrays.resize(bands,   count  );
+            this.matrix [j] = ArraysExt.resize(copy,    count+1);
+            this.sources[j] = ArraysExt.resize(sources, count  );
+            this.bands  [j] = ArraysExt.resize(bands,   count  );
         }
         /*
          * Set the sample model according the number of destination bands.

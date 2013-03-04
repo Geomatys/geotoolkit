@@ -35,7 +35,7 @@ import org.geotoolkit.resources.IndexedResourceBundle;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.resources.Errors;
 
-import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
+import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 
 
 /**

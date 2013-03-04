@@ -28,7 +28,7 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.SortedSet;
 
-import static org.geotoolkit.util.ArgumentChecks.ensurePositive;
+import static org.apache.sis.util.ArgumentChecks.ensurePositive;
 
 
 /**

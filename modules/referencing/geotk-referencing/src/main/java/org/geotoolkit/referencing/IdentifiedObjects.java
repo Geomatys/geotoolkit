@@ -42,18 +42,18 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.ComparisonMode;
+import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.naming.DefaultNameSpace;
+import org.geotoolkit.metadata.iso.DefaultIdentifier;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.referencing.factory.IdentifiedObjectFinder;
 import org.geotoolkit.referencing.factory.AbstractAuthorityFactory;
 
 import static org.opengis.referencing.IdentifiedObject.NAME_KEY;
 import static org.opengis.referencing.IdentifiedObject.IDENTIFIERS_KEY;
-import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
+import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 import static org.geotoolkit.internal.Citations.iterator;
-import static org.geotoolkit.internal.Citations.identifierMatches;
-import org.geotoolkit.metadata.iso.DefaultIdentifier;
+import static org.apache.sis.internal.util.Citations.identifierMatches;
 
 
 /**
@@ -198,14 +198,14 @@ public final class IdentifiedObjects extends Static {
      *   <li><p>If the name or alias implements the {@link ReferenceIdentifier} interface,
      *       then this method compares the {@linkplain ReferenceIdentifier#getAuthority()
      *       identifier authority} against the specified citation using the
-     *       {@link org.geotoolkit.metadata.iso.citation.Citations#identifierMatches(Citation,Citation)
-     *       identifierMatches} method. If a matching is found, then this method returns the
+     *       {@link Citations#identifierMatches(Citation,Citation) identifierMatches} method.
+     *       If a matching is found, then this method returns the
      *       {@linkplain ReferenceIdentifier#getCode identifier code} of this object.</p></li>
      *
      *   <li><p>Otherwise, if the alias implements the {@link GenericName} interface, then this method
      *       compares the {@linkplain GenericName#scope name scope} against the specified citation using the
-     *       {@linkplain org.geotoolkit.metadata.iso.citation.Citations#identifierMatches(Citation,String)
-     *       identifierMatches} method. If a matching is found, then this method returns the
+     *       {@linkplain Citations#identifierMatches(Citation,String) identifierMatches} method.
+     *       If a matching is found, then this method returns the
      *       {@linkplain GenericName#tip name tip} of this object.</p></li>
      * </ul>
      *
@@ -679,7 +679,7 @@ public final class IdentifiedObjects extends Static {
                 return cs + DefaultNameSpace.DEFAULT_SEPARATOR + code;
             }
         }
-        final String authority = org.geotoolkit.internal.Citations.getIdentifier(identifier.getAuthority());
+        final String authority = org.apache.sis.internal.util.Citations.getIdentifier(identifier.getAuthority());
         return (authority != null) ? (authority + DefaultNameSpace.DEFAULT_SEPARATOR + code) : code;
     }
 }

@@ -27,7 +27,7 @@ import org.opengis.referencing.cs.CoordinateSystem;
 
 import org.geotoolkit.io.X364;
 import org.geotoolkit.lang.Debug;
-import org.geotoolkit.util.ArgumentChecks;
+import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.util.converter.Classes;
 
 

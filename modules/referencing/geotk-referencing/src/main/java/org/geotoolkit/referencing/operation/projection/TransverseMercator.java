@@ -33,7 +33,7 @@ import org.opengis.parameter.ParameterNotFoundException;
 import org.geotoolkit.referencing.operation.matrix.Matrix2;
 
 import static java.lang.Math.*;
-import static org.geotoolkit.math.XMath.atanh;
+import static org.apache.sis.math.MathFunctions.atanh;
 import static org.geotoolkit.referencing.operation.provider.TransverseMercator.*;
 
 

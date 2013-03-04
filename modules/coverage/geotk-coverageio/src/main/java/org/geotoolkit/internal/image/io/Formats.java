@@ -39,7 +39,7 @@ import javax.imageio.stream.ImageInputStream;
 import org.geotoolkit.factory.Factories;
 
 import org.geotoolkit.lang.Static;
-import org.geotoolkit.util.XArrays;
+import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.resources.Vocabulary;
@@ -158,7 +158,7 @@ attmpt: while (true) {
                 if (!useProvidersList) {
                     if (!useSuffix) {
                         providers.add(provider);
-                    } else if (XArrays.contains(provider.getFileSuffixes(), suffix)) {
+                    } else if (ArraysExt.contains(provider.getFileSuffixes(), suffix)) {
                         providers.add(nextProviderForSuffix++, provider);
                     } else {
                         providers.add(provider);
@@ -386,7 +386,7 @@ attmpt: while (true) {
             if (exclude != null && exclude.isInstance(provider)) {
                 continue;
             }
-            if (XArrays.contains(provider.getFormatNames(), format)) {
+            if (ArraysExt.contains(provider.getFormatNames(), format)) {
                 /*
                  * NOTE: The following method uses the same rule for identifying JAI codecs.
                  *       If we change the way to identify those codecs here, we should do the
@@ -493,7 +493,7 @@ attmpt: while (true) {
                     choices[i]   = o1;
                 }
             }
-            choices = XArrays.resize(choices, count);
+            choices = ArraysExt.resize(choices, count);
         }
         return choices;
     }

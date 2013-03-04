@@ -29,7 +29,7 @@ import org.opengis.util.InternationalString;
 import org.opengis.coverage.SampleDimension;
 import org.opengis.metadata.content.TransferFunctionType;
 
-import org.geotoolkit.util.XArrays;
+import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.internal.image.ImageUtilities;
@@ -107,7 +107,7 @@ public final class DimensionAccessor extends MetadataNodeAccessor {
                         fillValues[n++] = fillValue;
                     }
                 }
-                fillValues = XArrays.resize(fillValues, n);
+                fillValues = ArraysExt.resize(fillValues, n);
             }
         }
         setFillSampleValues(fillValues);

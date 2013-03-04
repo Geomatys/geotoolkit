@@ -78,7 +78,7 @@ public final strictfp class RangeTest {
      * Tests internal utility methods to make sure the class is ticking over as expected.
      */
     @Test
-    public void testInternals() {
+    public void testInternals() { // LGPL
         assertEquals(  0, UNIT.compareMinTo( -1,  0));
         assertEquals( -1, UNIT.compareMinTo( -1, +1));
         assertEquals(  0, UNIT.compareMaxTo(  1,  0));
@@ -89,7 +89,7 @@ public final strictfp class RangeTest {
      * Tests ranges that are expected to be empty.
      */
     @Test
-    public void testIsEmpty() {
+    public void testIsEmpty() { // LGPL
         // easy
         assertTrue (new Range<Integer>(Integer.class, 0, -1  ).isEmpty());
         assertFalse(new Range<Integer>(Integer.class, 0, 0   ).isEmpty());
@@ -118,7 +118,7 @@ public final strictfp class RangeTest {
      * Tests string representations.
      */
     @Test
-    public void testToString() {
+    public void testToString() { // LGPL
         assertEquals("[-1 … 1]", UNIT    .toString());
         assertEquals("0",        ZERO    .toString());
         assertEquals("[A … B)",  A       .toString());
@@ -140,7 +140,7 @@ public final strictfp class RangeTest {
      * Tests {@link Range#contains}.
      */
     @Test
-    public void testContains() {
+    public void testContains() { // LGPL
         assertTrue (UNIT.contains( 0));
         assertTrue (UNIT.contains( 1));
         assertTrue (UNIT.contains(-1));

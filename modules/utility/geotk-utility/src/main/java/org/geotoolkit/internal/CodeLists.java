@@ -18,18 +18,13 @@
 package org.geotoolkit.internal;
 
 import java.util.Locale;
-import java.util.ResourceBundle;
-import java.util.MissingResourceException;
-import java.lang.reflect.Array;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.UndeclaredThrowableException;
 
 import org.opengis.util.CodeList;
 import org.opengis.annotation.UML;
 
+import org.opengis.util.InternationalString;
 import org.geotoolkit.lang.Static;
-import org.geotoolkit.util.Strings;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.iso.Types;
 
 
 /**
@@ -44,24 +39,15 @@ import org.geotoolkit.util.logging.Logging;
  *
  * @since 3.02
  * @module
+ *
+ * @deprecated Moved to {@link Types}.
  */
-public final class CodeLists extends Static implements CodeList.Filter {
+@Deprecated
+public final class CodeLists extends Static {
     /**
-     * The name to compare during filtering operation.
+     * Do not allow instantiation of this class.
      */
-    private final String codename;
-
-    /**
-     * {@code true} if {@link #valueOf} is allowed to create new code lists.
-     */
-    private final boolean canCreate;
-
-    /**
-     * Creates a new filter for the specified code name.
-     */
-    private CodeLists(final String codename, final boolean canCreate) {
-        this.codename  = codename;
-        this.canCreate = canCreate;
+    private CodeLists() {
     }
 
     /**
@@ -73,20 +59,12 @@ public final class CodeLists extends Static implements CodeList.Filter {
      * @return The class name, or {@code null} if the given code is null.
      *
      * @since 3.18
+     *
+     * @deprecated Moved to {@link Types#getListName(CodeList)}.
      */
+    @Deprecated
     public static String classname(final CodeList<?> code) {
-        if (code == null) {
-            return null;
-        }
-        final Class<?> type = code.getClass();
-        final UML uml = type.getAnnotation(UML.class);
-        if (uml != null) {
-            String id = uml.identifier();
-            if (id != null && !(id = id.trim()).isEmpty()) {
-                return id;
-            }
-        }
-        return type.getSimpleName();
+        return Types.getListName(code);
     }
 
     /**
@@ -98,17 +76,12 @@ public final class CodeLists extends Static implements CodeList.Filter {
      *         or {@code null} if the given code is null.
      *
      * @since 3.06
+     *
+     * @deprecated Moved to {@link Types#getCodeName(CodeList)}.
      */
+    @Deprecated
     public static String identifier(final CodeList<?> code) {
-        if (code == null) {
-            return null;
-        }
-        String id = code.identifier();
-        if (id == null || (id = id.trim()).isEmpty()) {
-            // Fallback if no UML identifier were found.
-            id = code.name();
-        }
-        return id;
+        return Types.getCodeName(code);
     }
 
     /**
@@ -139,22 +112,12 @@ public final class CodeLists extends Static implements CodeList.Filter {
      * @return A unlocalized sentence for the given code, or {@code null} if the given code is null.
      *
      * @since 3.18
+     *
+     * @deprecated Moved to {@link Types#getCodeLabel(CodeList)}.
      */
+    @Deprecated
     public static String sentence(final CodeList<?> code) {
-        if (code == null) {
-            return null;
-        }
-        String id = code.identifier();
-        final String name = code.name();
-        if (id == null) {
-            id = name;
-        }
-        for (final String candidate : code.names()) {
-            if (!candidate.equals(name) && candidate.length() >= id.length()) {
-                id = candidate;
-            }
-        }
-        return Strings.camelCaseToSentence(id);
+        return Types.getCodeLabel(code);
     }
 
     /**
@@ -168,20 +131,13 @@ public final class CodeLists extends Static implements CodeList.Filter {
      * @return The localized (if possible) sentence, or {@code null} if the given code is null.
      *
      * @since 3.18
+     *
+     * @deprecated Moved to {@link Types#getCodeTitle(CodeList)}.
      */
+    @Deprecated
     public static String localize(final CodeList<?> code, final Locale locale) {
-        if (code == null) {
-            return null;
-        }
-        if (locale != null) {
-            final String key = classname(code) + '.' + identifier(code);
-            try {
-                return ResourceBundle.getBundle("org.opengis.metadata.CodeLists", locale).getString(key);
-            } catch (MissingResourceException e) {
-                Logging.recoverableException(CodeLists.class, "localize", e);
-            }
-        }
-        return sentence(code);
+        final InternationalString text = Types.getCodeTitle(code);
+        return (text != null) ? text.toString(locale) : null;
     }
 
     /**
@@ -192,25 +148,12 @@ public final class CodeLists extends Static implements CodeList.Filter {
      * @return The list of values for the given code list, or an empty array if none.
      *
      * @since 3.03
+     *
+     * @deprecated Moved to {@link Types#getCodeValues(CodeList)}.
      */
-    @SuppressWarnings("unchecked")
+    @Deprecated
     public static <T extends CodeList<?>> T[] values(final Class<T> codeType) {
-        Object values;
-        try {
-            values = codeType.getMethod("values", (Class<?>[]) null).invoke(null, (Object[]) null);
-        } catch (InvocationTargetException e) {
-            final Throwable cause = e.getCause();
-            if (cause instanceof RuntimeException) {
-                throw (RuntimeException) cause;
-            }
-            if (cause instanceof Error) {
-                throw (Error) cause;
-            }
-            throw new UndeclaredThrowableException(cause);
-        } catch (Exception e) { // Multi catch: NoSuchMethodException, IllegalAccessException
-            values = Array.newInstance(codeType, 0);
-        }
-        return (T[]) values;
+        return Types.getCodeValues(codeType);
     }
 
     /**
@@ -224,7 +167,10 @@ public final class CodeLists extends Static implements CodeList.Filter {
      * @return A code matching the given name, or {@code null} if the name is null.
      *
      * @see CodeList#valueOf(Class, String)
+     *
+     * @deprecated Moved to {@link Types#forCodeName(java.lang.Class, String, boolean)}.
      */
+    @Deprecated
     public static <T extends CodeList<T>> T valueOf(final Class<T> codeType, final String name) {
         return valueOf(codeType, name, true);
     }
@@ -244,100 +190,11 @@ public final class CodeLists extends Static implements CodeList.Filter {
      * @see CodeList#valueOf(Class, String)
      *
      * @since 3.06
-     */
-    public static <T extends CodeList<T>> T valueOf(final Class<T> codeType, String name, final boolean canCreate) {
-        if (name == null || (name = name.trim()).isEmpty()) {
-            return null;
-        }
-        final String typeName = codeType.getName();
-        try {
-            // Forces initialization of the given class in order
-            // to register its list of static final constants.
-            Class.forName(typeName, true, codeType.getClassLoader());
-        } catch (ClassNotFoundException e) {
-            throw new TypeNotPresentException(typeName, e); // Should never happen.
-        }
-        return CodeList.valueOf(codeType, new CodeLists(name, canCreate));
-    }
-
-    /**
-     * This method is public as an implementation side-effect.
-     * Do not use directly.
-     */
-    @Override
-    public String codename() {
-        return canCreate ? codename : null;
-    }
-
-    /**
-     * This method is public as an implementation side-effect.
-     * Do not use directly.
-     */
-    @Override
-    public boolean accept(final CodeList<?> code) {
-        for (final String name : code.names()) {
-            if (matches(name, codename)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Returns {@code true} if the given strings are equal, ignoring case, whitespaces and the
-     * {@code '_'} character.
      *
-     * @param  name The first string to compare.
-     * @param  expected The second string to compare.
-     * @return {@code true} if the two strings are equal.
+     * @deprecated Moved to {@link Types#forCodeName(java.lang.Class, String, boolean)}.
      */
-    private static boolean matches(final String name, final String expected) {
-        final int el = expected.length();
-        final int length = name.length();
-        int ei=0;
-        for (int i=0; i<length; i++) {
-            char cn = name.charAt(i);
-            if (isSignificant(cn)) {
-                // Fetch the next significant character from the expected string.
-                char ce;
-                do {
-                    if (ei >= el) {
-                        return false; // The name has more significant characters than expected.
-                    }
-                    ce = expected.charAt(ei++);
-                } while (!isSignificant(ce));
-
-                // Compare the characters in the same way than String.equalsIgnoreCase(String).
-                if (cn == ce) {
-                    continue;
-                }
-                cn = Character.toUpperCase(cn);
-                ce = Character.toUpperCase(ce);
-                if (cn == ce) {
-                    continue;
-                }
-                cn = Character.toLowerCase(cn);
-                ce = Character.toLowerCase(ce);
-                if (cn == ce) {
-                    continue;
-                }
-                return false;
-            }
-        }
-        while (ei < el) {
-            if (isSignificant(expected.charAt(ei++))) {
-                return false; // The name has less significant characters than expected.
-            }
-        }
-        return true;
-    }
-
-    /**
-     * Returns {@code true} if the given character should be taken in account when comparing two
-     * strings. Current implementation ignores only the whitespaces, so this method is merely a
-     * placeholder where more elaborated conditions could be added in the future.
-     */
-    private static boolean isSignificant(final char c) {
-        return !Character.isWhitespace(c);
+    @Deprecated
+    public static <T extends CodeList<T>> T valueOf(final Class<T> codeType, String name, final boolean canCreate) {
+        return Types.forCodeName(codeType, name, canCreate);
     }
 }

@@ -28,7 +28,7 @@ import org.opengis.referencing.operation.Transformation;
 import org.opengis.referencing.operation.OperationMethod;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
-import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
+import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 
 
 /**

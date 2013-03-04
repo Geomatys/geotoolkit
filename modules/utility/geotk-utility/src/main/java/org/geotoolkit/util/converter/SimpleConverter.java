@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.util.converter;
 
+import org.apache.sis.util.Classes;
 import org.geotoolkit.resources.Errors;
 
 

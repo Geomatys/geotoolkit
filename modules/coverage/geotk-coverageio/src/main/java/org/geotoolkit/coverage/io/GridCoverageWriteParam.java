@@ -21,7 +21,7 @@ import javax.imageio.ImageWriter;
 import javax.imageio.ImageWriteParam;
 import org.opengis.coverage.InterpolationMethod;
 
-import static org.geotoolkit.util.ArgumentChecks.ensureBetween;
+import static org.apache.sis.util.ArgumentChecks.ensureBetween;
 
 
 /**

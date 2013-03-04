@@ -34,8 +34,8 @@ import java.util.Enumeration;
 import java.util.Properties;
 import java.util.Locale;
 
-import org.geotoolkit.util.XArrays;
-import org.geotoolkit.util.ArgumentChecks;
+import org.apache.sis.util.ArraysExt;
+import org.apache.sis.util.ArgumentChecks;
 
 
 /**
@@ -201,7 +201,7 @@ public enum Dialect {
      * minus the generic ones ({@link #ANSI}). The enum name must be part of the database
      * product name (ignoring case).
      */
-    private static final Dialect[] SPECIFIC = XArrays.remove(values(), ANSI.ordinal(), 1);
+    private static final Dialect[] SPECIFIC = ArraysExt.remove(values(), ANSI.ordinal(), 1);
 
     /**
      * The driver class name, or {@code null} if unknown.

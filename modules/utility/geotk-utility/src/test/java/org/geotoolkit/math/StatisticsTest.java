@@ -249,16 +249,17 @@ public final strictfp class StatisticsTest extends TestBase {
         final StringWriter buffer = new StringWriter();
         Statistics.writeTable(buffer, new String[] {"first", "second"}, multi, Locale.ENGLISH);
         assertMultilinesEquals(
-                "┌─────────────────────┬─────────┬─────────┐\n" +
-                "│                     │   first │  second │\n" +
-                "├─────────────────────┼─────────┼─────────┤\n" +
-                "│ Count:              │       3 │       4 │\n" +
-                "│ Minimum:            │ 10.0000 │ 10.0000 │\n" +
-                "│ Maximum:            │ 40.0000 │ 60.0000 │\n" +
-                "│ Mean:               │ 23.3333 │ 32.5000 │\n" +
-                "│ RMS:                │ 26.4575 │ 37.7492 │\n" +
-                "│ Standard deviation: │ 15.2753 │ 22.1736 │\n" +
-                "└─────────────────────┴─────────┴─────────┘",
+                "┌─────────────────────┬───────┬────────┐\n" +
+                "│                     │ first │ second │\n" +
+                "├─────────────────────┼───────┼────────┤\n" +
+                "│ Number of values:   │     3 │      4 │\n" +
+                "│ Number of ‘NaN’:    │     1 │      1 │\n" +
+                "│ Minimum value:      │  10.0 │   10.0 │\n" +
+                "│ Maximum value:      │  40.0 │   60.0 │\n" +
+                "│ Mean value:         │  23.3 │   32.5 │\n" +
+                "│ Root Mean Square:   │  26.5 │   37.7 │\n" +
+                "│ Standard deviation: │  15.3 │   22.2 │\n" +
+                "└─────────────────────┴───────┴────────┘\n",
                 buffer.toString());
     }
 }

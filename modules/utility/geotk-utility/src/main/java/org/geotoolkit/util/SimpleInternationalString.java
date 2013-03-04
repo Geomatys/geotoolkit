@@ -26,7 +26,7 @@ import net.jcip.annotations.Immutable;
 
 import org.opengis.util.InternationalString;
 
-import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
+import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 
 
 /**

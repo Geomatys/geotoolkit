@@ -43,6 +43,7 @@ import org.geotoolkit.io.wkt.Colors;
 import org.geotoolkit.io.wkt.WKTFormat;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.util.Strings;
+import org.apache.sis.util.StringBuilders;
 
 
 /**
@@ -248,9 +249,9 @@ public class PropertiesSheet extends JComponent {
         type      .setText(null);
         remarks   .setText(null);
         final StringBuilder buffer = new StringBuilder(message);
-        Strings.replace(buffer, "&", "&amp;");
-        Strings.replace(buffer, "<", "&lt;");
-        Strings.replace(buffer, ">", "&gt;");
+        StringBuilders.replace(buffer, "&", "&amp;");
+        StringBuilders.replace(buffer, "<", "&lt;");
+        StringBuilders.replace(buffer, ">", "&gt;");
         message = buffer.toString();
         buffer.setLength(0);
         buffer.append("<html><p><b>")

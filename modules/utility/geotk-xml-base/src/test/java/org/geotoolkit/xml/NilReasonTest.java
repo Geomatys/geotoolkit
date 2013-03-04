@@ -22,9 +22,9 @@ import java.net.URISyntaxException;
 import org.opengis.metadata.citation.Citation;
 import org.opengis.metadata.citation.ResponsibleParty;
 
-import org.geotoolkit.util.LenientComparable;
-import org.geotoolkit.util.ComparisonMode;
-import org.geotoolkit.util.XArrays;
+import org.apache.sis.util.LenientComparable;
+import org.apache.sis.util.ComparisonMode;
+import org.apache.sis.util.ArraysExt;
 
 import org.junit.*;
 import static org.geotoolkit.test.Assert.*;
@@ -52,8 +52,8 @@ public final strictfp class NilReasonTest {
         assertSame(NilReason.MISSING,  NilReason.valueOf("  missing "));
 
         final NilReason[] reasons = NilReason.values();
-        assertTrue(XArrays.contains(reasons, NilReason.TEMPLATE));
-        assertTrue(XArrays.contains(reasons, NilReason.MISSING));
+        assertTrue(ArraysExt.contains(reasons, NilReason.TEMPLATE));
+        assertTrue(ArraysExt.contains(reasons, NilReason.MISSING));
     }
 
     /**
@@ -72,9 +72,9 @@ public final strictfp class NilReasonTest {
         assertNull   ("NilReason.getURI()", other.getURI());
 
         final NilReason[] reasons = NilReason.values();
-        assertTrue(XArrays.contains(reasons, NilReason.TEMPLATE));
-        assertTrue(XArrays.contains(reasons, NilReason.MISSING));
-        assertTrue(XArrays.contains(reasons, other));
+        assertTrue(ArraysExt.contains(reasons, NilReason.TEMPLATE));
+        assertTrue(ArraysExt.contains(reasons, NilReason.MISSING));
+        assertTrue(ArraysExt.contains(reasons, other));
     }
 
     /**
@@ -90,9 +90,9 @@ public final strictfp class NilReasonTest {
         assertEquals("NilReason.getURI()", "http://www.nilreasons.org", String.valueOf(other.getURI()));
 
         final NilReason[] reasons = NilReason.values();
-        assertTrue(XArrays.contains(reasons, NilReason.TEMPLATE));
-        assertTrue(XArrays.contains(reasons, NilReason.MISSING));
-        assertTrue(XArrays.contains(reasons, other));
+        assertTrue(ArraysExt.contains(reasons, NilReason.TEMPLATE));
+        assertTrue(ArraysExt.contains(reasons, NilReason.MISSING));
+        assertTrue(ArraysExt.contains(reasons, other));
     }
 
     /**

@@ -25,7 +25,7 @@ import javax.swing.text.InternationalFormatter;
 import javax.measure.unit.Unit;
 import javax.measure.unit.UnitFormat;
 
-import org.geotoolkit.measure.Units;
+import org.apache.sis.measure.Units;
 
 
 /**

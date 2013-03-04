@@ -32,7 +32,10 @@ import java.util.Collection;
  *
  * @since 2.4
  * @module
+ *
+ * @deprecated Replaced by {@link org.apache.sis.util.collection.CheckedContainer}.
  */
+@Deprecated
 public interface CheckedCollection<E> extends Collection<E>, CheckedContainer<E> {
     /**
      * Returns the base type of all elements in this collection.

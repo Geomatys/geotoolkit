@@ -45,8 +45,8 @@ import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.geometry.DirectPosition;
 
 import org.geotoolkit.util.Utilities;
-import org.geotoolkit.util.ComparisonMode;
-import org.geotoolkit.util.ArgumentChecks;
+import org.apache.sis.util.ComparisonMode;
+import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.parameter.Parameter;
 import org.geotoolkit.parameter.FloatParameter;
 import org.geotoolkit.parameter.ParameterGroup;
@@ -637,7 +637,7 @@ public class GeocentricTransform extends AbstractMathTransform implements Ellips
      */
     @Override
     public Matrix derivative(final DirectPosition point) {
-        ArgumentChecks.ensureDimensionMatches("point", point, hasHeight ? 3 : 2);
+        ArgumentChecks.ensureDimensionMatches("point", hasHeight ? 3 : 2, point);
         return derivative(toRadians  (point.getOrdinate(0)),
                           toRadians  (point.getOrdinate(1)),
                           hasHeight ? point.getOrdinate(2) : 0,

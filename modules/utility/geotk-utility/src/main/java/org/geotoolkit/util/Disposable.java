@@ -44,10 +44,14 @@ package org.geotoolkit.util;
  * @module
  *
  * @see java.io.Closeable
+ *
+ * @deprecated Moved to Apache SIS {@link org.apache.sis.util.Disposable}.
  */
-public interface Disposable {
+@Deprecated
+public interface Disposable extends org.apache.sis.util.Disposable {
     /**
      * Allows any resources held by this object to be released.
      */
+    @Override
     void dispose();
 }

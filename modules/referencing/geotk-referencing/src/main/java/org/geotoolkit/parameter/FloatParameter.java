@@ -28,11 +28,11 @@ import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.InvalidParameterTypeException;
 import org.opengis.parameter.InvalidParameterValueException;
 
-import org.geotoolkit.util.XArrays;
+import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.resources.Errors;
 
-import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
+import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 
 
 /**
@@ -252,7 +252,7 @@ public class FloatParameter extends AbstractParameterValue<Double> {
     @Override
     public double[] doubleValueList(final Unit<?> unit) throws IllegalArgumentException {
         final double value = doubleValue(unit);
-        return Double.isNaN(value) ? XArrays.EMPTY_DOUBLE: new double[] {value};
+        return Double.isNaN(value) ? ArraysExt.EMPTY_DOUBLE: new double[] {value};
     }
 
     /**
@@ -263,7 +263,7 @@ public class FloatParameter extends AbstractParameterValue<Double> {
     @Override
     public double[] doubleValueList() {
         final double value = doubleValue();
-        return Double.isNaN(value) ? XArrays.EMPTY_DOUBLE: new double[] {value};
+        return Double.isNaN(value) ? ArraysExt.EMPTY_DOUBLE: new double[] {value};
     }
 
     /**

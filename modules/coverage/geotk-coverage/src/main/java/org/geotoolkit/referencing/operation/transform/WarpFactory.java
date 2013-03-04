@@ -41,7 +41,7 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.util.logging.Logging;
 
-import static org.geotoolkit.util.ArgumentChecks.ensurePositive;
+import static org.apache.sis.util.ArgumentChecks.ensurePositive;
 
 
 /**

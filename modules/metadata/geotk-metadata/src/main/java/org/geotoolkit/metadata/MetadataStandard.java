@@ -31,8 +31,8 @@ import net.jcip.annotations.ThreadSafe;
 import org.opengis.annotation.UML;
 
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.Strings;
-import org.geotoolkit.util.ComparisonMode;
+import org.apache.sis.util.CharSequences;
+import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.util.LenientComparable;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.NullArgumentException;
@@ -41,7 +41,7 @@ import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.gui.swing.tree.TreeTableNode;
 import org.geotoolkit.gui.swing.tree.DefaultTreeModel;
 
-import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
+import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 
 
 /**
@@ -398,7 +398,7 @@ public final class MetadataStandard {
                     if (acronyms != null) {
                         for (int i=0; i<acronyms.length; i+=2) {
                             final String acronym = acronyms[i];
-                            if (Strings.endsWith(buffer, acronym, false)) {
+                            if (CharSequences.endsWith(buffer, acronym, false)) {
                                 buffer.setLength(buffer.length() - acronym.length());
                                 buffer.append(acronyms[i+1]);
                                 break;
@@ -457,8 +457,8 @@ public final class MetadataStandard {
      *
      * @since 3.03
      */
-    public Map<String,Class<?>> asTypeMap(Class<?> type, final TypeValuePolicy typeValues,
-            final KeyNamePolicy keyNames) throws ClassCastException
+    public Map<String,Class<?>> asTypeMap(Class<?> type, final org.apache.sis.metadata.TypeValuePolicy typeValues,
+            final org.apache.sis.metadata.KeyNamePolicy keyNames) throws ClassCastException
     {
         ensureNonNull("type",       type);
         ensureNonNull("typeValues", typeValues);
@@ -492,8 +492,8 @@ public final class MetadataStandard {
      *
      * @since 3.04
      */
-    public Map<String,String> asNameMap(Class<?> type, final KeyNamePolicy valueNames,
-            final KeyNamePolicy keyNames) throws ClassCastException
+    public Map<String,String> asNameMap(Class<?> type, final org.apache.sis.metadata.KeyNamePolicy valueNames,
+            final org.apache.sis.metadata.KeyNamePolicy keyNames) throws ClassCastException
     {
         ensureNonNull("type",       type);
         ensureNonNull("typeValues", valueNames);
@@ -534,7 +534,7 @@ public final class MetadataStandard {
      * @since 3.05
      */
     public Map<String,String> asDescriptionMap(Class<?> type, final Locale locale,
-            final KeyNamePolicy keyNames) throws ClassCastException
+            final org.apache.sis.metadata.KeyNamePolicy keyNames) throws ClassCastException
     {
         ensureNonNull("type",     type);
         ensureNonNull("locale",   locale);
@@ -578,7 +578,8 @@ public final class MetadataStandard {
      * @since 3.04
      */
     public Map<String,ValueRestriction> asRestrictionMap(Object metadata,
-            final NullValuePolicy content, final KeyNamePolicy keyNames) throws ClassCastException
+            final org.apache.sis.metadata.NullValuePolicy content,
+            final org.apache.sis.metadata.KeyNamePolicy keyNames) throws ClassCastException
     {
         ensureNonNull("metadata", metadata);
         ensureNonNull("content",  content);
@@ -618,8 +619,9 @@ public final class MetadataStandard {
      *
      * @since 3.03
      */
-    public Map<String,Object> asMap(final Object metadata, final NullValuePolicy content,
-            final KeyNamePolicy keyNames) throws ClassCastException
+    public Map<String,Object> asMap(final Object metadata,
+            final org.apache.sis.metadata.NullValuePolicy content,
+            final org.apache.sis.metadata.KeyNamePolicy keyNames) throws ClassCastException
     {
         ensureNonNull("metadata", metadata);
         ensureNonNull("content",  content);

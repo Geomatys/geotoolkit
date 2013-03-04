@@ -19,7 +19,7 @@ package org.geotoolkit.internal.jaxb.gml;
 
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 import org.opengis.util.CodeList;
-import org.geotoolkit.internal.CodeLists;
+import org.apache.sis.util.iso.Types;
 
 
 /**
@@ -85,7 +85,7 @@ public abstract class CodeListAdapter<BoundType extends CodeList<BoundType>> ext
      */
     @Override
     public final BoundType unmarshal(final CodeListProxy proxy) {
-        return (proxy != null) ? CodeLists.valueOf(getCodeListClass(), proxy.identifier) : null;
+        return (proxy != null) ? Types.forCodeName(getCodeListClass(), proxy.identifier, true) : null;
     }
 
     /**

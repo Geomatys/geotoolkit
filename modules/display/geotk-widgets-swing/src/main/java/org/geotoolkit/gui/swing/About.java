@@ -51,8 +51,8 @@ import java.text.SimpleDateFormat;
 import javax.media.jai.JAI;
 
 import org.geotoolkit.util.Version;
-import org.geotoolkit.util.Strings;
-import org.geotoolkit.util.XArrays;
+import org.apache.sis.util.CharSequences;
+import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.internal.Threads;
@@ -455,7 +455,7 @@ public class About extends JComponent implements Dialog {
          * The list of threads to display. This list will be updated in a background
          * thread (the {@linkplain #worker}) on a regular basis.
          */
-        private String[] names = Strings.EMPTY;
+        private String[] names = CharSequences.EMPTY_ARRAY;
 
         /**
          * The label where to write the total amount of memory.
@@ -537,7 +537,7 @@ public class About extends JComponent implements Dialog {
                         threadNames[c++] = threadArray[i].getName();
                     }
                 }
-                threadNames = XArrays.resize(threadNames, c);
+                threadNames = ArraysExt.resize(threadNames, c);
                 if (Arrays.equals(names, threadNames)) {
                     threadNames = null;
                 }

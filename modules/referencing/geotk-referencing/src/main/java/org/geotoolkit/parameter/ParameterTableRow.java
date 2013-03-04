@@ -34,10 +34,10 @@ import org.opengis.metadata.Identifier;
 import org.opengis.referencing.IdentifiedObject;
 
 import org.geotoolkit.io.X364;
-import org.geotoolkit.internal.Citations;
+import org.apache.sis.internal.util.Citations;
 
 import static org.geotoolkit.io.X364.*;
-import static org.geotoolkit.util.Strings.spaces;
+import static org.apache.sis.util.CharSequences.spaces;
 
 
 /**
@@ -218,7 +218,7 @@ final class ParameterTableRow {
                 write(out, NORMAL, colorsForRows);
                 length -= authority.length();
             }
-            out.write(spaces(length));
+            out.append(spaces(length));
             write(out, BOLD, colorsForTitle);
             final Iterator<Object> it = entry.getValue().iterator();
             out.write(toString(it.next()));

@@ -28,8 +28,8 @@ import javax.swing.event.AncestorListener;
 import javax.swing.event.InternalFrameEvent;
 import javax.swing.event.InternalFrameListener;
 
-import org.geotoolkit.util.Disposable;
-import org.geotoolkit.util.XArrays;
+import org.apache.sis.util.Disposable;
+import org.apache.sis.util.ArraysExt;
 
 
 /**
@@ -80,13 +80,13 @@ public final class ComponentDisposer extends WindowAdapter implements InternalFr
         while (container != null) {
             if (container instanceof JInternalFrame) {
                 final JInternalFrame window = (JInternalFrame) container;
-                if (!XArrays.containsIdentity(window.getInternalFrameListeners(), INSTANCE)) {
+                if (!ArraysExt.containsIdentity(window.getInternalFrameListeners(), INSTANCE)) {
                     window.addInternalFrameListener(INSTANCE);
                 }
             }
             if (container instanceof Window) {
                 final Window window = (Window) container;
-                if (!XArrays.containsIdentity(window.getWindowListeners(), INSTANCE)) {
+                if (!ArraysExt.containsIdentity(window.getWindowListeners(), INSTANCE)) {
                     window.addWindowListener(INSTANCE);
                 }
             }

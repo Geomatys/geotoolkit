@@ -38,7 +38,7 @@ import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.InternationalString;
 
-import org.geotoolkit.util.XArrays;
+import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.SimpleInternationalString;
@@ -948,7 +948,7 @@ public class GridSampleDimension implements SampleDimension, Serializable {
             }
         }
         if (padValues != null) {
-            padValues = XArrays.resize(padValues, count);
+            padValues = ArraysExt.resize(padValues, count);
         }
         return padValues;
     }

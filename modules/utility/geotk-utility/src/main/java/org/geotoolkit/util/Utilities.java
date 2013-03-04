@@ -17,13 +17,10 @@
  */
 package org.geotoolkit.util;
 
-import java.util.Map;
-import java.util.Set;
 import java.util.Arrays;
-import java.util.Iterator;
-import java.util.Collection;
-import java.util.LinkedList;
+import org.apache.sis.internal.util.Objects;
 import java.io.Serializable;
+import org.apache.sis.util.ComparisonMode;
 
 import org.geotoolkit.lang.Static;
 
@@ -351,165 +348,12 @@ public final class Utilities extends Static {
      * @see org.geotoolkit.referencing.CRS#equalsIgnoreMetadata(Object, Object)
      *
      * @since 3.18
-     */
-    public static boolean deepEquals(final Object object1, final Object object2, final ComparisonMode mode) {
-        if (object1 == object2) {
-            return true;
-        }
-        if (object1 == null || object2 == null) {
-            assert isNotDebug(mode) : "object" + (object1 == null ? '1' : '2') + " is null";
-            return false;
-        }
-        if (object1 instanceof LenientComparable) {
-            return ((LenientComparable) object1).equals(object2, mode);
-        }
-        if (object2 instanceof LenientComparable) {
-            return ((LenientComparable) object2).equals(object1, mode);
-        }
-        if (object1 instanceof Map.Entry<?,?>) {
-            if (object2 instanceof Map.Entry<?,?>) {
-                final Map.Entry<?,?> e1 = (Map.Entry<?,?>) object1;
-                final Map.Entry<?,?> e2 = (Map.Entry<?,?>) object2;
-                return deepEquals(e1.getKey(),   e2.getKey(),   mode) &&
-                       deepEquals(e1.getValue(), e2.getValue(), mode);
-            }
-            assert isNotDebug(mode) : mismatchedType(Map.Entry.class, object2);
-            return false;
-        }
-        if (object1 instanceof Map<?,?>) {
-            if (object2 instanceof Map<?,?>) {
-                return equals(((Map<?,?>) object1).entrySet(),
-                              ((Map<?,?>) object2).entrySet(), mode);
-            }
-            assert isNotDebug(mode) : mismatchedType(Map.class, object2);
-            return false;
-        }
-        if (object1 instanceof Collection<?>) {
-            if (object2 instanceof Collection<?>) {
-                return equals((Collection<?>) object1,
-                              (Collection<?>) object2, mode);
-            }
-            assert isNotDebug(mode) : mismatchedType(Collection.class, object2);
-            return false;
-        }
-        if (object1 instanceof Object[]) {
-            if (!(object2 instanceof Object[])) {
-                assert isNotDebug(mode) : mismatchedType(Object[].class, object2);
-                return false;
-            }
-            final Object[] array1 = (Object[]) object1;
-            final Object[] array2 = (Object[]) object2;
-            if (array1 instanceof LenientComparable[]) {
-                return equals((LenientComparable[]) array1, array2, mode);
-            }
-            if (array2 instanceof LenientComparable[]) {
-                return equals((LenientComparable[]) array2, array1, mode);
-            }
-            final int length = array1.length;
-            if (array2.length != length) {
-                assert isNotDebug(mode) : "Length " + length + " != " + array2.length;
-                return false;
-            }
-            for (int i=0; i<length; i++) {
-                if (!deepEquals(array1[i], array2[i], mode)) {
-                    assert isNotDebug(mode) : "object[" + i + "] not equal";
-                    return false;
-                }
-            }
-            return true;
-        }
-        return deepEquals(object1, object2);
-    }
-
-    /**
-     * Compares two arrays where at least one array is known to contain {@link LenientComparable}
-     * elements. This knowledge avoid the need to test each element individually. The two arrays
-     * shall be non-null.
-     */
-    private static boolean equals(final LenientComparable[] array1, final Object[] array2, final ComparisonMode mode) {
-        final int length = array1.length;
-        if (array2.length != length) {
-            return false;
-        }
-        for (int i=0; i<length; i++) {
-            final LenientComparable e1 = array1[i];
-            final Object e2 = array2[i];
-            if (e1 != e2 && (e1 == null || !e1.equals(e2, mode))) {
-                assert isNotDebug(mode) : "object[" + i + "] not equal";
-                return false;
-            }
-        }
-        return true;
-    }
-
-    /**
-     * Compares two collections. Order are significant, unless both collections implement the
-     * {@link Set} interface.
-     */
-    private static boolean equals(final Iterable<?> object1, final Iterable<?> object2, final ComparisonMode mode) {
-        final Iterator<?> it1 = object1.iterator();
-        final Iterator<?> it2 = object2.iterator();
-        while (it1.hasNext()) {
-            if (!it2.hasNext()) {
-                assert isNotDebug(mode) : "Sizes not equal";
-                return false;
-            }
-            Object element1 = it1.next();
-            Object element2 = it2.next();
-            if (deepEquals(element1, element2, mode)) {
-                continue;
-            }
-            if (!(object1 instanceof Set<?> && object2 instanceof Set<?>)) {
-                assert isNotDebug(mode) : "Lists not equal";
-                return false;
-            }
-            /*
-             * We have found an element which is not equals. However in the particular
-             * case of Set, the element order is not significant. So we need to perform
-             * a more costly check ensuring that the collections are still different if
-             * ignoring order. Note that the test will ignore the elements successfuly
-             * compared up to this point.
-             */
-            // Creates a copy of REMAINING elements in the first collection.
-            final LinkedList<Object> copy = new LinkedList<Object>();
-            copy.add(element1);
-            while (it1.hasNext()) {
-                copy.add(it1.next());
-            }
-            // Removes from the above copy all REMAINING elements from the second collection.
-            while (true) {
-                final Iterator<?> it = copy.iterator();
-                do if (!it.hasNext()) {
-                    assert isNotDebug(mode) : "Sets not equal";
-                    return false; // An element has not been found.
-                } while (!deepEquals(it.next(), element2, mode));
-                it.remove();
-                if (!it2.hasNext()) {
-                    break;
-                }
-                element2 = it2.next();
-            }
-            return copy.isEmpty();
-        }
-        return !it2.hasNext();
-    }
-
-    /**
-     * Returns {@code true} if the given mode is not {@link ComparisonMode#DEBUG}.
-     */
-    private static boolean isNotDebug(final ComparisonMode mode) {
-        return mode != ComparisonMode.DEBUG;
-    }
-
-    /**
-     * Returns an assertion error message for mismatched types.
      *
-     * @param  expected The expected type.
-     * @param  actual The actual object (not its type).
-     * @return The error message to use in assertions.
+     * @deprecated Moved to Apache SIS {@link org.apache.sis.util.Utilities}.
      */
-    private static String mismatchedType(final Class<?> expected, final Object actual) {
-        return "Expected " + expected + " but got " + actual.getClass();
+    @Deprecated
+    public static boolean deepEquals(final Object object1, final Object object2, final ComparisonMode mode) {
+        return org.apache.sis.util.Utilities.deepEquals(object1, object2, mode);
     }
 
     /**

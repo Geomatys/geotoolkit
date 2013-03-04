@@ -22,7 +22,7 @@ import java.awt.image.Raster;
 import java.awt.image.DataBuffer;
 import java.awt.image.WritableRaster;
 
-import org.geotoolkit.util.XArrays;
+import org.apache.sis.util.ArraysExt;
 
 
 /**
@@ -153,7 +153,7 @@ abstract class SampleValues {
 
         /** Creates a new instance initialized to the given value. */
         Float(final double[] samples) {
-            this.samples = XArrays.copyAsFloats(samples);
+            this.samples = ArraysExt.copyAsFloats(samples);
         }
 
         /** {@inheritDoc} */
@@ -202,7 +202,7 @@ abstract class SampleValues {
 
         /** Creates a new instance initialized to the given value. */
         Integer(final double[] samples) {
-            this.samples = XArrays.copyAsInts(samples);
+            this.samples = ArraysExt.copyAsInts(samples);
         }
 
         /** {@inheritDoc} */

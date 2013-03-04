@@ -31,7 +31,7 @@ import org.geotoolkit.referencing.datum.BursaWolfParameters;
 import org.geotoolkit.referencing.operation.provider.CoordinateFrameRotation;
 import org.geotoolkit.referencing.operation.provider.GeocentricTranslation;
 import org.geotoolkit.referencing.operation.provider.PositionVector7Param;
-import org.geotoolkit.util.ComparisonMode;
+import org.apache.sis.util.ComparisonMode;
 
 import static org.geotoolkit.util.Utilities.hash;
 

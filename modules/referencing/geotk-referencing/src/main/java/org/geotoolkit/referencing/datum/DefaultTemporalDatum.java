@@ -30,11 +30,11 @@ import net.jcip.annotations.Immutable;
 import org.opengis.referencing.datum.TemporalDatum;
 
 import org.geotoolkit.resources.Vocabulary;
-import org.geotoolkit.util.ComparisonMode;
+import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.util.Utilities;
 
 import static org.geotoolkit.util.Utilities.hash;
-import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
+import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 
 
 /**

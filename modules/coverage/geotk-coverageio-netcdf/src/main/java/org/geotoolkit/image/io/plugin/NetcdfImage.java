@@ -39,7 +39,7 @@ import ucar.nc2.iosp.netcdf3.N3iosp;
 import org.opengis.metadata.content.ImageDescription;
 import org.opengis.metadata.content.RangeDimension;
 
-import org.geotoolkit.util.XArrays;
+import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.image.io.DimensionSlice;
 import org.geotoolkit.image.io.ImageMetadataException;
@@ -48,7 +48,7 @@ import org.geotoolkit.internal.image.io.IIOImageHelper;
 import org.geotoolkit.resources.Errors;
 
 import static ucar.nc2.constants.CDM.*;
-import static org.geotoolkit.math.XMath.divisors;
+import static org.apache.sis.math.MathFunctions.divisors;
 import static org.geotoolkit.internal.image.io.NetcdfVariable.*;
 import static org.geotoolkit.image.io.MultidimensionalImageStore.*;
 
@@ -245,7 +245,7 @@ final class NetcdfImage extends IIOImageHelper {
                 final SampleDimension sd = (SampleDimension) range;
                 double[] fillValues = sd.getFillSampleValues();
                 if (fillValues != null && fillValues.length == 0) {
-                    fillValues = null; // Must be null before call to XArrays.resize
+                    fillValues = null; // Must be null before call to ArraysExt.resize
                 }
                 // Special processing for the scale and offset factors, since we need to
                 // erase both of them if the transfer function is an identity transform.
@@ -265,7 +265,7 @@ final class NetcdfImage extends IIOImageHelper {
                         case 3: atn = ADD_OFFSET;    value = offset;           break;
                         case 4: atn = SCALE_FACTOR;  value = scale;            break;
                         case 5: atn = MISSING_VALUE; value = fillValues;       break;
-                        case 6: atn = FILL_VALUE;    value = XArrays.resize(fillValues, 1); break;
+                        case 6: atn = FILL_VALUE;    value = ArraysExt.resize(fillValues, 1); break;
                         default: throw new AssertionError(k);
                     }
                     if (value != null) {

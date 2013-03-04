@@ -69,7 +69,7 @@ import org.geotoolkit.metadata.netcdf.NetcdfMetadataReader;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.collection.BackingStoreException;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
-import org.geotoolkit.util.XArrays;
+import org.apache.sis.util.ArraysExt;
 
 import static org.geotoolkit.image.io.MultidimensionalImageStore.*;
 import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.ISO_FORMAT_NAME;

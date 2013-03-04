@@ -33,7 +33,7 @@ import org.opengis.referencing.ReferenceIdentifier;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransformFactory;
 
-import org.geotoolkit.util.ArgumentChecks;
+import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.util.collection.WeakHashSet;
 import org.geotoolkit.internal.sql.table.Column;
 import org.geotoolkit.internal.sql.table.Database;
@@ -51,7 +51,6 @@ import org.geotoolkit.resources.Errors;
 
 import static java.lang.reflect.Array.getLength;
 import static java.lang.reflect.Array.getDouble;
-import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 
 
 /**
@@ -267,8 +266,8 @@ final class GridGeometryTable extends SingletonTable<GridGeometryEntry> {
                  final double[] verticalOrdinates, final int verticalSRID)
             throws SQLException
     {
-        ensureNonNull("size",      size);
-        ensureNonNull("gridToCRS", gridToCRS);
+        ArgumentChecks.ensureNonNull("size",      size);
+        ArgumentChecks.ensureNonNull("gridToCRS", gridToCRS);
         Integer id = null;
         final GridGeometryQuery query = (GridGeometryQuery) super.query;
         final LocalCache lc = getLocalCache();

@@ -60,7 +60,7 @@ import org.opengis.metadata.quality.EvaluationMethodType;
 import org.opengis.metadata.quality.PositionalAccuracy;
 
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.measure.Units;
+import org.apache.sis.measure.Units;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.metadata.iso.citation.DefaultCitation;
 import org.geotoolkit.metadata.iso.extent.DefaultExtent;
@@ -92,7 +92,7 @@ import org.geotoolkit.io.TableWriter;
 import org.geotoolkit.util.SimpleInternationalString;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.Utilities;
-import org.geotoolkit.util.Strings;
+import org.apache.sis.util.CharSequences;
 import org.geotoolkit.util.Version;
 
 import static org.geotoolkit.internal.InternalUtilities.COMPARISON_THRESHOLD;
@@ -711,7 +711,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
             statements.put(key, stmt);
         }
         // Partial check that the statement is for the right SQL query.
-        assert stmt.getParameterMetaData().getParameterCount() == Strings.count(sql, '?');
+        assert stmt.getParameterMetaData().getParameterCount() == CharSequences.count(sql, '?');
         return stmt;
     }
 
@@ -1008,7 +1008,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                     if (owner.startsWith(AnsiDialectEpsgFactory.TABLE_PREFIX)) {
                         owner = owner.substring(AnsiDialectEpsgFactory.TABLE_PREFIX.length());
                     }
-                    if (!Strings.isAcronymForWords(owner, table)) {
+                    if (!CharSequences.isAcronymForWords(owner, table)) {
                         continue;
                     }
                 }

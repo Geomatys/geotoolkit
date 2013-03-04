@@ -23,8 +23,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import org.geotoolkit.util.DateRange;
-import org.geotoolkit.measure.Latitude;
-import org.geotoolkit.measure.Longitude;
+import org.apache.sis.measure.Latitude;
+import org.apache.sis.measure.Longitude;
 import org.geotoolkit.geometry.Envelope2D;
 import org.geotoolkit.display.shape.DoubleDimension2D;
 

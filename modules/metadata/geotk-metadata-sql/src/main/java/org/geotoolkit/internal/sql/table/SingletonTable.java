@@ -25,7 +25,7 @@ import java.util.Set;
 import java.util.LinkedHashSet;
 
 import org.geotoolkit.util.logging.Logging;
-import org.geotoolkit.util.collection.Cache;
+import org.apache.sis.util.collection.Cache;
 import org.geotoolkit.internal.sql.TypeMapper;
 import org.geotoolkit.resources.Errors;
 

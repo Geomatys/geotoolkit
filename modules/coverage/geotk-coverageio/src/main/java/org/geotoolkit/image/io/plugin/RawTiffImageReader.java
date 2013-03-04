@@ -60,8 +60,8 @@ import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.spi.ServiceRegistry;
 
-import org.geotoolkit.math.XMath;
-import org.geotoolkit.util.XArrays;
+import org.apache.sis.math.MathFunctions;
+import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.image.SampleModels;
 import org.geotoolkit.image.io.SpatialImageReader;
@@ -363,7 +363,7 @@ public class RawTiffImageReader extends SpatialImageReader {
             positionIFD[countIFD++] = position;
             return true;
         } else {
-            positionIFD = XArrays.resize(positionIFD, countIFD);
+            positionIFD = ArraysExt.resize(positionIFD, countIFD);
             countIFD = -1;
             return false;
         }
@@ -709,7 +709,7 @@ public class RawTiffImageReader extends SpatialImageReader {
      */
     private static final Comparator<long[]> OFFSET_COMPARATOR = new Comparator<long[]>() {
         @Override public int compare(final long[] o1, final long[] o2) {
-            return XMath.sgn(o1[0] - o2[0]);
+            return MathFunctions.sgn(o1[0] - o2[0]);
         }
     };
 
@@ -813,7 +813,7 @@ public class RawTiffImageReader extends SpatialImageReader {
 
         /** Compares this tile with the specified tile for order of file position. */
         @Override public int compareTo(final Tile other) {
-            return XMath.sgn(position - other.position);
+            return MathFunctions.sgn(position - other.position);
         }
     }
 
@@ -1365,7 +1365,7 @@ public class RawTiffImageReader extends SpatialImageReader {
             if (category.equals(ImageReaderSpi.class)) {
                 for (Iterator<ImageReaderSpi> it = registry.getServiceProviders(ImageReaderSpi.class, false); it.hasNext();) {
                     ImageReaderSpi other = it.next();
-                    if (other != this && XArrays.contains(other.getFormatNames(), "tiff")) {
+                    if (other != this && ArraysExt.contains(other.getFormatNames(), "tiff")) {
                         ImageReaderSpi last = this;
                         try {
                             if (Boolean.getBoolean(KEY_ALLOW_OVERRIDE)) {

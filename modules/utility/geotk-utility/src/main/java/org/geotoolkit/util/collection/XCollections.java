@@ -18,9 +18,9 @@
 package org.geotoolkit.util.collection;
 
 import java.util.*;
-import java.io.Serializable;
 
 import org.geotoolkit.lang.Static;
+import org.apache.sis.util.collection.CollectionsExt;
 
 
 /**
@@ -90,9 +90,12 @@ public final class XCollections extends Static {
      * @return {@code true} if the given collection is null or empty, or {@code false} otherwise.
      *
      * @since 3.18
+     *
+     * @deprecated Moved to {@link CollectionsExt#isNullOrEmpty(Collection)}.
      */
+    @Deprecated
     public static boolean isNullOrEmpty(final Collection<?> collection) {
-        return (collection == null) || collection.isEmpty();
+        return CollectionsExt.isNullOrEmpty(collection);
     }
 
     /**
@@ -104,9 +107,12 @@ public final class XCollections extends Static {
      * @return {@code true} if the given map is null or empty, or {@code false} otherwise.
      *
      * @since 3.18
+     *
+     * @deprecated Moved to {@link CollectionsExt#isNullOrEmpty(Map)}.
      */
+    @Deprecated
     public static boolean isNullOrEmpty(final Map<?,?> map) {
-        return (map == null) || map.isEmpty();
+        return CollectionsExt.isNullOrEmpty(map);
     }
 
     /**
@@ -132,10 +138,12 @@ public final class XCollections extends Static {
      *
      * @see Collections#emptyList()
      * @see Collections#emptySet()
+     *
+     * @deprecated Moved to {@link CollectionsExt#emptyQueue()}.
      */
-    @SuppressWarnings({"unchecked","rawtype"})
+    @Deprecated
     public static <E> Queue<E> emptyQueue() {
-        return EmptyQueue.INSTANCE;
+        return CollectionsExt.emptyQueue();
     }
 
     /**
@@ -147,11 +155,11 @@ public final class XCollections extends Static {
      * @see Collections#emptyList()
      * @see Collections#emptySet()
      *
-     * @todo This method will be removed on the JDK8 branch.
+     * @deprecated Moved to {@link CollectionsExt#emptySortedSet()}.
      */
-    @SuppressWarnings({"unchecked","rawtype"})
+    @Deprecated
     public static <E> SortedSet<E> emptySortedSet() {
-        return EmptySortedSet.INSTANCE;
+        return CollectionsExt.emptySortedSet();
     }
 
     /**
@@ -167,16 +175,12 @@ public final class XCollections extends Static {
      * @see Collections#unmodifiableSet(Set)
      *
      * @since 3.17
+     *
+     * @deprecated Moved to {@link CollectionsExt#immutableSet(E[])}.
      */
+    @Deprecated
     public static <E> Set<E> immutableSet(final E... array) {
-        if (array == null) {
-            return null;
-        }
-        switch (array.length) {
-            case 0:  return Collections.emptySet();
-            case 1:  return Collections.singleton(array[0]);
-            default: return Collections.unmodifiableSet(new LinkedHashSet<E>(Arrays.asList(array)));
-        }
+        return CollectionsExt.immutableSet(array);
     }
 
     /**
@@ -193,23 +197,12 @@ public final class XCollections extends Static {
      * @return A unmodifiable version of the given set, or {@code null} if the given set was null.
      *
      * @since 3.20
+     *
+     * @deprecated Moved to {@link CollectionsExt#unmodifiableOrCopy(Set)}.
      */
+    @Deprecated
     public static <E> Set<E> unmodifiableSet(Set<E> set) {
-        if (set != null) switch (set.size()) {
-            case 0: {
-                set = Collections.emptySet();
-                break;
-            }
-            case 1: {
-                set = Collections.singleton(set.iterator().next());
-                break;
-            }
-            default: {
-                set = Collections.unmodifiableSet(set);
-                break;
-            }
-        }
-        return set;
+        return CollectionsExt.unmodifiableOrCopy(set);
     }
 
     /**
@@ -227,24 +220,12 @@ public final class XCollections extends Static {
      * @return A unmodifiable version of the given map, or {@code null} if the given map was null.
      *
      * @since 3.18 (derived from 3.17)
+     *
+     * @deprecated Moved to {@link CollectionsExt#unmodifiableOrCopy(Map)}.
      */
+    @Deprecated
     public static <K,V> Map<K,V> unmodifiableMap(Map<K,V> map) {
-        if (map != null) switch (map.size()) {
-            case 0: {
-                map = Collections.emptyMap();
-                break;
-            }
-            case 1: {
-                final Map.Entry<K,V> entry = map.entrySet().iterator().next();
-                map = Collections.singletonMap(entry.getKey(), entry.getValue());
-                break;
-            }
-            default: {
-                map = Collections.unmodifiableMap(map);
-                break;
-            }
-        }
-        return map;
+        return CollectionsExt.unmodifiableOrCopy(map);
     }
 
     /**
@@ -272,36 +253,12 @@ public final class XCollections extends Static {
      * @return The value as a collection, or wrapped in a collection (never {@code null}).
      *
      * @since 3.20
+     *
+     * @deprecated Moved to {@link CollectionsExt#toCollection(Object)}.
      */
+    @Deprecated
     public static Collection<?> asCollection(final Object value) {
-        if (value == null) {
-            return Collections.emptyList();
-        }
-        if (value instanceof Collection<?>) {
-            return (Collection<?>) value;
-        }
-        if (value instanceof Object[]) {
-            return Arrays.asList((Object[]) value);
-        }
-        if (value instanceof Iterable<?>) {
-            final List<Object> list = new ArrayList<Object>();
-            for (final Object element : (Iterable<?>) value) {
-                list.add(element);
-            }
-            return list;
-        }
-        if (value instanceof Iterator<?>) {
-            final Iterator<?> it = (Iterator<?>) value;
-            final List<Object> list = new ArrayList<Object>();
-            while (it.hasNext()) {
-                list.add(it.next());
-            }
-            return list;
-        }
-        if (value instanceof Enumeration<?>) {
-            return Collections.list((Enumeration<?>) value);
-        }
-        return Collections.singletonList(value);
+        return CollectionsExt.toCollection(value);
     }
 
     /**
@@ -325,54 +282,13 @@ public final class XCollections extends Static {
      * @return The given collection as a list, or a copy of the given collection.
      *
      * @since 3.20
-     */
-    public static <T> List<T> asList(final Collection<T> collection) {
-        if (collection instanceof List<?>) {
-            return (List<T>) collection;
-        }
-        return new ArrayList<T>(collection);
-    }
-
-    /**
-     * The comparator to be returned by {@code #listComparator} and similar methods. Can not be
-     * public because of parameterized types: we need a method for casting to the expected type.
-     * This is the same trick than {@link Collections#emptySet()} for example.
      *
-     * @since 3.18 (derived from 2.5)
+     * @deprecated Moved to {@link CollectionsExt#toList(Collection)}.
      */
-    @SuppressWarnings("rawtypes")
-    private static final class Compare implements Comparator<Collection<Comparable>>, Serializable {
-        /**
-         * The unique instance.
-         */
-        static final Comparator<Collection<Comparable>> INSTANCE = new Compare();
-
-        /**
-         * For cross-version compatibility.
-         */
-        private static final long serialVersionUID = -8926770873102046405L;
-
-        /**
-         * Compares to collections of comparable objects.
-         */
-        @Override
-        @SuppressWarnings("unchecked")
-        public int compare(final Collection<Comparable> c1, final Collection<Comparable> c2) {
-            final Iterator<Comparable> i1 = c1.iterator();
-            final Iterator<Comparable> i2 = c2.iterator();
-            int c;
-            do {
-                final boolean h1 = i1.hasNext();
-                final boolean h2 = i2.hasNext();
-                if (!h1) return h2 ? -1 : 0;
-                if (!h2) return +1;
-                final Comparable e1 = i1.next();
-                final Comparable e2 = i2.next();
-                c = e1.compareTo(e2);
-            } while (c == 0);
-            return c;
-        }
-    };
+    @Deprecated
+    public static <T> List<T> asList(final Collection<T> collection) {
+        return CollectionsExt.toList(collection);
+    }
 
     /**
      * Returns a comparator for lists of comparable elements. The first element of each list
@@ -389,10 +305,12 @@ public final class XCollections extends Static {
      * @return The ordering between two lists.
      *
      * @since 3.18 (derived from 2.5)
+     *
+     * @deprecated Moved to {@link CollectionsExt#listComparator()}.
      */
-    @SuppressWarnings({"unchecked","rawtypes"})
+    @Deprecated
     public static <T extends Comparable<T>> Comparator<List<T>> listComparator() {
-        return (Comparator) Compare.INSTANCE;
+        return CollectionsExt.listComparator();
     }
 
     /**
@@ -403,10 +321,12 @@ public final class XCollections extends Static {
      * @return The ordering between two sets.
      *
      * @since 3.18 (derived from 2.5)
+     *
+     * @deprecated Moved to {@link CollectionsExt#sortedSetComparator()}.
      */
-    @SuppressWarnings({"unchecked","rawtypes"})
+    @Deprecated
     public static <T extends Comparable<T>> Comparator<SortedSet<T>> sortedSetComparator() {
-        return (Comparator) Compare.INSTANCE;
+        return CollectionsExt.sortedSetComparator();
     }
 
     /**
@@ -424,7 +344,8 @@ public final class XCollections extends Static {
      */
     @SuppressWarnings({"unchecked","rawtypes"})
     public static <T extends Comparable<T>> Comparator<Collection<T>> collectionComparator() {
-        return (Comparator) Compare.INSTANCE;
+        Comparator c = (Comparator) CollectionsExt.listComparator();
+        return c;
     }
 
     /**
@@ -437,13 +358,12 @@ public final class XCollections extends Static {
      *
      * @param elements The number of elements to be put into the hash map or hash set.
      * @return The optimal initial capacity to be given to the hash map constructor.
+     *
+     * @deprecated Moved to {@link CollectionsExt#hashMapCapacity(int)}.
      */
+    @Deprecated
     public static int hashMapCapacity(int elements) {
-        final int r = elements >>> 2;
-        if (elements != (r << 2)) {
-            elements++;
-        }
-        return elements + r;
+        return CollectionsExt.hashMapCapacity(elements);
     }
 
     /**
@@ -466,39 +386,12 @@ public final class XCollections extends Static {
      * @return A copy of the given collection, or {@code null} if the given collection was null.
      *
      * @since 3.18 (derived from 3.00)
+     *
+     * @deprecated Moved to {@link CollectionsExt#modifiableCopy(Collection)}.
      */
-    @SuppressWarnings("unchecked")
+    @Deprecated
     public static <E> Collection<E> copy(final Collection<E> collection) {
-        if (collection == null) {
-            return null;
-        }
-        /*
-         * We will use the clone() method when possible because they are
-         * implemented in a more efficient way than the copy constructors.
-         */
-        final Class<?> type = collection.getClass();
-        if (collection instanceof Set<?>) {
-            if (collection instanceof SortedSet<?>) {
-                if (type == TreeSet.class) {
-                    return (Collection<E>) ((TreeSet<E>) collection).clone();
-                }
-                return new TreeSet<E>(collection);
-            }
-            if (type == HashSet.class || type == LinkedHashSet.class) {
-                return (Collection<E>) ((HashSet<E>) collection).clone();
-            }
-            return new LinkedHashSet<E>(collection);
-        }
-        if (collection instanceof Queue<?>) {
-            if (type == LinkedList.class) {
-                return (Collection<E>) ((LinkedList<E>) collection).clone();
-            }
-            return new LinkedList<E>(collection);
-        }
-        if (type == ArrayList.class) {
-            return (Collection<E>) ((ArrayList<E>) collection).clone();
-        }
-        return new ArrayList<E>(collection);
+        return CollectionsExt.modifiableCopy(collection);
     }
 
     /**
@@ -519,26 +412,11 @@ public final class XCollections extends Static {
      * @return A copy of the given map, or {@code null} if the given map was null.
      *
      * @since 3.18 (derived from 3.00)
+     *
+     * @deprecated Moved to {@link CollectionsExt#modifiableCopy(Map)}.
      */
-    @SuppressWarnings("unchecked")
+    @Deprecated
     public static <K,V> Map<K,V> copy(final Map<K,V> map) {
-        if (map == null) {
-            return null;
-        }
-        /*
-         * We will use the clone() method when possible because they are
-         * implemented in a more efficient way than the copy constructors.
-         */
-        final Class<?> type = map.getClass();
-        if (map instanceof SortedMap<?,?>) {
-            if (type == TreeMap.class) {
-                return (Map<K,V>) ((TreeMap<K,V>) map).clone();
-            }
-            return new TreeMap<K,V>(map);
-        }
-        if (type == HashMap.class || type == LinkedHashMap.class) {
-            return (Map<K,V>) ((HashMap<K,V>) map).clone();
-        }
-        return new LinkedHashMap<K,V>(map);
+        return CollectionsExt.modifiableCopy(map);
     }
 }

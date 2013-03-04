@@ -38,7 +38,7 @@ import org.geotoolkit.io.LineWriter;
 import org.geotoolkit.io.ExpandedTabWriter;
 import org.geotoolkit.io.ContentFormatException;
 import org.geotoolkit.io.TableWriter;
-import org.geotoolkit.util.ArgumentChecks;
+import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.util.Strings;
 import org.geotoolkit.util.collection.BackingStoreException;
 import org.geotoolkit.resources.Errors;
@@ -502,6 +502,7 @@ public class TreeFormat extends Format {
             lineBuffer = buffer.getBuffer();
         }
         writer.write(String.valueOf(value));
+        writer.flush();
         final String text = lineBuffer.toString();
         writer.write('\n'); // Reset tabulation count and discart trailing spaces.
         lineBuffer.setLength(0);

@@ -29,7 +29,7 @@ import net.jcip.annotations.Immutable;
 import org.opengis.referencing.datum.EngineeringDatum;
 
 import org.geotoolkit.resources.Vocabulary;
-import org.geotoolkit.util.ComparisonMode;
+import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.io.wkt.Formatter;
 
 

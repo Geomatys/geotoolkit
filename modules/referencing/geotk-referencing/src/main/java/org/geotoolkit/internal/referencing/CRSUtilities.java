@@ -45,7 +45,7 @@ import org.geotoolkit.measure.Measure;
 import org.geotoolkit.resources.Errors;
 
 import static java.lang.Math.*;
-import static org.geotoolkit.math.XMath.atanh;
+import static org.apache.sis.math.MathFunctions.atanh;
 
 
 /**

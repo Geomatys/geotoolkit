@@ -32,7 +32,7 @@ import javax.imageio.IIOParam;
 import org.opengis.referencing.cs.AxisDirection;
 
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.Localized;
+import org.apache.sis.util.Localized;
 import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.internal.image.io.Warnings;

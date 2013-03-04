@@ -37,7 +37,7 @@ import javax.imageio.ImageReader;
 import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.spi.ImageReaderSpi;
 
-import org.geotoolkit.util.XArrays;
+import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.io.LineFormat;
 import org.geotoolkit.resources.Descriptions;
 import org.geotoolkit.image.io.TextImageReader;
@@ -170,7 +170,7 @@ public class TextMatrixImageReader extends TextImageReader {
                 return true;
             }
         }
-        data = XArrays.resize(data, offset);
+        data = ArraysExt.resize(data, offset);
         expectedHeight = height;
         completed = true;
         if (all) {

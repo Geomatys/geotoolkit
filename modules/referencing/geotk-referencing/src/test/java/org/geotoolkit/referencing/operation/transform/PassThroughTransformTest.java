@@ -28,11 +28,12 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
 import org.opengis.test.ToleranceModifier;
 import org.opengis.test.CalculationType;
+import org.apache.sis.util.ArraysExt;
 
-import org.geotoolkit.util.XArrays;
 import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
 
 import org.junit.*;
+
 import static org.junit.Assert.*;
 
 
@@ -222,8 +223,8 @@ public final strictfp class PassThroughTransformTest extends TransformTestBase {
             System.arraycopy(sourceData, firstAffectedOrdinate + i*fullDimension,
                              subTrData, i*subtDimension, subtDimension);
         }
-        assertFalse ("Error building test arrays.", XArrays.hasNaN(sourceData));
-        assertFalse ("Error building test arrays.", XArrays.hasNaN( subTrData));
+        assertFalse ("Error building test arrays.", ArraysExt.hasNaN(sourceData));
+        assertFalse ("Error building test arrays.", ArraysExt.hasNaN( subTrData));
         assertEquals("Error building test arrays.", (subtDimension == fullDimension), Arrays.equals(subTrData, sourceData));
         subTransform.transform(subTrData, 0, subTrData, 0, numPts);
         final double[] targetData = sourceData.clone();
@@ -231,7 +232,7 @@ public final strictfp class PassThroughTransformTest extends TransformTestBase {
             System.arraycopy(subTrData, i*subtDimension, targetData,
                              firstAffectedOrdinate + i*fullDimension, subtDimension);
         }
-        assertFalse ("Error building test arrays.", XArrays.hasNaN(targetData));
+        assertFalse ("Error building test arrays.", ArraysExt.hasNaN(targetData));
         assertEquals("Error building test arrays.", subTransform.isIdentity(), Arrays.equals(sourceData, targetData));
         /*
          * Now process to the transform and compares the results with the expected ones.

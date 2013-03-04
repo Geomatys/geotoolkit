@@ -55,7 +55,7 @@ import org.geotoolkit.io.wkt.FormattableObject;
 
 import static java.lang.StrictMath.*;
 import static org.geotoolkit.test.Assert.*;
-import static org.geotoolkit.util.converter.Classes.*;
+import static org.apache.sis.util.Classes.*;
 
 
 /**

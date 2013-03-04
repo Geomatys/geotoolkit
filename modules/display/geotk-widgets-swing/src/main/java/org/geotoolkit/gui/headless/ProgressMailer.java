@@ -40,7 +40,7 @@ import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.process.ProgressController;
 
-import static org.geotoolkit.util.Strings.length;
+import static org.apache.sis.util.CharSequences.length;
 
 
 /**

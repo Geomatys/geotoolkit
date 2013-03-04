@@ -56,7 +56,7 @@ import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.coverage.grid.RectifiedGrid;
 
 import org.geotoolkit.util.NumberRange;
-import org.geotoolkit.metadata.KeyNamePolicy;
+import org.apache.sis.metadata.KeyNamePolicy;
 import org.geotoolkit.metadata.MetadataStandard;
 import org.geotoolkit.referencing.cs.*;
 import org.geotoolkit.referencing.crs.*;
@@ -66,7 +66,7 @@ import org.geotoolkit.gui.swing.tree.TreeTableNode;
 import org.geotoolkit.internal.image.io.DataTypes;
 import org.geotoolkit.resources.Errors;
 
-import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
+import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 
 
 /**

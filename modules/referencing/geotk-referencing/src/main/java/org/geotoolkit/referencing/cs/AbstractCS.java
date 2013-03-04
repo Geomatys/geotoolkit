@@ -41,10 +41,10 @@ import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.util.InternationalString;
 
 import org.geotoolkit.util.Utilities;
-import org.geotoolkit.util.ComparisonMode;
+import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.measure.Measure;
-import org.geotoolkit.measure.Units;
+import org.apache.sis.measure.Units;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
 import org.geotoolkit.internal.referencing.AxisDirections;

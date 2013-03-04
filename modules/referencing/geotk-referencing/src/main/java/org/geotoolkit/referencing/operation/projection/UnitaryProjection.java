@@ -44,12 +44,12 @@ import org.opengis.referencing.operation.TransformException;
 
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.measure.Latitude;
-import org.geotoolkit.measure.Longitude;
-import org.geotoolkit.util.XArrays;
+import org.apache.sis.measure.Latitude;
+import org.apache.sis.measure.Longitude;
+import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.Deprecable;
-import org.geotoolkit.util.ComparisonMode;
+import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.collection.WeakHashSet;
 import org.geotoolkit.referencing.operation.provider.UniversalParameters;
@@ -61,8 +61,8 @@ import org.geotoolkit.referencing.operation.transform.AbstractMathTransform2D;
 
 import static java.lang.Math.*;
 import static java.lang.Double.*;
-import static org.geotoolkit.math.XMath.atanh;
-import static org.geotoolkit.math.XMath.xorSign;
+import static org.apache.sis.math.MathFunctions.atanh;
+import static org.apache.sis.math.MathFunctions.xorSign;
 import static org.geotoolkit.util.Utilities.hash;
 import static org.geotoolkit.internal.InternalUtilities.epsilonEqual;
 import static org.geotoolkit.parameter.Parameters.getOrCreate;
@@ -891,7 +891,7 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
             yScale            = doubleValue(expected, Y_SCALE,             values);
             xyPlaneRotation   = doubleValue(expected, XY_PLANE_ROTATION,   values);
             switch ((isNaN(standardParallel1) ? 0 : 1) | (isNaN(standardParallel2) ? 0 : 2)) {
-                case  0: standardParallels = XArrays.EMPTY_DOUBLE; break;
+                case  0: standardParallels = ArraysExt.EMPTY_DOUBLE; break;
                 case  1: standardParallels = new double[] {standardParallel1}; break;
                 case  2: standardParallels = new double[] {standardParallel2}; break;
                 case  3: standardParallels = new double[] {standardParallel1, standardParallel2}; break;
@@ -916,7 +916,7 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
             for (final GenericName name : reference.getAlias()) {
                 if (name instanceof Identifier) {
                     final Identifier identifier = (Identifier) name;
-                    if (!XArrays.containsIdentity(AMBIGUOUS, identifier.getAuthority()) &&
+                    if (!ArraysExt.containsIdentity(AMBIGUOUS, identifier.getAuthority()) &&
                             IdentifiedObjects.nameMatches(descriptor, identifier.getCode()))
                     {
                         if (identifier instanceof Deprecable && ((Deprecable) identifier).isDeprecated()) {

@@ -29,7 +29,7 @@ import java.lang.reflect.InvocationTargetException;
 import org.opengis.metadata.Identifier;
 
 import org.geotoolkit.util.Utilities;
-import org.geotoolkit.util.ComparisonMode;
+import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.util.LenientComparable;
 import org.geotoolkit.util.converter.Numbers;
 import org.geotoolkit.util.converter.Classes;

@@ -44,9 +44,9 @@ import org.geotoolkit.internal.InternalUtilities;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.metadata.iso.spatial.PixelTranslation;
 
-import static org.geotoolkit.util.ArgumentChecks.*;
-import static org.geotoolkit.math.XMath.isNegative;
-import static org.geotoolkit.math.XMath.isSameSign;
+import static org.apache.sis.util.ArgumentChecks.*;
+import static org.apache.sis.math.MathFunctions.isNegative;
+import static org.apache.sis.math.MathFunctions.isSameSign;
 
 
 /**

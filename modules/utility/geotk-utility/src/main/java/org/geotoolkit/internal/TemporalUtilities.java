@@ -28,7 +28,7 @@ import org.opengis.temporal.PeriodDuration;
 import org.opengis.util.InternationalString;
 
 import org.geotoolkit.lang.Static;
-import org.geotoolkit.util.Exceptions;
+import org.apache.sis.util.Exceptions;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.FactoryNotFoundException;
@@ -132,7 +132,7 @@ public final class TemporalUtilities extends Static {
         }
         final LogRecord record = new LogRecord(level, Errors.format(
                 Errors.Keys.MISSING_MODULE_$1, "geotk-temporal"));
-        record.setMessage(Exceptions.formatChainedMessages(record.getMessage(), e));
+        record.setMessage(Exceptions.formatChainedMessages(null, record.getMessage(), e));
         return record;
     }
 }

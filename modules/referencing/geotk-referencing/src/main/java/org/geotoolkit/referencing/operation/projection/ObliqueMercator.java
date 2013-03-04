@@ -38,13 +38,13 @@ import org.opengis.referencing.operation.MathTransform2D;
 import org.geotoolkit.measure.Angle;
 import org.geotoolkit.measure.Latitude;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.ComparisonMode;
+import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.referencing.operation.matrix.Matrix2;
 import org.geotoolkit.referencing.operation.provider.HotineObliqueMercator;
 
 import static java.lang.Math.*;
 import static java.lang.Double.*;
-import static org.geotoolkit.math.XMath.atanh;
+import static org.apache.sis.math.MathFunctions.atanh;
 import static org.geotoolkit.internal.InternalUtilities.epsilonEqual;
 import static org.geotoolkit.referencing.operation.provider.UniversalParameters.*;
 import static org.geotoolkit.referencing.operation.provider.ObliqueMercator.LATITUDE_OF_CENTRE;

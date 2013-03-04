@@ -17,6 +17,9 @@
  */
 package org.geotoolkit.metadata;
 
+import org.apache.sis.metadata.TypeValuePolicy;
+import org.apache.sis.metadata.NullValuePolicy;
+import org.apache.sis.metadata.KeyNamePolicy;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Collection;

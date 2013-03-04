@@ -34,10 +34,10 @@ import org.opengis.referencing.operation.Matrix;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.MismatchedDimensionException;
 
-import org.geotoolkit.util.XArrays;
-import org.geotoolkit.util.Strings;
-import org.geotoolkit.util.ComparisonMode;
-import org.geotoolkit.math.XMath;
+import org.apache.sis.util.ArraysExt;
+import org.apache.sis.util.CharSequences;
+import org.apache.sis.util.ComparisonMode;
+import org.apache.sis.math.MathFunctions;
 import org.geotoolkit.math.Statistics;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.io.ContentFormatException;
@@ -483,7 +483,7 @@ public class GeneralMatrix extends GMatrix implements XMatrix {
         final double[] column = new double[getNumRow()];
         for (int i=getNumCol(); --i>=0;) {
             getColumn(i, column);
-            final double m = XMath.magnitude(column);
+            final double m = MathFunctions.magnitude(column);
             for (int j=0; j<column.length; j++) {
                 column[j] /= m;
             }
@@ -592,7 +592,7 @@ public class GeneralMatrix extends GMatrix implements XMatrix {
             numRow++;
             assert numData % numRow == 0 : numData;
         }
-        data = (data != null) ? XArrays.resize(data, numData) : XArrays.EMPTY_DOUBLE;
+        data = (data != null) ? ArraysExt.resize(data, numData) : ArraysExt.EMPTY_DOUBLE;
         return new GeneralMatrix(numRow, numData/numRow, data);
     }
 
@@ -630,7 +630,7 @@ public class GeneralMatrix extends GMatrix implements XMatrix {
          * Formats the element values like usual matrix representation (including the brackets).
          */
         final String lineSeparator = System.getProperty("line.separator", "\n");
-        final String whiteline = Strings.spaces(numCol*columnWidth + 1);
+        final CharSequence whiteline = CharSequences.spaces(numCol*columnWidth + 1);
         StringBuffer buffer = new StringBuffer();
         buffer.append('\u250C').append(whiteline).append('\u2510').append(lineSeparator);
         for (int j=0; j<numRow; j++) {
@@ -639,7 +639,7 @@ public class GeneralMatrix extends GMatrix implements XMatrix {
                 final int position = buffer.length();
                 buffer = format.format(matrix.getElement(j,i), buffer, dummy);
                 final int spaces = Math.max(columnWidth - (buffer.length() - position), 1);
-                buffer.insert(position, Strings.spaces(spaces));
+                buffer.insert(position, CharSequences.spaces(spaces));
             }
             buffer.append(" \u2502").append(lineSeparator);
         }

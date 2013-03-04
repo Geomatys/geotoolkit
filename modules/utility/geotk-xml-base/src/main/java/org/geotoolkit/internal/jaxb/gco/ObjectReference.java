@@ -24,7 +24,7 @@ import org.geotoolkit.xml.ObjectLinker;
 import org.geotoolkit.xml.IdentifierMap;
 import org.geotoolkit.xml.IdentifierSpace;
 import org.geotoolkit.xml.IdentifiedObject;
-import org.geotoolkit.util.XArrays;
+import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.internal.jaxb.SpecializedIdentifier;
 import org.geotoolkit.internal.jaxb.MarshalContext;
 
@@ -124,7 +124,7 @@ final class ObjectReference {
                 SpecializedIdentifier<?>[] identifiers  = new SpecializedIdentifier<?>[2];
                 if (uuid  != null) identifiers[count++] = new SpecializedIdentifier<UUID> (IdentifierSpace.UUID,  uuid);
                 if (xlink != null) identifiers[count++] = new SpecializedIdentifier<XLink>(IdentifierSpace.XLINK, xlink);
-                identifiers = XArrays.resize(identifiers, count);
+                identifiers = ArraysExt.resize(identifiers, count);
                 metadata = linker.newIdentifiedObject(type, identifiers);
             }
         } else {

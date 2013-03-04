@@ -41,7 +41,7 @@ import org.opengis.referencing.operation.SingleOperation;
 
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.io.wkt.Formatter;
-import org.geotoolkit.util.ArgumentChecks;
+import org.apache.sis.util.ArgumentChecks;
 
 import static org.geotoolkit.referencing.IdentifiedObjects.EMPTY_ALIAS_ARRAY;
 import static org.geotoolkit.referencing.IdentifiedObjects.EMPTY_IDENTIFIER_ARRAY;

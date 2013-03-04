@@ -47,10 +47,10 @@ import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 
-import org.geotoolkit.measure.Units;
-import org.geotoolkit.util.XArrays;
+import org.apache.sis.measure.Units;
+import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.util.Utilities;
-import org.geotoolkit.util.ComparisonMode;
+import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.IdentifiedObjects;
@@ -238,7 +238,7 @@ final class NetcdfDimension {
                 if (sourceIndices == image.sourceBands) {
                     sourceIndices = sourceIndices.clone();
                 }
-                XArrays.reverse(sourceIndices);
+                ArraysExt.reverse(sourceIndices);
             }
             ordinates = Array.factory(dataType = DataType.INT, new int[] {length}, sourceIndices);
         } else {

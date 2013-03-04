@@ -31,16 +31,16 @@ import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.cs.RangeMeaning;
 
 import org.geotoolkit.util.Utilities;
-import org.geotoolkit.util.ComparisonMode;
+import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.display.shape.XRectangle2D;
+import org.apache.sis.util.StringBuilders;
 
 import static org.geotoolkit.internal.InternalUtilities.epsilonEqual;
-import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
-import static org.geotoolkit.util.Strings.trimFractionalPart;
+import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 import static org.geotoolkit.math.XMath.SIGN_BIT_MASK;
-import static org.geotoolkit.math.XMath.isNegative;
-import static org.geotoolkit.math.XMath.isPositive;
+import static org.apache.sis.math.MathFunctions.isNegative;
+import static org.apache.sis.math.MathFunctions.isPositive;
 
 
 /**
@@ -863,11 +863,11 @@ public abstract class AbstractEnvelope implements Envelope {
             if (i != 0) {
                 buffer.append(' ');
             }
-            trimFractionalPart(buffer.append(lower.getOrdinate(i)));
+            StringBuilders.trimFractionalPart(buffer.append(lower.getOrdinate(i)));
         }
         buffer.append(',');
         for (int i=0; i<dimension; i++) {
-            trimFractionalPart(buffer.append(' ').append(upper.getOrdinate(i)));
+            StringBuilders.trimFractionalPart(buffer.append(' ').append(upper.getOrdinate(i)));
         }
         return buffer.append(')').toString();
     }

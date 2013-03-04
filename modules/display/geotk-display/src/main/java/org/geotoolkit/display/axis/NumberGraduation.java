@@ -27,7 +27,7 @@ import javax.measure.converter.ConversionException;
 import org.geotoolkit.resources.Errors;
 
 import static java.lang.Double.doubleToLongBits;
-import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
+import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 
 
 /**

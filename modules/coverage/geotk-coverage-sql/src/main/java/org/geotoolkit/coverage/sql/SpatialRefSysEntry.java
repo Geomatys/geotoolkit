@@ -38,7 +38,7 @@ import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.MathTransformFactory;
 import org.opengis.referencing.operation.OperationNotFoundException;
 
-import org.geotoolkit.util.XArrays;
+import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
@@ -238,7 +238,7 @@ final class SpatialRefSysEntry {
             }
             default: {
                 final SingleCRS headCRS = elements[0];
-                elements = XArrays.resize(elements, count);
+                elements = ArraysExt.resize(elements, count);
                 Map<String,?> properties = IdentifiedObjects.getProperties(headCRS);
                 if (verticalCRS != null) {
                     String name = headCRS.getName().getCode();
@@ -255,7 +255,7 @@ final class SpatialRefSysEntry {
                     if (--count == 1) {
                         spatialCRS = elements[0];
                     } else {
-                        elements = XArrays.resize(elements, count);
+                        elements = ArraysExt.resize(elements, count);
                         spatialCRS = crsFactory.createCompoundCRS(properties, elements);
                     }
                 }

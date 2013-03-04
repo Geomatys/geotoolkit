@@ -46,7 +46,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
-import org.geotoolkit.util.XArrays;
+import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.resources.Errors;
@@ -456,14 +456,14 @@ verify:     for (final File file : getSelectedFiles()) {
                 if (suffixes == null) {
                     for (final ImageReaderWriterSpi candidate : providers.values()) {
                         suffixes = candidate.getFileSuffixes();
-                        if (XArrays.containsIgnoreCase(suffixes, ext)) {
+                        if (ArraysExt.containsIgnoreCase(suffixes, ext)) {
                             provider = candidate;
                             continue verify;
                         }
                     }
                     return null;
                 }
-                if (!XArrays.containsIgnoreCase(suffixes, ext)) {
+                if (!ArraysExt.containsIgnoreCase(suffixes, ext)) {
                     // Found image that would require a different provider.
                     return null;
                 }

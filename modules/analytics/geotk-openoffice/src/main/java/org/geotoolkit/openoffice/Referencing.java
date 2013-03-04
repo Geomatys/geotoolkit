@@ -34,10 +34,10 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.geometry.DirectPosition;
 
-import org.geotoolkit.measure.Angle;
-import org.geotoolkit.measure.Latitude;
-import org.geotoolkit.measure.Longitude;
-import org.geotoolkit.measure.AngleFormat;
+import org.apache.sis.measure.Angle;
+import org.apache.sis.measure.Latitude;
+import org.apache.sis.measure.Longitude;
+import org.apache.sis.measure.AngleFormat;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.GeodeticCalculator;
 import org.geotoolkit.geometry.GeneralDirectPosition;

@@ -22,7 +22,7 @@ import java.util.logging.LogRecord;
 
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.Localized;
+import org.apache.sis.util.Localized;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.image.io.SpatialImageReader;
 import org.geotoolkit.image.io.SpatialImageWriter;

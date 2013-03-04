@@ -21,8 +21,8 @@ import java.io.Serializable;
 import java.util.Arrays;
 import static java.lang.Math.*;
 
-import org.geotoolkit.util.XArrays;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.ArraysExt;
+import org.apache.sis.util.Classes;
 
 
 /**
@@ -71,7 +71,7 @@ public class Polynom implements Serializable {
             // Empty on purpose.
         }
         if (n == 0) {
-            this.c = XArrays.EMPTY_DOUBLE;
+            this.c = ArraysExt.EMPTY_DOUBLE;
         } else {
             this.c = new double[n];
             System.arraycopy(c, 0, this.c, 0, n);
@@ -131,7 +131,7 @@ public class Polynom implements Serializable {
             };
         } else {
             // Two complex conjugate roots
-            return XArrays.EMPTY_DOUBLE;
+            return ArraysExt.EMPTY_DOUBLE;
         }
     }
 
@@ -221,7 +221,7 @@ public class Polynom implements Serializable {
             // Empty on purpose.
         }
         switch (n) {
-            case 0:  return XArrays.EMPTY_DOUBLE;
+            case 0:  return ArraysExt.EMPTY_DOUBLE;
             case 1:  return new double[] {-c[0]/c[1]};
             case 2:  return quadraticRoots(c[0], c[1], c[2]);
             case 3:  return cubicRoots(c[0], c[1], c[2], c[3]);

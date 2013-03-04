@@ -36,8 +36,8 @@ import org.w3c.dom.Node;
 
 import org.geotoolkit.lang.Debug;
 import org.geotoolkit.lang.Static;
-import org.geotoolkit.util.XArrays;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.ArraysExt;
+import org.apache.sis.util.Classes;
 import org.geotoolkit.internal.io.IOUtilities;
 
 
@@ -128,7 +128,7 @@ public final class Trees extends Static {
         if (parent instanceof org.geotoolkit.gui.swing.tree.TreeNode) {
             final Object nodeValue = ((org.geotoolkit.gui.swing.tree.TreeNode) parent).getUserObject();
             if (nodeValue == value || (value!=null && value.equals(nodeValue))) {
-                list.add(new TreePath(XArrays.resize(path, length)));
+                list.add(new TreePath(ArraysExt.resize(path, length)));
             }
         }
         final int count = model.getChildCount(parent);
@@ -182,7 +182,7 @@ public final class Trees extends Static {
         }
         if (iterator != null) {
             final Class<?>[] types = Classes.getLeafInterfaces(object.getClass(), baseInterface);
-            node = new DefaultMutableTreeNode(Classes.getShortName(types != null ? types[0] : null));
+            node = new DefaultMutableTreeNode(Classes.getShortName(types.length != 0 ? types[0] : null));
             while (iterator.hasNext()) {
                 node.add(objectToSwing(iterator.next()));
             }

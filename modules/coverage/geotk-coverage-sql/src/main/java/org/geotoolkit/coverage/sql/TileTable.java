@@ -45,9 +45,9 @@ import javax.imageio.spi.ImageReaderSpi;
 import org.geotoolkit.image.io.mosaic.Tile;
 import org.geotoolkit.image.io.mosaic.TileManager;
 import org.geotoolkit.image.io.mosaic.TileManagerFactory;
-import org.geotoolkit.util.XArrays;
+import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.util.logging.Logging;
-import org.geotoolkit.util.collection.Cache;
+import org.apache.sis.util.collection.Cache;
 import org.geotoolkit.util.collection.BackingStoreException;
 import org.geotoolkit.internal.sql.table.Table;
 import org.geotoolkit.internal.sql.table.Database;
@@ -296,7 +296,7 @@ final class TileTable extends Table implements Comparator<TileManager> {
         ImageReaderSpi fallback = null;
         while (providers.hasNext()) {
             final ImageReaderSpi provider = providers.next();
-            if (XArrays.containsIgnoreCase(provider.getFormatNames(), format)) {
+            if (ArraysExt.containsIgnoreCase(provider.getFormatNames(), format)) {
                 if (!Tile.ignore(provider)) {
                     return provider;
                 }
@@ -314,7 +314,7 @@ final class TileTable extends Table implements Comparator<TileManager> {
         providers = registry.getServiceProviders(ImageReaderSpi.class, true);
         while (providers.hasNext()) {
             final ImageReaderSpi provider = providers.next();
-            if (XArrays.containsIgnoreCase(provider.getMIMETypes(), format)) {
+            if (ArraysExt.containsIgnoreCase(provider.getMIMETypes(), format)) {
                 if (!Tile.ignore(provider)) {
                     return provider;
                 }

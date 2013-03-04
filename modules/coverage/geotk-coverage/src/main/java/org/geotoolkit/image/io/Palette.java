@@ -33,7 +33,7 @@ import net.jcip.annotations.Immutable;
 
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.ArgumentChecks;
+import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.util.NullArgumentException;
 
 

@@ -41,7 +41,7 @@ import org.opengis.util.FactoryException;
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.util.Version;
 import org.geotoolkit.util.Utilities;
-import org.geotoolkit.util.ComparisonMode;
+import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.Factory;
@@ -63,7 +63,7 @@ import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.internal.referencing.AxisDirections;
 import org.geotoolkit.resources.Errors;
 
-import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
+import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 
 
 /**
@@ -422,7 +422,7 @@ public final class CRS extends Static {
      * @throws FactoryException if the CRS creation failed for an other reason.
      *
      * @see #getSupportedCodes(String)
-     * @see org.geotoolkit.measure.Units#valueOfEPSG(int)
+     * @see org.apache.sis.measure.Units#valueOfEPSG(int)
      * @see <a href="http://www.geotoolkit.org/modules/referencing/supported-codes.html">List of authority codes</a>
      *
      * @category factory

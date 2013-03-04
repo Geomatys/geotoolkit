@@ -46,7 +46,7 @@ import org.jdesktop.swingx.decorator.ComponentAdapter;
 import org.jdesktop.swingx.decorator.ColorHighlighter;
 import org.jdesktop.swingx.decorator.HighlightPredicate;
 
-import org.geotoolkit.util.XArrays;
+import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.util.Disposable;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.resources.Vocabulary;
@@ -362,7 +362,7 @@ public class LoggingPanel extends JComponent implements Disposable {
         } else {
             i = ~i;
             hlr = new Highlighter(level.intValue());
-            this.levelColors = levelColors = XArrays.insert(levelColors, i, 1);
+            this.levelColors = levelColors = ArraysExt.insert(levelColors, i, 1);
             levelColors[i] = hlr;
             if (i != 0) {
                 levelColors[i-1].upper = hlr.lower;
@@ -370,7 +370,7 @@ public class LoggingPanel extends JComponent implements Disposable {
             if (++i < levelColors.length) {
                 hlr.upper = levelColors[i].lower;
             }
-            assert XArrays.isSorted(levelColors, COMPARATOR, true);
+            assert ArraysExt.isSorted(levelColors, COMPARATOR, true);
             table.setHighlighters(levelColors);
         }
         hlr.setBackground(background);

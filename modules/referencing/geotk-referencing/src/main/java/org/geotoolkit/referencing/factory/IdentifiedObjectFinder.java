@@ -36,9 +36,9 @@ import org.opengis.referencing.NoSuchAuthorityCodeException;
 
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.IdentifiedObjects;
-import org.geotoolkit.internal.Citations;
-import org.geotoolkit.util.ArgumentChecks;
-import org.geotoolkit.util.ComparisonMode;
+import org.apache.sis.internal.util.Citations;
+import org.apache.sis.util.ArgumentChecks;
+import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.util.logging.Logging;
 
 import static org.geotoolkit.util.Utilities.deepEquals;

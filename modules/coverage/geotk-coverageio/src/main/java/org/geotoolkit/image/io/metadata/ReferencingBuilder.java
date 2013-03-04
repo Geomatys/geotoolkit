@@ -44,11 +44,11 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.resources.IndexedResourceBundle;
-import org.geotoolkit.internal.Citations;
-import org.geotoolkit.internal.CodeLists;
+import org.apache.sis.internal.util.Citations;
+import org.apache.sis.util.iso.Types;
 import org.geotoolkit.internal.image.io.DataTypes;
 import org.geotoolkit.util.Strings;
-import org.geotoolkit.util.NullArgumentException;
+import org.apache.sis.util.NullArgumentException;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.naming.DefaultNameSpace;
 import org.geotoolkit.lang.Builder;
@@ -536,7 +536,7 @@ public class ReferencingBuilder extends Builder<CoordinateReferenceSystem> {
                      */
                     abbreviation = axesProperties.get(IdentifiedObject.NAME_KEY).toString();
                     if (abbreviation == null) {
-                        abbreviation = CodeLists.identifier(direction);
+                        abbreviation = Types.getCodeName(direction);
                     }
                     abbreviation = Strings.camelCaseToAcronym(abbreviation);
                 }

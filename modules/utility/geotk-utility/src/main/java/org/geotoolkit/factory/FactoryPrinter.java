@@ -36,7 +36,7 @@ import org.opengis.referencing.AuthorityFactory;
 
 import org.geotoolkit.lang.Debug;
 import org.geotoolkit.io.TableWriter;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 import org.geotoolkit.resources.Vocabulary;
 
 

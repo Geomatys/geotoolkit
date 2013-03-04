@@ -32,7 +32,7 @@ import org.geotoolkit.internal.Threads;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.converter.Classes;
 
-import static org.geotoolkit.util.ArgumentChecks.ensureStrictlyPositive;
+import static org.apache.sis.util.ArgumentChecks.ensureStrictlyPositive;
 
 
 /**

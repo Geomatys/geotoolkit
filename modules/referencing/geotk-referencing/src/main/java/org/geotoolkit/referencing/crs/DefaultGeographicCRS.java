@@ -51,7 +51,7 @@ import org.geotoolkit.internal.referencing.AxisDirections;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.util.UnsupportedImplementationException;
 import org.geotoolkit.io.wkt.Formatter;
-import org.geotoolkit.measure.Units;
+import org.apache.sis.measure.Units;
 
 
 /**

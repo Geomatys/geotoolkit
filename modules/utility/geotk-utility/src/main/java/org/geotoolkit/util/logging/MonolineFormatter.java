@@ -34,7 +34,7 @@ import org.geotoolkit.io.X364;
 import org.geotoolkit.io.LineWriter;
 import org.geotoolkit.io.ExpandedTabWriter;
 import org.geotoolkit.internal.OS;
-import org.geotoolkit.util.Strings;
+import org.apache.sis.util.CharSequences;
 import org.geotoolkit.util.Utilities;
 
 
@@ -491,7 +491,7 @@ loop:   for (int i=0; ; i++) {
             }
             final int offset = buffer.length();
             buffer.append(level.getLocalizedName());
-            buffer.append(Strings.spaces(levelWidth - (buffer.length() - offset)));
+            buffer.append(CharSequences.spaces(levelWidth - (buffer.length() - offset)));
             margin += buffer.length() - offset;
             if (colors) {
                 buffer.append(X364.BACKGROUND_DEFAULT.sequence());
@@ -536,7 +536,7 @@ loop:   for (int i=0; ; i++) {
          */
         String bodyLineSeparator = writer.getLineSeparator();
         if (bodyLineSeparator.length() != lineSeparator.length() + margin) {
-            bodyLineSeparator = lineSeparator + Strings.spaces(margin);
+            bodyLineSeparator = lineSeparator + CharSequences.spaces(margin);
             writer.setLineSeparator(bodyLineSeparator);
         }
         if (colors && !emphase) {

@@ -35,7 +35,7 @@ import org.w3c.dom.Node;
 import ucar.nc2.NetcdfFileWriteable;
 import org.opengis.metadata.Metadata;
 
-import org.geotoolkit.util.XArrays;
+import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.util.collection.BackingStoreException;
 import org.geotoolkit.image.io.FileImageWriter;
 import org.geotoolkit.metadata.netcdf.NetcdfMetadataWriter;
@@ -177,7 +177,7 @@ public class NetcdfImageWriter extends FileImageWriter {
      */
     private void writeMetadata(final IIOMetadata metadata) throws IOException {
         if (metadata != null) try {
-            if (XArrays.contains(metadata.getExtraMetadataFormatNames(), ISO_FORMAT_NAME)) {
+            if (ArraysExt.contains(metadata.getExtraMetadataFormatNames(), ISO_FORMAT_NAME)) {
                 final Node root = metadata.getAsTree(ISO_FORMAT_NAME);
                 if (root instanceof IIOMetadataNode) {
                     final Object userObject = ((IIOMetadataNode) root).getUserObject();

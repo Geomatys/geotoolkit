@@ -38,9 +38,9 @@ import org.geotoolkit.referencing.operation.matrix.Matrix3;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 import org.geotoolkit.referencing.operation.provider.Affine;
 import org.geotoolkit.util.Cloneable;
-import org.geotoolkit.util.ComparisonMode;
+import org.apache.sis.util.ComparisonMode;
 
-import static org.geotoolkit.util.ArgumentChecks.ensureDimensionMatches;
+import static org.apache.sis.util.ArgumentChecks.ensureDimensionMatches;
 
 
 /**
@@ -201,7 +201,7 @@ public class AffineTransform2D extends XAffineTransform
      */
     @Override
     public DirectPosition transform(final DirectPosition ptSrc, DirectPosition ptDst) {
-        ensureDimensionMatches("ptSrc", ptSrc, 2);
+        ensureDimensionMatches("ptSrc", 2, ptSrc);
         /*
          * Try to write directly in the destination point if possible. Following
          * code avoid the creation of temporary objects (except if ptDst is null).
@@ -218,7 +218,7 @@ public class AffineTransform2D extends XAffineTransform
                 super.transform(point, point);
                 return point;
             }
-            ensureDimensionMatches("ptDst", ptDst, 2);
+            ensureDimensionMatches("ptDst", 2, ptDst);
             if (ptDst instanceof Point2D) {
                 final Point2D point = (Point2D) ptDst;
                 point.setLocation(ptSrc.getOrdinate(0), ptSrc.getOrdinate(1));

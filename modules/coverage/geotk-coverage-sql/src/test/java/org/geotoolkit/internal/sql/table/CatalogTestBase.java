@@ -26,7 +26,7 @@ import java.lang.reflect.Constructor;
 import org.postgresql.ds.PGSimpleDataSource;
 
 import org.geotoolkit.util.Utilities;
-import org.geotoolkit.util.ComparisonMode;
+import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.test.TestData;
 import org.geotoolkit.test.image.ImageTestBase;
 import org.geotoolkit.internal.io.Installation;

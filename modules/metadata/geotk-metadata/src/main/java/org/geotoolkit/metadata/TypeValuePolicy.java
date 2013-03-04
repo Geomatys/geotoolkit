@@ -30,15 +30,22 @@ package org.geotoolkit.metadata;
  *
  * @since 3.03
  * @module
+ *
+ * @deprecated Moved to Apache SIS {@link org.apache.sis.metadata.TypeValuePolicy}.
  */
-public enum TypeValuePolicy {
+@Deprecated
+public final class TypeValuePolicy {
+    private TypeValuePolicy() {
+    }
+
     /**
      * The type of a property, as inferred from the
      * {@linkplain java.lang.reflect.Method#getReturnType() return type} of the property method.
      * Collections are not handled in any special way; if the return type is a collection, then
      * the value is {@code Collection.class} (or a subclass).
      */
-    PROPERTY_TYPE,
+    public static final org.apache.sis.metadata.TypeValuePolicy PROPERTY_TYPE =
+            org.apache.sis.metadata.TypeValuePolicy.PROPERTY_TYPE;
 
     /**
      * The type of a property, or type of elements if the property is a collection. This is the
@@ -52,19 +59,22 @@ public enum TypeValuePolicy {
      *        type, then <code>ELEMENT_TYPE</code> will use that specialized type. This is different
      *        than <code>PROPERTY_TYPE</code> which always use the type declared in the interface.}
      */
-    ELEMENT_TYPE,
+    public static final org.apache.sis.metadata.TypeValuePolicy ELEMENT_TYPE =
+            org.apache.sis.metadata.TypeValuePolicy.ELEMENT_TYPE;
 
     /**
      * The type of the class that declares the method. A metadata implementation may have
      * different declaring classes for its properties if some of them are declared in parent
      * classes.
      */
-    DECLARING_CLASS,
+    public static final org.apache.sis.metadata.TypeValuePolicy DECLARING_CLASS =
+            org.apache.sis.metadata.TypeValuePolicy.DECLARING_CLASS;
 
     /**
      * The type of the interface that declares the method. This is the same than
      * {@link #DECLARING_CLASS}, except that the interface from the metadata standard
      * is returned instead than the implementation class.
      */
-    DECLARING_INTERFACE
+    public static final org.apache.sis.metadata.TypeValuePolicy DECLARING_INTERFACE =
+            org.apache.sis.metadata.TypeValuePolicy.DECLARING_INTERFACE;
 }

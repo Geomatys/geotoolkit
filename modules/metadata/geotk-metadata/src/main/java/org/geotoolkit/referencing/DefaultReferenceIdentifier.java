@@ -48,7 +48,7 @@ import org.geotoolkit.internal.jaxb.gco.StringAdapter;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Errors;
 
-import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
+import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 import static org.opengis.referencing.IdentifiedObject.NAME_KEY;
 import static org.opengis.referencing.IdentifiedObject.REMARKS_KEY;
 

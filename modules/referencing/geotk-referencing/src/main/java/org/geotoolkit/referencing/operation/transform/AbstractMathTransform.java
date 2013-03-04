@@ -52,13 +52,13 @@ import org.geotoolkit.display.shape.ShapeUtilities;
 import org.geotoolkit.referencing.operation.matrix.Matrices;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.Utilities;
-import org.geotoolkit.util.ComparisonMode;
+import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.util.LenientComparable;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
 
 import static org.geotoolkit.util.Utilities.hash;
-import static org.geotoolkit.util.ArgumentChecks.ensureDimensionMatches;
+import static org.apache.sis.util.ArgumentChecks.ensureDimensionMatches;
 
 
 /**
@@ -275,9 +275,9 @@ public abstract class AbstractMathTransform extends FormattableObject
     {
         final int dimSource = getSourceDimensions();
         final int dimTarget = getTargetDimensions();
-        ensureDimensionMatches("ptSrc", ptSrc, dimSource);
+        ensureDimensionMatches("ptSrc", dimSource, ptSrc);
         if (ptDst != null) {
-            ensureDimensionMatches("ptDst", ptDst, dimTarget);
+            ensureDimensionMatches("ptDst", dimTarget, ptDst);
             /*
              * Transforms the coordinates using a temporary 'double[]' buffer,
              * and copies the transformation result in the destination position.
@@ -1202,8 +1202,8 @@ public abstract class AbstractMathTransform extends FormattableObject
             final Matrix m1 = t1.getMatrix();
             if (m1 != null) {
                 final Matrix m2 = ((LinearTransform) t2).getMatrix();
-                if (m1 instanceof LenientComparable) {
-                    return ((LenientComparable) m1).equals(m2, mode);
+                if (m1 instanceof org.apache.sis.util.LenientComparable) {
+                    return ((org.apache.sis.util.LenientComparable) m1).equals(m2, mode);
                 }
                 return Matrices.equals(m1, m2, mode);
             }

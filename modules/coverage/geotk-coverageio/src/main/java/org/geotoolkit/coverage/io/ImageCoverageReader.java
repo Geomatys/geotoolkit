@@ -52,6 +52,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.util.GenericName;
 import org.opengis.util.NameFactory;
+import org.apache.sis.util.ArraysExt;
 
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.FactoryFinder;
@@ -77,7 +78,6 @@ import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.internal.image.io.CheckedImageInputStream;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.util.collection.BackingStoreException;
 import org.geotoolkit.referencing.CRS;
@@ -464,7 +464,7 @@ public class ImageCoverageReader extends GridCoverageReader {
     protected boolean canReuseImageReader(final ImageReaderSpi provider, final Object input) throws IOException {
         if (IOUtilities.canProcessAsPath(input)) {
             final String[] suffixes = provider.getFileSuffixes();
-            return (suffixes != null) && XArrays.containsIgnoreCase(suffixes, IOUtilities.extension(input));
+            return (suffixes != null) && ArraysExt.containsIgnoreCase(suffixes, IOUtilities.extension(input));
         } else {
             return provider.canDecodeInput(input);
         }

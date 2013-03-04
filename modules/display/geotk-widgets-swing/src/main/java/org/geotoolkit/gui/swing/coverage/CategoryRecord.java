@@ -31,7 +31,7 @@ import org.opengis.util.InternationalString;
 import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.metadata.content.TransferFunctionType;
 
-import org.geotoolkit.math.XMath;
+import org.apache.sis.math.MathFunctions;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.Cloneable;
 import org.geotoolkit.util.NumberRange;
@@ -415,8 +415,8 @@ public class CategoryRecord implements Cloneable, Serializable {
                 max = tmp;
             }
             if (functionType == EXPONENTIAL) {
-                min = XMath.pow10(min);
-                max = XMath.pow10(max);
+                min = MathFunctions.pow10(min);
+                max = MathFunctions.pow10(max);
             }
             valueRange = NumberRange.create(min, max);
         }

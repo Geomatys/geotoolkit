@@ -41,7 +41,7 @@ import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.referencing.operation.MathTransformFactory;
 import org.opengis.metadata.content.TransferFunctionType;
 
-import org.geotoolkit.math.XMath;
+import org.apache.sis.math.MathFunctions;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.util.Localized;
@@ -89,7 +89,7 @@ public class MetadataHelper implements Localized {
     /**
      * The image reader or writer for which we are creating metadata, or {@code null} if none.
      */
-    private final Localized owner;
+    private final org.apache.sis.util.Localized owner;
 
     /**
      * The math transform factory, fetched only if needed.
@@ -107,7 +107,7 @@ public class MetadataHelper implements Localized {
      * @param owner The image reader or writer for which we are creating metadata,
      *        or {@code null} if none.
      */
-    public MetadataHelper(final Localized owner) {
+    public MetadataHelper(final org.apache.sis.util.Localized owner) {
         this.owner = owner;
     }
 
@@ -547,7 +547,7 @@ public class MetadataHelper implements Localized {
         double minSize = Double.POSITIVE_INFINITY;
         final double[] sizes = new double[offsetVectors.size()];
         for (int i=0; i<sizes.length; i++) {
-            sizes[i] = adjustForRoundingError(XMath.magnitude(offsetVectors.get(i)));
+            sizes[i] = adjustForRoundingError(MathFunctions.magnitude(offsetVectors.get(i)));
             final double as = Math.abs(sizes[i]);
             if (as < minSize) {
                 minSize = as;

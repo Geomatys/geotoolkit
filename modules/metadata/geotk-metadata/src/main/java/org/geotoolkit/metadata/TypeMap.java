@@ -35,7 +35,7 @@ final class TypeMap extends MetadataMap<Class<?>> {
     /**
      * The kind of values in this map.
      */
-    final TypeValuePolicy types;
+    final org.apache.sis.metadata.TypeValuePolicy types;
 
     /**
      * Creates a type map for the specified accessor.
@@ -44,7 +44,7 @@ final class TypeMap extends MetadataMap<Class<?>> {
      * @param types    The kind of values in this map.
      * @param keyNames Determines the string representation of keys in the map..
      */
-    TypeMap(final PropertyAccessor accessor, final TypeValuePolicy types, final KeyNamePolicy keyNames) {
+    TypeMap(final PropertyAccessor accessor, final org.apache.sis.metadata.TypeValuePolicy types, final org.apache.sis.metadata.KeyNamePolicy keyNames) {
         super(accessor, keyNames);
         this.types = types;
     }

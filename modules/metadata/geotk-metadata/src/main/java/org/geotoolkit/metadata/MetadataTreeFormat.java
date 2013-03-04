@@ -42,8 +42,8 @@ import org.opengis.metadata.content.Band;
 import org.opengis.metadata.spatial.Dimension;
 import org.opengis.metadata.spatial.GridSpatialRepresentation;
 
-import org.geotoolkit.util.Strings;
-import org.geotoolkit.util.ArgumentChecks;
+import org.apache.sis.util.CharSequences;
+import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.util.MeasurementRange;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.converter.Numbers;
@@ -56,7 +56,7 @@ import org.geotoolkit.gui.swing.tree.DefaultMutableTreeNode;
 import org.geotoolkit.gui.swing.tree.TreeFormat;
 import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.internal.InternalUtilities;
-import org.geotoolkit.internal.CodeLists;
+import org.apache.sis.util.iso.Types;
 import org.geotoolkit.resources.Errors;
 
 import static org.geotoolkit.metadata.AbstractMetadata.LOGGER;
@@ -617,7 +617,7 @@ public class MetadataTreeFormat extends Format {
             // String formatted below must comply with the isCollectionElement(...) condition.
             final StringBuilder buffer = new StringBuilder(32);
             buffer.append(OPEN_BRACKET).append(formatNumber(number)).append(CLOSE_BRACKET).append(' ');
-            buffer.append(Strings.camelCaseToSentence(Classes.getShortName(type)));
+            buffer.append(CharSequences.camelCaseToSentence(Classes.getShortName(type)));
             String title = getTitleForSpecialCases(value);
             if (title == null) {
                 title = getTitle(asMap.values());
@@ -752,7 +752,8 @@ public class MetadataTreeFormat extends Format {
                     } else if (element instanceof InternationalString) {
                         name = ((InternationalString) element).toString(displayLocale);
                     } else if (element instanceof CodeList<?>) {
-                        name = CodeLists.localize((CodeList<?>) element, displayLocale);
+                        final InternationalString text = Types.getCodeTitle((CodeList<?>) element);
+                        name = (text != null) ? text.toString(displayLocale) : null;
                     } else {
                         name = element.toString();
                     }

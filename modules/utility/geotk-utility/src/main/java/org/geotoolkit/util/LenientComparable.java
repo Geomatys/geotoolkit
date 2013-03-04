@@ -17,6 +17,8 @@
  */
 package org.geotoolkit.util;
 
+import org.apache.sis.util.ComparisonMode;
+
 
 /**
  * Indicates that this object can be compared for equality using different levels of strictness.
@@ -124,8 +126,11 @@ package org.geotoolkit.util;
  *
  * @since 3.18
  * @module
+ *
+ * @deprecated Moved to Apache SIS {@link org.apache.sis.util.LenientComparable}.
  */
-public interface LenientComparable {
+@Deprecated
+public interface LenientComparable extends org.apache.sis.util.LenientComparable {
     /**
      * Compares this object with the given object for equality.
      * The strictness level is controlled by the second argument.
@@ -136,6 +141,7 @@ public interface LenientComparable {
      *
      * @see Utilities#deepEquals(Object, Object, ComparisonMode)
      */
+    @Override
     boolean equals(Object other, ComparisonMode mode);
 
     /**

@@ -22,7 +22,7 @@ import java.util.Date;
 import org.opengis.metadata.citation.DateType;
 import org.opengis.metadata.citation.CitationDate;
 
-import org.geotoolkit.util.ComparisonMode;
+import org.apache.sis.util.ComparisonMode;
 
 import org.junit.*;
 import static org.geotoolkit.test.Assert.*;

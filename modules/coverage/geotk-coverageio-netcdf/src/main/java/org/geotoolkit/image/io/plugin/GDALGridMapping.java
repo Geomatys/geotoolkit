@@ -24,8 +24,8 @@ import javax.vecmath.MismatchedSizeException;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
-import org.geotoolkit.util.Strings;
-import org.geotoolkit.util.Localized;
+import org.apache.sis.util.CharSequences;
+import org.apache.sis.util.Localized;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.image.io.WarningProducer;
@@ -66,7 +66,7 @@ final class GDALGridMapping {
             Warnings.log(caller, Level.WARNING, caller.getClass(), "parseWKT", e);
         }
         if (geoTransform != null) try {
-            gridToCRS = getGeoTransform(caller, Strings.parseDoubles(geoTransform, ' '));
+            gridToCRS = getGeoTransform(caller, CharSequences.parseDoubles(geoTransform, ' '));
         } catch (RuntimeException e) { // NumberFormatException & MismatchedSizeException.
             Warnings.log(caller, Level.WARNING, caller.getClass(), "getGeoTransform", e);
         }

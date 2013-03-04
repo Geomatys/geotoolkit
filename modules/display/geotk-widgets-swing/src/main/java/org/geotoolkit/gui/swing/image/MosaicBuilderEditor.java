@@ -46,8 +46,8 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import org.jdesktop.swingx.JXTitledPanel;
 
-import org.geotoolkit.math.XMath;
-import org.geotoolkit.util.XArrays;
+import org.apache.sis.math.MathFunctions;
+import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.coverage.grid.ImageGeometry;
 import org.geotoolkit.image.io.mosaic.TileManager;
@@ -312,7 +312,7 @@ public class MosaicBuilderEditor extends JComponent implements MosaicPerformance
                         selected[count++] = row;
                     }
                 }
-                selected = XArrays.resize(selected, count);
+                selected = ArraysExt.resize(selected, count);
                 ((Subsamplings) subsamplingTable.getModel()).remove(selected);
             }
 
@@ -440,7 +440,7 @@ public class MosaicBuilderEditor extends JComponent implements MosaicPerformance
          */
         @Override
         public int compare(final Dimension s1, final Dimension s2) {
-            return XMath.sgn(areaSquared(s1) - areaSquared(s2));
+            return MathFunctions.sgn(areaSquared(s1) - areaSquared(s2));
         }
 
         /**

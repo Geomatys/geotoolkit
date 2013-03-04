@@ -48,7 +48,7 @@ final class PropertyMap extends MetadataMap<Object> {
     /**
      * The behavior of this map toward null or empty values.
      */
-    final NullValuePolicy content;
+    final org.apache.sis.metadata.NullValuePolicy content;
 
     /**
      * Creates a property map for the specified metadata and accessor.
@@ -59,7 +59,8 @@ final class PropertyMap extends MetadataMap<Object> {
      * @param keyNames Determines the string representation of keys in the map..
      */
     PropertyMap(final Object metadata, final PropertyAccessor accessor,
-            final NullValuePolicy content, final KeyNamePolicy keyNames)
+            final org.apache.sis.metadata.NullValuePolicy content,
+            final org.apache.sis.metadata.KeyNamePolicy keyNames)
     {
         super(accessor, keyNames);
         this.metadata = metadata;

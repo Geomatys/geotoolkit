@@ -17,8 +17,6 @@
  */
 package org.geotoolkit.util;
 
-import org.geotoolkit.resources.Errors;
-
 
 /**
  * Throws when an operation can't use arbitrary implementation of an interface, and
@@ -31,12 +29,15 @@ import org.geotoolkit.resources.Errors;
  *
  * @since 2.0
  * @module
+ *
+ * @deprecated Moved to Apache SIS {@link org.apache.sis.util.UnsupportedImplementationException}.
  */
-public class UnsupportedImplementationException extends UnsupportedOperationException {
+@Deprecated
+public class UnsupportedImplementationException extends org.apache.sis.util.UnsupportedImplementationException {
     /**
      * For cross-version compatibility.
      */
-    private static final long serialVersionUID = -649050339146622730L;
+    private static final long serialVersionUID = -649050339146622731L;
 
     /**
      * Constructs an exception with the specified detail message.
@@ -53,7 +54,7 @@ public class UnsupportedImplementationException extends UnsupportedOperationExce
      * @param classe The unexpected implementation class.
      */
     public UnsupportedImplementationException(final Class<?> classe) {
-        super(Errors.format(Errors.Keys.UNKNOWN_TYPE_$1, classe));
+        super(classe);
     }
 
     /**
@@ -64,6 +65,6 @@ public class UnsupportedImplementationException extends UnsupportedOperationExce
      * @param cause The cause for the exception.
      */
     public UnsupportedImplementationException(final Class<?> classe, final Exception cause) {
-        super(Errors.format(Errors.Keys.UNKNOWN_TYPE_$1, classe), cause);
+        super(classe, cause);
     }
 }

@@ -23,7 +23,7 @@ import org.geotoolkit.util.Utilities;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.NullArgumentException;
 
-import static org.geotoolkit.util.ArgumentChecks.ensureValidIndex;
+import static org.apache.sis.util.ArgumentChecks.ensureValidIndex;
 
 
 /**
@@ -48,9 +48,12 @@ import static org.geotoolkit.util.ArgumentChecks.ensureValidIndex;
  *
  * @since 2.1
  * @module
+ *
+ * @deprecated Replaced by {@link org.apache.sis.util.collection.UnmodifiableArrayList}.
  */
+@Deprecated
 public class UnmodifiableArrayList<E> extends AbstractList<E>
-        implements CheckedCollection<E>, Serializable
+        implements CheckedCollection<E>, org.apache.sis.util.collection.CheckedContainer<E>, Serializable
 {
     /**
      * For compatibility with different versions.

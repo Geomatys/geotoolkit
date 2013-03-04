@@ -47,12 +47,12 @@ import org.opengis.parameter.InvalidParameterValueException;
 
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.Deprecable;
-import org.geotoolkit.util.ComparisonMode;
+import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.util.LenientComparable;
 import org.geotoolkit.util.DefaultInternationalString;
 import org.geotoolkit.util.logging.Logging;
-import org.geotoolkit.util.converter.Classes;
-import org.geotoolkit.internal.Citations;
+import org.apache.sis.util.Classes;
+import org.apache.sis.internal.util.Citations;
 import org.geotoolkit.internal.jaxb.gco.StringConverter;
 import org.geotoolkit.internal.jaxb.referencing.RS_Identifier;
 import org.geotoolkit.io.wkt.FormattableObject;
@@ -63,7 +63,7 @@ import net.jcip.annotations.Immutable;
 import org.geotoolkit.xml.Namespaces;
 
 import static org.geotoolkit.util.Utilities.deepEquals;
-import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
+import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 import static org.geotoolkit.internal.InternalUtilities.nonEmptySet;
 import static org.geotoolkit.internal.referencing.CRSUtilities.getReferencingGroup;
 
@@ -502,13 +502,13 @@ nextKey:for (final Map.Entry<String,?> entry : properties.entrySet()) {
      *   <li><p>If the name or alias implements the {@link ReferenceIdentifier} interface,
      *       then this method compares the {@linkplain ReferenceIdentifier#getAuthority()
      *       identifier authority} against the specified citation using the
-     *       {@link Citations#identifierMatches(Citation,Citation) identifierMatches}
+     *       {@link org.geotoolkit.metadata.iso.citation.Citations#identifierMatches(Citation,Citation) identifierMatches}
      *       method. If a matching is found, then this method returns the
      *       {@linkplain ReferenceIdentifier#getCode identifier code} of this object.</p></li>
      *
      *   <li><p>Otherwise, if the alias implements the {@link GenericName} interface, then this
      *       method compares the {@linkplain GenericName#scope name scope} against the specified
-     *       citation using the {@linkplain Citations#identifierMatches(Citation,String)
+     *       citation using the {@linkplain org.geotoolkit.metadata.iso.citation.Citations#identifierMatches(Citation,String)
      *       identifierMatches} method. If a matching is found, then this method returns the
      *       {@linkplain GenericName#tip name tip} of this object.</p></li>
      * </ul>
@@ -825,12 +825,9 @@ nextKey:for (final Map.Entry<String,?> entry : properties.entrySet()) {
     protected int computeHashCode() {
         // Subclasses need to overrides this!!!!
         int code = (int) serialVersionUID;
-        final Class<?>[] types = Classes.getLeafInterfaces(getClass(), IdentifiedObject.class);
-        if (types != null) {
-            for (final Class<?> type : types) {
-                // Use a plain addition in order to be insensitive to array element order.
-                code += type.hashCode();
-            }
+        for (final Class<?> type : Classes.getLeafInterfaces(getClass(), IdentifiedObject.class)) {
+            // Use a plain addition in order to be insensitive to array element order.
+            code += type.hashCode();
         }
         return code;
     }

@@ -31,12 +31,12 @@ import org.opengis.referencing.operation.Matrix;
 
 import org.geotoolkit.measure.Latitude;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.ComparisonMode;
+import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.referencing.operation.matrix.Matrix2;
 
 import static java.lang.Math.*;
 import static java.lang.Double.*;
-import static org.geotoolkit.math.XMath.atanh;
+import static org.apache.sis.math.MathFunctions.atanh;
 import static org.geotoolkit.parameter.Parameters.getOrCreate;
 import static org.geotoolkit.internal.InternalUtilities.epsilonEqual;
 import static org.geotoolkit.referencing.operation.provider.UniversalParameters.*;

@@ -29,7 +29,7 @@ import javax.swing.JComboBox;
 import javax.imageio.spi.IIORegistry;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.spi.ImageWriterSpi;
-import org.geotoolkit.util.XArrays;
+import org.apache.sis.util.ArraysExt;
 
 
 /**
@@ -147,7 +147,7 @@ skip:   for (final Iterator<ImageReaderSpi> it=registry.getServiceProviders(Imag
                 array[count++] = entry;
             }
         }
-        array = XArrays.resize(array, count);
+        array = ArraysExt.resize(array, count);
         preferred.retainAll(Arrays.asList(array));
         Arrays.sort(array);
         return array;

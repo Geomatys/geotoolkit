@@ -17,20 +17,9 @@
  */
 package org.geotoolkit.util.converter;
 
-import java.util.Map;
-import java.util.Set;
-import java.util.List;
-import java.util.Queue;
-import java.util.HashMap;
-import java.util.SortedSet;
-import java.util.Collections;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.lang.reflect.Array;
-
 import org.geotoolkit.lang.Static;
-import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.collection.XCollections;
 
 
 /**
@@ -42,7 +31,10 @@ import org.geotoolkit.util.collection.XCollections;
  *
  * @since 3.18 (derived from 2.5)
  * @module
+ *
+ * @deprecated Moved to {@link org.apache.sis.util.Numbers}.
  */
+@Deprecated
 public final class Numbers extends Static {
     /**
      * Constants to be used in {@code switch} statements.
@@ -50,77 +42,6 @@ public final class Numbers extends Static {
     public static final byte
             DOUBLE=8, FLOAT=7, LONG=6, INTEGER=5, SHORT=4, BYTE=3, CHARACTER=2, BOOLEAN=1, OTHER=0;
     // Note: This class assumes that DOUBLE is the greatest public constant.
-
-    /**
-     * Mapping between a primitive type and its wrapper, if any.
-     */
-    private static final Map<Class<?>,Numbers> MAPPING = new HashMap<Class<?>,Numbers>(16);
-    static {
-        new Numbers(BigDecimal.class, true, false, (byte) (DOUBLE+2)); // Undocumented enum.
-        new Numbers(BigInteger.class, false, true, (byte) (DOUBLE+1)); // Undocumented enum.
-        new Numbers(Double   .TYPE, Double   .class, true,  false, (byte) Double   .SIZE, DOUBLE,    'D', Double   .valueOf(Double.NaN));
-        new Numbers(Float    .TYPE, Float    .class, true,  false, (byte) Float    .SIZE, FLOAT,     'F', Float    .valueOf(Float .NaN));
-        new Numbers(Long     .TYPE, Long     .class, false, true,  (byte) Long     .SIZE, LONG,      'J', Long     .valueOf(        0L));
-        new Numbers(Integer  .TYPE, Integer  .class, false, true,  (byte) Integer  .SIZE, INTEGER,   'I', Integer  .valueOf(        0));
-        new Numbers(Short    .TYPE, Short    .class, false, true,  (byte) Short    .SIZE, SHORT,     'S', Short    .valueOf((short) 0));
-        new Numbers(Byte     .TYPE, Byte     .class, false, true,  (byte) Byte     .SIZE, BYTE,      'B', Byte     .valueOf((byte)  0));
-        new Numbers(Character.TYPE, Character.class, false, false, (byte) Character.SIZE, CHARACTER, 'C', Character.valueOf((char)  0));
-        new Numbers(Boolean  .TYPE, Boolean  .class, false, false, (byte) 1,              BOOLEAN,   'Z', Boolean.FALSE);
-        new Numbers(Void     .TYPE, Void     .class, false, false, (byte) 0,              OTHER,     'V', null);
-    }
-
-    /** The primitive type.                     */ private final Class<?> primitive;
-    /** The wrapper for the primitive type.     */ private final Class<?> wrapper;
-    /** {@code true} for floating point number. */ private final boolean  isFloat;
-    /** {@code true} for integer number.        */ private final boolean  isInteger;
-    /** The size in bytes.                      */ private final byte     size;
-    /** Constant to be used in switch statement.*/ private final byte     ordinal;
-    /** The internal form of the primitive name.*/ private final char     internal;
-    /** The null, NaN, 0 or false value.        */ private final Object   nullValue;
-
-    /**
-     * Creates an entry for a type which is not a primitive type.
-     */
-    private Numbers(final Class<?> type, final boolean isFloat, final boolean isInteger, final byte ordinal) {
-        primitive = wrapper = type;
-        this.isFloat   = isFloat;
-        this.isInteger = isInteger;
-        this.size      = -1;
-        this.ordinal   = ordinal;
-        this.internal  = 'L'; // Defined by Java, and tested elsewhere in this class.
-        this.nullValue = null;
-        if (MAPPING.put(type, this) != null) {
-            throw new AssertionError(); // Should never happen.
-        }
-    }
-
-    /**
-     * Creates a mapping between a primitive type and its wrapper.
-     */
-    private Numbers(final Class<?> primitive, final Class<?> wrapper,
-                    final boolean  isFloat,   final boolean  isInteger,
-                    final byte     size,      final byte     ordinal,
-                    final char     internal,  final Object   nullValue)
-    {
-        this.primitive = primitive;
-        this.wrapper   = wrapper;
-        this.isFloat   = isFloat;
-        this.isInteger = isInteger;
-        this.size      = size;
-        this.ordinal   = ordinal;
-        this.internal  = internal;
-        this.nullValue = nullValue;
-        if (MAPPING.put(primitive, this) != null || MAPPING.put(wrapper, this) != null) {
-            throw new AssertionError(); // Should never happen.
-        }
-    }
-
-    /**
-     * Returns the Java letter used for the internal representation of this given primitive type.
-     */
-    static char getInternal(final Class<?> type) {
-        return MAPPING.get(type).internal;
-    }
 
     /**
      * Returns {@code true} if the given {@code type} is a floating point type.
@@ -132,8 +53,7 @@ public final class Numbers extends Static {
      * @see #isInteger(Class)
      */
     public static boolean isFloat(final Class<?> type) {
-        final Numbers mapping = MAPPING.get(type);
-        return (mapping != null) && mapping.isFloat;
+        return org.apache.sis.util.Numbers.isFloat(type);
     }
 
     /**
@@ -147,23 +67,7 @@ public final class Numbers extends Static {
      * @see #isFloat(Class)
      */
     public static boolean isInteger(final Class<?> type) {
-        final Numbers mapping = MAPPING.get(type);
-        return (mapping != null) && mapping.isInteger;
-    }
-
-    /**
-     * Returns {@code true} if the given {@code type} is an integer type. This method performs
-     * the same test than {@link #isPrimitiveInteger}, excluding {@link BigInteger}.
-     *
-     * @param  type The type to test (may be {@code null}).
-     * @return {@code true} if {@code type} is the primitive of wrapper class of
-     *         {@link Long}, {@link Integer}, {@link Short} or {@link Byte}.
-     *
-     * @see #isInteger(Class)
-     */
-    private static boolean isPrimitiveInteger(final Class<?> type) {
-        final Numbers mapping = MAPPING.get(type);
-        return (mapping != null) && mapping.isInteger && (mapping.internal != 'L');
+        return org.apache.sis.util.Numbers.isInteger(type);
     }
 
     /**
@@ -175,17 +79,7 @@ public final class Numbers extends Static {
      * @throws IllegalArgumentException if the given type is unknown.
      */
     public static int primitiveBitCount(final Class<?> type) throws IllegalArgumentException {
-        final Numbers mapping = MAPPING.get(type);
-        if (mapping != null) {
-            final int size = mapping.size;
-            if (size >= 0) {
-                return size;
-            }
-        }
-        if (type == null) {
-            return 0;
-        }
-        throw unknownType(type);
+        return  org.apache.sis.util.Numbers.primitiveBitCount(type);
     }
 
     /**
@@ -198,8 +92,7 @@ public final class Numbers extends Static {
      * @see #wrapperToPrimitive(Class)
      */
     public static Class<?> primitiveToWrapper(final Class<?> type) {
-        final Numbers mapping = MAPPING.get(type);
-        return (mapping != null) ? mapping.wrapper : type;
+        return org.apache.sis.util.Numbers.primitiveToWrapper(type);
     }
 
     /**
@@ -212,8 +105,7 @@ public final class Numbers extends Static {
      * @see #primitiveToWrapper(Class)
      */
     public static Class<?> wrapperToPrimitive(final Class<?> type) {
-        final Numbers mapping = MAPPING.get(type);
-        return (mapping != null) ? mapping.primitive : type;
+        return org.apache.sis.util.Numbers.wrapperToPrimitive(type);
     }
 
     /**
@@ -235,8 +127,7 @@ public final class Numbers extends Static {
     public static Class<? extends Number> widestClass(final Number n1, final Number n2)
             throws IllegalArgumentException
     {
-        return widestClass((n1 != null) ? n1.getClass() : null,
-                           (n2 != null) ? n2.getClass() : null);
+        return org.apache.sis.util.Numbers.widestClass(n1, n2);
     }
 
     /**
@@ -267,17 +158,7 @@ public final class Numbers extends Static {
                                                       final Class<? extends Number> c2)
             throws IllegalArgumentException
     {
-        final Numbers m1 = MAPPING.get(c1);
-        if (m1 == null && c1 != null) {
-            throw unknownType(c1);
-        }
-        final Numbers m2 = MAPPING.get(c2);
-        if (m2 == null && c2 != null) {
-            throw unknownType(c2);
-        }
-        if (c1 == null) return c2;
-        if (c2 == null) return c1;
-        return (m1.ordinal >= m2.ordinal) ? c1 : c2;
+        return org.apache.sis.util.Numbers.widestClass(c1, c2);
     }
 
     /**
@@ -296,8 +177,7 @@ public final class Numbers extends Static {
     public static Class<? extends Number> finestClass(final Number n1, final Number n2)
             throws IllegalArgumentException
     {
-        return finestClass((n1 != null) ? n1.getClass() : null,
-                           (n2 != null) ? n2.getClass() : null);
+        return org.apache.sis.util.Numbers.narrowestClass(n1, n2);
     }
 
     /**
@@ -328,17 +208,7 @@ public final class Numbers extends Static {
                                                       final Class<? extends Number> c2)
             throws IllegalArgumentException
     {
-        final Numbers m1 = MAPPING.get(c1);
-        if (m1 == null && c1 != null) {
-            throw unknownType(c1);
-        }
-        final Numbers m2 = MAPPING.get(c2);
-        if (m2 == null && c2 != null) {
-            throw unknownType(c2);
-        }
-        if (c1 == null) return c2;
-        if (c2 == null) return c1;
-        return (m1.ordinal < m2.ordinal) ? c1 : c2;
+        return org.apache.sis.util.Numbers.narrowestClass(c1, c2);
     }
 
     /**
@@ -354,14 +224,7 @@ public final class Numbers extends Static {
      * @since 3.06
      */
     public static Class<? extends Number> finestClass(final Number value) {
-        if (value == null) {
-            return null;
-        }
-        if (isPrimitiveInteger(value.getClass())) {
-            return finestClass(value.longValue());
-        } else {
-            return finestClass(value.doubleValue());
-        }
+        return org.apache.sis.util.Numbers.narrowestClass(value);
     }
 
     /**
@@ -374,15 +237,7 @@ public final class Numbers extends Static {
      * @see #finestNumber(double)
      */
     public static Class<? extends Number> finestClass(final double value) {
-        final long lg = (long) value;
-        if (value == lg) {
-            return finestClass(lg);
-        }
-        final float fv = (float) value;
-        if (Double.doubleToRawLongBits(value) == Double.doubleToRawLongBits(fv)) {
-            return Float.class;
-        }
-        return Double.class;
+        return org.apache.sis.util.Numbers.narrowestClass(value);
     }
 
     /**
@@ -407,11 +262,7 @@ public final class Numbers extends Static {
      * @since 3.00
      */
     public static Class<? extends Number> finestClass(final long value) {
-        // Tests MAX_VALUE before MIN_VALUE because it is more likely to fail.
-        if (value <= Byte   .MAX_VALUE  &&  value >= Byte   .MIN_VALUE) return Byte.class;
-        if (value <= Short  .MAX_VALUE  &&  value >= Short  .MIN_VALUE) return Short.class;
-        if (value <= Integer.MAX_VALUE  &&  value >= Integer.MIN_VALUE) return Integer.class;
-        return Long.class;
+        return org.apache.sis.util.Numbers.narrowestClass(value);
     }
 
     /**
@@ -428,17 +279,7 @@ public final class Numbers extends Static {
      * @since 3.06
      */
     public static Number finestNumber(final Number value) {
-        if (value == null) {
-            return null;
-        }
-        final Number candidate;
-        if (isPrimitiveInteger(value.getClass())) {
-            candidate = finestNumber(value.longValue());
-        } else {
-            candidate = finestNumber(value.doubleValue());
-        }
-        // Keep the existing instance if possible.
-        return value.equals(candidate) ? value : candidate;
+        return org.apache.sis.util.Numbers.narrowestNumber(value);
     }
 
     /**
@@ -451,15 +292,7 @@ public final class Numbers extends Static {
      * @see #finestClass(double)
      */
     public static Number finestNumber(final double value) {
-        final long lg = (long) value;
-        if (value == lg) {
-            return finestNumber(lg);
-        }
-        final float fv = (float) value;
-        if (Double.doubleToRawLongBits(value) == Double.doubleToRawLongBits(fv)) {
-            return Float.valueOf(fv);
-        }
-        return Double.valueOf(value);
+        return org.apache.sis.util.Numbers.narrowestNumber(value);
     }
 
     /**
@@ -484,11 +317,7 @@ public final class Numbers extends Static {
      * @since 3.00
      */
     public static Number finestNumber(final long value) {
-        // Tests MAX_VALUE before MIN_VALUE because it is more likely to fail.
-        if (value <= Byte   .MAX_VALUE  &&  value >= Byte   .MIN_VALUE) return Byte   .valueOf((byte)  value);
-        if (value <= Short  .MAX_VALUE  &&  value >= Short  .MIN_VALUE) return Short  .valueOf((short) value);
-        if (value <= Integer.MAX_VALUE  &&  value >= Integer.MIN_VALUE) return Integer.valueOf((int)   value);
-        return Long.valueOf(value);
+        return org.apache.sis.util.Numbers.narrowestNumber(value);
     }
 
     /**
@@ -505,15 +334,7 @@ public final class Numbers extends Static {
      * @since 3.00
      */
     public static Number finestNumber(String value) throws NumberFormatException {
-        value = value.trim();
-        final int length = value.length();
-        for (int i=0; i<length; i++) {
-            final char c = value.charAt(i);
-            if (c == '.' || c == 'e' || c == 'E') {
-                return finestNumber(Double.parseDouble(value));
-            }
-        }
-        return finestNumber(Long.parseLong(value));
+        return org.apache.sis.util.Numbers.narrowestNumber(value);
     }
 
     /**
@@ -539,20 +360,10 @@ public final class Numbers extends Static {
      * @return The number casted to the given type.
      * @throws IllegalArgumentException If the given type is unknown.
      */
-    @SuppressWarnings("unchecked")
     public static <N extends Number> N cast(final Number n, final Class<N> c)
             throws IllegalArgumentException
     {
-        if (n == null || n.getClass() == c) {
-            return (N) n;
-        }
-        if (c == Byte   .class) return (N) Byte   .valueOf(n.  byteValue());
-        if (c == Short  .class) return (N) Short  .valueOf(n. shortValue());
-        if (c == Integer.class) return (N) Integer.valueOf(n.   intValue());
-        if (c == Long   .class) return (N) Long   .valueOf(n.  longValue());
-        if (c == Float  .class) return (N) Float  .valueOf(n. floatValue());
-        if (c == Double .class) return (N) Double .valueOf(n.doubleValue());
-        throw unknownType(c);
+        return org.apache.sis.util.Numbers.cast(n, c);
     }
 
     /**
@@ -582,34 +393,10 @@ public final class Numbers extends Static {
      * @throws NumberFormatException if {@code type} is a subclass of {@link Number} and the
      *         string value is not parseable as a number of the specified type.
      */
-    @SuppressWarnings("unchecked")
     public static <T> T valueOf(final Class<T> type, final String value)
             throws IllegalArgumentException, NumberFormatException
     {
-        if (value == null) {
-            return null;
-        }
-        if (type == Double .class) return (T) Double .valueOf(value);
-        if (type == Float  .class) return (T) Float  .valueOf(value);
-        if (type == Long   .class) return (T) Long   .valueOf(value);
-        if (type == Integer.class) return (T) Integer.valueOf(value);
-        if (type == Short  .class) return (T) Short  .valueOf(value);
-        if (type == Byte   .class) return (T) Byte   .valueOf(value);
-        if (type == Boolean.class) return (T) Boolean.valueOf(value);
-        if (type == Character.class) {
-            /*
-             * If the string is empty, returns 0 which means "end of string" in C/C++
-             * and NULL in Unicode standard. If non-empty, take only the first char.
-             * This is somewhat consistent with Boolean.valueOf(...) which is quite
-             * lenient about the parsing as well, and throwing a NumberFormatException
-             * for those would not be appropriate.
-             */
-            return (T) Character.valueOf(value.isEmpty() ? 0 : value.charAt(0));
-        }
-        if (type == String.class) {
-            return (T) value;
-        }
-        throw unknownType(type);
+        return org.apache.sis.util.Numbers.valueOf(value, type);
     }
 
     /**
@@ -646,25 +433,8 @@ public final class Numbers extends Static {
      *
      * @since 3.18
      */
-    @SuppressWarnings("unchecked")
     public static <T> T valueOfNil(final Class<T> type) {
-        if (type.isPrimitive()) {
-            return (T) MAPPING.get(type).nullValue;
-        }
-        if (type == Map      .class) return (T)  Collections.EMPTY_MAP;
-        if (type == List     .class) return (T)  Collections.EMPTY_LIST;
-        if (type == Queue    .class) return (T) XCollections.emptyQueue();
-        if (type == SortedSet.class) return (T) XCollections.emptySortedSet();
-        if (type != null && type != Object.class) {
-            if (type.isAssignableFrom(Set.class)) {
-                return (T) Collections.EMPTY_SET;
-            }
-            final Class<?> element = type.getComponentType();
-            if (element != null) {
-                return (T) Array.newInstance(element, 0);
-            }
-        }
-        return null;
+        return org.apache.sis.util.Numbers.valueOfNil(type);
     }
 
     /**
@@ -676,20 +446,6 @@ public final class Numbers extends Static {
      * @return The constant for the given type, or {@link #OTHER} if unknown.
      */
     public static byte getEnumConstant(final Class<?> type) {
-        final Numbers mapping = MAPPING.get(type);
-        if (mapping != null) {
-            // Filter out the non-public enum for BigDecimal and BigInteger.
-            if (mapping.size >= 0) {
-                return mapping.ordinal;
-            }
-        }
-        return OTHER;
-    }
-
-    /**
-     * Returns an exception for an unknown type.
-     */
-    private static IllegalArgumentException unknownType(final Class<?> type) {
-        return new IllegalArgumentException(Errors.format(Errors.Keys.UNKNOWN_TYPE_$1, type));
+        return org.apache.sis.util.Numbers.getEnumConstant(type);
     }
 }

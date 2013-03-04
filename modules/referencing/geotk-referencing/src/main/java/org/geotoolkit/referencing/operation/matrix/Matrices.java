@@ -26,10 +26,10 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
 
 import org.geotoolkit.lang.Static;
-import org.geotoolkit.math.XMath;
+import org.apache.sis.math.MathFunctions;
 import org.geotoolkit.util.Utilities;
-import org.geotoolkit.util.ArgumentChecks;
-import org.geotoolkit.util.ComparisonMode;
+import org.apache.sis.util.ArgumentChecks;
+import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.referencing.operation.transform.LinearTransform;
 
@@ -677,7 +677,7 @@ search:     for (int j=numRow; --j>=0;) {
      *   <li>The last column in the given matrix is assumed to contain translation terms,
      *       and will be ignored in the vector magnitude calculation described below.</li>
      *   <li>For each row:<ul>
-     *     <li>Compute the {@linkplain XMath#magnitude(double[]) magnitude} of the vector
+     *     <li>Compute the {@linkplain MathFunctions#magnitude(double[]) magnitude} of the vector
      *         formed by the coefficients in all columns except the last one.</li>
      *     <li>Multiply the given {@code tolerance} value by the given vector magnitude.</li>
      *     <li>For each element in the current row:<ul>
@@ -713,7 +713,7 @@ search:     for (int j=numRow; --j>=0;) {
             for (int i=0; i<vector.length; i++) {
                 vector[i] = matrix.getElement(j, i);
             }
-            final double eps = XMath.magnitude(vector) * tolerance;
+            final double eps = MathFunctions.magnitude(vector) * tolerance;
             for (int i=0; i<numCol; i++) {
                 final double value = matrix.getElement(j, i) * scale;
                 final double round = Math.rint(value);

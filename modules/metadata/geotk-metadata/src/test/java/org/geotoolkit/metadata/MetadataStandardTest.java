@@ -17,6 +17,8 @@
  */
 package org.geotoolkit.metadata;
 
+import org.apache.sis.metadata.TypeValuePolicy;
+import org.apache.sis.metadata.KeyNamePolicy;
 import java.util.Map;
 import java.util.Set;
 import java.util.List;
@@ -29,7 +31,7 @@ import org.opengis.metadata.quality.Completeness;
 import org.opengis.coverage.grid.RectifiedGrid;
 
 import org.geotoolkit.test.Depend;
-import org.geotoolkit.util.ComparisonMode;
+import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.util.SimpleInternationalString;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.metadata.iso.citation.DefaultCitation;

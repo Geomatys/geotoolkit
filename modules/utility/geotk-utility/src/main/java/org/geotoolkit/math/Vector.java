@@ -23,11 +23,11 @@ import java.util.AbstractList;
 import java.util.RandomAccess;
 
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.converter.Numbers;
+import org.apache.sis.util.Numbers;
 import org.geotoolkit.util.collection.WeakHashSet;
 import org.geotoolkit.util.collection.CheckedCollection;
 
-import static org.geotoolkit.util.ArgumentChecks.ensureValidIndex;
+import static org.apache.sis.util.ArgumentChecks.ensureValidIndex;
 
 
 /**

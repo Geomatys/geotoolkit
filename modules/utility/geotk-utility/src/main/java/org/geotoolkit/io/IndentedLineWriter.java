@@ -20,10 +20,12 @@ package org.geotoolkit.io;
 import java.io.IOException;
 import java.io.Writer;
 import net.jcip.annotations.ThreadSafe;
+import org.apache.sis.io.IO;
+import org.apache.sis.io.LineAppender;
+import org.apache.sis.util.ArgumentChecks;
 
 import org.geotoolkit.util.Strings;
 import org.geotoolkit.lang.Decorator;
-import org.geotoolkit.util.ArgumentChecks;
 
 
 /**
@@ -36,24 +38,43 @@ import org.geotoolkit.util.ArgumentChecks;
  *
  * @since 2.4
  * @module
+ *
+ * @deprecated Moved to Apache SIS as {@link LineAppender}.
  */
+@Deprecated
 @ThreadSafe
 @Decorator(Writer.class)
 public class IndentedLineWriter extends FilterWriter {
+    /**
+     * The Apache SIS formatter on which to delegate the work, with delegation of
+     * {@link #onLineBegin(boolean)} calls to the Geotk {@link #beginNewLine()}.
+     */
+    private static class Formatter extends LineAppender {
+        IndentedLineWriter enclosing;
+
+        Formatter(final Writer out) {
+            super(out);
+        }
+
+        @Override
+        protected void onLineBegin(boolean isContinuation) throws IOException {
+            enclosing.beginNewLine((Writer) out);
+        }
+    }
+
     /**
      * A string with a length equal to the indentation.
      */
     private String margin = "";
 
     /**
-     * {@code true} if we are about to write a new line.
+     * Workaround for RFE #4093999 ("Relax constraint on placement of this()/super()
+     * call in constructors")
      */
-    private boolean newLine = true;
-
-    /**
-     * {@code true} if we are waiting for a {@code '\n'} character.
-     */
-    private boolean waitLF;
+    private IndentedLineWriter(final Formatter formatter) {
+        super(IO.asWriter(formatter));
+        formatter.enclosing = this;
+    }
 
     /**
      * Constructs a stream which will add spaces in front of each line.
@@ -64,7 +85,7 @@ public class IndentedLineWriter extends FilterWriter {
      * @param out The underlying stream to write to.
      */
     public IndentedLineWriter(final Writer out) {
-        super(out);
+        this(new Formatter(out));
     }
 
     /**
@@ -78,7 +99,7 @@ public class IndentedLineWriter extends FilterWriter {
      * @since 3.00
      */
     public IndentedLineWriter(final Writer out, final int width) {
-        super(out);
+        this(out);
         setIndentation(width);
     }
 
@@ -137,6 +158,19 @@ public class IndentedLineWriter extends FilterWriter {
     }
 
     /**
+     * Bridge between the Apache SIS and the Geotk API.
+     */
+    final void beginNewLine(final Writer writeTo) throws IOException {
+        final Writer old = out;
+        out = writeTo;
+        try {
+            beginNewLine();
+        } finally {
+            out = old;
+        }
+    }
+
+    /**
      * Invoked when a new line is beginning. The default implementation writes the
      * amount of spaces specified by the last call to {@link #setIndentation}.
      *
@@ -144,99 +178,5 @@ public class IndentedLineWriter extends FilterWriter {
      */
     protected void beginNewLine() throws IOException {
         out.write(margin);
-    }
-
-    /**
-     * Writes the specified character.
-     *
-     * @throws IOException If an I/O error occurs.
-     */
-    private void doWrite(final int c) throws IOException {
-        assert Thread.holdsLock(lock);
-        if (newLine && (c!='\n' || !waitLF)) {
-            beginNewLine();
-        }
-        out.write(c);
-        if ((newLine = (c=='\r' || c=='\n')) == true) {
-            waitLF = (c=='\r');
-        }
-    }
-
-    /**
-     * Writes a single character.
-     *
-     * @throws IOException If an I/O error occurs.
-     */
-    @Override
-    public void write(final int c) throws IOException {
-        synchronized (lock) {
-            doWrite(c);
-        }
-    }
-
-    /**
-     * Writes a portion of an array of characters.
-     *
-     * @param  buffer  Buffer of characters to be written.
-     * @param  offset  Offset from which to start reading characters.
-     * @param  length  Number of characters to be written.
-     * @throws IOException If an I/O error occurs.
-     */
-    @Override
-    public void write(final char[] buffer, int offset, final int length) throws IOException {
-        final int upper = offset + length;
-        synchronized (lock) {
-check:      while (offset < upper) {
-                if (newLine) {
-                    doWrite(buffer[offset++]);
-                    continue;
-                }
-                final int lower = offset;
-                do {
-                    final char c = buffer[offset];
-                    if (c=='\r' || c=='\n') {
-                        out.write(buffer, lower, offset-lower);
-                        doWrite(c);
-                        offset++;
-                        continue check;
-                    }
-                } while (++offset < upper);
-                out.write(buffer, lower, offset-lower);
-                break;
-            }
-        }
-    }
-
-    /**
-     * Writes a portion of a string.
-     *
-     * @param  string  String to be written.
-     * @param  offset  Offset from which to start reading characters.
-     * @param  length  Number of characters to be written.
-     * @throws IOException If an I/O error occurs.
-     */
-    @Override
-    public void write(final String string, int offset, final int length) throws IOException {
-        final int upper = offset + length;
-        synchronized (lock) {
-check:      while (offset < upper) {
-                if (newLine) {
-                    doWrite(string.charAt(offset++));
-                    continue;
-                }
-                final int lower = offset;
-                do {
-                    final char c = string.charAt(offset);
-                    if (c=='\r' || c=='\n') {
-                        out.write(string, lower, offset-lower);
-                        doWrite(c);
-                        offset++;
-                        continue check;
-                    }
-                } while (++offset < upper);
-                out.write(string, lower, offset-lower);
-                break;
-            }
-        }
     }
 }

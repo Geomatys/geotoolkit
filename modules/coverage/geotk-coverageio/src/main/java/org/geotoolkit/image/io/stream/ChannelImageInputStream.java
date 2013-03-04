@@ -38,7 +38,7 @@ import javax.imageio.stream.ImageInputStream;
 import org.geotoolkit.internal.io.Buffers;
 import org.geotoolkit.resources.Errors;
 
-import static org.geotoolkit.util.ArgumentChecks.ensureBetween;
+import static org.apache.sis.util.ArgumentChecks.ensureBetween;
 
 
 /**

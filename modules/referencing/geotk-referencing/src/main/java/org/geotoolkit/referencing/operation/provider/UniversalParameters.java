@@ -36,7 +36,7 @@ import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.referencing.ReferenceIdentifier;
 
-import org.geotoolkit.util.XArrays;
+import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.referencing.IdentifiedObjects;
@@ -583,7 +583,7 @@ public final class UniversalParameters extends DefaultParameterDescriptor<Double
         int included = 0;
         for (final NamedIdentifier candidate : identifiers) {
             final Citation authority = candidate.getAuthority();
-            if (XArrays.contains(excludes, authority)) {
+            if (ArraysExt.contains(excludes, authority)) {
                 continue;
             }
             selected[included] = candidate;
@@ -642,12 +642,12 @@ public final class UniversalParameters extends DefaultParameterDescriptor<Double
          * between different provider. Deprecated names are rare enough that this is not needed.
          */
         if (deprecated != null) {
-            selected = XArrays.resize(selected, n + deprecated.length);
+            selected = ArraysExt.resize(selected, n + deprecated.length);
             for (final String code : deprecated) {
                 selected[n++] = new DeprecatedName(identifiersMap.get(code));
             }
         }
-        selected = XArrays.resize(selected, n);
+        selected = ArraysExt.resize(selected, n);
         return new DefaultParameterDescriptor<Double>(toMap(selected), Double.class, null,
                 (defaultValue != null) ? defaultValue : getDefaultValue(),
                 getMinimumValue(), getMaximumValue(), getUnit(),
@@ -784,7 +784,7 @@ public final class UniversalParameters extends DefaultParameterDescriptor<Double
                         int n = 0;
                         for (final Object alias : aliases) {
                             if (alias instanceof ReferenceIdentifier) {
-                                if (XArrays.contains(excludes, ((ReferenceIdentifier) alias).getAuthority())) {
+                                if (ArraysExt.contains(excludes, ((ReferenceIdentifier) alias).getAuthority())) {
                                     continue;
                                 }
                             }
@@ -835,8 +835,8 @@ public final class UniversalParameters extends DefaultParameterDescriptor<Double
                 id[idCount++] = candidate;
             }
         }
-        id    = XArrays.resize(id,    idCount);
-        alias = XArrays.resize(alias, aliasCount);
+        id    = ArraysExt.resize(id,    idCount);
+        alias = ArraysExt.resize(alias, aliasCount);
         final Map<String,Object> properties = new HashMap<String,Object>(4);
         properties.put(NAME_KEY,        identifiers[0]);
         properties.put(IDENTIFIERS_KEY, id);

@@ -17,11 +17,6 @@
  */
 package org.geotoolkit.measure;
 
-import java.util.Map;
-import java.util.HashMap;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-
 import javax.measure.unit.SI;
 import javax.measure.unit.NonSI;
 import javax.measure.unit.Unit;
@@ -34,10 +29,6 @@ import javax.measure.converter.UnitConverter;
 
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.lang.Workaround;
-import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.Exceptions;
-import org.geotoolkit.util.Strings;
-import org.geotoolkit.util.XArrays;
 
 
 /**
@@ -48,20 +39,11 @@ import org.geotoolkit.util.XArrays;
  *
  * @since 2.1
  * @module
+ *
+ * @deprecated Moved to Apache SIS {@link org.apache.sis.measure.Units}.
  */
+@Deprecated
 public final class Units extends Static {
-    /**
-     * Small tolerance factor for the comparisons of floating point values.
-     */
-    private static final double EPS = 1E-12;
-
-    /**
-     * The suffixes that NetCDF files sometime put after the "degrees" unit.
-     *
-     * @since 3.20
-     */
-    private static final String[] DEGREE_SUFFIXES = {"east", "west", "north", "south"};
-
     /**
      * Do not allows instantiation of this class.
      */
@@ -71,7 +53,7 @@ public final class Units extends Static {
     /**
      * Unit for milliseconds. Useful for conversion from and to {@link java.util.Date} objects.
      */
-    public static final Unit<Duration> MILLISECOND = SI.MetricPrefix.MILLI(SI.SECOND);
+    public static final Unit<Duration> MILLISECOND = org.apache.sis.measure.Units.MILLISECOND;
 
     /**
      * Pseudo-unit for sexagesimal degree. Numbers in this pseudo-unit has the following format:
@@ -85,8 +67,8 @@ public final class Units extends Static {
      *
      * @todo <a href="http://kenai.com/jira/browse/JSR_275-41">JSR-275 bug</a>
      */
-    public static final Unit<Angle> SEXAGESIMAL_DMS = NonSI.DEGREE_ANGLE.transform(
-            SexagesimalConverter.FRACTIONAL.inverse()).asType(Angle.class);//.alternate("D.MS");
+    @SuppressWarnings("unchecked")
+    public static final Unit<Angle> SEXAGESIMAL_DMS = (Unit) org.apache.sis.measure.Units.valueOfEPSG(9110);
 
     /**
      * Pseudo-unit for degree - minute - second. Numbers in this pseudo-unit has the following
@@ -101,42 +83,15 @@ public final class Units extends Static {
      *
      * @todo <a href="http://kenai.com/jira/browse/JSR_275-41">JSR-275 bug</a>
      */
-    public static final Unit<Angle> DEGREE_MINUTE_SECOND = NonSI.DEGREE_ANGLE.transform(
-            SexagesimalConverter.INTEGER.inverse()).asType(Angle.class);//.alternate("DMS");
+    @SuppressWarnings("unchecked")
+    public static final Unit<Angle> DEGREE_MINUTE_SECOND = (Unit) org.apache.sis.measure.Units.valueOfEPSG(9107);
 
     /**
      * Parts per million.
      *
      * @todo <a href="http://kenai.com/jira/browse/JSR_275-41">JSR-275 bug</a>
      */
-    public static final Unit<Dimensionless> PPM = Unit.ONE.times(1E-6);//.alternate("ppm");
-
-    /**
-     * A few units commonly used in GIS.
-     */
-    private static final Map<Unit<?>,Unit<?>> COMMONS = new HashMap<Unit<?>,Unit<?>>(48);
-    static {
-        COMMONS.put(PPM, PPM);
-        boolean nonSI = false;
-        do for (final Field field : (nonSI ? NonSI.class : SI.class).getFields()) {
-            final int modifiers = field.getModifiers();
-            if (Modifier.isStatic(modifiers) && Modifier.isFinal(modifiers)) {
-                final Object value;
-                try {
-                    value = field.get(null);
-                } catch (Exception e) {
-                    // Should not happen since we asked only for public static constants.
-                    throw new AssertionError(e);
-                }
-                if (value instanceof Unit<?>) {
-                    final Unit<?> unit = (Unit<?>) value;
-                    if (isLinear(unit) || isAngular(unit) || isScale(unit)) {
-                        COMMONS.put(unit, unit);
-                    }
-                }
-            }
-        } while ((nonSI = !nonSI) == true);
-    }
+    public static final Unit<Dimensionless> PPM = org.apache.sis.measure.Units.PPM;
 
     /**
      * Returns {@code true} if the given unit is a temporal unit.
@@ -150,7 +105,7 @@ public final class Units extends Static {
      * @since 3.00
      */
     public static boolean isTemporal(final Unit<?> unit) {
-        return (unit != null) && unit.toSI().equals(SI.SECOND);
+        return org.apache.sis.measure.Units.isTemporal(unit);
     }
 
     /**
@@ -165,7 +120,7 @@ public final class Units extends Static {
      * @since 3.00
      */
     public static boolean isLinear(final Unit<?> unit) {
-        return (unit != null) && unit.toSI().equals(SI.METRE);
+        return org.apache.sis.measure.Units.isLinear(unit);
     }
 
     /**
@@ -184,7 +139,7 @@ public final class Units extends Static {
      * @since 3.00
      */
     public static boolean isAngular(final Unit<?> unit) {
-        return (unit != null) && unit.toSI().equals(SI.RADIAN);
+        return org.apache.sis.measure.Units.isAngular(unit);
     }
 
     /**
@@ -199,7 +154,7 @@ public final class Units extends Static {
      * @since 3.00
      */
     public static boolean isScale(final Unit<?> unit) {
-        return (unit != null) && unit.toSI().equals(Unit.ONE);
+        return org.apache.sis.measure.Units.isScale(unit);
     }
 
     /**
@@ -213,7 +168,7 @@ public final class Units extends Static {
      * @since 3.20
      */
     public static boolean isPressure(final Unit<?> unit) {
-        return (unit != null) && unit.toSI().equals(SI.PASCAL);
+        return org.apache.sis.measure.Units.isPressure(unit);
     }
 
     /**
@@ -230,10 +185,7 @@ public final class Units extends Static {
      */
     @SuppressWarnings({"unchecked","rawtypes"})
     public static Unit<Duration> ensureTemporal(final Unit<?> unit) throws IllegalArgumentException {
-        if (unit != null && !isTemporal(unit)) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.NON_TEMPORAL_UNIT_$1, unit));
-        }
-        return (Unit) unit;
+        return org.apache.sis.measure.Units.ensureTemporal(unit);
     }
 
     /**
@@ -250,10 +202,7 @@ public final class Units extends Static {
      */
     @SuppressWarnings({"unchecked","rawtypes"})
     public static Unit<Length> ensureLinear(final Unit<?> unit) throws IllegalArgumentException {
-        if (unit != null && !isLinear(unit)) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.NON_LINEAR_UNIT_$1, unit));
-        }
-        return (Unit) unit;
+        return org.apache.sis.measure.Units.ensureLinear(unit);
     }
 
     /**
@@ -270,10 +219,7 @@ public final class Units extends Static {
      */
     @SuppressWarnings({"unchecked","rawtypes"})
     public static Unit<Angle> ensureAngular(final Unit<?> unit) throws IllegalArgumentException {
-        if (unit != null && !isAngular(unit)) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.NON_ANGULAR_UNIT_$1, unit));
-        }
-        return (Unit) unit;
+        return org.apache.sis.measure.Units.ensureAngular(unit);
     }
 
     /**
@@ -290,10 +236,7 @@ public final class Units extends Static {
      */
     @SuppressWarnings({"unchecked","rawtypes"})
     public static Unit<Dimensionless> ensureScale(final Unit<?> unit) throws IllegalArgumentException {
-        if (unit != null && !isScale(unit)) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.NON_SCALE_UNIT_$1, unit));
-        }
-        return (Unit) unit;
+        return org.apache.sis.measure.Units.ensureScale(unit);
     }
 
     /**
@@ -319,46 +262,7 @@ public final class Units extends Static {
      */
     @SuppressWarnings({"unchecked","rawtypes"})
     public static <A extends Quantity> Unit<A> multiply(Unit<A> unit, final double factor) {
-        if (SI.RADIAN.equals(unit)) {
-            if (Math.abs(factor - (Math.PI / 180)) < EPS) {
-                return (Unit) NonSI.DEGREE_ANGLE;
-            }
-            if (Math.abs(factor - (Math.PI / 200)) < EPS) {
-                return (Unit) NonSI.GRADE;
-            }
-        }
-        if (Math.abs(factor - 1) > EPS) {
-            final long fl = (long) factor;
-            if (fl == factor) {
-                /*
-                 * Invoke the Unit.times(long) overloaded method, not Unit.scale(double),
-                 * because as of JSR-275 0.9.3 the method with the long argument seems to
-                 * do a better work of detecting when the result is an existing unit.
-                 */
-                unit = unit.times(fl);
-            } else {
-                unit = unit.times(factor);
-            }
-        }
-        return canonicalize(unit);
-    }
-
-    /**
-     * Returns a unique instance of the given units if possible, or the units unchanged otherwise.
-     *
-     * @param  <A>    The quantity measured by the unit.
-     * @param  unit   The unit to canonicalize.
-     * @return A unit equivalents to the given unit, canonicalized if possible.
-     *
-     * @since 3.07
-     */
-    @SuppressWarnings({"unchecked","rawtypes"})
-    private static <A extends Quantity> Unit<A> canonicalize(final Unit<A> unit) {
-        final Unit<?> candidate = COMMONS.get(unit);
-        if (candidate != null) {
-            return (Unit) candidate;
-        }
-        return unit;
+        return org.apache.sis.measure.Units.multiply(unit, factor);
     }
 
     /**
@@ -377,7 +281,7 @@ public final class Units extends Static {
      * @since 3.07
      */
     public static <A extends Quantity> double toStandardUnit(final Unit<A> unit) {
-        return derivative(unit.getConverterTo(unit.toSI()), 0);
+        return org.apache.sis.measure.Units.toStandardUnit(unit);
     }
 
     /**
@@ -405,7 +309,7 @@ public final class Units extends Static {
      */
     @Workaround(library="Units", version="0.9.3")
     public static double derivative(final UnitConverter converter, final double value) {
-        return converter.convert(value + 1) - converter.convert(value);
+        return org.apache.sis.measure.Units.derivative(converter, value);
     }
 
     /**
@@ -430,109 +334,7 @@ public final class Units extends Static {
      * @since 3.07
      */
     public static Unit<?> valueOf(String uom) throws IllegalArgumentException {
-        if (uom == null) {
-            return null;
-        }
-        uom = Strings.toASCII(uom.trim()).toString();
-        int s = uom.indexOf(':');
-        if (s >= 0) {
-            final String authority = uom.substring(0, s).trim();
-            if (authority.equalsIgnoreCase("EPSG")) try {
-                return valueOfEPSG(Integer.parseInt(uom.substring(s+1).trim()));
-            } catch (NumberFormatException e) {
-                throw new IllegalArgumentException(Errors.format(
-                        Errors.Keys.ILLEGAL_ARGUMENT_$2, "uom", uom), e);
-            }
-        }
-        if (uom.length() >= 3) {
-            if (uom.regionMatches(true, 0, "deg", 0, 3)) {
-                if (uom.length() == 3) {
-                    return NonSI.DEGREE_ANGLE; // "deg"
-                }
-                boolean isTemperature = false;
-                s = uom.indexOf(' ', 3);
-                if (s < 0) {
-                    s = uom.indexOf('_', 3);
-                }
-                if (s >= 0) {
-                    final String prefix = uom.substring(0,s).trim();
-                    final String suffix = uom.substring(s+1).trim();
-                    if (!prefix.isEmpty() && !suffix.isEmpty()) {
-                        if (XArrays.containsIgnoreCase(DEGREE_SUFFIXES, suffix)) {
-                            uom = prefix;
-                        } else {
-                            uom = prefix;
-                            isTemperature = isCelsius(suffix);
-                        }
-                    }
-                }
-                if (equalsIgnorePlural(uom, "degree")) {
-                    return isTemperature ? SI.CELSIUS : NonSI.DEGREE_ANGLE;
-                }
-            } else if (equalsIgnorePlural(uom, "pixel")) {
-                return NonSI.PIXEL;
-            } else if (equalsIgnorePlural(uom, "decimal_degree")) {
-                return NonSI.DEGREE_ANGLE;
-            } else if (uom.equalsIgnoreCase("rad") || equalsIgnorePlural(uom, "radian")) {
-                return SI.RADIAN;
-            } else if (equalsIgnorePlural(uom, "kilometer") || equalsIgnorePlural(uom, "kilometre")) {
-                return SI.KILOMETRE;
-            } else if (equalsIgnorePlural(uom, "meter") || equalsIgnorePlural(uom, "metre")) {
-                return SI.METRE;
-            } else if (equalsIgnorePlural(uom, "week")) {
-                return NonSI.WEEK;
-            } else if (equalsIgnorePlural(uom, "day")) {
-                return NonSI.DAY;
-            } else if (equalsIgnorePlural(uom, "hour")) {
-                return NonSI.HOUR;
-            } else if (equalsIgnorePlural(uom, "minute")) {
-                return NonSI.MINUTE;
-            } else if (equalsIgnorePlural(uom, "second")) {
-                return SI.SECOND;
-            } else if (uom.equalsIgnoreCase("psu")) { // Pratical Salinity Scale
-                return Unit.ONE;
-            } else if (uom.equalsIgnoreCase("level")) { // Sigma level
-                return Unit.ONE;
-            } else if (isCelsius(uom)) {
-                return SI.CELSIUS;
-            }
-        } else {
-            // Symbols having less than 3 characters.
-            if (uom.isEmpty()) {
-                return Unit.ONE;
-            } else if (uom.equals("°")) {
-                return NonSI.DEGREE_ANGLE;
-            }
-        }
-        final Unit<?> unit;
-        try {
-            unit = Unit.valueOf(uom);
-        } catch (IllegalArgumentException e) {
-            // Provides a better error message than the default JSR-275 0.9.4 implementation.
-            throw Exceptions.setMessage(e, Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_$2, "uom", uom), true);
-        }
-        return canonicalize(unit);
-    }
-
-    /**
-     * Returns {@code true} if the given {@code uom} is equals to the given expected string,
-     * ignoring trailing {@code 's'} character (if any).
-     */
-    private static boolean equalsIgnorePlural(final String uom, final String expected) {
-        if (uom.equalsIgnoreCase(expected)) {
-            return true;
-        }
-        final int length = expected.length();
-        return uom.length() == length+1 && Character.toLowerCase(uom.charAt(length)) == 's' &&
-                uom.regionMatches(true, 0, expected, 0, length);
-    }
-
-    /**
-     * Returns {@code true} if the given {@code uom} is equals to {@code "Celsius"} or
-     * {@code "Celcius"}. The later is a common misspelling.
-     */
-    private static boolean isCelsius(final String uom) {
-        return uom.equalsIgnoreCase("Celsius") || uom.equalsIgnoreCase("Celcius");
+        return org.apache.sis.measure.Units.valueOf(uom);
     }
 
     /**
@@ -592,26 +394,6 @@ public final class Units extends Static {
      * @since 3.09
      */
     public static Unit<?> valueOfEPSG(final int code) {
-        switch (code) {
-            case 9001: return SI   .METRE;
-            case 9002: return NonSI.FOOT;
-            case 9030: return NonSI.NAUTICAL_MILE;
-            case 9036: return SI   .KILOMETRE;
-            case 9101: return SI   .RADIAN;
-            case 9122: // Fall through
-            case 9102: return NonSI.DEGREE_ANGLE;
-            case 9103: return NonSI.MINUTE_ANGLE;
-            case 9104: return NonSI.SECOND_ANGLE;
-            case 9105: return NonSI.GRADE;
-            case 9107: return Units.DEGREE_MINUTE_SECOND;
-            case 9108: return Units.DEGREE_MINUTE_SECOND;
-            case 9109: return SI.MetricPrefix.MICRO(SI.RADIAN);
-            case 9110: return Units.SEXAGESIMAL_DMS;
-//TODO      case 9111: return NonSI.SEXAGESIMAL_DM;
-            case 9203: // Fall through
-            case 9201: return Unit .ONE;
-            case 9202: return Units.PPM;
-            default:   return null;
-        }
+        return org.apache.sis.measure.Units.valueOfEPSG(code);
     }
 }

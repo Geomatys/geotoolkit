@@ -31,8 +31,8 @@ import org.opengis.referencing.cs.CartesianCS;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.opengis.geometry.MismatchedDimensionException;
 
-import org.geotoolkit.math.XMath;
-import org.geotoolkit.measure.Units;
+import org.apache.sis.math.MathFunctions;
+import org.apache.sis.measure.Units;
 import org.geotoolkit.measure.Measure;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
@@ -329,7 +329,7 @@ public class DefaultCartesianCS extends DefaultAffineCS implements CartesianCS {
             final UnitConverter  c = converters[i];
             delta[i] = c.convert(coord1[i]) - c.convert(coord2[i]);
         }
-        return new Measure(XMath.magnitude(delta), unit);
+        return new Measure(MathFunctions.magnitude(delta), unit);
     }
 
     /**

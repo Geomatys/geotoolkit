@@ -34,13 +34,13 @@ import org.opengis.annotation.UML;
 import org.opengis.util.CodeList;
 
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.internal.CodeLists;
+import org.apache.sis.util.iso.Types;
 import org.geotoolkit.internal.sql.SQLBuilder;
 import org.geotoolkit.internal.sql.StatementPool;
 import org.geotoolkit.internal.sql.DefaultDataSource;
 import org.geotoolkit.internal.sql.StatementEntry;
 import org.geotoolkit.metadata.NullValuePolicy;
-import org.geotoolkit.metadata.KeyNamePolicy;
+import org.apache.sis.metadata.KeyNamePolicy;
 import org.geotoolkit.metadata.MetadataStandard;
 import org.geotoolkit.util.collection.WeakValueHashMap;
 import org.geotoolkit.util.converter.Classes;
@@ -49,7 +49,7 @@ import org.geotoolkit.util.converter.ConverterRegistry;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
 import org.geotoolkit.util.logging.Logging;
 
-import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
+import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 
 
 /**
@@ -490,7 +490,7 @@ public class MetadataSource {
      */
     @SuppressWarnings({"unchecked","rawtypes"})
     private static CodeList<?> getCodeList(final Class<?> type, final String name) {
-        return CodeLists.valueOf((Class) type, name);
+        return Types.forCodeName((Class) type, name, true);
     }
 
     /**

@@ -43,7 +43,7 @@ import org.geotoolkit.referencing.cs.DefaultCompoundCS;
 import org.geotoolkit.referencing.AbstractReferenceSystem;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
 import org.geotoolkit.util.collection.CheckedContainer;
-import org.geotoolkit.util.ComparisonMode;
+import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.resources.Errors;

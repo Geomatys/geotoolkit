@@ -61,7 +61,7 @@ import org.geotoolkit.internal.image.io.GridDomainAccessor;
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.NumberRange;
-import org.geotoolkit.util.XArrays;
+import org.apache.sis.util.ArraysExt;
 
 import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMAT_NAME;
 import static org.geotoolkit.internal.image.io.DimensionAccessor.fixRoundingError;
@@ -227,8 +227,8 @@ final class GridCoverageLoader extends ImageCoverageReader {
     @Override
     protected boolean canReuseImageReader(final ImageReaderSpi provider, final Object input) throws IOException {
         assert (provider instanceof MosaicImageReader.Spi) || // The format name of this provider is "mosaic".
-                XArrays.containsIgnoreCase(provider.getFormatNames(), format.imageFormat) ||
-                XArrays.containsIgnoreCase(provider.getMIMETypes(),   format.imageFormat) : format;
+                ArraysExt.containsIgnoreCase(provider.getFormatNames(), format.imageFormat) ||
+                ArraysExt.containsIgnoreCase(provider.getMIMETypes(),   format.imageFormat) : format;
         return true;
     }
 
@@ -368,7 +368,7 @@ final class GridCoverageLoader extends ImageCoverageReader {
                 }
                 accessor.setValidSampleValue(range);
                 if (fillValuesCount != 0) {
-                    accessor.setFillSampleValues(XArrays.resize(fillValues, fillValuesCount));
+                    accessor.setFillSampleValues(ArraysExt.resize(fillValues, fillValuesCount));
                 }
                 /*
                  * Add the transfer function.

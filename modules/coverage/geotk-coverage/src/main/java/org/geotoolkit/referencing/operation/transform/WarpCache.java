@@ -20,7 +20,7 @@ package org.geotoolkit.referencing.operation.transform;
 import javax.media.jai.Warp;
 import javax.media.jai.WarpGrid;
 
-import org.geotoolkit.util.collection.Cache;
+import org.apache.sis.util.collection.Cache;
 
 
 /**

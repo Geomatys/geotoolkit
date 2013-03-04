@@ -26,8 +26,8 @@ import java.util.concurrent.CountDownLatch;
 import java.util.Map;
 
 import org.geotoolkit.math.Statistics;
-import org.geotoolkit.util.converter.Classes;
 
+import org.apache.sis.util.Classes;
 import org.junit.*;
 import static org.junit.Assume.assumeNotNull;
 

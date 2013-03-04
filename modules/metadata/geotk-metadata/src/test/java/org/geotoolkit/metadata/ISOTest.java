@@ -17,6 +17,8 @@
  */
 package org.geotoolkit.metadata;
 
+import org.apache.sis.metadata.TypeValuePolicy;
+import org.apache.sis.metadata.KeyNamePolicy;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.Collection;
@@ -29,7 +31,7 @@ import org.opengis.metadata.maintenance.ScopeDescription;
 import org.opengis.metadata.identification.AggregateInformation;
 import org.opengis.metadata.identification.RepresentativeFraction;
 
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 import org.geotoolkit.util.collection.CheckedContainer;
 import org.geotoolkit.metadata.iso.DefaultMetadata;
 import org.geotoolkit.test.TestBase;

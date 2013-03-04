@@ -17,16 +17,9 @@
  */
 package org.geotoolkit.util.collection;
 
-import java.util.Iterator;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.LinkedHashSet;
 import net.jcip.annotations.ThreadSafe;
-
 import org.geotoolkit.util.Cloneable;
-import org.geotoolkit.resources.Errors;
-
-import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 
 
 /**
@@ -49,18 +42,16 @@ import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
  *
  * @since 2.1
  * @module
+ *
+ * @deprecated Moved to Apache SIS {@link org.apache.sis.util.collection.CheckedHashSet}.
  */
 @ThreadSafe
-public class CheckedHashSet<E> extends LinkedHashSet<E> implements CheckedCollection<E>, Cloneable {
+@Deprecated
+public class CheckedHashSet<E> extends org.apache.sis.util.collection.CheckedHashSet<E> implements CheckedCollection<E>, Cloneable {
     /**
      * Serial version UID for compatibility with different versions.
      */
     private static final long serialVersionUID = -9014541457174735097L;
-
-    /**
-     * The element type.
-     */
-    private final Class<E> type;
 
     /**
      * Constructs a set of the specified type.
@@ -68,9 +59,7 @@ public class CheckedHashSet<E> extends LinkedHashSet<E> implements CheckedCollec
      * @param type The element type (should not be null).
      */
     public CheckedHashSet(final Class<E> type) {
-        super();
-        this.type = type;
-        ensureNonNull("type", type);
+        super(type);
     }
 
     /**
@@ -82,19 +71,7 @@ public class CheckedHashSet<E> extends LinkedHashSet<E> implements CheckedCollec
      * @since 2.4
      */
     public CheckedHashSet(final Class<E> type, final int capacity) {
-        super(capacity);
-        this.type = type;
-        ensureNonNull("type", type);
-    }
-
-    /**
-     * Returns the element type given at construction time.
-     *
-     * @since 2.4
-     */
-    @Override
-    public Class<E> getElementType() {
-        return type;
+        super(type, capacity);
     }
 
     /**
@@ -104,235 +81,23 @@ public class CheckedHashSet<E> extends LinkedHashSet<E> implements CheckedCollec
      * @param  element the object to check, or {@code null}.
      * @throws IllegalArgumentException if the specified element is not of the expected type.
      */
-    protected void ensureValidType(final E element) throws IllegalArgumentException {
-        if (element!=null && !type.isInstance(element)) {
-            throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.ILLEGAL_CLASS_$2, element.getClass(), type));
-        }
-    }
-
-    /**
-     * Checks the type of all elements in the specified collection.
-     *
-     * @param  collection the collection to check, or {@code null}.
-     * @throws IllegalArgumentException if at least one element is not of the expected type.
-     */
-    private void ensureValid(final Collection<? extends E> collection) throws IllegalArgumentException {
-        if (collection != null) {
-            for (final E element : collection) {
-                ensureValidType(element);
-            }
-        }
-    }
-
-    /**
-     * Checks if changes in this collection are allowed. This method is automatically invoked
-     * after this collection got the {@linkplain #getLock lock} and before any operation that
-     * may change the content. The default implementation does nothing (i.e. this collection
-     * is modifiable). Subclasses should override this method if they want to control write
-     * access.
-     *
-     * @throws UnsupportedOperationException if this collection is unmodifiable.
-     *
-     * @since 2.5
-     */
-    protected void checkWritePermission() throws UnsupportedOperationException {
-    }
-
-    /**
-     * Returns the synchronization lock. The default implementation returns {@code this}.
-     * Subclasses that override this method should be careful to update the lock reference
-     * when this set is {@linkplain #clone cloned}.
-     *
-     * @return The synchronization lock.
-     *
-     * @since 2.5
-     */
-    protected Object getLock() {
-        return this;
-    }
-
-    /**
-     * Returns an iterator over the elements in this set.
-     */
     @Override
-    public Iterator<E> iterator() {
-        final Object lock = getLock();
-        synchronized (lock) {
-            return new SynchronizedIterator<E>(super.iterator(), lock);
-        }
-    }
-
-    /**
-     * Returns the number of elements in this set.
-     */
-    @Override
-    public int size() {
-        synchronized (getLock()) {
-            return super.size();
-        }
-    }
-
-    /**
-     * Returns {@code true} if this set contains no elements.
-     */
-    @Override
-    public boolean isEmpty() {
-        synchronized (getLock()) {
-            return super.isEmpty();
-        }
-    }
-
-    /**
-     * Returns {@code true} if this set contains the specified element.
-     */
-    @Override
-    public boolean contains(final Object o) {
-        synchronized (getLock()) {
-            return super.contains(o);
-        }
-    }
-
-    /**
-     * Adds the specified element to this set if it is not already present.
-     *
-     * @param  element element to be added to this set.
-     * @return {@code true} if the set did not already contain the specified element.
-     * @throws IllegalArgumentException if the specified element is not of the expected type.
-     * @throws UnsupportedOperationException if this collection is unmodifiable.
-     */
-    @Override
-    public boolean add(final E element)
-            throws IllegalArgumentException, UnsupportedOperationException
-    {
+    protected final void ensureValid(final E element) throws IllegalArgumentException {
         ensureValidType(element);
-        synchronized (getLock()) {
-            checkWritePermission();
-            return super.add(element);
-        }
     }
 
     /**
-     * Appends all of the elements in the specified collection to this set.
+     * Checks the type of the specified object. The default implementation ensure
+     * that the object is assignable to the type specified at construction time.
      *
-     * @param collection the elements to be inserted into this set.
-     * @return {@code true} if this set changed as a result of the call.
-     * @throws IllegalArgumentException if at least one element is not of the expected type.
-     * @throws UnsupportedOperationException if this collection is unmodifiable.
-     */
-    @Override
-    public boolean addAll(final Collection<? extends E> collection)
-            throws IllegalArgumentException, UnsupportedOperationException
-    {
-        ensureValid(collection);
-        synchronized (getLock()) {
-            checkWritePermission();
-            return super.addAll(collection);
-        }
-    }
-
-    /**
-     * Removes the pecified element from this set.
+     * @param  element the object to check, or {@code null}.
+     * @throws IllegalArgumentException if the specified element is not of the expected type.
      *
-     * @throws UnsupportedOperationException if this collection is unmodifiable.
+     * @deprecated Renamed {@link #ensureValid(Object)}.
      */
-    @Override
-    public boolean remove(Object o) throws UnsupportedOperationException {
-        synchronized (getLock()) {
-            checkWritePermission();
-            return super.remove(o);
-        }
-    }
-
-    /**
-     * Removes all of this set's elements that are also contained in the specified collection.
-     *
-     * @throws UnsupportedOperationException if this collection is unmodifiable.
-     */
-    @Override
-    public boolean removeAll(Collection<?> c) throws UnsupportedOperationException {
-        synchronized (getLock()) {
-            checkWritePermission();
-            return super.removeAll(c);
-        }
-    }
-
-    /**
-     * Retains only the elements in this set that are contained in the specified collection.
-     *
-     * @throws UnsupportedOperationException if this collection is unmodifiable.
-     */
-    @Override
-    public boolean retainAll(Collection<?> c) throws UnsupportedOperationException {
-        synchronized (getLock()) {
-            checkWritePermission();
-            return super.retainAll(c);
-        }
-    }
-
-    /**
-     * Removes all of the elements from this set.
-     *
-     * @throws UnsupportedOperationException if this collection is unmodifiable.
-     */
-    @Override
-    public void clear() throws UnsupportedOperationException {
-        synchronized (getLock()) {
-            checkWritePermission();
-            super.clear();
-        }
-    }
-
-    /**
-     * Returns an array containing all of the elements in this set.
-     */
-    @Override
-    public Object[] toArray() {
-        synchronized (getLock()) {
-            return super.toArray();
-        }
-    }
-
-    /**
-     * Returns an array containing all of the elements in this set.
-     *
-     * @param <T> The type of array elements.
-     */
-    @Override
-    public <T> T[] toArray(T[] a) {
-        synchronized (getLock()) {
-            return super.toArray(a);
-        }
-    }
-
-    /**
-     * Returns a string representation of this set.
-     */
-    @Override
-    public String toString() {
-        synchronized (getLock()) {
-            return super.toString();
-        }
-    }
-
-    /**
-     * Compares the specified object with this set for equality.
-     */
-    @Override
-    public boolean equals(Object o) {
-        synchronized (getLock()) {
-            return super.equals(o);
-        }
-    }
-
-    /**
-     * Returns the hash code value for this set.
-     */
-    @Override
-    public int hashCode() {
-        synchronized (getLock()) {
-            return super.hashCode();
-        }
+    @Deprecated
+    protected void ensureValidType(final E element) throws IllegalArgumentException {
+        super.ensureValid(element);
     }
 
     /**
@@ -343,8 +108,6 @@ public class CheckedHashSet<E> extends LinkedHashSet<E> implements CheckedCollec
     @Override
     @SuppressWarnings("unchecked")
     public CheckedHashSet<E> clone() {
-        synchronized (getLock()) {
-            return (CheckedHashSet<E>) super.clone();
-        }
+        return (CheckedHashSet<E>) super.clone();
     }
 }

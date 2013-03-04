@@ -50,15 +50,15 @@ import org.opengis.referencing.crs.SingleCRS;
 import org.opengis.util.InternationalString;
 import org.opengis.util.CodeList;
 
-import org.geotoolkit.util.Strings;
+import org.apache.sis.util.CharSequences;
 import org.geotoolkit.util.Version;
-import org.geotoolkit.util.ArgumentChecks;
+import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.image.io.WarningProducer;
-import org.geotoolkit.internal.CodeLists;
+import org.apache.sis.util.iso.Types;
 import org.geotoolkit.internal.image.io.Warnings;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.XArrays;
+import org.apache.sis.util.ArraysExt;
 
 
 /**
@@ -358,7 +358,7 @@ public class NetcdfMetadataWriter extends NetcdfMetadata {
      * @throws IOException If an I/O operation was required and failed.
      */
     private boolean setAttribute(final CodeList<?> code) throws IOException {
-        return (code != null) && setAttribute(CodeLists.identifier(code));
+        return (code != null) && setAttribute(Types.getCodeName(code));
     }
 
     /**
@@ -585,10 +585,10 @@ public class NetcdfMetadataWriter extends NetcdfMetadata {
                     }
                 } else {
                     final String[] names = type.names();
-                    if (!isDefined(PROJECT) && XArrays.containsIgnoreCase(names, "project")) {
+                    if (!isDefined(PROJECT) && ArraysExt.containsIgnoreCase(names, "project")) {
                         setAttribute(toString(kset.getKeywords()));
                     }
-                    if (dataCenter == null && XArrays.containsIgnoreCase(names, "dataCenter")) {
+                    if (dataCenter == null && ArraysExt.containsIgnoreCase(names, "dataCenter")) {
                         dataCenter = toString(kset.getKeywords());
                     }
                 }
@@ -631,7 +631,7 @@ public class NetcdfMetadataWriter extends NetcdfMetadata {
                 if (credits.size() >= 2) {
                     credits = new LinkedHashSet<String>(credits); // Avoid duplicated values.
                 }
-                setAttribute(Strings.formatList(credits, "\n"));
+                setAttribute(CharSequences.toString(credits, "\n"));
             }
             int undefined = 0;
             if (!isDefined(DATE_CREATED))  undefined |= 1;
@@ -689,7 +689,7 @@ nextDate:       for (final CitationDate date : nonNull(citation.getDates())) {
             }
             if (constraint instanceof LegalConstraints) {
                 for (final Restriction r : nonNull(((LegalConstraints) constraint).getAccessConstraints())) {
-                    restrictions = addTo(restrictions, CodeLists.identifier(r));
+                    restrictions = addTo(restrictions, Types.getCodeName(r));
                 }
             }
         }
@@ -823,7 +823,7 @@ nextDate:       for (final CitationDate date : nonNull(citation.getDates())) {
          * This is okay because we accumulated the keywords in a class field, so the previous
          * attribute values are not lost. Similar argument applies to the legal information.
          */
-        if (setAttribute(KEYWORDS, Strings.formatList(keywords, ", "))) {
+        if (setAttribute(KEYWORDS, CharSequences.toString(keywords, ", "))) {
             setAttribute(VOCABULARY, vocabulary); // Must be consistent with the keywords.
         }
         if (!isDefined(PROCESSING_LEVEL)) {
@@ -863,8 +863,8 @@ nextDate:       for (final CitationDate date : nonNull(citation.getDates())) {
          * Unconditionally write the legal information. This is okay because we accumulated
          * those information in class fields, so the previous attribute values are not lost.
          */
-        setAttribute(LICENSE, Strings.formatList(licenses, "\n"));
-        setAttribute(ACCESS_CONSTRAINT, Strings.formatList(restrictions, ", "));
+        setAttribute(LICENSE, CharSequences.toString(licenses, "\n"));
+        setAttribute(ACCESS_CONSTRAINT, CharSequences.toString(restrictions, ", "));
         /*
          * Write history-related information last.
          */

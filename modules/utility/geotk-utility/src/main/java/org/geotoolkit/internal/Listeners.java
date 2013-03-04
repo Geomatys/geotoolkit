@@ -22,8 +22,8 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import org.geotoolkit.lang.Static;
-import org.geotoolkit.util.XArrays;
-import org.geotoolkit.util.ArgumentChecks;
+import org.apache.sis.util.ArraysExt;
+import org.apache.sis.util.ArgumentChecks;
 
 
 /**
@@ -81,7 +81,7 @@ public final class Listeners extends Static {
         if (listeners != null) {
             for (int i=0; i<listeners.length; i++) {
                 if (listeners[i] == listener) {
-                    listeners = XArrays.remove(listeners, i, 1);
+                    listeners = ArraysExt.remove(listeners, i, 1);
                     if (listeners.length == 0) {
                         listeners = null;
                     }

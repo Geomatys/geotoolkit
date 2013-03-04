@@ -18,7 +18,7 @@
 package org.geotoolkit.display.axis;
 
 import java.text.NumberFormat;
-import org.geotoolkit.math.XMath;
+import org.apache.sis.math.MathFunctions;
 import org.geotoolkit.internal.InternalUtilities;
 
 
@@ -169,7 +169,7 @@ class NumberIterator implements TickIterator {
          * ce pas à l'ordre des unitées.
          */
         double increment = (maximum - minimum) * (visualTickSpacing / visualLength);
-        final double factor = XMath.pow10((int) Math.floor(Math.log10(increment)));
+        final double factor = MathFunctions.pow10((int) Math.floor(Math.log10(increment)));
         increment /= factor;
         if (Double.isNaN(increment) || Double.isInfinite(increment) || increment==0) {
             this.minimum      = minimum;

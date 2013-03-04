@@ -25,11 +25,11 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.io.ObjectOutputStream;
 
-import org.geotoolkit.util.XArrays;
+import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.util.Cloneable;
 import org.geotoolkit.resources.Errors;
 
-import static org.geotoolkit.util.ArgumentChecks.*;
+import static org.apache.sis.util.ArgumentChecks.*;
 
 
 /**
@@ -447,7 +447,7 @@ public class IntegerList extends AbstractList<Integer> implements RandomAccess, 
      * Trims the capacity of this list to be its current size.
      */
     public void trimToSize() {
-        values = XArrays.resize(values, length(size));
+        values = ArraysExt.resize(values, length(size));
     }
 
     /**

@@ -44,8 +44,8 @@ import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
 import org.geotoolkit.referencing.operation.transform.LinearTransform;
 import org.geotoolkit.referencing.factory.epsg.LongitudeFirstEpsgFactory;
 import org.geotoolkit.referencing.factory.epsg.PropertyEpsgFactory;
-import org.geotoolkit.util.converter.Classes;
 
+import org.apache.sis.util.Classes;
 import org.geotoolkit.test.Depend;
 import org.geotoolkit.test.referencing.ReferencingTestBase;
 

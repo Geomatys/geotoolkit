@@ -31,7 +31,7 @@ import org.geotoolkit.test.TestData;
 import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.image.io.TextImageReaderTestBase;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
-import org.geotoolkit.util.XArrays;
+import org.apache.sis.util.ArraysExt;
 
 import org.junit.*;
 import static org.geotoolkit.test.Assert.*;
@@ -163,15 +163,15 @@ public final strictfp class WorldFileImageReaderTest extends TextImageReaderTest
              */
             final ImageReaderSpi pngSpi = XImageIO.getReaderSpiByFormatName("png" + NAME_SUFFIX);
             final String[] names = pngSpi.getFormatNames();
-            assertFalse(XArrays.contains(names, "png"));
-            assertFalse(XArrays.contains(names, "PNG"));
-            assertTrue (XArrays.contains(names, "png" + NAME_SUFFIX));
-            assertTrue (XArrays.contains(names, "PNG-WF"));
+            assertFalse(ArraysExt.contains(names, "png"));
+            assertFalse(ArraysExt.contains(names, "PNG"));
+            assertTrue (ArraysExt.contains(names, "png" + NAME_SUFFIX));
+            assertTrue (ArraysExt.contains(names, "PNG-WF"));
             final String[] MIMETypes = pngSpi.getMIMETypes();
-            assertFalse(XArrays.contains(MIMETypes, "image/png"));
-            assertFalse(XArrays.contains(MIMETypes, "image/x-png"));
-            assertTrue (XArrays.contains(MIMETypes, "image/png" + NAME_SUFFIX));
-            assertTrue (XArrays.contains(MIMETypes, "image/x-png" + NAME_SUFFIX));
+            assertFalse(ArraysExt.contains(MIMETypes, "image/png"));
+            assertFalse(ArraysExt.contains(MIMETypes, "image/x-png"));
+            assertTrue (ArraysExt.contains(MIMETypes, "image/png" + NAME_SUFFIX));
+            assertTrue (ArraysExt.contains(MIMETypes, "image/x-png" + NAME_SUFFIX));
             /*
              * Opportunist test, because it involves a lot of operations,
              * some of them may thrown an exception.

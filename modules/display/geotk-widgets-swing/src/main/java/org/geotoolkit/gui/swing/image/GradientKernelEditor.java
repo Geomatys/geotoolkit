@@ -34,7 +34,7 @@ import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.internal.swing.SwingUtilities;
 
 import static java.awt.GridBagConstraints.*;
-import static org.geotoolkit.math.XMath.SQRT2;
+import static org.apache.sis.math.MathFunctions.SQRT_2;
 
 
 /**
@@ -86,18 +86,18 @@ public class GradientKernelEditor extends JComponent implements Dialog {
      * Horizontal gradient mask (isotropic).
      */
     public static final KernelJAI ISOTROPIC_HORIZONTAL = new KernelJAI(3,3,new float[] {
-                -1,      0,          1,
-        (float) -SQRT2,  0,  (float) SQRT2,
-                -1,      0,          1,
+                -1,       0,          1,
+        (float) -SQRT_2,  0,  (float) SQRT_2,
+                -1,       0,          1,
     });
 
     /**
      * Vertical gradient mask (isotropic).
      */
     public static final KernelJAI ISOTROPIC_VERTICAL = new KernelJAI(3,3,new float[] {
-        -1,   (float) -SQRT2,   -1,
-         0,            0,        0,
-         1,   (float)  SQRT2,    1,
+        -1,   (float) -SQRT_2,   -1,
+         0,            0,         0,
+         1,   (float)  SQRT_2,    1,
     });
 
     /**

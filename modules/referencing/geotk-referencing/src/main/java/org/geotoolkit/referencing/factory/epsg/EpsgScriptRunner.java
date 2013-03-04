@@ -27,7 +27,8 @@ import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.geotoolkit.util.Strings;
+import org.apache.sis.util.CharSequences;
+import org.apache.sis.util.StringBuilders;
 import org.geotoolkit.internal.sql.Dialect;
 import org.geotoolkit.internal.sql.ScriptRunner;
 import org.geotoolkit.internal.sql.CreateStatementType;
@@ -238,7 +239,7 @@ final class EpsgScriptRunner extends ScriptRunner {
     @Override
     protected int execute(final StringBuilder sql) throws SQLException, IOException {
         if (!supportsCommitStatement) {
-            if (Strings.equalsIgnoreCase("COMMIT", sql)) {
+            if (CharSequences.equalsIgnoreCase("COMMIT", sql)) {
                 return 0;
             }
         }
@@ -248,16 +249,16 @@ final class EpsgScriptRunner extends ScriptRunner {
             }
         }
         if (replacePilcrow) {
-            Strings.replace(sql, "\u00B6", "\n");
+            StringBuilders.replace(sql, "\u00B6", "\n");
         }
-        if (maxRowsPerInsert != 0 && Strings.startsWith(sql, "INSERT INTO", true)) {
+        if (maxRowsPerInsert != 0 && CharSequences.startsWith(sql, "INSERT INTO", true)) {
             /*
              * The following code is very specific to the syntax of the scripts generated
              * by the geotk-epsg-pack module. It is executed only when running the scripts
              * embedded in the geotk-epsg module.
              */
             int position = sql.indexOf("\n");
-            if (position >= 0 && Strings.regionMatches(sql, position-6, "VALUES")) {
+            if (position >= 0 && CharSequences.regionMatches(sql, position-6, "VALUES")) {
                 /*
                  * Fetch the "INSERT INTO" part, which is expected to be on its own line.
                  * We will left this part of the buffer unchanged, and write only after

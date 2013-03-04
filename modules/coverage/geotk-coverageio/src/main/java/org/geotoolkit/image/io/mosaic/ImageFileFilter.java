@@ -23,7 +23,7 @@ import java.io.FilenameFilter;
 import javax.imageio.ImageIO;
 import javax.imageio.spi.ImageReaderSpi;
 
-import org.geotoolkit.util.XArrays;
+import org.apache.sis.util.ArraysExt;
 
 
 /**
@@ -87,14 +87,14 @@ final class ImageFileFilter implements FileFilter, FilenameFilter {
     public boolean accept(final File directory, String filename) {
         final int s = filename.lastIndexOf('.');
         final String suffix = (s >= 0) ? filename.substring(s + 1) : "";
-        if (XArrays.containsIgnoreCase(suffixes, suffix)) {
+        if (ArraysExt.containsIgnoreCase(suffixes, suffix)) {
             // Found a file having the expected suffix. However we still have a
             // few special cases to exclude, namely the readme and license files.
             if (suffix.isEmpty() || suffix.equalsIgnoreCase("txt")) {
                 if (s >= 0) {
                     filename = filename.substring(0, s);
                 }
-                return !XArrays.containsIgnoreCase(EXCLUDES, filename);
+                return !ArraysExt.containsIgnoreCase(EXCLUDES, filename);
             }
             return true;
         }

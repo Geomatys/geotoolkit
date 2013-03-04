@@ -34,7 +34,7 @@ import org.opengis.referencing.ReferenceIdentifier;
 import org.opengis.util.FactoryException;
 import org.opengis.util.Factory;
 
-import org.geotoolkit.util.XArrays;
+import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.FactoryRegistry;
@@ -548,7 +548,7 @@ public class ReferencingFactoryContainer extends ReferencingFactory {
         final int length = dimensions.length;
         final int crsDimension = crs.getCoordinateSystem().getDimension();
         if (length == 0 || dimensions[0] < 0 || dimensions[length-1] >= crsDimension ||
-            !XArrays.isSorted(dimensions, true))
+            !ArraysExt.isSorted(dimensions, true))
         {
             throw new IllegalArgumentException(Errors.format(
                     Errors.Keys.ILLEGAL_ARGUMENT_$1, "dimension"));
@@ -599,7 +599,7 @@ search:     for (final CoordinateReferenceSystem source : sources) {
             if (count == 1) {
                 return targets[0];
             }
-            return getCRSFactory().createCompoundCRS(getTemporaryName(crs), XArrays.resize(targets, count));
+            return getCRSFactory().createCompoundCRS(getTemporaryName(crs), ArraysExt.resize(targets, count));
         }
         /*
          * Special case for common hard-coded constants.

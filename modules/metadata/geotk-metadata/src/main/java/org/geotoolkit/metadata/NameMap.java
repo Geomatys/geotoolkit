@@ -35,7 +35,7 @@ final class NameMap extends MetadataMap<String> {
     /**
      * Determines the string representation of values in this map.
      */
-    final KeyNamePolicy valueNames;
+    final org.apache.sis.metadata.KeyNamePolicy valueNames;
 
     /**
      * Creates a name map for the specified accessor.
@@ -44,7 +44,7 @@ final class NameMap extends MetadataMap<String> {
      * @param valueNames Determines the string representation of values in this map.
      * @param keyNames   Determines the string representation of keys in the map.
      */
-    NameMap(final PropertyAccessor accessor, final KeyNamePolicy valueNames, final KeyNamePolicy keyNames) {
+    NameMap(final PropertyAccessor accessor, final org.apache.sis.metadata.KeyNamePolicy valueNames, final org.apache.sis.metadata.KeyNamePolicy keyNames) {
         super(accessor, keyNames);
         this.valueNames = valueNames;
     }

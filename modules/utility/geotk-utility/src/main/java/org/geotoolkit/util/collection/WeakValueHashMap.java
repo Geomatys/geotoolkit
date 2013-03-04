@@ -30,8 +30,7 @@ import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 import net.jcip.annotations.ThreadSafe;
 
-import org.geotoolkit.util.XArrays;
-import org.geotoolkit.util.Utilities;
+import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.util.Disposable;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.NullArgumentException;
@@ -81,8 +80,11 @@ import org.geotoolkit.internal.ReferenceQueueConsumer;
  *
  * @since 2.0
  * @module
+ *
+ * @deprecated Replaced by Apache SIS {@link org.apache.sis.util.collection.WeakValueHashMap}.
  */
 @ThreadSafe
+@Deprecated
 public class WeakValueHashMap<K,V> extends AbstractMap<K,V> {
     /**
      * Minimal capacity for {@link #table}.
@@ -584,7 +586,7 @@ public class WeakValueHashMap<K,V> extends AbstractMap<K,V> {
                         }
                     }
                 }
-                return XArrays.resize(elements, index);
+                return ArraysExt.resize(elements, index);
             }
         }
 

@@ -35,7 +35,11 @@ import org.geotoolkit.internal.io.IOUtilities;
  *
  * @since 2.1
  * @module
+ *
+ * @deprecated Moved to Apache SIS as {@link org.apache.sis.io.LineAppender}
+ * (developers need to override {@code onLineBegin(boolean)}).
  */
+@Deprecated
 @ThreadSafe
 @Decorator(Writer.class)
 public class NumberedLineWriter extends IndentedLineWriter {
@@ -56,23 +60,6 @@ public class NumberedLineWriter extends IndentedLineWriter {
             stdout = new PrintWriter(IOUtilities.standardWriter(), true);
         }
         return stdout;
-    }
-
-    /**
-     * A stream that can never been closed. Used only for wrapping the
-     * {@linkplain System#out standard output stream}.
-     */
-    private static final class Uncloseable extends NumberedLineWriter {
-        /** Constructs a stream. */
-        public Uncloseable(final Writer out) {
-            super(out);
-        }
-
-        /** Flush the stream without closing it. */
-        @Override
-        public void close() throws IOException {
-            flush();
-        }
     }
 
     /**

@@ -48,7 +48,7 @@ import org.opengis.metadata.acquisition.AcquisitionInformation;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import org.geotoolkit.gui.swing.tree.Trees;
-import org.geotoolkit.util.XArrays;
+import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.logging.LoggedFormat;
 import org.geotoolkit.image.io.WarningProducer;
@@ -57,7 +57,7 @@ import org.geotoolkit.measure.RangeFormat;
 import org.geotoolkit.resources.IndexedResourceBundle;
 import org.geotoolkit.resources.Errors;
 
-import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
+import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 
 
 /**
@@ -386,8 +386,8 @@ public class SpatialMetadata extends IIOMetadata implements WarningProducer {
             if (nativeMetadataFormatName == null) {
                 nativeMetadataFormatName = fallback.getNativeMetadataFormatName();
             }
-            extraMetadataFormatNames = XArrays.concatenate(extraMetadataFormatNames, fallback.getExtraMetadataFormatNames());
-            extraMetadataFormatNames = XArrays.resize(extraMetadataFormatNames, XArrays.removeDuplicated(extraMetadataFormatNames));
+            extraMetadataFormatNames = ArraysExt.concatenate(extraMetadataFormatNames, fallback.getExtraMetadataFormatNames());
+            extraMetadataFormatNames = ArraysExt.resize(extraMetadataFormatNames, ArraysExt.removeDuplicated(extraMetadataFormatNames));
         }
         final String rootName = format.getRootName();
         if (!isSupportedFormat(rootName)) {
@@ -396,7 +396,7 @@ public class SpatialMetadata extends IIOMetadata implements WarningProducer {
             } else if (extraMetadataFormatNames == null) {
                 extraMetadataFormatNames = new String[] {rootName};
             } else {
-                extraMetadataFormatNames = XArrays.append(extraMetadataFormatNames, rootName);
+                extraMetadataFormatNames = ArraysExt.append(extraMetadataFormatNames, rootName);
             }
         }
         /*
@@ -683,7 +683,7 @@ public class SpatialMetadata extends IIOMetadata implements WarningProducer {
      * This method does not verify the standard format name.
      */
     private boolean isSupportedFormat(final String name) {
-        return name.equals(nativeMetadataFormatName) || XArrays.contains(extraMetadataFormatNames, name);
+        return name.equals(nativeMetadataFormatName) || ArraysExt.contains(extraMetadataFormatNames, name);
     }
 
     /**

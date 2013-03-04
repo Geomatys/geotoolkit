@@ -29,12 +29,12 @@ import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.metadata.extent.GeographicBoundingBox;
 
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.XArrays;
+import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 
-import static org.geotoolkit.util.ArgumentChecks.*;
-import static org.geotoolkit.math.XMath.isNegative;
+import static org.apache.sis.util.ArgumentChecks.*;
+import static org.apache.sis.math.MathFunctions.isNegative;
 import static org.geotoolkit.internal.InternalUtilities.isPoleToPole;
 
 
@@ -263,7 +263,7 @@ scanNumber: while (++i < length) {
         }
         if (levelParenth != 0) fail(wkt, ')');
         if (levelBracket != 0) fail(wkt, ']');
-        ordinates = XArrays.resize(minimum, maxDimension << 1);
+        ordinates = ArraysExt.resize(minimum, maxDimension << 1);
         System.arraycopy(maximum, 0, ordinates, maxDimension, maxDimension);
     }
 

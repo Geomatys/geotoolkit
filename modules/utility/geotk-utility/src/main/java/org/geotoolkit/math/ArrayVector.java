@@ -20,8 +20,8 @@ package org.geotoolkit.math;
 import java.io.Serializable;
 import java.lang.reflect.Array;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.converter.Classes;
-import org.geotoolkit.util.converter.Numbers;
+import org.apache.sis.util.Classes;
+import org.apache.sis.util.Numbers;
 
 
 /**
