@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  Replace some Geotk fully qualified names by Apache SIS names.
+  This task does not replace all classes. The classes that are
+  not replaced by this task need to be resolved manually.
+
+  This class scans all *.java files in the current directory
+  and all sub-directories.
+-->
+<project name="Upgrade" default="rename">
+  <target name="rename">
+    <replace dir="${user.dir}" summary="yes">
+      <include name="**/*.java"/>
+      <replacefilter token="org.geotoolkit.util.ArgumentChecks" value="org.apache.sis.util.ArgumentChecks"/>
+      <replacefilter token="org.geotoolkit.util.ComparisonMode" value="org.apache.sis.util.ComparisonMode"/>
+      <replacefilter token="org.geotoolkit.util.NullArgumentException" value="org.apache.sis.util.NullArgumentException"/>
+    </replace>
+  </target>
+</project>
