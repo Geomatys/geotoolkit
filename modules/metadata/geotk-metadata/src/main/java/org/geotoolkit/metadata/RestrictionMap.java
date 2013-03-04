@@ -38,7 +38,7 @@ final class RestrictionMap extends MetadataMap<ValueRestriction> {
     /**
      * The behavior of this map toward null or empty values.
      */
-    final org.apache.sis.metadata.NullValuePolicy content;
+    final org.apache.sis.metadata.ValueExistencePolicy content;
 
     /**
      * If non-null, the metadata instance to validate. This map will contain only
@@ -55,7 +55,7 @@ final class RestrictionMap extends MetadataMap<ValueRestriction> {
      * @param keyNames Determines the string representation of keys in the map.
      */
     RestrictionMap(final PropertyAccessor accessor, final Object metadata,
-            final org.apache.sis.metadata.NullValuePolicy content, final org.apache.sis.metadata.KeyNamePolicy keyNames)
+            final org.apache.sis.metadata.ValueExistencePolicy content, final org.apache.sis.metadata.KeyNamePolicy keyNames)
     {
         super(accessor, keyNames);
         this.metadata = metadata;

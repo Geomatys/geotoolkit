@@ -341,11 +341,13 @@ public final class XCollections extends Static {
      * @return The ordering between two collections.
      *
      * @since 3.18 (derived from 2.5)
+     *
+     * @deprecated No replacement.
      */
+    @Deprecated
     @SuppressWarnings({"unchecked","rawtypes"})
     public static <T extends Comparable<T>> Comparator<Collection<T>> collectionComparator() {
-        Comparator c = (Comparator) CollectionsExt.listComparator();
-        return c;
+        throw new UnsupportedOperationException();
     }
 
     /**

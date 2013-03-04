@@ -17,7 +17,7 @@
  */
 package org.geotoolkit.metadata;
 
-import org.apache.sis.metadata.NullValuePolicy;
+import org.apache.sis.metadata.ValueExistencePolicy;
 import org.apache.sis.metadata.KeyNamePolicy;
 import java.util.Map;
 import java.util.HashMap;
@@ -51,7 +51,7 @@ public final strictfp class RestrictionMapTest {
     public void testValueRange() {
         final DefaultBand band = new DefaultBand();
         final Map<String,ValueRestriction> map = band.getStandard().asRestrictionMap(
-                band, NullValuePolicy.NON_NULL, KeyNamePolicy.JAVABEANS_PROPERTY);
+                band, ValueExistencePolicy.NON_NULL, KeyNamePolicy.JAVABEANS_PROPERTY);
         /*
          * Test a record that doesn't violate any restriction.
          */
@@ -88,7 +88,7 @@ public final strictfp class RestrictionMapTest {
     public void testObligation() {
         final DefaultEnvironmentalRecord record = new DefaultEnvironmentalRecord();
         final Map<String,ValueRestriction> map = record.getStandard().asRestrictionMap(
-                record, NullValuePolicy.NON_NULL, KeyNamePolicy.JAVABEANS_PROPERTY);
+                record, ValueExistencePolicy.NON_NULL, KeyNamePolicy.JAVABEANS_PROPERTY);
         /*
          * Test a record with 2 values specified, and 2 mandatory values left missing.
          */
@@ -143,7 +143,7 @@ public final strictfp class RestrictionMapTest {
          * Compares with the map calculated.
          */
         final Map<String,ValueRestriction> map = MetadataStandard.ISO_19115.asRestrictionMap(
-                EnvironmentalRecord.class, NullValuePolicy.NON_NULL, KeyNamePolicy.JAVABEANS_PROPERTY);
+                EnvironmentalRecord.class, ValueExistencePolicy.NON_NULL, KeyNamePolicy.JAVABEANS_PROPERTY);
         assertEquals(expected, map);
     }
 }

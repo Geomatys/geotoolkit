@@ -36,6 +36,7 @@ import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.internal.ReferenceQueueConsumer;
+import org.geotoolkit.util.Utilities;
 
 
 /**

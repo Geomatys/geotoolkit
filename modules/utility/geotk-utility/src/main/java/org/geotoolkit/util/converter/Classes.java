@@ -39,7 +39,7 @@ import org.apache.sis.util.ArraysExt;
  *       ({@link #findCommonClass(Class, Class) findCommonClass},
  *       ({@link #findCommonInterfaces(Class, Class) findCommonInterfaces})</li>
  *   <li>Getting the bounds of a parameterized field or method
- *       ({@link #boundOfParameterizedAttribute(Method) boundOfParameterizedAttribute})</li>
+ *       ({@link #boundOfParameterizedProperty(Method) boundOfParameterizedProperty})</li>
  *   <li>Getting a short class name ({@link #getShortName(Class) getShortName},
  *       {@link #getShortClassName(Object) getShortClassName})</li>
  * </ul>
@@ -139,17 +139,17 @@ public final class Classes extends Static {
      * @return The upper bound of parameterized type, or {@code null} if the given field
      *         is not of a parameterized type.
      *
-     * @deprecated Moved to {@link org.apache.sis.util.Classes#boundOfParameterizedAttribute(Field)}.
+     * @deprecated Moved to {@link org.apache.sis.util.Classes#boundOfParameterizedProperty(Field)}.
      */
     @Deprecated
     public static Class<?> boundOfParameterizedAttribute(final Field field) {
-        return org.apache.sis.util.Classes.boundOfParameterizedAttribute(field);
+        return org.apache.sis.util.Classes.boundOfParameterizedProperty(field);
     }
 
     /**
      * If the given method is a getter or a setter for a parameterized attribute, returns the
      * upper bounds of the parameterized type. Otherwise returns {@code null}. This method
-     * provides the same semantic than {@link #boundOfParameterizedAttribute(Field)}, but
+     * provides the same semantic than {@link #boundOfParameterizedProperty(Field)}, but
      * works on a getter or setter method rather then the field. See the javadoc of above
      * method for more details.
      * <p>
@@ -161,11 +161,11 @@ public final class Classes extends Static {
      * @return The upper bound of parameterized type, or {@code null} if the given method
      *         do not operate on an object of a parameterized type.
      *
-     * @deprecated Moved to {@link org.apache.sis.util.Classes#boundOfParameterizedAttribute(Method)}.
+     * @deprecated Moved to {@link org.apache.sis.util.Classes#boundOfParameterizedProperty(Method)}.
      */
     @Deprecated
     public static Class<?> boundOfParameterizedAttribute(final Method method) {
-        return org.apache.sis.util.Classes.boundOfParameterizedAttribute(method);
+        return org.apache.sis.util.Classes.boundOfParameterizedProperty(method);
     }
 
     /**

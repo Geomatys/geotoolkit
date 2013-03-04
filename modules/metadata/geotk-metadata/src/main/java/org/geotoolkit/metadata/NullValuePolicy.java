@@ -19,7 +19,7 @@ package org.geotoolkit.metadata;
 
 
 /**
- * Whatever {@link MetadataStandard#asMap(Object,NullValuePolicy,KeyNamePolicy) MetadataStandard.asMap(...)}
+ * Whatever {@link MetadataStandard#asMap(Object,ValueExistencePolicy,KeyNamePolicy) MetadataStandard.asMap(...)}
  * should contain entries for null values or empty collections. By default the map does not provide
  * {@linkplain java.util.Map.Entry entries} for {@code null} metadata attributes or
  * {@linkplain java.util.Collection#isEmpty() empty} collections. This enumeration
@@ -28,12 +28,12 @@ package org.geotoolkit.metadata;
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.03
  *
- * @see MetadataStandard#asMap(Object, NullValuePolicy, KeyNamePolicy)
+ * @see MetadataStandard#asMap(Object, ValueExistencePolicy, KeyNamePolicy)
  *
  * @since 3.03
  * @module
  *
- * @deprecated Moved to Apache SIS {@link org.apache.sis.metadata.NullValuePolicy}.
+ * @deprecated Moved to Apache SIS {@link org.apache.sis.metadata.ValueExistencePolicy}.
  */
 @Deprecated
 public final class NullValuePolicy {
@@ -44,21 +44,21 @@ public final class NullValuePolicy {
      * Includes all entries in the map, including those having a null value or an
      * empty collection.
      */
-    public static final org.apache.sis.metadata.NullValuePolicy ALL =
-            org.apache.sis.metadata.NullValuePolicy.ALL;
+    public static final org.apache.sis.metadata.ValueExistencePolicy ALL =
+            org.apache.sis.metadata.ValueExistencePolicy.ALL;
 
     /**
      * Includes only the non-null attributes. Collections are included no matter if
      * they are empty or not.
      */
-    public static final org.apache.sis.metadata.NullValuePolicy NON_NULL =
-            org.apache.sis.metadata.NullValuePolicy.NON_NULL;
+    public static final org.apache.sis.metadata.ValueExistencePolicy NON_NULL =
+            org.apache.sis.metadata.ValueExistencePolicy.NON_NULL;
 
     /**
      * Includes only the attributes that are non-null and, in the case of collections,
      * non-{@linkplain java.util.Collection#isEmpty() empty}. This is the default behavior
      * of {@link AbstractMetadata#asMap()}.
      */
-    public static final org.apache.sis.metadata.NullValuePolicy NON_EMPTY =
-            org.apache.sis.metadata.NullValuePolicy.NON_EMPTY;
+    public static final org.apache.sis.metadata.ValueExistencePolicy NON_EMPTY =
+            org.apache.sis.metadata.ValueExistencePolicy.NON_EMPTY;
 }
