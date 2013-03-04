@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.swe.xml.v101;
 
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -30,6 +31,7 @@ import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.swe.xml.AbstractConditionalValue;
 import org.geotoolkit.swe.xml.AbstractDataArray;
+import org.geotoolkit.swe.xml.AbstractDataComponent;
 import org.geotoolkit.swe.xml.AbstractDataRecord;
 import org.geotoolkit.swe.xml.AbstractEnvelope;
 import org.geotoolkit.swe.xml.AbstractGeoLocationArea;
@@ -278,6 +280,7 @@ public class DataComponentPropertyType implements DataComponentProperty {
     /**
      * Gets the value of the timeGeometricPrimitive property.
       */
+    @Override
     public AbstractDataRecordType getAbstractRecord() {
         if (abstractDataRecord != null) {
             return abstractDataRecord.getValue();
@@ -287,6 +290,7 @@ public class DataComponentPropertyType implements DataComponentProperty {
         return null;
     }
 
+    @Override
     public void setToHref() {
         if (abstractDataRecord != null) {
             if (abstractDataRecord.getValue().getId() != null) {
@@ -340,12 +344,13 @@ public class DataComponentPropertyType implements DataComponentProperty {
         } else if (obj instanceof VectorType) {
             abstractDataRecord = factory.createVector((VectorType) obj);
         } else if (obj != null ){
-            Logger.getLogger("org.geotoolkit.swe.xml.v101").warning("Unimplemented case:" + obj.getClass().getName());
+            Logger.getLogger("org.geotoolkit.swe.xml.v101").log(Level.WARNING, "Unimplemented case:{0}", obj.getClass().getName());
         }
 
     }
 
-    public Object getValue() {
+    @Override
+    public AbstractDataComponent getValue() {
 
         if (count != null) {
             return count;
@@ -375,12 +380,14 @@ public class DataComponentPropertyType implements DataComponentProperty {
     /**
      * 
      */
+    @Override
     public String getName(){
         return this.name;
     }
     /**
      * Gets the value of the remoteSchema property.
      */
+    @Override
     public String getRemoteSchema() {
         return remoteSchema;
     }
@@ -388,6 +395,7 @@ public class DataComponentPropertyType implements DataComponentProperty {
     /**
      * Gets the value of the type property.
      */
+    @Override
     public String getType() {
         return type;
     }
@@ -395,6 +403,7 @@ public class DataComponentPropertyType implements DataComponentProperty {
     /**
      * Gets the value of the href property.
      */
+    @Override
     public String getHref() {
         return href;
     }
@@ -402,6 +411,7 @@ public class DataComponentPropertyType implements DataComponentProperty {
     /**
      * Gets the value of the role property.
      */
+    @Override
     public String getRole() {
         return role;
     }
@@ -409,6 +419,7 @@ public class DataComponentPropertyType implements DataComponentProperty {
     /**
      * Gets the value of the arcrole property.
      */
+    @Override
     public String getArcrole() {
         return arcrole;
     }
@@ -416,6 +427,7 @@ public class DataComponentPropertyType implements DataComponentProperty {
     /**
      * Gets the value of the title property.
      */
+    @Override
     public String getTitle() {
         return title;
     }
@@ -423,6 +435,7 @@ public class DataComponentPropertyType implements DataComponentProperty {
     /**
      * Gets the value of the show property.
      */
+    @Override
     public String getShow() {
         return show;
     }
@@ -430,6 +443,7 @@ public class DataComponentPropertyType implements DataComponentProperty {
     /**
      * Gets the value of the actuate property.
      */
+    @Override
     public String getActuate() {
         return actuate;
     }
@@ -444,7 +458,7 @@ public class DataComponentPropertyType implements DataComponentProperty {
         }
 
         if (object instanceof DataComponentPropertyType) {
-            boolean eq = false;
+            boolean eq;
             final DataComponentPropertyType that = (DataComponentPropertyType) object;
             if (this.abstractDataRecord != null && that.abstractDataRecord != null) {
                 eq = Utilities.equals(this.abstractDataRecord.getValue(),that.abstractDataRecord.getValue());
@@ -622,6 +636,7 @@ public class DataComponentPropertyType implements DataComponentProperty {
     /**
      * @return the count
      */
+    @Override
     public Count getCount() {
         return count;
     }
@@ -629,6 +644,7 @@ public class DataComponentPropertyType implements DataComponentProperty {
     /**
      * @return the quantity
      */
+    @Override
     public QuantityType getQuantity() {
         return quantity;
     }
@@ -636,6 +652,7 @@ public class DataComponentPropertyType implements DataComponentProperty {
     /**
      * @return the time
      */
+    @Override
     public TimeType getTime() {
         return time;
     }
@@ -643,6 +660,7 @@ public class DataComponentPropertyType implements DataComponentProperty {
     /**
      * @return the _boolean
      */
+    @Override
     public BooleanType getBoolean() {
         return _boolean;
     }
@@ -650,6 +668,7 @@ public class DataComponentPropertyType implements DataComponentProperty {
     /**
      * @return the category
      */
+    @Override
     public Category getCategory() {
         return category;
     }
@@ -657,6 +676,7 @@ public class DataComponentPropertyType implements DataComponentProperty {
     /**
      * @return the text
      */
+    @Override
     public Text getText() {
         return text;
     }
@@ -664,6 +684,7 @@ public class DataComponentPropertyType implements DataComponentProperty {
     /**
      * @return the quantityRange
      */
+    @Override
     public QuantityRange getQuantityRange() {
         return quantityRange;
     }
@@ -671,6 +692,7 @@ public class DataComponentPropertyType implements DataComponentProperty {
     /**
      * @return the countRange
      */
+    @Override
     public CountRange getCountRange() {
         return countRange;
     }
@@ -678,10 +700,12 @@ public class DataComponentPropertyType implements DataComponentProperty {
     /**
      * @return the timeRange
      */
+    @Override
     public TimeRange getTimeRange() {
         return timeRange;
     }
 
+    @Override
     public AbstractDataArray getAbstractArray() {
         return null;
     }

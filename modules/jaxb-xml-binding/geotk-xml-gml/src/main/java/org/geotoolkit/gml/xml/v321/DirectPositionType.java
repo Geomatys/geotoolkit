@@ -75,7 +75,7 @@ public class DirectPositionType implements org.geotoolkit.gml.xml.DirectPosition
     protected String srsName;
     @XmlAttribute
     @XmlSchemaType(name = "positiveInteger")
-    private Integer srsDimension;
+    protected Integer srsDimension;
     @XmlAttribute
     private List<String> axisLabels;
     @XmlAttribute

@@ -61,6 +61,7 @@ import org.opengis.filter.temporal.Before;
 import org.opengis.filter.temporal.During;
 import org.opengis.filter.temporal.TEquals;
 import org.opengis.geometry.DirectPosition;
+import org.opengis.observation.CompositePhenomenon;
 import org.opengis.observation.Observation;
 import org.opengis.observation.ObservationCollection;
 import org.opengis.observation.sampling.SamplingFeature;
@@ -528,11 +529,11 @@ public class SOSXmlFactory {
         }
     }
     
-    public static Object buildMeasure(final String version, final String uom, final Double value) {
+    public static Object buildMeasure(final String version, final String name, final String uom, final Double value) {
         if ("2.0.0".equals(version)) {
             return new org.geotoolkit.gml.xml.v321.MeasureType(uom, value);
         } else if ("1.0.0".equals(version)) {
-            return new org.geotoolkit.observation.xml.v100.MeasureType(uom, value.floatValue());
+            return new org.geotoolkit.observation.xml.v100.MeasureType(name, uom, value.floatValue());
         } else {
             throw new IllegalArgumentException("unexpected sos version number:" + version);
         }
@@ -543,6 +544,23 @@ public class SOSXmlFactory {
             return new org.geotoolkit.observation.xml.v200.OMObservationType.InternalPhenomenon(phenomenonName);
         } else if ("1.0.0".equals(version)) {
             return new org.geotoolkit.swe.xml.v101.PhenomenonType(id, phenomenonName);
+        } else {
+            throw new IllegalArgumentException("unexpected sos version number:" + version);
+        }
+    }
+    
+    public static CompositePhenomenon buildCompositePhenomenon(final String version, final String id, final String phenomenonName, final List<org.opengis.observation.Phenomenon> phenomenons) {
+        if ("2.0.0".equals(version)) {
+            throw new IllegalArgumentException("Composite phenomenon are not supported in SOS v 2.0.0.");
+        } else if ("1.0.0".equals(version)) {
+            final List<org.geotoolkit.swe.xml.v101.PhenomenonType> phens = new ArrayList<org.geotoolkit.swe.xml.v101.PhenomenonType>();
+            for (org.opengis.observation.Phenomenon phen : phenomenons) {
+                if (phen != null && !(phen instanceof org.geotoolkit.swe.xml.v101.PhenomenonType)) {
+                    throw new IllegalArgumentException("unexpected object version for phenomenon component element");
+                }
+                phens.add((org.geotoolkit.swe.xml.v101.PhenomenonType)phen);
+            }
+            return new org.geotoolkit.swe.xml.v101.CompositePhenomenonType(id, phenomenonName, null, null, phens);
         } else {
             throw new IllegalArgumentException("unexpected sos version number:" + version);
         }

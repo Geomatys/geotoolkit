@@ -64,4 +64,6 @@ public interface DataComponentProperty {
     AbstractDataRecord getAbstractRecord();
 
     AbstractDataArray getAbstractArray();
+    
+    AbstractDataComponent getValue();
 }

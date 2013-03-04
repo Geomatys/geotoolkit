@@ -217,10 +217,12 @@ public class LineStringType extends AbstractCurveType implements LineString {
     public void emptySrsNameOnChild() {
          if (pos != null && !pos.isEmpty()) {
             for (DirectPositionType p : pos) {
-                p.srsName = null;
+                p.srsName      = null;
+                p.srsDimension = null;
             }
         } else if (posList != null) {
             posList.setSrsName(null);
+            posList.setSrsDimension(null);
         } 
     }
     /**

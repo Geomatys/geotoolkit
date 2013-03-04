@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.swe.xml.v100;
 
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -411,13 +412,13 @@ public class DataComponentPropertyType implements DataComponentProperty {
         } else if (obj instanceof DataArrayType) {
             abstractDataArray = factory.createDataArray((DataArrayType) obj);
         } else if (obj != null) {
-            Logger.getLogger("org.geotoolkit.swe.xml.v100").warning("Unimplemented case:" + obj.getClass().getName());
+            Logger.getLogger("org.geotoolkit.swe.xml.v100").log(Level.WARNING, "Unimplemented case:{0}", obj.getClass().getName());
         }
 
     }
 
-    public Object getValue() {
-
+    @Override
+    public AbstractDataComponent getValue() {
         if (count != null) {
             return count;
         } else if (quantity != null) {
@@ -449,6 +450,7 @@ public class DataComponentPropertyType implements DataComponentProperty {
     /**
      * Gets the value of the count property.
      */
+    @Override
     public Count getCount() {
         return count;
     }
@@ -463,6 +465,7 @@ public class DataComponentPropertyType implements DataComponentProperty {
     /**
      * Gets the value of the quantity property.
      */
+    @Override
     public QuantityType getQuantity() {
         return quantity;
     }
@@ -477,6 +480,7 @@ public class DataComponentPropertyType implements DataComponentProperty {
     /**
      * Gets the value of the time property.
      */
+    @Override
     public TimeType getTime() {
         return time;
     }
@@ -491,6 +495,7 @@ public class DataComponentPropertyType implements DataComponentProperty {
     /**
      * Gets the value of the boolean property.
      */
+    @Override
     public BooleanType getBoolean() {
         return _boolean;
     }
@@ -505,6 +510,7 @@ public class DataComponentPropertyType implements DataComponentProperty {
     /**
      * Gets the value of the category property.
      */
+    @Override
     public Category getCategory() {
         return category;
     }
@@ -519,6 +525,7 @@ public class DataComponentPropertyType implements DataComponentProperty {
     /**
      * Gets the value of the text property.
      */
+    @Override
     public Text getText() {
         return text;
     }
@@ -533,6 +540,7 @@ public class DataComponentPropertyType implements DataComponentProperty {
     /**
      * Gets the value of the quantityRange property.
      */
+    @Override
     public QuantityRange getQuantityRange() {
         return quantityRange;
     }
@@ -547,6 +555,7 @@ public class DataComponentPropertyType implements DataComponentProperty {
     /**
      * Gets the value of the countRange property.
      */
+    @Override
     public CountRange getCountRange() {
         return countRange;
     }
@@ -561,6 +570,7 @@ public class DataComponentPropertyType implements DataComponentProperty {
     /**
      * Gets the value of the timeRange property.
      */
+    @Override
     public TimeRange getTimeRange() {
         return timeRange;
     }
@@ -593,6 +603,7 @@ public class DataComponentPropertyType implements DataComponentProperty {
         return abstractDataRecord;
     }
 
+    @Override
     public AbstractDataRecordType getAbstractRecord() {
         if (abstractDataRecord != null) {
             return abstractDataRecord.getValue();
@@ -651,6 +662,7 @@ public class DataComponentPropertyType implements DataComponentProperty {
         this.abstractDataArray = ((JAXBElement<? extends AbstractDataArrayType> ) value);
     }
 
+    @Override
     public AbstractDataArrayType getAbstractArray() {
         if (abstractDataArray != null) {
             return abstractDataArray.getValue();
@@ -661,6 +673,7 @@ public class DataComponentPropertyType implements DataComponentProperty {
     /**
      * Gets the value of the name property.
      */
+    @Override
     public String getName() {
         return name;
     }
@@ -675,6 +688,7 @@ public class DataComponentPropertyType implements DataComponentProperty {
     /**
      * Gets the value of the remoteSchema property.
      */
+    @Override
     public String getRemoteSchema() {
         return remoteSchema;
     }
@@ -689,6 +703,7 @@ public class DataComponentPropertyType implements DataComponentProperty {
     /**
      * Gets the value of the type property.
      */
+    @Override
     public String getType() {
         return type;
     }
@@ -703,6 +718,7 @@ public class DataComponentPropertyType implements DataComponentProperty {
     /**
      * Gets the value of the href property.
      */
+    @Override
     public String getHref() {
         return href;
     }
@@ -717,6 +733,7 @@ public class DataComponentPropertyType implements DataComponentProperty {
     /**
      * Gets the value of the role property.
      */
+    @Override
     public String getRole() {
         return role;
     }
@@ -731,6 +748,7 @@ public class DataComponentPropertyType implements DataComponentProperty {
     /**
      * Gets the value of the arcrole property.
      */
+    @Override
     public String getArcrole() {
         return arcrole;
     }
@@ -745,6 +763,7 @@ public class DataComponentPropertyType implements DataComponentProperty {
     /**
      * Gets the value of the title property.
      */
+    @Override
     public String getTitle() {
         return title;
     }
@@ -759,6 +778,7 @@ public class DataComponentPropertyType implements DataComponentProperty {
     /**
      * Gets the value of the show property.
      */
+    @Override
     public String getShow() {
         return show;
     }
@@ -773,6 +793,7 @@ public class DataComponentPropertyType implements DataComponentProperty {
     /**
      * Gets the value of the actuate property.
      */
+    @Override
     public String getActuate() {
         return actuate;
     }

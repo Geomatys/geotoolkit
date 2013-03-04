@@ -139,13 +139,14 @@ public class MeasurementType extends ObservationType implements Measurement {
         if (getFeatureOfInterest() != null) {
             foi = (SamplingFeatureType) getFeatureOfInterest();
         }
-        
+        final MeasureType res = (MeasureType) getResult();
+        res.setValue(0);
         return new MeasurementType(temporaryName,
                                     getDefinition(),
                                     foi,
                                     pheno,
                                     getProcedure().getHref(),
-                                    (MeasureType) getResult(),
+                                    res,
                                     (AbstractTimeGeometricPrimitiveType)time);
 
     }

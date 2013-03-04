@@ -122,7 +122,7 @@ public class TimePositionType extends AbstractTimePosition implements Serializab
      */
     public TimePositionType(final Timestamp time){
         if (time != null) {
-            this.value = Arrays.asList(time.toString());
+            this.value = Arrays.asList(FORMATTERS.get(0).format(time));
         }
     }
 

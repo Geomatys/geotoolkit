@@ -178,6 +178,7 @@ public class AbstractDataComponentPropertyType implements DataComponentProperty 
         return abstractDataComponent;
     }
     
+    @Override
     public AbstractDataComponentType getValue() {
         if (abstractDataComponent != null) {
             return abstractDataComponent.getValue();

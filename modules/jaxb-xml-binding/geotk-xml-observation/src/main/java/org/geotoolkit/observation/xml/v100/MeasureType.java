@@ -17,6 +17,8 @@
 package org.geotoolkit.observation.xml.v100;
 
 // Constellation dependencies
+import java.util.HashMap;
+import java.util.Map;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
@@ -54,6 +56,11 @@ public class MeasureType implements Measure, Entry{
      */
     private float value;
     
+    private static final Map<String, String> idMap = new HashMap<String, String>();
+    static {
+        idMap.put("°C", "degrees");
+        idMap.put("m", "meters");
+    }
     /**
      * constructeur vide utilisé par jaxB
      */
@@ -75,9 +82,11 @@ public class MeasureType implements Measure, Entry{
         this.value = value;        
     }
     
-    public MeasureType(final String uom, final float value) {
+    public MeasureType(final String name, final String uom, final float value) {
+        this.name = name;
         if (uom != null) {
-            this.uom = new UnitOfMeasureEntry(uom, null, null, null);
+            final String id = idMap.get(uom);
+            this.uom = new UnitOfMeasureEntry(id, null, null, uom);
         }
         this.value = value;        
     }
@@ -96,6 +105,7 @@ public class MeasureType implements Measure, Entry{
      *
      * @todo Implementer le retour des unites.
      */
+    @Override
     public UnitOfMeasureEntry getUom() {
         return uom;
     }
@@ -103,8 +113,13 @@ public class MeasureType implements Measure, Entry{
     /**
      * {@inheritDoc}
      */
+    @Override
     public float getValue() {
         return value;
+    }
+    
+    public void setValue(final float value) {
+        this.value = value;
     }
     
      /**

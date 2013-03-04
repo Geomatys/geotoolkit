@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.List;
 import org.geotoolkit.gml.xml.FeatureProperty;
 import org.geotoolkit.gml.xml.GMLXmlFactory;
-import org.geotoolkit.swe.xml.Phenomenon;
 import org.geotoolkit.swe.xml.v101.PhenomenonType;
 import org.opengis.observation.Measurement;
 import org.opengis.observation.Observation;
@@ -371,7 +370,7 @@ public class OMXmlFactory {
         return null;
     }
     
-    public static Observation buildObservation(final String version, final String name, final String definition, final FeatureProperty sampledFeature, final Phenomenon phen,
+    public static Observation buildObservation(final String version, final String name, final String definition, final FeatureProperty sampledFeature, final org.opengis.observation.Phenomenon phen,
             final String procedure, final Object result, final TemporalGeometricPrimitive time) {
         if ("1.0.0".equals(version)) {
             if (sampledFeature != null && !(sampledFeature instanceof org.geotoolkit.gml.xml.v311.FeaturePropertyType)) {
@@ -397,11 +396,14 @@ public class OMXmlFactory {
             if (time != null && !(time instanceof org.geotoolkit.gml.xml.v321.TimePeriodType)) {
                 throw new IllegalArgumentException("unexpected object version for time element");
             }
+            if (phen != null && !(phen instanceof org.geotoolkit.swe.xml.Phenomenon)) {
+                throw new IllegalArgumentException("unexpected object version for phenomenon element");
+            }
            return new org.geotoolkit.observation.xml.v200.OMObservationType(name, 
                                                                             "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_ComplexObservation", 
                                                                             (org.geotoolkit.gml.xml.v321.TimePeriodType)time,
                                                                             procedure,
-                                                                            phen.getName(),
+                                                                            ((org.geotoolkit.swe.xml.Phenomenon)phen).getName(),
                                                                             (org.geotoolkit.gml.xml.v321.FeaturePropertyType)sampledFeature,
                                                                             result);
         } else {
@@ -409,7 +411,7 @@ public class OMXmlFactory {
         }
     }
     
-    public static Observation buildMeasurement(final String version, final String name, final String definition, final FeatureProperty sampledFeature, final Phenomenon phen,
+    public static Observation buildMeasurement(final String version, final String name, final String definition, final FeatureProperty sampledFeature, final org.opengis.observation.Phenomenon phen,
             final String procedure, final Object result, final TemporalGeometricPrimitive time) {
         if ("1.0.0".equals(version)) {
             if (sampledFeature != null && !(sampledFeature instanceof org.geotoolkit.gml.xml.v311.FeaturePropertyType)) {
@@ -438,6 +440,9 @@ public class OMXmlFactory {
             if (time != null && !(time instanceof org.geotoolkit.gml.xml.v321.TimePeriodType)) {
                 throw new IllegalArgumentException("unexpected object version for time element");
             }
+            if (phen != null && !(phen instanceof org.geotoolkit.swe.xml.Phenomenon)) {
+                throw new IllegalArgumentException("unexpected object version for phenomenon element");
+            }
             if (result != null && !(result instanceof org.geotoolkit.gml.xml.v321.MeasureType)) {
                 throw new IllegalArgumentException("unexpected object version for result element");
             }
@@ -445,7 +450,7 @@ public class OMXmlFactory {
                                                                             "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement", 
                                                                             (org.geotoolkit.gml.xml.v321.TimePeriodType)time,
                                                                             procedure,
-                                                                            phen.getName(),
+                                                                            ((org.geotoolkit.swe.xml.Phenomenon)phen).getName(),
                                                                             (org.geotoolkit.gml.xml.v321.FeaturePropertyType)sampledFeature,
                                                                             result);
         } else {
