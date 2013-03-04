@@ -38,7 +38,7 @@ import org.opengis.metadata.Identifier;
 import org.opengis.metadata.citation.Citation;
 import org.opengis.metadata.citation.ResponsibleParty;
 
-import org.apache.sis.metadata.NullValuePolicy;
+import org.apache.sis.metadata.ValueExistencePolicy;
 import org.geotoolkit.metadata.MetadataStandard;
 import org.apache.sis.internal.util.Citations;
 import org.geotoolkit.internal.sql.DefaultDataSource;
@@ -99,9 +99,9 @@ public class MetadataWriter extends MetadataSource {
 
     /**
      * Whatever the tables should contain a column for every attribute, or only for non-null
-     * and non-empty attributes. The default is {@link NullValuePolicy#NON_EMPTY NON-EMPTY}.
+     * and non-empty attributes. The default is {@link ValueExistencePolicy#NON_EMPTY NON-EMPTY}.
      */
-    private NullValuePolicy columnCreationPolicy = NullValuePolicy.NON_EMPTY;
+    private ValueExistencePolicy columnCreationPolicy = ValueExistencePolicy.NON_EMPTY;
 
     /**
      * The statements for checking collisions of primary keys.
@@ -141,12 +141,12 @@ public class MetadataWriter extends MetadataSource {
 
     /**
      * Whatever the tables should contain a column for every attributes, or only for non-null
-     * and non-empty attributes. The default is {@link NullValuePolicy#NON_EMPTY NON-EMPTY}, which
+     * and non-empty attributes. The default is {@link ValueExistencePolicy#NON_EMPTY NON-EMPTY}, which
      * implies that new columns are added only when first needed.
      *
      * @return The current policy for column creation.
      */
-    public NullValuePolicy getColumnCreationPolicy() {
+    public ValueExistencePolicy getColumnCreationPolicy() {
         synchronized (statements) {
             return columnCreationPolicy;
         }
@@ -154,12 +154,12 @@ public class MetadataWriter extends MetadataSource {
 
     /**
      * Sets whatever columns should be created only for non-empty attributes, or for all
-     * attributes. If this policy is set to {@link NullValuePolicy#ALL ALL}, then all columns
+     * attributes. If this policy is set to {@link ValueExistencePolicy#ALL ALL}, then all columns
      * will be added in newly created tables even if their content is empty.
      *
      * @param policy The new policy for column creation.
      */
-    public void setColumnCreationPolicy(final NullValuePolicy policy) {
+    public void setColumnCreationPolicy(final ValueExistencePolicy policy) {
         ensureNonNull("policy", policy);
         synchronized (statements) {
             columnCreationPolicy = policy;
@@ -329,7 +329,7 @@ public class MetadataWriter extends MetadataSource {
          * after the check for existing entries, in order to take in account null values
          * when checking existing entries.
          */
-        if (columnCreationPolicy != NullValuePolicy.ALL) {
+        if (columnCreationPolicy != ValueExistencePolicy.ALL) {
             for (final Iterator<Object> it=asMap.values().iterator(); it.hasNext();) {
                 if (it.next() == null) {
                     it.remove();

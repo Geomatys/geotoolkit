@@ -117,7 +117,7 @@ final class Pruner extends ThreadLocal<Map<Object,Boolean>> {
         boolean isEmpty = true;
         for (final Map.Entry<String,Object> entry : properties.entrySet()) {
             final Object value = entry.getValue();
-            // No need to check for null values, because the NullValuePolicy argument
+            // No need to check for null values, because the ValueExistencePolicy argument
             // given to asMap(...) asked for non-null values. If nevertheless a value
             // is null, following code should be robust to that.
 

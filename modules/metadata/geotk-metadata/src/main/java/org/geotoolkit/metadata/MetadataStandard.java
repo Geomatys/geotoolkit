@@ -578,7 +578,7 @@ public final class MetadataStandard {
      * @since 3.04
      */
     public Map<String,ValueRestriction> asRestrictionMap(Object metadata,
-            final org.apache.sis.metadata.NullValuePolicy content,
+            final org.apache.sis.metadata.ValueExistencePolicy content,
             final org.apache.sis.metadata.KeyNamePolicy keyNames) throws ClassCastException
     {
         ensureNonNull("metadata", metadata);
@@ -610,7 +610,7 @@ public final class MetadataStandard {
      *
      * @param  metadata The metadata object to view as a map.
      * @param  content Whatever the entries having null value or empty collection should be
-     *         included in the map. The default is {@link NullValuePolicy#NON_EMPTY NON_EMPTY}.
+     *         included in the map. The default is {@link ValueExistencePolicy#NON_EMPTY NON_EMPTY}.
      * @param  keyNames Determines the string representation of map keys. The default is
      *         {@link KeyNamePolicy#JAVABEANS_PROPERTY JAVABEANS_PROPERTY}.
      * @return A map view over the metadata object.
@@ -620,7 +620,7 @@ public final class MetadataStandard {
      * @since 3.03
      */
     public Map<String,Object> asMap(final Object metadata,
-            final org.apache.sis.metadata.NullValuePolicy content,
+            final org.apache.sis.metadata.ValueExistencePolicy content,
             final org.apache.sis.metadata.KeyNamePolicy keyNames) throws ClassCastException
     {
         ensureNonNull("metadata", metadata);

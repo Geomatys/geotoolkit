@@ -18,7 +18,7 @@
 package org.geotoolkit.metadata;
 
 import org.apache.sis.metadata.TypeValuePolicy;
-import org.apache.sis.metadata.NullValuePolicy;
+import org.apache.sis.metadata.ValueExistencePolicy;
 import org.apache.sis.metadata.KeyNamePolicy;
 import java.util.Map;
 import java.util.HashMap;
@@ -151,11 +151,11 @@ public final strictfp class PropertyMapTest {
          */
         Map<String,Object> m2;
         final MetadataStandard s = MetadataStandard.ISO_19115;
-        m2 = s.asMap(citation, NullValuePolicy.NON_EMPTY, KeyNamePolicy.JAVABEANS_PROPERTY);
+        m2 = s.asMap(citation, ValueExistencePolicy.NON_EMPTY, KeyNamePolicy.JAVABEANS_PROPERTY);
         assertFalse("Null values should be excluded.", m2.containsKey("alternateTitles"));
         assertEquals(map, m2);
 
-        m2 = s.asMap(citation, NullValuePolicy.ALL, KeyNamePolicy.JAVABEANS_PROPERTY);
+        m2 = s.asMap(citation, ValueExistencePolicy.ALL, KeyNamePolicy.JAVABEANS_PROPERTY);
         assertTrue ("Null values should be included.", m2.containsKey("alternateTitles"));
         assertTrue ("'m2' should be a larger map than 'map'.", m2.entrySet().containsAll(map.entrySet()));
         assertFalse("'m2' should be a larger map than 'map'.", map.entrySet().containsAll(m2.entrySet()));
