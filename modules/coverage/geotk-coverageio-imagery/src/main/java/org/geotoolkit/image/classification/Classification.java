@@ -18,7 +18,7 @@ package org.geotoolkit.image.classification;
 
 import java.util.LinkedList;
 import java.util.List;
-import org.geotoolkit.util.ArgumentChecks;
+import org.apache.sis.util.ArgumentChecks;
 
 /**
  * <p>Define and compute two sort of data classifications.<br/>

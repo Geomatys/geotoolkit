@@ -29,7 +29,7 @@ import org.geotoolkit.geometry.DefaultBoundingBox;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.style.StyleConstants;
-import static org.geotoolkit.util.ArgumentChecks.*;
+import static org.apache.sis.util.ArgumentChecks.*;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.opengis.geometry.Envelope;

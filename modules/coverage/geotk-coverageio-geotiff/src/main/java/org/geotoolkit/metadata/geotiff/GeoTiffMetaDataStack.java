@@ -31,7 +31,7 @@ import org.w3c.dom.Node;
 import static org.geotoolkit.metadata.geotiff.GeoTiffMetaDataUtils.*;
 import static org.geotoolkit.metadata.geotiff.GeoTiffConstants.*;
 import static org.geotoolkit.util.DomUtilities.*;
-import static org.geotoolkit.util.ArgumentChecks.*;
+import static org.apache.sis.util.ArgumentChecks.*;
 
 /**
  *

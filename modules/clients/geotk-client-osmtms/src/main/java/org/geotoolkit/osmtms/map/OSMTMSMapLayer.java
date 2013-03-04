@@ -24,7 +24,7 @@ import org.geotoolkit.osmtms.OSMTileMapServer;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.StyleConstants;
-import org.geotoolkit.util.ArgumentChecks;
+import org.apache.sis.util.ArgumentChecks;
 
 
 /**

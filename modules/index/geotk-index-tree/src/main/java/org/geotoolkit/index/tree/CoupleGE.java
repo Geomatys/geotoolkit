@@ -20,7 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.index.tree.calculator.Calculator;
-import org.geotoolkit.util.ArgumentChecks;
+import org.apache.sis.util.ArgumentChecks;
 
 /**
  * Create a couple of two {@code GeneralEnvelope}.

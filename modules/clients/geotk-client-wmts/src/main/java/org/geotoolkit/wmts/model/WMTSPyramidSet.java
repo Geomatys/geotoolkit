@@ -24,7 +24,7 @@ import org.geotoolkit.coverage.Pyramid;
 import org.geotoolkit.coverage.PyramidSet;
 import org.geotoolkit.ows.xml.v110.LanguageStringType;
 import org.geotoolkit.storage.DataStoreException;
-import org.geotoolkit.util.ArgumentChecks;
+import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.wmts.GetTileRequest;
 import org.geotoolkit.wmts.WebMapTileServer;
 import org.geotoolkit.wmts.xml.v100.*;

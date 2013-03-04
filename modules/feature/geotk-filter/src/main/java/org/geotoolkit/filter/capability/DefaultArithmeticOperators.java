@@ -20,7 +20,7 @@ package org.geotoolkit.filter.capability;
 import org.opengis.filter.capability.ArithmeticOperators;
 import org.opengis.filter.capability.Functions;
 
-import static org.geotoolkit.util.ArgumentChecks.*;
+import static org.apache.sis.util.ArgumentChecks.*;
 
 /**
  * Immutable arithmetic operators.

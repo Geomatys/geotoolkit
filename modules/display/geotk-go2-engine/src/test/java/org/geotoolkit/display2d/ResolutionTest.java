@@ -18,7 +18,7 @@ package org.geotoolkit.display2d;
 
 import java.util.List;
 import org.geotoolkit.geometry.GeneralEnvelope;
-import org.geotoolkit.util.ArgumentChecks;
+import org.apache.sis.util.ArgumentChecks;
 import static org.junit.Assert.assertTrue;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.MismatchedDimensionException;

@@ -19,7 +19,7 @@ package org.geotoolkit.display2d.ext.legend;
 import java.awt.Dimension;
 import java.awt.Font;
 import org.geotoolkit.display2d.ext.BackgroundTemplate;
-import org.geotoolkit.util.ArgumentChecks;
+import org.apache.sis.util.ArgumentChecks;
 
 /**
  * Default legend template, immutable.

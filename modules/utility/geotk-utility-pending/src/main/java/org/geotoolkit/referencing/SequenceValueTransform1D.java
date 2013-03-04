@@ -18,7 +18,7 @@ package org.geotoolkit.referencing;
 
 import java.util.Arrays;
 import org.geotoolkit.referencing.operation.transform.AbstractMathTransform1D;
-import org.geotoolkit.util.ArgumentChecks;
+import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.util.XArrays;
 import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.referencing.operation.NoninvertibleTransformException;

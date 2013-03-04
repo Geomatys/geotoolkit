@@ -41,7 +41,7 @@ import org.geotoolkit.referencing.cs.DiscreteReferencingFactory;
 import org.geotoolkit.referencing.datum.AbstractDatum;
 import org.geotoolkit.temporal.object.ISODateParser;
 import org.geotoolkit.temporal.object.TemporalUtilities;
-import org.geotoolkit.util.ArgumentChecks;
+import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.util.PeriodUtilities;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.wms.xml.AbstractDimension;

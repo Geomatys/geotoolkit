@@ -40,7 +40,7 @@ import org.opengis.sld.SLDVisitor;
 import org.opengis.sld.Source;
 import org.opengis.style.Description;
 
-import static org.geotoolkit.util.ArgumentChecks.*;
+import static org.apache.sis.util.ArgumentChecks.*;
 
 /**
  * Default mutable user layer, thread safe.

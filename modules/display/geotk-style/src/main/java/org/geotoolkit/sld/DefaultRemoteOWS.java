@@ -20,7 +20,7 @@ import org.opengis.metadata.citation.OnlineResource;
 import org.opengis.sld.RemoteOWS;
 import org.opengis.sld.SLDVisitor;
 
-import static org.geotoolkit.util.ArgumentChecks.*;
+import static org.apache.sis.util.ArgumentChecks.*;
 
 
 /**

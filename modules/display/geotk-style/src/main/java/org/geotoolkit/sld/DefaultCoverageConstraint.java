@@ -22,7 +22,7 @@ import org.opengis.sld.CoverageConstraint;
 import org.opengis.sld.CoverageExtent;
 import org.opengis.sld.SLDVisitor;
 
-import static org.geotoolkit.util.ArgumentChecks.*;
+import static org.apache.sis.util.ArgumentChecks.*;
 
 /**
  * Default imumutable coverage constraint, thread safe.

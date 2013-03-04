@@ -22,7 +22,7 @@ import org.opengis.feature.Attribute;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.filter.identity.Identifier;
 
-import static org.geotoolkit.util.ArgumentChecks.*;
+import static org.apache.sis.util.ArgumentChecks.*;
 
 /**
  * Immutable feature id.

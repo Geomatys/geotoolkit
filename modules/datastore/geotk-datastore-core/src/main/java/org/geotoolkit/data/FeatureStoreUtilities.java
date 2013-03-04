@@ -38,7 +38,7 @@ import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.geometry.DefaultBoundingBox;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.storage.DataStoreException;
-import static org.geotoolkit.util.ArgumentChecks.*;
+import static org.apache.sis.util.ArgumentChecks.*;
 import org.geotoolkit.util.collection.CloseableIterator;
 import org.geotoolkit.util.logging.Logging;
 import org.opengis.feature.Feature;

@@ -44,7 +44,7 @@ import org.geotoolkit.display2d.style.labeling.LabelRenderer;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
-import static org.geotoolkit.util.ArgumentChecks.*;
+import static org.apache.sis.util.ArgumentChecks.*;
 import org.opengis.display.container.ContainerEvent;
 import org.opengis.display.primitive.Graphic;
 import org.opengis.geometry.Geometry;

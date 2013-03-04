@@ -30,7 +30,7 @@ import org.geotoolkit.index.tree.io.TreeReader;
 import org.geotoolkit.index.tree.io.TreeWriter;
 import org.geotoolkit.index.tree.star.StarRTree;
 import org.geotoolkit.referencing.crs.DefaultEngineeringCRS;
-import org.geotoolkit.util.ArgumentChecks;
+import org.apache.sis.util.ArgumentChecks;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.opengis.geometry.Envelope;

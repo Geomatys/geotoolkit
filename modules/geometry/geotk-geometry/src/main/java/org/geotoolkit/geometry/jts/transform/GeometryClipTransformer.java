@@ -34,7 +34,7 @@ import org.geotoolkit.util.XArrays;
 
 import org.opengis.referencing.operation.TransformException;
 
-import static org.geotoolkit.util.ArgumentChecks.*;
+import static org.apache.sis.util.ArgumentChecks.*;
 
 /**
  * Clip geometries using the given rectangle.

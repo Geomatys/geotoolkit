@@ -26,7 +26,7 @@ import org.geotoolkit.data.jdbc.FilterToSQL;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.filter.capability.DefaultFilterCapabilities;
 import org.geotoolkit.jdbc.JDBCDataStore;
-import static org.geotoolkit.util.ArgumentChecks.*;
+import static org.apache.sis.util.ArgumentChecks.*;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.filter.FilterFactory;

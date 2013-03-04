@@ -27,7 +27,7 @@ import javax.imageio.ImageWriter;
 import javax.media.jai.RasterFactory;
 import org.geotoolkit.image.io.IllegalImageDimensionException;
 import org.geotoolkit.image.io.XImageIO;
-import org.geotoolkit.util.ArgumentChecks;
+import org.apache.sis.util.ArgumentChecks;
 
 /**
  * Stock all {@link Raster} contained from define {@link RenderedImage}.

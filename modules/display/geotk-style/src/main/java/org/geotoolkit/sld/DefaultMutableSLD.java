@@ -35,7 +35,7 @@ import org.opengis.sld.SLDLibrary;
 import org.opengis.sld.SLDVisitor;
 import org.opengis.style.Description;
 
-import static org.geotoolkit.util.ArgumentChecks.*;
+import static org.apache.sis.util.ArgumentChecks.*;
 
 /**
  * Default mutable Style Layer Descriptor, thread safe.

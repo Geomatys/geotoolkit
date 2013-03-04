@@ -40,7 +40,7 @@ import com.ardor3d.util.resource.URLResourceSource;
 import java.net.URL;
 import org.geotoolkit.display3d.canvas.A3DCanvas;
 import org.geotoolkit.map.MapContext;
-import org.geotoolkit.util.ArgumentChecks;
+import org.apache.sis.util.ArgumentChecks;
 import org.opengis.display.canvas.Canvas;
 
 /**

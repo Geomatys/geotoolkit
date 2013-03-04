@@ -19,7 +19,7 @@ package org.geotoolkit.filter.capability;
 
 import java.util.Collection;
 import java.util.List;
-import static org.geotoolkit.util.ArgumentChecks.*;
+import static org.apache.sis.util.ArgumentChecks.*;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
 import org.opengis.filter.capability.GeometryOperand;
 import org.opengis.filter.capability.SpatialCapabilities;

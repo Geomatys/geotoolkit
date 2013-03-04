@@ -32,7 +32,7 @@ import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.ows.xml.v110.BoundingBoxType;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.ows.xml.v110.DomainMetadataType;
-import org.geotoolkit.util.ArgumentChecks;
+import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.util.converter.ConverterRegistry;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
 import org.geotoolkit.util.logging.Logging;

@@ -19,7 +19,7 @@ package org.geotoolkit.filter.capability;
 
 import org.opengis.filter.capability.Operator;
 
-import static org.geotoolkit.util.ArgumentChecks.*;
+import static org.apache.sis.util.ArgumentChecks.*;
 
 /**
  * Immutable operator.

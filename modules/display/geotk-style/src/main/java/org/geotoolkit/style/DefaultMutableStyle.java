@@ -36,7 +36,7 @@ import org.opengis.style.SemanticType;
 import org.opengis.style.StyleVisitor;
 import org.opengis.style.Symbolizer;
 
-import static org.geotoolkit.util.ArgumentChecks.*;
+import static org.apache.sis.util.ArgumentChecks.*;
 
 /**
  * Mutable implementation of GeoAPI style.

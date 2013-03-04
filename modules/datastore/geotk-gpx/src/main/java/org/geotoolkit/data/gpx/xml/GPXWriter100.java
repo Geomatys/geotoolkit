@@ -42,7 +42,7 @@ import org.opengis.geometry.Envelope;
 
 import static org.geotoolkit.data.gpx.xml.GPXConstants.*;
 import static org.geotoolkit.data.gpx.model.GPXModelConstants.*;
-import static org.geotoolkit.util.ArgumentChecks.*;
+import static org.apache.sis.util.ArgumentChecks.*;
 
 
 /**

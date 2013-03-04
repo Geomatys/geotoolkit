@@ -53,7 +53,7 @@ import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.util.logging.Logging;
 
-import static org.geotoolkit.util.ArgumentChecks.*;
+import static org.apache.sis.util.ArgumentChecks.*;
 
 /**
  *

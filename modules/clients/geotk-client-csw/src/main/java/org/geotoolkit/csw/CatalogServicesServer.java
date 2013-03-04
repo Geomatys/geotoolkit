@@ -35,7 +35,7 @@ import org.geotoolkit.csw.xml.CSWBindingUtilities;
 import org.geotoolkit.csw.xml.CSWVersion;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.security.ClientSecurity;
-import org.geotoolkit.util.ArgumentChecks;
+import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.util.logging.Logging;
 
 

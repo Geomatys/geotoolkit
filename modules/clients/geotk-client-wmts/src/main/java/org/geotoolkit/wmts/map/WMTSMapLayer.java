@@ -23,7 +23,7 @@ import org.geotoolkit.map.DefaultCoverageMapLayer;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.StyleConstants;
-import org.geotoolkit.util.ArgumentChecks;
+import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.wmts.WebMapTileServer;
 import org.geotoolkit.wmts.model.WMTSPyramidSet;
 import org.opengis.feature.type.Name;

@@ -32,7 +32,7 @@ import org.geotoolkit.index.tree.io.TreeVisitor;
 import org.geotoolkit.index.tree.io.TreeVisitorResult;
 import org.geotoolkit.index.tree.NodeFactory;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.util.ArgumentChecks;
+import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;

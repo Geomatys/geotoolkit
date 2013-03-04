@@ -18,7 +18,7 @@ package org.geotoolkit.security;
 
 import java.net.URLConnection;
 import net.iharder.Base64;
-import org.geotoolkit.util.ArgumentChecks;
+import org.apache.sis.util.ArgumentChecks;
 
 /**
  * Basic authentication security.

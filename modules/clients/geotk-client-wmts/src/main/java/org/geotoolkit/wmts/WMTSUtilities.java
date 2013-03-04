@@ -23,7 +23,7 @@ import javax.measure.unit.Unit;
 import org.geotoolkit.geometry.DirectPosition2D;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
-import org.geotoolkit.util.ArgumentChecks;
+import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.wmts.xml.v100.TileMatrix;
 import org.geotoolkit.wmts.xml.v100.TileMatrixSet;
 import org.opengis.geometry.Envelope;

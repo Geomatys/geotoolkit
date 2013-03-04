@@ -23,7 +23,7 @@ import java.util.logging.Logger;
 import javax.swing.event.EventListenerList;
 import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.style.StyleConstants;
-import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
+import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.collection.CollectionChangeEvent;

@@ -23,7 +23,7 @@ import org.opengis.metadata.quality.ConformanceResult;
 import org.geotoolkit.parameter.Parameters;
 import javax.swing.event.EventListenerList;
 
-import static org.geotoolkit.util.ArgumentChecks.*;
+import static org.apache.sis.util.ArgumentChecks.*;
 
 /**
  *

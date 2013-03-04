@@ -22,7 +22,7 @@ import java.beans.PropertyChangeListener;
 import java.util.Locale;
 import java.util.logging.Logger;
 import org.geotoolkit.display.canvas.DisplayObject;
-import static org.geotoolkit.util.ArgumentChecks.*;
+import static org.apache.sis.util.ArgumentChecks.*;
 import org.geotoolkit.util.WeakPropertyChangeListener;
 import org.geotoolkit.util.converter.Classes;
 import org.opengis.display.canvas.Canvas;

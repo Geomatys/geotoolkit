@@ -31,7 +31,7 @@ import org.opengis.style.StyleVisitor;
 import org.opengis.style.TextSymbolizer;
 
 import static org.geotoolkit.style.StyleConstants.*;
-import static org.geotoolkit.util.ArgumentChecks.*;
+import static org.apache.sis.util.ArgumentChecks.*;
 
 /**
  * Immutable implementation of GeoAPI text symbolizer.

@@ -40,7 +40,7 @@ import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.display.shape.ShapeUtilities;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.factory.HintsPending;
-import org.geotoolkit.util.ArgumentChecks;
+import org.apache.sis.util.ArgumentChecks;
 
 import org.opengis.geometry.BoundingBox;
 import org.opengis.geometry.MismatchedDimensionException;

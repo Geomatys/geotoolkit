@@ -36,7 +36,7 @@ import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.process.AbstractProcess;
 import org.geotoolkit.process.ProcessException;
-import org.geotoolkit.util.ArgumentChecks;
+import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.util.NumberRange;
 
 import org.opengis.parameter.ParameterValueGroup;

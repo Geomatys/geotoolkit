@@ -31,7 +31,7 @@ import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.style.MutableStyle;
-import static org.geotoolkit.util.ArgumentChecks.*;
+import static org.apache.sis.util.ArgumentChecks.*;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.Range;
 import org.geotoolkit.util.collection.NotifiedCheckedList;

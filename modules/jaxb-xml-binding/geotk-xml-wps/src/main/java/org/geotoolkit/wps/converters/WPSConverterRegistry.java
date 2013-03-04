@@ -22,7 +22,7 @@ import java.util.logging.Logger;
 import org.geotoolkit.gml.xml.v311.BoundingShapeType;
 import org.geotoolkit.ows.xml.v110.BoundingBoxType;
 import org.geotoolkit.process.converters.*;
-import org.geotoolkit.util.ArgumentChecks;
+import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.wps.converters.inputs.complex.*;

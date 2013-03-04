@@ -61,7 +61,7 @@ import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.referencing.cs.DiscreteCoordinateSystemAxis;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.style.RandomStyleBuilder;
-import org.geotoolkit.util.ArgumentChecks;
+import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.util.Converters;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.Range;

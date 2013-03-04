@@ -18,7 +18,7 @@ package org.geotoolkit.style.function;
 
 import org.opengis.filter.expression.Expression;
 
-import static org.geotoolkit.util.ArgumentChecks.*;
+import static org.apache.sis.util.ArgumentChecks.*;
 
 /**
  *

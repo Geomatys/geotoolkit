@@ -19,7 +19,7 @@ package org.geotoolkit.data.query;
 
 import java.util.Arrays;
 import org.geotoolkit.factory.Hints;
-import static org.geotoolkit.util.ArgumentChecks.*;
+import static org.apache.sis.util.ArgumentChecks.*;
 import org.geotoolkit.util.NullArgumentException;
 import org.opengis.feature.type.Name;
 import org.opengis.filter.Filter;

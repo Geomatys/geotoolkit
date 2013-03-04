@@ -20,7 +20,7 @@ import org.opengis.filter.expression.Function;
 import org.opengis.style.ColorReplacement;
 import org.opengis.style.StyleVisitor;
 
-import static org.geotoolkit.util.ArgumentChecks.*;
+import static org.apache.sis.util.ArgumentChecks.*;
 
 /**
  * Immutable implementation of GeoAPI ColorReplacement.

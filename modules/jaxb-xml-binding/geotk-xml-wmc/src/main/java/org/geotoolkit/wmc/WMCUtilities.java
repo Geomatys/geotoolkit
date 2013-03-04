@@ -50,7 +50,7 @@ import org.geotoolkit.style.DefaultDescription;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.RandomStyleBuilder;
 import org.geotoolkit.style.StyleConstants;
-import org.geotoolkit.util.ArgumentChecks;
+import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.util.SimpleInternationalString;
 import org.geotoolkit.wmc.xml.v110.*;
 import org.geotoolkit.xml.MarshallerPool;

@@ -26,7 +26,7 @@ import org.geotoolkit.sld.DefaultSLDFactory;
 import org.geotoolkit.sld.MutableSLDFactory;
 import org.geotoolkit.sld.MutableStyledLayerDescriptor;
 import org.geotoolkit.sld.MutableUserLayer;
-import org.geotoolkit.util.ArgumentChecks;
+import org.apache.sis.util.ArgumentChecks;
 
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.expression.Expression;

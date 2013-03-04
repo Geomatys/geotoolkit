@@ -20,7 +20,7 @@ import java.awt.Rectangle;
 import java.awt.image.ComponentSampleModel;
 import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
-import org.geotoolkit.util.ArgumentChecks;
+import org.apache.sis.util.ArgumentChecks;
 import org.opengis.coverage.grid.SequenceType;
 
 /**

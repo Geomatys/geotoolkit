@@ -26,7 +26,7 @@ import static org.geotoolkit.parameter.Parameters.*;
 import org.geotoolkit.process.AbstractProcess;
 import org.geotoolkit.process.ProcessException;
 import static org.geotoolkit.process.coverage.pgpyramid.PyramidDescriptor.*;
-import org.geotoolkit.util.ArgumentChecks;
+import org.apache.sis.util.ArgumentChecks;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.geometry.Envelope;
 import org.opengis.parameter.ParameterValueGroup;

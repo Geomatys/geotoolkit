@@ -40,7 +40,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import static org.geotoolkit.parameter.Parameters.*;
 import org.geotoolkit.process.ProcessException;
 import static org.geotoolkit.process.coverage.tiling.TilingDescriptor.*;
-import org.geotoolkit.util.ArgumentChecks;
+import org.apache.sis.util.ArgumentChecks;
 /**
  *
  * @author Johann Sorel (Geomatys)

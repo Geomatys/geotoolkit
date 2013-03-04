@@ -22,7 +22,7 @@ import java.awt.image.WritableRaster;
 import javax.media.jai.RasterFactory;
 import org.geotoolkit.image.iterator.PixelIterator;
 import org.geotoolkit.image.iterator.PixelIteratorFactory;
-import org.geotoolkit.util.ArgumentChecks;
+import org.apache.sis.util.ArgumentChecks;
 
 /**
  * <p>To test interpolation performance.<br/><br/>

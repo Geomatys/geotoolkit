@@ -25,7 +25,7 @@ import org.geotoolkit.map.DefaultCoverageMapLayer;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.StyleConstants;
-import org.geotoolkit.util.ArgumentChecks;
+import org.apache.sis.util.ArgumentChecks;
 import org.opengis.feature.type.Name;
 
 

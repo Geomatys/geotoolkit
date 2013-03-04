@@ -54,7 +54,7 @@ import org.geotoolkit.util.collection.UnmodifiableArrayList;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.PropertyDescriptor;
 
-import static org.geotoolkit.util.ArgumentChecks.*;
+import static org.apache.sis.util.ArgumentChecks.*;
 
 /**
  * Utility class to generate html or pdf reports using JasperReport library.

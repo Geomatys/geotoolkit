@@ -66,7 +66,7 @@ import org.opengis.util.FactoryException;
 
 import static org.geotoolkit.metadata.geotiff.GeoTiffConstants.*;
 import static org.geotoolkit.referencing.AbstractIdentifiedObject.*;
-import static org.geotoolkit.util.ArgumentChecks.*;
+import static org.apache.sis.util.ArgumentChecks.*;
 
 /**
  * Encode a CoordinateReferenceSystem as GeoTiff tags.

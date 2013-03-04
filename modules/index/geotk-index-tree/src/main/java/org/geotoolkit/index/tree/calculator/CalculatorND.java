@@ -12,7 +12,7 @@ import static org.geotoolkit.index.tree.DefaultTreeUtils.*;
 import org.geotoolkit.index.tree.Node;
 import static org.geotoolkit.index.tree.Node.PROP_HILBERT_ORDER;
 import org.geotoolkit.index.tree.hilbert.HilbertIterator;
-import org.geotoolkit.util.ArgumentChecks;
+import org.apache.sis.util.ArgumentChecks;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 

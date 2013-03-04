@@ -42,7 +42,7 @@ import org.geotoolkit.gui.swing.go2.decoration.InformationDecoration;
 import org.geotoolkit.gui.swing.go2.decoration.MapDecoration;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
-import static org.geotoolkit.util.ArgumentChecks.*;
+import static org.apache.sis.util.ArgumentChecks.*;
 import org.geotoolkit.util.logging.Logging;
 import org.opengis.display.canvas.CanvasEvent;
 import org.opengis.display.canvas.CanvasListener;

@@ -20,7 +20,7 @@ import java.io.File;
 import org.geotoolkit.process.AbstractProcess;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.referencing.factory.epsg.EpsgInstaller;
-import org.geotoolkit.util.ArgumentChecks;
+import org.apache.sis.util.ArgumentChecks;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.FactoryException;
 import static org.geotoolkit.process.referencing.createdb.CreateDBDescriptor.*;

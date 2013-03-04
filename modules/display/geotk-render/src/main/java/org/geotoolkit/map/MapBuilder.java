@@ -36,7 +36,7 @@ import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.style.DefaultDescription;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
-import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
+import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 import org.geotoolkit.util.SimpleInternationalString;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.feature.Feature;

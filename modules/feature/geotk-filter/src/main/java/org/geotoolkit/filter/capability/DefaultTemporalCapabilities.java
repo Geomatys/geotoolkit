@@ -17,7 +17,7 @@
 package org.geotoolkit.filter.capability;
 
 import java.util.Collection;
-import static org.geotoolkit.util.ArgumentChecks.*;
+import static org.apache.sis.util.ArgumentChecks.*;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
 import org.opengis.filter.capability.TemporalCapabilities;
 import org.opengis.filter.capability.TemporalOperand;

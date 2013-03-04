@@ -32,7 +32,7 @@ import org.geotoolkit.filter.visitor.IsStaticExpressionVisitor;
 import org.geotoolkit.gui.swing.misc.JOptionDialog;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.MutableStyleFactory;
-import static org.geotoolkit.util.ArgumentChecks.*;
+import static org.apache.sis.util.ArgumentChecks.*;
 import org.geotoolkit.util.logging.Logging;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.expression.Expression;
