@@ -17,12 +17,16 @@
 package org.geotoolkit.index.tree.calculator;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import static org.geotoolkit.index.tree.DefaultTreeUtils.getMedian;
 import org.geotoolkit.index.tree.Node;
+import static org.geotoolkit.index.tree.Node.PROP_HILBERT_ORDER;
+import static org.geotoolkit.index.tree.Node.PROP_HILBERT_TABLE;
+import static org.geotoolkit.index.tree.Node.PROP_ISLEAF;
 import org.geotoolkit.index.tree.hilbert.HilbertIterator;
+import org.geotoolkit.index.tree.hilbert.HilbertRTree;
+import org.geotoolkit.util.ArgumentChecks;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.MismatchedDimensionException;
@@ -93,17 +97,6 @@ public abstract class Calculator {
     public abstract double getEnlargement(final Envelope envMin, final Envelope envMax);
 
     /**
-     * Return a {@code Comparator} to sort list elements.
-     *
-     * @param index : ordinate choosen to compare.
-     * @param lowerOrUpper : true to sort from "lower boundary", false from
-     * "upper boundary"
-     * @param nodeOrGE : true  to sort {@code Node} type elements,
-     *                   false to sort {@code Envelope} type elements.
-     */
-    public abstract Comparator sortFrom(final int index, final boolean lowerOrUpper, final boolean nodeOrGE);
-
-    /**
      * Method exclusively used by {@code HilbertRTree}.
      *
      * Create subnode(s) centroid(s). These centroids define Hilbert curve.
@@ -116,8 +109,33 @@ public abstract class Calculator {
      * @throws IllegalArgumentException if param hl Hilbert order is larger than
      * them Hilbert RTree order.
      */
-    public abstract void createBasicHL(final Node candidate, final int order, final Envelope bound)throws MismatchedDimensionException;
-
+    public void createBasicHL(final Node candidate, final int order, final Envelope bound) throws MismatchedDimensionException {
+        ArgumentChecks.ensurePositive("impossible to create Hilbert Curve with negative indice", order);
+        assert order <= ((HilbertRTree)candidate.getTree()).getHilbertOrder() : 
+                "impossible to build HilbertLeaf with Hilbert order higher than tree Hilbert order.";
+        candidate.getChildren().clear();
+        candidate.setUserProperty(PROP_ISLEAF, true);
+        candidate.setUserProperty(PROP_HILBERT_ORDER, order);
+        candidate.setBound(bound);
+        final List<Node> listN = candidate.getChildren();
+        listN.clear();
+        if (order > 0) {
+            int dim = bound.getDimension();
+            int dim2 = dim;
+            for (int d = 0; d < dim2; d++) if (bound.getSpan(d) <= 1E-9) dim--;
+            final int nbCells = 2 << (dim * order - 1);
+            int[] tabHV = new int[nbCells];
+            for (int i = 0; i < nbCells; i++) {
+                tabHV[i] = i;
+                listN.add(HilbertRTree.createCell(candidate.getTree(), candidate, null, i, null));
+            }
+            candidate.setUserProperty(PROP_HILBERT_TABLE, tabHV);
+        } else {
+            listN.add(HilbertRTree.createCell(candidate.getTree(), candidate, null, 0, null));
+        }
+        candidate.setBound(bound);
+    }
+    
     /**
      * Find Hilbert order of an entry from candidate.
      *
@@ -134,6 +152,51 @@ public abstract class Calculator {
         return dims;
     }
 
+    /**
+     * Sort elements list.
+     * 
+     * @param index : ordinate choosen to compare.
+     * @param lowerOrUpper : true to sort from "lower boundary", false from "upper boundary"
+     * @param list : elements which will be sorted.
+     * @return sorted list.
+     */
+    public List sortList(int index, boolean lowerOrUpper, List list) {
+        ArgumentChecks.ensureNonNull("list", list);
+        if (list.isEmpty()) return list;
+        boolean alreadySort;
+        final boolean isNode = (list.get(0) instanceof Node);
+        if (!isNode) assert (list.get(0) instanceof Envelope) : "objects should be instance of Envelope if they aren't Node";
+        final int siz = list.size();
+        Envelope env1, env2;
+        double val1, val2;
+        
+        for (int bornMin = 0; bornMin < siz-1; bornMin++) {
+            alreadySort = true;
+            for (int id2 = siz-1; id2 > bornMin; id2--) {
+                if (isNode) {
+                    env1 = ((Node)list.get(id2)).getBoundary();
+                    env2 = ((Node)list.get(id2-1)).getBoundary();
+                } else {
+                    env1 = ((Envelope)list.get(id2));
+                    env2 = ((Envelope)list.get(id2-1));
+                }
+                if (lowerOrUpper) {
+                    val1 = env1.getMinimum(index);
+                    val2 = env2.getMinimum(index);
+                } else {
+                    val1 = env1.getMaximum(index);
+                    val2 = env2.getMaximum(index);
+                }
+                if (val2 > val1) {
+                    alreadySort = false;
+                    list.add(id2-1, list.remove(id2));
+                }
+            }
+            if (alreadySort) break;
+        }
+        return list;
+    }
+    
     /**Create subnode(s) centroid(s). These centroids define Hilbert curve.
      *
      * @param hl HilbertLeaf to create Hilbert curve (subnode centroids).

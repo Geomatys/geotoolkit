@@ -54,8 +54,8 @@ public class DefaultTreeUtils {
         if (dim<3) throw new IllegalArgumentException("getGeneralEnvelopBulk : compute envelop bulk with lesser than three dimensions have no sens");
         if (lower.equals(upper)) return 0;
         double bulk = 1;
-        for(int i = 0; i<3;i++){
-            bulk*=envelope.getSpan(i);
+        for(int i = 0; i<dim; i++){
+            bulk *= envelope.getSpan(i);
         }
         return bulk;
     }
@@ -149,14 +149,18 @@ public class DefaultTreeUtils {
      * @throws IllegalArgumentException if {@code Envelope} list lS is empty.
      * @return GeneralEnvelope which is general boundary.
      */
-    public static GeneralEnvelope getEnveloppeMin(final List<? extends Envelope> lGE){
+    public static GeneralEnvelope getEnveloppeMin(final List lGE){
         ArgumentChecks.ensureNonNull("getEnveloppeMin : lGE", lGE);
         if(lGE.isEmpty()){
             throw new IllegalArgumentException("impossible to get Enveloppe : empty list");
         }
-        final GeneralEnvelope envlop = new GeneralEnvelope(lGE.get(0));
-        for(int i = 1, s = lGE.size(); i<s;i++){
-            envlop.add(lGE.get(i));
+        Object first = lGE.get(0);
+        if (!(first instanceof Envelope) && !(first instanceof Node))
+            throw new IllegalArgumentException("list elements should be instance of Node or Envelope : use only for tree work.");
+        final boolean isNode = first instanceof Node;
+        final GeneralEnvelope envlop = new GeneralEnvelope((isNode)?((Node)first).getBoundary():(Envelope)first);
+        for(int i = 1, s = lGE.size(); i < s; i++){
+            envlop.add((isNode)?((Node)lGE.get(i)).getBoundary():(Envelope)lGE.get(i));
         }
         return envlop;
     }

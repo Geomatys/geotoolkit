@@ -16,19 +16,13 @@
  */
 package org.geotoolkit.index.tree.calculator;
 
-import java.util.ArrayList;
-import java.util.List;
-import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import static org.geotoolkit.index.tree.DefaultTreeUtils.getMedian;
 import org.geotoolkit.index.tree.Node;
 import static org.geotoolkit.index.tree.Node.*;
-import org.geotoolkit.index.tree.hilbert.HilbertRTree;
 import org.geotoolkit.util.ArgumentChecks;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
-import org.opengis.geometry.MismatchedDimensionException;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  * Define a 3 dimension geographical Calculator.
@@ -41,99 +35,7 @@ public class GeoCalculator3D extends GeoCalculator{
     public GeoCalculator3D(double radius, int... dims) {
         super(radius, dims);
     }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public void createBasicHL(final Node candidate, final int order, final Envelope bound) throws MismatchedDimensionException {
-        ArgumentChecks.ensurePositive("impossible to create Hilbert Curve with negative indice", order);
-        candidate.getChildren().clear();
-        final CoordinateReferenceSystem crs = bound.getCoordinateReferenceSystem();
-        final List<DirectPosition> listOfCentroidChild = new ArrayList<DirectPosition>();
-        candidate.setUserProperty(PROP_ISLEAF, true);
-        candidate.setUserProperty(PROP_HILBERT_ORDER, order);
-        candidate.setBound(bound);
-        final List<Node> listN = candidate.getChildren();
-        listN.clear();
-        if (order > 0) {
-            final int dimH  = 2 << order - 1;
-            final int dimH2 = dimH << 1;
-            if (getSpace(bound) <= 0) {
-                final int nbCells2D = 2 << (2 * order - 1);
-                if (getEdge(bound) <= 0) {
-                    int index = -1;
-                    for (int i = 0; i < 3; i++) {
-                        if (bound.getSpan(i) > 0) {
-                            index = i;break;
-                        }
-                    }
-                    final double fract = bound.getSpan(index)/(2*nbCells2D);
-                    final double valMin = bound.getLowerCorner().getOrdinate(index);
-                    final DirectPosition dpt = new GeneralDirectPosition(crs);
-                    for(int i = 1; i<2*nbCells2D; i+= 2){
-                        for (int j = 0; j<bound.getDimension(); j++) {
-                            if(j!=index)dpt.setOrdinate(j, bound.getMedian(j));
-                        }
-                        dpt.setOrdinate(index, valMin + i * fract);
-                        listOfCentroidChild.add(dpt);
-                    }
-                    int[] groundZero = new int[nbCells2D];
-                    for (int i = 0, s = listOfCentroidChild.size(); i < s; i++) {
-                        groundZero[i] = i;
-                        listN.add(HilbertRTree.createCell(candidate.getTree(), candidate, listOfCentroidChild.get(i), i, null));
-                    }
-                    candidate.setUserProperty(PROP_HILBERT_TABLE, groundZero);
-
-                }else{
-                    int index = -1;
-                    for (int i = 0; i < 3; i++) {
-                        if (bound.getSpan(i) <= 0) {
-                            index = i;break;
-                        }
-                    }
-                    int[] tabHV = new int[dimH2];
-                    int  d0, d1;
-                    switch(index){
-                        case 0  : d0 = 1; d1 = 2; break;//defined on yz plan
-                        case 1  : d0 = 0; d1 = 2; break;//defined on xz
-                        case 2  : d0 = 0; d1 = 1; break;//defined on xy
-                        default : throw new IllegalStateException("invalid no space index : "+index);
-                    }
-                    listOfCentroidChild.addAll(createPath(candidate, order, d0, d1));
-                    for (int i = 0, s = listOfCentroidChild.size(); i < s; i++) {
-                        final DirectPosition ptCTemp = listOfCentroidChild.get(i);
-                        ArgumentChecks.ensureNonNull("the crs ptCTemp", ptCTemp.getCoordinateReferenceSystem());
-                        int[] tabTemp = getHilbCoord(candidate, ptCTemp, bound, order);
-                        tabHV[tabTemp[0] + tabTemp[1] * dimH] = i;
-                        listN.add(HilbertRTree.createCell(candidate.getTree(), candidate, ptCTemp, i, null));
-                    }
-                    candidate.setUserProperty(PROP_HILBERT_TABLE, tabHV);
-                }
-
-            } else {
-
-                int[] tabHV = new int[dimH * dimH2];
-
-                listOfCentroidChild.addAll(createPath(candidate, order, dims[0], dims[1], dims[2]));
-
-                for (int i = 0, s = listOfCentroidChild.size(); i < s; i++) {
-                    final DirectPosition ptCTemp = listOfCentroidChild.get(i);
-                    ArgumentChecks.ensureNonNull("the crs ptCTemp", ptCTemp.getCoordinateReferenceSystem());
-                    int[] tabTemp = getHilbCoord(candidate, ptCTemp, bound, order);
-                    tabHV[tabTemp[0] + tabTemp[1] * dimH + tabTemp[2] * dimH2] = i;
-                    listN.add(HilbertRTree.createCell(candidate.getTree(), candidate, ptCTemp, i, null));
-                }
-                candidate.setUserProperty(PROP_HILBERT_TABLE, tabHV);
-            }
-        } else {
-            listOfCentroidChild.add(new GeneralDirectPosition(getMedian(bound)));
-            listN.add(HilbertRTree.createCell(candidate.getTree(), candidate, listOfCentroidChild.get(0), 0, null));
-        }
-        candidate.setBound(bound);
-    }
-
-
+    
     /**
      * Find {@code DirectPosition} Hilbert coordinate from this Node.
      *
@@ -157,9 +59,12 @@ public class GeoCalculator3D extends GeoCalculator{
         double hdx        = (Math.abs(dPt.getOrdinate(0) - envelop.getLowerCorner().getOrdinate(0)) / divX);
         double hdy        = (Math.abs(dPt.getOrdinate(1) - envelop.getLowerCorner().getOrdinate(1)) / divY);
         double hdz        = (Math.abs(dPt.getOrdinate(2) - envelop.getLowerCorner().getOrdinate(2)) / divZ);
-        final int hx      = (hdx <= 1) ? 0 : 1;
-        final int hy      = (hdy <= 1) ? 0 : 1;
-        final int hz      = (hdz <= 1) ? 0 : 1;
+        int hx      = (int) hdx; 
+        int hy      = (int) hdy;
+        int hz      = (int) hdz;
+        if (hx == div) hx--;
+        if (hy == div) hy--;
+        if (hz == div) hz--;
 
         if (calc.getSpace(envelop) <= 0) {
             int index = -1;

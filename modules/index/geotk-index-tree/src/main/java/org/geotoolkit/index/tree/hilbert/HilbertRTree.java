@@ -17,8 +17,6 @@
 package org.geotoolkit.index.tree.hilbert;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.GeneralEnvelope;
@@ -245,35 +243,53 @@ public class HilbertRTree extends AbstractTree {
         ArgumentChecks.ensureNonNull("impossible to insert a null entry", entry);
         if (candidate.isFull()) {
             List<Node> lSp = splitNode(candidate);
+            //List is null if internal Node hilbert order should be increase by 1. 
             if (lSp != null) {
-                final Node lsp0 = lSp.get(0);
-                final Node lsp1 = lSp.get(1);
-                candidate.getChildren().clear();
-                candidate.setUserProperty(PROP_ISLEAF, false);
-                candidate.setUserProperty(PROP_HILBERT_ORDER, 0);
-                lsp0.setParent(candidate);
-                lsp1.setParent(candidate);
-                candidate.getChildren().add(lSp.get(0));
-                candidate.getChildren().add(lSp.get(1));
-            }
-        }
-        if (candidate.isLeaf()) {
-            final GeneralEnvelope cB = new GeneralEnvelope(candidate.getBoundary());
-            if ((!cB.contains(entry, true))) {
-                final List<Envelope> lS = new ArrayList<Envelope>();
-                searchHilbertNode(candidate, cB, new DefaultTreeVisitor(lS));
-                lS.add(entry);
-                Envelope envelope = getEnveloppeMin(lS);
-                candidate.getTree().getCalculator().createBasicHL(candidate, (Integer) candidate.getUserProperty(PROP_HILBERT_ORDER), envelope);
-                for (Envelope sh : lS) {
-                    candidate.setBound(envelope);//to avoid recomputing of candidate boundary.
-                    chooseSubtree(candidate, entry).getEntries().add(sh);
+                
+                final Node lsp0      = lSp.get(0);
+                final Node lsp1      = lSp.get(1);
+                Node parentCandidate = candidate.getParent();
+                
+                if (parentCandidate != null) {
+                    final List<Node> parentChildren = parentCandidate.getChildren();
+                    parentChildren.remove(candidate);
+                    lsp0.setParent(parentCandidate);
+                    lsp1.setParent(parentCandidate);
+                    parentChildren.add(lSp.get(0));
+                    parentChildren.add(lSp.get(1));
+                    insertNode(parentCandidate, entry);
+                } else {
+                    candidate.getChildren().clear();
+                    candidate.setUserProperty(PROP_ISLEAF, false);
+                    candidate.setUserProperty(PROP_HILBERT_ORDER, 0);
+                    lsp0.setParent(candidate);
+                    lsp1.setParent(candidate);
+                    candidate.getChildren().add(lSp.get(0));
+                    candidate.getChildren().add(lSp.get(1));
+                    insertNode(candidate, entry);
                 }
-            } else {
-                chooseSubtree(candidate, entry).getEntries().add(entry);
+            }else {
+                insertNode(candidate, entry);
             }
         } else {
-            insertNode(chooseSubtree(candidate, entry), entry);
+            if (candidate.isLeaf()) {
+                final GeneralEnvelope cB = new GeneralEnvelope(candidate.getBoundary());
+                if ((!cB.contains(entry, true))) {
+                    final List<Envelope> lS = new ArrayList<Envelope>();
+                    searchHilbertNode(candidate, cB, new DefaultTreeVisitor(lS));
+                    lS.add(entry);
+                    Envelope envelope = getEnveloppeMin(lS);
+                    candidate.getTree().getCalculator().createBasicHL(candidate, (Integer) candidate.getUserProperty(PROP_HILBERT_ORDER), envelope);
+                    for (Envelope sh : lS) {
+                        candidate.setBound(envelope);//to avoid recomputing of candidate boundary.
+                        chooseSubtree(candidate, entry).getEntries().add(sh);
+                    }
+                } else {
+                    chooseSubtree(candidate, entry).getEntries().add(entry);
+                }
+            } else {
+                insertNode(chooseSubtree(candidate, entry), entry);
+            }
         }
     }
 
@@ -339,7 +355,6 @@ public class HilbertRTree extends AbstractTree {
         }
         final AbstractTree tree = (AbstractTree)candidate.getTree();
         final Calculator calc   = tree.getCalculator();
-        final int dim           = tree.getDims().length;
         final int size          = eltList.size();
         final double size04     = size * 0.4;
         final int demiSize      = (int) ((size04 >= 1) ? size04 : 1);
@@ -348,10 +363,10 @@ public class HilbertRTree extends AbstractTree {
         double bulkRef          = Double.POSITIVE_INFINITY;
         int index               = 0;
         GeneralEnvelope gESPLA, gESPLB;
-        Comparator comp;
         double bulkTemp; 
         
         final GeneralEnvelope globalEltsArea = getEnveloppeMin(eltList);
+        final int dim           = globalEltsArea.getDimension();
         
         // if glogaleArea.span(currentDim) == 0 || if all elements have same span
         // value as global area on current ordinate, impossible to split on this axis.
@@ -368,12 +383,10 @@ public class HilbertRTree extends AbstractTree {
                 }
             }
             if (globalSpan <= 1E-9 || isSameSpan) continue unappropriateOrdinate; 
-            
             bulkTemp = 0;
+            
             for (int left_or_right = 0; left_or_right < 2; left_or_right++) {
-                comp = (isLeaf) ? ((left_or_right == 0) ? calc.sortFrom(indOrg, true, false) : calc.sortFrom(indOrg, false, false))
-                                : ((left_or_right == 0) ? calc.sortFrom(indOrg, true, true)  : calc.sortFrom(indOrg, false, true));
-                Collections.sort(eltList, comp);
+                eltList = (left_or_right == 0) ? calc.sortList(indOrg, true, eltList):calc.sortList(indOrg, false, eltList);
                 for (int cut = demiSize, sdem = size - demiSize; cut <= sdem; cut++) {
                     splitListA.clear();
                     splitListB.clear();
@@ -439,14 +452,10 @@ public class HilbertRTree extends AbstractTree {
         final List<CoupleGE> listCGE = new ArrayList<CoupleGE>();
         GeneralEnvelope gESPLA, gESPLB;
         CoupleGE coupleGE;
-        Comparator comp;
         double bulkTemp;
-        // if (lu == 0) organize list elements from their lower corner boundary else organize from their upper corner.
+        
         for (int lu = 0; lu < 2; lu++) {
-            comp = (isLeaf) ? ((lu == 0) ? calc.sortFrom(splitIndex, true, false) : calc.sortFrom(splitIndex, false, false))
-                            : ((lu == 0) ? calc.sortFrom(splitIndex, true, true)  : calc.sortFrom(splitIndex, false, true));
-            Collections.sort(eltList, comp);
-
+            eltList = (lu == 0) ? calc.sortList(splitIndex, true, eltList):calc.sortList(splitIndex, false, eltList);
             for (int cut = tierSize; cut <= size - tierSize; cut++) {
                 for (int i = 0; i < cut; i++) {
                     splitListA.add(eltList.get(i));
@@ -485,9 +494,7 @@ public class HilbertRTree extends AbstractTree {
                 }
             }
         }
-        comp = (isLeaf) ? ((lower_or_upper == 0) ? calc.sortFrom(splitIndex, true, false) : calc.sortFrom(splitIndex, false, false))
-                        : ((lower_or_upper == 0) ? calc.sortFrom(splitIndex, true, true)  : calc.sortFrom(splitIndex, false, true));
-        Collections.sort(eltList, comp);
+        eltList = (lower_or_upper == 0) ? calc.sortList(splitIndex, true, eltList):calc.sortList(splitIndex, false, eltList);
         for (int i = 0; i < index; i++) {
             splitListA.add(eltList.get(i));
         }
@@ -807,19 +814,26 @@ public class HilbertRTree extends AbstractTree {
             result = nodefactory.createNode(tree, parent, dp1, dp2, listChildren, null);
         }
         result.setUserProperty(PROP_ISLEAF, false);
+        result.setUserProperty(PROP_HILBERT_ORDER, 0);
         if (listEntries != null && !listEntries.isEmpty()) {
-            int diment = ((AbstractTree)tree).getDims().length;
-            if(tree.getCalculator().getSpace(getEnveloppeMin(listEntries))<=0)diment--;
+            final GeneralEnvelope bound = getEnveloppeMin(listEntries);
+            final int dim = bound.getDimension();
+            int diment = dim;
+            for (int d = 0; d < dim; d++) if (bound.getSpan(d) <= 1E-12) diment--;
             final int size = listEntries.size();
             final int maxElts = tree.getMaxElements();
             final int hOrder = (size <= maxElts) ? 0 : (int)((Math.log(size-1)-Math.log(maxElts))/(diment*LN2)) + 1;
-            assert hOrder <= ((HilbertRTree)tree).getHilbertOrder() : "too much elements to stock in tree leaf : hilbertOrder computed = "+hOrder;
-            result.setUserProperty(PROP_ISLEAF, true);
-            final Envelope bound = DefaultTreeUtils.getEnveloppeMin(listEntries);
-            tree.getCalculator().createBasicHL(result, hOrder, bound);
-            for (Envelope ent : listEntries) {
-                result.setBound(bound);
-                chooseSubtree(result, ent).getEntries().add(ent);
+            //case where splitting method lost a dimension and overmuch elements for n-1 dimension.
+            if (hOrder > ((HilbertRTree)tree).getHilbertOrder()) {
+                tree.getCalculator().createBasicHL(result, 0, bound);
+                for (Envelope ent : listEntries) insertNode(result, ent);
+            } else {
+                result.setUserProperty(PROP_ISLEAF, true);
+                tree.getCalculator().createBasicHL(result, hOrder, bound);
+                for (Envelope ent : listEntries) {
+                    result.setBound(bound);
+                    chooseSubtree(result, ent).getEntries().add(ent);
+                }
             }
         }
         return result;

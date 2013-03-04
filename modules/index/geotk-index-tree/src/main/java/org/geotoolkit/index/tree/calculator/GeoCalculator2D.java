@@ -16,18 +16,13 @@
  */
 package org.geotoolkit.index.tree.calculator;
 
-import java.util.ArrayList;
-import java.util.List;
-import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import static org.geotoolkit.index.tree.DefaultTreeUtils.getMedian;
 import org.geotoolkit.index.tree.Node;
 import static org.geotoolkit.index.tree.Node.*;
-import org.geotoolkit.index.tree.hilbert.HilbertRTree;
 import org.geotoolkit.util.ArgumentChecks;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  * Define a two dimension geographical Calculator.
@@ -39,74 +34,6 @@ public class GeoCalculator2D extends GeoCalculator{
 
     public GeoCalculator2D(double radius, int... dims) {
         super(radius, dims);
-    }
-
-    /**
-     * {@inheritDoc }.
-     */
-    @Override
-    public void createBasicHL(final Node candidate, final int order, final Envelope bound) {
-        ArgumentChecks.ensurePositive("impossible to create Hilbert Curve with negative indice", order);
-        candidate.getChildren().clear();
-        final CoordinateReferenceSystem crs = bound.getCoordinateReferenceSystem();
-        final List<DirectPosition> listOfCentroidChild = new ArrayList<DirectPosition>();
-        candidate.setUserProperty(PROP_ISLEAF, true);
-        candidate.setUserProperty(PROP_HILBERT_ORDER, order);
-        candidate.setBound(bound);
-        final List<Node> listN = candidate.getChildren();
-        listN.clear();
-        if (order > 0) {
-            final double width  = bound.getSpan(dims[0]);
-            final double height = bound.getSpan(dims[1]);
-            final int nbCells   = 2 << (2 * order - 1);
-            final int dimH      = 2 << order - 1;
-            int[] tabHV         = new int[nbCells];
-
-            double fract, ymin, xmin;
-            if (width * height <= 0) {
-                if (width <= 0) {
-                    fract = height / (2 * nbCells);
-                    ymin  = bound.getLowerCorner().getOrdinate(dims[1]);
-                    xmin  = bound.getLowerCorner().getOrdinate(dims[0]);
-                    for (int i = 1; i < 2 * nbCells; i += 2) {
-                        final DirectPosition dpt = new GeneralDirectPosition(crs);
-                        dpt.setOrdinate(dims[0], xmin);
-                        dpt.setOrdinate(dims[1], ymin + i * fract);
-                        listOfCentroidChild.add(dpt);
-                    }
-                } else {
-                    fract = width / (2 * nbCells);
-                    ymin  = bound.getLowerCorner().getOrdinate(dims[1]);
-                    xmin  = bound.getLowerCorner().getOrdinate(dims[0]);
-                    for (int i = 1; i < 2 * nbCells; i += 2) {
-                        final DirectPosition dpt = new GeneralDirectPosition(crs);
-                        dpt.setOrdinate(dims[0], xmin + i * fract);
-                        dpt.setOrdinate(dims[1], ymin);
-                        listOfCentroidChild.add(dpt);
-                    }
-                }
-                int[] groundZero = new int[nbCells];
-                for (int i = 0, s = listOfCentroidChild.size(); i < s; i++) {
-                    groundZero[i] = i;
-                    listN.add(HilbertRTree.createCell(candidate.getTree(), candidate, listOfCentroidChild.get(i), i, null));
-                }
-                candidate.setUserProperty(PROP_HILBERT_TABLE, groundZero);
-            } else {
-                listOfCentroidChild.addAll(createPath(candidate, order, dims[0], dims[1]));
-                for (int i = 0, s = listOfCentroidChild.size(); i < s; i++) {
-                    final DirectPosition ptCTemp = listOfCentroidChild.get(i);
-                    ArgumentChecks.ensureNonNull("the crs ptCTemp", ptCTemp.getCoordinateReferenceSystem());
-                    int[] tabTemp = getHilbCoord(candidate, ptCTemp, bound, order);
-                    tabHV[tabTemp[0] + tabTemp[1] * dimH] = i;
-                    listN.add(HilbertRTree.createCell(candidate.getTree(), candidate, ptCTemp, i, null));
-                }
-                candidate.setUserProperty(PROP_HILBERT_TABLE, tabHV);
-            }
-        } else {
-            listOfCentroidChild.add(new GeneralDirectPosition(getMedian(bound)));
-            listN.add(HilbertRTree.createCell(candidate.getTree(), candidate, listOfCentroidChild.get(0), 0, null));
-        }
-        candidate.setBound(bound);
     }
 
     /**

@@ -17,8 +17,6 @@
 package org.geotoolkit.index.tree.basic;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.GeneralEnvelope;
@@ -28,6 +26,7 @@ import org.geotoolkit.index.tree.DefaultTreeUtils;
 import org.geotoolkit.index.tree.Node;
 import org.geotoolkit.index.tree.Tree;
 import org.geotoolkit.index.tree.calculator.Calculator;
+import static org.geotoolkit.index.tree.DefaultTreeUtils.*;
 import static org.geotoolkit.index.tree.io.TVR.*;
 import org.geotoolkit.index.tree.io.TreeVisitor;
 import org.geotoolkit.index.tree.io.TreeVisitorResult;
@@ -273,7 +272,7 @@ public class BasicRTree extends AbstractTree {
      */
     private static void branchGrafting(final Node nodeA, final Node nodeB ) throws IllegalArgumentException {
         if(!nodeA.isLeaf() || !nodeB.isLeaf()) throw new IllegalArgumentException("branchGrafting : not leaf");
-        final List<Envelope> listGlobale = new ArrayList<Envelope>(nodeA.getEntries());
+        List<Envelope> listGlobale = new ArrayList<Envelope>(nodeA.getEntries());
         listGlobale.addAll(new ArrayList<Envelope>(nodeB.getEntries()));
         nodeA.getEntries().clear();
         nodeB.getEntries().clear();
@@ -296,8 +295,7 @@ public class BasicRTree extends AbstractTree {
         }
         assert indexSplit != -1 : "BranchGrafting : indexSplit not find"+indexSplit;
         final Calculator calc = tree.getCalculator();
-        final Comparator comp = calc.sortFrom(indexSplit, true, false);
-        Collections.sort(listGlobale, comp);
+        listGlobale = calc.sortList(indexSplit, true, listGlobale);
         GeneralEnvelope envB;
         final GeneralEnvelope envA = new GeneralEnvelope(listGlobale.get(0));
         double overLapsRef = -1;
@@ -380,7 +378,7 @@ public class BasicRTree extends AbstractTree {
                             bound1 = ((Node) ls.get(i)).getBoundary();
                             bound2 = ((Node) ls.get(j)).getBoundary();
                         }
-                        rectGlobal = DefaultTreeUtils.getEnveloppeMin(UnmodifiableArrayList.wrap(bound1, bound2));
+                        rectGlobal = getEnveloppeMin(UnmodifiableArrayList.wrap(bound1, bound2));
                         tempValue = calc.getSpace(rectGlobal)-calc.getSpace(bound1)-calc.getSpace(bound2);
                         if (tempValue > refValue) {
                             s1 = ls.get(i);
@@ -420,11 +418,9 @@ public class BasicRTree extends AbstractTree {
         demimaxE = Math.max(demimaxE, 1);
 
         for (Object ent : ls) {
-            r1Temp = (leaf) ? DefaultTreeUtils.getEnveloppeMin(UnmodifiableArrayList.wrap((Envelope) s1, (Envelope)ent))
-                            : DefaultTreeUtils.getEnveloppeMin(UnmodifiableArrayList.wrap(((Node) s1).getBoundary(), ((Node)ent).getBoundary()));
-            r2Temp = (leaf) ? DefaultTreeUtils.getEnveloppeMin(UnmodifiableArrayList.wrap((Envelope)s2, (Envelope)ent))
-                            : DefaultTreeUtils.getEnveloppeMin(UnmodifiableArrayList.wrap(((Node) s2).getBoundary(), ((Node)ent).getBoundary()));
-
+            r1Temp = getEnveloppeMin(UnmodifiableArrayList.wrap(s1, ent));
+            r2Temp = getEnveloppeMin(UnmodifiableArrayList.wrap(s2, ent));
+            
             double area1 = calc.getSpace(r1Temp);
             double area2 = calc.getSpace(r2Temp);
             int r1nbE = DefaultTreeUtils.countElements(result1);

@@ -16,20 +16,13 @@
  */
 package org.geotoolkit.index.tree.calculator;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
-import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import static org.geotoolkit.index.tree.DefaultTreeUtils.getMedian;
 import org.geotoolkit.index.tree.Node;
 import static org.geotoolkit.index.tree.Node.*;
-import org.geotoolkit.index.tree.hilbert.HilbertRTree;
 import org.geotoolkit.util.ArgumentChecks;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  * Define a two dimension Calculator.
@@ -38,127 +31,6 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @author Martin Desruisseaux (Geomatys).
  */
 public class Calculator2D extends Calculator {
-
-    /**
-     * To compare two {@code Node} from them boundary box minimum x axis
-     * coordinate.
-     *
-     * @see StarNode#organizeFrom(int)
-     */
-    private final Comparator<Node> nodeComparatorXLow = new Comparator<Node>() {
-
-        @Override
-        public int compare(Node o1, Node o2) {
-            final double x1 = o1.getBoundary().getLowerCorner().getOrdinate(dims[0]);
-            final double x2 = o2.getBoundary().getLowerCorner().getOrdinate(dims[0]);
-            return Double.compare(x1, x2);
-        }
-    };
-    /**
-     * To compare two {@code Node} from them boundary box minimum y axis
-     * coordinate.
-     *
-     * @see StarNode#organizeFrom(int)
-     */
-    private final Comparator<Node> nodeComparatorYLow = new Comparator<Node>() {
-
-        @Override
-        public int compare(Node o1, Node o2) {
-            final double y1 = o1.getBoundary().getLowerCorner().getOrdinate(dims[1]);
-            final double y2 = o2.getBoundary().getLowerCorner().getOrdinate(dims[1]);
-            return Double.compare(y1, y2);
-        }
-    };
-    /**
-     * To compare two {@code Envelope} from them boundary box minimum x
-     * axis coordinate.
-     *
-     * @see StarNode#organizeFrom(int)
-     */
-    private final Comparator<Envelope> gEComparatorXLow = new Comparator<Envelope>() {
-
-        @Override
-        public int compare(Envelope o1, Envelope o2) {
-            final double x1 = o1.getLowerCorner().getOrdinate(dims[0]);
-            final double x2 = o2.getLowerCorner().getOrdinate(dims[0]);
-            return Double.compare(x1, x2);
-        }
-    };
-    /**
-     * To compare two {@code Envelope} from them boundary box minimum y
-     * axis coordinate.
-     *
-     * @see StarNode#organizeFrom(int)
-     */
-    private final Comparator<Envelope> gEComparatorYLow = new Comparator<Envelope>() {
-
-        @Override
-        public int compare(Envelope o1, Envelope o2) {
-            final double y1 = o1.getLowerCorner().getOrdinate(dims[1]);
-            final double y2 = o2.getLowerCorner().getOrdinate(dims[1]);
-            return Double.compare(y1, y2);
-        }
-    };
-    /**
-     * To compare two {@code Node} from them boundary box minimum x axis
-     * coordinate.
-     *
-     * @see StarNode#organizeFrom(int)
-     */
-    private final Comparator<Node> nodeComparatorXUpp = new Comparator<Node>() {
-
-        @Override
-        public int compare(Node o1, Node o2) {
-            final double x1 = o1.getBoundary().getUpperCorner().getOrdinate(dims[0]);
-            final double x2 = o2.getBoundary().getUpperCorner().getOrdinate(dims[0]);
-            return Double.compare(x1, x2);
-        }
-    };
-    /**
-     * To compare two {@code Node} from them boundary box minimum y axis
-     * coordinate.
-     *
-     * @see StarNode#organizeFrom(int)
-     */
-    private final Comparator<Node> nodeComparatorYUpp = new Comparator<Node>() {
-
-        @Override
-        public int compare(Node o1, Node o2) {
-            final double y1 = o1.getBoundary().getUpperCorner().getOrdinate(dims[1]);
-            final double y2 = o2.getBoundary().getUpperCorner().getOrdinate(dims[1]);
-            return Double.compare(y1, y2);
-        }
-    };
-    /**
-     * To compare two {@code Envelope} from them boundary box minimum x
-     * axis coordinate.
-     *
-     * @see StarNode#organizeFrom(int)
-     */
-    private final Comparator<Envelope> gEComparatorXUpp = new Comparator<Envelope>() {
-
-        @Override
-        public int compare(Envelope o1, Envelope o2) {
-            final double x1 = o1.getUpperCorner().getOrdinate(dims[0]);
-            final double x2 = o2.getUpperCorner().getOrdinate(dims[0]);
-            return Double.compare(x1, x2);
-        }
-    };
-    /**
-     * To compare two {@code Envelope} from them boundary box minimum y
-     * axis coordinate.
-     *
-     * @see StarNode#organizeFrom(int)
-     */
-    private final Comparator<Envelope> gEComparatorYUpp = new Comparator<Envelope>() {
-
-        @Override
-        public int compare(Envelope o1, Envelope o2) {
-            final double y1 = o1.getUpperCorner().getOrdinate(dims[1]);
-            final double y2 = o2.getUpperCorner().getOrdinate(dims[1]);
-            return Double.compare(y1, y2);
-        }
-    };
 
     public Calculator2D(final int[] dims) {
         super(dims);
@@ -237,111 +109,6 @@ public class Calculator2D extends Calculator {
     @Override
     public double getEnlargement(final Envelope envMin, final Envelope envMax) {
         return getSpace(envMax) - getSpace(envMin);
-    }
-
-    /**
-     * Comparator for 2D space axis. {@inheritDoc }
-     */
-    @Override
-    public Comparator sortFrom(final int index, final boolean lowerOrUpper, final boolean nodeOrGE) {
-        ArgumentChecks.ensureBetween("sortFrom : index ", 0, 1, index);
-        if (lowerOrUpper) {
-            if (nodeOrGE) {
-                switch (index) {
-                    case 0  : return nodeComparatorXLow;
-                    case 1  : return nodeComparatorYLow;
-                    default : throw new IllegalStateException("no comparator finded");
-                }
-            } else {
-                switch (index) {
-                    case 0  : return gEComparatorXLow;
-                    case 1  : return gEComparatorYLow;
-                    default : throw new IllegalStateException("no comparator finded");
-                }
-            }
-        } else {
-            if (nodeOrGE) {
-                switch (index) {
-                    case 0  : return nodeComparatorXUpp;
-                    case 1  : return nodeComparatorYUpp;
-                    default : throw new IllegalStateException("no comparator finded");
-                }
-            } else {
-                switch (index) {
-                    case 0  : return gEComparatorXUpp;
-                    case 1  : return gEComparatorYUpp;
-                    default : throw new IllegalStateException("no comparator finded");
-                }
-            }
-        }
-    }
-
-    /**
-     * {@inheritDoc }.
-     */
-    @Override
-    public void createBasicHL(final Node candidate, final int order, final Envelope bound) {
-        ArgumentChecks.ensurePositive("impossible to create Hilbert Curve with negative indice", order);
-        candidate.getChildren().clear();
-        final CoordinateReferenceSystem crs = bound.getCoordinateReferenceSystem();
-        final List<DirectPosition> listOfCentroidChild = new ArrayList<DirectPosition>();
-        candidate.setUserProperty(PROP_ISLEAF, true);
-        candidate.setUserProperty(PROP_HILBERT_ORDER, order);
-        candidate.setBound(bound);
-        final List<Node> listN = candidate.getChildren();
-        listN.clear();
-        if (order > 0) {
-            final double width  = bound.getSpan(dims[0]);
-            final double height = bound.getSpan(dims[1]);
-            final int nbCells   = 2 << (2 * order - 1);
-            final int dimH      = 2 << order - 1;
-            int[] tabHV         = new int[nbCells];
-            
-            double fract, ymin, xmin;
-            if (width * height <= 0) {
-                if (width <= 0) {
-                    fract = height / (2 * nbCells);
-                    ymin = bound.getLowerCorner().getOrdinate(dims[1]);
-                    xmin = bound.getLowerCorner().getOrdinate(dims[0]);
-                    for (int i = 1; i < 2 * nbCells; i += 2) {
-                        final DirectPosition dpt = new GeneralDirectPosition(crs);
-                        dpt.setOrdinate(dims[0], xmin);
-                        dpt.setOrdinate(dims[1], ymin + i * fract);
-                        listOfCentroidChild.add(dpt);
-                    }
-                } else {
-                    fract = width / (2 * nbCells);
-                    ymin  = bound.getLowerCorner().getOrdinate(dims[1]);
-                    xmin  = bound.getLowerCorner().getOrdinate(dims[0]);
-                    for (int i = 1; i < 2 * nbCells; i += 2) {
-                        final DirectPosition dpt = new GeneralDirectPosition(crs);
-                        dpt.setOrdinate(dims[0], xmin + i * fract);
-                        dpt.setOrdinate(dims[1], ymin);
-                        listOfCentroidChild.add(dpt);
-                    }
-                }
-                int[] groundZero = new int[nbCells];
-                for (int i = 0, s = listOfCentroidChild.size(); i < s; i++) {
-                    groundZero[i] = i;
-                    listN.add(HilbertRTree.createCell(candidate.getTree(), candidate, listOfCentroidChild.get(i), i, null));
-                }
-                candidate.setUserProperty(PROP_HILBERT_TABLE, groundZero);
-            } else {
-                listOfCentroidChild.addAll(createPath(candidate, order, dims[0], dims[1]));
-                for (int i = 0, s = listOfCentroidChild.size(); i < s; i++) {
-                    final DirectPosition ptCTemp = listOfCentroidChild.get(i);
-                    ArgumentChecks.ensureNonNull("the crs ptCTemp", ptCTemp.getCoordinateReferenceSystem());
-                    int[] tabTemp = getHilbCoord(candidate, ptCTemp, bound, order);
-                    tabHV[tabTemp[0] + tabTemp[1] * dimH] = i;
-                    listN.add(HilbertRTree.createCell(candidate.getTree(), candidate, ptCTemp, i, null));
-                }
-                candidate.setUserProperty(PROP_HILBERT_TABLE, tabHV);
-            }
-        } else {
-            listOfCentroidChild.add(new GeneralDirectPosition(getMedian(bound)));
-            listN.add(HilbertRTree.createCell(candidate.getTree(), candidate, listOfCentroidChild.get(0), 0, null));
-        }
-        candidate.setBound(bound);
     }
 
     /**
