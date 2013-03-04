@@ -23,8 +23,6 @@ import org.geotoolkit.geometry.GeneralEnvelope;
 import static org.geotoolkit.index.tree.DefaultTreeUtils.*;
 import org.geotoolkit.index.tree.*;
 import org.geotoolkit.index.tree.calculator.Calculator;
-import org.geotoolkit.index.tree.calculator.Calculator2D;
-import org.geotoolkit.index.tree.calculator.Calculator3D;
 import org.geotoolkit.index.tree.io.DefaultTreeVisitor;
 import static org.geotoolkit.index.tree.io.TVR.*;
 import org.geotoolkit.index.tree.io.TreeVisitor;
@@ -683,15 +681,12 @@ public class StarRTree extends AbstractTree {
         if(size == 0) throw new IllegalArgumentException("branchGrafting : empty list");
         final AbstractTree tree = (AbstractTree)nodeA.getTree();
         final Calculator calc = tree.getCalculator();
-        final GeneralEnvelope globalE = new GeneralEnvelope(listGlobale.get(0));
-        final int[]dims = tree.getDims();
-        for(int i = 1;i<size; i++){
-            globalE.add(listGlobale.get(i));
-        }
+        final GeneralEnvelope globalE = getEnveloppeMin(listGlobale);
+        final int dim = globalE.getDimension();
         double lengthDimRef = -1;
         int indexSplit = -1;
-        for(int i = 0, l = dims.length; i<l; i++) {
-            double lengthDimTemp = globalE.getSpan(dims[i]);
+        for(int i = 0; i<dim; i++) {
+            double lengthDimTemp = globalE.getSpan(i);
             if(lengthDimTemp>lengthDimRef) {
                 lengthDimRef = lengthDimTemp;
                 indexSplit = i;
@@ -750,8 +745,7 @@ public class StarRTree extends AbstractTree {
      */
     private static List<Envelope> getElementAtMore33PerCent(final Node candidate) {
         ArgumentChecks.ensureNonNull("getElementAtMore33PerCent : candidate", candidate);
-        final int[] dims = ((AbstractTree)candidate.getTree()).getDims();
-        final Calculator calc =(dims.length<=2)?new Calculator2D(dims):new Calculator3D(dims);
+        final Calculator calc = candidate.getTree().getCalculator();
         final List<Envelope> lsh = new ArrayList<Envelope>();
         final TreeVisitor tvrSearch = new DefaultTreeVisitor(lsh);
         final Envelope boundGE = candidate.getBoundary();

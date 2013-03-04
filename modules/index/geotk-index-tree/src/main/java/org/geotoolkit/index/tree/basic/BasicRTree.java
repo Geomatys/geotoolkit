@@ -278,16 +278,13 @@ public class BasicRTree extends AbstractTree {
         nodeB.getEntries().clear();
         if(listGlobale.isEmpty()) throw new IllegalArgumentException("branchGrafting : empty list");
         final AbstractTree tree = (AbstractTree)nodeA.getTree();
-        final int[]dims = tree.getDims();
-        final GeneralEnvelope globalE = new GeneralEnvelope(listGlobale.get(0));
         final int size = listGlobale.size();
-        for(int i = 1;i<size; i++) {
-            globalE.add(listGlobale.get(i));
-        }
+        final GeneralEnvelope globalE = getEnveloppeMin(listGlobale);
+        final int dim = globalE.getDimension();
         double lengthDimRef = -1;
         int indexSplit = -1;
-        for(int i = 0, l = dims.length; i<l; i++) {
-            double lengthDimTemp = globalE.getSpan(dims[i]);
+        for(int i = 0; i<dim; i++) {
+            double lengthDimTemp = globalE.getSpan(i);
             if(lengthDimTemp>lengthDimRef) {
                 lengthDimRef = lengthDimTemp;
                 indexSplit = i;
