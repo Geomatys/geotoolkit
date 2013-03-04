@@ -31,7 +31,7 @@ import org.geotoolkit.data.DefaultFeatureStoreJoinFeatureCollection;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.storage.DataStoreException;
-import org.geotoolkit.util.NullArgumentException;
+import org.apache.sis.util.NullArgumentException;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
 import org.opengis.feature.type.Name;
 import org.opengis.filter.Filter;

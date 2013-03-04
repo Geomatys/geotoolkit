@@ -28,7 +28,7 @@ import org.geotoolkit.geometry.ImmutableEnvelope;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.style.MutableStyle;
-import org.geotoolkit.util.NullArgumentException;
+import org.apache.sis.util.NullArgumentException;
 import org.opengis.feature.type.Name;
 import org.opengis.geometry.Envelope;
 import static org.apache.sis.util.ArgumentChecks.*;

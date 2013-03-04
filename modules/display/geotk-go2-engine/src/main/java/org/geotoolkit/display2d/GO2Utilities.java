@@ -108,7 +108,7 @@ import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.StyleConstants;
 import org.geotoolkit.style.visitor.PrepareStyleVisitor;
 import static org.apache.sis.util.ArgumentChecks.*;
-import org.geotoolkit.util.NullArgumentException;
+import org.apache.sis.util.NullArgumentException;
 import org.geotoolkit.util.collection.Cache;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.feature.Feature;
