@@ -20,6 +20,7 @@ package org.geotoolkit.sos.xml.v200;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.sos.xml.InsertResultTemplateResponse;
@@ -49,6 +50,7 @@ import org.geotoolkit.swes.xml.v200.ExtensibleResponseType;
 @XmlType(name = "InsertResultTemplateResponseType", propOrder = {
     "acceptedTemplate"
 })
+@XmlRootElement(name="InsertResultTemplateResponse")
 public class InsertResultTemplateResponseType extends ExtensibleResponseType implements InsertResultTemplateResponse {
 
     @XmlElement(required = true)

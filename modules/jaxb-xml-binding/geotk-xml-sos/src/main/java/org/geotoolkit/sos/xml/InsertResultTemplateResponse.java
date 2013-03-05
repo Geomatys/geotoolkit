@@ -16,10 +16,12 @@
  */
 package org.geotoolkit.sos.xml;
 
+import org.geotoolkit.swes.xml.SOSResponse;
+
 /**
  *
  * @author Guilhem Legal (Geomatys)
  */
-public interface InsertResultTemplateResponse {
+public interface InsertResultTemplateResponse extends SOSResponse {
     
 }
