@@ -53,6 +53,8 @@ The Geotoolkit.org library
   <<<import>>> declarations. However in some cases, the changes are more consistent.
   Non-trivial replacements are indicated in the comments of the <<<@deprecated>>> tags.
 
+    * {{{./3.x/UpgradeTo4.xml}Ant script for automatic renaming of some package names}}.
+
   To reduce the annoyance, this replacement is performed only on the 4.<x> series of Geotk versions.
   The Geotk 3.<x> series still have no dependency to SIS, and their classes are not deprecated.
   However we expect that most future developments will happen in the Apache SIS project together
