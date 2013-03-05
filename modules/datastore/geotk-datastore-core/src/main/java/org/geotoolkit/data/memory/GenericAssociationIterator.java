@@ -26,7 +26,7 @@ import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.DefaultAssociation;
 import org.geotoolkit.util.collection.CloseableIterator;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 import org.opengis.feature.Feature;
 import org.opengis.feature.Property;
 import org.opengis.feature.type.AssociationDescriptor;

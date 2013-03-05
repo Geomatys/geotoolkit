@@ -53,7 +53,7 @@ import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.storage.DataStoreException;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 

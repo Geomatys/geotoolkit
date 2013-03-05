@@ -32,7 +32,7 @@ import org.geotoolkit.factory.HintsPending;
 import org.geotoolkit.feature.simple.DefaultSimpleSchema;
 import org.geotoolkit.feature.type.BasicFeatureTypes;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;

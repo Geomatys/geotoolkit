@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.style;
 
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 import javax.measure.quantity.Length;
 import javax.measure.unit.Unit;
 

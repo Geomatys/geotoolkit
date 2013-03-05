@@ -28,7 +28,7 @@ import org.geotoolkit.coverage.TileReference;
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.storage.DataStoreException;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 import org.geotoolkit.wmts.WMTSUtilities;
 import org.geotoolkit.wmts.xml.v100.TileMatrix;
 import org.geotoolkit.wmts.xml.v100.TileMatrixLimits;

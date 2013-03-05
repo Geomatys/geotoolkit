@@ -27,7 +27,7 @@ import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.geotoolkit.util.collection.NotifiedCheckedList;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 
 import org.opengis.filter.Filter;
 import org.opengis.metadata.citation.OnlineResource;

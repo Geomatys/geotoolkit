@@ -40,7 +40,7 @@ import org.geotoolkit.referencing.operation.MathTransforms;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
 import static org.apache.sis.util.ArgumentChecks.*;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.DerivedCRS;

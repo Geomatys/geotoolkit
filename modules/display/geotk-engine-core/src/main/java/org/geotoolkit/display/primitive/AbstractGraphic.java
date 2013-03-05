@@ -24,7 +24,7 @@ import java.util.logging.Logger;
 import org.geotoolkit.display.canvas.DisplayObject;
 import static org.apache.sis.util.ArgumentChecks.*;
 import org.geotoolkit.util.WeakPropertyChangeListener;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 import org.opengis.display.canvas.Canvas;
 import org.opengis.display.primitive.Graphic;
 

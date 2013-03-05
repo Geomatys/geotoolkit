@@ -49,7 +49,7 @@ import org.opengis.filter.expression.ExpressionVisitor;
 import org.opengis.filter.expression.Literal;
 
 import static org.geotoolkit.style.StyleConstants.*;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 import static org.opengis.filter.expression.Expression.*;
 
 /**

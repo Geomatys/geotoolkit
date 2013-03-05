@@ -83,7 +83,7 @@ import org.geotoolkit.style.MutableStyle;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.util.ImageIOUtilities;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;

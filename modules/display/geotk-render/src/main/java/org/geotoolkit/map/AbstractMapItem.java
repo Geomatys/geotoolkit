@@ -27,7 +27,7 @@ import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.collection.CollectionChangeEvent;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 import org.geotoolkit.util.logging.Logging;
 import org.opengis.style.Description;
 

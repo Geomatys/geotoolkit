@@ -19,7 +19,7 @@ package org.geotoolkit.index.tree;
 import java.util.Iterator;
 import org.geotoolkit.index.tree.calculator.*;
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 

@@ -43,7 +43,7 @@ import org.geotoolkit.process.converters.StringToSortByConverter;
 import org.geotoolkit.process.converters.StringToUnitConverter;
 import org.geotoolkit.process.converters.StringToMapConverter;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 import org.geotoolkit.util.converter.ConverterRegistry;
 import org.geotoolkit.util.converter.ObjectConverter;
 

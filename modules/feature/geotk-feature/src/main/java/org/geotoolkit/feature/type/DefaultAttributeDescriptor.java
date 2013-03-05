@@ -20,7 +20,7 @@ package org.geotoolkit.feature.type;
 import com.vividsolutions.jts.geom.Geometry;
 import java.util.Map;
 
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 import org.geotoolkit.util.Utilities;
 
 import org.opengis.feature.type.AttributeDescriptor;

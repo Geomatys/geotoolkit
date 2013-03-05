@@ -35,7 +35,7 @@ import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.feature.LenientFeatureFactory;
 import org.geotoolkit.feature.simple.DefaultSimpleFeature;
 import org.geotoolkit.geometry.jts.transform.GeometryTransformer;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureFactory;
 import org.opengis.feature.GeometryAttribute;

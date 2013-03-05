@@ -47,7 +47,7 @@ import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.io.wkt.UnformattableObjectException;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 import org.geotoolkit.resources.Vocabulary;
 import org.jdesktop.swingx.JXBusyLabel;
 import org.opengis.util.FactoryException;

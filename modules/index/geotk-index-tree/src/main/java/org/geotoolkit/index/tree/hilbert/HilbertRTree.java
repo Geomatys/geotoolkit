@@ -33,7 +33,7 @@ import org.geotoolkit.index.tree.NodeFactory;
 import org.geotoolkit.referencing.CRS;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.MismatchedReferenceSystemException;

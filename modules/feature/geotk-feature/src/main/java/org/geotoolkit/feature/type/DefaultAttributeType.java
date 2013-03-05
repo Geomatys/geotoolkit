@@ -19,7 +19,7 @@ package org.geotoolkit.feature.type;
 
 import java.util.List;
 
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 
 import org.opengis.feature.type.AttributeType;
 import org.opengis.feature.type.Name;

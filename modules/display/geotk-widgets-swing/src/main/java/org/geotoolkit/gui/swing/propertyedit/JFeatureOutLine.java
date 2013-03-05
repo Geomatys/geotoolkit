@@ -40,7 +40,7 @@ import org.geotoolkit.gui.swing.propertyedit.featureeditor.*;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.tree.DefaultMutableTreeNode;
 import org.geotoolkit.gui.swing.tree.MutableTreeNode;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 import org.jdesktop.swingx.table.DatePickerCellEditor;
 import org.netbeans.swing.outline.*;
 import org.opengis.feature.ComplexAttribute;

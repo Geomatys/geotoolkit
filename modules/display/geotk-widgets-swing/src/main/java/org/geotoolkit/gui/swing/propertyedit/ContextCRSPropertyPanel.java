@@ -44,7 +44,7 @@ import org.geotoolkit.gui.swing.misc.LoadingLockableUI;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.io.wkt.UnformattableObjectException;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 import org.geotoolkit.resources.Vocabulary;
 import org.jdesktop.swingx.JXBusyLabel;
 

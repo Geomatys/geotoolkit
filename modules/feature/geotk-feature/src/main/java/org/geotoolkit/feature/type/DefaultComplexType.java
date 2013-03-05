@@ -32,7 +32,7 @@ import org.geotoolkit.io.TableWriter;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 
 import org.opengis.feature.Property;
 import org.opengis.feature.type.AssociationType;

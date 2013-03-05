@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.UUID;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.gui.swing.tree.Trees;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 

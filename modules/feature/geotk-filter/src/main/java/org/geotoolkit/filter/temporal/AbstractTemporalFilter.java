@@ -17,7 +17,7 @@
 package org.geotoolkit.filter.temporal;
 
 import org.geotoolkit.util.StringUtilities;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 import org.opengis.filter.expression.Expression;
 
 /**
