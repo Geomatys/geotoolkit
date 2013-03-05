@@ -41,7 +41,7 @@ import java.awt.image.RenderedImage;
 import java.awt.image.renderable.RenderableImage;
 import java.text.AttributedCharacterIterator;
 import java.util.Map;
-import org.geotoolkit.util.collection.WeakHashSet;
+import org.apache.sis.util.collection.WeakHashSet;
 
 /**
  * Itext has several weakness which are fixed in this encapsulation
@@ -49,7 +49,7 @@ import org.geotoolkit.util.collection.WeakHashSet;
  * Here we override image paint operations.
  * The composite is multiply directly in the image before drawing.
  * - is not concurrent
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
@@ -60,7 +60,7 @@ public class PDFFixGraphics2D extends Graphics2D {
     public PDFFixGraphics2D(Graphics2D wrapped) {
         this.wrapped = wrapped;
     }
-    
+
     @Override
     public synchronized void draw(Shape s) {
         wrapped.draw(s);
@@ -366,7 +366,7 @@ public class PDFFixGraphics2D extends Graphics2D {
     public synchronized void drawRenderableImage(RenderableImage img, AffineTransform xform) {
         wrapped.drawRenderableImage(img, xform);
     }
-    
+
     @Override
     public synchronized boolean drawImage(Image img, AffineTransform xform, ImageObserver obs) {
         img = combineComposite(img);
@@ -378,7 +378,7 @@ public class PDFFixGraphics2D extends Graphics2D {
         img = (BufferedImage) combineComposite(img);
         wrapped.drawImage(img, op, x, y);
     }
-    
+
     @Override
     public synchronized boolean drawImage(Image img, int x, int y, ImageObserver observer) {
         img = combineComposite(img);
@@ -419,22 +419,22 @@ public class PDFFixGraphics2D extends Graphics2D {
     public synchronized void dispose() {
         wrapped.dispose();
     }
-    
-    private final WeakHashSet<BufferedImage> done = WeakHashSet.newInstance(BufferedImage.class);
-    
+
+    private final WeakHashSet<BufferedImage> done = new WeakHashSet<BufferedImage>(BufferedImage.class);
+
     /**
      * Itext does not support composite on image.
      * Here we generate another image with the alpha composite already combine in the image.
      */
     private Image combineComposite(Image img){
-        
+
         if(img == null || done.contains(img)){
             //already done
             return img;
         }
-        
+
         final Composite composite = this.getComposite();
-        
+
         if(composite instanceof AlphaComposite){
             final AlphaComposite alphaComposite = (AlphaComposite) composite;
             if(alphaComposite.getAlpha() != 1){
@@ -447,8 +447,8 @@ public class PDFFixGraphics2D extends Graphics2D {
                 img = buffer;
             }
         }
-        
+
         return img;
     }
-    
+
 }

@@ -24,7 +24,7 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.DefaultAssociation;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.util.Converters;
-import org.geotoolkit.util.collection.Cache;
+import org.apache.sis.util.collection.Cache;
 import org.opengis.feature.Attribute;
 import org.opengis.feature.ComplexAttribute;
 import org.opengis.feature.Feature;

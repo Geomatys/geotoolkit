@@ -49,7 +49,7 @@ import org.geotoolkit.coverage.*;
 import org.geotoolkit.security.DefaultClientSecurity;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.util.ImageIOUtilities;
-import org.geotoolkit.util.collection.Cache;
+import org.apache.sis.util.collection.Cache;
 import org.geotoolkit.util.logging.Logging;
 import org.jboss.netty.bootstrap.ClientBootstrap;
 import org.jboss.netty.buffer.ChannelBuffer;
