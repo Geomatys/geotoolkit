@@ -6,13 +6,15 @@
 Geotoolkit.org guides
 
   The Geotk guides are a work in progress aiming to introduce the Geotk library to developers.
-  The discussion will go from the international standards at the origin of many Geotk designs,
-  through GeoAPI up to all modules provided in the core of Geotk.
+  It is provided as a complement to the <Introduction to Apache SIS> guide.
 
   At this time, the guide is available only in French and cover only a few subjects.
-  However we plan to complete this guide week after week, and to translate it to
+  However we plan to complete this guide over time, and to translate it to
   English when the French version will be about complete.
 
-   * {{{./book/fr.xhtml}Guide (version française)}}
 
-   * Guide (English version) - to be provided later
+   * {{{http://builds.apache.org/job/sis-trunk/site/book/fr.xhtml}Introduction à Apache SIS™}} (French version)
+
+   * {{{./book/fr.xhtml}Introduction à Geotoolkit.org}} (French version)
+
+   * Introduction to Geotoolkit.org (English version) - to be provided later
