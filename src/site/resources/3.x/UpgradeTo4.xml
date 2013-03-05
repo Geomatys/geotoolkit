@@ -8,8 +8,8 @@
   This class scans all *.java files in the current directory
   and all sub-directories.
 -->
-<project name="Upgrade" default="rename">
-  <target name="rename">
+<project name="Upgrade" default="classes">
+  <target name="classes">
     <replace dir="${user.dir}" summary="yes">
       <include name="**/*.java"/>
       <replacefilter token="org.geotoolkit.util.ArgumentChecks"        value="org.apache.sis.util.ArgumentChecks"/>
@@ -27,9 +27,14 @@
       <replacefilter token="org.geotoolkit.util.collection.CheckedHashSet"        value="org.apache.sis.util.collection.CheckedHashSet"/>
       <replacefilter token="org.geotoolkit.util.collection.WeakHashSet"           value="org.apache.sis.util.collection.WeakHashSet"/>
       <replacefilter token="org.geotoolkit.util.collection.WeakValueHashMap"      value="org.apache.sis.util.collection.WeakValueHashMap"/>
+    </replace>
+  </target>
 
-      <!-- Methods -->
-      <replacefilter token="WeakHashSet.newInstance" value="new WeakHashSet"/>
+  <target name="methods">
+    <replace dir="${user.dir}" summary="yes">
+      <include name="**/*.java"/>
+      <replacefilter token="WeakHashSet.newInstance"               value="new WeakHashSet"/>
+      <replacefilter token="Classes.boundOfParameterizedAttribute" value="Classes.boundOfParameterizedProperty"/>
     </replace>
   </target>
 </project>
