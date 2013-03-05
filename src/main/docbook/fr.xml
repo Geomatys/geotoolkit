@@ -15,20 +15,13 @@
       <surname>Desruisseaux</surname>
     </personname></author>
     <abstract><para>
-      Introduction aux standards internationaux utilisées en information géographique,
-      et à l’approche choisie pour les implémenter dans la bibliothèque
-      <link xlink:href="http://www.geotoolkit.org">Geotoolkit.org</link> &geotk-release;.
-      Ce document couvre les outils de développement, structures, conventions et
-      principales classes Java.
+      Cette page a déménagée. Son contenu se trouve maintenant à la page
+      <link xlink:href="http://builds.apache.org/job/sis-trunk/site/book/fr.xhtml">Introduction à Apache SIS™</link>.
     </para></abstract>
     <keywordset>
       <keyword>Geotoolkit.org</keyword> <keyword>Geotk</keyword> <keyword>GeoAPI</keyword>
       <keyword>OGC</keyword> <keyword>geospatial</keyword>
     </keywordset>
   </info>
-
-  <xi:include href="fr/introduction.xml"/>
-  <xi:include href="fr/standards.xml"/>
-  <xi:include href="fr/geoapi.xml"/>
 
 </book>
