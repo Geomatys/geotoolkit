@@ -17,6 +17,7 @@
 package org.geotoolkit.index.tree.hilbert;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.GeneralEnvelope;
@@ -32,10 +33,13 @@ import org.geotoolkit.index.tree.io.TreeVisitorResult;
 import org.geotoolkit.index.tree.NodeFactory;
 import org.geotoolkit.referencing.CRS;
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.util.collection.UnmodifiableArrayList;
+import org.apache.sis.util.collection.UnmodifiableArrayList;
 import org.apache.sis.util.Classes;
+import static org.geotoolkit.index.tree.DefaultTreeUtils.getMedian;
+import org.geotoolkit.index.tree.calculator.CalculatorND;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
+import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.geometry.MismatchedReferenceSystemException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -279,7 +283,7 @@ public class HilbertRTree extends AbstractTree {
                     searchHilbertNode(candidate, cB, new DefaultTreeVisitor(lS));
                     lS.add(entry);
                     Envelope envelope = getEnveloppeMin(lS);
-                    candidate.getTree().getCalculator().createBasicHL(candidate, (Integer) candidate.getUserProperty(PROP_HILBERT_ORDER), envelope);
+                    createBasicHL(candidate, (Integer) candidate.getUserProperty(PROP_HILBERT_ORDER), envelope);
                     for (Envelope sh : lS) {
                         candidate.setBound(envelope);//to avoid recomputing of candidate boundary.
                         chooseSubtree(candidate, entry).getEntries().add(sh);
@@ -310,7 +314,7 @@ public class HilbertRTree extends AbstractTree {
             searchHilbertNode(candidate, candidate.getBoundary(), new DefaultTreeVisitor(lS));
             if (lS.isEmpty()) throw new IllegalStateException("impossible to increase Hilbert order of a empty Node");
             final Envelope boundT = getEnveloppeMin(lS);
-            calc.createBasicHL(candidate, cHO + 1, boundT);
+            createBasicHL(candidate, cHO + 1, boundT);
             for (Envelope sh : lS) {
                 candidate.setBound(boundT);//to avoid candidate boundary re-computing.
                 chooseSubtree(candidate, sh).getEntries().add(sh);
@@ -528,7 +532,7 @@ public class HilbertRTree extends AbstractTree {
         if (candidate.isLeaf()) {
             if ((Integer) candidate.getUserProperty(PROP_HILBERT_ORDER) < 1) return candidate.getChildren().get(0);
             int index;
-            index = calc.getHVOfEntry(candidate, entry);
+            index = getHVOfEntry(candidate, entry);
             for (Node nod : candidate.getChildren()) {
                 if (index <= ((Integer) (nod.getUserProperty(PROP_HILBERT_VALUE))) && !nod.isFull()) return nod;
             }
@@ -758,7 +762,7 @@ public class HilbertRTree extends AbstractTree {
             
             if (lS.size() <= tree.getMaxElements() * Math.pow(2, tree.getHilbertOrder() * 2) && !lS.isEmpty()) {
                 final Envelope bound = getEnveloppeMin(lS);
-                calc.createBasicHL(candidate, tree.getHilbertOrder(), bound);
+                createBasicHL(candidate, tree.getHilbertOrder(), bound);
                 candidate.setUserProperty(PROP_ISLEAF, true);
                 for (Envelope entry : lS) {
                     candidate.setBound(bound);
@@ -825,17 +829,123 @@ public class HilbertRTree extends AbstractTree {
             final int hOrder = (size <= maxElts) ? 0 : (int)((Math.log(size-1)-Math.log(maxElts))/(diment*LN2)) + 1;
             //case where splitting method lost a dimension and overmuch elements for n-1 dimension.
             if (hOrder > ((HilbertRTree)tree).getHilbertOrder()) {
-                tree.getCalculator().createBasicHL(result, 0, bound);
+                createBasicHL(result, 0, bound);
                 for (Envelope ent : listEntries) insertNode(result, ent);
             } else {
                 result.setUserProperty(PROP_ISLEAF, true);
-                tree.getCalculator().createBasicHL(result, hOrder, bound);
+                createBasicHL(result, hOrder, bound);
                 for (Envelope ent : listEntries) {
                     result.setBound(bound);
                     chooseSubtree(result, ent).getEntries().add(ent);
                 }
             }
         }
+        return result;
+    }
+    
+    /**
+     * Method exclusively used by {@code HilbertRTree}.
+     *
+     * Create subnode(s) centroid(s). These centroids define Hilbert curve.
+     * Increase the Hilbert order of {@code Node} passed in parameter by
+     * one unity.
+     *
+     * @param candidate HilbertLeaf to increase Hilbert order.
+     * @param
+     * @throws IllegalArgumentException if param "candidate" is null.
+     * @throws IllegalArgumentException if param hl Hilbert order is larger than
+     * them Hilbert RTree order.
+     */
+    private static void createBasicHL(final Node candidate, final int order, final Envelope bound) throws MismatchedDimensionException {
+        ArgumentChecks.ensurePositive("impossible to create Hilbert Curve with negative indice", order);
+        assert order <= ((HilbertRTree)candidate.getTree()).getHilbertOrder() : 
+                "impossible to build HilbertLeaf with Hilbert order higher than tree Hilbert order.";
+        candidate.getChildren().clear();
+        candidate.setUserProperty(PROP_ISLEAF, true);
+        candidate.setUserProperty(PROP_HILBERT_ORDER, order);
+        candidate.setBound(bound);
+        final List<Node> listN = candidate.getChildren();
+        listN.clear();
+        if (order > 0) {
+            int dim = bound.getDimension();
+            int dim2 = dim;
+            for (int d = 0; d < dim2; d++) if (bound.getSpan(d) <= 1E-9) dim--;
+            final int nbCells = 2 << (dim * order - 1);
+            int[] tabHV = new int[nbCells];
+            for (int i = 0; i < nbCells; i++) {
+                tabHV[i] = i;
+                listN.add(HilbertRTree.createCell(candidate.getTree(), candidate, null, i, null));
+            }
+            candidate.setUserProperty(PROP_HILBERT_TABLE, tabHV);
+        } else {
+            listN.add(HilbertRTree.createCell(candidate.getTree(), candidate, null, 0, null));
+        }
+        candidate.setBound(bound);
+    }
+    
+    /**
+     * Find Hilbert order of an entry from candidate.
+     *
+     * @param candidate entry 's hilbert value from it.
+     * @param entry which we looking for its Hilbert order.
+     * @throws IllegalArgumentException if parameter "entry" is out of this node
+     * boundary.
+     * @throws IllegalArgumentException if entry is null.
+     * @return integer the entry Hilbert order.
+     */
+    private static int getHVOfEntry(Node candidate, Envelope entry) {
+        ArgumentChecks.ensureNonNull("impossible to define Hilbert coordinate with null entry", entry);
+        final DirectPosition ptCE = getMedian(entry);
+        final GeneralEnvelope bound = new GeneralEnvelope(candidate.getBoundary());
+        final int order = (Integer) candidate.getUserProperty(PROP_HILBERT_ORDER);
+        if (! bound.contains(ptCE)) throw new IllegalArgumentException("entry is out of this node boundary");
+        
+        int[] hCoord = getHilbCoord(candidate, ptCE, bound, order);
+        final int spaceHDim = hCoord.length;
+        
+        if (spaceHDim == 1) return hCoord[0];
+                
+        final HilbertIterator hIt = new HilbertIterator(order, spaceHDim);
+        int hilberValue = 0;
+        while (hIt.hasNext()) {
+            final int[] currentCoords = hIt.next();
+            if (Arrays.equals(hCoord, currentCoords)) return hilberValue;
+            hilberValue++;
+        }
+        throw new IllegalArgumentException("should never throw");
+    }
+    
+    /**
+     * Find {@code DirectPosition} Hilbert coordinate from this Node.
+     *
+     * @param pt {@code DirectPosition}
+     * @throws IllegalArgumentException if parameter "dPt" is out of this node
+     * boundary.
+     * @throws IllegalArgumentException if parameter dPt is null.
+     * @return int[] table of length 3 which contains 3 coordinates.
+     */
+    private static int[] getHilbCoord(final Node candidate, final DirectPosition dPt, final Envelope envelop, final int hilbertOrder) {
+        ArgumentChecks.ensureNonNull("DirectPosition dPt : ", dPt);
+        if (!new GeneralEnvelope(envelop).contains(dPt)) {
+            throw new IllegalArgumentException("Point is out of this node boundary");
+        }
+        final Calculator calc = candidate.getTree().getCalculator();
+        assert calc instanceof CalculatorND : "getHilbertCoord : calculatorND type required";
+        final double div  = 2 << hilbertOrder - 1;
+        
+        List<Integer> lInt = new ArrayList<Integer>();
+        
+        for(int d = 0; d < envelop.getDimension(); d++){
+            final double span = envelop.getSpan(d);
+            if (span <= 1E-9) continue;
+            final double currentDiv = span/div;
+            int val = (int) (Math.abs(dPt.getOrdinate(d) - envelop.getMinimum(d)) / currentDiv);
+            if (val == div) val--;
+            lInt.add(val);
+        }
+        final int[] result = new int[lInt.size()];
+        int i = 0;
+        for (Integer val : lInt) result[i++] = val;
         return result;
     }
 }

@@ -16,20 +16,11 @@
  */
 package org.geotoolkit.index.tree.calculator;
 
-import java.util.ArrayList;
 import java.util.List;
-import org.geotoolkit.geometry.GeneralDirectPosition;
-import static org.geotoolkit.index.tree.DefaultTreeUtils.getMedian;
 import org.geotoolkit.index.tree.Node;
-import static org.geotoolkit.index.tree.Node.PROP_HILBERT_ORDER;
-import static org.geotoolkit.index.tree.Node.PROP_HILBERT_TABLE;
-import static org.geotoolkit.index.tree.Node.PROP_ISLEAF;
-import org.geotoolkit.index.tree.hilbert.HilbertIterator;
-import org.geotoolkit.index.tree.hilbert.HilbertRTree;
 import org.apache.sis.util.ArgumentChecks;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
-import org.opengis.geometry.MismatchedDimensionException;
 
 /**
  * Define a generic Calculator to define computing rules of tree.
@@ -38,13 +29,6 @@ import org.opengis.geometry.MismatchedDimensionException;
  * @author Martin Desruisseaux (Geomatys).
  */
 public abstract class Calculator {
-
-    final int[]dims;
-
-    public Calculator(final int[] dims) {
-        this.dims = dims;
-    }
-
 
     /**
      * @param envelop
@@ -97,62 +81,6 @@ public abstract class Calculator {
     public abstract double getEnlargement(final Envelope envMin, final Envelope envMax);
 
     /**
-     * Method exclusively used by {@code HilbertRTree}.
-     *
-     * Create subnode(s) centroid(s). These centroids define Hilbert curve.
-     * Increase the Hilbert order of {@code Node} passed in parameter by
-     * one unity.
-     *
-     * @param candidate HilbertLeaf to increase Hilbert order.
-     * @param
-     * @throws IllegalArgumentException if param "candidate" is null.
-     * @throws IllegalArgumentException if param hl Hilbert order is larger than
-     * them Hilbert RTree order.
-     */
-    public void createBasicHL(final Node candidate, final int order, final Envelope bound) throws MismatchedDimensionException {
-        ArgumentChecks.ensurePositive("impossible to create Hilbert Curve with negative indice", order);
-        assert order <= ((HilbertRTree)candidate.getTree()).getHilbertOrder() : 
-                "impossible to build HilbertLeaf with Hilbert order higher than tree Hilbert order.";
-        candidate.getChildren().clear();
-        candidate.setUserProperty(PROP_ISLEAF, true);
-        candidate.setUserProperty(PROP_HILBERT_ORDER, order);
-        candidate.setBound(bound);
-        final List<Node> listN = candidate.getChildren();
-        listN.clear();
-        if (order > 0) {
-            int dim = bound.getDimension();
-            int dim2 = dim;
-            for (int d = 0; d < dim2; d++) if (bound.getSpan(d) <= 1E-9) dim--;
-            final int nbCells = 2 << (dim * order - 1);
-            int[] tabHV = new int[nbCells];
-            for (int i = 0; i < nbCells; i++) {
-                tabHV[i] = i;
-                listN.add(HilbertRTree.createCell(candidate.getTree(), candidate, null, i, null));
-            }
-            candidate.setUserProperty(PROP_HILBERT_TABLE, tabHV);
-        } else {
-            listN.add(HilbertRTree.createCell(candidate.getTree(), candidate, null, 0, null));
-        }
-        candidate.setBound(bound);
-    }
-    
-    /**
-     * Find Hilbert order of an entry from candidate.
-     *
-     * @param candidate entry 's hilbert value from it.
-     * @param entry which we looking for its Hilbert order.
-     * @throws IllegalArgumentException if parameter "entry" is out of this node
-     * boundary.
-     * @throws IllegalArgumentException if entry is null.
-     * @return integer the entry Hilbert order.
-     */
-    public abstract int getHVOfEntry(final Node candidate, final Envelope entry);
-
-    public int[] getDims() {
-        return dims;
-    }
-
-    /**
      * Sort elements list.
      * 
      * @param index : ordinate choosen to compare.
@@ -195,39 +123,5 @@ public abstract class Calculator {
             if (alreadySort) break;
         }
         return list;
-    }
-    
-    /**Create subnode(s) centroid(s). These centroids define Hilbert curve.
-     *
-     * @param hl HilbertLeaf to create Hilbert curve (subnode centroids).
-     * @param order Hilbert curve order.
-     * @param dims[] space dimension.
-     */
-    protected List<DirectPosition> createPath(final Node hl, final int order, final int ...dims) {
-        final Envelope bound = hl.getBound();
-        final DirectPosition median = getMedian(bound);
-        final int spaceDimension = dims.length;
-        final List<DirectPosition> path = new ArrayList<DirectPosition>();
-
-        final HilbertIterator hIt = new HilbertIterator(order, spaceDimension);
-
-        final double[] spans = new double[spaceDimension];
-        for(int i = 0; i<spaceDimension; i++) {
-            spans[i] = bound.getSpan(dims[i]) / (2<<(order-1));
-        }
-        final double[] coords = new double[spaceDimension];
-        for(int i = 0; i<spaceDimension; i++) {
-            coords[i] = bound.getMinimum(dims[i]) + spans[i]/2;
-        }
-        final DirectPosition dptemp = new GeneralDirectPosition(median);
-        int[] coordinate;
-        while (hIt.hasNext()) {
-            coordinate = hIt.next();
-            for(int i=0; i<spaceDimension; i++) {
-                dptemp.setOrdinate(dims[i], coords[i] + spans[i]*coordinate[i]);
-            }
-            path.add(new GeneralDirectPosition(dptemp));
-        }
-        return path;
     }
 }
