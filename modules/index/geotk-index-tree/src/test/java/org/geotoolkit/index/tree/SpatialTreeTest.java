@@ -26,7 +26,6 @@ import org.geotoolkit.index.tree.io.DefaultTreeVisitor;
 import org.geotoolkit.referencing.crs.DefaultEngineeringCRS;
 import org.apache.sis.util.ArgumentChecks;
 import static org.junit.Assert.assertTrue;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
@@ -162,7 +161,7 @@ public abstract class SpatialTreeTest extends TreeTest{
         tree.deleteAll(lData.iterator());
         final List<Envelope> lGERef = new ArrayList<Envelope>();
         final GeneralEnvelope gR = new GeneralEnvelope(crs);
-
+        
         if (dimension == 2) {
             for (int i = 0; i < 20; i++) {
                 for (int j = 0; j < 20; j++) {
