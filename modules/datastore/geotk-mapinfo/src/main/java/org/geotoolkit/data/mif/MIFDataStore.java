@@ -1,6 +1,5 @@
 package org.geotoolkit.data.mif;
 
-import org.apache.derby.impl.io.vfmem.DataStore;
 import org.geotoolkit.data.*;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryCapabilities;
@@ -16,7 +15,6 @@ import org.opengis.filter.Filter;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.parameter.ParameterValueGroup;
 
-import java.io.FileNotFoundException;
 import java.net.URL;
 import java.util.Collection;
 import java.util.List;
@@ -31,7 +29,7 @@ import java.util.Set;
  */
 public class MIFDataStore extends AbstractFeatureStore {
 
-    private final MIFReader reader;
+    private final MIFManager manager;
 
     private Set<Name> names;
     private SimpleFeatureType schema;
@@ -64,8 +62,8 @@ public class MIFDataStore extends AbstractFeatureStore {
 
         final URL filePath = (URL) params.parameter(MIFDataStoreFactory.URLP.getName().toString()).getValue();
         try {
-            reader = new MIFReader(filePath.getPath());
-        } catch (FileNotFoundException e) {
+            manager = new MIFManager(filePath.getPath());
+        } catch (Exception e) {
             throw new DataStoreException("Datastore can't reach target data.", e);
         }
     }
@@ -85,7 +83,7 @@ public class MIFDataStore extends AbstractFeatureStore {
     @Override
     public Set<Name> getNames() throws DataStoreException {
         if(names == null) {
-            names = reader.getTypeNames();
+            names = manager.getTypeNames();
         }
         return names;
     }
@@ -93,54 +91,57 @@ public class MIFDataStore extends AbstractFeatureStore {
     @Override
     public void createSchema(Name typeName, FeatureType featureType) throws DataStoreException {
         /** todo : replace by writer */
-        reader.addSchema(typeName, featureType);
+//        manager.addSchema(typeName, featureType);
+        throw new DataStoreException("MIF/MID feature store is read only.");
     }
 
     @Override
     public void updateSchema(Name typeName, FeatureType featureType) throws DataStoreException {
         /** todo : replace by writer */
-        throw new UnsupportedOperationException("No implementation exists for this method.");
+        throw new DataStoreException("MIF/MID feature store is read only.");
     }
 
     @Override
     public void deleteSchema(Name typeName) throws DataStoreException {
         /** todo : replace by writer */
-        reader.deleteSchema(typeName);
+//        manager.deleteSchema(typeName);
+        throw new DataStoreException("MIF/MID feature store is read only.");
     }
 
     @Override
     public FeatureType getFeatureType(Name typeName) throws DataStoreException {
-        return reader.getType(typeName);
+        return manager.getType(typeName);
     }
 
     @Override
     public QueryCapabilities getQueryCapabilities() {
-        throw new UnsupportedOperationException("No implementation exists for this method.");
+        throw new UnsupportedOperationException("MIF/MID feature store is read only.");
     }
 
     @Override
     public List<FeatureId> addFeatures(Name groupName, Collection<? extends Feature> newFeatures, Hints hints) throws DataStoreException {
-        throw new UnsupportedOperationException("No implementation exists for this method.");
+        throw new DataStoreException("MIF/MID feature store is read only.");
     }
 
     @Override
     public void updateFeatures(Name groupName, Filter filter, Map<? extends PropertyDescriptor, ? extends Object> values) throws DataStoreException {
-        throw new UnsupportedOperationException("No implementation exists for this method.");
+        throw new DataStoreException("MIF/MID feature store is read only.");
     }
 
     @Override
     public void removeFeatures(Name groupName, Filter filter) throws DataStoreException {
-        throw new UnsupportedOperationException("No implementation exists for this method.");
+        throw new DataStoreException("MIF/MID feature store is read only.");
     }
 
     @Override
     public FeatureReader getFeatureReader(Query query) throws DataStoreException {
-        throw new UnsupportedOperationException("No implementation exists for this method.");
+        typeCheck(query.getTypeName());
+        return handleRemaining(new MIFFeatureReader(manager, query.getTypeName()), query);
     }
 
     @Override
     public FeatureWriter getFeatureWriter(Name typeName, Filter filter, Hints hints) throws DataStoreException {
-        throw new UnsupportedOperationException("No implementation exists for this method.");
+        throw new DataStoreException("MIF/MID feature store is read only.");
     }
 
     @Override

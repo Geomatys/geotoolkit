@@ -80,12 +80,12 @@ public class PortrayalDemo {
         final FeatureMapLayer featureLayer = MapBuilder.createFeatureLayer(features, featureStyle);
 
         //create a coverage layer
-        final GridCoverageReader reader = openWorldFile();
-        final MutableStyle coverageStyle = SF.style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER);
-        final CoverageMapLayer coverageLayer = MapBuilder.createCoverageLayer(reader, 0, coverageStyle,"background");
+//        final GridCoverageReader reader = openWorldFile();
+//        final MutableStyle coverageStyle = SF.style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER);
+//        final CoverageMapLayer coverageLayer = MapBuilder.createCoverageLayer(reader, 0, coverageStyle,"background");
 
         //add all layers in the context
-        context.layers().add(coverageLayer);
+//        context.layers().add(coverageLayer);
         context.layers().add(featureLayer);
 
         return context;
@@ -94,7 +94,6 @@ public class PortrayalDemo {
     private static FeatureCollection openShapeFile() throws DataStoreException {
         final Map<String,Serializable> params = new HashMap<String,Serializable>();
         params.put("url", PortrayalDemo.class.getResource("/data/world/Countries.shp"));
-
         final FeatureStore store = FeatureStoreFinder.open(params);
         final Session session = store.createSession(true);
         final Query query = QueryBuilder.all(store.getNames().iterator().next());

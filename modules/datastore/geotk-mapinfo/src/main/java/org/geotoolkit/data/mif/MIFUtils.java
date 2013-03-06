@@ -1,10 +1,16 @@
 package org.geotoolkit.data.mif;
 
 import com.vividsolutions.jts.geom.*;
+import org.geotoolkit.data.mif.geometry.*;
+import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.util.ArgumentChecks;
+import org.opengis.feature.Feature;
+import org.opengis.feature.type.FeatureType;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.MathTransform;
 
-import java.awt.geom.Arc2D;
 import java.util.Date;
+import java.util.Scanner;
 
 /**
  * Utility methods and constants for mif/mid parsing.
@@ -14,6 +20,7 @@ import java.util.Date;
  */
 public final class MIFUtils {
 
+    private final static GeometryFactory GEOMETRY_FACTORY = new GeometryFactory(new PrecisionModel());
     /**
      * An enum to list the header labels we can encounter in MIF file.
      */
@@ -60,24 +67,35 @@ public final class MIFUtils {
     }
 
     static public enum GeometryType {
-        POINT(Point.class),
-        LINE(LineString.class),
-        POLYLINE(MultiLineString.class),
-        REGION(MultiPolygon.class),
-        /** todo Give a better work on it */
-        ARC(LineString.class),
-        TEXT(String.class),
-        RECTANGLE(Polygon.class),
-        /** todo Give a better work on it */
-        ROUNDRECT(Envelope.class),
-        /** todo Give a better work on it */
-        ELLIPSE(LinearRing.class),
-        MULTIPOINT(MultiPoint.class),
-        COLLECTION(GeometryCollection.class);
+        POINT(new MIFPointBuilder()),
+        LINE(new MIFLineBuilder()),
+        POLYLINE(new MIFPolyLineBuilder()),
+        REGION(new MIFRegionBuilder()),
+        ARC(new MIFArcBuilder()),
+        TEXT(new MIFTextBuilder()),
+        RECTANGLE(new MIFRectangleBuilder()),
+        ROUNDRECT(new MIFRectangleBuilder()),
+        ELLIPSE(new MIFEllipseBuilder()),
+        MULTIPOINT(new MIFMultiPointBuilder()),
+        COLLECTION(new MIFCollectionBuilder());
 
-        public final Class binding;
-        private GeometryType(Class Bind) {
-            binding = Bind;
+        private final MIFGeometryBuilder binding;
+        private GeometryType(MIFGeometryBuilder Binder) {
+            binding = Binder;
+        }
+
+        /**
+         * Get the type used to build MIF geometry.
+         * @param crs The coordinate reference system to use in this type.
+         * @param parent The FeatureType we want to inherit from.
+         * @return
+         */
+        public FeatureType getBinding(CoordinateReferenceSystem crs, FeatureType parent) {
+            return binding.buildType(crs, parent);
+        }
+
+        public void readGeometry(Scanner reader, Feature toFill, MathTransform toApply) throws DataStoreException {
+            binding.buildGeometry(reader, toFill, toApply);
         }
     }
 
@@ -101,24 +119,56 @@ public final class MIFUtils {
     }
 
     /**
-     * Retrieve the Java class bound to the given typename. It works only for geometry types.
+     * Retrieve the feature type bound to the given typename. It works only for geometry types.
      *
      * It accept a null parameter, because when searching pattern in file, the result could be null.
      *
-     * @param typename The string to retrieve class from.
-     * @return A class matching given typename, or null if we can't find one.
+     * @param crs The CRS to use for the geometries.
+     * @param typename The string to retrieve type from (Should be a MIF id, like ROUNDRECT, REGION, etc).
+     * @param parent The feature type to set as parent of this geometryType.
+     * @return A {@link FeatureType} matching given typename, or null if we can't find one.
      */
-    public static Class getGeometryType(String typename) {
-        if(typename == null) {
+    public static FeatureType getGeometryType(String typename, CoordinateReferenceSystem crs, FeatureType parent) {
+        if(typename == null || typename.isEmpty()) {
             return null;
         }
-        Class geomClass = null;
+        FeatureType geomType = null;
         for(GeometryType type : GeometryType.values()) {
             if(typename.equalsIgnoreCase(type.name())) {
-                geomClass = type.binding;
+                geomType = type.getBinding(crs, parent);
                 break;
             }
         }
-        return geomClass;
+        return geomType;
+    }
+
+    public static GeometryType getGeometryType(String typename) {
+        if (typename == null || typename.isEmpty()) {
+            return null;
+        }
+        for (GeometryType type : GeometryType.values()) {
+            if (typename.equalsIgnoreCase(type.name())) {
+                return type;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Read the given input to build a geometry which type match the given typename
+     * @param typeName The type of geometry to build.
+     * @param reader The scanner to use for reading (at the wanted geometry position).
+     * @param toFill The feature to fill with geometry data.
+     * @throws DataStoreException If geometry can't be read.
+     */
+    public void readGeometry(String typeName, Scanner reader, Feature toFill, MathTransform toApply) throws DataStoreException {
+        ArgumentChecks.ensureNonNull("Reader", reader);
+        ArgumentChecks.ensureNonNull("Feature to fill", toFill);
+        for(GeometryType type : GeometryType.values()) {
+            if(typeName.equalsIgnoreCase(type.name())) {
+                type.readGeometry(reader, toFill, toApply);
+                return;
+            }
+        }
     }
 }
