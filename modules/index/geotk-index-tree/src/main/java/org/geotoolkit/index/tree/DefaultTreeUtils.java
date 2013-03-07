@@ -17,9 +17,9 @@
 package org.geotoolkit.index.tree;
 
 import java.util.List;
+import org.apache.sis.math.MathFunctions;
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.GeneralEnvelope;
-import org.geotoolkit.math.XMath;
 import org.apache.sis.util.ArgumentChecks;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
@@ -122,7 +122,7 @@ public class DefaultTreeUtils {
         for(int i =0; i<length; i++){
             tab[i] = dpACoords[i]-ordinateDB[i];
         }
-        return XMath.magnitude(tab);
+        return MathFunctions.magnitude(tab);
     }
 
     /**Compute Euclidean distance between two {@code Envelope} in dimension n.

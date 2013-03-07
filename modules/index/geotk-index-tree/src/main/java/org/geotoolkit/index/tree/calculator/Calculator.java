@@ -19,6 +19,7 @@ package org.geotoolkit.index.tree.calculator;
 import java.util.List;
 import org.geotoolkit.index.tree.Node;
 import org.apache.sis.util.ArgumentChecks;
+import org.geotoolkit.geometry.GeneralEnvelope;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 

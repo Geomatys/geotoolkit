@@ -30,6 +30,9 @@ import org.opengis.geometry.Envelope;
  */
 public class CalculatorND extends Calculator {
     
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public double getSpace(Envelope envelop) { 
         final int dim = envelop.getDimension();
@@ -37,6 +40,9 @@ public class CalculatorND extends Calculator {
         return getGeneralEnvelopBulk(envelop);
     }
 
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public double getEdge(Envelope envelop) {
         final int dim = envelop.getDimension();
@@ -44,21 +50,33 @@ public class CalculatorND extends Calculator {
         return getGeneralEnvelopArea(envelop);
     }
 
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public double getDistance(Envelope envelopA, Envelope envelopB) {
         return getDistance(getMedian(envelopA), getMedian(envelopB));
     }
 
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public double getDistance(DirectPosition positionA, DirectPosition positionB) {
         return getDistanceBetween2DirectPosition(positionA, positionB);
     }
 
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public double getDistance(Node nodeA, Node nodeB) {
         return getDistance(nodeA.getBoundary(), nodeB.getBoundary());
     }
 
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public double getOverlaps(Envelope envelopA, Envelope envelopB) {
         final int dim = envelopA.getDimension();
@@ -69,21 +87,28 @@ public class CalculatorND extends Calculator {
         intersection.intersects(envelopB, true);
         double ratio = 1;
         for (int d = 0; d < dim; d++) {
-            ratio *= (intersection.getSpan(d) / union.getSpan(d));
+            final double denominator = union.getSpan(d);
+            if (denominator <= 1E-12) continue;
+            ratio *= (intersection.getSpan(d) / denominator);
         }
         return ratio;
     }
 
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public double getEnlargement(Envelope envMin, Envelope envMax) {
         final int dim = envMin.getDimension();
         assert (dim == envMax.getDimension()) : "dimension not equals";
-        //paranoicUnion
+        //paranoiacUnion
         final GeneralEnvelope union = new GeneralEnvelope(envMin);
         union.add(envMax);//normaly equal to envMax.
         double ratio = 1;
         for (int d = 0; d < dim; d++) {
-            ratio *= (union.getSpan(d)/envMin.getSpan(d));
+            final double denominator = envMin.getSpan(d);
+            if (denominator <= 1E-12) continue;
+            ratio *= (union.getSpan(d) / denominator);
         }
         return ratio;
     }
