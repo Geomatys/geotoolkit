@@ -26,5 +26,9 @@ public interface SamplingFeature extends org.opengis.observation.sampling.Sampli
 
     String getId();
     
+    String getName();
+    
+    String getDescription();
+    
     Geometry getGeometry();
 }
