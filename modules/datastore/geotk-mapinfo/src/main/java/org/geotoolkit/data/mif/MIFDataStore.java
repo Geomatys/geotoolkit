@@ -4,6 +4,7 @@ import org.geotoolkit.data.*;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.storage.DataStoreException;
 import org.opengis.feature.Feature;
@@ -90,9 +91,7 @@ public class MIFDataStore extends AbstractFeatureStore {
 
     @Override
     public void createSchema(Name typeName, FeatureType featureType) throws DataStoreException {
-        /** todo : replace by writer */
-//        manager.addSchema(typeName, featureType);
-        throw new DataStoreException("MIF/MID feature store is read only.");
+        manager.addSchema(typeName, featureType);
     }
 
     @Override
@@ -103,9 +102,7 @@ public class MIFDataStore extends AbstractFeatureStore {
 
     @Override
     public void deleteSchema(Name typeName) throws DataStoreException {
-        /** todo : replace by writer */
-//        manager.deleteSchema(typeName);
-        throw new DataStoreException("MIF/MID feature store is read only.");
+        manager.deleteSchema(typeName);
     }
 
     @Override
@@ -142,6 +139,16 @@ public class MIFDataStore extends AbstractFeatureStore {
     @Override
     public FeatureWriter getFeatureWriter(Name typeName, Filter filter, Hints hints) throws DataStoreException {
         throw new DataStoreException("MIF/MID feature store is read only.");
+    }
+
+    @Override
+    public void refreshMetaModel() {
+        throw new UnsupportedOperationException("No implementation exists for this method.");
+    }
+
+    @Override
+    public void refreshMetaModel(DefaultName name) throws DataStoreException {
+        throw new UnsupportedOperationException("No implementation exists for this method.");
     }
 
     @Override

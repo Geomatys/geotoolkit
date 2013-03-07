@@ -1,6 +1,5 @@
 package org.geotoolkit.data.mif;
 
-import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.simple.DefaultSimpleFeatureType;
 import org.geotoolkit.feature.type.DefaultAttributeDescriptor;
@@ -9,6 +8,7 @@ import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.util.ArgumentChecks;
+import org.geotoolkit.util.FileUtilities;
 import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.util.logging.Logging;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -16,10 +16,13 @@ import org.opengis.feature.type.*;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
 
-import java.io.File;
+import java.io.*;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.*;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
@@ -66,7 +69,7 @@ public class MIFManager {
     private ArrayList<Short> mifIndex = new ArrayList<Short>();
     private CoordinateReferenceSystem mifCRS = null;
     private MathTransform mifTransform = null;
-    private short mifColumnsCount = -1;
+    private int mifColumnsCount = -1;
 
     /**
      * Type and data containers
@@ -134,6 +137,13 @@ public class MIFManager {
 
 
     public void addSchema(Name typeName, FeatureType featureType) throws DataStoreException {
+        File f = new File(mifPath);
+        if(f.exists()) {
+            boolean deleted = f.delete();
+            if(!deleted) {
+                throw new DataStoreException("File already exists and can't be deleted.");
+            }
+        }
         if (!(featureType instanceof SimpleFeatureType)) {
             throw new DataStoreException("The given feature type can't be added : MIF format only handle simple features.");
         }
@@ -383,7 +393,7 @@ public class MIFManager {
             if (tmpType == null) {
                 throw new DataStoreException("A problem occured while reading columns tag from .MIF header.");
             }
-            final Class binding = MIFUtils.getColumnType(tmpType);
+            final Class binding = MIFUtils.getColumnJavaType(tmpType);
             if (binding == null) {
                 throw new DataStoreException(
                         "The typename " + tmpType + "(from " + attName + " attribute) is an unknown attribute type.");
@@ -396,6 +406,107 @@ public class MIFManager {
         }
         Name name = new DefaultName(mifName);
         mifBaseType = new DefaultSimpleFeatureType(name, schema, null, false, null, null, null);
+    }
+
+    /**
+     * delete the MIF/MID files currently pointed by this manager.
+     *
+     * @return true if the files have successfully been deleted, false otherwise.
+     */
+    private boolean delete() {
+        int deleteCounter = 0;
+
+        RWLock.writeLock().lock();
+        try {
+            File mifFile = new File(mifPath);
+            File midFile = new File(midPath);
+
+            if (mifFile.exists()) {
+                if (mifFile.delete()) {
+                    deleteCounter++;
+                }
+            } else {
+                deleteCounter++;
+            }
+
+            if (midFile.exists()) {
+                if (midFile.delete()) {
+                    deleteCounter++;
+                }
+            } else {
+                deleteCounter++;
+            }
+
+        } finally {
+            RWLock.writeLock().unlock();
+        }
+
+        return (deleteCounter > 1);
+    }
+
+    /**
+     * Write the MIF file header(Version, MID columns and other stuff).
+     */
+    public void writeHeader(FeatureType toWrite) throws DataStoreException {
+        if(!(toWrite instanceof SimpleFeatureType)) {
+            throw new DataStoreException("Only simple schema can be written in MIF file header. Given is : \n" + toWrite);
+        }
+
+        final SimpleFeatureType toWorkWith = (SimpleFeatureType) toWrite;
+        final StringBuilder headBuilder = new StringBuilder();
+        try {
+            headBuilder.append(MIFUtils.HeaderCategory.VERSION).append(' ').append(mifVersion).append('\n');
+            headBuilder.append(MIFUtils.HeaderCategory.CHARSET).append(' ').append(mifCharset).append('\n');
+            headBuilder.append(MIFUtils.HeaderCategory.DELIMITER).append(' ').append(mifDelimiter).append('\n');
+
+            if(toWrite.getCoordinateReferenceSystem() != null) {
+                String strCRS = MIFUtils.crsToMIFSyntax(toWorkWith.getCoordinateReferenceSystem());
+                headBuilder.append(MIFUtils.HeaderCategory.COORDSYS).append(' ').append(strCRS).append('\n');
+                mifCRS = toWorkWith.getCoordinateReferenceSystem();
+            }
+
+            // Check the number of attributes, as the fact we've got at most one geometry.
+            int tmpCount = toWorkWith.getAttributeCount();
+            boolean geometryFound = false;
+            for(AttributeDescriptor desc : toWorkWith.getAttributeDescriptors()) {
+                if(desc instanceof GeometryDescriptor) {
+                    if(geometryFound) {
+                        throw new DataStoreException("Only mono geometry types are managed for MIF format, but given featureType get at least 2 geometry descriptor.");
+                    } else {
+                        tmpCount--;
+                        geometryFound = true;
+                    }
+                }
+            }
+            mifColumnsCount = tmpCount;
+            headBuilder.append(MIFUtils.HeaderCategory.COLUMNS).append(' ').append(mifColumnsCount).append('\n');
+            MIFUtils.featureTypeToMIFSyntax(toWorkWith, headBuilder);
+
+            headBuilder.append(MIFUtils.HeaderCategory.DATA).append('\n');
+
+                    } catch (Exception e) {
+            throw new DataStoreException("Datastore can't write MIF file header.", e);
+        }
+
+        // Writing pass, with datastore locking.
+        OutputStreamWriter stream = null;
+        RWLock.writeLock().lock();
+        try {
+            OutputStream out = MIFUtils.openOutConnection(new URL(mifPath));
+            stream = new OutputStreamWriter(out);
+            stream.write(headBuilder.toString());
+        } catch (Exception e) {
+            throw new DataStoreException("Datastore can't write MIF file header.", e);
+        } finally {
+            RWLock.writeLock().unlock();
+            if(stream != null) {
+                try {
+                    stream.close();
+                } catch (IOException e) {
+                    LOGGER.log(Level.WARNING, "Writer stream can't be closed.", e);
+                }
+            }
+        }
     }
 
 }
