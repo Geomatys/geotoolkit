@@ -17,6 +17,7 @@
 package org.geotoolkit.observation.xml.v100;
 
 // jaxb import
+import java.sql.Timestamp;
 import java.util.logging.Logger;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -191,7 +192,7 @@ public class ObservationType implements Entry, AbstractObservation {
         if (observation.result != null && observation.result.getValue() instanceof DataArrayPropertyType) {
             this.result = OM_FACTORY.createResult(new DataArrayPropertyType((DataArrayPropertyType)observation.result.getValue()));
         } else {
-            this.result              = observation.result;
+            this.result          = observation.result;
         }
         this.resultQuality       = observation.resultQuality;
         this.samplingTime        = observation.samplingTime;
@@ -551,12 +552,11 @@ public class ObservationType implements Entry, AbstractObservation {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void extendSamplingTime(final String newEndBound) {
         if (newEndBound != null) {
-            System.out.println("new end Bound:" + newEndBound);
             if (samplingTime != null && samplingTime.getTimeGeometricPrimitive() instanceof TimePeriodType) {
                 ((TimePeriodType)samplingTime.getTimeGeometricPrimitive()).setEndPosition(new TimePositionType(newEndBound));
-                System.out.println("update end");
             } else if (samplingTime != null && samplingTime.getTimeGeometricPrimitive() instanceof TimeInstantType) {
                 final TimeInstantType instant = (TimeInstantType) samplingTime.getTimeGeometricPrimitive();
                 if (!newEndBound.equals(instant.getTimePosition().getValue())) {

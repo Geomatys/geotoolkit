@@ -34,7 +34,9 @@ public interface AbstractObservation extends Observation {
     
     void emptySamplingTime();
     
-    void setSamplingTimePeriod(Period period);
+    void setSamplingTimePeriod(final Period period);
+    
+    void extendSamplingTime(final String newEndBound);
     
     boolean matchTemplate(final Observation template);
     

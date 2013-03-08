@@ -77,6 +77,7 @@ public class DataRecordType extends AbstractDataRecordType implements DataRecord
     /**
      * Gets the value of the field property.
      */
+    @Override
     public List<DataComponentPropertyType> getField() {
         if (field == null) {
             field = new ArrayList<DataComponentPropertyType>();

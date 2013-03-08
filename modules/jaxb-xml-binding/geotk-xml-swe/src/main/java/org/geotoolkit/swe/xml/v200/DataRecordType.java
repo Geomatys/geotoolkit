@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.swe.xml.AnyScalar;
 import org.geotoolkit.swe.xml.DataRecord;
 import org.geotoolkit.util.Utilities;
 
@@ -85,6 +86,13 @@ public class DataRecordType extends AbstractDataComponentType implements DataRec
             field = new ArrayList<Field>();
         }
         return this.field;
+    }
+    
+    public void addField(final Field newField) {
+        if (field == null) {
+            field = new ArrayList<Field>();
+        }
+        this.field.add((Field)newField);
     }
 
     @Override

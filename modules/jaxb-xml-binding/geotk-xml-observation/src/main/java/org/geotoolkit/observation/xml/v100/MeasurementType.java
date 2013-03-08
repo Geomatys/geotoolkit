@@ -115,6 +115,11 @@ public class MeasurementType extends ObservationType implements Measurement {
         
     }
     
+    public MeasurementType(final MeasurementType meas) {
+        super(meas);
+        
+    }
+    
     @Override
     public Measure getResult() {
        return (Measure)super.getResult();

@@ -40,6 +40,8 @@ import org.geotoolkit.observation.xml.v200.OMObservationType.InternalPhenomenon;
 import org.geotoolkit.sampling.xml.v200.SFSamplingFeatureType;
 import org.geotoolkit.swe.xml.v200.DataArrayPropertyType;
 import org.apache.sis.util.ComparisonMode;
+import org.geotoolkit.gml.xml.v321.TimeInstantType;
+import org.geotoolkit.gml.xml.v321.TimePositionType;
 import org.geotoolkit.util.Utilities;
 import org.opengis.metadata.Metadata;
 import org.opengis.metadata.quality.Element;
@@ -282,6 +284,21 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
         } else if (period != null) {
             final TimePeriodType pt = new TimePeriodType(period.getBeginning().getPosition(), period.getEnding().getPosition());
             this.phenomenonTime = new TimeObjectPropertyType(pt);
+        }
+    }
+    
+    @Override
+    public void extendSamplingTime(String newEndBound) {
+        if (newEndBound != null) {
+            if (phenomenonTime != null && phenomenonTime.getTimeObject() instanceof TimePeriodType) {
+                ((TimePeriodType)phenomenonTime.getTimeObject()).setEndPosition(new TimePositionType(newEndBound));
+            } else if (phenomenonTime != null && phenomenonTime.getTimeObject() instanceof TimeInstantType) {
+                final TimeInstantType instant = (TimeInstantType) phenomenonTime.getTimeObject();
+                if (!newEndBound.equals(instant.getTimePosition().getSingleValue())) {
+                    final TimePeriodType period = new TimePeriodType(instant.getTimePosition().getSingleValue(), newEndBound);
+                    phenomenonTime.setTimeObject(period);
+                }
+            }
         }
     }
     

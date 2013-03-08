@@ -151,6 +151,13 @@ public class TimePositionType extends AbstractTimePosition implements Serializab
         }
         return this.value;
     }
+    
+    public String getSingleValue() {
+        if (value != null && !value.isEmpty()) {
+            return value.get(0);
+        }
+        return null;
+    }
 
     public final void setValue(final Date value) {
         final Calendar c = Calendar.getInstance();

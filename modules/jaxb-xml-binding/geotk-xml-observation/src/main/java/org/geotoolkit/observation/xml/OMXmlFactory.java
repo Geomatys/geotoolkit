@@ -393,7 +393,7 @@ public class OMXmlFactory {
             if (sampledFeature != null && !(sampledFeature instanceof org.geotoolkit.gml.xml.v321.FeaturePropertyType)) {
                 throw new IllegalArgumentException("unexpected object version for sampled feature element");
             }
-            if (time != null && !(time instanceof org.geotoolkit.gml.xml.v321.TimePeriodType)) {
+            if (time != null && !(time instanceof org.geotoolkit.gml.xml.v321.AbstractTimeObjectType)) {
                 throw new IllegalArgumentException("unexpected object version for time element");
             }
             if (phen != null && !(phen instanceof org.geotoolkit.swe.xml.Phenomenon)) {
@@ -401,7 +401,7 @@ public class OMXmlFactory {
             }
            return new org.geotoolkit.observation.xml.v200.OMObservationType(name, 
                                                                             "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_ComplexObservation", 
-                                                                            (org.geotoolkit.gml.xml.v321.TimePeriodType)time,
+                                                                            (org.geotoolkit.gml.xml.v321.AbstractTimeObjectType)time,
                                                                             procedure,
                                                                             ((org.geotoolkit.swe.xml.Phenomenon)phen).getName(),
                                                                             (org.geotoolkit.gml.xml.v321.FeaturePropertyType)sampledFeature,
@@ -455,6 +455,26 @@ public class OMXmlFactory {
                                                                             result);
         } else {
             throw new IllegalArgumentException("unexpected sos version number:" + version);
+        }
+    }
+    
+    public static Observation cloneObervation(final String version, final Observation observation) {
+        if (version.equals("1.0.0")) {
+            if (observation instanceof org.geotoolkit.observation.xml.v100.MeasurementType) {
+                return new org.geotoolkit.observation.xml.v100.MeasurementType((org.geotoolkit.observation.xml.v100.MeasurementType)observation);
+            } else if (observation instanceof org.geotoolkit.observation.xml.v100.ObservationType) {
+                return new org.geotoolkit.observation.xml.v100.ObservationType((org.geotoolkit.observation.xml.v100.ObservationType)observation);
+            } else {
+                throw new IllegalArgumentException("unexpected observation element version");
+            }
+        } else if (version.equals("2.0.0")) {
+            if (observation instanceof org.geotoolkit.observation.xml.v200.OMObservationType) {
+                return new org.geotoolkit.observation.xml.v200.OMObservationType((org.geotoolkit.observation.xml.v200.OMObservationType)observation);
+            } else {
+                throw new IllegalArgumentException("unexpected observation element version");
+            }
+        } else {
+            throw new IllegalArgumentException("unexpected O&M version number:" + version);
         }
     }
 }
