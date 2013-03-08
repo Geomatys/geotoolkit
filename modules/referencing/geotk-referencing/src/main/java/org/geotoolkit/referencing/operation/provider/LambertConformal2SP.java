@@ -634,6 +634,7 @@ public class LambertConformal2SP extends MapProjection {
                  * ignored. The LambertConformal constructor relies on those names for
                  * distinguish the kind of projection being created.
                  */
+                new IdentifierCode (Citations.MAP_INFO, 19),
                 new NamedIdentifier(Citations.OGC,  "Lambert_Conformal_Conic_2SP_Belgium"),
                 new NamedIdentifier(Citations.ESRI, "Lambert_Conformal_Conic_2SP_Belgium"),
                 new NamedIdentifier(Citations.EPSG, "Lambert Conic Conformal (2SP Belgium)"),

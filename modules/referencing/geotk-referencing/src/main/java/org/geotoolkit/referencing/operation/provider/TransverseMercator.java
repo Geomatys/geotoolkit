@@ -314,6 +314,7 @@ public class TransverseMercator extends MapProjection {
      */
     public static final ParameterDescriptorGroup PARAMETERS = UniversalParameters.createDescriptorGroup(
         new ReferenceIdentifier[] {
+            new IdentifierCode (Citations.MAP_INFO,  8),
             new NamedIdentifier(Citations.OGC,      "Transverse_Mercator"),
             new NamedIdentifier(Citations.EPSG,     "Transverse Mercator"),
             new NamedIdentifier(Citations.EPSG,     "Gauss-Kruger"),

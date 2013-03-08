@@ -82,6 +82,15 @@ public final class Citations extends Static {
     ///////////////////////////////////////////////////////////////////////
 
     /**
+     * Map Info is a spatial data software which defines its proper codes for CRS projection and datum codes.
+     */
+    public static final Citation MAP_INFO;
+    static {
+        final CitationConstant c = new CitationConstant("MAPINFO", "MAPINFO", "MAPINFO");
+        c.freeze();
+        MAP_INFO = c;
+    }
+    /**
      * The <A HREF="http://www.iso.org/">International Organization for Standardization</A>
      * organisation. An {@linkplain Citation#getAlternateTitles alternate title} for this
      * citation is "ISO" (according ISO 19115, alternate titles often contain abbreviations).

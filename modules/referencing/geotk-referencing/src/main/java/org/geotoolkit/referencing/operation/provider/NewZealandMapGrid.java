@@ -306,6 +306,7 @@ public class NewZealandMapGrid extends MapProjection {
      */
     public static final ParameterDescriptorGroup PARAMETERS = UniversalParameters.createDescriptorGroup(
         new ReferenceIdentifier[] {
+            new IdentifierCode (Citations.MAP_INFO, 18),
             new NamedIdentifier(Citations.OGC,     "New_Zealand_Map_Grid"),
             new NamedIdentifier(Citations.EPSG,    "New Zealand Map Grid"),
             new IdentifierCode (Citations.EPSG,     9811),

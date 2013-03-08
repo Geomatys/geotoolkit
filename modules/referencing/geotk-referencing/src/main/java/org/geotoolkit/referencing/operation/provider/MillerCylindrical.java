@@ -253,6 +253,7 @@ public class MillerCylindrical extends MapProjection {
                 "FalseNorthing");      // GeoTIFF
 
         PARAMETERS = UniversalParameters.createDescriptorGroup(new ReferenceIdentifier[] {
+            new IdentifierCode (Citations.MAP_INFO, 11),
             new NamedIdentifier(Citations.OGC,     "Miller_Cylindrical"),
             new NamedIdentifier(Citations.IGNF,    "Miller_Cylindrical_Sphere"),
             new DefaultReferenceIdentifier(Citations.IGNF, "IGNF", "PRC9901"),
