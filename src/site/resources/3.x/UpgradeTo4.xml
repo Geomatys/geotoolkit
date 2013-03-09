@@ -12,21 +12,28 @@
   <target name="classes">
     <replace dir="${user.dir}" summary="yes">
       <include name="**/*.java"/>
-      <replacefilter token="org.geotoolkit.util.ArgumentChecks"        value="org.apache.sis.util.ArgumentChecks"/>
-      <replacefilter token="org.geotoolkit.util.Characters"            value="org.apache.sis.util.Characters"/>
-      <replacefilter token="org.geotoolkit.util.ComparisonMode"        value="org.apache.sis.util.ComparisonMode"/>
-      <replacefilter token="org.geotoolkit.util.NullArgumentException" value="org.apache.sis.util.NullArgumentException"/>
-      <replacefilter token="org.geotoolkit.util.converter.Classes"     value="org.apache.sis.util.Classes"/>
-      <replacefilter token="org.geotoolkit.util.converter.Numbers"     value="org.apache.sis.util.Numbers"/>
-
-      <replacefilter token="org.geotoolkit.util.collection.BackingStoreException" value="org.apache.sis.util.collection.BackingStoreException"/>
-      <replacefilter token="org.geotoolkit.util.collection.Cache"                 value="org.apache.sis.util.collection.Cache"/>
-      <replacefilter token="org.geotoolkit.util.collection.CheckedArrayList"      value="org.apache.sis.util.collection.CheckedArrayList"/>
-      <replacefilter token="org.geotoolkit.util.collection.CheckedContainer"      value="org.apache.sis.util.collection.CheckedContainer"/>
-      <replacefilter token="org.geotoolkit.util.collection.CheckedHashMap"        value="org.apache.sis.util.collection.CheckedHashMap"/>
-      <replacefilter token="org.geotoolkit.util.collection.CheckedHashSet"        value="org.apache.sis.util.collection.CheckedHashSet"/>
-      <replacefilter token="org.geotoolkit.util.collection.WeakHashSet"           value="org.apache.sis.util.collection.WeakHashSet"/>
-      <replacefilter token="org.geotoolkit.util.collection.WeakValueHashMap"      value="org.apache.sis.util.collection.WeakValueHashMap"/>
+      <replacefilter token="org.geotoolkit.util.AbstractInternationalString"        value="org.apache.sis.util.iso.AbstractInternationalString"/>
+      <replacefilter token="org.geotoolkit.util.ArgumentChecks"                     value="org.apache.sis.util.ArgumentChecks"/>
+      <replacefilter token="org.geotoolkit.util.Characters"                         value="org.apache.sis.util.Characters"/>
+      <replacefilter token="org.geotoolkit.util.ComparisonMode"                     value="org.apache.sis.util.ComparisonMode"/>
+      <replacefilter token="org.geotoolkit.util.GeoAPI"                             value="org.apache.sis.util.iso.Types"/>
+      <replacefilter token="org.geotoolkit.util.LenientComparable"                  value="org.apache.sis.util.LenientComparable"/>
+      <replacefilter token="org.geotoolkit.util.Localized"                          value="org.apache.sis.util.Localized"/>
+      <replacefilter token="org.geotoolkit.util.NullArgumentException"              value="org.apache.sis.util.NullArgumentException"/>
+      <replacefilter token="org.geotoolkit.util.Range"                              value="org.apache.sis.measure.Range"/>
+      <replacefilter token="org.geotoolkit.util.Strings"                            value="org.apache.sis.util.CharSequences"/>
+      <replacefilter token="org.geotoolkit.util.UnsupportedImplementationException" value="org.apache.sis.util.UnsupportedImplementationException"/>
+      <replacefilter token="org.geotoolkit.util.XArrays"                            value="org.apache.sis.util.ArraysExt"/>
+      <replacefilter token="org.geotoolkit.util.converter.Classes"                  value="org.apache.sis.util.Classes"/>
+      <replacefilter token="org.geotoolkit.util.converter.Numbers"                  value="org.apache.sis.util.Numbers"/>
+      <replacefilter token="org.geotoolkit.util.collection.BackingStoreException"   value="org.apache.sis.util.collection.BackingStoreException"/>
+      <replacefilter token="org.geotoolkit.util.collection.Cache"                   value="org.apache.sis.util.collection.Cache"/>
+      <replacefilter token="org.geotoolkit.util.collection.CheckedArrayList"        value="org.apache.sis.util.collection.CheckedArrayList"/>
+      <replacefilter token="org.geotoolkit.util.collection.CheckedContainer"        value="org.apache.sis.util.collection.CheckedContainer"/>
+      <replacefilter token="org.geotoolkit.util.collection.CheckedHashMap"          value="org.apache.sis.util.collection.CheckedHashMap"/>
+      <replacefilter token="org.geotoolkit.util.collection.CheckedHashSet"          value="org.apache.sis.util.collection.CheckedHashSet"/>
+      <replacefilter token="org.geotoolkit.util.collection.WeakHashSet"             value="org.apache.sis.util.collection.WeakHashSet"/>
+      <replacefilter token="org.geotoolkit.util.collection.WeakValueHashMap"        value="org.apache.sis.util.collection.WeakValueHashMap"/>
     </replace>
   </target>
 
@@ -35,6 +42,7 @@
       <include name="**/*.java"/>
       <replacefilter token="WeakHashSet.newInstance"               value="new WeakHashSet"/>
       <replacefilter token="Classes.boundOfParameterizedAttribute" value="Classes.boundOfParameterizedProperty"/>
+      <replacefilter token="GeoAPI.forUML"                         value="Types.forStandardName"/>
     </replace>
   </target>
 </project>
