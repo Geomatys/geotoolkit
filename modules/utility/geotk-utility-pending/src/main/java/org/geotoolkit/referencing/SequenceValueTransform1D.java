@@ -19,7 +19,7 @@ package org.geotoolkit.referencing;
 import java.util.Arrays;
 import org.geotoolkit.referencing.operation.transform.AbstractMathTransform1D;
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.util.XArrays;
+import org.apache.sis.util.ArraysExt;
 import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
 import org.opengis.referencing.operation.TransformException;
@@ -67,11 +67,11 @@ public final class SequenceValueTransform1D extends AbstractMathTransform1D {
             throw new IllegalArgumentException("table must have more than only two values");
         if (l != values.length)
             throw new IllegalArgumentException("antecedents and values table must have same length");
-        if (!XArrays.isSorted(antecedents, true)) {
+        if (!ArraysExt.isSorted(antecedents, true)) {
             final double[] antecedent2 = new double[l];
             int id = l;
             for (int i = 0; i < l; i++) antecedent2[i] = antecedents[--id];
-            if (!XArrays.isSorted(antecedent2, true))
+            if (!ArraysExt.isSorted(antecedent2, true))
                 throw new IllegalArgumentException("antecedents table must be strictly increasing or decreasing");
             isIncreaseOrder = false;
         }
@@ -132,11 +132,11 @@ public final class SequenceValueTransform1D extends AbstractMathTransform1D {
 
     @Override
     public MathTransform1D inverse() throws NoninvertibleTransformException {
-        if (!XArrays.isSorted(values, true)) {
+        if (!ArraysExt.isSorted(values, true)) {
             final double[] values2 = new double[l];
             int id = l;
             for (int i = 0; i < l; i++) values2[i] = values[--id];
-            if (!XArrays.isSorted(values2, true))
+            if (!ArraysExt.isSorted(values2, true))
                 throw new NoninvertibleTransformException("non inversible");
         }
         return new SequenceValueTransform1D(values, antecedent);

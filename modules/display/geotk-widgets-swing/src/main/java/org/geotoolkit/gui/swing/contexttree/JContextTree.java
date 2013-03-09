@@ -82,7 +82,7 @@ import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.util.SimpleInternationalString;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
-import org.geotoolkit.util.XArrays;
+import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.util.logging.Logging;
 
 import org.opengis.style.Description;
@@ -391,7 +391,7 @@ public class JContextTree extends JScrollPane {
 
             } else if (obj instanceof MapItem) {
                 final MapItem item = (MapItem) obj;
-                
+
                 if(!(item instanceof MapContext)){
                     this.icon.setIcon(ICON_GROUP);
                     panel.add(icon);
@@ -566,7 +566,7 @@ public class JContextTree extends JScrollPane {
             final MapItem dragged = (MapItem) lastNode.getUserObject();
             final MapItem lastParent = (MapItem) ((DefaultMutableTreeNode)lastNode.getParent()).getUserObject();
 
-            if(XArrays.contains(dropPath.getPath(), lastNode)){
+            if(ArraysExt.contains(dropPath.getPath(), lastNode)){
                 //trying to drop a node in himself, not possible
                 return true;
             }
@@ -590,11 +590,11 @@ public class JContextTree extends JScrollPane {
                 parent = newParent;
                 dropIndex = newParent.items().indexOf(layer);
             }
-            
-            
+
+
             //this far we are sure it's a MapItem
             final MapItem newParent = (MapItem) parent;
-            
+
             if(lastParent == newParent && dropIndex != -1){
                 //moving node is the same parent, readjust dropIndex
                 if(lastParent.items().indexOf(dragged) < dropIndex){
@@ -604,7 +604,7 @@ public class JContextTree extends JScrollPane {
             }else{
                 dropIndex = 0;
             }
-            
+
             //remove from previous position
             lastParent.items().remove(dragged);
             newParent.items().add(dropIndex, dragged);
@@ -666,34 +666,34 @@ public class JContextTree extends JScrollPane {
         }
 
         private synchronized void resetStructure(){
-                        
+
             boolean expanded = false;
             if(this.getChildCount()>0){
                 final TreePath tp = new TreePath(((DefaultMutableTreeNode)this.getFirstChild()).getPath());
                 expanded = tree.isExpanded(tp);
             }
-            
+
             removeAllChildren();
             final MapItem item = (MapItem) getUserObject();
-            
+
             final List<MapItem> childs = new ArrayList<MapItem>(item.items());
             Collections.reverse(childs);
             for(final MapItem child : childs){
                 final MapItemTreeNode childNode = new MapItemTreeNode(child);
                 add(childNode);
             }
-            
+
             if(item instanceof MapLayer){
                 fillStyleNodes((MapLayer)item);
             }
-            
+
             ((DefaultTreeModel)tree.getModel()).nodeStructureChanged(this);
-            
+
             if(expanded && this.getChildCount()>0){
                 final TreePath tp = new TreePath(((DefaultMutableTreeNode)this.getFirstChild()).getPath());
                 tree.expandPath(tp);
             }
-            
+
         }
 
         @Override

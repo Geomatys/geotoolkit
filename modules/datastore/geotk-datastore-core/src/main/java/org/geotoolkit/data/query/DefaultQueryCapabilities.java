@@ -17,7 +17,7 @@
 
 package org.geotoolkit.data.query;
 
-import org.geotoolkit.util.XArrays;
+import org.apache.sis.util.ArraysExt;
 
 /**
  * Default query capabilities implementation.
@@ -40,7 +40,7 @@ public class DefaultQueryCapabilities implements QueryCapabilities{
         if(languages == null){
             this.supportedLanguages = new String[]{Query.GEOTK_QOM};
         }else{
-            if(!XArrays.contains(languages, Query.GEOTK_QOM)){
+            if(!ArraysExt.contains(languages, Query.GEOTK_QOM)){
                 throw new IllegalArgumentException("Supported languages must at least contain GEOTK_QOM.");
             }
             this.supportedLanguages = languages.clone();

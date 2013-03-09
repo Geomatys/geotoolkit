@@ -26,7 +26,7 @@ import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.util.ResourceInternationalString;
-import org.geotoolkit.util.XArrays;
+import org.apache.sis.util.ArraysExt;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.identification.Identification;
 import org.opengis.parameter.GeneralParameterDescriptor;
@@ -62,7 +62,7 @@ public class CoverageSQLStoreFactory extends AbstractCoverageStoreFactory {
     static {
         GeneralParameterDescriptor[] params = CoverageDatabase.PARAMETERS.descriptors()
                 .toArray(new GeneralParameterDescriptor[0]);
-        params = XArrays.concatenate(new GeneralParameterDescriptor[]{IDENTIFIER},params);
+        params = ArraysExt.concatenate(new GeneralParameterDescriptor[]{IDENTIFIER},params);
 
         PARAMETERS = new DefaultParameterDescriptorGroup(
                 CoverageDatabase.PARAMETERS.getName().getCode(), params);

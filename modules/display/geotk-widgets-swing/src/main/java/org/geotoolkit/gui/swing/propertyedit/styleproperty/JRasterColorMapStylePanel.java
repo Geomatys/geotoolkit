@@ -107,7 +107,7 @@ import org.opengis.style.Symbolizer;
 import org.opengis.filter.expression.Function;
 
 import static org.geotoolkit.style.StyleConstants.*;
-import org.geotoolkit.util.XArrays;
+import org.apache.sis.util.ArraysExt;
 import org.opengis.util.GenericName;
 
 /**

@@ -1,7 +1,7 @@
 /*
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
- * 
+ *
  *    (C) 2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2009-2011, Geomatys
  *
@@ -18,7 +18,6 @@
 package org.geotoolkit.temporal.object;
 
 import org.geotoolkit.util.StringUtilities;
-import org.geotoolkit.util.Strings;
 import org.geotoolkit.util.Utilities;
 import org.opengis.temporal.CalendarDate;
 import org.opengis.temporal.DateAndTime;

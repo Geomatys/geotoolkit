@@ -30,7 +30,7 @@ import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 
 import org.geotoolkit.geometry.jts.coordinatesequence.LiteCoordinateSequence;
-import org.geotoolkit.util.XArrays;
+import org.apache.sis.util.ArraysExt;
 
 import org.opengis.referencing.operation.TransformException;
 
@@ -516,7 +516,7 @@ public class GeometryClipTransformer extends AbstractGeometryTransformer{
                 result = new double[borderLength];
             }else{
                 final int nsize = result.length+borderLength;
-                XArrays.resize(result, nsize);
+                result = ArraysExt.resize(result, nsize);
             }
             System.arraycopy(border, 0, result, result.length, borderLength);
         }
@@ -530,9 +530,9 @@ public class GeometryClipTransformer extends AbstractGeometryTransformer{
                 result = new double[extent*2];
             }else{
                 k= result.length;
-                XArrays.resize(result, result.length+extent*2);
+                result = ArraysExt.resize(result, result.length + extent*2);
             }
-            
+
             for(int i=lower; i<upper; i++,k+=2){
                 result[k] = cs.getX(i);
                 result[k+1] = cs.getY(i);
@@ -555,7 +555,7 @@ public class GeometryClipTransformer extends AbstractGeometryTransformer{
             }
         }
         if (intersectLength >= intersect.length) {
-            intersect = XArrays.resize(intersect, 2*intersectLength);
+            intersect = ArraysExt.resize(intersect, 2*intersectLength);
         }
         intersect[intersectLength++] = x0;
         intersect[intersectLength++] = y0;
@@ -632,7 +632,7 @@ public class GeometryClipTransformer extends AbstractGeometryTransformer{
             }
         }
         if (borderLength >= border.length) {
-            border = XArrays.resize(border, 2*borderLength);
+            border = ArraysExt.resize(border, 2*borderLength);
         }
         border[borderLength++] = x0;
         border[borderLength++] = y0;

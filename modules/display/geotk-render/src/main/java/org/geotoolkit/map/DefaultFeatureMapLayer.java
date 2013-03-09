@@ -33,7 +33,7 @@ import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.style.MutableStyle;
 import static org.apache.sis.util.ArgumentChecks.*;
 import org.geotoolkit.util.NumberRange;
-import org.geotoolkit.util.Range;
+import org.apache.sis.measure.Range;
 import org.geotoolkit.util.collection.NotifiedCheckedList;
 import org.opengis.feature.Feature;
 import org.opengis.filter.expression.Expression;
@@ -187,7 +187,7 @@ final class DefaultFeatureMapLayer extends DefaultCollectionMapLayer implements 
             Feature f = ite.next();
             final Comparable c1 = (Comparable) lower.evaluate(f);
             final Comparable c2 = (Comparable) upper.evaluate(f);
-            values.add( new Range(Comparable.class, c1, c2));
+            values.add( new Range(Comparable.class, c1, true, c2, true));
         }
         ite.close();
 

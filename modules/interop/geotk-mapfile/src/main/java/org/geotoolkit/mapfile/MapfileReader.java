@@ -30,7 +30,7 @@ import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.util.Converters;
-import org.geotoolkit.util.Strings;
+import org.apache.sis.util.CharSequences;
 
 import org.opengis.feature.ComplexAttribute;
 import org.opengis.feature.Feature;
@@ -46,34 +46,34 @@ import static org.geotoolkit.mapfile.MapfileTypes.*;
 
 /**
  * Read the given mapfile and return a feature which type is MapFileTypes.MAP.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public class MapfileReader {
-    
+
     private static final MutableStyleFactory SF = new DefaultStyleFactory();
     private static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
-    
+
     private Object in = null;
-    
+
     public MapfileReader() {
     }
-    
+
     /**
      * @param in : source, can be a File, String, URL or URI
      */
     public void setInput(final Object in){
         this.in = in;
     }
-    
+
     /**
      * Read the given file and return a feature which type is MapFileTypes.MAP.
      * @return Feature
-     * @throws IOException 
+     * @throws IOException
      */
     public Feature read() throws IOException{
         InputStream stream = IOUtilities.open(in);
-        
+
         LineNumberReader reader = null;
         try{
             reader = new LineNumberReader(new InputStreamReader(stream));
@@ -84,7 +84,7 @@ public class MapfileReader {
             }
         }
     }
-        
+
     private static Property readElement(final FeatureType parentType, final LineNumberReader reader, String line) throws IOException{
         if(line ==null){
             line = reader.readLine().trim();
@@ -92,7 +92,7 @@ public class MapfileReader {
         if(line == null){
             return null;
         }
-                
+
         final String typeName;
         String value;
         final int spaceIndex = line.indexOf(' ');
@@ -105,32 +105,32 @@ public class MapfileReader {
             typeName = line.substring(0, spaceIndex);
             value = line.substring(spaceIndex);
         }
-        
+
         if(typeName.equalsIgnoreCase("INCLUDE")){
             //TODO open the related file and append all string to it
         }
-                
+
         final FeatureType ft = getType(typeName);
-                
+
         final Property result;
         if(value == null && ft != null){
-            //it's a feature type       
-            
+            //it's a feature type
+
             //check if we are in a parent, in this case use the descriptor
             PropertyDescriptor desc = null;
             if(parentType != null){
                 desc = getDescriptorIgnoreCase(parentType, typeName);
             }
-            
+
             final ComplexAttribute f;
             if(desc != null){
                 f = (ComplexAttribute) FeatureUtilities.defaultProperty(desc, UUID.randomUUID().toString());
             }else{
                 f = FeatureUtilities.defaultFeature(ft, UUID.randomUUID().toString());
             }
-            
+
             result = f;
-            
+
             //read until element END
             line = reader.readLine().trim();
             while(!line.equalsIgnoreCase("END")){
@@ -140,7 +140,7 @@ public class MapfileReader {
                 }
                 line = reader.readLine().trim();
             }
-            
+
         }else{
             //read the full value if needed
             if(value == null){
@@ -151,7 +151,7 @@ public class MapfileReader {
                     line = reader.readLine().trim();
                 }
             }
-            
+
             //it's a single property from parent type
             final PropertyDescriptor desc = getDescriptorIgnoreCase(parentType, typeName);
             if(desc != null){
@@ -160,11 +160,11 @@ public class MapfileReader {
             }else{
                 result = null;
             }
-        }        
-                
+        }
+
         return result;
     }
-    
+
     /**
      * Handle mapfile formating :
      * - Boolean [on/off]  [true/false]
@@ -173,24 +173,24 @@ public class MapfileReader {
      */
     private static Object convertType(String value, final PropertyDescriptor desc) throws IOException{
         value = value.trim();
-        
+
         if(value.endsWith("END")){
             value = value.substring(0,value.length()-4);
         }
-        
+
         if(value.startsWith("\"") || value.startsWith("'")){
             value = value.substring(1, value.length()-1);
         }
-        
+
         final Class clazz = desc.getType().getBinding();
-        
+
         if(clazz == Boolean.class){
-            return (value.equalsIgnoreCase("on") || value.equalsIgnoreCase("true"));            
+            return (value.equalsIgnoreCase("on") || value.equalsIgnoreCase("true"));
         }else if(clazz == Color.class){
             if(value.startsWith("#")){
                 //normal conversion
                 return Converters.convert(value, clazz);
-            }            
+            }
             final String[] colors = value.split(" ");
             return new Color(Integer.valueOf(colors[0]), Integer.valueOf(colors[1]), Integer.valueOf(colors[2]));
         }else if(Point2D.class.isAssignableFrom(clazz)){
@@ -200,45 +200,45 @@ public class MapfileReader {
             //return it as a property name
             return FF.property(value);
         }else if(Expression.class.isAssignableFrom(clazz)){
-            
+
             if(value.startsWith("[")){
                 // like : [ATTRIBUTE] => PropertyName
                 value = value.substring(1, value.length()-1);
                 return FF.property(value);
             }
-            
+
             if(value.startsWith("#")){
                 // like : #CD5F29 => Literal
                 return FF.literal(value);
             }
-            
-            final int nbspace = Strings.count(value, " ");
-            
+
+            final int nbspace = CharSequences.count(value, " ");
+
             if(nbspace == 2){
                 // color 255 255 255 => Literal
                 final String[] colors = value.split(" ");
-                
+
                 final Integer r = Integer.valueOf(colors[0]);
                 final Integer g = Integer.valueOf(colors[1]);
                 final Integer b = Integer.valueOf(colors[2]);
-                
+
                 //possible -1 -1 -1 : we translate to white
                 final Color c;
                 if(r < 0 || g < 0 || b < 0){
                     c = Color.WHITE;
                 }else{
                     c = new Color(r,g,b);
-                }                
+                }
                 return SF.literal(c);
             }
-            
+
             //parse it as a number
             try{
                 final double d = Double.valueOf(value);
                 return FF.literal(d);
             }catch(final NumberFormatException ex){
             }
-            
+
             //return it as a string literal
             return FF.literal(value);
         }else if(clazz == float[].class){
@@ -249,12 +249,12 @@ public class MapfileReader {
             }
             return dashes;
         }
-        
+
         return Converters.convert(value, clazz);
     }
-    
+
     private static PropertyDescriptor getDescriptorIgnoreCase(final ComplexType parent, final String name){
-        
+
         PropertyDescriptor desc = parent.getDescriptor(name);
         if(desc == null){
             //search ignoring case
@@ -265,8 +265,8 @@ public class MapfileReader {
                 }
             }
         }
-        
+
         return desc;
     }
-    
+
 }

@@ -22,7 +22,7 @@ import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.storage.DataStoreException;
-import org.geotoolkit.util.Range;
+import org.apache.sis.measure.Range;
 import org.opengis.feature.Feature;
 import org.opengis.filter.expression.Expression;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;

@@ -64,7 +64,7 @@ import org.geotoolkit.style.RandomStyleBuilder;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.util.Converters;
 import org.geotoolkit.util.NumberRange;
-import org.geotoolkit.util.Range;
+import org.apache.sis.measure.Range;
 import org.geotoolkit.util.SwingEventPassThrough;
 import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.geotoolkit.util.logging.Logging;

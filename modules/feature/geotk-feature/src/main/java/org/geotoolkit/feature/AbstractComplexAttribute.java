@@ -31,7 +31,7 @@ import java.util.Set;
 import org.geotoolkit.io.TableWriter;
 import org.geotoolkit.util.StringUtilities;
 import org.geotoolkit.util.Utilities;
-import org.geotoolkit.util.XArrays;
+import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.util.collection.CloseableIterator;
 import org.apache.sis.util.Classes;
 

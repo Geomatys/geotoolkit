@@ -40,7 +40,7 @@ import org.geotoolkit.metadata.geotiff.GeoTiffMetaDataUtils;
 import org.geotoolkit.metadata.geotiff.GeoTiffMetaDataWriter;
 import org.geotoolkit.util.DomUtilities;
 import org.geotoolkit.util.Version;
-import org.geotoolkit.util.XArrays;
+import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.util.logging.Logging;
 import org.opengis.util.FactoryException;
 
@@ -104,9 +104,9 @@ public class GeoTiffImageWriter extends ImageWriterAdapter{
         final String tiffFormatName = main.getOriginatingProvider().getNativeImageMetadataFormatName();
 
         final String[] formatNames = iiometadata.getMetadataFormatNames();
-        if(XArrays.contains(formatNames, "geotiff")){
+        if(ArraysExt.contains(formatNames, "geotiff")){
             //already has a geotiff metadata associated
-        }else if(XArrays.contains(formatNames, tiffFormatName)){
+        }else if(ArraysExt.contains(formatNames, tiffFormatName)){
             //has a tiff metadata but no geotiff metadatas
             tiffTree = iiometadata.getAsTree(tiffFormatName);
             if(GeoTiffMetaDataUtils.isGeoTiffTree(tiffTree)){
@@ -172,7 +172,7 @@ public class GeoTiffImageWriter extends ImageWriterAdapter{
             pluginClassName = "org.geotoolkit.image.io.plugin.GeoTiffImageWriter";
             vendorName      = "Geotoolkit.org";
             version         = Version.GEOTOOLKIT.toString();
-            outputTypes     = XArrays.append(outputTypes, ImageOutputStream.class);
+            outputTypes     = ArraysExt.append(outputTypes, ImageOutputStream.class);
         }
 
         /**

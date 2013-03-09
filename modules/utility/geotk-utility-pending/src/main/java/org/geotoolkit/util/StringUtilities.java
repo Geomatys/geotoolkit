@@ -22,6 +22,7 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.geotoolkit.gui.swing.tree.Trees;
+import org.apache.sis.util.ArraysExt;
 
 
 /**
@@ -310,7 +311,7 @@ public final class StringUtilities {
      * Returns true if the list contains a string in one of the list elements.
      * This test is not case sensitive.
      *
-     * @see org.geotoolkit.util.XArrays#containsIgnoreCase(String[], String)
+     * @see org.apache.sis.util.ArraysExt#containsIgnoreCase(String[], String)
      *
      * @param list A list of String.
      * @param str The value searched.
@@ -379,7 +380,7 @@ public final class StringUtilities {
             pos = s.indexOf(occ, pos+1);
             for(; pos >= 0; pos = s.indexOf(occ, pos+1)){
                 int end = indexes.length;
-                indexes = XArrays.resize(indexes, end+1);
+                indexes = ArraysExt.resize(indexes, end+1);
                 indexes[end] = pos;
             }
             return indexes;
@@ -471,7 +472,7 @@ public final class StringUtilities {
      * @param string2 the second string
      * @return true if <code>string1</code> starts with <code>string2</code>; false otherwise
      *
-     * @deprecated Replaced by {@link org.geotoolkit.util.Strings#startsWith(CharSequence, CharSequence, boolean)}.
+     * @deprecated Replaced by {@link org.apache.sis.util.CharSequences#startsWith(CharSequence, CharSequence, boolean)}.
      */
     @Deprecated
     public static boolean startsWithIgnoreCase(final String string1, final String string2) {
@@ -543,7 +544,7 @@ public final class StringUtilities {
      * @return A list of elements that were contained in the string separated by the special
      *         character.
      *
-     * @deprecated Replaced by {@link org.geotoolkit.util.Strings#split(String)}.
+     * @deprecated Replaced by {@link org.apache.sis.util.CharSequences#split(CharSequence, char)}.
      */
     @Deprecated
     public static List<String> toStringList(String toSplit, final char separator) {

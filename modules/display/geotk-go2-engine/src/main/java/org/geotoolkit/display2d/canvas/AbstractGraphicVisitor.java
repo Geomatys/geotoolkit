@@ -41,7 +41,7 @@ import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
-import org.geotoolkit.util.XArrays;
+import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.util.logging.Logging;
 import org.opengis.coverage.CannotEvaluateException;
 import org.opengis.display.primitive.Graphic;
@@ -152,7 +152,7 @@ public abstract class AbstractGraphicVisitor implements GraphicVisitor {
             }
         }
         double[] resolution = context.getResolution();
-        resolution = XArrays.resize(resolution, objCRS.getCoordinateSystem().getDimension());
+        resolution = ArraysExt.resize(resolution, objCRS.getCoordinateSystem().getDimension());
 
         final GridCoverageReadParam param = new GridCoverageReadParam();
         param.setEnvelope(objBounds);
@@ -178,7 +178,7 @@ public abstract class AbstractGraphicVisitor implements GraphicVisitor {
         dp.setOrdinate(1, bounds2D.getCenterY());
 
         float[] values = null;
-        
+
         try{
             values = coverage.evaluate(dp, values);
         }catch(CannotEvaluateException ex){
