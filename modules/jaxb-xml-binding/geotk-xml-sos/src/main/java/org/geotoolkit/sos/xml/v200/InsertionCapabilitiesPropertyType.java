@@ -77,6 +77,14 @@ public class InsertionCapabilitiesPropertyType {
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     private ActuateType actuate;
 
+    public InsertionCapabilitiesPropertyType() {
+        
+    }
+    
+    public InsertionCapabilitiesPropertyType(final InsertionCapabilitiesType insertionCapabilities) {
+        this.insertionCapabilities = insertionCapabilities;
+    }
+    
     /**
      * Gets the value of the insertionCapabilities property.
      * 

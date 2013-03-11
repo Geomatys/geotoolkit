@@ -100,13 +100,13 @@ public class CapabilitiesType extends CapabilitiesBaseType implements Capabiliti
     
     public CapabilitiesType(final ServiceIdentification serviceIdentification, final ServiceProvider serviceProvider,
             final OperationsMetadata operationsMetadata, final String version, final String updateSequence, final FilterCapabilities filterCapabilities,
-            final ContentsType contents) {
+            final ContentsType contents, final List<Object> extension) {
         super(serviceIdentification, serviceProvider, operationsMetadata, version, updateSequence);
         if (contents != null) {
-            this.contents           = new Contents(contents);
+            this.contents       = new Contents(contents);
         }
         this.filterCapabilities = filterCapabilities;
-                    
+        this.extension          = extension;
     }
     
     /**
@@ -210,7 +210,7 @@ public class CapabilitiesType extends CapabilitiesBaseType implements Capabiliti
             }
         }
         // we build and normalize the document
-        return new CapabilitiesType(si, sp, om, "2.0.0", getUpdateSequence(), fc, cont);
+        return new CapabilitiesType(si, sp, om, "2.0.0", getUpdateSequence(), fc, cont, extension);
     }
     
     /**

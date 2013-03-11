@@ -152,7 +152,7 @@ public class SOSXmlFactory {
     }
     
     public static Capabilities buildCapabilities(final String version, final AbstractServiceIdentification serviceIdentification, final AbstractServiceProvider serviceProvider,
-            final AbstractOperationsMetadata operationsMetadata, final String updateSequence, final FilterCapabilities filterCapabilities, final Contents contents) {
+            final AbstractOperationsMetadata operationsMetadata, final String updateSequence, final FilterCapabilities filterCapabilities, final Contents contents, final List<Object> extension) {
         
         if (serviceIdentification != null && !(serviceIdentification instanceof org.geotoolkit.ows.xml.v110.ServiceIdentification)) {
             throw new IllegalArgumentException("unexpected object version for serviceIdentification element");
@@ -177,7 +177,8 @@ public class SOSXmlFactory {
                                                                     version, 
                                                                     updateSequence, 
                                                                     (org.geotoolkit.sos.xml.v200.FilterCapabilities)filterCapabilities,
-                                                                    (org.geotoolkit.sos.xml.v200.ContentsType)contents);
+                                                                    (org.geotoolkit.sos.xml.v200.ContentsType)contents,
+                                                                    extension);
         } else if ("1.0.0".equals(version)) {
             if (filterCapabilities != null && !(filterCapabilities instanceof org.geotoolkit.sos.xml.v100.FilterCapabilities)) {
                 throw new IllegalArgumentException("unexpected object version for filterCapabilities element");
