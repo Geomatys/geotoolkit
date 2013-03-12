@@ -90,7 +90,7 @@ public final class PostgisInstaller extends ScriptRunner {
     @Override
     public int run(final File directory) throws IOException, SQLException {
         if (directory.isFile()) {
-            return super.run(directory);
+            return runFile(directory);
         }
         int n = 0;
         if (schema != null) {
@@ -103,8 +103,8 @@ public final class PostgisInstaller extends ScriptRunner {
                 install = legacy;
             }
         }
-        n += run(install);
-        n += run(new File(directory, REF_SYS));
+        n += runFile(install);
+        n += runFile(new File(directory, REF_SYS));
         return n;
     }
 }
