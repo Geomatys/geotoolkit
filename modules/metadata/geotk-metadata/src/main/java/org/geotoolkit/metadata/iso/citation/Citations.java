@@ -86,7 +86,7 @@ public final class Citations extends Static {
      */
     public static final Citation MAP_INFO;
     static {
-        final CitationConstant c = new CitationConstant("MAPINFO", "MAPINFO", "MAPINFO");
+        final CitationConstant c = new CitationConstant("MAP_INFO", "MAP_INFO", "MAP_INFO");
         c.freeze();
         MAP_INFO = c;
     }
@@ -620,7 +620,7 @@ public final class Citations extends Static {
      * List of citations declared in this class.
      */
     private static final Citation[] AUTHORITIES = {
-        OGC, OPEN_GIS, ESRI, ORACLE, POSTGIS, GEOTOOLKIT, GEOTOOLS, WMS, NETCDF, GEOTIFF, JAI,
+        OGC, OPEN_GIS, ESRI, ORACLE, POSTGIS, GEOTOOLKIT, MAP_INFO, GEOTOOLS, WMS, NETCDF, GEOTIFF, JAI,
         EPSG, AUTO, AUTO2, CRS, URN_OGC, HTTP_OGC, UNKNOWN
     };
 
