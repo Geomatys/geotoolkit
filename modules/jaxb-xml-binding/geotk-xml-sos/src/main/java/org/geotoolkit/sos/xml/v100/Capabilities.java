@@ -110,6 +110,11 @@ public class Capabilities extends CapabilitiesBaseType implements org.geotoolkit
     }
     
     @Override
+    public String getSpecificationVersion() {
+        return "1.0.0";
+    }
+    
+    @Override
     public AbstractCapabilitiesCore applySections(final Sections sections) {
         //we prepare the different parts response document
         ServiceIdentification si = null;

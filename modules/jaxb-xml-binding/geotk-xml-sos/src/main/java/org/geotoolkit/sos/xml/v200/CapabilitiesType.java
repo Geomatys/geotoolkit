@@ -84,7 +84,7 @@ import org.geotoolkit.swes.xml.SOSResponse;
 @XmlRootElement(name="Capabilities")
 public class CapabilitiesType extends CapabilitiesBaseType implements Capabilities, SOSResponse {
 
-    private List<Object> extension;
+    private List<InsertionCapabilitiesPropertyType> extension;
     private FilterCapabilities filterCapabilities;
     private CapabilitiesType.Contents contents;
 
@@ -100,7 +100,7 @@ public class CapabilitiesType extends CapabilitiesBaseType implements Capabiliti
     
     public CapabilitiesType(final ServiceIdentification serviceIdentification, final ServiceProvider serviceProvider,
             final OperationsMetadata operationsMetadata, final String version, final String updateSequence, final FilterCapabilities filterCapabilities,
-            final ContentsType contents, final List<Object> extension) {
+            final ContentsType contents, final List<InsertionCapabilitiesPropertyType> extension) {
         super(serviceIdentification, serviceProvider, operationsMetadata, version, updateSequence);
         if (contents != null) {
             this.contents       = new Contents(contents);
@@ -117,9 +117,9 @@ public class CapabilitiesType extends CapabilitiesBaseType implements Capabiliti
      * 
      * 
      */
-    public List<Object> getExtension() {
+    public List<InsertionCapabilitiesPropertyType> getExtension() {
         if (extension == null) {
-            extension = new ArrayList<Object>();
+            extension = new ArrayList<InsertionCapabilitiesPropertyType>();
         }
         return this.extension;
     }
@@ -174,6 +174,10 @@ public class CapabilitiesType extends CapabilitiesBaseType implements Capabiliti
         this.contents = value;
     }
 
+    @Override
+    public String getSpecificationVersion() {
+        return "2.0.0";
+    }
 
     @Override
     public AbstractCapabilitiesCore applySections(final Sections sections) {

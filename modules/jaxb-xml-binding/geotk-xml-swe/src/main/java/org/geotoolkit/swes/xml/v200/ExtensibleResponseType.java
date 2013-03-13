@@ -93,6 +93,10 @@ public abstract class ExtensibleResponseType {
     public void setExtension(final List<Object> extension) {
         this.extension = extension;
     }
+    
+    public String getSpecificationVersion() {
+        return "2.0.0";
+    }
 
     @Override
     public int hashCode() {

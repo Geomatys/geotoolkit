@@ -50,7 +50,7 @@ import org.geotoolkit.util.Utilities;
     "assignedObservationId"
 })
 @XmlRootElement(name = "InsertObservationResponse")
-public class InsertObservationResponse implements org.geotoolkit.sos.xml.InsertObservationResponse {
+public class InsertObservationResponse extends ResponseBaseType implements org.geotoolkit.sos.xml.InsertObservationResponse {
 
     @XmlElement(name = "AssignedObservationId", required = true)
     @XmlSchemaType(name = "anyURI")

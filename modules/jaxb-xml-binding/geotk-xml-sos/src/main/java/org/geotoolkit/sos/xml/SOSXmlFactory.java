@@ -171,6 +171,17 @@ public class SOSXmlFactory {
             if (contents != null && !(contents instanceof org.geotoolkit.sos.xml.v200.ContentsType)) {
                 throw new IllegalArgumentException("unexpected object version for contents element");
             }
+            final List<org.geotoolkit.sos.xml.v200.InsertionCapabilitiesPropertyType> ext200 = new ArrayList<org.geotoolkit.sos.xml.v200.InsertionCapabilitiesPropertyType>();
+            if (extension != null) {
+                for (Object obs : extension) {
+                    if (obs instanceof org.geotoolkit.sos.xml.v200.InsertionCapabilitiesPropertyType) {
+                        ext200.add((org.geotoolkit.sos.xml.v200.InsertionCapabilitiesPropertyType) obs);
+                    } else {
+                        throw new IllegalArgumentException("unexpected object version for extension element");
+                    }
+                }
+            }
+            
             return new org.geotoolkit.sos.xml.v200.CapabilitiesType((org.geotoolkit.ows.xml.v110.ServiceIdentification)serviceIdentification, 
                                                                     (org.geotoolkit.ows.xml.v110.ServiceProvider)serviceProvider, 
                                                                     (org.geotoolkit.ows.xml.v110.OperationsMetadata)operationsMetadata, 
@@ -178,7 +189,7 @@ public class SOSXmlFactory {
                                                                     updateSequence, 
                                                                     (org.geotoolkit.sos.xml.v200.FilterCapabilities)filterCapabilities,
                                                                     (org.geotoolkit.sos.xml.v200.ContentsType)contents,
-                                                                    extension);
+                                                                    ext200);
         } else if ("1.0.0".equals(version)) {
             if (filterCapabilities != null && !(filterCapabilities instanceof org.geotoolkit.sos.xml.v100.FilterCapabilities)) {
                 throw new IllegalArgumentException("unexpected object version for filterCapabilities element");

@@ -51,7 +51,7 @@ import org.geotoolkit.util.Utilities;
     "assignedSensorId"
 })
 @XmlRootElement(name = "RegisterSensorResponse")
-public class RegisterSensorResponse implements InsertSensorResponse {
+public class RegisterSensorResponse extends ResponseBaseType implements InsertSensorResponse {
 
     @XmlElement(name = "AssignedSensorId", required = true)
     @XmlSchemaType(name = "anyURI")

@@ -125,7 +125,8 @@ public class ObservationOfferingType extends AbstractOfferingType implements Obs
         this.responseFormat    = responseFormat;
         this.observationType   = resultModel;
         if (phenomenonTime != null) {
-            this.phenomenonTime    = new PhenomenonTime();
+            phenomenonTime.setId("time-" + id);
+            this.phenomenonTime    = new PhenomenonTime(phenomenonTime);
         }
     }
 
