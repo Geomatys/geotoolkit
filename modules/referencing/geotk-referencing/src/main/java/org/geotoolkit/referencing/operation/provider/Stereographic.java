@@ -321,13 +321,13 @@ public class Stereographic extends MapProjection {
      */
     public static final ParameterDescriptorGroup PARAMETERS = UniversalParameters.createDescriptorGroup(
         new ReferenceIdentifier[] {
-            new IdentifierCode (Citations.MAP_INFO, 20),
             new NamedIdentifier(Citations.OGC,     "Stereographic"),
             new NamedIdentifier(Citations.ESRI,    "Stereographic"),
             new NamedIdentifier(Citations.NETCDF,  "Stereographic"),
             new NamedIdentifier(Citations.GEOTIFF, "CT_Stereographic"),
             new IdentifierCode (Citations.GEOTIFF,  14),
             new NamedIdentifier(Citations.PROJ4,   "stere"),
+            new IdentifierCode (Citations.MAP_INFO, 20),
             new NamedIdentifier(Citations.GEOTOOLKIT, Vocabulary.formatInternational(
                                 Vocabulary.Keys.STEREOGRAPHIC_PROJECTION))
         }, new Citation[] {

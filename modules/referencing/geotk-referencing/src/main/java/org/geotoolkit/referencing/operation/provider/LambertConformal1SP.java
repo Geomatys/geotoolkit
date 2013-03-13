@@ -289,13 +289,13 @@ public class LambertConformal1SP extends MapProjection {
              * is ignored. The LambertConformal constructor relies on those names for
              * distinguish the kind of projection being created.
              */
-            new IdentifierCode (Citations.MAP_INFO, 3),
             new NamedIdentifier(Citations.OGC,     "Lambert_Conformal_Conic_1SP"),
             new NamedIdentifier(Citations.EPSG,    "Lambert Conic Conformal (1SP)"),
             new IdentifierCode (Citations.EPSG,     9801),
             new NamedIdentifier(Citations.GEOTIFF, "CT_LambertConfConic_1SP"),
             // Note: the GeoTIFF numerical code (9) is already used by the 2SP case.
             new NamedIdentifier(Citations.PROJ4,    "lcc"),
+            new IdentifierCode (Citations.MAP_INFO, 3),
             new NamedIdentifier(Citations.GEOTOOLKIT, Vocabulary.formatInternational(
                                 Vocabulary.Keys.LAMBERT_CONFORMAL_PROJECTION))
         }, null, new ParameterDescriptor<?>[] {

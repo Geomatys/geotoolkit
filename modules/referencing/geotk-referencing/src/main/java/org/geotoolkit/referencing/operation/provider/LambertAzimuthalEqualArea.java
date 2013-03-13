@@ -292,7 +292,6 @@ public class LambertAzimuthalEqualArea extends MapProjection {
      */
     public static final ParameterDescriptorGroup PARAMETERS = UniversalParameters.createDescriptorGroup(
         new ReferenceIdentifier[] {
-            new IdentifierCode(Citations.MAP_INFO, 4),
             new NamedIdentifier(Citations.OGC,     "Lambert_Azimuthal_Equal_Area"),
             new NamedIdentifier(Citations.EPSG,    "Lambert Azimuthal Equal Area"),
             new NamedIdentifier(Citations.EPSG,    "Lambert Azimuthal Equal Area (Spherical)"),
@@ -304,6 +303,7 @@ public class LambertAzimuthalEqualArea extends MapProjection {
             new NamedIdentifier(Citations.GEOTIFF, "CT_LambertAzimEqualArea"),
             new IdentifierCode (Citations.GEOTIFF,  10),
             new NamedIdentifier(Citations.PROJ4,    "laea"),
+            new IdentifierCode(Citations.MAP_INFO, 4)
         }, null, new ParameterDescriptor<?>[] {
                 SEMI_MAJOR,         SEMI_MINOR, ROLL_LONGITUDE,
                 LATITUDE_OF_CENTRE, LONGITUDE_OF_CENTRE,

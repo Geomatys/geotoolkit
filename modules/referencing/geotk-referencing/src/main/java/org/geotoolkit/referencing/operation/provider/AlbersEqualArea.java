@@ -367,7 +367,6 @@ public class AlbersEqualArea extends MapProjection {
      */
     public static final ParameterDescriptorGroup PARAMETERS = UniversalParameters.createDescriptorGroup(
         new ReferenceIdentifier[] {
-            new IdentifierCode (Citations.MAP_INFO, 9),
             new NamedIdentifier(Citations.OGC,     "Albers_Conic_Equal_Area"),
             new NamedIdentifier(Citations.EPSG,    "Albers Equal Area"),
             new IdentifierCode (Citations.EPSG,     9822),
@@ -377,6 +376,7 @@ public class AlbersEqualArea extends MapProjection {
             new NamedIdentifier(Citations.GEOTIFF, "CT_AlbersEqualArea"),
             new IdentifierCode (Citations.GEOTIFF,  11),
             new NamedIdentifier(Citations.PROJ4,   "aea"),
+            new IdentifierCode (Citations.MAP_INFO, 9),
             new NamedIdentifier(Citations.S57,     "Albert equal area"),
             new NamedIdentifier(Citations.S57,     "ALA"),
             new IdentifierCode (Citations.S57,      1),

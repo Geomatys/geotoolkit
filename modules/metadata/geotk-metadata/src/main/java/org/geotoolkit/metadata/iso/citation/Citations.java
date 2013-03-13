@@ -86,7 +86,7 @@ public final class Citations extends Static {
      */
     public static final Citation MAP_INFO;
     static {
-        final CitationConstant c = new CitationConstant("MAP_INFO", "MAP_INFO", "MAP_INFO");
+        final CitationConstant c = new CitationConstant("MapInfo", "MAP_INFO", "MapInfo");
         c.freeze();
         MAP_INFO = c;
     }
