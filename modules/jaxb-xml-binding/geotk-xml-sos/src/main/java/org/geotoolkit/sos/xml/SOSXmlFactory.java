@@ -467,7 +467,8 @@ public class SOSXmlFactory {
     
     public static ObservationOffering buildOffering(final String version, final String id, final String name, final String description, final List<String> srsName, 
             final TemporalGeometricPrimitive time,  final List<String> procedure, final List<PhenomenonProperty> observedProperties, final List<String> observedPropertiesv200, 
-            final List<String> featureOfInterest, final List<String> responseFormat, final List<QName> resultModel, final List<String> resultModelV200, final List<ResponseModeType> responseMode) {
+            final List<String> featureOfInterest, final List<String> responseFormat, final List<QName> resultModel, final List<String> resultModelV200, final List<ResponseModeType> responseMode,
+            final List<String> procedureDescriptionFormat) {
         if ("2.0.0".equals(version)) {
             if (time != null && !(time instanceof org.geotoolkit.gml.xml.v321.TimePeriodType)) {
                 throw new IllegalArgumentException("unexpected object version for time element");
@@ -478,6 +479,7 @@ public class SOSXmlFactory {
             }
             return new org.geotoolkit.sos.xml.v200.ObservationOfferingType(
                                             id,
+                                            id,
                                             name,
                                             description,
                                             null,
@@ -486,7 +488,8 @@ public class SOSXmlFactory {
                                             observedPropertiesv200,
                                             featureOfInterest,
                                             responseFormat,
-                                            resultModelV200);
+                                            resultModelV200,
+                                            procedureDescriptionFormat);
         } else if ("1.0.0".equals(version)) {
             if (time != null && !(time instanceof org.geotoolkit.gml.xml.v311.AbstractTimeGeometricPrimitiveType)) {
                 throw new IllegalArgumentException("unexpected object version for time element");
@@ -924,6 +927,7 @@ public class SOSXmlFactory {
         }
         return new org.geotoolkit.sos.xml.v200.ObservationOfferingType(
                                            off.getId(),
+                                           off.getId(),
                                            off.getName(),
                                            off.getDescription(),
                                            env,
@@ -932,7 +936,8 @@ public class SOSXmlFactory {
                                            off.getObservedProperties(),
                                            off.getFeatureOfInterestIds(),
                                            off.getResponseFormat(),
-                                           Arrays.asList("http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Observation"));
+                                           Arrays.asList("http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Observation"),
+                                           Arrays.asList("http://www.opengis.net/sensorML/1.0.1"));
     }
     
     private static ObservationOffering convertTo100(final ObservationOffering off) {

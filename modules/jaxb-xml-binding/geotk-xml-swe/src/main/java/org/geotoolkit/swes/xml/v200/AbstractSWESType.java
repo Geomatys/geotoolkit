@@ -86,8 +86,9 @@ public abstract class AbstractSWESType {
         
     }
     
-    public AbstractSWESType(final String id, final String name, final String description) {
+    public AbstractSWESType(final String id, final String identifier, final String name, final String description) {
         this.id = id;
+        this.identifier = identifier;
         if (name != null) {
             this.name = new ArrayList<CodeType>();
             this.name.add(new CodeType(name));

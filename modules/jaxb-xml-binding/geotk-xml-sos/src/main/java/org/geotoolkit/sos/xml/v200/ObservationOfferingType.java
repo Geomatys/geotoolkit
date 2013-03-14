@@ -117,11 +117,11 @@ public class ObservationOfferingType extends AbstractOfferingType implements Obs
     /**
      *  Build a new offering.
      */ 
-    public ObservationOfferingType(final String id, final String name, final String description, final EnvelopeType observedArea, 
+    public ObservationOfferingType(final String id, final String identifier, final String name, final String description, final EnvelopeType observedArea, 
             final TimePeriodType phenomenonTime, final String procedure, final List<String> observedProperty, final List<String> featureOfInterest,
-            final List<String> responseFormat, final List<String> resultModel) {
+            final List<String> responseFormat, final List<String> resultModel, final List<String> procedureDescriptionFormat) {
         
-        super(id, name, description, procedure, observedProperty, featureOfInterest);
+        super(id, identifier, name, description, procedure, observedProperty, featureOfInterest, procedureDescriptionFormat);
         this.responseFormat    = responseFormat;
         this.observationType   = resultModel;
         if (phenomenonTime != null) {

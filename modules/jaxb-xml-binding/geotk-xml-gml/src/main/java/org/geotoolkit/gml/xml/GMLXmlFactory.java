@@ -315,21 +315,25 @@ public class GMLXmlFactory {
             final List<FeatureProperty> features) {
         if ("3.2.1".equals(version)) {
             final List<org.geotoolkit.gml.xml.v321.FeaturePropertyType> features321 = new ArrayList<org.geotoolkit.gml.xml.v321.FeaturePropertyType>();
-            for (FeatureProperty fp : features) {
-                if (fp != null && !(fp instanceof org.geotoolkit.gml.xml.v321.FeaturePropertyType)) {
-                    throw new IllegalArgumentException("unexpected gml version for feature property.");
-                } else if (fp != null) {
-                    features321.add((org.geotoolkit.gml.xml.v321.FeaturePropertyType)fp);
+            if (features != null) {
+                for (FeatureProperty fp : features) {
+                    if (fp != null && !(fp instanceof org.geotoolkit.gml.xml.v321.FeaturePropertyType)) {
+                        throw new IllegalArgumentException("unexpected gml version for feature property.");
+                    } else if (fp != null) {
+                        features321.add((org.geotoolkit.gml.xml.v321.FeaturePropertyType)fp);
+                    }
                 }
             }
             return new org.geotoolkit.gml.xml.v321.FeatureCollectionType(id, name, description, features321);
         } else if ("3.1.1".equals(version)) {
             final List<org.geotoolkit.gml.xml.v311.FeaturePropertyType> features311 = new ArrayList<org.geotoolkit.gml.xml.v311.FeaturePropertyType>();
-            for (FeatureProperty fp : features) {
-                if (fp != null && !(fp instanceof org.geotoolkit.gml.xml.v311.FeaturePropertyType)) {
-                    throw new IllegalArgumentException("unexpected gml version for feature property.");
-                } else if (fp != null) {
-                    features311.add((org.geotoolkit.gml.xml.v311.FeaturePropertyType)fp);
+            if (features != null) {
+                for (FeatureProperty fp : features) {
+                    if (fp != null && !(fp instanceof org.geotoolkit.gml.xml.v311.FeaturePropertyType)) {
+                        throw new IllegalArgumentException("unexpected gml version for feature property.");
+                    } else if (fp != null) {
+                        features311.add((org.geotoolkit.gml.xml.v311.FeaturePropertyType)fp);
+                    }
                 }
             }
             return new org.geotoolkit.gml.xml.v311.FeatureCollectionType(id, name, description, features311);

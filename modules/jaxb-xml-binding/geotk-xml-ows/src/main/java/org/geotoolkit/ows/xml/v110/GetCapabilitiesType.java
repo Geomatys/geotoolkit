@@ -62,14 +62,14 @@ public class GetCapabilitiesType implements AbstractGetCapabilities {
     @XmlElement(name = "AcceptVersions")
     private AcceptVersionsType acceptVersions;
     @XmlElement(name = "Sections")
-    private SectionsType sections;
+    protected SectionsType sections;
     @XmlElement(name = "AcceptFormats")
     private AcceptFormatsType acceptFormats;
     @XmlAttribute
     private String updateSequence;
 
     @XmlAttribute(required = true)
-    private String service;
+    protected String service;
     
     /**
      * Empty constructor used by JAXB.

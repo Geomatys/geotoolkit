@@ -189,6 +189,16 @@ public class GetFeatureOfInterest extends RequestBaseType implements org.geotool
         return results;
     }
     
+    @Override
+    public List<String> getProcedure() {
+        return new ArrayList<String>(); // no procedure filter in v 1.0.0
+    }
+
+    @Override
+    public List<String> getObservedProperty() {
+        return new ArrayList<String>(); // no observedProperty filter in v 1.0.0
+    }
+    
     /**
      * Verify if this entry is identical to the specified object.
      */

@@ -113,6 +113,7 @@ public class GetFeatureOfInterestType extends ExtensibleRequestType implements G
      * {@link String }
      * 
      */
+    @Override
     public List<String> getProcedure() {
         if (procedure == null) {
             procedure = new ArrayList<String>();
@@ -127,6 +128,7 @@ public class GetFeatureOfInterestType extends ExtensibleRequestType implements G
      * {@link String }
      * 
      */
+    @Override
     public List<String> getObservedProperty() {
         if (observedProperty == null) {
             observedProperty = new ArrayList<String>();

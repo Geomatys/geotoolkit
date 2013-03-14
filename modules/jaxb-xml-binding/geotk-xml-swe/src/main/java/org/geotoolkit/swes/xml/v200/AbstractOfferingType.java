@@ -83,9 +83,9 @@ public abstract class AbstractOfferingType extends AbstractSWESType {
         
     }
     
-    public AbstractOfferingType(final String id, final String name, final String description, final String procedure,
-            final List<String> observableProperty, final List<String> relatedFeature) {
-        super(id, name, description);
+    public AbstractOfferingType(final String id, final String identifier, final String name, final String description, final String procedure,
+            final List<String> observableProperty, final List<String> relatedFeature, final List<String> procedureDescriptionFormat) {
+        super(id, identifier, name, description);
         this.procedure = procedure;
         this.observableProperty = observableProperty;
         if (relatedFeature != null) {
@@ -94,6 +94,7 @@ public abstract class AbstractOfferingType extends AbstractSWESType {
                 this.relatedFeature.add(new RelatedFeature(feature));
             }
         }
+        this.procedureDescriptionFormat = procedureDescriptionFormat;
     }
     
     /**

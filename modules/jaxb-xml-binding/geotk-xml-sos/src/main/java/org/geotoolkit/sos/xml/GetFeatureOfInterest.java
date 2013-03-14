@@ -32,4 +32,8 @@ public interface GetFeatureOfInterest extends RequestBase {
     
     List<String> getFeatureOfInterestId();
     
+    List<String> getProcedure();
+    
+    List<String> getObservedProperty();
+    
 }
