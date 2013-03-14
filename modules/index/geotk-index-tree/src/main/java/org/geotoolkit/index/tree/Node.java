@@ -121,15 +121,16 @@ public abstract class Node {
      */
     public boolean isFull() {
         final Object userPropIsLeaf = getUserProperty(PROP_ISLEAF);
-        if(userPropIsLeaf != null && ((Boolean)userPropIsLeaf)){
-            for(Node cell : getChildren()){
+        final List<Node> nodes = getChildren();
+        if(Boolean.TRUE.equals(userPropIsLeaf)){
+            for(Node cell : nodes){
                 if(!cell.isFull()){
                     return false;
                 }
             }
             return true;
         }
-        return (getChildren().size()+getEntries().size())>=getTree().getMaxElements();
+        return (nodes.size()+getEntries().size())>=getTree().getMaxElements();
     }
     
 

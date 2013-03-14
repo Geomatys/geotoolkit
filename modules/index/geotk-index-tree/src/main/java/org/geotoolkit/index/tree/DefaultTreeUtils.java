@@ -41,6 +41,13 @@ public class DefaultTreeUtils {
         return node.getChildren().size()+node.getEntries().size();
     }
 
+    public static void recursiveCount(Node n, int[] counter){
+        counter[0] = counter[0]+n.getEntries().size();
+        for(Node c : n.getChildren()){
+            recursiveCount(c, counter);
+        }
+    }
+    
     /**Compute {@code Envelop} bulk.
      *
      * @param envelope {@code Envelope}.

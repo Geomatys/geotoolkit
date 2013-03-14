@@ -259,17 +259,16 @@ public class HilbertRTree extends AbstractTree {
                     parentChildren.remove(candidate);
                     lsp0.setParent(parentCandidate);
                     lsp1.setParent(parentCandidate);
-                    parentChildren.add(lSp.get(0));
-                    parentChildren.add(lSp.get(1));
+                    parentChildren.addAll(lSp.subList(0, 2));
                     insertNode(parentCandidate, entry);
                 } else {
-                    candidate.getChildren().clear();
+                    final List<Node> candidateChildren = candidate.getChildren();
+                    candidateChildren.clear();
                     candidate.setUserProperty(PROP_ISLEAF, false);
                     candidate.setUserProperty(PROP_HILBERT_ORDER, 0);
                     lsp0.setParent(candidate);
                     lsp1.setParent(candidate);
-                    candidate.getChildren().add(lSp.get(0));
-                    candidate.getChildren().add(lSp.get(1));
+                    candidateChildren.addAll(lSp.subList(0, 2));
                     insertNode(candidate, entry);
                 }
             }else {
@@ -526,16 +525,20 @@ public class HilbertRTree extends AbstractTree {
      */
     public static Node chooseSubtree(final Node candidate, final Envelope entry) {
         ArgumentChecks.ensureNonNull("impossible to choose subtree with entry null", entry);
-        if (candidate.isLeaf() && candidate.isFull()) throw new IllegalStateException("impossible to choose subtree in overflow node");
-        Calculator calc = candidate.getTree().getCalculator();
-        if (candidate.isLeaf()) {
+        final boolean isLeaf = candidate.isLeaf();
+        if (isLeaf && candidate.isFull()){
+            throw new IllegalStateException("impossible to choose subtree in overflow node");
+        }
+        
+        final Calculator calc = candidate.getTree().getCalculator();
+        if (isLeaf) {
             if ((Integer) candidate.getUserProperty(PROP_HILBERT_ORDER) < 1) return candidate.getChildren().get(0);
-            int index;
-            index = getHVOfEntry(candidate, entry);
-            for (Node nod : candidate.getChildren()) {
+            final int index = getHVOfEntry(candidate, entry);
+            final List<Node> children = candidate.getChildren();
+            for (Node nod : children) {
                 if (index <= ((Integer) (nod.getUserProperty(PROP_HILBERT_VALUE))) && !nod.isFull()) return nod;
             }
-            return candidate.getChildren().get(findAnotherCell(index, candidate));
+            return children.get(findAnotherCell(index, candidate));
         } else {
             final List<Node> childrenList = candidate.getChildren();
             final int size = childrenList.size();
