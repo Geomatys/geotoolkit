@@ -82,7 +82,14 @@ public class OMXmlFactory {
         }
         final String procedure = ((org.geotoolkit.observation.xml.Process)observation.getProcedure()).getHref();
         final String phenomenonName = ((org.geotoolkit.swe.xml.Phenomenon)observation.getObservedProperty()).getName();
-        final org.geotoolkit.swe.xml.v101.PhenomenonType observedProperty = new PhenomenonType(phenomenonName, phenomenonName);
+        // extract id
+        final String phenId;
+        if (phenomenonName.indexOf(':') != -1) {
+            phenId = phenomenonName.substring(phenomenonName.lastIndexOf(':') + 1, phenomenonName.length());
+        } else {
+            phenId = phenomenonName;
+        }
+        final org.geotoolkit.swe.xml.v101.PhenomenonType observedProperty = new PhenomenonType(phenId, phenomenonName);
         
         final org.geotoolkit.sampling.xml.v100.SamplingFeatureType sf = (org.geotoolkit.sampling.xml.v100.SamplingFeatureType)convertTo100((SamplingFeature)observation.getFeatureOfInterest());
         final Object result;

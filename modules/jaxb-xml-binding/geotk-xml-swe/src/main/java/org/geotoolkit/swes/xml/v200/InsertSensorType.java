@@ -22,7 +22,6 @@ import java.util.List;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlSchemaType;
@@ -30,7 +29,6 @@ import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.swes.xml.InsertSensor;
 import org.geotoolkit.swes.xml.ObservationTemplate;
 import org.opengis.observation.Observation;
-import org.w3c.dom.Element;
 
 
 /**
@@ -100,7 +98,7 @@ public class InsertSensorType extends ExtensibleRequestType implements InsertSen
     @XmlSchemaType(name = "anyURI")
     private String procedureDescriptionFormat;
     @XmlElement(required = true)
-    private InsertSensorType.ProcedureDescription procedureDescription;
+    private ProcedureDescription procedureDescription;
     @XmlElement(required = true)
     @XmlSchemaType(name = "anyURI")
     private List<String> observableProperty;
@@ -152,7 +150,7 @@ public class InsertSensorType extends ExtensibleRequestType implements InsertSen
      *     {@link InsertSensorType.ProcedureDescription }
      *     
      */
-    public InsertSensorType.ProcedureDescription getProcedureDescription() {
+    public ProcedureDescription getProcedureDescription() {
         return procedureDescription;
     }
 
@@ -172,7 +170,7 @@ public class InsertSensorType extends ExtensibleRequestType implements InsertSen
      *     {@link InsertSensorType.ProcedureDescription }
      *     
      */
-    public void setProcedureDescription(InsertSensorType.ProcedureDescription value) {
+    public void setProcedureDescription(ProcedureDescription value) {
         this.procedureDescription = value;
     }
 
@@ -225,6 +223,10 @@ public class InsertSensorType extends ExtensibleRequestType implements InsertSen
      */
     public static class ObservationTemplateType implements ObservationTemplate {
 
+        private String name;
+        
+        private String procedure;
+        
         private List<String> observableProperty;
         
         public ObservationTemplateType(final List<String> properties) {
@@ -233,7 +235,7 @@ public class InsertSensorType extends ExtensibleRequestType implements InsertSen
         
         @Override
         public String getProcedure() {
-            return null;
+            return procedure;
         }
 
         @Override
@@ -248,12 +250,12 @@ public class InsertSensorType extends ExtensibleRequestType implements InsertSen
 
         @Override
         public void setProcedure(final String process) {
-            // do nothing
+            this.procedure = process;
         }
 
         @Override
-        public void setName(String name) {
-            // do nothing
+        public void setName(final String name) {
+            this.name = name;
         }
 
         @Override
@@ -327,72 +329,6 @@ public class InsertSensorType extends ExtensibleRequestType implements InsertSen
         }
 
     }
-
-
-    /**
-     * <p>Java class for anonymous complex type.
-     * 
-     * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
-     * <pre>
-     * &lt;complexType>
-     *   &lt;complexContent>
-     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-     *       &lt;sequence>
-     *         &lt;any processContents='lax'/>
-     *       &lt;/sequence>
-     *     &lt;/restriction>
-     *   &lt;/complexContent>
-     * &lt;/complexType>
-     * </pre>
-     * 
-     * 
-     */
-    @XmlAccessorType(XmlAccessType.FIELD)
-    @XmlType(name = "", propOrder = {
-        "any"
-    })
-    public static class ProcedureDescription {
-
-        @XmlAnyElement(lax = true)
-        private Object any;
-
-        public ProcedureDescription() {
-            
-        }
-        
-        public ProcedureDescription(final Object any) {
-            this.any = any;
-        }
-        
-        /**
-         * Gets the value of the any property.
-         * 
-         * @return
-         *     possible object is
-         *     {@link Element }
-         *     {@link Object }
-         *     
-         */
-        public Object getAny() {
-            return any;
-        }
-
-        /**
-         * Sets the value of the any property.
-         * 
-         * @param value
-         *     allowed object is
-         *     {@link Element }
-         *     {@link Object }
-         *     
-         */
-        public void setAny(Object value) {
-            this.any = value;
-        }
-
-    }
-
 
     /**
      * <p>Java class for anonymous complex type.

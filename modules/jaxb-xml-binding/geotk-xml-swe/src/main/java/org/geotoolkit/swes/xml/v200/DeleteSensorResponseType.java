@@ -20,6 +20,7 @@ package org.geotoolkit.swes.xml.v200;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.swes.xml.DeleteSensorResponse;
@@ -49,6 +50,7 @@ import org.geotoolkit.util.Utilities;
 @XmlType(name = "DeleteSensorResponseType", propOrder = {
     "deletedProcedure"
 })
+@XmlRootElement(name="DeleteSensorResponse")
 public class DeleteSensorResponseType extends ExtensibleResponseType implements DeleteSensorResponse {
 
     @XmlElement(required = true)

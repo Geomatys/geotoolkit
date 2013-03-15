@@ -30,5 +30,7 @@ public interface GetResult extends RequestBase {
     
     String getOffering();
     
+    String getObservedProperty();
+    
     String getObservationTemplateId();
 }

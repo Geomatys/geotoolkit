@@ -110,7 +110,7 @@ public class GetResultType extends ExtensibleRequestType implements GetResult {
     /**
      * Build a new request GetResult.
      */
-    public GetResultType(final String offering, final List<TemporalOpsType> timeFilter, final String version){
+    public GetResultType(final String offering, final String observedProperty, final List<TemporalOpsType> timeFilter, final String version){
        super(version, "SOS");
        if (timeFilter != null) {
             this.temporalFilter = new ArrayList<TemporalFilter>();
@@ -119,6 +119,7 @@ public class GetResultType extends ExtensibleRequestType implements GetResult {
             }
        }
        this.offering = offering;
+       this.observedProperty = observedProperty;
     }
     
     /**
@@ -154,6 +155,7 @@ public class GetResultType extends ExtensibleRequestType implements GetResult {
      *     {@link String }
      *     
      */
+    @Override
     public String getObservedProperty() {
         return observedProperty;
     }

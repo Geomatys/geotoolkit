@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.v321.FeaturePropertyType;
 import org.geotoolkit.swes.xml.v200.ExtensibleResponseType;
@@ -49,6 +50,7 @@ import org.geotoolkit.swes.xml.v200.ExtensibleResponseType;
 @XmlType(name = "GetFeatureOfInterestResponseType", propOrder = {
     "featureMember"
 })
+@XmlRootElement(name="GetFeatureOfInterestResponse")
 public class GetFeatureOfInterestResponseType extends ExtensibleResponseType {
 
     private List<FeaturePropertyType> featureMember;
