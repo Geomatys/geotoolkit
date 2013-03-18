@@ -122,13 +122,13 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
     public OMObservationType() {
     }
     
-    public OMObservationType(final String name, final String type, final AbstractTimeObjectType phenomenonTime, 
+    public OMObservationType(final String id, final String name, final String type, final AbstractTimeObjectType phenomenonTime, 
             final String procedure, final String observedProperty, final FeaturePropertyType foi, final Object result) {
-        super(null, name, null);
+        super(id, name, null);
         this.type = new ReferenceType(type);
-        if (phenomenonTime != null) {
-            this.phenomenonTime = new TimeObjectPropertyType(phenomenonTime);
-        }
+        this.phenomenonTime = new TimeObjectPropertyType(phenomenonTime);
+        this.resultTime     = new TimeInstantPropertyType();
+        
         if (procedure != null) {
             this.procedure      = new OMProcessPropertyType(procedure);
         }
@@ -288,14 +288,14 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
     }
     
     @Override
-    public void extendSamplingTime(String newEndBound) {
+    public void extendSamplingTime(final String newEndBound) {
         if (newEndBound != null) {
             if (phenomenonTime != null && phenomenonTime.getTimeObject() instanceof TimePeriodType) {
                 ((TimePeriodType)phenomenonTime.getTimeObject()).setEndPosition(new TimePositionType(newEndBound));
             } else if (phenomenonTime != null && phenomenonTime.getTimeObject() instanceof TimeInstantType) {
                 final TimeInstantType instant = (TimeInstantType) phenomenonTime.getTimeObject();
                 if (!newEndBound.equals(instant.getTimePosition().getSingleValue())) {
-                    final TimePeriodType period = new TimePeriodType(instant.getTimePosition().getSingleValue(), newEndBound);
+                    final TimePeriodType period = new TimePeriodType(instant.getId(), instant.getTimePosition().getSingleValue(), newEndBound);
                     phenomenonTime.setTimeObject(period);
                 }
             }

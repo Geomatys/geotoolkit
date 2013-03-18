@@ -76,6 +76,11 @@ public class TimeInstantType extends AbstractTimeGeometricPrimitiveType implemen
         }
     }
     
+    public TimeInstantType(final String id, final String timePosition) {
+       super(id);
+       this.timePosition = new TimePositionType(timePosition);
+    }
+    
     public TimeInstantType(final String timePosition) {
        this.timePosition = new TimePositionType(timePosition);
     }

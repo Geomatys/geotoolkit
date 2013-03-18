@@ -17,7 +17,6 @@
 package org.geotoolkit.observation.xml.v100;
 
 // jaxb import
-import java.sql.Timestamp;
 import java.util.logging.Logger;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -31,7 +30,6 @@ import javax.xml.bind.annotation.XmlType;
 
 // openGis dependencies
 import org.geotoolkit.gml.xml.v311.*;
-import org.opengis.observation.Process;
 import org.opengis.metadata.quality.Element;
 import org.opengis.metadata.Metadata;
 import org.opengis.observation.Observation;
@@ -560,7 +558,7 @@ public class ObservationType implements Entry, AbstractObservation {
             } else if (samplingTime != null && samplingTime.getTimeGeometricPrimitive() instanceof TimeInstantType) {
                 final TimeInstantType instant = (TimeInstantType) samplingTime.getTimeGeometricPrimitive();
                 if (!newEndBound.equals(instant.getTimePosition().getValue())) {
-                    final TimePeriodType period = new TimePeriodType(instant.getTimePosition().getValue(), newEndBound);
+                    final TimePeriodType period = new TimePeriodType(instant.getId(), instant.getTimePosition().getValue(), newEndBound);
                     samplingTime.setTimeGeometricPrimitive(period);
                 }
             }
@@ -750,5 +748,10 @@ public class ObservationType implements Entry, AbstractObservation {
             s.append(" result = ").append(result.getValue()).append(lineSeparator);
         }
         return s.toString();
+    }
+
+    @Override
+    public void setId(String id) {
+        // do nothing no id on v 1.0.0
     }
 }

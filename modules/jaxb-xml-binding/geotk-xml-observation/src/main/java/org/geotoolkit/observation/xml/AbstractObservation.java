@@ -26,6 +26,8 @@ import org.opengis.temporal.TemporalGeometricPrimitive;
  */
 public interface AbstractObservation extends Observation {
  
+    void setId(final String id);
+    
     void setName(final String name);
     
     void setProcedure(final String procedureID);

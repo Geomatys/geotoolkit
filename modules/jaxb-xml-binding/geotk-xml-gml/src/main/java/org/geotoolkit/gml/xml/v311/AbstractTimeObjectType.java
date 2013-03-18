@@ -51,6 +51,14 @@ import org.opengis.temporal.TemporalObject;
 })
 public abstract class AbstractTimeObjectType extends AbstractGMLType implements TemporalObject {
     
+    public AbstractTimeObjectType() {
+        
+    }
+    
+    public AbstractTimeObjectType(final String id) {
+        super(id);
+    }
+    
     @Override
     public MetadataStandard getStandard() {
         return new MetadataStandard("org.opengis.temporal");

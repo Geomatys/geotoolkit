@@ -80,7 +80,11 @@ public class TimeType extends AbstractSimpleComponentType implements AbstractTim
     
     public TimeType(final String definition, final UnitReference uom) {
         super(null, definition);
-        this.uom = uom;
+        if (uom != null) {
+            this.uom = uom;
+        } else {
+            this.uom = new UnitReference();
+        }
     }
     
     /**

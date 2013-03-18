@@ -384,11 +384,11 @@ public class SOSXmlFactory {
         }
     }
     
-    public static Period buildTimePeriod(final String version, final String dateBegin, final String dateEnd) {
+    public static Period buildTimePeriod(final String version, final String id, final String dateBegin, final String dateEnd) {
         if ("2.0.0".equals(version)) {
-            return GMLXmlFactory.createTimePeriod("3.2.1", dateBegin, dateEnd);
+            return GMLXmlFactory.createTimePeriod("3.2.1", id, dateBegin, dateEnd);
         } else if ("1.0.0".equals(version)) {
-            return GMLXmlFactory.createTimePeriod("3.1.1", dateBegin, dateEnd);
+            return GMLXmlFactory.createTimePeriod("3.1.1", id, dateBegin, dateEnd);
         } else {
             throw new IllegalArgumentException("unexpected version number:" + version);
         }
@@ -455,11 +455,11 @@ public class SOSXmlFactory {
         }
     }
     
-    public static Instant buildTimeInstant(final String version, final String date) {
+    public static Instant buildTimeInstant(final String version, final String id, final String date) {
         if ("2.0.0".equals(version)) {
-            return GMLXmlFactory.createTimeInstant("3.2.1", date);
+            return GMLXmlFactory.createTimeInstant("3.2.1", id, date);
         } else if ("1.0.0".equals(version)) {
-            return GMLXmlFactory.createTimeInstant("3.1.1", date);
+            return GMLXmlFactory.createTimeInstant("3.1.1", id, date);
         } else {
             throw new IllegalArgumentException("unexpected version number:" + version);
         }
@@ -915,7 +915,7 @@ public class SOSXmlFactory {
         final org.geotoolkit.gml.xml.v321.TimePeriodType period;
         if (off.getTime() != null) {
             final org.geotoolkit.gml.xml.v311.TimePeriodType pv100 = (org.geotoolkit.gml.xml.v311.TimePeriodType) off.getTime();
-            period = new org.geotoolkit.gml.xml.v321.TimePeriodType(pv100.getBeginPosition().getValue(), pv100.getEndPosition().getValue());
+            period = new org.geotoolkit.gml.xml.v321.TimePeriodType(null, pv100.getBeginPosition().getValue(), pv100.getEndPosition().getValue());
         } else {
             period = null;
         }

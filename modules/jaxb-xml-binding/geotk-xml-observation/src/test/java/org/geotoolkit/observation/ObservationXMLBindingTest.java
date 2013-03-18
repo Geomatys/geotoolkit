@@ -98,8 +98,7 @@ public class ObservationXMLBindingTest {
         SamplingPointType sp  = new SamplingPointType("samplingID-007", "urn:sampling:test:007", "a sampling Test", new FeaturePropertyType(""), location);
 
         PhenomenonType observedProperty = new PhenomenonType("phenomenon-007", "urn:OGC:phenomenon-007");
-        TimePeriodType samplingTime      = new TimePeriodType("2007-01-01", "2008-09-09");
-        samplingTime.setId("t1");
+        TimePeriodType samplingTime      = new TimePeriodType("t1", "2007-01-01", "2008-09-09");
 
         TextBlockType encoding            = new TextBlockType("encoding-001", ",", "@@", ".");
         List<AnyScalarPropertyType> fields = new ArrayList<AnyScalarPropertyType>();
@@ -325,7 +324,7 @@ public class ObservationXMLBindingTest {
         SamplingPointType sp = new SamplingPointType("samplingID-007", "urn:sampling:test:007", "a sampling Test", new FeaturePropertyType("urn:sampling:sampledFeature"), location);
 
         PhenomenonType observedProperty = new PhenomenonType("phenomenon-007", "urn:OGC:phenomenon-007");
-        TimePeriodType samplingTime = new TimePeriodType("2007-01-01", "2008-09-09");
+        TimePeriodType samplingTime = new TimePeriodType(null, "2007-01-01", "2008-09-09");
 
         TextBlockType encoding            = new TextBlockType("encoding-001", ",", "@@", ".");
         List<AnyScalarPropertyType> fields = new ArrayList<AnyScalarPropertyType>();

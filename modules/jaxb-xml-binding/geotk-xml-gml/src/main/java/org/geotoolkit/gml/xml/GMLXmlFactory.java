@@ -170,18 +170,18 @@ public class GMLXmlFactory {
         }
     }
     
-    public static Period createTimePeriod(final String version, final String dateBegin, final String dateEnd) {
+    public static Period createTimePeriod(final String version, final String id, final String dateBegin, final String dateEnd) {
         if ("3.2.1".equals(version)) {
             if (dateEnd == null) {
-                return new org.geotoolkit.gml.xml.v321.TimePeriodType(dateBegin);
+                return new org.geotoolkit.gml.xml.v321.TimePeriodType(id, dateBegin);
             } else {
-                return new org.geotoolkit.gml.xml.v321.TimePeriodType(dateBegin, dateEnd);
+                return new org.geotoolkit.gml.xml.v321.TimePeriodType(id, dateBegin, dateEnd);
             }
         } else if ("3.1.1".equals(version)) {
             if (dateEnd == null) {
-                return new org.geotoolkit.gml.xml.v311.TimePeriodType(dateBegin);
+                return new org.geotoolkit.gml.xml.v311.TimePeriodType(id, dateBegin);
             } else {
-                return new org.geotoolkit.gml.xml.v311.TimePeriodType(dateBegin, dateEnd);
+                return new org.geotoolkit.gml.xml.v311.TimePeriodType(id, dateBegin, dateEnd);
             }
         } else {
             throw new IllegalArgumentException("unexpected gml version number:" + version);
@@ -255,12 +255,12 @@ public class GMLXmlFactory {
         }
     }
     
-    public static Instant createTimeInstant(final String version, final String date) {
+    public static Instant createTimeInstant(final String version, final String id, final String date) {
         if ("3.2.1".equals(version)) {
-            return new org.geotoolkit.gml.xml.v321.TimeInstantType(date);
+            return new org.geotoolkit.gml.xml.v321.TimeInstantType(id, date);
             
         } else if ("3.1.1".equals(version)) {
-            return new org.geotoolkit.gml.xml.v311.TimeInstantType(date);
+            return new org.geotoolkit.gml.xml.v311.TimeInstantType(id, date);
         } else {
             throw new IllegalArgumentException("unexpected gml version number:" + version);
         }

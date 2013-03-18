@@ -44,20 +44,21 @@ public class TimePeriodTypeTest {
 
     @Test
     public void getTimeTest() throws Exception {
-        TimePeriodType tp = new TimePeriodType("2008-11-01T02:00:00", "2008-11-01T02:01:00");
+        final String id = "id-1";
+        TimePeriodType tp = new TimePeriodType(id, "2008-11-01T02:00:00", "2008-11-01T02:01:00");
         assertEquals(60000, tp.getTime());
         
-        tp = new TimePeriodType("2008-11-01T01:00:00", "2008-11-01T02:00:00");
+        tp = new TimePeriodType(id, "2008-11-01T01:00:00", "2008-11-01T02:00:00");
         assertEquals(3600000, tp.getTime());
         
-        tp = new TimePeriodType("2008-11-01T01:00:00", null);
+        tp = new TimePeriodType(id, "2008-11-01T01:00:00", null);
         assertEquals(-1, tp.getTime());
         
-        tp = new TimePeriodType(null, "2008-11-01T02:00:00");
+        tp = new TimePeriodType(id, null, "2008-11-01T02:00:00");
         assertEquals(-1, tp.getTime());
         
         String s1 = null;
-        tp = new TimePeriodType(s1, null);
+        tp = new TimePeriodType(id, s1, null);
         assertEquals(-1, tp.getTime());
         
     }
@@ -91,30 +92,31 @@ public class TimePeriodTypeTest {
     
     @Test
     public void getTime3Test() throws Exception {
+        final String id = "id-1";
         String snull = null;
         TimeInstantType tb = new TimeInstantType(new TimePositionType("2008-11-01T02:00:00"));
         TimeInstantType te = new TimeInstantType(new TimePositionType("2008-11-01T02:01:00"));
-        TimePeriodType tp = new TimePeriodType(snull);
+        TimePeriodType tp = new TimePeriodType(id, snull);
         tp.setBegin(new TimeInstantPropertyType(tb));
         tp.setEnd(new TimeInstantPropertyType(te));
         assertEquals(60000, tp.getTime());
         
         tb = new TimeInstantType(new TimePositionType("2008-11-01T01:00:00"));
         te = new TimeInstantType(new TimePositionType("2008-11-01T02:00:00"));
-        tp = new TimePeriodType(snull);
+        tp = new TimePeriodType(id, snull);
         tp.setBegin(new TimeInstantPropertyType(tb));
         tp.setEnd(new TimeInstantPropertyType(te));
         assertEquals(3600000, tp.getTime());
         
-        tp = new TimePeriodType(snull);
+        tp = new TimePeriodType(id, snull);
         tp.setBegin(new TimeInstantPropertyType(tb));
         assertEquals(-1, tp.getTime());
         
-        tp = new TimePeriodType(snull);
+        tp = new TimePeriodType(id, snull);
         tp.setEnd(new TimeInstantPropertyType(te));
         assertEquals(-1, tp.getTime());
         
-        tp = new TimePeriodType(snull);
+        tp = new TimePeriodType(id, snull);
         assertEquals(-1, tp.getTime());
         
     }

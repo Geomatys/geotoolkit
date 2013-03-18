@@ -35,25 +35,25 @@ import org.opengis.temporal.TemporalGeometricPrimitive;
  */
 public class OMXmlFactory {
 
-    public static Observation convert(final String version, final Observation observation) {
+    public static AbstractObservation convert(final String version, final Observation observation) {
         if (version.equals("2.0.0")) {
             if (observation instanceof org.geotoolkit.observation.xml.v100.ObservationType) {
                 return convertTo200(observation);
             } else {
-                return observation;
+                return (AbstractObservation)observation;
             }
         } else if (version.equals("1.0.0")) {
             if (observation instanceof org.geotoolkit.observation.xml.v200.OMObservationType) {
                 return convertTo100(observation);
             } else {
-                return observation;
+                return (AbstractObservation)observation;
             }
         } else {
             throw new IllegalArgumentException("unexpected O&M version number:" + version);
         }
     }
     
-    private static Observation convertTo100(final Observation observation) {
+    private static AbstractObservation convertTo100(final Observation observation) {
         final String name = observation.getName();
         final String definition = observation.getDefinition();
         final org.geotoolkit.gml.xml.v311.AbstractTimeGeometricPrimitiveType time;
@@ -67,14 +67,14 @@ public class OMXmlFactory {
             if (p.getEnding() != null && p.getEnding().getPosition() != null) {
                 dateEnd = p.getEnding().getPosition().getDateTime().toString();
             }
-            time = (org.geotoolkit.gml.xml.v311.AbstractTimeGeometricPrimitiveType) GMLXmlFactory.createTimePeriod("3.1.1", dateBegin, dateEnd);
+            time = (org.geotoolkit.gml.xml.v311.AbstractTimeGeometricPrimitiveType) GMLXmlFactory.createTimePeriod("3.1.1", null, dateBegin, dateEnd);
         } else if (observation.getSamplingTime() instanceof Instant) {
             final Instant p = (Instant) observation.getSamplingTime();
             String date = null;
             if (p.getPosition() != null) {
                 date = p.getPosition().getDateTime().toString();
             }
-            time = (org.geotoolkit.gml.xml.v311.AbstractTimeGeometricPrimitiveType) GMLXmlFactory.createTimeInstant("3.1.1", date);
+            time = (org.geotoolkit.gml.xml.v311.AbstractTimeGeometricPrimitiveType) GMLXmlFactory.createTimeInstant("3.1.1", null, date);
         } else if (observation.getSamplingTime() != null) {
             throw new IllegalArgumentException("Unexpected samplingTime type:" + observation.getSamplingTime().getClass().getName());
         } else {
@@ -127,7 +127,7 @@ public class OMXmlFactory {
         }
     }
     
-    private static Observation convertTo200(final Observation observation) {
+    private static AbstractObservation convertTo200(final Observation observation) {
        
         final String name = observation.getName();
         final String type;
@@ -147,14 +147,14 @@ public class OMXmlFactory {
             if (p.getEnding() != null && p.getEnding().getPosition() != null) {
                 dateEnd = p.getEnding().getPosition().getDateTime().toString();
             }
-            time = (org.geotoolkit.gml.xml.v321.AbstractTimeObjectType) GMLXmlFactory.createTimePeriod("3.2.1", dateBegin, dateEnd);
+            time = (org.geotoolkit.gml.xml.v321.AbstractTimeObjectType) GMLXmlFactory.createTimePeriod("3.2.1", null, dateBegin, dateEnd);
         } else if (observation.getSamplingTime() instanceof Instant) {
             final Instant p = (Instant) observation.getSamplingTime();
             String date = null;
             if (p.getPosition() != null) {
                 date = p.getPosition().getDateTime().toString();
             }
-            time = (org.geotoolkit.gml.xml.v321.AbstractTimeObjectType) GMLXmlFactory.createTimeInstant("3.2.1", date);
+            time = (org.geotoolkit.gml.xml.v321.AbstractTimeObjectType) GMLXmlFactory.createTimeInstant("3.2.1", null, date);
         } else if (observation.getSamplingTime() != null) {
             throw new IllegalArgumentException("Unexpected samplingTime type:" + observation.getSamplingTime().getClass().getName());
         } else {
@@ -187,7 +187,7 @@ public class OMXmlFactory {
         } else {
             result = observation.getResult();
         }
-        return new org.geotoolkit.observation.xml.v200.OMObservationType(name, type, time, procedure, observedProperty, feature, result);
+        return new org.geotoolkit.observation.xml.v200.OMObservationType(null, name, type, time, procedure, observedProperty, feature, result);
     }
     
     public static SamplingFeature convert(final String version, final SamplingFeature feature) {
@@ -377,7 +377,7 @@ public class OMXmlFactory {
         return null;
     }
     
-    public static Observation buildObservation(final String version, final String name, final String definition, final FeatureProperty sampledFeature, final org.opengis.observation.Phenomenon phen,
+    public static Observation buildObservation(final String version, final String id, final String name, final String definition, final FeatureProperty sampledFeature, final org.opengis.observation.Phenomenon phen,
             final String procedure, final Object result, final TemporalGeometricPrimitive time) {
         if ("1.0.0".equals(version)) {
             if (sampledFeature != null && !(sampledFeature instanceof org.geotoolkit.gml.xml.v311.FeaturePropertyType)) {
@@ -406,7 +406,8 @@ public class OMXmlFactory {
             if (phen != null && !(phen instanceof org.geotoolkit.swe.xml.Phenomenon)) {
                 throw new IllegalArgumentException("unexpected object version for phenomenon element");
             }
-           return new org.geotoolkit.observation.xml.v200.OMObservationType(name, 
+           return new org.geotoolkit.observation.xml.v200.OMObservationType(id,
+                                                                            name, 
                                                                             "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_ComplexObservation", 
                                                                             (org.geotoolkit.gml.xml.v321.AbstractTimeObjectType)time,
                                                                             procedure,
@@ -418,7 +419,7 @@ public class OMXmlFactory {
         }
     }
     
-    public static Observation buildMeasurement(final String version, final String name, final String definition, final FeatureProperty sampledFeature, final org.opengis.observation.Phenomenon phen,
+    public static Observation buildMeasurement(final String version, final String id, final String name, final String definition, final FeatureProperty sampledFeature, final org.opengis.observation.Phenomenon phen,
             final String procedure, final Object result, final TemporalGeometricPrimitive time) {
         if ("1.0.0".equals(version)) {
             if (sampledFeature != null && !(sampledFeature instanceof org.geotoolkit.gml.xml.v311.FeaturePropertyType)) {
@@ -453,7 +454,8 @@ public class OMXmlFactory {
             if (result != null && !(result instanceof org.geotoolkit.gml.xml.v321.MeasureType)) {
                 throw new IllegalArgumentException("unexpected object version for result element");
             }
-           return new org.geotoolkit.observation.xml.v200.OMObservationType(name, 
+           return new org.geotoolkit.observation.xml.v200.OMObservationType(id,
+                                                                            name, 
                                                                             "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement", 
                                                                             (org.geotoolkit.gml.xml.v321.TimePeriodType)time,
                                                                             procedure,
