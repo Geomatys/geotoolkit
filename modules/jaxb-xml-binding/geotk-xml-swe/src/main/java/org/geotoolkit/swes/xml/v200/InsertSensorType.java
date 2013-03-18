@@ -155,7 +155,7 @@ public class InsertSensorType extends ExtensibleRequestType implements InsertSen
     }
 
     @Override
-    public Object getSensorMetadata() {
+    public Object getSensorDescription() {
         if (procedureDescription != null) {
             return procedureDescription.getAny();
         }
@@ -211,6 +211,14 @@ public class InsertSensorType extends ExtensibleRequestType implements InsertSen
             metadata = new ArrayList<InsertSensorType.Metadata>();
         }
         return this.metadata;
+    }
+    
+    @Override
+    public InsertionMetadataType getInsertionMetadata() {
+        if (metadata != null && !metadata.isEmpty()) {
+            return metadata.get(0).getInsertionMetadata();
+        }
+        return null;
     }
 
     @Override
@@ -302,6 +310,13 @@ public class InsertSensorType extends ExtensibleRequestType implements InsertSen
         @XmlElementRef(name = "InsertionMetadata", namespace = "http://www.opengis.net/swes/2.0", type = JAXBElement.class)
         private JAXBElement<? extends InsertionMetadataType> insertionMetadata;
 
+        public InsertionMetadataType getInsertionMetadata() {
+            if (insertionMetadata != null) {
+                return insertionMetadata.getValue();
+            }
+            return null;
+        }
+        
         /**
          * Gets the value of the insertionMetadata property.
          * 
@@ -311,7 +326,7 @@ public class InsertSensorType extends ExtensibleRequestType implements InsertSen
          *     {@link JAXBElement }{@code <}{@link InsertionMetadataType }{@code >}
          *     
          */
-        public JAXBElement<? extends InsertionMetadataType> getInsertionMetadata() {
+        public JAXBElement<? extends InsertionMetadataType> getJbInsertionMetadata() {
             return insertionMetadata;
         }
 

@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2012, Geomatys
+ *    (C) 2013, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -14,22 +14,17 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.swes.xml;
+package org.geotoolkit.sos.xml;
 
-import org.geotoolkit.ows.xml.RequestBase;
+import java.util.List;
 
 /**
  *
  * @author Guilhem Legal (Geomatys)
  */
-public interface InsertSensor extends RequestBase {
+public interface SosInsertionMetadata {
+ 
+    List<String> getObservationType();
     
-    Object getSensorDescription();
-    
-    Object getInsertionMetadata();
-    
-    ObservationTemplate getObservationTemplate();
-    
-    String getProcedureDescriptionFormat();
-    
+    List<String> getFeatureOfInterestType();
 }

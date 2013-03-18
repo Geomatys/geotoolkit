@@ -88,7 +88,7 @@ public class RegisterSensor extends RequestBaseType implements InsertSensor {
     /**
      * Gets the value of the sensorDescription property.
      */
-    public RegisterSensor.SensorDescription getSensorDescription() {
+    public RegisterSensor.SensorDescription getRealSensorDescription() {
         return sensorDescription;
     }
 
@@ -101,10 +101,28 @@ public class RegisterSensor extends RequestBaseType implements InsertSensor {
     }
 
     @Override
-    public Object getSensorMetadata() {
+    public Object getSensorDescription() {
         if (sensorDescription != null) {
             return sensorDescription.getAny();
         }
+        return null;
+    }
+    
+    /**
+     * compatibility with SOS 1.0.0
+     * @return always null
+     */
+    @Override
+    public String getProcedureDescriptionFormat() {
+        return null;
+    }
+
+    /**
+     * compatibility with SOS 1.0.0
+     * @return always null
+     */
+    @Override
+    public Object getInsertionMetadata() {
         return null;
     }
     
@@ -140,15 +158,6 @@ public class RegisterSensor extends RequestBaseType implements InsertSensor {
             s.append('\n').append("observation template:").append('\n').append(observationTemplate.toString());
         }
         return s.toString();
-    }
-
-    /**
-     * compatibility with SOS 1.0.0
-     * @return 
-     */
-    @Override
-    public String getProcedureDescriptionFormat() {
-        return null;
     }
 
     /**
