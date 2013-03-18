@@ -715,7 +715,7 @@ public class FeatureTypeBuilder {
             }
 
             //to be simple property must be an attribut
-            final Set<Class<?>> ints = Classes.getAllInterfaces(desc.getType().getClass());
+            final Class<?>[] ints = Classes.getAllInterfaces(desc.getType().getClass());
             boolean found = false;
             for(Class<?> c : ints){
                 if(AttributeType.class.isAssignableFrom(c)){

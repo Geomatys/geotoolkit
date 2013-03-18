@@ -21,12 +21,12 @@ import com.vividsolutions.jts.geom.Geometry;
 
 import java.util.List;
 import java.util.Map;
+import org.apache.sis.util.collection.UnmodifiableArrayList;
 
 import org.geotoolkit.feature.DefaultAttribute;
 import org.geotoolkit.feature.DefaultGeometryAttribute;
 import org.geotoolkit.filter.identity.DefaultFeatureId;
 
-import org.geotoolkit.util.collection.UnmodifiableArrayList;
 import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;

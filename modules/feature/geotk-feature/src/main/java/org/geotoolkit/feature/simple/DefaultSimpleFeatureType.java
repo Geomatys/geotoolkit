@@ -20,10 +20,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.apache.sis.util.collection.UnmodifiableArrayList;
 
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.type.DefaultFeatureType;
-import org.geotoolkit.util.collection.UnmodifiableArrayList;
 
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;

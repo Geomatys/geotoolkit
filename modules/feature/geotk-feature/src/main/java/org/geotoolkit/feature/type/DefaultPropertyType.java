@@ -25,7 +25,6 @@ import java.util.Map;
 
 import org.apache.sis.util.Classes;
 import org.geotoolkit.util.Utilities;
-import org.geotoolkit.util.collection.UnmodifiableArrayList;
 
 import org.opengis.feature.type.Name;
 import org.opengis.feature.type.PropertyType;
@@ -33,6 +32,7 @@ import org.opengis.filter.Filter;
 import org.opengis.util.InternationalString;
 
 import static org.apache.sis.util.ArgumentChecks.*;
+import org.apache.sis.util.collection.UnmodifiableArrayList;
 
 /**
  * Default implementation of a property type

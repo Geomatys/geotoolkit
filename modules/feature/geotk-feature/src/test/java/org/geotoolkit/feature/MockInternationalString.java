@@ -28,12 +28,13 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.Locale;
 import net.jcip.annotations.ThreadSafe;
+import org.apache.sis.util.collection.CollectionsExt;
+import org.apache.sis.util.iso.AbstractInternationalString;
 
 import org.opengis.util.InternationalString;
-import org.geotoolkit.util.*;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Locales;
-import org.geotoolkit.util.collection.XCollections;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -105,7 +106,7 @@ public class MockInternationalString extends AbstractInternationalString impleme
      * @since 3.00
      */
     public MockInternationalString(final Map<Locale,String> strings) {
-        if (XCollections.isNullOrEmpty(strings)) {
+        if (CollectionsExt.isNullOrEmpty(strings)) {
             localeMap = Collections.emptyMap();
         } else {
             final Iterator<Map.Entry<Locale,String>> it = strings.entrySet().iterator();
