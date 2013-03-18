@@ -99,21 +99,31 @@ public final class CQL {
     }
     
     public static Expression parseExpression(String cql) throws CQLException{
+        return parseExpression(cql, null);
+    }
+    
+    public static Expression parseExpression(String cql, FilterFactory2 factory) throws CQLException{
         final Object obj = compileExpression(cql);
         
         CommonTree tree = null;
         Expression result = null;
         if(obj instanceof CQLParser.expression_return){
             tree = (CommonTree)((CQLParser.expression_return)obj).tree;
-            final FilterFactory2 ff = (FilterFactory2) FactoryFinder
+            if(factory == null){
+                factory = (FilterFactory2) FactoryFinder
                     .getFilterFactory(new Hints(Hints.FILTER_FACTORY,FilterFactory2.class));
-            result = convertExpression(tree, ff);
+            }
+            result = convertExpression(tree, factory);
         }
         
         return result;
     }
     
     public static Filter parseFilter(String cql) throws CQLException{
+        return parseFilter(cql, null);
+    }
+    
+    public static Filter parseFilter(String cql, FilterFactory2 factory) throws CQLException{
         cql = cql.trim();
         
         //bypass parsing for inclusive filter
@@ -127,9 +137,11 @@ public final class CQL {
         Filter result = null;
         if(obj instanceof CQLParser.filter_return){
             tree = (CommonTree)((CQLParser.filter_return)obj).tree;
-            final FilterFactory2 ff = (FilterFactory2) FactoryFinder
+            if(factory == null){
+                factory = (FilterFactory2) FactoryFinder
                     .getFilterFactory(new Hints(Hints.FILTER_FACTORY,FilterFactory2.class));
-            result = convertFilter(tree, ff);
+            }
+            result = convertFilter(tree, factory);
         }
         
         return result;
