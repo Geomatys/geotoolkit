@@ -238,7 +238,7 @@ public class DynamicFactoryRegistry extends FactoryRegistry {
                 // We already tried this factory before and failed.
                 continue;
             }
-            if (!Classes.isAssignableTo(implementationType, types)) {
+            if (!Classes.isAssignableToAny(implementationType, types)) {
                 continue;
             }
             if (filter!=null && !filter.filter(factory)) {

@@ -18,7 +18,6 @@
 package org.geotoolkit.util;
 
 import java.util.Arrays;
-import org.apache.sis.internal.util.Objects;
 import java.io.Serializable;
 import org.apache.sis.util.ComparisonMode;
 

@@ -20,6 +20,7 @@ package org.geotoolkit.util.converter;
 import java.util.Set;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
@@ -54,20 +55,6 @@ import org.apache.sis.util.ArraysExt;
  */
 @Deprecated
 public final class Classes extends Static {
-    /**
-     * Methods to be rejected by {@link #isGetter(Method)}. They are mostly methods inherited
-     * from {@link Object}. Only no-argument methods having a non-void return value need to be
-     * declared in this list.
-     * <p>
-     * Note that testing {@code type.getDeclaringClass().equals(Object.class)}
-     * is not sufficient because those methods may be overridden in subclasses.
-     *
-     * @since 3.20
-     */
-    private static final String[] EXCLUDES = {
-        "clone", "getClass", "hashCode", "toString", "toWKT"
-    };
-
     /**
      * Do not allow instantiation of this class.
      */
@@ -186,11 +173,15 @@ public final class Classes extends Static {
      *
      * @see Class#asSubclass(Class)
      *
-     * @deprecated Moved to {@link org.apache.sis.util.Classes#asSubclassOrNull(Class, Class)}.
+     * @deprecated No replacement.
      */
     @Deprecated
+    @SuppressWarnings("unchecked")
     public static <U> Class<? extends U> asSubclassOrNull(final Class<?> type, final Class<U> sub) {
-        return org.apache.sis.util.Classes.asSubclassOrNull(type, sub);
+        // Design note: We are required to return null if 'sub' is null (not to return 'type'
+        // unchanged), because if we returned 'type', we would have an unsafe cast if this
+        // method is invoked indirectly from a parameterized method.
+        return (type != null && sub != null && sub.isAssignableFrom(type)) ? (Class) type : null;
     }
 
     /**
@@ -226,9 +217,15 @@ public final class Classes extends Static {
      * @return The set of classes of all objects in the given collection.
      *
      * @since 3.00
+     *
+     * @deprecated No replacement.
      */
     public static <T> Set<Class<? extends T>> getClasses(final Collection<? extends T> objects) {
-        return org.apache.sis.util.Classes.getClasses(objects);
+        final Set<Class<? extends T>> types = new LinkedHashSet<Class<? extends T>>();
+        for (final T object : objects) {
+            types.add(getClass(object));
+        }
+        return types;
     }
 
     /**
@@ -245,7 +242,7 @@ public final class Classes extends Static {
      * @since 3.01
      */
     public static Set<Class<?>> getAllInterfaces(Class<?> type) {
-        return org.apache.sis.util.Classes.getAllInterfaces(type);
+        return new LinkedHashSet<Class<?>>(Arrays.asList(org.apache.sis.util.Classes.getAllInterfaces(type)));
     }
 
     /**
@@ -460,7 +457,7 @@ next:       for (final Class<?> candidate : candidates) {
      * @since 3.12
      */
     public static boolean isAssignableTo(final Class<?> type, final Class<?>... allowedTypes) {
-        return org.apache.sis.util.Classes.isAssignableTo(type, allowedTypes);
+        return org.apache.sis.util.Classes.isAssignableToAny(type, allowedTypes);
     }
 
     /**
