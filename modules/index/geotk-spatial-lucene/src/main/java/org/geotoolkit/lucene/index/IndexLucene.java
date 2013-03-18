@@ -33,6 +33,7 @@ import org.geotoolkit.index.tree.io.TreeWriter;
 import org.geotoolkit.index.tree.star.StarRTree;
 import org.geotoolkit.lucene.analysis.standard.ClassicAnalyzer;
 import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.util.FileUtilities;
 import org.geotoolkit.util.logging.Logging;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
@@ -178,7 +179,11 @@ public abstract class IndexLucene {
 
     protected void writeTree() throws IOException {
         final File treeFile = new File(getFileDirectory(), "tree.bin");
-        TreeWriter.write(rTree, treeFile);
+        if (rTree.getElementsNumber() > 0) {
+            TreeWriter.write(rTree, treeFile);
+        } else if (treeFile.exists()) {
+            treeFile.delete();
+        }
     }
 
     /**

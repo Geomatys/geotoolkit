@@ -19,6 +19,7 @@ package org.geotoolkit.lucene.tree;
 
 import java.io.*;
 import org.geotoolkit.geometry.GeneralEnvelope;
+import org.geotoolkit.util.Utilities;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -92,5 +93,24 @@ public class NamedEnvelope extends GeneralEnvelope implements Externalizable {
         this.id = id;
         setRange(0, minx, maxx);
         setRange(1, miny, maxy);
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 17 * hash + this.id;
+        return hash;
+    }
+    
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj instanceof NamedEnvelope) {
+            final NamedEnvelope that = (NamedEnvelope) obj;
+            return Utilities.equals(this.id, that.id);
+        }
+        return false;
     }
 }
