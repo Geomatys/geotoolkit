@@ -1,7 +1,15 @@
 package org.geotoolkit.data.mapinfo;
 
+import org.geotoolkit.factory.AuthorityFactoryFinder;
+import org.geotoolkit.referencing.factory.epsg.DirectEpsgFactory;
+import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.util.ArgumentChecks;
+import org.opengis.referencing.datum.Datum;
+import org.opengis.referencing.datum.DatumAuthorityFactory;
+import org.opengis.referencing.datum.GeodeticDatum;
+import org.opengis.util.FactoryException;
 
+import javax.measure.unit.Unit;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,6 +20,8 @@ import java.util.Map;
  *         Date : 06/03/13
  */
 public final class DatumIdentifier {
+
+    private static final DatumAuthorityFactory DATUM_AUTHORITY_FACTORY = AuthorityFactoryFinder.getDatumAuthorityFactory("EPSG", null);
 
     // A map containing mapinfo datum codes as key, and EPSG code as value.
     private static final Map<Integer, Integer> DATUM_TABLE = new HashMap<Integer, Integer>();
@@ -25,6 +35,31 @@ public final class DatumIdentifier {
     public static Integer getEPSGDatumCode(Integer mapinfoDatumCode) {
         ArgumentChecks.ensureNonNull("MapInfo Datum Code", mapinfoDatumCode);
         return DATUM_TABLE.get(mapinfoDatumCode);
+    }
+
+    /**
+     * Search a MIF code for the given EPSG datum code.
+     * @param epsgCode The EPSG code which represents the wanted datum.
+     * @return The MIF code for the found datum, or -1 if no equivalent can be found.
+     */
+    public static int getMIFCodeFromEPSG(int epsgCode) {
+        for(Map.Entry<Integer, Integer> pair : DATUM_TABLE.entrySet()) {
+            if(pair.getValue().equals(epsgCode)) {
+                return pair.getKey();
+            }
+        }
+        return -1;
+    }
+
+    public static GeodeticDatum getDatumFromMIFCode(int datumCode) throws FactoryException {
+        GeodeticDatum datum = null;
+        final Integer epsgDatum = DatumIdentifier.getEPSGDatumCode(datumCode);
+        if(epsgDatum != null) {
+            datum = DATUM_AUTHORITY_FACTORY.createGeodeticDatum(epsgDatum.toString());
+        } else {
+
+        }
+        return datum;
     }
 
     //Fill table
@@ -145,6 +180,8 @@ public final class DatumIdentifier {
         DATUM_TABLE.put(112, 6124);
         // 113
         DATUM_TABLE.put(114, 6274);
+        // 115 ?
+        DATUM_TABLE.put(116, 6283);
 
         //3 differents epsg code can be found for mapinfo code 1000 --> 6746, 6745, 6314
         DATUM_TABLE.put(1000, 6314);

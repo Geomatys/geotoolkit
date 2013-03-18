@@ -1,4 +1,4 @@
-package org.geotoolkit.data.mif.style;
+package org.geotoolkit.data.mapinfo.mif.style;
 
 import org.opengis.style.Symbolizer;
 

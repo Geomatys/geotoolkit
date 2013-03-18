@@ -1,26 +1,40 @@
-package org.geotoolkit.data.mif;
+package org.geotoolkit.data.mapinfo.mif;
 
 import com.vividsolutions.jts.geom.*;
-import org.geotoolkit.data.mif.geometry.*;
+import org.geotoolkit.data.mapinfo.DatumIdentifier;
+import org.geotoolkit.data.mapinfo.ProjectionUtils;
+import org.geotoolkit.data.mapinfo.UnitIdentifier;
+import org.geotoolkit.data.mapinfo.mif.geometry.*;
+import org.geotoolkit.feature.FeatureUtilities;
+import org.geotoolkit.geometry.Envelope2D;
 import org.geotoolkit.metadata.iso.citation.Citations;
+import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.util.ArgumentChecks;
+import org.geotoolkit.util.StringUtilities;
 import org.opengis.feature.Feature;
+import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.GeometryDescriptor;
-import org.opengis.referencing.ReferenceIdentifier;
+import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.GeographicCRS;
 import org.opengis.referencing.crs.ProjectedCRS;
+import org.opengis.referencing.crs.SingleCRS;
+import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.Projection;
 
+import java.awt.geom.Rectangle2D;
 import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
+import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Scanner;
 
 /**
@@ -96,6 +110,7 @@ public final class MIFUtils {
 
         /**
          * Get the type used to build MIF geometry.
+         *
          * @param crs The coordinate reference system to use in this type.
          * @param parent The FeatureType we want to inherit from.
          * @return
@@ -107,8 +122,67 @@ public final class MIFUtils {
         public void readGeometry(Scanner reader, Feature toFill, MathTransform toApply) throws DataStoreException {
             binding.buildGeometry(reader, toFill, toApply);
         }
+
+        public String toMIFSyntax(Feature toConvert) throws DataStoreException {
+            return binding.toMIFSyntax(toConvert);
+        }
     }
 
+    /**
+     * Build a MIF representation of the given feature's geometry.
+     * @param toConvert The feature we want to extract geometry from.
+     * @return A string which is the feature geometry in MIF syntax, or null if there's no compatible geometry in the
+     * feature
+     * @throws DataStoreException If we get a problem while geometry conversion.
+     */
+    public static String buildMIFGeometry(Feature toConvert) throws DataStoreException {
+        String mifGeom = null;
+        if (toConvert.getDefaultGeometryProperty() != null) {
+            final GeometryType geomBuilder = identifyFeature(toConvert.getType());
+            if (geomBuilder != null) {
+                mifGeom = geomBuilder.toMIFSyntax(toConvert);
+            }
+        }
+        return mifGeom;
+    }
+
+    public static GeometryType identifyFeature(FeatureType toIdentify) {
+        GeometryType type = null;
+        /* We'll check for the exact featureType first, and if there's no matching, we'll refine our search by checking
+         * the geometry classes.
+         */
+        final CoordinateReferenceSystem crsParam = toIdentify.getCoordinateReferenceSystem();
+        FeatureType superParam = null;
+        if( toIdentify.getSuper() instanceof FeatureType) {
+            superParam = (FeatureType) toIdentify.getSuper();
+        }
+        for(GeometryType gType : GeometryType.values()) {
+            if(gType.getBinding(crsParam, superParam).equals(toIdentify)) {
+                type = gType;
+                break;
+            }
+        }
+
+        // for some types, we don't need to get the same featureType, only a matching geometry class will be sufficient.
+        if(type == null && toIdentify.getGeometryDescriptor() != null) {
+            final Class sourceClass = toIdentify.getGeometryDescriptor().getType().getBinding();
+            if(Polygon.class.isAssignableFrom(sourceClass) || MultiPolygon.class.isAssignableFrom(sourceClass)) {
+                type = GeometryType.REGION;
+            } else if(LineString.class.isAssignableFrom(sourceClass) || MultiLineString.class.isAssignableFrom(sourceClass)) {
+                type = GeometryType.POLYLINE;
+            } else if(Point.class.isAssignableFrom(sourceClass) || Coordinate.class.isAssignableFrom(sourceClass)) {
+                type = GeometryType.POINT;
+            } else if(MultiPoint.class.isAssignableFrom(sourceClass) || CoordinateSequence.class.isAssignableFrom(sourceClass)) {
+                type = GeometryType.MULTIPOINT;
+            } else if(Envelope.class.isAssignableFrom(sourceClass) || Envelope2D.class.isAssignableFrom(sourceClass) || Rectangle2D.class.isAssignableFrom(sourceClass)) {
+                type = GeometryType.RECTANGLE;
+            } else if(GeometryCollection.class.isAssignableFrom(sourceClass)) {
+                type = GeometryType.COLLECTION;
+            }
+        }
+
+        return type;
+    }
 
     /**
      * Retrieve the Java class bound to the given typename. It works only for primitive attribute types.
@@ -200,30 +274,6 @@ public final class MIFUtils {
     }
 
 
-    public static String crsToMIFSyntax(CoordinateReferenceSystem crs) throws DataStoreException {
-        ArgumentChecks.ensureNonNull("CRS to convert", crs);
-        final StringBuilder builder = new StringBuilder();
-        builder.append(HeaderCategory.COORDSYS).append(" Earth\nProjection");
-        // Geographic CRS (special) case, mapinfo proj code is 1.
-        if(crs instanceof GeographicCRS) {
-            builder.append('1').append(',');
-            final GeographicCRS gCRS = (GeographicCRS) crs;
-
-        } else if (crs instanceof ProjectedCRS) {
-            final ProjectedCRS pCRS = (ProjectedCRS) crs;
-            int projCode = getMapInfoProjectionCode(pCRS.getConversionFromBase());
-            if(projCode < 1) {
-                throw new DataStoreException("Projection of the given CRS does not get any equivalent in mapInfo.");
-            }
-            builder.append(projCode).append(',');
-        } else {
-            throw new DataStoreException("The given CRS can't be converted to MapInfo format.");
-        }
-
-
-        return builder.toString();
-    }
-
     /**
      * Parse the given {@link SimpleFeatureType} to build a list of types in MIF format (as header COLUMNS category describes them).
      * @param toWorkWith The FeatureType to parse, can't be null.
@@ -248,7 +298,7 @@ public final class MIFUtils {
             if( mifType == null) {
                 throw new DataStoreException("Type "+desc.getType().getBinding()+" has no equivalent in MIF format.");
             }
-            builder.append(desc.getLocalName()).append(' ').append(mifType).append('\n');
+            builder.append(desc.getLocalName()).append(' ').append(mifType.toLowerCase()).append('\n');
         }
     }
 
@@ -295,18 +345,44 @@ public final class MIFUtils {
             in = connection.getInputStream();
         }
         } catch (Exception e) {
-            throw new IOException("Unable to open data in write mode.", e);
+            throw new IOException("Unable to open data in read mode.", e);
         }
         return in;
     }
 
-    public static int getMapInfoProjectionCode(Projection source) {
-        ArgumentChecks.ensureNonNull("Source projection", source);
-        for(ReferenceIdentifier ref : source.getIdentifiers()) {
-            if(ref.getAuthority().equals(Citations.MAP_INFO)) {
-                return Integer.decode(ref.getCode());
-            }
+
+    /**
+     * Write a stream into another.
+     * @param in The source inputStream
+     * @param writer The {@link OutputStreamWriter} which will write input stream into destination stream.
+     * @throws IOException If there's a problem connecting to one of the streams.
+     */
+    public static void write(InputStream in, OutputStreamWriter writer) throws IOException {
+        InputStreamReader reader = new InputStreamReader(in);
+        char[] inBuffer = new char[1024];
+        while(reader.read(inBuffer) >=0) {
+            writer.write(inBuffer);
         }
-        return -1;
     }
+
+
+    /**
+     * Return a String which is the ready-to-write (for MID file) representation of the given property.
+     * @param prop The property to extract value from.
+     * @return A string which is the value of the given property. Never Null, but can be empty.
+     */
+    public static String getStringValue(Property prop) {
+        if(prop == null || prop.getValue() == null) {
+            return "";
+        }
+        final Object value = prop.getValue();
+        if(value instanceof Number) {
+            return NumberFormat.getInstance().format(value);
+        } else if(value instanceof Date) {
+            return String.valueOf(((Date) value).getTime());
+        }
+
+        return value.toString();
+    }
+
 }

@@ -1,5 +1,6 @@
-package org.geotoolkit.data.mif;
+package org.geotoolkit.data.mapinfo.mif;
 
+import org.geotoolkit.data.mapinfo.ProjectionUtils;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.simple.DefaultSimpleFeatureType;
 import org.geotoolkit.feature.type.DefaultAttributeDescriptor;
@@ -8,9 +9,9 @@ import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.util.ArgumentChecks;
-import org.geotoolkit.util.FileUtilities;
 import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.util.logging.Logging;
+import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.*;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -18,6 +19,7 @@ import org.opengis.referencing.operation.MathTransform;
 
 import java.io.*;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.*;
 import java.util.concurrent.locks.ReadWriteLock;
@@ -34,17 +36,12 @@ import java.util.regex.Pattern;
  */
 public class MIFManager {
 
-    private static final Logger LOGGER = Logging.getLogger(MIFManager.class.getName());
-
-    /**
-     * The number of mandatory tags to match in the header.
-     */
-    private static final int HEADER_MANDATORY_COUNT = 2;
+    public static final Logger LOGGER = Logging.getLogger(MIFManager.class.getName());
 
     /**
      * A pattern frequently used to find MIF categories
      */
-    public static final Pattern alphaPattern = Pattern.compile("\\w+");
+    public static final Pattern ALPHA_PATTERN = Pattern.compile("\\w+");
 
     /** To manage accesses to file. */
     private final ReadWriteLock RWLock = new ReentrantReadWriteLock();
@@ -53,17 +50,17 @@ public class MIFManager {
      * Mif file access
      */
     private String mifName;
-    private String mifPath;
+    private URL mifPath;
     private Scanner mifScanner;
 
     /** Path to the MID file. */
-    private String midPath;
+    private URL midPath;
 
     /**
      * Header tag values. See {@link MIFHeaderCategory} for tag description.
      */
     private short mifVersion = 300;
-    private String mifCharset = "UTF-8";
+    private String mifCharset = "Neutral";
     public char mifDelimiter = '\t';
     private ArrayList<Short> mifUnique = new ArrayList<Short>();
     private ArrayList<Short> mifIndex = new ArrayList<Short>();
@@ -75,17 +72,17 @@ public class MIFManager {
      * Type and data containers
      */
     private Set<Name> names = null;
-    private DefaultSimpleFeatureType mifBaseType = null;
-    private ArrayList<FeatureType> mifChildTypes = null;
+    private SimpleFeatureType mifBaseType = null;
+    private ArrayList<FeatureType> mifChildTypes = new ArrayList<FeatureType>();
 
 
-    public MIFManager(File mifFile) throws NullArgumentException, DataStoreException {
+    public MIFManager(File mifFile) throws NullArgumentException, DataStoreException, MalformedURLException {
         ArgumentChecks.ensureNonNull("Input file", mifFile);
-        mifPath = mifFile.getAbsolutePath();
+        mifPath = mifFile.toURI().toURL();
         init();
     }
 
-    public MIFManager(String mifFilePath) throws NullArgumentException, DataStoreException {
+    public MIFManager(URL mifFilePath) throws NullArgumentException, DataStoreException, MalformedURLException {
         ArgumentChecks.ensureNonNull("Input file path", mifFilePath);
         mifPath = mifFilePath;
         init();
@@ -94,9 +91,10 @@ public class MIFManager {
     /**
      * Basic operations needed in both constructors.
      */
-    private void init() throws DataStoreException {
-        int lastSeparatorIndex = mifPath.lastIndexOf(System.getProperty("file.separator"));
-        mifName = mifPath.substring(lastSeparatorIndex);
+    private void init() throws DataStoreException, MalformedURLException {
+        final String mifStr = mifPath.getPath();
+        int lastSeparatorIndex = mifStr.lastIndexOf(System.getProperty("file.separator"));
+        mifName = mifStr.substring(lastSeparatorIndex+1);
         if (mifName.endsWith(".mif") || mifName.endsWith(".MIF")) {
             mifName = mifName.substring(0, mifName.length() - 4);
         }
@@ -124,7 +122,7 @@ public class MIFManager {
      */
     public Set<Name> getTypeNames() throws DataStoreException {
         if (names == null) {
-            Set<Name> names = new HashSet<Name>();
+            names = new HashSet<Name>();
 
             checkDataTypes();
             names.add(mifBaseType.getName());
@@ -136,27 +134,47 @@ public class MIFManager {
     }
 
 
-    public void addSchema(Name typeName, FeatureType featureType) throws DataStoreException {
-        File f = new File(mifPath);
-        if(f.exists()) {
+    public void addSchema(Name typeName, FeatureType toAdd) throws DataStoreException, URISyntaxException {
+        ArgumentChecks.ensureNonNull("New feature type", toAdd);
+        File f = new File(mifPath.toURI());
+        if (f.exists()) {
             boolean deleted = f.delete();
-            if(!deleted) {
-                throw new DataStoreException("File already exists and can't be deleted.");
+            if (!deleted) {
+                throw new DataStoreException("File already exists and can't be erased.");
             }
         }
-        if (!(featureType instanceof SimpleFeatureType)) {
-            throw new DataStoreException("The given feature type can't be added : MIF format only handle simple features.");
+
+        if (!(toAdd instanceof SimpleFeatureType)
+                && (toAdd.getSuper() == null || !(toAdd.getSuper() instanceof SimpleFeatureType))) {
+
+            throw new DataStoreException("Only Simple Features, or features with a Simple Feature as parent can be added.");
         }
 
-        getTypeNames();
-
-        if (names.contains(typeName)) {
-            throw new DataStoreException("A feature type already exists with the name " + typeName);
-        } else if (mifBaseType.equals(featureType) || mifChildTypes.contains(featureType)) {
-            throw new DataStoreException("The given feature type already exists : " + typeName);
+        if (mifBaseType == null) {
+            if (toAdd.getGeometryDescriptor() == null && toAdd instanceof SimpleFeatureType) {
+                mifBaseType = (SimpleFeatureType) toAdd;
+            } else if (toAdd.getSuper() != null && toAdd.getSuper() instanceof SimpleFeatureType) {
+                mifBaseType = (SimpleFeatureType) toAdd.getSuper();
+                // Check if we should add it to child types too.
+                if (MIFUtils.identifyFeature(toAdd) != null) {
+                    mifChildTypes.add(toAdd);
+                }
+            } else {
+                throw new DataStoreException("A base type must be set first, and given one does not fit.");
+            }
+        } else {
+            if (toAdd.getSuper() == null || !toAdd.getSuper().equals(mifBaseType)) {
+                throw new DataStoreException(
+                        "Super type of the given feature doesn't match this data store base type :\nExpected"
+                                + mifBaseType + "\nFound :" + toAdd.getSuper());
+            } else {
+                if (MIFUtils.identifyFeature(toAdd) != null) {
+                    mifChildTypes.add(toAdd);
+                } else {
+                    throw new DataStoreException("The geometry for the given type is not supported for MIF geometry");
+                }
+            }
         }
-
-        mifChildTypes.add(featureType);
     }
 
     public void deleteSchema(Name typeName) throws DataStoreException {
@@ -202,11 +220,11 @@ public class MIFManager {
         return mifBaseType;
     }
 
-    public String getMIFPath() {
+    public URL getMIFPath() {
         return mifPath;
     }
 
-    public String getMIDPath() {
+    public URL getMIDPath() {
         return midPath;
     }
 
@@ -217,21 +235,23 @@ public class MIFManager {
      * @throws DataStoreException if the MIF path is malformed (because we use it to build MID path), or if there's no
      * valid file at built location.
      */
-    private void buildMIDPath() throws DataStoreException {
-
-        if (mifPath.endsWith(".mif") || mifPath.endsWith(".MIF")) {
-            midPath = mifPath.substring(0, mifPath.length() - 4);
+    private void buildMIDPath() throws DataStoreException, MalformedURLException {
+        final String mifStr = mifPath.getPath();
+        String midStr = null;
+        if (mifStr.endsWith(".mif") || mifStr.endsWith(".MIF")) {
+            midStr = mifStr.substring(0, mifStr.length() - 4);
         } else {
             throw new DataStoreException("There's an extension problem with Mif file. A correct extension is needed in order to retrieve the associated mid file.");
         }
 
         // We have to check if the extension is upper or lower case, since unix file systems are case sensitive.
-        if (mifPath.endsWith(".mif")) {
-            midPath.concat(".mid");
-        } else if (mifPath.endsWith(".MIF")) {
-            midPath.concat(".MID");
+        if (mifStr.endsWith(".mif")) {
+            midStr = midStr.concat(".mid");
+        } else if (mifStr.endsWith(".MIF")) {
+            midStr = midStr.concat(".MID");
         }
 
+        midPath = new URL(mifPath.getProtocol(), mifPath.getHost(), mifPath.getPort(), midStr);
     }
 
 
@@ -246,6 +266,7 @@ public class MIFManager {
      */
     private void parseHeader() throws DataStoreException {
         //Reset the file scanner to ensure we'll start on file top position.
+        InputStream mifStream = null;
         try {
             if (mifScanner != null) {
                 mifScanner.close();
@@ -254,27 +275,29 @@ public class MIFManager {
             }
 
             RWLock.readLock().lock();
-            mifScanner = new Scanner(mifPath);
+            mifStream = MIFUtils.openInConnection(mifPath);
+            mifScanner = new Scanner(mifStream);
 
             // A trigger to tell us if all mandatory categories have been parsed.
-            int allRequiredDone = 0;
+            boolean columnsParsed = false;
             while (mifScanner.hasNextLine()) {
-                final String matched = mifScanner.findInLine(alphaPattern);
+                final String matched = mifScanner.findInLine(ALPHA_PATTERN);
 
-                if (matched == null && allRequiredDone < HEADER_MANDATORY_COUNT) {
-                    throw new DataStoreException("File header can't be read (Mandatory marks are missing)");
+                if (matched == null && !columnsParsed) {
+                    // maybe we missed a line ?
+                    mifScanner.nextLine();
+                    continue;
                 }
 
                 if (matched.equalsIgnoreCase(MIFUtils.HeaderCategory.VERSION.name())) {
                     if (mifScanner.hasNextShort()) {
                         mifVersion = mifScanner.nextShort();
-                        allRequiredDone++;
                     } else {
                         throw new DataStoreException("MIF Version can't be read.");
                     }
 
                 } else if (matched.equalsIgnoreCase(MIFUtils.HeaderCategory.CHARSET.name())) {
-                    final String charset = mifScanner.findInLine(alphaPattern);
+                    final String charset = mifScanner.findInLine(ALPHA_PATTERN);
 
                 } else if (matched.equalsIgnoreCase(MIFUtils.HeaderCategory.DELIMITER.name())) {
                     final String tmpStr = mifScanner.findInLine("(\"|\')[^\"](\"|\')");
@@ -295,7 +318,26 @@ public class MIFManager {
                     }
 
                 } else if (matched.equalsIgnoreCase(MIFUtils.HeaderCategory.COORDSYS.name())) {
-
+                    /*
+                     * Don't know how many coefficients will be defined in the CRS, nor if it's written on a single
+                     * line,so we iterate until the next header category clause, storing encountered data.
+                     */
+                    final StringBuilder crsStr = new StringBuilder();
+                    boolean coordSysCase = true;
+                    while(coordSysCase) {
+                        crsStr.append(mifScanner.next());
+                        for(MIFUtils.HeaderCategory category : MIFUtils.HeaderCategory.values()) {
+                            Pattern pat = Pattern.compile(category.name(), Pattern.CASE_INSENSITIVE);
+                            if(mifScanner.hasNext(pat)) {
+                                coordSysCase = false;
+                                break;
+                            }
+                        }
+                    }
+                    final CoordinateReferenceSystem crs = ProjectionUtils.buildCRSFromMIF(crsStr.toString());
+                    if(crs != null) {
+                        mifCRS = crs;
+                    }
                 } else if (matched.equalsIgnoreCase(MIFUtils.HeaderCategory.TRANSFORM.name())) {
                     double xResample, yResample, xTranslate, yTranslate;
                     xResample = mifScanner.nextDouble();
@@ -314,18 +356,28 @@ public class MIFManager {
                     if (mifColumnsCount > 0) {
                         parseColumns();
                     }
-                    allRequiredDone++;
+                    columnsParsed = true;
                 } else if (matched.equalsIgnoreCase(MIFUtils.HeaderCategory.DATA.name())) {
-                    if (allRequiredDone < HEADER_MANDATORY_COUNT) {
-                        throw new DataStoreException("File header can't be read (Mandatory marks are missing)");
+                    if (!columnsParsed) {
+                        throw new DataStoreException("File header can't be read (Columns mark is missing)");
                     } else {
                         break;
                     }
                 }
+                mifScanner.nextLine();
             }
+        } catch (IOException e) {
+            LOGGER.log(Level.WARNING, "File header can't be read (creation mode ?).");
         } catch (Exception e) {
             throw new DataStoreException("MIF file header can't be read.", e);
         } finally {
+            if(mifStream != null) {
+                try {
+                    mifStream.close();
+                } catch (IOException e) {
+                    LOGGER.log(Level.WARNING, "Input connection to MIF data can't be closed.", e);
+                }
+            }
             RWLock.readLock().unlock();
         }
     }
@@ -336,19 +388,19 @@ public class MIFManager {
     public void checkDataTypes() throws DataStoreException {
         if (mifBaseType == null && mifColumnsCount < 0) {
             parseHeader();
-        } else {
-            if (mifChildTypes == null) {
-                try {
-                    mifScanner.close();
-                    RWLock.readLock().lock();
-                    mifScanner = new Scanner(mifPath);
-                    buildDataTypes();
-                } catch (Exception e) {
-                    throw new DataStoreException("Reading types from MIF file failed.", e);
-                } finally {
-                    mifScanner.close();
-                    RWLock.readLock().unlock();
-                }
+        }
+
+        if (mifChildTypes.isEmpty()) {
+            try {
+                mifScanner.close();
+                RWLock.readLock().lock();
+                mifScanner = new Scanner(MIFUtils.openInConnection(mifPath));
+                buildDataTypes();
+            } catch (Exception e) {
+                LOGGER.log(Level.WARNING, "Reading types from MIF file failed.", e);
+            } finally {
+                mifScanner.close();
+                RWLock.readLock().unlock();
             }
         }
     }
@@ -363,18 +415,22 @@ public class MIFManager {
      * itself (to avoid close / re-open each time).
      */
     private void buildDataTypes() {
-        mifChildTypes = new ArrayList<FeatureType>();
+        mifChildTypes.clear();
 
         ArrayList<String> triggeredTypes = new ArrayList<String>();
         while (mifScanner.hasNextLine()) {
-            final String typename = mifScanner.findInLine(alphaPattern);
-            if (triggeredTypes.contains(typename)) {
-                continue;
+            final String typename = mifScanner.findInLine(ALPHA_PATTERN);
+            if (typename != null) {
+                if (triggeredTypes.contains(typename)) {
+                    continue;
+                }
+                triggeredTypes.add(typename);
+                final FeatureType bind = MIFUtils.getGeometryType(typename, mifCRS, mifBaseType);
+                if (bind != null) {
+                    mifChildTypes.add(bind);
+                }
             }
-            final FeatureType bind = MIFUtils.getGeometryType(typename, mifCRS, mifBaseType);
-            if (bind != null) {
-                mifChildTypes.add(bind);
-            }
+            mifScanner.nextLine();
         }
     }
 
@@ -387,8 +443,8 @@ public class MIFManager {
         final ArrayList<AttributeDescriptor> schema = new ArrayList<AttributeDescriptor>();
         for (int i = 0; i < mifColumnsCount; i++) {
             mifScanner.nextLine();
-            final String attName = mifScanner.findInLine(alphaPattern);
-            final String tmpType = mifScanner.findInLine(alphaPattern);
+            final String attName = mifScanner.findInLine(ALPHA_PATTERN);
+            final String tmpType = mifScanner.findInLine(ALPHA_PATTERN);
             // Since scanner doesn't move if no matching pattern is found, we can test only the second string.
             if (tmpType == null) {
                 throw new DataStoreException("A problem occured while reading columns tag from .MIF header.");
@@ -413,13 +469,13 @@ public class MIFManager {
      *
      * @return true if the files have successfully been deleted, false otherwise.
      */
-    private boolean delete() {
+    private boolean delete() throws DataStoreException {
         int deleteCounter = 0;
 
         RWLock.writeLock().lock();
         try {
-            File mifFile = new File(mifPath);
-            File midFile = new File(midPath);
+            File mifFile = new File(mifPath.toURI());
+            File midFile = new File(midPath.toURI());
 
             if (mifFile.exists()) {
                 if (mifFile.delete()) {
@@ -437,6 +493,8 @@ public class MIFManager {
                 deleteCounter++;
             }
 
+        } catch (Exception ex) {
+            throw new DataStoreException("MIF/MID data files can't be removed.", ex);
         } finally {
             RWLock.writeLock().unlock();
         }
@@ -446,31 +504,37 @@ public class MIFManager {
 
     /**
      * Write the MIF file header(Version, MID columns and other stuff).
+     *
+     * @throws DataStoreException If the current FeatureType is not fully compliant with MIF constraints. If there's a
+     * problem while writing the featureType in MIF header.
      */
-    public void writeHeader(FeatureType toWrite) throws DataStoreException {
-        if(!(toWrite instanceof SimpleFeatureType)) {
-            throw new DataStoreException("Only simple schema can be written in MIF file header. Given is : \n" + toWrite);
+    public String buildHeader() throws DataStoreException {
+        if (!(mifBaseType instanceof SimpleFeatureType)) {
+            throw new DataStoreException("Only simple schema can be written in MIF file header. Given is : \n" + mifBaseType);
         }
 
-        final SimpleFeatureType toWorkWith = (SimpleFeatureType) toWrite;
+        final SimpleFeatureType toWorkWith = (SimpleFeatureType) mifBaseType;
+        int tmpCount = toWorkWith.getAttributeCount();
         final StringBuilder headBuilder = new StringBuilder();
         try {
             headBuilder.append(MIFUtils.HeaderCategory.VERSION).append(' ').append(mifVersion).append('\n');
             headBuilder.append(MIFUtils.HeaderCategory.CHARSET).append(' ').append(mifCharset).append('\n');
-            headBuilder.append(MIFUtils.HeaderCategory.DELIMITER).append(' ').append(mifDelimiter).append('\n');
+            headBuilder.append(MIFUtils.HeaderCategory.DELIMITER).append(' ').append('\"').append(mifDelimiter).append('\"').append('\n');
 
-            if(toWrite.getCoordinateReferenceSystem() != null) {
-                String strCRS = MIFUtils.crsToMIFSyntax(toWorkWith.getCoordinateReferenceSystem());
-                headBuilder.append(MIFUtils.HeaderCategory.COORDSYS).append(' ').append(strCRS).append('\n');
-                mifCRS = toWorkWith.getCoordinateReferenceSystem();
+            if (mifBaseType.getCoordinateReferenceSystem() != null) {
+                String strCRS = ProjectionUtils.crsToMIFSyntax(mifBaseType.getCoordinateReferenceSystem());
+                if(!strCRS.isEmpty()) {
+                    headBuilder.append(MIFUtils.HeaderCategory.COORDSYS).append(' ').append(strCRS).append('\n');
+                } else {
+                    throw new DataStoreException("Given CRS can't be written in MIF file.");
+                }
             }
 
             // Check the number of attributes, as the fact we've got at most one geometry.
-            int tmpCount = toWorkWith.getAttributeCount();
             boolean geometryFound = false;
-            for(AttributeDescriptor desc : toWorkWith.getAttributeDescriptors()) {
-                if(desc instanceof GeometryDescriptor) {
-                    if(geometryFound) {
+            for (AttributeDescriptor desc : toWorkWith.getAttributeDescriptors()) {
+                if (desc instanceof GeometryDescriptor) {
+                    if (geometryFound) {
                         throw new DataStoreException("Only mono geometry types are managed for MIF format, but given featureType get at least 2 geometry descriptor.");
                     } else {
                         tmpCount--;
@@ -478,35 +542,112 @@ public class MIFManager {
                     }
                 }
             }
-            mifColumnsCount = tmpCount;
             headBuilder.append(MIFUtils.HeaderCategory.COLUMNS).append(' ').append(mifColumnsCount).append('\n');
             MIFUtils.featureTypeToMIFSyntax(toWorkWith, headBuilder);
 
             headBuilder.append(MIFUtils.HeaderCategory.DATA).append('\n');
 
-                    } catch (Exception e) {
+        } catch (Exception e) {
             throw new DataStoreException("Datastore can't write MIF file header.", e);
         }
+        // Header successfully built, we can report featureType values on datastore attributes.
+        mifColumnsCount = tmpCount;
+        mifCRS = toWorkWith.getCoordinateReferenceSystem();
+        mifBaseType = toWorkWith;
+
+        return headBuilder.toString();
+    }
+
+
+    /**
+     * When opening MIF file in writing mode, we write all data in tmp file. This function is used for writing header
+     * and tmp file data into the real file.
+     */
+    public void flushData(MIFFeatureWriter dataToWrite) throws DataStoreException {
+
+        final String head = buildHeader();
 
         // Writing pass, with datastore locking.
         OutputStreamWriter stream = null;
+        InputStream mifInput = null;
+        InputStream midInput = null;
         RWLock.writeLock().lock();
         try {
-            OutputStream out = MIFUtils.openOutConnection(new URL(mifPath));
+            // writing MIF header and geometries.
+            OutputStream out = MIFUtils.openOutConnection(mifPath);
             stream = new OutputStreamWriter(out);
-            stream.write(headBuilder.toString());
+            stream.write(head);
+            mifInput = dataToWrite.getMIFTempStore();
+            MIFUtils.write(mifInput, stream);
+            stream.close();
+
+            // MID writing
+            out = MIFUtils.openOutConnection(midPath);
+            stream = new OutputStreamWriter(out);
+            midInput = dataToWrite.getMIDTempStore();
+            MIFUtils.write(midInput, stream);
+
         } catch (Exception e) {
-            throw new DataStoreException("Datastore can't write MIF file header.", e);
+            throw new DataStoreException("A problem have been encountered while flushing data.", e);
         } finally {
             RWLock.writeLock().unlock();
-            if(stream != null) {
+            if (stream != null) {
                 try {
                     stream.close();
                 } catch (IOException e) {
                     LOGGER.log(Level.WARNING, "Writer stream can't be closed.", e);
                 }
             }
+            if (mifInput != null) {
+                try {
+                    mifInput.close();
+                } catch (IOException e) {
+                    LOGGER.log(Level.WARNING, "Temporary data store can't be closed.", e);
+                }
+            }
+            if (stream != null) {
+                try {
+                    midInput.close();
+                } catch (IOException e) {
+                    LOGGER.log(Level.WARNING, "Temporary data store can't be closed.", e);
+                }
+            }
         }
     }
 
+    /**
+     * Build a string representation of the given feature attributes for MID file writing.
+     * @param toParse The feature to convert into MID syntax.
+     * @return A string representation of the given feature. Never null, but empty string is possible.
+     */
+    public String buildMIDAttributes(Feature toParse) {
+        final StringBuilder builder = new StringBuilder();
+        final FeatureType fType = toParse.getType();
+
+        if(mifBaseType.equals(fType) || mifBaseType.equals(fType.getSuper())) {
+            final Name name = mifBaseType.getType(0).getName();
+            builder.append(MIFUtils.getStringValue(toParse.getProperty(name)));
+
+            for(int i = 1 ; i < mifBaseType.getTypes().size() ; i++) {
+                final Name propName = mifBaseType.getType(i).getName();
+                builder.append(mifDelimiter).append(MIFUtils.getStringValue(toParse.getProperty(propName)));
+            }
+            builder.append('\n');
+        }
+        return builder.toString();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void refreshMetaModel() {
+        mifBaseType = null;
+        mifChildTypes.clear();
+        names.clear();
+        mifColumnsCount = -1;
+    }
+
+    public void setDelimiter(char delimiter) {
+        this.mifDelimiter = delimiter;
+    }
 }

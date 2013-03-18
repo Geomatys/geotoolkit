@@ -1,6 +1,7 @@
-package org.geotoolkit.data.mif;
+package org.geotoolkit.data.mapinfo.mif;
 
 import org.geotoolkit.data.*;
+import org.geotoolkit.data.query.DefaultQueryCapabilities;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.factory.Hints;
@@ -16,6 +17,7 @@ import org.opengis.filter.Filter;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.parameter.ParameterValueGroup;
 
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Collection;
 import java.util.List;
@@ -23,7 +25,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Class Description
+ * A featureStore for MapInfo exchange format MIF-MID.
  *
  * @author Alexis Manin (Geomatys)
  *         Date : 21/02/13
@@ -33,7 +35,8 @@ public class MIFDataStore extends AbstractFeatureStore {
     private final MIFManager manager;
 
     private Set<Name> names;
-    private SimpleFeatureType schema;
+
+    private final QueryCapabilities queryCapabilities = new DefaultQueryCapabilities(false);
 
     /**
      * Creates a new instance of MIFDataStore.
@@ -58,12 +61,12 @@ public class MIFDataStore extends AbstractFeatureStore {
         this(toParameter(url, namespace));
     }
 
-    public MIFDataStore(final ParameterValueGroup params)  throws DataStoreException {
+    public MIFDataStore(final ParameterValueGroup params) throws DataStoreException {
         super(params);
 
         final URL filePath = (URL) params.parameter(MIFDataStoreFactory.URLP.getName().toString()).getValue();
         try {
-            manager = new MIFManager(filePath.getPath());
+            manager = new MIFManager(filePath);
         } catch (Exception e) {
             throw new DataStoreException("Datastore can't reach target data.", e);
         }
@@ -76,84 +79,132 @@ public class MIFDataStore extends AbstractFeatureStore {
         return params;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public FeatureStoreFactory getFactory() {
         return FeatureStoreFinder.getFactoryById(MIFDataStoreFactory.NAME);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Set<Name> getNames() throws DataStoreException {
-        if(names == null) {
+        if(names == null || names.isEmpty()) {
             names = manager.getTypeNames();
         }
         return names;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void createSchema(Name typeName, FeatureType featureType) throws DataStoreException {
-        manager.addSchema(typeName, featureType);
+        try {
+            manager.addSchema(typeName, featureType);
+        } catch (URISyntaxException e) {
+            throw new DataStoreException("We're unable to add a schema because we can't access source files.", e);
+        }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void updateSchema(Name typeName, FeatureType featureType) throws DataStoreException {
-        /** todo : replace by writer */
-        throw new DataStoreException("MIF/MID feature store is read only.");
+        throw new DataStoreException("Can not update MIF schema.");
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void deleteSchema(Name typeName) throws DataStoreException {
         manager.deleteSchema(typeName);
+        removeFeatures(typeName, null);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public FeatureType getFeatureType(Name typeName) throws DataStoreException {
         return manager.getType(typeName);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public QueryCapabilities getQueryCapabilities() {
-        throw new UnsupportedOperationException("MIF/MID feature store is read only.");
+        return queryCapabilities;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<FeatureId> addFeatures(Name groupName, Collection<? extends Feature> newFeatures, Hints hints) throws DataStoreException {
-        throw new DataStoreException("MIF/MID feature store is read only.");
+        return handleAddWithFeatureWriter(groupName, newFeatures, hints);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void updateFeatures(Name groupName, Filter filter, Map<? extends PropertyDescriptor, ? extends Object> values) throws DataStoreException {
-        throw new DataStoreException("MIF/MID feature store is read only.");
+        handleUpdateWithFeatureWriter(groupName, filter, values);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void removeFeatures(Name groupName, Filter filter) throws DataStoreException {
-        throw new DataStoreException("MIF/MID feature store is read only.");
+        handleRemoveWithFeatureWriter(groupName, filter);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public FeatureReader getFeatureReader(Query query) throws DataStoreException {
         typeCheck(query.getTypeName());
         return handleRemaining(new MIFFeatureReader(manager, query.getTypeName()), query);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public FeatureWriter getFeatureWriter(Name typeName, Filter filter, Hints hints) throws DataStoreException {
-        throw new DataStoreException("MIF/MID feature store is read only.");
+        typeCheck(typeName);
+        final MIFFeatureReader reader = new MIFFeatureReader(manager, typeName);
+        final MIFFeatureWriter writer = new MIFFeatureWriter(manager, reader);
+        return  writer;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void refreshMetaModel() {
-        throw new UnsupportedOperationException("No implementation exists for this method.");
+        manager.refreshMetaModel();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void refreshMetaModel(DefaultName name) throws DataStoreException {
-        throw new UnsupportedOperationException("No implementation exists for this method.");
+        refreshMetaModel();
     }
 
-    @Override
-    public boolean isWritable(final Name typeName) throws DataStoreException {
-        return false;
+    public void setDelimiter(char newDelimiter) {
+        manager.setDelimiter(newDelimiter);
     }
 
 }

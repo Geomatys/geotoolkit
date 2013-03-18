@@ -1,8 +1,7 @@
-package org.geotoolkit.data.mif.style;
+package org.geotoolkit.data.mapinfo.mif.style;
 
 import org.geotoolkit.feature.DefaultName;
 import org.opengis.feature.type.Name;
-import org.opengis.filter.expression.Expression;
 import org.opengis.style.*;
 
 import javax.measure.quantity.Length;

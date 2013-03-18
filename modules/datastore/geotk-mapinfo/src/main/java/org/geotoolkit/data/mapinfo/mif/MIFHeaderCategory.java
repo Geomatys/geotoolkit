@@ -1,4 +1,4 @@
-package org.geotoolkit.data.mif;
+package org.geotoolkit.data.mapinfo.mif;
 
 /**
  * An enum to list the header labels we can encounter in MIF file.

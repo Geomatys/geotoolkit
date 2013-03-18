@@ -1,24 +1,22 @@
-package org.geotoolkit.data.mif.geometry;
+package org.geotoolkit.data.mapinfo.mif.geometry;
 
-import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.CoordinateSequence;
 import com.vividsolutions.jts.geom.MultiPoint;
+import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.impl.PackedCoordinateSequence;
-import org.geotoolkit.data.mif.style.Symbol;
+import org.geotoolkit.data.mapinfo.ProjectionUtils;
+import org.geotoolkit.data.mapinfo.mif.style.Symbol;
 import org.geotoolkit.feature.DefaultName;
-import org.geotoolkit.feature.simple.DefaultSimpleFeatureType;
 import org.geotoolkit.feature.type.DefaultAttributeDescriptor;
 import org.geotoolkit.feature.type.DefaultAttributeType;
-import org.geotoolkit.feature.type.DefaultGeometryDescriptor;
-import org.geotoolkit.feature.type.DefaultGeometryType;
 import org.geotoolkit.storage.DataStoreException;
 import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.*;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Scanner;
 
 /**
@@ -46,7 +44,7 @@ public class MIFMultiPointBuilder extends MIFGeometryBuilder {
             final int numCoords = scanner.nextInt()*2;
             double[] coords = new double[numCoords];
             for(int ptCount = 0 ; ptCount < numCoords ; ptCount++) {
-                coords[ptCount] = scanner.nextDouble();
+                coords[ptCount] = Double.parseDouble(scanner.next(ProjectionUtils.DOUBLE_PATTERN));
             }
 
             final CoordinateSequence seq;
@@ -73,12 +71,25 @@ public class MIFMultiPointBuilder extends MIFGeometryBuilder {
     }
 
     @Override
-    public FeatureType buildType(CoordinateReferenceSystem crs, FeatureType parent) {
-        GeometryType geomType = new DefaultGeometryType(NAME, MultiPoint.class, crs, true, false, null, null, null);
-        final GeometryDescriptor geomDesc = new DefaultGeometryDescriptor(geomType, NAME, 1, 1, true, null);
+    public String toMIFSyntax(Feature geometry) throws DataStoreException {
+        super.toMIFSyntax(geometry);
 
-        featureType = new DefaultSimpleFeatureType(NAME, Collections.singletonList(SYMBOL_DESCRIPTOR), geomDesc, false, null, parent, null);
-        return featureType;
+        final StringBuilder builder = new StringBuilder(NAME.getLocalPart());
+        final Object value = geometry.getDefaultGeometryProperty().getValue();
+        final MultiPoint multiPt;
+        if(value instanceof CoordinateSequence) {
+            multiPt = GEOMETRY_FACTORY.createMultiPoint(((CoordinateSequence)value).toCoordinateArray());
+        } else {
+            multiPt = (MultiPoint) geometry.getDefaultGeometryProperty().getValue();
+        }
+        builder.append(multiPt.getNumGeometries()).append('\n');
+
+        for(int i =0 ; i < multiPt.getNumGeometries(); i++) {
+            Point pt = (Point) multiPt.getGeometryN(i);
+            builder.append(pt.getX()).append(pt.getY()).append('\n');
+        }
+
+        return builder.toString();
     }
 
     @Override
@@ -87,7 +98,17 @@ public class MIFMultiPointBuilder extends MIFGeometryBuilder {
     }
 
     @Override
+    public Class[] getPossibleBindings() {
+        return new Class[]{MultiPoint.class, CoordinateSequence.class};
+    }
+
+    @Override
     public Name getName() {
         return NAME;
+    }
+
+    @Override
+    protected List<AttributeDescriptor> getAttributes() {
+        return Collections.singletonList(SYMBOL_DESCRIPTOR);
     }
 }

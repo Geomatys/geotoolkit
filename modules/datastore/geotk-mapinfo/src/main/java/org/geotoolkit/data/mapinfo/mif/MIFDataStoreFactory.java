@@ -1,4 +1,4 @@
-package org.geotoolkit.data.mif;
+package org.geotoolkit.data.mapinfo.mif;
 
 import org.geotoolkit.data.AbstractFileFeatureStoreFactory;
 import org.geotoolkit.data.FeatureStore;
@@ -44,6 +44,11 @@ public class MIFDataStoreFactory extends AbstractFileFeatureStoreFactory impleme
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
             new DefaultParameterDescriptorGroup("MIFParameters", IDENTIFIER,URLP,NAMESPACE);
+
+    @Override
+    public CharSequence getDisplayName() {
+        return NAME;
+    }
 
     /**
      * {@inheritDoc }

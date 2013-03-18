@@ -1,10 +1,14 @@
 package org.geotoolkit.data.mapinfo;
 
+import org.geotoolkit.data.mapinfo.mif.MIFUtils;
+
 import javax.measure.unit.NonSI;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * A class which binds mapinfo unit codes with Geotk unit constants.
@@ -16,6 +20,20 @@ public class UnitIdentifier {
 
     private static final HashMap<Integer, Unit> UNIT_TABLE = new HashMap<Integer, Unit>();
 
+    public static Unit getUnitFromCode(String code) {
+        Unit result = null;
+        Matcher codeMatch = Pattern.compile("\\d+").matcher(code);
+        if(codeMatch.find()) {
+            final int intCode = Integer.decode(codeMatch.group());
+            result = UNIT_TABLE.get(intCode);
+        } else {
+            Matcher strMatch = Pattern.compile("\\w+").matcher(code);
+            if(strMatch.find()) {
+                result = Unit.valueOf(strMatch.group());
+            }
+        }
+        return result;
+    }
     /**
      * Search an unit for the given unit code.
      * @param code The integer which is mapinfo unit code.

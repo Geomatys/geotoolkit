@@ -1,24 +1,21 @@
-package org.geotoolkit.data.mif.geometry;
+package org.geotoolkit.data.mapinfo.mif.geometry;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Point;
-import org.geotoolkit.data.mif.style.Symbol;
+import org.geotoolkit.data.mapinfo.ProjectionUtils;
+import org.geotoolkit.data.mapinfo.mif.style.Symbol;
 import org.geotoolkit.feature.DefaultName;
-import org.geotoolkit.feature.simple.DefaultSimpleFeatureType;
-import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.feature.type.DefaultAttributeDescriptor;
 import org.geotoolkit.feature.type.DefaultAttributeType;
-import org.geotoolkit.feature.type.DefaultGeometryDescriptor;
-import org.geotoolkit.feature.type.DefaultGeometryType;
 import org.geotoolkit.storage.DataStoreException;
 import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.*;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Scanner;
 import java.util.logging.Level;
 
@@ -50,17 +47,17 @@ public final class MIFPointBuilder extends MIFGeometryBuilder {
      * @param scanner The scanner to use for data reading (must be pointing on a mif POINT element).
      * @param toFill
      * @return a {@link SimpleFeature} matching the {@link SimpleFeatureType} given by
-     * {@link MIFPointBuilder#buildType(org.opengis.referencing.crs.CoordinateReferenceSystem, org.opengis.feature.type.FeatureType)}.
+     * {@link MIFGeometryBuilder#buildType(org.opengis.referencing.crs.CoordinateReferenceSystem, org.opengis.feature.type.FeatureType)}.
      * @throws DataStoreException If there's a problem while parsing stream of the given Scanner.
      */
     @Override
     public void buildGeometry(Scanner scanner, Feature toFill, MathTransform toApply) throws DataStoreException {
         Double x = null;
         Double y = null;
-        if (scanner.hasNextDouble()) {
-            x = scanner.nextDouble();
-            if(scanner.hasNextDouble()) {
-                y = scanner.nextDouble();
+        if (scanner.hasNext(ProjectionUtils.DOUBLE_PATTERN)) {
+            x = Double.parseDouble(scanner.next(ProjectionUtils.DOUBLE_PATTERN));
+            if(scanner.hasNext(ProjectionUtils.DOUBLE_PATTERN)) {
+                y = Double.parseDouble(scanner.next(ProjectionUtils.DOUBLE_PATTERN));
             }
         }
         if(x == null || y == null) {
@@ -98,19 +95,23 @@ public final class MIFPointBuilder extends MIFGeometryBuilder {
     }
 
     /**
-     * Build a feature type which represents a MIF point geometry
-     *
-     * @param crs The CRS to put in feature type. If null, no CRS will be pass to the feature type.
-     * @return A {@link SimpleFeatureType} which describe a point (as MIF defines it).
+     * {@inheritDoc}
      */
     @Override
-    public SimpleFeatureType buildType(CoordinateReferenceSystem crs, FeatureType parent) {
-        GeometryType geomType = new DefaultGeometryType(NAME, Point.class, crs, true, false, null, null, null);
-        final GeometryDescriptor geomDesc = new DefaultGeometryDescriptor(geomType, NAME, 1, 1, true, null);
-
-        featureType = new DefaultSimpleFeatureType(NAME, Collections.singletonList(SYMBOL_DESCRIPTOR), geomDesc, false, null, parent, null);
-        return featureType;
+    public String toMIFSyntax(Feature geometry) throws DataStoreException {
+        super.toMIFSyntax(geometry);
+        StringBuilder builder = new StringBuilder(NAME.getLocalPart());
+        final Point pt;
+        final Object value = (Point) geometry.getDefaultGeometryProperty().getValue();
+        if(value instanceof Point) {
+            pt = (Point)value;
+        } else {
+            pt = GEOMETRY_FACTORY.createPoint((Coordinate) value);
+        }
+        builder.append(' ').append(pt.getX()).append(' ').append(pt.getY()).append('\n');
+        return builder.toString();
     }
+
 
     @Override
     public Class getGeometryBinding() {
@@ -118,8 +119,18 @@ public final class MIFPointBuilder extends MIFGeometryBuilder {
     }
 
     @Override
+    public Class[] getPossibleBindings() {
+        return new Class[]{Point.class, Coordinate.class};
+    }
+
+    @Override
     public Name getName() {
         return NAME;
+    }
+
+    @Override
+    protected List<AttributeDescriptor> getAttributes() {
+        return Collections.singletonList(SYMBOL_DESCRIPTOR);
     }
 
 }

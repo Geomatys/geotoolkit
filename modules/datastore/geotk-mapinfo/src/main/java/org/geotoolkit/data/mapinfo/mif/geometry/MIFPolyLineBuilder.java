@@ -1,21 +1,16 @@
-package org.geotoolkit.data.mif.geometry;
+package org.geotoolkit.data.mapinfo.mif.geometry;
 
-import com.vividsolutions.jts.geom.CoordinateSequence;
-import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.MultiLineString;
+import com.vividsolutions.jts.geom.*;
 import com.vividsolutions.jts.geom.impl.PackedCoordinateSequence;
-import org.geotoolkit.data.mif.style.Pen;
+import org.geotoolkit.data.mapinfo.ProjectionUtils;
+import org.geotoolkit.data.mapinfo.mif.style.Pen;
 import org.geotoolkit.feature.DefaultName;
-import org.geotoolkit.feature.simple.DefaultSimpleFeatureType;
 import org.geotoolkit.feature.type.DefaultAttributeDescriptor;
 import org.geotoolkit.feature.type.DefaultAttributeType;
-import org.geotoolkit.feature.type.DefaultGeometryDescriptor;
-import org.geotoolkit.feature.type.DefaultGeometryType;
 import org.geotoolkit.storage.DataStoreException;
 import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.*;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
 
 import java.util.*;
@@ -73,7 +68,7 @@ public class MIFPolyLineBuilder extends MIFGeometryBuilder {
                 final int numCoord = scanner.nextInt()*2;
                 final double[] linePts = new double[numCoord];
                 for(int coordCount = 0 ; coordCount < numCoord; coordCount++) {
-                    linePts[coordCount] = scanner.nextDouble();
+                    linePts[coordCount] = Double.parseDouble(scanner.next(ProjectionUtils.DOUBLE_PATTERN));
                 }
 
                 final CoordinateSequence seq;
@@ -108,17 +103,45 @@ public class MIFPolyLineBuilder extends MIFGeometryBuilder {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public FeatureType buildType(CoordinateReferenceSystem crs, FeatureType parent) {
-        GeometryType geomType = new DefaultGeometryType(NAME, MultiLineString.class, crs, true, false, null, null, null);
-        final GeometryDescriptor geomDesc = new DefaultGeometryDescriptor(geomType, NAME, 1, 1, true, null);
+    public String toMIFSyntax(Feature geometry) throws DataStoreException {
+        //Here we don't want the super implementation verifications, because we can get LineString.
+        if(geometry.getDefaultGeometryProperty() == null) {
+            throw new DataStoreException("Input feature does not contain any geometry.");
+        } else {
+            final Class geomCls = geometry.getDefaultGeometryProperty().getType().getBinding();
+            if (!geomCls.equals(getGeometryBinding()) || !geomCls.equals(LineString.class)) {
+                throw new DataStoreException("Input feature does not contain the right geometry type." +
+                        "\nExpected : "+getGeometryBinding()+" or "+LineString.class+"\nFound : "+geomCls);
+            }
+        }
 
-        final List<AttributeDescriptor> descList = new ArrayList<AttributeDescriptor>(2);
-        descList.add(PEN);
-        descList.add(SMOOTH);
+        StringBuilder builder = new StringBuilder(NAME.getLocalPart());
 
-        featureType = new DefaultSimpleFeatureType(NAME, descList, geomDesc, false, null, parent, null);
-        return featureType;
+        MultiLineString polyLine = null;
+        Object value = geometry.getDefaultGeometryProperty().getValue();
+        if(value instanceof LineString) {
+            polyLine = GEOMETRY_FACTORY.createMultiLineString(new LineString[]{(LineString)value});
+        } else {
+            polyLine = (MultiLineString) value;
+            if(polyLine.getNumGeometries() > 1) {
+                builder.append("MULTIPLE ").append(polyLine.getNumGeometries());
+            }
+        }
+        builder.append('\n');
+
+        for(int i = 0 ; i < polyLine.getNumGeometries() ; i++) {
+            LineString line = (LineString) polyLine.getGeometryN(i);
+            builder.append(line.getNumPoints()).append('\n');
+            for(Coordinate pt : line.getCoordinates()) {
+                builder.append(pt.x).append(' ').append(pt.y).append('\n');
+            }
+        }
+
+        return builder.toString();
     }
 
     @Override
@@ -127,7 +150,21 @@ public class MIFPolyLineBuilder extends MIFGeometryBuilder {
     }
 
     @Override
+    public Class[] getPossibleBindings() {
+        return new Class[]{LineString.class, MultiLineString.class};
+    }
+
+    @Override
     public Name getName() {
         return NAME;
+    }
+
+    @Override
+    protected List<AttributeDescriptor> getAttributes() {
+        final List<AttributeDescriptor> descList = new ArrayList<AttributeDescriptor>(2);
+        descList.add(PEN);
+        descList.add(SMOOTH);
+
+        return  descList;
     }
 }

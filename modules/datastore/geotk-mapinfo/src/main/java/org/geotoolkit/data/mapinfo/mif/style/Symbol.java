@@ -1,6 +1,6 @@
-package org.geotoolkit.data.mif.style;
+package org.geotoolkit.data.mapinfo.mif.style;
 
-import org.geotoolkit.data.mif.geometry.MIFPointBuilder;
+import org.geotoolkit.data.mapinfo.mif.geometry.MIFPointBuilder;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.style.DefaultDescription;
 import org.geotoolkit.util.SimpleInternationalString;

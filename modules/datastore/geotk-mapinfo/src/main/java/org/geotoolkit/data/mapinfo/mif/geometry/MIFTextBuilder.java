@@ -1,24 +1,24 @@
-package org.geotoolkit.data.mif.geometry;
+package org.geotoolkit.data.mapinfo.mif.geometry;
 
 import com.vividsolutions.jts.geom.CoordinateSequence;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.impl.PackedCoordinateSequence;
-import org.geotoolkit.data.mif.style.Font;
-import org.geotoolkit.data.mif.style.LabelLine;
+import org.geotoolkit.data.mapinfo.ProjectionUtils;
+import org.geotoolkit.data.mapinfo.mif.style.Font;
+import org.geotoolkit.data.mapinfo.mif.style.LabelLine;
 import org.geotoolkit.feature.DefaultName;
-import org.geotoolkit.feature.simple.DefaultSimpleFeatureType;
 import org.geotoolkit.feature.type.DefaultAttributeDescriptor;
 import org.geotoolkit.feature.type.DefaultAttributeType;
-import org.geotoolkit.feature.type.DefaultGeometryDescriptor;
-import org.geotoolkit.feature.type.DefaultGeometryType;
+import org.geotoolkit.geometry.Envelope2D;
 import org.geotoolkit.storage.DataStoreException;
+import org.geotoolkit.util.ArgumentChecks;
 import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.*;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
 
+import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -43,8 +43,6 @@ public class MIFTextBuilder extends MIFGeometryBuilder {
     public static final AttributeDescriptor ANGLE_DESCRIPTOR;
     public static final AttributeDescriptor LABEL_DESCRIPTOR;
 
-    private SimpleFeatureType featureType = null;
-
     static {
         final DefaultAttributeType textType = new DefaultAttributeType(TEXT_NAME, String.class, true, false, null, null, null);
         TEXT_DESCRIPTOR = new DefaultAttributeDescriptor(textType, TEXT_NAME, 1, 1, false, "No data");
@@ -53,7 +51,7 @@ public class MIFTextBuilder extends MIFGeometryBuilder {
         FONT_DESCRIPTOR = new DefaultAttributeDescriptor(fontType, FONT_NAME, 0, 1, true, null);
 
         final DefaultAttributeType spacingType = new DefaultAttributeType(SPACING_NAME, Float.class, true, false, null, null, null);
-        SPACING_DESCRIPTOR = new DefaultAttributeDescriptor(spacingType, SPACING_NAME, 1, 1, false, 1.0);
+        SPACING_DESCRIPTOR = new DefaultAttributeDescriptor(spacingType, SPACING_NAME, 1, 1, false, 1f);
 
         final DefaultAttributeType angleType = new DefaultAttributeType(ANGLE_NAME, Double.class, true, false, null, null, null);
         ANGLE_DESCRIPTOR = new DefaultAttributeDescriptor(fontType, ANGLE_NAME, 0, 1, true, null);
@@ -70,7 +68,7 @@ public class MIFTextBuilder extends MIFGeometryBuilder {
      * @param toFill
      * @param toApply
      * @return a {@link SimpleFeature} matching the {@link SimpleFeatureType} given by
-     *         {@link MIFPointBuilder#buildType(org.opengis.referencing.crs.CoordinateReferenceSystem, org.opengis.feature.type.FeatureType)} .
+     *         {@link MIFGeometryBuilder#buildType(org.opengis.referencing.crs.CoordinateReferenceSystem, org.opengis.feature.type.FeatureType)} .
      * @throws DataStoreException If there's a problem while parsing stream of the given Scanner.
      */
     @Override
@@ -86,7 +84,7 @@ public class MIFTextBuilder extends MIFGeometryBuilder {
             final double[] pts = new double[4];
 
             for (int i = 0; i < pts.length; i++) {
-                pts[i] = scanner.nextDouble();
+                pts[i] = Double.parseDouble(scanner.next(ProjectionUtils.DOUBLE_PATTERN));
             }
 
             final CoordinateSequence seq;
@@ -121,26 +119,45 @@ public class MIFTextBuilder extends MIFGeometryBuilder {
         }
     }
 
-    /**
-     * Build a feature type which represents a MIF point geometry
-     *
-     * @param crs The CRS to put in feature type. If null, no CRS will be pass to the feature type.
-     * @return A {@link SimpleFeatureType} which describe a point (as MIF defines it).
-     */
+
     @Override
-    public SimpleFeatureType buildType(CoordinateReferenceSystem crs, FeatureType parent) {
-        GeometryType geomType = new DefaultGeometryType(NAME, Envelope.class, crs, true, false, null, null, null);
-        final GeometryDescriptor geomDesc = new DefaultGeometryDescriptor(geomType, NAME, 1, 1, true, null);
+    public String toMIFSyntax(Feature source) throws DataStoreException {
+        ArgumentChecks.ensureNonNull("Source feature", source);
+        if(source.getDefaultGeometryProperty() == null) {
+            throw new DataStoreException("Input feature does not contain any geometry.");
+        }
 
-        final List<AttributeDescriptor> descList = new ArrayList<AttributeDescriptor>(2);
-        descList.add(TEXT_DESCRIPTOR);
-        descList.add(FONT_DESCRIPTOR);
-        descList.add(SPACING_DESCRIPTOR);
-        descList.add(ANGLE_DESCRIPTOR);
-        descList.add(LABEL_DESCRIPTOR);
+        if (source.getProperty(TEXT_NAME) == null) {
+            throw new DataStoreException("Not enough information to build an arc (missing text).");
+        }
 
-        featureType = new DefaultSimpleFeatureType(NAME, descList, geomDesc, false, null, parent, null);
-        return featureType;
+        StringBuilder builder = new StringBuilder(TEXT_NAME.getLocalPart()).append(' ');
+        builder.append(' ').append(source.getProperty(TEXT_NAME).getValue()).append('\n');
+        Object value = source.getDefaultGeometryProperty().getValue();
+        if(value instanceof Envelope) {
+            Envelope env = (Envelope) value;
+            builder.append(env.getMinX()).append(' ')
+                    .append(env.getMinY()).append(' ')
+                    .append(env.getMaxX()).append(' ')
+                    .append(env.getMaxY());
+        } else if (value instanceof Rectangle2D) {
+            Rectangle2D rect = (Rectangle2D) value;
+            builder.append(rect.getMinX()).append(' ')
+                    .append(rect.getMinY()).append(' ')
+                    .append(rect.getMaxX()).append(' ')
+                    .append(rect.getMaxY());
+        } else if(value instanceof Envelope2D) {
+            Envelope2D env = (Envelope2D) value;
+            builder.append(env.getMinX()).append(' ')
+                    .append(env.getMinY()).append(' ')
+                    .append(env.getMaxX()).append(' ')
+                    .append(env.getMaxY());
+        } else {
+            throw new DataStoreException("Unable to build a text with the current geometry (Non compatible type"+value.getClass()+").");
+        }
+        builder.append('\n');
+
+        return builder.toString();
     }
 
     @Override
@@ -149,7 +166,23 @@ public class MIFTextBuilder extends MIFGeometryBuilder {
     }
 
     @Override
+    public Class[] getPossibleBindings() {
+        return new Class[]{Envelope.class, Envelope2D.class, Rectangle2D.class};
+    }
+
+    @Override
     public Name getName() {
         return NAME;
+    }
+
+    @Override
+    protected List<AttributeDescriptor> getAttributes() {
+        final List<AttributeDescriptor> descList = new ArrayList<AttributeDescriptor>(5);
+        descList.add(TEXT_DESCRIPTOR);
+        descList.add(FONT_DESCRIPTOR);
+        descList.add(SPACING_DESCRIPTOR);
+        descList.add(ANGLE_DESCRIPTOR);
+        descList.add(LABEL_DESCRIPTOR);
+        return descList;
     }
 }

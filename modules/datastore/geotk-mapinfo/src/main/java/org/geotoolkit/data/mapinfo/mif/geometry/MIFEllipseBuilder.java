@@ -1,4 +1,4 @@
-package org.geotoolkit.data.mif.geometry;
+package org.geotoolkit.data.mapinfo.mif.geometry;
 
 import org.geotoolkit.feature.DefaultName;
 

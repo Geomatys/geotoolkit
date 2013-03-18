@@ -1,22 +1,23 @@
-package org.geotoolkit.data.mif.geometry;
+package org.geotoolkit.data.mapinfo.mif.geometry;
 
 import com.vividsolutions.jts.geom.CoordinateSequence;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.impl.PackedCoordinateSequence;
-import org.geotoolkit.data.mif.style.Pen;
+import org.geotoolkit.data.mapinfo.ProjectionUtils;
+import org.geotoolkit.data.mapinfo.mif.style.Pen;
 import org.geotoolkit.feature.DefaultName;
-import org.geotoolkit.feature.simple.DefaultSimpleFeatureType;
 import org.geotoolkit.feature.type.DefaultAttributeDescriptor;
 import org.geotoolkit.feature.type.DefaultAttributeType;
-import org.geotoolkit.feature.type.DefaultGeometryDescriptor;
-import org.geotoolkit.feature.type.DefaultGeometryType;
+import org.geotoolkit.geometry.Envelope2D;
 import org.geotoolkit.storage.DataStoreException;
+import org.geotoolkit.util.ArgumentChecks;
 import org.opengis.feature.Feature;
+import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.*;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
 
+import java.awt.geom.Rectangle2D;
 import java.util.*;
 
 /**
@@ -54,7 +55,7 @@ public class MIFRectangleBuilder extends MIFGeometryBuilder {
         final double[] pts = new double[4];
         try {
             for (int i = 0; i < pts.length; i++) {
-                pts[i] = scanner.nextDouble();
+                pts[i] = Double.parseDouble(scanner.next(ProjectionUtils.DOUBLE_PATTERN));
             }
 
             final CoordinateSequence seq;
@@ -76,8 +77,8 @@ public class MIFRectangleBuilder extends MIFGeometryBuilder {
             throw new DataStoreException("Rectangle is not properly defined : not enough points found.", ex);
         }
 
-        if(scanner.hasNextDouble()) {
-            toFill.getProperty(ROUND_NAME).setValue(scanner.nextDouble());
+        if(scanner.hasNext(ProjectionUtils.DOUBLE_PATTERN)) {
+            toFill.getProperty(ROUND_NAME).setValue(Double.parseDouble(scanner.next(ProjectionUtils.DOUBLE_PATTERN)));
         }
 
         if(scanner.hasNext(PEN_NAME.getLocalPart())) {
@@ -85,17 +86,45 @@ public class MIFRectangleBuilder extends MIFGeometryBuilder {
         }
     }
 
+
     @Override
-    public FeatureType buildType(CoordinateReferenceSystem crs, FeatureType parent) {
-        GeometryType geomType = new DefaultGeometryType(NAME, Envelope.class, crs, true, false, null, null, null);
-        final GeometryDescriptor geomDesc = new DefaultGeometryDescriptor(geomType, NAME, 1, 1, true, null);
+    public String toMIFSyntax(Feature source) throws DataStoreException {
+        ArgumentChecks.ensureNonNull("Source feature", source);
+        if(source.getDefaultGeometryProperty() == null) {
+            throw new DataStoreException("Input feature does not contain any geometry.");
+        }
 
-        final List<AttributeDescriptor> descList = new ArrayList<AttributeDescriptor>(2);
-        descList.add(ROUNDING);
-        descList.add(STYLE);
+        StringBuilder builder = new StringBuilder(NAME.getLocalPart()).append(' ');
+        Object value = source.getDefaultGeometryProperty().getValue();
+        if(value instanceof Envelope) {
+            Envelope env = (Envelope) value;
+            builder.append(env.getMinX()).append(' ')
+                    .append(env.getMinY()).append(' ')
+                    .append(env.getMaxX()).append(' ')
+                    .append(env.getMaxY());
+        } else if (value instanceof Rectangle2D) {
+            Rectangle2D rect = (Rectangle2D) value;
+            builder.append(rect.getMinX()).append(' ')
+                    .append(rect.getMinY()).append(' ')
+                    .append(rect.getMaxX()).append(' ')
+                    .append(rect.getMaxY());
+        } else if(value instanceof Envelope2D) {
+            Envelope2D env = (Envelope2D) value;
+            builder.append(env.getMinX()).append(' ')
+                    .append(env.getMinY()).append(' ')
+                    .append(env.getMaxX()).append(' ')
+                    .append(env.getMaxY());
+        } else {
+            throw new DataStoreException("Unable to build a rectangle with the current geometry (Non compatible type"+value.getClass()+").");
+        }
+        builder.append('\n');
 
-        featureType = new DefaultSimpleFeatureType(NAME, descList, geomDesc, false, null, parent, null);
-        return featureType;
+        Property round = source.getProperty(ROUND_NAME);
+        if(round != null) {
+            builder.append(round.getValue()).append('\n');
+        }
+
+        return builder.toString();
     }
 
     @Override
@@ -104,7 +133,23 @@ public class MIFRectangleBuilder extends MIFGeometryBuilder {
     }
 
     @Override
+    public Class[] getPossibleBindings() {
+        return new Class[]{Envelope.class, Envelope2D.class, Rectangle2D.class};
+    }
+
+    @Override
     public Name getName() {
         return NAME;
+    }
+
+    @Override
+    protected List<AttributeDescriptor> getAttributes() {
+
+        final List<AttributeDescriptor> descList = new ArrayList<AttributeDescriptor>(3);
+        descList.add(ROUNDING);
+        descList.add(PEN);
+        descList.add(BRUSH);
+
+        return descList;
     }
 }

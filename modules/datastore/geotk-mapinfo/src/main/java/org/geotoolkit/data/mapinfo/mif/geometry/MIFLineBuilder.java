@@ -1,24 +1,23 @@
-package org.geotoolkit.data.mif.geometry;
+package org.geotoolkit.data.mapinfo.mif.geometry;
 
 import com.vividsolutions.jts.geom.CoordinateSequence;
 import com.vividsolutions.jts.geom.LineString;
+import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.impl.PackedCoordinateSequence;
-import org.geotoolkit.data.mif.style.Pen;
+import org.geotoolkit.data.mapinfo.ProjectionUtils;
+import org.geotoolkit.data.mapinfo.mif.style.Pen;
 import org.geotoolkit.feature.DefaultName;
-import org.geotoolkit.feature.simple.DefaultSimpleFeatureType;
 import org.geotoolkit.feature.type.DefaultAttributeDescriptor;
 import org.geotoolkit.feature.type.DefaultAttributeType;
-import org.geotoolkit.feature.type.DefaultGeometryDescriptor;
-import org.geotoolkit.feature.type.DefaultGeometryType;
 import org.geotoolkit.storage.DataStoreException;
 import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.*;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
 
 import java.util.Collections;
 import java.util.InputMismatchException;
+import java.util.List;
 import java.util.Scanner;
 
 /**
@@ -47,7 +46,7 @@ public class MIFLineBuilder extends MIFGeometryBuilder {
         final double[] linePts = new double[4];
         try {
             for (int i = 0; i < linePts.length; i++) {
-                linePts[i] = scanner.nextDouble();
+                linePts[i] = Double.parseDouble(scanner.next(ProjectionUtils.DOUBLE_PATTERN));
             }
         } catch (InputMismatchException ex) {
             throw new DataStoreException("Line is not properly defined : not enough points found.", ex);
@@ -62,13 +61,19 @@ public class MIFLineBuilder extends MIFGeometryBuilder {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public FeatureType buildType(CoordinateReferenceSystem crs, FeatureType parent) {
-        GeometryType geomType = new DefaultGeometryType(NAME, LineString.class, crs, true, false, null, null, null);
-        final GeometryDescriptor geomDesc = new DefaultGeometryDescriptor(geomType, NAME, 1, 1, true, null);
-
-        featureType = new DefaultSimpleFeatureType(NAME, Collections.singletonList(PEN), geomDesc, false, null, parent, null);
-        return featureType;
+    public String toMIFSyntax(Feature geometry) throws DataStoreException {
+        super.toMIFSyntax(geometry);
+        StringBuilder builder = new StringBuilder(NAME.getLocalPart());
+        LineString line = (LineString) geometry.getDefaultGeometryProperty().getValue();
+        Point pt1 =  line.getStartPoint();
+        Point pt2 =  line.getEndPoint();
+        builder.append(' ').append(pt1.getX()).append(' ').append(pt1.getY())
+                .append(' ').append(pt2.getX()).append(pt2.getY()).append('\n');
+        return builder.toString();
     }
 
     @Override
@@ -77,7 +82,17 @@ public class MIFLineBuilder extends MIFGeometryBuilder {
     }
 
     @Override
+    public Class[] getPossibleBindings() {
+        return new Class[]{LineString.class};
+    }
+
+    @Override
     public Name getName() {
         return NAME;
+    }
+
+    @Override
+    protected List<AttributeDescriptor> getAttributes() {
+        return Collections.singletonList(PEN);
     }
 }
