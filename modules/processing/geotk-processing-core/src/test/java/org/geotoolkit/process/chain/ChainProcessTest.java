@@ -16,8 +16,14 @@
  */
 package org.geotoolkit.process.chain;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.Set;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessException;
@@ -35,56 +41,39 @@ import org.opengis.parameter.ParameterValueGroup;
  */
 public class ChainProcessTest {
  
-    @Test
-    public void testChain() throws ProcessException{
-        
+    private Chain createChain(){        
         //produce a chain equivalent to :  ($1 + 10) / $2
         final Chain chain = new Chain("myChain");
         
-        //input parameters
-        final Parameter a = new Parameter("a", Double.class, "desc",1,1);
-        final Parameter b = new Parameter("b", Double.class, "desc",1,1);        
-        chain.getInputs().add(a);
-        chain.getInputs().add(b);
-        
-        //output parameters
-        final Parameter r = new Parameter("r", Double.class, "desc",1,1);
-        chain.getOutputs().add(r);
-        
-        //a constant
-        final Constant cst = new Constant(1, Double.class, "10");
-        chain.getConstants().add(cst);
+        //input/out/constants parameters
+        final Parameter a = chain.addInputParameter("a", Double.class, "desc",1,1,null);
+        final Parameter b = chain.addInputParameter("b", Double.class, "desc",1,1,null);   
+        final Parameter r = chain.addOutputParameter("r", Double.class, "desc",1,1,null);       
+        final Constant c = chain.addConstant(1, Double.class, 10d);        
         
         //chain blocks
-        final ChainElement add = new ChainElement(2, "demo", "add");
-        final ChainElement divide = new ChainElement(3, "demo", "divide");
-        chain.getChainElements().add(add);
-        chain.getChainElements().add(divide);
+        final ChainElement add = chain.addChainElement(2, "demo", "add");
+        final ChainElement divide = chain.addChainElement(3, "demo", "divide");        
         
         //execution flow links
-        final Chain.ExecutionLinkDto execLink1 = new Chain.ExecutionLinkDto(Chain.IN_PARAMS, add.getId());
-        final Chain.ExecutionLinkDto execLink2 = new Chain.ExecutionLinkDto(add.getId(), divide.getId());
-        final Chain.ExecutionLinkDto execLink3 = new Chain.ExecutionLinkDto(divide.getId(), Chain.OUT_PARAMS);
-        chain.getExecutionLinks().add(execLink1);
-        chain.getExecutionLinks().add(execLink2);
-        chain.getExecutionLinks().add(execLink3);
+        chain.addFlowLink(Chain.IN_PARAMS, add.getId());
+        chain.addFlowLink(add.getId(), divide.getId());
+        chain.addFlowLink(divide.getId(), Chain.OUT_PARAMS);
         
-        //value flow links
-        final Chain.LinkDto link1 = new Chain.LinkDto(
-                Chain.IN_PARAMS, a.getCode(), add.getId(), MockAddDescriptor.FIRST_NUMBER);
-        final Chain.LinkDto link2 = new Chain.LinkDto(
-                cst.getId(), "",                add.getId(), MockAddDescriptor.SECOND_NUMBER);
-        final Chain.LinkDto link3 = new Chain.LinkDto(
-                add.getId(), MockAddDescriptor.RESULT_NUMBER, divide.getId(), MockDivideDescriptor.FIRST_NUMBER);
-        final Chain.LinkDto link4 = new Chain.LinkDto(
-                Chain.IN_PARAMS, b.getCode(),               divide.getId(), MockDivideDescriptor.SECOND_NUMBER);
-        final Chain.LinkDto link5 = new Chain.LinkDto(
-                divide.getId(), MockDivideDescriptor.RESULT_NUMBER,               Chain.OUT_PARAMS, r.getCode());
-        chain.getLinks().add(link1);
-        chain.getLinks().add(link2);
-        chain.getLinks().add(link3);
-        chain.getLinks().add(link4);
-        chain.getLinks().add(link5);
+        //data flow links
+        chain.addDataLink(Chain.IN_PARAMS, a.getCode(), add.getId(), MockAddDescriptor.FIRST_NUMBER.getName().getCode());
+        chain.addDataLink(c.getId(), "", add.getId(), MockAddDescriptor.SECOND_NUMBER.getName().getCode());
+        chain.addDataLink(add.getId(), MockAddDescriptor.RESULT_NUMBER.getName().getCode(), divide.getId(), MockDivideDescriptor.FIRST_NUMBER.getName().getCode());
+        chain.addDataLink(Chain.IN_PARAMS, b.getCode(), divide.getId(), MockDivideDescriptor.SECOND_NUMBER.getName().getCode());
+        chain.addDataLink(divide.getId(), MockDivideDescriptor.RESULT_NUMBER.getName().getCode(), Chain.OUT_PARAMS, r.getCode());
+        
+        return chain;
+    }
+    
+    @Test
+    public void testChain() throws ProcessException{
+        
+        final Chain chain = createChain();
         
         //process registries to use
         final Set<MockProcessRegistry> registries = Collections.singleton(new MockProcessRegistry());
@@ -103,5 +92,34 @@ public class ChainProcessTest {
         assertEquals(12.5d, result.parameter("r").doubleValue(),0.000001);
         
     }
+    
+    @Test
+    public void testXmlRW() throws ProcessException, JAXBException, IOException{
+        
+        final Chain before = createChain();
+        
+        final File f = File.createTempFile("chain", ".xml");
+        before.write(f);
+        
+        final Chain chain = Chain.read(f);
+        
+        //process registries to use
+        final Set<MockProcessRegistry> registries = Collections.singleton(new MockProcessRegistry());
+        
+        //create a process descriptor to use it like any process.
+        final ProcessDescriptor desc = new ChainProcessDescriptor(chain, MockProcessRegistry.IDENTIFICATION, registries);
+        
+        //input params 
+        final ParameterValueGroup input = desc.getInputDescriptor().createValue();
+        input.parameter("a").setValue(15d);
+        input.parameter("b").setValue(2d);
+        
+        final Process process = desc.createProcess(input);
+        final ParameterValueGroup result = process.call();
+        
+        assertEquals(12.5d, result.parameter("r").doubleValue(),0.000001);
+        
+    }
+    
     
 }

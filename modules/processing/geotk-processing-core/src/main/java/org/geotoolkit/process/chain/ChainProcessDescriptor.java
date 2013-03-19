@@ -16,8 +16,10 @@
  */
 package org.geotoolkit.process.chain;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
@@ -25,6 +27,7 @@ import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.parameter.ExtendedParameterDescriptor;
 import org.geotoolkit.process.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
+import org.geotoolkit.process.ProcessFinder;
 import org.geotoolkit.process.ProcessingRegistry;
 import org.geotoolkit.process.chain.model.Chain;
 import org.geotoolkit.process.chain.model.Parameter;
@@ -47,6 +50,13 @@ public class ChainProcessDescriptor extends AbstractProcessDescriptor{
     private final Chain model;
 
     /**
+     * Create a process descriptor with default registry.
+     */
+    public ChainProcessDescriptor(final Chain model, final Identification registryId){
+        this(model,registryId,null);
+    }
+    
+    /**
      * Create a process descriptor with given registry.
      */
     public ChainProcessDescriptor(final Chain model, final Identification registryId,
@@ -60,7 +70,7 @@ public class ChainProcessDescriptor extends AbstractProcessDescriptor{
         this.model = model;
         this.factories = factories;
     }
-
+    
     /**
      * @return Chain model used.
      */
@@ -74,6 +84,14 @@ public class ChainProcessDescriptor extends AbstractProcessDescriptor{
      * @return Collection of ProcessingRegistry.
      */
     public Collection<? extends ProcessingRegistry> getFactories() {
+        if(factories == null){
+            final Iterator<ProcessingRegistry> ite = ProcessFinder.getProcessFactories();
+            final Collection<ProcessingRegistry> factories = new ArrayList<ProcessingRegistry>();
+            while(ite.hasNext()){
+                factories.add(ite.next());
+            }
+            return factories;
+        }
         return factories;
     }
 

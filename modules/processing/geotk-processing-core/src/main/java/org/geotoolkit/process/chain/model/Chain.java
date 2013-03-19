@@ -16,28 +16,50 @@
  */
 package org.geotoolkit.process.chain.model;
 
+import java.io.File;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.Reader;
+import java.io.Writer;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
+import javax.xml.stream.XMLEventReader;
+import javax.xml.stream.XMLEventWriter;
+import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLStreamWriter;
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.util.Utilities;
+import org.geotoolkit.xml.MarshallerPool;
 import org.opengis.parameter.ParameterDescriptor;
+import org.w3c.dom.Node;
+import org.xml.sax.ContentHandler;
+import org.xml.sax.InputSource;
 
 /**
  * Represents a process chain.
  *
  * @author Johann Sorel (Geomatys)
  */
-@XmlRootElement(name="ProcessChain")
+@XmlRootElement(name="chain")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Chain implements Comparable<Chain> {
 
+    @XmlTransient
+    private static MarshallerPool POOL;
+    
     public static final Integer IN_PARAMS = Integer.MIN_VALUE;
     public static final Integer OUT_PARAMS = Integer.MAX_VALUE;
     
@@ -53,14 +75,14 @@ public class Chain implements Comparable<Chain> {
     @XmlElement(name="constant")
     protected List<Constant> constants;
 
-    @XmlElement(name="descriptor")
+    @XmlElement(name="element")
     protected List<ChainElement> chainElements;
 
-    @XmlElement(name="links")
-    protected List<LinkDto> links;
+    @XmlElement(name="dataLink")
+    protected List<DataLink> links;
 
-    @XmlElement(name="executionLinks")
-    protected List<ExecutionLinkDto> executionLinks;
+    @XmlElement(name="flowLink")
+    protected List<FlowLink> executionLinks;
 
 
     private Chain() {
@@ -92,27 +114,65 @@ public class Chain implements Comparable<Chain> {
         for(Parameter cdt : chain.getInputs()){
             getInputs().add(new Parameter(cdt));
         }
-        for(LinkDto cdt : chain.getLinks()){
-            getLinks().add(new LinkDto(cdt));
+        for(DataLink cdt : chain.getDataLinks()){
+            getDataLinks().add(new DataLink(cdt));
         }
-        for(ExecutionLinkDto cdt : chain.getExecutionLinks()){
-            getExecutionLinks().add(new ExecutionLinkDto(cdt));
+        for(FlowLink cdt : chain.getFlowLinks()){
+            getFlowLinks().add(new FlowLink(cdt));
         }
         for(Parameter cdt : chain.getOutputs()){
             getOutputs().add(new Parameter(cdt));
         }
     }
 
-     /**
+    public Parameter addInputParameter(final String code, final Class type, 
+            final String remarks, final int minOccurs, final int maxOccurs, final Object defaultValue){
+        final Parameter param = new Parameter(code, type, remarks, minOccurs, maxOccurs, defaultValue);
+        getInputs().add(param);
+        return param;
+    }
+    
+    public Parameter addOutputParameter(final String code, final Class type, 
+            final String remarks, final int minOccurs, final int maxOccurs, final Object defaultValue){
+        final Parameter param = new Parameter(code, type, remarks, minOccurs, maxOccurs, defaultValue);
+        getOutputs().add(param);
+        return param;
+    }
+    
+    public Constant addConstant(final int id, final Class type, final Object value){
+        final Constant constant = new Constant(id, type, value,0,0);
+        getConstants().add(constant);
+        return constant;
+    }
+    
+    public ChainElement addChainElement(final int id, final String authority, final String code){
+        final ChainElement ele = new ChainElement(id, authority, code);
+        getChainElements().add(ele);
+        return ele;
+    }
+    
+    public FlowLink addFlowLink(int inId, int outId){
+        final FlowLink link = new FlowLink(inId, outId);
+        getFlowLinks().add(link);
+        return link;
+    }
+    
+    public DataLink addDataLink(int inId, String inCode, int outId, String outCode){
+        final DataLink link = new DataLink(inId, inCode, outId, outCode);
+        getDataLinks().add(link);
+        return link;
+    }
+    
+    /**
      * Return all link which come from a source id.
      * 
      * @param sourceId
      * @return a list of LinkDto
      */
-    public List<LinkDto> getInputLinks(final int sourceId) {
-        final List<LinkDto> result = new ArrayList<LinkDto>();
+    public List<DataLink> getInputLinks(final int sourceId) {
+        final List<DataLink> result = new ArrayList<DataLink>();
         if (links != null) {
-            for (LinkDto link : links) {
+            for (DataLink link : links) {
                 if (link.getSourceId() == sourceId) {
                     result.add(link);
                 }
@@ -127,10 +187,10 @@ public class Chain implements Comparable<Chain> {
      * @param targetId
      * @return a list of LinkDto
      */
-    public List<LinkDto> getOutputLinks(final int targetId) {
-        final List<LinkDto> result = new ArrayList<LinkDto>();
+    public List<DataLink> getOutputLinks(final int targetId) {
+        final List<DataLink> result = new ArrayList<DataLink>();
         if (links != null) {
-            for (LinkDto link : links) {
+            for (DataLink link : links) {
                 if (link.getTargetId() == targetId) {
                     result.add(link);
                 }
@@ -139,25 +199,25 @@ public class Chain implements Comparable<Chain> {
         return result;
     }
 
-    public List<LinkDto> getLinks() {
+    public List<DataLink> getDataLinks() {
         if(links == null){
-            links = new ArrayList<LinkDto>();
+            links = new ArrayList<DataLink>();
         }
         return links;
     }
 
-    public void setLinks(final List<LinkDto> links) {
+    public void setDataLinks(final List<DataLink> links) {
         this.links = links;
     }
 
-    public List<ExecutionLinkDto> getExecutionLinks() {
+    public List<FlowLink> getFlowLinks() {
         if (executionLinks == null) {
-            executionLinks = new ArrayList<ExecutionLinkDto>();
+            executionLinks = new ArrayList<FlowLink>();
         }
         return executionLinks;
     }
 
-    public void setExecutionLinks(final List<ExecutionLinkDto> executionLinks) {
+    public void setFlowLinks(final List<FlowLink> executionLinks) {
         this.executionLinks = executionLinks;
     }
 
@@ -241,8 +301,8 @@ public class Chain implements Comparable<Chain> {
             final Chain that = (Chain) obj;
             return Utilities.equals(this.getConstants(), that.getConstants())
                 && Utilities.equals(this.getChainElements(), that.getChainElements())
-                && Utilities.equals(this.getLinks(), that.getLinks())
-                && Utilities.equals(this.getExecutionLinks(), that.getExecutionLinks())
+                && Utilities.equals(this.getDataLinks(), that.getDataLinks())
+                && Utilities.equals(this.getFlowLinks(), that.getFlowLinks())
                 && Utilities.equals(this.name, that.name)
                 && Utilities.equals(this.getOutputs(), that.getOutputs())
                 && Utilities.equals(this.getInputs(), that.getInputs());
@@ -265,8 +325,8 @@ public class Chain implements Comparable<Chain> {
         sb.append(Trees.toString("Outputs", getOutputs()));
         sb.append(Trees.toString("Constants", getConstants()));
         sb.append(Trees.toString("Chain elements", getChainElements()));
-        sb.append(Trees.toString("Links", getLinks()));
-        sb.append(Trees.toString("ExecutionLinks", getExecutionLinks()));
+        sb.append(Trees.toString("Links", getDataLinks()));
+        sb.append(Trees.toString("ExecutionLinks", getFlowLinks()));
 
         return sb.toString();
     }
@@ -277,277 +337,6 @@ public class Chain implements Comparable<Chain> {
             return this.getName().compareTo(o.getName());
         }
         return -1;
-    }
-
-    @XmlAccessorType(XmlAccessType.FIELD)
-    public static class LinkDto {
-        @XmlElement(name="sourceId")
-        private int sourceId;
-        @XmlElement(name="sourceCode")
-        private String sourceCode;
-        @XmlElement(name="targetId")
-        private int targetId;
-        @XmlElement(name="targetCode")
-        private String targetCode;
-
-        private LinkDto() {}
-
-        public LinkDto(LinkDto toCopy){
-            this.sourceId = toCopy.sourceId;
-            this.sourceCode = toCopy.sourceCode;
-            this.targetId = toCopy.targetId;
-            this.targetCode = toCopy.targetCode;
-        }
-
-        public LinkDto(int inId, String inCode, int outId, ParameterDescriptor paramDesc) {
-            this(inId,inCode,outId,paramDesc.getName().getCode());
-        }
-        
-        public LinkDto(int inId, ParameterDescriptor inCode, int outId, String paramDesc) {
-            this(inId,inCode.getName().getCode(),outId,paramDesc);
-        }
-        
-        public LinkDto(int inId, ParameterDescriptor inCode, int outId, ParameterDescriptor paramDesc) {
-            this(inId,inCode.getName().getCode(),outId,paramDesc.getName().getCode());
-        }
-        
-        public LinkDto(int inId, String inCode, int outId, String outCode) {
-            this.sourceId = inId;
-            this.sourceCode = inCode;
-            this.targetId = outId;
-            this.targetCode = outCode;
-        }
-
-        public int getSourceId() {
-            return sourceId;
-        }
-
-        public void setSourceId(int sourceId) {
-            this.sourceId = sourceId;
-        }
-
-        public String getSourceCode() {
-            return sourceCode;
-        }
-
-        public void setSourceCode(String sourceCode) {
-            this.sourceCode = sourceCode;
-        }
-
-        public int getTargetId() {
-            return targetId;
-        }
-
-        public void setTargetId(int targetId) {
-            this.targetId = targetId;
-        }
-
-        public String getTargetCode() {
-            return targetCode;
-        }
-
-        public void setTargetCode(String targetCode) {
-            this.targetCode = targetCode;
-        }
-
-        /**
-         * @return source pointed by this link
-         */
-        public Object getSource(final Chain chain){
-
-            //source is an input param
-            if(sourceId == Integer.MIN_VALUE){
-                for(Parameter param : chain.getInputs()){
-                    if(param.getCode().equals(sourceCode)){
-                        return param;
-                    }
-                }
-            }
-
-            for(ChainElement desc : chain.getChainElements()){
-                if(desc.getId() == sourceId){
-                    return desc;
-                }
-            }
-            for(Constant cst : chain.getConstants()){
-                if(cst.getId() == sourceId){
-                    return cst;
-                }
-            }
-            return null;
-        }
-
-        /**
-         * @return target pointed by this link
-         */
-        public Object getTarget(final Chain seq){
-
-            //targer is an output param
-            if(targetId == Integer.MAX_VALUE){
-                for(Parameter param : seq.getOutputs()){
-                    if(param.getCode().equals(targetCode)){
-                        return param;
-                    }
-                }
-            }
-
-            for(ChainElement desc : seq.getChainElements()){
-                if(desc.getId() == targetId){
-                    return desc;
-                }
-            }
-            for(Constant cst : seq.getConstants()){
-                if(cst.getId() == targetId){
-                    return cst;
-                }
-            }
-            return null;
-        }
-
-        @Override
-        public boolean equals(final Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (obj instanceof LinkDto) {
-                final LinkDto that = (LinkDto) obj;
-                return Utilities.equals(this.sourceCode, that.sourceCode)
-                    && Utilities.equals(this.sourceId, that.sourceId)
-                    && Utilities.equals(this.targetCode, that.targetCode)
-                    && Utilities.equals(this.targetId, that.targetId);
-            }
-            return false;
-        }
-
-        @Override
-        public String toString() {
-            final StringBuilder sb = new StringBuilder("[LinkDto]");
-            sb.append("sourceId:").append(sourceId).append('\n');
-            sb.append("targetId:").append(targetId).append('\n');
-            if (sourceCode != null) {
-                sb.append("sourceCode:").append(sourceCode).append('\n');
-            }
-            if (targetCode != null) {
-                sb.append("targetCode:").append(targetCode).append('\n');
-            }
-            return sb.toString();
-        }
-
-    }
-
-    @XmlAccessorType(XmlAccessType.FIELD)
-    public static class ExecutionLinkDto {
-        @XmlElement(name="sourceId")
-        private int sourceId;
-        @XmlElement(name="targetId")
-        private int targetId;
-        
-        @XmlTransient
-        private String type = null;
-        
-        private ExecutionLinkDto() {}
-
-        public ExecutionLinkDto(final ExecutionLinkDto toCopy) {
-            if (toCopy != null) {
-                this.sourceId = toCopy.sourceId;
-                this.targetId = toCopy.targetId;
-            }
-        }
-
-        public ExecutionLinkDto(int inId, int outId) {
-            this.sourceId = inId;
-            this.targetId = outId;
-        }
-
-        public int getSourceId() {
-            return sourceId;
-        }
-
-        public void setSourceId(int sourceId) {
-            this.sourceId = sourceId;
-        }
-
-        public int getTargetId() {
-            return targetId;
-        }
-
-        public void setTargetId(int targetId) {
-            this.targetId = targetId;
-        }
-
-        public String getType() {
-            return type;
-        }
-
-        public void setType(String type) {
-            this.type = type;
-        }
-
-        /**
-         * @return source pointed by this link
-         */
-        public Object getSource(final Chain chain){
-
-            //source is an input param
-            if(sourceId == Integer.MIN_VALUE){
-                return ChainElement.BEGIN;
-            }
-
-            for (ChainElement desc : chain.getChainElements()) {
-                if(desc.getId() == sourceId){
-                    return desc;
-                }
-            }
-            return null;
-        }
-
-        /**
-         * @return target pointed by this link
-         */
-        public Object getTarget(final Chain seq){
-
-            //targer is an output param
-            if(targetId == Integer.MAX_VALUE){
-                return ChainElement.END;
-            }
-
-            for (ChainElement desc : seq.getChainElements()) {
-                if(desc.getId() == targetId){
-                    return desc;
-                }
-            }
-            return null;
-        }
-
-        @Override
-        public boolean equals(final Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (obj instanceof ExecutionLinkDto) {
-                final ExecutionLinkDto that = (ExecutionLinkDto) obj;
-                return Utilities.equals(this.sourceId, that.sourceId)
-                    && Utilities.equals(this.targetId, that.targetId);
-            }
-            return false;
-        }
-
-        @Override
-        public int hashCode() {
-            int hash = 7;
-            hash = 37 * hash + this.sourceId;
-            hash = 37 * hash + this.targetId;
-            return hash;
-        }
-
-        @Override
-        public String toString() {
-            final StringBuilder sb = new StringBuilder("[ExecutionLinkDto]");
-            sb.append("sourceId:").append(sourceId).append('\n');
-            sb.append("targetId:").append(targetId).append('\n');
-            return sb.toString();
-        }
-
     }
 
     public static class ClassAdaptor extends XmlAdapter<String, Class>{
@@ -564,4 +353,84 @@ public class Chain implements Comparable<Chain> {
 
     }
 
+    /**
+     * Write this ProcessSequence in given output.
+     * @throws JAXBException 
+     */
+    public void write(final Object output) throws JAXBException{
+        final MarshallerPool pool = getPoolInstance();
+        final Marshaller marshaller = pool.acquireMarshaller();
+        try{
+            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+            if(output instanceof ContentHandler){
+                marshaller.marshal(this, (ContentHandler)output);
+            }else if(output instanceof File){
+                marshaller.marshal(this, (File)output);
+            }else if(output instanceof Node){
+                marshaller.marshal(this, (Node)output);
+            }else if(output instanceof OutputStream){
+                marshaller.marshal(this, (OutputStream)output);
+            }else if(output instanceof Result){
+                marshaller.marshal(this, (Result)output);
+            }else if(output instanceof Writer){
+                marshaller.marshal(this, (Writer)output);
+            }else if(output instanceof XMLEventWriter){
+                marshaller.marshal(this, (XMLEventWriter)output);
+            }else if(output instanceof XMLStreamWriter){
+                marshaller.marshal(this, (XMLStreamWriter)output);
+            }else{
+                throw new JAXBException("Unsupported output : "+output);
+            }
+        }finally{
+            pool.release(marshaller);
+        }
+    }
+    
+    /**
+     * Read the given input and return an ProcessSequence.
+     * 
+     * @param input
+     * @return
+     * @throws JAXBException 
+     */
+    public static Chain read(final Object input) throws JAXBException{
+        final MarshallerPool pool = getPoolInstance();
+        final Unmarshaller unmarshaller = pool.acquireUnmarshaller();
+        final Chain set;
+        try{
+            if(input instanceof File){
+                set = (Chain) unmarshaller.unmarshal((File)input);
+            }else if(input instanceof InputSource){
+                set = (Chain) unmarshaller.unmarshal((InputSource)input);
+            }else if(input instanceof InputStream){
+                set = (Chain) unmarshaller.unmarshal((InputStream)input);
+            }else if(input instanceof Node){
+                set = (Chain) unmarshaller.unmarshal((Node)input);
+            }else if(input instanceof Reader){
+                set = (Chain) unmarshaller.unmarshal((Reader)input);
+            }else if(input instanceof Source){
+                set = (Chain) unmarshaller.unmarshal((Source)input);
+            }else if(input instanceof URL){
+                set = (Chain) unmarshaller.unmarshal((URL)input);
+            }else if(input instanceof XMLEventReader){
+                set = (Chain) unmarshaller.unmarshal((XMLEventReader)input);
+            }else if(input instanceof XMLStreamReader){
+                set = (Chain) unmarshaller.unmarshal((XMLStreamReader)input);
+            }else{
+                throw new JAXBException("Unsupported input : "+input);
+            }
+        }finally{
+            pool.release(unmarshaller);
+        }
+                
+        return set;
+    }
+    
+    public static synchronized MarshallerPool getPoolInstance() throws JAXBException{
+        if(POOL == null){
+            POOL = new MarshallerPool(Chain.class);
+        }
+        return POOL;
+    }
+    
 }

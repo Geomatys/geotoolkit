@@ -18,6 +18,7 @@ package org.geotoolkit.process.chain.model;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import org.geotoolkit.util.Utilities;
 
@@ -30,7 +31,7 @@ public class ChainElement extends Positionable {
     public static final ChainElement BEGIN = new ChainElement(Integer.MIN_VALUE, "chain", "begin", -1, -1);
     public static final ChainElement END = new ChainElement(Integer.MAX_VALUE, "chain", "end", -1, -1);
 
-    @XmlElement(name="id")
+    @XmlAttribute(name="id")
     private Integer id;
     @XmlElement(name="authority")
     private String authority;

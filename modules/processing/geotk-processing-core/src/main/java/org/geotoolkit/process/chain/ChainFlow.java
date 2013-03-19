@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import org.geotoolkit.process.chain.model.Chain;
 import org.geotoolkit.process.chain.model.ChainElement;
+import org.geotoolkit.process.chain.model.FlowLink;
 
 /**
  * Utility methods to manipulate process chains.
@@ -36,7 +37,7 @@ final class ChainFlow {
 
         private final Object object;
         private final List<ExecutionNode> children = new ArrayList<ExecutionNode>();
-        private final List<Chain.ExecutionLinkDto> links = new ArrayList<Chain.ExecutionLinkDto>();
+        private final List<FlowLink> links = new ArrayList<FlowLink>();
         private final boolean isInput;
         private final boolean isOutput;
 
@@ -54,7 +55,7 @@ final class ChainFlow {
             return children;
         }
 
-        public List<Chain.ExecutionLinkDto> getLinks() {
+        public List<FlowLink> getLinks() {
             return links;
         }
 
@@ -96,7 +97,7 @@ final class ChainFlow {
 
         for(Object obj : chain.getChainElements()) {nodes.put(obj,new ExecutionNode(obj,false,false));}
 
-        for(Chain.ExecutionLinkDto link : chain.getExecutionLinks()){
+        for(FlowLink link : chain.getFlowLinks()){
             Object source = link.getSource(chain);
             Object target = link.getTarget(chain);
 

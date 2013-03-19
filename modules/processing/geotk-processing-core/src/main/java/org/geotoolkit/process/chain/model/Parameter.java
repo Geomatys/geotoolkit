@@ -18,6 +18,7 @@ package org.geotoolkit.process.chain.model;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import org.geotoolkit.util.Utilities;
 
@@ -29,7 +30,7 @@ import org.geotoolkit.util.Utilities;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Parameter {
 
-    @XmlElement(name = "code")
+    @XmlAttribute(name = "code")
     private String code;
     @XmlElement(name = "type")
     private ClassFull type;

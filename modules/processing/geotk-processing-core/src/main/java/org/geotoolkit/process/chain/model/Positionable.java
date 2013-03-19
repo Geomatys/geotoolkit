@@ -16,6 +16,9 @@
  */
 package org.geotoolkit.process.chain.model;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import org.geotoolkit.util.Utilities;
 
 /**
@@ -23,9 +26,13 @@ import org.geotoolkit.util.Utilities;
  * 
  * @author Guilhem Legal (Geomatys)
  */
+@XmlAccessorType(value = XmlAccessType.FIELD)
 public abstract class Positionable {
 
-    private int x, y;
+    @XmlAttribute(name = "x")
+    private int x;
+    @XmlAttribute(name = "y")
+    private int y;
 
     public Positionable() {
         this.x     = -1;

@@ -18,8 +18,10 @@ package org.geotoolkit.process.chain.model;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.geotoolkit.process.chain.ConstantUtilities;
 import org.geotoolkit.util.Utilities;
 
 /**
@@ -29,7 +31,7 @@ import org.geotoolkit.util.Utilities;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Constant extends Positionable {
 
-    @XmlElement(name = "id")
+    @XmlAttribute(name = "id")
     private int id;
     @XmlElement(name = "type")
     @XmlJavaTypeAdapter(value = Chain.ClassAdaptor.class)
@@ -52,13 +54,17 @@ public class Constant extends Positionable {
         this(id,type,value,0,0);
     }
     
+    public Constant(final int id, final Class type, final Object value, final int x, final int y) {
+        this(id,type, ConstantUtilities.valueToString(value),x,x);
+    }
+
     public Constant(final int id, final Class type, final String value, final int x, final int y) {
         super(x,y);
         this.id    = id;
         this.type  = type;
         this.value = value;
     }
-
+    
     public int getId() {
         return id;
     }

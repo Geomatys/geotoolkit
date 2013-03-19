@@ -31,6 +31,7 @@ import org.geotoolkit.process.ProcessFinder;
 import org.geotoolkit.process.chain.model.Chain;
 import org.geotoolkit.process.chain.model.ChainElement;
 import org.geotoolkit.process.chain.model.Constant;
+import org.geotoolkit.process.chain.model.DataLink;
 import org.geotoolkit.util.converter.ConverterRegistry;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
 import org.geotoolkit.util.converter.ObjectConverter;
@@ -107,7 +108,7 @@ public class ChainProcess extends AbstractProcess{
         for(Constant cst : model.getConstants()){
             //copy constant in children nodes
             final Object value = ConstantUtilities.stringToValue(cst.getValue(), cst.getType());
-            for(Chain.LinkDto link : model.getInputLinks(cst.getId())){
+            for(DataLink link : model.getInputLinks(cst.getId())){
                 setValue(value, configs.get(link.getTargetId()).parameter(link.getTargetCode()));
             }
         }
@@ -123,7 +124,7 @@ public class ChainProcess extends AbstractProcess{
                 final Object obj = node.getObject();
                 if (obj == ChainElement.BEGIN) {
                     //copy input params in children nodes
-                    for(Chain.LinkDto link : model.getInputLinks(Integer.MIN_VALUE)){
+                    for(DataLink link : model.getInputLinks(Integer.MIN_VALUE)){
                         final Object value = inputParameters.parameter(link.getSourceCode()).getValue();
                         setValue(value, configs.get(link.getTargetId()).parameter(link.getTargetCode()));
                     }
@@ -172,7 +173,7 @@ public class ChainProcess extends AbstractProcess{
                     i++;
 
                     //set result in children
-                    for(Chain.LinkDto link : model.getInputLinks(element.getId())){
+                    for(DataLink link : model.getInputLinks(element.getId())){
                         final Object value = result.parameter(link.getSourceCode()).getValue();
                         setValue(value, configs.get(link.getTargetId()).parameter(link.getTargetCode()));
                     }

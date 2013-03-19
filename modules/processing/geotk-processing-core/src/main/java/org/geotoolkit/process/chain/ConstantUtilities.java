@@ -35,7 +35,7 @@ import org.opengis.metadata.Metadata;
  *
  * @author Johann Sorel (Geomatys)
  */
-final class ConstantUtilities {
+public final class ConstantUtilities {
 
     private static final Logger LOGGER = Logging.getLogger(ConstantUtilities.class);
 
