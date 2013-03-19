@@ -93,6 +93,13 @@ public class GetFeatureOfInterestType extends ExtensibleRequestType implements G
         }
     }
     
+    public GetFeatureOfInterestType(final String version, final String service, final List<String> observedProperties,
+            final List<String> procedure) {
+        super(version, service);
+        this.observedProperty = observedProperties;
+        this.procedure        = procedure;
+    }
+    
     public GetFeatureOfInterestType(final String version, final String service, final List<String> featureId) {
         super(version, service);
         this.featureOfInterest = featureId;
