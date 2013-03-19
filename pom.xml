@@ -243,7 +243,7 @@
       <dependency>
         <groupId>com.vividsolutions</groupId>
         <artifactId>jts</artifactId>
-        <version>1.11</version>
+        <version>1.13</version>
         <exclusions>
             <exclusion>
                 <groupId>xerces</groupId>
@@ -260,12 +260,12 @@
       <dependency>
         <groupId>org.netbeans.api</groupId>
         <artifactId>org-netbeans-swing-outline</artifactId>
-        <version>RELEASE72</version>
+        <version>RELEASE73</version>
       </dependency>
       <dependency>
         <groupId>org.netbeans.api</groupId>
         <artifactId>org-openide-awt</artifactId>
-        <version>RELEASE72</version>
+        <version>RELEASE73</version>
       </dependency>
 
       <dependency>
