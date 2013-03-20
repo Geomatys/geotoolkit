@@ -74,8 +74,8 @@ public abstract class JDBCDataStoreFactory extends AbstractFeatureStoreFactory {
              new DefaultParameterDescriptor<String>("user","user name to login as",String.class,null,true);
 
     /** parameter for database password */
-    public static final ParameterDescriptor<String> PASSWD =
-             new DefaultParameterDescriptor<String>("passwd","password used to login",String.class,null,true);
+    public static final ParameterDescriptor<String> PASSWORD =
+             new DefaultParameterDescriptor<String>("password","password used to login",String.class,null,true);
 
     /** parameter for data source */
     public static final ParameterDescriptor<DataSource> DATASOURCE =
@@ -267,7 +267,7 @@ public abstract class JDBCDataStoreFactory extends AbstractFeatureStoreFactory {
         dataSource.setUsername(user);
 
         // password
-        final String passwd = (String) params.parameter(PASSWD.getName().toString()).getValue();
+        final String passwd = (String) params.parameter(PASSWORD.getName().toString()).getValue();
         if (passwd != null) {
             dataSource.setPassword(passwd);
         }

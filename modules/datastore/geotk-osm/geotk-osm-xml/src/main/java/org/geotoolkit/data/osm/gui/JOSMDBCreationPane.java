@@ -354,7 +354,7 @@ public class JOSMDBCreationPane extends javax.swing.JPanel {
                 dbParameters.get(PostgisNGDataStoreFactory.PORT.getName().getCode()).toString(),
                 dbParameters.get(PostgisNGDataStoreFactory.DATABASE.getName().getCode()).toString(),
                 dbParameters.get(PostgisNGDataStoreFactory.USER.getName().getCode()).toString(),
-                dbParameters.get(PostgisNGDataStoreFactory.PASSWD.getName().getCode()).toString()
+                dbParameters.get(PostgisNGDataStoreFactory.PASSWORD.getName().getCode()).toString()
                 );
 
 

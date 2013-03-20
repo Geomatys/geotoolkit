@@ -29,6 +29,7 @@ import org.geotoolkit.coverage.CoverageStoreManagementEvent;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.feature.DefaultName;
+import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.storage.StorageListener;
 import org.opengis.feature.type.Name;
@@ -47,8 +48,35 @@ public class CoverageSQLStore extends CoverageDatabase implements CoverageStore 
     private final Set<StorageListener> listeners = new HashSet<StorageListener>();
     private final ParameterValueGroup parameters;
 
+    private static ParameterValueGroup adaptParameter(ParameterValueGroup parameters){
+        final ParameterValueGroup params = CoverageDatabase.PARAMETERS.createValue();
+        
+        final StringBuilder url = new StringBuilder("jdbc:postgresql://");
+        url.append(parameters.parameter("host").getValue());
+        url.append(':');
+        url.append(parameters.parameter("port").getValue());
+        url.append('/');
+        url.append(parameters.parameter("database").getValue());
+        
+        params.parameter("URL").setValue(url.toString());
+        
+        if(parameters.parameter("user")!=null){
+            params.parameter("user").setValue(parameters.parameter("user").getValue());
+        }
+        if(parameters.parameter("password")!=null){
+            params.parameter("password").setValue(parameters.parameter("password").getValue());
+        }
+        if(parameters.parameter("schema")!=null){
+            params.parameter("schema").setValue(parameters.parameter("schema").getValue());
+        }
+        if(parameters.parameter("rootDirectory")!=null){
+            params.parameter("rootDirectory").setValue(parameters.parameter("rootDirectory").getValue());
+        }
+        return params;
+    }
+    
     public CoverageSQLStore(ParameterValueGroup parameters) {
-        super(parameters);
+        super(adaptParameter(parameters));
         this.parameters = parameters;
     }
 

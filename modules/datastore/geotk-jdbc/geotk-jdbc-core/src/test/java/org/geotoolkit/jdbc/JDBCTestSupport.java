@@ -153,7 +153,7 @@ public abstract class JDBCTestSupport extends TestCase {
         Parameters.getOrCreate(JDBCDataStoreFactory.HOST, param).setValue("");
         Parameters.getOrCreate(JDBCDataStoreFactory.PORT, param).setValue(5432);
         Parameters.getOrCreate(JDBCDataStoreFactory.USER, param).setValue("");
-        Parameters.getOrCreate(JDBCDataStoreFactory.PASSWD, param).setValue("");
+        Parameters.getOrCreate(JDBCDataStoreFactory.PASSWORD, param).setValue("");
         final ParameterValueGroup param2 = desc.createValue();
         Parameters.getOrCreate(JDBCDataStoreFactory.NAMESPACE, param2).setValue("http://www.geotoolkit.org/test");
         Parameters.getOrCreate(JDBCDataStoreFactory.SCHEMA, param2).setValue("geotoolkit");
@@ -161,7 +161,7 @@ public abstract class JDBCTestSupport extends TestCase {
         Parameters.getOrCreate(JDBCDataStoreFactory.HOST, param2).setValue("");
         Parameters.getOrCreate(JDBCDataStoreFactory.PORT, param2).setValue(5432);
         Parameters.getOrCreate(JDBCDataStoreFactory.USER, param2).setValue("");
-        Parameters.getOrCreate(JDBCDataStoreFactory.PASSWD, param2).setValue("");
+        Parameters.getOrCreate(JDBCDataStoreFactory.PASSWORD, param2).setValue("");
         
         dataStore = (JDBCDataStore) factory.open( param );
         dataStore2 = (JDBCDataStore) factory.open( param2 );
