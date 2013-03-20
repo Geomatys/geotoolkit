@@ -22,9 +22,9 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LinearRing;
 import java.text.ParseException;
 import java.util.Date;
+import org.apache.sis.util.collection.UnmodifiableArrayList;
 import org.geotoolkit.filter.DefaultFilterFactory2;
 import org.geotoolkit.temporal.object.TemporalUtilities;
-import org.geotoolkit.util.collection.UnmodifiableArrayList;
 import static org.junit.Assert.*;
 import org.junit.Test;
 import org.opengis.filter.And;
@@ -202,6 +202,15 @@ public class FilterReadingTest {
     @Test
     public void testPropertyIsNotEqualTo() throws CQLException {
         final String cql = "att <> 15";
+        final Object obj = CQL.parseFilter(cql);        
+        assertTrue(obj instanceof PropertyIsNotEqualTo);
+        final PropertyIsNotEqualTo filter = (PropertyIsNotEqualTo) obj;
+        assertEquals(FF.notEqual(FF.property("att"), FF.literal(15)), filter);   
+    }
+    
+    @Test
+    public void testPropertyIsNotEqualTo2() throws CQLException {
+        final String cql = "att <>'15'";
         final Object obj = CQL.parseFilter(cql);        
         assertTrue(obj instanceof PropertyIsNotEqualTo);
         final PropertyIsNotEqualTo filter = (PropertyIsNotEqualTo) obj;
