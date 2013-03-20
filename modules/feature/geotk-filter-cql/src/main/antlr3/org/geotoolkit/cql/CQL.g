@@ -181,6 +181,8 @@ MPOINT              : M U L T I P O I N T ;
 MLINESTRING         : M U L T I L I N E S T R I N G ;
 MPOLYGON            : M U L T I P O L Y G O N ;
 GEOMETRYCOLLECTION  : G E O M E T R Y C O L L E C T I O N ;
+ENVELOPE            : E N V E L O P E ;
+EMPTY               : E M P T Y ;
 
 BBOX        : B B O X ;
 BEYOND      : B E Y O N D ;
@@ -269,12 +271,14 @@ coordinate_series   : LPAREN coordinate_serie (COMMA coordinate_serie)* RPAREN -
 
 
 expression_geometry	
-	: POINT^ coordinate_serie
-	| LINESTRING^ coordinate_serie
-	| POLYGON^ coordinate_series
-	| MPOINT^ coordinate_serie
-	| MLINESTRING^  coordinate_series
-	| MPOLYGON^ LPAREN! coordinate_series (COMMA! coordinate_series)* RPAREN! 
+	: POINT^ ( EMPTY | coordinate_serie )
+	| LINESTRING^ ( EMPTY | coordinate_serie )
+	| POLYGON^ ( EMPTY | coordinate_series )
+	| MPOINT^ ( EMPTY | coordinate_serie )
+	| MLINESTRING^  ( EMPTY | coordinate_series )
+	| MPOLYGON^ ( EMPTY | LPAREN! coordinate_series (COMMA! coordinate_series)* RPAREN! )
+        | GEOMETRYCOLLECTION^ ( EMPTY | (LPAREN! expression_geometry (COMMA! expression_geometry)* RPAREN!) )
+        | ENVELOPE^ ( EMPTY | (LPAREN! expression_unary COMMA! expression_unary COMMA! expression_unary COMMA! expression_unary RPAREN!) )
 	;
 
 expression_fct_param

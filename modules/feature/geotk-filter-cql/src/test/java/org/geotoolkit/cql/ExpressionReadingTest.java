@@ -18,9 +18,14 @@ package org.geotoolkit.cql;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryCollection;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.LinearRing;
+import com.vividsolutions.jts.geom.MultiLineString;
+import com.vividsolutions.jts.geom.MultiPoint;
+import com.vividsolutions.jts.geom.MultiPolygon;
+import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 import java.text.ParseException;
 import org.geotoolkit.filter.DefaultFilterFactory2;
@@ -225,6 +230,17 @@ public class ExpressionReadingTest {
     }
     
     @Test
+    public void testGeometryPointEmpty() throws CQLException{
+        final String cql = "POINT EMPTY";
+        final Object obj = CQL.parseExpression(cql);        
+        assertTrue(obj instanceof Literal);
+        final Literal expression = (Literal) obj;        
+        final Geometry geom = (Geometry)expression.getValue();
+        assertTrue(geom instanceof Point);
+        assertTrue(geom.isEmpty());  
+    }
+    
+    @Test
     public void testGeometryMPoint() throws CQLException{
         final String cql = "MULTIPOINT(15 30, 45 60)";
         final Object obj = CQL.parseExpression(cql);        
@@ -236,6 +252,17 @@ public class ExpressionReadingTest {
                     new Coordinate(45, 60)
                 });
         assertTrue(geom.equals((Geometry)expression.getValue()));  
+    }
+    
+    @Test
+    public void testGeometryMPointEmpty() throws CQLException{
+        final String cql = "MULTIPOINT EMPTY";
+        final Object obj = CQL.parseExpression(cql);        
+        assertTrue(obj instanceof Literal);
+        final Literal expression = (Literal) obj;        
+        final Geometry geom = (Geometry)expression.getValue();
+        assertTrue(geom instanceof MultiPoint);
+        assertTrue(geom.isEmpty());  
     }
     
     @Test
@@ -251,6 +278,17 @@ public class ExpressionReadingTest {
                     new Coordinate(50, 60)
                 });
         assertTrue(geom.equals((Geometry)expression.getValue()));  
+    }
+    
+    @Test
+    public void testGeometryLineStringEmpty() throws CQLException{
+        final String cql = "LINESTRING EMPTY";
+        final Object obj = CQL.parseExpression(cql);        
+        assertTrue(obj instanceof Literal);
+        final Literal expression = (Literal) obj;        
+        final Geometry geom = (Geometry)expression.getValue();
+        assertTrue(geom instanceof LineString);
+        assertTrue(geom.isEmpty());  
     }
     
     @Test
@@ -279,6 +317,17 @@ public class ExpressionReadingTest {
     }
     
     @Test
+    public void testGeometryMLineStringEmpty() throws CQLException{
+        final String cql = "MULTILINESTRING EMPTY";
+        final Object obj = CQL.parseExpression(cql);        
+        assertTrue(obj instanceof Literal);
+        final Literal expression = (Literal) obj;        
+        final Geometry geom = (Geometry)expression.getValue();
+        assertTrue(geom instanceof MultiLineString);
+        assertTrue(geom.isEmpty());  
+    }
+    
+    @Test
     public void testGeometryPolygon() throws CQLException{
         final String cql = "POLYGON((10 20, 30 40, 50 60, 10 20), (70 80, 90 100, 110 120, 70 80))";
         final Object obj = CQL.parseExpression(cql);        
@@ -303,6 +352,17 @@ public class ExpressionReadingTest {
                     }
                 );
         assertTrue(geom.equals((Geometry)expression.getValue()));  
+    }
+    
+    @Test
+    public void testGeometryPolygonEmpty() throws CQLException{
+        final String cql = "POLYGON EMPTY";
+        final Object obj = CQL.parseExpression(cql);        
+        assertTrue(obj instanceof Literal);
+        final Literal expression = (Literal) obj;        
+        final Geometry geom = (Geometry)expression.getValue();
+        assertTrue(geom instanceof Polygon);
+        assertTrue(geom.isEmpty());  
     }
     
     @Test
@@ -352,6 +412,79 @@ public class ExpressionReadingTest {
                 );
         final Geometry geom = GF.createMultiPolygon(new Polygon[]{geom1,geom2});
         assertTrue(geom.equals((Geometry)expression.getValue()));  
+    }
+    
+    @Test
+    public void testGeometryMPolygonEmpty() throws CQLException{
+        final String cql = "MULTIPOLYGON EMPTY";
+        final Object obj = CQL.parseExpression(cql);        
+        assertTrue(obj instanceof Literal);
+        final Literal expression = (Literal) obj;
+        final Geometry geom = (Geometry)expression.getValue();
+        assertTrue(geom instanceof MultiPolygon);
+        assertTrue(geom.isEmpty());  
+    }
+    
+    @Test
+    public void testGeometryCollection() throws CQLException{
+        final String cql = "GEOMETRYCOLLECTION( POINT(15 30), LINESTRING(10 20, 30 40, 50 60) )";
+        final Object obj = CQL.parseExpression(cql);        
+        assertTrue(obj instanceof Literal);
+        final Literal expression = (Literal) obj;
+        final Geometry geom1 =  GF.createPoint(new Coordinate(15, 30));
+        final Geometry geom2 =  GF.createLineString(
+                new Coordinate[]{
+                    new Coordinate(10, 20),
+                    new Coordinate(30, 40),
+                    new Coordinate(50, 60)
+                });
+        final GeometryCollection geom =  GF.createGeometryCollection(new Geometry[]{geom1,geom2});
+        final GeometryCollection returned = (GeometryCollection)expression.getValue();
+        assertEquals(geom.getNumGeometries(), returned.getNumGeometries());
+        assertEquals(geom.getGeometryN(0), returned.getGeometryN(0));
+        assertEquals(geom.getGeometryN(1), returned.getGeometryN(1));
+    }
+    
+    @Test
+    public void testGeometryCollectionEmpty() throws CQLException{
+        final String cql = "GEOMETRYCOLLECTION EMPTY";
+        final Object obj = CQL.parseExpression(cql);        
+        assertTrue(obj instanceof Literal);
+        final Literal expression = (Literal) obj;        
+        final Geometry geom = (Geometry)expression.getValue();
+        assertTrue(geom instanceof GeometryCollection);
+        assertTrue(geom.isEmpty());  
+    }
+    
+    @Test
+    public void testGeometryEnvelope() throws CQLException{
+        final String cql = "ENVELOPE(10, 20, 40, 30)";
+        final Object obj = CQL.parseExpression(cql);        
+        assertTrue(obj instanceof Literal);
+        final Literal expression = (Literal) obj;        
+        final Geometry geom =  GF.createPolygon(
+                GF.createLinearRing(
+                    new Coordinate[]{
+                        new Coordinate(10, 40),
+                        new Coordinate(20, 40),
+                        new Coordinate(20, 30),
+                        new Coordinate(10, 30),
+                        new Coordinate(10, 40)
+                    }),
+                new LinearRing[0]
+                );
+        assertTrue(geom.equals((Geometry)expression.getValue()));  
+    }
+    
+    @Test
+    public void testGeometryEnvelopeEmpty() throws CQLException{
+        final String cql = "ENVELOPE EMPTY";
+        final Object obj = CQL.parseExpression(cql);        
+        assertTrue(obj instanceof Literal);
+        final Literal expression = (Literal) obj;        
+        final Geometry geom = (Geometry)expression.getValue();
+        assertTrue(geom instanceof Polygon);
+        assertTrue(geom.isEmpty());  
     }
     
     @Test

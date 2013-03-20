@@ -265,51 +265,123 @@ public final class CQL {
         
         // GEOMETRY TYPES ------------------------------------------------------
         else if(CQLParser.POINT == type){
-            final CoordinateSequence cs = parseSequence((CommonTree)tree.getChild(0));
+            final CommonTree st = (CommonTree) tree.getChild(0);
+            final CoordinateSequence cs;
+            if(st.getType() == CQLParser.EMPTY){
+                cs = GF.getCoordinateSequenceFactory().create(new Coordinate[0]);
+            }else{
+                cs = parseSequence(st);
+            }
             final Geometry geom = GF.createPoint(cs);
             return ff.literal(geom);
         }else if(CQLParser.LINESTRING == type){
-            final CoordinateSequence cs = parseSequence((CommonTree)tree.getChild(0));
+            final CommonTree st = (CommonTree) tree.getChild(0);
+            final CoordinateSequence cs;
+            if(st.getType() == CQLParser.EMPTY){
+                cs = GF.getCoordinateSequenceFactory().create(new Coordinate[0]);
+            }else{
+                cs = parseSequence(st);
+            }
             final Geometry geom = GF.createLineString(cs);
             return ff.literal(geom);
         }else if(CQLParser.POLYGON == type){
-            final CommonTree serie = (CommonTree)tree.getChild(0);
-            final LinearRing contour = GF.createLinearRing(parseSequence((CommonTree)serie.getChild(0)));
-            final int n = serie.getChildCount();
-            final LinearRing[] holes = new LinearRing[n-1];
-            for(int i=1; i<n; i++){
-                holes[i-1] = GF.createLinearRing(parseSequence((CommonTree)serie.getChild(i)));
-            }
-            final Geometry geom = GF.createPolygon(contour,holes);
+            final CommonTree st = (CommonTree) tree.getChild(0);            
+            final Geometry geom;
+            if(st.getType() == CQLParser.EMPTY){
+                geom = GF.createPolygon(GF.createLinearRing(new Coordinate[0]),new LinearRing[0]);
+            }else{
+                final CommonTree serie = (CommonTree)tree.getChild(0);
+                final LinearRing contour = GF.createLinearRing(parseSequence((CommonTree)serie.getChild(0)));
+                final int n = serie.getChildCount();
+                final LinearRing[] holes = new LinearRing[n-1];
+                for(int i=1; i<n; i++){
+                    holes[i-1] = GF.createLinearRing(parseSequence((CommonTree)serie.getChild(i)));
+                }
+                geom = GF.createPolygon(contour,holes);
+            }            
             return ff.literal(geom);
         }else if(CQLParser.MPOINT == type){
-            final CoordinateSequence cs = parseSequence((CommonTree)tree.getChild(0));
+            final CommonTree st = (CommonTree) tree.getChild(0);
+            final CoordinateSequence cs;
+            if(st.getType() == CQLParser.EMPTY){
+                cs = GF.getCoordinateSequenceFactory().create(new Coordinate[0]);
+            }else{
+                cs = parseSequence(st);
+            }
             final Geometry geom = GF.createMultiPoint(cs);
             return ff.literal(geom);
         }else if(CQLParser.MLINESTRING == type){
-            final CommonTree series = (CommonTree) tree.getChild(0);
-            final int n = series.getChildCount();
-            final LineString[] strings = new LineString[n];
-            for(int i=0; i<n; i++){
-                strings[i] = GF.createLineString(parseSequence((CommonTree)series.getChild(i)));
+            final CommonTree st = (CommonTree) tree.getChild(0);            
+            final Geometry geom;
+            if(st.getType() == CQLParser.EMPTY){
+                geom = GF.createMultiLineString(new LineString[0]);
+            }else{
+                final CommonTree series = (CommonTree) tree.getChild(0);
+                final int n = series.getChildCount();
+                final LineString[] strings = new LineString[n];
+                for(int i=0; i<n; i++){
+                    strings[i] = GF.createLineString(parseSequence((CommonTree)series.getChild(i)));
+                }            
+                geom = GF.createMultiLineString(strings);
             }            
-            final Geometry geom = GF.createMultiLineString(strings);
             return ff.literal(geom);
         }else if(CQLParser.MPOLYGON == type){
-            final int n = tree.getChildCount();
-            final Polygon[] polygons = new Polygon[n];
-            for(int i=0; i<n; i++){
-                final CommonTree polyTree = (CommonTree) tree.getChild(i);
-                final LinearRing contour = GF.createLinearRing(parseSequence((CommonTree)polyTree.getChild(0)));
-                final int hn = polyTree.getChildCount();
-                final LinearRing[] holes = new LinearRing[hn-1];
-                for(int j=1; j<hn; j++){
-                    holes[j-1] = GF.createLinearRing(parseSequence((CommonTree)polyTree.getChild(j)));
-                }
-                final Polygon geom = GF.createPolygon(contour,holes);
-                polygons[i] = geom;
+            final CommonTree st = (CommonTree) tree.getChild(0);            
+            final Geometry geom;
+            if(st.getType() == CQLParser.EMPTY){
+                geom = GF.createMultiPolygon(new Polygon[0]);
+            }else{
+                final int n = tree.getChildCount();
+                final Polygon[] polygons = new Polygon[n];
+                for(int i=0; i<n; i++){
+                    final CommonTree polyTree = (CommonTree) tree.getChild(i);
+                    final LinearRing contour = GF.createLinearRing(parseSequence((CommonTree)polyTree.getChild(0)));
+                    final int hn = polyTree.getChildCount();
+                    final LinearRing[] holes = new LinearRing[hn-1];
+                    for(int j=1; j<hn; j++){
+                        holes[j-1] = GF.createLinearRing(parseSequence((CommonTree)polyTree.getChild(j)));
+                    }
+                    final Polygon poly = GF.createPolygon(contour,holes);
+                    polygons[i] = poly;
+                }            
+                geom = GF.createMultiPolygon(polygons);
+            }
+            return ff.literal(geom);
+        }else if(CQLParser.GEOMETRYCOLLECTION == type){
+            final CommonTree st = (CommonTree) tree.getChild(0);            
+            final Geometry geom;
+            if(st.getType() == CQLParser.EMPTY){
+                geom = GF.createGeometryCollection(new Geometry[0]);
+            }else{
+                final int n = tree.getChildCount();
+                final Geometry[] subs = new Geometry[n];
+                for(int i=0; i<n; i++){
+                    final CommonTree subTree = (CommonTree) tree.getChild(i);
+                    final Geometry sub = (Geometry)convertExpression(subTree, ff).evaluate(null);
+                    subs[i] = sub;
+                }            
+                geom = GF.createGeometryCollection(subs);
+            }
+            return ff.literal(geom);
+        }else if(CQLParser.ENVELOPE == type){
+            final CommonTree st = (CommonTree) tree.getChild(0);            
+            final Geometry geom;
+            if(st.getType() == CQLParser.EMPTY){
+                geom = GF.createPolygon(GF.createLinearRing(new Coordinate[0]),new LinearRing[0]);
+            }else{
+                final double west = Double.valueOf(tree.getChild(0).getText());
+                final double east = Double.valueOf(tree.getChild(1).getText());
+                final double north = Double.valueOf(tree.getChild(2).getText());
+                final double south = Double.valueOf(tree.getChild(3).getText());
+                final LinearRing contour = GF.createLinearRing(new Coordinate[]{
+                    new Coordinate(west, north),
+                    new Coordinate(east, north),
+                    new Coordinate(east, south),
+                    new Coordinate(west, south),
+                    new Coordinate(west, north)
+                });
+                geom = GF.createPolygon(contour,new LinearRing[0]);
             }            
-            final Geometry geom = GF.createMultiPolygon(polygons);
             return ff.literal(geom);
         }
         
