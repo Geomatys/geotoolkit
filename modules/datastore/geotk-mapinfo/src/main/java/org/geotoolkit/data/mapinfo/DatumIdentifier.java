@@ -182,12 +182,63 @@ public final class DatumIdentifier {
         DATUM_TABLE.put(114, 6274);
         // 115 ?
         DATUM_TABLE.put(116, 6283);
+        DATUM_TABLE.put(117, 6167);
+        DATUM_TABLE.put(118, 6169);
+        // 119
+        DATUM_TABLE.put(120, 6713);
+        DATUM_TABLE.put(121, 6219);
+        DATUM_TABLE.put(122, 6180);
+        DATUM_TABLE.put(123, 6155);
+        DATUM_TABLE.put(124, 6736);
+        // 125
+        DATUM_TABLE.put(126, 6183);
+        DATUM_TABLE.put(127, 6255);
+        // 128
+        // 129
+        DATUM_TABLE.put(130, 6239);
+        DATUM_TABLE.put(131, 6131);
+        DATUM_TABLE.put(132, 6240);
+        DATUM_TABLE.put(133, 6238);
+        // 134
+        DATUM_TABLE.put(135, 6735);
+        DATUM_TABLE.put(136, 6250);
+        DATUM_TABLE.put(137, 6604);
+        // 138
+        DATUM_TABLE.put(139, 6307);
+        DATUM_TABLE.put(140, 6182);
+        DATUM_TABLE.put(141, 6620);
+        DATUM_TABLE.put(142, 6282);
+        DATUM_TABLE.put(143, 6615);
+        DATUM_TABLE.put(144, 6616);
+        DATUM_TABLE.put(145, 6175);
+        DATUM_TABLE.put(146, 6818);
+        DATUM_TABLE.put(147, 6297);
+        DATUM_TABLE.put(148, 6671);
+        // 149
+        DATUM_TABLE.put(150, 6148);
+        DATUM_TABLE.put(151, 6122);
+        DATUM_TABLE.put(152, 6612);
+        DATUM_TABLE.put(157, 6326);
 
         //3 differents epsg code can be found for mapinfo code 1000 --> 6746, 6745, 6314
         DATUM_TABLE.put(1000, 6314);
         DATUM_TABLE.put(1001, 6284);
         DATUM_TABLE.put(1002, 6807);
         DATUM_TABLE.put(1003, 4149);
+        DATUM_TABLE.put(1004, 6237);
+        DATUM_TABLE.put(1005, 6222);
+        // 1006, 1007, 1008 & 1009 are australian geodetic datums (6202 & 6203) modified. How should we manage it ?
+        DATUM_TABLE.put(1010, 6272);
+        DATUM_TABLE.put(1011, 6124);
+        // 1012
+        DATUM_TABLE.put(1013, 6178);
+        DATUM_TABLE.put(1014, 6200);
+        DATUM_TABLE.put(1015, 6301);
+        DATUM_TABLE.put(1016, 6123);
+        DATUM_TABLE.put(1017, 6610);
+        DATUM_TABLE.put(1018, 6284);
+        DATUM_TABLE.put(1019, 6313);
+        DATUM_TABLE.put(1020, 6818);
 
         DATUM_TABLE.put(9999, 0);
     }

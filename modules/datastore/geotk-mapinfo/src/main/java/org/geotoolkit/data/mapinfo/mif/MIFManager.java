@@ -6,6 +6,7 @@ import org.geotoolkit.feature.simple.DefaultSimpleFeatureType;
 import org.geotoolkit.feature.type.DefaultAttributeDescriptor;
 import org.geotoolkit.feature.type.DefaultAttributeType;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.geotoolkit.referencing.operation.MathTransforms;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.util.ArgumentChecks;
@@ -136,11 +137,25 @@ public class MIFManager {
 
     public void addSchema(Name typeName, FeatureType toAdd) throws DataStoreException, URISyntaxException {
         ArgumentChecks.ensureNonNull("New feature type", toAdd);
-        File f = new File(mifPath.toURI());
-        if (f.exists()) {
-            boolean deleted = f.delete();
-            if (!deleted) {
-                throw new DataStoreException("File already exists and can't be erased.");
+
+        // Try to clear files before rewriting in it.
+        if (MIFUtils.isLocal(mifPath)) {
+            File f = new File(mifPath.toURI());
+            if (f.exists()) {
+                boolean deleted = f.delete();
+                if (!deleted) {
+                    throw new DataStoreException("MIF data already exists and can't be erased.");
+                }
+            }
+        }
+
+        if (MIFUtils.isLocal(midPath)) {
+            File f = new File(midPath.toURI());
+            if (f.exists()) {
+                boolean deleted = f.delete();
+                if (!deleted) {
+                    throw new DataStoreException("MID data already exists and can't be erased.");
+                }
             }
         }
 
@@ -153,10 +168,14 @@ public class MIFManager {
         if (mifBaseType == null) {
             if (toAdd.getGeometryDescriptor() == null && toAdd instanceof SimpleFeatureType) {
                 mifBaseType = (SimpleFeatureType) toAdd;
+                mifColumnsCount = mifBaseType.getAttributeCount();
             } else if (toAdd.getSuper() != null && toAdd.getSuper() instanceof SimpleFeatureType) {
                 mifBaseType = (SimpleFeatureType) toAdd.getSuper();
+                mifColumnsCount = mifBaseType.getAttributeCount();
                 // Check if we should add it to child types too.
                 if (MIFUtils.identifyFeature(toAdd) != null) {
+                    //We check for the crs first
+                    checkTypeCRS(toAdd);
                     mifChildTypes.add(toAdd);
                 }
             } else {
@@ -169,10 +188,29 @@ public class MIFManager {
                                 + mifBaseType + "\nFound :" + toAdd.getSuper());
             } else {
                 if (MIFUtils.identifyFeature(toAdd) != null) {
+                    //We check for the crs first
+                    checkTypeCRS(toAdd);
                     mifChildTypes.add(toAdd);
                 } else {
                     throw new DataStoreException("The geometry for the given type is not supported for MIF geometry");
                 }
+            }
+        }
+    }
+
+    private void checkTypeCRS(FeatureType toCheck) throws DataStoreException {
+
+        if(toCheck.getCoordinateReferenceSystem() == null) return;
+
+        if(mifChildTypes.isEmpty()) {
+                mifCRS = toCheck.getCoordinateReferenceSystem();
+        } else {
+            if(!mifCRS.equals(DefaultGeographicCRS.WGS84)) {
+                if(toCheck.getCoordinateReferenceSystem().equals(mifCRS)) {
+                    return;
+                }
+                throw new DataStoreException("Given type CRS is not compatible with the one previously specified." +
+                        "\nExpected : "+ mifCRS +"\nFound : "+toCheck.getCoordinateReferenceSystem());
             }
         }
     }
@@ -334,6 +372,7 @@ public class MIFManager {
                             }
                         }
                     }
+
                     final CoordinateReferenceSystem crs = ProjectionUtils.buildCRSFromMIF(crsStr.toString());
                     if(crs != null) {
                         mifCRS = crs;
@@ -521,10 +560,10 @@ public class MIFManager {
             headBuilder.append(MIFUtils.HeaderCategory.CHARSET).append(' ').append(mifCharset).append('\n');
             headBuilder.append(MIFUtils.HeaderCategory.DELIMITER).append(' ').append('\"').append(mifDelimiter).append('\"').append('\n');
 
-            if (mifBaseType.getCoordinateReferenceSystem() != null) {
-                String strCRS = ProjectionUtils.crsToMIFSyntax(mifBaseType.getCoordinateReferenceSystem());
+            if (mifCRS != null && mifCRS != DefaultGeographicCRS.WGS84) {
+                String strCRS = ProjectionUtils.crsToMIFSyntax(mifCRS);
                 if(!strCRS.isEmpty()) {
-                    headBuilder.append(MIFUtils.HeaderCategory.COORDSYS).append(' ').append(strCRS).append('\n');
+                    headBuilder.append(strCRS).append('\n');
                 } else {
                     throw new DataStoreException("Given CRS can't be written in MIF file.");
                 }

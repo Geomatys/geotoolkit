@@ -4,26 +4,21 @@ import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.FeatureStoreFinder;
-import org.geotoolkit.data.mapinfo.mif.MIFDataStore;
-import org.geotoolkit.data.mapinfo.mif.MIFDataStoreFactory;
+import org.geotoolkit.data.mapinfo.mif.MIFFeatureStore;
+import org.geotoolkit.data.mapinfo.mif.MIFFeatureStoreFactory;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.pending.demo.Demos;
-import org.geotoolkit.pending.demo.datamodel.shapefile.ShapefileDemo;
 import org.geotoolkit.storage.DataStoreException;
 import org.opengis.feature.Feature;
-import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.Name;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.NoSuchIdentifierException;
 
-import java.io.Serializable;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -46,10 +41,10 @@ public class MifDemo {
         try {
             URL dataLocation = MifDemo.class.getResource("/data/world/HY_WATER_AREA_POLYGON.mif");
             //create using a Parameters object--------------------------------------
-            System.out.println(MIFDataStoreFactory.PARAMETERS_DESCRIPTOR);
+            System.out.println(MIFFeatureStoreFactory.PARAMETERS_DESCRIPTOR);
 
-            final ParameterValueGroup parameters = MIFDataStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
-            Parameters.getOrCreate(MIFDataStoreFactory.URLP, parameters).setValue(dataLocation);
+            final ParameterValueGroup parameters = MIFFeatureStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
+            Parameters.getOrCreate(MIFFeatureStoreFactory.URLP, parameters).setValue(dataLocation);
 
             final FeatureStore store1 = FeatureStoreFinder.open(parameters);
             Set<Name> names = store1.getNames();
@@ -78,9 +73,9 @@ public class MifDemo {
 //                }
 //            }
 
-            final ParameterValueGroup writerParam = MIFDataStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
-            Parameters.getOrCreate(MIFDataStoreFactory.URLP, writerParam).setValue(new URL("file:/tmp/test.mif"));
-            final MIFDataStore writingStore = new MIFDataStore(writerParam);
+            final ParameterValueGroup writerParam = MIFFeatureStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
+            Parameters.getOrCreate(MIFFeatureStoreFactory.URLP, writerParam).setValue(new URL("file:/tmp/test.mif"));
+            final MIFFeatureStore writingStore = new MIFFeatureStore(writerParam);
             writingStore.setDelimiter(',');
             writingStore.createSchema(type1, fType1);
             writingStore.addFeatures(type1, coll1);

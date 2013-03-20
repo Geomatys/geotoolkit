@@ -9,7 +9,6 @@ import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.storage.DataStoreException;
 import org.opengis.feature.Feature;
-import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.Name;
 import org.opengis.feature.type.PropertyDescriptor;
@@ -30,7 +29,7 @@ import java.util.Set;
  * @author Alexis Manin (Geomatys)
  *         Date : 21/02/13
  */
-public class MIFDataStore extends AbstractFeatureStore {
+public class MIFFeatureStore extends AbstractFeatureStore {
 
     private final MIFManager manager;
 
@@ -39,13 +38,13 @@ public class MIFDataStore extends AbstractFeatureStore {
     private final QueryCapabilities queryCapabilities = new DefaultQueryCapabilities(false);
 
     /**
-     * Creates a new instance of MIFDataStore.
+     * Creates a new instance of MIFFeatureStore.
      *
      * @param url The URL of the MIF file to use for this DataStore.
      *
      * @throws DataStoreException If we got a problem getting needed files.
      */
-    public MIFDataStore(final URL url) throws DataStoreException {
+    public MIFFeatureStore(final URL url) throws DataStoreException {
         this(url, null);
     }
 
@@ -57,14 +56,14 @@ public class MIFDataStore extends AbstractFeatureStore {
      * @param url
      * @param namespace
      */
-    public MIFDataStore(final URL url, final String namespace) throws DataStoreException {
+    public MIFFeatureStore(final URL url, final String namespace) throws DataStoreException {
         this(toParameter(url, namespace));
     }
 
-    public MIFDataStore(final ParameterValueGroup params) throws DataStoreException {
+    public MIFFeatureStore(final ParameterValueGroup params) throws DataStoreException {
         super(params);
 
-        final URL filePath = (URL) params.parameter(MIFDataStoreFactory.URLP.getName().toString()).getValue();
+        final URL filePath = (URL) params.parameter(MIFFeatureStoreFactory.URLP.getName().toString()).getValue();
         try {
             manager = new MIFManager(filePath);
         } catch (Exception e) {
@@ -73,9 +72,9 @@ public class MIFDataStore extends AbstractFeatureStore {
     }
 
     private static ParameterValueGroup toParameter(final URL url, final String namespace) {
-        final ParameterValueGroup params = MIFDataStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
-        Parameters.getOrCreate(MIFDataStoreFactory.URLP, params).setValue(url);
-        Parameters.getOrCreate(MIFDataStoreFactory.NAMESPACE, params).setValue(namespace);
+        final ParameterValueGroup params = MIFFeatureStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
+        Parameters.getOrCreate(MIFFeatureStoreFactory.URLP, params).setValue(url);
+        Parameters.getOrCreate(MIFFeatureStoreFactory.NAMESPACE, params).setValue(namespace);
         return params;
     }
 
@@ -84,7 +83,7 @@ public class MIFDataStore extends AbstractFeatureStore {
      */
     @Override
     public FeatureStoreFactory getFactory() {
-        return FeatureStoreFinder.getFactoryById(MIFDataStoreFactory.NAME);
+        return FeatureStoreFinder.getFactoryById(MIFFeatureStoreFactory.NAME);
     }
 
     /**

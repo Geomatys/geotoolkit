@@ -3,19 +3,24 @@ package org.geotoolkit.data.mapinfo;
 import org.geotoolkit.data.mapinfo.mif.MIFUtils;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.geometry.DirectPosition2D;
 import org.geotoolkit.geometry.Envelope2D;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.metadata.iso.extent.DefaultExtent;
+import org.geotoolkit.metadata.iso.extent.DefaultGeographicBoundingBox;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.cs.DefaultCartesianCS;
 import org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis;
 import org.geotoolkit.referencing.cs.DefaultEllipsoidalCS;
+import org.geotoolkit.referencing.operation.DefaultMathTransformFactory;
+import org.geotoolkit.referencing.operation.DefaultTransformation;
 import org.geotoolkit.referencing.operation.provider.UniversalParameters;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.util.ArgumentChecks;
+import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.extent.Extent;
 import org.opengis.metadata.extent.GeographicBoundingBox;
@@ -29,18 +34,12 @@ import org.opengis.referencing.datum.Datum;
 import org.opengis.referencing.datum.DatumAuthorityFactory;
 import org.opengis.referencing.datum.Ellipsoid;
 import org.opengis.referencing.datum.GeodeticDatum;
-import org.opengis.referencing.operation.Conversion;
-import org.opengis.referencing.operation.CoordinateOperationFactory;
-import org.opengis.referencing.operation.OperationMethod;
-import org.opengis.referencing.operation.Projection;
+import org.opengis.referencing.operation.*;
 import org.opengis.util.FactoryException;
 
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -75,12 +74,18 @@ public class ProjectionUtils {
     private static int crsNumber = 0;
 
 
+    /**
+     * Get the coefficients of a projection to put it in a String.
+     * @param source The source projection to parse.
+     * @return A string containing projection's parameters. Never null, but can be empty.
+     * @throws FactoryException If we can't to retrieve the projection parameters.
+     */
     public static String getMIFProjCoefs(Projection source) throws FactoryException {
         final StringBuilder builder = new StringBuilder();
 
         // We must get the projection Map info equivalent to get its valid parameters.
-        ReferenceIdentifier id = IdentifiedObjects.getIdentifier(source, Citations.MAP_INFO);
-        final int projCode = Integer.decode(id.getCode());
+        String id = IdentifiedObjects.lookupIdentifier(Citations.MAP_INFO, source.getMethod(), false);
+        final int projCode = Integer.decode(id);
         ParameterDescriptor[] paramList = getProjectionParameters(projCode);
 
         final ParameterValueGroup coefs = source.getParameterValues();
@@ -216,6 +221,7 @@ public class ProjectionUtils {
          * If Bounds param is defined, we parse it to find the four numbers defining lower and upper corners. If there's
          * a problem during the parsing, we just keep going, since it's not an essential data for CRS definition.
          */
+        Envelope bounds = null;
         try {
             if(boundsStr != null) {
                 Matcher cornerMatch = DOUBLE_PATTERN.matcher(boundsStr);
@@ -228,10 +234,15 @@ public class ProjectionUtils {
                 if(coordCounter >= 4) {
                     double[] minDP = new double[]{coords[0], coords[1]};
                     double[] maxDP = new double[]{coords[2], coords[3]};
-                    final Envelope env = new GeneralEnvelope(minDP, maxDP);
-                    final Extent ext = new DefaultExtent(env);
 
-                    crsIdentifiers.put(ReferenceSystem.DOMAIN_OF_VALIDITY_KEY, ext);
+                    bounds = new GeneralEnvelope(minDP, maxDP);
+                    if(projCode == GEO_PROJ_CODE) {
+                        final GeographicExtent bbox = new DefaultGeographicBoundingBox(bounds);
+                        final DefaultExtent ext = new DefaultExtent();
+                        ext.setGeographicElements(Collections.singleton(bbox));
+                        crsIdentifiers.put(ReferenceSystem.DOMAIN_OF_VALIDITY_KEY, ext);
+                    }
+                    // The case for Projected crs is managed below, after we've defined the needed conversion.
                 }
             }
         } catch (Exception e) {
@@ -308,13 +319,32 @@ public class ProjectionUtils {
             properties.put("name", "MapInfoProjection");
             properties.put("authority", Citations.MAP_INFO);
 
-            Conversion conversion = PROJ_FACTORY.createDefiningConversion(properties, method, projParams);
-
             DefaultCoordinateSystemAxis east =
                     new DefaultCoordinateSystemAxis("East", "E", AxisDirection.EAST, unit);
             DefaultCoordinateSystemAxis north =
                     new DefaultCoordinateSystemAxis("North", "N", AxisDirection.NORTH, unit);
             CartesianCS cs = CS_FACTORY.createCartesianCS(properties, north, east);
+
+            Conversion conversion = PROJ_FACTORY.createDefiningConversion(properties, method, projParams);
+            // now that we've got conversion, we can check for bounds.
+            if (bounds != null) {
+                try {
+                    MathTransformFactory mtFactory = new DefaultMathTransformFactory();
+                    MathTransform transform = CRS.findMathTransform(CRS_FACTORY.createProjectedCRS(crsIdentifiers, baseCRS, conversion, cs), baseCRS);
+                    DirectPosition newLower = new DirectPosition2D(baseCRS);
+                    DirectPosition newUpper = new DirectPosition2D(baseCRS);
+                    transform.transform(bounds.getLowerCorner(), newLower);
+                    transform.transform(bounds.getUpperCorner(), newUpper);
+                    GeographicExtent bbox = new DefaultGeographicBoundingBox(
+                            new GeneralEnvelope(newLower.getCoordinate(), newUpper.getCoordinate()));
+                    Envelope geoEnv = new Envelope2D(newLower, newUpper);
+                    final DefaultExtent ext = new DefaultExtent(geoEnv);
+//                    ext.setGeographicElements(Collections.singleton(bbox));
+                    crsIdentifiers.put(ReferenceSystem.DOMAIN_OF_VALIDITY_KEY, ext);
+                } catch (Exception e) {
+                    LOGGER.log(Level.WARNING, "MIF CoordSys clause : Bounds can't be read.", e);
+                }
+            }
 
             result = CRS_FACTORY.createProjectedCRS(crsIdentifiers, baseCRS, conversion, cs);
         }
@@ -331,10 +361,10 @@ public class ProjectionUtils {
     public static String crsToMIFSyntax(CoordinateReferenceSystem crs) throws DataStoreException, FactoryException {
         ArgumentChecks.ensureNonNull("CRS to convert", crs);
         final StringBuilder builder = new StringBuilder();
-        builder.append(MIFUtils.HeaderCategory.COORDSYS).append(" Earth\nProjection");
+        builder.append("CoordSys Earth\n\tProjection ");
 
-        final String datumEPSGCode = IdentifiedObjects.getName(((SingleCRS)crs).getDatum(), Citations.EPSG);
-        final int datumMIFCode  = DatumIdentifier.getMIFCodeFromEPSG(Integer.decode(datumEPSGCode));
+        final int datumEPSGCode = IdentifiedObjects.lookupEpsgCode(((SingleCRS) crs).getDatum(), false);
+        final int datumMIFCode  = DatumIdentifier.getMIFCodeFromEPSG(datumEPSGCode);
         if(datumMIFCode < 0) {
             throw new DataStoreException("Datum of the given CRS does not get any equivalent in mapInfo.");
         }
@@ -353,7 +383,7 @@ public class ProjectionUtils {
         } else if (crs instanceof ProjectedCRS) {
             final ProjectedCRS pCRS = (ProjectedCRS) crs;
             final Projection proj = pCRS.getConversionFromBase();
-            final String projCode = IdentifiedObjects.getName(proj, Citations.MAP_INFO);
+            final String projCode = IdentifiedObjects.lookupIdentifier(Citations.MAP_INFO, proj.getMethod(), false);
             if(projCode == null) {
                 throw new DataStoreException("Projection of the given CRS does not get any equivalent in mapInfo.");
             }
@@ -361,14 +391,16 @@ public class ProjectionUtils {
 
             // Retrieve needed MIF projection parameters.
             final String coefs = ProjectionUtils.getMIFProjCoefs(proj);
-            builder.append(coefs);
+            if(!coefs.isEmpty()) {
+                builder.append(',').append(coefs);
+            }
         } else {
             throw new DataStoreException("The given CRS can't be converted to MapInfo format.");
         }
 
         final String bounds = ProjectionUtils.getMIFBounds(crs);
         if(!bounds.isEmpty()) {
-            builder.append(", ").append(bounds).append('\n');
+            builder.append(' ').append(bounds).append('\n');
         }
         return builder.toString();
     }

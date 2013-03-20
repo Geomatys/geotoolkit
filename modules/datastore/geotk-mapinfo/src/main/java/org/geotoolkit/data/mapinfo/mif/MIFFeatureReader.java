@@ -1,11 +1,13 @@
 package org.geotoolkit.data.mapinfo.mif;
 
+import org.apache.derby.impl.tools.ij.util;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.util.Converters;
+import org.geotoolkit.util.PeriodUtilities;
 import org.geotoolkit.util.Strings;
 import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeature;
@@ -17,6 +19,8 @@ import org.opengis.referencing.operation.MathTransform;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -138,7 +142,20 @@ public class MIFFeatureReader implements FeatureReader<FeatureType, Feature> {
                     AttributeType att = baseType.getType(i);
                     Object value = null;
                     if (!split[i].isEmpty()) {
-                        value = Converters.convert(split[i], att.getBinding());
+                        // We don't use geotoolkit to parse date, because we have to use a specific date pattern.
+                        if(Date.class.isAssignableFrom(att.getBinding())) {
+                            SimpleDateFormat format = new SimpleDateFormat();
+                            if(split[i].length() > 14) {
+                                format.applyPattern("yyyyMMddHHmmss.SSS");
+                            } else if(split[i].length() == 14) {
+                                format.applyPattern("yyyyMMddHHmmss");
+                            } else {
+                                 format.applyPattern("yyyyMMdd");
+                            }
+                            value = format.parse(split[i]);
+                        } else {
+                            value = Converters.convert(split[i], att.getBinding());
+                        }
                     }
                     resFeature.getProperty(att.getName()).setValue(value);
                 }

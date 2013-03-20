@@ -6,6 +6,7 @@ import org.geotoolkit.data.mapinfo.ProjectionUtils;
 import org.geotoolkit.data.mapinfo.UnitIdentifier;
 import org.geotoolkit.data.mapinfo.mif.geometry.*;
 import org.geotoolkit.feature.FeatureUtilities;
+import org.geotoolkit.filter.function.other.DateFormatFunction;
 import org.geotoolkit.geometry.Envelope2D;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.referencing.IdentifiedObjects;
@@ -31,7 +32,9 @@ import java.awt.geom.Rectangle2D;
 import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
+import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -44,6 +47,13 @@ import java.util.Scanner;
  *         Date : 20/02/13
  */
 public final class MIFUtils {
+
+    private static final DecimalFormat NUM_FORMAT = new DecimalFormat();
+
+    static {
+        NUM_FORMAT.setGroupingUsed(false);
+        NUM_FORMAT.setDecimalSeparatorAlwaysShown(false);
+    }
 
     /**
      * An enum to list the header labels we can encounter in MIF file.
@@ -282,11 +292,13 @@ public final class MIFUtils {
     public static void featureTypeToMIFSyntax(SimpleFeatureType toWorkWith, StringBuilder builder) throws DataStoreException {
         ArgumentChecks.ensureNonNull("FeatureType to convert", toWorkWith);
 
+        String delimiter = "\n\t";
         if(builder == null) {
             builder = new StringBuilder();
         }
+
         if(builder .length() > 0 && builder.charAt(builder.length()-1) != '\n') {
-            builder.append('\n');
+            builder.append(delimiter);
         }
 
         for(AttributeDescriptor desc : toWorkWith.getAttributeDescriptors()) {
@@ -298,7 +310,7 @@ public final class MIFUtils {
             if( mifType == null) {
                 throw new DataStoreException("Type "+desc.getType().getBinding()+" has no equivalent in MIF format.");
             }
-            builder.append(desc.getLocalName()).append(' ').append(mifType.toLowerCase()).append('\n');
+            builder.append(desc.getLocalName()).append(' ').append(mifType.toLowerCase()).append(delimiter);
         }
     }
 
@@ -360,8 +372,9 @@ public final class MIFUtils {
     public static void write(InputStream in, OutputStreamWriter writer) throws IOException {
         InputStreamReader reader = new InputStreamReader(in);
         char[] inBuffer = new char[1024];
-        while(reader.read(inBuffer) >=0) {
-            writer.write(inBuffer);
+        int byteRead = 0;
+        while((byteRead = reader.read(inBuffer)) >= 0) {
+            writer.write(inBuffer, 0, byteRead);
         }
     }
 
@@ -377,9 +390,10 @@ public final class MIFUtils {
         }
         final Object value = prop.getValue();
         if(value instanceof Number) {
-            return NumberFormat.getInstance().format(value);
+            return NUM_FORMAT.format(value);
         } else if(value instanceof Date) {
-            return String.valueOf(((Date) value).getTime());
+            SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
+            return format.format(value);
         }
 
         return value.toString();

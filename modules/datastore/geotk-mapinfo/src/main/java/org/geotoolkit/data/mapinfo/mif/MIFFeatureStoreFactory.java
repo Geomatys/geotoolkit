@@ -26,9 +26,9 @@ import java.util.logging.Logger;
  * @author Alexis Manin (Geomatys)
  *         Date : 21/02/13
  */
-public class MIFDataStoreFactory extends AbstractFileFeatureStoreFactory implements FileFeatureStoreFactory {
+public class MIFFeatureStoreFactory extends AbstractFileFeatureStoreFactory implements FileFeatureStoreFactory {
 
-    public final static Logger LOGGER = Logger.getLogger(MIFDataStoreFactory.class.getName());
+    public final static Logger LOGGER = Logger.getLogger(MIFFeatureStoreFactory.class.getName());
 
     /** factory identification **/
     public static final String NAME = "MIF-MID";
@@ -96,7 +96,7 @@ public class MIFDataStoreFactory extends AbstractFileFeatureStoreFactory impleme
             }
         }
 
-        return new MIFDataStore(filePath, namespace);
+        return new MIFFeatureStore(filePath, namespace);
     }
 
     /**
@@ -108,6 +108,6 @@ public class MIFDataStoreFactory extends AbstractFileFeatureStoreFactory impleme
         final URL filePath = (URL) params.parameter(URLP.getName().toString()).getValue();
         final String namespace = (String) params.parameter(NAMESPACE.getName().toString()).getValue();
 
-        return new MIFDataStore(filePath, namespace);
+        return new MIFFeatureStore(filePath, namespace);
     }
 }

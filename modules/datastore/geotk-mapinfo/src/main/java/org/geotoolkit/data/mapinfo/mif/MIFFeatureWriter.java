@@ -46,6 +46,8 @@ public class MIFFeatureWriter implements FeatureWriter {
         try {
             tmpMidFile = File.createTempFile(UUID.randomUUID().toString(), ".mid");
             tmpMifFile = File.createTempFile(UUID.randomUUID().toString(), ".mif");
+            tmpMidFile.deleteOnExit();
+            tmpMifFile.deleteOnExit();
 
             tmpMifWriter = new FileWriter(tmpMifFile);
             tmpMidWriter = new FileWriter(tmpMidFile);
