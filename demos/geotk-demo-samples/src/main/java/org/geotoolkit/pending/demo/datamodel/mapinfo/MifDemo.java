@@ -24,7 +24,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * A simple example for MIF/MID reading.
+ * A simple example for MIF/MID feature store.
+ *
+ * Use case : Read a MIF/MID file couple, and copy it into new file.
  *
  * @author Alexis Manin (Geomatys)
  *         Date : 12/03/13
@@ -39,46 +41,54 @@ public class MifDemo {
         ParameterValueGroup gr =FactoryFinder.getMathTransformFactory(null).getDefaultParameters("Mercator_1SP");
         System.out.println(gr);
         try {
+
+            // To build a valid MIFFeatureStore, the MIF file URL must be given to the store parameters.
             URL dataLocation = MifDemo.class.getResource("/data/world/HY_WATER_AREA_POLYGON.mif");
-            //create using a Parameters object--------------------------------------
+
             System.out.println(MIFFeatureStoreFactory.PARAMETERS_DESCRIPTOR);
 
             final ParameterValueGroup parameters = MIFFeatureStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
             Parameters.getOrCreate(MIFFeatureStoreFactory.URLP, parameters).setValue(dataLocation);
 
+            // Initialize the store, and create a session to browse it's data.
             final FeatureStore store1 = FeatureStoreFinder.open(parameters);
-            Set<Name> names = store1.getNames();
-
-            Name type0 = (Name) names.toArray()[0];
-            Name type1 = (Name) names.toArray()[1];
-            final FeatureType fType1 = store1.getFeatureType(type1);
-
             Session session = store1.createSession(false);
 
-            FeatureCollection coll0 = session.getFeatureCollection(QueryBuilder.all(type0));
-            FeatureIterator it0 = coll0.iterator();
-            Feature f;
-            while(it0.hasNext()) {
-                System.out.println(it0.next());
-            }
-
-            FeatureCollection coll1 = session.getFeatureCollection(QueryBuilder.all(type1));
-//            FeatureIterator it1 = coll1.iterator();
-//            while(it1.hasNext()) {
-//                f = it1.next();
-//                if(f.getDefaultGeometryProperty() != null) {
-//                    System.out.println(f.getDefaultGeometryProperty());
-//                } else {
-//                    System.out.println(f);
-//                }
-//            }
-
+            // Create a mif featureStore for writing operation.
             final ParameterValueGroup writerParam = MIFFeatureStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
             Parameters.getOrCreate(MIFFeatureStoreFactory.URLP, writerParam).setValue(new URL("file:/tmp/test.mif"));
             final MIFFeatureStore writingStore = new MIFFeatureStore(writerParam);
+            //Here we get a function to set mid file attributes delimiter. MID file is a sort of CSV, and default
+            // delimiter (which is \t) can be changed by user. Here I choose coma.
             writingStore.setDelimiter(',');
-            writingStore.createSchema(type1, fType1);
-            writingStore.addFeatures(type1, coll1);
+
+            // Names should contain several feature types :
+            // - The base type, which describe the attributes all features must have.
+            // - The geometry types. They're feature types describing a specific geometry type we can find in the source
+            // file. All those types inherit from base type, so we get all attributes associated with the geometry.
+            Set<Name> names = store1.getNames();
+
+            for(Name typeName : names) {
+                final FeatureType fType = store1.getFeatureType(typeName);
+                // Get all features of given type.
+                FeatureCollection collection = session.getFeatureCollection(QueryBuilder.all(typeName));
+                // If the type we got don't get super type, it's the store base type. Just print info.
+                if(fType.getSuper() == null) {
+                    FeatureIterator it = collection.iterator();
+                    while(it.hasNext()) {
+                        System.out.println(it.next());
+                    }
+                } else {
+                    // If we got the geometric data, we write it into new MIF/MID files.
+
+                    // First we must specify we must add a featureType to the store. If no base Type have already been
+                    // specified, the given feature type parent will be used. Else, we check that given type is compliant
+                    // with stored base type.
+                    writingStore.createSchema(typeName, fType);
+
+                    writingStore.addFeatures(typeName, collection);
+                }
+            }
 
         } catch(Exception ex) {
             LOGGER.log(Level.SEVERE, "Unexpected exception happened.", ex);
