@@ -71,7 +71,6 @@ public class DescribeProcessTest {
 
    @Test
    public void testRequestAndMarshall(){
-       Marshaller marshaller = null;
         try {
             final List<String> identifiers = new ArrayList<String>();
             identifiers.add("identifier1");
@@ -87,11 +86,11 @@ public class DescribeProcessTest {
             desc100.setIdentifiers(identifiers);
             final DescribeProcess request = desc100.makeRequest();
             assertEquals("WPS", request.getService());
-            assertEquals("1.0.0", request.getVersion());
+            assertEquals("1.0.0", request.getVersion().toString());
             assertEquals(request.getIdentifier(),identifierList);
 
             final StringWriter stringWriter = new StringWriter();
-            marshaller = WPSMarshallerPool.getInstance().acquireMarshaller();
+            final Marshaller marshaller = WPSMarshallerPool.getInstance().acquireMarshaller();
             marshaller.marshal(request,stringWriter);
 
             String result = StringUtilities.removeXmlns(stringWriter.toString());
@@ -103,11 +102,9 @@ public class DescribeProcessTest {
                     + "    <ows:Identifier>identifier3</ows:Identifier>\n"
                     + "</wps:DescribeProcess>\n";
             assertEquals(expectedMarshalledRequest, result);
+            WPSMarshallerPool.getInstance().release(marshaller);
         } catch (JAXBException ex) {
             fail(ex.getLocalizedMessage());
-            return;
-        } finally {
-            WPSMarshallerPool.getInstance().release(marshaller);
         }
    }
 
