@@ -17,6 +17,7 @@
 package org.geotoolkit.wms.xml;
 
 import net.jcip.annotations.Immutable;
+import org.geotoolkit.ows.xml.RequestBase;
 import org.geotoolkit.util.Version;
 
 
@@ -28,7 +29,7 @@ import org.geotoolkit.util.Version;
  * @author Guilhem Legal (Geomatys)
  */
 @Immutable
-public final class GetCapabilities {
+public final class GetCapabilities implements RequestBase {
     /**
      * The output format for this request.
      */
@@ -36,7 +37,9 @@ public final class GetCapabilities {
 
     private final String language;
 
-    private final Version version;
+    private Version version;
+    
+    private String service;
     
     private final String updateSequence;
 
@@ -74,17 +77,36 @@ public final class GetCapabilities {
     /**
      * {@inheritDoc}
      */
+    @Override
     public final String getService() {
-        return "WMS";
+        if (service == null) {
+            return "WMS";
+        }
+        return service;
     }
 
     /**
      * {@inheritDoc}
      */
+    @Override
     public final Version getVersion() {
         return version;
     }
 
+    @Override
+    public void setService(final String value) {
+        this.service = value;
+    }
+
+    @Override
+    public void setVersion(final String version) {
+        if (version != null) {
+            this.version = new Version(version);
+        } else {
+            this.version = null;
+        }
+    }
+    
     /**
      * {@inheritDoc}
      */

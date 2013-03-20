@@ -17,6 +17,7 @@
 package org.geotoolkit.sld.xml;
 
 import net.jcip.annotations.Immutable;
+import org.geotoolkit.ows.xml.RequestBase;
 import org.geotoolkit.sld.xml.Specification.StyledLayerDescriptor;
 import org.geotoolkit.util.Version;
 
@@ -31,7 +32,7 @@ import org.opengis.feature.type.Name;
  * @author Guilhem Legal (Geomatys)
  */
 @Immutable
-public final class GetLegendGraphic {
+public final class GetLegendGraphic implements RequestBase {
     /**
      * Layer to consider.
      */
@@ -77,7 +78,9 @@ public final class GetLegendGraphic {
      */
     private final Double scale;
 
-    private final Version version;
+    private Version version;
+    
+    private String service;
 
     /**
      * Builds a {@code GetLegendGraphic} request, using the layer and mime-type specified
@@ -174,14 +177,33 @@ public final class GetLegendGraphic {
     /**
      * {@inheritDoc}
      */
+    @Override
     public final String getService() {
-        return "WMS";
+        if (service == null) {
+            return "WMS";
+        }
+        return service;
     }
 
     /**
      * {@inheritDoc}
      */
+    @Override
     public final Version getVersion() {
         return version;
+    }
+    
+    @Override
+    public void setService(final String value) {
+        this.service = value;
+    }
+
+    @Override
+    public void setVersion(final String version) {
+        if (version != null) {
+            this.version = new Version(version);
+        } else {
+            this.version = null;
+        }
     }
 }

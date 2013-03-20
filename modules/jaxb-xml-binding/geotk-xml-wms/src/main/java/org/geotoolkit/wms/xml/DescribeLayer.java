@@ -18,6 +18,7 @@ package org.geotoolkit.wms.xml;
 
 import java.util.List;
 import net.jcip.annotations.Immutable;
+import org.geotoolkit.ows.xml.RequestBase;
 
 import org.geotoolkit.util.Version;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
@@ -31,13 +32,15 @@ import org.geotoolkit.util.collection.UnmodifiableArrayList;
  * @author Guilhem Legal (Geomatys)
  */
 @Immutable
-public final class DescribeLayer {
+public final class DescribeLayer implements RequestBase {
     /**
      * List of layers to request.
      */
     private final UnmodifiableArrayList<String> layers;
 
-    private final Version version;
+    private Version version;
+    
+    private String service;
 
     /**
      * Builds a {@code DescribeLayer} request, using the layer and mime-type specified.
@@ -64,15 +67,34 @@ public final class DescribeLayer {
     /**
      * {@inheritDoc}
      */
+    @Override
     public final String getService() {
-        return "WMS";
+        if (service == null) {
+            return "WMS";
+        }
+        return service;
     }
 
     /**
      * {@inheritDoc}
      */
+    @Override
     public final Version getVersion() {
         return version;
+    }
+    
+    @Override
+    public void setService(final String value) {
+        this.service = value;
+    }
+
+    @Override
+    public void setVersion(final String version) {
+        if (version != null) {
+            this.version = new Version(version);
+        } else {
+            this.version = null;
+        }
     }
 
 }

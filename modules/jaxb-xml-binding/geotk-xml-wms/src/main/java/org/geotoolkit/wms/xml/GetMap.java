@@ -25,6 +25,7 @@ import java.util.List;
 import net.jcip.annotations.Immutable;
 
 import org.geotoolkit.geometry.ImmutableEnvelope;
+import org.geotoolkit.ows.xml.RequestBase;
 import org.geotoolkit.util.Version;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
 
@@ -43,7 +44,7 @@ import org.opengis.sld.StyledLayerDescriptor;
  * @author Guilhem Legal (Geomatys)
  */
 @Immutable
-public class GetMap {
+public class GetMap implements RequestBase {
     /**
      * Envelope which contains the bounds and the crs for the request.
      */
@@ -104,7 +105,10 @@ public class GetMap {
      */
     private final String exceptions;
 
-    private final Version version;
+    private Version version;
+    
+    private String service;
+    
 
     /**
      * All query parameters, this might hold additional parameters that providers
@@ -357,13 +361,18 @@ public class GetMap {
     /**
      * {@inheritDoc}
      */
+    @Override
     public final String getService() {
-        return "WMS";
+        if (service == null) {
+            return "WMS";
+        }
+        return service;
     }
 
     /**
      * {@inheritDoc}
      */
+    @Override
     public final Version getVersion() {
         return version;
     }
@@ -375,5 +384,17 @@ public class GetMap {
         return parameters;
     }
 
+    @Override
+    public void setService(final String value) {
+        this.service = value;
+    }
 
+    @Override
+    public void setVersion(final String version) {
+        if (version != null) {
+            this.version = new Version(version);
+        } else {
+            this.version = null;
+        }
+    }
 }
