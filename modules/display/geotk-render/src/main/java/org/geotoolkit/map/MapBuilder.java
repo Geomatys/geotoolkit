@@ -37,6 +37,7 @@ import org.geotoolkit.style.DefaultDescription;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
+import org.geotoolkit.coverage.memory.MemoryCoverageReader;
 import org.geotoolkit.util.SimpleInternationalString;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.feature.Feature;
@@ -124,7 +125,7 @@ public final class MapBuilder {
      * @return  CoverageMapLayer
      */
     public static CoverageMapLayer createCoverageLayer(final GridCoverage2D grid, final MutableStyle style, final String name){
-        return createCoverageLayer(new SimpleCoverageReader(grid), 0, style, name);
+        return createCoverageLayer(new MemoryCoverageReader(grid), 0, style, name);
     }
 
     /**
@@ -176,37 +177,6 @@ public final class MapBuilder {
      */
     public static ElevationModel createElevationModel(final GridCoverageReader grid, final Expression offset, final Expression scale){
         return new DefaultElevationModel(grid, offset,scale);
-    }
-
-
-    private static class SimpleCoverageReader extends GridCoverageReader{
-
-        private final GridCoverage2D coverage;
-
-        public SimpleCoverageReader(final GridCoverage2D coverage){
-            this.coverage = coverage;
-        }
-
-        @Override
-        public GeneralGridGeometry getGridGeometry(final int i) throws CoverageStoreException, CancellationException {
-            return (GeneralGridGeometry) coverage.getGridGeometry();
-        }
-
-        @Override
-        public List<GridSampleDimension> getSampleDimensions(final int i) throws CoverageStoreException, CancellationException {
-            return Collections.singletonList(coverage.getSampleDimension(i));
-        }
-
-        @Override
-        public GridCoverage read(final int i, final GridCoverageReadParam gcrp) throws CoverageStoreException, CancellationException {
-            return coverage;
-        }
-
-        @Override
-        public List<? extends GenericName> getCoverageNames() throws CoverageStoreException, CancellationException {
-            return Collections.emptyList();
-        }
-
     }
 
 }

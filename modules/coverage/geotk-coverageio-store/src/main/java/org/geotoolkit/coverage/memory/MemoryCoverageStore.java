@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.coverage;
+package org.geotoolkit.coverage.memory;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -23,6 +23,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CancellationException;
 import java.util.logging.Level;
+import org.geotoolkit.coverage.AbstractCoverageStore;
+import org.geotoolkit.coverage.AbstractCoverageStoreFactory;
+import org.geotoolkit.coverage.CoverageReference;
+import org.geotoolkit.coverage.CoverageStoreContentEvent;
+import org.geotoolkit.coverage.CoverageStoreFactory;
+import org.geotoolkit.coverage.DefaultCoverageReference;
+import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageStoreException;
@@ -127,6 +134,12 @@ public class MemoryCoverageStore extends AbstractCoverageStore {
             this.name = name;
         }
 
+        public void setCoverage(GridCoverage2D coverage) {
+            this.coverage = coverage;
+            final CoverageStoreContentEvent event = fireDataUpdated();
+            getStore().forwardContentEvent(event);
+        }
+
         @Override
         public Name getName() {
             return name;
@@ -193,9 +206,7 @@ public class MemoryCoverageStore extends AbstractCoverageStore {
         
         @Override
         public void write(GridCoverage coverage, GridCoverageWriteParam param) throws CoverageStoreException, CancellationException {
-            ref.coverage = (GridCoverage2D) coverage;
-            final CoverageStoreContentEvent event = ref.fireDataUpdated();
-            ref.getStore().forwardContentEvent(event);
+            ref.setCoverage((GridCoverage2D)coverage);
         }
         
     }

@@ -92,7 +92,7 @@ public class MapContextDemo {
         
     }
 
-    private static FeatureCollection openShapeFile() throws Exception{
+    public static FeatureCollection openShapeFile() throws Exception{
         final Map<String,Serializable> params = new HashMap<String,Serializable>();
         params.put("url", MapContextDemo.class.getResource("/data/world/Countries.shp"));
 
@@ -103,7 +103,7 @@ public class MapContextDemo {
         return collection;
     }
 
-    private static GridCoverageReader openWorldFile() throws Exception{
+    public static GridCoverageReader openWorldFile() throws Exception{
         return CoverageIO.createSimpleReader(new File("data/clouds.jpg"));
     }
 

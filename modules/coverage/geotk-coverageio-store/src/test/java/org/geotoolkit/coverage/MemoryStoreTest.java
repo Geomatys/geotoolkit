@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.coverage;
 
+import org.geotoolkit.coverage.memory.MemoryCoverageStore;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.feature.DefaultName;
