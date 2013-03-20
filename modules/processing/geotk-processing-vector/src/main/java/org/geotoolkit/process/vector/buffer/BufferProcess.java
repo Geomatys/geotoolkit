@@ -131,6 +131,7 @@ public class BufferProcess extends AbstractProcess {
                 //restor to original CRS
                 bufferedGeometry = JTS.transform(bufferedGeometry, projection.inverse());
                 bufferedGeometry = JTS.transform(bufferedGeometry, mtToLongLatCRS.inverse());
+                JTS.setCRS(bufferedGeometry, originalCRS);
                 resultFeature.getProperty(property.getName()).setValue(bufferedGeometry);
 
             } else {
