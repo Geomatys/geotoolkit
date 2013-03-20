@@ -435,10 +435,10 @@ public final class CQL {
             final CommonTree negateNode = (CommonTree)tree.getChild(1);
             if(CQLParser.NOT == negateNode.getType()){
                 final Expression right = convertExpression((CommonTree)tree.getChild(2), ff);
-                return ff.not(ff.like(left, right.evaluate(null, String.class)));
+                return ff.not(ff.like(left, right.evaluate(null, String.class), "%", "_", "\\"));
             }else{
                 final Expression right = convertExpression((CommonTree)tree.getChild(1), ff);
-                return ff.like(left, right.evaluate(null, String.class));
+                return ff.like(left, right.evaluate(null, String.class), "%", "_", "\\");
             }
             
         }else if(CQLParser.IS == type){

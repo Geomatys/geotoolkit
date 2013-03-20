@@ -61,6 +61,7 @@ import org.opengis.filter.FilterVisitor;
     "spatialOps",
     "comparisonOps",
     "logicOps",
+    "temporalOps",
     "id"
 })
 @XmlRootElement(name = "Filter")
@@ -72,6 +73,8 @@ public class FilterType implements Filter, XMLFilter {
     private JAXBElement<? extends ComparisonOpsType> comparisonOps;
     @XmlElementRef(name = "logicOps", namespace = "http://www.opengis.net/ogc", type = JAXBElement.class)
     private JAXBElement<? extends LogicOpsType> logicOps;
+    @XmlElementRef(name = "temporalOps", namespace = "http://www.opengis.net/ogc", type = JAXBElement.class)
+    private JAXBElement<? extends TemporalOpsType> temporalOps;
     @XmlElementRef(name = "_Id", namespace = "http://www.opengis.net/ogc", type = JAXBElement.class)
     private List<JAXBElement<? extends AbstractIdType>> id;
 
@@ -107,6 +110,10 @@ public class FilterType implements Filter, XMLFilter {
         // spatial operator    
         } else if (obj instanceof SpatialOpsType) {
             this.spatialOps = createSpatialOps((SpatialOpsType) obj);
+            
+        // temporal operator    
+        } else if (obj instanceof TemporalOpsType) {
+            this.temporalOps = createTemporalOps((TemporalOpsType) obj);
 
         // id operator
         } else if (obj instanceof AbstractIdType) {
@@ -213,6 +220,27 @@ public class FilterType implements Filter, XMLFilter {
     public void setLogicOps(final LogicOpsType logicOps) {
         this.logicOps = createLogicOps(logicOps);
     }
+    
+    /**
+     * Gets the value of the logicOps property.
+     */
+    public JAXBElement<? extends TemporalOpsType> getTemporalOps() {
+        return temporalOps;
+    }
+    
+    /**
+     * Sets the value of the TemporalOps property.
+     */
+    public void setTemporalOps(final JAXBElement<? extends TemporalOpsType> temporalOps) {
+        this.temporalOps = temporalOps;
+    }
+    
+    /**
+     * Sets the value of the logicOps property.
+     */
+    public void setTemporalOps(final TemporalOpsType tempOps) {
+        this.temporalOps = createTemporalOps(tempOps);
+    }
 
     private void verifyIdFilter() {
         boolean fid = false;
@@ -254,6 +282,8 @@ public class FilterType implements Filter, XMLFilter {
             return logicOps.getValue();
         } else if (spatialOps != null) {
             return spatialOps.getValue();
+        } else if (temporalOps != null) {
+            return temporalOps.getValue();
         }
         return null;
     }
@@ -266,6 +296,9 @@ public class FilterType implements Filter, XMLFilter {
         }
         if (comparisonOps != null) {
             s.append("ComparisonOps: ").append(comparisonOps.getValue().toString()).append('\n');
+        }
+        if (temporalOps != null) {
+            s.append("TemporalOps: ").append(temporalOps.getValue().toString()).append('\n');
         }
         if (logicOps != null) {
             s.append("LogicOps: ").append(logicOps.getValue().toString()).append('\n');
@@ -363,6 +396,41 @@ public class FilterType implements Filter, XMLFilter {
             return null;
         }
     }
+    
+    public static JAXBElement<? extends TemporalOpsType> createTemporalOps(final TemporalOpsType operator) {
+        
+        if (operator instanceof TimeAfterType) {
+            return FACTORY.createTAfter((TimeAfterType) operator);
+        } else if (operator instanceof TimeBeforeType) {
+            return FACTORY.createTBefore((TimeBeforeType) operator);
+        } else if (operator instanceof TimeBeginsType) {
+            return FACTORY.createTBegins((TimeBeginsType) operator);
+        } else if (operator instanceof TimeBegunByType) {
+            return FACTORY.createTBegunBy((TimeBegunByType) operator);
+        } else if (operator instanceof TimeContainsType) {
+            return FACTORY.createTContains((TimeContainsType) operator);
+        } else if (operator instanceof TimeDuringType) {
+            return FACTORY.createTDuring((TimeDuringType) operator);
+        } else if (operator instanceof TimeEndedByType) {
+            return FACTORY.createTEndedBy((TimeEndedByType) operator);
+        } else if (operator instanceof TimeEndsType) {
+            return FACTORY.createTEnds((TimeEndsType) operator);
+        } else if (operator instanceof TimeEqualsType) {
+            return FACTORY.createTEquals((TimeEqualsType) operator);
+        } else if (operator instanceof TimeMeetsType) {
+            return FACTORY.createTMeets((TimeMeetsType) operator);
+        } else if (operator instanceof TimeMetByType) {
+            return FACTORY.createTMetBy((TimeMetByType) operator);
+        } else if (operator instanceof TimeOverlappedByType) {
+            return FACTORY.createTOverlappedBy((TimeOverlappedByType) operator);
+        } else if (operator instanceof TimeOverlapsType) {
+            return FACTORY.createTOveralps((TimeOverlapsType) operator);
+        } else if (operator instanceof TemporalOpsType) {
+            return FACTORY.createTemporalOps((TemporalOpsType) operator);
+        } else {
+            return null;
+        }
+    }
 
     /**
      * @return the prefixMapping
@@ -422,10 +490,17 @@ public class FilterType implements Filter, XMLFilter {
             } else if (this.spatialOps == null && that.spatialOps == null) {
                 spa = true;
             }
+            
+            boolean temp = false;
+            if (this.temporalOps != null && that.temporalOps != null) {
+                temp = Utilities.equals(this.temporalOps.getValue(), that.temporalOps.getValue());
+            } else if (this.temporalOps == null && that.temporalOps == null) {
+                temp = true;
+            }
             /**
              * TODO ID
              */
-            return  comp && spa && log;
+            return  comp && spa && log && temp;
         }
         return false;
     }
@@ -434,6 +509,7 @@ public class FilterType implements Filter, XMLFilter {
     public int hashCode() {
         int hash = 7;
         hash = 29 * hash + (this.spatialOps != null ? this.spatialOps.hashCode() : 0);
+        hash = 29 * hash + (this.temporalOps != null ? this.temporalOps.hashCode() : 0);
         hash = 29 * hash + (this.comparisonOps != null ? this.comparisonOps.hashCode() : 0);
         hash = 29 * hash + (this.logicOps != null ? this.logicOps.hashCode() : 0);
         hash = 29 * hash + (this.id != null ? this.id.hashCode() : 0);

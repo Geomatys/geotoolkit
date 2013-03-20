@@ -255,20 +255,20 @@ public class FilterReadingTest {
 
     @Test
     public void testPropertyIsLike() throws CQLException {
-        final String cql = "att LIKE '%hello?'";
+        final String cql = "att LIKE '%hello_'";
         final Object obj = CQL.parseFilter(cql);        
         assertTrue(obj instanceof PropertyIsLike);
         final PropertyIsLike filter = (PropertyIsLike) obj;
-        assertEquals(FF.like(FF.property("att"),"%hello?"), filter);   
+        assertEquals(FF.like(FF.property("att"),"%hello_", "%", "_", "\\"), filter);   
     }
 
     @Test
     public void testPropertyIsNotLike() throws CQLException {
-        final String cql = "att NOT LIKE '%hello?'";
+        final String cql = "att NOT LIKE '%hello_'";
         final Object obj = CQL.parseFilter(cql);        
         assertTrue(obj instanceof Not);
         final Not filter = (Not) obj;
-        assertEquals(FF.not(FF.like(FF.property("att"),"%hello?")), filter);   
+        assertEquals(FF.not(FF.like(FF.property("att"),"%hello_", "%", "_", "\\")), filter);   
     }
     
     @Test

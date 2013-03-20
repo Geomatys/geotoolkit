@@ -220,7 +220,7 @@ public class FilterFactoryImpl implements FilterFactory2 {
 
     @Override
     public And and(final List<Filter> f) {
-        return new AndType(f);
+        return new AndType(f.toArray());
     }
 
     @Override
