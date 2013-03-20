@@ -144,7 +144,7 @@ public abstract class AbstractMapItem implements MapItem {
      * {@inheritDoc }
      */
     @Override
-    public void setUserPropertie(final String key,final Object value){
+    public void setUserProperty(final String key,final Object value){
         parameters.put(key, value);
     }
 
@@ -152,7 +152,7 @@ public abstract class AbstractMapItem implements MapItem {
      * {@inheritDoc }
      */
     @Override
-    public Object getUserPropertie(final String key){
+    public Object getUserProperty(final String key){
         return parameters.get(key);
     }
 

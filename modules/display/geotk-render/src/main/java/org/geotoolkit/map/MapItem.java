@@ -88,14 +88,14 @@ public interface MapItem {
      * @param key
      * @param value  
      */
-    void setUserPropertie(String key,Object value);
+    void setUserProperty(String key,Object value);
 
     /**
      * Get a stored value knowing the key.
      * @param key
      * @return user property object , can be null
      */
-    Object getUserPropertie(String key);
+    Object getUserProperty(String key);
 
     /**
      * @return map of all user properties.
