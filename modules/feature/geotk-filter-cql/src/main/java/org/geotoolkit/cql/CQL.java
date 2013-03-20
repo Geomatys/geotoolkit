@@ -559,8 +559,10 @@ public final class CQL {
             return ff.disjoint(exp1,exp2);
         }else if(CQLParser.DWITHIN == type){
             final Expression exp1 = convertExpression((CommonTree)tree.getChild(0), ff);
-            final Expression exp2 = convertExpression((CommonTree)tree.getChild(1), ff);  
-            return ff.dwithin(exp1,exp2,0,"");
+            final Expression exp2 = convertExpression((CommonTree)tree.getChild(1), ff);
+            final double distance = Double.valueOf(tree.getChild(2).getText());
+            final String unit = tree.getChild(3).getText();
+            return ff.dwithin(exp1,exp2,distance,unit);
         }else if(CQLParser.EQUALS == type){
             final Expression exp1 = convertExpression((CommonTree)tree.getChild(0), ff);
             final Expression exp2 = convertExpression((CommonTree)tree.getChild(1), ff);  

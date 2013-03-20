@@ -385,7 +385,7 @@ public class FilterReadingTest {
 
     @Test
     public void testDWithin() throws CQLException {
-        final String cql = "DWITHIN(\"att\" ,POLYGON((10 20, 30 40, 50 60, 10 20)))";
+        final String cql = "DWITHIN(\"att\" ,POLYGON((10 20, 30 40, 50 60, 10 20)), 10, meters)";
         final Object obj = CQL.parseFilter(cql);        
         assertTrue(obj instanceof DWithin);
         final DWithin filter = (DWithin) obj;

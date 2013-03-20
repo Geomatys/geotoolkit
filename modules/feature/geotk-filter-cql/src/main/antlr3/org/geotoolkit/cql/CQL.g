@@ -317,7 +317,7 @@ filter_geometry
         | CONTAINS^ LPAREN! expression COMMA! expression RPAREN!
         | CROSS^ LPAREN! expression COMMA! expression RPAREN!
         | DISJOINT^ LPAREN! expression COMMA! expression RPAREN!
-        | DWITHIN^ LPAREN! expression COMMA! expression RPAREN!
+        | DWITHIN^ LPAREN! expression COMMA! expression COMMA! expression COMMA! expression RPAREN!
         | EQUALS^ LPAREN! expression COMMA! expression RPAREN!
         | INTERSECT^ LPAREN! expression COMMA! expression RPAREN!
         | OVERLAP^ LPAREN! expression COMMA! expression RPAREN!
