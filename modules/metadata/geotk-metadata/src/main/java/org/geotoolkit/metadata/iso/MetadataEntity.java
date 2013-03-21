@@ -27,7 +27,6 @@ import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.metadata.Identifier;
 
-import org.geotoolkit.xml.Namespaces;
 import org.geotoolkit.xml.IdentifierMap;
 import org.geotoolkit.xml.IdentifierSpace;
 import org.geotoolkit.xml.IdentifiedObject;
@@ -121,7 +120,7 @@ public class MetadataEntity extends ModifiableMetadata implements IdentifiedObje
      * @since 3.19
      */
     @XmlID
-    @XmlAttribute(namespace = Namespaces.GCO)
+    @XmlAttribute  // Defined in "gco" as unqualified attribute.
     @XmlJavaTypeAdapter(StringConverter.class)
     private String getID() {
         return getIdentifierMap().getSpecialized(IdentifierSpace.ID);
@@ -143,7 +142,7 @@ public class MetadataEntity extends ModifiableMetadata implements IdentifiedObje
      *
      * @since 3.19
      */
-    @XmlAttribute(namespace = Namespaces.GCO)
+    @XmlAttribute  // Defined in "gco" as unqualified attribute.
     @XmlJavaTypeAdapter(StringConverter.class)
     private String getUUID() {
         final UUID uuid = getIdentifierMap().getSpecialized(IdentifierSpace.UUID);

@@ -191,7 +191,7 @@ public final strictfp class ObjectReferenceMarshallingTest extends TestBase {
             "    <gco:CharacterString>A title</gco:CharacterString>\n" +
             "  </gmd:title>\n" +
             "  <gmd:series>\n" +
-            "    <gmd:CI_Series gco:uuid=\"" + uuid + "\">\n" +
+            "    <gmd:CI_Series uuid=\"" + uuid + "\">\n" +
             "      <gmd:name>\n" +
             "        <gco:CharacterString>A series</gco:CharacterString>\n" +
             "      </gmd:name>\n" +
@@ -226,7 +226,7 @@ public final strictfp class ObjectReferenceMarshallingTest extends TestBase {
             "  <gmd:title>\n" +
             "    <gco:CharacterString>A title</gco:CharacterString>\n" +
             "  </gmd:title>\n" +
-            "  <gmd:series gco:uuidref=\"" + uuid + "\"/>\n" +
+            "  <gmd:series uuidref=\"" + uuid + "\"/>\n" +
             "</gmd:CI_Citation>";
 
         final Citation fromUUID = (Citation) XML.unmarshal(xml);
