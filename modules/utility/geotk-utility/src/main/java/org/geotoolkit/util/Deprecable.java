@@ -35,8 +35,11 @@ package org.geotoolkit.util;
  *
  * @since 3.20
  * @module
+ *
+ * @deprecated Moved to Apache SIS as {@link org.apache.sis.util.Deprecable}.
  */
-public interface Deprecable {
+@Deprecated
+public interface Deprecable extends org.apache.sis.util.Deprecable {
     /**
      * Returns {@code true} if this instance is deprecated.
      *
