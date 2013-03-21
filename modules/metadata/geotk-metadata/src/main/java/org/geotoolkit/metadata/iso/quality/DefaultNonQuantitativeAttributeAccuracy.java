@@ -49,7 +49,7 @@ public class DefaultNonQuantitativeAttributeAccuracy extends AbstractThematicAcc
     private static final long serialVersionUID = 2659617465862554345L;
 
     /**
-     * Constructs an initially empty non quantitative attribute correctness.
+     * Constructs an initially empty non quantitative attribute accuracy.
      */
     public DefaultNonQuantitativeAttributeAccuracy() {
     }

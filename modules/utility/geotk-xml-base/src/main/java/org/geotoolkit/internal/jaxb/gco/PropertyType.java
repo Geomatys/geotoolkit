@@ -230,7 +230,7 @@ public abstract class PropertyType<ValueType extends PropertyType<ValueType,Boun
      * @category gco:ObjectReference
      * @since 3.18 (derived from 3.13)
      */
-    @XmlAttribute(name = "uuidref", namespace = Namespaces.GCO)
+    @XmlAttribute(name = "uuidref") // Defined in "gco" as unqualified attribute.
     public final String getUUIDREF() {
         final ObjectReference ref = reference(false);
         return (ref != null) ? ref.anyUUID : null;

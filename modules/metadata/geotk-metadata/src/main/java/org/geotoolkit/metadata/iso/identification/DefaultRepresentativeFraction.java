@@ -49,7 +49,7 @@ public class DefaultRepresentativeFraction extends Number implements Representat
     /**
      * Serial number for compatibility with different versions.
      */
-    private static final long serialVersionUID = 7228422109144637537L;
+    private static final long serialVersionUID = -715235893904309869L;
 
     /**
      * The number below the line in a vulgar fraction.

@@ -292,7 +292,7 @@ public class DefaultExtent extends MetadataEntity implements Extent {
                      */
                     final Boolean inclusion = bounds.getInclusion();
                     ensureNonNull("inclusion", inclusion);
-                    if (inclusion.booleanValue()) {
+                    if (inclusion) {
                         candidate = bounds;
                     }
                 } else {
