@@ -1,13 +1,11 @@
 package org.geotoolkit.data.mapinfo.mif;
 
-import org.apache.derby.impl.tools.ij.util;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.util.Converters;
-import org.geotoolkit.util.PeriodUtilities;
 import org.geotoolkit.util.Strings;
 import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeature;
