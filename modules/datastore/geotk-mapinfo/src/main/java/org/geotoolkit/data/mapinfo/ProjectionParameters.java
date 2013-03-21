@@ -32,6 +32,7 @@ public class ProjectionParameters {
     /** A map whose key is the MapInfo projection code, and value is a list of the possible parameters for it (their indice in the previous list). */
     private static final Map<Integer, int[]> PROJECTION_PARAMETERS = new HashMap<Integer, int[]>();
     static {
+        PROJECTION_PARAMETERS.put(1, new int[0]);              //Longitude / Latitude
         PROJECTION_PARAMETERS.put(9,  new int[]{0,1,2,3,6,7}); //Albers
         PROJECTION_PARAMETERS.put(17, new int[]{0});           //Gall
         PROJECTION_PARAMETERS.put(7,  new int[]{0,1,4,5,6,7}); //Hotine oblique mercator

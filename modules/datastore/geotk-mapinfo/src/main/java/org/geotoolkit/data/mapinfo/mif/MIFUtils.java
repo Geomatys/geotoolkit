@@ -292,13 +292,12 @@ public final class MIFUtils {
     public static void featureTypeToMIFSyntax(SimpleFeatureType toWorkWith, StringBuilder builder) throws DataStoreException {
         ArgumentChecks.ensureNonNull("FeatureType to convert", toWorkWith);
 
-        String delimiter = "\n\t";
         if(builder == null) {
             builder = new StringBuilder();
         }
 
         if(builder .length() > 0 && builder.charAt(builder.length()-1) != '\n') {
-            builder.append(delimiter);
+            builder.append('\n');
         }
 
         for(AttributeDescriptor desc : toWorkWith.getAttributeDescriptors()) {
@@ -310,7 +309,7 @@ public final class MIFUtils {
             if( mifType == null) {
                 throw new DataStoreException("Type "+desc.getType().getBinding()+" has no equivalent in MIF format.");
             }
-            builder.append(desc.getLocalName()).append(' ').append(mifType.toLowerCase()).append(delimiter);
+            builder.append('\t').append(desc.getLocalName()).append(' ').append(mifType.toLowerCase()).append('\n');
         }
     }
 

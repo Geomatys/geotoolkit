@@ -1,12 +1,15 @@
 package org.geotoolkit.data.mapinfo;
 
 import org.geotoolkit.factory.AuthorityFactoryFinder;
+import org.geotoolkit.referencing.IdentifiedObjects;
+import org.geotoolkit.referencing.datum.BursaWolfParameters;
+import org.geotoolkit.referencing.datum.DefaultEllipsoid;
+import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
+import org.geotoolkit.referencing.datum.DefaultPrimeMeridian;
 import org.geotoolkit.referencing.factory.epsg.DirectEpsgFactory;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.util.ArgumentChecks;
-import org.opengis.referencing.datum.Datum;
-import org.opengis.referencing.datum.DatumAuthorityFactory;
-import org.opengis.referencing.datum.GeodeticDatum;
+import org.opengis.referencing.datum.*;
 import org.opengis.util.FactoryException;
 
 import javax.measure.unit.Unit;
@@ -51,6 +54,60 @@ public final class DatumIdentifier {
         return -1;
     }
 
+    /**
+     * Build a MIF datum from a Geotk one. If we can find an existing one MapInfo datums, we just erturn its code.
+     * Otherwise, we must build a custom datum using Bursa Wolf transformation (to WGS 84).
+     * @param source The datum to write.
+     * @return A String representing the given datum as MapInfo needs it.
+     * @throws FactoryException If we don't find a per-existing code, and we cannot retrieve datum ellipsoid.
+     * @throws DataStoreException Same conditions as FactoryException.
+     */
+    public static String getMIFDatum(GeodeticDatum source) throws FactoryException, DataStoreException {
+        StringBuilder builder = new StringBuilder();
+
+        final int epsgCode = IdentifiedObjects.lookupEpsgCode(source, false);
+        final int mifCode = getMIFCodeFromEPSG(epsgCode);
+
+        // If we can't find a code matching, we build a custom CRS.
+        if(mifCode < 0) {
+            if(!(source instanceof DefaultGeodeticDatum)) {
+                throw new DataStoreException("Unsupported datum type.");
+            }
+
+            int customCode = 999;
+
+            int ellipsoidCode = EllipsoidIdentifier.getMIFCode(source.getEllipsoid());
+            if(ellipsoidCode < 0) {
+                throw new DataStoreException("We're unable to find an ellipsoid for source datum.");
+            }
+
+            BursaWolfParameters bwParams = ((DefaultGeodeticDatum) source).getBursaWolfParameters(DefaultGeodeticDatum.WGS84);
+
+            double primeShift = 0;
+            if(source.getPrimeMeridian() != DefaultPrimeMeridian.GREENWICH) {
+                customCode = 9999;
+                primeShift = source.getPrimeMeridian().getGreenwichLongitude();
+            }
+
+            builder .append(customCode).append(", ")
+                    .append(ellipsoidCode).append(", ")
+                    .append(bwParams.dx).append(", ")
+                    .append(bwParams.dy).append(", ")
+                    .append(bwParams.dz).append(", ")
+                    .append(bwParams.ex).append(", ")
+                    .append(bwParams.ey).append(", ")
+                    .append(bwParams.ez).append(", ")
+                    .append(bwParams.ppm);
+
+            if(primeShift != 0) {
+                builder.append(", ").append(primeShift);
+            }
+        } else {
+            builder.append(mifCode);
+        }
+        return builder.toString();
+    }
+
     public static GeodeticDatum getDatumFromMIFCode(int datumCode) throws FactoryException {
         GeodeticDatum datum = null;
         final Integer epsgDatum = DatumIdentifier.getEPSGDatumCode(datumCode);
@@ -60,6 +117,59 @@ public final class DatumIdentifier {
 
         }
         return datum;
+    }
+
+    /**
+     * Build a Geodetic datum from a MapInfo ellipsoid code and Bursa Wolf parameters to WGS84.
+     * @param parameters The parameters for datum making. Order is :
+     *                   0 --> Ellipsoid code (MapInfo code)
+     *                   1 --> Shift on X axis (meters)
+     *                   2 --> Shift on Y axis (meters)
+     *                   3 --> Shift on Z axis (meters)
+     *                   Next are facultative :
+     *                   4 --> Rotation on X axis (arc second)
+     *                   5 --> Rotation on Y axis (arc second)
+     *                   6 --> Rotation on Z axis (arc second)
+     *                   7 --> Scaling (in part per million)
+     *                   8 --> Prime meridian longitude to greenwich
+     * @return A geodetic datum object.
+     * @throws DataStoreException If there's not enough parameters.
+     * @throws FactoryException If we've got a problem while ellipsoid building.
+     */
+    public static GeodeticDatum buildCustomDatum(double[] parameters) throws DataStoreException, FactoryException {
+        BursaWolfParameters bwParams = new BursaWolfParameters(DefaultGeodeticDatum.WGS84);
+        if(parameters.length < 1) {
+            throw new DataStoreException("There's not enough parameters to build a valid datum. An ellipsoid code is required.");
+        }
+
+        // Get the ellipsoid
+        int ellipsoidCode = (int) parameters[0];
+        Ellipsoid ellipse = EllipsoidIdentifier.getEllipsoid(ellipsoidCode);
+
+        if(parameters.length > 3) {
+            bwParams.dx = parameters[1];
+            bwParams.dy = parameters[2];
+            bwParams.dz = parameters[3];
+        }
+
+        if(parameters.length > 7) {
+            bwParams.ex  = parameters[4];
+            bwParams.ey  = parameters[5];
+            bwParams.ez  = parameters[6];
+            bwParams.ppm = parameters[7];
+        }
+
+        // If we've got 9 parameters, the datum is not based on Greenwich meridian.
+        PrimeMeridian pMeridian = DefaultPrimeMeridian.GREENWICH;
+        if(parameters.length > 8) {
+            pMeridian = new DefaultPrimeMeridian("Greenwich"+((parameters[8] > 0)? "+"+parameters[8] : parameters[8]), parameters[8]);
+        }
+
+        final Map<String, Object> properties = new HashMap<String, Object>();
+        properties.put(GeodeticDatum.NAME_KEY, ellipse.getName().getCode()+"_custom_datum");
+        properties.put(DefaultGeodeticDatum.BURSA_WOLF_KEY, bwParams);
+
+        return new DefaultGeodeticDatum(properties, ellipse, pMeridian);
     }
 
     //Fill table
@@ -242,5 +352,4 @@ public final class DatumIdentifier {
 
         DATUM_TABLE.put(9999, 0);
     }
-
 }

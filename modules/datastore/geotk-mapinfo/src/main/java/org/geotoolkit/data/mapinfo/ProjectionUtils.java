@@ -153,13 +153,21 @@ public class ProjectionUtils {
 
         Map<String, Object> crsIdentifiers = new HashMap<String, Object>();
 
-        CoordinateReferenceSystem result = null;
-        GeodeticDatum datum = null;
-        Unit unit = null;
-        GeographicCRS baseCRS = null;
+        int projCode = -1;
+        ParameterDescriptor[] paramList;
 
+        GeodeticDatum datum = null;
+
+        Unit unit;
+
+        GeographicCRS baseCRS;
+
+        CoordinateReferenceSystem result;
+
+        // Which value we're on.
         int position  = 0;
 
+        // Remove useless data from string.
         mifCRS = mifCRS.trim();
         final boolean removeStart =
             mifCRS.regionMatches(true, 0, MIFUtils.HeaderCategory.COORDSYS.name(), 0, MIFUtils.HeaderCategory.COORDSYS.name().length());
@@ -173,7 +181,7 @@ public class ProjectionUtils {
         }
         mifCRS = mifCRS.substring(EARTH_PROJ_TYPE.length()).trim();
 
-        // Store bounds and affine units information apart to re-use it later.
+        // Store bounds and affine transformation apart to re-use it later.
         Matcher boundsMatch = Pattern.compile(BOUNDS_NAME, Pattern.CASE_INSENSITIVE).matcher(mifCRS);
         if(boundsMatch.find()) {
             boundsStr = mifCRS.substring(boundsMatch.start());
@@ -191,27 +199,45 @@ public class ProjectionUtils {
             throw new DataStoreException("Missing informations : A CoordSys must at least define projection type, datum and unit.");
         }
 
+        Pattern codeMatch = Pattern.compile("\\d+");
+
         //find projection type
-        int projCode = -1;
-        Matcher projMatch = Pattern.compile("\\d+").matcher(crsParameters[position++]);
+        Matcher projMatch = codeMatch.matcher(crsParameters[position++]);
         if(projMatch.find()) {
             projCode = Integer.decode(projMatch.group());
         }
+        paramList = getProjectionParameters(projCode);
 
         // Datum
         int datumCode = -1;
-        Matcher datumMatch = Pattern.compile("\\d+").matcher(crsParameters[position++]);
+        Matcher datumMatch = codeMatch.matcher(crsParameters[position++]);
         if(datumMatch.find()) {
             datumCode = Integer.decode(datumMatch.group());
-            datum = DatumIdentifier.getDatumFromMIFCode(datumCode);
+            // If we've got a custom datum, check for its ellipsoid and Bursa Wolf parameters.
+            if(datumCode == 999 || datumCode == 9999) {
+                int dParamNumber = crsParameters.length-(position+paramList.length+1);
+
+                double[] bursaWolfParameters = new double[dParamNumber];
+                for(int i = 0 ; i < dParamNumber ; i++) {
+                    Matcher match = DOUBLE_PATTERN.matcher(crsParameters[position++]);
+                    if(match.find()) {
+                        // For rotation parameters, we must inverse value.
+                        bursaWolfParameters[i] = Double.parseDouble(match.group());
+                    } else {
+                        throw new DataStoreException("One of the custom datum parameters can't be read.");
+                    }
+                }
+                datum = DatumIdentifier.buildCustomDatum(bursaWolfParameters);
+
+            } else {
+                datum = DatumIdentifier.getDatumFromMIFCode(datumCode);
+            }
         }
 
         // Unit
         unit = UnitIdentifier.getUnitFromCode(crsParameters[position++]);
 
-        if(projCode <= 0) {
-            throw new DataStoreException("One of the following mandatory parameter can't be read : Projection code");
-        } else if(datum == null) {
+        if(datum == null) {
             throw new DataStoreException("One of the following mandatory parameter can't be read : datum code");
         } else if (unit == null) {
             throw new DataStoreException("One of the following mandatory parameter can't be read : unit code");
@@ -234,8 +260,8 @@ public class ProjectionUtils {
                 if(coordCounter >= 4) {
                     double[] minDP = new double[]{coords[0], coords[1]};
                     double[] maxDP = new double[]{coords[2], coords[3]};
-
                     bounds = new GeneralEnvelope(minDP, maxDP);
+
                     if(projCode == GEO_PROJ_CODE) {
                         final GeographicExtent bbox = new DefaultGeographicBoundingBox(bounds);
                         final DefaultExtent ext = new DefaultExtent();
@@ -274,9 +300,6 @@ public class ProjectionUtils {
 
             final ParameterDescriptorGroup projDesc = method.getParameters();
             final ParameterValueGroup projParams = projDesc.createValue();
-
-            //The real managed parameters
-            ParameterDescriptor[] paramList = getProjectionParameters(projCode);
 
             //Parse coefficients given in the CoordSys string. The order is REALLY important, so we browse possible
             // parameters list with an index.
@@ -363,11 +386,7 @@ public class ProjectionUtils {
         final StringBuilder builder = new StringBuilder();
         builder.append("CoordSys Earth\n\tProjection ");
 
-        final int datumEPSGCode = IdentifiedObjects.lookupEpsgCode(((SingleCRS) crs).getDatum(), false);
-        final int datumMIFCode  = DatumIdentifier.getMIFCodeFromEPSG(datumEPSGCode);
-        if(datumMIFCode < 0) {
-            throw new DataStoreException("Datum of the given CRS does not get any equivalent in mapInfo.");
-        }
+        final String mifDatum  = DatumIdentifier.getMIFDatum((GeodeticDatum) ((SingleCRS) crs).getDatum());
 
         //Unit
         final CoordinateSystem cs = crs.getCoordinateSystem();
@@ -378,7 +397,7 @@ public class ProjectionUtils {
 
         // Geographic CRS (special) case, mapinfo proj code is 1.
         if(crs instanceof GeographicCRS) {
-            builder.append('1').append(", ").append(datumMIFCode).append(", ").append(mifUnitCode);
+            builder.append('1').append(", ").append(mifDatum).append(", ").append(mifUnitCode);
 
         } else if (crs instanceof ProjectedCRS) {
             final ProjectedCRS pCRS = (ProjectedCRS) crs;
@@ -387,12 +406,12 @@ public class ProjectionUtils {
             if(projCode == null) {
                 throw new DataStoreException("Projection of the given CRS does not get any equivalent in mapInfo.");
             }
-            builder.append(projCode).append(", ").append(datumMIFCode).append(", ").append(mifUnitCode);
+            builder.append(projCode).append(", ").append(mifDatum).append(", ").append(mifUnitCode);
 
             // Retrieve needed MIF projection parameters.
             final String coefs = ProjectionUtils.getMIFProjCoefs(proj);
             if(!coefs.isEmpty()) {
-                builder.append(',').append(coefs);
+                builder.append(", ").append(coefs);
             }
         } else {
             throw new DataStoreException("The given CRS can't be converted to MapInfo format.");
@@ -400,7 +419,7 @@ public class ProjectionUtils {
 
         final String bounds = ProjectionUtils.getMIFBounds(crs);
         if(!bounds.isEmpty()) {
-            builder.append(' ').append(bounds).append('\n');
+            builder.append(' ').append(bounds);
         }
         return builder.toString();
     }
