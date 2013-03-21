@@ -58,6 +58,11 @@
           <artifactId>geotk-jtswrapper</artifactId>
           <version>${project.version}</version>
       </dependency>
+      <dependency>
+          <groupId>org.codehaus.groovy</groupId>
+          <artifactId>groovy-all</artifactId>
+          <scope>provided</scope>
+      </dependency>
 
       <dependency>
           <groupId>org.geotoolkit.project</groupId>
@@ -74,6 +79,7 @@
           <artifactId>derby</artifactId>
           <scope>test</scope>
       </dependency>
+      
 
       <dependency>
         <groupId>commons-beanutils</groupId>
