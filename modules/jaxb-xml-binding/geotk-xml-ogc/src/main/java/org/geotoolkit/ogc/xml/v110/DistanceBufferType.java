@@ -40,6 +40,7 @@ import org.geotoolkit.gml.xml.v311.OrientableSurfaceType;
 import org.geotoolkit.gml.xml.v311.PointType;
 import org.geotoolkit.gml.xml.v311.PolyhedralSurfaceType;
 import org.geotoolkit.gml.xml.v311.RingType;
+import org.opengis.filter.spatial.DistanceBufferOperator;
 
 
 /**
@@ -70,7 +71,7 @@ import org.geotoolkit.gml.xml.v311.RingType;
     "abstractGeometry",
     "distance"
 })
-public class DistanceBufferType extends SpatialOpsType {
+public class DistanceBufferType extends SpatialOpsType implements DistanceBufferOperator {
 
     @XmlElement(name = "PropertyName", required = true)
     private PropertyNameType propertyName;
@@ -191,6 +192,7 @@ public class DistanceBufferType extends SpatialOpsType {
         return distance;
     }
 
+    @Override
     public double getDistance() {
         if (distance != null) {
             return distance.getValue();
@@ -198,6 +200,7 @@ public class DistanceBufferType extends SpatialOpsType {
         return 0.0;
     }
 
+    @Override
     public String getDistanceUnits() {
         if (distance != null) {
             return distance.getUnits();
@@ -205,10 +208,12 @@ public class DistanceBufferType extends SpatialOpsType {
         return null;
     }
 
+    @Override
     public Expression getExpression1() {
         return propertyName;
     }
 
+    @Override
     public Expression getExpression2() {
         if (abstractGeometry != null) {
             return abstractGeometry.getValue();

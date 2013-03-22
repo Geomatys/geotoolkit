@@ -29,6 +29,7 @@ import org.geotoolkit.gml.xml.v321.EnvelopeType;
 import org.geotoolkit.util.Utilities;
 import org.opengis.filter.FilterVisitor;
 import org.opengis.filter.expression.Expression;
+import org.opengis.filter.spatial.DistanceBufferOperator;
 
 /**
  * <p>Java class for DistanceBufferType complex type.
@@ -57,7 +58,7 @@ import org.opengis.filter.expression.Expression;
     "any",
     "distance"
 })
-public class DistanceBufferType extends SpatialOpsType {
+public class DistanceBufferType extends SpatialOpsType implements DistanceBufferOperator {
 
     @XmlElementRef(name = "expression", namespace = "http://www.opengis.net/fes/2.0", type = JAXBElement.class)
     private JAXBElement<?> expression;
@@ -221,6 +222,7 @@ public class DistanceBufferType extends SpatialOpsType {
         return distance;
     }
 
+    @Override
     public double getDistance() {
         if (distance != null) {
             return distance.getValue();
@@ -240,6 +242,7 @@ public class DistanceBufferType extends SpatialOpsType {
         this.distance = value;
     }
 
+    @Override
     public String getDistanceUnits() {
         if (distance != null) {
             return distance.getUom();
@@ -247,6 +250,7 @@ public class DistanceBufferType extends SpatialOpsType {
         return null;
     }
 
+    @Override
     public Expression getExpression1() {
         if (expression != null && expression.getValue() instanceof Expression) {
             return (Expression)expression.getValue();
@@ -254,9 +258,22 @@ public class DistanceBufferType extends SpatialOpsType {
         return null;
     }
 
+    @Override
     public Expression getExpression2() {
-        if (any instanceof Expression) {
-            return (Expression) any;
+        if (expression != null) {
+            if (expression.getValue() instanceof Expression) {
+                return (Expression)expression.getValue();
+            } else if (expression.getValue() != null){
+                throw new IllegalArgumentException("The object:" + expression.getValue() + "can be casted as an Expression");
+            }
+        }
+        final Object a = getAny();
+        if (a != null) {
+            if (a instanceof Expression) {
+                return (Expression)a;
+            } else {
+                throw new IllegalArgumentException("The object:" + a + "can be casted as an Expression");
+            }
         }
         return null;
     }

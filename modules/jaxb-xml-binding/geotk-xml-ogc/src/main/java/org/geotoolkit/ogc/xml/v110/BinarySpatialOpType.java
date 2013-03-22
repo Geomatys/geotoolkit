@@ -21,7 +21,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlSeeAlso;
-import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.v311.AbstractGeometryType;
 import org.geotoolkit.gml.xml.v311.CurveType;
@@ -41,6 +40,7 @@ import org.geotoolkit.gml.xml.v311.RingType;
 import org.geotoolkit.util.Utilities;
 import org.opengis.filter.FilterVisitor;
 import org.opengis.filter.expression.Expression;
+import org.opengis.filter.spatial.BinarySpatialOperator;
 
 
 /**
@@ -78,7 +78,7 @@ import org.opengis.filter.expression.Expression;
     "abstractGeometry"
 })
 @XmlSeeAlso({PropertyNameType.class})
-public class BinarySpatialOpType extends SpatialOpsType {
+public class BinarySpatialOpType extends SpatialOpsType implements BinarySpatialOperator {
 
     @XmlElementRef(name = "AbstractGeometry", namespace = "http://www.opengis.net/gml", type = JAXBElement.class)
     private JAXBElement<? extends AbstractGeometryType> abstractGeometry;
@@ -89,11 +89,9 @@ public class BinarySpatialOpType extends SpatialOpsType {
     @XmlElementRef(name = "Envelope",         namespace = "http://www.opengis.net/gml", type = JAXBElement.class)
     private JAXBElement<EnvelopeType> envelope;
 
-    @XmlTransient
-    private ObjectFactory ogcFactory = new ObjectFactory();
+    private static final ObjectFactory ogcFactory = new ObjectFactory();
 
-    @XmlTransient
-    private org.geotoolkit.gml.xml.v311.ObjectFactory gmlFactory = new org.geotoolkit.gml.xml.v311.ObjectFactory();
+    private static final org.geotoolkit.gml.xml.v311.ObjectFactory gmlFactory = new org.geotoolkit.gml.xml.v311.ObjectFactory();
 
     /**
      * An empty constructor used by JAXB
@@ -182,12 +180,22 @@ public class BinarySpatialOpType extends SpatialOpsType {
         return null;
     }
 
+    @Override
     public Expression getExpression1() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        if (propertyName != null) {
+            return propertyName.getValue();
+        }
+        return null;
     }
 
+    @Override
     public Expression getExpression2() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        if (abstractGeometry != null) {
+            return abstractGeometry.getValue();
+        } else if (envelope != null) {
+            return envelope.getValue();
+        }
+        return null;
     }
 
     @Override

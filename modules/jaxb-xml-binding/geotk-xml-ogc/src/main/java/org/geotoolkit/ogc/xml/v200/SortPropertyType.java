@@ -122,7 +122,7 @@ public class SortPropertyType implements SortBy {
      */
     @Override
     public PropertyName getPropertyName() {
-        return new org.geotoolkit.ogc.xml.v110.PropertyNameType(valueReference); // issue here
+        return new InternalPropertyName(valueReference);
     }
 
     /**

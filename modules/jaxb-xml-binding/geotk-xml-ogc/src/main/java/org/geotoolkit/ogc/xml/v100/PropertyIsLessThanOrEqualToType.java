@@ -19,6 +19,7 @@ package org.geotoolkit.ogc.xml.v100;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
+import org.opengis.filter.PropertyIsLessThanOrEqualTo;
 
 /**
  *
@@ -27,10 +28,17 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "PropertyIsLessThanOrEqualTo")
-public class PropertyIsLessThanOrEqualToType extends BinaryComparisonOpType {
+public class PropertyIsLessThanOrEqualToType extends BinaryComparisonOpType implements PropertyIsLessThanOrEqualTo {
     
     public PropertyIsLessThanOrEqualToType() {
         
+    }
+    
+    /**
+     * Build a new Binary comparison operator
+     */
+    public PropertyIsLessThanOrEqualToType(final LiteralType literal, final PropertyNameType propertyName) {
+        super(literal, propertyName);
     }
     
     public PropertyIsLessThanOrEqualToType(final PropertyIsLessThanOrEqualToType that) {

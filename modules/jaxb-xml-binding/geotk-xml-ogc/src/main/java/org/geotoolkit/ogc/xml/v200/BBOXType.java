@@ -32,7 +32,6 @@ import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.Envelope;
 import org.geotoolkit.gml.xml.v321.DirectPositionType;
 import org.geotoolkit.gml.xml.v321.EnvelopeType;
-import org.geotoolkit.ogc.xml.v110.PropertyNameType;
 import org.geotoolkit.util.Utilities;
 import org.opengis.filter.FilterVisitor;
 import org.opengis.filter.expression.Expression;
@@ -241,7 +240,7 @@ public class BBOXType extends SpatialOpsType implements BBOX {
 
     @Override
     public Expression getExpression1() {
-        return new PropertyNameType(getPropertyName());
+        return new InternalPropertyName(getPropertyName());
     }
 
     @Override

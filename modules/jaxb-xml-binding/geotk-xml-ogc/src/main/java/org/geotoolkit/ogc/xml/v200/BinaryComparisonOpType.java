@@ -26,7 +26,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.ogc.xml.v110.PropertyNameType;
 import org.geotoolkit.util.Utilities;
 import org.opengis.filter.BinaryComparisonOperator;
 import org.opengis.filter.FilterVisitor;
@@ -222,10 +221,10 @@ public class BinaryComparisonOpType extends ComparisonOpsType implements BinaryC
         for (JAXBElement<?> elem : getExpression()) {
             final Object value = elem.getValue();
             if (value instanceof String) {
-                return new PropertyNameType((String) value);
+                return new InternalPropertyName((String) value);
             }
-            if (value instanceof PropertyNameType) {
-                return (PropertyNameType) value;
+            if (value instanceof InternalPropertyName) {
+                return (InternalPropertyName) value;
             }
         }
         return null;
