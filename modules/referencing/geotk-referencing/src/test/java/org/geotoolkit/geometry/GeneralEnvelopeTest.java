@@ -20,7 +20,7 @@ package org.geotoolkit.geometry;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.DirectPosition;
 
-import org.geotoolkit.math.XMath;
+import org.apache.sis.math.MathFunctions;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 
 import org.junit.*;
@@ -77,7 +77,7 @@ public final strictfp class GeneralEnvelopeTest {
             final double lower, final double ymin, final double upper, final double ymax)
     {
         final double xmin, xmax;
-        if (XMath.isNegative(upper - lower)) { // Check for anti-meridian spanning.
+        if (MathFunctions.isNegative(upper - lower)) { // Check for anti-meridian spanning.
             xmin = -180;
             xmax = +180;
         } else {

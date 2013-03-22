@@ -39,7 +39,7 @@ import org.apache.sis.util.StringBuilders;
 
 import static org.geotoolkit.internal.InternalUtilities.epsilonEqual;
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
-import static org.geotoolkit.math.XMath.SIGN_BIT_MASK;
+import static org.apache.sis.internal.util.Utilities.SIGN_BIT_MASK;
 import static org.apache.sis.math.MathFunctions.isNegative;
 import static org.apache.sis.math.MathFunctions.isPositive;
 

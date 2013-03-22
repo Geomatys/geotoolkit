@@ -38,7 +38,7 @@ import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.CharSequences;
 import org.apache.sis.util.ComparisonMode;
 import org.apache.sis.math.MathFunctions;
-import org.geotoolkit.math.Statistics;
+import org.apache.sis.math.Statistics;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.io.ContentFormatException;
 import org.geotoolkit.io.LineFormat;
@@ -613,13 +613,13 @@ public class GeneralMatrix extends GMatrix implements XMatrix {
          */
         final int numRow = matrix.getNumRow();
         final int numCol = matrix.getNumCol();
-        final Statistics statistics = new Statistics();
+        final Statistics statistics = new Statistics(null);
         for (int j=0; j<numRow; j++) {
             for (int i=0; i<numCol; i++) {
                 statistics.add(matrix.getElement(j,i));
             }
         }
-        final NumberFormat format = statistics.getNumberFormat(null);
+        final NumberFormat format = NumberFormat.getNumberInstance();
         format.setGroupingUsed(false);
         final int columnWidth = format.getMaximumFractionDigits() + 6;
         final FieldPosition dummy = new FieldPosition(0);

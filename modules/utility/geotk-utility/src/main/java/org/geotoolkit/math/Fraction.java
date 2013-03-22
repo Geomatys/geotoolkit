@@ -18,6 +18,7 @@
 package org.geotoolkit.math;
 
 import org.geotoolkit.util.Cloneable;
+import org.apache.sis.math.MathFunctions;
 
 
 /**
@@ -158,12 +159,12 @@ public final class Fraction extends Number implements Comparable<Fraction>, Clon
     private void simplify() {
         // Simplify  0/x  as  0/1
         if (numerator == 0) {
-            denominator = XMath.sgn(denominator);
+            denominator = MathFunctions.sgn(denominator);
             return;
         }
         // Simplify  x/0  as  1/0
         if (denominator == 0) {
-            numerator = XMath.sgn(numerator);
+            numerator = MathFunctions.sgn(numerator);
             return;
         }
         // Simplify  x/xy  as  1/y

@@ -28,8 +28,9 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.InternationalString;
 
 import org.geotoolkit.math.XMath;
+import org.apache.sis.math.MathFunctions;
 import org.geotoolkit.util.NumberRange;
-import org.geotoolkit.util.converter.Numbers;
+import org.apache.sis.util.Numbers;
 import org.geotoolkit.util.SimpleInternationalString;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
@@ -518,7 +519,7 @@ public class Category implements Serializable {
         this.name    = inverse.name;
         this.ARGB    = inverse.ARGB;
         if (!isQuantitative) {
-            minimum = maximum = XMath.toNaN(((int) Math.round((inverse.minimum + inverse.maximum)/2)) % 0x200000);
+            minimum = maximum = MathFunctions.toNanFloat(((int) Math.round((inverse.minimum + inverse.maximum)/2)) % 0x200000);
             transform = LinearTransform1D.create(0, inverse.minimum); // geophysics to sample
             return;
         }

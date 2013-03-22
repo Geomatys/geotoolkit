@@ -34,7 +34,7 @@ import java.text.ParseException;
 
 import org.geotoolkit.math.Vector;
 import org.geotoolkit.math.VectorPair;
-import org.geotoolkit.math.Statistics;
+import org.apache.sis.math.Statistics;
 import org.geotoolkit.gui.swing.Dialog;
 import org.geotoolkit.gui.swing.Plot2D;
 import org.geotoolkit.internal.swing.SwingUtilities;

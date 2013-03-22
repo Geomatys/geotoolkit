@@ -27,7 +27,7 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.ProjectedCRS;
 
-import org.geotoolkit.math.Statistics;
+import org.apache.sis.math.Statistics;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.factory.AbstractAuthorityFactory;
@@ -115,7 +115,7 @@ final strictfp class ClientThread extends Thread {
         this.id         = id;
         this.factory    = factory;
         this.random     = new Random(179702531L + id);
-        this.statistics = new Statistics();
+        this.statistics = new Statistics(null);
         this.lock       = lock;
         this.result     = createEmptyResultMap();
     }

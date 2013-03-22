@@ -64,7 +64,7 @@ import org.opengis.metadata.extent.GeographicBoundingBox;
 
 import org.geotoolkit.util.DateRange;
 import org.geotoolkit.util.MeasurementRange;
-import org.geotoolkit.math.Statistics;
+import org.apache.sis.math.Statistics;
 import org.apache.sis.measure.Units;
 import org.apache.sis.measure.Angle;
 import org.apache.sis.measure.Latitude;
@@ -717,7 +717,7 @@ public class LayerList extends WindowCreator {
                 }
                 final Set<Number> z = layer.getAvailableElevations();
                 if (!isNullOrEmpty(z)) {
-                    final Statistics stats = new Statistics();
+                    final Statistics stats = new Statistics(null);
                     for (final Number value : z) {
                         stats.add(value.doubleValue());
                     }
@@ -725,7 +725,7 @@ public class LayerList extends WindowCreator {
                     final StringBuffer buffer = new StringBuffer();
                     final List<String> fz = new ArrayList<>(z.size());
                     synchronized (heightFormat) {
-                        stats.configure(heightFormat);
+                        org.geotoolkit.math.Statistics.configure(stats, heightFormat);
                         for (final Number value : z) {
                             heightFormat.format(value, buffer, pos).append("    ");
                             fz.add(buffer.toString());

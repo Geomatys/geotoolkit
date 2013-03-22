@@ -21,7 +21,7 @@ import java.awt.Rectangle;
 import java.awt.Dimension;
 import java.io.IOException;
 
-import org.geotoolkit.math.Statistics;
+import org.apache.sis.math.Statistics;
 
 import org.junit.*;
 import static org.junit.Assert.*;

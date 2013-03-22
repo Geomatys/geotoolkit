@@ -32,7 +32,7 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.operation.MathTransformFactory;
 
 import org.geotoolkit.io.TableWriter;
-import org.geotoolkit.math.Statistics;
+import org.apache.sis.math.Statistics;
 import org.geotoolkit.geometry.Envelopes;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.referencing.datum.DefaultEllipsoid;
@@ -141,8 +141,8 @@ public final strictfp class WarpFactoryTest extends ReferencingTestBase {
      */
     private void compare(final String name, final MathTransform2D transform, final Warp tested) {
         final Warp expected = new WarpAdapter(name, transform);
-        final Statistics sx = new Statistics();
-        final Statistics sy = new Statistics();
+        final Statistics sx = new Statistics("sx");
+        final Statistics sy = new Statistics("sy");
         float[] expPt = null;
         float[] tstPt = null;
         final int xmin = imageBounds.x;

@@ -25,7 +25,7 @@ import java.awt.geom.Point2D;
 import java.util.concurrent.CountDownLatch;
 import java.util.Map;
 
-import org.geotoolkit.math.Statistics;
+import org.apache.sis.math.Statistics;
 
 import org.apache.sis.util.Classes;
 import org.junit.*;
@@ -100,7 +100,7 @@ public final strictfp class StressTest extends EpsgFactoryTestBase {
          * end of this method.
          */
         final Map<Integer, Point2D.Double> result = ClientThread.createEmptyResultMap();
-        final Statistics statistics = new Statistics();
+        final Statistics statistics = new Statistics(null);
         Throwable exception = null;
         for (int i=0; i<RUNNER_COUNT; i++) {
             final ClientThread thread = runners[i];

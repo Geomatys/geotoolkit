@@ -72,7 +72,6 @@ import org.geotoolkit.metadata.TypeValuePolicy;
 import org.geotoolkit.metadata.ValueRestriction;
 import org.geotoolkit.metadata.MetadataStandard;
 import org.geotoolkit.metadata.UnmodifiableMetadataException;
-import org.geotoolkit.internal.CodeLists;
 import org.geotoolkit.resources.Errors;
 
 import static javax.imageio.metadata.IIOMetadataFormat.*;
@@ -80,6 +79,7 @@ import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.toElementName;
 import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.NAME_POLICY;
 import static org.geotoolkit.internal.image.io.GridDomainAccessor.ARRAY_ATTRIBUTE_NAME;
+import org.apache.sis.util.iso.Types;
 
 
 /**
@@ -631,11 +631,30 @@ public class SpatialMetadataFormatBuilder extends Builder<SpatialMetadataFormat>
     }
 
     /**
+     * Returns the list of UML identifiers for the given code list type.
+     * If a code has no UML identifier, then the programmatic name is used as a fallback.
+     *
+     * @param  codeType The type of code list.
+     * @return The list of UML identifiers or programmatic names for the given
+     *         code list, or an empty array if none.
+     *
+     * @since 3.03
+     */
+    private static String[] identifiers(final Class<? extends CodeList<?>> codeType) {
+        final CodeList<?>[] codes = Types.getCodeValues(codeType);
+        final String[] ids = new String[codes.length];
+        for (int i=0; i<codes.length; i++) {
+            ids[i] = Types.getCodeName(codes[i]);
+        }
+        return ids;
+    }
+
+    /**
      * Returns the code list identifiers, with some changes for code inherited from
      * legacy specifications.
      */
     private static String[] getCodeList(final Class<? extends CodeList<?>> codeType) {
-        String[] identifiers = CodeLists.identifiers(codeType);
+        String[] identifiers = identifiers(codeType);
         if (codeType == AxisDirection.class) {
             for (int i=0; i<identifiers.length; i++) {
                 // Replace "CS_AxisOrientationEnum.CS_AO_Other" by something more readable.

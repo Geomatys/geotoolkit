@@ -28,7 +28,7 @@ import java.io.IOException;
 
 import org.apache.sis.util.CharSequences;
 import org.geotoolkit.io.TableWriter;
-import org.geotoolkit.math.Statistics;
+import org.apache.sis.math.Statistics;
 import org.geotoolkit.test.TestBase;
 
 import org.junit.*;
@@ -194,7 +194,7 @@ public final strictfp class CacheTest extends TestBase {
         /*
          * Verifies the values.
          */
-        final Statistics beforeGC = new Statistics();
+        final Statistics beforeGC = new Statistics(null);
         for (final Map.Entry<Integer,Integer> entry : cache.entrySet()) {
             final int key = entry.getKey();
             final int value = entry.getValue();
@@ -237,7 +237,7 @@ public final strictfp class CacheTest extends TestBase {
         System.gc();
         Thread.sleep(100);
         System.gc();
-        final Statistics afterGC = new Statistics();
+        final Statistics afterGC = new Statistics(null);
         for (final Map.Entry<Integer,Integer> entry : cache.entrySet()) {
             final int key = entry.getKey();
             final int value = entry.getValue();

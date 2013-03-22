@@ -17,7 +17,7 @@
  */
 package org.geotoolkit.referencing.operation;
 
-import org.geotoolkit.math.Statistics;
+import org.apache.sis.math.Statistics;
 import org.geotoolkit.referencing.GeodeticCalculator;
 import static java.lang.StrictMath.*;
 
@@ -137,7 +137,7 @@ final strictfp class SamplePoints {
             NAD27_TO_WGS84,
             // More may be added in the future.
         };
-        final Statistics stats = new Statistics();
+        final Statistics stats = new Statistics(null);
         final GeodeticCalculator c = new GeodeticCalculator();
         for (final SamplePoints[] samples : samplesList) {
             for (final SamplePoints sample : samples) {

@@ -23,7 +23,7 @@ import java.awt.Rectangle;
 import java.io.IOException;
 import net.jcip.annotations.ThreadSafe;
 
-import org.geotoolkit.math.Statistics;
+import org.apache.sis.math.Statistics;
 import org.geotoolkit.resources.Errors;
 
 import static org.apache.sis.util.ArgumentChecks.ensureStrictlyPositive;
@@ -414,7 +414,7 @@ public class MosaicProfiler {
         final Rectangle region = this.region; // Shared instance - do not modify!
         final Rectangle sample = new Rectangle();
         final Dimension subsampling = new Dimension();
-        final Statistics stats = new Statistics();
+        final Statistics stats = new Statistics(null);
         while (--numSamples >= 0) {
             final int sx = minSubsampling.width  + random.nextInt(dsx);
             final int sy = minSubsampling.height + random.nextInt(dsy);
