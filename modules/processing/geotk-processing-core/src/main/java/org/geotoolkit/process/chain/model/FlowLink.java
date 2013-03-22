@@ -69,9 +69,9 @@ public class FlowLink {
     public Object getSource(final Chain chain) {
         //source is an input param
         if (sourceId == Integer.MIN_VALUE) {
-            return ChainElement.BEGIN;
+            return ElementProcess.BEGIN;
         }
-        for (ChainElement desc : chain.getChainElements()) {
+        for (Element desc : chain.getElements()) {
             if (desc.getId() == sourceId) {
                 return desc;
             }
@@ -85,9 +85,9 @@ public class FlowLink {
     public Object getTarget(final Chain seq) {
         //targer is an output param
         if (targetId == Integer.MAX_VALUE) {
-            return ChainElement.END;
+            return ElementProcess.END;
         }
-        for (ChainElement desc : seq.getChainElements()) {
+        for (Element desc : seq.getElements()) {
             if (desc.getId() == targetId) {
                 return desc;
             }

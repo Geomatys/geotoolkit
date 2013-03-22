@@ -110,7 +110,7 @@ public class DataLink {
                 }
             }
         }
-        for (ChainElement desc : chain.getChainElements()) {
+        for (Element desc : chain.getElements()) {
             if (desc.getId() == sourceId) {
                 return desc;
             }
@@ -135,7 +135,7 @@ public class DataLink {
                 }
             }
         }
-        for (ChainElement desc : seq.getChainElements()) {
+        for (Element desc : seq.getElements()) {
             if (desc.getId() == targetId) {
                 return desc;
             }

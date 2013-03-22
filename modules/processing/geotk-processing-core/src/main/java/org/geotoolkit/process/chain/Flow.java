@@ -23,7 +23,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.geotoolkit.process.chain.model.Chain;
-import org.geotoolkit.process.chain.model.ChainElement;
+import org.geotoolkit.process.chain.model.Element;
+import org.geotoolkit.process.chain.model.ElementProcess;
 import org.geotoolkit.process.chain.model.FlowLink;
 
 /**
@@ -31,45 +32,9 @@ import org.geotoolkit.process.chain.model.FlowLink;
  *
  * @author Johann Sorel (Geomatys)
  */
-final class ChainFlow {
+final class Flow {
 
-    static final class ExecutionNode{
-
-        private final Object object;
-        private final List<ExecutionNode> children = new ArrayList<ExecutionNode>();
-        private final List<FlowLink> links = new ArrayList<FlowLink>();
-        private final boolean isInput;
-        private final boolean isOutput;
-
-        private ExecutionNode(Object object, boolean isInput, boolean isOutput) {
-            this.object = object;
-            this.isInput = isInput;
-            this.isOutput = isOutput;
-        }
-
-        public Object getObject() {
-            return object;
-        }
-
-        public List<ExecutionNode> getChildren() {
-            return children;
-        }
-
-        public List<FlowLink> getLinks() {
-            return links;
-        }
-
-        public boolean isInput() {
-            return isInput;
-        }
-
-        public boolean isOutput() {
-            return isOutput;
-        }
-
-    }
-
-    private ChainFlow() {}
+    private Flow() {}
 
     /**
      * Analyze the model and create a Node graph.
@@ -81,35 +46,35 @@ final class ChainFlow {
      *
      * Links are translated with the getChildren method.
      */
-    static Collection<ExecutionNode> createExecutionFlow(final Chain chain){
+    static Collection<FlowNode> createFlow(final Chain chain){
 
-        final ExecutionNode inputNode = new ExecutionNode(ChainElement.BEGIN,true,false);
-        final ExecutionNode outputNode = new ExecutionNode(ChainElement.END,false,true);
+        final FlowNode inputNode = new FlowNode(ElementProcess.BEGIN,true,false);
+        final FlowNode outputNode = new FlowNode(ElementProcess.END,false,true);
 
-        final ExecutionNode inputParamNode  = new ExecutionNode(chain.getInputs(),true,false);
-        final ExecutionNode outputParamNode = new ExecutionNode(chain.getOutputs(),false,true);
+        final FlowNode inputParamNode  = new FlowNode(chain.getInputs(),true,false);
+        final FlowNode outputParamNode = new FlowNode(chain.getOutputs(),false,true);
 
-        final Map<Object,ExecutionNode> nodes = new HashMap<Object,ExecutionNode>();
+        final Map<Object,FlowNode> nodes = new HashMap<Object,FlowNode>();
         nodes.put(inputNode,inputNode);
         nodes.put(outputNode,outputNode);
         nodes.put(inputParamNode,inputParamNode);
         nodes.put(outputParamNode,outputParamNode);
 
-        for(Object obj : chain.getChainElements()) {nodes.put(obj,new ExecutionNode(obj,false,false));}
+        for(Object obj : chain.getElements()) {nodes.put(obj,new FlowNode(obj,false,false));}
 
         for(FlowLink link : chain.getFlowLinks()){
             Object source = link.getSource(chain);
             Object target = link.getTarget(chain);
 
-            if(source.equals(ChainElement.BEGIN)){
+            if(source.equals(ElementProcess.BEGIN)){
                 source = inputNode;
             }
-            if(target.equals(ChainElement.END)){
+            if(target.equals(ElementProcess.END)){
                 target = outputNode;
             }
 
-            final ExecutionNode sourceNode = nodes.get(source);
-            final ExecutionNode targetNode = nodes.get(target);
+            final FlowNode sourceNode = nodes.get(source);
+            final FlowNode targetNode = nodes.get(target);
 
             sourceNode.children.add(targetNode);
             sourceNode.links.add(link);
@@ -126,26 +91,26 @@ final class ChainFlow {
      * @param nodes
      * @return List
      */
-    static List<List<ExecutionNode>> sortByRankExec(Collection<ExecutionNode> nodes){
+    static List<List<FlowNode>> sortByRank(Collection<FlowNode> nodes){
 
-        nodes = new ArrayList<ExecutionNode>(nodes);
+        nodes = new ArrayList<FlowNode>(nodes);
 
-        final List<List<ExecutionNode>> ranked = new ArrayList<List<ExecutionNode>>();
+        final List<List<FlowNode>> ranked = new ArrayList<List<FlowNode>>();
 
         //extract in/out/begin/end nodes
-        ExecutionNode inNode = null;
-        ExecutionNode outNode = null;
-        ExecutionNode beginNode = null;
-        ExecutionNode endNode = null;
-        for(ExecutionNode n : nodes){
+        FlowNode inNode = null;
+        FlowNode outNode = null;
+        FlowNode beginNode = null;
+        FlowNode endNode = null;
+        for(FlowNode n : nodes){
             if (n.isInput) {
-                if (n.object instanceof ChainElement) {
+                if (n.object instanceof Element) {
                     beginNode = n;
                 } else {
                     inNode = n;
                 }
             } else if (n.isOutput) {
-                if (n.object instanceof ChainElement) {
+                if (n.object instanceof Element) {
                     endNode = n;
                 } else {
                     outNode = n;
@@ -158,13 +123,13 @@ final class ChainFlow {
         nodes.remove(outNode);
 
         while(!nodes.isEmpty()){
-            final List<ExecutionNode> step = new ArrayList<ExecutionNode>();
+            final List<FlowNode> step = new ArrayList<FlowNode>();
             ranked.add(step);
 
             loop:
-            for(ExecutionNode candidate : nodes){
+            for(FlowNode candidate : nodes){
                 //check amought remaining nodes if one of them is a parent of this node
-                for(ExecutionNode parent : nodes){
+                for(FlowNode parent : nodes){
                     if(parent.children.contains(candidate)){
                         continue loop;
                     }
@@ -182,4 +147,5 @@ final class ChainFlow {
 
         return ranked;
     }
+    
 }

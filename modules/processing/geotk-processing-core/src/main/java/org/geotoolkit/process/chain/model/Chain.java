@@ -43,7 +43,6 @@ import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.xml.MarshallerPool;
-import org.opengis.parameter.ParameterDescriptor;
 import org.w3c.dom.Node;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
@@ -59,10 +58,7 @@ public class Chain implements Comparable<Chain> {
 
     @XmlTransient
     private static MarshallerPool POOL;
-    
-    public static final Integer IN_PARAMS = Integer.MIN_VALUE;
-    public static final Integer OUT_PARAMS = Integer.MAX_VALUE;
-    
+        
     @XmlElement(name="name")
     protected String name;
 
@@ -76,7 +72,7 @@ public class Chain implements Comparable<Chain> {
     protected List<Constant> constants;
 
     @XmlElement(name="element")
-    protected List<ChainElement> chainElements;
+    protected List<Element> chainElements;
 
     @XmlElement(name="dataLink")
     protected List<DataLink> links;
@@ -108,8 +104,8 @@ public class Chain implements Comparable<Chain> {
         for(Constant cdt : chain.getConstants()){
             getConstants().add(new Constant(cdt));
         }
-        for(ChainElement cdt : chain.getChainElements()){
-            getChainElements().add(new ChainElement(cdt));
+        for(Element cdt : chain.getElements()){
+            getElements().add(cdt.copy());
         }
         for(Parameter cdt : chain.getInputs()){
             getInputs().add(new Parameter(cdt));
@@ -145,9 +141,21 @@ public class Chain implements Comparable<Chain> {
         return constant;
     }
     
-    public ChainElement addChainElement(final int id, final String authority, final String code){
-        final ChainElement ele = new ChainElement(id, authority, code);
-        getChainElements().add(ele);
+    public ElementProcess addProcessElement(final int id, final String authority, final String code){
+        final ElementProcess ele = new ElementProcess(id, authority, code);
+        getElements().add(ele);
+        return ele;
+    }
+    
+    public ElementCondition addConditionElement(final int id){
+        final ElementCondition ele = new ElementCondition(id);
+        getElements().add(ele);
+        return ele;
+    }
+    
+    public ElementManual addManualElement(final int id){
+        final ElementManual ele = new ElementManual(id);
+        getElements().add(ele);
         return ele;
     }
     
@@ -221,14 +229,14 @@ public class Chain implements Comparable<Chain> {
         this.executionLinks = executionLinks;
     }
 
-    public List<ChainElement> getChainElements() {
+    public List<Element> getElements() {
         if(chainElements == null){
-            chainElements = new ArrayList<ChainElement>();
+            chainElements = new ArrayList<Element>();
         }
         return chainElements;
     }
 
-    public void setChainElements(final List<ChainElement> descriptors) {
+    public void setElements(final List<Element> descriptors) {
         this.chainElements = descriptors;
     }
 
@@ -300,7 +308,7 @@ public class Chain implements Comparable<Chain> {
         if (obj instanceof Chain) {
             final Chain that = (Chain) obj;
             return Utilities.equals(this.getConstants(), that.getConstants())
-                && Utilities.equals(this.getChainElements(), that.getChainElements())
+                && Utilities.equals(this.getElements(), that.getElements())
                 && Utilities.equals(this.getDataLinks(), that.getDataLinks())
                 && Utilities.equals(this.getFlowLinks(), that.getFlowLinks())
                 && Utilities.equals(this.name, that.name)
@@ -324,7 +332,7 @@ public class Chain implements Comparable<Chain> {
         sb.append(Trees.toString("Inputs", getInputs()));
         sb.append(Trees.toString("Outputs", getOutputs()));
         sb.append(Trees.toString("Constants", getConstants()));
-        sb.append(Trees.toString("Chain elements", getChainElements()));
+        sb.append(Trees.toString("Chain elements", getElements()));
         sb.append(Trees.toString("Links", getDataLinks()));
         sb.append(Trees.toString("ExecutionLinks", getFlowLinks()));
 

@@ -6,8 +6,9 @@ import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.process.chain.ChainProcessDescriptor;
 import org.geotoolkit.process.chain.model.Chain;
-import org.geotoolkit.process.chain.model.ChainElement;
 import org.geotoolkit.process.chain.model.Constant;
+import org.geotoolkit.process.chain.model.Element;
+import org.geotoolkit.process.chain.model.ElementProcess;
 import org.geotoolkit.process.chain.model.Parameter;
 import org.opengis.parameter.ParameterValueGroup;
 
@@ -28,20 +29,20 @@ public class ChainProcessDemo {
         final Constant c = chain.addConstant(1, Double.class, 10d);        
         
         //chain blocks
-        final ChainElement add = chain.addChainElement(2, "math", "add");
-        final ChainElement divide = chain.addChainElement(3, "math", "divide");        
+        final ElementProcess add = chain.addProcessElement(2, "math", "add");
+        final ElementProcess divide = chain.addProcessElement(3, "math", "divide");        
         
         //execution flow links
-        chain.addFlowLink(Chain.IN_PARAMS, add.getId());
+        chain.addFlowLink(Element.BEGIN.getId(), add.getId());
         chain.addFlowLink(add.getId(), divide.getId());
-        chain.addFlowLink(divide.getId(), Chain.OUT_PARAMS);
+        chain.addFlowLink(divide.getId(), Element.END.getId());
         
         //data flow links
-        chain.addDataLink(Chain.IN_PARAMS, a.getCode(), add.getId(), "first");
+        chain.addDataLink(Element.BEGIN.getId(), a.getCode(), add.getId(), "first");
         chain.addDataLink(c.getId(), "", add.getId(), "second");
         chain.addDataLink(add.getId(), "result", divide.getId(), "first");
-        chain.addDataLink(Chain.IN_PARAMS, b.getCode(), divide.getId(), "second");
-        chain.addDataLink(divide.getId(), "result", Chain.OUT_PARAMS, r.getCode());
+        chain.addDataLink(Element.BEGIN.getId(), b.getCode(), divide.getId(), "second");
+        chain.addDataLink(divide.getId(), "result", Element.END.getId(), r.getCode());
         
         
         //////////////////// execute the chain /////////////////////////////////

@@ -45,7 +45,8 @@ public class MockProcessRegistry extends AbstractProcessingRegistry {
 
     public MockProcessRegistry() {
         super(MockAddDescriptor.INSTANCE,
-              MockDivideDescriptor.INSTANCE);
+              MockDivideDescriptor.INSTANCE,
+              MockMultiplyDescriptor.INSTANCE);
     }
 
     @Override
