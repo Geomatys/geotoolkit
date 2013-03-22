@@ -33,6 +33,7 @@ import org.opengis.feature.type.FeatureType;
 public class TableMetaModel {
 
     final String name;
+    final String type;
     ComplexType baseType;
     SimpleFeatureType simpleType;
     FeatureType complexType;
@@ -44,12 +45,17 @@ public class TableMetaModel {
     //inherited tables
     final Collection<String> parents = new ArrayList<String>();
 
-    public TableMetaModel(final String name) {
+    public TableMetaModel(final String name, String type) {
         this.name = name;
+        this.type = type;
     }
 
     public String getName() {
         return name;
+    }
+
+    public String getType() {
+        return type;
     }
 
     public ComplexType getBaseType() {

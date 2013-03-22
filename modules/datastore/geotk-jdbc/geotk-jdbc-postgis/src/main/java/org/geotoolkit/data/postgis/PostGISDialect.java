@@ -41,6 +41,7 @@ import java.sql.Types;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
+import org.apache.sis.util.Version;
 
 import org.geotoolkit.data.jdbc.FilterToSQL;
 import org.geotoolkit.data.postgis.ewkb.JtsBinaryParser;
@@ -148,6 +149,7 @@ public class PostGISDialect extends AbstractSQLDialect {
     };
     private boolean looseBBOXEnabled = false;
     private boolean estimatedExtentsEnabled = false;
+    private Version version = null;
 
     public PostGISDialect(final JDBCDataStore dataStore) {
         super(dataStore);
@@ -543,6 +545,34 @@ public class PostGISDialect extends AbstractSQLDialect {
         return "geometry";
     }
 
+    
+    public Version getVersion(){
+        if(version != null){
+            return version;
+        }
+        
+        Connection cx = null;
+        Statement statement = null;
+        ResultSet result = null;        
+        try {
+            cx = dataStore.getDataSource().getConnection();
+            statement = cx.createStatement();
+            result = statement.executeQuery("SELECT postgis_lib_version();");
+
+            if (result.next()) {
+                version = new Version(result.getString(1));
+            }else{
+                version = new Version("0.0.0");
+            }
+        } catch(SQLException ex){
+            LOGGER.log(Level.WARNING, ex.getMessage(),ex);
+        } finally {
+            dataStore.closeSafe(cx,statement,result);
+        }
+        
+        return version;
+    }
+    
     @Override
     public String getVersion(final String schemaName, final Connection cx) throws SQLException {
         final Statement st = cx.createStatement();
@@ -718,8 +748,14 @@ public class PostGISDialect extends AbstractSQLDialect {
                 //postgis does not handle linear rings, convert to just a line string
                 value = value.getFactory().createLineString(((LinearRing) value).getCoordinateSequence());
             }
-
-            sql.append("st_geomfromtext('").append(value.toText()).append("', ").append(srid).append(")");
+            
+            if(value.isEmpty() && ((Comparable)getVersion().getMajor()).compareTo((Comparable)Integer.valueOf(2)) < 0){
+                //empty geometries are interpreted as Geometrycollection in postgis < 2
+                //this breaks the column geometry type constraint so we replace those by null
+                sql.append("NULL");
+            }else{
+                sql.append("st_geomfromtext('").append(value.toText()).append("', ").append(srid).append(")");
+            }
         }
     }
 

@@ -265,8 +265,9 @@ public final class DataBaseModel {
 
         final String schemaName = tableSet.getString(Table.TABLE_SCHEM);
         final String tableName = tableSet.getString(Table.TABLE_NAME);
+        final String tableType = tableSet.getString(Table.TABLE_TYPE);
 
-        final TableMetaModel table = new TableMetaModel(tableName);
+        final TableMetaModel table = new TableMetaModel(tableName,tableType);
 
         Connection cx = null;
         ResultSet result = null;
