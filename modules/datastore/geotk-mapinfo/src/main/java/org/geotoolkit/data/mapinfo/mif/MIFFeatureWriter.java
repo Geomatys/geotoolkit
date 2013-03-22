@@ -14,7 +14,7 @@ import java.util.UUID;
 import java.util.logging.Level;
 
 /**
- * Class Description
+ * An iterator to write features into MIF/MID files.
  *
  * @author Alexis Manin (Geomatys)
  *         Date : 06/03/13

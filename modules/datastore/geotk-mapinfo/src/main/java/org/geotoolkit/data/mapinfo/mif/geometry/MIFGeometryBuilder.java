@@ -1,6 +1,7 @@
 package org.geotoolkit.data.mapinfo.mif.geometry;
 
 import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.LineSegment;
 import com.vividsolutions.jts.geom.PrecisionModel;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.FeatureTypeBuilder;
@@ -66,8 +67,7 @@ public abstract class MIFGeometryBuilder {
         builder.copy(parent);
         builder.setSuperType(parent);
 
-        builder.setName(getName()+".type");
-
+        builder.setName(getName());
         builder.add(getName(), getGeometryBinding(), crs);
         builder.addAll(getAttributes());
 

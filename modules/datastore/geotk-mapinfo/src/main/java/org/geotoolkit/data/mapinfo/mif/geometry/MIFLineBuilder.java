@@ -1,14 +1,14 @@
 package org.geotoolkit.data.mapinfo.mif.geometry;
 
-import com.vividsolutions.jts.geom.CoordinateSequence;
-import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.Point;
+import com.vividsolutions.jts.geom.*;
 import com.vividsolutions.jts.geom.impl.PackedCoordinateSequence;
 import org.geotoolkit.data.mapinfo.ProjectionUtils;
+import org.geotoolkit.data.mapinfo.mif.MIFUtils;
 import org.geotoolkit.data.mapinfo.mif.style.Pen;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.type.DefaultAttributeDescriptor;
 import org.geotoolkit.feature.type.DefaultAttributeType;
+import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSLineSegment;
 import org.geotoolkit.storage.DataStoreException;
 import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -54,6 +54,7 @@ public class MIFLineBuilder extends MIFGeometryBuilder {
 
         final CoordinateSequence seq = new PackedCoordinateSequence.Double(linePts, 2);
         final LineString line = GEOMETRY_FACTORY.createLineString(seq);
+
         toFill.getProperty(NAME).setValue(line);
 
         if(scanner.hasNext(PEN_NAME.getLocalPart())) {
@@ -68,11 +69,23 @@ public class MIFLineBuilder extends MIFGeometryBuilder {
     public String toMIFSyntax(Feature geometry) throws DataStoreException {
         super.toMIFSyntax(geometry);
         StringBuilder builder = new StringBuilder(NAME.getLocalPart());
-        LineString line = (LineString) geometry.getDefaultGeometryProperty().getValue();
-        Point pt1 =  line.getStartPoint();
-        Point pt2 =  line.getEndPoint();
-        builder.append(' ').append(pt1.getX()).append(' ').append(pt1.getY())
-                .append(' ').append(pt2.getX()).append(pt2.getY()).append('\n');
+
+        Object value = geometry.getDefaultGeometryProperty().getValue();
+
+        if(value instanceof LineSegment) {
+            LineSegment line = (LineSegment) value;
+            Coordinate pt1 =  line.p0;
+            Coordinate pt2 =  line.p1;
+            builder.append(' ').append(line.p0.x).append(' ').append(line.p0.y)
+                    .append(' ').append(line.p1.x).append(' ').append(line.p1.y).append('\n');
+        } else if (value instanceof LineString) {
+            LineString line = (LineString) value;
+            Point pt1 =  line.getStartPoint();
+            Point pt2 =  line.getEndPoint();
+            builder.append(' ').append(pt1.getX()).append(' ').append(pt1.getY())
+                    .append(' ').append(pt2.getX()).append(' ').append(pt2.getY()).append('\n');
+        }
+
         return builder.toString();
     }
 
@@ -83,7 +96,7 @@ public class MIFLineBuilder extends MIFGeometryBuilder {
 
     @Override
     public Class[] getPossibleBindings() {
-        return new Class[]{LineString.class};
+        return new Class[]{LineString.class, LineSegment.class};
     }
 
     @Override

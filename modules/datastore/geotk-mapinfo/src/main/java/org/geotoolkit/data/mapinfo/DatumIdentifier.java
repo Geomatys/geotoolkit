@@ -1,6 +1,8 @@
 package org.geotoolkit.data.mapinfo;
 
 import org.geotoolkit.factory.AuthorityFactoryFinder;
+import org.geotoolkit.internal.InternalUtilities;
+import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.datum.BursaWolfParameters;
 import org.geotoolkit.referencing.datum.DefaultEllipsoid;
@@ -13,6 +15,8 @@ import org.opengis.referencing.datum.*;
 import org.opengis.util.FactoryException;
 
 import javax.measure.unit.Unit;
+import java.util.AbstractMap;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,8 +30,28 @@ public final class DatumIdentifier {
 
     private static final DatumAuthorityFactory DATUM_AUTHORITY_FACTORY = AuthorityFactoryFinder.getDatumAuthorityFactory("EPSG", null);
 
-    // A map containing mapinfo datum codes as key, and EPSG code as value.
+    /** A map containing mapinfo datum codes as key, and EPSG code as value. */
     private static final Map<Integer, Integer> DATUM_TABLE = new HashMap<Integer, Integer>();
+
+    /**
+     * For datums we don't have EPSG equivalent, we get a list of Bursa Wolf parameters for each one (to WGS 84 transformation).
+     * The key is the MapInfo code of the datum. The value is pair of String double array, where the String is the datum name,
+     * and the double array is composed of :
+     *                   0 --> Ellipsoid code (MapInfo code)
+     *                   1 --> Shift on X axis (meters)
+     *                   2 --> Shift on Y axis (meters)
+     *                   3 --> Shift on Z axis (meters)
+     *                   4 --> Rotation on X axis (arc second)
+     *                   5 --> Rotation on Y axis (arc second)
+     *                   6 --> Rotation on Z axis (arc second)
+     *                   7 --> Scaling (in part per million)
+     *                   8 --> Prime meridian longitude to greenwich
+     */
+    private static final Map<Integer, Map.Entry<String, double[]> > HANDED_DATUM_TABLE = new HashMap<Integer, Map.Entry<String, double[]> >();
+
+    private static AbstractMap.SimpleImmutableEntry<String, double[]> buildValue(String name, double... values) {
+        return new AbstractMap.SimpleImmutableEntry<String, double[]>(name, values);
+    }
 
     /**
      * Return the EPSG code of the datum pointed by given MapInfo code.
@@ -55,7 +79,7 @@ public final class DatumIdentifier {
     }
 
     /**
-     * Build a MIF datum from a Geotk one. If we can find an existing one MapInfo datums, we just erturn its code.
+     * Build a MIF datum from a Geotk one. If we can find an existing one MapInfo datums, we just return its code.
      * Otherwise, we must build a custom datum using Bursa Wolf transformation (to WGS 84).
      * @param source The datum to write.
      * @return A String representing the given datum as MapInfo needs it.
@@ -65,42 +89,68 @@ public final class DatumIdentifier {
     public static String getMIFDatum(GeodeticDatum source) throws FactoryException, DataStoreException {
         StringBuilder builder = new StringBuilder();
 
-        final int epsgCode = IdentifiedObjects.lookupEpsgCode(source, false);
-        final int mifCode = getMIFCodeFromEPSG(epsgCode);
+        Integer epsgCode = IdentifiedObjects.lookupEpsgCode(source, false);
+        if(epsgCode == null) {
+            epsgCode = -1;
+        }
+        int mifCode = getMIFCodeFromEPSG(epsgCode);
 
-        // If we can't find a code matching, we build a custom CRS.
+        // If we can't find a code matching, we use the datum ellipsoid / Bursa Wolf parameters (to WGS 84) to search in
+        // the handed-built list, or create a custom datum.
         if(mifCode < 0) {
             if(!(source instanceof DefaultGeodeticDatum)) {
                 throw new DataStoreException("Unsupported datum type.");
             }
 
-            int customCode = 999;
-
-            int ellipsoidCode = EllipsoidIdentifier.getMIFCode(source.getEllipsoid());
-            if(ellipsoidCode < 0) {
-                throw new DataStoreException("We're unable to find an ellipsoid for source datum.");
-            }
-
-            BursaWolfParameters bwParams = ((DefaultGeodeticDatum) source).getBursaWolfParameters(DefaultGeodeticDatum.WGS84);
-
             double primeShift = 0;
+            int customCode = 999;
             if(source.getPrimeMeridian() != DefaultPrimeMeridian.GREENWICH) {
                 customCode = 9999;
                 primeShift = source.getPrimeMeridian().getGreenwichLongitude();
             }
+            int ellipsoidCode = EllipsoidIdentifier.getMIFCode(source.getEllipsoid());
+            if(ellipsoidCode < 0) {
+                throw new DataStoreException("We're unable to find an ellipsoid for source datum.");
+            }
+            BursaWolfParameters bwParams = ((DefaultGeodeticDatum) source).getBursaWolfParameters(DefaultGeodeticDatum.WGS84);
+            if(bwParams == null) {
+                bwParams = new BursaWolfParameters(DefaultGeodeticDatum.WGS84);
+            }
 
-            builder .append(customCode).append(", ")
-                    .append(ellipsoidCode).append(", ")
-                    .append(bwParams.dx).append(", ")
-                    .append(bwParams.dy).append(", ")
-                    .append(bwParams.dz).append(", ")
-                    .append(bwParams.ex).append(", ")
-                    .append(bwParams.ey).append(", ")
-                    .append(bwParams.ez).append(", ")
-                    .append(bwParams.ppm);
+            // search in the handed-built list
+            double[] comparisonParams = new double[]{
+                    ellipsoidCode,
+                    bwParams.dx,
+                    bwParams.dy,
+                    bwParams.dz,
+                    bwParams.ex,
+                    bwParams.ey,
+                    bwParams.ez,
+                    bwParams.ppm,
+                    primeShift};
+            for(Map.Entry<Integer, Map.Entry<String, double[]>> entry : HANDED_DATUM_TABLE.entrySet()) {
+                if(Arrays.equals(comparisonParams, entry.getValue().getValue())) {
+                    mifCode = entry.getKey();
+                    break;
+                }
+            }
 
-            if(primeShift != 0) {
-                builder.append(", ").append(primeShift);
+            if(mifCode >= 0) {
+                builder.append(mifCode);
+            } else {
+                // build a custom CRS.
+                builder .append(customCode).append(", ")
+                        .append(ellipsoidCode).append(", ")
+                        .append(bwParams.dx).append(", ")
+                        .append(bwParams.dy).append(", ")
+                        .append(bwParams.dz).append(", ")
+                        .append(bwParams.ex).append(", ")
+                        .append(bwParams.ey).append(", ")
+                        .append(bwParams.ez).append(", ")
+                        .append(bwParams.ppm);
+                if(primeShift != 0) {
+                    builder.append(", ").append(primeShift);
+                }
             }
         } else {
             builder.append(mifCode);
@@ -108,19 +158,30 @@ public final class DatumIdentifier {
         return builder.toString();
     }
 
-    public static GeodeticDatum getDatumFromMIFCode(int datumCode) throws FactoryException {
+    /**
+     * Build a Geodetic datum from a given MIF code (should not be 999 or 9999)
+     * @param datumCode The code to find a matching datum for.
+     * @return A datum matching the given MapInfo code, or null otherwise (Ex: if input code is 999).
+     * @throws FactoryException If we get a problem while browsing datum database.
+     * @throws DataStoreException If there's a problem building our datum.
+     */
+    public static GeodeticDatum getDatumFromMIFCode(int datumCode) throws FactoryException, DataStoreException {
         GeodeticDatum datum = null;
         final Integer epsgDatum = DatumIdentifier.getEPSGDatumCode(datumCode);
         if(epsgDatum != null) {
             datum = DATUM_AUTHORITY_FACTORY.createGeodeticDatum(epsgDatum.toString());
         } else {
-
+            if(HANDED_DATUM_TABLE.containsKey(datumCode)) {
+                Map.Entry<String, double[]> datumInfo = HANDED_DATUM_TABLE.get(datumCode);
+                datum = buildCustomDatum(datumInfo.getKey(), datumInfo.getValue());
+            }
         }
         return datum;
     }
 
     /**
      * Build a Geodetic datum from a MapInfo ellipsoid code and Bursa Wolf parameters to WGS84.
+     * @param name The name to give to built datum. If null, a name will be built from ellipsoid name.
      * @param parameters The parameters for datum making. Order is :
      *                   0 --> Ellipsoid code (MapInfo code)
      *                   1 --> Shift on X axis (meters)
@@ -136,7 +197,7 @@ public final class DatumIdentifier {
      * @throws DataStoreException If there's not enough parameters.
      * @throws FactoryException If we've got a problem while ellipsoid building.
      */
-    public static GeodeticDatum buildCustomDatum(double[] parameters) throws DataStoreException, FactoryException {
+    public static GeodeticDatum buildCustomDatum(String name, double[] parameters) throws DataStoreException, FactoryException {
         BursaWolfParameters bwParams = new BursaWolfParameters(DefaultGeodeticDatum.WGS84);
         if(parameters.length < 1) {
             throw new DataStoreException("There's not enough parameters to build a valid datum. An ellipsoid code is required.");
@@ -161,12 +222,12 @@ public final class DatumIdentifier {
 
         // If we've got 9 parameters, the datum is not based on Greenwich meridian.
         PrimeMeridian pMeridian = DefaultPrimeMeridian.GREENWICH;
-        if(parameters.length > 8) {
+        if(parameters.length > 8 && !InternalUtilities.epsilonEqual(parameters[8], 0)) {
             pMeridian = new DefaultPrimeMeridian("Greenwich"+((parameters[8] > 0)? "+"+parameters[8] : parameters[8]), parameters[8]);
         }
 
         final Map<String, Object> properties = new HashMap<String, Object>();
-        properties.put(GeodeticDatum.NAME_KEY, ellipse.getName().getCode()+"_custom_datum");
+        properties.put(GeodeticDatum.NAME_KEY, (name != null)? name : ellipse.getName().getCode()+"_custom_datum");
         properties.put(DefaultGeodeticDatum.BURSA_WOLF_KEY, bwParams);
 
         return new DefaultGeodeticDatum(properties, ellipse, pMeridian);
@@ -351,5 +412,32 @@ public final class DatumIdentifier {
         DATUM_TABLE.put(1020, 6818);
 
         DATUM_TABLE.put(9999, 0);
+
+        /***********************************
+              No EPSG equivalent datums
+         ***********************************/
+
+        HANDED_DATUM_TABLE.put(26, buildValue("Dos_1968",                     4, 230, -199, -752,0, 0, 0, 0, 0));
+        HANDED_DATUM_TABLE.put(35, buildValue("Gux_1_Astro",                  4, 252, -209, -751,0, 0, 0, 0, 0));
+        HANDED_DATUM_TABLE.put(41, buildValue("Indian_Bangladesh",           11, 289, 734,  257, 0, 0, 0, 0, 0));
+        HANDED_DATUM_TABLE.put(51, buildValue("Luzon_Mindanao_Island",       7, -133, -79,  -72, 0, 0, 0, 0, 0));
+        HANDED_DATUM_TABLE.put(58, buildValue("Nahrwan_Masirah_Island",      6, -247, -148, 369, 0, 0, 0, 0, 0));
+        HANDED_DATUM_TABLE.put(59, buildValue("Nahrwan_Un_Arab_Emirates",    6, -249, -156, 381, 0, 0, 0, 0, 0));
+        HANDED_DATUM_TABLE.put(93, buildValue("South_Asia",                  19,7,    -10, -26,  0, 0, 0, 0, 0));
+        HANDED_DATUM_TABLE.put(101, buildValue("WGS_60",                     26,0,    0,   0,    0, 0, 0, 0, 0));
+        HANDED_DATUM_TABLE.put(113, buildValue("Lisboa_DLX",                 4, -303, -62, 105,  0, 0, 0, 0, 0));
+        HANDED_DATUM_TABLE.put(115, buildValue("Euref_98",                   0, 0,    0,   0,    0, 0, 0, 0, 0));
+        HANDED_DATUM_TABLE.put(119, buildValue("Antigua_Astro_1965",         6, -270, 13,  62,   0, 0, 0, 0, 0));
+        HANDED_DATUM_TABLE.put(125, buildValue("Fort_Thomas_1955",           6, -7, 215,   225,  0, 0, 0, 0, 0));
+        HANDED_DATUM_TABLE.put(128, buildValue("Hermanns_Kogel",             10,682, -203, 480,  0, 0, 0, 0, 0));
+        HANDED_DATUM_TABLE.put(129, buildValue("Indian",                     50,283, 682,  231,  0, 0, 0, 0, 0));
+        HANDED_DATUM_TABLE.put(134, buildValue("ISTS061_Astro_1968",         4, -794, 119, -298, 0, 0, 0, 0, 0));
+        HANDED_DATUM_TABLE.put(138, buildValue("Mporaloko",                  6, -74, -130, 42,   0, 0, 0, 0, 0));
+        HANDED_DATUM_TABLE.put(149, buildValue("Virol_1960",                 6, -123, -206,219,  0, 0, 0, 0, 0));
+        HANDED_DATUM_TABLE.put(1006, buildValue("AGD84_7_Param_Aust",        2, -117.763,-51.51, 139.061, -0.292, -0.443, -0.277, -0.191, 0));
+        HANDED_DATUM_TABLE.put(1007, buildValue("AGD66_7_Param_ACT",         2, -129.193,-41.212, 130.73, -0.246, -0.374, -0.329, -2.955, 0));
+        HANDED_DATUM_TABLE.put(1008, buildValue("AGD66_7_Param_TAS",         2, -120.271,-64.543, 161.632, -0.2175, 0.0672, 0.1291, 2.4985, 0));
+        HANDED_DATUM_TABLE.put(1009, buildValue("AGD66_7_Param_VIC_NSW",     2, -119.353,-48.301, 139.484, -0.415, -0.26, -0.437, -0.613, 0));
+        HANDED_DATUM_TABLE.put(1012, buildValue("Russia_PZ90",               52, -1.08,-0.27,-0.9,0, 0, -0.16,-0.12, 0));
     }
 }

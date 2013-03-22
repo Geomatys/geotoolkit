@@ -102,8 +102,8 @@ public final class MIFUtils {
 
     static public enum GeometryType {
         POINT(new MIFPointBuilder()),
+        PLINE(new MIFPolyLineBuilder()),
         LINE(new MIFLineBuilder()),
-        POLYLINE(new MIFPolyLineBuilder()),
         REGION(new MIFRegionBuilder()),
         ARC(new MIFArcBuilder()),
         TEXT(new MIFTextBuilder()),
@@ -179,7 +179,7 @@ public final class MIFUtils {
             if(Polygon.class.isAssignableFrom(sourceClass) || MultiPolygon.class.isAssignableFrom(sourceClass)) {
                 type = GeometryType.REGION;
             } else if(LineString.class.isAssignableFrom(sourceClass) || MultiLineString.class.isAssignableFrom(sourceClass)) {
-                type = GeometryType.POLYLINE;
+                type = GeometryType.PLINE;
             } else if(Point.class.isAssignableFrom(sourceClass) || Coordinate.class.isAssignableFrom(sourceClass)) {
                 type = GeometryType.POINT;
             } else if(MultiPoint.class.isAssignableFrom(sourceClass) || CoordinateSequence.class.isAssignableFrom(sourceClass)) {
@@ -330,7 +330,7 @@ public final class MIFUtils {
         try {
         if(MIFUtils.isLocal(source)) {
             final File tmpFile = new File(source.toURI());
-            out = new FileOutputStream(tmpFile);
+            out = new FileOutputStream(tmpFile, true);
         } else {
             URLConnection connection = source.openConnection();
             connection.setDoOutput(true);

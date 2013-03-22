@@ -5,6 +5,8 @@ import com.vividsolutions.jts.geom.impl.PackedCoordinateSequence;
 import org.geotoolkit.data.mapinfo.ProjectionUtils;
 import org.geotoolkit.data.mapinfo.mif.style.Pen;
 import org.geotoolkit.feature.DefaultName;
+import org.geotoolkit.feature.FeatureTypeUtilities;
+import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.feature.type.DefaultAttributeDescriptor;
 import org.geotoolkit.feature.type.DefaultAttributeType;
 import org.geotoolkit.storage.DataStoreException;
@@ -14,6 +16,7 @@ import org.opengis.feature.type.*;
 import org.opengis.referencing.operation.MathTransform;
 
 import java.util.*;
+import java.util.regex.Pattern;
 
 /**
  * Util class to build a feature from Multi line object of a MIF file.
@@ -23,7 +26,7 @@ import java.util.*;
  */
 public class MIFPolyLineBuilder extends MIFGeometryBuilder {
 
-    public static final Name NAME = new DefaultName("POLYLINE");
+    public static final Name NAME = new DefaultName("PLINE");
     public static final Name PEN_NAME = new DefaultName("PEN");
     public static final Name SMOOTH_NAME = new DefaultName("SMOOTH");
 
@@ -58,14 +61,15 @@ public class MIFPolyLineBuilder extends MIFGeometryBuilder {
         int numLines = 1;
 
         try {
-            if(scanner.hasNext("\\w+") && "MULTIPLE".equalsIgnoreCase(scanner.next("\\w+"))) {
-                numLines = scanner.nextInt();
+            Pattern multiple = Pattern.compile("multiple", Pattern.CASE_INSENSITIVE);
+            if(scanner.hasNext(multiple)) {
+                numLines = Integer.decode(scanner.next("\\d+"));
             }
 
             final LineString[] lineTab = new LineString[numLines];
             for(int lineCount = 0 ; lineCount < numLines ; lineCount++) {
                 // We put a x2 factor as we work in 2 dimensions.
-                final int numCoord = scanner.nextInt()*2;
+                final int numCoord = Integer.decode(scanner.next("\\d+"))*2;
                 final double[] linePts = new double[numCoord];
                 for(int coordCount = 0 ; coordCount < numCoord; coordCount++) {
                     linePts[coordCount] = Double.parseDouble(scanner.next(ProjectionUtils.DOUBLE_PATTERN));
@@ -96,10 +100,12 @@ public class MIFPolyLineBuilder extends MIFGeometryBuilder {
             /** todo : parse PEN tag. */
         }
 
-        if(scanner.hasNext(SMOOTH_NAME.getLocalPart())) {
-            toFill.getProperty(SMOOTH_NAME).setValue(Boolean.TRUE);
-        } else {
-            toFill.getProperty(SMOOTH_NAME).setValue(Boolean.FALSE);
+        if(toFill.getProperty(SMOOTH_NAME) != null) {
+            if(scanner.hasNext(SMOOTH_NAME.getLocalPart())) {
+                toFill.getProperty(SMOOTH_NAME).setValue(Boolean.TRUE);
+            } else {
+                toFill.getProperty(SMOOTH_NAME).setValue(Boolean.FALSE);
+            }
         }
     }
 
@@ -108,16 +114,7 @@ public class MIFPolyLineBuilder extends MIFGeometryBuilder {
      */
     @Override
     public String toMIFSyntax(Feature geometry) throws DataStoreException {
-        //Here we don't want the super implementation verifications, because we can get LineString.
-        if(geometry.getDefaultGeometryProperty() == null) {
-            throw new DataStoreException("Input feature does not contain any geometry.");
-        } else {
-            final Class geomCls = geometry.getDefaultGeometryProperty().getType().getBinding();
-            if (!geomCls.equals(getGeometryBinding()) || !geomCls.equals(LineString.class)) {
-                throw new DataStoreException("Input feature does not contain the right geometry type." +
-                        "\nExpected : "+getGeometryBinding()+" or "+LineString.class+"\nFound : "+geomCls);
-            }
-        }
+        super.toMIFSyntax(geometry);
 
         StringBuilder builder = new StringBuilder(NAME.getLocalPart());
 

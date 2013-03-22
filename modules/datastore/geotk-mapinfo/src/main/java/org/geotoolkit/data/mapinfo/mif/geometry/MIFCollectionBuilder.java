@@ -107,18 +107,18 @@ public class MIFCollectionBuilder extends MIFGeometryBuilder {
         if(lines.size() > 0) {
             count++;
             final MultiLineString multiLine = GEOMETRY_FACTORY.createMultiLineString(lines.toArray(new LineString[lines.size()]));
-            final FeatureType type = MIFUtils.GeometryType.POLYLINE.getBinding(collectionCRS, null);
+            final FeatureType type = MIFUtils.GeometryType.PLINE.getBinding(collectionCRS, null);
             final Feature feature = FeatureUtilities.defaultFeature(type, "lines");
             feature.getDefaultGeometryProperty().setValue(multiLine);
-            geomsStr.add(MIFUtils.GeometryType.POLYLINE.toMIFSyntax(feature));
+            geomsStr.add(MIFUtils.GeometryType.PLINE.toMIFSyntax(feature));
         }
         if(points.size() > 0) {
             count++;
             final MultiPoint multiPoint = GEOMETRY_FACTORY.createMultiPoint(points.toArray(new Point[points.size()]));
-            final FeatureType type = MIFUtils.GeometryType.POLYLINE.getBinding(collectionCRS, null);
+            final FeatureType type = MIFUtils.GeometryType.PLINE.getBinding(collectionCRS, null);
             final Feature feature = FeatureUtilities.defaultFeature(type, "points");
             feature.getDefaultGeometryProperty().setValue(multiPoint);
-            geomsStr.add(MIFUtils.GeometryType.POLYLINE.toMIFSyntax(feature));
+            geomsStr.add(MIFUtils.GeometryType.PLINE.toMIFSyntax(feature));
         }
 
         builder.append(count).append('\n');

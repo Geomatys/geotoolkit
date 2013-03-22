@@ -227,7 +227,7 @@ public class ProjectionUtils {
                         throw new DataStoreException("One of the custom datum parameters can't be read.");
                     }
                 }
-                datum = DatumIdentifier.buildCustomDatum(bursaWolfParameters);
+                datum = DatumIdentifier.buildCustomDatum(null, bursaWolfParameters);
 
             } else {
                 datum = DatumIdentifier.getDatumFromMIFCode(datumCode);

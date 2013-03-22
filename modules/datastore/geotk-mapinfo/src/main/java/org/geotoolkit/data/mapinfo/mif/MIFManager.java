@@ -2,6 +2,7 @@ package org.geotoolkit.data.mapinfo.mif;
 
 import org.geotoolkit.data.mapinfo.ProjectionUtils;
 import org.geotoolkit.feature.DefaultName;
+import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.feature.simple.DefaultSimpleFeatureType;
 import org.geotoolkit.feature.type.DefaultAttributeDescriptor;
 import org.geotoolkit.feature.type.DefaultAttributeType;
@@ -65,7 +66,7 @@ public class MIFManager {
     public char mifDelimiter = '\t';
     private ArrayList<Short> mifUnique = new ArrayList<Short>();
     private ArrayList<Short> mifIndex = new ArrayList<Short>();
-    private CoordinateReferenceSystem mifCRS = null;
+    private CoordinateReferenceSystem mifCRS = DefaultGeographicCRS.WGS84;
     private MathTransform mifTransform = null;
     private int mifColumnsCount = -1;
 
@@ -99,7 +100,6 @@ public class MIFManager {
         if (mifName.endsWith(".mif") || mifName.endsWith(".MIF")) {
             mifName = mifName.substring(0, mifName.length() - 4);
         }
-        mifCRS = DefaultGeographicCRS.WGS84;
         buildMIDPath();
     }
 
@@ -124,39 +124,61 @@ public class MIFManager {
     public Set<Name> getTypeNames() throws DataStoreException {
         if (names == null) {
             names = new HashSet<Name>();
-
             checkDataTypes();
+        }
+
+        if(!names.contains(mifBaseType.getName())) {
             names.add(mifBaseType.getName());
-            for (FeatureType t : mifChildTypes) {
+        }
+        for (FeatureType t : mifChildTypes) {
+            if(!names.contains(t.getName())) {
                 names.add(t.getName());
             }
         }
+
         return names;
     }
 
 
+    /**
+     * Try to add a new Feature type to the current store.
+     * @param typeName The name of the type to add.
+     * @param toAdd The type to add.
+     * @throws DataStoreException If an unexpected error occurs while referencing given type.
+     * @throws URISyntaxException If the URL specified at store creation is invalid.
+     */
     public void addSchema(Name typeName, FeatureType toAdd) throws DataStoreException, URISyntaxException {
         ArgumentChecks.ensureNonNull("New feature type", toAdd);
 
-        // Try to clear files before rewriting in it.
-        if (MIFUtils.isLocal(mifPath)) {
-            File f = new File(mifPath.toURI());
-            if (f.exists()) {
-                boolean deleted = f.delete();
-                if (!deleted) {
-                    throw new DataStoreException("MIF data already exists and can't be erased.");
+        /*
+         * We'll try to get the available types from datastore. If an exception raises while this operation, the source
+         * file is invalid, so we try to delete it before going on.
+         */
+        try {
+            getTypeNames();
+        } catch (Exception e) {
+            // Try to clear files before rewriting in it.
+            if (MIFUtils.isLocal(mifPath)) {
+                File f = new File(mifPath.toURI());
+                if (f.exists()) {
+                    boolean deleted = f.delete();
+                    if (!deleted) {
+                        throw new DataStoreException("MIF data already exists and can't be erased.");
+                    }
                 }
             }
-        }
 
-        if (MIFUtils.isLocal(midPath)) {
-            File f = new File(midPath.toURI());
-            if (f.exists()) {
-                boolean deleted = f.delete();
-                if (!deleted) {
-                    throw new DataStoreException("MID data already exists and can't be erased.");
+            if (MIFUtils.isLocal(midPath)) {
+                File f = new File(midPath.toURI());
+                if (f.exists()) {
+                    boolean deleted = f.delete();
+                    if (!deleted) {
+                        throw new DataStoreException("MID data already exists and can't be erased.");
+                    }
                 }
             }
+
+            refreshMetaModel();
         }
 
         if (!(toAdd instanceof SimpleFeatureType)
@@ -165,44 +187,43 @@ public class MIFManager {
             throw new DataStoreException("Only Simple Features, or features with a Simple Feature as parent can be added.");
         }
 
+        //If we're on a new store, we must set the base type and write the header.
         if (mifBaseType == null) {
             if (toAdd.getGeometryDescriptor() == null && toAdd instanceof SimpleFeatureType) {
-                mifBaseType = (SimpleFeatureType) toAdd;
-                mifColumnsCount = mifBaseType.getAttributeCount();
+                throw new DataStoreException("Base type can't be set directly. You must set it by adding a geometry type" +
+                        "whose super type is the base type (and a SimpleFeatureType).");
             } else if (toAdd.getSuper() != null && toAdd.getSuper() instanceof SimpleFeatureType) {
                 mifBaseType = (SimpleFeatureType) toAdd.getSuper();
                 mifColumnsCount = mifBaseType.getAttributeCount();
-                // Check if we should add it to child types too.
-                if (MIFUtils.identifyFeature(toAdd) != null) {
-                    //We check for the crs first
-                    checkTypeCRS(toAdd);
-                    mifChildTypes.add(toAdd);
-                }
+                checkTypeCRS(toAdd);
             } else {
                 throw new DataStoreException("A base type must be set first, and given one does not fit.");
             }
+            flushHeader();
+        }
+
+        if (toAdd.getSuper() == null || !toAdd.getSuper().equals(mifBaseType)) {
+            throw new DataStoreException(
+                    "Super type of the given feature doesn't match this data store base type :\nExpected : "
+                            + mifBaseType + "\nFound :" + toAdd.getSuper());
         } else {
-            if (toAdd.getSuper() == null || !toAdd.getSuper().equals(mifBaseType)) {
-                throw new DataStoreException(
-                        "Super type of the given feature doesn't match this data store base type :\nExpected"
-                                + mifBaseType + "\nFound :" + toAdd.getSuper());
+            if (MIFUtils.identifyFeature(toAdd) != null) {
+                //We check for the crs first
+                checkTypeCRS(toAdd);
+                mifChildTypes.add(toAdd);
             } else {
-                if (MIFUtils.identifyFeature(toAdd) != null) {
-                    //We check for the crs first
-                    checkTypeCRS(toAdd);
-                    mifChildTypes.add(toAdd);
-                } else {
-                    throw new DataStoreException("The geometry for the given type is not supported for MIF geometry");
-                }
+                throw new DataStoreException("The geometry for the given type is not supported for MIF geometry");
             }
         }
+
     }
+
 
     private void checkTypeCRS(FeatureType toCheck) throws DataStoreException {
 
         if(toCheck.getCoordinateReferenceSystem() == null) return;
 
-        if(mifChildTypes.isEmpty()) {
+        if(mifChildTypes.isEmpty() && toCheck.getCoordinateReferenceSystem() != null) {
                 mifCRS = toCheck.getCoordinateReferenceSystem();
         } else {
             if(!mifCRS.equals(DefaultGeographicCRS.WGS84)) {
@@ -214,6 +235,7 @@ public class MIFManager {
             }
         }
     }
+
 
     public void deleteSchema(Name typeName) throws DataStoreException {
         getTypeNames();
@@ -234,6 +256,7 @@ public class MIFManager {
         }
     }
 
+
     public FeatureType getType(Name typeName) throws DataStoreException {
         getTypeNames();
 
@@ -250,6 +273,7 @@ public class MIFManager {
         }
         throw new DataStoreException("No type matching the given name have been found.");
     }
+
 
     public SimpleFeatureType getBaseType() throws DataStoreException {
         if(mifBaseType == null && mifColumnsCount <0) {
@@ -591,19 +615,14 @@ public class MIFManager {
         }
         // Header successfully built, we can report featureType values on datastore attributes.
         mifColumnsCount = tmpCount;
-        mifCRS = toWorkWith.getCoordinateReferenceSystem();
         mifBaseType = toWorkWith;
 
         return headBuilder.toString();
     }
 
 
-    /**
-     * When opening MIF file in writing mode, we write all data in tmp file. This function is used for writing header
-     * and tmp file data into the real file.
-     */
-    public void flushData(MIFFeatureWriter dataToWrite) throws DataStoreException {
-
+    private void flushHeader() throws DataStoreException {
+        // Cache the header in memory.
         final String head = buildHeader();
 
         // Writing pass, with datastore locking.
@@ -616,6 +635,37 @@ public class MIFManager {
             OutputStream out = MIFUtils.openOutConnection(mifPath);
             stream = new OutputStreamWriter(out);
             stream.write(head);
+        } catch (Exception e) {
+            throw new DataStoreException("A problem have been encountered while flushing data.", e);
+        } finally {
+            RWLock.writeLock().unlock();
+            if (stream != null) {
+                try {
+                    stream.close();
+                } catch (IOException e) {
+                    LOGGER.log(Level.WARNING, "Writer stream can't be closed.", e);
+                }
+            }
+        }
+    }
+
+
+    /**
+     * When opening MIF file in writing mode, we write all data in tmp file. This function is used for writing tmp file
+     * data into the real file.
+     */
+    public void flushData(MIFFeatureWriter dataToWrite) throws DataStoreException {
+
+        // Writing pass, with datastore locking.
+        OutputStreamWriter stream = null;
+        InputStream mifInput = null;
+        InputStreamReader reader;
+        InputStream midInput = null;
+        RWLock.writeLock().lock();
+        try {
+            // writing MIF header and geometries.
+            OutputStream out = MIFUtils.openOutConnection(mifPath);
+            stream = new OutputStreamWriter(out);
             mifInput = dataToWrite.getMIFTempStore();
             MIFUtils.write(mifInput, stream);
             stream.close();
@@ -644,7 +694,7 @@ public class MIFManager {
                     LOGGER.log(Level.WARNING, "Temporary data store can't be closed.", e);
                 }
             }
-            if (stream != null) {
+            if (midInput != null) {
                 try {
                     midInput.close();
                 } catch (IOException e) {
@@ -680,9 +730,10 @@ public class MIFManager {
      * {@inheritDoc}
      */
     public void refreshMetaModel() {
+        names.clear();
+        names = null;
         mifBaseType = null;
         mifChildTypes.clear();
-        names.clear();
         mifColumnsCount = -1;
     }
 

@@ -33,8 +33,6 @@ public class MIFFeatureStore extends AbstractFeatureStore {
 
     private final MIFManager manager;
 
-    private Set<Name> names;
-
     private final QueryCapabilities queryCapabilities = new DefaultQueryCapabilities(false);
 
     /**
@@ -91,10 +89,7 @@ public class MIFFeatureStore extends AbstractFeatureStore {
      */
     @Override
     public Set<Name> getNames() throws DataStoreException {
-        if(names == null || names.isEmpty()) {
-            names = manager.getTypeNames();
-        }
-        return names;
+        return manager.getTypeNames();
     }
 
     /**
