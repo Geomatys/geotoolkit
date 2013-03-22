@@ -53,7 +53,7 @@ import org.geotoolkit.gui.swing.contexttree.menu.SessionCommitItem;
 import org.geotoolkit.gui.swing.contexttree.menu.SessionRollbackItem;
 import org.geotoolkit.gui.swing.contexttree.menu.ZoomToLayerItem;
 import org.geotoolkit.gui.swing.filestore.JCoverageStoreChooser;
-import org.geotoolkit.gui.swing.filestore.JDataStoreChooser;
+import org.geotoolkit.gui.swing.filestore.JFeatureStoreChooser;
 import org.geotoolkit.gui.swing.filestore.JServerChooser;
 import org.geotoolkit.gui.swing.go2.control.JConfigBar;
 import org.geotoolkit.gui.swing.go2.control.JCoordinateBar;
@@ -324,10 +324,10 @@ public class JMap2DFrame extends javax.swing.JFrame {
         });
         jMenu1.add(jMenuItem4);
 
-        jMenuItem2.setText("Add data store ...");
+        jMenuItem2.setText("Add feature store ...");
         jMenuItem2.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
-                openDataStoreChooser(evt);
+                openFeatureStoreChooser(evt);
             }
         });
         jMenu1.add(jMenuItem2);
@@ -429,10 +429,10 @@ private void openCoverageStoreChooser(ActionEvent evt) {//GEN-FIRST:event_openCo
         
 }//GEN-LAST:event_openCoverageStoreChooser
 
-private void openDataStoreChooser(ActionEvent evt) {//GEN-FIRST:event_openDataStoreChooser
+private void openFeatureStoreChooser(ActionEvent evt) {//GEN-FIRST:event_openFeatureStoreChooser
 
         try {
-            final List<MapLayer> layers = JDataStoreChooser.showLayerDialog(null);
+            final List<MapLayer> layers = JFeatureStoreChooser.showLayerDialog(null);
             
             for(MapLayer layer : layers){
                 if(layer == null) continue;                    
@@ -443,7 +443,7 @@ private void openDataStoreChooser(ActionEvent evt) {//GEN-FIRST:event_openDataSt
             Logger.getLogger(JMap2DFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
     
-}//GEN-LAST:event_openDataStoreChooser
+}//GEN-LAST:event_openFeatureStoreChooser
 
 private void openServerChooser(ActionEvent evt) {//GEN-FIRST:event_openServerChooser
 

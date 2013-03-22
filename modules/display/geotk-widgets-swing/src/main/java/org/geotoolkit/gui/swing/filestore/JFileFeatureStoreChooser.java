@@ -46,16 +46,16 @@ import org.opengis.parameter.ParameterDescriptorGroup;
  *
  * @author Johann Sorel (Geoamatys)
  */
-public class JFileDatastoreChooser extends javax.swing.JSplitPane {
+public class JFileFeatureStoreChooser extends javax.swing.JSplitPane {
 
-    private static final Logger LOGGER = Logging.getLogger(JFileDatastoreChooser.class);
+    private static final Logger LOGGER = Logging.getLogger(JFileFeatureStoreChooser.class);
     private static volatile File lastPath = null;
     private static volatile FileFilter lastFilter = null;
     private final Map<FileFilter, FileFeatureStoreFactory> filterMap = new HashMap<FileFilter, FileFeatureStoreFactory>();
     private final JFileChooser guiChooser = new JFileChooser();
     private final JFeatureOutLine guiConfig = new JFeatureOutLine();
 
-    public JFileDatastoreChooser() {
+    public JFileFeatureStoreChooser() {
         this(null);
     }
 
@@ -63,7 +63,7 @@ public class JFileDatastoreChooser extends javax.swing.JSplitPane {
      * Creates new form panel, similar to a JFileChooser panel.
      * @param openPath : default path to open
      */
-    public JFileDatastoreChooser(final File openPath) {
+    public JFileFeatureStoreChooser(final File openPath) {
         setBorder(null);
         setDividerSize(3);
 
@@ -72,7 +72,7 @@ public class JFileDatastoreChooser extends javax.swing.JSplitPane {
         setLeftComponent(guiChooser);
         setRightComponent(null);
 
-        // get all datastore factories ---------------------------------------------
+        // get all featurestore factories ---------------------------------------------
         final List<FileFilter> filters = new ArrayList<FileFilter>();
 
         final Iterator<FileFeatureStoreFactory> ite = FeatureStoreFinder.getAvailableFactories(FileFeatureStoreFactory.class).iterator();
@@ -173,7 +173,7 @@ public class JFileDatastoreChooser extends javax.swing.JSplitPane {
     }
 
     /**
-     * Returns a list of created datastores
+     * Returns a list of created featurestores
      */
     public List<FeatureStore> getSources() {
         final List<FeatureStore> stores = new ArrayList<FeatureStore>();
@@ -223,7 +223,7 @@ public class JFileDatastoreChooser extends javax.swing.JSplitPane {
     }
 
     public static List<FeatureStore> showDialog(List<PropertyValueEditor> editors){
-        final JFileDatastoreChooser chooser = new JFileDatastoreChooser();
+        final JFileFeatureStoreChooser chooser = new JFileFeatureStoreChooser();
         chooser.getEditors().addAll(editors);
         JOptionDialog.show(null, chooser, JOptionPane.OK_OPTION);
         return chooser.getSources();

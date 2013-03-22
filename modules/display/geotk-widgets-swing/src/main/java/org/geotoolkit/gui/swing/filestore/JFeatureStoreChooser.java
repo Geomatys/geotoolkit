@@ -50,9 +50,9 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class JDataStoreChooser extends javax.swing.JPanel {
+public class JFeatureStoreChooser extends javax.swing.JPanel {
 
-    private static final Logger LOGGER = Logging.getLogger(JDataStoreChooser.class);
+    private static final Logger LOGGER = Logging.getLogger(JFeatureStoreChooser.class);
 
     private static final Comparator<FeatureStoreFactory> SORTER = new Comparator<FeatureStoreFactory>() {
         @Override
@@ -64,7 +64,7 @@ public class JDataStoreChooser extends javax.swing.JPanel {
     private final JFeatureOutLine guiEditor = new JFeatureOutLine();
     private final JLayerChooser chooser = new JLayerChooser();
 
-    public JDataStoreChooser() {
+    public JFeatureStoreChooser() {
         initComponents();
         guiEditPane.add(BorderLayout.CENTER,new JScrollPane(guiEditor));
 
@@ -96,7 +96,7 @@ public class JDataStoreChooser extends javax.swing.JPanel {
         }
     }
 
-    public FeatureStore getDataStore() throws DataStoreException{
+    public FeatureStore getFeatureStore() throws DataStoreException{
         final FeatureStoreFactory factory = (FeatureStoreFactory) guiList.getSelectedValue();
 
         if(factory == null){
@@ -205,7 +205,7 @@ private void guiConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
         FeatureStore store = null;
         try {
             chooser.setSource(null);
-            store = getDataStore();
+            store = getFeatureStore();
             chooser.setSource(store);
             guiInfoLabel.setForeground(Color.GREEN);
             guiInfoLabel.setText("ok");
@@ -263,7 +263,7 @@ private void guiConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
     }
 
     private static List showDialog(List<PropertyValueEditor> editors, boolean layerVisible) throws DataStoreException{
-        final JDataStoreChooser chooser = new JDataStoreChooser();
+        final JFeatureStoreChooser chooser = new JFeatureStoreChooser();
         if(editors != null){
             chooser.guiEditor.getEditors().addAll(editors);
         }        
@@ -275,7 +275,7 @@ private void guiConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
             if(layerVisible){
                 return chooser.getSelectedLayers();
             }else{
-                final FeatureStore store = chooser.getDataStore();
+                final FeatureStore store = chooser.getFeatureStore();
                 if(store == null){
                     return Collections.EMPTY_LIST;
                 }else{
