@@ -313,7 +313,7 @@ expression
 
 filter_geometry
         : BBOX^ LPAREN! (PROPERTY_NAME|NAME) COMMA! expression_unary COMMA! expression_unary COMMA! expression_unary COMMA! expression_unary (COMMA! TEXT)? RPAREN!
-        | BEYOND^ LPAREN! expression COMMA! expression RPAREN!
+        | BEYOND^ LPAREN! expression COMMA! expression COMMA! expression COMMA! expression RPAREN!
         | CONTAINS^ LPAREN! expression COMMA! expression RPAREN!
         | CROSS^ LPAREN! expression COMMA! expression RPAREN!
         | DISJOINT^ LPAREN! expression COMMA! expression RPAREN!

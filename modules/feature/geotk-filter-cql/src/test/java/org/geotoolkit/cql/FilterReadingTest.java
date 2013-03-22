@@ -326,10 +326,9 @@ public class FilterReadingTest {
         assertEquals(FF.bbox(FF.property("geometry"), -10,-20,10,20,null), filter);   
     }
     
-
     @Test
     public void testBeyond() throws CQLException {
-        final String cql = "BEYOND(\"att\" ,POLYGON((10 20, 30 40, 50 60, 10 20)))";
+        final String cql = "BEYOND(\"att\" ,POLYGON((10 20, 30 40, 50 60, 10 20)), 10, meters)";
         final Object obj = CQL.parseFilter(cql);        
         assertTrue(obj instanceof Beyond);
         final Beyond filter = (Beyond) obj;

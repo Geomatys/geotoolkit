@@ -544,7 +544,9 @@ public final class CQL {
         }else if(CQLParser.BEYOND == type){
             final Expression exp1 = convertExpression((CommonTree)tree.getChild(0), ff);
             final Expression exp2 = convertExpression((CommonTree)tree.getChild(1), ff);  
-            return ff.beyond(exp1,exp2,0,"");
+            final double distance = Double.valueOf(tree.getChild(2).getText());
+            final String unit = tree.getChild(3).getText();
+            return ff.beyond(exp1,exp2,distance,unit);
         }else if(CQLParser.CONTAINS == type){
             final Expression exp1 = convertExpression((CommonTree)tree.getChild(0), ff);
             final Expression exp2 = convertExpression((CommonTree)tree.getChild(1), ff);  
