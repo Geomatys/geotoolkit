@@ -39,6 +39,7 @@ import javax.imageio.spi.ImageWriterSpi;
 import javax.imageio.stream.ImageOutputStream;
 import javax.swing.*;
 import javax.swing.JToolBar.Separator;
+import javax.xml.bind.JAXBException;
 import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.gui.swing.contexttree.JContextTree;
@@ -52,6 +53,7 @@ import org.geotoolkit.gui.swing.contexttree.menu.SeparatorItem;
 import org.geotoolkit.gui.swing.contexttree.menu.SessionCommitItem;
 import org.geotoolkit.gui.swing.contexttree.menu.SessionRollbackItem;
 import org.geotoolkit.gui.swing.contexttree.menu.ZoomToLayerItem;
+import org.geotoolkit.gui.swing.etl.JChainEditor;
 import org.geotoolkit.gui.swing.filestore.JCoverageStoreChooser;
 import org.geotoolkit.gui.swing.filestore.JFeatureStoreChooser;
 import org.geotoolkit.gui.swing.filestore.JServerChooser;
@@ -80,6 +82,10 @@ import org.geotoolkit.gui.swing.propertyedit.styleproperty.JSimpleStylePanel;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
+import org.geotoolkit.process.chain.ChainProcess;
+import org.geotoolkit.process.chain.ChainProcessDescriptor;
+import org.geotoolkit.process.chain.model.Chain;
+import org.geotoolkit.process.chain.model.event.EventChain;
 import org.geotoolkit.storage.DataStoreException;
 import org.opengis.geometry.Envelope;
 
@@ -93,6 +99,7 @@ public class JMap2DFrame extends javax.swing.JFrame {
     
     private final JMap2D guiMap;
     private final JContextTree guiContextTree;
+    private final JChainEditor guiChainEditor;
     
     protected JMap2DFrame(final MapContext context, Hints hints) {
         this(context,false,hints);
@@ -111,6 +118,9 @@ public class JMap2DFrame extends javax.swing.JFrame {
         guiMap.getCanvas().setRenderingHint(GO2Hints.KEY_GENERALIZE, GO2Hints.GENERALIZE_ON);
         guiMap.getCanvas().setRenderingHint(GO2Hints.KEY_BEHAVIOR_MODE, GO2Hints.BEHAVIOR_PROGRESSIVE);
                
+        guiChainEditor = new JChainEditor(true);
+        panETL.add(BorderLayout.CENTER, guiChainEditor);
+        
         if(hints != null){
             guiMap.getCanvas().setRenderingHints(hints);
         }
@@ -150,7 +160,7 @@ public class JMap2DFrame extends javax.swing.JFrame {
         guiMap.getCanvas().getController().setAutoRepaint(true);
 
         setSize(1024,768);
-        setLocationRelativeTo(null);             
+        setLocationRelativeTo(null);
     }
 
     private void initTree(final JContextTree tree) {
@@ -195,7 +205,7 @@ public class JMap2DFrame extends javax.swing.JFrame {
 
         tree.revalidate();
     }
-    
+        
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -221,6 +231,7 @@ public class JMap2DFrame extends javax.swing.JFrame {
         guiEditBar = new JEditionBar();
         guiConfigBar = new JConfigBar();
         guiCoordBar = new JCoordinateBar();
+        panETL = new JPanel();
         panTree = new JPanel();
         jScrollPane1 = new JContextTree();
         jMenuBar1 = new JMenuBar();
@@ -303,6 +314,9 @@ public class JMap2DFrame extends javax.swing.JFrame {
         panGeneral.add(guiCoordBar, BorderLayout.PAGE_END);
 
         panTabs.addTab("2D", panGeneral);
+
+        panETL.setLayout(new BorderLayout());
+        panTabs.addTab("ETL", panETL);
 
         jSplitPane1.setRightComponent(panTabs);
 
@@ -512,6 +526,7 @@ private void openServerChooser(ActionEvent evt) {//GEN-FIRST:event_openServerCho
     private JPopupMenu.Separator jSeparator4;
     private JSplitPane jSplitPane1;
     private JToolBar jToolBar1;
+    private JPanel panETL;
     private JPanel panGeneral;
     protected JTabbedPane panTabs;
     private JPanel panTree;

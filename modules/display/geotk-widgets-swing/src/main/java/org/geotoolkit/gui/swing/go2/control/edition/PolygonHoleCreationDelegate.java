@@ -30,11 +30,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
+import org.apache.sis.util.collection.UnmodifiableArrayList;
 
 import org.opengis.feature.Feature;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.gui.swing.go2.JMap2D;
-import org.geotoolkit.util.collection.UnmodifiableArrayList;
 
 
 /**

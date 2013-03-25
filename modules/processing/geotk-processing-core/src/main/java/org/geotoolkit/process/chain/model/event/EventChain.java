@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import javax.swing.event.EventListenerList;
@@ -66,6 +67,23 @@ public class EventChain extends Chain{
      * Type convertion tester.
      */
     private final ConverterMatcher matcher ;
+
+    private static Collection<? extends ProcessingRegistry> getDefaultRegistries(){
+        final List<ProcessingRegistry> factories = new ArrayList<ProcessingRegistry>();
+        final Iterator<ProcessingRegistry> ite = ProcessFinder.getProcessFactories();
+        while(ite.hasNext()){
+            factories.add(ite.next());
+        }
+        return factories;
+    }
+    
+    public EventChain() {
+        this(null,getDefaultRegistries(),ConverterMatcher.DEFAULT);
+    }
+    
+    public EventChain(final Chain chain) {
+        this(chain,getDefaultRegistries(),ConverterMatcher.DEFAULT);
+    }
 
     public EventChain(Collection<? extends ProcessingRegistry> factories, ConverterMatcher matcher){
         this(null,factories, matcher);

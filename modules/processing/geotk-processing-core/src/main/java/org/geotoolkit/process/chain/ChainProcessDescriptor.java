@@ -18,10 +18,14 @@ package org.geotoolkit.process.chain;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import org.geotoolkit.metadata.iso.DefaultIdentifier;
+import org.geotoolkit.metadata.iso.citation.DefaultCitation;
+import org.geotoolkit.metadata.iso.identification.DefaultServiceIdentification;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.parameter.ExtendedParameterDescriptor;
@@ -32,6 +36,7 @@ import org.geotoolkit.process.ProcessingRegistry;
 import org.geotoolkit.process.chain.model.Chain;
 import org.geotoolkit.process.chain.model.Parameter;
 import org.geotoolkit.util.SimpleInternationalString;
+import org.opengis.metadata.Identifier;
 import org.opengis.metadata.identification.Identification;
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
@@ -44,11 +49,28 @@ import org.opengis.parameter.ParameterValueGroup;
  */
 public class ChainProcessDescriptor extends AbstractProcessDescriptor{
 
+    /** registry name **/
+    public static final DefaultServiceIdentification FALLBACK_IDENTIFICATION;
+    static {
+        FALLBACK_IDENTIFICATION = new DefaultServiceIdentification();
+        final Identifier id = new DefaultIdentifier("dynamicchain");
+        final DefaultCitation citation = new DefaultCitation("dynamicchain");
+        citation.setIdentifiers(Collections.singleton(id));
+        FALLBACK_IDENTIFICATION.setCitation(citation);
+    }
+    
     public static final String KEY_DISTANT_CLASS = "distanClass";
 
     private final Collection<? extends ProcessingRegistry> factories;
     private final Chain model;
 
+    /**
+     * Create a process descriptor with default registry.
+     */
+    public ChainProcessDescriptor(final Chain model){
+        this(model,FALLBACK_IDENTIFICATION,null);
+    }
+    
     /**
      * Create a process descriptor with default registry.
      */

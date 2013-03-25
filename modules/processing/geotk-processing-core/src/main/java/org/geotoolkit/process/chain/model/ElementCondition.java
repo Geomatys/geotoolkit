@@ -17,6 +17,7 @@
 package org.geotoolkit.process.chain.model;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -28,7 +29,7 @@ import org.geotoolkit.util.Utilities;
  * @author Quentin Boileau (Geomatys)
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ElementCondition extends Element {
+public class ElementCondition extends Element implements Parameterized{
         
     @XmlElement(name = "syntax")
     private String syntax;
@@ -178,6 +179,15 @@ public class ElementCondition extends Element {
     @Override
     public Element copy() {
         return new ElementCondition(this);
+    }
+
+    @Override
+    public List<Parameter> getOutputs() {
+        return Collections.emptyList();
+    }
+
+    @Override
+    public void setOutputs(List<Parameter> outputs) {
     }
     
 }

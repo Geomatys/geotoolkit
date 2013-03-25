@@ -61,11 +61,11 @@ public class MapContextDemo {
         final CoverageMapLayer coverageLayer = MapBuilder.createCoverageLayer(reader, 0, coverageStyle,"coverage");
 
         //create a WMS layer
-        final WebMapServer server = new WebMapServer(new URL("http://demo.geomatys.com/constellation/WS/wms"), WMSVersion.v130);
-        final WMSMapLayer wmsLayer = new WMSMapLayer(server, "BlueMarble");
+        //final WebMapServer server = new WebMapServer(new URL("http://demo.geomatys.com/constellation/WS/wms"), WMSVersion.v130);
+        //final WMSMapLayer wmsLayer = new WMSMapLayer(server, "BlueMarble");
 
         //add all layers in the context
-        context.layers().add(wmsLayer);
+        //context.layers().add(wmsLayer);
         context.layers().add(coverageLayer);
         context.layers().add(featureLayer);
 
@@ -73,7 +73,7 @@ public class MapContextDemo {
         JMap2DFrame.show(context);
         
         
-        //rebuild the context in a tree structure
+        //Build the context in a tree structure
         //context.items().clear();
         //
         //MapItem bggroup = MapBuilder.createItem();

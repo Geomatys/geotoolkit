@@ -16,12 +16,16 @@
  */
 package org.geotoolkit.process.chain.model.event;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import org.apache.sis.util.ArgumentChecks;
+import org.apache.sis.util.ObjectConverters;
 import org.geotoolkit.process.chain.model.ClassFull;
+import org.geotoolkit.util.Converters;
 import org.geotoolkit.util.converter.ObjectConverter;
 
 /**
@@ -31,6 +35,14 @@ import org.geotoolkit.util.converter.ObjectConverter;
  */
 public class ConverterMatcher {
 
+    public static ConverterMatcher DEFAULT;
+    
+    static {
+        DEFAULT = new ConverterMatcher(
+                    new HashMap<ClassFull, List<ClassFull>>(),
+                    new ArrayList<ObjectConverter>());
+    }
+    
     private final Map<ClassFull, List<ClassFull>> distantConverters;
     private final Collection<ObjectConverter> localConverters;
 

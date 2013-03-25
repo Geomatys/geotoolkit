@@ -54,7 +54,7 @@ import org.xml.sax.InputSource;
  */
 @XmlRootElement(name="chain")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class Chain implements Comparable<Chain> {
+public class Chain implements Comparable<Chain>,Parameterized {
 
     @XmlTransient
     private static MarshallerPool POOL;
