@@ -18,6 +18,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
 import java.util.logging.Level;
+import java.util.regex.Pattern;
 
 /**
  * Util class to build a feature from Point object of a MIF file.
@@ -32,7 +33,7 @@ public final class MIFPointBuilder extends MIFGeometryBuilder {
     public static final Name SYMBOL_NAME = new DefaultName("SYMBOL");
     public static final AttributeDescriptor SYMBOL_DESCRIPTOR;
 
-    private SimpleFeatureType featureType = null;
+    private final static Pattern SYMBOL_PATTERN = Pattern.compile("symbol", Pattern.CASE_INSENSITIVE);
 
     static {
         final DefaultAttributeType symbolType = new DefaultAttributeType(SYMBOL_NAME, Symbol.class, true, false, null, null, null);
@@ -80,7 +81,8 @@ public final class MIFPointBuilder extends MIFGeometryBuilder {
 
         toFill.getProperty(NAME).setValue(pt);
 
-        if(scanner.hasNext("\\w+") && "symbol".equalsIgnoreCase(scanner.next("\\w+"))) {
+        if(scanner.hasNext(SYMBOL_PATTERN)) {
+            scanner.next();
             Symbol symbol;
             String args = scanner.next("\\([^\\)]\\)");
             String[] argsTab = args.substring(1, args.length()-1).trim().split(",");

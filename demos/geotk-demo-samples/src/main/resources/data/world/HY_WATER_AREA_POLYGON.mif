@@ -1,6 +1,6 @@
 VERSION 300
 DELIMITER ","
- CoordSys Earth Projection 3, 116, "m", 145, -37, -36, -38, 2500000, 2500000 Bounds (1500000,1500000) (3500000,3500000)                                                                                 
+ CoordSys Earth Projection 3, 116, "m", 145, -37, -36, -38, 2500000, 2500000 Bounds (1500000,1500000) (3500000,3500000)
 COLUMNS 12
     PFI decimal(10,0)
     UFI decimal(10,0)

@@ -22,6 +22,7 @@ import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.regex.Pattern;
 
 /**
  * Class Description
@@ -106,17 +107,20 @@ public class MIFTextBuilder extends MIFGeometryBuilder {
             throw new DataStoreException("Unable to build envelope from given data", e);
         }
 
-        if (scanner.hasNext("\\w+") && scanner.next().equalsIgnoreCase("font")) {
-
-        }
-
-        if (scanner.hasNext("\\w+") && scanner.next().equalsIgnoreCase("spacing")) {
-
-        }
-
-        if (scanner.hasNext("\\w+") && scanner.next().equalsIgnoreCase("angle")) {
-
-        }
+        /**
+         * Add a management for the text options.
+         */
+//        if (scanner.hasNext("\\w+") && scanner.next().equalsIgnoreCase("font")) {
+//
+//        }
+//
+//        if (scanner.hasNext("\\w+") && scanner.next().equalsIgnoreCase("spacing")) {
+//
+//        }
+//
+//        if (scanner.hasNext("\\w+") && scanner.next().equalsIgnoreCase("angle")) {
+//
+//        }
     }
 
 
