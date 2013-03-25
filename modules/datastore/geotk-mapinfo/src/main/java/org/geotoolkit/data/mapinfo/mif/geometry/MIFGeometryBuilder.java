@@ -31,15 +31,6 @@ public abstract class MIFGeometryBuilder {
     protected final static Logger LOGGER = Logger.getLogger(MIFGeometryBuilder.class.getName());
     protected final static GeometryFactory GEOMETRY_FACTORY = new GeometryFactory(new PrecisionModel());
 
-    protected final static Name STYLE_NAME = new DefaultName("STYLE");
-
-    protected static final AttributeDescriptor STYLE;
-
-    static {
-        final AttributeType penType = new DefaultAttributeType(STYLE_NAME, Symbolizer.class, false, false, null, null, null);
-        STYLE = new DefaultAttributeDescriptor(penType, STYLE_NAME, 0, 1, true, null);
-    }
-
     /**
      * Parse an input file to build a JTS Geometry with its data.
      *

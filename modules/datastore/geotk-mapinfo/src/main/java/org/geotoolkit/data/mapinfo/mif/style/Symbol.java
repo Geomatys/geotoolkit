@@ -13,6 +13,7 @@ import org.opengis.style.StyleVisitor;
 import javax.measure.quantity.Length;
 import javax.measure.unit.Unit;
 import java.awt.*;
+import java.util.regex.Pattern;
 
 /**
  * Class Description
@@ -22,7 +23,10 @@ import java.awt.*;
  */
 public class Symbol implements MIFSymbolizer, PointSymbolizer {
 
-    private static final Name NAME = new DefaultName("SYMBOL");
+    public static final Name NAME = new DefaultName("SYMBOL");
+
+    public final static Pattern SYMBOL_PATTERN = Pattern.compile(NAME.getLocalPart()+"\\s*\\([^\\)]+\\)", Pattern.CASE_INSENSITIVE);
+
     private int shape  = 0;
     private int colorCode = 0;
     private int size = 0;
@@ -94,5 +98,10 @@ public class Symbol implements MIFSymbolizer, PointSymbolizer {
     @Override
     public Object accept(StyleVisitor styleVisitor, Object o) {
         return styleVisitor.visit(this, o);
+    }
+
+    @Override
+    public String toString() {
+        return toMIFText();
     }
 }

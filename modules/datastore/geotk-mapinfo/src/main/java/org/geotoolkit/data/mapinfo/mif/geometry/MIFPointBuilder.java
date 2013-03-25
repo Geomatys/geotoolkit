@@ -3,12 +3,15 @@ package org.geotoolkit.data.mapinfo.mif.geometry;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Point;
 import org.geotoolkit.data.mapinfo.ProjectionUtils;
+import org.geotoolkit.data.mapinfo.mif.style.Pen;
 import org.geotoolkit.data.mapinfo.mif.style.Symbol;
 import org.geotoolkit.feature.DefaultName;
+import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.feature.type.DefaultAttributeDescriptor;
 import org.geotoolkit.feature.type.DefaultAttributeType;
 import org.geotoolkit.storage.DataStoreException;
 import org.opengis.feature.Feature;
+import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.*;
@@ -30,14 +33,11 @@ public final class MIFPointBuilder extends MIFGeometryBuilder {
 
     public static final Name NAME = new DefaultName("POINT");
 
-    public static final Name SYMBOL_NAME = new DefaultName("SYMBOL");
     public static final AttributeDescriptor SYMBOL_DESCRIPTOR;
 
-    private final static Pattern SYMBOL_PATTERN = Pattern.compile("symbol", Pattern.CASE_INSENSITIVE);
-
     static {
-        final DefaultAttributeType symbolType = new DefaultAttributeType(SYMBOL_NAME, Symbol.class, true, false, null, null, null);
-        SYMBOL_DESCRIPTOR = new DefaultAttributeDescriptor(symbolType, SYMBOL_NAME, 0, 1, true, null);
+        final DefaultAttributeType symbolType = new DefaultAttributeType(Symbol.NAME, Symbol.class, true, false, null, null, null);
+        SYMBOL_DESCRIPTOR = new DefaultAttributeDescriptor(symbolType, Symbol.NAME, 1, 1, true, null);
     }
 
     /**
@@ -81,18 +81,20 @@ public final class MIFPointBuilder extends MIFGeometryBuilder {
 
         toFill.getProperty(NAME).setValue(pt);
 
-        if(scanner.hasNext(SYMBOL_PATTERN)) {
-            scanner.next();
-            Symbol symbol;
-            String args = scanner.next("\\([^\\)]\\)");
-            String[] argsTab = args.substring(1, args.length()-1).trim().split(",");
+        // Style
+        if(scanner.hasNext(Symbol.SYMBOL_PATTERN) && toFill.getType().getDescriptors().contains(SYMBOL_DESCRIPTOR)) {
+            String args = scanner.next(Symbol.SYMBOL_PATTERN);
+            String[] argsTab = args.substring(args.indexOf('(')+1, args.length()-1).trim().split(",");
             if (argsTab.length < 3) {
-                LOGGER.log(Level.WARNING, "A SYMBOL tag have been found, but can't be read (bad syntax ?). Ignore style.");
+                LOGGER.log(Level.WARNING, "A PEN tag have been found, but can't be read (bad syntax ?). Ignore style.");
             }
             else {
-                /** todo : parse symbol */
+                final int width = Integer.decode(argsTab[0]);
+                final int pattern = Integer.decode(argsTab[1]);
+                final int color = Integer.decode(argsTab[2]);
+                Symbol symbol = new Symbol(width, pattern, color, null);
+                toFill.getProperty(Symbol.NAME).setValue(symbol);
             }
-            symbol = new Symbol();
         }
     }
 
@@ -111,6 +113,13 @@ public final class MIFPointBuilder extends MIFGeometryBuilder {
             pt = GEOMETRY_FACTORY.createPoint((Coordinate) value);
         }
         builder.append(' ').append(pt.getX()).append(' ').append(pt.getY()).append('\n');
+
+        if(geometry.getProperty(Symbol.NAME) != null) {
+            Object sValue = geometry.getProperty(Symbol.NAME).getValue();
+            if(sValue != null && sValue instanceof Symbol) {
+                builder.append(sValue).append('\n');
+            }
+        }
         return builder.toString();
     }
 

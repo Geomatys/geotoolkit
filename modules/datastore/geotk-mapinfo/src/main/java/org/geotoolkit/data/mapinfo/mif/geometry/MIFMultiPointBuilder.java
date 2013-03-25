@@ -18,6 +18,7 @@ import org.opengis.referencing.operation.MathTransform;
 import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
+import java.util.logging.Level;
 
 /**
  * Create collection of points from MIF MultiPoint
@@ -28,14 +29,12 @@ import java.util.Scanner;
 public class MIFMultiPointBuilder extends MIFGeometryBuilder {
 
     public static final Name NAME = new DefaultName("MULTIPOINT");
-    public static final Name SYMBOL_NAME = new DefaultName("SYMBOL");
+
     public static final AttributeDescriptor SYMBOL_DESCRIPTOR;
 
-    private SimpleFeatureType featureType = null;
-
     static {
-        final DefaultAttributeType symbolType = new DefaultAttributeType(SYMBOL_NAME, Symbol.class, true, false, null, null, null);
-        SYMBOL_DESCRIPTOR = new DefaultAttributeDescriptor(symbolType, SYMBOL_NAME, 0, 1, true, null);
+        final DefaultAttributeType symbolType = new DefaultAttributeType(Symbol.NAME, Symbol.class, true, false, null, null, null);
+        SYMBOL_DESCRIPTOR = new DefaultAttributeDescriptor(symbolType, Symbol.NAME, 0, 1, true, null);
     }
 
     @Override
@@ -62,9 +61,21 @@ public class MIFMultiPointBuilder extends MIFGeometryBuilder {
 
             toFill.getProperty(NAME).setValue(GEOMETRY_FACTORY.createMultiPoint(seq));
 
-            if(scanner.hasNext("\\w+") && scanner.next().equalsIgnoreCase(SYMBOL_NAME.getLocalPart())) {
-
+            if(scanner.hasNext(Symbol.SYMBOL_PATTERN) && toFill.getType().getDescriptors().contains(SYMBOL_DESCRIPTOR)) {
+                String args = scanner.next(Symbol.SYMBOL_PATTERN);
+                String[] argsTab = args.substring(args.indexOf('(')+1, args.length()-1).trim().split(",");
+                if (argsTab.length < 3) {
+                    LOGGER.log(Level.WARNING, "A SYMBOL tag have been found, but can't be read (bad syntax ?). Ignore style.");
+                }
+                else {
+                    final int width = Integer.decode(argsTab[0]);
+                    final int pattern = Integer.decode(argsTab[1]);
+                    final int color = Integer.decode(argsTab[2]);
+                    Symbol symbol = new Symbol(width, pattern, color, null);
+                    toFill.getProperty(Symbol.NAME).setValue(symbol);
+                }
             }
+
         } catch (Exception e) {
             throw new DataStoreException("MultiPoint instance can't be read.", e);
         }
@@ -87,6 +98,13 @@ public class MIFMultiPointBuilder extends MIFGeometryBuilder {
         for(int i =0 ; i < multiPt.getNumGeometries(); i++) {
             Point pt = (Point) multiPt.getGeometryN(i);
             builder.append(pt.getX()).append(pt.getY()).append('\n');
+        }
+
+        if(geometry.getProperty(Symbol.NAME) != null) {
+            Object sValue = geometry.getProperty(Symbol.NAME).getValue();
+            if(sValue != null && sValue instanceof Symbol) {
+                builder.append(sValue).append('\n');
+            }
         }
 
         return builder.toString();

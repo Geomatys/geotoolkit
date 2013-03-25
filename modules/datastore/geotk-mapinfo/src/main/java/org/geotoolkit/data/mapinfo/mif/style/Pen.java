@@ -14,6 +14,7 @@ import org.opengis.style.StyleVisitor;
 import javax.measure.quantity.Length;
 import javax.measure.unit.Unit;
 import java.awt.*;
+import java.util.regex.Pattern;
 
 /**
  * Class Description
@@ -23,7 +24,9 @@ import java.awt.*;
  */
 public class Pen implements MIFSymbolizer, LineSymbolizer {
 
-    private static final Name NAME = new DefaultName("PEN");
+    public static final Name NAME = new DefaultName("PEN");
+
+    public static final Pattern PEN_PATTERN = Pattern.compile(NAME.getLocalPart()+"\\s*\\([^\\)]+\\)", Pattern.CASE_INSENSITIVE);
 
     private int widthCode;
     private int pattern;
@@ -118,5 +121,10 @@ public class Pen implements MIFSymbolizer, LineSymbolizer {
     @Override
     public Object accept(StyleVisitor styleVisitor, Object o) {
         return styleVisitor.visit(this, o);
+    }
+
+    @Override
+    public String toString() {
+        return toMIFText();
     }
 }

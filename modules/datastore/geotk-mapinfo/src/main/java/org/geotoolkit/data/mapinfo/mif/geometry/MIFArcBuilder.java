@@ -4,6 +4,7 @@ import com.vividsolutions.jts.geom.CoordinateSequence;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.impl.PackedCoordinateSequence;
 import org.geotoolkit.data.mapinfo.ProjectionUtils;
+import org.geotoolkit.data.mapinfo.mif.style.Pen;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.type.DefaultAttributeDescriptor;
 import org.geotoolkit.feature.type.DefaultAttributeType;
@@ -16,6 +17,7 @@ import org.opengis.referencing.operation.MathTransform;
 
 import java.awt.geom.Rectangle2D;
 import java.util.*;
+import java.util.logging.Level;
 
 /**
  * Class Description
@@ -31,12 +33,16 @@ public class MIFArcBuilder extends MIFGeometryBuilder {
 
     public static final AttributeDescriptor BEGIN_ANGLE;
     public static final AttributeDescriptor END_ANGLE;
+    private static final AttributeDescriptor PEN;
 
     static {
         final AttributeType angleType = new DefaultAttributeType(new DefaultName("ANGLE"), Double.class,false, false, null, null, null);
 
         BEGIN_ANGLE = new DefaultAttributeDescriptor(angleType, BEGIN_ANGLE_NAME, 1, 1, false, null);
         END_ANGLE = new DefaultAttributeDescriptor(angleType, END_ANGLE_NAME, 1, 1, false, null);
+
+        final AttributeType penType = new DefaultAttributeType(Pen.NAME, Pen.class, false, false, null, null, null);
+        PEN = new DefaultAttributeDescriptor(penType, Pen.NAME, 1, 1, true, null);
     }
 
     @Override
@@ -72,8 +78,19 @@ public class MIFArcBuilder extends MIFGeometryBuilder {
             throw new DataStoreException("Arc is not properly defined : not enough points found.", ex);
         }
 
-        if(scanner.hasNext("PEN")) {
-            /** todo : parse PEN tag. */
+        if(scanner.hasNext(Pen.PEN_PATTERN) && toFill.getType().getDescriptors().contains(PEN)) {
+            String args = scanner.next(Pen.PEN_PATTERN);
+            String[] argsTab = args.substring(args.indexOf('(')+1, args.length()-1).trim().split(",");
+            if (argsTab.length < 3) {
+                LOGGER.log(Level.WARNING, "A PEN tag have been found, but can't be read (bad syntax ?). Ignore style.");
+            }
+            else {
+                final int width = Integer.decode(argsTab[0]);
+                final int pattern = Integer.decode(argsTab[1]);
+                final int color = Integer.decode(argsTab[2]);
+                Pen pen = new Pen(width, pattern, color);
+                toFill.getProperty(Pen.NAME).setValue(pen);
+            }
         }
     }
 
@@ -115,6 +132,14 @@ public class MIFArcBuilder extends MIFGeometryBuilder {
 
         builder.append(source.getProperty(BEGIN_ANGLE_NAME).getValue()).append(' ')
                 .append(source.getProperty(BEGIN_ANGLE_NAME).getValue()).append('\n');
+
+        if(source.getProperty(Pen.NAME) != null) {
+            Object penValue = source.getProperty(Pen.NAME).getValue();
+            if(penValue != null && penValue instanceof Pen) {
+                builder.append(penValue).append('\n');
+            }
+        }
+
         return builder.toString();
     }
 
@@ -137,7 +162,7 @@ public class MIFArcBuilder extends MIFGeometryBuilder {
         List<AttributeDescriptor> descList = new ArrayList<AttributeDescriptor>(3);
         descList.add(BEGIN_ANGLE);
         descList.add(END_ANGLE);
-        descList.add(STYLE);
+        descList.add(PEN);
 
         return descList;
     }

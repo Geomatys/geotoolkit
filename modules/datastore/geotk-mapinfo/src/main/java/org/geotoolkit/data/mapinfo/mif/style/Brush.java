@@ -11,6 +11,7 @@ import org.opengis.style.Stroke;
 
 import javax.measure.quantity.Length;
 import javax.measure.unit.Unit;
+import java.util.regex.Pattern;
 
 /**
  * Class Description
@@ -21,6 +22,8 @@ import javax.measure.unit.Unit;
 public class Brush implements MIFSymbolizer, PolygonSymbolizer {
 
     public static final Name NAME = new DefaultName("BRUSH");
+
+    public static final Pattern BRUSH_PATTERN = Pattern.compile(NAME.getLocalPart()+"\\s*\\([^\\)]+\\)", Pattern.CASE_INSENSITIVE);
 
     public int pattern = 0;
     public int foregroundCC = 0;
@@ -123,5 +126,10 @@ public class Brush implements MIFSymbolizer, PolygonSymbolizer {
     @Override
     public Object accept(StyleVisitor styleVisitor, Object o) {
         return styleVisitor.visit(this, o);
+    }
+
+    @Override
+    public String toString() {
+        return toMIFText();
     }
 }

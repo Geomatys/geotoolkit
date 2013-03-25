@@ -6,6 +6,7 @@ import org.opengis.style.*;
 
 import javax.measure.quantity.Length;
 import javax.measure.unit.Unit;
+import java.util.regex.Pattern;
 
 /**
  * Class Description
@@ -15,7 +16,9 @@ import javax.measure.unit.Unit;
  */
 public class Font implements MIFSymbolizer {
 
-    public static final Name NAME = new DefaultName("BRUSH");
+    public static final Name NAME = new DefaultName("FONT");
+
+    public static final Pattern PATTERN = Pattern.compile(NAME.getLocalPart()+"\\s*\\([^\\)]+\\)", Pattern.CASE_INSENSITIVE);
 
     private String fontName = null;
     private int fontStyle = 0;
@@ -95,5 +98,10 @@ public class Font implements MIFSymbolizer {
     @Override
     public Object accept(StyleVisitor styleVisitor, Object o) {
         throw new UnsupportedOperationException("No implementation exists for this method.");
+    }
+
+    @Override
+    public String toString() {
+        return toMIFText();
     }
 }

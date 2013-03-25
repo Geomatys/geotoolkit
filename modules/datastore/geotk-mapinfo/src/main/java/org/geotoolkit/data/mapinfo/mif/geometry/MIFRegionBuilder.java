@@ -6,17 +6,21 @@ import org.geotoolkit.data.mapinfo.ProjectionUtils;
 import org.geotoolkit.data.mapinfo.mif.MIFUtils;
 import org.geotoolkit.data.mapinfo.mif.style.Brush;
 import org.geotoolkit.data.mapinfo.mif.style.Pen;
+import org.geotoolkit.data.mapinfo.mif.style.Symbol;
 import org.geotoolkit.feature.DefaultName;
+import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.feature.type.DefaultAttributeDescriptor;
 import org.geotoolkit.feature.type.DefaultAttributeType;
 import org.geotoolkit.storage.DataStoreException;
 import org.opengis.feature.Feature;
+import org.opengis.feature.Property;
 import org.opengis.feature.type.*;
 import org.opengis.referencing.operation.MathTransform;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.logging.Level;
 import java.util.regex.Pattern;
 
 /**
@@ -28,20 +32,18 @@ import java.util.regex.Pattern;
 public class MIFRegionBuilder extends MIFGeometryBuilder {
 
     public static final Name NAME = new DefaultName("REGION");
-    public static final Name PEN_NAME = new DefaultName("PEN");
-    public static final Name BRUSH_NAME = new DefaultName("BRUSH");
 
     private static final AttributeDescriptor BRUSH;
     private static final AttributeDescriptor PEN;
 
     static {
         final AttributeType penType =
-                new DefaultAttributeType(PEN_NAME, Pen.class, false, false, null, null, null);
-        PEN = new DefaultAttributeDescriptor(penType, PEN_NAME, 0, 1, true, null);
+                new DefaultAttributeType(Pen.NAME, Pen.class, false, false, null, null, null);
+        PEN = new DefaultAttributeDescriptor(penType, Pen.NAME, 1, 1, true, null);
 
         final AttributeType smoothType =
-                new DefaultAttributeType(BRUSH_NAME, Brush.class, false, false, null, null, null);
-        BRUSH = new DefaultAttributeDescriptor(smoothType, BRUSH_NAME, 0, 1, true, null);
+                new DefaultAttributeType(Brush.NAME, Brush.class, false, false, null, null, null);
+        BRUSH = new DefaultAttributeDescriptor(smoothType, Brush.NAME, 1, 1, true, null);
     }
 
     @Override
@@ -74,6 +76,41 @@ public class MIFRegionBuilder extends MIFGeometryBuilder {
         }
 
         toFill.getProperty(NAME).setValue(GEOMETRY_FACTORY.createMultiPolygon(polygons));
+
+
+        // Check for style definition.
+        if(scanner.hasNext(Pen.PEN_PATTERN) && toFill.getType().getDescriptors().contains(PEN)) {
+            String args = scanner.next(Pen.PEN_PATTERN);
+            String[] argsTab = args.substring(args.indexOf('(')+1, args.length()-1).trim().split(",");
+            if (argsTab.length < 3) {
+                LOGGER.log(Level.WARNING, "A PEN tag have been found, but can't be read (bad syntax ?). Ignore style.");
+            }
+            else {
+                final int width = Integer.decode(argsTab[0]);
+                final int pattern = Integer.decode(argsTab[1]);
+                final int color = Integer.decode(argsTab[2]);
+                Pen pen = new Pen(width, pattern, color);
+                toFill.getProperty(Pen.NAME).setValue(pen);
+            }
+        }
+
+        if(scanner.hasNext(Brush.BRUSH_PATTERN) && toFill.getType().getDescriptors().contains(BRUSH)) {
+            String args = scanner.next(Brush.BRUSH_PATTERN);
+            String[] argsTab = args.substring(args.indexOf('(')+1, args.length()-1).trim().split(",");
+            if (argsTab.length < 2) {
+                LOGGER.log(Level.WARNING, "A BRUSH tag have been found, but can't be read (bad syntax ?). Ignore style.");
+            }
+            else {
+                final int pattern = Integer.decode(argsTab[0]);
+                final int foreground = Integer.decode(argsTab[1]);
+                Brush brush = new Brush(pattern, foreground);
+                if(argsTab.length > 2) {
+                    final int background = Integer.decode(argsTab[2]);
+                    brush.setBackgroundCC(background);
+                }
+                toFill.getProperty(Brush.NAME).setValue(brush);
+            }
+        }
     }
 
     /**
@@ -98,6 +135,21 @@ public class MIFRegionBuilder extends MIFGeometryBuilder {
             builder.append(polygon.getNumPoints()).append('\n');
             for(Coordinate pt : polygon.getCoordinates()) {
                 builder.append(pt.x).append(' ').append(pt.y).append('\n');
+            }
+        }
+
+        // Write styles.
+        if(geometry.getProperty(Pen.NAME) != null) {
+            Object penValue = geometry.getProperty(Pen.NAME).getValue();
+            if(penValue != null && penValue instanceof Pen) {
+                builder.append(penValue).append('\n');
+            }
+        }
+
+        if(geometry.getProperty(Brush.NAME) != null) {
+                Object brValue = geometry.getProperty(Brush.NAME).getValue();
+            if(brValue != null && brValue instanceof Brush) {
+                builder.append(brValue).append('\n');
             }
         }
 

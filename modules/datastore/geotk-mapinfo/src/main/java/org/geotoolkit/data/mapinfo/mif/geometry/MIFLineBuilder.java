@@ -19,6 +19,8 @@ import java.util.Collections;
 import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.regex.Pattern;
 
 /**
  * Util class to build a feature from Line object of a MIF file.
@@ -29,16 +31,13 @@ import java.util.Scanner;
 public class MIFLineBuilder extends MIFGeometryBuilder {
 
     public static final Name NAME = new DefaultName("LINE");
-    public static final Name PEN_NAME = new DefaultName("PEN");
-    private static final AttributeDescriptor PEN;
 
+    private static final AttributeDescriptor PEN;
     static {
         final AttributeType penType =
-                new DefaultAttributeType(PEN_NAME, Pen.class, false, false, null, null, null);
-        PEN = new DefaultAttributeDescriptor(penType, PEN_NAME, 0, 1, true, null);
+                new DefaultAttributeType(Pen.NAME, Pen.class, false, false, null, null, null);
+        PEN = new DefaultAttributeDescriptor(penType, Pen.NAME, 0, 1, true, null);
     }
-
-    public SimpleFeatureType featureType;
 
     @Override
     public void buildGeometry(Scanner scanner, Feature toFill, MathTransform toApply) throws DataStoreException {
@@ -57,8 +56,19 @@ public class MIFLineBuilder extends MIFGeometryBuilder {
 
         toFill.getProperty(NAME).setValue(line);
 
-        if(scanner.hasNext(PEN_NAME.getLocalPart())) {
-            /** todo : parse PEN tag. */
+        if(scanner.hasNext(Pen.PEN_PATTERN) && toFill.getType().getDescriptors().contains(PEN)) {
+            String args = scanner.next(Pen.PEN_PATTERN);
+            String[] argsTab = args.substring(args.indexOf('(')+1, args.length()-1).trim().split(",");
+            if (argsTab.length < 3) {
+                LOGGER.log(Level.WARNING, "A PEN tag have been found, but can't be read (bad syntax ?). Ignore style.");
+            }
+            else {
+                final int width = Integer.decode(argsTab[0]);
+                final int pattern = Integer.decode(argsTab[1]);
+                final int color = Integer.decode(argsTab[2]);
+                Pen pen = new Pen(width, pattern, color);
+                toFill.getProperty(Pen.NAME).setValue(pen);
+            }
         }
     }
 
@@ -84,6 +94,13 @@ public class MIFLineBuilder extends MIFGeometryBuilder {
             Point pt2 =  line.getEndPoint();
             builder.append(' ').append(pt1.getX()).append(' ').append(pt1.getY())
                     .append(' ').append(pt2.getX()).append(' ').append(pt2.getY()).append('\n');
+        }
+
+        if(geometry.getProperty(Pen.NAME) != null) {
+            Object penValue = geometry.getProperty(Pen.NAME).getValue();
+            if(penValue != null && penValue instanceof Pen) {
+                builder.append(penValue).append('\n');
+            }
         }
 
         return builder.toString();

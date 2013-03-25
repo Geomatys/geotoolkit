@@ -1,9 +1,12 @@
 package org.geotoolkit.data.mapinfo.mif.geometry;
 
+import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.CoordinateSequence;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.impl.PackedCoordinateSequence;
 import org.geotoolkit.data.mapinfo.ProjectionUtils;
+import org.geotoolkit.data.mapinfo.mif.MIFManager;
+import org.geotoolkit.data.mapinfo.mif.MIFUtils;
 import org.geotoolkit.data.mapinfo.mif.style.Font;
 import org.geotoolkit.data.mapinfo.mif.style.LabelLine;
 import org.geotoolkit.feature.DefaultName;
@@ -22,10 +25,12 @@ import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Class Description
+ * A class which manage MIF text geometry.
  *
  * @author Alexis Manin (Geomatys)
  *         Date : 26/02/13
@@ -33,37 +38,44 @@ import java.util.regex.Pattern;
 public class MIFTextBuilder extends MIFGeometryBuilder {
     public static final Name NAME = new DefaultName("ENVELOPE");
     public static final Name TEXT_NAME = new DefaultName("TEXT");
-    public static final Name FONT_NAME = new DefaultName("FONT");
     public static final Name SPACING_NAME = new DefaultName("SPACING");
+    public static final Name JUSTIFY_NAME = new DefaultName("JUSTIFY");
     public static final Name ANGLE_NAME = new DefaultName("ANGLE");
-    public static final Name LABEL_NAME = new DefaultName("LABEL");
 
     public static final AttributeDescriptor TEXT_DESCRIPTOR;
     public static final AttributeDescriptor FONT_DESCRIPTOR;
     public static final AttributeDescriptor SPACING_DESCRIPTOR;
+    public static final AttributeDescriptor JUSTIFY_DESCRIPTOR;
     public static final AttributeDescriptor ANGLE_DESCRIPTOR;
     public static final AttributeDescriptor LABEL_DESCRIPTOR;
+
+    public static final Pattern SPACING_PATTERN = Pattern.compile(SPACING_NAME.getLocalPart()+"\\s*\\([^\\)]+\\)", Pattern.CASE_INSENSITIVE);
+    public static final Pattern JUSTIFY_PATTERN = Pattern.compile(JUSTIFY_NAME.getLocalPart(), Pattern.CASE_INSENSITIVE);
+    public static final Pattern ANGLE_PATTERN = Pattern.compile(ANGLE_NAME.getLocalPart()+"\\s*\\([^\\)]+\\)", Pattern.CASE_INSENSITIVE);
 
     static {
         final DefaultAttributeType textType = new DefaultAttributeType(TEXT_NAME, String.class, true, false, null, null, null);
         TEXT_DESCRIPTOR = new DefaultAttributeDescriptor(textType, TEXT_NAME, 1, 1, false, "No data");
 
-        final DefaultAttributeType fontType = new DefaultAttributeType(FONT_NAME, Font.class, true, false, null, null, null);
-        FONT_DESCRIPTOR = new DefaultAttributeDescriptor(fontType, FONT_NAME, 0, 1, true, null);
+        final DefaultAttributeType fontType = new DefaultAttributeType(Font.NAME, Font.class, true, false, null, null, null);
+        FONT_DESCRIPTOR = new DefaultAttributeDescriptor(fontType, Font.NAME, 1, 1, true, null);
 
         final DefaultAttributeType spacingType = new DefaultAttributeType(SPACING_NAME, Float.class, true, false, null, null, null);
         SPACING_DESCRIPTOR = new DefaultAttributeDescriptor(spacingType, SPACING_NAME, 1, 1, false, 1f);
 
-        final DefaultAttributeType angleType = new DefaultAttributeType(ANGLE_NAME, Double.class, true, false, null, null, null);
-        ANGLE_DESCRIPTOR = new DefaultAttributeDescriptor(fontType, ANGLE_NAME, 0, 1, true, null);
+        final DefaultAttributeType justifyType = new DefaultAttributeType(JUSTIFY_NAME, String.class, true, false, null, null, null);
+        JUSTIFY_DESCRIPTOR = new DefaultAttributeDescriptor(justifyType, JUSTIFY_NAME, 1, 1, false, "Left");
 
-        final DefaultAttributeType labelType = new DefaultAttributeType(LABEL_NAME, LabelLine.class, true, false, null, null, null);
-        LABEL_DESCRIPTOR = new DefaultAttributeDescriptor(fontType, LABEL_NAME, 0, 1, true, null);
+        final DefaultAttributeType angleType = new DefaultAttributeType(ANGLE_NAME, Double.class, true, false, null, null, null);
+        ANGLE_DESCRIPTOR = new DefaultAttributeDescriptor(fontType, ANGLE_NAME, 1, 1, true, null);
+
+        final DefaultAttributeType labelType = new DefaultAttributeType(LabelLine.NAME, LabelLine.class, true, false, null, null, null);
+        LABEL_DESCRIPTOR = new DefaultAttributeDescriptor(fontType, LabelLine.NAME, 1, 1, true, null);
     }
 
     /**
      * Build a feature describing a MIF point geometry. That assume that user gave a {@link Scanner} which is placed on
-     * a POINT tag.
+     * a TEXT tag.
      *
      * @param scanner The scanner to use for data reading (must be pointing on a mif POINT element).
      * @param toFill
@@ -110,17 +122,60 @@ public class MIFTextBuilder extends MIFGeometryBuilder {
         /**
          * Add a management for the text options.
          */
-//        if (scanner.hasNext("\\w+") && scanner.next().equalsIgnoreCase("font")) {
-//
-//        }
-//
-//        if (scanner.hasNext("\\w+") && scanner.next().equalsIgnoreCase("spacing")) {
-//
-//        }
-//
-//        if (scanner.hasNext("\\w+") && scanner.next().equalsIgnoreCase("angle")) {
-//
-//        }
+        if (scanner.hasNext(Font.PATTERN)) {
+            String args = scanner.next(Font.PATTERN);
+            String[] argsTab = args.substring(args.indexOf('(')+1, args.length()-1).trim().split(",");
+            if (argsTab.length < 3) {
+                LOGGER.log(Level.WARNING, "A FONT clause have been found, but can't be read (bad syntax ?). Ignore it.");
+            }
+            else {
+                final String fName = argsTab[0];
+                final int fStyle = Integer.decode(argsTab[1]);
+                final int fColor = Integer.decode(argsTab[2]);
+                Font font = new Font(fName, fStyle, fColor);
+                if(argsTab.length > 3) {
+                    final int background = Integer.decode(argsTab[3]);
+                    font.setBackColorCode(background);
+                }
+                toFill.getProperty(Font.NAME).setValue(font);
+            }
+        }
+
+        if (scanner.hasNext(SPACING_PATTERN)) {
+            String spacing = scanner.next(SPACING_PATTERN);
+            Matcher match = ProjectionUtils.DOUBLE_PATTERN.matcher(spacing);
+            if(match.find()) {
+                toFill.getProperty(SPACING_NAME).setValue(Double.parseDouble(match.group()));
+            }
+        }
+
+        if (scanner.hasNext(JUSTIFY_PATTERN)) {
+            String spacing = scanner.next(JUSTIFY_PATTERN);
+            toFill.getProperty(SPACING_NAME).setValue(scanner.next());
+        }
+
+        if (scanner.hasNext(ANGLE_PATTERN)) {
+            String spacing = scanner.next(ANGLE_PATTERN);
+            Matcher match = ProjectionUtils.DOUBLE_PATTERN.matcher(spacing);
+            if(match.find()) {
+                toFill.getProperty(ANGLE_NAME).setValue(Double.parseDouble(match.group()));
+            }
+        }
+
+        if(scanner.hasNext(LabelLine.PATTERN)) {
+            String label = scanner.next(LabelLine.PATTERN);
+            String type = label.contains("?i(arrow)")? "arrow" : "simple";
+            Double x = null, y = null;
+            Matcher match = ProjectionUtils.DOUBLE_PATTERN.matcher(label);
+            if(match.find()) {
+                x = Double.parseDouble(match.group());
+            }
+            if(match.find()) {
+                y = Double.parseDouble(match.group());
+            }
+            LabelLine labelLine = new LabelLine(type, new Coordinate(x, y));
+            toFill.getProperty(LabelLine.NAME).setValue(labelLine);
+        }
     }
 
 
@@ -160,6 +215,29 @@ public class MIFTextBuilder extends MIFGeometryBuilder {
             throw new DataStoreException("Unable to build a text with the current geometry (Non compatible type"+value.getClass()+").");
         }
         builder.append('\n');
+
+        if(source.getProperty(Font.NAME) != null) {
+            Object ftValue = source.getProperty(Font.NAME).getValue();
+            if(ftValue != null && ftValue instanceof Font) {
+                builder.append(ftValue);
+            }
+        }
+
+        if(source.getProperty(SPACING_NAME) != null && source.getProperty(SPACING_NAME).getValue() != null) {
+            builder.append("SPACING ("+source.getProperty(SPACING_NAME).getValue()+")\n");
+        }
+
+        if(source.getProperty(JUSTIFY_NAME) != null && source.getProperty(JUSTIFY_NAME).getValue() != null) {
+            builder.append("JUSTIFY ("+source.getProperty(JUSTIFY_NAME).getValue()+")\n");
+        }
+
+        if(source.getProperty(ANGLE_NAME) != null && source.getProperty(ANGLE_NAME).getValue() != null) {
+            builder.append("ANGLE "+source.getProperty(ANGLE_NAME).getValue()).append('\n');
+        }
+
+        if(source.getProperty(LabelLine.NAME) != null && source.getProperty(LabelLine.NAME).getValue() != null) {
+            builder.append(source.getProperty(LabelLine.NAME).getValue()).append('\n');
+        }
 
         return builder.toString();
     }

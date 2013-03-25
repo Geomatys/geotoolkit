@@ -16,6 +16,7 @@ import org.opengis.feature.type.*;
 import org.opengis.referencing.operation.MathTransform;
 
 import java.util.*;
+import java.util.logging.Level;
 import java.util.regex.Pattern;
 
 /**
@@ -27,7 +28,6 @@ import java.util.regex.Pattern;
 public class MIFPolyLineBuilder extends MIFGeometryBuilder {
 
     public static final Name NAME = new DefaultName("PLINE");
-    public static final Name PEN_NAME = new DefaultName("PEN");
     public static final Name SMOOTH_NAME = new DefaultName("SMOOTH");
 
     private static final AttributeDescriptor SMOOTH;
@@ -35,8 +35,8 @@ public class MIFPolyLineBuilder extends MIFGeometryBuilder {
 
     static {
         final AttributeType penType =
-                new DefaultAttributeType(PEN_NAME, Pen.class, false, false, null, null, null);
-        PEN = new DefaultAttributeDescriptor(penType, PEN_NAME, 0, 1, true, null);
+                new DefaultAttributeType(Pen.NAME, Pen.class, false, false, null, null, null);
+        PEN = new DefaultAttributeDescriptor(penType, Pen.NAME, 0, 1, true, null);
 
         final AttributeType smoothType =
                 new DefaultAttributeType(SMOOTH_NAME, Boolean.class, false, false, null, null, null);
@@ -96,17 +96,25 @@ public class MIFPolyLineBuilder extends MIFGeometryBuilder {
             throw new DataStoreException("Line is not properly defined : not enough points found.", ex);
         }
 
-        if(scanner.hasNext(PEN_NAME.getLocalPart())) {
-            /** todo : parse PEN tag. */
-        }
-
-        if(toFill.getProperty(SMOOTH_NAME) != null) {
-            if(scanner.hasNext(SMOOTH_NAME.getLocalPart())) {
-                toFill.getProperty(SMOOTH_NAME).setValue(Boolean.TRUE);
-            } else {
-                toFill.getProperty(SMOOTH_NAME).setValue(Boolean.FALSE);
+        if(scanner.hasNext(Pen.PEN_PATTERN) && toFill.getType().getDescriptors().contains(PEN)) {
+            String args = scanner.next(Pen.PEN_PATTERN);
+            String[] argsTab = args.substring(args.indexOf('(')+1, args.length()-1).trim().split(",");
+            if (argsTab.length < 3) {
+                LOGGER.log(Level.WARNING, "A PEN tag have been found, but can't be read (bad syntax ?). Ignore style.");
+            }
+            else {
+                final int width = Integer.decode(argsTab[0]);
+                final int pattern = Integer.decode(argsTab[1]);
+                final int color = Integer.decode(argsTab[2]);
+                Pen pen = new Pen(width, pattern, color);
+                toFill.getProperty(Pen.NAME).setValue(pen);
             }
         }
+
+        if(scanner.hasNext(Pattern.compile(SMOOTH_NAME.getLocalPart(), Pattern.CASE_INSENSITIVE))) {
+            toFill.getProperty(SMOOTH_NAME).setValue(Boolean.TRUE);
+        }
+
     }
 
     /**
@@ -136,6 +144,17 @@ public class MIFPolyLineBuilder extends MIFGeometryBuilder {
             for(Coordinate pt : line.getCoordinates()) {
                 builder.append(pt.x).append(' ').append(pt.y).append('\n');
             }
+        }
+
+        if(geometry.getProperty(Pen.NAME) != null) {
+            Object penValue = geometry.getProperty(Pen.NAME).getValue();
+            if(penValue != null && penValue instanceof Pen) {
+                builder.append(penValue).append('\n');
+            }
+        }
+
+        if(geometry.getProperty(SMOOTH_NAME) != null) {
+            builder.append(SMOOTH_NAME.getLocalPart()).append('n');
         }
 
         return builder.toString();

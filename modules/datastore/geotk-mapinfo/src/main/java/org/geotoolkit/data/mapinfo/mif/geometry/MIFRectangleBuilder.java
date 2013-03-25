@@ -4,6 +4,7 @@ import com.vividsolutions.jts.geom.CoordinateSequence;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.impl.PackedCoordinateSequence;
 import org.geotoolkit.data.mapinfo.ProjectionUtils;
+import org.geotoolkit.data.mapinfo.mif.style.Brush;
 import org.geotoolkit.data.mapinfo.mif.style.Pen;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.type.DefaultAttributeDescriptor;
@@ -19,6 +20,7 @@ import org.opengis.referencing.operation.MathTransform;
 
 import java.awt.geom.Rectangle2D;
 import java.util.*;
+import java.util.logging.Level;
 
 /**
  * The class used to build Feature from MIF rectangle or MIF Round rectangle.
@@ -29,8 +31,6 @@ import java.util.*;
 public class MIFRectangleBuilder extends MIFGeometryBuilder {
     public Name NAME = new DefaultName("RECTANGLE");
     public static final Name ROUND_NAME = new DefaultName("ROUNDING");
-    public static final Name PEN_NAME = new DefaultName("PEN");
-    public static final Name BRUSH_NAME = new DefaultName("BRUSH");
 
     private static final AttributeDescriptor ROUNDING;
     private static final AttributeDescriptor PEN;
@@ -40,11 +40,11 @@ public class MIFRectangleBuilder extends MIFGeometryBuilder {
         final AttributeType roundType = new DefaultAttributeType(ROUND_NAME, Double.class, false, false, null, null, null);
         ROUNDING = new DefaultAttributeDescriptor(roundType, ROUND_NAME, 0, 1, true, null);
 
-        final AttributeType penType = new DefaultAttributeType(PEN_NAME, Pen.class, false, false, null, null, null);
-        PEN = new DefaultAttributeDescriptor(penType, PEN_NAME, 0, 1, true, null);
+        final AttributeType penType = new DefaultAttributeType(Pen.NAME, Pen.class, false, false, null, null, null);
+        PEN = new DefaultAttributeDescriptor(penType, Pen.NAME, 0, 1, true, null);
 
-        final AttributeType brushType = new DefaultAttributeType(BRUSH_NAME, Pen.class, false, false, null, null, null);
-        BRUSH = new DefaultAttributeDescriptor(penType, BRUSH_NAME, 0, 1, true, null);
+        final AttributeType brushType = new DefaultAttributeType(Brush.NAME, Pen.class, false, false, null, null, null);
+        BRUSH = new DefaultAttributeDescriptor(penType, Brush.NAME, 0, 1, true, null);
     }
 
     public SimpleFeatureType featureType;
@@ -81,8 +81,37 @@ public class MIFRectangleBuilder extends MIFGeometryBuilder {
             toFill.getProperty(ROUND_NAME).setValue(Double.parseDouble(scanner.next(ProjectionUtils.DOUBLE_PATTERN)));
         }
 
-        if(scanner.hasNext(PEN_NAME.getLocalPart())) {
-            /** todo : parse PEN tag. */
+        if(scanner.hasNext(Pen.PEN_PATTERN) && toFill.getType().getDescriptors().contains(PEN)) {
+            String args = scanner.next(Pen.PEN_PATTERN);
+            String[] argsTab = args.substring(args.indexOf('(')+1, args.length()-1).trim().split(",");
+            if (argsTab.length < 3) {
+                LOGGER.log(Level.WARNING, "A PEN tag have been found, but can't be read (bad syntax ?). Ignore style.");
+            }
+            else {
+                final int width = Integer.decode(argsTab[0]);
+                final int pattern = Integer.decode(argsTab[1]);
+                final int color = Integer.decode(argsTab[2]);
+                Pen pen = new Pen(width, pattern, color);
+                toFill.getProperty(Pen.NAME).setValue(pen);
+            }
+        }
+
+        if(scanner.hasNext(Brush.BRUSH_PATTERN) && toFill.getType().getDescriptors().contains(BRUSH)) {
+            String args = scanner.next(Brush.BRUSH_PATTERN);
+            String[] argsTab = args.substring(args.indexOf('(')+1, args.length()-1).trim().split(",");
+            if (argsTab.length < 2) {
+                LOGGER.log(Level.WARNING, "A BRUSH tag have been found, but can't be read (bad syntax ?). Ignore style.");
+            }
+            else {
+                final int pattern = Integer.decode(argsTab[0]);
+                final int foreground = Integer.decode(argsTab[1]);
+                Brush brush = new Brush(pattern, foreground);
+                if(argsTab.length > 2) {
+                    final int background = Integer.decode(argsTab[2]);
+                    brush.setBackgroundCC(background);
+                }
+                toFill.getProperty(Brush.NAME).setValue(brush);
+            }
         }
     }
 
@@ -122,6 +151,20 @@ public class MIFRectangleBuilder extends MIFGeometryBuilder {
         Property round = source.getProperty(ROUND_NAME);
         if(round != null) {
             builder.append(round.getValue()).append('\n');
+        }
+
+        if(source.getProperty(Pen.NAME) != null) {
+            Object penValue = source.getProperty(Pen.NAME).getValue();
+            if(penValue != null && penValue instanceof Pen) {
+                builder.append(penValue).append('\n');
+            }
+        }
+
+        if(source.getProperty(Brush.NAME) != null) {
+            Object brValue = source.getProperty(Brush.NAME).getValue();
+            if(brValue != null && brValue instanceof Brush) {
+                builder.append(brValue).append('\n');
+            }
         }
 
         return builder.toString();
