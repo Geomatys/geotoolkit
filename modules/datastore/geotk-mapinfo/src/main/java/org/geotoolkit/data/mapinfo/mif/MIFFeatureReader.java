@@ -205,7 +205,7 @@ public class MIFFeatureReader implements FeatureReader<FeatureType, Feature> {
                 // Check the MapInfo geometry typename to see if there's some next in the file.
                 String geomName = readType.getGeometryDescriptor().getLocalName();
                 Pattern geomPattern = Pattern.compile(geomName, Pattern.CASE_INSENSITIVE);
-                while(mifScanner.hasNextLine()) {
+                while(mifScanner.hasNext()) {
                     if (mifScanner.hasNext(geomPattern)) {
                         mifNext = true;
                         break;
@@ -216,7 +216,7 @@ public class MIFFeatureReader implements FeatureReader<FeatureType, Feature> {
                         }
                     }
 
-                    mifScanner.nextLine();
+                    mifScanner.next();
                 }
             }
 

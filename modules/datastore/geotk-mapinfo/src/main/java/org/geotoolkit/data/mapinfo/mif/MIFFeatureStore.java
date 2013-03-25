@@ -142,23 +142,35 @@ public class MIFFeatureStore extends AbstractFeatureStore {
      */
     @Override
     public List<FeatureId> addFeatures(Name groupName, Collection<? extends Feature> newFeatures, Hints hints) throws DataStoreException {
-        return handleAddWithFeatureWriter(groupName, newFeatures, hints);
+        final FeatureWriter writer = getFeatureWriter(groupName, null, null);
+
+        // We remove the features as we get them. We don't need to write them as the default writing behaviour is append mode.
+        while (writer.hasNext()) {
+            writer.next();
+            writer.remove();
+        }
+
+        return FeatureStoreUtilities.write(writer, newFeatures);
     }
 
     /**
-     * {@inheritDoc}
+     * The update operation is not supported for now, because of the behaviour of the writer, which have to manage
+     * multiple feature types.
      */
     @Override
     public void updateFeatures(Name groupName, Filter filter, Map<? extends PropertyDescriptor, ? extends Object> values) throws DataStoreException {
-        handleUpdateWithFeatureWriter(groupName, filter, values);
+        //handleUpdateWithFeatureWriter(groupName, filter, values);
+        throw new UnsupportedOperationException("Update operation is not supported now");
     }
 
     /**
-     * {@inheritDoc}
+     * The remove operation is not supported for now, because of the behaviour of the writer, which have to manage
+     * multiple feature types.
      */
     @Override
     public void removeFeatures(Name groupName, Filter filter) throws DataStoreException {
-        handleRemoveWithFeatureWriter(groupName, filter);
+        //handleRemoveWithFeatureWriter(groupName, filter);
+        throw new UnsupportedOperationException("Remove operation is not supported now");
     }
 
     /**
