@@ -111,11 +111,8 @@ public class FilterReadingTest {
         assertEquals(
                 FF.and(
                 UnmodifiableArrayList.wrap((Filter)
-                    FF.and(
-                        UnmodifiableArrayList.wrap((Filter)
-                            FF.equals(FF.property("att1"), FF.literal(15)),
-                            FF.equals(FF.property("att2"), FF.literal(30))
-                        )),
+                    FF.equals(FF.property("att1"), FF.literal(15)),
+                    FF.equals(FF.property("att2"), FF.literal(30)),
                     FF.equals(FF.property("att3"), FF.literal(50))
                 )),
                 filter);     
@@ -130,11 +127,8 @@ public class FilterReadingTest {
         assertEquals(
                 FF.or(
                 UnmodifiableArrayList.wrap((Filter)
-                    FF.or(
-                    UnmodifiableArrayList.wrap((Filter)
-                        FF.equals(FF.property("att1"), FF.literal(15)),
-                        FF.equals(FF.property("att2"), FF.literal(30))
-                    )),
+                    FF.equals(FF.property("att1"), FF.literal(15)),
+                    FF.equals(FF.property("att2"), FF.literal(30)),
                     FF.equals(FF.property("att3"), FF.literal(50))
                 )),
                 filter);     
@@ -504,16 +498,14 @@ public class FilterReadingTest {
         final And filter = (And) obj;
         assertEquals(
                 FF.and(
-                    FF.and(
-                        UnmodifiableArrayList.wrap(
-                            FF.not(FF.equals(FF.property("att1"), FF.literal(15))),
-                            FF.or(
-                                FF.equals(FF.property("att2"), FF.literal(15)),
-                                FF.between(FF.property("att3"), FF.literal(15), FF.literal(30))
-                            )
-                        )
-                    ),
-                    FF.between(FF.property("att4"), FF.literal(1), FF.literal(2))
+                    UnmodifiableArrayList.wrap((Filter)
+                        FF.not(FF.equals(FF.property("att1"), FF.literal(15))),
+                        FF.or(
+                            FF.equals(FF.property("att2"), FF.literal(15)),
+                            FF.between(FF.property("att3"), FF.literal(15), FF.literal(30))
+                        ),
+                        FF.between(FF.property("att4"), FF.literal(1), FF.literal(2))
+                    )
                 ),
                 filter
                 );               

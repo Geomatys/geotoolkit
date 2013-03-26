@@ -35,8 +35,10 @@ import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.temporal.object.TemporalUtilities;
+import org.opengis.filter.And;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory2;
+import org.opengis.filter.Or;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Literal;
 import org.opengis.filter.expression.PropertyName;
@@ -503,13 +505,25 @@ public final class CQL {
             final int nbchild = tree.getChildCount();
             final String logicType = tree.getChild(0).getText();
             
-            for(int i=1; i<nbchild; i++){
-                filters.add(convertFilter((CommonTree)tree.getChild(i), ff));
-            }
-            
             if("AND".equalsIgnoreCase(logicType)){
+                for(int i=1; i<nbchild; i++){
+                    final Filter f = convertFilter((CommonTree)tree.getChild(i), ff);
+                    if(f instanceof And){
+                        filters.addAll(((And)f).getChildren());
+                    }else{
+                        filters.add(f);
+                    }
+                }
                 return ff.and(filters);
             }else if("OR".equalsIgnoreCase(logicType)){
+                for(int i=1; i<nbchild; i++){
+                    final Filter f = convertFilter((CommonTree)tree.getChild(i), ff);
+                    if(f instanceof Or){
+                        filters.addAll(((Or)f).getChildren());
+                    }else{
+                        filters.add(f);
+                    }
+                }
                 return ff.or(filters);
             }
             
@@ -517,14 +531,24 @@ public final class CQL {
             final List<Filter> filters = new ArrayList<Filter>();
             final int nbchild = tree.getChildCount();
             for(int i=0; i<nbchild; i++){
-                filters.add(convertFilter((CommonTree)tree.getChild(i), ff));
+                final Filter f = convertFilter((CommonTree)tree.getChild(i), ff);
+                if(f instanceof And){
+                    filters.addAll(((And)f).getChildren());
+                }else{
+                    filters.add(f);
+                }
             }
             return ff.and(filters);
         }else if(CQLParser.OR == type){
             final List<Filter> filters = new ArrayList<Filter>();
             final int nbchild = tree.getChildCount();
             for(int i=0; i<nbchild; i++){
-                filters.add(convertFilter((CommonTree)tree.getChild(i), ff));
+                final Filter f = convertFilter((CommonTree)tree.getChild(i), ff);
+                if(f instanceof Or){
+                    filters.addAll(((Or)f).getChildren());
+                }else{
+                    filters.add(f);
+                }
             }
             return ff.or(filters);
         }else if(CQLParser.NOT == type){
