@@ -23,7 +23,7 @@ import java.util.NoSuchElementException;
 import java.util.ServiceLoader;
 import java.util.Set;
 import net.jcip.annotations.ThreadSafe;
-import org.geotoolkit.internal.Citations;
+import org.apache.sis.internal.util.Citations;
 import org.geotoolkit.internal.LazySet;
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.storage.DataStoreException;
