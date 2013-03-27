@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.filter.accessor;
+package org.geotoolkit.filter.binding;
 
 import java.util.Map;
 import java.util.HashMap;
@@ -28,7 +28,7 @@ import static org.junit.Assert.*;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class MapAccessorTest {
+public class MapBindingTest {
 
     @Test
     public void testGetter(){
@@ -37,36 +37,36 @@ public class MapAccessorTest {
         map.put("name", "marcel");
         map.put("human", true);
 
-        final PropertyAccessor accessor = Accessors.getAccessor(Map.class, "age", Object.class);
-        assertNotNull(accessor);
+        final Binding binding = Bindings.getBinding(Map.class, "age");
+        assertNotNull(binding);
 
         //test access
-        assertEquals(Integer.valueOf(45), accessor.get(map, "age", Object.class));
-        assertEquals("marcel", accessor.get(map, "name", Object.class));
-        assertEquals(true, accessor.get(map, "human", Object.class));
+        assertEquals(Integer.valueOf(45), binding.get(map, "age", Object.class));
+        assertEquals("marcel", binding.get(map, "name", Object.class));
+        assertEquals(true, binding.get(map, "human", Object.class));
 
         //test convertion
-        assertEquals("45", accessor.get(map, "age", String.class));
+        assertEquals("45", binding.get(map, "age", String.class));
     }
 
     @Test
     public void testSetter(){
         final Map<String,Object> map = new HashMap<String, Object>();
 
-        final PropertyAccessor accessor = Accessors.getAccessor(Map.class, "age", Object.class);
-        assertNotNull(accessor);
+        final Binding binding = Bindings.getBinding(Map.class, "age");
+        assertNotNull(binding);
 
-        accessor.set(map, "age", 45, Integer.class);
-        accessor.set(map, "name", "marcel", String.class);
-        accessor.set(map, "human", true, Boolean.class);
+        binding.set(map, "age", 45);
+        binding.set(map, "name", "marcel");
+        binding.set(map, "human", true);
 
         //test access
-        assertEquals(Integer.valueOf(45), accessor.get(map, "age", Object.class));
-        assertEquals("marcel", accessor.get(map, "name", Object.class));
-        assertEquals(true, accessor.get(map, "human", Object.class));
+        assertEquals(Integer.valueOf(45), binding.get(map, "age", Object.class));
+        assertEquals("marcel", binding.get(map, "name", Object.class));
+        assertEquals(true, binding.get(map, "human", Object.class));
 
         //test convertion
-        assertEquals("45", accessor.get(map, "age", String.class));
+        assertEquals("45", binding.get(map, "age", String.class));
     }
 
 }

@@ -30,7 +30,7 @@ import java.util.logging.Logger;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.util.BytesRef;
 
-import org.geotoolkit.filter.accessor.PropertyAccessor;
+import org.geotoolkit.filter.binding.AbstractBinding;
 import org.geotoolkit.geometry.jts.SRIDGenerator;
 
 
@@ -42,7 +42,7 @@ import org.geotoolkit.geometry.jts.SRIDGenerator;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class LucenePropertyAccessor implements PropertyAccessor {
+public class LucenePropertyBinding extends AbstractBinding<Document> {
     private static final GeometryFactory GF = new GeometryFactory();
 
     private static final ThreadLocal<WKBReader> THREAD_LOCAL = new ThreadLocal<WKBReader>(){
@@ -54,23 +54,17 @@ public class LucenePropertyAccessor implements PropertyAccessor {
 
     };
 
-    LucenePropertyAccessor() {
+    public LucenePropertyBinding() {
+        super(Document.class, 10);
     }
 
-    /**
-     * {@inheritDoc }
-     */
     @Override
-    public boolean canHandle(final Class clazz, final String xpath, final Class target) {
-        return Document.class.isAssignableFrom(clazz);
+    public boolean support(String xpath) {
+        return true;
     }
 
-    /**
-     * {@inheritDoc }
-     */
     @Override
-    public Object get(final Object object, final String xpath, final Class target) throws IllegalArgumentException {
-        Document doc = (Document) object;
+    public <T> T get(Document doc, String xpath, Class<T> target) throws IllegalArgumentException {
 
         if(xpath.equals(LuceneOGCFilter.GEOMETRY_FIELD_NAME)){
 
@@ -89,23 +83,19 @@ public class LucenePropertyAccessor implements PropertyAccessor {
             try {
                 final Geometry geom = THREAD_LOCAL.get().read(stream);
                 geom.setSRID(srid);
-                return geom;
+                return (T) geom;
             } catch (IOException ex) {
-                Logger.getLogger(LucenePropertyAccessor.class.getName()).log(Level.WARNING, null, ex);
+                Logger.getLogger(LucenePropertyBinding.class.getName()).log(Level.WARNING, null, ex);
             } catch (ParseException ex) {
-                Logger.getLogger(LucenePropertyAccessor.class.getName()).log(Level.WARNING, null, ex);
+                Logger.getLogger(LucenePropertyBinding.class.getName()).log(Level.WARNING, null, ex);
             }
         }
 
-        return doc.get(xpath);
+        return (T) doc.get(xpath);
     }
 
-
-    /**
-     * {@inheritDoc }
-     */
     @Override
-    public void set(final Object object, final String xpath, final Object value, final Class target) throws IllegalArgumentException {
+    public void set(Document candidate, String xpath, Object value) throws IllegalArgumentException {
         throw new UnsupportedOperationException("You are not allowed to change a property value on lucene document.");
     }
 

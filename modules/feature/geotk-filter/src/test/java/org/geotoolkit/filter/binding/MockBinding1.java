@@ -15,25 +15,32 @@
  *    Lesser General Public License for more details.
  */
 
-package org.geotoolkit.filter.accessor;
-
-import org.geotoolkit.factory.Hints;
+package org.geotoolkit.filter.binding;
 
 /**
  * To test acessor order by priority.
  * 
  * @author Johann Sorel (Geomatys)
  */
-public final class MockAccessorFactory1 implements PropertyAccessorFactory{
+public final class MockBinding1 extends AbstractBinding{
 
+    public MockBinding1() {
+        super(Object.class, -2);
+    }
+    
     @Override
-    public PropertyAccessor createPropertyAccessor(final Class type, final String xpath, final Class target, final Hints hints) {        
-        return null;
+    public boolean support(String xpath) {
+        return false;
     }
 
     @Override
-    public int getPriority() {
-        return -2;
+    public Object get(Object candidate, String xpath, Class target) throws IllegalArgumentException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void set(Object candidate, String xpath, Object value) throws IllegalArgumentException {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
 }

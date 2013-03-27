@@ -15,7 +15,7 @@
  *    Lesser General Public License for more details.
  */
 
-package org.geotoolkit.filter.accessor;
+package org.geotoolkit.filter.binding;
 
 import java.util.HashMap;
 import java.util.List;

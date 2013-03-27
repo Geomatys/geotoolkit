@@ -1,0 +1,7 @@
+org.geotoolkit.filter.binding.AttributeBinding
+org.geotoolkit.filter.binding.ComplexAttributeBinding
+org.geotoolkit.filter.binding.ComplexAttributeArrayBinding
+org.geotoolkit.filter.binding.ComplexTypeBinding
+org.geotoolkit.filter.binding.ComplexTypeArrayBinding
+org.geotoolkit.filter.binding.XPathBinding$CAXPath
+org.geotoolkit.filter.binding.XPathBinding$CTXPath

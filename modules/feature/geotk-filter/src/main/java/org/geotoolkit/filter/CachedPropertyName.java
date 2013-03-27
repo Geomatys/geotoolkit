@@ -17,17 +17,13 @@
 
 package org.geotoolkit.filter;
 
-import org.opengis.feature.simple.SimpleFeature;
-import org.geotoolkit.filter.accessor.Accessors;
-import org.geotoolkit.filter.accessor.PropertyAccessor;
-
-import org.opengis.feature.Property;
-import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.ComplexType;
 import org.opengis.filter.expression.ExpressionVisitor;
 import org.opengis.filter.expression.PropertyName;
 
 import static org.apache.sis.util.ArgumentChecks.*;
+import org.geotoolkit.filter.binding.Binding;
+import org.geotoolkit.filter.binding.Bindings;
 
 /**
  *
@@ -37,13 +33,13 @@ class CachedPropertyName extends AbstractExpression implements PropertyName{
 
     private final String property;
 
-    private final PropertyAccessor accessor;
+    private final Binding accessor;
 
     CachedPropertyName(final String property, final Class clazz, final ComplexType expectedType) {
         ensureNonNull("property name", property);
         this.property = property;
                 
-        final PropertyAccessor fallacc = Accessors.getAccessor(clazz,property,null);
+        final Binding fallacc = Bindings.getBinding(clazz,property);
         
         //try to create a faster accessor
 //        if(Property.class.isAssignableFrom(clazz) && expectedType instanceof SimpleFeatureType ){

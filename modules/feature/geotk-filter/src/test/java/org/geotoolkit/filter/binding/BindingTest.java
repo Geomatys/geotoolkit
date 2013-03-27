@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.filter.accessor;
+package org.geotoolkit.filter.binding;
 
 import org.junit.Test;
 
@@ -26,25 +26,25 @@ import static org.junit.Assert.*;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class AccessorTest {
+public class BindingTest {
 
     @Test
     public void testList(){
-        final PropertyAccessorFactory[] factories = Accessors.getAccessorFactories();
+        final Binding[] factories = Bindings.getBindings();
         assertNotNull(factories);
         assertEquals(4, factories.length);
 
         //check correct order, by priority
-        assertTrue( factories[0] instanceof MockAccessorFactory2); //higher priority
-        assertTrue( factories[1] instanceof MapAccessorFactory);
-        assertTrue( factories[2] instanceof ParameterAccessorFactory);
-        assertTrue( factories[3] instanceof MockAccessorFactory1); //lower priority
+        assertTrue( factories[0] instanceof MockBinding2); //higher priority
+        assertTrue( factories[1] instanceof MapBinding);
+        assertTrue( factories[2] instanceof ParameterBinding);
+        assertTrue( factories[3] instanceof MockBinding1); //lower priority
     }
 
     @Test
     public void testNoAccessor(){
         //should not raise any error and result must be null.
-        final PropertyAccessor accessor = Accessors.getAccessor(Double.class, "test", null);
+        final Binding accessor = Bindings.getBinding(Double.class, "test");
         assertNull(accessor);
     }
 

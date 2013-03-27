@@ -21,9 +21,8 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
-
-import org.geotoolkit.filter.accessor.Accessors;
-import org.geotoolkit.filter.accessor.PropertyAccessor;
+import org.geotoolkit.filter.binding.Binding;
+import org.geotoolkit.filter.binding.Bindings;
 
 import org.opengis.filter.FilterVisitor;
 import org.opengis.filter.Id;
@@ -74,12 +73,12 @@ public class DefaultId implements Id,Serializable{
             return false;
         }
 
-        final PropertyAccessor accessor = Accessors.getAccessor(object.getClass(), XPATH_ID, null);
+        final Binding binding = Bindings.getBinding(object.getClass(), XPATH_ID);
 
-        if (accessor == null) {
+        if (binding == null) {
             return false;
         }
-        return keys.containsKey(accessor.get(object, XPATH_ID, null));
+        return keys.containsKey(binding.get(object, XPATH_ID, null));
     }
 
     /**

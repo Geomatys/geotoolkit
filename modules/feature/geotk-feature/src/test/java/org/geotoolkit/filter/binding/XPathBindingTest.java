@@ -15,7 +15,7 @@
  *    Lesser General Public License for more details.
  */
 
-package org.geotoolkit.filter.accessor;
+package org.geotoolkit.filter.binding;
 
 import java.util.Iterator;
 import java.util.List;
@@ -35,7 +35,7 @@ import static org.geotoolkit.filter.FilterTestConstants.*;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class XPathPropertyAccessorTest {
+public class XPathBindingTest {
 
 
     @Test

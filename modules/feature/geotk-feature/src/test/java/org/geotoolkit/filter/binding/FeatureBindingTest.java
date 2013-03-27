@@ -15,7 +15,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.filter.accessor;
+package org.geotoolkit.filter.binding;
 
 import java.util.Collection;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -38,22 +38,22 @@ import static org.geotoolkit.filter.FilterTestConstants.*;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class FeaturePropertyAccessorTest {
+public class FeatureBindingTest {
 
-    public FeaturePropertyAccessorTest() {
+    public FeatureBindingTest() {
     }
 
     @Test
     public void testFactories(){
-        final PropertyAccessorFactory[] factories = Accessors.getAccessorFactories();
+        final Binding[] factories = Bindings.getBindings();
         
         int xpathFactory = -1;
         int defaultFactory = -1;
         
         for(int i=0;i<factories.length;i++){
-            if(factories[i] instanceof XPathPropertyAccessorFactory){
+            if(factories[i] instanceof XPathBinding){
                 xpathFactory = i;
-            }else if(factories[i] instanceof DefaultFeaturePropertyAccessorFactory){
+            }else if(factories[i] instanceof ComplexAttributeBinding){
                 defaultFactory = i;
             }
         }
@@ -69,33 +69,33 @@ public class FeaturePropertyAccessorTest {
     public void testSimpleFeatureFlatAccessor() {
 
         //test a simple attribut------------------------------------------------
-        PropertyAccessor accessor = Accessors.getAccessor(Feature.class, "testGeometry", null);
+        Binding accessor = Bindings.getBinding(Feature.class, "testGeometry");
         assertNotNull(accessor);
         Object att = accessor.get(FEATURE_1, "testGeometry", Geometry.class);
         assertEquals(FEATURE_1.getDefaultGeometryProperty().getValue(), att);
 
 
         //test a simple attribut------------------------------------------------
-        accessor = Accessors.getAccessor(Feature.class, "//testGeometry", null);
+        accessor = Bindings.getBinding(Feature.class, "//testGeometry");
         assertNotNull(accessor);
         att = (Geometry) accessor.get(FEATURE_1, "//testGeometry", Geometry.class);
         assertEquals(FEATURE_1.getDefaultGeometryProperty().getValue(), att);
 
         //test id---------------------------------------------------------------
-        accessor = Accessors.getAccessor(Feature.class, "@id", null);
+        accessor = Bindings.getBinding(Feature.class, "@id");
         assertNotNull(accessor);
         Object id = accessor.get(FEATURE_1, "@id", null);
         assertEquals(FEATURE_1.getIdentifier().getID(), id);
 
         //test xpath index------------------------------------------------------
-        accessor = Accessors.getAccessor(Feature.class, "*[10]", null);
+        accessor = Bindings.getBinding(Feature.class, "*[10]");
         assertNotNull(accessor);
         att = accessor.get(FEATURE_1, "*[10]", null);
         assertEquals("test string data", att);
         assertEquals(FEATURE_1.getProperty("testString").getValue(), att);
 
         //test a geometry name with accents-------------------------------------
-        accessor = Accessors.getAccessor(Feature.class, "attribut.Géométrie", null);
+        accessor = Bindings.getBinding(Feature.class, "attribut.Géométrie");
         assertNotNull(accessor);
         att = accessor.get(FEATURE_1, "attribut.Géométrie", null);
         assertEquals("POINT(45,32)", att);
@@ -107,25 +107,25 @@ public class FeaturePropertyAccessorTest {
     public void testSimpleFeatureTypeFlatAccessor() {
 
         //test a simple attribut------------------------------------------------
-        PropertyAccessor accessor = Accessors.getAccessor(SimpleFeatureType.class, "testGeometry", null);
+        Binding accessor = Bindings.getBinding(SimpleFeatureType.class, "testGeometry");
         assertNotNull(accessor);
         Object att = (GeometryDescriptor) accessor.get(FEATURE_TYPE_1, "testGeometry", null);
         assertEquals(FEATURE_TYPE_1.getGeometryDescriptor(), att);
 
         //test a simple attribut------------------------------------------------
-        accessor = Accessors.getAccessor(SimpleFeatureType.class, "//testGeometry", null);
+        accessor = Bindings.getBinding(SimpleFeatureType.class, "//testGeometry");
         assertNotNull(accessor);
         att = (GeometryDescriptor) accessor.get(FEATURE_TYPE_1, "//testGeometry", null);
         assertEquals(FEATURE_TYPE_1.getGeometryDescriptor(), att);
 
         //test xpath index------------------------------------------------------
-        accessor = Accessors.getAccessor(SimpleFeatureType.class, "*[10]", null);
+        accessor = Bindings.getBinding(SimpleFeatureType.class, "*[10]");
         assertNotNull(accessor);
         att = accessor.get(FEATURE_TYPE_1, "*[10]", null);
         assertEquals(FEATURE_TYPE_1.getDescriptor("testString"), att);
 
         //test a geometry name with accents-------------------------------------
-        accessor = Accessors.getAccessor(SimpleFeatureType.class, "attribut.Géométrie", null);
+        accessor = Bindings.getBinding(SimpleFeatureType.class, "attribut.Géométrie");
         assertNotNull(accessor);
         att = accessor.get(FEATURE_TYPE_1, "attribut.Géométrie", null);
         assertEquals(FEATURE_TYPE_1.getDescriptor("attribut.Géométrie"), att);
@@ -134,63 +134,63 @@ public class FeaturePropertyAccessorTest {
 
     @Test
     public void testComplexFeatureAccessor() {
-        PropertyAccessor accessor;
+        Binding accessor;
         String xpath;
 
         final Feature candidate = FeatureUtilities.copy(CX_FEATURE);
 
         // flat attribut test //////////////////////////////////////////////////
         xpath = "attString";
-        accessor = Accessors.getAccessor(Feature.class, xpath, null);
+        accessor = Bindings.getBinding(Feature.class, xpath);
         assertNotNull(accessor);
         Object val = accessor.get(candidate, xpath, null);
         assertEquals("toto1", val);
         //test setting
-        accessor.set(candidate, xpath, "bigJohn", null);
+        accessor.set(candidate, xpath, "bigJohn");
         val = accessor.get(candidate, xpath, null);
         assertEquals("bigJohn", val);
-        accessor.set(candidate, xpath, "toto1", null);
+        accessor.set(candidate, xpath, "toto1");
 
         // flat attribut test //////////////////////////////////////////////////
         xpath = "{http://test.com}attString";
-        accessor = Accessors.getAccessor(Feature.class, xpath, null);
+        accessor = Bindings.getBinding(Feature.class, xpath);
         assertNotNull(accessor);
         val = accessor.get(candidate, xpath, null);
         assertEquals("toto1", val);
         //test setting
-        accessor.set(candidate, xpath, "Alex", null);
+        accessor.set(candidate, xpath, "Alex");
         val = accessor.get(candidate, xpath, null);
         assertEquals("Alex", val);
-        accessor.set(candidate, xpath, "toto1", null);
+        accessor.set(candidate, xpath, "toto1");
 
         // flat attribut test //////////////////////////////////////////////////
         xpath = "/{http://test2.com}attString";
-        accessor = Accessors.getAccessor(Feature.class, xpath, null);
+        accessor = Bindings.getBinding(Feature.class, xpath);
         assertNotNull(accessor);
         val = accessor.get(candidate, xpath, null);
         assertEquals("toto3", val);
         //test setting
-        accessor.set(candidate, xpath, "Alex", null);
+        accessor.set(candidate, xpath, "Alex");
         val = accessor.get(candidate, xpath, null);
         assertEquals("Alex", val);
-        accessor.set(candidate, xpath, "toto3", null);
+        accessor.set(candidate, xpath, "toto3");
 
 
         // sub path attribut ///////////////////////////////////////////////////
         xpath = "/{http://test.com}attCpx/{http://test.com}attString";
-        accessor = Accessors.getAccessor(Feature.class, xpath, null);
+        accessor = Bindings.getBinding(Feature.class, xpath);
         assertNotNull(accessor);
         val = accessor.get(candidate, xpath, null);
         assertEquals("toto19", val);
         //test setting
-        accessor.set(candidate, xpath, "Franck", null);
+        accessor.set(candidate, xpath, "Franck");
         val = accessor.get(candidate, xpath, null);
         assertEquals("Franck", val);
-        accessor.set(candidate, xpath, "toto19", null);
+        accessor.set(candidate, xpath, "toto19");
 
         // sub path attribut ///////////////////////////////////////////////////
         xpath = "/{http://test.com}attCpx[{http://test2.com}attString='marcel2']";
-        accessor = Accessors.getAccessor(Feature.class, xpath, null);
+        accessor = Bindings.getBinding(Feature.class, xpath);
         assertNotNull(accessor);
         val = accessor.get(candidate, xpath, Property.class);
 
@@ -200,7 +200,7 @@ public class FeaturePropertyAccessorTest {
 
         //accessing a collection of properties /////////////////////////////////
         xpath = "attCpx";
-        accessor = Accessors.getAccessor(Feature.class, xpath, Collection.class);
+        accessor = Bindings.getBinding(Feature.class, xpath);
         assertNotNull(accessor);
         val = accessor.get(candidate, xpath, Collection.class);
 
@@ -213,36 +213,36 @@ public class FeaturePropertyAccessorTest {
 
     @Test
     public void testComplexFeatureTypeAccessor() {
-        PropertyAccessor accessor;
+        Binding accessor;
 
         // flat attribut test //////////////////////////////////////////////////
-        accessor = Accessors.getAccessor(FeatureType.class, "attString", null);
+        accessor = Bindings.getBinding(FeatureType.class, "attString");
         assertNotNull(accessor);
         Object val = accessor.get(CX_FEATURE_TYPE, "attString", null);
         assertEquals(CX_FEATURE_TYPE.getDescriptor("{http://test.com}attString"), val);
 
         // flat attribut test //////////////////////////////////////////////////
-        accessor = Accessors.getAccessor(FeatureType.class, "{http://test.com}attString", null);
+        accessor = Bindings.getBinding(FeatureType.class, "{http://test.com}attString");
         assertNotNull(accessor);
         val = accessor.get(CX_FEATURE_TYPE, "{http://test.com}attString", null);
         assertEquals(CX_FEATURE_TYPE.getDescriptor("{http://test.com}attString"), val);
 
         // flat attribut test //////////////////////////////////////////////////
-        accessor = Accessors.getAccessor(FeatureType.class, "/{http://test.com}attString", null);
+        accessor = Bindings.getBinding(FeatureType.class, "/{http://test.com}attString");
         assertNotNull(accessor);
         val = accessor.get(CX_FEATURE_TYPE, "/{http://test.com}attString", null);
         assertEquals(CX_FEATURE_TYPE.getDescriptor("{http://test.com}attString"), val);
 
 
         // sub path attribut ///////////////////////////////////////////////////
-        accessor = Accessors.getAccessor(FeatureType.class, "/{http://test.com}attCpx/{http://test.com}attString", null);
+        accessor = Bindings.getBinding(FeatureType.class, "/{http://test.com}attCpx/{http://test.com}attString");
         assertNotNull(accessor);
         val = accessor.get(CX_FEATURE_TYPE, "/{http://test.com}attCpx/{http://test.com}attString", null);
         ComplexType type = (ComplexType) CX_FEATURE_TYPE.getDescriptor("{http://test.com}attCpx").getType();
         assertEquals(type.getDescriptor("{http://test.com}attString"), val);
 
         // sub path attribut ///////////////////////////////////////////////////
-        accessor = Accessors.getAccessor(FeatureType.class, "//{http://test.com}attCpx/{http://test.com}attString", null);
+        accessor = Bindings.getBinding(FeatureType.class, "//{http://test.com}attCpx/{http://test.com}attString");
         assertNotNull(accessor);
         val = accessor.get(CX_FEATURE_TYPE, "//{http://test.com}attCpx/{http://test.com}attString", null);
         type = (ComplexType) CX_FEATURE_TYPE.getDescriptor("{http://test.com}attCpx").getType();
@@ -253,7 +253,7 @@ public class FeaturePropertyAccessorTest {
     @Test
     public void testAttributeAccessor(){
         
-        PropertyAccessor accessor = Accessors.getAccessor(Attribute.class, ".", null);
+        Binding accessor = Bindings.getBinding(Attribute.class, ".");
         assertNotNull(accessor);
         Property prop = FEATURE_1.getProperty("testGeometry");
         Object att = accessor.get(prop, ".", Geometry.class);

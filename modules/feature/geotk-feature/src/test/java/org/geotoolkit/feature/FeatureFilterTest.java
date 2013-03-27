@@ -29,8 +29,8 @@ import com.vividsolutions.jts.geom.Point;
 
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.filter.DefaultFilterFactory2;
-import org.geotoolkit.filter.accessor.Accessors;
-import org.geotoolkit.filter.accessor.PropertyAccessor;
+import org.geotoolkit.filter.binding.Binding;
+import org.geotoolkit.filter.binding.Bindings;
 import org.geotoolkit.referencing.CRS;
 
 import org.junit.Test;
@@ -71,7 +71,7 @@ public class FeatureFilterTest {
         final SimpleFeatureType sft = ftb.buildSimpleFeatureType();
 
         //test a no namespace property
-        PropertyAccessor accessor = Accessors.getAccessor(SimpleFeatureType.class, "att_double", AttributeDescriptor.class);
+        Binding accessor = Bindings.getBinding(SimpleFeatureType.class, "att_double");
         assertNotNull(accessor);
         AttributeDescriptor desc = (AttributeDescriptor) accessor.get(sft, "att_double", AttributeDescriptor.class);
 
@@ -79,7 +79,7 @@ public class FeatureFilterTest {
         assertEquals(desc.getName(), new DefaultName(null, "att_double"));
 
         //test a namespace property without namespace
-        accessor = Accessors.getAccessor(SimpleFeatureType.class, "att_string", AttributeDescriptor.class);
+        accessor = Bindings.getBinding(SimpleFeatureType.class, "att_string");
         assertNotNull(accessor);
         desc = (AttributeDescriptor) accessor.get(sft, "att_string", AttributeDescriptor.class);
 
@@ -87,13 +87,13 @@ public class FeatureFilterTest {
         assertEquals(desc.getName(), new DefaultName("http://test1.com", "att_string"));
 
         //test a namespace property with namespace
-        accessor = Accessors.getAccessor(SimpleFeatureType.class, "http://test1.com:att_string", AttributeDescriptor.class);
+        accessor = Bindings.getBinding(SimpleFeatureType.class, "http://test1.com:att_string");
         assertNotNull(accessor);
         desc = (AttributeDescriptor) accessor.get(sft, "http://test1.com:att_string", AttributeDescriptor.class);
         assertNotNull(desc);
         assertEquals(desc.getName(), new DefaultName("http://test1.com", "att_string"));
 
-        accessor = Accessors.getAccessor(SimpleFeatureType.class, "http://test2.com:att_string", AttributeDescriptor.class);
+        accessor = Bindings.getBinding(SimpleFeatureType.class, "http://test2.com:att_string");
         assertNotNull(accessor);
         desc = (AttributeDescriptor) accessor.get(sft, "http://test2.com:att_string", AttributeDescriptor.class);
         assertNotNull(desc);

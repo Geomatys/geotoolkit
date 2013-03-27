@@ -15,7 +15,7 @@
  *    Lesser General Public License for more details.
  */
 
-package org.geotoolkit.filter.accessor;
+package org.geotoolkit.filter.binding;
 
 import org.jaxen.ContextSupport;
 import org.jaxen.JaxenException;

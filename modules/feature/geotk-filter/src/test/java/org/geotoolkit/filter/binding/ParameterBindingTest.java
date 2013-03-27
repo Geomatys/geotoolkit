@@ -14,10 +14,8 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.filter.accessor;
+package org.geotoolkit.filter.binding;
 
-import java.util.Map;
-import java.util.HashMap;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.junit.Test;
@@ -33,7 +31,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class ParameterAccessorTest {
+public class ParameterBindingTest {
 
     @Test
     public void testGetter(){
@@ -46,7 +44,7 @@ public class ParameterAccessorTest {
         param.parameter("name").setValue("marcel");
         param.parameter("human").setValue(true);
         
-        final PropertyAccessor accessor = Accessors.getAccessor(ParameterValueGroup.class, "age", Object.class);
+        final Binding accessor = Bindings.getBinding(ParameterValueGroup.class, "age");
         assertNotNull(accessor);
 
         //test access
@@ -69,12 +67,12 @@ public class ParameterAccessorTest {
         param.parameter("name").setValue("marcel");
         param.parameter("human").setValue(true);
 
-        final PropertyAccessor accessor = Accessors.getAccessor(ParameterValueGroup.class, "age", Object.class);
+        final Binding accessor = Bindings.getBinding(ParameterValueGroup.class, "age");
         assertNotNull(accessor);
 
-        accessor.set(param, "age", 45, Integer.class);
-        accessor.set(param, "name", "marcel", String.class);
-        accessor.set(param, "human", true, Boolean.class);
+        accessor.set(param, "age", 45);
+        accessor.set(param, "name", "marcel");
+        accessor.set(param, "human", true);
 
         //test access
         assertEquals(Integer.valueOf(45), accessor.get(param, "age", Object.class));
