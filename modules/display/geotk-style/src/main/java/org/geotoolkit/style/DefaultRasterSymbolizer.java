@@ -60,7 +60,7 @@ public class DefaultRasterSymbolizer extends AbstractSymbolizer implements Raste
      * Create a default immutable Line symbolizer.
      * 
      * @param opacity : if null will be replaced by default value.
-     * @param selection : if null will be replaced by default value.
+     * @param selection : can be null
      * @param overlap : if null will be replaced by default value.
      * @param colorMap : can be null
      * @param enchance : if null will be replaced by default value.
@@ -84,7 +84,7 @@ public class DefaultRasterSymbolizer extends AbstractSymbolizer implements Raste
             final Description desc){
         super(uom,geom,name,desc);
         this.opacity = (opacity == null || opacity == NIL) ? DEFAULT_RASTER_OPACITY : opacity;
-        this.selection = (selection == null) ? DEFAULT_RASTER_CHANNEL_GRAY : selection;
+        this.selection = selection;
         this.overlap = (overlap == null) ? DEFAULT_RASTER_OVERLAP : overlap;
         this.colorMap = colorMap;
         this.enhance = (enhance == null) ? DEFAULT_CONTRAST_ENHANCEMENT : enhance;

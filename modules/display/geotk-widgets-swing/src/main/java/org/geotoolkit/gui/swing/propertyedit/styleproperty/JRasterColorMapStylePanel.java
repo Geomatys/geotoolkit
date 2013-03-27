@@ -493,8 +493,7 @@ public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
         final Interpolate function = SF.interpolateFunction(
                 lookup, new ArrayList<InterpolationPoint>(model.points), Method.COLOR, Mode.LINEAR, fallback);
 
-        final ChannelSelection selection = DEFAULT_RASTER_CHANNEL_RGB;
-
+        final ChannelSelection selection = null;
         final Expression opacity = LITERAL_ONE_FLOAT;
         final OverlapBehavior overlap = OverlapBehavior.LATEST_ON_TOP;
         final ColorMap colorMap = SF.colorMap(function);

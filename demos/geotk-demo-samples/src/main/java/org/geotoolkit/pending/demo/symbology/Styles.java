@@ -547,8 +547,7 @@ public class Styles {
         final Expression function = SF.interpolateFunction(
                 lookup, values, Method.COLOR, Mode.LINEAR, fallback);
 
-        final ChannelSelection selection = DEFAULT_RASTER_CHANNEL_RGB;
-
+        final ChannelSelection selection = null;
         final Expression opacity = LITERAL_ONE_FLOAT;
         final OverlapBehavior overlap = OverlapBehavior.LATEST_ON_TOP;
         final ColorMap colorMap = SF.colorMap(function);
@@ -578,8 +577,7 @@ public class Styles {
         final Literal fallback = DEFAULT_FALLBACK;
         final Expression function = SF.categorizeFunction(lookup, values, ThreshholdsBelongTo.SUCCEEDING, fallback);
 
-        final ChannelSelection selection = DEFAULT_RASTER_CHANNEL_RGB;
-
+        final ChannelSelection selection = null;
         final Expression opacity = LITERAL_ONE_FLOAT;
         final OverlapBehavior overlap = OverlapBehavior.LATEST_ON_TOP;
         final ColorMap colorMap = SF.colorMap(function);

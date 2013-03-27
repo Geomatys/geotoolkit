@@ -40,7 +40,6 @@ import javax.media.jai.OpImage;
 import javax.media.jai.RenderedOp;
 import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.grid.GridEnvelope2D;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.CoverageStoreException;
@@ -64,7 +63,6 @@ import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.image.jai.FloodFill;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.map.DefaultCoverageMapLayer;
-import org.geotoolkit.metadata.iso.spatial.PixelTranslation;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.geotoolkit.referencing.operation.transform.LinearTransform;
@@ -87,7 +85,6 @@ import org.opengis.geometry.Envelope;
 import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
-import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.style.ChannelSelection;
 import org.opengis.style.ColorMap;
@@ -384,49 +381,46 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
         //works as a JAI operation
         final int nbDim = coverage.getNumSampleDimensions();
         if(nbDim > 1){
-
             //we can change sample dimension only if we have more then one available.
             final ChannelSelection selections = styleElement.getChannelSelection();
-            final SelectedChannelType channel = selections.getGrayChannel();
-            final SelectedChannelType[] channels = selections.getRGBChannels();
-
-            if(channel != null){
-                //single band selection
-                final int[] indices = new int[]{
-                    Integer.valueOf(channel.getChannelName())
-                };
-                coverage = (GridCoverage2D)selectBand(coverage, indices);
-            }else{
-
-                final int[] selected = new int[]{
+            if(selections!=null){
+                final SelectedChannelType channel = selections.getGrayChannel();
+                final SelectedChannelType[] channels = selections.getRGBChannels();
+                if(channel!= null){
+                    //single band selection
+                    final int[] indices = new int[]{
+                        Integer.valueOf(channel.getChannelName())
+                    };
+                    coverage = (GridCoverage2D)selectBand(coverage, indices);
+                }else{
+                    final int[] selected = new int[]{
                         Integer.valueOf(channels[0].getChannelName()),
                         Integer.valueOf(channels[1].getChannelName()),
                         Integer.valueOf(channels[2].getChannelName())
                         };
+                    //@Workaround(library="JAI",version="1.0.x")
+                    //TODO when JAI has been rewritten, this test might not be necessary anymore
+                    //check if selection actually does something
+                    if(!(selected[0] == 0 && selected[1] == 1 && selected[2] == 2)){
+                        final int[] indices;
+                        final RenderedImage image = coverage.getRenderedImage();
 
-                //@Workaround(library="JAI",version="1.0.x")
-                //TODO when JAI has been rewritten, this test might not be necessary anymore
-                //check if selection actually does something
-                if(!(selected[0] == 0 && selected[1] == 1 && selected[2] == 2)){
-                    final int[] indices;
-                    final RenderedImage image = coverage.getRenderedImage();
-
-                    if (image.getColorModel().hasAlpha()) {
-                        indices = new int[]{
-                            Integer.valueOf(channels[0].getChannelName()),
-                            Integer.valueOf(channels[1].getChannelName()),
-                            Integer.valueOf(channels[2].getChannelName()),
-                            // Here we suppose that the transparent band is the last one. This is the
-                            // default behaviour with standard java.
-                            image.getSampleModel().getNumBands() - 1
-                            };
-                    } else {
-                        indices = selected;
+                        if (image.getColorModel().hasAlpha()) {
+                            indices = new int[]{
+                                Integer.valueOf(channels[0].getChannelName()),
+                                Integer.valueOf(channels[1].getChannelName()),
+                                Integer.valueOf(channels[2].getChannelName()),
+                                // Here we suppose that the transparent band is the last one. This is the
+                                // default behaviour with standard java.
+                                image.getSampleModel().getNumBands() - 1
+                                };
+                        } else {
+                            indices = selected;
+                        }
+                        coverage = (GridCoverage2D)selectBand(coverage, indices);
                     }
-                    coverage = (GridCoverage2D)selectBand(coverage, indices);
                 }
             }
-
         }
 
 

@@ -245,8 +245,7 @@ public class JClassificationJenksPanel extends JPanel implements PropertyPane{
         final Literal fallback = DEFAULT_FALLBACK;
         final Jenks function = SF.jenksFunction(FF.literal(classNumber), FF.literal(paletteName), fallback);
 
-        final ChannelSelection selection = DEFAULT_RASTER_CHANNEL_RGB;
-
+        final ChannelSelection selection = null;
         final Expression opacity = LITERAL_ONE_FLOAT;
         final OverlapBehavior overlap = OverlapBehavior.LATEST_ON_TOP;
         final ColorMap colorMap = SF.colorMap(function);

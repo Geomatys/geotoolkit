@@ -372,7 +372,7 @@ public final class StyleConstants {
     
         DEFAULT_RASTER_SYMBOLIZER = new DefaultRasterSymbolizer(
                 DEFAULT_RASTER_OPACITY,
-                DEFAULT_RASTER_CHANNEL_RGB,
+                null,
                 DEFAULT_RASTER_OVERLAP,
                 DEFAULT_RASTER_COLORMAP,
                 DEFAULT_CONTRAST_ENHANCEMENT,
