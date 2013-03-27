@@ -939,12 +939,8 @@ public final class GO2Utilities {
 
     public static Geometry getGeometry(final Object obj, final String geomName){
         final Object candidateGeom;
-        if(geomName != null){
-            final Binding acc = Bindings.getBinding(obj.getClass(), geomName);
-            candidateGeom = acc.get(obj, geomName, Geometry.class);
-        }else{
-            candidateGeom = null;
-        }
+        final Binding acc = Bindings.getBinding(obj.getClass(), geomName);
+        candidateGeom = acc.get(obj, geomName, Geometry.class);
 
         if(candidateGeom == null || candidateGeom instanceof Geometry){
             return (Geometry) candidateGeom;
