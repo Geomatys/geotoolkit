@@ -50,7 +50,6 @@ import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.feature.FeatureTypeBuilder;
-import org.geotoolkit.filter.IllegalFilterException;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 
 import org.opengis.feature.simple.SimpleFeature;
@@ -309,7 +308,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
     private ArrayList performQueryComparison(
             final IndexedShapefileDataStore indexedDS,
             final IndexedShapefileDataStore baselineDS, final JTSEnvelope2D newBounds)
-            throws FactoryRegistryException, IllegalFilterException,
+            throws FactoryRegistryException,
             IOException, DataStoreException {
         FeatureCollection<SimpleFeature> features;
         FeatureIterator<SimpleFeature> indexIter;

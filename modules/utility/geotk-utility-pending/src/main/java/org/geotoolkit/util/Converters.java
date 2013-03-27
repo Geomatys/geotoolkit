@@ -2,8 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2002-2008, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2009, Geomatys
+ *    (C) 2009-2013, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -30,27 +29,32 @@ import org.geotoolkit.util.logging.Logging;
  */
 public final class Converters {
 
-    protected static final ConverterRegistry CONVERTERS = ConverterRegistry.system();
+    private static final ConverterRegistry REGISTRY = ConverterRegistry.system();
 
     private Converters(){}
 
-    public static <T> T convert(final Object candidate, final Class<T> target) {
+    /**
+     * Try to convert given object to given class.
+     * This function do not throw any exception, result will be null if convertion
+     * failed.
+     * 
+     * @param <T> expected class of returned object
+     * @param candidate : object to convert, can be null, result will be null.
+     * @param targetClass : if null return candidate unchanged
+     * @return converted value or null if unconvertible
+     */
+    public static <T> T convert(final Object candidate, final Class<T> targetClass) {
         if(candidate == null) return null;
-        if(target == null) return (T) candidate;
-        return (T) convert(candidate, (Class) candidate.getClass(), target);
-    }
-
-    private static <S,T> T convert(final S candidate, final Class<S> source, final Class<T> target) {
-
-        // handle case of source being an instance of target up front
-        if (target.isAssignableFrom(source) ) {
+        if(targetClass == null) return (T) candidate;
+        final Class sourceClass = candidate.getClass();
+        if (targetClass.isAssignableFrom(sourceClass) ) {
             return (T) candidate;
         }
-
-        final ObjectConverter<S,T> converter;
+        
+        final ObjectConverter converter;
         try {
-            converter = CONVERTERS.converter(source, target);
-            return converter.convert(candidate);
+            converter = REGISTRY.converter(sourceClass, targetClass);
+            return (T) converter.convert(candidate);
         } catch (NonconvertibleObjectException ex) {
             Logging.recoverableException(Converters.class, "convert", ex);
             return null;
