@@ -98,7 +98,10 @@ public class BinaryLogicOpType extends LogicOpsType implements BinaryLogicOperat
              // spatial operator    
              } else if (obj instanceof SpatialOpsType) {
                  this.spatialOps.add(FilterType.createSpatialOps((SpatialOpsType) obj));
-             
+              
+             // filter
+             } else if (obj instanceof FilterType) {
+                 treatFilter((FilterType)obj);
              } else {
                  throw new IllegalArgumentException("This kind of object is not allowed:" + obj.getClass().getSimpleName());
              }
@@ -145,6 +148,18 @@ public class BinaryLogicOpType extends LogicOpsType implements BinaryLogicOperat
          }
      }
     
+     private void treatFilter(final FilterType filter) {
+         if (filter.getComparisonOps() != null) {
+            this.comparisonOps.add(filter.getComparisonOps());
+         }
+         if (filter.getLogicOps() != null) {
+            this.logicOps.add(filter.getLogicOps());
+         }
+         if (filter.getSpatialOps() != null) {
+            this.spatialOps.add(filter.getSpatialOps());
+         }
+    }
+     
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder(super.toString());
