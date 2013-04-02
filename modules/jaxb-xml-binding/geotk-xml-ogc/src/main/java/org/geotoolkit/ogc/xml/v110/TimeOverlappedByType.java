@@ -36,6 +36,15 @@ public class TimeOverlappedByType extends BinaryTemporalOpType implements Overla
     public TimeOverlappedByType(final String propertyName, final Object temporal) {
         super(propertyName, temporal);
     }
+    
+    public TimeOverlappedByType(final TimeOverlappedByType that) {
+        super(that);
+    }
+
+    @Override
+    public TemporalOpsType getClone() {
+        return new TimeOverlappedByType(this);
+    }
 
     @Override
     public boolean evaluate(Object o) {

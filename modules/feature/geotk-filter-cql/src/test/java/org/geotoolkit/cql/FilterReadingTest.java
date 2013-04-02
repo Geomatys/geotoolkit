@@ -350,7 +350,7 @@ public class FilterReadingTest {
 
     @Test
     public void testCrosses() throws CQLException {
-        final String cql = "CROSS(\"att\" ,POLYGON((10 20, 30 40, 50 60, 10 20)))";
+        final String cql = "CROSSES(\"att\" ,POLYGON((10 20, 30 40, 50 60, 10 20)))";
         final Object obj = CQL.parseFilter(cql);        
         assertTrue(obj instanceof Crosses);
         final Crosses filter = (Crosses) obj;
@@ -406,7 +406,7 @@ public class FilterReadingTest {
 
     @Test
     public void testIntersects() throws CQLException {
-        final String cql = "INTERSECT(\"att\" ,POLYGON((10 20, 30 40, 50 60, 10 20)))";
+        final String cql = "INTERSECTS(\"att\" ,POLYGON((10 20, 30 40, 50 60, 10 20)))";
         final Object obj = CQL.parseFilter(cql);        
         assertTrue(obj instanceof Intersects);
         final Intersects filter = (Intersects) obj;
@@ -420,7 +420,7 @@ public class FilterReadingTest {
 
     @Test
     public void testOverlaps() throws CQLException {
-        final String cql = "OVERLAP(\"att\" ,POLYGON((10 20, 30 40, 50 60, 10 20)))";
+        final String cql = "OVERLAPS(\"att\" ,POLYGON((10 20, 30 40, 50 60, 10 20)))";
         final Object obj = CQL.parseFilter(cql);        
         assertTrue(obj instanceof Overlaps);
         final Overlaps filter = (Overlaps) obj;
@@ -434,7 +434,7 @@ public class FilterReadingTest {
 
     @Test
     public void testTouches() throws CQLException {
-        final String cql = "TOUCH(\"att\" ,POLYGON((10 20, 30 40, 50 60, 10 20)))";
+        final String cql = "TOUCHES(\"att\" ,POLYGON((10 20, 30 40, 50 60, 10 20)))";
         final Object obj = CQL.parseFilter(cql);        
         assertTrue(obj instanceof Touches);
         final Touches filter = (Touches) obj;

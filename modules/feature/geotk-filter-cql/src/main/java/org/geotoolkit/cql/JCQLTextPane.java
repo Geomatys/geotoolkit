@@ -234,13 +234,13 @@ public class JCQLTextPane extends JPanel implements KeyListener{
                 case CQLLexer.BBOX :
                 case CQLLexer.BEYOND :
                 case CQLLexer.CONTAINS :
-                case CQLLexer.CROSS :
+                case CQLLexer.CROSSES :
                 case CQLLexer.DISJOINT :
                 case CQLLexer.DWITHIN :
                 case CQLLexer.EQUALS :
-                case CQLLexer.INTERSECT :
-                case CQLLexer.OVERLAP :
-                case CQLLexer.TOUCH :
+                case CQLLexer.INTERSECTS :
+                case CQLLexer.OVERLAPS :
+                case CQLLexer.TOUCHES :
                 case CQLLexer.WITHIN :
                     doc.setCharacterAttributes(offset, length, styleBinary, true);
                     break;

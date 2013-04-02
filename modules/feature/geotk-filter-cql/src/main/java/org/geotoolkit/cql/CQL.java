@@ -34,6 +34,7 @@ import org.antlr.runtime.tree.CommonTree;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.gui.swing.tree.Trees;
+import org.geotoolkit.temporal.object.ISODateParser;
 import org.geotoolkit.temporal.object.TemporalUtilities;
 import org.opengis.filter.And;
 import org.opengis.filter.Filter;
@@ -211,7 +212,8 @@ public final class CQL {
         }else if(CQLParser.FLOAT == type){
             return ff.literal(Double.valueOf(tree.getText()));
         }else if(CQLParser.DATE == type){
-            return ff.literal(TemporalUtilities.parseDateSafe(tree.getText(),true));
+            final ISODateParser parser = new ISODateParser();
+            return ff.literal(parser.parseToDate(tree.getText()));
         }else if(CQLParser.DURATION_P == type || CQLParser.DURATION_T == type){
             return ff.literal(TemporalUtilities.getTimeInMillis(tree.getText()));
         }else if(CQLParser.UNARY == type){
@@ -575,7 +577,7 @@ public final class CQL {
             final Expression exp1 = convertExpression((CommonTree)tree.getChild(0), ff);
             final Expression exp2 = convertExpression((CommonTree)tree.getChild(1), ff);  
             return ff.contains(exp1,exp2);
-        }else if(CQLParser.CROSS == type){
+        }else if(CQLParser.CROSSES == type){
             final Expression exp1 = convertExpression((CommonTree)tree.getChild(0), ff);
             final Expression exp2 = convertExpression((CommonTree)tree.getChild(1), ff);  
             return ff.crosses(exp1,exp2);
@@ -593,15 +595,15 @@ public final class CQL {
             final Expression exp1 = convertExpression((CommonTree)tree.getChild(0), ff);
             final Expression exp2 = convertExpression((CommonTree)tree.getChild(1), ff);  
             return ff.equal(exp1,exp2);
-        }else if(CQLParser.INTERSECT == type){
+        }else if(CQLParser.INTERSECTS == type){
             final Expression exp1 = convertExpression((CommonTree)tree.getChild(0), ff);
             final Expression exp2 = convertExpression((CommonTree)tree.getChild(1), ff);  
             return ff.intersects(exp1,exp2);
-        }else if(CQLParser.OVERLAP == type){
+        }else if(CQLParser.OVERLAPS == type){
             final Expression exp1 = convertExpression((CommonTree)tree.getChild(0), ff);
             final Expression exp2 = convertExpression((CommonTree)tree.getChild(1), ff);  
             return ff.overlaps(exp1,exp2);
-        }else if(CQLParser.TOUCH == type){
+        }else if(CQLParser.TOUCHES == type){
             final Expression exp1 = convertExpression((CommonTree)tree.getChild(0), ff);
             final Expression exp2 = convertExpression((CommonTree)tree.getChild(1), ff);  
             return ff.touches(exp1,exp2);

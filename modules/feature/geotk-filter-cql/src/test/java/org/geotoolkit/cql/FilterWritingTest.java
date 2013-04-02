@@ -215,7 +215,7 @@ public class FilterWritingTest {
         final Filter filter = FF.crosses(FF.property("att"), FF.literal(baseGeometry));
         final String cql = CQL.write(filter);
         assertNotNull(cql);
-        assertEquals("CROSS(att,POLYGON ((10 20, 30 40, 50 60, 10 20)))", cql);
+        assertEquals("CROSSES(att,POLYGON ((10 20, 30 40, 50 60, 10 20)))", cql);
     }
 
     @Test
@@ -247,7 +247,7 @@ public class FilterWritingTest {
         final Filter filter = FF.intersects(FF.property("att"), FF.literal(baseGeometry));
         final String cql = CQL.write(filter);
         assertNotNull(cql);
-        assertEquals("INTERSECT(att,POLYGON ((10 20, 30 40, 50 60, 10 20)))", cql);
+        assertEquals("INTERSECTS(att,POLYGON ((10 20, 30 40, 50 60, 10 20)))", cql);
     }
 
     @Test
@@ -255,7 +255,7 @@ public class FilterWritingTest {
         final Filter filter = FF.overlaps(FF.property("att"), FF.literal(baseGeometry));
         final String cql = CQL.write(filter);
         assertNotNull(cql);
-        assertEquals("OVERLAP(att,POLYGON ((10 20, 30 40, 50 60, 10 20)))", cql);
+        assertEquals("OVERLAPS(att,POLYGON ((10 20, 30 40, 50 60, 10 20)))", cql);
     }
 
     @Test
@@ -263,7 +263,7 @@ public class FilterWritingTest {
         final Filter filter = FF.touches(FF.property("att"), FF.literal(baseGeometry));
         final String cql = CQL.write(filter);
         assertNotNull(cql);
-        assertEquals("TOUCH(att,POLYGON ((10 20, 30 40, 50 60, 10 20)))", cql);
+        assertEquals("TOUCHES(att,POLYGON ((10 20, 30 40, 50 60, 10 20)))", cql);
     }
 
     @Test
