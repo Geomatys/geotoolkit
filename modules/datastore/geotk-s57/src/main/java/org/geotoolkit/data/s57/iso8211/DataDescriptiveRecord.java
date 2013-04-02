@@ -20,160 +20,24 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import org.geotoolkit.gui.swing.tree.Trees;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
-public class DataDescriptiveRecord {
+public class DataDescriptiveRecord extends DataRecord{
     
-    private int recordLength;
-    private byte interchangeLevel;
-    private byte leaderidentifier;
-    private byte extensionIndicator;
-    private byte version;
-    private byte applicationIndicator;
-    private int fieldControlLength;
-    private int areaAddress;
-    private byte[] charsetIndicator;
-    private final List<Field> fields = new ArrayList<Field>();
+    private final List<FieldDescription> fieldDescriptions = new ArrayList<FieldDescription>();
 
     public DataDescriptiveRecord() {
     }
 
-    /**
-     * @return the recordLength
-     */
-    public int getRecordLength() {
-        return recordLength;
+    public List<FieldDescription> getFieldDescriptions() {
+        return fieldDescriptions;
     }
 
-    /**
-     * @param recordLength the recordLength to set
-     */
-    public void setRecordLength(int recordLength) {
-        this.recordLength = recordLength;
-    }
-
-    /**
-     * @return the interchangeLevel
-     */
-    public byte getInterchangeLevel() {
-        return interchangeLevel;
-    }
-
-    /**
-     * @param interchangeLevel the interchangeLevel to set
-     */
-    public void setInterchangeLevel(byte interchangeLevel) {
-        this.interchangeLevel = interchangeLevel;
-    }
-
-    /**
-     * @return the leaderidentifier
-     */
-    public byte getLeaderidentifier() {
-        return leaderidentifier;
-    }
-
-    /**
-     * @param leaderidentifier the leaderidentifier to set
-     */
-    public void setLeaderidentifier(byte leaderidentifier) {
-        this.leaderidentifier = leaderidentifier;
-    }
-
-    /**
-     * @return the extensionIndicator
-     */
-    public byte getExtensionIndicator() {
-        return extensionIndicator;
-    }
-
-    /**
-     * @param extensionIndicator the extensionIndicator to set
-     */
-    public void setExtensionIndicator(byte extensionIndicator) {
-        this.extensionIndicator = extensionIndicator;
-    }
-
-    /**
-     * @return the version
-     */
-    public byte getVersion() {
-        return version;
-    }
-
-    /**
-     * @param version the version to set
-     */
-    public void setVersion(byte version) {
-        this.version = version;
-    }
-
-    /**
-     * @return the applicationIndicator
-     */
-    public byte getApplicationIndicator() {
-        return applicationIndicator;
-    }
-
-    /**
-     * @param applicationIndicator the applicationIndicator to set
-     */
-    public void setApplicationIndicator(byte applicationIndicator) {
-        this.applicationIndicator = applicationIndicator;
-    }
-
-    /**
-     * @return the fieldControlLength
-     */
-    public int getFieldControlLength() {
-        return fieldControlLength;
-    }
-
-    /**
-     * @param fieldControlLength the fieldControlLength to set
-     */
-    public void setFieldControlLength(int fieldControlLength) {
-        this.fieldControlLength = fieldControlLength;
-    }
-
-    /**
-     * @return the areaAddress
-     */
-    public int getAreaAddress() {
-        return areaAddress;
-    }
-
-    /**
-     * @param areaAddress the areaAddress to set
-     */
-    public void setAreaAddress(int areaAddress) {
-        this.areaAddress = areaAddress;
-    }
-
-    /**
-     * @return the charsetIndicator
-     */
-    public byte[] getCharsetIndicator() {
-        return charsetIndicator;
-    }
-
-    /**
-     * @param charsetIndicator the charsetIndicator to set
-     */
-    public void setCharsetIndicator(byte[] charsetIndicator) {
-        this.charsetIndicator = charsetIndicator;
-    }
-
-    public List<Field> getFields() {
-        return fields;
-    }
-
-    public Field getField(String tag){
-        for(Field f : fields){
+    public FieldDescription getFieldDescription(String tag){
+        for(FieldDescription f : fieldDescriptions){
             if(tag.equalsIgnoreCase(f.getTag())){
                 return f;
             }
@@ -185,13 +49,13 @@ public class DataDescriptiveRecord {
      * the root field, is the field not contained in any other fields.
      * @return Field
      */
-    public Field getRootField(){
-        final Set<Field> allSubFields = new HashSet<Field>();
-        allSubFields.add(getField("0000")); //field control field is not the root 
-        for(Field f : fields){
-            allSubFields.addAll(f.getSubFields());
+    public FieldDescription getRootFieldDescription(){
+        final Set<FieldDescription> allSubFields = new HashSet<FieldDescription>();
+        allSubFields.add(getFieldDescription("0000")); //field control field is not the root 
+        for(FieldDescription f : fieldDescriptions){
+            allSubFields.addAll(f.getFields());
         }
-        for(Field f : fields){
+        for(FieldDescription f : fieldDescriptions){
             if(!allSubFields.contains(f)){
                 //found the root
                 return f;
@@ -212,10 +76,8 @@ public class DataDescriptiveRecord {
         sb.append("-fieldControlLength:").append(fieldControlLength).append("\n");
         sb.append("-areaAddress:").append(areaAddress).append("\n");
         sb.append("-charsetIndicator:").append(charsetIndicator).append("\n");
-        sb.append(getRootField());
+        sb.append(getRootFieldDescription());
         return sb.toString();
     }
-
-    
 
 }
