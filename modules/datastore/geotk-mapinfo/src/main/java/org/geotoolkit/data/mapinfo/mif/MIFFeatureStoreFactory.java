@@ -55,7 +55,7 @@ public class MIFFeatureStoreFactory extends AbstractFileFeatureStoreFactory impl
      */
     @Override
     public String[] getFileExtensions() {
-        return new String[] {".mif",".mid"};
+        return new String[] {".mif"};
     }
 
     /**
