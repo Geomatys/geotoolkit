@@ -24,7 +24,7 @@ public class SubFieldDescription {
     
     private String tag;
     private FieldDataType type;
-    private int length;
+    private Integer length;
     private boolean mandatory;
 
     public SubFieldDescription() {
@@ -61,14 +61,14 @@ public class SubFieldDescription {
     /**
      * @return the length
      */
-    public int getLength() {
+    public Integer getLength() {
         return length;
     }
 
     /**
      * @param length the length to set
      */
-    public void setLength(int length) {
+    public void setLength(Integer length) {
         this.length = length;
     }
 
@@ -91,8 +91,11 @@ public class SubFieldDescription {
         final StringBuilder sb = new StringBuilder();
         sb.append(tag);
         sb.append(" [").append(type);
-        sb.append("(").append(length);
-        sb.append("), mandatory:").append(mandatory);
+        if(length!=null){
+            sb.append("(").append(length).append(")");
+        }
+        
+        sb.append(" mandatory:").append(mandatory);
         sb.append("]");
         return sb.toString();
     }

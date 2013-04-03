@@ -77,7 +77,7 @@ public enum FieldDataType {
                 throw new IOException("Unreconized field type :"+value);
             }
             //parse length if set
-            int length = -1;
+            Integer length = null;
             if(!p.isEmpty()){
                 if(p.charAt(0) == '('){
                     p = p.substring(1, p.length()-1);

@@ -21,7 +21,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import static org.geotoolkit.data.s57.iso8211.ISO8211Constants.FC_CONTROL;
-import static org.geotoolkit.data.s57.iso8211.ISO8211Reader.expect;
+import static org.geotoolkit.data.s57.iso8211.ISO8211Utilities.*;
 import org.geotoolkit.gui.swing.tree.Trees;
 
 /**
@@ -31,6 +31,7 @@ import org.geotoolkit.gui.swing.tree.Trees;
 public class FieldDescription {
         
     private String tag;
+    private FieldDescription parent;
     
     //DDR location
     private int length;
@@ -65,6 +66,20 @@ public class FieldDescription {
     public void setTag(String tag) {
         this.tag = tag;
     }
+    
+    /**
+     * @return the parent field, can be null
+     */
+    public FieldDescription getParent() {
+        return parent;
+    }
+
+    /**
+     * @param tag the parent field to set
+     */
+    public void setParent(FieldDescription parent) {
+        this.parent = parent;
+    }
 
     /**
      * @return the lenght
@@ -94,8 +109,16 @@ public class FieldDescription {
         this.position = position;
     }
 
+    public SubFieldDescription getDatatype() {
+        return datatype;
+    }
+
     public List<FieldDescription> getFields() {
         return fields;
+    }
+
+    public List<SubFieldDescription> getSubFields() {
+        return subfields;
     }
     
     public void readDescription(final DataInput ds) throws IOException{
