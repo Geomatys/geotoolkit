@@ -71,9 +71,6 @@ public class ProjectionUtils {
 
     public static final Pattern DOUBLE_PATTERN = Pattern.compile("(-|\\+)?\\d+(\\.\\d+((?i)e(-|\\+)?\\d+)?)?");
 
-    private static int crsNumber = 0;
-
-
     /**
      * Get the coefficients of a projection to put it in a String.
      * @param source The source projection to parse.

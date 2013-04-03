@@ -9,9 +9,11 @@ import org.geotoolkit.data.mapinfo.mif.MIFFeatureStoreFactory;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.storage.DataStoreException;
+import org.geotoolkit.util.FileUtilities;
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.Name;
@@ -80,7 +82,6 @@ public class MifDemo {
             // - The geometry types. They're feature types describing a specific geometry type we can find in the source
             // file. All those types inherit from base type, so we get all attributes associated with the geometry.
             Set<Name> names = store1.getNames();
-
             for(Name typeName : names) {
                 final FeatureType fType = store1.getFeatureType(typeName);
                 // Get all features of given type.
@@ -98,7 +99,6 @@ public class MifDemo {
                     // specified, the given feature type parent will be used. Else, we check that given type is compliant
                     // with stored base type.
                     writingStore.createSchema(typeName, fType);
-
                     writingStore.addFeatures(typeName, collection);
                 }
             }

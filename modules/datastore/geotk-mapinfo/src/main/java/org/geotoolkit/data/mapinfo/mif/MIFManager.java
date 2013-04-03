@@ -127,13 +127,14 @@ public class MIFManager {
             checkDataTypes();
         }
 
-        if(!names.contains(mifBaseType.getName())) {
-            names.add(mifBaseType.getName());
-        }
         for (FeatureType t : mifChildTypes) {
             if(!names.contains(t.getName())) {
                 names.add(t.getName());
             }
+        }
+
+        if(names.isEmpty()) {
+            names.add(mifBaseType.getName());
         }
 
         return names;
