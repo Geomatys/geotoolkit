@@ -149,4 +149,56 @@ public class LEDataInputStream extends InputStream implements DataInput {
         ds.close();
     }
     
+    
+    public static short readUnsignedByte(final byte[] buffer, final int offset){
+        return (short) (buffer[offset] & 0xff);
+    }
+    
+    public static short readShort(final byte[] buffer, final int offset){
+        return (short) ((buffer[offset+1] & 0xff) << 8
+                | (buffer[offset+0] & 0xff));
+    }
+
+    public static int readUnsignedShort(final byte[] buffer, final int offset){
+        return ((buffer[offset+1] & 0xff) << 8 | (buffer[offset+0] & 0xff));
+    }
+
+    public static char readChar(final byte[] buffer, final int offset){
+        return (char) ((buffer[offset+1] & 0xff) << 8
+                | (buffer[offset+0] & 0xff));
+    }
+
+    public static int readInt(final byte[] buffer, final int offset){
+        return    (buffer[offset+3]) << 24
+                | (buffer[offset+2] & 0xff) << 16
+                | (buffer[offset+1] & 0xff) << 8
+                | (buffer[offset+0] & 0xff);
+    }
+
+    public static long readUnsignedInt(final byte[] buffer, final int offset){
+        return    (long) (buffer[offset+3] & 0xff) << 24
+                | (long) (buffer[offset+2] & 0xff) << 16
+                | (long) (buffer[offset+1] & 0xff) << 8
+                | (long) (buffer[offset+0] & 0xff);
+    }
+    
+    public static long readLong(final byte[] buffer, final int offset){
+        return    (long) (buffer[offset+7]) << 56
+                | (long) (buffer[offset+6] & 0xff) << 48
+                | (long) (buffer[offset+5] & 0xff) << 40
+                | (long) (buffer[offset+4] & 0xff) << 32
+                | (long) (buffer[offset+3] & 0xff) << 24
+                | (long) (buffer[offset+2] & 0xff) << 16
+                | (long) (buffer[offset+1] & 0xff) << 8
+                | (long) (buffer[offset+0] & 0xff);
+    }
+
+    public static float readFloat(final byte[] buffer, final int offset){
+        return Float.intBitsToFloat(readInt(buffer,offset));
+    }
+
+    public static double readDouble(final byte[] buffer, final int offset){
+        return Double.longBitsToDouble(readLong(buffer,offset));
+    }
+
 }
