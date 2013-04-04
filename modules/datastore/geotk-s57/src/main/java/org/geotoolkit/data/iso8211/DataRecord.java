@@ -14,9 +14,10 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.data.s57.iso8211;
+package org.geotoolkit.data.iso8211;
 
 import java.io.DataInput;
+import java.io.DataOutput;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,8 +26,8 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import static org.geotoolkit.data.s57.iso8211.ISO8211Constants.*;
-import static org.geotoolkit.data.s57.iso8211.ISO8211Utilities.*;
+import static org.geotoolkit.data.iso8211.ISO8211Constants.*;
+import static org.geotoolkit.data.iso8211.ISO8211Utilities.*;
 
 /**
  *
@@ -276,7 +277,110 @@ public class DataRecord {
         }
         return null;
     }
+        
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder();
+        
+        if(ddr!=null){
+            //we are on a record
+            sb.append("DR Record\n");
+            sb.append(getRootField());
+        }else{
+            //we are on the data descriptive record
+            sb.append("DDR Header\n");
+            sb.append("-recordLength:").append(recordLength).append("\n");
+            sb.append("-interchangeLevel:").append(interchangeLevel).append("\n");
+            sb.append("-leaderidentifier:").append(leaderidentifier).append("\n");
+            sb.append("-extensionIndicator:").append(extensionIndicator).append("\n");
+            sb.append("-version:").append(version).append("\n");
+            sb.append("-applicationIndicator:").append(applicationIndicator).append("\n");
+            sb.append("-fieldControlLength:").append(fieldControlLength).append("\n");
+            sb.append("-areaAddress:").append(areaAddress).append("\n");
+            sb.append("-charsetIndicator:").append(charsetIndicator).append("\n");
+            sb.append(getRootFieldDescription());
+        }
+        
+        return sb.toString();
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+    // IO operations ///////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
     
+    /**
+     * Recalculate byte metrics based on current definition.
+     * Recalculated fields are :
+     * - fieldLengthSize
+     * - fieldPositionSize
+     * - fieldReserved
+     * - fieldSizeTag
+     * - area offset
+     * - length
+     */
+    public void recalculateMetrics(){
+        int headerSize = 0;
+        //add general informations
+        headerSize += 24;
+        
+        //calculate the various sizes
+        int maxFieldLength = 0;
+        int totalFieldLength = 0;
+        int maxTagSize = 0;
+        
+        if(ddr==null){
+            //this is a DDR Header
+            for(FieldDescription fd : fieldDescriptions){
+                if(!fd.getTag().equals("0000")){
+                    fd.recalculateMetrics();
+                    maxFieldLength = Math.max(maxFieldLength, fd.getLenght());
+                    totalFieldLength += fd.getLenght();
+                    maxTagSize = Math.max(maxTagSize, fd.getTag().getBytes(US_ASCII).length);
+                }
+            }
+            fieldSizeTag = maxTagSize;
+            
+            //calculate the 0000 DDR field length
+            final int nbRelations = countRelations(getRootFieldDescription());
+            final int zeroFieldLength = nbRelations*2*fieldSizeTag;
+            maxFieldLength = Math.max(maxFieldLength, zeroFieldLength);
+            totalFieldLength += zeroFieldLength;
+                    
+            fieldLengthSize = Integer.toString(maxFieldLength).getBytes(US_ASCII).length;
+            fieldPositionSize = Integer.toString(totalFieldLength).getBytes(US_ASCII).length;
+            fieldReserved = 0;
+            
+            //calculate the entries length
+            final int entrySize = fieldLengthSize+fieldPositionSize+fieldReserved+fieldSizeTag;
+            headerSize += entrySize*fieldDescriptions.size();
+            
+        }else{
+            //this is a DR Record
+        }
+                        
+        headerSize += 1;
+        areaAddress = headerSize;
+        recordLength = areaAddress+totalFieldLength;        
+    }
+    
+    /**
+     * Recursive count of number of parent>children relations.
+     * @return number of relations
+     */
+    private static int countRelations(FieldDescription candidate){
+        int i=0;
+        i+=candidate.getFields().size();
+        for(FieldDescription child : candidate.getFields()){
+            i+= countRelations(child);
+        }
+        return i;
+    }
+    
+    /**
+     * Read the general structure of the record, DDR or DR.
+     * @param ds
+     * @throws IOException 
+     */
     public void readDescription(DataInput ds) throws IOException{
         byte[] buffer = new byte[24];
         ds.readFully(buffer);
@@ -329,30 +433,97 @@ public class DataRecord {
         });
     }
     
-    @Override
-    public String toString() {
-        final StringBuilder sb = new StringBuilder();
+    /**
+     * Read DDR field descriptions.
+     * Call after readDescription and DDR record only.
+     * 
+     * @param ds
+     * @throws IOException 
+     */
+    public void readFieldDescriptions(DataInput ds) throws IOException{
         
-        if(ddr!=null){
-            //we are on a record
-            sb.append("DR Record\n");
-            sb.append(getRootField());
-        }else{
-            //we are on the data descriptive record
-            sb.append("DDR Header\n");
-            sb.append("-recordLength:").append(recordLength).append("\n");
-            sb.append("-interchangeLevel:").append(interchangeLevel).append("\n");
-            sb.append("-leaderidentifier:").append(leaderidentifier).append("\n");
-            sb.append("-extensionIndicator:").append(extensionIndicator).append("\n");
-            sb.append("-version:").append(version).append("\n");
-            sb.append("-applicationIndicator:").append(applicationIndicator).append("\n");
-            sb.append("-fieldControlLength:").append(fieldControlLength).append("\n");
-            sb.append("-areaAddress:").append(areaAddress).append("\n");
-            sb.append("-charsetIndicator:").append(charsetIndicator).append("\n");
-            sb.append(getRootFieldDescription());
+        //read each field description
+        final List<FieldDescription> sortedFields = getFieldDescriptions();
+        for(FieldDescription field : sortedFields){
+            field.readDescription(ds);
+                
+            if("0000".equals(field.getTag())){
+                //first field, contains the tree structure
+                expect(ds,FEND);
+                //calculate number of pairs we will have, rebuild tree structure
+                final int nbPair = (field.getLenght()-11)/ (getFieldSizeTag()*2) ;
+                byte[] buffer = new byte[getFieldSizeTag()];
+                for(int i=0;i<nbPair;i++){
+                    ds.readFully(buffer);
+                    final String parentTag = new String(buffer);
+                    ds.readFully(buffer);
+                    final String childTag = new String(buffer);
+                    final FieldDescription child = getFieldDescription(childTag);
+                    final FieldDescription parent = getFieldDescription(parentTag);
+                    child.setParent(parent);
+                    parent.getFields().add(child);
+                }
+                expect(ds,SFEND);
+            }else{
+                //description field
+                field.readModel(ds);
+            }
         }
-        
-        return sb.toString();
     }
-
+    
+    /**
+     * Read DR fields
+     * Call after readDescriptio and DR recrod only.
+     * @param ds
+     * @throws IOException 
+     */
+    public void readFieldValues(DataInput ds) throws IOException{
+        //read each field value
+        final List<FieldDescription> sortedFields = getFieldDescriptions();
+        for(FieldDescription field : sortedFields){
+            final byte[] value = new byte[field.getLenght()];
+            ds.readFully(value);
+            //get the full field description from DDR
+            final FieldDescription desc = getDescriptor().getFieldDescription(field.getTag());
+            final Field f = new Field(desc);
+            f.readValues(value);
+            if(desc.getParent()!=null){
+                //add field in it's parent
+                final Field parent = getField(desc.getParent().getTag());
+                parent.getFields().add(f);
+            }
+            getFields().add(f);
+        }
+    }
+    
+    /**
+     * Write DR description.
+     * 
+     * @param out 
+     * @return int : number of bytes written
+     */
+    public int writeDescription(final DataOutput out){
+        throw new RuntimeException("No supported yet.");
+    }
+    
+    /**
+     * Write DDR field descriptions.
+     * 
+     * @param out 
+     * @return int : number of bytes written
+     */
+    public int writeFieldDescriptions(final DataOutput out){
+        throw new RuntimeException("No supported yet.");
+    }
+    
+    /**
+     * Write DR field values.
+     * 
+     * @param out 
+     * @return int : number of bytes written
+     */
+    public int writeFieldValues(final DataOutput out){
+        throw new RuntimeException("No supported yet.");
+    }
+    
 }

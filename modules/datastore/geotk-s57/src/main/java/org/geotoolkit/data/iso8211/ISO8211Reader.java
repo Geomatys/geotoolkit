@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.data.s57.iso8211;
+package org.geotoolkit.data.iso8211;
 
 import java.io.DataInput;
 import java.io.EOFException;
@@ -26,12 +26,13 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import static org.geotoolkit.data.s57.iso8211.ISO8211Constants.*;
-import static org.geotoolkit.data.s57.iso8211.ISO8211Utilities.*;
+import static org.geotoolkit.data.iso8211.ISO8211Constants.*;
+import static org.geotoolkit.data.iso8211.ISO8211Utilities.*;
 import org.geotoolkit.io.LEDataInputStream;
 
 /**
- *
+ * ISO8211 Reader.
+ * 
  * @author Johann Sorel (Geomatys)
  */
 public class ISO8211Reader {
@@ -89,12 +90,7 @@ public class ISO8211Reader {
         readHeader(ds);
         return ddr;
     }
-    
-//    public FeatureType getFeatureType() throws IOException {
-//        getDDR();
-//        
-//    }
-    
+        
     public boolean hasNext() throws IOException{
         findNext();
         return record != null;
@@ -127,35 +123,7 @@ public class ISO8211Reader {
     private void readHeader(final DataInput ds) throws IOException {
         ddr = new DataRecord();
         ddr.readDescription(ds);
-        
-        //read each field description
-        final List<FieldDescription> sortedFields = ddr.getFieldDescriptions();
-        for(FieldDescription field : sortedFields){
-            field.readDescription(ds);
-                
-            if("0000".equals(field.getTag())){
-                //first field, contains the tree structure
-                expect(ds,FEND);
-                //calculate number of pairs we will have, rebuild tree structure
-                final int nbPair = (field.getLenght()-11)/ (ddr.getFieldSizeTag()*2) ;
-                byte[] buffer = new byte[ddr.getFieldSizeTag()];
-                for(int i=0;i<nbPair;i++){
-                    ds.readFully(buffer);
-                    final String parentTag = new String(buffer);
-                    ds.readFully(buffer);
-                    final String childTag = new String(buffer);
-                    final FieldDescription child = ddr.getFieldDescription(childTag);
-                    final FieldDescription parent = ddr.getFieldDescription(parentTag);
-                    child.setParent(parent);
-                    parent.getFields().add(child);
-                }
-                expect(ds,SFEND);
-            }else{
-                //description field
-                field.readModel(ds);
-            }
-        }
-        
+        ddr.readFieldDescriptions(ds);
     }
     
     private DataRecord readRecord(final DataInput ds) throws IOException{
@@ -166,25 +134,7 @@ public class ISO8211Reader {
             //no more records
             return null;
         }
-        
-        
-        //read each field value
-        final List<FieldDescription> sortedFields = new ArrayList<FieldDescription>(dr.getFieldDescriptions());
-        for(FieldDescription field : sortedFields){
-            final byte[] value = new byte[field.getLenght()];
-            ds.readFully(value);
-            //get the full field description from DDR
-            final FieldDescription desc = dr.getDescriptor().getFieldDescription(field.getTag());
-            final Field f = new Field(desc);
-            f.setValueAsByte(value);
-            if(desc.getParent()!=null){
-                //add field in it's parent
-                final Field parent = dr.getField(desc.getParent().getTag());
-                parent.getFields().add(f);
-            }
-            dr.getFields().add(f);
-        }
-        
+        dr.readFieldValues(ds);
         return dr;
     }
     

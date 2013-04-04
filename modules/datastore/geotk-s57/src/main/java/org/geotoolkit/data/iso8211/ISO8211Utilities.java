@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.data.s57.iso8211;
+package org.geotoolkit.data.iso8211;
 
 import java.io.DataInput;
 import java.io.IOException;

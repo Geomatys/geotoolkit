@@ -14,12 +14,11 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.data.s57.iso8211;
+package org.geotoolkit.data.iso8211;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map.Entry;
 
 /**
  *
@@ -46,7 +45,13 @@ public enum FieldDataType {
         return code;
     }
     
-    public static List<SubFieldDescription> get(String value) throws IOException {
+    /**
+     * Read the field types and length.
+     * @param value
+     * @return List<SubFieldDescription>
+     * @throws IOException 
+     */
+    public static List<SubFieldDescription> read(String value) throws IOException {
         if(value.charAt(0) != '(' || value.charAt(value.length()-1) != ')'){
             throw new IOException("Type should be wrapped between () but was :"+value);
         }
@@ -97,6 +102,50 @@ public enum FieldDataType {
         return types;
     }
     
-    
+    /**
+     * Write the given list of field description.
+     * 
+     * @param types
+     * @return String
+     */
+    public static String write(final List<SubFieldDescription> types){
+        final StringBuilder sb = new StringBuilder();
+        sb.append('(');
+        int repetition = 0;
+        for(int i=0,n=types.size();i<n;i++){
+            final SubFieldDescription desc = types.get(i);
+            final FieldDataType type = desc.getType();
+            final Integer length = desc.getLength();
+            repetition++;
+            //check for repetition
+            if(i<n-1){
+                //check the next description, see if it's the same
+                if(types.get(i+1).getType() == type && types.get(i+1).getLength() == length){
+                    //same
+                    continue;
+                }
+            }
+            
+            if(i>0) sb.append(',');
+            if(repetition>1) sb.append(repetition);
+            sb.append(type.getCode());
+            if(length!=null){
+                if(type==TEXT){
+                    sb.append('(').append(length).append(')');
+                }else if(type==INTEGER_UNSIGNED){
+                    sb.append(length);
+                }else if(type==INTEGER_SIGNED){
+                    sb.append(length);
+                }else if(type==REAL){
+                    sb.append(length);
+                }else if(type==BINARY){
+                    sb.append('(').append(length).append(')');
+                }
+            }
+            repetition = 0;
+        }        
+        sb.append(')');
+        return sb.toString();
+    }
     
 }

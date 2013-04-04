@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.data.s57.iso8211;
+package org.geotoolkit.data.iso8211;
 
 import java.io.IOException;
 
@@ -24,7 +24,10 @@ import java.io.IOException;
  * @author Johann Sorel (Geomatys)
  */
 public enum FieldDataStructure {
-    ELEMENTARY(0), ARRAY(1), VECTOR(2);
+    ELEMENTARY(0), 
+    ARRAY(1), 
+    VECTOR(2);
+    
     private final byte value;
 
     private FieldDataStructure(int value) {

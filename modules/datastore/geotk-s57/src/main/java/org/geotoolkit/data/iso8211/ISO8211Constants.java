@@ -14,9 +14,9 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.data.s57.iso8211;
+package org.geotoolkit.data.iso8211;
 
-import java.io.IOException;
+import java.nio.charset.Charset;
 
 /**
  * ISO8211 constants.
@@ -24,6 +24,11 @@ import java.io.IOException;
  * @author Johann Sorel (Geomatys)
  */
 public final class ISO8211Constants {
+    
+    public static final Charset US_ASCII;
+    static {
+        US_ASCII = Charset.forName("US-ASCII");
+    }
     
     /** End of field : UT */
     public static final char FEND = '\u001F';

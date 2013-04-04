@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.data.s57.iso8211;
+package org.geotoolkit.data.iso8211;
 
 /**
  *
@@ -28,6 +28,11 @@ public class SubFieldDescription {
     private boolean mandatory;
 
     public SubFieldDescription() {
+    }
+
+    public SubFieldDescription(FieldDataType type, Integer length) {
+        this.type = type;
+        this.length = length;
     }
 
     /**

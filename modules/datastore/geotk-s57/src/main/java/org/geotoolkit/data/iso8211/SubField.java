@@ -14,9 +14,19 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.data.s57.iso8211;
+package org.geotoolkit.data.iso8211;
 
+import java.io.DataOutput;
 import java.util.Arrays;
+import static org.geotoolkit.data.iso8211.FieldDataType.BINARY;
+import static org.geotoolkit.data.iso8211.FieldDataType.INTEGER;
+import static org.geotoolkit.data.iso8211.FieldDataType.INTEGER_SIGNED;
+import static org.geotoolkit.data.iso8211.FieldDataType.INTEGER_UNSIGNED;
+import static org.geotoolkit.data.iso8211.FieldDataType.LOGICAL;
+import static org.geotoolkit.data.iso8211.FieldDataType.REAL;
+import static org.geotoolkit.data.iso8211.FieldDataType.REAL_FIXED;
+import static org.geotoolkit.data.iso8211.FieldDataType.REAL_FLOAT;
+import static org.geotoolkit.data.iso8211.FieldDataType.TEXT;
 
 /**
  *
@@ -39,7 +49,25 @@ public class SubField {
         this.value = value;
     }
 
-    public int setValue(byte[] buffer, int offset){
+    
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder();
+        sb.append(type.getTag()).append(" : ").append(value);
+        return sb.toString();
+    }
+    
+    ////////////////////////////////////////////////////////////////////////////
+    // IO operations ///////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+    
+    /**
+     * Read subfield value from buffer.
+     * @param buffer
+     * @param offset
+     * @return number of bytes read
+     */
+    public int readValue(byte[] buffer, int offset){
         Integer length = type.getLength();
         
         switch(type.getType()){
@@ -89,11 +117,13 @@ public class SubField {
         return 0;
     }
     
-    @Override
-    public String toString() {
-        final StringBuilder sb = new StringBuilder();
-        sb.append(type.getTag()).append(" : ").append(value);
-        return sb.toString();
+    /**
+     * 
+     * @param out 
+     * @return int : number of bytes written
+     */
+    public int writeValue(final DataOutput out){
+        throw new RuntimeException("No supported yet.");
     }
     
 }
