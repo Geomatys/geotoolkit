@@ -94,10 +94,15 @@ public class GetFeatureOfInterestType extends ExtensibleRequestType implements G
     }
     
     public GetFeatureOfInterestType(final String version, final String service, final List<String> observedProperties,
-            final List<String> procedure) {
+            final List<String> procedure, final List<String> featureId, final Filter location) {
         super(version, service);
-        this.observedProperty = observedProperties;
-        this.procedure        = procedure;
+        this.observedProperty  = observedProperties;
+        this.procedure         = procedure;
+        this.featureOfInterest = featureId;
+        if (location != null) {
+            this.spatialFilter = new ArrayList<SpatialFilter>();
+            this.spatialFilter.add(new SpatialFilter(location));
+        }
     }
     
     public GetFeatureOfInterestType(final String version, final String service, final List<String> featureId) {

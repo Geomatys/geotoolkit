@@ -110,7 +110,8 @@ public class GetResultType extends ExtensibleRequestType implements GetResult {
     /**
      * Build a new request GetResult.
      */
-    public GetResultType(final String offering, final String observedProperty, final List<TemporalOpsType> timeFilter, final String version){
+    public GetResultType(final String version, final String service, final String offering, final String observedProperty, 
+            final List<TemporalOpsType> timeFilter, final SpatialOpsType spatialFilter, final List<String> featureOfInterest){
        super(version, "SOS");
        if (timeFilter != null) {
             this.temporalFilter = new ArrayList<TemporalFilter>();
@@ -120,6 +121,10 @@ public class GetResultType extends ExtensibleRequestType implements GetResult {
        }
        this.offering = offering;
        this.observedProperty = observedProperty;
+       if (spatialFilter != null) {
+           this.spatialFilter = new SpatialFilter(spatialFilter);
+       }
+       this.featureOfInterest = featureOfInterest;
     }
     
     /**
@@ -269,6 +274,15 @@ public class GetResultType extends ExtensibleRequestType implements GetResult {
         @XmlElementRef(name = "spatialOps", namespace = "http://www.opengis.net/fes/2.0", type = JAXBElement.class)
         private JAXBElement<? extends SpatialOpsType> spatialOps;
 
+        public SpatialFilter() {
+            
+        }
+        
+        public SpatialFilter(final SpatialOpsType filter) {
+            if (filter != null) {
+                this.spatialOps = FilterType.createSpatialOps(filter);
+            }
+        }
         /**
          * Gets the value of the spatialOps property.
          * 

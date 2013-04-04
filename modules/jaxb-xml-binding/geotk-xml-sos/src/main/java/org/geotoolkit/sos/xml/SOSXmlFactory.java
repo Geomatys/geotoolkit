@@ -53,9 +53,12 @@ import org.geotoolkit.swe.xml.SweXmlFactory;
 import org.geotoolkit.swe.xml.TextBlock;
 import org.geotoolkit.swe.xml.UomProperty;
 import org.geotoolkit.swe.xml.v101.PhenomenonPropertyType;
+import org.geotoolkit.swes.xml.DeleteSensor;
 import org.geotoolkit.swes.xml.DeleteSensorResponse;
 import org.geotoolkit.swes.xml.DescribeSensor;
 import org.geotoolkit.swes.xml.InsertSensorResponse;
+import org.opengis.filter.Filter;
+import org.opengis.filter.spatial.BBOX;
 import org.opengis.filter.temporal.After;
 import org.opengis.filter.temporal.Before;
 import org.opengis.filter.temporal.During;
@@ -321,6 +324,68 @@ public class SOSXmlFactory {
         }
     }
     
+    public static GetObservationById buildGetObservationById(final String version, final String service, final List<String> observations,
+            final QName resultModel, final ResponseModeType responseMode, final String srsName, final String responseFormat) {
+        if ("2.0.0".equals(version)) {
+            return new org.geotoolkit.sos.xml.v200.GetObservationByIdType(version, service, observations);
+        } else if ("1.0.0".equals(version)) {
+            String oid = null;
+            if (observations != null && !observations.isEmpty()) {
+                oid = observations.get(0);
+            }
+            return new org.geotoolkit.sos.xml.v100.GetObservationById(version, service, oid, responseFormat, resultModel, responseMode, srsName);
+        } else {
+            throw new IllegalArgumentException("unexpected version number:" + version);
+        }
+    }
+    
+    public static GetResultTemplate buildGetResultTemplate(final String version, final String service, final String offering,
+            final String observedProperty) {
+        if ("2.0.0".equals(version)) {
+            return new org.geotoolkit.sos.xml.v200.GetResultTemplateType(version, service, offering, observedProperty);
+        } else if ("1.0.0".equals(version)) {
+            throw new IllegalArgumentException("GetResultTemplate is not implemented in SOS v100");
+        } else {
+            throw new IllegalArgumentException("unexpected version number:" + version);
+        }
+    }
+    
+    public static DeleteSensor buildDeleteSensor(final String version, final String service, final String procedure) {
+        if ("2.0.0".equals(version)) {
+            return new org.geotoolkit.swes.xml.v200.DeleteSensorType(version, service, procedure);
+        } else if ("1.0.0".equals(version)) {
+            throw new IllegalArgumentException("deleteSensor is not implemented in SOS v100");
+        } else {
+            throw new IllegalArgumentException("unexpected version number:" + version);
+        }
+    }
+    
+    public static GetObservation buildGetObservation(final String version, final String service, final List<String> offering,
+            final List<String> observedProperties, final List<String> procedures, final List<String> foid, final String responseFormat,
+            final List<Filter> temporalFilter, final Filter spatialFilter) {
+        if ("2.0.0".equals(version)) {
+            final List<org.geotoolkit.ogc.xml.v200.TemporalOpsType> times = new ArrayList<org.geotoolkit.ogc.xml.v200.TemporalOpsType>();
+            for (Filter tf : temporalFilter) {
+                if (tf instanceof org.geotoolkit.ogc.xml.v200.TemporalOpsType) {
+                    times.add((org.geotoolkit.ogc.xml.v200.TemporalOpsType)tf);
+                } else {
+                    throw new IllegalArgumentException("unexpected object version for time filter");
+                }
+            }
+            final org.geotoolkit.ogc.xml.v200.SpatialOpsType spa;
+            if (spatialFilter != null && !(spatialFilter instanceof org.geotoolkit.ogc.xml.v200.SpatialOpsType)) {
+                throw new IllegalArgumentException("unexpected object version for spatial filter");
+            } else {
+                spa = (org.geotoolkit.ogc.xml.v200.SpatialOpsType)spatialFilter;
+            }
+            return new org.geotoolkit.sos.xml.v200.GetObservationType(version, service, offering, times, procedures, observedProperties, spa, foid, responseFormat);
+        } else if ("1.0.0".equals(version)) {
+            throw new IllegalArgumentException("not supported yet for 1.0.0");
+        } else {
+            throw new IllegalArgumentException("unexpected version number:" + version);
+        }
+    }
+    
     public static DeleteSensorResponse buildDeleteSensorResponse(final String version, final String deletedProcedure) {
         if ("2.0.0".equals(version)) {
             return new org.geotoolkit.swes.xml.v200.DeleteSensorResponseType(deletedProcedure);
@@ -351,11 +416,46 @@ public class SOSXmlFactory {
         }
     }
     
+    public static GetFeatureOfInterest buildGetFeatureOfInterest(final String version, final String service, final List<String> featureId, 
+            final List<String> observedProperties, final List<String> procedures, final Filter spatialFilter) {
+        if ("2.0.0".equals(version)) {
+            return new org.geotoolkit.sos.xml.v200.GetFeatureOfInterestType(version, service, observedProperties, procedures, featureId, spatialFilter);
+        } else if ("1.0.0".equals(version)) {
+            return new org.geotoolkit.sos.xml.v100.GetFeatureOfInterest(version, service, featureId, spatialFilter);
+        } else {
+            throw new IllegalArgumentException("unexpected version number:" + version);
+        }
+    }
+    
     public static InsertSensorResponse buildInsertSensorResponse(final String version, final String assignedProcedure, final String assignedOffering) {
         if ("2.0.0".equals(version)) {
             return new org.geotoolkit.swes.xml.v200.InsertSensorResponseType(assignedProcedure, assignedOffering);
         } else if ("1.0.0".equals(version)) {
             return new org.geotoolkit.sos.xml.v100.RegisterSensorResponse(assignedProcedure);
+        } else {
+            throw new IllegalArgumentException("unexpected version number:" + version);
+        }
+    }
+    
+    public static GetResult buildGetResult(final String version, final String service, final String offering, final String observedProperty,
+            final List<String> featureOfInterest, final Filter spatialFilter, final List<Filter> temporalFilter) {
+        if ("2.0.0".equals(version)) {
+            final List<org.geotoolkit.ogc.xml.v200.TemporalOpsType> temps = new ArrayList<org.geotoolkit.ogc.xml.v200.TemporalOpsType>();
+            if (temporalFilter != null) {
+                for (Filter tmp : temporalFilter) {
+                    if (!(tmp instanceof org.geotoolkit.ogc.xml.v200.TemporalOpsType)) {
+                        throw new IllegalArgumentException("unexpected object version for temporal filter element");
+                    }
+                    temps.add((org.geotoolkit.ogc.xml.v200.TemporalOpsType)tmp);
+                }
+            }
+            if (spatialFilter != null && !(spatialFilter instanceof org.geotoolkit.ogc.xml.v200.SpatialOpsType)) {
+                throw new IllegalArgumentException("unexpected object version for spatial filter element");
+            }
+            final org.geotoolkit.ogc.xml.v200.SpatialOpsType spa = (org.geotoolkit.ogc.xml.v200.SpatialOpsType)spatialFilter;
+            return new org.geotoolkit.sos.xml.v200.GetResultType(version, service, offering, observedProperty, temps, spa, featureOfInterest);
+        } else if ("1.0.0".equals(version)) {
+            throw new IllegalArgumentException("GetResult KVP is not implemented in SOS v100");
         } else {
             throw new IllegalArgumentException("unexpected version number:" + version);
         }
@@ -682,6 +782,16 @@ public class SOSXmlFactory {
             return GMLXmlFactory.createFeatureCollection("3.1.1", id, name, description, features);
         } else {
             throw new IllegalArgumentException("unexpected sos version number:" + version);
+        }
+    }
+    
+    public static BBOX buildBBOX(final String version, final String propertyName, final double minx, final double miny, final double maxx, final double maxy, final String srs) {
+        if ("2.0.0".equals(version)) {
+            return new org.geotoolkit.ogc.xml.v200.BBOXType(propertyName, minx, miny, maxx, maxy, srs);
+        } else if ("1.0.0".equals(version)) {
+            return new org.geotoolkit.ogc.xml.v110.BBOXType(propertyName, minx, miny, maxx, maxy, srs);
+        } else {
+            throw new IllegalArgumentException("unexpected SOS version number:" + version);
         }
     }
     

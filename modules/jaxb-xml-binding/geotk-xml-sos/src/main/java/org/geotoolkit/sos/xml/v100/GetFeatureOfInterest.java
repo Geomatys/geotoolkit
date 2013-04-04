@@ -117,7 +117,7 @@ public class GetFeatureOfInterest extends RequestBaseType implements org.geotool
         if (featureId != null) {
             this.featureOfInterestId.add(featureId);
         }
-        }
+     }
 
      public GetFeatureOfInterest(final String version, final String service, final List<String> featureId) {
         super(version, service);
@@ -126,6 +126,14 @@ public class GetFeatureOfInterest extends RequestBaseType implements org.geotool
 
      public GetFeatureOfInterest(final String version, final String service, final Filter location) {
         super(version, service);
+        if (location != null) {
+            this.location = new Location(location);
+        }
+     }
+     
+     public GetFeatureOfInterest(final String version, final String service, final List<String> featureId, final Filter location) {
+        super(version, service);
+        this.featureOfInterestId = featureId;
         if (location != null) {
             this.location = new Location(location);
         }

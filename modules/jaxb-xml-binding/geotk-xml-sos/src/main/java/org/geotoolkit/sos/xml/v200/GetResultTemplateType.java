@@ -70,6 +70,12 @@ public class GetResultTemplateType extends ExtensibleRequestType implements GetR
         this.offering         = offering;
     }
     
+    public GetResultTemplateType(final String version, final String service, final String offering, final String observedProperty) {
+        super(version, service);
+        this.observedProperty = observedProperty;
+        this.offering         = offering;
+    }
+    
     /**
      * Gets the value of the offering property.
      * 

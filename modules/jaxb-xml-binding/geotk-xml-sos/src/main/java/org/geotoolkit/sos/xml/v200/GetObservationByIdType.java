@@ -66,6 +66,11 @@ public class GetObservationByIdType extends ExtensibleRequestType implements Get
         this.observation = observation;
     }
     
+    public GetObservationByIdType(final String version, final String service, final List<String> observation) {
+        super(version, service);
+        this.observation = observation;
+    }
+    
     /**
      * Gets the value of the observation property.
      * 

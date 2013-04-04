@@ -147,6 +147,26 @@ public class GetObservationType extends ExtensibleRequestType implements GetObse
         this.responseFormat = responseFormat;
     }
     
+    public GetObservationType(final String version, final String service, final List<String> offering, final List<TemporalOpsType> eventTime, 
+            final List<String> procedure, final List<String> observedProperty, final SpatialOpsType spatialFilter,
+            final List<String> foi, final String responseFormat) {
+        super(version, service);
+        this.offering = offering;
+        if (eventTime != null) {
+            temporalFilter = new ArrayList<TemporalFilter>();
+            for (TemporalOpsType temporal : eventTime) {
+                this.temporalFilter.add(new TemporalFilter(temporal));
+            }
+        }
+        this.procedure = procedure;
+        this.observedProperty = observedProperty;
+        if (spatialFilter != null) {
+            this.spatialFilter = new SpatialFilter(spatialFilter);
+        }
+        this.featureOfInterest = foi;
+        this.responseFormat = responseFormat;
+    }
+    
     
     /**
      * Gets the value of the procedure property.

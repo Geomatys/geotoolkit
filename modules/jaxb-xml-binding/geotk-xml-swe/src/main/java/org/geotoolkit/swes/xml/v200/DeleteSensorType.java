@@ -63,6 +63,11 @@ public class DeleteSensorType extends ExtensibleRequestType implements DeleteSen
         this.procedure = procedure;
     }
     
+    public DeleteSensorType(final String version, final String service, final String procedure) {
+        super(version, service);
+        this.procedure = procedure;
+    }
+    
     /**
      * Gets the value of the procedure property.
      * 

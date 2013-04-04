@@ -80,6 +80,17 @@ public class GetObservationById extends RequestBaseType implements org.geotoolki
      */
     GetObservationById() {}
 
+    public GetObservationById(final String version, final String service, final String observationId, final String responseFormat,
+                              final QName resultModel, final ResponseModeType responseMode, final String srsName)
+    {
+        super(version, service);
+        this.observationId = observationId;
+        this.responseFormat = responseFormat;
+        this.resultModel = resultModel;
+        this.responseMode = responseMode;
+        this.srsName = srsName;
+    }
+    
     /**
      * Build a new full GetObservationById request
      */
