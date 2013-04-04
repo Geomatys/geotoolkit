@@ -29,10 +29,10 @@ public class Brush implements MIFSymbolizer, PolygonSymbolizer {
     public int foregroundCC = 0;
     public int backgroundCC = -1;
 
-    private Fill fill = null;
-    private Stroke stroke = null;
-    private Expression perpendicularOffset = null;
-    private Displacement displacement = null;
+    private transient Fill fill = null;
+    private transient Stroke stroke = null;
+    private transient Expression perpendicularOffset = null;
+    private transient Displacement displacement = null;
     private String geometryName= MIFLineBuilder.NAME.getLocalPart();
 
     public Brush(int pattern, int foregroundCC) {

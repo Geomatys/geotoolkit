@@ -32,9 +32,9 @@ public class Pen implements MIFSymbolizer, LineSymbolizer {
     private int pattern;
     private int colorCode;
 
-    private Stroke stroke = null;
-    private Expression perpendicularOffset = null;
-    private Graphics2D graphic =null;
+    private transient Stroke stroke = null;
+    private transient Expression perpendicularOffset = null;
+    private transient Graphics2D graphic =null;
     private String geometryName= MIFLineBuilder.NAME.getLocalPart();
 
     public Pen(int widthCode, int pattern, int colorCode) {

@@ -3,6 +3,7 @@ package org.geotoolkit.data.mapinfo.mif.geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineSegment;
 import com.vividsolutions.jts.geom.PrecisionModel;
+import org.geotoolkit.data.mapinfo.mif.style.Brush;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.type.DefaultAttributeDescriptor;
@@ -31,6 +32,9 @@ public abstract class MIFGeometryBuilder {
     protected final static Logger LOGGER = Logger.getLogger(MIFGeometryBuilder.class.getName());
     protected final static GeometryFactory GEOMETRY_FACTORY = new GeometryFactory(new PrecisionModel());
 
+
+    protected static final AttributeType STRING_TYPE =
+            new DefaultAttributeType(new DefaultName("TEXT"), String.class, false, false, null, null, null);
     /**
      * Parse an input file to build a JTS Geometry with its data.
      *

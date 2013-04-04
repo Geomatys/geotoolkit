@@ -32,7 +32,7 @@ public class Symbol implements MIFSymbolizer, PointSymbolizer {
     private int size = 0;
 
     private String geometryName= MIFPointBuilder.NAME.getLocalPart();
-    private Graphics2D graphic;
+    private transient Graphics2D graphic;
 
     public Symbol() { }
 

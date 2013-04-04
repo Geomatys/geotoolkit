@@ -37,14 +37,11 @@ public class MIFRectangleBuilder extends MIFGeometryBuilder {
     private static final AttributeDescriptor BRUSH;
 
     static {
-        final AttributeType roundType = new DefaultAttributeType(ROUND_NAME, Double.class, false, false, null, null, null);
-        ROUNDING = new DefaultAttributeDescriptor(roundType, ROUND_NAME, 0, 1, true, null);
+        ROUNDING = new DefaultAttributeDescriptor(STRING_TYPE, ROUND_NAME, 0, 1, true, null);
 
-        final AttributeType penType = new DefaultAttributeType(Pen.NAME, Pen.class, false, false, null, null, null);
-        PEN = new DefaultAttributeDescriptor(penType, Pen.NAME, 0, 1, true, null);
+        PEN = new DefaultAttributeDescriptor(STRING_TYPE, Pen.NAME, 0, 1, true, null);
 
-        final AttributeType brushType = new DefaultAttributeType(Brush.NAME, Pen.class, false, false, null, null, null);
-        BRUSH = new DefaultAttributeDescriptor(penType, Brush.NAME, 0, 1, true, null);
+        BRUSH = new DefaultAttributeDescriptor(STRING_TYPE, Brush.NAME, 0, 1, true, null);
     }
 
     public SimpleFeatureType featureType;

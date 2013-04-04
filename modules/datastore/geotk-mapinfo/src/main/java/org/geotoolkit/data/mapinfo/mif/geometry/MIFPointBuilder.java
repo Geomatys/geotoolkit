@@ -36,8 +36,7 @@ public final class MIFPointBuilder extends MIFGeometryBuilder {
     public static final AttributeDescriptor SYMBOL_DESCRIPTOR;
 
     static {
-        final DefaultAttributeType symbolType = new DefaultAttributeType(Symbol.NAME, Symbol.class, true, false, null, null, null);
-        SYMBOL_DESCRIPTOR = new DefaultAttributeDescriptor(symbolType, Symbol.NAME, 1, 1, true, null);
+        SYMBOL_DESCRIPTOR = new DefaultAttributeDescriptor(STRING_TYPE, Symbol.NAME, 1, 1, true, null);
     }
 
     /**

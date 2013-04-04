@@ -57,8 +57,7 @@ public class MIFTextBuilder extends MIFGeometryBuilder {
         final DefaultAttributeType textType = new DefaultAttributeType(TEXT_NAME, String.class, true, false, null, null, null);
         TEXT_DESCRIPTOR = new DefaultAttributeDescriptor(textType, TEXT_NAME, 1, 1, false, "No data");
 
-        final DefaultAttributeType fontType = new DefaultAttributeType(Font.NAME, Font.class, true, false, null, null, null);
-        FONT_DESCRIPTOR = new DefaultAttributeDescriptor(fontType, Font.NAME, 1, 1, true, null);
+        FONT_DESCRIPTOR = new DefaultAttributeDescriptor(STRING_TYPE, Font.NAME, 1, 1, true, null);
 
         final DefaultAttributeType spacingType = new DefaultAttributeType(SPACING_NAME, Float.class, true, false, null, null, null);
         SPACING_DESCRIPTOR = new DefaultAttributeDescriptor(spacingType, SPACING_NAME, 1, 1, false, 1f);
@@ -67,10 +66,9 @@ public class MIFTextBuilder extends MIFGeometryBuilder {
         JUSTIFY_DESCRIPTOR = new DefaultAttributeDescriptor(justifyType, JUSTIFY_NAME, 1, 1, false, "Left");
 
         final DefaultAttributeType angleType = new DefaultAttributeType(ANGLE_NAME, Double.class, true, false, null, null, null);
-        ANGLE_DESCRIPTOR = new DefaultAttributeDescriptor(fontType, ANGLE_NAME, 1, 1, true, null);
+        ANGLE_DESCRIPTOR = new DefaultAttributeDescriptor(angleType, ANGLE_NAME, 1, 1, true, null);
 
-        final DefaultAttributeType labelType = new DefaultAttributeType(LabelLine.NAME, LabelLine.class, true, false, null, null, null);
-        LABEL_DESCRIPTOR = new DefaultAttributeDescriptor(fontType, LabelLine.NAME, 1, 1, true, null);
+        LABEL_DESCRIPTOR = new DefaultAttributeDescriptor(STRING_TYPE, LabelLine.NAME, 1, 1, true, null);
     }
 
     /**

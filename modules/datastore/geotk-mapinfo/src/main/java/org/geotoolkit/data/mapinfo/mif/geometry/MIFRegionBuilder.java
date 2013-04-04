@@ -37,13 +37,9 @@ public class MIFRegionBuilder extends MIFGeometryBuilder {
     private static final AttributeDescriptor PEN;
 
     static {
-        final AttributeType penType =
-                new DefaultAttributeType(Pen.NAME, Pen.class, false, false, null, null, null);
-        PEN = new DefaultAttributeDescriptor(penType, Pen.NAME, 1, 1, true, null);
+        PEN = new DefaultAttributeDescriptor(STRING_TYPE, Pen.NAME, 1, 1, true, null);
 
-        final AttributeType smoothType =
-                new DefaultAttributeType(Brush.NAME, Brush.class, false, false, null, null, null);
-        BRUSH = new DefaultAttributeDescriptor(smoothType, Brush.NAME, 1, 1, true, null);
+        BRUSH = new DefaultAttributeDescriptor(STRING_TYPE, Brush.NAME, 1, 1, true, null);
     }
 
     @Override

@@ -35,7 +35,7 @@ public class MIFLineBuilder extends MIFGeometryBuilder {
     private static final AttributeDescriptor PEN;
     static {
         final AttributeType penType =
-                new DefaultAttributeType(Pen.NAME, Pen.class, false, false, null, null, null);
+                new DefaultAttributeType(Pen.NAME, String.class, false, false, null, null, null);
         PEN = new DefaultAttributeDescriptor(penType, Pen.NAME, 0, 1, true, null);
     }
 

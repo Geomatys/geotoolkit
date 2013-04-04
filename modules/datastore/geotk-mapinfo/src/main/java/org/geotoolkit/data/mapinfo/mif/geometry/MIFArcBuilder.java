@@ -41,8 +41,7 @@ public class MIFArcBuilder extends MIFGeometryBuilder {
         BEGIN_ANGLE = new DefaultAttributeDescriptor(angleType, BEGIN_ANGLE_NAME, 1, 1, false, null);
         END_ANGLE = new DefaultAttributeDescriptor(angleType, END_ANGLE_NAME, 1, 1, false, null);
 
-        final AttributeType penType = new DefaultAttributeType(Pen.NAME, Pen.class, false, false, null, null, null);
-        PEN = new DefaultAttributeDescriptor(penType, Pen.NAME, 1, 1, true, null);
+        PEN = new DefaultAttributeDescriptor(STRING_TYPE, Pen.NAME, 1, 1, true, null);
     }
 
     @Override
