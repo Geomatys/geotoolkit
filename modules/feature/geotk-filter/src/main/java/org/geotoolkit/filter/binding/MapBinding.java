@@ -29,7 +29,7 @@ import org.geotoolkit.util.Converters;
 public final class MapBinding extends AbstractBinding<Map> implements Serializable{
 
     public MapBinding() {
-        super(Map.class, 0);
+        super(Map.class, 1);
     }
 
     @Override

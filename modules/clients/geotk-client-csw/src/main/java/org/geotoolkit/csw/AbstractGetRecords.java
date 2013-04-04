@@ -26,6 +26,8 @@ import java.util.List;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.namespace.QName;
+import org.geotoolkit.cql.CQL;
+import org.geotoolkit.cql.CQLException;
 import org.geotoolkit.csw.xml.ElementSetName;
 import org.geotoolkit.csw.xml.ElementSetType;
 import org.geotoolkit.csw.xml.ResultType;
@@ -34,8 +36,6 @@ import org.geotoolkit.csw.xml.Query;
 import org.geotoolkit.csw.xml.DistributedSearch;
 import org.geotoolkit.csw.xml.QueryConstraint;
 import org.geotoolkit.filter.FilterFactoryImpl;
-import org.geotoolkit.filter.text.cql2.CQL;
-import org.geotoolkit.filter.text.cql2.CQLException;
 import org.geotoolkit.ogc.xml.v110.FilterType;
 import org.geotoolkit.ogc.xml.v110.SortByType;
 import org.geotoolkit.security.ClientSecurity;
@@ -367,7 +367,7 @@ public abstract class AbstractGetRecords extends AbstractCSWRequest implements G
             if (constraint != null && !constraint.isEmpty())  {
                 try {
                     final FilterType filterType;
-                    Filter filter = CQL.toFilter(constraint, new FilterFactoryImpl());
+                    Filter filter = CQL.parseFilter(constraint, new FilterFactoryImpl());
                     if (filter instanceof FilterType) {
                         filterType = (FilterType) filter;
                     } else {

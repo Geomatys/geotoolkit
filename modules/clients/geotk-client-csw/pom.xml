@@ -97,7 +97,7 @@
         </dependency>
         <dependency>
             <groupId>org.geotoolkit.pending</groupId>
-            <artifactId>geotk-cql</artifactId>
+            <artifactId>geotk-filter-cql</artifactId>
             <version>${project.version}</version>
         </dependency>
 
