@@ -148,7 +148,7 @@ public class ISO8211Test {
         subfields.add(new SubFieldDescription(FieldValueType.TEXT, 8));
         
         final String result = FieldValueType.write(subfields);
-        assertEquals("(B11,2C,B24,3A(8))", result);
+        assertEquals("(b11,2C,b24,3A(8))", result);
         
     }
     

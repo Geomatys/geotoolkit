@@ -141,20 +141,19 @@ public class Field {
         final FieldDataStructure structure = type.getStructure();
         final List<SubFieldDescription> subdescs = type.getSubFieldTypes();
         
+        int nbbyteread = 0;
         if(structure == FieldDataStructure.ELEMENTARY){
             //parse a single field
             final SubFieldDescription desc = type.getSubFieldTypes().get(0);
             final SubField sf = new SubField(desc);
-            sf.readValue(byteValues, 0);
+            nbbyteread += sf.readValue(byteValues, 0);
             subfields.add(sf);
             
         }else if(structure == FieldDataStructure.LINEAR){
             //parse subfields
-            int offset = 0;
             for(SubFieldDescription desc : subdescs){
                 final SubField sf = new SubField(desc);
-                int length = sf.readValue(byteValues, offset);
-                offset += length;
+                nbbyteread += sf.readValue(byteValues, nbbyteread);
                 subfields.add(sf);
             }
         }else if(structure == FieldDataStructure.CARTESIAN){
@@ -162,17 +161,22 @@ public class Field {
             if(names.size()>2){
                 throw new IOException("Only 2D cartesian array fields supported");
             }
-            int offset = 0;
-            while(offset<(byteValues.length-1)){
+            while(nbbyteread<(byteValues.length-1)){
                 for(SubFieldDescription desc : subdescs){
                     final SubField sf = new SubField(desc);
-                    int length = sf.readValue(byteValues, offset);
-                    offset += length;
+                    nbbyteread += sf.readValue(byteValues, nbbyteread);
                     subfields.add(sf);
                 }
             }
         }else if(structure == FieldDataStructure.CONCATENATED){
             throw new IOException("Concatenate field value reading not supported ");
+        }
+        
+        if(nbbyteread != (byteValues.length-1)){
+            throw new IOException("Field bytes value length do not match readed values : read="+nbbyteread+" size="+(byteValues.length-1));
+        }
+        if(byteValues[byteValues.length-1] != ISO8211Constants.SFEND){
+            throw new IOException("Missing field end delimiter");
         }
         
     }

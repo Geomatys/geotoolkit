@@ -74,52 +74,57 @@ public class SubField {
      */
     public int readValue(byte[] buffer, int offset){
         Integer length = type.getLength();
+        boolean endMarked = false;
+        if(length==null){
+            endMarked=true;
+            //find the end
+            length = 0;
+            for(int i=offset;i<buffer.length;i++){
+                if(   ISO8211Constants.FEND == buffer[i] 
+                   || ISO8211Constants.SFEND == buffer[i]){
+                    break;
+                }
+                length++;
+            }
+        }
+        
+        //clip size
+        if(type.getType() == BINARY){
+            length = length/8;
+        }
         
         switch(type.getType()){
             case TEXT:
-                if(length!=null){
-                    value = new String(Arrays.copyOfRange(buffer, offset, offset+length));
-                    return length;
-                }else{
-                    //find the end
-                    if(length == null){
-                        for(length=0;length+offset<buffer.length;length++){
-                            if(   ISO8211Constants.FEND == buffer[length+offset] 
-                               || ISO8211Constants.SFEND == buffer[length+offset]){
-                                break;
-                            }
-                        }
-                    }
-                    value = new String(Arrays.copyOfRange(buffer, offset, offset+length));
-                    return length+1; //+1 for the delimiter
-                }
-                
+                value = new String(Arrays.copyOfRange(buffer, offset, offset+length));
+                break;
             case INTEGER:
-                value = ISO8211Utilities.readSignedInteger(buffer, offset, 4);
-                return 4;
+                value = ISO8211Utilities.readSignedInteger(buffer, offset, length);
+                break;
             case REAL_FIXED:
-                value = ISO8211Utilities.readUnsignedInteger(buffer, offset, 2);
-                return 2;
+                value = ISO8211Utilities.readUnsignedInteger(buffer, offset, length);
+                break;
             case REAL_FLOAT:
-                value = ISO8211Utilities.readReal(buffer, offset, 4);
-                return 4;
+                value = ISO8211Utilities.readReal(buffer, offset, length);
+                break;
             case LOGICAL:
                 value = (buffer[offset]!=0);
-                return 1;
+                break;
             case LE_INTEGER_UNSIGNED:
                 value = ISO8211Utilities.readUnsignedInteger(buffer, offset, length);
-                return length;
+                break;
             case LE_INTEGER_SIGNED:
                 value = ISO8211Utilities.readSignedInteger(buffer, offset, length);
-                return length;
+                break;
             case LE_REAL:
                 value = ISO8211Utilities.readReal(buffer, offset,length);
-                return length;
+                break;
             case BINARY:
-                value = Arrays.copyOfRange(buffer, offset, offset+(length/8)); //length is in bits
-                return length/8; //length is in bits
+                value = Arrays.copyOfRange(buffer, offset, offset+(length/8));
+                break;
         }
-        return 0;
+        
+        if(endMarked)length++;
+        return length;
     }
     
     /**
