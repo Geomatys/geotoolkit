@@ -29,6 +29,7 @@ import java.util.logging.Logger;
 import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
 import javax.media.jai.TileCache;
+import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.image.iterator.PixelIterator;
 import org.geotoolkit.image.iterator.PixelIteratorFactory;
 
@@ -89,7 +90,7 @@ public class LargeRenderedImage implements RenderedImage {
     private final int nbrTileY;
 
     /**
-     * Define if tile will read from {@link #imageReader} or call from {@link #tilecache}. 
+     * Define if tile will be read from {@link #imageReader} or call from {@link #tilecache}. 
      */
     private final boolean[][] isRead;
     
@@ -112,6 +113,18 @@ public class LargeRenderedImage implements RenderedImage {
     private SampleModel sm = null;
 
     /**
+     * Create a {@link LargeRenderedImage} object with a default {@link TileCache} 
+     * with 64Mo memory capacity and a default tile size of 256 x 256 piels.
+     * 
+     * @param imageReader reader which target at image stored on disk.
+     * @param imageIndex the index of the image to be retrieved.
+     * @throws IOException if an error occurs during reading.
+     */
+    public LargeRenderedImage(ImageReader imageReader, int imageIndex) throws IOException{
+        this(imageReader, imageIndex, null, null);
+    }
+    
+    /**
      * Create {@link LargeRenderedImage} object.
      * 
      * @param imageReader reader which target at image stored on disk.
@@ -123,6 +136,8 @@ public class LargeRenderedImage implements RenderedImage {
      * @throws IOException if an error occurs during reading.
      */
     public LargeRenderedImage(ImageReader imageReader, int imageIndex, TileCache tilecache, Dimension tileSize) throws IOException {
+        ArgumentChecks.ensureNonNull("imageReader", imageReader);
+        ArgumentChecks.ensurePositive("image index", imageIndex);
         this.imageReader = imageReader;
         this.imageIndex  = imageIndex;
         this.imgParam    = new ImageReadParam();

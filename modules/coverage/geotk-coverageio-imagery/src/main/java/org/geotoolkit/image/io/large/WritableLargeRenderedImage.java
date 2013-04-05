@@ -23,6 +23,7 @@ import java.awt.Rectangle;
 import java.awt.image.*;
 import java.util.Arrays;
 import java.util.Vector;
+import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.image.iterator.PixelIterator;
 import org.geotoolkit.image.iterator.PixelIteratorFactory;
 
@@ -34,10 +35,39 @@ public class WritableLargeRenderedImage implements WritableRenderedImage {
 
     private final LargeCache tilecache;
 
+    /**
+     * Default tile size.
+     */
     private static final int DEFAULT_TILE_SIZE = 256;
+    
+    /**
+     * Minimum required tile size.
+     */
     private static final int MIN_TILE_SIZE = 64;
+    
+    /**
+     * Upper left corner of currently stored {@link Raster}. 
+     */
     private static final Point ptOffset = new Point();
+    
+    /**
+     * Default store memory capacity.
+     */
     private static final long DEFAULT_MEMORY_CAPACITY = 64000000;
+    
+    /**
+     * Upper left corner of all image tiles.
+     */
+    private Point[] tileIndices = null;
+    
+    /**
+     * Defaine if tile is allready writen. 
+     */
+    private final boolean[][] isWrite;
+    
+    /**
+     * Image attributs.
+     */
     private final int minX;
     private final int minY;
     private final int width;
@@ -48,17 +78,40 @@ public class WritableLargeRenderedImage implements WritableRenderedImage {
     private final int tileGridYOffset;
     private int minTileGridX;
     private int minTileGridY;
-    private Vector<RenderedImage> vector = null;
-
     private final int nbrTileX;
     private final int nbrTileY;
     private final ColorModel cm;
     private final SampleModel sm;
-    private Point[] tileIndices = null;
-    private final boolean[][] isWrite;
 
+    /**
+     * Create {@link WritableLargeRenderedImage} with default upper corner at position (0, 0),
+     * a default tile size of 256 x 256 pixels and a default tile grid offset at position (0, 0).
+     * 
+     * @param width image width.
+     * @param height image height.
+     * @param colorModel {@link ColorModel} use to build {@link WritableRaster} (image tiles).
+     */
+    public WritableLargeRenderedImage(int width, int height, ColorModel colorModel) { 
+        this(0, 0, width, height, null, 0, 0, colorModel);
+    }
+    
+    /**
+     * Create {@link WritableLargeRenderedImage} object.
+     * 
+     * @param minX image upper left corner min X values.
+     * @param minY image upper left corner min Y values. 
+     * @param width image width.
+     * @param height image height. 
+     * @param tileSize size of tile or raster within this image.
+     * @param tileGridXOffset tile grid offset in X direction.
+     * @param tileGridYOffset tile grid offset in Y direction.
+     * @param colorModel {@link ColorModel} use to build {@link WritableRaster} (image tiles). 
+     */
     public WritableLargeRenderedImage(int minX, int minY, int width, int height,
             Dimension tileSize, int tileGridXOffset, int tileGridYOffset, ColorModel colorModel) {
+        ArgumentChecks.ensureNonNull("ColorModel", colorModel);
+        ArgumentChecks.ensureStrictlyPositive("image width", width);
+        ArgumentChecks.ensureStrictlyPositive("image height", height);
         this.tilecache = LargeCache.getInstance(DEFAULT_MEMORY_CAPACITY);
         this.minX      = minX;
         this.minY      = minY;
@@ -82,7 +135,6 @@ public class WritableLargeRenderedImage implements WritableRenderedImage {
         this.minTileGridY = (minY - tileGridYOffset) / tileHeight;
         if (tileGridXOffset < minX) minTileGridX--;
         if (tileGridYOffset < minY) minTileGridY--;
-        
         isWrite = new boolean[nbrTileY][nbrTileX];
         for (boolean[] bool : isWrite) Arrays.fill(bool, false);
     }
