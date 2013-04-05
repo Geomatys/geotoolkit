@@ -77,6 +77,11 @@ public class IIOImageHelper {
     private final int numBands;
 
     /**
+     * {@code true} if the {@code IIOParam} were {@code null}.
+     */
+    public final boolean isDefaultParameters;
+
+    /**
      * The smallest rectangle that fully encompass the region to read from the source (never
      * {@code null}). This rectangle is computed as the intersection of the user-supplied region
      * (if any) and the image bounds.  If a sub-sampling has been specified, it will be taken in
@@ -185,6 +190,7 @@ public class IIOImageHelper {
          * Examines the parameters for subsampling in lines, columns and bands. If a subsampling
          * is specified, the source region will be translated by the subsampling offset (if any).
          */
+        isDefaultParameters = (param == null);
         if (param != null) {
             Rectangle region   = param.getSourceRegion();
             sourceXSubsampling = param.getSourceXSubsampling();
