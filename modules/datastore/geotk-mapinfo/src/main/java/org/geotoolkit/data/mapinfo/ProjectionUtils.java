@@ -343,7 +343,7 @@ public class ProjectionUtils {
                     new DefaultCoordinateSystemAxis("East", "E", AxisDirection.EAST, unit);
             DefaultCoordinateSystemAxis north =
                     new DefaultCoordinateSystemAxis("North", "N", AxisDirection.NORTH, unit);
-            CartesianCS cs = CS_FACTORY.createCartesianCS(properties, north, east);
+            CartesianCS cs = CS_FACTORY.createCartesianCS(properties, east, north);
 
             Conversion conversion = PROJ_FACTORY.createDefiningConversion(properties, method, projParams);
             // now that we've got conversion, we can check for bounds.

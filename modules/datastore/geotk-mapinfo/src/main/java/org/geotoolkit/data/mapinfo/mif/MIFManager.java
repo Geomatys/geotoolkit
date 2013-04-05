@@ -41,9 +41,9 @@ public class MIFManager {
     public static final Logger LOGGER = Logging.getLogger(MIFManager.class.getName());
 
     /**
-     * A pattern frequently used to find MIF categories
+     * A pattern frequently used to find MIF categories (for words without digit).
      */
-    public static final Pattern ALPHA_PATTERN = Pattern.compile("\\w+");
+    public static final Pattern ALPHA_PATTERN = Pattern.compile("[a-zA-Z_]+");
 
     /** To manage accesses to file. */
     private final ReadWriteLock RWLock = new ReentrantReadWriteLock();
