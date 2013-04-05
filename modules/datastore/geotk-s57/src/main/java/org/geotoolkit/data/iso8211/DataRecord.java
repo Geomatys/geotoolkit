@@ -38,8 +38,8 @@ public class DataRecord {
     private final DataRecord ddr;
     
     protected int recordLength;
-    protected byte interchangeLevel;
-    protected byte leaderidentifier;
+    protected InterchangeLevel interchangeLevel;
+    protected LeaderIdentifier leaderidentifier;
     protected byte extensionIndicator;
     protected byte version;
     protected byte applicationIndicator;
@@ -87,28 +87,28 @@ public class DataRecord {
     /**
      * @return the interchangeLevel
      */
-    public byte getInterchangeLevel() {
+    public InterchangeLevel getInterchangeLevel() {
         return interchangeLevel;
     }
 
     /**
      * @param interchangeLevel the interchangeLevel to set
      */
-    public void setInterchangeLevel(byte interchangeLevel) {
+    public void setInterchangeLevel(InterchangeLevel interchangeLevel) {
         this.interchangeLevel = interchangeLevel;
     }
 
     /**
      * @return the leaderidentifier
      */
-    public byte getLeaderidentifier() {
+    public LeaderIdentifier getLeaderidentifier() {
         return leaderidentifier;
     }
 
     /**
      * @param leaderidentifier the leaderidentifier to set
      */
-    public void setLeaderidentifier(byte leaderidentifier) {
+    public void setLeaderidentifier(LeaderIdentifier leaderidentifier) {
         this.leaderidentifier = leaderidentifier;
     }
 
@@ -387,8 +387,8 @@ public class DataRecord {
         
         //read header informations
         setRecordLength(Integer.parseInt(trimZeros(buffer, 0, 5)));
-        setInterchangeLevel(buffer[5]);
-        setLeaderidentifier(buffer[6]);
+        setInterchangeLevel(InterchangeLevel.fromCode(buffer[5]));
+        setLeaderidentifier(LeaderIdentifier.fromCode(buffer[6]));
         setExtensionIndicator(buffer[7]);
         setVersion(buffer[8]);
         setApplicationIndicator(buffer[9]);
@@ -449,7 +449,10 @@ public class DataRecord {
                 
             if("0000".equals(field.getTag())){
                 //first field, contains the tree structure
-                expect(ds,FEND);
+                //optional external field name
+                while(ds.readByte() != FEND){
+                    //we don't need to store this name, skip it
+                }
                 //calculate number of pairs we will have, rebuild tree structure
                 final int nbPair = (field.getLenght()-11)/ (getFieldSizeTag()*2) ;
                 byte[] buffer = new byte[getFieldSizeTag()];

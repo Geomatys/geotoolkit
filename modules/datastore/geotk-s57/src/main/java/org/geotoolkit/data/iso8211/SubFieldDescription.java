@@ -23,14 +23,13 @@ package org.geotoolkit.data.iso8211;
 public class SubFieldDescription {
     
     private String tag;
-    private FieldDataType type;
+    private FieldValueType type;
     private Integer length;
-    private boolean mandatory;
 
     public SubFieldDescription() {
     }
 
-    public SubFieldDescription(FieldDataType type, Integer length) {
+    public SubFieldDescription(FieldValueType type, Integer length) {
         this.type = type;
         this.length = length;
     }
@@ -52,14 +51,14 @@ public class SubFieldDescription {
     /**
      * @return the type
      */
-    public FieldDataType getType() {
+    public FieldValueType getType() {
         return type;
     }
 
     /**
      * @param type the type to set
      */
-    public void setType(FieldDataType type) {
+    public void setType(FieldValueType type) {
         this.type = type;
     }
 
@@ -77,20 +76,6 @@ public class SubFieldDescription {
         this.length = length;
     }
 
-    /**
-     * @return the mandatory
-     */
-    public boolean isMandatory() {
-        return mandatory;
-    }
-
-    /**
-     * @param mandatory the mandatory to set
-     */
-    public void setMandatory(boolean mandatory) {
-        this.mandatory = mandatory;
-    }
-
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder();
@@ -99,8 +84,6 @@ public class SubFieldDescription {
         if(length!=null){
             sb.append("(").append(length).append(")");
         }
-        
-        sb.append(" mandatory:").append(mandatory);
         sb.append("]");
         return sb.toString();
     }

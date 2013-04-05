@@ -19,25 +19,29 @@ package org.geotoolkit.data.iso8211;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import static org.geotoolkit.data.iso8211.ISO8211Constants.*;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
-public enum FieldDataType {
+public enum FieldValueType {
     TEXT("A"),
     INTEGER("I"),
     REAL_FIXED("R"),
     REAL_FLOAT("S"),
     LOGICAL("C"),
-    INTEGER_UNSIGNED("B1"),
-    INTEGER_SIGNED("B2"),
-    REAL("B4"),
-    BINARY("B");//placed at the end to est B1,B2,B4 before
+    LE_INTEGER_UNSIGNED("b1"),
+    LE_INTEGER_SIGNED("b2"),
+    LE_REAL("b4"),
+    BE_INTEGER_UNSIGNED("B1"),
+    BE_INTEGER_SIGNED("B2"),
+    BE_REAL("B4"),
+    BINARY("B");//placed at the end to test bx,Bx before
     
     private final String code;
     
-    private FieldDataType(String code) {
+    private FieldValueType(String code) {
         this.code = code;
     }
 
@@ -45,20 +49,25 @@ public enum FieldDataType {
         return code;
     }
     
+    private static String checkEncapsulation(String value) throws IOException{
+        if(value.charAt(0) != '(' || value.charAt(value.length()-1) != ')'){
+            throw new IOException("Type should be wrapped between () but was :"+value);
+        }
+        return value.substring(1, value.length()-1);
+    }
+        
     /**
-     * Read the field types and length.
+     * Read linear field types.
      * @param value
      * @return List<SubFieldDescription>
      * @throws IOException 
      */
-    public static List<SubFieldDescription> read(String value) throws IOException {
-        if(value.charAt(0) != '(' || value.charAt(value.length()-1) != ')'){
-            throw new IOException("Type should be wrapped between () but was :"+value);
-        }
+    public static List<SubFieldDescription> readTypes(String value) throws IOException {
+        checkEncapsulation(value);
         final List<SubFieldDescription> types = new ArrayList<SubFieldDescription>();
         
-        value = value.substring(1, value.length()-1);
-        final String[] parts = value.split(",");
+        value = checkEncapsulation(value);
+        final String[] parts = value.split(DELIMITER_TYPE);
         for(String p : parts){
             int repetition = 1;
             //check for a repetition
@@ -68,10 +77,9 @@ public enum FieldDataType {
                 repetition = Integer.valueOf(p.substring(0, lastDigit+1));
                 p = p.substring(lastDigit+1);
             }
-            p = p.toUpperCase();
             //search the type
-            FieldDataType type = null;
-            for(FieldDataType t : values()){
+            FieldValueType type = null;
+            for(FieldValueType t : values()){
                 if(p.startsWith(t.code)){
                     type = t;
                     p = p.substring(t.code.length());
@@ -102,6 +110,7 @@ public enum FieldDataType {
         return types;
     }
     
+    
     /**
      * Write the given list of field description.
      * 
@@ -114,7 +123,7 @@ public enum FieldDataType {
         int repetition = 0;
         for(int i=0,n=types.size();i<n;i++){
             final SubFieldDescription desc = types.get(i);
-            final FieldDataType type = desc.getType();
+            final FieldValueType type = desc.getType();
             final Integer length = desc.getLength();
             repetition++;
             //check for repetition
@@ -132,11 +141,11 @@ public enum FieldDataType {
             if(length!=null){
                 if(type==TEXT){
                     sb.append('(').append(length).append(')');
-                }else if(type==INTEGER_UNSIGNED){
+                }else if(type==LE_INTEGER_UNSIGNED){
                     sb.append(length);
-                }else if(type==INTEGER_SIGNED){
+                }else if(type==LE_INTEGER_SIGNED){
                     sb.append(length);
-                }else if(type==REAL){
+                }else if(type==LE_REAL){
                     sb.append(length);
                 }else if(type==BINARY){
                     sb.append('(').append(length).append(')');

@@ -18,15 +18,15 @@ package org.geotoolkit.data.iso8211;
 
 import java.io.DataOutput;
 import java.util.Arrays;
-import static org.geotoolkit.data.iso8211.FieldDataType.BINARY;
-import static org.geotoolkit.data.iso8211.FieldDataType.INTEGER;
-import static org.geotoolkit.data.iso8211.FieldDataType.INTEGER_SIGNED;
-import static org.geotoolkit.data.iso8211.FieldDataType.INTEGER_UNSIGNED;
-import static org.geotoolkit.data.iso8211.FieldDataType.LOGICAL;
-import static org.geotoolkit.data.iso8211.FieldDataType.REAL;
-import static org.geotoolkit.data.iso8211.FieldDataType.REAL_FIXED;
-import static org.geotoolkit.data.iso8211.FieldDataType.REAL_FLOAT;
-import static org.geotoolkit.data.iso8211.FieldDataType.TEXT;
+import static org.geotoolkit.data.iso8211.FieldValueType.BINARY;
+import static org.geotoolkit.data.iso8211.FieldValueType.INTEGER;
+import static org.geotoolkit.data.iso8211.FieldValueType.LE_INTEGER_SIGNED;
+import static org.geotoolkit.data.iso8211.FieldValueType.LE_INTEGER_UNSIGNED;
+import static org.geotoolkit.data.iso8211.FieldValueType.LOGICAL;
+import static org.geotoolkit.data.iso8211.FieldValueType.LE_REAL;
+import static org.geotoolkit.data.iso8211.FieldValueType.REAL_FIXED;
+import static org.geotoolkit.data.iso8211.FieldValueType.REAL_FLOAT;
+import static org.geotoolkit.data.iso8211.FieldValueType.TEXT;
 
 /**
  *
@@ -49,6 +49,10 @@ public class SubField {
         this.value = value;
     }
 
+    /** only the value to string */
+    public String toStringPlain() {
+        return String.valueOf(value);
+    }
     
     @Override
     public String toString() {
@@ -56,6 +60,7 @@ public class SubField {
         sb.append(type.getTag()).append(" : ").append(value);
         return sb.toString();
     }
+    
     
     ////////////////////////////////////////////////////////////////////////////
     // IO operations ///////////////////////////////////////////////////////////
@@ -101,18 +106,18 @@ public class SubField {
             case LOGICAL:
                 value = (buffer[offset]!=0);
                 return 1;
-            case INTEGER_UNSIGNED:
+            case LE_INTEGER_UNSIGNED:
                 value = ISO8211Utilities.readUnsignedInteger(buffer, offset, length);
                 return length;
-            case INTEGER_SIGNED:
+            case LE_INTEGER_SIGNED:
                 value = ISO8211Utilities.readSignedInteger(buffer, offset, length);
                 return length;
-            case REAL:
+            case LE_REAL:
                 value = ISO8211Utilities.readReal(buffer, offset,length);
                 return length;
             case BINARY:
-                value = Arrays.copyOfRange(buffer, offset, offset+length);
-                return length;
+                value = Arrays.copyOfRange(buffer, offset, offset+(length/8)); //length is in bits
+                return length/8; //length is in bits
         }
         return 0;
     }

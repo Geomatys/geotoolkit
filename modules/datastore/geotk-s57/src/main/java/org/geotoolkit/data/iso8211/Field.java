@@ -17,9 +17,14 @@
 package org.geotoolkit.data.iso8211;
 
 import java.io.DataOutput;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
+import org.apache.sis.io.TableAppender;
 import org.geotoolkit.gui.swing.tree.Trees;
+import org.geotoolkit.data.iso8211.ISO8211Constants.*;
 
 /**
  *
@@ -30,7 +35,6 @@ public class Field {
     private final FieldDescription type;    
     private final List<Field> fields = new ArrayList<Field>();
     private final List<SubField> subfields = new ArrayList<SubField>();
-    private Object value;
 
     public Field(FieldDescription type) {
         this.type = type;
@@ -41,14 +45,6 @@ public class Field {
      */
     public FieldDescription getType() {
         return type;
-    }
-
-    public Object getValue() {
-        return value;
-    }
-
-    public void setValue(Object value) {
-        this.value = value;
     }
 
     public List<Field> getFields() {
@@ -63,12 +59,68 @@ public class Field {
     public String toString() {
         final StringBuilder sb = new StringBuilder();
         sb.append(getType().getTag());
-        if(value != null){
-            sb.append(" : ").append(value);
-        }
-        if(!fields.isEmpty() || !subfields.isEmpty()){
-            final List lst = new  ArrayList();
+        final FieldDataStructure structure = getType().getStructure();
+        
+        final List lst = new  ArrayList();
+        if(structure == FieldDataStructure.ELEMENTARY){
+            sb.append(" : ").append(getSubFields().get(0).getValue());
+        }else if(structure == FieldDataStructure.LINEAR){
             lst.addAll(subfields);
+        }else if(structure == FieldDataStructure.CARTESIAN){
+            final List<String[]> names = getType().getSubfieldNames();
+            final Iterator<SubField> sfite = subfields.iterator();
+            if(names.size()==2){
+                //we can make a nice table for display
+                final TableAppender tw = new TableAppender();
+                tw.writeHorizontalSeparator();
+                if(names.get(0).length != 0){
+                    //fixed named NxM size
+                    //header
+                    tw.append("");
+                    for(String colname : names.get(1)){
+                        tw.append('\t').append(colname);
+                    }
+                    tw.writeHorizontalSeparator();
+                    
+                    final Iterator<String> rownames = Arrays.asList(names.get(0)).iterator();
+                    for(String rowname : names.get(0)){
+                        tw.append(rowname);
+                        for(String colname : names.get(1)){
+                            tw.append('\t').append(String.valueOf(sfite.next().getValue()));
+                        }
+                        tw.writeHorizontalSeparator();
+                    }
+                    
+                }else{
+                    //infinite XxM unnamed size
+                    for(int c=0;c<names.get(1).length;c++){
+                        if(c!=0) tw.append('\t');
+                        tw.append(names.get(1)[c]);
+                    }
+                    tw.writeHorizontalSeparator();
+                    
+                    while(sfite.hasNext()){
+                        for(int c=0;c<names.get(1).length;c++){
+                            if(c!=0) tw.append('\t');
+                            tw.append(String.valueOf(sfite.next().getValue()));
+                        }
+                        tw.append('\n');
+                    }
+                    
+                }
+                tw.writeHorizontalSeparator();
+                lst.add(tw.toString());
+            }else{
+                lst.addAll(subfields);
+            }
+            
+            
+        }else{
+            //concatenated, how to display this correctly ?
+            lst.addAll(subfields);
+        }
+        
+        if(!fields.isEmpty() || subfields.size()>1){
             lst.addAll(fields);
             sb.append(Trees.toString("", lst));
         }
@@ -83,24 +135,46 @@ public class Field {
      * Parse the given bytearray and rebuild subfields.
      * @param byteValues 
      */
-    public void readValues(final byte[] byteValues){
+    public void readValues(final byte[] byteValues) throws IOException{
         subfields.clear();
-        if(type.getElementaryType() != null){
-            //parse a single value
-            final SubFieldDescription desc = type.getElementaryType();
+        
+        final FieldDataStructure structure = type.getStructure();
+        final List<SubFieldDescription> subdescs = type.getSubFieldTypes();
+        
+        if(structure == FieldDataStructure.ELEMENTARY){
+            //parse a single field
+            final SubFieldDescription desc = type.getSubFieldTypes().get(0);
             final SubField sf = new SubField(desc);
             sf.readValue(byteValues, 0);
-            this.value = sf.getValue();
-        }else{
+            subfields.add(sf);
+            
+        }else if(structure == FieldDataStructure.LINEAR){
             //parse subfields
             int offset = 0;
-            for(SubFieldDescription desc : type.getSubFields()){
+            for(SubFieldDescription desc : subdescs){
                 final SubField sf = new SubField(desc);
                 int length = sf.readValue(byteValues, offset);
                 offset += length;
                 subfields.add(sf);
             }
+        }else if(structure == FieldDataStructure.CARTESIAN){
+            final List<String[]> names = getType().getSubfieldNames();
+            if(names.size()>2){
+                throw new IOException("Only 2D cartesian array fields supported");
+            }
+            int offset = 0;
+            while(offset<(byteValues.length-1)){
+                for(SubFieldDescription desc : subdescs){
+                    final SubField sf = new SubField(desc);
+                    int length = sf.readValue(byteValues, offset);
+                    offset += length;
+                    subfields.add(sf);
+                }
+            }
+        }else if(structure == FieldDataStructure.CONCATENATED){
+            throw new IOException("Concatenate field value reading not supported ");
         }
+        
     }
     
     /**

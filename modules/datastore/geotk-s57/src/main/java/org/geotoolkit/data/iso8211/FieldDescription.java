@@ -44,12 +44,14 @@ public class FieldDescription {
     
     //field control
     private FieldDataStructure structure;
-    private int type;
-    private SubFieldDescription elementaryType; //we reuse the structure, it's not really a subfield
+    private FieldDataType type;
     private byte[] lexicalLevel;
     //property details
     private String description;
-    private final List<SubFieldDescription> subfields = new ArrayList<SubFieldDescription>();
+    
+    //value types, can only be one of those
+    private final List<SubFieldDescription> subfieldTypes = new ArrayList<SubFieldDescription>();
+    private final List<String[]> subfieldNames = new ArrayList<String[]>();
     
     public FieldDescription() {
     }
@@ -110,16 +112,16 @@ public class FieldDescription {
         this.position = position;
     }
 
-    public SubFieldDescription getElementaryType() {
-        return elementaryType;
-    }
-
     public List<FieldDescription> getFields() {
         return fields;
     }
+    
+    public List<SubFieldDescription> getSubFieldTypes() {
+        return subfieldTypes;
+    }
 
-    public List<SubFieldDescription> getSubFields() {
-        return subfields;
+    public List<String[]> getSubfieldNames() {
+        return subfieldNames;
     }
     
     /**
@@ -139,14 +141,14 @@ public class FieldDescription {
     /**
      * @return the type
      */
-    public int getType() {
+    public FieldDataType getType() {
         return type;
     }
 
     /**
      * @param type the type to set
      */
-    public void setType(int type) {
+    public void setType(FieldDataType type) {
         this.type = type;
     }
 
@@ -168,16 +170,12 @@ public class FieldDescription {
     public String toString() {
         final StringBuilder sb = new StringBuilder(tag);
         sb.append(" (").append(description).append(") [");
-        sb.append("type:").append(type);
-        if(elementaryType!=null){
-            sb.append(",datatype:").append(elementaryType.getType()).append("(").append(elementaryType.getLength()).append(")");
-        }
-        //sb.append(",length:").append(length);
-        //sb.append(",position:").append(position);
+        sb.append(",").append(structure);
+        sb.append(",").append(type);
         sb.append("]");
-        if(!subfields.isEmpty() || !fields.isEmpty()){
+        if(!subfieldTypes.isEmpty() || !fields.isEmpty()){
             final List lst = new ArrayList();
-            lst.addAll(subfields);
+            lst.addAll(subfieldTypes);
             lst.addAll(fields);
             sb.append(Trees.toString("", lst));
         }
@@ -207,22 +205,17 @@ public class FieldDescription {
         length += 1;
         
         //add subfields names + delimiter
-        if(structure != FieldDataStructure.ELEMENTARY && !getSubFields().isEmpty()){
-            for(SubFieldDescription sfd : getSubFields()){
+        if(structure != FieldDataStructure.ELEMENTARY && !getSubFieldTypes().isEmpty()){
+            for(SubFieldDescription sfd : getSubFieldTypes()){
                 length += sfd.getTag().getBytes(US_ASCII).length;
             }
-            length += getSubFields().size()-1; //field name separators
+            length += getSubFieldTypes().size()-1; //field name separators
         }
         length += 1;
         
         //add elementary or subfields types + delimiter
-        if(structure == FieldDataStructure.ELEMENTARY){
-            final String types = FieldDataType.write(Collections.singletonList(elementaryType));
-            length += types.getBytes(US_ASCII).length;
-        }else{
-            final String types = FieldDataType.write(getSubFields());
-            length += types.getBytes(US_ASCII).length;
-        }
+        final String types = FieldValueType.write(getSubFieldTypes());
+        length += types.getBytes(US_ASCII).length;
         length += 1;
         
         this.length = length;
@@ -230,8 +223,8 @@ public class FieldDescription {
     
     
     public void readDescription(final DataInput ds) throws IOException{
-        structure = FieldDataStructure.get(Integer.parseInt(new String(new byte[]{ds.readByte()})));
-        type = Integer.parseInt(new String(new byte[]{ds.readByte()}));
+        structure = FieldDataStructure.fromCode(ds.readByte());
+        type = FieldDataType.fromCode(ds.readByte());
         expect(ds, FC_CONTROL);
         lexicalLevel = new byte[3];
         ds.readFully(lexicalLevel);
@@ -245,35 +238,46 @@ public class FieldDescription {
         final String[] parts = str.split(ISO8211Constants.FEND+"");
         description = parts[0];
         
+        if("0000".equals(getTag())){
+            //no proper type on this field
+            return;
+        }
+        
+        subfieldTypes.addAll(FieldValueType.readTypes(parts[2]));
+        
         if(structure == FieldDataStructure.ELEMENTARY){
-            elementaryType = FieldDataType.read(parts[2]).get(0);
-        }else{
-            //read subfields definitions
-            if(!parts[1].isEmpty()){
-                final String[] subfieldnames = parts[1].split("!");
-                //parse types
-                final List<SubFieldDescription> types = FieldDataType.read(parts[2]);
-                if(subfieldnames.length != types.size()){
-                    throw new IOException("number of field do not match number of given types : "+parts[1]+" "+parts[2]);
-                }
-
-                //rebuild complete types
-                for(int i=0;i<subfieldnames.length;i++){
-                    String subFieldName = subfieldnames[i];
-                    final SubFieldDescription sft = types.get(i);
-                    if(subFieldName.charAt(0) == '*'){
-                        //mandatory
-                        subFieldName = subFieldName.substring(1);
-                        sft.setMandatory(true);
-                    }else{
-                        sft.setMandatory(false);
-                    }
-                    sft.setTag(subFieldName);
-                }
-                subfields.addAll(types);
+            //unnamed
+            subfieldNames.add(new String[]{""}); 
+        }else if(structure == FieldDataStructure.LINEAR){            
+            //rebuild complete types            
+            final String[] subfieldnames = parts[1].split(DELIMITER_SUBFIELD);
+            for(int i=0;i<subfieldnames.length;i++){
+                final SubFieldDescription sft = subfieldTypes.get(i);
+                sft.setTag(subfieldnames[i]);
             }
+            subfieldNames.add(subfieldnames);
+            
+        }else if(structure == FieldDataStructure.CARTESIAN){
+            final String[] dimensions = parts[1].split("\\"+DELIMITER_VECTOR);
+            String[] subfieldnames = null;
+            for(String dim : dimensions){
+                subfieldnames = dim.split(DELIMITER_SUBFIELD);
+                if(subfieldnames.length == 1 && subfieldnames[0].isEmpty()){
+                    subfieldNames.add(new String[0]);
+                }else{
+                    subfieldNames.add(subfieldnames);
+                }
+            }
+            
+            //last subfield names are the actual encoded field values.
+            for(int i=0;i<subfieldnames.length;i++){
+                final SubFieldDescription sft = subfieldTypes.get(i);
+                sft.setTag(subfieldnames[i]);
+            }
+            
+        }else if(structure == FieldDataStructure.CONCATENATED){
+            throw new IOException("Concatenate field type not supported : "+parts[1]+" "+parts[2]);
         }
     }
 
-    
 }

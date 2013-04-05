@@ -108,30 +108,30 @@ public class ISO8211Test {
     @Test
     public void readDataTypeTest() throws IOException{
         final String str = "(b11,2C,b24,3A(8))";
-        final List<SubFieldDescription> subfields = FieldDataType.read(str);
+        final List<SubFieldDescription> subfields = FieldValueType.readTypes(str);
         assertNotNull(subfields);
         assertEquals(7, subfields.size());
         
         int index = 0;
-        assertEquals(FieldDataType.INTEGER_UNSIGNED, subfields.get(index).getType());
+        assertEquals(FieldValueType.LE_INTEGER_UNSIGNED, subfields.get(index).getType());
         assertEquals(Integer.valueOf(1), subfields.get(index).getLength());
         index++;
-        assertEquals(FieldDataType.LOGICAL, subfields.get(index).getType());
+        assertEquals(FieldValueType.LOGICAL, subfields.get(index).getType());
         assertEquals(null, subfields.get(index).getLength());
         index++;
-        assertEquals(FieldDataType.LOGICAL, subfields.get(index).getType());
+        assertEquals(FieldValueType.LOGICAL, subfields.get(index).getType());
         assertEquals(null, subfields.get(index).getLength());
         index++;
-        assertEquals(FieldDataType.INTEGER_SIGNED, subfields.get(index).getType());
+        assertEquals(FieldValueType.LE_INTEGER_SIGNED, subfields.get(index).getType());
         assertEquals(Integer.valueOf(4), subfields.get(index).getLength());
         index++;
-        assertEquals(FieldDataType.TEXT, subfields.get(index).getType());
+        assertEquals(FieldValueType.TEXT, subfields.get(index).getType());
         assertEquals(Integer.valueOf(8), subfields.get(index).getLength());
         index++;
-        assertEquals(FieldDataType.TEXT, subfields.get(index).getType());
+        assertEquals(FieldValueType.TEXT, subfields.get(index).getType());
         assertEquals(Integer.valueOf(8), subfields.get(index).getLength());
         index++;
-        assertEquals(FieldDataType.TEXT, subfields.get(index).getType());
+        assertEquals(FieldValueType.TEXT, subfields.get(index).getType());
         assertEquals(Integer.valueOf(8), subfields.get(index).getLength());
         
     }
@@ -139,15 +139,15 @@ public class ISO8211Test {
     @Test
     public void writeDataTypeTest() throws IOException{
         final List<SubFieldDescription> subfields = new ArrayList<SubFieldDescription>();
-        subfields.add(new SubFieldDescription(FieldDataType.INTEGER_UNSIGNED, 1));
-        subfields.add(new SubFieldDescription(FieldDataType.LOGICAL, null));
-        subfields.add(new SubFieldDescription(FieldDataType.LOGICAL, null));
-        subfields.add(new SubFieldDescription(FieldDataType.INTEGER_SIGNED, 4));
-        subfields.add(new SubFieldDescription(FieldDataType.TEXT, 8));
-        subfields.add(new SubFieldDescription(FieldDataType.TEXT, 8));
-        subfields.add(new SubFieldDescription(FieldDataType.TEXT, 8));
+        subfields.add(new SubFieldDescription(FieldValueType.LE_INTEGER_UNSIGNED, 1));
+        subfields.add(new SubFieldDescription(FieldValueType.LOGICAL, null));
+        subfields.add(new SubFieldDescription(FieldValueType.LOGICAL, null));
+        subfields.add(new SubFieldDescription(FieldValueType.LE_INTEGER_SIGNED, 4));
+        subfields.add(new SubFieldDescription(FieldValueType.TEXT, 8));
+        subfields.add(new SubFieldDescription(FieldValueType.TEXT, 8));
+        subfields.add(new SubFieldDescription(FieldValueType.TEXT, 8));
         
-        final String result = FieldDataType.write(subfields);
+        final String result = FieldValueType.write(subfields);
         assertEquals("(B11,2C,B24,3A(8))", result);
         
     }
