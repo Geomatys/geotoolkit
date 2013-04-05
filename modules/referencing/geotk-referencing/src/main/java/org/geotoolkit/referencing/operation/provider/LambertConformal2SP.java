@@ -394,6 +394,7 @@ public class LambertConformal2SP extends MapProjection {
             new NamedIdentifier(Citations.NETCDF,  "LambertConformal"),
             new NamedIdentifier(Citations.GEOTIFF, "CT_LambertConfConic_2SP"),
             new NamedIdentifier(Citations.GEOTIFF, "CT_LambertConfConic"),
+            new IdentifierCode (Citations.MAP_INFO, 3),
             new IdentifierCode (Citations.GEOTIFF,  9), // The same code is used for 1SP.
                      sameNameAs(Citations.PROJ4,    LambertConformal1SP.PARAMETERS),
             new NamedIdentifier(Citations.S57,     "Lambert conformal conic"),
