@@ -1334,6 +1334,10 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      * the {@linkplain #crs}, {@linkplain #envelope}, {@linkplain #extent}, {@linkplain #gridToCRS
      * grid to CRS} and {@linkplain #pixelAnchor pixel anchor} attributes.
      *
+     * {@note If this property is set to <code>null</code> in the intend to force computation of
+     *        a new grid geometry from the <code>envelope</code> value, then the caller will also
+     *        needs to ensure that the <code>gridToCRS</code> property is <code>null</code>.}
+     *
      * @param geom The new grid geometry, or {@code null}.
      *
      * @since 3.20

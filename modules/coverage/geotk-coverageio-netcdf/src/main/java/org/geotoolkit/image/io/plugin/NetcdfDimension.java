@@ -22,6 +22,7 @@ import java.util.Locale;
 import java.util.Collections;
 import java.io.IOException;
 import javax.imageio.IIOException;
+import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 import javax.measure.unit.NonSI;
 
@@ -146,6 +147,8 @@ final class NetcdfDimension {
     {
         final CoordinateSystem cs = image.getCoordinateSystem();
         axis = (cs.getDimension() > dimension) ? cs.getAxis(dimension) : null;
+        final boolean canUseDiscreteAxis = image.isDefaultParameters
+                && (axis instanceof DiscreteCoordinateSystemAxis<?>);
         /*
          * TODO: We use DimensionSlice.API as a matter of principle (for keeping room for future
          * improvement), but the mapping is hard-coded for now. Futures versions may use some of
@@ -181,8 +184,7 @@ final class NetcdfDimension {
                     index  = domain.getLow (dimension);
                     length = domain.getSpan(dimension);
                 } else {
-                    length = (axis instanceof DiscreteCoordinateSystemAxis<?>) ?
-                             ((DiscreteCoordinateSystemAxis<?>) axis).length() : 1;
+                    length = canUseDiscreteAxis ? ((DiscreteCoordinateSystemAxis<?>) axis).length() : 1;
                 }
                 break;
             }
@@ -191,7 +193,7 @@ final class NetcdfDimension {
          * If the axis declares directly its set of valid ordinate values, use those values.
          * This is the case if the coordinate system has been created by NetcdfImageReader.
          */
-        if (axis instanceof DiscreteCoordinateSystemAxis<?>) {
+        if (canUseDiscreteAxis) {
             final DiscreteCoordinateSystemAxis<?> ds = (DiscreteCoordinateSystemAxis<?>) axis;
             final Class<?> type = ds.getElementType();
             final boolean isNumeric = Number.class.isAssignableFrom(type);
@@ -344,7 +346,7 @@ final class NetcdfDimension {
             addAttribute(CDM.LONG_NAME, longName);
         }
         if (unit != null && !unit.equals(Unit.ONE)) {
-            addAttribute(CDM.UNITS, NonSI.DEGREE_ANGLE.equals(unit) ? getAngularUnit(direction) : String.valueOf(unit));
+            addAttribute(CDM.UNITS, getUnitSymbol(unit, direction));
         }
         addAttribute(CF.POSITIVE, positive);
         if (type != null) {
@@ -388,14 +390,33 @@ final class NetcdfDimension {
     }
 
     /**
-     * Returns the angular units for the given axis direction.
+     * Returns the symbol for the given units for the axis direction.
      */
-    private static String getAngularUnit(final AxisDirection direction) {
-        if (AxisDirection.EAST .equals(direction)) return "degrees_east";
-        if (AxisDirection.NORTH.equals(direction)) return "degrees_north";
-        if (AxisDirection.WEST .equals(direction)) return "degrees_west";
-        if (AxisDirection.SOUTH.equals(direction)) return "degrees_south";
-        return "degrees";
+    private String getUnitSymbol(final Unit<?> unit, final AxisDirection direction) {
+        if (NonSI.DEGREE_ANGLE.equals(unit)) {
+            if (AxisDirection.EAST .equals(direction)) return "degrees_east";
+            if (AxisDirection.NORTH.equals(direction)) return "degrees_north";
+            if (AxisDirection.WEST .equals(direction)) return "degrees_west";
+            if (AxisDirection.SOUTH.equals(direction)) return "degrees_south";
+            return "degrees";
+        }
+        if (Units.isTemporal(unit)) {
+            final StringBuilder buffer = new StringBuilder();
+            if (SI.SECOND.equals(unit)) {
+                buffer.append("seconds");
+            } else if (NonSI.MINUTE.equals(unit)) {
+                buffer.append("minutes");
+            } else if (NonSI.HOUR.equals(unit)) {
+                buffer.append("hours");
+            } else if (NonSI.DAY.equals(unit)) {
+                buffer.append("days");
+            } else {
+                buffer.append(unit);
+            }
+            // TODO: needs to append " since ", then the epoch.
+            return buffer.toString();
+        }
+        return String.valueOf(unit);
     }
 
     /**
