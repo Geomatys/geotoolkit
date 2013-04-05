@@ -48,7 +48,8 @@ public class LargeCache implements TileCache {
     /**<p>Construct tile cache mechanic.<br/>
      * Stock Raster while memory capacity does not exceed else write in temporary file.</p>
      *
-     * @param memoryCapacity memory allocation authorized for all stocked image.
+     * @param memoryCapacity memory allocation authorized for all stored image.
+     *                       Size in byte unit.
      * @return TileCache
      */
     public static LargeCache getInstance(long memoryCapacity) {
