@@ -33,22 +33,74 @@ import org.geotoolkit.image.iterator.PixelIterator;
 import org.geotoolkit.image.iterator.PixelIteratorFactory;
 
 /**
- *
- *
+ * <p>
+ * Define "Large" {@link RenderedImage} which is an image with a large size.<br/>
+ * It can contain more data than computer ram memory capacity, in cause of {@link TileCache} 
+ * mechanic which store some image tiles on hard drive.
+ * </p>
+ * 
  * @author Remi Marechal (Geomatys).
  */
 public class LargeRenderedImage implements RenderedImage {
 
+    /**
+     * Mechanic to store tile on hard drive.
+     */
     private final TileCache tilecache;
 
+    /**
+     * Default tile size.
+     */
     private static final int DEFAULT_TILE_SIZE = 256;
+    
+    /**
+     * Minimum required tile size.
+     */
     private static final int MIN_TILE_SIZE = 64;
+    
+    /**
+     * Upper left corner of currently stored {@link Raster}. 
+     */
     private static final Point ptOffset = new Point();
+    
+    /**
+     * Default store memory capacity.
+     */
     private static final long DEFAULT_MEMORY_CAPACITY = 64000000;
 
-    private final int minIndex;
-//    private final int numImages;
+    /**
+     * {@link ImageReader} where is read each image tile.
+     */
     private final ImageReader imageReader;
+    
+    /**
+     * To read some area (Tile) from {@link #imageReader}.
+     */
+    private final ImageReadParam imgParam;
+    
+    /**
+     * Tile number in X direction.
+     */
+    private final int nbrTileX;
+    
+    /**
+     * Tile number in Y direction.
+     */
+    private final int nbrTileY;
+
+    /**
+     * Define if tile will read from {@link #imageReader} or call from {@link #tilecache}. 
+     */
+    private final boolean[][] isRead;
+    
+    /**
+     * Use to read a define area in {@link #imageReader}.
+     */
+    private final Rectangle srcRegion = new Rectangle();
+
+    /**
+     * Image attributs.
+     */
     private final int imageIndex;
     private final int width;
     private final int height;
@@ -56,32 +108,24 @@ public class LargeRenderedImage implements RenderedImage {
     private final int tileHeight;
     private final int tileGridXOffset;
     private final int tileGridYOffset;
-    private Vector<RenderedImage> vector = null;
-    private final ImageReadParam imgParam;
-
-    private final int nbrTileX;
-    private final int nbrTileY;
-
-    private final boolean[][] isRead;
-    private final Rectangle srcRegion = new Rectangle();
-
-    private ColorModel cm = null;
+    private ColorModel cm  = null;
     private SampleModel sm = null;
 
     /**
-     *
+     * Create {@link LargeRenderedImage} object.
+     * 
      * @param imageReader reader which target at image stored on disk.
      * @param imageIndex the index of the image to be retrieved.
-     * @param tilecache cache mechanic class.
-     * @param tileSize internal {@link Raster} (tile) dimension.
+     * @param tilecache cache mechanic class. if {@code null} a default {@link TileCache} 
+     *                  is define with a default memory capacity of 64 Mo.
+     * @param tileSize internal {@link Raster} (tile) dimension. if {@code null} 
+     *                 a default tile size is choosen of 256x256 pixels.
      * @throws IOException if an error occurs during reading.
      */
     public LargeRenderedImage(ImageReader imageReader, int imageIndex, TileCache tilecache, Dimension tileSize) throws IOException {
         this.imageReader = imageReader;
         this.imageIndex  = imageIndex;
-        this.minIndex    = imageReader.getMinIndex();
         this.imgParam    = new ImageReadParam();
-//        this.numImages   = imageReader.getNumImages(true);
         this.width       = imageReader.getWidth(imageIndex);
         this.height      = imageReader.getHeight(imageIndex);
         this.tilecache = (tilecache != null) ? tilecache : LargeCache.getInstance(DEFAULT_MEMORY_CAPACITY);
