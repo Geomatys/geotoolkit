@@ -144,11 +144,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link GetResultType.TemporalFilter }
+     * Create an instance of {@link TemporalFilter }
      * 
      */
-    public GetResultType.TemporalFilter createGetResultTypeTemporalFilter() {
-        return new GetResultType.TemporalFilter();
+    public TemporalFilterType createTemporalFilterType() {
+        return new TemporalFilterType();
     }
 
     /**
@@ -248,11 +248,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link GetFeatureOfInterestType.SpatialFilter }
+     * Create an instance of {@link SpatialFilter }
      * 
      */
-    public GetFeatureOfInterestType.SpatialFilter createGetFeatureOfInterestTypeSpatialFilter() {
-        return new GetFeatureOfInterestType.SpatialFilter();
+    public SpatialFilterType createSpatialFilterType() {
+        return new SpatialFilterType();
     }
 
     /**
@@ -376,14 +376,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link GetObservationType.SpatialFilter }
-     * 
-     */
-    public GetObservationType.SpatialFilter createGetObservationTypeSpatialFilter() {
-        return new GetObservationType.SpatialFilter();
-    }
-
-    /**
      * Create an instance of {@link ResultTemplatePropertyType }
      * 
      */
@@ -485,22 +477,6 @@ public class ObjectFactory {
      */
     public ObservationOfferingType createObservationOfferingType() {
         return new ObservationOfferingType();
-    }
-
-    /**
-     * Create an instance of {@link GetObservationType.TemporalFilter }
-     * 
-     */
-    public GetObservationType.TemporalFilter createGetObservationTypeTemporalFilter() {
-        return new GetObservationType.TemporalFilter();
-    }
-
-    /**
-     * Create an instance of {@link GetResultType.SpatialFilter }
-     * 
-     */
-    public GetResultType.SpatialFilter createGetResultTypeSpatialFilter() {
-        return new GetResultType.SpatialFilter();
     }
 
     /**
