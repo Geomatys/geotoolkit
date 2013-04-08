@@ -285,8 +285,11 @@ public class HotineObliqueMercator extends ObliqueMercator {
             new NamedIdentifier(Citations.ESRI,    "Rectified_Skew_Orthomorphic_Natural_Origin"),
             new NamedIdentifier(Citations.GEOTIFF, "CT_ObliqueMercator_Hotine"),
             // Note: The GeoTIFF numerical code (3) is already used by CT_ObliqueMercator.
-                     sameNameAs(Citations.PROJ4, ObliqueMercator.PARAMETERS),
-            new NamedIdentifier(Citations.GEOTOOLKIT, "Rectified Skew Orthomorphic (RSO)"), // Legacy EPSG
+                     sameNameAs(Citations.PROJ4,    ObliqueMercator.PARAMETERS),
+            new NamedIdentifier(Citations.S57,     "Hotine Oblique Mercator"),
+            new NamedIdentifier(Citations.S57,     "HOM"),
+            new IdentifierCode (Citations.S57,      5),
+            new NamedIdentifier(Citations.GEOTOOLKIT, "Rectified Skew Orthomorphic (RSO)"), // Legacy EPSG (TODO: use versions instead)
                      sameNameAs(Citations.GEOTOOLKIT, ObliqueMercator.PARAMETERS)
         }, null, new ParameterDescriptor<?>[] {
             sameParameterAs(EquidistantCylindrical.PARAMETERS, "semi_major"),

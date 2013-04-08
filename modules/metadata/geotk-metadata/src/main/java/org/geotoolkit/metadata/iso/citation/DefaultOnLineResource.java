@@ -101,6 +101,16 @@ public class DefaultOnlineResource extends MetadataEntity implements OnlineResou
     }
 
     /**
+     * The online resources for the <A HREF="http://www.iho.int">International hydrographic organization</A>.
+     */
+    static final OnlineResource IHO;
+    static {
+        final DefaultOnlineResource r;
+        IHO = r = new DefaultOnlineResource("http://www.iho.int");
+        r.freeze();
+    }
+
+    /**
      * The online resources for the
      * <A HREF="http://www.epsg.org">European Petroleum Survey Group</A>.
      */

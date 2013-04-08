@@ -325,14 +325,17 @@ public class Mercator2SP extends MapProjection {
      */
     public static final ParameterDescriptorGroup PARAMETERS = UniversalParameters.createDescriptorGroup(
         new ReferenceIdentifier[] {
-            new NamedIdentifier(Citations.OGC,    "Mercator_2SP"),
-            new NamedIdentifier(Citations.EPSG,   "Mercator (variant B)"), // Starting from 7.6
-            new DeprecatedName (Citations.EPSG,   "Mercator (2SP)"), // Prior to EPSG version 7.6
-            new IdentifierCode (Citations.EPSG,    9805),
-            new NamedIdentifier(Citations.ESRI,   "Mercator"),
-            new NamedIdentifier(Citations.NETCDF, "Mercator"),
-                     sameNameAs(Citations.GEOTIFF,    Mercator1SP.PARAMETERS),
-                     sameNameAs(Citations.PROJ4,      Mercator1SP.PARAMETERS),
+            new NamedIdentifier(Citations.OGC,     "Mercator_2SP"),
+            new NamedIdentifier(Citations.EPSG,    "Mercator (variant B)"), // Starting from 7.6
+            new DeprecatedName (Citations.EPSG,    "Mercator (2SP)"), // Prior to EPSG version 7.6
+            new IdentifierCode (Citations.EPSG,     9805),
+            new NamedIdentifier(Citations.ESRI,    "Mercator"),
+            new NamedIdentifier(Citations.NETCDF,  "Mercator"),
+                     sameNameAs(Citations.GEOTIFF,  Mercator1SP.PARAMETERS),
+                     sameNameAs(Citations.PROJ4,    Mercator1SP.PARAMETERS),
+            new NamedIdentifier(Citations.S57,     "Mercator"),
+            new NamedIdentifier(Citations.S57,     "MER"),
+            new IdentifierCode (Citations.S57,      8),
                      sameNameAs(Citations.GEOTOOLKIT, Mercator1SP.PARAMETERS)
         }, null, new ParameterDescriptor<?>[] {
             SEMI_MAJOR, SEMI_MINOR, ROLL_LONGITUDE,
