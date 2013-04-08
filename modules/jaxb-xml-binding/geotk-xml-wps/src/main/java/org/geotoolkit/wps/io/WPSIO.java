@@ -153,14 +153,14 @@ public final class WPSIO {
             }
         }
         FORMATSUPPORTS.add(new FormatSupport(Coverage.class, IOType.OUTPUT, WPSMimeType.OGC_WMS.val(), WPSEncoding.UTF8.getValue(), null, false));
-  
+
         //TODO test NetCDF & GRIB in base64
         //FORMATSUPPORTS.add(new FormatSupport(GridCoverage2D.class, IOType.INPUT, WPSMimeType.APP_NETCDF.val(), null, null, false));
         //FORMATSUPPORTS.add(new FormatSupport(GridCoverage2D.class, IOType.INPUT, WPSMimeType.APP_NETCDF.val(), WPSEncoding.BASE64.getValue(), null, false));
         //FORMATSUPPORTS.add(new FormatSupport(GridCoverage2D.class, IOType.INPUT, WPSMimeType.APP_GRIB.val(), null, null, false));
         //FORMATSUPPORTS.add(new FormatSupport(GridCoverage2D.class, IOType.INPUT, WPSMimeType.APP_GRIB.val(), WPSEncoding.BASE64.getValue(), null, false));
-        
-        
+
+
         FORMATSUPPORTS.add(new FormatSupport(AffineTransform.class, IOType.INPUT, WPSMimeType.TEXT_XML.val(), WPSEncoding.UTF8.getValue(), WPSSchema.MATHML_3.getValue(), true));
 
         FORMATSUPPORTS.add(new FormatSupport(Number.class, IOType.BOTH, null, WPSEncoding.UTF8.getValue(), null, true));
@@ -176,11 +176,16 @@ public final class WPSIO {
         FORMATSUPPORTS.add(new FormatSupport(NumberRange[].class, IOType.INPUT, null, WPSEncoding.UTF8.getValue(), null, true));
         FORMATSUPPORTS.add(new FormatSupport(Filter.class, IOType.INPUT, null, WPSEncoding.UTF8.getValue(), null, true));
         FORMATSUPPORTS.add(new FormatSupport(Date.class, IOType.INPUT, null, WPSEncoding.UTF8.getValue(), null, true));
-        
+
         //primitive arrays
         FORMATSUPPORTS.add(new FormatSupport(double[].class, IOType.BOTH, null, WPSEncoding.UTF8.getValue(), null, true));
         FORMATSUPPORTS.add(new FormatSupport(int[].class, IOType.BOTH, null, WPSEncoding.UTF8.getValue(), null, true));
         FORMATSUPPORTS.add(new FormatSupport(float[].class, IOType.BOTH, null, WPSEncoding.UTF8.getValue(), null, true));
+    }
+
+    public static void addFormatSupport(FormatSupport newSupport) {
+           ArgumentChecks.ensureNonNull("Support format to add", newSupport);
+        FORMATSUPPORTS.add(newSupport);
     }
 
     /**

@@ -18,48 +18,37 @@ package org.geotoolkit.wps.converters;
 
 import com.vividsolutions.jts.geom.Geometry;
 import java.awt.image.RenderedImage;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URL;
 import java.util.List;
 import java.util.*;
 import java.util.Set;
-import javax.imageio.ImageIO;
-import javax.imageio.ImageWriter;
 import javax.xml.bind.JAXBElement;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
 
-import net.iharder.Base64;
 import net.sf.json.JSONObject;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageIO;
-import org.geotoolkit.coverage.io.CoverageStoreException;
+import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
-import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.FeatureTypeUtilities;
-import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.feature.type.DefaultFeatureType;
 import org.geotoolkit.feature.type.DefaultGeometryType;
 import org.geotoolkit.feature.type.DefaultPropertyDescriptor;
 import org.geotoolkit.feature.type.DefaultPropertyType;
-import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeWriter;
-import org.geotoolkit.geometry.Envelope2D;
 import org.geotoolkit.geometry.Envelopes;
-import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.geometry.jts.JTS;
-import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.mathml.xml.*;
 import org.geotoolkit.ows.xml.v110.DomainMetadataType;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.IdentifiedObjects;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.apache.sis.util.ArgumentChecks;
+import org.geotoolkit.util.FileUtilities;
 import org.geotoolkit.util.converter.ConverterRegistry;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
 import org.geotoolkit.wps.io.WPSIO;
@@ -67,9 +56,6 @@ import org.geotoolkit.wps.xml.v100.ComplexDataType;
 import org.geotoolkit.wps.xml.v100.InputReferenceType;
 import org.geotoolkit.wps.xml.v100.OutputReferenceType;
 import org.geotoolkit.wps.xml.v100.ReferenceType;
-import org.geotoolkit.xml.MarshallerPool;
-import org.geotoolkit.xsd.xml.v2001.Schema;
-import org.geotoolkit.xsd.xml.v2001.XSDMarshallerPool;
 import org.opengis.coverage.Coverage;
 import org.opengis.feature.ComplexAttribute;
 import org.opengis.feature.Feature;
@@ -77,15 +63,14 @@ import org.opengis.feature.Property;
 import org.opengis.feature.type.ComplexType;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.GeometryDescriptor;
-import org.opengis.feature.type.Name;
 import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.feature.type.PropertyType;
+import org.opengis.geometry.Envelope;
 import org.opengis.metadata.Identifier;
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
-import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.ReferenceIdentifier;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.cs.AxisDirection;
@@ -326,9 +311,6 @@ public class WPSConvertersUtils {
         complex.setMimeType(mimeType);
         complex.setSchema(schema);
 
-        final GridCoverage2D coverage = (GridCoverage2D) object;
-
-
         final Map<String,Object> jsonMap = new HashMap<String, Object>();
         jsonMap.put("url", (String)params.get(WMS_INSTANCE_URL));
         jsonMap.put("type", "WMS");
@@ -341,26 +323,55 @@ public class WPSConvertersUtils {
         final File coverageFile = new File((String)params.get(WMS_STORAGE_DIR), layerName+".tiff");
 
         try {
-            CoverageIO.write(coverage, "GEOTIFF", coverageFile);
+            // Set the envelope crs to 4326 because of client request :
             final CoordinateReferenceSystem outCRS = CRS.decode("EPSG:4326");
-            final GeneralEnvelope env = (GeneralEnvelope) Envelopes.transform(coverage.getEnvelope2D(), outCRS);
-            final double xMin = env.getLower(0);
-            final double xMax = env.getUpper(0);
-            final double yMin = env.getLower(1);
-            final double yMax = env.getUpper(1);
+            Envelope env =null;
+            Integer crsCode = null;
+            if (object instanceof GridCoverage2D) {
+                final GridCoverage2D coverage = (GridCoverage2D) object;
+                CoverageIO.write(coverage, "GEOTIFF", coverageFile);
+                env = Envelopes.transform(coverage.getEnvelope2D(), outCRS);
+                crsCode = IdentifiedObjects.lookupEpsgCode(coverage.getCoordinateReferenceSystem(), false);
+
+            } else if (object instanceof File) {
+                final GridCoverageReader reader = CoverageIO.createSimpleReader(object);
+                env = Envelopes.transform(reader.getGridGeometry(0).getEnvelope(), outCRS);
+                crsCode = IdentifiedObjects.lookupEpsgCode(reader.getGridGeometry(0).getCoordinateReferenceSystem(), false);
+                FileUtilities.copy((File) object, coverageFile);
+
+            } else if (object instanceof GridCoverageReader) {
+                final GridCoverageReader reader = (GridCoverageReader) object;
+                env = Envelopes.transform(reader.getGridGeometry(0).getEnvelope(), outCRS);
+                crsCode = IdentifiedObjects.lookupEpsgCode(reader.getGridGeometry(0).getCoordinateReferenceSystem(), false);
+                Object in = reader.getInput();
+                if(in == null) {
+                    throw new IOException("Input coverage is invalid.");
+                } else if( in instanceof File) {
+                    FileUtilities.copy((File) in, coverageFile);
+                } else if(in instanceof InputStream) {
+                    FileUtilities.buildFileFromStream((InputStream)in, coverageFile);
+                } else {
+                    throw new IOException("Input coverage is invalid.");
+                }
+            }
+
+            if(crsCode == null) {
+                crsCode = 3857;
+            }
+
+            final double xMin = env.getLowerCorner().getOrdinate(0);
+            final double xMax = env.getUpperCorner().getOrdinate(0);
+            final double yMin = env.getLowerCorner().getOrdinate(1);
+            final double yMax = env.getUpperCorner().getOrdinate(1);
             final Map<String,String> bboxMap = new HashMap<String, String>();
             bboxMap.put("bounds", xMin+","+yMin+","+xMax+","+yMax);
             bboxMap.put("crs", "EPSG:4326");
             jsonMap.put("bbox", bboxMap);
-            jsonMap.put("srs", "EPSG:3857");
+            jsonMap.put("srs", "EPSG:" + crsCode);
 
-        } catch (CoverageStoreException ex) {
-            throw new NonconvertibleObjectException(ex.getMessage(), ex);
         } catch (TransformException e) {
-            throw new NonconvertibleObjectException(e.getMessage(), e);
-        } catch (NoSuchAuthorityCodeException e) {
-            throw new NonconvertibleObjectException(e.getMessage(), e);
-        } catch (FactoryException e) {
+            throw new NonconvertibleObjectException("The geographic envelope of the layer can't be retrieved", e);
+        } catch (Exception e) {
             throw new NonconvertibleObjectException(e.getMessage(), e);
         }
 
