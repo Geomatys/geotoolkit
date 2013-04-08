@@ -170,6 +170,18 @@ public class DefaultResponsibleParty extends MetadataEntity implements Responsib
     }
 
     /**
+     * The <A HREF="http://www.iho.int">International hydrographic organization</A>.
+     */
+    static final ResponsibleParty IHO;
+    static {
+        final DefaultResponsibleParty r = new DefaultResponsibleParty(Role.RESOURCE_PROVIDER);
+        r.setOrganisationName(new SimpleInternationalString("International hydrographic organization"));
+        r.setContactInfo(DefaultContact.IHO);
+        r.freeze();
+        IHO = r;
+    }
+
+    /**
      * The <A HREF="http://www.epsg.org">European Petroleum Survey Group</A> responsible party.
      *
      * @see DefaultContact#EPSG

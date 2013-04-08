@@ -23,7 +23,6 @@ import org.opengis.util.InternationalString;
 import org.opengis.metadata.citation.Citation;
 
 import org.geotoolkit.resources.Vocabulary;
-import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.referencing.DefaultReferenceIdentifier;
 
 
@@ -75,9 +74,7 @@ final class IdentifierCode extends DefaultReferenceIdentifier {
      * Returns the code space for the given authority.
      */
     private static String codespace(final Citation authority) {
-        if (authority == Citations.EPSG)    return "EPSG";
-        if (authority == Citations.GEOTIFF) return "GeoTIFF";
-        throw new IllegalArgumentException(authority.getTitle().toString());
+        return authority.getIdentifiers().iterator().next().getCode();
     }
 
     /**

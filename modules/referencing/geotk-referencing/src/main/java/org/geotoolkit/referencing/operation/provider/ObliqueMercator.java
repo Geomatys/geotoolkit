@@ -392,6 +392,9 @@ public class ObliqueMercator extends MapProjection {
             new NamedIdentifier(Citations.GEOTIFF, "CT_ObliqueMercator"),
             new IdentifierCode (Citations.GEOTIFF,  3), // Also used by CT_ObliqueMercator_Hotine
             new NamedIdentifier(Citations.PROJ4,   "omerc"),
+            new NamedIdentifier(Citations.S57,     "Oblique Mercator"),
+            new NamedIdentifier(Citations.S57,     "OME"),
+            new IdentifierCode (Citations.S57,      9),
             new NamedIdentifier(Citations.GEOTOOLKIT, Vocabulary.formatInternational(
                                 Vocabulary.Keys.OBLIQUE_MERCATOR_PROJECTION))
         }, null, new ParameterDescriptor<?>[] {

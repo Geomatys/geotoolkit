@@ -319,6 +319,9 @@ public class Orthographic extends MapProjection {
             new NamedIdentifier(Citations.GEOTIFF, "CT_Orthographic"),
             new IdentifierCode (Citations.GEOTIFF,  21),
             new NamedIdentifier(Citations.PROJ4,   "ortho"),
+            new NamedIdentifier(Citations.S57,     "Orthographic"),
+            new NamedIdentifier(Citations.S57,     "ORT"),
+            new IdentifierCode (Citations.S57,      10),
             new NamedIdentifier(Citations.GEOTOOLKIT, Vocabulary.formatInternational(
                                 Vocabulary.Keys.ORTHOGRAPHIC_PROJECTION))
         }, null, new ParameterDescriptor<?>[] {

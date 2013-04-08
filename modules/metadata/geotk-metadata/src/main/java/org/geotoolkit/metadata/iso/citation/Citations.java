@@ -138,6 +138,21 @@ public final class Citations extends Static {
     }
 
     /**
+     * The <A HREF="http://www.iho.int">International hydrographic organization</A>.
+     *
+     * @see #S57
+     * @category Organisation
+     *
+     * @since 3.22
+     */
+    public static final Citation IHO;
+    static {
+        final CitationConstant c = new CitationConstant(DefaultResponsibleParty.IHO, "IHO", "IHO");
+        c.freeze();
+        IHO = c;
+    }
+
+    /**
      * The <A HREF="http://www.esri.com">ESRI</A> organisation.
      * This company defines many Coordinate Reference Systems in addition to the {@linkplain #EPSG}
      * ones.
@@ -290,6 +305,23 @@ public final class Citations extends Static {
         c.setPresentationForm(PresentationForm.DOCUMENT_DIGITAL);
         c.freeze();
         GEOTIFF = c;
+    }
+
+    /**
+     * The <A HREF="http://www.iho.int/iho_pubs/standard/S-57Ed3.1/31Main.pdf">IHO transfer
+     * standard for digital hydrographic data</A> specification.
+     *
+     * @see #IHO
+     * @category Specification
+     *
+     * @since 3.22
+     */
+    public static final Citation S57;
+    static {
+        final CitationConstant c = new CitationConstant(DefaultResponsibleParty.IHO, "S57", "S57");
+        c.setPresentationForm(PresentationForm.DOCUMENT_DIGITAL);
+        c.freeze();
+        S57 = c;
     }
 
     /**
