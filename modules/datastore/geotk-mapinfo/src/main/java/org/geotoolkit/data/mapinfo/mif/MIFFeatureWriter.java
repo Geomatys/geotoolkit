@@ -133,11 +133,14 @@ public class MIFFeatureWriter implements FeatureWriter {
         }
 
         try {
-            final String midAttributes = master.buildMIDAttributes(currentFeature);
-            tmpMidWriter.write(midAttributes);
+            if (master.getBaseType() != null && master.getBaseType().getAttributeCount() > 0) {
+                final String midAttributes = master.buildMIDAttributes(currentFeature);
+                tmpMidWriter.write(midAttributes);
+            }
         } catch (Exception e) {
             throw new FeatureStoreRuntimeException("A problem occurred while building geometry.", e);
         }
+
 
         currentFeature = null;
     }
