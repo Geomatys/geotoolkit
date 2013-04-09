@@ -389,9 +389,11 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
                 final TopDocs docs            = searcher.search(query, 1);
                 if (docs.totalHits > 0) {
                     int docID = docs.scoreDocs[0].doc;
-                    final NamedEnvelope env = new NamedEnvelope(rTree.getCrs(), docID);
-                    rTree.remove(env);
-                    writeTree();
+                    if (rTree.getElementsNumber() > 0) {
+                        final NamedEnvelope env = new NamedEnvelope(rTree.getCrs(), docID);
+                        rTree.remove(env);
+                        writeTree();
+                    }
                 }
                 reader.close();
             }
