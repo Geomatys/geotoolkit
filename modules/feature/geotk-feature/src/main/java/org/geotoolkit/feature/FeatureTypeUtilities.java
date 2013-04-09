@@ -1098,9 +1098,9 @@ public final class FeatureTypeUtilities {
     }
 
     /**
-     * Traverses the filter and returns any encoutered property names.
+     * Traverses the filter and returns any encountered property names.
      * <p>
-     * The feautre type is supplied as contexts used to lookup expressions in cases where the
+     * The feature type is supplied as context used to lookup expressions in cases where the
      * attributeName does not match the actual name of the type.
      * </p>
      */
@@ -1257,9 +1257,9 @@ public final class FeatureTypeUtilities {
      */
     public static SimpleFeature reType(final SimpleFeatureType featureType, final SimpleFeature feature)
             throws IllegalAttributeException {
-        final SimpleFeatureType origional = feature.getFeatureType();
+        final SimpleFeatureType original = feature.getFeatureType();
 
-        if (featureType.equals(origional)) {
+        if (featureType.equals(original)) {
             return FeatureUtilities.copy(feature);
         }
 

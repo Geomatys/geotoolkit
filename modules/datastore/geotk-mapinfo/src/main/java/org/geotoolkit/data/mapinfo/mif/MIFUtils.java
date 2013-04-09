@@ -156,6 +156,12 @@ public final class MIFUtils {
         return mifGeom;
     }
 
+    /**
+     * Check the given FeatureType to know if its geometry property can be managed by MIF writer. Here we check feature
+     * type and not geometry because of style information which can be stored in the feature.
+     * @param toIdentify The feature type to check geometry.
+     * @return The MIF {@link GeometryType} corresponding to this feature.
+     */
     public static GeometryType identifyFeature(FeatureType toIdentify) {
         GeometryType type = null;
         /* We'll check for the exact featureType first, and if there's no matching, we'll refine our search by checking

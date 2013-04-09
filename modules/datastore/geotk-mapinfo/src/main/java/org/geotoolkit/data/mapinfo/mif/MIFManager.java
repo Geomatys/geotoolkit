@@ -2,6 +2,7 @@ package org.geotoolkit.data.mapinfo.mif;
 
 import org.geotoolkit.data.mapinfo.ProjectionUtils;
 import org.geotoolkit.feature.DefaultName;
+import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.feature.simple.DefaultSimpleFeatureType;
 import org.geotoolkit.feature.type.DefaultAttributeDescriptor;
@@ -71,6 +72,12 @@ public class MIFManager {
     private int mifColumnsCount = -1;
 
     /**
+     * All geometries in a MIF file must get the same CRS. This trigger will serve to know if user add multiple
+     * geometries with different CRS,
+     */
+    private boolean crsSet = false;
+
+    /**
      * Type and data containers
      */
     private Set<Name> names = null;
@@ -133,10 +140,8 @@ public class MIFManager {
             }
         }
 
-        if(names.isEmpty()) {
-            if(mifBaseType!=null){
-                names.add(mifBaseType.getName());
-            }
+        if(names.isEmpty() && mifBaseType!=null) {
+            names.add(mifBaseType.getName());
         }
 
         return names;
@@ -190,26 +195,35 @@ public class MIFManager {
             throw new DataStoreException("Only Simple Features, or features with a Simple Feature as parent can be added.");
         }
 
-        //If we're on a new store, we must set the base type and write the header.
+        boolean isBaseType = false;
+        // If we're on a new store, we must set the base type and write the header. If the source type is non-geometric,
+        // we save it as our base type. Otherwise, we set it's super type as base type, and if there's not, we set it as
+        // base type, but we extract geometry first.
         if (mifBaseType == null) {
             if (toAdd.getGeometryDescriptor() == null && toAdd instanceof SimpleFeatureType) {
-                throw new DataStoreException("Base type can't be set directly. You must set it by adding a geometry type" +
-                        "whose super type is the base type (and a SimpleFeatureType).");
+                mifBaseType = (SimpleFeatureType) toAdd;
+                isBaseType = true;
+
             } else if (toAdd.getSuper() != null && toAdd.getSuper() instanceof SimpleFeatureType) {
                 mifBaseType = (SimpleFeatureType) toAdd.getSuper();
                 mifColumnsCount = mifBaseType.getAttributeCount();
                 checkTypeCRS(toAdd);
+
             } else {
-                throw new DataStoreException("A base type must be set first, and given one does not fit.");
+                Collection<PropertyDescriptor> properties = toAdd.getDescriptors();
+                properties.remove(toAdd.getGeometryDescriptor());
+
+                FeatureTypeBuilder builder = new FeatureTypeBuilder();
+                builder.setName(mifName+".baseType");
+                builder.addAll(properties);
+
+                mifBaseType = builder.buildSimpleFeatureType();
             }
             flushHeader();
         }
 
-        if (toAdd.getSuper() == null || !toAdd.getSuper().equals(mifBaseType)) {
-            throw new DataStoreException(
-                    "Super type of the given feature doesn't match this data store base type :\nExpected : "
-                            + mifBaseType + "\nFound :" + toAdd.getSuper());
-        } else {
+        // If the given type has not been added as is as base type, we try to put it into our childTypes.
+       if(!isBaseType) {
             if (MIFUtils.identifyFeature(toAdd) != null) {
                 //We check for the crs first
                 checkTypeCRS(toAdd);
@@ -224,18 +238,14 @@ public class MIFManager {
 
     private void checkTypeCRS(FeatureType toCheck) throws DataStoreException {
 
-        if(toCheck.getCoordinateReferenceSystem() == null) return;
+        if (toCheck.getCoordinateReferenceSystem() == null) return;
 
-        if(mifChildTypes.isEmpty() && toCheck.getCoordinateReferenceSystem() != null) {
-                mifCRS = toCheck.getCoordinateReferenceSystem();
-        } else {
-            if(!mifCRS.equals(DefaultGeographicCRS.WGS84)) {
-                if(toCheck.getCoordinateReferenceSystem().equals(mifCRS)) {
-                    return;
-                }
-                throw new DataStoreException("Given type CRS is not compatible with the one previously specified." +
-                        "\nExpected : "+ mifCRS +"\nFound : "+toCheck.getCoordinateReferenceSystem());
-            }
+        if (!crsSet) {
+            mifCRS = toCheck.getCoordinateReferenceSystem();
+            crsSet = true;
+        } else if (!mifCRS.equals(toCheck.getCoordinateReferenceSystem())) {
+            throw new DataStoreException("Given type CRS is not compatible with the one previously specified." +
+                    "\nExpected : " + mifCRS + "\nFound : " + toCheck.getCoordinateReferenceSystem());
         }
     }
 
@@ -475,7 +485,7 @@ public class MIFManager {
      * Browse the MIF file to get the geometry types it contained. With it, we create a new feature type
      * for each geometry type found. They'll all get the base feature type (defining MID attributes) as parent.
      * <p/>
-     * IMPORTANT :  we'll browse the file only for geometry TYPES, so no other data we'll be read.
+     * IMPORTANT :  we'll browse the file only for geometry TYPES, so no other data is read.
      * <p/>
      * MORE IMPORTANT : This method does not manage scanner start position, we assume that caller have prepared it
      * itself (to avoid close / re-open each time).
@@ -716,7 +726,9 @@ public class MIFManager {
         final StringBuilder builder = new StringBuilder();
         final FeatureType fType = toParse.getType();
 
-        if(mifBaseType.equals(fType) || mifBaseType.equals(fType.getSuper())) {
+
+        if(mifBaseType.equals(fType) || mifBaseType.equals(fType.getSuper())
+                || fType.getDescriptors().containsAll(mifBaseType.getDescriptors())) {
             final Name name = mifBaseType.getType(0).getName();
             builder.append(MIFUtils.getStringValue(toParse.getProperty(name)));
 
