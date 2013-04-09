@@ -170,9 +170,7 @@ public class FieldDescription {
     public String toString() {
         final StringBuilder sb = new StringBuilder(tag);
         sb.append(" (").append(description).append(") [");
-        sb.append(",").append(structure);
-        sb.append(",").append(type);
-        sb.append("]");
+        sb.append(structure).append(",").append(type).append("]");
         if(!subfieldTypes.isEmpty() || !fields.isEmpty()){
             final List lst = new ArrayList();
             lst.addAll(subfieldTypes);
