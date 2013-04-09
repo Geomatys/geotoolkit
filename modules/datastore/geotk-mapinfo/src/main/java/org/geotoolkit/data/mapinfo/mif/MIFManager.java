@@ -134,7 +134,9 @@ public class MIFManager {
         }
 
         if(names.isEmpty()) {
-            names.add(mifBaseType.getName());
+            if(mifBaseType!=null){
+                names.add(mifBaseType.getName());
+            }
         }
 
         return names;
@@ -454,7 +456,7 @@ public class MIFManager {
             parseHeader();
         }
 
-        if (mifChildTypes.isEmpty()) {
+        if (mifChildTypes.isEmpty() && mifScanner!=null) {
             try {
                 mifScanner.close();
                 RWLock.readLock().lock();
