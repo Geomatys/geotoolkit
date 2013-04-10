@@ -1,62 +1,76 @@
 /*
- *    Geotoolkit.org - An Open Source Java GIS Toolkit
- *    http://www.geotoolkit.org
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- *    (C) 2002-2012, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2009-2012, Geomatys
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- *    This library is free software; you can redistribute it and/or
- *    modify it under the terms of the GNU Lesser General Public
- *    License as published by the Free Software Foundation;
- *    version 2.1 of the License.
- *
- *    This library is distributed in the hope that it will be useful,
- *    but WITHOUT ANY WARRANTY; without even the implied warranty of
- *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- *    Lesser General Public License for more details.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.geotoolkit.util.collection;
 
+import java.util.List;
 import java.util.Iterator;
+import java.util.ListIterator;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.NoSuchElementException;
 import net.jcip.annotations.ThreadSafe;
-
+import org.apache.sis.util.Decorator;
+import org.apache.sis.util.resources.Errors;
 import org.apache.sis.util.collection.CheckedContainer;
-import org.geotoolkit.util.Cloneable;
-import org.geotoolkit.resources.Errors;
 
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 
 
 /**
- * A {@linkplain Collections#checkedList checked} and {@linkplain Collections#synchronizedList
- * synchronized} {@link java.util.List}. Type checks are performed at run-time in addition of
- * compile-time checks. The synchronization lock can be modified at runtime by overriding the
- * {@link #getLock} method.
- * <p>
- * This class is similar to using the wrappers provided in {@link Collections}, minus the cost
- * of indirection levels and with the addition of overrideable methods.
+ * A {@linkplain Collections#checkedList(List, Class) checked} and
+ * {@linkplain Collections#synchronizedList(List) synchronized} {@link ArrayList}.
+ * The type checks are performed at run-time in addition to the compile-time checks.
+ *
+ * <p>Using this class is similar to wrapping an {@link ArrayList} using the methods provided
+ * in the standard {@link Collections} class, except for the following advantages:</p>
+ *
+ * <ul>
+ *   <li>Avoid the two levels of indirection (for type check and synchronization).</li>
+ *   <li>Checks for write permission.</li>
+ *   <li>Overrideable methods for controlling the synchronization lock,
+ *       type checks and write permission checks.</li>
+ * </ul>
+ *
+ * The synchronization is provided mostly in order to prevent damages
+ * to the list in case of concurrent access. It does <strong>not</strong> prevent
+ * {@link java.util.ConcurrentModificationException} to be thrown during iterations,
+ * unless the whole iteration is synchronized on this list {@linkplain #getLock() lock}.
+ * For real concurrency, see the {@link java.util.concurrent} package instead.
+ *
+ * {@note The above is the reason why the name of this class emphases the <cite>checked</cite>
+ *        aspect rather than the <cite>synchronized</cite> aspect of the list.}
  *
  * @param <E> The type of elements in the list.
  *
- * @author Jody Garnett (Refractions)
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
- *
- * @see Collections#checkedList
- * @see Collections#synchronizedList
- *
- * @since 2.1
+ * @author  Martin Desruisseaux (Geomatys)
+ * @since   2.1
+ * @version 3.22
  * @module
+ *
+ * @see Collections#checkedList(List, Class)
+ * @see Collections#synchronizedList(List)
  */
 @ThreadSafe
 public class CheckedArrayList<E> extends ArrayList<E> implements CheckedContainer<E>, Cloneable {
     /**
      * Serial version UID for compatibility with different versions.
      */
-    private static final long serialVersionUID = -587331971085094268L;
+    private static final long serialVersionUID = -8265578982723471814L;
 
     /**
      * The element type.
@@ -66,7 +80,7 @@ public class CheckedArrayList<E> extends ArrayList<E> implements CheckedContaine
     /**
      * Constructs a list of the specified type.
      *
-     * @param type The element type (should not be null).
+     * @param type The element type (can not be null).
      */
     public CheckedArrayList(final Class<E> type) {
         super();
@@ -79,8 +93,6 @@ public class CheckedArrayList<E> extends ArrayList<E> implements CheckedContaine
      *
      * @param type The element type (should not be null).
      * @param capacity The initial capacity.
-     *
-     * @since 2.4
      */
     public CheckedArrayList(final Class<E> type, final int capacity) {
         super(capacity);
@@ -90,8 +102,6 @@ public class CheckedArrayList<E> extends ArrayList<E> implements CheckedContaine
 
     /**
      * Returns the element type given at construction time.
-     *
-     * @since 2.4
      */
     @Override
     public Class<E> getElementType() {
@@ -99,75 +109,219 @@ public class CheckedArrayList<E> extends ArrayList<E> implements CheckedContaine
     }
 
     /**
-     * Checks the type of the specified object. The default implementation ensure
-     * that the object is assignable to the type specified at construction time.
+     * Ensures that the given element can be added to this list.
+     * The default implementation ensures that the object is {@code null} or assignable
+     * to the type specified at construction time. Subclasses can override this method
+     * if they need to perform additional checks.
+     *
+     * {@section Synchronization}
+     * This method is invoked <em>before</em> to get the synchronization {@linkplain #getLock() lock}.
+     * This is different than the {@link #checkWritePermission()} method, which is invoked inside the
+     * synchronized block.
      *
      * @param  element the object to check, or {@code null}.
-     * @throws IllegalArgumentException if the specified element is not of the expected type.
+     * @throws IllegalArgumentException if the specified element can not be added to this list.
      */
-    protected void ensureValidType(final E element) throws IllegalArgumentException {
-        if (element!=null && !type.isInstance(element)) {
+    protected void ensureValid(final E element) throws IllegalArgumentException {
+        if (element != null && !type.isInstance(element)) {
             throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.ILLEGAL_CLASS_$2, element.getClass(), type));
+                    Errors.Keys.IllegalArgumentClass_3, "element", type, element.getClass()));
         }
     }
 
     /**
-     * Checks the type of all elements in the specified collection.
+     * Ensures that all elements of the given collection can be added to this list.
      *
      * @param  collection the collection to check, or {@code null}.
-     * @throws IllegalArgumentException if at least one element is not of the expected type.
+     * @throws IllegalArgumentException if at least one element can not be added to this list.
      */
-    private void ensureValid(final Collection<? extends E> collection) throws IllegalArgumentException {
-        if (collection != null) {
-            for (final E element : collection) {
-                ensureValidType(element);
-            }
+    private void ensureValidCollection(final Collection<? extends E> collection) throws IllegalArgumentException {
+        for (final E element : collection) {
+            ensureValid(element);
         }
     }
 
     /**
-     * Checks if changes in this collection are allowed. This method is automatically invoked
-     * after this collection got the {@linkplain #getLock lock} and before any operation that
-     * may change the content. The default implementation does nothing (i.e. this collection
-     * is modifiable). Subclasses should override this method if they want to control write
-     * access.
+     * Checks if changes in this list are allowed. This method is automatically invoked
+     * after this list got the {@linkplain #getLock() lock} and before any operation that
+     * may change the content. If the write operation is allowed, then this method shall
+     * returns normally. Otherwise an {@link UnsupportedOperationException} is thrown.
      *
-     * @throws UnsupportedOperationException if this collection is unmodifiable.
+     * <p>The default implementation does nothing significant (see below), thus allowing this list to
+     * be modified. Subclasses can override this method if they want to control write permissions.</p>
      *
-     * @since 2.5
+     * {@note Actually the current implementation contains an <code>assert</code> statement
+     * ensuring that the thread holds the lock. This is an implementation details that may
+     * change in any future version of the SIS library. Nevertheless methods that override
+     * this one are encouraged to invoke <code>super.checkWritePermission()</code>.}
+     *
+     * @throws UnsupportedOperationException if this list is unmodifiable.
      */
     protected void checkWritePermission() throws UnsupportedOperationException {
+        assert Thread.holdsLock(getLock());
     }
 
     /**
      * Returns the synchronization lock. The default implementation returns {@code this}.
-     * Subclasses that override this method should be careful to update the lock reference
-     * when this list is {@linkplain #clone cloned}.
+     *
+     * {@section Note for subclass implementors}
+     * Subclasses that override this method must be careful to update the lock reference
+     * (if needed) when this list is {@linkplain #clone() cloned}.
      *
      * @return The synchronization lock.
-     *
-     * @since 2.5
      */
     protected Object getLock() {
         return this;
     }
 
     /**
-     * Returns an iterator over the elements in this list.
+     * A synchronized iterator with a check for write permission prior element removal.
+     * This class wraps the iterator provided by {@link ArrayList#iterator()}, and is
+     * also the base class for the wrapper around {@link ArrayList#listIterator()}.
+     *
+     * @see CheckedArrayList#iterator()
      */
-    @Override
-    public Iterator<E> iterator() {
-        final Object lock = getLock();
-        synchronized (lock) {
-            return new SynchronizedIterator<>(super.iterator(), lock);
+    @ThreadSafe
+    @Decorator(Iterator.class)
+    private class Iter<I extends Iterator<E>> implements Iterator<E> {
+        /** The {@link ArrayList} iterator. */
+        protected final I iterator;
+
+        /** Creates a new wrapper for the given {@link ArrayList} iterator. */
+        Iter(final I iterator) {
+            this.iterator = iterator;
+        }
+
+        /** Returns {@code true} if there is more elements in the iteration. */
+        @Override
+        public final boolean hasNext() {
+            synchronized (getLock()) {
+                return iterator.hasNext();
+            }
+        }
+
+        /** Returns the next element in the iteration. */
+        @Override
+        public final E next() throws NoSuchElementException {
+            synchronized (getLock()) {
+                return iterator.next();
+            }
+        }
+
+        /** Removes the previous element if the enclosing {@link CheckedArrayList} allows write operations. */
+        @Override
+        public final void remove() throws UnsupportedOperationException {
+            synchronized (getLock()) {
+                checkWritePermission();
+                iterator.remove();
+            }
         }
     }
 
-    // Note: providing a synchronized iterator is a little bit of paranoia because the ArrayList
-    // implementation inherits the default AbstractList implementation, which delegates its work
-    // to the public List methods. And the later are synchronized. We do not override ListIterator
-    // for this reason and because it is less used.
+    /**
+     * A synchronized list iterator with a check for write permission prior element removal.
+     * This class wraps the iterator provided by {@link ArrayList#listIterator()}.
+     *
+     * @see CheckedArrayList#listIterator()
+     * @see CheckedArrayList#listIterator(int)
+     */
+    @Decorator(ListIterator.class)
+    private class ListIter extends Iter<ListIterator<E>> implements ListIterator<E> {
+        /** Creates a new wrapper for the given {@link ArrayList} list iterator. */
+        ListIter(final ListIterator<E> iterator) {
+            super(iterator);
+        }
+
+        /** Returns the index of the element to be returned by {@link #next()}. */
+        @Override
+        public int nextIndex() {
+            synchronized (getLock()) {
+                return iterator.nextIndex();
+            }
+        }
+
+        /** Returns the index of the element to be returned by {@link #previous()}. */
+        @Override
+        public int previousIndex() {
+            synchronized (getLock()) {
+                return iterator.previousIndex();
+            }
+        }
+
+        /** Returns {@code true} if there is elements before current position. */
+        @Override
+        public boolean hasPrevious() {
+            synchronized (getLock()) {
+                return iterator.hasPrevious();
+            }
+        }
+
+        /** Returns the previous element in the iteration. */
+        @Override
+        public E previous() throws NoSuchElementException {
+            synchronized (getLock()) {
+                return iterator.previous();
+            }
+        }
+
+        /** See the {@link CheckedArrayList#set(int, Object)} method contract. */
+        @Override
+        public void set(final E element) throws IllegalArgumentException, UnsupportedOperationException {
+            ensureValid(element);
+            synchronized (getLock()) {
+                checkWritePermission();
+                iterator.set(element);
+            }
+        }
+
+        /** See the {@link CheckedArrayList#add(Object)} method contract. */
+        @Override
+        public void add(final E element) throws IllegalArgumentException, UnsupportedOperationException {
+            ensureValid(element);
+            synchronized (getLock()) {
+                checkWritePermission();
+                iterator.add(element);
+            }
+        }
+    }
+
+    /**
+     * Returns an iterator over the elements in this list.
+     * The returned iterator will support {@linkplain Iterator#remove() element removal}
+     * only if the {@link #checkWritePermission()} method does not throw exception.
+     */
+    @Override
+    public Iterator<E> iterator() {
+        synchronized (getLock()) {
+            return new Iter<>(super.iterator());
+        }
+    }
+
+    /**
+     * Returns an iterator over the elements in this list.
+     * The returned iterator will support {@linkplain ListIterator#remove() element removal},
+     * {@linkplain ListIterator#add(Object) addition} or {@linkplain ListIterator#set(Object)
+     * modification} only if the {@link #checkWritePermission()} method does not throw exception.
+     */
+    @Override
+    public ListIterator<E> listIterator() {
+        synchronized (getLock()) {
+            return new ListIter(super.listIterator());
+        }
+    }
+
+    /**
+     * Returns an iterator over the elements in this list, starting at the given index.
+     * The returned iterator will support {@linkplain ListIterator#remove() element removal},
+     * {@linkplain ListIterator#add(Object) addition} or {@linkplain ListIterator#set(Object)
+     * modification} only if the {@link #checkWritePermission()} method does not throw exception.
+     */
+    @Override
+    public ListIterator<E> listIterator(final int index) {
+        synchronized (getLock()) {
+            return new ListIter(super.listIterator(index));
+        }
+    }
 
     /**
      * Returns the number of elements in this list.
@@ -245,7 +399,7 @@ public class CheckedArrayList<E> extends ArrayList<E> implements CheckedContaine
     public E set(final int index, final E element)
             throws IllegalArgumentException, UnsupportedOperationException
     {
-        ensureValidType(element);
+        ensureValid(element);
         synchronized (getLock()) {
             checkWritePermission();
             return super.set(index, element);
@@ -264,7 +418,7 @@ public class CheckedArrayList<E> extends ArrayList<E> implements CheckedContaine
     public boolean add(final E element)
             throws IllegalArgumentException, UnsupportedOperationException
     {
-        ensureValidType(element);
+        ensureValid(element);
         synchronized (getLock()) {
             checkWritePermission();
             return super.add(element);
@@ -284,7 +438,7 @@ public class CheckedArrayList<E> extends ArrayList<E> implements CheckedContaine
     public void add(final int index, final E element)
             throws IllegalArgumentException, UnsupportedOperationException
     {
-        ensureValidType(element);
+        ensureValid(element);
         synchronized (getLock()) {
             checkWritePermission();
             super.add(index, element);
@@ -295,7 +449,7 @@ public class CheckedArrayList<E> extends ArrayList<E> implements CheckedContaine
      * Appends all of the elements in the specified collection to the end of this list,
      * in the order that they are returned by the specified Collection's Iterator.
      *
-     * @param collection the elements to be inserted into this list.
+     * @param  collection the elements to be inserted into this list.
      * @return {@code true} if this list changed as a result of the call.
      * @throws IllegalArgumentException if at least one element is not of the expected type.
      * @throws UnsupportedOperationException if this collection is unmodifiable.
@@ -304,7 +458,7 @@ public class CheckedArrayList<E> extends ArrayList<E> implements CheckedContaine
     public boolean addAll(final Collection<? extends E> collection)
             throws IllegalArgumentException, UnsupportedOperationException
     {
-        ensureValid(collection);
+        ensureValidCollection(collection);
         synchronized (getLock()) {
             checkWritePermission();
             return super.addAll(collection);
@@ -315,8 +469,8 @@ public class CheckedArrayList<E> extends ArrayList<E> implements CheckedContaine
      * Inserts all of the elements in the specified collection into this list,
      * starting at the specified position.
      *
-     * @param index index at which to insert first element fromm the specified collection.
-     * @param collection elements to be inserted into this list.
+     * @param  index index at which to insert first element fromm the specified collection.
+     * @param  collection elements to be inserted into this list.
      * @return {@code true} if this list changed as a result of the call.
      * @throws IllegalArgumentException if at least one element is not of the expected type.
      * @throws UnsupportedOperationException if this collection is unmodifiable.
@@ -325,7 +479,7 @@ public class CheckedArrayList<E> extends ArrayList<E> implements CheckedContaine
     public boolean addAll(final int index, final Collection<? extends E> collection)
             throws IllegalArgumentException, UnsupportedOperationException
     {
-        ensureValid(collection);
+        ensureValidCollection(collection);
         synchronized (getLock()) {
             checkWritePermission();
             return super.addAll(index, collection);
