@@ -1,6 +1,7 @@
 package org.geotoolkit.data.mapinfo.mif;
 
 import org.geotoolkit.data.*;
+import org.geotoolkit.data.mapinfo.ProjectionUtils;
 import org.geotoolkit.data.query.DefaultQueryCapabilities;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryCapabilities;
@@ -15,6 +16,7 @@ import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -209,8 +211,25 @@ public class MIFFeatureStore extends AbstractFeatureStore {
         refreshMetaModel();
     }
 
+    /**
+     * MIF file defines a delimiter character to separate values into the MID file. This function allows user to redefine it.
+     * @param newDelimiter The new delimiter to use for MID value separation.
+     */
     public void setDelimiter(char newDelimiter) {
         manager.setDelimiter(newDelimiter);
+    }
+
+    public static boolean isCompatibleCRS(CoordinateReferenceSystem source) {
+        boolean isCompatible = false;
+        try {
+            final String mifCRS = ProjectionUtils.crsToMIFSyntax(source);
+            if(mifCRS != null && ! mifCRS.isEmpty()) {
+                isCompatible = true;
+            }
+        } catch(Exception e) {
+            // Nothing to do here, if we get an exception, we just get an incompatible CRS.
+        }
+        return isCompatible;
     }
 
 }

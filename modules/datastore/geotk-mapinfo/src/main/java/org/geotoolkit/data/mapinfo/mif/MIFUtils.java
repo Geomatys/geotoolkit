@@ -48,6 +48,8 @@ import java.util.Scanner;
  */
 public final class MIFUtils {
 
+    private static final int MAX_CHAR_LENGTH = 255;
+
     private static final DecimalFormat NUM_FORMAT = new DecimalFormat();
 
     static {
@@ -229,9 +231,17 @@ public final class MIFUtils {
         for(AttributeType type : AttributeType.values()) {
             if(javaBinding.equals(type.binding)) {
                 typename = type.name();
+
+                // If we get a char or decimal type, we must set length delimiter on it.
+                if (type.equals(AttributeType.CHAR)) {
+                    typename = typename+'('+MAX_CHAR_LENGTH+')';
+                } else if(type.equals(AttributeType.DECIMAL)) {
+                    typename = typename+'('+NUM_FORMAT.getMaximumIntegerDigits()+','+NUM_FORMAT.getMaximumFractionDigits()+')';
+                }
                 break;
             }
         }
+
         return typename;
     }
 
