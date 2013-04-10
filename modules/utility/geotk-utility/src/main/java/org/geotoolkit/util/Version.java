@@ -57,12 +57,6 @@ public class Version extends org.apache.sis.util.Version implements CharSequence
     public static final Version GEOTOOLKIT = new Version("4.00-SNAPSHOT");
 
     /**
-     * The separator characters between {@linkplain #getMajor major}, {@linkplain #getMinor minor}
-     * and {@linkplain #getRevision revision} components. Any character in this string fits.
-     */
-    public static final String SEPARATORS = ".-";
-
-    /**
      * Creates a new version object from the supplied string.
      *
      * @param version The version as a string.

@@ -45,7 +45,7 @@ import org.geotoolkit.lang.Debug;
 import org.geotoolkit.lang.Decorator;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
-import org.geotoolkit.util.collection.WeakValueHashMap;
+import org.apache.sis.util.collection.WeakValueHashMap;
 import org.geotoolkit.factory.FactoryNotFoundException;
 
 
@@ -73,7 +73,7 @@ public class FallbackAuthorityFactory extends AuthorityFactoryAdapter {
     /**
      * The pool of factories created up to date.
      */
-    private static final Map<Key,AuthorityFactory> POOL = new WeakValueHashMap<>();
+    private static final Map<Key,AuthorityFactory> POOL = new WeakValueHashMap<>(Key.class);
 
     /**
      * The number of time the primary factory failed and the fallback factory was used

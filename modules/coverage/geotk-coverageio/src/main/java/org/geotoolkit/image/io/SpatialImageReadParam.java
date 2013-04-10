@@ -35,8 +35,8 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.IndexedResourceBundle;
 import org.geotoolkit.image.io.metadata.SampleDomain;
 import org.geotoolkit.internal.image.io.Warnings;
-import org.geotoolkit.util.collection.UnmodifiableArrayList;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.collection.UnmodifiableArrayList;
+import org.apache.sis.util.Classes;
 
 import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
 

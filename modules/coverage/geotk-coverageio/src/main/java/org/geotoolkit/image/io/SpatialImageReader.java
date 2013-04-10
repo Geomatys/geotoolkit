@@ -42,7 +42,7 @@ import org.opengis.coverage.grid.GridEnvelope;
 import org.apache.sis.util.ArraysExt;
 
 import org.geotoolkit.util.Version;
-import org.geotoolkit.util.Disposable;
+import org.apache.sis.util.Disposable;
 import org.geotoolkit.util.NumberRange;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.util.logging.Logging;

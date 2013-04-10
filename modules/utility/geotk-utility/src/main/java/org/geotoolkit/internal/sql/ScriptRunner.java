@@ -44,7 +44,7 @@ import java.sql.SQLException;
 import java.sql.DatabaseMetaData;
 
 import org.geotoolkit.util.Strings;
-import org.geotoolkit.util.Version;
+import org.apache.sis.util.Version;
 import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;

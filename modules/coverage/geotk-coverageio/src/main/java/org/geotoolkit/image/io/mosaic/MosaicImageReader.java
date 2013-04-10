@@ -42,7 +42,7 @@ import org.opengis.metadata.spatial.PixelOrientation;
 import org.geotoolkit.io.TableWriter;
 import org.geotoolkit.io.wkt.PrjFiles;
 import org.geotoolkit.util.Version;
-import org.geotoolkit.util.Disposable;
+import org.apache.sis.util.Disposable;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.logging.LogProducer;
 import org.geotoolkit.util.logging.PerformanceLevel;

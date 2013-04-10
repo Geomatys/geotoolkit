@@ -30,8 +30,8 @@ import org.apache.sis.util.ArraysExt;
 
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.IndexedResourceBundle;
-import org.geotoolkit.util.NullArgumentException;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.NullArgumentException;
+import org.apache.sis.util.Classes;
 import org.geotoolkit.internal.image.io.Warnings;
 
 import static org.geotoolkit.image.io.DimensionSlice.API;

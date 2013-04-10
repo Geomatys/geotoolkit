@@ -22,6 +22,7 @@ import org.opengis.geometry.MismatchedDimensionException;
 
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.resources.Errors;
+import org.apache.sis.util.NullArgumentException;
 
 
 /**

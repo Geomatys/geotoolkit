@@ -92,7 +92,7 @@ import org.geotoolkit.io.TableWriter;
 import org.geotoolkit.util.SimpleInternationalString;
 import org.geotoolkit.util.logging.Logging;
 import org.apache.sis.util.CharSequences;
-import org.geotoolkit.util.Version;
+import org.apache.sis.util.Version;
 
 import static org.geotoolkit.internal.InternalUtilities.COMPARISON_THRESHOLD;
 import static org.geotoolkit.internal.referencing.CRSUtilities.PARAMETERS_KEY;

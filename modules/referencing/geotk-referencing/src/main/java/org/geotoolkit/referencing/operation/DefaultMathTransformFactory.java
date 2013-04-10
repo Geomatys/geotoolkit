@@ -63,7 +63,7 @@ import org.geotoolkit.internal.referencing.MathTransformDecorator;
 import org.geotoolkit.internal.referencing.ParameterizedAffine;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.metadata.iso.citation.Citations;
-import org.geotoolkit.util.collection.WeakHashSet;
+import org.apache.sis.util.collection.WeakHashSet;
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.util.ArraysExt;
 
@@ -166,7 +166,7 @@ public class DefaultMathTransformFactory extends ReferencingFactory implements M
      */
     public DefaultMathTransformFactory() {
         registry  = new FactoryRegistry(MathTransformProvider.class);
-        pool      = WeakHashSet.newInstance(MathTransform.class);
+        pool      = new WeakHashSet<>(MathTransform.class);
         variables = new ThreadLocal<>();
     }
 

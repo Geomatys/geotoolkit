@@ -23,6 +23,7 @@ import java.util.Collection;
 import java.util.Collections;
 import net.jcip.annotations.ThreadSafe;
 
+import org.apache.sis.util.collection.CheckedContainer;
 import org.geotoolkit.util.Cloneable;
 import org.geotoolkit.resources.Errors;
 
@@ -51,7 +52,7 @@ import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
  * @module
  */
 @ThreadSafe
-public class CheckedArrayList<E> extends ArrayList<E> implements CheckedCollection<E>, Cloneable {
+public class CheckedArrayList<E> extends ArrayList<E> implements CheckedContainer<E>, Cloneable {
     /**
      * Serial version UID for compatibility with different versions.
      */

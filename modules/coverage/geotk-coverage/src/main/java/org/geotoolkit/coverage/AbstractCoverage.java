@@ -79,8 +79,8 @@ import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.SimpleInternationalString;
 
 import org.geotoolkit.io.LineWriter;
-import org.geotoolkit.util.Localized;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Localized;
+import org.apache.sis.util.Classes;
 import org.geotoolkit.internal.image.ImageUtilities;
 import org.geotoolkit.internal.referencing.AxisDirections;
 import org.geotoolkit.resources.Errors;

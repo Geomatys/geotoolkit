@@ -39,7 +39,7 @@ import org.opengis.metadata.extent.*;
 import org.opengis.util.FactoryException;
 
 import org.geotoolkit.lang.Static;
-import org.geotoolkit.util.Version;
+import org.apache.sis.util.Version;
 import org.geotoolkit.util.Utilities;
 import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.util.logging.Logging;

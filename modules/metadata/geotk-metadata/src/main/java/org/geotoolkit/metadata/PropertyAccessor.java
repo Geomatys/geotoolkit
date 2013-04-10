@@ -39,9 +39,9 @@ import org.geotoolkit.util.Strings;
 import org.geotoolkit.util.Utilities;
 import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.util.collection.XCollections;
-import org.geotoolkit.util.collection.CheckedContainer;
-import org.geotoolkit.util.converter.Classes;
-import org.geotoolkit.util.converter.Numbers;
+import org.apache.sis.util.collection.CheckedContainer;
+import org.apache.sis.util.Classes;
+import org.apache.sis.util.Numbers;
 import org.geotoolkit.util.converter.ObjectConverter;
 import org.geotoolkit.util.converter.ConverterRegistry;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
@@ -318,7 +318,7 @@ final class PropertyAccessor {
              */
             Class<?> elementType = getter.getReturnType();
             if (Collection.class.isAssignableFrom(elementType)) {
-                elementType = Classes.boundOfParameterizedAttribute(getter);
+                elementType = Classes.boundOfParameterizedProperty(getter);
             }
             elementTypes[i] = Numbers.primitiveToWrapper(elementType);
         }

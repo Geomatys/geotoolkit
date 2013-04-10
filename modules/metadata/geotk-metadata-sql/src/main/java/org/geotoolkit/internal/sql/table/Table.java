@@ -28,7 +28,7 @@ import java.util.logging.Logger;
 import java.util.logging.LogRecord;
 import java.util.concurrent.TimeUnit;
 
-import org.geotoolkit.util.Localized;
+import org.apache.sis.util.Localized;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.logging.PerformanceLevel;
 import org.geotoolkit.resources.IndexedResourceBundle;

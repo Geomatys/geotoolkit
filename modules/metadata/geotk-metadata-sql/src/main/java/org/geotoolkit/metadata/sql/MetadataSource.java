@@ -42,8 +42,8 @@ import org.geotoolkit.internal.sql.StatementEntry;
 import org.geotoolkit.metadata.NullValuePolicy;
 import org.apache.sis.metadata.KeyNamePolicy;
 import org.geotoolkit.metadata.MetadataStandard;
-import org.geotoolkit.util.collection.WeakValueHashMap;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.collection.WeakValueHashMap;
+import org.apache.sis.util.Classes;
 import org.geotoolkit.util.converter.ObjectConverter;
 import org.geotoolkit.util.converter.ConverterRegistry;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
@@ -185,7 +185,7 @@ public class MetadataSource implements AutoCloseable {
         this.schema = schema;
         statements  = new StatementPool<>(10, dataSource);
         tables      = new HashMap<>();
-        cache       = new WeakValueHashMap<>();
+        cache       = new WeakValueHashMap<>(CacheKey.class);
         converters  = ConverterRegistry.system();
         loader      = getClass().getClassLoader();
         synchronized (statements) {
@@ -208,7 +208,7 @@ public class MetadataSource implements AutoCloseable {
         loader     = source.loader;
         buffer     = new SQLBuilder(source.buffer);
         tables     = new HashMap<>();
-        cache      = new WeakValueHashMap<>();
+        cache      = new WeakValueHashMap<>(CacheKey.class);
         statements = new StatementPool<>(source.statements);
     }
 
@@ -502,7 +502,7 @@ public class MetadataSource implements AutoCloseable {
     final Object getValue(final Class<?> type, final Method method, final String identifier) throws SQLException {
         final Class<?> valueType    = method.getReturnType();
         final boolean  isCollection = Collection.class.isAssignableFrom(valueType);
-        final Class<?> elementType  = isCollection ? Classes.boundOfParameterizedAttribute(method) : valueType;
+        final Class<?> elementType  = isCollection ? Classes.boundOfParameterizedProperty(method) : valueType;
         final boolean  isMetadata   = standard.isMetadata(elementType);
         final String   tableName    = getTableName(type);
         final String   columnName   = getColumnName(method);

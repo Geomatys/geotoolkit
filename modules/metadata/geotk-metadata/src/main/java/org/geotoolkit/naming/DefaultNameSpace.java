@@ -35,8 +35,8 @@ import org.opengis.util.GenericName;
 import org.opengis.util.InternationalString;
 
 import org.geotoolkit.util.Utilities;
-import org.geotoolkit.util.collection.WeakValueHashMap;
-import org.geotoolkit.util.collection.UnmodifiableArrayList;
+import org.apache.sis.util.collection.WeakValueHashMap;
+import org.apache.sis.util.collection.UnmodifiableArrayList;
 
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 
@@ -171,7 +171,7 @@ public class DefaultNameSpace implements NameSpace, Serializable {
      * Initializes the transient fields.
      */
     private void init() {
-        childs = new WeakValueHashMap<>();
+        childs = new WeakValueHashMap<>(String.class);
     }
 
     /**

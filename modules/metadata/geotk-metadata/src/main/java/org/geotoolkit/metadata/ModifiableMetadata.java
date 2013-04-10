@@ -35,7 +35,7 @@ import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.util.collection.CheckedArrayList;
 import org.geotoolkit.util.collection.CheckedHashSet;
-import org.geotoolkit.util.collection.UnmodifiableArrayList;
+import org.apache.sis.util.collection.UnmodifiableArrayList;
 import org.geotoolkit.internal.jaxb.MarshalContext;
 
 

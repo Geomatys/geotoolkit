@@ -23,7 +23,7 @@ import javax.measure.unit.Unit;
 import net.jcip.annotations.Immutable;
 
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.collection.CheckedContainer;
+import org.apache.sis.util.collection.CheckedContainer;
 
 import static org.apache.sis.util.Numbers.isInteger;
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
@@ -76,7 +76,7 @@ import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 @Immutable
 @Deprecated
 public class Range<T extends Comparable<? super T>> extends org.apache.sis.measure.Range
-        implements CheckedContainer<T>, Serializable
+        implements CheckedContainer/*<T>*/, Serializable
 {
     /**
      * For cross-version compatibility.

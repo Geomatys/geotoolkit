@@ -36,7 +36,7 @@ import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.naming.DefaultNameSpace;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
-import org.geotoolkit.util.collection.UnmodifiableArrayList;
+import org.apache.sis.util.collection.UnmodifiableArrayList;
 
 import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
 

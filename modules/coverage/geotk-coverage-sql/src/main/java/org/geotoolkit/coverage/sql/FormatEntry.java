@@ -34,7 +34,7 @@ import org.geotoolkit.coverage.io.GridCoverageStorePool;
 import org.geotoolkit.gui.swing.tree.MutableTreeNode;
 import org.geotoolkit.gui.swing.tree.DefaultMutableTreeNode;
 import org.geotoolkit.image.io.metadata.SampleDomain;
-import org.geotoolkit.util.collection.UnmodifiableArrayList;
+import org.apache.sis.util.collection.UnmodifiableArrayList;
 import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.util.MeasurementRange;
 import org.geotoolkit.internal.sql.table.DefaultEntry;

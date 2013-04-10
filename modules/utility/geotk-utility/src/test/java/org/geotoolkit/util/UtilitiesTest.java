@@ -21,6 +21,7 @@ import org.apache.sis.util.ComparisonMode;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;
+import org.apache.sis.util.LenientComparable;
 
 import org.junit.*;
 import static org.junit.Assert.*;

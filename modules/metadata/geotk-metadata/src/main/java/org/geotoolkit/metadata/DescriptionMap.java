@@ -26,7 +26,7 @@ import java.util.MissingResourceException;
 
 import org.opengis.annotation.UML;
 
-import org.geotoolkit.util.Localized;
+import org.apache.sis.util.Localized;
 import org.geotoolkit.util.logging.Logging;
 
 

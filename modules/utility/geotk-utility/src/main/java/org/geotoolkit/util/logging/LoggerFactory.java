@@ -19,7 +19,7 @@ package org.geotoolkit.util.logging;
 
 import java.util.logging.Logger;
 import net.jcip.annotations.ThreadSafe;
-import org.geotoolkit.util.collection.WeakValueHashMap;
+import org.apache.sis.util.collection.WeakValueHashMap;
 
 
 /**
@@ -62,7 +62,7 @@ public abstract class LoggerFactory<L> {
      */
     protected LoggerFactory(final Class<L> loggerClass) {
         this.loggerClass = loggerClass;
-        loggers = new WeakValueHashMap<>();
+        loggers = new WeakValueHashMap<>(String.class);
     }
 
     /**

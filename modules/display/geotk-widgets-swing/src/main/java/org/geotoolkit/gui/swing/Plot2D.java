@@ -56,8 +56,8 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.display.axis.Axis2D;
 import org.geotoolkit.display.axis.AbstractGraduation;
 import org.geotoolkit.display.shape.TransformedShape;
-import org.geotoolkit.util.collection.UnmodifiableArrayList;
-import org.geotoolkit.util.converter.Numbers;
+import org.apache.sis.util.collection.UnmodifiableArrayList;
+import org.apache.sis.util.Numbers;
 import org.geotoolkit.util.logging.Logging;
 
 import static java.lang.Math.hypot;

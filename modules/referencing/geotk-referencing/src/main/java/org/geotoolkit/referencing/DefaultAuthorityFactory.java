@@ -42,7 +42,7 @@ import org.geotoolkit.referencing.factory.MultiAuthoritiesFactory;
 import org.geotoolkit.referencing.factory.CachingAuthorityFactory;
 import org.geotoolkit.referencing.factory.FactoryDependencies;
 import org.geotoolkit.internal.referencing.factory.ImplementationHints;
-import org.geotoolkit.util.collection.UnmodifiableArrayList;
+import org.apache.sis.util.collection.UnmodifiableArrayList;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.resources.Loggings;
 

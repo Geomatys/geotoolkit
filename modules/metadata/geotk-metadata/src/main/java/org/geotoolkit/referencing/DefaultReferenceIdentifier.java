@@ -38,7 +38,7 @@ import org.opengis.referencing.ReferenceIdentifier;
 import org.opengis.util.InternationalString;
 
 import org.geotoolkit.xml.Namespaces;
-import org.geotoolkit.util.Deprecable;
+import org.apache.sis.util.Deprecable;
 import org.geotoolkit.util.DefaultInternationalString;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.metadata.iso.citation.Citations;

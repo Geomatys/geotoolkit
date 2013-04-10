@@ -37,11 +37,11 @@ import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.apache.sis.util.ArraysExt;
 
-import org.geotoolkit.util.Deprecable;
+import org.apache.sis.util.Deprecable;
 import org.geotoolkit.util.NumberRange;
 import org.apache.sis.util.Numbers;
-import org.geotoolkit.measure.Latitude;
-import org.geotoolkit.measure.Longitude;
+import org.apache.sis.measure.Latitude;
+import org.apache.sis.measure.Longitude;
 import org.geotoolkit.metadata.iso.extent.DefaultGeographicBoundingBox;
 import org.geotoolkit.referencing.operation.provider.*;
 import org.geotoolkit.referencing.CRS;

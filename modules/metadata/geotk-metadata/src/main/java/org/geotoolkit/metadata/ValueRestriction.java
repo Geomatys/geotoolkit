@@ -27,8 +27,8 @@ import org.opengis.annotation.UML;
 import org.opengis.annotation.Obligation;
 
 import org.geotoolkit.util.NumberRange;
-import org.geotoolkit.util.converter.Classes;
-import org.geotoolkit.util.collection.WeakHashSet;
+import org.apache.sis.util.Classes;
+import org.apache.sis.util.collection.WeakHashSet;
 import org.geotoolkit.lang.ValueRange;
 import org.geotoolkit.resources.Errors;
 
@@ -73,7 +73,7 @@ public class ValueRestriction implements Serializable {
      * The instances created in this JVM. In many case, the same restriction will be shared
      * by many attributes (e.g. restricting the range of values to 0 .. 100 for percentage).
      */
-    private static final WeakHashSet<ValueRestriction> POOL = WeakHashSet.newInstance(ValueRestriction.class);
+    private static final WeakHashSet<ValueRestriction> POOL = new WeakHashSet<>(ValueRestriction.class);
 
     /**
      * Whatever the property is {@linkplain Obligation#MANDATORY mandatory} or

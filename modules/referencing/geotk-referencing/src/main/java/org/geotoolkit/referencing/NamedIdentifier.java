@@ -43,7 +43,7 @@ import org.geotoolkit.factory.Factories;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.naming.DefaultNameFactory;
 import org.geotoolkit.metadata.iso.citation.Citations;
-import org.geotoolkit.util.collection.WeakValueHashMap;
+import org.apache.sis.util.collection.WeakValueHashMap;
 
 
 /**
@@ -81,7 +81,7 @@ public class NamedIdentifier extends DefaultReferenceIdentifier implements Gener
     /**
      * A pool of {@link NameSpace} values for given {@link InternationalString}.
      */
-    private static final Map<CharSequence,NameSpace> SCOPES = new WeakValueHashMap<>();
+    private static final Map<CharSequence,NameSpace> SCOPES = new WeakValueHashMap<>(CharSequence.class);
 
     /**
      * The factory for creating new generic names.

@@ -23,7 +23,7 @@ package org.geotoolkit.referencing.operation.transform;
 import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.MathTransform;
 
-import org.geotoolkit.util.LenientComparable;
+import org.apache.sis.util.LenientComparable;
 import org.apache.sis.util.ComparisonMode;
 
 

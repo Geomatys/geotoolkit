@@ -23,7 +23,7 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 
-import org.geotoolkit.util.collection.CheckedContainer;
+import org.apache.sis.util.collection.CheckedContainer;
 
 
 /**
@@ -182,7 +182,7 @@ final class PropertyMap extends MetadataMap<Object> {
      *
      * @since 2.4
      */
-    private final class Property implements Map.Entry<String,Object>, CheckedContainer<Object> {
+    private final class Property implements Map.Entry<String,Object>, CheckedContainer/*<Object>*/ {
         /**
          * The property index.
          */

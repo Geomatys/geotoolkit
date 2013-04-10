@@ -50,7 +50,7 @@ import org.geotoolkit.internal.image.ImageUtilities;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.util.logging.Logging;
-import org.geotoolkit.util.Localized;
+import org.apache.sis.util.Localized;
 
 
 /**

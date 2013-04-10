@@ -18,7 +18,7 @@
 package org.geotoolkit.referencing.cs;
 
 import org.geotoolkit.util.Range;
-import org.geotoolkit.util.collection.CheckedContainer;
+import org.apache.sis.util.collection.CheckedContainer;
 
 
 /**
@@ -43,9 +43,7 @@ import org.geotoolkit.util.collection.CheckedContainer;
  * @since 3.15
  * @module
  */
-public interface DiscreteCoordinateSystemAxis<T extends Comparable<? super T>> extends CheckedContainer<T>,
-        org.apache.sis.util.collection.CheckedContainer<T>
-{
+public interface DiscreteCoordinateSystemAxis<T extends Comparable<? super T>> extends CheckedContainer<T> {
     /**
      * Returns the type of values in this discrete axis.
      */

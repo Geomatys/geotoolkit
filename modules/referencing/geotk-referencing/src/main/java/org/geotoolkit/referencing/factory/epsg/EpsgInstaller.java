@@ -39,7 +39,7 @@ import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Descriptions;
 import org.geotoolkit.internal.sql.DefaultDataSource;
 import org.geotoolkit.internal.sql.Dialect;
-import org.geotoolkit.util.NullArgumentException;
+import org.apache.sis.util.NullArgumentException;
 
 import static org.geotoolkit.internal.referencing.CRSUtilities.EPSG_VERSION;
 

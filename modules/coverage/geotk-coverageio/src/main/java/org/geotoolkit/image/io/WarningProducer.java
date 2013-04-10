@@ -22,7 +22,7 @@ import java.util.logging.LogRecord;
 import javax.imageio.event.IIOReadWarningListener;
 import javax.imageio.event.IIOWriteWarningListener;
 
-import org.geotoolkit.util.Localized;
+import org.apache.sis.util.Localized;
 import org.geotoolkit.util.logging.Logging;
 
 

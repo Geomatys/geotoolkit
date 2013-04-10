@@ -22,7 +22,7 @@ import java.util.Iterator;
 import java.util.Collection;
 import java.util.IdentityHashMap;
 import org.geotoolkit.util.collection.XCollections;
-import org.geotoolkit.util.collection.CheckedContainer;
+import org.apache.sis.util.collection.CheckedContainer;
 import org.opengis.util.CodeList;
 
 

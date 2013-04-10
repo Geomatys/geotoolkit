@@ -27,8 +27,8 @@ import org.opengis.metadata.Identifier;
 
 import org.geotoolkit.xml.ObjectLinker;
 import org.geotoolkit.xml.ObjectConverters;
-import org.geotoolkit.util.collection.UnmodifiableArrayList;
-import org.geotoolkit.util.Version;
+import org.apache.sis.util.collection.UnmodifiableArrayList;
+import org.apache.sis.util.Version;
 
 
 /**

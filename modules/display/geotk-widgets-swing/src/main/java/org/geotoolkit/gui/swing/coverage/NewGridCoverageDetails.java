@@ -54,7 +54,7 @@ import org.opengis.referencing.crs.CRSAuthorityFactory;
 import org.geotoolkit.resources.Widgets;
 import org.geotoolkit.resources.Vocabulary;
 import org.apache.sis.util.ArraysExt;
-import org.geotoolkit.util.Disposable;
+import org.apache.sis.util.Disposable;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.SimpleInternationalString;
 import org.geotoolkit.coverage.GridSampleDimension;

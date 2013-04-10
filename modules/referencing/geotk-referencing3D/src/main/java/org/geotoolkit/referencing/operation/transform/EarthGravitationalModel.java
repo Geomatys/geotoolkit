@@ -37,7 +37,7 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.parameter.Parameter;
 import org.geotoolkit.parameter.ParameterGroup;
 import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
-import org.geotoolkit.util.collection.WeakValueHashMap;
+import org.apache.sis.util.collection.WeakValueHashMap;
 import org.apache.sis.util.ComparisonMode;
 
 import static java.lang.Math.*;
@@ -91,7 +91,7 @@ public class EarthGravitationalModel extends VerticalTransform {
      * memory usage (avoid duplicating arrays), not for saving the CPU time associated to the
      * creation of the model. So we really want weak references, not soft references.
      */
-    private static final WeakValueHashMap<Integer,EarthGravitationalModel> POOL = new WeakValueHashMap<>();
+    private static final WeakValueHashMap<Integer,EarthGravitationalModel> POOL = new WeakValueHashMap<>(Integer.class);
 
     /** {@code true} for WGS84 model, or {@code false} for WGS72 model. */
     private final boolean isWGS84;

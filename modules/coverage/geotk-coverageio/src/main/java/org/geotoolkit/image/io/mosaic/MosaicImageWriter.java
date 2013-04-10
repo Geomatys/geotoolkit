@@ -52,7 +52,7 @@ import java.lang.reflect.UndeclaredThrowableException;
 import org.apache.sis.math.MathFunctions;
 import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.util.Version;
-import org.geotoolkit.util.Disposable;
+import org.apache.sis.util.Disposable;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.logging.LogProducer;
 import org.geotoolkit.util.logging.PerformanceLevel;

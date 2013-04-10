@@ -30,7 +30,7 @@ import org.geotoolkit.gui.swing.tree.TreeNodeFilter;
 import org.geotoolkit.gui.swing.tree.DefaultTreeModel;
 import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.util.collection.FrequencySortedSet;
-import org.geotoolkit.util.collection.UnmodifiableArrayList;
+import org.apache.sis.util.collection.UnmodifiableArrayList;
 
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 

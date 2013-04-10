@@ -20,7 +20,7 @@ package org.geotoolkit.gui.swing.tree;
 import java.util.Locale;
 import java.util.Enumeration;
 import org.opengis.util.InternationalString;
-import org.geotoolkit.util.Localized;
+import org.apache.sis.util.Localized;
 import org.geotoolkit.lang.Workaround;
 
 

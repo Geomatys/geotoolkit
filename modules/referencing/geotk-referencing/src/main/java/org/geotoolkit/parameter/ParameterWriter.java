@@ -42,8 +42,8 @@ import org.geotoolkit.lang.Decorator;
 import org.geotoolkit.measure.Angle;
 import org.geotoolkit.measure.AngleFormat;
 import org.geotoolkit.resources.Vocabulary;
-import org.geotoolkit.util.converter.Classes;
-import org.geotoolkit.util.Localized;
+import org.apache.sis.util.Classes;
+import org.apache.sis.util.Localized;
 import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.internal.io.IOUtilities;
 

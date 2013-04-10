@@ -27,7 +27,7 @@ import javax.swing.tree.TreeModel;
 import net.jcip.annotations.ThreadSafe;
 
 import org.apache.sis.util.ComparisonMode;
-import org.geotoolkit.util.LenientComparable;
+import org.apache.sis.util.LenientComparable;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.gui.swing.tree.TreeTableNode;
 

@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import net.jcip.annotations.ThreadSafe;
 
+import org.apache.sis.util.collection.CheckedContainer;
 import org.geotoolkit.util.Cloneable;
 import org.geotoolkit.resources.Errors;
 
@@ -51,7 +52,7 @@ import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
  * @module
  */
 @ThreadSafe
-public class CheckedHashSet<E> extends LinkedHashSet<E> implements CheckedCollection<E>, Cloneable {
+public class CheckedHashSet<E> extends LinkedHashSet<E> implements CheckedContainer<E>, Cloneable {
     /**
      * Serial version UID for compatibility with different versions.
      */

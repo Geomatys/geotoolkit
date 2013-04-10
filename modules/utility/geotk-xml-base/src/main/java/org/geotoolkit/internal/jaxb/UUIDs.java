@@ -28,7 +28,7 @@ import net.jcip.annotations.ThreadSafe;
 
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.internal.ReferenceQueueConsumer;
-import org.geotoolkit.util.Disposable;
+import org.apache.sis.util.Disposable;
 
 
 /**

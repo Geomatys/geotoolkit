@@ -25,8 +25,8 @@ import net.jcip.annotations.Immutable;
 import org.opengis.referencing.AuthorityFactory;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 
-import org.geotoolkit.util.Version;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Version;
+import org.apache.sis.util.Classes;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.referencing.factory.AbstractAuthorityFactory;

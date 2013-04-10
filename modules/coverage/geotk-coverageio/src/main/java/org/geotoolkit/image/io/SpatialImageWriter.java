@@ -40,7 +40,7 @@ import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
 import org.geotoolkit.internal.image.ImageUtilities;
 import org.geotoolkit.util.Version;
 import org.apache.sis.util.ArraysExt;
-import org.geotoolkit.util.Disposable;
+import org.apache.sis.util.Disposable;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Locales;

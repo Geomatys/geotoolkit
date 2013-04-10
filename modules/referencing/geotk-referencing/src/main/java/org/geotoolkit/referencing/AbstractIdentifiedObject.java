@@ -46,13 +46,12 @@ import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.ReferenceIdentifier;
 import org.opengis.parameter.InvalidParameterValueException;
 
-import org.geotoolkit.util.Deprecable;
+import org.apache.sis.util.Deprecable;
 import org.apache.sis.util.ComparisonMode;
-import org.geotoolkit.util.LenientComparable;
+import org.apache.sis.util.LenientComparable;
 import org.geotoolkit.util.DefaultInternationalString;
 import org.geotoolkit.util.logging.Logging;
 import org.apache.sis.util.Classes;
-import org.apache.sis.internal.util.Citations;
 import org.geotoolkit.internal.jaxb.gco.StringConverter;
 import org.geotoolkit.internal.jaxb.referencing.RS_Identifier;
 import org.geotoolkit.io.wkt.FormattableObject;

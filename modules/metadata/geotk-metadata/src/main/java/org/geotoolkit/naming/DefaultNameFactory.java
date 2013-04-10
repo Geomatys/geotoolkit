@@ -38,10 +38,10 @@ import org.opengis.metadata.citation.Citation;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.Factory;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.NullArgumentException;
+import org.apache.sis.util.NullArgumentException;
 import org.geotoolkit.util.SimpleInternationalString;
 import org.geotoolkit.util.DefaultInternationalString;
-import org.geotoolkit.util.collection.WeakHashSet;
+import org.apache.sis.util.collection.WeakHashSet;
 import org.geotoolkit.metadata.iso.citation.Citations;
 
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
@@ -71,7 +71,7 @@ public class DefaultNameFactory extends Factory implements NameFactory {
      * Use {@link org.geotoolkit.factory.FactoryFinder#getNameFactory(Hints)} instead.
      */
     public DefaultNameFactory() {
-        pool = WeakHashSet.newInstance(GenericName.class);
+        pool = new WeakHashSet<>(GenericName.class);
     }
 
     /**

@@ -24,7 +24,7 @@ import org.opengis.referencing.operation.Matrix;
 
 import org.geotoolkit.util.Cloneable;
 import org.apache.sis.util.ComparisonMode;
-import org.geotoolkit.util.LenientComparable;
+import org.apache.sis.util.LenientComparable;
 
 
 /**

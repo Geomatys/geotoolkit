@@ -49,10 +49,10 @@ import org.apache.sis.measure.Latitude;
 import org.apache.sis.measure.Longitude;
 import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.util.Utilities;
-import org.geotoolkit.util.Deprecable;
+import org.apache.sis.util.Deprecable;
 import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.util.logging.Logging;
-import org.geotoolkit.util.collection.WeakHashSet;
+import org.apache.sis.util.collection.WeakHashSet;
 import org.geotoolkit.referencing.operation.provider.UniversalParameters;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.referencing.IdentifiedObjects;
@@ -168,7 +168,7 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
      * The pool of unitary projections created in this running JVM.
      */
     private static final WeakHashSet<UnitaryProjection> POOL =
-            WeakHashSet.newInstance(UnitaryProjection.class);
+            new WeakHashSet<>(UnitaryProjection.class);
 
     /**
      * The parameters used for creating this projection. They are used for formatting <cite>Well

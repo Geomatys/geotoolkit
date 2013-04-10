@@ -28,7 +28,7 @@ import javax.xml.bind.PropertyException;
 import javax.xml.bind.JAXBException;
 import javax.xml.validation.Schema;
 
-import org.geotoolkit.util.Version;
+import org.apache.sis.util.Version;
 import org.geotoolkit.util.Strings;
 import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.resources.Errors;

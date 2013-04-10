@@ -31,13 +31,14 @@ import java.util.AbstractSet;
 import java.util.NoSuchElementException;
 import java.util.ConcurrentModificationException;
 
+import org.apache.sis.util.collection.CheckedContainer;
 
 import org.geotoolkit.util.Range;
 import org.geotoolkit.util.Cloneable;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.DateRange;
 import org.geotoolkit.util.NumberRange;
-import org.geotoolkit.util.NullArgumentException;
+import org.apache.sis.util.NullArgumentException;
 import org.geotoolkit.util.converter.ObjectConverter;
 import org.geotoolkit.util.converter.ConverterRegistry;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
@@ -71,7 +72,7 @@ import static org.apache.sis.util.ArgumentChecks.ensureCanCast;
  */
 @Deprecated
 public class RangeSet<T extends Comparable<? super T>> extends AbstractSet<Range<T>>
-        implements CheckedCollection<Range<T>>, SortedSet<Range<T>>, Cloneable, Serializable
+        implements CheckedContainer/*<Range<T>>*/, SortedSet<Range<T>>, Cloneable, Serializable
 {
     /**
      * Serial number for inter-operability with different versions.

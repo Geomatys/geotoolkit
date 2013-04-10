@@ -35,7 +35,7 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.coverage.AbstractCoverage;
 import org.geotoolkit.geometry.DirectPosition2D;
-import org.geotoolkit.util.collection.UnmodifiableArrayList;
+import org.apache.sis.util.collection.UnmodifiableArrayList;
 
 
 /**

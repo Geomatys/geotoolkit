@@ -40,8 +40,8 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.*;
 
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.util.converter.Classes;
-import org.geotoolkit.util.collection.WeakHashSet;
+import org.apache.sis.util.Classes;
+import org.apache.sis.util.collection.WeakHashSet;
 import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.factory.ReferencingFactory;
@@ -133,7 +133,7 @@ public abstract class AbstractCoordinateOperationFactory extends ReferencingFact
      * to returns instance of existing operations when possible.
      */
     private final WeakHashSet<CoordinateOperation> pool =
-            WeakHashSet.newInstance(CoordinateOperation.class);
+            new WeakHashSet<>(CoordinateOperation.class);
 
     /**
      * Tells if {@link FactoryGroup#hints} has been invoked. It must be invoked exactly once,

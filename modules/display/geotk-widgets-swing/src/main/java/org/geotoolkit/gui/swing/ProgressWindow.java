@@ -35,7 +35,7 @@ import org.geotoolkit.process.ProgressController;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.internal.swing.SwingUtilities;
 import org.geotoolkit.internal.swing.ExceptionMonitor;
-import org.geotoolkit.util.Disposable;
+import org.apache.sis.util.Disposable;
 
 
 /**
