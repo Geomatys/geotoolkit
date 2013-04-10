@@ -19,15 +19,12 @@ package org.geotoolkit.xml;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.io.Serializable;
 import java.lang.reflect.Proxy;
 import java.lang.reflect.InvocationHandler;
-import net.jcip.annotations.Immutable;
 
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.util.LenientComparable;
-import org.geotoolkit.util.collection.WeakHashSet;
 
 
 /**
@@ -54,20 +51,17 @@ import org.geotoolkit.util.collection.WeakHashSet;
  *
  * @since 3.18
  * @module
+ *
+ * @deprecated Moved to Apache SIS as {@link org.apache.sis.xml.NilReason}.
  */
-@Immutable
-public final class NilReason implements Serializable {
-    /**
-     * For cross-version compatibility.
-     */
-    private static final long serialVersionUID = -1302619137838086028L;
-
+@Deprecated
+public final class NilReason {
     /**
      * There is no value.
      * <p>
      * The string representation is {@code "inapplicable"}.
      */
-    public static final NilReason INAPPLICABLE = new NilReason("inapplicable");
+    public static final org.apache.sis.xml.NilReason INAPPLICABLE = org.apache.sis.xml.NilReason.INAPPLICABLE;
 
     /**
      * The correct value is not readily available to the sender of this data.
@@ -75,14 +69,14 @@ public final class NilReason implements Serializable {
      * <p>
      * The string representation is {@code "missing"}.
      */
-    public static final NilReason MISSING = new NilReason("missing");
+    public static final org.apache.sis.xml.NilReason MISSING = org.apache.sis.xml.NilReason.MISSING;
 
     /**
      * The value will be available later.
      * <p>
      * The string representation is {@code "template"}.
      */
-    public static final NilReason TEMPLATE = new NilReason("template");
+    public static final org.apache.sis.xml.NilReason TEMPLATE = org.apache.sis.xml.NilReason.TEMPLATE;
 
     /**
      * The correct value is not known to, and not computable by, the sender of this data.
@@ -90,14 +84,14 @@ public final class NilReason implements Serializable {
      * <p>
      * The string representation is {@code "unknown"}.
      */
-    public static final NilReason UNKNOWN = new NilReason("unknown");
+    public static final org.apache.sis.xml.NilReason UNKNOWN = org.apache.sis.xml.NilReason.UNKNOWN;
 
     /**
      * The value is not divulged.
      * <p>
      * The string representation is {@code "withheld"}.
      */
-    public static final NilReason WITHHELD = new NilReason("withheld");
+    public static final org.apache.sis.xml.NilReason WITHHELD = org.apache.sis.xml.NilReason.WITHHELD;
 
     /**
      * Other brief explanation. This constant does not provide any explanation. In order to test
@@ -107,37 +101,12 @@ public final class NilReason implements Serializable {
      * The string representation is {@code "other:text"}, where text is a string of two or more
      * characters with no included spaces.
      */
-    public static final NilReason OTHER = new NilReason("other");
+    public static final org.apache.sis.xml.NilReason OTHER = org.apache.sis.xml.NilReason.OTHER;
 
     /**
-     * List of predefined constants.
+     * Do not allow instantiation.
      */
-    private static final NilReason[] PREDEFINED = {
-        INAPPLICABLE, MISSING, TEMPLATE, UNKNOWN, WITHHELD, OTHER
-    };
-
-    /**
-     * The pool of other and URI created up to date.
-     */
-    private static final WeakHashSet<NilReason> POOL = WeakHashSet.newInstance(NilReason.class);
-
-    /**
-     * Either the XML enum as a {@code String} (including the explanation if the prefix
-     * is "{@code other}", or an {@link URI}.
-     */
-    private final Object reason;
-
-    /**
-     * The invocation handler for empty objects, created when first needed.
-     * The same handler can be shared for all objects.
-     */
-    private transient InvocationHandler handler;
-
-    /**
-     * Creates a new enum for the given XML enum or the given URI.
-     */
-    private NilReason(final Object reason) {
-        this.reason = reason;
+    private NilReason() {
     }
 
     /**
@@ -148,22 +117,8 @@ public final class NilReason implements Serializable {
      *
      * @return An array containing the instances of this type.
      */
-    public static NilReason[] values() {
-        final int predefinedCount = PREDEFINED.length;
-        NilReason[] reasons;
-        synchronized (POOL) {
-            reasons = POOL.toArray(new NilReason[predefinedCount + POOL.size()]);
-        }
-        int count = reasons.length;
-        while (count != 0 && reasons[count-1] == null) count--;
-        count += predefinedCount;
-        final NilReason[] source = reasons;
-        if (count != reasons.length) {
-            reasons = new NilReason[count];
-        }
-        System.arraycopy(source, 0, reasons, predefinedCount, count - predefinedCount);
-        System.arraycopy(PREDEFINED, 0, reasons, 0, predefinedCount);
-        return reasons;
+    public static org.apache.sis.xml.NilReason[] values() {
+        return org.apache.sis.xml.NilReason.values();
     }
 
     /**
@@ -189,120 +144,8 @@ public final class NilReason implements Serializable {
      * @throws URISyntaxException If the given string is not one of the predefined enumeration
      *         values and can not be parsed as a URI.
      */
-    public static NilReason valueOf(String reason) throws URISyntaxException {
-        reason = reason.trim();
-        int i = reason.indexOf(':');
-        if (i < 0) {
-            for (final NilReason candidate : PREDEFINED) {
-                if (reason.equalsIgnoreCase((String) candidate.reason)) {
-                    return candidate;
-                }
-            }
-        } else {
-            if (reason.substring(0, i).trim().equalsIgnoreCase("other")) {
-                final StringBuilder buffer = new StringBuilder("other:");
-                final int length = reason.length();
-                while (++i < length) {
-                    final char c = reason.charAt(i);
-                    if (Character.isUnicodeIdentifierPart(c)) {
-                        buffer.append(c);
-                    }
-                }
-                String result = buffer.toString();
-                if (result.isEmpty()) {
-                    return OTHER;
-                }
-                if (result.equals(reason)) {
-                    result = reason; // Share existing instance.
-                }
-                return POOL.unique(new NilReason(result));
-            }
-        }
-        return POOL.unique(new NilReason(new URI(reason)));
-    }
-
-    /**
-     * Invoked after deserialization in order to return a unique instance if possible.
-     */
-    private Object readResolve() {
-        if (reason instanceof String) {
-            for (final NilReason candidate : PREDEFINED) {
-                if (reason.equals(candidate.reason)) {
-                    return candidate;
-                }
-            }
-        }
-        return POOL.unique(this);
-    }
-
-    /**
-     * If this {@code NilReason} is an enumeration of kind {@link #OTHER}, returns the explanation
-     * text. Otherwise returns {@code null}. If non-null, then the explanation is a unicode
-     * identifier without white space.
-     * <p>
-     * Note that in the special case where {@code this} nil reason is the {@link #OTHER}
-     * instance itself, then this method returns an empty string.
-     *
-     * @return The explanation as a unicode identifier, or {@code null} if this {@code NilReason}
-     *         is not an enumeration of kind {@link #OTHER}.
-     */
-    public String getExplanation() {
-        if (reason instanceof String) {
-            final String text = (String) reason;
-            final int s = text.indexOf(':');
-            if (s >= 0) {
-                return text.substring(s + 1);
-            }
-            if (text.equals("other")) {
-                return "";
-            }
-        }
-        return null;
-    }
-
-    /**
-     * If the explanation of this {@code NilReason} is referenced by a URI, returns that URI.
-     * Otherwise returns {@code null}.
-     *
-     * @return The URI, or {@code null} if the explanation of this {@code NilReason}
-     *         is not referenced by a URI.
-     */
-    public URI getURI() {
-        return (reason instanceof URI) ? (URI) reason : null;
-    }
-
-    /**
-     * Returns the GML string representation of this {@code NilReason}. The returned string
-     * is a simple enumeration value (e.g. {@code "inapplicable"}) if this {@code NilReason}
-     * is one of the predefined constants, or a string of the form {@code "other:text"}, or
-     * a URI.
-     *
-     * @return The GML string representation of this {@code NilReason}.
-     */
-    @Override
-    public String toString() {
-        return reason.toString();
-    }
-
-    /**
-     * Returns a hash code value for this {@code NilReason}.
-     */
-    @Override
-    public int hashCode() {
-        return reason.hashCode() ^ (int)serialVersionUID;
-    }
-
-    /**
-     * Compares this {@code NilReason} with the specified object for equality.
-     *
-     * @param other The object to compare with this {@code NilReason}.
-     */
-    @Override
-    public boolean equals(final Object other) {
-        if (other instanceof NilReason) {
-            return reason.equals(((NilReason) other).reason);
-        }
-        return false;
+    public static org.apache.sis.xml.NilReason valueOf(String reason) throws URISyntaxException {
+        return org.apache.sis.xml.NilReason.valueOf(reason);
     }
 
     /**
@@ -318,17 +161,12 @@ public final class NilReason implements Serializable {
      * @return An {@link NilObject} of the given type.
      */
     @SuppressWarnings("unchecked")
-    public <T> T createNilObject(final Class<T> type) {
+    public static <T> T createNilObject(final org.apache.sis.xml.NilReason reason, final Class<T> type) {
         ArgumentChecks.ensureNonNull("type", type);
         if (NilObjectHandler.isIgnoredInterface(type)) {
             throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_$2, "type", type));
         }
-        InvocationHandler h;
-        synchronized (this) {
-            if ((h = handler) == null) {
-                handler = h = new NilObjectHandler(this);
-            }
-        }
+        InvocationHandler h= new NilObjectHandler(reason);
         return (T) Proxy.newProxyInstance(NilReason.class.getClassLoader(),
                 new Class<?>[] {type, NilObject.class, LenientComparable.class}, h);
     }

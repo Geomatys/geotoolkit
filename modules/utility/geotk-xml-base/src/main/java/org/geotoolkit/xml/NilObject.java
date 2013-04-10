@@ -63,12 +63,9 @@ package org.geotoolkit.xml;
  *
  * @since 3.18
  * @module
+ *
+ * @deprecated Moved to Apache SIS as {@link org.apache.sis.xml.NilObject}.
  */
-public interface NilObject {
-    /**
-     * Returns the reason why this object is empty.
-     *
-     * @return The reason why this object is empty.
-     */
-    NilReason getNilReason();
+@Deprecated
+public interface NilObject extends org.apache.sis.xml.NilObject {
 }

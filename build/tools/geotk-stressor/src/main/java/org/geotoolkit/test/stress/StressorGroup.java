@@ -33,7 +33,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.geotoolkit.io.TableWriter;
 import org.geotoolkit.io.ExpandedTabWriter;
 import org.geotoolkit.internal.Threads;
-import org.geotoolkit.math.Statistics;
+import org.apache.sis.math.Statistics;
 import org.geotoolkit.util.NullArgumentException;
 
 
@@ -177,8 +177,8 @@ public class StressorGroup<S extends Stressor> implements Runnable, ThreadFactor
             return;
         }
         err.flush();
-        final Statistics  responseTime = new Statistics();
-        final Statistics  throughput   = new Statistics();
+        final Statistics  responseTime = new Statistics(null);
+        final Statistics  throughput   = new Statistics(null);
         final TableWriter table        = new TableWriter(out);
         final PrintWriter printer      = new PrintWriter(new ExpandedTabWriter(table, 2));
         table.setMultiLinesCells(true);

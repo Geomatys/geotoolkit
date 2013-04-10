@@ -805,13 +805,13 @@ public class GeneralEnvelope extends ArrayEnvelope implements Cloneable, Seriali
      * {@linkplain #getCoordinateReferenceSystem coordinate reference system} (if any) stay
      * unchanged.
      *
-     * @see #isNull()
+     * @see #isAllNaN()
      *
      * @since 2.2
      */
     public void setToNull() {
         Arrays.fill(ordinates, Double.NaN);
-        assert isNull() : this;
+        assert isAllNaN() : this;
     }
 
     /**

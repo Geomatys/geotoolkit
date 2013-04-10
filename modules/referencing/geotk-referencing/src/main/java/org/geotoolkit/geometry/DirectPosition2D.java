@@ -18,10 +18,6 @@
 package org.geotoolkit.geometry;
 
 import java.awt.geom.Point2D;
-import java.io.IOException;
-import java.io.Serializable;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.MismatchedDimensionException;
@@ -29,8 +25,6 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.cs.AxisDirection;
 
 import org.geotoolkit.util.Cloneable;
-import org.geotoolkit.util.Utilities;
-import org.geotoolkit.resources.Errors;
 
 
 /**
@@ -68,17 +62,15 @@ import org.geotoolkit.resources.Errors;
  *
  * @since 2.0
  * @module
+ *
+ * @deprecated Moved to Apache SIS as {@link org.apache.sis.geometry.DirectPosition2D}.
  */
-public class DirectPosition2D extends Point2D.Double implements DirectPosition, Serializable, Cloneable {
+@Deprecated
+public class DirectPosition2D extends org.apache.sis.geometry.DirectPosition2D implements Cloneable {
     /**
      * Serial number for inter-operability with different versions.
      */
-    private static final long serialVersionUID = 835130287438466996L;
-
-    /**
-     * The coordinate reference system for this position;
-     */
-    private CoordinateReferenceSystem crs;
+    private static final long serialVersionUID = 835130287438466997L;
 
     /**
      * Constructs a position initialized to (0,0) with a {@code null} coordinate reference system.
@@ -92,7 +84,7 @@ public class DirectPosition2D extends Point2D.Double implements DirectPosition, 
      * @param crs The coordinate reference system, or {@code null}.
      */
     public DirectPosition2D(final CoordinateReferenceSystem crs) {
-        setCoordinateReferenceSystem(crs);
+        super(crs);
     }
 
     /**
@@ -124,8 +116,7 @@ public class DirectPosition2D extends Point2D.Double implements DirectPosition, 
     public DirectPosition2D(final CoordinateReferenceSystem crs,
                             final double x, final double y)
     {
-        super(x, y);
-        setCoordinateReferenceSystem(crs);
+        super(x, y, crs);
     }
 
     /**
@@ -147,7 +138,7 @@ public class DirectPosition2D extends Point2D.Double implements DirectPosition, 
      * @throws MismatchedDimensionException if this point doesn't have the expected dimension.
      */
     public DirectPosition2D(final DirectPosition point) throws MismatchedDimensionException {
-        setLocation(point);
+        super(point);
     }
 
     /**
@@ -170,105 +161,7 @@ public class DirectPosition2D extends Point2D.Double implements DirectPosition, 
      * @since 3.09
      */
     public DirectPosition2D(final String wkt) throws NumberFormatException, IllegalArgumentException {
-        final double[] ordinates = AbstractDirectPosition.parse(wkt);
-        final int dimension = (ordinates != null) ? ordinates.length : 0;
-        if (dimension != 2) {
-            throw new MismatchedDimensionException(Errors.format(
-                    Errors.Keys.MISMATCHED_DIMENSION_$3, wkt, dimension, 2));
-        }
-        x = ordinates[0];
-        y = ordinates[1];
-    }
-
-    /**
-     * Returns always {@code this}, the direct position for this
-     * {@linkplain org.opengis.geometry.coordinate.Position position}.
-     *
-     * @since 2.5
-     */
-    @Override
-    public DirectPosition getDirectPosition() {
-        return this;
-    }
-
-    /**
-     * Returns the coordinate reference system in which the coordinate is given.
-     * May be {@code null} if this particular {@code DirectPosition} is included
-     * in a larger object with such a reference to a CRS.
-     *
-     * @return The coordinate reference system, or {@code null}.
-     */
-    @Override
-    public final CoordinateReferenceSystem getCoordinateReferenceSystem() {
-        return crs;
-    }
-
-    /**
-     * Sets the coordinate reference system in which the coordinate is given.
-     *
-     * @param crs The new coordinate reference system, or {@code null}.
-     */
-    public void setCoordinateReferenceSystem(final CoordinateReferenceSystem crs) {
-        AbstractDirectPosition.checkCoordinateReferenceSystemDimension(crs, 2);
-        this.crs = crs;
-    }
-
-    /**
-     * The length of coordinate sequence (the number of entries).
-     * This is always 2 for {@code DirectPosition2D} objects.
-     *
-     * @return The dimensionality of this position.
-     */
-    @Override
-    public final int getDimension() {
-        return 2;
-    }
-
-    /**
-     * Returns a sequence of numbers that hold the coordinate of this position in its
-     * reference system.
-     *
-     * @return The coordinate.
-     */
-    @Override
-    public double[] getCoordinate() {
-        return new double[] {x,y};
-    }
-
-    /**
-     * Returns the ordinate at the specified dimension.
-     *
-     * @param  dimension The dimension in the range 0 to 1 inclusive.
-     * @return The coordinate at the specified dimension.
-     * @throws IndexOutOfBoundsException if the specified dimension is out of bounds.
-     *
-     * @todo Provides a more detailed error message.
-     */
-    @Override
-    public final double getOrdinate(final int dimension) throws IndexOutOfBoundsException {
-        switch (dimension) {
-            case 0:  return x;
-            case 1:  return y;
-            default: throw new IndexOutOfBoundsException(Errors.format(
-                    Errors.Keys.INDEX_OUT_OF_BOUNDS_$1, dimension));
-        }
-    }
-
-    /**
-     * Sets the ordinate value along the specified dimension.
-     *
-     * @param  dimension the dimension for the ordinate of interest.
-     * @param  value the ordinate value of interest.
-     * @throws IndexOutOfBoundsException if the specified dimension is out of bounds.
-     */
-    @Override
-    public final void setOrdinate(int dimension, double value) throws IndexOutOfBoundsException {
-        switch (dimension) {
-            case 0:  x = value; break;
-            case 1:  y = value; break;
-            default: throw new IndexOutOfBoundsException(Errors.format(
-                    Errors.Keys.INDEX_OUT_OF_BOUNDS_$1, dimension));
-        }
+        super(wkt);
     }
 
     /**
@@ -293,96 +186,5 @@ public class DirectPosition2D extends Point2D.Double implements DirectPosition, 
      */
     public Point2D toPoint2D() {
         return new Point2D.Double(x,y);
-    }
-
-    /**
-     * Formats this position in the <cite>Well Known Text</cite> (WKT) format.
-     * The output is like below:
-     *
-     * <blockquote>{@code POINT(}{@linkplain #getCoordinate() ordinates}{@code )}</blockquote>
-     *
-     * The output of this method can be
-     * {@linkplain GeneralDirectPosition#GeneralDirectPosition(String) parsed} by the
-     * {@link GeneralDirectPosition} constructor.
-     */
-    @Override
-    public String toString() {
-        return AbstractDirectPosition.toString(this);
-    }
-
-    /**
-     * Returns a hash value for this coordinate. This method implements the
-     * {@link DirectPosition#hashCode} contract, not the {@link Point2D#hashCode} contract.
-     *
-     * @return A hash code value for this position.
-     */
-    @Override
-    public int hashCode() {
-        return AbstractDirectPosition.hashCode(this);
-    }
-
-    /**
-     * Compares this point with the specified object for equality. If the given object implements
-     * the {@link DirectPosition} interface, then the comparison is performed as specified in its
-     * {@link DirectPosition#equals} contract. Otherwise the comparison is performed as specified
-     * in {@link Point2D#equals}.
-     *
-     * @param object The object to compare with this position.
-     * @return {@code true} if the given object is equal to this position.
-     */
-    @Override
-    public boolean equals(final Object object) {
-        /*
-         * If the other object implements the DirectPosition interface, performs
-         * the comparison as specified in DirectPosition.equals(Object) contract.
-         */
-        if (object instanceof DirectPosition) {
-            final DirectPosition other = (DirectPosition) object;
-            if (other.getDimension() == 2 &&
-                Utilities.equals(other.getOrdinate(0), x) &&
-                Utilities.equals(other.getOrdinate(1), y) &&
-                Utilities.equals(other.getCoordinateReferenceSystem(), crs))
-            {
-                assert hashCode() == other.hashCode() : this;
-                return true;
-            }
-            return false;
-        }
-        /*
-         * Otherwise performs the comparison as in Point2D.equals(Object).
-         * Do NOT check the CRS if the given object is an ordinary Point2D.
-         * This is necessary in order to respect the contract defined in Point2D.
-         */
-        return super.equals(object);
-    }
-
-    /**
-     * Returns a clone of this point.
-     *
-     * @return A clone of this position.
-     */
-    @Override
-    public DirectPosition2D clone() {
-        return (DirectPosition2D) super.clone();
-    }
-
-    /**
-     * Write this object to the specified stream. This method is necessary
-     * because the super-class is not serializable.
-     */
-    private void writeObject(final ObjectOutputStream out) throws IOException {
-        out.defaultWriteObject();
-        out.writeDouble(x);
-        out.writeDouble(y);
-    }
-
-    /**
-     * Read this object from the specified stream. This method is necessary
-     * because the super-class is not serializable.
-     */
-    private void readObject(final ObjectInputStream in) throws IOException, ClassNotFoundException {
-        in.defaultReadObject();
-        x = in.readDouble();
-        y = in.readDouble();
     }
 }

@@ -498,7 +498,7 @@ public class GeneralGridGeometry implements GridGeometry, Serializable {
      * @see GridGeometry2D#getEnvelope2D()
      */
     public Envelope getEnvelope() throws InvalidGridGeometryException {
-        if (envelope != null && !envelope.isNull()) {
+        if (envelope != null && !envelope.isAllNaN()) {
             assert isDefined(ENVELOPE);
             return envelope;
         }
@@ -654,8 +654,8 @@ public class GeneralGridGeometry implements GridGeometry, Serializable {
                     Errors.Keys.ILLEGAL_ARGUMENT_$2, "bitmask", bitmask));
         }
         return ((bitmask & CRS)         == 0 || (envelope  != null && envelope.getCoordinateReferenceSystem() != null))
-            && ((bitmask & ENVELOPE)    == 0 || (envelope  != null && !envelope.isNull()))
-            && ((bitmask & EXTENT)  == 0 || (extent != null))
+            && ((bitmask & ENVELOPE)    == 0 || (envelope  != null && !envelope.isAllNaN()))
+            && ((bitmask & EXTENT)      == 0 || (extent    != null))
             && ((bitmask & GRID_TO_CRS) == 0 || (gridToCRS != null));
     }
 

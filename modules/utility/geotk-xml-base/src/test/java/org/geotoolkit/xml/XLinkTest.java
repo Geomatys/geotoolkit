@@ -103,7 +103,7 @@ public final strictfp class XLinkTest {
             fail("The XLink should be unmodifiable.");
         } catch (UnsupportedOperationException e) {
             // This is the expected exception.
-            assertTrue(e.getMessage().contains("xlink"));
+            assertTrue(e.getMessage().contains("XLink"));
         }
     }
 
@@ -150,7 +150,7 @@ public final strictfp class XLinkTest {
             fail("The XLink should be unmodifiable.");
         } catch (UnsupportedOperationException e) {
             // This is the expected exception.
-            assertTrue(e.getMessage().contains("xlink"));
+            assertTrue(e.getMessage().contains("XLink"));
         }
     }
 

@@ -785,7 +785,7 @@ public class GridGeometry2D extends GeneralGridGeometry {
      */
     public Envelope2D getEnvelope2D() throws InvalidGridGeometryException {
         final ImmutableEnvelope envelope = this.envelope;
-        if (envelope != null && !envelope.isNull()) {
+        if (envelope != null && !envelope.isAllNaN()) {
             assert isDefined(ENVELOPE);
             return new Envelope2D(crs2D,
                     envelope.getMinimum(axisDimensionX),
