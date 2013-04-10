@@ -130,7 +130,7 @@ public class DuplicatingFilterVisitor implements FilterVisitor, ExpressionVisito
      * @param extraData
      * @return
      */
-    Expression visit(final Expression expression, final Object extraData) {
+    public Expression visit(final Expression expression, final Object extraData) {
         if (expression == null) {
             return null;
         }
@@ -255,7 +255,7 @@ public class DuplicatingFilterVisitor implements FilterVisitor, ExpressionVisito
         final Expression expr = visit(filter.getExpression(), extraData);
         return getFactory(extraData).isNil(expr);
     }
-    
+
     @Override
     public Object visit(final BBOX filter, final Object extraData) {
 
@@ -454,7 +454,7 @@ public class DuplicatingFilterVisitor implements FilterVisitor, ExpressionVisito
         final Expression exp2 = visit(filter.getExpression2(), extraData);
         return getFactory(extraData).toverlaps(exp1, exp2);
     }
-    
+
     @Override
     public Object visitNullFilter(final Object extraData) {
         return null;
@@ -484,7 +484,7 @@ public class DuplicatingFilterVisitor implements FilterVisitor, ExpressionVisito
         //TODO bug on duplicate interpolate and catorize.
         //expecting the function to be immutable for now.
         return expression;
-        
+
 //        final List<Expression> old = expression.getParameters();
 //        final Expression[] args = new Expression[old.size()];
 //        int i = 0;

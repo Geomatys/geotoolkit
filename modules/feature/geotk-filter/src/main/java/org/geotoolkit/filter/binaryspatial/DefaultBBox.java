@@ -34,6 +34,7 @@ import org.geotoolkit.geometry.jts.SRIDGenerator;
 import org.geotoolkit.geometry.jts.SRIDGenerator.Version;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.IdentifiedObjects;
+import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.util.StringUtilities;
 
 import org.opengis.feature.Feature;
@@ -72,11 +73,14 @@ public class DefaultBBox extends AbstractBinarySpatialOperator<PropertyName,Defa
         super(nonNullPropertyName(property),bbox);
         boundingGeometry = toGeometry(bbox.getValue());
         boundingEnv = boundingGeometry.getGeometry().getEnvelopeInternal();
-        this.crs = bbox.getValue().getCoordinateReferenceSystem();
-        if(crs != null){
+        final CoordinateReferenceSystem crsFilter = bbox.getValue().getCoordinateReferenceSystem();
+        if(crsFilter != null){
+            this.crs = crsFilter;
             this.srid = SRIDGenerator.toSRID(crs, Version.V1);
         }else{
-            this.srid = 0;
+            // In CQL if crs is not specified, it is EPSG:4326
+            this.crs = DefaultGeographicCRS.WGS84;
+            this.srid = 4326;
         }
     }
 
@@ -275,7 +279,7 @@ public class DefaultBBox extends AbstractBinarySpatialOperator<PropertyName,Defa
      * @return Geometry
      */
     private static PreparedGeometry toGeometry(final Envelope env){
-        
+
         double minX = env.getMinimum(0);
         double minY = env.getMinimum(1);
         double maxX = env.getMaximum(0);
@@ -284,7 +288,7 @@ public class DefaultBBox extends AbstractBinarySpatialOperator<PropertyName,Defa
         if(Double.isNaN(minY) || Double.isInfinite(minY)) minY = Double.MIN_VALUE;
         if(Double.isNaN(maxX) || Double.isInfinite(maxX)) maxX = Double.MAX_VALUE;
         if(Double.isNaN(maxY) || Double.isInfinite(maxY)) maxY = Double.MAX_VALUE;
-        
+
         final Coordinate[] coords = new Coordinate[5];
         coords[0] = new Coordinate(minX, minY);
         coords[1] = new Coordinate(minX, maxY);
