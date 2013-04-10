@@ -46,7 +46,7 @@ import org.geotoolkit.referencing.operation.matrix.Matrices;
 import org.geotoolkit.referencing.operation.transform.EllipsoidalTransform;
 import org.geotoolkit.referencing.operation.transform.ConcatenatedTransform;
 import org.geotoolkit.referencing.factory.NoSuchIdentifiedResource;
-import org.geotoolkit.util.collection.BackingStoreException;
+import org.apache.sis.util.collection.BackingStoreException;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Descriptions;
 

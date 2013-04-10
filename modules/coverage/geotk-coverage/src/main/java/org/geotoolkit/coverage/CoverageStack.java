@@ -58,7 +58,7 @@ import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.collection.FrequencySortedSet;
-import org.geotoolkit.util.collection.BackingStoreException;
+import org.apache.sis.util.collection.BackingStoreException;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.Interpolator2D;
 import org.geotoolkit.geometry.GeneralDirectPosition;
@@ -833,7 +833,7 @@ public class CoverageStack extends AbstractCoverage {
             try {
                 return Double.compare(zFromObject(entry1), zFromObject(entry2));
             } catch (IOException exception) {
-                throw new BackingStoreException(exception);
+                throw new org.geotoolkit.util.collection.BackingStoreException(exception);
                 // Will be catch and rethrown as IOException
                 // by all methods using this comparator.
             }

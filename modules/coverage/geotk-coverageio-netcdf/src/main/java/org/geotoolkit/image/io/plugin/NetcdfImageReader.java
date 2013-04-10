@@ -86,7 +86,7 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.lang.Workaround;
 import org.geotoolkit.util.Version;
 import org.apache.sis.util.ArraysExt;
-import org.geotoolkit.util.collection.BackingStoreException;
+import org.apache.sis.util.collection.BackingStoreException;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
 
 import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.ISO_FORMAT_NAME;
@@ -660,7 +660,7 @@ public class NetcdfImageReader extends FileImageReader implements
                             axes = getAxes(rank);
                         } catch (IOException e) {
                             // Will be caught in the enclosing method.
-                            throw new BackingStoreException(e);
+                            throw new org.geotoolkit.util.collection.BackingStoreException(e);
                         }
                         return (axes != null) ? new NetcdfAxesIterator(axes) :
                                 Collections.<Map.Entry<?,Integer>>emptySet().iterator();

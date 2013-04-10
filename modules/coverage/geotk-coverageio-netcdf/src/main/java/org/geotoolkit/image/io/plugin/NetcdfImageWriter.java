@@ -36,7 +36,7 @@ import ucar.nc2.NetcdfFileWriteable;
 import org.opengis.metadata.Metadata;
 
 import org.apache.sis.util.ArraysExt;
-import org.geotoolkit.util.collection.BackingStoreException;
+import org.apache.sis.util.collection.BackingStoreException;
 import org.geotoolkit.image.io.FileImageWriter;
 import org.geotoolkit.metadata.netcdf.NetcdfMetadataWriter;
 
