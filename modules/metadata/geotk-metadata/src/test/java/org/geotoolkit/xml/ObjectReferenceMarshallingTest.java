@@ -27,6 +27,7 @@ import org.opengis.metadata.citation.Series;
 import org.opengis.metadata.citation.Citation;
 
 import org.geotoolkit.test.TestBase;
+import org.apache.sis.xml.XLink;
 import org.apache.sis.util.ComparisonMode;
 import org.apache.sis.util.LenientComparable;
 import org.geotoolkit.util.SimpleInternationalString;

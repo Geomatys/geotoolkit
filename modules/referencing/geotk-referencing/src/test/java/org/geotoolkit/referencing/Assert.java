@@ -29,7 +29,7 @@ import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.io.wkt.Convention;
 import org.geotoolkit.io.wkt.WKTFormat;
 import org.geotoolkit.io.wkt.FormattableObject;
-import org.geotoolkit.geometry.AbstractEnvelope;
+import org.apache.sis.geometry.AbstractEnvelope;
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.referencing.operation.transform.LinearTransform;
 

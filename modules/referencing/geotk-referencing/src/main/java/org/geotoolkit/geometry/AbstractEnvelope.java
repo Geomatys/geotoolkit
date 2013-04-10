@@ -95,7 +95,7 @@ import static org.apache.sis.internal.util.Utilities.SIGN_BIT_MASK;
  * @deprecated Moved to Apache SIS as {@link org.apache.sis.geometry.AbstractEnvelope}.
  */
 @Deprecated
-public abstract class AbstractEnvelope extends org.apache.sis.geometry.AbstractEnvelope {
+abstract class AbstractEnvelope extends org.apache.sis.geometry.AbstractEnvelope {
     /**
      * Constructs an envelope.
      */

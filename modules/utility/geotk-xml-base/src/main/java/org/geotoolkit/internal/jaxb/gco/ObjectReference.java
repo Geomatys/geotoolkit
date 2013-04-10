@@ -19,7 +19,7 @@ package org.geotoolkit.internal.jaxb.gco;
 
 import java.util.UUID;
 
-import org.geotoolkit.xml.XLink;
+import org.apache.sis.xml.XLink;
 import org.geotoolkit.xml.ObjectLinker;
 import org.geotoolkit.xml.IdentifierMap;
 import org.geotoolkit.xml.IdentifierSpace;

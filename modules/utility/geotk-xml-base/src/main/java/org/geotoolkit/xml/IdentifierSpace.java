@@ -19,6 +19,7 @@ package org.geotoolkit.xml;
 
 import java.net.URI;
 import java.util.UUID;
+import org.apache.sis.xml.XLink;
 import org.opengis.metadata.citation.Citation;
 import org.geotoolkit.internal.jaxb.NonMarshalledAuthority;
 

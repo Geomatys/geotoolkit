@@ -18,12 +18,8 @@
 package org.geotoolkit.xml;
 
 import java.util.UUID;
-import java.lang.reflect.Proxy;
-
 import org.opengis.metadata.Identifier;
-
-import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.LenientComparable;
+import org.apache.sis.xml.XLink;
 import org.apache.sis.xml.NilReason;
 import org.apache.sis.xml.MarshalContext;
 import org.apache.sis.xml.ReferenceResolver;
@@ -90,12 +86,7 @@ public class ObjectLinker extends ReferenceResolver {
      */
     @SuppressWarnings("unchecked")
     public <T> T newIdentifiedObject(final Class<T> type, final Identifier... identifiers) {
-        if (NilObjectHandler.isIgnoredInterface(type)) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_$2, "type", type));
-        }
-        return (T) Proxy.newProxyInstance(ObjectLinker.class.getClassLoader(),
-                new Class<?>[] {type, IdentifiedObject.class, NilObject.class, LenientComparable.class},
-                new NilObjectHandler(Identifier.class, identifiers));
+        return super.newIdentifiedObject(org.apache.sis.internal.jaxb.MarshalContext.current(), type, identifiers);
     }
 
     /**
@@ -155,7 +146,7 @@ public class ObjectLinker extends ReferenceResolver {
     public <T> T resolve(final Class<T> type, final NilReason nilReason) {
         ensureNonNull("type", type);
         ensureNonNull("nilReason", nilReason);
-        return org.geotoolkit.xml.NilReason.createNilObject(nilReason, type);
+        return nilReason.createNilObject(type);
     }
 
     /**
@@ -193,7 +184,7 @@ public class ObjectLinker extends ReferenceResolver {
 
     @Override
     public final <T> T resolve(final MarshalContext context, final Class<T> type, final org.apache.sis.xml.XLink link) {
-        return (link instanceof XLink) ? resolve(type, (XLink) link) : super.resolve(context, type, link);
+        return resolve(type, link);
     }
 
     @Override

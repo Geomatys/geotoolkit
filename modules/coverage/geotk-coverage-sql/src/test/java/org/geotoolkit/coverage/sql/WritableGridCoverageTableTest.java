@@ -36,7 +36,7 @@ import org.geotoolkit.image.io.plugin.WorldFileImageReader;
 import org.geotoolkit.image.io.plugin.TextMatrixImageReader;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.ViewType;
-import org.geotoolkit.geometry.AbstractEnvelope;
+import org.apache.sis.geometry.AbstractEnvelope;
 import org.geotoolkit.util.MeasurementRange;
 import org.geotoolkit.util.Range;
 

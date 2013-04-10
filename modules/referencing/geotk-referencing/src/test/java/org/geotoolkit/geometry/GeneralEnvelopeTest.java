@@ -24,7 +24,6 @@ import org.apache.sis.math.MathFunctions;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 
 import org.junit.*;
-import org.geotoolkit.test.Depend;
 
 import static java.lang.Double.NaN;
 import static org.geotoolkit.referencing.Assert.*;
@@ -44,7 +43,6 @@ import static org.geotoolkit.referencing.crs.DefaultGeographicCRS.WGS84;
  *
  * @since 2.4
  */
-@Depend(AbstractEnvelopeTest.class)
 public final strictfp class GeneralEnvelopeTest {
     /**
      * The comparison threshold for strict comparisons.

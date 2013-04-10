@@ -20,6 +20,8 @@ package org.geotoolkit.xml;
 import javax.xml.bind.JAXBException;
 import org.opengis.metadata.citation.Series;
 import org.opengis.metadata.citation.Citation;
+import org.apache.sis.xml.NilObject;
+import org.apache.sis.xml.NilReason;
 import org.geotoolkit.test.TestBase;
 
 import org.junit.*;

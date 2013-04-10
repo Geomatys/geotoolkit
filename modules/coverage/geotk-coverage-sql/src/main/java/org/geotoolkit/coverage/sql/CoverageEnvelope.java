@@ -36,7 +36,7 @@ import org.geotoolkit.util.Cloneable;
 import org.geotoolkit.util.DateRange;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.geometry.GeneralEnvelope;
-import org.geotoolkit.geometry.AbstractEnvelope;
+import org.apache.sis.geometry.AbstractEnvelope;
 import org.geotoolkit.display.shape.XRectangle2D;
 import org.geotoolkit.display.shape.FloatDimension2D;
 import org.geotoolkit.display.shape.DoubleDimension2D;
