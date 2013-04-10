@@ -2,47 +2,69 @@
 
 <!--
   Replace some Geotk fully qualified names by Apache SIS names.
-  This task does not replace all classes. The classes that are
-  not replaced by this task need to be resolved manually.
+  This script processes all *.java files in the current working
+  directory and all sub-directories. This task does not replace
+  every classes. The classes that are not replaced by this task
+  will need to be resolved manually.
 
-  This class scans all *.java files in the current directory
-  and all sub-directories.
+  This script has three targets:
+
+  - packages (default): process entities for which only the package
+             name is different, typically in import statements. The
+             class names are unchanged.
+
+  - classes: process entities for which the package and class names
+             are different. Developer will need to manually replace
+             the class usages in the modified files.
+
+  - methods: rename some static methods after the classes have been
+             renamed.
 -->
-<project name="Upgrade" default="classes">
-  <target name="classes">
+<project name="Upgrade" default="packages">
+  <target name="packages">
     <replace dir="${user.dir}" summary="yes">
       <include name="**/*.java"/>
+      <replacefilter token="org.geotoolkit.geometry.AbstractDirectPosition"         value="org.apache.sis.geometry.AbstractDirectPosition"/>
+      <replacefilter token="org.geotoolkit.geometry.AbstractEnvelope"               value="org.apache.sis.geometry.AbstractEnvelope"/>
+      <replacefilter token="org.geotoolkit.geometry.DirectPosition2D"               value="org.apache.sis.geometry.DirectPosition2D"/>
+      <replacefilter token="org.geotoolkit.geometry.Envelope2D"                     value="org.apache.sis.geometry.Envelope2D"/>
       <replacefilter token="org.geotoolkit.util.AbstractInternationalString"        value="org.apache.sis.util.iso.AbstractInternationalString"/>
       <replacefilter token="org.geotoolkit.util.ArgumentChecks"                     value="org.apache.sis.util.ArgumentChecks"/>
       <replacefilter token="org.geotoolkit.util.Characters"                         value="org.apache.sis.util.Characters"/>
       <replacefilter token="org.geotoolkit.util.ComparisonMode"                     value="org.apache.sis.util.ComparisonMode"/>
-      <replacefilter token="org.geotoolkit.util.GeoAPI"                             value="org.apache.sis.util.iso.Types"/>
       <replacefilter token="org.geotoolkit.util.LenientComparable"                  value="org.apache.sis.util.LenientComparable"/>
       <replacefilter token="org.geotoolkit.util.Localized"                          value="org.apache.sis.util.Localized"/>
       <replacefilter token="org.geotoolkit.util.NullArgumentException"              value="org.apache.sis.util.NullArgumentException"/>
       <replacefilter token="org.geotoolkit.util.Range"                              value="org.apache.sis.measure.Range"/>
-      <replacefilter token="org.geotoolkit.util.Strings"                            value="org.apache.sis.util.CharSequences"/>
       <replacefilter token="org.geotoolkit.util.UnsupportedImplementationException" value="org.apache.sis.util.UnsupportedImplementationException"/>
-      <replacefilter token="org.geotoolkit.util.XArrays"                            value="org.apache.sis.util.ArraysExt"/>
       <replacefilter token="org.geotoolkit.util.converter.Classes"                  value="org.apache.sis.util.Classes"/>
       <replacefilter token="org.geotoolkit.util.converter.Numbers"                  value="org.apache.sis.util.Numbers"/>
       <replacefilter token="org.geotoolkit.util.collection.BackingStoreException"   value="org.apache.sis.util.collection.BackingStoreException"/>
       <replacefilter token="org.geotoolkit.util.collection.Cache"                   value="org.apache.sis.util.collection.Cache"/>
-      <replacefilter token="org.geotoolkit.util.collection.CheckedArrayList"        value="org.apache.sis.util.collection.CheckedArrayList"/>
       <replacefilter token="org.geotoolkit.util.collection.CheckedContainer"        value="org.apache.sis.util.collection.CheckedContainer"/>
-      <replacefilter token="org.geotoolkit.util.collection.CheckedHashMap"          value="org.apache.sis.util.collection.CheckedHashMap"/>
-      <replacefilter token="org.geotoolkit.util.collection.CheckedHashSet"          value="org.apache.sis.util.collection.CheckedHashSet"/>
       <replacefilter token="org.geotoolkit.util.collection.WeakHashSet"             value="org.apache.sis.util.collection.WeakHashSet"/>
       <replacefilter token="org.geotoolkit.util.collection.WeakValueHashMap"        value="org.apache.sis.util.collection.WeakValueHashMap"/>
+      <replacefilter token="org.geotoolkit.xml.XLink"                               value="org.apache.sis.xml.XLink"/>
+      <replacefilter token="org.geotoolkit.xml.NilReason"                           value="org.apache.sis.xml.NilReason"/>
+    </replace>
+  </target>
+
+  <target name="classes">
+    <replace dir="${user.dir}" summary="yes">
+      <include name="**/*.java"/>
+      <replacefilter token="org.geotoolkit.util.GeoAPI"                             value="org.apache.sis.util.iso.Types"/>
+      <replacefilter token="org.geotoolkit.util.Strings"                            value="org.apache.sis.util.CharSequences"/>
+      <replacefilter token="org.geotoolkit.util.XArrays"                            value="org.apache.sis.util.ArraysExt"/>
+      <replacefilter token="org.geotoolkit.xml.ObjectConverters"                    value="org.apache.sis.xml.ValueConverter"/>
     </replace>
   </target>
 
   <target name="methods">
     <replace dir="${user.dir}" summary="yes">
       <include name="**/*.java"/>
-      <replacefilter token="WeakHashSet.newInstance"               value="new WeakHashSet"/>
-      <replacefilter token="Classes.boundOfParameterizedAttribute" value="Classes.boundOfParameterizedProperty"/>
-      <replacefilter token="GeoAPI.forUML"                         value="Types.forStandardName"/>
+      <replacefilter token="WeakHashSet.newInstance"                                value="new WeakHashSet"/>
+      <replacefilter token="Classes.boundOfParameterizedAttribute"                  value="Classes.boundOfParameterizedProperty"/>
+      <replacefilter token="GeoAPI.forUML"                                          value="Types.forStandardName"/>
     </replace>
   </target>
 </project>
