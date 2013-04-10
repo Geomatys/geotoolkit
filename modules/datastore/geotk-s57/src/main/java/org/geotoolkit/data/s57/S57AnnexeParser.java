@@ -27,10 +27,12 @@ import com.lowagie.text.pdf.PdfReader;
 import com.lowagie.text.pdf.PdfString;
 import com.lowagie.text.pdf.RandomAccessFileOrArray;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
 import org.geotoolkit.feature.FeatureTypeBuilder;
@@ -46,7 +48,7 @@ import org.opengis.feature.type.FeatureType;
  */
 final class S57AnnexeParser {
     
-    private static class S57FeatureType{
+    public static class S57FeatureType implements Serializable{
         String acronym;
         int code;
         String fullName;
@@ -72,7 +74,7 @@ final class S57AnnexeParser {
         }        
     }
     
-    private static class S57PropertyType{
+    public static class S57PropertyType implements Serializable{
         String acronym;
         int code;
         String fullName;
@@ -111,7 +113,14 @@ final class S57AnnexeParser {
     
     public static void main(String[] args) throws IOException {
         
-        new S57AnnexeParser(args[0], args[1]);
+        args = new String[]{
+            "/home/jsorel/TRAVAIL/1_Specification/IHO/S-57_AppendixA_Chapter1_31ApAch1.pdf",
+            "/home/jsorel/TRAVAIL/1_Specification/IHO/S-57_AppendixA_Chapter2_31ApAch2.pdf"
+        };
+        S57AnnexeParser parser = new S57AnnexeParser(args[0], args[1]);
+        
+        
+        
     }
     
     public S57AnnexeParser(String an1, String an2) throws IOException {

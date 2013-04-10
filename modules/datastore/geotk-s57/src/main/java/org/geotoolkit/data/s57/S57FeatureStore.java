@@ -18,9 +18,11 @@
 package org.geotoolkit.data.s57;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -32,6 +34,7 @@ import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.storage.DataStoreException;
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
@@ -40,6 +43,8 @@ import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.parameter.ParameterValueGroup;
+
+import org.geotoolkit.data.s57.model.S57ModelObjectReader;
 
 /**
  * S-57 FeatureStore.
@@ -52,6 +57,8 @@ public class S57FeatureStore extends AbstractFeatureStore{
     static final String BUNDLE_PATH = "org/geotoolkit/s57/bundle";
     
     private final File file;
+    private Set<FeatureType> types = null;
+    private Set<Name> names = null;
     
     public S57FeatureStore(final ParameterValueGroup params) throws DataStoreException{
         super(params);
@@ -82,17 +89,49 @@ public class S57FeatureStore extends AbstractFeatureStore{
     
     @Override
     public Set<Name> getNames() throws DataStoreException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        loadTypes();
+        return names;
     }
 
     @Override
     public FeatureType getFeatureType(Name typeName) throws DataStoreException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        loadTypes();
+        for(FeatureType ft : types){
+            if(DefaultName.match(ft.getName(),typeName)){
+                return ft;
+            }
+        }
+        throw new DataStoreException("Type "+typeName+" does not exist.");
     }
 
+    private synchronized void loadTypes()throws DataStoreException {
+        if(types!= null) return;
+        types = new HashSet<FeatureType>();
+        names = new HashSet<Name>();
+        
+        final S57ModelObjectReader reader = new S57ModelObjectReader();
+        reader.setInput(file);
+        try{
+            while(reader.hasNext()){
+                
+                
+            }
+        }catch(IOException ex){
+            throw new DataStoreException(ex);
+        }finally{
+            try {
+                reader.dispose();
+            } catch (IOException ex) {
+                //we tryed
+            }
+        }
+    }
+    
     @Override
     public FeatureReader getFeatureReader(Query query) throws DataStoreException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        final FeatureType ft = getFeatureType(query.getTypeName());
+        final FeatureReader reader = new S57FeatureReader(ft);
+        return handleRemaining(reader, query);
     }
 
     

@@ -394,5 +394,5 @@ public final class S57Constants {
     public static final SBConstant RIND_MASTER = new SBConstant("M",1);
     public static final SBConstant RIND_SLAVE = new SBConstant("S",2);
     public static final SBConstant RIND_PEER = new SBConstant("P",3);
-    
+        
 }
