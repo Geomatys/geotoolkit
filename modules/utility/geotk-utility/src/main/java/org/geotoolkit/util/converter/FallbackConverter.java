@@ -17,10 +17,13 @@
  */
 package org.geotoolkit.util.converter;
 
+import java.util.Arrays;
 import java.util.Set;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.io.Serializable;
 import javax.swing.tree.MutableTreeNode;
+import org.apache.sis.util.Classes;
 
 import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.gui.swing.tree.DefaultMutableTreeNode;
@@ -115,7 +118,7 @@ final class FallbackConverter<S,T> extends ClassPair<S,T> implements ObjectConve
              * root for both classes and interfaces.
              */
             final Set<Class<?>> interfaces = Classes.findCommonInterfaces(target1, target2);
-            interfaces.removeAll(Classes.getAllInterfaces(source));
+            interfaces.removeAll(getAllInterfaces(source));
             final Iterator<Class<?>> it = interfaces.iterator();
             if (it.hasNext()) {
                 /*
@@ -135,6 +138,21 @@ final class FallbackConverter<S,T> extends ClassPair<S,T> implements ObjectConve
         @SuppressWarnings({"unchecked","rawtypes"})
         final Class<? extends T> unsafe = (Class) type;
         return unsafe;
+    }
+
+    /**
+     * Returns the set of every interfaces implemented by the given class or interface. This is
+     * similar to {@link Class#getInterfaces()} except that this method searches recursively in
+     * the super-interfaces. For example if the given type is {@link java.util.ArrayList}, then
+     * the returned set will contains {@link java.util.List} (which is implemented directly)
+     * together with its parent interfaces {@link Collection} and {@link Iterable}.
+     *
+     * @param  type The class or interface for which to get all implemented interfaces.
+     * @return All implemented interfaces (not including the given {@code type} if it was an
+     *         interface), or an empty set if none. Callers can freely modify the returned set.
+     */
+    private static Set<Class<?>> getAllInterfaces(Class<?> type) {
+        return new LinkedHashSet<Class<?>>(Arrays.asList(org.apache.sis.util.Classes.getAllInterfaces(type)));
     }
 
     /**

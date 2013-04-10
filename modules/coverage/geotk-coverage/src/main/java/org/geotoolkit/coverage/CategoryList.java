@@ -44,7 +44,7 @@ import org.geotoolkit.referencing.operation.matrix.Matrix1;
 import org.geotoolkit.io.wkt.UnformattableObjectException;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 import org.geotoolkit.util.AbstractInternationalString;
 import org.geotoolkit.util.NumberRange;
 

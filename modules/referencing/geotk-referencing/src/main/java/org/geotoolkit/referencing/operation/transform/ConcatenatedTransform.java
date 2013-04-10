@@ -38,7 +38,7 @@ import org.geotoolkit.referencing.operation.matrix.XMatrix;
 import org.geotoolkit.referencing.operation.matrix.Matrices;
 import org.geotoolkit.referencing.operation.MathTransforms;
 import org.geotoolkit.internal.referencing.Semaphores;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 import org.apache.sis.util.LenientComparable;
 import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.util.Utilities;

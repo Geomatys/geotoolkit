@@ -46,7 +46,7 @@ import org.geotoolkit.internal.sql.CoverageDatabaseInstaller;
 import org.geotoolkit.referencing.factory.epsg.EpsgInstaller;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.resources.Wizards;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 import org.opengis.util.FactoryException;
 
 

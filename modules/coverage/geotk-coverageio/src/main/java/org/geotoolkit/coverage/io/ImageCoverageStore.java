@@ -34,7 +34,7 @@ import org.opengis.referencing.operation.NoninvertibleTransformException;
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Vocabulary;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.internal.image.io.Formats;
 import org.geotoolkit.coverage.AbstractCoverage;

@@ -50,14 +50,14 @@ import javax.media.jai.RegistryElementDescriptor;
 import org.geotoolkit.measure.Angle;
 import org.geotoolkit.measure.AngleFormat;
 import org.geotoolkit.util.logging.Logging;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 import org.geotoolkit.gui.swing.image.KernelEditor;
 import org.geotoolkit.internal.swing.SwingUtilities;
 import org.geotoolkit.internal.image.Adapters;
 import org.geotoolkit.resources.Vocabulary;
 
 import static java.awt.GridBagConstraints.*;
-import static org.geotoolkit.util.converter.Numbers.*;
+import static org.apache.sis.util.Numbers.*;
 
 
 /**

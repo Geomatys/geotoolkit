@@ -19,7 +19,7 @@ package org.geotoolkit.internal.image;
 
 import java.awt.color.ColorSpace;
 import net.jcip.annotations.Immutable;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 
 
 /**

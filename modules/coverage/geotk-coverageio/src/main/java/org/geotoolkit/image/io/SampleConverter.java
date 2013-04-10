@@ -21,7 +21,7 @@ import java.awt.image.Raster;
 import net.jcip.annotations.Immutable;
 
 import org.apache.sis.math.MathFunctions;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 
 
 /**

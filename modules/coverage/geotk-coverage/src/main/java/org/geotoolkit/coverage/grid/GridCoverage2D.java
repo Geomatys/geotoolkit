@@ -62,7 +62,7 @@ import org.geotoolkit.geometry.TransformedDirectPosition;
 import org.geotoolkit.coverage.AbstractCoverage;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;

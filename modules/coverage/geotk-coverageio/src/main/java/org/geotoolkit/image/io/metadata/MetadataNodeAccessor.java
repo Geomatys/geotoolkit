@@ -34,9 +34,9 @@ import org.geotoolkit.resources.Errors;
 import org.apache.sis.util.iso.Types;
 import org.geotoolkit.internal.jaxb.XmlUtilities;
 import org.geotoolkit.util.NumberRange;
-import org.geotoolkit.util.converter.Classes;
-import org.geotoolkit.util.converter.Numbers;
-import org.geotoolkit.util.UnsupportedImplementationException;
+import org.apache.sis.util.Classes;
+import org.apache.sis.util.Numbers;
+import org.apache.sis.util.UnsupportedImplementationException;
 import org.geotoolkit.metadata.iso.citation.Citations;
 
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;

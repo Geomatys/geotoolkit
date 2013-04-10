@@ -29,7 +29,7 @@ import org.opengis.referencing.operation.MathTransform1D;
 
 import org.apache.sis.util.CharSequences;
 import org.geotoolkit.util.NumberRange;
-import org.geotoolkit.util.converter.Numbers;
+import org.apache.sis.util.Numbers;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.grid.ViewType;

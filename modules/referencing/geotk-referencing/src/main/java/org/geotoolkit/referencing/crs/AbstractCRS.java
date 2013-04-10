@@ -35,7 +35,7 @@ import org.geotoolkit.measure.Measure;
 import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.referencing.cs.AbstractCS;
 import org.geotoolkit.referencing.AbstractReferenceSystem;
-import org.geotoolkit.util.UnsupportedImplementationException;
+import org.apache.sis.util.UnsupportedImplementationException;
 import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.internal.referencing.CRSUtilities;

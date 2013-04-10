@@ -131,22 +131,6 @@ public final class XCollections extends Static {
     }
 
     /**
-     * Returns a {@linkplain Queue queue} which is always empty and accepts no element.
-     *
-     * @param <E> The type of elements in the empty collection.
-     * @return An empty collection.
-     *
-     * @see Collections#emptyList()
-     * @see Collections#emptySet()
-     *
-     * @deprecated Moved to {@link CollectionsExt#emptyQueue()}.
-     */
-    @Deprecated
-    public static <E> Queue<E> emptyQueue() {
-        return CollectionsExt.emptyQueue();
-    }
-
-    /**
      * Returns a {@linkplain SortedSet sorted set} which is always empty and accepts no element.
      *
      * @param <E> The type of elements in the empty collection.
@@ -312,22 +296,6 @@ public final class XCollections extends Static {
     @Deprecated
     public static <T extends Comparable<T>> Comparator<List<T>> listComparator() {
         return CollectionsExt.listComparator();
-    }
-
-    /**
-     * Returns a comparator for sorted sets of comparable elements. The elements are compared in
-     * iteration order as for the {@linkplain #listComparator list comparator}.
-     *
-     * @param <T> The type of elements in both sets.
-     * @return The ordering between two sets.
-     *
-     * @since 3.18 (derived from 2.5)
-     *
-     * @deprecated Moved to {@link CollectionsExt#sortedSetComparator()}.
-     */
-    @Deprecated
-    public static <T extends Comparable<T>> Comparator<SortedSet<T>> sortedSetComparator() {
-        return CollectionsExt.sortedSetComparator();
     }
 
     /**

@@ -25,6 +25,8 @@ import java.util.LinkedHashSet;
 import java.util.ServiceLoader;
 import net.jcip.annotations.ThreadSafe;
 import org.apache.sis.measure.Angle;
+import org.apache.sis.util.Numbers;
+import org.apache.sis.util.Classes;
 
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.logging.Logging;

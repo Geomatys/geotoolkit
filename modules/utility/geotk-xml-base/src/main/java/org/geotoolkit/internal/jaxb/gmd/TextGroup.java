@@ -19,7 +19,7 @@ package org.geotoolkit.internal.jaxb.gmd;
 
 import java.util.Locale;
 import javax.xml.bind.annotation.XmlElement;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 
 
 /**

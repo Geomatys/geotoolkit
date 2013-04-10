@@ -46,7 +46,7 @@ import org.apache.sis.util.Disposable;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.logging.LogProducer;
 import org.geotoolkit.util.logging.PerformanceLevel;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 import org.geotoolkit.util.collection.FrequencySortedSet;
 import org.geotoolkit.internal.image.io.Formats;
 import org.geotoolkit.internal.image.io.GridDomainAccessor;

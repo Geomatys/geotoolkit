@@ -43,7 +43,7 @@ import java.awt.EventQueue;
 import org.jdesktop.swingx.JXLabel;
 
 import org.geotoolkit.util.Exceptions;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 import org.geotoolkit.resources.Vocabulary;
 
 

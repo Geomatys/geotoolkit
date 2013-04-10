@@ -35,7 +35,7 @@ import com.sun.media.jai.util.ImageUtil;
 
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 
 import static java.awt.image.DataBuffer.*;
 

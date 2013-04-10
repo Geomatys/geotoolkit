@@ -24,7 +24,7 @@ import javax.media.jai.registry.RenderedRegistryMode;
 import net.jcip.annotations.Immutable;
 
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 import org.geotoolkit.image.jai.Combine;
 
 import static org.geotoolkit.image.jai.Combine.Transform;

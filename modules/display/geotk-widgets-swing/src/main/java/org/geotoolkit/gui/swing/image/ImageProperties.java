@@ -62,7 +62,7 @@ import org.geotoolkit.gui.swing.Dialog;
 import org.geotoolkit.internal.swing.SwingUtilities;
 import org.geotoolkit.util.Strings;
 import org.geotoolkit.util.NumberRange;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 import org.geotoolkit.measure.RangeFormat;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.lang.Debug;

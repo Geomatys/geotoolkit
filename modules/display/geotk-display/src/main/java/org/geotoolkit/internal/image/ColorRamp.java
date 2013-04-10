@@ -51,7 +51,7 @@ import org.opengis.referencing.operation.TransformException;
 import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.util.MeasurementRange;
 import org.geotoolkit.util.logging.Logging;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 import org.geotoolkit.display.axis.Graduation;
 import org.geotoolkit.display.axis.TickIterator;
 import org.geotoolkit.display.axis.NumberGraduation;

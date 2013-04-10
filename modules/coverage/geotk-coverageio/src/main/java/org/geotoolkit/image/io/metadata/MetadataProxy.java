@@ -40,7 +40,7 @@ import org.opengis.coverage.grid.GridEnvelope;
 
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.logging.Logging;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 import org.geotoolkit.util.SimpleInternationalString;
 import org.apache.sis.util.collection.UnmodifiableArrayList;
 import org.geotoolkit.coverage.grid.GeneralGridCoordinates;
@@ -251,6 +251,32 @@ final class MetadataProxy<T> implements InvocationHandler {
     }
 
     /**
+     * Casts the {@code type} class to represent a subclass of the class represented by the
+     * {@code sub} argument. Checks that the cast is valid, and returns {@code null} if it
+     * is not.
+     * <p>
+     * This method performs the same work than
+     * <code>type.{@linkplain Class#asSubclass(Class) asSubclass}(sub)</code>,
+     * except that {@code null} is returned instead than throwing an exception
+     * if the cast is not valid or if any of the argument is {@code null}.
+     *
+     * @param  <U>  The compile-time bounds of the {@code sub} argument.
+     * @param  type The class to cast to a sub-class, or {@code null}.
+     * @param  sub  The subclass to cast to, or {@code null}.
+     * @return The {@code type} argument casted to a subclass of the {@code sub} argument,
+     *         or {@code null} if this cast can not be performed.
+     *
+     * @see Class#asSubclass(Class)
+     */
+    @SuppressWarnings("unchecked")
+    private static <U> Class<? extends U> asSubclassOrNull(final Class<?> type, final Class<U> sub) {
+        // Design note: We are required to return null if 'sub' is null (not to return 'type'
+        // unchanged), because if we returned 'type', we would have an unsafe cast if this
+        // method is invoked indirectly from a parameterized method.
+        return (type != null && sub != null && sub.isAssignableFrom(type)) ? (Class) type : null;
+    }
+
+    /**
      * For an attribute containing an array, return the length of that array.
      * This is used only for implementing a few {@link #SPECIAL_CASE special cases}.
      */
@@ -405,8 +431,8 @@ final class MetadataProxy<T> implements InvocationHandler {
             return SimpleInternationalString.wrap(accessor.getAttribute(name));
         }
         if (targetType.isAssignableFrom(Unit.class)) {
-            final Class<?> bounds = Classes.boundOfParameterizedAttribute(method);
-            return accessor.getAttributeAsUnit(name, Classes.asSubclassOrNull(bounds, Quantity.class));
+            final Class<?> bounds = Classes.boundOfParameterizedProperty(method);
+            return accessor.getAttributeAsUnit(name, asSubclassOrNull(bounds, Quantity.class));
         }
         if (SPECIAL_CASE && Character.isLowerCase(name.charAt(0))) {
             /*
@@ -430,7 +456,7 @@ final class MetadataProxy<T> implements InvocationHandler {
              * value because we want to recompute it on next method call (the returned list
              * is not "live").
              */
-            Class<?> componentType = Classes.boundOfParameterizedAttribute(method);
+            Class<?> componentType = Classes.boundOfParameterizedProperty(method);
             if (componentType.isAssignableFrom(String.class)) {
                 return UnmodifiableArrayList.wrap(accessor.getAttributeAsStrings(name, false));
             }

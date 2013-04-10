@@ -27,7 +27,7 @@ import org.opengis.referencing.operation.MathTransform1D;
 
 import org.geotoolkit.util.Cloneable;
 import org.geotoolkit.util.NumberRange;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 
 
 /**

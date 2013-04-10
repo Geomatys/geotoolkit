@@ -37,7 +37,7 @@ import org.geotoolkit.coverage.CoverageFactoryFinder;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.referencing.NamedIdentifier;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 import org.geotoolkit.resources.Errors;
 
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;

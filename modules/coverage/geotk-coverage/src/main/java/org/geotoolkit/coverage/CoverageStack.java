@@ -56,7 +56,7 @@ import org.opengis.geometry.Envelope;
 import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.logging.Logging;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 import org.geotoolkit.util.collection.FrequencySortedSet;
 import org.geotoolkit.util.collection.BackingStoreException;
 import org.geotoolkit.coverage.grid.GridCoverage2D;

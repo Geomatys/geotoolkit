@@ -49,7 +49,7 @@ import org.geotoolkit.referencing.datum.DefaultEllipsoid;
 import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
 import org.geotoolkit.internal.referencing.AxisDirections;
 import org.geotoolkit.internal.referencing.CRSUtilities;
-import org.geotoolkit.util.UnsupportedImplementationException;
+import org.apache.sis.util.UnsupportedImplementationException;
 import org.geotoolkit.io.wkt.Formatter;
 import org.apache.sis.measure.Units;
 

@@ -42,7 +42,7 @@ import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.util.InternationalString;
 
 import org.apache.sis.util.ComparisonMode;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 import org.geotoolkit.measure.Measure;
 import org.apache.sis.measure.Units;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;

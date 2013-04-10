@@ -23,7 +23,7 @@ import javax.swing.tree.TreeNode;
 import org.jdesktop.swingx.treetable.AbstractTreeTableModel;
 
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 import org.geotoolkit.gui.swing.tree.TreeTableNode;
 
 

@@ -54,8 +54,8 @@ import org.apache.sis.measure.Units;
 import org.geotoolkit.util.Strings;
 import org.apache.sis.util.Localized;
 import org.geotoolkit.util.NumberRange;
-import org.geotoolkit.util.converter.Classes;
-import org.geotoolkit.util.converter.Numbers;
+import org.apache.sis.util.Classes;
+import org.apache.sis.util.Numbers;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.resources.IndexedResourceBundle;
 
@@ -880,7 +880,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
             if (String.class.isAssignableFrom(type)) {
                 value = value.toString();
             } else if (Number.class.isAssignableFrom(type)) {
-                value = Numbers.valueOf(type, value.toString());
+                value = Numbers.valueOf(value.toString(), type);
             } else if (Date.class.isAssignableFrom(type)) {
                 value = XmlUtilities.parseDateTime(value.toString());
             } else if (type.isArray()) {
@@ -1366,7 +1366,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
             final String token = tokens.nextToken().replace(NBSP, ' ').trim();
             final Object value;
             try {
-                value = Numbers.valueOf(wrapperType, token);
+                value = Numbers.valueOf(token, wrapperType);
             } catch (NumberFormatException e) {
                 if (caller == null) {
                     throw e;

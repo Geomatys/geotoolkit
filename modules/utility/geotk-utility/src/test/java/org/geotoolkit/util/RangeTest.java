@@ -17,9 +17,6 @@
  */
 package org.geotoolkit.util;
 
-import org.geotoolkit.util.converter.ClassesTest;
-import org.geotoolkit.test.Depend;
-
 import org.junit.*;
 import static org.geotoolkit.test.Assert.*;
 
@@ -33,7 +30,6 @@ import static org.geotoolkit.test.Assert.*;
  *
  * @since 2.4
  */
-@Depend(ClassesTest.class)
 public final strictfp class RangeTest {
     /** [-1,1] */
     private final Range<Integer> UNIT = new Range<>(Integer.class, -1, 1); // LGPL

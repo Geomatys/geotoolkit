@@ -25,7 +25,7 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.IndexedResourceBundle;
 import org.geotoolkit.internal.image.io.Formats;
 import org.geotoolkit.internal.io.IOUtilities;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 
 
 /**

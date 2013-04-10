@@ -21,7 +21,7 @@ import java.awt.Shape;
 import java.awt.geom.Rectangle2D;
 import java.io.Serializable;
 
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 
 
 /**

@@ -33,7 +33,7 @@ import org.opengis.metadata.citation.Citation;
 
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.util.collection.XCollections;
-import org.geotoolkit.util.UnsupportedImplementationException;
+import org.apache.sis.util.UnsupportedImplementationException;
 import org.geotoolkit.xml.IdentifierSpace;
 import org.geotoolkit.xml.IdentifierMap;
 

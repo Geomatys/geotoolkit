@@ -48,7 +48,7 @@ import org.geotoolkit.measure.AngleFormat;
 import org.geotoolkit.measure.CoordinateFormat;
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.internal.swing.SwingUtilities;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 import org.geotoolkit.resources.Vocabulary;
 
 import static java.awt.GridBagConstraints.*;
