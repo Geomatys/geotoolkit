@@ -27,7 +27,7 @@ import java.lang.reflect.Type;
 
 import org.geotoolkit.xml.XLink;
 import org.geotoolkit.xml.NilObject;
-import org.geotoolkit.xml.NilReason;
+import org.apache.sis.xml.NilReason;
 import org.geotoolkit.xml.Namespaces;
 import org.geotoolkit.xml.IdentifierMap;
 import org.geotoolkit.xml.IdentifierSpace;

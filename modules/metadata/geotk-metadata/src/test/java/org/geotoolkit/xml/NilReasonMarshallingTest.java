@@ -60,9 +60,9 @@ public final strictfp class NilReasonMarshallingTest extends TestBase {
         final Series series = citation.getSeries();
         assertInstanceOf("Should have instantiated a proxy.", NilObject.class, series);
 
-        final NilReason reason = ((NilObject) series).getNilReason();
+        final org.apache.sis.xml.NilReason reason = ((NilObject) series).getNilReason();
         assertSame("nilReason", NilReason.MISSING, reason);
-        assertNull("NilReason.explanation", reason.getExplanation());
+        assertNull("NilReason.explanation", reason.getOtherExplanation());
         assertNull("NilReason.URI",         reason.getURI());
 
         assertEquals("Series[missing]", series.toString());
@@ -96,8 +96,8 @@ public final strictfp class NilReasonMarshallingTest extends TestBase {
         final Series series = citation.getSeries();
         assertInstanceOf("Should have instantiated a proxy.", NilObject.class, series);
 
-        final NilReason reason = ((NilObject) series).getNilReason();
-        assertEquals("NilReason.explanation", "myReason", reason.getExplanation());
+        final org.apache.sis.xml.NilReason reason = ((NilObject) series).getNilReason();
+        assertEquals("NilReason.explanation", "myReason", reason.getOtherExplanation());
         assertNull("NilReason.URI", reason.getURI());
 
         assertEquals("Series[other:myReason]", series.toString());
@@ -131,8 +131,8 @@ public final strictfp class NilReasonMarshallingTest extends TestBase {
         final Series series = citation.getSeries();
         assertInstanceOf("Should have instantiated a proxy.", NilObject.class, series);
 
-        final NilReason reason = ((NilObject) series).getNilReason();
-        assertNull("NilReason.explanation", reason.getExplanation());
+        final org.apache.sis.xml.NilReason reason = ((NilObject) series).getNilReason();
+        assertNull("NilReason.explanation", reason.getOtherExplanation());
         assertEquals("NilReason.URI", "http://www.myreason.org", String.valueOf(reason.getURI()));
 
         assertEquals("Series[http://www.myreason.org]", series.toString());

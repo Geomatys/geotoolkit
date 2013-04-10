@@ -32,7 +32,7 @@ import org.opengis.referencing.datum.*;
 import org.opengis.referencing.operation.*;
 import org.opengis.metadata.extent.Extent;
 
-import org.geotoolkit.xml.NilReason;
+import org.apache.sis.xml.NilReason;
 import org.geotoolkit.xml.NilObject;
 import org.geotoolkit.referencing.datum.DefaultEllipsoid;
 import org.geotoolkit.referencing.datum.DefaultPrimeMeridian;
