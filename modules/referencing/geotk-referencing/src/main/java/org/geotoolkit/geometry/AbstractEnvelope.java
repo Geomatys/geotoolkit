@@ -265,14 +265,14 @@ public abstract class AbstractEnvelope extends org.apache.sis.geometry.AbstractE
 
     /**
      * Returns {@code false} if at least one ordinate value is not {@linkplain Double#NaN NaN}. The
-     * {@code isNull()} check is a little bit different than {@link #isEmpty()} since it returns
+     * {@code isAllNaN()} check is a little bit different than {@link #isEmpty()} since it returns
      * {@code false} for a partially initialized envelope, while {@code isEmpty()} returns
      * {@code false} only after all dimensions have been initialized. More specifically, the
      * following rules apply:
      * <p>
      * <ul>
-     *   <li>If <code>isNull() == true</code>, then <code>{@linkplain #isEmpty()} == true</code></li>
-     *   <li>If <code>{@linkplain #isEmpty()} == false</code>, then <code>isNull() == false</code></li>
+     *   <li>If <code>isAllNaN() == true</code>, then <code>{@linkplain #isEmpty()} == true</code></li>
+     *   <li>If <code>{@linkplain #isEmpty()} == false</code>, then <code>isAllNaN() == false</code></li>
      *   <li>The converse of the above-cited rules are not always true.</li>
      * </ul>
      *
@@ -281,11 +281,12 @@ public abstract class AbstractEnvelope extends org.apache.sis.geometry.AbstractE
      * @see GeneralEnvelope#setToNull()
      *
      * @since 3.20 (derived from 2.2)
+     *
+     * @deprecated Renamed {@link #isAllNaN()}.
      */
-    @Override
-    public boolean isNull() {
-        // We keep this method for now because we may rename it in SIS.
-        return super.isNull();
+    @Deprecated
+    public final boolean isNull() {
+        return isAllNaN();
     }
 
     /**
