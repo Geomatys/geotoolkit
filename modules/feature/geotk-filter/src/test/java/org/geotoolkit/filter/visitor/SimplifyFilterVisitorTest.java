@@ -18,7 +18,7 @@ package org.geotoolkit.filter.visitor;
 
 import java.util.Collections;
 import java.util.HashSet;
-import org.geotoolkit.util.collection.UnmodifiableArrayList;
+import org.apache.sis.util.collection.UnmodifiableArrayList;
 import org.opengis.filter.Filter;
 import org.junit.Test;
 import org.opengis.filter.Id;

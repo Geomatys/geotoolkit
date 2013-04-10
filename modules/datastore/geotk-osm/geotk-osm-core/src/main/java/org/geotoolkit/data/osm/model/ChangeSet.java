@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Map;
 import org.geotoolkit.io.TableWriter;
 
-import org.geotoolkit.util.collection.UnmodifiableArrayList;
+import org.apache.sis.util.collection.UnmodifiableArrayList;
 import org.opengis.geometry.Envelope;
 
 /**

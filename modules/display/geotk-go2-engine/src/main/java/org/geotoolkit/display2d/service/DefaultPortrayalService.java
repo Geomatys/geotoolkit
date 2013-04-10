@@ -82,7 +82,7 @@ import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyle;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.util.ImageIOUtilities;
-import org.geotoolkit.util.collection.UnmodifiableArrayList;
+import org.apache.sis.util.collection.UnmodifiableArrayList;
 import org.apache.sis.util.Classes;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.geometry.Envelope;

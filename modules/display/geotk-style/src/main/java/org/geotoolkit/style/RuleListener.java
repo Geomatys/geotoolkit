@@ -24,7 +24,7 @@ import java.util.Collection;
 
 import org.geotoolkit.internal.ReferenceQueueConsumer;
 import org.geotoolkit.util.collection.CollectionChangeEvent;
-import org.geotoolkit.util.Disposable;
+import org.apache.sis.util.Disposable;
 
 import org.opengis.style.Symbolizer;
 

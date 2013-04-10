@@ -20,7 +20,7 @@ import java.util.Collection;
 import java.util.Collections;
 import javax.swing.Icon;
 
-import org.geotoolkit.util.collection.UnmodifiableArrayList;
+import org.apache.sis.util.collection.UnmodifiableArrayList;
 import org.geotoolkit.util.Utilities;
 
 import org.opengis.metadata.citation.OnlineResource;

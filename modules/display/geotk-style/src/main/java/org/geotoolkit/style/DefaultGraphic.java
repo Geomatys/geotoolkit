@@ -20,7 +20,7 @@ import java.util.Collections;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.geotoolkit.util.collection.UnmodifiableArrayList;
+import org.apache.sis.util.collection.UnmodifiableArrayList;
 import org.geotoolkit.util.Utilities;
 
 import org.opengis.filter.expression.Expression;

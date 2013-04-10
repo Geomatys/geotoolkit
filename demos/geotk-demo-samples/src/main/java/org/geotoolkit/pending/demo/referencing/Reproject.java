@@ -2,7 +2,7 @@
 package org.geotoolkit.pending.demo.referencing;
 
 import java.util.Set;
-import org.geotoolkit.geometry.DirectPosition2D;
+import org.apache.sis.geometry.DirectPosition2D;
 import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.referencing.CRS;
 import org.opengis.geometry.DirectPosition;

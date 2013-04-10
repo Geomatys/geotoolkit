@@ -17,7 +17,7 @@
 package org.geotoolkit.map;
 
 import java.util.Collection;
-import org.geotoolkit.geometry.Envelope2D;
+import org.apache.sis.geometry.Envelope2D;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.style.MutableStyle;
 import static org.apache.sis.util.ArgumentChecks.*;

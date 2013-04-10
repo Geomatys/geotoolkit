@@ -17,7 +17,7 @@
 package org.geotoolkit.map;
 
 import org.geotoolkit.display.shape.XRectangle2D;
-import org.geotoolkit.geometry.Envelope2D;
+import org.apache.sis.geometry.Envelope2D;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.style.MutableStyle;
 import org.opengis.geometry.Envelope;

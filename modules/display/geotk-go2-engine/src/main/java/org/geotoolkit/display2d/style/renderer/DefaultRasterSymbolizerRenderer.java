@@ -58,7 +58,7 @@ import org.geotoolkit.style.function.CompatibleColorModel;
 import org.geotoolkit.display2d.style.raster.ShadedReliefOp;
 import org.geotoolkit.display2d.style.raster.StatisticOp;
 import org.geotoolkit.filter.visitor.DefaultFilterVisitor;
-import org.geotoolkit.geometry.Envelope2D;
+import org.apache.sis.geometry.Envelope2D;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.image.jai.FloodFill;
 import org.geotoolkit.internal.referencing.CRSUtilities;

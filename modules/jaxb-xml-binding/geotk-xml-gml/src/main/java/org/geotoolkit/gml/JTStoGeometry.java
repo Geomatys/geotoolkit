@@ -31,7 +31,7 @@ import com.vividsolutions.jts.geom.Polygon;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.geotoolkit.geometry.DirectPosition2D;
+import org.apache.sis.geometry.DirectPosition2D;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.gml.xml.AbstractGeometricAggregate;
 import org.geotoolkit.gml.xml.AbstractGeometry;

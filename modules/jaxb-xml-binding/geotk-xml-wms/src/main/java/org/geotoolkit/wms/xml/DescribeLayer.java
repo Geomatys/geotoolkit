@@ -21,7 +21,7 @@ import net.jcip.annotations.Immutable;
 import org.geotoolkit.ows.xml.RequestBase;
 
 import org.geotoolkit.util.Version;
-import org.geotoolkit.util.collection.UnmodifiableArrayList;
+import org.apache.sis.util.collection.UnmodifiableArrayList;
 
 
 /**

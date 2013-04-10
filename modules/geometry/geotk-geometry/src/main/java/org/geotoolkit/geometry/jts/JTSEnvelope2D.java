@@ -31,7 +31,7 @@ import org.opengis.referencing.operation.CoordinateOperation;
 import org.opengis.referencing.operation.CoordinateOperationFactory;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
-import org.geotoolkit.geometry.DirectPosition2D;
+import org.apache.sis.geometry.DirectPosition2D;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.referencing.CRS;
 import org.apache.sis.util.Classes;
@@ -53,7 +53,7 @@ import org.geotoolkit.resources.Errors;
  * @author Simone Giannecchini
  * @author Johann Sorel
  *
- * @see org.geotoolkit.geometry.Envelope2D
+ * @see org.apache.sis.geometry.Envelope2D
  * @see org.geotoolkit.geometry.GeneralEnvelope
  * @see org.opengis.metadata.extent.GeographicBoundingBox
  */

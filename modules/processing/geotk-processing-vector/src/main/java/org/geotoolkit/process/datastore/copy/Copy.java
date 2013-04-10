@@ -33,7 +33,7 @@ import org.geotoolkit.process.AbstractProcess;
 import org.geotoolkit.process.ProcessException;
 import static org.geotoolkit.process.datastore.copy.CopyDescriptor.*;
 import org.geotoolkit.storage.DataStoreException;
-import org.geotoolkit.util.collection.UnmodifiableArrayList;
+import org.apache.sis.util.collection.UnmodifiableArrayList;
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.Name;

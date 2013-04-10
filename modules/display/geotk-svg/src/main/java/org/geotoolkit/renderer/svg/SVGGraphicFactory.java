@@ -28,7 +28,7 @@ import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.geotoolkit.renderer.style.ExternalGraphicFactory;
-import org.geotoolkit.util.collection.UnmodifiableArrayList;
+import org.apache.sis.util.collection.UnmodifiableArrayList;
 
 /**
  * Factory capable to read SVG files.

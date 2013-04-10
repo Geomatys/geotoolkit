@@ -39,7 +39,7 @@ import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.geotoolkit.internal.image.ColorUtilities;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.Converters;
-import org.geotoolkit.util.collection.UnmodifiableArrayList;
+import org.apache.sis.util.collection.UnmodifiableArrayList;
 
 import org.opengis.feature.Feature;
 import org.opengis.filter.capability.FunctionName;

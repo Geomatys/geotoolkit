@@ -25,22 +25,22 @@ import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.StyleConstants;
 import org.geotoolkit.style.StyleListener;
 import static org.apache.sis.util.ArgumentChecks.*;
-import org.apache.sis.util.collection.CheckedArrayList;
+import org.geotoolkit.util.collection.CheckedArrayList;
 import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.opengis.display.primitive.Graphic;
 
 /**
  * Abstract implementation of the MapLayer.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
 public abstract class AbstractMapLayer extends AbstractMapItem implements MapLayer,StyleListener {
-    
+
     private final List<GraphicBuilder> builders = new CheckedArrayList<GraphicBuilder>(GraphicBuilder.class);
-    
+
     private final StyleListener.Weak styleListener = new StyleListener.Weak(null,this);
-    
+
     protected MutableStyle style;
 
     protected MutableStyle selectionStyle;
@@ -59,7 +59,7 @@ public abstract class AbstractMapLayer extends AbstractMapItem implements MapLay
         this.desc = StyleConstants.DEFAULT_DESCRIPTION;
         this.selectionStyle = null;
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -75,7 +75,7 @@ public abstract class AbstractMapLayer extends AbstractMapItem implements MapLay
 
     /**
      * Getter for property style.
-     * 
+     *
      * @return Value of property style.
      */
     @Override
@@ -85,13 +85,13 @@ public abstract class AbstractMapLayer extends AbstractMapItem implements MapLay
 
     /**
      * Setter for property style.
-     * 
+     *
      * @param style : New value of property style.
      */
     @Override
     public void setStyle(final MutableStyle style) {
         ensureNonNull("style", style);
-        
+
         final MutableStyle oldStyle;
         synchronized (this) {
             oldStyle = this.style;
@@ -130,7 +130,7 @@ public abstract class AbstractMapLayer extends AbstractMapItem implements MapLay
     /**
      * {@inheritDoc }
      */
-    @Override 
+    @Override
     public double getOpacity(){
         return opacity;
     }
@@ -178,7 +178,7 @@ public abstract class AbstractMapLayer extends AbstractMapItem implements MapLay
         }
         firePropertyChange(SELECTABLE_PROPERTY, oldSelectable, this.selectable);
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -210,45 +210,45 @@ public abstract class AbstractMapLayer extends AbstractMapItem implements MapLay
     public List<GraphicBuilder> graphicBuilders(){
         return builders;
     }
-    
+
     /**
      * A layer may provide a graphic builder, this enable
      * special representations, like wind arrows for coverages.
      * A layer may have different builder for each kind of Graphic implementation.
      * This enable the possibility to have custom made graphic representation
      * and several builder, for 2D,3D or else...
-     * 
+     *
      * @param type : the graphic type wanted
      * @return graphicBuilder<? extends type> or null
      */
     @Override
     public <T extends Graphic> GraphicBuilder<? extends T> getGraphicBuilder( final Class<T> type ){
-        
+
         for(GraphicBuilder builder : builders){
             if(type.isAssignableFrom(builder.getGraphicType())){
                 return builder;
             }
         }
-        
+
         return null;
     }
-        
+
     //--------------------------------------------------------------------------
     // listeners management ----------------------------------------------------
     //--------------------------------------------------------------------------
-        
+
     protected void fireStyleChange(final EventObject event){
         //TODO make fire property change thread safe, preserve fire order
-        
+
         final LayerListener[] lists = listeners.getListeners(LayerListener.class);
-        
+
         for(LayerListener listener : lists){
             listener.styleChange(this, event);
         }
-        
+
         //fire a property change for others
         firePropertyChange(STYLE_PROPERTY, event, this.getStyle());
-        
+
     }
 
     //--------------------------------------------------------------------------
@@ -286,5 +286,5 @@ public abstract class AbstractMapLayer extends AbstractMapItem implements MapLay
             removeItemListener(listener);
         }
     }
-    
+
 }

@@ -22,11 +22,12 @@ import java.beans.PropertyChangeListener;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import org.apache.sis.util.Disposable;
 import org.geotoolkit.internal.ReferenceQueueConsumer;
 
 /**
  * Weak PropertyChangeListener.
- * 
+ *
  * @author Johann sorel (Geomatys)
  */
 public class WeakPropertyChangeListener extends WeakReference<PropertyChangeListener>

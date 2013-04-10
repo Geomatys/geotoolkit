@@ -25,7 +25,7 @@ import java.util.Map;
 
 import org.geotoolkit.feature.AbstractFeature;
 import org.geotoolkit.filter.identity.DefaultFeatureId;
-import org.geotoolkit.util.collection.UnmodifiableArrayList;
+import org.apache.sis.util.collection.UnmodifiableArrayList;
 
 import org.opengis.feature.Property;
 

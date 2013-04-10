@@ -26,7 +26,7 @@ import java.util.EventListener;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.geotoolkit.internal.ReferenceQueueConsumer;
-import org.geotoolkit.util.Disposable;
+import org.apache.sis.util.Disposable;
 import org.geotoolkit.util.logging.Logging;
 
 /**

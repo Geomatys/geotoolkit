@@ -19,7 +19,7 @@ package org.geotoolkit.display2d;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import org.geotoolkit.geometry.DirectPosition2D;
+import org.apache.sis.geometry.DirectPosition2D;
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.apache.sis.util.ArgumentChecks;

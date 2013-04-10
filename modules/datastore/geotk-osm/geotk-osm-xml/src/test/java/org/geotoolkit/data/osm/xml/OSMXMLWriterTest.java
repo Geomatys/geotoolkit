@@ -33,7 +33,7 @@ import org.geotoolkit.data.osm.model.Transaction;
 import org.geotoolkit.data.osm.model.TransactionType;
 import org.geotoolkit.data.osm.model.User;
 import org.geotoolkit.data.osm.model.Way;
-import org.geotoolkit.util.collection.UnmodifiableArrayList;
+import org.apache.sis.util.collection.UnmodifiableArrayList;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;

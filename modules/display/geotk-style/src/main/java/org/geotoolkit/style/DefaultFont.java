@@ -19,7 +19,7 @@ package org.geotoolkit.style;
 import java.util.Collections;
 import java.util.List;
 
-import org.geotoolkit.util.collection.UnmodifiableArrayList;
+import org.apache.sis.util.collection.UnmodifiableArrayList;
 
 import org.opengis.filter.expression.Expression;
 import org.opengis.style.Font;

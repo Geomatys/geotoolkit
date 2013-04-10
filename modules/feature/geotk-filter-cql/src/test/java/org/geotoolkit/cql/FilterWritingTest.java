@@ -25,7 +25,7 @@ import java.util.Collections;
 import org.geotoolkit.filter.DefaultFilterFactory2;
 import org.geotoolkit.filter.identity.DefaultFeatureId;
 import org.geotoolkit.temporal.object.TemporalUtilities;
-import org.geotoolkit.util.collection.UnmodifiableArrayList;
+import org.apache.sis.util.collection.UnmodifiableArrayList;
 import static org.junit.Assert.*;
 import org.junit.Ignore;
 import org.junit.Test;
