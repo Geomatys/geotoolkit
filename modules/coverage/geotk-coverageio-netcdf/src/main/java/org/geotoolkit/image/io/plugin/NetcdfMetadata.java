@@ -67,7 +67,7 @@ import org.geotoolkit.referencing.adapters.NetcdfCRS;
 import org.geotoolkit.referencing.adapters.NetcdfCRSBuilder;
 import org.geotoolkit.metadata.netcdf.NetcdfMetadataReader;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.collection.BackingStoreException;
+import org.apache.sis.util.collection.BackingStoreException;
 import org.apache.sis.util.collection.UnmodifiableArrayList;
 
 import static org.geotoolkit.image.io.MultidimensionalImageStore.*;

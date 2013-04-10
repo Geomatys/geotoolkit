@@ -70,7 +70,7 @@ import org.geotoolkit.util.Cloneable;
 import org.geotoolkit.util.NumberRange;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.util.collection.XCollections;
-import org.geotoolkit.util.collection.BackingStoreException;
+import org.apache.sis.util.collection.BackingStoreException;
 import org.geotoolkit.factory.Hints;
 import org.apache.sis.measure.Units;
 import org.geotoolkit.coverage.Category;

@@ -36,7 +36,7 @@ import com.sun.star.beans.XPropertySet;
 import com.sun.star.uno.AnyConverter;
 import com.sun.star.lib.uno.helper.WeakBase;
 
-import org.geotoolkit.util.collection.BackingStoreException;
+import org.apache.sis.util.collection.BackingStoreException;
 import org.apache.sis.util.Classes;
 import org.geotoolkit.util.logging.Logging;
 

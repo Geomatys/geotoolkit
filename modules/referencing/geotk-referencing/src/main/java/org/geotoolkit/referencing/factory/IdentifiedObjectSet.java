@@ -44,7 +44,7 @@ import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.operation.CoordinateOperationAuthorityFactory;
 
 import org.geotoolkit.resources.Loggings;
-import org.geotoolkit.util.collection.BackingStoreException;
+import org.apache.sis.util.collection.BackingStoreException;
 
 import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
 

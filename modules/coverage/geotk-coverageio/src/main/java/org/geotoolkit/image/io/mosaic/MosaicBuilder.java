@@ -39,7 +39,7 @@ import org.geotoolkit.math.Fraction;
 import org.geotoolkit.lang.Builder;
 import org.geotoolkit.util.logging.LogProducer;
 import org.geotoolkit.util.logging.PerformanceLevel;
-import org.geotoolkit.util.collection.BackingStoreException;
+import org.apache.sis.util.collection.BackingStoreException;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.coverage.grid.ImageGeometry;

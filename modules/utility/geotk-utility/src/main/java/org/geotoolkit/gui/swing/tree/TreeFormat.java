@@ -40,7 +40,7 @@ import org.geotoolkit.io.ContentFormatException;
 import org.geotoolkit.io.TableWriter;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.util.Strings;
-import org.geotoolkit.util.collection.BackingStoreException;
+import org.apache.sis.util.collection.BackingStoreException;
 import org.geotoolkit.resources.Errors;
 
 
