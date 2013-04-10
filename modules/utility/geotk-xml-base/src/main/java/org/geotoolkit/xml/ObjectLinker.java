@@ -24,6 +24,9 @@ import org.opengis.metadata.Identifier;
 
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.LenientComparable;
+import org.apache.sis.xml.NilReason;
+import org.apache.sis.xml.MarshalContext;
+import org.apache.sis.xml.ReferenceResolver;
 import org.geotoolkit.internal.jaxb.gco.ObjectIdentification;
 
 import static org.apache.sis.util.ArgumentChecks.*;
@@ -43,8 +46,11 @@ import static org.apache.sis.util.ArgumentChecks.*;
  *
  * @since 3.18
  * @module
+ *
+ * @deprecated Moved to Apache SIS as {@link ReferenceResolver}.
  */
-public class ObjectLinker {
+@Deprecated
+public class ObjectLinker extends ReferenceResolver {
     /**
      * The default and thread-safe instance. This instance is used at unmarshalling time
      * when no {@code ObjectLinker} was explicitly set by the {@link XML#LINKER} property.
@@ -149,7 +155,7 @@ public class ObjectLinker {
     public <T> T resolve(final Class<T> type, final NilReason nilReason) {
         ensureNonNull("type", type);
         ensureNonNull("nilReason", nilReason);
-        return nilReason.createNilObject(type);
+        return org.geotoolkit.xml.NilReason.createNilObject(nilReason, type);
     }
 
     /**
@@ -173,5 +179,25 @@ public class ObjectLinker {
      */
     public <T> boolean canUseReference(final Class<T> type, final T object, final UUID uuid) {
         return false;
+    }
+
+    @Override
+    public final <T> T newIdentifiedObject(final MarshalContext context, final Class<T> type, final Identifier... identifiers) {
+        return newIdentifiedObject(type, identifiers);
+    }
+
+    @Override
+    public final <T> T resolve(final MarshalContext context, final Class<T> type, final UUID uuid) {
+        return resolve(type, uuid);
+    }
+
+    @Override
+    public final <T> T resolve(final MarshalContext context, final Class<T> type, final org.apache.sis.xml.XLink link) {
+        return (link instanceof XLink) ? resolve(type, (XLink) link) : super.resolve(context, type, link);
+    }
+
+    @Override
+    public final <T> boolean canSubstituteByReference(final MarshalContext context, final Class<T> type, final T object, final UUID uuid) {
+        return canUseReference(type, object, uuid);
     }
 }

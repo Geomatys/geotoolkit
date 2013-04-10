@@ -51,7 +51,7 @@ public final strictfp class NilReasonTest {
         assertSame(NilReason.TEMPLATE, NilReason.valueOf("TEMPLATE"));
         assertSame(NilReason.MISSING,  NilReason.valueOf("  missing "));
 
-        final NilReason[] reasons = NilReason.values();
+        final org.apache.sis.xml.NilReason[] reasons = NilReason.values();
         assertTrue(ArraysExt.contains(reasons, NilReason.TEMPLATE));
         assertTrue(ArraysExt.contains(reasons, NilReason.MISSING));
     }
@@ -64,14 +64,14 @@ public final strictfp class NilReasonTest {
     @Test
     public void testValueOfOther() throws URISyntaxException {
         assertSame(NilReason.OTHER, NilReason.valueOf("other"));
-        final NilReason other = NilReason.valueOf("other:myReason");
+        final org.apache.sis.xml.NilReason other = NilReason.valueOf("other:myReason");
         assertSame(other, NilReason.valueOf("  OTHER : myReason "));
         assertNotSame("Expected a new instance.", NilReason.OTHER, other);
         assertFalse  ("NilReason.equals(Object)", NilReason.OTHER.equals(other));
-        assertEquals ("NilReason.getExplanation()", "myReason", other.getExplanation());
+        assertEquals ("NilReason.getExplanation()", "myReason", other.getOtherExplanation());
         assertNull   ("NilReason.getURI()", other.getURI());
 
-        final NilReason[] reasons = NilReason.values();
+        final org.apache.sis.xml.NilReason[] reasons = NilReason.values();
         assertTrue(ArraysExt.contains(reasons, NilReason.TEMPLATE));
         assertTrue(ArraysExt.contains(reasons, NilReason.MISSING));
         assertTrue(ArraysExt.contains(reasons, other));
@@ -84,12 +84,12 @@ public final strictfp class NilReasonTest {
      */
     @Test
     public void testValueOfURI() throws URISyntaxException {
-        final NilReason other = NilReason.valueOf("http://www.nilreasons.org");
+        final org.apache.sis.xml.NilReason other = NilReason.valueOf("http://www.nilreasons.org");
         assertSame(other, NilReason.valueOf("  http://www.nilreasons.org  "));
-        assertNull  ("NilReason.getExplanation()", other.getExplanation());
+        assertNull  ("NilReason.getExplanation()", other.getOtherExplanation());
         assertEquals("NilReason.getURI()", "http://www.nilreasons.org", String.valueOf(other.getURI()));
 
-        final NilReason[] reasons = NilReason.values();
+        final org.apache.sis.xml.NilReason[] reasons = NilReason.values();
         assertTrue(ArraysExt.contains(reasons, NilReason.TEMPLATE));
         assertTrue(ArraysExt.contains(reasons, NilReason.MISSING));
         assertTrue(ArraysExt.contains(reasons, other));
@@ -101,7 +101,7 @@ public final strictfp class NilReasonTest {
     @Test
     public void testCreateNilObject() {
         final Citation citation = NilReason.TEMPLATE.createNilObject(Citation.class);
-        assertInstanceOf("Unexpected proxy.", NilObject.class, citation);
+        assertInstanceOf("Unexpected proxy.", org.apache.sis.xml.NilObject.class, citation);
         assertNull(citation.getTitle());
         assertTrue(citation.getDates().isEmpty());
         assertEquals("NilObject.toString()", "Citation[template]", citation.toString());

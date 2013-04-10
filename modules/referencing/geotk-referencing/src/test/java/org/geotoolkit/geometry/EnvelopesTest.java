@@ -203,7 +203,7 @@ public final strictfp class EnvelopesTest extends ReferencingTestBase {
         env.setRange(1, -80,   80);
         env.setRange(2, -50,  -50);
         env.setRange(3, Double.NaN, Double.NaN);
-        assertFalse(env.isNull());
+        assertFalse(env.isAllNaN());
         assertTrue(env.isEmpty());
         final CoordinateReferenceSystem crs2D = CRSUtilities.getCRS2D(crs);
         assertSame(DefaultGeographicCRS.WGS84, crs2D);

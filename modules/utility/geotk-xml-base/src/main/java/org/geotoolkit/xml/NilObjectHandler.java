@@ -29,6 +29,7 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.opengis.metadata.Identifier;
 
+import org.apache.sis.xml.NilReason;
 import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.util.LenientComparable;
 import org.geotoolkit.util.converter.Numbers;
@@ -52,6 +53,7 @@ import org.geotoolkit.internal.jaxb.IdentifierMapAdapter;
  * @since 3.18
  * @module
  */
+@Deprecated
 final class NilObjectHandler implements InvocationHandler {
     /**
      * The identifiers as an {@link IdentifierMapAdapter} object, or the {@code nilReason}

@@ -100,6 +100,16 @@ public class DefaultContact extends MetadataEntity implements Contact {
     }
 
     /**
+     * Contact informations for the <A HREF="http://www.iho.int">International hydrographic organization</A>.
+     */
+    static final Contact IHO;
+    static {
+        final DefaultContact c = new DefaultContact(DefaultOnlineResource.IHO);
+        c.freeze();
+        IHO = c;
+    }
+
+    /**
      * Contact informations for the
      * <A HREF="http://www.epsg.org">European Petroleum Survey Group</A>.
      *

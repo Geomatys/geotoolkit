@@ -63,6 +63,11 @@
       <artifactId>geoapi-pending</artifactId>
     </dependency>
     <dependency>
+      <groupId>org.apache.sis</groupId>
+      <artifactId>sis-referencing</artifactId>
+      <version>${sis.version}</version>
+    </dependency>
+    <dependency>
       <groupId>org.geotoolkit</groupId>
       <artifactId>geotk-utility</artifactId>
       <version>${project.version}</version>

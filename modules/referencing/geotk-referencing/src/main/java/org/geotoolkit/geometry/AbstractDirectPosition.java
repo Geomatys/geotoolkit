@@ -18,15 +18,11 @@
 package org.geotoolkit.geometry;
 
 import java.util.Arrays;
-import java.util.Objects;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.MismatchedDimensionException;
-import org.opengis.geometry.MismatchedReferenceSystemException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import org.apache.sis.util.ArraysExt;
-import org.geotoolkit.util.Utilities;
-import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.util.StringBuilders;
 
@@ -44,77 +40,15 @@ import org.apache.sis.util.StringBuilders;
  *
  * @since 2.4
  * @module
+ *
+ * @deprecated Moved to Apache SIS as {@link org.apache.sis.geometry.AbstractDirectPosition}.
  */
-public abstract class AbstractDirectPosition implements DirectPosition {
+@Deprecated
+public abstract class AbstractDirectPosition extends org.apache.sis.geometry.AbstractDirectPosition {
     /**
      * Constructs a direct position.
      */
     protected AbstractDirectPosition() {
-    }
-
-    /**
-     * Returns always {@code this}, the direct position for this
-     * {@linkplain org.opengis.geometry.coordinate.Position position}.
-     *
-     * @since 2.5
-     */
-    @Override
-    public DirectPosition getDirectPosition() {
-        return this;
-    }
-
-    /**
-     * Sets this direct position to the given position. If the given position is
-     * {@code null}, then all ordinate values are set to {@linkplain Double#NaN NaN}.
-     * <p>
-     * If this position and the given position have a non-null CRS, then the default implementation
-     * requires the CRS to be {@linkplain CRS#equalsIgnoreMetadata equals (ignoring metadata)}
-     * otherwise a {@link MismatchedReferenceSystemException} is thrown. However subclass may
-     * choose to assign the CRS of this position to the CRS of the given position.
-     *
-     * @param position The new position, or {@code null}.
-     * @throws MismatchedDimensionException If the given position doesn't have the expected dimension.
-     * @throws MismatchedReferenceSystemException If the given position doesn't use the expected CRS.
-     *
-     * @since 3.16 (derived from 2.5)
-     */
-    public void setLocation(final DirectPosition position) throws MismatchedDimensionException,
-            MismatchedReferenceSystemException
-    {
-        final int dimension = getDimension();
-        if (position != null) {
-            ensureDimensionMatch("position", position.getDimension(), dimension);
-            final CoordinateReferenceSystem crs = getCoordinateReferenceSystem();
-            if (crs != null) {
-                final CoordinateReferenceSystem other = position.getCoordinateReferenceSystem();
-                if (other != null && !CRS.equalsIgnoreMetadata(crs, other)) {
-                    throw new MismatchedReferenceSystemException(Errors.format(
-                            Errors.Keys.MISMATCHED_COORDINATE_REFERENCE_SYSTEM));
-                }
-            }
-            for (int i=0; i<dimension; i++) {
-                setOrdinate(i, position.getOrdinate(i));
-            }
-        } else {
-            for (int i=0; i<dimension; i++) {
-                setOrdinate(i, Double.NaN);
-            }
-        }
-    }
-
-    /**
-     * Returns a sequence of numbers that hold the coordinate of this position in its
-     * reference system.
-     *
-     * @return The coordinates.
-     */
-    @Override
-    public double[] getCoordinate() {
-        final double[] ordinates = new double[getDimension()];
-        for (int i=0; i<ordinates.length; i++) {
-            ordinates[i] = getOrdinate(i);
-        }
-        return ordinates;
     }
 
     /**
@@ -155,21 +89,6 @@ public abstract class AbstractDirectPosition implements DirectPosition {
             throw new MismatchedDimensionException(Errors.format(Errors.Keys.MISMATCHED_DIMENSION_$3,
                         name, dimension, expectedDimension));
         }
-    }
-
-    /**
-     * Formats this position in the <cite>Well Known Text</cite> (WKT) format.
-     * The output is like below:
-     *
-     * <blockquote>{@code POINT(}{@linkplain #getCoordinate() ordinates}{@code )}</blockquote>
-     *
-     * The output of this method can be
-     * {@linkplain GeneralDirectPosition#GeneralDirectPosition(String) parsed} by the
-     * {@link GeneralDirectPosition} constructor.
-     */
-    @Override
-    public String toString() {
-        return toString(this);
     }
 
     /**
@@ -290,62 +209,5 @@ scan:   while (true) {
             }
         }
         return ArraysExt.resize(ordinates, dimension);
-    }
-
-    /**
-     * Returns a hash value for this coordinate.
-     *
-     * @return A hash code value for this position.
-     */
-    @Override
-    public int hashCode() {
-        return hashCode(this);
-    }
-
-    /**
-     * Returns a hash value for the given coordinate.
-     */
-    static int hashCode(final DirectPosition position) {
-        final int dimension = position.getDimension();
-        int code = 1;
-        for (int i=0; i<dimension; i++) {
-            final long bits = Double.doubleToLongBits(position.getOrdinate(i));
-            code = 31 * code + ((int)(bits) ^ (int)(bits >>> 32));
-        }
-        final CoordinateReferenceSystem crs = position.getCoordinateReferenceSystem();
-        if (crs != null) {
-            code += crs.hashCode();
-        }
-        return code;
-    }
-
-    /**
-     * Returns {@code true} if the specified object is also a {@linkplain DirectPosition
-     * direct position} with equals {@linkplain #getCoordinate coordinate} and
-     * {@linkplain #getCoordinateReferenceSystem CRS}.
-     *
-     * @param object The object to compare with this position.
-     * @return {@code true} if the given object is equal to this position.
-     */
-    @Override
-    public boolean equals(final Object object) {
-        if (object instanceof DirectPosition) {
-            final DirectPosition that = (DirectPosition) object;
-            final int dimension = getDimension();
-            if (dimension == that.getDimension()) {
-                for (int i=0; i<dimension; i++) {
-                    if (!Utilities.equals(this.getOrdinate(i), that.getOrdinate(i))) {
-                        return false;
-                    }
-                }
-                if (Objects.equals(this.getCoordinateReferenceSystem(),
-                                   that.getCoordinateReferenceSystem()))
-                {
-                    assert hashCode() == that.hashCode() : this;
-                    return true;
-                }
-            }
-        }
-        return false;
     }
 }

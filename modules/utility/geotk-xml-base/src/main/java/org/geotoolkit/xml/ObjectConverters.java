@@ -28,6 +28,9 @@ import javax.measure.unit.Unit;
 import org.apache.sis.measure.Units;
 import org.geotoolkit.resources.Locales;
 import org.geotoolkit.internal.io.IOUtilities;
+import org.apache.sis.xml.MarshalContext;
+import org.apache.sis.xml.NilReason;
+import org.apache.sis.xml.ValueConverter;
 
 
 /**
@@ -65,8 +68,11 @@ import org.geotoolkit.internal.io.IOUtilities;
  *
  * @since 3.07
  * @module
+ *
+ * @deprecated Moved to Apache SIS as {@link ValueConverter}.
  */
-public class ObjectConverters {
+@Deprecated
+public class ObjectConverters extends ValueConverter {
     /**
      * The default, thread-safe and immutable instance. This instance defines the
      * converters used during every (un)marshalling if no {@code ObjectConverters}
@@ -298,5 +304,47 @@ public class ObjectConverters {
             }
         }
         return null;
+    }
+
+    @Override
+    protected final <T> boolean exceptionOccured(MarshalContext context, T value,
+            Class<T> sourceType, Class<?> targetType, Exception exception)
+    {
+        return exceptionOccured(value, sourceType, targetType, exception);
+    }
+
+    @Override
+    public final Locale toLocale(final MarshalContext context, String value) throws IllegalArgumentException {
+        return toLocale(value);
+    }
+
+    @Override
+    public final Unit<?> toUnit(final MarshalContext context, String value) throws IllegalArgumentException {
+        return toUnit(value);
+    }
+
+    @Override
+    public final UUID toUUID(final MarshalContext context, String value) throws IllegalArgumentException {
+        return toUUID(value);
+    }
+
+    @Override
+    public final URI toURI(final MarshalContext context, String value) throws URISyntaxException {
+        return toURI(value);
+    }
+
+    @Override
+    public final URI toURI(final MarshalContext context, URL value) throws URISyntaxException {
+        return toURI(value);
+    }
+
+    @Override
+    public final URL toURL(final MarshalContext context, URI value) throws MalformedURLException {
+        return toURL(value);
+    }
+
+    @Override
+    public final NilReason toNilReason(final MarshalContext context, String value) throws URISyntaxException {
+        return toNilReason(value);
     }
 }
