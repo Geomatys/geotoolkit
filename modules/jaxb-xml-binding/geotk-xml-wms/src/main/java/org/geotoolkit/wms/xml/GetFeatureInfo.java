@@ -22,7 +22,7 @@ import java.util.Date;
 import java.util.List;
 import net.jcip.annotations.Immutable;
 
-import org.geotoolkit.util.Version;
+import org.apache.sis.util.Version;
 import org.apache.sis.util.collection.UnmodifiableArrayList;
 
 import org.opengis.feature.type.Name;

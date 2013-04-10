@@ -21,7 +21,7 @@ package org.geotoolkit.wfs.xml.v200;
 import java.util.Map;
 import javax.xml.bind.annotation.*;
 import org.geotoolkit.util.Utilities;
-import org.geotoolkit.util.Version;
+import org.apache.sis.util.Version;
 import org.geotoolkit.wfs.xml.BaseRequest;
 
 

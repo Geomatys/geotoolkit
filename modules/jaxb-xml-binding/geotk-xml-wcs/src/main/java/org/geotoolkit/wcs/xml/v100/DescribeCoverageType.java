@@ -27,7 +27,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.wcs.xml.DescribeCoverage;
-import org.geotoolkit.util.Version;
+import org.apache.sis.util.Version;
 
 
 /**

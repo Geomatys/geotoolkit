@@ -18,7 +18,7 @@ package org.geotoolkit.wms.xml;
 
 import net.jcip.annotations.Immutable;
 import org.geotoolkit.ows.xml.RequestBase;
-import org.geotoolkit.util.Version;
+import org.apache.sis.util.Version;
 
 
 /**

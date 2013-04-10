@@ -19,7 +19,7 @@ package org.geotoolkit.sld.xml;
 import net.jcip.annotations.Immutable;
 import org.geotoolkit.ows.xml.RequestBase;
 import org.geotoolkit.sld.xml.Specification.StyledLayerDescriptor;
-import org.geotoolkit.util.Version;
+import org.apache.sis.util.Version;
 
 import org.opengis.feature.type.Name;
 
