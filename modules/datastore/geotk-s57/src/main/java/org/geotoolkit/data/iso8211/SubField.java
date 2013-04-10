@@ -41,6 +41,10 @@ public class SubField {
         this.type = type;
     }
 
+    public SubFieldDescription getType() {
+        return type;
+    }
+
     public Object getValue() {
         return value;
     }

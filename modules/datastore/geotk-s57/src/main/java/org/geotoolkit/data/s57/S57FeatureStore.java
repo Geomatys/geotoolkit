@@ -33,6 +33,7 @@ import org.geotoolkit.data.FeatureStoreFinder;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryCapabilities;
+import org.geotoolkit.data.s57.model.S57ModelObject;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.storage.DataStoreException;
@@ -113,7 +114,8 @@ public class S57FeatureStore extends AbstractFeatureStore{
         reader.setInput(file);
         try{
             while(reader.hasNext()){
-                
+                final S57ModelObject obj = reader.next();
+                System.out.println(obj);
                 
             }
         }catch(IOException ex){

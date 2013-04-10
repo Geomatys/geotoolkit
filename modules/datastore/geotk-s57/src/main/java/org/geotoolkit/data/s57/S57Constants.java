@@ -16,6 +16,9 @@
  */
 package org.geotoolkit.data.s57;
 
+import java.io.IOException;
+import org.geotoolkit.data.iso8211.SubField;
+
 /**
  * S-57 constants.
  * 
@@ -44,9 +47,79 @@ public final class S57Constants {
         }
     }
     
+    private static boolean match(Object candidate, String ascii, int binary){                    
+        if(candidate instanceof String){
+            final String val = (String) candidate;
+            return ascii.equalsIgnoreCase(val);
+        }
+        if(candidate instanceof byte[]){
+            candidate = ((byte[])candidate)[0] & 0xff;
+        }
+        if(candidate instanceof Number){
+            int val = ((Number)candidate).intValue();
+            return binary == val;
+        }
+        return false;
+    }
+    
     ////////////////////////////////////////////////////////////////////////////
     // RECORD TYPES (2.2.1) ////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
+        
+    public static enum RCNM{
+         /** Data Set General Information */
+        DATASET_GENERAL_INFORMATIONS("DS",10),
+        /** Data Set Geographic Reference */
+        DATASET_GEOGRAPHIC_REFERENCE("DP",20),
+        /** Data Set History */
+        DATASET_HISTORY("DH",30),
+        /** Data Set Accuracy */
+        DATASET_ACCURACY("DA",40),
+        /** Catalogue Directory {*)} */
+        CATALOG_DIRECTORY("CD",50),
+        /** Catalogue Cross Reference */
+        CATALOG_CROSS_REFERENCE("CR",60),
+        /** Data Dictionary Definition */
+        DATADICO_DEFINITION("ID",70),
+        /** Data Dictionary Domain */
+        DATADICO_DOMAIN("IO",80),
+        /** Data Dictionary Schema */
+        DATADICO_SCHEMA("IS",90),
+        /** Feature */
+        FEATURE("FE",100),
+        /** Vector Isolated node */
+        VECTOR_ISOLATED_NODE("VI",110),
+        /** Vector Connected node */
+        VECTOR_CONNECTED_NODE("VC",120),
+        /** Vector Edge node */
+        EDGE_NODE("VE",130),
+        /** Vector Face node */
+        FACE_NODE("VF",140);
+            
+        private final String text;
+        private final int binary;
+        
+        RCNM(String text, int binary) {
+            this.text = text;
+            this.binary = binary;            
+        }
+        
+        public String toText(){
+            return text;
+        }
+        
+        public byte toBinary(){
+            return (byte)binary;
+        }
+        
+        public static RCNM read(Object candidate) throws IOException {
+            for(RCNM c : values()){
+                if(match(candidate, c.text, c.binary)) return c;
+            }
+            throw new IOException("Unknowned value : "+candidate);
+        }
+        
+    }
     
     /** Data Set General Information */
     public static final SBConstant RCNM_DATASET_GENERAL_INFORMATIONS = new SBConstant("DS",10); 
