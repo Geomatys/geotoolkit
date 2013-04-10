@@ -112,6 +112,7 @@ public class HTTP implements AbstractHTTP {
     /**
      * Gets the value of the getOrPost property.
      */
+    @Override
     public List<RequestMethodType> getGetOrPost() {
         
         List<RequestMethodType> result = new ArrayList<RequestMethodType>();
@@ -133,14 +134,15 @@ public class HTTP implements AbstractHTTP {
         }
         if (object instanceof HTTP) {
             final HTTP that = (HTTP) object;
-            int i=0;
-            for (JAXBElement<RequestMethodType> j:getOrPost) {
-                if (!Utilities.equals(j.getValue(), that.getOrPost.get(i).getValue()))
-                    return false;
+            if (this.getRealGetOrPost().size() == that.getRealGetOrPost().size()) {
+                for (int i = 0; i < this.getOrPost.size(); i++) {
+                    if (!Utilities.equals(this.getOrPost.get(i).getValue(), that.getOrPost.get(i).getValue()))
+                        return false;
 
-                i++;
+                    i++;
+                }
+                return true;
             }
-            return true;
         }
         return false;
     }
