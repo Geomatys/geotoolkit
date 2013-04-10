@@ -35,7 +35,6 @@ import static java.lang.Double.NaN;
 import static java.lang.Double.isNaN;
 import static org.apache.sis.math.MathFunctions.isSameSign;
 import static org.geotoolkit.geometry.AbstractEnvelope.*;
-import static org.geotoolkit.geometry.AbstractDirectPosition.checkCoordinateReferenceSystemDimension;
 import static org.geotoolkit.internal.InternalUtilities.isPoleToPole;
 
 
@@ -174,7 +173,7 @@ public class Envelope2D extends org.apache.sis.geometry.Envelope2D implements Cl
      * @see GeneralEnvelope#GeneralEnvelope(Rectangle2D)
      */
     public Envelope2D(final CoordinateReferenceSystem crs, final Rectangle2D rect) {
-        super(rect, crs);
+        super(crs, rect);
     }
 
     /**
@@ -194,7 +193,7 @@ public class Envelope2D extends org.apache.sis.geometry.Envelope2D implements Cl
     public Envelope2D(final CoordinateReferenceSystem crs,
                       final double x, final double y, final double width, final double height)
     {
-        super(x, y, width, height, crs);
+        super(crs, x, y, width, height);
     }
 
     /**

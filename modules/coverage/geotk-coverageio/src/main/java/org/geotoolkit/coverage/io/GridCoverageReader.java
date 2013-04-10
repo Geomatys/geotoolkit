@@ -49,7 +49,7 @@ import org.opengis.util.GenericName;
 import org.apache.sis.util.ArraysExt;
 
 import org.geotoolkit.util.MeasurementRange;
-import org.geotoolkit.util.collection.BackingStoreException;
+import org.apache.sis.util.collection.BackingStoreException;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.measure.Measure;
 import org.geotoolkit.metadata.iso.DefaultMetadata;

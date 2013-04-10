@@ -47,7 +47,10 @@ import java.sql.SQLException;
  *
  * @since 3.09 (derived from 2.3)
  * @module
+ *
+ * @deprecated Moved to Apache SIS as {@link org.apache.sis.util.collection.BackingStoreException}.
  */
+@Deprecated
 public class BackingStoreException extends org.apache.sis.util.collection.BackingStoreException {
     /**
      * For cross-version compatibility.

@@ -116,7 +116,7 @@ public class DirectPosition2D extends org.apache.sis.geometry.DirectPosition2D i
     public DirectPosition2D(final CoordinateReferenceSystem crs,
                             final double x, final double y)
     {
-        super(x, y, crs);
+        super(crs, x, y);
     }
 
     /**

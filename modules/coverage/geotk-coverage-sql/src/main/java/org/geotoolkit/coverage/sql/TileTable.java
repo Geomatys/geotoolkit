@@ -48,7 +48,7 @@ import org.geotoolkit.image.io.mosaic.TileManagerFactory;
 import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.util.logging.Logging;
 import org.apache.sis.util.collection.Cache;
-import org.geotoolkit.util.collection.BackingStoreException;
+import org.apache.sis.util.collection.BackingStoreException;
 import org.geotoolkit.internal.sql.table.Table;
 import org.geotoolkit.internal.sql.table.Database;
 import org.geotoolkit.internal.sql.table.QueryType;
