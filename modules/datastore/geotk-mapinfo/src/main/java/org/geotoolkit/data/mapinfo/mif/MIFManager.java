@@ -195,6 +195,9 @@ public class MIFManager {
             throw new DataStoreException("Only Simple Features, or features with a Simple Feature as parent can be added.");
         }
 
+        //We check for the crs first
+        checkTypeCRS(toAdd);
+
         boolean isBaseType = false;
         // If we're on a new store, we must set the base type and write the header. If the source type is non-geometric,
         // we save it as our base type. Otherwise, we set it's super type as base type, and if there's not, we set it as
@@ -204,29 +207,28 @@ public class MIFManager {
                 mifBaseType = (SimpleFeatureType) toAdd;
                 isBaseType = true;
 
-            } else if (toAdd.getSuper() != null && toAdd.getSuper() instanceof SimpleFeatureType) {
+            } else if (toAdd.getSuper() != null && toAdd.getSuper() instanceof SimpleFeatureType && ((SimpleFeatureType) toAdd.getSuper()).getAttributeCount()>0) {
                 mifBaseType = (SimpleFeatureType) toAdd.getSuper();
-                mifColumnsCount = mifBaseType.getAttributeCount();
                 checkTypeCRS(toAdd);
 
             } else {
                 Collection<PropertyDescriptor> properties = toAdd.getDescriptors();
-                properties.remove(toAdd.getGeometryDescriptor());
 
                 FeatureTypeBuilder builder = new FeatureTypeBuilder();
                 builder.setName(mifName+".baseType");
                 builder.addAll(properties);
+                builder.remove(toAdd.getGeometryDescriptor().getLocalName());
 
                 mifBaseType = builder.buildSimpleFeatureType();
             }
+            mifColumnsCount = mifBaseType.getAttributeCount();
+
             flushHeader();
         }
 
         // If the given type has not been added as is as base type, we try to put it into our childTypes.
        if(!isBaseType) {
             if (MIFUtils.identifyFeature(toAdd) != null) {
-                //We check for the crs first
-                checkTypeCRS(toAdd);
                 mifChildTypes.add(toAdd);
             } else {
                 throw new DataStoreException("The geometry for the given type is not supported for MIF geometry");
@@ -723,7 +725,7 @@ public class MIFManager {
      * @return A string representation of the given feature. Never null, but empty string is possible.
      */
     public String buildMIDAttributes(Feature toParse) {
-        final StringBuilder builder = new StringBuilder();
+         final StringBuilder builder = new StringBuilder();
         final FeatureType fType = toParse.getType();
 
 

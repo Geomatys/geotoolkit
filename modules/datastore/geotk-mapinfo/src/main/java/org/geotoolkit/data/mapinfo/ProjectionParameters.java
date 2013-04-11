@@ -37,7 +37,7 @@ public class ProjectionParameters {
         PROJECTION_PARAMETERS.put(17, new int[]{0});           //Gall
         PROJECTION_PARAMETERS.put(7,  new int[]{0,1,4,5,6,7}); //Hotine oblique mercator
         PROJECTION_PARAMETERS.put(4,  new int[]{0,1});         //Lambert Azimuthal Equal–Area
-        PROJECTION_PARAMETERS.put(3,  new int[]{0,1,2,3,6,7}); //Lambert Conformal Conic
+        PROJECTION_PARAMETERS.put(3,  new int[]{0,1,2,3,6,7}); //Lambert Conformal Conic (2SP)
         PROJECTION_PARAMETERS.put(19, new int[]{0,1,2,3,6,7}); //Lambert Conformal Conic (modified for Belgium 1972)
         PROJECTION_PARAMETERS.put(10, new int[]{0});           //Mercator
         PROJECTION_PARAMETERS.put(11, new int[]{0});           //Miller Cylindrical

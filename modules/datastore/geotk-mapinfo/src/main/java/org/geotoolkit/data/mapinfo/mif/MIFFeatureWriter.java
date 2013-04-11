@@ -138,7 +138,7 @@ public class MIFFeatureWriter implements FeatureWriter {
                 tmpMidWriter.write(midAttributes);
             }
         } catch (Exception e) {
-            throw new FeatureStoreRuntimeException("A problem occurred while building geometry.", e);
+            throw new FeatureStoreRuntimeException("A problem occurred while building MID attributes.", e);
         }
 
 

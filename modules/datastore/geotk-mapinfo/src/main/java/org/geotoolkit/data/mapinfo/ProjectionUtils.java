@@ -77,12 +77,9 @@ public class ProjectionUtils {
      * @return A string containing projection's parameters. Never null, but can be empty.
      * @throws FactoryException If we can't to retrieve the projection parameters.
      */
-    public static String getMIFProjCoefs(Projection source) throws FactoryException {
+    public static String getMIFProjCoefs(Projection source, int projCode) throws FactoryException {
         final StringBuilder builder = new StringBuilder();
 
-        // We must get the projection Map info equivalent to get its valid parameters.
-        String id = IdentifiedObjects.lookupIdentifier(Citations.MAP_INFO, source.getMethod(), false);
-        final int projCode = Integer.decode(id);
         ParameterDescriptor[] paramList = getProjectionParameters(projCode);
 
         final ParameterValueGroup coefs = source.getParameterValues();
@@ -399,14 +396,18 @@ public class ProjectionUtils {
         } else if (crs instanceof ProjectedCRS) {
             final ProjectedCRS pCRS = (ProjectedCRS) crs;
             final Projection proj = pCRS.getConversionFromBase();
-            final String projCode = IdentifiedObjects.lookupIdentifier(Citations.MAP_INFO, proj.getMethod(), false);
+            String projCode = IdentifiedObjects.lookupIdentifier(Citations.MAP_INFO, proj.getMethod(), false);
             if(projCode == null) {
-                throw new DataStoreException("Projection of the given CRS does not get any equivalent in mapInfo.");
+                OperationMethod method = PROJ_FACTORY.getOperationMethod(proj.getMethod().getName().getCode());
+                projCode = IdentifiedObjects.lookupIdentifier(Citations.MAP_INFO, method, false);
+                if (projCode == null) {
+                    throw new DataStoreException("Projection of the given CRS does not get any equivalent in mapInfo.");
+                }
             }
             builder.append(projCode).append(", ").append(mifDatum).append(", ").append(mifUnitCode);
 
             // Retrieve needed MIF projection parameters.
-            final String coefs = ProjectionUtils.getMIFProjCoefs(proj);
+            final String coefs = ProjectionUtils.getMIFProjCoefs(proj, Integer.decode(projCode));
             if(!coefs.isEmpty()) {
                 builder.append(", ").append(coefs);
             }
