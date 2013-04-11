@@ -35,7 +35,6 @@ import static java.lang.Double.NaN;
 import static java.lang.Double.isNaN;
 import static org.apache.sis.math.MathFunctions.isSameSign;
 import static org.geotoolkit.geometry.AbstractEnvelope.*;
-import static org.geotoolkit.internal.InternalUtilities.isPoleToPole;
 
 
 /**
@@ -147,19 +146,8 @@ public class Envelope2D extends org.apache.sis.geometry.Envelope2D implements Cl
      * @since 3.11
      */
     public Envelope2D(final GeographicBoundingBox box) {
-        this(box.getWestBoundLongitude(),
-             box.getSouthBoundLatitude(),
-             box.getEastBoundLongitude(),
-             box.getNorthBoundLatitude());
+        super(box);
         super.setCoordinateReferenceSystem(DefaultGeographicCRS.WGS84);
-        if (Boolean.FALSE.equals(box.getInclusion())) {
-            x += width;
-            width = -width;
-            if (!isPoleToPole(y, y+height)) {
-                y += height;
-                height = -height;
-            }
-        }
     }
 
     /**

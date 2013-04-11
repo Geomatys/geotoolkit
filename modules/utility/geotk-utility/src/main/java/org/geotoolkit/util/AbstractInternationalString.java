@@ -44,7 +44,7 @@ import java.util.Locale;
  * @deprecated Moved to Apache SIS {@link org.apache.sis.util.iso.AbstractInternationalString}
  */
 @Deprecated
-public abstract class AbstractInternationalString extends org.apache.sis.util.iso.AbstractInternationalString {
+abstract class AbstractInternationalString extends org.apache.sis.util.iso.AbstractInternationalString {
     /**
      * The string in the {@linkplain Locale#getDefault system default} locale, or {@code null}
      * if this string has not yet been determined. This is the default string returned by

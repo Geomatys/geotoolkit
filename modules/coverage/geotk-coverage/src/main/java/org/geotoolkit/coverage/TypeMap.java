@@ -34,7 +34,7 @@ import static org.opengis.coverage.SampleDimensionType.*;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.internal.image.ColorUtilities;
-import org.geotoolkit.util.AbstractInternationalString;
+import org.apache.sis.util.iso.AbstractInternationalString;
 import org.geotoolkit.util.SimpleInternationalString;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.Range;

@@ -26,6 +26,7 @@ import java.util.MissingResourceException;
 import net.jcip.annotations.Immutable;
 
 import org.opengis.util.InternationalString;
+import org.apache.sis.util.iso.AbstractInternationalString;
 
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 

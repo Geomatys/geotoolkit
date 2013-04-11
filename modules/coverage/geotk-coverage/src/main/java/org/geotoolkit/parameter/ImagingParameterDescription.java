@@ -25,7 +25,7 @@ import java.io.Serializable;
 import javax.media.jai.OperationDescriptor;
 import net.jcip.annotations.Immutable;
 
-import org.geotoolkit.util.AbstractInternationalString;
+import org.apache.sis.util.iso.AbstractInternationalString;
 
 
 /**

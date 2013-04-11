@@ -45,7 +45,7 @@ import org.geotoolkit.io.wkt.UnformattableObjectException;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
 import org.apache.sis.util.Classes;
-import org.geotoolkit.util.AbstractInternationalString;
+import org.apache.sis.util.iso.AbstractInternationalString;
 import org.geotoolkit.util.NumberRange;
 
 import static java.lang.Double.NaN;
