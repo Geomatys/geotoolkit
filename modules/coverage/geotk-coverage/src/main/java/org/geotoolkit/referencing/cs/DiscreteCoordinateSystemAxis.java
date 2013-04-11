@@ -17,7 +17,7 @@
  */
 package org.geotoolkit.referencing.cs;
 
-import org.geotoolkit.util.Range;
+import org.apache.sis.measure.Range;
 import org.apache.sis.util.collection.CheckedContainer;
 
 

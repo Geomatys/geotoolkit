@@ -18,7 +18,7 @@
 package org.geotoolkit.internal.image;
 
 import org.geotoolkit.lang.Static;
-import org.geotoolkit.util.Range;
+import org.apache.sis.measure.Range;
 
 
 /**

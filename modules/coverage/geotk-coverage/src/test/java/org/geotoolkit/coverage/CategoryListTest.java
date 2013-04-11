@@ -22,7 +22,7 @@ import java.util.Random;
 
 import org.opengis.referencing.operation.TransformException;
 
-import org.geotoolkit.util.Range;
+import org.apache.sis.measure.Range;
 import org.geotoolkit.test.Depend;
 import org.geotoolkit.test.TestBase;
 

@@ -37,7 +37,7 @@ import org.geotoolkit.internal.image.ColorUtilities;
 import org.apache.sis.util.iso.AbstractInternationalString;
 import org.geotoolkit.util.SimpleInternationalString;
 import org.geotoolkit.util.NumberRange;
-import org.geotoolkit.util.Range;
+import org.apache.sis.measure.Range;
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.math.NumberSet;
 

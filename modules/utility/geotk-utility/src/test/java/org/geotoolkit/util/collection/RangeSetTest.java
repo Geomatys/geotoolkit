@@ -20,10 +20,9 @@ package org.geotoolkit.util.collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.Random;
-import org.geotoolkit.util.Range;
+import org.apache.sis.measure.Range;
 import org.geotoolkit.util.DateRange;
 import org.geotoolkit.util.NumberRange;
-import org.geotoolkit.util.RangeTest;
 import org.geotoolkit.test.Depend;
 import org.geotoolkit.test.Performance;
 
@@ -40,7 +39,6 @@ import static org.geotoolkit.test.Assert.*;
  *
  * @since 2.2
  */
-@Depend(RangeTest.class)
 public final strictfp class RangeSetTest {
     /**
      * Tests {@link RangeSet#add} followed by {@link RangeSet#remove},
@@ -229,18 +227,18 @@ public final strictfp class RangeSetTest {
 
         ranges.add("FAA", "FBB");
         assertEquals(1, ranges.size());
-        assertTrue(ranges.contains(new Range<>(String.class, "FAA", "FBB")));
+        assertTrue(ranges.contains(new Range<>(String.class, "FAA", true, "FBB", true)));
 
         ranges.add("FAZ", "FCC");
         assertEquals(1, ranges.size());
-        assertTrue(ranges.contains(new Range<>(String.class, "FAA", "FCC")));
+        assertTrue(ranges.contains(new Range<>(String.class, "FAA", true, "FCC", true)));
 
         ranges.add("GAA", "GBB");
         assertEquals(2, ranges.size());
 
         final Iterator<Range<String>> it = ranges.iterator();
-        assertEquals(new Range<>(String.class, "FAA", "FCC"), it.next());
-        assertEquals(new Range<>(String.class, "GAA", "GBB"), it.next());
+        assertEquals(new Range<>(String.class, "FAA", true, "FCC", true), it.next());
+        assertEquals(new Range<>(String.class, "GAA", true, "GBB", true), it.next());
         assertFalse(it.hasNext());
     }
 

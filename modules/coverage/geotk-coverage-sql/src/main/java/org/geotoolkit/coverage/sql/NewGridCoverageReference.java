@@ -44,7 +44,7 @@ import org.opengis.referencing.crs.CRSAuthorityFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
 
-import org.geotoolkit.util.Range;
+import org.apache.sis.measure.Range;
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.Localized;
 import org.geotoolkit.util.DateRange;

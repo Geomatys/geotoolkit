@@ -70,7 +70,7 @@ import org.apache.sis.measure.Angle;
 import org.apache.sis.measure.Latitude;
 import org.apache.sis.measure.Longitude;
 import org.apache.sis.measure.AngleFormat; // Can't use SIS because of Number formatting.
-import org.geotoolkit.measure.RangeFormat;
+import org.apache.sis.measure.RangeFormat;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.sql.CoverageDatabase;
 import org.geotoolkit.coverage.sql.CoverageEnvelope;
@@ -244,7 +244,7 @@ public class LayerList extends WindowCreator {
         dateFormat   = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, locale);
         heightFormat = NumberFormat.getNumberInstance(locale);
         angleFormat  = AngleFormat.getInstance(locale);
-        rangeFormat  = RangeFormat.getInstance(locale);
+        rangeFormat  = new RangeFormat(locale);
         /*
          * List of layers.
          */

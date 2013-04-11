@@ -53,7 +53,7 @@ import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.logging.LoggedFormat;
 import org.geotoolkit.image.io.WarningProducer;
 import org.geotoolkit.internal.image.io.Warnings;
-import org.geotoolkit.measure.RangeFormat;
+import org.apache.sis.measure.RangeFormat;
 import org.geotoolkit.resources.IndexedResourceBundle;
 import org.geotoolkit.resources.Errors;
 

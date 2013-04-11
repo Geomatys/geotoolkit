@@ -19,7 +19,6 @@ package org.geotoolkit.util;
 
 import org.junit.*;
 import static org.junit.Assert.*;
-import org.geotoolkit.test.Depend;
 
 
 /**
@@ -30,7 +29,6 @@ import org.geotoolkit.test.Depend;
  *
  * @since 3.06 (derived from 2.4)
  */
-@Depend(RangeTest.class)
 public final strictfp class NumberRangeTest {
     /**
      * Tests the bounds values of a range of integers.
