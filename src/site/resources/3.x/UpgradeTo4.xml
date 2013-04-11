@@ -32,8 +32,10 @@
       <replacefilter token="org.geotoolkit.util.ArgumentChecks"                     value="org.apache.sis.util.ArgumentChecks"/>
       <replacefilter token="org.geotoolkit.util.Characters"                         value="org.apache.sis.util.Characters"/>
       <replacefilter token="org.geotoolkit.util.ComparisonMode"                     value="org.apache.sis.util.ComparisonMode"/>
+      <replacefilter token="org.geotoolkit.util.Disposable"                         value="org.apache.sis.util.Disposable"/>
       <replacefilter token="org.geotoolkit.util.LenientComparable"                  value="org.apache.sis.util.LenientComparable"/>
       <replacefilter token="org.geotoolkit.util.Localized"                          value="org.apache.sis.util.Localized"/>
+      <replacefilter token="org.geotoolkit.util.Version;"                           value="org.apache.sis.util.Version;"/> <!-- Not to confuse with Versioned. -->
       <replacefilter token="org.geotoolkit.util.NullArgumentException"              value="org.apache.sis.util.NullArgumentException"/>
       <replacefilter token="org.geotoolkit.util.Range"                              value="org.apache.sis.measure.Range"/>
       <replacefilter token="org.geotoolkit.util.UnsupportedImplementationException" value="org.apache.sis.util.UnsupportedImplementationException"/>
@@ -42,6 +44,7 @@
       <replacefilter token="org.geotoolkit.util.collection.BackingStoreException"   value="org.apache.sis.util.collection.BackingStoreException"/>
       <replacefilter token="org.geotoolkit.util.collection.Cache"                   value="org.apache.sis.util.collection.Cache"/>
       <replacefilter token="org.geotoolkit.util.collection.CheckedContainer"        value="org.apache.sis.util.collection.CheckedContainer"/>
+      <replacefilter token="org.geotoolkit.util.collection.UnmodifiableArrayList"   value="org.apache.sis.util.collection.UnmodifiableArrayList"/>
       <replacefilter token="org.geotoolkit.util.collection.WeakHashSet"             value="org.apache.sis.util.collection.WeakHashSet"/>
       <replacefilter token="org.geotoolkit.util.collection.WeakValueHashMap"        value="org.apache.sis.util.collection.WeakValueHashMap"/>
       <replacefilter token="org.geotoolkit.xml.XLink"                               value="org.apache.sis.xml.XLink"/>
