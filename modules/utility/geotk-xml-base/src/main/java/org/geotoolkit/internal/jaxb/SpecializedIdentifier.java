@@ -26,7 +26,7 @@ import java.io.Serializable;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.citation.Citation;
 
-import org.geotoolkit.xml.XLink;
+import org.apache.sis.xml.XLink;
 import org.geotoolkit.xml.IdentifierMap;
 import org.geotoolkit.xml.IdentifierSpace;
 import org.geotoolkit.util.logging.Logging;

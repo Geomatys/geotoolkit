@@ -22,6 +22,7 @@ import javax.xml.bind.JAXBException;
 import org.opengis.metadata.citation.Address;
 import org.opengis.referencing.ReferenceIdentifier;
 import org.geotoolkit.test.LocaleDependantTestBase;
+import org.apache.sis.xml.XLink;
 
 import org.junit.*;
 import static org.geotoolkit.test.Assert.*;

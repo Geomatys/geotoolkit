@@ -17,6 +17,8 @@
  */
 package org.geotoolkit.util;
 
+import org.apache.sis.util.Version;
+
 
 /**
  * Interface of versioned objects or services.
