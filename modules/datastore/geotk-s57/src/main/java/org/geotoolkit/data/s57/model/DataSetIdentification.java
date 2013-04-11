@@ -17,7 +17,6 @@
 package org.geotoolkit.data.s57.model;
 
 import java.io.IOException;
-import java.util.Date;
 import org.geotoolkit.data.iso8211.Field;
 import org.geotoolkit.data.iso8211.SubField;
 import static org.geotoolkit.data.s57.S57Constants.*;
@@ -48,21 +47,21 @@ public class DataSetIdentification extends S57ModelObject {
     public static final String DSID_AGEN = "AGEN";
     public static final String DSID_COMT = "COMT";
     
-    public RCNM type;
+    public RecordType type;
     public long id;
-    public Object purpose;
-    public int usage;
+    public ExchangePurpose purpose;
+    public IntendedUsage usage;
     public String name;
     public String editionNumber;
     public String updateNumber;
     public String updateDate;
     public String issueDate;
     public double s57ediionNumber;
-    public String specification;
+    public ProductSpecification specification;
     public String specificationDesc;
     public String specificationNumber;
-    public String applicationProfile;
-    public String producer;    
+    public ApplicationProfile applicationProfile;
+    public Agency agency;    
     public String comment;
     public DataSetStructureInformation information;
     
@@ -82,9 +81,9 @@ public class DataSetIdentification extends S57ModelObject {
         public static final String DSID_DSSI_NOED = "NOED";
         public static final String DSID_DSSI_NOFA = "NOFA";
         
-        public String dataStructure;
-        public int attfLexicalLevel;
-        public int natfLexicalLevel;
+        public DataStructure dataStructure;
+        public LexicalLevel attfLexicalLevel;
+        public LexicalLevel natfLexicalLevel;
         public int nbMeta;
         public int nbCarto;
         public int nbGeo;
@@ -99,9 +98,9 @@ public class DataSetIdentification extends S57ModelObject {
             for(SubField sf : isofield.getSubFields()){
                 final String tag = sf.getType().getTag();
                 final Object value = sf.getValue();
-                     if(DSID_DSSI_DSTR.equalsIgnoreCase(tag)) dataStructure = toString(value);
-                else if(DSID_DSSI_AALL.equalsIgnoreCase(tag)) attfLexicalLevel = toInteger(value);
-                else if(DSID_DSSI_NALL.equalsIgnoreCase(tag)) natfLexicalLevel = toInteger(value);
+                     if(DSID_DSSI_DSTR.equalsIgnoreCase(tag)) dataStructure = DataStructure.valueOf(value);
+                else if(DSID_DSSI_AALL.equalsIgnoreCase(tag)) attfLexicalLevel = LexicalLevel.valueOf(value);
+                else if(DSID_DSSI_NALL.equalsIgnoreCase(tag)) natfLexicalLevel = LexicalLevel.valueOf(value);
                 else if(DSID_DSSI_NOMR.equalsIgnoreCase(tag)) nbMeta = toInteger(value);
                 else if(DSID_DSSI_NOCR.equalsIgnoreCase(tag)) nbCarto = toInteger(value);
                 else if(DSID_DSSI_NOGR.equalsIgnoreCase(tag)) nbGeo = toInteger(value);
@@ -120,21 +119,21 @@ public class DataSetIdentification extends S57ModelObject {
         for(SubField sf : isofield.getSubFields()){
             final String tag = sf.getType().getTag();
             final Object value = sf.getValue();
-            if(DSID_RCNM.equalsIgnoreCase(tag)) type = RCNM.read(value);
+            if(DSID_RCNM.equalsIgnoreCase(tag)) type = RecordType.valueOf(value);
             else if(DSID_RCID.equalsIgnoreCase(tag)) id = toLong(value);
-            else if(DSID_EXPP.equalsIgnoreCase(tag)) purpose = value;
-            else if(DSID_INTU.equalsIgnoreCase(tag)) usage = toInteger(value);
+            else if(DSID_EXPP.equalsIgnoreCase(tag)) purpose = ExchangePurpose.valueOf(value);
+            else if(DSID_INTU.equalsIgnoreCase(tag)) usage = IntendedUsage.valueOf(value);
             else if(DSID_DSNM.equalsIgnoreCase(tag)) name = toString(value);
             else if(DSID_EDTN.equalsIgnoreCase(tag)) editionNumber = toString(value);
             else if(DSID_UPDN.equalsIgnoreCase(tag)) updateNumber = toString(value);
             else if(DSID_UADT.equalsIgnoreCase(tag)) updateDate = toString(value);
             else if(DSID_ISDT.equalsIgnoreCase(tag)) issueDate = toString(value);
             else if(DSID_STED.equalsIgnoreCase(tag)) s57ediionNumber = toDouble(value);
-            else if(DSID_PRSP.equalsIgnoreCase(tag)) specification = toString(value);
+            else if(DSID_PRSP.equalsIgnoreCase(tag)) specification = ProductSpecification.valueOf(value);
             else if(DSID_PSDN.equalsIgnoreCase(tag)) specificationDesc = toString(value);
             else if(DSID_PRED.equalsIgnoreCase(tag)) specificationNumber = toString(value);
-            else if(DSID_PROF.equalsIgnoreCase(tag)) applicationProfile = toString(value);
-            else if(DSID_AGEN.equalsIgnoreCase(tag)) producer = toString(value);
+            else if(DSID_PROF.equalsIgnoreCase(tag)) applicationProfile = ApplicationProfile.valueOf(value);
+            else if(DSID_AGEN.equalsIgnoreCase(tag)) agency = Agency.valueOf(value);
             else if(DSID_COMT.equalsIgnoreCase(tag)) comment = toString(value);              
             
         }

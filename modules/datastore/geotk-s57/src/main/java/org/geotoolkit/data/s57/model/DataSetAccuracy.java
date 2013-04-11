@@ -38,7 +38,7 @@ public class DataSetAccuracy extends S57ModelObject {
     public static final String DSAC_FPMF = "FPMF";
     public static final String DSAC_COMT = "COMT";
     
-    public RCNM type;
+    public RecordType type;
     public long id;
     public double positionAccuracy;
     public double hvmeasureAccuracy;
@@ -52,7 +52,7 @@ public class DataSetAccuracy extends S57ModelObject {
         for(SubField sf : isofield.getSubFields()){
             final String tag = sf.getType().getTag();
             final Object val = sf.getValue();
-                 if (DSAC_RCNM.equalsIgnoreCase(tag)) type = RCNM.read(val);
+                 if (DSAC_RCNM.equalsIgnoreCase(tag)) type = RecordType.valueOf(val);
             else if (DSAC_RCID.equalsIgnoreCase(tag)) id = toLong(val);
             else if (DSAC_PACC.equalsIgnoreCase(tag)) positionAccuracy = toDouble(val);
             else if (DSAC_HACC.equalsIgnoreCase(tag)) hvmeasureAccuracy = toDouble(val);

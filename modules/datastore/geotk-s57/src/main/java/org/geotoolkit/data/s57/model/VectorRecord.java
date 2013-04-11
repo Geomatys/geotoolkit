@@ -33,14 +33,16 @@ public class VectorRecord extends S57ModelObject {
     //7.7.1.1 Vector record identifier field structure
     public static final String VRID = "VRID";
     public static final String VRID_RCNM = "RCNM"; 
-    public static final String VRID_RCID = "RCID"; 
+    public static final String VRID_RCID = "RCID";     
+    /** record version */
     public static final String VRID_RVER = "RVER"; 
+    /** record update instruction */
     public static final String VRID_RUIN = "RUIN"; 
     
-    public RCNM type;
+    public RecordType type;
     public long id;
     public int version;
-    public String updateInstruction;
+    public UpdateInstruction updateInstruction;
     
     public List<Attribute> attributes;
     public RecordPointerControl recordPointerControl;
@@ -77,6 +79,21 @@ public class VectorRecord extends S57ModelObject {
         public static final String VRID_VRPC_VPUI = "VPUI"; 
         public static final String VRID_VRPC_VPIX = "VPIX";
         public static final String VRID_VRPC_NVPT = "NVPT";
+        
+        public UpdateInstruction update;
+        public int index;
+        public int number;
+        
+        @Override
+        public void read(Field isofield) throws IOException {
+            for(SubField sf : isofield.getSubFields()){
+                final String tag = sf.getType().getTag();
+                final Object value = sf.getValue();
+                     if(VRID_VRPC_VPUI.equalsIgnoreCase(tag)) update = UpdateInstruction.valueOf(value);
+                else if(VRID_VRPC_VPIX.equalsIgnoreCase(tag)) index = toInteger(value);
+                else if(VRID_VRPC_NVPT.equalsIgnoreCase(tag)) number = toInteger(value);
+            }
+        }
     }
     
     public static class RecordPointer extends S57ModelObject {
@@ -89,10 +106,10 @@ public class VectorRecord extends S57ModelObject {
         public static final String VRID_VRPT_MASK = "MASK"; 
         
         public String name;
-        public String orientation;
-        public String usage;
-        public String topology;
-        public String masking;
+        public Orientation orientation;
+        public Usage usage;
+        public Topology topology;
+        public Mask mask;
         
         @Override
         public void read(Field isofield) throws IOException {
@@ -100,10 +117,10 @@ public class VectorRecord extends S57ModelObject {
                 final String tag = sf.getType().getTag();
                 final Object value = sf.getValue();
                      if(VRID_VRPT_NAME.equalsIgnoreCase(tag)) name = toString(value);
-                else if(VRID_VRPT_ORNT.equalsIgnoreCase(tag)) orientation = toString(value);
-                else if(VRID_VRPT_USAG.equalsIgnoreCase(tag)) usage = toString(value);
-                else if(VRID_VRPT_TOPI.equalsIgnoreCase(tag)) topology = toString(value);
-                else if(VRID_VRPT_MASK.equalsIgnoreCase(tag)) masking = toString(value);
+                else if(VRID_VRPT_ORNT.equalsIgnoreCase(tag)) orientation = Orientation.valueOf(value);
+                else if(VRID_VRPT_USAG.equalsIgnoreCase(tag)) usage = Usage.valueOf(value);
+                else if(VRID_VRPT_TOPI.equalsIgnoreCase(tag)) topology = Topology.valueOf(value);
+                else if(VRID_VRPT_MASK.equalsIgnoreCase(tag)) mask = Mask.valueOf(value);
             }
         }
         
@@ -115,6 +132,21 @@ public class VectorRecord extends S57ModelObject {
         public static final String VRID_SGCC_CCUI = "CCUI"; 
         public static final String VRID_SGCC_CCIX = "CCIX"; 
         public static final String VRID_SGCC_CCNG = "CCNG"; 
+        
+        public UpdateInstruction update;
+        public int index;
+        public int number;
+        
+         @Override
+        public void read(Field isofield) throws IOException {
+            for(SubField sf : isofield.getSubFields()){
+                final String tag = sf.getType().getTag();
+                final Object value = sf.getValue();
+                     if(VRID_SGCC_CCUI.equalsIgnoreCase(tag)) update = UpdateInstruction.valueOf(value);
+                else if(VRID_SGCC_CCIX.equalsIgnoreCase(tag)) index = toInteger(value);
+                else if(VRID_SGCC_CCNG.equalsIgnoreCase(tag)) number = toInteger(value);
+            }
+        }
     }
     
     public static class Coordinate2D extends S57ModelObject {
@@ -143,6 +175,13 @@ public class VectorRecord extends S57ModelObject {
         public static final String VRID_SG3D = "SG3D";
         public static final String VRID_SG3D_YCOO = "YCOO";
         public static final String VRID_SG3D_XCOO = "XCOO";
+        /** 
+        * In the binary implementation, 3-D sounding values are encoded as integers. In order to convert
+        * floating-point 3-D (sounding) values to integers (and vice-versa) a multiplication factor is used. The factor
+        * is defined by the encoder and held in the “3-D (sounding) Multiplication Factor” [SOMF] subfield. The
+        * SOMF subfield applies to the “3-D (sounding) Value” [VE3D] subfield of the “3-D Coordinate” [SG3D] field.
+        * The conversion algorithm is defined in clause 2.6.
+        */
         public static final String VRID_SG3D_VE3D = "VE3D";
         
         public double x;
@@ -170,8 +209,8 @@ public class VectorRecord extends S57ModelObject {
         public static final String VRID_ARCC_RESO = "RESO";
         public static final String VRID_ARCC_FPMF = "FPMF";
         
-        public String type;
-        public String surface;
+        public ArcType type;
+        public ConstructionSurface surface;
         public int order;
         public double resolution;
         public int factor;
@@ -181,8 +220,8 @@ public class VectorRecord extends S57ModelObject {
             for(SubField sf : isofield.getSubFields()){
                 final String tag = sf.getType().getTag();
                 final Object value = sf.getValue();
-                     if (VRID_ARCC_ATYP.equalsIgnoreCase(tag)) type = toString(value);
-                else if (VRID_ARCC_SURF.equalsIgnoreCase(tag)) surface = toString(value);
+                     if (VRID_ARCC_ATYP.equalsIgnoreCase(tag)) type = ArcType.valueOf(value);
+                else if (VRID_ARCC_SURF.equalsIgnoreCase(tag)) surface = ConstructionSurface.valueOf(value);
                 else if (VRID_ARCC_ORDR.equalsIgnoreCase(tag)) order = toInteger(value);
                 else if (VRID_ARCC_RESO.equalsIgnoreCase(tag)) resolution = toDouble(value);
                 else if (VRID_ARCC_FPMF.equalsIgnoreCase(tag)) factor = toInteger(value);
@@ -225,10 +264,10 @@ public class VectorRecord extends S57ModelObject {
         for(SubField sf : isofield.getSubFields()){
             final String tag = sf.getType().getTag();
             final Object value = sf.getValue();
-                 if (VRID_RCNM.equalsIgnoreCase(tag)) type = RCNM.read(value);
+                 if (VRID_RCNM.equalsIgnoreCase(tag)) type = RecordType.valueOf(value);
             else if (VRID_RCID.equalsIgnoreCase(tag)) id = toLong(value);
             else if (VRID_RVER.equalsIgnoreCase(tag)) version = toInteger(value);
-            else if (VRID_RUIN.equalsIgnoreCase(tag)) updateInstruction = toString(value);
+            else if (VRID_RUIN.equalsIgnoreCase(tag)) updateInstruction = UpdateInstruction.valueOf(value);
         }
         for(Field f : isofield.getFields()){
             final String tag = f.getType().getTag();

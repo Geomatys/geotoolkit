@@ -41,13 +41,13 @@ public class DataDictionaryDomainIdentifier extends S57ModelObject {
     public static final String DDDI_AUTH = "AUTH";
     public static final String DDDI_COMT = "COMT";
     
-    public RCNM type;
+    public RecordType type;
     public long id;
     public int code;
-    public String domainType;
+    public AttributeDomain domainType;
     public String unit;
     public String domainFormat;
-    public String agency;
+    public Agency agency;
     public String comment;
     public List<DataDictionaryDomainField> fields = new ArrayList<DataDictionaryDomainField>();
     
@@ -60,11 +60,11 @@ public class DataDictionaryDomainIdentifier extends S57ModelObject {
         public static final String DDDI_DDOM_DEFN = "DEFN";
         public static final String DDDI_DDOM_AUTH = "AUTH";
         
-        public String rangeOrValue;
+        public RangeOrValue rangeOrValue;
         public String domainValue;
         public String description;
         public String definition;
-        public String agency;
+        public Agency agency;
         public List<DataDictionaryDomainReference> references = new ArrayList<DataDictionaryDomainReference>();
         
         @Override
@@ -72,11 +72,11 @@ public class DataDictionaryDomainIdentifier extends S57ModelObject {
             for(SubField sf : isofield.getSubFields()){
                 final String tag = sf.getType().getTag();
                 final Object value = sf.getValue();
-                     if (DDDI_DDOM_RAVA.equalsIgnoreCase(tag)) rangeOrValue = toString(value);
+                     if (DDDI_DDOM_RAVA.equalsIgnoreCase(tag)) rangeOrValue = RangeOrValue.valueOf(value);
                 else if (DDDI_DDOM_DVAL.equalsIgnoreCase(tag)) domainValue = toString(value);
                 else if (DDDI_DDOM_DVSD.equalsIgnoreCase(tag)) description = toString(value);
                 else if (DDDI_DDOM_DEFN.equalsIgnoreCase(tag)) definition = toString(value);
-                else if (DDDI_DDOM_AUTH.equalsIgnoreCase(tag)) agency = toString(value);
+                else if (DDDI_DDOM_AUTH.equalsIgnoreCase(tag)) agency = Agency.valueOf(value);
             }
             for(Field f : isofield.getFields()){
                 final String tag = f.getType().getTag();
@@ -97,7 +97,7 @@ public class DataDictionaryDomainIdentifier extends S57ModelObject {
         public static final String DDDI_DDOM_DDRF_RFTP = "RFTP";
         public static final String DDDI_DDOM_DDRF_RFVL = "RFVL";
         
-        public String type;
+        public ReferenceType type;
         public String value;
         
         @Override
@@ -105,7 +105,7 @@ public class DataDictionaryDomainIdentifier extends S57ModelObject {
             for(SubField sf : isofield.getSubFields()){
                 final String tag = sf.getType().getTag();
                 final Object val = sf.getValue();
-                     if (DDDI_DDOM_DDRF_RFTP.equalsIgnoreCase(tag)) type = toString(val);
+                     if (DDDI_DDOM_DDRF_RFTP.equalsIgnoreCase(tag)) type = ReferenceType.valueOf(val);
                 else if (DDDI_DDOM_DDRF_RFVL.equalsIgnoreCase(tag)) value = toString(val);
                 
             }
@@ -118,13 +118,13 @@ public class DataDictionaryDomainIdentifier extends S57ModelObject {
         for(SubField sf : isofield.getSubFields()){
             final String tag = sf.getType().getTag();
             final Object value = sf.getValue();
-                 if (DDDI_RCNM.equalsIgnoreCase(tag)) type = RCNM.read(value);
+                 if (DDDI_RCNM.equalsIgnoreCase(tag)) type = RecordType.valueOf(value);
             else if (DDDI_RCID.equalsIgnoreCase(tag)) id = toInteger(value);
             else if (DDDI_ATLB.equalsIgnoreCase(tag)) code = toInteger(value);
-            else if (DDDI_ATDO.equalsIgnoreCase(tag)) domainType = toString(value);
+            else if (DDDI_ATDO.equalsIgnoreCase(tag)) domainType = AttributeDomain.valueOf(value);
             else if (DDDI_ADMU.equalsIgnoreCase(tag)) unit = toString(value);
             else if (DDDI_ADFT.equalsIgnoreCase(tag)) domainFormat = toString(value);
-            else if (DDDI_AUTH.equalsIgnoreCase(tag)) agency = toString(value);
+            else if (DDDI_AUTH.equalsIgnoreCase(tag)) agency = Agency.valueOf(value);
             else if (DDDI_COMT.equalsIgnoreCase(tag)) comment = toString(value);
         }
         for(Field f : isofield.getFields()){

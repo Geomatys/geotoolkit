@@ -36,7 +36,7 @@ public class DataDictionarySchemaIdentifier extends S57ModelObject {
     public static final String DDSI_RCID = "RCID"; 
     public static final String DDSI_OBLB = "OBLB"; 
         
-    public RCNM type;
+    public RecordType type;
     public long id;
     public int code;
     public List<DataDictionarySchemaField> fields;
@@ -49,8 +49,8 @@ public class DataDictionarySchemaIdentifier extends S57ModelObject {
         public static final String DDSI_DDSC_AUTH = "AUTH";
         
         public int code;
-        public String set;
-        public String agency;
+        public AttributeSet set;
+        public Agency agency;
         
         @Override
         public void read(Field isofield) throws IOException {
@@ -58,8 +58,8 @@ public class DataDictionarySchemaIdentifier extends S57ModelObject {
                 final String tag = sf.getType().getTag();
                 final Object val = sf.getValue();
                      if (DDSI_DDSC_ATLB.equalsIgnoreCase(tag)) code = toInteger(val);
-                else if (DDSI_DDSC_ASET.equalsIgnoreCase(tag)) set = toString(val);
-                else if (DDSI_DDSC_AUTH.equalsIgnoreCase(tag)) agency = toString(val);
+                else if (DDSI_DDSC_ASET.equalsIgnoreCase(tag)) set = AttributeSet.valueOf(val);
+                else if (DDSI_DDSC_AUTH.equalsIgnoreCase(tag)) agency = Agency.valueOf(val);
 
             }
         }
@@ -72,7 +72,7 @@ public class DataDictionarySchemaIdentifier extends S57ModelObject {
         for(SubField sf : isofield.getSubFields()){
             final String tag = sf.getType().getTag();
             final Object val = sf.getValue();
-                 if (DDSI_RCNM.equalsIgnoreCase(tag)) type = RCNM.read(val);
+                 if (DDSI_RCNM.equalsIgnoreCase(tag)) type = RecordType.valueOf(val);
             else if (DDSI_RCID.equalsIgnoreCase(tag)) id = toLong(val);
             else if (DDSI_OBLB.equalsIgnoreCase(tag)) code = toInteger(val);
         }

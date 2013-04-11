@@ -40,19 +40,28 @@ public class CatalogDirectory extends S57ModelObject {
     public static final String CATD_WLON = "WLON";
     public static final String CATD_NLAT = "NLAT";
     public static final String CATD_ELON = "ELON";
+    /**
+     * A “Cyclic Redundancy Check” (CRC) algorithm can be used to ensure that the data has not been
+     * corrupted during the exchange process. Different CRC algorithms can be used for different applications.
+     * The algorithm used is, therefore, described in the relevant product specification (see Appendix B –
+     * Product Specifications).
+     * A CRC value for every file in an exchange set can be encoded in the “Catalogue Directory” [CATD] field,
+     * CRCS subfield.
+     */
     public static final String CATD_CRCS = "CRCS";
     public static final String CATD_COMT = "COMT";
  
-    public RCNM type;
+    public RecordType type;
     public long id;
     public String file;
     public String fileName;
     public String volume;
-    public String impl;
+    public Implementation impl;
     public double southmostLatitude;
     public double westmostLongitude;
     public double northmostLatitude;
     public double eastmostLongitude;
+    
     public String crc;
     public String comment;
     
@@ -61,12 +70,12 @@ public class CatalogDirectory extends S57ModelObject {
         for(SubField sf : isofield.getSubFields()){
             final String tag = sf.getType().getTag();
             final Object value = sf.getValue();
-                 if (CATD_RCNM.equalsIgnoreCase(tag)) type = RCNM.read(value);
+                 if (CATD_RCNM.equalsIgnoreCase(tag)) type = RecordType.valueOf(value);
             else if (CATD_RCID.equalsIgnoreCase(tag)) id = toInteger(value);
             else if (CATD_FILE.equalsIgnoreCase(tag)) file = toString(value);
             else if (CATD_LFIL.equalsIgnoreCase(tag)) fileName = toString(value);
             else if (CATD_VOLM.equalsIgnoreCase(tag)) volume = toString(value);
-            else if (CATD_IMPL.equalsIgnoreCase(tag)) impl = toString(value);
+            else if (CATD_IMPL.equalsIgnoreCase(tag)) impl = Implementation.valueOf(value);
             else if (CATD_SLAT.equalsIgnoreCase(tag)) southmostLatitude = toDouble(value);
             else if (CATD_WLON.equalsIgnoreCase(tag)) westmostLongitude = toDouble(value);
             else if (CATD_NLAT.equalsIgnoreCase(tag)) northmostLatitude = toDouble(value);

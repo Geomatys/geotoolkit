@@ -44,7 +44,7 @@ public class DataSetParameter extends S57ModelObject {
     public static final String DSPM_SOMF = "SOMF";
     public static final String DSPM_COMT = "COMT";
     
-    public RCNM type;
+    public RecordType type;
     public long id;
     public int horizontalDatum;
     public int verticalDatum;
@@ -53,7 +53,7 @@ public class DataSetParameter extends S57ModelObject {
     public int depthUnit;
     public int heightUnit;
     public int positionAccuracyUnit;
-    public int coordUnit;
+    public Unit coordUnit;
     public int coordFactor;
     public int soundingFactor;
     public String comment;
@@ -73,7 +73,7 @@ public class DataSetParameter extends S57ModelObject {
         public static final String DSPM_DSPR_FPMF= "FPMF";
         public static final String DSPM_DSPR_COMT = "COMT";
         
-        public String projection;
+        public Projection projection;
         public Double param1;
         public Double param2;
         public Double param3;
@@ -88,7 +88,7 @@ public class DataSetParameter extends S57ModelObject {
             for(SubField sf : isofield.getSubFields()){
                 final String tag = sf.getType().getTag();
                 final Object value = sf.getValue();
-                     if(DSPM_DSPR_PROJ.equalsIgnoreCase(tag)) projection = toString(value);
+                     if(DSPM_DSPR_PROJ.equalsIgnoreCase(tag)) projection = Projection.valueOf(value);
                 else if(DSPM_DSPR_PRP1.equalsIgnoreCase(tag)) param1 = toDouble(value);              
                 else if(DSPM_DSPR_PRP2.equalsIgnoreCase(tag)) param2 = toDouble(value);              
                 else if(DSPM_DSPR_PRP3.equalsIgnoreCase(tag)) param3 = toDouble(value);              
@@ -155,7 +155,7 @@ public class DataSetParameter extends S57ModelObject {
         for(SubField sf : isofield.getSubFields()){
             final String tag = sf.getType().getTag();
             final Object value = sf.getValue();
-                 if(DSPM_RCNM.equalsIgnoreCase(tag)) type = RCNM.read(value);
+                 if(DSPM_RCNM.equalsIgnoreCase(tag)) type = RecordType.valueOf(value);
             else if(DSPM_RCID.equalsIgnoreCase(tag)) id = toLong(value);
             else if(DSPM_HDAT.equalsIgnoreCase(tag)) horizontalDatum = toInteger(value);
             else if(DSPM_VDAT.equalsIgnoreCase(tag)) verticalDatum = toInteger(value);
@@ -164,7 +164,7 @@ public class DataSetParameter extends S57ModelObject {
             else if(DSPM_DUNI.equalsIgnoreCase(tag)) depthUnit = toInteger(value);
             else if(DSPM_HUNI.equalsIgnoreCase(tag)) heightUnit = toInteger(value);
             else if(DSPM_PUNI.equalsIgnoreCase(tag)) positionAccuracyUnit = toInteger(value);
-            else if(DSPM_COUN.equalsIgnoreCase(tag)) coordUnit = toInteger(value);
+            else if(DSPM_COUN.equalsIgnoreCase(tag)) coordUnit = Unit.valueOf(value);
             else if(DSPM_COMF.equalsIgnoreCase(tag)) coordFactor = toInteger(value);
             else if(DSPM_SOMF.equalsIgnoreCase(tag)) soundingFactor = toInteger(value);
             else if(DSPM_COMT.equalsIgnoreCase(tag)) comment = toString(value);              

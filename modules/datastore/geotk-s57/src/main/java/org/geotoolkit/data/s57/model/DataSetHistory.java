@@ -39,9 +39,9 @@ public class DataSetHistory extends S57ModelObject {
     public static final String DSHT_CODT = "CODT";
     public static final String DSHT_COMT = "COMT";
     
-    public RCNM type;
+    public RecordType type;
     public long id;
-    public String agency;
+    public Agency agency;
     public String earliestSourceDate;
     public String latestSourceDate;
     public String collectionCriteria;
@@ -53,9 +53,9 @@ public class DataSetHistory extends S57ModelObject {
         for(SubField sf : isofield.getSubFields()){
             final String tag = sf.getType().getTag();
             final Object val = sf.getValue();
-                 if (DSHT_RCNM.equalsIgnoreCase(tag)) type = RCNM.read(val);
+                 if (DSHT_RCNM.equalsIgnoreCase(tag)) type = RecordType.valueOf(val);
             else if (DSHT_RCID.equalsIgnoreCase(tag)) id = toLong(val);
-            else if (DSHT_PRCO.equalsIgnoreCase(tag)) agency = toString(val);
+            else if (DSHT_PRCO.equalsIgnoreCase(tag)) agency = Agency.valueOf(val);
             else if (DSHT_ESDT.equalsIgnoreCase(tag)) earliestSourceDate = toString(val);
             else if (DSHT_LSDT.equalsIgnoreCase(tag)) latestSourceDate = toString(val);
             else if (DSHT_DCRT.equalsIgnoreCase(tag)) collectionCriteria = toString(val);

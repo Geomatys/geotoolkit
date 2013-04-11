@@ -34,19 +34,27 @@ public class FeatureRecord extends S57ModelObject {
     public static final String FRID = "FRID";
     public static final String FRID_RCNM = "RCNM"; 
     public static final String FRID_RCID = "RCID"; 
+    /** object geometric primitive*/
     public static final String FRID_PRIM = "PRIM"; 
+    /** The “Group” [GRUP] subfield is used to separate feature objects into groups. The definition of groups is
+     * dependent on the product specification (see Appendix B – Product Specifications). If a feature object does
+     * not belong to a group, the subfield must be left empty (see clause 2.1). */
     public static final String FRID_GRUP = "GRUP"; 
+    /** The numeric object label/code of the object class from the IHO Object Catalogue is encoded in the “Object
+     * Label/Code” [OBJL] subfield. */
     public static final String FRID_OBJL = "OBJL"; 
+    /** record version */
     public static final String FRID_RVER = "RVER"; 
+    /** record update instruction */
     public static final String FRID_RUIN = "RUIN"; 
     
-    public RCNM type;
+    public RecordType type;
     public long id;
-    public String primitiveType;
+    public Primitive primitiveType;
     public int group;
     public int code;
     public int version;
-    public String updateInstruction;
+    public UpdateInstruction updateInstruction;
     public Identifier identifier;
     public List<Attribute> attributes;
     public List<NationalAttribute> nattributes;
@@ -59,10 +67,14 @@ public class FeatureRecord extends S57ModelObject {
         //7.6.2 Feature object identifier field structure
         public static final String FRID_FOID = "FOID"; 
         public static final String FRID_FOID_AGEN = "AGEN"; 
+        /** The “Feature Object Identification Number” ranges from 1 to (2^32)-2. The “Feature Object Identification
+        * Subdivision” ranges from 1 to (2^16)-2. Both subfields are used to create an unique key for a feature object
+        * produced by the agency encoded in the AGEN subfield. The usage of the FIDN and FIDS subfields is not
+        * constrained and must be defined by the encoder. */
         public static final String FRID_FOID_FIDN = "FIDN"; 
         public static final String FRID_FOID_FIDS = "FIDS"; 
         
-        public String agency;
+        public Agency agency;
         public int number;
         public int subdivision;
         
@@ -71,7 +83,7 @@ public class FeatureRecord extends S57ModelObject {
             for(SubField sf : isofield.getSubFields()){
                 final String tag = sf.getType().getTag();
                 final Object value = sf.getValue();
-                     if (FRID_FOID_AGEN.equalsIgnoreCase(tag)) agency = toString(value);
+                     if (FRID_FOID_AGEN.equalsIgnoreCase(tag)) agency = Agency.valueOf(value);
                 else if (FRID_FOID_FIDN.equalsIgnoreCase(tag)) number = toInteger(value);
                 else if (FRID_FOID_FIDS.equalsIgnoreCase(tag)) subdivision = toInteger(value);
             }
@@ -81,6 +93,12 @@ public class FeatureRecord extends S57ModelObject {
     
     public static class Attribute extends S57ModelObject {
         //7.6.3 Feature record attribute field structure
+        /** 4.4
+        * Attributes of feature objects must be encoded in the “Feature Record Attribute” [ATTF] field (see clause
+        * 7.6.3). The numeric attribute label/code of the attribute from the IHO Object Catalogue is encoded in the
+        * “Attribute Label/Code” [ATTL] subfield. In both the ASCII and binary implementations, the “Attribute Value”
+        * subfield [ATVL] must be a string of characters terminated by the subfield terminator (1/15). Lexical level
+        * 0 or 1 may be used for the general text in the ATTF field (see clause 2.4). */
         public static final String FRID_ATTF = "ATTF"; 
         public static final String FRID_ATTF_ATTL = "ATTL"; 
         public static final String FRID_ATTF_ATVL = "ATVL"; 
@@ -101,6 +119,13 @@ public class FeatureRecord extends S57ModelObject {
 
     public static class NationalAttribute extends S57ModelObject {
         //7.6.4 Feature record national attribute field structure
+        /** 4.5
+        * National attributes of feature objects must be encoded in the “Feature Record National Attribute” [NATF]
+        * field (see clause 7.6.4). The numeric attribute label/code of the national attribute from the IHO Object
+        * Catalogue is encoded in the “Attribute Label/Code” [ATTL] subfield. In both the ASCII and binary
+        * implementations, the “Attribute Value” subfield [ATVL] must be a string of characters terminated by the
+        * appropriate subfield terminator (see clause 2.5). All lexical levels may be used for the general text in the
+        * NATF field (see clause 2.4). */
         public static final String FRID_NATF = "NATF"; 
         public static final String FRID_NATF_ATTL = "ATTL"; 
         public static final String FRID_NATF_ATVL = "ATVL"; 
@@ -126,18 +151,18 @@ public class FeatureRecord extends S57ModelObject {
         public static final String FRID_FFPC_FFIX = "FFIX"; 
         public static final String FRID_FFPC_NFPT = "NFPT"; 
         
-        public String updateInstruction;
-        public int pointerIndex;
-        public int nbPointers;
+        public UpdateInstruction update;
+        public int index;
+        public int number;
         
         @Override
         public void read(Field isofield) throws IOException {
             for(SubField sf : isofield.getSubFields()){
                 final String tag = sf.getType().getTag();
                 final Object val = sf.getValue();
-                     if(FRID_FFPC_FFUI.equalsIgnoreCase(tag)) updateInstruction = toString(val);
-                else if(FRID_FFPC_FFIX.equalsIgnoreCase(tag)) pointerIndex = toInteger(val);
-                else if(FRID_FFPC_NFPT.equalsIgnoreCase(tag)) nbPointers = toInteger(val);
+                     if(FRID_FFPC_FFUI.equalsIgnoreCase(tag)) update = UpdateInstruction.valueOf(val);
+                else if(FRID_FFPC_FFIX.equalsIgnoreCase(tag)) index = toInteger(val);
+                else if(FRID_FFPC_NFPT.equalsIgnoreCase(tag)) number = toInteger(val);
             }
         }
         
@@ -145,13 +170,20 @@ public class FeatureRecord extends S57ModelObject {
     
     public static class ObjectPointer extends S57ModelObject {
         //7.6.6 Feature record to feature object pointer field structure
+        /** 4.6
+        * The “Feature Record to Feature Object Pointer” [FFPT] field is used to establish a relationship between
+        * feature objects. Relationships between feature objects are discussed in detail in chapter 6.
+        * The main element of the pointer field is the LNAM subfield (see clause 4.3). The LNAM subfield contains
+        * the key of the feature object being referenced (foreign key). The “Relationship Indicator” [RIND] subfield
+        * can be used to qualify a relationship (e.g. master or slave relationship) or to add a stacking order to a
+        * relationship. */
         public static final String FRID_FFPT = "FFPT"; 
         public static final String FRID_FFPT_LNAM = "LNAM"; 
         public static final String FRID_FFPT_RIND = "RIND"; 
         public static final String FRID_FFPT_COMT = "COMT"; 
                 
         public String name;
-        public String relationship;
+        public RelationShip relationship;
         public String comment;
         
         @Override
@@ -160,7 +192,7 @@ public class FeatureRecord extends S57ModelObject {
                 final String tag = sf.getType().getTag();
                 final Object val = sf.getValue();
                      if(FRID_FFPT_LNAM.equalsIgnoreCase(tag)) name = toString(val);
-                else if(FRID_FFPT_RIND.equalsIgnoreCase(tag)) relationship = toString(val);
+                else if(FRID_FFPT_RIND.equalsIgnoreCase(tag)) relationship = RelationShip.valueOf(val);
                 else if(FRID_FFPT_COMT.equalsIgnoreCase(tag)) comment = toString(val);
             }
         }
@@ -174,18 +206,18 @@ public class FeatureRecord extends S57ModelObject {
         public static final String FRID_FSPC_FSIX = "FSIX"; 
         public static final String FRID_FSPC_NSPT = "NSPT"; 
                 
-        public String updateInstruction;
-        public int pointerIndex;
-        public int nbPointers;
+        public UpdateInstruction update;
+        public int index;
+        public int number;
         
         @Override
         public void read(Field isofield) throws IOException {
             for(SubField sf : isofield.getSubFields()){
                 final String tag = sf.getType().getTag();
                 final Object val = sf.getValue();
-                     if(FRID_FSPC_FSUI.equalsIgnoreCase(tag)) updateInstruction = toString(val);
-                else if(FRID_FSPC_FSIX.equalsIgnoreCase(tag)) pointerIndex = toInteger(val);
-                else if(FRID_FSPC_NSPT.equalsIgnoreCase(tag)) nbPointers = toInteger(val);
+                     if(FRID_FSPC_FSUI.equalsIgnoreCase(tag)) update = UpdateInstruction.valueOf(val);
+                else if(FRID_FSPC_FSIX.equalsIgnoreCase(tag)) index = toInteger(val);
+                else if(FRID_FSPC_NSPT.equalsIgnoreCase(tag)) number = toInteger(val);
             }
         }
         
@@ -200,9 +232,9 @@ public class FeatureRecord extends S57ModelObject {
         public static final String FRID_FSPT_MASK = "MASK";
              
         public String name;
-        public String orientation;
-        public String usage;
-        public String mask;
+        public Orientation orientation;
+        public Usage usage;
+        public Mask mask;
         
         @Override
         public void read(Field isofield) throws IOException {
@@ -210,9 +242,9 @@ public class FeatureRecord extends S57ModelObject {
                 final String tag = sf.getType().getTag();
                 final Object val = sf.getValue();
                      if(FRID_FSPT_NAME.equalsIgnoreCase(tag)) name = toString(val);
-                else if(FRID_FSPT_ORNT.equalsIgnoreCase(tag)) orientation = toString(val);
-                else if(FRID_FSPT_USAG.equalsIgnoreCase(tag)) usage = toString(val);
-                else if(FRID_FSPT_MASK.equalsIgnoreCase(tag)) mask = toString(val);
+                else if(FRID_FSPT_ORNT.equalsIgnoreCase(tag)) orientation = Orientation.valueOf(val);
+                else if(FRID_FSPT_USAG.equalsIgnoreCase(tag)) usage = Usage.valueOf(val);
+                else if(FRID_FSPT_MASK.equalsIgnoreCase(tag)) mask = Mask.valueOf(val);
             }
         }
         
@@ -224,13 +256,13 @@ public class FeatureRecord extends S57ModelObject {
         for(SubField sf : isofield.getSubFields()){
             final String tag = sf.getType().getTag();
             final Object value = sf.getValue();
-                 if (FRID_RCNM.equalsIgnoreCase(tag)) type = RCNM.read(value);
+                 if (FRID_RCNM.equalsIgnoreCase(tag)) type = RecordType.valueOf(value);
             else if (FRID_RCID.equalsIgnoreCase(tag)) id = toLong(value);
-            else if (FRID_PRIM.equalsIgnoreCase(tag)) primitiveType = toString(value);
+            else if (FRID_PRIM.equalsIgnoreCase(tag)) primitiveType = Primitive.valueOf(value);
             else if (FRID_GRUP.equalsIgnoreCase(tag)) group = toInteger(value);
             else if (FRID_OBJL.equalsIgnoreCase(tag)) code = toInteger(value);
             else if (FRID_RVER.equalsIgnoreCase(tag)) version = toInteger(value);
-            else if (FRID_RUIN.equalsIgnoreCase(tag)) updateInstruction = toString(value);
+            else if (FRID_RUIN.equalsIgnoreCase(tag)) updateInstruction = UpdateInstruction.valueOf(value);
         }
         for(Field f : isofield.getFields()){
             final String tag = f.getType().getTag();
