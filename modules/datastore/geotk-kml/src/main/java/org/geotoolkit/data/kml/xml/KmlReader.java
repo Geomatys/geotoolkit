@@ -5626,8 +5626,7 @@ public class KmlReader extends StaxStreamReader {
      */
     private boolean checkNamespace(String namespaceURI) {
         //if we hve a valid namespace, return true
-        if (URI_KML_2_2.equals(namespaceURI)
-                || URI_KML_2_1.equals(namespaceURI)) {
+        if (namespaceURI.endsWith("2.2") || namespaceURI.endsWith("2.1")) {
             return true;
         }
         if (useNamespace == false) {
