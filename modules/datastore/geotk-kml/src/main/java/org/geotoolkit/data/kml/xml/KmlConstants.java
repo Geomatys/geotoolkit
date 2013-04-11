@@ -39,6 +39,7 @@ public final class KmlConstants {
 
     // NAMESPACES
     public static final String URI_KML_2_1 = "http://earth.google.com/kml/2.1";
+    public static final String URI_KML_GOOGLE_2_2 = "http://earth.google.com/kml/2.2";
     public static final String URI_KML_2_2 = "http://www.opengis.net/kml/2.2";
     public static final String URI_XAL = XalConstants.URI_XAL;
     public static final String URI_ATOM = AtomConstants.URI_ATOM;
