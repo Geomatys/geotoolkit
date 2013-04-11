@@ -148,7 +148,7 @@ public class ConverterRegistry {
             register(new SimpleConverter<Double,Angle>() {
                 @Override public Class<Double> getSourceClass()      {return Double.class;}
                 @Override public Class<Angle>  getTargetClass()      {return Angle .class;}
-                @Override public Angle         convert(Double value) {return new org.geotoolkit.measure.Angle(value);}
+                @Override public Angle         convert(Double value) {return new Angle(value);}
             });
             /*
              * Registration of converter working on interfaces

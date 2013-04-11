@@ -19,7 +19,7 @@ package org.geotoolkit.internal.simple;
 
 import org.opengis.metadata.citation.Citation;
 import org.opengis.referencing.ReferenceIdentifier;
-
+import org.apache.sis.internal.simple.SimpleCitation;
 
 /**
  * A trivial implementation of {@link ReferenceIdentifier}. This is defined as a subtype of

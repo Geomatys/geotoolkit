@@ -47,8 +47,8 @@ import javax.media.jai.PerspectiveTransform;
 import javax.media.jai.ParameterListDescriptor;
 import javax.media.jai.RegistryElementDescriptor;
 
-import org.geotoolkit.measure.Angle;
-import org.geotoolkit.measure.AngleFormat;
+import org.apache.sis.measure.Angle;
+import org.apache.sis.measure.AngleFormat;
 import org.geotoolkit.util.logging.Logging;
 import org.apache.sis.util.Classes;
 import org.geotoolkit.gui.swing.image.KernelEditor;

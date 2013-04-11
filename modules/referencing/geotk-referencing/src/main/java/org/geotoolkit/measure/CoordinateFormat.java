@@ -46,6 +46,10 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.MismatchedDimensionException;
 
+import org.apache.sis.measure.Angle;
+import org.apache.sis.measure.AngleFormat;
+import org.apache.sis.measure.Latitude;
+import org.apache.sis.measure.Longitude;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.geometry.TransformedDirectPosition;

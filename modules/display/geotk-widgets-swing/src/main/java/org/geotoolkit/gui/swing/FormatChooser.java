@@ -43,8 +43,8 @@ import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import org.geotoolkit.measure.Angle;
-import org.geotoolkit.measure.AngleFormat;
+import org.apache.sis.measure.Angle;
+import org.apache.sis.measure.AngleFormat;
 import org.geotoolkit.measure.CoordinateFormat;
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.internal.swing.SwingUtilities;

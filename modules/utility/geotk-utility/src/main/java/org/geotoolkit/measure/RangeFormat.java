@@ -33,6 +33,8 @@ import java.text.SimpleDateFormat;
 import javax.measure.unit.Unit;
 import javax.measure.unit.UnitFormat;
 
+import org.apache.sis.measure.Angle;
+import org.apache.sis.measure.AngleFormat;
 import org.geotoolkit.util.Range;
 import org.geotoolkit.util.DateRange;
 import org.geotoolkit.util.NumberRange;

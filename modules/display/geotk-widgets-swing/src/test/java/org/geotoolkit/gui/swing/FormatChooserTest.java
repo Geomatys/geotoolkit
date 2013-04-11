@@ -18,7 +18,7 @@
 package org.geotoolkit.gui.swing;
 
 import org.geotoolkit.test.gui.SwingTestBase;
-import org.geotoolkit.measure.AngleFormat;
+import org.apache.sis.measure.AngleFormat;
 
 
 /**
