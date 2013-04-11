@@ -64,12 +64,14 @@ public class S57ModelObject {
     }
     
     protected static String toString(Object candidate){
+        if(candidate==null) return null;
+        
         if(candidate instanceof String){
             return (String)candidate;
         }else if(candidate instanceof byte[]){
             return new String(((byte[])candidate));
         }
-        return null;
+        return candidate.toString();
     }
     
     protected static Integer toInteger(Object candidate){

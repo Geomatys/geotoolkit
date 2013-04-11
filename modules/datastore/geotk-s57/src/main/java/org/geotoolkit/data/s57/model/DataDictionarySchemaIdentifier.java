@@ -16,6 +16,14 @@
  */
 package org.geotoolkit.data.s57.model;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import org.geotoolkit.data.iso8211.Field;
+import org.geotoolkit.data.iso8211.SubField;
+import static org.geotoolkit.data.s57.S57Constants.*;
+import static org.geotoolkit.data.s57.model.S57ModelObject.*;
+
 /**
  *
  * @author Johann Sorel (Geomatys)
@@ -28,6 +36,11 @@ public class DataDictionarySchemaIdentifier extends S57ModelObject {
     public static final String DDSI_RCID = "RCID"; 
     public static final String DDSI_OBLB = "OBLB"; 
         
+    public RCNM type;
+    public long id;
+    public int code;
+    public List<DataDictionarySchemaField> fields;
+    
     public static class DataDictionarySchemaField extends S57ModelObject {
         //7.5.3.2 Data dictionary schema field structure
         public static final String DDSI_DDSC = "DDSC";
@@ -35,6 +48,42 @@ public class DataDictionarySchemaIdentifier extends S57ModelObject {
         public static final String DDSI_DDSC_ASET = "ASET";
         public static final String DDSI_DDSC_AUTH = "AUTH";
         
+        public int code;
+        public String set;
+        public String agency;
+        
+        @Override
+        public void read(Field isofield) throws IOException {
+            for(SubField sf : isofield.getSubFields()){
+                final String tag = sf.getType().getTag();
+                final Object val = sf.getValue();
+                     if (DDSI_DDSC_ATLB.equalsIgnoreCase(tag)) code = toInteger(val);
+                else if (DDSI_DDSC_ASET.equalsIgnoreCase(tag)) set = toString(val);
+                else if (DDSI_DDSC_AUTH.equalsIgnoreCase(tag)) agency = toString(val);
+
+            }
+        }
+        
     }
     
+    
+    @Override
+    public void read(Field isofield) throws IOException {
+        for(SubField sf : isofield.getSubFields()){
+            final String tag = sf.getType().getTag();
+            final Object val = sf.getValue();
+                 if (DDSI_RCNM.equalsIgnoreCase(tag)) type = RCNM.read(val);
+            else if (DDSI_RCID.equalsIgnoreCase(tag)) id = toLong(val);
+            else if (DDSI_OBLB.equalsIgnoreCase(tag)) code = toInteger(val);
+        }
+        for(Field f : isofield.getFields()){
+            final String tag = f.getType().getTag();
+            if(DataDictionarySchemaField.DDSI_DDSC.equalsIgnoreCase(tag)){
+                if(fields==null) fields = new ArrayList<DataDictionarySchemaField>();
+                final DataDictionarySchemaField candidate = new DataDictionarySchemaField();
+                candidate.read(f);
+                fields.add(candidate);
+            }
+        }
+    }
 }

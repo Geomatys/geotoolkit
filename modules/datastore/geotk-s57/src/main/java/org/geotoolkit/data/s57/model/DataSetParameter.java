@@ -88,7 +88,7 @@ public class DataSetParameter extends S57ModelObject {
             for(SubField sf : isofield.getSubFields()){
                 final String tag = sf.getType().getTag();
                 final Object value = sf.getValue();
-                if(DSPM_DSPR_PROJ.equalsIgnoreCase(tag)) projection = toString(value);
+                     if(DSPM_DSPR_PROJ.equalsIgnoreCase(tag)) projection = toString(value);
                 else if(DSPM_DSPR_PRP1.equalsIgnoreCase(tag)) param1 = toDouble(value);              
                 else if(DSPM_DSPR_PRP2.equalsIgnoreCase(tag)) param2 = toDouble(value);              
                 else if(DSPM_DSPR_PRP3.equalsIgnoreCase(tag)) param3 = toDouble(value);              
@@ -134,7 +134,7 @@ public class DataSetParameter extends S57ModelObject {
             for(SubField sf : isofield.getSubFields()){
                 final String tag = sf.getType().getTag();
                 final Object value = sf.getValue();
-                if(DSPM_DSRC_RPID.equalsIgnoreCase(tag)) id = toString(value);
+                     if(DSPM_DSRC_RPID.equalsIgnoreCase(tag)) id = toString(value);
                 else if(DSPM_DSRC_RYCO.equalsIgnoreCase(tag)) latNorth = toDouble(value);              
                 else if(DSPM_DSRC_RXCO.equalsIgnoreCase(tag)) lonEast = toDouble(value);              
                 else if(DSPM_DSRC_CURP.equalsIgnoreCase(tag)) unit = toString(value);              
@@ -155,33 +155,20 @@ public class DataSetParameter extends S57ModelObject {
         for(SubField sf : isofield.getSubFields()){
             final String tag = sf.getType().getTag();
             final Object value = sf.getValue();
-            if(DSPM_RCNM.equalsIgnoreCase(tag)){
-                type = RCNM.read(value);
-            }else if(DSPM_RCID.equalsIgnoreCase(tag)){
-                id = toLong(value);
-            }else if(DSPM_HDAT.equalsIgnoreCase(tag)){
-                horizontalDatum = toInteger(value);
-            }else if(DSPM_VDAT.equalsIgnoreCase(tag)){
-                verticalDatum = toInteger(value);
-            }else if(DSPM_SDAT.equalsIgnoreCase(tag)){
-                soundingDatum = toInteger(value);
-            }else if(DSPM_CSCL.equalsIgnoreCase(tag)){
-                dataScale = toInteger(value);
-            }else if(DSPM_DUNI.equalsIgnoreCase(tag)){
-                depthUnit = toInteger(value);
-            }else if(DSPM_HUNI.equalsIgnoreCase(tag)){
-                heightUnit = toInteger(value);
-            }else if(DSPM_PUNI.equalsIgnoreCase(tag)){
-                positionAccuracyUnit = toInteger(value);
-            }else if(DSPM_COUN.equalsIgnoreCase(tag)){
-                coordUnit = toInteger(value);
-            }else if(DSPM_COMF.equalsIgnoreCase(tag)){
-                coordFactor = toInteger(value);
-            }else if(DSPM_SOMF.equalsIgnoreCase(tag)){
-                soundingFactor = toInteger(value);
-            }else if(DSPM_COMT.equalsIgnoreCase(tag)){  
-                comment = toString(value);              
-            }
+                 if(DSPM_RCNM.equalsIgnoreCase(tag)) type = RCNM.read(value);
+            else if(DSPM_RCID.equalsIgnoreCase(tag)) id = toLong(value);
+            else if(DSPM_HDAT.equalsIgnoreCase(tag)) horizontalDatum = toInteger(value);
+            else if(DSPM_VDAT.equalsIgnoreCase(tag)) verticalDatum = toInteger(value);
+            else if(DSPM_SDAT.equalsIgnoreCase(tag)) soundingDatum = toInteger(value);
+            else if(DSPM_CSCL.equalsIgnoreCase(tag)) dataScale = toInteger(value);
+            else if(DSPM_DUNI.equalsIgnoreCase(tag)) depthUnit = toInteger(value);
+            else if(DSPM_HUNI.equalsIgnoreCase(tag)) heightUnit = toInteger(value);
+            else if(DSPM_PUNI.equalsIgnoreCase(tag)) positionAccuracyUnit = toInteger(value);
+            else if(DSPM_COUN.equalsIgnoreCase(tag)) coordUnit = toInteger(value);
+            else if(DSPM_COMF.equalsIgnoreCase(tag)) coordFactor = toInteger(value);
+            else if(DSPM_SOMF.equalsIgnoreCase(tag)) soundingFactor = toInteger(value);
+            else if(DSPM_COMT.equalsIgnoreCase(tag)) comment = toString(value);              
+            
         }
         for(Field f : isofield.getFields()){
             final String tag = f.getType().getTag();

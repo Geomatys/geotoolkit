@@ -16,6 +16,12 @@
  */
 package org.geotoolkit.data.s57.model;
 
+import java.io.IOException;
+import org.geotoolkit.data.iso8211.Field;
+import org.geotoolkit.data.iso8211.SubField;
+import static org.geotoolkit.data.s57.S57Constants.*;
+import static org.geotoolkit.data.s57.model.S57ModelObject.*;
+
 /**
  *
  * @author Johann Sorel (Geomatys)
@@ -32,5 +38,30 @@ public class DataSetHistory extends S57ModelObject {
     public static final String DSHT_DCRT = "DCRT";
     public static final String DSHT_CODT = "CODT";
     public static final String DSHT_COMT = "COMT";
+    
+    public RCNM type;
+    public long id;
+    public String agency;
+    public String earliestSourceDate;
+    public String latestSourceDate;
+    public String collectionCriteria;
+    public String compilationDate;
+    public String comment;
+    
+    @Override
+    public void read(Field isofield) throws IOException {
+        for(SubField sf : isofield.getSubFields()){
+            final String tag = sf.getType().getTag();
+            final Object val = sf.getValue();
+                 if (DSHT_RCNM.equalsIgnoreCase(tag)) type = RCNM.read(val);
+            else if (DSHT_RCID.equalsIgnoreCase(tag)) id = toLong(val);
+            else if (DSHT_PRCO.equalsIgnoreCase(tag)) agency = toString(val);
+            else if (DSHT_ESDT.equalsIgnoreCase(tag)) earliestSourceDate = toString(val);
+            else if (DSHT_LSDT.equalsIgnoreCase(tag)) latestSourceDate = toString(val);
+            else if (DSHT_DCRT.equalsIgnoreCase(tag)) collectionCriteria = toString(val);
+            else if (DSHT_CODT.equalsIgnoreCase(tag)) compilationDate = toString(val);
+            else if (DSHT_COMT.equalsIgnoreCase(tag)) comment = toString(val);
+        }
+    }
     
 }

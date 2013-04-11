@@ -16,6 +16,12 @@
  */
 package org.geotoolkit.data.s57.model;
 
+import java.io.IOException;
+import org.geotoolkit.data.iso8211.Field;
+import org.geotoolkit.data.iso8211.SubField;
+import static org.geotoolkit.data.s57.S57Constants.*;
+import static org.geotoolkit.data.s57.model.S57ModelObject.*;
+
 /**
  *
  * @author Johann Sorel (Geomatys)
@@ -32,5 +38,28 @@ public class DataSetAccuracy extends S57ModelObject {
     public static final String DSAC_FPMF = "FPMF";
     public static final String DSAC_COMT = "COMT";
     
+    public RCNM type;
+    public long id;
+    public double positionAccuracy;
+    public double hvmeasureAccuracy;
+    public double soundingAccuracy;
+    public int factor;
+    public String comment;
+    
+    
+    @Override
+    public void read(Field isofield) throws IOException {
+        for(SubField sf : isofield.getSubFields()){
+            final String tag = sf.getType().getTag();
+            final Object val = sf.getValue();
+                 if (DSAC_RCNM.equalsIgnoreCase(tag)) type = RCNM.read(val);
+            else if (DSAC_RCID.equalsIgnoreCase(tag)) id = toLong(val);
+            else if (DSAC_PACC.equalsIgnoreCase(tag)) positionAccuracy = toDouble(val);
+            else if (DSAC_HACC.equalsIgnoreCase(tag)) hvmeasureAccuracy = toDouble(val);
+            else if (DSAC_SACC.equalsIgnoreCase(tag)) soundingAccuracy = toDouble(val);
+            else if (DSAC_FPMF.equalsIgnoreCase(tag)) factor = toInteger(val);
+            else if (DSAC_COMT.equalsIgnoreCase(tag)) comment = toString(val);
+        }
+    }
     
 }

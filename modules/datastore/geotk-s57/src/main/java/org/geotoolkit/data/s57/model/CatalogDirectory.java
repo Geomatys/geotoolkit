@@ -16,6 +16,12 @@
  */
 package org.geotoolkit.data.s57.model;
 
+import java.io.IOException;
+import org.geotoolkit.data.iso8211.Field;
+import org.geotoolkit.data.iso8211.SubField;
+import static org.geotoolkit.data.s57.S57Constants.*;
+import static org.geotoolkit.data.s57.model.S57ModelObject.*;
+
 /**
  *
  * @author Johann Sorel (Geomatys)
@@ -36,5 +42,38 @@ public class CatalogDirectory extends S57ModelObject {
     public static final String CATD_ELON = "ELON";
     public static final String CATD_CRCS = "CRCS";
     public static final String CATD_COMT = "COMT";
-        
+ 
+    public RCNM type;
+    public long id;
+    public String file;
+    public String fileName;
+    public String volume;
+    public String impl;
+    public double southmostLatitude;
+    public double westmostLongitude;
+    public double northmostLatitude;
+    public double eastmostLongitude;
+    public String crc;
+    public String comment;
+    
+    @Override
+    public void read(Field isofield) throws IOException {
+        for(SubField sf : isofield.getSubFields()){
+            final String tag = sf.getType().getTag();
+            final Object value = sf.getValue();
+                 if (CATD_RCNM.equalsIgnoreCase(tag)) type = RCNM.read(value);
+            else if (CATD_RCID.equalsIgnoreCase(tag)) id = toInteger(value);
+            else if (CATD_FILE.equalsIgnoreCase(tag)) file = toString(value);
+            else if (CATD_LFIL.equalsIgnoreCase(tag)) fileName = toString(value);
+            else if (CATD_VOLM.equalsIgnoreCase(tag)) volume = toString(value);
+            else if (CATD_IMPL.equalsIgnoreCase(tag)) impl = toString(value);
+            else if (CATD_SLAT.equalsIgnoreCase(tag)) southmostLatitude = toDouble(value);
+            else if (CATD_WLON.equalsIgnoreCase(tag)) westmostLongitude = toDouble(value);
+            else if (CATD_NLAT.equalsIgnoreCase(tag)) northmostLatitude = toDouble(value);
+            else if (CATD_ELON.equalsIgnoreCase(tag)) eastmostLongitude = toDouble(value);
+            else if (CATD_CRCS.equalsIgnoreCase(tag)) crc = toString(value);
+            else if (CATD_COMT.equalsIgnoreCase(tag)) comment = toString(value);
+        }
+    }
+    
 }

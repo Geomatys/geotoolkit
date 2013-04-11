@@ -86,7 +86,11 @@ public class Field {
                     for(String rowname : names.get(0)){
                         tw.append(rowname);
                         for(String colname : names.get(1)){
-                            tw.append('\t').append(String.valueOf(sfite.next().getValue()));
+                            Object val = sfite.next().getValue();
+                            if(val instanceof byte[]){
+                                val = Arrays.toString((byte[])val);
+                            }
+                            tw.append('\t').append(String.valueOf(val));
                         }
                         tw.writeHorizontalSeparator();
                     }
@@ -102,7 +106,11 @@ public class Field {
                     while(sfite.hasNext()){
                         for(int c=0;c<names.get(1).length;c++){
                             if(c!=0) tw.append('\t');
-                            tw.append(String.valueOf(sfite.next().getValue()));
+                            Object val = sfite.next().getValue();
+                            if(val instanceof byte[]){
+                                val = Arrays.toString((byte[])val);
+                            }
+                            tw.append(String.valueOf(val));
                         }
                         tw.append('\n');
                     }

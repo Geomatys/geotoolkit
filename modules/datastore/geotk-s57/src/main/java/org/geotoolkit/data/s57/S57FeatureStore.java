@@ -115,7 +115,7 @@ public class S57FeatureStore extends AbstractFeatureStore{
         try{
             while(reader.hasNext()){
                 final S57ModelObject obj = reader.next();
-                System.out.println(obj);
+                System.err.println(obj);
                 
             }
         }catch(IOException ex){
