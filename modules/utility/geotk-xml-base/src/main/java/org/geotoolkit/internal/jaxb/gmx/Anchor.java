@@ -24,7 +24,7 @@ import javax.xml.bind.annotation.XmlValue;
 
 import org.opengis.util.InternationalString;
 
-import org.geotoolkit.xml.XLink;
+import org.apache.sis.xml.XLink;
 import org.geotoolkit.util.Utilities;
 
 

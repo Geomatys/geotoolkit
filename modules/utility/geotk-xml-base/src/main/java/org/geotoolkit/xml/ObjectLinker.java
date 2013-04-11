@@ -24,6 +24,7 @@ import org.opengis.metadata.Identifier;
 
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.LenientComparable;
+import org.apache.sis.xml.XLink;
 import org.apache.sis.xml.NilReason;
 import org.apache.sis.xml.MarshalContext;
 import org.apache.sis.xml.ReferenceResolver;
