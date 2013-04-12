@@ -20,6 +20,7 @@ import java.util.*;
 import java.io.Serializable;
 import org.geotoolkit.lang.Static;
 import org.apache.sis.util.collection.Containers;
+import org.apache.sis.internal.util.CollectionsExt;
 
 
 /**
@@ -98,14 +99,7 @@ public final class XCollections extends Static {
      */
     @SafeVarargs
     public static <E> Set<E> immutableSet(final E... array) {
-        if (array == null) {
-            return null;
-        }
-        switch (array.length) {
-            case 0:  return Collections.emptySet();
-            case 1:  return Collections.singleton(array[0]);
-            default: return Collections.unmodifiableSet(new LinkedHashSet<>(Arrays.asList(array)));
-        }
+        return CollectionsExt.immutableSet(array);
     }
 
     /**
@@ -125,7 +119,7 @@ public final class XCollections extends Static {
      * @return A unmodifiable version of the given set, or {@code null} if the given set was null.
      */
     public static <E> Set<E> unmodifiableOrCopy(Set<E> set) {
-        return org.apache.sis.internal.util.CollectionsExt.unmodifiableOrCopy(set);
+        return CollectionsExt.unmodifiableOrCopy(set);
     }
 
     /**
@@ -145,7 +139,7 @@ public final class XCollections extends Static {
      * @return A unmodifiable version of the given map, or {@code null} if the given map was null.
      */
     public static <K,V> Map<K,V> unmodifiableOrCopy(Map<K,V> map) {
-        return org.apache.sis.internal.util.CollectionsExt.unmodifiableOrCopy(map);
+        return CollectionsExt.unmodifiableOrCopy(map);
     }
 
     /**
