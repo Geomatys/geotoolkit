@@ -33,7 +33,7 @@ import org.geotoolkit.index.tree.io.TreeVisitorResult;
 import org.geotoolkit.index.tree.NodeFactory;
 import org.geotoolkit.referencing.CRS;
 import org.apache.sis.util.ArgumentChecks;
-import org.apache.sis.util.collection.UnmodifiableArrayList;
+import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.MismatchedReferenceSystemException;
@@ -60,7 +60,7 @@ public class BasicRTree extends AbstractTree {
     public BasicRTree(final int maxElements, CoordinateReferenceSystem crs, final SplitCase choice) {
         this(maxElements, crs, choice, DefaultNodeFactory.INSTANCE);
     }
-    
+
     /**
      * Create a Basic R-Tree.
      *
@@ -181,7 +181,7 @@ public class BasicRTree extends AbstractTree {
                                 if (isSkipSibling(tvrTemp)) break;
                             }
                         }
-                    } else { 
+                    } else {
                         if (!isSkipSubTree(tvr)) {
                             for (Node child : candidate.getChildren()) {
                                 final TreeVisitorResult tvrTemp = nodeSearch(child, regionSearch, visitor);
@@ -394,7 +394,7 @@ public class BasicRTree extends AbstractTree {
         ls.remove(Math.min(index1, index2));
         Envelope r1Temp, r2Temp;
         Envelope boundS1, boundS2;
-        Node result1, result2;               
+        Node result1, result2;
         boundS1 = (leaf) ? ((Envelope)s1) : ((Node)s1).getBoundary();
         boundS2 = (leaf) ? ((Envelope)s2) : ((Node)s2).getBoundary();
         double[] tabS1 = new double[2*dim];
@@ -417,7 +417,7 @@ public class BasicRTree extends AbstractTree {
         for (Object ent : ls) {
             r1Temp = getEnveloppeMin(UnmodifiableArrayList.wrap(s1, ent));
             r2Temp = getEnveloppeMin(UnmodifiableArrayList.wrap(s2, ent));
-            
+
             double area1 = calc.getSpace(r1Temp);
             double area2 = calc.getSpace(r2Temp);
             int r1nbE = DefaultTreeUtils.countElements(result1);

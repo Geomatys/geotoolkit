@@ -20,7 +20,7 @@ package org.geotoolkit.filter.capability;
 import java.util.Collection;
 import java.util.List;
 import static org.apache.sis.util.ArgumentChecks.*;
-import org.apache.sis.util.collection.UnmodifiableArrayList;
+import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.opengis.filter.capability.GeometryOperand;
 import org.opengis.filter.capability.SpatialCapabilities;
 import org.opengis.filter.capability.SpatialOperators;
@@ -42,7 +42,7 @@ public class DefaultSpatialCapabilities implements SpatialCapabilities{
         if(operands.length == 0){
             throw new IllegalArgumentException("Operands must not be empty");
         }
-        
+
         this.operands = UnmodifiableArrayList.wrap(operands);
         this.operators = operators;
     }
@@ -94,5 +94,5 @@ public class DefaultSpatialCapabilities implements SpatialCapabilities{
         hash = 71 * hash + (this.operators != null ? this.operators.hashCode() : 0);
         return hash;
     }
-    
+
 }

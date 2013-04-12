@@ -19,7 +19,7 @@ package org.geotoolkit.style;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.sis.util.collection.UnmodifiableArrayList;
+import org.apache.sis.internal.util.UnmodifiableArrayList;
 
 import org.opengis.filter.expression.Expression;
 import org.opengis.style.Font;
@@ -30,23 +30,23 @@ import static org.opengis.filter.expression.Expression.*;
 
 /**
  * Immutable implementation of GeoAPI Font.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
 public class DefaultFont implements Font{
 
     private final List<Expression> family;
-    
+
     private final Expression style;
-    
+
     private final Expression weight;
-    
+
     private final Expression size;
-    
+
     /**
      * Create a default immutable Font.
-     * 
+     *
      * @param family : can be null or empty
      * @param style : if null or Expression.NIL will be replaced by default value.
      * defaults are “normal”, “italic”, and “oblique”
@@ -55,20 +55,20 @@ public class DefaultFont implements Font{
      * @param size : if null or Expression.NIL will be replaced by default value.
      */
     public DefaultFont(final List<Expression> family, final Expression style, final Expression weight, final Expression size){
-        
+
         this.style = (style == null || style == NIL) ? DEFAULT_FONT_STYLE : style;
         this.weight = (weight == null || weight == NIL) ? DEFAULT_FONT_WEIGHT : weight;
         this.size = (size == null || size == NIL) ? DEFAULT_FONT_SIZE : size;
-        
+
         if(family != null && !family.isEmpty()) {
             final Expression[] rep = family.toArray(new Expression[family.size()]);
             this.family = UnmodifiableArrayList.wrap(rep);
         }else{
             this.family = Collections.emptyList();
         }
-        
+
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -160,5 +160,5 @@ public class DefaultFont implements Font{
         builder.append(']');
         return builder.toString();
     }
-    
+
 }

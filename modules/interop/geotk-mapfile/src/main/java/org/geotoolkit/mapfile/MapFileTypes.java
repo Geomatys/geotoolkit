@@ -26,7 +26,7 @@ import org.geotoolkit.feature.AttributeDescriptorBuilder;
 import org.geotoolkit.feature.AttributeTypeBuilder;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.FeatureTypeBuilder;
-import org.apache.sis.util.collection.UnmodifiableArrayList;
+import org.apache.sis.internal.util.UnmodifiableArrayList;
 
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.FeatureType;
@@ -37,14 +37,14 @@ import org.opengis.filter.expression.PropertyName;
 
 /**
  * Declares all mapfile types.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public final class MapfileTypes {
-    
+
     public static final String NAMESPACE = "http://mapserver.org";
-    
-    public static final FeatureType CLASS;    
+
+    public static final FeatureType CLASS;
     public static final AttributeDescriptor CLASS_BACKGROUNDCOLOR;
     public static final AttributeDescriptor CLASS_COLOR;
     public static final AttributeDescriptor CLASS_DEBUG;
@@ -67,19 +67,19 @@ public final class MapfileTypes {
     public static final AttributeDescriptor CLASS_TEMPLATE;
     /** Expression */
     public static final AttributeDescriptor CLASS_TEXT;
-    
+
     public static final FeatureType CLUSTER;
     public static final AttributeDescriptor CLUSTER_MAXDISTANCE;
     public static final AttributeDescriptor CLUSTER_REGION;
     public static final AttributeDescriptor CLUSTER_GROUP;
     public static final AttributeDescriptor CLUSTER_FILTER;
-                
+
     public static final FeatureType FEATURE;
     public static final AttributeDescriptor FEATURE_POINTS;
     public static final AttributeDescriptor FEATURE_ITEMS;
     public static final AttributeDescriptor FEATURE_TEXT;
     public static final AttributeDescriptor FEATURE_WKT;
-    
+
     public static final FeatureType GRID;
     public static final AttributeDescriptor GRID_LABELFORMAT;
     public static final AttributeDescriptor GRID_MINARCS;
@@ -88,7 +88,7 @@ public final class MapfileTypes {
     public static final AttributeDescriptor GRID_MAXINTERVAL;
     public static final AttributeDescriptor GRID_MINSUBDIVIDE;
     public static final AttributeDescriptor GRID_MAXSUBDIVIDE;
-    
+
     public static final FeatureType JOIN;
     public static final AttributeDescriptor JOIN_CONNECTION;
     public static final AttributeDescriptor JOIN_CONNECTIONTYPE;
@@ -100,7 +100,7 @@ public final class MapfileTypes {
     public static final AttributeDescriptor JOIN_TEMPLATE;
     public static final AttributeDescriptor JOIN_TO;
     public static final AttributeDescriptor JOIN_TYPE;
-    
+
     public static final FeatureType LABEL;
     public static final AttributeDescriptor LABEL_ALIGN;
     /** [double|auto|follow|attribute] */
@@ -138,7 +138,7 @@ public final class MapfileTypes {
     public static final AttributeDescriptor LABEL_STYLE;
     public static final AttributeDescriptor LABEL_TYPE;
     public static final AttributeDescriptor LABEL_WRAP;
-                
+
     public static final FeatureType LAYER;
     public static final AttributeDescriptor LAYER_CLASS;
     public static final AttributeDescriptor LAYER_CLASSGROUP;
@@ -205,7 +205,7 @@ public final class MapfileTypes {
     public static final AttributeDescriptor LAYER_TRANSFORM;
     public static final AttributeDescriptor LAYER_TYPE;
     public static final AttributeDescriptor LAYER_UNITS;
-    
+
     public static final FeatureType LEGEND;
     public static final AttributeDescriptor LEGEND_IMAGECOLOR;
     public static final AttributeDescriptor LEGEND_INTERLACE;
@@ -218,7 +218,7 @@ public final class MapfileTypes {
     public static final AttributeDescriptor LEGEND_STATUS;
     public static final AttributeDescriptor LEGEND_TEMPLATE;
     public static final AttributeDescriptor LEGEND_TRANSPARENT;
-    
+
     public static final FeatureType MAP;
     public static final AttributeDescriptor MAP_ANGLE;
     public static final AttributeDescriptor MAP_CONFIG;
@@ -251,7 +251,7 @@ public final class MapfileTypes {
     public static final AttributeDescriptor MAP_TRANSPARENT;
     public static final AttributeDescriptor MAP_UNITS;
     public static final AttributeDescriptor MAP_WEB;
-    
+
     public static final FeatureType OUTPUTFORMAT;
     public static final AttributeDescriptor OUTPUTFORMAT_DRIVER;
     public static final AttributeDescriptor OUTPUTFORMAT_EXTENSION;
@@ -260,13 +260,13 @@ public final class MapfileTypes {
     public static final AttributeDescriptor OUTPUTFORMAT_MIMETYPE;
     public static final AttributeDescriptor OUTPUTFORMAT_NAME;
     public static final AttributeDescriptor OUTPUTFORMAT_TRANSPARENT;
-                
+
     public static final FeatureType QUERYMAP;
     public static final AttributeDescriptor QUERYMAP_COLOR;
     public static final AttributeDescriptor QUERYMAP_SIZE;
     public static final AttributeDescriptor QUERYMAP_STATUS;
     public static final AttributeDescriptor QUERYMAP_STYLE;
-                
+
     public static final FeatureType REFERENCE;
     public static final AttributeDescriptor REFERENCE_COLOR;
     public static final AttributeDescriptor REFERENCE_EXTENT;
@@ -278,7 +278,7 @@ public final class MapfileTypes {
     public static final AttributeDescriptor REFERENCE_OUTLINECOLOR;
     public static final AttributeDescriptor REFERENCE_SIZE;
     public static final AttributeDescriptor REFERENCE_STATUS;
-    
+
     public static final FeatureType SCALEBAR;
     public static final AttributeDescriptor SCALEBAR_ALIGN;
     public static final AttributeDescriptor SCALEBAR_BACKGROUNDCOLOR;
@@ -295,7 +295,7 @@ public final class MapfileTypes {
     public static final AttributeDescriptor SCALEBAR_STYLE;
     public static final AttributeDescriptor SCALEBAR_TRANSPARENT;
     public static final AttributeDescriptor SCALEBAR_UNITS;
-    
+
     public static final FeatureType STYLE;
     public static final AttributeDescriptor STYLE_ANGLE;
     public static final AttributeDescriptor STYLE_ANGLEITEM;
@@ -329,7 +329,7 @@ public final class MapfileTypes {
     public static final AttributeDescriptor STYLE_SYMBOL;
     /** [double|attribute] */
     public static final AttributeDescriptor STYLE_WIDTH;
-    
+
     public static final FeatureType SYMBOL;
     public static final AttributeDescriptor SYMBOL_ANTIALIAS;
     public static final AttributeDescriptor SYMBOL_CHARACTER;
@@ -346,7 +346,7 @@ public final class MapfileTypes {
     public static final AttributeDescriptor SYMBOL_STYLE;
     public static final AttributeDescriptor SYMBOL_TRANSPARENT;
     public static final AttributeDescriptor SYMBOL_TYPE;
-    
+
     public static final FeatureType WEB;
     public static final AttributeDescriptor WEB_BROWSEFORMAT;
     public static final AttributeDescriptor WEB_EMPTY;
@@ -366,13 +366,13 @@ public final class MapfileTypes {
     public static final AttributeDescriptor WEB_MINTEMPLATE;
     public static final AttributeDescriptor WEB_QUERYFORMAT;
     public static final AttributeDescriptor WEB_TEMPLATE;
-    
+
     static {
         final AttributeTypeBuilder atb          = new AttributeTypeBuilder();
         final AttributeDescriptorBuilder adb    = new AttributeDescriptorBuilder();
         final FeatureTypeBuilder ftb            = new FeatureTypeBuilder();
-        
-        
+
+
         //----------------------------------------------------------------------
         atb.reset(); adb.reset(); ftb.reset();
         ftb.setName(NAMESPACE,"STYLE");
@@ -400,7 +400,7 @@ public final class MapfileTypes {
         STYLE_SYMBOL            = ftb.add(new DefaultName(NAMESPACE, "SYMBOL"),           String.class,0,1,false,null);
         STYLE_WIDTH             = ftb.add(new DefaultName(NAMESPACE, "WIDTH"),            Expression.class,0,1,false,null);
         STYLE = ftb.buildFeatureType();
-        
+
         //----------------------------------------------------------------------
         atb.reset(); adb.reset(); ftb.reset();
         ftb.setName(NAMESPACE,"LABEL");
@@ -435,8 +435,8 @@ public final class MapfileTypes {
         LABEL_TYPE                  = ftb.add(new DefaultName(NAMESPACE, "TYPE"),             String.class,0,1,false,null);
         LABEL_WRAP                  = ftb.add(new DefaultName(NAMESPACE, "WRAP"),             String.class,0,1,false,null);
         LABEL = ftb.buildFeatureType();
-        
-        
+
+
         //----------------------------------------------------------------------
         atb.reset(); adb.reset(); ftb.reset();
         ftb.setName(NAMESPACE,"WEB");
@@ -457,11 +457,11 @@ public final class MapfileTypes {
         WEB_MINSCALE            = ftb.add(new DefaultName(NAMESPACE, "MINSCALE"),         Double.class,0,1,false,deprecated());
         WEB_MINTEMPLATE         = ftb.add(new DefaultName(NAMESPACE, "MINTEMPLATE"),      String.class,0,1,false,null);
         WEB_QUERYFORMAT         = ftb.add(new DefaultName(NAMESPACE, "QUERYFORMAT"),      String.class,0,1,false,null);
-        WEB_TEMPLATE            = ftb.add(new DefaultName(NAMESPACE, "TEMPLATE"),         String.class,0,1,false,null);        
+        WEB_TEMPLATE            = ftb.add(new DefaultName(NAMESPACE, "TEMPLATE"),         String.class,0,1,false,null);
         //should exist, yet the mapserver doesn't explain what it contain
         //ftb.add(new DefaultName(NAMESPACE, "VALIDATION"),       String.class,0,1,false,null);
         WEB = ftb.buildFeatureType();
-        
+
         //----------------------------------------------------------------------
         atb.reset(); adb.reset(); ftb.reset();
         ftb.setName(NAMESPACE,"CLASS");
@@ -489,7 +489,7 @@ public final class MapfileTypes {
         //should exist, yet the mapserver doesn't explain what it contain
         //ftb.add(new DefaultName(NAMESPACE, "VALIDATION"),       String.class,0,1,false,null);
         CLASS = ftb.buildFeatureType();
-        
+
         //----------------------------------------------------------------------
         atb.reset(); adb.reset(); ftb.reset();
         ftb.setName(NAMESPACE,"CLUSTER");
@@ -498,18 +498,18 @@ public final class MapfileTypes {
         CLUSTER_GROUP       = ftb.add(new DefaultName(NAMESPACE, "GROUP"),            String.class,0,1,false,null);
         CLUSTER_FILTER      = ftb.add(new DefaultName(NAMESPACE, "FILTER"),           String.class,0,1,false,null);
         CLUSTER = ftb.buildFeatureType();
-        
+
         //----------------------------------------------------------------------
-        atb.reset(); adb.reset(); ftb.reset();        
+        atb.reset(); adb.reset(); ftb.reset();
         ftb.setName(NAMESPACE,"FEATURE");
         FEATURE_POINTS  = ftb.add(new DefaultName(NAMESPACE, "POINTS"),           String.class,0,1,false,null);
         FEATURE_ITEMS   = ftb.add(new DefaultName(NAMESPACE, "ITEMS"),            String.class,0,1,false,null);
         FEATURE_TEXT    = ftb.add(new DefaultName(NAMESPACE, "TEXT"),             String.class,0,1,false,null);
         FEATURE_WKT     = ftb.add(new DefaultName(NAMESPACE, "WKT"),              String.class,0,1,false,null);
         FEATURE = ftb.buildFeatureType();
-                
+
         //----------------------------------------------------------------------
-        atb.reset(); adb.reset(); ftb.reset();        
+        atb.reset(); adb.reset(); ftb.reset();
         ftb.setName(NAMESPACE,"GRID");
         GRID_LABELFORMAT    = ftb.add(new DefaultName(NAMESPACE, "LABELFORMAT"),      String.class,0,1,false,null);
         GRID_MINARCS        = ftb.add(new DefaultName(NAMESPACE, "MINARCS"),          Double.class,0,1,false,null);
@@ -519,9 +519,9 @@ public final class MapfileTypes {
         GRID_MINSUBDIVIDE   = ftb.add(new DefaultName(NAMESPACE, "MINSUBDIVIDE"),     Double.class,0,1,false,null);
         GRID_MAXSUBDIVIDE   = ftb.add(new DefaultName(NAMESPACE, "MAXSUBDIVIDE"),     Double.class,0,1,false,null);
         GRID = ftb.buildFeatureType();
-                
+
         //----------------------------------------------------------------------
-        atb.reset(); adb.reset(); ftb.reset();        
+        atb.reset(); adb.reset(); ftb.reset();
         ftb.setName(NAMESPACE,"JOIN");
         JOIN_CONNECTION     = ftb.add(new DefaultName(NAMESPACE, "CONNECTION"),       String.class,0,1,false,null);
         JOIN_CONNECTIONTYPE = ftb.add(new DefaultName(NAMESPACE, "CONNECTIONTYPE"),   String.class,0,1,false,null);
@@ -534,7 +534,7 @@ public final class MapfileTypes {
         JOIN_TO             = ftb.add(new DefaultName(NAMESPACE, "TO"),               String.class,0,1,false,null);
         JOIN_TYPE           = ftb.add(new DefaultName(NAMESPACE, "TYPE"),             String.class,0,1,false,null);
         JOIN = ftb.buildFeatureType();
-        
+
         //----------------------------------------------------------------------
         atb.reset(); adb.reset(); ftb.reset();
         ftb.setName(NAMESPACE,"LAYER");
@@ -598,7 +598,7 @@ public final class MapfileTypes {
         //should exist, yet the mapserver doesn't explain what it contain
         //ftb.add(new DefaultName(NAMESPACE, "VALIDATION"),       String.class,0,1,false,null);
         LAYER = ftb.buildFeatureType();
-        
+
         //----------------------------------------------------------------------
         atb.reset(); adb.reset(); ftb.reset();
         ftb.setName(NAMESPACE,"LEGEND");
@@ -614,8 +614,8 @@ public final class MapfileTypes {
         LEGEND_TEMPLATE         = ftb.add(new DefaultName(NAMESPACE, "TEMPLATE"),         String.class,0,1,false,null);
         LEGEND_TRANSPARENT      = ftb.add(new DefaultName(NAMESPACE, "TRANSPARENT"),      Boolean.class,0,1,false,deprecated());
         LEGEND = ftb.buildFeatureType();
-        
-        
+
+
         //----------------------------------------------------------------------
         atb.reset(); adb.reset(); ftb.reset();
         ftb.setName(NAMESPACE,"OUTPUTFORMAT");
@@ -627,7 +627,7 @@ public final class MapfileTypes {
         OUTPUTFORMAT_NAME           = ftb.add(new DefaultName(NAMESPACE, "NAME"),             String.class,0,1,false,null);
         OUTPUTFORMAT_TRANSPARENT    = ftb.add(new DefaultName(NAMESPACE, "TRANSPARENT"),      Boolean.class,0,1,false,null);
         OUTPUTFORMAT = ftb.buildFeatureType();
-                
+
         //----------------------------------------------------------------------
         atb.reset(); adb.reset(); ftb.reset();
         ftb.setName(NAMESPACE,"QUERYMAP");
@@ -636,7 +636,7 @@ public final class MapfileTypes {
         QUERYMAP_STATUS     = ftb.add(new DefaultName(NAMESPACE, "STATUS"),           Boolean.class,0,1,false,null);
         QUERYMAP_STYLE      = ftb.add(new DefaultName(NAMESPACE, "STYLE"),            String.class,0,1,false,null);
         QUERYMAP = ftb.buildFeatureType();
-        
+
         //----------------------------------------------------------------------
         atb.reset(); adb.reset(); ftb.reset();
         ftb.setName(NAMESPACE,"REFERENCE");
@@ -651,7 +651,7 @@ public final class MapfileTypes {
         REFERENCE_SIZE          = ftb.add(new DefaultName(NAMESPACE, "SIZE"),             Point2D.class,0,1,false,null);
         REFERENCE_STATUS        = ftb.add(new DefaultName(NAMESPACE, "STATUS"),           Boolean.class,0,1,false,null);
         REFERENCE = ftb.buildFeatureType();
-        
+
         //----------------------------------------------------------------------
         atb.reset(); adb.reset(); ftb.reset();
         ftb.setName(NAMESPACE,"SCALEBAR");
@@ -671,7 +671,7 @@ public final class MapfileTypes {
         SCALEBAR_TRANSPARENT    = ftb.add(new DefaultName(NAMESPACE, "TRANSPARENT"),      Boolean.class,0,1,false,deprecated());
         SCALEBAR_UNITS          = ftb.add(new DefaultName(NAMESPACE, "UNITS"),            String.class,0,1,false,null);
         SCALEBAR = ftb.buildFeatureType();
-        
+
         //----------------------------------------------------------------------
         atb.reset(); adb.reset(); ftb.reset();
         ftb.setName(NAMESPACE,"SYMBOL");
@@ -692,7 +692,7 @@ public final class MapfileTypes {
         /** [ellipse|hatch|pixmap|simple|truetype|vector] */
         SYMBOL_TYPE             = ftb.add(new DefaultName(NAMESPACE, "TYPE"),             String.class,0,1,false,null);
         SYMBOL = ftb.buildFeatureType();
-        
+
         //----------------------------------------------------------------------
         atb.reset(); adb.reset(); ftb.reset();
         ftb.setName(NAMESPACE,"MAP");
@@ -728,13 +728,13 @@ public final class MapfileTypes {
         MAP_UNITS               = ftb.add(new DefaultName(NAMESPACE, "UNITS"),            String.class,0,1,false,null);
         MAP_WEB                 = ftb.add(WEB,WEB.getName(),null,0,1,false,null);
         MAP = ftb.buildFeatureType();
-        
+
     }
-    
+
     private static final List<FeatureType> ALL_TYPES = UnmodifiableArrayList.wrap(
             CLASS,CLUSTER,FEATURE,GRID,JOIN,LABEL,LAYER,LEGEND,MAP,
             OUTPUTFORMAT,QUERYMAP,REFERENCE,SCALEBAR,STYLE,SYMBOL,WEB);
-    
+
     public static FeatureType getType(final Name name){
         for(FeatureType ft : ALL_TYPES){
             if(ft.getName().equals(name)){
@@ -743,7 +743,7 @@ public final class MapfileTypes {
         }
         return null;
     }
-    
+
     public static FeatureType getType(final String name){
         for(FeatureType ft : ALL_TYPES){
             if(ft.getName().getLocalPart().equalsIgnoreCase(name)){
@@ -752,12 +752,12 @@ public final class MapfileTypes {
         }
         return null;
     }
-    
+
     private static Map<Object,Object> deprecated(){
         return Collections.singletonMap((Object)"Deprecated", (Object)Boolean.TRUE);
     }
-    
+
     private MapfileTypes(){
     }
-    
+
 }

@@ -20,7 +20,7 @@ package org.geotoolkit.filter.binarylogic;
 import java.io.Serializable;
 import java.util.List;
 
-import org.apache.sis.util.collection.UnmodifiableArrayList;
+import org.apache.sis.internal.util.UnmodifiableArrayList;
 
 import org.opengis.filter.BinaryLogicOperator;
 import org.opengis.filter.Filter;

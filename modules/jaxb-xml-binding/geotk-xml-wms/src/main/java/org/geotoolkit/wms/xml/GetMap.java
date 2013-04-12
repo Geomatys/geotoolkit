@@ -27,7 +27,7 @@ import net.jcip.annotations.Immutable;
 import org.geotoolkit.geometry.ImmutableEnvelope;
 import org.geotoolkit.ows.xml.RequestBase;
 import org.apache.sis.util.Version;
-import org.apache.sis.util.collection.UnmodifiableArrayList;
+import org.apache.sis.internal.util.UnmodifiableArrayList;
 
 import org.opengis.feature.type.Name;
 import org.opengis.geometry.Envelope;
@@ -106,9 +106,9 @@ public class GetMap implements RequestBase {
     private final String exceptions;
 
     private Version version;
-    
+
     private String service;
-    
+
 
     /**
      * All query parameters, this might hold additional parameters that providers

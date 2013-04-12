@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Set;
 import org.geotoolkit.display.canvas.AbstractReferencedCanvas2D;
 import org.geotoolkit.display.primitive.AbstractReferencedGraphic2D;
-import org.apache.sis.util.collection.UnmodifiableArrayList;
+import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.opengis.display.container.ContainerEvent;
 import org.opengis.display.primitive.Graphic;
 
@@ -100,7 +100,7 @@ public abstract class AbstractContainer2D extends AbstractContainer{
     }
 
 
-    
+
     //------------ graphic methods ---------------------------------------------
     /**
      * The returned list is sorted in increasing

@@ -28,7 +28,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.Locale;
 import net.jcip.annotations.ThreadSafe;
-import org.apache.sis.util.collection.CollectionsExt;
+import org.apache.sis.util.collection.Containers;
 import org.apache.sis.util.iso.AbstractInternationalString;
 
 import org.opengis.util.InternationalString;
@@ -52,7 +52,7 @@ import org.geotoolkit.util.Utilities;
  */
 @ThreadSafe
 public class MockInternationalString extends AbstractInternationalString implements Serializable {
-    
+
     private String defaultVar;
     /**
      * Serial number for inter-operability with different versions.
@@ -106,7 +106,7 @@ public class MockInternationalString extends AbstractInternationalString impleme
      * @since 3.00
      */
     public MockInternationalString(final Map<Locale,String> strings) {
-        if (CollectionsExt.isNullOrEmpty(strings)) {
+        if (Containers.isNullOrEmpty(strings)) {
             localeMap = Collections.emptyMap();
         } else {
             final Iterator<Map.Entry<Locale,String>> it = strings.entrySet().iterator();

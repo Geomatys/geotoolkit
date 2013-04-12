@@ -33,7 +33,6 @@ import org.geotoolkit.process.AbstractProcess;
 import org.geotoolkit.process.ProcessException;
 import static org.geotoolkit.process.datastore.copy.CopyDescriptor.*;
 import org.geotoolkit.storage.DataStoreException;
-import org.apache.sis.util.collection.UnmodifiableArrayList;
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.Name;
@@ -90,8 +89,7 @@ public class Copy extends AbstractProcess {
         } else {
             //pick only the wanted names
             names = new HashSet<Name>();
-            final List<String> wanted = UnmodifiableArrayList.wrap(typenameParam.split(","));
-            for(String s : wanted) {
+            for(String s : typenameParam.split(",")) {
                 try{
                     final FeatureType type = sourceDS.getFeatureType(s);
                     names.add(type.getName());

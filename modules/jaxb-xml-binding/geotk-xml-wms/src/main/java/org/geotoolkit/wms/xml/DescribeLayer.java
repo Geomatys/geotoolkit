@@ -21,7 +21,7 @@ import net.jcip.annotations.Immutable;
 import org.geotoolkit.ows.xml.RequestBase;
 
 import org.apache.sis.util.Version;
-import org.apache.sis.util.collection.UnmodifiableArrayList;
+import org.apache.sis.internal.util.UnmodifiableArrayList;
 
 
 /**
@@ -39,7 +39,7 @@ public final class DescribeLayer implements RequestBase {
     private final UnmodifiableArrayList<String> layers;
 
     private Version version;
-    
+
     private String service;
 
     /**
@@ -82,7 +82,7 @@ public final class DescribeLayer implements RequestBase {
     public final Version getVersion() {
         return version;
     }
-    
+
     @Override
     public void setService(final String value) {
         this.service = value;

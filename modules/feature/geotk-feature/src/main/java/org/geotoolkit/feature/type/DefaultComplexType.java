@@ -32,7 +32,7 @@ import org.geotoolkit.io.TableWriter;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.util.Utilities;
 import org.apache.sis.util.Classes;
-import org.apache.sis.util.collection.UnmodifiableArrayList;
+import org.apache.sis.internal.util.UnmodifiableArrayList;
 
 import org.opengis.feature.Property;
 import org.opengis.feature.type.AssociationType;
@@ -266,7 +266,7 @@ public class DefaultComplexType extends DefaultAttributeType<AttributeType> impl
         if(inCycle){
             builder.append(" <...CYCLIC...>");
         }
-        
+
         builder.append("\t");
         builder.append(Integer.toString(property.getMinOccurs()));
         builder.append("\t");

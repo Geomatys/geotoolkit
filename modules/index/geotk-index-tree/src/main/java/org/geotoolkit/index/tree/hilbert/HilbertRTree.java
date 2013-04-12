@@ -33,7 +33,7 @@ import org.geotoolkit.index.tree.io.TreeVisitorResult;
 import org.geotoolkit.index.tree.NodeFactory;
 import org.geotoolkit.referencing.CRS;
 import org.apache.sis.util.ArgumentChecks;
-import org.apache.sis.util.collection.UnmodifiableArrayList;
+import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.apache.sis.util.Classes;
 import static org.geotoolkit.index.tree.DefaultTreeUtils.getMedian;
 import org.geotoolkit.index.tree.calculator.CalculatorND;
@@ -52,7 +52,7 @@ public class HilbertRTree extends AbstractTree {
 
     int hilbertOrder;
     private static final double LN2 = 0.6931471805599453;
-    
+
     /**
      * Create Hilbert R-Tree using default node factory.
      *
@@ -73,7 +73,7 @@ public class HilbertRTree extends AbstractTree {
     public HilbertRTree(int nbMaxElement, int hilbertOrder, CoordinateReferenceSystem crs) {
         this(nbMaxElement, hilbertOrder, crs, DefaultNodeFactory.INSTANCE);
     }
-    
+
     /**
      * Create Hilbert R-Tree.
      *
@@ -247,13 +247,13 @@ public class HilbertRTree extends AbstractTree {
         ArgumentChecks.ensureNonNull("impossible to insert a null entry", entry);
         if (candidate.isFull()) {
             List<Node> lSp = splitNode(candidate);
-            //List is null if internal Node hilbert order should be increase by 1. 
+            //List is null if internal Node hilbert order should be increase by 1.
             if (lSp != null) {
-                
+
                 final Node lsp0      = lSp.get(0);
                 final Node lsp1      = lSp.get(1);
                 Node parentCandidate = candidate.getParent();
-                
+
                 if (parentCandidate != null) {
                     final List<Node> parentChildren = parentCandidate.getChildren();
                     parentChildren.remove(candidate);
@@ -365,14 +365,14 @@ public class HilbertRTree extends AbstractTree {
         double bulkRef          = Double.POSITIVE_INFINITY;
         int index               = 0;
         GeneralEnvelope gESPLA, gESPLB;
-        double bulkTemp; 
-        
+        double bulkTemp;
+
         final GeneralEnvelope globalEltsArea = getEnveloppeMin(eltList);
         final int dim           = globalEltsArea.getDimension();
-        
+
         // if glogaleArea.span(currentDim) == 0 || if all elements have same span
         // value as global area on current ordinate, impossible to split on this axis.
-        unappropriateOrdinate : 
+        unappropriateOrdinate :
         for (int indOrg = 0; indOrg < dim; indOrg++) {
             final double globalSpan = globalEltsArea.getSpan(indOrg);
             boolean isSameSpan = true;
@@ -384,9 +384,9 @@ public class HilbertRTree extends AbstractTree {
                     break;
                 }
             }
-            if (globalSpan <= 1E-9 || isSameSpan) continue unappropriateOrdinate; 
+            if (globalSpan <= 1E-9 || isSameSpan) continue unappropriateOrdinate;
             bulkTemp = 0;
-            
+
             for (int left_or_right = 0; left_or_right < 2; left_or_right++) {
                 eltList = (left_or_right == 0) ? calc.sortList(indOrg, true, eltList):calc.sortList(indOrg, false, eltList);
                 for (int cut = demiSize, sdem = size - demiSize; cut <= sdem; cut++) {
@@ -455,7 +455,7 @@ public class HilbertRTree extends AbstractTree {
         GeneralEnvelope gESPLA, gESPLB;
         CoupleGE coupleGE;
         double bulkTemp;
-        
+
         for (int lu = 0; lu < 2; lu++) {
             eltList = (lu == 0) ? calc.sortList(splitIndex, true, eltList):calc.sortList(splitIndex, false, eltList);
             for (int cut = tierSize; cut <= size - tierSize; cut++) {
@@ -469,7 +469,7 @@ public class HilbertRTree extends AbstractTree {
                 gESPLB = getEnveloppeMin(splitListB);
                 coupleGE = new CoupleGE(gESPLA, gESPLB, calc);
                 bulkTemp = coupleGE.getOverlaps();
-                
+
                 if (Double.isNaN(bulkTemp) || bulkTemp == 0) {
                     coupleGE.setUserProperty("cut", cut);
                     coupleGE.setUserProperty("lower_or_upper", lu);
@@ -503,11 +503,11 @@ public class HilbertRTree extends AbstractTree {
         for (int i = index; i < size; i++) {
             splitListB.add(eltList.get(i));
         }
-        
+
         //paranoiac assertion.
         assert (!splitListA.isEmpty()) :"split list A should not be empty";
         assert (!splitListB.isEmpty()) :"split list B should not be empty";
-        
+
         if (isLeaf) return UnmodifiableArrayList.wrap(tree.createNode(tree, null, null, splitListA), tree.createNode(tree, null, null, splitListB));
         final Node resultA = (Node) ((splitListA.size() == 1) ? splitListA.get(0) : tree.createNode(tree, null, splitListA, null));
         final Node resultB = (Node) ((splitListB.size() == 1) ? splitListB.get(0) : tree.createNode(tree, null, splitListB, null));
@@ -529,7 +529,7 @@ public class HilbertRTree extends AbstractTree {
         if (isLeaf && candidate.isFull()){
             throw new IllegalStateException("impossible to choose subtree in overflow node");
         }
-        
+
         final Calculator calc = candidate.getTree().getCalculator();
         if (isLeaf) {
             if ((Integer) candidate.getUserProperty(PROP_HILBERT_ORDER) < 1) return candidate.getChildren().get(0);
@@ -760,7 +760,7 @@ public class HilbertRTree extends AbstractTree {
             final HilbertRTree tree = (HilbertRTree) candidate.getTree();
             final List<Envelope> lS = new ArrayList<Envelope>();
             searchHilbertNode(candidate, candidate.getBoundary(), new DefaultTreeVisitor(lS));
-            
+
             if (lS.size() <= tree.getMaxElements() * Math.pow(2, tree.getHilbertOrder() * 2) && !lS.isEmpty()) {
                 final Envelope bound = getEnveloppeMin(lS);
                 createBasicHL(candidate, tree.getHilbertOrder(), bound);
@@ -843,7 +843,7 @@ public class HilbertRTree extends AbstractTree {
         }
         return result;
     }
-    
+
     /**
      * Method exclusively used by {@code HilbertRTree}.
      *
@@ -859,7 +859,7 @@ public class HilbertRTree extends AbstractTree {
      */
     private static void createBasicHL(final Node candidate, final int order, final Envelope bound) throws MismatchedDimensionException {
         ArgumentChecks.ensurePositive("impossible to create Hilbert Curve with negative indice", order);
-        assert order <= ((HilbertRTree)candidate.getTree()).getHilbertOrder() : 
+        assert order <= ((HilbertRTree)candidate.getTree()).getHilbertOrder() :
                 "impossible to build HilbertLeaf with Hilbert order higher than tree Hilbert order.";
         candidate.getChildren().clear();
         candidate.setUserProperty(PROP_ISLEAF, true);
@@ -883,7 +883,7 @@ public class HilbertRTree extends AbstractTree {
         }
         candidate.setBound(bound);
     }
-    
+
     /**
      * Find Hilbert order of an entry from candidate.
      *
@@ -900,12 +900,12 @@ public class HilbertRTree extends AbstractTree {
         final GeneralEnvelope bound = new GeneralEnvelope(candidate.getBoundary());
         final int order = (Integer) candidate.getUserProperty(PROP_HILBERT_ORDER);
         if (! bound.contains(ptCE)) throw new IllegalArgumentException("entry is out of this node boundary");
-        
+
         int[] hCoord = getHilbCoord(candidate, ptCE, bound, order);
         final int spaceHDim = hCoord.length;
-        
+
         if (spaceHDim == 1) return hCoord[0];
-                
+
         final HilbertIterator hIt = new HilbertIterator(order, spaceHDim);
         int hilberValue = 0;
         while (hIt.hasNext()) {
@@ -915,7 +915,7 @@ public class HilbertRTree extends AbstractTree {
         }
         throw new IllegalArgumentException("should never throw");
     }
-    
+
     /**
      * Find {@code DirectPosition} Hilbert coordinate from this Node.
      *
@@ -933,9 +933,9 @@ public class HilbertRTree extends AbstractTree {
         final Calculator calc = candidate.getTree().getCalculator();
         assert calc instanceof CalculatorND : "getHilbertCoord : calculatorND type required";
         final double div  = 2 << hilbertOrder - 1;
-        
+
         List<Integer> lInt = new ArrayList<Integer>();
-        
+
         for(int d = 0; d < envelop.getDimension(); d++){
             final double span = envelop.getSpan(d);
             if (span <= 1E-9) continue;

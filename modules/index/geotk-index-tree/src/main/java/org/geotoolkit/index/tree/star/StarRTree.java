@@ -30,7 +30,7 @@ import org.geotoolkit.index.tree.io.TreeVisitorResult;
 import org.geotoolkit.index.tree.NodeFactory;
 import org.geotoolkit.referencing.CRS;
 import org.apache.sis.util.ArgumentChecks;
-import org.apache.sis.util.collection.UnmodifiableArrayList;
+import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.MismatchedReferenceSystemException;
@@ -63,7 +63,7 @@ public class StarRTree extends AbstractTree {
     public StarRTree(int nbMaxElement, CoordinateReferenceSystem crs) {
         this(nbMaxElement, crs, DefaultNodeFactory.INSTANCE);
     }
-    
+
     /**
      * Create a R*Tree.
      *
@@ -506,13 +506,13 @@ public class StarRTree extends AbstractTree {
         double bulkTemp;
         double bulkRef = Double.POSITIVE_INFINITY;
         int index = 0;
-        
+
         final GeneralEnvelope globalEltsArea = getEnveloppeMin(eltList);
         final int dim = globalEltsArea.getDimension();
-        
+
         // if glogaleArea.span(currentDim) == 0 || if all elements have same span
         // value as global area on current ordinate, impossible to split on this axis.
-        unappropriateOrdinate : 
+        unappropriateOrdinate :
         for (int indOrg = 0; indOrg < dim; indOrg++) {
             final double globalSpan = globalEltsArea.getSpan(indOrg);
             boolean isSameSpan = true;
@@ -524,8 +524,8 @@ public class StarRTree extends AbstractTree {
                     break;
                 }
             }
-            if (globalSpan <= 1E-9 || isSameSpan) continue unappropriateOrdinate; 
-            
+            if (globalSpan <= 1E-9 || isSameSpan) continue unappropriateOrdinate;
+
             bulkTemp = 0;
             for (int left_or_right = 0; left_or_right < 2; left_or_right++) {
                 eltList = (left_or_right == 0) ? calc.sortList(indOrg, true, eltList) : calc.sortList(indOrg, false, eltList);

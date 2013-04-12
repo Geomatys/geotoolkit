@@ -25,7 +25,7 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.storage.DataStoreException;
-import org.apache.sis.util.collection.UnmodifiableArrayList;
+import org.apache.sis.internal.util.UnmodifiableArrayList;
 
 /**
  * Contain a list of all modification, ensure concurrency when accesing
@@ -60,7 +60,7 @@ class DefaultSessionDiff{
         }finally{
             readLock.unlock();
         }
-        
+
         /*
          * Double-check: was a deprecated practice before Java 5.
          * Is okay since Java 5 provided that the readCopy field

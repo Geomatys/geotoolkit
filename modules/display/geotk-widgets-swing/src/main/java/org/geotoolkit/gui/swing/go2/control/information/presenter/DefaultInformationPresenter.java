@@ -23,7 +23,7 @@ import java.util.Iterator;
 import java.util.List;
 import javax.imageio.spi.ServiceRegistry;
 import javax.swing.JComponent;
-import org.apache.sis.util.collection.UnmodifiableArrayList;
+import org.apache.sis.internal.util.UnmodifiableArrayList;
 
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;

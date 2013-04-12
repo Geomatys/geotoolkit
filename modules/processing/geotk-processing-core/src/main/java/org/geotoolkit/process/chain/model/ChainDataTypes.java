@@ -20,7 +20,7 @@ import java.awt.image.RenderedImage;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import org.apache.sis.util.collection.UnmodifiableArrayList;
+import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.opengis.filter.Filter;
 import org.opengis.geometry.Envelope;
@@ -33,7 +33,7 @@ import org.opengis.metadata.Metadata;
  */
 public final class ChainDataTypes {
 
-    public static final List<Class> EDITABLE_TYPE = (List<Class>)UnmodifiableArrayList.wrap(
+    public static final List<Class> EDITABLE_TYPE = UnmodifiableArrayList.<Class>wrap(
                 (Class)String.class,
                 Boolean.class,
                 Integer.class,
@@ -47,7 +47,7 @@ public final class ChainDataTypes {
                 Filter.class
             );
 
-    public static final List<Class> VALID_TYPES = (List<Class>)UnmodifiableArrayList.wrap(
+    public static final List<Class> VALID_TYPES = UnmodifiableArrayList.<Class>wrap(
                 (Class)String.class,
                 Boolean.class,
                 Integer.class,

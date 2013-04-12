@@ -32,7 +32,7 @@ import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.storage.DataStoreException;
 import org.apache.sis.util.NullArgumentException;
-import org.apache.sis.util.collection.UnmodifiableArrayList;
+import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.opengis.feature.type.Name;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
@@ -46,14 +46,14 @@ import org.opengis.filter.sort.SortBy;
 public class QueryUtilities {
 
     private static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
-    
+
     private QueryUtilities(){}
 
     /**
      * A source is considered absolute when all selector in the source have
      * a session defined. That implies we can use a query with this source
      * directly on a EvaluatedFeatureCollection.
-     * 
+     *
      * @param source
      * @return true if the source is absolute
      */
@@ -81,7 +81,7 @@ public class QueryUtilities {
      * @return an absolute source
      */
     public static Source makeAbsolute(final Source source, final Session session){
-        
+
         final Source absolute;
         if(source instanceof Join){
             final Join j = (Join) source;
@@ -182,7 +182,7 @@ public class QueryUtilities {
 
     /**
      * Explore all source and check that the type is writable.
-     * 
+     *
      * @param source
      * @return true if all source are writable
      */
@@ -198,7 +198,7 @@ public class QueryUtilities {
             if(session == null){
                 throw new IllegalArgumentException("Source must be absolute to verify if it's writable");
             }
-            
+
             return session.getFeatureStore().isWritable(select.getFeatureTypeName());
         }else if(source instanceof TextStatement){
             return false;
@@ -252,11 +252,11 @@ public class QueryUtilities {
 
     /**
      * Combine two queries in the way that the resulting query act
-     * as if it was a sub query result. 
+     * as if it was a sub query result.
      * For example if the original query has a start index of 10 and the
      * sub-query a start index of 5, the resulting startIndex will be 15.
      * The type name of the first query will override the one of the second.
-     * 
+     *
      * @param original
      * @param second
      * @return sub query
@@ -432,7 +432,7 @@ public class QueryUtilities {
         builder.setMaxFeatures(maxFeatures);
         builder.setProperties(propNames);
         builder.setStartIndex(start);
-        
+
         return builder.buildQuery();
     }
 

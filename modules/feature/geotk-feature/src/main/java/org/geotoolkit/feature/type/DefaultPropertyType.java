@@ -32,7 +32,7 @@ import org.opengis.filter.Filter;
 import org.opengis.util.InternationalString;
 
 import static org.apache.sis.util.ArgumentChecks.*;
-import org.apache.sis.util.collection.UnmodifiableArrayList;
+import org.apache.sis.internal.util.UnmodifiableArrayList;
 
 /**
  * Default implementation of a property type

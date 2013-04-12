@@ -30,7 +30,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
-import org.apache.sis.util.collection.UnmodifiableArrayList;
+import org.apache.sis.internal.util.UnmodifiableArrayList;
 
 import org.opengis.feature.Feature;
 import org.geotoolkit.map.FeatureMapLayer;
@@ -39,14 +39,14 @@ import org.geotoolkit.gui.swing.go2.JMap2D;
 
 /**
  * Edition tool to create holes in polygons.
- * 
+ *
  * @author Johann Sorel
  * @module pending
  */
 public class PolygonHoleCreationDelegate extends AbstractFeatureEditionDelegate {
 
     private boolean multipolygon = false;
-    
+
     private Feature feature = null;
     private Geometry geometry = null;
     private final List<Geometry> subGeometries = new ArrayList<Geometry>();
@@ -66,17 +66,17 @@ public class PolygonHoleCreationDelegate extends AbstractFeatureEditionDelegate 
         subGeometries.clear();
         decoration.setGeometries(null);
     }
-    
+
     private void resetCurrentCreation(){
         justCreated = false;
         coords.clear();
     }
-    
+
     private void setCurrentFeature(final Feature feature){
         this.feature = feature;
         this.geometry = null;
         this.subGeometries.clear();
-        
+
         if(feature != null){
             this.geometry = helper.toObjectiveCRS(feature);
             if(geometry != null){
@@ -148,7 +148,7 @@ public class PolygonHoleCreationDelegate extends AbstractFeatureEditionDelegate 
                 coords.remove(coords.size()-1);
                 coords.add(helper.toCoord(e.getX(), e.getY()));
             }
-            
+
             erase = EditionHelper.createPolygon(coords);
             final Geometry line = EditionHelper.createLinearRing(coords);
             geometry = (multipolygon) ? EditionHelper.createMultiPolygon(subGeometries) : subGeometries.get(0);
@@ -162,5 +162,5 @@ public class PolygonHoleCreationDelegate extends AbstractFeatureEditionDelegate 
         }
         super.mouseMoved(e);
     }
-    
+
 }

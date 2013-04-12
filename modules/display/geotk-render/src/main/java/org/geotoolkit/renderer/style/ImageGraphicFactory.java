@@ -27,16 +27,16 @@ import java.net.URI;
 import java.util.Collection;
 import javax.imageio.ImageIO;
 
-import org.apache.sis.util.collection.UnmodifiableArrayList;
+import org.apache.sis.internal.util.UnmodifiableArrayList;
 
 /**
  * External graphic factory accepting an Expression that can be evaluated to a
  * URL pointing to a image file. The <code>format</code> must be one of the
  * mime types supported by the current JDK.
- * 
+ *
  * @author Andrea Aime - TOPP
  * @author Johann Sorel (Geomatys)
- * 
+ *
  * @module pending
  */
 public class ImageGraphicFactory implements ExternalGraphicFactory {
@@ -62,7 +62,7 @@ public class ImageGraphicFactory implements ExternalGraphicFactory {
         synchronized (imageLoader) {
             image = imageLoader.get(location.toURL(), false);
         }
-        
+
         // if scaling is needed, perform it
         if(size > 0 && image.getHeight() != size) {
             final double dsize = (double) size;
@@ -72,10 +72,10 @@ public class ImageGraphicFactory implements ExternalGraphicFactory {
             final AffineTransformOp ato = new AffineTransformOp(scaleTx, AffineTransformOp.TYPE_BILINEAR);
             image = ato.filter(image, null);
         }
-        
+
         return image;
     }
-    
+
     /**
      * Returs the set of mime types supported by this factory
      * @return Collection<String>

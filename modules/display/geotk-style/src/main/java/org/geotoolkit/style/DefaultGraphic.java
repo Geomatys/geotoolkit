@@ -20,7 +20,7 @@ import java.util.Collections;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.sis.util.collection.UnmodifiableArrayList;
+import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.geotoolkit.util.Utilities;
 
 import org.opengis.filter.expression.Expression;
@@ -35,30 +35,30 @@ import static org.opengis.filter.expression.Expression.*;
 
 /**
  * Immutable implementation of GeoAPI Graphic.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
 public class DefaultGraphic implements Graphic{
 
     protected final List<GraphicalSymbol> symbols;
-    
+
     protected final Expression opacity;
-    
+
     protected final Expression size;
-    
+
     protected final Expression rotation;
-    
+
     protected final AnchorPoint anchor;
-    
+
     protected final Displacement disp;
-    
+
     /**
      * Create a default immutable Graphic.
-     * 
+     *
      * @param symbols : can be null, if null or empty, the default mark will be added.
      * @param opacity : if null or Expression.NIL will be replaced by default value.
-     * @param size : if null will be replaced by Expression.NIL, 
+     * @param size : if null will be replaced by Expression.NIL,
      * if NIL the size of the graphicalSymbol is used
      * @param rotation : if null or Expression.NIL will be replaced by default value.
      * @param anchor : if null will be replaced by default value.
@@ -66,23 +66,23 @@ public class DefaultGraphic implements Graphic{
      */
     public DefaultGraphic(final List<GraphicalSymbol> symbols, final Expression opacity, final Expression size,
             final Expression rotation, final AnchorPoint anchor, final Displacement disp){
-        
+
         if(symbols == null || symbols.isEmpty()){
             this.symbols = Collections.singletonList((GraphicalSymbol)DEFAULT_GRAPHICAL_SYMBOL);
         }else{
             final GraphicalSymbol[] rep = symbols.toArray(new GraphicalSymbol[symbols.size()]);
             this.symbols = UnmodifiableArrayList.wrap(rep);
         }
-                
+
         this.opacity = (opacity == null || opacity == NIL) ? DEFAULT_GRAPHIC_OPACITY : opacity;
         this.rotation = (rotation == null || rotation == NIL) ? DEFAULT_GRAPHIC_ROTATION : rotation;
-        
+
         //size is special since if it null, we must use the graphicsymbol original size
         this.size = (size == null ) ? Expression.NIL : size;
-        
+
         this.anchor = (anchor == null) ? DEFAULT_ANCHOR_POINT : anchor;
         this.disp = (disp == null) ? DEFAULT_DISPLACEMENT : disp;
-        
+
     }
 
     /**
@@ -194,5 +194,5 @@ public class DefaultGraphic implements Graphic{
         builder.append(']');
         return builder.toString();
     }
-    
+
 }
