@@ -27,8 +27,11 @@ package org.geotoolkit.metadata;
  *
  * @since 2.4
  * @module
+ *
+ * @deprecated Moved to Apache SIS as {@link org.apache.sis.metadata.InvalidMetadataException}.
  */
-public class InvalidMetadataException extends IllegalStateException {
+@Deprecated
+public class InvalidMetadataException extends org.apache.sis.metadata.InvalidMetadataException {
     /**
      * For cross-version compatibility.
      */
