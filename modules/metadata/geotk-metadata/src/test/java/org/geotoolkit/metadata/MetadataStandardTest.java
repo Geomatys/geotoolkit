@@ -32,6 +32,7 @@ import org.opengis.coverage.grid.RectifiedGrid;
 
 import org.geotoolkit.test.Depend;
 import org.apache.sis.util.ComparisonMode;
+import org.apache.sis.metadata.UnmodifiableMetadataException;
 import org.geotoolkit.util.SimpleInternationalString;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.metadata.iso.citation.DefaultCitation;

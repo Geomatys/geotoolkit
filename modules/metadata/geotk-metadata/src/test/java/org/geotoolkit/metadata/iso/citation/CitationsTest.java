@@ -25,7 +25,7 @@ import java.lang.reflect.Modifier;
 
 import org.geotoolkit.test.Depend;
 import org.apache.sis.util.ComparisonMode;
-import org.geotoolkit.metadata.UnmodifiableMetadataException;
+import org.apache.sis.metadata.UnmodifiableMetadataException;
 
 import org.junit.*;
 import static org.geotoolkit.test.Assert.*;

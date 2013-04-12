@@ -38,7 +38,7 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.InternationalString;
 
 import org.geotoolkit.metadata.iso.MetadataEntity;
-import org.geotoolkit.metadata.InvalidMetadataException;
+import org.apache.sis.metadata.InvalidMetadataException;
 import org.geotoolkit.internal.referencing.ProxyForMetadata;
 import org.geotoolkit.resources.Errors;
 

@@ -71,7 +71,7 @@ import org.apache.sis.metadata.ValueExistencePolicy;
 import org.apache.sis.metadata.TypeValuePolicy;
 import org.geotoolkit.metadata.ValueRestriction;
 import org.geotoolkit.metadata.MetadataStandard;
-import org.geotoolkit.metadata.UnmodifiableMetadataException;
+import org.apache.sis.metadata.UnmodifiableMetadataException;
 import org.geotoolkit.resources.Errors;
 
 import static javax.imageio.metadata.IIOMetadataFormat.*;

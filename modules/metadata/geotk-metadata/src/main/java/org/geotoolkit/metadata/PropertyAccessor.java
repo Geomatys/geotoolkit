@@ -41,6 +41,7 @@ import org.apache.sis.util.ComparisonMode;
 import org.apache.sis.util.collection.CheckedContainer;
 import org.apache.sis.util.Classes;
 import org.apache.sis.util.Numbers;
+import org.apache.sis.metadata.UnmodifiableMetadataException;
 import org.geotoolkit.util.converter.ObjectConverter;
 import org.geotoolkit.util.converter.ConverterRegistry;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;

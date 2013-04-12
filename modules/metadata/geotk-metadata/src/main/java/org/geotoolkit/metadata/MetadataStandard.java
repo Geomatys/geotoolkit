@@ -39,6 +39,7 @@ import org.apache.sis.util.NullArgumentException;
 import org.apache.sis.util.Classes;
 import org.apache.sis.metadata.KeyNamePolicy;
 import org.apache.sis.metadata.ValueExistencePolicy;
+import org.apache.sis.metadata.UnmodifiableMetadataException;
 import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.gui.swing.tree.TreeTableNode;
 import org.geotoolkit.gui.swing.tree.DefaultTreeModel;

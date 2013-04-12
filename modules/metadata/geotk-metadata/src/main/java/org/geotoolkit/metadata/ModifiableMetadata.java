@@ -36,6 +36,7 @@ import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.util.collection.CheckedArrayList;
 import org.geotoolkit.util.collection.CheckedHashSet;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
+import org.apache.sis.metadata.UnmodifiableMetadataException;
 import org.geotoolkit.internal.jaxb.MarshalContext;
 
 import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
