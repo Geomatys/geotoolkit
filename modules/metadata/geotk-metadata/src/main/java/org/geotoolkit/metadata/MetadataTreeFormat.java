@@ -48,6 +48,9 @@ import org.geotoolkit.util.MeasurementRange;
 import org.apache.sis.util.Classes;
 import org.apache.sis.util.Numbers;
 import org.apache.sis.util.collection.CheckedContainer;
+import org.apache.sis.metadata.KeyNamePolicy;
+import org.apache.sis.metadata.TypeValuePolicy;
+import org.apache.sis.metadata.ValueExistencePolicy;
 import org.geotoolkit.internal.jaxb.NonMarshalledAuthority;
 import org.geotoolkit.gui.swing.tree.TreeTableNode;
 import org.geotoolkit.gui.swing.tree.NamedTreeNode;
@@ -540,7 +543,7 @@ public class MetadataTreeFormat extends Format {
             /*
              * The value is a metadata object (unknown implementation).
              */
-            asMap = new PropertyMap(value, accessor, NullValuePolicy.NON_EMPTY, KeyNamePolicy.JAVABEANS_PROPERTY);
+            asMap = new PropertyMap(value, accessor, ValueExistencePolicy.NON_EMPTY, KeyNamePolicy.JAVABEANS_PROPERTY);
         } else if (value instanceof Collection<?>) {
             /*
              * The value is a collection of any other cases. Add all the childs recursively,

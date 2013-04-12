@@ -20,6 +20,7 @@ package org.geotoolkit.metadata;
 import java.util.Map;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import org.apache.sis.metadata.ValueExistencePolicy;
 
 
 /**
@@ -81,7 +82,7 @@ final class RestrictionMap extends MetadataMap<ValueRestriction> {
     @Override
     public int size() {
         final int count = accessor.count();
-        if (content == NullValuePolicy.ALL) {
+        if (content == ValueExistencePolicy.ALL) {
             return count;
         }
         int n = 0;

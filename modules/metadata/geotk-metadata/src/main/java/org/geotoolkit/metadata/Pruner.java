@@ -23,6 +23,8 @@ import java.util.Collection;
 import java.util.IdentityHashMap;
 import org.apache.sis.internal.util.CollectionsExt;
 import org.apache.sis.util.collection.CheckedContainer;
+import org.apache.sis.metadata.ValueExistencePolicy;
+import org.apache.sis.metadata.KeyNamePolicy;
 import org.opengis.util.CodeList;
 
 
@@ -64,7 +66,7 @@ final class Pruner extends ThreadLocal<Map<Object,Boolean>> {
      * to set them to {@code null}.
      */
     private static Map<String, Object> asMap(final MetadataStandard standard, final Object metadata) {
-        return standard.asMap(metadata, NullValuePolicy.NON_NULL, KeyNamePolicy.JAVABEANS_PROPERTY);
+        return standard.asMap(metadata, ValueExistencePolicy.NON_NULL, KeyNamePolicy.JAVABEANS_PROPERTY);
     }
 
     /**

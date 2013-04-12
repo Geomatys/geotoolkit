@@ -37,6 +37,8 @@ import org.apache.sis.util.LenientComparable;
 import org.geotoolkit.util.logging.Logging;
 import org.apache.sis.util.NullArgumentException;
 import org.apache.sis.util.Classes;
+import org.apache.sis.metadata.KeyNamePolicy;
+import org.apache.sis.metadata.ValueExistencePolicy;
 import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.gui.swing.tree.TreeTableNode;
 import org.geotoolkit.gui.swing.tree.DefaultTreeModel;
@@ -650,7 +652,7 @@ public final class MetadataStandard {
      * @see AbstractMetadata#asMap()
      */
     public Map<String,Object> asMap(final Object metadata) throws ClassCastException {
-        return asMap(metadata, NullValuePolicy.NON_EMPTY, KeyNamePolicy.JAVABEANS_PROPERTY);
+        return asMap(metadata, ValueExistencePolicy.NON_EMPTY, KeyNamePolicy.JAVABEANS_PROPERTY);
     }
 
     /**

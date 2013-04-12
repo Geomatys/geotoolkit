@@ -23,6 +23,7 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 
+import org.apache.sis.metadata.TypeValuePolicy;
 import org.apache.sis.util.collection.CheckedContainer;
 
 

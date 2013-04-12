@@ -52,8 +52,8 @@ import org.geotoolkit.lang.Workaround;
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 import static org.apache.sis.util.ArgumentChecks.ensureStrictlyPositive;
 import static org.apache.sis.metadata.KeyNamePolicy.UML_IDENTIFIER;
-import static org.geotoolkit.metadata.TypeValuePolicy.ELEMENT_TYPE;
-import static org.geotoolkit.metadata.TypeValuePolicy.DECLARING_INTERFACE;
+import static org.apache.sis.metadata.TypeValuePolicy.ELEMENT_TYPE;
+import static org.apache.sis.metadata.TypeValuePolicy.DECLARING_INTERFACE;
 
 
 /**

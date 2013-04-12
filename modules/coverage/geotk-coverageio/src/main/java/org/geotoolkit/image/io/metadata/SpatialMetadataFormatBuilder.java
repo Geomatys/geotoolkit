@@ -67,8 +67,8 @@ import org.geotoolkit.lang.Builder;
 import org.apache.sis.util.Classes;
 import org.apache.sis.util.Numbers;
 import org.apache.sis.metadata.KeyNamePolicy;
-import org.geotoolkit.metadata.NullValuePolicy;
-import org.geotoolkit.metadata.TypeValuePolicy;
+import org.apache.sis.metadata.ValueExistencePolicy;
+import org.apache.sis.metadata.TypeValuePolicy;
 import org.geotoolkit.metadata.ValueRestriction;
 import org.geotoolkit.metadata.MetadataStandard;
 import org.geotoolkit.metadata.UnmodifiableMetadataException;
@@ -479,7 +479,7 @@ public class SpatialMetadataFormatBuilder extends Builder<SpatialMetadataFormat>
         identifiers   = standard.asNameMap       (type, KeyNamePolicy.  UML_IDENTIFIER, NAME_POLICY);
         propertyTypes = standard.asTypeMap       (type, TypeValuePolicy.PROPERTY_TYPE,  NAME_POLICY);
         elementTypes  = standard.asTypeMap       (type, TypeValuePolicy.ELEMENT_TYPE,   NAME_POLICY);
-        restrictions  = standard.asRestrictionMap(type, NullValuePolicy.NON_NULL,       NAME_POLICY);
+        restrictions  = standard.asRestrictionMap(type, ValueExistencePolicy.NON_NULL,  NAME_POLICY);
         final boolean isComplete = (incompletes != null) && !incompletes.contains(type);
         for (final Map.Entry<String,Class<?>> entry : elementTypes.entrySet()) {
             final Class<?> candidate = entry.getValue();
