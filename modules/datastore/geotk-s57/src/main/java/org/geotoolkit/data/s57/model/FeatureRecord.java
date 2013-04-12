@@ -25,6 +25,7 @@ import org.geotoolkit.data.iso8211.Field;
 import org.geotoolkit.data.iso8211.SubField;
 import static org.geotoolkit.data.s57.S57Constants.*;
 import static org.geotoolkit.data.s57.model.S57ModelObject.*;
+import org.geotoolkit.io.LEDataInputStream;
 
 /**
  *
@@ -189,11 +190,16 @@ public class FeatureRecord extends S57ModelObject {
         * can be used to qualify a relationship (e.g. master or slave relationship) or to add a stacking order to a
         * relationship. */
         public static final String FRID_FFPT = "FFPT"; 
+        /** LNAM is composed of AGEN + FIDN + FIDS */
         public static final String FRID_FFPT_LNAM = "LNAM"; 
         public static final String FRID_FFPT_RIND = "RIND"; 
         public static final String FRID_FFPT_COMT = "COMT"; 
                 
-        public String name;
+        //reference id
+        public Agency agency;
+        public long refid;
+        public int revision;
+        //informations
         public RelationShip relationship;
         public String comment;
         
@@ -206,7 +212,17 @@ public class FeatureRecord extends S57ModelObject {
             for(SubField sf : subFields){
                 final String tag = sf.getType().getTag();
                 final Object val = sf.getValue();
-                     if(FRID_FFPT_LNAM.equalsIgnoreCase(tag)) name = toString(val);
+                if(FRID_FFPT_LNAM.equalsIgnoreCase(tag)){
+                    if(val instanceof byte[]){
+                        final byte[] buffer = (byte[]) val;
+                        agency = Agency.valueOf(LEDataInputStream.readUnsignedShort(buffer, 0));
+                        refid = LEDataInputStream.readUnsignedInt(buffer, 2);
+                        revision = LEDataInputStream.readUnsignedShort(buffer, 6);
+                    }else{
+                        //TODO
+                        throw new IOException("ASCII Form for LNAM not supported yet");
+                    }
+                }
                 else if(FRID_FFPT_RIND.equalsIgnoreCase(tag)) relationship = RelationShip.valueOf(val);
                 else if(FRID_FFPT_COMT.equalsIgnoreCase(tag)) comment = toString(val);
             }
@@ -245,8 +261,11 @@ public class FeatureRecord extends S57ModelObject {
         public static final String FRID_FSPT_ORNT = "ORNT"; 
         public static final String FRID_FSPT_USAG = "USAG"; 
         public static final String FRID_FSPT_MASK = "MASK";
-             
-        public String name;
+        
+        //reference id
+        public RecordType type;
+        public long refid;
+        //informations
         public Orientation orientation;
         public Usage usage;
         public Mask mask;
@@ -260,7 +279,16 @@ public class FeatureRecord extends S57ModelObject {
             for(SubField sf : subFields){
                 final String tag = sf.getType().getTag();
                 final Object val = sf.getValue();
-                     if(FRID_FSPT_NAME.equalsIgnoreCase(tag)) name = toString(val);
+                if(FRID_FSPT_NAME.equalsIgnoreCase(tag)){
+                     if(val instanceof byte[]){
+                        final byte[] buffer = (byte[]) val;
+                        type = RecordType.valueOf(buffer[0] & 0xff);
+                        refid = LEDataInputStream.readUnsignedInt(buffer, 1);
+                    }else{
+                        //TODO
+                        throw new IOException("ASCII Form for NAME not supported yet");
+                    }
+                }
                 else if(FRID_FSPT_ORNT.equalsIgnoreCase(tag)) orientation = Orientation.valueOf(val);
                 else if(FRID_FSPT_USAG.equalsIgnoreCase(tag)) usage = Usage.valueOf(val);
                 else if(FRID_FSPT_MASK.equalsIgnoreCase(tag)) mask = Mask.valueOf(val);

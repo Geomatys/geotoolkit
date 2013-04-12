@@ -25,6 +25,7 @@ import org.geotoolkit.data.iso8211.Field;
 import org.geotoolkit.data.iso8211.SubField;
 import static org.geotoolkit.data.s57.S57Constants.*;
 import static org.geotoolkit.data.s57.model.S57ModelObject.*;
+import org.geotoolkit.io.LEDataInputStream;
 
 /**
  *
@@ -105,13 +106,17 @@ public class VectorRecord extends S57ModelObject {
     public static class RecordPointer extends S57ModelObject {
         //7.7.1.4 Vector record pointer field structure
         public static final String VRID_VRPT = "VRPT"; 
+        /** NAME is composed of */
         public static final String VRID_VRPT_NAME = "NAME"; 
         public static final String VRID_VRPT_ORNT = "ORNT"; 
         public static final String VRID_VRPT_USAG = "USAG"; 
         public static final String VRID_VRPT_TOPI = "TOPI"; 
         public static final String VRID_VRPT_MASK = "MASK"; 
         
-        public String name;
+        //reference id
+        public RecordType type;
+        public long refid;
+        //informations
         public Orientation orientation;
         public Usage usage;
         public Topology topology;
@@ -126,7 +131,16 @@ public class VectorRecord extends S57ModelObject {
             for(SubField sf : subFields){
                 final String tag = sf.getType().getTag();
                 final Object value = sf.getValue();
-                     if(VRID_VRPT_NAME.equalsIgnoreCase(tag)) name = toString(value);
+                if(VRID_VRPT_NAME.equalsIgnoreCase(tag)){
+                     if(value instanceof byte[]){
+                        final byte[] buffer = (byte[]) value;
+                        type = RecordType.valueOf(buffer[0] & 0xff);
+                        refid = LEDataInputStream.readUnsignedInt(buffer, 1);
+                    }else{
+                        //TODO
+                        throw new IOException("ASCII Form for NAME not supported yet");
+                    }
+                }
                 else if(VRID_VRPT_ORNT.equalsIgnoreCase(tag)) orientation = Orientation.valueOf(value);
                 else if(VRID_VRPT_USAG.equalsIgnoreCase(tag)) usage = Usage.valueOf(value);
                 else if(VRID_VRPT_TOPI.equalsIgnoreCase(tag)) topology = Topology.valueOf(value);
@@ -181,6 +195,11 @@ public class VectorRecord extends S57ModelObject {
                 else if(VRID_SG2D_XCOO.equalsIgnoreCase(tag)) x = toDouble(value);
             }
         }
+
+        @Override
+        public String toString() {
+            return "Coord2D["+x+"  "+y+"]";
+        }
         
     }
     
@@ -215,6 +234,11 @@ public class VectorRecord extends S57ModelObject {
                 else if (VRID_SG3D_XCOO.equalsIgnoreCase(tag)) x = toDouble(value);
                 else if (VRID_SG3D_VE3D.equalsIgnoreCase(tag)) z = toDouble(value);
             }
+        }
+        
+        @Override
+        public String toString() {
+            return "Coord3D["+x+"  "+y+"  "+z+"]";
         }
         
     }

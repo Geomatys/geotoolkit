@@ -34,6 +34,7 @@ import org.geotoolkit.data.FeatureStoreFinder;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryCapabilities;
+import org.geotoolkit.data.s57.model.DataSetParameter;
 import org.geotoolkit.data.s57.model.FeatureRecord;
 import org.geotoolkit.data.s57.model.S57ModelObject;
 import org.geotoolkit.factory.Hints;
@@ -64,6 +65,8 @@ public class S57FeatureStore extends AbstractFeatureStore{
     private final File file;
     private Set<FeatureType> types = null;
     private Set<Name> names = null;
+    private double coordFactor;
+    private double soundingfactor;
     
     public S57FeatureStore(final ParameterValueGroup params) throws DataStoreException{
         super(params);
@@ -121,7 +124,11 @@ public class S57FeatureStore extends AbstractFeatureStore{
             
             while(reader.hasNext()){
                 final S57ModelObject obj = reader.next();
-                if(obj instanceof FeatureRecord){
+                if(obj instanceof DataSetParameter){
+                    final DataSetParameter parameters = (DataSetParameter) obj;
+                    coordFactor = parameters.coordFactor;
+                    soundingfactor = parameters.soundingFactor;
+                }else if(obj instanceof FeatureRecord){
                     final FeatureRecord rec = (FeatureRecord) obj;
                     final int objlCode = rec.code;
                     final FeatureType type = annexe.getFeatureType(objlCode);
@@ -150,7 +157,9 @@ public class S57FeatureStore extends AbstractFeatureStore{
         final FeatureType ft = getFeatureType(query.getTypeName());
         final S57ModelObjectReader s57reader = new S57ModelObjectReader();
         s57reader.setInput(file);
-        final FeatureReader reader = new S57FeatureReader(ft,(Integer)ft.getUserData().get(S57TYPECODE),s57reader);
+        final FeatureReader reader = new S57FeatureReader(ft,
+                (Integer)ft.getUserData().get(S57TYPECODE),s57reader,
+                coordFactor,soundingfactor);
         return handleRemaining(reader, query);
     }
 
