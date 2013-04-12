@@ -28,6 +28,11 @@
       <replacefilter token="org.geotoolkit.geometry.AbstractEnvelope"               value="org.apache.sis.geometry.AbstractEnvelope"/>
       <replacefilter token="org.geotoolkit.geometry.DirectPosition2D"               value="org.apache.sis.geometry.DirectPosition2D"/>
       <replacefilter token="org.geotoolkit.geometry.Envelope2D"                     value="org.apache.sis.geometry.Envelope2D"/>
+      <replacefilter token="org.geotoolkit.metadata.InvalidMetadataException"       value="org.apache.sis.metadata.InvalidMetadataException"/>
+      <replacefilter token="org.geotoolkit.metadata.KeyNamePolicy"                  value="org.apache.sis.metadata.KeyNamePolicy"/>
+      <replacefilter token="org.geotoolkit.metadata.NullValuePolicy"                value="org.apache.sis.metadata.ValueExistencePolicy"/>
+      <replacefilter token="org.geotoolkit.metadata.TypeValuePolicy"                value="org.apache.sis.metadata.TypeValuePolicy"/>
+      <replacefilter token="org.geotoolkit.metadata.UnmodifiableMetadataException"  value="org.apache.sis.metadata.UnmodifiableMetadataException"/>
       <replacefilter token="org.geotoolkit.util.AbstractInternationalString"        value="org.apache.sis.util.iso.AbstractInternationalString"/>
       <replacefilter token="org.geotoolkit.util.ArgumentChecks"                     value="org.apache.sis.util.ArgumentChecks"/>
       <replacefilter token="org.geotoolkit.util.Characters"                         value="org.apache.sis.util.Characters"/>
@@ -44,9 +49,10 @@
       <replacefilter token="org.geotoolkit.util.collection.BackingStoreException"   value="org.apache.sis.util.collection.BackingStoreException"/>
       <replacefilter token="org.geotoolkit.util.collection.Cache"                   value="org.apache.sis.util.collection.Cache"/>
       <replacefilter token="org.geotoolkit.util.collection.CheckedContainer"        value="org.apache.sis.util.collection.CheckedContainer"/>
-      <replacefilter token="org.geotoolkit.util.collection.UnmodifiableArrayList"   value="org.apache.sis.util.collection.UnmodifiableArrayList"/>
+      <replacefilter token="org.geotoolkit.util.collection.UnmodifiableArrayList"   value="org.apache.sis.internal.util.UnmodifiableArrayList"/>
       <replacefilter token="org.geotoolkit.util.collection.WeakHashSet"             value="org.apache.sis.util.collection.WeakHashSet"/>
       <replacefilter token="org.geotoolkit.util.collection.WeakValueHashMap"        value="org.apache.sis.util.collection.WeakValueHashMap"/>
+      <replacefilter token="org.geotoolkit.util.collection.XCollection"             value="org.apache.sis.util.collection.Containers"/>
       <replacefilter token="org.geotoolkit.xml.XLink"                               value="org.apache.sis.xml.XLink"/>
       <replacefilter token="org.geotoolkit.xml.NilReason"                           value="org.apache.sis.xml.NilReason"/>
     </replace>
