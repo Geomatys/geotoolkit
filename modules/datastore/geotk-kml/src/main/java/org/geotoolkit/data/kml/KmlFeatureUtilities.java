@@ -2,11 +2,14 @@ package org.geotoolkit.data.kml;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryCollection;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.MultiLineString;
+import org.geotoolkit.data.kml.model.AbstractGeometry;
 import org.geotoolkit.data.kml.model.DefaultExtendedData;
+import org.geotoolkit.data.kml.model.DefaultMultiGeometry;
 import org.geotoolkit.data.kml.model.Kml;
 import org.geotoolkit.data.kml.model.KmlModelConstants;
 import org.geotoolkit.data.kml.model.SchemaData;
@@ -132,9 +135,11 @@ public class KmlFeatureUtilities {
                             SimpleFeature simpleFeature = extractFeature(idgeom, geometry);
 
                             //test if geometry already exist
-                            if (!results.contains(simpleFeature)) {
-                                results.add(simpleFeature);
-                                idgeom++;
+                            if(simpleFeature!=null){
+                                if (!results.contains(simpleFeature)) {
+                                    results.add(simpleFeature);
+                                    idgeom++;
+                                }
                             }
                         }
                     }
@@ -151,55 +156,84 @@ public class KmlFeatureUtilities {
      * @return a {@link SimpleFeature}
      */
     private static SimpleFeature extractFeature(int idgeom, Map.Entry<Object, Map<String, String>> geometry) {
-        if (geometry.getKey() instanceof Geometry) {
-            Geometry kmlGeometry = (Geometry) geometry.getKey();
+        final Object geom = geometry.getKey();
+        Geometry finalGeom = null;
+        //if it's a simple geometry
+        if (geom instanceof Geometry) {
+            finalGeom = (Geometry) geometry.getKey();
             try {
-                if (kmlGeometry instanceof LineString) {
-                    LineString lineString = (LineString) kmlGeometry;
+                //if it's lineString it can cut meridian. So test it
+                if (finalGeom instanceof LineString) {
+                    LineString lineString = (LineString) finalGeom;
                     MultiLineString multiLine = cutAtMeridian(lineString);
                     if(multiLine!=null){
-                        kmlGeometry = multiLine;
+                        finalGeom = multiLine;
                     }
                 }
-
-
-                //Building simplefeature
-                final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
-                final String name = "Geometry";
-                ftb.setName(name);
-                ftb.add("geometry", Geometry.class, DefaultGeographicCRS.WGS84);
-
-                //loop on values to find data names
-                Map<String, String> values = geometry.getValue();
-                for (String valName : values.keySet()) {
-                    ftb.add(valName, String.class);
-                }
-
-
-                final SimpleFeatureType sft = ftb.buildSimpleFeatureType();
-                final SimpleFeatureBuilder sfb = new SimpleFeatureBuilder(sft);
-
-                //Clear the feature builder before creating a new feature.
-                sfb.reset();
-
-                //add geometry
-                sfb.set("geometry", kmlGeometry);
-
-                //add other data
-                for (String valName : values.keySet()) {
-                    sfb.set(valName, values.get(valName));
-                }
-
-                //create simple feature
-                final SimpleFeature simpleFeature = sfb.buildFeature("feature" + idgeom);
-                simpleFeature.validate();
-                return simpleFeature;
-
             } catch (Exception ex) {
                 LOGGER.log(Level.WARNING, ex.getMessage(), ex);
             }
         }
+
+        //it's a geometry collection
+        else if(geom instanceof DefaultMultiGeometry){
+            final DefaultMultiGeometry kmlabstractGeometry = (DefaultMultiGeometry)geom;
+            final List<Geometry> multiGeometry = new ArrayList<Geometry>(0);
+
+            //loop on geometry to add id on a GeometryList
+            for (AbstractGeometry abstractGeometry : kmlabstractGeometry.getGeometries()) {
+                if(abstractGeometry instanceof Geometry){
+                    final Geometry currentGeom = (Geometry)abstractGeometry;
+                    multiGeometry.add(currentGeom);
+                }
+            }
+
+            final GeometryFactory gf = new GeometryFactory();
+            Geometry[] geometryArray = new Geometry[multiGeometry.size()];
+            for (int i = 0; i < multiGeometry.size(); i++) {
+                geometryArray[i] = multiGeometry.get(i);
+
+            }
+            finalGeom = new GeometryCollection(geometryArray, gf);
+        }
+
+        if(finalGeom!=null){
+            return BuildSimpleFeature(idgeom, geometry.getValue(), finalGeom);
+        }
         return null;
+    }
+
+    private static SimpleFeature BuildSimpleFeature(int idgeom, Map<String, String> values, Geometry finalGeom) {
+        //Building simplefeature
+        final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
+        final String name = "Geometry";
+        ftb.setName(name);
+        ftb.add("geometry", Geometry.class, DefaultGeographicCRS.WGS84);
+
+        //loop on values to find data names
+        for (String valName : values.keySet()) {
+            ftb.add(valName, String.class);
+        }
+
+
+        final SimpleFeatureType sft = ftb.buildSimpleFeatureType();
+        final SimpleFeatureBuilder sfb = new SimpleFeatureBuilder(sft);
+
+        //Clear the feature builder before creating a new feature.
+        sfb.reset();
+
+        //add geometry
+        sfb.set("geometry", finalGeom);
+
+        //add other data
+        for (String valName : values.keySet()) {
+            sfb.set(valName, values.get(valName));
+        }
+
+        //create simple feature
+        final SimpleFeature simpleFeature = sfb.buildFeature("feature" + idgeom);
+        simpleFeature.validate();
+        return simpleFeature;
     }
 
     /**
@@ -342,7 +376,7 @@ public class KmlFeatureUtilities {
                     end++;
                 }
 
-                if ((end - from) > 2) {
+                if ((end - from) > 1) {
                     final Coordinate[] cut = Arrays.copyOfRange(coords, from, end);
                     final LineString cls = gf.createLineString(cut);
                     strs.add(cls);
