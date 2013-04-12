@@ -32,10 +32,11 @@ import org.opengis.metadata.Identifier;
 import org.opengis.metadata.citation.Citation;
 
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.util.collection.XCollections;
 import org.apache.sis.util.UnsupportedImplementationException;
 import org.geotoolkit.xml.IdentifierSpace;
 import org.geotoolkit.xml.IdentifierMap;
+
+import static org.apache.sis.util.collection.Containers.hashMapCapacity;
 
 
 /**
@@ -459,7 +460,7 @@ public class IdentifierMapAdapter extends AbstractMap<Citation,String> implement
          * Creates a new iterator for the given collection of identifiers.
          */
         Iter(final Collection<? extends Identifier> identifiers) {
-            super(XCollections.hashMapCapacity(identifiers.size()));
+            super(hashMapCapacity(identifiers.size()));
             this.identifiers = identifiers.iterator();
         }
 

@@ -48,7 +48,7 @@ import org.geotoolkit.resources.Vocabulary;
 import org.apache.sis.util.Localized;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.MeasurementRange;
-import org.apache.sis.util.collection.UnmodifiableArrayList;
+import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.geotoolkit.internal.InternalUtilities;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.coverage.Category;
@@ -60,7 +60,7 @@ import org.geotoolkit.referencing.operation.matrix.Matrix2;
 import org.geotoolkit.referencing.operation.matrix.Matrices;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 
-import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
+import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
 
 
 /**

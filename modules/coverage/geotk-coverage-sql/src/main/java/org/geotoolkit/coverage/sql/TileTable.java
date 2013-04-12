@@ -57,7 +57,8 @@ import org.geotoolkit.internal.sql.table.SpatialDatabase;
 import org.geotoolkit.internal.sql.table.CatalogException;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.resources.Errors;
-import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
+
+import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
 
 
 

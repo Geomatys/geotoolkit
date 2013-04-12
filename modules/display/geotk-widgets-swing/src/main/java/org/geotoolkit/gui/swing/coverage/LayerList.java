@@ -88,7 +88,7 @@ import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.resources.Widgets;
 import org.geotoolkit.resources.Errors;
 
-import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
+import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
 
 
 /**

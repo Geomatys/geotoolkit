@@ -56,7 +56,7 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.display.axis.Axis2D;
 import org.geotoolkit.display.axis.AbstractGraduation;
 import org.geotoolkit.display.shape.TransformedShape;
-import org.apache.sis.util.collection.UnmodifiableArrayList;
+import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.apache.sis.util.Numbers;
 import org.geotoolkit.util.logging.Logging;
 

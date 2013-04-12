@@ -32,8 +32,9 @@ import org.w3c.dom.NamedNodeMap;
 
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.gui.swing.tree.Trees;
-import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.image.io.metadata.MetadataTreeTable;
+
+import static org.apache.sis.util.collection.Containers.hashMapCapacity;
 
 
 /**
@@ -133,7 +134,7 @@ public abstract class SampleMetadataFormat implements IIOMetadataFormat {
                 if (element.childs != null) {
                     childNames = new LinkedHashSet<>(Arrays.asList(element.childs));
                 } else {
-                    childNames = new LinkedHashSet<>(XCollections.hashMapCapacity(length));
+                    childNames = new LinkedHashSet<>(hashMapCapacity(length));
                 }
                 for (int i=0; i<length; i++) {
                     childNames.add(addNode(childs.item(i)));

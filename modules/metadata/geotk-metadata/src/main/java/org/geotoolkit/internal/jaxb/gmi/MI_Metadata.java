@@ -22,7 +22,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.opengis.metadata.Metadata;
 import org.geotoolkit.metadata.iso.DefaultMetadata;
 
-import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
+import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
 
 
 /**

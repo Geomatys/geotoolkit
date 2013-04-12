@@ -42,7 +42,7 @@ import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.logging.Logging;
 import org.apache.sis.util.Classes;
 import org.geotoolkit.util.SimpleInternationalString;
-import org.apache.sis.util.collection.UnmodifiableArrayList;
+import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.geotoolkit.coverage.grid.GeneralGridCoordinates;
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.resources.Errors;

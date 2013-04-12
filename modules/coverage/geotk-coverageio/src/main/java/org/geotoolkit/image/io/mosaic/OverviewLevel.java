@@ -32,7 +32,7 @@ import java.net.MalformedURLException;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.collection.IntegerList;
 import org.geotoolkit.util.collection.FrequencySortedSet;
-import org.apache.sis.util.collection.UnmodifiableArrayList;
+import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.resources.Errors;
 

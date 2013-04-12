@@ -43,11 +43,12 @@ import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.util.Strings;
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.referencing.datum.BursaWolfParameters;
 import org.geotoolkit.io.ContentFormatException;
 import org.geotoolkit.lang.Configuration;
 import org.geotoolkit.resources.Errors;
+
+import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
 
 
 /**
@@ -208,7 +209,7 @@ public class WKTFormat extends Format {
      *              {@code null} for the system-wide default hints.
      */
     public WKTFormat(final Hints hints) {
-        if (!XCollections.isNullOrEmpty(hints)) {
+        if (!isNullOrEmpty(hints)) {
             parser = new ReferencingParser(symbols, hints);
         }
     }
@@ -446,7 +447,7 @@ public class WKTFormat extends Format {
      * @throws IOException if an error occurred while writing to the output stream.
      */
     public void printDefinitions(final Writer out) throws IOException {
-        if (!XCollections.isNullOrEmpty(definitions)) {
+        if (!isNullOrEmpty(definitions)) {
             definitions.print(out, colors != null);
         }
     }

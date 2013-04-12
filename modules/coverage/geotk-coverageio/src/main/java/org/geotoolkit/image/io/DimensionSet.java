@@ -38,6 +38,8 @@ import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.internal.image.io.Warnings;
 
 import static org.geotoolkit.image.io.DimensionSlice.API;
+import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
+import static org.geotoolkit.util.collection.XCollections.unmodifiableOrCopy;
 
 
 /**
@@ -177,7 +179,7 @@ public class DimensionSet extends AbstractSet<DimensionIdentification> implement
      */
     @Override
     public boolean isEmpty() {
-        return XCollections.isNullOrEmpty(identifiersMap);
+        return isNullOrEmpty(identifiersMap);
     }
 
     /**
@@ -215,7 +217,7 @@ public class DimensionSet extends AbstractSet<DimensionIdentification> implement
     private Set<DimensionIdentification> dimensions() {
         if (dimensions == null) {
             if (identifiersMap != null) {
-                dimensions = XCollections.unmodifiableSet(new LinkedHashSet<>(identifiersMap.values()));
+                dimensions = unmodifiableOrCopy(new LinkedHashSet<>(identifiersMap.values()));
             } else {
                 dimensions = Collections.emptySet();
             }

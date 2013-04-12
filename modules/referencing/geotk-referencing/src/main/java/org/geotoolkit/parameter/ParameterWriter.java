@@ -48,7 +48,7 @@ import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.internal.io.IOUtilities;
 
 import static org.geotoolkit.io.TableWriter.*;
-import static org.geotoolkit.util.collection.XCollections.hashMapCapacity;
+import static org.apache.sis.util.collection.Containers.hashMapCapacity;
 
 
 /**

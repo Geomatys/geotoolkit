@@ -44,9 +44,10 @@ import org.opengis.metadata.quality.LogicalConsistency;
 import org.opengis.metadata.quality.EvaluationMethodType;
 import org.opengis.util.InternationalString;
 
-import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.metadata.iso.MetadataEntity;
 import org.geotoolkit.resources.Errors;
+
+import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
 
 
 /**
@@ -148,7 +149,7 @@ public class AbstractElement extends MetadataEntity implements Element {
         super(source);
         if (source != null) {
             // Be careful to not overwrite date values (GEOTK-170).
-            if (date1 == 0 && date2 == 0 && XCollections.isNullOrEmpty(source.getDates())) {
+            if (date1 == 0 && date2 == 0 && isNullOrEmpty(source.getDates())) {
                 date1 = Long.MIN_VALUE;
                 date2 = Long.MIN_VALUE;
             }

@@ -32,10 +32,10 @@ import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.factory.AbstractAuthorityFactory;
 import org.geotoolkit.geometry.DirectPosition2D;
-import org.geotoolkit.util.collection.XCollections;
 
 import static org.junit.Assert.*;
 import static java.lang.StrictMath.*;
+import static org.apache.sis.util.collection.Containers.hashMapCapacity;
 
 
 /**
@@ -125,7 +125,7 @@ final strictfp class ClientThread extends Thread {
      * {@link #testGeographicToRandom()}.
      */
     static Map<Integer, Point2D.Double> createEmptyResultMap() {
-        return new HashMap<>(XCollections.hashMapCapacity(CODES.length));
+        return new HashMap<>(hashMapCapacity(CODES.length));
     }
 
     /**

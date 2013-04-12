@@ -27,7 +27,7 @@ import org.opengis.metadata.extent.GeographicBoundingBox;
 
 import org.geotoolkit.metadata.iso.extent.DefaultExtent;
 
-import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
+import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
 
 
 /**

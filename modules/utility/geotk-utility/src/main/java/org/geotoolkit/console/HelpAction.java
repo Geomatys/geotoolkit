@@ -30,11 +30,11 @@ import org.geotoolkit.io.TableWriter;
 import org.geotoolkit.io.LineWrapWriter;
 import org.geotoolkit.io.IndentedLineWriter;
 import org.apache.sis.util.Numbers;
-import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.resources.Descriptions;
 import org.geotoolkit.resources.Vocabulary;
 
 import static org.geotoolkit.console.CommandLine.*;
+import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
 
 
 /**
@@ -368,7 +368,7 @@ final class HelpAction {
      */
     private void examples(final String command) {
         final Map<String,String> examples = cmd.examples();
-        if (XCollections.isNullOrEmpty(examples)) {
+        if (isNullOrEmpty(examples)) {
             return;
         }
         /*

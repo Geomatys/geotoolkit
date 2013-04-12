@@ -32,7 +32,8 @@ import org.opengis.referencing.operation.CoordinateOperationAuthorityFactory;
 
 import org.geotoolkit.lang.Configuration;
 import org.apache.sis.internal.util.Citations;
-import org.geotoolkit.util.collection.XCollections;
+
+import static org.geotoolkit.util.collection.XCollections.unmodifiableOrCopy;
 
 
 /**
@@ -104,7 +105,7 @@ loop:       for (int i=0; ; i++) {
                     }
                 }
             }
-            authorityNames = XCollections.unmodifiableSet(authorityNames);
+            authorityNames = unmodifiableOrCopy(authorityNames);
         }
         return authorityNames;
     }

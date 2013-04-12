@@ -28,7 +28,8 @@ import net.jcip.annotations.NotThreadSafe;
 
 import org.geotoolkit.internal.Threads;
 import org.geotoolkit.util.logging.Logging;
-import org.geotoolkit.util.collection.XCollections;
+
+import static org.apache.sis.util.collection.Containers.hashMapCapacity;
 
 
 /**
@@ -122,7 +123,7 @@ public class StatementPool<K,V extends StatementEntry> extends LinkedHashMap<K,V
      * @param dataSource The datasource to the database.
      */
     public StatementPool(final int capacity, final DataSource dataSource) {
-        super(XCollections.hashMapCapacity(capacity));
+        super(hashMapCapacity(capacity));
         this.capacity   = capacity;
         this.dataSource = dataSource;
     }
@@ -134,7 +135,7 @@ public class StatementPool<K,V extends StatementEntry> extends LinkedHashMap<K,V
      * @param source The pool from which to copy the configuration.
      */
     public StatementPool(final StatementPool<K,V> source) {
-        super(XCollections.hashMapCapacity(source.capacity));
+        super(hashMapCapacity(source.capacity));
         capacity   = source.capacity;
         dataSource = source.dataSource;
     }

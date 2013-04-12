@@ -35,8 +35,12 @@ import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.util.collection.CheckedArrayList;
 import org.geotoolkit.util.collection.CheckedHashSet;
-import org.apache.sis.util.collection.UnmodifiableArrayList;
+import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.geotoolkit.internal.jaxb.MarshalContext;
+
+import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
+import static org.apache.sis.util.collection.Containers.hashMapCapacity;
+import static org.geotoolkit.util.collection.XCollections.unmodifiableOrCopy;
 
 
 /**
@@ -287,7 +291,7 @@ public abstract class ModifiableMetadata extends AbstractMetadata implements Clo
                 // since we don't need anymore synchronization or type checking.
                 collection = UnmodifiableArrayList.wrap(array);
                 if (isSet) {
-                    collection = XCollections.unmodifiableSet(new LinkedHashSet<>(collection));
+                    collection = unmodifiableOrCopy(new LinkedHashSet<>(collection));
                 } else {
                     // Conservatively assumes a List if we are not sure to have a Set,
                     // since the list is less destructive (no removal of duplicated).
@@ -309,7 +313,7 @@ public abstract class ModifiableMetadata extends AbstractMetadata implements Clo
                 final Map.Entry entry = it.next();
                 entry.setValue(unmodifiable(entry.getValue()));
             }
-            return XCollections.unmodifiableMap(map);
+            return unmodifiableOrCopy(map);
         }
         /*
          * CASE 4 - The object is cloneable.
@@ -430,7 +434,7 @@ public abstract class ModifiableMetadata extends AbstractMetadata implements Clo
                 return (List<E>) source;
             }
             checkWritePermission();
-            if (XCollections.isNullOrEmpty(source)) {
+            if (isNullOrEmpty(source)) {
                 target = null;
             } else {
                 if (target != null) {
@@ -481,7 +485,7 @@ public abstract class ModifiableMetadata extends AbstractMetadata implements Clo
                 return (Set<E>) source;
             }
             checkWritePermission();
-            if (XCollections.isNullOrEmpty(source)) {
+            if (isNullOrEmpty(source)) {
                 target = null;
             } else {
                 if (target != null) {
@@ -545,7 +549,7 @@ public abstract class ModifiableMetadata extends AbstractMetadata implements Clo
                 return (Collection<E>) source;
             }
             checkWritePermission();
-            if (XCollections.isNullOrEmpty(source)) {
+            if (isNullOrEmpty(source)) {
                 target = null;
             } else {
                 if (target != null) {
@@ -665,7 +669,7 @@ public abstract class ModifiableMetadata extends AbstractMetadata implements Clo
     // However a future version may do so if it appears worth on a performance point of view.
     protected final <E> Collection<E> nonNullCollection(final Collection<E> c, final Class<E> elementType) {
         assert Thread.holdsLock(this);
-        if (XCollections.isNullOrEmpty(c) && MarshalContext.isMarshaling()) {
+        if (isNullOrEmpty(c) && MarshalContext.isMarshaling()) {
             return null;
         }
         if (c != null) {
@@ -704,7 +708,7 @@ public abstract class ModifiableMetadata extends AbstractMetadata implements Clo
         }
 
         public MutableSet(Class<E> type, int capacity) {
-            super(type, XCollections.hashMapCapacity(capacity));
+            super(type, hashMapCapacity(capacity));
         }
 
         @Override

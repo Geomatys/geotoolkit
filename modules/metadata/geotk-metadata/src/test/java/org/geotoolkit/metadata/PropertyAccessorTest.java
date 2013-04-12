@@ -30,13 +30,13 @@ import org.opengis.util.InternationalString;
 
 import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.util.SimpleInternationalString;
-import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.metadata.iso.citation.DefaultCitation;
 
 import org.junit.*;
 import static org.junit.Assert.*;
 import static org.apache.sis.metadata.KeyNamePolicy.*;
+import static org.apache.sis.internal.util.CollectionsExt.modifiableCopy;
 
 
 /**
@@ -229,7 +229,7 @@ public final strictfp class PropertyAccessorTest {
         assertEquals (source, target);
         assertTrue(containsEPSG(target));
 
-        assertEquals(XCollections.copy((Collection<?>) target), accessor.set(index, citation, null, true));
+        assertEquals(modifiableCopy((Collection<?>) target), accessor.set(index, citation, null, true));
         final Object value = accessor.get(index, citation);
         assertNotNull(value);
         assertTrue(((Collection<?>) value).isEmpty());

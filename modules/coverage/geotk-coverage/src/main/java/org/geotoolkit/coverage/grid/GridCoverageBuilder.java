@@ -69,7 +69,6 @@ import org.geotoolkit.lang.Builder;
 import org.geotoolkit.util.Cloneable;
 import org.geotoolkit.util.NumberRange;
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.util.collection.XCollections;
 import org.apache.sis.util.collection.BackingStoreException;
 import org.geotoolkit.factory.Hints;
 import org.apache.sis.measure.Units;
@@ -89,6 +88,7 @@ import org.geotoolkit.image.io.PaletteFactory;
 import org.geotoolkit.resources.Errors;
 
 import static java.awt.image.DataBuffer.*;
+import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
 
 
 /**
@@ -595,7 +595,7 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      * @since 3.20
      */
     public GridCoverageBuilder(final Hints hints) {
-        if (XCollections.isNullOrEmpty(hints)) {
+        if (isNullOrEmpty(hints)) {
             this.hints = null;
         } else {
             this.hints = new Hints(hints);
@@ -2938,7 +2938,7 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
                      * Creates the categories for "no data" values, if any. We may keep an empty
                      * slot at the end of the category array for the "quantitative" category.
                      */
-                    if (XCollections.isNullOrEmpty(nodata)) {
+                    if (isNullOrEmpty(nodata)) {
                         categories = (range != null) ? new Category[1] : null;
                     } else {
                         categories = new Category[nodata.size() + (range != null ? 1 : 0)];

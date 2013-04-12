@@ -28,7 +28,8 @@ import java.lang.reflect.Modifier;
 import org.geotoolkit.lang.Static;
 import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.util.logging.Logging;
-import static org.geotoolkit.util.collection.XCollections.hashMapCapacity;
+
+import static org.apache.sis.util.collection.Containers.hashMapCapacity;
 
 
 /**

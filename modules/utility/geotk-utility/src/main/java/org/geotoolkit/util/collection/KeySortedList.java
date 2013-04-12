@@ -29,7 +29,7 @@ import java.util.Collections;
 import java.util.NoSuchElementException;
 import java.io.Serializable;
 
-import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
+import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
 
 
 /**

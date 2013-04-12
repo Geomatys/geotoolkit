@@ -31,6 +31,8 @@ import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.resources.Errors;
 
 import static java.lang.Math.*;
+import static org.apache.sis.util.collection.Containers.hashMapCapacity;
+import static org.geotoolkit.util.collection.XCollections.unmodifiableOrCopy;
 
 
 /**
@@ -276,7 +278,7 @@ public final class InternalUtilities extends Static {
      * Returns a copy of the given array as a non-empty immutable set.
      * If the given array is empty, then this method returns {@code null}.
      * <p>
-     * This method is not public provided in the public API because the recommended
+     * This method is not provided in the public API because the recommended
      * practice is usually to return an empty collection rather than {@code null}.
      *
      * @param  <T> The type of elements.
@@ -313,14 +315,14 @@ public final class InternalUtilities extends Static {
     {
         Map<K,V> copy = null;
         if (map != null) {
-            copy = new HashMap<>(XCollections.hashMapCapacity(Math.min(map.size(), keys.length)));
+            copy = new HashMap<>(hashMapCapacity(Math.min(map.size(), keys.length)));
             for (final K key : keys) {
                 final V value = valueType.cast(map.get(key));
                 if (value != null) {
                     copy.put(key, value);
                 }
             }
-            copy = XCollections.unmodifiableMap(copy);
+            copy = unmodifiableOrCopy(copy);
         }
         return copy;
     }

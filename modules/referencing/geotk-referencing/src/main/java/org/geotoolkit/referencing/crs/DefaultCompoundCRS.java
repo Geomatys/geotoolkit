@@ -42,7 +42,7 @@ import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.cs.AxisRangeType;
 import org.geotoolkit.referencing.cs.DefaultCompoundCS;
 import org.geotoolkit.referencing.AbstractReferenceSystem;
-import org.apache.sis.util.collection.UnmodifiableArrayList;
+import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.apache.sis.util.collection.CheckedContainer;
 import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.io.wkt.Formatter;

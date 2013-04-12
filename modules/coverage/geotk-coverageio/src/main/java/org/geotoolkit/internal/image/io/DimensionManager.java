@@ -31,7 +31,7 @@ import org.geotoolkit.image.io.IllegalImageDimensionException;
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.util.NullArgumentException;
 import org.geotoolkit.util.collection.XCollections;
-import org.apache.sis.util.collection.UnmodifiableArrayList;
+import org.apache.sis.internal.util.UnmodifiableArrayList;
 
 
 /**

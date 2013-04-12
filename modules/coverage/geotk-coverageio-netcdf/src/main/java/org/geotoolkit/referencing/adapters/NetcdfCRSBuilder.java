@@ -39,8 +39,10 @@ import ucar.nc2.dataset.CoordinateSystem;
 
 import org.geotoolkit.lang.Builder;
 import org.geotoolkit.image.io.WarningProducer;
-import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.resources.Errors;
+
+import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
+import static org.apache.sis.util.collection.Containers.hashMapCapacity;
 
 
 /**
@@ -252,7 +254,7 @@ public class NetcdfCRSBuilder extends Builder<NetcdfCRS> {
     public Map<Dimension,CoordinateAxis> getAxesDomain() throws IllegalStateException {
         final List<CoordinateAxis> axes = getCoordinateAxes();
         ensureDefined("axes", axes);
-        final Map<Dimension,CoordinateAxis> map = new LinkedHashMap<>(XCollections.hashMapCapacity(axes.size()));
+        final Map<Dimension,CoordinateAxis> map = new LinkedHashMap<>(hashMapCapacity(axes.size()));
         /*
          * Stores all dimensions in the map, together with an arbitrary axis. If there is no
          * conflict, we are done. If there is conflicts, then the first one-dimensional axis
@@ -304,7 +306,7 @@ public class NetcdfCRSBuilder extends Builder<NetcdfCRS> {
          * exist. In such cases, we will first checks if there is any axis that can be assigned
          * to only one dimension, because all other dimensions are not available anymore.
          */
-redo:   while (!XCollections.isNullOrEmpty(conflicts)) {
+redo:   while (!isNullOrEmpty(conflicts)) {
             for (final Map.Entry<Dimension,Set<CoordinateAxis>> entry : conflicts.entrySet()) {
                 final Dimension dimension = entry.getKey();
 otherAxis:      for (final CoordinateAxis axis : entry.getValue()) {
@@ -364,7 +366,7 @@ otherAxis:      for (final CoordinateAxis axis : entry.getValue()) {
         final List<Dimension>    domain = getDomain();         if (domain == null) return;
         final Map<Dimension,CoordinateAxis> forDim = getAxesDomain();
         final int rank = domain.size();
-        final Map<CoordinateAxis,Integer> positions = new IdentityHashMap<>(XCollections.hashMapCapacity(rank));
+        final Map<CoordinateAxis,Integer> positions = new IdentityHashMap<>(hashMapCapacity(rank));
         for (int i=rank; --i>=0;) {
             /*
              * Remember the axis position for later sorting. If the axis dimension is not in the

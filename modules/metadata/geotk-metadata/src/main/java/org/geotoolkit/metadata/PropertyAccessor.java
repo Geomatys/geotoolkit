@@ -38,7 +38,6 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.Strings;
 import org.geotoolkit.util.Utilities;
 import org.apache.sis.util.ComparisonMode;
-import org.geotoolkit.util.collection.XCollections;
 import org.apache.sis.util.collection.CheckedContainer;
 import org.apache.sis.util.Classes;
 import org.apache.sis.util.Numbers;
@@ -47,7 +46,9 @@ import org.geotoolkit.util.converter.ConverterRegistry;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
 import org.geotoolkit.xml.IdentifiedObject;
 
+import static org.apache.sis.internal.util.CollectionsExt.modifiableCopy;
 import static org.geotoolkit.internal.InternalUtilities.floatEpsilonEqual;
+import static org.apache.sis.util.collection.Containers.hashMapCapacity;
 
 
 /**
@@ -230,7 +231,7 @@ final class PropertyAccessor {
         /*
          * Compute all information derived from getters: setters, property names, value types.
          */
-        mapping = new HashMap<>(XCollections.hashMapCapacity(allCount));
+        mapping = new HashMap<>(hashMapCapacity(allCount));
         names   = new String[allCount];
         elementTypes = new Class<?>[allCount];
         Method[] setters = null;
@@ -425,7 +426,7 @@ final class PropertyAccessor {
                 getters = type.getMethods();
                 // Following is similar in purpose to the PropertyAccessor.mapping field,
                 // but index values are different because of the call to Arrays.sort(...).
-                final Map<String,Integer> mapping = new HashMap<>(XCollections.hashMapCapacity(getters.length));
+                final Map<String,Integer> mapping = new HashMap<>(hashMapCapacity(getters.length));
                 boolean hasExtraGetter = false;
                 int count = 0;
                 for (final Method candidate : getters) {
@@ -774,9 +775,9 @@ final class PropertyAccessor {
                 if (getOld) {
                     old = get(getter, metadata);
                     if (old instanceof Collection<?>) {
-                        old = XCollections.copy((Collection<?>) old);
+                        old = modifiableCopy((Collection<?>) old);
                     } else if (old instanceof Map<?,?>) {
-                        old = XCollections.copy((Map<?,?>) old);
+                        old = modifiableCopy((Map<?,?>) old);
                     }
                 } else {
                     old = null;

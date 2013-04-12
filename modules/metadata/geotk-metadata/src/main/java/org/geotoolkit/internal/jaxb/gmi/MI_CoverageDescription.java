@@ -22,7 +22,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.opengis.metadata.content.CoverageDescription;
 import org.geotoolkit.metadata.iso.content.DefaultCoverageDescription;
 
-import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
+import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
 
 
 /**

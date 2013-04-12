@@ -63,12 +63,12 @@ import org.geotoolkit.coverage.AbstractCoverage;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.apache.sis.util.Classes;
-import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.lang.Debug;
 
-import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
+import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
+import static org.geotoolkit.util.collection.XCollections.unmodifiableOrCopy;
 
 
 /**
@@ -982,7 +982,7 @@ public class GridCoverage2D extends AbstractGridCoverage implements RenderedCove
                 }
             }
             // Assign only in successful.
-            this.viewTypes = XCollections.unmodifiableSet(viewTypes);
+            this.viewTypes = unmodifiableOrCopy(viewTypes);
         }
         return viewTypes;
     }

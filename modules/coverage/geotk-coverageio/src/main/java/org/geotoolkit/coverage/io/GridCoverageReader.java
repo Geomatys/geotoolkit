@@ -64,7 +64,7 @@ import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.resources.Vocabulary;
 
 import static org.geotoolkit.util.collection.XCollections.addIfNonNull;
-import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
+import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
 import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.ISO_FORMAT_NAME;
 
 

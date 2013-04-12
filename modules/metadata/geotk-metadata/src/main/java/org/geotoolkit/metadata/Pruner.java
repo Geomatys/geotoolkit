@@ -21,7 +21,7 @@ import java.util.Map;
 import java.util.Iterator;
 import java.util.Collection;
 import java.util.IdentityHashMap;
-import org.geotoolkit.util.collection.XCollections;
+import org.apache.sis.internal.util.CollectionsExt;
 import org.apache.sis.util.collection.CheckedContainer;
 import org.opengis.util.CodeList;
 
@@ -137,7 +137,7 @@ final class Pruner extends ThreadLocal<Map<Object,Boolean>> {
                 }
             } else {
                 boolean allEmpty = true;
-                final Collection<?> values = XCollections.asCollection(value);
+                final Collection<?> values = CollectionsExt.toCollection(value);
                 for (final Iterator<?> it = values.iterator(); it.hasNext();) {
                     final Object element = it.next();
                     if (!PropertyAccessor.isEmpty(element)) {

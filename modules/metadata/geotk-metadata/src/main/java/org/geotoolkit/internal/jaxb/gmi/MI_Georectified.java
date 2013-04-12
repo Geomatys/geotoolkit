@@ -22,7 +22,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.opengis.metadata.spatial.Georectified;
 import org.geotoolkit.metadata.iso.spatial.DefaultGeorectified;
 
-import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
+import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
 
 
 /**

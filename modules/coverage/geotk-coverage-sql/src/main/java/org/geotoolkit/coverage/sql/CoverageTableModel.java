@@ -60,12 +60,13 @@ import org.opengis.coverage.Coverage;
 import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.util.DateRange;
 import org.geotoolkit.util.logging.Logging;
-import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.internal.Threads;
 import org.geotoolkit.image.io.IIOListeners;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.coverage.io.CoverageStoreException;
+
+import static org.apache.sis.util.collection.Containers.hashMapCapacity;
 
 
 /**
@@ -420,7 +421,7 @@ public class CoverageTableModel extends AbstractTableModel {
          * Get the indices (in the names array) of each name. A name
          * can have more than one index if it appears many time.
          */
-        final Map<String,int[]> map = new HashMap<>(XCollections.hashMapCapacity(names.length));
+        final Map<String,int[]> map = new HashMap<>(hashMapCapacity(names.length));
         for (int i=0; i<names.length; i++) {
             int[] index = map.put(names[i], new int[]{i});
             if (index != null) {
@@ -464,7 +465,7 @@ public class CoverageTableModel extends AbstractTableModel {
      */
     public void remove(final int... rows) {
         final Set<GridCoverageReference> toRemoveSet;
-        toRemoveSet = new HashSet<>(XCollections.hashMapCapacity(rows.length));
+        toRemoveSet = new HashSet<>(hashMapCapacity(rows.length));
         for (int i=0; i<rows.length; i++) {
             toRemoveSet.add(unwrap(entries[rows[i]]));
         }
@@ -479,7 +480,7 @@ public class CoverageTableModel extends AbstractTableModel {
      */
     public void remove(final GridCoverageReference... toRemove) {
         final Set<GridCoverageReference> toRemoveSet;
-        toRemoveSet = new HashSet<>(XCollections.hashMapCapacity(toRemove.length));
+        toRemoveSet = new HashSet<>(hashMapCapacity(toRemove.length));
         for (int i=0; i<toRemove.length; i++) {
             toRemoveSet.add(unwrap(toRemove[i]));
         }

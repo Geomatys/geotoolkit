@@ -45,10 +45,11 @@ import org.geotoolkit.referencing.operation.DefiningConversion;
 import org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis;
 import org.apache.sis.util.collection.BackingStoreException;
 import org.apache.sis.util.collection.WeakHashSet;
-import org.geotoolkit.util.collection.XCollections;
 import org.apache.sis.util.Classes;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.lang.Decorator;
+
+import static org.apache.sis.util.collection.Containers.hashMapCapacity;
 
 
 /**
@@ -522,7 +523,7 @@ public class TransformedAuthorityFactory extends AuthorityFactoryAdapter {
     {
         final Set<CoordinateOperation> operations, modified;
         operations = super.createFromCoordinateReferenceSystemCodes(sourceCRS, targetCRS);
-        modified = new LinkedHashSet<>(XCollections.hashMapCapacity(operations.size()));
+        modified = new LinkedHashSet<>(hashMapCapacity(operations.size()));
         for (final Iterator<CoordinateOperation> it = operations.iterator(); it.hasNext();) {
             final CoordinateOperation operation;
             try {

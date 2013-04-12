@@ -50,7 +50,7 @@ import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.lang.Debug;
 
 import static org.geotoolkit.gui.swing.coverage.CategoryRecord.*;
-import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
+import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
 
 
 /**

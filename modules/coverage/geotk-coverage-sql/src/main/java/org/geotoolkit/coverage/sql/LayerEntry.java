@@ -55,9 +55,9 @@ import org.geotoolkit.util.DateRange;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.MeasurementRange;
 import org.geotoolkit.util.logging.Logging;
-import org.geotoolkit.util.collection.XCollections;
+import org.apache.sis.internal.util.CollectionsExt;
 import org.geotoolkit.util.collection.FrequencySortedSet;
-import org.apache.sis.util.collection.UnmodifiableArrayList;
+import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.geotoolkit.internal.sql.table.DefaultEntry;
 import org.geotoolkit.internal.sql.table.TablePool;
 import org.geotoolkit.internal.sql.table.SpatialDatabase;
@@ -74,6 +74,8 @@ import org.geotoolkit.referencing.operation.MathTransforms;
 import org.geotoolkit.referencing.operation.transform.LinearTransform;
 import org.geotoolkit.metadata.iso.extent.DefaultGeographicBoundingBox;
 import org.geotoolkit.resources.Errors;
+
+import static org.geotoolkit.util.collection.XCollections.unmodifiableOrCopy;
 
 
 /**
@@ -369,7 +371,7 @@ final class LayerEntry extends DefaultEntry implements Layer, Localized {
             final String name = getName();
             final SeriesTable st = getTableFactory().getTable(SeriesTable.class);
             st.setLayer(name);
-            map = XCollections.unmodifiableMap(st.getEntriesMap());
+            map = unmodifiableOrCopy(st.getEntriesMap());
             st.release();
             series = map;
         }
@@ -527,7 +529,7 @@ final class LayerEntry extends DefaultEntry implements Layer, Localized {
             } catch (SQLException e) {
                 throw new CoverageStoreException(e);
             }
-            available = XCollections.emptySortedSet();
+            available = CollectionsExt.emptySortedSet();
             if (count != null) {
                 final Set<Double> all = new HashSet<>();
                 for (final GridGeometryEntry entry : count) {
@@ -814,7 +816,7 @@ final class LayerEntry extends DefaultEntry implements Layer, Localized {
                 throw new CoverageStoreException(e);
             }
             if (extents == null) {
-                return XCollections.emptySortedSet();
+                return CollectionsExt.emptySortedSet();
             }
             final int[] count = extents.frequencies();
             final FrequencySortedSet<GeneralGridGeometry> geometries = new FrequencySortedSet<>(true);

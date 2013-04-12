@@ -46,7 +46,7 @@ import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 
 import static org.opengis.referencing.operation.SingleOperation.*;
 import static org.geotoolkit.metadata.iso.citation.Citations.*;
-import static org.geotoolkit.util.collection.XCollections.hashMapCapacity;
+import static org.apache.sis.util.collection.Containers.hashMapCapacity;
 
 
 /**

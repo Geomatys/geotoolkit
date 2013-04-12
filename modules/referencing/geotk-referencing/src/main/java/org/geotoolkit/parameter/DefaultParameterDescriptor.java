@@ -38,7 +38,6 @@ import org.opengis.referencing.IdentifiedObject;
 
 import org.apache.sis.util.ComparisonMode;
 import org.apache.sis.util.Classes;
-import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.referencing.IdentifiedObjects;
@@ -48,6 +47,8 @@ import org.geotoolkit.metadata.iso.citation.Citations;
 import static org.geotoolkit.util.Utilities.*;
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 import static org.apache.sis.util.ArgumentChecks.ensureCanCast;
+import static org.apache.sis.util.collection.Containers.hashMapCapacity;
+import static org.geotoolkit.util.collection.XCollections.unmodifiableOrCopy;
 
 
 /**
@@ -278,13 +279,13 @@ public class DefaultParameterDescriptor<T> extends AbstractParameterDescriptor
             }
         }
         if (validValues != null) {
-            final Set<T> valids = new HashSet<>(Math.max(XCollections.hashMapCapacity(validValues.length), 8));
+            final Set<T> valids = new HashSet<>(Math.max(hashMapCapacity(validValues.length), 8));
             for (int i=0; i<validValues.length; i++) {
                 final T value = cached(validValues[i]);
                 ensureCanCast("validValues", valueClass, value);
                 valids.add(value);
             }
-            this.validValues = XCollections.unmodifiableSet(valids);
+            this.validValues = unmodifiableOrCopy(valids);
         } else {
             this.validValues = null;
         }

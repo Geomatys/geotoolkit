@@ -47,8 +47,9 @@ import org.opengis.referencing.crs.GeographicCRS;
 
 import org.geotoolkit.lang.Configuration;
 import org.geotoolkit.util.logging.Logging;
-import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.resources.Errors;
+
+import static org.geotoolkit.util.collection.XCollections.unmodifiableOrCopy;
 
 
 /**
@@ -1319,7 +1320,7 @@ public class Hints extends RenderingHints {
             super(String.class);
             final Set<String> options = new TreeSet<>(Arrays.asList(alternatives));
             this.wildcard = options.remove("*");
-            this.options  = XCollections.unmodifiableSet(options);
+            this.options  = unmodifiableOrCopy(options);
         }
 
         /**

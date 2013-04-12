@@ -38,10 +38,10 @@ import org.opengis.util.InternationalString;
 
 import org.geotoolkit.metadata.iso.MetadataEntity;
 import org.geotoolkit.internal.jaxb.NonMarshalledAuthority;
-import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.util.SimpleInternationalString;
 import org.geotoolkit.xml.IdentifierSpace;
 
+import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
 import static org.geotoolkit.internal.jaxb.MarshalContext.filterIdentifiers;
 
 
@@ -498,7 +498,7 @@ public class DefaultCitation extends MetadataEntity implements Citation {
     @Override
     @XmlElement(name = "ISBN")
     public synchronized String getISBN() {
-        return XCollections.isNullOrEmpty(identifiers) ? null : getIdentifierMap().getSpecialized(ISBN);
+        return isNullOrEmpty(identifiers) ? null : getIdentifierMap().getSpecialized(ISBN);
     }
 
     /**
@@ -513,7 +513,7 @@ public class DefaultCitation extends MetadataEntity implements Citation {
      */
     public synchronized void setISBN(final String newValue) {
         checkWritePermission();
-        if (newValue != null || !XCollections.isNullOrEmpty(identifiers)) {
+        if (newValue != null || !isNullOrEmpty(identifiers)) {
             getIdentifierMap().putSpecialized(ISBN, newValue);
         }
     }
@@ -531,7 +531,7 @@ public class DefaultCitation extends MetadataEntity implements Citation {
     @Override
     @XmlElement(name = "ISSN")
     public synchronized String getISSN() {
-        return XCollections.isNullOrEmpty(identifiers) ? null : getIdentifierMap().getSpecialized(ISSN);
+        return isNullOrEmpty(identifiers) ? null : getIdentifierMap().getSpecialized(ISSN);
     }
 
     /**
@@ -546,7 +546,7 @@ public class DefaultCitation extends MetadataEntity implements Citation {
      */
     public synchronized void setISSN(final String newValue) {
         checkWritePermission();
-        if (newValue != null || !XCollections.isNullOrEmpty(identifiers)) {
+        if (newValue != null || !isNullOrEmpty(identifiers)) {
             getIdentifierMap().putSpecialized(ISSN, newValue);
         }
     }

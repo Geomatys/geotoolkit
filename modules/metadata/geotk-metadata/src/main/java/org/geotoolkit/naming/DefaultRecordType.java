@@ -37,7 +37,7 @@ import org.opengis.util.TypeName;
 import org.opengis.util.MemberName;
 import org.opengis.util.NameSpace;
 
-import org.geotoolkit.util.collection.XCollections;
+import static org.geotoolkit.util.collection.XCollections.unmodifiableOrCopy;
 
 
 /**
@@ -110,7 +110,7 @@ public class DefaultRecordType implements RecordType, Serializable {
     {
         this.parent = parent;
         this.name = name;
-        memberTypes = XCollections.unmodifiableMap(new LinkedHashMap<>(members));
+        memberTypes = unmodifiableOrCopy(new LinkedHashMap<>(members));
     }
 
     /**
