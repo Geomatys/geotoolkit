@@ -49,7 +49,7 @@ public class DataDictionaryDomainIdentifier extends S57ModelObject {
     public String domainFormat;
     public Agency agency;
     public String comment;
-    public List<DataDictionaryDomainField> fields = new ArrayList<DataDictionaryDomainField>();
+    public final List<DataDictionaryDomainField> fields = new ArrayList<DataDictionaryDomainField>();
     
     public static class DataDictionaryDomainField extends S57ModelObject {
         //7.5.2.2 Data dictionary domain field structure
@@ -130,7 +130,6 @@ public class DataDictionaryDomainIdentifier extends S57ModelObject {
         for(Field f : isofield.getFields()){
             final String tag = f.getType().getTag();
             if(DataDictionaryDomainField.DDDI_DDOM.equalsIgnoreCase(tag)){
-                if(fields==null) fields = new ArrayList<DataDictionaryDomainField>();
                 final DataDictionaryDomainField candidate = new DataDictionaryDomainField();
                 candidate.read(f);
                 fields.add(candidate);

@@ -18,6 +18,8 @@ package org.geotoolkit.data.s57.model;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import org.geotoolkit.data.iso8211.Field;
 import org.geotoolkit.data.iso8211.SubField;
@@ -53,7 +55,7 @@ public class DataDictionaryDefinition extends S57ModelObject {
     public String definition;
     public Agency agency;
     public String comment;
-    public List<DataDictionaryDefinitionReference> references;
+    public final List<DataDictionaryDefinitionReference> references = new ArrayList<DataDictionaryDefinitionReference>();
     
     public static class DataDictionaryDefinitionReference extends S57ModelObject {
         
@@ -67,13 +69,18 @@ public class DataDictionaryDefinition extends S57ModelObject {
         
         @Override
         public void read(Field isofield) throws IOException {
-            for(SubField sf : isofield.getSubFields()){
+            read(isofield.getSubFields());
+        }
+        
+        public void read(List<SubField> subFields) throws IOException {
+            for(SubField sf : subFields){
                 final String tag = sf.getType().getTag();
                 final Object val = sf.getValue();
                      if (DDDF_DDDR_RFTP.equalsIgnoreCase(tag)) type = ReferenceType.valueOf(val);
                 else if (DDDF_DDDR_RFVL.equalsIgnoreCase(tag)) value = toString(val);
             }
         }
+        
     }
     
     @Override
@@ -95,10 +102,12 @@ public class DataDictionaryDefinition extends S57ModelObject {
         for(Field f : isofield.getFields()){
             final String tag = f.getType().getTag();
             if(DataDictionaryDefinitionReference.DDDF_DDDR.equalsIgnoreCase(tag)){
-                if(references==null) references = new ArrayList<DataDictionaryDefinitionReference>();
-                final DataDictionaryDefinitionReference candidate = new DataDictionaryDefinitionReference();
-                candidate.read(f);
-                references.add(candidate);
+                final Iterator<SubField> sfite = f.getSubFields().iterator();
+                while(sfite.hasNext()){
+                    final DataDictionaryDefinitionReference candidate = new DataDictionaryDefinitionReference();
+                    candidate.read(Arrays.asList(sfite.next(),sfite.next()));
+                    references.add(candidate);
+                }
             }
         }
     }

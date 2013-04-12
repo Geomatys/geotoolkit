@@ -123,7 +123,7 @@ public class SubField {
                 value = ISO8211Utilities.readReal(buffer, offset,length);
                 break;
             case BINARY:
-                value = Arrays.copyOfRange(buffer, offset, offset+(length/8));
+                value = Arrays.copyOfRange(buffer, offset, offset+length);
                 break;
         }
         

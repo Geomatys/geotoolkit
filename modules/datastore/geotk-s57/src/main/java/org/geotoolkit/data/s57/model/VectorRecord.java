@@ -18,6 +18,8 @@ package org.geotoolkit.data.s57.model;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import org.geotoolkit.data.iso8211.Field;
 import org.geotoolkit.data.iso8211.SubField;
@@ -44,12 +46,12 @@ public class VectorRecord extends S57ModelObject {
     public int version;
     public UpdateInstruction updateInstruction;
     
-    public List<Attribute> attributes;
+    public final List<Attribute> attributes = new ArrayList<Attribute>();
     public RecordPointerControl recordPointerControl;
-    public List<RecordPointer> records;
+    public final List<RecordPointer> records = new ArrayList<RecordPointer>();
     public CoordinateControl coordinateControl;
-    public List<Coordinate2D> coords2D;
-    public List<Coordinate3D> coords3D;
+    public final List<Coordinate2D> coords2D = new ArrayList<Coordinate2D>();
+    public final List<Coordinate3D> coords3D = new ArrayList<Coordinate3D>();
     public List<Arc> arcs;
     
     public static class Attribute extends S57ModelObject {
@@ -63,7 +65,11 @@ public class VectorRecord extends S57ModelObject {
         
         @Override
         public void read(Field isofield) throws IOException {
-            for(SubField sf : isofield.getSubFields()){
+            read(isofield.getSubFields());
+        }
+        
+        public void read(List<SubField> subFields) throws IOException {
+            for(SubField sf : subFields){
                 final String tag = sf.getType().getTag();
                 final Object val = sf.getValue();
                      if(VRID_ATTV_ATTL.equalsIgnoreCase(tag)) code = toInteger(val);
@@ -113,7 +119,11 @@ public class VectorRecord extends S57ModelObject {
         
         @Override
         public void read(Field isofield) throws IOException {
-            for(SubField sf : isofield.getSubFields()){
+            read(isofield.getSubFields());
+        }
+        
+        public void read(List<SubField> subFields) throws IOException {
+            for(SubField sf : subFields){
                 final String tag = sf.getType().getTag();
                 final Object value = sf.getValue();
                      if(VRID_VRPT_NAME.equalsIgnoreCase(tag)) name = toString(value);
@@ -160,7 +170,11 @@ public class VectorRecord extends S57ModelObject {
 
         @Override
         public void read(Field isofield) throws IOException {
-            for(SubField sf : isofield.getSubFields()){
+            read(isofield.getSubFields());
+        }
+        
+        public void read(List<SubField> subFields) throws IOException {
+            for(SubField sf : subFields){
                 final String tag = sf.getType().getTag();
                 final Object value = sf.getValue();
                      if(VRID_SG2D_YCOO.equalsIgnoreCase(tag)) y = toDouble(value);
@@ -187,9 +201,14 @@ public class VectorRecord extends S57ModelObject {
         public double x;
         public double y;
         public double z;
+        
         @Override
         public void read(Field isofield) throws IOException {
-            for(SubField sf : isofield.getSubFields()){
+            read(isofield.getSubFields());
+        }
+        
+        public void read(List<SubField> subFields) throws IOException {
+            for(SubField sf : subFields){
                 final String tag = sf.getType().getTag();
                 final Object value = sf.getValue();
                      if (VRID_SG3D_YCOO.equalsIgnoreCase(tag)) y = toDouble(value);
@@ -272,31 +291,39 @@ public class VectorRecord extends S57ModelObject {
         for(Field f : isofield.getFields()){
             final String tag = f.getType().getTag();
             if(Attribute.VRID_ATTV.equalsIgnoreCase(tag)){
-                if(attributes==null) attributes = new ArrayList<Attribute>();
-                final Attribute candidate = new Attribute();
-                candidate.read(f);
-                attributes.add(candidate);
+                final Iterator<SubField> sfite = f.getSubFields().iterator();
+                while(sfite.hasNext()){
+                    final Attribute candidate = new Attribute();
+                    candidate.read(Arrays.asList(sfite.next(),sfite.next()));
+                    attributes.add(candidate);
+                }
             }else if(RecordPointerControl.VRID_VRPC.equalsIgnoreCase(tag)){
                 recordPointerControl = new RecordPointerControl();
                 recordPointerControl.read(f);
             }else if(RecordPointer.VRID_VRPT.equalsIgnoreCase(tag)){
-                if(records==null) records = new ArrayList<RecordPointer>();
-                final RecordPointer candidate = new RecordPointer();
-                candidate.read(f);
-                records.add(candidate);
+                final Iterator<SubField> sfite = f.getSubFields().iterator();
+                while(sfite.hasNext()){
+                    final RecordPointer candidate = new RecordPointer();
+                    candidate.read(Arrays.asList(sfite.next(),sfite.next(),sfite.next(),sfite.next(),sfite.next()));
+                    records.add(candidate);
+                }
             }else if(CoordinateControl.VRID_SGCC.equalsIgnoreCase(tag)){
                 coordinateControl = new CoordinateControl();
                 coordinateControl.read(f);
             }else if(Coordinate2D.VRID_SG2D.equalsIgnoreCase(tag)){
-                if(coords2D==null) coords2D = new ArrayList<Coordinate2D>();                
-                final Coordinate2D candidate = new Coordinate2D();
-                candidate.read(f);
-                coords2D.add(candidate);
+                final Iterator<SubField> sfite = f.getSubFields().iterator();
+                while(sfite.hasNext()){
+                    final Coordinate2D candidate = new Coordinate2D();
+                    candidate.read(Arrays.asList(sfite.next(),sfite.next()));
+                    coords2D.add(candidate);
+                }
             }else if(Coordinate3D.VRID_SG3D.equalsIgnoreCase(tag)){
-                if(coords3D==null) coords3D = new ArrayList<Coordinate3D>();
-                final Coordinate3D candidate = new Coordinate3D();
-                candidate.read(f);
-                coords3D.add(candidate);
+                final Iterator<SubField> sfite = f.getSubFields().iterator();
+                while(sfite.hasNext()){
+                    final Coordinate3D candidate = new Coordinate3D();
+                    candidate.read(Arrays.asList(sfite.next(),sfite.next(),sfite.next()));
+                    coords3D.add(candidate);
+                }
             }else if(Arc.VRID_ARCC.equalsIgnoreCase(tag)){
                 if(arcs==null) arcs = new ArrayList<Arc>();
                 final Arc candidate = new Arc();

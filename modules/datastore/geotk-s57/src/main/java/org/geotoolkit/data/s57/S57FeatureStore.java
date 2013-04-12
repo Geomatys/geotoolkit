@@ -26,6 +26,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
 import org.geotoolkit.data.AbstractFeatureStore;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureStoreFactory;
@@ -33,6 +34,7 @@ import org.geotoolkit.data.FeatureStoreFinder;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryCapabilities;
+import org.geotoolkit.data.s57.model.FeatureRecord;
 import org.geotoolkit.data.s57.model.S57ModelObject;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.DefaultName;
@@ -55,6 +57,8 @@ import org.geotoolkit.data.s57.model.S57ModelObjectReader;
  */
 public class S57FeatureStore extends AbstractFeatureStore{
 
+    public static final String S57TYPECODE = "S-57 Code";
+    
     static final String BUNDLE_PATH = "org/geotoolkit/s57/bundle";
     
     private final File file;
@@ -113,12 +117,21 @@ public class S57FeatureStore extends AbstractFeatureStore{
         final S57ModelObjectReader reader = new S57ModelObjectReader();
         reader.setInput(file);
         try{
+            S57AnnexeParser annexe = new S57AnnexeParser();
+            
             while(reader.hasNext()){
                 final S57ModelObject obj = reader.next();
-                
-                
-                System.err.println(obj);
-                
+                if(obj instanceof FeatureRecord){
+                    final FeatureRecord rec = (FeatureRecord) obj;
+                    final int objlCode = rec.code;
+                    final FeatureType type = annexe.getFeatureType(objlCode);
+                    if(type == null){
+                        throw new DataStoreException("Unknown feature type OBJL : "+objlCode);
+                    }
+                    type.getUserData().put(S57TYPECODE, rec.code);
+                    types.add(type);
+                    names.add(type.getName());
+                }                
             }
         }catch(IOException ex){
             throw new DataStoreException(ex);
@@ -127,6 +140,7 @@ public class S57FeatureStore extends AbstractFeatureStore{
                 reader.dispose();
             } catch (IOException ex) {
                 //we tryed
+                getLogger().log(Level.WARNING, ex.getMessage(), ex);
             }
         }
     }
@@ -134,7 +148,9 @@ public class S57FeatureStore extends AbstractFeatureStore{
     @Override
     public FeatureReader getFeatureReader(Query query) throws DataStoreException {
         final FeatureType ft = getFeatureType(query.getTypeName());
-        final FeatureReader reader = new S57FeatureReader(ft);
+        final S57ModelObjectReader s57reader = new S57ModelObjectReader();
+        s57reader.setInput(file);
+        final FeatureReader reader = new S57FeatureReader(ft,(Integer)ft.getUserData().get(S57TYPECODE),s57reader);
         return handleRemaining(reader, query);
     }
 

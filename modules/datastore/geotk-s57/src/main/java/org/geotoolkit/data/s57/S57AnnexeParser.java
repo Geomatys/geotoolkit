@@ -26,6 +26,7 @@ import com.lowagie.text.pdf.PdfObject;
 import com.lowagie.text.pdf.PdfReader;
 import com.lowagie.text.pdf.PdfString;
 import com.lowagie.text.pdf.RandomAccessFileOrArray;
+import com.vividsolutions.jts.geom.Geometry;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -36,8 +37,12 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
 import org.geotoolkit.feature.FeatureTypeBuilder;
+import org.geotoolkit.feature.type.DefaultAttributeType;
 import org.geotoolkit.gui.swing.tree.Trees;
+import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.FeatureType;
+import org.opengis.feature.type.PropertyType;
 
 /**
  * Used only to rebuild types from S-57 annexes.
@@ -123,18 +128,24 @@ final class S57AnnexeParser {
         
     }
     
+    public S57AnnexeParser() throws IOException {
+        this(
+            "/home/jsorel/TRAVAIL/1_Specification/IHO/S-57_AppendixA_Chapter1_31ApAch1.pdf",
+            "/home/jsorel/TRAVAIL/1_Specification/IHO/S-57_AppendixA_Chapter2_31ApAch2.pdf");
+    }
+    
     public S57AnnexeParser(String an1, String an2) throws IOException {
         s57ftypes = parseFeatureTypes(an1);
         s57ptypes = parsePropertyTypes(an2);
         
         //rebuild types
-        for(S57FeatureType sft : s57ftypes.values()){
-            System.out.println(getFeatureType(sft.acronym));
-        }
-        System.out.println(s57ftypes.size());
+//        for(S57FeatureType sft : s57ftypes.values()){
+//            System.out.println(getFeatureType(sft.acronym));
+//        }
+//        System.out.println(s57ftypes.size());
     }
     
-    private FeatureType getFeatureType(String name){
+    public FeatureType getFeatureType(String name){
         FeatureType ft = featureTypes.get(name);
         if(ft!=null) return ft;
         
@@ -142,6 +153,9 @@ final class S57AnnexeParser {
         
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName(sft.acronym);
+        //add a geometry type
+        ftb.add("spatial", Geometry.class, DefaultGeographicCRS.WGS84);
+        
         final List<String> allAtts = new ArrayList<String>();
         allAtts.addAll(sft.attA);
         allAtts.addAll(sft.attB);
@@ -149,10 +163,30 @@ final class S57AnnexeParser {
 
         for(String att : allAtts){
             final S57PropertyType pt = s57ptypes.get(att);
-            if(pt==null){
-                System.out.println(">>>>"+att);
+            Class binding;
+            if("E".equalsIgnoreCase(pt.type)){
+                //enumeration type
+                binding = String.class;
+            }else if("L".equalsIgnoreCase(pt.type)){
+                //enumaration list
+                binding = String.class;
+            }else if("F".equalsIgnoreCase(pt.type)){
+                //float
+                binding = Double.class;
+            }else if("I".equalsIgnoreCase(pt.type)){
+                //integer
+                binding = Integer.class;
+            }else if("A".equalsIgnoreCase(pt.type)){
+                //code string
+                binding = String.class;
+            }else if("S".equalsIgnoreCase(pt.type)){
+                // free text
+                binding = String.class;
+            }else{
+                throw new RuntimeException("unknowned property type : "+pt.type);
             }
-            ftb.add(pt.acronym, Object.class);
+            AttributeDescriptor desc = ftb.add(pt.acronym, binding);
+            desc.getUserData().put(S57FeatureStore.S57TYPECODE, pt.code);
         }
 
         ft = ftb.buildFeatureType();
@@ -160,6 +194,16 @@ final class S57AnnexeParser {
         
         return ft;
     }
+    
+    public FeatureType getFeatureType(int code){
+        for(S57FeatureType sft : s57ftypes.values()){
+            if(sft.code == code){
+                return getFeatureType(sft.acronym);
+            }
+        }
+        return null;
+    }
+    
     
     private static Map<String,S57FeatureType> parseFeatureTypes(String path) throws IOException {
         final Map<String,S57FeatureType> featureTypes = new HashMap<String,S57FeatureType>();
@@ -296,7 +340,7 @@ final class S57AnnexeParser {
             final S57PropertyType type = new S57PropertyType();            
             String str = sb.toString();
             String lstr = str.toLowerCase();
-            System.out.println(str);
+            //System.out.println(str);
             
             if(str.contains("DELETED - DO NOT USE")) continue;
             if(!lstr.contains("acronym: "))continue;
@@ -318,8 +362,10 @@ final class S57AnnexeParser {
             lstr = str.toLowerCase();
             
             final String attType = "attribute type:";
+            final String att2Type = "input type:";
             final String expinput = "expected input:";
             final String definition = "definition:";
+            final String definitions = "definitions:";
             final String references = "references:";
             final String indication = "indication:";
             final String minval = "minimum value:";
@@ -328,11 +374,17 @@ final class S57AnnexeParser {
             final String exemple = "exemple:";
             final String remarks = "remarks:";
             final String attribute = "attribute:";
+            final String int1ref = "int 1 reference:";
+            final String chartref = "chart specification:";
+            
+
             
             final TreeMap<Integer,String> map = new TreeMap();
             map.put(lstr.indexOf(attType), attType);
+            map.put(lstr.indexOf(att2Type), att2Type);
             map.put(lstr.indexOf(expinput), expinput);
             map.put(lstr.indexOf(definition), definition);
+            map.put(lstr.indexOf(definitions), definitions);
             map.put(lstr.indexOf(references), references);
             map.put(lstr.indexOf(indication), indication);
             map.put(lstr.indexOf(minval), minval);
@@ -341,6 +393,8 @@ final class S57AnnexeParser {
             map.put(lstr.indexOf(exemple), exemple);
             map.put(lstr.indexOf(remarks), remarks);
             map.put(lstr.indexOf(attribute), attribute);
+            map.put(lstr.indexOf(int1ref), int1ref); //TODO
+            map.put(lstr.indexOf(chartref), chartref); //TODO
 
             for(Map.Entry<Integer,String> e : map.entrySet()){
                 final Integer index = e.getKey();
@@ -348,7 +402,7 @@ final class S57AnnexeParser {
                 if(index<0) continue;
 
                 Integer end = map.ceilingKey(index+1);
-                final String clip;
+                String clip;
                 if(end==null){
                     clip = str.substring(index+val.length()).trim();
                 }else{
@@ -357,9 +411,31 @@ final class S57AnnexeParser {
                 
                 if(val == attType){
                     type.type = clip;
+                }else if(val == att2Type){
+                    type.type = clip;
                 }else if(val == expinput){
-                    type.expecteds.add(clip);//TODO
+                    clip = clip.substring(clip.indexOf("Meaning")+7);
+                    if(clip.indexOf("INT 1") >= 0){
+                        clip = clip.substring(clip.indexOf("INT 1")+5).trim();
+                    }
+                    if(clip.indexOf("M-4") >= 0){
+                        clip = clip.substring(clip.indexOf("M-4")+3).trim();
+                    }
+                    int previous = 0;
+                    final String[] parts = clip.split("\\d+:");
+                    for(int k=1;k<parts.length;k++){
+                        String desc = parts[k];
+                        int desci = clip.indexOf(desc,previous)-1; //remove the ':'
+                        final String ecodestr = clip.substring(
+                                previous,desci).trim();
+                        final int code = Integer.valueOf(ecodestr);
+                        previous = desci+desc.length()+1;
+                        type.expecteds.add(ecodestr);
+                    }
+                    
                 }else if(val == definition){
+                    type.definition = clip;
+                }else if(val == definitions){
                     type.definition = clip;
                 }else if(val == references){
                     type.references = clip;

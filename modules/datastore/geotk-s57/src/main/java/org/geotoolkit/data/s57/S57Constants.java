@@ -1575,11 +1575,15 @@ public final class S57Constants {
         public static final SubFieldDescription BINARYFORMAT = new SubFieldDescription(LE_INTEGER_UNSIGNED, 1);
         static final List<AttributeSet> VALUES = new ArrayList<AttributeSet>();
         //---------------
-        /** Atribute set A */
+        /** Atribute set A : Attributes in this subset define the individual 
+         * characteristics of an object; */
         public static final AttributeSet SET_A = new AttributeSet("A", 1);
-        /** Atribute set B */
+        /** Atribute set B : Attributes in this subset provide information 
+         * relevant to the use of the data, e.g. for presentation or for 
+         * an information system; */
         public static final AttributeSet SET_B = new AttributeSet("B", 2);
-        /** Atribute set C */
+        /** Atribute set C : Attributes in this subset provide administrative 
+         * information about the object and the data describing it; */
         public static final AttributeSet SET_C = new AttributeSet("C", 3);
 
         AttributeSet(final String ascii, final int binary) {

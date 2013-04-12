@@ -18,6 +18,8 @@ package org.geotoolkit.data.s57.model;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import org.geotoolkit.data.iso8211.Field;
 import org.geotoolkit.data.iso8211.SubField;
@@ -56,12 +58,12 @@ public class FeatureRecord extends S57ModelObject {
     public int version;
     public UpdateInstruction updateInstruction;
     public Identifier identifier;
-    public List<Attribute> attributes;
-    public List<NationalAttribute> nattributes;
+    public final List<Attribute> attributes = new ArrayList<Attribute>();
+    public final List<NationalAttribute> nattributes = new ArrayList<NationalAttribute>();
     public ObjectPointerControl objectControl;
-    public List<ObjectPointer> objectPointers;
+    public final List<ObjectPointer> objectPointers = new ArrayList<ObjectPointer>();
     public SpatialPointerControl spatialControl;
-    public List<SpatialPointer> spatialPointers;
+    public final List<SpatialPointer> spatialPointers = new ArrayList<SpatialPointer>();
     
     public static class Identifier extends S57ModelObject {
         //7.6.2 Feature object identifier field structure
@@ -108,7 +110,11 @@ public class FeatureRecord extends S57ModelObject {
         
         @Override
         public void read(Field isofield) throws IOException {
-            for(SubField sf : isofield.getSubFields()){
+            read(isofield.getSubFields());
+        }
+        
+        public void read(List<SubField> subFields) throws IOException {
+            for(SubField sf : subFields){
                 final String tag = sf.getType().getTag();
                 final Object val = sf.getValue();
                      if(FRID_ATTF_ATTL.equalsIgnoreCase(tag)) code = toInteger(val);
@@ -132,16 +138,21 @@ public class FeatureRecord extends S57ModelObject {
         
         public int code;
         public String value;
-        
+                
         @Override
         public void read(Field isofield) throws IOException {
-            for(SubField sf : isofield.getSubFields()){
+            read(isofield.getSubFields());
+        }
+        
+        public void read(List<SubField> subFields) throws IOException {
+            for(SubField sf : subFields){
                 final String tag = sf.getType().getTag();
                 final Object val = sf.getValue();
                      if(FRID_NATF_ATTL.equalsIgnoreCase(tag)) code = toInteger(val);
                 else if(FRID_NATF_ATVL.equalsIgnoreCase(tag)) value = toString(val);
             }
         }
+        
     }
     
     public static class ObjectPointerControl extends S57ModelObject {
@@ -188,7 +199,11 @@ public class FeatureRecord extends S57ModelObject {
         
         @Override
         public void read(Field isofield) throws IOException {
-            for(SubField sf : isofield.getSubFields()){
+            read(isofield.getSubFields());
+        }
+        
+        public void read(List<SubField> subFields) throws IOException {
+            for(SubField sf : subFields){
                 final String tag = sf.getType().getTag();
                 final Object val = sf.getValue();
                      if(FRID_FFPT_LNAM.equalsIgnoreCase(tag)) name = toString(val);
@@ -238,7 +253,11 @@ public class FeatureRecord extends S57ModelObject {
         
         @Override
         public void read(Field isofield) throws IOException {
-            for(SubField sf : isofield.getSubFields()){
+            read(isofield.getSubFields());
+        }
+        
+        public void read(List<SubField> subFields) throws IOException {
+            for(SubField sf : subFields){
                 final String tag = sf.getType().getTag();
                 final Object val = sf.getValue();
                      if(FRID_FSPT_NAME.equalsIgnoreCase(tag)) name = toString(val);
@@ -270,31 +289,39 @@ public class FeatureRecord extends S57ModelObject {
                 identifier = new Identifier();
                 identifier.read(f);
             }else if(Attribute.FRID_ATTF.equalsIgnoreCase(tag)){
-                if(attributes==null) attributes = new ArrayList<Attribute>();
-                final Attribute candidate = new Attribute();
-                candidate.read(f);
-                attributes.add(candidate);
+                final Iterator<SubField> sfite = f.getSubFields().iterator();
+                while(sfite.hasNext()){
+                    final Attribute candidate = new Attribute();
+                    candidate.read(Arrays.asList(sfite.next(),sfite.next()));
+                    attributes.add(candidate);
+                }
             }else if(NationalAttribute.FRID_NATF.equalsIgnoreCase(tag)){
-                if(nattributes==null) nattributes = new ArrayList<NationalAttribute>();
-                final NationalAttribute candidate = new NationalAttribute();
-                candidate.read(f);
-                nattributes.add(candidate);
+                final Iterator<SubField> sfite = f.getSubFields().iterator();
+                while(sfite.hasNext()){
+                    final NationalAttribute candidate = new NationalAttribute();
+                    candidate.read(Arrays.asList(sfite.next(),sfite.next()));
+                    nattributes.add(candidate);
+                }
             }else if(ObjectPointerControl.FRID_FFPC.equalsIgnoreCase(tag)){
                 objectControl = new ObjectPointerControl();
                 objectControl.read(f);
             }else if(ObjectPointer.FRID_FFPT.equalsIgnoreCase(tag)){
-                if(objectPointers==null) objectPointers = new ArrayList<ObjectPointer>();                
-                final ObjectPointer candidate = new ObjectPointer();
-                candidate.read(f);
-                objectPointers.add(candidate);
+                final Iterator<SubField> sfite = f.getSubFields().iterator();
+                while(sfite.hasNext()){
+                    final ObjectPointer candidate = new ObjectPointer();
+                    candidate.read(Arrays.asList(sfite.next(),sfite.next(),sfite.next()));
+                    objectPointers.add(candidate);
+                }
             }else if(SpatialPointerControl.FRID_FSPC.equalsIgnoreCase(tag)){
                 spatialControl = new SpatialPointerControl();
                 spatialControl.read(f);
             }else if(SpatialPointer.FRID_FSPT.equalsIgnoreCase(tag)){
-                if(spatialPointers==null) spatialPointers = new ArrayList<SpatialPointer>();                
-                final SpatialPointer candidate = new SpatialPointer();
-                candidate.read(f);
-                spatialPointers.add(candidate);
+                final Iterator<SubField> sfite = f.getSubFields().iterator();
+                while(sfite.hasNext()){
+                    final SpatialPointer candidate = new SpatialPointer();
+                    candidate.read(Arrays.asList(sfite.next(),sfite.next(),sfite.next(),sfite.next()));
+                    spatialPointers.add(candidate);
+                }
             }
         }
     }

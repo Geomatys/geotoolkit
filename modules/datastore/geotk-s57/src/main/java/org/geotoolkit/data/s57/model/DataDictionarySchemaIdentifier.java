@@ -18,6 +18,8 @@ package org.geotoolkit.data.s57.model;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import org.geotoolkit.data.iso8211.Field;
 import org.geotoolkit.data.iso8211.SubField;
@@ -39,7 +41,7 @@ public class DataDictionarySchemaIdentifier extends S57ModelObject {
     public RecordType type;
     public long id;
     public int code;
-    public List<DataDictionarySchemaField> fields;
+    public final List<DataDictionarySchemaField> fields = new ArrayList<DataDictionarySchemaField>();
     
     public static class DataDictionarySchemaField extends S57ModelObject {
         //7.5.3.2 Data dictionary schema field structure
@@ -54,13 +56,16 @@ public class DataDictionarySchemaIdentifier extends S57ModelObject {
         
         @Override
         public void read(Field isofield) throws IOException {
-            for(SubField sf : isofield.getSubFields()){
+            read(isofield.getSubFields());
+        }
+        
+        public void read(List<SubField> subFields) throws IOException {
+            for(SubField sf : subFields){
                 final String tag = sf.getType().getTag();
                 final Object val = sf.getValue();
                      if (DDSI_DDSC_ATLB.equalsIgnoreCase(tag)) code = toInteger(val);
                 else if (DDSI_DDSC_ASET.equalsIgnoreCase(tag)) set = AttributeSet.valueOf(val);
                 else if (DDSI_DDSC_AUTH.equalsIgnoreCase(tag)) agency = Agency.valueOf(val);
-
             }
         }
         
@@ -79,10 +84,12 @@ public class DataDictionarySchemaIdentifier extends S57ModelObject {
         for(Field f : isofield.getFields()){
             final String tag = f.getType().getTag();
             if(DataDictionarySchemaField.DDSI_DDSC.equalsIgnoreCase(tag)){
-                if(fields==null) fields = new ArrayList<DataDictionarySchemaField>();
-                final DataDictionarySchemaField candidate = new DataDictionarySchemaField();
-                candidate.read(f);
-                fields.add(candidate);
+                final Iterator<SubField> sfite = f.getSubFields().iterator();
+                while(sfite.hasNext()){
+                    final DataDictionarySchemaField candidate = new DataDictionarySchemaField();
+                    candidate.read(Arrays.asList(sfite.next(),sfite.next(),sfite.next()));
+                    fields.add(candidate);
+                }
             }
         }
     }
