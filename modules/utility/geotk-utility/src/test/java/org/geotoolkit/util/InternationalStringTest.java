@@ -83,10 +83,6 @@ public final strictfp class InternationalStringTest {
         assertEquals("Unlocalized message:", message,     String.format((Locale) null,  "%s", toTest));
         assertEquals("English message:",     messageEn,   String.format(Locale.ENGLISH, "%s", toTest));
         assertEquals("French message:",      messageFr,   String.format(Locale.FRENCH,  "%s", toTest));
-        assertEquals("  This",   String.format(Locale.ENGLISH, "%6.4s", toTest));
-        assertEquals(" Voici",   String.format(Locale.FRENCH,  "%6.5s", toTest));
-        assertEquals("THIS  ",   String.format(Locale.ENGLISH, "%-6.5S", toTest));
-        assertEquals("VOICI ",   String.format(Locale.FRENCH,  "%-6.5S", toTest));
     }
 
     /**
