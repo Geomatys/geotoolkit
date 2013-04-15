@@ -55,8 +55,10 @@ public class DataRecord {
     
     //descriptions are complete only in the DDR
     private final List<FieldDescription> fieldDescriptions = new ArrayList<FieldDescription>();
+    private FieldDescription rootDescription;
     //fields are only in DR
     private final List<Field> fields = new ArrayList<Field>();
+    private Field rootField;
 
     public DataRecord() {
         this.ddr = null;
@@ -242,8 +244,11 @@ public class DataRecord {
      * @return Field
      */
     public Field getRootField(){
+        if(rootField != null) return rootField;
+        
         FieldDescription root = getRootFieldDescription();
-        return getField(root.getTag());
+        rootField = getField(root.getTag());
+        return rootField;
     }
     
     public List<FieldDescription> getFieldDescriptions() {
@@ -264,18 +269,27 @@ public class DataRecord {
      * @return Field
      */
     public FieldDescription getRootFieldDescription(){
-        final Set<FieldDescription> allSubFields = new HashSet<FieldDescription>();
-        allSubFields.add(getFieldDescription("0000")); //field control field is not the root 
-        for(FieldDescription f : fieldDescriptions){
-            allSubFields.addAll(f.getFields());
-        }
-        for(FieldDescription f : fieldDescriptions){
-            if(!allSubFields.contains(f)){
-                //found the root
-                return f;
+        if(ddr!=null){
+            //we are in a data record, get the root description field from type.
+            return getFieldDescription(ddr.getRootFieldDescription().getTag());
+        }else{
+            //we are in the DDR, find the root desc if not set
+            if(rootDescription != null) return rootDescription;
+
+            final Set<FieldDescription> allSubFields = new HashSet<FieldDescription>();
+            allSubFields.add(getFieldDescription("0000")); //field control field is not the root 
+            for(FieldDescription f : fieldDescriptions){
+                allSubFields.addAll(f.getFields());
             }
+            for(FieldDescription f : fieldDescriptions){
+                if(!allSubFields.contains(f)){
+                    //found the root
+                    rootDescription = f;
+                    break;
+                }
+            }
+            return rootDescription;
         }
-        return null;
     }
         
     @Override
@@ -441,7 +455,7 @@ public class DataRecord {
      * @throws IOException 
      */
     public void readFieldDescriptions(DataInput ds) throws IOException{
-        
+                
         //read each field description
         final List<FieldDescription> sortedFields = getFieldDescriptions();
         for(FieldDescription field : sortedFields){
@@ -456,22 +470,30 @@ public class DataRecord {
                 //calculate number of pairs we will have, rebuild tree structure
                 final int nbPair = (field.getLenght()-11)/ (getFieldSizeTag()*2) ;
                 byte[] buffer = new byte[getFieldSizeTag()];
+                FieldDescription child = null;
                 for(int i=0;i<nbPair;i++){
                     ds.readFully(buffer);
                     final String parentTag = new String(buffer);
                     ds.readFully(buffer);
                     final String childTag = new String(buffer);
-                    final FieldDescription child = getFieldDescription(childTag);
+                    child = getFieldDescription(childTag);
                     final FieldDescription parent = getFieldDescription(parentTag);
                     child.setParent(parent);
                     parent.getFields().add(child);
                 }
                 expect(ds,SFEND);
+                
+                //find the root, take one field desc, and move up by parents
+                while(child.getParent()!=null){
+                    child = child.getParent();
+                }
+                rootDescription = child;
+                
             }else{
                 //description field
                 field.readModel(ds);
             }
-        }
+        }                
     }
     
     /**

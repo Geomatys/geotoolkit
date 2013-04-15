@@ -51,6 +51,15 @@ public class Field {
         return fields;
     }
 
+    public Field getField(String tag){
+        for(Field f : fields){
+            if(tag.equalsIgnoreCase(f.getType().getTag())){
+                return f;
+            }
+        }
+        return null;
+    }
+    
     public List<SubField> getSubFields(){
         return subfields;
     }
@@ -161,7 +170,7 @@ public class Field {
         int nbbyteread = 0;
         if(structure == FieldDataStructure.ELEMENTARY){
             //parse a single field
-            final SubFieldDescription desc = type.getSubFieldTypes().get(0);
+            final SubFieldDescription desc = subdescs.get(0);
             final SubField sf = new SubField(desc);
             nbbyteread += sf.readValue(byteValues, 0);
             subfields.add(sf);
@@ -174,7 +183,7 @@ public class Field {
                 subfields.add(sf);
             }
         }else if(structure == FieldDataStructure.CARTESIAN){
-            final List<String[]> names = getType().getSubfieldNames();
+            final List<String[]> names = type.getSubfieldNames();
             if(names.size()>2){
                 throw new IOException("Only 2D cartesian array fields supported");
             }
