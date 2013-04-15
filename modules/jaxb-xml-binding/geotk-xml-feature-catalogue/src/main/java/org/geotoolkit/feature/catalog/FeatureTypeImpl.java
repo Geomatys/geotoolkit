@@ -566,7 +566,12 @@ public class FeatureTypeImpl implements FeatureType, Referenceable {
              
                      
              //to avoid infinite cycle
-             boolean catalogue = Utilities.equals(this.featureCatalogue.getId(), that.featureCatalogue.getId());
+             boolean catalogue = false;
+             if (this.featureCatalogue != null && that.featureCatalogue != null) {
+                catalogue = Utilities.equals(this.featureCatalogue.getId(), that.featureCatalogue.getId());
+             } else if (this.featureCatalogue == null && that.featureCatalogue == null){
+                 catalogue = true;
+             }
              
              //to avoid infinite cycle
              boolean inherits = Utilities.equals(this.getInheritsFrom().size(), that.getInheritsFrom().size()) && 
