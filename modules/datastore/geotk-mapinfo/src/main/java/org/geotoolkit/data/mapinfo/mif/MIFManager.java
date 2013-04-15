@@ -3,12 +3,11 @@ package org.geotoolkit.data.mapinfo.mif;
 import org.geotoolkit.data.mapinfo.ProjectionUtils;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.FeatureTypeBuilder;
-import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.feature.simple.DefaultSimpleFeatureType;
 import org.geotoolkit.feature.type.DefaultAttributeDescriptor;
 import org.geotoolkit.feature.type.DefaultAttributeType;
+import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
-import org.geotoolkit.referencing.operation.MathTransforms;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.util.ArgumentChecks;
@@ -70,6 +69,12 @@ public class MIFManager {
     private CoordinateReferenceSystem mifCRS = DefaultGeographicCRS.WGS84;
     private MathTransform mifTransform = null;
     private int mifColumnsCount = -1;
+
+    /**
+     * The mif crs as it will be defined in final MIF file. We need it because it could be some differences between the
+     * CRS of features added by user, and the one that will be written (Ex : written crs first axis have to be east).
+     */
+    private CoordinateReferenceSystem writtenCRS = null;
 
     /**
      * All geometries in a MIF file must get the same CRS. This trigger will serve to know if user add multiple
@@ -245,6 +250,23 @@ public class MIFManager {
         if (!crsSet) {
             mifCRS = toCheck.getCoordinateReferenceSystem();
             crsSet = true;
+            /**
+             * We check if mif conversion will modify the defined CRS. If it is the case, we store the modified CRS.
+             * This CRS will serve us as file writing, as we will have to reproject our features to fit the final system.
+             */
+            if (!CRS.equalsIgnoreMetadata(mifCRS, DefaultGeographicCRS.WGS84)) {
+                try {
+                    final String mifCRSDefinition = ProjectionUtils.crsToMIFSyntax(mifCRS);
+                    if (mifCRSDefinition != null && !mifCRSDefinition.isEmpty()) {
+                        writtenCRS = ProjectionUtils.buildCRSFromMIF(mifCRSDefinition);
+                        if (CRS.equalsIgnoreMetadata(mifCRS, writtenCRS)) {
+                            writtenCRS = null;
+                        }
+                    }
+                } catch (Exception e) {
+                    // Nothing to do here, if a CRS incompatibility has been raised, it will be well raise at MIF file flushing.
+                }
+            }
         } else if (!mifCRS.equals(toCheck.getCoordinateReferenceSystem())) {
             throw new DataStoreException("Given type CRS is not compatible with the one previously specified." +
                     "\nExpected : " + mifCRS + "\nFound : " + toCheck.getCoordinateReferenceSystem());
@@ -756,5 +778,9 @@ public class MIFManager {
 
     public void setDelimiter(char delimiter) {
         this.mifDelimiter = delimiter;
+    }
+
+    public CoordinateReferenceSystem getWrittenCRS() {
+        return writtenCRS;
     }
 }

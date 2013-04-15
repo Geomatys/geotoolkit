@@ -2,6 +2,7 @@ package org.geotoolkit.data.mapinfo.mif;
 
 import org.geotoolkit.data.*;
 import org.geotoolkit.data.mapinfo.ProjectionUtils;
+import org.geotoolkit.data.memory.GenericReprojectFeatureIterator;
 import org.geotoolkit.data.query.DefaultQueryCapabilities;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryCapabilities;
@@ -152,7 +153,21 @@ public class MIFFeatureStore extends AbstractFeatureStore {
             writer.remove();
         }
 
-        return FeatureStoreUtilities.write(writer, newFeatures);
+        List<FeatureId> addedFeatures = null;
+        if(manager.getWrittenCRS() != null) {
+            final FeatureCollection toWrite;
+            if(newFeatures instanceof FeatureCollection) {
+                toWrite = GenericReprojectFeatureIterator.wrap( (FeatureCollection) newFeatures, manager.getWrittenCRS());
+            } else {
+                toWrite = GenericReprojectFeatureIterator.wrap(
+                        FeatureStoreUtilities.collection(newFeatures.toArray(new Feature[newFeatures.size()])),
+                        manager.getWrittenCRS());
+            }
+            addedFeatures = FeatureStoreUtilities.write(writer, toWrite);
+        } else {
+            addedFeatures = FeatureStoreUtilities.write(writer, newFeatures);
+        }
+        return addedFeatures;
     }
 
     /**

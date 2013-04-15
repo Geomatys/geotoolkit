@@ -1,13 +1,18 @@
 package org.geotoolkit.data.mapinfo.mif;
 
 import org.geotoolkit.data.FeatureStoreRuntimeException;
+import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.FeatureWriter;
+import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.feature.FeatureUtilities;
+import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
+import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.util.ArgumentChecks;
 import org.opengis.feature.Feature;
 import org.opengis.feature.IllegalAttributeException;
 import org.opengis.feature.type.FeatureType;
+import org.opengis.referencing.cs.AxisDirection;
 
 import java.io.*;
 import java.util.UUID;
