@@ -20,6 +20,7 @@ import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
+import com.vividsolutions.jts.geom.LinearRing;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,6 +28,8 @@ import java.util.List;
 import java.util.Map;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
+import org.geotoolkit.data.iso8211.DataRecord;
+import org.geotoolkit.data.iso8211.Field;
 import org.geotoolkit.data.s57.model.FeatureRecord;
 import org.geotoolkit.data.s57.model.S57ModelObject;
 import org.geotoolkit.data.s57.model.S57ModelObjectReader;
@@ -69,6 +72,22 @@ public class S57FeatureReader implements FeatureReader{
             Integer code = (Integer) desc.getUserData().get(S57FeatureStore.S57TYPECODE);
             properties.put(code, desc);
         }
+        
+        mreader.setPredicate(new S57ModelObjectReader.Predicate() {
+            @Override
+            public boolean match(DataRecord record) {
+                final Field root = record.getRootField();
+                final Field firstField = root.getFields().get(0);
+                final String tag = firstField.getType().getTag();
+                if(FeatureRecord.FRID.equalsIgnoreCase(tag)){
+                    Long obj = (Long) firstField.getSubField(FeatureRecord.FRID_OBJL).getValue();
+                    return s57TypeCode == obj;
+                }else if(VectorRecord.VRID.equalsIgnoreCase(tag)){
+                    return true;
+                }
+                return false;
+            }
+        });
         
     }
     
@@ -116,6 +135,10 @@ public class S57FeatureReader implements FeatureReader{
         
     }
     
+    private final List<Coordinate> coords = new ArrayList<Coordinate>();
+    private final List<LineString> lines = new ArrayList<LineString>();
+    private final List<LinearRing> interiors = new ArrayList<LinearRing>();
+            
     private Feature toFeature(FeatureRecord record){
         final Feature f =  FeatureUtilities.defaultFeature(type, String.valueOf(record.id));
         
@@ -133,7 +156,7 @@ public class S57FeatureReader implements FeatureReader{
         //rebuild geometry
         Geometry geometry = null;
         if(S57Constants.Primitive.PRIMITIVE_POINT == record.primitiveType){
-            final List<Coordinate> coords = new ArrayList<Coordinate>();
+            coords.clear();
             for(FeatureRecord.SpatialPointer sp : record.spatialPointers){
                 VectorRecord rec = (VectorRecord) spatials.get(sp.refid);
                 for(VectorRecord.Coordinate2D c : rec.coords2D){
@@ -148,9 +171,9 @@ public class S57FeatureReader implements FeatureReader{
             }
             
         }else if(S57Constants.Primitive.PRIMITIVE_LINE == record.primitiveType){
-            final List<LineString> lines = new ArrayList<LineString>();
+            lines.clear();
             for(FeatureRecord.SpatialPointer sp : record.spatialPointers){
-                final List<Coordinate> coords = new ArrayList<Coordinate>();
+                coords.clear();
                 VectorRecord rec = (VectorRecord) spatials.get(sp.refid);
                 for(VectorRecord.Coordinate2D c : rec.coords2D){
                     coords.add(new Coordinate(c.x/coordFactor, c.y/coordFactor));
@@ -171,26 +194,36 @@ public class S57FeatureReader implements FeatureReader{
             }
                     
         }else if(S57Constants.Primitive.PRIMITIVE_AREA == record.primitiveType){
-            final List<LineString> lines = new ArrayList<LineString>();
+            LinearRing exterior = null;
+            interiors.clear();
             for(FeatureRecord.SpatialPointer sp : record.spatialPointers){
-                final List<Coordinate> coords = new ArrayList<Coordinate>();
-                VectorRecord rec = (VectorRecord) spatials.get(sp.refid);
+                coords.clear();
+                final VectorRecord rec = (VectorRecord) spatials.get(sp.refid);
                 for(VectorRecord.Coordinate2D c : rec.coords2D){
                     coords.add(new Coordinate(c.x/coordFactor, c.y/coordFactor));
                 }
                 for(VectorRecord.Coordinate3D c : rec.coords3D){
                     coords.add(new Coordinate(c.x/coordFactor, c.y/coordFactor, c.y/soundingfactor));
                 }
-                if(coords.size() == 1){
+                
+                if(coords.isEmpty()){
+                   //an empty ring ?
+                    continue;
+                }
+                
+                while(coords.size() < 4 || !coords.get(0).equals2D(coords.get(coords.size()-1))){
                     coords.add((Coordinate)coords.get(0).clone());
                 }
-                if(!coords.isEmpty()){
-                    final LineString line = GF.createLineString(coords.toArray(new Coordinate[coords.size()]));
-                    lines.add(line);
+                
+                final LinearRing ring = GF.createLinearRing(coords.toArray(new Coordinate[coords.size()]));
+                if(sp.usage == S57Constants.Usage.INTERIOR){
+                    exterior = ring;
+                }else{
+                    interiors.add(ring);
                 }
             }
-            if(!lines.isEmpty()){
-                geometry = GF.createMultiLineString(lines.toArray(new LineString[lines.size()]));
+            if(exterior != null){
+                geometry = GF.createPolygon(exterior,interiors.toArray(new LinearRing[interiors.size()]));
             }
         }
         

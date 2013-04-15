@@ -35,7 +35,7 @@ public final class S57Constants {
 
     private S57Constants() {}
     
-    public static class S57CodeList<T extends CodeList<T>> extends CodeList<T>{
+    public static abstract class S57CodeList<T extends CodeList<T>> extends CodeList<T>{
         
         private final Class<T> clazz;
         public final String ascii;
@@ -46,10 +46,7 @@ public final class S57Constants {
         }
         
         private S57CodeList(final Class<T> clazz, final int binary) {
-            super(String.valueOf(binary),getValuesByField(clazz));
-            this.clazz = clazz;
-            this.ascii = String.valueOf(binary);
-            this.binary = binary;
+            this(clazz,String.valueOf(binary),binary);
         }
         
         private S57CodeList(final Class<T> clazz,final String ascii, final int binary) {
@@ -58,7 +55,7 @@ public final class S57Constants {
             this.ascii = ascii;
             this.binary = binary;
         }
-
+            
         private static List getValuesByField(Class c){
             try {
                 final Field m = c.getDeclaredField("VALUES");
@@ -87,46 +84,42 @@ public final class S57Constants {
             }
         }
         
-        public static S57CodeList valueOf(Class c, Object code) {
+        static S57CodeList valueOf(List<? extends S57CodeList> lst, Object code) {
             
             final String ascii;
             final int binary;
             if(code instanceof Number){
                 ascii = code.toString();
                 binary = ((Number)code).intValue();
-                for(S57CodeList exp : getValuesByMethod(c)){
+                for(S57CodeList exp : lst){
                     if(exp.binary == binary) return exp;
                 }
             }else if(code instanceof String){
                 ascii = (String)code;
                 binary = -1;
-                for(S57CodeList exp : getValuesByMethod(c)){
+                for(S57CodeList exp : lst){
                     if(exp.ascii.equalsIgnoreCase(ascii)) return exp;
                 }
             }else{
                 throw new IllegalArgumentException("Expected a String or Number object, received : "+code);
             }
             
-            try {
-                final Constructor construct = c.getDeclaredConstructor(String.class,int.class);
-                return (S57CodeList) construct.newInstance(ascii,binary);
-            } catch (NoSuchMethodException ex) {
-                throw new IllegalStateException("Class "+c.getSimpleName()+" has not been properly declared, expecting a constructor with String,Integer arguments.",ex);
-            } catch (SecurityException ex) {
-                throw new IllegalStateException("Class "+c.getSimpleName()+" has not been properly declared, expecting a constructor with String,Integer arguments.",ex);
-            } catch (IllegalAccessException ex) {
-                throw new IllegalStateException("Class "+c.getSimpleName()+" has not been properly declared, expecting a constructor with String,Integer arguments.",ex);
-            } catch (InvocationTargetException ex) {
-                throw new IllegalStateException("Class "+c.getSimpleName()+" has not been properly declared, expecting a constructor with String,Integer arguments.",ex);
-            } catch (InstantiationException ex) {
-                throw new IllegalStateException("Class "+c.getSimpleName()+" has not been properly declared, expecting a constructor with String,Integer arguments.",ex);
-            }
+            throw new IllegalArgumentException("Unknwonec type : "+ code);
             
-        }
-        
-        @Override
-        public T[] family() {
-            return (T[])getValuesByMethod(clazz);
+//            try {
+//                final Constructor construct = c.getDeclaredConstructor(String.class,int.class);
+//                return (S57CodeList) construct.newInstance(ascii,binary);
+//            } catch (NoSuchMethodException ex) {
+//                throw new IllegalStateException("Class "+c.getSimpleName()+" has not been properly declared, expecting a constructor with String,Integer arguments.",ex);
+//            } catch (SecurityException ex) {
+//                throw new IllegalStateException("Class "+c.getSimpleName()+" has not been properly declared, expecting a constructor with String,Integer arguments.",ex);
+//            } catch (IllegalAccessException ex) {
+//                throw new IllegalStateException("Class "+c.getSimpleName()+" has not been properly declared, expecting a constructor with String,Integer arguments.",ex);
+//            } catch (InvocationTargetException ex) {
+//                throw new IllegalStateException("Class "+c.getSimpleName()+" has not been properly declared, expecting a constructor with String,Integer arguments.",ex);
+//            } catch (InstantiationException ex) {
+//                throw new IllegalStateException("Class "+c.getSimpleName()+" has not been properly declared, expecting a constructor with String,Integer arguments.",ex);
+//            }
         }
                 
     } 
@@ -208,9 +201,15 @@ public final class S57Constants {
             }
         }
 
-        public static RecordType valueOf(Object code) {
-            return (RecordType) valueOf(RecordType.class, code);
+        @Override
+        public RecordType[] family() {
+            return values();
         }
+        
+        public static RecordType valueOf(Object code) {
+            return (RecordType) valueOf(VALUES, code);
+        }
+
     }
 
     /**
@@ -241,8 +240,13 @@ public final class S57Constants {
             }
         }
 
+        @Override
+        public Unit[] family() {
+            return values();
+        }
+        
         public static Unit valueOf(Object code) {
-            return (Unit) valueOf(Unit.class, code);
+            return (Unit) valueOf(VALUES, code);
         }
     }
 
@@ -364,8 +368,13 @@ public final class S57Constants {
             }
         }
 
+        @Override
+        public Projection[] family() {
+            return values();
+        }
+        
         public static Projection valueOf(Object code) {
-            return (Projection) valueOf(Projection.class, code);
+            return (Projection) valueOf(VALUES, code);
         }
     }
         
@@ -398,8 +407,13 @@ public final class S57Constants {
             }
         }
 
+        @Override
+        public Primitive[] family() {
+            return values();
+        }
+        
         public static Primitive valueOf(Object code) {
-            return (Primitive) valueOf(Primitive.class, code);
+            return (Primitive) valueOf(VALUES, code);
         }
     }
         
@@ -429,8 +443,13 @@ public final class S57Constants {
             }
         }
 
+        @Override
+        public Usage[] family() {
+            return values();
+        }
+        
         public static Usage valueOf(Object code) {
-            return (Usage) valueOf(Usage.class, code);
+            return (Usage) valueOf(VALUES, code);
         }
     }
     
@@ -458,8 +477,13 @@ public final class S57Constants {
             }
         }
 
+        @Override
+        public Orientation[] family() {
+            return values();
+        }
+        
         public static Orientation valueOf(Object code) {
-            return (Orientation) valueOf(Orientation.class, code);
+            return (Orientation) valueOf(VALUES, code);
         }
     }
     
@@ -487,8 +511,13 @@ public final class S57Constants {
             }
         }
 
+        @Override
+        public Mask[] family() {
+            return values();
+        }
+        
         public static Mask valueOf(Object code) {
-            return (Mask) valueOf(Mask.class, code);
+            return (Mask) valueOf(VALUES, code);
         }
     }
         
@@ -517,8 +546,13 @@ public final class S57Constants {
             }
         }
 
+        @Override
+        public Topology[] family() {
+            return values();
+        }
+        
         public static Topology valueOf(Object code) {
-            return (Topology) valueOf(Topology.class, code);
+            return (Topology) valueOf(VALUES, code);
         }
     }
         
@@ -546,8 +580,13 @@ public final class S57Constants {
             }
         }
 
+        @Override
+        public ArcType[] family() {
+            return values();
+        }
+        
         public static ArcType valueOf(Object code) {
-            return (ArcType) valueOf(ArcType.class, code);
+            return (ArcType) valueOf(VALUES, code);
         }
     }
     
@@ -573,8 +612,13 @@ public final class S57Constants {
             }
         }
 
+        @Override
+        public ConstructionSurface[] family() {
+            return values();
+        }
+        
         public static ConstructionSurface valueOf(Object code) {
-            return (ConstructionSurface) valueOf(ConstructionSurface.class, code);
+            return (ConstructionSurface) valueOf(VALUES, code);
         }
     }
     
@@ -601,8 +645,13 @@ public final class S57Constants {
             }
         }
 
+        @Override
+        public ExchangePurpose[] family() {
+            return values();
+        }
+        
         public static ExchangePurpose valueOf(Object code) {
-            return (ExchangePurpose) valueOf(ExchangePurpose.class, code);
+            return (ExchangePurpose) valueOf(VALUES, code);
         }
     }
 
@@ -632,8 +681,13 @@ public final class S57Constants {
             }
         }
 
+        @Override
+        public IntendedUsage[] family() {
+            return values();
+        }
+        
         public static IntendedUsage valueOf(Object code) {
-            return (IntendedUsage) valueOf(IntendedUsage.class, code);
+            return (IntendedUsage) valueOf(VALUES, code);
         }
     }
 
@@ -659,8 +713,13 @@ public final class S57Constants {
             }
         }
 
+        @Override
+        public ProductSpecification[] family() {
+            return values();
+        }
+        
         public static ProductSpecification valueOf(Object code) {
-            return (ProductSpecification) valueOf(ProductSpecification.class, code);
+            return (ProductSpecification) valueOf(VALUES, code);
         }
     }
 
@@ -687,8 +746,13 @@ public final class S57Constants {
             }
         }
 
+        @Override
+        public ApplicationProfile[] family() {
+            return values();
+        }
+        
         public static ApplicationProfile valueOf(Object code) {
-            return (ApplicationProfile) valueOf(ApplicationProfile.class, code);
+            return (ApplicationProfile) valueOf(VALUES, code);
         }
     }
 
@@ -1418,8 +1482,13 @@ public final class S57Constants {
             }
         }
 
+        @Override
+        public Agency[] family() {
+            return values();
+        }
+        
         public static Agency valueOf(Object code) {
-            return (Agency) valueOf(Agency.class, code);
+            return (Agency) valueOf(VALUES, code);
         }
     }
 
@@ -1466,8 +1535,13 @@ public final class S57Constants {
             }
         }
 
+        @Override
+        public DataStructure[] family() {
+            return values();
+        }
+        
         public static DataStructure valueOf(Object code) {
-            return (DataStructure) valueOf(DataStructure.class, code);
+            return (DataStructure) valueOf(VALUES, code);
         }
     }
 
@@ -1507,8 +1581,13 @@ public final class S57Constants {
             }
         }
 
+        @Override
+        public LexicalLevel[] family() {
+            return values();
+        }
+        
         public static LexicalLevel valueOf(Object code) {
-            return (LexicalLevel) valueOf(LexicalLevel.class, code);
+            return (LexicalLevel) valueOf(VALUES, code);
         }
     }
 
@@ -1535,8 +1614,13 @@ public final class S57Constants {
             }
         }
 
+        @Override
+        public RelationShip[] family() {
+            return values();
+        }
+        
         public static RelationShip valueOf(Object code) {
-            return (RelationShip) valueOf(RelationShip.class, code);
+            return (RelationShip) valueOf(VALUES, code);
         }
     }
         
@@ -1563,8 +1647,13 @@ public final class S57Constants {
             }
         }
 
+        @Override
+        public UpdateInstruction[] family() {
+            return values();
+        }
+        
         public static UpdateInstruction valueOf(Object code) {
-            return (UpdateInstruction) valueOf(UpdateInstruction.class, code);
+            return (UpdateInstruction) valueOf(VALUES, code);
         }
     }
     
@@ -1596,8 +1685,13 @@ public final class S57Constants {
             }
         }
 
+        @Override
+        public AttributeSet[] family() {
+            return values();
+        }
+        
         public static AttributeSet valueOf(Object code) {
-            return (AttributeSet) valueOf(AttributeSet.class, code);
+            return (AttributeSet) valueOf(VALUES, code);
         }
     }
     
@@ -1623,8 +1717,13 @@ public final class S57Constants {
             }
         }
 
+        @Override
+        public ReferenceType[] family() {
+            return values();
+        }
+        
         public static ReferenceType valueOf(Object code) {
-            return (ReferenceType) valueOf(ReferenceType.class, code);
+            return (ReferenceType) valueOf(VALUES, code);
         }
     }
     
@@ -1652,8 +1751,13 @@ public final class S57Constants {
             }
         }
 
+        @Override
+        public RangeOrValue[] family() {
+            return values();
+        }
+        
         public static RangeOrValue valueOf(Object code) {
-            return (RangeOrValue) valueOf(RangeOrValue.class, code);
+            return (RangeOrValue) valueOf(VALUES, code);
         }
     }
     
@@ -1687,8 +1791,13 @@ public final class S57Constants {
             }
         }
 
+        @Override
+        public AttributeDomain[] family() {
+            return values();
+        }
+        
         public static AttributeDomain valueOf(Object code) {
-            return (AttributeDomain) valueOf(AttributeDomain.class, code);
+            return (AttributeDomain) valueOf(VALUES, code);
         }
     }
     
@@ -1724,8 +1833,13 @@ public final class S57Constants {
             }
         }
 
+        @Override
+        public ObjectType[] family() {
+            return values();
+        }
+        
         public static ObjectType valueOf(Object code) {
-            return (ObjectType) valueOf(ObjectType.class, code);
+            return (ObjectType) valueOf(VALUES, code);
         }
     }
     
@@ -1751,8 +1865,13 @@ public final class S57Constants {
             }
         }
 
+        @Override
+        public ObjectOrAttribute[] family() {
+            return values();
+        }
+        
         public static ObjectOrAttribute valueOf(Object code) {
-            return (ObjectOrAttribute) valueOf(ObjectOrAttribute.class, code);
+            return (ObjectOrAttribute) valueOf(VALUES, code);
         }
     }
     
@@ -1778,8 +1897,13 @@ public final class S57Constants {
             }
         }
 
+        @Override
+        public Implementation[] family() {
+            return values();
+        }
+        
         public static Implementation valueOf(Object code) {
-            return (Implementation) valueOf(Implementation.class, code);
+            return (Implementation) valueOf(VALUES, code);
         }
     }
     

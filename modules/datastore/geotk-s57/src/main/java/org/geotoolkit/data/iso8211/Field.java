@@ -55,6 +55,15 @@ public class Field {
         return subfields;
     }
     
+    public SubField getSubField(String tag){
+        for(SubField sf : subfields){
+            if(sf.getType().getTag().equalsIgnoreCase(tag)){
+                return sf;
+            }
+        }
+        return null;
+    }
+    
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder();

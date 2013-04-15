@@ -34,6 +34,7 @@ import org.geotoolkit.data.FeatureStoreFinder;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryCapabilities;
+import org.geotoolkit.data.s57.annexe.S57TypeBank;
 import org.geotoolkit.data.s57.model.DataSetParameter;
 import org.geotoolkit.data.s57.model.FeatureRecord;
 import org.geotoolkit.data.s57.model.S57ModelObject;
@@ -120,7 +121,6 @@ public class S57FeatureStore extends AbstractFeatureStore{
         final S57ModelObjectReader reader = new S57ModelObjectReader();
         reader.setInput(file);
         try{
-            S57AnnexeParser annexe = new S57AnnexeParser();
             
             while(reader.hasNext()){
                 final S57ModelObject obj = reader.next();
@@ -131,7 +131,7 @@ public class S57FeatureStore extends AbstractFeatureStore{
                 }else if(obj instanceof FeatureRecord){
                     final FeatureRecord rec = (FeatureRecord) obj;
                     final int objlCode = rec.code;
-                    final FeatureType type = annexe.getFeatureType(objlCode);
+                    final FeatureType type = S57TypeBank.getFeatureType(objlCode);
                     if(type == null){
                         throw new DataStoreException("Unknown feature type OBJL : "+objlCode);
                     }

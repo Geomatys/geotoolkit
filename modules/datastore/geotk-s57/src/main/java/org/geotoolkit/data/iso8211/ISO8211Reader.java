@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.data.iso8211;
 
+import java.io.BufferedInputStream;
 import java.io.DataInput;
 import java.io.EOFException;
 import java.io.File;
@@ -78,6 +79,9 @@ public class ISO8211Reader {
         }else{
             throw new IOException("Unsupported input : "+input);
         }
+        final BufferedInputStream bufferStream = new BufferedInputStream(stream);
+        stream = bufferStream;
+        
         ds = new LEDataInputStream(stream);
         return ds;
     }

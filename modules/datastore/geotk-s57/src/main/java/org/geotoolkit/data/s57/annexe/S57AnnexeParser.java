@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.data.s57;
+package org.geotoolkit.data.s57.annexe;
 
 import com.lowagie.text.pdf.PRTokeniser;
 import com.lowagie.text.pdf.PdfArray;
@@ -30,19 +30,18 @@ import com.vividsolutions.jts.geom.Geometry;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
+import org.geotoolkit.data.s57.S57FeatureStore;
 import org.geotoolkit.feature.FeatureTypeBuilder;
-import org.geotoolkit.feature.type.DefaultAttributeType;
 import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.FeatureType;
-import org.opengis.feature.type.PropertyType;
 
 /**
  * Used only to rebuild types from S-57 annexes.
@@ -51,69 +50,10 @@ import org.opengis.feature.type.PropertyType;
  * 
  * @author Johann Sorel (Geomatys)
  */
-final class S57AnnexeParser {
-    
-    public static class S57FeatureType implements Serializable{
-        String acronym;
-        int code;
-        String fullName;
-        String description;
-        String remarks;
-        String reference;
-        List<String> attA = new ArrayList<String>();
-        List<String> attB = new ArrayList<String>();
-        List<String> attC = new ArrayList<String>();
+public final class S57AnnexeParser {
 
-        @Override
-        public String toString() {
-            final List lst = new ArrayList();
-            lst.add("CODE="+code);
-            lst.add("NAME="+fullName);
-            lst.add("DESC="+description);
-            lst.add("REMARK="+remarks);
-            lst.add("REFS="+reference);
-            lst.add(Trees.toString("AttA", attA));
-            lst.add(Trees.toString("AttB", attB));
-            lst.add(Trees.toString("AttC", attC));            
-            return Trees.toString(acronym, lst);
-        }        
-    }
-    
-    public static class S57PropertyType implements Serializable{
-        String acronym;
-        int code;
-        String fullName;
-        String type;
-        List<String> expecteds = new ArrayList<String>();
-        String definition;
-        String references;
-        Double minimum;
-        Double maximum;
-        String remarks;
-        String indication;
-        String format;
-        String exemple;
-        
-        @Override
-        public String toString() {
-            final List lst = new ArrayList();
-            lst.add("CODE="+code);
-            lst.add("NAME="+fullName);
-            lst.add("TYPE="+type);
-            lst.add("definition="+definition);
-            lst.add("references="+references);
-            lst.add("minimum="+minimum);
-            lst.add("maximum="+maximum);
-            lst.add("remarks="+remarks);
-            lst.add("indication="+indication);
-            lst.add("format="+format);
-            lst.add("exemple="+exemple);
-            return Trees.toString(acronym, lst);
-        }        
-    }
-
-    private final Map<String,S57FeatureType> s57ftypes;
-    private final Map<String,S57PropertyType> s57ptypes;
+    private final Map<String,AnS57FeatureType> s57ftypes;
+    private final Map<String,AnS57PropertyType> s57ptypes;
     private final Map<String, FeatureType> featureTypes = new HashMap<String, FeatureType>();
     
     public static void main(String[] args) throws IOException {
@@ -124,7 +64,19 @@ final class S57AnnexeParser {
         };
         S57AnnexeParser parser = new S57AnnexeParser(args[0], args[1]);
         
+        System.out.println(parser.s57ftypes.size());
+        System.out.println(parser.s57ptypes.size());
         
+        for(AnS57FeatureType sft : parser.s57ftypes.values()){
+            System.out.println(sft.toFormattedString());
+            sft.fromFormattedString(sft.toFormattedString());
+        }
+        
+        System.out.println("---------------------------------");
+        for(AnS57PropertyType sft : parser.s57ptypes.values()){
+            System.out.println(sft.toFormattedString());
+            sft.fromFormattedString(sft.toFormattedString());
+        }
         
     }
     
@@ -138,18 +90,13 @@ final class S57AnnexeParser {
         s57ftypes = parseFeatureTypes(an1);
         s57ptypes = parsePropertyTypes(an2);
         
-        //rebuild types
-//        for(S57FeatureType sft : s57ftypes.values()){
-//            System.out.println(getFeatureType(sft.acronym));
-//        }
-//        System.out.println(s57ftypes.size());
     }
     
     public FeatureType getFeatureType(String name){
         FeatureType ft = featureTypes.get(name);
         if(ft!=null) return ft;
         
-        final S57FeatureType sft = s57ftypes.get(name);
+        final AnS57FeatureType sft = s57ftypes.get(name);
         
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName(sft.acronym);
@@ -162,7 +109,7 @@ final class S57AnnexeParser {
         allAtts.addAll(sft.attC);
 
         for(String att : allAtts){
-            final S57PropertyType pt = s57ptypes.get(att);
+            final AnS57PropertyType pt = s57ptypes.get(att);
             Class binding;
             if("E".equalsIgnoreCase(pt.type)){
                 //enumeration type
@@ -196,7 +143,7 @@ final class S57AnnexeParser {
     }
     
     public FeatureType getFeatureType(int code){
-        for(S57FeatureType sft : s57ftypes.values()){
+        for(AnS57FeatureType sft : s57ftypes.values()){
             if(sft.code == code){
                 return getFeatureType(sft.acronym);
             }
@@ -205,8 +152,8 @@ final class S57AnnexeParser {
     }
     
     
-    private static Map<String,S57FeatureType> parseFeatureTypes(String path) throws IOException {
-        final Map<String,S57FeatureType> featureTypes = new HashMap<String,S57FeatureType>();
+    private static Map<String,AnS57FeatureType> parseFeatureTypes(String path) throws IOException {
+        final Map<String,AnS57FeatureType> featureTypes = new HashMap<String,AnS57FeatureType>();
         
         final PdfReader reader = new PdfReader(path);        
         final int nbPages = reader.getNumberOfPages();
@@ -225,7 +172,7 @@ final class S57AnnexeParser {
                 }
             }
             
-            final S57FeatureType type = new S57FeatureType();
+            final AnS57FeatureType type = new AnS57FeatureType();
             
             final String str = sb.toString();
             
@@ -317,8 +264,8 @@ final class S57AnnexeParser {
         return featureTypes;
     }
     
-    private static Map<String,S57PropertyType> parsePropertyTypes(String path) throws IOException {
-        final Map<String,S57PropertyType> propertyTypes = new HashMap<String,S57PropertyType>();
+    private static Map<String,AnS57PropertyType> parsePropertyTypes(String path) throws IOException {
+        final Map<String,AnS57PropertyType> propertyTypes = new HashMap<String,AnS57PropertyType>();
         
         final PdfReader reader = new PdfReader(path);        
         final int nbPages = reader.getNumberOfPages();
@@ -337,7 +284,7 @@ final class S57AnnexeParser {
                 }
             }
             
-            final S57PropertyType type = new S57PropertyType();            
+            final AnS57PropertyType type = new AnS57PropertyType();            
             String str = sb.toString();
             String lstr = str.toLowerCase();
             //System.out.println(str);

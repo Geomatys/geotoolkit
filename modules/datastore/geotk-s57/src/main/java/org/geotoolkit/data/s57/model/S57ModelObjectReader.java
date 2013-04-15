@@ -31,12 +31,30 @@ import org.geotoolkit.util.logging.Logging;
  */
 public class S57ModelObjectReader {
 
+    /**
+     * Filter records.
+     */
+    public static interface Predicate{
+        public boolean match(DataRecord record);
+    }
+    
     private static final Logger LOGGER = Logging.getLogger(S57ModelObjectReader.class);
     
     private ISO8211Reader isoReader;
     private S57ModelObject record;
     
+    //used to filter records
+    private Predicate predicate;
+    
     public S57ModelObjectReader() {
+    }
+
+    public void setPredicate(Predicate predicate) {
+        this.predicate = predicate;
+    }
+
+    public Predicate getPredicate() {
+        return predicate;
     }
     
     public void setInput(Object input){
@@ -47,7 +65,6 @@ public class S57ModelObjectReader {
             this.isoReader.setInput(input);
         }
     }
-    
     
     public boolean hasNext() throws IOException{
         findNext();
@@ -70,6 +87,8 @@ public class S57ModelObjectReader {
         
         while(isoReader.hasNext() && record==null){
                 final DataRecord rec = isoReader.next();
+                if(predicate!=null && !predicate.match(rec)) continue;
+                
                 final Field root = rec.getRootField();
                 final Field firstField = root.getFields().get(0);
                 final String tag = firstField.getType().getTag();
