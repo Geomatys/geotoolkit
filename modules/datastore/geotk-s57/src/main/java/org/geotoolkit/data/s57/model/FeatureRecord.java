@@ -254,7 +254,7 @@ public class FeatureRecord extends S57ModelObject {
         
     }
     
-    public static class SpatialPointer extends S57ModelObject {
+    public static class SpatialPointer extends Pointer {
         //7.6.8 Feature record to spatial record pointer field structure
         public static final String FRID_FSPT = "FSPT"; 
         public static final String FRID_FSPT_NAME = "NAME";
@@ -262,9 +262,6 @@ public class FeatureRecord extends S57ModelObject {
         public static final String FRID_FSPT_USAG = "USAG"; 
         public static final String FRID_FSPT_MASK = "MASK";
         
-        //reference id
-        public RecordType type;
-        public long refid;
         //informations
         public Orientation orientation;
         public Usage usage;
@@ -295,8 +292,12 @@ public class FeatureRecord extends S57ModelObject {
             }
         }
         
+        @Override
+        public String toString() {
+            return "SP:"+type+","+refid+","+orientation+","+usage+","+mask;
+        }
+        
     }
-    
     
     @Override
     public void read(Field isofield) throws IOException {

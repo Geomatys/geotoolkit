@@ -461,7 +461,7 @@ public final class S57Constants {
         static final List<Orientation> VALUES = new ArrayList<Orientation>();
         //---------------
         /** Forward */
-        public static final Orientation FROWARD = new Orientation("F",1);
+        public static final Orientation FORWARD = new Orientation("F",1);
         /** Reverse */
         public static final Orientation REVERSE = new Orientation("R",2);
         /** NULL */

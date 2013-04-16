@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.data.s57.model;
 
+import com.vividsolutions.jts.geom.Coordinate;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,7 +24,9 @@ import java.util.Iterator;
 import java.util.List;
 import org.geotoolkit.data.iso8211.Field;
 import org.geotoolkit.data.iso8211.SubField;
+import org.geotoolkit.data.s57.S57Constants;
 import static org.geotoolkit.data.s57.S57Constants.*;
+import org.geotoolkit.data.s57.S57FeatureReader;
 import static org.geotoolkit.data.s57.model.S57ModelObject.*;
 import org.geotoolkit.io.LEDataInputStream;
 
@@ -32,7 +35,7 @@ import org.geotoolkit.io.LEDataInputStream;
  * @author Johann Sorel (Geomatys)
  */
 public class VectorRecord extends S57ModelObject {
-    
+        
     //7.7.1.1 Vector record identifier field structure
     public static final String VRID = "VRID";
     public static final String VRID_RCNM = "RCNM"; 
@@ -54,6 +57,64 @@ public class VectorRecord extends S57ModelObject {
     public final List<Coordinate2D> coords2D = new ArrayList<Coordinate2D>();
     public final List<Coordinate3D> coords3D = new ArrayList<Coordinate3D>();
     public List<Arc> arcs;
+
+    /**
+     * Generate a key composed of id + type.
+     * Used for pointer resolution
+     * @return 
+     */
+    public RecordPointer generatePointer(){
+        return new RecordPointer(id, type);
+    }
+    
+    /**
+     * Shortcut to access edge begin node.
+     * May return null if vector is not an edge.
+     * @return 
+     */
+    public RecordPointer getEdgeBeginNode(){
+        for(RecordPointer rp : records){
+            if(rp.topology == Topology.TOPI_BEGIN_NODE){
+                return rp;
+            }
+        }
+        return null;
+    }
+    
+    /**
+     * Shortcut to access edge begin node.
+     * May return null if vector is not an edge.
+     * @return 
+     */
+    public RecordPointer getEdgeEndNode(){
+        for(RecordPointer rp : records){
+            if(rp.topology == Topology.TOPI_END_NODE){
+                return rp;
+            }
+        }
+        return null;
+    }
+    
+    /**
+     * If vector is an edge, return it's coordinates.
+     * @return Coordinate
+     */
+    public List<Coordinate> getEdgeCoordinates(double coordFactor){
+        final List<Coordinate> coords = new ArrayList<Coordinate>(coords2D.size());
+        for(Coordinate2D c : coords2D){
+            coords.add(new Coordinate(c.x/coordFactor, c.y/coordFactor));
+        }
+        return coords;
+    }
+    
+    /**
+     * If vector is a node, return it's coordinate.
+     * @return Coordinate
+     */
+    public Coordinate getNodeCoordinate(double coordFactor){
+        final Coordinate2D c = coords2D.get(0);
+        return new Coordinate(c.x/coordFactor, c.y/coordFactor);
+    }
     
     public static class Attribute extends S57ModelObject {
         //7.7.1.2 Vector record attribute field structure
@@ -103,7 +164,7 @@ public class VectorRecord extends S57ModelObject {
         }
     }
     
-    public static class RecordPointer extends S57ModelObject {
+    public static class RecordPointer extends Pointer {
         //7.7.1.4 Vector record pointer field structure
         public static final String VRID_VRPT = "VRPT"; 
         /** NAME is composed of */
@@ -113,14 +174,19 @@ public class VectorRecord extends S57ModelObject {
         public static final String VRID_VRPT_TOPI = "TOPI"; 
         public static final String VRID_VRPT_MASK = "MASK"; 
         
-        //reference id
-        public RecordType type;
-        public long refid;
         //informations
         public Orientation orientation;
         public Usage usage;
         public Topology topology;
         public Mask mask;
+        
+        public RecordPointer() {
+        }
+        
+        public RecordPointer(long id, S57Constants.RecordType type) {
+            this.refid = id;
+            this.type = type;
+        }
         
         @Override
         public void read(Field isofield) throws IOException {
@@ -146,6 +212,11 @@ public class VectorRecord extends S57ModelObject {
                 else if(VRID_VRPT_TOPI.equalsIgnoreCase(tag)) topology = Topology.valueOf(value);
                 else if(VRID_VRPT_MASK.equalsIgnoreCase(tag)) mask = Mask.valueOf(value);
             }
+        }
+        
+        @Override
+        public String toString() {
+            return "RP:"+type+","+refid+","+orientation+","+usage+","+topology+","+mask;
         }
         
     }
@@ -308,7 +379,9 @@ public class VectorRecord extends S57ModelObject {
             final String tag = sf.getType().getTag();
             final Object value = sf.getValue();
                  if (VRID_RCNM.equalsIgnoreCase(tag)) type = RecordType.valueOf(value);
-            else if (VRID_RCID.equalsIgnoreCase(tag)) id = toLong(value);
+            else if (VRID_RCID.equalsIgnoreCase(tag)){
+                id = toLong(value);
+            }
             else if (VRID_RVER.equalsIgnoreCase(tag)) version = toInteger(value);
             else if (VRID_RUIN.equalsIgnoreCase(tag)) updateInstruction = UpdateInstruction.valueOf(value);
         }

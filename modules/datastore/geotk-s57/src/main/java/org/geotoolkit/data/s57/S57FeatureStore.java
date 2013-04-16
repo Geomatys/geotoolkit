@@ -35,6 +35,7 @@ import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.data.s57.annexe.S57TypeBank;
+import org.geotoolkit.data.s57.model.DataSetIdentification;
 import org.geotoolkit.data.s57.model.DataSetParameter;
 import org.geotoolkit.data.s57.model.FeatureRecord;
 import org.geotoolkit.data.s57.model.S57ModelObject;
@@ -66,8 +67,11 @@ public class S57FeatureStore extends AbstractFeatureStore{
     private final File file;
     private Set<FeatureType> types = null;
     private Set<Name> names = null;
-    private double coordFactor;
-    private double soundingfactor;
+    
+    //S-57 metadata/description records
+    private DataSetIdentification datasetIdentification;
+    private DataSetParameter datasetParameter;
+    
     
     public S57FeatureStore(final ParameterValueGroup params) throws DataStoreException{
         super(params);
@@ -124,10 +128,10 @@ public class S57FeatureStore extends AbstractFeatureStore{
             
             while(reader.hasNext()){
                 final S57ModelObject obj = reader.next();
-                if(obj instanceof DataSetParameter){
-                    final DataSetParameter parameters = (DataSetParameter) obj;
-                    coordFactor = parameters.coordFactor;
-                    soundingfactor = parameters.soundingFactor;
+                if(obj instanceof DataSetIdentification){
+                    datasetIdentification = (DataSetIdentification) obj;
+                }else if(obj instanceof DataSetParameter){
+                    datasetParameter = (DataSetParameter) obj;
                 }else if(obj instanceof FeatureRecord){
                     final FeatureRecord rec = (FeatureRecord) obj;
                     final int objlCode = rec.code;
@@ -159,7 +163,7 @@ public class S57FeatureStore extends AbstractFeatureStore{
         s57reader.setInput(file);
         final FeatureReader reader = new S57FeatureReader(ft,
                 (Integer)ft.getUserData().get(S57TYPECODE),s57reader,
-                coordFactor,soundingfactor);
+                datasetIdentification,datasetParameter);
         return handleRemaining(reader, query);
     }
 
