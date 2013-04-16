@@ -31,7 +31,10 @@ import org.apache.sis.util.StringBuilders;
  *
  * @since 2.4
  * @module
+ *
+ * @deprecated No public replacement.
  */
+@Deprecated
 public enum X364 {
     /** Reset all attributes to their default value. */ RESET               ((byte)  0),
     /** Normal intensity (not {@link #BOLD}).        */ NORMAL              ((byte) 22),
