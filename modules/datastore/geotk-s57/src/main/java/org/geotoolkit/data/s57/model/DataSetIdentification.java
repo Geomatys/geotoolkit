@@ -82,8 +82,6 @@ public class DataSetIdentification extends S57ModelObject {
         public static final String DSID_DSSI_NOFA = "NOFA";
         
         public DataStructure dataStructure;
-        public LexicalLevel attfLexicalLevel;
-        public LexicalLevel natfLexicalLevel;
         public int nbMeta;
         public int nbCarto;
         public int nbGeo;

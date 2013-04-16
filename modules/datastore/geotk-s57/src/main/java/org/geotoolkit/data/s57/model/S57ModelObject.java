@@ -17,14 +17,15 @@
 package org.geotoolkit.data.s57.model;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.sis.util.Classes;
 import org.geotoolkit.data.iso8211.Field;
+import org.geotoolkit.data.s57.S57Constants;
 import org.geotoolkit.gui.swing.tree.Trees;
-import org.geotoolkit.storage.DataStoreException;
 
 /**
  *
@@ -32,6 +33,14 @@ import org.geotoolkit.storage.DataStoreException;
  */
 public class S57ModelObject {
  
+    public static final Charset US_ASCII = Charset.forName("US-ASCII");
+    public static final Charset ISO_8859_1 = Charset.forName("ISO-8859-1");
+    public static final Charset UCS2 = Charset.forName("UTF-16");
+    
+    /** lexical levels should be filled before reading values */
+    public S57Constants.LexicalLevel attfLexicalLevel;
+    public S57Constants.LexicalLevel natfLexicalLevel;
+    
     public void read(Field isofield) throws IOException {
         throw new IOException("Not implemented yet.");
     }

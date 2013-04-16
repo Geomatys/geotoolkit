@@ -77,6 +77,7 @@ public class S57FeatureReader implements FeatureReader{
         this.datasetParameter = datasetParameter;
         this.coordFactor = datasetParameter.coordFactor;
         this.soundingFactor = datasetParameter.soundingFactor;
+        this.mreader.setDsid(datasetIdentification);
                 
         for(PropertyDescriptor desc :type.getDescriptors()){
             Integer code = (Integer) desc.getUserData().get(S57FeatureStore.S57TYPECODE);

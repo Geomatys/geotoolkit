@@ -40,6 +40,8 @@ public class S57ModelObjectReader {
     
     private static final Logger LOGGER = Logging.getLogger(S57ModelObjectReader.class);
     
+    //used to pass lexical levels to other records.
+    private DataSetIdentification dsid;
     private ISO8211Reader isoReader;
     private S57ModelObject record;
     
@@ -49,6 +51,10 @@ public class S57ModelObjectReader {
     public S57ModelObjectReader() {
     }
 
+    public void setDsid(DataSetIdentification dsid) {
+        this.dsid = dsid;
+    }
+    
     public void setPredicate(Predicate predicate) {
         this.predicate = predicate;
     }
@@ -93,51 +99,38 @@ public class S57ModelObjectReader {
                 final Field firstField = root.getFields().get(0);
                 final String tag = firstField.getType().getTag();
                 
-                //convert to an S-57 object                
+                //convert to an S-57 object
                 if(CatalogDirectory.CATD.equalsIgnoreCase(tag)){
-                    final CatalogDirectory candidate = new CatalogDirectory();
-                    candidate.read(firstField);
-                    record = candidate;
+                    record = new CatalogDirectory();
                 }else if(DataDictionaryDefinition.DDDF.equalsIgnoreCase(tag)){
-                    final DataDictionaryDefinition candidate = new DataDictionaryDefinition();
-                    candidate.read(firstField);
-                    record = candidate;
+                    record = new DataDictionaryDefinition();
                 }else if(DataDictionaryDomainIdentifier.DDDI.equalsIgnoreCase(tag)){
-                    final DataDictionaryDomainIdentifier candidate = new DataDictionaryDomainIdentifier();
-                    candidate.read(firstField);
-                    record = candidate;
+                    record = new DataDictionaryDomainIdentifier();
                 }else if(DataDictionarySchemaIdentifier.DDSI.equalsIgnoreCase(tag)){
-                    final DataDictionarySchemaIdentifier candidate = new DataDictionarySchemaIdentifier();
-                    candidate.read(firstField);
-                    record = candidate;
+                    record = new DataDictionarySchemaIdentifier();
                 }else if(DataSetAccuracy.DSAC.equalsIgnoreCase(tag)){
-                    final DataSetAccuracy candidate = new DataSetAccuracy();
-                    candidate.read(firstField);
-                    record = candidate;
+                    record = new DataSetAccuracy();
                 }else if(DataSetHistory.DSHT.equalsIgnoreCase(tag)){
-                    final DataSetHistory candidate = new DataSetHistory();
-                    candidate.read(firstField);
-                    record = candidate;
+                    record = new DataSetHistory();
                 }else if(DataSetIdentification.DSID.equalsIgnoreCase(tag)){
-                    final DataSetIdentification candidate = new DataSetIdentification();
-                    candidate.read(firstField);
-                    record = candidate;
+                    record = new DataSetIdentification();
+                    record.read(firstField);
+                    this.dsid = (DataSetIdentification) record;
                 }else if(DataSetParameter.DSPM.equalsIgnoreCase(tag)){
-                    final DataSetParameter candidate = new DataSetParameter();
-                    candidate.read(firstField);
-                    record = candidate;
+                    record = new DataSetParameter();
                 }else if(FeatureRecord.FRID.equalsIgnoreCase(tag)){
-                    final FeatureRecord candidate = new FeatureRecord();
-                    candidate.read(firstField);
-                    record = candidate;
+                    record = new FeatureRecord();
                 }else if(VectorRecord.VRID.equalsIgnoreCase(tag)){
-                    final VectorRecord candidate = new VectorRecord();
-                    candidate.read(firstField);
-                    record = candidate;
+                    record = new VectorRecord();
                 }else{
                     LOGGER.log(Level.INFO, "Unknowned tag (possibly provider specific or unvalid S-57 file) : "+tag);
                     continue;
                 }
+                if(dsid!=null){
+                    record.attfLexicalLevel = dsid.information.attfLexicalLevel;
+                    record.natfLexicalLevel = dsid.information.natfLexicalLevel;
+                }
+                record.read(firstField);
         }
     }
     

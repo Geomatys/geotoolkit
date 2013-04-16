@@ -119,7 +119,17 @@ public class FeatureRecord extends S57ModelObject {
                 final String tag = sf.getType().getTag();
                 final Object val = sf.getValue();
                      if(FRID_ATTF_ATTL.equalsIgnoreCase(tag)) code = toInteger(val);
-                else if(FRID_ATTF_ATVL.equalsIgnoreCase(tag)) value = toString(val);
+                else if(FRID_ATTF_ATVL.equalsIgnoreCase(tag)){
+                    if(attfLexicalLevel== LexicalLevel.LEVEL0){
+                        value = new String(sf.getValueBytes(),US_ASCII);
+                    }else if(attfLexicalLevel==LexicalLevel.LEVEL1){
+                        value = new String(sf.getValueBytes(),ISO_8859_1);
+                    }else if(attfLexicalLevel==LexicalLevel.LEVEL2){
+                        value = new String(sf.getValueBytes(),UCS2);
+                    }else{
+                        throw new IOException("ATTF Lexical level not provided.");
+                    }
+                }
             }
         }
     }
@@ -150,7 +160,17 @@ public class FeatureRecord extends S57ModelObject {
                 final String tag = sf.getType().getTag();
                 final Object val = sf.getValue();
                      if(FRID_NATF_ATTL.equalsIgnoreCase(tag)) code = toInteger(val);
-                else if(FRID_NATF_ATVL.equalsIgnoreCase(tag)) value = toString(val);
+                else if(FRID_NATF_ATVL.equalsIgnoreCase(tag)){
+                    if(natfLexicalLevel==LexicalLevel.LEVEL0){
+                        value = new String(sf.getValueBytes(),US_ASCII);
+                    }else if(natfLexicalLevel==LexicalLevel.LEVEL1){
+                        value = new String(sf.getValueBytes(),ISO_8859_1);
+                    }else if(natfLexicalLevel==LexicalLevel.LEVEL2){
+                        value = new String(sf.getValueBytes(),UCS2);
+                    }else{
+                        throw new IOException("ATTF Lexical level not provided.");
+                    }
+                }
             }
         }
         
@@ -321,6 +341,8 @@ public class FeatureRecord extends S57ModelObject {
                 final Iterator<SubField> sfite = f.getSubFields().iterator();
                 while(sfite.hasNext()){
                     final Attribute candidate = new Attribute();
+                    candidate.attfLexicalLevel = attfLexicalLevel;
+                    candidate.natfLexicalLevel = natfLexicalLevel;
                     candidate.read(Arrays.asList(sfite.next(),sfite.next()));
                     attributes.add(candidate);
                 }
@@ -328,6 +350,8 @@ public class FeatureRecord extends S57ModelObject {
                 final Iterator<SubField> sfite = f.getSubFields().iterator();
                 while(sfite.hasNext()){
                     final NationalAttribute candidate = new NationalAttribute();
+                    candidate.attfLexicalLevel = attfLexicalLevel;
+                    candidate.natfLexicalLevel = natfLexicalLevel;
                     candidate.read(Arrays.asList(sfite.next(),sfite.next()));
                     nattributes.add(candidate);
                 }

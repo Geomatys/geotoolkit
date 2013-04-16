@@ -24,11 +24,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import static org.geotoolkit.data.iso8211.ISO8211Constants.*;
-import static org.geotoolkit.data.iso8211.ISO8211Utilities.*;
 import org.geotoolkit.io.LEDataInputStream;
 
 /**

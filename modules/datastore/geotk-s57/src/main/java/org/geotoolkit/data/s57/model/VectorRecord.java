@@ -18,6 +18,7 @@ package org.geotoolkit.data.s57.model;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -138,7 +139,17 @@ public class VectorRecord extends S57ModelObject {
                 final String tag = sf.getType().getTag();
                 final Object val = sf.getValue();
                      if(VRID_ATTV_ATTL.equalsIgnoreCase(tag)) code = toInteger(val);
-                else if(VRID_ATTV_ATVL.equalsIgnoreCase(tag)) value = toString(val);
+                else if(VRID_ATTV_ATVL.equalsIgnoreCase(tag)){
+                    if(attfLexicalLevel== LexicalLevel.LEVEL0){
+                        value = new String(sf.getValueBytes(),US_ASCII);
+                    }else if(attfLexicalLevel==LexicalLevel.LEVEL1){
+                        value = new String(sf.getValueBytes(),ISO_8859_1);
+                    }else if(attfLexicalLevel==LexicalLevel.LEVEL2){
+                        value = new String(sf.getValueBytes(),UCS2);
+                    }else{
+                        throw new IOException("ATTF Lexical level not provided.");
+                    }
+                }
             }
         }
         
@@ -394,6 +405,8 @@ public class VectorRecord extends S57ModelObject {
                 final Iterator<SubField> sfite = f.getSubFields().iterator();
                 while(sfite.hasNext()){
                     final Attribute candidate = new Attribute();
+                    candidate.attfLexicalLevel = attfLexicalLevel;
+                    candidate.natfLexicalLevel = natfLexicalLevel;
                     candidate.read(Arrays.asList(sfite.next(),sfite.next()));
                     attributes.add(candidate);
                 }

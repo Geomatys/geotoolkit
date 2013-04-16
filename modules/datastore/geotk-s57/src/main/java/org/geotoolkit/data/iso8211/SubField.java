@@ -35,6 +35,7 @@ import static org.geotoolkit.data.iso8211.FieldValueType.TEXT;
 public class SubField {
     
     private final SubFieldDescription type;
+    private byte[] valueBytes;
     private Object value;
 
     public SubField(SubFieldDescription type) {
@@ -43,6 +44,10 @@ public class SubField {
 
     public SubFieldDescription getType() {
         return type;
+    }
+
+    public byte[] getValueBytes() {
+        return valueBytes;
     }
 
     public Object getValue() {
@@ -97,9 +102,11 @@ public class SubField {
             length = length/8;
         }
         
+        valueBytes = Arrays.copyOfRange(buffer, offset, offset+length);
+        
         switch(type.getType()){
             case TEXT:
-                value = new String(Arrays.copyOfRange(buffer, offset, offset+length));
+                value = new String(valueBytes);
                 break;
             case INTEGER:
                 value = ISO8211Utilities.readSignedInteger(buffer, offset, length);
