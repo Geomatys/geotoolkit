@@ -287,7 +287,7 @@ public class S57FeatureReader implements FeatureReader{
         }else if(S57Constants.Primitive.PRIMITIVE_AREA == record.primitiveType){
             
             LinearRing outter = null;
-            List<Coordinate> exterior = new ArrayList<Coordinate>();
+            List<Coordinate> inbuild = new ArrayList<Coordinate>();
             Pointer startNode = null;
             Pointer endNode = null;
                         
@@ -295,34 +295,37 @@ public class S57FeatureReader implements FeatureReader{
                 final VectorRecord edge = spatials.get(sp);
                 final Pointer edgeStart = edge.getEdgeBeginNode();
                 final Pointer edgeEnd = edge.getEdgeEndNode();
-                
-                final List<Coordinate> scoords = fillCoordinates(edge);
-                
-                if(scoords.isEmpty()){
-                   //an empty ring ?
-                    throw new FeatureStoreRuntimeException("Empty ring");
-                }                
+                final VectorRecord startPoint = spatials.get(edgeStart);
+                final VectorRecord endPoint = spatials.get(edgeEnd);
+                final List<Coordinate> scoords = edge.getEdgeCoordinates(datasetParameter.coordFactor);
+                             
                 if(sp.usage == S57Constants.Usage.EXTERIOR || sp.usage == S57Constants.Usage.EXTERIOR_TRUNCATED){
                     
                     if(startNode == null){
                         //first exterior segment
-                        exterior.addAll(scoords);
+                        inbuild.addAll(scoords);
                         startNode = edgeStart;
                         endNode = edgeEnd;
+                        inbuild.add(0,startPoint.getNodeCoordinate(datasetParameter.coordFactor));
+                        inbuild.add(endPoint.getNodeCoordinate(datasetParameter.coordFactor));
                     }else{
                         if(edgeStart.equals(startNode)){
                             Collections.reverse(scoords);                            
-                            exterior.addAll(0,scoords);
+                            inbuild.addAll(0,scoords);
+                            inbuild.add(0,endPoint.getNodeCoordinate(datasetParameter.coordFactor));
                             startNode = edgeEnd;                            
                         }else if(edgeStart.equals(endNode)){
-                            exterior.addAll(scoords);
+                            inbuild.addAll(scoords);
+                            inbuild.add(endPoint.getNodeCoordinate(datasetParameter.coordFactor));
                             endNode = edgeEnd;
                         }else if(edgeEnd.equals(startNode)){
-                            exterior.addAll(0,scoords);
+                            inbuild.addAll(0,scoords);
+                            inbuild.add(0,startPoint.getNodeCoordinate(datasetParameter.coordFactor));
                             startNode = edgeStart;
                         }else if(edgeEnd.equals(endNode)){
                             Collections.reverse(scoords);
-                            exterior.addAll(scoords);
+                            inbuild.addAll(scoords);
+                            inbuild.add(startPoint.getNodeCoordinate(datasetParameter.coordFactor));
                             endNode = edgeStart;
                         }else{
                             throw new FeatureStoreRuntimeException("Segment not connected");
@@ -330,12 +333,14 @@ public class S57FeatureReader implements FeatureReader{
                     }
                     
                 }else{
+                    scoords.add(0,startPoint.getNodeCoordinate(datasetParameter.coordFactor));
+                    scoords.add(endPoint.getNodeCoordinate(datasetParameter.coordFactor));
                     interiors.add(toRing(scoords));
                 }
                                 
             }
             
-            outter = toRing(exterior);
+            outter = toRing(inbuild);
             geometry = GF.createPolygon(outter,interiors.toArray(new LinearRing[interiors.size()]));
         }
         
