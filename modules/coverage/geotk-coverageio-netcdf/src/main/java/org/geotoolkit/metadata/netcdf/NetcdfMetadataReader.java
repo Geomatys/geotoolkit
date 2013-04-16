@@ -100,7 +100,7 @@ import org.geotoolkit.referencing.adapters.NetcdfCRSBuilder;
 import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
 import org.geotoolkit.resources.Errors;
 
-import static org.geotoolkit.util.SimpleInternationalString.wrap;
+import static org.apache.sis.util.iso.Types.toInternationalString;
 
 
 /**
@@ -593,7 +593,7 @@ public class NetcdfMetadataReader extends NetcdfMetadata {
             if (individualName != null || organisationName != null || contact != null) { // Do not test role.
                 final DefaultResponsibleParty np = new DefaultResponsibleParty(role);
                 np.setIndividualName(individualName);
-                np.setOrganisationName(wrap(organisationName));
+                np.setOrganisationName(toInternationalString(organisationName));
                 np.setContactInfo(contact);
                 party = np;
             }
@@ -644,7 +644,7 @@ public class NetcdfMetadataReader extends NetcdfMetadata {
                 addIfAbsent(citation.getCitedResponsibleParties(), contributor);
             }
         }
-        citation.setOtherCitationDetails(wrap(references));
+        citation.setOtherCitationDetails(toInternationalString(references));
         return citation.isEmpty() ? null : citation;
     }
 
@@ -701,7 +701,7 @@ public class NetcdfMetadataReader extends NetcdfMetadata {
                     hasExtent = true;
                 }
             }
-            project = addIfNonNull(project, wrap(getStringValue(group, PROJECT)));
+            project = addIfNonNull(project, toInternationalString(getStringValue(group, PROJECT)));
         }
         final Citation citation = createCitation(identifier);
         final String   summary  = getStringValue(SUMMARY);
@@ -713,14 +713,14 @@ public class NetcdfMetadataReader extends NetcdfMetadata {
             identification = new DefaultDataIdentification();
         }
         identification.setCitation(citation);
-        identification.setAbstract(wrap(summary));
-        identification.setPurpose (wrap(purpose));
+        identification.setAbstract(toInternationalString(summary));
+        identification.setPurpose (toInternationalString(purpose));
         if (pointOfContact != null) {
             identification.getPointOfContacts().add(pointOfContact);
         }
         addKeywords(identification, project,   "project"); // Not necessarily the same string than PROJECT.
         addKeywords(identification, publisher, "dataCenter");
-        identification.setSupplementalInformation(wrap(getStringValue(COMMENT)));
+        identification.setSupplementalInformation(toInternationalString(getStringValue(COMMENT)));
         return identification;
     }
 
@@ -752,7 +752,7 @@ public class NetcdfMetadataReader extends NetcdfMetadata {
             for (String keyword : list.split(getKeywordSeparator(group))) {
                 keyword = keyword.trim();
                 if (!keyword.isEmpty()) {
-                    words.add(wrap(keyword));
+                    words.add(toInternationalString(keyword));
                 }
             }
             if (!words.isEmpty()) {
@@ -1047,7 +1047,7 @@ public class NetcdfMetadataReader extends NetcdfMetadata {
         }
         String descriptor = variable.getDescription();
         if (descriptor != null && !(descriptor = descriptor.trim()).isEmpty() && !descriptor.equals(name)) {
-            band.setDescriptor(wrap(descriptor));
+            band.setDescriptor(toInternationalString(descriptor));
         }
 //TODO: Can't store the units, because the Band interface restricts it to length.
 //      We need the SampleDimension interface proposed in ISO 19115 revision draft.
@@ -1074,8 +1074,8 @@ public class NetcdfMetadataReader extends NetcdfMetadata {
     {
         if (name != null && meaning != null) {
             final DefaultRangeElementDescription element = new DefaultRangeElementDescription();
-            element.setName(wrap(name));
-            element.setDefinition(wrap(meaning));
+            element.setName(toInternationalString(name));
+            element.setDefinition(toInternationalString(meaning));
             // TODO: create a record from values (and possibly from the masks).
             //       if (pixel & mask == value) then we have that range element.
             return element;
@@ -1142,14 +1142,14 @@ public class NetcdfMetadataReader extends NetcdfMetadata {
                 // TODO: There is some transfert option, etc. that we could set there.
                 // See UnidataDD2MI.xsl for options for OPeNDAP, THREDDS, etc.
                 addIfAbsent(distribution.getDistributors(), distributor);
-                publisher = addIfNonNull(publisher, wrap(party.getIndividualName()));
+                publisher = addIfNonNull(publisher, toInternationalString(party.getIndividualName()));
             }
             // Also add history.
             final String history = getStringValue(HISTORY);
             if (history != null) {
                 final DefaultDataQuality quality = new DefaultDataQuality();
                 final DefaultLineage lineage = new DefaultLineage();
-                lineage.setStatement(wrap(history));
+                lineage.setStatement(toInternationalString(history));
                 quality.setLineage(lineage);
                 addIfAbsent(metadata.getDataQualityInfo(), quality);
             }

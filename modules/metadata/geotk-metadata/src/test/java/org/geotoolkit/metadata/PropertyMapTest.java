@@ -33,7 +33,7 @@ import org.opengis.metadata.extent.GeographicDescription;
 
 import org.geotoolkit.test.Depend;
 import org.geotoolkit.test.Commons;
-import org.geotoolkit.util.SimpleInternationalString;
+import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.metadata.iso.citation.DefaultCitation;
 import org.geotoolkit.metadata.iso.citation.DefaultResponsibleParty;
 import org.geotoolkit.metadata.iso.extent.AbstractGeographicExtent;

@@ -13,7 +13,7 @@ import org.opengis.metadata.citation.Citation;
 import org.opengis.metadata.citation.PresentationForm;
 
 import org.geotoolkit.xml.XML;
-import org.geotoolkit.util.SimpleInternationalString;
+import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.metadata.iso.citation.DefaultCitation;
 import org.geotoolkit.metadata.iso.citation.DefaultResponsibleParty;
 

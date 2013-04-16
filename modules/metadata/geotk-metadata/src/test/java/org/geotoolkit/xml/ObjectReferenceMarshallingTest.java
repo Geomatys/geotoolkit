@@ -30,7 +30,7 @@ import org.geotoolkit.test.TestBase;
 import org.apache.sis.xml.XLink;
 import org.apache.sis.util.ComparisonMode;
 import org.apache.sis.util.LenientComparable;
-import org.geotoolkit.util.SimpleInternationalString;
+import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.metadata.iso.citation.DefaultSeries;
 import org.geotoolkit.metadata.iso.citation.DefaultCitation;
 import org.geotoolkit.internal.jaxb.gco.ObjectIdentification;

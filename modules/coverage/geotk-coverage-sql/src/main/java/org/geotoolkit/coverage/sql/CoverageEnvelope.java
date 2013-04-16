@@ -35,7 +35,7 @@ import org.opengis.referencing.crs.SingleCRS;
 import org.geotoolkit.util.Cloneable;
 import org.geotoolkit.util.DateRange;
 import org.geotoolkit.util.NumberRange;
-import org.geotoolkit.geometry.GeneralEnvelope;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.geometry.AbstractEnvelope;
 import org.geotoolkit.display.shape.XRectangle2D;
 import org.geotoolkit.display.shape.FloatDimension2D;

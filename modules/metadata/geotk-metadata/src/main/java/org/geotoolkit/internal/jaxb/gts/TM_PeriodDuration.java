@@ -30,7 +30,7 @@ import org.geotoolkit.factory.FactoryNotFoundException;
 import org.geotoolkit.internal.TemporalUtilities;
 import org.geotoolkit.internal.jaxb.XmlUtilities;
 import org.geotoolkit.internal.jaxb.gco.PropertyType;
-import org.geotoolkit.util.SimpleInternationalString;
+import org.apache.sis.util.iso.SimpleInternationalString;
 
 import static org.geotoolkit.internal.jaxb.referencing.TM_Primitive.log;
 

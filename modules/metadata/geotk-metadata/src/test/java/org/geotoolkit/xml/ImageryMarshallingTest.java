@@ -20,7 +20,7 @@ package org.geotoolkit.xml;
 import java.util.Arrays;
 import javax.xml.bind.JAXBException;
 import org.geotoolkit.test.TestBase;
-import org.geotoolkit.util.SimpleInternationalString;
+import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.metadata.iso.DefaultIdentifier;
 import org.geotoolkit.metadata.iso.lineage.DefaultSource;
 import org.geotoolkit.metadata.iso.lineage.DefaultLineage;

@@ -17,17 +17,9 @@
  */
 package org.geotoolkit.util;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.util.Locale;
-import java.util.Objects;
 import net.jcip.annotations.Immutable;
-
 import org.opengis.util.InternationalString;
-
-import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 
 
 /**
@@ -45,7 +37,7 @@ import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
  */
 @Deprecated
 @Immutable
-public class SimpleInternationalString extends AbstractInternationalString implements Serializable {
+public class SimpleInternationalString extends org.apache.sis.util.iso.SimpleInternationalString {
     /**
      * Serial number for inter-operability with different versions.
      */
@@ -57,8 +49,7 @@ public class SimpleInternationalString extends AbstractInternationalString imple
      * @param message The string for all locales.
      */
     public SimpleInternationalString(final String message) {
-        ensureNonNull("message", message);
-        defaultValue = message;
+        super(message);
     }
 
     /**
@@ -103,60 +94,5 @@ public class SimpleInternationalString extends AbstractInternationalString imple
             copy[i] = wrap(strings[i]);
         }
         return copy;
-    }
-
-    /**
-     * Returns the string representation, which is unique for all locales.
-     */
-    @Override
-    public String toString() {
-        return defaultValue;
-    }
-
-    /**
-     * Returns the same string for all locales. This is the string given to the constructor.
-     */
-    @Override
-    public String toString(final Locale locale) {
-        return defaultValue;
-    }
-
-    /**
-     * Compares this international string with the specified object for equality.
-     *
-     * @param object The object to compare with this international string.
-     * @return {@code true} if the given object is equal to this string.
-     */
-    @Override
-    public boolean equals(final Object object) {
-        if (object != null && object.getClass() == getClass()) {
-            final SimpleInternationalString that = (SimpleInternationalString) object;
-            return Objects.equals(this.defaultValue, that.defaultValue);
-        }
-        return false;
-    }
-
-    /**
-     * Returns a hash code value for this international text.
-     */
-    @Override
-    public int hashCode() {
-        return (int) serialVersionUID ^ defaultValue.hashCode();
-    }
-
-    /**
-     * Write the string. This is required since {@link #defaultValue} is not serialized.
-     */
-    private void writeObject(final ObjectOutputStream out) throws IOException {
-        out.defaultWriteObject();
-        out.writeUTF(defaultValue);
-    }
-
-    /**
-     * Read the string. This is required since {@link #defaultValue} is not serialized.
-     */
-    private void readObject(final ObjectInputStream in) throws IOException, ClassNotFoundException {
-        in.defaultReadObject();
-        defaultValue = in.readUTF();
     }
 }

@@ -39,7 +39,7 @@ import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.util.InternationalString;
 
-import org.geotoolkit.geometry.GeneralDirectPosition;
+import org.apache.sis.geometry.GeneralDirectPosition;
 import org.geotoolkit.referencing.operation.matrix.Matrix1;
 import org.geotoolkit.io.wkt.UnformattableObjectException;
 import org.geotoolkit.resources.Errors;

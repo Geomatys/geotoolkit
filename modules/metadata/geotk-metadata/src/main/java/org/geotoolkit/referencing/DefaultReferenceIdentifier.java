@@ -39,7 +39,7 @@ import org.opengis.util.InternationalString;
 
 import org.geotoolkit.xml.Namespaces;
 import org.apache.sis.util.Deprecable;
-import org.geotoolkit.util.DefaultInternationalString;
+import org.apache.sis.util.iso.DefaultInternationalString;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.internal.jaxb.metadata.CI_Citation;
@@ -51,6 +51,7 @@ import org.geotoolkit.resources.Errors;
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 import static org.opengis.referencing.IdentifiedObject.NAME_KEY;
 import static org.opengis.referencing.IdentifiedObject.REMARKS_KEY;
+import org.apache.sis.util.Locales;
 
 
 /**
@@ -349,7 +350,10 @@ public class DefaultReferenceIdentifier implements ReferenceIdentifier, Deprecab
                         localized = new DefaultInternationalString();
                     }
                 }
-                localized.add(REMARKS_KEY, key, value.toString());
+                final Locale locale = Locales.parseSuffix(REMARKS_KEY, key);
+                if (locale != null) {
+                    localized.add(locale, value.toString());
+                }
             }
         }
         /*

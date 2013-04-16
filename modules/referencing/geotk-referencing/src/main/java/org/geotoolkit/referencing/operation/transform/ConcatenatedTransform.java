@@ -33,7 +33,7 @@ import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
 
-import org.geotoolkit.geometry.GeneralDirectPosition;
+import org.apache.sis.geometry.GeneralDirectPosition;
 import org.geotoolkit.referencing.operation.matrix.XMatrix;
 import org.geotoolkit.referencing.operation.matrix.Matrices;
 import org.geotoolkit.referencing.operation.MathTransforms;
@@ -888,7 +888,7 @@ public class ConcatenatedTransform extends AbstractMathTransform implements Seri
      */
     @Override
     public Matrix derivative(final Point2D point) throws TransformException {
-        return derivative(new GeneralDirectPosition(point));
+        return derivative(new GeneralDirectPosition(point.getX(), point.getY()));
     }
 
     /**

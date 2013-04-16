@@ -20,7 +20,7 @@ package org.geotoolkit.xml;
 import java.util.Locale;
 import javax.xml.bind.JAXBException;
 import org.opengis.metadata.citation.Citation;
-import org.geotoolkit.util.DefaultInternationalString;
+import org.apache.sis.util.iso.DefaultInternationalString;
 import org.geotoolkit.test.TestBase;
 
 import org.junit.*;

@@ -25,6 +25,7 @@ import java.util.Set;
 import java.util.Iterator;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.io.Serializable;
@@ -46,10 +47,11 @@ import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.ReferenceIdentifier;
 import org.opengis.parameter.InvalidParameterValueException;
 
+import static org.opengis.referencing.IdentifiedObject.REMARKS_KEY;
 import org.apache.sis.util.Deprecable;
 import org.apache.sis.util.ComparisonMode;
 import org.apache.sis.util.LenientComparable;
-import org.geotoolkit.util.DefaultInternationalString;
+import org.apache.sis.util.iso.DefaultInternationalString;
 import org.geotoolkit.util.logging.Logging;
 import org.apache.sis.util.Classes;
 import org.geotoolkit.internal.jaxb.gco.StringConverter;
@@ -65,6 +67,7 @@ import static org.apache.sis.util.Utilities.deepEquals;
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 import static org.geotoolkit.internal.InternalUtilities.nonEmptySet;
 import static org.geotoolkit.internal.referencing.CRSUtilities.getReferencingGroup;
+import org.apache.sis.util.Locales;
 
 
 /**
@@ -362,7 +365,9 @@ nextKey:for (final Map.Entry<String,?> entry : properties.entrySet()) {
                         i18n = new DefaultInternationalString();
                     }
                 }
-                if (i18n.add(REMARKS_KEY, key, value.toString())) {
+                final Locale locale = Locales.parseSuffix(REMARKS_KEY, key);
+                if (locale != null) {
+                    i18n.add(locale, value.toString());
                     continue nextKey;
                 }
             }
@@ -393,7 +398,9 @@ nextKey:for (final Map.Entry<String,?> entry : properties.entrySet()) {
                                 sub_i18n[i] = new DefaultInternationalString();
                             }
                         }
-                        if (sub_i18n[i].add(prefix, key, value.toString())) {
+                        final Locale locale = Locales.parseSuffix(prefix, key);
+                        if (locale != null) {
+                            sub_i18n[i].add(locale, value.toString());
                             continue nextKey;
                         }
                     }

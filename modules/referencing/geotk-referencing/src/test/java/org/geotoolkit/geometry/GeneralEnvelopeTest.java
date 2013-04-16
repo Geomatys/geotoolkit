@@ -21,6 +21,8 @@ import org.opengis.geometry.Envelope;
 import org.opengis.geometry.DirectPosition;
 
 import org.apache.sis.math.MathFunctions;
+import org.apache.sis.geometry.Envelope2D;
+import org.apache.sis.geometry.DirectPosition2D;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 
 import org.junit.*;
@@ -483,7 +485,6 @@ public final strictfp class GeneralEnvelopeTest {
     public void testWktFormatting() {
         Envelope2D envelope2D = new Envelope2D(null, -180, -90, 360, 180);
         assertEquals("BOX(-180 -90, 180 90)", envelope2D.toString());
-        assertEquals("POLYGON((-180 -90, -180 90, 180 90, 180 -90, -180 -90))", Envelopes.toPolygonWKT(envelope2D));
 
         GeneralEnvelope envelope = new GeneralEnvelope(3);
         envelope.setRange(0, -180, +180);

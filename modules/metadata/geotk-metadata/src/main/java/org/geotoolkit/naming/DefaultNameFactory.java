@@ -39,8 +39,8 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.Factory;
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.util.NullArgumentException;
-import org.geotoolkit.util.SimpleInternationalString;
-import org.geotoolkit.util.DefaultInternationalString;
+import org.apache.sis.util.iso.SimpleInternationalString;
+import org.apache.sis.util.iso.DefaultInternationalString;
 import org.apache.sis.util.collection.WeakHashSet;
 import org.geotoolkit.metadata.iso.citation.Citations;
 

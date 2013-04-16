@@ -21,6 +21,7 @@ import java.awt.geom.Rectangle2D;
 
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.DirectPosition;
+import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.geometry.MismatchedReferenceSystemException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
@@ -121,6 +122,46 @@ abstract class AbstractEnvelope extends org.apache.sis.geometry.AbstractEnvelope
             return (AbstractEnvelope) envelope;
         }
         return new GeneralEnvelope(envelope);
+    }
+
+    /**
+     * Convenience method for checking coordinate reference system validity.
+     *
+     * @param  crs The coordinate reference system to check.
+     * @param  expected the dimension expected.
+     * @throws MismatchedDimensionException if the CRS dimension is not valid.
+     */
+    static void checkCoordinateReferenceSystemDimension(final CoordinateReferenceSystem crs,
+                                                        final int expected)
+            throws MismatchedDimensionException
+    {
+        if (crs != null) {
+            final int dimension = crs.getCoordinateSystem().getDimension();
+            if (dimension != expected) {
+                throw new MismatchedDimensionException(Errors.format(Errors.Keys.MISMATCHED_DIMENSION_$3,
+                          crs.getName().getCode(), dimension, expected));
+            }
+        }
+    }
+
+    /**
+     * Convenience method for checking object dimension validity.
+     * This method is usually invoked for argument checking.
+     *
+     * @param  name The name of the argument to check.
+     * @param  dimension The object dimension.
+     * @param  expectedDimension The Expected dimension for the object.
+     * @throws MismatchedDimensionException if the object doesn't have the expected dimension.
+     */
+    static void ensureDimensionMatch(final String name,
+                                     final int dimension,
+                                     final int expectedDimension)
+            throws MismatchedDimensionException
+    {
+        if (dimension != expectedDimension) {
+            throw new MismatchedDimensionException(Errors.format(Errors.Keys.MISMATCHED_DIMENSION_$3,
+                        name, dimension, expectedDimension));
+        }
     }
 
     /**

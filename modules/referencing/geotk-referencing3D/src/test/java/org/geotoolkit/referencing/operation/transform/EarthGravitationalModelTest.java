@@ -30,7 +30,7 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.test.referencing.TransformTestCase;
 
 import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.geometry.GeneralDirectPosition;
+import org.apache.sis.geometry.GeneralDirectPosition;
 import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
 
 import org.junit.*;

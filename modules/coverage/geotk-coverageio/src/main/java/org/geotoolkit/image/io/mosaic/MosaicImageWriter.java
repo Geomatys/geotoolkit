@@ -51,7 +51,7 @@ import java.lang.reflect.UndeclaredThrowableException;
 
 import org.apache.sis.math.MathFunctions;
 import org.apache.sis.util.ArraysExt;
-import org.geotoolkit.util.Version;
+import org.geotoolkit.util.Utilities;
 import org.apache.sis.util.Disposable;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.logging.LogProducer;
@@ -1703,7 +1703,7 @@ search: for (final Tile tile : tiles) {
          */
         public Spi() {
             vendorName      = "Geotoolkit.org";
-            version         = Version.GEOTOOLKIT.toString();
+            version         = Utilities.VERSION.toString();
             names           = MosaicImageReader.Spi.NAMES;
             pluginClassName = "org.geotoolkit.image.io.mosaic.MosaicImageWriter";
         }

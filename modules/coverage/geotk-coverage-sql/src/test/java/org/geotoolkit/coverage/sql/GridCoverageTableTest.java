@@ -31,7 +31,7 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.metadata.extent.GeographicBoundingBox;
 
 import org.geotoolkit.test.Depend;
-import org.geotoolkit.geometry.GeneralEnvelope;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.image.io.mosaic.TileManager;
 import org.geotoolkit.internal.sql.table.CatalogTestBase;

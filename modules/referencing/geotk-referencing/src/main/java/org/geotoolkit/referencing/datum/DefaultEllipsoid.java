@@ -36,7 +36,7 @@ import net.jcip.annotations.Immutable;
 
 import org.opengis.referencing.datum.Ellipsoid;
 
-import org.geotoolkit.geometry.DirectPosition2D;
+import org.apache.sis.geometry.DirectPosition2D;
 import org.geotoolkit.internal.jaxb.referencing.SecondDefiningParameter;
 import org.geotoolkit.internal.jaxb.gco.Measure;
 import org.geotoolkit.internal.referencing.CRSUtilities;

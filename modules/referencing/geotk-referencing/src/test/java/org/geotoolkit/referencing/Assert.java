@@ -30,7 +30,7 @@ import org.geotoolkit.io.wkt.Convention;
 import org.geotoolkit.io.wkt.WKTFormat;
 import org.geotoolkit.io.wkt.FormattableObject;
 import org.apache.sis.geometry.AbstractEnvelope;
-import org.geotoolkit.geometry.GeneralDirectPosition;
+import org.apache.sis.geometry.GeneralDirectPosition;
 import org.geotoolkit.referencing.operation.transform.LinearTransform;
 
 import static java.lang.StrictMath.*;

@@ -23,7 +23,7 @@ import net.jcip.annotations.ThreadSafe;
 import org.opengis.util.InternationalString;
 
 import org.apache.sis.util.Localized;
-import org.geotoolkit.util.SimpleInternationalString;
+import org.apache.sis.util.iso.SimpleInternationalString;
 
 
 /**

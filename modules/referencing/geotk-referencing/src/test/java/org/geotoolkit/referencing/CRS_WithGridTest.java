@@ -22,8 +22,8 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import org.geotoolkit.internal.io.Installation;
-import org.geotoolkit.geometry.GeneralEnvelope;
-import org.geotoolkit.geometry.DirectPosition2D;
+import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.geometry.DirectPosition2D;
 
 import org.geotoolkit.test.Depend;
 import org.geotoolkit.test.referencing.ReferencingTestBase;

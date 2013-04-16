@@ -558,7 +558,8 @@ public class GridCoverage2D extends AbstractGridCoverage implements RenderedCove
                 } catch (TransformException exception) {
                     throw new CannotEvaluateException(formatEvaluateError(point, false), exception);
                 }
-                return arbitraryToInternal.toPoint2D();
+                return new Point2D.Double(arbitraryToInternal.getOrdinate(0),
+                                          arbitraryToInternal.getOrdinate(1));
             }
         }
         /*

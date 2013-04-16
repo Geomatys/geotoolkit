@@ -23,7 +23,7 @@ import java.util.TimeZone;
 
 import org.opengis.geometry.MismatchedDimensionException;
 
-import org.geotoolkit.geometry.GeneralDirectPosition;
+import org.apache.sis.geometry.GeneralDirectPosition;
 import org.geotoolkit.referencing.cs.DefaultTimeCS;
 import org.geotoolkit.referencing.crs.AbstractCRS;
 import org.geotoolkit.referencing.crs.DefaultCompoundCRS;

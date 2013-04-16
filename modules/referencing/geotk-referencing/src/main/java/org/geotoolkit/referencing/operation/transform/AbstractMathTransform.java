@@ -47,7 +47,7 @@ import org.opengis.parameter.ParameterValueGroup;
 
 import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.io.wkt.FormattableObject;
-import org.geotoolkit.geometry.GeneralDirectPosition;
+import org.apache.sis.geometry.GeneralDirectPosition;
 import org.geotoolkit.display.shape.ShapeUtilities;
 import org.geotoolkit.referencing.operation.matrix.Matrices;
 import org.apache.sis.util.Classes;

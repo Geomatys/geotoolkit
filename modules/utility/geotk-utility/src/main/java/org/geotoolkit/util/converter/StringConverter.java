@@ -30,7 +30,7 @@ import org.apache.sis.util.Locales;
 import org.apache.sis.util.iso.Types;
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.internal.InternalUtilities;
-import org.geotoolkit.util.SimpleInternationalString;
+import org.apache.sis.util.iso.SimpleInternationalString;
 
 
 /**

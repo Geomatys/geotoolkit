@@ -40,7 +40,7 @@ import org.apache.sis.measure.Longitude;
 import org.apache.sis.measure.AngleFormat;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.GeodeticCalculator;
-import org.geotoolkit.geometry.GeneralDirectPosition;
+import org.apache.sis.geometry.GeneralDirectPosition;
 import org.geotoolkit.resources.Errors;
 
 

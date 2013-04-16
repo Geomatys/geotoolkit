@@ -31,7 +31,7 @@ import org.apache.sis.math.Statistics;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.factory.AbstractAuthorityFactory;
-import org.geotoolkit.geometry.DirectPosition2D;
+import org.apache.sis.geometry.DirectPosition2D;
 
 import static org.junit.Assert.*;
 import static java.lang.StrictMath.*;

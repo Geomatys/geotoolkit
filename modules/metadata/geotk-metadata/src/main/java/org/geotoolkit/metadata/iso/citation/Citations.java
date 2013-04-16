@@ -30,7 +30,7 @@ import org.opengis.metadata.citation.PresentationForm;
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.resources.Vocabulary;
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.util.SimpleInternationalString;
+import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.metadata.iso.DefaultIdentifier;
 import org.geotoolkit.xml.IdentifierSpace;
 

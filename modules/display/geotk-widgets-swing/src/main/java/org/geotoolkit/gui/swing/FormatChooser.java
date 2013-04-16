@@ -46,7 +46,7 @@ import java.awt.event.ActionListener;
 import org.apache.sis.measure.Angle;
 import org.apache.sis.measure.AngleFormat;
 import org.geotoolkit.measure.CoordinateFormat;
-import org.geotoolkit.geometry.GeneralDirectPosition;
+import org.apache.sis.geometry.GeneralDirectPosition;
 import org.geotoolkit.internal.swing.SwingUtilities;
 import org.apache.sis.util.Classes;
 import org.geotoolkit.resources.Vocabulary;

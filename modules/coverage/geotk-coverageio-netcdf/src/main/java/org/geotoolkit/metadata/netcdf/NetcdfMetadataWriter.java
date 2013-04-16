@@ -51,7 +51,7 @@ import org.opengis.util.InternationalString;
 import org.opengis.util.CodeList;
 
 import org.apache.sis.util.CharSequences;
-import org.geotoolkit.util.Version;
+import org.geotoolkit.util.Utilities;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.image.io.WarningProducer;
 import org.apache.sis.util.iso.Types;
@@ -886,7 +886,7 @@ nextDate:       for (final CitationDate date : nonNull(citation.getDates())) {
                 }
             }
             if (history.length() == 0) {
-                history.append("Created by Geotoolkit.org version ").append(Version.GEOTOOLKIT);
+                history.append("Created by Geotoolkit.org version ").append(Utilities.VERSION);
             }
             setAttribute(history.toString());
         }

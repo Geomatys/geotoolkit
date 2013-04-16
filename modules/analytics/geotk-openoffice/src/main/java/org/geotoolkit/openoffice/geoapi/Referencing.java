@@ -52,7 +52,7 @@ import org.geotoolkit.io.wkt.Convention;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.operation.AbstractCoordinateOperation;
-import org.geotoolkit.geometry.GeneralDirectPosition;
+import org.apache.sis.geometry.GeneralDirectPosition;
 import org.geotoolkit.metadata.iso.extent.DefaultExtent;
 import org.geotoolkit.openoffice.MethodInfo;
 import org.geotoolkit.openoffice.Formulas;

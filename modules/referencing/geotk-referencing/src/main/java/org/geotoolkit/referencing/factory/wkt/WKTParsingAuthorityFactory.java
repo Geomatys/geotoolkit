@@ -45,7 +45,7 @@ import org.geotoolkit.io.wkt.WKTFormat;
 import org.geotoolkit.io.wkt.ReferencingParser;
 import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.util.collection.DerivedSet;
-import org.geotoolkit.util.SimpleInternationalString;
+import org.apache.sis.util.iso.SimpleInternationalString;
 import org.apache.sis.util.collection.BackingStoreException;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.metadata.iso.citation.DefaultCitation;

@@ -61,8 +61,8 @@ import org.geotoolkit.util.collection.FrequencySortedSet;
 import org.apache.sis.util.collection.BackingStoreException;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.Interpolator2D;
-import org.geotoolkit.geometry.GeneralDirectPosition;
-import org.geotoolkit.geometry.GeneralEnvelope;
+import org.apache.sis.geometry.GeneralDirectPosition;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.image.io.IIOListeners;
 import org.geotoolkit.image.io.IIOReadProgressAdapter;
 import org.geotoolkit.resources.Errors;
@@ -746,7 +746,7 @@ public class CoverageStack extends AbstractCoverage {
         } else {
             envelope = new GeneralEnvelope(zDimension + 1);
         }
-        envelope.setToNull();
+        envelope.setToNaN();
         /*
          * Computes a CRS without the z dimension (which is assumed to be the last one, as
          * specified in the javadoc). A coordinate operation is cached during the loop for

@@ -40,8 +40,8 @@ import org.geotoolkit.metadata.iso.citation.*;
 import org.geotoolkit.metadata.iso.distribution.*;
 import org.geotoolkit.metadata.iso.identification.*;
 import org.geotoolkit.metadata.MetadataStandardTest;
-import org.geotoolkit.util.DefaultInternationalString;
-import org.geotoolkit.util.SimpleInternationalString;
+import org.apache.sis.util.iso.DefaultInternationalString;
+import org.apache.sis.util.iso.SimpleInternationalString;
 
 import org.junit.*;
 

@@ -34,7 +34,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.coverage.AbstractCoverage;
-import org.geotoolkit.geometry.DirectPosition2D;
+import org.apache.sis.geometry.DirectPosition2D;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
 
 
@@ -441,7 +441,7 @@ public abstract class AbstractGridCoverage extends AbstractCoverage implements G
      * @since 2.5
      */
     protected String formatEvaluateError(final Point2D point, final boolean outside) {
-        return formatEvaluateError((DirectPosition) new DirectPosition2D(point), outside);
+        return formatEvaluateError((DirectPosition) new DirectPosition2D(point.getX(), point.getY()), outside);
     }
 
     /**
@@ -470,7 +470,7 @@ public abstract class AbstractGridCoverage extends AbstractCoverage implements G
      * @return The coordinate point as a string, without '(' or ')' characters.
      */
     static String toString(final Point2D point, final Locale locale) {
-        return toString((DirectPosition) new DirectPosition2D(point), locale);
+        return toString((DirectPosition) new DirectPosition2D(point.getX(), point.getY()), locale);
     }
 
     /**

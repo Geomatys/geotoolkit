@@ -41,10 +41,10 @@ import org.opengis.coverage.grid.GridEnvelope;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.logging.Logging;
 import org.apache.sis.util.Classes;
-import org.geotoolkit.util.SimpleInternationalString;
+import org.apache.sis.util.iso.Types;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.geotoolkit.coverage.grid.GeneralGridCoordinates;
-import org.geotoolkit.geometry.GeneralDirectPosition;
+import org.apache.sis.geometry.GeneralDirectPosition;
 import org.geotoolkit.resources.Errors;
 
 
@@ -428,7 +428,7 @@ final class MetadataProxy<T> implements InvocationHandler {
         if (targetType.isAssignableFrom(NumberRange.class)) return accessor.getAttributeAsRange   (name);
         if (targetType.isAssignableFrom(Citation   .class)) return accessor.getAttributeAsCitation(name);
         if (targetType.isAssignableFrom(InternationalString.class)) {
-            return SimpleInternationalString.wrap(accessor.getAttribute(name));
+            return Types.toInternationalString(accessor.getAttribute(name));
         }
         if (targetType.isAssignableFrom(Unit.class)) {
             final Class<?> bounds = Classes.boundOfParameterizedProperty(method);
@@ -461,7 +461,7 @@ final class MetadataProxy<T> implements InvocationHandler {
                 return UnmodifiableArrayList.wrap(accessor.getAttributeAsStrings(name, false));
             }
             if (componentType.isAssignableFrom(InternationalString.class)) {
-                return UnmodifiableArrayList.wrap(SimpleInternationalString.wrap(
+                return UnmodifiableArrayList.wrap(Types.toInternationalStrings(
                         accessor.getAttributeAsStrings(name, false)));
             }
             if (componentType.isAssignableFrom(Citation.class)) {

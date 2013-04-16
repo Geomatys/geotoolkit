@@ -26,7 +26,7 @@ import org.opengis.metadata.citation.ResponsibleParty;
 import org.opengis.metadata.citation.PresentationForm;
 
 import org.geotoolkit.metadata.iso.DefaultIdentifier;
-import org.geotoolkit.util.SimpleInternationalString;
+import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.xml.IdentifierSpace;
 
 import static java.util.Collections.singleton;

@@ -27,8 +27,8 @@ import java.sql.PreparedStatement;
 import java.awt.geom.Rectangle2D;
 
 import org.geotoolkit.util.DateRange;
-import org.geotoolkit.geometry.Envelopes;
-import org.geotoolkit.geometry.Envelope2D;
+import org.apache.sis.geometry.Envelopes;
+import org.apache.sis.geometry.Envelope2D;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.display.shape.XRectangle2D;
 import org.geotoolkit.coverage.sql.CoverageEnvelope;
