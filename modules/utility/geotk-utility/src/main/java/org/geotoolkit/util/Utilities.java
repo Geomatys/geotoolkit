@@ -20,7 +20,7 @@ package org.geotoolkit.util;
 import java.util.Arrays;
 import java.io.Serializable;
 import org.geotoolkit.lang.Static;
-
+import org.apache.sis.util.Version;
 
 /**
  * Miscellaneous methods.
@@ -45,6 +45,11 @@ public final class Utilities extends Static {
      * (Josh Bloch, <cite>Effective Java</cite>).
      */
     private static final int PRIME_NUMBER = 31;
+
+    /**
+     * The version of this Geotoolkit.org distribution.
+     */
+    public static final Version VERSION = new Version("4.00-SNAPSHOT");
 
     /**
      * Forbid object creation.

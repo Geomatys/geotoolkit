@@ -85,7 +85,7 @@ public final strictfp class CRS_WithGridTest extends ReferencingTestBase {
 
         final CoordinateReferenceSystem sourceCRS = CRS.decode("EPSG:2154");  // Réseau Géodésique Français 1993
         final CoordinateReferenceSystem targetCRS = CRS.decode("EPSG:27582"); // Nouvelle Triangulation Française (Paris)
-        final GeneralEnvelope source = new GeneralEnvelope("BOX2D(-2000000 4000000, 2000000 4000000)");
+        final GeneralEnvelope source = new GeneralEnvelope("BOX(-2000000 4000000, 2000000 4000000)");
         source.setCoordinateReferenceSystem(sourceCRS);
         final Envelope target = CRS.transform(source, targetCRS);
 

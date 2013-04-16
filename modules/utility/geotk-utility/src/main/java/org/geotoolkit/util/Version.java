@@ -53,7 +53,10 @@ public class Version extends org.apache.sis.util.Version implements CharSequence
 
     /**
      * The version of this Geotoolkit.org distribution.
+     *
+     * @deprecated Moved to {@link Utilities#VERSION.
      */
+    @Deprecated
     public static final Version GEOTOOLKIT = new Version("4.00-SNAPSHOT");
 
     /**

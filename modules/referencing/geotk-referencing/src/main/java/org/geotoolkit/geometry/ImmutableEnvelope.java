@@ -39,7 +39,10 @@ import static org.geotoolkit.geometry.AbstractDirectPosition.checkCoordinateRefe
  *
  * @since 3.00
  * @module
+ *
+ * @deprecated Moved to Apache SIS as {@link org.apache.sis.geometry.ImmutableEnvelope}.
  */
+@Deprecated
 @Immutable
 public final class ImmutableEnvelope extends ArrayEnvelope implements Serializable {
     /**

@@ -61,7 +61,10 @@ import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
  *
  * @since 2.1
  * @module
+ *
+ * @deprecated Moved to Apache SIS {@link org.apache.sis.util.iso.ResourceInternationalString}.
  */
+@Deprecated
 @Immutable
 public class ResourceInternationalString extends AbstractInternationalString implements Serializable {
     /**

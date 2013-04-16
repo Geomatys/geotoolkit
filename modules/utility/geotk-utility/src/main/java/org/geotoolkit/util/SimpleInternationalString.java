@@ -40,7 +40,10 @@ import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
  *
  * @since 2.1
  * @module
+ *
+ * @deprecated Moved to Apache SIS {@link org.apache.sis.util.iso.SimpleInternationalString}.
  */
+@Deprecated
 @Immutable
 public class SimpleInternationalString extends AbstractInternationalString implements Serializable {
     /**
