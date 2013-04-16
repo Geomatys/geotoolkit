@@ -27,8 +27,11 @@ package org.geotoolkit.metadata;
  *
  * @since 2.4
  * @module
+ *
+ * @deprecated Moved to Apache SIS as {@link org.apache.sis.metadata.UnmodifiableMetadataException}.
  */
-public class UnmodifiableMetadataException extends UnsupportedOperationException {
+@Deprecated
+public class UnmodifiableMetadataException extends org.apache.sis.metadata.UnmodifiableMetadataException {
     /**
      * For cross-version compatibility.
      */

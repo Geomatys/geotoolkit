@@ -48,7 +48,7 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.util.Localized;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.logging.LogProducer;
-import org.geotoolkit.util.logging.PerformanceLevel;
+import org.apache.sis.util.logging.PerformanceLevel;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.internal.referencing.CRSUtilities;

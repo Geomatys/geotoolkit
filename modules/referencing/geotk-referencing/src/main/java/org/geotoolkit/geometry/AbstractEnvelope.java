@@ -340,7 +340,7 @@ public abstract class AbstractEnvelope extends org.apache.sis.geometry.AbstractE
      * envelope in <cite>Well Known Text</cite> (WKT) format.
      *
      * @param  envelope The envelope to format.
-     * @return The envelope as a {@code BOX2D} or {@code BOX3D} in WKT format.
+     * @return The envelope as a {@code BOX} or {@code BOX3D}.
      *
      * @see GeneralEnvelope#GeneralEnvelope(String)
      * @see org.geotoolkit.measure.CoordinateFormat

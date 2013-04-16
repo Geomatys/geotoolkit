@@ -1221,7 +1221,7 @@ public final class Envelopes extends Static {
      * by the {@link GeneralEnvelope} constructor.
      *
      * @param  envelope The envelope to format.
-     * @return The envelope as a {@code BOX2D} or {@code BOX3D} in WKT format.
+     * @return The envelope as a {@code BOX} or {@code BOX3D}.
      *
      * @see #parseWKT(String)
      * @see org.geotoolkit.measure.CoordinateFormat
