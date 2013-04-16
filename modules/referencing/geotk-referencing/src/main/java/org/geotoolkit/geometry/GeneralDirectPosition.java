@@ -57,7 +57,10 @@ import org.geotoolkit.resources.Errors;
  *
  * @since 1.2
  * @module
+ *
+ * @deprecated Moved to Apache SIS as {@link org.apache.sis.geometry.GeneralDirectPosition}.
  */
+@Deprecated
 public class GeneralDirectPosition extends AbstractDirectPosition implements Serializable, Cloneable {
     /**
      * Serial number for inter-operability with different versions.

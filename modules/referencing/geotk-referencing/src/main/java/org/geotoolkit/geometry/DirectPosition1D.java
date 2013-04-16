@@ -38,7 +38,10 @@ import org.geotoolkit.resources.Errors;
  *
  * @since 2.0
  * @module
+ *
+ * @deprecated Moved to Apache SIS as {@link org.apache.sis.geometry.DirectPosition1D}.
  */
+@Deprecated
 public class DirectPosition1D extends AbstractDirectPosition implements Serializable, Cloneable {
     /**
      * Serial number for inter-operability with different versions.

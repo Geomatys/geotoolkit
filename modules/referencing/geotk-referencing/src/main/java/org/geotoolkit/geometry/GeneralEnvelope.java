@@ -114,7 +114,10 @@ import static org.apache.sis.math.MathFunctions.isSameSign;
  *
  * @since 1.2
  * @module
+ *
+ * @deprecated Moved to Apache SIS as {@link org.apache.sis.geometry.GeneralEnvelope}.
  */
+@Deprecated
 public class GeneralEnvelope extends ArrayEnvelope implements Cloneable, Serializable {
     /**
      * Serial number for inter-operability with different versions.
