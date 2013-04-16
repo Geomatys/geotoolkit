@@ -232,7 +232,10 @@ public final class Utilities extends Static {
      *
      * @param object The object to compute hash code. May be {@code null}.
      * @return The hash code of the given object.
+     *
+     * @deprecated Moved to Apache SIS {@link org.apache.sis.util.Utilities}.
      */
+    @Deprecated
     public static int deepHashCode(final Object object) {
         if (object == null) {
             return 0;
@@ -285,7 +288,10 @@ public final class Utilities extends Static {
      *
      * @param object The object to format as a string. May be {@code null}.
      * @return A string representation of the given object.
+     *
+     * @deprecated Moved to Apache SIS {@link org.apache.sis.util.Utilities}.
      */
+    @Deprecated
     public static String deepToString(final Object object) {
         if (object instanceof Object[]) {
             return Arrays.deepToString((Object[]) object);
