@@ -60,6 +60,8 @@ public class S57FeatureReader implements FeatureReader{
     //S-57 metadata/description records
     private DataSetIdentification datasetIdentification;
     private DataSetParameter datasetParameter;
+    private int coordFactor;
+    private int soundingFactor;
     // S-57 objects
     private final S57ModelObjectReader mreader;
     private final Map<Pointer,VectorRecord> spatials = new HashMap<Pointer,VectorRecord>();
@@ -73,6 +75,8 @@ public class S57FeatureReader implements FeatureReader{
         this.mreader = mreader;
         this.datasetIdentification = datasetIdentification;
         this.datasetParameter = datasetParameter;
+        this.coordFactor = datasetParameter.coordFactor;
+        this.soundingFactor = datasetParameter.soundingFactor;
                 
         for(PropertyDescriptor desc :type.getDescriptors()){
             Integer code = (Integer) desc.getUserData().get(S57FeatureStore.S57TYPECODE);
@@ -144,15 +148,11 @@ public class S57FeatureReader implements FeatureReader{
         }
         
     }
-    
-    private final List<Coordinate> coords = new ArrayList<Coordinate>();
-    private final List<LineString> lines = new ArrayList<LineString>();
-    private final List<LinearRing> interiors = new ArrayList<LinearRing>();
             
     private Feature toFeature(final FeatureRecord record){
         final Feature f =  FeatureUtilities.defaultFeature(type, String.valueOf(record.id));
-        System.out.println("-------");
-        System.out.println(record.id+" "+record.updateInstruction+" "+record.code+" "+record.identifier.number);
+        //System.out.println("-------");
+        //System.out.println(record.id+" "+record.updateInstruction+" "+record.code+" "+record.identifier.number);
         
         //read attributes
         for(FeatureRecord.Attribute att : record.attributes){
@@ -190,24 +190,22 @@ public class S57FeatureReader implements FeatureReader{
     }
         
     private Geometry rebuildSpaghetti(final FeatureRecord record){
-        coords.clear();
-        lines.clear();
-        interiors.clear();
         
         Geometry geometry = null;
         if(S57Constants.Primitive.PRIMITIVE_POINT == record.primitiveType){
+            final List<Coordinate> coords = new ArrayList<Coordinate>();
             for(FeatureRecord.SpatialPointer sp : record.spatialPointers){
                 final VectorRecord rec = spatials.get(sp);
-                fillCoordinates(rec, coords,false);
+                coords.addAll(rec.getCoordinates(coordFactor, soundingFactor));
             }
             if(!coords.isEmpty()){
                 geometry = GF.createMultiPoint(coords.toArray(new Coordinate[coords.size()]));
             }
         }else if(S57Constants.Primitive.PRIMITIVE_LINE == record.primitiveType){
+            final List<LineString> lines = new ArrayList<LineString>();
             for(FeatureRecord.SpatialPointer sp : record.spatialPointers){
-                coords.clear();
                 final VectorRecord rec = spatials.get(sp);
-                fillCoordinates(rec, coords,false);
+                final List<Coordinate> coords = rec.getCoordinates(coordFactor, soundingFactor);
                 if(coords.size() == 1){ //we need at least 2 points
                     coords.add((Coordinate)coords.get(0).clone());
                 }
@@ -220,26 +218,20 @@ public class S57FeatureReader implements FeatureReader{
                 geometry = GF.createMultiLineString(lines.toArray(new LineString[lines.size()]));
             }
         }else if(S57Constants.Primitive.PRIMITIVE_AREA == record.primitiveType){
+            final List<LinearRing> interiors = new ArrayList<LinearRing>();
             LinearRing exterior = null;
-            for(FeatureRecord.SpatialPointer sp : record.spatialPointers){
-                coords.clear();
+            for(FeatureRecord.SpatialPointer sp : record.spatialPointers){                
                 final VectorRecord rec = spatials.get(sp);
-                fillCoordinates(rec, coords,false);
+                final List<Coordinate> coords = rec.getCoordinates(coordFactor, soundingFactor);
                 
                 if(coords.isEmpty()){
                    //an empty ring ?
                     continue;
                 }
                 
-                while(coords.size() < 4 || !coords.get(0).equals2D(coords.get(coords.size()-1))){
-                    coords.add((Coordinate)coords.get(0).clone());
-                }
-                
-                final LinearRing ring = GF.createLinearRing(coords.toArray(new Coordinate[coords.size()]));
-                if(sp.usage == S57Constants.Usage.EXTERIOR){
+                final LinearRing ring = toRing(coords);
+                if(sp.usage == S57Constants.Usage.EXTERIOR || sp.usage == S57Constants.Usage.EXTERIOR_TRUNCATED){
                     exterior = ring;
-                }else if(sp.usage == S57Constants.Usage.EXTERIOR_TRUNCATED){
-                    throw new FeatureStoreRuntimeException("TRUNCATED segements not supported yet.");
                 }else{
                     interiors.add(ring);
                 }
@@ -255,39 +247,74 @@ public class S57FeatureReader implements FeatureReader{
     }
     
     private Geometry rebuildChained(final FeatureRecord record){
-        coords.clear();
-        lines.clear();
-        interiors.clear();
         
         Geometry geometry = null;
         if(S57Constants.Primitive.PRIMITIVE_POINT == record.primitiveType){
+            final List<Coordinate> coords = new ArrayList<Coordinate>();
             for(FeatureRecord.SpatialPointer sp : record.spatialPointers){
                 final VectorRecord rec = spatials.get(sp);
-                fillCoordinates(rec, coords,false);
+                coords.addAll(rec.getCoordinates(coordFactor, soundingFactor));
             }
             if(!coords.isEmpty()){
                 geometry = GF.createMultiPoint(coords.toArray(new Coordinate[coords.size()]));
             }
         }else if(S57Constants.Primitive.PRIMITIVE_LINE == record.primitiveType){
+            final List<Coordinate> inprogress = new ArrayList<Coordinate>();
+            Pointer startNode = null;
+            Pointer endNode = null;
+            
             for(FeatureRecord.SpatialPointer sp : record.spatialPointers){
-                coords.clear();
-                final VectorRecord rec = spatials.get(sp);
-                fillCoordinates(rec, coords,false);
-                if(coords.size() == 1){ //we need at least 2 points
-                    coords.add((Coordinate)coords.get(0).clone());
-                }
-                if(!coords.isEmpty()){
-                    final LineString line = GF.createLineString(coords.toArray(new Coordinate[coords.size()]));
-                    lines.add(line);
+                final VectorRecord edge = spatials.get(sp);
+                final Pointer edgeStart = edge.getEdgeBeginNode();
+                final Pointer edgeEnd = edge.getEdgeEndNode();
+                final VectorRecord startPoint = spatials.get(edgeStart);
+                final VectorRecord endPoint = spatials.get(edgeEnd);
+                final List<Coordinate> scoords = edge.getCoordinates(coordFactor,soundingFactor);
+                
+                if(startNode == null){
+                    //first exterior segment
+                    inprogress.addAll(scoords);
+                    startNode = edgeStart;
+                    endNode = edgeEnd;
+                    inprogress.add(0,startPoint.getNodeCoordinate(coordFactor));
+                    inprogress.add(endPoint.getNodeCoordinate(coordFactor));
+                }else{
+                    if(edgeStart.equals(startNode)){
+                        Collections.reverse(scoords);                            
+                        inprogress.addAll(0,scoords);
+                        inprogress.add(0,endPoint.getNodeCoordinate(coordFactor));
+                        startNode = edgeEnd;                            
+                    }else if(edgeStart.equals(endNode)){
+                        inprogress.addAll(scoords);
+                        inprogress.add(endPoint.getNodeCoordinate(coordFactor));
+                        endNode = edgeEnd;
+                    }else if(edgeEnd.equals(startNode)){
+                        inprogress.addAll(0,scoords);
+                        inprogress.add(0,startPoint.getNodeCoordinate(coordFactor));
+                        startNode = edgeStart;
+                    }else if(edgeEnd.equals(endNode)){
+                        Collections.reverse(scoords);
+                        inprogress.addAll(scoords);
+                        inprogress.add(startPoint.getNodeCoordinate(coordFactor));
+                        endNode = edgeStart;
+                    }else{
+                        throw new FeatureStoreRuntimeException("Segment not connected");
+                    }
                 }
             }
-            if(!lines.isEmpty()){
-                geometry = GF.createMultiLineString(lines.toArray(new LineString[lines.size()]));
+            
+            if(inprogress.size() == 1){ //we need at least 2 points
+                inprogress.add((Coordinate)inprogress.get(0).clone());
             }
+            if(!inprogress.isEmpty()){
+                geometry = GF.createLineString(inprogress.toArray(new Coordinate[inprogress.size()]));
+            }
+            
         }else if(S57Constants.Primitive.PRIMITIVE_AREA == record.primitiveType){
             
+            final List<LinearRing> interiors = new ArrayList<LinearRing>();
             LinearRing outter = null;
-            List<Coordinate> inbuild = new ArrayList<Coordinate>();
+            List<Coordinate> inprogress = new ArrayList<Coordinate>();
             Pointer startNode = null;
             Pointer endNode = null;
                         
@@ -297,50 +324,53 @@ public class S57FeatureReader implements FeatureReader{
                 final Pointer edgeEnd = edge.getEdgeEndNode();
                 final VectorRecord startPoint = spatials.get(edgeStart);
                 final VectorRecord endPoint = spatials.get(edgeEnd);
-                final List<Coordinate> scoords = edge.getEdgeCoordinates(datasetParameter.coordFactor);
+                final List<Coordinate> scoords = edge.getCoordinates(coordFactor,soundingFactor);
                              
-                if(sp.usage == S57Constants.Usage.EXTERIOR || sp.usage == S57Constants.Usage.EXTERIOR_TRUNCATED){
-                    
-                    if(startNode == null){
-                        //first exterior segment
-                        inbuild.addAll(scoords);
-                        startNode = edgeStart;
-                        endNode = edgeEnd;
-                        inbuild.add(0,startPoint.getNodeCoordinate(datasetParameter.coordFactor));
-                        inbuild.add(endPoint.getNodeCoordinate(datasetParameter.coordFactor));
-                    }else{
-                        if(edgeStart.equals(startNode)){
-                            Collections.reverse(scoords);                            
-                            inbuild.addAll(0,scoords);
-                            inbuild.add(0,endPoint.getNodeCoordinate(datasetParameter.coordFactor));
-                            startNode = edgeEnd;                            
-                        }else if(edgeStart.equals(endNode)){
-                            inbuild.addAll(scoords);
-                            inbuild.add(endPoint.getNodeCoordinate(datasetParameter.coordFactor));
-                            endNode = edgeEnd;
-                        }else if(edgeEnd.equals(startNode)){
-                            inbuild.addAll(0,scoords);
-                            inbuild.add(0,startPoint.getNodeCoordinate(datasetParameter.coordFactor));
-                            startNode = edgeStart;
-                        }else if(edgeEnd.equals(endNode)){
-                            Collections.reverse(scoords);
-                            inbuild.addAll(scoords);
-                            inbuild.add(startPoint.getNodeCoordinate(datasetParameter.coordFactor));
-                            endNode = edgeStart;
-                        }else{
-                            throw new FeatureStoreRuntimeException("Segment not connected");
-                        }
-                    }
-                    
+                if(startNode == null){
+                    //first exterior segment
+                    inprogress.addAll(scoords);
+                    startNode = edgeStart;
+                    endNode = edgeEnd;
+                    inprogress.add(0,startPoint.getNodeCoordinate(coordFactor));
+                    inprogress.add(endPoint.getNodeCoordinate(coordFactor));
                 }else{
-                    scoords.add(0,startPoint.getNodeCoordinate(datasetParameter.coordFactor));
-                    scoords.add(endPoint.getNodeCoordinate(datasetParameter.coordFactor));
-                    interiors.add(toRing(scoords));
+                    if(edgeStart.equals(startNode)){
+                        Collections.reverse(scoords);                            
+                        inprogress.addAll(0,scoords);
+                        inprogress.add(0,endPoint.getNodeCoordinate(coordFactor));
+                        startNode = edgeEnd;                            
+                    }else if(edgeStart.equals(endNode)){
+                        inprogress.addAll(scoords);
+                        inprogress.add(endPoint.getNodeCoordinate(coordFactor));
+                        endNode = edgeEnd;
+                    }else if(edgeEnd.equals(startNode)){
+                        inprogress.addAll(0,scoords);
+                        inprogress.add(0,startPoint.getNodeCoordinate(coordFactor));
+                        startNode = edgeStart;
+                    }else if(edgeEnd.equals(endNode)){
+                        Collections.reverse(scoords);
+                        inprogress.addAll(scoords);
+                        inprogress.add(startPoint.getNodeCoordinate(coordFactor));
+                        endNode = edgeStart;
+                    }else{
+                        throw new FeatureStoreRuntimeException("Segment not connected");
+                    }
                 }
-                                
+
+                if(startNode.equals(endNode)){
+                    //finish ring
+                    LinearRing ring = toRing(inprogress);
+                    if(sp.usage == S57Constants.Usage.EXTERIOR || sp.usage == S57Constants.Usage.EXTERIOR_TRUNCATED){
+                        outter = ring;
+                    }else{
+                        interiors.add(ring);
+                    }
+                    inprogress.clear();
+                    startNode = null;
+                    endNode = null;
+                }     
             }
             
-            outter = toRing(inbuild);
             geometry = GF.createPolygon(outter,interiors.toArray(new LinearRing[interiors.size()]));
         }
         
@@ -353,107 +383,6 @@ public class S57FeatureReader implements FeatureReader{
         }
         return GF.createLinearRing(coords.toArray(new Coordinate[coords.size()]));
     }
-    
-    /**
-     * 
-     * @param rec
-     * @param coords
-     * @param reverse insert at the begin in inverse order
-     */
-    private void fillCoordinates(VectorRecord rec, List<Coordinate> coords, boolean reverse){
-        if(reverse){
-            //insert in reverse order
-            for(int i=rec.coords2D.size()-1; i>=0; i--){
-                final VectorRecord.Coordinate2D c = rec.coords2D.get(i);
-                coords.add(0,new Coordinate(c.x/datasetParameter.coordFactor, c.y/datasetParameter.coordFactor));
-            }
-            for(int i=rec.coords3D.size()-1; i>=0; i--){
-                final VectorRecord.Coordinate3D c = rec.coords3D.get(i);
-                coords.add(0,new Coordinate(c.x/datasetParameter.coordFactor, c.y/datasetParameter.coordFactor, c.y/datasetParameter.soundingFactor));
-            }
-        }else{
-            for(int i=rec.coords2D.size()-1; i>=0; i--){
-                final VectorRecord.Coordinate2D c = rec.coords2D.get(i);
-                coords.add(0,new Coordinate(c.x/datasetParameter.coordFactor, c.y/datasetParameter.coordFactor));
-            }
-            for(int i=rec.coords3D.size()-1; i>=0; i--){
-                final VectorRecord.Coordinate3D c = rec.coords3D.get(i);
-                coords.add(0,new Coordinate(c.x/datasetParameter.coordFactor, c.y/datasetParameter.coordFactor, c.y/datasetParameter.soundingFactor));
-            }
-        }
-    }
-    
-    private List<Coordinate> fillCoordinates(VectorRecord edge){
-        System.out.println("== "+edge.id);
-        List<Coordinate> coords = new ArrayList<Coordinate>();
-        
-        fillCoordinates(edge, coords, false);
-        
-        //explore left side
-        Pointer leftPointer = edge.getEdgeBeginNode();
-        
-        if(leftPointer != null){
-            System.out.println("<< "+leftPointer);
-            VectorRecord leftspatial = spatials.get(leftPointer);
-            fillCoordinates(leftspatial, coords, true);
-        }
-        
-        //explore right side
-        Pointer rightPointer = edge.getEdgeEndNode();
-        if(rightPointer != null){
-            System.out.println(">> "+rightPointer);
-            VectorRecord rightspatial = spatials.get(rightPointer);
-            fillCoordinates(rightspatial, coords, false);
-        }
-        
-        return coords;
-    }
-    
-    
-//    private void fillCoordinates(VectorRecord rec, List<Coordinate> coords, Boolean forward, S57Constants.Mask mask){
-//        System.out.println("-> "+rec.id +" "+forward);
-//        
-//        if(mask == S57Constants.Mask.MASK){
-//            System.out.println(">>>>>>> ARGGGG");
-//        }
-//        if(forward!= null && !forward){
-//            //insert in reverse order
-//            for(int i=rec.coords2D.size()-1; i>=0; i--){
-//                final VectorRecord.Coordinate2D c = rec.coords2D.get(i);
-//                coords.add(0,new Coordinate(c.x/datasetParameter.coordFactor, c.y/datasetParameter.coordFactor));
-//            }
-//            for(int i=rec.coords3D.size()-1; i>=0; i--){
-//                final VectorRecord.Coordinate3D c = rec.coords3D.get(i);
-//                coords.add(0,new Coordinate(c.x/datasetParameter.coordFactor, c.y/datasetParameter.coordFactor, c.y/datasetParameter.soundingFactor));
-//            }
-//        }else{
-//            for(VectorRecord.Coordinate2D c : rec.coords2D){
-//                coords.add(new Coordinate(c.x/datasetParameter.coordFactor, c.y/datasetParameter.coordFactor));
-//            }
-//            for(VectorRecord.Coordinate3D c : rec.coords3D){
-//                coords.add(new Coordinate(c.x/datasetParameter.coordFactor, c.y/datasetParameter.coordFactor, c.y/datasetParameter.soundingFactor));
-//            }
-//        }
-//        
-//        //get previous or next segments
-//        for(VectorRecord.RecordPointer recp : rec.records){
-//            if(recp.refid == rec.id){
-//                //refer to himself, must be an end segment
-//                continue;
-//            }
-//            if(recp.topology == S57Constants.Topology.TOPI_BEGIN_NODE){
-//                if(forward == null || !forward){
-//                    fillCoordinates((VectorRecord)spatials.get(new SpatialKey(recp.refid, recp.type)), coords, false, recp.mask);
-//                }
-//            }else if(recp.topology == S57Constants.Topology.TOPI_END_NODE){
-//                if(forward == null || forward){
-//                    fillCoordinates((VectorRecord)spatials.get(new SpatialKey(recp.refid, recp.type)), coords, true, recp.mask);
-//                }
-//            }
-//        }
-//                
-//    }
-    
     
     @Override
     public void close() throws FeatureStoreRuntimeException {

@@ -96,13 +96,16 @@ public class VectorRecord extends S57ModelObject {
     }
     
     /**
-     * If vector is an edge, return it's coordinates.
+     * If vector is an edge/nodes, return it's coordinates.
      * @return Coordinate
      */
-    public List<Coordinate> getEdgeCoordinates(double coordFactor){
+    public List<Coordinate> getCoordinates(double coordFactor,double soundingFactor){
         final List<Coordinate> coords = new ArrayList<Coordinate>(coords2D.size());
         for(Coordinate2D c : coords2D){
             coords.add(new Coordinate(c.x/coordFactor, c.y/coordFactor));
+        }
+        for(Coordinate3D c : coords3D){
+            coords.add(new Coordinate(c.x/coordFactor, c.y/coordFactor, c.z/soundingFactor));
         }
         return coords;
     }
@@ -115,7 +118,7 @@ public class VectorRecord extends S57ModelObject {
         final Coordinate2D c = coords2D.get(0);
         return new Coordinate(c.x/coordFactor, c.y/coordFactor);
     }
-    
+        
     public static class Attribute extends S57ModelObject {
         //7.7.1.2 Vector record attribute field structure
         public static final String VRID_ATTV = "ATTV"; 
