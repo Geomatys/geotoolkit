@@ -132,7 +132,10 @@ public final class XMath extends Static {
      *
      * @ess MathFunctions#nextPrimeNumber(int)
      * @see java.math.BigInteger#isProbablePrime
+     *
+     * @deprecated No public replacement. {@link MathFunctions#nextPrimeNumber(int)} is the closest replacement.
      */
+    @Deprecated
     public static synchronized int primeNumber(final int index) throws IndexOutOfBoundsException {
         // 6541 is the largest index returning a 16 bits unsigned prime number.
         if (index < 0 || index >= MAX_PRIMES_LENGTH) {

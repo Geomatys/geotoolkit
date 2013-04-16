@@ -30,6 +30,7 @@ import static org.geotoolkit.io.X364.*;
  *
  * @since 3.00
  */
+@Deprecated
 public final strictfp class X364Test {
     /**
      * Tests the {@link X364#plain} method.
