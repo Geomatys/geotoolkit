@@ -104,6 +104,7 @@
     <module>geotk-om</module>
     <module>geotk-osm</module>
     <module>geotk-sensorml</module>
+    <module>geotk-geojson</module>
   </modules>
 
 </project>
