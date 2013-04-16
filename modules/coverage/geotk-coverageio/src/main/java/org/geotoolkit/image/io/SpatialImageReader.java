@@ -46,7 +46,7 @@ import org.apache.sis.util.Disposable;
 import org.geotoolkit.util.NumberRange;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.util.logging.Logging;
-import org.geotoolkit.resources.Locales;
+import org.apache.sis.util.Locales;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.IndexedResourceBundle;
 import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
@@ -149,7 +149,7 @@ public abstract class SpatialImageReader extends ImageReader implements WarningP
      */
     protected SpatialImageReader(final Spi provider) {
         super(provider);
-        availableLocales = Locales.getAvailableLocales();
+        availableLocales = Locales.SIS.getAvailableLocales();
     }
 
     /**

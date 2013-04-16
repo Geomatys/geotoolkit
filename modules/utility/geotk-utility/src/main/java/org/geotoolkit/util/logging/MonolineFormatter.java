@@ -36,6 +36,7 @@ import org.geotoolkit.io.LineWriter;
 import org.geotoolkit.io.ExpandedTabWriter;
 import org.geotoolkit.internal.OS;
 import org.apache.sis.util.CharSequences;
+import org.apache.sis.util.logging.PerformanceLevel;
 
 
 /**

@@ -41,7 +41,7 @@ import org.geotoolkit.internal.referencing.Semaphores;
 import org.apache.sis.util.Classes;
 import org.apache.sis.util.LenientComparable;
 import org.apache.sis.util.ComparisonMode;
-import org.geotoolkit.util.Utilities;
+import org.apache.sis.util.Utilities;
 import org.geotoolkit.io.wkt.Convention;
 import org.geotoolkit.io.wkt.Formattable;
 import org.geotoolkit.io.wkt.Formatter;

@@ -43,7 +43,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.DatabaseMetaData;
 
-import org.geotoolkit.util.Strings;
+import org.apache.sis.util.CharSequences;
 import org.apache.sis.util.Version;
 import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.resources.Errors;
@@ -265,8 +265,8 @@ public class ScriptRunner implements FilenameFilter {
          */
         String prefix = null, suffix = null;
         for (final String file : files) {
-            prefix = Strings.commonPrefix(prefix, file);
-            suffix = Strings.commonSuffix(suffix, file);
+            prefix = CharSequences.commonPrefix(prefix, file).toString();
+            suffix = CharSequences.commonSuffix(suffix, file).toString();
         }
         final int pl = prefix.length();
         final int sl = suffix.length();

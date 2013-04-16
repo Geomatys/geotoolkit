@@ -37,7 +37,7 @@ import org.opengis.parameter.InvalidParameterValueException;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.metadata.citation.Citation;
 
-import org.geotoolkit.util.Utilities;
+import org.apache.sis.util.Utilities;
 import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.referencing.IdentifiedObjects;

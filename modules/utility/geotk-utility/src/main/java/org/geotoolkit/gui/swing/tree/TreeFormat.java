@@ -39,7 +39,7 @@ import org.geotoolkit.io.ExpandedTabWriter;
 import org.geotoolkit.io.ContentFormatException;
 import org.geotoolkit.io.TableWriter;
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.util.Strings;
+import org.apache.sis.util.CharSequences;
 import org.apache.sis.util.collection.BackingStoreException;
 import org.geotoolkit.resources.Errors;
 
@@ -683,7 +683,7 @@ public class TreeFormat extends Format {
         final Iterator<?> it = nodes.iterator();
         boolean hasNext = it.hasNext();
         while (hasNext) {
-            final String[] lines = Strings.getLinesFromMultilines(String.valueOf(it.next()));
+            final CharSequence[] lines = CharSequences.splitOnEOL(String.valueOf(it.next()));
             hasNext = it.hasNext();
             final String next;
             String margin;
@@ -694,8 +694,8 @@ public class TreeFormat extends Format {
                 margin = treeEnd;
                 next   = treeBlank;
             }
-            for (final String line : lines) {
-                if (!line.isEmpty()) {
+            for (final CharSequence line : lines) {
+                if (line.length() != 0) {
                     toAppendTo.append(margin).append(line).append(lineSeparator);
                     margin = next;
                 }

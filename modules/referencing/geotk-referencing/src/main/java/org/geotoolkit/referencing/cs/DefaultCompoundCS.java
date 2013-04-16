@@ -30,7 +30,7 @@ import org.opengis.referencing.cs.CoordinateSystemAxis;
 
 import org.apache.sis.util.ComparisonMode;
 
-import static org.geotoolkit.util.Utilities.deepEquals;
+import static org.apache.sis.util.Utilities.deepEquals;
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 
 

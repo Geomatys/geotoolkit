@@ -35,8 +35,8 @@ import org.opengis.annotation.UML;
 import org.apache.sis.util.ArraysExt;
 
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.Strings;
-import org.geotoolkit.util.Utilities;
+import org.apache.sis.util.CharSequences;
+import org.apache.sis.util.Utilities;
 import org.apache.sis.util.ComparisonMode;
 import org.apache.sis.util.collection.CheckedContainer;
 import org.apache.sis.util.Classes;
@@ -630,7 +630,7 @@ final class PropertyAccessor {
                     return getters[index].getName();
                 }
                 case SENTENCE: {
-                    return Strings.camelCaseToSentence(names[index]);
+                    return CharSequences.camelCaseToSentence(names[index]).toString();
                 }
             }
         }

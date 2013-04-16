@@ -126,7 +126,7 @@ public final class LanguageCode extends GO_CharacterString {
             if (value.proxy != null) {
                 String code = value.proxy.codeListValue;
                 if (code != null && !(code = code.trim()).isEmpty()) {
-                    return Locales.parse(code);
+                    return org.apache.sis.util.Locales.parse(code);
                 }
             }
             if (useCharSequence) {

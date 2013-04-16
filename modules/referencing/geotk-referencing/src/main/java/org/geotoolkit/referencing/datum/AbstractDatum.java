@@ -42,7 +42,7 @@ import org.apache.sis.util.Classes;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.internal.jaxb.gco.DateAsLongAdapter;
 
-import static org.geotoolkit.util.Utilities.deepEquals;
+import static org.apache.sis.util.Utilities.deepEquals;
 
 
 /**

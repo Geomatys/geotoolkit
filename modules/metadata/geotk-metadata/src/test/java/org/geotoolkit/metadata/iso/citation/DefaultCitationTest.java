@@ -28,7 +28,7 @@ import org.geotoolkit.xml.IdentifierMap;
 import org.geotoolkit.xml.IdentifierSpace;
 import org.geotoolkit.metadata.iso.DefaultIdentifier;
 import org.geotoolkit.test.Depend;
-import org.geotoolkit.util.Strings;
+import org.apache.sis.util.CharSequences;
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -98,8 +98,8 @@ public final strictfp class DefaultCitationTest {
          */
         String previous = null;
         int foundID=0, foundOGC=0, foundEPSG=0, foundISBN=0, foundISSN=0;
-        for (String line : Strings.getLinesFromMultilines(xml)) {
-            line = line.trim();
+        for (CharSequence l : CharSequences.splitOnEOL(xml)) {
+            final String line = l.toString().trim();
             if (line.contains("MyID"))   {assertTrue  ("Expected root.",  previous.startsWith("<?xml")); foundID++;}
             if (line.contains("MyOGC"))  {assertEquals("Wrong parent element.", "<gmd:code>", previous); foundOGC++;}
             if (line.contains("MyEPSG")) {assertEquals("Wrong parent element.", "<gmd:code>", previous); foundEPSG++;}

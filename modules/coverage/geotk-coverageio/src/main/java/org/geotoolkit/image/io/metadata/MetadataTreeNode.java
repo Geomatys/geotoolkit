@@ -25,7 +25,7 @@ import javax.imageio.metadata.IIOMetadataFormat;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-import org.geotoolkit.util.Strings;
+import org.apache.sis.util.CharSequences;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.logging.Logging;
 import org.apache.sis.util.Classes;
@@ -219,7 +219,7 @@ public final class MetadataTreeNode extends NamedTreeNode implements TreeTableNo
      */
     public String getLabel() {
         if (label == null) {
-            label = Strings.camelCaseToSentence(getName());
+            label = CharSequences.camelCaseToSentence(getName()).toString();
         }
         return label;
     }

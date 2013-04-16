@@ -40,7 +40,7 @@ import org.opengis.util.FactoryException;
 
 import org.geotoolkit.lang.Static;
 import org.apache.sis.util.Version;
-import org.geotoolkit.util.Utilities;
+import org.apache.sis.util.Utilities;
 import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.factory.Hints;

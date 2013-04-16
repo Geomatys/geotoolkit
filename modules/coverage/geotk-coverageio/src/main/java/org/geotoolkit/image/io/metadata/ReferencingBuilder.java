@@ -47,7 +47,7 @@ import org.geotoolkit.resources.IndexedResourceBundle;
 import org.apache.sis.internal.util.Citations;
 import org.apache.sis.util.iso.Types;
 import org.geotoolkit.internal.image.io.DataTypes;
-import org.geotoolkit.util.Strings;
+import org.apache.sis.util.CharSequences;
 import org.apache.sis.util.NullArgumentException;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.naming.DefaultNameSpace;
@@ -535,7 +535,9 @@ public class ReferencingBuilder extends Builder<CoordinateReferenceSystem> {
                     if (abbreviation == null) {
                         abbreviation = Types.getCodeName(direction);
                     }
-                    abbreviation = Strings.camelCaseToAcronym(abbreviation);
+                    if (abbreviation != null) {
+                        abbreviation = CharSequences.camelCaseToAcronym(abbreviation).toString();
+                    }
                 }
                 final Unit<?> unit = axesAccessor.getAttributeAsUnit("unit", null);
                 if (!isNonNull("getCoordinateSystem", "unit", unit)) {

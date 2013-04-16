@@ -66,8 +66,8 @@ import org.opengis.util.InternationalString;
 import org.opengis.util.NameFactory;
 
 import org.apache.sis.measure.Units;
-import org.geotoolkit.util.Strings;
 import org.apache.sis.util.ArraysExt;
+import org.apache.sis.util.CharSequences;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.naming.DefaultNameSpace;
@@ -683,12 +683,13 @@ public class NetcdfMetadataReader extends NetcdfMetadata {
                 if (credits  != null) addIfAbsent(identification.getCredits(), credits);
                 if (license  != null) addIfAbsent(identification.getResourceConstraints(), constraints = new DefaultLegalConstraints(license));
                 if (access   != null) {
-                    for (final String token : Strings.split(access, ',')) {
-                        if (!token.isEmpty()) {
+                    for (final CharSequence token : CharSequences.split(access, ',')) {
+                        final String t = token.toString();
+                        if (!t.isEmpty()) {
                             if (constraints == null) {
                                 identification.getResourceConstraints().add(constraints = new DefaultLegalConstraints());
                             }
-                            addIfAbsent(constraints.getAccessConstraints(), Types.forCodeName(Restriction.class, token, true));
+                            addIfAbsent(constraints.getAccessConstraints(), Types.forCodeName(Restriction.class, t, true));
                         }
                     }
                 }
@@ -1016,7 +1017,7 @@ public class NetcdfMetadataReader extends NetcdfMetadata {
                 return values;
             }
         }
-        return Strings.EMPTY;
+        return CharSequences.EMPTY_ARRAY;
     }
 
     /**

@@ -33,7 +33,7 @@ import net.jcip.annotations.ThreadSafe;
 import org.opengis.util.InternationalString;
 
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.resources.Locales;
+import org.apache.sis.util.Locales;
 
 import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
 

@@ -26,7 +26,7 @@ import net.jcip.annotations.Immutable;
 
 import org.apache.sis.util.Numbers;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.resources.Locales;
+import org.apache.sis.util.Locales;
 import org.apache.sis.util.iso.Types;
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.internal.InternalUtilities;

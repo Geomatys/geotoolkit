@@ -36,8 +36,8 @@ import net.jcip.annotations.ThreadSafe;
 import org.opengis.util.InternationalString;
 
 import org.geotoolkit.lang.Debug;
-import org.geotoolkit.util.Strings;
 import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.CharSequences;
 import org.apache.sis.util.Classes;
 
 
@@ -202,7 +202,7 @@ public class IndexedResourceBundle extends ResourceBundle {
             int indexCR = value.indexOf('\r'); if (indexCR < 0) indexCR = value.length();
             int indexLF = value.indexOf('\n'); if (indexLF < 0) indexLF = value.length();
             final String number = String.valueOf(i);
-            out.write(Strings.spaces(5 - number.length()));
+            out.append(CharSequences.spaces(5 - number.length()));
             out.write(number);
             out.write(":\t");
             out.write(value, 0, Math.min(indexCR,indexLF));
@@ -377,7 +377,7 @@ public class IndexedResourceBundle extends ResourceBundle {
      * @return A sentence not longer than {@code maxLength}.
      */
     private static String summarize(String text, int maxLength) {
-        text = Strings.trim(text);
+        text = CharSequences.trimWhitespaces(text);
         final int length = text.length();
         if (length <= maxLength) {
             return text;
@@ -411,7 +411,7 @@ public class IndexedResourceBundle extends ResourceBundle {
                 break;
             }
         }
-        return Strings.trim(new StringBuilder(break1 + (length-break2) + 6)
+        return CharSequences.trimWhitespaces(new StringBuilder(break1 + (length-break2) + 6)
                 .append(text, 0, break1+1).append(" (…) ").append(text, break2, length).toString());
     }
 

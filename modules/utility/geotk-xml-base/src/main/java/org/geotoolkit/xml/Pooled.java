@@ -29,7 +29,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.validation.Schema;
 
 import org.apache.sis.util.Version;
-import org.geotoolkit.util.Strings;
+import org.apache.sis.util.CharSequences;
 import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.internal.InternalUtilities;
@@ -243,7 +243,7 @@ abstract class Pooled {
                 }
                 case XML.STRING_SUBSTITUTES: {
                     int mask = 0;
-                    final String[] substitutes = Strings.split((String) value, ',');
+                    final String[] substitutes = (String[]) CharSequences.split((String) value, ',');
                     if (ArraysExt.containsIgnoreCase(substitutes, "language")) mask |= SUBSTITUTE_LANGUAGE;
                     if (ArraysExt.containsIgnoreCase(substitutes, "country"))  mask |= SUBSTITUTE_COUNTRY;
                     bitMasks = mask;

@@ -26,7 +26,7 @@ import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.InvalidParameterTypeException;
 import org.opengis.parameter.InvalidParameterValueException;
 
-import org.geotoolkit.util.Utilities;
+import org.apache.sis.util.Utilities;
 import org.geotoolkit.resources.Errors;
 
 
@@ -346,7 +346,7 @@ final class ImagingParameter<T> extends AbstractParameterValue<T> {
      */
     @Override
     public int hashCode() {
-        return Utilities.hash(Utilities.deepHashCode(getValue()), super.hashCode()) ^ (int) serialVersionUID;
+        return org.geotoolkit.util.Utilities.hash(Utilities.deepHashCode(getValue()), super.hashCode()) ^ (int) serialVersionUID;
     }
 
     /**

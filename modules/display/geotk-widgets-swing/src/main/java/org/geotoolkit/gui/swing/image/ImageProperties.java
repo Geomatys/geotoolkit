@@ -60,7 +60,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import org.geotoolkit.gui.swing.Dialog;
 import org.geotoolkit.internal.swing.SwingUtilities;
-import org.geotoolkit.util.Strings;
+import org.apache.sis.util.CharSequences;
 import org.geotoolkit.util.NumberRange;
 import org.apache.sis.util.Classes;
 import org.apache.sis.measure.RangeFormat;
@@ -659,7 +659,7 @@ public class ImageProperties extends JComponent implements Dialog {
             return resources.getString(Vocabulary.Keys.UNDEFINED);
         }
         final String name = Classes.getShortClassName(object);
-        final StringBuilder buffer = Strings.camelCaseToWords(name, true);
+        final StringBuilder buffer = (StringBuilder) CharSequences.camelCaseToWords(name, true);
         long numColors = 0;
         if (object instanceof IndexColorModel) {
             numColors = ((IndexColorModel) object).getMapSize();

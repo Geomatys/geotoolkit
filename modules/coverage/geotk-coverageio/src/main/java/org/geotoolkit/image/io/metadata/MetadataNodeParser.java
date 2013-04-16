@@ -51,7 +51,7 @@ import org.apache.sis.util.iso.Types;
 import org.geotoolkit.internal.image.io.Warnings;
 import org.geotoolkit.internal.jaxb.XmlUtilities;
 import org.apache.sis.measure.Units;
-import org.geotoolkit.util.Strings;
+import org.apache.sis.util.CharSequences;
 import org.apache.sis.util.Localized;
 import org.geotoolkit.util.NumberRange;
 import org.apache.sis.util.Classes;
@@ -1123,7 +1123,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
     public Integer getAttributeAsInteger(final String attribute) {
         String value = getAttribute(attribute);
         if (value != null) {
-            value = Strings.trimFractionalPart(value);
+            value = CharSequences.trimFractionalPart(value).toString();
             try {
                 return Integer.valueOf(value);
             } catch (NumberFormatException e) {
@@ -1240,7 +1240,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
     public Date getAttributeAsDate(final String attribute) {
         String value = getAttribute(attribute);
         if (value != null) {
-            value = Strings.trimFractionalPart(value);
+            value = CharSequences.trimFractionalPart(value).toString();
             if (metadata instanceof SpatialMetadata) {
                 return ((SpatialMetadata) metadata).dateFormat().parse(value);
             } else try {

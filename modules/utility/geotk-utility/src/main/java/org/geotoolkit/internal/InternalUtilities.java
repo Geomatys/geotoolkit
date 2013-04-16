@@ -24,7 +24,7 @@ import java.text.NumberFormat;
 import java.text.DecimalFormat;
 
 import org.geotoolkit.lang.Static;
-import org.geotoolkit.util.Utilities;
+import org.apache.sis.util.Utilities;
 import org.apache.sis.util.ComparisonMode;
 import org.apache.sis.util.Classes;
 import org.geotoolkit.util.collection.XCollections;
@@ -160,7 +160,7 @@ public final class InternalUtilities extends Static {
      */
     public static boolean epsilonEqual(final double v1, final double v2, final ComparisonMode mode) {
         switch (mode) {
-            default:            return Utilities.equals(v1, v2);
+            default: return org.geotoolkit.util.Utilities.equals(v1, v2);
             case APPROXIMATIVE: return epsilonEqual(v1, v2);
             case DEBUG: {
                 final boolean equal = epsilonEqual(v1, v2);

@@ -28,7 +28,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.opengis.metadata.identification.CharacterSet;
 
 import org.geotoolkit.util.logging.Logging;
-import org.geotoolkit.resources.Locales;
+import org.apache.sis.util.Locales;
 import org.apache.sis.util.iso.Types;
 import org.geotoolkit.internal.jaxb.MarshalContext;
 import org.geotoolkit.internal.jaxb.code.MD_CharacterSetCode;

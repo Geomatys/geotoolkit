@@ -43,7 +43,7 @@ import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.Disposable;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.resources.Locales;
+import org.apache.sis.util.Locales;
 import org.geotoolkit.resources.IndexedResourceBundle;
 
 import static org.geotoolkit.image.io.SpatialImageReader.Spi.getMetadataFormatCode;
@@ -91,7 +91,7 @@ public abstract class SpatialImageWriter extends ImageWriter implements WarningP
      */
     protected SpatialImageWriter(final Spi provider) {
         super(provider);
-        availableLocales = Locales.getAvailableLocales();
+        availableLocales = Locales.SIS.getAvailableLocales();
     }
 
     /**

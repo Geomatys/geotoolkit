@@ -96,7 +96,7 @@ final class LocalisedCharacterString {
         if (localeId != null) {
             localeId = localeId.trim();
             if (!localeId.isEmpty()) {
-                locale = Locales.parse(localeId.substring(localeId.indexOf('-') + 1));
+                locale = org.apache.sis.util.Locales.parse(localeId.substring(localeId.indexOf('-') + 1));
                 return;
             }
         }

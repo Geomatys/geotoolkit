@@ -44,7 +44,8 @@ import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.metadata.iso.citation.Citations;
 
-import static org.geotoolkit.util.Utilities.*;
+import static org.geotoolkit.util.Utilities.hash;
+import static org.apache.sis.util.Utilities.deepHashCode;
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 import static org.apache.sis.util.ArgumentChecks.ensureCanCast;
 import static org.apache.sis.util.collection.Containers.hashMapCapacity;

@@ -21,7 +21,7 @@ import java.util.Locale;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlElement;
 
-import org.geotoolkit.resources.Locales;
+import org.apache.sis.util.Locales;
 import org.geotoolkit.internal.jaxb.code.CodeListProxy;
 import org.geotoolkit.internal.jaxb.gco.GO_CharacterString;
 import org.geotoolkit.internal.jaxb.gco.CharSequenceAdapter;

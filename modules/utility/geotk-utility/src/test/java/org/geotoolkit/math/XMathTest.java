@@ -33,11 +33,6 @@ import static org.junit.Assert.*;
  */
 public final strictfp class XMathTest {
     /**
-     * Small number for floating point comparisons.
-     */
-    private static final double EPS = 1E-12;
-
-    /**
      * Tests the {@link XMath#primeNumber} method.
      */
     @Test

@@ -30,7 +30,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.sis.util.Localized;
 import org.geotoolkit.util.logging.Logging;
-import org.geotoolkit.util.logging.PerformanceLevel;
+import org.apache.sis.util.logging.PerformanceLevel;
 import org.geotoolkit.resources.IndexedResourceBundle;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.resources.Errors;

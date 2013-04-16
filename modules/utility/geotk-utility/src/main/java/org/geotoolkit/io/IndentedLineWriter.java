@@ -24,7 +24,7 @@ import org.apache.sis.io.IO;
 import org.apache.sis.io.LineAppender;
 import org.apache.sis.util.ArgumentChecks;
 
-import org.geotoolkit.util.Strings;
+import org.apache.sis.util.CharSequences;
 import org.geotoolkit.lang.Decorator;
 
 
@@ -124,7 +124,7 @@ public class IndentedLineWriter extends FilterWriter {
      */
     public void setIndentation(final int width) {
         synchronized (lock) {
-            margin = Strings.spaces(width);
+            margin = CharSequences.spaces(width).toString();
         }
     }
 

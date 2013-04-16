@@ -28,7 +28,7 @@ import org.opengis.coverage.Coverage;
 import org.opengis.coverage.processing.Operation;
 import org.opengis.parameter.ParameterValueGroup;
 
-import org.geotoolkit.util.Utilities;
+import org.apache.sis.util.Utilities;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.coverage.CoverageReferences;
 
