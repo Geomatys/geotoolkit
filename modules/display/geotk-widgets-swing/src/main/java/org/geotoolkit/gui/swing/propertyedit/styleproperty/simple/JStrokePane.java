@@ -33,6 +33,7 @@ import javax.swing.JPanel;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SwingConstants;
 import org.geotoolkit.gui.swing.misc.EmptyCellRenderer;
+import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.gui.swing.style.JLineCapExpressionPane;
 import org.geotoolkit.gui.swing.style.JLineJoinExpressionPane;
 import org.geotoolkit.gui.swing.style.JNumberExpressionPane;
@@ -146,13 +147,13 @@ public class JStrokePane extends StyleElementEditor<Stroke> {
         guiWidth = new JNumberExpressionPane();
         guiFill = new JFillControlPane();
 
-        jLabel1.setText("Style :");
+        jLabel1.setText(MessageBundle.getString("style")); // NOI18N
 
-        jLabel3.setText("Type d'extrémité : ");
+        jLabel3.setText(MessageBundle.getString("linejoin")); // NOI18N
 
-        jLabel4.setText("Type de jointures :");
+        jLabel4.setText(MessageBundle.getString("linecap")); // NOI18N
 
-        jLabel5.setText("Epaisseur :");
+        jLabel5.setText(MessageBundle.getString("width")); // NOI18N
 
         guiLineType.setModel(new DefaultComboBoxModel(new String[] { "ligne simple 1pt", "ligne simple 2pt", "ligne double 1pt", "ligne double 4pt" }));
         guiLineType.addItemListener(new ItemListener() {
@@ -173,7 +174,7 @@ public class JStrokePane extends StyleElementEditor<Stroke> {
             }
         });
 
-        jLabel6.setText("Remplissage du trait :");
+        jLabel6.setText(MessageBundle.getString("fill")); // NOI18N
 
         guiWidth.addPropertyChangeListener(new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent evt) {
@@ -214,7 +215,7 @@ public class JStrokePane extends StyleElementEditor<Stroke> {
                         .addComponent(jLabel6)
                         .addPreferredGap(ComponentPlacement.RELATED)
                         .addComponent(guiFill, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(86, Short.MAX_VALUE))
         );
 
         layout.linkSize(SwingConstants.HORIZONTAL, new Component[] {jLabel3, jLabel4, jLabel5, jLabel6});

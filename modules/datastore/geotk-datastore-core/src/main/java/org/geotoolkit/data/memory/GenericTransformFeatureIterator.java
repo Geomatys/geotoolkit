@@ -124,6 +124,7 @@ public abstract class GenericTransformFeatureIterator<F extends Feature, R exten
                 if(prop instanceof GeometryAttribute){
                     Object value = prop.getValue();
                     if(value instanceof Geometry){
+                        if(((Geometry)value).isEmpty()) continue;
                         try {
                             //transform the geometry
                             prop.setValue(transformer.transform((Geometry) value));

@@ -25,6 +25,7 @@ import javax.measure.unit.NonSI;
 import javax.measure.unit.Unit;
 import javax.swing.JTabbedPane;
 import javax.swing.border.LineBorder;
+import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.gui.swing.style.JColorPane;
 import org.geotoolkit.gui.swing.style.StyleElementEditor;
 import org.geotoolkit.map.MapLayer;
@@ -67,13 +68,13 @@ public class JFillPane extends StyleElementEditor<Fill> {
         setLayout(new BorderLayout());
 
         guiColorChooser.setBorder(new LineBorder(new Color(0, 0, 0), 1, true));
-        guiTabbedPane.addTab("Couleur unie", guiColorChooser);
+        guiTabbedPane.addTab(MessageBundle.getString("plainColor"), guiColorChooser);
 
         guiMarkPane.setBorder(new LineBorder(new Color(102, 102, 102), 1, true));
-        guiTabbedPane.addTab("Formes prédéfinies", guiMarkPane);
+        guiTabbedPane.addTab(MessageBundle.getString("predefinedShape"), guiMarkPane);
 
         guiExternalGraphicPane.setBorder(new LineBorder(new Color(102, 102, 102), 1, true));
-        guiTabbedPane.addTab("Image", guiExternalGraphicPane);
+        guiTabbedPane.addTab(MessageBundle.getString("image"), guiExternalGraphicPane);
 
         add(guiTabbedPane, java.awt.BorderLayout.CENTER);
 

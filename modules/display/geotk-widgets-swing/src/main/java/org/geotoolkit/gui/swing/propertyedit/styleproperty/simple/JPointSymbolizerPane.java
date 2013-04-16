@@ -29,6 +29,7 @@ import javax.swing.GroupLayout.Alignment;
 import javax.swing.JLabel;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SwingConstants;
+import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.gui.swing.style.JNumberExpressionPane;
 import org.geotoolkit.gui.swing.style.JNumberSliderExpressionPane;
 import org.geotoolkit.gui.swing.style.StyleElementEditor;
@@ -199,13 +200,13 @@ public class JPointSymbolizerPane extends StyleElementEditor<PointSymbolizer> {
         guiStroke = new JStrokeControlPane();
         guiFill = new JFillControlPane();
 
-        jLabel1.setText("Type de forme :");
+        jLabel1.setText(MessageBundle.getString("type")); // NOI18N
 
-        jLabel2.setText("Remplissage de la forme :");
+        jLabel2.setText(MessageBundle.getString("fill")); // NOI18N
 
-        jLabel10.setText("Bordure de la forme :");
+        jLabel10.setText(MessageBundle.getString("border")); // NOI18N
 
-        jLabel4.setText("Taille :");
+        jLabel4.setText(MessageBundle.getString("size")); // NOI18N
 
         guiSize.addPropertyChangeListener(new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent evt) {
@@ -213,7 +214,7 @@ public class JPointSymbolizerPane extends StyleElementEditor<PointSymbolizer> {
             }
         });
 
-        jLabel7.setText("Angle :");
+        jLabel7.setText(MessageBundle.getString("rotation")); // NOI18N
 
         guiRotation.addPropertyChangeListener(new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent evt) {
@@ -221,7 +222,7 @@ public class JPointSymbolizerPane extends StyleElementEditor<PointSymbolizer> {
             }
         });
 
-        jLabel3.setText("Opacité :");
+        jLabel3.setText(MessageBundle.getString("opacity")); // NOI18N
 
         guiOpacity.addPropertyChangeListener(new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent evt) {
@@ -229,7 +230,7 @@ public class JPointSymbolizerPane extends StyleElementEditor<PointSymbolizer> {
             }
         });
 
-        jLabel5.setText("Décallage X :");
+        jLabel5.setText(MessageBundle.getString("displacementX")); // NOI18N
 
         guiDisplacementY.addPropertyChangeListener(new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent evt) {
@@ -243,7 +244,7 @@ public class JPointSymbolizerPane extends StyleElementEditor<PointSymbolizer> {
             }
         });
 
-        jLabel8.setText("Décallage Y :");
+        jLabel8.setText(MessageBundle.getString("displacementY")); // NOI18N
 
         guiGraphicSymbol.addPropertyChangeListener(new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent evt) {
@@ -307,7 +308,7 @@ public class JPointSymbolizerPane extends StyleElementEditor<PointSymbolizer> {
                                 .addComponent(jLabel8)
                                 .addPreferredGap(ComponentPlacement.RELATED)
                                 .addComponent(guiDisplacementY, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
-                        .addGap(0, 12, Short.MAX_VALUE))))
+                        .addGap(0, 0, Short.MAX_VALUE))))
         );
 
         layout.linkSize(SwingConstants.HORIZONTAL, new Component[] {jLabel3, jLabel4, jLabel5, jLabel7, jLabel8});

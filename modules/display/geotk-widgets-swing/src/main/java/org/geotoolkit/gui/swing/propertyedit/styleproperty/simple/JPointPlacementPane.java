@@ -79,7 +79,7 @@ public class JPointPlacementPane extends StyleElementEditor<PointPlacement>{
             }
         });
 
-        jLabel5.setText("Décallage X :");
+        jLabel5.setText(MessageBundle.getString("displacementX")); // NOI18N
 
         guiDisplacementY.addPropertyChangeListener(new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent evt) {
@@ -87,7 +87,7 @@ public class JPointPlacementPane extends StyleElementEditor<PointPlacement>{
             }
         });
 
-        jLabel6.setText("Décallage Y :");
+        jLabel6.setText(MessageBundle.getString("displacementY")); // NOI18N
 
         guiDisplacementX.addPropertyChangeListener(new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent evt) {

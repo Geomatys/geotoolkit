@@ -313,7 +313,12 @@ public class JContextTree extends JScrollPane {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     if (value != null && value instanceof MapItem) {
-                        ((MapItem) value).setVisible(visibleCheck.isSelected());
+                        new Thread(){
+                            @Override
+                            public void run() {
+                             ((MapItem) value).setVisible(visibleCheck.isSelected());
+                            }
+                        }.start();
                     }
                 }
             });
@@ -323,7 +328,12 @@ public class JContextTree extends JScrollPane {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     if (value != null && value instanceof MapLayer) {
-                        ((MapLayer) value).setSelectable(selectCheck.isSelected());
+                        new Thread(){
+                            @Override
+                            public void run() {
+                             ((MapLayer) value).setSelectable(selectCheck.isSelected());
+                            }
+                        }.start();
                     }
                 }
             });
@@ -333,7 +343,12 @@ public class JContextTree extends JScrollPane {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     if (value != null && value instanceof MapLayer) {
-                        ((MapLayer) value).setOpacity(opacity.getOpacity());
+                        new Thread(){
+                            @Override
+                            public void run() {
+                             ((MapLayer) value).setOpacity(opacity.getOpacity());
+                            }
+                        }.start();
                     }
                 }
             });
