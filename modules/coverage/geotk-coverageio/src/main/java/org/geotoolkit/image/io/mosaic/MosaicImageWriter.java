@@ -55,7 +55,7 @@ import org.geotoolkit.util.Version;
 import org.apache.sis.util.Disposable;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.logging.LogProducer;
-import org.geotoolkit.util.logging.PerformanceLevel;
+import org.apache.sis.util.logging.PerformanceLevel;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Vocabulary;
