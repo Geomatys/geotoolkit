@@ -34,7 +34,7 @@ import static org.geotoolkit.test.Assert.*;
  *
  * @since 3.00
  */
-@Depend({UtilitiesTest.class, X364Test.class})
+@Depend(UtilitiesTest.class)
 public final strictfp class WriterTest {
     /**
      * The buffer where to write test data. All those buffers
