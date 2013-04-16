@@ -49,7 +49,10 @@ import org.geotoolkit.util.collection.XCollections;
  *
  * @since 2.1
  * @module
+ *
+ * @deprecated Moved to Apache SIS {@link org.apache.sis.util.iso.DefaultInternationalString}.
  */
+@Deprecated
 @ThreadSafe
 public class DefaultInternationalString extends AbstractInternationalString implements Serializable {
     /**

@@ -49,7 +49,6 @@ import org.geotoolkit.internal.referencing.DirectPositionView;
 import org.geotoolkit.resources.Errors;
 
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
-import static org.apache.sis.util.StringBuilders.trimFractionalPart;
 
 
 /**
@@ -1198,7 +1197,10 @@ public final class Envelopes extends Static {
      * @see #toWKT(Envelope)
      * @see org.geotoolkit.measure.CoordinateFormat
      * @see org.geotoolkit.io.wkt
+     *
+     * @deprecated Moved to Apache SIS as {@link org.apache.sis.geometry.Envelopes#parseWKT}.
      */
+    @Deprecated
     public static Envelope parseWKT(final String wkt) throws FactoryException {
         ensureNonNull("wkt", wkt);
         try {
@@ -1226,7 +1228,10 @@ public final class Envelopes extends Static {
      * @see #parseWKT(String)
      * @see org.geotoolkit.measure.CoordinateFormat
      * @see org.geotoolkit.io.wkt
+     *
+     * @deprecated Moved to Apache SIS as {@link org.apache.sis.geometry.Envelopes#toString}.
      */
+    @Deprecated
     public static String toWKT(final Envelope envelope) {
         return AbstractEnvelope.toString(envelope);
     }
@@ -1246,37 +1251,11 @@ public final class Envelopes extends Static {
      * @throws IllegalArgumentException if the given envelope can not be formatted.
      *
      * @see org.geotoolkit.io.wkt
+     *
+     * @deprecated Moved to Apache SIS as {@link org.apache.sis.geometry.Envelopes#toPolygonWKT}.
      */
+    @Deprecated
     public static String toPolygonWKT(final Envelope envelope) throws IllegalArgumentException {
-        /*
-         * Get the dimension, ignoring the trailing ones which have infinite values.
-         */
-        int dimension = envelope.getDimension();
-        while (dimension != 0) {
-            final double length = envelope.getSpan(dimension - 1);
-            if (!Double.isNaN(length) && !Double.isInfinite(length)) {
-                break;
-            }
-            dimension--;
-        }
-        if (dimension < 2) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.EMPTY_ENVELOPE_2D));
-        }
-        final StringBuilder buffer = new StringBuilder("POLYGON(");
-        String separator = "(";
-        for (int corner=0; corner<CORNERS.length; corner+=2) {
-            for (int i=0; i<dimension; i++) {
-                final double value;
-                switch (i) {
-                    case  0: // Fall through
-                    case  1: value = CORNERS[corner+i] ? envelope.getMaximum(i) : envelope.getMinimum(i); break;
-                    default: value = envelope.getMedian(i); break;
-                }
-                trimFractionalPart(buffer.append(separator).append(value));
-                separator = " ";
-            }
-            separator = ", ";
-        }
-        return buffer.append("))").toString();
+        return org.apache.sis.geometry.Envelopes.toPolygonWKT(envelope);
     }
 }
