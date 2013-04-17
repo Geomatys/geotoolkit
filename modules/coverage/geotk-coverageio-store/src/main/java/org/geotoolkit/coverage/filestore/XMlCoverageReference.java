@@ -39,12 +39,12 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class XMlCoverageReference extends AbstractPyramidalModel {
+public class XMLCoverageReference extends AbstractPyramidalModel {
 
     private final XMLPyramidSet set;
 
 
-    public XMlCoverageReference(XMLCoverageStore store, Name name, XMLPyramidSet set) {
+    public XMLCoverageReference(XMLCoverageStore store, Name name, XMLPyramidSet set) {
         super(store,name,0);
         this.set = set;
     }
@@ -104,7 +104,7 @@ public class XMlCoverageReference extends AbstractPyramidalModel {
         try {
             set.write();
         } catch (JAXBException ex) {
-            Logger.getLogger(XMlCoverageReference.class.getName()).log(Level.WARNING, ex.getMessage(), ex);
+            Logger.getLogger(XMLCoverageReference.class.getName()).log(Level.WARNING, ex.getMessage(), ex);
         }
     }
 
