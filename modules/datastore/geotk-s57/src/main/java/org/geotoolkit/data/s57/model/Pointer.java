@@ -22,7 +22,7 @@ import org.geotoolkit.data.s57.S57Constants;
  * Common parent for VectorRecord.RecordPointer and FeatureRecord.SpatialPointer
  * @author Johann Sorel
  */
-public class Pointer extends S57ModelObject {
+public class Pointer extends S57Object {
     
     //reference id
     public S57Constants.RecordType type;

@@ -20,13 +20,13 @@ import java.io.IOException;
 import org.geotoolkit.data.iso8211.Field;
 import org.geotoolkit.data.iso8211.SubField;
 import static org.geotoolkit.data.s57.S57Constants.*;
-import static org.geotoolkit.data.s57.model.S57ModelObject.*;
+import static org.geotoolkit.data.s57.model.S57Object.*;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
-public class DataSetParameter extends S57ModelObject {
+public class DataSetParameter extends S57Object {
     
     //7.3.2.1 Data set parameter field structure
     public static final String DSPM = "DSPM";
@@ -44,8 +44,6 @@ public class DataSetParameter extends S57ModelObject {
     public static final String DSPM_SOMF = "SOMF";
     public static final String DSPM_COMT = "COMT";
     
-    public RecordType type;
-    public long id;
     public int horizontalDatum;
     public int verticalDatum;
     public int soundingDatum;
@@ -60,7 +58,7 @@ public class DataSetParameter extends S57ModelObject {
     public DataSetProjection projection;
     public DataSetRegistration registration;
     
-    public static class DataSetProjection extends S57ModelObject {
+    public static class DataSetProjection extends S57Object {
         //7.3.2.2 Data set projection field structure
         public static final String DSPM_DSPR = "DSPR";
         public static final String DSPM_DSPR_PROJ = "PROJ";
@@ -108,7 +106,7 @@ public class DataSetParameter extends S57ModelObject {
         
     }
     
-    public static class DataSetRegistration extends S57ModelObject {
+    public static class DataSetRegistration extends S57Object {
         //7.3.2.3 Data set registration control field structure
         public static final String DSPM_DSRC = "DSRC";
         public static final String DSPM_DSRC_RPID = "RPID";

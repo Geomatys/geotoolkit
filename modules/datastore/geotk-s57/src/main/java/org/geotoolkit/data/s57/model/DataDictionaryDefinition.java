@@ -24,13 +24,14 @@ import java.util.List;
 import org.geotoolkit.data.iso8211.Field;
 import org.geotoolkit.data.iso8211.SubField;
 import static org.geotoolkit.data.s57.S57Constants.*;
-import static org.geotoolkit.data.s57.model.S57ModelObject.*;
+import org.geotoolkit.data.s57.S62Agency;
+import static org.geotoolkit.data.s57.model.S57Object.*;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
-public class DataDictionaryDefinition extends S57ModelObject {
+public class DataDictionaryDefinition extends S57Object {
     
     //7.5.1.1 Data dictionary definition field structure
     public static final String DDDF = "DDDF";
@@ -45,19 +46,17 @@ public class DataDictionaryDefinition extends S57ModelObject {
     public static final String DDDF_AUTH = "AUTH";    
     public static final String DDDF_COMT = "COMT";
     
-    public RecordType type;
-    public long id;
     public ObjectOrAttribute objOrAtt;
     public String acronym;
     public int code;
     public String longLabel;
     public ObjectType objType;
     public String definition;
-    public Agency agency;
+    public S62Agency agency;
     public String comment;
     public final List<DataDictionaryDefinitionReference> references = new ArrayList<DataDictionaryDefinitionReference>();
     
-    public static class DataDictionaryDefinitionReference extends S57ModelObject {
+    public static class DataDictionaryDefinitionReference extends S57Object {
         
         //7.5.1.2 Data dictionary definition reference field structure
         public static final String DDDF_DDDR = "DDDR";
@@ -96,7 +95,7 @@ public class DataDictionaryDefinition extends S57ModelObject {
             else if (DDDF_OALL.equalsIgnoreCase(tag)) longLabel = toString(value);
             else if (DDDF_OATY.equalsIgnoreCase(tag)) objType = ObjectType.valueOf(value);
             else if (DDDF_DEFN.equalsIgnoreCase(tag)) definition = toString(value);
-            else if (DDDF_AUTH.equalsIgnoreCase(tag)) agency = Agency.valueOf(value);
+            else if (DDDF_AUTH.equalsIgnoreCase(tag)) agency = S62Agency.valueOf(value);
             else if (DDDF_COMT.equalsIgnoreCase(tag)) comment = toString(value);
         }
         for(Field f : isofield.getFields()){

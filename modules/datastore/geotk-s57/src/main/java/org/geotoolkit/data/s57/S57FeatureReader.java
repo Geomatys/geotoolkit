@@ -35,8 +35,8 @@ import org.geotoolkit.data.s57.model.DataSetIdentification;
 import org.geotoolkit.data.s57.model.DataSetParameter;
 import org.geotoolkit.data.s57.model.FeatureRecord;
 import org.geotoolkit.data.s57.model.Pointer;
-import org.geotoolkit.data.s57.model.S57ModelObject;
-import org.geotoolkit.data.s57.model.S57ModelObjectReader;
+import org.geotoolkit.data.s57.model.S57Object;
+import org.geotoolkit.data.s57.model.S57ObjectReader;
 import org.geotoolkit.data.s57.model.VectorRecord;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.geometry.jts.JTS;
@@ -63,12 +63,12 @@ public class S57FeatureReader implements FeatureReader{
     private int coordFactor;
     private int soundingFactor;
     // S-57 objects
-    private final S57ModelObjectReader mreader;
+    private final S57ObjectReader mreader;
     private final Map<Pointer,VectorRecord> spatials = new HashMap<Pointer,VectorRecord>();
     
     private Feature feature;
 
-    public S57FeatureReader(FeatureType type, int s57typeCode, S57ModelObjectReader mreader,
+    public S57FeatureReader(FeatureType type, int s57typeCode, S57ObjectReader mreader,
             DataSetIdentification datasetIdentification,DataSetParameter datasetParameter) {
         this.type = type;
         this.s57TypeCode = s57typeCode;
@@ -84,7 +84,7 @@ public class S57FeatureReader implements FeatureReader{
             properties.put(code, desc);
         }
         
-        mreader.setPredicate(new S57ModelObjectReader.Predicate() {
+        mreader.setPredicate(new S57ObjectReader.Predicate() {
             @Override
             public boolean match(DataRecord record) {
                 final Field root = record.getRootField();
@@ -129,7 +129,7 @@ public class S57FeatureReader implements FeatureReader{
         
         try{
             while(feature==null && mreader.hasNext()){
-                final S57ModelObject modelObj = mreader.next();
+                final S57Object modelObj = mreader.next();
                 if(modelObj instanceof VectorRecord){
                     final VectorRecord rec = (VectorRecord) modelObj;
                     final Pointer key = rec.generatePointer();

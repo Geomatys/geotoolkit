@@ -20,13 +20,14 @@ import java.io.IOException;
 import org.geotoolkit.data.iso8211.Field;
 import org.geotoolkit.data.iso8211.SubField;
 import static org.geotoolkit.data.s57.S57Constants.*;
-import static org.geotoolkit.data.s57.model.S57ModelObject.*;
+import org.geotoolkit.data.s57.S62Agency;
+import static org.geotoolkit.data.s57.model.S57Object.*;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
-public class DataSetIdentification extends S57ModelObject {
+public class DataSetIdentification extends S57Object {
     
     //7.3.1.1 Data set identification field structure
     public static final String DSID = "DSID";
@@ -47,8 +48,6 @@ public class DataSetIdentification extends S57ModelObject {
     public static final String DSID_AGEN = "AGEN";
     public static final String DSID_COMT = "COMT";
     
-    public RecordType type;
-    public long id;
     public ExchangePurpose purpose;
     public IntendedUsage usage;
     public String name;
@@ -61,11 +60,11 @@ public class DataSetIdentification extends S57ModelObject {
     public String specificationDesc;
     public String specificationNumber;
     public ApplicationProfile applicationProfile;
-    public Agency agency;    
+    public S62Agency agency;    
     public String comment;
     public DataSetStructureInformation information;
     
-    public static class DataSetStructureInformation extends S57ModelObject{
+    public static class DataSetStructureInformation extends S57Object{
         
         //7.3.1.2 Data set structure information field structure
         public static final String DSID_DSSI = "DSSI";
@@ -131,7 +130,7 @@ public class DataSetIdentification extends S57ModelObject {
             else if(DSID_PSDN.equalsIgnoreCase(tag)) specificationDesc = toString(value);
             else if(DSID_PRED.equalsIgnoreCase(tag)) specificationNumber = toString(value);
             else if(DSID_PROF.equalsIgnoreCase(tag)) applicationProfile = ApplicationProfile.valueOf(value);
-            else if(DSID_AGEN.equalsIgnoreCase(tag)) agency = Agency.valueOf(value);
+            else if(DSID_AGEN.equalsIgnoreCase(tag)) agency = S62Agency.valueOf(value);
             else if(DSID_COMT.equalsIgnoreCase(tag)) comment = toString(value);              
             
         }

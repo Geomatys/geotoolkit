@@ -28,10 +28,11 @@ import org.geotoolkit.data.s57.S57Constants;
 import org.geotoolkit.gui.swing.tree.Trees;
 
 /**
- *
+ * Base class for all S-57 objects.
+ * 
  * @author Johann Sorel (Geomatys)
  */
-public class S57ModelObject {
+public class S57Object {
  
     public static final Charset US_ASCII = Charset.forName("US-ASCII");
     public static final Charset ISO_8859_1 = Charset.forName("ISO-8859-1");
@@ -40,6 +41,18 @@ public class S57ModelObject {
     /** lexical levels should be filled before reading values */
     public S57Constants.LexicalLevel attfLexicalLevel;
     public S57Constants.LexicalLevel natfLexicalLevel;
+    
+    public S57Constants.RecordType type;
+    public long id;
+    
+    /**
+     * Generate a key composed of id + type.
+     * Used for pointer resolution
+     * @return Pointer, never null
+     */
+    public Pointer generatePointer(){
+        return new Pointer(type,id);
+    }
     
     public void read(Field isofield) throws IOException {
         throw new IOException("Not implemented yet.");
@@ -64,9 +77,9 @@ public class S57ModelObject {
                 Object value = f.get(this);
                 lst.add(f.getName() +" = "+value);
             } catch (IllegalArgumentException ex) {
-                Logger.getLogger(S57ModelObject.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(S57Object.class.getName()).log(Level.SEVERE, null, ex);
             } catch (IllegalAccessException ex) {
-                Logger.getLogger(S57ModelObject.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(S57Object.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
         return Trees.toString(name, lst);

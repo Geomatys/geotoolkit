@@ -22,13 +22,14 @@ import java.util.List;
 import org.geotoolkit.data.iso8211.Field;
 import org.geotoolkit.data.iso8211.SubField;
 import static org.geotoolkit.data.s57.S57Constants.*;
-import static org.geotoolkit.data.s57.model.S57ModelObject.*;
+import org.geotoolkit.data.s57.S62Agency;
+import static org.geotoolkit.data.s57.model.S57Object.*;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
-public class DataDictionaryDomainIdentifier extends S57ModelObject {
+public class DataDictionaryDomainIdentifier extends S57Object {
     
     //7.5.2.1 Data dictionary domain identifier field structure
     public static final String DDDI = "DDDI";
@@ -41,17 +42,15 @@ public class DataDictionaryDomainIdentifier extends S57ModelObject {
     public static final String DDDI_AUTH = "AUTH";
     public static final String DDDI_COMT = "COMT";
     
-    public RecordType type;
-    public long id;
     public int code;
     public AttributeDomain domainType;
     public String unit;
     public String domainFormat;
-    public Agency agency;
+    public S62Agency agency;
     public String comment;
     public final List<DataDictionaryDomainField> fields = new ArrayList<DataDictionaryDomainField>();
     
-    public static class DataDictionaryDomainField extends S57ModelObject {
+    public static class DataDictionaryDomainField extends S57Object {
         //7.5.2.2 Data dictionary domain field structure
         public static final String DDDI_DDOM = "DDOM";
         public static final String DDDI_DDOM_RAVA = "RAVA";
@@ -64,7 +63,7 @@ public class DataDictionaryDomainIdentifier extends S57ModelObject {
         public String domainValue;
         public String description;
         public String definition;
-        public Agency agency;
+        public S62Agency agency;
         public List<DataDictionaryDomainReference> references = new ArrayList<DataDictionaryDomainReference>();
         
         @Override
@@ -76,7 +75,7 @@ public class DataDictionaryDomainIdentifier extends S57ModelObject {
                 else if (DDDI_DDOM_DVAL.equalsIgnoreCase(tag)) domainValue = toString(value);
                 else if (DDDI_DDOM_DVSD.equalsIgnoreCase(tag)) description = toString(value);
                 else if (DDDI_DDOM_DEFN.equalsIgnoreCase(tag)) definition = toString(value);
-                else if (DDDI_DDOM_AUTH.equalsIgnoreCase(tag)) agency = Agency.valueOf(value);
+                else if (DDDI_DDOM_AUTH.equalsIgnoreCase(tag)) agency = S62Agency.valueOf(value);
             }
             for(Field f : isofield.getFields()){
                 final String tag = f.getType().getTag();
@@ -91,7 +90,7 @@ public class DataDictionaryDomainIdentifier extends S57ModelObject {
         
     }
     
-    public static class DataDictionaryDomainReference extends S57ModelObject{
+    public static class DataDictionaryDomainReference extends S57Object{
         //7.5.2.3 Data dictionary domain reference field structure
         public static final String DDDI_DDOM_DDRF = "DDRF";
         public static final String DDDI_DDOM_DDRF_RFTP = "RFTP";
@@ -124,7 +123,7 @@ public class DataDictionaryDomainIdentifier extends S57ModelObject {
             else if (DDDI_ATDO.equalsIgnoreCase(tag)) domainType = AttributeDomain.valueOf(value);
             else if (DDDI_ADMU.equalsIgnoreCase(tag)) unit = toString(value);
             else if (DDDI_ADFT.equalsIgnoreCase(tag)) domainFormat = toString(value);
-            else if (DDDI_AUTH.equalsIgnoreCase(tag)) agency = Agency.valueOf(value);
+            else if (DDDI_AUTH.equalsIgnoreCase(tag)) agency = S62Agency.valueOf(value);
             else if (DDDI_COMT.equalsIgnoreCase(tag)) comment = toString(value);
         }
         for(Field f : isofield.getFields()){

@@ -20,13 +20,14 @@ import java.io.IOException;
 import org.geotoolkit.data.iso8211.Field;
 import org.geotoolkit.data.iso8211.SubField;
 import static org.geotoolkit.data.s57.S57Constants.*;
-import static org.geotoolkit.data.s57.model.S57ModelObject.*;
+import org.geotoolkit.data.s57.S62Agency;
+import static org.geotoolkit.data.s57.model.S57Object.*;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
-public class DataSetHistory extends S57ModelObject {
+public class DataSetHistory extends S57Object {
     
     //7.3.3 Data set history record structure
     public static final String DSHT = "DSHT";
@@ -39,9 +40,7 @@ public class DataSetHistory extends S57ModelObject {
     public static final String DSHT_CODT = "CODT";
     public static final String DSHT_COMT = "COMT";
     
-    public RecordType type;
-    public long id;
-    public Agency agency;
+    public S62Agency agency;
     public String earliestSourceDate;
     public String latestSourceDate;
     public String collectionCriteria;
@@ -55,7 +54,7 @@ public class DataSetHistory extends S57ModelObject {
             final Object val = sf.getValue();
                  if (DSHT_RCNM.equalsIgnoreCase(tag)) type = RecordType.valueOf(val);
             else if (DSHT_RCID.equalsIgnoreCase(tag)) id = toLong(val);
-            else if (DSHT_PRCO.equalsIgnoreCase(tag)) agency = Agency.valueOf(val);
+            else if (DSHT_PRCO.equalsIgnoreCase(tag)) agency = S62Agency.valueOf(val);
             else if (DSHT_ESDT.equalsIgnoreCase(tag)) earliestSourceDate = toString(val);
             else if (DSHT_LSDT.equalsIgnoreCase(tag)) latestSourceDate = toString(val);
             else if (DSHT_DCRT.equalsIgnoreCase(tag)) collectionCriteria = toString(val);

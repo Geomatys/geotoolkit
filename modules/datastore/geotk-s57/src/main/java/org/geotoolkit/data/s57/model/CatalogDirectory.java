@@ -20,13 +20,13 @@ import java.io.IOException;
 import org.geotoolkit.data.iso8211.Field;
 import org.geotoolkit.data.iso8211.SubField;
 import static org.geotoolkit.data.s57.S57Constants.*;
-import static org.geotoolkit.data.s57.model.S57ModelObject.*;
+import static org.geotoolkit.data.s57.model.S57Object.*;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
-public class CatalogDirectory extends S57ModelObject {
+public class CatalogDirectory extends S57Object {
     
     //7.4.1 Catalogue directory record structure
     public static final String CATD = "CATD";
@@ -51,8 +51,6 @@ public class CatalogDirectory extends S57ModelObject {
     public static final String CATD_CRCS = "CRCS";
     public static final String CATD_COMT = "COMT";
  
-    public RecordType type;
-    public long id;
     public String file;
     public String fileName;
     public String volume;

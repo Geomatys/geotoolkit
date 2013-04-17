@@ -16,8 +16,6 @@
  */
 package org.geotoolkit.data.iso8211;
 
-import java.nio.charset.Charset;
-
 /**
  *
  * @author Johann Sorel (Geomatys)

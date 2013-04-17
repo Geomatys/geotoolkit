@@ -21,7 +21,9 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -38,7 +40,8 @@ import org.geotoolkit.data.s57.annexe.S57TypeBank;
 import org.geotoolkit.data.s57.model.DataSetIdentification;
 import org.geotoolkit.data.s57.model.DataSetParameter;
 import org.geotoolkit.data.s57.model.FeatureRecord;
-import org.geotoolkit.data.s57.model.S57ModelObject;
+import org.geotoolkit.data.s57.model.Pointer;
+import org.geotoolkit.data.s57.model.S57Object;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.storage.DataStoreException;
@@ -50,7 +53,7 @@ import org.opengis.filter.Filter;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.parameter.ParameterValueGroup;
 
-import org.geotoolkit.data.s57.model.S57ModelObjectReader;
+import org.geotoolkit.data.s57.model.S57ObjectReader;
 
 /**
  * S-57 FeatureStore.
@@ -122,12 +125,12 @@ public class S57FeatureStore extends AbstractFeatureStore{
         types = new HashSet<FeatureType>();
         names = new HashSet<Name>();
         
-        final S57ModelObjectReader reader = new S57ModelObjectReader();
-        reader.setInput(file);
+        final S57ObjectReader reader = new S57ObjectReader();
+        reader.setInput(findMainFile(null));
         try{
             
             while(reader.hasNext()){
-                final S57ModelObject obj = reader.next();
+                final S57Object obj = reader.next();
                 if(obj instanceof DataSetIdentification){
                     datasetIdentification = (DataSetIdentification) obj;
                 }else if(obj instanceof DataSetParameter){
@@ -159,14 +162,71 @@ public class S57FeatureStore extends AbstractFeatureStore{
     @Override
     public FeatureReader getFeatureReader(Query query) throws DataStoreException {
         final FeatureType ft = getFeatureType(query.getTypeName());
-        final S57ModelObjectReader s57reader = new S57ModelObjectReader();
-        s57reader.setInput(file);
+        
+        
+        
+        final S57ObjectReader s57reader = new S57ObjectReader();
+        s57reader.setInput(findMainFile(null));
         final FeatureReader reader = new S57FeatureReader(ft,
                 (Integer)ft.getUserData().get(S57TYPECODE),s57reader,
                 datasetIdentification,datasetParameter);
         return handleRemaining(reader, query);
     }
 
+    /**
+     * Search for the main file, it must be somewhere in the given path and have the
+     * extension .000
+     * @return File if found, DataStoreException otherwise
+     */
+    private File findMainFile(File root) throws DataStoreException{
+        if(root == null){
+            root = file;
+        }
+        
+        if(root.isDirectory()){
+            //search sub files
+            for(File f : root.listFiles()){
+                File candidate = findMainFile(f);
+                if(candidate!=null) return candidate;
+            }            
+        }else{
+            if(root.getName().endsWith(".000")){
+                return root;
+            }
+        }
+        throw new DataStoreException("Could not find any S-57 base file, named xxx.000");
+    }
+    
+    /**
+     * Search for update files.
+     * @param updateFiles
+     * @param root
+     * @return List<File>, never null
+     */
+    private List<File> findUpdateFiles(String baseName,List<File> updateFiles, File root) throws DataStoreException{
+        if(root == null){
+            root = file;
+        }
+        if(baseName==null){
+            File main = findMainFile(null);
+            baseName = main.getName().substring(0, main.getName().length()-4);
+        }        
+        if(updateFiles==null){
+            updateFiles = new ArrayList<File>();
+        }
+        if(root.isDirectory()){
+            //search sub files
+            for(File f : root.listFiles()){
+                findUpdateFiles(baseName, updateFiles, f);
+            }            
+        }else{
+            if(root.getName().startsWith(baseName) && !root.getName().endsWith(".000")){
+                updateFiles.add(root);
+            }
+        }
+        return updateFiles;
+    }
+    
     
     ////////////////////////////////////////////////////////////////////////////
     // WRITING OPERATIONS //////////////////////////////////////////////////////

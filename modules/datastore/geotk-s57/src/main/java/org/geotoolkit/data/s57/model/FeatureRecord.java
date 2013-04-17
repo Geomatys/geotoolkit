@@ -24,14 +24,15 @@ import java.util.List;
 import org.geotoolkit.data.iso8211.Field;
 import org.geotoolkit.data.iso8211.SubField;
 import static org.geotoolkit.data.s57.S57Constants.*;
-import static org.geotoolkit.data.s57.model.S57ModelObject.*;
+import org.geotoolkit.data.s57.S62Agency;
+import static org.geotoolkit.data.s57.model.S57Object.*;
 import org.geotoolkit.io.LEDataInputStream;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
-public class FeatureRecord extends S57ModelObject {
+public class FeatureRecord extends S57Object {
  
     //7.5.3.2 Feature record identifier field structure
     public static final String FRID = "FRID";
@@ -51,8 +52,6 @@ public class FeatureRecord extends S57ModelObject {
     /** record update instruction */
     public static final String FRID_RUIN = "RUIN"; 
     
-    public RecordType type;
-    public long id;
     public Primitive primitiveType;
     public int group;
     public int code;
@@ -66,7 +65,7 @@ public class FeatureRecord extends S57ModelObject {
     public SpatialPointerControl spatialControl;
     public final List<SpatialPointer> spatialPointers = new ArrayList<SpatialPointer>();
     
-    public static class Identifier extends S57ModelObject {
+    public static class Identifier extends S57Object {
         //7.6.2 Feature object identifier field structure
         public static final String FRID_FOID = "FOID"; 
         public static final String FRID_FOID_AGEN = "AGEN"; 
@@ -77,7 +76,7 @@ public class FeatureRecord extends S57ModelObject {
         public static final String FRID_FOID_FIDN = "FIDN"; 
         public static final String FRID_FOID_FIDS = "FIDS"; 
         
-        public Agency agency;
+        public S62Agency agency;
         public int number;
         public int subdivision;
         
@@ -86,7 +85,7 @@ public class FeatureRecord extends S57ModelObject {
             for(SubField sf : isofield.getSubFields()){
                 final String tag = sf.getType().getTag();
                 final Object value = sf.getValue();
-                     if (FRID_FOID_AGEN.equalsIgnoreCase(tag)) agency = Agency.valueOf(value);
+                     if (FRID_FOID_AGEN.equalsIgnoreCase(tag)) agency = S62Agency.valueOf(value);
                 else if (FRID_FOID_FIDN.equalsIgnoreCase(tag)) number = toInteger(value);
                 else if (FRID_FOID_FIDS.equalsIgnoreCase(tag)) subdivision = toInteger(value);
             }
@@ -94,7 +93,7 @@ public class FeatureRecord extends S57ModelObject {
         
     }
     
-    public static class Attribute extends S57ModelObject {
+    public static class Attribute extends S57Object {
         //7.6.3 Feature record attribute field structure
         /** 4.4
         * Attributes of feature objects must be encoded in the “Feature Record Attribute” [ATTF] field (see clause
@@ -134,7 +133,7 @@ public class FeatureRecord extends S57ModelObject {
         }
     }
 
-    public static class NationalAttribute extends S57ModelObject {
+    public static class NationalAttribute extends S57Object {
         //7.6.4 Feature record national attribute field structure
         /** 4.5
         * National attributes of feature objects must be encoded in the “Feature Record National Attribute” [NATF]
@@ -176,7 +175,7 @@ public class FeatureRecord extends S57ModelObject {
         
     }
     
-    public static class ObjectPointerControl extends S57ModelObject {
+    public static class ObjectPointerControl extends S57Object {
         //7.6.5 Feature record to feature object pointer control field structure
         public static final String FRID_FFPC = "FFPC"; 
         public static final String FRID_FFPC_FFUI = "FFUI"; 
@@ -200,7 +199,7 @@ public class FeatureRecord extends S57ModelObject {
         
     }
     
-    public static class ObjectPointer extends S57ModelObject {
+    public static class ObjectPointer extends S57Object {
         //7.6.6 Feature record to feature object pointer field structure
         /** 4.6
         * The “Feature Record to Feature Object Pointer” [FFPT] field is used to establish a relationship between
@@ -216,7 +215,7 @@ public class FeatureRecord extends S57ModelObject {
         public static final String FRID_FFPT_COMT = "COMT"; 
                 
         //reference id
-        public Agency agency;
+        public S62Agency agency;
         public long refid;
         public int revision;
         //informations
@@ -235,7 +234,7 @@ public class FeatureRecord extends S57ModelObject {
                 if(FRID_FFPT_LNAM.equalsIgnoreCase(tag)){
                     if(val instanceof byte[]){
                         final byte[] buffer = (byte[]) val;
-                        agency = Agency.valueOf(LEDataInputStream.readUnsignedShort(buffer, 0));
+                        agency = S62Agency.valueOf(LEDataInputStream.readUnsignedShort(buffer, 0));
                         refid = LEDataInputStream.readUnsignedInt(buffer, 2);
                         revision = LEDataInputStream.readUnsignedShort(buffer, 6);
                     }else{
@@ -250,7 +249,7 @@ public class FeatureRecord extends S57ModelObject {
         
     }
     
-    public static class SpatialPointerControl extends S57ModelObject {
+    public static class SpatialPointerControl extends S57Object {
         //7.6.7 Feature record to spatial record pointer control field structure
         public static final String FRID_FSPC = "FSPC"; 
         public static final String FRID_FSPC_FSUI = "FSUI"; 

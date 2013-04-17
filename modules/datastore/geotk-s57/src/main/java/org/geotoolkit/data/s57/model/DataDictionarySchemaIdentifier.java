@@ -24,26 +24,25 @@ import java.util.List;
 import org.geotoolkit.data.iso8211.Field;
 import org.geotoolkit.data.iso8211.SubField;
 import static org.geotoolkit.data.s57.S57Constants.*;
-import static org.geotoolkit.data.s57.model.S57ModelObject.*;
+import org.geotoolkit.data.s57.S62Agency;
+import static org.geotoolkit.data.s57.model.S57Object.*;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
-public class DataDictionarySchemaIdentifier extends S57ModelObject {
+public class DataDictionarySchemaIdentifier extends S57Object {
     
     //7.5.3.1 Data dictionary schema identifier field structure
     public static final String DDSI = "DDSI";
     public static final String DDSI_RCNM = "RCNM";
     public static final String DDSI_RCID = "RCID"; 
     public static final String DDSI_OBLB = "OBLB"; 
-        
-    public RecordType type;
-    public long id;
+    
     public int code;
     public final List<DataDictionarySchemaField> fields = new ArrayList<DataDictionarySchemaField>();
     
-    public static class DataDictionarySchemaField extends S57ModelObject {
+    public static class DataDictionarySchemaField extends S57Object {
         //7.5.3.2 Data dictionary schema field structure
         public static final String DDSI_DDSC = "DDSC";
         public static final String DDSI_DDSC_ATLB = "ATLB";
@@ -52,7 +51,7 @@ public class DataDictionarySchemaIdentifier extends S57ModelObject {
         
         public int code;
         public AttributeSet set;
-        public Agency agency;
+        public S62Agency agency;
         
         @Override
         public void read(Field isofield) throws IOException {
@@ -65,7 +64,7 @@ public class DataDictionarySchemaIdentifier extends S57ModelObject {
                 final Object val = sf.getValue();
                      if (DDSI_DDSC_ATLB.equalsIgnoreCase(tag)) code = toInteger(val);
                 else if (DDSI_DDSC_ASET.equalsIgnoreCase(tag)) set = AttributeSet.valueOf(val);
-                else if (DDSI_DDSC_AUTH.equalsIgnoreCase(tag)) agency = Agency.valueOf(val);
+                else if (DDSI_DDSC_AUTH.equalsIgnoreCase(tag)) agency = S62Agency.valueOf(val);
             }
         }
         

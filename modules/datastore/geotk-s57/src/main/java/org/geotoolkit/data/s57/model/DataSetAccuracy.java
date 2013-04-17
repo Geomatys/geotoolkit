@@ -20,13 +20,13 @@ import java.io.IOException;
 import org.geotoolkit.data.iso8211.Field;
 import org.geotoolkit.data.iso8211.SubField;
 import static org.geotoolkit.data.s57.S57Constants.*;
-import static org.geotoolkit.data.s57.model.S57ModelObject.*;
+import static org.geotoolkit.data.s57.model.S57Object.*;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
-public class DataSetAccuracy extends S57ModelObject {
+public class DataSetAccuracy extends S57Object {
     
     //7.3.4 Data set accuracy record structure
     public static final String DSAC = "DSAC";
@@ -38,8 +38,6 @@ public class DataSetAccuracy extends S57ModelObject {
     public static final String DSAC_FPMF = "FPMF";
     public static final String DSAC_COMT = "COMT";
     
-    public RecordType type;
-    public long id;
     public double positionAccuracy;
     public double hvmeasureAccuracy;
     public double soundingAccuracy;

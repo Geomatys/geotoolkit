@@ -18,7 +18,6 @@ package org.geotoolkit.data.s57.model;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -27,15 +26,14 @@ import org.geotoolkit.data.iso8211.Field;
 import org.geotoolkit.data.iso8211.SubField;
 import org.geotoolkit.data.s57.S57Constants;
 import static org.geotoolkit.data.s57.S57Constants.*;
-import org.geotoolkit.data.s57.S57FeatureReader;
-import static org.geotoolkit.data.s57.model.S57ModelObject.*;
+import static org.geotoolkit.data.s57.model.S57Object.*;
 import org.geotoolkit.io.LEDataInputStream;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
-public class VectorRecord extends S57ModelObject {
+public class VectorRecord extends S57Object {
         
     //7.7.1.1 Vector record identifier field structure
     public static final String VRID = "VRID";
@@ -46,8 +44,6 @@ public class VectorRecord extends S57ModelObject {
     /** record update instruction */
     public static final String VRID_RUIN = "RUIN"; 
     
-    public RecordType type;
-    public long id;
     public int version;
     public UpdateInstruction updateInstruction;
     
@@ -58,15 +54,6 @@ public class VectorRecord extends S57ModelObject {
     public final List<Coordinate2D> coords2D = new ArrayList<Coordinate2D>();
     public final List<Coordinate3D> coords3D = new ArrayList<Coordinate3D>();
     public List<Arc> arcs;
-
-    /**
-     * Generate a key composed of id + type.
-     * Used for pointer resolution
-     * @return 
-     */
-    public RecordPointer generatePointer(){
-        return new RecordPointer(id, type);
-    }
     
     /**
      * Shortcut to access edge begin node.
@@ -120,7 +107,7 @@ public class VectorRecord extends S57ModelObject {
         return new Coordinate(c.x/coordFactor, c.y/coordFactor);
     }
         
-    public static class Attribute extends S57ModelObject {
+    public static class Attribute extends S57Object {
         //7.7.1.2 Vector record attribute field structure
         public static final String VRID_ATTV = "ATTV"; 
         public static final String VRID_ATTV_ATTL = "ATTL"; 
@@ -155,7 +142,7 @@ public class VectorRecord extends S57ModelObject {
         
     }
     
-    public static class RecordPointerControl extends S57ModelObject {
+    public static class RecordPointerControl extends S57Object {
         //7.7.1.3 Vector record pointer control field structure
         public static final String VRID_VRPC = "VRPC"; 
         public static final String VRID_VRPC_VPUI = "VPUI"; 
@@ -235,7 +222,7 @@ public class VectorRecord extends S57ModelObject {
         
     }
     
-    public static class CoordinateControl extends S57ModelObject {
+    public static class CoordinateControl extends S57Object {
         //7.7.1.5 Coordinate control field structure
         public static final String VRID_SGCC = "SGCC"; 
         public static final String VRID_SGCC_CCUI = "CCUI"; 
@@ -258,7 +245,7 @@ public class VectorRecord extends S57ModelObject {
         }
     }
     
-    public static class Coordinate2D extends S57ModelObject {
+    public static class Coordinate2D extends S57Object {
         //7.7.1.6 2-D Coordinate field structure
         public static final String VRID_SG2D = "SG2D"; 
         public static final String VRID_SG2D_YCOO = "YCOO"; 
@@ -288,7 +275,7 @@ public class VectorRecord extends S57ModelObject {
         
     }
     
-    public static class Coordinate3D extends S57ModelObject {
+    public static class Coordinate3D extends S57Object {
         //7.7.1.7 3-D Coordinate field structure
         public static final String VRID_SG3D = "SG3D";
         public static final String VRID_SG3D_YCOO = "YCOO";
@@ -328,7 +315,7 @@ public class VectorRecord extends S57ModelObject {
         
     }
     
-    public static class Arc extends S57ModelObject {
+    public static class Arc extends S57Object {
         //7.7.1.8 Arc/Curve definition field structure
         public static final String VRID_ARCC = "ARCC";
         public static final String VRID_ARCC_ATYP = "ATYP";
@@ -356,7 +343,7 @@ public class VectorRecord extends S57ModelObject {
             }
         }
         
-        public static class Arc2D extends S57ModelObject {
+        public static class Arc2D extends S57Object {
             //7.7.1.9 Arc coordinates field structure
             public static final String VRID_ARCC_AR2D = "AR2D";
             public static final String VRID_ARCC_AR2D_ENPT = "STPT";
@@ -366,7 +353,7 @@ public class VectorRecord extends S57ModelObject {
             public static final String VRID_ARCC_AR2D_XCOO = "XCOO";
         }
 
-        public static class Ellipse2D extends S57ModelObject {
+        public static class Ellipse2D extends S57Object {
             //7.7.1.10 Ellipse coordinates field structure
             public static final String VRID_ARCC_EL2D = "EL2D";
             public static final String VRID_ARCC_EL2D_STPT = "STPT";
@@ -378,7 +365,7 @@ public class VectorRecord extends S57ModelObject {
             public static final String VRID_ARCC_EL2D_XCOO = "XCOO";
         }
 
-        public static class Curve2D extends S57ModelObject {
+        public static class Curve2D extends S57Object {
             //7.7.1.11 Curve coordinates field structure
             public static final String VRID_ARCC_CT2D = "CT2D";
             public static final String VRID_ARCC_CT2D_YCOO = "YCOO";
