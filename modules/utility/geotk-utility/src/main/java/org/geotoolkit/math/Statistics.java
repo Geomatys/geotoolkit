@@ -85,6 +85,27 @@ public class Statistics extends org.apache.sis.math.Statistics implements Clonea
     }
 
     /**
+     * @deprecated Renamed {@link #accept}.
+     */
+    public void add(final double value) {
+        accept(value);
+    }
+
+    /**
+     * @deprecated Renamed {@link #accept}.
+     */
+    public void add(final long value) {
+        accept(value);
+    }
+
+    /**
+     * @deprecated Renamed {@link #combine}.
+     */
+    public void add(final org.apache.sis.math.Statistics stats) {
+        combine(stats);
+    }
+
+    /**
      * Returns the range of sample values. This is equivalent to <code>{@link #maximum maximum} -
      * {@link #minimum minimum}</code>, except for rounding error. If no samples were added,
      * then returns {@link Double#NaN NaN}.
@@ -317,7 +338,7 @@ public class Statistics extends org.apache.sis.math.Statistics implements Clonea
             copy = new org.apache.sis.math.Statistics[statistics.length];
             for (int i=0; i<copy.length; i++) {
                 copy[i] = new org.apache.sis.math.Statistics(header[i]);
-                copy[i].add(statistics[i]);
+                copy[i].combine(statistics[i]);
             }
         }
         final StatisticsFormat format;
