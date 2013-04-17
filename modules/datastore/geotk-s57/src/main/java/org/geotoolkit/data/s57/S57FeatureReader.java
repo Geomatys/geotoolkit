@@ -36,7 +36,7 @@ import org.geotoolkit.data.s57.model.DataSetParameter;
 import org.geotoolkit.data.s57.model.FeatureRecord;
 import org.geotoolkit.data.s57.model.Pointer;
 import org.geotoolkit.data.s57.model.S57Object;
-import org.geotoolkit.data.s57.model.S57ObjectReader;
+import org.geotoolkit.data.s57.model.S57Reader;
 import org.geotoolkit.data.s57.model.VectorRecord;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.geometry.jts.JTS;
@@ -63,12 +63,12 @@ public class S57FeatureReader implements FeatureReader{
     private int coordFactor;
     private int soundingFactor;
     // S-57 objects
-    private final S57ObjectReader mreader;
+    private final S57Reader mreader;
     private final Map<Pointer,VectorRecord> spatials = new HashMap<Pointer,VectorRecord>();
     
     private Feature feature;
 
-    public S57FeatureReader(FeatureType type, int s57typeCode, S57ObjectReader mreader,
+    public S57FeatureReader(FeatureType type, int s57typeCode, S57Reader mreader,
             DataSetIdentification datasetIdentification,DataSetParameter datasetParameter) {
         this.type = type;
         this.s57TypeCode = s57typeCode;
@@ -84,7 +84,7 @@ public class S57FeatureReader implements FeatureReader{
             properties.put(code, desc);
         }
         
-        mreader.setPredicate(new S57ObjectReader.Predicate() {
+        mreader.setPredicate(new S57Reader.Predicate() {
             @Override
             public boolean match(DataRecord record) {
                 final Field root = record.getRootField();
@@ -151,9 +151,7 @@ public class S57FeatureReader implements FeatureReader{
     }
             
     private Feature toFeature(final FeatureRecord record){
-        final Feature f =  FeatureUtilities.defaultFeature(type, String.valueOf(record.id));
-        //System.out.println("-------");
-        //System.out.println(record.id+" "+record.updateInstruction+" "+record.code+" "+record.identifier.number);
+        final Feature f =  FeatureUtilities.defaultFeature(type, record.identifier.agency.ascii+"."+String.valueOf(record.id)+".v"+record.version);
         
         //read attributes
         for(FeatureRecord.Attribute att : record.attributes){

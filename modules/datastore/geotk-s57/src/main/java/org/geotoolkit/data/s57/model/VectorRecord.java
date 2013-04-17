@@ -30,7 +30,8 @@ import static org.geotoolkit.data.s57.model.S57Object.*;
 import org.geotoolkit.io.LEDataInputStream;
 
 /**
- *
+ * S-57 Vector/Spatial record.
+ * 
  * @author Johann Sorel (Geomatys)
  */
 public class VectorRecord extends S57Object {
@@ -44,15 +45,21 @@ public class VectorRecord extends S57Object {
     /** record update instruction */
     public static final String VRID_RUIN = "RUIN"; 
     
+    /** RVER */
     public int version;
+    /** RUIN */
     public UpdateInstruction updateInstruction;
-    
+    /** ATTV */
     public final List<Attribute> attributes = new ArrayList<Attribute>();
+    /** VRPC */
     public RecordPointerControl recordPointerControl;
+    /** VRPT */
     public final List<RecordPointer> records = new ArrayList<RecordPointer>();
+    /** SGCC */
     public CoordinateControl coordinateControl;
-    public final List<Coordinate2D> coords2D = new ArrayList<Coordinate2D>();
-    public final List<Coordinate3D> coords3D = new ArrayList<Coordinate3D>();
+    /** SG2D/SG3D */
+    public final List<Coordinate2D> coords = new ArrayList<Coordinate2D>();
+    /** ARCC */
     public List<Arc> arcs;
     
     /**
@@ -88,12 +95,13 @@ public class VectorRecord extends S57Object {
      * @return Coordinate
      */
     public List<Coordinate> getCoordinates(double coordFactor,double soundingFactor){
-        final List<Coordinate> coords = new ArrayList<Coordinate>(coords2D.size());
-        for(Coordinate2D c : coords2D){
-            coords.add(new Coordinate(c.x/coordFactor, c.y/coordFactor));
-        }
-        for(Coordinate3D c : coords3D){
-            coords.add(new Coordinate(c.x/coordFactor, c.y/coordFactor, c.z/soundingFactor));
+        final List<Coordinate> coords = new ArrayList<Coordinate>(this.coords.size());
+        for(Coordinate2D c : this.coords){
+            if(c.is3D){
+                coords.add(new Coordinate(c.x/coordFactor, c.y/coordFactor, c.z/soundingFactor));
+            }else{
+                coords.add(new Coordinate(c.x/coordFactor, c.y/coordFactor));
+            }
         }
         return coords;
     }
@@ -103,65 +111,48 @@ public class VectorRecord extends S57Object {
      * @return Coordinate
      */
     public Coordinate getNodeCoordinate(double coordFactor){
-        final Coordinate2D c = coords2D.get(0);
+        final Coordinate2D c = coords.get(0);
         return new Coordinate(c.x/coordFactor, c.y/coordFactor);
     }
         
-    public static class Attribute extends S57Object {
+    public static class Attribute extends BaseAttribute {
         //7.7.1.2 Vector record attribute field structure
         public static final String VRID_ATTV = "ATTV"; 
         public static final String VRID_ATTV_ATTL = "ATTL"; 
         public static final String VRID_ATTV_ATVL = "ATVL";
         
-        public int code;
-        public String value;
-        
         @Override
-        public void read(Field isofield) throws IOException {
-            read(isofield.getSubFields());
+        protected String getKeyTag() {
+            return VRID_ATTV_ATTL;
         }
-        
-        public void read(List<SubField> subFields) throws IOException {
-            for(SubField sf : subFields){
-                final String tag = sf.getType().getTag();
-                final Object val = sf.getValue();
-                     if(VRID_ATTV_ATTL.equalsIgnoreCase(tag)) code = toInteger(val);
-                else if(VRID_ATTV_ATVL.equalsIgnoreCase(tag)){
-                    if(attfLexicalLevel== LexicalLevel.LEVEL0){
-                        value = new String(sf.getValueBytes(),US_ASCII);
-                    }else if(attfLexicalLevel==LexicalLevel.LEVEL1){
-                        value = new String(sf.getValueBytes(),ISO_8859_1);
-                    }else if(attfLexicalLevel==LexicalLevel.LEVEL2){
-                        value = new String(sf.getValueBytes(),UCS2);
-                    }else{
-                        throw new IOException("ATTF Lexical level not provided.");
-                    }
-                }
-            }
+
+        @Override
+        protected String getValueTag() {
+            return VRID_ATTV_ATVL;
         }
         
     }
     
-    public static class RecordPointerControl extends S57Object {
+    public static class RecordPointerControl extends BaseControl {
         //7.7.1.3 Vector record pointer control field structure
         public static final String VRID_VRPC = "VRPC"; 
         public static final String VRID_VRPC_VPUI = "VPUI"; 
         public static final String VRID_VRPC_VPIX = "VPIX";
         public static final String VRID_VRPC_NVPT = "NVPT";
         
-        public UpdateInstruction update;
-        public int index;
-        public int number;
-        
         @Override
-        public void read(Field isofield) throws IOException {
-            for(SubField sf : isofield.getSubFields()){
-                final String tag = sf.getType().getTag();
-                final Object value = sf.getValue();
-                     if(VRID_VRPC_VPUI.equalsIgnoreCase(tag)) update = UpdateInstruction.valueOf(value);
-                else if(VRID_VRPC_VPIX.equalsIgnoreCase(tag)) index = toInteger(value);
-                else if(VRID_VRPC_NVPT.equalsIgnoreCase(tag)) number = toInteger(value);
-            }
+        protected String getUpdateTag() {
+            return VRID_VRPC_VPUI;
+        }
+
+        @Override
+        protected String getIndexTag() {
+            return VRID_VRPC_VPIX;
+        }
+
+        @Override
+        protected String getNumberTag() {
+            return VRID_VRPC_NVPT;
         }
     }
     
@@ -222,64 +213,37 @@ public class VectorRecord extends S57Object {
         
     }
     
-    public static class CoordinateControl extends S57Object {
+    public static class CoordinateControl extends BaseControl {
         //7.7.1.5 Coordinate control field structure
         public static final String VRID_SGCC = "SGCC"; 
         public static final String VRID_SGCC_CCUI = "CCUI"; 
         public static final String VRID_SGCC_CCIX = "CCIX"; 
-        public static final String VRID_SGCC_CCNG = "CCNG"; 
+        public static final String VRID_SGCC_CCNC = "CCNC"; 
         
-        public UpdateInstruction update;
-        public int index;
-        public int number;
-        
-         @Override
-        public void read(Field isofield) throws IOException {
-            for(SubField sf : isofield.getSubFields()){
-                final String tag = sf.getType().getTag();
-                final Object value = sf.getValue();
-                     if(VRID_SGCC_CCUI.equalsIgnoreCase(tag)) update = UpdateInstruction.valueOf(value);
-                else if(VRID_SGCC_CCIX.equalsIgnoreCase(tag)) index = toInteger(value);
-                else if(VRID_SGCC_CCNG.equalsIgnoreCase(tag)) number = toInteger(value);
-            }
+        @Override
+        protected String getUpdateTag() {
+            return VRID_SGCC_CCUI;
         }
+
+        @Override
+        protected String getIndexTag() {
+            return VRID_SGCC_CCIX;
+        }
+
+        @Override
+        protected String getNumberTag() {
+            return VRID_SGCC_CCNC;
+        }
+         
     }
     
     public static class Coordinate2D extends S57Object {
         //7.7.1.6 2-D Coordinate field structure
         public static final String VRID_SG2D = "SG2D"; 
-        public static final String VRID_SG2D_YCOO = "YCOO"; 
-        public static final String VRID_SG2D_XCOO = "XCOO";
-        
-        public double x;
-        public double y;
-
-        @Override
-        public void read(Field isofield) throws IOException {
-            read(isofield.getSubFields());
-        }
-        
-        public void read(List<SubField> subFields) throws IOException {
-            for(SubField sf : subFields){
-                final String tag = sf.getType().getTag();
-                final Object value = sf.getValue();
-                     if(VRID_SG2D_YCOO.equalsIgnoreCase(tag)) y = toDouble(value);
-                else if(VRID_SG2D_XCOO.equalsIgnoreCase(tag)) x = toDouble(value);
-            }
-        }
-
-        @Override
-        public String toString() {
-            return "Coord2D["+x+"  "+y+"]";
-        }
-        
-    }
-    
-    public static class Coordinate3D extends S57Object {
+        public static final String VRID_SGXD_YCOO = "YCOO"; 
+        public static final String VRID_SGXD_XCOO = "XCOO";        
         //7.7.1.7 3-D Coordinate field structure
         public static final String VRID_SG3D = "SG3D";
-        public static final String VRID_SG3D_YCOO = "YCOO";
-        public static final String VRID_SG3D_XCOO = "XCOO";
         /** 
         * In the binary implementation, 3-D sounding values are encoded as integers. In order to convert
         * floating-point 3-D (sounding) values to integers (and vice-versa) a multiplication factor is used. The factor
@@ -289,10 +253,15 @@ public class VectorRecord extends S57Object {
         */
         public static final String VRID_SG3D_VE3D = "VE3D";
         
+        private final boolean is3D;
         public double x;
         public double y;
         public double z;
-        
+
+        public Coordinate2D(boolean is3D) {
+            this.is3D = is3D;
+        }
+
         @Override
         public void read(Field isofield) throws IOException {
             read(isofield.getSubFields());
@@ -302,19 +271,19 @@ public class VectorRecord extends S57Object {
             for(SubField sf : subFields){
                 final String tag = sf.getType().getTag();
                 final Object value = sf.getValue();
-                     if (VRID_SG3D_YCOO.equalsIgnoreCase(tag)) y = toDouble(value);
-                else if (VRID_SG3D_XCOO.equalsIgnoreCase(tag)) x = toDouble(value);
-                else if (VRID_SG3D_VE3D.equalsIgnoreCase(tag)) z = toDouble(value);
+                     if(VRID_SGXD_YCOO.equalsIgnoreCase(tag)) y = toDouble(value);
+                else if(VRID_SGXD_XCOO.equalsIgnoreCase(tag)) x = toDouble(value);
+                else if(VRID_SG3D_VE3D.equalsIgnoreCase(tag)) z = toDouble(value);
             }
         }
-        
+
         @Override
         public String toString() {
-            return "Coord3D["+x+"  "+y+"  "+z+"]";
+            return "Coord["+x+"  "+y+"  "+z+"]";
         }
         
     }
-    
+        
     public static class Arc extends S57Object {
         //7.7.1.8 Arc/Curve definition field structure
         public static final String VRID_ARCC = "ARCC";
@@ -413,16 +382,16 @@ public class VectorRecord extends S57Object {
             }else if(Coordinate2D.VRID_SG2D.equalsIgnoreCase(tag)){
                 final Iterator<SubField> sfite = f.getSubFields().iterator();
                 while(sfite.hasNext()){
-                    final Coordinate2D candidate = new Coordinate2D();
+                    final Coordinate2D candidate = new Coordinate2D(false);
                     candidate.read(Arrays.asList(sfite.next(),sfite.next()));
-                    coords2D.add(candidate);
+                    coords.add(candidate);
                 }
-            }else if(Coordinate3D.VRID_SG3D.equalsIgnoreCase(tag)){
+            }else if(Coordinate2D.VRID_SG3D.equalsIgnoreCase(tag)){
                 final Iterator<SubField> sfite = f.getSubFields().iterator();
                 while(sfite.hasNext()){
-                    final Coordinate3D candidate = new Coordinate3D();
+                    final Coordinate2D candidate = new Coordinate2D(true);
                     candidate.read(Arrays.asList(sfite.next(),sfite.next(),sfite.next()));
-                    coords3D.add(candidate);
+                    coords.add(candidate);
                 }
             }else if(Arc.VRID_ARCC.equalsIgnoreCase(tag)){
                 if(arcs==null) arcs = new ArrayList<Arc>();

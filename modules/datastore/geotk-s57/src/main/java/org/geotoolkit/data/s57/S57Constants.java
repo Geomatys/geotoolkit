@@ -16,9 +16,7 @@
  */
 package org.geotoolkit.data.s57;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import org.geotoolkit.data.iso8211.SubFieldDescription;
@@ -792,24 +790,45 @@ public final class S57Constants {
         /**
          * ASCII text, IRV of ISO/IEC 646
          */
-        public static final LexicalLevel LEVEL0 = new LexicalLevel("0", 0);
+        public static final LexicalLevel LEVEL0 = new LexicalLevel("0", 0, Charset.forName("US-ASCII"), (char)0x7F);
         /**
          * ISO 8859 part 1, Latin alphabet 1 repertoire (i.e. Western European
          * Latin alphabet based languages.
          */
-        public static final LexicalLevel LEVEL1 = new LexicalLevel("1", 1);
+        public static final LexicalLevel LEVEL1 = new LexicalLevel("1", 1, Charset.forName("ISO-8859-1"), (char)0x7F);
         /**
          * Universal Character Set repertoire UCS-2 implementation level 1 (no
          * combining characters), Base Multilingual plane of ISO/IEC 10646 (i.e.
          * including Latin alphabet, Greek, Cyrillic, Arabic, Chinese, Japanese
          * etc.)
          */
-        public static final LexicalLevel LEVEL2 = new LexicalLevel("2", 2);
+        public static final LexicalLevel LEVEL2 = new LexicalLevel("2", 2, Charset.forName("UTF-16"), (char)0x007F);
 
-        LexicalLevel(final String ascii, final int binary) {
+        private final Charset charset;
+        private final char deleteValue;
+        
+        LexicalLevel(final String ascii, final int binary, Charset cs, char deleteValue) {
             super(LexicalLevel.class, ascii, binary, VALUES);
+            this.charset = cs;
+            this.deleteValue = deleteValue;
         }
 
+        /**
+         * Charset to use to decode
+         * @return Charset, never null
+         */
+        public Charset getCharSet(){
+            return charset;
+        }
+
+        /**
+         * Value used in update instructions to express a attribute deletion.
+         * @return char
+         */
+        public char getDeleteValue() {
+            return deleteValue;
+        }
+        
         public static LexicalLevel[] values() {
             synchronized (VALUES) {
                 return VALUES.toArray(new LexicalLevel[VALUES.size()]);

@@ -29,7 +29,8 @@ import static org.geotoolkit.data.s57.model.S57Object.*;
 import org.geotoolkit.io.LEDataInputStream;
 
 /**
- *
+ * S-57 Feature Record.
+ * 
  * @author Johann Sorel (Geomatys)
  */
 public class FeatureRecord extends S57Object {
@@ -52,17 +53,29 @@ public class FeatureRecord extends S57Object {
     /** record update instruction */
     public static final String FRID_RUIN = "RUIN"; 
     
+    /** RCNM */
     public Primitive primitiveType;
+    /** GRUP */
     public int group;
+    /** OBJL */
     public int code;
+    /** RVER */
     public int version;
+    /** RUIN */
     public UpdateInstruction updateInstruction;
+    /** FOID */
     public Identifier identifier;
+    /** ATTF */
     public final List<Attribute> attributes = new ArrayList<Attribute>();
+    /** NATF */
     public final List<NationalAttribute> nattributes = new ArrayList<NationalAttribute>();
+    /** FFPC */
     public ObjectPointerControl objectControl;
+    /** FFPT */
     public final List<ObjectPointer> objectPointers = new ArrayList<ObjectPointer>();
+    /** FSPC */
     public SpatialPointerControl spatialControl;
+    /** FSPT */
     public final List<SpatialPointer> spatialPointers = new ArrayList<SpatialPointer>();
     
     public static class Identifier extends S57Object {
@@ -93,7 +106,7 @@ public class FeatureRecord extends S57Object {
         
     }
     
-    public static class Attribute extends S57Object {
+    public static class Attribute extends BaseAttribute {
         //7.6.3 Feature record attribute field structure
         /** 4.4
         * Attributes of feature objects must be encoded in the “Feature Record Attribute” [ATTF] field (see clause
@@ -105,35 +118,18 @@ public class FeatureRecord extends S57Object {
         public static final String FRID_ATTF_ATTL = "ATTL"; 
         public static final String FRID_ATTF_ATVL = "ATVL"; 
         
-        public int code;
-        public String value;
-        
         @Override
-        public void read(Field isofield) throws IOException {
-            read(isofield.getSubFields());
+        protected String getKeyTag() {
+            return FRID_ATTF_ATTL;
         }
-        
-        public void read(List<SubField> subFields) throws IOException {
-            for(SubField sf : subFields){
-                final String tag = sf.getType().getTag();
-                final Object val = sf.getValue();
-                     if(FRID_ATTF_ATTL.equalsIgnoreCase(tag)) code = toInteger(val);
-                else if(FRID_ATTF_ATVL.equalsIgnoreCase(tag)){
-                    if(attfLexicalLevel== LexicalLevel.LEVEL0){
-                        value = new String(sf.getValueBytes(),US_ASCII);
-                    }else if(attfLexicalLevel==LexicalLevel.LEVEL1){
-                        value = new String(sf.getValueBytes(),ISO_8859_1);
-                    }else if(attfLexicalLevel==LexicalLevel.LEVEL2){
-                        value = new String(sf.getValueBytes(),UCS2);
-                    }else{
-                        throw new IOException("ATTF Lexical level not provided.");
-                    }
-                }
-            }
+
+        @Override
+        protected String getValueTag() {
+            return FRID_ATTF_ATVL;
         }
     }
 
-    public static class NationalAttribute extends S57Object {
+    public static class NationalAttribute extends BaseAttribute {
         //7.6.4 Feature record national attribute field structure
         /** 4.5
         * National attributes of feature objects must be encoded in the “Feature Record National Attribute” [NATF]
@@ -145,56 +141,39 @@ public class FeatureRecord extends S57Object {
         public static final String FRID_NATF = "NATF"; 
         public static final String FRID_NATF_ATTL = "ATTL"; 
         public static final String FRID_NATF_ATVL = "ATVL"; 
-        
-        public int code;
-        public String value;
                 
         @Override
-        public void read(Field isofield) throws IOException {
-            read(isofield.getSubFields());
+        protected String getKeyTag() {
+            return FRID_NATF_ATTL;
         }
-        
-        public void read(List<SubField> subFields) throws IOException {
-            for(SubField sf : subFields){
-                final String tag = sf.getType().getTag();
-                final Object val = sf.getValue();
-                     if(FRID_NATF_ATTL.equalsIgnoreCase(tag)) code = toInteger(val);
-                else if(FRID_NATF_ATVL.equalsIgnoreCase(tag)){
-                    if(natfLexicalLevel==LexicalLevel.LEVEL0){
-                        value = new String(sf.getValueBytes(),US_ASCII);
-                    }else if(natfLexicalLevel==LexicalLevel.LEVEL1){
-                        value = new String(sf.getValueBytes(),ISO_8859_1);
-                    }else if(natfLexicalLevel==LexicalLevel.LEVEL2){
-                        value = new String(sf.getValueBytes(),UCS2);
-                    }else{
-                        throw new IOException("ATTF Lexical level not provided.");
-                    }
-                }
-            }
+
+        @Override
+        protected String getValueTag() {
+            return FRID_NATF_ATVL;
         }
         
     }
     
-    public static class ObjectPointerControl extends S57Object {
+    public static class ObjectPointerControl extends BaseControl {
         //7.6.5 Feature record to feature object pointer control field structure
         public static final String FRID_FFPC = "FFPC"; 
         public static final String FRID_FFPC_FFUI = "FFUI"; 
         public static final String FRID_FFPC_FFIX = "FFIX"; 
         public static final String FRID_FFPC_NFPT = "NFPT"; 
-        
-        public UpdateInstruction update;
-        public int index;
-        public int number;
-        
+                
         @Override
-        public void read(Field isofield) throws IOException {
-            for(SubField sf : isofield.getSubFields()){
-                final String tag = sf.getType().getTag();
-                final Object val = sf.getValue();
-                     if(FRID_FFPC_FFUI.equalsIgnoreCase(tag)) update = UpdateInstruction.valueOf(val);
-                else if(FRID_FFPC_FFIX.equalsIgnoreCase(tag)) index = toInteger(val);
-                else if(FRID_FFPC_NFPT.equalsIgnoreCase(tag)) number = toInteger(val);
-            }
+        protected String getUpdateTag() {
+            return FRID_FFPC_FFUI;
+        }
+
+        @Override
+        protected String getIndexTag() {
+            return FRID_FFPC_FFIX;
+        }
+
+        @Override
+        protected String getNumberTag() {
+            return FRID_FFPC_NFPT;
         }
         
     }
@@ -249,26 +228,26 @@ public class FeatureRecord extends S57Object {
         
     }
     
-    public static class SpatialPointerControl extends S57Object {
+    public static class SpatialPointerControl extends BaseControl {
         //7.6.7 Feature record to spatial record pointer control field structure
         public static final String FRID_FSPC = "FSPC"; 
         public static final String FRID_FSPC_FSUI = "FSUI"; 
         public static final String FRID_FSPC_FSIX = "FSIX"; 
         public static final String FRID_FSPC_NSPT = "NSPT"; 
-                
-        public UpdateInstruction update;
-        public int index;
-        public int number;
         
         @Override
-        public void read(Field isofield) throws IOException {
-            for(SubField sf : isofield.getSubFields()){
-                final String tag = sf.getType().getTag();
-                final Object val = sf.getValue();
-                     if(FRID_FSPC_FSUI.equalsIgnoreCase(tag)) update = UpdateInstruction.valueOf(val);
-                else if(FRID_FSPC_FSIX.equalsIgnoreCase(tag)) index = toInteger(val);
-                else if(FRID_FSPC_NSPT.equalsIgnoreCase(tag)) number = toInteger(val);
-            }
+        protected String getUpdateTag() {
+            return FRID_FSPC_FSUI;
+        }
+
+        @Override
+        protected String getIndexTag() {
+            return FRID_FSPC_FSIX;
+        }
+
+        @Override
+        protected String getNumberTag() {
+            return FRID_FSPC_NSPT;
         }
         
     }

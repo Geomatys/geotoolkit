@@ -19,6 +19,7 @@ package org.geotoolkit.data.s57;
 
 import java.net.URL;
 import java.util.Collections;
+import org.apache.sis.util.iso.ResourceInternationalString;
 
 import org.geotoolkit.data.AbstractFeatureStoreFactory;
 import static org.geotoolkit.data.AbstractFeatureStoreFactory.createFixedIdentifier;
@@ -29,7 +30,6 @@ import org.geotoolkit.metadata.iso.citation.DefaultCitation;
 import org.geotoolkit.metadata.iso.identification.DefaultServiceIdentification;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.storage.DataStoreException;
-import org.geotoolkit.util.ResourceInternationalString;
 
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.identification.Identification;

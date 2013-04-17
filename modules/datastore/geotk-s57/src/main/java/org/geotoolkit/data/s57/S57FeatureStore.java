@@ -40,7 +40,7 @@ import org.geotoolkit.data.s57.annexe.S57TypeBank;
 import org.geotoolkit.data.s57.model.DataSetIdentification;
 import org.geotoolkit.data.s57.model.DataSetParameter;
 import org.geotoolkit.data.s57.model.FeatureRecord;
-import org.geotoolkit.data.s57.model.Pointer;
+import org.geotoolkit.data.s57.model.S57FileReader;
 import org.geotoolkit.data.s57.model.S57Object;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.DefaultName;
@@ -53,7 +53,8 @@ import org.opengis.filter.Filter;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.parameter.ParameterValueGroup;
 
-import org.geotoolkit.data.s57.model.S57ObjectReader;
+import org.geotoolkit.data.s57.model.S57Reader;
+import org.geotoolkit.data.s57.model.S57UpdatedReader;
 
 /**
  * S-57 FeatureStore.
@@ -125,10 +126,8 @@ public class S57FeatureStore extends AbstractFeatureStore{
         types = new HashSet<FeatureType>();
         names = new HashSet<Name>();
         
-        final S57ObjectReader reader = new S57ObjectReader();
-        reader.setInput(findMainFile(null));
+        final S57Reader reader = getS57Reader();
         try{
-            
             while(reader.hasNext()){
                 final S57Object obj = reader.next();
                 if(obj instanceof DataSetIdentification){
@@ -162,17 +161,40 @@ public class S57FeatureStore extends AbstractFeatureStore{
     @Override
     public FeatureReader getFeatureReader(Query query) throws DataStoreException {
         final FeatureType ft = getFeatureType(query.getTypeName());
-        
-        
-        
-        final S57ObjectReader s57reader = new S57ObjectReader();
-        s57reader.setInput(findMainFile(null));
+        final S57Reader s57reader = getS57Reader();
         final FeatureReader reader = new S57FeatureReader(ft,
                 (Integer)ft.getUserData().get(S57TYPECODE),s57reader,
                 datasetIdentification,datasetParameter);
         return handleRemaining(reader, query);
     }
 
+    private S57Reader getS57Reader() throws DataStoreException{
+        
+        final File baseFile = findMainFile(null);
+        String baseName = baseFile.getName();
+        baseName = baseName.substring(0, baseName.length()-4);
+        final List<File> updateFiles = findUpdateFiles(baseName, null, null);
+        //sort files
+        Collections.sort(updateFiles);
+        
+        //create base reader
+        S57Reader reader = new S57FileReader();
+        try {
+            reader.setInput(baseFile);            
+            reader.setDsid(datasetIdentification);
+        } catch (IOException ex) {
+            throw new DataStoreException(ex.getMessage(), ex);
+        }
+        
+        //encapsulated with each update
+        for(File uf : updateFiles){
+            reader = new S57UpdatedReader(reader,uf);
+            reader.setDsid(datasetIdentification);
+        }
+        
+        return reader;
+    }
+    
     /**
      * Search for the main file, it must be somewhere in the given path and have the
      * extension .000

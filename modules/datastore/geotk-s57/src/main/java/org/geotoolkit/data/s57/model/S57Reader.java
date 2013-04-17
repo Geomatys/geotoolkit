@@ -21,17 +21,14 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.geotoolkit.data.iso8211.DataRecord;
 import org.geotoolkit.data.iso8211.Field;
-import org.geotoolkit.data.iso8211.ISO8211Reader;
 import org.geotoolkit.util.logging.Logging;
 
 /**
- * Wrap an ISO 8211 Reader, returning S-57 objects for each field.
- * 
- * Not thread safe.
+ * REader returning S-57 objects for each field.
  * 
  * @author Johann Sorel (Geomatys)
  */
-public class S57ObjectReader {
+public abstract class S57Reader {
 
     /**
      * Filter records.
@@ -40,71 +37,52 @@ public class S57ObjectReader {
         public boolean match(DataRecord record);
     }
     
-    protected static final Logger LOGGER = Logging.getLogger(S57ObjectReader.class);
+    static final Logger LOGGER = Logging.getLogger(S57Reader.class);
     
     //used to pass lexical levels to other records.
     protected DataSetIdentification dsid;
-    protected ISO8211Reader isoReader;
     protected S57Object record;
     
     //used to filter records
     protected Predicate predicate;
     
-    public S57ObjectReader() {
+    public S57Reader() {
     }
 
-    public void setDsid(DataSetIdentification dsid) {
+    public final void setDsid(DataSetIdentification dsid) {
         this.dsid = dsid;
     }
     
-    public void setPredicate(Predicate predicate) {
+    public final void setPredicate(Predicate predicate) {
         this.predicate = predicate;
     }
 
-    public Predicate getPredicate() {
+    public final Predicate getPredicate() {
         return predicate;
     }
     
-    public void setInput(Object input){
-        if(input instanceof ISO8211Reader){
-            this.isoReader = (ISO8211Reader) input;
-        }else{
-            this.isoReader = new ISO8211Reader();
-            this.isoReader.setInput(input);
-        }
-    }
+    public abstract void setInput(Object input) throws IOException;
     
-    public boolean hasNext() throws IOException{
+    public final boolean hasNext() throws IOException{
         findNext();
         return record != null;
     }
     
-    public S57Object next() throws IOException{
+    public final S57Object next() throws IOException{
         findNext();
         S57Object r = record;
         record = null;
         return r;
     }
     
-    protected void findNext() throws IOException {
-        if(record != null){
-            //already found
-            return;
-        }
-        
-        while(isoReader.hasNext() && record==null){
-            final DataRecord rec = isoReader.next();
-            if(predicate!=null && !predicate.match(rec)) continue;                
-            record = toS57Object(rec);
-        }
-    }
+    protected abstract void findNext() throws IOException;
     
     /**
      * Transform the given ISO8211 object in an S-57 object.
      * @param rec DataRecord
      * @return S57Object, may return null of ag is unknowned.
      */
-    protected S57Object toS57Object(final DataRecord rec) throws IOException{
+    protected final S57Object toS57Object(final DataRecord rec) throws IOException{
                 
         final Field root = rec.getRootField();
         final Field firstField = root.getFields().get(0);
@@ -149,9 +127,6 @@ public class S57ObjectReader {
     }
     
     public void dispose() throws IOException{
-        if(isoReader!= null){
-            isoReader.dispose();
-        }
     }
     
 }
