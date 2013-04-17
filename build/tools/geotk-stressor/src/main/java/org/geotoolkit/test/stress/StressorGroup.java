@@ -203,11 +203,11 @@ public class StressorGroup<S extends Stressor> implements Runnable, ThreadFactor
                 e.getCause().printStackTrace(printer);
             }
             if (statistics != null) {
-                responseTime.add(statistics);
+                responseTime.combine(statistics);
                 printer.print(statistics);
                 table.nextColumn();
                 final double th = statistics.count() / statistics.sum() * 60000;
-                throughput.add(th);
+                throughput.accept(th);
                 printer.print((float) th);
             }
             table.nextLine();

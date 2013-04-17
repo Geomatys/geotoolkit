@@ -115,7 +115,7 @@ public final strictfp class StressTest extends EpsgFactoryTestBase {
                 System.err.println(Classes.getShortClassName(e) + " in thread " +
                         thread.id + " for code " + thread.badCode);
             }
-            statistics.add(thread.statistics);
+            statistics.combine(thread.statistics);
             // Check the consistency between different threads.
             for (final Map.Entry<Integer, Point2D.Double> entry : thread.result.entrySet()) {
                 ClientThread.assertConsistent(result, entry.getKey(), entry.getValue());

@@ -719,7 +719,7 @@ public class LayerList extends WindowCreator {
                 if (!isNullOrEmpty(z)) {
                     final Statistics stats = new Statistics(null);
                     for (final Number value : z) {
-                        stats.add(value.doubleValue());
+                        stats.accept(value.doubleValue());
                     }
                     final FieldPosition pos = new FieldPosition(0);
                     final StringBuffer buffer = new StringBuffer();
