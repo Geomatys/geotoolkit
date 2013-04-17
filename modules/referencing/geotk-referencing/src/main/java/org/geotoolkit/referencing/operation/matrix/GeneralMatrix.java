@@ -619,7 +619,7 @@ public class GeneralMatrix extends GMatrix implements XMatrix {
         final Statistics statistics = new Statistics();
         for (int j=0; j<numRow; j++) {
             for (int i=0; i<numCol; i++) {
-                statistics.add(matrix.getElement(j,i));
+                statistics.accept(matrix.getElement(j,i));
             }
         }
         final NumberFormat format = statistics.getNumberFormat(null);

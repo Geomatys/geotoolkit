@@ -164,7 +164,7 @@ final strictfp class ClientThread extends Thread {
                 final CoordinateReferenceSystem targetCRS = factory.createCoordinateReferenceSystem(code);
                 MathTransform transform = CRS.findMathTransform(sourceCRS, targetCRS, true);
                 assertSame(targetPt, transform.inverse().transform(sourcePt, targetPt));
-                statistics.add(System.nanoTime() - startTime);
+                statistics.accept(System.nanoTime() - startTime);
                 assertFalse("x=NaN", Double.isNaN(targetPt.x));
                 assertFalse("y=NaN", Double.isNaN(targetPt.y));
                 assertConsistent(result, crsCode, targetPt);

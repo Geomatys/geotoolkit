@@ -485,7 +485,7 @@ public abstract strictfp class TransformTestBase extends TransformTestCase imple
                 stats[i] = new Statistics();
             }
             for (int i=0; i<coordinates.length; i++) {
-                stats[i % dimension].add(coordinates[i]);
+                stats[i % dimension].accept(coordinates[i]);
             }
             Statistics.printTable(null, stats, null);
             out.println();

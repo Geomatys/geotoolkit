@@ -145,7 +145,7 @@ final strictfp class SamplePoints {
                 c.setDestinationGeographicPoint(sample.epsg.λ, sample.epsg.φ);
                 double distance = c.getOrthodromicDistance();
                 distance = hypot(distance, sample.tgt.h - sample.epsg.h);
-                stats.add(distance);
+                stats.accept(distance);
             }
             System.out.println(stats);
             stats.reset();

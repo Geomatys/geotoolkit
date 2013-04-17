@@ -172,7 +172,7 @@ public abstract class Stressor extends RequestGenerator implements Callable<Stat
              * Compute statistics about the ellapsed time.
              */
             final double time_ms = time / 1E+6; // To milliseconds.
-            statistics.add(time_ms);
+            statistics.accept(time_ms);
             /*
              * Format how long it took to execute the request, in milliseconds and in
              * millseconds by megabyte. Note: it should actually be "by megapixel",

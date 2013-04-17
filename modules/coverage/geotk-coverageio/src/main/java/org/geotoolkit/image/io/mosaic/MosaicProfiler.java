@@ -430,7 +430,7 @@ public class MosaicProfiler {
                 cost += tile.countUnwantedPixelsFromAbsolute(sample, subsampling);
             }
             final long area = (long) width * (long) height / (subsampling.width * subsampling.height);
-            stats.add(1 / ((double) cost / (double) area + 1));
+            stats.accept(1 / ((double) cost / (double) area + 1));
         }
         return stats;
     }

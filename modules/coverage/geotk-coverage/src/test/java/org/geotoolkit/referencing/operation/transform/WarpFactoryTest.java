@@ -162,8 +162,8 @@ public final strictfp class WarpFactoryTest extends ReferencingTestBase {
                             Arrays.toString(expPt) + " but got " +
                             Arrays.toString(tstPt) + ". Error is (" + dx + ", " + dy + ')');
                 }
-                sx.add(dx);
-                sy.add(dy);
+                sx.accept(dx);
+                sy.accept(dy);
             }
         }
         if (out != null) {
