@@ -232,7 +232,7 @@ public class DataRecord {
 
     public Field getField(String tag){
         for(Field f : fields){
-            if(tag.equalsIgnoreCase(f.getType().getTag())){
+            if(tag.equals(f.getType().getTag())){
                 return f;
             }
         }
@@ -257,7 +257,7 @@ public class DataRecord {
 
     public FieldDescription getFieldDescription(String tag){
         for(FieldDescription f : fieldDescriptions){
-            if(tag.equalsIgnoreCase(f.getTag())){
+            if(tag.equals(f.getTag())){
                 return f;
             }
         }

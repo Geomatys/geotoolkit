@@ -55,6 +55,7 @@ import org.opengis.parameter.ParameterValueGroup;
 
 import org.geotoolkit.data.s57.model.S57Reader;
 import org.geotoolkit.data.s57.model.S57UpdatedReader;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  * S-57 FeatureStore.
@@ -75,6 +76,7 @@ public class S57FeatureStore extends AbstractFeatureStore{
     //S-57 metadata/description records
     private DataSetIdentification datasetIdentification;
     private DataSetParameter datasetParameter;
+    private CoordinateReferenceSystem crs;
     
     
     public S57FeatureStore(final ParameterValueGroup params) throws DataStoreException{
@@ -134,10 +136,11 @@ public class S57FeatureStore extends AbstractFeatureStore{
                     datasetIdentification = (DataSetIdentification) obj;
                 }else if(obj instanceof DataSetParameter){
                     datasetParameter = (DataSetParameter) obj;
+                    crs = datasetParameter.buildCoordinateReferenceSystem();
                 }else if(obj instanceof FeatureRecord){
                     final FeatureRecord rec = (FeatureRecord) obj;
                     final int objlCode = rec.code;
-                    final FeatureType type = S57TypeBank.getFeatureType(objlCode);
+                    final FeatureType type = S57TypeBank.getFeatureType(objlCode,crs);
                     if(type == null){
                         throw new DataStoreException("Unknown feature type OBJL : "+objlCode);
                     }

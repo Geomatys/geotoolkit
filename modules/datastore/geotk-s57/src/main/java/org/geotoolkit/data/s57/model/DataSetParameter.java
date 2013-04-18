@@ -21,6 +21,8 @@ import org.geotoolkit.data.iso8211.Field;
 import org.geotoolkit.data.iso8211.SubField;
 import static org.geotoolkit.data.s57.S57Constants.*;
 import static org.geotoolkit.data.s57.model.S57Object.*;
+import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  *
@@ -86,15 +88,15 @@ public class DataSetParameter extends S57Object {
             for(SubField sf : isofield.getSubFields()){
                 final String tag = sf.getType().getTag();
                 final Object value = sf.getValue();
-                     if(DSPM_DSPR_PROJ.equalsIgnoreCase(tag)) projection = Projection.valueOf(value);
-                else if(DSPM_DSPR_PRP1.equalsIgnoreCase(tag)) param1 = toDouble(value);              
-                else if(DSPM_DSPR_PRP2.equalsIgnoreCase(tag)) param2 = toDouble(value);              
-                else if(DSPM_DSPR_PRP3.equalsIgnoreCase(tag)) param3 = toDouble(value);              
-                else if(DSPM_DSPR_PRP4.equalsIgnoreCase(tag)) param4 = toDouble(value);              
-                else if(DSPM_DSPR_FEAS.equalsIgnoreCase(tag)) falseEasting = toDouble(value);              
-                else if(DSPM_DSPR_FNOR.equalsIgnoreCase(tag)) falseNorthin = toDouble(value);              
-                else if(DSPM_DSPR_FPMF.equalsIgnoreCase(tag)) factor = toInteger(value);              
-                else if(DSPM_DSPR_COMT.equalsIgnoreCase(tag)) comment = toString(value);              
+                     if(DSPM_DSPR_PROJ.equals(tag)) projection = Projection.valueOf(value);
+                else if(DSPM_DSPR_PRP1.equals(tag)) param1 = toDouble(value);              
+                else if(DSPM_DSPR_PRP2.equals(tag)) param2 = toDouble(value);              
+                else if(DSPM_DSPR_PRP3.equals(tag)) param3 = toDouble(value);              
+                else if(DSPM_DSPR_PRP4.equals(tag)) param4 = toDouble(value);              
+                else if(DSPM_DSPR_FEAS.equals(tag)) falseEasting = toDouble(value);              
+                else if(DSPM_DSPR_FNOR.equals(tag)) falseNorthin = toDouble(value);              
+                else if(DSPM_DSPR_FPMF.equals(tag)) factor = toInteger(value);              
+                else if(DSPM_DSPR_COMT.equals(tag)) comment = toString(value);              
             }
             
             //apply factor on double values
@@ -132,14 +134,14 @@ public class DataSetParameter extends S57Object {
             for(SubField sf : isofield.getSubFields()){
                 final String tag = sf.getType().getTag();
                 final Object value = sf.getValue();
-                     if(DSPM_DSRC_RPID.equalsIgnoreCase(tag)) id = toString(value);
-                else if(DSPM_DSRC_RYCO.equalsIgnoreCase(tag)) latNorth = toDouble(value);              
-                else if(DSPM_DSRC_RXCO.equalsIgnoreCase(tag)) lonEast = toDouble(value);              
-                else if(DSPM_DSRC_CURP.equalsIgnoreCase(tag)) unit = toString(value);              
-                else if(DSPM_DSRC_FPMF.equalsIgnoreCase(tag)) factor = toInteger(value);              
-                else if(DSPM_DSRC_RXVL.equalsIgnoreCase(tag)) x = toDouble(value);              
-                else if(DSPM_DSRC_RYVL.equalsIgnoreCase(tag)) y = toDouble(value);              
-                else if(DSPM_DSRC_COMT.equalsIgnoreCase(tag)) comment = toString(value);              
+                     if(DSPM_DSRC_RPID.equals(tag)) id = toString(value);
+                else if(DSPM_DSRC_RYCO.equals(tag)) latNorth = toDouble(value);              
+                else if(DSPM_DSRC_RXCO.equals(tag)) lonEast = toDouble(value);              
+                else if(DSPM_DSRC_CURP.equals(tag)) unit = toString(value);              
+                else if(DSPM_DSRC_FPMF.equals(tag)) factor = toInteger(value);              
+                else if(DSPM_DSRC_RXVL.equals(tag)) x = toDouble(value);              
+                else if(DSPM_DSRC_RYVL.equals(tag)) y = toDouble(value);              
+                else if(DSPM_DSRC_COMT.equals(tag)) comment = toString(value);              
             }
             
             if(latNorth!=null)latNorth = latNorth/factor;
@@ -147,33 +149,42 @@ public class DataSetParameter extends S57Object {
         }
         
     }
-        
+    
+    /**
+     * Rebuild coordinate reference system from parameters.
+     * @return CoordinateReferenceSystem , never null
+     */
+    public CoordinateReferenceSystem buildCoordinateReferenceSystem() {
+        //TODO by martin
+        return DefaultGeographicCRS.WGS84;
+    }
+    
     @Override
     public void read(Field isofield) throws IOException {
         for(SubField sf : isofield.getSubFields()){
             final String tag = sf.getType().getTag();
             final Object value = sf.getValue();
-                 if(DSPM_RCNM.equalsIgnoreCase(tag)) type = RecordType.valueOf(value);
-            else if(DSPM_RCID.equalsIgnoreCase(tag)) id = toLong(value);
-            else if(DSPM_HDAT.equalsIgnoreCase(tag)) horizontalDatum = toInteger(value);
-            else if(DSPM_VDAT.equalsIgnoreCase(tag)) verticalDatum = toInteger(value);
-            else if(DSPM_SDAT.equalsIgnoreCase(tag)) soundingDatum = toInteger(value);
-            else if(DSPM_CSCL.equalsIgnoreCase(tag)) dataScale = toInteger(value);
-            else if(DSPM_DUNI.equalsIgnoreCase(tag)) depthUnit = toInteger(value);
-            else if(DSPM_HUNI.equalsIgnoreCase(tag)) heightUnit = toInteger(value);
-            else if(DSPM_PUNI.equalsIgnoreCase(tag)) positionAccuracyUnit = toInteger(value);
-            else if(DSPM_COUN.equalsIgnoreCase(tag)) coordUnit = Unit.valueOf(value);
-            else if(DSPM_COMF.equalsIgnoreCase(tag)) coordFactor = toInteger(value);
-            else if(DSPM_SOMF.equalsIgnoreCase(tag)) soundingFactor = toInteger(value);
-            else if(DSPM_COMT.equalsIgnoreCase(tag)) comment = toString(value);              
+                 if(DSPM_RCNM.equals(tag)) type = RecordType.valueOf(value);
+            else if(DSPM_RCID.equals(tag)) id = toLong(value);
+            else if(DSPM_HDAT.equals(tag)) horizontalDatum = toInteger(value);
+            else if(DSPM_VDAT.equals(tag)) verticalDatum = toInteger(value);
+            else if(DSPM_SDAT.equals(tag)) soundingDatum = toInteger(value);
+            else if(DSPM_CSCL.equals(tag)) dataScale = toInteger(value);
+            else if(DSPM_DUNI.equals(tag)) depthUnit = toInteger(value);
+            else if(DSPM_HUNI.equals(tag)) heightUnit = toInteger(value);
+            else if(DSPM_PUNI.equals(tag)) positionAccuracyUnit = toInteger(value);
+            else if(DSPM_COUN.equals(tag)) coordUnit = Unit.valueOf(value);
+            else if(DSPM_COMF.equals(tag)) coordFactor = toInteger(value);
+            else if(DSPM_SOMF.equals(tag)) soundingFactor = toInteger(value);
+            else if(DSPM_COMT.equals(tag)) comment = toString(value);              
             
         }
         for(Field f : isofield.getFields()){
             final String tag = f.getType().getTag();
-            if(DataSetProjection.DSPM_DSPR.equalsIgnoreCase(tag)){
+            if(DataSetProjection.DSPM_DSPR.equals(tag)){
                 projection = new DataSetProjection();
                 projection.read(f);
-            }else if(DataSetRegistration.DSPM_DSRC.equalsIgnoreCase(tag)){
+            }else if(DataSetRegistration.DSPM_DSRC.equals(tag)){
                 registration = new DataSetRegistration();
                 registration.read(f);
                 if(registration.x!=null)registration.x = registration.x/coordFactor;

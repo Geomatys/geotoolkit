@@ -90,10 +90,10 @@ public class S57FeatureReader implements FeatureReader{
                 final Field root = record.getRootField();
                 final Field firstField = root.getFields().get(0);
                 final String tag = firstField.getType().getTag();
-                if(FeatureRecord.FRID.equalsIgnoreCase(tag)){
+                if(FeatureRecord.FRID.equals(tag)){
                     Long obj = (Long) firstField.getSubField(FeatureRecord.FRID_OBJL).getValue();
                     return s57TypeCode == obj;
-                }else if(VectorRecord.VRID.equalsIgnoreCase(tag)){
+                }else if(VectorRecord.VRID.equals(tag)){
                     return true;
                 }
                 return false;

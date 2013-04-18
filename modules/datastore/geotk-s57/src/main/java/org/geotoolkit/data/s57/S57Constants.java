@@ -53,21 +53,19 @@ public final class S57Constants {
             this.binary = binary;
         }
             
-        static S57CodeList valueOf(List<? extends S57CodeList> lst, Object code) {
+        static S57CodeList valueOf(final List<? extends S57CodeList> lst, final Object code) {
             
             final String ascii;
             final int binary;
             if(code instanceof Number){
-                ascii = code.toString();
                 binary = ((Number)code).intValue();
                 for(S57CodeList exp : lst){
                     if(exp.binary == binary) return exp;
                 }
             }else if(code instanceof String){
                 ascii = (String)code;
-                binary = -1;
                 for(S57CodeList exp : lst){
-                    if(exp.ascii.equalsIgnoreCase(ascii)) return exp;
+                    if(exp.ascii.equals(ascii)) return exp;
                 }
             }else{
                 throw new IllegalArgumentException("Expected a String or Number object, received : "+code);

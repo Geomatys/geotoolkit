@@ -71,15 +71,15 @@ public class DataDictionaryDomainIdentifier extends S57Object {
             for(SubField sf : isofield.getSubFields()){
                 final String tag = sf.getType().getTag();
                 final Object value = sf.getValue();
-                     if (DDDI_DDOM_RAVA.equalsIgnoreCase(tag)) rangeOrValue = RangeOrValue.valueOf(value);
-                else if (DDDI_DDOM_DVAL.equalsIgnoreCase(tag)) domainValue = toString(value);
-                else if (DDDI_DDOM_DVSD.equalsIgnoreCase(tag)) description = toString(value);
-                else if (DDDI_DDOM_DEFN.equalsIgnoreCase(tag)) definition = toString(value);
-                else if (DDDI_DDOM_AUTH.equalsIgnoreCase(tag)) agency = S62Agency.valueOf(value);
+                     if (DDDI_DDOM_RAVA.equals(tag)) rangeOrValue = RangeOrValue.valueOf(value);
+                else if (DDDI_DDOM_DVAL.equals(tag)) domainValue = toString(value);
+                else if (DDDI_DDOM_DVSD.equals(tag)) description = toString(value);
+                else if (DDDI_DDOM_DEFN.equals(tag)) definition = toString(value);
+                else if (DDDI_DDOM_AUTH.equals(tag)) agency = S62Agency.valueOf(value);
             }
             for(Field f : isofield.getFields()){
                 final String tag = f.getType().getTag();
-                if(DataDictionaryDomainReference.DDDI_DDOM_DDRF.equalsIgnoreCase(tag)){
+                if(DataDictionaryDomainReference.DDDI_DDOM_DDRF.equals(tag)){
                     if(references==null) references = new ArrayList<DataDictionaryDomainReference>();
                     final DataDictionaryDomainReference candidate = new DataDictionaryDomainReference();
                     candidate.read(f);
@@ -104,8 +104,8 @@ public class DataDictionaryDomainIdentifier extends S57Object {
             for(SubField sf : isofield.getSubFields()){
                 final String tag = sf.getType().getTag();
                 final Object val = sf.getValue();
-                     if (DDDI_DDOM_DDRF_RFTP.equalsIgnoreCase(tag)) type = ReferenceType.valueOf(val);
-                else if (DDDI_DDOM_DDRF_RFVL.equalsIgnoreCase(tag)) value = toString(val);
+                     if (DDDI_DDOM_DDRF_RFTP.equals(tag)) type = ReferenceType.valueOf(val);
+                else if (DDDI_DDOM_DDRF_RFVL.equals(tag)) value = toString(val);
                 
             }
         }
@@ -117,18 +117,18 @@ public class DataDictionaryDomainIdentifier extends S57Object {
         for(SubField sf : isofield.getSubFields()){
             final String tag = sf.getType().getTag();
             final Object value = sf.getValue();
-                 if (DDDI_RCNM.equalsIgnoreCase(tag)) type = RecordType.valueOf(value);
-            else if (DDDI_RCID.equalsIgnoreCase(tag)) id = toInteger(value);
-            else if (DDDI_ATLB.equalsIgnoreCase(tag)) code = toInteger(value);
-            else if (DDDI_ATDO.equalsIgnoreCase(tag)) domainType = AttributeDomain.valueOf(value);
-            else if (DDDI_ADMU.equalsIgnoreCase(tag)) unit = toString(value);
-            else if (DDDI_ADFT.equalsIgnoreCase(tag)) domainFormat = toString(value);
-            else if (DDDI_AUTH.equalsIgnoreCase(tag)) agency = S62Agency.valueOf(value);
-            else if (DDDI_COMT.equalsIgnoreCase(tag)) comment = toString(value);
+                 if (DDDI_RCNM.equals(tag)) type = RecordType.valueOf(value);
+            else if (DDDI_RCID.equals(tag)) id = toInteger(value);
+            else if (DDDI_ATLB.equals(tag)) code = toInteger(value);
+            else if (DDDI_ATDO.equals(tag)) domainType = AttributeDomain.valueOf(value);
+            else if (DDDI_ADMU.equals(tag)) unit = toString(value);
+            else if (DDDI_ADFT.equals(tag)) domainFormat = toString(value);
+            else if (DDDI_AUTH.equals(tag)) agency = S62Agency.valueOf(value);
+            else if (DDDI_COMT.equals(tag)) comment = toString(value);
         }
         for(Field f : isofield.getFields()){
             final String tag = f.getType().getTag();
-            if(DataDictionaryDomainField.DDDI_DDOM.equalsIgnoreCase(tag)){
+            if(DataDictionaryDomainField.DDDI_DDOM.equals(tag)){
                 final DataDictionaryDomainField candidate = new DataDictionaryDomainField();
                 candidate.read(f);
                 fields.add(candidate);

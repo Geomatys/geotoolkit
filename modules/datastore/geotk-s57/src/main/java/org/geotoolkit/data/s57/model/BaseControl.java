@@ -45,9 +45,9 @@ public abstract class BaseControl extends S57Object {
         for(SubField sf : isofield.getSubFields()){
             final String tag = sf.getType().getTag();
             final Object value = sf.getValue();
-                 if(getUpdateTag().equalsIgnoreCase(tag)) update = UpdateInstruction.valueOf(value);
-            else if(getIndexTag().equalsIgnoreCase(tag)) index = toInteger(value);
-            else if(getNumberTag().equalsIgnoreCase(tag)) number = toInteger(value);
+                 if(getUpdateTag().equals(tag)) update = UpdateInstruction.valueOf(value);
+            else if(getIndexTag().equals(tag)) index = toInteger(value);
+            else if(getNumberTag().equals(tag)) number = toInteger(value);
         }
     }
 

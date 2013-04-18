@@ -95,17 +95,17 @@ public class DataSetIdentification extends S57Object {
             for(SubField sf : isofield.getSubFields()){
                 final String tag = sf.getType().getTag();
                 final Object value = sf.getValue();
-                     if(DSID_DSSI_DSTR.equalsIgnoreCase(tag)) dataStructure = DataStructure.valueOf(value);
-                else if(DSID_DSSI_AALL.equalsIgnoreCase(tag)) attfLexicalLevel = LexicalLevel.valueOf(value);
-                else if(DSID_DSSI_NALL.equalsIgnoreCase(tag)) natfLexicalLevel = LexicalLevel.valueOf(value);
-                else if(DSID_DSSI_NOMR.equalsIgnoreCase(tag)) nbMeta = toInteger(value);
-                else if(DSID_DSSI_NOCR.equalsIgnoreCase(tag)) nbCarto = toInteger(value);
-                else if(DSID_DSSI_NOGR.equalsIgnoreCase(tag)) nbGeo = toInteger(value);
-                else if(DSID_DSSI_NOLR.equalsIgnoreCase(tag)) nbCollection = toInteger(value);
-                else if(DSID_DSSI_NOIN.equalsIgnoreCase(tag)) nbIsolatedNode = toInteger(value);
-                else if(DSID_DSSI_NOCN.equalsIgnoreCase(tag)) nbConnectedNode = toInteger(value);
-                else if(DSID_DSSI_NOED.equalsIgnoreCase(tag)) nbEdge = toInteger(value);
-                else if(DSID_DSSI_NOFA.equalsIgnoreCase(tag)) nbFace = toInteger(value);
+                     if(DSID_DSSI_DSTR.equals(tag)) dataStructure = DataStructure.valueOf(value);
+                else if(DSID_DSSI_AALL.equals(tag)) attfLexicalLevel = LexicalLevel.valueOf(value);
+                else if(DSID_DSSI_NALL.equals(tag)) natfLexicalLevel = LexicalLevel.valueOf(value);
+                else if(DSID_DSSI_NOMR.equals(tag)) nbMeta = toInteger(value);
+                else if(DSID_DSSI_NOCR.equals(tag)) nbCarto = toInteger(value);
+                else if(DSID_DSSI_NOGR.equals(tag)) nbGeo = toInteger(value);
+                else if(DSID_DSSI_NOLR.equals(tag)) nbCollection = toInteger(value);
+                else if(DSID_DSSI_NOIN.equals(tag)) nbIsolatedNode = toInteger(value);
+                else if(DSID_DSSI_NOCN.equals(tag)) nbConnectedNode = toInteger(value);
+                else if(DSID_DSSI_NOED.equals(tag)) nbEdge = toInteger(value);
+                else if(DSID_DSSI_NOFA.equals(tag)) nbFace = toInteger(value);
             }
         }
         
@@ -116,27 +116,27 @@ public class DataSetIdentification extends S57Object {
         for(SubField sf : isofield.getSubFields()){
             final String tag = sf.getType().getTag();
             final Object value = sf.getValue();
-            if(DSID_RCNM.equalsIgnoreCase(tag)) type = RecordType.valueOf(value);
-            else if(DSID_RCID.equalsIgnoreCase(tag)) id = toLong(value);
-            else if(DSID_EXPP.equalsIgnoreCase(tag)) purpose = ExchangePurpose.valueOf(value);
-            else if(DSID_INTU.equalsIgnoreCase(tag)) usage = IntendedUsage.valueOf(value);
-            else if(DSID_DSNM.equalsIgnoreCase(tag)) name = toString(value);
-            else if(DSID_EDTN.equalsIgnoreCase(tag)) editionNumber = toString(value);
-            else if(DSID_UPDN.equalsIgnoreCase(tag)) updateNumber = toString(value);
-            else if(DSID_UADT.equalsIgnoreCase(tag)) updateDate = toString(value);
-            else if(DSID_ISDT.equalsIgnoreCase(tag)) issueDate = toString(value);
-            else if(DSID_STED.equalsIgnoreCase(tag)) s57ediionNumber = toDouble(value);
-            else if(DSID_PRSP.equalsIgnoreCase(tag)) specification = ProductSpecification.valueOf(value);
-            else if(DSID_PSDN.equalsIgnoreCase(tag)) specificationDesc = toString(value);
-            else if(DSID_PRED.equalsIgnoreCase(tag)) specificationNumber = toString(value);
-            else if(DSID_PROF.equalsIgnoreCase(tag)) applicationProfile = ApplicationProfile.valueOf(value);
-            else if(DSID_AGEN.equalsIgnoreCase(tag)) agency = S62Agency.valueOf(value);
-            else if(DSID_COMT.equalsIgnoreCase(tag)) comment = toString(value);              
+            if(DSID_RCNM.equals(tag)) type = RecordType.valueOf(value);
+            else if(DSID_RCID.equals(tag)) id = toLong(value);
+            else if(DSID_EXPP.equals(tag)) purpose = ExchangePurpose.valueOf(value);
+            else if(DSID_INTU.equals(tag)) usage = IntendedUsage.valueOf(value);
+            else if(DSID_DSNM.equals(tag)) name = toString(value);
+            else if(DSID_EDTN.equals(tag)) editionNumber = toString(value);
+            else if(DSID_UPDN.equals(tag)) updateNumber = toString(value);
+            else if(DSID_UADT.equals(tag)) updateDate = toString(value);
+            else if(DSID_ISDT.equals(tag)) issueDate = toString(value);
+            else if(DSID_STED.equals(tag)) s57ediionNumber = toDouble(value);
+            else if(DSID_PRSP.equals(tag)) specification = ProductSpecification.valueOf(value);
+            else if(DSID_PSDN.equals(tag)) specificationDesc = toString(value);
+            else if(DSID_PRED.equals(tag)) specificationNumber = toString(value);
+            else if(DSID_PROF.equals(tag)) applicationProfile = ApplicationProfile.valueOf(value);
+            else if(DSID_AGEN.equals(tag)) agency = S62Agency.valueOf(value);
+            else if(DSID_COMT.equals(tag)) comment = toString(value);              
             
         }
         for(Field f : isofield.getFields()){
             final String tag = f.getType().getTag();
-            if(DataSetStructureInformation.DSID_DSSI.equalsIgnoreCase(tag)){
+            if(DataSetStructureInformation.DSID_DSSI.equals(tag)){
                 information = new DataSetStructureInformation();
                 information.read(f);
             }

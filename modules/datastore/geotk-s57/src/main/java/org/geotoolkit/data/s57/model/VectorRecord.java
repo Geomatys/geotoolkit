@@ -189,7 +189,7 @@ public class VectorRecord extends S57Object {
             for(SubField sf : subFields){
                 final String tag = sf.getType().getTag();
                 final Object value = sf.getValue();
-                if(VRID_VRPT_NAME.equalsIgnoreCase(tag)){
+                if(VRID_VRPT_NAME.equals(tag)){
                      if(value instanceof byte[]){
                         final byte[] buffer = (byte[]) value;
                         type = RecordType.valueOf(buffer[0] & 0xff);
@@ -199,10 +199,10 @@ public class VectorRecord extends S57Object {
                         throw new IOException("ASCII Form for NAME not supported yet");
                     }
                 }
-                else if(VRID_VRPT_ORNT.equalsIgnoreCase(tag)) orientation = Orientation.valueOf(value);
-                else if(VRID_VRPT_USAG.equalsIgnoreCase(tag)) usage = Usage.valueOf(value);
-                else if(VRID_VRPT_TOPI.equalsIgnoreCase(tag)) topology = Topology.valueOf(value);
-                else if(VRID_VRPT_MASK.equalsIgnoreCase(tag)) mask = Mask.valueOf(value);
+                else if(VRID_VRPT_ORNT.equals(tag)) orientation = Orientation.valueOf(value);
+                else if(VRID_VRPT_USAG.equals(tag)) usage = Usage.valueOf(value);
+                else if(VRID_VRPT_TOPI.equals(tag)) topology = Topology.valueOf(value);
+                else if(VRID_VRPT_MASK.equals(tag)) mask = Mask.valueOf(value);
             }
         }
         
@@ -271,9 +271,9 @@ public class VectorRecord extends S57Object {
             for(SubField sf : subFields){
                 final String tag = sf.getType().getTag();
                 final Object value = sf.getValue();
-                     if(VRID_SGXD_YCOO.equalsIgnoreCase(tag)) y = toDouble(value);
-                else if(VRID_SGXD_XCOO.equalsIgnoreCase(tag)) x = toDouble(value);
-                else if(VRID_SG3D_VE3D.equalsIgnoreCase(tag)) z = toDouble(value);
+                     if(VRID_SGXD_YCOO.equals(tag)) y = toDouble(value);
+                else if(VRID_SGXD_XCOO.equals(tag)) x = toDouble(value);
+                else if(VRID_SG3D_VE3D.equals(tag)) z = toDouble(value);
             }
         }
 
@@ -304,11 +304,11 @@ public class VectorRecord extends S57Object {
             for(SubField sf : isofield.getSubFields()){
                 final String tag = sf.getType().getTag();
                 final Object value = sf.getValue();
-                     if (VRID_ARCC_ATYP.equalsIgnoreCase(tag)) type = ArcType.valueOf(value);
-                else if (VRID_ARCC_SURF.equalsIgnoreCase(tag)) surface = ConstructionSurface.valueOf(value);
-                else if (VRID_ARCC_ORDR.equalsIgnoreCase(tag)) order = toInteger(value);
-                else if (VRID_ARCC_RESO.equalsIgnoreCase(tag)) resolution = toDouble(value);
-                else if (VRID_ARCC_FPMF.equalsIgnoreCase(tag)) factor = toInteger(value);
+                     if (VRID_ARCC_ATYP.equals(tag)) type = ArcType.valueOf(value);
+                else if (VRID_ARCC_SURF.equals(tag)) surface = ConstructionSurface.valueOf(value);
+                else if (VRID_ARCC_ORDR.equals(tag)) order = toInteger(value);
+                else if (VRID_ARCC_RESO.equals(tag)) resolution = toDouble(value);
+                else if (VRID_ARCC_FPMF.equals(tag)) factor = toInteger(value);
             }
         }
         
@@ -348,16 +348,16 @@ public class VectorRecord extends S57Object {
         for(SubField sf : isofield.getSubFields()){
             final String tag = sf.getType().getTag();
             final Object value = sf.getValue();
-                 if (VRID_RCNM.equalsIgnoreCase(tag)) type = RecordType.valueOf(value);
-            else if (VRID_RCID.equalsIgnoreCase(tag)){
+                 if (VRID_RCNM.equals(tag)) type = RecordType.valueOf(value);
+            else if (VRID_RCID.equals(tag)){
                 id = toLong(value);
             }
-            else if (VRID_RVER.equalsIgnoreCase(tag)) version = toInteger(value);
-            else if (VRID_RUIN.equalsIgnoreCase(tag)) updateInstruction = UpdateInstruction.valueOf(value);
+            else if (VRID_RVER.equals(tag)) version = toInteger(value);
+            else if (VRID_RUIN.equals(tag)) updateInstruction = UpdateInstruction.valueOf(value);
         }
         for(Field f : isofield.getFields()){
             final String tag = f.getType().getTag();
-            if(Attribute.VRID_ATTV.equalsIgnoreCase(tag)){
+            if(Attribute.VRID_ATTV.equals(tag)){
                 final Iterator<SubField> sfite = f.getSubFields().iterator();
                 while(sfite.hasNext()){
                     final Attribute candidate = new Attribute();
@@ -366,34 +366,34 @@ public class VectorRecord extends S57Object {
                     candidate.read(Arrays.asList(sfite.next(),sfite.next()));
                     attributes.add(candidate);
                 }
-            }else if(RecordPointerControl.VRID_VRPC.equalsIgnoreCase(tag)){
+            }else if(RecordPointerControl.VRID_VRPC.equals(tag)){
                 recordPointerControl = new RecordPointerControl();
                 recordPointerControl.read(f);
-            }else if(RecordPointer.VRID_VRPT.equalsIgnoreCase(tag)){
+            }else if(RecordPointer.VRID_VRPT.equals(tag)){
                 final Iterator<SubField> sfite = f.getSubFields().iterator();
                 while(sfite.hasNext()){
                     final RecordPointer candidate = new RecordPointer();
                     candidate.read(Arrays.asList(sfite.next(),sfite.next(),sfite.next(),sfite.next(),sfite.next()));
                     records.add(candidate);
                 }
-            }else if(CoordinateControl.VRID_SGCC.equalsIgnoreCase(tag)){
+            }else if(CoordinateControl.VRID_SGCC.equals(tag)){
                 coordinateControl = new CoordinateControl();
                 coordinateControl.read(f);
-            }else if(Coordinate2D.VRID_SG2D.equalsIgnoreCase(tag)){
+            }else if(Coordinate2D.VRID_SG2D.equals(tag)){
                 final Iterator<SubField> sfite = f.getSubFields().iterator();
                 while(sfite.hasNext()){
                     final Coordinate2D candidate = new Coordinate2D(false);
                     candidate.read(Arrays.asList(sfite.next(),sfite.next()));
                     coords.add(candidate);
                 }
-            }else if(Coordinate2D.VRID_SG3D.equalsIgnoreCase(tag)){
+            }else if(Coordinate2D.VRID_SG3D.equals(tag)){
                 final Iterator<SubField> sfite = f.getSubFields().iterator();
                 while(sfite.hasNext()){
                     final Coordinate2D candidate = new Coordinate2D(true);
                     candidate.read(Arrays.asList(sfite.next(),sfite.next(),sfite.next()));
                     coords.add(candidate);
                 }
-            }else if(Arc.VRID_ARCC.equalsIgnoreCase(tag)){
+            }else if(Arc.VRID_ARCC.equals(tag)){
                 if(arcs==null) arcs = new ArrayList<Arc>();
                 final Arc candidate = new Arc();
                 candidate.read(f);

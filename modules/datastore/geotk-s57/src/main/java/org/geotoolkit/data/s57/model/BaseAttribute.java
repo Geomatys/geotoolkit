@@ -43,8 +43,8 @@ public abstract class BaseAttribute extends S57Object {
         for(SubField sf : subFields){
             final String tag = sf.getType().getTag();
             final Object val = sf.getValue();
-                 if(getKeyTag().equalsIgnoreCase(tag)) code = toInteger(val);
-            else if(getValueTag().equalsIgnoreCase(tag)){
+                 if(getKeyTag().equals(tag)) code = toInteger(val);
+            else if(getValueTag().equals(tag)){
                 if(attfLexicalLevel==null) throw new IOException("ATTF Lexical level not provided.");
                 value = new String(sf.getValueBytes(),attfLexicalLevel.getCharSet());
             }

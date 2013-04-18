@@ -98,9 +98,9 @@ public class FeatureRecord extends S57Object {
             for(SubField sf : isofield.getSubFields()){
                 final String tag = sf.getType().getTag();
                 final Object value = sf.getValue();
-                     if (FRID_FOID_AGEN.equalsIgnoreCase(tag)) agency = S62Agency.valueOf(value);
-                else if (FRID_FOID_FIDN.equalsIgnoreCase(tag)) number = toInteger(value);
-                else if (FRID_FOID_FIDS.equalsIgnoreCase(tag)) subdivision = toInteger(value);
+                     if (FRID_FOID_AGEN.equals(tag)) agency = S62Agency.valueOf(value);
+                else if (FRID_FOID_FIDN.equals(tag)) number = toInteger(value);
+                else if (FRID_FOID_FIDS.equals(tag)) subdivision = toInteger(value);
             }
         }
         
@@ -210,7 +210,7 @@ public class FeatureRecord extends S57Object {
             for(SubField sf : subFields){
                 final String tag = sf.getType().getTag();
                 final Object val = sf.getValue();
-                if(FRID_FFPT_LNAM.equalsIgnoreCase(tag)){
+                if(FRID_FFPT_LNAM.equals(tag)){
                     if(val instanceof byte[]){
                         final byte[] buffer = (byte[]) val;
                         agency = S62Agency.valueOf(LEDataInputStream.readUnsignedShort(buffer, 0));
@@ -221,8 +221,8 @@ public class FeatureRecord extends S57Object {
                         throw new IOException("ASCII Form for LNAM not supported yet");
                     }
                 }
-                else if(FRID_FFPT_RIND.equalsIgnoreCase(tag)) relationship = RelationShip.valueOf(val);
-                else if(FRID_FFPT_COMT.equalsIgnoreCase(tag)) comment = toString(val);
+                else if(FRID_FFPT_RIND.equals(tag)) relationship = RelationShip.valueOf(val);
+                else if(FRID_FFPT_COMT.equals(tag)) comment = toString(val);
             }
         }
         
@@ -274,7 +274,7 @@ public class FeatureRecord extends S57Object {
             for(SubField sf : subFields){
                 final String tag = sf.getType().getTag();
                 final Object val = sf.getValue();
-                if(FRID_FSPT_NAME.equalsIgnoreCase(tag)){
+                if(FRID_FSPT_NAME.equals(tag)){
                      if(val instanceof byte[]){
                         final byte[] buffer = (byte[]) val;
                         type = RecordType.valueOf(buffer[0] & 0xff);
@@ -284,9 +284,9 @@ public class FeatureRecord extends S57Object {
                         throw new IOException("ASCII Form for NAME not supported yet");
                     }
                 }
-                else if(FRID_FSPT_ORNT.equalsIgnoreCase(tag)) orientation = Orientation.valueOf(val);
-                else if(FRID_FSPT_USAG.equalsIgnoreCase(tag)) usage = Usage.valueOf(val);
-                else if(FRID_FSPT_MASK.equalsIgnoreCase(tag)) mask = Mask.valueOf(val);
+                else if(FRID_FSPT_ORNT.equals(tag)) orientation = Orientation.valueOf(val);
+                else if(FRID_FSPT_USAG.equals(tag)) usage = Usage.valueOf(val);
+                else if(FRID_FSPT_MASK.equals(tag)) mask = Mask.valueOf(val);
             }
         }
         
@@ -302,20 +302,20 @@ public class FeatureRecord extends S57Object {
         for(SubField sf : isofield.getSubFields()){
             final String tag = sf.getType().getTag();
             final Object value = sf.getValue();
-                 if (FRID_RCNM.equalsIgnoreCase(tag)) type = RecordType.valueOf(value);
-            else if (FRID_RCID.equalsIgnoreCase(tag)) id = toLong(value);
-            else if (FRID_PRIM.equalsIgnoreCase(tag)) primitiveType = Primitive.valueOf(value);
-            else if (FRID_GRUP.equalsIgnoreCase(tag)) group = toInteger(value);
-            else if (FRID_OBJL.equalsIgnoreCase(tag)) code = toInteger(value);
-            else if (FRID_RVER.equalsIgnoreCase(tag)) version = toInteger(value);
-            else if (FRID_RUIN.equalsIgnoreCase(tag)) updateInstruction = UpdateInstruction.valueOf(value);
+                 if (FRID_RCNM.equals(tag)) type = RecordType.valueOf(value);
+            else if (FRID_RCID.equals(tag)) id = toLong(value);
+            else if (FRID_PRIM.equals(tag)) primitiveType = Primitive.valueOf(value);
+            else if (FRID_GRUP.equals(tag)) group = toInteger(value);
+            else if (FRID_OBJL.equals(tag)) code = toInteger(value);
+            else if (FRID_RVER.equals(tag)) version = toInteger(value);
+            else if (FRID_RUIN.equals(tag)) updateInstruction = UpdateInstruction.valueOf(value);
         }
         for(Field f : isofield.getFields()){
             final String tag = f.getType().getTag();
-            if(Identifier.FRID_FOID.equalsIgnoreCase(tag)){
+            if(Identifier.FRID_FOID.equals(tag)){
                 identifier = new Identifier();
                 identifier.read(f);
-            }else if(Attribute.FRID_ATTF.equalsIgnoreCase(tag)){
+            }else if(Attribute.FRID_ATTF.equals(tag)){
                 final Iterator<SubField> sfite = f.getSubFields().iterator();
                 while(sfite.hasNext()){
                     final Attribute candidate = new Attribute();
@@ -324,7 +324,7 @@ public class FeatureRecord extends S57Object {
                     candidate.read(Arrays.asList(sfite.next(),sfite.next()));
                     attributes.add(candidate);
                 }
-            }else if(NationalAttribute.FRID_NATF.equalsIgnoreCase(tag)){
+            }else if(NationalAttribute.FRID_NATF.equals(tag)){
                 final Iterator<SubField> sfite = f.getSubFields().iterator();
                 while(sfite.hasNext()){
                     final NationalAttribute candidate = new NationalAttribute();
@@ -333,20 +333,20 @@ public class FeatureRecord extends S57Object {
                     candidate.read(Arrays.asList(sfite.next(),sfite.next()));
                     nattributes.add(candidate);
                 }
-            }else if(ObjectPointerControl.FRID_FFPC.equalsIgnoreCase(tag)){
+            }else if(ObjectPointerControl.FRID_FFPC.equals(tag)){
                 objectControl = new ObjectPointerControl();
                 objectControl.read(f);
-            }else if(ObjectPointer.FRID_FFPT.equalsIgnoreCase(tag)){
+            }else if(ObjectPointer.FRID_FFPT.equals(tag)){
                 final Iterator<SubField> sfite = f.getSubFields().iterator();
                 while(sfite.hasNext()){
                     final ObjectPointer candidate = new ObjectPointer();
                     candidate.read(Arrays.asList(sfite.next(),sfite.next(),sfite.next()));
                     objectPointers.add(candidate);
                 }
-            }else if(SpatialPointerControl.FRID_FSPC.equalsIgnoreCase(tag)){
+            }else if(SpatialPointerControl.FRID_FSPC.equals(tag)){
                 spatialControl = new SpatialPointerControl();
                 spatialControl.read(f);
-            }else if(SpatialPointer.FRID_FSPT.equalsIgnoreCase(tag)){
+            }else if(SpatialPointer.FRID_FSPT.equals(tag)){
                 final Iterator<SubField> sfite = f.getSubFields().iterator();
                 while(sfite.hasNext()){
                     final SpatialPointer candidate = new SpatialPointer();

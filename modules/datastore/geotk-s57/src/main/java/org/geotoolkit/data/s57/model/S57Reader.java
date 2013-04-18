@@ -91,27 +91,27 @@ public abstract class S57Reader {
         final S57Object record;
         
         //convert to an S-57 object
-        if(CatalogDirectory.CATD.equalsIgnoreCase(tag)){
+        if(CatalogDirectory.CATD.equals(tag)){
             record = new CatalogDirectory();
-        }else if(DataDictionaryDefinition.DDDF.equalsIgnoreCase(tag)){
+        }else if(DataDictionaryDefinition.DDDF.equals(tag)){
             record = new DataDictionaryDefinition();
-        }else if(DataDictionaryDomainIdentifier.DDDI.equalsIgnoreCase(tag)){
+        }else if(DataDictionaryDomainIdentifier.DDDI.equals(tag)){
             record = new DataDictionaryDomainIdentifier();
-        }else if(DataDictionarySchemaIdentifier.DDSI.equalsIgnoreCase(tag)){
+        }else if(DataDictionarySchemaIdentifier.DDSI.equals(tag)){
             record = new DataDictionarySchemaIdentifier();
-        }else if(DataSetAccuracy.DSAC.equalsIgnoreCase(tag)){
+        }else if(DataSetAccuracy.DSAC.equals(tag)){
             record = new DataSetAccuracy();
-        }else if(DataSetHistory.DSHT.equalsIgnoreCase(tag)){
+        }else if(DataSetHistory.DSHT.equals(tag)){
             record = new DataSetHistory();
-        }else if(DataSetIdentification.DSID.equalsIgnoreCase(tag)){
+        }else if(DataSetIdentification.DSID.equals(tag)){
             record = new DataSetIdentification();
             record.read(firstField);
             this.dsid = (DataSetIdentification) record;
-        }else if(DataSetParameter.DSPM.equalsIgnoreCase(tag)){
+        }else if(DataSetParameter.DSPM.equals(tag)){
             record = new DataSetParameter();
-        }else if(FeatureRecord.FRID.equalsIgnoreCase(tag)){
+        }else if(FeatureRecord.FRID.equals(tag)){
             record = new FeatureRecord();
-        }else if(VectorRecord.VRID.equalsIgnoreCase(tag)){
+        }else if(VectorRecord.VRID.equals(tag)){
             record = new VectorRecord();
         }else{
             LOGGER.log(Level.INFO, "Unknowned tag (possibly provider specific or unvalid S-57 file) : "+tag);

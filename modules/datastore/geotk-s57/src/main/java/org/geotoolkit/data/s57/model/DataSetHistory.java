@@ -52,14 +52,14 @@ public class DataSetHistory extends S57Object {
         for(SubField sf : isofield.getSubFields()){
             final String tag = sf.getType().getTag();
             final Object val = sf.getValue();
-                 if (DSHT_RCNM.equalsIgnoreCase(tag)) type = RecordType.valueOf(val);
-            else if (DSHT_RCID.equalsIgnoreCase(tag)) id = toLong(val);
-            else if (DSHT_PRCO.equalsIgnoreCase(tag)) agency = S62Agency.valueOf(val);
-            else if (DSHT_ESDT.equalsIgnoreCase(tag)) earliestSourceDate = toString(val);
-            else if (DSHT_LSDT.equalsIgnoreCase(tag)) latestSourceDate = toString(val);
-            else if (DSHT_DCRT.equalsIgnoreCase(tag)) collectionCriteria = toString(val);
-            else if (DSHT_CODT.equalsIgnoreCase(tag)) compilationDate = toString(val);
-            else if (DSHT_COMT.equalsIgnoreCase(tag)) comment = toString(val);
+                 if (DSHT_RCNM.equals(tag)) type = RecordType.valueOf(val);
+            else if (DSHT_RCID.equals(tag)) id = toLong(val);
+            else if (DSHT_PRCO.equals(tag)) agency = S62Agency.valueOf(val);
+            else if (DSHT_ESDT.equals(tag)) earliestSourceDate = toString(val);
+            else if (DSHT_LSDT.equals(tag)) latestSourceDate = toString(val);
+            else if (DSHT_DCRT.equals(tag)) collectionCriteria = toString(val);
+            else if (DSHT_CODT.equals(tag)) compilationDate = toString(val);
+            else if (DSHT_COMT.equals(tag)) comment = toString(val);
         }
     }
     

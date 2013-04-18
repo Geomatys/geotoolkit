@@ -62,9 +62,9 @@ public class DataDictionarySchemaIdentifier extends S57Object {
             for(SubField sf : subFields){
                 final String tag = sf.getType().getTag();
                 final Object val = sf.getValue();
-                     if (DDSI_DDSC_ATLB.equalsIgnoreCase(tag)) code = toInteger(val);
-                else if (DDSI_DDSC_ASET.equalsIgnoreCase(tag)) set = AttributeSet.valueOf(val);
-                else if (DDSI_DDSC_AUTH.equalsIgnoreCase(tag)) agency = S62Agency.valueOf(val);
+                     if (DDSI_DDSC_ATLB.equals(tag)) code = toInteger(val);
+                else if (DDSI_DDSC_ASET.equals(tag)) set = AttributeSet.valueOf(val);
+                else if (DDSI_DDSC_AUTH.equals(tag)) agency = S62Agency.valueOf(val);
             }
         }
         
@@ -76,13 +76,13 @@ public class DataDictionarySchemaIdentifier extends S57Object {
         for(SubField sf : isofield.getSubFields()){
             final String tag = sf.getType().getTag();
             final Object val = sf.getValue();
-                 if (DDSI_RCNM.equalsIgnoreCase(tag)) type = RecordType.valueOf(val);
-            else if (DDSI_RCID.equalsIgnoreCase(tag)) id = toLong(val);
-            else if (DDSI_OBLB.equalsIgnoreCase(tag)) code = toInteger(val);
+                 if (DDSI_RCNM.equals(tag)) type = RecordType.valueOf(val);
+            else if (DDSI_RCID.equals(tag)) id = toLong(val);
+            else if (DDSI_OBLB.equals(tag)) code = toInteger(val);
         }
         for(Field f : isofield.getFields()){
             final String tag = f.getType().getTag();
-            if(DataDictionarySchemaField.DDSI_DDSC.equalsIgnoreCase(tag)){
+            if(DataDictionarySchemaField.DDSI_DDSC.equals(tag)){
                 final Iterator<SubField> sfite = f.getSubFields().iterator();
                 while(sfite.hasNext()){
                     final DataDictionarySchemaField candidate = new DataDictionarySchemaField();

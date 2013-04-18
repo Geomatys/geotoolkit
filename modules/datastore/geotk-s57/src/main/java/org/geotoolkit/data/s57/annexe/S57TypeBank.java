@@ -32,10 +32,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.geotoolkit.data.s57.S57FeatureStore;
 import org.geotoolkit.feature.FeatureTypeBuilder;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.storage.DataStoreException;
+import org.apache.sis.util.ArgumentChecks;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.FeatureType;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  * Give access to all S-57 feature and property types.
@@ -131,19 +132,21 @@ public final class S57TypeBank {
         return splitKey(key).getValue();
     }
     
-    public static FeatureType getFeatureType(String name) throws DataStoreException{
+    public static FeatureType getFeatureType(String name, CoordinateReferenceSystem crs) throws DataStoreException{
         String key = FT_ACC_KEY.get(name);
         if(key == null) throw new DataStoreException("No feature type for name : "+ name);
-        return getFeatureTypeByKey(key);
+        return getFeatureTypeByKey(key,crs);
     }
     
-    public static FeatureType getFeatureType(int code) throws DataStoreException{
+    public static FeatureType getFeatureType(int code, CoordinateReferenceSystem crs) throws DataStoreException{
         String key = FT_CODE_KEY.get(code);
         if(key == null) throw new DataStoreException("No feature type for code : "+ code);
-        return getFeatureTypeByKey(key);
+        return getFeatureTypeByKey(key,crs);
     }
     
-    private static FeatureType getFeatureTypeByKey(String key) throws DataStoreException{
+    private static FeatureType getFeatureTypeByKey(String key, CoordinateReferenceSystem crs) throws DataStoreException{
+        ArgumentChecks.ensureNonNull("crs", crs);
+        
         final String values = FEATURE_TYPES.get(key).toString();
         Entry<Integer,String> entry = splitKey(key);
         final AnS57FeatureType sft = new AnS57FeatureType();
@@ -154,7 +157,7 @@ public final class S57TypeBank {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName(sft.acronym);
         //add a geometry type
-        ftb.add("spatial", Geometry.class, DefaultGeographicCRS.WGS84);
+        ftb.add("spatial", Geometry.class, crs);
         
         final List<String> allAtts = new ArrayList<String>();
         allAtts.addAll(sft.attA);

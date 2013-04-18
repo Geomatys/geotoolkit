@@ -33,7 +33,7 @@ public final class ISO8211Utilities {
         for(;start<end-1;start++){
             if('0' != buffer[start]) break;
         }
-        return new String(Arrays.copyOfRange(buffer, start, end));
+        return new String(buffer, start, end-start);
     }
     
     public static void expect(final DataInput ds, final char val) throws IOException{

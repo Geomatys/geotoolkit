@@ -50,13 +50,13 @@ public class DataSetAccuracy extends S57Object {
         for(SubField sf : isofield.getSubFields()){
             final String tag = sf.getType().getTag();
             final Object val = sf.getValue();
-                 if (DSAC_RCNM.equalsIgnoreCase(tag)) type = RecordType.valueOf(val);
-            else if (DSAC_RCID.equalsIgnoreCase(tag)) id = toLong(val);
-            else if (DSAC_PACC.equalsIgnoreCase(tag)) positionAccuracy = toDouble(val);
-            else if (DSAC_HACC.equalsIgnoreCase(tag)) hvmeasureAccuracy = toDouble(val);
-            else if (DSAC_SACC.equalsIgnoreCase(tag)) soundingAccuracy = toDouble(val);
-            else if (DSAC_FPMF.equalsIgnoreCase(tag)) factor = toInteger(val);
-            else if (DSAC_COMT.equalsIgnoreCase(tag)) comment = toString(val);
+                 if (DSAC_RCNM.equals(tag)) type = RecordType.valueOf(val);
+            else if (DSAC_RCID.equals(tag)) id = toLong(val);
+            else if (DSAC_PACC.equals(tag)) positionAccuracy = toDouble(val);
+            else if (DSAC_HACC.equals(tag)) hvmeasureAccuracy = toDouble(val);
+            else if (DSAC_SACC.equals(tag)) soundingAccuracy = toDouble(val);
+            else if (DSAC_FPMF.equals(tag)) factor = toInteger(val);
+            else if (DSAC_COMT.equals(tag)) comment = toString(val);
         }
     }
     

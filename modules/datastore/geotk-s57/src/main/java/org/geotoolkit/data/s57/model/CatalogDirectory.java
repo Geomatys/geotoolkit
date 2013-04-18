@@ -68,18 +68,18 @@ public class CatalogDirectory extends S57Object {
         for(SubField sf : isofield.getSubFields()){
             final String tag = sf.getType().getTag();
             final Object value = sf.getValue();
-                 if (CATD_RCNM.equalsIgnoreCase(tag)) type = RecordType.valueOf(value);
-            else if (CATD_RCID.equalsIgnoreCase(tag)) id = toInteger(value);
-            else if (CATD_FILE.equalsIgnoreCase(tag)) file = toString(value);
-            else if (CATD_LFIL.equalsIgnoreCase(tag)) fileName = toString(value);
-            else if (CATD_VOLM.equalsIgnoreCase(tag)) volume = toString(value);
-            else if (CATD_IMPL.equalsIgnoreCase(tag)) impl = Implementation.valueOf(value);
-            else if (CATD_SLAT.equalsIgnoreCase(tag)) southmostLatitude = toDouble(value);
-            else if (CATD_WLON.equalsIgnoreCase(tag)) westmostLongitude = toDouble(value);
-            else if (CATD_NLAT.equalsIgnoreCase(tag)) northmostLatitude = toDouble(value);
-            else if (CATD_ELON.equalsIgnoreCase(tag)) eastmostLongitude = toDouble(value);
-            else if (CATD_CRCS.equalsIgnoreCase(tag)) crc = toString(value);
-            else if (CATD_COMT.equalsIgnoreCase(tag)) comment = toString(value);
+                 if (CATD_RCNM.equals(tag)) type = RecordType.valueOf(value);
+            else if (CATD_RCID.equals(tag)) id = toInteger(value);
+            else if (CATD_FILE.equals(tag)) file = toString(value);
+            else if (CATD_LFIL.equals(tag)) fileName = toString(value);
+            else if (CATD_VOLM.equals(tag)) volume = toString(value);
+            else if (CATD_IMPL.equals(tag)) impl = Implementation.valueOf(value);
+            else if (CATD_SLAT.equals(tag)) southmostLatitude = toDouble(value);
+            else if (CATD_WLON.equals(tag)) westmostLongitude = toDouble(value);
+            else if (CATD_NLAT.equals(tag)) northmostLatitude = toDouble(value);
+            else if (CATD_ELON.equals(tag)) eastmostLongitude = toDouble(value);
+            else if (CATD_CRCS.equals(tag)) crc = toString(value);
+            else if (CATD_COMT.equals(tag)) comment = toString(value);
         }
     }
     

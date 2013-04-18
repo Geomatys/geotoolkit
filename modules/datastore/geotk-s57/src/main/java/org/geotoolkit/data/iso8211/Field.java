@@ -53,7 +53,7 @@ public class Field {
 
     public Field getField(String tag){
         for(Field f : fields){
-            if(tag.equalsIgnoreCase(f.getType().getTag())){
+            if(tag.equals(f.getType().getTag())){
                 return f;
             }
         }
@@ -66,7 +66,7 @@ public class Field {
     
     public SubField getSubField(String tag){
         for(SubField sf : subfields){
-            if(sf.getType().getTag().equalsIgnoreCase(tag)){
+            if(sf.getType().getTag().equals(tag)){
                 return sf;
             }
         }

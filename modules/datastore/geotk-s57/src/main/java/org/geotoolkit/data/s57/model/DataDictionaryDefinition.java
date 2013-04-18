@@ -75,8 +75,8 @@ public class DataDictionaryDefinition extends S57Object {
             for(SubField sf : subFields){
                 final String tag = sf.getType().getTag();
                 final Object val = sf.getValue();
-                     if (DDDF_DDDR_RFTP.equalsIgnoreCase(tag)) type = ReferenceType.valueOf(val);
-                else if (DDDF_DDDR_RFVL.equalsIgnoreCase(tag)) value = toString(val);
+                     if (DDDF_DDDR_RFTP.equals(tag)) type = ReferenceType.valueOf(val);
+                else if (DDDF_DDDR_RFVL.equals(tag)) value = toString(val);
             }
         }
         
@@ -87,20 +87,20 @@ public class DataDictionaryDefinition extends S57Object {
         for(SubField sf : isofield.getSubFields()){
             final String tag = sf.getType().getTag();
             final Object value = sf.getValue();
-                 if (DDDF_RCNM.equalsIgnoreCase(tag)) type = RecordType.valueOf(value);
-            else if (DDDF_RCID.equalsIgnoreCase(tag)) id = toInteger(value);
-            else if (DDDF_OORA.equalsIgnoreCase(tag)) objOrAtt = ObjectOrAttribute.valueOf(value);
-            else if (DDDF_OAAC.equalsIgnoreCase(tag)) acronym = toString(value);
-            else if (DDDF_OACO.equalsIgnoreCase(tag)) code = toInteger(value);
-            else if (DDDF_OALL.equalsIgnoreCase(tag)) longLabel = toString(value);
-            else if (DDDF_OATY.equalsIgnoreCase(tag)) objType = ObjectType.valueOf(value);
-            else if (DDDF_DEFN.equalsIgnoreCase(tag)) definition = toString(value);
-            else if (DDDF_AUTH.equalsIgnoreCase(tag)) agency = S62Agency.valueOf(value);
-            else if (DDDF_COMT.equalsIgnoreCase(tag)) comment = toString(value);
+                 if (DDDF_RCNM.equals(tag)) type = RecordType.valueOf(value);
+            else if (DDDF_RCID.equals(tag)) id = toInteger(value);
+            else if (DDDF_OORA.equals(tag)) objOrAtt = ObjectOrAttribute.valueOf(value);
+            else if (DDDF_OAAC.equals(tag)) acronym = toString(value);
+            else if (DDDF_OACO.equals(tag)) code = toInteger(value);
+            else if (DDDF_OALL.equals(tag)) longLabel = toString(value);
+            else if (DDDF_OATY.equals(tag)) objType = ObjectType.valueOf(value);
+            else if (DDDF_DEFN.equals(tag)) definition = toString(value);
+            else if (DDDF_AUTH.equals(tag)) agency = S62Agency.valueOf(value);
+            else if (DDDF_COMT.equals(tag)) comment = toString(value);
         }
         for(Field f : isofield.getFields()){
             final String tag = f.getType().getTag();
-            if(DataDictionaryDefinitionReference.DDDF_DDDR.equalsIgnoreCase(tag)){
+            if(DataDictionaryDefinitionReference.DDDF_DDDR.equals(tag)){
                 final Iterator<SubField> sfite = f.getSubFields().iterator();
                 while(sfite.hasNext()){
                     final DataDictionaryDefinitionReference candidate = new DataDictionaryDefinitionReference();
