@@ -28,7 +28,6 @@ import org.geotoolkit.metadata.iso.citation.DefaultCitation;
 
 import org.junit.*;
 import static org.junit.Assert.*;
-import org.geotoolkit.test.Depend;
 
 
 /**
@@ -40,7 +39,6 @@ import org.geotoolkit.test.Depend;
  *
  * @since 3.03
  */
-@Depend(PropertyMapTest.class)
 public final strictfp class MetadataFactoryTest {
     /**
      * The metadata factory.

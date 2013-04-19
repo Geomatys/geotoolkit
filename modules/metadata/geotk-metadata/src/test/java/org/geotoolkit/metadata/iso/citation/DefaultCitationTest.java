@@ -18,16 +18,12 @@
 package org.geotoolkit.metadata.iso.citation;
 
 import java.util.Arrays;
-import java.util.Collection;
 import javax.xml.bind.JAXBException;
-
-import org.opengis.metadata.Identifier;
 
 import org.geotoolkit.xml.XML;
 import org.geotoolkit.xml.IdentifierMap;
 import org.geotoolkit.xml.IdentifierSpace;
 import org.geotoolkit.metadata.iso.DefaultIdentifier;
-import org.geotoolkit.test.Depend;
 import org.apache.sis.util.CharSequences;
 
 import org.junit.*;
@@ -42,37 +38,7 @@ import static org.junit.Assert.*;
  *
  * @since 3.19
  */
-@Depend(DefaultCitationDateTest.class)
 public final strictfp class DefaultCitationTest {
-    /**
-     * Tests the identifier map, which handles ISBN and ISSN codes in a special way.
-     */
-    @Test
-    public void testIdentifierMap() {
-        final DefaultCitation citation = new DefaultCitation();
-        final Collection<Identifier> identifiers = citation.getIdentifiers();
-        final IdentifierMap identifierMap = citation.getIdentifierMap();
-        assertTrue("Expected an initially empty set of identifiers.", identifiers.isEmpty());
-
-        citation.setISBN("MyISBN");
-        assertEquals("MyISBN", citation.getISBN());
-        assertEquals("ISBN code shall be included in the set of identifiers.", 1, identifiers.size());
-        assertEquals("{ISBN=“MyISBN”}", identifierMap.toString());
-
-        assertNull(citation.getISSN());
-        citation.setIdentifiers(Arrays.asList(
-                new DefaultIdentifier(Citations.OGC,  "MyOGC"),
-                new DefaultIdentifier(Citations.EPSG, "MyEPSG"),
-                new DefaultIdentifier(Citations.ISSN, "MyISSN")));
-
-        assertEquals(3, identifiers.size()); // The ISSN code has been ignored.
-        assertEquals("MyISBN", citation.getISBN());
-        assertNull("The current implementation of setIdentifiers(Collection) does not perform "
-                + "any special processing for ISBN and ISSN codes yet. However we may revisit "
-                + "this policy in a future version.", citation.getISSN());
-        assertEquals("{OGC=“MyOGC”, EPSG=“MyEPSG”, ISBN=“MyISBN”}", identifierMap.toString());
-    }
-
     /**
      * Ensures that the identifier collection, when marshalled, does not include the ISBN
      * and ID codes.
