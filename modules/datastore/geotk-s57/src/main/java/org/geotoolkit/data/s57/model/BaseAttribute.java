@@ -50,5 +50,10 @@ public abstract class BaseAttribute extends S57Object {
             }
         }
     }
+
+    @Override
+    public String toString() {
+        return "Att:"+code+"="+value;
+    }
     
 }

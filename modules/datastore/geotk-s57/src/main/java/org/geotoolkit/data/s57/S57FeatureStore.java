@@ -24,6 +24,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -34,6 +35,7 @@ import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureStoreFactory;
 import org.geotoolkit.data.FeatureStoreFinder;
 import org.geotoolkit.data.FeatureWriter;
+import org.geotoolkit.data.query.DefaultQueryCapabilities;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.data.s57.annexe.S57TypeBank;
@@ -55,6 +57,8 @@ import org.opengis.parameter.ParameterValueGroup;
 
 import org.geotoolkit.data.s57.model.S57Reader;
 import org.geotoolkit.data.s57.model.S57UpdatedReader;
+import org.geotoolkit.version.VersionHistory;
+import org.geotoolkit.version.VersioningException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
@@ -69,6 +73,7 @@ public class S57FeatureStore extends AbstractFeatureStore{
     
     static final String BUNDLE_PATH = "org/geotoolkit/s57/bundle";
     
+    private final QueryCapabilities capa = new DefaultQueryCapabilities(false, true);
     private final File file;
     private Set<FeatureType> types = null;
     private Set<Name> names = null;
@@ -77,7 +82,8 @@ public class S57FeatureStore extends AbstractFeatureStore{
     private DataSetIdentification datasetIdentification;
     private DataSetParameter datasetParameter;
     private CoordinateReferenceSystem crs;
-    
+    //versioning informations
+    private S57VersionHistory history;
     
     public S57FeatureStore(final ParameterValueGroup params) throws DataStoreException{
         super(params);
@@ -98,7 +104,17 @@ public class S57FeatureStore extends AbstractFeatureStore{
     
     @Override
     public QueryCapabilities getQueryCapabilities() {
-        return null;
+        return capa;
+    }
+
+    @Override
+    public VersionHistory getHistory(Name typeName) throws VersioningException {
+        try {
+            typeCheck(typeName);
+            return loadHistory();
+        } catch (DataStoreException ex) {
+            throw new VersioningException(ex);
+        }
     }
     
     @Override
@@ -128,7 +144,7 @@ public class S57FeatureStore extends AbstractFeatureStore{
         types = new HashSet<FeatureType>();
         names = new HashSet<Name>();
         
-        final S57Reader reader = getS57Reader();
+        final S57Reader reader = getS57Reader(null);
         try{
             while(reader.hasNext()){
                 final S57Object obj = reader.next();
@@ -164,38 +180,63 @@ public class S57FeatureStore extends AbstractFeatureStore{
     @Override
     public FeatureReader getFeatureReader(Query query) throws DataStoreException {
         final FeatureType ft = getFeatureType(query.getTypeName());
-        final S57Reader s57reader = getS57Reader();
-        final FeatureReader reader = new S57FeatureReader(ft,
+        
+        /** find the whished version */
+        final Date vdate = query.getVersionDate();
+        final String vlabel = query.getVersionLabel();
+        S57Version wantedVersion = null;
+        if(vdate!=null || vlabel != null){
+            try{
+                if(vdate!=null){
+                    wantedVersion = (S57Version) loadHistory().getVersion(vdate);
+                }else{
+                    wantedVersion = (S57Version) loadHistory().getVersion(vlabel);
+                }
+            }catch(VersioningException ex){
+                throw new DataStoreException(ex);
+            }
+        }
+        
+        
+        final S57Reader s57reader = getS57Reader(wantedVersion);
+        final FeatureReader reader = new S57FeatureReader(this,ft,
                 (Integer)ft.getUserData().get(S57TYPECODE),s57reader,
                 datasetIdentification,datasetParameter);
         return handleRemaining(reader, query);
     }
 
-    private S57Reader getS57Reader() throws DataStoreException{
+    private S57Reader getS57Reader(final S57Version version) throws DataStoreException{
         
-        final File baseFile = findMainFile(null);
-        String baseName = baseFile.getName();
-        baseName = baseName.substring(0, baseName.length()-4);
-        final List<File> updateFiles = findUpdateFiles(baseName, null, null);
-        //sort files
-        Collections.sort(updateFiles);
+        final List<S57Version> versions = loadHistory().list();
         
-        //create base reader
-        S57Reader reader = new S57FileReader();
-        try {
-            reader.setInput(baseFile);            
-            reader.setDsid(datasetIdentification);
-        } catch (IOException ex) {
-            throw new DataStoreException(ex.getMessage(), ex);
+        S57Reader reader = null;
+        for(S57Version v : versions){
+            if(reader==null){
+                //create base reader
+                reader = new S57FileReader();
+                ((S57FileReader)reader).setInput(v.getFile());
+                reader.setDsid(datasetIdentification);
+            }else{
+                //encapsulated with an update file
+                reader = new S57UpdatedReader(reader,v.getFile());
+                reader.setDsid(datasetIdentification);
+            }
+            if(v.equals(version)) break;
         }
-        
-        //encapsulated with each update
-        for(File uf : updateFiles){
-            reader = new S57UpdatedReader(reader,uf);
-            reader.setDsid(datasetIdentification);
-        }
-        
         return reader;
+    }
+    
+    /**
+     * Rebuild history.
+     * @return VersionHistory
+     * @throws DataStoreException 
+     */
+    private synchronized S57VersionHistory loadHistory() throws DataStoreException{
+        if(history!=null) return history;
+        final List<File> updateFiles = findUpdateFiles(null, null, null);
+        updateFiles.add(0, findMainFile(null));
+        history = new S57VersionHistory(updateFiles);        
+        return history;
     }
     
     /**
@@ -249,6 +290,9 @@ public class S57FeatureStore extends AbstractFeatureStore{
                 updateFiles.add(root);
             }
         }
+        
+        //sort files
+        Collections.sort(updateFiles);
         return updateFiles;
     }
     

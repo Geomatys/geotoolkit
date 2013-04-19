@@ -63,7 +63,7 @@ public class S57Object {
         
         final String name = Classes.getShortClassName(this);
         final List lst = new ArrayList();
-        final java.lang.reflect.Field[] fields = getClass().getDeclaredFields();
+        final java.lang.reflect.Field[] fields = getClass().getFields();
         for(java.lang.reflect.Field f : fields){
             if(java.lang.reflect.Modifier.isStatic(f.getModifiers())) {
                 continue;

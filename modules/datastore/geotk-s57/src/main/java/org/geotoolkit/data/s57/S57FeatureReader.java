@@ -23,6 +23,7 @@ import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.LinearRing;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -39,9 +40,12 @@ import org.geotoolkit.data.s57.model.S57Object;
 import org.geotoolkit.data.s57.model.S57Reader;
 import org.geotoolkit.data.s57.model.VectorRecord;
 import org.geotoolkit.feature.FeatureUtilities;
+import static org.geotoolkit.feature.FeatureUtilities.defaultProperty;
+import org.geotoolkit.filter.identity.DefaultFeatureId;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.util.Converters;
 import org.opengis.feature.Feature;
+import org.opengis.feature.Property;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.PropertyDescriptor;
 
@@ -53,6 +57,8 @@ public class S57FeatureReader implements FeatureReader{
 
     private static final GeometryFactory GF = new GeometryFactory();
         
+    private final S57FeatureStore store;
+    
     //searched type
     private final FeatureType type;
     private final Map<Integer,PropertyDescriptor> properties = new HashMap<Integer, PropertyDescriptor>();
@@ -68,8 +74,9 @@ public class S57FeatureReader implements FeatureReader{
     
     private Feature feature;
 
-    public S57FeatureReader(FeatureType type, int s57typeCode, S57Reader mreader,
+    public S57FeatureReader(S57FeatureStore store,FeatureType type, int s57typeCode, S57Reader mreader,
             DataSetIdentification datasetIdentification,DataSetParameter datasetParameter) {
+        this.store = store;
         this.type = type;
         this.s57TypeCode = s57typeCode;
         this.mreader = mreader;
@@ -151,7 +158,13 @@ public class S57FeatureReader implements FeatureReader{
     }
             
     private Feature toFeature(final FeatureRecord record){
-        final Feature f =  FeatureUtilities.defaultFeature(type, record.identifier.agency.ascii+"."+String.valueOf(record.id)+".v"+record.version);
+        
+        //we must not append the version in the id, otherwise we can't find older versions
+        //final String id = record.identifier.agency.ascii+"."+String.valueOf(record.id)+".v"+record.version;
+        final String id = record.identifier.agency.ascii+"."+String.valueOf(record.id);
+        final Feature f =  FeatureUtilities.defaultFeature(type, id);
+        final S57VersionedFeature versionned = new S57VersionedFeature(store, type.getName(), f.getIdentifier());
+        f.getUserData().put(FeatureUtilities.ATT_VERSIONING, versionned);
         
         //read attributes
         for(FeatureRecord.Attribute att : record.attributes){
@@ -396,5 +409,21 @@ public class S57FeatureReader implements FeatureReader{
     public void remove() {
         throw new FeatureStoreRuntimeException("writing not supported");
     }
+    
+    
+//    private Feature defaultFeature(final FeatureType type, final String id){
+//
+//        final Collection<Property> props = new ArrayList<Property>();
+//        for(final PropertyDescriptor subDesc : type.getDescriptors()){
+//            for(int i=0,n=subDesc.getMinOccurs();i<n;i++){
+//                final Property prop = defaultProperty(subDesc);
+//                if(prop != null){
+//                    props.add(prop);
+//                }
+//            }
+//        }
+//        return new S57VersionedFeature(store, props, type, new DefaultFeatureId(id));
+//    }
+    
     
 }

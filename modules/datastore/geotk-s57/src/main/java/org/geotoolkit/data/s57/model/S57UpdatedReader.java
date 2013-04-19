@@ -210,8 +210,8 @@ public class S57UpdatedReader extends S57Reader{
             fr.version = ur.version;
             
             //update attributes
-            updateAttributes(fr.attributes, ur.attributes);
-            updateAttributes(fr.nattributes, ur.nattributes);
+            updateAttributes((List)fr.attributes, ur.attributes);
+            updateAttributes((List)fr.nattributes, ur.nattributes);
             
             //update spatial pointers
             updateByControl(ur.spatialControl, fr.spatialPointers, ur.spatialPointers);
@@ -235,7 +235,7 @@ public class S57UpdatedReader extends S57Reader{
             }
             
             //update attributes
-            updateAttributes(vr.attributes, ur.attributes);
+            updateAttributes((List)vr.attributes, ur.attributes);
             
             //update object pointers
             updateByControl(ur.recordPointerControl, vr.records, ur.records);
@@ -251,7 +251,7 @@ public class S57UpdatedReader extends S57Reader{
         return candidate;
     }
     
-    private void updateAttributes(final List<? extends BaseAttribute> attributes, final List<? extends BaseAttribute> updates){
+    private void updateAttributes(final List<BaseAttribute> attributes, final List<? extends BaseAttribute> updates){
         for(BaseAttribute att : updates){
             if(att.value.length() == 1 && att.value.charAt(0) == att.attfLexicalLevel.getDeleteValue()){
                 //delete attribute
@@ -264,10 +264,17 @@ public class S57UpdatedReader extends S57Reader{
                 }
             }else{
                 //update attribute
+                boolean found = false;
                 for(BaseAttribute frt : attributes){
                     if(frt.code == att.code){
                         frt.value = att.value;
+                        found = true;
+                        break;
                     }
+                }
+                if(!found){
+                    //create the attribute
+                    attributes.add(att);
                 }
             }
         }
