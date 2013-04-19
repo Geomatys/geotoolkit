@@ -42,6 +42,7 @@ import org.geotoolkit.geometry.DefaultBoundingBox;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.storage.DataStoreException;
+import org.geotoolkit.version.Version;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.Name;
@@ -69,12 +70,17 @@ public class DefaultSession extends AbstractSession {
     
     private final DefaultSessionDiff diff;
     private final boolean async;
+    private final Version version;
 
     public DefaultSession(final FeatureStore store, final boolean async){
+        this(store,async,null);
+    }
+    
+    public DefaultSession(final FeatureStore store, final boolean async, final Version version){
         super(store);
-        
         this.diff = new DefaultSessionDiff();
         this.async = async;
+        this.version = version;
     }
 
     /**
@@ -85,6 +91,14 @@ public class DefaultSession extends AbstractSession {
         return async;
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public Version getVersion() {
+        return version;
+    }
+    
     /**
      * {@inheritDoc }
      */
@@ -136,6 +150,7 @@ public class DefaultSession extends AbstractSession {
      */
     @Override
     public void addFeatures(final Name groupName, final Collection newFeatures) throws DataStoreException {
+        checkVersion();
         //will raise an error if the name doesnt exist
         store.getFeatureType(groupName);
 
@@ -152,6 +167,7 @@ public class DefaultSession extends AbstractSession {
      */
     @Override
     public void updateFeatures(final Name groupName, Filter filter, final Map<? extends AttributeDescriptor,? extends Object> values) throws DataStoreException {
+        checkVersion();
         //will raise an error if the name doesnt exist
         store.getFeatureType(groupName);
 
@@ -202,6 +218,7 @@ public class DefaultSession extends AbstractSession {
      */
     @Override
     public void removeFeatures(final Name groupName, final Filter filter) throws DataStoreException {
+        checkVersion();
         //will raise an error if the name doesnt exist
         store.getFeatureType(groupName);
 
@@ -288,6 +305,17 @@ public class DefaultSession extends AbstractSession {
         }
     }
 
+    /**
+     * Test if a version is set, raise an error if it's the case.
+     * Version must not be set when doing writing operations
+     */
+    private void checkVersion() throws DataStoreException {
+        if(version!=null){
+            throw new DataStoreException("Session is opened on version : "+version+". "
+                    + "Writing operations are not allowed, open a session without version to support writing.");
+        }
+    }
+    
     private Query forceCRS(final Query query, boolean replace) throws DataStoreException{
         final FeatureType ft = store.getFeatureType(query.getTypeName());
         final CoordinateReferenceSystem crs = ft.getCoordinateReferenceSystem();

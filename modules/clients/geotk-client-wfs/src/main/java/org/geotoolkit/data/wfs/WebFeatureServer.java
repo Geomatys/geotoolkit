@@ -40,6 +40,9 @@ import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.util.logging.Logging;
+import org.geotoolkit.version.Version;
+import org.geotoolkit.version.VersionHistory;
+import org.geotoolkit.version.VersioningException;
 import org.geotoolkit.wfs.xml.WFSBindingUtilities;
 import org.geotoolkit.wfs.xml.WFSCapabilities;
 import org.geotoolkit.wfs.xml.WFSVersion;
@@ -254,9 +257,24 @@ public class WebFeatureServer extends AbstractServer implements FeatureStore{
 
     @Override
     public Session createSession(boolean asynchrone) {
-        return getStore().createSession(asynchrone);
+        return createSession(asynchrone, null);
     }
 
+    @Override
+    public Session createSession(boolean asynchrone, Version version) {
+        return getStore().createSession(asynchrone,version);
+    }
+    
+    @Override
+    public VersionHistory getHistory(String typeName) throws VersioningException {
+        return store.getHistory(typeName);
+    }
+
+    @Override
+    public VersionHistory getHistory(Name typeName) throws VersioningException {
+        return store.getHistory(typeName);
+    }
+    
     @Override
     public String[] getTypeNames() throws DataStoreException {
         return getStore().getTypeNames();
@@ -382,10 +400,9 @@ public class WebFeatureServer extends AbstractServer implements FeatureStore{
         getStore().removeStorageListener(listener);
     }
 
-	@Override
-	public void refreshMetaModel() {
-		getStore().refreshMetaModel();
-		
-	}
+    @Override
+    public void refreshMetaModel() {
+        getStore().refreshMetaModel();
+    }
 
 }

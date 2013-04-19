@@ -17,7 +17,9 @@
  */
 package org.geotoolkit.data.query;
 
+import java.util.Date;
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.version.Version;
 import org.opengis.feature.type.Name;
 import org.opengis.filter.Filter;
 import org.opengis.filter.sort.SortBy;
@@ -244,6 +246,22 @@ public interface Query {
      */
     SortBy[] getSortBy();
 
+    /**
+     * Requested version label of the features.
+     * If the value is null the latest version is returned.
+     * Mutualy excludive with VersionDate.
+     * @return String, may be null.
+     */
+    String getVersionLabel();
+    
+    /**
+     * Requested version date of the features.
+     * If the value is null the latest version is returned.
+     * Mutualy excludive with VersionLabel.
+     * @return Date, may be null.
+     */
+    Date getVersionDate();
+    
     /**
      * Specifies some hints to drive the query execution and results build-up.
      * Hints examples can be the GeometryFactory to be used, a generalization

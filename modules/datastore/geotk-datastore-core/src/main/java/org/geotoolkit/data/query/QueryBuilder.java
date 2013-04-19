@@ -17,10 +17,12 @@
 
 package org.geotoolkit.data.query;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.DefaultName;
+import org.geotoolkit.version.Version;
 import org.opengis.feature.type.Name;
 import org.opengis.filter.Filter;
 import org.opengis.filter.sort.SortBy;
@@ -48,6 +50,7 @@ public final class QueryBuilder {
     private Hints hints = null;
     private double[] resolution = null;
     private String language = Query.GEOTK_QOM;
+    private Object version = null;
 
     public QueryBuilder(){
     }
@@ -83,6 +86,8 @@ public final class QueryBuilder {
         this.startIndex = query.getStartIndex();
         this.typeName = query.getTypeName();
         this.source = query.getSource();
+        this.version = query.getVersionDate();
+        if(this.version==null) this.version = query.getVersionLabel();
         this.language = query.getLanguage();
     }
 
@@ -175,6 +180,28 @@ public final class QueryBuilder {
         return resolution;
     }
 
+    public void setVersionLabel(String label) {
+        this.version = label;
+    }
+
+    public String getVersionLabel() {
+        if(version instanceof String){
+            return (String)version;
+        }
+        return null;
+    }
+    
+    public void setVersionDate(Date version) {
+        this.version = version;
+    }
+
+    public Date getVersionDate() {
+        if(version instanceof Date){
+            return (Date)version;
+        }
+        return null;
+    }
+
     public Hints getHints() {
         return hints;
     }
@@ -186,7 +213,7 @@ public final class QueryBuilder {
     public Query buildQuery(){
         final Source cs = (source == null) ? new DefaultSelector(null, typeName, "s1") : source;
         checkSource(cs,null);
-        return new DefaultQuery(cs, filter, properties, sortBy, crs, startIndex, maxFeatures, resolution, hints);
+        return new DefaultQuery(cs, filter, properties, sortBy, crs, startIndex, maxFeatures, resolution, version, hints);
     }
 
     /**

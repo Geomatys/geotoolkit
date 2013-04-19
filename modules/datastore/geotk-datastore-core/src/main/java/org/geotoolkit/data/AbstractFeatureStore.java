@@ -55,6 +55,9 @@ import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.storage.AbstractStorage;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.util.logging.Logging;
+import org.geotoolkit.version.Version;
+import org.geotoolkit.version.VersionHistory;
+import org.geotoolkit.version.VersioningException;
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.FeatureType;
@@ -130,14 +133,37 @@ public abstract class AbstractFeatureStore extends AbstractStorage implements Fe
         return Logger;
     }
 
+    @Override
+    public VersionHistory getHistory(String typeName) throws VersioningException{
+        final Name n = DefaultName.valueOf(typeName);
+        return getHistory(n);
+    }
+
+    /**
+     * Overwrite to enable versioning.
+     * @param version 
+     */
+    @Override
+    public VersionHistory getHistory(Name typeName) throws VersioningException{
+        throw new VersioningException("Versioning not supported");
+    }
+
     /**
      * {@inheritDoc }
      */
     @Override
     public Session createSession(final boolean async) {
-        return new DefaultSession(this, async);
+        return createSession(async, null);
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public Session createSession(final boolean async, Version version) {
+        return new DefaultSession(this, async,version);
+    }
+    
     /**
      * {@inheritDoc }
      */
