@@ -78,6 +78,13 @@ public final class Namespaces extends Static {
      * The <code>{@value}</code> URL.
      *
      * @category ISO
+     */
+    public static final String SRV = "http://www.isotc211.org/2005/srv";
+
+    /**
+     * The <code>{@value}</code> URL.
+     *
+     * @category ISO
      *
      * @since 3.21
      */
