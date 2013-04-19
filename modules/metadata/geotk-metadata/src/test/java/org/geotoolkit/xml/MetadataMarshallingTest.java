@@ -39,7 +39,6 @@ import org.geotoolkit.metadata.iso.lineage.*;
 import org.geotoolkit.metadata.iso.citation.*;
 import org.geotoolkit.metadata.iso.distribution.*;
 import org.geotoolkit.metadata.iso.identification.*;
-import org.geotoolkit.metadata.MetadataStandardTest;
 import org.apache.sis.util.iso.DefaultInternationalString;
 import org.apache.sis.util.iso.SimpleInternationalString;
 
@@ -64,7 +63,7 @@ import static org.geotoolkit.test.Assert.*;
  *
  * @since 2.5
  */
-@Depend({MetadataStandardTest.class, CodeListMarshallingTest.class, FreeTextMarshallingTest.class})
+@Depend({CodeListMarshallingTest.class, FreeTextMarshallingTest.class})
 public final strictfp class MetadataMarshallingTest extends LocaleDependantTestBase {
     /**
      * Generates a XML tree using the annotations on the {@link DefaultMetadata} class,

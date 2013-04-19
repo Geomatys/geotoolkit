@@ -40,7 +40,7 @@ import org.geotoolkit.test.Depend;
  *
  * @since 3.03
  */
-@Depend({MetadataStandardTest.class, PropertyMapTest.class})
+@Depend(PropertyMapTest.class)
 public final strictfp class MetadataFactoryTest {
     /**
      * The metadata factory.
