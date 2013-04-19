@@ -66,7 +66,7 @@ public class Version {
 
     @Override
     public String toString() {
-        return label+":"+date;
+        return label+" : "+date;
     }
     
 }

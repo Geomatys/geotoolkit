@@ -20,9 +20,14 @@ package org.geotoolkit.gui.swing.propertyedit;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.GridLayout;
 import java.awt.Image;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.beans.PropertyChangeEvent;
@@ -34,15 +39,25 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.*;
+import javax.swing.event.CellEditorListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableCellEditor;
+import javax.swing.table.TableCellRenderer;
+import org.geotoolkit.cql.CQLException;
+import org.geotoolkit.cql.JCQLTextPane;
 import org.geotoolkit.data.FeatureCollection;
+import org.geotoolkit.data.FeatureStore;
+import org.geotoolkit.data.FeatureStoreUtilities;
+import org.geotoolkit.data.query.QueryBuilder;
+import org.geotoolkit.data.query.Selector;
+import org.geotoolkit.data.query.Source;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.filter.identity.DefaultFeatureId;
+import org.geotoolkit.gui.swing.misc.JOptionDialog;
 import org.geotoolkit.gui.swing.misc.LoadingLockableUI;
 import org.geotoolkit.gui.swing.propertyedit.featureeditor.PropertyValueEditor;
 import org.geotoolkit.gui.swing.propertyedit.featureeditor.TableCellEditorRenderer;
@@ -51,13 +66,20 @@ import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.LayerListener;
+import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapItem;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.storage.DataStoreException;
+import org.geotoolkit.style.RandomStyleBuilder;
 import org.geotoolkit.util.collection.CollectionChangeEvent;
+import org.geotoolkit.version.Version;
+import org.geotoolkit.version.VersionHistory;
+import org.geotoolkit.version.Versioned;
+import org.geotoolkit.version.VersioningException;
 import org.jdesktop.jxlayer.plaf.ext.LockableUI;
 import org.jdesktop.swingx.JXErrorPane;
 import org.jdesktop.swingx.JXTable;
+import org.jdesktop.swingx.combobox.ListComboBoxModel;
 import org.jdesktop.swingx.decorator.Highlighter;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
 import org.jdesktop.swingx.table.DatePickerCellEditor;
@@ -67,9 +89,11 @@ import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.feature.type.PropertyType;
+import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.Id;
 import org.opengis.filter.identity.Identifier;
+import org.openide.util.Exceptions;
 
 /**
  * layer feature panel
@@ -79,6 +103,7 @@ import org.opengis.filter.identity.Identifier;
  */
 public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements PropertyPane, LayerListener {
 
+    private static final ImageIcon ICON_VERSIONED = IconBundle.getIcon("16_temporal");
 
 
     private final ListSelectionListener selectionListener = new ListSelectionListener() {
@@ -100,6 +125,7 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
 
     private final List<JComponent> actions = new ArrayList<JComponent>();
     private final LockableUI lockableUI = new LoadingLockableUI();
+    private final JCQLTextPane guiCQL = new JCQLTextPane();
 
     private FeatureMapLayer layer = null;
     private boolean editable = false;
@@ -131,6 +157,8 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
     public LayerFeaturePropertyPanel() {
         initComponents();
 
+        guiPanFilter.add(BorderLayout.CENTER,guiCQL);
+        
         tab_data.setEditable(false);
         tab_data.setColumnControlVisible(true);
         tab_data.setHorizontalScrollEnabled(true);
@@ -145,6 +173,8 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
         tab_data.setDefaultEditor(java.sql.Date.class, new DatePickerCellEditor(DateFormat.getDateTimeInstance()));
         tab_data.setDefaultEditor(Time.class, new DatePickerCellEditor(DateFormat.getDateTimeInstance()));
         tab_data.setDefaultEditor(Timestamp.class, new DatePickerCellEditor(DateFormat.getDateTimeInstance()));
+        tab_data.setDefaultEditor(Versioned.class, new VersionEditor());
+        tab_data.setDefaultRenderer(Versioned.class, new VersionEditor());
         editors.addAll(JAttributeEditor.createDefaultEditorList());
 
         SwingUtilities.invokeLater(new Runnable() {
@@ -247,7 +277,7 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
         final HashSet<Identifier> ids = new HashSet<Identifier>();
 
         for(int i : rows){
-            ids.add(new DefaultFeatureId((String)model.getValueAt(i, 0)));
+            ids.add(new DefaultFeatureId((String)model.getValueAt(i, 1)));
         }
 
         if(ids.isEmpty()){
@@ -273,6 +303,15 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jPanel2 = new JPanel();
+        guiQueryButton = new JButton();
+        guiPanFilter = new JPanel();
+        jPanel4 = new JPanel();
+        jPanel3 = new JPanel();
+        jLabel2 = new JLabel();
+        jSeparator1 = new JSeparator();
+        jLabel1 = new JLabel();
+        guiVersions = new JComboBox();
         jPanel1 = new JPanel();
         jcb_edit = new JCheckBox();
         guiCount = new JLabel();
@@ -283,6 +322,55 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
         panCenter = new JPanel();
 
         setLayout(new BorderLayout());
+
+        jPanel2.setLayout(new BorderLayout());
+
+        guiQueryButton.setText(MessageBundle.getString("ok")); // NOI18N
+        guiQueryButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                guiQueryButtonActionPerformed(evt);
+            }
+        });
+        jPanel2.add(guiQueryButton, BorderLayout.EAST);
+
+        guiPanFilter.setMinimumSize(new Dimension(10, 10));
+        guiPanFilter.setPreferredSize(new Dimension(10, 0));
+        guiPanFilter.setLayout(new BorderLayout());
+        jPanel2.add(guiPanFilter, BorderLayout.CENTER);
+
+        jPanel4.setLayout(new GridLayout(2, 1));
+
+        jLabel2.setText(MessageBundle.getString("filter")); // NOI18N
+
+        jSeparator1.setOrientation(SwingConstants.VERTICAL);
+
+        jLabel1.setHorizontalAlignment(SwingConstants.CENTER);
+        jLabel1.setText(MessageBundle.getString("version")); // NOI18N
+
+        GroupLayout jPanel3Layout = new GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addComponent(jLabel1)
+                .addPreferredGap(ComponentPlacement.RELATED)
+                .addComponent(jSeparator1, GroupLayout.PREFERRED_SIZE, 11, GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(ComponentPlacement.RELATED)
+                .addComponent(jLabel2, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(Alignment.LEADING)
+            .addComponent(jSeparator1)
+            .addComponent(jLabel1, GroupLayout.DEFAULT_SIZE, 25, Short.MAX_VALUE)
+            .addComponent(jLabel2, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+
+        jPanel4.add(jPanel3);
+        jPanel4.add(guiVersions);
+
+        jPanel2.add(jPanel4, BorderLayout.WEST);
+
+        add(jPanel2, BorderLayout.NORTH);
 
         jPanel1.setOpaque(false);
 
@@ -297,7 +385,6 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
 
         guiCount.setHorizontalAlignment(SwingConstants.CENTER);
         guiCount.setText(" ");
-
 
         guiCommit.setText(MessageBundle.getString("commit")); // NOI18N
         guiCommit.addActionListener(new ActionListener() {
@@ -314,6 +401,7 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
         });
 
         jbu_action.setText(MessageBundle.getString("property_action")); // NOI18N
+
         guiShowId.setText(MessageBundle.getString("show_id")); // NOI18N
         guiShowId.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
@@ -330,7 +418,7 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
                 .addPreferredGap(ComponentPlacement.RELATED)
                 .addComponent(guiShowId)
                 .addPreferredGap(ComponentPlacement.RELATED)
-                .addComponent(guiCount, GroupLayout.DEFAULT_SIZE, 98, Short.MAX_VALUE)
+                .addComponent(guiCount, GroupLayout.DEFAULT_SIZE, 93, Short.MAX_VALUE)
                 .addPreferredGap(ComponentPlacement.RELATED)
                 .addComponent(guiCommit)
                 .addPreferredGap(ComponentPlacement.RELATED)
@@ -405,12 +493,52 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
         setTarget(layer);
     }//GEN-LAST:event_guiShowIdActionPerformed
 
+    private void guiQueryButtonActionPerformed(ActionEvent evt) {//GEN-FIRST:event_guiQueryButtonActionPerformed
+        
+        try {
+            panCenter.removeAll();
+        
+            Filter f = guiCQL.getFilter();
+            final QueryBuilder qb = new QueryBuilder(layer.getCollection().getFeatureType().getName());
+            qb.setFilter(f);
+            if(guiVersions.getSelectedItem()!=null){
+                final Date d = ((Version)guiVersions.getSelectedItem()).getDate();
+                qb.setVersionDate(d);
+            }
+            final FeatureCollection subcol = layer.getCollection().subCollection(qb.buildQuery());
+            FeatureMapLayer layer = MapBuilder.createFeatureLayer(subcol, RandomStyleBuilder.createDefaultRasterStyle());
+            final FeatureCollectionModel m = new FeatureCollectionModel(tab_data, layer, guiShowId.isSelected());
+            tab_data.setModel(m);
+            tab_data.packAll();
+            tab_data.getModel().addTableModelListener(tableListener);
+            updateLayerSelection();
+            panCenter.add(BorderLayout.CENTER, new JScrollPane(tab_data));
+
+            panCenter.revalidate();
+            revalidate();
+            repaint();
+            checkChanges();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        
+    }//GEN-LAST:event_guiQueryButtonActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private JButton guiCommit;
     private JLabel guiCount;
+    private JPanel guiPanFilter;
+    private JButton guiQueryButton;
     private JButton guiRollback;
     private JCheckBox guiShowId;
+    private JComboBox guiVersions;
+    private JLabel jLabel1;
+    private JLabel jLabel2;
     private JPanel jPanel1;
+    private JPanel jPanel2;
+    private JPanel jPanel3;
+    private JPanel jPanel4;
+    private JSeparator jSeparator1;
     private JButton jbu_action;
     private JCheckBox jcb_edit;
     private JPanel panCenter;
@@ -451,6 +579,25 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
             }
 
             weakListener.registerSource(layer);
+            
+            //list versions
+            final Source src = source.getSource();
+            final List lst = new ArrayList();
+            lst.add("-");
+            if(src instanceof Selector){
+                final Selector s = (Selector) src;
+                final FeatureStore store = s.getSession().getFeatureStore();
+                if(store.getQueryCapabilities().handleVersioning()){
+                    try {
+                        final VersionHistory history = store.getHistory(source.getFeatureType().getName());
+                        lst.addAll(history.list());
+                    } catch (VersioningException ex) {
+                        Exceptions.printStackTrace(ex);
+                    }
+                }
+            }
+            guiVersions.setModel(new ListComboBoxModel(lst));
+            
         }
 
         panCenter.revalidate();
@@ -548,4 +695,92 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
     public void itemChange(final CollectionChangeEvent<MapItem> event) {
     }
 
+    private class VersionEditor extends AbstractCellEditor implements TableCellRenderer,TableCellEditor{
+
+        private final JLabel lbl = new JLabel(ICON_VERSIONED);
+
+        public VersionEditor() {
+        }
+        
+        @Override
+        public Object getCellEditorValue() {
+            return null;
+        }
+
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            if(value instanceof Versioned){
+                return new VersionButton((Versioned)value);
+            }else{
+                return new JLabel("");
+            }
+        }
+
+        @Override
+        public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+            if(value instanceof Versioned){
+                return new VersionButton((Versioned)value);
+            }else{
+                return new JLabel("");
+            }
+        }
+    } 
+    
+    private class VersionButton extends JButton implements ActionListener{
+        
+        private Versioned versioned;
+
+        public VersionButton(Versioned v) {
+            super(ICON_VERSIONED);
+            setMargin(new Insets(0, 0, 0, 0));
+            this.versioned = v;
+            addActionListener(this);
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            
+            final JComboBox jcb = new JComboBox();
+            try{
+                ComboBoxModel m = new ListComboBoxModel(versioned.getHistory().list());
+                jcb.setModel(m);
+            }catch(Exception ex){
+                ex.printStackTrace();
+            }
+            final JFeatureOutLine editor = new JFeatureOutLine();
+            editor.setEnabled(false);
+            
+            jcb.addItemListener(new ItemListener() {
+                @Override
+                public void itemStateChanged(ItemEvent e) {
+                    final Version v = (Version) jcb.getSelectedItem();
+                    try{
+                        Feature o = (Feature) versioned.getForVersion(v);
+                        editor.setEdited(o);
+                    }catch(Exception ex){
+                        ex.printStackTrace();
+                        editor.setEdited((Feature)null);
+                    }
+                }
+            });
+            final Version v = (Version) jcb.getSelectedItem();
+            if(v!=null){
+                try{
+                    Feature o = (Feature) versioned.getForVersion(v);
+                    editor.setEdited(o);
+                }catch(Exception ex){
+                    ex.printStackTrace();
+                    editor.setEdited((Feature)null);
+                }
+            }
+            
+            final JPanel p = new JPanel(new BorderLayout());            
+            p.add(BorderLayout.NORTH,jcb);
+            p.add(BorderLayout.CENTER,new JScrollPane(editor));
+            
+            JOptionDialog.show(null, p, JOptionPane.OK_OPTION);
+        }
+        
+    }
+    
 }

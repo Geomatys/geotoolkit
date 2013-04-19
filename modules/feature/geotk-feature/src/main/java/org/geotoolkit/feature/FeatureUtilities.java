@@ -40,7 +40,6 @@ import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.*;
 import org.opengis.filter.identity.Identifier;
 import org.opengis.parameter.*;
-import org.opengis.util.InternationalString;
 
 /**
  *
@@ -52,6 +51,11 @@ import org.opengis.util.InternationalString;
  */
 public final class FeatureUtilities {
 
+    /**
+     * Key used if properties to store a version manager for the object.
+     */
+    public static final String ATT_VERSIONING = "versioning";
+    
     private static final Logger LOGGER = Logging.getLogger(FeatureUtilities.class);
 
     private static final FeatureFactory FF = FactoryFinder

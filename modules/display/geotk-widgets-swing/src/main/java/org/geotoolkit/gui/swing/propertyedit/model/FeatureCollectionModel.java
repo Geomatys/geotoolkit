@@ -37,6 +37,7 @@ import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.util.Converters;
+import org.geotoolkit.version.Versioned;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeature;
@@ -45,7 +46,6 @@ import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.feature.type.Name;
 import org.opengis.feature.type.PropertyDescriptor;
-import org.opengis.feature.type.PropertyType;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 
@@ -147,24 +147,27 @@ public class FeatureCollectionModel extends DefaultTableModel {
 
     @Override
     public int getColumnCount() {
-        return columns.size()+1; //for id column
+        return columns.size()+2; //for id column + versioning
     }
 
     @Override
     public Class getColumnClass(final int column) {
-        if(column == 0) return String.class;
-        return columns.get(column-1).getType().getBinding();
+        if(column == 0) return Versioned.class;
+        if(column == 1) return String.class;
+        return columns.get(column-2).getType().getBinding();
     }
 
     @Override
     public String getColumnName(final int column) {
-        if(column == 0) return "id";
-        return columns.get(column-1).getName().getLocalPart();
+        if(column == 0) return "";//versioning
+        if(column == 1) return "id";
+        return columns.get(column-2).getName().getLocalPart();
     }
     
     public PropertyDescriptor getColumnDesc(final int column) {
         if(column == 0) return null;
-        return columns.get(column-1);
+        if(column == 1) return null;
+        return columns.get(column-2);
     }
 
     @Override
@@ -178,7 +181,7 @@ public class FeatureCollectionModel extends DefaultTableModel {
 
     @Override
     public boolean isCellEditable(final int rowIndex, final int columnIndex) {
-        return columnIndex != 0;
+        return columnIndex != 1;
     }
 
     public Feature getFeatureAt(final int rowIndex){
@@ -187,18 +190,21 @@ public class FeatureCollectionModel extends DefaultTableModel {
 
     @Override
     public Object getValueAt(final int rowIndex, final int columnIndex) {
-        if(columnIndex == 0) return features.get(rowIndex).getIdentifier().getID();
-        return features.get(rowIndex).getProperty(columns.get(columnIndex-1).getName()).getValue();
+        final Feature f = features.get(rowIndex);
+        if(columnIndex == 0) return f.getUserData().get(FeatureUtilities.ATT_VERSIONING);
+        if(columnIndex == 1) return f.getIdentifier().getID();
+        return f.getProperty(columns.get(columnIndex-2).getName()).getValue();
     }
 
     @Override
     public void setValueAt(Object aValue, final int rowIndex, final int columnIndex) {
         if(columnIndex == 0) return;
+        if(columnIndex == 1) return;
 
         if (featureCollection.isWritable()) {
             final FilterFactory ff = FactoryFinder.getFilterFactory(null);
             final Filter filter = ff.id(Collections.singleton(features.get(rowIndex).getIdentifier()));
-            final AttributeDescriptor NAME = (AttributeDescriptor) columns.get(columnIndex-1);
+            final AttributeDescriptor NAME = (AttributeDescriptor) columns.get(columnIndex-2);
 
             aValue = Converters.convert(aValue, getColumnClass(columnIndex));
             
