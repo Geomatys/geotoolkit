@@ -211,6 +211,9 @@ public abstract class GenericTransformFeatureIterator<F extends Feature, R exten
                 }
                 properties.add(prop);
             }
+            
+            feature.getUserData().clear();
+            feature.getUserData().putAll(next.getUserData());
             return (F)feature;
         }
 

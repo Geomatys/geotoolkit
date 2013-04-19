@@ -44,6 +44,7 @@ import org.geotoolkit.geometry.jts.transform.GeometryTransformer;
 import org.geotoolkit.referencing.CRS;
 import static org.apache.sis.util.ArgumentChecks.*;
 import org.apache.sis.util.Classes;
+import static org.geotoolkit.data.memory.GenericTransformFeatureIterator.FF;
 import org.geotoolkit.util.logging.Logging;
 import org.opengis.coverage.Coverage;
 import org.opengis.feature.Feature;
@@ -200,7 +201,10 @@ public abstract class GenericReprojectFeatureIterator<F extends Feature, R exten
                 }
                 properties.add(prop);
             }
-            return (F) FF.createFeature(properties, schema, next.getIdentifier().getID());
+            
+            final F f = (F) FF.createFeature(properties, schema, next.getIdentifier().getID());
+            f.getUserData().putAll(next.getUserData());
+            return f;
         }
 
     }
@@ -287,6 +291,9 @@ public abstract class GenericReprojectFeatureIterator<F extends Feature, R exten
                 }
                 properties.add(prop);
             }
+            
+            feature.getUserData().clear();
+            feature.getUserData().putAll(next.getUserData());
             return (F)feature;
         }
 
@@ -384,6 +391,8 @@ public abstract class GenericReprojectFeatureIterator<F extends Feature, R exten
                 }
             }
 
+            feature.getUserData().clear();
+            feature.getUserData().putAll(next.getUserData());
             return (F)feature;
         }
 
@@ -536,7 +545,11 @@ public abstract class GenericReprojectFeatureIterator<F extends Feature, R exten
             }
             properties.add(prop);
         }
-        return FF.createFeature(properties, schema, next.getIdentifier().getID());
+        
+        final Feature f = FF.createFeature(properties, schema, next.getIdentifier().getID());
+        f.getUserData().clear();
+        f.getUserData().putAll(next.getUserData());
+        return f;
     }
 
 }

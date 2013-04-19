@@ -94,6 +94,7 @@ public class GenericExtendFeatureIterator<F extends Feature, R extends FeatureIt
         final AttributeDescriptor desc = new DefaultAttributeDescriptor( mask, mask.getName(), 1, 1, true, null);
         final NoCopyFeature feature = new NoCopyFeature(desc, properties, next.getIdentifier());
         extend.extendProperties(feature, properties);
+        feature.getUserData().putAll(next.getUserData());
         return (F) feature;
     }
 

@@ -215,7 +215,11 @@ public abstract class GenericRetypeFeatureIterator<F extends Feature, R extends 
             for(final PropertyDescriptor prop : types){
                 properties.addAll(next.getProperties(prop.getName()));
             }
-            return (F) FF.createFeature(properties, mask, next.getIdentifier().getID());
+            
+            final F cp = (F) FF.createFeature(properties, mask, next.getIdentifier().getID());
+            //copy user datas
+            cp.getUserData().putAll(next.getUserData());
+            return cp;
         }
 
         @Override
@@ -267,7 +271,9 @@ public abstract class GenericRetypeFeatureIterator<F extends Feature, R extends 
             for (int i = 0; i < types.length; i++) {
                 feature.setAttribute(i, next.getAttribute(types[i]));
             }
-            
+            //copy user datas
+            feature.getUserData().clear();
+            feature.getUserData().putAll(next.getUserData());            
             return (F) feature;
         }
 
