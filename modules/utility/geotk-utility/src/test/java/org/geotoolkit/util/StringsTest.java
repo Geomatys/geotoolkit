@@ -20,8 +20,6 @@ package org.geotoolkit.util;
 import org.junit.*;
 import static org.junit.Assert.*;
 
-import static org.geotoolkit.util.Strings.*;
-
 
 /**
  * Tests {@link Strings} methods.
