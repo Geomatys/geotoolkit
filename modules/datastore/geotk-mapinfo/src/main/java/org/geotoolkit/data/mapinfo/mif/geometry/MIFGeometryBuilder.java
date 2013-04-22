@@ -6,6 +6,7 @@ import com.vividsolutions.jts.geom.PrecisionModel;
 import org.geotoolkit.data.mapinfo.mif.style.Brush;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.FeatureTypeBuilder;
+import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.feature.type.DefaultAttributeDescriptor;
 import org.geotoolkit.feature.type.DefaultAttributeType;
 import org.geotoolkit.storage.DataStoreException;
@@ -64,7 +65,12 @@ public abstract class MIFGeometryBuilder {
 
         builder.setName(getName());
         builder.add(getName(), getGeometryBinding(), crs);
-        builder.addAll(getAttributes());
+
+        for(AttributeDescriptor desc : getAttributes()) {
+            if(parent.getDescriptor(desc.getName()) == null) {
+                builder.add(desc);
+            }
+        }
 
         return builder.buildFeatureType();
     }

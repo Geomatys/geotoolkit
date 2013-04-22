@@ -94,7 +94,8 @@ public final class MIFUtils {
         DECIMAL(Double.class),
         FLOAT(Float.class),
         DATE(Date.class),
-        LOGICAL(Boolean.class);
+        LOGICAL(Boolean.class),
+        LONG(Long.class);
 
         public final Class binding;
         private AttributeType(Class Bind) {
@@ -237,6 +238,8 @@ public final class MIFUtils {
                     typename = typename+'('+MAX_CHAR_LENGTH+')';
                 } else if(type.equals(AttributeType.DECIMAL)) {
                     typename = typename+'('+NUM_FORMAT.getMaximumIntegerDigits()+','+NUM_FORMAT.getMaximumFractionDigits()+')';
+                } else if(type.equals(AttributeType.LONG)){
+                    typename = AttributeType.DECIMAL.name()+'('+NUM_FORMAT.getMaximumIntegerDigits()+','+NUM_FORMAT.getMaximumFractionDigits()+')';
                 }
                 break;
             }

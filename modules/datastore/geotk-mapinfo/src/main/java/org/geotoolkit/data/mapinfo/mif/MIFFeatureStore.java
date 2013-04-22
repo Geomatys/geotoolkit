@@ -234,17 +234,17 @@ public class MIFFeatureStore extends AbstractFeatureStore {
         manager.setDelimiter(newDelimiter);
     }
 
-    public static boolean isCompatibleCRS(CoordinateReferenceSystem source) {
-        boolean isCompatible = false;
-        try {
-            final String mifCRS = ProjectionUtils.crsToMIFSyntax(source);
-            if(mifCRS != null && ! mifCRS.isEmpty()) {
-                isCompatible = true;
+        public static boolean isCompatibleCRS(CoordinateReferenceSystem source) {
+            boolean isCompatible = false;
+            try {
+                final String mifCRS = ProjectionUtils.crsToMIFSyntax(source);
+                if(mifCRS != null && ! mifCRS.isEmpty()) {
+                    isCompatible = true;
+                }
+            } catch(Exception e) {
+                // Nothing to do here, if we get an exception, we just get an incompatible CRS.
             }
-        } catch(Exception e) {
-            // Nothing to do here, if we get an exception, we just get an incompatible CRS.
+            return isCompatible;
         }
-        return isCompatible;
-    }
 
 }
