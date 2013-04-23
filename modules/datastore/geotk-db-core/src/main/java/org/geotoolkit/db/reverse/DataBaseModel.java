@@ -19,8 +19,19 @@ package org.geotoolkit.db.reverse;
 
 
 import com.vividsolutions.jts.geom.Geometry;
-import java.sql.*;
-import java.util.*;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 import org.geotoolkit.db.AbstractJDBCFeatureStoreFactory;
 import org.geotoolkit.db.JDBCFeatureStore;
@@ -119,7 +130,12 @@ public final class DataBaseModel {
         Set<Name> ref = nameCache;
         if(ref == null){
             analyze();
-            ref = Collections.unmodifiableSet(new HashSet<Name>(typeIndex.keySet()));
+            final Set<Name> names = new HashSet<Name>();
+            for(Name n : typeIndex.keySet()){
+                if(store.getDialect().ignoreTable(n.getLocalPart())) continue;
+                names.add(n);
+            }
+            ref = Collections.unmodifiableSet(names);
             nameCache = ref;
         }
         return ref;

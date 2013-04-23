@@ -26,6 +26,7 @@ import java.util.logging.Logger;
 import javax.sql.DataSource;
 import org.geotoolkit.data.*;
 import org.geotoolkit.data.query.Query;
+import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.db.dialect.SQLDialect;
 import org.geotoolkit.db.reverse.DataBaseModel;
@@ -39,6 +40,7 @@ import org.opengis.feature.type.Name;
 import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;
 import org.opengis.filter.identity.FeatureId;
+import org.opengis.geometry.Envelope;
 import org.opengis.parameter.ParameterNotFoundException;
 import org.opengis.parameter.ParameterValueGroup;
 
@@ -153,7 +155,34 @@ public class DefaultJDBCFeatureStore extends AbstractFeatureStore implements JDB
     
     @Override
     public FeatureReader getFeatureReader(final Query query) throws DataStoreException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        if(!query.isSimple()){
+            throw new DataStoreException("Query is not simple.");
+        }
+        
+        final FeatureType baseType = getFeatureType(query.getTypeName());
+        final QueryBuilder remaining = new QueryBuilder(query);
+                
+        //split the filter
+        final Filter baseFilter = query.getFilter();
+        //TODO
+        final Filter before = Filter.INCLUDE;
+        final Filter after = baseFilter;
+        
+        final String sql = "SELECT * FROM \""+baseType.getName().getLocalPart()+"\"";
+        
+        FeatureReader reader;
+        try {
+            reader = new JDBCFeatureReader(sql, baseType, this);
+        } catch (SQLException ex) {
+            throw new DataStoreException(ex.getMessage(), ex);
+        }
+        
+        return handleRemaining(reader, remaining.buildQuery());
+    }
+
+    @Override
+    public Envelope getEnvelope(Query query) throws DataStoreException, FeatureStoreRuntimeException {
+        return super.getEnvelope(query);
     }
     
     @Override

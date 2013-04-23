@@ -34,4 +34,11 @@ public interface SQLDialect {
 
     String getColumnSequence(Connection cx, String schemaName, String tableName, String columnName) throws SQLException;
     
+    /**
+     * Test if a table is to be used as a FeatureType.
+     * @param name
+     * @return true if table should be ignored as a feature type.
+     */
+    boolean ignoreTable(String name);
+    
 }

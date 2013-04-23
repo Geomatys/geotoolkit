@@ -35,7 +35,9 @@ import java.sql.Time;
 import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 import org.geotoolkit.db.DefaultJDBCFeatureStore;
 import org.geotoolkit.db.dialect.SQLDialect;
@@ -50,6 +52,7 @@ public class PostgresDialect implements SQLDialect{
     private static final Map<Integer,Class> TYPE_TO_CLASS = new HashMap<Integer, Class>();
     private static final Map<String,Class> TYPENAME_TO_CLASS = new HashMap<String, Class>();
     private static final Map<Class,String> CLASS_TO_TYPENAME = new HashMap<Class,String>();
+    private static final Set<String> IGNORE_TABLES = new HashSet<String>();
     
     static {
         //fill base types
@@ -199,8 +202,16 @@ public class PostgresDialect implements SQLDialect{
         CLASS_TO_TYPENAME.put(MultiPolygon.class, "MULTIPOLYGON");
         CLASS_TO_TYPENAME.put(GeometryCollection.class, "GEOMETRYCOLLECTION");
 
+        //postgis 1+ geometry and referencing
+        IGNORE_TABLES.add("spatial_ref_sys");
+        IGNORE_TABLES.add("geometry_columns");
+        IGNORE_TABLES.add("geography_columns");
+        //postgis 2 raster
+        IGNORE_TABLES.add("raster_columns");
+        IGNORE_TABLES.add("raster_overviews");
+        
     }
-    
+        
     private final DefaultJDBCFeatureStore datastore;
 
     public PostgresDialect(DefaultJDBCFeatureStore datastore) {
@@ -274,6 +285,11 @@ public class PostgresDialect implements SQLDialect{
             closeSafe(datastore.getLogger(),st);
         }
         return null;
+    }
+
+    @Override
+    public boolean ignoreTable(String name) {
+        return IGNORE_TABLES.contains(name.toLowerCase());
     }
     
 }
