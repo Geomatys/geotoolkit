@@ -28,6 +28,11 @@ import org.geotoolkit.db.reverse.DataBaseModel;
  * @module pending
  */
 public interface JDBCFeatureStore extends FeatureStore{
+    
+    /**
+     * Query language supported : SQL.
+     */
+    public static final String CUSTOM_SQL = "CUSTOM-SQL";
         
     /**
      * Each database type have slim deformation from the SQL specification.

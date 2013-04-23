@@ -16,7 +16,11 @@
  */
 package org.geotoolkit.db;
 
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -25,12 +29,19 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.sql.DataSource;
 import org.geotoolkit.data.*;
+import org.geotoolkit.data.query.DefaultQueryCapabilities;
+import org.geotoolkit.data.query.Join;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.query.QueryCapabilities;
+import org.geotoolkit.data.query.Selector;
+import org.geotoolkit.data.query.Source;
+import org.geotoolkit.data.query.TextStatement;
 import org.geotoolkit.db.dialect.SQLDialect;
 import org.geotoolkit.db.reverse.DataBaseModel;
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.feature.DefaultName;
+import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.jdbc.ManageableDataSource;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.storage.DataStoreException;
@@ -51,6 +62,7 @@ import org.opengis.parameter.ParameterValueGroup;
  */
 public class DefaultJDBCFeatureStore extends AbstractFeatureStore implements JDBCFeatureStore{
     
+    protected static final QueryCapabilities DEFAULT_CAPABILITIES = new DefaultQueryCapabilities(false, false, new String[]{Query.GEOTK_QOM, CUSTOM_SQL});
     private final DataBaseModel dbmodel; 
     private final String factoryId;
     private DataSource source;
@@ -149,12 +161,60 @@ public class DefaultJDBCFeatureStore extends AbstractFeatureStore implements JDB
     }
 
     @Override
+    public FeatureType getFeatureType(Query query) throws DataStoreException, SchemaException {
+        if(CUSTOM_SQL.equalsIgnoreCase(query.getLanguage())){
+            final TextStatement txt = (TextStatement) query.getSource();
+            final String sql = txt.getStatement();
+            Connection cx = null;
+            Statement stmt = null;
+            ResultSet rs = null;
+            try {
+                cx = getDataSource().getConnection();
+                stmt = cx.createStatement();
+                rs = stmt.executeQuery(sql);
+                return getDatabaseModel().analyzeResult(rs, query.getTypeName().getLocalPart());
+            } catch (SQLException ex) {
+                throw new DataStoreException(ex);
+            }finally{
+                JDBCFeatureStoreUtilities.closeSafe(getLogger(),cx,stmt,rs);
+            }
+        }
+        return super.getFeatureType(query);
+    }
+    
+    @Override
     public QueryCapabilities getQueryCapabilities() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return DEFAULT_CAPABILITIES;
     }
     
     @Override
     public FeatureReader getFeatureReader(final Query query) throws DataStoreException {
+        final Source source = query.getSource();
+        
+        final FeatureReader reader;
+        if(source instanceof Selector){
+            reader = getQOMFeatureReader(query);
+        }else if(source instanceof TextStatement){
+            reader = getSQLFeatureReader(query);
+        }else{
+            throw new DataStoreException("Unsupported source type : " + source);
+        }
+        
+        //take care of potential hints, like removing primary keys
+        final QueryBuilder qb = new QueryBuilder();
+        qb.setTypeName(new DefaultName("remaining"));
+        qb.setHints(query.getHints());
+        return handleRemaining(reader, qb.buildQuery());
+    }
+
+    /**
+     * Get reader with geotk query model.
+     * @param query
+     * @return FeatureReader
+     * @throws DataStoreException 
+     */
+    private FeatureReader getQOMFeatureReader(final Query query) throws DataStoreException {
+        
         if(!query.isSimple()){
             throw new DataStoreException("Query is not simple.");
         }
@@ -179,14 +239,47 @@ public class DefaultJDBCFeatureStore extends AbstractFeatureStore implements JDB
         
         return handleRemaining(reader, remaining.buildQuery());
     }
+    
+    /**
+     * Get reader with SQL query.
+     * @param query
+     * @return FeatureReader
+     * @throws DataStoreException 
+     */
+    private FeatureReader getSQLFeatureReader(final Query query) throws DataStoreException {
 
+        final TextStatement stmt = (TextStatement) query.getSource();
+        final String sql = stmt.getStatement();
+
+        try {
+            final FeatureType ft = getFeatureType(query);
+            final JDBCFeatureReader reader = new JDBCFeatureReader(sql, ft, this);
+            return reader;
+        } catch (SchemaException ex) {
+            throw new DataStoreException(ex);
+        } catch (SQLException ex) {
+            throw new DataStoreException(ex);
+        } catch (IOException ex) {
+            throw new DataStoreException(ex);
+        }
+    }
+    
     @Override
     public Envelope getEnvelope(Query query) throws DataStoreException, FeatureStoreRuntimeException {
+        if(CUSTOM_SQL.equalsIgnoreCase(query.getLanguage())){
+            //can not optimize this query
+            //iterator is closed by method
+            return FeatureStoreUtilities.calculateEnvelope(getSQLFeatureReader(query));
+        }
         return super.getEnvelope(query);
     }
     
     @Override
     public long getCount(Query query) throws DataStoreException {
+        if(CUSTOM_SQL.equalsIgnoreCase(query.getLanguage())){
+            //iterator is closed by method
+            return FeatureStoreUtilities.calculateCount(getSQLFeatureReader(query));
+        }
         return super.getCount(query);
     }
 
