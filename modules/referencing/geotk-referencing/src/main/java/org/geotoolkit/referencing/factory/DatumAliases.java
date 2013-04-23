@@ -255,7 +255,7 @@ public class DatumAliases extends ReferencingFactory implements DatumFactory {
             String url = aliasURL.getPath();
             final int s = url.indexOf('!');
             if (s >= 1) url = url.substring(0, s);
-            final LogRecord record = Loggings.format(Level.CONFIG, Loggings.Keys.LOADING_DATUM_ALIASES_$1, url);
+            final LogRecord record = Loggings.format(Level.CONFIG, Loggings.Keys.LOADING_DATUM_ALIASES_1, url);
             record.setLoggerName(LOGGER.getName());
             LOGGER.log(record);
         }
@@ -339,7 +339,7 @@ public class DatumAliases extends ReferencingFactory implements DatumFactory {
      * Logs an {@link IOException}.
      */
     private void log(final IOException exception) {
-        LogRecord record = Loggings.format(Level.WARNING, Loggings.Keys.CANT_READ_FILE_$1, aliasURL);
+        LogRecord record = Loggings.format(Level.WARNING, Loggings.Keys.CANT_READ_FILE_1, aliasURL);
         record.setSourceClassName(DatumAliases.class.getName());
         record.setSourceMethodName("reload");
         record.setThrown(exception);

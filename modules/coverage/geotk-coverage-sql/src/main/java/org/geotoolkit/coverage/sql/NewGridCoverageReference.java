@@ -409,7 +409,7 @@ public final class NewGridCoverageReference {
          */
         input = IOUtilities.tryToFile(input);
         if (!(input instanceof File)) {
-            throw new IIOException(Errors.format(Errors.Keys.ILLEGAL_CLASS_$2,
+            throw new IIOException(Errors.format(Errors.Keys.ILLEGAL_CLASS_2,
                     Classes.getShortClassName(input), File.class));
         }
         final File inputFile = (File) input;
@@ -690,7 +690,7 @@ public final class NewGridCoverageReference {
                     if (id != null) try {
                         return Integer.valueOf(code);
                     } catch (NumberFormatException e) {
-                        throw new FactoryException(Errors.format(Errors.Keys.UNPARSABLE_NUMBER_$1, id), e);
+                        throw new FactoryException(Errors.format(Errors.Keys.UNPARSABLE_NUMBER_1, id), e);
                     }
                 }
             }

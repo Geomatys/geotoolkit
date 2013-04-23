@@ -167,7 +167,7 @@ final class CoverageDatabaseCreator extends DeferredWizardResult implements Runn
                 message = Classes.getShortClassName(exception);
             }
             if (installer != null) {
-                message = Vocabulary.format(Vocabulary.Keys.ERROR_$1,
+                message = Vocabulary.format(Vocabulary.Keys.ERROR_1,
                         installer.getCurrentPosition()) + ": " + message;
             }
             progress.failed(message, false);

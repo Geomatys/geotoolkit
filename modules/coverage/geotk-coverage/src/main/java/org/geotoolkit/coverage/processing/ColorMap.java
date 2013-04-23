@@ -288,7 +288,7 @@ public class ColorMap implements Serializable {
     public void setRelativeRange(final CharSequence category, final NumberRange<?> range) {
         if (range instanceof MeasurementRange<?>) {
             // The MeasurementRange type is reserved for geophysics ranges.
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_$1, "range"));
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_1, "range"));
         }
         setRange(category, range);
     }
@@ -527,7 +527,7 @@ public class ColorMap implements Serializable {
                 }
                 if (outOfBounds) {
                     AbstractCoverageProcessor.LOGGER.warning(Errors.format(
-                            Errors.Keys.VALUE_OUT_OF_BOUNDS_$3, category, 0, ARGB.length - 1));
+                            Errors.Keys.VALUE_OUT_OF_BOUNDS_3, category, 0, ARGB.length - 1));
                 }
                 if (upper <= lower) {
                     continue;
@@ -666,7 +666,7 @@ public class ColorMap implements Serializable {
                 if (colors.length == 1) {
                     message = Integer.toHexString(colors[0].getRGB()).toUpperCase();
                 } else {
-                    message = Vocabulary.format(Vocabulary.Keys.COLOR_COUNT_$1, colors.length);
+                    message = Vocabulary.format(Vocabulary.Keys.COLOR_COUNT_1, colors.length);
                 }
                 writer.write(message);
             }

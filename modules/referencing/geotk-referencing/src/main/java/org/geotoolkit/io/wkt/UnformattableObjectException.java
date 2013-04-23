@@ -87,7 +87,7 @@ public class UnformattableObjectException extends UnsupportedOperationException 
             }
             unformattable = candidate;
         }
-        return Errors.format(Errors.Keys.ILLEGAL_WKT_FORMAT_$1, unformattable);
+        return Errors.format(Errors.Keys.ILLEGAL_WKT_FORMAT_1, unformattable);
     }
 
     /**

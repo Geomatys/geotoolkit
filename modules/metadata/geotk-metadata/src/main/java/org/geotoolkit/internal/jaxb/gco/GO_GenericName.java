@@ -72,7 +72,7 @@ public final class GO_GenericName extends XmlAdapter<GO_GenericName, GenericName
      */
     private void ensureUndefined() throws IllegalStateException {
         if (name != null) {
-            throw new IllegalStateException(Errors.format(Errors.Keys.VALUE_ALREADY_DEFINED_$1, "name"));
+            throw new IllegalStateException(Errors.format(Errors.Keys.VALUE_ALREADY_DEFINED_1, "name"));
         }
     }
 

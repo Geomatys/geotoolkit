@@ -33,7 +33,7 @@ import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.collection.WeakHashSet;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.resources.IndexedResourceBundle;
+import org.apache.sis.util.resources.IndexedResourceBundle;
 
 
 /**
@@ -744,7 +744,7 @@ public class PaletteFactory {
      * Prepares an exception for the specified cause, which may be {@code null}.
      */
     private IIOException syntaxError(final LineNumberReader input, final String name, final Exception cause) {
-        String message = getErrorResources().getString(Errors.Keys.ILLEGAL_LINE_IN_FILE_$2,
+        String message = getErrorResources().getString(Errors.Keys.ILLEGAL_LINE_IN_FILE_2,
                 name, input.getLineNumber());
         if (cause != null) {
             message += cause.getLocalizedMessage();
@@ -792,7 +792,7 @@ public class PaletteFactory {
             return value;
         }
         throw new ParseException(getErrorResources().getString(
-                Errors.Keys.RGB_OUT_OF_RANGE_$1, value), 0);
+                Errors.Keys.RGB_OUT_OF_RANGE_1, value), 0);
     }
 
     /**

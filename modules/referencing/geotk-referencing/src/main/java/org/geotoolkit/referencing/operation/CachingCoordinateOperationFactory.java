@@ -187,7 +187,7 @@ public class CachingCoordinateOperationFactory extends AbstractCoordinateOperati
             }
         }
         throw new FactoryNotFoundException(Errors.format(
-                Errors.Keys.FACTORY_NOT_FOUND_$1, CoordinateOperationFactory.class));
+                Errors.Keys.FACTORY_NOT_FOUND_1, CoordinateOperationFactory.class));
     }
 
     /**

@@ -262,7 +262,7 @@ public class Tile implements Comparable<Tile>, Serializable {
         ensureNonNull("tile", tile);
         if (region != null) {
             if (region.isEmpty()) {
-                throw new IllegalArgumentException(Errors.format(Errors.Keys.EMPTY_RECTANGLE_$1, region));
+                throw new IllegalArgumentException(Errors.format(Errors.Keys.EMPTY_RECTANGLE_1, region));
             }
             x = region.x;
             y = region.y;
@@ -359,7 +359,7 @@ public class Tile implements Comparable<Tile>, Serializable {
         ensureNonNull("input",    input);
         ensureNonNull("region",   region);
         if (region.isEmpty()) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.EMPTY_RECTANGLE_$1, region));
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.EMPTY_RECTANGLE_1, region));
         }
         this.provider   = provider;
         this.input      = input;
@@ -521,7 +521,7 @@ public class Tile implements Comparable<Tile>, Serializable {
     static short toShort(final int n) throws IllegalArgumentException {
         if (n < 0 || n > MASK) {
             throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.VALUE_OUT_OF_BOUNDS_$3, n, 0, MASK));
+                    Errors.Keys.VALUE_OUT_OF_BOUNDS_3, n, 0, MASK));
         }
         return (short) n;
     }
@@ -810,7 +810,7 @@ public class Tile implements Comparable<Tile>, Serializable {
             return stream;
         }
         throw new FileNotFoundException(Errors.format(
-                Errors.Keys.FILE_DOES_NOT_EXIST_$1, input));
+                Errors.Keys.FILE_DOES_NOT_EXIST_1, input));
     }
 
     /**
@@ -1207,7 +1207,7 @@ public class Tile implements Comparable<Tile>, Serializable {
         width  = 0;
         height = 0;
         throw new IllegalArgumentException(Errors.format(
-                Errors.Keys.VALUE_OUT_OF_BOUNDS_$4, name, value, 0, MASK));
+                Errors.Keys.VALUE_OUT_OF_BOUNDS_4, name, value, 0, MASK));
     }
 
     /**
@@ -1652,7 +1652,7 @@ public class Tile implements Comparable<Tile>, Serializable {
          */
         table.flush();
         if (remaining < 0) {
-            out.write(Vocabulary.format(Vocabulary.Keys.MORE_$1, tiles.size() - maximum));
+            out.write(Vocabulary.format(Vocabulary.Keys.MORE_1, tiles.size() - maximum));
             out.write(System.getProperty("line.separator", "\n"));
         }
     }
@@ -1687,7 +1687,7 @@ public class Tile implements Comparable<Tile>, Serializable {
             field.set(this, registry.getServiceProviderByClass(type));
         } catch (Exception cause) {
             InvalidClassException e = new InvalidClassException(type.getCanonicalName(),
-                    Errors.format(Errors.Keys.ILLEGAL_CLASS_$2, type, ImageReaderSpi.class));
+                    Errors.format(Errors.Keys.ILLEGAL_CLASS_2, type, ImageReaderSpi.class));
             e.initCause(cause);
             throw e;
         }

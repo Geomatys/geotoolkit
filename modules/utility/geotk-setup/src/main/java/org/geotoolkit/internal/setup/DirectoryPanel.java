@@ -221,8 +221,8 @@ final class DirectoryPanel extends JComponent {
         c.insets.left=3; c.insets.right=3; c.fill=HORIZONTAL; c.gridy=0;
         items = new Item[] {
             new Item(c, resources.getLabel (Vocabulary.Keys.ROOT_DIRECTORY),          Installation.ROOT_DIRECTORY),
-            new Item(c, resources.getString(Vocabulary.Keys.DATA_$1, "EPSG") + ':',   Installation.EPSG),
-            new Item(c, resources.getString(Vocabulary.Keys.DATA_$1, "NADCON") + ':', Installation.NADCON),
+            new Item(c, resources.getString(Vocabulary.Keys.DATA_1, "EPSG") + ':',   Installation.EPSG),
+            new Item(c, resources.getString(Vocabulary.Keys.DATA_1, "NADCON") + ':', Installation.NADCON),
             new Item(c, resources.getLabel (Vocabulary.Keys.GRIDDED_DATA),            Installation.COVERAGES)
         };
     }

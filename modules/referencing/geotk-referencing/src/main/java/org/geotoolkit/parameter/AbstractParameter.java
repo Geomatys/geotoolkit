@@ -129,7 +129,7 @@ public abstract class AbstractParameter extends FormattableObject
          */
         final Class<T> type = descriptor.getValueClass();
         if (!type.isInstance(value)) {
-            error = Errors.format(Errors.Keys.ILLEGAL_OPERATION_FOR_VALUE_CLASS_$1, value.getClass());
+            error = Errors.format(Errors.Keys.ILLEGAL_OPERATION_FOR_VALUE_CLASS_1, value.getClass());
         } else {
             final T typedValue = type.cast(value);
             final Comparable<T> minimum = descriptor.getMinimumValue();
@@ -137,11 +137,11 @@ public abstract class AbstractParameter extends FormattableObject
             if ((minimum != null && minimum.compareTo(typedValue) > 0) ||
                 (maximum != null && maximum.compareTo(typedValue) < 0))
             {
-                error = Errors.format(Errors.Keys.VALUE_OUT_OF_BOUNDS_$3, value, minimum, maximum);
+                error = Errors.format(Errors.Keys.VALUE_OUT_OF_BOUNDS_3, value, minimum, maximum);
             } else {
                 final Set<T> validValues = descriptor.getValidValues();
                 if (validValues!=null && !validValues.contains(value)) {
-                    error = Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_$2, getName(descriptor), value);
+                    error = Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_2, getName(descriptor), value);
                 } else {
                     /*
                      * Passed every tests - the value is valid.
@@ -159,7 +159,7 @@ public abstract class AbstractParameter extends FormattableObject
      */
     static IllegalStateException unitlessParameter(final GeneralParameterDescriptor descriptor) {
         return new IllegalStateException(Errors.format(
-                Errors.Keys.UNITLESS_PARAMETER_$1, getName(descriptor)));
+                Errors.Keys.UNITLESS_PARAMETER_1, getName(descriptor)));
     }
 
     /**
@@ -176,11 +176,11 @@ public abstract class AbstractParameter extends FormattableObject
      * error message formatting if needed.
      */
     static int getUnitMessageID(final Unit<?> unit) {
-        if (Units.isLinear  (unit)) return Errors.Keys.NON_LINEAR_UNIT_$1;
-        if (Units.isAngular (unit)) return Errors.Keys.NON_ANGULAR_UNIT_$1;
-        if (Units.isTemporal(unit)) return Errors.Keys.NON_TEMPORAL_UNIT_$1;
-        if (Units.isScale   (unit)) return Errors.Keys.NON_SCALE_UNIT_$1;
-        return Errors.Keys.INCOMPATIBLE_UNIT_$1;
+        if (Units.isLinear  (unit)) return Errors.Keys.NON_LINEAR_UNIT_1;
+        if (Units.isAngular (unit)) return Errors.Keys.NON_ANGULAR_UNIT_1;
+        if (Units.isTemporal(unit)) return Errors.Keys.NON_TEMPORAL_UNIT_1;
+        if (Units.isScale   (unit)) return Errors.Keys.NON_SCALE_UNIT_1;
+        return Errors.Keys.INCOMPATIBLE_UNIT_1;
     }
 
     /**

@@ -507,7 +507,7 @@ public class WeakValueHashMap<K,V> extends AbstractMap<K,V> {
     @Override
     public V put(final K key, final V value) {
         if (value == null) {
-            throw new NullArgumentException(Errors.format(Errors.Keys.NULL_ARGUMENT_$1, "value"));
+            throw new NullArgumentException(Errors.format(Errors.Keys.NULL_ARGUMENT_1, "value"));
         }
         return intern(key, value);
     }

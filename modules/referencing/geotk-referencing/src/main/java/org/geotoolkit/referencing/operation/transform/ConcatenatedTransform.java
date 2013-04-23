@@ -118,7 +118,7 @@ public class ConcatenatedTransform extends AbstractMathTransform implements Seri
         this.transform2 = transform2;
         if (!isValid()) {
             throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.CANT_CONCATENATE_TRANSFORMS_$2,
+                    Errors.Keys.CANT_CONCATENATE_TRANSFORMS_2,
                     getName(transform1), getName(transform2)));
         }
     }
@@ -166,8 +166,8 @@ public class ConcatenatedTransform extends AbstractMathTransform implements Seri
         final int dim2 = tr2.getSourceDimensions();
         if (dim1 != dim2) {
             throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.CANT_CONCATENATE_TRANSFORMS_$2, getName(tr1), getName(tr2)) +
-                    ' ' + Errors.format(Errors.Keys.MISMATCHED_DIMENSION_$2, dim1, dim2));
+                    Errors.Keys.CANT_CONCATENATE_TRANSFORMS_2, getName(tr1), getName(tr2)) +
+                    ' ' + Errors.format(Errors.Keys.MISMATCHED_DIMENSION_2, dim1, dim2));
         }
         MathTransform mt = createOptimized(tr1, tr2);
         if (mt != null) {

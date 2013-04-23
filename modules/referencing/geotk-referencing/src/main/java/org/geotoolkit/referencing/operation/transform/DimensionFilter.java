@@ -393,7 +393,7 @@ public class DimensionFilter {
         assert ArraysExt.isSorted(sourceDimensions, true);
         if (upper > dimSource) {
             throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.ILLEGAL_ARGUMENT_$2, "sourceDimensions", upper-1));
+                    Errors.Keys.ILLEGAL_ARGUMENT_2, "sourceDimensions", upper-1));
         }
         /*
          * Check for easiest cases: same transform, identity transform or concatenated transforms.
@@ -558,7 +558,7 @@ reduce:     for (int j=0; j<rows.length; j++) {
         assert ArraysExt.isSorted(targetDimensions, true);
         if (upper > dimTarget) {
             throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.ILLEGAL_ARGUMENT_$2, "targetDimensions", upper));
+                    Errors.Keys.ILLEGAL_ARGUMENT_2, "targetDimensions", upper));
         }
         if (dimOutput == dimTarget) {
             assert lower==0 && upper==dimTarget;
@@ -668,7 +668,7 @@ reduce:     for (int j=0; j<rows.length; j++) {
     private static int[] add(int[] sequence, int dimension) throws IllegalArgumentException {
         if (dimension < 0) {
             throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.ILLEGAL_ARGUMENT_$2, "dimension", dimension));
+                    Errors.Keys.ILLEGAL_ARGUMENT_2, "dimension", dimension));
         }
         if (sequence == null) {
             return new int[] {dimension};
@@ -719,7 +719,7 @@ reduce:     for (int j=0; j<rows.length; j++) {
             throws IllegalArgumentException
     {
         if (lower<0 || lower>=upper) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_RANGE_$2, lower, upper));
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_RANGE_2, lower, upper));
         }
         if (sequence == null) {
             sequence = series(lower, upper);
@@ -757,7 +757,7 @@ reduce:     for (int j=0; j<rows.length; j++) {
             final int value = dimensions[i];
             if (value <= last) {
                 throw new IllegalArgumentException(Errors.format(
-                        Errors.Keys.ILLEGAL_ARGUMENT_$2, "dimensions[" + i + ']', value));
+                        Errors.Keys.ILLEGAL_ARGUMENT_2, "dimensions[" + i + ']', value));
             }
             last = value;
         }

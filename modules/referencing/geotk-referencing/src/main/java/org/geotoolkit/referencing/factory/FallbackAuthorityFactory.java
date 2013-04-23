@@ -150,7 +150,7 @@ public class FallbackAuthorityFactory extends AuthorityFactoryAdapter {
         ensureNonNull("type", type);
         ensureNonNull("factories", factories);
         if (factories.isEmpty()) {
-            throw new FactoryNotFoundException(Errors.format(Errors.Keys.FACTORY_NOT_FOUND_$1, type));
+            throw new FactoryNotFoundException(Errors.format(Errors.Keys.FACTORY_NOT_FOUND_1, type));
         }
         return type.cast(create(false, interfaceMask(type), factories.iterator()));
     }
@@ -175,7 +175,7 @@ public class FallbackAuthorityFactory extends AuthorityFactoryAdapter {
         ensureNonNull("factories", factories);
         if (factories.isEmpty()) {
             throw new FactoryNotFoundException(Errors.format(
-                    Errors.Keys.FACTORY_NOT_FOUND_$1, AuthorityFactory.class));
+                    Errors.Keys.FACTORY_NOT_FOUND_1, AuthorityFactory.class));
         }
         return create(false, interfaceMask(factories), factories.iterator());
     }
@@ -1003,7 +1003,7 @@ public class FallbackAuthorityFactory extends AuthorityFactoryAdapter {
         failureCount.incrementAndGet();
         if (LOGGER.isLoggable(Level.FINE)) {
             final LogRecord record = Loggings.format(Level.FINE,
-                    Loggings.Keys.FALLBACK_FACTORY_$1, exception);
+                    Loggings.Keys.FALLBACK_FACTORY_1, exception);
             record.setSourceClassName(FallbackAuthorityFactory.class.getName());
             record.setSourceMethodName(method);
             record.setLoggerName(LOGGER.getName());

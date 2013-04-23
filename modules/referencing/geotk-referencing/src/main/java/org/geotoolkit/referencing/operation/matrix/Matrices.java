@@ -818,7 +818,7 @@ search:     for (int j=numRow; --j>=0;) {
             case IGNORE_METADATA: return equals(m1, m2, 0, false);
             case DEBUG:           // Fall through
             case APPROXIMATIVE:   return equals(m1, m2, COMPARISON_THRESHOLD, true);
-            default: throw new IllegalArgumentException(Errors.format(Errors.Keys.UNKNOWN_ENUM_$1, mode));
+            default: throw new IllegalArgumentException(Errors.format(Errors.Keys.UNKNOWN_ENUM_1, mode));
         }
     }
 }

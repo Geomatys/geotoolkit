@@ -394,7 +394,7 @@ public class NetcdfMetadataWriter extends NetcdfMetadata {
             return false;
         }
         if (!defined.add(key)) { // Must be 'key' even if subclass used a different attribute name.
-            throw new IllegalStateException(Errors.format(Errors.Keys.VALUE_ALREADY_DEFINED_$1, key));
+            throw new IllegalStateException(Errors.format(Errors.Keys.VALUE_ALREADY_DEFINED_1, key));
         }
         return true;
     }

@@ -246,7 +246,7 @@ public class MosaicBuilder extends Builder<TileManager> implements LogProducer {
             }
         }
         throw new IllegalArgumentException(Errors.format(
-                Errors.Keys.ILLEGAL_ARGUMENT_$2, "layout", layout));
+                Errors.Keys.ILLEGAL_ARGUMENT_2, "layout", layout));
     }
 
     /**
@@ -408,7 +408,7 @@ public class MosaicBuilder extends Builder<TileManager> implements LogProducer {
         } else {
             if (size.width < 2 || size.height < 2) {
                 throw new IllegalArgumentException(Errors.format(
-                        Errors.Keys.ILLEGAL_ARGUMENT_$1, "size"));
+                        Errors.Keys.ILLEGAL_ARGUMENT_1, "size"));
             }
             tileSize = new Dimension(size);
         }
@@ -445,7 +445,7 @@ public class MosaicBuilder extends Builder<TileManager> implements LogProducer {
     {
         if (minSize <= 1 || minSize > maxSize) {
             throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.ILLEGAL_RANGE_$2, minSize, maxSize));
+                    Errors.Keys.ILLEGAL_RANGE_2, minSize, maxSize));
         }
         ensureBetween("tileSize", minSize, maxSize, tileSize);
         if (imageSize <= minSize) {
@@ -556,7 +556,7 @@ public class MosaicBuilder extends Builder<TileManager> implements LogProducer {
                 final int ySubsampling = subsampling.height;
                 if (xSubsampling < 1 || ySubsampling < 1) {
                     throw new IllegalArgumentException(Errors.format(
-                            Errors.Keys.ILLEGAL_ARGUMENT_$1, "subsamplings[" + i + ']'));
+                            Errors.Keys.ILLEGAL_ARGUMENT_1, "subsamplings[" + i + ']'));
                 }
                 newSubsamplings[target++] = xSubsampling;
                 newSubsamplings[target++] = ySubsampling;
@@ -728,7 +728,7 @@ public class MosaicBuilder extends Builder<TileManager> implements LogProducer {
         final Rectangle tileBounds    = new Rectangle(tileSize);
         Dimension[] subsamplings = getSubsamplings();
         if (subsamplings == null || subsamplings.length == 0) {
-            throw new IllegalStateException(Errors.format(Errors.Keys.NO_PARAMETER_VALUE_$1,
+            throw new IllegalStateException(Errors.format(Errors.Keys.NO_PARAMETER_VALUE_1,
                     Vocabulary.format(Vocabulary.Keys.SUBSAMPLING)));
         }
         final List<Tile> tiles;

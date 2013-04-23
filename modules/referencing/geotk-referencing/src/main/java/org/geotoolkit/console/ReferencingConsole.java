@@ -288,7 +288,7 @@ public class ReferencingConsole extends InteractiveConsole {
                     // -------------------------------
                     if (key0.equalsIgnoreCase("print")) {
                         if (value != null) {
-                            throw unexpectedArgument(Errors.Keys.UNEXPECTED_ARGUMENT_FOR_INSTRUCTION_$1, "print");
+                            throw unexpectedArgument(Errors.Keys.UNEXPECTED_ARGUMENT_FOR_INSTRUCTION_1, "print");
                         }
                         if (key1.equalsIgnoreCase("set")) {
                             printDefinitions();
@@ -306,14 +306,14 @@ public class ReferencingConsole extends InteractiveConsole {
                             printPts();
                             return;
                         }
-                        throw unexpectedArgument(Errors.Keys.ILLEGAL_INSTRUCTION_$1, key1);
+                        throw unexpectedArgument(Errors.Keys.ILLEGAL_INSTRUCTION_1, key1);
                     }
                     // -------------------------------
                     //   load <filename>
                     // -------------------------------
                     if (key0.equalsIgnoreCase("load")) {
                         if (value != null) {
-                            throw unexpectedArgument(Errors.Keys.UNEXPECTED_ARGUMENT_FOR_INSTRUCTION_$1, "load");
+                            throw unexpectedArgument(Errors.Keys.UNEXPECTED_ARGUMENT_FOR_INSTRUCTION_1, "load");
                         }
                         final BufferedReader in = new BufferedReader(new FileReader(key1));
                         try {
@@ -342,7 +342,7 @@ public class ReferencingConsole extends InteractiveConsole {
                             toleranceInverse = parseVector(value, true);
                             return;
                         }
-                        throw unexpectedArgument(Errors.Keys.ILLEGAL_INSTRUCTION_$1, key1);
+                        throw unexpectedArgument(Errors.Keys.ILLEGAL_INSTRUCTION_1, key1);
                     }
                     // -------------------------------
                     //   source|target crs = <wkt>
@@ -617,7 +617,7 @@ public class ReferencingConsole extends InteractiveConsole {
                 final int expectedDim = target.getDimension();
                 if (actualDim != expectedDim) {
                     throw new MismatchedDimensionException(Errors.format(
-                            Errors.Keys.MISMATCHED_DIMENSION_$2, actualDim, expectedDim));
+                            Errors.Keys.MISMATCHED_DIMENSION_2, actualDim, expectedDim));
                 }
                 /*
                  * Check the ordinate values.
@@ -636,7 +636,7 @@ public class ReferencingConsole extends InteractiveConsole {
                         }
                     }
                     if (!(delta <= tolerance[Math.min(i, tolerance.length-1)])) { // Use '!' for catching NaN.
-                        throw new TransformException(Errors.format(Errors.Keys.UNEXPECTED_TRANSFORM_RESULT_$5,
+                        throw new TransformException(Errors.format(Errors.Keys.UNEXPECTED_TRANSFORM_RESULT_5,
                                 new Number[] {expected, actual, delta, i, inverse ? 1 : 0}));
                     }
                 }

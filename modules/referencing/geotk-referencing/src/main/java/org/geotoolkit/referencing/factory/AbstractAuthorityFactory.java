@@ -982,7 +982,7 @@ public abstract class AbstractAuthorityFactory extends ReferencingFactory implem
      */
     protected final NoSuchAuthorityCodeException noSuchAuthorityCode(final Class<?> type, final String code) {
         final InternationalString authority = getAuthority().getTitle();
-        return new NoSuchAuthorityCodeException(Errors.format(Errors.Keys.NO_SUCH_AUTHORITY_CODE_$3,
+        return new NoSuchAuthorityCodeException(Errors.format(Errors.Keys.NO_SUCH_AUTHORITY_CODE_3,
                    code, authority, type), authority.toString(), trimAuthority(code), code);
     }
 }

@@ -51,9 +51,9 @@ public class IndexedResourceCompiler implements FilenameFilter, Comparator<Objec
 
     /**
      * Prefix for argument count in resource key names. For example, a resource
-     * expecting one argument may have a key name like "HELLO_$1".
+     * expecting one argument may have a key name like "HELLO_1".
      */
-    private static final String ARGUMENT_COUNT_PREFIX = "_$";
+    private static final String ARGUMENT_COUNT_PREFIX = "_";
 
     /**
      * The maximal length of comment lines.
@@ -273,7 +273,7 @@ public class IndexedResourceCompiler implements FilenameFilter, Comparator<Objec
     /**
      * Loads all properties from a {@code .properties} file. Resource keys are checked for naming
      * conventions (i.e. resources expecting some arguments must have a key name ending with
-     * {@code "_$n"} where {@code "n"} is the number of arguments). This method transforms resource
+     * {@code "_n"} where {@code "n"} is the number of arguments). This method transforms resource
      * values into legal {@link MessageFormat} patterns when necessary.
      * <p>
      * The following methods must be invoked before this one:
@@ -319,7 +319,7 @@ public class IndexedResourceCompiler implements FilenameFilter, Comparator<Objec
              */
             final int argumentCount;
             final int index = key.lastIndexOf(ARGUMENT_COUNT_PREFIX);
-            if (index < 0) {
+            if (index < 0 || !Character.isDigit(key.charAt(index+1)) || key.endsWith("D")) {
                 argumentCount = 0;
                 resources.put(key, value); // Text will not be formatted using MessageFormat.
             } else try {

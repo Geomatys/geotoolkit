@@ -107,7 +107,7 @@ public class NTv2Transform extends GridTransform2D {
         super(GridType.NTv2, loader.getDataBuffer(), loader.getSize(), loader.getArea());
         final String units = loader.getString("GS_TYPE");
         if (!"SECONDS".equals(units)) {
-            throw new FactoryException(Errors.format(Errors.Keys.ILLEGAL_PARAMETER_VALUE_$2, "GS_TYPE", units));
+            throw new FactoryException(Errors.format(Errors.Keys.ILLEGAL_PARAMETER_VALUE_2, "GS_TYPE", units));
         }
         gridFile  = (String) loader.latitudeGridFile;
     }

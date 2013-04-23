@@ -214,7 +214,7 @@ public class DefaultConcatenatedOperation extends AbstractCoordinateOperation
                 final List<SingleOperation> cops = cop.getOperations();
                 expand(cops.toArray(new CoordinateOperation[cops.size()]), target, factory, false);
             } else {
-                throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_CLASS_$2,
+                throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_CLASS_2,
                         op.getClass(), SingleOperation.class));
             }
             /*
@@ -228,7 +228,7 @@ public class DefaultConcatenatedOperation extends AbstractCoordinateOperation
                     final int dim2 =     next.getCoordinateSystem().getDimension();
                     if (dim1 != dim2) {
                         throw new IllegalArgumentException(Errors.format(
-                                Errors.Keys.MISMATCHED_DIMENSION_$2, dim1, dim2));
+                                Errors.Keys.MISMATCHED_DIMENSION_2, dim1, dim2));
                     }
                 }
             }
@@ -250,7 +250,7 @@ public class DefaultConcatenatedOperation extends AbstractCoordinateOperation
             final int size = target.size();
             if (size <= 1) {
                 throw new IllegalArgumentException(Errors.format(
-                        Errors.Keys.NO_PARAMETER_$1, "operations[" + size + ']'));
+                        Errors.Keys.NO_PARAMETER_1, "operations[" + size + ']'));
             }
         }
         return transform;

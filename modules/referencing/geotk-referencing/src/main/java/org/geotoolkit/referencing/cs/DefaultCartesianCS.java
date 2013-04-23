@@ -270,7 +270,7 @@ public class DefaultCartesianCS extends DefaultAffineCS implements CartesianCS {
                 final double angle = DefaultCoordinateSystemAxis.getAngle(axis0, axis1);
                 if (Math.abs(Math.abs(angle) - 90) > DirectionAlongMeridian.EPS) {
                     throw new IllegalArgumentException(Errors.format(
-                            Errors.Keys.NON_PERPENDICULAR_AXIS_$2, axis0.name(), axis1.name()));
+                            Errors.Keys.NON_PERPENDICULAR_AXIS_2, axis0.name(), axis1.name()));
                 }
             }
         }
@@ -319,7 +319,7 @@ public class DefaultCartesianCS extends DefaultAffineCS implements CartesianCS {
                     converters[i] = axisUnit.getConverterToAny(unit);
                 } catch (ConversionException e) {
                     throw new UnsupportedOperationException(Errors.format(
-                            Errors.Keys.INCOMPATIBLE_UNIT_$1, axisUnit), e);
+                            Errors.Keys.INCOMPATIBLE_UNIT_1, axisUnit), e);
                 }
             }
             this.converters = converters;
@@ -375,7 +375,7 @@ public class DefaultCartesianCS extends DefaultAffineCS implements CartesianCS {
         try {
             axes = axisUsingUnit(unit, null);
         } catch (ConversionException e) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.INCOMPATIBLE_UNIT_$1, unit), e);
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.INCOMPATIBLE_UNIT_1, unit), e);
         }
         if (axes == null) {
             return this;

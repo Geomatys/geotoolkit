@@ -163,7 +163,7 @@ final class PredefinedCS extends Static implements Comparator<CoordinateSystem> 
             return Arrays.equals(user, std) ? cs : new DefaultCompoundCS(std);
         }
         throw new IllegalArgumentException(Errors.format(
-                Errors.Keys.UNSUPPORTED_COORDINATE_SYSTEM_$1, cs.getName().getCode()));
+                Errors.Keys.UNSUPPORTED_COORDINATE_SYSTEM_1, cs.getName().getCode()));
     }
 
     /**
@@ -197,7 +197,7 @@ final class PredefinedCS extends Static implements Comparator<CoordinateSystem> 
             if (!Unit.ONE.equals(unit) && !SI.METRE.equals(unit)) try {
                 axe = DefaultCoordinateSystemAxis.castOrCopy(axe).usingUnit(SI.METRE);
             } catch (ConversionException e) {
-                throw new IllegalArgumentException(Errors.format(Errors.Keys.INCOMPATIBLE_UNIT_$1, SI.METRE), e);
+                throw new IllegalArgumentException(Errors.format(Errors.Keys.INCOMPATIBLE_UNIT_1, SI.METRE), e);
             }
             changed |= (axe != axis[i]);
             axis[i] = axe;

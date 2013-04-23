@@ -242,7 +242,7 @@ public class RangeFormat extends org.apache.sis.measure.RangeFormat {
             elementFormat = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT, locale);
             unitFormat    = null;
         } else {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.UNKNOWN_TYPE_$1, elementClass));
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.UNKNOWN_TYPE_1, elementClass));
         }
         final DecimalFormatSymbols ds;
         if (elementFormat instanceof DecimalFormat) {
@@ -349,9 +349,9 @@ public class RangeFormat extends org.apache.sis.measure.RangeFormat {
         if (!(range instanceof Range<?>)) {
             final String message;
             if (range == null) {
-                message = Errors.format(Errors.Keys.NULL_ARGUMENT_$1, "range");
+                message = Errors.format(Errors.Keys.NULL_ARGUMENT_1, "range");
             } else {
-                message = Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_CLASS_$3, "range", range.getClass(), Range.class);
+                message = Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_CLASS_3, "range", range.getClass(), Range.class);
             }
             throw new IllegalArgumentException(message);
         }
@@ -501,7 +501,7 @@ public class RangeFormat extends org.apache.sis.measure.RangeFormat {
             failure = e;
         }
         final int errorIndex = pos.getErrorIndex();
-        final ParseException e = new ParseException(Errors.format(Errors.Keys.UNPARSABLE_STRING_$2,
+        final ParseException e = new ParseException(Errors.format(Errors.Keys.UNPARSABLE_STRING_2,
                 source, CharSequences.token(source, errorIndex)), errorIndex);
         e.initCause(failure);
         throw e;

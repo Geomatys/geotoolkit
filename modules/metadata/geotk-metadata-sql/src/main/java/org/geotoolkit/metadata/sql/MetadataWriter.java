@@ -501,7 +501,7 @@ public class MetadataWriter extends MetadataSource {
                                             .append(" DROP CONSTRAINT ").appendIdentifier(fkey.keyName);
                                     stmt.executeUpdate(buffer.toString());
                                     final LogRecord record = Errors.getResources(null).getLogRecord(
-                                            Level.WARNING, Errors.Keys.DROPPED_FOREIGNER_KEY_$1,
+                                            Level.WARNING, Errors.Keys.DROPPED_FOREIGNER_KEY_1,
                                             table + '.' + column + " ⇒ " + fkey.tableName + '.' + ID_COLUMN);
                                     record.setSourceMethodName("add");
                                     record.setSourceClassName(MetadataWriter.class.getName());

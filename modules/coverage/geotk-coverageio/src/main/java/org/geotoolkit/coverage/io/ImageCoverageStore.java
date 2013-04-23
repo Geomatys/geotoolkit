@@ -84,7 +84,7 @@ final class ImageCoverageStore extends Static {
         final boolean write = (store instanceof GridCoverageWriter);
         final Locale locale = store.locale;
         String message = Loggings.getResources(locale).getString(
-                Loggings.Keys.CREATED_CODEC_OF_CLASS_$2, write ? 1 : 0, codec.getClass().getName());
+                Loggings.Keys.CREATED_CODEC_OF_CLASS_2, write ? 1 : 0, codec.getClass().getName());
         if (spi != null) {
             final StringBuilder buffer = new StringBuilder(message).append('\n');
             Formats.formatDescription(spi, locale, buffer);
@@ -253,7 +253,7 @@ final class ImageCoverageStore extends Static {
          * Put everything in a log record.
          */
         final LogRecord record = Loggings.getResources(locale).getLogRecord(
-                level, Loggings.Keys.COVERAGE_STORE_$8, new Object[] {
+                level, Loggings.Keys.COVERAGE_STORE_8, new Object[] {
                         write ? 1 : 0, streamName, name.toString(locale), viewTypes,
                         size, crsName, transform, timeNanos / 1E+6
         });

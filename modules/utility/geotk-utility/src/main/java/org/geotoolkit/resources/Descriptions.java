@@ -21,6 +21,7 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.MissingResourceException;
 import org.opengis.util.InternationalString;
+import org.apache.sis.util.resources.IndexedResourceBundle;
 import org.geotoolkit.util.ResourceInternationalString;
 
 
@@ -67,12 +68,12 @@ public final class Descriptions extends IndexedResourceBundle {
         /**
          * Usage: {0} [OPTION...] [COMMAND] [PARAMETER...]
          */
-        public static final int COMMAND_USAGE_$1 = 3;
+        public static final int COMMAND_USAGE_1 = 3;
 
         /**
          * Concatenation of {0} adapted to the 3D domain
          */
-        public static final int CONCATENATED_OPERATION_ADAPTED_$1 = 15;
+        public static final int CONCATENATED_OPERATION_ADAPTED_1 = 15;
 
         /**
          * This result indicates if a datum shift method has been applied.
@@ -82,7 +83,7 @@ public final class Descriptions extends IndexedResourceBundle {
         /**
          * This result indicates if the factory “{0}” is available for use.
          */
-        public static final int CONFORMANCE_MEANS_FACTORY_AVAILABLE_$1 = 5;
+        public static final int CONFORMANCE_MEANS_FACTORY_AVAILABLE_1 = 5;
 
         /**
          * This result indicates if the parameters are valid.
@@ -94,23 +95,23 @@ public final class Descriptions extends IndexedResourceBundle {
          * the “{2}” module. The default directory for {0} data is “{1}”, but {2} allows to change this
          * setting.
          */
-        public static final int DATA_NOT_INSTALLED_$3 = 7;
+        public static final int DATA_NOT_INSTALLED_3 = 7;
 
         /**
          * {0} files have been read successfully but {1} files can not be read. The failure causes are
          * reported below.
          */
-        public static final int ERROR_READING_SOME_FILES_$2 = 8;
+        public static final int ERROR_READING_SOME_FILES_2 = 8;
 
         /**
          * Inserted {0} rows in {1} seconds.
          */
-        public static final int INSERTED_ROWS_$2 = 9;
+        public static final int INSERTED_ROWS_2 = 9;
 
         /**
          * Parameter “{0}” is not conform. {1}
          */
-        public static final int NON_CONFORM_PARAMETER_$2 = 10;
+        public static final int NON_CONFORM_PARAMETER_2 = 10;
 
         /**
          * Do not use a valuable password, since it will not be encrypted.
@@ -125,12 +126,12 @@ public final class Descriptions extends IndexedResourceBundle {
          * RMS: {4}
          * Standard deviation: {5}
          */
-        public static final int STATISTICS_TO_STRING_$6 = 12;
+        public static final int STATISTICS_TO_STRING_6 = 12;
 
         /**
          * Use {0,choice,0#the embedded|1#a specific} database.
          */
-        public static final int USE_EOS_DATABASE_$1 = 13;
+        public static final int USE_EOS_DATABASE_1 = 13;
 
         /**
          * Use "help" to show available commands.
@@ -143,7 +144,7 @@ public final class Descriptions extends IndexedResourceBundle {
      *
      * @param filename The file or the JAR entry containing resources.
      */
-    Descriptions(final String filename) {
+    public Descriptions(final java.net.URL filename) {
         super(filename);
     }
 

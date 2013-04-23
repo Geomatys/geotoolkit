@@ -355,10 +355,10 @@ public class Category implements Serializable {
             throw new AssertionError(exception);
         }
         if (Double.isNaN(scale) || Double.isInfinite(scale)) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.INFINITE_COEFFICIENT_$2, "scale", scale));
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.INFINITE_COEFFICIENT_2, "scale", scale));
         }
         if (Double.isNaN(offset) || Double.isInfinite(offset)) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.INFINITE_COEFFICIENT_$2, "offset", offset));
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.INFINITE_COEFFICIENT_2, "offset", offset));
         }
     }
 
@@ -467,7 +467,7 @@ public class Category implements Serializable {
          * except for the legal case catched by the "if" block just above.
          */
         if (!(minimum <= maximum) || Double.isInfinite(minimum) || Double.isInfinite(maximum)) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_RANGE_$2,
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_RANGE_2,
                                                range.getMinValue(), range.getMaxValue()));
         }
         /*
@@ -493,7 +493,7 @@ public class Category implements Serializable {
         } catch (TransformException exception) {
             cause = exception;
         }
-        throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_TRANSFORM_FOR_TYPE_$1,
+        throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_TRANSFORM_FOR_TYPE_1,
                 sampleToGeophysics.getClass()), cause);
     }
 
@@ -554,10 +554,10 @@ public class Category implements Serializable {
             throws IllegalArgumentException
     {
         if (scale == 0 || Double.isNaN(scale) || Double.isInfinite(scale)) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_$2, "scale", scale));
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_2, "scale", scale));
         }
         if (Double.isNaN(offset) || Double.isInfinite(offset)) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_$2, "offset", offset));
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_2, "offset", offset));
         }
         return LinearTransform1D.create(scale, offset);
     }

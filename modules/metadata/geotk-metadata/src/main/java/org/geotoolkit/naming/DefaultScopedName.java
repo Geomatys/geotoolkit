@@ -122,7 +122,7 @@ public class DefaultScopedName extends AbstractName implements ScopedName {
         final int size = names.size();
         if (size < 2) {
             throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.ILLEGAL_ARGUMENT_$2, "size", size));
+                    Errors.Keys.ILLEGAL_ARGUMENT_2, "size", size));
         }
         DefaultNameSpace ns = DefaultNameSpace.wrap(scope);
         final boolean global = ns.isGlobal();

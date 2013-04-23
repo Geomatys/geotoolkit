@@ -719,7 +719,7 @@ public class AuthorityFactoryAdapter extends AbstractAuthorityFactory {
             return null;
         }
         throw new FactoryException(Errors.format(
-                    Errors.Keys.GEOTOOLKIT_EXTENSION_REQUIRED_$1, caller));
+                    Errors.Keys.GEOTOOLKIT_EXTENSION_REQUIRED_1, caller));
     }
 
     /**
@@ -1184,7 +1184,7 @@ public class AuthorityFactoryAdapter extends AbstractAuthorityFactory {
              * user since this case has some chances to be an user error.
              */
             final LogRecord record = Loggings.format(Level.WARNING,
-                    Loggings.Keys.MISMATCHED_COORDINATE_OPERATION_FACTORIES_$2, sourceCRS, targetCRS);
+                    Loggings.Keys.MISMATCHED_COORDINATE_OPERATION_FACTORIES_2, sourceCRS, targetCRS);
             record.setSourceMethodName("createFromCoordinateReferenceSystemCodes");
             record.setSourceClassName(AuthorityFactoryAdapter.class.getName());
             record.setLoggerName(LOGGER.getName());
@@ -1356,7 +1356,7 @@ public class AuthorityFactoryAdapter extends AbstractAuthorityFactory {
      * especially by {@link FallbackAuthorityFactory}.
      */
     private FactoryException missingFactory(final Class<?> category, final String code) {
-        return new NoSuchAuthorityCodeException(Errors.format(Errors.Keys.FACTORY_NOT_FOUND_$1,
+        return new NoSuchAuthorityCodeException(Errors.format(Errors.Keys.FACTORY_NOT_FOUND_1,
                 category), Citations.getIdentifier(getAuthority()), trimAuthority(code), code);
     }
 
@@ -1413,7 +1413,7 @@ public class AuthorityFactoryAdapter extends AbstractAuthorityFactory {
         } else if (type == AuthorityFactory.class) {
             f = getAuthorityFactory(code);
         } else {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.UNKNOWN_TYPE_$1, type));
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.UNKNOWN_TYPE_1, type));
         }
         return type.cast(f);
     }

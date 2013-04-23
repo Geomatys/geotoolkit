@@ -539,7 +539,7 @@ public class CategoryRecord implements Cloneable, Serializable {
             case 1: value = scale;  break;
             default: {
                 throw new IllegalArgumentException(Errors.format(
-                        Errors.Keys.ILLEGAL_ARGUMENT_$2, "order", order));
+                        Errors.Keys.ILLEGAL_ARGUMENT_2, "order", order));
             }
         }
         return value;
@@ -560,7 +560,7 @@ public class CategoryRecord implements Cloneable, Serializable {
             case 1: old = scale;  scale  = coeff; break;
             default: {
                 throw new IllegalArgumentException(Errors.format(
-                        Errors.Keys.ILLEGAL_ARGUMENT_$2, "order", order));
+                        Errors.Keys.ILLEGAL_ARGUMENT_2, "order", order));
             }
         }
         boolean changed = !Utilities.equals(old, coeff);

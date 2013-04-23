@@ -228,7 +228,7 @@ final class CategoryTable extends Table {
                                 tr = mtFactory.createConcatenatedTransform(tr, exponential);
                             } else {
                                 throw new IllegalRecordException(errors().getString(
-                                        Errors.Keys.UNSUPPORTED_OPERATION_$1, function),
+                                        Errors.Keys.UNSUPPORTED_OPERATION_1, function),
                                         this, results, functionIndex, name);
                             }
                         }
@@ -249,7 +249,7 @@ final class CategoryTable extends Table {
                  */
                 final int minBand = Math.max(1, bandOfPreviousCategory);
                 if (band < minBand || band > MAXIMUM_BANDS) {
-                    throw new IllegalRecordException(errors().getString(Errors.Keys.VALUE_OUT_OF_BOUNDS_$3,
+                    throw new IllegalRecordException(errors().getString(Errors.Keys.VALUE_OUT_OF_BOUNDS_3,
                             band, minBand, MAXIMUM_BANDS), this, results, bandIndex, name);
                 }
                 // If we are beginning a new band, stores the previous

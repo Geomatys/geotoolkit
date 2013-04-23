@@ -927,7 +927,7 @@ public class Operations {
             parameters.parameter(name).setValue(value);
         } catch (ParameterNotFoundException cause) {
             throw new InvalidParameterNameException(
-                    Errors.format(Errors.Keys.UNKNOWN_PARAMETER_NAME_$1, name), cause, name);
+                    Errors.format(Errors.Keys.UNKNOWN_PARAMETER_NAME_1, name), cause, name);
         }
     }
 }

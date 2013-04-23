@@ -60,6 +60,6 @@ public class RecursiveSearchException extends FactoryRegistryException {
      * @param category The category for which a recursive call is detected.
      */
     public RecursiveSearchException(final Class<?> category) {
-        super(Errors.format(Errors.Keys.RECURSIVE_CALL_$1, category));
+        super(Errors.format(Errors.Keys.RECURSIVE_CALL_1, category));
     }
 }

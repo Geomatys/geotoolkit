@@ -230,7 +230,7 @@ public class Database implements Localized {
                         }
                         // "getStatement" is name of the Table method which invoke this method.
                         table.log("getStatement", Loggings.getResources(locale).getLogRecord(
-                                Level.FINE, Loggings.Keys.CONNECTED_DATABASE_FOR_THREAD_$2, threadName, url));
+                                Level.FINE, Loggings.Keys.CONNECTED_DATABASE_FOR_THREAD_2, threadName, url));
                     }
                 }
             }
@@ -253,7 +253,7 @@ public class Database implements Localized {
                     final Logger logger = DefaultDataSource.LOGGER;
                     if (logger.isLoggable(Level.FINE)) {
                         final LogRecord record = Loggings.format(Level.FINE,
-                                Loggings.Keys.CLOSED_DATABASE_FOR_THREAD_$2, threadName, numQueries);
+                                Loggings.Keys.CLOSED_DATABASE_FOR_THREAD_2, threadName, numQueries);
                         record.setLoggerName(logger.getName());
                         record.setSourceClassName(StatementPool.class.getName());
                         record.setSourceMethodName("run");

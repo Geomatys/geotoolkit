@@ -747,7 +747,7 @@ public class AuthorityBackedFactory extends DefaultCoordinateOperationFactory {
                     // since users expect a well known projection name.
                 }
                 method = createOperationMethod(Collections.singletonMap(OperationMethod.NAME_KEY,
-                        Descriptions.format(Descriptions.Keys.CONCATENATED_OPERATION_ADAPTED_$1, buffer)),
+                        Descriptions.format(Descriptions.Keys.CONCATENATED_OPERATION_ADAPTED_1, buffer)),
                         srcDim, tgtDim, null);
             }
             operation = createFromMathTransform(IdentifiedObjects.getProperties(operation),
@@ -796,7 +796,7 @@ public class AuthorityBackedFactory extends DefaultCoordinateOperationFactory {
     {
         if (LOGGER.isLoggable(level)) {
             final LogRecord record = Loggings.format(level,
-                    Loggings.Keys.CANT_CREATE_COORDINATE_OPERATION_$1,
+                    Loggings.Keys.CANT_CREATE_COORDINATE_OPERATION_1,
                     factory.getAuthority().getTitle());
             record.setSourceClassName(AuthorityBackedFactory.class.getName());
             record.setSourceMethodName("createFromDatabase");

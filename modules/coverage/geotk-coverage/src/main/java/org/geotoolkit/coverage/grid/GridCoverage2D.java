@@ -333,7 +333,7 @@ public class GridCoverage2D extends AbstractGridCoverage implements RenderedCove
                 label = Integer.valueOf(i);
             }
             if (range.getLow(i)!=min || range.getSpan(i)!=span) {
-                return Errors.format(Errors.Keys.ILLEGAL_GRID_ENVELOPE_$3, label, min, min + span);
+                return Errors.format(Errors.Keys.ILLEGAL_GRID_ENVELOPE_3, label, min, min + span);
             }
         }
         return null;
@@ -569,7 +569,7 @@ public class GridCoverage2D extends AbstractGridCoverage implements RenderedCove
         final int expected = crs.getCoordinateSystem().getDimension();
         if (actual != expected) {
             throw new MismatchedDimensionException(Errors.format(
-                    Errors.Keys.MISMATCHED_DIMENSION_$2, actual, expected));
+                    Errors.Keys.MISMATCHED_DIMENSION_2, actual, expected));
         }
         if (point instanceof Point2D) {
             return (Point2D) point;
@@ -1028,7 +1028,7 @@ public class GridCoverage2D extends AbstractGridCoverage implements RenderedCove
                 serializedImage = new SerializableRenderedImage(source, false, null,
                                                                 tileEncoding, null, null);
                 final LogRecord record = Loggings.format(Level.FINE,
-                        Loggings.Keys.CREATED_SERIALIZABLE_IMAGE_$2, getName(), tileEncoding);
+                        Loggings.Keys.CREATED_SERIALIZABLE_IMAGE_2, getName(), tileEncoding);
                 record.setSourceClassName(GridCoverage2D.class.getName());
                 record.setSourceMethodName("writeObject");
                 record.setLoggerName(LOGGER.getName());

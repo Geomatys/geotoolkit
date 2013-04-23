@@ -63,7 +63,7 @@ public abstract class ProxyForMetadata {
             instance = (ProxyForMetadata) Class.forName("org.geotoolkit.internal.referencing.ProxyForMetadataImpl").newInstance();
         } catch (ClassNotFoundException exception) {
             throw new UnsupportedOperationException(Errors.format(
-                    Errors.Keys.MISSING_MODULE_$1, "geotk-referencing"), exception);
+                    Errors.Keys.MISSING_MODULE_1, "geotk-referencing"), exception);
         } catch (Exception exception) {
             // Should never happen if we didn't broke our helper class.
             throw new AssertionError(exception);

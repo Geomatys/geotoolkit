@@ -122,7 +122,7 @@ public class DirectPostgisFactory extends WKTParsingAuthorityFactory implements 
         CharSequence cs;
         if ((cs=authority.getEdition()) != null) {
             final String identifier = Citations.getIdentifier(authority);
-            table.write(resources.getString(Vocabulary.Keys.VERSION_OF_$1, identifier));
+            table.write(resources.getString(Vocabulary.Keys.VERSION_OF_1, identifier));
             table.write(':');
             table.nextColumn();
             table.write(cs.toString());
@@ -137,7 +137,7 @@ public class DirectPostgisFactory extends WKTParsingAuthorityFactory implements 
                 table.write(s);
                 if ((s = metadata.getDatabaseProductVersion()) != null) {
                     table.write(' ');
-                    table.write(resources.getString(Vocabulary.Keys.VERSION_$1, s));
+                    table.write(resources.getString(Vocabulary.Keys.VERSION_1, s));
                 }
                 table.nextLine();
             }

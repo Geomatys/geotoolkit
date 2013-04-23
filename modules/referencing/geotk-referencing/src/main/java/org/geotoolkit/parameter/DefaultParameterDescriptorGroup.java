@@ -184,7 +184,7 @@ public class DefaultParameterDescriptorGroup extends AbstractParameterDescriptor
                 if (i != j) {
                     if (IdentifiedObjects.nameMatches(parameters[j], name)) {
                         throw new InvalidParameterNameException(Errors.format(
-                                Errors.Keys.DUPLICATED_PARAMETER_NAME_$4,
+                                Errors.Keys.DUPLICATED_PARAMETER_NAME_4,
                                 parameters[j].getName().getCode(), j, name, i), name);
                     }
                 }
@@ -297,7 +297,7 @@ public class DefaultParameterDescriptorGroup extends AbstractParameterDescriptor
             }
             parameters = subgroups.remove(0).descriptors();
         }
-        throw new ParameterNotFoundException(Errors.format(Errors.Keys.UNKNOWN_PARAMETER_NAME_$1, name), name);
+        throw new ParameterNotFoundException(Errors.format(Errors.Keys.UNKNOWN_PARAMETER_NAME_1, name), name);
     }
 
     /**

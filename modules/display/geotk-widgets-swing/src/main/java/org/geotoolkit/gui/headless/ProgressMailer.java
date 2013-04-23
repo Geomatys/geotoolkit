@@ -174,8 +174,8 @@ public class ProgressMailer extends ProgressController {
         }
         final StringBuffer buffer = new StringBuffer(task).append(": ");
         format.format(percent/100, buffer, new FieldPosition(0)).append('\n');
-        buffer.append(resources.getString(Vocabulary.Keys.MEMORY_HEAP_SIZE_$1, totalMemory)).append('\n')
-              .append(resources.getString(Vocabulary.Keys.MEMORY_HEAP_USAGE_$1, 1f - freeMemory/totalMemory)).append('\n');
+        buffer.append(resources.getString(Vocabulary.Keys.MEMORY_HEAP_SIZE_1, totalMemory)).append('\n')
+              .append(resources.getString(Vocabulary.Keys.MEMORY_HEAP_USAGE_1, 1f - freeMemory/totalMemory)).append('\n');
         send(method, Vocabulary.Keys.PROGRESSION, buffer.toString());
     }
 

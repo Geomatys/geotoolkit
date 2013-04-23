@@ -139,7 +139,7 @@ public final class TM_Primitive extends PropertyType<TM_Primitive, TemporalPrimi
                      * to a public API.
                      */
                     record = Errors.getResources(null).getLogRecord(Level.WARNING,
-                            Errors.Keys.ILLEGAL_RANGE_$2, begin, end);
+                            Errors.Keys.ILLEGAL_RANGE_2, begin, end);
                 } else try {
                     metadata = TemporalUtilities.createPeriod(begin, end);
                     period.copyIdTo(metadata);

@@ -247,7 +247,7 @@ public class GeodeticCalculator {
      */
     private GeodeticCalculator(final Ellipsoid ellipsoid, final CoordinateReferenceSystem crs) {
         if (ellipsoid == null) {
-            throw new NullArgumentException(Errors.format(Errors.Keys.NULL_ARGUMENT_$1, "ellipsoid"));
+            throw new NullArgumentException(Errors.format(Errors.Keys.NULL_ARGUMENT_1, "ellipsoid"));
         }
         this.ellipsoid     = ellipsoid;
         this.semiMajorAxis = ellipsoid.getSemiMajorAxis();
@@ -380,7 +380,7 @@ public class GeodeticCalculator {
             return toRadians(latitude);
         }
         throw new IllegalArgumentException(Errors.format(
-                Errors.Keys.LATITUDE_OUT_OF_RANGE_$1, new Latitude(latitude)));
+                Errors.Keys.LATITUDE_OUT_OF_RANGE_1, new Latitude(latitude)));
     }
 
     /**
@@ -397,7 +397,7 @@ public class GeodeticCalculator {
             return toRadians(longitude);
         }
         throw new IllegalArgumentException(Errors.format(
-                Errors.Keys.LONGITUDE_OUT_OF_RANGE_$1, new Longitude(longitude)));
+                Errors.Keys.LONGITUDE_OUT_OF_RANGE_1, new Longitude(longitude)));
     }
 
     /**
@@ -414,7 +414,7 @@ public class GeodeticCalculator {
             return toRadians(azimuth);
         }
         throw new IllegalArgumentException(Errors.format(
-                Errors.Keys.AZIMUTH_OUT_OF_RANGE_$1, new Longitude(azimuth)));
+                Errors.Keys.AZIMUTH_OUT_OF_RANGE_1, new Longitude(azimuth)));
     }
 
     /**
@@ -429,7 +429,7 @@ public class GeodeticCalculator {
             throws IllegalArgumentException
     {
         if (!(distance >= 0.0 && distance <= maxOrthodromicDistance)) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.DISTANCE_OUT_OF_RANGE_$4,
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.DISTANCE_OUT_OF_RANGE_4,
                     distance, 0.0, maxOrthodromicDistance, ellipsoid.getAxisUnit()));
         }
     }
@@ -445,7 +445,7 @@ public class GeodeticCalculator {
             throws IllegalArgumentException
     {
         if (numberOfPoints < 0) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_$2,
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_2,
                         "numberOfPoints", numberOfPoints));
         }
     }
@@ -456,7 +456,7 @@ public class GeodeticCalculator {
      */
     private String getNoConvergenceErrorMessage() {
         final CoordinateFormat cf = new CoordinateFormat();
-        return Errors.format(Errors.Keys.NO_CONVERGENCE_$2,
+        return Errors.format(Errors.Keys.NO_CONVERGENCE_2,
                 format(cf, long1, lat1), format(cf, long2, lat2));
     }
 

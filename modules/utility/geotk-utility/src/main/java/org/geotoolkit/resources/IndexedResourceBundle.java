@@ -57,8 +57,11 @@ import org.apache.sis.util.Classes;
  *
  * @since 1.2
  * @module
+ *
+ * @deprecated Moved to Apache SIS as {@link org.apache.sis.util.resources.IndexedResourceBundle}.
  */
 @ThreadSafe
+@Deprecated
 public class IndexedResourceBundle extends ResourceBundle {
     /**
      * {@code true} if the {@link #getLogRecord(Level, int, Object)} should localize the log

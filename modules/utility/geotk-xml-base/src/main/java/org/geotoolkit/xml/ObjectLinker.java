@@ -92,7 +92,7 @@ public class ObjectLinker extends ReferenceResolver {
     @SuppressWarnings("unchecked")
     public <T> T newIdentifiedObject(final Class<T> type, final Identifier... identifiers) {
         if (NilObjectHandler.isIgnoredInterface(type)) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_$2, "type", type));
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_2, "type", type));
         }
         return (T) Proxy.newProxyInstance(ObjectLinker.class.getClassLoader(),
                 new Class<?>[] {type, IdentifiedObject.class, NilObject.class, LenientComparable.class},

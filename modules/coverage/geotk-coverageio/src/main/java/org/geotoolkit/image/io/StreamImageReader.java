@@ -216,7 +216,7 @@ public abstract class StreamImageReader extends SpatialImageReader {
                 // Do not define closeOnReset since we don't want to close user-provided input.
             } else {
                 throw new IllegalStateException(getErrorResources().getString(
-                        Errors.Keys.ILLEGAL_CLASS_$2, input.getClass(), InputStream.class));
+                        Errors.Keys.ILLEGAL_CLASS_2, input.getClass(), InputStream.class));
             }
         }
         return stream;

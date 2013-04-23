@@ -159,7 +159,7 @@ public class DefaultCompoundCRS extends AbstractCRS implements CompoundCRS {
     private static CoordinateSystem createCoordinateSystem(final CoordinateReferenceSystem[] components) {
         ensureNonNull("components", components);
         if (components.length < 2) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.TOO_FEW_ARGUMENTS_$2, 2, components.length));
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.TOO_FEW_ARGUMENTS_2, 2, components.length));
         }
         final CoordinateSystem[] cs = new CoordinateSystem[components.length];
         for (int i=0; i<components.length; i++) {

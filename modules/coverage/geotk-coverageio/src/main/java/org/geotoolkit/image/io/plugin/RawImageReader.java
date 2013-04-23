@@ -244,7 +244,7 @@ public class RawImageReader extends SpatialImageReader {
         final ImageTypeSpecifier imageType   = getRawImageType(imageIndex);
         final SampleModel        streamModel = imageType.getSampleModel();
         if (SampleModels.getPixelStride(streamModel) != 1) {
-            throw new UnsupportedImageFormatException(Errors.format(Errors.Keys.UNSUPPORTED_FILE_TYPE_$1,
+            throw new UnsupportedImageFormatException(Errors.format(Errors.Keys.UNSUPPORTED_FILE_TYPE_1,
                     Classes.getShortClassName(streamModel) + "[pixelStride = " +
                     SampleModels.getPixelStride(streamModel) + ']'));
         }
@@ -389,7 +389,7 @@ public class RawImageReader extends SpatialImageReader {
             iter.startBands();
             for (int j=dstBand; --j>=0;) {
                 if (iter.nextBandDone()) {
-                    throw new IIOException(Errors.format(Errors.Keys.ILLEGAL_BAND_NUMBER_$1, dstBand));
+                    throw new IIOException(Errors.format(Errors.Keys.ILLEGAL_BAND_NUMBER_1, dstBand));
                 }
             }
             iter.startLines();

@@ -317,7 +317,7 @@ attmpt: while (true) {
         if (!success) {
             if (failure == null) {
                 if (input instanceof File && !((File) input).exists()) {
-                    failure = new FileNotFoundException(Errors.format(Errors.Keys.FILE_DOES_NOT_EXIST_$1, input));
+                    failure = new FileNotFoundException(Errors.format(Errors.Keys.FILE_DOES_NOT_EXIST_1, input));
                 } else {
                     failure = new IIOException(Errors.format(Errors.Keys.NO_IMAGE_READER));
                 }
@@ -405,7 +405,7 @@ attmpt: while (true) {
         if (fallback != null) {
             return fallback;
         }
-        throw new IllegalArgumentException(Errors.format(Errors.Keys.UNKNOWN_IMAGE_FORMAT_$1, format));
+        throw new IllegalArgumentException(Errors.format(Errors.Keys.UNKNOWN_IMAGE_FORMAT_1, format));
     }
 
     /**
@@ -518,7 +518,7 @@ attmpt: while (true) {
         appendTo.append(text);
         text = spi.getVersion();
         if (text != null) {
-            appendTo.append(" (").append(resources.getString(Vocabulary.Keys.VERSION_$1, text));
+            appendTo.append(" (").append(resources.getString(Vocabulary.Keys.VERSION_1, text));
             text = spi.getVendorName();
             if (text != null) {
                 appendTo.append(", ").append(text);

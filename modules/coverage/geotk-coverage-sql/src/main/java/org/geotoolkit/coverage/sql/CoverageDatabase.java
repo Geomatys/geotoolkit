@@ -351,7 +351,7 @@ public class CoverageDatabase implements Localized {
     private void ensureNonNull(final String name, final Object value) {
         if (value == null) {
             throw new NullArgumentException(Errors.getResources(getLocale())
-                    .getString(Errors.Keys.NULL_ARGUMENT_$1, name));
+                    .getString(Errors.Keys.NULL_ARGUMENT_1, name));
         }
     }
 

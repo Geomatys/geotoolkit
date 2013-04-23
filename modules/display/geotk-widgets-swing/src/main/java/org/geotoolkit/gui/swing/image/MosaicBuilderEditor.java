@@ -420,8 +420,8 @@ public class MosaicBuilderEditor extends JComponent implements MosaicPerformance
             super(Dimension.class, new ArrayList<Dimension>());
             titles = new String[] {
                 resources.getString(Vocabulary.Keys.LEVEL),
-                resources.getString(Vocabulary.Keys.AXIS_$1, "x"),
-                resources.getString(Vocabulary.Keys.AXIS_$1, "y")
+                resources.getString(Vocabulary.Keys.AXIS_1, "x"),
+                resources.getString(Vocabulary.Keys.AXIS_1, "y")
             };
             Collections.sort(elements, this);
         }

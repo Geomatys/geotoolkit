@@ -157,7 +157,7 @@ public abstract class UUIDs<T> {
             if (oldUUID != null) {
                 if (!oldUUID.equals(uuid)) {
                     throw new IllegalArgumentException(Errors.format(
-                            Errors.Keys.VALUE_ALREADY_DEFINED_$1, object));
+                            Errors.Keys.VALUE_ALREADY_DEFINED_1, object));
                 }
             } else {
                 final WeakRef ref = new WeakRef(object);

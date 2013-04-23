@@ -339,7 +339,7 @@ public class ReferencingFactoryContainer extends ReferencingFactory {
                 }
             }
         }
-        throw new FactoryException(Errors.format(Errors.Keys.UNSUPPORTED_CRS_$1, crs.getName()));
+        throw new FactoryException(Errors.format(Errors.Keys.UNSUPPORTED_CRS_1, crs.getName()));
     }
 
     /**
@@ -523,7 +523,7 @@ public class ReferencingFactoryContainer extends ReferencingFactory {
         } catch (ConversionException e) {
             failure = e;
         }
-        throw new FactoryException(Errors.format(Errors.Keys.UNSUPPORTED_CRS_$1, crs.getName()), failure);
+        throw new FactoryException(Errors.format(Errors.Keys.UNSUPPORTED_CRS_1, crs.getName()), failure);
     }
 
     /**
@@ -551,7 +551,7 @@ public class ReferencingFactoryContainer extends ReferencingFactory {
             !ArraysExt.isSorted(dimensions, true))
         {
             throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.ILLEGAL_ARGUMENT_$1, "dimension"));
+                    Errors.Keys.ILLEGAL_ARGUMENT_1, "dimension"));
         }
         if (length == crsDimension) {
             return crs;
@@ -626,7 +626,7 @@ search:     for (final CoordinateReferenceSystem source : sources) {
          *       which is why this method live in ReferencingFactoryContainer.
          */
         throw new FactoryException(Errors.format(
-                Errors.Keys.CANT_SEPARATE_CRS_$1, crs.getName().getCode()));
+                Errors.Keys.CANT_SEPARATE_CRS_1, crs.getName().getCode()));
     }
 
     /**

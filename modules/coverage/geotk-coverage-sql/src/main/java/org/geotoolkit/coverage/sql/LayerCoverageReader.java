@@ -161,7 +161,7 @@ public class LayerCoverageReader extends GridCoverageReader {
         ensureInputSet();
         if (index != 0) {
             throw new IndexOutOfBoundsException(errors().getString(
-                    Errors.Keys.INDEX_OUT_OF_BOUNDS_$1, index));
+                    Errors.Keys.INDEX_OUT_OF_BOUNDS_1, index));
         }
     }
 
@@ -192,7 +192,7 @@ public class LayerCoverageReader extends GridCoverageReader {
             if (input instanceof CharSequence) {
                 input = database.getLayer(input.toString());
             } else if (!(input instanceof Layer)) {
-                throw new IllegalArgumentException(errors().getString(Errors.Keys.ILLEGAL_CLASS_$2,
+                throw new IllegalArgumentException(errors().getString(Errors.Keys.ILLEGAL_CLASS_2,
                         input.getClass(), Layer.class));
             }
         }

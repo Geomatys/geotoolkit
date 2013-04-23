@@ -139,7 +139,7 @@ public class NetcdfAxis extends NetcdfIdentifiedObject implements CoordinateSyst
             }
             buffer.append(dimension.getName());
         }
-        throw new IIOException(Errors.format(Errors.Keys.UNEXPECTED_AXIS_DOMAIN_$2, axis.getShortName(), buffer));
+        throw new IIOException(Errors.format(Errors.Keys.UNEXPECTED_AXIS_DOMAIN_2, axis.getShortName(), buffer));
     }
 
     /**

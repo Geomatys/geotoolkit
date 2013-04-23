@@ -307,7 +307,7 @@ public class GeocentricTransform extends AbstractMathTransform implements Ellips
     {
         if (!target3D) {
             throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.ILLEGAL_ARGUMENT_$2, "target3D", target3D));
+                    Errors.Keys.ILLEGAL_ARGUMENT_2, "target3D", target3D));
         }
         if (source3D == hasHeight) {
             return this;
@@ -765,7 +765,7 @@ public class GeocentricTransform extends AbstractMathTransform implements Ellips
         {
             if (!source3D) {
                 throw new IllegalArgumentException(Errors.format(
-                        Errors.Keys.ILLEGAL_ARGUMENT_$2, "source3D", source3D));
+                        Errors.Keys.ILLEGAL_ARGUMENT_2, "source3D", source3D));
             }
             if (target3D == hasHeight) {
                 return this;

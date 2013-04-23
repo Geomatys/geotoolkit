@@ -127,7 +127,7 @@ public class DateRange extends Range<Date> {
         // No need to call super.checkElementClass() because Date implements Comparable.
         if (!Date.class.isAssignableFrom(elementClass)) {
             throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.ILLEGAL_CLASS_$2, elementClass, Date.class));
+                    Errors.Keys.ILLEGAL_CLASS_2, elementClass, Date.class));
         }
     }
 

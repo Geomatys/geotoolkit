@@ -293,7 +293,7 @@ public class GeneralEnvelope extends ArrayEnvelope implements Cloneable, Seriali
         try {
             transformed = Envelopes.transform(gridToCRS, this);
         } catch (TransformException exception) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_TRANSFORM_FOR_TYPE_$1,
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_TRANSFORM_FOR_TYPE_1,
                     gridToCRS.getClass()), exception);
         }
         assert transformed.ordinates.length == this.ordinates.length;
@@ -652,13 +652,13 @@ public class GeneralEnvelope extends ArrayEnvelope implements Cloneable, Seriali
     public void setEnvelope(final double... ordinates) {
         if ((ordinates.length & 1) != 0) {
             throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.ODD_ARRAY_LENGTH_$1, ordinates.length));
+                    Errors.Keys.ODD_ARRAY_LENGTH_1, ordinates.length));
         }
         final int dimension  = ordinates.length >>> 1;
         final int check = this.ordinates.length >>> 1;
         if (dimension != check) {
             throw new MismatchedDimensionException(Errors.format(
-                    Errors.Keys.MISMATCHED_DIMENSION_$3, "ordinates", dimension, check));
+                    Errors.Keys.MISMATCHED_DIMENSION_3, "ordinates", dimension, check));
         }
         System.arraycopy(ordinates, 0, this.ordinates, 0, ordinates.length);
     }
@@ -717,7 +717,7 @@ public class GeneralEnvelope extends ArrayEnvelope implements Cloneable, Seriali
         final int dimension = ordinates.length >>> 1;
         if (offset < 0 || offset + subDim > dimension) {
             throw new IndexOutOfBoundsException(Errors.format(
-                    Errors.Keys.ILLEGAL_ARGUMENT_$2, "lower", offset));
+                    Errors.Keys.ILLEGAL_ARGUMENT_2, "lower", offset));
         }
         final DirectPosition lower = envelope.getLowerCorner();
         final DirectPosition upper = envelope.getUpperCorner();
@@ -756,11 +756,11 @@ public class GeneralEnvelope extends ArrayEnvelope implements Cloneable, Seriali
         final int newDim = upper - lower;
         if (lower<0 || lower>curDim) {
             throw new IndexOutOfBoundsException(Errors.format(
-                    Errors.Keys.ILLEGAL_ARGUMENT_$2, "lower", lower));
+                    Errors.Keys.ILLEGAL_ARGUMENT_2, "lower", lower));
         }
         if (newDim<0 || upper>curDim) {
             throw new IndexOutOfBoundsException(Errors.format(
-                    Errors.Keys.ILLEGAL_ARGUMENT_$2, "upper", upper));
+                    Errors.Keys.ILLEGAL_ARGUMENT_2, "upper", upper));
         }
         if (newDim == curDim) {
             return this;

@@ -183,11 +183,11 @@ public class AffineMatrix3 extends AffineTransform implements Matrix, Cloneable 
             }
             default: {
                 throw new IndexOutOfBoundsException(
-                        Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_$2, "column", column));
+                        Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_2, "column", column));
             }
         }
         throw new IndexOutOfBoundsException(Errors.format(
-                Errors.Keys.ILLEGAL_ARGUMENT_$2, "row", row));
+                Errors.Keys.ILLEGAL_ARGUMENT_2, "row", row));
     }
 
     /**
@@ -201,11 +201,11 @@ public class AffineMatrix3 extends AffineTransform implements Matrix, Cloneable 
     public void setElement(final int row, final int column, final double value) {
         if (row<0 || row>=SIZE) {
             throw new IndexOutOfBoundsException(Errors.format(
-                    Errors.Keys.ILLEGAL_ARGUMENT_$2, "row", row));
+                    Errors.Keys.ILLEGAL_ARGUMENT_2, "row", row));
         }
         if (column<0 || column>=SIZE) {
             throw new IndexOutOfBoundsException(Errors.format(
-                    Errors.Keys.ILLEGAL_ARGUMENT_$2, "column", column));
+                    Errors.Keys.ILLEGAL_ARGUMENT_2, "column", column));
         }
         if (row == SIZE-1) {
             checkLastRow(column, value);
@@ -227,7 +227,7 @@ public class AffineMatrix3 extends AffineTransform implements Matrix, Cloneable 
             throws IllegalArgumentException
     {
         if (value != (column == SIZE-1 ? 1 : 0)) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_$2,
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_2,
                       "matrix[" + (SIZE-1) + ',' + column + ']', value));
         }
     }

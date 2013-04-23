@@ -341,7 +341,7 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
     public static SpatialMetadataFormat getStreamInstance(final String name) {
         if (name.equalsIgnoreCase(GEOTK_FORMAT_NAME)) return Geotk.STREAM;
         if (name.equalsIgnoreCase(ISO_FORMAT_NAME))   return ISO.INSTANCE;
-        throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_$2, "name", name));
+        throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_2, "name", name));
     }
 
     /**
@@ -358,7 +358,7 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
     public static SpatialMetadataFormat getImageInstance(final String name) {
         if (name.equalsIgnoreCase(GEOTK_FORMAT_NAME)) return Geotk.IMAGE;
         // More formats may be added later (e.g. GML in JPEG2000).
-        throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_$2, "name", name));
+        throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_2, "name", name));
     }
 
     /**
@@ -621,7 +621,7 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
         if (old != null && !old.equals(elementName)) {
             map.put(methodName, old); // Preserve the previous value.
             throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.DUPLICATED_VALUES_FOR_KEY_$1, methodName));
+                    Errors.Keys.DUPLICATED_VALUES_FOR_KEY_1, methodName));
         }
     }
 

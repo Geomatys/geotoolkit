@@ -268,11 +268,11 @@ public class Statistics extends org.apache.sis.math.Statistics implements Clonea
      */
     private static String toString(final Locale locale, final String[] values) {
         return Descriptions.getResources(locale).getString(
-                Descriptions.Keys.STATISTICS_TO_STRING_$6, values);
+                Descriptions.Keys.STATISTICS_TO_STRING_6, values);
     }
 
     /**
-     * Returns a value suitable for the {@link Descriptions.Keys#STATISTICS_TO_STRING_$6}
+     * Returns a value suitable for the {@link Descriptions.Keys#STATISTICS_TO_STRING_6}
      * localized resource. The two first value can be formatted as integers. The other ones
      * are numbers.
      *

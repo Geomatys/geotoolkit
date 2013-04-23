@@ -264,7 +264,7 @@ public class SampleDimensionPanel extends JComponent {
                     name = desc.toString(locale);
                 }
                 if (name == null) {
-                    name = resources.getString(Vocabulary.Keys.BAND_$1, i+1);
+                    name = resources.getString(Vocabulary.Keys.BAND_1, i+1);
                 }
                 nameList.addElement(new BandName(i, name));
             }

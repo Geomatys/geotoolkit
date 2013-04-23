@@ -250,7 +250,7 @@ abstract class Pooled {
                 return;
             }
         } catch (ClassCastException e) {
-            throw new PropertyException(Errors.format(Errors.Keys.ILLEGAL_PROPERTY_TYPE_$2,
+            throw new PropertyException(Errors.format(Errors.Keys.ILLEGAL_PROPERTY_TYPE_2,
                     name, value.getClass()), e);
         }
         name = convertPropertyKey(name);

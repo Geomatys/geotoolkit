@@ -176,7 +176,7 @@ public class LambertConformal extends UnitaryProjection {
             ensureLatitudeInRange(LambertConformal2SP.STANDARD_PARALLEL_2, φ2, true);
         }
         if (abs(φ1 + φ2) < ANGLE_TOLERANCE * (180/PI)) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.LATITUDES_ARE_OPPOSITE_$2,
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.LATITUDES_ARE_OPPOSITE_2,
                     new Latitude(φ1), new Latitude(φ2)));
         }
         φ1 = toRadians(φ1);

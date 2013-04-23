@@ -429,7 +429,7 @@ final class OverviewLevel implements Comparable<OverviewLevel>, Serializable {
      * @return An exception formatted for a duplicated tile at the given coordinate.
      */
     private static IllegalArgumentException duplicatedTile(final Point pt) {
-        return new IllegalArgumentException(Errors.format(Errors.Keys.DUPLICATED_VALUES_FOR_KEY_$1,
+        return new IllegalArgumentException(Errors.format(Errors.Keys.DUPLICATED_VALUES_FOR_KEY_1,
                 "location=" + pt.x + ',' + pt.y));
     }
 
@@ -533,7 +533,7 @@ final class OverviewLevel implements Comparable<OverviewLevel>, Serializable {
      */
     private int getIndex(final int tileX, final int tileY) throws IndexOutOfBoundsException {
         if (tileX < 0 || tileX >= nx || tileY < 0 || tileY >= ny) {
-            throw new IndexOutOfBoundsException(Errors.format(Errors.Keys.INDEX_OUT_OF_BOUNDS_$1,
+            throw new IndexOutOfBoundsException(Errors.format(Errors.Keys.INDEX_OUT_OF_BOUNDS_1,
                     "(" + tileX + ',' + tileY + ')'));
         }
         return tileY * nx + tileX;

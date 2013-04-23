@@ -195,7 +195,7 @@ public class ParameterGroup extends AbstractParameter implements ParameterValueG
             if (count == null) {
                 final String name = getName(descriptor);
                 throw new InvalidParameterTypeException(Errors.format(
-                        Errors.Keys.ILLEGAL_DESCRIPTOR_FOR_PARAMETER_$1, name), name);
+                        Errors.Keys.ILLEGAL_DESCRIPTOR_FOR_PARAMETER_1, name), name);
             }
             if (count != 0) {
                 // Rarely enter in this block because there is usually at most 1 occurrence.
@@ -213,7 +213,7 @@ public class ParameterGroup extends AbstractParameter implements ParameterValueG
             if (!(count>=min && count<=max)) {
                 final String name = getName(descriptor);
                 throw new InvalidParameterCardinalityException(Errors.format(
-                        Errors.Keys.ILLEGAL_OCCURS_FOR_PARAMETER_$4, name, count, min, max), name);
+                        Errors.Keys.ILLEGAL_OCCURS_FOR_PARAMETER_4, name, count, min, max), name);
             }
         }
     }
@@ -302,7 +302,7 @@ public class ParameterGroup extends AbstractParameter implements ParameterValueG
                 }
             }
         }
-        throw new ParameterNotFoundException(Errors.format(Errors.Keys.UNKNOWN_PARAMETER_NAME_$1, name), name);
+        throw new ParameterNotFoundException(Errors.format(Errors.Keys.UNKNOWN_PARAMETER_NAME_1, name), name);
     }
 
     /**
@@ -340,7 +340,7 @@ public class ParameterGroup extends AbstractParameter implements ParameterValueG
                     ((ParameterDescriptorGroup) descriptor).descriptor(name);
             if (!(check instanceof ParameterDescriptorGroup)) {
                 throw new ParameterNotFoundException(Errors.format(
-                        Errors.Keys.UNKNOWN_PARAMETER_NAME_$1, name), name);
+                        Errors.Keys.UNKNOWN_PARAMETER_NAME_1, name), name);
             }
         }
         return groups;
@@ -368,7 +368,7 @@ public class ParameterGroup extends AbstractParameter implements ParameterValueG
                 ((ParameterDescriptorGroup) descriptor).descriptor(name);
         if (!(check instanceof ParameterDescriptorGroup)) {
             throw new ParameterNotFoundException(Errors.format(
-                    Errors.Keys.UNKNOWN_PARAMETER_NAME_$1, name), name);
+                    Errors.Keys.UNKNOWN_PARAMETER_NAME_1, name), name);
         }
         int count = 0;
         for (final GeneralParameterValue value : values) {
@@ -378,7 +378,7 @@ public class ParameterGroup extends AbstractParameter implements ParameterValueG
         }
         if (count >= check.getMaximumOccurs()) {
             throw new InvalidParameterCardinalityException(Errors.format(
-                    Errors.Keys.TOO_MANY_OCCURRENCES_$2, name, count), name);
+                    Errors.Keys.TOO_MANY_OCCURRENCES_2, name, count), name);
         }
         final ParameterValueGroup value = ((ParameterDescriptorGroup) check).createValue();
         values.add(value);

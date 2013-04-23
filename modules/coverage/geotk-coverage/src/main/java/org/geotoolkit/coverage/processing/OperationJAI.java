@@ -216,7 +216,7 @@ public class OperationJAI extends Operation2D {
                 return operation;
             }
         }
-        throw new OperationNotFoundException(Errors.format(Errors.Keys.NO_SUCH_OPERATION_$1, name));
+        throw new OperationNotFoundException(Errors.format(Errors.Keys.NO_SUCH_OPERATION_1, name));
     }
 
     /**
@@ -225,7 +225,7 @@ public class OperationJAI extends Operation2D {
     private static void ensureRenderedImage(final Class<?> classe) throws IllegalArgumentException {
         if (!RenderedImage.class.isAssignableFrom(classe)) {
             throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.ILLEGAL_CLASS_$2, classe, RenderedImage.class));
+                    Errors.Keys.ILLEGAL_CLASS_2, classe, RenderedImage.class));
         }
     }
 
@@ -323,7 +323,7 @@ public class OperationJAI extends Operation2D {
      * Returns an error message for an unsupported CRS.
      */
     private static String unsupported(final CoordinateReferenceSystem crs) {
-        return Errors.format(Errors.Keys.UNSUPPORTED_CRS_$1, crs.getName().getCode());
+        return Errors.format(Errors.Keys.UNSUPPORTED_CRS_1, crs.getName().getCode());
     }
 
     /**
@@ -519,7 +519,7 @@ public class OperationJAI extends Operation2D {
                     }
                 } catch (FactoryException exception) {
                     throw new CannotReprojectException(Errors.format(
-                            Errors.Keys.CANT_REPROJECT_COVERAGE_$1, source.getName()), exception);
+                            Errors.Keys.CANT_REPROJECT_COVERAGE_1, source.getName()), exception);
                 }
             }
             final GridGeometry2D targetGeom = new GridGeometry2D(null, toTarget, targetCRS);

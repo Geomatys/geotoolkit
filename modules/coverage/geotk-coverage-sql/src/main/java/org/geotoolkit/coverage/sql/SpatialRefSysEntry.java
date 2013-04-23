@@ -211,7 +211,7 @@ final class SpatialRefSysEntry {
                 horizontalCRS = (SingleCRS) crs;
             } catch (ClassCastException e) {
                 throw new FactoryException(Errors.format(
-                        Errors.Keys.ILLEGAL_CLASS_$2, crs.getClass(), SingleCRS.class), e);
+                        Errors.Keys.ILLEGAL_CLASS_2, crs.getClass(), SingleCRS.class), e);
             }
         }
         if (verticalSRID != 0) {

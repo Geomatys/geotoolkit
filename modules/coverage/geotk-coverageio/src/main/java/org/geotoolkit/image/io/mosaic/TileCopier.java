@@ -138,7 +138,7 @@ final class TileCopier extends ShareableTask<Tile,Map<Tile,RawFile>> {
         BufferedImage targetImage = null;
         Tile tile;
         while ((tile = tiles.next()) != null) {
-            final LogRecord record = Loggings.format(Level.FINE, Loggings.Keys.CACHING_$1, tile);
+            final LogRecord record = Loggings.format(Level.FINE, Loggings.Keys.CACHING_1, tile);
             record.setSourceClassName("MosaicImageWriter"); // The public API which created this task.
             record.setSourceMethodName("writeFromInput");
             LOGGER.log(record);
@@ -189,7 +189,7 @@ final class TileCopier extends ShareableTask<Tile,Map<Tile,RawFile>> {
                     share(sharedSizes, new Dimension(image.getWidth(), image.getHeight())));
             if (temporaryFiles.put(tile, entry) != null) {
                 throw new IllegalArgumentException(Errors.format(
-                        Errors.Keys.DUPLICATED_VALUES_FOR_KEY_$1, tile));
+                        Errors.Keys.DUPLICATED_VALUES_FOR_KEY_1, tile));
             }
             /*
              * Writes the temporary file.

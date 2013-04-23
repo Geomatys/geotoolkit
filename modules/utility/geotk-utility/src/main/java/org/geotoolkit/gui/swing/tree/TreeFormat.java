@@ -421,7 +421,7 @@ public class TreeFormat extends Format {
                      * node at 'level == 0' has a null parent and we checked this case.
                      */
                     if (--level < 0) {
-                        throw new ContentFormatException(Errors.format(Errors.Keys.NODE_HAS_NO_PARENT_$1, node));
+                        throw new ContentFormatException(Errors.format(Errors.Keys.NODE_HAS_NO_PARENT_1, node));
                     }
                     lastNode = (DefaultMutableTreeNode) lastNode.getParent();
                 }
@@ -433,7 +433,7 @@ public class TreeFormat extends Format {
                      */
                     final DefaultMutableTreeNode parent = (DefaultMutableTreeNode) lastNode.getParent();
                     if (parent == null) {
-                        throw new ContentFormatException(Errors.format(Errors.Keys.NODE_HAS_NO_PARENT_$1, node));
+                        throw new ContentFormatException(Errors.format(Errors.Keys.NODE_HAS_NO_PARENT_1, node));
                     }
                     parent.add(node);
                 } else if (i > p) {
@@ -753,7 +753,7 @@ public class TreeFormat extends Format {
             } else if (tree instanceof Iterable<?>) {
                 format((Iterable<?>) tree, toAppendTo);
             } else {
-                throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_CLASS_$3,
+                throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_CLASS_3,
                         "tree", tree.getClass(), TreeModel.class));
             }
         } catch (IOException e) {

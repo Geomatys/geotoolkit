@@ -246,7 +246,7 @@ public final class Envelopes extends Static {
         final int sourceDim = transform.getSourceDimensions();
         final int targetDim = transform.getTargetDimensions();
         if (envelope.getDimension() != sourceDim) {
-            throw new MismatchedDimensionException(Errors.format(Errors.Keys.MISMATCHED_DIMENSION_$2,
+            throw new MismatchedDimensionException(Errors.format(Errors.Keys.MISMATCHED_DIMENSION_2,
                       sourceDim, envelope.getDimension()));
         }
         /*
@@ -1207,7 +1207,7 @@ public final class Envelopes extends Static {
             return new GeneralEnvelope(wkt);
         } catch (RuntimeException e) {
             throw new FactoryException(Errors.format(
-                    Errors.Keys.CANT_CREATE_OBJECT_FROM_TEXT_$1, Envelope.class), e);
+                    Errors.Keys.CANT_CREATE_OBJECT_FROM_TEXT_1, Envelope.class), e);
         }
     }
 

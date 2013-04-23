@@ -143,7 +143,7 @@ final class NetcdfAxis2D extends NetcdfAxis {
             }
             return value;
         } catch (IndexOutOfBoundsException e) {
-            throw new TransformException(Errors.format(Errors.Keys.ILLEGAL_COORDINATE_$1,
+            throw new TransformException(Errors.format(Errors.Keys.ILLEGAL_COORDINATE_1,
                     "(" + x + ", " + y + ')'), e);
         }
     }

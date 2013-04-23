@@ -129,7 +129,7 @@ final class ParameterValueList extends AbstractList<GeneralParameterValue>
                      * the descriptor was illegal.
                      */
                     throw new IllegalArgumentException(Errors.format(
-                            Errors.Keys.ILLEGAL_DESCRIPTOR_FOR_PARAMETER_$1, name));
+                            Errors.Keys.ILLEGAL_DESCRIPTOR_FOR_PARAMETER_1, name));
                 }
             }
             /*
@@ -143,7 +143,7 @@ final class ParameterValueList extends AbstractList<GeneralParameterValue>
                 value = "(group)";
             }
             throw new InvalidParameterNameException(Errors.format(
-                    Errors.Keys.ILLEGAL_ARGUMENT_$2, name, value), name);
+                    Errors.Keys.ILLEGAL_ARGUMENT_2, name, value), name);
         }
         final int max = type.getMaximumOccurs();
         if (max == 1) {
@@ -173,7 +173,7 @@ final class ParameterValueList extends AbstractList<GeneralParameterValue>
             }
             if (count >= max) {
                 throw new InvalidParameterCardinalityException(Errors.format(
-                        Errors.Keys.TOO_MANY_OCCURRENCES_$2, name, count), name);
+                        Errors.Keys.TOO_MANY_OCCURRENCES_2, name, count), name);
             }
         }
         values.add(parameter);
@@ -209,7 +209,7 @@ final class ParameterValueList extends AbstractList<GeneralParameterValue>
         if (count <= min) {
             final int max = type.getMaximumOccurs();
             throw new InvalidParameterCardinalityException(Errors.format(
-                    Errors.Keys.ILLEGAL_OCCURS_FOR_PARAMETER_$4, name, count-1, min, max), name);
+                    Errors.Keys.ILLEGAL_OCCURS_FOR_PARAMETER_4, name, count-1, min, max), name);
         }
         final GeneralParameterValue value = values.remove(index);
         assert value!=null && type.equals(value.getDescriptor()) : value;

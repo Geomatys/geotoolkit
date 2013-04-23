@@ -522,7 +522,7 @@ scanLine:   for (; i<length; i++) {
         in.close();
         line = buffer.toString().trim();
         if (!line.isEmpty() && !line.startsWith(COMMENT)) {
-            throw new EOFException(Errors.format(Errors.Keys.MISSING_CHARACTER_$1, END_OF_STATEMENT));
+            throw new EOFException(Errors.format(Errors.Keys.MISSING_CHARACTER_1, END_OF_STATEMENT));
         }
         return count;
     }
@@ -640,7 +640,7 @@ scanLine:   for (; i<length; i++) {
     public String getCurrentPosition() {
         String position = null;
         if (currentFile != null) {
-            position = Vocabulary.format(Vocabulary.Keys.FILE_POSITION_$2, currentFile, currentLine);
+            position = Vocabulary.format(Vocabulary.Keys.FILE_POSITION_2, currentFile, currentLine);
         }
         if (currentSQL != null) {
             final StringBuilder buffer = new StringBuilder();

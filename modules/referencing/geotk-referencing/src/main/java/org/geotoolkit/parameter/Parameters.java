@@ -128,7 +128,7 @@ public final class Parameters extends Static {
             // We require a strict equality - not type.isAssignableFrom(actual) - because in
             // the later case we could have (to be strict) to return a <? extends T> type.
             if (!type.equals(actual)) {
-                throw new ClassCastException(Errors.format(Errors.Keys.ILLEGAL_PARAMETER_TYPE_$2,
+                throw new ClassCastException(Errors.format(Errors.Keys.ILLEGAL_PARAMETER_TYPE_2,
                         descriptor.getName().getCode(), actual));
             }
         }
@@ -157,7 +157,7 @@ public final class Parameters extends Static {
             final ParameterDescriptor<?> descriptor = value.getDescriptor();
             final Class<?> actual = descriptor.getValueClass();
             if (!type.equals(actual)) { // Same comment than cast(ParameterDescriptor)...
-                throw new ClassCastException(Errors.format(Errors.Keys.ILLEGAL_PARAMETER_TYPE_$2,
+                throw new ClassCastException(Errors.format(Errors.Keys.ILLEGAL_PARAMETER_TYPE_2,
                         descriptor.getName().getCode(), actual));
             }
         }
@@ -210,7 +210,7 @@ public final class Parameters extends Static {
             if (descriptor.getMinimumOccurs() == 0) {
                 return null; // Test pass.
             }
-            return localized ? Errors.formatInternational(Errors.Keys.NO_PARAMETER_$1,
+            return localized ? Errors.formatInternational(Errors.Keys.NO_PARAMETER_1,
                     AbstractParameter.getName(descriptor)) : EXPLAIN;
         }
         /*
@@ -219,7 +219,7 @@ public final class Parameters extends Static {
         final Class<?> type = value.getClass();
         final Class<T> expected = descriptor.getValueClass();
         if (!expected.isAssignableFrom(type)) {
-            return localized ? Errors.formatInternational(Errors.Keys.ILLEGAL_CLASS_$2,
+            return localized ? Errors.formatInternational(Errors.Keys.ILLEGAL_CLASS_2,
                     type, expected) : EXPLAIN;
         }
         final T typedValue = expected.cast(value);
@@ -231,7 +231,7 @@ public final class Parameters extends Static {
         if ((minimum != null && minimum.compareTo(typedValue) > 0) ||
             (maximum != null && maximum.compareTo(typedValue) < 0))
         {
-            return localized ? Errors.formatInternational(Errors.Keys.VALUE_OUT_OF_BOUNDS_$3,
+            return localized ? Errors.formatInternational(Errors.Keys.VALUE_OUT_OF_BOUNDS_3,
                     value, minimum, maximum) : EXPLAIN;
         }
         /*
@@ -239,7 +239,7 @@ public final class Parameters extends Static {
          */
         final Set<T> validValues = descriptor.getValidValues();
         if (validValues!=null && !validValues.contains(value)) {
-            return localized ? Errors.formatInternational(Errors.Keys.ILLEGAL_ARGUMENT_$2,
+            return localized ? Errors.formatInternational(Errors.Keys.ILLEGAL_ARGUMENT_2,
                     AbstractParameter.getName(descriptor), value) : EXPLAIN;
         }
         return null; // Test pass.
@@ -281,7 +281,7 @@ public final class Parameters extends Static {
         if (failure != null) {
             final Identifier name = failure.getDescriptor().getName();
             result.setExplanation(Descriptions.formatInternational(
-                    Descriptions.Keys.NON_CONFORM_PARAMETER_$2, name, result.getExplanation()));
+                    Descriptions.Keys.NON_CONFORM_PARAMETER_2, name, result.getExplanation()));
             result.setSpecification(name.getAuthority());
             result.setPass(Boolean.FALSE);
         }
@@ -332,7 +332,7 @@ public final class Parameters extends Static {
                         desc = group.descriptor(name);
                     } catch (ParameterNotFoundException e) {
                         result.setExplanation(Errors.formatInternational(
-                                Errors.Keys.UNEXPECTED_PARAMETER_$1, name));
+                                Errors.Keys.UNEXPECTED_PARAMETER_1, name));
                         return value;
                     }
                     final GeneralParameterValue failure = isValid(element, desc, result);
@@ -359,10 +359,10 @@ public final class Parameters extends Static {
                         final int key;
                         final Object[] param;
                         if (n == 0) {
-                            key = Errors.Keys.NO_PARAMETER_$1;
+                            key = Errors.Keys.NO_PARAMETER_1;
                             param = new Object[] {name};
                         } else {
-                            key = Errors.Keys.ILLEGAL_OCCURS_FOR_PARAMETER_$4;
+                            key = Errors.Keys.ILLEGAL_OCCURS_FOR_PARAMETER_4;
                             param = new Object[] {name, nw, min, max};
                         }
                         result.setExplanation(Errors.formatInternational(key, param));
@@ -384,7 +384,7 @@ public final class Parameters extends Static {
         } else {
             type = GeneralParameterValue.class;
         }
-        result.setExplanation(Errors.formatInternational(Errors.Keys.ILLEGAL_OPERATION_FOR_VALUE_CLASS_$1, type));
+        result.setExplanation(Errors.formatInternational(Errors.Keys.ILLEGAL_OPERATION_FOR_VALUE_CLASS_1, type));
         return value;
     }
 
@@ -844,7 +844,7 @@ public final class Parameters extends Static {
             parameter.setValue(value, unit);
         } else {
             Logging.log(Parameters.class, "ensureSet", new LogRecord(Level.FINE,
-                    Errors.format(Errors.Keys.VALUE_ALREADY_DEFINED_$1, name)));
+                    Errors.format(Errors.Keys.VALUE_ALREADY_DEFINED_1, name)));
         }
         return true;
     }

@@ -592,7 +592,7 @@ public final class UniversalParameters extends DefaultParameterDescriptor<Double
                 if (code.equals(names[j])) {
                     if (authorities.put(authority, Boolean.TRUE) != null) {
                         throw new IllegalArgumentException(Errors.format(
-                                Errors.Keys.VALUE_ALREADY_DEFINED_$1, authority));
+                                Errors.Keys.VALUE_ALREADY_DEFINED_1, authority));
                     }
                     usedNames |= (1 << j);
                     usedIdent |= (1 << included);
@@ -608,7 +608,7 @@ public final class UniversalParameters extends DefaultParameterDescriptor<Double
          */
         if (usedNames != (1 << names.length) - 1) {
             throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.UNKNOWN_PARAMETER_$1, names[Long.numberOfTrailingZeros(~usedNames)]));
+                    Errors.Keys.UNKNOWN_PARAMETER_1, names[Long.numberOfTrailingZeros(~usedNames)]));
         }
         /*
          * If some identifiers were selected as a result of explicit requirement through the
@@ -677,7 +677,7 @@ public final class UniversalParameters extends DefaultParameterDescriptor<Double
                     if (candidate instanceof ParameterDescriptor<?>) {
                         if (found != null) {
                             throw new IllegalArgumentException(Errors.format(
-                                    Errors.Keys.AMBIGUOUS_VALUE_$1, getName().getCode()) +
+                                    Errors.Keys.AMBIGUOUS_VALUE_1, getName().getCode()) +
                                     IdentifiedObjects.toString(found.getName()) + ", " +
                                     IdentifiedObjects.toString(candidate.getName()));
                         }

@@ -195,7 +195,7 @@ public class EarthGravitationalModel extends VerticalTransform {
         try {
             load(filename);
         } catch (IOException e) {
-            throw new FactoryException(Errors.format(Errors.Keys.CANT_READ_FILE_$1, filename), e);
+            throw new FactoryException(Errors.format(Errors.Keys.CANT_READ_FILE_1, filename), e);
         }
         initialize();
     }
@@ -240,7 +240,7 @@ public class EarthGravitationalModel extends VerticalTransform {
             grava     = 9.7803327;
             star      = 0.005278994;
         } else {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.UNSUPPORTED_DATUM_$1,
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.UNSUPPORTED_DATUM_1,
                     datum.getName().getCode()));
         }
         final int cleanshawLength = locatingArray(nmax + 3);

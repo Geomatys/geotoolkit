@@ -183,8 +183,8 @@ final class NTv2Loader extends GridLoader {
             loader.longitudeGridFile = gridFile;
             loader.latitudeGridFile  = gridFile;
         } catch (IOException cause) {
-            String message = Errors.format(Errors.Keys.CANT_READ_FILE_$1, gridFile);
-            message = message + ' ' + Descriptions.format(Descriptions.Keys.DATA_NOT_INSTALLED_$3,
+            String message = Errors.format(Errors.Keys.CANT_READ_FILE_1, gridFile);
+            message = message + ' ' + Descriptions.format(Descriptions.Keys.DATA_NOT_INSTALLED_3,
                     "NTv2", NTv2.directory(true), "geotk-setup");
             final FactoryException ex;
             if (cause instanceof FileNotFoundException) {
@@ -343,7 +343,7 @@ final class NTv2Loader extends GridLoader {
         if (value instanceof Number) {
             return ((Number) value).doubleValue();
         }
-        throw new ContentFormatException(Errors.format(Errors.Keys.NO_SUCH_ATTRIBUTE_$1, key));
+        throw new ContentFormatException(Errors.format(Errors.Keys.NO_SUCH_ATTRIBUTE_1, key));
     }
 
     /**
@@ -355,7 +355,7 @@ final class NTv2Loader extends GridLoader {
         if (value instanceof Number) {
             return ((Number) value).intValue();
         }
-        throw new ContentFormatException(Errors.format(Errors.Keys.NO_SUCH_ATTRIBUTE_$1, key));
+        throw new ContentFormatException(Errors.format(Errors.Keys.NO_SUCH_ATTRIBUTE_1, key));
     }
 
     /**

@@ -369,7 +369,7 @@ public class IIOImageHelper {
             } else {
                 final int dim = cs.getDimension();
                 if (dim < 2) {
-                    throw new ImageMetadataException(Errors.format(Errors.Keys.ILLEGAL_CS_DIMENSION_$1, dim));
+                    throw new ImageMetadataException(Errors.format(Errors.Keys.ILLEGAL_CS_DIMENSION_1, dim));
                 }
             }
             coordinateSystem = cs; // Store ony on success.

@@ -111,7 +111,7 @@ final class GeophysicsCategory extends Category {
             assert Double.doubleToLongBits(maximum) == Double.doubleToLongBits(maxIncluded ? max : max2);
             this.range = range = new Range(min, minIncluded, max, maxIncluded, min2, max2);
         } catch (TransformException cause) {
-            throw new IllegalStateException(Errors.format(Errors.Keys.ILLEGAL_TRANSFORM_FOR_TYPE_$1,
+            throw new IllegalStateException(Errors.format(Errors.Keys.ILLEGAL_TRANSFORM_FOR_TYPE_1,
                     inverse.transform.getClass()), cause);
         }
         return range;

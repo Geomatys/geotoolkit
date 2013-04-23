@@ -116,7 +116,7 @@ public class ReferencingFactory extends org.geotoolkit.factory.Factory implement
     {
         if (object == null) {
             throw new InvalidParameterValueException(Errors.format(
-                    Errors.Keys.NULL_ARGUMENT_$1, name), name, object);
+                    Errors.Keys.NULL_ARGUMENT_1, name), name, object);
         }
     }
 

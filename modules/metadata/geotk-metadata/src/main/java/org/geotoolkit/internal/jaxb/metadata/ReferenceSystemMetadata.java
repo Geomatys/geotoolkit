@@ -182,7 +182,7 @@ public class ReferenceSystemMetadata implements ReferenceSystem, Serializable {
     @Override
     public String toWKT() throws UnsupportedOperationException {
         throw new UnsupportedOperationException(Errors.format(
-                Errors.Keys.ILLEGAL_WKT_FORMAT_$1, ReferenceSystemMetadata.class));
+                Errors.Keys.ILLEGAL_WKT_FORMAT_1, ReferenceSystemMetadata.class));
     }
 
     /**

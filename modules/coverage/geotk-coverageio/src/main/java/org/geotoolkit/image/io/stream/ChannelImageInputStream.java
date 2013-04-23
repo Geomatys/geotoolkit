@@ -170,7 +170,7 @@ public class ChannelImageInputStream extends InputStream implements ImageInputSt
      */
     public ChannelImageInputStream(final ReadableByteChannel channel, final int size) {
         if (size < 2*(Double.SIZE / Byte.SIZE)) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_$2, "size", size));
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_2, "size", size));
         }
         this.channel = channel;
         buffer = ByteBuffer.allocate(size);
@@ -194,7 +194,7 @@ public class ChannelImageInputStream extends InputStream implements ImageInputSt
         this.channel = channel;
         this.buffer  = buffer;
         if (buffer.capacity() < 2*(Double.SIZE / Byte.SIZE)) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_$1, "buffer"));
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_1, "buffer"));
         }
     }
 
@@ -653,7 +653,7 @@ loop:   while ((c = read()) >= 0) {
     private static void checkRange(int maxLength, final int offset, final int length) {
         if (length < 0 || (maxLength -= length) < 0) {
             throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.ILLEGAL_ARGUMENT_$2, "length", length));
+                    Errors.Keys.ILLEGAL_ARGUMENT_2, "length", length));
         }
         ensureBetween("offset", 0, maxLength, offset);
     }
@@ -1036,7 +1036,7 @@ loop:   while ((c = read()) >= 0) {
         final long relativePosition = pos - bufferPosition;
         if (relativePosition < 0) {
             final long size = length();
-            throw new IndexOutOfBoundsException(Errors.format(Errors.Keys.VALUE_OUT_OF_BOUNDS_$3,
+            throw new IndexOutOfBoundsException(Errors.format(Errors.Keys.VALUE_OUT_OF_BOUNDS_3,
                     pos, bufferPosition, (size >= 0) ? size : "\u221E"));
         }
         if (relativePosition < buffer.limit()) {
@@ -1100,7 +1100,7 @@ loop:   while ((c = read()) >= 0) {
         final long relativePosition = pos - bufferPosition;
         final int  currentPosition  = buffer.position();
         if (relativePosition < 0 || relativePosition > currentPosition) {
-            throw new IndexOutOfBoundsException(Errors.format(Errors.Keys.VALUE_OUT_OF_BOUNDS_$3,
+            throw new IndexOutOfBoundsException(Errors.format(Errors.Keys.VALUE_OUT_OF_BOUNDS_3,
                     pos, bufferPosition, bufferPosition + currentPosition));
         }
         // At this point we know that 'relativePosition' fit in an

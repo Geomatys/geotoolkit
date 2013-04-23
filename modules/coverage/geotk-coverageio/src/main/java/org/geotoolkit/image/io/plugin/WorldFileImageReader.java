@@ -334,7 +334,7 @@ public class WorldFileImageReader extends ImageReaderAdapter {
         @Override
         public String getDescription(final Locale locale) {
             return Vocabulary.getResources(locale).getString(
-                    Vocabulary.Keys.IMAGE_CODEC_WITH_WORLD_FILE_$2, 0, Formats.getDisplayName(main));
+                    Vocabulary.Keys.IMAGE_CODEC_WITH_WORLD_FILE_2, 0, Formats.getDisplayName(main));
         }
 
         /**

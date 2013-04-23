@@ -108,7 +108,7 @@ final class MosaicCoverageReader extends ImageCoverageReader {
     public MosaicCoverageReader(final File input, final boolean generate) throws CoverageStoreException {
         File directory = input.getParentFile(); // May be null.
         if (directory != null && !directory.isDirectory()) {
-            throw new CoverageStoreException(Errors.format(Errors.Keys.NOT_A_DIRECTORY_$1, directory));
+            throw new CoverageStoreException(Errors.format(Errors.Keys.NOT_A_DIRECTORY_1, directory));
         }
         /*
          * Before to perform the more costly operations, try to load the ".prj" file.
@@ -153,12 +153,12 @@ final class MosaicCoverageReader extends ImageCoverageReader {
         final TileWritingPolicy policy;
         if (directory.exists()) {
             if (!directory.isDirectory()) {
-                throw new CoverageStoreException(Errors.format(Errors.Keys.NOT_A_DIRECTORY_$1, directory));
+                throw new CoverageStoreException(Errors.format(Errors.Keys.NOT_A_DIRECTORY_1, directory));
             }
             policy = TileWritingPolicy.NO_WRITE;
         } else {
             if (!directory.mkdir()) {
-                throw new CoverageStoreException(Errors.format(Errors.Keys.CANT_CREATE_DIRECTORY_$1, directory));
+                throw new CoverageStoreException(Errors.format(Errors.Keys.CANT_CREATE_DIRECTORY_1, directory));
             }
             policy = TileWritingPolicy.OVERWRITE;
         }

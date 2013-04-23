@@ -480,7 +480,7 @@ public class NetcdfCRS extends NetcdfIdentifiedObject implements CoordinateRefer
             try {
                 unit = new DateUnit(unitSymbol);
             } catch (Exception e) {
-                throw new IIOException(Errors.format(Errors.Keys.UNKNOWN_UNIT_$1, unitSymbol), e);
+                throw new IIOException(Errors.format(Errors.Keys.UNKNOWN_UNIT_1, unitSymbol), e);
             }
             datum = new DefaultTemporalDatum(unitSymbol, unit.getDateOrigin());
             getAxis(0).unit = Units.multiply(SI.SECOND, unit.getTimeUnit().getValueInSeconds());

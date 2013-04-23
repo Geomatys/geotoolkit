@@ -239,7 +239,7 @@ public final class CRSUtilities extends Static {
                     crs = CRS.getHorizontalCRS(crs);
                     if (crs == null) {
                         throw new TransformException(Errors.format(
-                                Errors.Keys.CANT_REDUCE_TO_TWO_DIMENSIONS_$1, crs.getName()));
+                                Errors.Keys.CANT_REDUCE_TO_TWO_DIMENSIONS_1, crs.getName()));
                     }
                 }
             }

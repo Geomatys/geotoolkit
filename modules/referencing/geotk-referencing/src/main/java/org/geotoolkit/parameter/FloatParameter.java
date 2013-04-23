@@ -102,7 +102,7 @@ public class FloatParameter extends AbstractParameterValue<Double> {
         final Class<Double> expected = Double.class;
         if (!expected.equals(type) && !Double.TYPE.equals(type)) {
             throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.ILLEGAL_CLASS_$2, type, expected));
+                    Errors.Keys.ILLEGAL_CLASS_2, type, expected));
         }
         value = defaultValue(descriptor);
         unit  = descriptor.getUnit();
@@ -168,7 +168,7 @@ public class FloatParameter extends AbstractParameterValue<Double> {
         try {
             return thisUnit.getConverterToAny(unit).convert(doubleValue());
         } catch (ConversionException e) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.INCOMPATIBLE_UNIT_$1, unit), e);
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.INCOMPATIBLE_UNIT_1, unit), e);
         }
     }
 
@@ -206,7 +206,7 @@ public class FloatParameter extends AbstractParameterValue<Double> {
         final String name = getName(descriptor);
         if (Double.isNaN(value)) {
             // If a default value existed, it should has been copied by the constructor or setter methods.
-            throw new IllegalStateException(Errors.format(Errors.Keys.NO_PARAMETER_$1, name));
+            throw new IllegalStateException(Errors.format(Errors.Keys.NO_PARAMETER_1, name));
         }
         throw new InvalidParameterTypeException(getClassTypeError(), name);
     }
@@ -221,7 +221,7 @@ public class FloatParameter extends AbstractParameterValue<Double> {
     public boolean booleanValue() throws IllegalStateException {
         final double value = doubleValue();
         if (Double.isNaN(value)) {
-            throw new IllegalStateException(Errors.format(Errors.Keys.NO_PARAMETER_$1, getName(descriptor)));
+            throw new IllegalStateException(Errors.format(Errors.Keys.NO_PARAMETER_1, getName(descriptor)));
         }
         return value != 0;
     }
@@ -236,7 +236,7 @@ public class FloatParameter extends AbstractParameterValue<Double> {
     public String stringValue() throws IllegalStateException {
         final double value = doubleValue();
         if (Double.isNaN(value)) {
-            throw new IllegalStateException(Errors.format(Errors.Keys.NO_PARAMETER_$1, getName(descriptor)));
+            throw new IllegalStateException(Errors.format(Errors.Keys.NO_PARAMETER_1, getName(descriptor)));
         }
         return String.valueOf(value);
     }
@@ -292,7 +292,7 @@ public class FloatParameter extends AbstractParameterValue<Double> {
      * Format an error message for illegal method call for the current value type.
      */
     private static String getClassTypeError() {
-        return Errors.format(Errors.Keys.ILLEGAL_OPERATION_FOR_VALUE_CLASS_$1, Double.class);
+        return Errors.format(Errors.Keys.ILLEGAL_OPERATION_FOR_VALUE_CLASS_1, Double.class);
     }
 
     /**
@@ -340,7 +340,7 @@ public class FloatParameter extends AbstractParameterValue<Double> {
                 try {
                     converted = unit.getConverterToAny(targetUnit).convert(value);
                 } catch (ConversionException e) {
-                    throw new IllegalArgumentException(Errors.format(Errors.Keys.INCOMPATIBLE_UNIT_$1, unit), e);
+                    throw new IllegalArgumentException(Errors.format(Errors.Keys.INCOMPATIBLE_UNIT_1, unit), e);
                 }
             }
         }

@@ -237,7 +237,7 @@ public class Envelope2D extends org.apache.sis.geometry.Envelope2D implements Cl
             final int dimension = envelope.getDimension();
             if (dimension != 2) {
                 throw new MismatchedDimensionException(Errors.format(
-                        Errors.Keys.NOT_TWO_DIMENSIONAL_$1, dimension));
+                        Errors.Keys.NOT_TWO_DIMENSIONAL_1, dimension));
             }
             final DirectPosition lower = envelope.getLowerCorner();
             final DirectPosition upper = envelope.getUpperCorner();
@@ -291,7 +291,7 @@ public class Envelope2D extends org.apache.sis.geometry.Envelope2D implements Cl
      * Creates an exception for an index out of bounds.
      */
     private static IndexOutOfBoundsException indexOutOfBounds(final int dimension) {
-        return new IndexOutOfBoundsException(Errors.format(Errors.Keys.INDEX_OUT_OF_BOUNDS_$1, dimension));
+        return new IndexOutOfBoundsException(Errors.format(Errors.Keys.INDEX_OUT_OF_BOUNDS_1, dimension));
     }
 
     /**

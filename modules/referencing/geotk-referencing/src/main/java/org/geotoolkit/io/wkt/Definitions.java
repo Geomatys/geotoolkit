@@ -188,7 +188,7 @@ final class Definitions extends AbstractMap<String,String> implements Serializab
          */
         ArgumentChecks.ensureNonNull("identifier", identifier);
         if (!Strings.isJavaIdentifier(identifier)) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_IDENTIFIER_$1, identifier));
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_IDENTIFIER_1, identifier));
         }
         if (value == null || value.trim().isEmpty()) {
             throw new IllegalArgumentException(Errors.format(Errors.Keys.NO_WKT_DEFINITION));
@@ -204,7 +204,7 @@ final class Definitions extends AbstractMap<String,String> implements Serializab
                 previous = definitions.put(identifier, parsed);
             } else {
                 throw new IllegalArgumentException(Errors.format(
-                        Errors.Keys.ILLEGAL_ARGUMENT_$2, identifier, value));
+                        Errors.Keys.ILLEGAL_ARGUMENT_2, identifier, value));
             }
         } else {
             /*
@@ -217,7 +217,7 @@ final class Definitions extends AbstractMap<String,String> implements Serializab
                 object = parser.parseObject(value);
             } catch (ParseException e) {
                 throw new IllegalArgumentException(Errors.format(
-                        Errors.Keys.ILLEGAL_ARGUMENT_$1, identifier), e);
+                        Errors.Keys.ILLEGAL_ARGUMENT_1, identifier), e);
             }
             previous = definitions.put(identifier, new Parsed(value, object));
         }

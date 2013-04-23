@@ -211,7 +211,7 @@ public class EpsgInstaller implements Callable<EpsgInstaller.Result> {
      */
     public synchronized void setDatabase(final Connection connection) throws SQLException {
         if (connection == null) {
-            throw new NullArgumentException(Errors.format(Errors.Keys.NULL_ARGUMENT_$1, "connection"));
+            throw new NullArgumentException(Errors.format(Errors.Keys.NULL_ARGUMENT_1, "connection"));
         }
         final DatabaseMetaData metadata = connection.getMetaData();
         databaseURL    = metadata.getURL();
@@ -418,7 +418,7 @@ public class EpsgInstaller implements Callable<EpsgInstaller.Result> {
              * is the opposite of the other case which occurs as a result of explicit call.
              */
             final LogRecord log = Loggings.format(Level.INFO,
-                    Loggings.Keys.CREATING_CACHED_EPSG_DATABASE_$1, EPSG_VERSION);
+                    Loggings.Keys.CREATING_CACHED_EPSG_DATABASE_1, EPSG_VERSION);
             log.setSourceMethodName("call");
             log.setSourceClassName(EpsgInstaller.class.getName());
             log.setLoggerName(ThreadedEpsgFactory.LOGGER.getName());
@@ -428,7 +428,7 @@ public class EpsgInstaller implements Callable<EpsgInstaller.Result> {
                 final InputStream in = EpsgScriptRunner.class.getResourceAsStream(script);
                 if (in == null) {
                     throw new FileNotFoundException(Errors.format(
-                            Errors.Keys.FILE_DOES_NOT_EXIST_$1, script));
+                            Errors.Keys.FILE_DOES_NOT_EXIST_1, script));
                 }
                 numRows += runner.run(in);
                 // The stream will be closed by the run method.
@@ -472,7 +472,7 @@ public class EpsgInstaller implements Callable<EpsgInstaller.Result> {
          */
         @Override
         public String toString() {
-            return Descriptions.format(Descriptions.Keys.INSERTED_ROWS_$2, numRows, elapsedTime/1000.0);
+            return Descriptions.format(Descriptions.Keys.INSERTED_ROWS_2, numRows, elapsedTime/1000.0);
         }
     }
 }

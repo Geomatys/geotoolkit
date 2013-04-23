@@ -94,7 +94,7 @@ class NetcdfGridToCRS extends AbstractMathTransform implements SeparableTransfor
             }
         }
         throw new IllegalArgumentException(Errors.format(
-                Errors.Keys.ILLEGAL_ARGUMENT_$2, "sourceDimension", sourceDimension));
+                Errors.Keys.ILLEGAL_ARGUMENT_2, "sourceDimension", sourceDimension));
     }
 
     /**

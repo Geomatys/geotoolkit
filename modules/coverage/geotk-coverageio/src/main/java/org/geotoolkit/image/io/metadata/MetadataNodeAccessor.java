@@ -462,7 +462,7 @@ public class MetadataNodeAccessor extends MetadataNodeParser {
             ((IIOMetadataNode) element).setUserObject(value);
         } else if (value!=null && asText==null) {
             throw new UnsupportedImplementationException(getErrorResources().getString(
-                    Errors.Keys.ILLEGAL_CLASS_$2, Classes.getClass(element), IIOMetadataNode.class));
+                    Errors.Keys.ILLEGAL_CLASS_2, Classes.getClass(element), IIOMetadataNode.class));
         }
         element.setNodeValue(asText);
     }

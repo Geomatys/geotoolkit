@@ -279,12 +279,12 @@ public class MetadataTreeFormat extends Format {
         final Class<?> type = destination.getClass();
         final PropertyAccessor accessor = standard.getAccessorOptional(type);
         if (accessor == null) {
-            throw new ParseException(Errors.format(Errors.Keys.UNKNOWN_TYPE_$1, type), 0);
+            throw new ParseException(Errors.format(Errors.Keys.UNKNOWN_TYPE_1, type), 0);
         }
         final int duplicated = parse(node, type, destination, null, accessor);
         if (duplicated != 0) {
             final LogRecord record = Errors.getResources(displayLocale).getLogRecord(
-                    Level.WARNING, Errors.Keys.DUPLICATED_VALUES_COUNT_$1, duplicated);
+                    Level.WARNING, Errors.Keys.DUPLICATED_VALUES_COUNT_1, duplicated);
             record.setSourceClassName("MetadataTreeFormat");
             record.setSourceMethodName("parse");
             record.setLoggerName(LOGGER.getName());
@@ -342,7 +342,7 @@ public class MetadataTreeFormat extends Format {
                  * that are not properly formatted, but still understandable in some way.
                  */
                 if (addTo == null) {
-                    throw new ParseException(Errors.format(Errors.Keys.DUPLICATED_VALUES_FOR_KEY_$1, name), 0);
+                    throw new ParseException(Errors.format(Errors.Keys.DUPLICATED_VALUES_FOR_KEY_1, name), 0);
                 }
                 // Something would be wrong with the 'done' map if the following assertion fails.
                 assert (metadata != null) : done;
@@ -359,13 +359,13 @@ public class MetadataTreeFormat extends Format {
              */
             final int index = accessor.indexOf(name);
             if (index < 0) {
-                throw new ParseException(Errors.format(Errors.Keys.UNKNOWN_PARAMETER_NAME_$1, name), 0);
+                throw new ParseException(Errors.format(Errors.Keys.UNKNOWN_PARAMETER_NAME_1, name), 0);
             }
             Class<?> childType = accessor.type(index, TypeValuePolicy.ELEMENT_TYPE);
             if (childType == null) {
                 // The type of the parameter is unknown (actually the message is a bit
                 // misleading since it doesn't said that only the type is unknown).
-                throw new ParseException(Errors.format(Errors.Keys.UNKNOWN_PARAMETER_$1, name), 0);
+                throw new ParseException(Errors.format(Errors.Keys.UNKNOWN_PARAMETER_1, name), 0);
             }
             childType = standard.getImplementation(childType);
             /*
@@ -452,7 +452,7 @@ public class MetadataTreeFormat extends Format {
              * including the checked ones (it bypass the compile-time exception checking).
              */
             ParseException exception = new ParseException(Errors.format(
-                    Errors.Keys.CANT_CREATE_OBJECT_FROM_TEXT_$1, type), 0);
+                    Errors.Keys.CANT_CREATE_OBJECT_FROM_TEXT_1, type), 0);
             exception.initCause(cause);
             throw exception;
         }
@@ -967,6 +967,6 @@ public class MetadataTreeFormat extends Format {
             if (name.equals("Metadata")) return org.opengis.metadata.Metadata.class;
             if (name.equals("Citation")) return org.opengis.metadata.citation.Citation.class;
         }
-        throw new ParseException(Errors.format(Errors.Keys.UNKNOWN_TYPE_$1, name), 0);
+        throw new ParseException(Errors.format(Errors.Keys.UNKNOWN_TYPE_1, name), 0);
     }
 }

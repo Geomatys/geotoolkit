@@ -95,7 +95,7 @@ public class CheckedHashMap<K,V> extends LinkedHashMap<K,V> implements Cloneable
     {
         if (element!=null && !type.isInstance(element)) {
             throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.ILLEGAL_CLASS_$2, element.getClass(), type));
+                    Errors.Keys.ILLEGAL_CLASS_2, element.getClass(), type));
         }
     }
 

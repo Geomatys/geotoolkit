@@ -736,7 +736,7 @@ public class DefaultCoordinateSystemAxis extends AbstractIdentifiedObject implem
         ensureNonNull("unit",         unit);
         ensureNonNull("rangeMeaning", rangeMeaning);
         if (!(minimum < maximum)) { // Use '!' for catching NaN
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_RANGE_$2, minimum, maximum));
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_RANGE_2, minimum, maximum));
         }
     }
 
@@ -1010,7 +1010,7 @@ public class DefaultCoordinateSystemAxis extends AbstractIdentifiedObject implem
             return candidate;
         }
         throw new NoSuchElementException(
-                Errors.format(Errors.Keys.UNKNOWN_AXIS_DIRECTION_$1, direction));
+                Errors.format(Errors.Keys.UNKNOWN_AXIS_DIRECTION_1, direction));
     }
 
     /**

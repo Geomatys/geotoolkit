@@ -118,7 +118,7 @@ public class DefaultRepresentativeFraction extends Number implements Representat
             //       we can't represent a negative zero using 'long' primitive type.
             return new DefaultRepresentativeFraction(Math.round(1.0 / scale)); // flip!
         } else {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_$2, "scale", scale));
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_2, "scale", scale));
         }
     }
 

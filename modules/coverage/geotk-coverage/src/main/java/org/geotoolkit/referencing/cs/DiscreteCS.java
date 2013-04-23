@@ -132,7 +132,7 @@ class DiscreteCS implements CoordinateSystem, GridGeometry, Serializable {
         final int dimension = cs.getDimension();
         if (dimension != ordinates.length) {
             throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.MISMATCHED_DIMENSION_$3, "ordinates", ordinates.length, dimension));
+                    Errors.Keys.MISMATCHED_DIMENSION_3, "ordinates", ordinates.length, dimension));
         }
         axes = new DiscreteCoordinateSystemAxis<?>[dimension];
         for (int i=0; i<dimension; i++) {

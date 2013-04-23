@@ -202,7 +202,7 @@ public class AsciiGridWriter extends TextImageWriter {
                 xll = "XLLCENTER";
             } else {
                 throw new ImageMetadataException(Warnings.message(this,
-                        Errors.Keys.ILLEGAL_PARAMETER_VALUE_$2, "pointInPixel", ptInPixel));
+                        Errors.Keys.ILLEGAL_PARAMETER_VALUE_2, "pointInPixel", ptInPixel));
             }
         }
         header.put(xll, String.valueOf(gridToCRS.getTranslateX()));

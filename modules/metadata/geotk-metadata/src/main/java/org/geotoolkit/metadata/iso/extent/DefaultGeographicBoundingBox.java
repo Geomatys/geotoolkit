@@ -420,8 +420,8 @@ public class DefaultGeographicBoundingBox extends AbstractGeographicExtent
             return;
         }
         String message = Vocabulary.format(propertyKey);
-        message = Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_$1, message);
-        message = message + ' ' + Errors.format(Errors.Keys.ILLEGAL_RANGE_$2, min, max);
+        message = Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_1, message);
+        message = message + ' ' + Errors.format(Errors.Keys.ILLEGAL_RANGE_2, min, max);
         throw new IllegalArgumentException(message);
     }
 
@@ -507,7 +507,7 @@ public class DefaultGeographicBoundingBox extends AbstractGeographicExtent
         final Boolean inc1 =     getInclusion(); ensureNonNull("inclusion", inc1);
         final Boolean inc2 = box.getInclusion(); ensureNonNull("inclusion", inc2);
         if (inc1.booleanValue() != inc2.booleanValue()) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_$1, "box"));
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_1, "box"));
         }
         final double xmin = box.getWestBoundLongitude();
         final double xmax = box.getEastBoundLongitude();

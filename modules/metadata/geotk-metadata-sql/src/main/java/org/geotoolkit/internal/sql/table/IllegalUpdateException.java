@@ -58,7 +58,7 @@ public class IllegalUpdateException extends CatalogException {
      * @since 3.13
      */
     public IllegalUpdateException(final Locale locale, final int count) {
-        this(Errors.getResources(locale).getString(Errors.Keys.UNEXPECTED_UPDATES_$1, count));
+        this(Errors.getResources(locale).getString(Errors.Keys.UNEXPECTED_UPDATES_1, count));
     }
 
     /**

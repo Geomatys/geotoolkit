@@ -89,7 +89,7 @@ public final class ControlPanel extends JPanel implements ActionListener {
     public static void show(final Locale locale) {
         Installation.allowSystemPreferences = true;
         final Vocabulary resources = Vocabulary.getResources(locale);
-        final JFrame frame = new JFrame(resources.getString(Vocabulary.Keys.INSTALLATION_$1, "Geotoolkit.org"));
+        final JFrame frame = new JFrame(resources.getString(Vocabulary.Keys.INSTALLATION_1, "Geotoolkit.org"));
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.add(new ControlPanel(resources));
         frame.pack();
@@ -108,7 +108,7 @@ public final class ControlPanel extends JPanel implements ActionListener {
         final Vocabulary resources = Vocabulary.getResources(desktop.getLocale());
         final ControlPanel panel = new ControlPanel(resources);
         final JInternalFrame frame = new JInternalFrame(resources.getString(
-                Vocabulary.Keys.INSTALLATION_$1, "Geotoolkit.org"), true, true);
+                Vocabulary.Keys.INSTALLATION_1, "Geotoolkit.org"), true, true);
         desktop.add(frame);
         panel.disposeOnClose = frame;
         frame.add(panel);

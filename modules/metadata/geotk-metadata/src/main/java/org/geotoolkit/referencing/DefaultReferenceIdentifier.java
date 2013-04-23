@@ -385,7 +385,7 @@ public class DefaultReferenceIdentifier implements ReferenceIdentifier, Deprecab
             key=   REMARKS_KEY; this.remarks   = (InternationalString) (value = remarks);
         } catch (ClassCastException exception) {
             throw new InvalidParameterValueException(
-                    Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_$2, key, value), exception, key, value);
+                    Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_2, key, value), exception, key, value);
         }
         ensureNonNull(CODE_KEY, code);
     }

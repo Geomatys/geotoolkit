@@ -97,17 +97,17 @@ final class DataPanel extends JComponent {
             final int button;
             switch (i) {
                 case EPSG: {
-                    label = resources.getString(Vocabulary.Keys.DATA_BASE_$1, "EPSG");
+                    label = resources.getString(Vocabulary.Keys.DATA_BASE_1, "EPSG");
                     button = Vocabulary.Keys.INSTALL;
                     break;
                 }
                 case NADCON: {
-                    label = resources.getString(Vocabulary.Keys.DATA_$1, "NADCON");
+                    label = resources.getString(Vocabulary.Keys.DATA_1, "NADCON");
                     button = Vocabulary.Keys.DOWNLOAD;
                     break;
                 }
                 case RGF93: {
-                    label = resources.getString(Vocabulary.Keys.DATA_$1, "RGF93");
+                    label = resources.getString(Vocabulary.Keys.DATA_1, "RGF93");
                     button = Vocabulary.Keys.DOWNLOAD;
                     break;
                 }

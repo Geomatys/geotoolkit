@@ -230,7 +230,7 @@ public final class IOUtilities extends Static {
              * should succeed, so a failure can actually be considered as a malformed URL.
              */
             final MalformedURLException e = new MalformedURLException(concatenate(
-                    Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_$2, "URL", path), cause));
+                    Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_2, "URL", path), cause));
             e.initCause(cause);
             throw e;
         }
@@ -274,7 +274,7 @@ public final class IOUtilities extends Static {
              * the fragment part can not represent an existing file.
              */
             final MalformedURLException e = new MalformedURLException(concatenate(
-                    Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_$2, "URL", url), cause));
+                    Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_2, "URL", url), cause));
             e.initCause(cause);
             throw e;
         }
@@ -356,7 +356,7 @@ public final class IOUtilities extends Static {
                  * because the scheme pretended that we had a file URI.
                  */
                 final IOException e = new MalformedURLException(concatenate(
-                        Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_$2, "URI", path), cause));
+                        Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_2, "URI", path), cause));
                 e.initCause(cause);
                 throw e;
             }
@@ -576,7 +576,7 @@ public final class IOUtilities extends Static {
         for (int i=0; i<numCol; i++) {
             if (!tokens.hasMoreTokens()) {
                 throw new ContentFormatException(Errors.format(
-                        Errors.Keys.LINE_TOO_SHORT_$2, i, numCol));
+                        Errors.Keys.LINE_TOO_SHORT_2, i, numCol));
             }
             final String token = tokens.nextToken();
             final double value;
@@ -584,12 +584,12 @@ public final class IOUtilities extends Static {
                 value = Double.parseDouble(token);
             } catch (NumberFormatException e) {
                 throw new ContentFormatException(concatenate(
-                        Errors.format(Errors.Keys.UNPARSABLE_NUMBER_$1, token), e), e);
+                        Errors.format(Errors.Keys.UNPARSABLE_NUMBER_1, token), e), e);
             }
             grid[offset + i] = value;
         }
         if (tokens.hasMoreElements()) {
-            throw new ContentFormatException(Errors.format(Errors.Keys.LINE_TOO_LONG_$3,
+            throw new ContentFormatException(Errors.format(Errors.Keys.LINE_TOO_LONG_3,
                     numCol+tokens.countTokens(), numCol, tokens.nextToken()));
         }
     }
@@ -614,7 +614,7 @@ public final class IOUtilities extends Static {
         for (int i=0; i<numCol; i++) {
             if (!tokens.hasMoreTokens()) {
                 throw new ContentFormatException(Errors.format(
-                        Errors.Keys.LINE_TOO_SHORT_$2, i, numCol));
+                        Errors.Keys.LINE_TOO_SHORT_2, i, numCol));
             }
             final String token = tokens.nextToken();
             final float value;
@@ -622,12 +622,12 @@ public final class IOUtilities extends Static {
                 value = Float.parseFloat(token);
             } catch (NumberFormatException e) {
                 throw new ContentFormatException(concatenate(
-                        Errors.format(Errors.Keys.UNPARSABLE_NUMBER_$1, token), e), e);
+                        Errors.format(Errors.Keys.UNPARSABLE_NUMBER_1, token), e), e);
             }
             grid[offset + i] = value;
         }
         if (tokens.hasMoreElements()) {
-            throw new ContentFormatException(Errors.format(Errors.Keys.LINE_TOO_LONG_$3,
+            throw new ContentFormatException(Errors.format(Errors.Keys.LINE_TOO_LONG_3,
                     numCol+tokens.countTokens(), numCol, tokens.nextToken()));
         }
     }
@@ -661,7 +661,7 @@ public final class IOUtilities extends Static {
             final File file = new File(target, entry.getName());
             if (entry.isDirectory()) {
                 if (!file.isDirectory() && !file.mkdir()) {
-                    throw new IOException(Errors.format(Errors.Keys.CANT_CREATE_DIRECTORY_$1, file));
+                    throw new IOException(Errors.format(Errors.Keys.CANT_CREATE_DIRECTORY_1, file));
                 }
                 continue;
             }

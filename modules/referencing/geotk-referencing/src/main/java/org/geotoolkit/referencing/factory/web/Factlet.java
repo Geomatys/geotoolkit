@@ -79,7 +79,7 @@ abstract class Factlet {
         if (!SI.METRE.equals(unit)) {
             if (!Units.isLinear(unit)) {
                 throw new NoSuchAuthorityCodeException(Errors.format(
-                        Errors.Keys.NON_LINEAR_UNIT_$1, unit), code.authority,
+                        Errors.Keys.NON_LINEAR_UNIT_1, unit), code.authority,
                         String.valueOf(code.code), code.toString());
             }
             cs = cs.usingUnit(unit);

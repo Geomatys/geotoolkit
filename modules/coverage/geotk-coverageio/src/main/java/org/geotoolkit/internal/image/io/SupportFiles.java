@@ -244,7 +244,7 @@ attmpt: for (int caseNumber=0; ; caseNumber++) {
             if (renamed != null) {
                 return renamed;
             }
-            throw new IIOException(Errors.format(Errors.Keys.UNKNOWN_TYPE_$1, path.getClass()));
+            throw new IIOException(Errors.format(Errors.Keys.UNKNOWN_TYPE_1, path.getClass()));
         }
         return path;
     }
@@ -322,7 +322,7 @@ attmpt: for (int caseNumber=0; ; caseNumber++) {
         file = toSupportFile(file, toSuffixTFW(file), true);
         if (!file.isFile()) {
             // Formats our own error message instead of the JSE one in order to localize it.
-            throw new FileNotFoundException(Errors.format(Errors.Keys.FILE_DOES_NOT_EXIST_$1, file.getName()));
+            throw new FileNotFoundException(Errors.format(Errors.Keys.FILE_DOES_NOT_EXIST_1, file.getName()));
         }
         return parseTFW(new FileInputStream(file), file.getName());
     }
@@ -355,7 +355,7 @@ attmpt: for (int caseNumber=0; ; caseNumber++) {
                     m[count++] = Double.parseDouble(line);
                 } catch (NumberFormatException e) {
                     in.close();
-                    throw new ContentFormatException(Errors.format(Errors.Keys.ILLEGAL_LINE_IN_FILE_$2,
+                    throw new ContentFormatException(Errors.format(Errors.Keys.ILLEGAL_LINE_IN_FILE_2,
                             IOUtilities.name(filename), in.getLineNumber()), e);
                 }
             }
