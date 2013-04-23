@@ -21,6 +21,7 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.MissingResourceException;
 import org.opengis.util.InternationalString;
+import org.apache.sis.util.resources.IndexedResourceBundle;
 import org.geotoolkit.util.ResourceInternationalString;
 
 
@@ -143,7 +144,7 @@ public final class Descriptions extends IndexedResourceBundle {
      *
      * @param filename The file or the JAR entry containing resources.
      */
-    Descriptions(final String filename) {
+    public Descriptions(final java.net.URL filename) {
         super(filename);
     }
 

@@ -19,8 +19,12 @@ package org.geotoolkit.resources;
 
 import java.util.Locale;
 import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 import java.util.logging.LogRecord;
 import java.util.logging.Level;
+import java.text.MessageFormat;
+import org.apache.sis.util.resources.IndexedResourceBundle;
+import org.geotoolkit.util.logging.Logging;
 
 
 /**
@@ -403,7 +407,7 @@ public final class Loggings extends IndexedResourceBundle {
      *
      * @param filename The file or the JAR entry containing resources.
      */
-    Loggings(final String filename) {
+    public Loggings(final java.net.URL filename) {
         super(filename);
     }
 
@@ -510,5 +514,59 @@ public final class Loggings extends IndexedResourceBundle {
                                    final Object arg3) throws MissingResourceException
     {
         return getResources(null).getLogRecord(level, key, arg0, arg1, arg2, arg3);
+    }
+
+    /**
+     * Localizes and formats the message string from a log record. This method performs a work
+     * similar to {@link java.util.logging.Formatter#formatMessage}, except that the work will be
+     * delegated to {@link #getString(int, Object)} if the {@linkplain LogRecord#getResourceBundle
+     * record resource bundle} is an instance of {@code IndexedResourceBundle}.
+     *
+     * @param  record The log record to format.
+     * @return The formatted message.
+     */
+    public static String format(final LogRecord record) {
+        String message = record.getMessage();
+        final ResourceBundle resources = record.getResourceBundle();
+        if (resources instanceof IndexedResourceBundle) {
+            int key = -1;
+            try {
+                key = Integer.parseInt(message);
+            } catch (NumberFormatException e) {
+                 unexpectedException(e);
+            }
+            if (key >= 0) {
+                final Object[] parameters = record.getParameters();
+                return ((IndexedResourceBundle) resources).getString(key, parameters);
+            }
+        }
+        if (resources != null) {
+            try {
+                message = resources.getString(message);
+            } catch (MissingResourceException e) {
+                unexpectedException(e);
+            }
+            final Object[] parameters = record.getParameters();
+            if (parameters != null && parameters.length != 0) {
+                final int offset = message.indexOf('{');
+                if (offset >= 0 && offset < message.length()-1) {
+                    // Uses a more restrictive check than Character.isDigit(char)
+                    final char c = message.charAt(offset);
+                    if (c>='0' && c<='9') try {
+                        return MessageFormat.format(message, parameters);
+                    } catch (IllegalArgumentException e) {
+                        unexpectedException(e);
+                    }
+                }
+            }
+        }
+        return message;
+    }
+
+    /**
+     * Invoked when an unexpected exception occurred in the {@link #format} method.
+     */
+    private static void unexpectedException(final RuntimeException exception) {
+        Logging.unexpectedException(IndexedResourceBundle.class, "format", exception);
     }
 }

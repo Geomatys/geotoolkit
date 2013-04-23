@@ -48,7 +48,8 @@ import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.resources.Locales;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.resources.IndexedResourceBundle;
+import org.geotoolkit.resources.Loggings;
+import org.apache.sis.util.resources.IndexedResourceBundle;
 import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
 import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
@@ -1212,7 +1213,7 @@ public abstract class SpatialImageReader extends ImageReader implements WarningP
             LOGGER.log(record);
             return false;
         } else {
-            processWarningOccurred(IndexedResourceBundle.format(record));
+            processWarningOccurred(Loggings.format(record));
             return true;
         }
     }

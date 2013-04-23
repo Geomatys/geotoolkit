@@ -29,7 +29,7 @@ import org.opengis.referencing.cs.AxisDirection;
 import org.apache.sis.util.ArraysExt;
 
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.resources.IndexedResourceBundle;
+import org.apache.sis.util.resources.IndexedResourceBundle;
 import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.internal.image.io.Warnings;

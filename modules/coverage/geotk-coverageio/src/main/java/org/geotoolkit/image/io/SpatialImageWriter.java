@@ -44,7 +44,8 @@ import org.geotoolkit.util.Disposable;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Locales;
-import org.geotoolkit.resources.IndexedResourceBundle;
+import org.geotoolkit.resources.Loggings;
+import org.apache.sis.util.resources.IndexedResourceBundle;
 
 import static org.geotoolkit.image.io.SpatialImageReader.Spi.getMetadataFormatCode;
 import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMAT_NAME;
@@ -496,7 +497,7 @@ public abstract class SpatialImageWriter extends ImageWriter implements WarningP
             LOGGER.log(record);
             return false;
         } else {
-            processWarningOccurred(IndexedResourceBundle.format(record));
+            processWarningOccurred(Loggings.format(record));
             return true;
         }
     }

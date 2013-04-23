@@ -19,6 +19,7 @@ package org.geotoolkit.resources;
 
 import java.util.Locale;
 import java.util.MissingResourceException;
+import org.apache.sis.util.resources.IndexedResourceBundle;
 
 
 /**
@@ -194,7 +195,7 @@ public final class Wizards extends IndexedResourceBundle {
      *
      * @param filename The file or the JAR entry containing resources.
      */
-    Wizards(final String filename) {
+    public Wizards(final java.net.URL filename) {
         super(filename);
     }
 

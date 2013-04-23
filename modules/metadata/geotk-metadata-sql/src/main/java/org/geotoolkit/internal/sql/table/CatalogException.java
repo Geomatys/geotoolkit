@@ -24,7 +24,7 @@ import java.sql.SQLNonTransientException;
 import java.util.Locale;
 
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.resources.IndexedResourceBundle;
+import org.apache.sis.util.resources.IndexedResourceBundle;
 import org.geotoolkit.util.converter.Classes;
 
 

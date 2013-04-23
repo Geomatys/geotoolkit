@@ -19,6 +19,7 @@ package org.geotoolkit.resources;
 
 import java.util.Locale;
 import java.util.MissingResourceException;
+import org.apache.sis.util.resources.IndexedResourceBundle;
 
 
 /**
@@ -151,7 +152,7 @@ public final class Widgets extends IndexedResourceBundle {
      *
      * @param filename The file or the JAR entry containing resources.
      */
-    Widgets(final String filename) {
+    public Widgets(final java.net.URL filename) {
         super(filename);
     }
 

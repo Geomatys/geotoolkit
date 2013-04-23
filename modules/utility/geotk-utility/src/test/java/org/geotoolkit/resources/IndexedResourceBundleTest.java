@@ -39,9 +39,6 @@ public final strictfp class IndexedResourceBundleTest {
     @Test
     public void testErrors() {
         Errors resources =       Errors.getResources(Locale.ENGLISH);
-        assertSame   (resources, Errors.getResources(Locale.US));
-        assertSame   (resources, Errors.getResources(Locale.UK));
-        assertSame   (resources, Errors.getResources(Locale.CANADA));
         assertNotSame(resources, Errors.getResources(Locale.FRENCH));
         assertNotSame(resources, Errors.getResources(Locale.GERMAN));
         String s = resources.getString(Errors.Keys.IN_1);
@@ -49,7 +46,6 @@ public final strictfp class IndexedResourceBundleTest {
 
         resources = Errors.getResources(Locale.FRENCH);
         assertNotSame(resources, Errors.getResources(Locale.CANADA));
-        assertSame   (resources, Errors.getResources(Locale.CANADA_FRENCH));
         s = resources.getString(Errors.Keys.IN_1);
         assertTrue(s, s.startsWith("Erreur"));
     }
@@ -62,14 +58,9 @@ public final strictfp class IndexedResourceBundleTest {
         Vocabulary resources;
 
         resources = Vocabulary.getResources(Locale.ENGLISH);
-        assertSame(resources, Vocabulary.getResources(Locale.US));
-        assertSame(resources, Vocabulary.getResources(Locale.UK));
-        assertSame(resources, Vocabulary.getResources(Locale.CANADA));
         assertEquals("North", resources.getString(Vocabulary.Keys.NORTH));
 
         resources = Vocabulary.getResources(Locale.FRENCH);
-        assertSame(resources, Vocabulary.getResources(Locale.FRANCE));
-        assertSame(resources, Vocabulary.getResources(Locale.CANADA_FRENCH));
         assertEquals("Nord", resources.getString(Vocabulary.Keys.NORTH));
     }
 

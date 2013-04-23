@@ -21,6 +21,7 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.MissingResourceException;
 import org.opengis.util.InternationalString;
+import org.apache.sis.util.resources.IndexedResourceBundle;
 import org.geotoolkit.util.ResourceInternationalString;
 
 
@@ -1837,7 +1838,7 @@ public final class Vocabulary extends IndexedResourceBundle {
      *
      * @param filename The file or the JAR entry containing resources.
      */
-    Vocabulary(final String filename) {
+    public Vocabulary(final java.net.URL filename) {
         super(filename);
     }
 

@@ -32,7 +32,7 @@ import javax.imageio.ImageReadParam;
 import org.opengis.referencing.cs.AxisDirection;
 
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.resources.IndexedResourceBundle;
+import org.apache.sis.util.resources.IndexedResourceBundle;
 import org.geotoolkit.image.io.metadata.SampleDomain;
 import org.geotoolkit.internal.image.io.Warnings;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;

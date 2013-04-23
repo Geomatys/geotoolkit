@@ -57,7 +57,7 @@ import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.converter.Numbers;
 import org.geotoolkit.metadata.iso.citation.Citations;
-import org.geotoolkit.resources.IndexedResourceBundle;
+import org.apache.sis.util.resources.IndexedResourceBundle;
 
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 

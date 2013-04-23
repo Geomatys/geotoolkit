@@ -59,7 +59,7 @@ import org.apache.sis.util.logging.PerformanceLevel;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Vocabulary;
-import org.geotoolkit.resources.IndexedResourceBundle;
+import org.apache.sis.util.resources.IndexedResourceBundle;
 import org.geotoolkit.image.io.InvalidImageStoreException;
 import org.geotoolkit.image.io.UnsupportedImageFormatException;
 import org.geotoolkit.internal.Threads;
