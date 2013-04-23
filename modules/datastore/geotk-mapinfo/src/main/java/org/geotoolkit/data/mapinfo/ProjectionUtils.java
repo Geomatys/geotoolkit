@@ -9,6 +9,7 @@ import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.metadata.iso.extent.DefaultExtent;
 import org.geotoolkit.metadata.iso.extent.DefaultGeographicBoundingBox;
+import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.cs.DefaultCartesianCS;
@@ -16,6 +17,8 @@ import org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis;
 import org.geotoolkit.referencing.cs.DefaultEllipsoidalCS;
 import org.geotoolkit.referencing.operation.DefaultMathTransformFactory;
 import org.geotoolkit.referencing.operation.DefaultTransformation;
+import org.geotoolkit.referencing.operation.projection.LambertConformal;
+import org.geotoolkit.referencing.operation.provider.LambertConformal2SP;
 import org.geotoolkit.referencing.operation.provider.UniversalParameters;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.storage.DataStoreException;
@@ -77,7 +80,7 @@ public class ProjectionUtils {
      * @return A string containing projection's parameters. Never null, but can be empty.
      * @throws FactoryException If we can't to retrieve the projection parameters.
      */
-    public static String getMIFProjCoefs(Projection source, int projCode) throws FactoryException {
+    public static String getMIFProjCoefs(Conversion source, int projCode) throws FactoryException {
         final StringBuilder builder = new StringBuilder();
 
         ParameterDescriptor[] paramList = getProjectionParameters(projCode);
@@ -395,11 +398,36 @@ public class ProjectionUtils {
 
         } else if (crs instanceof ProjectedCRS) {
             final ProjectedCRS pCRS = (ProjectedCRS) crs;
-            final Projection proj = pCRS.getConversionFromBase();
+            Conversion proj = pCRS.getConversionFromBase();
             String projCode = IdentifiedObjects.lookupIdentifier(Citations.MAP_INFO, proj.getMethod(), false);
             if(projCode == null) {
-                OperationMethod method = PROJ_FACTORY.getOperationMethod(proj.getMethod().getName().getCode());
-                projCode = IdentifiedObjects.lookupIdentifier(Citations.MAP_INFO, method, false);
+                // If we get a lambert conformal 1SP, we must convert it into 2P to use it.
+                if(IdentifiedObjects.lookupEpsgCode(proj.getMethod(), true).equals(9801)) {
+                    projCode = "3";
+                    OperationMethod method = PROJ_FACTORY.getOperationMethod(MAP_INFO_NAMESPACE+NAMESPACE_SEPARATOR+projCode);
+                    Map<String, Object> properties = new HashMap<String, Object>();
+                    properties.put("name", "Lambert Conformal Conic (2SP)");
+                    properties.put("authority", Citations.MAP_INFO);
+                    ParameterDescriptorGroup desc = method.getParameters();
+                    ParameterValueGroup values = desc.createValue();
+                    Parameters.copy(proj.getParameterValues(), values);
+
+//                    for(GeneralParameterValue source : proj.getParameterValues().values()) {
+//                        values.parameter(source.getDescriptor().getName().getCode())
+//                                .setValue(((ParameterValue) source).getValue());
+//                    }
+                    final String originLat = getName(UniversalParameters.LATITUDE_OF_ORIGIN, proj.getParameterValues().getDescriptor());
+                    final String stParallel1 = getName(UniversalParameters.STANDARD_PARALLEL_1, desc);
+                    final String stParallel2 = getName(UniversalParameters.STANDARD_PARALLEL_2, desc);
+                    values.parameter(stParallel1).setValue(proj.getParameterValues().parameter(originLat).getValue());
+                    values.parameter(stParallel2).setValue(proj.getParameterValues().parameter(originLat).getValue());
+
+                    proj = PROJ_FACTORY.createDefiningConversion(properties, method, values);
+
+                } else {
+                    OperationMethod method = PROJ_FACTORY.getOperationMethod(proj.getMethod().getName().getCode());
+                    projCode = IdentifiedObjects.lookupIdentifier(Citations.MAP_INFO, method, false);
+                }
                 if (projCode == null) {
                     throw new DataStoreException("Projection of the given CRS does not get any equivalent in mapInfo.");
                 }
