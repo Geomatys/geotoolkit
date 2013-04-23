@@ -25,7 +25,7 @@ import org.geotoolkit.gui.swing.tree.Trees;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class AnS57PropertyType implements Serializable {
+public class S57PropertyType implements Serializable {
     String acronym;
     int code;
     String fullName;

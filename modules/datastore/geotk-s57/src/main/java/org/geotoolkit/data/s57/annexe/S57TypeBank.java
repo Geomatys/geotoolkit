@@ -34,6 +34,8 @@ import org.geotoolkit.data.s57.S57FeatureStore;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
+import org.geotoolkit.feature.AttributeDescriptorBuilder;
+import org.geotoolkit.feature.AttributeTypeBuilder;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -113,7 +115,7 @@ public final class S57TypeBank {
         return splitKey(key).getKey();
     }
     
-    public static String getFeatureTypeNamee(int code) throws DataStoreException{
+    public static String getFeatureTypeName(int code) throws DataStoreException{
         String key = FT_CODE_KEY.get(code);
         if(key == null) throw new DataStoreException("No feature type for code : "+ code);
         return splitKey(key).getValue();
@@ -126,7 +128,7 @@ public final class S57TypeBank {
         return splitKey(key).getKey();
     }
     
-    public static String getPropertyTypeNamee(int code) throws DataStoreException{
+    public static String getPropertyTypeName(int code) throws DataStoreException{
         String key = PT_CODE_KEY.get(code);
         if(key == null) throw new DataStoreException("No property type for code : "+ code);
         return splitKey(key).getValue();
@@ -149,7 +151,7 @@ public final class S57TypeBank {
         
         final String values = FEATURE_TYPES.get(key).toString();
         Entry<Integer,String> entry = splitKey(key);
-        final AnS57FeatureType sft = new AnS57FeatureType();
+        final S57FeatureType sft = new S57FeatureType();
         sft.code = entry.getKey();
         sft.acronym = entry.getValue();
         sft.fromFormattedString(values);
@@ -165,44 +167,72 @@ public final class S57TypeBank {
         allAtts.addAll(sft.attC);
 
         for(String att : allAtts){
-            final String propertyKey = PT_ACC_KEY.get(att);
-            if(propertyKey == null) throw new DataStoreException("No property type for name : "+ att);
-            entry = splitKey(propertyKey);
-            final String pvalues = PROPERTY_TYPES.getProperty(propertyKey);
-            final AnS57PropertyType pt = new AnS57PropertyType();
-            pt.code = entry.getKey();
-            pt.acronym = entry.getValue();
-            pt.fromFormattedString(pvalues);
-            
-            Class binding;
-            if("E".equalsIgnoreCase(pt.type)){
-                //enumeration type
-                binding = String.class;
-            }else if("L".equalsIgnoreCase(pt.type)){
-                //enumaration list
-                binding = String.class;
-            }else if("F".equalsIgnoreCase(pt.type)){
-                //float
-                binding = Double.class;
-            }else if("I".equalsIgnoreCase(pt.type)){
-                //integer
-                binding = Integer.class;
-            }else if("A".equalsIgnoreCase(pt.type)){
-                //code string
-                binding = String.class;
-            }else if("S".equalsIgnoreCase(pt.type)){
-                // free text
-                binding = String.class;
-            }else{
-                throw new RuntimeException("unknowned property type : "+pt.type);
-            }
-            final AttributeDescriptor desc = ftb.add(pt.acronym, binding);
-            desc.getUserData().put(S57FeatureStore.S57TYPECODE, pt.code);
+            final AttributeDescriptor attDesc = getAttributeDescriptor(att);
+            ftb.add(attDesc);
         }
 
         final FeatureType ft = ftb.buildFeatureType();   
         // do we need a cache here ?
         return ft;
+    }
+    
+    public static AttributeDescriptor getAttributeDescriptor(final String code) throws DataStoreException{
+        final String key = PT_ACC_KEY.get(code);
+        if(key == null) throw new DataStoreException("No property type for code : "+ code);
+        return getAttributeDescriptorByKey(key);
+    }
+    
+    public static AttributeDescriptor getAttributeDescriptor(final int code) throws DataStoreException{
+        final String key = PT_CODE_KEY.get(code);
+        if(key == null) throw new DataStoreException("No property type for code : "+ code);
+        return getAttributeDescriptorByKey(key);
+    }
+    
+    public static AttributeDescriptor getAttributeDescriptorByKey(final String propertyKey){
+        final Entry<Integer,String> entry = splitKey(propertyKey);
+        
+        final String pvalues = PROPERTY_TYPES.getProperty(propertyKey);
+        final S57PropertyType pt = new S57PropertyType();
+        pt.code = entry.getKey();
+        pt.acronym = entry.getValue();
+        pt.fromFormattedString(pvalues);
+
+        Class binding;
+        if("E".equalsIgnoreCase(pt.type)){
+            //enumeration type
+            binding = String.class;
+        }else if("L".equalsIgnoreCase(pt.type)){
+            //enumaration list
+            binding = String.class;
+        }else if("F".equalsIgnoreCase(pt.type)){
+            //float
+            binding = Double.class;
+        }else if("I".equalsIgnoreCase(pt.type)){
+            //integer
+            binding = Integer.class;
+        }else if("A".equalsIgnoreCase(pt.type)){
+            //code string
+            binding = String.class;
+        }else if("S".equalsIgnoreCase(pt.type)){
+            // free text
+            binding = String.class;
+        }else{
+            throw new RuntimeException("unknowned property type : "+pt.type);
+        }
+        
+        final AttributeTypeBuilder atb = new AttributeTypeBuilder();
+        atb.setName(pt.acronym);
+        atb.setBinding(binding);        
+        final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
+        adb.setName(pt.acronym);
+        adb.setMinOccurs(1);
+        adb.setMaxOccurs(1);
+        adb.setNillable(true);
+        adb.setType(atb.buildType());
+        
+        final AttributeDescriptor attDesc = adb.buildDescriptor();
+        attDesc.getUserData().put(S57FeatureStore.S57TYPECODE, pt.code);
+        return attDesc;
     }
     
     /**

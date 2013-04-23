@@ -22,7 +22,7 @@ import org.geotoolkit.data.iso8211.FieldValueType;
 import org.geotoolkit.data.iso8211.SubFieldDescription;
 
 /**
- * 7.3.11 Agency , see S-62(TODO add all the list)
+ * 7.3.11 Agencices.
  * 
  * LAST UPDATE 11/04/2013 from http://registry.iho.int/s100_gi_registry/home.php
  * 

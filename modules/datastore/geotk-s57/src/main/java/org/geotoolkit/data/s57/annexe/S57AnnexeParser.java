@@ -52,8 +52,8 @@ import org.opengis.feature.type.FeatureType;
  */
 public final class S57AnnexeParser {
 
-    private final Map<String,AnS57FeatureType> s57ftypes;
-    private final Map<String,AnS57PropertyType> s57ptypes;
+    private final Map<String,S57FeatureType> s57ftypes;
+    private final Map<String,S57PropertyType> s57ptypes;
     private final Map<String, FeatureType> featureTypes = new HashMap<String, FeatureType>();
     
     public static void main(String[] args) throws IOException {
@@ -67,13 +67,13 @@ public final class S57AnnexeParser {
         System.out.println(parser.s57ftypes.size());
         System.out.println(parser.s57ptypes.size());
         
-        for(AnS57FeatureType sft : parser.s57ftypes.values()){
+        for(S57FeatureType sft : parser.s57ftypes.values()){
             System.out.println(sft.toFormattedString());
             sft.fromFormattedString(sft.toFormattedString());
         }
         
         System.out.println("---------------------------------");
-        for(AnS57PropertyType sft : parser.s57ptypes.values()){
+        for(S57PropertyType sft : parser.s57ptypes.values()){
             System.out.println(sft.toFormattedString());
             sft.fromFormattedString(sft.toFormattedString());
         }
@@ -96,7 +96,7 @@ public final class S57AnnexeParser {
         FeatureType ft = featureTypes.get(name);
         if(ft!=null) return ft;
         
-        final AnS57FeatureType sft = s57ftypes.get(name);
+        final S57FeatureType sft = s57ftypes.get(name);
         
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName(sft.acronym);
@@ -109,7 +109,7 @@ public final class S57AnnexeParser {
         allAtts.addAll(sft.attC);
 
         for(String att : allAtts){
-            final AnS57PropertyType pt = s57ptypes.get(att);
+            final S57PropertyType pt = s57ptypes.get(att);
             Class binding;
             if("E".equalsIgnoreCase(pt.type)){
                 //enumeration type
@@ -143,7 +143,7 @@ public final class S57AnnexeParser {
     }
     
     public FeatureType getFeatureType(int code){
-        for(AnS57FeatureType sft : s57ftypes.values()){
+        for(S57FeatureType sft : s57ftypes.values()){
             if(sft.code == code){
                 return getFeatureType(sft.acronym);
             }
@@ -152,8 +152,8 @@ public final class S57AnnexeParser {
     }
     
     
-    private static Map<String,AnS57FeatureType> parseFeatureTypes(String path) throws IOException {
-        final Map<String,AnS57FeatureType> featureTypes = new HashMap<String,AnS57FeatureType>();
+    private static Map<String,S57FeatureType> parseFeatureTypes(String path) throws IOException {
+        final Map<String,S57FeatureType> featureTypes = new HashMap<String,S57FeatureType>();
         
         final PdfReader reader = new PdfReader(path);        
         final int nbPages = reader.getNumberOfPages();
@@ -172,7 +172,7 @@ public final class S57AnnexeParser {
                 }
             }
             
-            final AnS57FeatureType type = new AnS57FeatureType();
+            final S57FeatureType type = new S57FeatureType();
             
             final String str = sb.toString();
             
@@ -264,8 +264,8 @@ public final class S57AnnexeParser {
         return featureTypes;
     }
     
-    private static Map<String,AnS57PropertyType> parsePropertyTypes(String path) throws IOException {
-        final Map<String,AnS57PropertyType> propertyTypes = new HashMap<String,AnS57PropertyType>();
+    private static Map<String,S57PropertyType> parsePropertyTypes(String path) throws IOException {
+        final Map<String,S57PropertyType> propertyTypes = new HashMap<String,S57PropertyType>();
         
         final PdfReader reader = new PdfReader(path);        
         final int nbPages = reader.getNumberOfPages();
@@ -284,7 +284,7 @@ public final class S57AnnexeParser {
                 }
             }
             
-            final AnS57PropertyType type = new AnS57PropertyType();            
+            final S57PropertyType type = new S57PropertyType();            
             String str = sb.toString();
             String lstr = str.toLowerCase();
             //System.out.println(str);
