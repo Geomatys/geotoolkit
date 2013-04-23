@@ -177,7 +177,7 @@ final class GridCoverageEntry extends DefaultEntry implements GridCoverageRefere
             } catch (URISyntaxException e) {
                 throw new IOException(e);
             } else {
-                throw new IllegalArgumentException(Errors.format(Errors.Keys.UNKNOWN_TYPE_$1, type));
+                throw new IllegalArgumentException(Errors.format(Errors.Keys.UNKNOWN_TYPE_1, type));
             }
         }
         return type.cast(input);
@@ -392,7 +392,7 @@ final class GridCoverageEntry extends DefaultEntry implements GridCoverageRefere
             if (cause instanceof IOException) {
                 throw (IOException) cause;
             }
-            throw new IIOException(Errors.format(Errors.Keys.CANT_READ_FILE_$1, getName()), e);
+            throw new IIOException(Errors.format(Errors.Keys.CANT_READ_FILE_1, getName()), e);
         }
     }
 

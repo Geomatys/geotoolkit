@@ -292,7 +292,7 @@ public class GeneralMatrix extends GMatrix implements XMatrix {
                 if (search.equals(AxisDirections.absolute(srcAxe))) {
                     if (hasFound) {
                         throw new IllegalArgumentException(Errors.format(
-                                Errors.Keys.COLINEAR_AXIS_$2, srcAxe.name(), dstAxe.name()));
+                                Errors.Keys.COLINEAR_AXIS_2, srcAxe.name(), dstAxe.name()));
                     }
                     hasFound = true;
                     /*
@@ -316,7 +316,7 @@ public class GeneralMatrix extends GMatrix implements XMatrix {
             }
             if (!hasFound) {
                 throw new IllegalArgumentException(Errors.format(
-                        Errors.Keys.NO_SOURCE_AXIS_$1, dstAxis[dstIndex].name()));
+                        Errors.Keys.NO_SOURCE_AXIS_1, dstAxis[dstIndex].name()));
             }
         }
         setElement(dstAxis.length, srcAxis.length, 1);
@@ -338,7 +338,7 @@ public class GeneralMatrix extends GMatrix implements XMatrix {
         final int dim = envelope.getDimension();
         if (dimension != dim) {
             throw new MismatchedDimensionException(Errors.format(
-                    Errors.Keys.MISMATCHED_DIMENSION_$3, name, dim, dimension));
+                    Errors.Keys.MISMATCHED_DIMENSION_3, name, dim, dimension));
         }
     }
 
@@ -519,7 +519,7 @@ public class GeneralMatrix extends GMatrix implements XMatrix {
         int check;
         if ((check=getNumRow()) != 3 || (check=getNumCol()) != 3) {
             throw new IllegalStateException(Errors.format(
-                    Errors.Keys.NOT_TWO_DIMENSIONAL_$1, check-1));
+                    Errors.Keys.NOT_TWO_DIMENSIONAL_1, check-1));
         }
         if (isAffine()) {
             return new AffineMatrix3(getElement(0,0), getElement(1,0),

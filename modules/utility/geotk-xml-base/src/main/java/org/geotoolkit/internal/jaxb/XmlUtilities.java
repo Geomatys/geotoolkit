@@ -80,7 +80,7 @@ public final class XmlUtilities extends Static {
             factory = DatatypeFactory.newInstance();
         } catch (DatatypeConfigurationException e) {
             throw new FactoryNotFoundException(Errors.format(
-                    Errors.Keys.FACTORY_NOT_FOUND_$1, DatatypeFactory.class), e);
+                    Errors.Keys.FACTORY_NOT_FOUND_1, DatatypeFactory.class), e);
         }
         return factory;
     }

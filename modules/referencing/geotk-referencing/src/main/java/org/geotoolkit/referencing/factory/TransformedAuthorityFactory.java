@@ -355,7 +355,7 @@ public class TransformedAuthorityFactory extends AuthorityFactoryAdapter {
             } else {
                 // TODO: Need a createDerivedCRS method.
                 throw new FactoryException(Errors.format(
-                        Errors.Keys.UNSUPPORTED_CRS_$1, crs.getName().getCode()));
+                        Errors.Keys.UNSUPPORTED_CRS_1, crs.getName().getCode()));
             }
         } else if (sameCS) {
             return crs;
@@ -394,7 +394,7 @@ public class TransformedAuthorityFactory extends AuthorityFactoryAdapter {
                 modified = crsFactory.createCompoundCRS(properties, m);
             } else {
                 throw new FactoryException(Errors.format(
-                        Errors.Keys.UNSUPPORTED_CRS_$1, crs.getName().getCode()));
+                        Errors.Keys.UNSUPPORTED_CRS_1, crs.getName().getCode()));
             }
         }
         return pool.unique(modified);
@@ -487,7 +487,7 @@ public class TransformedAuthorityFactory extends AuthorityFactoryAdapter {
                 case 3: return csFactory.createUserDefinedCS(properties, axis[0], axis[1], axis[2]);
             }
         }
-        throw new FactoryException(Errors.format(Errors.Keys.UNSUPPORTED_COORDINATE_SYSTEM_$1, type));
+        throw new FactoryException(Errors.format(Errors.Keys.UNSUPPORTED_COORDINATE_SYSTEM_1, type));
     }
 
     /**

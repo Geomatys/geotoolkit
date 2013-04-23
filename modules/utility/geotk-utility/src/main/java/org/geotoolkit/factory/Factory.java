@@ -254,7 +254,7 @@ public abstract class Factory {
             assert category.isInstance(factory);
             if (!subclasses && !category.isAssignableFrom(type)) {
                 throw new ClassCastException(Errors.format(
-                        Errors.Keys.ILLEGAL_CLASS_$2, type, category));
+                        Errors.Keys.ILLEGAL_CLASS_2, type, category));
             }
             /*
              * The 'exclude' below is the base type of factory to not order, or null if none.
@@ -642,10 +642,10 @@ public abstract class Factory {
                     }
                 }
                 if (message != null) {
-                    explanation = Vocabulary.formatInternational(Vocabulary.Keys.ERROR_$1, message);
+                    explanation = Vocabulary.formatInternational(Vocabulary.Keys.ERROR_1, message);
                 } else {
                     explanation = Descriptions.formatInternational(Descriptions.Keys.
-                            CONFORMANCE_MEANS_FACTORY_AVAILABLE_$1, Factory.this.getClass());
+                            CONFORMANCE_MEANS_FACTORY_AVAILABLE_1, Factory.this.getClass());
                 }
             }
             return explanation;

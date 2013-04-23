@@ -258,7 +258,7 @@ public class Formatter {
         ArgumentChecks.ensureNonNull("symbols", symbols);
         if (indentation < WKTFormat.SINGLE_LINE) {
             throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.ILLEGAL_ARGUMENT_$2, "indentation", indentation));
+                    Errors.Keys.ILLEGAL_ARGUMENT_2, "indentation", indentation));
         }
         this.symbols      = symbols;
         this.colors       = colors;
@@ -493,7 +493,7 @@ public class Formatter {
     private static UnformattableObjectException unsupported(final Object object) {
         final Class<?> type = object.getClass();
         return new UnformattableObjectException(Errors.format(
-                Errors.Keys.ILLEGAL_CLASS_$2, type, Formattable.class), type);
+                Errors.Keys.ILLEGAL_CLASS_2, type, Formattable.class), type);
     }
 
     /**
@@ -818,7 +818,7 @@ public class Formatter {
      */
     public void setLinearUnit(final Unit<Length> unit) throws IllegalArgumentException {
         if (unit != null && !Units.isLinear(unit)) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.NON_LINEAR_UNIT_$1, unit));
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.NON_LINEAR_UNIT_1, unit));
         }
         linearUnit = unit;
     }
@@ -843,7 +843,7 @@ public class Formatter {
      */
     public void setAngularUnit(final Unit<Angle> unit) throws IllegalArgumentException {
         if (unit != null && !Units.isAngular(unit)) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.NON_ANGULAR_UNIT_$1, unit));
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.NON_ANGULAR_UNIT_1, unit));
         }
         angularUnit = unit;
     }

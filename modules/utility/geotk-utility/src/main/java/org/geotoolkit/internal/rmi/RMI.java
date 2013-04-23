@@ -95,7 +95,7 @@ public final class RMI extends Static {
     @Configuration
     public static void setSharedTemporaryDirectory(final File directory) {
         if (directory != null && !directory.isDirectory()) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.NOT_A_DIRECTORY_$1, directory));
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.NOT_A_DIRECTORY_1, directory));
         }
         sharedTemporaryDirectory = directory;
     }

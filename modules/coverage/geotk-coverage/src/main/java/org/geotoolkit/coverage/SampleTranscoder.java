@@ -219,13 +219,13 @@ final class SampleTranscoder extends PointOpImage {
             final GridSampleDimension[] bands = (GridSampleDimension[]) param.getObjectParameter(0);
             final int numBands = source.getSampleModel().getNumBands();
             if (numBands != bands.length) {
-                message.append(Errors.format(Errors.Keys.MISMATCHED_NUMBER_OF_BANDS_$3,
+                message.append(Errors.format(Errors.Keys.MISMATCHED_NUMBER_OF_BANDS_3,
                         numBands, bands.length, "SampleDimension"));
                 return false;
             }
             for (int i=0; i<numBands; i++) {
                 if (bands[i].categories == null) {
-                    message.append(Errors.format(Errors.Keys.ILLEGAL_PARAMETER_VALUE_$2,
+                    message.append(Errors.format(Errors.Keys.ILLEGAL_PARAMETER_VALUE_2,
                             "sampleDimensions["+i+"].categories", null));
                     return false;
                 }
@@ -292,7 +292,7 @@ final class SampleTranscoder extends PointOpImage {
                     org.geotoolkit.internal.image.Setup.PRODUCT_NAME, new CRIF());
         } catch (IllegalArgumentException exception) {
             final LogRecord record = Loggings.format(Level.SEVERE,
-                   Loggings.Keys.CANT_REGISTER_JAI_OPERATION_$1, OPERATION_NAME);
+                   Loggings.Keys.CANT_REGISTER_JAI_OPERATION_1, OPERATION_NAME);
             // Note: GridSampleDimension is the public class that use this transcoder.
             record.setSourceClassName(GridSampleDimension.class.getName());
             record.setSourceMethodName("<classinit>");

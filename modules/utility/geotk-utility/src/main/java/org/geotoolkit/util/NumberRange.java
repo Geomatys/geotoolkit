@@ -419,7 +419,7 @@ public class NumberRange<T extends Number & Comparable<? super T>> extends Range
     private static void ensureNumberClass(final Class<?> type) throws IllegalArgumentException {
         if (!Number.class.isAssignableFrom(type)) {
             throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.ILLEGAL_CLASS_$2, type, Number.class));
+                    Errors.Keys.ILLEGAL_CLASS_2, type, Number.class));
         }
     }
 
@@ -496,7 +496,7 @@ public class NumberRange<T extends Number & Comparable<? super T>> extends Range
     public boolean contains(final Number value) throws IllegalArgumentException {
         if (value != null && !(value instanceof Comparable<?>)) {
             throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.NOT_COMPARABLE_CLASS_$1, value.getClass()));
+                    Errors.Keys.NOT_COMPARABLE_CLASS_1, value.getClass()));
         }
         return contains((Comparable<?>) value);
     }
@@ -688,7 +688,7 @@ public class NumberRange<T extends Number & Comparable<? super T>> extends Range
         } else {
             // Thrown IllegalStateException instead than IllegalArgumentException because
             // the 'type' argument given to this method come from a NumberRange field.
-            throw new IllegalStateException(Errors.format(Errors.Keys.UNKNOWN_TYPE_$1, type));
+            throw new IllegalStateException(Errors.format(Errors.Keys.UNKNOWN_TYPE_1, type));
         }
         if (!up) {
             value = -value;

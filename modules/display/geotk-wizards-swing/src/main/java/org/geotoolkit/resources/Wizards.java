@@ -19,6 +19,7 @@ package org.geotoolkit.resources;
 
 import java.util.Locale;
 import java.util.MissingResourceException;
+import org.apache.sis.util.resources.IndexedResourceBundle;
 
 
 /**
@@ -70,7 +71,7 @@ public final class Wizards extends IndexedResourceBundle {
          * href="http://www.epsg.org">http://www.epsg.org</a>) is sufficient and can be shared by
          * different Coverages database. However having multiple copies is okay.</li></ul></html>
          */
-        public static final int COVERAGE_DATABASE_NOTES_$1 = 3;
+        public static final int COVERAGE_DATABASE_NOTES_1 = 3;
 
         /**
          * New coverage database
@@ -85,7 +86,7 @@ public final class Wizards extends IndexedResourceBundle {
         /**
          * Create the “{0}” and “{1}” roles
          */
-        public static final int CREATE_ROLES_$2 = 6;
+        public static final int CREATE_ROLES_2 = 6;
 
         /**
          * Creating the mosaic
@@ -95,7 +96,7 @@ public final class Wizards extends IndexedResourceBundle {
         /**
          * Creating the {0} schema.
          */
-        public static final int CREATING_SCHEMA_$1 = 8;
+        public static final int CREATING_SCHEMA_1 = 8;
 
         /**
          * A server and a database must be specified.
@@ -175,7 +176,7 @@ public final class Wizards extends IndexedResourceBundle {
         /**
          * Set as the default {0} database
          */
-        public static final int SET_AS_DEFAULT_$1 = 23;
+        public static final int SET_AS_DEFAULT_1 = 23;
 
         /**
          * <html>Use the <cite>Preferences</cite> menu for specifying an existing database,<br>or use
@@ -194,7 +195,7 @@ public final class Wizards extends IndexedResourceBundle {
      *
      * @param filename The file or the JAR entry containing resources.
      */
-    Wizards(final String filename) {
+    public Wizards(final java.net.URL filename) {
         super(filename);
     }
 

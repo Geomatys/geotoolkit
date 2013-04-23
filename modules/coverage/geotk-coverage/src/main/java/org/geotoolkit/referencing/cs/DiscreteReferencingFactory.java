@@ -79,7 +79,7 @@ public final class DiscreteReferencingFactory extends Static {
      */
     private static void ensureNonNull(final String name, final Object object) throws NullArgumentException {
         if (object == null) {
-            throw new NullArgumentException(Errors.format(Errors.Keys.NULL_ARGUMENT_$1, name));
+            throw new NullArgumentException(Errors.format(Errors.Keys.NULL_ARGUMENT_1, name));
         }
     }
 

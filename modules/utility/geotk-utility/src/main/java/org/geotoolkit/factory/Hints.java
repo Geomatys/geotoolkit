@@ -690,7 +690,7 @@ public class Hints extends RenderingHints {
         this(key1, value1, key2, value2);
         if ((pairs.length & 1) != 0) {
             throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.ODD_ARRAY_LENGTH_$1, pairs.length));
+                    Errors.Keys.ODD_ARRAY_LENGTH_1, pairs.length));
         }
         for (int i=0; i<pairs.length;) {
             put(pairs[i++], pairs[i++]);
@@ -777,7 +777,7 @@ public class Hints extends RenderingHints {
     public static Object putSystemDefault(final RenderingHints.Key key, final Object value) {
         if (!key.isCompatibleValue(value)) {
             throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.ILLEGAL_ARGUMENT_$2, nameOf(key), value));
+                    Errors.Keys.ILLEGAL_ARGUMENT_2, nameOf(key), value));
         }
         final Object old = GLOBAL.put(key, value);
         if (!Objects.equals(value, old)) {

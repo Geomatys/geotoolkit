@@ -250,7 +250,7 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
                  * subclass constructor since this is the place where the issue originate.
                  */
                 Logging.log(UnitaryProjection.class, "finish", Loggings.format(Level.WARNING,
-                        Loggings.Keys.CANT_ROLL_LONGITUDE_$1, getClass()));
+                        Loggings.Keys.CANT_ROLL_LONGITUDE_1, getClass()));
             }
         }
         longitudeBound = bound;
@@ -298,7 +298,7 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
         } else {
             name = String.valueOf(parameter);
         }
-        return new IllegalArgumentException(Errors.format(Errors.Keys.UNKNOWN_PARAMETER_$1, name));
+        return new IllegalArgumentException(Errors.format(Errors.Keys.UNKNOWN_PARAMETER_1, name));
     }
 
     /**
@@ -1169,7 +1169,7 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
             }
             final String code = name.getName().getCode();
             throw new InvalidParameterValueException(Errors.format(
-                    Errors.Keys.LONGITUDE_OUT_OF_RANGE_$1, new Longitude(x)), code, x);
+                    Errors.Keys.LONGITUDE_OUT_OF_RANGE_1, new Longitude(x)), code, x);
         }
 
         /**
@@ -1190,7 +1190,7 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
             }
             final String code = name.getName().getCode();
             throw new InvalidParameterValueException(Errors.format(
-                    Errors.Keys.LATITUDE_OUT_OF_RANGE_$1, new Latitude(y)), code, y);
+                    Errors.Keys.LATITUDE_OUT_OF_RANGE_1, new Latitude(y)), code, y);
         }
 
         /**
@@ -1207,7 +1207,7 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
             if (!(abs(abs(y) - expected) < ANGLE_TOLERANCE * (180/PI))) {
                 final String code = name.getName().getCode();
                 throw new InvalidParameterValueException(Errors.format(
-                        Errors.Keys.ILLEGAL_ARGUMENT_$2, code, new Latitude(y)), code, y);
+                        Errors.Keys.ILLEGAL_ARGUMENT_2, code, new Latitude(y)), code, y);
             }
         }
 

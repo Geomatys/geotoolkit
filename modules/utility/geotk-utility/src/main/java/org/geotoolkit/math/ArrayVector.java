@@ -190,7 +190,7 @@ final class ArrayVector extends Vector implements Serializable {
      */
     private ClassCastException cantConvert(final IllegalArgumentException cause) {
         final ClassCastException exception = new ClassCastException(Errors.format(
-                Errors.Keys.CANT_CONVERT_FROM_TYPE_$1, array.getClass().getComponentType()));
+                Errors.Keys.CANT_CONVERT_FROM_TYPE_1, array.getClass().getComponentType()));
         exception.initCause(cause);
         return exception;
     }
@@ -220,7 +220,7 @@ final class ArrayVector extends Vector implements Serializable {
             Array.set(array, index, value);
         } catch (IllegalArgumentException cause) {
             final ArrayStoreException exception = new ArrayStoreException(Errors.format(
-                    Errors.Keys.CANT_CONVERT_FROM_TYPE_$1, Classes.getClass(value)));
+                    Errors.Keys.CANT_CONVERT_FROM_TYPE_1, Classes.getClass(value)));
             exception.initCause(cause);
             throw exception;
         }
@@ -293,7 +293,7 @@ final class ArrayVector extends Vector implements Serializable {
          */
         private static ClassCastException cantConvert() {
             return new ClassCastException(Errors.format(
-                    Errors.Keys.CANT_CONVERT_FROM_TYPE_$1, Double.class));
+                    Errors.Keys.CANT_CONVERT_FROM_TYPE_1, Double.class));
         }
 
         /** Returns the value at the given index. */
@@ -377,7 +377,7 @@ final class ArrayVector extends Vector implements Serializable {
          */
         private static ClassCastException cantConvert() {
             return new ClassCastException(Errors.format(
-                    Errors.Keys.CANT_CONVERT_FROM_TYPE_$1, Float.class));
+                    Errors.Keys.CANT_CONVERT_FROM_TYPE_1, Float.class));
         }
 
         /** Returns the value at the given index. */

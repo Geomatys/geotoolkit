@@ -138,7 +138,7 @@ public final class TransferFunction {
             return expected.cast(tr);
         }
         if (tr != null && warning == null) {
-            warning = Errors.getResources(locale).getString(Errors.Keys.UNKNOWN_TYPE_$1, tr.getClass());
+            warning = Errors.getResources(locale).getString(Errors.Keys.UNKNOWN_TYPE_1, tr.getClass());
         }
         return null;
     }

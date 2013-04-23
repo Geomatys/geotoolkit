@@ -677,7 +677,7 @@ public class NetcdfImageReader extends FileImageReader implements
                 switch (n) {
                     case X_DIMENSION:
                     case Y_DIMENSION: {
-                        throw new IllegalImageDimensionException(errors().getString(Errors.Keys.ILLEGAL_PARAMETER_VALUE_$2,
+                        throw new IllegalImageDimensionException(errors().getString(Errors.Keys.ILLEGAL_PARAMETER_VALUE_2,
                                 "DimensionSlice(" + api.name() + ')', n));
                     }
                 }
@@ -898,7 +898,7 @@ public class NetcdfImageReader extends FileImageReader implements
             }
             if (dataset == null) {
                 throw new FileNotFoundException(errors().getString(
-                        Errors.Keys.FILE_DOES_NOT_EXIST_$1, inputURL));
+                        Errors.Keys.FILE_DOES_NOT_EXIST_1, inputURL));
             }
         }
     }
@@ -992,7 +992,7 @@ public class NetcdfImageReader extends FileImageReader implements
             final Variable candidate = findVariable(name);
             final int rank = candidate.getRank();
             if (rank < 2) {
-                throw new IIOException(errors().getString(Errors.Keys.NOT_TWO_DIMENSIONAL_$1, rank));
+                throw new IIOException(errors().getString(Errors.Keys.NOT_TWO_DIMENSIONAL_1, rank));
             }
             variable      = candidate;
             variableName  = name;
@@ -1042,7 +1042,7 @@ public class NetcdfImageReader extends FileImageReader implements
             }
         }
         throw new IIOException(errors().getString(
-                Errors.Keys.VARIABLE_NOT_FOUND_IN_FILE_$2, name, dataset.getLocation()));
+                Errors.Keys.VARIABLE_NOT_FOUND_IN_FILE_2, name, dataset.getLocation()));
     }
 
     /**
@@ -1273,7 +1273,7 @@ public class NetcdfImageReader extends FileImageReader implements
      * Wraps a generic exception into an {@link IIOException}.
      */
     private IIOException netcdfFailure(final Exception e) throws IOException {
-        return new IIOException(errors().getString(Errors.Keys.CANT_READ_FILE_$1, dataset.getLocation()), e);
+        return new IIOException(errors().getString(Errors.Keys.CANT_READ_FILE_1, dataset.getLocation()), e);
     }
 
     /**

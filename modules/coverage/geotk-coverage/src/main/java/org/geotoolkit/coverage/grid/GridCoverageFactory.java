@@ -191,7 +191,7 @@ public class GridCoverageFactory extends Factory {
             case  2: return DefaultGeographicCRS.WGS84;
             case  3: return DefaultGeographicCRS.WGS84_3D;
             default: throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.ILLEGAL_ARGUMENT_$2, "dimension", dimension));
+                    Errors.Keys.ILLEGAL_ARGUMENT_2, "dimension", dimension));
         }
     }
 

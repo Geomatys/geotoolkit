@@ -238,7 +238,7 @@ public class DimensionSet extends AbstractSet<DimensionIdentification> implement
      */
     public DimensionIdentification get(final API api) {
         if (api == null) {
-            throw new NullArgumentException(Warnings.message(this, Errors.Keys.NULL_ARGUMENT_$1, "api"));
+            throw new NullArgumentException(Warnings.message(this, Errors.Keys.NULL_ARGUMENT_1, "api"));
         }
         if (api != API.NONE && apiMapping != null) {
             return apiMapping.dimensions[api.ordinal()];
@@ -443,7 +443,7 @@ public class DimensionSet extends AbstractSet<DimensionIdentification> implement
         if (old != null && !old.equals(dimension)) {
             identifiersMap.put(identifier, old); // Restore the previous value.
             throw new IllegalArgumentException(Errors.getResources(getLocale())
-                    .getString(Errors.Keys.VALUE_ALREADY_DEFINED_$1, identifier));
+                    .getString(Errors.Keys.VALUE_ALREADY_DEFINED_1, identifier));
         }
         dimensions = null; // Will need to be recomputed.
     }
@@ -600,7 +600,7 @@ public class DimensionSet extends AbstractSet<DimensionIdentification> implement
                         }
                         buffer.append(value);
                     }
-                    String message = Warnings.message(caller, Errors.Keys.AMBIGUOUS_VALUE_$1, buffer);
+                    String message = Warnings.message(caller, Errors.Keys.AMBIGUOUS_VALUE_1, buffer);
                     buffer.setLength(0);
                     buffer.append(message);
                     for (final T source : found.keySet()) {

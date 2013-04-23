@@ -138,7 +138,7 @@ abstract class AbstractEnvelope extends org.apache.sis.geometry.AbstractEnvelope
         if (crs != null) {
             final int dimension = crs.getCoordinateSystem().getDimension();
             if (dimension != expected) {
-                throw new MismatchedDimensionException(Errors.format(Errors.Keys.MISMATCHED_DIMENSION_$3,
+                throw new MismatchedDimensionException(Errors.format(Errors.Keys.MISMATCHED_DIMENSION_3,
                           crs.getName().getCode(), dimension, expected));
             }
         }
@@ -159,7 +159,7 @@ abstract class AbstractEnvelope extends org.apache.sis.geometry.AbstractEnvelope
             throws MismatchedDimensionException
     {
         if (dimension != expectedDimension) {
-            throw new MismatchedDimensionException(Errors.format(Errors.Keys.MISMATCHED_DIMENSION_$3,
+            throw new MismatchedDimensionException(Errors.format(Errors.Keys.MISMATCHED_DIMENSION_3,
                         name, dimension, expectedDimension));
         }
     }
@@ -369,7 +369,7 @@ abstract class AbstractEnvelope extends org.apache.sis.geometry.AbstractEnvelope
         final int dimension = getDimension();
         if (dimension != 2) {
             throw new IllegalStateException(Errors.format(
-                    Errors.Keys.NOT_TWO_DIMENSIONAL_$1, dimension));
+                    Errors.Keys.NOT_TWO_DIMENSIONAL_1, dimension));
         }
         return XRectangle2D.createFromExtremums(
                 getMinimum(0), getMinimum(1),

@@ -64,7 +64,7 @@ public final class Buffers extends Static {
         if (buffer instanceof LongBuffer)   return Long.SIZE;
         if (buffer instanceof FloatBuffer)  return Float.SIZE;
         if (buffer instanceof DoubleBuffer) return Double.SIZE;
-        throw new IllegalArgumentException(Errors.format(Errors.Keys.UNKNOWN_TYPE_$1, buffer.getClass()));
+        throw new IllegalArgumentException(Errors.format(Errors.Keys.UNKNOWN_TYPE_1, buffer.getClass()));
     }
 
     /**

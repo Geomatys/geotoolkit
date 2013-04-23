@@ -246,7 +246,7 @@ public final class Envelopes extends Static {
         final int sourceDim = transform.getSourceDimensions();
         final int targetDim = transform.getTargetDimensions();
         if (envelope.getDimension() != sourceDim) {
-            throw new MismatchedDimensionException(Errors.format(Errors.Keys.MISMATCHED_DIMENSION_$2,
+            throw new MismatchedDimensionException(Errors.format(Errors.Keys.MISMATCHED_DIMENSION_2,
                       sourceDim, envelope.getDimension()));
         }
         /*

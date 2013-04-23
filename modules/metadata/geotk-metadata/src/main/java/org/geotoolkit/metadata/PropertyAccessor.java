@@ -337,7 +337,7 @@ final class PropertyAccessor {
             do {
                 final Integer old = mapping.put(name, index);
                 if (old != null && !old.equals(index)) {
-                    throw new IllegalStateException(Errors.format(Errors.Keys.DUPLICATED_VALUE_$1,
+                    throw new IllegalStateException(Errors.format(Errors.Keys.DUPLICATED_VALUE_1,
                             Classes.getShortName(type) + '.' + name));
                 }
                 original = name;
@@ -454,7 +454,7 @@ final class PropertyAccessor {
                                 getters[pi] = candidate;
                                 continue;
                             }
-                            throw new ClassCastException(Errors.format(Errors.Keys.ILLEGAL_CLASS_$3,
+                            throw new ClassCastException(Errors.format(Errors.Keys.ILLEGAL_CLASS_3,
                                     Classes.getShortName(type) + '.' + name, pt, ct));
                         }
                         getters[count++] = candidate;
@@ -586,7 +586,7 @@ final class PropertyAccessor {
         if (index >= 0) {
             return index;
         }
-        throw new IllegalArgumentException(Errors.format(Errors.Keys.NO_SUCH_ATTRIBUTE_$2, key, type));
+        throw new IllegalArgumentException(Errors.format(Errors.Keys.NO_SUCH_ATTRIBUTE_2, key, type));
     }
 
     /**
@@ -789,7 +789,7 @@ final class PropertyAccessor {
                 return old;
             }
         }
-        throw new UnsupportedOperationException(Errors.format(Errors.Keys.CANT_SET_ATTRIBUTE_VALUE_$1, names[index]));
+        throw new UnsupportedOperationException(Errors.format(Errors.Keys.CANT_SET_ATTRIBUTE_VALUE_1, names[index]));
     }
 
     /**
@@ -974,7 +974,7 @@ final class PropertyAccessor {
                     elements[i] = ((ObjectConverter) converter).convert(value);
                 } catch (NonconvertibleObjectException cause) {
                     final ClassCastException e = new ClassCastException(Errors.format(
-                            Errors.Keys.ILLEGAL_CLASS_$2, sourceType, targetType));
+                            Errors.Keys.ILLEGAL_CLASS_2, sourceType, targetType));
                     e.initCause(cause);
                     throw e;
                 }

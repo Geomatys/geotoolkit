@@ -247,7 +247,7 @@ public class GridSampleDimension implements SampleDimension, Serializable {
     private static CategoryList list(final CharSequence[] names, final Color[] colors) {
         if (names.length != colors.length) {
             throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.MISMATCHED_ARRAY_LENGTH_$2, "names", "colors"));
+                    Errors.Keys.MISMATCHED_ARRAY_LENGTH_2, "names", "colors"));
         }
         final int length = names.length;
         final Category[] categories = new Category[length];
@@ -400,13 +400,13 @@ public class GridSampleDimension implements SampleDimension, Serializable {
             description = Vocabulary.formatInternational(Vocabulary.Keys.UNTITLED);
         }
         if (Double.isInfinite(minimum) || Double.isInfinite(maximum) || !(minimum < maximum)) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_RANGE_$2, minimum, maximum));
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_RANGE_2, minimum, maximum));
         }
         if (Double.isNaN(scale) || Double.isInfinite(scale) || scale == 0) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_PARAMETER_VALUE_$2, "scale", scale));
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_PARAMETER_VALUE_2, "scale", scale));
         }
         if (Double.isNaN(offset) || Double.isInfinite(offset)) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_PARAMETER_VALUE_$2, "offset", offset));
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_PARAMETER_VALUE_2, "offset", offset));
         }
         if (type == null) {
             type = TypeMap.getSampleDimensionType(minimum, maximum);

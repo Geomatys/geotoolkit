@@ -420,7 +420,7 @@ public class DynamicFactoryRegistry extends FactoryRegistry {
             cause = exception;
         }
         throw new FactoryRegistryException(Errors.format(
-                Errors.Keys.CANT_CREATE_FACTORY_FOR_TYPE_$1, implementation), cause);
+                Errors.Keys.CANT_CREATE_FACTORY_FOR_TYPE_1, implementation), cause);
     }
 
     /**

@@ -1265,7 +1265,7 @@ public class MosaicImageReader extends ImageReader implements LogProducer, Close
                     level = PerformanceLevel.forDuration(duration, TimeUnit.NANOSECONDS);
                 }
                 table.writeHorizontalSeparator();
-                final String message = Loggings.getResources(locale).getString(Loggings.Keys.LOADING_REGION_$6,
+                final String message = Loggings.getResources(locale).getString(Loggings.Keys.LOADING_REGION_6,
                         new Number[] {
                             sourceRegion.x, sourceRegion.x + sourceRegion.width  - 1,
                             sourceRegion.y, sourceRegion.y + sourceRegion.height - 1,

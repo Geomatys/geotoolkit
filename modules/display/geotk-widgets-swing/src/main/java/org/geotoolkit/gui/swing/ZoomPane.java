@@ -863,7 +863,7 @@ public abstract class ZoomPane extends JComponent implements DeformableViewer {
                 firePropertyChange("preferredArea", oldArea, area);
                 log("setPreferredArea", area);
             } else {
-                throw new IllegalArgumentException(Errors.format(Errors.Keys.EMPTY_RECTANGLE_$1, area));
+                throw new IllegalArgumentException(Errors.format(Errors.Keys.EMPTY_RECTANGLE_1, area));
             }
         }
         else preferredArea = null;
@@ -934,7 +934,7 @@ public abstract class ZoomPane extends JComponent implements DeformableViewer {
          * the user.
          */
         if (!isValid(source)) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.EMPTY_RECTANGLE_$1, source));
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.EMPTY_RECTANGLE_1, source));
         }
         if (!isValid(dest)) {
             return new AffineTransform();
@@ -2451,7 +2451,7 @@ public abstract class ZoomPane extends JComponent implements DeformableViewer {
             }
             final Vocabulary resources = Vocabulary.getResources(null);
             final LogRecord record = resources.getLogRecord(Level.FINER,
-                    Vocabulary.Keys.RECTANGLE_$4, areaBounds);
+                    Vocabulary.Keys.RECTANGLE_4, areaBounds);
             record.setSourceClassName (className);
             record.setSourceMethodName(methodName);
             record.setLoggerName(LOGGER.getName());

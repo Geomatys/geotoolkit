@@ -239,7 +239,7 @@ public class DefaultOperationMethod extends AbstractIdentifiedObject implements 
             } else if (formula instanceof CharSequence) {
                 formula = new DefaultFormula((CharSequence) formula);
             } else if (!(formula instanceof Formula)) {
-                throw new InvalidParameterValueException(Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_$2,
+                throw new InvalidParameterValueException(Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_2,
                         "formula", formula), "formula", formula);
             }
         }
@@ -466,6 +466,6 @@ public class DefaultOperationMethod extends AbstractIdentifiedObject implements 
             }
         }
         throw new IllegalArgumentException(Errors.format(
-                Errors.Keys.MISMATCHED_DIMENSION_$3, name, actual, expected));
+                Errors.Keys.MISMATCHED_DIMENSION_3, name, actual, expected));
     }
 }

@@ -257,7 +257,7 @@ public abstract class MathTransformProvider extends DefaultOperationMethod {
                     continue;
                 } else {
                     throw new InvalidParameterNameException(Errors.format(
-                            Errors.Keys.UNEXPECTED_PARAMETER_$1, name), name);
+                            Errors.Keys.UNEXPECTED_PARAMETER_1, name), name);
                 }
             }
             /*
@@ -269,7 +269,7 @@ public abstract class MathTransformProvider extends DefaultOperationMethod {
                 target = copy.parameter(name);
             } catch (ParameterNotFoundException cause) {
                 throw new InvalidParameterNameException(Errors.format(
-                            Errors.Keys.UNEXPECTED_PARAMETER_$1, name), cause, name);
+                            Errors.Keys.UNEXPECTED_PARAMETER_1, name), cause, name);
             }
             final Object  v    = source.getValue();
             final Unit<?> unit = source.getUnit();
@@ -281,7 +281,7 @@ public abstract class MathTransformProvider extends DefaultOperationMethod {
                 target.setValue((double[]) v, unit);
             } else {
                 throw new InvalidParameterValueException(Errors.format(
-                        Errors.Keys.ILLEGAL_ARGUMENT_$2, name, v), name, v);
+                        Errors.Keys.ILLEGAL_ARGUMENT_2, name, v), name, v);
             }
         }
     }

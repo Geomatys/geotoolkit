@@ -255,7 +255,7 @@ final class NetcdfMetadata extends SpatialMetadata {
             if (domain == null) {
                 domain = vd;
             } else if (!domain.equals(vd)) {
-                throw new IIOException(Errors.format(Errors.Keys.INCONSISTENT_DOMAIN_$2,
+                throw new IIOException(Errors.format(Errors.Keys.INCONSISTENT_DOMAIN_2,
                         variable.getShortName(), variables[0].getShortName()));
             }
         }
@@ -343,7 +343,7 @@ final class NetcdfMetadata extends SpatialMetadata {
                     final String direction = units.substring(offset + 1).trim();
                     final String opposite = AxisDirections.opposite(axis.getDirection()).name();
                     if (direction.equalsIgnoreCase(opposite)) {
-                        warning("setCoordinateSystem", Errors.Keys.INCONSISTENT_AXIS_ORIENTATION_$2,
+                        warning("setCoordinateSystem", Errors.Keys.INCONSISTENT_AXIS_ORIENTATION_2,
                                 new String[] {axis.getCode(), direction});
                     }
                 }

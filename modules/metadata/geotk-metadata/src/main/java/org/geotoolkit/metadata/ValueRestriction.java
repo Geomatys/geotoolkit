@@ -173,7 +173,7 @@ public class ValueRestriction implements Serializable {
                 {
                     range = new NumberRange((Class) type, vr);
                 } else {
-                    throw new ClassCastException(Errors.format(Errors.Keys.ILLEGAL_CLASS_$2, type, required));
+                    throw new ClassCastException(Errors.format(Errors.Keys.ILLEGAL_CLASS_2, type, required));
                 }
             }
             if (getter == impl) {

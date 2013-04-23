@@ -413,7 +413,7 @@ public final class ImageUtilities extends Static {
                 }
             }
         }
-        throw new IllegalArgumentException(Errors.format(Errors.Keys.UNKNOWN_INTERPOLATION_$1, type));
+        throw new IllegalArgumentException(Errors.format(Errors.Keys.UNKNOWN_INTERPOLATION_1, type));
     }
 
     /**

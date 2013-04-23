@@ -505,7 +505,7 @@ public class MosaicChooser extends JComponent implements Dialog {
             final JXHeader label = new JXHeader(
                     Vocabulary.getResources(locale).getString(Vocabulary.Keys.ERROR),
                     Descriptions.getResources(locale).getString(
-                    Descriptions.Keys.ERROR_READING_SOME_FILES_$2, files.length-count, count));
+                    Descriptions.Keys.ERROR_READING_SOME_FILES_2, files.length-count, count));
             final JPanel panel = new JPanel(new BorderLayout());
             panel.add(label, BorderLayout.NORTH);
             panel.add(new JScrollPane(this.failures), BorderLayout.CENTER);

@@ -169,7 +169,7 @@ public class AlbersEqualArea extends UnitaryProjection {
         ensureLatitudeInRange(org.geotoolkit.referencing.operation.provider.AlbersEqualArea.STANDARD_PARALLEL_1, φ1, true);
         ensureLatitudeInRange(org.geotoolkit.referencing.operation.provider.AlbersEqualArea.STANDARD_PARALLEL_2, phi2, true);
         if (abs(φ1 + phi2) < ANGLE_TOLERANCE * (180/PI)) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.LATITUDES_ARE_OPPOSITE_$2,
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.LATITUDES_ARE_OPPOSITE_2,
                     new Latitude(φ1), new Latitude(phi2)));
         }
         φ1 = toRadians(φ1);
@@ -179,7 +179,7 @@ public class AlbersEqualArea extends UnitaryProjection {
          * Computes constants.
          */
         if (abs(φ1 + phi2) < ANGLE_TOLERANCE) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.LATITUDES_ARE_OPPOSITE_$2,
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.LATITUDES_ARE_OPPOSITE_2,
                     new Latitude(toDegrees(φ1)), new Latitude(toDegrees(phi2))));
         }
         double  sinφ   = sin(φ1);

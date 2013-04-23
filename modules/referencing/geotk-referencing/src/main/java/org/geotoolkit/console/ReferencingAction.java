@@ -328,8 +328,8 @@ final class ReferencingAction {
         } else {
             final PrintWriter err = cmd.err;
             final Errors resources = Errors.getResources(cmd.locale);
-            err.println(resources.getString(Errors.Keys.ILLEGAL_ARGUMENT_$1, "list"));
-            err.println(resources.getString(Errors.Keys.UNKNOWN_TYPE_$1, list));
+            err.println(resources.getString(Errors.Keys.ILLEGAL_ARGUMENT_1, "list"));
+            err.println(resources.getString(Errors.Keys.UNKNOWN_TYPE_1, list));
             cmd.exit(ILLEGAL_ARGUMENT_EXIT_CODE);
             return;
         }
@@ -518,7 +518,7 @@ final class ReferencingAction {
         else if (test.equalsIgnoreCase("duplicates")) code = 2;
         else {
             final Errors resources = Errors.getResources(cmd.locale);
-            cmd.err.println(resources.getString(Errors.Keys.ILLEGAL_ARGUMENT_$2, "test", test));
+            cmd.err.println(resources.getString(Errors.Keys.ILLEGAL_ARGUMENT_2, "test", test));
             cmd.exit(ILLEGAL_ARGUMENT_EXIT_CODE);
             return;
         }

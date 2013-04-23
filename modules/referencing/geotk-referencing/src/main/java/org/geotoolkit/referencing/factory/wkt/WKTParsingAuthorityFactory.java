@@ -439,7 +439,7 @@ public class WKTParsingAuthorityFactory extends DirectAuthorityFactory {
             } else {
                 typeName = Vocabulary.format(Vocabulary.Keys.UNKNOWN);
             }
-            message = Errors.format(Errors.Keys.DATABASE_FAILURE_$2, typeName, code) + ": " + message;
+            message = Errors.format(Errors.Keys.DATABASE_FAILURE_2, typeName, code) + ": " + message;
         }
         return new FactoryException(message, exception);
     }

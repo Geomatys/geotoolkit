@@ -220,7 +220,7 @@ public final class CoverageDatabaseWizard extends AbstractWizard {
                 postgis.setControlButtonsAreShown(false);
                 postgis.setMultiSelectionEnabled(false);
                 postgis.setAcceptAllFileFilterUsed(false);
-                postgis.addChoosableFileFilter(new FileNameExtensionFilter(resources.getString(Vocabulary.Keys.FILES_$1, "SQL"), "sql"));
+                postgis.addChoosableFileFilter(new FileNameExtensionFilter(resources.getString(Vocabulary.Keys.FILES_1, "SQL"), "sql"));
                 postgis.addPropertyChangeListener(JFileChooser.SELECTED_FILE_CHANGED_PROPERTY, new PropertyChangeListener() {
                     @Override public void propertyChange(final PropertyChangeEvent event) {
                         String missing = PostgisInstaller.INSTALL;
@@ -236,7 +236,7 @@ public final class CoverageDatabaseWizard extends AbstractWizard {
                             }
                         }
                         if (missing != null) {
-                            missing = Errors.format(Errors.Keys.FILE_DOES_NOT_EXIST_$1, missing);
+                            missing = Errors.format(Errors.Keys.FILE_DOES_NOT_EXIST_1, missing);
                         }
                         controller.setProblem(missing);
                     }
@@ -252,10 +252,10 @@ public final class CoverageDatabaseWizard extends AbstractWizard {
             //     Panel 3:  Configure whatever we want roles, EPSG database, etc.
             // -------------------------------------------------------------------
             case CONFIGURE: {
-                createRoles      = new JCheckBox(wizardRes.getString(Wizards.Keys.CREATE_ROLES_$2, admin.getText(), user.getText()), true);
+                createRoles      = new JCheckBox(wizardRes.getString(Wizards.Keys.CREATE_ROLES_2, admin.getText(), user.getText()), true);
                 createEPSG       = new JCheckBox(wizardRes.getString(Wizards.Keys.CREATE_EPSG), true);
-                setAsDefaultEPSG = new JCheckBox(wizardRes.getString(Wizards.Keys.SET_AS_DEFAULT_$1, "EPSG"));
-                setAsDefault     = new JCheckBox(wizardRes.getString(Wizards.Keys.SET_AS_DEFAULT_$1, "Coverages"));
+                setAsDefaultEPSG = new JCheckBox(wizardRes.getString(Wizards.Keys.SET_AS_DEFAULT_1, "EPSG"));
+                setAsDefault     = new JCheckBox(wizardRes.getString(Wizards.Keys.SET_AS_DEFAULT_1, "Coverages"));
                 createEPSG.addActionListener(new ActionListener() {
                     @Override public void actionPerformed(final ActionEvent event) {
                         setAsDefaultEPSG.setEnabled(createEPSG.isSelected());
@@ -296,7 +296,7 @@ public final class CoverageDatabaseWizard extends AbstractWizard {
                 choices.add(passwordWarning, c);
                 panel = new JPanel(new BorderLayout());
                 panel.add(choices, BorderLayout.CENTER);
-                panel.add(new JLabel(wizardRes.getString(Wizards.Keys.COVERAGE_DATABASE_NOTES_$1,
+                panel.add(new JLabel(wizardRes.getString(Wizards.Keys.COVERAGE_DATABASE_NOTES_1,
                         server.getText())), BorderLayout.PAGE_END);
                 break;
             }
@@ -323,7 +323,7 @@ public final class CoverageDatabaseWizard extends AbstractWizard {
                 c.anchor=GridBagConstraints.LINE_START;
                 c.insets.top = c.insets.bottom = 6;
                 for (int i=0; i<schemas.length; i++) {
-                    panel.add(new JLabel(wizardRes.getString(Wizards.Keys.CREATING_SCHEMA_$1, schemas[i])), c);
+                    panel.add(new JLabel(wizardRes.getString(Wizards.Keys.CREATING_SCHEMA_1, schemas[i])), c);
                     c.gridy++;
                 }
                 addSetting(settings, CONFIRM, panel);

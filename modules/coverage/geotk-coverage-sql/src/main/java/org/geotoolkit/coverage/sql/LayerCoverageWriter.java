@@ -204,7 +204,7 @@ public class LayerCoverageWriter extends GridCoverageWriter {
             if (output instanceof CharSequence) {
                 output = database.getLayer(output.toString());
             } else if (!(output instanceof Layer)) {
-                throw new IllegalArgumentException(errors().getString(Errors.Keys.ILLEGAL_CLASS_$2,
+                throw new IllegalArgumentException(errors().getString(Errors.Keys.ILLEGAL_CLASS_2,
                         output.getClass(), Layer.class));
             }
         }
@@ -273,7 +273,7 @@ public class LayerCoverageWriter extends GridCoverageWriter {
             if (directory == null) {
                 directory = new File(database.database.getProperty(ConfigurationKey.ROOT_DIRECTORY), layer.getName());
                 if (!directory.isDirectory() && !directory.mkdirs()) {
-                    throw new CoverageStoreException(Errors.format(Errors.Keys.CANT_CREATE_DIRECTORY_$1, directory));
+                    throw new CoverageStoreException(Errors.format(Errors.Keys.CANT_CREATE_DIRECTORY_1, directory));
                 }
             }
             String formatName = (param != null) ? param.getFormatName() : null;
@@ -312,13 +312,13 @@ public class LayerCoverageWriter extends GridCoverageWriter {
                     }
                     file = new File(directory, filename);
                     if (file.exists()) { // Check must be before to add to the files list.
-                        throw new CoverageStoreException(errors().getString(Errors.Keys.FILE_ALREADY_EXISTS_$1, file));
+                        throw new CoverageStoreException(errors().getString(Errors.Keys.FILE_ALREADY_EXISTS_1, file));
                     }
                 } else try {
                     // Not really a temporary file, but this method will create a unique filename.
                     file = File.createTempFile(DEFAULT_PREFIX, suffix, directory);
                 } catch (IOException e) {
-                    throw new CoverageStoreException(errors().getString(Errors.Keys.CANT_WRITE_FILE_$1, DEFAULT_PREFIX), e);
+                    throw new CoverageStoreException(errors().getString(Errors.Keys.CANT_WRITE_FILE_1, DEFAULT_PREFIX), e);
                 }
                 /*
                  * Extract the grid geometry information and store them as a "tile". Even if the
@@ -349,7 +349,7 @@ public class LayerCoverageWriter extends GridCoverageWriter {
             for (final Tile tile : files) {
                 final File file = (File) tile.getInput();
                 if (!file.delete()) {
-                    Logging.getLogger(LayerCoverageWriter.class).warning(errors().getString(Errors.Keys.CANT_DELETE_FILE_$1, file));
+                    Logging.getLogger(LayerCoverageWriter.class).warning(errors().getString(Errors.Keys.CANT_DELETE_FILE_1, file));
                 }
             }
             throw e;

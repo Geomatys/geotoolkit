@@ -307,7 +307,7 @@ public class DefaultMathTransformFactory extends ReferencingFactory implements M
             }
             if (provider == null) {
                 throw new NoSuchIdentifierException(Errors.format(
-                        Errors.Keys.NO_TRANSFORM_FOR_CLASSIFICATION_$1, method), method);
+                        Errors.Keys.NO_TRANSFORM_FOR_CLASSIFICATION_1, method), method);
             }
         }
         /*

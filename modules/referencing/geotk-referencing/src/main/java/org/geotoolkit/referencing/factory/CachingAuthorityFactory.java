@@ -208,7 +208,7 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
     static void ensureNotSmaller(final String name, final int value, final int minimum) {
         if (value < minimum) {
             throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.ILLEGAL_ARGUMENT_$2, name, value));
+                    Errors.Keys.ILLEGAL_ARGUMENT_2, name, value));
         }
     }
 
@@ -371,7 +371,7 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
             title = Vocabulary.formatInternational(Vocabulary.Keys.UNTITLED);
         }
         final LogRecord record = new LogRecord(level, Exceptions.formatChainedMessages(null, Loggings.getResources(null).
-                getString(Loggings.Keys.UNAVAILABLE_AUTHORITY_FACTORY_$1, title), exception));
+                getString(Loggings.Keys.UNAVAILABLE_AUTHORITY_FACTORY_1, title), exception));
         record.setSourceClassName(getClass().getCanonicalName());
         record.setSourceMethodName("availability");
         record.setThrown(exception);

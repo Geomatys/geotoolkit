@@ -56,7 +56,7 @@ public strictfp class NullImageWriter extends SpatialImageWriter {
      */
     @Override
     public void write(IIOMetadata metadata, IIOImage image, ImageWriteParam param) throws IOException {
-        LOGGER.info(Vocabulary.format(Vocabulary.Keys.SAVING_$1, output));
+        LOGGER.info(Vocabulary.format(Vocabulary.Keys.SAVING_1, output));
     }
 
 

@@ -31,7 +31,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.sis.util.Localized;
 import org.geotoolkit.util.logging.Logging;
 import org.apache.sis.util.logging.PerformanceLevel;
-import org.geotoolkit.resources.IndexedResourceBundle;
+import org.apache.sis.util.resources.IndexedResourceBundle;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.resources.Errors;
 
@@ -258,7 +258,7 @@ public abstract class Table implements Localized {
         switch (type) {
             case COUNT: sql = query.count(lc, type, column); break;
             default: throw new IllegalArgumentException(errors().getString(
-                    Errors.Keys.ILLEGAL_ARGUMENT_$2, "type", type));
+                    Errors.Keys.ILLEGAL_ARGUMENT_2, "type", type));
         }
         this.type = type;
         fireStateChanged(); // Because the column may be different on every call.
@@ -388,8 +388,8 @@ public abstract class Table implements Localized {
         }
         final IndexedResourceBundle errors = errors();
         throw new SQLDataException(
-                errors.getString(Errors.Keys.UNSUPPORTED_OPERATION_$1, type) + ". " +
-                errors.getString(Errors.Keys.CANT_READ_DATABASE_TABLE_$2, column.table, column.name));
+                errors.getString(Errors.Keys.UNSUPPORTED_OPERATION_1, type) + ". " +
+                errors.getString(Errors.Keys.CANT_READ_DATABASE_TABLE_2, column.table, column.name));
     }
 
     /**
@@ -408,7 +408,7 @@ public abstract class Table implements Localized {
         if (index > 0) {
             return index;
         }
-        throw new SQLDataException(errors().getString(Errors.Keys.UNSUPPORTED_OPERATION_$1, type));
+        throw new SQLDataException(errors().getString(Errors.Keys.UNSUPPORTED_OPERATION_1, type));
     }
 
     /**

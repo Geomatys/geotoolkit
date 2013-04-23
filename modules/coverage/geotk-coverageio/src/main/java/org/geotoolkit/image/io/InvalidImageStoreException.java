@@ -22,7 +22,7 @@ import java.util.Arrays;
 import javax.imageio.IIOException;
 
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.resources.IndexedResourceBundle;
+import org.apache.sis.util.resources.IndexedResourceBundle;
 import org.geotoolkit.internal.image.io.Formats;
 import org.geotoolkit.internal.io.IOUtilities;
 import org.apache.sis.util.Classes;
@@ -107,13 +107,13 @@ public class InvalidImageStoreException extends IIOException {
             if (write) {
                 file = file.getParentFile();
                 if (file != null && !file.isDirectory()) {
-                    return resources.getString(Errors.Keys.NOT_A_DIRECTORY_$1, file);
+                    return resources.getString(Errors.Keys.NOT_A_DIRECTORY_1, file);
                 }
             } else if (!file.exists()) {
-                int key = Errors.Keys.FILE_DOES_NOT_EXIST_$1;
+                int key = Errors.Keys.FILE_DOES_NOT_EXIST_1;
                 final File parent = file.getParentFile();
                 if (parent != null && !parent.isDirectory()) {
-                    key = Errors.Keys.NOT_A_DIRECTORY_$1;
+                    key = Errors.Keys.NOT_A_DIRECTORY_1;
                     file = parent;
                 }
                 return resources.getString(key, file);
@@ -127,7 +127,7 @@ public class InvalidImageStoreException extends IIOException {
             for (final Class<?> e : expected) {
                 if (e.isInstance(io)) {
                     return resources.getString(
-                            write ? Errors.Keys.CANT_WRITE_FILE_$1 : Errors.Keys.CANT_READ_FILE_$1,
+                            write ? Errors.Keys.CANT_WRITE_FILE_1 : Errors.Keys.CANT_READ_FILE_1,
                             IOUtilities.name(io));
                 }
             }
@@ -136,7 +136,7 @@ public class InvalidImageStoreException extends IIOException {
          * If the input or output object is not a supported type, format an error
          * message with the list of expected types.
          */
-        String message = resources.getString(Errors.Keys.UNKNOWN_TYPE_$1, Classes.getShortClassName(io));
+        String message = resources.getString(Errors.Keys.UNKNOWN_TYPE_1, Classes.getShortClassName(io));
         if (expected != null && expected.length != 0) {
             String[] names = new String[expected.length];
             for (int i=0; i<expected.length; i++) {
@@ -144,7 +144,7 @@ public class InvalidImageStoreException extends IIOException {
             }
             names = Formats.simplify(names);
             message = message + ' ' + resources.getString(
-                    Errors.Keys.EXPECTED_ONE_OF_$1, Arrays.toString(names));
+                    Errors.Keys.EXPECTED_ONE_OF_1, Arrays.toString(names));
         }
         return message;
     }

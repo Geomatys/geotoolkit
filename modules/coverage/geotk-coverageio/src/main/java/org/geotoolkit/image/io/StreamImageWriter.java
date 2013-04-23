@@ -165,7 +165,7 @@ public abstract class StreamImageWriter extends SpatialImageWriter {
                 // Do not define closeOnReset since we don't want to close user-provided output.
             } else {
                 throw new IllegalStateException(getErrorResources().getString(
-                        Errors.Keys.ILLEGAL_CLASS_$2, output.getClass(), OutputStream.class));
+                        Errors.Keys.ILLEGAL_CLASS_2, output.getClass(), OutputStream.class));
             }
         }
         return stream;

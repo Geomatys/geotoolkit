@@ -224,7 +224,7 @@ public abstract class SingletonTable<E extends Entry> extends Table {
         if (pkIndices.length == 1) {
             return null; // Special value to be handled by getEntries().
         }
-        throw new CatalogException(errors().getString(Errors.Keys.UNSUPPORTED_OPERATION_$1, getQueryType()));
+        throw new CatalogException(errors().getString(Errors.Keys.UNSUPPORTED_OPERATION_1, getQueryType()));
     }
 
     /**

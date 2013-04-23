@@ -660,7 +660,7 @@ public class GridGeometry2D extends GeneralGridGeometry {
         } else try {
             return gridToCRS2D.inverse();
         } catch (NoninvertibleTransformException exception) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_TRANSFORM_FOR_TYPE_$1,
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_TRANSFORM_FOR_TYPE_1,
                     gridToCRS2D.getClass()), exception);
         }
     }
@@ -683,7 +683,7 @@ public class GridGeometry2D extends GeneralGridGeometry {
             crs = reduce(crs);
         } catch (FactoryException exception) {
             throw new InvalidGridGeometryException(Errors.format(
-                    Errors.Keys.ILLEGAL_ARGUMENT_$2, "crs", crs.getName()), exception);
+                    Errors.Keys.ILLEGAL_ARGUMENT_2, "crs", crs.getName()), exception);
         }
         return crs;
     }
@@ -936,7 +936,7 @@ public class GridGeometry2D extends GeneralGridGeometry {
             try {
                 return gridFromCRS2D.transform(point, null);
             } catch (TransformException exception) {
-                throw new CannotEvaluateException(Errors.format(Errors.Keys.CANT_EVALUATE_FOR_COORDINATE_$1,
+                throw new CannotEvaluateException(Errors.format(Errors.Keys.CANT_EVALUATE_FOR_COORDINATE_1,
                           AbstractGridCoverage.toString(point, Locale.getDefault(Locale.Category.FORMAT)), exception));
             }
         }

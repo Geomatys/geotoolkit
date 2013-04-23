@@ -54,7 +54,7 @@ import org.geotoolkit.util.logging.LoggedFormat;
 import org.geotoolkit.image.io.WarningProducer;
 import org.geotoolkit.internal.image.io.Warnings;
 import org.apache.sis.measure.RangeFormat;
-import org.geotoolkit.resources.IndexedResourceBundle;
+import org.apache.sis.util.resources.IndexedResourceBundle;
 import org.geotoolkit.resources.Errors;
 
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
@@ -713,7 +713,7 @@ public class SpatialMetadata extends IIOMetadata implements WarningProducer {
             return FALLBACK;
         }
         throw new IllegalArgumentException(getErrorResources().getString(
-                Errors.Keys.ILLEGAL_ARGUMENT_$2, "formatName", formatName));
+                Errors.Keys.ILLEGAL_ARGUMENT_2, "formatName", formatName));
     }
 
     /**

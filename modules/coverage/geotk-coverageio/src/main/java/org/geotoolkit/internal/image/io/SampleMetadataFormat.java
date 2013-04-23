@@ -159,7 +159,7 @@ public abstract class SampleMetadataFormat implements IIOMetadataFormat {
         final Element element = elements.get(elementName);
         if (element == null) {
             throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.NO_SUCH_ELEMENT_NAME_$1, elementName));
+                    Errors.Keys.NO_SUCH_ELEMENT_NAME_1, elementName));
         }
         return element;
     }
@@ -266,7 +266,7 @@ public abstract class SampleMetadataFormat implements IIOMetadataFormat {
         final Integer type = getElement(elementName).get(attrName);
         if (type == null) {
             throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.NO_SUCH_ATTRIBUTE_$1, attrName));
+                    Errors.Keys.NO_SUCH_ATTRIBUTE_1, attrName));
         }
         return type;
     }

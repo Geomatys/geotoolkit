@@ -150,7 +150,7 @@ public class MetadataHelper implements Localized {
     private void ensureVectorsExist(final List<?> vectors) throws ImageMetadataException {
         ensureMetadataExists("OffsetVectors", -1, vectors);
         if (vectors.isEmpty()) {
-            throw new ImageMetadataException(error(Errors.Keys.NO_PARAMETER_VALUE_$1, "OffsetVectors"));
+            throw new ImageMetadataException(error(Errors.Keys.NO_PARAMETER_VALUE_1, "OffsetVectors"));
         }
     }
 
@@ -168,7 +168,7 @@ public class MetadataHelper implements Localized {
             if (index >= 0) {
                 name = name + '[' + index + ']';
             }
-            throw new ImageMetadataException(error(Errors.Keys.NO_PARAMETER_$1, name));
+            throw new ImageMetadataException(error(Errors.Keys.NO_PARAMETER_1, name));
         }
     }
 
@@ -188,7 +188,7 @@ public class MetadataHelper implements Localized {
             if (index >= 0) {
                 name = name + '[' + index + ']';
             }
-            throw new ImageMetadataException(error(Errors.Keys.MISMATCHED_DIMENSION_$3,
+            throw new ImageMetadataException(error(Errors.Keys.MISMATCHED_DIMENSION_3,
                     name, dimension, expected));
         }
     }
@@ -732,7 +732,7 @@ public class MetadataHelper implements Localized {
                                     tr = mtFactory.createConcatenatedTransform(tr, exponential);
                                 } else {
                                     throw new ImageMetadataException(Errors.getResources(getLocale())
-                                            .getString(Errors.Keys.UNSUPPORTED_OPERATION_$1, type));
+                                            .getString(Errors.Keys.UNSUPPORTED_OPERATION_1, type));
                                 }
                             }
                         } catch (FactoryException e) {

@@ -322,7 +322,7 @@ public abstract class CommandLine implements Runnable {
                     arg = arg.trim();
                     if (arg.startsWith(OPTION_PREFIX)) {
                         status = new IllegalArgumentException(error(
-                                Errors.Keys.UNKNOWN_PARAMETER_$1, arg));
+                                Errors.Keys.UNKNOWN_PARAMETER_1, arg));
                     }
                 }
             }
@@ -433,7 +433,7 @@ public abstract class CommandLine implements Runnable {
                 if (text == null && option.mandatory() && status == null) {
                     if (!ignoreMandatoryOption) {
                         status = new IllegalArgumentException(error(
-                                Errors.Keys.NO_PARAMETER_$1, name));
+                                Errors.Keys.NO_PARAMETER_1, name));
                     }
                     continue;
                 }
@@ -532,7 +532,7 @@ public abstract class CommandLine implements Runnable {
                         split = 0;
                     }
                     throw new IllegalArgumentException(error(
-                            Errors.Keys.NO_PARAMETER_VALUE_$1, arg));
+                            Errors.Keys.NO_PARAMETER_VALUE_1, arg));
                 }
             }
         }
@@ -604,13 +604,13 @@ public abstract class CommandLine implements Runnable {
                 final int count = arguments.length;
                 int limit = candidate.minimalArgumentCount();
                 if (count < limit) {
-                    err.println(error(Errors.Keys.TOO_FEW_ARGUMENTS_$2, limit, count));
+                    err.println(error(Errors.Keys.TOO_FEW_ARGUMENTS_2, limit, count));
                     exit(ILLEGAL_ARGUMENT_EXIT_CODE);
                     return;
                 }
                 limit = candidate.maximalArgumentCount();
                 if (count > limit) {
-                    err.println(error(Errors.Keys.TOO_MANY_ARGUMENTS_$2, limit, count));
+                    err.println(error(Errors.Keys.TOO_MANY_ARGUMENTS_2, limit, count));
                     exit(ILLEGAL_ARGUMENT_EXIT_CODE);
                     return;
                 }
@@ -661,7 +661,7 @@ public abstract class CommandLine implements Runnable {
             summary();
             exit(0);
         } else {
-            err.println(error(Errors.Keys.UNKNOWN_COMMAND_$1, action));
+            err.println(error(Errors.Keys.UNKNOWN_COMMAND_1, action));
             exit(ILLEGAL_ARGUMENT_EXIT_CODE);
         }
     }
@@ -676,7 +676,7 @@ public abstract class CommandLine implements Runnable {
     protected void summary() {
         final PrintWriter out = this.out;
         final Descriptions resources = Descriptions.getResources(locale);
-        out.println(resources.getString(Descriptions.Keys.COMMAND_USAGE_$1, command));
+        out.println(resources.getString(Descriptions.Keys.COMMAND_USAGE_1, command));
         final Vocabulary vocabulary = Vocabulary.getResources(locale);
         final Set<String> options = new TreeSet<>();
         boolean action = true;
@@ -810,7 +810,7 @@ public abstract class CommandLine implements Runnable {
             final String type = Classes.getShortClassName(exception);
             String message = exception.getLocalizedMessage();
             if (message == null) {
-                message = Vocabulary.getResources(locale).getString(Vocabulary.Keys.NO_DETAILS_$1, type);
+                message = Vocabulary.getResources(locale).getString(Vocabulary.Keys.NO_DETAILS_1, type);
             } else {
                 color(buffer, X364.FOREGROUND_RED);
                 color(buffer, X364.BOLD);

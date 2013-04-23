@@ -219,7 +219,7 @@ public class DefaultAffineCS extends AbstractCS implements AffineCS {
         try {
             axes = axisUsingUnit(unit, null);
         } catch (ConversionException e) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.INCOMPATIBLE_UNIT_$1, unit), e);
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.INCOMPATIBLE_UNIT_1, unit), e);
         }
         if (axes == null) {
             return this;

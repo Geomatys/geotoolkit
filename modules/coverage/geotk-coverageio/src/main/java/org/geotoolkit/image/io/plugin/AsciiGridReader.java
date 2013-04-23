@@ -299,7 +299,7 @@ public class AsciiGridReader extends TextImageReader {
                 }
                 yll = parseDouble(ensureDefined(key, value));
             } catch (NumberFormatException cause) {
-                throw new IIOException(Warnings.message(this, Errors.Keys.UNPARSABLE_NUMBER_$1, key), cause);
+                throw new IIOException(Warnings.message(this, Errors.Keys.UNPARSABLE_NUMBER_1, key), cause);
             }
             /*
              * The binary format, which is a Geotk extension.
@@ -310,7 +310,7 @@ public class AsciiGridReader extends TextImageReader {
                 binaryType = DataTypes.getDataBufferType(value);
                 if (binaryType == DataBuffer.TYPE_UNDEFINED) {
                     Warnings.log(this, null, AsciiGridReader.class, "readHeader",
-                            Errors.Keys.ILLEGAL_PARAMETER_VALUE_$2, "BINARY_TYPE", value);
+                            Errors.Keys.ILLEGAL_PARAMETER_VALUE_2, "BINARY_TYPE", value);
                 }
             }
             headerValid = true;
@@ -319,7 +319,7 @@ public class AsciiGridReader extends TextImageReader {
              */
             for (final String extra : header.keySet()) {
                 Warnings.log(this, null, AsciiGridReader.class, "readHeader",
-                        Errors.Keys.UNKNOWN_PARAMETER_$1, extra);
+                        Errors.Keys.UNKNOWN_PARAMETER_1, extra);
             }
         }
     }
@@ -334,7 +334,7 @@ public class AsciiGridReader extends TextImageReader {
      */
     private String ensureDefined(final String name, final String value) throws IIOException {
         if (value == null || value.isEmpty()) {
-            throw new ImageMetadataException(Warnings.message(this, Errors.Keys.NO_PARAMETER_$1, name));
+            throw new ImageMetadataException(Warnings.message(this, Errors.Keys.NO_PARAMETER_1, name));
         }
         return value;
     }
@@ -373,7 +373,7 @@ readLine:   while (true) {
                     final int capacity = buffer.capacity();
                     if (pos >= capacity) {
                         throw new ImageMetadataException(Errors.format(
-                                Errors.Keys.UNEXPECTED_HEADER_LENGTH_$1, capacity));
+                                Errors.Keys.UNEXPECTED_HEADER_LENGTH_1, capacity));
                     }
                     /*
                      * Arbitrary read a block of 512 bytes for starting, because the header is
@@ -442,7 +442,7 @@ readLine:   while (true) {
                 final Object old = header.put(key, value);
                 if (old != null && !old.equals(value)) {
                     throw new ImageMetadataException(Errors.format(
-                            Errors.Keys.VALUE_ALREADY_DEFINED_$1, key));
+                            Errors.Keys.VALUE_ALREADY_DEFINED_1, key));
                 }
             }
         }
@@ -616,7 +616,7 @@ readLine:   while (true) {
         final int dstBand = (destinationBands != null) ? destinationBands[0] : 0;
         for (int i=dstBand; --i>=0;) {
             if (iter.nextBandDone()) {
-                throw new IIOException(Errors.format(Errors.Keys.ILLEGAL_BAND_NUMBER_$1, dstBand));
+                throw new IIOException(Errors.format(Errors.Keys.ILLEGAL_BAND_NUMBER_1, dstBand));
             }
         }
         if (!iter.finishedBands() && !iter.finishedLines() && !iter.finishedPixels()) {
@@ -670,7 +670,7 @@ loop:       for (int y=0; /* stop condition inside */; y++) {
                         if (c > ' ') {
                             if (nChar >= charBuffer.length) {
                                 throw new IIOException(Warnings.message(this,
-                                        Errors.Keys.ILLEGAL_PARAMETER_VALUE_$2, "cell(" + x + ',' + y + ')',
+                                        Errors.Keys.ILLEGAL_PARAMETER_VALUE_2, "cell(" + x + ',' + y + ')',
                                         String.valueOf(charBuffer)));
                             }
                             if (c == ',') c = '.';
@@ -703,7 +703,7 @@ loop:       for (int y=0; /* stop condition inside */; y++) {
                             }
                         } catch (NumberFormatException cause) {
                             throw new IIOException(Warnings.message(this,
-                                    Errors.Keys.UNPARSABLE_NUMBER_$1, value), cause);
+                                    Errors.Keys.UNPARSABLE_NUMBER_1, value), cause);
                         }
                         /*
                          * Move to the next pixel in the destination image. The reading process

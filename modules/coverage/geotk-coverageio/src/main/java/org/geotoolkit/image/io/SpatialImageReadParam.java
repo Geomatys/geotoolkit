@@ -32,7 +32,7 @@ import javax.imageio.ImageReadParam;
 import org.opengis.referencing.cs.AxisDirection;
 
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.resources.IndexedResourceBundle;
+import org.apache.sis.util.resources.IndexedResourceBundle;
 import org.geotoolkit.image.io.metadata.SampleDomain;
 import org.geotoolkit.internal.image.io.Warnings;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
@@ -289,7 +289,7 @@ public class SpatialImageReadParam extends ImageReadParam implements WarningProd
     private void ensureValidBand(final int band) throws IllegalArgumentException {
         if (band < 0) {
             throw new IllegalArgumentException(getErrorResources().getString(
-                    Errors.Keys.ILLEGAL_BAND_NUMBER_$1, band));
+                    Errors.Keys.ILLEGAL_BAND_NUMBER_1, band));
         }
     }
 

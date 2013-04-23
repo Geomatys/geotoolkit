@@ -28,7 +28,6 @@ import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.internal.SetupService;
 import org.geotoolkit.internal.io.Installation;
-import org.geotoolkit.resources.IndexedResourceBundle;
 import org.geotoolkit.resources.Errors;
 
 
@@ -190,7 +189,6 @@ public final class Setup extends Static {
         state = 1;
         if ("server".equalsIgnoreCase(get(properties, "platform", "desktop"))) {
             Installation.allowSystemPreferences = false;
-            IndexedResourceBundle.immediateLocalization = true;
         } else {
             Logging.ALL.forceMonolineConsoleOutput(null);
         }
@@ -245,7 +243,7 @@ public final class Setup extends Static {
                  .getMethod("show", Locale.class).invoke(null, new Object[] {null});
         } catch (ClassNotFoundException exception) {
             throw new UnsupportedOperationException(Errors.format(
-                    Errors.Keys.MISSING_MODULE_$1, "geotk-setup"), exception);
+                    Errors.Keys.MISSING_MODULE_1, "geotk-setup"), exception);
         } catch (InvocationTargetException exception) {
             final Throwable cause = exception.getCause();
             if (cause instanceof RuntimeException) {

@@ -147,7 +147,7 @@ public abstract class GridCoverageStoreParam implements Serializable {
             final int expected = crs.getCoordinateSystem().getDimension();
             if (dimension != expected) {
                 throw new MismatchedDimensionException(Errors.format(
-                    Errors.Keys.MISMATCHED_DIMENSION_$2, dimension, expected));
+                    Errors.Keys.MISMATCHED_DIMENSION_2, dimension, expected));
             }
         }
     }
@@ -164,7 +164,7 @@ public abstract class GridCoverageStoreParam implements Serializable {
             final int expected = envelope.getDimension();
             if (dimension != expected) {
                 throw new MismatchedDimensionException(Errors.format(
-                    Errors.Keys.MISMATCHED_DIMENSION_$2, dimension, expected));
+                    Errors.Keys.MISMATCHED_DIMENSION_2, dimension, expected));
             }
         }
     }
@@ -450,12 +450,12 @@ public abstract class GridCoverageStoreParam implements Serializable {
             for (int i=0; i<bands.length; i++) {
                 final int band = bands[i];
                 if (band < 0) {
-                    throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_BAND_NUMBER_$1, band));
+                    throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_BAND_NUMBER_1, band));
                 }
                 for (int j=i; --j>=0;) {
                     if (band == bands[j]) {
                         throw new IllegalArgumentException(Errors.format(
-                                Errors.Keys.DUPLICATED_VALUE_$1, band));
+                                Errors.Keys.DUPLICATED_VALUE_1, band));
                     }
                 }
             }

@@ -259,7 +259,7 @@ public class MeasurementRange<T extends Number & Comparable<? super T>> extends 
                 return casted.convertAndCast(type, units);
             } catch (ConversionException e) {
                 throw new IllegalArgumentException(Errors.format(
-                        Errors.Keys.INCOMPATIBLE_UNIT_$1, casted.units), e);
+                        Errors.Keys.INCOMPATIBLE_UNIT_1, casted.units), e);
             }
         }
         return new MeasurementRange<>(type, range, units);

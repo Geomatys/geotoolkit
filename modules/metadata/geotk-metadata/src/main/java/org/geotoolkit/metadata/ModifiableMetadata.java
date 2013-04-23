@@ -762,7 +762,7 @@ public abstract class ModifiableMetadata extends AbstractMetadata implements Clo
         if (List.class.isAssignableFrom(type)) {
             return false;
         }
-        throw new NoSuchElementException(Errors.format(Errors.Keys.UNSUPPORTED_DATA_TYPE_$1, type));
+        throw new NoSuchElementException(Errors.format(Errors.Keys.UNSUPPORTED_DATA_TYPE_1, type));
     }
 
     /**

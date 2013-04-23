@@ -358,7 +358,7 @@ public class GeneralGridGeometry implements GridGeometry, Serializable {
         try {
             transformed = Envelopes.transform(gridToCRS.inverse(), envelope);
         } catch (TransformException exception) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_TRANSFORM_FOR_TYPE_$1,
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_TRANSFORM_FOR_TYPE_1,
                     gridToCRS.getClass()), exception);
         }
         extent = new GeneralGridEnvelope(transformed, anchor, false);
@@ -442,7 +442,7 @@ public class GeneralGridGeometry implements GridGeometry, Serializable {
     {
         if (dimension != expected) {
             throw new MismatchedDimensionException(Errors.format(
-                    Errors.Keys.MISMATCHED_DIMENSION_$3, argument, dimension, expected));
+                    Errors.Keys.MISMATCHED_DIMENSION_3, argument, dimension, expected));
         }
     }
 
@@ -651,7 +651,7 @@ public class GeneralGridGeometry implements GridGeometry, Serializable {
     public boolean isDefined(final int bitmask) throws IllegalArgumentException {
         if ((bitmask & ~(CRS | ENVELOPE | EXTENT | GRID_TO_CRS)) != 0) {
             throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.ILLEGAL_ARGUMENT_$2, "bitmask", bitmask));
+                    Errors.Keys.ILLEGAL_ARGUMENT_2, "bitmask", bitmask));
         }
         return ((bitmask & CRS)         == 0 || (envelope  != null && envelope.getCoordinateReferenceSystem() != null))
             && ((bitmask & ENVELOPE)    == 0 || (envelope  != null && !envelope.isAllNaN()))

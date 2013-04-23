@@ -205,7 +205,7 @@ public abstract class AbstractMathTransform extends FormattableObject
      * @param expected  The expected dimension.
      */
     static String mismatchedDimension(final String argument, final int dimension, final int expected) {
-        return Errors.format(Errors.Keys.MISMATCHED_DIMENSION_$3, argument, dimension, expected);
+        return Errors.format(Errors.Keys.MISMATCHED_DIMENSION_3, argument, dimension, expected);
     }
 
     /**
@@ -1264,7 +1264,7 @@ public abstract class AbstractMathTransform extends FormattableObject
     {
         if (object == null) {
             throw new InvalidParameterValueException(Errors.format(
-                        Errors.Keys.NULL_ARGUMENT_$1, name), name, object);
+                        Errors.Keys.NULL_ARGUMENT_1, name), name, object);
         }
     }
 

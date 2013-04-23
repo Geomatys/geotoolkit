@@ -89,7 +89,7 @@ public final class CombineDescriptor extends OperationDescriptorImpl {
             for (int i=param.getNumSources(); --i>=0;) {
                 final Object source = param.getSource(i);
                 if (!(source instanceof RenderedImage)) {
-                    message.append(Errors.format(Errors.Keys.ILLEGAL_PARAMETER_TYPE_$2,
+                    message.append(Errors.format(Errors.Keys.ILLEGAL_PARAMETER_TYPE_2,
                             "source"+i, Classes.getClass(source)));
                     return false;
                 }
@@ -124,7 +124,7 @@ public final class CombineDescriptor extends OperationDescriptorImpl {
         }
         for (int i=0; i<matrix.length; i++) {
             if (matrix[i].length != numSamples) {
-                message.append(Errors.format(Errors.Keys.UNEXPECTED_ROW_LENGTH_$3,
+                message.append(Errors.format(Errors.Keys.UNEXPECTED_ROW_LENGTH_3,
                         i, matrix[i].length, numSamples));
                 return false;
             }

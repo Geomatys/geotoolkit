@@ -324,6 +324,6 @@ final class TextRecordList {
          */
         pointCount[xColumn] = oldX;
         pointCount[yColumn] = oldY;
-        return Vocabulary.format(Vocabulary.Keys.POINT_COUNT_IN_GRID_$3, upper, xCount, yCount);
+        return Vocabulary.format(Vocabulary.Keys.POINT_COUNT_IN_GRID_3, upper, xCount, yCount);
     }
 }

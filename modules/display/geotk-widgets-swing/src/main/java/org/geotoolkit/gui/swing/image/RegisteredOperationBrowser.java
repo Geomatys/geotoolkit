@@ -219,7 +219,7 @@ public class RegisteredOperationBrowser extends JComponent {
             }
             try {
                 description = resources.getString(key);
-                version = Vocabulary.getResources(locale).getString(Vocabulary.Keys.VERSION_$1,
+                version = Vocabulary.getResources(locale).getString(Vocabulary.Keys.VERSION_1,
                         resources.getString("Version")) + ", " + resources.getString("Vendor");
             } catch (MissingResourceException exception) {
                 /*

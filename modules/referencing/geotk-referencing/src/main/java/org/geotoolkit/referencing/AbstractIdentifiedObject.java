@@ -452,7 +452,7 @@ nextKey:for (final Map.Entry<String,?> entry : properties.entrySet()) {
             key = REMARKS_KEY;     this.remarks     =             (InternationalString)   (value = remarks);
         } catch (ClassCastException exception) {
             throw new InvalidParameterValueException(Errors.format(
-                    Errors.Keys.ILLEGAL_ARGUMENT_$2, key, value), exception, key, value);
+                    Errors.Keys.ILLEGAL_ARGUMENT_2, key, value), exception, key, value);
         }
         ensureNonNull(NAME_KEY, name);
         ensureNonNull(NAME_KEY, name.toString());
@@ -776,7 +776,7 @@ nextKey:for (final Map.Entry<String,?> entry : properties.entrySet()) {
                 return true;
             }
             default: {
-                throw new IllegalArgumentException(Errors.format(Errors.Keys.UNKNOWN_ENUM_$1, mode));
+                throw new IllegalArgumentException(Errors.format(Errors.Keys.UNKNOWN_ENUM_1, mode));
             }
         }
     }

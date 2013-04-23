@@ -199,7 +199,7 @@ public class TextRecordImageReader extends TextImageReader {
      */
     private static void ensurePositive(final String name, final int column) throws IIOException {
         if (column < 0) {
-            throw new IIOException(Errors.format(Errors.Keys.NEGATIVE_COLUMN_$2, name, column));
+            throw new IIOException(Errors.format(Errors.Keys.NEGATIVE_COLUMN_2, name, column));
         }
     }
 

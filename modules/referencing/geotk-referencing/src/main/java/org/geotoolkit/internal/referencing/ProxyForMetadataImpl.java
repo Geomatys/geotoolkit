@@ -171,14 +171,14 @@ public final class ProxyForMetadataImpl extends ProxyForMetadata implements Chan
         double ymin = envelope.getMinimum(1);
         double ymax = envelope.getMaximum(1);
         if (ymin > ymax) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_ORDINATE_AT_$1, 1));
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_ORDINATE_AT_1, 1));
         }
         boolean inclusion = true;
         if (xmin > xmax) {
             // Longitude is spanning the anti-meridian: we accept them only for lattitudes from
             // poles to poles, because we can declare the bounding box as exclusive only as a whole.
             if (!isPoleToPole(ymin, ymax)) {
-                throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_ORDINATE_AT_$1, 0));
+                throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_ORDINATE_AT_1, 0));
             }
             double t=xmin; xmin=xmax; xmax=t;
             inclusion = false;

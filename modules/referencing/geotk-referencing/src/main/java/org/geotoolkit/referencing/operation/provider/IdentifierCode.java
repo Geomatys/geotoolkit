@@ -84,7 +84,7 @@ final class IdentifierCode extends DefaultReferenceIdentifier {
         if (supersededBy == 0) {
             return null;
         }
-        return Vocabulary.formatInternational(Vocabulary.Keys.SUPERSEDED_BY_$1, supersededBy);
+        return Vocabulary.formatInternational(Vocabulary.Keys.SUPERSEDED_BY_1, supersededBy);
     }
 
     /**

@@ -101,7 +101,7 @@ public abstract class Vector extends AbstractList<Number> implements CheckedCont
                 return new ArrayVector(array);
             }
         }
-        throw new IllegalArgumentException(Errors.format(Errors.Keys.UNKNOWN_TYPE_$1,
+        throw new IllegalArgumentException(Errors.format(Errors.Keys.UNKNOWN_TYPE_1,
                 (component != null) ? component : type));
     }
 
@@ -566,11 +566,11 @@ public abstract class Vector extends AbstractList<Number> implements CheckedCont
             final int key;
             final Object arg1, arg2;
             if (step == 1) {
-                key  = Errors.Keys.ILLEGAL_RANGE_$2;
+                key  = Errors.Keys.ILLEGAL_RANGE_2;
                 arg1 = first;
                 arg2 = first + length;
             } else {
-                key  = Errors.Keys.ILLEGAL_ARGUMENT_$2;
+                key  = Errors.Keys.ILLEGAL_ARGUMENT_2;
                 arg1 = "range";
                 arg2 = "[" + first + ':' + step + ':' + (first + step*length) + ']';
             }

@@ -22,6 +22,7 @@ import java.util.ResourceBundle;
 import java.util.MissingResourceException;
 import org.opengis.util.InternationalString;
 import org.apache.sis.util.iso.ResourceInternationalString;
+import org.apache.sis.util.resources.IndexedResourceBundle;
 
 
 /**
@@ -127,7 +128,7 @@ public final class Vocabulary extends IndexedResourceBundle {
         /**
          * {0} axis
          */
-        public static final int AXIS_$1 = 14;
+        public static final int AXIS_1 = 14;
 
         /**
          * Axis changes
@@ -147,7 +148,7 @@ public final class Vocabulary extends IndexedResourceBundle {
         /**
          * Band {0}
          */
-        public static final int BAND_$1 = 352;
+        public static final int BAND_1 = 352;
 
         /**
          * Barometric altitude
@@ -227,7 +228,7 @@ public final class Vocabulary extends IndexedResourceBundle {
         /**
          * {0} color{0,choice,1#|2#s}
          */
-        public static final int COLOR_COUNT_$1 = 33;
+        public static final int COLOR_COUNT_1 = 33;
 
         /**
          * Color model
@@ -267,7 +268,7 @@ public final class Vocabulary extends IndexedResourceBundle {
         /**
          * {0} component{0,choice,1#|2#s}
          */
-        public static final int COMPONENT_COUNT_$1 = 41;
+        public static final int COMPONENT_COUNT_1 = 41;
 
         /**
          * Configure
@@ -347,7 +348,7 @@ public final class Vocabulary extends IndexedResourceBundle {
         /**
          * {0} data
          */
-        public static final int DATA_$1 = 57;
+        public static final int DATA_1 = 57;
 
         /**
          * Data are present
@@ -357,12 +358,12 @@ public final class Vocabulary extends IndexedResourceBundle {
         /**
          * {0} data base
          */
-        public static final int DATA_BASE_$1 = 59;
+        public static final int DATA_BASE_1 = 59;
 
         /**
          * {0} data base version {1} on {2} engine.
          */
-        public static final int DATA_BASE_$3 = 60;
+        public static final int DATA_BASE_3 = 60;
 
         /**
          * Data type
@@ -372,7 +373,7 @@ public final class Vocabulary extends IndexedResourceBundle {
         /**
          * {1} bits {0,choice,0#unsigned integer|1#signed integer|2#real number}
          */
-        public static final int DATA_TYPE_$2 = 62;
+        public static final int DATA_TYPE_2 = 62;
 
         /**
          * Datum
@@ -432,7 +433,7 @@ public final class Vocabulary extends IndexedResourceBundle {
         /**
          * Derived from {0}
          */
-        public static final int DERIVED_FROM_$1 = 74;
+        public static final int DERIVED_FROM_1 = 74;
 
         /**
          * Description
@@ -567,7 +568,7 @@ public final class Vocabulary extends IndexedResourceBundle {
         /**
          * Error - {0}
          */
-        public static final int ERROR_$1 = 99;
+        public static final int ERROR_1 = 99;
 
         /**
          * Error filters
@@ -612,17 +613,17 @@ public final class Vocabulary extends IndexedResourceBundle {
         /**
          * {0} files
          */
-        public static final int FILES_$1 = 108;
+        public static final int FILES_1 = 108;
 
         /**
          * File {0}
          */
-        public static final int FILE_$1 = 109;
+        public static final int FILE_1 = 109;
 
         /**
          * Line {1} in file {0}
          */
-        public static final int FILE_POSITION_$2 = 110;
+        public static final int FILE_POSITION_2 = 110;
 
         /**
          * Format
@@ -802,7 +803,7 @@ public final class Vocabulary extends IndexedResourceBundle {
         /**
          * {0}-{1}
          */
-        public static final int HYPHEN_$2 = 354;
+        public static final int HYPHEN_2 = 354;
 
         /**
          * Identification
@@ -827,17 +828,17 @@ public final class Vocabulary extends IndexedResourceBundle {
         /**
          * Image {0}
          */
-        public static final int IMAGE_$1 = 148;
+        public static final int IMAGE_1 = 148;
 
         /**
          * Image of class {0}
          */
-        public static final int IMAGE_CLASS_$1 = 149;
+        public static final int IMAGE_CLASS_1 = 149;
 
         /**
          * {1} Image {0,choice,0#Reader|1#Writer} with World File
          */
-        public static final int IMAGE_CODEC_WITH_WORLD_FILE_$2 = 150;
+        public static final int IMAGE_CODEC_WITH_WORLD_FILE_2 = 150;
 
         /**
          * Image list
@@ -857,7 +858,7 @@ public final class Vocabulary extends IndexedResourceBundle {
         /**
          * {0} × {1} pixels × {2} bands
          */
-        public static final int IMAGE_SIZE_$3 = 154;
+        public static final int IMAGE_SIZE_3 = 154;
 
         /**
          * Implementations
@@ -892,12 +893,12 @@ public final class Vocabulary extends IndexedResourceBundle {
         /**
          * {0} installation
          */
-        public static final int INSTALLATION_$1 = 161;
+        public static final int INSTALLATION_1 = 161;
 
         /**
          * Inverse {0}
          */
-        public static final int INVERSE_$1 = 162;
+        public static final int INVERSE_1 = 162;
 
         /**
          * Inverse operation
@@ -912,12 +913,12 @@ public final class Vocabulary extends IndexedResourceBundle {
         /**
          * {0}
          */
-        public static final int JAVA_VENDOR_$1 = 165;
+        public static final int JAVA_VENDOR_1 = 165;
 
         /**
          * Java version {0}
          */
-        public static final int JAVA_VERSION_$1 = 166;
+        public static final int JAVA_VERSION_1 = 166;
 
         /**
          * Julian
@@ -967,7 +968,7 @@ public final class Vocabulary extends IndexedResourceBundle {
         /**
          * Line {0}
          */
-        public static final int LINE_$1 = 175;
+        public static final int LINE_1 = 175;
 
         /**
          * Loading…
@@ -977,7 +978,7 @@ public final class Vocabulary extends IndexedResourceBundle {
         /**
          * Loading {0}…
          */
-        public static final int LOADING_$1 = 177;
+        public static final int LOADING_1 = 177;
 
         /**
          * Loading headers
@@ -987,12 +988,12 @@ public final class Vocabulary extends IndexedResourceBundle {
         /**
          * Loading images {0} and {1}
          */
-        public static final int LOADING_IMAGES_$2 = 179;
+        public static final int LOADING_IMAGES_2 = 179;
 
         /**
          * Loading image {0}
          */
-        public static final int LOADING_IMAGE_$1 = 180;
+        public static final int LOADING_IMAGE_1 = 180;
 
         /**
          * Local
@@ -1042,12 +1043,12 @@ public final class Vocabulary extends IndexedResourceBundle {
         /**
          * Allocated memory: {0} MB
          */
-        public static final int MEMORY_HEAP_SIZE_$1 = 190;
+        public static final int MEMORY_HEAP_SIZE_1 = 190;
 
         /**
          * Allocation used: {0,number,percent}
          */
-        public static final int MEMORY_HEAP_USAGE_$1 = 191;
+        public static final int MEMORY_HEAP_USAGE_1 = 191;
 
         /**
          * Message
@@ -1082,7 +1083,7 @@ public final class Vocabulary extends IndexedResourceBundle {
         /**
          * … {0} more…
          */
-        public static final int MORE_$1 = 198;
+        public static final int MORE_1 = 198;
 
         /**
          * NADCON transform
@@ -1147,7 +1148,7 @@ public final class Vocabulary extends IndexedResourceBundle {
         /**
          * {0} (no details)
          */
-        public static final int NO_DETAILS_$1 = 209;
+        public static final int NO_DETAILS_1 = 209;
 
         /**
          * No duplicated value found.
@@ -1182,7 +1183,7 @@ public final class Vocabulary extends IndexedResourceBundle {
         /**
          * {0} operation
          */
-        public static final int OPERATION_$1 = 215;
+        public static final int OPERATION_1 = 215;
 
         /**
          * Options
@@ -1212,12 +1213,12 @@ public final class Vocabulary extends IndexedResourceBundle {
         /**
          * {0} system
          */
-        public static final int OS_NAME_$1 = 221;
+        public static final int OS_NAME_1 = 221;
 
         /**
          * Version {0} for {1}
          */
-        public static final int OS_VERSION_$2 = 222;
+        public static final int OS_VERSION_2 = 222;
 
         /**
          * Other
@@ -1247,7 +1248,7 @@ public final class Vocabulary extends IndexedResourceBundle {
         /**
          * Parameter {0}
          */
-        public static final int PARAMETER_$1 = 228;
+        public static final int PARAMETER_1 = 228;
 
         /**
          * Part
@@ -1289,7 +1290,7 @@ public final class Vocabulary extends IndexedResourceBundle {
         /**
          * {0} points on a {1} × {2} grid.
          */
-        public static final int POINT_COUNT_IN_GRID_$3 = 235;
+        public static final int POINT_COUNT_IN_GRID_3 = 235;
 
         /**
          * Port
@@ -1334,7 +1335,7 @@ public final class Vocabulary extends IndexedResourceBundle {
         /**
          * Properties of {0}
          */
-        public static final int PROPERTIES_OF_$1 = 338;
+        public static final int PROPERTIES_OF_1 = 338;
 
         /**
          * Quit
@@ -1349,12 +1350,12 @@ public final class Vocabulary extends IndexedResourceBundle {
         /**
          * {0} bits real number
          */
-        public static final int REAL_NUMBER_$1 = 246;
+        public static final int REAL_NUMBER_1 = 246;
 
         /**
          * Area: x=[{0} … {1}], y=[{2} … {3}]
          */
-        public static final int RECTANGLE_$4 = 247;
+        public static final int RECTANGLE_4 = 247;
 
         /**
          * Red
@@ -1449,7 +1450,7 @@ public final class Vocabulary extends IndexedResourceBundle {
         /**
          * Saving {0}…
          */
-        public static final int SAVING_$1 = 260;
+        public static final int SAVING_1 = 260;
 
         /**
          * Scale
@@ -1459,7 +1460,7 @@ public final class Vocabulary extends IndexedResourceBundle {
         /**
          * Scale 1:{0} (approximative)
          */
-        public static final int SCALE_$1 = 261;
+        public static final int SCALE_1 = 261;
 
         /**
          * Schema
@@ -1499,7 +1500,7 @@ public final class Vocabulary extends IndexedResourceBundle {
         /**
          * {0} bits signed integer
          */
-        public static final int SIGNED_INTEGER_$1 = 269;
+        public static final int SIGNED_INTEGER_1 = 269;
 
         /**
          * Size
@@ -1509,7 +1510,7 @@ public final class Vocabulary extends IndexedResourceBundle {
         /**
          * {0} × {1}
          */
-        public static final int SIZE_$2 = 271;
+        public static final int SIZE_2 = 271;
 
         /**
          * (in angle minutes)
@@ -1584,7 +1585,7 @@ public final class Vocabulary extends IndexedResourceBundle {
         /**
          * Superseded by {0}.
          */
-        public static final int SUPERSEDED_BY_$1 = 286;
+        public static final int SUPERSEDED_BY_1 = 286;
 
         /**
          * System
@@ -1624,12 +1625,12 @@ public final class Vocabulary extends IndexedResourceBundle {
         /**
          * Tile cache capacity: {0} Mb
          */
-        public static final int TILE_CACHE_CAPACITY_$1 = 294;
+        public static final int TILE_CACHE_CAPACITY_1 = 294;
 
         /**
          * {0}×{1} tiles of {2} × {3} pixels
          */
-        public static final int TILE_SIZE_$4 = 295;
+        public static final int TILE_SIZE_4 = 295;
 
         /**
          * Time
@@ -1709,7 +1710,7 @@ public final class Vocabulary extends IndexedResourceBundle {
         /**
          * {0} bits unsigned integer ({1} bits/pixel)
          */
-        public static final int UNSIGNED_INTEGER_$2 = 310;
+        public static final int UNSIGNED_INTEGER_2 = 310;
 
         /**
          * Untitled
@@ -1769,12 +1770,12 @@ public final class Vocabulary extends IndexedResourceBundle {
         /**
          * Version {0}
          */
-        public static final int VERSION_$1 = 322;
+        public static final int VERSION_1 = 322;
 
         /**
          * “{0}” version
          */
-        public static final int VERSION_OF_$1 = 323;
+        public static final int VERSION_OF_1 = 323;
 
         /**
          * Vertical
@@ -1837,7 +1838,7 @@ public final class Vocabulary extends IndexedResourceBundle {
      *
      * @param filename The file or the JAR entry containing resources.
      */
-    Vocabulary(final String filename) {
+    public Vocabulary(final java.net.URL filename) {
         super(filename);
     }
 

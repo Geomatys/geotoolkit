@@ -342,7 +342,7 @@ public class OperationTreeBrowser extends JComponent implements Dialog {
                 if (resources == null) {
                     resources = Vocabulary.getResources(locale);
                 }
-                name = resources.getString(Vocabulary.Keys.PARAMETER_$1, i);
+                name = resources.getString(Vocabulary.Keys.PARAMETER_1, i);
             }
             root.add(new NamedTreeNode(name, param.getObjectParameter(i), false));
         }
