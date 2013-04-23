@@ -103,7 +103,7 @@ public class DimapImageWriter extends ImageWriterAdapter{
 
         if (imageIndex != 0) {
             throw new IIOException(Errors.getResources(locale).getString(
-                    Errors.Keys.INDEX_OUT_OF_BOUNDS_$1, imageIndex));
+                    Errors.Keys.INDEX_OUT_OF_BOUNDS_1, imageIndex));
         }
         if (metadata instanceof SpatialMetadata) {
             final SpatialMetadata md = (SpatialMetadata) metadata;

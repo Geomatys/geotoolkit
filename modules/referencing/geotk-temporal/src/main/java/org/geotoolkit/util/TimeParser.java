@@ -234,7 +234,7 @@ public final class TimeParser {
     static long parsePeriod(final String period) throws ParseException {
         final int length = period.length();
         if (length!=0 && Character.toUpperCase(period.charAt(0)) != 'P') {
-            throw new ParseException(Errors.format(Errors.Keys.UNPARSABLE_STRING_$2,
+            throw new ParseException(Errors.format(Errors.Keys.UNPARSABLE_STRING_2,
                     period, period.substring(0,1)), 0);
         }
         long millis = 0;
@@ -263,7 +263,7 @@ public final class TimeParser {
                 value = Double.parseDouble(number);
             } catch (NumberFormatException exception) {
                 final ParseException e = new ParseException(Errors.format(
-                        Errors.Keys.UNPARSABLE_NUMBER_$1, number), lower);
+                        Errors.Keys.UNPARSABLE_NUMBER_1, number), lower);
                 e.initCause(exception);
                 throw e;
             }

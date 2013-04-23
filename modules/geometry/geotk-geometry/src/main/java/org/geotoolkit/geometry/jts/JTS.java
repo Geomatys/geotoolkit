@@ -117,7 +117,7 @@ public final class JTS {
     private static void ensureNonNull(final String name, final Object object)
             throws IllegalArgumentException {
         if (object == null) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.NULL_ARGUMENT_$1, name));
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.NULL_ARGUMENT_1, name));
         }
     }
 
@@ -177,7 +177,7 @@ public final class JTS {
         ensureNonNull("transform", transform);
 
         if ((transform.getSourceDimensions() != 2) || (transform.getTargetDimensions() != 2)) {
-            throw new MismatchedDimensionException(Errors.format(Errors.Keys.ILLEGAL_TRANSFORM_FOR_TYPE_$1,
+            throw new MismatchedDimensionException(Errors.format(Errors.Keys.ILLEGAL_TRANSFORM_FOR_TYPE_1,
                     Classes.getShortClassName(transform)));
         }
 
@@ -550,7 +550,7 @@ public final class JTS {
         if (crs2D == null) {
             throw new MismatchedDimensionException(
                     Errors.format(
-                    Errors.Keys.CANT_SEPARATE_CRS_$1, crs));
+                    Errors.Keys.CANT_SEPARATE_CRS_1, crs));
         }
 
 

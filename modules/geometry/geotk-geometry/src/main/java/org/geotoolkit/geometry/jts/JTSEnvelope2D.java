@@ -251,7 +251,7 @@ public class JTSEnvelope2D extends Envelope implements org.opengis.geometry.Enve
             final int dimension = crs.getCoordinateSystem().getDimension();
             if (dimension != expected) {
                 throw new MismatchedDimensionException(Errors.format(
-                        Errors.Keys.MISMATCHED_DIMENSION_$3, crs.getName().getCode(),
+                        Errors.Keys.MISMATCHED_DIMENSION_3, crs.getName().getCode(),
                         new Integer(dimension), new Integer(expected)));
             }
         }

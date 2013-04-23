@@ -349,7 +349,7 @@ public class DefaultCategorize extends AbstractExpression implements Categorize 
         } else {
             // Current implementation supports only sources that use of index color model
             // and component color model
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_CLASS_$2,
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_CLASS_2,
                     Classes.getClass(candidate), IndexColorModel.class));
         }
 

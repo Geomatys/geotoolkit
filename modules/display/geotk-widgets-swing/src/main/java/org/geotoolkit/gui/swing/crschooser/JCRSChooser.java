@@ -304,7 +304,7 @@ public class JCRSChooser extends javax.swing.JDialog {
      * @param message The error message.
      */
     private void setErrorMessage(final String message) {
-        wktArea.setText("<html>"+Vocabulary.format(Vocabulary.Keys.ERROR_$1, message)+"</html>");
+        wktArea.setText("<html>"+Vocabulary.format(Vocabulary.Keys.ERROR_1, message)+"</html>");
     }
 
     public ACTION showDialog() {

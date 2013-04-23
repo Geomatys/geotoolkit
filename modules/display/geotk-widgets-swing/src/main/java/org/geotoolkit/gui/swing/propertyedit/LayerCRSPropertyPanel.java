@@ -330,6 +330,6 @@ public class LayerCRSPropertyPanel extends javax.swing.JPanel implements Propert
      * @param message The error message.
      */
     private void setErrorMessage(final String message) {
-        wktArea.setText(Vocabulary.format(Vocabulary.Keys.ERROR_$1, message));
+        wktArea.setText(Vocabulary.format(Vocabulary.Keys.ERROR_1, message));
     }
 }

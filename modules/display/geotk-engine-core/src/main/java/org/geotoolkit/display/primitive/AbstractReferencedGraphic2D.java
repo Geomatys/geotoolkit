@@ -104,7 +104,7 @@ public abstract class AbstractReferencedGraphic2D extends AbstractReferencedGrap
     public void setZOrderHint(final double zOrderHint) {
         if (Double.isNaN(zOrderHint)) {
             throw new IllegalArgumentException(Errors.getResources(getLocale()).getString(
-                    Errors.Keys.ILLEGAL_ARGUMENT_$2, "zOrderHint", zOrderHint));
+                    Errors.Keys.ILLEGAL_ARGUMENT_2, "zOrderHint", zOrderHint));
         }
         final double oldZOrder;
         synchronized (getTreeLock()) {
