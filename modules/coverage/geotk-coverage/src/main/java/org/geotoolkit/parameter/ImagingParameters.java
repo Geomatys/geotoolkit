@@ -244,7 +244,7 @@ public class ImagingParameters extends AbstractParameter implements ParameterVal
                     final ParameterDescriptor<?> d = (ParameterDescriptor<?>) values[i].getDescriptor();
                     if (IdentifiedObjects.nameMatches(d, name)) {
                         throw new InvalidParameterNameException(Errors.format(
-                                Errors.Keys.DUPLICATED_PARAMETER_NAME_$4,
+                                Errors.Keys.DUPLICATED_PARAMETER_NAME_4,
                                 d.getName().getCode(), j, name, i), name);
                     }
                 }
@@ -297,7 +297,7 @@ public class ImagingParameters extends AbstractParameter implements ParameterVal
                 return value;
             }
         }
-        throw new ParameterNotFoundException(Errors.format(Errors.Keys.UNKNOWN_PARAMETER_NAME_$1, name), name);
+        throw new ParameterNotFoundException(Errors.format(Errors.Keys.UNKNOWN_PARAMETER_NAME_1, name), name);
     }
 
     /**
@@ -306,7 +306,7 @@ public class ImagingParameters extends AbstractParameter implements ParameterVal
      */
     @Override
     public List<ParameterValueGroup> groups(final String name) throws ParameterNotFoundException {
-        throw new ParameterNotFoundException(Errors.format(Errors.Keys.UNKNOWN_PARAMETER_NAME_$1, name), name);
+        throw new ParameterNotFoundException(Errors.format(Errors.Keys.UNKNOWN_PARAMETER_NAME_1, name), name);
     }
 
     /**
@@ -315,7 +315,7 @@ public class ImagingParameters extends AbstractParameter implements ParameterVal
      */
     @Override
     public ParameterValueGroup addGroup(final String name) throws ParameterNotFoundException {
-        throw new ParameterNotFoundException(Errors.format(Errors.Keys.UNKNOWN_PARAMETER_NAME_$1, name), name);
+        throw new ParameterNotFoundException(Errors.format(Errors.Keys.UNKNOWN_PARAMETER_NAME_1, name), name);
     }
 
     /**

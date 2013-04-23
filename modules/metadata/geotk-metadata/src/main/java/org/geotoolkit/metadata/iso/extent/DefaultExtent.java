@@ -320,7 +320,7 @@ public class DefaultExtent extends MetadataEntity implements Extent {
      */
     static void ensureNonNull(final String name, final Object object) throws InvalidMetadataException {
         if (object == null) {
-            throw new InvalidMetadataException(Errors.format(Errors.Keys.NULL_ATTRIBUTE_$1, name));
+            throw new InvalidMetadataException(Errors.format(Errors.Keys.NULL_ATTRIBUTE_1, name));
         }
     }
 }

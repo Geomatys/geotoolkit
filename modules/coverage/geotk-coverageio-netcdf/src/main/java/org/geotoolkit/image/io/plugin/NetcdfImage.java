@@ -152,7 +152,7 @@ final class NetcdfImage extends IIOImageHelper {
             dimensions[i] = dimension;
             if (dimension.api == DimensionSlice.API.BANDS) {
                 if (bandDimension >= 0) {
-                    throw new IIOException(Errors.format(Errors.Keys.DUPLICATED_VALUE_$1, DimensionSlice.API.BANDS));
+                    throw new IIOException(Errors.format(Errors.Keys.DUPLICATED_VALUE_1, DimensionSlice.API.BANDS));
                 }
                 bandDimension = i;
             }
@@ -200,7 +200,7 @@ final class NetcdfImage extends IIOImageHelper {
             case DataBuffer.TYPE_INT:    type = DataType.INT;    break;
             case DataBuffer.TYPE_FLOAT:  type = DataType.FLOAT;  break;
             case DataBuffer.TYPE_DOUBLE: type = DataType.DOUBLE; break;
-            default: throw new ImageMetadataException(Errors.format(Errors.Keys.UNSUPPORTED_DATA_TYPE_$1, dataType));
+            default: throw new ImageMetadataException(Errors.format(Errors.Keys.UNSUPPORTED_DATA_TYPE_1, dataType));
         }
         /*
          * Get the NetCDF dimensions to be given to Variable constructor.

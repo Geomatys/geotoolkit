@@ -999,7 +999,7 @@ compare:    for (final SingleCRS component : actualComponents) {
             int dimension = crs.getCoordinateSystem().getDimension();
             if (lower < 0 || lower > upper || upper > dimension) {
                 throw new IndexOutOfBoundsException(Errors.format(
-                        Errors.Keys.INDEX_OUT_OF_BOUNDS_$1, lower < 0 ? lower : upper));
+                        Errors.Keys.INDEX_OUT_OF_BOUNDS_1, lower < 0 ? lower : upper));
             }
 check:      while (lower != 0 || upper != dimension) {
                 if (crs instanceof CompoundCRS) {
@@ -1420,7 +1420,7 @@ check:      while (lower != 0 || upper != dimension) {
         final int targetDim = transform.getTargetDimensions();
         final double[] result = new double[targetDim];
         if (vector.length != sourceDim) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.MISMATCHED_DIMENSION_$3,
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.MISMATCHED_DIMENSION_3,
                     "vector", vector.length, sourceDim));
         }
         if (transform instanceof AffineTransform) {

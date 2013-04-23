@@ -295,7 +295,7 @@ final class Element {
      */
     private ParseException missingCharacter(final char c, final int position) {
         return trim("missingCharacter", new ParseException(complete(
-                Errors.format(Errors.Keys.MISSING_CHARACTER_$1, Character.valueOf(c))), position));
+                Errors.format(Errors.Keys.MISSING_CHARACTER_1, Character.valueOf(c))), position));
     }
 
     /**
@@ -309,7 +309,7 @@ final class Element {
             error += keyword.length();
         }
         return trim("missingParameter", new ParseException(complete(
-                Errors.format(Errors.Keys.NO_PARAMETER_$1, key)), error));
+                Errors.format(Errors.Keys.NO_PARAMETER_1, key)), error));
     }
 
     /**
@@ -320,7 +320,7 @@ final class Element {
      */
     private String complete(String message) {
         if (keyword != null) {
-            message = Errors.format(Errors.Keys.IN_$1, keyword) + ' ' + message;
+            message = Errors.format(Errors.Keys.IN_1, keyword) + ' ' + message;
         }
         return message;
     }
@@ -405,7 +405,7 @@ final class Element {
                 final Number number = (Number) object;
                 if (number instanceof Float || number instanceof Double) {
                     throw new ParseException(complete(Errors.format(
-                            Errors.Keys.ILLEGAL_ARGUMENT_$2, key, number)), offset);
+                            Errors.Keys.ILLEGAL_ARGUMENT_2, key, number)), offset);
                 }
                 return number.intValue();
             }
@@ -551,7 +551,7 @@ final class Element {
      */
     public void close() throws ParseException {
         if (!isNullOrEmpty(list)) {
-            throw new ParseException(complete(Errors.format(Errors.Keys.UNEXPECTED_PARAMETER_$1,
+            throw new ParseException(complete(Errors.format(Errors.Keys.UNEXPECTED_PARAMETER_1,
                     list.get(0))), offset + keyword.length());
         }
     }

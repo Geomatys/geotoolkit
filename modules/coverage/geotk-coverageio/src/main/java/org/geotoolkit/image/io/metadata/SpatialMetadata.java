@@ -713,7 +713,7 @@ public class SpatialMetadata extends IIOMetadata implements WarningProducer {
             return FALLBACK;
         }
         throw new IllegalArgumentException(getErrorResources().getString(
-                Errors.Keys.ILLEGAL_ARGUMENT_$2, "formatName", formatName));
+                Errors.Keys.ILLEGAL_ARGUMENT_2, "formatName", formatName));
     }
 
     /**

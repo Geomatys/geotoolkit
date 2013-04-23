@@ -152,7 +152,7 @@ public abstract class ShareableTask<Input,Output> implements Callable<Output>, S
         }
         size -= aggregate.size();
         if (size != 0) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.DUPLICATED_VALUES_COUNT_$1, size));
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.DUPLICATED_VALUES_COUNT_1, size));
         }
         return aggregate;
     }

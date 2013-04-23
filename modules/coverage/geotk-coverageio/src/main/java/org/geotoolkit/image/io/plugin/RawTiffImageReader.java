@@ -456,7 +456,7 @@ public class RawTiffImageReader extends SpatialImageReader {
                         ensureBufferContains(position + n * entrySize, intSize, IFD_SIZE);
                         if (!nextImageFileDirectory()) {
                             throw new IndexOutOfBoundsException(error(
-                                    Errors.Keys.INDEX_OUT_OF_BOUNDS_$1, imageIndex));
+                                    Errors.Keys.INDEX_OUT_OF_BOUNDS_1, imageIndex));
                         }
                         imageAhead--;
                     }
@@ -503,7 +503,7 @@ public class RawTiffImageReader extends SpatialImageReader {
                     return;
                 }
             }
-            throw new IndexOutOfBoundsException(error(Errors.Keys.INDEX_OUT_OF_BOUNDS_$1, imageIndex));
+            throw new IndexOutOfBoundsException(error(Errors.Keys.INDEX_OUT_OF_BOUNDS_1, imageIndex));
         }
     }
 
@@ -517,7 +517,7 @@ public class RawTiffImageReader extends SpatialImageReader {
      */
     private void ensureDefined(final int value, final String name) throws IIOException {
         if (value < 0) {
-            throw new IIOException(error(Errors.Keys.NO_SUCH_ELEMENT_NAME_$1, name));
+            throw new IIOException(error(Errors.Keys.NO_SUCH_ELEMENT_NAME_1, name));
         }
     }
 
@@ -531,7 +531,7 @@ public class RawTiffImageReader extends SpatialImageReader {
      */
     private void ensureDefined(final long[] value, final String name) throws IIOException {
         if (value == null) {
-            throw new IIOException(error(Errors.Keys.NO_SUCH_ELEMENT_NAME_$1, name));
+            throw new IIOException(error(Errors.Keys.NO_SUCH_ELEMENT_NAME_1, name));
         }
     }
 
@@ -555,7 +555,7 @@ public class RawTiffImageReader extends SpatialImageReader {
             case 0x011C: { // PlanarConfiguration.
                 final int planarConfiguration = entryValue("PlanarConfiguration");
                 if (planarConfiguration != 1) { // '1' stands for "chunky", 2 for "planar".
-                    throw new UnsupportedImageFormatException(error(Errors.Keys.ILLEGAL_PARAMETER_VALUE_$2,
+                    throw new UnsupportedImageFormatException(error(Errors.Keys.ILLEGAL_PARAMETER_VALUE_2,
                             "planarConfiguration", planarConfiguration));
                 }
                 break;
@@ -563,7 +563,7 @@ public class RawTiffImageReader extends SpatialImageReader {
             case 0x0106: { // PhotometricInterpretation.
                 final int photometricInterpretation = entryValue("photometricInterpretation");
                 if (photometricInterpretation != 2) { // '2' stands for RGB.
-                    throw new UnsupportedImageFormatException(error(Errors.Keys.ILLEGAL_PARAMETER_VALUE_$2,
+                    throw new UnsupportedImageFormatException(error(Errors.Keys.ILLEGAL_PARAMETER_VALUE_2,
                             "photometricInterpretation", photometricInterpretation));
                 }
                 break;
@@ -577,7 +577,7 @@ public class RawTiffImageReader extends SpatialImageReader {
                         case 7:  name = "LZW";       break;
                         default: name = compression; break;
                     }
-                    throw new UnsupportedImageFormatException(error(Errors.Keys.ILLEGAL_PARAMETER_VALUE_$2,
+                    throw new UnsupportedImageFormatException(error(Errors.Keys.ILLEGAL_PARAMETER_VALUE_2,
                             "compression", name));
                 }
                 break;
@@ -626,7 +626,7 @@ public class RawTiffImageReader extends SpatialImageReader {
     private int entryValue(final String name) throws IIOException {
         final short type = buffer.getShort();
         if (readInt() != 1) {
-            throw new IIOException(error(Errors.Keys.DUPLICATED_VALUE_$1, name));
+            throw new IIOException(error(Errors.Keys.DUPLICATED_VALUE_1, name));
         }
         switch (type) {
             case TYPE_BYTE:   return buffer.get();
@@ -635,7 +635,7 @@ public class RawTiffImageReader extends SpatialImageReader {
             case TYPE_USHORT: return buffer.getShort() & 0xFFFF;
             case TYPE_INT:
             case TYPE_UINT:   return buffer.getInt();
-            default: throw new IIOException(error(Errors.Keys.ILLEGAL_PARAMETER_TYPE_$2, name, type));
+            default: throw new IIOException(error(Errors.Keys.ILLEGAL_PARAMETER_TYPE_2, name, type));
         }
     }
 
@@ -660,7 +660,7 @@ public class RawTiffImageReader extends SpatialImageReader {
         }
         final int dataSize, intSize = isBigTIFF ? SIZE_BIG_INT : SIZE_INT;
         if (type < 0 || type == TYPE_FLOAT || type == TYPE_DOUBLE || (dataSize = TYPE_SIZE[type]) == 0) {
-            throw new IIOException(error(Errors.Keys.ILLEGAL_PARAMETER_TYPE_$2, name, type));
+            throw new IIOException(error(Errors.Keys.ILLEGAL_PARAMETER_TYPE_2, name, type));
         }
         final long[] values = new long[(int) count];
         if (values.length * dataSize <= intSize) {
@@ -905,7 +905,7 @@ public class RawTiffImageReader extends SpatialImageReader {
                     if ((bits[i] = (int) b) != b) {
                         // Verify that 'bitPerSample' values are inside 'int' range (paranoiac check).
                         throw new UnsupportedImageFormatException(error(
-                                Errors.Keys.ILLEGAL_PARAMETER_VALUE_$2, "bitsPerSample", b));
+                                Errors.Keys.ILLEGAL_PARAMETER_VALUE_2, "bitsPerSample", b));
                     }
                     if (i != 0 && b != size) {
                         // Current implementation requires all sample values to be of the same size.
@@ -923,7 +923,7 @@ public class RawTiffImageReader extends SpatialImageReader {
                     case Integer.SIZE: type = DataBuffer.TYPE_INT;    break;
                     default: {
                         throw new UnsupportedImageFormatException(error(
-                                Errors.Keys.ILLEGAL_PARAMETER_VALUE_$2, "bitsPerSample", size));
+                                Errors.Keys.ILLEGAL_PARAMETER_VALUE_2, "bitsPerSample", size));
                     }
                 }
             } else {

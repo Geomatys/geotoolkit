@@ -401,7 +401,7 @@ public class DefaultEllipsoidalCS extends AbstractCS implements EllipsoidalCS {
             final Unit<?> unit = axis.getUnit();
             if (Double.isNaN(offset) || Double.isInfinite(offset)) {
                 // Should never happen unless the axis has some strange unit.
-                throw new IllegalStateException(Errors.format(Errors.Keys.UNKNOWN_UNIT_$1, unit));
+                throw new IllegalStateException(Errors.format(Errors.Keys.UNKNOWN_UNIT_1, unit));
             }
             final DefaultCoordinateSystemAxis newAxis = new DefaultCoordinateSystemAxis(
                     IdentifiedObjects.getProperties(axis), axis.getAbbreviation(), axis.getDirection(),
@@ -438,7 +438,7 @@ public class DefaultEllipsoidalCS extends AbstractCS implements EllipsoidalCS {
         try {
             axes = axisUsingUnit(unit, Units.isLinear(unit) ? SI.RADIAN : SI.METRE);
         } catch (ConversionException e) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.INCOMPATIBLE_UNIT_$1, unit), e);
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.INCOMPATIBLE_UNIT_1, unit), e);
         }
         if (axes == null) {
             return this;

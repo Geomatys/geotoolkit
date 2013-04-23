@@ -424,7 +424,7 @@ public class DefaultEllipsoid extends AbstractIdentifiedObject implements Ellips
         if (value > 0) {
             return value;
         }
-        throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_$2, name, value));
+        throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_2, name, value));
     }
 
     /**
@@ -732,7 +732,7 @@ public class DefaultEllipsoid extends AbstractIdentifiedObject implements Ellips
         }
         // Other cases: no solution for this algorithm.
         final CoordinateFormat format = new CoordinateFormat();
-        throw new ArithmeticException(Errors.format(Errors.Keys.NO_CONVERGENCE_$2,
+        throw new ArithmeticException(Errors.format(Errors.Keys.NO_CONVERGENCE_2,
                   format.format(new DirectPosition2D(toDegrees(x1), toDegrees(y1))),
                   format.format(new DirectPosition2D(toDegrees(x2), toDegrees(y2)))));
     }

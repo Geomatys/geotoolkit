@@ -515,7 +515,7 @@ public class Molodensky extends MathTransformProvider {
         if (dimension != 2 && dimension != 3) {
             final String name = descriptor.getName().getCode();
             throw new InvalidParameterValueException(Errors.format(
-                    Errors.Keys.ILLEGAL_ARGUMENT_$2, name, dimension), name, dimension);
+                    Errors.Keys.ILLEGAL_ARGUMENT_2, name, dimension), name, dimension);
         }
         return dimension;
     }

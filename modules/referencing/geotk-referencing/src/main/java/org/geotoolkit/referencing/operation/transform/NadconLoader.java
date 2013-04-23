@@ -162,8 +162,8 @@ abstract class NadconLoader extends GridLoader {
             loader.latitudeGridFile  = latitudeGrid;
             return loader;
         } catch (IOException cause) {
-            String message = Errors.format(Errors.Keys.CANT_READ_FILE_$1, rx ? longitudeGrid : latitudeGrid);
-            message = message + ' ' + Descriptions.format(Descriptions.Keys.DATA_NOT_INSTALLED_$3,
+            String message = Errors.format(Errors.Keys.CANT_READ_FILE_1, rx ? longitudeGrid : latitudeGrid);
+            message = message + ' ' + Descriptions.format(Descriptions.Keys.DATA_NOT_INSTALLED_3,
                     "NADCON", NADCON.directory(true), "geotk-setup");
             final FactoryException ex;
             if (cause instanceof FileNotFoundException) {
@@ -193,7 +193,7 @@ abstract class NadconLoader extends GridLoader {
         } else if (ext.equalsIgnoreCase(text)) {
             return false;
         } else {
-            throw new IOException(Errors.format(Errors.Keys.UNSUPPORTED_FILE_TYPE_$1, ext));
+            throw new IOException(Errors.format(Errors.Keys.UNSUPPORTED_FILE_TYPE_1, ext));
         }
     }
 
@@ -292,7 +292,7 @@ abstract class NadconLoader extends GridLoader {
             int tokenCount = tokens.countTokens();
             if (tokenCount != 8) {
                 throw new ContentFormatException(Errors.format(
-                        Errors.Keys.UNEXPECTED_HEADER_LENGTH_$1, tokenCount));
+                        Errors.Keys.UNEXPECTED_HEADER_LENGTH_1, tokenCount));
             }
             String n = null;
             try {
@@ -307,7 +307,7 @@ abstract class NadconLoader extends GridLoader {
                     Float.parseFloat(n = tokens.nextToken())
                 };
             } catch (NumberFormatException e) {
-                throw new ContentFormatException(Errors.format(Errors.Keys.UNPARSABLE_NUMBER_$1, n), e);
+                throw new ContentFormatException(Errors.format(Errors.Keys.UNPARSABLE_NUMBER_1, n), e);
             }
         }
 
@@ -343,7 +343,7 @@ abstract class NadconLoader extends GridLoader {
                         value = Float.parseFloat(token);
                     } catch (NumberFormatException e) {
                         throw new ContentFormatException(Errors.format(
-                                Errors.Keys.UNPARSABLE_NUMBER_$1, token), e);
+                                Errors.Keys.UNPARSABLE_NUMBER_1, token), e);
                     }
                     if (offset >= grid.length) {
                         throw new IOException(Errors.format(Errors.Keys.FILE_HAS_TOO_MANY_DATA));

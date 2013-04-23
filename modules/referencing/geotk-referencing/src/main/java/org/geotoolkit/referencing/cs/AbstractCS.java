@@ -173,13 +173,13 @@ public class AbstractCS extends AbstractIdentifiedObject implements CoordinateSy
             if (!isCompatibleDirection(direction)) {
                 // TOOD: localize name()
                 throw new IllegalArgumentException(Errors.format(
-                        Errors.Keys.ILLEGAL_AXIS_ORIENTATION_$2, direction.name(), getClass()));
+                        Errors.Keys.ILLEGAL_AXIS_ORIENTATION_2, direction.name(), getClass()));
             }
             final Unit<?> unit = axis[i].getUnit();
             ensureNonNull("unit", unit);
             if (!isCompatibleUnit(direction, unit)) {
                 throw new IllegalArgumentException(Errors.format(
-                        Errors.Keys.INCOMPATIBLE_UNIT_$1, unit));
+                        Errors.Keys.INCOMPATIBLE_UNIT_1, unit));
             }
             /*
              * Ensures there is no axis along the same direction
@@ -193,7 +193,7 @@ public class AbstractCS extends AbstractIdentifiedObject implements CoordinateSy
                         final String nameI = axis[i].getDirection().name();
                         final String nameJ = axis[j].getDirection().name();
                         throw new IllegalArgumentException(Errors.format(
-                                Errors.Keys.COLINEAR_AXIS_$2, nameI, nameJ));
+                                Errors.Keys.COLINEAR_AXIS_2, nameI, nameJ));
                     }
                 }
             }
@@ -221,7 +221,7 @@ public class AbstractCS extends AbstractIdentifiedObject implements CoordinateSy
                          */
                         if (m == null) {
                             throw new IllegalArgumentException(Errors.format(
-                                    Errors.Keys.INCONSISTENT_AXIS_ORIENTATION_$2,
+                                    Errors.Keys.INCONSISTENT_AXIS_ORIENTATION_2,
                                     name, direction.name()));
                         }
                     }
@@ -388,7 +388,7 @@ public class AbstractCS extends AbstractIdentifiedObject implements CoordinateSy
                 final UnitConverter converter = sourceUnit.getConverterToAny(targetUnit);
                 if (!(converter instanceof LinearConverter)) {
                     throw new ConversionException(Errors.format(
-                              Errors.Keys.NON_LINEAR_UNIT_CONVERSION_$2, sourceUnit, targetUnit));
+                              Errors.Keys.NON_LINEAR_UNIT_CONVERSION_2, sourceUnit, targetUnit));
                 }
                 final double offset = converter.convert(0);
                 final double scale  = Units.derivative(converter, 0);
@@ -448,7 +448,7 @@ public class AbstractCS extends AbstractIdentifiedObject implements CoordinateSy
     {
         if (coordinates.length != axis.length) {
             throw new MismatchedDimensionException(Errors.format(
-                    Errors.Keys.MISMATCHED_DIMENSION_$3,
+                    Errors.Keys.MISMATCHED_DIMENSION_3,
                     name, coordinates.length, axis.length));
         }
     }
@@ -481,7 +481,7 @@ public class AbstractCS extends AbstractIdentifiedObject implements CoordinateSy
         if (axis.length == 1) {
             return new Measure(Math.abs(coord1[0] - coord2[0]), axis[0].getUnit());
         }
-        throw new UnsupportedOperationException(Errors.format(Errors.Keys.UNSUPPORTED_COORDINATE_SYSTEM_$1, getClass()));
+        throw new UnsupportedOperationException(Errors.format(Errors.Keys.UNSUPPORTED_COORDINATE_SYSTEM_1, getClass()));
     }
 
     /**

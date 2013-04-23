@@ -707,8 +707,8 @@ public class ParameterEditor extends JComponent {
                 classe = primitiveToWrapper(classe);
                 boolean isInteger = false;
                 if (isFloat(classe) || (isInteger = isInteger(classe)) == true) {
-                    type = Vocabulary.format(isInteger ? Vocabulary.Keys.SIGNED_INTEGER_$1 :
-                            Vocabulary.Keys.REAL_NUMBER_$1, primitiveBitCount(classe)) +
+                    type = Vocabulary.format(isInteger ? Vocabulary.Keys.SIGNED_INTEGER_1 :
+                            Vocabulary.Keys.REAL_NUMBER_1, primitiveBitCount(classe)) +
                             " (" + type + ')';
                 }
             }

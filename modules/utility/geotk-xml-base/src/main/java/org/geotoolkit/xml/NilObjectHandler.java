@@ -152,7 +152,7 @@ final class NilObjectHandler implements InvocationHandler {
                 }
                 if (name.startsWith("set")) {
                     throw new UnsupportedOperationException(Errors.format(
-                            Errors.Keys.UNMODIFIABLE_OBJECT_$1, getInterface(proxy)));
+                            Errors.Keys.UNMODIFIABLE_OBJECT_1, getInterface(proxy)));
                 }
                 break;
             }
@@ -163,7 +163,7 @@ final class NilObjectHandler implements InvocationHandler {
                 break;
             }
         }
-        throw new UnsupportedOperationException(Errors.format(Errors.Keys.UNSUPPORTED_OPERATION_$1,
+        throw new UnsupportedOperationException(Errors.format(Errors.Keys.UNSUPPORTED_OPERATION_1,
                 getInterface(proxy).getSimpleName() + '.' + name));
     }
 

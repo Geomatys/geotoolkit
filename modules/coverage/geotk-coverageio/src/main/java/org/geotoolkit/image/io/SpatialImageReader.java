@@ -221,7 +221,7 @@ public abstract class SpatialImageReader extends ImageReader implements WarningP
      * @param upper The upper legal value, exclusive.
      */
     private String indexOutOfBounds(final int index, final int lower, final int upper) {
-        return getErrorResources().getString(Errors.Keys.VALUE_OUT_OF_BOUNDS_$3,
+        return getErrorResources().getString(Errors.Keys.VALUE_OUT_OF_BOUNDS_3,
                 index, (lower < upper) ? lower : "EOF", upper-1);
     }
 
@@ -798,7 +798,7 @@ public abstract class SpatialImageReader extends ImageReader implements WarningP
                     } else {
                         // Use range.getMin/MaxValue() because they may be integers rather than doubles.
                         Warnings.log(this, null, SpatialImageReader.class, "getImageType",
-                                Errors.Keys.ILLEGAL_RANGE_$2, range.getMinValue(), range.getMaxValue());
+                                Errors.Keys.ILLEGAL_RANGE_2, range.getMinValue(), range.getMaxValue());
                         continue;
                     }
                 } else {

@@ -80,7 +80,7 @@ final class DatabasePanels extends JComponent implements ActionListener {
         connectionPanels.setOpaque(false);
         final String[] databaseNames = new String[CONNECTION_PANELS.length];
         for (int i=0; i<CONNECTION_PANELS.length; i++) {
-            databaseNames[i] = resources.getString(Vocabulary.Keys.DATA_BASE_$1, CONNECTION_PANELS[i]);
+            databaseNames[i] = resources.getString(Vocabulary.Keys.DATA_BASE_1, CONNECTION_PANELS[i]);
             final JComponent panel;
             switch (i) {
                 case 0: panel = epsgPanel; break;

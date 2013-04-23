@@ -350,10 +350,10 @@ public class ImageProperties extends JComponent implements Dialog {
                 bundle      = ((OperationDescriptor) descriptor).getResourceBundle(locale);
                 name        = bundle   .getString("LocalName");
                 description = bundle   .getString("Description");
-                version     = resources.getString(Vocabulary.Keys.VERSION_$1,
+                version     = resources.getString(Vocabulary.Keys.VERSION_1,
                               bundle   .getString("Version")) + " (" +
                               bundle   .getString("Vendor") + ')';
-                name = resources.getString(Vocabulary.Keys.OPERATION_$1, name);
+                name = resources.getString(Vocabulary.Keys.OPERATION_1, name);
             }
         } else if (image instanceof ImageReaderWriterSpi) {
             /*
@@ -364,7 +364,7 @@ public class ImageProperties extends JComponent implements Dialog {
              */
             final ImageReaderWriterSpi spi = (ImageReaderWriterSpi) image;
             description = spi.getDescription(locale);
-            extra = resources.getString(Vocabulary.Keys.VERSION_$1,
+            extra = resources.getString(Vocabulary.Keys.VERSION_1,
                     spi.getVersion()) + " (" + spi.getVendorName() + ')';
             String[] names = spi.getMIMETypes();
             if (names != null && names.length != 0) {
@@ -380,7 +380,7 @@ public class ImageProperties extends JComponent implements Dialog {
              * Unknown case - typically a BufferedImage.
              */
             name = Classes.getShortClassName(image);
-            name = resources.getString(Vocabulary.Keys.IMAGE_CLASS_$1, name);
+            name = resources.getString(Vocabulary.Keys.IMAGE_CLASS_1, name);
         }
         /*
          * Formats the description field using the information fetched above.
@@ -452,7 +452,7 @@ public class ImageProperties extends JComponent implements Dialog {
         if (image != null) {
             final Vocabulary resources = Vocabulary.getResources(getLocale());
             descriptions[IMAGE_SIZE].setText(resources.getString(
-                    Vocabulary.Keys.SIZE_$2, image.getWidth(), image.getHeight()));
+                    Vocabulary.Keys.SIZE_2, image.getWidth(), image.getHeight()));
         }
         setOperationDescription(image);
         if (properties != null) {
@@ -499,11 +499,11 @@ public class ImageProperties extends JComponent implements Dialog {
             switch (i) {
                 case IMAGE_SIZE: {
                     final Object numBands = (sm != null) ? sm.getNumBands() : resources.getString(Vocabulary.Keys.UNDEFINED);
-                    text = resources.getString(Vocabulary.Keys.IMAGE_SIZE_$3, width, height, numBands);
+                    text = resources.getString(Vocabulary.Keys.IMAGE_SIZE_3, width, height, numBands);
                     break;
                 }
                 case TILE_SIZE: {
-                    text = resources.getString(Vocabulary.Keys.TILE_SIZE_$4, numXTiles, numYTiles, tileWidth, tileHeight);
+                    text = resources.getString(Vocabulary.Keys.TILE_SIZE_4, numXTiles, numYTiles, tileWidth, tileHeight);
                     break;
                 }
                 case DATA_TYPE: {
@@ -597,11 +597,11 @@ public class ImageProperties extends JComponent implements Dialog {
         final int key;
         switch (type) {
             case DataBuffer.TYPE_BYTE:      // Fall through
-            case DataBuffer.TYPE_USHORT:    key = Vocabulary.Keys.UNSIGNED_INTEGER_$2; break;
+            case DataBuffer.TYPE_USHORT:    key = Vocabulary.Keys.UNSIGNED_INTEGER_2; break;
             case DataBuffer.TYPE_SHORT:     // Fall through
-            case DataBuffer.TYPE_INT:       key = Vocabulary.Keys.SIGNED_INTEGER_$1; break;
+            case DataBuffer.TYPE_INT:       key = Vocabulary.Keys.SIGNED_INTEGER_1; break;
             case DataBuffer.TYPE_FLOAT:     // Fall through
-            case DataBuffer.TYPE_DOUBLE:    key = Vocabulary.Keys.REAL_NUMBER_$1; break;
+            case DataBuffer.TYPE_DOUBLE:    key = Vocabulary.Keys.REAL_NUMBER_1; break;
             case DataBuffer.TYPE_UNDEFINED: // Fall through
             default: return resources.getString(Vocabulary.Keys.UNDEFINED);
         }
@@ -640,7 +640,7 @@ public class ImageProperties extends JComponent implements Dialog {
                     }
                 }
                 return text + " (" + resources.getString(
-                        Vocabulary.Keys.COMPONENT_COUNT_$1, cs.getNumComponents()) + ')';
+                        Vocabulary.Keys.COMPONENT_COUNT_1, cs.getNumComponents()) + ')';
             }
         }
         return resources.getString(Vocabulary.Keys.UNDEFINED);
@@ -676,7 +676,7 @@ public class ImageProperties extends JComponent implements Dialog {
             }
         }
         if (numColors != 0) {
-            buffer.append(" (").append(resources.getString(Vocabulary.Keys.COLOR_COUNT_$1, numColors)).append(')');
+            buffer.append(" (").append(resources.getString(Vocabulary.Keys.COLOR_COUNT_1, numColors)).append(')');
         }
         return buffer.toString().trim();
     }

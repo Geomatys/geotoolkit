@@ -249,7 +249,7 @@ public class AbstractDerivedCRS extends AbstractSingleCRS implements GeneralDeri
             (dim1 = dimTarget) != (dim2 = derivedCS.getDimension()))
         {
             throw new MismatchedDimensionException(Errors.format(
-                    Errors.Keys.MISMATCHED_DIMENSION_$2, dim1, dim2));
+                    Errors.Keys.MISMATCHED_DIMENSION_2, dim1, dim2));
         }
     }
 

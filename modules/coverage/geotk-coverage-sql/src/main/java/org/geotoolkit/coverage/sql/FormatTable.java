@@ -153,7 +153,7 @@ final class FormatTable extends SingletonTable<FormatEntry> {
             default: {
                 // Following constructor will close the ResultSet.
                 throw new IllegalRecordException(errors().getString(
-                        Errors.Keys.UNKNOWN_PARAMETER_$1, encoding),
+                        Errors.Keys.UNKNOWN_PARAMETER_1, encoding),
                         this, results, encodingIndex, identifier);
             }
         }

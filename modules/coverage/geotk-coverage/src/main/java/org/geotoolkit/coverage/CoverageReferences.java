@@ -97,7 +97,7 @@ public class CoverageReferences {
      */
     public Reference<Coverage> reference(final Coverage coverage) {
         if (coverage == null) {
-            throw new NullArgumentException(Errors.format(Errors.Keys.NULL_ARGUMENT_$1, "coverage"));
+            throw new NullArgumentException(Errors.format(Errors.Keys.NULL_ARGUMENT_1, "coverage"));
         }
         Ref ref = pool.get(new Lookup(coverage));
         if (ref == null) {

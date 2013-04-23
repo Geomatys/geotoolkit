@@ -564,7 +564,7 @@ public class CoordinateFormat extends Format {
         final int dimension = point.getDimension();
         if (dimension != formats.length && crs != null) {
             throw new MismatchedDimensionException(Errors.format(
-                    Errors.Keys.MISMATCHED_DIMENSION_$3, "point", dimension, formats.length));
+                    Errors.Keys.MISMATCHED_DIMENSION_3, "point", dimension, formats.length));
         }
         final CoordinateReferenceSystem pointCRS = point.getCoordinateReferenceSystem();
         if (!CRS.equalsIgnoreMetadata(pointCRS, crs) && pointCRS != null && crs != null) {
@@ -642,7 +642,7 @@ public class CoordinateFormat extends Format {
         if (object instanceof DirectPosition) {
             return format((DirectPosition) object, toAppendTo, position);
         } else {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_CLASS_$2,
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_CLASS_2,
                     object.getClass(), DirectPosition.class));
         }
     }

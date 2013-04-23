@@ -71,12 +71,12 @@ public final class Widgets extends IndexedResourceBundle {
          * all references to raster data in that layer.</strong> However, the raster files will not be
          * deleted.</html>
          */
-        public static final int CONFIRM_DELETE_LAYER_$1 = 7;
+        public static final int CONFIRM_DELETE_LAYER_1 = 7;
 
         /**
          * A {0,choice,0#horizontal|1#vertical} Coordinate Reference System must be specified.
          */
-        public static final int CRS_REQUIRED_$1 = 16;
+        public static final int CRS_REQUIRED_1 = 16;
 
         /**
          * Domain of entries to list
@@ -98,7 +98,7 @@ public final class Widgets extends IndexedResourceBundle {
         /**
          * Elements of layer {0}
          */
-        public static final int LAYER_ELEMENTS_$1 = 9;
+        public static final int LAYER_ELEMENTS_1 = 9;
 
         /**
          * New format (editable).
@@ -143,7 +143,7 @@ public final class Widgets extends IndexedResourceBundle {
         /**
          * <html><i>from</i> {0}<br><i>to</i> {1}</html>
          */
-        public static final int TIME_RANGE_$2 = 5;
+        public static final int TIME_RANGE_2 = 5;
     }
 
     /**

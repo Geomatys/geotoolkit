@@ -184,7 +184,7 @@ public class RangeSet<T extends Comparable<? super T>> extends AbstractSet<Range
     public RangeSet(final Class<T> type) {
         if (!Comparable.class.isAssignableFrom(type)) {
             // Should never happen if parameterized type was checked.
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.NOT_COMPARABLE_CLASS_$1, type));
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.NOT_COMPARABLE_CLASS_1, type));
         }
         elementClass = type;
         initialize();
@@ -260,7 +260,7 @@ public class RangeSet<T extends Comparable<? super T>> extends AbstractSet<Range
             throws IllegalArgumentException
     {
         if (value == null) {
-            throw new NullArgumentException(Errors.format(Errors.Keys.NULL_ARGUMENT_$1, name));
+            throw new NullArgumentException(Errors.format(Errors.Keys.NULL_ARGUMENT_1, name));
         }
         ensureCanCast("value", isNumeric ? Number.class : elementClass, value);
         if (converter == null) {
@@ -272,10 +272,10 @@ public class RangeSet<T extends Comparable<? super T>> extends AbstractSet<Range
             return result;
         } catch (ClassCastException cause) {
             throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.ILLEGAL_CLASS_$2, value.getClass(), elementClass), cause);
+                    Errors.Keys.ILLEGAL_CLASS_2, value.getClass(), elementClass), cause);
         } catch (NonconvertibleObjectException cause) {
             throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.ILLEGAL_ARGUMENT_$2, name, value), cause);
+                    Errors.Keys.ILLEGAL_ARGUMENT_2, name, value), cause);
         }
     }
 
@@ -399,7 +399,7 @@ public class RangeSet<T extends Comparable<? super T>> extends AbstractSet<Range
         Comparable<?> lower = toArrayElement(min, "min");
         Comparable<?> upper = toArrayElement(max, "max");
         if (compare(lower, upper) > 0) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_RANGE_$2, min, max));
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_RANGE_2, min, max));
         }
         if (array == null) {
             modCount++;
@@ -652,7 +652,7 @@ public class RangeSet<T extends Comparable<? super T>> extends AbstractSet<Range
         Comparable<?> lower = toArrayElement(min, "min");
         Comparable<?> upper = toArrayElement(max, "max");
         if (compare(lower, upper) >= 0) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_RANGE_$2, min, max));
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_RANGE_2, min, max));
         }
         // if already empty, or range outside the current set, nothing to change
         if (length == 0) {

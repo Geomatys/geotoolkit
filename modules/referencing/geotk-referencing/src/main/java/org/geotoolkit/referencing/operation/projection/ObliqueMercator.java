@@ -310,10 +310,10 @@ public class ObliqueMercator extends UnitaryProjection {
             }
             if (isTwoPoints) {
                 throw new ParameterNotFoundException(Errors.format(
-                        Errors.Keys.NO_PARAMETER_$1, problem), problem);
+                        Errors.Keys.NO_PARAMETER_1, problem), problem);
             } else {
                 throw new InvalidParameterNameException(Errors.format(
-                        Errors.Keys.UNEXPECTED_PARAMETER_$1, problem), problem);
+                        Errors.Keys.UNEXPECTED_PARAMETER_1, problem), problem);
             }
         }
 
@@ -359,7 +359,7 @@ public class ObliqueMercator extends UnitaryProjection {
             }
             final String name = desc.getName().getCode();
             throw new InvalidParameterValueException(Errors.format(
-                    Errors.Keys.ILLEGAL_ARGUMENT_$2, name, value), name, value);
+                    Errors.Keys.ILLEGAL_ARGUMENT_2, name, value), name, value);
         }
     }
 
@@ -491,7 +491,7 @@ public class ObliqueMercator extends UnitaryProjection {
                 final String name = AZIMUTH.getName().getCode();
                 final Angle value = new Angle(parameters.azimuth);
                 throw new InvalidParameterValueException(Errors.format(
-                        Errors.Keys.ILLEGAL_ARGUMENT_$2, name, value), name, value);
+                        Errors.Keys.ILLEGAL_ARGUMENT_2, name, value), name, value);
             }
             if (isNaN(parameters.rectifiedGridAngle)) {
                 parameters.rectifiedGridAngle = parameters.azimuth;
@@ -561,7 +561,7 @@ public class ObliqueMercator extends UnitaryProjection {
             final double V    = sin(B * λ);
             final double U    = (S*singamma0 - V*cosgamma0) / Sp;
             if (abs(abs(U) - 1) < EPSILON) {
-                throw new ProjectionException(Errors.Keys.INFINITE_VALUE_$1, "v");
+                throw new ProjectionException(Errors.Keys.INFINITE_VALUE_1, "v");
             }
             final double dV_dλ = cos(B * λ);
             if (abs(dV_dλ) < FINER_EPSILON) {

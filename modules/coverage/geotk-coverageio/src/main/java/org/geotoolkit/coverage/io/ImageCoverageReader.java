@@ -399,10 +399,10 @@ public class ImageCoverageReader extends GridCoverageReader {
                                     final int messageKey;
                                     final Object argument;
                                     if (IOUtilities.canProcessAsPath(input)) {
-                                        messageKey = Errors.Keys.CANT_READ_FILE_$1;
+                                        messageKey = Errors.Keys.CANT_READ_FILE_1;
                                         argument = IOUtilities.name(input);
                                     } else {
-                                        messageKey = Errors.Keys.UNKNOWN_TYPE_$1;
+                                        messageKey = Errors.Keys.UNKNOWN_TYPE_1;
                                         argument = input.getClass();
                                     }
                                     throw new CoverageStoreException(Errors.getResources(locale).getString(messageKey, argument));
@@ -920,7 +920,7 @@ public class ImageCoverageReader extends GridCoverageReader {
             dstBands = param.getDestinationBands();
             if (srcBands != null && dstBands != null && srcBands.length != dstBands.length) {
                 throw new IllegalArgumentException(Errors.getResources(locale).getString(
-                        Errors.Keys.MISMATCHED_ARRAY_LENGTH_$2, "sourceBands", "destinationBands"));
+                        Errors.Keys.MISMATCHED_ARRAY_LENGTH_2, "sourceBands", "destinationBands"));
             }
             /*
              * Convert geodetic envelope and resolution to pixel coordinates.

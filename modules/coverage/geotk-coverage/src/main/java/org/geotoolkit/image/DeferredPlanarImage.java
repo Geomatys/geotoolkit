@@ -304,7 +304,7 @@ public final class DeferredPlanarImage extends PlanarImage
          */
         if (LOGGER.isLoggable(Level.FINER)) {
             final LogRecord record = Loggings.format(Level.FINER,
-                    Loggings.Keys.DEFERRED_TILE_PAINTING_$2, tileX, tileY);
+                    Loggings.Keys.DEFERRED_TILE_PAINTING_2, tileX, tileY);
             record.setSourceClassName(DeferredPlanarImage.class.getName());
             record.setSourceMethodName("getTile");
             record.setLoggerName(LOGGER.getName());

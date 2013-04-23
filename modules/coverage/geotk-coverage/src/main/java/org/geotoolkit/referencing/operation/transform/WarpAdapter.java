@@ -119,7 +119,7 @@ final class WarpAdapter extends Warp {
             // At least one transformation failed. In Geotk MapProjection
             // implementation, unprojected coordinates are set to (NaN,NaN).
             RasterFormatException e = new RasterFormatException(
-                    Errors.format(Errors.Keys.CANT_REPROJECT_COVERAGE_$1, name));
+                    Errors.format(Errors.Keys.CANT_REPROJECT_COVERAGE_1, name));
             e.initCause(exception);
             throw e;
         }
@@ -138,7 +138,7 @@ final class WarpAdapter extends Warp {
             return inverse.transform(destPt, null);
         } catch (TransformException exception) {
             throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.ILLEGAL_PARAMETER_VALUE_$2, "destPt", destPt), exception);
+                    Errors.Keys.ILLEGAL_PARAMETER_VALUE_2, "destPt", destPt), exception);
         }
     }
 
@@ -154,7 +154,7 @@ final class WarpAdapter extends Warp {
             return inverse.inverse().transform(sourcePt, null);
         } catch (TransformException exception) {
             throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.ILLEGAL_PARAMETER_VALUE_$2, "sourcePt", sourcePt), exception);
+                    Errors.Keys.ILLEGAL_PARAMETER_VALUE_2, "sourcePt", sourcePt), exception);
         }
     }
 }

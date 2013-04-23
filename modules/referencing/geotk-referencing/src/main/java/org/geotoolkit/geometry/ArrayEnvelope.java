@@ -272,7 +272,7 @@ scanNumber: while (++i < length) {
      */
     private static void fail(final String wkt, char missing) {
         throw new IllegalArgumentException(Errors.format(
-                Errors.Keys.NON_EQUILIBRATED_PARENTHESIS_$2, wkt, missing));
+                Errors.Keys.NON_EQUILIBRATED_PARENTHESIS_2, wkt, missing));
     }
 
     /**
@@ -281,7 +281,7 @@ scanNumber: while (++i < length) {
     static void ensureSameDimension(final int dim1, final int dim2) throws MismatchedDimensionException {
         if (dim1 != dim2) {
             throw new MismatchedDimensionException(Errors.format(
-                    Errors.Keys.MISMATCHED_DIMENSION_$2, dim1, dim2));
+                    Errors.Keys.MISMATCHED_DIMENSION_2, dim1, dim2));
         }
     }
 

@@ -166,7 +166,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
         if (target != unit) try {
             value = unit.getConverterToAny(target).convert(value);
         } catch (ConversionException e) {
-            throw new FactoryException(Errors.format(Errors.Keys.INCOMPATIBLE_UNIT_$1, unit), e);
+            throw new FactoryException(Errors.format(Errors.Keys.INCOMPATIBLE_UNIT_1, unit), e);
         }
         switch (code) {
             case 8605: parameters.dx  = value; break;
@@ -177,7 +177,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
             case 8610: parameters.ez  = value; break;
             case 8611: parameters.ppm = value; break;
             default: throw new FactoryException(Errors.format(
-                    Errors.Keys.UNEXPECTED_PARAMETER_$1, code));
+                    Errors.Keys.UNEXPECTED_PARAMETER_1, code));
         }
     }
     // Datum shift operation methods
@@ -478,7 +478,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                     final String engine  = metadata.getDatabaseProductName();
                     final DefaultCitation c = new DefaultCitation(Citations.EPSG);
                     c.getAlternateTitles().add(Vocabulary.formatInternational(
-                            Vocabulary.Keys.DATA_BASE_$3, "EPSG", version, engine));
+                            Vocabulary.Keys.DATA_BASE_3, "EPSG", version, engine));
                     c.setEdition(new SimpleInternationalString(version));
                     c.setEditionDate(date);
                     c.freeze();
@@ -506,7 +506,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
         final Vocabulary  resources = Vocabulary.getResources(null);
         CharSequence cs;
         if ((cs = authority.getEdition()) != null) {
-            table.write(resources.getString(Vocabulary.Keys.VERSION_OF_$1, "EPSG"));
+            table.write(resources.getString(Vocabulary.Keys.VERSION_OF_1, "EPSG"));
             table.write(':');
             table.nextColumn();
             table.write(cs.toString());
@@ -521,7 +521,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                 table.write(s);
                 if ((s = metadata.getDatabaseProductVersion()) != null) {
                     table.write(' ');
-                    table.write(resources.getString(Vocabulary.Keys.VERSION_$1, s));
+                    table.write(resources.getString(Vocabulary.Keys.VERSION_1, s));
                 }
                 table.nextLine();
             }
@@ -744,7 +744,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
             final String table  = metadata.getTableName (columnFault);
             result.close();
             throw new FactoryException(Errors.format(
-                    Errors.Keys.NULL_VALUE_IN_TABLE_$3, code, column, table));
+                    Errors.Keys.NULL_VALUE_IN_TABLE_3, code, column, table));
         }
         return str.trim();
     }
@@ -800,7 +800,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
             final String table  = metadata.getTableName (columnIndex);
             result.close();
             throw new FactoryException(Errors.format(
-                    Errors.Keys.NULL_VALUE_IN_TABLE_$3, code, column, table));
+                    Errors.Keys.NULL_VALUE_IN_TABLE_3, code, column, table));
         }
     }
 
@@ -822,7 +822,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
             n = Integer.parseInt(primaryKey);
         } catch (NumberFormatException e) {
             final NoSuchIdentifierException ne = new NoSuchIdentifierException(
-                    Errors.format(Errors.Keys.ILLEGAL_IDENTIFIER_$1, primaryKey), primaryKey);
+                    Errors.format(Errors.Keys.ILLEGAL_IDENTIFIER_1, primaryKey), primaryKey);
             ne.initCause(e);
             throw ne;
         }
@@ -847,7 +847,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
             n = Integer.parseInt(key2);
         } catch (NumberFormatException e) {
             final NoSuchIdentifierException ne = new NoSuchIdentifierException(
-                    Errors.format(Errors.Keys.ILLEGAL_IDENTIFIER_$1, key2), key2);
+                    Errors.format(Errors.Keys.ILLEGAL_IDENTIFIER_1, key2), key2);
             ne.initCause(e);
             throw ne;
         }
@@ -938,7 +938,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
         if (oldValue.equals(newValue)) {
             return oldValue;
         }
-        throw new FactoryException(Errors.format(Errors.Keys.DUPLICATED_VALUES_FOR_KEY_$1, code));
+        throw new FactoryException(Errors.format(Errors.Keys.DUPLICATED_VALUES_FOR_KEY_1, code));
     }
 
     /**
@@ -1141,7 +1141,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                 }
                 if (present) {
                     if (index >= 0) {
-                        throw new FactoryException(Errors.format(Errors.Keys.DUPLICATED_VALUES_FOR_KEY_$1, code));
+                        throw new FactoryException(Errors.format(Errors.Keys.DUPLICATED_VALUES_FOR_KEY_1, code));
                     }
                     index = (i < 0) ? lastObjectType : i;
                     if (isPrimaryKey) {
@@ -1240,12 +1240,12 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                             unit = Units.valueOf(name);
                         } catch (IllegalArgumentException e) {
                             // TODO: this error message is not quite accurate...
-                            throw new FactoryException(Errors.format(Errors.Keys.UNKNOWN_UNIT_$1, code), e);
+                            throw new FactoryException(Errors.format(Errors.Keys.UNKNOWN_UNIT_1, code), e);
                         }
                     } else if (b != 0 && c != 0) {
                         unit = Units.multiply(base, b/c);
                     } else {
-                        throw new FactoryException(Errors.format(Errors.Keys.UNKNOWN_UNIT_$1, code));
+                        throw new FactoryException(Errors.format(Errors.Keys.UNKNOWN_UNIT_1, code));
                     }
                     returnValue = ensureSingleton(unit, returnValue, code);
                 }
@@ -1313,7 +1313,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                         if (semiMinorAxis == 0) {
                             // Both are null, which is not allowed.
                             final String column = result.getMetaData().getColumnName(3);
-                            throw new FactoryException(Errors.format(Errors.Keys.NULL_VALUE_IN_TABLE_$3, code, column));
+                            throw new FactoryException(Errors.format(Errors.Keys.NULL_VALUE_IN_TABLE_3, code, column));
                         } else {
                             // We only have semiMinorAxis defined -> it's OK
                             ellipsoid = factories.getDatumFactory().createEllipsoid(
@@ -1717,7 +1717,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                             break;
                         }
                         default: {
-                            throw new FactoryException(Errors.format(Errors.Keys.UNKNOWN_TYPE_$1, type));
+                            throw new FactoryException(Errors.format(Errors.Keys.UNKNOWN_TYPE_1, type));
                         }
                     }
                     returnValue = ensureSingleton(datum, returnValue, code);
@@ -1868,7 +1868,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
         }
         if (i != axis.length) {
             throw new FactoryException(Errors.format(
-                    Errors.Keys.MISMATCHED_DIMENSION_$2, axis.length, i));
+                    Errors.Keys.MISMATCHED_DIMENSION_2, axis.length, i));
         }
         return axis;
     }
@@ -1975,11 +1975,11 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                             break;
                         }
                         default: {
-                            throw new FactoryException(Errors.format(Errors.Keys.UNKNOWN_TYPE_$1, type));
+                            throw new FactoryException(Errors.format(Errors.Keys.UNKNOWN_TYPE_1, type));
                         }
                     }
                     if (cs == null) {
-                        throw new FactoryException(Errors.format(Errors.Keys.UNEXPECTED_DIMENSION_FOR_CS_$1, type));
+                        throw new FactoryException(Errors.format(Errors.Keys.UNEXPECTED_DIMENSION_FOR_CS_1, type));
                     }
                     returnValue = ensureSingleton(cs, returnValue, code);
                 }
@@ -2172,7 +2172,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                                 crs = factory.createGeocentricCRS(properties, datum, (SphericalCS) cs);
                             } else {
                                 throw new FactoryException(Errors.format(
-                                        Errors.Keys.ILLEGAL_COORDINATE_SYSTEM_FOR_CRS_$2,
+                                        Errors.Keys.ILLEGAL_COORDINATE_SYSTEM_FOR_CRS_2,
                                         cs.getClass(), GeocentricCRS.class));
                             }
                             break;
@@ -2194,7 +2194,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                          *   UNKNOWN CRS
                          * ---------------------------------------------------------------------- */
                         default: {
-                            throw new FactoryException(Errors.format(Errors.Keys.UNKNOWN_TYPE_$1, type));
+                            throw new FactoryException(Errors.format(Errors.Keys.UNKNOWN_TYPE_1, type));
                         }
                     }
                     returnValue = ensureSingleton(crs, returnValue, code);
@@ -2379,7 +2379,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                      * should try the next coordinate operation or propagate the exception.
                      */
                     final NoSuchIdentifierException e = new NoSuchIdentifierException(
-                            Errors.format(Errors.Keys.CANT_SET_PARAMETER_VALUE_$1, name), name);
+                            Errors.format(Errors.Keys.CANT_SET_PARAMETER_VALUE_1, name), name);
                     e.initCause(exception);
                     throw e;
                 }
@@ -2392,7 +2392,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                         param.setValue(value);
                     }
                 } catch (RuntimeException exception) { // Catch InvalidParameterValueException, ArithmeticException
-                    throw new FactoryException(Errors.format(Errors.Keys.CANT_SET_PARAMETER_VALUE_$1, name), exception);
+                    throw new FactoryException(Errors.format(Errors.Keys.CANT_SET_PARAMETER_VALUE_1, name), exception);
                 }
             }
         }
@@ -2843,7 +2843,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                             properties.put(PARAMETERS_KEY, parameters);
                         } catch (ParameterNotFoundException exception) {
                             throw new FactoryException(Errors.format(
-                                    Errors.Keys.GEOTOOLKIT_EXTENSION_REQUIRED_$1,
+                                    Errors.Keys.GEOTOOLKIT_EXTENSION_REQUIRED_1,
                                     method.getName().getCode(), exception));
                         }
                         /*
@@ -2856,7 +2856,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                         } else if (isConversion) {
                             expected = Conversion.class;
                         } else {
-                            throw new FactoryException(Errors.format(Errors.Keys.UNKNOWN_TYPE_$1, type));
+                            throw new FactoryException(Errors.format(Errors.Keys.UNKNOWN_TYPE_1, type));
                         }
                         final MathTransform mt = factories.getMathTransformFactory().createBaseToDerived(
                                 sourceCRS, parameters, targetCRS.getCoordinateSystem());
@@ -3140,14 +3140,14 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
      * Constructs an exception for recursive calls.
      */
     private static FactoryException recursiveCall(final Class<?> type, final String code) {
-        return new FactoryException(Errors.format(Errors.Keys.RECURSIVE_CALL_$2, type, code));
+        return new FactoryException(Errors.format(Errors.Keys.RECURSIVE_CALL_2, type, code));
     }
 
     /**
      * Constructs an exception for a database failure.
      */
     private static FactoryException databaseFailure(Class<?> type, String code, SQLException cause) {
-        return new FactoryException(Errors.format(Errors.Keys.DATABASE_FAILURE_$2, type, code), cause);
+        return new FactoryException(Errors.format(Errors.Keys.DATABASE_FAILURE_2, type, code), cause);
     }
 
     /**

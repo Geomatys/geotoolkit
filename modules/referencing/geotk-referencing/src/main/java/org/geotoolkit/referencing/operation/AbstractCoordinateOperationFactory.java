@@ -243,7 +243,7 @@ public abstract class AbstractCoordinateOperationFactory extends ReferencingFact
             }
         }
         throw new NoSuchIdentifierException(Errors.format(
-                Errors.Keys.NO_TRANSFORM_FOR_CLASSIFICATION_$1, name), name);
+                Errors.Keys.NO_TRANSFORM_FOR_CLASSIFICATION_1, name), name);
     }
 
     /**
@@ -731,7 +731,7 @@ public abstract class AbstractCoordinateOperationFactory extends ReferencingFact
         final Map<String,Object> properties = new HashMap<>(4);
         properties.put(NAME_KEY, new TemporaryIdentifier(source.getName()));
         properties.put(IdentifiedObject.REMARKS_KEY, formatInternational(
-                Vocabulary.Keys.DERIVED_FROM_$1, getClassName(source)));
+                Vocabulary.Keys.DERIVED_FROM_1, getClassName(source)));
         return properties;
     }
 
@@ -758,7 +758,7 @@ public abstract class AbstractCoordinateOperationFactory extends ReferencingFact
     protected static String getErrorMessage(final IdentifiedObject source,
                                             final IdentifiedObject target)
     {
-        return Errors.format(Errors.Keys.NO_TRANSFORMATION_PATH_$2,
+        return Errors.format(Errors.Keys.NO_TRANSFORMATION_PATH_2,
                 getClassName(source), getClassName(target));
     }
 }

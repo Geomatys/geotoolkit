@@ -198,7 +198,7 @@ public class ImageFileProperties extends ImageProperties implements PropertyChan
         for (final Object chunk : chunks) {
             if (chunk instanceof Worker) {
                 String label = IOUtilities.name(((Worker) chunk).input);
-                label = Vocabulary.getResources(getLocale()).getString(Vocabulary.Keys.LOADING_$1, label);
+                label = Vocabulary.getResources(getLocale()).getString(Vocabulary.Keys.LOADING_1, label);
                 viewer.setProgressLabel(label);
                 viewer.setProgress(0);
             } else if (chunk instanceof Boolean) {

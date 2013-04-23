@@ -317,7 +317,7 @@ public class ReferencingBuilder extends Builder<CoordinateReferenceSystem> {
                             getConversionFromBase(baseCRS, derivedCS), derivedCS));
                 } else {
                     // TODO: test for other types of CRS here (VerticalCRS, etc.)
-                    warning("getCoordinateReferenceSystem", Errors.Keys.UNKNOWN_TYPE_$1, type);
+                    warning("getCoordinateReferenceSystem", Errors.Keys.UNKNOWN_TYPE_1, type);
                 }
             }
         }
@@ -512,7 +512,7 @@ public class ReferencingBuilder extends Builder<CoordinateReferenceSystem> {
             final MetadataNodeParser axesAccessor = createNodeReader(csAccessor, "Axes", "CoordinateSystemAxis");
             final int numAxes = axesAccessor.childCount();
             if (dimension != null && dimension != numAxes) {
-                warning("getCoordinateSystem", Errors.Keys.MISMATCHED_DIMENSION_$3,
+                warning("getCoordinateSystem", Errors.Keys.MISMATCHED_DIMENSION_3,
                         new Object[] {"Axes", numAxes, dimension});
             }
             final CoordinateSystemAxis[] axes = new CoordinateSystemAxis[numAxes];
@@ -557,7 +557,7 @@ public class ReferencingBuilder extends Builder<CoordinateReferenceSystem> {
                 switch (numAxes) {
                     case 0: // Fall through
                     case 1: {
-                        warning("getCoordinateSystem", Errors.Keys.NOT_TWO_DIMENSIONAL_$1, numAxes);
+                        warning("getCoordinateSystem", Errors.Keys.NOT_TWO_DIMENSIONAL_1, numAxes);
                         break;
                     }
                     case 2: {
@@ -566,7 +566,7 @@ public class ReferencingBuilder extends Builder<CoordinateReferenceSystem> {
                                 factory.createCartesianCS  (properties, axes[0], axes[1]));
                     }
                     default: {
-                        warning("getCoordinateSystem", Errors.Keys.UNEXPECTED_DIMENSION_FOR_CS_$1, type);
+                        warning("getCoordinateSystem", Errors.Keys.UNEXPECTED_DIMENSION_FOR_CS_1, type);
                         // Fall through
                     }
                     case 3: {
@@ -577,7 +577,7 @@ public class ReferencingBuilder extends Builder<CoordinateReferenceSystem> {
                 }
             } else {
                 // TODO: test for other types of CS here (VerticalCS, etc.)
-                warning("getCoordinateSystem", Errors.Keys.UNKNOWN_TYPE_$1, type);
+                warning("getCoordinateSystem", Errors.Keys.UNKNOWN_TYPE_1, type);
             }
         }
         return getDefault("getCoordinateSystem", csAccessor, baseType);
@@ -657,7 +657,7 @@ public class ReferencingBuilder extends Builder<CoordinateReferenceSystem> {
             } else if (EngineeringDatum.class.isAssignableFrom(type)) {
                 return baseType.cast(factory.createEngineeringDatum(properties));
             } else {
-                warning("getDatum", Errors.Keys.UNKNOWN_TYPE_$1, type);
+                warning("getDatum", Errors.Keys.UNKNOWN_TYPE_1, type);
             }
         }
         return getDefault("getDatum", datumAccessor, baseType);
@@ -816,7 +816,7 @@ public class ReferencingBuilder extends Builder<CoordinateReferenceSystem> {
         }
         if (object != null) {
             warning(method, Loggings.getResources(accessor.getLocale()),
-                    Loggings.Keys.USING_FALLBACK_$1, object.getName());
+                    Loggings.Keys.USING_FALLBACK_1, object.getName());
         }
         return object;
     }
@@ -900,7 +900,7 @@ public class ReferencingBuilder extends Builder<CoordinateReferenceSystem> {
              * only one specific type of datum or coordinate system.
              */
             if (baseType.equals(Datum.class) || baseType.equals(CoordinateSystem.class)) {
-                warning(method, Errors.Keys.NO_PARAMETER_VALUE_$1, "type");
+                warning(method, Errors.Keys.NO_PARAMETER_VALUE_1, "type");
             }
         } else try {
             // Following line may throw a ClassCastException (as of method contract).
@@ -908,9 +908,9 @@ public class ReferencingBuilder extends Builder<CoordinateReferenceSystem> {
             if (classe != null) {
                 return classe;
             }
-            warning(method, Errors.Keys.UNKNOWN_TYPE_$1, type);
+            warning(method, Errors.Keys.UNKNOWN_TYPE_1, type);
         } catch (ClassCastException e) {
-            warning(method, Errors.Keys.ILLEGAL_CLASS_$2, new Object[] {type, baseType});
+            warning(method, Errors.Keys.ILLEGAL_CLASS_2, new Object[] {type, baseType});
         }
         return baseType;
     }
@@ -1002,7 +1002,7 @@ public class ReferencingBuilder extends Builder<CoordinateReferenceSystem> {
         if (value != null) {
             return true;
         }
-        warning(method, Errors.Keys.NO_PARAMETER_VALUE_$1, attribute);
+        warning(method, Errors.Keys.NO_PARAMETER_VALUE_1, attribute);
         return false;
     }
 

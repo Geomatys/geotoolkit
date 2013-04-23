@@ -240,7 +240,7 @@ public class EllipsoidToGeocentric extends MathTransformProvider {
                 default: {
                     final String name = DIM.getName().getCode();
                     throw new InvalidParameterValueException(Errors.format(Errors.Keys.
-                            ILLEGAL_ARGUMENT_$2, name, dimension), name, dimension);
+                            ILLEGAL_ARGUMENT_2, name, dimension), name, dimension);
                 }
             }
         }

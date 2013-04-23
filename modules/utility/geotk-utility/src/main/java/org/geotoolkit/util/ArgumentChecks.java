@@ -91,11 +91,11 @@ public final class ArgumentChecks extends Static {
             throws NullArgumentException
     {
         if (array == null) {
-            throw new NullArgumentException(Errors.format(Errors.Keys.NULL_ARGUMENT_$1, name));
+            throw new NullArgumentException(Errors.format(Errors.Keys.NULL_ARGUMENT_1, name));
         }
         if (array[index] == null) {
             throw new NullArgumentException(Errors.format(
-                    Errors.Keys.NULL_ARGUMENT_$1, name + '[' + index + ']'));
+                    Errors.Keys.NULL_ARGUMENT_1, name + '[' + index + ']'));
         }
     }
 

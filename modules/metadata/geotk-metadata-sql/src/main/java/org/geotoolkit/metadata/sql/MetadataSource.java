@@ -398,7 +398,7 @@ public class MetadataSource implements AutoCloseable {
                         identifier = candidate;
                     } else if (!identifier.equals(candidate)) {
                         Logging.log(MetadataSource.class, "search", Errors.getResources(null).getLogRecord(
-                                Level.WARNING, Errors.Keys.DUPLICATED_VALUES_FOR_KEY_$1, candidate));
+                                Level.WARNING, Errors.Keys.DUPLICATED_VALUES_FOR_KEY_1, candidate));
                     }
                 }
             }
@@ -553,7 +553,7 @@ public class MetadataSource implements AutoCloseable {
                     } else try {
                         element = convert(elementType, element);
                     } catch (NonconvertibleObjectException e) {
-                        throw new MetadataException(Errors.format(Errors.Keys.ILLEGAL_PARAMETER_VALUE_$2,
+                        throw new MetadataException(Errors.format(Errors.Keys.ILLEGAL_PARAMETER_VALUE_2,
                                 columnName + '[' + i + ']', value), e);
                     }
                 }
@@ -587,7 +587,7 @@ public class MetadataSource implements AutoCloseable {
             } else try {
                 value = convert(elementType, value);
             } catch (NonconvertibleObjectException e) {
-                throw new MetadataException(Errors.format(Errors.Keys.ILLEGAL_PARAMETER_VALUE_$2, columnName, value), e);
+                throw new MetadataException(Errors.format(Errors.Keys.ILLEGAL_PARAMETER_VALUE_2, columnName, value), e);
             }
             if (isCollection) {
                 if (Set.class.isAssignableFrom(valueType)) {

@@ -158,7 +158,7 @@ public class WorldFileImageWriter extends ImageWriterAdapter {
     {
         if (imageIndex != 0) {
             throw new IIOException(Errors.getResources(locale).getString(
-                    Errors.Keys.INDEX_OUT_OF_BOUNDS_$1, imageIndex));
+                    Errors.Keys.INDEX_OUT_OF_BOUNDS_1, imageIndex));
         }
         if (metadata instanceof SpatialMetadata) {
             final SpatialMetadata md = (SpatialMetadata) metadata;
@@ -265,7 +265,7 @@ public class WorldFileImageWriter extends ImageWriterAdapter {
         @Override
         public String getDescription(final Locale locale) {
             return Vocabulary.getResources(locale).getString(
-                    Vocabulary.Keys.IMAGE_CODEC_WITH_WORLD_FILE_$2, 1, Formats.getDisplayName(main));
+                    Vocabulary.Keys.IMAGE_CODEC_WITH_WORLD_FILE_2, 1, Formats.getDisplayName(main));
         }
 
         /**

@@ -183,7 +183,7 @@ public class HTTP_AuthorityFactory extends AuthorityFactoryAdapter implements CR
             }
         }
         throw new NoSuchAuthorityCodeException(Errors.format(
-                Errors.Keys.ILLEGAL_ARGUMENT_$2, "code", code), BASE_URL, fragment, code);
+                Errors.Keys.ILLEGAL_ARGUMENT_2, "code", code), BASE_URL, fragment, code);
     }
 
     /**

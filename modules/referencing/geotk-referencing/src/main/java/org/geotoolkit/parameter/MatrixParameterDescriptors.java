@@ -201,7 +201,7 @@ public class MatrixParameterDescriptors extends DefaultParameterDescriptorGroup 
     {
         if (index<0 || index>=upper) {
             throw new IndexOutOfBoundsException(Errors.format(
-                    Errors.Keys.ILLEGAL_ARGUMENT_$2, name, index));
+                    Errors.Keys.ILLEGAL_ARGUMENT_2, name, index));
         }
     }
 
@@ -428,7 +428,7 @@ public class MatrixParameterDescriptors extends DefaultParameterDescriptorGroup 
                     }
                 }
                 throw new InvalidParameterNameException(Errors.format(
-                            Errors.Keys.UNEXPECTED_PARAMETER_$1, name), cause, name);
+                            Errors.Keys.UNEXPECTED_PARAMETER_1, name), cause, name);
             }
         }
         return matrix;

@@ -277,7 +277,7 @@ public abstract class AbstractGraduation implements Graduation, Serializable {
     static void ensureNonZero(final String name, final double n) throws IllegalArgumentException {
         if (Double.isNaN(n) || Double.isInfinite(n) || n==0) {
             throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.ILLEGAL_ARGUMENT_$2, name, n));
+                    Errors.Keys.ILLEGAL_ARGUMENT_2, name, n));
         }
     }
 
@@ -291,7 +291,7 @@ public abstract class AbstractGraduation implements Graduation, Serializable {
     static void ensureFinite(final String name, final double n) throws IllegalArgumentException {
         if (Double.isNaN(n) || Double.isInfinite(n)) {
             throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.ILLEGAL_ARGUMENT_$2, name, n));
+                    Errors.Keys.ILLEGAL_ARGUMENT_2, name, n));
         }
     }
 
@@ -305,7 +305,7 @@ public abstract class AbstractGraduation implements Graduation, Serializable {
     static void ensureFinite(final String name, final float n) throws IllegalArgumentException {
         if (Float.isNaN(n) || Float.isInfinite(n)) {
             throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.ILLEGAL_ARGUMENT_$2, name, n));
+                    Errors.Keys.ILLEGAL_ARGUMENT_2, name, n));
         }
     }
 

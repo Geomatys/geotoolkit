@@ -345,7 +345,7 @@ loop:   for (int fieldNumber=0; ;fieldNumber++) {
             }
         }
         throw new IllegalArgumentException(Errors.format(
-                Errors.Keys.ILLEGAL_ARGUMENT_$2, "pattern", pattern), cause);
+                Errors.Keys.ILLEGAL_ARGUMENT_2, "pattern", pattern), cause);
     }
 
     /**

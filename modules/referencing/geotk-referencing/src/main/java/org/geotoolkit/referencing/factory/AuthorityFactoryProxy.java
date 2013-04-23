@@ -147,7 +147,7 @@ abstract class AuthorityFactoryProxy<T> {
      * Returns the exception to be thrown when a factory is not found.
      */
     private static FactoryException factoryNotFound(final Class<? extends AuthorityFactory> type) {
-        return new FactoryException(Errors.format(Errors.Keys.FACTORY_NOT_FOUND_$1, type));
+        return new FactoryException(Errors.format(Errors.Keys.FACTORY_NOT_FOUND_1, type));
     }
 
     /**
@@ -527,7 +527,7 @@ abstract class AuthorityFactoryProxy<T> {
             }
         }
         throw new IllegalArgumentException(Errors.format(
-                Errors.Keys.ILLEGAL_CLASS_$2, type, IdentifiedObject.class));
+                Errors.Keys.ILLEGAL_CLASS_2, type, IdentifiedObject.class));
     }
 
     /**

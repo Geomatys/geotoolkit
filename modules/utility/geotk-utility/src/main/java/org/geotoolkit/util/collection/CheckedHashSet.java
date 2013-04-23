@@ -107,7 +107,7 @@ public class CheckedHashSet<E> extends LinkedHashSet<E> implements CheckedCollec
     protected void ensureValidType(final E element) throws IllegalArgumentException {
         if (element!=null && !type.isInstance(element)) {
             throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.ILLEGAL_CLASS_$2, element.getClass(), type));
+                    Errors.Keys.ILLEGAL_CLASS_2, element.getClass(), type));
         }
     }
 

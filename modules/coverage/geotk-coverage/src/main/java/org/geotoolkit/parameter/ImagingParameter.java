@@ -74,7 +74,7 @@ final class ImagingParameter<T> extends AbstractParameterValue<T> {
      */
     private InvalidParameterTypeException invalidType(final ClassCastException cause) {
         return new InvalidParameterTypeException(
-                Errors.format(Errors.Keys.ILLEGAL_OPERATION_FOR_VALUE_CLASS_$1, getType()),
+                Errors.format(Errors.Keys.ILLEGAL_OPERATION_FOR_VALUE_CLASS_1, getType()),
                 cause, getName(descriptor));
     }
 

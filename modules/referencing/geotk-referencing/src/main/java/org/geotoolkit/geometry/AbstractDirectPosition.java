@@ -65,7 +65,7 @@ public abstract class AbstractDirectPosition extends org.apache.sis.geometry.Abs
         if (crs != null) {
             final int dimension = crs.getCoordinateSystem().getDimension();
             if (dimension != expected) {
-                throw new MismatchedDimensionException(Errors.format(Errors.Keys.MISMATCHED_DIMENSION_$3,
+                throw new MismatchedDimensionException(Errors.format(Errors.Keys.MISMATCHED_DIMENSION_3,
                           crs.getName().getCode(), dimension, expected));
             }
         }
@@ -86,7 +86,7 @@ public abstract class AbstractDirectPosition extends org.apache.sis.geometry.Abs
             throws MismatchedDimensionException
     {
         if (dimension != expectedDimension) {
-            throw new MismatchedDimensionException(Errors.format(Errors.Keys.MISMATCHED_DIMENSION_$3,
+            throw new MismatchedDimensionException(Errors.format(Errors.Keys.MISMATCHED_DIMENSION_3,
                         name, dimension, expectedDimension));
         }
     }
@@ -174,7 +174,7 @@ scan:   while (true) {
                 while (++i < length) {
                     if (!Character.isWhitespace(c = wkt.charAt(i))) {
                         throw new IllegalArgumentException(Errors.format(
-                                Errors.Keys.UNPARSABLE_STRING_$2, wkt, wkt.substring(i)));
+                                Errors.Keys.UNPARSABLE_STRING_2, wkt, wkt.substring(i)));
                     }
                 }
                 break scan;
@@ -201,7 +201,7 @@ scan:   while (true) {
                 if (++i >= length) {
                     if (close != ' ') {
                         throw new IllegalArgumentException(Errors.format(
-                                Errors.Keys.NON_EQUILIBRATED_PARENTHESIS_$2, wkt, close));
+                                Errors.Keys.NON_EQUILIBRATED_PARENTHESIS_2, wkt, close));
                     }
                     break scan;
                 }

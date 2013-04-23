@@ -230,18 +230,18 @@ public class CatalogException extends SQLNonTransientException {
             final Comparable<?>[] args;
             if (column != null) {
                 if (key != null) {
-                    localKey = Errors.Keys.CANT_READ_DATABASE_RECORD_$3;
+                    localKey = Errors.Keys.CANT_READ_DATABASE_RECORD_3;
                     args = new Comparable<?>[] {table, column, key};
                 } else {
-                    localKey = Errors.Keys.CANT_READ_DATABASE_TABLE_$2;
+                    localKey = Errors.Keys.CANT_READ_DATABASE_TABLE_2;
                     args = new String[] {table, column};
                 }
             } else {
                 if (key != null) {
-                    localKey = Errors.Keys.CANT_READ_DATABASE_RECORD_$2;
+                    localKey = Errors.Keys.CANT_READ_DATABASE_RECORD_2;
                     args = new Comparable<?>[] {table, key};
                 } else {
-                    localKey = Errors.Keys.CANT_READ_DATABASE_TABLE_$1;
+                    localKey = Errors.Keys.CANT_READ_DATABASE_TABLE_1;
                     args = new String[] {table};
                 }
             }

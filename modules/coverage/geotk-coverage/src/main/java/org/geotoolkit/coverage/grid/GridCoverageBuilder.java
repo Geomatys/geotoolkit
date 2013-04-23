@@ -665,7 +665,7 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
             final int expectedDimension) throws MismatchedDimensionException
     {
         if (dimension != expectedDimension) {
-            throw new MismatchedDimensionException(Errors.format(Errors.Keys.MISMATCHED_DIMENSION_$3,
+            throw new MismatchedDimensionException(Errors.format(Errors.Keys.MISMATCHED_DIMENSION_3,
                         name, dimension, expectedDimension));
         }
     }
@@ -2853,7 +2853,7 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
             if (old != null) {
                 nodata.put(key, old);
                 throw new IllegalArgumentException(Errors.format(
-                        Errors.Keys.VALUE_ALREADY_DEFINED_$1, key));
+                        Errors.Keys.VALUE_ALREADY_DEFINED_1, key));
             }
             sampleDimensionsChanged();
         }
@@ -2948,7 +2948,7 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
                                 final Comparable<?> w = sample;
                                 if (range.contains(w)) {
                                     throw new IllegalStateException(Errors.format(
-                                            Errors.Keys.VALUE_ALREADY_DEFINED_$1, w));
+                                            Errors.Keys.VALUE_ALREADY_DEFINED_1, w));
                                 }
                             }
                             final NoData n = entry.getValue();

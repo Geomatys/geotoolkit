@@ -347,7 +347,7 @@ public final class Logging extends Static {
      * Wraps a unchecked {@link NoClassDefFoundError} into a checked {@link ClassNotFoundException}.
      */
     private static ClassNotFoundException factoryNotFound(String name, NoClassDefFoundError error) {
-        return new ClassNotFoundException(Errors.format(Errors.Keys.FACTORY_NOT_FOUND_$1, name), error);
+        return new ClassNotFoundException(Errors.format(Errors.Keys.FACTORY_NOT_FOUND_1, name), error);
     }
 
     /**

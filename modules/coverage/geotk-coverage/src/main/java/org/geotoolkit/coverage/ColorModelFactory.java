@@ -107,7 +107,7 @@ final class ColorModelFactory extends Static {
         this.type        = type;
         if (visibleBand < 0 || visibleBand >= numBands) {
             throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.ILLEGAL_BAND_NUMBER_$1, visibleBand));
+                    Errors.Keys.ILLEGAL_BAND_NUMBER_1, visibleBand));
         }
     }
 

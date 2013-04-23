@@ -69,7 +69,7 @@ final class SequenceVector extends Vector implements Serializable {
     public SequenceVector(final double first, final double increment, final int length) {
         if (length < 0) {
             throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.ILLEGAL_ARGUMENT_$1, "length", length));
+                    Errors.Keys.ILLEGAL_ARGUMENT_1, "length", length));
         }
         this.first     = first;
         this.increment = increment;

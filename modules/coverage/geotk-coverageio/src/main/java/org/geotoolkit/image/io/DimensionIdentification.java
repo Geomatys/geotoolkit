@@ -100,7 +100,7 @@ public class DimensionIdentification implements WarningProducer {
             throws IllegalArgumentException
     {
         if (owner == null) {
-            throw new NullArgumentException(Errors.format(Errors.Keys.NULL_ARGUMENT_$1, "owner"));
+            throw new NullArgumentException(Errors.format(Errors.Keys.NULL_ARGUMENT_1, "owner"));
         }
         this.owner = owner;
         if (api != API.NONE) {
@@ -108,7 +108,7 @@ public class DimensionIdentification implements WarningProducer {
             final DimensionIdentification[] apiMapping = owner.apiMapping();
             if (apiMapping[ordinal] != null) {
                 throw new IllegalArgumentException(getErrorResources()
-                        .getString(Errors.Keys.VALUE_ALREADY_DEFINED_$1, api));
+                        .getString(Errors.Keys.VALUE_ALREADY_DEFINED_1, api));
             }
             apiMapping[ordinal] = this;
         }
@@ -157,7 +157,7 @@ public class DimensionIdentification implements WarningProducer {
             final Object identifier = identifiers[i];
             if (identifier == null) {
                 throw new NullArgumentException(getErrorResources().getString(
-                        Errors.Keys.NULL_ARGUMENT_$1, argName + '[' + i + ']'));
+                        Errors.Keys.NULL_ARGUMENT_1, argName + '[' + i + ']'));
             }
             owner.addDimensionId(this, identifier);
         }
@@ -185,7 +185,7 @@ public class DimensionIdentification implements WarningProducer {
     public void addDimensionId(final int index) throws IllegalArgumentException {
         if (index < 0) {
             throw new IllegalArgumentException(getErrorResources().getString(
-                    Errors.Keys.ILLEGAL_ARGUMENT_$2, "index", index));
+                    Errors.Keys.ILLEGAL_ARGUMENT_2, "index", index));
         }
         owner.addDimensionId(this, index);
     }

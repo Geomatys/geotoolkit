@@ -50,7 +50,7 @@ public abstract class AbstractWizard extends WizardPanelProvider {
     @SuppressWarnings({"unchecked","rawtypes"})
     static void addSetting(final Map settings, final String key, final Object value) {
         if (settings.put(key, value) != null) {
-            throw new AssertionError(Errors.format(Errors.Keys.DUPLICATED_VALUES_FOR_KEY_$1, key));
+            throw new AssertionError(Errors.format(Errors.Keys.DUPLICATED_VALUES_FOR_KEY_1, key));
         }
     }
 

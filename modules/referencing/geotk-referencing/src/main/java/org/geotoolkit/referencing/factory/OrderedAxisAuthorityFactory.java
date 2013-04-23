@@ -293,7 +293,7 @@ public class OrderedAxisAuthorityFactory extends TransformedAuthorityFactory
             final int ordinal  = AxisDirections.absolute(axisOrder[i]).ordinal();
             final int previous = directionRanks[ordinal];
             if (previous != length) {
-                throw new IllegalArgumentException(Errors.format(Errors.Keys.COLINEAR_AXIS_$2,
+                throw new IllegalArgumentException(Errors.format(Errors.Keys.COLINEAR_AXIS_2,
                         axisOrder[previous].name(), axisOrder[i].name()));
             }
             directionRanks[ordinal] = i;

@@ -274,7 +274,7 @@ public class DefaultParameterDescriptor<T> extends AbstractParameterDescriptor
         if (minimum!=null && maximum!=null) {
             if (minimum.compareTo(valueClass.cast(maximum)) > 0) {
                 throw new IllegalArgumentException(Errors.format(
-                        Errors.Keys.ILLEGAL_RANGE_$2, minimum, maximum));
+                        Errors.Keys.ILLEGAL_RANGE_2, minimum, maximum));
             }
         }
         if (validValues != null) {

@@ -574,13 +574,13 @@ public class CoverageEnvelope extends AbstractEnvelope implements Cloneable {
             double dy = size.height;
             if (!(dx > 0 && dy > 0)) {
                 throw new IllegalArgumentException(errors()
-                        .getString(Errors.Keys.ILLEGAL_ARGUMENT_$2, "size", size));
+                        .getString(Errors.Keys.ILLEGAL_ARGUMENT_2, "size", size));
             }
             dx = (xMax - xMin) / dx;
             dy = (yMax - yMin) / dy;
             if (Double.isInfinite(dx) || Double.isInfinite(dy)) {
                 throw new IllegalStateException(errors()
-                        .getString(Errors.Keys.UNDEFINED_PROPERTY_$1, "envelope"));
+                        .getString(Errors.Keys.UNDEFINED_PROPERTY_1, "envelope"));
             }
             resolution = new DoubleDimension2D(dx, dy);
         }

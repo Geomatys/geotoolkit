@@ -44,13 +44,13 @@ public final strictfp class IndexedResourceBundleTest {
         assertSame   (resources, Errors.getResources(Locale.CANADA));
         assertNotSame(resources, Errors.getResources(Locale.FRENCH));
         assertNotSame(resources, Errors.getResources(Locale.GERMAN));
-        String s = resources.getString(Errors.Keys.IN_$1);
+        String s = resources.getString(Errors.Keys.IN_1);
         assertTrue(s, s.startsWith("Error"));
 
         resources = Errors.getResources(Locale.FRENCH);
         assertNotSame(resources, Errors.getResources(Locale.CANADA));
         assertSame   (resources, Errors.getResources(Locale.CANADA_FRENCH));
-        s = resources.getString(Errors.Keys.IN_$1);
+        s = resources.getString(Errors.Keys.IN_1);
         assertTrue(s, s.startsWith("Erreur"));
     }
 

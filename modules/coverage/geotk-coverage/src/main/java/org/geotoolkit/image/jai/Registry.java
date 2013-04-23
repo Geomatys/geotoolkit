@@ -105,7 +105,7 @@ public final class Registry extends Static {
              * and some of them depend on JAI operations).
              */
             record = Loggings.getResources(null).getLogRecord(Level.WARNING,
-                    Loggings.Keys.CANT_REGISTER_JAI_OPERATION_$1, op);
+                    Loggings.Keys.CANT_REGISTER_JAI_OPERATION_1, op);
             record.setThrown(exception);
         }
         log("registerGeotoolkitServices", record);
@@ -174,7 +174,7 @@ public final class Registry extends Static {
                         allowed ? nativeFactory : javaFactory,
                         allowed ? javaFactory : nativeFactory);
                 final LogRecord record = Loggings.format(Level.CONFIG,
-                        Loggings.Keys.NATIVE_ACCELERATION_STATE_$2,
+                        Loggings.Keys.NATIVE_ACCELERATION_STATE_2,
                         operation, Integer.valueOf(allowed ? 1 : 0));
                 log("setNativeAccelerationAllowed", record);
             }
@@ -257,7 +257,7 @@ public final class Registry extends Static {
             }
             if (changed) {
                 final LogRecord record = Loggings.format(Level.CONFIG,
-                        Loggings.Keys.NATIVE_CODEC_STATE_$3,
+                        Loggings.Keys.NATIVE_CODEC_STATE_3,
                         format, Integer.valueOf(allowed ? 1 : 0),
                         Integer.valueOf(ImageWriterSpi.class.isAssignableFrom(category) ? 1 : 0));
                 log("setNativeCodecAllowed", record);

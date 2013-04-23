@@ -276,7 +276,7 @@ public enum Installation {
         final File directory = directory(usePreferences);
         if (!directory.isDirectory()) {
             if (!directory.mkdirs()) {
-                throw new IOException(Errors.format(Errors.Keys.CANT_CREATE_FACTORY_FOR_TYPE_$1, directory));
+                throw new IOException(Errors.format(Errors.Keys.CANT_CREATE_FACTORY_FOR_TYPE_1, directory));
             }
         }
         return directory;

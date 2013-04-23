@@ -328,7 +328,7 @@ public abstract class AbstractEnvelope extends org.apache.sis.geometry.AbstractE
         final int dimension = getDimension();
         if (dimension != 2) {
             throw new IllegalStateException(Errors.format(
-                    Errors.Keys.NOT_TWO_DIMENSIONAL_$1, dimension));
+                    Errors.Keys.NOT_TWO_DIMENSIONAL_1, dimension));
         }
         return XRectangle2D.createFromExtremums(
                 getMinimum(0), getMinimum(1),

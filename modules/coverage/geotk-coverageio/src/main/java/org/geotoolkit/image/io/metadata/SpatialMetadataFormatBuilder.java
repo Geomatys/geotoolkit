@@ -237,7 +237,7 @@ public class SpatialMetadataFormatBuilder extends Builder<SpatialMetadataFormat>
     private void ensureModifiable() {
         if (done) {
             throw new UnmodifiableMetadataException(Errors.format(
-                    Errors.Keys.UNMODIFIABLE_OBJECT_$1, metadata.getClass()));
+                    Errors.Keys.UNMODIFIABLE_OBJECT_1, metadata.getClass()));
         }
     }
 

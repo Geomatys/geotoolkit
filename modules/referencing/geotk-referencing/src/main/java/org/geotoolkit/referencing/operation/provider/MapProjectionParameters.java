@@ -242,7 +242,7 @@ final class MapProjectionParameters extends ParameterGroup {
             if (value != null) {
                 switch (value.length) {
                     default: {
-                        throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_$1,
+                        throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_1,
                                 MapProjectionDescriptor.STANDARD_PARALLEL));
                     }
                     case 2: standardParallel2 = value[1]; // Fallthrough

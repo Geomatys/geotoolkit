@@ -134,7 +134,7 @@ public class GeocentricAffineTransform extends ProjectiveTransform {
             name = "descriptor";
             value = (descriptor != null) ? descriptor.getName().getCode() : null;
         }
-        throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_PARAMETER_VALUE_$2, name, value));
+        throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_PARAMETER_VALUE_2, name, value));
     }
 
     /**

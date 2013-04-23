@@ -82,7 +82,7 @@ public class GridTransform2D extends GridTransform implements MathTransform2D {
         final int n = grid.getNumBanks();
         if (n != 2) {
             throw new MismatchedDimensionException(Errors.format(
-                    Errors.Keys.MISMATCHED_DIMENSION_$3, "grid", n, 2));
+                    Errors.Keys.MISMATCHED_DIMENSION_3, "grid", n, 2));
         }
     }
 

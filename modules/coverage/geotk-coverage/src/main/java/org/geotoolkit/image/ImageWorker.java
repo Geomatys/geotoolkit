@@ -256,7 +256,7 @@ public class ImageWorker extends ImageInspector {
             }
             default: {
                 throw new IllegalArgumentException(Errors.format(
-                        Errors.Keys.ILLEGAL_ARGUMENT_$2, "method", method));
+                        Errors.Keys.ILLEGAL_ARGUMENT_2, "method", method));
             }
         }
         invalidateStatistics();
@@ -507,7 +507,7 @@ public class ImageWorker extends ImageInspector {
             forceComponentColorModel();
         } else {
             throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.UNKNOWN_TYPE_$1, type));
+                    Errors.Keys.UNKNOWN_TYPE_1, type));
         }
     }
 
@@ -702,7 +702,7 @@ public class ImageWorker extends ImageInspector {
         if (first < 0) first += numBands;
         if (last  < 0) last  += numBands;
         if (first < 0 || last < first || last >= numBands) {
-            throw new IndexOutOfBoundsException(Errors.format(Errors.Keys.ILLEGAL_RANGE_$2, first, last));
+            throw new IndexOutOfBoundsException(Errors.format(Errors.Keys.ILLEGAL_RANGE_2, first, last));
         }
         final int count = last - first + 1;
         if (count != numBands) {

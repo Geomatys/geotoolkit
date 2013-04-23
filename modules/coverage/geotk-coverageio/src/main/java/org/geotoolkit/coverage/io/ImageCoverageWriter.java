@@ -260,10 +260,10 @@ public class ImageCoverageWriter extends GridCoverageWriter {
                                 final int messageKey;
                                 final Object argument;
                                 if (IOUtilities.canProcessAsPath(output)) {
-                                    messageKey = Errors.Keys.CANT_WRITE_FILE_$1;
+                                    messageKey = Errors.Keys.CANT_WRITE_FILE_1;
                                     argument = IOUtilities.name(output);
                                 } else {
-                                    messageKey = Errors.Keys.UNKNOWN_TYPE_$1;
+                                    messageKey = Errors.Keys.UNKNOWN_TYPE_1;
                                     argument = output.getClass();
                                 }
                                 throw new CoverageStoreException(Errors.getResources(locale).getString(messageKey, argument));
@@ -483,7 +483,7 @@ public class ImageCoverageWriter extends GridCoverageWriter {
         final long startTime = isLoggable() ? System.nanoTime() : Long.MIN_VALUE;
         final Iterator<? extends GridCoverage> it = coverages.iterator();
         if (!it.hasNext()) {
-            throw new CoverageStoreException(Errors.format(Errors.Keys.NO_SUCH_ELEMENT_$1, GridCoverage.class));
+            throw new CoverageStoreException(Errors.format(Errors.Keys.NO_SUCH_ELEMENT_1, GridCoverage.class));
         }
         boolean hasNext;
         write(it.next(), param, true, !(hasNext = it.hasNext()), startTime);
@@ -544,7 +544,7 @@ public class ImageCoverageWriter extends GridCoverageWriter {
             throw new IllegalStateException(formatErrorMessage(Errors.Keys.NO_IMAGE_OUTPUT));
         }
         if (!isLast && !imageWriter.canWriteSequence()) {
-            throw new CoverageStoreException(Errors.format(Errors.Keys.UNSUPPORTED_MULTI_OCCURRENCE_$1, GridCoverage.class));
+            throw new CoverageStoreException(Errors.format(Errors.Keys.UNSUPPORTED_MULTI_OCCURRENCE_1, GridCoverage.class));
         }
         /*
          * Convert the geodetic coordinates to pixel coordinates.
@@ -573,7 +573,7 @@ public class ImageCoverageWriter extends GridCoverageWriter {
                 interp = Interpolation.INTERP_BICUBIC;
             } else {
                 throw new CoverageStoreException(Errors.getResources(locale).getString(
-                        Errors.Keys.ILLEGAL_ARGUMENT_$2, "interpolation", interpolation.name()));
+                        Errors.Keys.ILLEGAL_ARGUMENT_2, "interpolation", interpolation.name()));
             }
             destToExtractedGrid = geodeticToPixelCoordinates(gridGeometry, param, imageParam);
             imageParam.setSourceBands(param.getSourceBands());

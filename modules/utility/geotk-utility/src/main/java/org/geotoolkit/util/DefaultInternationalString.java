@@ -153,7 +153,7 @@ public class DefaultInternationalString extends AbstractInternationalString impl
                     return;
                 }
                 throw new IllegalArgumentException(Errors.format(
-                        Errors.Keys.VALUE_ALREADY_DEFINED_$1, locale));
+                        Errors.Keys.VALUE_ALREADY_DEFINED_1, locale));
             }
             localeMap.put(locale, string);
             defaultValue = null; // Will be recomputed when first needed.

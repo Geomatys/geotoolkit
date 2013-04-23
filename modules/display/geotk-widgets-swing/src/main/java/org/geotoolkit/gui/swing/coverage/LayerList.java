@@ -508,7 +508,7 @@ public class LayerList extends WindowCreator {
         if (layer == null) {
             layer = '(' + resources.getString(Vocabulary.Keys.NONE) + ')';
         }
-        return resources.getString(Vocabulary.Keys.PROPERTIES_OF_$1, layer);
+        return resources.getString(Vocabulary.Keys.PROPERTIES_OF_1, layer);
     }
 
     /**
@@ -533,7 +533,7 @@ public class LayerList extends WindowCreator {
         geographicPanel.setVisible(bbox != null);
         String text = null;
         if (startTime != null && endTime != null) {
-            text = Widgets.getResources(getLocale()).getString(Widgets.Keys.TIME_RANGE_$2,
+            text = Widgets.getResources(getLocale()).getString(Widgets.Keys.TIME_RANGE_2,
                     dateFormat.format(startTime), dateFormat.format(endTime));
         }
         setText(timeRange, text);
@@ -790,7 +790,7 @@ public class LayerList extends WindowCreator {
                         refresh(false);
                     } else {
                         JOptionPane.showMessageDialog(LayerList.this,
-                                "<html>" + Errors.format(Errors.Keys.VALUE_ALREADY_DEFINED_$1,
+                                "<html>" + Errors.format(Errors.Keys.VALUE_ALREADY_DEFINED_1,
                                 "<cite>" + layer + "</cite>") + "</html>",
                                 title, JOptionPane.WARNING_MESSAGE);
                     }
@@ -810,7 +810,7 @@ public class LayerList extends WindowCreator {
             final Vocabulary vocabulary = Vocabulary.getResources(locale);
             final String remove = vocabulary.getString(Vocabulary.Keys.REMOVE);
             final String cancel = vocabulary.getString(Vocabulary.Keys.CANCEL);
-            final JLabel confirm = new JLabel(resources.getString(Widgets.Keys.CONFIRM_DELETE_LAYER_$1, layer));
+            final JLabel confirm = new JLabel(resources.getString(Widgets.Keys.CONFIRM_DELETE_LAYER_1, layer));
             confirm.setPreferredSize(new Dimension(450, 80));
             if (0 == JOptionPane.showOptionDialog(this, confirm,
                     resources.getString(Widgets.Keys.CONFIRM_DELETE), JOptionPane.OK_CANCEL_OPTION,
@@ -897,7 +897,7 @@ public class LayerList extends WindowCreator {
                 final CoverageList coverages = new CoverageList(new CoverageTableModel(locale));
                 coverages.setData(layer, envelope);
                 final Window frame = getWindowHandler().createWindow(LayerList.this, coverages,
-                        resources.getString(Widgets.Keys.LAYER_ELEMENTS_$1, layerName));
+                        resources.getString(Widgets.Keys.LAYER_ELEMENTS_1, layerName));
                 frame.setVisible(true);
             }
         }

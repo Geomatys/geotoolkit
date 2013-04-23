@@ -63,7 +63,7 @@ final class SerializedKey implements Serializable {
         final Field f = Hints.fieldOf(key);
         if (f == null) {
             throw new NotSerializableException(Errors.format(
-                    Errors.Keys.UNKNOWN_TYPE_$1, Classes.getShortClassName(key)));
+                    Errors.Keys.UNKNOWN_TYPE_1, Classes.getShortClassName(key)));
         }
         definer = f.getDeclaringClass();
         field   = f.getName();
@@ -82,7 +82,7 @@ final class SerializedKey implements Serializable {
             return definer.getField(field).get(null);
         } catch (ReflectiveOperationException cause) {
             final InvalidClassException e = new InvalidClassException(definer.getName(),
-                    Errors.format(Errors.Keys.ILLEGAL_KEY_$1, this));
+                    Errors.format(Errors.Keys.ILLEGAL_KEY_1, this));
             e.initCause(cause);
             throw e;
         }

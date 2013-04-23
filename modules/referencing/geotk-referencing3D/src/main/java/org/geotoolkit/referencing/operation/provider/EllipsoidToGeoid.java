@@ -165,7 +165,7 @@ public class EllipsoidToGeoid extends MathTransformProvider {
         } else if ("WGS72".equalsIgnoreCase(name)) {
             datum = DefaultGeodeticDatum.WGS72;
         } else {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.UNSUPPORTED_DATUM_$1, name));
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.UNSUPPORTED_DATUM_1, name));
         }
         final Integer order = integerValue(ORDER, values);
         int nmax = (order != null) ? order : DEFAULT_ORDER;

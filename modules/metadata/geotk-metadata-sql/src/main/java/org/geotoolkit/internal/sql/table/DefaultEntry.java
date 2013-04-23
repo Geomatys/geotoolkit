@@ -65,7 +65,7 @@ public class DefaultEntry implements Entry, Serializable {
      */
     protected DefaultEntry(final Comparable<?> identifier, final String description) {
         if (identifier == null) {
-            throw new NullArgumentException(Errors.format(Errors.Keys.NULL_ARGUMENT_$1, "identifier"));
+            throw new NullArgumentException(Errors.format(Errors.Keys.NULL_ARGUMENT_1, "identifier"));
         }
         this.identifier  = identifier;
         this.description = description;

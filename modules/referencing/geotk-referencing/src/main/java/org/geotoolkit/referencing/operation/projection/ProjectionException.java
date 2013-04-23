@@ -68,7 +68,7 @@ public class ProjectionException extends TransformException {
      * formatted for a latitude too close from a pole.
      */
     ProjectionException(final double latitude) {
-        this(Errors.format(Errors.Keys.POLE_PROJECTION_$1, new Latitude(Math.toDegrees(latitude))));
+        this(Errors.format(Errors.Keys.POLE_PROJECTION_1, new Latitude(Math.toDegrees(latitude))));
     }
 
     /**

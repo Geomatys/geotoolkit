@@ -124,7 +124,7 @@ final class URN_Parser {
             }
         }
         throw new NoSuchAuthorityCodeException(
-                Errors.format(Errors.Keys.ILLEGAL_IDENTIFIER_$1, type), "urn:ogc:def", type, urn);
+                Errors.format(Errors.Keys.ILLEGAL_IDENTIFIER_1, type), "urn:ogc:def", type, urn);
     }
 
     /**
@@ -145,7 +145,7 @@ final class URN_Parser {
         if (!expected.isAssignableFrom(type.factoryType)) {
             // Build a simplified URN, omitting "urn:ogc:def" and version number.
             final String urn = "..." + SEPARATOR + type + SEPARATOR + authority + SEPARATOR + code;
-            final LogRecord record = Loggings.format(Level.WARNING, Loggings.Keys.MISMATCHED_URN_TYPE_$1, urn);
+            final LogRecord record = Loggings.format(Level.WARNING, Loggings.Keys.MISMATCHED_URN_TYPE_1, urn);
             // Set the source to the public or protected method.
             record.setSourceClassName(URN_AuthorityFactory.class.getName());
             record.setSourceMethodName("get" + Classes.getShortName(expected));

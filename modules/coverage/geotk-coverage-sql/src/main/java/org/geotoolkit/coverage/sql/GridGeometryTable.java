@@ -128,7 +128,7 @@ final class GridGeometryTable extends SingletonTable<GridGeometryEntry> {
         try {
             return Integer.parseInt(code);
         } catch (NumberFormatException e) {
-            throw new FactoryException(Errors.format(Errors.Keys.UNPARSABLE_NUMBER_$1, code), e);
+            throw new FactoryException(Errors.format(Errors.Keys.UNPARSABLE_NUMBER_1, code), e);
         }
     }
 
@@ -332,7 +332,7 @@ final class GridGeometryTable extends SingletonTable<GridGeometryEntry> {
                         }
                         if (foundStrictlyEquals) {
                             // Could happen if there is insufficient conditions in the WHERE clause.
-                            log("find", errors().getLogRecord(Level.WARNING, Errors.Keys.DUPLICATED_RECORD_$1, id));
+                            log("find", errors().getLogRecord(Level.WARNING, Errors.Keys.DUPLICATED_RECORD_1, id));
                             continue;
                         }
                     }

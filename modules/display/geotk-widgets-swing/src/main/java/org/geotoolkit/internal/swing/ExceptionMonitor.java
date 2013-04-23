@@ -147,7 +147,7 @@ public final class ExceptionMonitor extends JOptionPane implements ActionListene
          * we should be happy with JDialog. The exception trace will not be written immediately.
          */
         final String classname = Classes.getShortClassName(exception);
-        final String title = resources.getString(Vocabulary.Keys.ERROR_$1, classname);
+        final String title = resources.getString(Vocabulary.Keys.ERROR_1, classname);
         final JDesktopPane desktop = getDesktopPaneForComponent(owner);
         if (desktop != null) {
             final JInternalFrame dialog = createInternalFrame(desktop, title);
@@ -176,7 +176,7 @@ public final class ExceptionMonitor extends JOptionPane implements ActionListene
             message = exception.getLocalizedMessage();
             if (message == null) {
                 final String classname = Classes.getShortClassName(exception);
-                message = resources.getString(Vocabulary.Keys.NO_DETAILS_$1, classname);
+                message = resources.getString(Vocabulary.Keys.NO_DETAILS_1, classname);
             }
         }
         final JXLabel textArea = new JXLabel(message);

@@ -162,7 +162,7 @@ public abstract class GridCoverageWriter extends GridCoverageStore {
     public void write(final Iterable<? extends GridCoverage> coverages, final GridCoverageWriteParam param)
             throws CoverageStoreException, CancellationException
     {
-        int errorKey = Errors.Keys.NO_SUCH_ELEMENT_$1;
+        int errorKey = Errors.Keys.NO_SUCH_ELEMENT_1;
         final Iterator<? extends GridCoverage> it = coverages.iterator();
         if (it.hasNext()) {
             final GridCoverage coverage = it.next();
@@ -170,7 +170,7 @@ public abstract class GridCoverageWriter extends GridCoverageStore {
                 write(coverage, param);
                 return;
             }
-            errorKey = Errors.Keys.UNSUPPORTED_MULTI_OCCURRENCE_$1;
+            errorKey = Errors.Keys.UNSUPPORTED_MULTI_OCCURRENCE_1;
         }
         throw new CoverageStoreException(Errors.format(errorKey, GridCoverage.class));
     }

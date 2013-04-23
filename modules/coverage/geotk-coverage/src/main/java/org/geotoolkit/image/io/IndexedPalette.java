@@ -116,7 +116,7 @@ final class IndexedPalette extends Palette {
         ensureInsideBounds(size,  upper,      MAX_UNSIGNED + 1);
         if (lower >= upper) {
             throw new IllegalArgumentException(factory.getErrorResources().getString(
-                    Errors.Keys.ILLEGAL_RANGE_$2, lower, upper));
+                    Errors.Keys.ILLEGAL_RANGE_2, lower, upper));
         }
         this.lower = lower;
         this.upper = upper;
@@ -155,7 +155,7 @@ final class IndexedPalette extends Palette {
         final Color[] colors = factory.getColors(name);
         if (colors == null) {
             throw new FileNotFoundException(factory.getErrorResources().getString(
-                    Errors.Keys.FILE_DOES_NOT_EXIST_$1, name));
+                    Errors.Keys.FILE_DOES_NOT_EXIST_1, name));
         }
         final int[] ARGB = new int[size];
         if (lower >= 0) {

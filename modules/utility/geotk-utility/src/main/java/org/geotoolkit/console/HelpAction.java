@@ -118,7 +118,7 @@ final class HelpAction {
     void help(final String command) {
         final Locale locale = cmd.locale;
         out.println(cmd.bold(Descriptions.getResources(locale).getString(
-                    Descriptions.Keys.COMMAND_USAGE_$1, command)));
+                    Descriptions.Keys.COMMAND_USAGE_1, command)));
         out.println();
 
         // Writer to be used for the remainding of this method, which trim trailing spaces.

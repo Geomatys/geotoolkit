@@ -161,7 +161,7 @@ public class DefaultNameFactory extends Factory implements NameFactory {
         final boolean isEmpty = (separator.isEmpty());
         if (isEmpty || headSeparator.isEmpty()) {
             throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.ILLEGAL_ARGUMENT_$1, isEmpty ? "separator" : "separator.head"));
+                    Errors.Keys.ILLEGAL_ARGUMENT_1, isEmpty ? "separator" : "separator.head"));
         }
         return DefaultNameSpace.forName(name.toFullyQualifiedName(), headSeparator, separator);
     }
@@ -368,6 +368,6 @@ jump:   while (true) {
             }
             return names;
         }
-        throw new ClassCastException(Errors.format(Errors.Keys.UNKNOWN_TYPE_$1, value.getClass()));
+        throw new ClassCastException(Errors.format(Errors.Keys.UNKNOWN_TYPE_1, value.getClass()));
     }
 }

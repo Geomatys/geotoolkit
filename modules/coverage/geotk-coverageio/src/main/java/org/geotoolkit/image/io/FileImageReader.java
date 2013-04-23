@@ -105,7 +105,7 @@ public abstract class FileImageReader extends StreamImageReader {
     private void ensureFileExists(final File file) throws FileNotFoundException {
         if (!file.isFile() || !file.canRead()) {
             throw new FileNotFoundException(getErrorResources().getString(
-                    Errors.Keys.FILE_DOES_NOT_EXIST_$1, file));
+                    Errors.Keys.FILE_DOES_NOT_EXIST_1, file));
         }
     }
 

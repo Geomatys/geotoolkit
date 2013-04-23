@@ -476,7 +476,7 @@ public class WKTFormat extends Format {
         if (Strings.isJavaIdentifier(text)) {
             if (definitions == null || (value = definitions.getParsed(text)) == null) {
                 throw new ParseException(Errors.format(
-                        Errors.Keys.NO_SUCH_AUTHORITY_CODE_$2, type, text), 0);
+                        Errors.Keys.NO_SUCH_AUTHORITY_CODE_2, type, text), 0);
             }
         } else {
             if (definitions != null) {
@@ -503,7 +503,7 @@ public class WKTFormat extends Format {
             return type.cast(value);
         }
         throw new ParseException(Errors.format(
-                Errors.Keys.ILLEGAL_CLASS_$2, actualType, type), 0);
+                Errors.Keys.ILLEGAL_CLASS_2, actualType, type), 0);
     }
 
     /**
@@ -675,7 +675,7 @@ copy:       while (true) {
                     if (c == closingBrackets[i]) {
                         if (--bracketCount[i] < 0) {
                             throw new ContentFormatException(Errors.format(
-                                    Errors.Keys.NON_EQUILIBRATED_PARENTHESIS_$2,
+                                    Errors.Keys.NON_EQUILIBRATED_PARENTHESIS_2,
                                     closingBrackets[i], openingBrackets[i]));
                         }
                         for (i=0; i<bracketCount.length; i++) { // NOSONAR: The outer loop will not continue.
@@ -699,7 +699,7 @@ copy:       while (true) {
                 reportError(err, wkt, exception.getErrorOffset());
                 continue;
             } catch (InvalidParameterValueException exception) {
-                err.print(Errors.format(Errors.Keys.IN_$1, exception.getParameterName()));
+                err.print(Errors.format(Errors.Keys.IN_1, exception.getParameterName()));
                 err.print(' ');
                 err.println(exception.getLocalizedMessage());
                 continue;
@@ -724,7 +724,7 @@ copy:       while (true) {
             if (formatter.warning != null) {
                 return formatter.warning;
             }
-            return Errors.format(Errors.Keys.ILLEGAL_WKT_FORMAT_$1, formatter.getUnformattableClass());
+            return Errors.format(Errors.Keys.ILLEGAL_WKT_FORMAT_1, formatter.getUnformattableClass());
         }
         return null;
     }

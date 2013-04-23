@@ -148,7 +148,7 @@ public class MathTransformParser extends Parser {
             }
         }
         if (required) {
-            throw element.parseFailed(null, Errors.format(Errors.Keys.UNKNOWN_TYPE_$1, key));
+            throw element.parseFailed(null, Errors.format(Errors.Keys.UNKNOWN_TYPE_1, key));
         }
         return null;
     }

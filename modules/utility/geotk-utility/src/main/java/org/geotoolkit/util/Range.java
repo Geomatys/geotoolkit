@@ -182,7 +182,7 @@ public class Range<T extends Comparable<? super T>> extends org.apache.sis.measu
     private void ensureCompatible(final Class<?> type) throws IllegalArgumentException {
         if (!elementClass.isAssignableFrom(type)) {
             throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.ILLEGAL_CLASS_$2, type, elementClass));
+                    Errors.Keys.ILLEGAL_CLASS_2, type, elementClass));
         }
     }
 
@@ -194,7 +194,7 @@ public class Range<T extends Comparable<? super T>> extends org.apache.sis.measu
     void checkElementClass() throws IllegalArgumentException {
         if (!Comparable.class.isAssignableFrom(elementClass)) {
             throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.ILLEGAL_CLASS_$2, elementClass, Comparable.class));
+                    Errors.Keys.ILLEGAL_CLASS_2, elementClass, Comparable.class));
         }
     }
 

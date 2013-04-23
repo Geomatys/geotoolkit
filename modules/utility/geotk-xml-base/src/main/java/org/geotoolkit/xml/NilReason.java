@@ -164,7 +164,7 @@ public final class NilReason {
     public static <T> T createNilObject(final org.apache.sis.xml.NilReason reason, final Class<T> type) {
         ArgumentChecks.ensureNonNull("type", type);
         if (NilObjectHandler.isIgnoredInterface(type)) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_$2, "type", type));
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_2, "type", type));
         }
         InvocationHandler h= new NilObjectHandler(reason);
         return (T) Proxy.newProxyInstance(NilReason.class.getClassLoader(),

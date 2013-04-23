@@ -209,7 +209,7 @@ scan:   for (int i=0; i<numBands; i++) {
                  * Getting there with one of the above type is an error.
                  */
                 throw new IllegalArgumentException(Errors.format(
-                        Errors.Keys.ILLEGAL_ARGUMENT_$2, "type", type));
+                        Errors.Keys.ILLEGAL_ARGUMENT_2, "type", type));
             }
         }
         coverage = caller.specialize(coverage);
@@ -616,7 +616,7 @@ testLinear: for (int i=0; i<numBands; i++) {
             final String shortName = operation.substring(operation.lastIndexOf('.') + 1);
             final Locale    locale = coverage.getLocale();
             final LogRecord record = Loggings.getResources(locale).getLogRecord(
-                    AbstractCoverageProcessor.OPERATION, Loggings.Keys.SAMPLE_TRANSCODE_$3, new Object[] {
+                    AbstractCoverageProcessor.OPERATION, Loggings.Keys.SAMPLE_TRANSCODE_3, new Object[] {
                         (name != null) ? name.toString(locale) :
                             Vocabulary.getResources(locale).getString(Vocabulary.Keys.UNTITLED),
                         code, shortName

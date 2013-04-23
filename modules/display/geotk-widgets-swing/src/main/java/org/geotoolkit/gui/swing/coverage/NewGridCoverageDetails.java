@@ -532,7 +532,7 @@ final class NewGridCoverageDetails extends WindowCreator implements CoverageData
      */
     private void incompleteForm(final int crsType) {
         final Widgets resources = Widgets.getResources(getLocale());
-        final JXLabel label = new JXLabel(resources.getString(Widgets.Keys.CRS_REQUIRED_$1, crsType));
+        final JXLabel label = new JXLabel(resources.getString(Widgets.Keys.CRS_REQUIRED_1, crsType));
         final String  title = resources.getString(Widgets.Keys.INCOMPLETE_FORM);
         label.setLineWrap(true);
         getWindowHandler().showError(this, label, title);

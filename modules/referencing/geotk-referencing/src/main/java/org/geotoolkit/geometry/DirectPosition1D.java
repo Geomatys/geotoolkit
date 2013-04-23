@@ -116,7 +116,7 @@ public class DirectPosition1D extends AbstractDirectPosition implements Serializ
         final int dimension = (ordinates != null) ? ordinates.length : 0;
         if (dimension != 1) {
             throw new MismatchedDimensionException(Errors.format(
-                    Errors.Keys.MISMATCHED_DIMENSION_$3, wkt, dimension, 1));
+                    Errors.Keys.MISMATCHED_DIMENSION_3, wkt, dimension, 1));
         }
         ordinate = ordinates[0];
     }
@@ -178,7 +178,7 @@ public class DirectPosition1D extends AbstractDirectPosition implements Serializ
             return ordinate;
         } else {
             throw new IndexOutOfBoundsException(Errors.format(
-                    Errors.Keys.INDEX_OUT_OF_BOUNDS_$1, dimension));
+                    Errors.Keys.INDEX_OUT_OF_BOUNDS_1, dimension));
         }
     }
 
@@ -195,7 +195,7 @@ public class DirectPosition1D extends AbstractDirectPosition implements Serializ
             ordinate = value;
         } else {
             throw new IndexOutOfBoundsException(Errors.format(
-                    Errors.Keys.INDEX_OUT_OF_BOUNDS_$1, dimension));
+                    Errors.Keys.INDEX_OUT_OF_BOUNDS_1, dimension));
         }
     }
 

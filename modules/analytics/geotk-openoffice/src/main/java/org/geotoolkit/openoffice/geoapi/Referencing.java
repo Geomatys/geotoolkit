@@ -233,7 +233,7 @@ public final class Referencing extends Formulas implements XReferencing {
         final Logger logger = getLogger();
         if (logger.isLoggable(Level.FINER)) {
             final LogRecord record = Loggings.format(Level.FINER,
-                    Loggings.Keys.CREATED_COORDINATE_OPERATION_$3,
+                    Loggings.Keys.CREATED_COORDINATE_OPERATION_3,
                     IdentifiedObjects.getIdentifier(operation),
                     IdentifiedObjects.getIdentifier(sourceCRS),
                     IdentifiedObjects.getIdentifier(targetCRS));
@@ -410,7 +410,7 @@ public final class Referencing extends Formulas implements XReferencing {
         if (dimension >= 1 && dimension <= cs.getDimension()) {
             return cs.getAxis(dimension - 1).getName().getCode();
         } else {
-            return Errors.format(Errors.Keys.INDEX_OUT_OF_BOUNDS_$1, dimension);
+            return Errors.format(Errors.Keys.INDEX_OUT_OF_BOUNDS_1, dimension);
         }
     }
 
@@ -439,7 +439,7 @@ public final class Referencing extends Formulas implements XReferencing {
         try {
             return parameters.parameter(parameter).getValue();
         } catch (ParameterNotFoundException exception) {
-            return Errors.format(Errors.Keys.UNKNOWN_PARAMETER_$1, parameter);
+            return Errors.format(Errors.Keys.UNKNOWN_PARAMETER_1, parameter);
         } catch (Throwable exception) {
             return getLocalizedMessage(exception);
         }
