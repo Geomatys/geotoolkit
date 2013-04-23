@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.db;
 
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryFactory;
 import java.io.Closeable;
 import java.io.IOException;
 import java.sql.ResultSet;
@@ -41,6 +43,7 @@ import org.opengis.feature.Property;
 import org.opengis.feature.type.AssociationDescriptor;
 import org.opengis.feature.type.AssociationType;
 import org.opengis.feature.type.FeatureType;
+import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.feature.type.Name;
 import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.filter.identity.FeatureId;
@@ -54,6 +57,8 @@ import org.opengis.filter.identity.FeatureId;
  */
 public class JDBCComplexFeature extends AbstractFeature<Collection<Property>> {
     
+    private static final GeometryFactory GF = new GeometryFactory();
+    
     private final DefaultJDBCFeatureStore store;
     private final Map<Name,Object> progressiveMap = new HashMap<Name, Object>();
     
@@ -62,6 +67,7 @@ public class JDBCComplexFeature extends AbstractFeature<Collection<Property>> {
         super(type, id);
         this.store = store;
         
+        int k=0;
         for(final PropertyDescriptor desc : type.getDescriptors()){
             final Name n = desc.getName();
             
@@ -89,10 +95,33 @@ public class JDBCComplexFeature extends AbstractFeature<Collection<Property>> {
             }else{
                 //single value attribut
                 prop = FeatureUtilities.defaultProperty(desc);
-                ((Property)prop).setValue(rs.getObject(n.getLocalPart()));
+                if(desc instanceof GeometryDescriptor){
+                    final GeometryDescriptor gatt = (GeometryDescriptor) desc;
+                    //read the geometry
+                    Geometry geom = null;
+                    try {
+                        geom = store.getDialect().decodeGeometryValue(
+                                gatt, rs, k+1, GF);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+
+                    if (geom != null) {
+                        //check to see if a crs was set
+                        Geometry geometry = (Geometry) geom;
+                        if ( geometry.getUserData() == null ) {
+                            //if not set, set from descriptor
+                            geometry.setUserData( gatt.getCoordinateReferenceSystem() );
+                        }
+                    }
+                    
+                }else{
+                    ((Property)prop).setValue(rs.getObject(n.getLocalPart()));
+                }
             }
             
-            progressiveMap.put(n, prop);            
+            progressiveMap.put(n, prop);
+            k++;
         }
         
         //used by getValue and getProperties()

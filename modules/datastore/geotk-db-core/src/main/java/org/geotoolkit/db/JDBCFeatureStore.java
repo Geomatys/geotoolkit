@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.db;
 
+import java.awt.RenderingHints;
 import java.util.logging.Logger;
 import javax.sql.DataSource;
 import org.geotoolkit.data.FeatureStore;
@@ -29,10 +30,17 @@ import org.geotoolkit.db.reverse.DataBaseModel;
  */
 public interface JDBCFeatureStore extends FeatureStore{
     
+    public static final RenderingHints.Key RESAMPLING = new org.geotoolkit.factory.Hints.Key(Object.class);
+    
     /**
      * Query language supported : SQL.
      */
     public static final String CUSTOM_SQL = "CUSTOM-SQL";
+    
+    /**
+     * The native SRID associated to a certain descriptor
+     */
+    public static final String JDBC_NATIVE_SRID = "nativeSRID";
         
     /**
      * Each database type have slim deformation from the SQL specification.

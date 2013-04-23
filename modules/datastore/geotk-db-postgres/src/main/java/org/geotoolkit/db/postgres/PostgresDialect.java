@@ -18,12 +18,14 @@ package org.geotoolkit.db.postgres;
 
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryCollection;
+import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.MultiLineString;
 import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
+import java.io.IOException;
 import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.sql.Connection;
@@ -40,20 +42,38 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import org.geotoolkit.db.DefaultJDBCFeatureStore;
-import org.geotoolkit.db.dialect.SQLDialect;
+import org.geotoolkit.db.JDBCFeatureStore;
 import static org.geotoolkit.db.JDBCFeatureStoreUtilities.*;
+import org.geotoolkit.db.dialect.AbstractSQLDialect;
+import org.geotoolkit.db.postgres.ewkb.JtsBinaryParser;
+import org.geotoolkit.db.postgres.wkb.WKBAttributeIO;
+import org.geotoolkit.factory.Hints;
+import org.geotoolkit.referencing.CRS;
+import org.opengis.feature.type.GeometryDescriptor;
+import org.opengis.filter.Filter;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
-public class PostgresDialect implements SQLDialect{
+public class PostgresDialect extends AbstractSQLDialect{
 
+    private static final String GEOM_ENCODING = "Encoding";
+    private static enum GeometryEncoding{
+        HEXEWKB,
+        WKB,
+        WKT,
+        UNKNOWNED
+    }
+
+    protected final Map<Integer, CoordinateReferenceSystem> CRS_CACHE = new HashMap<Integer, CoordinateReferenceSystem>();
+    
     private static final Map<Integer,Class> TYPE_TO_CLASS = new HashMap<Integer, Class>();
     private static final Map<String,Class> TYPENAME_TO_CLASS = new HashMap<String, Class>();
     private static final Map<Class,String> CLASS_TO_TYPENAME = new HashMap<Class,String>();
     private static final Set<String> IGNORE_TABLES = new HashSet<String>();
-    
+        
     static {
         //fill base types
         TYPE_TO_CLASS.put(Types.VARCHAR,        String.class);
@@ -213,6 +233,30 @@ public class PostgresDialect implements SQLDialect{
     }
         
     private final DefaultJDBCFeatureStore datastore;
+    
+    //readers
+    private final ThreadLocal<WKBAttributeIO> wkbReader = new ThreadLocal<WKBAttributeIO>();
+    private final JtsBinaryParser hexewkbReader = new JtsBinaryParser(){
+
+        @Override
+        public Geometry parse(String value) {
+            final Geometry geom =  super.parse(value);
+
+            if(geom != null){
+                final int srid = geom.getSRID();
+                if(srid >= 0){
+                    try {
+                        //set the real crs
+                        geom.setUserData(decodeCRS(geom.getSRID(), null));
+                    } catch (SQLException ex) {
+                        datastore.getLogger().log(Level.WARNING, ex.getLocalizedMessage(),ex);
+                    }
+                }
+            }
+            return geom;
+        }
+
+    };
 
     public PostgresDialect(DefaultJDBCFeatureStore datastore) {
         this.datastore = datastore;
@@ -291,5 +335,126 @@ public class PostgresDialect implements SQLDialect{
     public boolean ignoreTable(String name) {
         return IGNORE_TABLES.contains(name.toLowerCase());
     }
+
+    @Override
+    public Filter[] splitFilter(Filter filter) {
+        //TODO
+        final Filter[] divided = new Filter[2];
+        divided[0] = Filter.INCLUDE;
+        divided[1] = filter;
+        return divided;
+    }
+
+    @Override
+    public String encodeFilter(Filter filter) {
+        //TODO
+        return "";
+    }
+
+    @Override
+    public void encodeGeometryColumn(StringBuilder sql, GeometryDescriptor gatt, int srid, Hints hints) {
+        double res = 0;
+        if(hints != null){
+            double[] ress = (double[]) hints.get(JDBCFeatureStore.RESAMPLING);
+            if(ress != null){
+                res = Math.min(ress[0], ress[1]);
+            }
+        }
+        if(Double.isInfinite(res)){
+            res = Double.MAX_VALUE;
+        }
+
+
+        final CoordinateReferenceSystem crs = gatt.getCoordinateReferenceSystem();
+        final int dimensions = (crs == null) ? 2 : crs.getCoordinateSystem().getDimension();
+        sql.append("encode(");
+
+        if(res > 0){
+            if (dimensions > 2) {
+                sql.append("ST_AsEWKB(ST_simplify(");
+                encodeColumnName(sql, gatt.getLocalName());
+                sql.append(",").append(res).append(")");
+            } else {
+                sql.append("ST_AsBinary(ST_simplify(");
+                encodeColumnName(sql, gatt.getLocalName());
+                sql.append(",").append(res).append(")");
+            }
+            sql.append(") ");
+        }else{
+            if (dimensions > 2) {
+                sql.append("ST_AsEWKB(");
+                encodeColumnName(sql, gatt.getLocalName());
+            } else {
+                sql.append("ST_AsBinary(");
+                encodeColumnName(sql, gatt.getLocalName());
+            }
+            sql.append(") ");
+        }
+
+        sql.append(",'base64')");
+    }
+
+    @Override
+    public void encodeLimitOffset(StringBuilder sql, Integer limit, int offset) {
+        if (limit != null && limit > 0 && limit < Integer.MAX_VALUE) {
+            sql.append(" LIMIT ").append(limit);
+        }
+        if (offset > 0) {
+            sql.append(" OFFSET ").append(offset);
+        }
+    }
+
+    @Override
+    public Geometry decodeGeometryValue(GeometryDescriptor descriptor, ResultSet rs, 
+        String column, GeometryFactory factory) throws IOException, SQLException {
+        
+        switch((GeometryEncoding)descriptor.getType().getUserData().get(GEOM_ENCODING)){
+            case HEXEWKB:
+                return hexewkbReader.parse(rs.getString(column));
+            case WKB:
+                WKBAttributeIO reader = wkbReader.get();
+                if (reader == null) {
+                    reader = new WKBAttributeIO(factory);
+                    wkbReader.set(reader);
+                }
+                return (Geometry) reader.read(rs, column);
+            default:
+                throw new IllegalStateException("Can not decode geometry not knowing it's encoding.");
+        }
+    }
+
+    @Override
+    public Geometry decodeGeometryValue(GeometryDescriptor descriptor, ResultSet rs, 
+        int column, GeometryFactory factory) throws IOException, SQLException {
+        
+        switch((GeometryEncoding)descriptor.getType().getUserData().get(GEOM_ENCODING)){
+            case HEXEWKB:
+                return hexewkbReader.parse(rs.getString(column));
+            case WKB:
+                WKBAttributeIO reader = wkbReader.get();
+                if (reader == null) {
+                    reader = new WKBAttributeIO(factory);
+                    wkbReader.set(reader);
+                }
+                return (Geometry) reader.read(rs, column);
+            default:
+                throw new IllegalStateException("Can not decode geometry not knowing it's encoding.");
+        }
+    }
     
+    public CoordinateReferenceSystem decodeCRS(final int srid, final Connection cx) throws SQLException{
+        CoordinateReferenceSystem crs = CRS_CACHE.get(srid);
+        if (crs == null) {
+            try {
+                crs = CRS.decode("EPSG:" + srid,true);
+                CRS_CACHE.put(srid, crs);
+            } catch(Exception e) {
+                if(datastore.getLogger().isLoggable(Level.FINE)) {
+                    datastore.getLogger().log(Level.FINE, "Could not decode " + srid + " using the built-in EPSG database", e);
+                }
+                return null;
+            }
+        }
+        return crs;
+    }
 }

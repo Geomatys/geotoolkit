@@ -64,6 +64,8 @@ import org.opengis.feature.type.*;
  */
 public final class DataBaseModel {
 
+    public static final String ASSOCIATION_SEPARATOR = "→"; 
+    
     /**
      * The native SRID associated to a certain descriptor
      */
@@ -631,7 +633,7 @@ public final class DataBaseModel {
                 for(final RelationMetaModel relation : table.exportedKeys){
                     
                     final Name n = new DefaultName(store.getDefaultNamespace(),
-                            relation.getForeignTable()+"→"+relation.getForeignColumn());
+                            relation.getForeignTable()+ASSOCIATION_SEPARATOR+relation.getForeignColumn());
                     
                     adb.reset();
                     adb.setName(n);

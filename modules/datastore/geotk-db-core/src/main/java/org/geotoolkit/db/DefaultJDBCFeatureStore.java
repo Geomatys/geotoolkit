@@ -21,6 +21,8 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +31,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.sql.DataSource;
 import org.geotoolkit.data.*;
+import org.geotoolkit.data.memory.GenericFilterFeatureIterator;
+import org.geotoolkit.data.memory.GenericReprojectFeatureIterator;
+import org.geotoolkit.data.memory.GenericRetypeFeatureIterator;
 import org.geotoolkit.data.query.DefaultQueryCapabilities;
 import org.geotoolkit.data.query.Join;
 import org.geotoolkit.data.query.Query;
@@ -38,12 +43,20 @@ import org.geotoolkit.data.query.Selector;
 import org.geotoolkit.data.query.Source;
 import org.geotoolkit.data.query.TextStatement;
 import org.geotoolkit.db.dialect.SQLDialect;
+import org.geotoolkit.db.dialect.SQLQueryBuilder;
+import org.geotoolkit.db.reverse.ColumnMetaModel;
 import org.geotoolkit.db.reverse.DataBaseModel;
+import org.geotoolkit.db.reverse.PrimaryKey;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.DefaultName;
+import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.SchemaException;
+import org.geotoolkit.filter.visitor.CRSAdaptorVisitor;
+import org.geotoolkit.filter.visitor.FIDFixVisitor;
+import org.geotoolkit.filter.visitor.FilterAttributeExtractor;
 import org.geotoolkit.jdbc.ManageableDataSource;
 import org.geotoolkit.parameter.Parameters;
+import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.storage.DataStoreException;
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
@@ -54,6 +67,8 @@ import org.opengis.filter.identity.FeatureId;
 import org.opengis.geometry.Envelope;
 import org.opengis.parameter.ParameterNotFoundException;
 import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.util.FactoryException;
 
 /**
  *
@@ -220,24 +235,101 @@ public class DefaultJDBCFeatureStore extends AbstractFeatureStore implements JDB
         }
         
         final FeatureType baseType = getFeatureType(query.getTypeName());
-        final QueryBuilder remaining = new QueryBuilder(query);
+        final PrimaryKey pkey = dbmodel.getPrimaryKey(query.getTypeName());
                 
-        //split the filter
-        final Filter baseFilter = query.getFilter();
-        //TODO
-        final Filter before = Filter.INCLUDE;
-        final Filter after = baseFilter;
         
-        final String sql = "SELECT * FROM \""+baseType.getName().getLocalPart()+"\"";
+        //replace any PropertyEqualsTo in true ID filters
+        Filter baseFilter = query.getFilter();
+        baseFilter = (Filter) baseFilter.accept(new FIDFixVisitor(), null);
+        
+        //split the filter between what can be send and must be handle by code
+        final Filter[] divided = getDialect().splitFilter(baseFilter);
+        Filter preFilter = divided[0];
+        Filter postFilter = divided[1];
+        
+        //ensure spatial filters are in featuretype geometry crs
+        preFilter = (Filter)preFilter.accept(new CRSAdaptorVisitor(baseType),null);
+        
+        // rebuild a new query with the same params, but just the pre-filter
+        final QueryBuilder builder = new QueryBuilder(query);
+        builder.setFilter(preFilter);
+        if(query.getResolution() != null){ //attach resampling in hints; used later by postgis dialect
+            builder.getHints().add(new Hints(RESAMPLING, query.getResolution()));
+        }
+        final Query preQuery = builder.buildQuery();
+        
+        // Build the feature type returned by this query. Also build an eventual extra feature type
+        // containing the attributes we might need in order to evaluate the post filter
+        final FeatureType queryFeatureType;
+        final FeatureType returnedFeatureType;
+        if(query.retrieveAllProperties()) {
+            returnedFeatureType = queryFeatureType = baseType;
+        } else {
+            returnedFeatureType = FeatureTypeBuilder.retype(baseType, query.getPropertyNames());
+            final FilterAttributeExtractor extractor = new FilterAttributeExtractor(baseType);
+            postFilter.accept(extractor, null);
+            final Name[] extraAttributes = extractor.getAttributeNames();
+            final List<Name> allAttributes = new ArrayList<Name>(Arrays.asList(query.getPropertyNames()));
+            for (Name extraAttribute : extraAttributes) {
+                if(!allAttributes.contains(extraAttribute)) {
+                    allAttributes.add(extraAttribute);
+                }
+            }
+
+            //ensure we have the primarykeys
+            pkLoop :
+            for(ColumnMetaModel pkc : pkey.getColumns()){
+                final String pkcName = pkc.getName();
+                for(Name n : allAttributes){
+                    if(n.getLocalPart().equals(pkcName)){
+                        continue pkLoop;
+                     }
+                 }
+                //add the pk attribut
+                allAttributes.add(baseType.getDescriptor(pkcName).getName());
+             }
+
+            final Name[] allAttributeArray = allAttributes.toArray(new Name[allAttributes.size()]);
+            queryFeatureType = FeatureTypeBuilder.retype(baseType, allAttributeArray);
+        }
+        
+        
+        
+        final String sql;
         
         FeatureReader reader;
         try {
-            reader = new JDBCFeatureReader(sql, baseType, this);
+            final SQLQueryBuilder queryBuilder = new SQLQueryBuilder(this);
+            sql = queryBuilder.selectSQL(queryFeatureType, preQuery);
+            reader = new JDBCFeatureReader(sql, queryFeatureType, this);
         } catch (SQLException ex) {
             throw new DataStoreException(ex.getMessage(), ex);
         }
         
-        return handleRemaining(reader, remaining.buildQuery());
+        
+        // if post filter, wrap it
+        if (postFilter != null && postFilter != Filter.INCLUDE) {
+            reader = GenericFilterFeatureIterator.wrap(reader, postFilter);
+        }
+
+        //if we need to reproject data
+        final CoordinateReferenceSystem reproject = query.getCoordinateSystemReproject();
+        if(reproject != null && !CRS.equalsIgnoreMetadata(reproject,baseType.getCoordinateReferenceSystem())){
+            try {
+                reader = GenericReprojectFeatureIterator.wrap(reader, reproject,query.getHints());
+            } catch (FactoryException ex) {
+                throw new DataStoreException(ex);
+            } catch (SchemaException ex) {
+                throw new DataStoreException(ex);
+            }
+        }
+
+        //if we need to constraint type
+        if(!returnedFeatureType.equals(queryFeatureType)){
+            reader = GenericRetypeFeatureIterator.wrap(reader, returnedFeatureType, query.getHints());
+        }
+
+        return reader;
     }
     
     /**
