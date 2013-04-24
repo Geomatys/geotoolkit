@@ -16,11 +16,15 @@
  */
 package org.geotoolkit.db.reverse;
 
+import java.io.IOException;
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collections;
 import java.util.List;
+import org.geotoolkit.db.DefaultJDBCFeatureStore;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
+import org.geotoolkit.storage.DataStoreException;
 
 /**
  * Describe a table primary key.
@@ -78,7 +82,7 @@ public class PrimaryKey {
         }
     }
 
-    private static String encodeFID(final Object[] keyValues) {
+    public static String encodeFID(final Object[] keyValues) {
         final StringBuilder fid = new StringBuilder();
         for (Object val : keyValues) {
             fid.append(escapeDot(val)).append('.');
@@ -95,6 +99,18 @@ public class PrimaryKey {
     
     private static String unescapeDot(String str){
         return str.replaceAll("◼",".");
+    }
+    
+    /**
+     * Calculate the next entry primary key values.
+     */
+    public Object[] nextPrimaryKeyValues(final DefaultJDBCFeatureStore store, final Connection cx)
+            throws SQLException, DataStoreException {
+        final Object[] parts = new Object[columns.size()];
+        for(int i=0,n=columns.size(); i<n; i++){
+            parts[i] = columns.get(i).nextColumnValue(store, cx);
+        }
+        return parts;
     }
     
 }

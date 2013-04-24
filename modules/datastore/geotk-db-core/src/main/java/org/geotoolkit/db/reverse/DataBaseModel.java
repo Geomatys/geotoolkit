@@ -292,14 +292,14 @@ public final class DataBaseModel {
 
                 final String str = columns.getString(Column.IS_AUTOINCREMENT);
                 if(Column.VALUE_YES.equalsIgnoreCase(str)){
-                    col = new ColumnMetaModel(columnName, sqlType, sqlTypeName, columnType, Type.AUTO);
+                    col = new ColumnMetaModel(schemaName, tableName, columnName, sqlType, sqlTypeName, columnType, Type.AUTO);
                 }else {
                     final String sequenceName = dialect.getColumnSequence(cx,schemaName, tableName, columnName);
                     if (sequenceName != null) {
-                        col = new ColumnMetaModel(columnName, sqlType, 
-                                sqlTypeName, columnType, Type.SEQUENCED);
+                        col = new ColumnMetaModel(schemaName, tableName, columnName, sqlType, 
+                                sqlTypeName, columnType, Type.SEQUENCED,sequenceName);
                     }else{
-                        col = new ColumnMetaModel(columnName, sqlType, 
+                        col = new ColumnMetaModel(schemaName, tableName, columnName, sqlType, 
                                 sqlTypeName, columnType, Type.NON_INCREMENTING);
                     }
                 }
@@ -338,7 +338,7 @@ public final class DataBaseModel {
                         final int sqlType = result.getInt(Column.DATA_TYPE);
                         final String sqlTypeName = result.getString(Column.TYPE_NAME);
                         final Class columnType = dialect.getJavaType(sqlType, sqlTypeName);                        
-                        final ColumnMetaModel col = new ColumnMetaModel(columnName, 
+                        final ColumnMetaModel col = new ColumnMetaModel(schemaName, tableName, columnName, 
                                 sqlType, sqlTypeName, columnType, Type.NON_INCREMENTING);
                         cols.add(col);
                     }

@@ -30,12 +30,13 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.sql.DataSource;
+import org.apache.sis.util.ArgumentChecks;
+import org.apache.sis.util.Version;
 import org.geotoolkit.data.*;
 import org.geotoolkit.data.memory.GenericFilterFeatureIterator;
 import org.geotoolkit.data.memory.GenericReprojectFeatureIterator;
 import org.geotoolkit.data.memory.GenericRetypeFeatureIterator;
 import org.geotoolkit.data.query.DefaultQueryCapabilities;
-import org.geotoolkit.data.query.Join;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.query.QueryCapabilities;
@@ -59,6 +60,7 @@ import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.storage.DataStoreException;
 import org.opengis.feature.Feature;
+import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.Name;
 import org.opengis.feature.type.PropertyDescriptor;
@@ -77,6 +79,12 @@ import org.opengis.util.FactoryException;
  */
 public class DefaultJDBCFeatureStore extends AbstractFeatureStore implements JDBCFeatureStore{
     
+    private static enum EditMode{
+        UPDATE,
+        INSERT,
+        UPDATE_AND_INSERT
+    }
+
     protected static final QueryCapabilities DEFAULT_CAPABILITIES = new DefaultQueryCapabilities(false, false, new String[]{Query.GEOTK_QOM, CUSTOM_SQL});
     private final DataBaseModel dbmodel; 
     private final String factoryId;
@@ -86,6 +94,8 @@ public class DefaultJDBCFeatureStore extends AbstractFeatureStore implements JDB
     
     //number of records to retrieve with each db call.
     private final int fetchSize;
+    private SQLQueryBuilder queryBuilder;
+    
     
     public DefaultJDBCFeatureStore(final ParameterValueGroup params,final String factoryId){
         super(params);
@@ -132,7 +142,28 @@ public class DefaultJDBCFeatureStore extends AbstractFeatureStore implements JDB
     }
 
     public void setDialect(SQLDialect dialect) {
+        ArgumentChecks.ensureNonNull("dialect", dialect);
         this.dialect = dialect;
+    }
+    
+    private SQLQueryBuilder getQueryBuilder(){
+        if(queryBuilder == null){
+            queryBuilder = new SQLQueryBuilder(this);
+        }
+        return queryBuilder;
+    }
+    
+    /**
+     * Get database version.
+     * @return
+     * @throws DataStoreException 
+     */
+    public Version getVersion() throws DataStoreException {
+        try {
+            return dialect.getVersion(getDatabaseSchema());
+        } catch (SQLException e) {
+            throw new DataStoreException("Error occured calculating bounds", e);
+        }
     }
     
     /**
@@ -294,14 +325,12 @@ public class DefaultJDBCFeatureStore extends AbstractFeatureStore implements JDB
         }
         
         
-        
         final String sql;
         
         FeatureReader reader;
         try {
-            final SQLQueryBuilder queryBuilder = new SQLQueryBuilder(this);
-            sql = queryBuilder.selectSQL(queryFeatureType, preQuery);
-            reader = new JDBCFeatureReader(sql, queryFeatureType, this);
+            sql = getQueryBuilder().selectSQL(queryFeatureType, preQuery);
+            reader = new JDBCFeatureReader(this, sql, queryFeatureType, null);
         } catch (SQLException ex) {
             throw new DataStoreException(ex.getMessage(), ex);
         }
@@ -345,7 +374,7 @@ public class DefaultJDBCFeatureStore extends AbstractFeatureStore implements JDB
 
         try {
             final FeatureType ft = getFeatureType(query);
-            final JDBCFeatureReader reader = new JDBCFeatureReader(sql, ft, this);
+            final JDBCFeatureReader reader = new JDBCFeatureReader(this, sql, ft, null);
             return reader;
         } catch (SchemaException ex) {
             throw new DataStoreException(ex);
@@ -376,8 +405,85 @@ public class DefaultJDBCFeatureStore extends AbstractFeatureStore implements JDB
     }
 
     @Override
-    public FeatureWriter getFeatureWriter(Name typeName, Filter filter, Hints hints) throws DataStoreException {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public FeatureWriter getFeatureWriter(final Name typeName, final Filter filter, final Hints hints) throws DataStoreException {
+        try {
+            return getFeatureWriterInternal(typeName, filter, EditMode.UPDATE_AND_INSERT, hints);
+        } catch (IOException ex) {
+            throw new DataStoreException(ex);
+        }
+    }
+
+    @Override
+    public FeatureWriter getFeatureWriterAppend(final Name typeName, final Hints hints) throws DataStoreException {
+        try {
+            return getFeatureWriterInternal(typeName, Filter.EXCLUDE, EditMode.INSERT, hints);
+        } catch (IOException ex) {
+            throw new DataStoreException(ex);
+        }
+    }
+
+    private FeatureWriter getFeatureWriterInternal(final Name typeName, Filter baseFilter,
+            final EditMode mode, final Hints hints) throws DataStoreException, IOException {
+
+        if(!isWritable(typeName)){
+            throw new DataStoreException("Type "+ typeName + " is not writeable.");
+        }
+
+        final FeatureType baseType = getFeatureType(typeName);
+        final PrimaryKey pkey = dbmodel.getPrimaryKey(typeName);
+        
+        //replace any PropertyEqualsTo in true ID filters
+        baseFilter = (Filter) baseFilter.accept(new FIDFixVisitor(), null);
+        
+        //split the filter between what can be send and must be handle by code
+        final Filter[] divided = getDialect().splitFilter(baseFilter);
+        Filter preFilter = divided[0];
+        Filter postFilter = divided[1];
+        
+        //ensure spatial filters are in featuretype geometry crs
+        preFilter = (Filter)preFilter.accept(new CRSAdaptorVisitor(baseType),null);
+
+
+        Connection cx = null;
+        FeatureWriter writer;
+        try {
+            cx = getDataSource().getConnection();
+
+            //check for insert only
+            if ( EditMode.INSERT == mode ) {
+                //build up a statement for the content, inserting only so we dont want
+                //the query to return any data ==> Filter.EXCLUDE
+                final Query queryNone = QueryBuilder.filtered(typeName, Filter.EXCLUDE);
+                final String sql = getQueryBuilder().selectSQL(baseType, queryNone);
+                getLogger().fine(sql);
+                return new JDBCFeatureWriterInsert(this,sql,baseType,hints);
+            }
+
+
+            // build up a statement for the content
+            final Query preQuery = QueryBuilder.filtered(typeName, preFilter);
+            final String sql = getQueryBuilder().selectSQL(baseType, preQuery);
+            getLogger().fine(sql);
+
+            if(EditMode.UPDATE == mode) {
+                writer = new JDBCFeatureWriterUpdate(this, sql, baseType, hints);
+            }else{
+                //update insert case
+                writer = new JDBCFeatureWriterUpdateInsert(this, sql, baseType, hints);
+            }
+
+        } catch (SQLException e) {
+            // close the connection
+            JDBCFeatureStoreUtilities.closeSafe(getLogger(),cx);
+            // now we can safely rethrow the exception
+            throw new DataStoreException(e);
+        }
+
+        //check for post filter and wrap accordingly
+        if ( postFilter != null && postFilter != Filter.INCLUDE ) {
+            writer = GenericFilterFeatureIterator.wrap(writer, postFilter);
+        }
+        return writer;
     }
     
     @Override
@@ -435,6 +541,114 @@ public class DefaultJDBCFeatureStore extends AbstractFeatureStore implements JDB
         handleRemoveWithFeatureWriter(groupName, filter);
     }
 
+    protected void insert(final Collection<? extends Feature> features, final FeatureType featureType,
+            final Connection cx) throws DataStoreException {
+        final PrimaryKey key = dbmodel.getPrimaryKey(featureType.getName());
+
+        // we do this in a synchronized block because we need to do two queries,
+        // first to figure out what the id will be, then the insert statement
+        synchronized (this) {
+            Statement st = null;
+            try {
+                st = cx.createStatement();
+                final Object[] nextKeyValues = key.nextPrimaryKeyValues(this, cx);
+                final String sql = getQueryBuilder().insertSQL(featureType, features, nextKeyValues, cx);
+                st.executeUpdate(sql);
+
+            } catch (SQLException e) {
+                throw new DataStoreException("Error inserting features",e);
+            } finally {
+                JDBCFeatureStoreUtilities.closeSafe(getLogger(),st);
+            }
+        }
+
+        fireFeaturesAdded(featureType.getName(), null);
+    }
+
+    protected void insert(final Feature feature, final FeatureType featureType,
+            final Connection cx) throws DataStoreException {
+        final PrimaryKey key = dbmodel.getPrimaryKey(featureType.getName());
+
+        // we do this in a synchronized block because we need to do two queries,
+        // first to figure out what the id will be, then the insert statement
+        synchronized (this) {
+            Statement stmt = null;
+            String sql = null;
+            try {
+                stmt = cx.createStatement();
+
+                //figure out what the next fid will be
+                final Object[] nextKeyValues = key.nextPrimaryKeyValues(this, cx);
+
+                //this technic must be generalize to all primary keys, must revisite tests for this
+                sql = getQueryBuilder().insertSQL(featureType, feature, nextKeyValues, cx);
+                getLogger().log(Level.FINE, "Inserting new feature: {0}", sql);
+
+                if(nextKeyValues.length == 0 || nextKeyValues[0] == null){
+                    stmt.execute(sql,Statement.RETURN_GENERATED_KEYS);
+                    ResultSet rs = stmt.getGeneratedKeys();
+                    rs.next();
+                    final Object id = rs.getObject(1);
+                    nextKeyValues[0] = id;
+                    rs.close();
+                    feature.getProperty(key.getColumns().get(0).getName()).setValue(id);
+                }else{
+                    stmt.execute(sql);
+                }
+
+                //report the feature id as user data since we cant set the fid
+                final String fid = featureType.getName().getLocalPart() + "." + PrimaryKey.encodeFID(nextKeyValues);
+                feature.getUserData().put("fid", fid);
+
+            //st.executeBatch();
+            } catch (SQLException ex) {
+            throw new DataStoreException("Failed to intert features : "+ex.getMessage()+"\nSQL Query :"+sql, ex);
+            } finally {
+                JDBCFeatureStoreUtilities.closeSafe(getLogger(),stmt);
+            }
+        }
+        fireFeaturesAdded(featureType.getName(), null);
+    }
+
+    protected void update(final FeatureType featureType, final Map<AttributeDescriptor,Object> changes,
+            final Filter filter, final Connection cx) throws DataStoreException{
+        if(changes==null || changes.isEmpty()){
+            //do nothing
+            return;
+        }
+
+        Statement stmt = null;
+        String sql = null;
+        try {
+            sql = getQueryBuilder().updateSQL(featureType, changes, filter);
+            stmt = cx.createStatement();
+            stmt.execute(sql);
+        } catch (SQLException ex) {
+            throw new DataStoreException("Failed to update features : "+ex.getMessage()+"\nSQL Query :"+sql, ex);
+        } finally {
+            JDBCFeatureStoreUtilities.closeSafe(getLogger(),stmt);
+        }
+        fireFeaturesUpdated(featureType.getName(), null);
+    }
+
+    protected void delete(final FeatureType featureType, final Filter filter, final Connection cx)
+            throws DataStoreException {
+
+        Statement stmt = null;
+        String sql = null;
+        try {
+            sql = getQueryBuilder().deleteSQL(featureType, filter);
+            stmt = cx.createStatement();
+            stmt.execute(sql);
+        } catch (SQLException ex) {
+            throw new DataStoreException("Failed to delete features : "+ex.getMessage()+"\nSQL Query :"+sql, ex);
+        } finally {
+            JDBCFeatureStoreUtilities.closeSafe(getLogger(),stmt);
+        }
+        fireFeaturesDeleted(featureType.getName(), null);
+    }
+
+    
     ////////////////////////////////////////////////////////////////////////////
     // other utils /////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////

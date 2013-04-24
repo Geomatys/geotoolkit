@@ -38,6 +38,7 @@ import org.geotoolkit.db.reverse.ForeignKey;
 import org.geotoolkit.feature.AbstractFeature;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.FeatureUtilities;
+import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.util.collection.CloseableIterator;
 import org.opengis.feature.Property;
 import org.opengis.feature.type.AssociationDescriptor;
@@ -71,10 +72,10 @@ public class JDBCComplexFeature extends AbstractFeature<Collection<Property>> {
         for(final PropertyDescriptor desc : type.getDescriptors()){
             final Name n = desc.getName();
             
-            Object prop = null;
+            final Object prop;
             if(desc.getType() instanceof AssociationType){
                 final AssociationDescriptor assDesc = (AssociationDescriptor) desc;
-                ForeignKey template = (ForeignKey) desc.getUserData().get(ForeignKey.RELATION);
+                final ForeignKey template = (ForeignKey) desc.getUserData().get(ForeignKey.RELATION);
                 
                 if(template != null){
                     //create a dynamic collection
@@ -98,21 +99,16 @@ public class JDBCComplexFeature extends AbstractFeature<Collection<Property>> {
                 if(desc instanceof GeometryDescriptor){
                     final GeometryDescriptor gatt = (GeometryDescriptor) desc;
                     //read the geometry
-                    Geometry geom = null;
+                    final Geometry geom;
                     try {
-                        geom = store.getDialect().decodeGeometryValue(
-                                gatt, rs, k+1, GF);
+                        geom = store.getDialect().decodeGeometryValue(gatt, rs, k+1, GF);
                     } catch (IOException e) {
-                        throw new RuntimeException(e);
+                        throw new SQLException(e);
                     }
 
-                    if (geom != null) {
-                        //check to see if a crs was set
-                        Geometry geometry = (Geometry) geom;
-                        if ( geometry.getUserData() == null ) {
-                            //if not set, set from descriptor
-                            geometry.setUserData( gatt.getCoordinateReferenceSystem() );
-                        }
+                    if(geom != null && geom.getUserData() == null){ 
+                        //set crs is not set
+                        JTS.setCRS(geom, gatt.getCoordinateReferenceSystem());
                     }
                     
                 }else{
@@ -194,6 +190,10 @@ public class JDBCComplexFeature extends AbstractFeature<Collection<Property>> {
     @Override
     public Property getProperty(final String name) {
         return getProperty(new DefaultName(null, name));
+    }
+
+    public void updateResultSet(final ResultSet rs) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
     
     private class CollectionMap extends AbstractCollection<Property> {

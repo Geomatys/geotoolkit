@@ -22,7 +22,10 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import org.apache.sis.util.Version;
+import org.geotoolkit.db.reverse.ColumnMetaModel;
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.storage.DataStoreException;
 import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.filter.Filter;
 
@@ -32,6 +35,8 @@ import org.opengis.filter.Filter;
  * @author Johann Sorel (Geomatys)
  */
 public interface SQLDialect {
+    
+    Version getVersion(String schema) throws SQLException;
     
     /**
      * Escape sequence for table names.
@@ -77,20 +82,38 @@ public interface SQLDialect {
 
     void encodeTableName(StringBuilder sql, String name);
 
+    /**
+     * Encode schema and table name portion of an sql query.
+     * @param tableName
+     * @param sql 
+     */
+    void encodeSchemaAndTableName(StringBuilder sql, String databaseSchema, String tableName);
+    
     void encodeGeometryColumn(StringBuilder sql, GeometryDescriptor gatt, int srid, Hints hints);
 
     void encodeColumnAlias(StringBuilder sql, String name);
     
     void encodeLimitOffset(StringBuilder sql, Integer limit, int offset);
     
+    void encodeValue(StringBuilder sql, Object value, Class type);
+
+    void encodeGeometryValue(StringBuilder sql, Geometry value, int srid) throws DataStoreException;
+    
+    ////////////////////////////////////////////////////////////////////////////
+    // PRIMARY KEY CALCULATION METHOS //////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+    
+    Object nextValue(ColumnMetaModel column, Connection cx) throws SQLException, DataStoreException;
+    
+    
     ////////////////////////////////////////////////////////////////////////////
     // METHODS TO READ FROM RESULTSET //////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
     
-    Geometry decodeGeometryValue(final GeometryDescriptor descriptor, final ResultSet rs,
-        final String column, final GeometryFactory factory) throws IOException, SQLException;
+    Geometry decodeGeometryValue(GeometryDescriptor descriptor, ResultSet rs,
+        String column, GeometryFactory factory) throws IOException, SQLException;
 
-    Geometry decodeGeometryValue(final GeometryDescriptor descriptor, final ResultSet rs,
-        final int column, final GeometryFactory factory) throws IOException, SQLException;
+    Geometry decodeGeometryValue(GeometryDescriptor descriptor, ResultSet rs,
+        int column, GeometryFactory factory) throws IOException, SQLException;
     
 }

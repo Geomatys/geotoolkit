@@ -62,4 +62,13 @@ public abstract class AbstractSQLDialect implements SQLDialect {
         sql.append(getTableEscape()).append(name).append(getTableEscape());
     }
     
+    @Override
+    public void encodeSchemaAndTableName(final StringBuilder sql, final String databaseSchema, final String tableName) {
+        if (databaseSchema != null && !databaseSchema.isEmpty()) {
+            encodeSchemaName(sql, databaseSchema);
+            sql.append('.');
+        }
+        encodeTableName(sql, tableName);
+    }
+    
 }

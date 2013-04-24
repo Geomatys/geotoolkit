@@ -16,6 +16,20 @@
  */
 package org.geotoolkit.db.reverse;
 
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.logging.Level;
+import org.geotoolkit.db.DefaultJDBCFeatureStore;
+import org.geotoolkit.db.JDBCFeatureStoreUtilities;
+import org.geotoolkit.db.dialect.SQLDialect;
+import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
+import org.geotoolkit.storage.DataStoreException;
+
 /**
  * Description of a table column.
  * 
@@ -32,11 +46,14 @@ public class ColumnMetaModel {
         SEQUENCED
     }
     
+    private final String schema;
+    private final String table;
     private final String name;
     private final int sqlType;
     private final String sqlTypeName;
     private final Class clazz;
     private final Type type;
+    private final String sequenceName;
 
     /**
      * @param name column name
@@ -45,12 +62,37 @@ public class ColumnMetaModel {
      * @param clazz best java matching type
      * @param type if column is a primary key column, define how value is found
      */
-    public ColumnMetaModel(String name, int sqlType, String sqlTypeName, Class clazz, Type type) {
+    public ColumnMetaModel(String schema, String table, String name, 
+            int sqlType, String sqlTypeName, Class clazz, Type type) {
+        this(schema, table, name,sqlType,sqlTypeName,clazz,type,null);
+    }
+    
+    /**
+     * @param name column name
+     * @param sqlType sql type 
+     * @param sqlTypeName sql type name
+     * @param clazz best java matching type
+     * @param type if column is a primary key column, define how value is found
+     * @param sequenceName the sequence name if type SEQUENCED
+     */
+    public ColumnMetaModel(String schema, String table, String name, 
+            int sqlType, String sqlTypeName, Class clazz, Type type, String sequenceName) {
+        this.schema = schema;
+        this.table = table;
         this.name = name;
         this.sqlType = sqlType;
         this.sqlTypeName = sqlTypeName;
         this.clazz = clazz;
         this.type = type;
+        this.sequenceName = sequenceName;
+    }
+
+    public String getSchema() {
+        return schema;
+    }
+
+    public String getTable() {
+        return table;
     }
 
     public String getName() {
@@ -69,8 +111,12 @@ public class ColumnMetaModel {
         return clazz;
     }
 
-    public Type isType() {
+    public Type getType() {
         return type;
+    }
+
+    public String getSequenceName() {
+        return sequenceName;
     }
     
     @Override
@@ -84,6 +130,71 @@ public class ColumnMetaModel {
         sb.append(type);
         sb.append(']');
         return sb.toString();
+    }
+    
+    /**
+     * Calculate the next column value.
+     */
+    public Object nextColumnValue(final DefaultJDBCFeatureStore store, final Connection cx)
+            throws SQLException, DataStoreException {
+        Object next = null;
+        final SQLDialect dialect = store.getDialect();
+
+        if(type == Type.AUTO){
+            next = dialect.nextValue(this, cx);
+        } else  if(type == Type.SEQUENCED){
+            next = dialect.nextValue(this, cx);
+        } else {
+            // generate a default value if possible
+            if (Number.class.isAssignableFrom(clazz)) {
+
+                //search the max value.
+                final StringBuilder sql = new StringBuilder();
+                sql.append("SELECT MAX(");
+                dialect.encodeColumnName(sql, getName());
+                sql.append(") FROM ");
+                dialect.encodeSchemaAndTableName(sql, schema, table);
+
+                final Statement st = cx.createStatement();
+                ResultSet rs = null;
+                try {
+                    rs = st.executeQuery(sql.toString());
+                    rs.next();
+                    next = rs.getObject(1);
+                } finally {
+                    JDBCFeatureStoreUtilities.closeSafe(store.getLogger(),null, st, rs);
+                }
+
+                if(next == null){
+                    // This probably means there was no data in the table, set to 1
+                    // TODO: probably better to do a count to check... but if this
+                    // value already exists the db will throw an error when it tries
+                    // to insert
+                    next = 1;
+                }else if (clazz == Short.class || clazz == Integer.class || clazz == Long.class
+                        || BigInteger.class.isAssignableFrom(clazz)
+                        || BigDecimal.class.isAssignableFrom(clazz) ) {
+                    next = ((Number)next).longValue() +1;
+                }else if (clazz == Float.class){
+                    next = Math.nextUp( ((Number)next).floatValue() );
+                }else if (clazz == Double.class){
+                    next = Math.nextUp( ((Number)next).doubleValue() );
+                }else{
+                    //can't calculate for other types
+                    next = 1;
+                }
+
+            } else if (CharSequence.class.isAssignableFrom(clazz)) {
+                //generate a random string
+                next = SimpleFeatureBuilder.createDefaultFeatureId();
+            }
+
+            if (next == null) {
+                throw new DataStoreException("Cannot generate key value for column of type: " + clazz.getName());
+            }
+        }
+
+        return next;
     }
     
 }

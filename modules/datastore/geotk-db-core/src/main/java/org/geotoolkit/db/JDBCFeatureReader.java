@@ -24,6 +24,7 @@ import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
 import static org.geotoolkit.db.JDBCFeatureStoreUtilities.*;
 import org.geotoolkit.db.reverse.PrimaryKey;
+import org.geotoolkit.factory.Hints;
 import org.geotoolkit.filter.identity.DefaultFeatureId;
 import org.geotoolkit.storage.DataStoreException;
 import org.opengis.feature.Feature;
@@ -43,6 +44,7 @@ public class JDBCFeatureReader implements FeatureReader<FeatureType, Feature> {
     protected final PrimaryKey pkey;
     protected final String sql;
     protected final String fidBase;
+    protected final Hints hints;
     
     /**
      * statement,result set that is being worked from.
@@ -50,13 +52,11 @@ public class JDBCFeatureReader implements FeatureReader<FeatureType, Feature> {
     protected final Statement st;
     protected final ResultSet rs;
     protected final Connection cx;
-    /**
-     * flag indicating if the iterator has another feature
-     */
-    protected Boolean next;
+    /** the next feature */
+    private JDBCComplexFeature feature = null;
     
-    public JDBCFeatureReader(final String sql, final FeatureType type, 
-            final DefaultJDBCFeatureStore store) throws SQLException,DataStoreException {
+    public JDBCFeatureReader(final DefaultJDBCFeatureStore store, final String sql, 
+            final FeatureType type, final Hints hints) throws SQLException,DataStoreException {
         final Name typeName = type.getName();
         final String name = typeName.getLocalPart();
         this.fidBase = name + ".";
@@ -69,6 +69,19 @@ public class JDBCFeatureReader implements FeatureReader<FeatureType, Feature> {
         this.cx = store.getDataSource().getConnection();
         this.st = cx.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
         this.rs = this.st.executeQuery(sql);
+        this.hints = hints;
+    }
+    
+    public JDBCFeatureReader(final JDBCFeatureReader other) throws SQLException {
+        this.type = other.type;
+        this.store = other.store;
+        this.pkey = other.pkey;
+        this.sql = other.sql;        
+        this.fidBase = other.fidBase;
+        this.hints = other.hints;
+        this.st = other.st;
+        this.rs = other.rs;
+        this.cx = other.cx;
     }
     
     @Override
@@ -78,28 +91,35 @@ public class JDBCFeatureReader implements FeatureReader<FeatureType, Feature> {
 
     @Override
     public Feature next() throws FeatureStoreRuntimeException {
-        try {
-            return new JDBCComplexFeature(store, rs, type, 
-                    new DefaultFeatureId(fidBase + pkey.encodeFID(rs)));
-        } catch (SQLException ex) {
-            throw new FeatureStoreRuntimeException(ex);
-        } finally{
-            next = null;
-        }
+        findNext();
+        final Feature f = feature;
+        feature = null;
+        return f;
     }
 
     @Override
     public boolean hasNext() throws FeatureStoreRuntimeException {
-        if (next == null) {
-            try {
-                next = Boolean.valueOf(rs.next());
-            } catch (SQLException e) {
-                throw new FeatureStoreRuntimeException(e);
-            }
-        }
-        return next.booleanValue();
+        findNext();
+        return feature != null;
     }
 
+    private void findNext(){
+        if(feature!=null) return;
+        
+        try {
+            if(rs.next()){
+                feature = toFeature(rs);
+            }
+        } catch (SQLException e) {
+            throw new FeatureStoreRuntimeException(e);
+        }
+    }
+    
+    protected JDBCComplexFeature toFeature(ResultSet rs) throws SQLException{
+        return new JDBCComplexFeature(store, rs, type, 
+                    new DefaultFeatureId(fidBase + pkey.encodeFID(rs)));
+    }
+    
     @Override
     public void close() {
         closeSafe(store.getLogger(),cx,st,rs);

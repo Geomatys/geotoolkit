@@ -20,12 +20,14 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryCollection;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
+import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.MultiLineString;
 import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 import java.io.IOException;
+import java.io.StringWriter;
 import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.sql.Connection;
@@ -41,16 +43,21 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
+import org.apache.sis.util.Version;
 import org.geotoolkit.db.DefaultJDBCFeatureStore;
 import org.geotoolkit.db.JDBCFeatureStore;
+import org.geotoolkit.db.JDBCFeatureStoreUtilities;
 import static org.geotoolkit.db.JDBCFeatureStoreUtilities.*;
 import org.geotoolkit.db.dialect.AbstractSQLDialect;
 import org.geotoolkit.db.postgres.ewkb.JtsBinaryParser;
 import org.geotoolkit.db.postgres.wkb.WKBAttributeIO;
+import org.geotoolkit.db.reverse.ColumnMetaModel;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.storage.DataStoreException;
 import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.filter.Filter;
+import org.opengis.filter.expression.Literal;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
@@ -232,7 +239,7 @@ public class PostgresDialect extends AbstractSQLDialect{
         
     }
         
-    private final DefaultJDBCFeatureStore datastore;
+    private final DefaultJDBCFeatureStore featurestore;
     
     //readers
     private final ThreadLocal<WKBAttributeIO> wkbReader = new ThreadLocal<WKBAttributeIO>();
@@ -249,7 +256,7 @@ public class PostgresDialect extends AbstractSQLDialect{
                         //set the real crs
                         geom.setUserData(decodeCRS(geom.getSRID(), null));
                     } catch (SQLException ex) {
-                        datastore.getLogger().log(Level.WARNING, ex.getLocalizedMessage(),ex);
+                        featurestore.getLogger().log(Level.WARNING, ex.getLocalizedMessage(),ex);
                     }
                 }
             }
@@ -257,9 +264,12 @@ public class PostgresDialect extends AbstractSQLDialect{
         }
 
     };
+    
+    //cache
+    private Version version = null;
 
     public PostgresDialect(DefaultJDBCFeatureStore datastore) {
-        this.datastore = datastore;
+        this.featurestore = datastore;
     }
     
     @Override
@@ -291,7 +301,7 @@ public class PostgresDialect extends AbstractSQLDialect{
         }
         
         if(c == null){
-            datastore.getLogger().log(Level.INFO, "No definied mapping for type : {0} {1}", new Object[]{sqlType, sqlTypeName});
+            featurestore.getLogger().log(Level.INFO, "No definied mapping for type : {0} {1}", new Object[]{sqlType, sqlTypeName});
             c = Object.class;
         }
         return c;
@@ -309,24 +319,20 @@ public class PostgresDialect extends AbstractSQLDialect{
         final Statement st = cx.createStatement();
         try {
             final StringBuilder sb = new StringBuilder();
-            sb.append("SELECT pg_get_serial_sequence('\"");
-            if (schemaName != null && !schemaName.isEmpty()){
-                sb.append(schemaName).append("\".\"");
-            }
-            sb.append(tableName).append("\"', '");
-            sb.append(columnName).append("')");
+            sb.append("SELECT pg_get_serial_sequence('");
+            encodeSchemaAndTableName(sb, schemaName, tableName);
+            sb.append("', '").append(columnName).append("')");
             final String sql = sb.toString();
-            datastore.getLogger().fine(sql);
             final ResultSet rs = st.executeQuery(sql);
             try {
-                if (rs.next()) {
+                if(rs.next()){
                     return rs.getString(1);
                 }
             } finally {
-                closeSafe(datastore.getLogger(),rs);
+                closeSafe(featurestore.getLogger(),rs);
             }
         } finally {
-            closeSafe(datastore.getLogger(),st);
+            closeSafe(featurestore.getLogger(),st);
         }
         return null;
     }
@@ -345,6 +351,38 @@ public class PostgresDialect extends AbstractSQLDialect{
         return divided;
     }
 
+    @Override
+    public Version getVersion(String schema){
+        if(version != null){
+            return version;
+        }
+        
+        Connection cx = null;
+        Statement statement = null;
+        ResultSet result = null;        
+        try {
+            cx = featurestore.getDataSource().getConnection();
+            statement = cx.createStatement();
+            result = statement.executeQuery("SELECT postgis_lib_version();");
+
+            if (result.next()) {
+                version = new Version(result.getString(1));
+            }else{
+                version = new Version("0.0.0");
+            }
+        } catch(SQLException ex){
+            featurestore.getLogger().log(Level.WARNING, ex.getMessage(),ex);
+        } finally {
+            JDBCFeatureStoreUtilities.closeSafe(featurestore.getLogger(),cx,statement,result);
+        }
+        
+        return version;
+    }
+    
+    ////////////////////////////////////////////////////////////////////////////
+    // METHODS TO CREATE SQL QUERIES ///////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+    
     @Override
     public String encodeFilter(Filter filter) {
         //TODO
@@ -403,7 +441,68 @@ public class PostgresDialect extends AbstractSQLDialect{
             sql.append(" OFFSET ").append(offset);
         }
     }
+    
+    @Override
+    public void encodeValue(StringBuilder sql, Object value, Class type) {
+        throw new RuntimeException("Not yet implemented.");
+//        //turn the value into a literal and use FilterToSQL to encode it
+//        final Literal literal = featurestore.getFilterFactory().literal(value);
+//        final FilterToSQL filterToSQL = featurestore.createFilterToSQL(null);
+//
+//        final StringWriter w = new StringWriter();
+//        filterToSQL.setWriter(w);
+//        filterToSQL.visit(literal,type);
+//
+//        sql.append(w.getBuffer().toString());
+    }
 
+    @Override
+    public void encodeGeometryValue(StringBuilder sql, Geometry value, int srid) throws DataStoreException {
+        if (value == null) {
+            sql.append("NULL");
+        } else {
+            if (value instanceof LinearRing) {
+                //postgis does not handle linear rings, convert to just a line string
+                value = value.getFactory().createLineString(((LinearRing) value).getCoordinateSequence());
+            }
+            
+            if(value.isEmpty() && ((Comparable)getVersion(null).getMajor()).compareTo((Comparable)Integer.valueOf(2)) < 0){
+                //empty geometries are interpreted as Geometrycollection in postgis < 2
+                //this breaks the column geometry type constraint so we replace those by null
+                sql.append("NULL");
+            }else{
+                sql.append("st_geomfromtext('").append(value.toText()).append("', ").append(srid).append(")");
+            }
+        }
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+    // PRIMARY KEY CALCULATION METHOS //////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+    
+    @Override
+    public Object nextValue(final ColumnMetaModel column, final Connection cx) throws SQLException, DataStoreException {
+        if(column.getType() == ColumnMetaModel.Type.SEQUENCED){
+            final Statement st = cx.createStatement();
+            ResultSet rs = null;
+            try {
+                final String sql = "SELECT nextval('" + column.getSequenceName() + "')";
+                rs = st.executeQuery(sql);
+                if (rs.next()) {
+                    return rs.getLong(1);
+                }
+            } finally {
+                JDBCFeatureStoreUtilities.closeSafe(featurestore.getLogger(), null,st,rs);
+            }
+            return null;
+        }
+        return null;
+    }
+    
+    ////////////////////////////////////////////////////////////////////////////
+    // METHODS TO READ FROM RESULTSET //////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+    
     @Override
     public Geometry decodeGeometryValue(GeometryDescriptor descriptor, ResultSet rs, 
         String column, GeometryFactory factory) throws IOException, SQLException {
@@ -449,12 +548,13 @@ public class PostgresDialect extends AbstractSQLDialect{
                 crs = CRS.decode("EPSG:" + srid,true);
                 CRS_CACHE.put(srid, crs);
             } catch(Exception e) {
-                if(datastore.getLogger().isLoggable(Level.FINE)) {
-                    datastore.getLogger().log(Level.FINE, "Could not decode " + srid + " using the built-in EPSG database", e);
+                if(featurestore.getLogger().isLoggable(Level.FINE)) {
+                    featurestore.getLogger().log(Level.FINE, "Could not decode " + srid + " using the built-in EPSG database", e);
                 }
                 return null;
             }
         }
         return crs;
     }
+    
 }
