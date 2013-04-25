@@ -49,7 +49,10 @@ public enum WPSMimeType {
     TEXT_XML("text/xml"),
     IMG_GEOTIFF_BIS("image/x-geotiff"),
     TEXT_GML("text/gml"),
-    TEXT_PLAIN("text/plain");
+    TEXT_PLAIN("text/plain"),
+    APP_ZIP_BIS("application/x-zip"),
+    APP_GZIP("application/x-gzip");
+
     private String mime;
 
     private WPSMimeType(final String mime) {
