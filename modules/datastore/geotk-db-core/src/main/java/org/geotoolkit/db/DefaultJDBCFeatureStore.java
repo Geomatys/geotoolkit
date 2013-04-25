@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.db;
 
+import com.vividsolutions.jts.geom.GeometryFactory;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -48,6 +49,7 @@ import org.geotoolkit.db.dialect.SQLQueryBuilder;
 import org.geotoolkit.db.reverse.ColumnMetaModel;
 import org.geotoolkit.db.reverse.DataBaseModel;
 import org.geotoolkit.db.reverse.PrimaryKey;
+import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.FeatureTypeBuilder;
@@ -66,6 +68,7 @@ import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.Name;
 import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;
+import org.opengis.filter.FilterFactory;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.geometry.Envelope;
 import org.opengis.parameter.ParameterNotFoundException;
@@ -87,6 +90,10 @@ public class DefaultJDBCFeatureStore extends AbstractFeatureStore implements JDB
     }
 
     protected static final QueryCapabilities DEFAULT_CAPABILITIES = new DefaultQueryCapabilities(false, false, new String[]{Query.GEOTK_QOM, CUSTOM_SQL});
+    
+    protected final GeometryFactory geometryFactory = new GeometryFactory();
+    protected final FilterFactory filterFactory = FactoryFinder.getFilterFactory(null);
+    
     private final DataBaseModel dbmodel; 
     private final String factoryId;
     private DataSource source;
@@ -111,6 +118,14 @@ public class DefaultJDBCFeatureStore extends AbstractFeatureStore implements JDB
         }catch(ParameterNotFoundException ex){
             //parameter migth not exist on all database implementations
         }
+    }
+
+    public FilterFactory getFilterFactory() {
+        return filterFactory;
+    }
+
+    public GeometryFactory getGeometryFactory() {
+        return geometryFactory;
     }
 
     @Override

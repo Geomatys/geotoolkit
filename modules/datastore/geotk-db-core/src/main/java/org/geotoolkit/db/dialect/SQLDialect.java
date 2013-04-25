@@ -17,12 +17,12 @@
 package org.geotoolkit.db.dialect;
 
 import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryFactory;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import org.apache.sis.util.Version;
+import org.geotoolkit.db.FilterToSQL;
 import org.geotoolkit.db.reverse.ColumnMetaModel;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.AttributeTypeBuilder;
@@ -41,6 +41,8 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 public interface SQLDialect {
     
     Version getVersion(String schema) throws SQLException;
+    
+    FilterToSQL getFilterToSQL();
     
     /**
      * Escape sequence for table names.
@@ -134,10 +136,14 @@ public interface SQLDialect {
 
     CoordinateReferenceSystem createCRS(final int srid, final Connection cx) throws SQLException;
     
+    Object decodeAttributeValue(AttributeDescriptor descriptor, ResultSet rs, 
+            int i) throws SQLException;
+    
     Geometry decodeGeometryValue(GeometryDescriptor descriptor, ResultSet rs,
-        String column, GeometryFactory factory) throws IOException, SQLException;
+        String column) throws IOException, SQLException;
 
     Geometry decodeGeometryValue(GeometryDescriptor descriptor, ResultSet rs,
-        int column, GeometryFactory factory) throws IOException, SQLException;
+        int column) throws IOException, SQLException;
+
     
 }

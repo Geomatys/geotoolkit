@@ -16,15 +16,19 @@
  */
 package org.geotoolkit.db.postgres;
 
+import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryCollection;
+import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
+import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.MultiLineString;
 import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import org.geotoolkit.data.FeatureCollection;
@@ -57,6 +61,7 @@ import org.opengis.util.FactoryException;
  */
 public class PostgresFeatureStoreTest {
     
+    private static final double DELTA = 0.00000001;    
     private static final FeatureType FTYPE_SIMPLE;
     private static final FeatureType FTYPE_ARRAY;
     private static final FeatureType FTYPE_GEOMETRY;
@@ -189,6 +194,7 @@ public class PostgresFeatureStoreTest {
         //we expect one more field for id
         final List<PropertyDescriptor> descs = new ArrayList<PropertyDescriptor>(resType.getDescriptors());
         
+        //Postgis allow NULL in arrays, so returned array are not primitive types
         int index=1;
         PropertyDescriptor desc;
         desc = descs.get(index++);
@@ -287,7 +293,7 @@ public class PostgresFeatureStoreTest {
         feature.getProperty("byte").setValue(45);
         feature.getProperty("short").setValue(963);
         feature.getProperty("integer").setValue(123456);
-        feature.getProperty("long").setValue(456789);
+        feature.getProperty("long").setValue(456789l);
         feature.getProperty("float").setValue(7.3f);
         feature.getProperty("double").setValue(14.5);
         feature.getProperty("string").setValue("a string");
@@ -300,7 +306,132 @@ public class PostgresFeatureStoreTest {
         
         final Feature resFeature = col.iterator().next();
         assertNotNull(resFeature);
+        assertEquals(true, resFeature.getProperty("boolean").getValue());
+        assertEquals(45, resFeature.getProperty("byte").getValue());
+        assertEquals(963, resFeature.getProperty("short").getValue());
+        assertEquals(123456, resFeature.getProperty("integer").getValue());
+        assertEquals(456789l, resFeature.getProperty("long").getValue());
+        assertEquals(7.3f, resFeature.getProperty("float").getValue());
+        assertEquals(14.5d, resFeature.getProperty("double").getValue());
+        assertEquals("a string", resFeature.getProperty("string").getValue());
         
     }
+        
+    @Test
+    public void testArrayInsert() throws DataStoreException{
+        reload();
+            
+        store.createSchema(FTYPE_ARRAY.getName(), FTYPE_ARRAY);
+        final FeatureType resType = store.getFeatureType(store.getNames().iterator().next());
+        
+        final Feature feature = FeatureUtilities.defaultFeature(resType, "0");
+        feature.getProperty("boolean").setValue(new boolean[]{true,false,true});
+        feature.getProperty("byte").setValue(new byte[]{3,6,9});
+        feature.getProperty("short").setValue(new short[]{-5,12,-50});
+        feature.getProperty("integer").setValue(new int[]{123,456,789});
+        feature.getProperty("long").setValue(new long[]{111l,222l,333l});
+        feature.getProperty("float").setValue(new float[]{1.2f,-5.9f,8.1f});
+        feature.getProperty("double").setValue(new double[]{78.3d,41.23d,-99.66d});
+        feature.getProperty("string").setValue(new String[]{"marc","hubert","samy"});
+        
+        store.addFeatures(resType.getName(), Collections.singleton(feature));
+        
+        final Session session = store.createSession(false);
+        final FeatureCollection<Feature> col = session.getFeatureCollection(QueryBuilder.all(resType.getName()));
+        assertEquals(1, col.size());
+        
+        //Postgis allow NULL in arrays, so returned array are not primitive types
+        final Feature resFeature = col.iterator().next();
+        assertNotNull(resFeature);
+        assertArrayEquals(new Boolean[]{true,false,true},       (Boolean[])resFeature.getProperty("boolean").getValue());
+        assertArrayEquals(new Short[]{3,6,9},                   (Short[])resFeature.getProperty("byte").getValue());
+        assertArrayEquals(new Short[]{-5,12,-50},               (Short[])resFeature.getProperty("short").getValue());
+        assertArrayEquals(new Integer[]{123,456,789},           (Integer[])resFeature.getProperty("integer").getValue());
+        assertArrayEquals(new Long[]{111l,222l,333l},           (Long[])resFeature.getProperty("long").getValue());
+        assertArrayEquals(new Float[]{1.2f,-5.9f,8.1f},         (Float[])resFeature.getProperty("float").getValue());
+        assertArrayEquals(new Double[]{78.3d,41.23d,-99.66d},   (Double[])resFeature.getProperty("double").getValue());
+        assertArrayEquals(new String[]{"marc","hubert","samy"}, (String[])resFeature.getProperty("string").getValue());
+        
+    }
+    
+    
+    @Test
+    public void testGeometryInsert() throws DataStoreException{
+        reload();
+            
+        ////////////////////////////////////////////////////////////////////////
+        final GeometryFactory gf = new GeometryFactory();
+        //creating a point -----------------------------------------------
+        final Point point = gf.createPoint(new Coordinate(56, 45));
+
+        //creating a multipoint ------------------------------------------
+        final MultiPoint mp = gf.createMultiPoint(new Coordinate[]{
+                                    new Coordinate(23, 78),
+                                    new Coordinate(-10, 43),
+                                    new Coordinate(12, 94)});
+
+        //creating a linestring ------------------------------------------
+        final LineString ls = gf.createLineString(new Coordinate[]{
+                                    new Coordinate(23, 78),
+                                    new Coordinate(-10, 43),
+                                    new Coordinate(12, 94)});
+
+        //creating a multilinestring -------------------------------------
+        final LineString ls1 = gf.createLineString(new Coordinate[]{
+                                    new Coordinate(30, 45),new Coordinate(56, 29)});
+        final LineString ls2 = gf.createLineString(new Coordinate[]{
+                                    new Coordinate(98,12),new Coordinate(19, 87)});
+        final MultiLineString mls = gf.createMultiLineString(new LineString[]{
+                                    ls1,ls2});
+
+        //creating a polygon ---------------------------------------------
+        final LinearRing ring = gf.createLinearRing(new Coordinate[]{
+                                    new Coordinate(23, 78),
+                                    new Coordinate(-10, 43),
+                                    new Coordinate(12, 94),
+                                    new Coordinate(23, 78)});
+        final Polygon polygon = gf.createPolygon(ring, new LinearRing[0]);
+
+        //creating a multipolygon ----------------------------------------
+        final MultiPolygon mpolygon = gf.createMultiPolygon(new Polygon[]{polygon});
+        
+        //creating a geometry collection ----------------------------------------
+        final GeometryCollection gc = gf.createGeometryCollection(new Geometry[]{point,ls,polygon});
+        ////////////////////////////////////////////////////////////////////////
+        
+        
+        store.createSchema(FTYPE_GEOMETRY.getName(), FTYPE_GEOMETRY);
+        final FeatureType resType = store.getFeatureType(store.getNames().iterator().next());
+        
+        final Feature feature = FeatureUtilities.defaultFeature(resType, "0");
+        feature.getProperty("geometry").setValue(point);
+        feature.getProperty("point").setValue(point);
+        feature.getProperty("multipoint").setValue(mp);
+        feature.getProperty("linestring").setValue(ls);
+        feature.getProperty("multilinestring").setValue(mls);
+        feature.getProperty("polygon").setValue(polygon);
+        feature.getProperty("multipolygon").setValue(mpolygon);
+        feature.getProperty("geometrycollection").setValue(gc);
+        
+        store.addFeatures(resType.getName(), Collections.singleton(feature));
+        
+        final Session session = store.createSession(false);
+        final FeatureCollection<Feature> col = session.getFeatureCollection(QueryBuilder.all(resType.getName()));
+        assertEquals(1, col.size());
+        
+        //Postgis allow NULL in arrays, so returned array are not primitive types
+        final Feature resFeature = col.iterator().next();
+        assertNotNull(resFeature);
+        assertEquals(point,     resFeature.getProperty("geometry").getValue());
+        assertEquals(point,     resFeature.getProperty("point").getValue());
+        assertEquals(mp,        resFeature.getProperty("multipoint").getValue());
+        assertEquals(ls,        resFeature.getProperty("linestring").getValue());
+        assertEquals(mls,       resFeature.getProperty("multilinestring").getValue());
+        assertEquals(polygon,   resFeature.getProperty("polygon").getValue());
+        assertEquals(mpolygon,  resFeature.getProperty("multipolygon").getValue());
+        assertEquals(gc,        resFeature.getProperty("geometrycollection").getValue());
+        
+    }
+    
     
 }

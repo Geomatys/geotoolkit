@@ -18,7 +18,6 @@ package org.geotoolkit.db.postgres;
 
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryCollection;
-import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.MultiLineString;
@@ -42,8 +41,10 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
+import org.apache.sis.util.ObjectConverter;
 import org.apache.sis.util.Version;
 import org.geotoolkit.db.DefaultJDBCFeatureStore;
+import org.geotoolkit.db.FilterToSQL;
 import org.geotoolkit.db.JDBCFeatureStore;
 import org.geotoolkit.db.JDBCFeatureStoreUtilities;
 import static org.geotoolkit.db.JDBCFeatureStoreUtilities.*;
@@ -56,10 +57,12 @@ import org.geotoolkit.feature.AttributeTypeBuilder;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.storage.DataStoreException;
+import org.geotoolkit.util.Converters;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.filter.Filter;
+import org.opengis.filter.expression.Literal;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
 
@@ -255,6 +258,7 @@ public class PostgresDialect extends AbstractSQLDialect{
     }
         
     private final DefaultJDBCFeatureStore featurestore;
+    private final PostgresFilterToSQL filterToSQL = new PostgresFilterToSQL();
     
     //readers
     private final ThreadLocal<WKBAttributeIO> wkbReader = new ThreadLocal<WKBAttributeIO>();
@@ -285,6 +289,11 @@ public class PostgresDialect extends AbstractSQLDialect{
 
     public PostgresDialect(DefaultJDBCFeatureStore datastore) {
         this.featurestore = datastore;
+    }
+
+    @Override
+    public FilterToSQL getFilterToSQL() {
+        return filterToSQL;
     }
     
     @Override
@@ -411,12 +420,8 @@ public class PostgresDialect extends AbstractSQLDialect{
     
     @Override
     public String encodeFilter(Filter filter) {
-        
-        if(filter == Filter.EXCLUDE){
-            return "1 = 0";
-        }
-        //TODO
-        return "";
+        final StringBuilder sb = (StringBuilder)filter.accept(getFilterToSQL(), new StringBuilder());
+        return sb.toString();
     }
 
     @Override
@@ -495,16 +500,9 @@ public class PostgresDialect extends AbstractSQLDialect{
     
     @Override
     public void encodeValue(StringBuilder sql, Object value, Class type) {
-        throw new RuntimeException("Not yet implemented.");
-//        //turn the value into a literal and use FilterToSQL to encode it
-//        final Literal literal = featurestore.getFilterFactory().literal(value);
-//        final FilterToSQL filterToSQL = featurestore.createFilterToSQL(null);
-//
-//        final StringWriter w = new StringWriter();
-//        filterToSQL.setWriter(w);
-//        filterToSQL.visit(literal,type);
-//
-//        sql.append(w.getBuffer().toString());
+        //turn the value into a literal and use FilterToSQL to encode it
+        final Literal literal = featurestore.getFilterFactory().literal(value);
+        literal.accept(filterToSQL, sql);
     }
 
     @Override
@@ -628,17 +626,19 @@ public class PostgresDialect extends AbstractSQLDialect{
                     st.execute(sql);
 
                     // add geometry type checks
-                    sb = new StringBuilder("ALTER TABLE \"").append(tableName);
-                    sb.append('"');
-                    sb.append(" ADD CONSTRAINT \"enforce_geotype_");
-                    sb.append(gd.getLocalName()).append('"');
-                    sb.append(" CHECK (st_geometrytype(");
-                    sb.append('"').append(gd.getLocalName()).append('"');
-                    sb.append(") = '").append(TYPE_TO_ST_TYPE_MAP.get(geomType)).append("'::text OR \"");
-                    sb.append(gd.getLocalName()).append('"').append(" IS NULL)");
-                    sql = sb.toString();
-                    featurestore.getLogger().fine(sql);
-                    st.execute(sql);
+                    if(!"geometry".equalsIgnoreCase(geomType)){
+                        sb = new StringBuilder("ALTER TABLE \"").append(tableName);
+                        sb.append('"');
+                        sb.append(" ADD CONSTRAINT \"enforce_geotype_");
+                        sb.append(gd.getLocalName()).append('"');
+                        sb.append(" CHECK (st_geometrytype(");
+                        sb.append('"').append(gd.getLocalName()).append('"');
+                        sb.append(") = '").append(TYPE_TO_ST_TYPE_MAP.get(geomType)).append("'::text OR \"");
+                        sb.append(gd.getLocalName()).append('"').append(" IS NULL)");
+                        sql = sb.toString();
+                        featurestore.getLogger().fine(sql);
+                        st.execute(sql);
+                    }
 
                     // add the spatial index
                     sb = new StringBuilder("CREATE INDEX \"spatial_").append(tableName);
@@ -795,8 +795,30 @@ public class PostgresDialect extends AbstractSQLDialect{
     }
     
     @Override
+    public Object decodeAttributeValue(AttributeDescriptor descriptor, ResultSet rs, 
+            int i) throws SQLException{
+        final Class binding = descriptor.getType().getBinding();
+        if(binding.isArray()){
+            Object baseArray = rs.getArray(i).getArray();
+            final Class c = binding.getComponentType();
+            if(!baseArray.getClass().getComponentType().equals(c)){
+                //not exact match retype it
+                int size = Array.getLength(baseArray);
+                final Object rarray = Array.newInstance(c, size);
+                for(int k=0; k<size; k++){
+                    Array.set(rarray, k, Converters.convert(Array.get(baseArray, k), c));
+                }
+                baseArray = rarray;
+            }
+            return baseArray;
+        }else{
+            return rs.getObject(i);
+        }
+    }
+    
+    @Override
     public Geometry decodeGeometryValue(GeometryDescriptor descriptor, ResultSet rs, 
-        String column, GeometryFactory factory) throws IOException, SQLException {
+        String column) throws IOException, SQLException {
         
         switch((GeometryEncoding)descriptor.getType().getUserData().get(GEOM_ENCODING)){
             case HEXEWKB:
@@ -804,7 +826,7 @@ public class PostgresDialect extends AbstractSQLDialect{
             case WKB:
                 WKBAttributeIO reader = wkbReader.get();
                 if (reader == null) {
-                    reader = new WKBAttributeIO(factory);
+                    reader = new WKBAttributeIO(featurestore.getGeometryFactory());
                     wkbReader.set(reader);
                 }
                 return (Geometry) reader.read(rs, column);
@@ -815,7 +837,7 @@ public class PostgresDialect extends AbstractSQLDialect{
 
     @Override
     public Geometry decodeGeometryValue(GeometryDescriptor descriptor, ResultSet rs, 
-        int column, GeometryFactory factory) throws IOException, SQLException {
+        int column) throws IOException, SQLException {
         
         switch((GeometryEncoding)descriptor.getType().getUserData().get(GEOM_ENCODING)){
             case HEXEWKB:
@@ -823,7 +845,7 @@ public class PostgresDialect extends AbstractSQLDialect{
             case WKB:
                 WKBAttributeIO reader = wkbReader.get();
                 if (reader == null) {
-                    reader = new WKBAttributeIO(factory);
+                    reader = new WKBAttributeIO(featurestore.getGeometryFactory());
                     wkbReader.set(reader);
                 }
                 return (Geometry) reader.read(rs, column);

@@ -17,7 +17,6 @@
 package org.geotoolkit.db;
 
 import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryFactory;
 import java.io.Closeable;
 import java.io.IOException;
 import java.sql.ResultSet;
@@ -43,6 +42,7 @@ import org.geotoolkit.util.collection.CloseableIterator;
 import org.opengis.feature.Property;
 import org.opengis.feature.type.AssociationDescriptor;
 import org.opengis.feature.type.AssociationType;
+import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.feature.type.Name;
@@ -57,9 +57,7 @@ import org.opengis.filter.identity.FeatureId;
  * @module pending
  */
 public class JDBCComplexFeature extends AbstractFeature<Collection<Property>> {
-    
-    private static final GeometryFactory GF = new GeometryFactory();
-    
+        
     private final DefaultJDBCFeatureStore store;
     private final Map<Name,Object> progressiveMap = new HashMap<Name, Object>();
     
@@ -101,7 +99,7 @@ public class JDBCComplexFeature extends AbstractFeature<Collection<Property>> {
                     //read the geometry
                     final Geometry geom;
                     try {
-                        geom = store.getDialect().decodeGeometryValue(gatt, rs, k+1, GF);
+                        geom = store.getDialect().decodeGeometryValue(gatt, rs, k+1);
                     } catch (IOException e) {
                         throw new SQLException(e);
                     }
@@ -110,9 +108,10 @@ public class JDBCComplexFeature extends AbstractFeature<Collection<Property>> {
                         //set crs is not set
                         JTS.setCRS(geom, gatt.getCoordinateReferenceSystem());
                     }
-                    
+                    ((Property)prop).setValue(geom);
                 }else{
-                    ((Property)prop).setValue(rs.getObject(n.getLocalPart()));
+                    Object value = store.getDialect().decodeAttributeValue((AttributeDescriptor)desc, rs, k+1);
+                    ((Property)prop).setValue(value);
                 }
             }
             

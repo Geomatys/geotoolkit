@@ -41,7 +41,7 @@ public interface JDBCFeatureStore extends FeatureStore{
      * The native SRID associated to a certain descriptor
      */
     public static final String JDBC_NATIVE_SRID = "nativeSRID";
-        
+            
     /**
      * Each database type have slim deformation from the SQL specification.
      * The dialect object provide informations on those changes.
