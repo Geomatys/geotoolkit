@@ -28,7 +28,6 @@ import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import org.geotoolkit.data.FeatureCollection;
@@ -36,7 +35,6 @@ import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.FeatureStoreFinder;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.session.Session;
-import static org.geotoolkit.db.postgres.PostgresFeatureStoreFactory.*;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.parameter.Parameters;
@@ -46,14 +44,16 @@ import org.junit.Test;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.Name;
 import org.opengis.parameter.ParameterValueGroup;
-
-import static org.junit.Assert.*;
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
+
+import static org.geotoolkit.db.postgres.PostgresFeatureStoreFactory.*;
+import org.geotoolkit.geometry.jts.JTS;
+import static org.junit.Assert.*;
 
 /**
  *
@@ -354,9 +354,8 @@ public class PostgresFeatureStoreTest {
         
     }
     
-    
     @Test
-    public void testGeometryInsert() throws DataStoreException{
+    public void testGeometryInsert() throws DataStoreException, NoSuchAuthorityCodeException, FactoryException{
         reload();
             
         ////////////////////////////////////////////////////////////////////////
@@ -422,14 +421,31 @@ public class PostgresFeatureStoreTest {
         //Postgis allow NULL in arrays, so returned array are not primitive types
         final Feature resFeature = col.iterator().next();
         assertNotNull(resFeature);
-        assertEquals(point,     resFeature.getProperty("geometry").getValue());
-        assertEquals(point,     resFeature.getProperty("point").getValue());
-        assertEquals(mp,        resFeature.getProperty("multipoint").getValue());
-        assertEquals(ls,        resFeature.getProperty("linestring").getValue());
-        assertEquals(mls,       resFeature.getProperty("multilinestring").getValue());
-        assertEquals(polygon,   resFeature.getProperty("polygon").getValue());
-        assertEquals(mpolygon,  resFeature.getProperty("multipolygon").getValue());
-        assertEquals(gc,        resFeature.getProperty("geometrycollection").getValue());
+        Geometry geom;
+        geom = (Geometry)resFeature.getProperty("geometry").getValue();
+        assertEquals(point,geom);
+        assertEquals(CRS_4326, JTS.findCoordinateReferenceSystem(geom));        
+        geom = (Geometry)resFeature.getProperty("point").getValue();
+        assertEquals(point,geom);
+        assertEquals(CRS_4326, JTS.findCoordinateReferenceSystem(geom));
+        geom = (Geometry)resFeature.getProperty("multipoint").getValue();
+        assertEquals(mp,geom);
+        assertEquals(CRS_4326, JTS.findCoordinateReferenceSystem(geom));
+        geom = (Geometry)resFeature.getProperty("linestring").getValue();
+        assertEquals(ls,geom);
+        assertEquals(CRS_4326, JTS.findCoordinateReferenceSystem(geom));
+        geom = (Geometry)resFeature.getProperty("multilinestring").getValue();
+        assertEquals(mls,geom);
+        assertEquals(CRS_4326, JTS.findCoordinateReferenceSystem(geom));
+        geom = (Geometry)resFeature.getProperty("polygon").getValue();
+        assertEquals(polygon,geom);
+        assertEquals(CRS_4326, JTS.findCoordinateReferenceSystem(geom));
+        geom = (Geometry)resFeature.getProperty("multipolygon").getValue();
+        assertEquals(mpolygon,geom);
+        assertEquals(CRS_4326, JTS.findCoordinateReferenceSystem(geom));
+        geom = (Geometry)resFeature.getProperty("geometrycollection").getValue();
+        assertEquals(gc,geom);
+        assertEquals(CRS_4326, JTS.findCoordinateReferenceSystem(geom));
         
     }
     
