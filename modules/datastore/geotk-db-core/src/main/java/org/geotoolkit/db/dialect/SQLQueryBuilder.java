@@ -20,6 +20,7 @@ import com.vividsolutions.jts.geom.Geometry;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +31,7 @@ import org.geotoolkit.db.reverse.ColumnMetaModel;
 import org.geotoolkit.db.reverse.DataBaseModel;
 import org.geotoolkit.db.reverse.PrimaryKey;
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.filter.visitor.FIDFixVisitor;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.storage.DataStoreException;
@@ -40,6 +42,9 @@ import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;
+import org.opengis.filter.PropertyIsLessThanOrEqualTo;
+import org.opengis.filter.expression.Function;
+import org.opengis.filter.expression.Literal;
 import org.opengis.filter.expression.PropertyName;
 import org.opengis.filter.sort.SortBy;
 import org.opengis.filter.sort.SortOrder;
@@ -365,11 +370,196 @@ public class SQLQueryBuilder {
         return sql.toString();
     }
 
+    /**
+     * Generates a 'CREATE TABLE' sql statement.
+     */
+    public String createTableSQL(final FeatureType featureType, final Connection cx) throws SQLException {
+        //figure out the names and types of the columns
+        final String tableName = featureType.getName().getLocalPart();
+        final List<PropertyDescriptor> descs = new ArrayList<PropertyDescriptor>(featureType.getDescriptors());
+        final int size = descs.size();
+        final String[] columnNames = new String[size];
+        final Class[] classes = new Class[size];
+        final boolean[] nillable = new boolean[size];
+        final List<String> pkeyColumn = new ArrayList<String>();
+
+        for (int i=0; i<size; i++) {
+            final PropertyDescriptor desc = descs.get(i);
+            columnNames[i] = desc.getName().getLocalPart();
+            classes[i] = desc.getType().getBinding();
+            nillable[i] = desc.getMinOccurs() <= 0 || desc.isNillable();
+
+            if(FeatureTypeUtilities.isPartOfPrimaryKey(desc)){
+                pkeyColumn.add(desc.getName().getLocalPart());
+            }
+        }
+
+        final String[] sqlTypeNames = getSQLTypeNames(classes, cx);
+
+        for (int i=0; i<sqlTypeNames.length; i++) {
+            if (sqlTypeNames[i] == null) {
+                throw new SQLException("Unable to map " + columnNames[i] + "( " + classes[i].getName() + ")");
+            }
+        }
+
+        //build the create table sql -------------------------------------------
+        final StringBuilder sql = new StringBuilder();
+        sql.append("CREATE TABLE ");
+        dialect.encodeSchemaAndTableName(sql, databaseSchema, tableName);
+        sql.append(" ( ");
+
+        if(pkeyColumn.isEmpty()){
+            //we create a primary key, this will modify the geature type but
+            //we don't have any other solution
+            dialect.encodeColumnName(sql,"fid");
+            dialect.encodePrimaryKey(sql, Integer.class,"INTEGER");
+            sql.append(", ");
+        }
+
+        //normal attributes
+        for (int i = 0; i < columnNames.length; i++) {
+            final PropertyDescriptor att = featureType.getDescriptor(columnNames[i]);
+
+            //the column name
+            dialect.encodeColumnName(sql,columnNames[i]);
+            sql.append(' ');
+
+            if(pkeyColumn.contains(columnNames[i])){
+                dialect.encodePrimaryKey(sql,att.getType().getBinding(), sqlTypeNames[i]);
+
+            }else if (sqlTypeNames[i].toUpperCase().startsWith("VARCHAR")) {
+                Integer length = findVarcharColumnLength(att);
+                if (length == null || length < 0) {
+                    length = 255;
+                }
+                
+                dialect.encodeColumnType(sql, sqlTypeNames[i],length);
+            } else {
+                dialect.encodeColumnType(sql, sqlTypeNames[i], null);
+            }
+
+            //nullable
+            if (nillable != null && !nillable[i]) {
+                sql.append(" NOT NULL ");
+            }
+
+            //delegate to dialect to encode column postamble
+            dialect.encodePostColumnCreateTable(sql, (AttributeDescriptor)att);
+
+            //sql.append(sqlTypeNames[i]);
+            if (i < (sqlTypeNames.length - 1)) {
+                sql.append(", ");
+            }
+        }
+
+        sql.append(" ) ");
+
+        //encode anything post create table
+        dialect.encodePostCreateTable(sql, tableName);
+
+        return sql.toString();
+    }
+
+    /**
+     * Generates a 'ALTER TABLE . ADD COLUMN ' sql statement.
+     */
+    public String alterTableAddColumnSQL(final FeatureType featureType, final PropertyDescriptor desc, final Connection cx) throws SQLException{
+        final String tableName = featureType.getName().getLocalPart();
+        final boolean nillable = desc.getMinOccurs() <= 0 || desc.isNillable();
+        final Class clazz = desc.getType().getBinding();
+        final String sqlTypeName = getSQLTypeNames(new Class[]{clazz}, cx)[0];
+
+        final StringBuilder sql = new StringBuilder();
+        sql.append("ALTER TABLE ");
+        dialect.encodeSchemaAndTableName(sql, databaseSchema, tableName);
+        dialect.encodeTableName(sql,tableName);
+        sql.append(" ADD COLUMN ");
+        dialect.encodeColumnName(sql, desc.getName().getLocalPart());
+        sql.append(' ');
+
+        //encode type
+        if (sqlTypeName.toUpperCase().startsWith("VARCHAR")) {
+            //sql type name
+            //JD: some sql dialects require strings / varchars to have an
+            // associated size with them
+            Integer length = findVarcharColumnLength((AttributeDescriptor)desc);
+            if (length == null || length < 0) {
+                length = 255;
+            }
+            dialect.encodeColumnType(sql, sqlTypeName,length);
+        } else {
+            dialect.encodeColumnType(sql, sqlTypeName,null);
+        }
+
+        //nullable
+        if (!nillable) {
+            sql.append(" NOT NULL ");
+        }
+
+        return sql.toString();
+    }
+
+    /**
+     * Generates a 'ALTER TABLE . DROP COLUMN ' sql statement.
+     */
+    public String alterTableDropColumnSQL(final FeatureType featureType, final PropertyDescriptor desc, final Connection cx){
+        final String tableName = featureType.getName().getLocalPart();
+        final StringBuilder sql = new StringBuilder();
+        sql.append("ALTER TABLE ");
+        dialect.encodeSchemaAndTableName(sql, databaseSchema, tableName);
+        sql.append(" DROP COLUMN ");
+        dialect.encodeColumnName(sql,desc.getName().getLocalPart());
+        return sql.toString();
+    }
+
+    /**
+     * Generates a 'DROP TABLE' sql statement.
+     */
+    public String dropSQL(final FeatureType featureType){
+        final StringBuilder sql = new StringBuilder();
+        sql.append("DROP TABLE ");
+        dialect.encodeSchemaAndTableName(sql, databaseSchema, featureType.getName().getLocalPart());
+        sql.append(";");
+        return sql.toString();
+    }
     
     ////////////////////////////////////////////////////////////////////////////
     // OTHER UTILS /////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
 
+    private static Integer findVarcharColumnLength(final PropertyDescriptor att) {
+        for (final Filter r : att.getType().getRestrictions()) {
+            if (r instanceof PropertyIsLessThanOrEqualTo) {
+                final PropertyIsLessThanOrEqualTo c = (PropertyIsLessThanOrEqualTo) r;
+                if (c.getExpression1() instanceof Function &&
+                        ((Function) c.getExpression1()).getName().toLowerCase().endsWith("length")) {
+                    if (c.getExpression2() instanceof Literal) {
+                        final Integer length = c.getExpression2().evaluate(null, Integer.class);
+                        if (length != null) {
+                            return length;
+                        }
+                    }
+                }
+            }
+        }
+
+        return null;
+    }
+    
+    private String[] getSQLTypeNames(final Class[] classes, final Connection cx) throws SQLException {
+        //figure out what the sql types are corresponding to the feature type
+        // attributes
+        final String[] sqlTypeNames = new String[classes.length];
+
+        for (int i = 0; i < classes.length; i++) {
+            final Class clazz = classes[i];
+            String sqlTypeName = dialect.getSQLType(clazz);
+            sqlTypeNames[i] = sqlTypeName;
+
+        }
+        return sqlTypeNames;
+    }
+        
     /**
      * Encodes the sort-by portion of an sql query.
      * @param featureType

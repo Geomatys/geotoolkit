@@ -61,12 +61,13 @@ public class JDBCFeatureWriterInsert extends JDBCFeatureReader implements Featur
     }
     
     private void init(){
-        last = new AbstractFeature<Collection<Property>>(type, (FeatureId)null) {
-            @Override
-            public FeatureId getIdentifier() {
-                return new DefaultFeatureId(JDBCFeatureWriterInsert.this.id);
-            }
-        };
+        last = FeatureUtilities.defaultFeature(type, "-1");
+//        last = new AbstractFeature<Collection<Property>>(type, (FeatureId)null) {
+//            @Override
+//            public FeatureId getIdentifier() {
+//                return new DefaultFeatureId(JDBCFeatureWriterInsert.this.id);
+//            }
+//        };
         if(hints != null){
             batchInsert = Boolean.FALSE.equals(hints.get(HintsPending.UPDATE_ID_ON_INSERT));
         }else{

@@ -16,6 +16,12 @@
  */
 package org.geotoolkit.db.dialect;
 
+import java.lang.reflect.Array;
+import java.sql.Connection;
+import java.sql.SQLException;
+import org.geotoolkit.feature.AttributeTypeBuilder;
+import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.filter.Filter;
 
 /**
@@ -45,7 +51,7 @@ public abstract class AbstractSQLDialect implements SQLDialect {
     public void encodeColumnName(StringBuilder sql, String name) {
         sql.append(getTableEscape()).append(name).append(getTableEscape());
     }
-
+    
     @Override
     public void encodeColumnAlias(StringBuilder sql, String name) {
         sql.append(" as ");
@@ -63,12 +69,36 @@ public abstract class AbstractSQLDialect implements SQLDialect {
     }
     
     @Override
-    public void encodeSchemaAndTableName(final StringBuilder sql, final String databaseSchema, final String tableName) {
+    public void encodeSchemaAndTableName(StringBuilder sql, String databaseSchema, String tableName) {
         if (databaseSchema != null && !databaseSchema.isEmpty()) {
             encodeSchemaName(sql, databaseSchema);
             sql.append('.');
         }
         encodeTableName(sql, tableName);
     }
+    
+    @Override
+    public void encodePostColumnCreateTable(StringBuilder sql, AttributeDescriptor att) {
+    }
+    
+    @Override
+    public void postCreateTable(String schemaName, SimpleFeatureType featureType,
+                                Connection cx) throws SQLException {
+    }
+    
+    @Override
+    public void encodePostCreateTable(StringBuilder sql, String tableName) {
+    }
+    
+    @Override
+    public void decodeColumnType(final AttributeTypeBuilder atb, final Connection cx,
+            final String typeName, final int datatype, final String schemaName,
+            final String tableName, final String columnName) throws SQLException {
+
+        final Class binding = getJavaType(datatype, typeName);
+        atb.setName(columnName);
+        atb.setBinding(binding);
+    }
+
     
 }

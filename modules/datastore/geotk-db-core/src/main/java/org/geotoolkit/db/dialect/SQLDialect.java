@@ -25,9 +25,13 @@ import java.sql.SQLException;
 import org.apache.sis.util.Version;
 import org.geotoolkit.db.reverse.ColumnMetaModel;
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.feature.AttributeTypeBuilder;
 import org.geotoolkit.storage.DataStoreException;
+import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.filter.Filter;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  * Stores additional databse SQL encoding informations.
@@ -78,6 +82,8 @@ public interface SQLDialect {
 
     void encodeColumnName(StringBuilder sql, String name);
 
+    void encodeColumnType(StringBuilder sql, String sqlTypeName, Integer length);
+    
     void encodeSchemaName(StringBuilder sql, String name);
 
     void encodeTableName(StringBuilder sql, String name);
@@ -99,6 +105,15 @@ public interface SQLDialect {
 
     void encodeGeometryValue(StringBuilder sql, Geometry value, int srid) throws DataStoreException;
     
+    void encodePrimaryKey(StringBuilder sql, Class binding, String sqlType);
+
+    void encodePostColumnCreateTable(StringBuilder sql, AttributeDescriptor att);
+
+    void encodePostCreateTable(StringBuilder sql, String tableName);
+
+    void postCreateTable(String schemaName, SimpleFeatureType featureType, Connection cx) throws SQLException;
+
+    
     ////////////////////////////////////////////////////////////////////////////
     // PRIMARY KEY CALCULATION METHOS //////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
@@ -109,6 +124,15 @@ public interface SQLDialect {
     ////////////////////////////////////////////////////////////////////////////
     // METHODS TO READ FROM RESULTSET //////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
+    
+    void decodeColumnType(final AttributeTypeBuilder atb, final Connection cx,
+            final String typeName, final int datatype, final String schemaName,
+            final String tableName, final String columnName) throws SQLException;
+    
+    Integer getGeometrySRID(final String schemaName, final String tableName,
+            final String columnName, final Connection cx) throws SQLException;
+
+    CoordinateReferenceSystem createCRS(final int srid, final Connection cx) throws SQLException;
     
     Geometry decodeGeometryValue(GeometryDescriptor descriptor, ResultSet rs,
         String column, GeometryFactory factory) throws IOException, SQLException;

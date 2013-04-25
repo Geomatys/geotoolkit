@@ -35,6 +35,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import org.geotoolkit.db.AbstractJDBCFeatureStoreFactory;
 import org.geotoolkit.db.JDBCFeatureStore;
+import org.geotoolkit.db.JDBCFeatureStoreUtilities;
 import static org.geotoolkit.db.JDBCFeatureStoreUtilities.*;
 import org.geotoolkit.db.dialect.SQLDialect;
 import org.geotoolkit.db.reverse.ColumnMetaModel.Type;
@@ -55,6 +56,7 @@ import org.geotoolkit.feature.type.ModifiableType;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.storage.DataStoreException;
 import org.opengis.feature.type.*;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  * Represent the structure of the database. The work done here is similar to
@@ -422,9 +424,7 @@ public final class DataBaseModel {
         Connection cx = null;
         try {
             cx = store.getDataSource().getConnection();
-            final Class type = dialect.getJavaType(columnDataType, columnTypeName);
-            atb.setName(columnName);
-            atb.setBinding(type);
+            dialect.decodeColumnType(atb, cx, columnTypeName, columnDataType, schemaName, tableName, columnName);
         } catch (SQLException e) {
             throw new DataStoreException("Error occurred analyzing column : " + columnName, e);
         } finally {
@@ -530,7 +530,8 @@ public final class DataBaseModel {
      * Rebuild simple feature types for each table.
      */
     private void reverseSimpleFeatureTypes(){
-
+        final SQLDialect dialect = store.getDialect();
+        
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder(FTF);
         final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder(FTF);
         final AttributeTypeBuilder atb = new AttributeTypeBuilder(FTF);
@@ -570,6 +571,33 @@ public final class DataBaseModel {
                     atb.setName(namespace,name);
                     adb.setType(atb.buildType());
 
+                    //Set the CRS if it's a geometry
+                    if (Geometry.class.isAssignableFrom(type.getBinding())) {
+                        //add the attribute as a geometry, try to figure out
+                        // its srid first
+                        Integer srid = null;
+                        CoordinateReferenceSystem crs = null;
+                        Connection cx = null;
+                        try {
+                            cx = store.getDataSource().getConnection();
+                            srid = dialect.getGeometrySRID(store.getDatabaseSchema(), tableName, name, cx);
+                            if(srid != null)
+                                crs = dialect.createCRS(srid, cx);
+                        } catch (SQLException e) {
+                            String msg = "Error occured determing srid for " + tableName + "."+ name;
+                            store.getLogger().log(Level.WARNING, msg, e);
+                        } finally{
+                            JDBCFeatureStoreUtilities.closeSafe(store.getLogger(), cx);
+                        }
+
+                        atb.setCRS(crs);
+                        if(srid != null){
+                            adb.addUserData(JDBCFeatureStore.JDBC_NATIVE_SRID, srid);
+                        }
+                        adb.setType(atb.buildGeometryType());
+                        adb.findBestDefaultValue();
+                    }
+                    
                     descs.set(i, adb.buildDescriptor());
                 }
 

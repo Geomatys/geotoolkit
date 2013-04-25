@@ -60,6 +60,7 @@ import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.storage.DataStoreException;
 import org.opengis.feature.Feature;
+import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.Name;
@@ -112,6 +113,12 @@ public class DefaultJDBCFeatureStore extends AbstractFeatureStore implements JDB
         }
     }
 
+    @Override
+    public boolean isWritable(final Name typeName) throws DataStoreException {
+        final PrimaryKey key = dbmodel.getPrimaryKey(typeName);
+        return key != null && !(key.isNull());
+    }
+    
     @Override
     public FeatureStoreFactory getFactory() {
         return FeatureStoreFinder.getFactoryById(factoryId);
@@ -498,19 +505,111 @@ public class DefaultJDBCFeatureStore extends AbstractFeatureStore implements JDB
     @Override
     public void createSchema(final Name typeName, final FeatureType featureType) throws DataStoreException {
         ensureOpen();
-        throw new DataStoreException("Not supported yet.");
+        
+        if(typeName == null){
+            throw new DataStoreException("Type name can not be null.");
+        }
+        if(!(featureType instanceof SimpleFeatureType)){
+            throw new DataStoreException("JDBC datastore can handle only simple feature types.");
+        }
+        if(!featureType.getName().equals(typeName)){
+            throw new DataStoreException("JDBC datastore can only hold typename same as feature type name.");
+        }
+        if(getNames().contains(typeName)){
+            throw new DataStoreException("Type name "+ typeName + " already exists.");
+        }
+
+        Connection cx = null;
+        Statement stmt = null;
+        String sql = null;
+        try {
+            cx = getDataSource().getConnection();
+            stmt = cx.createStatement();
+            sql = getQueryBuilder().createTableSQL(featureType,cx);
+            stmt.execute(sql);
+
+            dialect.postCreateTable(getDatabaseSchema(), (SimpleFeatureType)featureType, cx);
+        } catch (SQLException ex) {
+            throw new DataStoreException("Failed to drop table "+typeName.getLocalPart()+","+ex.getMessage()+"\n Query : "+sql, ex);
+        } finally {
+            JDBCFeatureStoreUtilities.closeSafe(getLogger(),cx,stmt,null);
+        }
+
+        // reset the type name cache, will be recreated when needed.
+        dbmodel.clearCache();
     }
 
     @Override
-    public void updateSchema(final Name typeName, final FeatureType featureType) throws DataStoreException {
+    public void updateSchema(final Name typeName, final FeatureType newft) throws DataStoreException {
         ensureOpen();
-        throw new DataStoreException("Not supported yet.");
+        final FeatureType oldft = getFeatureType(typeName);
+
+        //we only handle adding or removing columns
+        final List<PropertyDescriptor> toRemove = new ArrayList<PropertyDescriptor>();
+        final List<PropertyDescriptor> toAdd = new ArrayList<PropertyDescriptor>();
+
+        toRemove.addAll(oldft.getDescriptors());
+        toRemove.removeAll(newft.getDescriptors());
+        toAdd.addAll(newft.getDescriptors());
+        toAdd.removeAll(oldft.getDescriptors());
+
+        //TODO : this is not perfect, we loose datas, we should update the column type when possible.
+        Connection cx = null;
+        try{
+            cx = getDataSource().getConnection();
+
+            for(PropertyDescriptor remove : toRemove){
+                final String sql = getQueryBuilder().alterTableDropColumnSQL(oldft, remove, cx);
+                final Statement stmt = cx.createStatement();
+                try {
+                    stmt.execute(sql);
+                } finally {
+                    JDBCFeatureStoreUtilities.closeSafe(getLogger(),stmt);
+                }
+            }
+
+            for(PropertyDescriptor add : toAdd){
+                final String sql = getQueryBuilder().alterTableAddColumnSQL(oldft, add, cx);
+                final Statement stmt = cx.createStatement();
+                try {
+                    stmt.execute(sql);
+                } finally {
+                    JDBCFeatureStoreUtilities.closeSafe(getLogger(),stmt);
+                }
+            }
+
+        } catch (final SQLException ex) {
+            throw new DataStoreException("Failed updating table "+typeName.getLocalPart()+", "+ex.getMessage(), ex);
+        } finally{
+            JDBCFeatureStoreUtilities.closeSafe(getLogger(),cx);
+        }
+
+        // reset the type name cache, will be recreated when needed.
+        dbmodel.clearCache();
     }
 
     @Override
     public void deleteSchema(final Name typeName) throws DataStoreException {
         ensureOpen();
-        throw new DataStoreException("Not supported yet.");
+        final FeatureType featureType = getFeatureType(typeName);
+
+        Connection cx = null;
+        Statement stmt = null;
+        String sql = null;
+        try {
+            cx = getDataSource().getConnection();
+            stmt = cx.createStatement();
+            sql = getQueryBuilder().dropSQL(featureType);
+
+            stmt.execute(sql);
+            // reset the type name cache, will be recreated when needed.
+            dbmodel.clearCache();
+
+        } catch (SQLException ex) {
+            throw new DataStoreException("Failed to drop table "+typeName.getLocalPart()+","+ex.getMessage()+"\n Query : "+sql, ex);
+        } finally {
+            JDBCFeatureStoreUtilities.closeSafe(getLogger(),cx,stmt,null);
+        }
     }
     
     ////////////////////////////////////////////////////////////////////////////
