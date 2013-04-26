@@ -26,24 +26,29 @@ import org.geotoolkit.data.s57.model.DataSetIdentification;
 import org.geotoolkit.data.s57.model.S57FileReader;
 import org.geotoolkit.data.s57.model.S57Object;
 import org.geotoolkit.storage.DataStoreException;
-import org.geotoolkit.version.AbstractVersionHistory;
+import org.geotoolkit.version.AbstractVersionControl;
 
 /**
  * S-57 history based on available files.
  * @author Johann Sorel (Geomatys)
  */
-public class S57VersionHistory extends AbstractVersionHistory{
+public class S57VersionControl extends AbstractVersionControl{
 
     private static final TimeZone GMT0 = TimeZone.getTimeZone("GMT+0");
     
     private final List<S57Version> versions = new ArrayList<S57Version>();
     private final List<File> files;
 
+    @Override
+    public boolean isVersioned() {
+        return true;
+    }
+    
     /**
      * 
      * @param files ordered S-57 files .000, .001, .002 ...etc...
      */
-    public S57VersionHistory(final List<File> files) throws DataStoreException{
+    public S57VersionControl(final List<File> files) throws DataStoreException{
         this.files = files;
         
         final Calendar calendar = Calendar.getInstance(GMT0);

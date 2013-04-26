@@ -50,7 +50,7 @@ public class S57VersionedFeature implements Versioned<Feature> {
 
     @Override
     public VersionHistory getHistory() throws VersioningException {
-        return store.getHistory(typeName);
+        return store.getVersioning(typeName);
     }
 
     @Override

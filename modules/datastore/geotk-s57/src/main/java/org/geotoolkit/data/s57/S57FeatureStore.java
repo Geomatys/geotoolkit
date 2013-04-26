@@ -57,7 +57,7 @@ import org.opengis.parameter.ParameterValueGroup;
 
 import org.geotoolkit.data.s57.model.S57Reader;
 import org.geotoolkit.data.s57.model.S57UpdatedReader;
-import org.geotoolkit.version.VersionHistory;
+import org.geotoolkit.version.VersionControl;
 import org.geotoolkit.version.VersioningException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -83,7 +83,7 @@ public class S57FeatureStore extends AbstractFeatureStore{
     private DataSetParameter datasetParameter;
     private CoordinateReferenceSystem crs;
     //versioning informations
-    private S57VersionHistory history;
+    private S57VersionControl history;
     
     public S57FeatureStore(final ParameterValueGroup params) throws DataStoreException{
         super(params);
@@ -108,7 +108,7 @@ public class S57FeatureStore extends AbstractFeatureStore{
     }
 
     @Override
-    public VersionHistory getHistory(Name typeName) throws VersioningException {
+    public VersionControl getVersioning(Name typeName) throws VersioningException {
         try {
             typeCheck(typeName);
             return loadHistory();
@@ -231,11 +231,11 @@ public class S57FeatureStore extends AbstractFeatureStore{
      * @return VersionHistory
      * @throws DataStoreException 
      */
-    private synchronized S57VersionHistory loadHistory() throws DataStoreException{
+    private synchronized S57VersionControl loadHistory() throws DataStoreException{
         if(history!=null) return history;
         final List<File> updateFiles = findUpdateFiles(null, null, null);
         updateFiles.add(0, findMainFile(null));
-        history = new S57VersionHistory(updateFiles);        
+        history = new S57VersionControl(updateFiles);        
         return history;
     }
     
