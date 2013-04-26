@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2008 - 2009, Geomatys
+ *    (C) 2013, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -14,7 +14,8 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.ows.xml.v110;
+
+package org.geotoolkit.ows.xml.v200;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -25,7 +26,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -38,16 +38,15 @@ import org.geotoolkit.util.Utilities;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;choice maxOccurs="unbounded">
- *         &lt;element ref="{http://www.opengis.net/ows/1.1}Value"/>
- *         &lt;element ref="{http://www.opengis.net/ows/1.1}Range"/>
+ *         &lt;element ref="{http://www.opengis.net/ows/2.0}Value"/>
+ *         &lt;element ref="{http://www.opengis.net/ows/2.0}Range"/>
  *       &lt;/choice>
  *     &lt;/restriction>
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
  * 
- * @author Guilhem Legal
- * @module pending
+ * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
@@ -57,16 +56,23 @@ import org.geotoolkit.util.Utilities;
 public class AllowedValues {
 
     @XmlElements({
-        @XmlElement(name = "Range", type = RangeType.class),
-        @XmlElement(name = "Value", type = ValueType.class)
+        @XmlElement(name = "Value", type = ValueType.class),
+        @XmlElement(name = "Range", type = RangeType.class)
     })
     private List<Object> valueOrRange;
 
-    /**
-     *  empty constructor used by JAXB.
-     */
-    AllowedValues(){
+    public AllowedValues() {
         
+    }
+    /**
+     *  Build an allowed value with the specified list of value.
+     */
+    public AllowedValues(final Collection<String> values){
+        
+        this.valueOrRange = new ArrayList<Object>();
+        for (String value: values){
+            valueOrRange.add(new ValueType(value));
+        }
     }
     
     public AllowedValues(final AllowedValues that){
@@ -86,25 +92,6 @@ public class AllowedValues {
     }
     
     /**
-     *  Build an allowed value.
-     */
-    public AllowedValues(final List<Object> valueOrRange){
-        this.valueOrRange = valueOrRange;
-    }
-    
-    /**
-     *  Build an allowed value with the specified list of value.
-     */
-    public AllowedValues(final Collection<String> values){
-        
-        this.valueOrRange = new ArrayList<Object>();
-        for (String value: values){
-            valueOrRange.add(new ValueType(value));
-        }
-        
-    }
-    
-    /**
      *  Build an allowed value with the specified range
      */
     public AllowedValues(final RangeType range){
@@ -115,6 +102,7 @@ public class AllowedValues {
     
     /**
      * Gets the value of the valueOrRange property.
+     * 
      */
     public List<Object> getValueOrRange() {
         if (valueOrRange == null) {
@@ -122,7 +110,7 @@ public class AllowedValues {
         }
         return this.valueOrRange;
     }
-    
+
     public List<String> getStringValues() {
         final List<String> values = new ArrayList<String>();
         if (valueOrRange != null) {
@@ -133,39 +121,5 @@ public class AllowedValues {
             }
         }
         return values;
-    }
-    
-    /**
-     * Verify that this entry is identical to the specified object.
-     */
-    @Override
-    public boolean equals(final Object object) {
-        if (object == this) {
-            return true;
-        }
-        if (object instanceof AllowedValues) {
-            final AllowedValues that = (AllowedValues) object;
-            return Utilities.equals(this.valueOrRange,   that.valueOrRange);
-        }
-        return false;
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 7;
-        hash = 97 * hash + (this.valueOrRange != null ? this.valueOrRange.hashCode() : 0);
-        return hash;
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder("[AllowedValues]").append("\n");
-        if (valueOrRange != null) {
-            sb.append("valueOrRange:\n ");
-            for (Object obj : valueOrRange) {
-                sb.append(obj).append('\n');
-            }
-        }
-        return sb.toString();
     }
 }

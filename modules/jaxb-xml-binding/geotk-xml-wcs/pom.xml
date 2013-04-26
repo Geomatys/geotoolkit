@@ -77,6 +77,11 @@
       <groupId>org.geotoolkit</groupId>
       <artifactId>geotk-coverage</artifactId>
     </dependency>
+     <dependency>
+        <groupId>org.geotoolkit.pending</groupId>
+        <artifactId>geotk-xml-swe</artifactId>
+        <version>${project.version}</version>
+    </dependency>
   </dependencies>
 
 </project>
