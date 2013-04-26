@@ -47,32 +47,5 @@ public abstract class AbstractVersionHistory implements VersionHistory {
         //this is not exact, yet versioning might have started a very long time afeter initial data creation.
         return lst.isEmpty() ? null : lst.get(0);
     }
-
-    /**
-     * Overwrite to enable history edition.
-     * @param version 
-     */
-    @Override
-    public void trim(Version version) throws VersioningException {
-        throw new VersioningException("History edition not supported.");
-    }
-
-    /**
-     * Overwrite to enable history edition.
-     * @param version 
-     */
-    @Override
-    public void revert(Version version) throws VersioningException {
-        throw new VersioningException("History edition not supported.");
-    }
-
-    /**
-     * Overwrite to enable history edition.
-     * @return false
-     */
-    @Override
-    public boolean isEditable() {
-        return false;
-    }
-    
+  
 }

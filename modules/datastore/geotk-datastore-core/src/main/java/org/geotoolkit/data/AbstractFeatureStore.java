@@ -56,7 +56,7 @@ import org.geotoolkit.storage.AbstractStorage;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.version.Version;
-import org.geotoolkit.version.VersionHistory;
+import org.geotoolkit.version.VersionControl;
 import org.geotoolkit.version.VersioningException;
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.AttributeDescriptor;
@@ -134,9 +134,9 @@ public abstract class AbstractFeatureStore extends AbstractStorage implements Fe
     }
 
     @Override
-    public VersionHistory getHistory(String typeName) throws VersioningException{
+    public VersionControl getVersioning(String typeName) throws VersioningException{
         final Name n = DefaultName.valueOf(typeName);
-        return getHistory(n);
+        return getVersioning(n);
     }
 
     /**
@@ -144,7 +144,7 @@ public abstract class AbstractFeatureStore extends AbstractStorage implements Fe
      * @param version 
      */
     @Override
-    public VersionHistory getHistory(Name typeName) throws VersioningException{
+    public VersionControl getVersioning(Name typeName) throws VersioningException{
         throw new VersioningException("Versioning not supported");
     }
 

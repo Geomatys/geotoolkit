@@ -589,7 +589,7 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
                 final FeatureStore store = s.getSession().getFeatureStore();
                 if(store.getQueryCapabilities().handleVersioning()){
                     try {
-                        final VersionHistory history = store.getHistory(source.getFeatureType().getName());
+                        final VersionHistory history = store.getVersioning(source.getFeatureType().getName());
                         lst.addAll(history.list());
                     } catch (VersioningException ex) {
                         Exceptions.printStackTrace(ex);

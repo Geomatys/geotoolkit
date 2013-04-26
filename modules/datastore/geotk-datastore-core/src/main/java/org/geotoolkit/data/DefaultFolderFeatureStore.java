@@ -33,6 +33,7 @@ import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.storage.DataStoreException;
+import org.geotoolkit.version.VersionControl;
 import org.geotoolkit.version.VersionHistory;
 import org.geotoolkit.version.VersioningException;
 import org.opengis.feature.Feature;
@@ -91,14 +92,14 @@ public class DefaultFolderFeatureStore extends AbstractFeatureStore{
      * Fallthrought to sub feature stores.
      */
     @Override
-    public VersionHistory getHistory(Name typeName) throws VersioningException {
+    public VersionControl getVersioning(Name typeName) throws VersioningException {
         try {
             typeCheck(typeName);
         } catch (DataStoreException ex) {
             throw new VersioningException(ex);
         }
         final FeatureStore store = stores.get(typeName);
-        return store.getHistory(typeName);
+        return store.getVersioning(typeName);
     }
 
     /**

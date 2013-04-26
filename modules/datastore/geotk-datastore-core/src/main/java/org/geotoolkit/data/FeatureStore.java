@@ -30,7 +30,7 @@ import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.storage.StorageListener;
 import org.geotoolkit.version.Version;
-import org.geotoolkit.version.VersionHistory;
+import org.geotoolkit.version.VersionControl;
 import org.geotoolkit.version.VersioningException;
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
@@ -73,13 +73,13 @@ public interface FeatureStore {
      * Get version history for given feature type.
      * @return VersionHistory for given type.
      */
-    VersionHistory getHistory(String typeName) throws VersioningException;
+    VersionControl getVersioning(String typeName) throws VersioningException;
     
     /**
      * Get version history for given feature type.
      * @return VersionHistory for given type.
      */
-    VersionHistory getHistory(Name typeName) throws VersioningException;
+    VersionControl getVersioning(Name typeName) throws VersioningException;
     
     /**
      * Create a session, that session may be synchrone or asynchrone.

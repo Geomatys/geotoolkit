@@ -41,7 +41,7 @@ import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.version.Version;
-import org.geotoolkit.version.VersionHistory;
+import org.geotoolkit.version.VersionControl;
 import org.geotoolkit.version.VersioningException;
 import org.geotoolkit.wfs.xml.WFSBindingUtilities;
 import org.geotoolkit.wfs.xml.WFSCapabilities;
@@ -53,7 +53,6 @@ import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.geometry.Envelope;
-import org.opengis.parameter.ParameterNotFoundException;
 import org.opengis.parameter.ParameterValueGroup;
 
 /**
@@ -266,13 +265,13 @@ public class WebFeatureServer extends AbstractServer implements FeatureStore{
     }
     
     @Override
-    public VersionHistory getHistory(String typeName) throws VersioningException {
-        return store.getHistory(typeName);
+    public VersionControl getVersioning(String typeName) throws VersioningException {
+        return store.getVersioning(typeName);
     }
 
     @Override
-    public VersionHistory getHistory(Name typeName) throws VersioningException {
-        return store.getHistory(typeName);
+    public VersionControl getVersioning(Name typeName) throws VersioningException {
+        return store.getVersioning(typeName);
     }
     
     @Override

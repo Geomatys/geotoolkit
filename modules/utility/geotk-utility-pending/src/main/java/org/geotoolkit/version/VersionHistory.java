@@ -26,14 +26,7 @@ import java.util.List;
  * @author Johann Sorel (Geomatys)
  */
 public interface VersionHistory {
-    
-    /**
-     * Check if this history allows version modifications (trim and rollback).
-     * Versions should be created automaticaly through storage writers.
-     * @return true if history clipping is supported.
-     */
-    boolean isEditable();
-    
+        
     /**
      * Unmodifiable list of versions available.
      * @return List<Version>
@@ -54,17 +47,5 @@ public interface VersionHistory {
      * @return Version
      */
     Version getVersion(Date date) throws VersioningException;
-    
-    /**
-     * Remove oldest version history until given version exclusive.
-     * @param version not null
-     */
-    void trim(Version version) throws VersioningException;
-    
-    /**
-     * Rollback datas until given version exclusive.
-     * @param version not null
-     */
-    void revert(Version version) throws VersioningException;
-    
+        
 }
