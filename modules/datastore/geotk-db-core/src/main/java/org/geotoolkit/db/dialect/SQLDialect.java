@@ -29,8 +29,10 @@ import org.geotoolkit.feature.AttributeTypeBuilder;
 import org.geotoolkit.storage.DataStoreException;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
+import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.filter.Filter;
+import org.opengis.filter.capability.FilterCapabilities;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
@@ -41,6 +43,8 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 public interface SQLDialect {
     
     Version getVersion(String schema) throws SQLException;
+    
+    FilterCapabilities getFilterCapabilities();
     
     FilterToSQL getFilterToSQL();
     
@@ -69,7 +73,7 @@ public interface SQLDialect {
      * @param filter not null
      * @return array of two filters.
      */
-    Filter[] splitFilter(Filter filter);
+    Filter[] splitFilter(Filter filter, FeatureType type);
     
     ////////////////////////////////////////////////////////////////////////////
     // METHODS TO CREATE SQL QUERIES ///////////////////////////////////////////

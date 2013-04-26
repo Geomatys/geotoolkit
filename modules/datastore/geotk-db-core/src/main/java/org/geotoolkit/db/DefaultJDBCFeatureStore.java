@@ -296,7 +296,7 @@ public class DefaultJDBCFeatureStore extends AbstractFeatureStore implements JDB
         baseFilter = (Filter) baseFilter.accept(new FIDFixVisitor(), null);
         
         //split the filter between what can be send and must be handle by code
-        final Filter[] divided = getDialect().splitFilter(baseFilter);
+        final Filter[] divided = getDialect().splitFilter(baseFilter,baseType);
         Filter preFilter = divided[0];
         Filter postFilter = divided[1];
         
@@ -458,7 +458,7 @@ public class DefaultJDBCFeatureStore extends AbstractFeatureStore implements JDB
         baseFilter = (Filter) baseFilter.accept(new FIDFixVisitor(), null);
         
         //split the filter between what can be send and must be handle by code
-        final Filter[] divided = getDialect().splitFilter(baseFilter);
+        final Filter[] divided = getDialect().splitFilter(baseFilter,baseType);
         Filter preFilter = divided[0];
         Filter postFilter = divided[1];
         

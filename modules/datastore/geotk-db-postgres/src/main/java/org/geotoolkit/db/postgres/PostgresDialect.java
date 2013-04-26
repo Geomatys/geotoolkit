@@ -36,12 +36,13 @@ import java.sql.Statement;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.sql.Types;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
-import org.apache.sis.util.ObjectConverter;
 import org.apache.sis.util.Version;
 import org.geotoolkit.db.DefaultJDBCFeatureStore;
 import org.geotoolkit.db.FilterToSQL;
@@ -54,15 +55,65 @@ import org.geotoolkit.db.postgres.wkb.WKBAttributeIO;
 import org.geotoolkit.db.reverse.ColumnMetaModel;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.AttributeTypeBuilder;
+import org.geotoolkit.filter.capability.DefaultArithmeticOperators;
+import org.geotoolkit.filter.capability.DefaultComparisonOperators;
+import org.geotoolkit.filter.capability.DefaultFilterCapabilities;
+import org.geotoolkit.filter.capability.DefaultFunctionName;
+import org.geotoolkit.filter.capability.DefaultFunctions;
+import org.geotoolkit.filter.capability.DefaultIdCapabilities;
+import org.geotoolkit.filter.capability.DefaultOperator;
+import org.geotoolkit.filter.capability.DefaultScalarCapabilities;
+import org.geotoolkit.filter.capability.DefaultSpatialCapabilities;
+import org.geotoolkit.filter.capability.DefaultSpatialOperator;
+import org.geotoolkit.filter.capability.DefaultSpatialOperators;
+import org.geotoolkit.filter.capability.DefaultTemporalCapabilities;
+import org.geotoolkit.filter.capability.DefaultTemporalOperators;
+import org.geotoolkit.filter.visitor.CapabilitiesFilterSplitter;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.util.Converters;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
+import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.filter.Filter;
+import org.opengis.filter.PropertyIsBetween;
+import org.opengis.filter.PropertyIsEqualTo;
+import org.opengis.filter.PropertyIsGreaterThan;
+import org.opengis.filter.PropertyIsGreaterThanOrEqualTo;
+import org.opengis.filter.PropertyIsLessThan;
+import org.opengis.filter.PropertyIsLessThanOrEqualTo;
+import org.opengis.filter.PropertyIsLike;
+import org.opengis.filter.PropertyIsNotEqualTo;
+import org.opengis.filter.PropertyIsNull;
+import org.opengis.filter.capability.ArithmeticOperators;
+import org.opengis.filter.capability.ComparisonOperators;
+import org.opengis.filter.capability.FilterCapabilities;
+import org.opengis.filter.capability.FunctionName;
+import org.opengis.filter.capability.Functions;
+import org.opengis.filter.capability.GeometryOperand;
+import org.opengis.filter.capability.Operator;
+import org.opengis.filter.capability.ScalarCapabilities;
+import org.opengis.filter.capability.SpatialCapabilities;
+import org.opengis.filter.capability.SpatialOperator;
+import org.opengis.filter.capability.SpatialOperators;
+import org.opengis.filter.capability.TemporalCapabilities;
+import org.opengis.filter.capability.TemporalOperand;
+import org.opengis.filter.capability.TemporalOperator;
+import org.opengis.filter.capability.TemporalOperators;
 import org.opengis.filter.expression.Literal;
+import org.opengis.filter.spatial.BBOX;
+import org.opengis.filter.spatial.Beyond;
+import org.opengis.filter.spatial.Contains;
+import org.opengis.filter.spatial.Crosses;
+import org.opengis.filter.spatial.DWithin;
+import org.opengis.filter.spatial.Disjoint;
+import org.opengis.filter.spatial.Equals;
+import org.opengis.filter.spatial.Intersects;
+import org.opengis.filter.spatial.Overlaps;
+import org.opengis.filter.spatial.Touches;
+import org.opengis.filter.spatial.Within;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
 
@@ -88,6 +139,8 @@ public class PostgresDialect extends AbstractSQLDialect{
     private static final Map<String, String> TYPE_TO_ST_TYPE_MAP = new HashMap<String, String>();
     private static final Set<String> IGNORE_TABLES = new HashSet<String>();
         
+    private static final FilterCapabilities FILTER_CAPABILITIES;
+    
     static {
         //fill base types
         TYPE_TO_CLASS.put(Types.VARCHAR,        String.class);
@@ -254,7 +307,66 @@ public class PostgresDialect extends AbstractSQLDialect{
         //postgis 2 raster
         IGNORE_TABLES.add("raster_columns");
         IGNORE_TABLES.add("raster_overviews");
+     
         
+        //filter capabilities
+        final String version = null;
+        //ID capabilities, support : EID, FID
+        final DefaultIdCapabilities idCapa = new DefaultIdCapabilities(true, true);
+        //Spatial capabilities
+        final GeometryOperand[] geometryOperands = new GeometryOperand[]{
+            GeometryOperand.Point,
+            GeometryOperand.LineString,
+            GeometryOperand.Polygon,
+            GeometryOperand.Envelope
+        };
+        final SpatialOperator[] spatialOperatrs = new SpatialOperator[]{
+            new DefaultSpatialOperator(BBOX.NAME      , geometryOperands),
+            new DefaultSpatialOperator(Beyond.NAME    , geometryOperands),
+            new DefaultSpatialOperator(Contains.NAME  , geometryOperands),
+            new DefaultSpatialOperator(Crosses.NAME   , geometryOperands),
+            new DefaultSpatialOperator(Disjoint.NAME  , geometryOperands),
+            new DefaultSpatialOperator(DWithin.NAME   , geometryOperands),
+            new DefaultSpatialOperator(Equals.NAME    , geometryOperands),
+            new DefaultSpatialOperator(Intersects.NAME, geometryOperands),
+            new DefaultSpatialOperator(Overlaps.NAME  , geometryOperands),
+            new DefaultSpatialOperator(Touches.NAME   , geometryOperands),
+            new DefaultSpatialOperator(Within.NAME    , geometryOperands)
+        };
+        final SpatialOperators spatialOperators = new DefaultSpatialOperators(spatialOperatrs);
+        final SpatialCapabilities spatialCapa = new DefaultSpatialCapabilities(geometryOperands, spatialOperators);
+        
+        //scalar capabilities
+        //support : AND, OR, NOT
+        final boolean logical = true; 
+        //support : =, <>, <, <=, >, >=, LIKE, BEETWEN, NULL
+        final Operator[] comparaisonOps = new Operator[]{ 
+            new DefaultOperator(PropertyIsEqualTo.NAME),
+            new DefaultOperator(PropertyIsNotEqualTo.NAME),
+            new DefaultOperator(PropertyIsLessThan.NAME),
+            new DefaultOperator(PropertyIsLessThanOrEqualTo.NAME),
+            new DefaultOperator(PropertyIsGreaterThan.NAME),
+            new DefaultOperator(PropertyIsGreaterThanOrEqualTo.NAME),
+            new DefaultOperator(PropertyIsLike.NAME),
+            new DefaultOperator(PropertyIsBetween.NAME),
+            new DefaultOperator(PropertyIsNull.NAME)
+        };
+        final ComparisonOperators comparisonOperators = new DefaultComparisonOperators(comparaisonOps);
+        //support : +, -, *, /
+        final boolean arithmeticSimple = true; 
+        //support various functions
+        final FunctionName[] functionNames = new FunctionName[0];
+        final Functions functions = new DefaultFunctions(functionNames);
+        final ArithmeticOperators arithmeticOperators = new DefaultArithmeticOperators(arithmeticSimple, functions);
+        final ScalarCapabilities scalarCapa = new DefaultScalarCapabilities(logical, comparisonOperators, arithmeticOperators);
+        
+        //temporal capabilities
+        final TemporalOperand[] temporalOperands = new TemporalOperand[0];
+        final TemporalOperator[] temporalOperatrs = new TemporalOperator[0];
+        final TemporalOperators temporalOperators = new DefaultTemporalOperators(temporalOperatrs);
+        final TemporalCapabilities temporalCapa = new DefaultTemporalCapabilities(temporalOperands, temporalOperators);
+        
+        FILTER_CAPABILITIES = new DefaultFilterCapabilities(version, idCapa, spatialCapa, scalarCapa, temporalCapa);
     }
         
     private final DefaultJDBCFeatureStore featurestore;
@@ -289,6 +401,11 @@ public class PostgresDialect extends AbstractSQLDialect{
 
     public PostgresDialect(DefaultJDBCFeatureStore datastore) {
         this.featurestore = datastore;
+    }
+
+    @Override
+    public FilterCapabilities getFilterCapabilities() {
+        return FILTER_CAPABILITIES;
     }
 
     @Override
@@ -375,15 +492,6 @@ public class PostgresDialect extends AbstractSQLDialect{
     @Override
     public boolean ignoreTable(String name) {
         return IGNORE_TABLES.contains(name.toLowerCase());
-    }
-
-    @Override
-    public Filter[] splitFilter(Filter filter) {
-        //TODO
-        final Filter[] divided = new Filter[2];
-        divided[0] = Filter.INCLUDE;
-        divided[1] = filter;
-        return divided;
     }
 
     @Override

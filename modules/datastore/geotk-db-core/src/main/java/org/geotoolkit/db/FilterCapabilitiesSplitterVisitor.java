@@ -75,6 +75,8 @@ import org.opengis.filter.temporal.TOverlaps;
  * The pre-filter can be used directly while the post-filter will have to
  * be handle in java.
  * 
+ * TODO
+ * 
  * @author Johann Sorel (Geomatys)
  */
 public class FilterCapabilitiesSplitterVisitor implements FilterVisitor, ExpressionVisitor {

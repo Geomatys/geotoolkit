@@ -20,8 +20,11 @@ import java.lang.reflect.Array;
 import java.sql.Connection;
 import java.sql.SQLException;
 import org.geotoolkit.feature.AttributeTypeBuilder;
+import org.geotoolkit.filter.capability.DefaultFilterCapabilities;
+import org.geotoolkit.filter.visitor.CapabilitiesFilterSplitter;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
+import org.opengis.feature.type.FeatureType;
 import org.opengis.filter.Filter;
 
 /**
@@ -40,11 +43,11 @@ public abstract class AbstractSQLDialect implements SQLDialect {
      * Everything will be added in the post filter.
      */
     @Override
-    public Filter[] splitFilter(Filter filter) {
-        final Filter[] divided = new Filter[2];
-        divided[0] = Filter.INCLUDE;
-        divided[1] = filter;
-        return divided;
+    public Filter[] splitFilter(Filter filter, FeatureType type) {
+        final CapabilitiesFilterSplitter splitter = new CapabilitiesFilterSplitter(
+                (DefaultFilterCapabilities)getFilterCapabilities(), type);
+        filter.accept(splitter, null);
+        return new Filter[]{splitter.getPreFilter(),splitter.getPostFilter()};
     }
 
     @Override
