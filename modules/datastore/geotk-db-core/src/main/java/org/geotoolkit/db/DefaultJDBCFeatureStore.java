@@ -163,6 +163,11 @@ public class DefaultJDBCFeatureStore extends AbstractFeatureStore implements JDB
         return dialect;
     }
 
+    @Override
+    public int getFetchSize() {
+        return fetchSize;
+    }
+    
     public void setDialect(SQLDialect dialect) {
         ArgumentChecks.ensureNonNull("dialect", dialect);
         this.dialect = dialect;

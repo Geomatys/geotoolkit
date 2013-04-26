@@ -68,6 +68,7 @@ public class JDBCFeatureReader implements FeatureReader<FeatureType, Feature> {
         this.sql = sql;        
         this.cx = store.getDataSource().getConnection();
         this.st = cx.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+        this.st.setFetchSize(store.getFetchSize());
         this.rs = this.st.executeQuery(sql);
         this.hints = hints;
     }

@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.db.reverse;
 
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -32,12 +31,12 @@ import org.geotoolkit.storage.DataStoreException;
  * @author Johann Sorel (Geomatys)
  */
 public class PrimaryKey {
-        
+            
     private final String tableName;
     private final List<ColumnMetaModel> columns;
 
     public PrimaryKey(String tableName) {
-        this(tableName,null);
+        this(tableName,null);        
     }
     
     public PrimaryKey(String tableName, List<ColumnMetaModel> columns) {
@@ -93,12 +92,12 @@ public class PrimaryKey {
     }
 
     private static String escapeDot(Object obj){
-        String str = String.valueOf(obj);
-        return str.replaceAll("\\.", "◼");
+        final String str = String.valueOf(obj);
+        return str.replace('.', '◼');
     }
     
     private static String unescapeDot(String str){
-        return str.replaceAll("◼",".");
+        return str.replace('◼','.');
     }
     
     /**
