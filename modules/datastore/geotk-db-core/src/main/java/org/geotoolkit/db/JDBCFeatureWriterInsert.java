@@ -97,6 +97,7 @@ public class JDBCFeatureWriterInsert extends JDBCFeatureReader implements Featur
         
         if(batchInsert){
             toAdd.add(last);
+            last = FeatureUtilities.defaultFeature(type, "-1");
             if(toAdd.size() > 1000){
                 try {
                     store.insert(toAdd, type, cx);

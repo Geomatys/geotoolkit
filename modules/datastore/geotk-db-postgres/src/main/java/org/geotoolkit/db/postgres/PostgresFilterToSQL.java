@@ -16,16 +16,28 @@
  */
 package org.geotoolkit.db.postgres;
 
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.LinearRing;
 import java.lang.reflect.Array;
 import java.util.List;
+import net.iharder.Base64;
+import org.apache.sis.util.Version;
 import org.geotoolkit.db.FilterToSQL;
+import org.geotoolkit.db.JDBCFeatureStore;
+import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.feature.DefaultName;
+import org.geotoolkit.filter.DefaultPropertyIsLike;
 import org.geotoolkit.util.Converters;
+import org.opengis.feature.type.AttributeDescriptor;
+import org.opengis.feature.type.FeatureType;
+import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.feature.type.Name;
 import org.opengis.filter.And;
 import org.opengis.filter.ExcludeFilter;
 import org.opengis.filter.Filter;
-import org.opengis.filter.FilterVisitor;
+import org.opengis.filter.FilterFactory;
 import org.opengis.filter.Id;
 import org.opengis.filter.IncludeFilter;
 import org.opengis.filter.Not;
@@ -43,7 +55,6 @@ import org.opengis.filter.PropertyIsNull;
 import org.opengis.filter.expression.Add;
 import org.opengis.filter.expression.Divide;
 import org.opengis.filter.expression.Expression;
-import org.opengis.filter.expression.ExpressionVisitor;
 import org.opengis.filter.expression.Function;
 import org.opengis.filter.expression.Literal;
 import org.opengis.filter.expression.Multiply;
@@ -52,6 +63,7 @@ import org.opengis.filter.expression.PropertyName;
 import org.opengis.filter.expression.Subtract;
 import org.opengis.filter.spatial.BBOX;
 import org.opengis.filter.spatial.Beyond;
+import org.opengis.filter.spatial.BinarySpatialOperator;
 import org.opengis.filter.spatial.Contains;
 import org.opengis.filter.spatial.Crosses;
 import org.opengis.filter.spatial.DWithin;
@@ -75,6 +87,7 @@ import org.opengis.filter.temporal.OverlappedBy;
 import org.opengis.filter.temporal.TContains;
 import org.opengis.filter.temporal.TEquals;
 import org.opengis.filter.temporal.TOverlaps;
+import org.opengis.geometry.Envelope;
 
 /**
  * Convert filters and expressions in SQL.
@@ -82,15 +95,16 @@ import org.opengis.filter.temporal.TOverlaps;
  * @author Johann Sorel (Geomatys)
  */
 public class PostgresFilterToSQL implements FilterToSQL {
-
-    private static StringBuilder toStringBuilder(Object candidate){
-        if(candidate instanceof StringBuilder){
-            return (StringBuilder) candidate;
-        }else{
-            throw new RuntimeException("Expected a StringBuilder argument");
-        }
-    }
     
+    private final Version pgVersion;
+    private final FeatureType featureType;
+    private int currentsrid;
+
+    public PostgresFilterToSQL(FeatureType featureType, Version pgVersion) {
+        this.featureType = featureType;
+        this.pgVersion = pgVersion;
+    }
+        
     ////////////////////////////////////////////////////////////////////////////
     // EXPRESSION EXPRESSION ///////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
@@ -127,7 +141,7 @@ public class PostgresFilterToSQL implements FilterToSQL {
     @Override
     public StringBuilder visit(Function candidate, Object o) {
         final StringBuilder sb = toStringBuilder(o);
-        if(true) throw new UnsupportedOperationException("Not supported yet.");
+        if(true) throw new UnsupportedOperationException("Not supported.");
         return sb;
     }
 
@@ -135,17 +149,45 @@ public class PostgresFilterToSQL implements FilterToSQL {
     public StringBuilder visit(Literal candidate, Object o) {
         final StringBuilder sb = toStringBuilder(o);
         final Object value = candidate.getValue();
-        writeValue(sb, value);
+        writeValue(sb, value, currentsrid);
         return sb;
     }
     
-    private void writeValue(final StringBuilder sb, Object candidate){
+    public void writeValue(final StringBuilder sb, Object candidate, int srid){
         if(candidate == null){
           sb.append("NULL");
           
         }else if(candidate instanceof Number 
               || candidate instanceof Boolean){
             sb.append(String.valueOf(candidate));
+           
+        }else if(candidate instanceof byte[]){
+            //special case for byte array
+            sb.append("decode('");
+            sb.append(Base64.encodeBytes((byte[])candidate));
+            sb.append("','base64')");
+        }else if(candidate instanceof Geometry){
+            // evaluate the literal and store it for later
+            Geometry geom = (Geometry)candidate;
+
+            if(geom.isEmpty() && ((Comparable)pgVersion.getMajor()).compareTo((Comparable)Integer.valueOf(2)) < 0){
+                //empty geometries are interpreted as Geometrycollection in postgis < 2
+                //this breaks the column geometry type constraint so we replace those by null
+                sb.append("NULL");
+            }else{
+                
+                if(geom instanceof LinearRing){
+                    //postgis does not handle linear rings, convert to just a line string
+                    geom = geom.getFactory().createLineString(((LinearRing) geom).getCoordinateSequence());
+                }
+                sb.append("st_geomfromtext('");
+                sb.append(geom.toText());
+                if(srid>0){
+                    sb.append("',").append(srid).append(')');
+                }else{
+                    sb.append("')");
+                }
+            }
             
         }else if(candidate.getClass().isArray()){
             final int size = Array.getLength(candidate);
@@ -167,11 +209,11 @@ public class PostgresFilterToSQL implements FilterToSQL {
                     final String escaped = encoding.replaceAll("'", "''");
                     sb.append(escaped);
                 }else{
-                    writeValue(sb,o);
+                    writeValue(sb,o,-1);
                 }
             }
             sb.append("}'");
-        }else {
+        }else{
             // we don't know what this is, let's convert back to a string
             String encoded = Converters.convert(candidate, String.class);
             if (encoded == null) {
@@ -226,7 +268,7 @@ public class PostgresFilterToSQL implements FilterToSQL {
     @Override
     public StringBuilder visitNullFilter(Object o) {
         final StringBuilder sb = toStringBuilder(o);
-        if(true) throw new UnsupportedOperationException("Not supported yet.");
+        if(true) throw new UnsupportedOperationException("Not supported.");
         return sb;
     }
 
@@ -363,7 +405,33 @@ public class PostgresFilterToSQL implements FilterToSQL {
     @Override
     public StringBuilder visit(PropertyIsLike candidate, Object o) {
         final StringBuilder sb = toStringBuilder(o);
-        if(true) throw new UnsupportedOperationException("Not supported yet.");
+        
+        final char escape = candidate.getEscape().charAt(0);
+        final char wildCard = candidate.getWildCard().charAt(0);
+        final char single = candidate.getSingleChar().charAt(0);
+        final boolean matchingCase = candidate.isMatchingCase();
+        final Expression expression = candidate.getExpression();
+        
+        final String literal = candidate.getLiteral();
+        String pattern = DefaultPropertyIsLike.convertToSQL92(escape, wildCard, single, literal);
+        
+        if(!matchingCase){
+            pattern = pattern.toUpperCase();
+            sb.append(" UPPER(");
+        }
+
+        //we don't know the type, make a type cast to be on the safe side
+        sb.append(" CAST( ");
+        expression.accept(this, sb);
+        sb.append(" AS VARCHAR)");
+        
+        if(!matchingCase){
+            sb.append(")");
+        }
+
+        sb.append(" LIKE '");
+        sb.append(pattern);
+        sb.append("' ");
         return sb;
     }
 
@@ -386,176 +454,330 @@ public class PostgresFilterToSQL implements FilterToSQL {
     @Override
     public StringBuilder visit(BBOX candidate, Object o) {
         final StringBuilder sb = toStringBuilder(o);
-        if(true) throw new UnsupportedOperationException("Not supported yet.");
+        final PreparedSpatialFilter prepared = new PreparedSpatialFilter(candidate);
+        sb.append("st_intersects(");
+        prepared.property.accept(this, o);
+        sb.append(',');
+        prepared.geometry.accept(this, o);
+        sb.append(')');
         return sb;
     }
 
     @Override
     public StringBuilder visit(Beyond candidate, Object o) {
         final StringBuilder sb = toStringBuilder(o);
-        if(true) throw new UnsupportedOperationException("Not supported yet.");
+        final PreparedSpatialFilter prepared = new PreparedSpatialFilter(candidate);
+        
+        if(prepared.swap){
+            sb.append("st_dwithin(");
+            prepared.property.accept(this, o);
+            sb.append(',');
+            prepared.geometry.accept(this, o);
+            sb.append(',');
+            sb.append(candidate.getDistance());
+            sb.append(')');
+        }else{
+            sb.append("st_distance(");
+            prepared.property.accept(this, o);
+            sb.append(',');
+            prepared.geometry.accept(this, o);
+            sb.append(") > ");
+            sb.append(candidate.getDistance());
+        }
+        
         return sb;
     }
 
     @Override
     public StringBuilder visit(Contains candidate, Object o) {
         final StringBuilder sb = toStringBuilder(o);
-        if(true) throw new UnsupportedOperationException("Not supported yet.");
+        final PreparedSpatialFilter prepared = new PreparedSpatialFilter(candidate);
+        if(prepared.swap){
+            sb.append("st_within(");
+        }else{
+            sb.append("st_contains(");
+        }
+        prepared.property.accept(this, o);
+        sb.append(',');
+        prepared.geometry.accept(this, o);
+        sb.append(')');
         return sb;
     }
 
     @Override
     public StringBuilder visit(Crosses candidate, Object o) {
         final StringBuilder sb = toStringBuilder(o);
-        if(true) throw new UnsupportedOperationException("Not supported yet.");
+        final PreparedSpatialFilter prepared = new PreparedSpatialFilter(candidate);
+        sb.append("st_crosses(");
+        prepared.property.accept(this, o);
+        sb.append(',');
+        prepared.geometry.accept(this, o);
+        sb.append(')');
         return sb;
     }
 
     @Override
     public StringBuilder visit(Disjoint candidate, Object o) {
         final StringBuilder sb = toStringBuilder(o);
-        if(true) throw new UnsupportedOperationException("Not supported yet.");
+        final PreparedSpatialFilter prepared = new PreparedSpatialFilter(candidate);
+        sb.append("not(st_intersects(");
+        prepared.property.accept(this, o);
+        sb.append(',');
+        prepared.geometry.accept(this, o);
+        sb.append("))");
         return sb;
     }
 
     @Override
     public StringBuilder visit(DWithin candidate, Object o) {
         final StringBuilder sb = toStringBuilder(o);
-        if(true) throw new UnsupportedOperationException("Not supported yet.");
+        final PreparedSpatialFilter prepared = new PreparedSpatialFilter(candidate);
+        
+        if(prepared.swap){
+            sb.append("st_distance(");
+            prepared.property.accept(this, o);
+            sb.append(',');
+            prepared.geometry.accept(this, o);
+            sb.append(',');
+            sb.append(candidate.getDistance());
+            sb.append(')');
+        }else{
+            sb.append("st_dwithin(");
+            prepared.property.accept(this, o);
+            sb.append(',');
+            prepared.geometry.accept(this, o);
+            sb.append(") > ");
+            sb.append(candidate.getDistance());
+        }
+        
         return sb;
     }
 
     @Override
     public StringBuilder visit(Equals candidate, Object o) {
         final StringBuilder sb = toStringBuilder(o);
-        if(true) throw new UnsupportedOperationException("Not supported yet.");
+        final PreparedSpatialFilter prepared = new PreparedSpatialFilter(candidate);
+        sb.append("st_equals(");
+        prepared.property.accept(this, o);
+        sb.append(',');
+        prepared.geometry.accept(this, o);
+        sb.append(')');
         return sb;
     }
 
     @Override
     public StringBuilder visit(Intersects candidate, Object o) {
         final StringBuilder sb = toStringBuilder(o);
-        if(true) throw new UnsupportedOperationException("Not supported yet.");
+        final PreparedSpatialFilter prepared = new PreparedSpatialFilter(candidate);
+        sb.append("st_intersects(");
+        prepared.property.accept(this, o);
+        sb.append(',');
+        prepared.geometry.accept(this, o);
+        sb.append(')');
         return sb;
     }
 
     @Override
     public StringBuilder visit(Overlaps candidate, Object o) {
         final StringBuilder sb = toStringBuilder(o);
-        if(true) throw new UnsupportedOperationException("Not supported yet.");
+        final PreparedSpatialFilter prepared = new PreparedSpatialFilter(candidate);
+        sb.append("st_overlaps(");
+        prepared.property.accept(this, o);
+        sb.append(',');
+        prepared.geometry.accept(this, o);
+        sb.append(')');
         return sb;
     }
 
     @Override
     public StringBuilder visit(Touches candidate, Object o) {
         final StringBuilder sb = toStringBuilder(o);
-        if(true) throw new UnsupportedOperationException("Not supported yet.");
+        final PreparedSpatialFilter prepared = new PreparedSpatialFilter(candidate);
+        sb.append("st_touches(");
+        prepared.property.accept(this, o);
+        sb.append(',');
+        prepared.geometry.accept(this, o);
+        sb.append(')');
         return sb;
     }
 
     @Override
     public StringBuilder visit(Within candidate, Object o) {
         final StringBuilder sb = toStringBuilder(o);
-        if(true) throw new UnsupportedOperationException("Not supported yet.");
+        final PreparedSpatialFilter prepared = new PreparedSpatialFilter(candidate);
+        if(prepared.swap){
+            sb.append("st_contains(");
+        }else{
+            sb.append("st_within(");
+        }
+        prepared.property.accept(this, o);
+        sb.append(',');
+        prepared.geometry.accept(this, o);
+        sb.append(')');
         return sb;
     }
 
+    
+    ////////////////////////////////////////////////////////////////////////////
+    // TEMPORAL filters are not supported //////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+    
     @Override
     public StringBuilder visit(After candidate, Object o) {
-        final StringBuilder sb = toStringBuilder(o);
-        if(true) throw new UnsupportedOperationException("Not supported yet.");
-        return sb;
+        throw new UnsupportedOperationException("Temporal filters not supported.");
     }
 
     @Override
     public StringBuilder visit(AnyInteracts candidate, Object o) {
-        final StringBuilder sb = toStringBuilder(o);
-        if(true) throw new UnsupportedOperationException("Not supported yet.");
-        return sb;
+        throw new UnsupportedOperationException("Temporal filters not supported.");
     }
 
     @Override
     public StringBuilder visit(Before candidate, Object o) {
-        final StringBuilder sb = toStringBuilder(o);
-        if(true) throw new UnsupportedOperationException("Not supported yet.");
-        return sb;
+        throw new UnsupportedOperationException("Temporal filters not supported.");
     }
 
     @Override
     public StringBuilder visit(Begins candidate, Object o) {
-        final StringBuilder sb = toStringBuilder(o);
-        if(true) throw new UnsupportedOperationException("Not supported yet.");
-        return sb;
+        throw new UnsupportedOperationException("Temporal filters not supported.");
     }
 
     @Override
     public StringBuilder visit(BegunBy candidate, Object o) {
-        final StringBuilder sb = toStringBuilder(o);
-        if(true) throw new UnsupportedOperationException("Not supported yet.");
-        return sb;
+        throw new UnsupportedOperationException("Temporal filters not supported.");
     }
 
     @Override
     public StringBuilder visit(During candidate, Object o) {
-        final StringBuilder sb = toStringBuilder(o);
-        if(true) throw new UnsupportedOperationException("Not supported yet.");
-        return sb;
+        throw new UnsupportedOperationException("Temporal filters not supported.");
     }
 
     @Override
     public StringBuilder visit(EndedBy candidate, Object o) {
-        final StringBuilder sb = toStringBuilder(o);
-        if(true) throw new UnsupportedOperationException("Not supported yet.");
-        return sb;
+        throw new UnsupportedOperationException("Temporal filters not supported.");
     }
 
     @Override
     public StringBuilder visit(Ends candidate, Object o) {
-        final StringBuilder sb = toStringBuilder(o);
-        if(true) throw new UnsupportedOperationException("Not supported yet.");
-        return sb;
+        throw new UnsupportedOperationException("Temporal filters not supported.");
     }
 
     @Override
     public StringBuilder visit(Meets candidate, Object o) {
-        final StringBuilder sb = toStringBuilder(o);
-        if(true) throw new UnsupportedOperationException("Not supported yet.");
-        return sb;
+        throw new UnsupportedOperationException("Temporal filters not supported.");
     }
 
     @Override
     public StringBuilder visit(MetBy candidate, Object o) {
-        final StringBuilder sb = toStringBuilder(o);
-        if(true) throw new UnsupportedOperationException("Not supported yet.");
-        return sb;
+        throw new UnsupportedOperationException("Temporal filters not supported.");
     }
 
     @Override
     public StringBuilder visit(OverlappedBy candidate, Object o) {
-        final StringBuilder sb = toStringBuilder(o);
-        if(true) throw new UnsupportedOperationException("Not supported yet.");
-        return sb;
+        throw new UnsupportedOperationException("Temporal filters not supported.");
     }
 
     @Override
     public StringBuilder visit(TContains candidate, Object o) {
-        final StringBuilder sb = toStringBuilder(o);
-        if(true) throw new UnsupportedOperationException("Not supported yet.");
-        return sb;
+        throw new UnsupportedOperationException("Temporal filters not supported.");
     }
 
     @Override
     public StringBuilder visit(TEquals candidate, Object o) {
-        final StringBuilder sb = toStringBuilder(o);
-        if(true) throw new UnsupportedOperationException("Not supported yet.");
-        return sb;
+        throw new UnsupportedOperationException("Temporal filters not supported.");
     }
 
     @Override
     public StringBuilder visit(TOverlaps candidate, Object o) {
-        final StringBuilder sb = toStringBuilder(o);
-        if(true) throw new UnsupportedOperationException("Not supported yet.");
-        return sb;
+        throw new UnsupportedOperationException("Temporal filters not supported.");
     }
 
+    ////////////////////////////////////////////////////////////////////////////
+    // UTILITY METHODS /////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+    
+    
+    private static StringBuilder toStringBuilder(Object candidate){
+        if(candidate instanceof StringBuilder){
+            return (StringBuilder) candidate;
+        }else{
+            throw new RuntimeException("Expected a StringBuilder argument");
+        }
+    }
+    
+    /**
+     * Ensure the given double is not an infinite, doesn't work well with SQL and postgres.
+     * @param candidate
+     * @return double unchanged if not an infinite.
+     */
+    private static double checkInfinites(final double candidate){
+        if(candidate == Double.NEGATIVE_INFINITY){
+            return Double.MIN_VALUE;
+        }else if(candidate == Double.POSITIVE_INFINITY){
+            return Double.MAX_VALUE;
+        }else{
+            return candidate;
+        }
+    }
+    
+    /**
+     * prepare a spatial filter, isolate the field and geometry parts.
+     * Enventually converting it in a geometry.
+     */
+    private class PreparedSpatialFilter{
+        
+        public PropertyName property;
+        public Literal geometry;
+        public boolean swap;
+
+        public PreparedSpatialFilter(final BinarySpatialOperator filter){
+            final Expression exp1 = filter.getExpression1();
+            final Expression exp2 = filter.getExpression2();
+            
+            if(exp1 instanceof PropertyName){
+                swap = false;
+                property = (PropertyName)exp1;
+                geometry = (Literal)exp2;
+            }else{
+                swap = true;
+                property = (PropertyName)exp2;
+                geometry = (Literal)exp1;
+            }
+            
+            //change Envelope in polygon
+            final Object obj = geometry.getValue();
+            if (obj instanceof Envelope) {
+                final Envelope env = (Envelope) obj;
+                final FilterFactory ff = FactoryFinder.getFilterFactory(null);
+                final GeometryFactory gf = new GeometryFactory();
+                final Coordinate[] coords = new Coordinate[5];
+                double minx = checkInfinites(env.getMinimum(0));
+                double maxx = checkInfinites(env.getMaximum(0));
+                double miny = checkInfinites(env.getMinimum(1));
+                double maxy = checkInfinites(env.getMaximum(1));
+
+                coords[0] = new Coordinate(minx,miny);
+                coords[1] = new Coordinate(minx,maxy);
+                coords[2] = new Coordinate(maxx,maxy);
+                coords[3] = new Coordinate(maxx,miny);
+                coords[4] = new Coordinate(minx,miny);
+                final LinearRing ring = gf.createLinearRing(coords);
+                final Geometry geom = gf.createPolygon(ring, new LinearRing[0]);
+                geometry = ff.literal(geom);
+            }
+            
+            //set the current srid, extract it from feature type
+            //requiered when encoding geometry
+            currentsrid = -1;
+            if (featureType != null) {
+                final AttributeDescriptor descriptor = (AttributeDescriptor) property.evaluate(featureType);
+                if (descriptor instanceof GeometryDescriptor) {
+                    currentsrid = (Integer) descriptor.getUserData().get(JDBCFeatureStore.JDBC_NATIVE_SRID);
+                }
+            }
+            
+        }
+        
+    }
+    
 }

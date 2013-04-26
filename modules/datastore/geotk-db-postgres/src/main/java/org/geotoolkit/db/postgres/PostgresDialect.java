@@ -36,10 +36,8 @@ import java.sql.Statement;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.sql.Types;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
@@ -58,7 +56,6 @@ import org.geotoolkit.feature.AttributeTypeBuilder;
 import org.geotoolkit.filter.capability.DefaultArithmeticOperators;
 import org.geotoolkit.filter.capability.DefaultComparisonOperators;
 import org.geotoolkit.filter.capability.DefaultFilterCapabilities;
-import org.geotoolkit.filter.capability.DefaultFunctionName;
 import org.geotoolkit.filter.capability.DefaultFunctions;
 import org.geotoolkit.filter.capability.DefaultIdCapabilities;
 import org.geotoolkit.filter.capability.DefaultOperator;
@@ -68,7 +65,6 @@ import org.geotoolkit.filter.capability.DefaultSpatialOperator;
 import org.geotoolkit.filter.capability.DefaultSpatialOperators;
 import org.geotoolkit.filter.capability.DefaultTemporalCapabilities;
 import org.geotoolkit.filter.capability.DefaultTemporalOperators;
-import org.geotoolkit.filter.visitor.CapabilitiesFilterSplitter;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.storage.DataStoreException;
@@ -370,7 +366,6 @@ public class PostgresDialect extends AbstractSQLDialect{
     }
         
     private final DefaultJDBCFeatureStore featurestore;
-    private final PostgresFilterToSQL filterToSQL = new PostgresFilterToSQL();
     
     //readers
     private final ThreadLocal<WKBAttributeIO> wkbReader = new ThreadLocal<WKBAttributeIO>();
@@ -409,8 +404,8 @@ public class PostgresDialect extends AbstractSQLDialect{
     }
 
     @Override
-    public FilterToSQL getFilterToSQL() {
-        return filterToSQL;
+    public FilterToSQL getFilterToSQL(FeatureType featureType) {
+        return new PostgresFilterToSQL(featureType,getVersion(featurestore.getDatabaseSchema()));
     }
     
     @Override
@@ -527,8 +522,9 @@ public class PostgresDialect extends AbstractSQLDialect{
     ////////////////////////////////////////////////////////////////////////////
     
     @Override
-    public String encodeFilter(Filter filter) {
-        final StringBuilder sb = (StringBuilder)filter.accept(getFilterToSQL(), new StringBuilder());
+    public String encodeFilter(Filter filter, FeatureType type) {
+        final FilterToSQL fts = getFilterToSQL(type);
+        final StringBuilder sb = (StringBuilder)filter.accept(fts, new StringBuilder());
         return sb.toString();
     }
 
@@ -610,7 +606,7 @@ public class PostgresDialect extends AbstractSQLDialect{
     public void encodeValue(StringBuilder sql, Object value, Class type) {
         //turn the value into a literal and use FilterToSQL to encode it
         final Literal literal = featurestore.getFilterFactory().literal(value);
-        literal.accept(filterToSQL, sql);
+        literal.accept(getFilterToSQL(null), sql);
     }
 
     @Override

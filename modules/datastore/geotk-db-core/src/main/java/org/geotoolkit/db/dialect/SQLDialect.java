@@ -46,7 +46,7 @@ public interface SQLDialect {
     
     FilterCapabilities getFilterCapabilities();
     
-    FilterToSQL getFilterToSQL();
+    FilterToSQL getFilterToSQL(FeatureType featureType);
     
     /**
      * Escape sequence for table names.
@@ -84,7 +84,7 @@ public interface SQLDialect {
      * @param filter
      * @return SQL String
      */
-    String encodeFilter(Filter filter);
+    String encodeFilter(Filter filter, FeatureType type);
 
     void encodeColumnName(StringBuilder sql, String name);
 

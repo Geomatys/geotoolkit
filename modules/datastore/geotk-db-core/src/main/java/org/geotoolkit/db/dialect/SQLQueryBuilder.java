@@ -118,7 +118,7 @@ public class SQLQueryBuilder {
         if (filter != null && !Filter.INCLUDE.equals(filter)) {
             //encode filter
             sql.append(" WHERE ");
-            sql.append(dialect.encodeFilter(filter));
+            sql.append(dialect.encodeFilter(filter,featureType));
         }
 
         // sorting
@@ -346,7 +346,7 @@ public class SQLQueryBuilder {
             //replace any PropertyEqualsTo in true ID filters
             filter = (Filter) filter.accept(new FIDFixVisitor(), null);
             sql.append(" ");
-            sql.append(dialect.encodeFilter(filter));
+            sql.append(dialect.encodeFilter(filter,featureType));
         }
 
         return sql.toString();
@@ -364,7 +364,7 @@ public class SQLQueryBuilder {
             //replace any PropertyEqualsTo in true ID filters
             filter = (Filter) filter.accept(new FIDFixVisitor(), null);
             sql.append(" ");
-            sql.append(dialect.encodeFilter(filter));
+            sql.append(dialect.encodeFilter(filter,featureType));
         }
 
         return sql.toString();
