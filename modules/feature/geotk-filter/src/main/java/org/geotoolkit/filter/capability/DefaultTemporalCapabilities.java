@@ -36,9 +36,9 @@ public class DefaultTemporalCapabilities implements TemporalCapabilities{
 
     public DefaultTemporalCapabilities(final TemporalOperand[] operands, final TemporalOperators operators) {
         ensureNonNull("operands", operands);
-        ensureNonNull("spatial operators", operators);
-        if(operands.length == 0){
-            throw new IllegalArgumentException("Operands must not be empty");
+        ensureNonNull("temporal operators", operators);
+        if(operands == null){
+            throw new IllegalArgumentException("Operands must not be null");
         }
 
         this.operands = UnmodifiableArrayList.wrap(operands);

@@ -34,8 +34,8 @@ public class DefaultFunctions implements Functions{
     private final Map<String,FunctionName> functions = new HashMap<String, FunctionName>();
 
     public DefaultFunctions(final FunctionName[] functions) {
-        if(functions == null || functions.length == 0){
-            throw new IllegalArgumentException("Functions must not be null or empty");
+        if(functions == null){
+            throw new IllegalArgumentException("Functions must not be null");
         }
         for(FunctionName fn : functions){
             this.functions.put(fn.getName(), fn);

@@ -480,6 +480,34 @@ public final class FeatureUtilities {
         }
     }
 
+    /**
+     * Reset the property values.
+     * @param candidate 
+     */
+    public static void resetProperty(final Property candidate){
+        final PropertyType type = candidate.getType();
+        final PropertyDescriptor desc = candidate.getDescriptor();
+        
+        if(type instanceof ComplexType){
+            final ComplexType ct = (ComplexType) type;
+            final ComplexAttribute ca = (ComplexAttribute) candidate;
+            final Collection<Property> props = ca.getProperties();
+            props.clear();
+            for(final PropertyDescriptor subDesc : ct.getDescriptors()){
+                for(int i=0,n=subDesc.getMinOccurs();i<n;i++){
+                    final Property prop = defaultProperty(subDesc);
+                    if(prop != null){
+                        props.add(prop);
+                    }
+                }
+            }
+
+        }else if(desc instanceof AttributeDescriptor){
+            candidate.setValue( ((AttributeDescriptor)desc).getDefaultValue() );
+        }
+
+    }
+    
     ////////////////////////////////////////////////////////////////////////////
     // ENCAPSULATION OPERATIONS ////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
