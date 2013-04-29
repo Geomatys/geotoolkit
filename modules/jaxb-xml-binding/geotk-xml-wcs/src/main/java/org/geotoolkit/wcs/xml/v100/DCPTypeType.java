@@ -23,6 +23,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.ows.xml.AbstractDCP;
+import org.geotoolkit.ows.xml.AbstractHTTP;
 
 
 /**
@@ -86,7 +88,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "DCPTypeType", propOrder = {
     "http"
 })
-public class DCPTypeType {
+public class DCPTypeType implements AbstractDCP {
 
     @XmlElement(name = "HTTP", required = true)
     private DCPTypeType.HTTP http;
@@ -108,6 +110,7 @@ public class DCPTypeType {
     /**
      * Gets the value of the http property.
      */
+    @Override
     public DCPTypeType.HTTP getHTTP() {
         return http;
     }
@@ -162,7 +165,7 @@ public class DCPTypeType {
     @XmlType(name = "", propOrder = {
         "getOrPost"
     })
-    public static class HTTP {
+    public static class HTTP implements AbstractHTTP {
 
         @XmlElements({
             @XmlElement(name = "Post", type = DCPTypeType.HTTP.Post.class),
@@ -204,11 +207,26 @@ public class DCPTypeType {
          * Gets the value of the getOrPost property.
          * 
          */
-        public List<Object> getGetOrPost() {
+        public List<Object> getRealGetOrPost() {
             if (getOrPost == null) {
                 getOrPost = new ArrayList<Object>();
             }
             return this.getOrPost;
+        }
+        
+        @Override
+        public List<OnlineResourceType> getGetOrPost() {
+            final List<OnlineResourceType> result = new ArrayList<OnlineResourceType>();
+            if (getOrPost != null) {
+                for (Object o : getOrPost) {
+                    if (o instanceof Get) {
+                        result.add(((Get)o).onlineResource);
+                    } else if (o instanceof Post) {
+                        result.add(((Post)o).onlineResource);
+                    }
+                }
+            }
+            return result;
         }
 
         public void updateURL(final String url) {

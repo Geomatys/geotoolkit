@@ -16,12 +16,17 @@
  */
 package org.geotoolkit.wcs.xml.v100;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.v311.CodeListType;
+import org.geotoolkit.ows.xml.AbstractCodeType;
+import org.geotoolkit.ows.xml.AbstractServiceIdentification;
+import org.geotoolkit.ows.xml.v110.CodeType;
 
 
 /**
@@ -56,7 +61,7 @@ import org.geotoolkit.gml.xml.v311.CodeListType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ServiceType")
-public class ServiceType extends AbstractDescriptionType {
+public class ServiceType extends AbstractDescriptionType implements AbstractServiceIdentification {
 
     @XmlAttribute
     private String version;
@@ -116,8 +121,12 @@ public class ServiceType extends AbstractDescriptionType {
      * Gets the value of the keywords property.
      * 
      */
-    public Keywords getKeywords() {
-        return keywords;
+    @Override
+    public List<Keywords> getKeywords() {
+        if (keywords != null) {
+            return Arrays.asList(keywords);
+        }
+        return null;
     }
 
     /**
@@ -140,19 +149,65 @@ public class ServiceType extends AbstractDescriptionType {
      * Gets the value of the fees property.
      * 
      */
-    public CodeListType getFees() {
+    public CodeListType getFullFees() {
         return fees;
+    }
+    
+    @Override
+    public String getFees() {
+        if (fees != null && !fees.getValue().isEmpty()) {
+            return fees.getValue().get(0);
+        }
+        return null;
     }
     
     /**
      * Gets the value of the acces constraint property.
      * 
      */
-    public CodeListType getAccessConstraints() {
+    public CodeListType getFullAccessConstraints() {
         return accessConstraints;
+    }
+    
+    @Override
+    public List<String> getAccessConstraints() {
+        if (accessConstraints != null) {
+            return accessConstraints.getValue();
+        }
+        return null;
     }
 
     public void setVersion(final String version) {
         this.version = version;
+    }
+
+    @Override
+    public List<String> getServiceTypeVersion() {
+        return Arrays.asList(version);
+    }
+
+    @Override
+    public AbstractCodeType getServiceType() {
+        return new CodeType("WCS");
+    }
+
+    @Override
+    public List<String> getProfile() {
+        return new ArrayList<String>();
+    }
+
+    @Override
+    public void setProfile(List<String> profiles) {
+        // do nothing
+    }
+
+    @Override
+    public String getFirstTitle() {
+        return super.getName();
+    }
+
+    @Override
+    public String getFirstAbstract() {
+        return super.getDescription();
     }
 }

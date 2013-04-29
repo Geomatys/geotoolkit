@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.v311.TimePositionType;
+import org.geotoolkit.wcs.xml.TimeSequence;
 
 
 /**
@@ -54,7 +55,7 @@ import org.geotoolkit.gml.xml.v311.TimePositionType;
 @XmlType(name = "TimeSequenceType", propOrder = {
     "timePositionOrTimePeriod"
 })
-public class TimeSequenceType {
+public class TimeSequenceType implements TimeSequence {
 
     @XmlElements({
         @XmlElement(name = "TimePeriod", type = TimePeriodType.class),
@@ -86,6 +87,14 @@ public class TimeSequenceType {
     public TimeSequenceType(final TimePositionType timePosition) {
         timePositionOrTimePeriod = new ArrayList<Object>();
         timePositionOrTimePeriod.add(timePosition);
+    }
+    
+    public TimeSequenceType(final String timePosition) {
+        timePositionOrTimePeriod = new ArrayList<Object>();
+        if (timePosition != null) {
+            final TimePositionType tp = new TimePositionType(timePosition);
+            timePositionOrTimePeriod.add(tp);
+        }
     }
     
     /**

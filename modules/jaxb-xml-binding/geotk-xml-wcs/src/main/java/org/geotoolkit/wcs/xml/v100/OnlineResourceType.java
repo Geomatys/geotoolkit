@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.ows.xml.AbstractOnlineResourceType;
 
 
 /**
@@ -45,7 +46,7 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "OnlineResourceType")
-public class OnlineResourceType {
+public class OnlineResourceType implements AbstractOnlineResourceType{
 
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     private String type;
@@ -100,6 +101,7 @@ public class OnlineResourceType {
      * Gets the value of the href property.
      * 
      */
+    @Override
     public String getHref() {
         return href;
     }
@@ -108,6 +110,7 @@ public class OnlineResourceType {
      * Gets the value of the href property.
      * 
      */
+    @Override
     public void setHref(final String href) {
         this.href = href;
     }

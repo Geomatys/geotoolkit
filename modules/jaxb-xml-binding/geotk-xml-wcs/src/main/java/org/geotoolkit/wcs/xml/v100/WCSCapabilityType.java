@@ -24,6 +24,9 @@ import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.ows.xml.AbstractDomain;
+import org.geotoolkit.ows.xml.AbstractOperation;
+import org.geotoolkit.ows.xml.AbstractOperationsMetadata;
 
 
 /**
@@ -125,7 +128,7 @@ import javax.xml.bind.annotation.XmlType;
     "exception",
     "vendorSpecificCapabilities"
 })
-public class WCSCapabilityType {
+public class WCSCapabilityType implements AbstractOperationsMetadata {
 
     @XmlElement(name = "Request", required = true)
     private Request request;
@@ -181,6 +184,56 @@ public class WCSCapabilityType {
 
     public void setVersion(final String version) {
         this.version = version;
+    }
+
+    @Override
+    public void updateURL(final String url) {
+        if (request != null) {
+            request.updateURL(url);
+        }
+    }
+
+    @Override
+    public void addConstraint(final AbstractDomain domain) {
+        //do nothing
+    }
+
+    @Override
+    public AbstractOperation getOperation(final String operationName) {
+        if (request != null) {
+            return request.getOperation(operationName);
+        }
+        return null;
+    }
+
+    @Override
+    public void removeOperation(String operationName) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public AbstractDomain getConstraint(String name) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void removeConstraint(String name) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Object getExtendedCapabilities() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void setExtendedCapabilities(Object extendedCapabilities) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public AbstractOperationsMetadata clone() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     /**

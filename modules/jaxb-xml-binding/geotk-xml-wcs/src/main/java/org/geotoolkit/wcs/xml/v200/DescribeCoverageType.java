@@ -60,6 +60,14 @@ public class DescribeCoverageType extends RequestBaseType implements DescribeCov
     @XmlSchemaType(name = "NCName")
     private List<String> coverageId;
 
+    public DescribeCoverageType(){
+        
+    }
+    
+    public DescribeCoverageType(final List<String> coverageId){
+        this.coverageId = coverageId;
+    }
+    
     /**
      * Unordered list of identifiers of desired coverages. A client can obtain identifiers by a prior GetCapabilities request, or from a third-party source. Gets the value of the coverageId property.
      * 
