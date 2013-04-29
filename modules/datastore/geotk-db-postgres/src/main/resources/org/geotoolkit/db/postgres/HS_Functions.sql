@@ -280,8 +280,7 @@ begin
 	AND KCU.TABLE_NAME = "HS_ExtractTableIdentifier"("tableName")
 	AND TC.CONSTRAINT_TYPE = 'PRIMARY KEY'
 	ORDER BY ORDINAL_POSITION loop
-		c := val;
-		return next;
+		return next val;
 	end loop;
 	
 end;$BODY$
@@ -408,8 +407,13 @@ end;$BODY$
 
 CREATE OR REPLACE FUNCTION "HS_ExtractTableIdentifier"("tableName" character varying)
   RETURNS character varying AS
-$BODY$begin
-	return "tableName";
+$BODY$declare 
+	tab text[];
+	tLength integer;
+begin
+	tab = regexp_split_to_array("tableName", '\.');
+	tLength = array_Upper(tab, 1);
+	return tab[tLength];
 end;$BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
@@ -422,15 +426,15 @@ CREATE OR REPLACE FUNCTION "HS_ExtractSchemaIdentifier"("tableName" character va
   RETURNS character varying AS
 $BODY$declare
 	tab text[];
-	tLenght integer;
+	tLength integer;
 	result record;
 begin 
 	tab = regexp_split_to_array("tableName", '\.');
-	tLenght = array_Upper(tab, 1);
-	if tLenght > 1 then 
-		return tab[tLenght-1];
+	tLength = array_Upper(tab, 1);
+	if tLength > 1 then 
+		return tab[tLength-1];
 	else
-		select table_schema into strict result from information_schema.tables where table_name = "tableName"; 
+		select table_schema into strict result from information_schema.tables where table_name = tab[tLength]; 
 		return result."table_schema";
 	end if;
 end;$BODY$
@@ -655,7 +659,7 @@ begin
 		if i > 1 then 
 			result = result || ', ';
 		end if;
-		select data_type into strict datatypecolumn from information_schema.columns where table_name = "tableName"  and column_name = "trackedColumns"[i];
+		select data_type into strict datatypecolumn from information_schema.columns where table_name = "HS_ExtractTableIdentifier"("tableName")  and column_name = "trackedColumns"[i];
 		result = result || "HS_ConstructColumnIdentifier"("trackedColumns"[i]) || datatypecolumn."data_type";
 		i = i+1;
 	end loop;
