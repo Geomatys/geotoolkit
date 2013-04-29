@@ -889,7 +889,7 @@ end;$BODY$
 CREATE OR REPLACE FUNCTION "HS_ConstructTableIdentifier"("tableName" character varying)
   RETURNS character varying AS
 $BODY$begin
-	return '"'||"HS_ConstructIdentifier"('HS_TBL_',"tableName",'')||'"';
+	return "HS_ConstructIdentifier"('HS_TBL_',"tableName",'');
 end;$BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
@@ -957,7 +957,7 @@ begin
 	tmpAllIdentifierColumnsType = "HS_CreateCommaSeparatedTrackedColumnAndTypeList"("tableName", "trackedColumns");
 	tmpAllIdentifierColumnsOpt  = "HS_CreateCommaSeparatedIdentifierColumnList"("tableName", "trackedColumns", ' WITH OPTIONS NOT NULL');
 		
-	stmt = 'CREATE TABLE ' || "HS_ConstructTableIdentifier"("tableName") ||'( "HS_SEQ" serial PRIMARY KEY, '||
+	stmt = 'CREATE TABLE ' ||'"'|| "HS_ConstructTableIdentifier"("tableName") ||'"'||'( "HS_SEQ" serial PRIMARY KEY, '||
 	tmpAllIdentifierColumnsType || ', "HS_Begin" timestamp, "HS_End" timestamp )';
 	EXECUTE stmt;
 	return stmt;
@@ -979,7 +979,7 @@ begin
 	tmpAllTrackedColumns  = "HS_CreateCommaSeparatedTrackedColumnList"("trackedColumns", NULL);
 	-- Construct an INSERT statement
 	--in order to insert all rows in the tracked table into the history table.
-	stmt ='INSERT INTO ' || "HS_ConstructTableIdentifier"("tableName")||
+	stmt ='INSERT INTO ' ||'"'|| "HS_ConstructTableIdentifier"("tableName")||'"'||
 	' (' || tmpAllTrackedColumns || ', "HS_Begin", "HS_End")'||
 	' SELECT '||tmpAllTrackedColumns || 
 	' , "HS_GetTransactionTimestamp"()'||', null '||
@@ -1008,7 +1008,7 @@ begin
 	tmpAllTrackedColumns = "HS_CreateCommaSeparatedTrackedColumnList"("trackedColumns", NULL);
 	tmpAllTrackedColumns_new = "HS_CreateCommaSeparatedTrackedColumnList"("trackedColumns", 'NEW.');
 	trigger_name = "HS_ConstructInsTriggerIdentifier"("tableName");
-	hs_table_name = "HS_ConstructTableIdentifier"("tableName");
+	hs_table_name = '"'||"HS_ConstructTableIdentifier"("tableName")||'"'||;
 
 	stmt_fonc = 'CREATE OR REPLACE FUNCTION'|| ' "'||trigger_name||'"'||
 		    '() RETURNS trigger AS $'||trigger_name||'$
@@ -1050,7 +1050,7 @@ $BODY$declare
 	
 
 begin
-	hs_table_name = "HS_ConstructTableIdentifier"("tableName");
+	hs_table_name = '"'||"HS_ConstructTableIdentifier"("tableName")||'"'||;
 	selfJoin = "HS_CreateIdentifierColumnSelfJoinCondition"("tableName", "trackedColumns", hs_table_name||'.', 'NEW.');
 	multiCondition = "HS_CreateIdentifierColumnSelfJoinAndTestCondition"("trackedColumns", 'OLD.', 'NEW.', 'IS DISTINCT FROM', 'OR');
 	tmpAllTrackedColumns = "HS_CreateCommaSeparatedTrackedColumnList"("trackedColumns", NULL);
@@ -1102,7 +1102,7 @@ $BODY$DECLARE
 	tmpAllTrackedColumns_new character varying;
 	selfJoin character varying;
 begin
-	hs_table_name = "HS_ConstructTableIdentifier"("tableName");
+	hs_table_name = '"'||"HS_ConstructTableIdentifier"("tableName")||'"'||;
 	trigger_name = "HS_ConstructDelTriggerIdentifier"("tableName");
 	selfJoin = "HS_CreateIdentifierColumnSelfJoinCondition"("tableName", "trackedColumns", hs_table_name||'.', 'OLD.');
 	stmt_fonc = 'CREATE OR REPLACE FUNCTION'|| ' "'||trigger_name||'"'||
