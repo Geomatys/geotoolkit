@@ -31,7 +31,7 @@ public interface VersionControl extends VersionHistory {
      * 
      * @return true if the versioning is enable.
      */
-    boolean isVersioned();
+    boolean isVersioned() throws VersioningException;
     
     /**
      * @throws VersioningException 
