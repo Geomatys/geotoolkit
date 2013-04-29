@@ -21,7 +21,11 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import org.geotoolkit.data.query.DefaultQueryCapabilities;
+import org.geotoolkit.data.query.Query;
+import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.db.DefaultJDBCFeatureStore;
+import static org.geotoolkit.db.JDBCFeatureStore.CUSTOM_SQL;
 import org.geotoolkit.db.JDBCFeatureStoreUtilities;
 import org.geotoolkit.internal.sql.ScriptRunner;
 import org.geotoolkit.storage.DataStoreException;
@@ -38,13 +42,19 @@ import org.opengis.parameter.ParameterValueGroup;
  */
 public class PostgresFeatureStore extends DefaultJDBCFeatureStore{
     
+    private static final QueryCapabilities PG_CAPA = new DefaultQueryCapabilities(false, true, new String[]{Query.GEOTK_QOM, CUSTOM_SQL});
+    
     //historisation informations
     private Boolean hasHSFunctions;
 
     public PostgresFeatureStore(ParameterValueGroup params, String factoryId) {
         super(params, factoryId);
     }
-    
+
+    @Override
+    public QueryCapabilities getQueryCapabilities() {
+        return PG_CAPA;
+    }
     
     ////////////////////////////////////////////////////////////////////////////
     // Versioning control //////////////////////////////////////////////////////
@@ -101,6 +111,27 @@ public class PostgresFeatureStore extends DefaultJDBCFeatureStore{
             cnx = getDataSource().getConnection();
             final ScriptRunner scriptRunner = new ScriptRunner(cnx);
             scriptRunner.run(PostgresFeatureStore.class.getResourceAsStream("/org/geotoolkit/db/postgres/HS_Functions.sql"));
+        }catch(IOException ex){
+            throw new VersioningException(ex.getMessage(),ex);
+        }catch(SQLException ex){
+            throw new VersioningException(ex.getMessage(),ex);
+        }finally{
+            JDBCFeatureStoreUtilities.closeSafe(getLogger(), cnx);
+        }
+    }
+    
+    /**
+     * Uninstall the ISO-13249:7 History functions.
+     * @throws VersioningException 
+     */
+    public synchronized void dropHSFunctions() throws VersioningException {
+        hasHSFunctions = null;
+        
+        Connection cnx = null;
+        try{
+            cnx = getDataSource().getConnection();
+            final ScriptRunner scriptRunner = new ScriptRunner(cnx);
+            scriptRunner.run(PostgresFeatureStore.class.getResourceAsStream("/org/geotoolkit/db/postgres/HS_DropFunctions.sql"));
         }catch(IOException ex){
             throw new VersioningException(ex.getMessage(),ex);
         }catch(SQLException ex){

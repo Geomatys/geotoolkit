@@ -326,7 +326,7 @@ public class PostgresFeatureStoreTest {
         
         final Feature feature = FeatureUtilities.defaultFeature(resType, "0");
         feature.getProperty("boolean").setValue(new boolean[]{true,false,true});
-        feature.getProperty("byte").setValue(new byte[]{3,6,9});
+        feature.getProperty("byte").setValue(new short[]{3,6,9});
         feature.getProperty("short").setValue(new short[]{-5,12,-50});
         feature.getProperty("integer").setValue(new int[]{123,456,789});
         feature.getProperty("long").setValue(new long[]{111l,222l,333l});
