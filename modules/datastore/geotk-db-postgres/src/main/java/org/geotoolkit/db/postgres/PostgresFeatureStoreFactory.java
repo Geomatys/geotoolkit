@@ -30,6 +30,7 @@ import org.opengis.metadata.Identifier;
 import org.opengis.metadata.identification.Identification;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
+import org.opengis.parameter.ParameterValueGroup;
 
 /**
  * PostgreSQL/PostGIS  feature store factory.
@@ -99,6 +100,12 @@ public class PostgresFeatureStoreFactory extends AbstractJDBCFeatureStoreFactory
     @Override
     protected String getValidationQuery() {
         return "select now()";
+    }
+
+    @Override
+    protected DefaultJDBCFeatureStore toFeatureStore(ParameterValueGroup params, String factoryId) {
+        //add versioning support
+        return new PostgresFeatureStore(params, factoryId);
     }
 
 }

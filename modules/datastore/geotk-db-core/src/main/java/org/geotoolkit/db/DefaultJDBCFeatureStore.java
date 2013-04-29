@@ -103,7 +103,7 @@ public class DefaultJDBCFeatureStore extends AbstractFeatureStore implements JDB
     //number of records to retrieve with each db call.
     private final int fetchSize;
     private SQLQueryBuilder queryBuilder;
-    
+        
     
     public DefaultJDBCFeatureStore(final ParameterValueGroup params,final String factoryId){
         super(params);
@@ -515,7 +515,7 @@ public class DefaultJDBCFeatureStore extends AbstractFeatureStore implements JDB
     
     @Override
     public void refreshMetaModel() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        dbmodel.clearCache();
     }
     
     ////////////////////////////////////////////////////////////////////////////
@@ -631,7 +631,7 @@ public class DefaultJDBCFeatureStore extends AbstractFeatureStore implements JDB
             JDBCFeatureStoreUtilities.closeSafe(getLogger(),cx,stmt,null);
         }
     }
-    
+        
     ////////////////////////////////////////////////////////////////////////////
     // Fallback on reader/write iterator methods ///////////////////////////////
     ////////////////////////////////////////////////////////////////////////////

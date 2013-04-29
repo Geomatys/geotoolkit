@@ -129,7 +129,7 @@ public abstract class AbstractJDBCFeatureStoreFactory extends AbstractFeatureSto
             namespace = "http://geotoolkit.org";
         }
 
-        final DefaultJDBCFeatureStore featureStore = new DefaultJDBCFeatureStore(params,
+        final DefaultJDBCFeatureStore featureStore = toFeatureStore(params,
                 getIdentification().getCitation().getIdentifiers().iterator().next().getCode());
 
         // datasource
@@ -148,6 +148,9 @@ public abstract class AbstractJDBCFeatureStoreFactory extends AbstractFeatureSto
         return featureStore;
     }
 
+    protected DefaultJDBCFeatureStore toFeatureStore(final ParameterValueGroup params,String factoryId){
+        return new DefaultJDBCFeatureStore(params,factoryId);
+    }
 
     @Override
     public FeatureStore create(final ParameterValueGroup params) throws DataStoreException {
