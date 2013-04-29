@@ -18,6 +18,7 @@
 
 package org.geotoolkit.wcs.xml;
 
+import java.util.ArrayList;
 import java.util.List;
 import org.geotoolkit.ows.xml.AbstractOperationsMetadata;
 import org.geotoolkit.ows.xml.AbstractServiceIdentification;
@@ -33,6 +34,64 @@ import org.geotoolkit.ows.xml.Sections;
  */
 public class WCSXmlFactory {
 
+    public static CoverageInfo createCoverageInfo(final String version, final String identifier, final String title, 
+            final String _abstract, final Object bbox) {
+        if ("1.1.1".equals(version)) {
+            if (bbox != null && !(bbox instanceof org.geotoolkit.ows.xml.v110.WGS84BoundingBoxType)) {
+                throw new IllegalArgumentException("unexpected object version for bbox element");
+            }
+            return new org.geotoolkit.wcs.xml.v111.CoverageSummaryType(identifier, title, _abstract, 
+                                                                      (org.geotoolkit.ows.xml.v110.WGS84BoundingBoxType)bbox);
+        } else if ("1.0.0".equals(version)) {
+            if (bbox != null && !(bbox instanceof org.geotoolkit.wcs.xml.v100.LonLatEnvelopeType)) {
+                throw new IllegalArgumentException("unexpected object version for bbox element");
+            }
+            return new org.geotoolkit.wcs.xml.v100.CoverageOfferingBriefType(identifier, title, _abstract, 
+                                                                      (org.geotoolkit.wcs.xml.v100.LonLatEnvelopeType)bbox);
+        } else if ("2.0.0".equals(version)) {
+            if (bbox != null && !(bbox instanceof org.geotoolkit.ows.xml.v200.WGS84BoundingBoxType)) {
+                throw new IllegalArgumentException("unexpected object version for bbox element");
+            }
+            return new org.geotoolkit.wcs.xml.v200.CoverageSummaryType(identifier, title, _abstract, 
+                                                                      (org.geotoolkit.ows.xml.v200.WGS84BoundingBoxType)bbox);
+        } else {
+            throw new IllegalArgumentException("unsupported version:" + version);
+        }
+    }
+    
+    public static Content createContent(final String version, final List<CoverageInfo> coverageinfos) {
+        if ("1.1.1".equals(version)) {
+            final List<org.geotoolkit.wcs.xml.v111.CoverageSummaryType> cov111 = new ArrayList<org.geotoolkit.wcs.xml.v111.CoverageSummaryType>();
+            for (CoverageInfo c : coverageinfos) {
+                if (!(c instanceof org.geotoolkit.wcs.xml.v111.CoverageSummaryType)) {
+                    throw new IllegalArgumentException("unexpected object version for coverageInfo element");
+                }
+                cov111.add((org.geotoolkit.wcs.xml.v111.CoverageSummaryType)c);
+            }
+            return new org.geotoolkit.wcs.xml.v111.Contents(cov111, null, null, null);
+        } else if ("1.0.0".equals(version)) {
+            final List<org.geotoolkit.wcs.xml.v100.CoverageOfferingBriefType> cov100 = new ArrayList<org.geotoolkit.wcs.xml.v100.CoverageOfferingBriefType>();
+            for (CoverageInfo c : coverageinfos) {
+                if (!(c instanceof org.geotoolkit.wcs.xml.v100.CoverageOfferingBriefType)) {
+                    throw new IllegalArgumentException("unexpected object version for coverageInfo element");
+                }
+                cov100.add((org.geotoolkit.wcs.xml.v100.CoverageOfferingBriefType)c);
+            }
+            return new org.geotoolkit.wcs.xml.v100.ContentMetadata(cov100);
+        } else if ("2.0.0".equals(version)) {
+            final List<org.geotoolkit.wcs.xml.v200.CoverageSummaryType> cov200 = new ArrayList<org.geotoolkit.wcs.xml.v200.CoverageSummaryType>();
+            for (CoverageInfo c : coverageinfos) {
+                if (!(c instanceof org.geotoolkit.wcs.xml.v200.CoverageSummaryType)) {
+                    throw new IllegalArgumentException("unexpected object version for coverageInfo element");
+                }
+                cov200.add((org.geotoolkit.wcs.xml.v200.CoverageSummaryType)c);
+            }
+            return new org.geotoolkit.wcs.xml.v200.ContentsType(cov200);
+        } else {
+            throw new IllegalArgumentException("unsupported version:" + version);
+        }
+    }
+    
     public static DescribeCoverage createDescribeCoverage(final String version, final List<String> coverage) {
         if ("1.1.1".equals(version)) {
             return new org.geotoolkit.wcs.xml.v111.DescribeCoverageType(coverage);
@@ -40,6 +99,30 @@ public class WCSXmlFactory {
             return new org.geotoolkit.wcs.xml.v100.DescribeCoverageType(coverage);
         } else if ("2.0.0".equals(version)) {
             return new org.geotoolkit.wcs.xml.v200.DescribeCoverageType(coverage);
+        } else {
+            throw new IllegalArgumentException("unsupported version:" + version);
+        }
+    }
+    
+    public static DescribeCoverageResponse createDescribeCoverageResponse(final String version, final List<CoverageInfo> coverageinfos) {
+        if ("1.1.1".equals(version)) {
+            final List<org.geotoolkit.wcs.xml.v111.CoverageDescriptionType> cov111 = new ArrayList<org.geotoolkit.wcs.xml.v111.CoverageDescriptionType>();
+            for (CoverageInfo c : coverageinfos) {
+                if (!(c instanceof org.geotoolkit.wcs.xml.v111.CoverageDescriptionType)) {
+                    throw new IllegalArgumentException("unexpected object version for coverageInfo element");
+                }
+                cov111.add((org.geotoolkit.wcs.xml.v111.CoverageDescriptionType)c);
+            }
+            return new org.geotoolkit.wcs.xml.v111.CoverageDescriptions(cov111);
+        } else if ("1.0.0".equals(version)) {
+            final List<org.geotoolkit.wcs.xml.v100.CoverageOfferingType> cov100 = new ArrayList<org.geotoolkit.wcs.xml.v100.CoverageOfferingType>();
+            for (CoverageInfo c : coverageinfos) {
+                if (!(c instanceof org.geotoolkit.wcs.xml.v100.CoverageOfferingType)) {
+                    throw new IllegalArgumentException("unexpected object version for coverageInfo element");
+                }
+                cov100.add((org.geotoolkit.wcs.xml.v100.CoverageOfferingType)c);
+            }
+            return new org.geotoolkit.wcs.xml.v100.CoverageDescription(cov100, "1.0.0");
         } else {
             throw new IllegalArgumentException("unsupported version:" + version);
         }
@@ -137,7 +220,8 @@ public class WCSXmlFactory {
     
     public static GetCapabilitiesResponse createCapabilitiesResponse(final String version, final AbstractServiceIdentification si,
             final AbstractServiceProvider sp, final AbstractOperationsMetadata om, final Content cont, final String updateSequence) {
-        if ("1.1.1".equals(version) || "1.0.0".equals(version)) {
+        
+        if ("1.1.1".equals(version)) {
             if (si != null && !(si instanceof org.geotoolkit.ows.xml.v110.ServiceIdentification)) {
                 throw new IllegalArgumentException("unexpected object version for ServiceIdentification element");
             }
@@ -147,6 +231,28 @@ public class WCSXmlFactory {
             if (om != null && !(om instanceof org.geotoolkit.ows.xml.v110.OperationsMetadata)) {
                 throw new IllegalArgumentException("unexpected object version for OperationsMetadata element");
             }
+            if (cont != null && !(cont instanceof org.geotoolkit.wcs.xml.v111.Contents)) {
+                throw new IllegalArgumentException("unexpected object version for Contents element");
+            }
+            return new org.geotoolkit.wcs.xml.v111.Capabilities((org.geotoolkit.ows.xml.v110.ServiceIdentification)si,
+                                                                (org.geotoolkit.ows.xml.v110.ServiceProvider)sp,
+                                                                (org.geotoolkit.ows.xml.v110.OperationsMetadata)om,
+                                                                version, updateSequence,
+                                                                (org.geotoolkit.wcs.xml.v111.Contents)cont);
+        } else if ("1.0.0".equals(version)) {
+            if (si != null && !(si instanceof org.geotoolkit.wcs.xml.v100.ServiceType)) {
+                throw new IllegalArgumentException("unexpected object version for ServiceIdentification element");
+            }
+            if (om != null && !(om instanceof org.geotoolkit.wcs.xml.v100.WCSCapabilityType)) {
+                throw new IllegalArgumentException("unexpected object version for ServiceIdentification element");
+            }
+            if (cont != null && !(cont instanceof org.geotoolkit.wcs.xml.v100.ContentMetadata)) {
+                throw new IllegalArgumentException("unexpected object version for Contents element");
+            }
+            return new org.geotoolkit.wcs.xml.v100.WCSCapabilitiesType((org.geotoolkit.wcs.xml.v100.ServiceType)si,
+                                                                       (org.geotoolkit.wcs.xml.v100.WCSCapabilityType)om,
+                                                                       (org.geotoolkit.wcs.xml.v100.ContentMetadata)cont,
+                                                                       updateSequence);
         } else if ("2.0.0".equals(version)) {
             if (si != null && !(si instanceof org.geotoolkit.ows.xml.v200.ServiceIdentification)) {
             throw new IllegalArgumentException("unexpected object version for ServiceIdentification element");
@@ -157,26 +263,6 @@ public class WCSXmlFactory {
             if (om != null && !(om instanceof org.geotoolkit.ows.xml.v200.OperationsMetadata)) {
                 throw new IllegalArgumentException("unexpected object version for OperationsMetadata element");
             }
-        }
-        
-        if ("1.1.1".equals(version)) {
-            if (cont != null && !(cont instanceof org.geotoolkit.wcs.xml.v111.Contents)) {
-                throw new IllegalArgumentException("unexpected object version for Contents element");
-            }
-            return new org.geotoolkit.wcs.xml.v111.Capabilities((org.geotoolkit.ows.xml.v110.ServiceIdentification)si,
-                                                                (org.geotoolkit.ows.xml.v110.ServiceProvider)sp,
-                                                                (org.geotoolkit.ows.xml.v110.OperationsMetadata)om,
-                                                                version, updateSequence,
-                                                                (org.geotoolkit.wcs.xml.v111.Contents)cont);
-        } else if ("1.0.0".equals(version)) {
-            if (cont != null && !(cont instanceof org.geotoolkit.wcs.xml.v100.ContentMetadata)) {
-                throw new IllegalArgumentException("unexpected object version for Contents element");
-            }
-            return new org.geotoolkit.wcs.xml.v100.WCSCapabilitiesType(null,
-                                                                       null,
-                                                                       (org.geotoolkit.wcs.xml.v100.ContentMetadata)cont,
-                                                                       updateSequence);
-        } else if ("2.0.0".equals(version)) {
             if (cont != null && !(cont instanceof org.geotoolkit.wcs.xml.v200.ContentsType)) {
                 throw new IllegalArgumentException("unexpected object version for Contents element");
             }

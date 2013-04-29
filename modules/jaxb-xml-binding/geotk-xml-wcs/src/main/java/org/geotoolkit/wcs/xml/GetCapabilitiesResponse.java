@@ -17,6 +17,9 @@
 package org.geotoolkit.wcs.xml;
 
 import org.geotoolkit.ows.xml.AbstractCapabilitiesCore;
+import org.geotoolkit.ows.xml.AbstractOperationsMetadata;
+import org.geotoolkit.ows.xml.AbstractServiceIdentification;
+import org.geotoolkit.ows.xml.AbstractServiceProvider;
 
 /**
  *
@@ -25,6 +28,12 @@ import org.geotoolkit.ows.xml.AbstractCapabilitiesCore;
  */
 public interface GetCapabilitiesResponse extends AbstractCapabilitiesCore {
 
+    AbstractOperationsMetadata getOperationsMetadata();
+    
+    AbstractServiceIdentification getServiceIdentification();
+    
+    AbstractServiceProvider getServiceProvider();
+    
     Content getContents();
     
     String getUpdateSequence();

@@ -57,6 +57,28 @@ public class LanguageStringType {
     private String lang;
 
     /**
+     * Empty constructor used by JAXB.
+     */
+    LanguageStringType(){
+    }
+    
+    /**
+     * Build a new String in the specified language.
+     */
+    public LanguageStringType(final String value, final String lang){
+        this.lang  = lang;
+        this.value = value;
+    }
+    
+    /**
+     * Build a new String without specifying the language.
+     */
+    public LanguageStringType(final String value){
+        this.value = value;
+    }
+    
+    
+    /**
      * Gets the value of the value property.
      * 
      * @return

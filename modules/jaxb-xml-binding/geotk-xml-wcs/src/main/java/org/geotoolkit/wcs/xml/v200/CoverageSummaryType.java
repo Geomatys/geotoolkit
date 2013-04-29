@@ -87,6 +87,19 @@ public class CoverageSummaryType extends DescriptionType  implements CoverageInf
     @XmlElementRef(name = "Metadata", namespace = "http://www.opengis.net/ows/2.0", type = JAXBElement.class)
     private List<JAXBElement<? extends MetadataType>> metadata;
 
+    public CoverageSummaryType() {
+        
+    }
+    
+    public CoverageSummaryType(final String identifier, final String title, final String _abstract, final WGS84BoundingBoxType bbox) {
+        super(title, _abstract, null);
+        if (bbox != null) {
+            this.wgs84BoundingBox = new ArrayList<WGS84BoundingBoxType>();
+            this.wgs84BoundingBox.add(bbox);
+        }
+        this.coverageId = identifier;
+                
+    }
     /**
      * Gets the value of the wgs84BoundingBox property.
      */
@@ -201,6 +214,16 @@ public class CoverageSummaryType extends DescriptionType  implements CoverageInf
         return this.metadata;
     }
 
+    @Override
+    public void setMetadata(final String href) {
+        if (href != null) {
+            this.metadata = new ArrayList<JAXBElement<? extends MetadataType>>();
+            final org.geotoolkit.ows.xml.v200.ObjectFactory factory = new org.geotoolkit.ows.xml.v200.ObjectFactory();
+            
+            this.metadata.add(factory.createMetadata(new MetadataType(href)));
+        }
+    }
+    
     @Override
     public Envelope getLonLatEnvelope() {
         //TODO

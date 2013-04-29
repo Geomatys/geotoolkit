@@ -95,6 +95,10 @@ public class MetadataType implements AbstractMetadata {
     public MetadataType() {
 
     }
+    
+    public MetadataType(final String href) {
+        this.href = href;
+    }
 
     public MetadataType(final AbstractMetadata that) {
         if (that != null) {

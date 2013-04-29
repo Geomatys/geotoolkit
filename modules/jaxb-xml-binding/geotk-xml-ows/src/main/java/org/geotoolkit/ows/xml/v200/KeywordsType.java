@@ -63,6 +63,54 @@ public class KeywordsType implements AbstractKeywords {
     private CodeType type;
 
     /**
+     * Empty constructor used by JAXB.
+     */
+    KeywordsType(){
+    }
+
+    /**
+     * Build a new list of keywords.
+     */
+    public KeywordsType(final List<String> keyword){
+        this.keyword = new ArrayList<LanguageStringType>();
+        if (keyword != null) {
+            for (String k : keyword){
+                this.keyword.add(new LanguageStringType(k));
+            }
+        }
+    }
+
+    /**
+     * Build a new list of keywords.
+     */
+    public KeywordsType(final List<LanguageStringType> keyword, final CodeType type){
+        this.keyword = keyword;
+        this.type    = type;
+    }
+    
+    /**
+     * Build a simple list of keywords without type.
+     * all the element of the list are in the parameters. 
+     */
+    public KeywordsType(final LanguageStringType... keywords){
+        this.keyword = new ArrayList<LanguageStringType>();
+        for (LanguageStringType element: keywords){
+            keyword.add(element);
+        }
+    }
+    
+    /**
+     * Build a simple list of keywords without type.
+     * all the element of the list are in the parameters. 
+     */
+    public KeywordsType(final String... keywords){
+        this.keyword = new ArrayList<LanguageStringType>();
+        for (String element: keywords){
+            keyword.add(new LanguageStringType(element));
+        }
+    }
+    
+    /**
      * Gets the value of the keyword property.
      * 
      */

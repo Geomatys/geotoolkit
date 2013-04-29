@@ -60,6 +60,14 @@ public class ContentsType extends ContentsBaseType implements Content {
     @XmlElement(name = "Extension")
     private ExtensionType extension;
 
+    public ContentsType() {
+        
+    }
+    
+    public ContentsType(final List<CoverageSummaryType> coverageSummary) {
+        this.coverageSummary = coverageSummary;
+    }
+    
     /**
      * Gets the value of the coverageSummary property.
      * 

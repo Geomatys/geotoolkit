@@ -152,6 +152,7 @@ public class CoverageSummaryType extends DescriptionType implements CoverageInfo
         return null;
     }
 
+    @Override
     public void setMetadata(final String href) {
         if (href != null) {
             setMetadata(new MetadataType(href));

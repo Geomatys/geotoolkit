@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlRootElement;
+import org.opengis.metadata.extent.GeographicBoundingBox;
 
 
 /**
@@ -63,5 +64,12 @@ public class WGS84BoundingBoxType extends BoundingBoxType {
     public WGS84BoundingBoxType(final String crsName, final double minx, final double miny, final double maxx, final double maxy){
         super(crsName, minx, miny, maxx, maxy);
     }
-
+    
+    public WGS84BoundingBoxType(final GeographicBoundingBox inputGeoBox){
+        super(null, 
+             inputGeoBox.getWestBoundLongitude(),
+             inputGeoBox.getSouthBoundLatitude(),
+             inputGeoBox.getEastBoundLongitude(),
+             inputGeoBox.getNorthBoundLatitude());
+    }
 }

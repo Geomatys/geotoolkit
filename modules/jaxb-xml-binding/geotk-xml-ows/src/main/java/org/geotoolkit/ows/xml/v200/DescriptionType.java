@@ -83,6 +83,50 @@ public class DescriptionType implements AbstractDescription {
     private List<KeywordsType> keywords;
 
     /**
+     * An empty constructor used by JAXB.
+     */
+    protected DescriptionType() {
+    }
+    
+    public DescriptionType(final String title,  final String _abstract,
+            final List<String> keywords) {
+        if (title != null) {
+            this.title = new ArrayList<LanguageStringType>();
+            this.title.add(new LanguageStringType(title));
+        }
+        if (_abstract != null) {
+            this._abstract = new ArrayList<LanguageStringType>();
+            this._abstract.add(new LanguageStringType(_abstract));
+        }
+        if (keywords != null) {
+            this.keywords = new ArrayList<KeywordsType>();
+            this.keywords.add(new KeywordsType(keywords));
+        }
+    }
+    
+    /**
+     * Build a new DescriptionType (full version).
+     */
+    public DescriptionType(final List<LanguageStringType> title,  final List<LanguageStringType> _abstract,
+            final List<KeywordsType> keywords) {
+        this._abstract =  _abstract;
+        this.keywords  = keywords;
+        this.title     = title;
+    }
+    
+     /**
+     * Build a new DescriptionType (full version).
+     */
+    public DescriptionType(final LanguageStringType title, final LanguageStringType _abstract, final KeywordsType keywords) {
+        this._abstract = new ArrayList<LanguageStringType>();
+        this._abstract.add(_abstract);
+        this.keywords  = new ArrayList<KeywordsType>();
+        this.keywords.add(keywords);
+        this.title     = new ArrayList<LanguageStringType>();
+        this.title.add(title);
+    }
+    
+    /**
      * Gets the value of the title property.
      * 
      */
@@ -101,6 +145,28 @@ public class DescriptionType implements AbstractDescription {
         return null;
     }
 
+    public void setTitle(final List<LanguageStringType> titles) {
+        this.title = titles;
+    }
+
+    public void setTitle(final LanguageStringType title) {
+        if (this.title == null) {
+            this.title = new ArrayList<LanguageStringType>();
+        }
+        if (title != null) {
+            this.title.add(title);
+        }
+    }
+
+    public void setTitle(final String title) {
+        if (this.title == null) {
+            this.title = new ArrayList<LanguageStringType>();
+        }
+        if (title != null) {
+            this.title.add(new LanguageStringType(title));
+        }
+    }
+    
     /**
      * Gets the value of the abstract property.
      * 
@@ -120,6 +186,28 @@ public class DescriptionType implements AbstractDescription {
         return null;
     }
 
+    public void setAbstract(final List<LanguageStringType> abstracts) {
+        this._abstract = abstracts;
+    }
+
+    public void setAbstract(final LanguageStringType _abstract) {
+        if (this._abstract == null) {
+            this._abstract = new ArrayList<LanguageStringType>();
+        }
+        if (_abstract != null) {
+            this._abstract.add(_abstract);
+        }
+    }
+
+    public void setAbstract(final String _abstract) {
+        if (this._abstract == null) {
+            this._abstract = new ArrayList<LanguageStringType>();
+        }
+        if (_abstract != null) {
+            this._abstract.add(new LanguageStringType(_abstract));
+        }
+    }
+
     /**
      * Gets the value of the keywords property.
      * 
@@ -132,4 +220,17 @@ public class DescriptionType implements AbstractDescription {
         return this.keywords;
     }
 
+    /**
+     * Gets the value of the keywords property.
+     */
+    public void setKeywords(final List<KeywordsType> keywords) {
+        this.keywords = keywords;
+    }
+    
+    public void setKeywordValues(final List<String> keywords) {
+        if (keywords != null) {
+            this.keywords = new ArrayList<KeywordsType>();
+            this.keywords.add(new KeywordsType(keywords));
+        }
+    }
 }

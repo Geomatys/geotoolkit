@@ -141,6 +141,24 @@ public class WCSCapabilityType implements AbstractOperationsMetadata {
     @XmlAttribute
     private String updateSequence;
 
+    public WCSCapabilityType() {
+        
+    }
+    
+    public WCSCapabilityType(final Request request, final Exception exption) {
+        this.exception = exption;
+        this.request = request;
+    }
+    
+    public WCSCapabilityType(final Request request, final Exception exption, 
+            final VendorSpecificCapabilities vCapa, final String version, final String upseq) {
+        this.exception = exption;
+        this.request = request;
+        this.vendorSpecificCapabilities = vCapa;
+        this.version = version;
+        this.updateSequence = upseq;
+    }
+    
     /**
      * Gets the value of the request property.
      */
@@ -207,33 +225,57 @@ public class WCSCapabilityType implements AbstractOperationsMetadata {
     }
 
     @Override
-    public void removeOperation(String operationName) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void removeOperation(final String operationName) {
+        if ("GetCapabilities".equalsIgnoreCase(operationName)) {
+            request.setGetCapabilities(null);
+        } else if ("DescribeCoverage".equalsIgnoreCase(operationName)) {
+            request.setDescribeCoverage(null);
+        } else if ("GetCoverage".equalsIgnoreCase(operationName)) {
+            request.setGetCoverage(null);
+        }
     }
 
     @Override
     public AbstractDomain getConstraint(String name) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        //no constraint
+        return null;
     }
 
     @Override
     public void removeConstraint(String name) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        //no constraint
     }
 
     @Override
     public Object getExtendedCapabilities() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (vendorSpecificCapabilities != null) {
+            return vendorSpecificCapabilities.getAny();
+        }
+        return null;
     }
 
     @Override
     public void setExtendedCapabilities(Object extendedCapabilities) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (vendorSpecificCapabilities != null) {
+            vendorSpecificCapabilities.setAny(extendedCapabilities);
+        }
     }
 
     @Override
     public AbstractOperationsMetadata clone() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Request r = null; 
+        if (this.request != null) {
+            r = this.request.clone();
+        }
+        Exception e = null; 
+        if (this.exception != null) {
+            e = new Exception(new ArrayList<String>(this.exception.getFormat()));
+        }
+        VendorSpecificCapabilities v = null;
+        if (this.vendorSpecificCapabilities != null) {
+            v = new VendorSpecificCapabilities(this.vendorSpecificCapabilities.any);
+        }
+        return new WCSCapabilityType(r, e, v, this.version, this.updateSequence);
     }
 
     /**
@@ -264,6 +306,14 @@ public class WCSCapabilityType implements AbstractOperationsMetadata {
         @XmlElement(name = "Format", required = true)
         private List<String> format;
 
+        public Exception() {
+            
+        }
+        
+        public Exception(final List<String> format) {
+            this.format = format;
+        }
+        
         /**
          * Gets the value of the format property.
          * 
@@ -305,6 +355,14 @@ public class WCSCapabilityType implements AbstractOperationsMetadata {
         @XmlAnyElement(lax = true)
         private Object any;
 
+        public VendorSpecificCapabilities() {
+        
+        }
+        
+        public VendorSpecificCapabilities(final Object any) {
+            this.any = any;
+        }
+        
         /**
          * Gets the value of the any property.
          * 

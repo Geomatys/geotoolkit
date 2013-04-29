@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlRootElement;
+import org.geotoolkit.ows.xml.AbstractServiceProvider;
 import org.geotoolkit.ows.xml.Sections;
 import org.geotoolkit.wcs.xml.Content;
 import org.geotoolkit.wcs.xml.GetCapabilitiesResponse;
@@ -136,6 +137,11 @@ public class WCSCapabilitiesType implements GetCapabilitiesResponse, WCSResponse
         return service;
     }
     
+    @Override
+    public ServiceType getServiceIdentification() {
+        return service;
+    }
+    
     public void setService(final ServiceType service) {
         this.service = service; 
     }
@@ -144,6 +150,11 @@ public class WCSCapabilitiesType implements GetCapabilitiesResponse, WCSResponse
      * 
     */
     public WCSCapabilityType getCapability() {
+        return capability;
+    }
+    
+    @Override
+    public WCSCapabilityType getOperationsMetadata() {
         return capability;
     }
 
@@ -209,5 +220,11 @@ public class WCSCapabilitiesType implements GetCapabilitiesResponse, WCSResponse
         } else {
             return new WCSCapabilitiesType(service, capability, contentMetadata, updateSequence);
         }
+    }
+
+    @Override
+    public AbstractServiceProvider getServiceProvider() {
+        // no service provider in v100
+        return null;
     }
 }
