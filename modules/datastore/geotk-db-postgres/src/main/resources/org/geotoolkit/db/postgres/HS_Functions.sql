@@ -659,8 +659,8 @@ begin
 		if i > 1 then 
 			result = result || ', ';
 		end if;
-		select data_type into strict datatypecolumn from information_schema.columns where table_name = "HS_ExtractTableIdentifier"("tableName")  and column_name = "trackedColumns"[i];
-		result = result || "HS_ConstructColumnIdentifier"("trackedColumns"[i]) || datatypecolumn."data_type";
+		select udt_name into strict datatypecolumn from information_schema.columns where table_name = "HS_ExtractTableIdentifier"("tableName")  and column_name = "trackedColumns"[i];
+		result = result || "HS_ConstructColumnIdentifier"("trackedColumns"[i])||' '|| datatypecolumn."udt_name";
 		i = i+1;
 	end loop;
 	return result;
@@ -1086,6 +1086,44 @@ end;$BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
 
+-- Function: "HS_CreateDeleteTrigger"(character varying, character varying[])
+
+-- DROP FUNCTION "HS_CreateDeleteTrigger"(character varying, character varying[]);
+
+CREATE OR REPLACE FUNCTION "HS_CreateDeleteTrigger"("tableName" character varying, "trackedColumns" character varying[])
+  RETURNS character varying AS
+$BODY$DECLARE 
+	stmt character varying;
+	stmt_fonc character varying;
+	stmt_trigg character varying;
+	trigger_name character varying;
+	hs_table_name character varying;
+	tmpAllTrackedColumns character varying;
+	tmpAllTrackedColumns_new character varying;
+	selfJoin character varying;
+begin
+	hs_table_name = "HS_ConstructTableIdentifier"("tableName");
+	trigger_name = "HS_ConstructDelTriggerIdentifier"("tableName");
+	selfJoin = "HS_CreateIdentifierColumnSelfJoinCondition"("tableName", "trackedColumns", hs_table_name||'.', 'OLD.');
+	stmt_fonc = 'CREATE OR REPLACE FUNCTION'|| ' "'||trigger_name||'"'||
+		    '() RETURNS trigger AS $'||trigger_name||'$
+	BEGIN
+
+		UPDATE '|| hs_table_name ||' SET "HS_End" = "HS_GetTransactionTimestamp"() '||
+		'WHERE ' || selfjoin || ' AND '||hs_table_name ||'.'||'"HS_End" IS NULL; '||
+		'return OLD;
+	END;
+	$'||trigger_name||'$ LANGUAGE plpgsql; ';
+	
+	stmt_trigg = 'CREATE TRIGGER' || ' "'||trigger_name||'"'||
+		     ' AFTER DELETE ON "'||"tableName"||
+		     '" FOR EACH ROW execute procedure "'||trigger_name||'"();';
+	stmt = stmt_fonc || stmt_trigg;
+	execute stmt;
+	return stmt;
+END;$BODY$
+  LANGUAGE plpgsql VOLATILE
+  COST 100;
 
 -- Function: "HS_CreateHistory"(character varying, character varying[])
 
@@ -1108,6 +1146,7 @@ begin
 	--trigger creation
 	stmt = "HS_CreateInsertTrigger"(tablenam, "trackedColumns");
 	stmt = "HS_CreateUpdateTrigger"(tablenam, "trackedColumns");
+	stmt = "HS_CreateDeleteTrigger"(tablenam, "trackedColumns");
 	return stmt;
 end;$BODY$
   LANGUAGE plpgsql VOLATILE
