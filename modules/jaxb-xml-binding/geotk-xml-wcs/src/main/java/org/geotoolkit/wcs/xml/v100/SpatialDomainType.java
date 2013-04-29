@@ -30,6 +30,7 @@ import org.geotoolkit.gml.xml.v311.EnvelopeType;
 import org.geotoolkit.gml.xml.v311.GridType;
 import org.geotoolkit.gml.xml.v311.ObjectFactory;
 import org.geotoolkit.gml.xml.v311.RectifiedGridType;
+import org.geotoolkit.wcs.xml.SpatialDomain;
 
 /**
  * Definition of the spatial domain of a coverage. 
@@ -63,7 +64,7 @@ import org.geotoolkit.gml.xml.v311.RectifiedGridType;
     "grid",
     "polygon"
 })
-public class SpatialDomainType {
+public class SpatialDomainType implements SpatialDomain {
 
     // for both version 1.0.0 et 1.1.1
     @XmlElement(name = "Polygon", namespace = "http://www.opengis.net/gml")

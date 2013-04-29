@@ -29,6 +29,7 @@ import org.geotoolkit.gml.xml.v311.AbstractCoordinateOperationType;
 import org.geotoolkit.gml.xml.v311.PolygonType;
 import org.geotoolkit.ows.xml.v110.BoundingBoxType;
 import org.geotoolkit.ows.xml.v110.WGS84BoundingBoxType;
+import org.geotoolkit.wcs.xml.SpatialDomain;
 
 /**
  * Definition of the spatial domain of a coverage. 
@@ -64,7 +65,7 @@ import org.geotoolkit.ows.xml.v110.WGS84BoundingBoxType;
     "imageCRS",
     "polygon"
 })
-public class SpatialDomainType {
+public class SpatialDomainType implements SpatialDomain {
 
     /**
      * WCS version 1.1.1 attribute

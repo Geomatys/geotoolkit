@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlElementRefs;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.wcs.xml.CoverageDomain;
 
 
 /**
@@ -57,7 +58,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "DomainSetType", propOrder = {
     "content"
 })
-public class DomainSetType {
+public class DomainSetType implements CoverageDomain {
 
     @XmlElementRefs({
         @XmlElementRef(name = "spatialDomain", namespace = "http://www.opengis.net/wcs", type = JAXBElement.class),
@@ -105,6 +106,26 @@ public class DomainSetType {
      */
     public List<JAXBElement<?>> getContent() {
         return Collections.unmodifiableList(content);
+    }
+
+    @Override
+    public SpatialDomainType getSpatialDomain() {
+        for (JAXBElement<?> jb : content) {
+            if (jb.getValue() instanceof SpatialDomainType) {
+                return (SpatialDomainType)jb.getValue();
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public TimeSequenceType getTemporalDomain() {
+        for (JAXBElement<?> jb : content) {
+            if (jb.getValue() instanceof TimeSequenceType) {
+                return (TimeSequenceType)jb.getValue();
+            }
+        }
+        return null;
     }
 
 }
