@@ -940,7 +940,7 @@ begin
 end;$BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
-
+/*
 -- Function: "HS_CreateHistoryErrorCheck"(character varying, integer[])
 
 -- DROP FUNCTION "HS_CreateHistoryErrorCheck"(character varying, integer[]);
@@ -1000,7 +1000,7 @@ begin
 		end if;
 	end loop;
 end;
-
+*/
 
 
 $BODY$
@@ -1107,10 +1107,7 @@ $BODY$declare
 	selfJoin character varying;
 	multiCondition character varying;
 	tmpAllTrackedColumns character varying;
-	tmpAllTrackedColumns_OLD character varying;
 	tmpAllTrackedColumns_NEW character varying;
-	tmpAllIdentifierColumns_OLD character varying;
-	tmpAllIdentifierColumns_NEW character varying;
 	stmt character varying;
 	stmt_fonc character varying;
 	stmt_trigg character varying;
@@ -1123,10 +1120,7 @@ begin
 	selfJoin = "HS_CreateIdentifierColumnSelfJoinCondition"("tableName", "trackedColumns", hs_table_name||'.', 'NEW.');
 	multiCondition = "HS_CreateIdentifierColumnSelfJoinAndTestCondition"("trackedColumns", 'OLD.', 'NEW.', 'IS DISTINCT FROM', 'OR');
 	tmpAllTrackedColumns = "HS_CreateCommaSeparatedTrackedColumnList"("trackedColumns", NULL);
-	--tmpAllTrackedColumns_OLD = "HS_CreateCommaSeparatedTrackedColumnList"("trackedColumns", 'OLD.');
 	tmpAllTrackedColumns_NEW = "HS_CreateCommaSeparatedTrackedColumnList"("trackedColumns", 'NEW.');
-	--tmpAllIdentifierColumns_OLD = "HS_CreateCommaSeparatedIdentifierColumnList"("tableName", "trackedColumns", 'OLD.');
-	--tmpAllIdentifierColumns_NEW = "HS_CreateCommaSeparatedIdentifierColumnList"("tableName", "trackedColumns", 'NEW.');
 	trigger_name = "HS_ConstructUpdTriggerIdentifier"("tableName");
 	
 	
@@ -1167,16 +1161,19 @@ CREATE OR REPLACE FUNCTION "HS_CreateHistory"("tableName" character varying, "tr
   RETURNS character varying AS
 $BODY$declare 
 	stmt character varying;
-
+	tablenam character varying;
 begin
+	tablenam = "HS_ExtractTableIdentifier"("tableName");
 	stmt = '';
+	-- verification
+	--stmt = "HS_CreateHistoryErrorCheck"("tableName","trackedColumns");
 	--creation de la table historique
-	stmt = "HS_CreateHistoryTable"("tableName","trackedColumns");
-	stmt = "HS_InitializeHistoryTable"("tableName", "trackedColumns");
+	stmt = "HS_CreateHistoryTable"(tablenam,"trackedColumns");
+	stmt = "HS_InitializeHistoryTable"(tablenam, "trackedColumns");
 
 	--trigger creation
-	stmt = "HS_CreateInsertTrigger"("tableName", "trackedColumns");
-	stmt = "HS_CreateUpdateTrigger"("tableName", "trackedColumns");
+	stmt = "HS_CreateInsertTrigger"(tablenam, "trackedColumns");
+	stmt = "HS_CreateUpdateTrigger"(tablenam, "trackedColumns");
 	return stmt;
 end;$BODY$
   LANGUAGE plpgsql VOLATILE
