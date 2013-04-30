@@ -372,7 +372,7 @@ public final strictfp class WKTFormatTest {
                 "  PARAMETER[“false_northing”, 2000.0],\n" +
                 "  UNIT[“metre”, 1.0],\n" +
                 "  AXIS[“Easting”, EAST],\n" +
-                "  AXIS[“Northing”, NORTH]]\n");
+                "  AXIS[“Northing”, NORTH]]");
         CoordinateReferenceSystem crs = wktFormat.parse(wkt, 0, CoordinateReferenceSystem.class);
         wkt = wkt.replace("World Geodetic System 1984", "WGS84"); // DATUM name change.
         assertMultilinesEquals(wkt, wktFormat.format(crs));

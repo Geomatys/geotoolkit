@@ -185,10 +185,10 @@ public final strictfp class SpatialMetadataTest {
         final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(GEOTK_FORMAT_NAME));
         metadata.setReadOnly(true);
         assertNull(metadata.getListForType(SampleDimension.class));
-        assertMultilinesEquals("No node should have been created.", GEOTK_FORMAT_NAME, metadata.toString());
+        assertMultilinesEquals("No node should have been created.", GEOTK_FORMAT_NAME + '\n', metadata.toString());
         metadata.setReadOnly(false);
         assertNull(metadata.getListForType(SampleDimension.class));
         assertNull(metadata.getInstanceForType(SampleDimension.class));
-        assertMultilinesEquals("No node should have been created.", GEOTK_FORMAT_NAME, metadata.toString());
+        assertMultilinesEquals("No node should have been created.", GEOTK_FORMAT_NAME + '\n', metadata.toString());
     }
 }

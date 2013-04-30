@@ -58,6 +58,15 @@
       <artifactId>sis-utility</artifactId>
       <version>${sis.version}</version>
     </dependency>
+
+    <!-- Test dependencies -->
+    <dependency>
+      <groupId>org.apache.sis</groupId>
+      <artifactId>sis-utility</artifactId>
+      <version>${sis.version}</version>
+      <type>test-jar</type>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
 

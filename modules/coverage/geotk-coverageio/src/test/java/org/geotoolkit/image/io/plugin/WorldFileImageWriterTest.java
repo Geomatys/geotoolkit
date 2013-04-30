@@ -192,7 +192,7 @@ public final strictfp class WorldFileImageWriterTest extends TextImageWriterTest
                 "PARAMETER[“false_northing”, 0.0],\n" +
                 "UNIT[“metre”, 1.0],\n" +
                 "AXIS[“Easting”, EAST],\n" +
-                "AXIS[“Northing”, NORTH]]"), wkt);
+                "AXIS[“Northing”, NORTH]]\n"), wkt);
         } finally {
             writer.dispose();
             assertTrue(TemporaryFile.delete(file));

@@ -34,6 +34,7 @@ import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.coverage.grid.GridGeometry;
 import org.opengis.referencing.operation.MathTransform;
 
+import org.apache.sis.util.CharSequences;
 import static org.junit.Assert.*;
 
 
@@ -209,7 +210,7 @@ public strictfp class Commons {
 
         final String margin = "                "; // 4 indentation levels (16 spaces).
         boolean continuing = false;
-        for (final StringIterator it=new StringIterator(text); it.hasNext();) {
+        for (final CharSequence cs : CharSequences.splitOnEOL(text)) {
             if (continuing) {
                 out.println("\\n\" +");
             }
@@ -217,7 +218,7 @@ public strictfp class Commons {
             out.print(margin);
             out.print('"');
             int quotes = 0;
-            final String line = it.next();
+            final String line = cs.toString();
             for (int i=0; i<line.length(); i++) {
                 char c = line.charAt(i);
                 switch (c) {

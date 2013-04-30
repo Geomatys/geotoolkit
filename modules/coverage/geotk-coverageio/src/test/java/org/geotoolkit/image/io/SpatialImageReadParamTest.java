@@ -124,12 +124,12 @@ public final strictfp class SpatialImageReadParamTest {
         assertMultilinesEquals(decodeQuotes(
             "SpatialImageReadParam[sourceBands={25}]\n" +
             "  ├─ DimensionSlice[id={“time”}, sliceIndex=20]\n" +
-            "  └─ DimensionSlice[id={“depth”}, sliceIndex=25]"), param.toString());
+            "  └─ DimensionSlice[id={“depth”}, sliceIndex=25]\n"), param.toString());
 
         depthSlice.removeDimensionId("depth");
         assertMultilinesEquals(decodeQuotes(
             "SpatialImageReadParam[sourceBands={25}]\n" +
-            "  └─ DimensionSlice[id={“time”}, sliceIndex=20]"), param.toString());
+            "  └─ DimensionSlice[id={“time”}, sliceIndex=20]\n"), param.toString());
         /*
          * Now adds name to the (latitude, longitude) dimensions.
          */
@@ -139,7 +139,7 @@ public final strictfp class SpatialImageReadParamTest {
             "SpatialImageReadParam[sourceBands={25}]\n" +
             "  ├─ DimensionSlice[id={“time”}, sliceIndex=20]\n" +
             "  ├─ DimensionSlice[id={“longitude”}, sliceIndex=0]\n" +
-            "  └─ DimensionSlice[id={“latitude”}, sliceIndex=0]"), param.toString());
+            "  └─ DimensionSlice[id={“latitude”}, sliceIndex=0]\n"), param.toString());
 
         param.getDimensionSlice("longitude").setSliceIndex(100);
         param.getDimensionSlice("latitude" ).setSliceIndex(200);
@@ -148,7 +148,7 @@ public final strictfp class SpatialImageReadParamTest {
             "SpatialImageReadParam[sourceBands={25}, destinationOffset=(2,3)]\n" +
             "  ├─ DimensionSlice[id={“time”}, sliceIndex=20]\n" +
             "  ├─ DimensionSlice[id={“longitude”}, sliceIndex=100]\n" +
-            "  └─ DimensionSlice[id={“latitude”}, sliceIndex=200]"), param.toString());
+            "  └─ DimensionSlice[id={“latitude”}, sliceIndex=200]\n"), param.toString());
     }
 
     /**

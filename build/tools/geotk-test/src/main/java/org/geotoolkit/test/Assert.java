@@ -17,19 +17,13 @@
  */
 package org.geotoolkit.test;
 
-import java.io.*;
-import java.util.Arrays;
-import java.util.Enumeration;
 import java.awt.image.RenderedImage;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.RectangularShape;
 import java.awt.geom.Rectangle2D;
-import javax.swing.tree.TreeNode;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.media.jai.iterator.RectIter;
 import javax.media.jai.iterator.RectIterFactory;
 import javax.measure.unit.Unit;
-import org.xml.sax.SAXException;
 
 import org.opengis.coverage.Coverage;
 import org.opengis.parameter.ParameterValue;
@@ -37,72 +31,22 @@ import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.GeneralParameterValue;
 
-import org.geotoolkit.test.xml.DomComparator;
-
 import static org.geotoolkit.test.image.ImageTestBase.SAMPLE_TOLERANCE;
 
 
 /**
- * Assertion methods used by the Geotk project in addition of the JUnit and GeoAPI assertions.
+ * Assertion methods used by the Geotk project in addition of the JUnit, GeoAPI and SIS assertions.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.20
+ * @version 3.22
  *
  * @since 3.16 (derived from 3.00)
  */
-public strictfp class Assert extends org.opengis.test.Assert {
+public strictfp class Assert extends org.apache.sis.test.Assert {
     /**
      * For subclass constructor only.
      */
     protected Assert() {
-    }
-
-    /**
-     * Asserts that two strings are equal, ignoring the differences in EOL characters.
-     * The comparisons is performed one a line-by-line basis. For each line, leading
-     * and trailing spaces are ignored in order to make the comparison independent of
-     * indentation.
-     *
-     * @param expected The expected string.
-     * @param actual The actual string.
-     */
-    public static void assertMultilinesEquals(final String expected, final String actual) {
-        assertMultilinesEquals(null, expected, actual);
-    }
-
-    /**
-     * Asserts that two strings are equal, ignoring the differences in EOL characters.
-     * The comparisons is performed one a line-by-line basis. For each line, leading
-     * and trailing spaces are ignored in order to make the comparison independent of
-     * indentation.
-     *
-     * @param message  The message to print in case of failure, or {@code null} if none.
-     * @param expected The expected string.
-     * @param actual The actual string.
-     */
-    public static void assertMultilinesEquals(final String message, final String expected, final String actual) {
-        final StringBuilder buffer = new StringBuilder();
-        if (message != null) {
-            buffer.append(message).append(" at line ");
-        } else {
-            buffer.append("Line ");
-        }
-        int line = 0;
-        final int length = buffer.length();
-        final StringIterator c1 = new StringIterator(expected);
-        final StringIterator c2 = new StringIterator(actual);
-        while (c1.hasNext()) {
-            final String next = c1.next().trim();
-            if (!c2.hasNext()) {
-                fail("Expected more lines: " + next);
-            }
-            buffer.setLength(length);
-            buffer.append(++line);
-            assertEquals(buffer.toString(), next, c2.next().trim());
-        }
-        if (c2.hasNext()) {
-            fail("Unexpected line: " + c2.next());
-        }
     }
 
     /**
@@ -125,10 +69,11 @@ public strictfp class Assert extends org.opengis.test.Assert {
      * @param  ignoredAttributes The fully-qualified names of attributes to ignore
      *         (typically {@code "xmlns:*"} and {@code "xsi:schemaLocation"}).
      *
-     * @see DomComparator
-     *
      * @since 3.17
+     *
+     * @deprecated Moved to Apache SIS as {@link #assertXmlEquals(Object, Object, String[])}.
      */
+    @Deprecated
     public static void assertDomEquals(final Object expected, final Object actual, final String... ignoredAttributes) {
         assertDomEquals(expected, actual, 0, ignoredAttributes);
     }
@@ -145,70 +90,15 @@ public strictfp class Assert extends org.opengis.test.Assert {
      * @param  ignoredAttributes The fully-qualified names of attributes to ignore
      *         (typically {@code "xmlns:*"} and {@code "xsi:schemaLocation"}).
      *
-     * @see DomComparator
-     *
      * @since 3.18
+     *
+     * @deprecated Moved to Apache SIS as {@link #assertXmlEquals(Object, Object, double, String[])}.
      */
+    @Deprecated
     public static void assertDomEquals(final Object expected, final Object actual,
             final double tolerance, final String... ignoredAttributes)
     {
-        final DomComparator comparator;
-        try {
-            comparator = new DomComparator(expected, actual);
-        } catch (IOException | ParserConfigurationException | SAXException e) {
-            // We don't throw directly those exceptions since failing to parse the XML file can
-            // be considered as part of test failures and the JUnit exception for such failures
-            // is AssertionError. Having no checked exception in "assert" methods allow us to
-            // declare the checked exceptions only for the library code being tested.
-            throw new AssertionError(e);
-        }
-        comparator.tolerance = tolerance;
-        comparator.ignoreComments = true;
-        comparator.ignoredAttributes.addAll(Arrays.asList(ignoredAttributes));
-        comparator.compare();
-    }
-
-    /**
-     * Ensures that a tree is equals to an other tree. This method invokes itself
-     * recursively for every child nodes.
-     *
-     * @param  expected The expected tree, or {@code null}.
-     * @param  actual The tree to compare with the expected one, or {@code null}.
-     * @return The number of nodes.
-     *
-     * @since 3.04
-     */
-    public static int assertTreeEquals(final TreeNode expected, final TreeNode actual) {
-        if (expected == null) {
-            assertNull(actual);
-            return 0;
-        }
-        int n = 1;
-        assertNotNull(actual);
-        assertEquals("isLeaf()",            expected.isLeaf(),            actual.isLeaf());
-        assertEquals("getAllowsChildren()", expected.getAllowsChildren(), actual.getAllowsChildren());
-        assertEquals("getChildCount()",     expected.getChildCount(),     actual.getChildCount());
-        @SuppressWarnings("unchecked") final Enumeration<? extends TreeNode> ec = expected.children();
-        @SuppressWarnings("unchecked") final Enumeration<? extends TreeNode> ac = actual  .children();
-
-        int childIndex = 0;
-        while (ec.hasMoreElements()) {
-            assertTrue("hasMoreElements()", ac.hasMoreElements());
-            final TreeNode nextExpected = ec.nextElement();
-            final TreeNode nextActual   = ac.nextElement();
-            final String message = "getChildAt(" + childIndex + ')';
-            assertSame(message, nextExpected, expected.getChildAt(childIndex));
-            assertSame(message, nextActual,   actual  .getChildAt(childIndex));
-            assertSame("getParent()", expected, nextExpected.getParent());
-            assertSame("getParent()", actual,   nextActual  .getParent());
-            assertSame("getIndex(TreeNode)", childIndex, expected.getIndex(nextExpected));
-            assertSame("getIndex(TreeNode)", childIndex, actual  .getIndex(nextActual));
-            n += assertTreeEquals(nextExpected, nextActual);
-            childIndex++;
-        }
-        assertFalse("hasMoreElements()", ac.hasMoreElements());
-        assertEquals("toString()", expected.toString(), actual.toString());
-        return n;
+        assertXmlEquals(expected, actual, tolerance, ignoredAttributes);
     }
 
     /**
@@ -442,36 +332,11 @@ public strictfp class Assert extends org.opengis.test.Assert {
      * @return The deserialized object.
      *
      * @since 3.19 (derived from 3.00)
+     *
+     * @deprecated Moved to Apache SIS as {@link #assertSerializedEquals(Object)}.
      */
+    @Deprecated
     public static <T> T assertSerializable(final T object) {
-        final Object deserialized;
-        try {
-            final ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-            try (ObjectOutputStream out = new ObjectOutputStream(buffer)) {
-                out.writeObject(object);
-            }
-            /*
-             * Now reads the object we just serialized.
-             */
-            final byte[] data = buffer.toByteArray();
-            try (ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(data))) {
-                try {
-                    deserialized = in.readObject();
-                } catch (ClassNotFoundException e) {
-                    throw new AssertionError(e);
-                }
-            }
-        } catch (IOException e) {
-            throw new AssertionError(e);
-        }
-        /*
-         * Compares with the original object and returns it.
-         */
-        @SuppressWarnings("unchecked")
-        final Class<? extends T> type = (Class<? extends T>) object.getClass();
-        assertEquals("Deserialized object not equal to the original one.", object, deserialized);
-        assertEquals("Deserialized object has a different hash code.",
-                object.hashCode(), deserialized.hashCode());
-        return type.cast(deserialized);
+        return assertSerializedEquals(object);
     }
 }
