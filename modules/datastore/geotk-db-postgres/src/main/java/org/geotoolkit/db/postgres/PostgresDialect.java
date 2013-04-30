@@ -497,6 +497,11 @@ public class PostgresDialect extends AbstractSQLDialect{
 
     @Override
     public boolean ignoreTable(String name) {
+        name = name.toLowerCase();
+        //ignore the versioning tables
+        if(name.startsWith("hs_tbl_")){
+            return true;
+        }
         return IGNORE_TABLES.contains(name.toLowerCase());
     }
 

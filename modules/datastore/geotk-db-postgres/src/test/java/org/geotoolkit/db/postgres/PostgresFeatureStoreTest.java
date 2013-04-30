@@ -54,6 +54,8 @@ import org.opengis.util.FactoryException;
 
 import static org.geotoolkit.db.postgres.PostgresFeatureStoreFactory.*;
 import org.geotoolkit.geometry.jts.JTS;
+import org.geotoolkit.version.VersionControl;
+import org.geotoolkit.version.VersioningException;
 import static org.junit.Assert.*;
 
 /**
@@ -119,7 +121,7 @@ public class PostgresFeatureStoreTest {
     public PostgresFeatureStoreTest(){
     }
     
-    private void reload() throws DataStoreException {
+    private void reload() throws DataStoreException, VersioningException {
         if(store != null){
             store.dispose();
         }
@@ -135,13 +137,15 @@ public class PostgresFeatureStoreTest {
         store = FeatureStoreFinder.open(params);
         
         for(Name n : store.getNames()){
+            VersionControl vc = store.getVersioning(n);
+            vc.dropVersioning();
             store.deleteSchema(n);
         }
         assertTrue(store.getNames().isEmpty());
     }
     
     @Test
-    public void testSimpleTypeCreation() throws DataStoreException {
+    public void testSimpleTypeCreation() throws DataStoreException, VersioningException {
         reload();
         
         final FeatureType refType = FTYPE_SIMPLE;        
@@ -183,7 +187,7 @@ public class PostgresFeatureStoreTest {
     }
     
     @Test
-    public void testArrayTypeCreation() throws DataStoreException {
+    public void testArrayTypeCreation() throws DataStoreException, VersioningException {
         reload();
         
         final FeatureType refType = FTYPE_ARRAY;        
@@ -226,7 +230,7 @@ public class PostgresFeatureStoreTest {
     }
     
     @Test
-    public void testGeometryTypeCreation() throws DataStoreException, NoSuchAuthorityCodeException, FactoryException {
+    public void testGeometryTypeCreation() throws DataStoreException, NoSuchAuthorityCodeException, FactoryException, VersioningException {
         reload();
                 
         final FeatureType refType = FTYPE_GEOMETRY;        
@@ -283,7 +287,7 @@ public class PostgresFeatureStoreTest {
     }
         
     @Test
-    public void testSimpleInsert() throws DataStoreException{
+    public void testSimpleInsert() throws DataStoreException, VersioningException{
         reload();
             
         store.createSchema(FTYPE_SIMPLE.getName(), FTYPE_SIMPLE);
@@ -324,7 +328,7 @@ public class PostgresFeatureStoreTest {
     }
         
     @Test
-    public void testArrayInsert() throws DataStoreException{
+    public void testArrayInsert() throws DataStoreException, VersioningException{
         reload();
             
         store.createSchema(FTYPE_ARRAY.getName(), FTYPE_ARRAY);
@@ -366,7 +370,7 @@ public class PostgresFeatureStoreTest {
     }
     
     @Test
-    public void testGeometryInsert() throws DataStoreException, NoSuchAuthorityCodeException, FactoryException{
+    public void testGeometryInsert() throws DataStoreException, NoSuchAuthorityCodeException, FactoryException, VersioningException{
         reload();
             
         ////////////////////////////////////////////////////////////////////////

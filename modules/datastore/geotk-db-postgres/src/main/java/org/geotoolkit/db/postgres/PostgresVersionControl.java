@@ -119,6 +119,9 @@ public class PostgresVersionControl extends AbstractVersionControl{
             return;
         }
         
+        //install history functions, won't do anything if already present
+        featureStore.installHSFunctions();
+        
         final String schemaName = featureStore.getDatabaseSchema();
         final String tableName = featureType.getName().getLocalPart();
         

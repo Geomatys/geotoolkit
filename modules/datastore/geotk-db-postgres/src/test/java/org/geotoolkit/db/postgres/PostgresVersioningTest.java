@@ -24,6 +24,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.geotoolkit.data.FeatureIterator;
@@ -104,6 +105,8 @@ public class PostgresVersioningTest {
         store = (PostgresFeatureStore) FeatureStoreFinder.open(params);
         
         for(Name n : store.getNames()){
+            VersionControl vc = store.getVersioning(n);
+            vc.dropVersioning();
             store.deleteSchema(n);
         }
         assertTrue(store.getNames().isEmpty());
@@ -144,6 +147,12 @@ public class PostgresVersioningTest {
         assertTrue(vc.isVersioned());        
         versions = vc.list();
         assertTrue(versions.isEmpty());
+        
+        //check the version table is not visible in the feature types
+        store.refreshMetaModel();
+        final Set<Name> names = store.getNames();
+        assertEquals(1, names.size());
+        
         
         ////////////////////////////////////////////////////////////////////////
         //make an insert ///////////////////////////////////////////////////////
