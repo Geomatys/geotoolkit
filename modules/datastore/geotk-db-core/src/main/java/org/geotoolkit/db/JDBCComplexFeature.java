@@ -60,10 +60,12 @@ public class JDBCComplexFeature extends AbstractFeature<Collection<Property>> {
         
     private final DefaultJDBCFeatureStore store;
     private final Map<Name,Object> progressiveMap = new HashMap<Name, Object>();
+    private final FeatureType type;
     
     public JDBCComplexFeature(final DefaultJDBCFeatureStore store, final ResultSet rs,
             final FeatureType type, final FeatureId id) throws SQLException{
         super(type, id);
+        this.type = type;
         this.store = store;
         
         int k=0;

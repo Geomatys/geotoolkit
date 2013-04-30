@@ -24,6 +24,7 @@ import java.util.List;
 import org.geotoolkit.db.DefaultJDBCFeatureStore;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.storage.DataStoreException;
+import org.geotoolkit.util.Converters;
 
 /**
  * Describe a table primary key.
@@ -89,6 +90,17 @@ public class PrimaryKey {
         //remove last dot
         fid.setLength(fid.length() - 1);
         return fid.toString();
+    }
+    
+    public Object[] decodeFID(final String fid) {        
+        final String[] parts = fid.split("\\.");
+        final Object[] values = new Object[parts.length];
+        
+        for(int i=0;i<parts.length;i++){
+            values[i] = Converters.convert(parts[i], columns.get(i).getJavaType());
+        }
+        
+        return values;
     }
 
     private static String escapeDot(Object obj){

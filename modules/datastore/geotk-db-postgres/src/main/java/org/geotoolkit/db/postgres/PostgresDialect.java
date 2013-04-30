@@ -51,6 +51,7 @@ import org.geotoolkit.db.dialect.AbstractSQLDialect;
 import org.geotoolkit.db.postgres.ewkb.JtsBinaryParser;
 import org.geotoolkit.db.postgres.wkb.WKBAttributeIO;
 import org.geotoolkit.db.reverse.ColumnMetaModel;
+import org.geotoolkit.db.reverse.PrimaryKey;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.AttributeTypeBuilder;
 import org.geotoolkit.filter.capability.DefaultArithmeticOperators;
@@ -405,7 +406,17 @@ public class PostgresDialect extends AbstractSQLDialect{
 
     @Override
     public FilterToSQL getFilterToSQL(FeatureType featureType) {
-        return new PostgresFilterToSQL(featureType,getVersion(featurestore.getDatabaseSchema()));
+        try{
+            PrimaryKey pk = null;
+            if(featureType!=null){
+                pk = featurestore.getDatabaseModel().getPrimaryKey(featureType.getName());
+            }
+            return new PostgresFilterToSQL(
+                featureType, pk,
+                getVersion(featurestore.getDatabaseSchema()));
+        }catch(DataStoreException ex){
+            throw new RuntimeException(ex.getMessage(),ex);
+        }
     }
     
     @Override

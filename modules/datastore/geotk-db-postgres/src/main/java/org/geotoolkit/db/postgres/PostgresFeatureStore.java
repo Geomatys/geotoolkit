@@ -89,7 +89,7 @@ public class PostgresFeatureStore extends DefaultJDBCFeatureStore{
             stmt = cnx.createStatement();
             rs = stmt.executeQuery("select count(proname) from pg_proc where upper(\"proname\") like 'HS\\_%'");
             rs.next();
-            hasHSFunctions = rs.getBoolean(1);
+            hasHSFunctions = rs.getInt(1) > 0;
         }catch(SQLException ex){
             throw new VersioningException(ex.getMessage(),ex);
         }finally{

@@ -100,6 +100,7 @@ public class PostgresVersionControl extends AbstractVersionControl{
             }
             
             sb.append("]);");
+            System.out.println(sb.toString());
             stmt.executeQuery(sb.toString());
             
         }catch(SQLException ex){
@@ -173,24 +174,21 @@ public class PostgresVersionControl extends AbstractVersionControl{
             cnx = featureStore.getDataSource().getConnection();
             stmt = cnx.createStatement();  
             
-            final StringBuilder sb = new StringBuilder("SELECT distinct(");
-            dialect.encodeColumnName(sb, "HS_Begin");
-            sb.append(") FROM ");
+            final StringBuilder sb = new StringBuilder("SELECT distinct(sub.date) as date FROM (");
+            sb.append("SELECT \"HS_Begin\" AS date from ");
             dialect.encodeSchemaAndTableName(sb, schemaName, tableName);
-            sb.append(" ORDER BY ");
-            dialect.encodeColumnName(sb, "HS_Begin");
-            sb.append(" ASC");
+            sb.append(" UNION ");
+            sb.append("SELECT \"HS_End\" AS date from ");
+            dialect.encodeSchemaAndTableName(sb, schemaName, tableName);
+            sb.append(" WHERE \"HS_End\" IS NOT NULL");
+            sb.append(") AS sub ORDER BY date ASC");
+            
             rs = stmt.executeQuery(sb.toString());
             while(rs.next()){
                 final Timestamp ts = rs.getTimestamp(1);
                 final Version v = new Version(this, ts.toString(), ts);
                 versions.add(v);
-            }
-            
-            rs.next();
-            final int nb = rs.getInt(1);
-            isVersioned = nb>0;
-            
+            }            
         }catch(SQLException ex){
             throw new VersioningException(ex.getMessage(), ex);
         }finally{

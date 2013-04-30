@@ -513,6 +513,31 @@ public class DefaultJDBCFeatureStore extends AbstractFeatureStore implements JDB
         return writer;
     }
     
+    /**
+     * Updates an existing feature(s) in the database for a particular feature type / table.
+     */
+    protected void updateSingle(final FeatureType featureType, final Map<AttributeDescriptor,Object> changes,
+            final Filter filter, final Connection cx) throws DataStoreException{
+        if ((changes == null) || (changes.isEmpty())) {
+            getLogger().warning("Update called with no attributes, doing nothing.");
+            return;
+        }
+
+        Statement stmt = null;
+        try {
+            final String sql = queryBuilder.updateSQL(featureType, changes, filter);
+            getLogger().log(Level.FINE, "Updating feature: {0}", sql);
+            stmt = cx.createStatement();
+            System.out.println(sql);
+            stmt.execute(sql);
+        } catch (SQLException e) {
+            throw new DataStoreException("Error occured updating features",e);
+        } finally {
+            JDBCFeatureStoreUtilities.closeSafe(getLogger(),null,stmt,null);
+        }
+        fireFeaturesUpdated(featureType.getName(), null);
+    }
+    
     @Override
     public void refreshMetaModel() {
         dbmodel.clearCache();

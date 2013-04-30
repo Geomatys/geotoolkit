@@ -21,11 +21,14 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LinearRing;
 import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.List;
 import net.iharder.Base64;
 import org.apache.sis.util.Version;
 import org.geotoolkit.db.FilterToSQL;
 import org.geotoolkit.db.JDBCFeatureStore;
+import org.geotoolkit.db.reverse.ColumnMetaModel;
+import org.geotoolkit.db.reverse.PrimaryKey;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.filter.DefaultPropertyIsLike;
@@ -61,6 +64,7 @@ import org.opengis.filter.expression.Multiply;
 import org.opengis.filter.expression.NilExpression;
 import org.opengis.filter.expression.PropertyName;
 import org.opengis.filter.expression.Subtract;
+import org.opengis.filter.identity.Identifier;
 import org.opengis.filter.spatial.BBOX;
 import org.opengis.filter.spatial.Beyond;
 import org.opengis.filter.spatial.BinarySpatialOperator;
@@ -98,10 +102,12 @@ public class PostgresFilterToSQL implements FilterToSQL {
     
     private final Version pgVersion;
     private final FeatureType featureType;
+    private final PrimaryKey pkey;
     private int currentsrid;
 
-    public PostgresFilterToSQL(FeatureType featureType, Version pgVersion) {
+    public PostgresFilterToSQL(FeatureType featureType, PrimaryKey pkey, Version pgVersion) {
         this.featureType = featureType;
+        this.pkey = pkey;
         this.pgVersion = pgVersion;
     }
         
@@ -304,7 +310,26 @@ public class PostgresFilterToSQL implements FilterToSQL {
     @Override
     public StringBuilder visit(Id candidate, Object o) {
         final StringBuilder sb = toStringBuilder(o);
-        if(true) throw new UnsupportedOperationException("Not supported yet.");
+        sb.append('(');
+        final FilterFactory ff = FactoryFinder.getFilterFactory(null);
+        final List<ColumnMetaModel> columns = pkey.getColumns();
+        
+        //we must split this in a serie of OR
+        final Identifier[] ids = candidate.getIdentifiers().toArray(new Identifier[0]);
+        final List<Filter> idFilters = new ArrayList<Filter>(ids.length);
+        final List<Filter> idPartFilters = new ArrayList<Filter>();
+        for(int i=0;i<ids.length;i++){
+            idPartFilters.clear();
+            final Object[] idValues = pkey.decodeFID(ids[i].toString());
+            for(int k=0;k<idValues.length;k++){
+                idPartFilters.add(ff.equals(ff.property(columns.get(k).getName()), ff.literal(idValues[k])));
+            }
+            final Filter and = ff.and(idPartFilters);
+            idFilters.add(and);
+        }
+        Filter filter = ff.or(idFilters);   
+        filter.accept(this, o);
+        sb.append(')');
         return sb;
     }
 
