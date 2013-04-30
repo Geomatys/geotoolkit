@@ -1237,7 +1237,22 @@ end;$BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
 
+-- Function: "HS_DropHistory"(character varying)
 
+-- DROP FUNCTION "HS_DropHistory"(character varying);
+
+CREATE OR REPLACE FUNCTION "HS_DropHistory"("tableName" character varying)
+  RETURNS character varying AS
+$BODY$declare 
+	stmt character varying;
+begin
+	stmt = "HS_DropHistoryErrorCheck"("tableName");
+	stmt = "HS_DropHistoryTriggers"("tableName");
+	stmt = "HS_DropHistoryTable"("tableName");
+	return stmt;
+end;$BODY$
+  LANGUAGE plpgsql VOLATILE
+  COST 100;
 
 
 
