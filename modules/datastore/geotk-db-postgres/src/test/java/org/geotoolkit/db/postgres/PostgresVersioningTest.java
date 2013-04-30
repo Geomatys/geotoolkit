@@ -145,7 +145,8 @@ public class PostgresVersioningTest {
         versions = vc.list();
         assertTrue(versions.isEmpty());
         
-        //create an insert------------------------------------------------------
+        ////////////////////////////////////////////////////////////////////////
+        //make an insert ///////////////////////////////////////////////////////
         final Point firstPoint = GF.createPoint(new Coordinate(56, 45));
         feature = FeatureUtilities.defaultFeature(refType, "0");
         feature.getProperty("boolean").setValue(Boolean.TRUE);
@@ -340,6 +341,20 @@ public class PostgresVersioningTest {
         }finally{
             ite.close();
         }
+        
+        ////////////////////////////////////////////////////////////////////////
+        //drop versioning //////////////////////////////////////////////////////
+        
+        vc.dropVersioning();
+        assertTrue(vc.isEditable());
+        assertFalse(vc.isVersioned());
+        versions = vc.list();
+        assertTrue(versions.isEmpty());
+        
+        //ensure we have no record----------------------------------------------
+        qb.reset();
+        qb.setTypeName(refType.getName());
+        assertTrue(store.createSession(true).getFeatureCollection(qb.buildQuery()).isEmpty());
         
     }
     

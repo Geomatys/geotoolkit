@@ -129,7 +129,12 @@ public class PostgresVersionControl extends AbstractVersionControl{
             stmt = cnx.createStatement();  
             
             final StringBuilder sb = new StringBuilder("SELECT \"HS_DropHistory\"(");          
-            dialect.encodeSchemaAndTableName(sb, schemaName, tableName);
+            sb.append('\'');
+            if(schemaName!=null && !schemaName.isEmpty()){
+                sb.append(schemaName).append('.');
+            }
+            sb.append(tableName);
+            sb.append('\'');
             sb.append(");");
             stmt.executeQuery(sb.toString());
             
