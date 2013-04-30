@@ -28,6 +28,7 @@ import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.factory.Hints;
 import org.apache.sis.util.Classes;
+import org.geotoolkit.factory.HintsPending;
 import org.geotoolkit.util.logging.Logging;
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
@@ -221,7 +222,11 @@ public class GenericCachedFeatureIterator<F extends Feature, R extends FeatureIt
         }
 
         @Override
-        public FeatureIterator iterator(final Hints hints) throws FeatureStoreRuntimeException {
+        public FeatureIterator iterator(Hints hints) throws FeatureStoreRuntimeException {
+            if(hints!= null){
+                hints = new Hints(hints);
+                hints.put(HintsPending.FEATURE_DETACHED,Boolean.TRUE);
+            }
             return wrap(getOriginalFeatureCollection().iterator(hints), cacheSize);
         }
 
