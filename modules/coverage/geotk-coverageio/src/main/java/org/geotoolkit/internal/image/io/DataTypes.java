@@ -44,7 +44,7 @@ public final class DataTypes extends Static {
      * Enumeration of valid coordinate reference system types.
      */
     public static final List<String> CRS_TYPES = UnmodifiableArrayList.wrap(
-        "geographic", "projected"
+        new String[] {"geographic", "projected"}
     );
 
     /**
@@ -60,7 +60,7 @@ public final class DataTypes extends Static {
      * Enumeration of valid coordinate system types.
      */
     public static final List<String> CS_TYPES = UnmodifiableArrayList.wrap(
-        "ellipsoidal", "cartesian"
+        new String[] {"ellipsoidal", "cartesian"}
     );
 
     /**
@@ -76,7 +76,7 @@ public final class DataTypes extends Static {
      * Enumeration of valid datum types.
      */
     public static final List<String> DATUM_TYPES = UnmodifiableArrayList.wrap(
-        "geodetic", "vertical", "temporal", "image", "engineering"
+        new String[] {"geodetic", "vertical", "temporal", "image", "engineering"}
     );
 
     /**
