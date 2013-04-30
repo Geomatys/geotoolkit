@@ -1153,6 +1153,91 @@ end;$BODY$
   COST 100;
 
 
+------------------------------- DROP FUNCTION ----------------------------------
+
+-- Function: "HS_DropHistoryErrorCheck"(character varying)
+-- DROP FUNCTION "HS_DropHistoryErrorCheck"(character varying);
+
+CREATE OR REPLACE FUNCTION "HS_DropHistoryErrorCheck"("tableName" character varying)
+  RETURNS character varying AS
+$BODY$declare 
+	table_nam character varying;
+
+begin 
+	table_nam = "HS_ExtractTableIdentifier"("tableName");
+	-- Check if or not null value is specified as a table name.
+	IF "tableName" IS NULL THEN
+		raise exception 'table name is a null value';
+	END IF;
+	
+	-- Check if or not specified tracked table does not exist.
+	IF NOT EXISTS(SELECT *
+	FROM information_schema.tables
+	WHERE TABLE_CATALOG = "HS_ExtractCatalogIdentifier"(table_nam)
+	AND TABLE_SCHEMA = "HS_ExtractSchemaIdentifier"(table_nam)
+	AND TABLE_NAME = table_nam) THEN
+		raise exception'table does not exist';
+	END IF;
+	-- Check if or not the history table according to the tracked table
+	-- does not exist.
+	IF NOT EXISTS(SELECT *
+	FROM information_schema.tables
+	WHERE TABLE_CATALOG = "HS_ExtractCatalogIdentifier"(table_nam)
+	AND TABLE_SCHEMA = "HS_ExtractSchemaIdentifier"(table_nam)
+	AND TABLE_NAME = "HS_ConstructTableIdentifier"(table_nam)) THEN
+		raise exception 'history table does not exist';
+	END IF;
+	return '';
+end;$BODY$
+  LANGUAGE plpgsql VOLATILE
+  COST 100;
+
+-- Function: "HS_DropHistoryTable"(character varying)
+-- DROP FUNCTION "HS_DropHistoryTable"(character varying);
+
+CREATE OR REPLACE FUNCTION "HS_DropHistoryTable"("tableName" character varying)
+  RETURNS character varying AS
+$BODY$declare 
+	stmt character varying;
+	table_nam character varying;
+	
+begin
+	table_nam = "HS_ExtractTableIdentifier"("tableName");
+	stmt = 'DROP TABLE if exists' ||'"'|| "HS_ConstructTableIdentifier"(table_nam)||'"';
+	execute stmt;
+	return stmt;
+end;$BODY$
+  LANGUAGE plpgsql VOLATILE
+  COST 100;
+
+-- Function: "HS_DropHistoryTriggers"(character varying)
+-- DROP FUNCTION "HS_DropHistoryTriggers"(character varying);
+
+CREATE OR REPLACE FUNCTION "HS_DropHistoryTriggers"("tableName" character varying)
+  RETURNS character varying AS
+$BODY$declare 
+	table_nam character varying;
+	stmt character varying;
+
+begin
+	table_nam = "HS_ExtractTableIdentifier"("tableName");
+	-- drop delete trigger function
+	stmt = 'drop function if exists '||'"'||"HS_ConstructDelTriggerIdentifier"(table_nam)||'"'||'() cascade';
+	execute stmt;
+
+	-- drop update trigger function
+	stmt = 'drop function if exists '||'"'||"HS_ConstructUpdTriggerIdentifier"(table_nam)||'"'||'() cascade';
+	execute stmt;
+
+	-- drop insert trigger function
+	stmt = 'drop function if exists '||'"'||"HS_ConstructInsTriggerIdentifier"(table_nam)||'"'||'() cascade';
+	execute stmt;
+	return stmt;
+end;$BODY$
+  LANGUAGE plpgsql VOLATILE
+  COST 100;
+
+
 
 
 

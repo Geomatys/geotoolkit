@@ -42,3 +42,6 @@ DROP FUNCTION IF EXISTS "HS_CreateInsertTrigger"(character varying, character va
 DROP FUNCTION IF EXISTS "HS_CreateUpdateTrigger"(character varying, character varying[]);
 DROP FUNCTION IF EXISTS "HS_CreateDeleteTrigger"(character varying, character varying[]);
 DROP FUNCTION IF EXISTS "HS_CreateHistory"(character varying, character varying[]);
+DROP FUNCTION IF EXISTS "HS_DropHistoryErrorCheck"(character varying);
+DROP FUNCTION IF EXISTS "HS_DropHistoryTable"(character varying);
+DROP FUNCTION IF EXISTS "HS_DropHistoryTriggers"(character varying);
