@@ -368,7 +368,7 @@ public class SQLQueryBuilder {
         if(filter != null && !Filter.INCLUDE.equals(filter)){
             //replace any PropertyEqualsTo in true ID filters
             filter = (Filter) filter.accept(new FIDFixVisitor(), null);
-            sql.append(" ");
+            sql.append(" WHERE ");
             sql.append(dialect.encodeFilter(filter,featureType));
         }
 

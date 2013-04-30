@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import org.geotoolkit.data.FeatureCollection;
+import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.FeatureStoreFinder;
 import org.geotoolkit.data.query.QueryBuilder;
@@ -304,16 +305,21 @@ public class PostgresFeatureStoreTest {
         final FeatureCollection<Feature> col = session.getFeatureCollection(QueryBuilder.all(resType.getName()));
         assertEquals(1, col.size());
         
-        final Feature resFeature = col.iterator().next();
-        assertNotNull(resFeature);
-        assertEquals(true, resFeature.getProperty("boolean").getValue());
-        assertEquals(45, resFeature.getProperty("byte").getValue());
-        assertEquals(963, resFeature.getProperty("short").getValue());
-        assertEquals(123456, resFeature.getProperty("integer").getValue());
-        assertEquals(456789l, resFeature.getProperty("long").getValue());
-        assertEquals(7.3f, resFeature.getProperty("float").getValue());
-        assertEquals(14.5d, resFeature.getProperty("double").getValue());
-        assertEquals("a string", resFeature.getProperty("string").getValue());
+        final FeatureIterator ite = col.iterator();
+        try{
+            final Feature resFeature = ite.next();
+            assertNotNull(resFeature);
+            assertEquals(true, resFeature.getProperty("boolean").getValue());
+            assertEquals(45, resFeature.getProperty("byte").getValue());
+            assertEquals(963, resFeature.getProperty("short").getValue());
+            assertEquals(123456, resFeature.getProperty("integer").getValue());
+            assertEquals(456789l, resFeature.getProperty("long").getValue());
+            assertEquals(7.3f, resFeature.getProperty("float").getValue());
+            assertEquals(14.5d, resFeature.getProperty("double").getValue());
+            assertEquals("a string", resFeature.getProperty("string").getValue());
+        }finally{
+            ite.close();
+        }
         
     }
         
@@ -341,16 +347,21 @@ public class PostgresFeatureStoreTest {
         assertEquals(1, col.size());
         
         //Postgis allow NULL in arrays, so returned array are not primitive types
-        final Feature resFeature = col.iterator().next();
-        assertNotNull(resFeature);
-        assertArrayEquals(new Boolean[]{true,false,true},       (Boolean[])resFeature.getProperty("boolean").getValue());
-        assertArrayEquals(new Short[]{3,6,9},                   (Short[])resFeature.getProperty("byte").getValue());
-        assertArrayEquals(new Short[]{-5,12,-50},               (Short[])resFeature.getProperty("short").getValue());
-        assertArrayEquals(new Integer[]{123,456,789},           (Integer[])resFeature.getProperty("integer").getValue());
-        assertArrayEquals(new Long[]{111l,222l,333l},           (Long[])resFeature.getProperty("long").getValue());
-        assertArrayEquals(new Float[]{1.2f,-5.9f,8.1f},         (Float[])resFeature.getProperty("float").getValue());
-        assertArrayEquals(new Double[]{78.3d,41.23d,-99.66d},   (Double[])resFeature.getProperty("double").getValue());
-        assertArrayEquals(new String[]{"marc","hubert","samy"}, (String[])resFeature.getProperty("string").getValue());
+        final FeatureIterator ite = col.iterator();
+        try{
+            final Feature resFeature = ite.next();
+            assertNotNull(resFeature);
+            assertArrayEquals(new Boolean[]{true,false,true},       (Boolean[])resFeature.getProperty("boolean").getValue());
+            assertArrayEquals(new Short[]{3,6,9},                   (Short[])resFeature.getProperty("byte").getValue());
+            assertArrayEquals(new Short[]{-5,12,-50},               (Short[])resFeature.getProperty("short").getValue());
+            assertArrayEquals(new Integer[]{123,456,789},           (Integer[])resFeature.getProperty("integer").getValue());
+            assertArrayEquals(new Long[]{111l,222l,333l},           (Long[])resFeature.getProperty("long").getValue());
+            assertArrayEquals(new Float[]{1.2f,-5.9f,8.1f},         (Float[])resFeature.getProperty("float").getValue());
+            assertArrayEquals(new Double[]{78.3d,41.23d,-99.66d},   (Double[])resFeature.getProperty("double").getValue());
+            assertArrayEquals(new String[]{"marc","hubert","samy"}, (String[])resFeature.getProperty("string").getValue());
+        }finally{
+            ite.close();
+        }
         
     }
     
@@ -419,34 +430,38 @@ public class PostgresFeatureStoreTest {
         assertEquals(1, col.size());
         
         //Postgis allow NULL in arrays, so returned array are not primitive types
-        final Feature resFeature = col.iterator().next();
-        assertNotNull(resFeature);
-        Geometry geom;
-        geom = (Geometry)resFeature.getProperty("geometry").getValue();
-        assertEquals(point,geom);
-        assertEquals(CRS_4326, JTS.findCoordinateReferenceSystem(geom));        
-        geom = (Geometry)resFeature.getProperty("point").getValue();
-        assertEquals(point,geom);
-        assertEquals(CRS_4326, JTS.findCoordinateReferenceSystem(geom));
-        geom = (Geometry)resFeature.getProperty("multipoint").getValue();
-        assertEquals(mp,geom);
-        assertEquals(CRS_4326, JTS.findCoordinateReferenceSystem(geom));
-        geom = (Geometry)resFeature.getProperty("linestring").getValue();
-        assertEquals(ls,geom);
-        assertEquals(CRS_4326, JTS.findCoordinateReferenceSystem(geom));
-        geom = (Geometry)resFeature.getProperty("multilinestring").getValue();
-        assertEquals(mls,geom);
-        assertEquals(CRS_4326, JTS.findCoordinateReferenceSystem(geom));
-        geom = (Geometry)resFeature.getProperty("polygon").getValue();
-        assertEquals(polygon,geom);
-        assertEquals(CRS_4326, JTS.findCoordinateReferenceSystem(geom));
-        geom = (Geometry)resFeature.getProperty("multipolygon").getValue();
-        assertEquals(mpolygon,geom);
-        assertEquals(CRS_4326, JTS.findCoordinateReferenceSystem(geom));
-        geom = (Geometry)resFeature.getProperty("geometrycollection").getValue();
-        assertEquals(gc,geom);
-        assertEquals(CRS_4326, JTS.findCoordinateReferenceSystem(geom));
-        
+        final FeatureIterator ite = col.iterator();
+        try{
+            final Feature resFeature = ite.next();
+            assertNotNull(resFeature);
+            Geometry geom;
+            geom = (Geometry)resFeature.getProperty("geometry").getValue();
+            assertEquals(point,geom);
+            assertEquals(CRS_4326, JTS.findCoordinateReferenceSystem(geom));        
+            geom = (Geometry)resFeature.getProperty("point").getValue();
+            assertEquals(point,geom);
+            assertEquals(CRS_4326, JTS.findCoordinateReferenceSystem(geom));
+            geom = (Geometry)resFeature.getProperty("multipoint").getValue();
+            assertEquals(mp,geom);
+            assertEquals(CRS_4326, JTS.findCoordinateReferenceSystem(geom));
+            geom = (Geometry)resFeature.getProperty("linestring").getValue();
+            assertEquals(ls,geom);
+            assertEquals(CRS_4326, JTS.findCoordinateReferenceSystem(geom));
+            geom = (Geometry)resFeature.getProperty("multilinestring").getValue();
+            assertEquals(mls,geom);
+            assertEquals(CRS_4326, JTS.findCoordinateReferenceSystem(geom));
+            geom = (Geometry)resFeature.getProperty("polygon").getValue();
+            assertEquals(polygon,geom);
+            assertEquals(CRS_4326, JTS.findCoordinateReferenceSystem(geom));
+            geom = (Geometry)resFeature.getProperty("multipolygon").getValue();
+            assertEquals(mpolygon,geom);
+            assertEquals(CRS_4326, JTS.findCoordinateReferenceSystem(geom));
+            geom = (Geometry)resFeature.getProperty("geometrycollection").getValue();
+            assertEquals(gc,geom);
+            assertEquals(CRS_4326, JTS.findCoordinateReferenceSystem(geom));
+        }finally{
+            ite.close();
+        }
     }
     
     

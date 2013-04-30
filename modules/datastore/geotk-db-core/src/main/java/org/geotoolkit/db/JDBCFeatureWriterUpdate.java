@@ -35,6 +35,7 @@ import org.opengis.feature.type.AssociationDescriptor;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.PropertyDescriptor;
+import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.Id;
 
@@ -62,9 +63,13 @@ public class JDBCFeatureWriterUpdate extends JDBCFeatureReader implements
             throw new FeatureStoreRuntimeException("Cursor is not on a record.");
         }
         
+        final Filter filter = store.getFilterFactory().id(
+                Collections.singleton(last.getIdentifier()));
         try {
-            rs.deleteRow();
+            store.delete(type, filter, st.getConnection());
         } catch (SQLException e) {
+            throw new FeatureStoreRuntimeException(e);
+        } catch (DataStoreException e) {
             throw new FeatureStoreRuntimeException(e);
         }
     }

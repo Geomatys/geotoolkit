@@ -528,7 +528,6 @@ public class DefaultJDBCFeatureStore extends AbstractFeatureStore implements JDB
             final String sql = getQueryBuilder().updateSQL(featureType, changes, filter);
             getLogger().log(Level.FINE, "Updating feature: {0}", sql);
             stmt = cx.createStatement();
-            System.out.println(sql);
             stmt.execute(sql);
         } catch (SQLException e) {
             throw new DataStoreException("Error occured updating features",e);

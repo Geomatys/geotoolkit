@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.FeatureStoreFinder;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.feature.FeatureTypeBuilder;
@@ -49,7 +50,6 @@ import org.geotoolkit.version.VersioningException;
 import static org.junit.Assert.*;
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.PropertyDescriptor;
-import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.identity.FeatureId;
 
@@ -118,9 +118,12 @@ public class PostgresVersioningTest {
         reload();
         List<Version> versions;
         Version version;
-        Point point;
         Feature feature;
         FeatureId fid;
+        Version v1;
+        Version v2;
+        Version v3;
+        FeatureIterator ite;
         final QueryBuilder qb = new QueryBuilder();
         
         final FeatureType refType = FTYPE_SIMPLE;        
@@ -135,23 +138,22 @@ public class PostgresVersioningTest {
         assertTrue(vc.isEditable());
         assertFalse(vc.isVersioned());
         
-        //start versioning------------------------------------------------------
+        ////////////////////////////////////////////////////////////////////////
+        //start versioning /////////////////////////////////////////////////////
         vc.startVersioning();
         assertTrue(vc.isVersioned());        
         versions = vc.list();
         assertTrue(versions.isEmpty());
         
         //create an insert------------------------------------------------------
-        point = GF.createPoint(new Coordinate(56, 45));
+        final Point firstPoint = GF.createPoint(new Coordinate(56, 45));
         feature = FeatureUtilities.defaultFeature(refType, "0");
         feature.getProperty("boolean").setValue(Boolean.TRUE);
         feature.getProperty("integer").setValue(14);
-        feature.getProperty("point").setValue(point);
+        feature.getProperty("point").setValue(firstPoint);
         feature.getProperty("string").setValue("someteststring");        
         store.addFeatures(refType.getName(), Collections.singleton(feature));
-        
-        final Point firstPoint = point;
-        
+                
         //we should have one version
         versions = vc.list();
         assertEquals(1, versions.size());        
@@ -161,23 +163,32 @@ public class PostgresVersioningTest {
         //ensure normal reading is correct without version----------------------
         qb.reset();
         qb.setTypeName(refType.getName());
-        feature = store.createSession(true).getFeatureCollection(qb.buildQuery()).iterator().next();
-        assertEquals(Boolean.TRUE,      feature.getProperty("boolean").getValue());
-        assertEquals(14,                feature.getProperty("integer").getValue());
-        assertEquals(point,             feature.getProperty("point").getValue());
-        assertEquals("someteststring",  feature.getProperty("string").getValue());
-        
-        fid = feature.getIdentifier();
+        ite = store.createSession(true).getFeatureCollection(qb.buildQuery()).iterator();
+        try{
+            feature = ite.next();
+            assertEquals(Boolean.TRUE,      feature.getProperty("boolean").getValue());
+            assertEquals(14,                feature.getProperty("integer").getValue());
+            assertEquals(firstPoint,        feature.getProperty("point").getValue());
+            assertEquals("someteststring",  feature.getProperty("string").getValue());        
+            fid = feature.getIdentifier();
+        }finally{
+            ite.close();
+        }
         
         //ensure normal reading is correct with version-------------------------
         qb.reset();
         qb.setTypeName(refType.getName());
         qb.setVersionLabel(version.getLabel());
-        feature = store.createSession(true).getFeatureCollection(qb.buildQuery()).iterator().next();
-        assertEquals(Boolean.TRUE,      feature.getProperty("boolean").getValue());
-        assertEquals(14,                feature.getProperty("integer").getValue());
-        assertEquals(point,             feature.getProperty("point").getValue());
-        assertEquals("someteststring",  feature.getProperty("string").getValue());
+        ite = store.createSession(true).getFeatureCollection(qb.buildQuery()).iterator();
+        try{
+            feature = ite.next();
+            assertEquals(Boolean.TRUE,      feature.getProperty("boolean").getValue());
+            assertEquals(14,                feature.getProperty("integer").getValue());
+            assertEquals(firstPoint,        feature.getProperty("point").getValue());
+            assertEquals("someteststring",  feature.getProperty("string").getValue());
+        }finally{
+            ite.close();
+        }
         
         try {
             //wait a bit just to have some space between version dates
@@ -186,12 +197,14 @@ public class PostgresVersioningTest {
             fail(ex.getMessage());
         }
         
-        //make an update--------------------------------------------------------
-        point = GF.createPoint(new Coordinate(-12, 21));
+        
+        ////////////////////////////////////////////////////////////////////////
+        //make an update ///////////////////////////////////////////////////////
+        final Point secondPoint = GF.createPoint(new Coordinate(-12, 21));
         final Map<PropertyDescriptor,Object> updates = new HashMap<PropertyDescriptor, Object>();
         updates.put(feature.getProperty("boolean").getDescriptor(), Boolean.FALSE);
         updates.put(feature.getProperty("integer").getDescriptor(), -3);
-        updates.put(feature.getProperty("point").getDescriptor(), point);
+        updates.put(feature.getProperty("point").getDescriptor(), secondPoint);
         updates.put(feature.getProperty("string").getDescriptor(), "anothertextupdated");
         
         store.updateFeatures(refType.getName(), FF.id(Collections.singleton(fid)), updates);
@@ -199,50 +212,134 @@ public class PostgresVersioningTest {
         //we should have two versions
         versions = vc.list();
         assertEquals(2, versions.size());        
-        Version v1 = versions.get(0);
-        Version v2 = versions.get(1);
+        v1 = versions.get(0);
+        v2 = versions.get(1);
         //should be ordered starting from the oldest
         assertTrue(v1.getDate().compareTo(v2.getDate()) < 0);
         
         //ensure normal reading is correct without version----------------------
         qb.reset();
         qb.setTypeName(refType.getName());
-        feature = store.createSession(true).getFeatureCollection(qb.buildQuery()).iterator().next();
-        assertEquals(Boolean.FALSE,      feature.getProperty("boolean").getValue());
-        assertEquals(-3,                feature.getProperty("integer").getValue());
-        assertEquals(point,             feature.getProperty("point").getValue());
-        assertEquals("anothertextupdated",feature.getProperty("string").getValue());
+        ite = store.createSession(true).getFeatureCollection(qb.buildQuery()).iterator();
+        try{
+            feature = ite.next();
+            assertEquals(Boolean.FALSE,      feature.getProperty("boolean").getValue());
+            assertEquals(-3,                feature.getProperty("integer").getValue());
+            assertEquals(secondPoint,             feature.getProperty("point").getValue());
+            assertEquals("anothertextupdated",feature.getProperty("string").getValue());
+        }finally{
+            ite.close();
+        }
         
         //ensure normal reading is correct with version-------------------------
         qb.reset();
         qb.setTypeName(refType.getName());
         qb.setVersionLabel(v2.getLabel());
-        feature = store.createSession(true).getFeatureCollection(qb.buildQuery()).iterator().next();
-        assertEquals(Boolean.FALSE,      feature.getProperty("boolean").getValue());
-        assertEquals(-3,                feature.getProperty("integer").getValue());
-        assertEquals(point,             feature.getProperty("point").getValue());
-        assertEquals("anothertextupdated",feature.getProperty("string").getValue());
+        ite = store.createSession(true).getFeatureCollection(qb.buildQuery()).iterator();
+        try{
+            feature = ite.next();
+            assertEquals(Boolean.FALSE,      feature.getProperty("boolean").getValue());
+            assertEquals(-3,                feature.getProperty("integer").getValue());
+            assertEquals(secondPoint,             feature.getProperty("point").getValue());
+            assertEquals("anothertextupdated",feature.getProperty("string").getValue());
+        }finally{
+            ite.close();
+        }
         
         //ensure reading a previous version works ------------------------------
         qb.reset();
         qb.setTypeName(refType.getName());
         qb.setVersionLabel(v1.getLabel());
-        feature = store.createSession(true).getFeatureCollection(qb.buildQuery()).iterator().next();
-        assertEquals(Boolean.TRUE,      feature.getProperty("boolean").getValue());
-        assertEquals(14,                feature.getProperty("integer").getValue());
-        assertEquals(firstPoint,        feature.getProperty("point").getValue());
-        assertEquals("someteststring",  feature.getProperty("string").getValue());
+        ite = store.createSession(true).getFeatureCollection(qb.buildQuery()).iterator();
+        try{
+            feature = ite.next();
+            assertEquals(Boolean.TRUE,      feature.getProperty("boolean").getValue());
+            assertEquals(14,                feature.getProperty("integer").getValue());
+            assertEquals(firstPoint,        feature.getProperty("point").getValue());
+            assertEquals("someteststring",  feature.getProperty("string").getValue());
+        }finally{
+            ite.close();
+        }
         
         //ensure reading a previous version using not exact date----------------
         qb.reset();
         qb.setTypeName(refType.getName());
         qb.setVersionDate(new Date(v1.getDate().getTime()+400));
-        feature = store.createSession(true).getFeatureCollection(qb.buildQuery()).iterator().next();
-        assertEquals(Boolean.TRUE,      feature.getProperty("boolean").getValue());
-        assertEquals(14,                feature.getProperty("integer").getValue());
-        assertEquals(firstPoint,        feature.getProperty("point").getValue());
-        assertEquals("someteststring",  feature.getProperty("string").getValue());
+        ite = store.createSession(true).getFeatureCollection(qb.buildQuery()).iterator();
+        try{
+            feature = ite.next();
+            assertEquals(Boolean.TRUE,      feature.getProperty("boolean").getValue());
+            assertEquals(14,                feature.getProperty("integer").getValue());
+            assertEquals(firstPoint,        feature.getProperty("point").getValue());
+            assertEquals("someteststring",  feature.getProperty("string").getValue());
+        }finally{
+            ite.close();
+        }
         
+        ////////////////////////////////////////////////////////////////////////
+        //delete record ////////////////////////////////////////////////////////
+        
+        store.removeFeatures(refType.getName(), FF.id(Collections.singleton(fid)));
+        qb.reset();
+        qb.setTypeName(refType.getName());
+        assertEquals(0, store.getCount(qb.buildQuery()));
+        
+        //we should have three versions
+        versions = vc.list();
+        assertEquals(3, versions.size());        
+        v1 = versions.get(0);
+        v2 = versions.get(1);
+        v3 = versions.get(2);
+        //should be ordered starting from the oldest
+        assertTrue(v2.getDate().compareTo(v1.getDate()) > 0);
+        assertTrue(v3.getDate().compareTo(v2.getDate()) > 0);
+        
+        //ensure we have nothing if no version set -----------------------------
+        qb.reset();
+        qb.setTypeName(refType.getName());
+        assertTrue(store.createSession(true).getFeatureCollection(qb.buildQuery()).isEmpty());
+                
+        //ensure we have nothing if latest version set -------------------------
+        qb.reset();
+        qb.setTypeName(refType.getName());
+        qb.setVersionLabel(v3.getLabel());
+        assertTrue(store.createSession(true).getFeatureCollection(qb.buildQuery()).isEmpty());
+        
+        //ensure we have nothing with date after deletion ----------------------
+        qb.reset();
+        qb.setTypeName(refType.getName());
+        qb.setVersionDate(new Date(v3.getDate().getTime()+400));
+        assertTrue(store.createSession(true).getFeatureCollection(qb.buildQuery()).isEmpty());
+        
+        //ensure reading version 1 works ---------------------------------------
+        qb.reset();
+        qb.setTypeName(refType.getName());
+        qb.setVersionLabel(v1.getLabel());
+        ite = store.createSession(true).getFeatureCollection(qb.buildQuery()).iterator();
+        try{
+            feature = ite.next();
+            assertEquals(Boolean.TRUE,      feature.getProperty("boolean").getValue());
+            assertEquals(14,                feature.getProperty("integer").getValue());
+            assertEquals(firstPoint,        feature.getProperty("point").getValue());
+            assertEquals("someteststring",  feature.getProperty("string").getValue());
+        }finally{
+            ite.close();
+        }
+        
+        //ensure reading version 2 works ---------------------------------------
+        qb.reset();
+        qb.setTypeName(refType.getName());
+        qb.setVersionLabel(v2.getLabel());
+        ite = store.createSession(true).getFeatureCollection(qb.buildQuery()).iterator();
+        try{
+            feature = ite.next();
+            assertEquals(Boolean.FALSE,      feature.getProperty("boolean").getValue());
+            assertEquals(-3,                 feature.getProperty("integer").getValue());
+            assertEquals(secondPoint,        feature.getProperty("point").getValue());
+            assertEquals("anothertextupdated",feature.getProperty("string").getValue());
+        }finally{
+            ite.close();
+        }
         
     }
     

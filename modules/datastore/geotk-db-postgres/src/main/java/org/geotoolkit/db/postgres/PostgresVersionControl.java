@@ -100,7 +100,6 @@ public class PostgresVersionControl extends AbstractVersionControl{
             }
             
             sb.append("]);");
-            System.out.println(sb.toString());
             stmt.executeQuery(sb.toString());
             
         }catch(SQLException ex){

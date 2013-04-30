@@ -17,18 +17,13 @@
 package org.geotoolkit.db;
 
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
-
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
-import org.geotoolkit.db.reverse.PrimaryKey;
 import org.geotoolkit.factory.Hints;
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
 
-import org.opengis.feature.type.Name;
 
 public class JDBCFeatureWriterUpdateInsert extends JDBCFeatureWriterUpdate {
 
