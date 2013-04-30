@@ -46,3 +46,4 @@ DROP FUNCTION IF EXISTS "HS_DropHistoryErrorCheck"(character varying);
 DROP FUNCTION IF EXISTS "HS_DropHistoryTable"(character varying);
 DROP FUNCTION IF EXISTS "HS_DropHistoryTriggers"(character varying);
 DROP FUNCTION IF EXISTS "HS_DropHistory"(character varying);
+DROP FUNCTION IF EXISTS "HS_CreateHistoryErrorCheck"(character varying, character varying[]);

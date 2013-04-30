@@ -846,6 +846,84 @@ end;$BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
 
+-- Function: "HS_CreateHistoryErrorCheck"(character varying, character varying[])
+
+-- DROP FUNCTION "HS_CreateHistoryErrorCheck"(character varying, character varying[]);
+
+CREATE OR REPLACE FUNCTION "HS_CreateHistoryErrorCheck"("tableName" character varying, "trackedColumns" character varying[])
+  RETURNS character varying AS
+$BODY$declare 
+       IdentifierColumns text[];
+	i integer;
+	j integer;
+	cn text;
+	tn text;
+	table_nam character varying;
+
+begin
+	-- Check if the specified TableName parameter is valid
+	if "tableName" is null then 
+		raise exception 'table name is a null value';
+	end if;
+
+	if "trackedColumns" is null or array_Upper("trackedColumns", 1) < 1  then
+		raise exception 'no tracked column is specified';
+	end if;
+	
+	table_nam = "HS_ExtractTableIdentifier"("tableName");
+
+	-- Check if the table specified exists in the SQL-database
+	if not exists (select * FROM information_schema.tables
+	WHERE TABLE_CATALOG = "HS_ExtractCatalogIdentifier"("tableName")
+	AND TABLE_SCHEMA    = "HS_ExtractSchemaIdentifier"("tableName")
+	AND TABLE_NAME      = table_nam) THEN
+		raise exception 'table does not exist';
+	end if;
+	
+	IdentifierColumns = "HS_GetHistoryRowSetIdentifierColumns"(table_nam, "trackedColumns");
+
+	FOREACH tn in array IdentifierColumns loop
+		IF NOT EXISTS(SELECT * from information_schema.table_constraints where
+		table_name = table_nam) THEN
+			raise exception	'tracked table has no unique constraint with NOT NULL';
+		end if;
+	end loop;
+
+	-- Check if the history table for the specified table does not exist
+	IF EXISTS(SELECT * FROM information_schema.tables
+	WHERE TABLE_CATALOG = "HS_ExtractCatalogIdentifier"(table_nam)
+	AND TABLE_SCHEMA    = "HS_ExtractSchemaIdentifier"(table_nam)
+	AND TABLE_NAME      = "HS_ConstructTableIdentifier"(table_nam))
+	THEN
+		raise exception	'history table already exists';
+	END IF;
+	
+	i = 1;
+	while i <= array_Upper("trackedColumns", 1) loop
+		IF "trackedColumns"[i] IS NULL THEN
+			raise exception 'column name is a null value';
+		ELSIF NOT EXISTS(SELECT * FROM information_schema.columns
+			WHERE TABLE_CATALOG = "HS_ExtractCatalogIdentifier"("tableName")
+			AND TABLE_SCHEMA    = "HS_ExtractSchemaIdentifier"("tableName")
+			AND TABLE_NAME      = table_nam
+			AND column_name     = "HS_ExtractColumnIdentifier"("trackedColumns"[i])) THEN
+			raise exception 'column does not exist';
+		end if;
+		i = i + 1;
+	end loop;
+
+	foreach cn in array IdentifierColumns loop
+		IF NOT EXISTS(SELECT * from information_schema.constraint_column_usage where
+		table_name = table_nam and column_name = cn) THEN
+			raise exception	'tracked table has no unique constraint with NOT NULL';
+		end if;
+	end loop;
+	return '';
+end;$BODY$
+  LANGUAGE plpgsql VOLATILE
+  COST 100;
+
+
 -- Function: "HS_ConstructDelTriggerIdentifier"(character varying)
 
 -- DROP FUNCTION "HS_ConstructDelTriggerIdentifier"(character varying);
@@ -1155,7 +1233,7 @@ begin
 	tablenam = "HS_ExtractTableIdentifier"("tableName");
 	stmt = '';
 	-- verification
-	--stmt = "HS_CreateHistoryErrorCheck"("tableName","trackedColumns");
+	stmt = "HS_CreateHistoryErrorCheck"("tableName","trackedColumns");
 	--creation de la table historique
 	stmt = "HS_CreateHistoryTable"(tablenam,"trackedColumns");
 	stmt = "HS_InitializeHistoryTable"(tablenam, "trackedColumns");
