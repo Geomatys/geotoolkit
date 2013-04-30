@@ -99,7 +99,7 @@ public final strictfp class ReferencingBuilderTest extends LocaleDependantTestBa
             "                    ├───minimumValue=“-90.0”\n" +
             "                    ├───maximumValue=“90.0”\n" +
             "                    ├───rangeMeaning=“exact”\n" +
-            "                    └───unit=“deg”";
+            "                    └───unit=“deg”\n";
         /*
          * We must replace the name of the Coordinate System from French to current locale
          * because the above CRS uses the DefaultEllipsoidalCS.GEODETIC_2D static final constant,
@@ -159,7 +159,7 @@ public final strictfp class ReferencingBuilderTest extends LocaleDependantTestBa
             "        │           └───unit=“m”\n" +
             "        └───Conversion\n" +
             "            ├───name=“WGS 84 / World Mercator”\n" +
-            "            └───method=“Mercator_1SP”"), metadata.toString());
+            "            └───method=“Mercator_1SP”\n"), metadata.toString());
     }
 
     /**
@@ -216,7 +216,7 @@ public final strictfp class ReferencingBuilderTest extends LocaleDependantTestBa
             "                │   └───value=“0.9996”\n" +
             "                └───ParameterValue\n" +
             "                    ├───name=“false_easting”\n" +
-            "                    └───value=“500000.0”"), metadata.toString());
+            "                    └───value=“500000.0”\n"), metadata.toString());
     }
 
     /**

@@ -209,7 +209,7 @@ public class Plot2D extends ZoomPane {
      * encouraged to specify the desired color explicitly when adding a series to a plot.
      */
     protected static final List<Color> DEFAULT_COLORS = UnmodifiableArrayList.wrap(
-        Color.RED, Color.BLUE, Color.GREEN, Color.ORANGE, Color.CYAN, Color.MAGENTA
+        new Color[] {Color.RED, Color.BLUE, Color.GREEN, Color.ORANGE, Color.CYAN, Color.MAGENTA}
     );
 
     /**

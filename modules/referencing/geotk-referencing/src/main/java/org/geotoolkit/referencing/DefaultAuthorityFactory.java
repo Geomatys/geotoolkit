@@ -70,7 +70,7 @@ final class DefaultAuthorityFactory extends CachingAuthorityFactory implements C
      * authority factory.
      */
     private static final List<String> AUTHORITY_LESS = UnmodifiableArrayList.wrap(
-        "WGS84(DD)"  // (longitude,latitude) with decimal degrees.
+        new String[] {"WGS84(DD)"}  // (longitude,latitude) with decimal degrees.
     );
 
     /**

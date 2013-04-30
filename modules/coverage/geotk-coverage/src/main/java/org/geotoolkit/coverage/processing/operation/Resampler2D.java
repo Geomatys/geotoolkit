@@ -106,11 +106,8 @@ final class Resampler2D extends GridCoverage2D {
      * The corner to use for performing calculation. By default {@link GridGeometry#getGridToCRS()}
      * maps to pixel center (as of OGC specification). In JAI, the transforms rather map to the
      * upper left corner.
-     *
-     * @todo Left to CENTER for now because we need to pass this argument to {@link GridGeometry2D}
-     *       constructors.
      */
-    private static final PixelOrientation CORNER = PixelOrientation.CENTER; //UPPER_LEFT;
+    private static final PixelOrientation CORNER = PixelOrientation.UPPER_LEFT;
 
     /**
      * When an empirical adjustment of the Warp transform seems necessary, the amount of
@@ -656,7 +653,7 @@ final class Resampler2D extends GridCoverage2D {
         upper[targetGG.gridDimensionY] = targetImage.getMaxY();
         final GridEnvelope actualGR = new GeneralGridEnvelope(lower, upper, false);
         if (!targetGR.equals(actualGR)) {
-            final MathTransform gridToCRS = targetGG.getGridToCRS(CORNER);
+            final MathTransform gridToCRS = targetGG.getGridToCRS();
             targetGG = new GridGeometry2D(actualGR, gridToCRS, targetCRS);
             if (!automaticGR) {
                 final InternationalString name = sourceCoverage.getName();
