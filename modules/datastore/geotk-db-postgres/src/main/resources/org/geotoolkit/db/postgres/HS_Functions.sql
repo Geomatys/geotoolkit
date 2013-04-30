@@ -948,22 +948,39 @@ end;$BODY$
 CREATE OR REPLACE FUNCTION "HS_CreateHistoryTable"("tableName" character varying, "trackedColumns" character varying[])
   RETURNS character varying AS
 $BODY$declare 
- stmt character varying;
- stmtType character varying;
- tmpAllIdentifierColumnsType character varying;
- tmpAllIdentifierColumnsOpt character varying;
+	stmt character varying;
+	stmt_table character varying;
+	stmtType character varying;
+	table_nam character varying;
+	tmpAllIdentifierColumnsType character varying;
+	tmpAllIdentifierColumnsOpt character varying;
+	stmt_HS_Begin_idx character varying;
+	stmt_HS_End_idx character varying;
+	stmt_HS_BegEnd_idx character varying;
+
 
 begin
+	table_nam = "HS_ConstructTableIdentifier"("tableName");
 	tmpAllIdentifierColumnsType = "HS_CreateCommaSeparatedTrackedColumnAndTypeList"("tableName", "trackedColumns");
 	tmpAllIdentifierColumnsOpt  = "HS_CreateCommaSeparatedIdentifierColumnList"("tableName", "trackedColumns", ' WITH OPTIONS NOT NULL');
-		
-	stmt = 'CREATE TABLE ' ||'"'|| "HS_ConstructTableIdentifier"("tableName") ||'"'||'( "HS_SEQ" serial PRIMARY KEY, '||
-	tmpAllIdentifierColumnsType || ', "HS_Begin" timestamp, "HS_End" timestamp )';
+	
+	-- table query creation 	
+	stmt_table = 'CREATE TABLE ' ||'"'|| table_nam ||'"'||'( "HS_SEQ" serial PRIMARY KEY, '||
+	tmpAllIdentifierColumnsType || ', "HS_Begin" timestamp, "HS_End" timestamp ); ';
+
+	-- Begin index query creation
+	stmt_HS_Begin_idx = 'CREATE INDEX "HS_Begin_idx"  ON '|| '"'|| table_nam ||'"' ||' USING btree  ("HS_Begin" ); ';
+	-- End index query creation
+	stmt_HS_End_idx = 'CREATE INDEX "HS_End_idx"  ON '|| '"'|| table_nam ||'"' ||' USING btree  ("HS_End" ); ';
+	-- BegEnd index query creation
+	stmt_HS_BegEnd_idx = 'CREATE INDEX "HS_BegEnd_idx"  ON '|| '"'|| table_nam ||'"' ||' USING btree  ("HS_Begin", "HS_End" ); ';
+	stmt = stmt_table || stmt_HS_Begin_idx || stmt_HS_End_idx || stmt_HS_BegEnd_idx;
 	EXECUTE stmt;
 	return stmt;
 end;$BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
+
 
 -- Function: "HS_InitializeHistoryTable"(character varying, character varying[])
 
