@@ -88,6 +88,6 @@ public final strictfp class ParameterWriterTest extends LocaleDependantTestBase 
             "central_meridian   = 2.337229166666667\n" +
             "scale_factor       = 1.0\n" +
             "false_easting      = 0.0\n" +
-            "false_northing     = 0.0", parameters.toString());
+            "false_northing     = 0.0\n", parameters.toString());
     }
 }

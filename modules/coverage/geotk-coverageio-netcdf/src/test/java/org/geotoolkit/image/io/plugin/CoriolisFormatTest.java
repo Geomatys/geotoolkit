@@ -298,7 +298,7 @@ public final strictfp class CoriolisFormatTest extends NetcdfImageReaderTestBase
             "            ├───fillSampleValues=“32767.0”\n" +
             "            ├───scaleFactor=“0.001”\n" +
             "            ├───offset=“20.0”\n" +
-            "            └───transferFunctionType=“linear”"), simplify(metadata.toString()));
+            "            └───transferFunctionType=“linear”\n"), simplify(metadata.toString()));
     }
 
     /**
@@ -339,7 +339,7 @@ public final strictfp class CoriolisFormatTest extends NetcdfImageReaderTestBase
             "            ├───validSampleValues=“[0 … 100]”\n" +
             "            ├───fillSampleValues=“32767.0”\n" +
             "            ├───scaleFactor=“0.01”\n" +
-            "            └───transferFunctionType=“linear”"), simplify(metadata.toString()));
+            "            └───transferFunctionType=“linear”\n"), simplify(metadata.toString()));
     }
 
     /**

@@ -869,7 +869,7 @@ public class NetcdfImageReader extends FileImageReader implements
                     inputURL = input.toString();
                     final int s = inputURL.indexOf('?');
                     if (s >= 0) {
-                        variableNames = UnmodifiableArrayList.wrap(inputURL.substring(s + 1));
+                        variableNames = UnmodifiableArrayList.wrap(new String[] {inputURL.substring(s + 1)});
                     }
                     break;
                 }
