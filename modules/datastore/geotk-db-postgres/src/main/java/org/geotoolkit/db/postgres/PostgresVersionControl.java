@@ -235,7 +235,11 @@ public class PostgresVersionControl extends AbstractVersionControl{
         return isVersioned;
     }
     
-    private String getHSTableName(){
+    /**
+     * Get the history derivated table name.
+     * @return String
+     */
+    public String getHSTableName(){
         return "HS_TBL_"+featureType.getName().getLocalPart();
     }
     

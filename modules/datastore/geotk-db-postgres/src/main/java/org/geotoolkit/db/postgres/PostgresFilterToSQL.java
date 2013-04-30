@@ -21,7 +21,9 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LinearRing;
 import java.lang.reflect.Array;
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import net.iharder.Base64;
 import org.apache.sis.util.Version;
@@ -160,6 +162,12 @@ public class PostgresFilterToSQL implements FilterToSQL {
     }
     
     public void writeValue(final StringBuilder sb, Object candidate, int srid){
+        
+        if(candidate instanceof Date){
+            //convert it to a timestamp, string representation won't be ambiguious like dates toString()
+            candidate = new Timestamp(((Date)candidate).getTime());           
+        }
+        
         if(candidate == null){
           sb.append("NULL");
           

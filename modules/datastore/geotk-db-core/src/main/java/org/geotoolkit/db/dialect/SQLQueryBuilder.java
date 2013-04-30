@@ -51,14 +51,15 @@ import org.opengis.filter.sort.SortOrder;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
- *
+ * SQL query builder, rely on dialect to build conform SQL queries.
+ * 
  * @author Johann Sorel (Geomatys)
  */
 public class SQLQueryBuilder {
     
-    private final DefaultJDBCFeatureStore store;
-    private final String databaseSchema;
-    private final SQLDialect dialect;
+    protected final DefaultJDBCFeatureStore store;
+    protected final String databaseSchema;
+    protected final SQLDialect dialect;
 
     public SQLQueryBuilder(DefaultJDBCFeatureStore store) {
         this.store = store;
@@ -87,10 +88,33 @@ public class SQLQueryBuilder {
         final PrimaryKey key = store.getDatabaseModel().getPrimaryKey(featureType.getName());
 
         // column names
+        encodeSelectColumnNames(sql, featureType, query.getHints());
+
+        sql.append(" FROM ");
+        dialect.encodeSchemaAndTableName(sql, databaseSchema, featureType.getName().getLocalPart());
+
+        // filtering
+        final Filter filter = query.getFilter();
+        if (!Filter.INCLUDE.equals(filter)) {
+            //encode filter
+            sql.append(" WHERE ");
+            sql.append(dialect.encodeFilter(filter,featureType));
+        }
+
+        // sorting
+        encodeSortBy(featureType, query.getSortBy(), key, sql);
+
+        // finally encode limit/offset, if necessary
+        dialect.encodeLimitOffset(sql, query.getMaxFeatures(), query.getStartIndex());
+
+        return sql.toString();
+    }
+
+    protected void encodeSelectColumnNames(StringBuilder sql, FeatureType featureType, Hints hints){
         for (PropertyDescriptor att : featureType.getDescriptors()) {
             if (att instanceof GeometryDescriptor) {
                 //encode as geometry
-                encodeGeometryColumn((GeometryDescriptor) att, sql, query.getHints());
+                encodeGeometryColumn((GeometryDescriptor) att, sql, hints);
                 //alias it to be the name of the original geometry
                 dialect.encodeColumnAlias(sql, att.getName().getLocalPart());
             } else if (att instanceof AssociationDescriptor) {
@@ -109,27 +133,8 @@ public class SQLQueryBuilder {
             sql.append(',');
         }
         sql.setLength(sql.length() - 1);
-
-        sql.append(" FROM ");
-        dialect.encodeSchemaAndTableName(sql, databaseSchema, featureType.getName().getLocalPart());
-
-        // filtering
-        final Filter filter = query.getFilter();
-        if (filter != null && !Filter.INCLUDE.equals(filter)) {
-            //encode filter
-            sql.append(" WHERE ");
-            sql.append(dialect.encodeFilter(filter,featureType));
-        }
-
-        // sorting
-        encodeSortBy(featureType, query.getSortBy(), key, sql);
-
-        // finally encode limit/offset, if necessary
-        dialect.encodeLimitOffset(sql, query.getMaxFeatures(), query.getStartIndex());
-
-        return sql.toString();
     }
-
+    
     
     /**
      * Generates a 'INSERT INFO' sql statement.

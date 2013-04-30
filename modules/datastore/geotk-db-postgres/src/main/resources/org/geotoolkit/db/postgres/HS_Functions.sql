@@ -250,7 +250,7 @@ end;$BODY$
 CREATE OR REPLACE FUNCTION "HS_GetTransactionTimestamp"()
   RETURNS timestamp with time zone AS
 $BODY$BEGIN
-  RETURN now();
+  RETURN DATE_TRUNC('millisecond', now());
 END;$BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;

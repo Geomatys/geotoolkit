@@ -78,7 +78,7 @@ public class JDBCFeatureWriterUpdate extends JDBCFeatureReader implements
         try {
             //figure out what the fid is
             final PrimaryKey key = store.getDatabaseModel().getPrimaryKey(type.getName());
-            final String fid = key.encodeFID(rs);
+            final String fid = fidBase + key.encodeFID(rs);
 
             final FilterFactory ff = store.getFilterFactory();
             final Id filter = ff.id(Collections.singleton(ff.featureId(fid)));

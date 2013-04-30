@@ -94,10 +94,11 @@ public class PrimaryKey {
     
     public Object[] decodeFID(final String fid) {        
         final String[] parts = fid.split("\\.");
-        final Object[] values = new Object[parts.length];
+        final Object[] values = new Object[parts.length-1];
         
-        for(int i=0;i<parts.length;i++){
-            values[i] = Converters.convert(parts[i], columns.get(i).getJavaType());
+        //ignore the first part which is the featuretype name
+        for(int i=1;i<parts.length;i++){
+            values[i-1] = Converters.convert(parts[i], columns.get(i-1).getJavaType());
         }
         
         return values;

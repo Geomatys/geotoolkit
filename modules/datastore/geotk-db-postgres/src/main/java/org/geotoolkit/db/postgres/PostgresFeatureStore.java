@@ -27,6 +27,7 @@ import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.db.DefaultJDBCFeatureStore;
 import static org.geotoolkit.db.JDBCFeatureStore.CUSTOM_SQL;
 import org.geotoolkit.db.JDBCFeatureStoreUtilities;
+import org.geotoolkit.db.dialect.SQLQueryBuilder;
 import org.geotoolkit.internal.sql.ScriptRunner;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.version.VersionControl;
@@ -46,7 +47,8 @@ public class PostgresFeatureStore extends DefaultJDBCFeatureStore{
     
     //historisation informations
     private Boolean hasHSFunctions;
-
+    private PostgresQueryBuilder querybuilder = null;
+    
     public PostgresFeatureStore(ParameterValueGroup params, String factoryId) {
         super(params, factoryId);
     }
@@ -54,6 +56,14 @@ public class PostgresFeatureStore extends DefaultJDBCFeatureStore{
     @Override
     public QueryCapabilities getQueryCapabilities() {
         return PG_CAPA;
+    }
+
+    @Override
+    protected SQLQueryBuilder getQueryBuilder() {
+         if(querybuilder == null){
+            querybuilder = new PostgresQueryBuilder(this);
+        }
+        return querybuilder;
     }
     
     ////////////////////////////////////////////////////////////////////////////

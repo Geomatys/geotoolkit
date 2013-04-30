@@ -173,7 +173,7 @@ public class DefaultJDBCFeatureStore extends AbstractFeatureStore implements JDB
         this.dialect = dialect;
     }
     
-    private SQLQueryBuilder getQueryBuilder(){
+    protected SQLQueryBuilder getQueryBuilder(){
         if(queryBuilder == null){
             queryBuilder = new SQLQueryBuilder(this);
         }
@@ -525,7 +525,7 @@ public class DefaultJDBCFeatureStore extends AbstractFeatureStore implements JDB
 
         Statement stmt = null;
         try {
-            final String sql = queryBuilder.updateSQL(featureType, changes, filter);
+            final String sql = getQueryBuilder().updateSQL(featureType, changes, filter);
             getLogger().log(Level.FINE, "Updating feature: {0}", sql);
             stmt = cx.createStatement();
             System.out.println(sql);
