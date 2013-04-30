@@ -26,7 +26,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 import org.junit.*;
-import org.geotoolkit.test.Depend;
+import org.apache.sis.test.DependsOn;
 import static org.junit.Assert.*;
 
 
@@ -38,7 +38,7 @@ import static org.junit.Assert.*;
  *
  * @since 2.5
  */
-@Depend(TileManagerTest.class)
+@DependsOn(TileManagerTest.class)
 public final strictfp class MosaicBuilderTest extends MosaicTestBase {
     /**
      * Tests subsampling calculation.

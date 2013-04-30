@@ -35,7 +35,7 @@ import org.opengis.metadata.Metadata;
 import org.junit.*;
 import static org.geotoolkit.test.Assert.*;
 
-import org.geotoolkit.test.Depend;
+import org.apache.sis.test.DependsOn;
 import org.geotoolkit.test.TestData;
 import org.geotoolkit.test.image.ImageTestBase;
 import org.geotoolkit.geometry.Envelope2D;
@@ -59,7 +59,7 @@ import org.geotoolkit.xml.XML;
  *
  * @since 3.09
  */
-@Depend({TextMatrixImageReaderTest.class, WorldFileImageReaderTest.class})
+@DependsOn({TextMatrixImageReaderTest.class, WorldFileImageReaderTest.class})
 public final strictfp class ImageCoverageReaderTest extends ImageTestBase {
     /**
      * Small number for comparison of floating point values.

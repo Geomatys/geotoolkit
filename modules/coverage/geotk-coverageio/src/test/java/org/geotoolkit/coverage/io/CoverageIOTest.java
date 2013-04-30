@@ -26,7 +26,7 @@ import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.coverage.grid.GridGeometry;
 import org.opengis.coverage.grid.GridEnvelope;
 
-import org.geotoolkit.test.Depend;
+import org.apache.sis.test.DependsOn;
 import org.geotoolkit.test.TestData;
 import org.geotoolkit.test.image.ImageTestBase;
 import org.geotoolkit.internal.io.IOUtilities;
@@ -48,7 +48,7 @@ import static org.geotoolkit.test.Assert.*;
  *
  * @since 3.18
  */
-@Depend(MosaicReadWriteTest.class)
+@DependsOn(MosaicReadWriteTest.class)
 public final strictfp class CoverageIOTest extends ImageTestBase {
     /**
      * Creates a new test suite.

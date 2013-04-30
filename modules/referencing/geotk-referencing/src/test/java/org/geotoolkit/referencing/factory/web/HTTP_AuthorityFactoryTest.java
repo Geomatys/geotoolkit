@@ -34,7 +34,7 @@ import org.geotoolkit.referencing.factory.AbstractAuthorityFactory;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.metadata.iso.citation.Citations;
 
-import org.geotoolkit.test.Depend;
+import org.apache.sis.test.DependsOn;
 import org.geotoolkit.test.referencing.ReferencingTestBase;
 
 import org.junit.*;
@@ -53,7 +53,7 @@ import static org.geotoolkit.factory.AuthorityFactoryFinder.*;
  *
  * @since 2.4
  */
-@Depend(AllAuthoritiesFactoryTest.class)
+@DependsOn(AllAuthoritiesFactoryTest.class)
 public final strictfp class HTTP_AuthorityFactoryTest extends ReferencingTestBase {
     /**
      * Tests the {@link HTTP_AuthorityFactory#forceAxisOrderHonoring} method.

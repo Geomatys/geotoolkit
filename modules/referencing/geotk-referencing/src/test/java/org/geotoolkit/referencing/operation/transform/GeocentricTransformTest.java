@@ -35,7 +35,7 @@ import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.datum.BursaWolfParameters;
 import org.geotoolkit.referencing.datum.DefaultEllipsoid;
 
-import org.geotoolkit.test.Depend;
+import org.apache.sis.test.DependsOn;
 import org.junit.*;
 import org.opengis.referencing.datum.Ellipsoid;
 
@@ -57,7 +57,7 @@ import static java.lang.StrictMath.*;
  *
  * @since 2.1
  */
-@Depend(AbstractMathTransformTest.class)
+@DependsOn(AbstractMathTransformTest.class)
 public final strictfp class GeocentricTransformTest extends TransformTestBase {
     /**
      * Creates the test suite.

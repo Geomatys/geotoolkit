@@ -17,8 +17,8 @@
  */
 package org.geotoolkit.util.converter;
 
-import org.geotoolkit.test.Depend;
 
+import org.apache.sis.test.DependsOn;
 import org.junit.*;
 import static org.junit.Assert.*;
 
@@ -31,7 +31,7 @@ import static org.junit.Assert.*;
  *
  * @since 3.04
  */
-@Depend(SystemConverterTest.class)
+@DependsOn(SystemConverterTest.class)
 public final strictfp class AnyConverterTest {
     /**
      * Tests the {@link AnyConverter#convert} method.

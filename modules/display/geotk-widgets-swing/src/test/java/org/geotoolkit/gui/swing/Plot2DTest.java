@@ -19,8 +19,8 @@ package org.geotoolkit.gui.swing;
 
 import java.util.Random;
 import javax.swing.JComponent;
-import org.geotoolkit.test.Depend;
 
+import org.apache.sis.test.DependsOn;
 import org.geotoolkit.test.gui.SwingTestBase;
 
 
@@ -32,7 +32,7 @@ import org.geotoolkit.test.gui.SwingTestBase;
  *
  * @since 2.0
  */
-@Depend(ZoomPaneTest.class)
+@DependsOn(ZoomPaneTest.class)
 public final strictfp class Plot2DTest extends SwingTestBase<Plot2D> {
     /**
      * Constructs the test case.

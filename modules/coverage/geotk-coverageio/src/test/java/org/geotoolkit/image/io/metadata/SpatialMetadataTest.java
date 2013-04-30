@@ -28,7 +28,7 @@ import org.opengis.metadata.acquisition.Instrument;
 import org.opengis.metadata.content.ImageDescription;
 import org.opengis.metadata.content.ImagingCondition;
 
-import org.geotoolkit.test.Depend;
+import org.apache.sis.test.DependsOn;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.metadata.iso.acquisition.DefaultInstrument;
 import org.geotoolkit.metadata.iso.citation.DefaultCitation;
@@ -48,7 +48,7 @@ import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMA
  *
  * @since 3.06
  */
-@Depend(MetadataProxyTest.class)
+@DependsOn(MetadataProxyTest.class)
 public final strictfp class SpatialMetadataTest {
     /**
      * The warning level to use in this test. We set them to FINE in order to avoid

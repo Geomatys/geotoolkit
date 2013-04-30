@@ -39,7 +39,7 @@ import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.referencing.factory.wkt.PropertyAuthorityFactoryTest;
 
-import org.geotoolkit.test.Depend;
+import org.apache.sis.test.DependsOn;
 import org.geotoolkit.test.referencing.ReferencingTestBase;
 
 import org.junit.*;
@@ -56,7 +56,7 @@ import static org.geotoolkit.referencing.Commons.*;
  *
  * @since 2.4
  */
-@Depend(PropertyAuthorityFactoryTest.class)
+@DependsOn(PropertyAuthorityFactoryTest.class)
 public final strictfp class PropertyEpsgFactoryTest extends ReferencingTestBase {
     /**
      * The factory to test.

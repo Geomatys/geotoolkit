@@ -55,7 +55,7 @@ import org.geotoolkit.referencing.factory.FallbackAuthorityFactory;
 import org.geotoolkit.referencing.factory.OrderedAxisAuthorityFactory;
 import org.geotoolkit.referencing.factory.OrderedAxisAuthorityFactoryTest;
 
-import org.geotoolkit.test.Depend;
+import org.apache.sis.test.DependsOn;
 import org.geotoolkit.test.referencing.ReferencingTestBase;
 
 import org.junit.*;
@@ -74,7 +74,7 @@ import static org.geotoolkit.referencing.Commons.*;
  *
  * @since 2.4
  */
-@Depend(CRS_Test.class)
+@DependsOn(CRS_Test.class)
 public final strictfp class CRS_WithEpsgTest extends ReferencingTestBase {
     /**
      * Ensures that the EPSG database is available. If no EPSG database is installed,

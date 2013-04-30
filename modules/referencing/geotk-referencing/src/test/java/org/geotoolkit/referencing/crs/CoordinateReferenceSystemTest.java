@@ -33,7 +33,7 @@ import static org.geotoolkit.referencing.crs.DefaultEngineeringCRS.*;
 
 import org.junit.*;
 import org.opengis.test.ValidatorContainer;
-import org.geotoolkit.test.Depend;
+import org.apache.sis.test.DependsOn;
 import org.geotoolkit.test.referencing.ReferencingTestBase;
 
 
@@ -45,7 +45,7 @@ import org.geotoolkit.test.referencing.ReferencingTestBase;
  *
  * @since 2.2
  */
-@Depend({IdentifiedObjectTest.class, DatumTest.class, CoordinateSystemTest.class})
+@DependsOn({IdentifiedObjectTest.class, DatumTest.class, CoordinateSystemTest.class})
 public final strictfp class CoordinateReferenceSystemTest extends ReferencingTestBase {
     /**
      * Validates constants.

@@ -33,7 +33,7 @@ import javax.media.jai.RenderedImageAdapter;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 
-import org.geotoolkit.test.Depend;
+import org.apache.sis.test.DependsOn;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageFactory;
@@ -53,7 +53,7 @@ import static org.junit.Assert.*;
  *
  * @since 2.1
  */
-@Depend(SampleDimensionTest.class)
+@DependsOn(SampleDimensionTest.class)
 public final strictfp class SampleTranscoderTest {
     /**
      * Small value for comparisons. Remind: transformed values are stored in a new image

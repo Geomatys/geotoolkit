@@ -25,7 +25,7 @@ import org.geotoolkit.internal.io.Installation;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.geometry.DirectPosition2D;
 
-import org.geotoolkit.test.Depend;
+import org.apache.sis.test.DependsOn;
 import org.geotoolkit.test.referencing.ReferencingTestBase;
 
 import org.junit.*;
@@ -42,7 +42,7 @@ import static org.geotoolkit.referencing.Commons.*;
  *
  * @since 3.00
  */
-@Depend(CRS_WithEpsgTest.class)
+@DependsOn(CRS_WithEpsgTest.class)
 public final strictfp class CRS_WithGridTest extends ReferencingTestBase {
     /**
      * Tests transformation NADCON grids.

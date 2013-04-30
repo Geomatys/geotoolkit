@@ -24,7 +24,7 @@ import org.opengis.referencing.crs.ProjectedCRS;
 import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.MathTransform;
 
-import org.geotoolkit.test.Depend;
+import org.apache.sis.test.DependsOn;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.transform.LinearTransform;
 import org.geotoolkit.referencing.operation.transform.ConcatenatedTransform;
@@ -41,7 +41,7 @@ import static org.junit.Assert.*;
  *
  * @since 2.3
  */
-@Depend({TransverseMercatorTest.class, KrovakTest.class})
+@DependsOn({TransverseMercatorTest.class, KrovakTest.class})
 public final strictfp class SouthOrientatedTest {
     /**
      * Small number for matrix element comparisons.

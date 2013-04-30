@@ -23,7 +23,7 @@ import javax.media.jai.ParameterBlockJAI;
 import javax.media.jai.RegistryElementDescriptor;
 import javax.media.jai.registry.RenderedRegistryMode;
 
-import org.geotoolkit.test.Depend;
+import org.apache.sis.test.DependsOn;
 import org.geotoolkit.image.SampleImage;
 import org.geotoolkit.image.SampleImageTestBase;
 import org.geotoolkit.internal.image.jai.MaskDescriptor;
@@ -40,7 +40,7 @@ import static org.junit.Assert.*;
  *
  * @since 3.00
  */
-@Depend(SilhouetteMaskTest.class)
+@DependsOn(SilhouetteMaskTest.class)
 public final strictfp class MaskTest extends SampleImageTestBase {
     /**
      * Creates a new test case.

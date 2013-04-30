@@ -27,7 +27,7 @@ import org.geotoolkit.referencing.operation.provider.PositionVector7Param;
 import org.geotoolkit.referencing.operation.provider.GeocentricTranslation;
 import org.geotoolkit.referencing.operation.provider.CoordinateFrameRotation;
 
-import org.geotoolkit.test.Depend;
+import org.apache.sis.test.DependsOn;
 import org.junit.*;
 
 
@@ -39,7 +39,7 @@ import org.junit.*;
  *
  * @since 2.0
  */
-@Depend({ProjectiveTransformTest.class, GeocentricTransformTest.class, ConcatenatedTransformTest.class})
+@DependsOn({ProjectiveTransformTest.class, GeocentricTransformTest.class, ConcatenatedTransformTest.class})
 public final strictfp class GeocentricAffineTransformTest extends TransformTestBase {
     /**
      * Creates a new test suite.

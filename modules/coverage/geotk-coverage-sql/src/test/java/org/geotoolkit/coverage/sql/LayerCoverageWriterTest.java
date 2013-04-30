@@ -26,8 +26,8 @@ import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.internal.sql.table.CatalogTestBase;
 import org.geotoolkit.internal.sql.table.ConfigurationKey;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
-import org.geotoolkit.test.Depend;
 
+import org.apache.sis.test.DependsOn;
 import org.junit.*;
 import static org.geotoolkit.test.Assert.*;
 
@@ -40,7 +40,7 @@ import static org.geotoolkit.test.Assert.*;
  *
  * @since 3.20
  */
-@Depend(CoverageDatabaseTest.class)
+@DependsOn(CoverageDatabaseTest.class)
 public final strictfp class LayerCoverageWriterTest extends CatalogTestBase {
     /**
      * Creates a new test suite.

@@ -27,8 +27,8 @@ import org.opengis.referencing.crs.VerticalCRS;
 import org.opengis.util.FactoryException;
 
 import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
-import org.geotoolkit.test.Depend;
 
+import org.apache.sis.test.DependsOn;
 import org.junit.*;
 import static org.junit.Assert.*;
 import static org.geotoolkit.referencing.datum.DefaultVerticalDatum.GEOIDAL;
@@ -45,7 +45,7 @@ import static org.geotoolkit.referencing.cs.DefaultVerticalCS.GRAVITY_RELATED_HE
  *
  * @since 3.03
  */
-@Depend(FactoryMethodTest.class)
+@DependsOn(FactoryMethodTest.class)
 public final strictfp class ReferencingFactoryTest {
     /**
      * The metadata factory.

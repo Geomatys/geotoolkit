@@ -39,7 +39,7 @@ import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.datum.PixelInCell;
 
 import org.apache.sis.measure.Range;
-import org.geotoolkit.test.Depend;
+import org.apache.sis.test.DependsOn;
 import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
 import org.geotoolkit.referencing.cs.DiscreteReferencingFactory;
 import org.geotoolkit.referencing.cs.DiscreteCoordinateSystemAxis;
@@ -65,7 +65,7 @@ import static org.geotoolkit.image.io.plugin.CoriolisFormatTest.assertExpectedAx
  *
  * @since 3.08
  */
-@Depend({NetcdfAxisTest.class, IrregularAxesConverterTest.class})
+@DependsOn({NetcdfAxisTest.class, IrregularAxesConverterTest.class})
 public final strictfp class NetcdfCRSTest extends org.opengis.wrapper.netcdf.NetcdfCRSTest {
     /**
      * Small tolerance factor for floating point comparison.

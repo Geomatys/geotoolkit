@@ -27,7 +27,7 @@ import java.awt.image.IndexColorModel;
 
 import org.opengis.referencing.crs.ProjectedCRS;
 
-import org.geotoolkit.test.Depend;
+import org.apache.sis.test.DependsOn;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
@@ -49,7 +49,7 @@ import static org.junit.Assert.*;
  *
  * @since 3.10 (derived from Seagis)
  */
-@Depend(GridCoverageTableTest.class)
+@DependsOn(GridCoverageTableTest.class)
 public final strictfp class GridCoverageLoaderTest extends CatalogTestBase {
     /**
      * Creates a new test suite.

@@ -21,7 +21,7 @@ import org.junit.*;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.operation.TransformException;
 
-import org.geotoolkit.test.Depend;
+import org.apache.sis.test.DependsOn;
 import org.geotoolkit.referencing.operation.transform.CoordinateDomain;
 
 import static java.lang.Double.*;
@@ -41,7 +41,7 @@ import static org.geotoolkit.referencing.operation.provider.LambertAzimuthalEqua
  *
  * @since 3.00
  */
-@Depend(UnitaryProjectionTest.class)
+@DependsOn(UnitaryProjectionTest.class)
 public final strictfp class LambertAzimuthalEqualAreaTest extends ProjectionTestBase {
     /**
      * Tolerance level for comparing floating point numbers.

@@ -44,7 +44,7 @@ import org.apache.sis.util.iso.SimpleInternationalString;
 
 import org.junit.*;
 
-import org.geotoolkit.test.Depend;
+import org.apache.sis.test.DependsOn;
 import org.geotoolkit.test.TestData;
 import org.geotoolkit.test.LocaleDependantTestBase;
 import static org.geotoolkit.test.Assert.*;
@@ -63,7 +63,7 @@ import static org.geotoolkit.test.Assert.*;
  *
  * @since 2.5
  */
-@Depend({CodeListMarshallingTest.class, FreeTextMarshallingTest.class})
+@DependsOn({CodeListMarshallingTest.class, FreeTextMarshallingTest.class})
 public final strictfp class MetadataMarshallingTest extends LocaleDependantTestBase {
     /**
      * Generates a XML tree using the annotations on the {@link DefaultMetadata} class,

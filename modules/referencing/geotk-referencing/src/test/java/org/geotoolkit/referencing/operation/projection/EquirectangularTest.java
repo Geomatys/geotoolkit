@@ -24,7 +24,7 @@ import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.operation.TransformException;
 
 import org.junit.*;
-import org.geotoolkit.test.Depend;
+import org.apache.sis.test.DependsOn;
 import org.geotoolkit.referencing.operation.transform.CoordinateDomain;
 import org.geotoolkit.referencing.operation.transform.ConcatenatedTransform;
 
@@ -40,7 +40,7 @@ import static org.geotoolkit.referencing.operation.provider.EquidistantCylindric
  *
  * @since 3.00
  */
-@Depend(UnitaryProjectionTest.class)
+@DependsOn(UnitaryProjectionTest.class)
 public final strictfp class EquirectangularTest extends ProjectionTestBase {
     /**
      * Tolerance level for comparing floating point numbers.

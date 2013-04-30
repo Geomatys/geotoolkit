@@ -27,7 +27,7 @@ import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.crs.GeographicCRS;
 
-import org.geotoolkit.test.Depend;
+import org.apache.sis.test.DependsOn;
 import org.geotoolkit.util.MeasurementRange;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.io.CoverageStoreException;
@@ -49,7 +49,7 @@ import static org.geotoolkit.coverage.sql.LayerTableTest.*;
  *
  * @since 3.10 (derived from Seagis)
  */
-@Depend(LayerTableTest.class)
+@DependsOn(LayerTableTest.class)
 public final strictfp class LayerEntryTest extends CatalogTestBase {
     /**
      * Creates a new test suite.

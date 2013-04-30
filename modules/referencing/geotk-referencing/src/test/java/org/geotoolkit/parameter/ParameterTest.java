@@ -27,7 +27,7 @@ import static javax.measure.unit.NonSI.DEGREE_ANGLE;
 import org.opengis.parameter.*;
 import org.opengis.referencing.cs.AxisDirection;
 
-import org.geotoolkit.test.Depend;
+import org.apache.sis.test.DependsOn;
 import org.geotoolkit.internal.referencing.VerticalDatumTypes;
 import org.geotoolkit.test.referencing.ParameterTestBase;
 
@@ -45,7 +45,7 @@ import static java.lang.StrictMath.*;
  *
  * @since 2.1
  */
-@Depend(ParameterDescriptorTest.class)
+@DependsOn(ParameterDescriptorTest.class)
 public final strictfp class ParameterTest extends ParameterTestBase {
     /**
      * Strict tolerance factor for floating point comparisons. In the particular

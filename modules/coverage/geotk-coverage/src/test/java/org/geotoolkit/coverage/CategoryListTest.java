@@ -23,7 +23,7 @@ import java.util.Random;
 import org.opengis.referencing.operation.TransformException;
 
 import org.apache.sis.measure.Range;
-import org.geotoolkit.test.Depend;
+import org.apache.sis.test.DependsOn;
 import org.geotoolkit.test.TestBase;
 
 import org.junit.*;
@@ -38,7 +38,7 @@ import static org.junit.Assert.*;
  *
  * @since 2.1
  */
-@Depend(CategoryTest.class)
+@DependsOn(CategoryTest.class)
 public final strictfp class CategoryListTest extends TestBase {
     /**
      * Small value for comparisons.

@@ -29,7 +29,7 @@ import java.text.SimpleDateFormat;
 
 import org.opengis.geometry.Envelope;
 
-import org.geotoolkit.test.Depend;
+import org.apache.sis.test.DependsOn;
 import org.geotoolkit.util.MeasurementRange;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.internal.sql.table.CatalogTestBase;
@@ -46,7 +46,7 @@ import static org.junit.Assert.*;
  *
  * @since 3.10 (derived from Seagis)
  */
-@Depend(SeriesTableTest.class)
+@DependsOn(SeriesTableTest.class)
 public final strictfp class LayerTableTest extends CatalogTestBase {
     /**
      * The name of the simplest layer to be tested. This layer contains only PNG images in

@@ -18,7 +18,7 @@
 package org.geotoolkit.referencing.operation;
 
 import java.io.LineNumberReader;
-import org.geotoolkit.test.Depend;
+import org.apache.sis.test.DependsOn;
 import org.geotoolkit.test.TestData;
 import org.geotoolkit.test.referencing.ReferencingTestBase;
 import org.geotoolkit.referencing.operation.provider.NADCON;
@@ -50,7 +50,7 @@ import org.junit.*;
  *
  * @since 2.1
  */
-@Depend({
+@DependsOn({
     DefaultMathTransformFactoryTest.class, EquirectangularTest.class, MercatorTest.class,
     TransverseMercatorTest.class, ObliqueMercatorTest.class, LambertConformalTest.class,
     AlbersEqualAreaTest.class, OrthographicTest.class, ObliqueStereographicTest.class,

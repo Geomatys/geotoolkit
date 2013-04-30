@@ -27,7 +27,7 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.test.CalculationType;
 
-import org.geotoolkit.test.Depend;
+import org.apache.sis.test.DependsOn;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.referencing.datum.DefaultEllipsoid;
 import org.geotoolkit.referencing.operation.transform.CoordinateDomain;
@@ -48,7 +48,7 @@ import static org.opengis.test.Assert.*;
  *
  * @since 3.00
  */
-@Depend({ProjectiveTransformTest.class, ConcatenatedTransformTest.class})
+@DependsOn({ProjectiveTransformTest.class, ConcatenatedTransformTest.class})
 public abstract strictfp class ProjectionTestBase extends TransformTestBase {
     /**
      * The radius of the sphere used in sphere test cases.

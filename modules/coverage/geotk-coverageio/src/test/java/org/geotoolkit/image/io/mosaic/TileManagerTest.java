@@ -23,7 +23,7 @@ import java.io.IOException;
 import java.util.Collection;
 
 import org.junit.*;
-import org.geotoolkit.test.Depend;
+import org.apache.sis.test.DependsOn;
 import static org.junit.Assert.*;
 
 
@@ -35,7 +35,7 @@ import static org.junit.Assert.*;
  *
  * @since 2.5
  */
-@Depend({GridTileManagerTest.class, TreeTileManagerTest.class})
+@DependsOn({GridTileManagerTest.class, TreeTileManagerTest.class})
 public strictfp class TileManagerTest extends MosaicTestBase {
     /**
      * The region of interest to be queried.

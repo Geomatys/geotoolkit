@@ -29,7 +29,7 @@ import java.util.Set;
 
 import org.opengis.geometry.Envelope;
 
-import org.geotoolkit.test.Depend;
+import org.apache.sis.test.DependsOn;
 import org.geotoolkit.test.TestData;
 import org.geotoolkit.internal.sql.table.CatalogTestBase;
 import org.geotoolkit.image.io.plugin.WorldFileImageReader;
@@ -52,7 +52,7 @@ import static org.junit.Assert.*;
  *
  * @since 3.12
  */
-@Depend(GridCoverageTableTest.class)
+@DependsOn(GridCoverageTableTest.class)
 public final strictfp class WritableGridCoverageTableTest extends CatalogTestBase {
     /**
      * The file which contains geostrophic current data.

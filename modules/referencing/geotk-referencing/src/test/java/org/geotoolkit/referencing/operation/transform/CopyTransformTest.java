@@ -22,7 +22,7 @@ import java.util.Random;
 import org.opengis.referencing.operation.TransformException;
 import org.geotoolkit.referencing.operation.provider.Affine;
 
-import org.geotoolkit.test.Depend;
+import org.apache.sis.test.DependsOn;
 import org.junit.*;
 
 import static org.junit.Assert.*;
@@ -36,7 +36,7 @@ import static org.junit.Assert.*;
  *
  * @since 3.08
  */
-@Depend(ProjectiveTransformTest.class)
+@DependsOn(ProjectiveTransformTest.class)
 public final strictfp class CopyTransformTest extends TransformTestBase {
     /**
      * Creates a new test suite.

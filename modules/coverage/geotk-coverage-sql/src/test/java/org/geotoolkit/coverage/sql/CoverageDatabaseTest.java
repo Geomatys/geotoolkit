@@ -24,7 +24,7 @@ import java.util.SortedSet;
 
 import org.opengis.parameter.ParameterValueGroup;
 
-import org.geotoolkit.test.Depend;
+import org.apache.sis.test.DependsOn;
 import org.geotoolkit.util.DateRange;
 import org.geotoolkit.util.MeasurementRange;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
@@ -44,7 +44,7 @@ import static org.geotoolkit.coverage.sql.LayerTableTest.*;
  *
  * @since 3.10
  */
-@Depend(GridCoverageLoaderTest.class)
+@DependsOn(GridCoverageLoaderTest.class)
 public final strictfp class CoverageDatabaseTest extends CatalogTestBase {
     /**
      * Creates a new test suite.

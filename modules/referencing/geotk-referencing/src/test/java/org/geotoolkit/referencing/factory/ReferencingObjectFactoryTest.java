@@ -50,7 +50,7 @@ import org.geotoolkit.referencing.operation.transform.AbstractMathTransform;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.DefaultReferenceIdentifier;
 
-import org.geotoolkit.test.Depend;
+import org.apache.sis.test.DependsOn;
 import org.geotoolkit.test.referencing.ReferencingTestBase;
 
 import org.junit.*;
@@ -66,7 +66,7 @@ import static org.geotoolkit.referencing.Assert.*;
  *
  * @since 2.0
  */
-@Depend({DatumTest.class, CartesianTest.class, CoordinateReferenceSystemTest.class, FactoryFinderTest.class})
+@DependsOn({DatumTest.class, CartesianTest.class, CoordinateReferenceSystemTest.class, FactoryFinderTest.class})
 public final strictfp class ReferencingObjectFactoryTest extends ReferencingTestBase {
     /**
      * Convenience method creating a map with only the "{@code name"} property.

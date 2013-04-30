@@ -23,7 +23,7 @@ import org.geotoolkit.util.collection.LazyList;
 
 import org.junit.*;
 import static org.junit.Assert.*;
-import org.geotoolkit.test.Depend;
+import org.apache.sis.test.DependsOn;
 
 
 /**
@@ -34,7 +34,7 @@ import org.geotoolkit.test.Depend;
  *
  * @since 2.1
  */
-@Depend(FactoryTest.class)
+@DependsOn(FactoryTest.class)
 public final strictfp class FactoryRegistryTest {
     /**
      * Ensures that class {@link Hints} is loaded before {@link DummyFactory}.

@@ -26,7 +26,7 @@ import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
 
-import org.geotoolkit.test.Depend;
+import org.apache.sis.test.DependsOn;
 import org.geotoolkit.referencing.IdentifiedObjectTest;
 import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
 
@@ -48,7 +48,7 @@ import org.geotoolkit.test.referencing.ReferencingTestBase;
  *
  * @since 2.2
  */
-@Depend({IdentifiedObjectTest.class, CoordinateSystemAxisTest.class, ComparableAxisWrapperTest.class})
+@DependsOn({IdentifiedObjectTest.class, CoordinateSystemAxisTest.class, ComparableAxisWrapperTest.class})
 public final strictfp class CoordinateSystemTest extends ReferencingTestBase {
     /**
      * Validates constants.

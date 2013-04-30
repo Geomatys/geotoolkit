@@ -37,8 +37,8 @@ import org.opengis.util.InternationalString;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.metadata.citation.PresentationForm;
 
-import org.geotoolkit.test.Depend;
 
+import org.apache.sis.test.DependsOn;
 import org.junit.*;
 import static org.junit.Assert.*;
 
@@ -51,7 +51,7 @@ import static org.junit.Assert.*;
  *
  * @since 3.00
  */
-@Depend(ConverterRegistryTest.class)
+@DependsOn(ConverterRegistryTest.class)
 public final strictfp class SystemConverterTest {
     /**
      * Tests the conversion of collections.

@@ -26,7 +26,7 @@ import javax.imageio.spi.IIORegistry;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.stream.ImageInputStream;
 
-import org.geotoolkit.test.Depend;
+import org.apache.sis.test.DependsOn;
 import org.geotoolkit.test.TestData;
 import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.image.io.TextImageReaderTestBase;
@@ -48,7 +48,7 @@ import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMA
  *
  * @since 3.07
  */
-@Depend(TextMatrixImageReader.class)
+@DependsOn(TextMatrixImageReader.class)
 public final strictfp class WorldFileImageReaderTest extends TextImageReaderTestBase {
     /**
      * Creates a reader and sets its input if needed.

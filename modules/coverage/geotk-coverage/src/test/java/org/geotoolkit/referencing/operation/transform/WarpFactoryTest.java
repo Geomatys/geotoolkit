@@ -39,8 +39,8 @@ import org.geotoolkit.referencing.datum.DefaultEllipsoid;
 import org.geotoolkit.referencing.operation.MathTransforms;
 import org.geotoolkit.referencing.operation.builder.GridToEnvelopeMapper;
 import org.geotoolkit.test.referencing.ReferencingTestBase;
-import org.geotoolkit.test.Depend;
 
+import org.apache.sis.test.DependsOn;
 import org.junit.*;
 import static org.junit.Assert.*;
 import static java.lang.StrictMath.*;
@@ -54,7 +54,7 @@ import static java.lang.StrictMath.*;
  *
  * @since 3.16
  */
-@Depend(WarpAdapterTest.class)
+@DependsOn(WarpAdapterTest.class)
 public final strictfp class WarpFactoryTest extends ReferencingTestBase {
     /**
      * The tolerance threshold (in pixels) used by the {@link WarpFactory} being tested.

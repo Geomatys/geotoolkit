@@ -23,7 +23,7 @@ import java.util.Random;
 import org.apache.sis.measure.Range;
 import org.geotoolkit.util.DateRange;
 import org.geotoolkit.util.NumberRange;
-import org.geotoolkit.test.Depend;
+import org.apache.sis.test.DependsOn;
 import org.geotoolkit.test.Performance;
 
 import org.junit.*;

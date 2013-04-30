@@ -22,7 +22,7 @@ import javax.measure.converter.ConversionException;
 
 import org.junit.*;
 import static org.geotoolkit.test.Assert.*;
-import org.geotoolkit.test.Depend;
+import org.apache.sis.test.DependsOn;
 
 
 /**
@@ -33,7 +33,7 @@ import org.geotoolkit.test.Depend;
  *
  * @since 2.4
  */
-@Depend(NumberRangeTest.class)
+@DependsOn(NumberRangeTest.class)
 public final strictfp class MeasurementRangeTest {
     /**
      * Tests unit conversions.
