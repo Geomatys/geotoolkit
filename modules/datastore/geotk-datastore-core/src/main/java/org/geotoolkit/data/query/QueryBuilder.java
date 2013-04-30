@@ -73,6 +73,7 @@ public final class QueryBuilder {
         maxFeatures = null;
         resolution = null;
         hints = null;
+        version = null;
     }
 
     public void copy(final Query query){
