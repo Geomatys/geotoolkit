@@ -52,7 +52,7 @@ public class LenghtHandler implements CanvasHandler {
 
     private static final GeometryFactory GEOMETRY_FACTORY = new GeometryFactory();
 
-    public static final List<Unit> UNITS = UnmodifiableArrayList.wrap((Unit)SI.KILOMETRE,SI.METRE,NonSI.MILE,NonSI.INCH);
+    public static final List<Unit> UNITS = UnmodifiableArrayList.wrap(new Unit[] {(Unit)SI.KILOMETRE,SI.METRE,NonSI.MILE,NonSI.INCH});
 
     private final MouseListen mouseInputListener;
 

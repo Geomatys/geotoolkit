@@ -72,11 +72,11 @@ public class FilterWritingTest {
     @Test
     public void testAnd() throws CQLException {
         final Filter filter = FF.and(
-                UnmodifiableArrayList.wrap((Filter)
+                UnmodifiableArrayList.wrap(new Filter[] {(Filter)
                     FF.equals(FF.property("att1"), FF.literal(15)),
                     FF.equals(FF.property("att2"), FF.literal(30)),
                     FF.equals(FF.property("att3"), FF.literal(50))
-                ));
+                }));
         final String cql = CQL.write(filter);
         assertNotNull(cql);
         assertEquals("(att1 = 15 AND att2 = 30 AND att3 = 50)", cql);
@@ -85,11 +85,11 @@ public class FilterWritingTest {
     @Test
     public void testOr() throws CQLException {
         final Filter filter = FF.or(
-                UnmodifiableArrayList.wrap((Filter)
+                UnmodifiableArrayList.wrap(new Filter[] {(Filter)
                     FF.equals(FF.property("att1"), FF.literal(15)),
                     FF.equals(FF.property("att2"), FF.literal(30)),
                     FF.equals(FF.property("att3"), FF.literal(50))
-                ));
+                }));
         final String cql = CQL.write(filter);
         assertNotNull(cql);
         assertEquals("(att1 = 15 OR att2 = 30 OR att3 = 50)", cql);

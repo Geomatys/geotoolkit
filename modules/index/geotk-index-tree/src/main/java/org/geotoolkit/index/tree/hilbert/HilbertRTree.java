@@ -139,7 +139,7 @@ public class HilbertRTree extends AbstractTree {
         System.arraycopy(entry.getLowerCorner().getCoordinate(), 0, coords, 0, dim);
         System.arraycopy(entry.getUpperCorner().getCoordinate(), 0, coords, dim, dim);
         if (root == null || root.isEmpty()) {
-            setRoot(createNode(this, null, null, UnmodifiableArrayList.wrap(entry), coords));
+            setRoot(createNode(this, null, null, UnmodifiableArrayList.wrap(new Envelope[] {entry}), coords));
         } else {
             insertNode(root, entry);
         }
@@ -508,10 +508,10 @@ public class HilbertRTree extends AbstractTree {
         assert (!splitListA.isEmpty()) :"split list A should not be empty";
         assert (!splitListB.isEmpty()) :"split list B should not be empty";
 
-        if (isLeaf) return UnmodifiableArrayList.wrap(tree.createNode(tree, null, null, splitListA), tree.createNode(tree, null, null, splitListB));
+        if (isLeaf) return UnmodifiableArrayList.wrap(new Node[] {tree.createNode(tree, null, null, splitListA), tree.createNode(tree, null, null, splitListB)});
         final Node resultA = (Node) ((splitListA.size() == 1) ? splitListA.get(0) : tree.createNode(tree, null, splitListA, null));
         final Node resultB = (Node) ((splitListB.size() == 1) ? splitListB.get(0) : tree.createNode(tree, null, splitListB, null));
-        return UnmodifiableArrayList.wrap(resultA, resultB);
+        return UnmodifiableArrayList.wrap(new Node[] {resultA, resultB});
     }
 
     /**

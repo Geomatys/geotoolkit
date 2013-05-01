@@ -731,9 +731,9 @@ public final class MapfileTypes {
 
     }
 
-    private static final List<FeatureType> ALL_TYPES = UnmodifiableArrayList.wrap(
+    private static final List<FeatureType> ALL_TYPES = UnmodifiableArrayList.wrap(new FeatureType[] {
             CLASS,CLUSTER,FEATURE,GRID,JOIN,LABEL,LAYER,LEGEND,MAP,
-            OUTPUTFORMAT,QUERYMAP,REFERENCE,SCALEBAR,STYLE,SYMBOL,WEB);
+            OUTPUTFORMAT,QUERYMAP,REFERENCE,SCALEBAR,STYLE,SYMBOL,WEB});
 
     public static FeatureType getType(final Name name){
         for(FeatureType ft : ALL_TYPES){

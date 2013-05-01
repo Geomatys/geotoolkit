@@ -101,7 +101,7 @@ public class BasicRTree extends AbstractTree {
         System.arraycopy(entry.getLowerCorner().getCoordinate(), 0, coords, 0, dim);
         System.arraycopy(entry.getUpperCorner().getCoordinate(), 0, coords, dim, dim);
         if (root == null || root.isEmpty()) {
-            setRoot(createNode(this, null, null, UnmodifiableArrayList.wrap(entry), coords));
+            setRoot(createNode(this, null, null, UnmodifiableArrayList.wrap(new Envelope[] {entry}), coords));
         } else {
             nodeInsert(root, entry);
         }
@@ -375,7 +375,7 @@ public class BasicRTree extends AbstractTree {
                             bound1 = ((Node) ls.get(i)).getBoundary();
                             bound2 = ((Node) ls.get(j)).getBoundary();
                         }
-                        rectGlobal = getEnveloppeMin(UnmodifiableArrayList.wrap(bound1, bound2));
+                        rectGlobal = getEnveloppeMin(UnmodifiableArrayList.wrap(new Envelope[] {bound1, bound2}));
                         tempValue  = calc.getSpace(rectGlobal) - calc.getSpace(bound1) - calc.getSpace(bound2);
                         if (tempValue > refValue) {
                             s1     = ls.get(i);
@@ -407,16 +407,16 @@ public class BasicRTree extends AbstractTree {
             tabS1[i+dim-1] = boundS1.getUpperCorner().getOrdinate(i);
             tabS2[i+dim-1] = boundS2.getUpperCorner().getOrdinate(i);
         }
-        result1 = (leaf) ? tree.createNode(tree, null, null, UnmodifiableArrayList.wrap((Envelope) s1), tabS1)
-                         : tree.createNode(tree, null, UnmodifiableArrayList.wrap((Node) s1), null, tabS1);
-        result2 = (leaf) ? tree.createNode(tree, null, null, UnmodifiableArrayList.wrap((Envelope) s2), tabS2)
-                         : tree.createNode(tree, null, UnmodifiableArrayList.wrap((Node) s2), null, tabS2);
+        result1 = (leaf) ? tree.createNode(tree, null, null, UnmodifiableArrayList.wrap(new Envelope[] {(Envelope) s1}), tabS1)
+                         : tree.createNode(tree, null, UnmodifiableArrayList.wrap(new Node[] {(Node) s1}), null, tabS1);
+        result2 = (leaf) ? tree.createNode(tree, null, null, UnmodifiableArrayList.wrap(new Envelope[] {(Envelope) s2}), tabS2)
+                         : tree.createNode(tree, null, UnmodifiableArrayList.wrap(new Node[] {(Node) s2}), null, tabS2);
         double demimaxE = maxElmnts / 3;
         demimaxE = Math.max(demimaxE, 1);
 
         for (Object ent : ls) {
-            r1Temp = getEnveloppeMin(UnmodifiableArrayList.wrap(s1, ent));
-            r2Temp = getEnveloppeMin(UnmodifiableArrayList.wrap(s2, ent));
+            r1Temp = getEnveloppeMin(UnmodifiableArrayList.wrap(new Object[] {s1, ent}));
+            r2Temp = getEnveloppeMin(UnmodifiableArrayList.wrap(new Object[] {s2, ent}));
 
             double area1 = calc.getSpace(r1Temp);
             double area2 = calc.getSpace(r2Temp);
@@ -498,7 +498,7 @@ public class BasicRTree extends AbstractTree {
                 nod2d.setParent(result2);
             }
         }
-        return UnmodifiableArrayList.wrap(result1, result2);
+        return UnmodifiableArrayList.wrap(new Node[] {result1, result2});
     }
 
     /**

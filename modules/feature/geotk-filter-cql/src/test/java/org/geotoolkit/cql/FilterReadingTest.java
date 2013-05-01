@@ -110,11 +110,11 @@ public class FilterReadingTest {
         final Filter filter = (Filter) obj;
         assertEquals(
                 FF.and(
-                UnmodifiableArrayList.wrap((Filter)
+                UnmodifiableArrayList.wrap(new Filter[] {(Filter)
                     FF.equals(FF.property("att1"), FF.literal(15)),
                     FF.equals(FF.property("att2"), FF.literal(30)),
                     FF.equals(FF.property("att3"), FF.literal(50))
-                )),
+                })),
                 filter);
     }
 
@@ -126,11 +126,11 @@ public class FilterReadingTest {
         final Filter filter = (Filter) obj;
         assertEquals(
                 FF.or(
-                UnmodifiableArrayList.wrap((Filter)
+                UnmodifiableArrayList.wrap(new Filter[] {(Filter)
                     FF.equals(FF.property("att1"), FF.literal(15)),
                     FF.equals(FF.property("att2"), FF.literal(30)),
                     FF.equals(FF.property("att3"), FF.literal(50))
-                )),
+                })),
                 filter);
     }
 
@@ -498,14 +498,14 @@ public class FilterReadingTest {
         final And filter = (And) obj;
         assertEquals(
                 FF.and(
-                    UnmodifiableArrayList.wrap((Filter)
+                    UnmodifiableArrayList.wrap(new Filter[] {(Filter)
                         FF.not(FF.equals(FF.property("att1"), FF.literal(15))),
                         FF.or(
                             FF.equals(FF.property("att2"), FF.literal(15)),
                             FF.between(FF.property("att3"), FF.literal(15), FF.literal(30))
                         ),
                         FF.between(FF.property("att4"), FF.literal(1), FF.literal(2))
-                    )
+                    })
                 ),
                 filter
                 );

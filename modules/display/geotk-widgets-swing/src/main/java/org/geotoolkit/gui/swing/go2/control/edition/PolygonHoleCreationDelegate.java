@@ -127,7 +127,7 @@ public class PolygonHoleCreationDelegate extends AbstractFeatureEditionDelegate 
                 }catch(TopologyException ex){
                     LOGGER.log(Level.INFO, ex.getLocalizedMessage());
                 }
-                decoration.setGeometries(UnmodifiableArrayList.wrap(geometry,line));
+                decoration.setGeometries(UnmodifiableArrayList.wrap(new Geometry[] {geometry,line}));
             }
         } else if (button == MouseEvent.BUTTON3 && feature != null) {
             //finish editing the feature
@@ -157,7 +157,7 @@ public class PolygonHoleCreationDelegate extends AbstractFeatureEditionDelegate 
             }catch(TopologyException ex){
                 LOGGER.log(Level.INFO, ex.getLocalizedMessage());
             }
-            decoration.setGeometries(UnmodifiableArrayList.wrap(geometry,line));
+            decoration.setGeometries(UnmodifiableArrayList.wrap(new Geometry[] {geometry,line}));
             return;
         }
         super.mouseMoved(e);

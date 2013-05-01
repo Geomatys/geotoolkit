@@ -33,7 +33,7 @@ import org.opengis.metadata.Metadata;
  */
 public final class ChainDataTypes {
 
-    public static final List<Class> EDITABLE_TYPE = UnmodifiableArrayList.<Class>wrap(
+    public static final List<Class> EDITABLE_TYPE = UnmodifiableArrayList.<Class>wrap(new Class[] {
                 (Class)String.class,
                 Boolean.class,
                 Integer.class,
@@ -45,9 +45,9 @@ public final class ChainDataTypes {
                 Map.class,
                 Metadata.class,
                 Filter.class
-            );
+    });
 
-    public static final List<Class> VALID_TYPES = UnmodifiableArrayList.<Class>wrap(
+    public static final List<Class> VALID_TYPES = UnmodifiableArrayList.<Class>wrap(new Class[] {
                 (Class)String.class,
                 Boolean.class,
                 Integer.class,
@@ -65,7 +65,7 @@ public final class ChainDataTypes {
                 Date.class,
                 Envelope.class,
                 Object.class
-            );
+    });
 
     private ChainDataTypes(){};
 

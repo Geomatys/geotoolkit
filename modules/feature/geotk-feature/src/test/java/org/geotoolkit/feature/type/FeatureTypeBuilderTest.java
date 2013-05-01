@@ -528,15 +528,15 @@ public class FeatureTypeBuilderTest {
                 FeatureTypeUtilities.getAncestors(BasicFeatureTypes.FEATURE));
 
         assertEquals("Ancestors of A, nearest first",
-                UnmodifiableArrayList.wrap(BasicFeatureTypes.FEATURE),
+                UnmodifiableArrayList.wrap(new SimpleFeatureType[] {BasicFeatureTypes.FEATURE}),
                 FeatureTypeUtilities.getAncestors(typeA));
 
         assertEquals("Ancestors of B, nearest first",
-                UnmodifiableArrayList.wrap(typeA,BasicFeatureTypes.FEATURE),
+                UnmodifiableArrayList.wrap(new SimpleFeatureType[] {typeA,BasicFeatureTypes.FEATURE}),
                 FeatureTypeUtilities.getAncestors(typeB));
 
         assertEquals("Ancestors of C, nearest first",
-                UnmodifiableArrayList.wrap(typeB,typeA,BasicFeatureTypes.FEATURE),
+                UnmodifiableArrayList.wrap(new SimpleFeatureType[] {typeB,typeA,BasicFeatureTypes.FEATURE}),
                 FeatureTypeUtilities.getAncestors(typeC));
     }
 

@@ -108,7 +108,7 @@ public class StarRTree extends AbstractTree {
         System.arraycopy(entry.getLowerCorner().getCoordinate(), 0, coords, 0, dim);
         System.arraycopy(entry.getUpperCorner().getCoordinate(), 0, coords, dim, dim);
         if (root == null || root.isEmpty()) {
-            setRoot(createNode(this, null, null, UnmodifiableArrayList.wrap(entry), coords));
+            setRoot(createNode(this, null, null, UnmodifiableArrayList.wrap(new Envelope[] {entry}), coords));
         } else {
             nodeInsert(root, entry);
         }
@@ -469,10 +469,10 @@ public class StarRTree extends AbstractTree {
         for(int i=index; i<size; i++) {
             splitListB.add(eltList.get(i));
         }
-        if(isLeaf) return UnmodifiableArrayList.wrap(tree.createNode(tree, null, null, splitListA), tree.createNode(tree, null, null, splitListB));
+        if(isLeaf) return UnmodifiableArrayList.wrap(new Node[] {tree.createNode(tree, null, null, splitListA), tree.createNode(tree, null, null, splitListB)});
         final Node resultA = (Node) ((splitListA.size() == 1)?splitListA.get(0):tree.createNode(tree, null, splitListA, null));
         final Node resultB = (Node) ((splitListB.size() == 1)?splitListB.get(0):tree.createNode(tree, null, splitListB, null));
-        return UnmodifiableArrayList.wrap(resultA, resultB);
+        return UnmodifiableArrayList.wrap(new Node[] {resultA, resultB});
     }
 
     /**Compute and define which axis to split {@code Node} candidate.

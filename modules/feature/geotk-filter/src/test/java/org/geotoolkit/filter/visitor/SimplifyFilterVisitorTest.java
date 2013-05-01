@@ -37,9 +37,9 @@ public class SimplifyFilterVisitorTest {
     @Test
     public void testIdRegroup(){
         final Filter id1 = FF.id(Collections.singleton(new MockIdentifier("123")));
-        final Filter id2 = FF.id( new HashSet(UnmodifiableArrayList.wrap(new MockIdentifier("456"), new MockIdentifier("789")) ));
+        final Filter id2 = FF.id( new HashSet(UnmodifiableArrayList.wrap(new MockIdentifier[] {new MockIdentifier("456"), new MockIdentifier("789")}) ));
         final Filter id3 = FF.id(Collections.singleton(new MockIdentifier("789")));
-        final Filter or = FF.or(UnmodifiableArrayList.wrap(id1,id2,id3));
+        final Filter or = FF.or(UnmodifiableArrayList.wrap(new Filter[] {id1,id2,id3}));
 
         SimplifyingFilterVisitor visitor = new SimplifyingFilterVisitor();
         final Filter res = (Filter) or.accept(visitor, null);

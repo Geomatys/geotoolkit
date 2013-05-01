@@ -122,7 +122,7 @@ public class ExpressionTest {
         final Filter f1 = FF.equals(reference,FF.literal("joe"));
         final Filter f2 = FF.equals(reference,FF.literal("marcel"));
         final Filter f3 = FF.equals(reference,FF.literal("emile"));
-        final Filter combine = FF.or(UnmodifiableArrayList.wrap(f1,f2,f3));
+        final Filter combine = FF.or(UnmodifiableArrayList.wrap(new Filter[] {f1,f2,f3}));
 
         assertEquals(combine, result);
     }
