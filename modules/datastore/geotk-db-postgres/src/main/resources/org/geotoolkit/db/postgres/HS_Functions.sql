@@ -1349,5 +1349,34 @@ end;$BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
 
+------------------------------- ADDING METHODS ---------------------------------
 
+-- Function: "HSX_TrimHistory"(character varying, timestamp with time zone)
+
+-- DROP FUNCTION "HSX_TrimHistory"(character varying, timestamp with time zone);
+
+CREATE OR REPLACE FUNCTION "HSX_TrimHistory"("tableName" character varying, "trimTime" timestamp with time zone)
+  RETURNS character varying AS
+$BODY$declare 
+	table_nam character varying;
+	HS_table_nam character varying;
+	stmt character varying;
+	stmt_delete character varying;
+	stmt_update character varying;
+begin
+	table_nam    = "HS_ExtractTableIdentifier"("tableName");
+	HS_table_nam = "HS_ConstructTableIdentifier"(table_nam);
+
+	--delete all elements where HS_End is before or equal trimTime
+	stmt_delete = 'DELETE FROM '||'"'||HS_table_nam||'"'|| 
+		     ' WHERE "HS_Begin" <= '''||"trimTime"||''' AND "HS_End" <= '''||"trimTime"||'''; ';
+	--update HS_Begin time of all element where trimTime is between HS_Begin and HS_End  
+	stmt_update = 'UPDATE '||'"'||HS_table_nam||'"'||' SET "HS_Begin" = '''||"trimTime"||
+		      ''' WHERE "HS_Begin" < '''||"trimTime"||''' AND ("HS_End" > '''||"trimTime"||''' OR "HS_End" IS NULL); ';
+	stmt = stmt_delete || stmt_update;
+	execute stmt;
+	return stmt;
+end;$BODY$
+  LANGUAGE plpgsql VOLATILE
+  COST 100;
 

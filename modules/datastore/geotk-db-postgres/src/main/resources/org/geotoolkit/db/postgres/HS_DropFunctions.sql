@@ -47,3 +47,4 @@ DROP FUNCTION IF EXISTS "HS_DropHistoryTable"(character varying);
 DROP FUNCTION IF EXISTS "HS_DropHistoryTriggers"(character varying);
 DROP FUNCTION IF EXISTS "HS_DropHistory"(character varying);
 DROP FUNCTION IF EXISTS "HS_CreateHistoryErrorCheck"(character varying, character varying[]);
+DROP FUNCTION IF EXISTS "HSX_TrimHistory"(character varying, timestamp with time zone);
