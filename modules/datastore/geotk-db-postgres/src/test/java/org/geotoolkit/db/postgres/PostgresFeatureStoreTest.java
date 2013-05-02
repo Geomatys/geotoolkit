@@ -27,9 +27,14 @@ import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.FeatureStore;
@@ -57,6 +62,8 @@ import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.version.VersionControl;
 import org.geotoolkit.version.VersioningException;
 import static org.junit.Assert.*;
+import org.junit.Assume;
+import org.junit.BeforeClass;
 
 /**
  *
@@ -121,19 +128,40 @@ public class PostgresFeatureStoreTest {
     public PostgresFeatureStoreTest(){
     }
     
+    private static ParameterValueGroup params;
+    
+    /**
+     * <p>Find JDBC connection parameters in specified file at 
+     * "/home/.geotoolkit.org/test-pgfeature.properties".<br/>
+     * If properties file doesn't find all tests are skipped.</p>
+     * 
+     * <p>To lunch tests user should create file with this architecture<br/>
+     * for example : <br/>
+     * database   = junit    (table name)<br/>
+     * port       = 5432     (port number)<br/>
+     * schema     = public   (schema name)<br/>
+     * user       = postgres (user login)<br/>
+     * password   = postgres (user password)<br/>
+     * simpletype = false <br/>
+     * namespace  = no namespace</p>
+     * @throws IOException 
+     */
+    @BeforeClass
+    public static void beforeClass() throws IOException {
+        String path = System.getProperty("user.home");
+        path += "/.geotoolkit.org/test-pgfeature.properties";        
+        final File f = new File(path);
+        Assume.assumeTrue(f.exists());        
+        final Properties properties = new Properties();
+        properties.load(new FileInputStream(f));
+        params = FeatureUtilities.toParameter((Map)properties, PARAMETERS_DESCRIPTOR, false);
+    }
+    
     private void reload() throws DataStoreException, VersioningException {
         if(store != null){
             store.dispose();
         }
         
-        final ParameterValueGroup params = PARAMETERS_DESCRIPTOR.createValue();
-        Parameters.getOrCreate(DATABASE, params).setValue("junit");
-        Parameters.getOrCreate(PORT, params).setValue(5432);
-        Parameters.getOrCreate(SCHEMA, params).setValue("public");
-        Parameters.getOrCreate(USER, params).setValue("postgres");
-        Parameters.getOrCreate(PASSWORD, params).setValue("postgres");
-        Parameters.getOrCreate(SIMPLETYPE, params).setValue(false);
-        Parameters.getOrCreate(NAMESPACE, params).setValue("no namespace");
         store = FeatureStoreFinder.open(params);
         
         for(Name n : store.getNames()){

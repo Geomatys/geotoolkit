@@ -23,6 +23,7 @@ import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import org.geotoolkit.db.JDBCFeatureStoreUtilities;
 import org.geotoolkit.db.dialect.SQLDialect;
@@ -153,13 +154,47 @@ public class PostgresVersionControl extends AbstractVersionControl{
     
     @Override
     public synchronized void trim(Version version) throws VersioningException {
-        //TODO waiting for remy marechal work
-        super.trim(version);
+        trim(version.getDate());
     }
 
     @Override
+    public void trim(Date date) throws VersioningException {
+        if(!isVersioned()){
+            return ;
+        }
+        
+        final String schemaName = featureStore.getDatabaseSchema();
+        final String tableName  = featureType.getName().getLocalPart();
+        
+        Connection cnx = null;
+        Statement stmt = null;
+        ResultSet rs   = null;
+        try{
+            cnx  = featureStore.getDataSource().getConnection();
+            stmt = cnx.createStatement();  
+            
+            final StringBuilder sb = new StringBuilder("SELECT \"HSX_TrimHistory\"(");
+            sb.append('\'');
+            if(schemaName != null && !schemaName.isEmpty()){
+                sb.append(schemaName).append('.');
+            }
+            sb.append(tableName);
+            sb.append('\'');
+            sb.append(", TIMESTAMP '");
+            sb.append(new Timestamp(date.getTime()).toString());
+            sb.append("');");
+            rs = stmt.executeQuery(sb.toString());
+            
+        }catch(SQLException ex){
+            throw new VersioningException(ex.getMessage(), ex);
+        }finally{
+            JDBCFeatureStoreUtilities.closeSafe(featureStore.getLogger(), cnx, stmt, null);
+        }
+    }
+    
+    @Override
     public synchronized void revert(Version version) throws VersioningException {
-        //TODO waiting for remy marechal work
+        //TODO waiting for remi marechal work
         super.revert(version);
     }
     
