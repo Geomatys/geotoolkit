@@ -71,13 +71,13 @@ public interface FeatureStore {
     
     /**
      * Get version history for given feature type.
-     * @return VersionHistory for given type.
+     * @return VersionControl for given type.
      */
     VersionControl getVersioning(String typeName) throws VersioningException;
     
     /**
      * Get version history for given feature type.
-     * @return VersionHistory for given type.
+     * @return VersionControl for given type.
      */
     VersionControl getVersioning(Name typeName) throws VersioningException;
     

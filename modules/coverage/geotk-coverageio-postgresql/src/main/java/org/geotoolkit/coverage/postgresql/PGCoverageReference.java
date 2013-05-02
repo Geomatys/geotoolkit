@@ -36,6 +36,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.RejectedExecutionHandler;
@@ -63,7 +64,9 @@ import org.geotoolkit.coverage.wkb.WKBRasterConstants;
 import org.geotoolkit.coverage.wkb.WKBRasterWriter;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.storage.DataStoreException;
+import org.geotoolkit.temporal.object.TemporalUtilities;
 import org.geotoolkit.util.NumberRange;
+import org.geotoolkit.version.Version;
 import org.opengis.coverage.SampleDimensionType;
 import org.opengis.feature.type.Name;
 import org.opengis.geometry.DirectPosition;
@@ -81,11 +84,13 @@ public class PGCoverageReference extends AbstractCoverageReference implements Py
     private final PGCoverageStore store;
     private final PGPyramidSet pyramidSet;
     private final Name name;
+    final Version version;
 
-    public PGCoverageReference(final PGCoverageStore store, final Name name) {
+    public PGCoverageReference(final PGCoverageStore store, final Name name, Version version) {
         this.store = store;
         this.name = name;
         this.pyramidSet = new PGPyramidSet(this);
+        this.version = version;
     }
 
     @Override
@@ -157,13 +162,27 @@ public class PGCoverageReference extends AbstractCoverageReference implements Py
             query.append(",'");
             query.append(epsgCode);
             query.append("')");
-
+            
             stmt.executeUpdate(query.toString(), new String[]{"id"});
 
             rs = stmt.getGeneratedKeys();
             if(rs.next()){
                 pyramidId = String.valueOf(rs.getInt(1));
             }
+            
+            //write version
+            if(version!=null && !version.getLabel().equals(PGVersionControl.UNSET)){
+                query.setLength(0);
+                query.append("INSERT INTO ");
+                query.append(store.encodeTableName("PyramidProperty"));
+                query.append("(\"pyramidId\",\"key\",\"type\",\"value\") VALUES (");
+                query.append(pyramidId);
+                query.append(",'version','date','");
+                query.append(TemporalUtilities.toISO8601Z(version.getDate(), TimeZone.getTimeZone("GMT+0")));
+                query.append("')");
+                stmt.executeUpdate(query.toString());
+            }
+            
         }catch(FactoryException ex){
             throw new DataStoreException(ex);
         }catch(SQLException ex){

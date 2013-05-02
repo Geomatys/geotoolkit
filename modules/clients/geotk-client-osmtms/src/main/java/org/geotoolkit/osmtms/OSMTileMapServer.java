@@ -19,7 +19,7 @@ package org.geotoolkit.osmtms;
 import java.net.URL;
 import java.util.Collections;
 import java.util.Set;
-import org.geotoolkit.client.AbstractServer;
+import org.geotoolkit.client.AbstractCoverageServer;
 import org.geotoolkit.client.ServerFinder;
 import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.coverage.CoverageStore;
@@ -38,7 +38,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class OSMTileMapServer extends AbstractServer implements CoverageStore{
+public class OSMTileMapServer extends AbstractCoverageServer implements CoverageStore{
 
     private final OSMTMSPyramidSet pyramidSet;
     private final Name name;

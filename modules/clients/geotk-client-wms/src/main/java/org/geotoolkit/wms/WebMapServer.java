@@ -23,7 +23,7 @@ import java.net.URL;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.geotoolkit.client.AbstractServer;
+import org.geotoolkit.client.AbstractCoverageServer;
 import org.geotoolkit.client.CapabilitiesException;
 import org.geotoolkit.client.ServerFinder;
 import org.geotoolkit.coverage.CoverageReference;
@@ -57,7 +57,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Cédric Briançon (Geomatys)
  * @module pending
  */
-public class WebMapServer extends AbstractServer implements CoverageStore{
+public class WebMapServer extends AbstractCoverageServer implements CoverageStore{
 
     private static final Logger LOGGER = Logging.getLogger(WebMapServer.class);
 

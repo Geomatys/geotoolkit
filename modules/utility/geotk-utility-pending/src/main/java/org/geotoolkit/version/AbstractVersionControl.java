@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.version;
 
+import java.util.Date;
 
 /**
  * Abstract Version control, override methods to support edition.
@@ -35,12 +36,52 @@ public abstract class AbstractVersionControl extends AbstractVersionHistory impl
     }
     
     /**
+     * Overwrite to enable automatic edition.
+     * @return false
+     * @throws VersioningException 
+     */
+    @Override
+    public boolean isAutomatic(){
+        return false;
+    }
+
+    /**
+     * Overwrite to enable manual edition.
+     * @return false
+     * @throws VersioningException 
+     */
+    @Override
+    public Version createVersion(Date date) throws VersioningException {
+        throw new VersioningException("Versioning edition not supported.");
+    }
+
+    /**
+     * Overwrite to enable manual edition.
+     * @return false
+     * @throws VersioningException 
+     */
+    @Override
+    public void dropVersion(Version version) throws VersioningException {
+        throw new VersioningException("Versioning edition not supported.");
+    }
+    
+    /**
      * Overwrite to enable versioning edition.
      * @param version 
      * @throws VersioningException 
      */
     @Override
     public void trim(Version version) throws VersioningException {
+        trim(version.getDate());
+    }
+    
+    /**
+     * Overwrite to enable versioning edition.
+     * @param version 
+     * @throws VersioningException 
+     */
+    @Override
+    public void trim(Date date) throws VersioningException {
         throw new VersioningException("Versioning edition not supported.");
     }
 
@@ -51,6 +92,16 @@ public abstract class AbstractVersionControl extends AbstractVersionHistory impl
      */
     @Override
     public void revert(Version version) throws VersioningException {
+        revert(version.getDate());
+    }
+    
+    /**
+     * Overwrite to enable versioning edition.
+     * @param version 
+     * @throws VersioningException 
+     */
+    @Override
+    public void revert(Date date) throws VersioningException {
         throw new VersioningException("Versioning edition not supported.");
     }
     

@@ -24,6 +24,7 @@ import java.sql.Statement;
 import java.util.Collections;
 import javax.sql.DataSource;
 import org.apache.commons.dbcp.BasicDataSource;
+import org.apache.sis.util.iso.ResourceInternationalString;
 import org.geotoolkit.coverage.AbstractCoverageStoreFactory;
 import org.geotoolkit.coverage.postgresql.exception.SchemaExistsException;
 import org.geotoolkit.jdbc.DBCPDataSource;
@@ -35,7 +36,6 @@ import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.referencing.factory.epsg.EpsgInstaller;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.util.FileUtilities;
-import org.geotoolkit.util.ResourceInternationalString;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.identification.Identification;
 import org.opengis.parameter.ParameterDescriptor;
@@ -86,8 +86,8 @@ public class PGCoverageStoreFactory extends AbstractCoverageStoreFactory{
              new DefaultParameterDescriptor<String>("user","user name to login as",String.class,null,true);
 
     /** parameter for database password */
-    public static final ParameterDescriptor<String> PASSWD =
-             new DefaultParameterDescriptor<String>("passwd","password used to login",String.class,null,true);
+    public static final ParameterDescriptor<String> PASSWORD =
+             new DefaultParameterDescriptor<String>("password","password used to login",String.class,null,true);
 
     /** parameter for data source */
     public static final ParameterDescriptor<DataSource> DATASOURCE =
@@ -116,7 +116,7 @@ public class PGCoverageStoreFactory extends AbstractCoverageStoreFactory{
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
             new DefaultParameterDescriptorGroup("PGRasterParameters",
-                IDENTIFIER,HOST,PORT,DATABASE,SCHEMA,USER,PASSWD,NAMESPACE,
+                IDENTIFIER,HOST,PORT,DATABASE,SCHEMA,USER,PASSWORD,NAMESPACE,
                 DATASOURCE,MAXCONN,MINCONN,VALIDATECONN,FETCHSIZE,MAXWAIT);
 
     @Override
@@ -182,7 +182,7 @@ public class PGCoverageStoreFactory extends AbstractCoverageStoreFactory{
         //create epsg model
         final String dbURL      = jdbcurl;
         final String user       = (String) params.parameter(USER.getName().getCode()).getValue();
-        final String password   = (String) params.parameter(PASSWD.getName().getCode()).getValue();
+        final String password   = (String) params.parameter(PASSWORD.getName().getCode()).getValue();
 
         final EpsgInstaller installer = new EpsgInstaller();
         installer.setDatabase(dbURL, user, password);
@@ -286,7 +286,7 @@ public class PGCoverageStoreFactory extends AbstractCoverageStoreFactory{
         dataSource.setUsername(user);
 
         // password
-        final String passwd = (String) params.parameter(PASSWD.getName().toString()).getValue();
+        final String passwd = (String) params.parameter(PASSWORD.getName().toString()).getValue();
         if (passwd != null) {
             dataSource.setPassword(passwd);
         }

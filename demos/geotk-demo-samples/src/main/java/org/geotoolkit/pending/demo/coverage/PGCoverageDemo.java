@@ -57,7 +57,7 @@ public class PGCoverageDemo {
         Parameters.getOrCreate(PGCoverageStoreFactory.HOST, params).setValue("localhost");
         Parameters.getOrCreate(PGCoverageStoreFactory.PORT, params).setValue(5432);
         Parameters.getOrCreate(PGCoverageStoreFactory.USER, params).setValue("*****");
-        Parameters.getOrCreate(PGCoverageStoreFactory.PASSWD, params).setValue("*****");
+        Parameters.getOrCreate(PGCoverageStoreFactory.PASSWORD, params).setValue("*****");
         Parameters.getOrCreate(PGCoverageStoreFactory.NAMESPACE, params).setValue("no namespace");
 
         final CoverageStore store = CoverageStoreFinder.open(params);

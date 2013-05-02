@@ -25,6 +25,9 @@ import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.storage.AbstractStorage;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.util.logging.Logging;
+import org.geotoolkit.version.Version;
+import org.geotoolkit.version.VersionControl;
+import org.geotoolkit.version.VersioningException;
 import org.opengis.feature.type.Name;
 import org.opengis.parameter.ParameterValueGroup;
 
@@ -80,7 +83,26 @@ public abstract class AbstractCoverageStore extends AbstractStorage implements C
     }
     
     ////////////////////////////////////////////////////////////////////////////
-    // convinient methods                                                      /
+    // versioning methods : handle nothing by default                         //
+    ////////////////////////////////////////////////////////////////////////////
+    
+    @Override
+    public boolean handleVersioning() {
+        return false;
+    }
+
+    @Override
+    public VersionControl getVersioning(Name typeName) throws VersioningException {
+        throw new VersioningException("Versioning not supported");
+    }
+
+    @Override
+    public CoverageReference getCoverageReference(Name name, Version version) throws DataStoreException {
+        throw new DataStoreException("Versioning not supported");
+    }
+    
+    ////////////////////////////////////////////////////////////////////////////
+    // convinient methods                                                     //
     ////////////////////////////////////////////////////////////////////////////
     
     protected CoverageStoreManagementEvent fireCoverageAdded(final Name name){

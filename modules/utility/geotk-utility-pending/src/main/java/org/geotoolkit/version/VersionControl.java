@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.version;
 
+import java.util.Date;
+
 /**
  * Extends the version history, adding management methods.
  * 
@@ -34,15 +36,29 @@ public interface VersionControl extends VersionHistory {
     boolean isVersioned() throws VersioningException;
     
     /**
+     * Install versioning mechanism if not installed.
+     * 
      * @throws VersioningException 
      */
     void startVersioning() throws VersioningException;
     
     /**
+     * Uninstall versioning mechanism, drops history.
      * 
      * @throws VersioningException 
      */
     void dropVersioning() throws VersioningException;
+    
+    /**
+     * If versioning is not automatic then it is the user work to properly
+     * call create/drop version to add or remove versions.
+     * 
+     * If versioning is automatic then create/drop version methods will raise a
+     * VersioningException
+     * 
+     * @return true if versioning is automatic.
+     */
+    boolean isAutomatic();
     
     /**
      * Check if this history allows version modifications (trim and rollback).
@@ -52,10 +68,37 @@ public interface VersionControl extends VersionHistory {
     boolean isEditable();
     
     /**
+     * Create a new version for given date.
+     * @param date new version date
+     * @return Version
+     * @throws VersioningException 
+     */
+    Version createVersion(Date date) throws VersioningException;
+    
+    /**
+     * Drop given version.
+     * @param version version to delete
+     * @throws VersioningException 
+     */
+    void dropVersion(Version version) throws VersioningException;
+    
+    /**
+     * Remove oldest history until given date exclusive.
+     * @param version not null
+     */
+    void trim(Date date) throws VersioningException;
+    
+    /**
      * Remove oldest version history until given version exclusive.
      * @param version not null
      */
     void trim(Version version) throws VersioningException;
+    
+    /**
+     * Rollback datas until given date exclusive.
+     * @param version not null
+     */
+    void revert(Date date) throws VersioningException;
     
     /**
      * Rollback datas until given version exclusive.

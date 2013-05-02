@@ -92,8 +92,8 @@
             <artifactId>base64</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.derby</groupId>
-            <artifactId>derby</artifactId>
+            <groupId>org.geotoolkit</groupId>
+            <artifactId>geotk-epsg-javadb</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>

@@ -21,7 +21,7 @@ import java.net.URL;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-import org.geotoolkit.client.AbstractServer;
+import org.geotoolkit.client.AbstractCoverageServer;
 import org.geotoolkit.client.AbstractServerFactory;
 import org.geotoolkit.client.ServerFinder;
 import org.geotoolkit.coverage.CoverageReference;
@@ -39,7 +39,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class StaticGoogleMapsServer extends AbstractServer implements CoverageStore{
+public class StaticGoogleMapsServer extends AbstractCoverageServer implements CoverageStore{
 
     public static final URL DEFAULT_GOOGLE_STATIC_MAPS;
     private static final Set<Name> LAYER_NAMES;

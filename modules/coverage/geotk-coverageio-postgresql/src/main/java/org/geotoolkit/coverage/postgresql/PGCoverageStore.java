@@ -35,6 +35,9 @@ import org.geotoolkit.jdbc.ManageableDataSource;
 import org.geotoolkit.referencing.factory.epsg.ThreadedEpsgFactory;
 import org.geotoolkit.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
+import org.geotoolkit.version.Version;
+import org.geotoolkit.version.VersionControl;
+import org.geotoolkit.version.VersioningException;
 import org.opengis.feature.type.Name;
 import org.opengis.parameter.ParameterValueGroup;
 
@@ -133,8 +136,7 @@ public class PGCoverageStore extends AbstractCoverageStore{
      */
     @Override
     public CoverageReference getCoverageReference(Name name) throws DataStoreException {
-        typeCheck(name);
-        return new PGCoverageReference(this, name);
+        return getCoverageReference(name, null);
     }
 
     @Override
@@ -222,6 +224,31 @@ public class PGCoverageStore extends AbstractCoverageStore{
 
     }
 
+    ////////////////////////////////////////////////////////////////////////////
+    // Versioning support //////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+    
+    @Override
+    public boolean handleVersioning() {
+        return true;
+    }
+
+    @Override
+    public VersionControl getVersioning(Name typeName) throws VersioningException {
+        try {
+            typeCheck(typeName);
+            return new PGVersionControl(this, typeName);
+        } catch (DataStoreException ex) {
+            throw new VersioningException(ex.getMessage(), ex);
+        }
+    }
+
+    @Override
+    public CoverageReference getCoverageReference(Name name, Version version) throws DataStoreException {
+        typeCheck(name);
+        return new PGCoverageReference(this, name, version);
+    }
+    
     ////////////////////////////////////////////////////////////////////////////
     // Connection utils ////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////

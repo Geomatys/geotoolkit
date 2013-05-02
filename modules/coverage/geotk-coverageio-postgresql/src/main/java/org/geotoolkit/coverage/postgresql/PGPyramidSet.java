@@ -26,14 +26,16 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.SortedSet;
+import java.util.TimeZone;
 import java.util.TreeSet;
 import java.util.logging.Level;
 import javax.sql.DataSource;
+import org.apache.sis.geometry.GeneralDirectPosition;
 import org.geotoolkit.coverage.DefaultPyramid;
 import org.geotoolkit.coverage.DefaultPyramidSet;
 import org.geotoolkit.coverage.Pyramid;
-import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.referencing.cs.DiscreteReferencingFactory;
+import org.geotoolkit.temporal.object.TemporalUtilities;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
 
@@ -79,11 +81,22 @@ public class PGPyramidSet extends DefaultPyramidSet{
             final int layerId = store.getLayerId(ref.getName().getLocalPart());
             
             final StringBuilder query = new StringBuilder();        
-            query.append("SELECT p.id, p.epsg FROM ");
+            query.append("SELECT p.id, p.epsg, pp.value FROM ");
             query.append(store.encodeTableName("Pyramid"));
             query.append(" as p ");
+            query.append("LEFT OUTER JOIN ");
+            query.append(store.encodeTableName("PyramidProperty"));
+            query.append(" AS pp ON pp.\"pyramidId\" = p.id");
             query.append(" WHERE p.\"layerId\" = ");
             query.append(layerId);
+            query.append(" AND (pp.key IS NULL OR pp.key = 'version')"); //grab version
+            if(ref.version==null || ref.version.getLabel().equals(PGVersionControl.UNSET)){
+                query.append(" AND pp.value IS NULL");
+            }else{
+                query.append(" AND pp.value = '");
+                query.append(TemporalUtilities.toISO8601Z(ref.version.getDate(), TimeZone.getTimeZone("GMT+0")));
+                query.append("'");
+            }
             
             final Map<Integer,String> map = new HashMap<Integer, String>();
             rs = stmt.executeQuery(query.toString());

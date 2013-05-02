@@ -29,9 +29,11 @@ import org.geotoolkit.coverage.CoverageStoreManagementEvent;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.feature.DefaultName;
-import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.storage.StorageListener;
+import org.geotoolkit.version.Version;
+import org.geotoolkit.version.VersionControl;
+import org.geotoolkit.version.VersioningException;
 import org.opengis.feature.type.Name;
 import org.opengis.parameter.ParameterValueGroup;
 
@@ -100,6 +102,21 @@ public class CoverageSQLStore extends CoverageDatabase implements CoverageStore 
         return names;
     }
 
+    @Override
+    public boolean handleVersioning() {
+        return false;
+    }
+
+    @Override
+    public VersionControl getVersioning(Name typeName) throws VersioningException {
+        throw new VersioningException("Versioning not supported");
+    }
+
+    @Override
+    public CoverageReference getCoverageReference(Name name, Version version) throws DataStoreException {
+        throw new DataStoreException("Versioning not supported");
+    }
+    
     @Override
     public CoverageReference getCoverageReference(Name name) throws DataStoreException {
         return new CoverageSQLLayerReference(name);

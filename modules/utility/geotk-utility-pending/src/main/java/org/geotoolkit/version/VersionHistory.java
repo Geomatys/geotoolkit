@@ -29,6 +29,7 @@ public interface VersionHistory {
         
     /**
      * Unmodifiable list of versions available.
+     * List is ordered by date ascending
      * @return List<Version>
      */
     List<Version> list() throws VersioningException;

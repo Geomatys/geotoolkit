@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.geotoolkit.client.AbstractServer;
+import org.geotoolkit.client.AbstractCoverageServer;
 import org.geotoolkit.client.AbstractServerFactory;
 import org.geotoolkit.client.ServerFinder;
 import org.geotoolkit.coverage.CoverageReference;
@@ -50,7 +50,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Guilhem Legal (Geomatys)
  * @module pending
  */
-public class WebMapTileServer extends AbstractServer implements CoverageStore{
+public class WebMapTileServer extends AbstractCoverageServer implements CoverageStore{
 
     private static final Logger LOGGER = Logging.getLogger(WebMapTileServer.class);
 
