@@ -20,10 +20,13 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Calendar;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.rmi.CORBA.Tie;
 import javax.sql.DataSource;
 import org.geotoolkit.coverage.AbstractCoverageStore;
 import org.geotoolkit.coverage.CoverageReference;
@@ -246,6 +249,22 @@ public class PGCoverageStore extends AbstractCoverageStore{
     @Override
     public CoverageReference getCoverageReference(Name name, Version version) throws DataStoreException {
         typeCheck(name);
+        if(version == null){
+            try {
+                //grab the latest
+                VersionControl vc = getVersioning(name);
+                final List<Version> versions = vc.list();
+                if(versions.isEmpty()){
+                    final Calendar cal = Calendar.getInstance(PGVersionControl.GMT0);
+                    cal.setTimeInMillis(0);
+                    version = vc.createVersion(cal.getTime());
+                }else{
+                    version = versions.get(versions.size()-1);
+                }
+            } catch (VersioningException ex) {
+                throw new DataStoreException(ex.getMessage(), ex);
+            }
+        }
         return new PGCoverageReference(this, name, version);
     }
     

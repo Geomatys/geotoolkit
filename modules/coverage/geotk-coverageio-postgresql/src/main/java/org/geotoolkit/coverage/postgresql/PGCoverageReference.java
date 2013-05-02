@@ -206,7 +206,25 @@ public class PGCoverageReference extends AbstractCoverageReference implements Py
 
     @Override
     public void deletePyramid(String pyramidId) throws DataStoreException {
-        throw new DataStoreException("Not supported yet.");
+        Connection cnx = null;
+        Statement stmt = null;
+        ResultSet rs = null;
+        try{
+            cnx = store.getDataSource().getConnection();
+            cnx.setReadOnly(false);
+            stmt = cnx.createStatement();
+            final int pyramidIdInt = Integer.valueOf(pyramidId);
+            final StringBuilder sql = new StringBuilder("DELETE FROM ");
+            sql.append(store.encodeTableName("Pyramid"));
+            sql.append(" WHERE id = ");
+            sql.append(pyramidIdInt);
+            stmt.executeUpdate(sql.toString());
+        }catch(SQLException ex){
+            throw new DataStoreException(ex.getMessage(), ex);
+        }finally{
+            store.closeSafe(cnx, stmt, rs);
+            pyramidSet.mustUpdate();
+        }
     }
     
     @Override
@@ -289,7 +307,25 @@ public class PGCoverageReference extends AbstractCoverageReference implements Py
      */
     @Override
     public void deleteMosaic(String pyramidId, String mosaicId) throws DataStoreException {
-        throw new DataStoreException("Not supported yet.");
+        Connection cnx = null;
+        Statement stmt = null;
+        ResultSet rs = null;
+        try{
+            cnx = store.getDataSource().getConnection();
+            cnx.setReadOnly(false);
+            stmt = cnx.createStatement();
+            final int mosaicdIdInt = Integer.valueOf(mosaicId);
+            final StringBuilder sql = new StringBuilder("DELETE FROM ");
+            sql.append(store.encodeTableName("Mosaic"));
+            sql.append(" WHERE id = ");
+            sql.append(mosaicdIdInt);
+            stmt.executeUpdate(sql.toString());
+        }catch(SQLException ex){
+            throw new DataStoreException(ex.getMessage(), ex);
+        }finally{
+            store.closeSafe(cnx, stmt, rs);
+            pyramidSet.mustUpdate();
+        }
     }
     
     @Override
@@ -392,7 +428,26 @@ public class PGCoverageReference extends AbstractCoverageReference implements Py
 
     @Override
     public void deleteTile(String pyramidId, String mosaicId, int col, int row) throws DataStoreException {
-        throw new DataStoreException("Not supported yet.");
+        Connection cnx = null;
+        Statement stmt = null;
+        ResultSet rs = null;
+        try{
+            cnx = store.getDataSource().getConnection();
+            cnx.setReadOnly(false);
+            stmt = cnx.createStatement();
+            final int mosaicdIdInt = Integer.valueOf(mosaicId);
+            final StringBuilder sql = new StringBuilder("DELETE FROM ");
+            sql.append(store.encodeTableName("Tile"));
+            sql.append(" WHERE \"mosaicId\" = ").append(mosaicdIdInt);
+            sql.append(" AND \"positionX\" = ").append(col);
+            sql.append(" AND \"positionY\" = ").append(row);
+            stmt.executeUpdate(sql.toString());
+        }catch(SQLException ex){
+            throw new DataStoreException(ex.getMessage(), ex);
+        }finally{
+            store.closeSafe(cnx, stmt, rs);
+            pyramidSet.mustUpdate();
+        };
     }
     
     @Override

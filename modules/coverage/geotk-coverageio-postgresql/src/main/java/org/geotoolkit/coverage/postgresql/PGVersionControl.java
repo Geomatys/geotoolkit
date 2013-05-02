@@ -22,9 +22,17 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.geotoolkit.coverage.CoverageReference;
+import org.geotoolkit.coverage.Pyramid;
+import org.geotoolkit.coverage.PyramidalModel;
+import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.temporal.object.ISODateParser;
 import org.geotoolkit.version.AbstractVersionControl;
 import org.geotoolkit.version.Version;
@@ -38,6 +46,7 @@ import org.opengis.feature.type.Name;
  */
 public class PGVersionControl extends AbstractVersionControl{
 
+    public static TimeZone GMT0 = TimeZone.getTimeZone("GMT+0");
     /**
      * Version label for pyramid without version informations.
      */
@@ -74,7 +83,16 @@ public class PGVersionControl extends AbstractVersionControl{
 
     @Override
     public void dropVersion(Version version) throws VersioningException {
-        super.dropVersion(version); //TODO
+        try {
+            final PyramidalModel ref = (PyramidalModel) store.getCoverageReference(name, version);
+            final Collection<Pyramid> pyramids = ref.getPyramidSet().getPyramids();
+            for(Pyramid p : pyramids){
+                ref.deletePyramid(p.getId());
+            }
+        } catch (DataStoreException ex) {
+            throw new VersioningException(ex.getMessage(), ex);
+        }
+        
     }
     
     @Override

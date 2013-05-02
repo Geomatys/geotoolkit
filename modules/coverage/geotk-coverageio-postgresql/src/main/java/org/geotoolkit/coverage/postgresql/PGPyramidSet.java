@@ -26,7 +26,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.SortedSet;
-import java.util.TimeZone;
 import java.util.TreeSet;
 import java.util.logging.Level;
 import javax.sql.DataSource;
@@ -94,7 +93,7 @@ public class PGPyramidSet extends DefaultPyramidSet{
                 query.append(" AND pp.value IS NULL");
             }else{
                 query.append(" AND pp.value = '");
-                query.append(TemporalUtilities.toISO8601Z(ref.version.getDate(), TimeZone.getTimeZone("GMT+0")));
+                query.append(TemporalUtilities.toISO8601Z(ref.version.getDate(), PGVersionControl.GMT0));
                 query.append("'");
             }
             
