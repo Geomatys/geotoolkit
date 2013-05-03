@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2012, Geomatys
+ *    (C) 2012-2013, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -17,6 +17,10 @@
 package org.geotoolkit.db;
 
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import javax.sql.DataSource;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.geotoolkit.data.AbstractFeatureStoreFactory;
@@ -123,12 +127,6 @@ public abstract class AbstractJDBCFeatureStoreFactory extends AbstractFeatureSto
     public JDBCFeatureStore open(final ParameterValueGroup params) throws DataStoreException {
         checkCanProcessWithError(params);
         
-        //get or set default namespace
-        String namespace = (String) params.parameter(NAMESPACE.getName().getCode()).getValue();
-        if(namespace == null){
-            namespace = "http://geotoolkit.org";
-        }
-
         final DefaultJDBCFeatureStore featureStore = toFeatureStore(params,
                 getIdentification().getCitation().getIdentifiers().iterator().next().getCode());
 
@@ -152,9 +150,52 @@ public abstract class AbstractJDBCFeatureStoreFactory extends AbstractFeatureSto
         return new DefaultJDBCFeatureStore(params,factoryId);
     }
 
+    /**
+     * Create a JDBC database : this will not create a database but just
+     * create the schema if possible.
+     * 
+     * @param params
+     * @return
+     * @throws DataStoreException 
+     */
     @Override
     public FeatureStore create(final ParameterValueGroup params) throws DataStoreException {
-        throw new DataStoreException("Creation of new database instance not supported.");
+        
+        JDBCFeatureStore store = null;
+        Connection cnx = null;
+        Statement stmt = null;
+        ResultSet rs = null;
+
+        try {
+            store = open(params);
+            cnx = store.getDataSource().getConnection();
+            rs = cnx.getMetaData().getSchemas();
+            final String schema = store.getDatabaseSchema();
+            while (rs.next()) {
+                final String currentSchema = rs.getString(1);
+                if (currentSchema.contains(schema)) {
+                    throw new DataStoreException("Schema " + schema+ " already exist. Unable to create DataStore.");
+                }
+            }
+
+            stmt = cnx.createStatement();
+
+            if (schema != null && !schema.isEmpty()) {
+                //create schema
+                stmt.executeUpdate("CREATE SCHEMA \"" + schema + "\";");
+            }
+
+            return store;
+        } catch (SQLException ex) {
+            if (store != null) {
+                store.dispose();
+            }
+            throw new DataStoreException(ex);
+        } finally {
+            if (store != null) {
+                JDBCFeatureStoreUtilities.closeSafe(store.getLogger(),cnx, stmt, rs);
+            }
+        }
     }
 
     /**
