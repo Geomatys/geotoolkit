@@ -71,13 +71,12 @@ public class StringToReferenceConverter extends AbstractReferenceOutputConverter
             reference = new OutputReferenceType();
         }
 
-        reference.setMimeType((String) params.get(MIME));
-        reference.setEncoding((String) params.get(ENCODING));
-        reference.setSchema((String) params.get(SCHEMA));
+        final String mime = (params.get(MIME) == null)? "text/plain" : (String) params.get(MIME);
+        final String encoding = (params.get(ENCODING) == null)? "UTF-8" : (String) params.get(ENCODING);
 
-        reference.setMimeType("text/plain");
-        reference.setEncoding("UTF-8");
-        reference.setSchema(null);
+        reference.setMimeType(mime);
+        reference.setEncoding(encoding);
+        reference.setSchema((String) params.get(SCHEMA));
         
         final String randomFileName = UUID.randomUUID().toString();
         FileWriter writer = null;
