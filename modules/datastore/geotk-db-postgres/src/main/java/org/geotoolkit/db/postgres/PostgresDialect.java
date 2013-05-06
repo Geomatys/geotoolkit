@@ -70,10 +70,10 @@ import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.util.Converters;
-import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.GeometryDescriptor;
+import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;
 import org.opengis.filter.PropertyIsBetween;
 import org.opengis.filter.PropertyIsEqualTo;
@@ -658,7 +658,7 @@ public class PostgresDialect extends AbstractSQLDialect{
     }
 
     @Override
-    public void postCreateTable(String schemaName, final SimpleFeatureType featureType,
+    public void postCreateTable(String schemaName, final FeatureType featureType,
             final Connection cx) throws SQLException{
         if (schemaName == null) {
             schemaName = "public";
@@ -670,7 +670,7 @@ public class PostgresDialect extends AbstractSQLDialect{
             st = cx.createStatement();
 
             // register all geometry columns in the database
-            for (AttributeDescriptor att : featureType.getAttributeDescriptors()) {
+            for (PropertyDescriptor att : featureType.getDescriptors()) {                
                 if (att instanceof GeometryDescriptor) {
                     final GeometryDescriptor gd = (GeometryDescriptor) att;
 

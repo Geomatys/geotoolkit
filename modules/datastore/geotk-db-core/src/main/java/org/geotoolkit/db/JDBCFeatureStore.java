@@ -41,6 +41,11 @@ public interface JDBCFeatureStore extends FeatureStore{
      * The native SRID associated to a certain descriptor
      */
     public static final String JDBC_NATIVE_SRID = "nativeSRID";
+    
+    /**
+     * Property information, if the field is unique in the database.
+     */
+    public static final String JDBC_PROPERTY_UNIQUE = "unique";
             
     /**
      * Each database type have slim deformation from the SQL specification.

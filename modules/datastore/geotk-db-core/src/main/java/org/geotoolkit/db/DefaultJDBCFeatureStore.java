@@ -51,8 +51,11 @@ import org.geotoolkit.db.reverse.DataBaseModel;
 import org.geotoolkit.db.reverse.PrimaryKey;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.feature.AttributeDescriptorBuilder;
+import org.geotoolkit.feature.AttributeTypeBuilder;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.FeatureTypeBuilder;
+import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.filter.visitor.CRSAdaptorVisitor;
 import org.geotoolkit.filter.visitor.FIDFixVisitor;
@@ -63,10 +66,14 @@ import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.storage.DataStoreException;
 import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.feature.type.AssociationType;
 import org.opengis.feature.type.AttributeDescriptor;
+import org.opengis.feature.type.AttributeType;
+import org.opengis.feature.type.ComplexType;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.Name;
 import org.opengis.feature.type.PropertyDescriptor;
+import org.opengis.feature.type.PropertyType;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.identity.FeatureId;
@@ -546,15 +553,20 @@ public class DefaultJDBCFeatureStore extends AbstractFeatureStore implements JDB
     // Schema manipulation /////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
     
+    /**
+     * Complexe feature types will be decomposed in flat types then relations
+     * will be rebuilded.
+     * 
+     * @param typeName
+     * @param featureType
+     * @throws DataStoreException 
+     */
     @Override
     public void createSchema(final Name typeName, final FeatureType featureType) throws DataStoreException {
         ensureOpen();
         
         if(typeName == null){
             throw new DataStoreException("Type name can not be null.");
-        }
-        if(!(featureType instanceof SimpleFeatureType)){
-            throw new DataStoreException("JDBC datastore can handle only simple feature types.");
         }
         if(!featureType.getName().equals(typeName)){
             throw new DataStoreException("JDBC datastore can only hold typename same as feature type name.");
@@ -568,13 +580,109 @@ public class DefaultJDBCFeatureStore extends AbstractFeatureStore implements JDB
         String sql = null;
         try {
             cx = getDataSource().getConnection();
+            cx.setAutoCommit(false);
             stmt = cx.createStatement();
-            sql = getQueryBuilder().createTableSQL(featureType,cx);
-            stmt.execute(sql);
+            
+            //we must first decompose the feature type in flat types, then recreate relations
+            final List<FeatureType> flatTypes = new ArrayList<FeatureType>();
+            final List<TypeRelation> relations = new ArrayList<TypeRelation>();
+            decompose(featureType, flatTypes, relations);
+            
+            //rebuild flat types
+            for(FeatureType flatType : flatTypes){
+                sql = getQueryBuilder().createTableSQL(flatType,cx);
+                stmt.execute(sql);
+                dialect.postCreateTable(getDatabaseSchema(), featureType, cx);
+            }
+            
+            //rebuild relations
+            if(!relations.isEmpty()){
+                //refresh the model to find primary keys
+                dbmodel.clearCache();
+                
+                for(TypeRelation relation : relations){
+                    final String baseTypeName = relation.type.getName().getLocalPart();
+                    final String propertyName = relation.property.getName().getLocalPart();
+                    final int minOccurs = relation.property.getMinOccurs();
+                    final int maxOccurs = relation.property.getMaxOccurs();
 
-            dialect.postCreateTable(getDatabaseSchema(), (SimpleFeatureType)featureType, cx);
+                    if(relation.property.getType() instanceof AssociationType){
+                        final AssociationType assType = (AssociationType) relation.property.getType();
+                        final String targetTypeName = assType.getRelatedType().getName().getLocalPart();
+                        throw new DataStoreException("Association property not supported");
+                        
+                    }else if(relation.property.getType() instanceof ComplexType){
+                        final String targetTypeName = relation.property.getType().getName().getLocalPart();
+                        final PrimaryKey targetKey = dbmodel.getPrimaryKey(new DefaultName(getDefaultNamespace(), targetTypeName));
+                        final PrimaryKey sourceKey = dbmodel.getPrimaryKey(relation.type.getName());
+                        if(targetKey.getColumns().size() != 1 || sourceKey.getColumns().size() != 1){
+                            throw new DataStoreException("Multiple key column relations not supported.");
+                        }
+                        final ColumnMetaModel sourceColumnMeta = sourceKey.getColumns().get(0);
+                        final ColumnMetaModel targetColumnMeta = targetKey.getColumns().get(0);
+                        final FeatureType targetType = dbmodel.getFeatureType(
+                                new DefaultName(getDefaultNamespace(), targetColumnMeta.getTable()));
+                        
+                        if(maxOccurs==1){
+                            //we can add the property in the base type and create a foreign key
+                            final AttributeTypeBuilder atb = new AttributeTypeBuilder();
+                            atb.setName(propertyName);
+                            atb.setBinding(targetColumnMeta.getJavaType());
+                            final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
+                            adb.setName(propertyName);
+                            adb.setNillable(true);
+                            adb.setMinOccurs(0);
+                            adb.setMaxOccurs(1);
+                            adb.setType(atb.buildType());
+                            final PropertyDescriptor pdesc = adb.buildDescriptor();
+                            
+                            //create the property
+                            sql = getQueryBuilder().alterTableAddColumnSQL(relation.type, pdesc, cx);
+                            stmt.execute(sql);
+                            //add the foreign key relation
+                            sql = getQueryBuilder().alterTableAddForeignKey(
+                                    relation.type, propertyName, targetType, targetColumnMeta.getName(), false);
+                            stmt.execute(sql);
+                            
+                        }else{
+                            //we create an relation in the opposite direction
+                            final AttributeTypeBuilder atb = new AttributeTypeBuilder();
+                            atb.setName(propertyName);
+                            atb.setBinding(sourceColumnMeta.getJavaType());
+                            final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
+                            adb.setName(propertyName);
+                            adb.setNillable(true);
+                            adb.setMinOccurs(0);
+                            adb.setMaxOccurs(1);
+                            adb.setType(atb.buildType());
+                            final PropertyDescriptor pdesc = adb.buildDescriptor();
+                            
+                            //create the property
+                            sql = getQueryBuilder().alterTableAddColumnSQL(targetType, pdesc, cx);
+                            stmt.execute(sql);
+                            //add the foreign key relation
+                            sql = getQueryBuilder().alterTableAddForeignKey(
+                                    targetType, propertyName, relation.type, sourceColumnMeta.getName(), true);
+                            stmt.execute(sql);
+                            
+                        }
+                        
+                    }else{
+                        throw new DataStoreException("Unsupported relation type "+relation.property.getType().getClass());
+                    }
+                }
+            }
+            
+            cx.commit();
         } catch (SQLException ex) {
-            throw new DataStoreException("Failed to drop table "+typeName.getLocalPart()+","+ex.getMessage()+"\n Query : "+sql, ex);
+            if(cx!=null){
+                try {
+                    cx.rollback();
+                } catch (SQLException ex1) {
+                    getLogger().log(Level.WARNING, ex1.getMessage(), ex1);
+                }
+            }
+            throw new DataStoreException("Failed to create table "+typeName.getLocalPart()+","+ex.getMessage()+"\n Query : "+sql, ex);
         } finally {
             JDBCFeatureStoreUtilities.closeSafe(getLogger(),cx,stmt,null);
         }
@@ -656,6 +764,46 @@ public class DefaultJDBCFeatureStore extends AbstractFeatureStore implements JDB
         }
     }
         
+    private void decompose(ComplexType type, List<FeatureType> types, List<TypeRelation> relations) throws DataStoreException{
+        
+        final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
+        ftb.setName(type.getName());
+        for(PropertyDescriptor desc : type.getDescriptors()){
+            final PropertyType pt = desc.getType();
+            if(pt instanceof AssociationType){
+                final AssociationType assType = (AssociationType) pt;
+                final AttributeType attType = assType.getRelatedType();
+                if(!(attType instanceof ComplexType)){
+                    throw new DataStoreException("Only associations with complex type target are supported");
+                }
+                final TypeRelation relation = new TypeRelation();
+                relation.type = type;
+                relation.property = desc;
+                relations.add(relation);
+                decompose(((ComplexType)attType), types, relations);
+                
+            }else if(pt instanceof ComplexType){
+                final ComplexType comType = (ComplexType) pt;
+                final TypeRelation relation = new TypeRelation();
+                relation.type = type;
+                relation.property = desc;
+                relations.add(relation);
+                decompose(comType, types, relations);
+            }else{
+                ftb.add(desc);
+            }
+        }
+        
+        final FeatureType flatType = ftb.buildFeatureType();
+        types.add(flatType);
+    }
+    
+    private static class TypeRelation {
+        ComplexType type;
+        PropertyDescriptor property;
+    }
+    
+    
     ////////////////////////////////////////////////////////////////////////////
     // Fallback on reader/write iterator methods ///////////////////////////////
     ////////////////////////////////////////////////////////////////////////////

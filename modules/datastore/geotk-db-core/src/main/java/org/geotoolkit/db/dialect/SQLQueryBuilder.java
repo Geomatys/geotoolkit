@@ -38,6 +38,7 @@ import org.geotoolkit.storage.DataStoreException;
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.AssociationDescriptor;
 import org.opengis.feature.type.AttributeDescriptor;
+import org.opengis.feature.type.ComplexType;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.feature.type.PropertyDescriptor;
@@ -468,7 +469,7 @@ public class SQLQueryBuilder {
     /**
      * Generates a 'ALTER TABLE . ADD COLUMN ' sql statement.
      */
-    public String alterTableAddColumnSQL(final FeatureType featureType, final PropertyDescriptor desc, final Connection cx) throws SQLException{
+    public String alterTableAddColumnSQL(final ComplexType featureType, final PropertyDescriptor desc, final Connection cx) throws SQLException{
         final String tableName = featureType.getName().getLocalPart();
         final boolean nillable = desc.getMinOccurs() <= 0 || desc.isNillable();
         final Class clazz = desc.getType().getBinding();
@@ -477,7 +478,6 @@ public class SQLQueryBuilder {
         final StringBuilder sql = new StringBuilder();
         sql.append("ALTER TABLE ");
         dialect.encodeSchemaAndTableName(sql, databaseSchema, tableName);
-        dialect.encodeTableName(sql,tableName);
         sql.append(" ADD COLUMN ");
         dialect.encodeColumnName(sql, desc.getName().getLocalPart());
         sql.append(' ');
@@ -501,6 +501,31 @@ public class SQLQueryBuilder {
             sql.append(" NOT NULL ");
         }
 
+        return sql.toString();
+    }
+    
+    /**
+     * Generates a 'ALTER TABLE - ADD FOREIGN KEY (-) REFERENCES -(-)' sql query.
+     */
+    public String alterTableAddForeignKey(final ComplexType sourceType, final String sourceProperty, 
+            final ComplexType targetType, final String targetProperty, boolean cascade) throws SQLException{
+        final String sourceName = sourceType.getName().getLocalPart();
+        final String targetName = targetType.getName().getLocalPart();
+        
+        final StringBuilder sql = new StringBuilder();
+        sql.append("ALTER TABLE ");
+        dialect.encodeSchemaAndTableName(sql, databaseSchema, sourceName);
+        sql.append(" ADD FOREIGN KEY (");
+        dialect.encodeColumnName(sql, sourceProperty);
+        sql.append(") REFERENCES ");
+        dialect.encodeSchemaAndTableName(sql, databaseSchema, targetName);
+        sql.append('(');
+        dialect.encodeColumnName(sql, targetProperty);
+        sql.append(')');
+        if(cascade){
+            sql.append(" ON DELETE CASCADE");
+        }
+        
         return sql.toString();
     }
 

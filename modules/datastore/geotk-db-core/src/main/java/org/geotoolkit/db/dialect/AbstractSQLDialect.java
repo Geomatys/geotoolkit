@@ -16,13 +16,11 @@
  */
 package org.geotoolkit.db.dialect;
 
-import java.lang.reflect.Array;
 import java.sql.Connection;
 import java.sql.SQLException;
 import org.geotoolkit.feature.AttributeTypeBuilder;
 import org.geotoolkit.filter.capability.DefaultFilterCapabilities;
 import org.geotoolkit.filter.visitor.CapabilitiesFilterSplitter;
-import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.filter.Filter;
@@ -85,7 +83,7 @@ public abstract class AbstractSQLDialect implements SQLDialect {
     }
     
     @Override
-    public void postCreateTable(String schemaName, SimpleFeatureType featureType,
+    public void postCreateTable(String schemaName, FeatureType featureType,
                                 Connection cx) throws SQLException {
     }
     

@@ -32,6 +32,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -58,12 +59,17 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
 
 import static org.geotoolkit.db.postgres.PostgresFeatureStoreFactory.*;
+import org.geotoolkit.feature.AttributeDescriptorBuilder;
+import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.version.VersionControl;
 import org.geotoolkit.version.VersioningException;
 import static org.junit.Assert.*;
 import org.junit.Assume;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
+import org.opengis.feature.type.AttributeDescriptor;
+import org.opengis.feature.type.ComplexType;
 
 /**
  *
@@ -75,6 +81,7 @@ public class PostgresFeatureStoreTest {
     private static final FeatureType FTYPE_SIMPLE;
     private static final FeatureType FTYPE_ARRAY;
     private static final FeatureType FTYPE_GEOMETRY;
+    private static final FeatureType FTYPE_COMPLEX;
     
     private static final CoordinateReferenceSystem CRS_4326;
     
@@ -120,7 +127,31 @@ public class PostgresFeatureStoreTest {
         ftb.add("polygon",          Polygon.class, CRS_4326);
         ftb.add("multipolygon",     MultiPolygon.class, CRS_4326);
         ftb.add("geometrycollection",GeometryCollection.class, CRS_4326);
-        FTYPE_GEOMETRY = ftb.buildFeatureType();   
+        FTYPE_GEOMETRY = ftb.buildFeatureType();
+        
+        
+        ftb = new FeatureTypeBuilder();
+        final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
+
+        ftb.setName("Stop");
+        ftb.add("location", Point.class, CRS_4326);
+        ftb.add("time", Date.class);
+        final ComplexType trackPointType = ftb.buildType();
+
+        ftb.reset();
+        ftb.setName("Driver");
+        ftb.add("name", String.class);
+        ftb.add("code", String.class);
+        final ComplexType fishType = ftb.buildType();
+
+        ftb.reset();
+        ftb.setName("Voyage");
+        ftb.add("identifier", Long.class);
+        AttributeDescriptor elementDesc = adb.create(fishType, DefaultName.valueOf("driver"),1,1,false,null);
+        AttributeDescriptor stepDesc = adb.create(trackPointType, DefaultName.valueOf("stops"),0,Integer.MAX_VALUE,false,null);
+        ftb.add(elementDesc);
+        ftb.add(stepDesc);
+        FTYPE_COMPLEX = ftb.buildFeatureType();
     }
     
     private FeatureStore store;
@@ -314,6 +345,16 @@ public class PostgresFeatureStoreTest {
         assertEquals(CRS_4326, ((GeometryDescriptor)desc).getCoordinateReferenceSystem());
     }
         
+    @Ignore
+    @Test
+    public void testComplexTypeCreation() throws DataStoreException, VersioningException{
+        reload();
+        
+        final FeatureType refType = FTYPE_COMPLEX;        
+        store.createSchema(refType.getName(), refType);        
+        assertEquals(3, store.getNames().size());
+    }
+    
     @Test
     public void testSimpleInsert() throws DataStoreException, VersioningException{
         reload();

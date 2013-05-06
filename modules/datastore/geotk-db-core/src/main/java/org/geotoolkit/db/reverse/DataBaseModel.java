@@ -31,6 +31,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.logging.Level;
 import org.geotoolkit.db.AbstractJDBCFeatureStoreFactory;
@@ -266,7 +267,6 @@ public final class DataBaseModel {
             //explore all columns ----------------------------------------------
             result = metadata.getColumns(null, schemaName, tableName, "%");
             while (result.next()) {
-                final PropertyDescriptor desc = analyzeColumn(result);
                 ftb.add(analyzeColumn(result));
             }
             closeSafe(store.getLogger(),result);
@@ -309,46 +309,74 @@ public final class DataBaseModel {
                 cols.add(col);
             }
 
-            //check if we could use a unique key index if no primary key found
-            if(cols.isEmpty()){
-                result = metadata.getIndexInfo(null, schemaName, tableName, true, false);
-                final List<String> names = new ArrayList<String>();
-                String indexname = null;
-                while (result.next()) {
-                    final String columnName = result.getString(Index.COLUMN_NAME);
-
+            //Search indexes, they provide informations such as :
+            // - Unique indexes may indicate 1:1 relations in complexe features
+            // - Unique indexes can be used as primary key if no primary key are defined
+            final boolean pkEmpty = cols.isEmpty();
+            final List<String> names = new ArrayList<String>();
+            final Map<String,List<String>> uniqueIndexes = new HashMap<String, List<String>>();
+            String indexname = null;
+            result = metadata.getIndexInfo(null, schemaName, tableName, true, false);
+            while (result.next()) {
+                final String columnName = result.getString(Index.COLUMN_NAME);
+                final String idxName = result.getString(Index.INDEX_NAME);
+                
+                List<String> lst = uniqueIndexes.get(idxName);
+                if(lst == null){
+                    lst = new ArrayList<String>();
+                    uniqueIndexes.put(idxName, lst);
+                }
+                lst.add(columnName);
+                
+                if(pkEmpty){
                     //we use a single index columns set as primary key
                     //we must not mix with other potential indexes.
                     if(indexname == null){
-                        indexname = result.getString(Index.INDEX_NAME);
-                    }else if(!indexname.equals(result.getString(Index.INDEX_NAME))){
+                        indexname = idxName;
+                    }else if(!indexname.equals(idxName)){
                         continue;
                     }
-
                     names.add(columnName);
                 }
-                closeSafe(store.getLogger(),result);
-
-                if(!names.isEmpty()){
-                    result = metadata.getColumns(null, schemaName, tableName, "%");
-                    while (result.next()) {
-                        final String columnName = result.getString(Column.COLUMN_NAME);
-                        if(!names.contains(columnName)){
-                            continue;
+            }
+            closeSafe(store.getLogger(),result);
+            
+            //for each unique index composed of one column add a flag on the property descriptor
+            for(Entry<String,List<String>> entry : uniqueIndexes.entrySet()){
+                final List<String> columns = entry.getValue();
+                if(columns.size() == 1){
+                    String columnName = columns.get(0);
+                    for(PropertyDescriptor desc : ftb.getProperties()){
+                        if(desc.getName().getLocalPart().equals(columnName)){
+                            desc.getUserData().put(JDBCFeatureStore.JDBC_PROPERTY_UNIQUE, Boolean.TRUE);
                         }
-
-                        final int sqlType = result.getInt(Column.DATA_TYPE);
-                        final String sqlTypeName = result.getString(Column.TYPE_NAME);
-                        final Class columnType = dialect.getJavaType(sqlType, sqlTypeName);                        
-                        final ColumnMetaModel col = new ColumnMetaModel(schemaName, tableName, columnName, 
-                                sqlType, sqlTypeName, columnType, Type.NON_INCREMENTING);
-                        cols.add(col);
                     }
-                    closeSafe(store.getLogger(),result);
                 }
             }
             
-            if(cols.isEmpty()) store.getLogger().log(Level.INFO, "No primary key found for {0}.", tableName);
+            if(pkEmpty && !names.isEmpty()){
+                //build a primary key from unique index
+                result = metadata.getColumns(null, schemaName, tableName, "%");
+                while (result.next()) {
+                    final String columnName = result.getString(Column.COLUMN_NAME);
+                    if(!names.contains(columnName)){
+                        continue;
+                    }
+
+                    final int sqlType = result.getInt(Column.DATA_TYPE);
+                    final String sqlTypeName = result.getString(Column.TYPE_NAME);
+                    final Class columnType = dialect.getJavaType(sqlType, sqlTypeName);                        
+                    final ColumnMetaModel col = new ColumnMetaModel(schemaName, tableName, columnName, 
+                            sqlType, sqlTypeName, columnType, Type.NON_INCREMENTING);
+                    cols.add(col);
+                }
+                closeSafe(store.getLogger(),result);
+            }
+            
+            
+            if(cols.isEmpty()){
+                store.getLogger().log(Level.INFO, "No primary key found for {0}.", tableName);
+            }
             table.key = new PrimaryKey(tableName, cols);
             
             closeSafe(store.getLogger(),result);

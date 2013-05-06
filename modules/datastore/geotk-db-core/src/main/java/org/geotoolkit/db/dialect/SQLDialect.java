@@ -117,7 +117,7 @@ public interface SQLDialect {
 
     void encodePostCreateTable(StringBuilder sql, String tableName);
 
-    void postCreateTable(String schemaName, SimpleFeatureType featureType, Connection cx) throws SQLException;
+    void postCreateTable(String schemaName, FeatureType featureType, Connection cx) throws SQLException;
 
     
     ////////////////////////////////////////////////////////////////////////////

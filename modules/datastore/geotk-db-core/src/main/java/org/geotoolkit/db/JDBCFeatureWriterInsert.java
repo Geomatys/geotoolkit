@@ -26,14 +26,9 @@ import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.HintsPending;
-import org.geotoolkit.feature.AbstractFeature;
 import org.geotoolkit.feature.FeatureUtilities;
-import org.geotoolkit.filter.identity.DefaultFeatureId;
 import org.opengis.feature.Feature;
-import org.opengis.feature.Property;
-
 import org.opengis.feature.type.FeatureType;
-import org.opengis.filter.identity.FeatureId;
 
 /**
  * Feature writer for insertion only.
