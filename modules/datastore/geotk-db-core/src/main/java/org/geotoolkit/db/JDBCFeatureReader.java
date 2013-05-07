@@ -20,6 +20,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
 import static org.geotoolkit.db.JDBCFeatureStoreUtilities.*;
@@ -52,11 +53,13 @@ public class JDBCFeatureReader implements FeatureReader<FeatureType, Feature> {
     protected final Statement st;
     protected final ResultSet rs;
     protected final Connection cx;
+    protected final boolean release ;
     /** the next feature */
     private JDBCComplexFeature feature = null;
     
     public JDBCFeatureReader(final DefaultJDBCFeatureStore store, final String sql, 
-            final FeatureType type, final Hints hints) throws SQLException,DataStoreException {
+            final FeatureType type, Connection cnx, boolean release, final Hints hints) throws SQLException,DataStoreException {
+        ArgumentChecks.ensureNonNull("Connection", cnx);
         final Name typeName = type.getName();
         final String name = typeName.getLocalPart();
         this.fidBase = name + ".";
@@ -66,11 +69,12 @@ public class JDBCFeatureReader implements FeatureReader<FeatureType, Feature> {
         this.pkey = store.getDatabaseModel().getPrimaryKey(typeName);
         
         this.sql = sql;        
-        this.cx = store.getDataSource().getConnection();
+        this.cx = cnx;
         this.st = cx.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
         this.st.setFetchSize(store.getFetchSize());
         this.rs = this.st.executeQuery(sql);
         this.hints = hints;
+        this.release = release;
     }
     
     public JDBCFeatureReader(final JDBCFeatureReader other) throws SQLException {
@@ -83,6 +87,7 @@ public class JDBCFeatureReader implements FeatureReader<FeatureType, Feature> {
         this.st = other.st;
         this.rs = other.rs;
         this.cx = other.cx;
+        this.release = other.release;
     }
     
     @Override
@@ -123,7 +128,7 @@ public class JDBCFeatureReader implements FeatureReader<FeatureType, Feature> {
     
     @Override
     public void close() {
-        closeSafe(store.getLogger(),cx,st,rs);
+        closeSafe(store.getLogger(),(release)?cx:null,st,rs);
     }
 
     @Override

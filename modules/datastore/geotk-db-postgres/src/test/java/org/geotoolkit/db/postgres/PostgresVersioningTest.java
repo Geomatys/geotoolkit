@@ -29,14 +29,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.FeatureStoreFinder;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.query.QueryBuilder;
+import org.geotoolkit.data.session.Session;
 import org.geotoolkit.feature.FeatureTypeBuilder;
-import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.storage.DataStoreException;
 import org.junit.Test;
@@ -398,6 +396,301 @@ public class PostgresVersioningTest {
         
     }
     
+    /**
+     * Check versions are created on each call on the session.
+     * 
+     * @throws DataStoreException
+     * @throws VersioningException 
+     */
+    @Test
+    public void testVersioningSynchrone() throws DataStoreException, VersioningException{
+        reload();
+        List<Version> versions;
+        Version version;
+        Feature feature;
+        FeatureId fid;
+        FeatureIterator ite;
+        final QueryBuilder qb = new QueryBuilder();
+        
+        final FeatureType refType = FTYPE_SIMPLE;        
+        store.createSchema(refType.getName(), refType);        
+        final VersionControl vc = store.getVersioning(refType.getName());
+        
+        ////////////////////////////////////////////////////////////////////////
+        //start versioning /////////////////////////////////////////////////////
+        vc.startVersioning();
+        versions = vc.list();
+        assertTrue(versions.isEmpty());
+        
+        final Session session = store.createSession(false);
+        
+        ////////////////////////////////////////////////////////////////////////
+        //make an insert ///////////////////////////////////////////////////////
+        final Point firstPoint = GF.createPoint(new Coordinate(56, 45));
+        feature = FeatureUtilities.defaultFeature(refType, "0");
+        feature.getProperty("boolean").setValue(Boolean.TRUE);
+        feature.getProperty("integer").setValue(14);
+        feature.getProperty("point").setValue(firstPoint);
+        feature.getProperty("string").setValue("someteststring");        
+        session.addFeatures(refType.getName(), Collections.singleton(feature));
+                
+        //we should have one version
+        versions = vc.list();
+        assertEquals(1, versions.size());        
+        version = versions.get(0);
+        Date date = version.getDate();
+        
+        //ensure normal reading is correct without version----------------------
+        qb.reset();
+        qb.setTypeName(refType.getName());
+        ite = session.getFeatureCollection(qb.buildQuery()).iterator();
+        try{
+            feature = ite.next();  
+            fid = feature.getIdentifier();
+        }finally{
+            ite.close();
+        }
+        
+        try {
+            //wait a bit just to have some space between version dates
+            Thread.sleep(1000);
+        } catch (InterruptedException ex) {
+            fail(ex.getMessage());
+        }
+        
+        
+        ////////////////////////////////////////////////////////////////////////
+        //make an update 1 /////////////////////////////////////////////////////
+        final Point secondPoint = GF.createPoint(new Coordinate(-12, 21));
+        Map updates = new HashMap<PropertyDescriptor, Object>();
+        updates.put(feature.getProperty("boolean").getDescriptor(), Boolean.FALSE);
+        updates.put(feature.getProperty("integer").getDescriptor(), -3);
+        updates.put(feature.getProperty("point").getDescriptor(), secondPoint);
+        updates.put(feature.getProperty("string").getDescriptor(), "anothertextupdated");        
+        session.updateFeatures(refType.getName(), FF.id(Collections.singleton(fid)), updates);
+        
+        //we should have two versions
+        versions = vc.list();
+        assertEquals(2, versions.size());
+        
+        ////////////////////////////////////////////////////////////////////////
+        //make an update 2 /////////////////////////////////////////////////////
+        final Point thirdPoint = GF.createPoint(new Coordinate(48, -51));
+        updates = new HashMap<PropertyDescriptor, Object>();
+        updates.put(feature.getProperty("boolean").getDescriptor(), Boolean.TRUE);
+        updates.put(feature.getProperty("integer").getDescriptor(), -89);
+        updates.put(feature.getProperty("point").getDescriptor(), thirdPoint);
+        updates.put(feature.getProperty("string").getDescriptor(), "thridupdatetext");        
+        session.updateFeatures(refType.getName(), FF.id(Collections.singleton(fid)), updates);
+        
+        //we should have three versions
+        versions = vc.list();
+        assertEquals(3, versions.size());
+        
+        ////////////////////////////////////////////////////////////////////////
+        //delete record ////////////////////////////////////////////////////////
+        
+        session.removeFeatures(refType.getName(), FF.id(Collections.singleton(fid)));
+        qb.reset();
+        qb.setTypeName(refType.getName());
+        assertEquals(0, session.getCount(qb.buildQuery()));
+        
+        //we should have four versions
+        versions = vc.list();
+        assertEquals(4, versions.size());
+        
+        ////////////////////////////////////////////////////////////////////////
+        //make an insert ///////////////////////////////////////////////////////
+        Point fourthPoint = GF.createPoint(new Coordinate(66, 11));
+        feature = FeatureUtilities.defaultFeature(refType, "0");
+        feature.getProperty("boolean").setValue(Boolean.FALSE);
+        feature.getProperty("integer").setValue(22);
+        feature.getProperty("point").setValue(fourthPoint);
+        feature.getProperty("string").setValue("fourthupdateString");        
+        session.addFeatures(refType.getName(), Collections.singleton(feature));
+        
+        //we should have five versions
+        versions = vc.list();
+        assertEquals(5, versions.size());
+        
+        
+    }
+    
+    /**
+     * Check versions are created only on session commit calls.
+     * 
+     * @throws DataStoreException
+     * @throws VersioningException 
+     */
+    @Test
+    public void testVersioningASynchrone() throws DataStoreException, VersioningException{
+        reload();
+        List<Version> versions;
+        Version version;
+        Feature feature;
+        FeatureId fid;
+        FeatureIterator ite;
+        final QueryBuilder qb = new QueryBuilder();
+        
+        final FeatureType refType = FTYPE_SIMPLE;        
+        store.createSchema(refType.getName(), refType);        
+        final VersionControl vc = store.getVersioning(refType.getName());
+        
+        ////////////////////////////////////////////////////////////////////////
+        //start versioning /////////////////////////////////////////////////////
+        vc.startVersioning();
+        versions = vc.list();
+        assertTrue(versions.isEmpty());
+        
+        final Session session = store.createSession(true);
+        
+        ////////////////////////////////////////////////////////////////////////
+        //make an insert ///////////////////////////////////////////////////////
+        final Point firstPoint = GF.createPoint(new Coordinate(56, 45));
+        feature = FeatureUtilities.defaultFeature(refType, "0");
+        feature.getProperty("boolean").setValue(Boolean.TRUE);
+        feature.getProperty("integer").setValue(14);
+        feature.getProperty("point").setValue(firstPoint);
+        feature.getProperty("string").setValue("someteststring");        
+        session.addFeatures(refType.getName(), Collections.singleton(feature));
+                
+        //we should have 0 version
+        versions = vc.list();
+        assertEquals(0, versions.size());
+        
+        session.commit(); // <-- creates a version
+        
+        //we should have 1 version
+        versions = vc.list();
+        assertEquals(1, versions.size());        
+        version = versions.get(0);
+        Date date = version.getDate();
+        
+        //ensure normal reading is correct without version----------------------
+        qb.reset();
+        qb.setTypeName(refType.getName());
+        ite = session.getFeatureCollection(qb.buildQuery()).iterator();
+        try{
+            feature = ite.next();  
+            fid = feature.getIdentifier();
+        }finally{
+            ite.close();
+        }
+        
+        try {
+            //wait a bit just to have some space between version dates
+            Thread.sleep(1000);
+        } catch (InterruptedException ex) {
+            fail(ex.getMessage());
+        }
+        
+        
+        ////////////////////////////////////////////////////////////////////////
+        //make 2 updates at the time ///////////////////////////////////////////
+        final Point secondPoint = GF.createPoint(new Coordinate(-12, 21));
+        Map updates = new HashMap<PropertyDescriptor, Object>();
+        updates.put(feature.getProperty("boolean").getDescriptor(), Boolean.FALSE);
+        updates.put(feature.getProperty("integer").getDescriptor(), -3);
+        updates.put(feature.getProperty("point").getDescriptor(), secondPoint);
+        updates.put(feature.getProperty("string").getDescriptor(), "anothertextupdated");        
+        session.updateFeatures(refType.getName(), FF.id(Collections.singleton(fid)), updates);
+        
+        //we should have 1 version
+        versions = vc.list();
+        assertEquals(1, versions.size());
+        
+        final Point thirdPoint = GF.createPoint(new Coordinate(48, -51));
+        updates = new HashMap<PropertyDescriptor, Object>();
+        updates.put(feature.getProperty("boolean").getDescriptor(), Boolean.TRUE);
+        updates.put(feature.getProperty("integer").getDescriptor(), -89);
+        updates.put(feature.getProperty("point").getDescriptor(), thirdPoint);
+        updates.put(feature.getProperty("string").getDescriptor(), "thridupdatetext");        
+        session.updateFeatures(refType.getName(), FF.id(Collections.singleton(fid)), updates);
+        
+        //we should have 1 version
+        versions = vc.list();
+        assertEquals(1, versions.size());
+        
+        session.commit();  // <-- creates a version
+        
+        //we should have two versions
+        versions = vc.list();
+        assertEquals(2, versions.size());
+        
+        //ensure we read the latest --------------------------------------------
+        qb.reset();
+        qb.setTypeName(refType.getName());
+        ite = store.createSession(true).getFeatureCollection(qb.buildQuery()).iterator();
+        try{
+            feature = ite.next();
+            assertEquals(Boolean.TRUE,      feature.getProperty("boolean").getValue());
+            assertEquals(-89,               feature.getProperty("integer").getValue());
+            assertEquals(thirdPoint,        feature.getProperty("point").getValue());
+            assertEquals("thridupdatetext", feature.getProperty("string").getValue());
+        }finally{
+            ite.close();
+        }
+        
+        
+        ////////////////////////////////////////////////////////////////////////
+        // make delete + insert at the same time ///////////////////////////////
+        
+        session.removeFeatures(refType.getName(), FF.id(Collections.singleton(fid)));
+        qb.reset();
+        qb.setTypeName(refType.getName());
+        assertEquals(0, session.getCount(qb.buildQuery()));
+        
+        //we should have two versions
+        versions = vc.list();
+        assertEquals(2, versions.size());
+        
+        ////////////////////////////////////////////////////////////////////////
+        //delete record ////////////////////////////////////////////////////////
+        
+        session.removeFeatures(refType.getName(), FF.id(Collections.singleton(fid)));
+        qb.reset();
+        qb.setTypeName(refType.getName());
+        assertEquals(0, session.getCount(qb.buildQuery()));
+        
+        //we should have two versions
+        versions = vc.list();
+        assertEquals(2, versions.size());
+        
+        Point fourthPoint = GF.createPoint(new Coordinate(66, 11));
+        feature = FeatureUtilities.defaultFeature(refType, "0");
+        feature.getProperty("boolean").setValue(Boolean.FALSE);
+        feature.getProperty("integer").setValue(22);
+        feature.getProperty("point").setValue(fourthPoint);
+        feature.getProperty("string").setValue("fourthupdateString");        
+        session.addFeatures(refType.getName(), Collections.singleton(feature));
+        
+        //we should have two versions
+        versions = vc.list();
+        assertEquals(2, versions.size());
+        
+        session.commit();  // <-- creates a version
+        
+        //we should have three versions
+        versions = vc.list();
+        assertEquals(3, versions.size());
+        
+        //ensure we read the latest --------------------------------------------
+        qb.reset();
+        qb.setTypeName(refType.getName());
+        ite = store.createSession(true).getFeatureCollection(qb.buildQuery()).iterator();
+        try{
+            feature = ite.next();
+            assertEquals(Boolean.FALSE,        feature.getProperty("boolean").getValue());
+            assertEquals(22,                   feature.getProperty("integer").getValue());
+            assertEquals(fourthPoint,          feature.getProperty("point").getValue());
+            assertEquals("fourthupdateString", feature.getProperty("string").getValue());
+        }finally{
+            ite.close();
+        }
+        
+    }
+    
+    
     @Test
     public void testTrimVersioning() throws DataStoreException, VersioningException {
         reload();
@@ -541,4 +834,5 @@ public class PostgresVersioningTest {
         //ensure version v2 begin time become lastDate.
         assertEquals(vc.list().get(0).getDate().getTime(), lastDate);
     }
+    
 }

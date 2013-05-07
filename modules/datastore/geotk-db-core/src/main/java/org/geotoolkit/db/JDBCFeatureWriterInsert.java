@@ -17,6 +17,7 @@
 package org.geotoolkit.db;
 
 import java.io.IOException;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -44,9 +45,9 @@ public class JDBCFeatureWriterInsert extends JDBCFeatureReader implements Featur
     private Feature last;
 
     public JDBCFeatureWriterInsert(final DefaultJDBCFeatureStore store, final String sql, 
-            final FeatureType type, final Hints hints)
+            final FeatureType type, Connection cnx, boolean release, final Hints hints)
             throws SQLException, IOException, DataStoreException {
-        super(store, sql, type, hints);
+        super(store, sql, type, cnx, release, hints);
         init();
     }
 

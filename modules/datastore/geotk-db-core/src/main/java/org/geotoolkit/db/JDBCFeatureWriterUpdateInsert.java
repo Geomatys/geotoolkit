@@ -17,6 +17,7 @@
 package org.geotoolkit.db;
 
 import java.io.IOException;
+import java.sql.Connection;
 import java.sql.SQLException;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
@@ -30,9 +31,9 @@ public class JDBCFeatureWriterUpdateInsert extends JDBCFeatureWriterUpdate {
     JDBCFeatureWriterInsert inserter;
     
     public JDBCFeatureWriterUpdateInsert(final DefaultJDBCFeatureStore store, final String sql, 
-            final FeatureType type, final Hints hints)
+            final FeatureType type, Connection cnx, boolean release, final Hints hints)
             throws SQLException, IOException,DataStoreException {        
-        super(store, sql, type, hints);
+        super(store, sql, type, cnx, release, hints);
     }
     
     @Override
