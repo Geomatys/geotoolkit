@@ -201,19 +201,23 @@ public final class DataBaseModel {
         }
 
         for(SchemaMetaModel schema : candidates){
-            for(TableMetaModel table : schema.tables.values()){
-                final FeatureType ft;
-                if(simpleTypes){
-                    ft = table.getSimpleType();
-                }else{
-                    ft = table.getComplexType();
-                }
-                final Name name = ft.getName();
-                typeIndex.put(name, ft);
-                pkIndex.put(name, table.key);
-            }
-        }
-
+           if (schema != null) {
+                for(TableMetaModel table : schema.tables.values()){
+                    final FeatureType ft;
+                    if(simpleTypes){
+                        ft = table.getSimpleType();
+                    }else{
+                        ft = table.getComplexType();
+                    }
+                    final Name name = ft.getName();
+                    typeIndex.put(name, ft);
+                    pkIndex.put(name, table.key);
+                 }
+            } else {
+                throw new DataStoreException("Specifed schema " + baseSchemaName + " does not exist.");
+             }
+         }
+        
     }
 
     private SchemaMetaModel analyzeSchema(final String schemaName) throws DataStoreException{

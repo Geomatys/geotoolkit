@@ -724,7 +724,8 @@ public class PostgresDialect extends AbstractSQLDialect{
 
                     // add srid checks
                     if (srid > -1) {
-                        sb = new StringBuilder("ALTER TABLE \"").append(tableName).append('"');
+                        sb = new StringBuilder("ALTER TABLE ");
+                        encodeSchemaAndTableName(sb, schemaName, tableName);
                         sb.append(" ADD CONSTRAINT \"enforce_srid_");
                         sb.append(gd.getLocalName()).append('"');
                         sb.append(" CHECK (st_srid(");
@@ -737,7 +738,8 @@ public class PostgresDialect extends AbstractSQLDialect{
 
                     // add dimension checks
 
-                    sb = new StringBuilder("ALTER TABLE \"").append(tableName).append('"');
+                    sb = new StringBuilder("ALTER TABLE ");
+                    encodeSchemaAndTableName(sb, schemaName, tableName);
                     sb.append(" ADD CONSTRAINT \"enforce_dims_");
                     sb.append(gd.getLocalName()).append('"');
                     sb.append(" CHECK (st_ndims(\"").append(gd.getLocalName()).append("\") = 2)");
@@ -747,8 +749,8 @@ public class PostgresDialect extends AbstractSQLDialect{
 
                     // add geometry type checks
                     if(!"geometry".equalsIgnoreCase(geomType)){
-                        sb = new StringBuilder("ALTER TABLE \"").append(tableName);
-                        sb.append('"');
+                        sb = new StringBuilder("ALTER TABLE ");
+                        encodeSchemaAndTableName(sb, schemaName, tableName);
                         sb.append(" ADD CONSTRAINT \"enforce_geotype_");
                         sb.append(gd.getLocalName()).append('"');
                         sb.append(" CHECK (st_geometrytype(");
@@ -764,7 +766,7 @@ public class PostgresDialect extends AbstractSQLDialect{
                     sb = new StringBuilder("CREATE INDEX \"spatial_").append(tableName);
                     sb.append('_').append(gd.getLocalName().toLowerCase()).append('"');
                     sb.append(" ON ");
-                    sb.append('"').append(tableName).append('"');
+                    encodeSchemaAndTableName(sb, schemaName, tableName);
                     sb.append(" USING GIST (");
                     sb.append('"').append(gd.getLocalName()).append('"').append(')');
                     sql = sb.toString();
