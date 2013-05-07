@@ -53,12 +53,12 @@ import org.opengis.util.FactoryException;
  * @module pending
  * @todo make this concurrent
  */
-class ModifyDelta extends AbstractDelta{
+public class ModifyDelta extends AbstractDelta{
 
-    private final Map<AttributeDescriptor,Object> values = new HashMap<AttributeDescriptor, Object>();
-    private Id filter;
+    protected final Map<AttributeDescriptor,Object> values = new HashMap<AttributeDescriptor, Object>();
+    protected Id filter;
 
-    ModifyDelta(final Session session, final Name typeName, final Id filter, final Map<? extends AttributeDescriptor,? extends Object> values){
+    public ModifyDelta(final Session session, final Name typeName, final Id filter, final Map<? extends AttributeDescriptor,? extends Object> values){
         super(session,typeName);
         ensureNonNull("type name", typeName);
         if(filter == null){

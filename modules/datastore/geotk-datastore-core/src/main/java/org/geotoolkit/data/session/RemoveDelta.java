@@ -38,11 +38,11 @@ import org.opengis.geometry.Envelope;
  * @module pending
  * @todo make this concurrent
  */
-class RemoveDelta extends AbstractDelta{
+public class RemoveDelta extends AbstractDelta{
 
-    private Id removedIds;
+    protected Id removedIds;
 
-    RemoveDelta(final Session session, final Name typeName, final Id filter){
+    public RemoveDelta(final Session session, final Name typeName, final Id filter){
         super(session,typeName);
         ensureNonNull("type name", typeName);
         ensureNonNull("filter", filter);

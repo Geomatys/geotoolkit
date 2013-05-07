@@ -43,6 +43,7 @@ import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.version.Version;
+import org.opengis.feature.Feature;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.Name;
@@ -78,11 +79,28 @@ public class DefaultSession extends AbstractSession {
     
     public DefaultSession(final FeatureStore store, final boolean async, final Version version){
         super(store);
-        this.diff = new DefaultSessionDiff();
+        this.diff = createDiff();
         this.async = async;
         this.version = version;
     }
+    
+    protected DefaultSessionDiff createDiff(){
+        return new DefaultSessionDiff();
+    }
 
+    protected AddDelta createAddDelta(Session session, Name typeName, Collection<? extends Feature> features){
+        return new AddDelta(this, typeName, features);
+    }
+    
+    protected ModifyDelta createModifyDelta(Session session, Name typeName, 
+            Id filter , final Map<? extends AttributeDescriptor,? extends Object> values){
+        return new ModifyDelta(this, typeName, filter, values);
+    }
+    
+    protected RemoveDelta createRemoveDelta(Session session, Name typeName, Id filter){
+        return new RemoveDelta(session, typeName, filter);
+    }
+    
     /**
      * {@inheritDoc }
      */
@@ -155,7 +173,7 @@ public class DefaultSession extends AbstractSession {
         store.getFeatureType(groupName);
 
         if(async){
-            diff.add(new AddDelta(this, groupName, newFeatures));
+            diff.add(createAddDelta(this, groupName, newFeatures));
             fireSessionChanged();
         }else{
             store.addFeatures(groupName, newFeatures);
@@ -206,7 +224,7 @@ public class DefaultSession extends AbstractSession {
                 }
             }
 
-            diff.add(new ModifyDelta(this, groupName, modified, values));
+            diff.add(createModifyDelta(this, groupName, modified, values));
             fireSessionChanged();
         }else{
             store.updateFeatures(groupName, filter, values);
@@ -248,7 +266,7 @@ public class DefaultSession extends AbstractSession {
                 }
             }
 
-            diff.add(new RemoveDelta(this, groupName, removed));
+            diff.add(createRemoveDelta(this, groupName, removed));
             fireSessionChanged();
         }else{
             store.removeFeatures(groupName, filter);
@@ -303,6 +321,10 @@ public class DefaultSession extends AbstractSession {
         }else{
             return store.getEnvelope(original);
         }
+    }
+
+    protected DefaultSessionDiff getDiff() {
+        return diff;
     }
 
     /**

@@ -30,7 +30,7 @@ import org.opengis.geometry.Envelope;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-interface Delta {
+public interface Delta {
 
     /**
      * 

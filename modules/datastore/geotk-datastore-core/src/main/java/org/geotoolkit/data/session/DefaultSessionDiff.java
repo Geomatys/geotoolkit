@@ -34,7 +34,7 @@ import org.apache.sis.internal.util.UnmodifiableArrayList;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-class DefaultSessionDiff{
+public class DefaultSessionDiff{
 
     private final List<Delta> deltas = new ArrayList<Delta>();
     private List<Delta> readCopy = null;
@@ -44,7 +44,7 @@ class DefaultSessionDiff{
     private final Lock writeLock = rwlock.writeLock();
 
 
-    DefaultSessionDiff(){
+    public DefaultSessionDiff(){
     }
 
     /**

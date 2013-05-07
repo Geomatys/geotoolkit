@@ -152,7 +152,7 @@ public abstract class AbstractFeatureStore extends AbstractStorage implements Fe
      * {@inheritDoc }
      */
     @Override
-    public Session createSession(final boolean async) {
+    public final Session createSession(final boolean async) {
         return createSession(async, null);
     }
 
