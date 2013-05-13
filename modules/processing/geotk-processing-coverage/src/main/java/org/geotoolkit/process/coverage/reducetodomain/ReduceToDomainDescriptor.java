@@ -14,16 +14,15 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.process.coverage.reducedodomain;
+package org.geotoolkit.process.coverage.reducetodomain;
 
+import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.process.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.coverage.CoverageProcessingRegistry;
-import org.geotoolkit.process.coverage.reducetodomain.ReduceToDomainProcess;
-import org.geotoolkit.util.SimpleInternationalString;
 import org.opengis.coverage.Coverage;
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;

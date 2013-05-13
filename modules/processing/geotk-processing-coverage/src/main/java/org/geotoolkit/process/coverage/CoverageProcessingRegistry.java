@@ -31,7 +31,7 @@ import org.geotoolkit.process.coverage.kriging.KrigingDescriptor;
 import org.geotoolkit.process.coverage.metadataextractor.ExtractionDescriptor;
 import org.geotoolkit.process.coverage.pgpyramid.PyramidDescriptor;
 import org.geotoolkit.process.coverage.pyramid.MapcontextPyramidDescriptor;
-import org.geotoolkit.process.coverage.reducedodomain.ReduceToDomainDescriptor;
+import org.geotoolkit.process.coverage.reducetodomain.ReduceToDomainDescriptor;
 import org.geotoolkit.process.coverage.resample.ResampleDescriptor;
 import org.geotoolkit.process.coverage.straighten.StraightenDescriptor;
 import org.geotoolkit.process.coverage.tiling.TilingDescriptor;
