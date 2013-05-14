@@ -324,7 +324,7 @@ public class LargeRenderedImage implements RenderedImage {
         try {
             buff = imageReader.read(imageIndex, imgParam);
         } catch (IOException ex) {
-            Logger.getLogger(LargeRenderedImage.class.getName()).log(Level.SEVERE, null, ex);
+            throw new IllegalStateException("Impossible to read tile from image reader.", ex);
         }
         // 2 : la setter au tile cache
         if (cm == null) cm = buff.getColorModel();
