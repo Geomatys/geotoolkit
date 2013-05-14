@@ -67,7 +67,7 @@ public class PostgresFeatureStoreFactory extends AbstractJDBCFeatureStoreFactory
 
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
-            new DefaultParameterDescriptorGroup("PostGISParameters",
+            new DefaultParameterDescriptorGroup("PostgresParameters",
                 IDENTIFIER,HOST,PORT,DATABASE,SCHEMA,TABLE,USER,PASSWORD,NAMESPACE,
                 DATASOURCE,MAXCONN,MINCONN,VALIDATECONN,FETCHSIZE,MAXWAIT,LOOSEBBOX,SIMPLETYPE);
     

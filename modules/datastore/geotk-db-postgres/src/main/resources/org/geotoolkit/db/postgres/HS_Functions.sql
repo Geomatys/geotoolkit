@@ -467,7 +467,11 @@ $BODY$declare
 begin 
 	tab = regexp_split_to_array("tableName", '\.');
 	tLenght = array_Upper(tab, 1);
-	select table_catalog into strict result from information_schema.tables where table_name = tab[tLenght]; 
+        if (tLenght >= 2) then
+            select table_catalog into strict result from information_schema.tables where table_schema = tab[tLenght -1] AND table_name = tab[tLenght]; 
+        else
+            select table_catalog into strict result from information_schema.tables where table_name = tab[tLenght]; 
+        end if;
 	return result."table_catalog";
 end;$BODY$
   LANGUAGE plpgsql VOLATILE
@@ -650,7 +654,11 @@ $BODY$declare
 	i integer;
 	datatypecolumn record;
 	result character varying;
+        schemaNam character varying;
+	tablenam character varying;
 begin
+        tablenam = "HS_ExtractTableIdentifier"("tableName");
+	schemaNam = "HS_ExtractSchemaIdentifier"("tableName");
 	tcLenght = array_Upper("trackedColumns", 1);
 	result = '';
 	i = 1;
@@ -659,7 +667,7 @@ begin
 		if i > 1 then 
 			result = result || ', ';
 		end if;
-		select udt_name into strict datatypecolumn from information_schema.columns where table_name = "HS_ExtractTableIdentifier"("tableName")  and column_name = "trackedColumns"[i];
+		select udt_name into strict datatypecolumn from information_schema.columns where table_schema = schemaNam AND table_name = tablenam  and column_name = "trackedColumns"[i];
 		result = result || "HS_ConstructColumnIdentifier"("trackedColumns"[i])||' '|| datatypecolumn."udt_name";
 		i = i+1;
 	end loop;
@@ -880,7 +888,7 @@ begin
 		raise exception 'table does not exist';
 	end if;
 	
-	IdentifierColumns = "HS_GetHistoryRowSetIdentifierColumns"(table_nam, "trackedColumns");
+	IdentifierColumns = "HS_GetHistoryRowSetIdentifierColumns"("tableName", "trackedColumns");
 
 	FOREACH tn in array IdentifierColumns loop
 		IF NOT EXISTS(SELECT * from information_schema.table_constraints where
@@ -891,8 +899,8 @@ begin
 
 	-- Check if the history table for the specified table does not exist
 	IF EXISTS(SELECT * FROM information_schema.tables
-	WHERE TABLE_CATALOG = "HS_ExtractCatalogIdentifier"(table_nam)
-	AND TABLE_SCHEMA    = "HS_ExtractSchemaIdentifier"(table_nam)
+	WHERE TABLE_CATALOG = "HS_ExtractCatalogIdentifier"("tableName")
+	AND TABLE_SCHEMA    = "HS_ExtractSchemaIdentifier"("tableName")
 	AND TABLE_NAME      = "HS_ConstructTableIdentifier"(table_nam))
 	THEN
 		raise exception	'history table already exists';
@@ -1035,23 +1043,26 @@ $BODY$declare
 	stmt_HS_Begin_idx character varying;
 	stmt_HS_End_idx character varying;
 	stmt_HS_BegEnd_idx character varying;
-
+        schemaNam character varying;
+	tablenam character varying;
 
 begin
-	table_nam = "HS_ConstructTableIdentifier"("tableName");
+        tablenam = "HS_ExtractTableIdentifier"("tableName");
+	schemaNam = "HS_ExtractSchemaIdentifier"("tableName");
+	table_nam = "HS_ConstructTableIdentifier"(tablenam);
 	tmpAllIdentifierColumnsType = "HS_CreateCommaSeparatedTrackedColumnAndTypeList"("tableName", "trackedColumns");
 	tmpAllIdentifierColumnsOpt  = "HS_CreateCommaSeparatedIdentifierColumnList"("tableName", "trackedColumns", ' WITH OPTIONS NOT NULL');
 	
 	-- table query creation 	
-	stmt_table = 'CREATE TABLE ' ||'"'|| table_nam ||'"'||'( "HS_SEQ" serial PRIMARY KEY, '||
+	stmt_table = 'CREATE TABLE ' ||'"'||schemaNam||'"."'||table_nam||'"'||'( "HS_SEQ" serial PRIMARY KEY, '||
 	tmpAllIdentifierColumnsType || ', "HS_Begin" timestamp, "HS_End" timestamp ); ';
 
 	-- Begin index query creation
-	stmt_HS_Begin_idx = 'CREATE INDEX "HS_Begin_idx"  ON '|| '"'|| table_nam ||'"' ||' USING btree  ("HS_Begin" ); ';
+	stmt_HS_Begin_idx = 'CREATE INDEX "HS_'||table_nam||'_Begin_idx"  ON '|| '"'||schemaNam||'"."'||table_nam||'"' ||' USING btree  ("HS_Begin" ); ';
 	-- End index query creation
-	stmt_HS_End_idx = 'CREATE INDEX "HS_End_idx"  ON '|| '"'|| table_nam ||'"' ||' USING btree  ("HS_End" ); ';
+	stmt_HS_End_idx = 'CREATE INDEX "HS_'||table_nam||'_End_idx"  ON '|| '"'||schemaNam||'"."'||table_nam||'"' ||' USING btree  ("HS_End" ); ';
 	-- BegEnd index query creation
-	stmt_HS_BegEnd_idx = 'CREATE INDEX "HS_BegEnd_idx"  ON '|| '"'|| table_nam ||'"' ||' USING btree  ("HS_Begin", "HS_End" ); ';
+	stmt_HS_BegEnd_idx = 'CREATE INDEX "HS_'||table_nam||'_BegEnd_idx"  ON '|| '"'||schemaNam||'"."'||table_nam||'"' ||' USING btree  ("HS_Begin", "HS_End" ); ';
 	stmt = stmt_table || stmt_HS_Begin_idx || stmt_HS_End_idx || stmt_HS_BegEnd_idx;
 	EXECUTE stmt;
 	return stmt;
@@ -1069,16 +1080,20 @@ CREATE OR REPLACE FUNCTION "HS_InitializeHistoryTable"("tableName" character var
 $BODY$declare 
 	stmt character varying;
 	tmpAllTrackedColumns character varying;
+	schemaNam character varying;
+	tablenam character varying;
 begin
+        tablenam = "HS_ExtractTableIdentifier"("tableName");
+	schemaNam = "HS_ExtractSchemaIdentifier"("tableName");
 
 	tmpAllTrackedColumns  = "HS_CreateCommaSeparatedTrackedColumnList"("trackedColumns", NULL);
 	-- Construct an INSERT statement
 	--in order to insert all rows in the tracked table into the history table.
-	stmt ='INSERT INTO ' ||'"'|| "HS_ConstructTableIdentifier"("tableName")||'"'||
-	' (' || tmpAllTrackedColumns || ', "HS_Begin", "HS_End")'||
+	stmt ='INSERT INTO "' || schemaNam || '"."' || "HS_ConstructTableIdentifier"(tableNam)||
+	'" (' || tmpAllTrackedColumns || ', "HS_Begin", "HS_End")'||
 	' SELECT '||tmpAllTrackedColumns || 
 	' , "HS_GetTransactionTimestamp"()'||', null '||
-	'FROM ' || '"'||"tableName"||'"';
+	'FROM "'||schemaNam||'"."'||tableNam||'"';
 	EXECUTE stmt;
 	return stmt;
 end;$BODY$
@@ -1099,25 +1114,29 @@ $BODY$DECLARE
 	hs_table_name character varying;
 	tmpAllTrackedColumns character varying;
 	tmpAllTrackedColumns_new character varying;
+        schemaNam character varying;
+	tablenam character varying;
 begin
+        tablenam = "HS_ExtractTableIdentifier"("tableName");
+	schemaNam = "HS_ExtractSchemaIdentifier"("tableName");
 	tmpAllTrackedColumns = "HS_CreateCommaSeparatedTrackedColumnList"("trackedColumns", NULL);
 	tmpAllTrackedColumns_new = "HS_CreateCommaSeparatedTrackedColumnList"("trackedColumns", 'NEW.');
-	trigger_name = "HS_ConstructInsTriggerIdentifier"("tableName");
-	hs_table_name = '"'||"HS_ConstructTableIdentifier"("tableName")||'"';
+	trigger_name = "HS_ConstructInsTriggerIdentifier"(tablenam);
+	hs_table_name = '"'||"HS_ConstructTableIdentifier"(tablenam)||'"';
 
-	stmt_fonc = 'CREATE OR REPLACE FUNCTION'|| ' "'||trigger_name||'"'||
+	stmt_fonc = 'CREATE OR REPLACE FUNCTION "' ||schemaNam|| '"."'||trigger_name||'"'||
 		    '() RETURNS trigger AS $'||trigger_name||'$
 	BEGIN
-		INSERT INTO '||hs_table_name||'('||tmpAllTrackedColumns||
+		INSERT INTO "'||schemaNam||'".'||hs_table_name||'('||tmpAllTrackedColumns||
 		', "HS_Begin", "HS_End") values('||tmpAllTrackedColumns_new||
 		', "HS_GetTransactionTimestamp"(), null);
 		return NEW;
 	END;
 	$'||trigger_name||'$ LANGUAGE plpgsql; ';
 	
-	stmt_trigg = 'CREATE TRIGGER' || ' "'||trigger_name||'"'||
-		     ' AFTER INSERT ON "'||"tableName"||
-		     '" FOR EACH ROW execute procedure "'||trigger_name||'"();';
+	stmt_trigg = 'CREATE TRIGGER "'||trigger_name||'" '||
+		     ' AFTER INSERT ON "'||schemaNam||'"."'||tableNam||
+		     '" FOR EACH ROW execute procedure "'||schemaNam||'"."'||trigger_name||'"();';
 	stmt = stmt_fonc || stmt_trigg;
 	execute stmt;
 	return stmt;
@@ -1142,26 +1161,29 @@ $BODY$declare
 	stmt_trigg character varying;
 	trigger_name character varying;
 	hs_table_name character varying;
-	
+	schemaNam character varying;
+	tablenam character varying;
 
 begin
-	hs_table_name = '"'||"HS_ConstructTableIdentifier"("tableName")||'"';
+        tablenam = "HS_ExtractTableIdentifier"("tableName");
+	schemaNam = "HS_ExtractSchemaIdentifier"("tableName");
+	hs_table_name = '"'||"HS_ConstructTableIdentifier"(tablenam)||'"';
 	selfJoin = "HS_CreateIdentifierColumnSelfJoinCondition"("tableName", "trackedColumns", hs_table_name||'.', 'NEW.');
 	multiCondition = "HS_CreateIdentifierColumnSelfJoinAndTestCondition"("trackedColumns", 'OLD.', 'NEW.', 'IS DISTINCT FROM', 'OR');
 	tmpAllTrackedColumns = "HS_CreateCommaSeparatedTrackedColumnList"("trackedColumns", NULL);
 	tmpAllTrackedColumns_NEW = "HS_CreateCommaSeparatedTrackedColumnList"("trackedColumns", 'NEW.');
-	trigger_name = "HS_ConstructUpdTriggerIdentifier"("tableName");
+	trigger_name = "HS_ConstructUpdTriggerIdentifier"(tablenam);
 	
 	
-	stmt_fonc = 'CREATE OR REPLACE FUNCTION'|| ' "'||trigger_name||'"'||
+	stmt_fonc = 'CREATE OR REPLACE FUNCTION'|| ' "' ||schemaNam|| '"."'||trigger_name||'"'||
 		    '() RETURNS trigger AS $'||trigger_name||'$
 	BEGIN
 
-		 UPDATE ' || hs_table_name ||' SET "HS_End" = "HS_GetTransactionTimestamp"() '||
-		 'WHERE ' || selfJoin ||' AND '||hs_table_name ||'.'||'"HS_End" IS NULL;'
+		 UPDATE "' ||schemaNam||'".'|| hs_table_name ||' SET "HS_End" = "HS_GetTransactionTimestamp"() '||
+		 'WHERE ' || selfJoin ||' AND "'||schemaNam||'".'||hs_table_name ||'.'||'"HS_End" IS NULL;'
 
 		
-		'INSERT INTO '||hs_table_name||'('||tmpAllTrackedColumns||
+		'INSERT INTO "'||schemaNam||'".'||hs_table_name||'('||tmpAllTrackedColumns||
 		', "HS_Begin", "HS_End") values('||tmpAllTrackedColumns_NEW||
 		', "HS_GetTransactionTimestamp"(), null);
 
@@ -1169,11 +1191,11 @@ begin
 	END;
 	$'||trigger_name||'$ LANGUAGE plpgsql; ';
 	
-	stmt_trigg = 'CREATE TRIGGER' || ' "'||trigger_name||'"'||
-		     ' AFTER UPDATE OF '||tmpAllTrackedColumns||' ON "'||"tableName"||
+	stmt_trigg = 'CREATE TRIGGER "'||trigger_name||'" '||
+		     ' AFTER UPDATE OF '||tmpAllTrackedColumns||' ON "'||schemaNam||'"."'||tableNam||
 		     '" FOR EACH ROW'||
 		     ' WHEN ('||multiCondition||')'||
-		     ' EXECUTE PROCEDURE "'||trigger_name||'"();';
+		     ' EXECUTE PROCEDURE "' ||schemaNam|| '"."'||trigger_name||'"();';
 	stmt = stmt_fonc || stmt_trigg;
 	execute stmt;
 	return stmt;
@@ -1196,23 +1218,27 @@ $BODY$DECLARE
 	tmpAllTrackedColumns character varying;
 	tmpAllTrackedColumns_new character varying;
 	selfJoin character varying;
+        schemaNam character varying;
+	tablenam character varying;
 begin
-	hs_table_name = '"'||"HS_ConstructTableIdentifier"("tableName")||'"';
-	trigger_name = "HS_ConstructDelTriggerIdentifier"("tableName");
+        tablenam = "HS_ExtractTableIdentifier"("tableName");
+	schemaNam = "HS_ExtractSchemaIdentifier"("tableName");
+	hs_table_name = '"'||"HS_ConstructTableIdentifier"(tablenam)||'"';
+	trigger_name = "HS_ConstructDelTriggerIdentifier"(tablenam);
 	selfJoin = "HS_CreateIdentifierColumnSelfJoinCondition"("tableName", "trackedColumns", hs_table_name||'.', 'OLD.');
-	stmt_fonc = 'CREATE OR REPLACE FUNCTION'|| ' "'||trigger_name||'"'||
+	stmt_fonc = 'CREATE OR REPLACE FUNCTION'|| ' "' ||schemaNam|| '"."'||trigger_name||'"'||
 		    '() RETURNS trigger AS $'||trigger_name||'$
 	BEGIN
 
-		UPDATE '|| hs_table_name ||' SET "HS_End" = "HS_GetTransactionTimestamp"() '||
-		'WHERE ' || selfjoin || ' AND '||hs_table_name ||'.'||'"HS_End" IS NULL; '||
+		UPDATE "'||schemaNam||'".'|| hs_table_name ||' SET "HS_End" = "HS_GetTransactionTimestamp"() '||
+		'WHERE ' || selfjoin || ' AND "'||schemaNam||'".'||hs_table_name ||'.'||'"HS_End" IS NULL; '||
 		'return OLD;
 	END;
 	$'||trigger_name||'$ LANGUAGE plpgsql; ';
 	
-	stmt_trigg = 'CREATE TRIGGER' || ' "'||trigger_name||'"'||
-		     ' AFTER DELETE ON "'||"tableName"||
-		     '" FOR EACH ROW execute procedure "'||trigger_name||'"();';
+	stmt_trigg = 'CREATE TRIGGER '||trigger_name||' '||
+		     ' AFTER DELETE ON "'||schemaNam||'"."'||tableNam||
+		     '" FOR EACH ROW execute procedure "' ||schemaNam|| '"."'||trigger_name||'"();';
 	stmt = stmt_fonc || stmt_trigg;
 	execute stmt;
 	return stmt;
@@ -1228,20 +1254,19 @@ CREATE OR REPLACE FUNCTION "HS_CreateHistory"("tableName" character varying, "tr
   RETURNS character varying AS
 $BODY$declare 
 	stmt character varying;
-	tablenam character varying;
+	
 begin
-	tablenam = "HS_ExtractTableIdentifier"("tableName");
 	stmt = '';
 	-- verification
 	stmt = "HS_CreateHistoryErrorCheck"("tableName","trackedColumns");
 	--creation de la table historique
-	stmt = "HS_CreateHistoryTable"(tablenam,"trackedColumns");
-	stmt = "HS_InitializeHistoryTable"(tablenam, "trackedColumns");
+	stmt = "HS_CreateHistoryTable"("tableName","trackedColumns");
+	stmt = "HS_InitializeHistoryTable"("tableName", "trackedColumns");
 
 	--trigger creation
-	stmt = "HS_CreateInsertTrigger"(tablenam, "trackedColumns");
-	stmt = "HS_CreateUpdateTrigger"(tablenam, "trackedColumns");
-	stmt = "HS_CreateDeleteTrigger"(tablenam, "trackedColumns");
+	stmt = "HS_CreateInsertTrigger"("tableName", "trackedColumns");
+	stmt = "HS_CreateUpdateTrigger"("tableName", "trackedColumns");
+	stmt = "HS_CreateDeleteTrigger"("tableName", "trackedColumns");
 	return stmt;
 end;$BODY$
   LANGUAGE plpgsql VOLATILE
@@ -1268,8 +1293,8 @@ begin
 	-- Check if or not specified tracked table does not exist.
 	IF NOT EXISTS(SELECT *
 	FROM information_schema.tables
-	WHERE TABLE_CATALOG = "HS_ExtractCatalogIdentifier"(table_nam)
-	AND TABLE_SCHEMA = "HS_ExtractSchemaIdentifier"(table_nam)
+	WHERE TABLE_CATALOG = "HS_ExtractCatalogIdentifier"("tableName")
+	AND TABLE_SCHEMA = "HS_ExtractSchemaIdentifier"("tableName")
 	AND TABLE_NAME = table_nam) THEN
 		raise exception'table does not exist';
 	END IF;
@@ -1277,8 +1302,8 @@ begin
 	-- does not exist.
 	IF NOT EXISTS(SELECT *
 	FROM information_schema.tables
-	WHERE TABLE_CATALOG = "HS_ExtractCatalogIdentifier"(table_nam)
-	AND TABLE_SCHEMA = "HS_ExtractSchemaIdentifier"(table_nam)
+	WHERE TABLE_CATALOG = "HS_ExtractCatalogIdentifier"("tableName")
+	AND TABLE_SCHEMA = "HS_ExtractSchemaIdentifier"("tableName")
 	AND TABLE_NAME = "HS_ConstructTableIdentifier"(table_nam)) THEN
 		raise exception 'history table does not exist';
 	END IF;
@@ -1295,10 +1320,12 @@ CREATE OR REPLACE FUNCTION "HS_DropHistoryTable"("tableName" character varying)
 $BODY$declare 
 	stmt character varying;
 	table_nam character varying;
-	
+	schema_nam character varying;
+
 begin
+        schema_nam = "HS_ExtractSchemaIdentifier"("tableName");
 	table_nam = "HS_ExtractTableIdentifier"("tableName");
-	stmt = 'DROP TABLE if exists' ||'"'|| "HS_ConstructTableIdentifier"(table_nam)||'"';
+	stmt = 'DROP TABLE if exists "'|| schema_nam || '"."' || "HS_ConstructTableIdentifier"(table_nam)||'"';
 	execute stmt;
 	return stmt;
 end;$BODY$
@@ -1312,20 +1339,22 @@ CREATE OR REPLACE FUNCTION "HS_DropHistoryTriggers"("tableName" character varyin
   RETURNS character varying AS
 $BODY$declare 
 	table_nam character varying;
+        schema_nam character varying;
 	stmt character varying;
 
 begin
 	table_nam = "HS_ExtractTableIdentifier"("tableName");
+        schema_nam = "HS_ExtractSchemaIdentifier"("tableName");
 	-- drop delete trigger function
-	stmt = 'drop function if exists '||'"'||"HS_ConstructDelTriggerIdentifier"(table_nam)||'"'||'() cascade';
+	stmt = 'drop function if exists "' || schema_nam || '"."' ||"HS_ConstructDelTriggerIdentifier"(table_nam)||'"'||'() cascade';
 	execute stmt;
 
 	-- drop update trigger function
-	stmt = 'drop function if exists '||'"'||"HS_ConstructUpdTriggerIdentifier"(table_nam)||'"'||'() cascade';
+	stmt = 'drop function if exists "' || schema_nam || '"."' ||"HS_ConstructUpdTriggerIdentifier"(table_nam)||'"'||'() cascade';
 	execute stmt;
 
 	-- drop insert trigger function
-	stmt = 'drop function if exists '||'"'||"HS_ConstructInsTriggerIdentifier"(table_nam)||'"'||'() cascade';
+	stmt = 'drop function if exists "' || schema_nam || '"."' ||"HS_ConstructInsTriggerIdentifier"(table_nam)||'"'||'() cascade';
 	execute stmt;
 	return stmt;
 end;$BODY$

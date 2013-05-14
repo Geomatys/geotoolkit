@@ -21,6 +21,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.logging.Level;
 import org.geotoolkit.data.query.DefaultQueryCapabilities;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryCapabilities;
@@ -149,6 +150,17 @@ public class PostgresFeatureStore extends DefaultJDBCFeatureStore{
         }finally{
             JDBCFeatureStoreUtilities.closeSafe(getLogger(), cnx);
         }
+    }
+    
+     @Override
+    public void deleteSchema(final Name typeName) throws DataStoreException {
+        try {
+            getVersioning(typeName).dropVersioning();
+        } catch (VersioningException ex) {
+            throw new DataStoreException(ex);
+        }
+         super.deleteSchema(typeName);
+        
     }
     
 }
