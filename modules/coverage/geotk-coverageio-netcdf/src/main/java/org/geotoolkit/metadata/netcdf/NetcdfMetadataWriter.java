@@ -786,7 +786,7 @@ nextDate:       for (final CitationDate date : nonNull(citation.getDates())) {
             {
                 final DimensionNameType type = dimension.getDimensionName();
                 if (type != null) for (int i=0; i<NUM_DIMENSIONS; i++) {
-                    if (type.equals(DIMENSIONS[i].TYPE)) {
+                    if (type.equals(DIMENSIONS[i].DEFAULT_NAME_TYPE)) {
                         final Double resolution = dimension.getResolution();
                         if (resolution != null) {
                             final double value = resolution;

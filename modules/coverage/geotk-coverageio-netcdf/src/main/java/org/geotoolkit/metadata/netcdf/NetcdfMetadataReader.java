@@ -828,7 +828,7 @@ public class NetcdfMetadataReader extends NetcdfMetadata {
             }
             final DefaultDimension dimension = new DefaultDimension();
             if (rsat != null) {
-                dimension.setDimensionName(rsat.TYPE);
+                dimension.setDimensionName(rsat.DEFAULT_NAME_TYPE);
                 dimension.setResolution(resolution);
             }
             dimension.setDimensionSize(axis.getShape(i));
