@@ -23,6 +23,7 @@ import org.apache.sis.xml.XLink;
 import org.apache.sis.xml.NilReason;
 import org.apache.sis.xml.MarshalContext;
 import org.apache.sis.xml.ReferenceResolver;
+import org.apache.sis.internal.jaxb.Context;
 import org.geotoolkit.internal.jaxb.gco.ObjectIdentification;
 
 import static org.apache.sis.util.ArgumentChecks.*;
@@ -86,7 +87,7 @@ public class ObjectLinker extends ReferenceResolver {
      */
     @SuppressWarnings("unchecked")
     public <T> T newIdentifiedObject(final Class<T> type, final Identifier... identifiers) {
-        return super.newIdentifiedObject(org.apache.sis.internal.jaxb.MarshalContext.current(), type, identifiers);
+        return super.newIdentifiedObject(Context.current(), type, identifiers);
     }
 
     /**
