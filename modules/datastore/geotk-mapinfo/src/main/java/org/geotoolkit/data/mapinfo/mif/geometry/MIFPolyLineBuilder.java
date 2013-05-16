@@ -11,6 +11,7 @@ import org.geotoolkit.feature.type.DefaultAttributeDescriptor;
 import org.geotoolkit.feature.type.DefaultAttributeType;
 import org.geotoolkit.storage.DataStoreException;
 import org.opengis.feature.Feature;
+import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.*;
 import org.opengis.referencing.operation.MathTransform;
@@ -61,6 +62,7 @@ public class MIFPolyLineBuilder extends MIFGeometryBuilder {
         try {
             Pattern multiple = Pattern.compile("multiple", Pattern.CASE_INSENSITIVE);
             if(scanner.hasNext(multiple)) {
+                scanner.next();
                 numLines = Integer.decode(scanner.next("\\d+"));
             }
 
@@ -95,8 +97,10 @@ public class MIFPolyLineBuilder extends MIFGeometryBuilder {
         }
 
         if(scanner.hasNext(Pen.PEN_PATTERN) && toFill.getType().getDescriptors().contains(PEN)) {
-            String args = scanner.next(Pen.PEN_PATTERN);
-            String[] argsTab = args.substring(args.indexOf('(')+1, args.length()-1).trim().split(",");
+            String args = scanner.next()+scanner.nextLine();
+            String[] argsTab = args.substring(args.indexOf('(')+1, args.length()-1)
+                    .replaceAll("[^\\d^,]+", "")
+                    .split(",");
             if (argsTab.length < 3) {
                 LOGGER.log(Level.WARNING, "A PEN tag have been found, but can't be read (bad syntax ?). Ignore style.");
             }
@@ -151,8 +155,12 @@ public class MIFPolyLineBuilder extends MIFGeometryBuilder {
             }
         }
 
-        if(geometry.getProperty(SMOOTH_NAME) != null) {
-            builder.append(SMOOTH_NAME.getLocalPart()).append('n');
+        Property smooth;
+        if((smooth =geometry.getProperty(SMOOTH_NAME)) != null) {
+            Object val = smooth.getValue();
+            if(val != null && val instanceof Boolean && val.equals(Boolean.TRUE)) {
+                builder.append(SMOOTH_NAME.getLocalPart()).append('\n');
+            }
         }
 
         return builder.toString();

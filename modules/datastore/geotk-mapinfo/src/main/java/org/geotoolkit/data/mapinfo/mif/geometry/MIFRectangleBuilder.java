@@ -79,8 +79,10 @@ public class MIFRectangleBuilder extends MIFGeometryBuilder {
         }
 
         if(scanner.hasNext(Pen.PEN_PATTERN) && toFill.getType().getDescriptors().contains(PEN)) {
-            String args = scanner.next(Pen.PEN_PATTERN);
-            String[] argsTab = args.substring(args.indexOf('(')+1, args.length()-1).trim().split(",");
+            String args = scanner.next()+scanner.nextLine();
+            String[] argsTab = args.substring(args.indexOf('(')+1, args.length()-1)
+                    .replaceAll("[^\\d^,]+", "")
+                    .split(",");
             if (argsTab.length < 3) {
                 LOGGER.log(Level.WARNING, "A PEN tag have been found, but can't be read (bad syntax ?). Ignore style.");
             }
@@ -94,8 +96,10 @@ public class MIFRectangleBuilder extends MIFGeometryBuilder {
         }
 
         if(scanner.hasNext(Brush.BRUSH_PATTERN) && toFill.getType().getDescriptors().contains(BRUSH)) {
-            String args = scanner.next(Brush.BRUSH_PATTERN);
-            String[] argsTab = args.substring(args.indexOf('(')+1, args.length()-1).trim().split(",");
+            String args = scanner.next()+scanner.nextLine();
+            String[] argsTab = args.substring(args.indexOf('(')+1, args.length()-1)
+                    .replaceAll("[^\\d^,]+", "")
+                    .split(",");
             if (argsTab.length < 2) {
                 LOGGER.log(Level.WARNING, "A BRUSH tag have been found, but can't be read (bad syntax ?). Ignore style.");
             }

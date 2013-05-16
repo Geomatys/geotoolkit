@@ -26,7 +26,7 @@ public class Pen implements MIFSymbolizer, LineSymbolizer {
 
     public static final Name NAME = new DefaultName("PEN");
 
-    public static final Pattern PEN_PATTERN = Pattern.compile(NAME.getLocalPart()+"\\s*\\([^\\)]+\\)", Pattern.CASE_INSENSITIVE);
+    public static final Pattern PEN_PATTERN = Pattern.compile(NAME.getLocalPart()+"(\\s*\\([^\\)]+\\))?", Pattern.CASE_INSENSITIVE);
 
     private int widthCode;
     private int pattern;

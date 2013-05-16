@@ -18,7 +18,7 @@ public class Font implements MIFSymbolizer {
 
     public static final Name NAME = new DefaultName("FONT");
 
-    public static final Pattern PATTERN = Pattern.compile(NAME.getLocalPart()+"\\s*\\([^\\)]+\\)", Pattern.CASE_INSENSITIVE);
+    public static final Pattern PATTERN = Pattern.compile(NAME.getLocalPart()+"(\\s*\\([^\\)]+\\))?", Pattern.CASE_INSENSITIVE);
 
     private String fontName = null;
     private int fontStyle = 0;

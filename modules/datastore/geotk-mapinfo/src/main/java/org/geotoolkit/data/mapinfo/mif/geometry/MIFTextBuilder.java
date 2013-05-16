@@ -121,8 +121,10 @@ public class MIFTextBuilder extends MIFGeometryBuilder {
          * Add a management for the text options.
          */
         if (scanner.hasNext(Font.PATTERN)) {
-            String args = scanner.next(Font.PATTERN);
-            String[] argsTab = args.substring(args.indexOf('(')+1, args.length()-1).trim().split(",");
+            String args = scanner.next()+scanner.next(Font.PATTERN);
+            String[] argsTab = args.substring(args.indexOf('(')+1, args.length()-1)
+                    .replaceAll("[^\\w^,]+", "")
+                    .split(",");
             if (argsTab.length < 3) {
                 LOGGER.log(Level.WARNING, "A FONT clause have been found, but can't be read (bad syntax ?). Ignore it.");
             }

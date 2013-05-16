@@ -23,7 +23,7 @@ public class Brush implements MIFSymbolizer, PolygonSymbolizer {
 
     public static final Name NAME = new DefaultName("BRUSH");
 
-    public static final Pattern BRUSH_PATTERN = Pattern.compile(NAME.getLocalPart()+"\\s*\\([^\\)]+\\)", Pattern.CASE_INSENSITIVE);
+    public static final Pattern BRUSH_PATTERN = Pattern.compile(NAME.getLocalPart()+"(\\s*\\([^\\)]+\\))?", Pattern.CASE_INSENSITIVE);
 
     public int pattern = 0;
     public int foregroundCC = 0;

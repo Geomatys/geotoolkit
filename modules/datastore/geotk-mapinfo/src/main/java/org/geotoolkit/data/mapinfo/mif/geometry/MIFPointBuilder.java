@@ -82,8 +82,10 @@ public final class MIFPointBuilder extends MIFGeometryBuilder {
 
         // Style
         if(scanner.hasNext(Symbol.SYMBOL_PATTERN) && toFill.getType().getDescriptors().contains(SYMBOL_DESCRIPTOR)) {
-            String args = scanner.next(Symbol.SYMBOL_PATTERN);
-            String[] argsTab = args.substring(args.indexOf('(')+1, args.length()-1).trim().split(",");
+            String args = scanner.next()+scanner.nextLine();
+            String[] argsTab = args.substring(args.indexOf('(')+1, args.length()-1)
+                    .replaceAll("[^\\d^,]+", "")
+                    .split(",");
             if (argsTab.length < 3) {
                 LOGGER.log(Level.WARNING, "A PEN tag have been found, but can't be read (bad syntax ?). Ignore style.");
             }

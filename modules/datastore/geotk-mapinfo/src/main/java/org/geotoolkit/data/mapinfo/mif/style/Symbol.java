@@ -25,7 +25,7 @@ public class Symbol implements MIFSymbolizer, PointSymbolizer {
 
     public static final Name NAME = new DefaultName("SYMBOL");
 
-    public final static Pattern SYMBOL_PATTERN = Pattern.compile(NAME.getLocalPart()+"\\s*\\([^\\)]+\\)", Pattern.CASE_INSENSITIVE);
+    public final static Pattern SYMBOL_PATTERN = Pattern.compile(NAME.getLocalPart()+"(\\s*\\([^\\)]+\\))?", Pattern.CASE_INSENSITIVE);
 
     private int shape  = 0;
     private int colorCode = 0;
