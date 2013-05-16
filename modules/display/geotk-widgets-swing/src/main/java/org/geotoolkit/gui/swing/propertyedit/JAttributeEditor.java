@@ -121,18 +121,12 @@ public class JAttributeEditor extends JPanel{
                 }
 
                 if(edit.canHandle(type)){
-                    try {
-                        PropertyValueEditor newInst = edit.getClass().newInstance();
+                    PropertyValueEditor newInst = edit.copy();
 
-                        if(edit instanceof ArrayEditor){
-                            ((ArrayEditor)edit).setEditors(editors);
-                        }
-                        return newInst;
-                    } catch (InstantiationException ex) {
-                        Logger.getLogger(JAttributeEditor.class.getName()).log(Level.WARNING, ex.getMessage(), ex);
-                    } catch (IllegalAccessException ex) {
-                        Logger.getLogger(JAttributeEditor.class.getName()).log(Level.WARNING, ex.getMessage(), ex);
+                    if(edit instanceof ArrayEditor){
+                        ((ArrayEditor)edit).setEditors(editors);
                     }
+                    return newInst;
                 }
             }
         }
