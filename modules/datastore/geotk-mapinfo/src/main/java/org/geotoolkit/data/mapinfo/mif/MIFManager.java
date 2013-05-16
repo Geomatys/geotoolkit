@@ -28,6 +28,7 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -90,13 +91,13 @@ public class MIFManager {
     private ArrayList<FeatureType> mifChildTypes = new ArrayList<FeatureType>();
 
 
-    public MIFManager(File mifFile) throws NullArgumentException, DataStoreException, MalformedURLException {
+    public MIFManager(File mifFile) throws NullArgumentException, DataStoreException, MalformedURLException, URISyntaxException {
         ArgumentChecks.ensureNonNull("Input file", mifFile);
         mifPath = mifFile.toURI().toURL();
         init();
     }
 
-    public MIFManager(URL mifFilePath) throws NullArgumentException, DataStoreException, MalformedURLException {
+    public MIFManager(URL mifFilePath) throws NullArgumentException, DataStoreException, MalformedURLException, URISyntaxException {
         ArgumentChecks.ensureNonNull("Input file path", mifFilePath);
         mifPath = mifFilePath;
         init();
@@ -105,7 +106,7 @@ public class MIFManager {
     /**
      * Basic operations needed in both constructors.
      */
-    private void init() throws DataStoreException, MalformedURLException {
+    private void init() throws DataStoreException, MalformedURLException, URISyntaxException {
         final String mifStr = mifPath.getPath();
         int lastSeparatorIndex = mifStr.lastIndexOf(System.getProperty("file.separator"));
         mifName = mifStr.substring(lastSeparatorIndex+1);
@@ -145,8 +146,12 @@ public class MIFManager {
             }
         }
 
-        if(names.isEmpty() && mifBaseType!=null) {
-            names.add(mifBaseType.getName());
+        if(names.isEmpty()) {
+            if(mifBaseType!=null) {
+                names.add(mifBaseType.getName());
+            } else {
+                throw new DataStoreException("No valid type can be found into this feature store.");
+            }
         }
 
         return names;
@@ -334,20 +339,47 @@ public class MIFManager {
      * @throws DataStoreException if the MIF path is malformed (because we use it to build MID path), or if there's no
      * valid file at built location.
      */
-    private void buildMIDPath() throws DataStoreException, MalformedURLException {
-        final String mifStr = mifPath.getPath();
+    private void buildMIDPath() throws DataStoreException, MalformedURLException, URISyntaxException {
         String midStr = null;
-        if (mifStr.endsWith(".mif") || mifStr.endsWith(".MIF")) {
-            midStr = mifStr.substring(0, mifStr.length() - 4);
-        } else {
-            throw new DataStoreException("There's an extension problem with Mif file. A correct extension is needed in order to retrieve the associated mid file.");
-        }
 
-        // We have to check if the extension is upper or lower case, since unix file systems are case sensitive.
-        if (mifStr.endsWith(".mif")) {
-            midStr = midStr.concat(".mid");
-        } else if (mifStr.endsWith(".MIF")) {
-            midStr = midStr.concat(".MID");
+        // We try to retrieve the mid path using files, so we can use filter which don't care about case.
+        if (mifPath.getProtocol().contains("file")) {
+            final File mif = new File(mifPath.toURI());
+            final String mifName = mif.getName();
+
+            File[] matchingFiles = null;
+            if (mif.exists()) {
+                matchingFiles = mif.getParentFile().listFiles(new FileFilter() {
+                    @Override
+                    public boolean accept(File pathname) {
+                        Pattern patoche = Pattern.compile(mifName.replaceFirst("\\.(?i)mif$", "") + "\\.mid", Pattern.CASE_INSENSITIVE);
+                        Matcher match = patoche.matcher(pathname.getName());
+                        return match.matches();
+                    }
+                });
+            }
+
+            if (matchingFiles == null || matchingFiles.length < 1) {
+                midStr = mif.getAbsolutePath().replaceFirst("\\.(?i)mif$", "") + ".mid";
+            } else {
+                midStr = matchingFiles[0].getAbsolutePath();
+            }
+
+        } else {
+            final String mifStr = mifPath.getPath();
+
+            if (mifStr.endsWith(".mif") || mifStr.endsWith(".MIF")) {
+                midStr = mifStr.substring(0, mifStr.length() - 4);
+            } else {
+                throw new DataStoreException("There's an extension problem with Mif file. A correct extension is needed in order to retrieve the associated mid file.");
+            }
+
+            // We have to check if the extension is upper or lower case, since unix file systems are case sensitive.
+            if (mifStr.endsWith(".mif")) {
+                midStr = midStr.concat(".mid");
+            } else if (mifStr.endsWith(".MIF")) {
+                midStr = midStr.concat(".MID");
+            }
         }
 
         midPath = new URL(mifPath.getProtocol(), mifPath.getHost(), mifPath.getPort(), midStr);
