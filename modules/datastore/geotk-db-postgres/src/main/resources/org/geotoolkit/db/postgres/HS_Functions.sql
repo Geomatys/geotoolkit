@@ -1378,29 +1378,32 @@ end;$BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
 
-------------------------------- ADDING METHODS ---------------------------------
+------------------------------- ADDED METHODS ---------------------------------
 
--- Function: "HSX_TrimHistory"(character varying, timestamp with time zone)
+-- Function: "HSX_TrimHistory"(character varying, timestamp without time zone)
 
--- DROP FUNCTION "HSX_TrimHistory"(character varying, timestamp with time zone);
+-- DROP FUNCTION "HSX_TrimHistory"(character varying, timestamp without time zone);
 
-CREATE OR REPLACE FUNCTION "HSX_TrimHistory"("tableName" character varying, "trimTime" timestamp with time zone)
+CREATE OR REPLACE FUNCTION "HSX_TrimHistory"("tableName" character varying, "trimTime" timestamp without time zone)
   RETURNS character varying AS
 $BODY$declare 
 	table_nam character varying;
 	HS_table_nam character varying;
+	schema_nam character varying;
 	stmt character varying;
 	stmt_delete character varying;
 	stmt_update character varying;
 begin
+        
+	schema_nam   = "HS_ExtractSchemaIdentifier"("tableName"); 
 	table_nam    = "HS_ExtractTableIdentifier"("tableName");
 	HS_table_nam = "HS_ConstructTableIdentifier"(table_nam);
 
 	--delete all elements where HS_End is before or equal trimTime
-	stmt_delete = 'DELETE FROM '||'"'||HS_table_nam||'"'|| 
+	stmt_delete = 'DELETE FROM '||'"'||schema_nam||'"'||'.'||'"'||HS_table_nam||'"'|| 
 		     ' WHERE "HS_Begin" <= '''||"trimTime"||''' AND "HS_End" <= '''||"trimTime"||'''; ';
 	--update HS_Begin time of all element where trimTime is between HS_Begin and HS_End  
-	stmt_update = 'UPDATE '||'"'||HS_table_nam||'"'||' SET "HS_Begin" = '''||"trimTime"||
+	stmt_update = 'UPDATE '||'"'||schema_nam||'"'||'.'||'"'||HS_table_nam||'"'||' SET "HS_Begin" = '''||"trimTime"||
 		      ''' WHERE "HS_Begin" < '''||"trimTime"||''' AND ("HS_End" > '''||"trimTime"||''' OR "HS_End" IS NULL); ';
 	stmt = stmt_delete || stmt_update;
 	execute stmt;
@@ -1409,3 +1412,154 @@ end;$BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
 
+-- Function: "HSX_RevertHistory"(character varying, timestamp without time zone)
+
+-- DROP FUNCTION "HSX_RevertHistory"(character varying, timestamp without time zone);
+
+CREATE OR REPLACE FUNCTION "HSX_RevertHistory"("tableName" character varying, "revertTime" timestamp without time zone)
+  RETURNS character varying AS
+$BODY$declare 
+	table_nam character varying;
+	schema_nam character varying;
+	HS_table_nam character varying;
+	stmt character varying;
+	stmt_delete character varying;
+	stmt_update character varying;
+	stmt_set character varying;
+	stmt_insert character varying;
+	stmt_values character varying;
+	
+	cn character varying;
+	column_nam character varying[];
+	all_columns character varying[];
+	all_i integer;
+	i integer;
+	isequal integer;
+	id_up integer;
+
+	pk character varying;
+	prim_key character varying[];
+	prim_condition character varying;
+	HS_prim_condition character varying;
+	prim_rec character varying;
+	pkey character varying;
+	time_condition character varying;
+
+	rec record;
+	rec_exist record;
+	stmt_test character varying;
+	temps text;
+	
+begin
+	table_nam    = "HS_ExtractTableIdentifier"("tableName");
+	schema_nam   = "HS_ExtractSchemaIdentifier"("tableName"); 
+	HS_table_nam = "HS_ConstructTableIdentifier"(table_nam);
+
+	time_condition = '"'||schema_nam||'"'||'.'||'"'||HS_table_nam||'"'||'."HS_Begin" <= '''||"revertTime"||
+	''' AND ('||'"'||schema_nam||'"'||'.'||'"'||HS_table_nam||'"'||'."HS_End" > '''||"revertTime"||''' OR '||'"'||schema_nam||'"'||'.'||'"'||HS_table_nam||'"'||'."HS_End" IS NULL) ';
+
+	--delete all elements where HS_Begin is strictly after revertTime
+	stmt_delete = 'DELETE FROM '||'"'||schema_nam||'"'||'.'||'"'||HS_table_nam||'"'|| 
+		     ' WHERE "HS_Begin" > '''||"revertTime"||''' AND ("HS_End" > '''||"revertTime"||''' OR "HS_End" IS NULL); ';
+	--update HS_End time of all element where revertTime is between HS_Begin and HS_End  
+	stmt_update = 'UPDATE '||'"'||schema_nam||'"'||'.'||'"'||HS_table_nam||'"'||' SET "HS_End" = NULL '||
+		      ' WHERE "HS_Begin" <= '''||"revertTime"||''' AND "HS_End" >= '''||"revertTime"||'''; ';
+	stmt = stmt_delete || stmt_update;
+	execute stmt;
+	
+	--drop triggers
+	stmt = "HS_DropHistoryTriggers"(table_nam);
+	
+	--get primary keys from base table.
+	i = 1;
+	pkey = '';
+	for pk in SELECT * FROM "HS_GetPrimaryKeys"(table_nam) loop
+		prim_key[i] = pk;
+		if i > 1 then
+			pkey = pkey||', ';
+		end if;
+		pkey = pkey||'"'||pk||'"';
+		i = i + 1;
+	end loop;
+	
+	-- get columns identifiants from base table which they are already in history table. 
+	i = 1;
+	all_i = 1;
+	for cn in select column_name from information_schema.columns 
+	where table_name = table_nam order by ordinal_position loop
+		if exists (select * from information_schema.columns 
+		where table_name = HS_table_nam AND column_name = cn) then
+			
+			all_columns[all_i] = cn;
+			all_i = all_i + 1;
+			isequal = 0;
+			foreach pk in array prim_key loop
+				if pk = cn then
+					isequal = 1;
+					exit;
+				end if;
+			end loop;
+			if isequal = 0 then
+				column_nam[i] = cn;
+				pkey = pkey||', '||'"'||cn||'"';
+				i = i + 1;
+			end if;
+		end if;
+	end loop;
+	
+	if i = 1 then
+		raise exception 'no primary key found';
+	end if;
+	
+	for rec in execute 'SELECT  ARRAY['||pkey||']::character varying[] AS tab 
+		   FROM '||'"'||schema_nam||'"."'||HS_table_nam||'"'||  
+		   'WHERE '||time_condition loop
+		   -- creation des conditions
+		   i = 1;
+		   prim_condition = '';
+		   HS_prim_condition = '';
+		   while (i <= array_Upper(prim_key, 1)) loop
+			if i > 1 then
+				prim_condition = prim_condition||' AND ';
+				HS_prim_condition = HS_prim_condition||' AND ';
+			end if;
+			prim_condition = prim_condition||'"'||schema_nam||'"."'||table_nam||'"."'||prim_key[i]||'" = '||rec.tab[i];
+			HS_prim_condition = HS_prim_condition||'"'||schema_nam||'"."'||HS_table_nam||'"."'||prim_key[i]||'" = '||rec.tab[i];
+			i = i + 1;
+		   end loop;
+		   
+		   execute 'select *  from "'||schema_nam||'"."'||table_nam||'" WHERE '||prim_condition into rec_exist;
+		   if rec_exist is not null then
+			--set creation
+			id_up = 1;
+			stmt_set = '';
+			foreach pk in array column_nam loop
+				if id_up > 1 then
+					stmt_set = stmt_set||', ';
+				end if;
+				stmt_set = stmt_set||'"'||pk||'"'||' = '||
+				'(SELECT '||'"'||pk||'"'||' FROM '||'"'||schema_nam||'"."'||HS_table_nam||
+				'" WHERE '||HS_prim_condition||' AND '||time_condition||' )'; 
+				id_up = id_up + 1;
+			end loop;
+			
+			--update creation
+			stmt_update = 'UPDATE '||'"'||schema_nam||'"."'||table_nam||
+			'" SET '||stmt_set||' WHERE '||prim_condition;
+			execute stmt_update;
+		   else
+			stmt_insert = ' INSERT INTO "'||schema_nam||'"."'||table_nam||'" SELECT '||
+			pkey||' FROM '||'"'||schema_nam||'"."'||HS_table_nam||
+				'" WHERE '||HS_prim_condition||' AND '||time_condition;
+			execute stmt_insert;
+		   end if;
+	end loop;
+
+	-- re-create triggers
+	stmt = "HS_CreateInsertTrigger"(table_nam, all_columns);
+	stmt = "HS_CreateDeleteTrigger"(table_nam, all_columns);
+	stmt = "HS_CreateUpdateTrigger"(table_nam, all_columns);
+	return stmt;
+end;$BODY$
+  LANGUAGE plpgsql VOLATILE
+  COST 100;
