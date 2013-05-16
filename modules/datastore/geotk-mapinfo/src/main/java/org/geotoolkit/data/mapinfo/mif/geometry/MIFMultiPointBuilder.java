@@ -33,7 +33,7 @@ public class MIFMultiPointBuilder extends MIFGeometryBuilder {
     public static final AttributeDescriptor SYMBOL_DESCRIPTOR;
 
     static {
-        SYMBOL_DESCRIPTOR = new DefaultAttributeDescriptor(STRING_TYPE, Symbol.NAME, 0, 1, true, null);
+        SYMBOL_DESCRIPTOR = new DefaultAttributeDescriptor(STRING_TYPE, Symbol.NAME, 1, 1, true, null);
     }
 
     @Override

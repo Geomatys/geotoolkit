@@ -34,7 +34,7 @@ public class MIFPolyLineBuilder extends MIFGeometryBuilder {
     private static final AttributeDescriptor PEN;
 
     static {
-        PEN = new DefaultAttributeDescriptor(STRING_TYPE, Pen.NAME, 0, 1, true, null);
+        PEN = new DefaultAttributeDescriptor(STRING_TYPE, Pen.NAME, 1, 1, true, null);
 
         final AttributeType smoothType =
                 new DefaultAttributeType(SMOOTH_NAME, Boolean.class, false, false, null, null, null);
