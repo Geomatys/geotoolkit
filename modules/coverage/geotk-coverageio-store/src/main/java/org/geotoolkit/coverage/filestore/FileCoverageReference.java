@@ -93,6 +93,15 @@ public class FileCoverageReference extends RecyclingCoverageReference{
         return imageIndex;
     }
 
+    /**
+     * Get the input image file used for this coverage.
+     * @return a {@link File} object which point to he image file of this coverage, or null if the input has not been
+     * initialized.
+     */
+    public File getInput() {
+        return file;
+    }
+
     public Image getLegend() throws DataStoreException {
         return null;
     }
