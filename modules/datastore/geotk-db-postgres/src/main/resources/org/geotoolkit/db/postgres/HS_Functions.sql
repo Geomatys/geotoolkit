@@ -1412,11 +1412,11 @@ end;$BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
 
--- Function: "HSX_RevertHistory"(character varying, timestamp with time zone)
+-- Function: "HSX_RevertHistory"(character varying, timestamp without time zone)
 
--- DROP FUNCTION "HSX_RevertHistory"(character varying, timestamp with time zone);
+-- DROP FUNCTION "HSX_RevertHistory"(character varying, timestamp without time zone);
 
-CREATE OR REPLACE FUNCTION "HSX_RevertHistory"("tableName" character varying, "revertTime" timestamp with time zone)
+CREATE OR REPLACE FUNCTION "HSX_RevertHistory"("tableName" character varying, "revertTime" timestamp without time zone)
   RETURNS character varying AS
 $BODY$declare 
 	table_nam character varying;
@@ -1491,7 +1491,7 @@ begin
 	i = 1;
 	all_i = 1;
 	for cn in select column_name from information_schema.columns 
-	where table_name = table_nam order by ordinal_position loop
+	where table_name = table_nam and table_schema = schema_nam order by ordinal_position loop
 		if exists (select * from information_schema.columns 
 		where table_name = HS_table_nam AND column_name = cn) then
 			

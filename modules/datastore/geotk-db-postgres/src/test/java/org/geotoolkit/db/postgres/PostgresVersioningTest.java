@@ -21,6 +21,7 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Date;
@@ -47,6 +48,7 @@ import org.opengis.util.FactoryException;
 
 import static org.geotoolkit.db.postgres.PostgresFeatureStoreFactory.*;
 import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.version.Version;
 import org.geotoolkit.version.VersionControl;
@@ -525,7 +527,6 @@ public class PostgresVersioningTest {
      * @throws DataStoreException
      * @throws VersioningException 
      */
-            @Ignore
     @Test
     public void testVersioningASynchrone() throws DataStoreException, VersioningException{
         reload();
@@ -694,7 +695,6 @@ public class PostgresVersioningTest {
         
     }
     
-        @Ignore
     @Test
     public void testTrimVersioning() throws DataStoreException, VersioningException {
         reload();
@@ -838,7 +838,6 @@ public class PostgresVersioningTest {
         //ensure version v2 begin time become lastDate.
         assertEquals(vc.list().get(0).getDate().getTime(), lastDate);
     }
-    
     
     @Test
     public void testRevertVersioning() throws DataStoreException, VersioningException {
@@ -1034,5 +1033,172 @@ public class PostgresVersioningTest {
         assertTrue(feat.getProperty("integer").equals(featV1.getProperty("integer")));
         assertTrue(feat.getProperty("point").equals(featV1.getProperty("point")));
         assertTrue(feat.getProperty("string").equals(featV1.getProperty("string")));
+    }
+    
+    @Test
+    public void testDistinctSchema() throws DataStoreException, VersioningException, FileNotFoundException, IOException {
+        reload();
+        List<Version> versions;
+        Feature feature;
+        FeatureId fid;
+        Version v0;
+        Version v1;
+        Version v2;
+        FeatureIterator ite;
+        final QueryBuilder qb = new QueryBuilder();
+        
+        final FeatureType refType = FTYPE_SIMPLE;     
+        
+        // ------------------- initialize public2 schema --------------------
+        /// creation 2eme table
+        PostgresFeatureStore store2;
+        final ParameterValueGroup params2  = params.clone();
+        params2.parameter("schema").setValue("public2");
+        store2 = (PostgresFeatureStore) FeatureStoreFinder.open(params2);
+        
+        //-------------- create schema in public2 schema --------------------   
+        try{
+            store2.getFactory().create(params2);
+        } catch (Exception ex) {
+            //schema public2 already exist
+        }
+        
+        for(Name n : store2.getNames()) {
+            VersionControl vc = store2.getVersioning(n);
+            vc.dropVersioning();
+            store2.deleteSchema(n);
+        }
+        assertTrue(store2.getNames().isEmpty());
+        
+        
+        //delete historisation functions, he must create them himself
+        store2.dropHSFunctions();
+        
+        
+        //-------------- create table in public schema --------------------
+        store.createSchema(refType.getName(), refType);        
+        assertEquals(1, store.getNames().size());
+        assertTrue(store2.getNames().isEmpty());
+        
+        //get version control
+        final VersionControl vcP1 = store.getVersioning(refType.getName());
+        assertNotNull(vcP1);
+        assertTrue(vcP1.isEditable());
+        assertFalse(vcP1.isVersioned());
+        
+        //-------------------- start versioning in public schema ---------------
+        vcP1.startVersioning();
+        assertTrue(vcP1.isVersioned());        
+        versions = vcP1.list();
+        assertTrue(versions.isEmpty());
+        
+        //--------------------- table creation in public2 schema ---------------
+        store2.createSchema(refType.getName(), refType);
+        assertEquals(1, store2.getNames().size());
+        
+        //get version control
+        final VersionControl vcP2 = store2.getVersioning(refType.getName());
+        assertNotNull(vcP2);
+        assertTrue(vcP2.isEditable());
+        assertFalse(vcP2.isVersioned());
+        
+        //-------------------- start versioning in public schema ---------------
+        vcP2.startVersioning();
+        assertTrue(vcP2.isVersioned());        
+        versions = vcP2.list();
+        assertTrue(versions.isEmpty());
+        
+        /* insert, update and delete some elements in public schema and verify 
+         * public2 schema stay empty, to verify the 2th schema are actions distincts.*/
+        
+        //make an insert ///////////////////////////////////////////////////////
+        final Point firstPoint = GF.createPoint(new Coordinate(56, 45));
+        feature = FeatureUtilities.defaultFeature(refType, "0");
+        feature.getProperty("boolean").setValue(Boolean.TRUE);
+        feature.getProperty("integer").setValue(14);
+        feature.getProperty("point").setValue(firstPoint);
+        feature.getProperty("string").setValue("someteststring");        
+        store.addFeatures(refType.getName(), Collections.singleton(feature));
+        
+        // ensure test table in public2 schema is empty
+        qb.reset();
+        qb.setTypeName(refType.getName());
+        assertTrue(store2.createSession(true).getFeatureCollection(qb.buildQuery()).isEmpty());
+        
+        // ensure history test table in public2 schema is empty
+        assertTrue(vcP2.list().isEmpty());
+        
+        //make an update ///////////////////////////////////////////////////////
+        
+        // get feature to update
+        // get identifier
+        qb.reset();
+        qb.setTypeName(refType.getName());
+        ite = store.createSession(true).getFeatureCollection(qb.buildQuery()).iterator();
+        try{
+            feature = ite.next();     
+            fid = feature.getIdentifier();
+        }finally{
+            ite.close();
+        }
+                
+        try {
+            //wait a bit just to have some space between version dates
+            Thread.sleep(1000);
+        } catch (InterruptedException ex) {
+            fail(ex.getMessage());
+        }
+        
+        final Point secondPoint = GF.createPoint(new Coordinate(-12, 21));
+        final Map<PropertyDescriptor,Object> updates = new HashMap<PropertyDescriptor, Object>();
+        updates.put(feature.getProperty("boolean").getDescriptor(), Boolean.FALSE);
+        updates.put(feature.getProperty("integer").getDescriptor(), -3);
+        updates.put(feature.getProperty("point").getDescriptor(), secondPoint);
+        updates.put(feature.getProperty("string").getDescriptor(), "anothertextupdated");
+        store.updateFeatures(refType.getName(), FF.id(Collections.singleton(fid)), updates);
+        
+        // ensure test table in public2 schema is empty
+        qb.reset();
+        qb.setTypeName(refType.getName());
+        assertTrue(store2.createSession(true).getFeatureCollection(qb.buildQuery()).isEmpty());
+        
+        // ensure history test table in public2 schema is empty
+        assertTrue(vcP2.list().isEmpty());
+        
+        //make a remove ///////////////////////////////////////////////////////
+        store.removeFeatures(refType.getName(), FF.id(Collections.singleton(fid)));
+        
+        // ensure test table in public2 schema is empty
+        qb.reset();
+        qb.setTypeName(refType.getName());
+        assertTrue(store2.createSession(true).getFeatureCollection(qb.buildQuery()).isEmpty());
+        
+        // ensure history test table in public2 schema is empty
+        assertTrue(vcP2.list().isEmpty());
+        
+        //get all versions organized in increase dates order.
+        versions = vcP1.list();
+        assertEquals(3, versions.size());
+        v0 = versions.get(0);
+        v1 = versions.get(1);
+        v2 = versions.get(2);
+        
+        vcP1.revert(v1.getDate());
+        // ensure test table in public2 schema is empty
+        qb.reset();
+        qb.setTypeName(refType.getName());
+        assertTrue(store2.createSession(true).getFeatureCollection(qb.buildQuery()).isEmpty());
+        
+        // ensure history test table in public2 schema is empty
+        assertTrue(vcP2.list().isEmpty());
+        
+        vcP1.trim(v1.getDate());
+        // ensure test table in public2 schema is empty
+        qb.reset();
+        qb.setTypeName(refType.getName());
+        assertTrue(store2.createSession(true).getFeatureCollection(qb.buildQuery()).isEmpty());
+        
+        // ensure history test table in public2 schema is empty
+        assertTrue(vcP2.list().isEmpty());
     }
 }
