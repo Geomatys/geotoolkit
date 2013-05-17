@@ -981,40 +981,58 @@ public class PostgresVersioningTest {
             ite.close();
         }
         
-        assertTrue(feat.equals(featV1));
+        assertTrue(feat.getProperty("boolean").equals(featV1.getProperty("boolean")));
+        assertTrue(feat.getProperty("integer").equals(featV1.getProperty("integer")));
+        assertTrue(feat.getProperty("point").equals(featV1.getProperty("point")));
+        assertTrue(feat.getProperty("string").equals(featV1.getProperty("string")));
+                
+        /* second revert at v0 begin date to verify update roll back, and verify 
+         * feature update from history table into original base.*/
+        vc.revert(v0.getDate());
+        versions = vc.list();
+        assertEquals(1, versions.size());
         
-//        
-//        //ensure version v1 have null ending date.
-//        assertNull(vc.list().get(1).getDate().getTime());
-//        
-//        //verify apparution dans la base de base
-//        
-//        /* second trim at exactely the begining of the third version to verify, 
-//         * deletion of second version and third version existence.*/
-//        vc.trim(v2);
-//        versions = vc.list();
-//        assertEquals(1, versions.size());
-//        //ensure version 1 does not exist
-//        qb.reset();
-//        qb.setTypeName(refType.getName());
-//        qb.setVersionLabel(v1.getLabel());
-//        try {
-//            store.createSession(true).getFeatureCollection(qb.buildQuery()).isEmpty();
-//            fail("should not find version");
-//        } catch(FeatureStoreRuntimeException ex) {
-//            //ok
-//        }
-//        //ensure version v2 begin time doesn't change.
-//        assertEquals(vc.list().get(0).getDate().getTime(), v2.getDate().getTime());
-//        
-//        /* third trim just after v3 version date, to verify that v3 
-//         * version date become trim date */
-//        final long lastDate = v2.getDate().getTime()+400;
-//        vc.trim(new Date(lastDate));
-//        versions = vc.list();
-//        assertEquals(1, versions.size());
-//        //ensure version v2 begin time become lastDate.
-//        assertEquals(vc.list().get(0).getDate().getTime(), lastDate);
+        qb.reset();
+        qb.setTypeName(refType.getName());
+        qb.setVersionLabel(v1.getLabel());
+        try {
+            store.createSession(true).getFeatureCollection(qb.buildQuery()).isEmpty();
+            fail("should not find version");
+        } catch(FeatureStoreRuntimeException ex) {
+            //ok
+        }
+        
+        //ensure test table contain feature from version 1
+        qb.reset();
+        qb.setTypeName(refType.getName());
+        assertFalse(store.createSession(true).getFeatureCollection(qb.buildQuery()).isEmpty());
+        
+        // feature from test base result.
+        qb.reset();
+        qb.setTypeName(refType.getName());
+        ite = store.createSession(true).getFeatureCollection(qb.buildQuery()).iterator();
+        try{
+            feat = ite.next();     
+            fid = feature.getIdentifier();
+        }finally{
+            ite.close();
+        }
+        
+        // feature from version v1.
+        qb.reset();
+        qb.setTypeName(refType.getName());
+        qb.setVersionLabel(v0.getLabel());
+        ite = store.createSession(true).getFeatureCollection(qb.buildQuery()).iterator();
+        try{
+            featV1 = ite.next();     
+            fid = feature.getIdentifier();
+        }finally{
+            ite.close();
+        }
+        
+        assertTrue(feat.getProperty("boolean").equals(featV1.getProperty("boolean")));
+        assertTrue(feat.getProperty("integer").equals(featV1.getProperty("integer")));
+        assertTrue(feat.getProperty("point").equals(featV1.getProperty("point")));
+        assertTrue(feat.getProperty("string").equals(featV1.getProperty("string")));
     }
-    
 }
