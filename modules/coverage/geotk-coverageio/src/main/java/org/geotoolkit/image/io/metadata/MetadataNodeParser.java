@@ -882,7 +882,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
             } else if (Number.class.isAssignableFrom(type)) {
                 value = Numbers.valueOf(type, value.toString());
             } else if (Date.class.isAssignableFrom(type)) {
-                value = Utilities.parseDateTime(value.toString(), false);
+                value = org.apache.sis.internal.jdk8.JDK8.parseDateTime(value.toString(), false);
             } else if (type.isArray()) {
                 final Class<?> component = Numbers.primitiveToWrapper(type.getComponentType());
                 if (component == Double.class) {

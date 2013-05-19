@@ -176,11 +176,11 @@ public final class XmlUtilities extends Static {
      *
      * @since 3.06
      *
-     * @deprecated Moved to SIS as {@link org.apache.sis.internal.util.Utilities#parseDateTime(String, boolean)}.
+     * @deprecated Moved to SIS as {@link org.apache.sis.internal.jdk8.JDK8#parseDateTime(String, boolean)}.
      */
     @Deprecated
     public static Date parseDateTime(final String date) throws IllegalArgumentException {
-        return org.apache.sis.internal.util.Utilities.parseDateTime(date, false);
+        return org.apache.sis.internal.jdk8.JDK8.parseDateTime(date, false);
     }
 
     /**
