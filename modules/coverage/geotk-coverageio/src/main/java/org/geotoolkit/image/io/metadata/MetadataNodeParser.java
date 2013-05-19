@@ -49,7 +49,6 @@ import org.geotoolkit.gui.swing.tree.TreeFormat;
 import org.geotoolkit.image.io.WarningProducer;
 import org.apache.sis.util.iso.Types;
 import org.geotoolkit.internal.image.io.Warnings;
-import org.geotoolkit.internal.jaxb.XmlUtilities;
 import org.apache.sis.measure.Units;
 import org.apache.sis.util.CharSequences;
 import org.apache.sis.util.Localized;
@@ -57,6 +56,7 @@ import org.geotoolkit.util.NumberRange;
 import org.apache.sis.util.Classes;
 import org.apache.sis.util.Numbers;
 import org.geotoolkit.metadata.iso.citation.Citations;
+import org.apache.sis.internal.util.Utilities;
 import org.apache.sis.util.resources.IndexedResourceBundle;
 
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
@@ -882,7 +882,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
             } else if (Number.class.isAssignableFrom(type)) {
                 value = Numbers.valueOf(value.toString(), type);
             } else if (Date.class.isAssignableFrom(type)) {
-                value = XmlUtilities.parseDateTime(value.toString());
+                value = org.apache.sis.internal.jdk8.JDK8.parseDateTime(value.toString(), false);
             } else if (type.isArray()) {
                 final Class<?> component = Numbers.primitiveToWrapper(type.getComponentType());
                 if (component == Double.class) {
