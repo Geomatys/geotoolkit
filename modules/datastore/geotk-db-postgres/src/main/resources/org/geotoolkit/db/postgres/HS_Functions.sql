@@ -428,12 +428,17 @@ $BODY$declare
 	tab text[];
 	tLength integer;
 	result record;
+	nbr_Schema integer;
 begin 
 	tab = regexp_split_to_array("tableName", '\.');
 	tLength = array_Upper(tab, 1);
 	if tLength > 1 then 
 		return tab[tLength-1];
 	else
+		select count(table_schema) into nbr_Schema from information_schema.tables where table_name = tab[tLength];
+		if nbr_Schema > 1 then 
+			raise exception 'multiple schema name exist, impossible to define which schema should be choosen, caller must specify schema name';
+		end if;
 		select table_schema into strict result from information_schema.tables where table_name = tab[tLength]; 
 		return result."table_schema";
 	end if;
@@ -1448,7 +1453,7 @@ $BODY$declare
 	pkey character varying;
 
 	rec record;
-	rec_exist record;
+	rec_exist integer;
 	stmt_test character varying;
 	temps text;
 	
@@ -1468,7 +1473,7 @@ begin
 							AND ("HS_End" > '''||"revertTime"||''' OR "HS_End" IS NULL); ';
 	--update HS_End time of all element where revertTime is between HS_Begin and HS_End  
 	stmt_update = 'UPDATE '||HS_sch_tbl_nam||' SET "HS_End" = NULL '||
-		      ' WHERE "HS_Begin" <= '''||"revertTime"||''' AND "HS_End" >= '''||"revertTime"||'''; ';
+		      ' WHERE "HS_Begin" <= '''||"revertTime"||''' AND "HS_End" > '''||"revertTime"||'''; ';
 	stmt = stmt_delete || stmt_update;
 	execute stmt;
 	
@@ -1534,8 +1539,8 @@ begin
 			i = i + 1;
 		   end loop;
 		   
-		   execute 'select *  from '||sch_tbl_nam||' WHERE '||prim_condition into rec_exist;
-		   if rec_exist is not null then
+		   execute 'select count(*)  from '||sch_tbl_nam||' WHERE '||prim_condition into rec_exist;
+		   if rec_exist = 1 then
 			--set creation
 			i = 1;
 			stmt_set = '';
@@ -1553,12 +1558,14 @@ begin
 			stmt_update = 'UPDATE '||sch_tbl_nam||
 			' SET '||stmt_set||' WHERE '||prim_condition;
 			execute stmt_update;
-		   else
+		   elsif rec_exist = 0 then
 			--insert
 			stmt_insert = ' INSERT INTO '||sch_tbl_nam||' SELECT '||
 			pkey||' FROM '||HS_sch_tbl_nam||
 				' WHERE '||HS_prim_condition||' AND '||time_condition;
 			execute stmt_insert;
+		   else 
+			raise exception 'multiple rows at same primary Key properties, impossible to revert. ';
 		   end if;
 	end loop;
 
