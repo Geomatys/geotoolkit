@@ -50,6 +50,7 @@ import static org.geotoolkit.db.postgres.PostgresFeatureStoreFactory.*;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.FeatureUtilities;
+import org.geotoolkit.parameter.ParametersExt;
 import org.geotoolkit.version.Version;
 import org.geotoolkit.version.VersionControl;
 import org.geotoolkit.version.VersioningException;
@@ -126,11 +127,12 @@ public class PostgresVersioningTest {
         params = FeatureUtilities.toParameter((Map)properties, PARAMETERS_DESCRIPTOR, false);
     }
     
-    private void reload() throws DataStoreException, VersioningException {
+    private void reload(boolean simpleType) throws DataStoreException, VersioningException {
         if(store != null){
             store.dispose();
         }
         
+        ParametersExt.getOrCreateValue(params, PostgresFeatureStoreFactory.SIMPLETYPE.getName().getCode()).setValue(simpleType);
         store = (PostgresFeatureStore) FeatureStoreFinder.open(params);
         
         for(Name n : store.getNames()){
@@ -145,10 +147,9 @@ public class PostgresVersioningTest {
         
     }
     
-    @Ignore
     @Test
     public void testSimpleTypeVersioning() throws DataStoreException, VersioningException {
-        reload();
+        reload(true);
         List<Version> versions;
         Version version;
         Feature feature;
@@ -406,10 +407,9 @@ public class PostgresVersioningTest {
      * @throws DataStoreException
      * @throws VersioningException 
      */
-        @Ignore
     @Test
     public void testVersioningSynchrone() throws DataStoreException, VersioningException{
-        reload();
+        reload(true);
         List<Version> versions;
         Version version;
         Feature feature;
@@ -529,7 +529,7 @@ public class PostgresVersioningTest {
      */
     @Test
     public void testVersioningASynchrone() throws DataStoreException, VersioningException{
-        reload();
+        reload(true);
         List<Version> versions;
         Version version;
         Feature feature;
@@ -697,7 +697,7 @@ public class PostgresVersioningTest {
     
     @Test
     public void testTrimVersioning() throws DataStoreException, VersioningException {
-        reload();
+        reload(true);
         List<Version> versions;
         Feature feature;
         FeatureId fid;
@@ -841,7 +841,7 @@ public class PostgresVersioningTest {
     
     @Test
     public void testRevertVersioning() throws DataStoreException, VersioningException {
-        reload();
+        reload(true);
         List<Version> versions;
         Feature feature;
         FeatureId fid;
@@ -1037,7 +1037,7 @@ public class PostgresVersioningTest {
     
     @Test
     public void testDistinctSchema() throws DataStoreException, VersioningException, FileNotFoundException, IOException {
-        reload();
+        reload(true);
         List<Version> versions;
         Feature feature;
         FeatureId fid;

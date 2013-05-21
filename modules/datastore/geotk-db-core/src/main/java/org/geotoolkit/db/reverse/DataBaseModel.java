@@ -203,10 +203,16 @@ public final class DataBaseModel {
         for(SchemaMetaModel schema : candidates){
            if (schema != null) {
                 for(TableMetaModel table : schema.tables.values()){
+                    
+                    
                     final FeatureType ft;
                     if(simpleTypes){
                         ft = table.getSimpleType();
                     }else{
+                        if(table.isSubType()){
+                            //we don't show subtype, they are part of other feature types.
+                            continue;
+                        }
                         ft = table.getComplexType();
                     }
                     final Name name = ft.getName();
@@ -392,8 +398,10 @@ public final class DataBaseModel {
                 final String refSchemaName = result.getString(ImportedKey.PKTABLE_SCHEM);
                 final String refTableName = result.getString(ImportedKey.PKTABLE_NAME);
                 final String refColumnName = result.getString(ImportedKey.PKCOLUMN_NAME);
+                final int deleteRule = result.getInt(ImportedKey.DELETE_RULE);
+                final boolean deleteCascade = DatabaseMetaData.importedKeyCascade == deleteRule;
                 table.importedKeys.add(new RelationMetaModel(localColumn,
-                        refSchemaName, refTableName, refColumnName, true));
+                        refSchemaName, refTableName, refColumnName, true, deleteCascade));
             }
             closeSafe(store.getLogger(),result);
 
@@ -404,8 +412,10 @@ public final class DataBaseModel {
                 final String refSchemaName = result.getString(ExportedKey.FKTABLE_SCHEM);
                 final String refTableName = result.getString(ExportedKey.FKTABLE_NAME);
                 final String refColumnName = result.getString(ExportedKey.FKCOLUMN_NAME);
+                final int deleteRule = result.getInt(ImportedKey.DELETE_RULE);
+                final boolean deleteCascade = DatabaseMetaData.importedKeyCascade == deleteRule;
                 table.exportedKeys.add(new RelationMetaModel(localColumn,
-                        refSchemaName, refTableName, refColumnName, false));
+                        refSchemaName, refTableName, refColumnName, false, deleteCascade));
             }
             closeSafe(store.getLogger(),result);
 
@@ -665,7 +675,7 @@ public final class DataBaseModel {
 
                 // replace 0:1 relations----------------------------------------
                 for(final RelationMetaModel relation : table.importedKeys){
-
+                    
                     //find the descriptor to replace
                     final List<PropertyDescriptor> descs = ftb.getProperties();
                     int index = -1;
@@ -676,30 +686,39 @@ public final class DataBaseModel {
                         }
                     }
 
-                    //create the new descriptor derivated
-                    final PropertyDescriptor baseDescriptor = descs.get(index);
-                    adb.reset();
-                    adb.copy((AttributeDescriptor) baseDescriptor);
-                    adb.setType(FLAG_TYPE);
-                    adb.setDefaultValue(null);
-                    final PropertyDescriptor newDescriptor = adb.buildDescriptor();
-                    descs.set(index, newDescriptor);
-                    
-                    final Object[] futur = new Object[]{schema, table, relation, index};
+                    if(table.isSubType() && relation.isDeleteCascade()){
+                        //this type is a subtype and relation points toward it's parent
+                        //so we actualy don't want to view this property since it will
+                        //be visible the other way araound (parent -> child)
+                        descs.remove(index);
+                        continue;
+                    }else{
+                        //create the new descriptor derivated
+                        final PropertyDescriptor baseDescriptor = descs.get(index);
+                        adb.reset();
+                        adb.copy((AttributeDescriptor) baseDescriptor);
+                        adb.setType(FLAG_TYPE);
+                        adb.setDefaultValue(null);
+                        final PropertyDescriptor newDescriptor = adb.buildDescriptor();
+                        descs.set(index, newDescriptor);
+                    }
+
+                    final Object[] futur = new Object[]{schema, table, relation};
                     secondPass.add(futur);
                 }
 
                 // create N:1 relations-----------------------------------------
                 for(final RelationMetaModel relation : table.exportedKeys){
                     
-                    final Name n = new DefaultName(store.getDefaultNamespace(),
-                            relation.getForeignTable()+ASSOCIATION_SEPARATOR+relation.getForeignColumn());
-                    
+                    final ComplexType foreignType = schema.getTable(relation.getForeignTable()).getBaseType();
+                    final PropertyDescriptor propDesc = foreignType.getDescriptor(relation.getForeignColumn());
+                    final boolean unique = Boolean.TRUE.equals(propDesc.getUserData().get(JDBCFeatureStore.JDBC_PROPERTY_UNIQUE));
+                    final Name n = new DefaultName(store.getDefaultNamespace(),relation.getForeignColumn());
                     adb.reset();
                     adb.setName(n);
                     adb.setType(FLAG_TYPE);
                     adb.setMinOccurs(0);
-                    adb.setMaxOccurs(Integer.MAX_VALUE);
+                    adb.setMaxOccurs(unique? 1 : Integer.MAX_VALUE);
                     adb.setNillable(false);
                     adb.setDefaultValue(null);
                     final PropertyDescriptor newDescriptor = adb.buildDescriptor();
@@ -721,26 +740,43 @@ public final class DataBaseModel {
             final SchemaMetaModel schema = (SchemaMetaModel) futur[0];
             final TableMetaModel table = (TableMetaModel) futur[1];
             final RelationMetaModel relation = (RelationMetaModel) futur[2];
-            final int index = (Integer) futur[3];
+            //final int index = (Integer) futur[3];
             
             final String code = schema.name +"."+table.name;            
             final ModifiableType candidate = builded.get(code);
             final List<PropertyDescriptor> descs = candidate.getDescriptors();
             final String relCode = relation.getForeignSchema() +"."+relation.getForeignTable();
             final ComplexType relType = builded.get(relCode);
-            
-            
+                        
             //create the new association descriptor derivated
             atb.reset();
             atb.copy(relType);
             atb.setParentType(null);
-            final AssociationType at = atb.buildAssociationType(relType);
-
+            
+            //find the descriptor to replace
+            int index = -1;
+            final String searchedName = relation.isImported() ? relation.getCurrentColumn() : relation.getForeignColumn();
+            for(int i=0,n=descs.size();i<n;i++){
+                final PropertyDescriptor pd = descs.get(i);
+                if(pd.getName().getLocalPart().equals(searchedName)){
+                    index = i;
+                }
+            }
+            
             final PropertyDescriptor baseDescriptor = descs.get(index);
             adb.reset();
             adb.copy(baseDescriptor);
-            adb.setType(at);
-            final PropertyDescriptor newDescriptor = adb.buildAssociationDescriptor();
+            adb.setDefaultValue(null);
+            
+            final PropertyDescriptor newDescriptor;
+            if(relation.isDeleteCascade()){
+                adb.setType(relType);
+                newDescriptor = adb.buildDescriptor();
+            }else{
+                adb.setType(atb.buildAssociationType(relType));
+                newDescriptor = adb.buildAssociationDescriptor();
+            }
+
             newDescriptor.getUserData().put(ForeignKey.RELATION, 
                     new ForeignKey(relation));
             candidate.changeProperty(index, newDescriptor);

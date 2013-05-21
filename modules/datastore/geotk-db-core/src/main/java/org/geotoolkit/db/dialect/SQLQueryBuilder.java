@@ -530,6 +530,23 @@ public class SQLQueryBuilder {
     }
 
     /**
+     * Generates a 'CREATE UNIQUE INDEX - ON -(-) sql query.
+     */
+    public String alterTableAddIndex(final ComplexType type, final String property){
+        final String sourceName = type.getName().getLocalPart();
+        
+        final StringBuilder sql = new StringBuilder();
+        sql.append("CREATE UNIQUE INDEX \"");
+        sql.append(sourceName).append(property);
+        sql.append("\" ON ");
+        dialect.encodeSchemaAndTableName(sql, databaseSchema, sourceName);
+        sql.append('(');
+        sql.append(property);
+        sql.append(')');
+        return sql.toString();
+    }
+    
+    /**
      * Generates a 'ALTER TABLE . DROP COLUMN ' sql statement.
      */
     public String alterTableDropColumnSQL(final FeatureType featureType, final PropertyDescriptor desc, final Connection cx){

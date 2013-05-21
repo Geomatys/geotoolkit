@@ -29,14 +29,17 @@ public class RelationMetaModel {
     private final String foreignTable;
     private final String foreignColumn;
     private final boolean imported;
+    private final boolean deleteCascade;
 
     public RelationMetaModel(final String currentColumn, final String foreignSchema,
-            final String foreignTable, final String foreignColumn, boolean imported) {
+            final String foreignTable, final String foreignColumn, 
+            boolean imported, boolean deleteCascade) {
         this.currentColumn = currentColumn;
         this.foreignSchema = foreignSchema;
         this.foreignTable = foreignTable;
         this.foreignColumn = foreignColumn;
         this.imported = imported;
+        this.deleteCascade = deleteCascade;
     }
 
     public String getCurrentColumn() {
@@ -61,6 +64,13 @@ public class RelationMetaModel {
      */
     public boolean isImported() {
         return imported;
+    }
+    
+    /**
+     * @return true if relation implies a delete on cascade.
+     */
+    public boolean isDeleteCascade(){
+        return deleteCascade;
     }
     
     @Override

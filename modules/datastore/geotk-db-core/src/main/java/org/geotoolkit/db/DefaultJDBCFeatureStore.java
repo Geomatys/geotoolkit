@@ -66,6 +66,7 @@ import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.storage.DataStoreException;
 import org.opengis.feature.Feature;
+import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AssociationType;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.AttributeType;
@@ -645,7 +646,7 @@ public class DefaultJDBCFeatureStore extends AbstractFeatureStore implements JDB
             for(FeatureType flatType : flatTypes){
                 sql = getQueryBuilder().createTableSQL(flatType,cnx);
                 stmt.execute(sql);
-                dialect.postCreateTable(getDatabaseSchema(), featureType, cnx);
+                dialect.postCreateTable(getDatabaseSchema(), flatType, cnx);
             }
             
             //rebuild relations
@@ -676,48 +677,31 @@ public class DefaultJDBCFeatureStore extends AbstractFeatureStore implements JDB
                         final FeatureType targetType = dbmodel.getFeatureType(
                                 new DefaultName(getDefaultNamespace(), targetColumnMeta.getTable()));
                         
+                        
+                        //we create an relation in the opposite direction
+                        final AttributeTypeBuilder atb = new AttributeTypeBuilder();
+                        atb.setName(propertyName);
+                        atb.setBinding(sourceColumnMeta.getJavaType());
+                        final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
+                        adb.setName(propertyName);
+                        adb.setNillable(true);
+                        adb.setMinOccurs(0);
+                        adb.setMaxOccurs(1);
+                        adb.setType(atb.buildType());
+                        final PropertyDescriptor pdesc = adb.buildDescriptor();
+
+                        //create the property
+                        sql = getQueryBuilder().alterTableAddColumnSQL(targetType, pdesc, cnx);
+                        stmt.execute(sql);
+                        //add the foreign key relation
+                        sql = getQueryBuilder().alterTableAddForeignKey(
+                                targetType, propertyName, relation.type, sourceColumnMeta.getName(), true);
+                        stmt.execute(sql);
+                        
                         if(maxOccurs==1){
-                            //we can add the property in the base type and create a foreign key
-                            final AttributeTypeBuilder atb = new AttributeTypeBuilder();
-                            atb.setName(propertyName);
-                            atb.setBinding(targetColumnMeta.getJavaType());
-                            final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
-                            adb.setName(propertyName);
-                            adb.setNillable(true);
-                            adb.setMinOccurs(0);
-                            adb.setMaxOccurs(1);
-                            adb.setType(atb.buildType());
-                            final PropertyDescriptor pdesc = adb.buildDescriptor();
-                            
-                            //create the property
-                            sql = getQueryBuilder().alterTableAddColumnSQL(relation.type, pdesc, cnx);
+                            //we add a unique index, equivalent to a 0:1 relation
+                            sql = getQueryBuilder().alterTableAddIndex(targetType, propertyName);
                             stmt.execute(sql);
-                            //add the foreign key relation
-                            sql = getQueryBuilder().alterTableAddForeignKey(
-                                    relation.type, propertyName, targetType, targetColumnMeta.getName(), false);
-                            stmt.execute(sql);
-                            
-                        }else{
-                            //we create an relation in the opposite direction
-                            final AttributeTypeBuilder atb = new AttributeTypeBuilder();
-                            atb.setName(propertyName);
-                            atb.setBinding(sourceColumnMeta.getJavaType());
-                            final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
-                            adb.setName(propertyName);
-                            adb.setNillable(true);
-                            adb.setMinOccurs(0);
-                            adb.setMaxOccurs(1);
-                            adb.setType(atb.buildType());
-                            final PropertyDescriptor pdesc = adb.buildDescriptor();
-                            
-                            //create the property
-                            sql = getQueryBuilder().alterTableAddColumnSQL(targetType, pdesc, cnx);
-                            stmt.execute(sql);
-                            //add the foreign key relation
-                            sql = getQueryBuilder().alterTableAddForeignKey(
-                                    targetType, propertyName, relation.type, sourceColumnMeta.getName(), true);
-                            stmt.execute(sql);
-                            
                         }
                         
                     }else{
@@ -794,10 +778,23 @@ public class DefaultJDBCFeatureStore extends AbstractFeatureStore implements JDB
     }
 
     @Override
-    public void deleteSchema(final Name typeName) throws DataStoreException {
+    public void deleteSchema(final Name typeName) throws DataStoreException{
         ensureOpen();
         final FeatureType featureType = getFeatureType(typeName);
-
+        recursiveDelete(featureType);
+    }
+    
+    private void recursiveDelete(FeatureType featureType) throws DataStoreException{
+        
+        //search properties which are complex types
+        for(PropertyDescriptor desc : featureType.getDescriptors()){
+            final PropertyType pt = desc.getType();
+            if(pt instanceof FeatureType){
+                recursiveDelete((FeatureType)pt);
+            }
+        }
+        
+        final Name typeName = featureType.getName();
         Connection cnx = null;
         Statement stmt = null;
         String sql = null;
@@ -815,6 +812,7 @@ public class DefaultJDBCFeatureStore extends AbstractFeatureStore implements JDB
         } finally {
             JDBCFeatureStoreUtilities.closeSafe(getLogger(),cnx,stmt,null);
         }
+        
     }
         
     private void decompose(ComplexType type, List<FeatureType> types, List<TypeRelation> relations) throws DataStoreException{

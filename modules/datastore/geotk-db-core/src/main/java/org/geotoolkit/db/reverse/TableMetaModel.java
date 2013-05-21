@@ -78,6 +78,22 @@ public class TableMetaModel {
         return Collections.unmodifiableCollection(importedKeys);
     }
 
+    /**
+     * Detect if given type is a subtype. Conditions are :
+     * - having a relation toward another type
+     * - relation must be cascading
+     * @param ft
+     * @return true is type is a subtype
+     */
+    public boolean isSubType(){
+        for(RelationMetaModel relation : getImportedKeys()){
+            if(relation.isDeleteCascade()){
+                return true;
+            }
+        }
+        return false;
+    }
+    
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder(name);

@@ -30,6 +30,7 @@ import com.vividsolutions.jts.geom.Polygon;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -62,6 +63,7 @@ import static org.geotoolkit.db.postgres.PostgresFeatureStoreFactory.*;
 import org.geotoolkit.feature.AttributeDescriptorBuilder;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.geometry.jts.JTS;
+import org.geotoolkit.parameter.ParametersExt;
 import org.geotoolkit.version.VersionControl;
 import org.geotoolkit.version.VersioningException;
 import static org.junit.Assert.*;
@@ -69,7 +71,9 @@ import org.junit.Assume;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.opengis.feature.type.AttributeDescriptor;
+import org.opengis.feature.type.AttributeType;
 import org.opengis.feature.type.ComplexType;
+import org.opengis.feature.type.PropertyType;
 
 /**
  *
@@ -188,24 +192,31 @@ public class PostgresFeatureStoreTest {
         params = FeatureUtilities.toParameter((Map)properties, PARAMETERS_DESCRIPTOR, false);
     }
     
-    private void reload() throws DataStoreException, VersioningException {
+    private void reload(boolean simpleType) throws DataStoreException, VersioningException {
         if(store != null){
             store.dispose();
         }
         
-        store = FeatureStoreFinder.open(params);
-        
+        //open in complex type to delete all types
+        ParametersExt.getOrCreateValue(params, PostgresFeatureStoreFactory.SIMPLETYPE.getName().getCode()).setValue(false);
+        store = FeatureStoreFinder.open(params);        
         for(Name n : store.getNames()){
             VersionControl vc = store.getVersioning(n);
             vc.dropVersioning();
             store.deleteSchema(n);
         }
         assertTrue(store.getNames().isEmpty());
+        store.dispose();
+        
+        //reopen the way it was asked
+        ParametersExt.getOrCreateValue(params, PostgresFeatureStoreFactory.SIMPLETYPE.getName().getCode()).setValue(simpleType);
+        store = FeatureStoreFinder.open(params);
+        assertTrue(store.getNames().isEmpty());
     }
     
     @Test
     public void testSimpleTypeCreation() throws DataStoreException, VersioningException {
-        reload();
+        reload(true);
         
         final FeatureType refType = FTYPE_SIMPLE;        
         store.createSchema(refType.getName(), refType);        
@@ -247,7 +258,7 @@ public class PostgresFeatureStoreTest {
     
     @Test
     public void testArrayTypeCreation() throws DataStoreException, VersioningException {
-        reload();
+        reload(true);
         
         final FeatureType refType = FTYPE_ARRAY;        
         store.createSchema(refType.getName(), refType);        
@@ -290,7 +301,7 @@ public class PostgresFeatureStoreTest {
     
     @Test
     public void testGeometryTypeCreation() throws DataStoreException, NoSuchAuthorityCodeException, FactoryException, VersioningException {
-        reload();
+        reload(true);
                 
         final FeatureType refType = FTYPE_GEOMETRY;        
         store.createSchema(refType.getName(), refType);        
@@ -344,20 +355,50 @@ public class PostgresFeatureStoreTest {
         assertTrue(desc instanceof GeometryDescriptor);
         assertEquals(CRS_4326, ((GeometryDescriptor)desc).getCoordinateReferenceSystem());
     }
-        
-    @Ignore
+    
     @Test
     public void testComplexTypeCreation() throws DataStoreException, VersioningException{
-        reload();
+        reload(false);
         
         final FeatureType refType = FTYPE_COMPLEX;        
         store.createSchema(refType.getName(), refType);        
-        assertEquals(3, store.getNames().size());
+        assertEquals(1, store.getNames().size());
+        
+        final Name name = store.getNames().iterator().next();
+        final FeatureType created = store.getFeatureType(name);
+        lazyCompare(refType, created);
+        
+    }
+    
+    private void lazyCompare(PropertyType refType, PropertyType candidate){
+        final Name name = refType.getName();
+        assertEquals(refType.getName().getLocalPart(), name.getLocalPart());
+        
+        if(refType instanceof ComplexType){
+            final ComplexType ct = (ComplexType) refType;
+            final ComplexType cct = (ComplexType) candidate;
+            assertEquals(ct.getDescriptors().size()+1, cct.getDescriptors().size());// +1 for generated fid field
+
+            for(PropertyDescriptor desc : ct.getDescriptors()){
+                final PropertyDescriptor cdesc = cct.getDescriptor(desc.getName().getLocalPart());
+                assertNotNull(cdesc);
+                lazyCompare(desc.getType(), cdesc.getType());
+            }
+            
+        }else{
+            final AttributeType at = (AttributeType) refType;
+            final AttributeType cat = (AttributeType) candidate;
+            if(at.getBinding()==Date.class){
+                assertEquals(Timestamp.class, cat.getBinding());
+            }else{
+                assertEquals(at.getBinding(), cat.getBinding());
+            }
+        }
     }
     
     @Test
     public void testSimpleInsert() throws DataStoreException, VersioningException{
-        reload();
+        reload(true);
             
         store.createSchema(FTYPE_SIMPLE.getName(), FTYPE_SIMPLE);
         final FeatureType resType = store.getFeatureType(store.getNames().iterator().next());
@@ -398,7 +439,7 @@ public class PostgresFeatureStoreTest {
         
     @Test
     public void testArrayInsert() throws DataStoreException, VersioningException{
-        reload();
+        reload(true);
             
         store.createSchema(FTYPE_ARRAY.getName(), FTYPE_ARRAY);
         final FeatureType resType = store.getFeatureType(store.getNames().iterator().next());
@@ -440,7 +481,7 @@ public class PostgresFeatureStoreTest {
     
     @Test
     public void testGeometryInsert() throws DataStoreException, NoSuchAuthorityCodeException, FactoryException, VersioningException{
-        reload();
+        reload(true);
             
         ////////////////////////////////////////////////////////////////////////
         final GeometryFactory gf = new GeometryFactory();
