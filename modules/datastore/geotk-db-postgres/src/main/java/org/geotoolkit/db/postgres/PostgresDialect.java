@@ -25,6 +25,8 @@ import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
+import com.vividsolutions.jts.io.ParseException;
+import com.vividsolutions.jts.io.WKBReader;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.math.BigDecimal;
@@ -41,6 +43,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
+import net.iharder.Base64;
 import org.apache.sis.util.Version;
 import org.geotoolkit.db.DefaultJDBCFeatureStore;
 import org.geotoolkit.db.FilterToSQL;
@@ -49,7 +52,6 @@ import org.geotoolkit.db.JDBCFeatureStoreUtilities;
 import static org.geotoolkit.db.JDBCFeatureStoreUtilities.*;
 import org.geotoolkit.db.dialect.AbstractSQLDialect;
 import org.geotoolkit.db.postgres.ewkb.JtsBinaryParser;
-import org.geotoolkit.db.postgres.wkb.WKBAttributeIO;
 import org.geotoolkit.db.reverse.ColumnMetaModel;
 import org.geotoolkit.db.reverse.PrimaryKey;
 import org.geotoolkit.factory.Hints;
@@ -116,7 +118,8 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
 
 /**
- *
+ * Postgres/Postgis dialect.
+ * 
  * @author Johann Sorel (Geomatys)
  */
 public class PostgresDialect extends AbstractSQLDialect{
@@ -370,7 +373,7 @@ public class PostgresDialect extends AbstractSQLDialect{
     private final DefaultJDBCFeatureStore featurestore;
     
     //readers
-    private final ThreadLocal<WKBAttributeIO> wkbReader = new ThreadLocal<WKBAttributeIO>();
+    private final ThreadLocal<WKBReader> wkbReader = new ThreadLocal<WKBReader>();
     private final JtsBinaryParser hexewkbReader = new JtsBinaryParser(){
 
         @Override
@@ -947,12 +950,16 @@ public class PostgresDialect extends AbstractSQLDialect{
             case HEXEWKB:
                 return hexewkbReader.parse(rs.getString(column));
             case WKB:
-                WKBAttributeIO reader = wkbReader.get();
+                WKBReader reader = wkbReader.get();
                 if (reader == null) {
-                    reader = new WKBAttributeIO(featurestore.getGeometryFactory());
+                    reader = new WKBReader(featurestore.getGeometryFactory());
                     wkbReader.set(reader);
                 }
-                return (Geometry) reader.read(rs, column);
+                try {
+                    return (Geometry) reader.read(Base64.decode(rs.getBytes(column)));
+                } catch (ParseException ex) {
+                    throw new IOException(ex.getMessage(),ex);
+                }
             default:
                 throw new IllegalStateException("Can not decode geometry not knowing it's encoding.");
         }
@@ -966,12 +973,16 @@ public class PostgresDialect extends AbstractSQLDialect{
             case HEXEWKB:
                 return hexewkbReader.parse(rs.getString(column));
             case WKB:
-                WKBAttributeIO reader = wkbReader.get();
+                WKBReader reader = wkbReader.get();
                 if (reader == null) {
-                    reader = new WKBAttributeIO(featurestore.getGeometryFactory());
+                    reader = new WKBReader(featurestore.getGeometryFactory());
                     wkbReader.set(reader);
                 }
-                return (Geometry) reader.read(rs, column);
+                try {
+                    return (Geometry) reader.read(Base64.decode(rs.getBytes(column)));
+                } catch (ParseException ex) {
+                    throw new IOException(ex.getMessage(),ex);
+                }
             default:
                 throw new IllegalStateException("Can not decode geometry not knowing it's encoding.");
         }
