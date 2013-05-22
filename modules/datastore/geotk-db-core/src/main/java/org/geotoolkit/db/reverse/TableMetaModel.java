@@ -22,7 +22,6 @@ import java.util.Collections;
 import org.geotoolkit.gui.swing.tree.Trees;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.ComplexType;
-import org.opengis.feature.type.FeatureType;
 
 /**
  * Description of a database table.
@@ -32,11 +31,11 @@ import org.opengis.feature.type.FeatureType;
  */
 public class TableMetaModel {
 
-    final String name;
-    final String type;
+    String name;
+    String type;
     ComplexType baseType;
     SimpleFeatureType simpleType;
-    FeatureType complexType;
+    ComplexType complexType;
     PrimaryKey key;
     //those are 0:1 relations
     final Collection<RelationMetaModel> importedKeys = new ArrayList<RelationMetaModel>();
@@ -66,7 +65,7 @@ public class TableMetaModel {
         return simpleType;
     }
 
-    public FeatureType getComplexType() {
+    public ComplexType getComplexType() {
         return complexType;
     }
 

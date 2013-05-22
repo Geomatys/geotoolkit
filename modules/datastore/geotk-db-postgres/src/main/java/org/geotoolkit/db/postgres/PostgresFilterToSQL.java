@@ -36,6 +36,7 @@ import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.filter.DefaultPropertyIsLike;
 import org.geotoolkit.util.Converters;
 import org.opengis.feature.type.AttributeDescriptor;
+import org.opengis.feature.type.ComplexType;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.feature.type.Name;
@@ -103,11 +104,11 @@ import org.opengis.geometry.Envelope;
 public class PostgresFilterToSQL implements FilterToSQL {
     
     private final Version pgVersion;
-    private final FeatureType featureType;
+    private final ComplexType featureType;
     private final PrimaryKey pkey;
     private int currentsrid;
 
-    public PostgresFilterToSQL(FeatureType featureType, PrimaryKey pkey, Version pgVersion) {
+    public PostgresFilterToSQL(ComplexType featureType, PrimaryKey pkey, Version pgVersion) {
         this.featureType = featureType;
         this.pkey = pkey;
         this.pgVersion = pgVersion;
@@ -805,7 +806,7 @@ public class PostgresFilterToSQL implements FilterToSQL {
             if (featureType != null) {
                 final AttributeDescriptor descriptor = (AttributeDescriptor) property.evaluate(featureType);
                 if (descriptor instanceof GeometryDescriptor) {
-                    currentsrid = (Integer) descriptor.getUserData().get(JDBCFeatureStore.JDBC_NATIVE_SRID);
+                    currentsrid = (Integer) descriptor.getUserData().get(JDBCFeatureStore.JDBC_PROPERTY_SRID);
                 }
             }
             

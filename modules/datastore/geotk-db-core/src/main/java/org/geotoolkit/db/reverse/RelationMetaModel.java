@@ -16,6 +16,15 @@
  */
 package org.geotoolkit.db.reverse;
 
+import java.util.Collection;
+import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.factory.HintsPending;
+import org.geotoolkit.storage.DataStoreException;
+import org.opengis.feature.type.PropertyDescriptor;
+import org.opengis.filter.Filter;
+import org.opengis.filter.FilterFactory;
+import org.opengis.filter.expression.PropertyName;
+
 /**
  * Description of a relation between two tables.
  * 
@@ -23,6 +32,8 @@ package org.geotoolkit.db.reverse;
  * @module pending
  */
 public class RelationMetaModel {
+    
+    public static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
 
     private final String currentColumn;
     private final String foreignSchema;
@@ -30,6 +41,9 @@ public class RelationMetaModel {
     private final String foreignColumn;
     private final boolean imported;
     private final boolean deleteCascade;
+    
+    //for filter
+    private final PropertyName property;
 
     public RelationMetaModel(final String currentColumn, final String foreignSchema,
             final String foreignTable, final String foreignColumn, 
@@ -40,6 +54,7 @@ public class RelationMetaModel {
         this.foreignColumn = foreignColumn;
         this.imported = imported;
         this.deleteCascade = deleteCascade;
+        this.property = FF.property(foreignColumn);
     }
 
     public String getCurrentColumn() {
@@ -71,6 +86,24 @@ public class RelationMetaModel {
      */
     public boolean isDeleteCascade(){
         return deleteCascade;
+    }
+    
+    public Filter toFilter(final Object value){
+        return FF.equals(property, FF.literal(value));
+    }
+    
+    public String[] getSubTypeFields(DataBaseModel model) throws DataStoreException{
+        final TableMetaModel table = model.getSchemaMetaModel(foreignSchema).getTable(foreignTable);
+        final Collection<PropertyDescriptor> descs = table.baseType.getDescriptors();
+        String[] fields = new String[descs.size()-table.key.getColumns().size()-1];
+        int i=0;
+        for(PropertyDescriptor desc : descs){
+            if(!Boolean.TRUE.equals(desc.getUserData().get(HintsPending.PROPERTY_IS_IDENTIFIER)) && !desc.getName().getLocalPart().equals(foreignColumn)){
+                fields[i] = desc.getName().getLocalPart();
+                i++;
+            }
+        }
+        return fields;
     }
     
     @Override

@@ -33,20 +33,24 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.geotoolkit.data.memory.GenericAssociationIterator;
 import org.geotoolkit.data.query.QueryBuilder;
-import org.geotoolkit.db.reverse.ForeignKey;
+import org.geotoolkit.db.dialect.SQLDialect;
+import org.geotoolkit.db.reverse.RelationMetaModel;
 import org.geotoolkit.feature.AbstractFeature;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.geometry.jts.JTS;
+import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.util.collection.CloseableIterator;
 import org.opengis.feature.Property;
 import org.opengis.feature.type.AssociationDescriptor;
 import org.opengis.feature.type.AssociationType;
 import org.opengis.feature.type.AttributeDescriptor;
+import org.opengis.feature.type.ComplexType;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.feature.type.Name;
 import org.opengis.feature.type.PropertyDescriptor;
+import org.opengis.feature.type.PropertyType;
 import org.opengis.filter.identity.FeatureId;
 
 /**
@@ -63,7 +67,7 @@ public class JDBCComplexFeature extends AbstractFeature<Collection<Property>> {
     private final FeatureType type;
     
     public JDBCComplexFeature(final DefaultJDBCFeatureStore store, final ResultSet rs,
-            final FeatureType type, final FeatureId id) throws SQLException{
+            final FeatureType type, final FeatureId id) throws SQLException, DataStoreException{
         super(type, id);
         this.type = type;
         this.store = store;
@@ -71,20 +75,21 @@ public class JDBCComplexFeature extends AbstractFeature<Collection<Property>> {
         int k=0;
         for(final PropertyDescriptor desc : type.getDescriptors()){
             final Name n = desc.getName();
+            final PropertyType ptype = desc.getType();
             
             final Object prop;
-            if(desc.getType() instanceof AssociationType){
+            if(ptype instanceof AssociationType){
                 final AssociationDescriptor assDesc = (AssociationDescriptor) desc;
-                final ForeignKey template = (ForeignKey) desc.getUserData().get(ForeignKey.RELATION);
+                final RelationMetaModel template = (RelationMetaModel) desc.getUserData().get(JDBCFeatureStore.JDBC_PROPERTY_RELATION);
                 
                 if(template != null){
                     //create a dynamic collection
-                    final Object key = rs.getObject(template.getRelationModel().getCurrentColumn());
+                    final Object key = rs.getObject(template.getCurrentColumn());
                     
                     final QueryBuilder qb = new QueryBuilder();
                     qb.setTypeName(new DefaultName(
                             store.getDefaultNamespace(), 
-                            template.getRelationModel().getForeignTable()));
+                            template.getForeignTable()));
                     qb.setFilter(template.toFilter(key));
 
                     prop = GenericAssociationIterator.wrap(
@@ -93,28 +98,30 @@ public class JDBCComplexFeature extends AbstractFeature<Collection<Property>> {
                 }else{
                     prop = Collections.emptyList();
                 }
+            }else if(ptype instanceof ComplexType){
+                final RelationMetaModel template = (RelationMetaModel) desc.getUserData().get(JDBCFeatureStore.JDBC_PROPERTY_RELATION);
+                
+                if(template != null){
+                    //create a dynamic collection
+                    final Object key = rs.getObject(template.getCurrentColumn());
+                    
+                    //create the filter, excluding relation and id fields                    
+                    final QueryBuilder qb = new QueryBuilder();
+                    qb.setTypeName(new DefaultName(
+                            store.getDefaultNamespace(), 
+                            template.getForeignTable()));
+                    qb.setFilter(template.toFilter(key));
+                    qb.setProperties(template.getSubTypeFields(store.getDatabaseModel()));
+
+                    prop = store.createSession(false).getFeatureCollection(qb.buildQuery());
+                }else{
+                    prop = Collections.emptyList();
+                }
             }else{
                 //single value attribut
                 prop = FeatureUtilities.defaultProperty(desc);
-                if(desc instanceof GeometryDescriptor){
-                    final GeometryDescriptor gatt = (GeometryDescriptor) desc;
-                    //read the geometry
-                    final Geometry geom;
-                    try {
-                        geom = store.getDialect().decodeGeometryValue(gatt, rs, k+1);
-                    } catch (IOException e) {
-                        throw new SQLException(e);
-                    }
-
-                    if(geom != null && geom.getUserData() == null){ 
-                        //set crs is not set
-                        JTS.setCRS(geom, gatt.getCoordinateReferenceSystem());
-                    }
-                    ((Property)prop).setValue(geom);
-                }else{
-                    Object value = store.getDialect().decodeAttributeValue((AttributeDescriptor)desc, rs, k+1);
-                    ((Property)prop).setValue(value);
-                }
+                final Object value = readSimpleValue(store.getDialect(), rs, k+1, desc);
+                ((Property)prop).setValue(value);
             }
             
             progressiveMap.put(n, prop);
@@ -314,4 +321,24 @@ public class JDBCComplexFeature extends AbstractFeature<Collection<Property>> {
         
     }
     
+    public static Object readSimpleValue(final SQLDialect dialect, final ResultSet rs, int index, PropertyDescriptor desc) throws SQLException{
+        if(desc instanceof GeometryDescriptor){
+            final GeometryDescriptor gatt = (GeometryDescriptor) desc;
+            //read the geometry
+            final Geometry geom;
+            try {
+                geom = dialect.decodeGeometryValue(gatt, rs, index);
+            } catch (IOException e) {
+                throw new SQLException(e);
+            }
+
+            if(geom != null && geom.getUserData() == null){ 
+                //set crs is not set
+                JTS.setCRS(geom, gatt.getCoordinateReferenceSystem());
+            }
+            return geom;
+        }else{
+            return dialect.decodeAttributeValue((AttributeDescriptor)desc, rs, index);
+        }
+    }
 }

@@ -38,14 +38,22 @@ public interface JDBCFeatureStore extends FeatureStore{
     public static final String CUSTOM_SQL = "CUSTOM-SQL";
     
     /**
-     * The native SRID associated to a certain descriptor
+     * Property information, The native SRID associated to a certain descriptor.
+     * Value is an Integer.
      */
-    public static final String JDBC_NATIVE_SRID = "nativeSRID";
+    public static final String JDBC_PROPERTY_SRID = "nativeSRID";
     
     /**
      * Property information, if the field is unique in the database.
+     * Value is a Boolean.
      */
     public static final String JDBC_PROPERTY_UNIQUE = "unique";
+    
+    /**
+     * Property information, if the field is a relation.
+     * Value is a RelationMetaModel.
+     */
+    public static final String JDBC_PROPERTY_RELATION = "relation";
             
     /**
      * Each database type have slim deformation from the SQL specification.

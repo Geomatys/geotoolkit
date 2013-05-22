@@ -70,6 +70,7 @@ import static org.junit.Assert.*;
 import org.junit.Assume;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
+import org.opengis.feature.ComplexAttribute;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.AttributeType;
 import org.opengis.feature.type.ComplexType;
@@ -576,6 +577,54 @@ public class PostgresFeatureStoreTest {
         }finally{
             ite.close();
         }
+    }
+    
+    @Test
+    public void testComplexInsert() throws DataStoreException, VersioningException{
+        reload(false);
+        final GeometryFactory gf = new GeometryFactory();
+            
+        store.createSchema(FTYPE_COMPLEX.getName(), FTYPE_COMPLEX);
+        final FeatureType resType = store.getFeatureType(store.getNames().iterator().next());
+        
+        final Feature voyage = FeatureUtilities.defaultFeature(resType, "0");
+        voyage.getProperty("identifier").setValue(120);
+        
+        final ComplexAttribute driver = (ComplexAttribute)FeatureUtilities.defaultProperty(resType.getDescriptor("driver"));
+        driver.getProperty("name").setValue("jean-michel");
+        driver.getProperty("code").setValue("BHF:123456");
+        voyage.getProperties().add(driver);
+        
+        final ComplexAttribute stop1 = (ComplexAttribute)FeatureUtilities.defaultProperty(resType.getDescriptor("stops"));
+        stop1.getProperty("location").setValue(gf.createPoint(new Coordinate(-10, 60)));
+        stop1.getProperty("time").setValue(new Date(5000000));
+        voyage.getProperties().add(stop1);
+        
+        final ComplexAttribute stop2 = (ComplexAttribute)FeatureUtilities.defaultProperty(resType.getDescriptor("stops"));
+        stop2.getProperty("location").setValue(gf.createPoint(new Coordinate(30, 15)));
+        stop2.getProperty("time").setValue(new Date(6000000));
+        voyage.getProperties().add(stop2);
+        
+        final ComplexAttribute stop3 = (ComplexAttribute)FeatureUtilities.defaultProperty(resType.getDescriptor("stops"));
+        stop3.getProperty("location").setValue(gf.createPoint(new Coordinate(40, -70)));
+        stop3.getProperty("time").setValue(new Date(7000000));
+        voyage.getProperties().add(stop3);
+        
+        store.addFeatures(resType.getName(), Collections.singleton(voyage));
+        
+        final Session session = store.createSession(false);
+        final FeatureCollection<Feature> col = session.getFeatureCollection(QueryBuilder.all(resType.getName()));
+        assertEquals(1, col.size());
+        
+        final FeatureIterator ite = col.iterator();
+        try{
+            final Feature resFeature = ite.next();
+            assertNotNull(resFeature);
+            System.out.println(resFeature);
+        }finally{
+            ite.close();
+        }
+        
     }
     
     

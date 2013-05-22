@@ -71,6 +71,7 @@ import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.util.Converters;
 import org.opengis.feature.type.AttributeDescriptor;
+import org.opengis.feature.type.ComplexType;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.feature.type.PropertyDescriptor;
@@ -405,7 +406,7 @@ public class PostgresDialect extends AbstractSQLDialect{
     }
 
     @Override
-    public FilterToSQL getFilterToSQL(FeatureType featureType) {
+    public FilterToSQL getFilterToSQL(ComplexType featureType) {
         try{
             PrimaryKey pk = null;
             if(featureType!=null){
@@ -538,7 +539,7 @@ public class PostgresDialect extends AbstractSQLDialect{
     ////////////////////////////////////////////////////////////////////////////
     
     @Override
-    public String encodeFilter(Filter filter, FeatureType type) {
+    public String encodeFilter(Filter filter, ComplexType type) {
         final FilterToSQL fts = getFilterToSQL(type);
         final StringBuilder sb = (StringBuilder)filter.accept(fts, new StringBuilder());
         return sb.toString();
@@ -676,8 +677,8 @@ public class PostgresDialect extends AbstractSQLDialect{
 
                     // lookup or reverse engineer the srid
                     int srid = -1;
-                    if (gd.getUserData().get(JDBCFeatureStore.JDBC_NATIVE_SRID) != null) {
-                        srid = (Integer) gd.getUserData().get(JDBCFeatureStore.JDBC_NATIVE_SRID);
+                    if (gd.getUserData().get(JDBCFeatureStore.JDBC_PROPERTY_SRID) != null) {
+                        srid = (Integer) gd.getUserData().get(JDBCFeatureStore.JDBC_PROPERTY_SRID);
                     } else if (gd.getCoordinateReferenceSystem() != null) {
                         try {
                             final Integer result = IdentifiedObjects.lookupEpsgCode(gd.getCoordinateReferenceSystem(), true);

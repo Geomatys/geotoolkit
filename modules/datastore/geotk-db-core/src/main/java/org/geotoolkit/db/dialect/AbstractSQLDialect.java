@@ -22,6 +22,7 @@ import org.geotoolkit.feature.AttributeTypeBuilder;
 import org.geotoolkit.filter.capability.DefaultFilterCapabilities;
 import org.geotoolkit.filter.visitor.CapabilitiesFilterSplitter;
 import org.opengis.feature.type.AttributeDescriptor;
+import org.opengis.feature.type.ComplexType;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.filter.Filter;
 
@@ -41,7 +42,7 @@ public abstract class AbstractSQLDialect implements SQLDialect {
      * Everything will be added in the post filter.
      */
     @Override
-    public Filter[] splitFilter(Filter filter, FeatureType type) {
+    public Filter[] splitFilter(Filter filter, ComplexType type) {
         final CapabilitiesFilterSplitter splitter = new CapabilitiesFilterSplitter(
                 (DefaultFilterCapabilities)getFilterCapabilities(), type);
         filter.accept(splitter, null);

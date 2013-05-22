@@ -28,6 +28,7 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.AttributeTypeBuilder;
 import org.geotoolkit.storage.DataStoreException;
 import org.opengis.feature.type.AttributeDescriptor;
+import org.opengis.feature.type.ComplexType;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.filter.Filter;
@@ -45,7 +46,7 @@ public interface SQLDialect {
     
     FilterCapabilities getFilterCapabilities();
     
-    FilterToSQL getFilterToSQL(FeatureType featureType);
+    FilterToSQL getFilterToSQL(ComplexType featureType);
     
     /**
      * Escape sequence for table names.
@@ -72,7 +73,7 @@ public interface SQLDialect {
      * @param filter not null
      * @return array of two filters.
      */
-    Filter[] splitFilter(Filter filter, FeatureType type);
+    Filter[] splitFilter(Filter filter, ComplexType type);
     
     ////////////////////////////////////////////////////////////////////////////
     // METHODS TO CREATE SQL QUERIES ///////////////////////////////////////////
@@ -83,7 +84,7 @@ public interface SQLDialect {
      * @param filter
      * @return SQL String
      */
-    String encodeFilter(Filter filter, FeatureType type);
+    String encodeFilter(Filter filter, ComplexType type);
 
     void encodeColumnName(StringBuilder sql, String name);
 

@@ -132,14 +132,20 @@ public class PostgresVersioningTest {
             store.dispose();
         }
         
-        ParametersExt.getOrCreateValue(params, PostgresFeatureStoreFactory.SIMPLETYPE.getName().getCode()).setValue(simpleType);
-        store = (PostgresFeatureStore) FeatureStoreFinder.open(params);
-        
+        //open in complex type to delete all types
+        ParametersExt.getOrCreateValue(params, PostgresFeatureStoreFactory.SIMPLETYPE.getName().getCode()).setValue(false);
+        store = (PostgresFeatureStore) FeatureStoreFinder.open(params);        
         for(Name n : store.getNames()){
             VersionControl vc = store.getVersioning(n);
             vc.dropVersioning();
             store.deleteSchema(n);
         }
+        assertTrue(store.getNames().isEmpty());
+        store.dispose();
+        
+        //reopen the way it was asked
+        ParametersExt.getOrCreateValue(params, PostgresFeatureStoreFactory.SIMPLETYPE.getName().getCode()).setValue(simpleType);
+        store = (PostgresFeatureStore) FeatureStoreFinder.open(params);
         assertTrue(store.getNames().isEmpty());
         
         //delete historisation functions, he must create them himself

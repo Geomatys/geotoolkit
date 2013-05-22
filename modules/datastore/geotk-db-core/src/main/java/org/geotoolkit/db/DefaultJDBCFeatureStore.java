@@ -23,11 +23,14 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -51,12 +54,15 @@ import org.geotoolkit.db.dialect.SQLQueryBuilder;
 import org.geotoolkit.db.reverse.ColumnMetaModel;
 import org.geotoolkit.db.reverse.DataBaseModel;
 import org.geotoolkit.db.reverse.PrimaryKey;
+import org.geotoolkit.db.reverse.RelationMetaModel;
+import org.geotoolkit.db.reverse.TableMetaModel;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.AttributeDescriptorBuilder;
 import org.geotoolkit.feature.AttributeTypeBuilder;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.FeatureTypeBuilder;
+import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.filter.visitor.CRSAdaptorVisitor;
 import org.geotoolkit.filter.visitor.FIDFixVisitor;
@@ -65,7 +71,9 @@ import org.geotoolkit.jdbc.ManageableDataSource;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.storage.DataStoreException;
+import org.opengis.feature.ComplexAttribute;
 import org.opengis.feature.Feature;
+import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AssociationType;
 import org.opengis.feature.type.AttributeDescriptor;
@@ -784,13 +792,13 @@ public class DefaultJDBCFeatureStore extends AbstractFeatureStore implements JDB
         recursiveDelete(featureType);
     }
     
-    private void recursiveDelete(FeatureType featureType) throws DataStoreException{
+    private void recursiveDelete(ComplexType featureType) throws DataStoreException{
         
         //search properties which are complex types
         for(PropertyDescriptor desc : featureType.getDescriptors()){
             final PropertyType pt = desc.getType();
-            if(pt instanceof FeatureType){
-                recursiveDelete((FeatureType)pt);
+            if(pt instanceof ComplexType){
+                recursiveDelete((ComplexType)pt);
             }
         }
         
@@ -815,6 +823,14 @@ public class DefaultJDBCFeatureStore extends AbstractFeatureStore implements JDB
         
     }
         
+    /**
+     * Decompose given type in flat types for table creation.
+     * 
+     * @param type
+     * @param types
+     * @param relations
+     * @throws DataStoreException 
+     */
     private void decompose(ComplexType type, List<FeatureType> types, List<TypeRelation> relations) throws DataStoreException{
         
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
@@ -897,7 +913,7 @@ public class DefaultJDBCFeatureStore extends AbstractFeatureStore implements JDB
         handleRemoveWithFeatureWriter(groupName, filter, cnx);
     }
 
-    protected void insert(final Collection<? extends Feature> features, final FeatureType featureType,
+    protected void insert(final Collection<? extends ComplexAttribute> features, final ComplexType featureType,
             final Connection cx) throws DataStoreException {
         final PrimaryKey key = dbmodel.getPrimaryKey(featureType.getName());
 
@@ -921,7 +937,33 @@ public class DefaultJDBCFeatureStore extends AbstractFeatureStore implements JDB
         fireFeaturesAdded(featureType.getName(), null);
     }
 
-    protected void insert(final Feature feature, final FeatureType featureType,
+    protected void insert(final ComplexAttribute feature, final ComplexType featureType,
+            final Connection cx) throws DataStoreException {
+        
+        if(featureType instanceof SimpleFeatureType){
+            insertFlat(feature, featureType, cx);
+        }else{
+            //decompose feature and make multiple inserts
+            final List<Entry<ComplexAttribute,ComplexAttribute>> flats = decompose(feature);
+            for(Entry<ComplexAttribute,ComplexAttribute> hierarchy : flats){
+                final ComplexAttribute parent = hierarchy.getKey();
+                final ComplexAttribute flat = hierarchy.getValue();
+                //resolve parent id fields.
+                if(parent!=null){
+                    for(Property prop : flat.getProperties()){
+                        final RelationMetaModel relation = (RelationMetaModel) prop.getDescriptor().getUserData().get(JDBC_PROPERTY_RELATION);
+                        if(relation==null) continue;
+                        final Object parentValue = parent.getProperty(relation.getForeignColumn()).getValue();
+                        flat.getProperty(relation.getCurrentColumn()).setValue(parentValue);
+                    }
+                }
+                
+                insertFlat(flat, flat.getType(), cx);
+            }
+        }
+    }
+    
+    private void insertFlat(final ComplexAttribute feature, final ComplexType featureType,
             final Connection cx) throws DataStoreException {
         final PrimaryKey key = dbmodel.getPrimaryKey(featureType.getName());
 
@@ -966,6 +1008,34 @@ public class DefaultJDBCFeatureStore extends AbstractFeatureStore implements JDB
         fireFeaturesAdded(featureType.getName(), null);
     }
 
+    /**
+     * Decompose feature in flat features, they are ordered in appropriate insertion order.
+     * 
+     * @param candidate 
+     */
+    private List<Entry<ComplexAttribute,ComplexAttribute>> decompose(ComplexAttribute candidate) throws DataStoreException{
+        final List<Entry<ComplexAttribute,ComplexAttribute>> flats = new ArrayList<Entry<ComplexAttribute,ComplexAttribute>>();        
+        decompose(null,candidate,flats);
+        return flats;
+    }
+    
+    private void decompose(ComplexAttribute parent, ComplexAttribute candidate, List<Entry<ComplexAttribute,ComplexAttribute>> flats) throws DataStoreException{
+        //decompose main type
+        final ComplexType featuretype = candidate.getType();
+        final TableMetaModel table = dbmodel.getSchemaMetaModel(getDatabaseSchema()).getTable(featuretype.getName().getLocalPart());
+        final ComplexType flatType = table.getSimpleType();
+        final ComplexAttribute flat = FeatureUtilities.defaultProperty(flatType);
+        FeatureUtilities.copy(candidate, flat, false);        
+        flats.add(new AbstractMap.SimpleImmutableEntry<ComplexAttribute, ComplexAttribute>(parent, flat));
+        
+        //decompose sub complex types
+        for(Property prop : candidate.getProperties()){
+            if(prop instanceof ComplexAttribute){
+                decompose(flat,(ComplexAttribute)prop, flats);
+            }
+        }
+    }
+    
     protected void update(final FeatureType featureType, final Map<AttributeDescriptor,Object> changes,
             final Filter filter, final Connection cx) throws DataStoreException{
         if(changes==null || changes.isEmpty()){

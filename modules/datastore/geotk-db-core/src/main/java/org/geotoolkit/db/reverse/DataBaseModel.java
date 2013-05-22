@@ -136,9 +136,10 @@ public final class DataBaseModel {
         if(ref == null){
             analyze();
             final Set<Name> names = new HashSet<Name>();
-            for(Name n : typeIndex.keySet()){
-                if(store.getDialect().ignoreTable(n.getLocalPart())) continue;
-                names.add(n);
+            for(Entry<Name,FeatureType> entry : typeIndex.entrySet()){
+                if(Boolean.TRUE.equals(entry.getValue().getUserData().get("subtype"))) continue;
+                if(store.getDialect().ignoreTable(entry.getKey().getLocalPart())) continue;
+                names.add(entry.getKey());
             }
             ref = Collections.unmodifiableSet(names);
             nameCache = ref;
@@ -204,20 +205,19 @@ public final class DataBaseModel {
            if (schema != null) {
                 for(TableMetaModel table : schema.tables.values()){
                     
-                    
-                    final FeatureType ft;
-                    if(simpleTypes){
+                    final ComplexType ft;
+                    if(simpleTypes || table.isSubType()){
                         ft = table.getSimpleType();
                     }else{
-                        if(table.isSubType()){
-                            //we don't show subtype, they are part of other feature types.
-                            continue;
-                        }
                         ft = table.getComplexType();
                     }
                     final Name name = ft.getName();
-                    typeIndex.put(name, ft);
                     pkIndex.put(name, table.key);
+                    if(table.isSubType()){
+                        //we don't show subtype, they are part of other feature types, add a flag to identify then
+                        ft.getUserData().put("subtype", Boolean.TRUE);
+                    }
+                    typeIndex.put(name, (FeatureType)ft);
                  }
             } else {
                 throw new DataStoreException("Specifed schema " + baseSchemaName + " does not exist.");
@@ -379,6 +379,14 @@ public final class DataBaseModel {
                     final ColumnMetaModel col = new ColumnMetaModel(schemaName, tableName, columnName, 
                             sqlType, sqlTypeName, columnType, Type.NON_INCREMENTING);
                     cols.add(col);
+                    
+                    //set the information
+                    for(PropertyDescriptor desc : ftb.getProperties()){
+                        if(desc.getName().getLocalPart().equals(columnName)){
+                            desc.getUserData().put(HintsPending.PROPERTY_IS_IDENTIFIER,Boolean.TRUE);
+                            break;
+                        }
+                    }
                 }
                 closeSafe(store.getLogger(),result);
             }
@@ -400,8 +408,17 @@ public final class DataBaseModel {
                 final String refColumnName = result.getString(ImportedKey.PKCOLUMN_NAME);
                 final int deleteRule = result.getInt(ImportedKey.DELETE_RULE);
                 final boolean deleteCascade = DatabaseMetaData.importedKeyCascade == deleteRule;
-                table.importedKeys.add(new RelationMetaModel(localColumn,
-                        refSchemaName, refTableName, refColumnName, true, deleteCascade));
+                final RelationMetaModel relation = new RelationMetaModel(localColumn,
+                        refSchemaName, refTableName, refColumnName, true, deleteCascade);
+                table.importedKeys.add(relation);
+                
+                //set the information
+                for(PropertyDescriptor desc : ftb.getProperties()){
+                    if(desc.getName().getLocalPart().equals(localColumn)){
+                        desc.getUserData().put(JDBCFeatureStore.JDBC_PROPERTY_RELATION,relation);
+                        break;
+                    }
+                }
             }
             closeSafe(store.getLogger(),result);
 
@@ -634,7 +651,7 @@ public final class DataBaseModel {
 
                         atb.setCRS(crs);
                         if(srid != null){
-                            adb.addUserData(JDBCFeatureStore.JDBC_NATIVE_SRID, srid);
+                            adb.addUserData(JDBCFeatureStore.JDBC_PROPERTY_SRID, srid);
                         }
                         adb.setType(atb.buildGeometryType());
                         adb.findBestDefaultValue();
@@ -699,6 +716,7 @@ public final class DataBaseModel {
                         adb.copy((AttributeDescriptor) baseDescriptor);
                         adb.setType(FLAG_TYPE);
                         adb.setDefaultValue(null);
+                        adb.addUserData(JDBCFeatureStore.JDBC_PROPERTY_RELATION, relation);
                         final PropertyDescriptor newDescriptor = adb.buildDescriptor();
                         descs.set(index, newDescriptor);
                     }
@@ -710,10 +728,20 @@ public final class DataBaseModel {
                 // create N:1 relations-----------------------------------------
                 for(final RelationMetaModel relation : table.exportedKeys){
                     
+                    //find an appropriate name
+                    Name n = new DefaultName(store.getDefaultNamespace(),relation.getForeignColumn());
+                    for(PropertyDescriptor dpd : ftb.getProperties()){
+                        if(n.getLocalPart().equals(dpd.getName().getLocalPart())){
+                            //name already used, make it unique by including reference table name
+                            n = new DefaultName(store.getDefaultNamespace(),
+                                relation.getForeignTable()+ASSOCIATION_SEPARATOR+relation.getForeignColumn());
+                            break;
+                        }
+                    }
+                    
                     final ComplexType foreignType = schema.getTable(relation.getForeignTable()).getBaseType();
                     final PropertyDescriptor propDesc = foreignType.getDescriptor(relation.getForeignColumn());
                     final boolean unique = Boolean.TRUE.equals(propDesc.getUserData().get(JDBCFeatureStore.JDBC_PROPERTY_UNIQUE));
-                    final Name n = new DefaultName(store.getDefaultNamespace(),relation.getForeignColumn());
                     adb.reset();
                     adb.setName(n);
                     adb.setType(FLAG_TYPE);
@@ -721,6 +749,7 @@ public final class DataBaseModel {
                     adb.setMaxOccurs(unique? 1 : Integer.MAX_VALUE);
                     adb.setNillable(false);
                     adb.setDefaultValue(null);
+                    adb.addUserData(JDBCFeatureStore.JDBC_PROPERTY_RELATION, relation);
                     final PropertyDescriptor newDescriptor = adb.buildDescriptor();
                     final int index = ftb.add(newDescriptor);
                     
@@ -728,10 +757,18 @@ public final class DataBaseModel {
                     secondPass.add(futur);
                 }
 
-                final FeatureType ft = ftb.buildFeatureType();
+                final ComplexType ft;
+                if(table.isSubType()){
+                    //we wont a complex type for sub types, we don't want them to have ids
+                    ft = ftb.buildType();
+                    //store it as a real feature type in the table
+                    table.complexType = ftb.buildFeatureType();
+                }else{
+                    ft = ftb.buildFeatureType();
+                    table.complexType = ft;
+                }
                 builded.put(code, (ModifiableType) ft);
-
-                table.complexType = ft;
+                
             }
         }
 
@@ -777,8 +814,7 @@ public final class DataBaseModel {
                 newDescriptor = adb.buildAssociationDescriptor();
             }
 
-            newDescriptor.getUserData().put(ForeignKey.RELATION, 
-                    new ForeignKey(relation));
+            newDescriptor.getUserData().put(JDBCFeatureStore.JDBC_PROPERTY_RELATION,relation);
             candidate.changeProperty(index, newDescriptor);
         }
         

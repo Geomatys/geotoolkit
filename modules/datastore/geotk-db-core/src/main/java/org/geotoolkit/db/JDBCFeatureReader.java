@@ -26,11 +26,15 @@ import org.geotoolkit.data.FeatureStoreRuntimeException;
 import static org.geotoolkit.db.JDBCFeatureStoreUtilities.*;
 import org.geotoolkit.db.reverse.PrimaryKey;
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.feature.simple.DefaultSimpleFeature;
 import org.geotoolkit.filter.identity.DefaultFeatureId;
 import org.geotoolkit.storage.DataStoreException;
 import org.opengis.feature.Feature;
+import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.Name;
+import org.opengis.feature.type.PropertyDescriptor;
+import org.opengis.filter.identity.FeatureId;
 
 /**
  * JDBC Feature reader, both simple and complexe features.
@@ -47,6 +51,10 @@ public class JDBCFeatureReader implements FeatureReader<FeatureType, Feature> {
     protected final String fidBase;
     protected final Hints hints;
     
+    //array of properties for faster access when simple type
+    protected final PropertyDescriptor[] properties;
+    protected final Object[] values;
+    
     /**
      * statement,result set that is being worked from.
      */
@@ -55,7 +63,7 @@ public class JDBCFeatureReader implements FeatureReader<FeatureType, Feature> {
     protected final Connection cx;
     protected final boolean release ;
     /** the next feature */
-    private JDBCComplexFeature feature = null;
+    private Feature feature = null;
     
     public JDBCFeatureReader(final DefaultJDBCFeatureStore store, final String sql, 
             final FeatureType type, Connection cnx, boolean release, final Hints hints) throws SQLException,DataStoreException {
@@ -67,6 +75,8 @@ public class JDBCFeatureReader implements FeatureReader<FeatureType, Feature> {
         this.type = type;
         this.store = store;
         this.pkey = store.getDatabaseModel().getPrimaryKey(typeName);
+        this.properties = this.type.getDescriptors().toArray(new PropertyDescriptor[0]);
+        this.values = new Object[this.properties.length];
         
         this.sql = sql;        
         this.cx = cnx;
@@ -88,6 +98,8 @@ public class JDBCFeatureReader implements FeatureReader<FeatureType, Feature> {
         this.rs = other.rs;
         this.cx = other.cx;
         this.release = other.release;
+        this.properties = other.properties;
+        this.values = new Object[this.properties.length];
     }
     
     @Override
@@ -118,12 +130,22 @@ public class JDBCFeatureReader implements FeatureReader<FeatureType, Feature> {
             }
         } catch (SQLException e) {
             throw new FeatureStoreRuntimeException(e);
+        } catch (DataStoreException e) {
+            throw new FeatureStoreRuntimeException(e);
         }
     }
     
-    protected JDBCComplexFeature toFeature(ResultSet rs) throws SQLException{
-        return new JDBCComplexFeature(store, rs, type, 
-                    new DefaultFeatureId(fidBase + pkey.encodeFID(rs)));
+    protected Feature toFeature(ResultSet rs) throws SQLException, DataStoreException{
+        final FeatureId fid = new DefaultFeatureId(fidBase + pkey.encodeFID(rs));
+        if(type instanceof SimpleFeatureType){
+            for(int i=0;i<values.length;i++){
+                final PropertyDescriptor pdesc = properties[i];
+                values[i] = JDBCComplexFeature.readSimpleValue(store.getDialect(), rs, i+1, pdesc);
+            }
+            return new DefaultSimpleFeature((SimpleFeatureType)type, fid, values, false);
+        }else{
+            return new JDBCComplexFeature(store, rs, type, fid);
+        }
     }
     
     @Override

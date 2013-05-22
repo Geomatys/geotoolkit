@@ -44,7 +44,7 @@ public class JDBCFeatureWriterUpdate extends JDBCFeatureReader implements
         FeatureWriter<FeatureType, Feature> {
     
     //we keep the reference a bit longer
-    private JDBCComplexFeature last;
+    private Feature last;
     
     public JDBCFeatureWriterUpdate(final DefaultJDBCFeatureStore store, final String sql, 
             final FeatureType type, Connection cnx, boolean release, final Hints hints)
@@ -53,7 +53,7 @@ public class JDBCFeatureWriterUpdate extends JDBCFeatureReader implements
     }
 
     @Override
-    protected JDBCComplexFeature toFeature(ResultSet rs) throws SQLException {
+    protected Feature toFeature(ResultSet rs) throws SQLException, DataStoreException {
         last = super.toFeature(rs);
         return last;
     }
