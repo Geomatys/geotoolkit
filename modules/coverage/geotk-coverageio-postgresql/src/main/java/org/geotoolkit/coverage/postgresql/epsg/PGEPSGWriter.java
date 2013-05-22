@@ -468,9 +468,11 @@ public class PGEPSGWriter implements EPSGWriter {
             cnx = source.getConnection();
             
             //find similar
-            final Integer similar = findSimilar(cnx, FIND_DATUM, datum_type,origin_description,ellipsoid_code,prime_meridian_code);
-            if(similar != null){ return similar; }
-                        
+            if (!(candidate instanceof VerticalDatum)) {
+                final Integer similar = findSimilar(cnx, FIND_DATUM, datum_type,origin_description,ellipsoid_code,prime_meridian_code);
+                if(similar != null){ return similar; }
+            }
+
             final Integer area_of_use_code = getOrCreateArea(candidate.getDomainOfValidity());
             
             cnx.setReadOnly(false);
