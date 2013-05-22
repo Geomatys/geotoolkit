@@ -37,7 +37,6 @@ import org.geotoolkit.filter.DefaultPropertyIsLike;
 import org.geotoolkit.util.Converters;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.ComplexType;
-import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.feature.type.Name;
 import org.opengis.filter.And;

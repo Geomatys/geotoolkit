@@ -27,6 +27,7 @@ import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -38,18 +39,38 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
+import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.FeatureStoreFinder;
+import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.session.Session;
+import org.geotoolkit.db.JDBCFeatureStore;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.FeatureUtilities;
-import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.storage.DataStoreException;
+import org.geotoolkit.feature.AttributeDescriptorBuilder;
+import org.geotoolkit.feature.DefaultName;
+import org.geotoolkit.geometry.jts.JTS;
+import org.geotoolkit.parameter.ParametersExt;
+import org.geotoolkit.version.VersionControl;
+import org.geotoolkit.version.VersioningException;
+
+import org.junit.Assume;
+import org.junit.BeforeClass;
 import org.junit.Test;
+
+import org.opengis.feature.ComplexAttribute;
+import org.opengis.feature.Property;
+import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.type.AttributeDescriptor;
+import org.opengis.feature.type.AttributeType;
+import org.opengis.feature.type.ComplexType;
+import org.opengis.feature.type.PropertyType;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.Name;
 import org.opengis.parameter.ParameterValueGroup;
@@ -61,24 +82,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
 
 import static org.geotoolkit.db.postgres.PostgresFeatureStoreFactory.*;
-import org.geotoolkit.feature.AttributeDescriptorBuilder;
-import org.geotoolkit.feature.DefaultName;
-import org.geotoolkit.geometry.jts.JTS;
-import org.geotoolkit.parameter.ParametersExt;
-import org.geotoolkit.version.VersionControl;
-import org.geotoolkit.version.VersioningException;
 import static org.junit.Assert.*;
-import org.junit.Assume;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.opengis.feature.ComplexAttribute;
-import org.opengis.feature.Property;
-import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.feature.type.AttributeDescriptor;
-import org.opengis.feature.type.AttributeType;
-import org.opengis.feature.type.ComplexType;
-import org.opengis.feature.type.PropertyType;
-import org.opengis.geometry.complex.ComplexFactory;
 
 /**
  *
@@ -662,6 +666,75 @@ public class PostgresFeatureStoreTest {
         }finally{
             ite.close();
         }
+        
+    }
+    
+    /**
+     * Test hand made query.
+     * 
+     * @throws DataStoreException
+     * @throws VersioningException 
+     */
+    @Test
+    public void testHandMadeSQLQuery() throws Exception{
+        reload(false);
+        final GeometryFactory gf = new GeometryFactory();
+            
+        store.createSchema(FTYPE_COMPLEX.getName(), FTYPE_COMPLEX);
+        final FeatureType resType = store.getFeatureType(store.getNames().iterator().next());
+        
+        final Feature voyage = FeatureUtilities.defaultFeature(resType, "0");
+        voyage.getProperty("identifier").setValue(120);
+        
+        final ComplexAttribute driver = (ComplexAttribute)FeatureUtilities.defaultProperty(resType.getDescriptor("driver"));
+        driver.getProperty("name").setValue("jean-michel");
+        driver.getProperty("code").setValue("BHF:123456");
+        voyage.getProperties().add(driver);
+        
+        final ComplexAttribute stop1 = (ComplexAttribute)FeatureUtilities.defaultProperty(resType.getDescriptor("stops"));
+        stop1.getProperty("location").setValue(gf.createPoint(new Coordinate(-10, 60)));
+        stop1.getProperty("time").setValue(new Date(5000000));
+        voyage.getProperties().add(stop1);
+        
+        final ComplexAttribute stop2 = (ComplexAttribute)FeatureUtilities.defaultProperty(resType.getDescriptor("stops"));
+        stop2.getProperty("location").setValue(gf.createPoint(new Coordinate(30, 15)));
+        stop2.getProperty("time").setValue(new Date(6000000));
+        voyage.getProperties().add(stop2);
+        
+        final ComplexAttribute stop3 = (ComplexAttribute)FeatureUtilities.defaultProperty(resType.getDescriptor("stops"));
+        stop3.getProperty("location").setValue(gf.createPoint(new Coordinate(40, -70)));
+        stop3.getProperty("time").setValue(new Date(7000000));
+        voyage.getProperties().add(stop3);
+        
+        store.addFeatures(resType.getName(), Collections.singleton(voyage));
+        
+        final Query query = QueryBuilder.language(JDBCFeatureStore.CUSTOM_SQL, "SELECT * FROM \"Stop\"", new DefaultName("s1"));        
+        final FeatureReader ite = store.getFeatureReader(query);
+        final boolean[] found = new boolean[3];
+        try{
+            while(ite.hasNext()){
+                final Feature feature = ite.next();
+                final Timestamp time = (Timestamp) feature.getProperty("time").getValue();
+                final Point location = (Point) feature.getProperty("location").getValue();
+                if(time.getTime() == 5000000){
+                    assertEquals(stop1.getProperty("location").getValue(), location);
+                    found[0] = true;
+                }else if(time.getTime() == 6000000){
+                    assertEquals(stop2.getProperty("location").getValue(), location);
+                    found[1] = true;
+                }else if(time.getTime() == 7000000){
+                    assertEquals(stop3.getProperty("location").getValue(), location);
+                    found[2] = true;
+                }else{
+                    fail("Unexpected property \n"+feature);
+                }
+                assertNotNull(JTS.findCoordinateReferenceSystem((Geometry)feature.getDefaultGeometryProperty().getValue()));
+            }
+        }finally{
+            ite.close();
+        }
+        
+        for(boolean b : found) assertTrue(b);        
         
     }
     

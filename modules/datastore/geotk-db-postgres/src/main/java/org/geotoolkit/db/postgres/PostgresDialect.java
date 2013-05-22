@@ -51,7 +51,6 @@ import org.geotoolkit.db.JDBCFeatureStore;
 import org.geotoolkit.db.JDBCFeatureStoreUtilities;
 import static org.geotoolkit.db.JDBCFeatureStoreUtilities.*;
 import org.geotoolkit.db.dialect.AbstractSQLDialect;
-import org.geotoolkit.db.postgres.ewkb.JtsBinaryParser;
 import org.geotoolkit.db.reverse.ColumnMetaModel;
 import org.geotoolkit.db.reverse.PrimaryKey;
 import org.geotoolkit.factory.Hints;
@@ -122,7 +121,7 @@ import org.opengis.util.FactoryException;
  * 
  * @author Johann Sorel (Geomatys)
  */
-public class PostgresDialect extends AbstractSQLDialect{
+final class PostgresDialect extends AbstractSQLDialect{
 
     private static final String GEOM_ENCODING = "Encoding";
     private static enum GeometryEncoding{
@@ -374,33 +373,18 @@ public class PostgresDialect extends AbstractSQLDialect{
     
     //readers
     private final ThreadLocal<WKBReader> wkbReader = new ThreadLocal<WKBReader>();
-    private final JtsBinaryParser hexewkbReader = new JtsBinaryParser(){
-
-        @Override
-        public Geometry parse(String value) {
-            final Geometry geom =  super.parse(value);
-
-            if(geom != null){
-                final int srid = geom.getSRID();
-                if(srid >= 0){
-                    try {
-                        //set the real crs
-                        geom.setUserData(decodeCRS(geom.getSRID(), null));
-                    } catch (SQLException ex) {
-                        featurestore.getLogger().log(Level.WARNING, ex.getLocalizedMessage(),ex);
-                    }
-                }
-            }
-            return geom;
-        }
-
-    };
+    private final PostgisHexEWKB ewkbReader;
     
     //cache
     private Version version = null;
 
-    public PostgresDialect(DefaultJDBCFeatureStore datastore) {
+    PostgresDialect(DefaultJDBCFeatureStore datastore) {
         this.featurestore = datastore;
+        ewkbReader = new PostgisHexEWKB(featurestore.getGeometryFactory(),this);
+    }
+
+    DefaultJDBCFeatureStore getFeaturestore() {
+        return featurestore;
     }
 
     @Override
@@ -948,7 +932,7 @@ public class PostgresDialect extends AbstractSQLDialect{
         
         switch((GeometryEncoding)descriptor.getType().getUserData().get(GEOM_ENCODING)){
             case HEXEWKB:
-                return hexewkbReader.parse(rs.getString(column));
+                return ewkbReader.read(rs.getString(column));
             case WKB:
                 WKBReader reader = wkbReader.get();
                 if (reader == null) {
@@ -969,9 +953,24 @@ public class PostgresDialect extends AbstractSQLDialect{
     public Geometry decodeGeometryValue(GeometryDescriptor descriptor, ResultSet rs, 
         int column) throws IOException, SQLException {
         
-        switch((GeometryEncoding)descriptor.getType().getUserData().get(GEOM_ENCODING)){
+        GeometryEncoding ge = null;
+        final Map userData = descriptor.getType().getUserData();
+        if(userData!=null){
+            ge = (GeometryEncoding)userData.get(GEOM_ENCODING);
+        }
+        if(ge==null){
+            //try to guess type
+            final Object obj = rs.getObject(column);
+            if(obj instanceof String){
+                ge = GeometryEncoding.WKT;
+            }else{
+                ge = GeometryEncoding.HEXEWKB; 
+            }
+        }
+        
+        switch(ge){
             case HEXEWKB:
-                return hexewkbReader.parse(rs.getString(column));
+                return ewkbReader.read(rs.getString(column));
             case WKB:
                 WKBReader reader = wkbReader.get();
                 if (reader == null) {

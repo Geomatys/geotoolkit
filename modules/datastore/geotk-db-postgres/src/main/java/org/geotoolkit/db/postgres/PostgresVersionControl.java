@@ -27,7 +27,6 @@ import java.util.Date;
 import java.util.List;
 import org.geotoolkit.db.JDBCFeatureStoreUtilities;
 import org.geotoolkit.db.dialect.SQLDialect;
-import org.geotoolkit.factory.HintsPending;
 import org.geotoolkit.version.AbstractVersionControl;
 import org.geotoolkit.version.Version;
 import org.geotoolkit.version.VersioningException;

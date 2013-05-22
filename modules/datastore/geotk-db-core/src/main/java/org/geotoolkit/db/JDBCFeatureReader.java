@@ -74,7 +74,8 @@ public class JDBCFeatureReader implements FeatureReader<FeatureType, Feature> {
         
         this.type = type;
         this.store = store;
-        this.pkey = store.getDatabaseModel().getPrimaryKey(typeName);
+        PrimaryKey pk = store.getDatabaseModel().getPrimaryKey(typeName);
+        this.pkey = (pk==null)? new PrimaryKey("qom") : pk;
         this.properties = this.type.getDescriptors().toArray(new PropertyDescriptor[0]);
         this.values = new Object[this.properties.length];
         
