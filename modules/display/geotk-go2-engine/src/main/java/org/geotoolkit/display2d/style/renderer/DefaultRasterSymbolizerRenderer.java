@@ -55,6 +55,7 @@ import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.style.CachedRasterSymbolizer;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
+import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.style.function.CompatibleColorModel;
 import org.geotoolkit.display2d.style.raster.ShadedReliefOp;
 import org.geotoolkit.display2d.style.raster.StatisticOp;
@@ -118,60 +119,13 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
             double[] resolution = renderingContext.getResolution();
             Envelope bounds = new GeneralEnvelope(renderingContext.getCanvasObjectiveBounds());
             resolution = checkResolution(resolution,bounds);
+            final CoverageMapLayer coverageLayer = projectedCoverage.getLayer();
+            final CoordinateReferenceSystem coverageMapLayerCRS = coverageLayer.getBounds().getCoordinateReferenceSystem();
 
-            if (projectedCoverage.getLayer() instanceof DefaultCoverageMapLayer) {
-                final DefaultCoverageMapLayer covMapLayer = (DefaultCoverageMapLayer)projectedCoverage.getLayer();
-                final Query query = covMapLayer.getQuery();
-                Map<String,Double> values = null;
-                if (query != null) {
-                    // visit the filter to extract all values
-                    final FilterVisitor fv = new DefaultFilterVisitor() {
-
-                        @Override
-                        public Object visit(PropertyIsEqualTo filter, Object data) {
-                            final Map<String,Double> values = (Map<String,Double>) data;
-                            final String expr1 = ((PropertyName)filter.getExpression1()).getPropertyName();
-                            final Double expr2 = Double.valueOf(((Literal)filter.getExpression2()).getValue().toString());
-                            values.put(expr1, expr2);
-                            return values;
-                        }
-
-                    };
-
-                    final Filter filter = query.getFilter();
-                    values = (Map<String,Double>) filter.accept(fv, new HashMap<String, Double>());
-                }
-
-                if (values != null) {
-                    final CoordinateReferenceSystem crsND = covMapLayer.getBounds().getCoordinateReferenceSystem();
-                    final GeneralEnvelope env = new GeneralEnvelope(crsND);
-
-                    // Set ranges from the map
-                    for (int j=0; j < bounds.getDimension(); j++) {
-                        env.setRange(j, bounds.getMinimum(j), bounds.getMaximum(j));
-                    }
-
-                    // Set ranges from the filter
-                    for (int i=0; i < crsND.getCoordinateSystem().getDimension(); i++) {
-                        final CoordinateSystemAxis axis = crsND.getCoordinateSystem().getAxis(i);
-                        final String axisName = axis.getName().getCode();
-                        if (values.containsKey(axisName)) {
-                            final Double val = values.get(axisName);
-                            env.setRange(i, val, val);
-                        }
-                    }
-
-                    bounds = env;
-                    final double[] tempRes = new double[crsND.getCoordinateSystem().getDimension()];
-                    for (int i=0; i < tempRes.length; i++) {
-                        if (i < resolution.length) {
-                            tempRes[i] = resolution[i];
-                        } else {
-                            tempRes[i] = Math.nextUp(0);
-                        }
-                    }
-                    resolution = tempRes;
-                }
+            final Map<String,Double> queryValues = extractQuery(projectedCoverage.getLayer());
+            if (queryValues != null && !queryValues.isEmpty()) {
+                bounds = fixEnvelopeWithQuery(queryValues, bounds, coverageMapLayerCRS);
+                resolution = fixResolutionWithCRS(resolution, coverageMapLayerCRS);
             }
 
             final GridCoverageReadParam param = new GridCoverageReadParam();
@@ -361,6 +315,98 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
             LOGGER.warning(e.getMessage());
         }
     }
+
+    /**
+     * Fix portrayal resolutions from CoverageMapLayer bounds CRS dimensions.
+     *
+     * @param resolution default resolution
+     * @param coverageCRS CoverageMapLayer CRS
+     * @return fixed resolutions or input resolution if coverageCRS is null.
+     */
+    private double[] fixResolutionWithCRS(double[] resolution, CoordinateReferenceSystem coverageCRS) {
+        if (coverageCRS != null) {
+            final double[] tempRes = new double[coverageCRS.getCoordinateSystem().getDimension()];
+            for (int i=0; i < tempRes.length; i++) {
+                if (i < resolution.length) {
+                    tempRes[i] = resolution[i];
+                } else {
+                    tempRes[i] = Math.nextUp(0);
+                }
+            }
+            return tempRes;
+        }
+        return resolution;
+    }
+
+    /**
+     * Set envelope ranges using values map extracted from Query.
+     * This method use coverage CRS axis names to link Query parameters.
+     *
+     * @param values Map<String, Double> extracted from CoverageMapLayer Query
+     * @param bounds Envelope to fix.
+     * @param coverageCRS complete ND CRS
+     * @return fixed Envelope or input bounds parameter if values are null or empty.
+     */
+    public static Envelope fixEnvelopeWithQuery(final Map<String, Double> values, final Envelope bounds,
+                                                final CoordinateReferenceSystem coverageCRS) {
+        if (values != null && !values.isEmpty()) {
+            final GeneralEnvelope env = new GeneralEnvelope(coverageCRS);
+
+            // Set ranges from the map
+            for (int j=0; j < bounds.getDimension(); j++) {
+                env.setRange(j, bounds.getMinimum(j), bounds.getMaximum(j));
+            }
+
+            // Set ranges from the filter
+            for (int i=0; i < coverageCRS.getCoordinateSystem().getDimension(); i++) {
+                final CoordinateSystemAxis axis = coverageCRS.getCoordinateSystem().getAxis(i);
+                final String axisName = axis.getName().getCode();
+                if (values.containsKey(axisName)) {
+                    final Double val = values.get(axisName);
+                    env.setRange(i, val, val);
+                }
+            }
+
+            return env;
+        }
+
+        return bounds;
+    }
+
+    /**
+     * Extract query parameters from CoverageMapLayer if his an instance of DefaultCoverageMapLayer.
+     *
+     * @param coverageMapLayer CoverageMapLayer
+     * @return a Map</String,Double> with query parameters or null
+     */
+    public static Map<String, Double> extractQuery(final CoverageMapLayer coverageMapLayer) {
+
+        Map<String,Double> values = null;
+        if (coverageMapLayer instanceof DefaultCoverageMapLayer) {
+            final DefaultCoverageMapLayer covMapLayer = (DefaultCoverageMapLayer) coverageMapLayer;
+            final Query query = covMapLayer.getQuery();
+            if (query != null) {
+                // visit the filter to extract all values
+                final FilterVisitor fv = new DefaultFilterVisitor() {
+
+                    @Override
+                    public Object visit(PropertyIsEqualTo filter, Object data) {
+                        final Map<String,Double> values = (Map<String,Double>) data;
+                        final String expr1 = ((PropertyName)filter.getExpression1()).getPropertyName();
+                        final Double expr2 = Double.valueOf(((Literal)filter.getExpression2()).getValue().toString());
+                        values.put(expr1, expr2);
+                        return values;
+                    }
+
+                };
+
+                final Filter filter = query.getFilter();
+                values = (Map<String,Double>) filter.accept(fv, new HashMap<String, Double>());
+            }
+        }
+        return values;
+    }
+
 
     ////////////////////////////////////////////////////////////////////////////
     // Renderedmage JAI image operations ///////////////////////////////////////
