@@ -349,14 +349,4 @@ public abstract class GenericRetypeFeatureIterator<F extends Feature, R extends 
         return new GenericRetypeFeatureCollection(original, mask);
     }
 
-    public static Feature apply(Feature candidate, final FeatureType mask){
-        final PropertyDescriptor[] types = typeAttributes(candidate.getType(), mask);
-
-        final Collection<Property> properties = new ArrayList<Property>();
-        for(final PropertyDescriptor prop : types){
-            properties.addAll(candidate.getProperties(prop.getName()));
-        }
-        return FF.createFeature(properties, mask, candidate.getIdentifier().getID());
-
-    }
 }

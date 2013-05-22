@@ -29,8 +29,8 @@ import java.util.logging.Logger;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.filter.capability.DefaultFilterCapabilities;
 import org.geotoolkit.util.logging.Logging;
+import org.opengis.feature.type.ComplexType;
 
-import org.opengis.feature.type.FeatureType;
 import org.opengis.filter.And;
 import org.opengis.filter.BinaryComparisonOperator;
 import org.opengis.filter.ExcludeFilter;
@@ -51,9 +51,7 @@ import org.opengis.filter.PropertyIsLike;
 import org.opengis.filter.PropertyIsNil;
 import org.opengis.filter.PropertyIsNotEqualTo;
 import org.opengis.filter.PropertyIsNull;
-import org.opengis.filter.capability.ComparisonOperators;
 import org.opengis.filter.capability.FilterCapabilities;
-import org.opengis.filter.capability.ScalarCapabilities;
 import org.opengis.filter.expression.Add;
 import org.opengis.filter.expression.BinaryExpression;
 import org.opengis.filter.expression.Divide;
@@ -155,7 +153,7 @@ public class CapabilitiesFilterSplitter implements FilterVisitor, ExpressionVisi
      * The given filterCapabilities that we're splitting on.
      */
     private final DefaultFilterCapabilities fcs;
-    private final FeatureType parent;
+    private final ComplexType parent;
     private final FilterFactory ff;
     private Filter original = null;
 
@@ -167,7 +165,7 @@ public class CapabilitiesFilterSplitter implements FilterVisitor, ExpressionVisi
      *            process.
      * @param parent The FeatureType that this filter involves. Why is this needed?
      */
-    public CapabilitiesFilterSplitter(final DefaultFilterCapabilities fcs, final FeatureType parent) {
+    public CapabilitiesFilterSplitter(final DefaultFilterCapabilities fcs, final ComplexType parent) {
         this.ff = FactoryFinder.getFilterFactory(null);
         this.fcs = fcs;
         this.parent = parent;

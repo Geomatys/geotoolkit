@@ -18,6 +18,7 @@ package org.geotoolkit.index.tree;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -196,6 +197,6 @@ public class DefaultNode extends Node {
         col.addAll(children);
         String strparent =  (parent == null)?"null":String.valueOf(parent.hashCode());
         return Trees.toString(Classes.getShortClassName(this)+" : "+this.hashCode()+" parent : "+strparent
-                + " leaf : "+isLeaf()+ " userPropLeaf : "+(Boolean)getUserProperty(PROP_ISLEAF), col);
+                + " leaf : "+isLeaf()+ " userPropLeaf : "+(Boolean)getUserProperty(PROP_ISLEAF), Collections.EMPTY_LIST);
     }
 }
