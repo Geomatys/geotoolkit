@@ -32,6 +32,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -71,10 +72,13 @@ import org.junit.Assume;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.opengis.feature.ComplexAttribute;
+import org.opengis.feature.Property;
+import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.AttributeType;
 import org.opengis.feature.type.ComplexType;
 import org.opengis.feature.type.PropertyType;
+import org.opengis.geometry.complex.ComplexFactory;
 
 /**
  *
@@ -424,6 +428,7 @@ public class PostgresFeatureStoreTest {
         try{
             final Feature resFeature = ite.next();
             assertNotNull(resFeature);
+            assertTrue(resFeature instanceof SimpleFeature);
             assertEquals(true, resFeature.getProperty("boolean").getValue());
             assertEquals(45, resFeature.getProperty("byte").getValue());
             assertEquals(963, resFeature.getProperty("short").getValue());
@@ -466,6 +471,7 @@ public class PostgresFeatureStoreTest {
         try{
             final Feature resFeature = ite.next();
             assertNotNull(resFeature);
+            assertTrue(resFeature instanceof SimpleFeature);
             assertArrayEquals(new Boolean[]{true,false,true},       (Boolean[])resFeature.getProperty("boolean").getValue());
             assertArrayEquals(new Short[]{3,6,9},                   (Short[])resFeature.getProperty("byte").getValue());
             assertArrayEquals(new Short[]{-5,12,-50},               (Short[])resFeature.getProperty("short").getValue());
@@ -549,6 +555,7 @@ public class PostgresFeatureStoreTest {
         try{
             final Feature resFeature = ite.next();
             assertNotNull(resFeature);
+            assertTrue(resFeature instanceof SimpleFeature);
             Geometry geom;
             geom = (Geometry)resFeature.getProperty("geometry").getValue();
             assertEquals(point,geom);
@@ -620,7 +627,38 @@ public class PostgresFeatureStoreTest {
         try{
             final Feature resFeature = ite.next();
             assertNotNull(resFeature);
-            System.out.println(resFeature);
+            assertTrue(!(resFeature instanceof SimpleFeature));
+            
+            assertEquals(120l, resFeature.getProperty("identifier").getValue());
+            
+            final ComplexAttribute resDriver = (ComplexAttribute) resFeature.getProperty("driver");
+            assertEquals("jean-michel", resDriver.getProperty("name").getValue());
+            assertEquals("BHF:123456", resDriver.getProperty("code").getValue());
+            
+            final Collection<Property> stops = resFeature.getProperties("stops");
+            assertEquals(3, stops.size());
+            final boolean[] found = new boolean[3];
+            for(Property stop : stops){
+                assertTrue(stop instanceof ComplexAttribute);
+                final ComplexAttribute ca = (ComplexAttribute) stop;
+                final Timestamp time = (Timestamp) ca.getProperty("time").getValue();
+                final Point location = (Point) ca.getProperty("location").getValue();
+                if(time.getTime() == 5000000){
+                    assertEquals(stop1.getProperty("location").getValue(), location);
+                    found[0] = true;
+                }else if(time.getTime() == 6000000){
+                    assertEquals(stop2.getProperty("location").getValue(), location);
+                    found[1] = true;
+                }else if(time.getTime() == 7000000){
+                    assertEquals(stop3.getProperty("location").getValue(), location);
+                    found[2] = true;
+                }else{
+                    fail("Unexpected property \n"+ca);
+                }
+            }
+            
+            for(boolean b : found) assertTrue(b);
+            
         }finally{
             ite.close();
         }
