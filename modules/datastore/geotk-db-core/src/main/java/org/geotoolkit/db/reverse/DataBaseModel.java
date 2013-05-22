@@ -90,7 +90,7 @@ public final class DataBaseModel {
     private Map<String,SchemaMetaModel> schemas = null;
     private Set<Name> nameCache = null;
     private final boolean simpleTypes;
-
+    
     //metadata getSuperTable query is not implemented on all databases
     private Boolean handleSuperTableMetadata = null;
 
@@ -176,9 +176,12 @@ public final class DataBaseModel {
             schemaSet = metadata.getSchemas();
             while (schemaSet.next()) {
                 final String SchemaName = schemaSet.getString(Schema.TABLE_SCHEM);
-                final SchemaMetaModel schema = analyzeSchema(SchemaName);
+                final SchemaMetaModel schema = analyzeSchema(SchemaName,cx);
                 schemas.put(schema.name, schema);
             }
+            
+            reverseSimpleFeatureTypes(cx);
+            reverseComplexFeatureTypes();
 
         } catch (SQLException e) {
             throw new DataStoreException("Error occurred analyzing database model.", e);
@@ -187,8 +190,6 @@ public final class DataBaseModel {
             closeSafe(store.getLogger(),cx);
         }
 
-        reverseSimpleFeatureTypes();
-        reverseComplexFeatureTypes();
 
         //build indexes---------------------------------------------------------
         final String baseSchemaName = store.getDatabaseSchema();
@@ -226,14 +227,12 @@ public final class DataBaseModel {
         
     }
 
-    private SchemaMetaModel analyzeSchema(final String schemaName) throws DataStoreException{
+    private SchemaMetaModel analyzeSchema(final String schemaName, final Connection cx) throws DataStoreException{
 
         final SchemaMetaModel schema = new SchemaMetaModel(schemaName);
 
-        Connection cx = null;
         ResultSet tableSet = null;
         try {
-            cx = store.getDataSource().getConnection();
 
             final DatabaseMetaData metadata = cx.getMetaData();
             final String tableNamePattern = 
@@ -244,7 +243,7 @@ public final class DataBaseModel {
                     new String[]{Table.VALUE_TYPE_TABLE, Table.VALUE_TYPE_VIEW});
 
             while (tableSet.next()) {
-                final TableMetaModel table = analyzeTable(tableSet);
+                final TableMetaModel table = analyzeTable(tableSet,cx);
                 schema.tables.put(table.name, table);
             }
 
@@ -252,13 +251,12 @@ public final class DataBaseModel {
             throw new DataStoreException("Error occurred analyzing database model.", e);
         } finally {
             closeSafe(store.getLogger(),tableSet);
-            closeSafe(store.getLogger(),cx);
         }
 
         return schema;
     }
 
-    private TableMetaModel analyzeTable(final ResultSet tableSet) throws DataStoreException, SQLException{
+    private TableMetaModel analyzeTable(final ResultSet tableSet, final Connection cx) throws DataStoreException, SQLException{
         final SQLDialect dialect = store.getDialect();
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder(FTF);
 
@@ -268,16 +266,14 @@ public final class DataBaseModel {
 
         final TableMetaModel table = new TableMetaModel(tableName,tableType);
         
-        Connection cx = null;
         ResultSet result = null;
         try {
-            cx = store.getDataSource().getConnection();
             final DatabaseMetaData metadata = cx.getMetaData();
 
             //explore all columns ----------------------------------------------
             result = metadata.getColumns(null, schemaName, tableName, "%");
             while (result.next()) {
-                ftb.add(analyzeColumn(result));
+                ftb.add(analyzeColumn(result,cx));
             }
             closeSafe(store.getLogger(),result);
 
@@ -457,7 +453,6 @@ public final class DataBaseModel {
             throw new DataStoreException("Error occurred analyzing table : " + tableName, e);
         } finally {
             closeSafe(store.getLogger(),result);
-            closeSafe(store.getLogger(),cx);
         }
 
         ftb.setName(tableName);
@@ -465,7 +460,7 @@ public final class DataBaseModel {
         return table;
     }
 
-    private AttributeDescriptor analyzeColumn(final ResultSet columnSet) throws SQLException, DataStoreException{
+    private AttributeDescriptor analyzeColumn(final ResultSet columnSet, final Connection cx) throws SQLException, DataStoreException{
         final SQLDialect dialect = store.getDialect();
         final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder(FTF);
         final AttributeTypeBuilder atb = new AttributeTypeBuilder(FTF);
@@ -480,14 +475,10 @@ public final class DataBaseModel {
         atb.setName(columnName);
         adb.setName(columnName);
 
-        Connection cx = null;
         try {
-            cx = store.getDataSource().getConnection();
             dialect.decodeColumnType(atb, cx, columnTypeName, columnDataType, schemaName, tableName, columnName);
         } catch (SQLException e) {
             throw new DataStoreException("Error occurred analyzing column : " + columnName, e);
-        } finally {
-            closeSafe(store.getLogger(),cx);
         }
 
         //table values are always min 1, max 1
@@ -588,7 +579,7 @@ public final class DataBaseModel {
     /**
      * Rebuild simple feature types for each table.
      */
-    private void reverseSimpleFeatureTypes(){
+    private void reverseSimpleFeatureTypes(final Connection cx){
         final SQLDialect dialect = store.getDialect();
         
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder(FTF);
@@ -636,17 +627,13 @@ public final class DataBaseModel {
                         // its srid first
                         Integer srid = null;
                         CoordinateReferenceSystem crs = null;
-                        Connection cx = null;
                         try {
-                            cx = store.getDataSource().getConnection();
                             srid = dialect.getGeometrySRID(store.getDatabaseSchema(), tableName, name, cx);
                             if(srid != null)
                                 crs = dialect.createCRS(srid, cx);
                         } catch (SQLException e) {
                             String msg = "Error occured determing srid for " + tableName + "."+ name;
                             store.getLogger().log(Level.WARNING, msg, e);
-                        } finally{
-                            JDBCFeatureStoreUtilities.closeSafe(store.getLogger(), cx);
                         }
 
                         atb.setCRS(crs);
