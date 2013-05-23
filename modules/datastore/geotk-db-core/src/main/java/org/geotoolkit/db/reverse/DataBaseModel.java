@@ -299,7 +299,8 @@ public final class DataBaseModel {
         try {
             Filter filter = FF.equals(FF.property(Table.TABLE_SCHEM), FF.literal(schemaName));
             
-            if(Parameters.getOrCreate(AbstractJDBCFeatureStoreFactory.TABLE,store.getConfiguration()).getValue()!=null){
+            if(Parameters.getOrCreate(AbstractJDBCFeatureStoreFactory.TABLE,store.getConfiguration()).getValue()!=null &&
+               !Parameters.getOrCreate(AbstractJDBCFeatureStoreFactory.TABLE,store.getConfiguration()).getValue().toString().isEmpty()){
                 filter = FF.and(filter, FF.equals(FF.property(Table.TABLE_NAME), 
                         FF.literal(Parameters.getOrCreate(AbstractJDBCFeatureStoreFactory.TABLE,store.getConfiguration()).getValue().toString())));
             }
