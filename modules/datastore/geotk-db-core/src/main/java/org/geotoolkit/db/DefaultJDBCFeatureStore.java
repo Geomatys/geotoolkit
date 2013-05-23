@@ -663,7 +663,7 @@ public class DefaultJDBCFeatureStore extends AbstractFeatureStore implements JDB
                 dbmodel.clearCache();
                 
                 for(TypeRelation relation : relations){
-                    final String baseTypeName = relation.type.getName().getLocalPart();
+                    final String baseTypeName = relation.type.getLocalPart();
                     final String propertyName = relation.property.getName().getLocalPart();
                     final int minOccurs = relation.property.getMinOccurs();
                     final int maxOccurs = relation.property.getMaxOccurs();
@@ -676,7 +676,7 @@ public class DefaultJDBCFeatureStore extends AbstractFeatureStore implements JDB
                     }else if(relation.property.getType() instanceof ComplexType){
                         final String targetTypeName = relation.property.getType().getName().getLocalPart();
                         final PrimaryKey targetKey = dbmodel.getPrimaryKey(new DefaultName(getDefaultNamespace(), targetTypeName));
-                        final PrimaryKey sourceKey = dbmodel.getPrimaryKey(relation.type.getName());
+                        final PrimaryKey sourceKey = dbmodel.getPrimaryKey(relation.type);
                         if(targetKey.getColumns().size() != 1 || sourceKey.getColumns().size() != 1){
                             throw new DataStoreException("Multiple key column relations not supported.");
                         }
@@ -833,8 +833,10 @@ public class DefaultJDBCFeatureStore extends AbstractFeatureStore implements JDB
      */
     private void decompose(ComplexType type, List<FeatureType> types, List<TypeRelation> relations) throws DataStoreException{
         
+        final Name dbName = new DefaultName(getDefaultNamespace(), type.getName().getLocalPart());
+        
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
-        ftb.setName(type.getName());
+        ftb.setName(dbName);
         for(PropertyDescriptor desc : type.getDescriptors()){
             final PropertyType pt = desc.getType();
             if(pt instanceof AssociationType){
@@ -844,7 +846,7 @@ public class DefaultJDBCFeatureStore extends AbstractFeatureStore implements JDB
                     throw new DataStoreException("Only associations with complex type target are supported");
                 }
                 final TypeRelation relation = new TypeRelation();
-                relation.type = type;
+                relation.type = dbName;
                 relation.property = desc;
                 relations.add(relation);
                 decompose(((ComplexType)attType), types, relations);
@@ -852,7 +854,7 @@ public class DefaultJDBCFeatureStore extends AbstractFeatureStore implements JDB
             }else if(pt instanceof ComplexType){
                 final ComplexType comType = (ComplexType) pt;
                 final TypeRelation relation = new TypeRelation();
-                relation.type = type;
+                relation.type = dbName;
                 relation.property = desc;
                 relations.add(relation);
                 decompose(comType, types, relations);
@@ -866,7 +868,7 @@ public class DefaultJDBCFeatureStore extends AbstractFeatureStore implements JDB
     }
     
     private static class TypeRelation {
-        ComplexType type;
+        Name type;
         PropertyDescriptor property;
     }
     

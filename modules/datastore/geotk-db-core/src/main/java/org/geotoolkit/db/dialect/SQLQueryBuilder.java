@@ -43,6 +43,7 @@ import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.ComplexType;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.GeometryDescriptor;
+import org.opengis.feature.type.Name;
 import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;
 import org.opengis.filter.PropertyIsLessThanOrEqualTo;
@@ -511,9 +512,9 @@ public class SQLQueryBuilder {
      * Generates a 'ALTER TABLE - ADD FOREIGN KEY (-) REFERENCES -(-)' sql query.
      */
     public String alterTableAddForeignKey(final ComplexType sourceType, final String sourceProperty, 
-            final ComplexType targetType, final String targetProperty, boolean cascade) throws SQLException{
+            final Name targetType, final String targetProperty, boolean cascade) throws SQLException{
         final String sourceName = sourceType.getName().getLocalPart();
-        final String targetName = targetType.getName().getLocalPart();
+        final String targetName = targetType.getLocalPart();
         
         final StringBuilder sql = new StringBuilder();
         sql.append("ALTER TABLE ");
