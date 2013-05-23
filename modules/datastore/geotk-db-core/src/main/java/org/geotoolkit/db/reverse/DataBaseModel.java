@@ -29,6 +29,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -36,7 +37,6 @@ import java.util.Set;
 import java.util.logging.Level;
 import org.geotoolkit.db.AbstractJDBCFeatureStoreFactory;
 import org.geotoolkit.db.JDBCFeatureStore;
-import org.geotoolkit.db.JDBCFeatureStoreUtilities;
 import static org.geotoolkit.db.JDBCFeatureStoreUtilities.*;
 import org.geotoolkit.db.dialect.SQLDialect;
 import org.geotoolkit.db.reverse.ColumnMetaModel.Type;
@@ -47,6 +47,7 @@ import org.geotoolkit.db.reverse.MetaDataConstants.Index;
 import org.geotoolkit.db.reverse.MetaDataConstants.Schema;
 import org.geotoolkit.db.reverse.MetaDataConstants.SuperTable;
 import org.geotoolkit.db.reverse.MetaDataConstants.Table;
+import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.HintsPending;
 import org.geotoolkit.feature.AttributeDescriptorBuilder;
 import org.geotoolkit.feature.AttributeTypeBuilder;
@@ -57,6 +58,8 @@ import org.geotoolkit.feature.type.ModifiableType;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.storage.DataStoreException;
 import org.opengis.feature.type.*;
+import org.opengis.filter.Filter;
+import org.opengis.filter.FilterFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
@@ -78,6 +81,7 @@ public final class DataBaseModel {
      * Custom factory where types can be modified after they are created.
      */
     private static final FeatureTypeFactory FTF = new ModifiableFeatureTypeFactory();
+    private static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
     /**
      * Dummy type which will be replaced dynamically in the reverse engineering process.
      */
@@ -93,6 +97,15 @@ public final class DataBaseModel {
     
     //metadata getSuperTable query is not implemented on all databases
     private Boolean handleSuperTableMetadata = null;
+    
+    //various cache while analyzing model
+    private CachedResultSet cacheSchemas;
+    private CachedResultSet cacheTables;
+    private CachedResultSet cacheColumns;
+    private CachedResultSet cachePrimaryKeys;
+    private CachedResultSet cacheImportedKeys;
+    private CachedResultSet cacheExportedKeys;
+    private CachedResultSet cacheIndexInfos;
 
     public DataBaseModel(final JDBCFeatureStore store, final boolean simpleTypes){
         this.store = store;
@@ -168,14 +181,60 @@ public final class DataBaseModel {
         schemas = new HashMap<String, SchemaMetaModel>();
 
         Connection cx = null;
-        ResultSet schemaSet = null;
         try {
             cx = store.getDataSource().getConnection();
 
             final DatabaseMetaData metadata = cx.getMetaData();
-            schemaSet = metadata.getSchemas();
-            while (schemaSet.next()) {
-                final String SchemaName = schemaSet.getString(Schema.TABLE_SCHEM);
+            
+            // Cache all metadata informations, we will loop on them plenty of times ////////
+            cacheSchemas = new CachedResultSet(metadata.getSchemas(), 
+                    Schema.TABLE_SCHEM);
+            cacheTables = new CachedResultSet(
+                    metadata.getTables(null,null,null,new String[]{Table.VALUE_TYPE_TABLE, Table.VALUE_TYPE_VIEW}), 
+                    Table.TABLE_SCHEM,
+                    Table.TABLE_NAME,
+                    Table.TABLE_TYPE);
+            cacheColumns = new CachedResultSet(metadata.getColumns(null, null, null, "%"),
+                    Column.TABLE_SCHEM,
+                    Column.TABLE_NAME,
+                    Column.COLUMN_NAME,
+                    Column.DATA_TYPE,
+                    Column.TYPE_NAME,
+                    Column.IS_NULLABLE,
+                    Column.IS_AUTOINCREMENT);
+            cachePrimaryKeys = new CachedResultSet(metadata.getPrimaryKeys(null, null, null),
+                    Column.TABLE_SCHEM,
+                    Column.TABLE_NAME,
+                    Column.COLUMN_NAME);            
+            cacheImportedKeys = new CachedResultSet(metadata.getImportedKeys(null, null, null),
+                    ImportedKey.FKTABLE_SCHEM,
+                    ImportedKey.FKTABLE_NAME,
+                    ImportedKey.FKCOLUMN_NAME,
+                    ImportedKey.PKTABLE_SCHEM,
+                    ImportedKey.PKTABLE_NAME,
+                    ImportedKey.PKCOLUMN_NAME,
+                    ImportedKey.DELETE_RULE);
+            cacheExportedKeys = new CachedResultSet(metadata.getExportedKeys(null, null, null),
+                    ImportedKey.PKTABLE_SCHEM,
+                    ImportedKey.PKTABLE_NAME,
+                    ExportedKey.PKCOLUMN_NAME,
+                    ExportedKey.FKTABLE_SCHEM,
+                    ExportedKey.FKTABLE_NAME,
+                    ExportedKey.FKCOLUMN_NAME,
+                    ImportedKey.DELETE_RULE);
+            cacheIndexInfos = new CachedResultSet(metadata.getIndexInfo(null, null, "%",true,false),
+                    Index.TABLE_SCHEM,
+                    Index.TABLE_NAME,
+                    Index.COLUMN_NAME,
+                    Index.INDEX_NAME);
+            
+                
+            ////////////////////////////////////////////////////////////////////////////////
+            
+            
+            final Iterator<Map> ite = cacheSchemas.filter(Filter.INCLUDE);
+            while(ite.hasNext()) {
+                final String SchemaName = (String)ite.next().get(Schema.TABLE_SCHEM);
                 final SchemaMetaModel schema = analyzeSchema(SchemaName,cx);
                 schemas.put(schema.name, schema);
             }
@@ -186,8 +245,14 @@ public final class DataBaseModel {
         } catch (SQLException e) {
             throw new DataStoreException("Error occurred analyzing database model.", e);
         } finally {
-            closeSafe(store.getLogger(),schemaSet);
             closeSafe(store.getLogger(),cx);
+            cacheSchemas = null;
+            cacheTables = null;
+            cacheColumns = null;
+            cachePrimaryKeys = null;
+            cacheImportedKeys = null;
+            cacheExportedKeys = null;
+            cacheIndexInfos = null;
         }
 
 
@@ -231,64 +296,66 @@ public final class DataBaseModel {
 
         final SchemaMetaModel schema = new SchemaMetaModel(schemaName);
 
-        ResultSet tableSet = null;
         try {
+            Filter filter = FF.equals(FF.property(Table.TABLE_SCHEM), FF.literal(schemaName));
+            
+            if(Parameters.getOrCreate(AbstractJDBCFeatureStoreFactory.TABLE,store.getConfiguration()).getValue()!=null){
+                filter = FF.and(filter, FF.equals(FF.property(Table.TABLE_NAME), 
+                        FF.literal(Parameters.getOrCreate(AbstractJDBCFeatureStoreFactory.TABLE,store.getConfiguration()).getValue().toString())));
+            }
 
-            final DatabaseMetaData metadata = cx.getMetaData();
-            final String tableNamePattern = 
-                    (Parameters.getOrCreate(AbstractJDBCFeatureStoreFactory.TABLE,store.getConfiguration()).getValue()!=null)
-                    ? Parameters.getOrCreate(AbstractJDBCFeatureStoreFactory.TABLE,store.getConfiguration()).getValue().toString()
-                    : "%";
-            tableSet = metadata.getTables(null, schemaName, tableNamePattern,
-                    new String[]{Table.VALUE_TYPE_TABLE, Table.VALUE_TYPE_VIEW});
-
-            while (tableSet.next()) {
-                final TableMetaModel table = analyzeTable(tableSet,cx);
+            final Iterator<Map> ite = cacheTables.filter(filter);
+            while (ite.hasNext()) {
+                final TableMetaModel table = analyzeTable(ite.next(),cx);
                 schema.tables.put(table.name, table);
             }
 
         } catch (SQLException e) {
             throw new DataStoreException("Error occurred analyzing database model.", e);
-        } finally {
-            closeSafe(store.getLogger(),tableSet);
         }
 
         return schema;
     }
 
-    private TableMetaModel analyzeTable(final ResultSet tableSet, final Connection cx) throws DataStoreException, SQLException{
+    private Filter filter(String schemafield, String schemaName, String tablefield, String tableName){
+        return FF.and(      FF.equals(FF.property(schemafield), FF.literal(schemaName)),
+                            FF.equals(FF.property(tablefield), FF.literal(tableName)));
+    }
+    
+    private TableMetaModel analyzeTable(final Map tableSet, final Connection cx) throws DataStoreException, SQLException{
         final SQLDialect dialect = store.getDialect();
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder(FTF);
 
-        final String schemaName = tableSet.getString(Table.TABLE_SCHEM);
-        final String tableName = tableSet.getString(Table.TABLE_NAME);
-        final String tableType = tableSet.getString(Table.TABLE_TYPE);
+        final String schemaName = (String) tableSet.get(Table.TABLE_SCHEM);
+        final String tableName = (String) tableSet.get(Table.TABLE_NAME);
+        final String tableType = (String) tableSet.get(Table.TABLE_TYPE);
 
         final TableMetaModel table = new TableMetaModel(tableName,tableType);
         
-        ResultSet result = null;
         try {
-            final DatabaseMetaData metadata = cx.getMetaData();
 
             //explore all columns ----------------------------------------------
-            result = metadata.getColumns(null, schemaName, tableName, "%");
-            while (result.next()) {
-                ftb.add(analyzeColumn(result,cx));
-            }
-            closeSafe(store.getLogger(),result);
+            Filter tableFilter = filter(Table.TABLE_SCHEM, schemaName, Table.TABLE_NAME, tableName);            
 
+            final Iterator<Map> ite1 = cacheColumns.filter(tableFilter);
+            while(ite1.hasNext()){
+                ftb.add(analyzeColumn(ite1.next(),cx));
+            }
+            
             //find primary key -------------------------------------------------
             final List<ColumnMetaModel> cols = new ArrayList();
-            result = metadata.getPrimaryKeys(null, schemaName, tableName);
-            while (result.next()) {
-                final String columnName = result.getString(Column.COLUMN_NAME);
+            final Iterator<Map> pkIte = cachePrimaryKeys.filter(tableFilter);
+            while(pkIte.hasNext()){
+                final Map result = pkIte.next();
+                final String columnName = (String) result.get(Column.COLUMN_NAME);
 
                 //look up the type ( should only be one row )
-                final ResultSet columns = metadata.getColumns(null, schemaName, tableName, columnName);
-                columns.next();
+                final Iterator<Map> cite = cacheColumns.filter(
+                        FF.and(tableFilter, FF.equals(FF.property(Column.COLUMN_NAME), FF.literal(columnName))));
+                final Map column = cite.next();
 
-                final int sqlType = columns.getInt(Column.DATA_TYPE);
-                final String sqlTypeName = columns.getString(Column.TYPE_NAME);
+                final int sqlType = (Integer)column.get(Column.DATA_TYPE);
+                final String sqlTypeName = (String) column.get(Column.TYPE_NAME);
                 Class columnType = dialect.getJavaType(sqlType, sqlTypeName);
 
                 if (columnType == null) {
@@ -298,7 +365,7 @@ public final class DataBaseModel {
 
                 ColumnMetaModel col = null;
 
-                final String str = columns.getString(Column.IS_AUTOINCREMENT);
+                final String str = (String) column.get(Column.IS_AUTOINCREMENT);
                 if(Column.VALUE_YES.equalsIgnoreCase(str)){
                     col = new ColumnMetaModel(schemaName, tableName, columnName, sqlType, sqlTypeName, columnType, Type.AUTO);
                 }else {
@@ -322,10 +389,11 @@ public final class DataBaseModel {
             final List<String> names = new ArrayList<String>();
             final Map<String,List<String>> uniqueIndexes = new HashMap<String, List<String>>();
             String indexname = null;
-            result = metadata.getIndexInfo(null, schemaName, tableName, true, false);
-            while (result.next()) {
-                final String columnName = result.getString(Index.COLUMN_NAME);
-                final String idxName = result.getString(Index.INDEX_NAME);
+            final Iterator<Map> indexIte = cacheIndexInfos.filter(tableFilter);
+            while(indexIte.hasNext()){
+                final Map result = pkIte.next();
+                final String columnName = (String)result.get(Index.COLUMN_NAME);
+                final String idxName = (String)result.get(Index.INDEX_NAME);
                 
                 List<String> lst = uniqueIndexes.get(idxName);
                 if(lst == null){
@@ -345,7 +413,6 @@ public final class DataBaseModel {
                     names.add(columnName);
                 }
             }
-            closeSafe(store.getLogger(),result);
             
             //for each unique index composed of one column add a flag on the property descriptor
             for(Entry<String,List<String>> entry : uniqueIndexes.entrySet()){
@@ -362,15 +429,16 @@ public final class DataBaseModel {
             
             if(pkEmpty && !names.isEmpty()){
                 //build a primary key from unique index
-                result = metadata.getColumns(null, schemaName, tableName, "%");
-                while (result.next()) {
-                    final String columnName = result.getString(Column.COLUMN_NAME);
+                final Iterator<Map> ite = cacheColumns.filter(tableFilter);
+                while(ite.hasNext()){
+                    final Map result = ite.next();
+                    final String columnName = (String) result.get(Column.COLUMN_NAME);
                     if(!names.contains(columnName)){
                         continue;
                     }
 
-                    final int sqlType = result.getInt(Column.DATA_TYPE);
-                    final String sqlTypeName = result.getString(Column.TYPE_NAME);
+                    final int sqlType = (Integer) result.get(Column.DATA_TYPE);
+                    final String sqlTypeName = (String) result.get(Column.TYPE_NAME);
                     final Class columnType = dialect.getJavaType(sqlType, sqlTypeName);                        
                     final ColumnMetaModel col = new ColumnMetaModel(schemaName, tableName, columnName, 
                             sqlType, sqlTypeName, columnType, Type.NON_INCREMENTING);
@@ -384,7 +452,6 @@ public final class DataBaseModel {
                         }
                     }
                 }
-                closeSafe(store.getLogger(),result);
             }
             
             
@@ -393,16 +460,16 @@ public final class DataBaseModel {
             }
             table.key = new PrimaryKey(tableName, cols);
             
-            closeSafe(store.getLogger(),result);
 
             //find imported keys -----------------------------------------------
-            result = metadata.getImportedKeys(null, schemaName, tableName);
-            while (result.next()) {
-                final String localColumn = result.getString(ImportedKey.FKCOLUMN_NAME);
-                final String refSchemaName = result.getString(ImportedKey.PKTABLE_SCHEM);
-                final String refTableName = result.getString(ImportedKey.PKTABLE_NAME);
-                final String refColumnName = result.getString(ImportedKey.PKCOLUMN_NAME);
-                final int deleteRule = result.getInt(ImportedKey.DELETE_RULE);
+            Iterator<Map> ite = cacheImportedKeys.filter(filter(ImportedKey.FKTABLE_SCHEM, schemaName, ImportedKey.FKTABLE_NAME, tableName));
+            while(ite.hasNext()){
+                final Map result = ite.next();
+                final String localColumn = (String)result.get(ImportedKey.FKCOLUMN_NAME);
+                final String refSchemaName = (String)result.get(ImportedKey.PKTABLE_SCHEM);
+                final String refTableName = (String)result.get(ImportedKey.PKTABLE_NAME);
+                final String refColumnName = (String)result.get(ImportedKey.PKCOLUMN_NAME);
+                final int deleteRule = (Integer)result.get(ImportedKey.DELETE_RULE);
                 final boolean deleteCascade = DatabaseMetaData.importedKeyCascade == deleteRule;
                 final RelationMetaModel relation = new RelationMetaModel(localColumn,
                         refSchemaName, refTableName, refColumnName, true, deleteCascade);
@@ -416,43 +483,40 @@ public final class DataBaseModel {
                     }
                 }
             }
-            closeSafe(store.getLogger(),result);
 
             //find exported keys -----------------------------------------------
-            result = metadata.getExportedKeys(null, schemaName, tableName);
-            while (result.next()) {
-                final String localColumn = result.getString(ExportedKey.PKCOLUMN_NAME);
-                final String refSchemaName = result.getString(ExportedKey.FKTABLE_SCHEM);
-                final String refTableName = result.getString(ExportedKey.FKTABLE_NAME);
-                final String refColumnName = result.getString(ExportedKey.FKCOLUMN_NAME);
-                final int deleteRule = result.getInt(ImportedKey.DELETE_RULE);
+            ite = cacheExportedKeys.filter(filter(ImportedKey.PKTABLE_SCHEM, schemaName, ImportedKey.PKTABLE_NAME, tableName));
+            while(ite.hasNext()){
+                final Map result = ite.next();
+                final String localColumn = (String)result.get(ExportedKey.PKCOLUMN_NAME);
+                final String refSchemaName = (String)result.get(ExportedKey.FKTABLE_SCHEM);
+                final String refTableName = (String)result.get(ExportedKey.FKTABLE_NAME);
+                final String refColumnName = (String)result.get(ExportedKey.FKCOLUMN_NAME);
+                final int deleteRule = (Integer)result.get(ImportedKey.DELETE_RULE);
                 final boolean deleteCascade = DatabaseMetaData.importedKeyCascade == deleteRule;
                 table.exportedKeys.add(new RelationMetaModel(localColumn,
                         refSchemaName, refTableName, refColumnName, false, deleteCascade));
             }
-            closeSafe(store.getLogger(),result);
 
             //find parent table if any -----------------------------------------
-            if(handleSuperTableMetadata == null || handleSuperTableMetadata){
-                try{
-                    result = metadata.getSuperTables(null, schemaName, tableName);
-                    while (result.next()) {
-                        final String parentTable = result.getString(SuperTable.SUPERTABLE_NAME);
-                        table.parents.add(parentTable);
-                    }
-                }catch(final SQLException ex){
-                    //not implemented by database
-                    handleSuperTableMetadata = Boolean.FALSE;
-                    store.getLogger().log(Level.INFO, "Database does not handle getSuperTable, feature type hierarchy will be ignored.");
-                }finally{
-                    closeSafe(store.getLogger(),result);
-                }
-            }
+//            if(handleSuperTableMetadata == null || handleSuperTableMetadata){
+//                try{
+//                    result = metadata.getSuperTables(null, schemaName, tableName);
+//                    while (result.next()) {
+//                        final String parentTable = result.getString(SuperTable.SUPERTABLE_NAME);
+//                        table.parents.add(parentTable);
+//                    }
+//                }catch(final SQLException ex){
+//                    //not implemented by database
+//                    handleSuperTableMetadata = Boolean.FALSE;
+//                    store.getLogger().log(Level.INFO, "Database does not handle getSuperTable, feature type hierarchy will be ignored.");
+//                }finally{
+//                    closeSafe(store.getLogger(),result);
+//                }
+//            }
 
         } catch (SQLException e) {
             throw new DataStoreException("Error occurred analyzing table : " + tableName, e);
-        } finally {
-            closeSafe(store.getLogger(),result);
         }
 
         ftb.setName(tableName);
@@ -460,17 +524,17 @@ public final class DataBaseModel {
         return table;
     }
 
-    private AttributeDescriptor analyzeColumn(final ResultSet columnSet, final Connection cx) throws SQLException, DataStoreException{
+    private AttributeDescriptor analyzeColumn(final Map columnSet, final Connection cx) throws SQLException, DataStoreException{
         final SQLDialect dialect = store.getDialect();
         final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder(FTF);
         final AttributeTypeBuilder atb = new AttributeTypeBuilder(FTF);
 
-        final String schemaName     = columnSet.getString(Column.TABLE_SCHEM);
-        final String tableName      = columnSet.getString(Column.TABLE_NAME);
-        final String columnName     = columnSet.getString(Column.COLUMN_NAME);
-        final int columnDataType    = columnSet.getInt(Column.DATA_TYPE);
-        final String columnTypeName = columnSet.getString(Column.TYPE_NAME);
-        final String columnNullable = columnSet.getString(Column.IS_NULLABLE);
+        final String schemaName     = (String) columnSet.get(Column.TABLE_SCHEM);
+        final String tableName      = (String) columnSet.get(Column.TABLE_NAME);
+        final String columnName     = (String) columnSet.get(Column.COLUMN_NAME);
+        final int columnDataType    = (Integer)columnSet.get(Column.DATA_TYPE);
+        final String columnTypeName = (String) columnSet.get(Column.TYPE_NAME);
+        final String columnNullable = (String) columnSet.get(Column.IS_NULLABLE);
 
         atb.setName(columnName);
         adb.setName(columnName);
