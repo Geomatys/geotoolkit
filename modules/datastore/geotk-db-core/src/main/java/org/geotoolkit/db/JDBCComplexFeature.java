@@ -36,8 +36,6 @@ import java.util.logging.Logger;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.memory.GenericAssociationIterator;
-import org.geotoolkit.data.memory.GenericEncapsulateFeatureIterator;
-import org.geotoolkit.data.memory.GenericRetypeFeatureIterator;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.db.dialect.SQLDialect;
@@ -122,15 +120,11 @@ public class JDBCComplexFeature extends AbstractFeature<Collection<Property>> {
                     qb.setProperties(template.getSubTypeFields(store.getDatabaseModel()));
 
                     prop = new ComplexAttCollection(qb.buildQuery(), desc);
-//                    FeatureCollection col = store.createSession(false).getFeatureCollection(qb.buildQuery());
-//                    col = GenericRetypeFeatureIterator.wrap(col, (FeatureType)desc.getType());
-//                    prop = GenericEncapsulateFeatureIterator.wrap(col, desc);
                 }else{
                     prop = Collections.emptyList();
                 }
             }else{
                 //single value attribut
-                System.out.println(k+" "+desc);
                 prop = FeatureUtilities.defaultProperty(desc);
                 final Object value = readSimpleValue(store.getDialect(), rs, k+1, desc);
                 ((Property)prop).setValue(value);
