@@ -114,7 +114,7 @@ public class Copy extends AbstractProcess {
         fireProcessCompleted("Copy successful.");
     }
 
-    private void insert(Name name, final FeatureStore source, final FeatureStore target, final boolean erase) throws DataStoreException{
+    private void insert(final Name name, final FeatureStore source, final FeatureStore target, final boolean erase) throws DataStoreException{
 
         final FeatureType type = source.getFeatureType(name);
         final Session session = source.createSession(false);
@@ -141,11 +141,11 @@ public class Copy extends AbstractProcess {
         }
         
         //get the created name, namespace might change
-        name = target.getFeatureType(type.getName().getLocalPart()).getName();
+        final Name tname = target.getFeatureType(type.getName().getLocalPart()).getName();
 
         final Hints hints = new Hints();
         hints.put(HintsPending.UPDATE_ID_ON_INSERT, Boolean.FALSE);
-        target.addFeatures(name, wrap, hints);
+        target.addFeatures(tname, wrap, hints);
 
     }
 

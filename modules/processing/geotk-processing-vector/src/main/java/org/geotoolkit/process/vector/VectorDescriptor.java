@@ -16,10 +16,10 @@
  */
 package org.geotoolkit.process.vector;
 
+import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.process.AbstractProcessDescriptor;
-import org.geotoolkit.util.SimpleInternationalString;
 
 import org.opengis.feature.Feature;
 import org.opengis.parameter.ParameterDescriptor;
