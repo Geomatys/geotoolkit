@@ -422,9 +422,16 @@ public class JFeatureOutLine extends Outline{
             final Object userObject = node.getUserObject();
 
             if(userObject instanceof Property){
-                final InternationalString i18n = ((Property) node.getUserObject()).getDescriptor().getType().getDescription();
+                PropertyDescriptor pdesc = ((Property) node.getUserObject()).getDescriptor();
+                PropertyType ptype;
+                if(pdesc==null){
+                    ptype = ((Property) node.getUserObject()).getType();
+                }else{
+                    ptype = pdesc.getType();
+                }
+                final InternationalString i18n = ptype.getDescription();
                 String tooltip = String.valueOf(i18n);
-                tooltip += " ("+Classes.getShortName(((Property) node.getUserObject()).getType().getBinding()) +")";
+                tooltip += " ("+Classes.getShortName(ptype.getBinding()) +")";
                 return tooltip;
             }else{
                 return null;
