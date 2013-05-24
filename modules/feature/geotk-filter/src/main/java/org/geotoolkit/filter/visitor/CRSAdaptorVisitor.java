@@ -7,7 +7,7 @@ import org.geotoolkit.filter.binaryspatial.UnreprojectedLooseBBox;
 import org.geotoolkit.geometry.DefaultBoundingBox;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.referencing.CRS;
-import org.opengis.feature.type.FeatureType;
+import org.opengis.feature.type.ComplexType;
 import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.filter.expression.Expression;
@@ -24,9 +24,9 @@ import org.opengis.referencing.operation.MathTransform;
  */
 public class CRSAdaptorVisitor extends DuplicatingFilterVisitor {
 
-    private final FeatureType dataType;
+    private final ComplexType dataType;
 
-    public CRSAdaptorVisitor(FeatureType type){
+    public CRSAdaptorVisitor(ComplexType type){
         super();
         this.dataType = type;
     }

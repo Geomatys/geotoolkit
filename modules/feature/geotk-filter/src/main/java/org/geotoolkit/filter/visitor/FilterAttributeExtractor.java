@@ -23,6 +23,7 @@ import java.util.Set;
 import org.geotoolkit.feature.DefaultName;
 
 import org.opengis.feature.type.AttributeDescriptor;
+import org.opengis.feature.type.ComplexType;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.Name;
 import org.opengis.filter.expression.PropertyName;
@@ -42,7 +43,7 @@ public class FilterAttributeExtractor extends DefaultFilterVisitor {
     /**
      * feature type to evaluate against
      */
-    private final FeatureType featureType;
+    private final ComplexType featureType;
 
     /**
      * Just extract the property names; don't check against a feature type.
@@ -57,7 +58,7 @@ public class FilterAttributeExtractor extends DefaultFilterVisitor {
      *
      * @param featureType
      */
-    public FilterAttributeExtractor(final FeatureType featureType) {
+    public FilterAttributeExtractor(final ComplexType featureType) {
         this.featureType = featureType;
     }
 
