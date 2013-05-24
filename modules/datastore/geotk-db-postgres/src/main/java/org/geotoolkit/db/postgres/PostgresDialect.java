@@ -451,7 +451,7 @@ final class PostgresDialect extends AbstractSQLDialect{
     public String getSQLType(Class javaType) throws SQLException{
         String sqlName = CLASS_TO_TYPENAME.get(javaType);
         if(javaType.isArray()){
-            sqlName = CLASS_TO_TYPENAME.get(javaType.getComponentType());
+            sqlName = getSQLType(javaType.getComponentType());
             if(sqlName == null) throw new SQLException("No database mapping for type "+ javaType);
             sqlName = sqlName+"[]";
         }
@@ -542,10 +542,11 @@ final class PostgresDialect extends AbstractSQLDialect{
         if(length == null){
             sql.append(sqlTypeName);
         }else{
-            if(sqlTypeName.endsWith("[]")){
-                sql.append(sqlTypeName.substring(0, sqlTypeName.length()-2));
+            final int arrayindex = sqlTypeName.indexOf("[]");
+            if(arrayindex>0){
+                sql.append(sqlTypeName.substring(0, arrayindex));
                 sql.append('(').append(length).append(')');
-                sql.append("[]");
+                sql.append(sqlTypeName.substring(arrayindex));
             }else{
                 sql.append(sqlTypeName);
                 sql.append('(').append(length).append(')');

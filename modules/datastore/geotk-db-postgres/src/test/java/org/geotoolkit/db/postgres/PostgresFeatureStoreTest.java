@@ -94,6 +94,7 @@ public class PostgresFeatureStoreTest {
     private static final double DELTA = 0.00000001;    
     private static final FeatureType FTYPE_SIMPLE;
     private static final FeatureType FTYPE_ARRAY;
+    private static final FeatureType FTYPE_ARRAY2;
     private static final FeatureType FTYPE_GEOMETRY;
     private static final FeatureType FTYPE_COMPLEX;
     private static final FeatureType FTYPE_COMPLEX2;
@@ -137,6 +138,19 @@ public class PostgresFeatureStoreTest {
         ftb.add("double",   Double[].class);
         ftb.add("string",   String[].class);
         FTYPE_ARRAY = ftb.buildFeatureType();
+        
+        ////////////////////////////////////////////////////////////////////////
+        ftb = new FeatureTypeBuilder();
+        ftb.setName("testTable");
+        ftb.add("boolean",  Boolean[][].class);
+        ftb.add("byte",     Byte[][].class);
+        ftb.add("short",    Short[][].class);
+        ftb.add("integer",  Integer[][].class);
+        ftb.add("long",     Long[][].class);
+        ftb.add("float",    Float[][].class);
+        ftb.add("double",   Double[][].class);
+        ftb.add("string",   String[][].class);
+        FTYPE_ARRAY2 = ftb.buildFeatureType();
         
         ////////////////////////////////////////////////////////////////////////
         ftb = new FeatureTypeBuilder();
@@ -304,6 +318,49 @@ public class PostgresFeatureStoreTest {
         reload(true);
         
         final FeatureType refType = FTYPE_ARRAY;        
+        store.createSchema(refType.getName(), refType);        
+        assertEquals(1, store.getNames().size());
+        
+        final FeatureType resType = store.getFeatureType(store.getNames().iterator().next());
+        assertEquals(resType.getName().getLocalPart(), refType.getName().getLocalPart());
+        //we expect one more field for id
+        final List<PropertyDescriptor> descs = new ArrayList<PropertyDescriptor>(resType.getDescriptors());
+        
+        //Postgis allow NULL in arrays, so returned array are not primitive types
+        int index=1;
+        PropertyDescriptor desc;
+        desc = descs.get(index++);
+        assertEquals("boolean", desc.getName().getLocalPart()); 
+        assertEquals(Boolean[].class, desc.getType().getBinding());
+        desc = descs.get(index++);
+        assertEquals("byte", desc.getName().getLocalPart()); 
+        assertEquals(Short[].class, desc.getType().getBinding());
+        desc = descs.get(index++);
+        assertEquals("short", desc.getName().getLocalPart()); 
+        assertEquals(Short[].class, desc.getType().getBinding());
+        desc = descs.get(index++);
+        assertEquals("integer", desc.getName().getLocalPart()); 
+        assertEquals(Integer[].class, desc.getType().getBinding());
+        desc = descs.get(index++);
+        assertEquals("long", desc.getName().getLocalPart()); 
+        assertEquals(Long[].class, desc.getType().getBinding());
+        desc = descs.get(index++);
+        assertEquals("float", desc.getName().getLocalPart()); 
+        assertEquals(Float[].class, desc.getType().getBinding());
+        desc = descs.get(index++);
+        assertEquals("double", desc.getName().getLocalPart()); 
+        assertEquals(Double[].class, desc.getType().getBinding());
+        desc = descs.get(index++);
+        assertEquals("string", desc.getName().getLocalPart()); 
+        assertEquals(String[].class, desc.getType().getBinding());
+        
+    }
+    
+    @Test
+    public void testArray2TypeCreation() throws DataStoreException, VersioningException {
+        reload(true);
+        
+        final FeatureType refType = FTYPE_ARRAY2;        
         store.createSchema(refType.getName(), refType);        
         assertEquals(1, store.getNames().size());
         
