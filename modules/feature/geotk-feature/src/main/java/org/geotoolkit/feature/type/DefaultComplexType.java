@@ -63,8 +63,8 @@ public class DefaultComplexType extends DefaultAttributeType<AttributeType> impl
     /**
      * Immutable copy of the properties list with which we were constructed.
      */
-    protected final PropertyDescriptor[] descriptors;
-    protected final List<PropertyDescriptor> descriptorsList;
+    protected PropertyDescriptor[] descriptors;
+    protected List<PropertyDescriptor> descriptorsList;
 
     /**
      * Map to locate properties by name or string.

@@ -18,6 +18,8 @@ package org.geotoolkit.feature.type;
 
 import java.util.List;
 import org.geotoolkit.feature.simple.DefaultSimpleFeatureType;
+import org.geotoolkit.util.XArrays;
+import org.geotoolkit.util.collection.UnmodifiableArrayList;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.AttributeType;
 import org.opengis.feature.type.GeometryDescriptor;
@@ -45,8 +47,20 @@ public class ModifiableSimpleFeaturetype extends DefaultSimpleFeatureType implem
 
     @Override
     public void changeProperty(final int index, PropertyDescriptor desc) {
-        descriptors[index] = desc;
-        types[index] = (AttributeType) desc.getType();
+        if(desc==null){
+            descriptors = XArrays.remove(descriptors, index, 1);
+        }else{
+            descriptors[index] = desc;
+        }
+        this.descriptorsList = UnmodifiableArrayList.wrap(this.descriptors);
+        
+        //for faster access
+        types = new AttributeType[descriptors.length];
+        for(int i=0; i<descriptors.length;i++){
+            types[i] = (AttributeType) descriptors[i].getType();
+        }
+        typesList = UnmodifiableArrayList.wrap(types);
+        
         rebuildPropertyMap();
     }
 

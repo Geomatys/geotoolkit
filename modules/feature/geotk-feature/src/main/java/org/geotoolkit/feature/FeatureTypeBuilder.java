@@ -776,7 +776,7 @@ public class FeatureTypeBuilder {
      * @param types
      * @return SimpleFeatureType
      */
-    public static FeatureType retype(final FeatureType original, final Name[] types) {
+    public static <T extends ComplexType> T retype(final T original, final Name[] types) {
         final FeatureTypeBuilder b = new FeatureTypeBuilder();
 
         //initialize the builder
@@ -805,9 +805,11 @@ public class FeatureTypeBuilder {
         }
 
         if(original instanceof SimpleFeatureType){
-            return b.buildSimpleFeatureType();
+            return (T) b.buildSimpleFeatureType();
+        }else if(original instanceof FeatureType){
+            return (T) b.buildFeatureType();
         }else{
-            return b.buildFeatureType();
+            return (T) b.buildType();
         }
         
     }

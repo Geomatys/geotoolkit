@@ -18,6 +18,8 @@ package org.geotoolkit.feature.type;
 
 import java.util.Collection;
 import java.util.List;
+import org.geotoolkit.util.XArrays;
+import org.geotoolkit.util.collection.UnmodifiableArrayList;
 import org.opengis.feature.type.AttributeType;
 import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.feature.type.Name;
@@ -44,7 +46,12 @@ public class ModifiableFeaturetype extends DefaultFeatureType implements Modifia
 
     @Override
     public void changeProperty(final int index, PropertyDescriptor desc) {
-        descriptors[index] = desc;
+        if(desc==null){
+            descriptors = XArrays.remove(descriptors, index, 1);
+        }else{
+            descriptors[index] = desc;
+        }
+        this.descriptorsList = UnmodifiableArrayList.wrap(this.descriptors);
         rebuildPropertyMap();
     }
 
@@ -67,4 +74,8 @@ public class ModifiableFeaturetype extends DefaultFeatureType implements Modifia
         }
     }
 
+    @Override
+    public void rebuildPropertyMap() {
+        super.rebuildPropertyMap();
+    }
 }
