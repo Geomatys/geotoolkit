@@ -27,7 +27,6 @@ import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -324,7 +323,8 @@ public class DefaultJDBCFeatureStore extends AbstractFeatureStore implements JDB
             throw new DataStoreException("Query is not simple.");
         }
         
-        final FeatureType baseType = getFeatureType(query.getTypeName());
+        final TableMetaModel tableMeta = dbmodel.getSchemaMetaModel(getDatabaseSchema()).getTable(query.getTypeName().getLocalPart());
+        final ComplexType tableType = tableMeta.getType(TableMetaModel.View.ALLCOMPLEX);
         final PrimaryKey pkey = dbmodel.getPrimaryKey(query.getTypeName());
                 
         
@@ -333,12 +333,12 @@ public class DefaultJDBCFeatureStore extends AbstractFeatureStore implements JDB
         baseFilter = (Filter) baseFilter.accept(new FIDFixVisitor(), null);
         
         //split the filter between what can be send and must be handle by code
-        final Filter[] divided = getDialect().splitFilter(baseFilter,baseType);
+        final Filter[] divided = getDialect().splitFilter(baseFilter,tableType);
         Filter preFilter = divided[0];
         Filter postFilter = divided[1];
         
         //ensure spatial filters are in featuretype geometry crs
-        preFilter = (Filter)preFilter.accept(new CRSAdaptorVisitor(baseType),null);
+        preFilter = (Filter)preFilter.accept(new CRSAdaptorVisitor(tableType),null);
         
         // rebuild a new query with the same params, but just the pre-filter
         final QueryBuilder builder = new QueryBuilder(query);
@@ -348,15 +348,17 @@ public class DefaultJDBCFeatureStore extends AbstractFeatureStore implements JDB
         }
         final Query preQuery = builder.buildQuery();
         
+        final FeatureType baseType = getFeatureType(query.getTypeName());
+        
         // Build the feature type returned by this query. Also build an eventual extra feature type
         // containing the attributes we might need in order to evaluate the post filter
         final FeatureType queryFeatureType;
         final FeatureType returnedFeatureType;
         if(query.retrieveAllProperties()) {
-            returnedFeatureType = queryFeatureType = baseType;
+            returnedFeatureType = queryFeatureType = (FeatureType) baseType;
         } else {
-            returnedFeatureType = FeatureTypeBuilder.retype(baseType, query.getPropertyNames());
-            final FilterAttributeExtractor extractor = new FilterAttributeExtractor(baseType);
+            returnedFeatureType = (FeatureType) FeatureTypeBuilder.retype(tableType, query.getPropertyNames());
+            final FilterAttributeExtractor extractor = new FilterAttributeExtractor(tableType);
             postFilter.accept(extractor, null);
             final Name[] extraAttributes = extractor.getAttributeNames();
             final List<Name> allAttributes = new ArrayList<Name>(Arrays.asList(query.getPropertyNames()));
@@ -380,7 +382,7 @@ public class DefaultJDBCFeatureStore extends AbstractFeatureStore implements JDB
              }
 
             final Name[] allAttributeArray = allAttributes.toArray(new Name[allAttributes.size()]);
-            queryFeatureType = FeatureTypeBuilder.retype(baseType, allAttributeArray);
+            queryFeatureType = (FeatureType) FeatureTypeBuilder.retype(tableType, allAttributeArray);
         }
         
         
@@ -412,7 +414,7 @@ public class DefaultJDBCFeatureStore extends AbstractFeatureStore implements JDB
 
         //if we need to reproject data
         final CoordinateReferenceSystem reproject = query.getCoordinateSystemReproject();
-        if(reproject != null && !CRS.equalsIgnoreMetadata(reproject,baseType.getCoordinateReferenceSystem())){
+        if(reproject != null && !CRS.equalsIgnoreMetadata(reproject,((FeatureType)baseType).getCoordinateReferenceSystem())){
             try {
                 reader = GenericReprojectFeatureIterator.wrap(reader, reproject,query.getHints());
             } catch (FactoryException ex) {
@@ -1025,7 +1027,7 @@ public class DefaultJDBCFeatureStore extends AbstractFeatureStore implements JDB
         //decompose main type
         final ComplexType featuretype = candidate.getType();
         final TableMetaModel table = dbmodel.getSchemaMetaModel(getDatabaseSchema()).getTable(featuretype.getName().getLocalPart());
-        final ComplexType flatType = table.getSimpleType();
+        final ComplexType flatType = table.getType(TableMetaModel.View.SIMPLE_FEATURE_TYPE);
         final ComplexAttribute flat = FeatureUtilities.defaultProperty(flatType);
         FeatureUtilities.copy(candidate, flat, false);        
         flats.add(new AbstractMap.SimpleImmutableEntry<ComplexAttribute, ComplexAttribute>(parent, flat));

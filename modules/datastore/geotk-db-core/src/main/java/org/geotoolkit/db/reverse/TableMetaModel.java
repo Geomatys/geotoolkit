@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import org.geotoolkit.gui.swing.tree.Trees;
-import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.ComplexType;
 
 /**
@@ -31,11 +30,23 @@ import org.opengis.feature.type.ComplexType;
  */
 public class TableMetaModel {
 
+    public static enum View{
+        TABLE,
+        SIMPLE_FEATURE_TYPE,
+        COMPLEX_FEATURE_TYPE,
+        COMPLEX_ATTRIBUTE_TYPE,
+        ALLCOMPLEX
+    }
+    
     String name;
     String type;
-    ComplexType baseType;
-    SimpleFeatureType simpleType;
-    ComplexType complexType;
+    
+    ComplexType tableType;
+    ComplexType simpleFeatureType;
+    ComplexType complexFeatureType;
+    ComplexType complexAttType;
+    ComplexType allType;
+    
     PrimaryKey key;
     //those are 0:1 relations
     final Collection<RelationMetaModel> importedKeys = new ArrayList<RelationMetaModel>();
@@ -55,18 +66,6 @@ public class TableMetaModel {
 
     public String getType() {
         return type;
-    }
-
-    public ComplexType getBaseType() {
-        return baseType;
-    }
-
-    public SimpleFeatureType getSimpleType() {
-        return simpleType;
-    }
-
-    public ComplexType getComplexType() {
-        return complexType;
     }
 
     public Collection<RelationMetaModel> getExportedKeys() {
@@ -104,4 +103,23 @@ public class TableMetaModel {
         }
         return sb.toString();
     }
+    
+    public ComplexType getType(View view){
+        
+        if(view==View.TABLE){
+            return tableType;
+        }else if(view==View.SIMPLE_FEATURE_TYPE){
+            return simpleFeatureType;
+        }else if(view==View.COMPLEX_FEATURE_TYPE){
+            return complexFeatureType;
+        }else if(view==View.COMPLEX_ATTRIBUTE_TYPE){
+            return complexAttType;
+        }else if(view==View.ALLCOMPLEX){
+            return allType;
+        }else{
+            throw new IllegalArgumentException("Unknowned view type : "+view);
+        }
+        
+    }
+    
 }

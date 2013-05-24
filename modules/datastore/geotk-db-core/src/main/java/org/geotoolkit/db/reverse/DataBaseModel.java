@@ -45,7 +45,6 @@ import org.geotoolkit.db.reverse.MetaDataConstants.ExportedKey;
 import org.geotoolkit.db.reverse.MetaDataConstants.ImportedKey;
 import org.geotoolkit.db.reverse.MetaDataConstants.Index;
 import org.geotoolkit.db.reverse.MetaDataConstants.Schema;
-import org.geotoolkit.db.reverse.MetaDataConstants.SuperTable;
 import org.geotoolkit.db.reverse.MetaDataConstants.Table;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.HintsPending;
@@ -110,6 +109,10 @@ public final class DataBaseModel {
     public DataBaseModel(final JDBCFeatureStore store, final boolean simpleTypes){
         this.store = store;
         this.simpleTypes = simpleTypes;
+    }
+
+    public boolean isSimpleTypes() {
+        return simpleTypes;
     }
 
     public Collection<SchemaMetaModel> getSchemaMetaModels() throws DataStoreException {
@@ -272,10 +275,10 @@ public final class DataBaseModel {
                 for(TableMetaModel table : schema.tables.values()){
                     
                     final ComplexType ft;
-                    if(simpleTypes || table.isSubType()){
-                        ft = table.getSimpleType();
+                    if(simpleTypes){
+                        ft = table.getType(TableMetaModel.View.SIMPLE_FEATURE_TYPE);
                     }else{
-                        ft = table.getComplexType();
+                        ft = table.getType(TableMetaModel.View.COMPLEX_FEATURE_TYPE);
                     }
                     final Name name = ft.getName();
                     pkIndex.put(name, table.key);
@@ -461,6 +464,16 @@ public final class DataBaseModel {
             }
             table.key = new PrimaryKey(tableName, cols);
             
+            //mark primary key columns
+            for(PropertyDescriptor desc : ftb.getProperties()){
+                for(ColumnMetaModel col : cols){
+                    if(desc.getName().getLocalPart().equals(col.getName())){
+                        desc.getUserData().put(HintsPending.PROPERTY_IS_IDENTIFIER, Boolean.TRUE);
+                        break;
+                    }
+                }
+            }
+            
 
             //find imported keys -----------------------------------------------
             Iterator<Map> ite = cacheImportedKeys.filter(filter(ImportedKey.FKTABLE_SCHEM, schemaName, ImportedKey.FKTABLE_NAME, tableName));
@@ -521,7 +534,7 @@ public final class DataBaseModel {
         }
 
         ftb.setName(tableName);
-        table.baseType = ftb.buildType();
+        table.tableType = ftb.buildType();
         return table;
     }
 
@@ -594,7 +607,7 @@ public final class DataBaseModel {
             if(schema != null){
                 TableMetaModel table = schema.getTable(tableName);
                 if(table != null){
-                    desc = table.getSimpleType().getDescriptor(columnName);
+                    desc = table.getType(TableMetaModel.View.SIMPLE_FEATURE_TYPE).getDescriptor(columnName);
                 }
             }
 
@@ -655,21 +668,11 @@ public final class DataBaseModel {
             for(final TableMetaModel table : schema.tables.values()){
                 final String tableName = table.name;
                 
-                //add flag for primary key fields-------------------------------
-                final PrimaryKey pk = table.key;
-                for(ColumnMetaModel column : pk.getColumns()){
-                    final String attName = column.getName();
-                    final PropertyDescriptor base = table.baseType.getDescriptor(attName);
-                    base.getUserData().put(HintsPending.PROPERTY_IS_IDENTIFIER, Boolean.TRUE);
-                }
-
-
                 //fill the namespace--------------------------------------------
                 ftb.reset();
-                ftb.copy(table.baseType);
+                ftb.copy(table.tableType);
                 final String namespace = store.getDefaultNamespace();
                 ftb.setName(namespace, ftb.getName().getLocalPart());
-
 
                 final List<PropertyDescriptor> descs = ftb.getProperties();
 
@@ -712,7 +715,7 @@ public final class DataBaseModel {
                     descs.set(i, adb.buildDescriptor());
                 }
 
-                table.simpleType = ftb.buildSimpleFeatureType();
+                table.simpleFeatureType = ftb.buildSimpleFeatureType();
             }
         }
         
@@ -727,7 +730,7 @@ public final class DataBaseModel {
         final AttributeTypeBuilder atb = new AttributeTypeBuilder(FTF);
         
         //result map
-        final Map<String,ModifiableType> builded = new HashMap<String, ModifiableType>();
+        final Map<String,TableMetaModel> builded = new HashMap<String, TableMetaModel>();
 
         //first pass to create the real types but without relations types-------
         //since we must have all of them before creating relations
@@ -736,9 +739,10 @@ public final class DataBaseModel {
         for(final SchemaMetaModel schema : schemas.values()){
             for(final TableMetaModel table : schema.tables.values()){
                 final String code = schema.name +"."+table.name;
+                builded.put(code, table);
 
                 //create the complex model by replacing descriptors
-                final ComplexType baseType = table.simpleType;
+                final ComplexType baseType = table.simpleFeatureType;
                 ftb.reset();
                 ftb.copy(baseType);
 
@@ -755,25 +759,17 @@ public final class DataBaseModel {
                         }
                     }
 
-                    if(table.isSubType() && relation.isDeleteCascade()){
-                        //this type is a subtype and relation points toward it's parent
-                        //so we actualy don't want to view this property since it will
-                        //be visible the other way araound (parent -> child)
-                        descs.remove(index);
-                        continue;
-                    }else{
-                        //create the new descriptor derivated
-                        final PropertyDescriptor baseDescriptor = descs.get(index);
-                        adb.reset();
-                        adb.copy((AttributeDescriptor) baseDescriptor);
-                        adb.setType(FLAG_TYPE);
-                        adb.setDefaultValue(null);
-                        adb.addUserData(JDBCFeatureStore.JDBC_PROPERTY_RELATION, relation);
-                        final PropertyDescriptor newDescriptor = adb.buildDescriptor();
-                        descs.set(index, newDescriptor);
-                    }
+                    //create the new descriptor derivated
+                    final PropertyDescriptor baseDescriptor = descs.get(index);
+                    adb.reset();
+                    adb.copy((AttributeDescriptor) baseDescriptor);
+                    adb.setType(FLAG_TYPE);
+                    adb.setDefaultValue(null);
+                    adb.addUserData(JDBCFeatureStore.JDBC_PROPERTY_RELATION, relation);
+                    final PropertyDescriptor newDescriptor = adb.buildDescriptor();
+                    descs.set(index, newDescriptor);
 
-                    final Object[] futur = new Object[]{schema, table, relation};
+                    final Object[] futur = new Object[]{table, relation};
                     secondPass.add(futur);
                 }
 
@@ -791,7 +787,7 @@ public final class DataBaseModel {
                         }
                     }
                     
-                    final ComplexType foreignType = schema.getTable(relation.getForeignTable()).getBaseType();
+                    final ComplexType foreignType = schema.getTable(relation.getForeignTable()).getType(TableMetaModel.View.TABLE);
                     final PropertyDescriptor propDesc = foreignType.getDescriptor(relation.getForeignColumn());
                     final boolean unique = Boolean.TRUE.equals(propDesc.getUserData().get(JDBCFeatureStore.JDBC_PROPERTY_UNIQUE));
                     adb.reset();
@@ -805,71 +801,96 @@ public final class DataBaseModel {
                     final PropertyDescriptor newDescriptor = adb.buildDescriptor();
                     final int index = ftb.add(newDescriptor);
                     
-                    final Object[] futur = new Object[]{schema, table, relation, index};
+                    final Object[] futur = new Object[]{table, relation};
                     secondPass.add(futur);
                 }
 
-                final ComplexType ft;
                 if(table.isSubType()){
                     //we wont a complex type for sub types, we don't want them to have ids
-                    ft = ftb.buildType();
-                    //store it as a real feature type in the table
-                    table.complexType = ftb.buildFeatureType();
+                    table.complexAttType = ftb.buildType();
+                    table.complexFeatureType = ftb.buildFeatureType();
+                    table.allType = ftb.buildFeatureType();
                 }else{
-                    ft = ftb.buildFeatureType();
-                    table.complexType = ft;
-                }
-                builded.put(code, (ModifiableType) ft);
-                
+                    table.complexAttType = ftb.buildFeatureType();
+                    table.complexFeatureType = ftb.buildFeatureType();
+                    table.allType = ftb.buildFeatureType();
+                }                
             }
         }
 
         //second pass to fill relations-----------------------------------------
         for(Object[] futur : secondPass){
-            final SchemaMetaModel schema = (SchemaMetaModel) futur[0];
-            final TableMetaModel table = (TableMetaModel) futur[1];
-            final RelationMetaModel relation = (RelationMetaModel) futur[2];
-            //final int index = (Integer) futur[3];
-            
-            final String code = schema.name +"."+table.name;            
-            final ModifiableType candidate = builded.get(code);
-            final List<PropertyDescriptor> descs = candidate.getDescriptors();
+            final TableMetaModel primaryTable = (TableMetaModel) futur[0];
+            final RelationMetaModel relation = (RelationMetaModel) futur[1];
             final String relCode = relation.getForeignSchema() +"."+relation.getForeignTable();
-            final ComplexType relType = builded.get(relCode);
-                        
-            //create the new association descriptor derivated
-            atb.reset();
-            atb.copy(relType);
-            atb.setParentType(null);
+            final TableMetaModel foreignTable = (TableMetaModel)builded.get(relCode);
             
-            //find the descriptor to replace
-            int index = -1;
-            final String searchedName = relation.isImported() ? relation.getCurrentColumn() : relation.getForeignColumn();
-            for(int i=0,n=descs.size();i<n;i++){
-                final PropertyDescriptor pd = descs.get(i);
-                if(pd.getName().getLocalPart().equals(searchedName)){
-                    index = i;
-                }
+            //update complex attribute type
+            final ModifiableType cat = (ModifiableType) primaryTable.getType(TableMetaModel.View.COMPLEX_ATTRIBUTE_TYPE);
+            final int index = modifyField(foreignTable, relation, cat);
+            
+            //update complex feature type
+            final ModifiableType cft = (ModifiableType) primaryTable.getType(TableMetaModel.View.COMPLEX_FEATURE_TYPE);
+            modifyField(foreignTable, relation, cft);
+            
+            //update full type
+            final ModifiableType allt = (ModifiableType) primaryTable.getType(TableMetaModel.View.ALLCOMPLEX);
+            modifyField(foreignTable, relation, allt);
+            
+            
+            if(primaryTable.isSubType() && relation.isDeleteCascade() && relation.isImported()){
+                //this type is a subtype and relation points toward it's parent
+                //so we actualy don't want to view this property since it will
+                //be visible the other way araound (parent -> child)
+                cat.changeProperty(index, null);
+                cft.changeProperty(index, null);
             }
             
-            final PropertyDescriptor baseDescriptor = descs.get(index);
-            adb.reset();
-            adb.copy(baseDescriptor);
-            adb.setDefaultValue(null);
             
-            final PropertyDescriptor newDescriptor;
-            if(relation.isDeleteCascade()){
-                adb.setType(relType);
-                newDescriptor = adb.buildDescriptor();
-            }else{
-                adb.setType(atb.buildAssociationType(relType));
-                newDescriptor = adb.buildAssociationDescriptor();
-            }
-
-            newDescriptor.getUserData().put(JDBCFeatureStore.JDBC_PROPERTY_RELATION,relation);
-            candidate.changeProperty(index, newDescriptor);
         }
+    }
+    
+    private int modifyField(final TableMetaModel foreignTable, 
+            final RelationMetaModel relation, final ModifiableType candidate){
+        final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder(FTF);
+        final AttributeTypeBuilder atb = new AttributeTypeBuilder(FTF);
         
+        final List<PropertyDescriptor> descs = candidate.getDescriptors();
+        final ComplexType foreignType = foreignTable.getType(TableMetaModel.View.COMPLEX_ATTRIBUTE_TYPE);
+
+        //create the new association descriptor derivated
+        atb.reset();
+        atb.copy(foreignType);
+        atb.setParentType(null);
+
+        //find the descriptor to replace
+        int index = -1;
+        final String searchedName = relation.isImported() ? relation.getCurrentColumn() : relation.getForeignColumn();
+        for(int i=0,n=descs.size();i<n;i++){
+            final PropertyDescriptor pd = descs.get(i);
+            if(pd.getName().getLocalPart().equals(searchedName)){
+                index = i;
+            }
+        }
+
+        final PropertyDescriptor baseDescriptor = descs.get(index);
+        adb.reset();
+        adb.copy(baseDescriptor);
+        adb.setDefaultValue(null);
+
+        final PropertyDescriptor newDescriptor;
+        if(relation.isDeleteCascade()){
+            adb.setType(foreignType);
+            newDescriptor = adb.buildDescriptor();
+        }else{
+            adb.setType(atb.buildAssociationType(foreignType));
+            newDescriptor = adb.buildAssociationDescriptor();
+        }
+
+        newDescriptor.getUserData().put(JDBCFeatureStore.JDBC_PROPERTY_RELATION,relation);
+        candidate.changeProperty(index, newDescriptor);
+        
+        return index;
     }
 
 }

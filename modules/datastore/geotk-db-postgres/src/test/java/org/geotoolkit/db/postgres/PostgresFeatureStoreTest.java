@@ -33,6 +33,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -95,11 +96,24 @@ public class PostgresFeatureStoreTest {
     private static final FeatureType FTYPE_ARRAY;
     private static final FeatureType FTYPE_GEOMETRY;
     private static final FeatureType FTYPE_COMPLEX;
+    private static final FeatureType FTYPE_COMPLEX2;
     
     private static final CoordinateReferenceSystem CRS_4326;
     
     static{
+        try {
+            CRS_4326 = CRS.decode("EPSG:4326",true);
+        } catch (NoSuchAuthorityCodeException ex) {
+            throw new RuntimeException("Failed to load CRS");
+        } catch (FactoryException ex) {
+            throw new RuntimeException("Failed to load CRS");
+        }
+        
         FeatureTypeBuilder ftb = new FeatureTypeBuilder();
+        AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
+        
+        ////////////////////////////////////////////////////////////////////////
+        ftb = new FeatureTypeBuilder();
         ftb.setName("testTable");
         ftb.add("boolean",  Boolean.class);
         ftb.add("byte",     Byte.class);
@@ -111,6 +125,7 @@ public class PostgresFeatureStoreTest {
         ftb.add("string",   String.class);
         FTYPE_SIMPLE = ftb.buildFeatureType();
         
+        ////////////////////////////////////////////////////////////////////////
         ftb = new FeatureTypeBuilder();
         ftb.setName("testTable");
         ftb.add("boolean",  Boolean[].class);
@@ -123,13 +138,7 @@ public class PostgresFeatureStoreTest {
         ftb.add("string",   String[].class);
         FTYPE_ARRAY = ftb.buildFeatureType();
         
-        try {
-            CRS_4326 = CRS.decode("EPSG:4326",true);
-        } catch (NoSuchAuthorityCodeException ex) {
-            throw new RuntimeException("Failed to load CRS");
-        } catch (FactoryException ex) {
-            throw new RuntimeException("Failed to load CRS");
-        }
+        ////////////////////////////////////////////////////////////////////////
         ftb = new FeatureTypeBuilder();
         ftb.setName("testTable");
         ftb.add("geometry",         Geometry.class, CRS_4326);
@@ -143,28 +152,53 @@ public class PostgresFeatureStoreTest {
         FTYPE_GEOMETRY = ftb.buildFeatureType();
         
         
+        ////////////////////////////////////////////////////////////////////////
         ftb = new FeatureTypeBuilder();
-        final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
 
         ftb.setName("Stop");
         ftb.add("location", Point.class, CRS_4326);
         ftb.add("time", Date.class);
-        final ComplexType trackPointType = ftb.buildType();
+        final ComplexType stopType = ftb.buildType();
 
         ftb.reset();
         ftb.setName("Driver");
         ftb.add("name", String.class);
         ftb.add("code", String.class);
-        final ComplexType fishType = ftb.buildType();
+        final ComplexType driverType = ftb.buildType();
 
         ftb.reset();
         ftb.setName("Voyage");
         ftb.add("identifier", Long.class);
-        AttributeDescriptor elementDesc = adb.create(fishType, DefaultName.valueOf("driver"),1,1,false,null);
-        AttributeDescriptor stepDesc = adb.create(trackPointType, DefaultName.valueOf("stops"),0,Integer.MAX_VALUE,false,null);
+        AttributeDescriptor elementDesc = adb.create(driverType, DefaultName.valueOf("driver"),1,1,false,null);
+        AttributeDescriptor stepDesc = adb.create(stopType, DefaultName.valueOf("stops"),0,Integer.MAX_VALUE,false,null);
         ftb.add(elementDesc);
         ftb.add(stepDesc);
         FTYPE_COMPLEX = ftb.buildFeatureType();
+        
+        
+        ////////////////////////////////////////////////////////////////////////
+        ftb = new FeatureTypeBuilder();
+        adb = new AttributeDescriptorBuilder();
+
+        ftb.reset();
+        ftb.setName("Data");
+        ftb.add("values", Float[].class);
+        final ComplexType dataType = ftb.buildType();
+        
+        ftb.reset();
+        ftb.setName("Record");
+        ftb.add("time", Date.class);
+        AttributeDescriptor dataDesc = adb.create(dataType, DefaultName.valueOf("datas"),0,Integer.MAX_VALUE,false,null);
+        ftb.add(dataDesc);
+        final ComplexType recordType = ftb.buildType();
+
+        ftb.reset();
+        ftb.setName("Sounding");
+        ftb.add("identifier", Long.class);
+        AttributeDescriptor recordDesc = adb.create(recordType, DefaultName.valueOf("records"),0,Integer.MAX_VALUE,false,null);
+        ftb.add(recordDesc);
+        FTYPE_COMPLEX2 = ftb.buildFeatureType();
+        
     }
     
     private FeatureStore store;
@@ -379,7 +413,21 @@ public class PostgresFeatureStoreTest {
         
     }
     
-    private void lazyCompare(PropertyType refType, PropertyType candidate){
+    @Test
+    public void testComplexType2Creation() throws DataStoreException, VersioningException{
+        reload(false);
+        
+        final FeatureType refType = FTYPE_COMPLEX2;        
+        store.createSchema(refType.getName(), refType);        
+        assertEquals(1, store.getNames().size());
+        
+        final Name name = store.getNames().iterator().next();
+        final FeatureType created = store.getFeatureType(name);
+        lazyCompare(refType, created);
+        
+    }
+    
+    private void lazyCompare(final PropertyType refType, final PropertyType candidate){
         final Name name = refType.getName();
         assertEquals(refType.getName().getLocalPart(), name.getLocalPart());
         
@@ -590,6 +638,9 @@ public class PostgresFeatureStoreTest {
         }
     }
     
+    /**
+     * 2 level depths feature test.
+     */
     @Test
     public void testComplexInsert() throws DataStoreException, VersioningException{
         reload(false);
@@ -656,6 +707,119 @@ public class PostgresFeatureStoreTest {
                 }else if(time.getTime() == 7000000){
                     assertEquals(stop3.getProperty("location").getValue(), location);
                     found[2] = true;
+                }else{
+                    fail("Unexpected property \n"+ca);
+                }
+            }
+            
+            for(boolean b : found) assertTrue(b);
+            
+        }finally{
+            ite.close();
+        }
+        
+    }
+    
+    /**
+     * 3 level depths feature test.
+     */
+    @Test
+    public void testComplex2Insert() throws DataStoreException, VersioningException{
+        reload(false);
+        final GeometryFactory gf = new GeometryFactory();
+            
+        store.createSchema(FTYPE_COMPLEX2.getName(), FTYPE_COMPLEX2);
+        final FeatureType soundingType = store.getFeatureType(store.getNames().iterator().next());
+        final PropertyDescriptor recordType = soundingType.getDescriptor("records");
+        final PropertyDescriptor dataType = ((ComplexType)recordType.getType()).getDescriptor("datas");
+        
+        final Feature sounding = FeatureUtilities.defaultFeature(soundingType, "0");
+        sounding.getProperty("identifier").setValue(120);
+        
+        final ComplexAttribute record1 = (ComplexAttribute)FeatureUtilities.defaultProperty(recordType);
+        record1.getProperty("time").setValue(new Date(5000000));        
+        final ComplexAttribute data11 = (ComplexAttribute)FeatureUtilities.defaultProperty(dataType);
+        data11.getProperty("values").setValue(new Float[]{1f,2f,3f});
+        record1.getProperties().add(data11);
+        final ComplexAttribute data12 = (ComplexAttribute)FeatureUtilities.defaultProperty(dataType);
+        data12.getProperty("values").setValue(new Float[]{4f,5f,6f});
+        record1.getProperties().add(data12);
+        
+        final ComplexAttribute record2 = (ComplexAttribute)FeatureUtilities.defaultProperty(recordType);
+        record2.getProperty("time").setValue(new Date(6000000));
+        final ComplexAttribute data21 = (ComplexAttribute)FeatureUtilities.defaultProperty(dataType);
+        data21.getProperty("values").setValue(new Float[]{7f,8f,9f});
+        record2.getProperties().add(data21);
+        
+        
+        sounding.getProperties().add(record1);
+        sounding.getProperties().add(record2);
+        
+                
+        store.addFeatures(soundingType.getName(), Collections.singleton(sounding));
+        
+        final Session session = store.createSession(false);
+        final FeatureCollection<Feature> col = session.getFeatureCollection(QueryBuilder.all(soundingType.getName()));
+        assertEquals(1, col.size());
+        
+        final FeatureIterator ite = store.getFeatureReader(QueryBuilder.all(soundingType.getName()));
+        try{
+            final Feature resFeature = ite.next();
+            assertNotNull(resFeature);
+            assertTrue(!(resFeature instanceof SimpleFeature));
+            
+            assertEquals(120l, resFeature.getProperty("identifier").getValue());
+            
+            
+            final Collection<Property> records = resFeature.getProperties("records");
+            assertEquals(2, records.size());
+            final boolean[] found = new boolean[2];
+            for(Property record : records){
+                assertTrue(record instanceof ComplexAttribute);
+                assertNotNull(record.getDescriptor());
+                final ComplexAttribute ca = (ComplexAttribute) record;
+                final Timestamp time = (Timestamp) ca.getProperty("time").getValue();
+                if(time.getTime() == 5000000){
+                    found[0] = true;
+                    
+                    final Collection<Property> datas = ((ComplexAttribute)record).getProperties("datas");
+                    assertEquals(2, datas.size());
+                    final boolean[] dfound = new boolean[2];
+                    for(Property data : datas){
+                        assertTrue(data instanceof ComplexAttribute);
+                        final ComplexAttribute dca = (ComplexAttribute) data;
+                         assertNotNull(dca.getDescriptor());
+                        final Float[] values = (Float[]) dca.getProperty("values").getValue();
+                        if(Arrays.equals(values, new Float[]{1f,2f,3f})){
+                            dfound[0] = true;
+                        }else if(Arrays.equals(values, new Float[]{4f,5f,6f})){
+                            dfound[1] = true;
+                        }else{
+                            fail("Unexpected property \n"+dca);
+                        }
+                    }
+                    for(boolean b : dfound) assertTrue(b);
+                    
+                }else if(time.getTime() == 6000000){
+                    found[1] = true;
+                    
+                    final Collection<Property> datas = ((ComplexAttribute)record).getProperties("datas");
+                    assertEquals(1, datas.size());
+                    final boolean[] dfound = new boolean[1];
+                    for(Property data : datas){
+                        assertTrue(data instanceof ComplexAttribute);
+                        final ComplexAttribute dca = (ComplexAttribute) data;
+                         assertNotNull(dca.getDescriptor());
+                        final Float[] values = (Float[]) dca.getProperty("values").getValue();
+                        if(Arrays.equals(values, new Float[]{7f,8f,9f})){
+                            dfound[0] = true;
+                        }else{
+                            fail("Unexpected property \n"+dca);
+                        }
+                    }
+                    for(boolean b : dfound) assertTrue(b);
+                    
+                    
                 }else{
                     fail("Unexpected property \n"+ca);
                 }

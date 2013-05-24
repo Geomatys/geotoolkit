@@ -94,11 +94,11 @@ public class RelationMetaModel {
     
     public String[] getSubTypeFields(DataBaseModel model) throws DataStoreException{
         final TableMetaModel table = model.getSchemaMetaModel(foreignSchema).getTable(foreignTable);
-        final Collection<PropertyDescriptor> descs = table.baseType.getDescriptors();
-        String[] fields = new String[descs.size()-table.key.getColumns().size()-1];
+        final Collection<PropertyDescriptor> descs = table.getType(TableMetaModel.View.COMPLEX_FEATURE_TYPE).getDescriptors();
+        String[] fields = new String[descs.size()-table.key.getColumns().size()];
         int i=0;
         for(PropertyDescriptor desc : descs){
-            if(!Boolean.TRUE.equals(desc.getUserData().get(HintsPending.PROPERTY_IS_IDENTIFIER)) && !desc.getName().getLocalPart().equals(foreignColumn)){
+            if(!Boolean.TRUE.equals(desc.getUserData().get(HintsPending.PROPERTY_IS_IDENTIFIER))){
                 fields[i] = desc.getName().getLocalPart();
                 i++;
             }

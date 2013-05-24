@@ -143,7 +143,7 @@ public class JDBCFeatureReader implements FeatureReader<FeatureType, Feature> {
                 final PropertyDescriptor pdesc = properties[i];
                 values[i] = JDBCComplexFeature.readSimpleValue(store.getDialect(), rs, i+1, pdesc);
             }
-            return new DefaultSimpleFeature((SimpleFeatureType)type, fid, values, false);
+            return new DefaultSimpleFeature((SimpleFeatureType)type, fid, values.clone(), false);
         }else{
             return new JDBCComplexFeature(store, rs, type, fid);
         }

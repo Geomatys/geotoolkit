@@ -22,16 +22,23 @@ import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.AbstractCollection;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.geotoolkit.data.FeatureCollection;
+import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.memory.GenericAssociationIterator;
+import org.geotoolkit.data.memory.GenericEncapsulateFeatureIterator;
+import org.geotoolkit.data.memory.GenericRetypeFeatureIterator;
+import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.db.dialect.SQLDialect;
 import org.geotoolkit.db.reverse.RelationMetaModel;
@@ -98,6 +105,7 @@ public class JDBCComplexFeature extends AbstractFeature<Collection<Property>> {
                 }else{
                     prop = Collections.emptyList();
                 }
+                k++;
             }else if(ptype instanceof ComplexType){
                 final RelationMetaModel template = (RelationMetaModel) desc.getUserData().get(JDBCFeatureStore.JDBC_PROPERTY_RELATION);
                 
@@ -113,19 +121,23 @@ public class JDBCComplexFeature extends AbstractFeature<Collection<Property>> {
                     qb.setFilter(template.toFilter(key));
                     qb.setProperties(template.getSubTypeFields(store.getDatabaseModel()));
 
-                    prop = store.createSession(false).getFeatureCollection(qb.buildQuery());
+                    prop = new ComplexAttCollection(qb.buildQuery(), desc);
+//                    FeatureCollection col = store.createSession(false).getFeatureCollection(qb.buildQuery());
+//                    col = GenericRetypeFeatureIterator.wrap(col, (FeatureType)desc.getType());
+//                    prop = GenericEncapsulateFeatureIterator.wrap(col, desc);
                 }else{
                     prop = Collections.emptyList();
                 }
             }else{
                 //single value attribut
+                System.out.println(k+" "+desc);
                 prop = FeatureUtilities.defaultProperty(desc);
                 final Object value = readSimpleValue(store.getDialect(), rs, k+1, desc);
                 ((Property)prop).setValue(value);
+                k++;
             }
             
             progressiveMap.put(n, prop);
-            k++;
         }
         
         //used by getValue and getProperties()
@@ -341,4 +353,118 @@ public class JDBCComplexFeature extends AbstractFeature<Collection<Property>> {
             return dialect.decodeAttributeValue((AttributeDescriptor)desc, rs, index);
         }
     }
+    
+    /**
+     * Load properties later
+     */
+    private class ComplexAttCollection implements Collection<Property>{
+
+        private final Query query;
+        private final PropertyDescriptor desc;
+        private List<Property> loaded = null;
+
+        public ComplexAttCollection(Query query, PropertyDescriptor desc) {
+            this.query = query;
+            this.desc = desc;
+        }
+        
+        private synchronized void load(){
+            if(loaded!=null) return;
+            
+            loaded = new ArrayList<Property>();
+            final FeatureCollection col = store.createSession(false).getFeatureCollection(query);
+            final FeatureIterator ite = col.iterator();
+            try{
+                while(ite.hasNext()){
+                    Property p = ite.next();
+                    Property cp = FeatureUtilities.defaultProperty(desc);
+                    FeatureUtilities.copy(p, cp, false);
+                    //Property p = FeatureUtilities.wrapProperty(ite.next(), desc);
+                    loaded.add(cp);
+                }
+            }finally{
+                ite.close();
+            }
+        }
+        
+        @Override
+        public int size() {
+            load();
+            return loaded.size();
+        }
+
+        @Override
+        public boolean isEmpty() {
+            load();
+            return loaded.isEmpty();
+        }
+
+        @Override
+        public boolean contains(Object o) {
+            load();
+            return loaded.contains(o);
+        }
+
+        @Override
+        public Iterator iterator() {
+            load();
+            return loaded.iterator();
+        }
+
+        @Override
+        public Object[] toArray() {
+            load();
+            return loaded.toArray();
+        }
+
+        @Override
+        public Object[] toArray(Object[] a) {
+            load();
+            return loaded.toArray(a);
+        }
+
+        @Override
+        public boolean add(Property e) {
+            load();
+            return loaded.add(e);
+        }
+
+        @Override
+        public boolean remove(Object o) {
+            load();
+            return loaded.remove(o);
+        }
+
+        @Override
+        public boolean containsAll(Collection c) {
+            load();
+            return loaded.containsAll(c);
+        }
+
+        @Override
+        public boolean addAll(Collection c) {
+            load();
+            return loaded.addAll(c);
+        }
+
+        @Override
+        public boolean removeAll(Collection c) {
+            load();
+            return loaded.removeAll(c);
+        }
+
+        @Override
+        public boolean retainAll(Collection c) {
+            load();
+            return loaded.removeAll(c);
+        }
+
+        @Override
+        public void clear() {
+            load();
+            loaded.clear();
+        }
+        
+    }
+    
 }
