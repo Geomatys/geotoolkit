@@ -515,9 +515,9 @@ public class PostgresFeatureStoreTest {
         reload(true);
             
         store.createSchema(FTYPE_SIMPLE.getName(), FTYPE_SIMPLE);
-        final FeatureType resType = store.getFeatureType(store.getNames().iterator().next());
+        FeatureType resType = store.getFeatureType(store.getNames().iterator().next());
         
-        final Feature feature = FeatureUtilities.defaultFeature(resType, "0");
+        Feature feature = FeatureUtilities.defaultFeature(resType, "0");
         feature.getProperty("boolean").setValue(true);
         feature.getProperty("byte").setValue(45);
         feature.getProperty("short").setValue(963);
@@ -529,11 +529,11 @@ public class PostgresFeatureStoreTest {
         
         store.addFeatures(resType.getName(), Collections.singleton(feature));
         
-        final Session session = store.createSession(false);
-        final FeatureCollection<Feature> col = session.getFeatureCollection(QueryBuilder.all(resType.getName()));
+        Session session = store.createSession(false);
+        FeatureCollection<Feature> col = session.getFeatureCollection(QueryBuilder.all(resType.getName()));
         assertEquals(1, col.size());
         
-        final FeatureIterator ite = col.iterator();
+        FeatureIterator ite = col.iterator();
         try{
             final Feature resFeature = ite.next();
             assertNotNull(resFeature);
@@ -549,6 +549,47 @@ public class PostgresFeatureStoreTest {
         }finally{
             ite.close();
         }
+        
+        
+        // SECOND TEST for NAN values ------------------------------------------
+        reload(true);            
+        store.createSchema(FTYPE_SIMPLE.getName(), FTYPE_SIMPLE);
+        resType = store.getFeatureType(store.getNames().iterator().next());
+        
+        feature = FeatureUtilities.defaultFeature(resType, "0");
+        feature.getProperty("boolean").setValue(true);
+        feature.getProperty("byte").setValue(45);
+        feature.getProperty("short").setValue(963);
+        feature.getProperty("integer").setValue(123456);
+        feature.getProperty("long").setValue(456789l);
+        feature.getProperty("float").setValue(Float.NaN);
+        feature.getProperty("double").setValue(Double.NaN);
+        feature.getProperty("string").setValue("a string");
+        
+        store.addFeatures(resType.getName(), Collections.singleton(feature));
+        
+        session = store.createSession(false);
+        col = session.getFeatureCollection(QueryBuilder.all(resType.getName()));
+        assertEquals(1, col.size());
+        
+        ite = col.iterator();
+        try{
+            final Feature resFeature = ite.next();
+            assertNotNull(resFeature);
+            assertTrue(resFeature instanceof SimpleFeature);
+            assertEquals(true, resFeature.getProperty("boolean").getValue());
+            assertEquals(45, resFeature.getProperty("byte").getValue());
+            assertEquals(963, resFeature.getProperty("short").getValue());
+            assertEquals(123456, resFeature.getProperty("integer").getValue());
+            assertEquals(456789l, resFeature.getProperty("long").getValue());
+            assertEquals(Float.NaN, resFeature.getProperty("float").getValue());
+            assertEquals(Double.NaN, resFeature.getProperty("double").getValue());
+            assertEquals("a string", resFeature.getProperty("string").getValue());
+        }finally{
+            ite.close();
+        }
+        
+        
         
     }
         

@@ -171,10 +171,23 @@ public class PostgresFilterToSQL implements FilterToSQL {
         if(candidate == null){
           sb.append("NULL");
           
-        }else if(candidate instanceof Number 
-              || candidate instanceof Boolean){
+        }else if(candidate instanceof Boolean){
             sb.append(String.valueOf(candidate));
            
+        }else if(candidate instanceof Double){
+            if(((Double)candidate).isNaN()){
+                sb.append("'NaN'");
+            }else{
+                sb.append(String.valueOf(candidate));
+            }
+        }else if(candidate instanceof Float){
+            if(((Float)candidate).isNaN()){
+                sb.append("'NaN'");
+            }else{
+                sb.append(String.valueOf(candidate));
+            }
+        }else if(candidate instanceof Number){
+            sb.append(String.valueOf(candidate));
         }else if(candidate instanceof byte[]){
             //special case for byte array
             sb.append("decode('");
