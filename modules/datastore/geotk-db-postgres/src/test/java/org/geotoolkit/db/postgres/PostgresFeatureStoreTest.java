@@ -596,6 +596,49 @@ public class PostgresFeatureStoreTest {
     }
     
     @Test
+    public void testArray2Insert() throws DataStoreException, VersioningException{
+        reload(true);
+            
+        store.createSchema(FTYPE_ARRAY2.getName(), FTYPE_ARRAY2);
+        final FeatureType resType = store.getFeatureType(store.getNames().iterator().next());
+        
+        final Feature feature = FeatureUtilities.defaultFeature(resType, "0");
+        feature.getProperty("boolean").setValue(new Boolean[][]{{true,false,true},{false,true,false},{false,false,false}});
+        feature.getProperty("byte").setValue(new Short[][]{{1,2,3},{4,5,6},{7,8,9}});
+        feature.getProperty("short").setValue(new Short[][]{{1,2,3},{4,5,6},{7,8,9}});
+        feature.getProperty("integer").setValue(new Integer[][]{{1,2,3},{4,5,6},{7,8,9}});
+        feature.getProperty("long").setValue(new Long[][]{{1l,2l,3l},{4l,5l,6l},{7l,8l,9l}});
+        feature.getProperty("float").setValue(new Float[][]{{1f,2f,3f},{4f,5f,6f},{7f,8f,9f}});
+        feature.getProperty("double").setValue(new Double[][]{{1d,2d,3d},{4d,5d,6d},{7d,8d,9d}});
+        feature.getProperty("string").setValue(new String[][]{{"1","2","3"},{"4","5","6"},{"7","8","9"}});
+        
+        store.addFeatures(resType.getName(), Collections.singleton(feature));
+        
+        final Session session = store.createSession(false);
+        final FeatureCollection<Feature> col = session.getFeatureCollection(QueryBuilder.all(resType.getName()));
+        assertEquals(1, col.size());
+        
+        //Postgis allow NULL in arrays, so returned array are not primitive types
+        final FeatureIterator ite = col.iterator();
+        try{
+            final Feature resFeature = ite.next();
+            assertNotNull(resFeature);
+            assertTrue(resFeature instanceof SimpleFeature);
+            assertArrayEquals((Boolean[][])feature.getProperty("boolean").getValue(),       (Boolean[][])resFeature.getProperty("boolean").getValue());
+            assertArrayEquals((Short[][])feature.getProperty("byte").getValue(),       (Short[][])resFeature.getProperty("byte").getValue());
+            assertArrayEquals((Short[][])feature.getProperty("short").getValue(),       (Short[][])resFeature.getProperty("short").getValue());
+            assertArrayEquals((Integer[][])feature.getProperty("integer").getValue(),       (Integer[][])resFeature.getProperty("integer").getValue());
+            assertArrayEquals((Long[][])feature.getProperty("long").getValue(),       (Long[][])resFeature.getProperty("long").getValue());
+            assertArrayEquals((Float[][])feature.getProperty("float").getValue(),       (Float[][])resFeature.getProperty("float").getValue());
+            assertArrayEquals((Double[][])feature.getProperty("double").getValue(),       (Double[][])resFeature.getProperty("double").getValue());
+            assertArrayEquals((String[][])feature.getProperty("string").getValue(),       (String[][])resFeature.getProperty("string").getValue());
+        }finally{
+            ite.close();
+        }
+        
+    }
+    
+    @Test
     public void testGeometryInsert() throws DataStoreException, NoSuchAuthorityCodeException, FactoryException, VersioningException{
         reload(true);
             

@@ -211,7 +211,15 @@ public class PostgresFilterToSQL implements FilterToSQL {
                     sb.append(',');
                 }
                 final Object o = Array.get(candidate, i);
-                if(!(o instanceof Number || o instanceof Boolean) && o != null){
+                if(o != null && o.getClass().isArray()){
+                    final StringBuilder suba = new StringBuilder();
+                    writeValue(suba,o,-1);
+                    if(suba.charAt(0)=='\''){
+                        sb.append(suba.substring(1, suba.length()-1));
+                    }else{
+                        sb.append(suba.toString());
+                    }
+                }else if(!(o instanceof Number || o instanceof Boolean) && o != null){
                     // we don't know what this is, let's convert back to a string
                     String encoding = Converters.convert(o, String.class);
                     if (encoding == null) {

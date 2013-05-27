@@ -911,21 +911,58 @@ final class PostgresDialect extends AbstractSQLDialect{
         final Class binding = descriptor.getType().getBinding();
         if(binding.isArray()){
             Object baseArray = rs.getArray(i).getArray();
+            
             final Class c = binding.getComponentType();
             if(!baseArray.getClass().getComponentType().equals(c)){
-                //not exact match retype it
-                int size = Array.getLength(baseArray);
-                final Object rarray = Array.newInstance(c, size);
-                for(int k=0; k<size; k++){
-                    Array.set(rarray, k, Converters.convert(Array.get(baseArray, k), c));
+                
+                //postgres handle multi depth array, yet do not declare them as Nd array in metadatas
+                //find the number of dimensions
+                int nbdim=1;
+                Class base = baseArray.getClass().getComponentType();
+                while(base.isArray()){
+                    base = base.getComponentType();
+                    nbdim++;
                 }
-                baseArray = rarray;
+                
+                baseArray = rebuildArray(baseArray, c, nbdim);
+                
+//                if(nbdim==1){
+//                    //not exact match retype it
+//                    int size = Array.getLength(baseArray);
+//                    final Object rarray = Array.newInstance(c, size);
+//                    for(int k=0; k<size; k++){
+//                        Array.set(rarray, k, Converters.convert(Array.get(baseArray, k), c));
+//                    }
+//                    baseArray = rarray;
+//                }else{
+//                    final Object rarray = Array.newInstance(c, new int[nbdim]);
+//                    
+//                }
             }
             return baseArray;
         }else{
             return rs.getObject(i);
         }
     }
+    
+    private Object rebuildArray(Object candidate, Class componentType, int depth){
+        if(candidate==null) return null;
+        
+        if(candidate.getClass().isArray()){
+            final int size = Array.getLength(candidate);
+            final int[] dims = new int[depth];
+            dims[0] = size;
+            final Object rarray = Array.newInstance(componentType, dims);
+            depth--;
+            for(int k=0; k<size; k++){
+                Array.set(rarray, k, rebuildArray(Array.get(candidate, k), componentType, depth));
+            }
+            return rarray;
+        }else{
+            return Converters.convert(candidate, componentType);
+        }
+    }
+    
     
     @Override
     public Geometry decodeGeometryValue(GeometryDescriptor descriptor, ResultSet rs, 
