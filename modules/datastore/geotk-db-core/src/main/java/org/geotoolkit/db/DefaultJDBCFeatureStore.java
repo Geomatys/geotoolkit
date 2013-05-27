@@ -27,6 +27,7 @@ import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -48,10 +49,12 @@ import org.geotoolkit.data.query.Selector;
 import org.geotoolkit.data.query.Source;
 import org.geotoolkit.data.query.TextStatement;
 import org.geotoolkit.data.session.Session;
+import static org.geotoolkit.db.JDBCFeatureStore.JDBC_PROPERTY_RELATION;
 import org.geotoolkit.db.dialect.SQLDialect;
 import org.geotoolkit.db.dialect.SQLQueryBuilder;
 import org.geotoolkit.db.reverse.ColumnMetaModel;
 import org.geotoolkit.db.reverse.DataBaseModel;
+import org.geotoolkit.db.reverse.InsertRelation;
 import org.geotoolkit.db.reverse.PrimaryKey;
 import org.geotoolkit.db.reverse.RelationMetaModel;
 import org.geotoolkit.db.reverse.TableMetaModel;
@@ -791,18 +794,22 @@ public class DefaultJDBCFeatureStore extends AbstractFeatureStore implements JDB
     public void deleteSchema(final Name typeName) throws DataStoreException{
         ensureOpen();
         final FeatureType featureType = getFeatureType(typeName);
-        recursiveDelete(featureType);
+        final Set<ComplexType> visited = new HashSet<ComplexType>();
+        recursiveDelete(featureType,visited);
     }
     
-    private void recursiveDelete(ComplexType featureType) throws DataStoreException{
+    private void recursiveDelete(ComplexType featureType, Set<ComplexType> visited) throws DataStoreException{
         
         //search properties which are complex types
         for(PropertyDescriptor desc : featureType.getDescriptors()){
             final PropertyType pt = desc.getType();
             if(pt instanceof ComplexType){
-                recursiveDelete((ComplexType)pt);
+                recursiveDelete((ComplexType)pt,visited);
             }
         }
+        
+        if(visited.contains(featureType)) return;
+        visited.add(featureType);
         
         final Name typeName = featureType.getName();
         Connection cnx = null;
@@ -866,7 +873,9 @@ public class DefaultJDBCFeatureStore extends AbstractFeatureStore implements JDB
         }
         
         final FeatureType flatType = ftb.buildFeatureType();
-        types.add(flatType);
+        if(!types.contains(flatType)){
+            types.add(flatType);
+        }
     }
     
     private static class TypeRelation {
@@ -948,18 +957,22 @@ public class DefaultJDBCFeatureStore extends AbstractFeatureStore implements JDB
             insertFlat(feature, featureType, cx);
         }else{
             //decompose feature and make multiple inserts
-            final List<Entry<ComplexAttribute,ComplexAttribute>> flats = decompose(feature);
-            for(Entry<ComplexAttribute,ComplexAttribute> hierarchy : flats){
-                final ComplexAttribute parent = hierarchy.getKey();
-                final ComplexAttribute flat = hierarchy.getValue();
+            final List<InsertRelation> flats = decompose(feature);
+            for(InsertRelation hierarchy : flats){
+                final ComplexAttribute parent = hierarchy.parent;
+                final ComplexAttribute flat = hierarchy.child;
+                final RelationMetaModel relation = hierarchy.relation;
                 //resolve parent id fields.
-                if(parent!=null){
-                    for(Property prop : flat.getProperties()){
-                        final RelationMetaModel relation = (RelationMetaModel) prop.getDescriptor().getUserData().get(JDBC_PROPERTY_RELATION);
-                        if(relation==null) continue;
-                        final Object parentValue = parent.getProperty(relation.getForeignColumn()).getValue();
-                        flat.getProperty(relation.getCurrentColumn()).setValue(parentValue);
-                    }
+                if(parent!=null && relation!=null){
+                    final Object parentValue = parent.getProperty(relation.getForeignColumn()).getValue();
+                    flat.getProperty(relation.getCurrentColumn()).setValue(parentValue);
+                        
+//                    for(Property prop : flat.getProperties()){
+//                        final RelationMetaModel relation = (RelationMetaModel) prop.getDescriptor().getUserData().get(JDBC_PROPERTY_RELATION);
+//                        if(relation==null) continue;
+//                        final Object parentValue = parent.getProperty(relation.getForeignColumn()).getValue();
+//                        flat.getProperty(relation.getCurrentColumn()).setValue(parentValue);
+//                    }
                 }
                 
                 insertFlat(flat, flat.getType(), cx);
@@ -1017,25 +1030,37 @@ public class DefaultJDBCFeatureStore extends AbstractFeatureStore implements JDB
      * 
      * @param candidate 
      */
-    private List<Entry<ComplexAttribute,ComplexAttribute>> decompose(ComplexAttribute candidate) throws DataStoreException{
-        final List<Entry<ComplexAttribute,ComplexAttribute>> flats = new ArrayList<Entry<ComplexAttribute,ComplexAttribute>>();        
-        decompose(null,candidate,flats);
+    private List<InsertRelation> decompose(ComplexAttribute candidate) throws DataStoreException{
+        final List<InsertRelation> flats = new ArrayList<InsertRelation>();        
+        decompose(null,candidate,null, flats);
         return flats;
     }
     
-    private void decompose(ComplexAttribute parent, ComplexAttribute candidate, List<Entry<ComplexAttribute,ComplexAttribute>> flats) throws DataStoreException{
+    private void decompose(ComplexAttribute parent, ComplexAttribute candidate, 
+            RelationMetaModel relation, List<InsertRelation> flats) throws DataStoreException{
         //decompose main type
         final ComplexType featuretype = candidate.getType();
         final TableMetaModel table = dbmodel.getSchemaMetaModel(getDatabaseSchema()).getTable(featuretype.getName().getLocalPart());
         final ComplexType flatType = table.getType(TableMetaModel.View.SIMPLE_FEATURE_TYPE);
         final ComplexAttribute flat = FeatureUtilities.defaultProperty(flatType);
-        FeatureUtilities.copy(candidate, flat, false);        
-        flats.add(new AbstractMap.SimpleImmutableEntry<ComplexAttribute, ComplexAttribute>(parent, flat));
+        FeatureUtilities.copy(candidate, flat, false);
+        
+        //find the reverted relation
+        if(relation!=null){
+            relation = (RelationMetaModel)flatType.getDescriptor(relation.getForeignColumn()).getUserData().get(JDBC_PROPERTY_RELATION);
+        }
+        
+        final InsertRelation rt = new InsertRelation();
+        rt.parent = parent;
+        rt.child = flat;
+        rt.relation = relation;        
+        flats.add(rt);
         
         //decompose sub complex types
         for(Property prop : candidate.getProperties()){
             if(prop instanceof ComplexAttribute){
-                decompose(flat,(ComplexAttribute)prop, flats);
+                final RelationMetaModel cr = (RelationMetaModel) prop.getDescriptor().getUserData().get(JDBC_PROPERTY_RELATION);
+                decompose(flat,(ComplexAttribute)prop, cr, flats);
             }
         }
     }

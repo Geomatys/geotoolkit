@@ -98,6 +98,7 @@ public final class DataBaseModel {
     private Boolean handleSuperTableMetadata = null;
     
     //various cache while analyzing model
+    private DatabaseMetaData metadata;
     private CachedResultSet cacheSchemas;
     private CachedResultSet cacheTables;
     private CachedResultSet cacheColumns;
@@ -187,7 +188,7 @@ public final class DataBaseModel {
         try {
             cx = store.getDataSource().getConnection();
 
-            final DatabaseMetaData metadata = cx.getMetaData();
+            metadata = cx.getMetaData();
             
             // Cache all metadata informations, we will loop on them plenty of times ////////
             cacheSchemas = new CachedResultSet(metadata.getSchemas(), 
@@ -225,12 +226,7 @@ public final class DataBaseModel {
                     ExportedKey.FKTABLE_NAME,
                     ExportedKey.FKCOLUMN_NAME,
                     ImportedKey.DELETE_RULE);
-            cacheIndexInfos = new CachedResultSet(metadata.getIndexInfo(null, null, "%",true,false),
-                    Index.TABLE_SCHEM,
-                    Index.TABLE_NAME,
-                    Index.COLUMN_NAME,
-                    Index.INDEX_NAME);
-            
+                        
                 
             ////////////////////////////////////////////////////////////////////////////////
             
@@ -256,6 +252,7 @@ public final class DataBaseModel {
             cacheImportedKeys = null;
             cacheExportedKeys = null;
             cacheIndexInfos = null;
+            metadata = null;
         }
 
 
@@ -393,9 +390,15 @@ public final class DataBaseModel {
             final List<String> names = new ArrayList<String>();
             final Map<String,List<String>> uniqueIndexes = new HashMap<String, List<String>>();
             String indexname = null;
+            //we can't cache this one, seems to be a bug in the driver, it won't find anything for table name like '%'
+            cacheIndexInfos = new CachedResultSet(metadata.getIndexInfo(null, schemaName, tableName,true,false),
+                    Index.TABLE_SCHEM,
+                    Index.TABLE_NAME,
+                    Index.COLUMN_NAME,
+                    Index.INDEX_NAME);
             final Iterator<Map> indexIte = cacheIndexInfos.filter(tableFilter);
             while(indexIte.hasNext()){
-                final Map result = pkIte.next();
+                final Map result = indexIte.next();
                 final String columnName = (String)result.get(Index.COLUMN_NAME);
                 final String idxName = (String)result.get(Index.INDEX_NAME);
                 
@@ -799,7 +802,7 @@ public final class DataBaseModel {
                     adb.setDefaultValue(null);
                     adb.addUserData(JDBCFeatureStore.JDBC_PROPERTY_RELATION, relation);
                     final PropertyDescriptor newDescriptor = adb.buildDescriptor();
-                    final int index = ftb.add(newDescriptor);
+                    ftb.add(newDescriptor);
                     
                     final Object[] futur = new Object[]{table, relation};
                     secondPass.add(futur);

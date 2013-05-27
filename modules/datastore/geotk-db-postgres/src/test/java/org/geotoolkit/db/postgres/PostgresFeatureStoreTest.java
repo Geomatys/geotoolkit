@@ -92,12 +92,20 @@ import static org.junit.Assert.*;
 public class PostgresFeatureStoreTest {
     
     private static final double DELTA = 0.00000001;    
+    /** basic field types */
     private static final FeatureType FTYPE_SIMPLE;
-    private static final FeatureType FTYPE_ARRAY;
+    /** 1 dimension arrays */
+    private static final FeatureType FTYPE_ARRAY;    
+    /** 2 dimensions arrays */
     private static final FeatureType FTYPE_ARRAY2;
+    /** geometric fields */
     private static final FeatureType FTYPE_GEOMETRY;
+    /** 1 depth feature type */
     private static final FeatureType FTYPE_COMPLEX;
+    /** 2 depth feature type */
     private static final FeatureType FTYPE_COMPLEX2;
+    /** multiple properties of same complex type */
+    private static final FeatureType FTYPE_COMPLEX3;
     
     private static final CoordinateReferenceSystem CRS_4326;
     
@@ -212,6 +220,28 @@ public class PostgresFeatureStoreTest {
         AttributeDescriptor recordDesc = adb.create(recordType, DefaultName.valueOf("records"),0,Integer.MAX_VALUE,false,null);
         ftb.add(recordDesc);
         FTYPE_COMPLEX2 = ftb.buildFeatureType();
+        
+        
+        ////////////////////////////////////////////////////////////////////////
+        ftb = new FeatureTypeBuilder();
+        adb = new AttributeDescriptorBuilder();
+
+        ftb.reset();
+        ftb.setName("Data");
+        ftb.add("value", Float.class);
+        final ComplexType sdataType = ftb.buildType();
+        
+        ftb.reset();
+        ftb.setName("Record");
+        ftb.add("identifier", Long.class);
+        AttributeDescriptor sdata1Desc = adb.create(sdataType, DefaultName.valueOf("data1"),0,1,false,null);
+        AttributeDescriptor sdata2Desc = adb.create(sdataType, DefaultName.valueOf("data2"),0,1,false,null);
+        AttributeDescriptor sdata3Desc = adb.create(sdataType, DefaultName.valueOf("data3"),0,1,false,null);
+        ftb.add(sdata1Desc);
+        ftb.add(sdata2Desc);
+        ftb.add(sdata3Desc);
+        FTYPE_COMPLEX3 = ftb.buildFeatureType();
+        
         
     }
     
@@ -463,7 +493,7 @@ public class PostgresFeatureStoreTest {
         final FeatureType refType = FTYPE_COMPLEX;        
         store.createSchema(refType.getName(), refType);        
         assertEquals(1, store.getNames().size());
-        
+         
         final Name name = store.getNames().iterator().next();
         final FeatureType created = store.getFeatureType(name);
         lazyCompare(refType, created);
@@ -484,6 +514,19 @@ public class PostgresFeatureStoreTest {
         
     }
     
+    @Test
+    public void testComplexType3Creation() throws DataStoreException, VersioningException{
+        reload(false);
+        
+        final FeatureType refType = FTYPE_COMPLEX3;        
+        store.createSchema(refType.getName(), refType);        
+        assertEquals(1, store.getNames().size());
+        
+        final Name name = store.getNames().iterator().next();
+        final FeatureType created = store.getFeatureType(name);
+        lazyCompare(refType, created);
+    }
+    
     private void lazyCompare(final PropertyType refType, final PropertyType candidate){
         final Name name = refType.getName();
         assertEquals(refType.getName().getLocalPart(), name.getLocalPart());
@@ -495,6 +538,7 @@ public class PostgresFeatureStoreTest {
 
             for(PropertyDescriptor desc : ct.getDescriptors()){
                 final PropertyDescriptor cdesc = cct.getDescriptor(desc.getName().getLocalPart());
+                assertEquals(desc.getMaxOccurs(), cdesc.getMaxOccurs());
                 assertNotNull(cdesc);
                 lazyCompare(desc.getType(), cdesc.getType());
             }
@@ -867,7 +911,6 @@ public class PostgresFeatureStoreTest {
     @Test
     public void testComplex2Insert() throws DataStoreException, VersioningException{
         reload(false);
-        final GeometryFactory gf = new GeometryFactory();
             
         store.createSchema(FTYPE_COMPLEX2.getName(), FTYPE_COMPLEX2);
         final FeatureType soundingType = store.getFeatureType(store.getNames().iterator().next());
@@ -971,8 +1014,61 @@ public class PostgresFeatureStoreTest {
         }finally{
             ite.close();
         }
+    }
+    
+    /**
+     * multiple complex properties of same type
+     */
+    @Test
+    public void testComplex3Insert() throws DataStoreException, VersioningException{
+        reload(false);
+            
+        store.createSchema(FTYPE_COMPLEX3.getName(), FTYPE_COMPLEX3);
+        final FeatureType recordType = store.getFeatureType(store.getNames().iterator().next());
+        final PropertyDescriptor data1Type = recordType.getDescriptor("data1");
+        final PropertyDescriptor data2Type = recordType.getDescriptor("data2");
+        final PropertyDescriptor data3Type = recordType.getDescriptor("data3");
+        
+        final Feature record = FeatureUtilities.defaultFeature(recordType, "0");
+        record.getProperty("identifier").setValue(120);
+        
+        final ComplexAttribute data1 = (ComplexAttribute)FeatureUtilities.defaultProperty(data1Type);
+        data1.getProperty("value").setValue(5f);
+        final ComplexAttribute data2 = (ComplexAttribute)FeatureUtilities.defaultProperty(data2Type);
+        data2.getProperty("value").setValue(10f);
+        final ComplexAttribute data3 = (ComplexAttribute)FeatureUtilities.defaultProperty(data3Type);
+        data3.getProperty("value").setValue(15f);
+        
+        record.getProperties().add(data1);
+        record.getProperties().add(data2);
+        record.getProperties().add(data3);
+                        
+        store.addFeatures(recordType.getName(), Collections.singleton(record));
+        
+        final Session session = store.createSession(false);
+        final FeatureCollection<Feature> col = session.getFeatureCollection(QueryBuilder.all(recordType.getName()));
+        assertEquals(1, col.size());
+        
+        final FeatureIterator ite = store.getFeatureReader(QueryBuilder.all(recordType.getName()));
+        try{
+            final Feature resFeature = ite.next();
+            assertNotNull(resFeature);
+            assertTrue(!(resFeature instanceof SimpleFeature));
+            
+            assertEquals(120l, resFeature.getProperty("identifier").getValue());
+            
+            assertNotNull(resFeature.getProperty("data1"));
+            assertNotNull(resFeature.getProperty("data2"));
+            assertNotNull(resFeature.getProperty("data3"));
+            assertEquals(5f, ((ComplexAttribute)resFeature.getProperty("data1")).getProperty("value").getValue());
+            assertEquals(10f, ((ComplexAttribute)resFeature.getProperty("data2")).getProperty("value").getValue());
+            assertEquals(15f, ((ComplexAttribute)resFeature.getProperty("data3")).getProperty("value").getValue());
+        }finally{
+            ite.close();
+        }
         
     }
+    
     
     /**
      * Test hand made query.
