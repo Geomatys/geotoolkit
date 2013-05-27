@@ -899,7 +899,9 @@ public class HilbertRTree extends AbstractTree {
         final DirectPosition ptCE = getMedian(entry);
         final GeneralEnvelope bound = new GeneralEnvelope(candidate.getBoundary());
         final int order = (Integer) candidate.getUserProperty(PROP_HILBERT_ORDER);
-        if (! bound.contains(ptCE)) throw new IllegalArgumentException("entry is out of this node boundary");
+        if (! bound.contains(ptCE)) {
+            throw new IllegalArgumentException("entry is out of this node boundary");
+        }
 
         int[] hCoord = getHilbCoord(candidate, ptCE, bound, order);
         final int spaceHDim = hCoord.length;

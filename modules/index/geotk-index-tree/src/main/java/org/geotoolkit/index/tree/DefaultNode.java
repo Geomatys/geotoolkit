@@ -192,10 +192,6 @@ public class DefaultNode extends Node {
      */
     @Override
     public String toString() {
-        final Collection col = new ArrayList(entries);
-        col.addAll(children);
-        String strparent =  (parent == null)?"null":String.valueOf(parent.hashCode());
-        return Trees.toString(Classes.getShortClassName(this)+" : "+this.hashCode()+" parent : "+strparent
-                + " leaf : "+isLeaf()+ " userPropLeaf : "+(Boolean)getUserProperty(PROP_ISLEAF), col);
+        return "mon arbre";
     }
 }
