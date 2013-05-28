@@ -121,9 +121,8 @@ Downloading Geotoolkit.org Binaries
 |                                        | • geotk-epsg.jar                   |                           |
 *----------------------------------------+------------------------------------+---------------------------+
 | <<<geotk-bundle-coverage.pack.gz>>>    | <All the referencing pack plus:>\  | • Java 6\                 |
-|                                        | • geotk-storage.jar\               | • Java Advanced Imaging\  |
-|                                        | • geotk-coverage.jar\              | • JavaDB (<optional>)     |
-|                                        | • geotk-coverageio.jar\            |                           |
+|                                        | • geotk-coverage.jar\              | • Java Advanced Imaging\  |
+|                                        | • geotk-coverageio.jar\            | • JavaDB (<optional>)     |
 |                                        | • jai_imageio.jar\                 |                           |
 *----------------------------------------+------------------------------------+---------------------------+
 | <<<geotk-bundle-netcdf.pack.gz>>>      | <All the coverage pack plus:>\     | • Java 6\                 |

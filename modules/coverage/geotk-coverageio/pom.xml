@@ -142,9 +142,9 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.geotoolkit</groupId>
-      <artifactId>geotk-storage</artifactId>
-      <version>${project.version}</version>
+      <groupId>org.apache.sis.storage</groupId>
+      <artifactId>sis-storage</artifactId>
+      <version>${sis.version}</version>
     </dependency>
   </dependencies>
 </project>

@@ -50,7 +50,7 @@ import org.geotoolkit.image.io.TextImageReader;
 import org.geotoolkit.image.io.SampleConverter;
 import org.geotoolkit.image.io.ImageMetadataException;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
-import org.geotoolkit.image.io.stream.ChannelImageInputStream;
+import org.apache.sis.internal.storage.ChannelImageInputStream;
 import org.geotoolkit.internal.image.io.DataTypes;
 import org.geotoolkit.internal.image.io.DimensionAccessor;
 import org.geotoolkit.internal.image.io.GridDomainAccessor;
@@ -780,7 +780,8 @@ loop:       for (int y=0; /* stop condition inside */; y++) {
         final BufferedImage image;
         try {
             buffer.clear().limit(0);
-            final ImageInputStream in = new ChannelImageInputStream(Channels.newChannel(binaryStream), buffer);
+            final ImageInputStream in = new ChannelImageInputStream(IOUtilities.name(input),
+                    Channels.newChannel(binaryStream), buffer, true);
             try (RawImageInputStream rawStream = new RawImageInputStream(in, getRawImageType(imageIndex),
                    new long[1], new Dimension[] {new Dimension(width, height)}))
             {
