@@ -26,8 +26,10 @@ package org.geotoolkit.storage;
  *
  * @since 3.10
  * @module
+ *
+ * @deprecated Moved to Apache SIS as {@link org.apache.sis.storage.DataStoreException}.
  */
-public class DataStoreException extends Exception {
+public class DataStoreException extends org.apache.sis.storage.DataStoreException {
     /**
      * For cross-version compatibility.
      */
