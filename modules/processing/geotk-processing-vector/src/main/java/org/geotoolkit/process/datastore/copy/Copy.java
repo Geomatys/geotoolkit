@@ -116,9 +116,9 @@ public class Copy extends AbstractProcess {
 
     private void insert(final Name name, final FeatureStore source, final FeatureStore target, final boolean erase) throws DataStoreException{
 
-        final FeatureType type = source.getFeatureType(name);
         final Session session = source.createSession(false);
         final FeatureCollection collection = session.getFeatureCollection(QueryBuilder.all(name));
+        final FeatureType type = collection.getFeatureType();
 
         final FeatureCollection wrap = new WrapFeatureCollection(collection) {
 
@@ -152,9 +152,9 @@ public class Copy extends AbstractProcess {
     private void insert(final Query query, final FeatureStore source, final FeatureStore target, final boolean erase) throws DataStoreException{
 
         final Name name = query.getTypeName();
-        final FeatureType type = source.getFeatureType(name);
         final Session session = source.createSession(false);
         final FeatureCollection collection = session.getFeatureCollection(query);
+        final FeatureType type = collection.getFeatureType();
 
         if(target.getNames().contains(name)) {
             if(erase) {
