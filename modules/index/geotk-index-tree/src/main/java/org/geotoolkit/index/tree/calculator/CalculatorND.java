@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.index.tree.calculator;
 
-import org.geotoolkit.geometry.GeneralEnvelope;
+import org.apache.sis.geometry.GeneralEnvelope;
 import static org.geotoolkit.index.tree.DefaultTreeUtils.*;
 import org.geotoolkit.index.tree.Node;
 import org.opengis.geometry.DirectPosition;

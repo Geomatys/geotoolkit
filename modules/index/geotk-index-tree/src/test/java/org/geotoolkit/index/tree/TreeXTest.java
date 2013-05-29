@@ -18,8 +18,8 @@ package org.geotoolkit.index.tree;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.filter.SpatialFilterType;
-import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.index.tree.io.DefaultTreeVisitor;
 import org.geotoolkit.index.tree.io.TreeVisitor;
 import org.geotoolkit.index.tree.io.TreeX;

@@ -18,8 +18,8 @@ package org.geotoolkit.index.tree.star;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.geotoolkit.geometry.GeneralDirectPosition;
-import org.geotoolkit.geometry.GeneralEnvelope;
+import org.apache.sis.geometry.GeneralDirectPosition;
+import org.apache.sis.geometry.GeneralEnvelope;
 import static org.geotoolkit.index.tree.DefaultTreeUtils.*;
 import org.geotoolkit.index.tree.*;
 import org.geotoolkit.index.tree.calculator.Calculator;

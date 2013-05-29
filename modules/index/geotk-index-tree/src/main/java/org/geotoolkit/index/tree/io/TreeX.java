@@ -18,7 +18,7 @@ package org.geotoolkit.index.tree.io;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.geotoolkit.geometry.GeneralEnvelope;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.index.tree.Tree;
 import org.geotoolkit.filter.SpatialFilterType;
 import org.opengis.geometry.Envelope;

@@ -21,7 +21,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import org.geotoolkit.geometry.GeneralEnvelope;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.index.tree.basic.BasicRTree;
 import org.geotoolkit.index.tree.basic.SplitCase;
 import org.geotoolkit.index.tree.hilbert.HilbertRTree;

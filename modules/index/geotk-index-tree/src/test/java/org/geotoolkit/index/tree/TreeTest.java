@@ -17,8 +17,8 @@
 package org.geotoolkit.index.tree;
 
 import java.util.List;
-import org.geotoolkit.geometry.GeneralDirectPosition;
-import org.geotoolkit.geometry.GeneralEnvelope;
+import org.apache.sis.geometry.GeneralDirectPosition;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.util.ArgumentChecks;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;

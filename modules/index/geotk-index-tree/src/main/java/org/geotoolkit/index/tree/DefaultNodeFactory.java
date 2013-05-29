@@ -17,9 +17,6 @@
 package org.geotoolkit.index.tree;
 
 import java.util.List;
-import org.geotoolkit.index.tree.DefaultNode;
-import org.geotoolkit.index.tree.Node;
-import org.geotoolkit.index.tree.Tree;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 

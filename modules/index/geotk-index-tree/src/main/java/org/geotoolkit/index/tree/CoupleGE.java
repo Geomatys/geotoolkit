@@ -18,7 +18,7 @@ package org.geotoolkit.index.tree;
 
 import java.util.HashMap;
 import java.util.Map;
-import org.geotoolkit.geometry.GeneralEnvelope;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.index.tree.calculator.Calculator;
 import org.apache.sis.util.ArgumentChecks;
 

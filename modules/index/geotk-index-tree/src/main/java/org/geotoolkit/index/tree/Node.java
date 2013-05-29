@@ -16,10 +16,8 @@
  */
 package org.geotoolkit.index.tree;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import org.geotoolkit.geometry.GeneralEnvelope;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.util.ArgumentChecks;
 import org.opengis.geometry.Envelope;
 
@@ -160,7 +158,7 @@ public abstract class Node {
             return env;
         }
         env = calculateBounds();
-        if(!env.isNull()){
+        if(!env.isAllNaN()){
             setBound(env);
         }
         return env;
@@ -181,7 +179,7 @@ public abstract class Node {
         }
         if(boundary == null){
             boundary = new GeneralEnvelope(tree.getCrs());
-            boundary.setToNull();
+            boundary.setToNaN();
         }
         return boundary;
     }
