@@ -18,8 +18,10 @@ package org.geotoolkit.map;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
@@ -173,7 +175,7 @@ final class DefaultFeatureMapLayer extends DefaultCollectionMapLayer implements 
         final Expression lower = def.getLower();
         final Expression upper = def.getUpper();
 
-        final List<String> properties = new ArrayList<String>();
+        final Set<String> properties = new HashSet<String>();
         lower.accept(ListingPropertyVisitor.VISITOR, properties);
         upper.accept(ListingPropertyVisitor.VISITOR, properties);
 
