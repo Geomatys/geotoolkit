@@ -105,6 +105,8 @@
     <module>geotk-osm</module>
     <module>geotk-sensorml</module>
     <module>geotk-geojson</module>
+    <module>geotk-db-core</module>
+    <module>geotk-db-postgres</module>
   </modules>
 
 </project>
