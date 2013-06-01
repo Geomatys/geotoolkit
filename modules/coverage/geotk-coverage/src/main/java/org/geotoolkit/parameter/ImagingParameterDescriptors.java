@@ -61,7 +61,7 @@ import org.apache.sis.util.NullArgumentException;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.factory.Factories;
 import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.internal.io.IOUtilities;
+import org.apache.sis.internal.storage.IOUtilities;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.metadata.iso.citation.DefaultContact;

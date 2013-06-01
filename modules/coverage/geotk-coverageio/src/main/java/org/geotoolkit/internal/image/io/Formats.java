@@ -41,7 +41,7 @@ import org.geotoolkit.factory.Factories;
 import org.geotoolkit.lang.Static;
 import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.internal.io.IOUtilities;
+import org.apache.sis.internal.storage.IOUtilities;
 import org.geotoolkit.resources.Vocabulary;
 
 

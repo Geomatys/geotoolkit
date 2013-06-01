@@ -27,7 +27,7 @@ import javax.measure.unit.Unit;
 
 import org.apache.sis.measure.Units;
 import org.apache.sis.util.Locales;
-import org.geotoolkit.internal.io.IOUtilities;
+import org.apache.sis.internal.storage.IOUtilities;
 import org.apache.sis.xml.MarshalContext;
 import org.apache.sis.xml.NilReason;
 import org.apache.sis.xml.ValueConverter;

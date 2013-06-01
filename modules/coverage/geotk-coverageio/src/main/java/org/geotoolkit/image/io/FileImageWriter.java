@@ -27,7 +27,7 @@ import java.io.FileInputStream;
 import javax.imageio.spi.ImageWriterSpi;
 import java.nio.file.Path;
 
-import org.geotoolkit.internal.io.IOUtilities;
+import org.apache.sis.internal.storage.IOUtilities;
 import org.geotoolkit.internal.io.TemporaryFile;
 import org.geotoolkit.resources.Errors;
 
@@ -184,7 +184,7 @@ public abstract class FileImageWriter extends StreamImageWriter {
             isTemporary = false;
             final OutputStream out = getOutputStream();
             try (InputStream in = new FileInputStream(file)) {
-                IOUtilities.copy(in, out);
+                org.geotoolkit.internal.io.IOUtilities.copy(in, out);
             }
             out.flush();
             // Do not close the 'out' stream. Let the super.close() method decides what

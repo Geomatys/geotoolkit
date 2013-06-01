@@ -28,7 +28,7 @@ import org.apache.sis.util.Numbers;
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.util.Locales;
 import org.apache.sis.util.iso.Types;
-import org.geotoolkit.internal.io.IOUtilities;
+import org.apache.sis.internal.storage.IOUtilities;
 import org.geotoolkit.internal.InternalUtilities;
 import org.apache.sis.util.iso.SimpleInternationalString;
 

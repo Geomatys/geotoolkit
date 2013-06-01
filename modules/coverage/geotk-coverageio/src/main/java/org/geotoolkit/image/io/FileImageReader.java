@@ -29,7 +29,7 @@ import javax.imageio.spi.ImageReaderSpi;
 import java.nio.file.Path;
 
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.internal.io.IOUtilities;
+import org.apache.sis.internal.storage.IOUtilities;
 import org.geotoolkit.internal.io.TemporaryFile;
 
 
@@ -164,7 +164,7 @@ public abstract class FileImageReader extends StreamImageReader {
         inputFile = TemporaryFile.createTempFile("FIR", XImageIO.getFileSuffix(originatingProvider), null);
         isTemporary = true;
         try (OutputStream out = new FileOutputStream(inputFile)) {
-            IOUtilities.copy(in, out);
+            org.geotoolkit.internal.io.IOUtilities.copy(in, out);
         }
         /*
          * Do not close the input stream, because it may be a stream explicitly specified by the user.

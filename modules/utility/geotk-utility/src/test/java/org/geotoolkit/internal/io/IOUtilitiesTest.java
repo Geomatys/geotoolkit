@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.internal.io;
 
-import java.net.URL;
 import java.io.File;
 import java.io.IOException;
 
@@ -43,48 +42,6 @@ public final strictfp class IOUtilitiesTest {
         final File root  = new File("home/root/subdirectory");
         final File other = new File("home/root/data/other");
         assertEquals(new File("home/root"), IOUtilities.commonParent(root, other));
-    }
-
-    /**
-     * Tests the {@link IOUtilities#toFile} method. Do not test a Windows-specific path
-     * (e.g. {@code "file:///C:/some/path/Picture.png"}), since the result is different
-     * on Windows or Unix platforms.
-     *
-     * @throws IOException Should not happen.
-     */
-    @Test
-    public void testToFile() throws IOException {
-        testToFile(null, "+");
-    }
-
-    /**
-     * Implementation of {@link #testToFile()} using the given encoding.
-     * If the encoding is null, then the {@code URLDecoder} will not be used.
-     *
-     * @param  encoding The encoding, or {@code null} if none.
-     * @param  plus The encoding for the {@code '+'} sign.
-     * @throws IOException Should not happen.
-     */
-    private void testToFile(final String encoding, final String plus) throws IOException {
-        assertEquals("Unix absolute path.", new File("/Users/name/Picture.png"),
-                IOUtilities.toFile(new URL("file:/Users/name/Picture.png"), encoding));
-        assertEquals("Path with space.", new File("/Users/name/Picture with spaces.png"),
-                IOUtilities.toFile(new URL("file:/Users/name/Picture with spaces.png"), encoding));
-
-        assertEquals("Path with + sign.", new File("/Users/name/++t--++est.shp"),
-                IOUtilities.toFile(new URL("file:/Users/name/++t--++est.shp".replace("+", plus)), encoding));
-    }
-
-    /**
-     * Same test than {@link #testToFile()}, but using the UTF-8 encoding.
-     *
-     * @throws IOException Should not happen.
-     *
-     * @since 3.20
-     */
-    @Test
-    public void testToFileUTF8() throws IOException {
-        testToFile("UTF-8", "%2B");
     }
 
     /**
