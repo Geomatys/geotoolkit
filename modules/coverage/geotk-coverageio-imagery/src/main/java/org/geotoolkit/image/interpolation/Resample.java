@@ -84,6 +84,11 @@ public class Resample {
      * Table which contain x, y coordinates after {@link MathTransform} transformation.
      */
     private final double[] srcCoords;
+    
+    /**
+     * Table which contain x, y coordinates after {@link MathTransform} transformation.
+     */
+    private final double[] destCoords;
 
     /**
      * Iterator use to fill destination image from interpolation of source image pixel value.
@@ -117,6 +122,7 @@ public class Resample {
         maxSourceX = minSourceX + bound.width  - 1;
         maxSourceY = minSourceY + bound.height - 1;
         srcCoords  = new double[2];
+        destCoords = new double[2];
     }
 
     /**
@@ -147,6 +153,7 @@ public class Resample {
         maxSourceX = minSourceX + bound.width  - 1;
         maxSourceY = minSourceY + bound.height - 1;
         srcCoords  = new double[2];
+        destCoords = new double[2];
     }
 
     /**
@@ -158,10 +165,16 @@ public class Resample {
      * @throws TransformException
      */
     private double[] getSourcePixelValue(double x, double y) throws TransformException {
-        invertMathTransform.transform(new double[]{x, y}, 0, srcCoords, 0, 1);
-        if (srcCoords[0]<minSourceX || srcCoords[0]>maxSourceX
-         || srcCoords[1]<minSourceY || srcCoords[1]>maxSourceY) return fillValue;
-        return interpol.interpolate(srcCoords[0], srcCoords[1]);
+        destCoords[0] = x;
+        destCoords[1] = y;
+        invertMathTransform.transform(destCoords, 0, srcCoords, 0, 1);
+        final int src0 = (int) srcCoords[0];
+        final int src1 = (int) srcCoords[1];
+        if (src0 < minSourceX || src0 > maxSourceX
+         || src1 < minSourceY || src1 > maxSourceY) {
+            return fillValue;
+        }
+        return interpol.interpolate(src0, src1);
     }
 
     /**

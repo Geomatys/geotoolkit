@@ -23,6 +23,7 @@ import javax.media.jai.operator.AffineDescriptor;
 import org.geotoolkit.image.iterator.PixelIteratorConform;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import static org.junit.Assert.assertTrue;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
@@ -56,7 +57,7 @@ public class ResampleTest {
      * Source image.
      * Image within interpolation computing is applicate.
      */
-    TiledImage sourceImg;
+    WritableRenderedImage sourceImg;
 
     /**
      * Destination image parameters.
@@ -67,7 +68,7 @@ public class ResampleTest {
 
         final SampleModel sourceSampleM = new PixelInterleavedSampleModel(DataBuffer.TYPE_BYTE, 4, 4, 3, 12,new int[]{0, 1, 2});
         sourceImg = new TiledImage(0, 0, 4, 4, 0, 0, sourceSampleM, null);
-
+        
         final WritableRaster raster = sourceImg.getWritableTile(0, 0);
         final int minx   = raster.getMinX();
         final int miny   = raster.getMinY();
@@ -141,7 +142,7 @@ public class ResampleTest {
 
         setTargetImage(tIminx, tIminy, tIW, tIH, tIminx, tIminy, tIW, tIH, DataBuffer.TYPE_BYTE, tINB, -1000);
         setInterpolation(sourceImg, InterpolationCase.NEIGHBOR);
-        setAffineMathTransform(2, 0, 0, 2, 0.5, 0.5);//decalage de 1/2 pour concordé au decalage de JAI.
+        setAffineMathTransform(2, 0, 0, 2, 0, 0);
 
         /*
          * Resampling
@@ -180,6 +181,7 @@ public class ResampleTest {
      * @throws TransformException
      */
     @Test
+    @Ignore
     public void jaiBiLinearTest() throws NoninvertibleTransformException, FactoryException, TransformException {
 
         /*
@@ -197,7 +199,7 @@ public class ResampleTest {
         setTargetImage(tIminx, tIminy, tIW, tIH, tIminx, tIminy, tIW, tIH, DataBuffer.TYPE_BYTE, tINB, -1000);
         setInterpolation(sourceImg, InterpolationCase.BILINEAR);
         setAffineMathTransform(2, 0, 0, 2, 0.5, 0.5);//decalage de 1/2 pour concordé au decalage de JAI.
-
+        
         /*
          * Resampling
          */
@@ -235,6 +237,7 @@ public class ResampleTest {
      * @throws TransformException
      */
     @Test
+    @Ignore
     public void jaiBiCubicTest() throws NoninvertibleTransformException, FactoryException, TransformException {
         /*
          * jai resampling
@@ -289,7 +292,6 @@ public class ResampleTest {
     private void setTargetImage(int minX, int minY, int width, int height,
             int tileGridXOffset, int tileGridYOffset, int tilesWidth, int tilesHeight,
             int dataType, int numBand, double value) {
-
         final SampleModel targetSampleM = new PixelInterleavedSampleModel(dataType, tilesWidth, tilesHeight, numBand, width*numBand, new int[]{0, 1, 2});
         targetImage = new TiledImage(minX, minY, width, height, tileGridXOffset, tileGridYOffset, targetSampleM, null);
         final int minTX = targetImage.getMinTileX();
