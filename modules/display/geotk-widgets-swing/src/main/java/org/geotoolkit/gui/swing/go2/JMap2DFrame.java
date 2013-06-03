@@ -2,6 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
+ *    (C) 2013, Geomatys
  *    (C) 2010, Johann Sorel
  *
  *    This library is free software; you can redistribute it and/or
@@ -39,7 +40,6 @@ import javax.imageio.spi.ImageWriterSpi;
 import javax.imageio.stream.ImageOutputStream;
 import javax.swing.*;
 import javax.swing.JToolBar.Separator;
-import javax.xml.bind.JAXBException;
 import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.gui.swing.contexttree.JContextTree;
@@ -79,13 +79,10 @@ import org.geotoolkit.gui.swing.propertyedit.styleproperty.JClassificationSingle
 import org.geotoolkit.gui.swing.propertyedit.styleproperty.JRasterColorMapStylePanel;
 import org.geotoolkit.gui.swing.propertyedit.styleproperty.JSLDImportExportPanel;
 import org.geotoolkit.gui.swing.propertyedit.styleproperty.JSimpleStylePanel;
+import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
-import org.geotoolkit.process.chain.ChainProcess;
-import org.geotoolkit.process.chain.ChainProcessDescriptor;
-import org.geotoolkit.process.chain.model.Chain;
-import org.geotoolkit.process.chain.model.event.EventChain;
 import org.geotoolkit.storage.DataStoreException;
 import org.opengis.geometry.Envelope;
 
@@ -185,17 +182,17 @@ public class JMap2DFrame extends javax.swing.JFrame {
         lstproperty.add(new LayerCRSPropertyPanel());
 
         LayerFilterPropertyPanel filters = new LayerFilterPropertyPanel();
-        filters.addPropertyPanel(new JCQLPropertyPanel());
+        filters.addPropertyPanel(MessageBundle.getString("filter"),new JCQLPropertyPanel());
         lstproperty.add(filters);
 
         LayerStylePropertyPanel styles = new LayerStylePropertyPanel();
-        styles.addPropertyPanel(new JSimpleStylePanel());
-        styles.addPropertyPanel(new JClassificationSingleStylePanel());
-        styles.addPropertyPanel(new JClassificationIntervalStylePanel());
-        styles.addPropertyPanel(new JClassificationJenksPanel());
-        styles.addPropertyPanel(new JRasterColorMapStylePanel());
-        styles.addPropertyPanel(new JAdvancedStylePanel());
-        styles.addPropertyPanel(new JSLDImportExportPanel());
+        styles.addPropertyPanel(MessageBundle.getString("analyze"),new JSimpleStylePanel());
+        styles.addPropertyPanel(MessageBundle.getString("analyze_vector"),new JClassificationSingleStylePanel());
+        styles.addPropertyPanel(MessageBundle.getString("analyze_vector"),new JClassificationIntervalStylePanel());
+        styles.addPropertyPanel(MessageBundle.getString("analyze_raster"),new JClassificationJenksPanel());
+        styles.addPropertyPanel(MessageBundle.getString("analyze_raster"),new JRasterColorMapStylePanel());
+        styles.addPropertyPanel(MessageBundle.getString("sld"),new JAdvancedStylePanel());
+        styles.addPropertyPanel(MessageBundle.getString("sld"),new JSLDImportExportPanel());
         lstproperty.add(styles);
 
         property.setPropertyPanels(lstproperty);

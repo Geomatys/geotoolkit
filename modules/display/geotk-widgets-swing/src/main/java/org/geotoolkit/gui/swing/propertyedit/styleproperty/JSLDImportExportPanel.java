@@ -26,6 +26,7 @@ import javax.xml.bind.JAXBException;
 
 import org.geotoolkit.gui.swing.propertyedit.PropertyPane;
 import org.geotoolkit.gui.swing.resource.IconBundle;
+import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.sld.MutableLayer;
 import org.geotoolkit.sld.MutableStyledLayerDescriptor;
@@ -217,7 +218,7 @@ public class JSLDImportExportPanel extends javax.swing.JPanel implements Propert
 
     @Override
     public String getTitle() {
-        return "SLD";
+        return MessageBundle.getString("import_export");
     }
 
     @Override

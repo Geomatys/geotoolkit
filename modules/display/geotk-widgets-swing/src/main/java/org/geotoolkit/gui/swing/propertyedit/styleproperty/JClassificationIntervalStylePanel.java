@@ -242,10 +242,6 @@ public class JClassificationIntervalStylePanel extends JPanel implements Propert
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-
-
-
-
         guiRemoveAll = new JButton();
         jPanel1 = new JPanel();
         guiLblProperty = new JLabel();
@@ -273,8 +269,10 @@ public class JClassificationIntervalStylePanel extends JPanel implements Propert
             }
         });
 
-        jPanel1.setBorder(BorderFactory.createTitledBorder(MessageBundle.getString("properties"))); // NOI18N
+        jPanel1.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 5));
+
         guiLblProperty.setText(MessageBundle.getString("property")); // NOI18N
+
         guiProperty.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 guiPropertyActionPerformed(evt);
@@ -282,7 +280,9 @@ public class JClassificationIntervalStylePanel extends JPanel implements Propert
         });
 
         guiLblPalette.setText(MessageBundle.getString("palette")); // NOI18N
+
         guiLblModel.setText(MessageBundle.getString("model")); // NOI18N
+
         guiModel.setText(" ");
         guiModel.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
@@ -300,8 +300,6 @@ public class JClassificationIntervalStylePanel extends JPanel implements Propert
         ResourceBundle bundle = ResourceBundle.getBundle("org/geotoolkit/gui/swing/resource/Bundle"); // NOI18N
         guiLblNormalize.setText(bundle.getString("normalize")); // NOI18N
 
-
-
         guiNormalize.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 guiNormalizeActionPerformed(evt);
@@ -316,6 +314,7 @@ public class JClassificationIntervalStylePanel extends JPanel implements Propert
         });
 
         guiLblMethod.setText(MessageBundle.getString("method")); // NOI18N
+
         guiMethod.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 guiMethodActionPerformed(evt);
@@ -323,6 +322,7 @@ public class JClassificationIntervalStylePanel extends JPanel implements Propert
         });
 
         guiLblClasses.setText(MessageBundle.getString("classes")); // NOI18N
+
         guiClasses.setModel(new SpinnerNumberModel(Integer.valueOf(5), Integer.valueOf(1), null, Integer.valueOf(1)));
         guiClasses.addChangeListener(new ChangeListener() {
             public void stateChanged(ChangeEvent evt) {
@@ -347,24 +347,26 @@ public class JClassificationIntervalStylePanel extends JPanel implements Propert
                             .addPreferredGap(ComponentPlacement.RELATED)
                             .addComponent(guiNormalize, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                         .addGroup(jPanel1Layout.createSequentialGroup()
-                            .addComponent(guiLblMethod)
-                            .addPreferredGap(ComponentPlacement.RELATED)
-                            .addComponent(guiMethod, GroupLayout.PREFERRED_SIZE, 130, GroupLayout.PREFERRED_SIZE)
-                            .addPreferredGap(ComponentPlacement.RELATED)
-                            .addComponent(guiLblClasses)
-                            .addPreferredGap(ComponentPlacement.RELATED)
-                            .addComponent(guiClasses, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                            .addPreferredGap(ComponentPlacement.RELATED)
-                            .addComponent(guiClassify)
-                            .addContainerGap(48, Short.MAX_VALUE))
-                        .addGroup(jPanel1Layout.createSequentialGroup()
-                            .addComponent(guiLblPalette)
-                            .addPreferredGap(ComponentPlacement.RELATED)
-                            .addComponent(guiPalette, 0, 268, Short.MAX_VALUE)
-                            .addPreferredGap(ComponentPlacement.RELATED)
-                            .addComponent(guiLblModel)
-                            .addPreferredGap(ComponentPlacement.RELATED)
-                            .addComponent(guiModel)
+                            .addGroup(jPanel1Layout.createParallelGroup(Alignment.LEADING)
+                                .addGroup(jPanel1Layout.createSequentialGroup()
+                                    .addComponent(guiLblMethod)
+                                    .addPreferredGap(ComponentPlacement.RELATED)
+                                    .addComponent(guiMethod, GroupLayout.PREFERRED_SIZE, 130, GroupLayout.PREFERRED_SIZE)
+                                    .addPreferredGap(ComponentPlacement.RELATED)
+                                    .addComponent(guiLblClasses)
+                                    .addPreferredGap(ComponentPlacement.RELATED)
+                                    .addComponent(guiClasses, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                                    .addPreferredGap(ComponentPlacement.RELATED)
+                                    .addComponent(guiClassify)
+                                    .addGap(0, 81, Short.MAX_VALUE))
+                                .addGroup(jPanel1Layout.createSequentialGroup()
+                                    .addComponent(guiLblPalette)
+                                    .addPreferredGap(ComponentPlacement.RELATED)
+                                    .addComponent(guiPalette, 0, 305, Short.MAX_VALUE)
+                                    .addPreferredGap(ComponentPlacement.RELATED)
+                                    .addComponent(guiLblModel)
+                                    .addPreferredGap(ComponentPlacement.RELATED)
+                                    .addComponent(guiModel)))
                             .addContainerGap()))
                     .addComponent(guiGenerate, Alignment.TRAILING)))
         );
@@ -412,19 +414,19 @@ public class JClassificationIntervalStylePanel extends JPanel implements Propert
         layout.setHorizontalGroup(
             layout.createParallelGroup(Alignment.LEADING)
             .addComponent(jPanel1, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(jScrollPane1, GroupLayout.DEFAULT_SIZE, 468, Short.MAX_VALUE)
+            .addComponent(jScrollPane1, GroupLayout.DEFAULT_SIZE, 490, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(guiInvert)
                 .addPreferredGap(ComponentPlacement.RELATED)
                 .addComponent(guiRemoveAll)
-                .addContainerGap(237, Short.MAX_VALUE))
+                .addContainerGap(253, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanel1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, GroupLayout.DEFAULT_SIZE, 210, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, GroupLayout.DEFAULT_SIZE, 227, Short.MAX_VALUE)
                 .addPreferredGap(ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(Alignment.BASELINE)
                     .addComponent(guiInvert)

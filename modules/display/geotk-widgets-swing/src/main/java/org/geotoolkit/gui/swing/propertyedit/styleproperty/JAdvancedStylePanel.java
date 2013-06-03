@@ -194,7 +194,7 @@ public class JAdvancedStylePanel extends StyleElementEditor implements PropertyP
 
     @Override
     public String getTitle() {
-        return MessageBundle.getString("advanced");
+        return MessageBundle.getString("sldeditor");
     }
 
     @Override
