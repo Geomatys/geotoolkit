@@ -162,24 +162,26 @@ public abstract class MultiPropertyPanel extends javax.swing.JPanel implements P
             final String groupName = entry.getKey();
             final List<PropertyPane> panels = entry.getValue();
             for(final PropertyPane panel : panels){
-                if(panel.canHandle(target)){
+//                if(panel.canHandle(target)){
                     if(selected==null){
                         selected = panel;
                     }
-
+                    
                     panel.setTarget(target);
 
                     JXTaskPane task = guiGroups.get(groupName);
                     if(task==null){
                         task = new JXTaskPane();
                         task.setTitle(groupName);
-                        task.setCollapsed(false);
                         task.setIcon(null);
+                        task.setCollapsed(true);
+                        task.setSpecial(true);
+                        task.setEnabled(false);
                         guiGroups.put(groupName, task);
                         guiMenus.add(task);
                     }
-
-                    task.add(new AbstractAction() {
+                    
+                    final Action act = new AbstractAction() {
                         {
                             putValue(Action.NAME, panel.getTitle());
                             putValue(Action.SHORT_DESCRIPTION, panel.getToolTip());
@@ -188,14 +190,24 @@ public abstract class MultiPropertyPanel extends javax.swing.JPanel implements P
                         public void actionPerformed(ActionEvent e) {
                           setSelectedPropertyPanel(panel);
                         }
-                      });
-
-                }else{
-                    panel.setTarget(null);
-                }
+                      };
+                    
+                    if(panel.canHandle(target)){
+                        act.setEnabled(true);
+                        panel.setTarget(target);
+                        //activate the group task pane
+                        task.setCollapsed(false);
+                        task.setSpecial(false);
+                        task.setEnabled(true);
+                    }else{
+                        act.setEnabled(false);
+                        panel.setTarget(null);
+                    }
+                    
+                    task.add(act);
             }
         }
-              
+                      
         setSelectedPropertyPanel(selected);
     }
 
