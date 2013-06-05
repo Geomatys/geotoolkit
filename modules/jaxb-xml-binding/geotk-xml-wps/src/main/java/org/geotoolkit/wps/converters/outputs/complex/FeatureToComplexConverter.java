@@ -26,10 +26,13 @@ import java.util.Map;
 import java.util.UUID;
 import javax.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
+
+import org.geotoolkit.data.geojson.GeoJSONWriter;
 import org.geotoolkit.feature.xml.XmlFeatureTypeWriter;
 import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeWriter;
 import org.geotoolkit.feature.xml.jaxp.ElementFeatureWriter;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
+import org.geotoolkit.wps.io.WPSMimeType;
 import org.geotoolkit.wps.xml.v100.ComplexDataType;
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
@@ -84,32 +87,36 @@ public final class FeatureToComplexConverter extends AbstractComplexOutputConver
         final FeatureType ft = source.getType();
         final String namespace = ft.getName().getURI();
         final Map<String, String> schemaLocation = new HashMap<String, String>();
-        
-        try {
-            
-            final String schemaFileName = "schema_"+UUID.randomUUID().toString()+".xsd";
-            //create file
-            final File schemaFile = new File((String) params.get(TMP_DIR_PATH), schemaFileName);
-            final OutputStream stream = new FileOutputStream(schemaFile);
-            //write featureType xsd on file
-            final XmlFeatureTypeWriter xmlFTWriter = new JAXBFeatureTypeWriter();
-            xmlFTWriter.write(ft, stream);
-            
-            complex.setSchema((String) params.get(TMP_DIR_URL) + "/" +schemaFileName);
-            schemaLocation.put(namespace, complex.getSchema());
-        } catch (JAXBException ex) {
-            throw new NonconvertibleObjectException("Can't write FeatureType into xsd schema.",ex);
-        } catch (FileNotFoundException ex) {
-            throw new NonconvertibleObjectException("Can't create xsd schema file.",ex);
-        }
-        
-        try {
-            
-            final ElementFeatureWriter efw = new ElementFeatureWriter(schemaLocation);
-            complex.getContent().add(efw.writeFeature(source, null, true));
-            
-        } catch (ParserConfigurationException ex) {
-             throw new NonconvertibleObjectException("Can't write FeatureCollection into ResponseDocument.",ex);
+
+        if(complex.getMimeType().equalsIgnoreCase(WPSMimeType.APP_GEOJSON.val())) {
+            complex.getContent().add(GeoJSONWriter.toGeoJSON(source));
+            complex.setSchema(null);
+
+        } else {
+
+            try {
+                final String schemaFileName = "schema_" + UUID.randomUUID().toString() + ".xsd";
+                //create file
+                final File schemaFile = new File((String) params.get(TMP_DIR_PATH), schemaFileName);
+                final OutputStream stream = new FileOutputStream(schemaFile);
+                //write featureType xsd on file
+                final XmlFeatureTypeWriter xmlFTWriter = new JAXBFeatureTypeWriter();
+                xmlFTWriter.write(ft, stream);
+
+                complex.setSchema((String) params.get(TMP_DIR_URL) + "/" + schemaFileName);
+                schemaLocation.put(namespace, complex.getSchema());
+            } catch (JAXBException ex) {
+                throw new NonconvertibleObjectException("Can't write FeatureType into xsd schema.", ex);
+            } catch (FileNotFoundException ex) {
+                throw new NonconvertibleObjectException("Can't create xsd schema file.", ex);
+            }
+
+            try {
+                final ElementFeatureWriter efw = new ElementFeatureWriter(schemaLocation);
+                complex.getContent().add(efw.writeFeature(source, null, true));
+            } catch (ParserConfigurationException ex) {
+                throw new NonconvertibleObjectException("Can't write FeatureCollection into ResponseDocument.", ex);
+            }
         }
 
        return  complex;

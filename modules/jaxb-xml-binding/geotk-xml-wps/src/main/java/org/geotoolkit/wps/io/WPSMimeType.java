@@ -36,7 +36,7 @@ public enum WPSMimeType {
     APP_OCTET("application/octet-stream"),
     APP_ZIP("application/zip"),
     APP_JSON("application/json"),
-    APP_GEOJSON("application/geojson"),
+    APP_GEOJSON("application/geo+json"),
     APP_GML("application/gml+xml"),
     APP_SHP("application/x-zipped-shp"),
     APP_NETCDF("application/netcdf"),

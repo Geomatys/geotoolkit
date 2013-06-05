@@ -18,21 +18,21 @@ package org.geotoolkit.wps.converters.outputs.references;
 
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
+import org.geotoolkit.data.geojson.GeoJSONWriter;
 import org.geotoolkit.feature.xml.XmlFeatureTypeWriter;
 import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeWriter;
 import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureWriter;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.util.FileUtilities;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
-import org.geotoolkit.wps.converters.outputs.complex.AbstractComplexOutputConverter;
 import org.geotoolkit.wps.io.WPSIO;
-import org.geotoolkit.wps.xml.v100.ComplexDataType;
+import org.geotoolkit.wps.io.WPSMimeType;
 import org.geotoolkit.wps.xml.v100.InputReferenceType;
 import org.geotoolkit.wps.xml.v100.OutputReferenceType;
 import org.geotoolkit.wps.xml.v100.ReferenceType;
 import org.opengis.feature.type.FeatureType;
 
 import javax.xml.bind.JAXBException;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
 import java.io.*;
 import java.util.HashMap;
@@ -62,7 +62,7 @@ public final class FeatureCollectionToReferenceConverter extends AbstractReferen
     public Class<? super FeatureCollection> getSourceClass() {
         return FeatureCollection.class;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -72,7 +72,7 @@ public final class FeatureCollectionToReferenceConverter extends AbstractReferen
         if (params.get(TMP_DIR_PATH) == null) {
             throw new NonconvertibleObjectException("The output directory should be defined.");
         }
-        
+
         if (source == null) {
             throw new NonconvertibleObjectException("The output data should be defined.");
         }
@@ -80,7 +80,7 @@ public final class FeatureCollectionToReferenceConverter extends AbstractReferen
             throw new NonconvertibleObjectException("The requested output data is not an instance of FeatureCollection.");
         }
         final WPSIO.IOType ioType = WPSIO.IOType.valueOf((String) params.get(IOTYPE));
-        ReferenceType reference = null ;
+        ReferenceType reference = null;
 
         if (ioType.equals(WPSIO.IOType.INPUT)) {
             reference = new InputReferenceType();
@@ -96,60 +96,72 @@ public final class FeatureCollectionToReferenceConverter extends AbstractReferen
 
         final String randomFileName = UUID.randomUUID().toString();
 
-        try {
-            final String schemaFileName = randomFileName + "_schema" + ".xsd";
+        if (reference.getMimeType().equalsIgnoreCase(WPSMimeType.APP_GEOJSON.val())) {
             //create file
-            final File schemaFile = new File((String) params.get(TMP_DIR_PATH), schemaFileName);
-            final OutputStream stream = new FileOutputStream(schemaFile);
-            //write featureType xsd on file
-            final XmlFeatureTypeWriter xmlFTWriter = new JAXBFeatureTypeWriter();
-            xmlFTWriter.write(ft, stream);
-
-            reference.setSchema((String) params.get(TMP_DIR_URL) + "/" + schemaFileName);
-            schemaLocation.put(namespace, reference.getSchema());
-            
-        } catch (JAXBException ex) {
-            throw new NonconvertibleObjectException("Can't write FeatureType into xsd schema.", ex);
-        } catch (FileNotFoundException ex) {
-            throw new NonconvertibleObjectException("Can't create xsd schema file.", ex);
-        }
-
-        JAXPStreamFeatureWriter featureWriter = null;
-        try {
-            featureWriter = new JAXPStreamFeatureWriter(schemaLocation);
-
-            final String dataFileName = randomFileName+".xml";
-
-            //create file
+            final String dataFileName = randomFileName + ".json";
             final File dataFile = new File((String) params.get(TMP_DIR_PATH), dataFileName);
-            final OutputStream dataStream = new FileOutputStream(dataFile);
-
-            //Write feature collection in file
-            featureWriter.setOutput(dataStream);
-            featureWriter.writeFeatureCollection(source, false, null);
-
-            reference.setHref((String) params.get(TMP_DIR_URL) + "/" +dataFileName);
-
-        } catch (IOException ex) {
-            throw new NonconvertibleObjectException(ex);
-        } catch (XMLStreamException ex) {
-            throw new NonconvertibleObjectException("Stax exception while writing the feature collection", ex);
-        } catch (DataStoreException ex) {
-            throw new NonconvertibleObjectException("FeatureStore exception while writing the feature collection", ex);
-        } catch (FeatureStoreRuntimeException ex) {
-            throw new NonconvertibleObjectException("FeatureStoreRuntimeException exception while writing the feature collection", ex);
-        } finally {
             try {
-                if (featureWriter != null) {
-                    featureWriter.dispose();
-                }
+                FileUtilities.stringToFile(dataFile, GeoJSONWriter.toGeoJSON(source));
+            } catch (IOException e) {
+                throw new NonconvertibleObjectException(e);
+            }
+            reference.setHref(params.get(TMP_DIR_URL) + "/" + dataFileName);
+            reference.setSchema(null);
+        } else {
+            try {
+                final String schemaFileName = randomFileName + "_schema" + ".xsd";
+                //create file
+                final File schemaFile = new File((String) params.get(TMP_DIR_PATH), schemaFileName);
+                final OutputStream stream = new FileOutputStream(schemaFile);
+                //write featureType xsd on file
+                final XmlFeatureTypeWriter xmlFTWriter = new JAXBFeatureTypeWriter();
+                xmlFTWriter.write(ft, stream);
+
+                reference.setSchema((String) params.get(TMP_DIR_URL) + "/" + schemaFileName);
+                schemaLocation.put(namespace, reference.getSchema());
+
+            } catch (JAXBException ex) {
+                throw new NonconvertibleObjectException("Can't write FeatureType into xsd schema.", ex);
+            } catch (FileNotFoundException ex) {
+                throw new NonconvertibleObjectException("Can't create xsd schema file.", ex);
+            }
+
+            JAXPStreamFeatureWriter featureWriter = null;
+            try {
+                featureWriter = new JAXPStreamFeatureWriter(schemaLocation);
+
+                final String dataFileName = randomFileName + ".xml";
+
+                //create file
+                final File dataFile = new File((String) params.get(TMP_DIR_PATH), dataFileName);
+                final OutputStream dataStream = new FileOutputStream(dataFile);
+
+                //Write feature collection in file
+                featureWriter.setOutput(dataStream);
+                featureWriter.writeFeatureCollection(source, false, null);
+
+                reference.setHref((String) params.get(TMP_DIR_URL) + "/" + dataFileName);
+
             } catch (IOException ex) {
                 throw new NonconvertibleObjectException(ex);
             } catch (XMLStreamException ex) {
-                throw new NonconvertibleObjectException(ex);
+                throw new NonconvertibleObjectException("Stax exception while writing the feature collection", ex);
+            } catch (DataStoreException ex) {
+                throw new NonconvertibleObjectException("FeatureStore exception while writing the feature collection", ex);
+            } catch (FeatureStoreRuntimeException ex) {
+                throw new NonconvertibleObjectException("FeatureStoreRuntimeException exception while writing the feature collection", ex);
+            } finally {
+                try {
+                    if (featureWriter != null) {
+                        featureWriter.dispose();
+                    }
+                } catch (IOException ex) {
+                    throw new NonconvertibleObjectException(ex);
+                } catch (XMLStreamException ex) {
+                    throw new NonconvertibleObjectException(ex);
+                }
             }
         }
-
         return reference;
 
     }

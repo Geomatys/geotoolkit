@@ -23,14 +23,16 @@ import java.util.UUID;
 import javax.xml.bind.JAXBException;
 import javax.xml.stream.XMLStreamException;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
-import org.geotoolkit.data.FeatureCollection;
+import org.geotoolkit.data.geojson.GeoJSONWriter;
 import org.geotoolkit.feature.xml.XmlFeatureTypeWriter;
 import org.geotoolkit.feature.xml.XmlFeatureWriter;
 import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeWriter;
 import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureWriter;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.util.FileUtilities;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
 import org.geotoolkit.wps.io.WPSIO;
+import org.geotoolkit.wps.io.WPSMimeType;
 import org.geotoolkit.wps.xml.v100.InputReferenceType;
 import org.geotoolkit.wps.xml.v100.OutputReferenceType;
 import org.geotoolkit.wps.xml.v100.ReferenceType;
@@ -99,7 +101,20 @@ public class FeatureToReferenceConverter extends AbstractReferenceOutputConverte
         final Map <String, String> schemaLocation = new HashMap<String, String>();
         
         final String randomFileName = UUID.randomUUID().toString();
-        
+
+        if(reference.getMimeType().equalsIgnoreCase(WPSMimeType.APP_GEOJSON.val())) {
+            //create file
+            final String dataFileName = randomFileName+".json";
+            final File dataFile = new File((String) params.get(TMP_DIR_PATH), dataFileName);
+            try {
+                FileUtilities.stringToFile(dataFile, GeoJSONWriter.toGeoJSON(source));
+            } catch (IOException e) {
+                throw new NonconvertibleObjectException(e);
+            }
+            reference.setHref(params.get(TMP_DIR_URL) + "/" +dataFileName);
+            reference.setSchema(null);
+
+        } else {
         //Write FeatureType
         try {
             final String schemaFileName = randomFileName + "_schema" + ".xsd";
@@ -124,9 +139,9 @@ public class FeatureToReferenceConverter extends AbstractReferenceOutputConverte
         //Write Feature
         XmlFeatureWriter featureWriter = null;
         try {
-            
-            final String dataFileName = randomFileName+".xml"; 
-            
+
+            final String dataFileName = randomFileName+".xml";
+
             //create file
             final File dataFile = new File((String) params.get(TMP_DIR_PATH), dataFileName);
             final OutputStream dataStream = new FileOutputStream(dataFile);
@@ -134,7 +149,7 @@ public class FeatureToReferenceConverter extends AbstractReferenceOutputConverte
             //Write feature in file
             featureWriter = new JAXPStreamFeatureWriter(schemaLocation);
             featureWriter.write(source, dataStream);
-            reference.setHref((String) params.get(TMP_DIR_URL) + "/" +dataFileName);
+            reference.setHref(params.get(TMP_DIR_URL) + "/" +dataFileName);
             
         } catch (IOException ex) {
             throw new NonconvertibleObjectException(ex);
@@ -154,6 +169,7 @@ public class FeatureToReferenceConverter extends AbstractReferenceOutputConverte
             } catch (XMLStreamException ex) {
                  throw new NonconvertibleObjectException(ex);
             }
+        }
         }
         return reference;
     }

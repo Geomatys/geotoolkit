@@ -76,6 +76,7 @@ public final class WPSIO {
         FORMATSUPPORTS.add(new FormatSupport(Feature.class, IOType.BOTH, WPSMimeType.TEXT_XML.val(), WPSEncoding.UTF8.getValue(), WPSSchema.OGC_FEATURE_3_1_1.getValue(), false));
         FORMATSUPPORTS.add(new FormatSupport(Feature.class, IOType.BOTH, WPSMimeType.TEXT_GML.val(), WPSEncoding.UTF8.getValue(), WPSSchema.OGC_FEATURE_3_1_1.getValue(), false));
         FORMATSUPPORTS.add(new FormatSupport(Feature.class, IOType.BOTH, WPSMimeType.APP_GML.val(), WPSEncoding.UTF8.getValue(), WPSSchema.OGC_FEATURE_3_1_1.getValue(), true));
+        FORMATSUPPORTS.add(new FormatSupport(Feature.class, IOType.OUTPUT, WPSMimeType.APP_GEOJSON.val(), WPSEncoding.UTF8.getValue(), null, true));
 
         FORMATSUPPORTS.add(new FormatSupport(Feature[].class, IOType.INPUT, WPSMimeType.TEXT_XML.val(), WPSEncoding.UTF8.getValue(), WPSSchema.OGC_FEATURE_3_1_1.getValue(), false));
         FORMATSUPPORTS.add(new FormatSupport(Feature[].class, IOType.INPUT, WPSMimeType.TEXT_GML.val(), WPSEncoding.UTF8.getValue(), WPSSchema.OGC_FEATURE_3_1_1.getValue(), false));
@@ -84,6 +85,8 @@ public final class WPSIO {
         FORMATSUPPORTS.add(new FormatSupport(FeatureCollection.class, IOType.BOTH, WPSMimeType.TEXT_XML.val(), WPSEncoding.UTF8.getValue(), WPSSchema.OGC_FEATURE_3_1_1.getValue(), false));
         FORMATSUPPORTS.add(new FormatSupport(FeatureCollection.class, IOType.BOTH, WPSMimeType.TEXT_GML.val(), WPSEncoding.UTF8.getValue(), WPSSchema.OGC_FEATURE_3_1_1.getValue(), false));
         FORMATSUPPORTS.add(new FormatSupport(FeatureCollection.class, IOType.BOTH, WPSMimeType.APP_GML.val(), WPSEncoding.UTF8.getValue(), WPSSchema.OGC_FEATURE_3_1_1.getValue(), true));
+        FORMATSUPPORTS.add(new FormatSupport(FeatureCollection.class, IOType.OUTPUT, WPSMimeType.APP_GEOJSON.val(), WPSEncoding.UTF8.getValue(), null, true));
+
 
         FORMATSUPPORTS.add(new FormatSupport(FeatureCollection[].class, IOType.INPUT, WPSMimeType.TEXT_XML.val(), WPSEncoding.UTF8.getValue(), WPSSchema.OGC_FEATURE_3_1_1.getValue(), false));
         FORMATSUPPORTS.add(new FormatSupport(FeatureCollection[].class, IOType.INPUT, WPSMimeType.TEXT_GML.val(), WPSEncoding.UTF8.getValue(), WPSSchema.OGC_FEATURE_3_1_1.getValue(), false));

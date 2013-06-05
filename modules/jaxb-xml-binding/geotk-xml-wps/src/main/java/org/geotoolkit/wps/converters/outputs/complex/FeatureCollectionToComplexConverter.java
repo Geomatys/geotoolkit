@@ -26,11 +26,13 @@ import java.util.UUID;
 import javax.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
 import org.geotoolkit.data.FeatureCollection;
+import org.geotoolkit.data.geojson.GeoJSONWriter;
 import org.geotoolkit.feature.xml.XmlFeatureTypeWriter;
 import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeWriter;
 import org.geotoolkit.feature.xml.jaxp.ElementFeatureWriter;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
+import org.geotoolkit.wps.io.WPSMimeType;
 import org.geotoolkit.wps.xml.v100.ComplexDataType;
 import org.opengis.feature.type.FeatureType;
 
@@ -85,36 +87,41 @@ public final class FeatureCollectionToComplexConverter extends AbstractComplexOu
         final String namespace = ft.getName().getURI();
         final Map<String, String> schemaLocation = new HashMap<String, String>();
 
-        try {
+        if(complex.getMimeType().equalsIgnoreCase(WPSMimeType.APP_GEOJSON.val())) {
+            complex.getContent().add(GeoJSONWriter.toGeoJSON(source));
+            complex.setSchema(null);
 
-            final String schemaFileName = "schema_" + UUID.randomUUID().toString() + ".xsd";
-            //create file
-            final File schemaFile = new File((String) params.get(TMP_DIR_PATH), schemaFileName);
-            final OutputStream stream = new FileOutputStream(schemaFile);
-            //write featureType xsd on file
-            final XmlFeatureTypeWriter xmlFTWriter = new JAXBFeatureTypeWriter();
-            xmlFTWriter.write(ft, stream);
+        } else {
+            try {
 
-            complex.setSchema((String) params.get(TMP_DIR_URL) + "/" + schemaFileName);
-            schemaLocation.put(namespace, complex.getSchema());
-            
-        } catch (JAXBException ex) {
-            throw new NonconvertibleObjectException("Can't write FeatureType into xsd schema.", ex);
-        } catch (FileNotFoundException ex) {
-            throw new NonconvertibleObjectException("Can't create xsd schema file.", ex);
+                final String schemaFileName = "schema_" + UUID.randomUUID().toString() + ".xsd";
+                //create file
+                final File schemaFile = new File((String) params.get(TMP_DIR_PATH), schemaFileName);
+                final OutputStream stream = new FileOutputStream(schemaFile);
+                //write featureType xsd on file
+                final XmlFeatureTypeWriter xmlFTWriter = new JAXBFeatureTypeWriter();
+                xmlFTWriter.write(ft, stream);
+
+                complex.setSchema((String) params.get(TMP_DIR_URL) + "/" + schemaFileName);
+                schemaLocation.put(namespace, complex.getSchema());
+
+            } catch (JAXBException ex) {
+                throw new NonconvertibleObjectException("Can't write FeatureType into xsd schema.", ex);
+            } catch (FileNotFoundException ex) {
+                throw new NonconvertibleObjectException("Can't create xsd schema file.", ex);
+            }
+
+            try {
+
+                final ElementFeatureWriter efw = new ElementFeatureWriter(schemaLocation);
+                complex.getContent().add(efw.writeFeatureCollection(source, true, false, null));
+
+            } catch (DataStoreException ex) {
+                throw new NonconvertibleObjectException("Can't write FeatureCollection into ResponseDocument.", ex);
+            } catch (ParserConfigurationException ex) {
+                throw new NonconvertibleObjectException("Can't write FeatureCollection into ResponseDocument.", ex);
+            }
         }
-
-        try {
-
-            final ElementFeatureWriter efw = new ElementFeatureWriter(schemaLocation);
-            complex.getContent().add(efw.writeFeatureCollection(source, true, false, null));
-
-        } catch (DataStoreException ex) {
-            throw new NonconvertibleObjectException("Can't write FeatureCollection into ResponseDocument.", ex);
-        } catch (ParserConfigurationException ex) {
-            throw new NonconvertibleObjectException("Can't write FeatureCollection into ResponseDocument.", ex);
-        }
-
         return complex;
 
     }
