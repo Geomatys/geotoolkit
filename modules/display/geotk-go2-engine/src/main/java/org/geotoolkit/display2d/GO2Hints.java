@@ -81,6 +81,12 @@ public final class GO2Hints extends Static {
     public static final Key KEY_GENERALIZE_FACTOR = new NamedKey(Number.class, "GO2 - Generalize factor");
 
     /**
+     * Configure maximum number of tiles to render before skiping mosaic.
+     * default value is 500.
+     */
+    public static final Key KEY_MAX_TILES = new NamedKey(Integer.class, "GO2 - Max tiles per pyramid when rendering");
+    
+    /**
      * Configure the go2 engine to use JTS or ISO geometries.
      * Default is ISO.
      */
