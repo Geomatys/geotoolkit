@@ -38,6 +38,11 @@ public class MPGridMosaic extends AbstractGridMosaic {
     }
 
     @Override
+    public boolean isMissing(int col, int row) {
+        return mpTileReference[col][row] == null;
+    }
+
+    @Override
     public MPTileReference getTile(int col, int row, Map hints) throws DataStoreException {
         return mpTileReference[col][row];
     }    

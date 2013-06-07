@@ -145,9 +145,9 @@ public class MPCoverageReference extends AbstractPyramidalModel {
             if (gm.getId().equalsIgnoreCase(mosaicId)) {
                 final Dimension tileSize = gm.getTileSize();
                 if (tileSize.width < image.getWidth() || tileSize.height < image.getHeight()) {
-                    throw new IllegalArgumentException("image too large from tile dimensions.");
+                    throw new IllegalArgumentException("Uncorrect image size ["+image.getWidth()+","+image.getHeight()+"] expecting size ["+tileSize.width+","+tileSize.height+"]");
                 }
-                gm.setTile(tileX, tileY, new MPTileReference(null, image, 0, new Point(tileX, tileY)));
+                gm.setTile(tileX, tileY, new MPTileReference(image, 0, new Point(tileX, tileY)));
                 return;
             }
         }

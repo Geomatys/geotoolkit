@@ -18,7 +18,6 @@ package org.geotoolkit.coverage.memory;
 
 import java.awt.Point;
 import java.awt.image.RenderedImage;
-import javax.imageio.spi.ImageReaderSpi;
 import org.geotoolkit.coverage.DefaultTileReference;
 
 /**
@@ -27,8 +26,8 @@ import org.geotoolkit.coverage.DefaultTileReference;
  */
 public class MPTileReference extends DefaultTileReference {
 
-    public MPTileReference(ImageReaderSpi spi, RenderedImage input, int imageIndex, Point position) {
-        super(spi, input, imageIndex, position);
+    public MPTileReference(RenderedImage input, int imageIndex, Point position) {
+        super(IImageReader.IISpi.INSTANCE, input, imageIndex, position);
     }
 
     @Override
