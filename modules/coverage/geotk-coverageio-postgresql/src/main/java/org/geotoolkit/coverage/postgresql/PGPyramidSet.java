@@ -28,7 +28,6 @@ import java.util.Map.Entry;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.logging.Level;
-import javax.sql.DataSource;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.geotoolkit.coverage.DefaultPyramid;
 import org.geotoolkit.coverage.DefaultPyramidSet;
@@ -56,10 +55,8 @@ public class PGPyramidSet extends DefaultPyramidSet{
     }
     
     @Override
-    public Collection<Pyramid> getPyramids() {
-        if(!updated){
-            updateModel();
-        }
+    public synchronized Collection<Pyramid> getPyramids() {
+        updateModel();
         return super.getPyramids();
     }
     
@@ -77,7 +74,7 @@ public class PGPyramidSet extends DefaultPyramidSet{
         try{
             cnx = store.getDataSource().getConnection();
             stmt = cnx.createStatement();
-            final int layerId = store.getLayerId(ref.getName().getLocalPart());
+            final int layerId = store.getLayerId(cnx,ref.getName().getLocalPart());
             
             final StringBuilder query = new StringBuilder();        
             query.append("SELECT p.id, p.epsg, pp.value FROM ");
@@ -104,7 +101,7 @@ public class PGPyramidSet extends DefaultPyramidSet{
             }
             store.closeSafe(null,stmt,rs);
             for(Entry<Integer,String> entry : map.entrySet()){
-                super.getPyramids().add(readPyramid(store.getDataSource(), entry.getKey(), entry.getValue()));
+                super.getPyramids().add(readPyramid(cnx, entry.getKey(), entry.getValue()));
             }
             
         }catch(SQLException ex){
@@ -118,13 +115,12 @@ public class PGPyramidSet extends DefaultPyramidSet{
         updated = true;
     }
     
-    private Pyramid readPyramid(final DataSource source, final int pyramidId, final String epsgcode) throws SQLException, FactoryException{
+    private Pyramid readPyramid(final Connection cnx, final int pyramidId, final String epsgcode) throws SQLException, FactoryException{
         
         final CoordinateReferenceSystem crs = ref.getStore().getEPSGFactory().createCoordinateReferenceSystem(epsgcode);
         DefaultPyramid pyramid = new DefaultPyramid(String.valueOf(pyramidId), this, crs);
         final PGCoverageStore store = ref.getStore();
         
-        Connection cnx = source.getConnection();
         Statement stmt = null;
         ResultSet rs = null;
         try{            
@@ -190,11 +186,10 @@ public class PGPyramidSet extends DefaultPyramidSet{
                 
                 if(crs.getCoordinateSystem().getDimension() > 2){
                     //retrieve additional axis value
-                    Connection cnx2 = source.getConnection();
                     Statement stmt2 = null;
                     ResultSet rs2 = null;
                     try{
-                        stmt2 = cnx2.createStatement();
+                        stmt2 = cnx.createStatement();
                         query = new StringBuilder();        
                         query.append("SELECT \"indice\",\"value\" FROM ");
                         query.append(store.encodeTableName("MosaicAxis"));
@@ -205,7 +200,7 @@ public class PGPyramidSet extends DefaultPyramidSet{
                             position.setOrdinate(rs2.getInt(1), rs2.getDouble(2));
                         }
                     }finally{
-                        store.closeSafe(cnx2, stmt2, rs2);
+                        store.closeSafe(null, stmt2, rs2);
                     }
                 }
                 
@@ -220,7 +215,7 @@ public class PGPyramidSet extends DefaultPyramidSet{
         }catch(SQLException ex){
             store.getLogger().log(Level.WARNING, ex.getMessage(),ex);
         }finally{
-            store.closeSafe(cnx, stmt, rs);
+            store.closeSafe(null, stmt, rs);
         }
         
         return pyramid;

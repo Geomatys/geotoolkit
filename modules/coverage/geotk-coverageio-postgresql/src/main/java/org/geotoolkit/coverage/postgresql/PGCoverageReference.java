@@ -152,7 +152,7 @@ public class PGCoverageReference extends AbstractCoverageReference implements Py
 
             stmt = cnx.createStatement();
 
-            final int layerId = store.getLayerId(name.getLocalPart());
+            final int layerId = store.getLayerId(cnx,name.getLocalPart());
 
             StringBuilder query = new StringBuilder();
             query.append("INSERT INTO ");
@@ -459,7 +459,10 @@ public class PGCoverageReference extends AbstractCoverageReference implements Py
         ResultSet rs = null;
 
         try {
-            final int layerId = store.getLayerId(name.getLocalPart());
+            cnx = store.getDataSource().getConnection();
+            cnx.setReadOnly(false);
+            
+            final int layerId = store.getLayerId(cnx,name.getLocalPart());
             final StringBuilder query = new StringBuilder();
             query.append("SELECT \"id\",\"indice\",\"description\",\"dataType\",\"unit\",\"noData\",\"min\",\"max\"");
             query.append("FROM ").append(store.encodeTableName("Band"));
@@ -467,8 +470,6 @@ public class PGCoverageReference extends AbstractCoverageReference implements Py
             query.append("\"layerId\"=").append(Integer.valueOf(layerId));
             query.append("ORDER BY \"indice\" ASC");
 
-            cnx = store.getDataSource().getConnection();
-            cnx.setReadOnly(false);
             stmt = cnx.createStatement();
             rs = stmt.executeQuery(query.toString());
 
@@ -536,8 +537,10 @@ public class PGCoverageReference extends AbstractCoverageReference implements Py
             PreparedStatement pstmt = null;
             ResultSet rs = null;
             try{
-
-                final int layerId = store.getLayerId(name.getLocalPart());
+                cnx = store.getDataSource().getConnection();
+                cnx.setReadOnly(false);
+                    
+                final int layerId = store.getLayerId(cnx,name.getLocalPart());
                 for (int i = 0; i < dimensions.size(); i++) {
 
                     final GridSampleDimension dim = dimensions.get(i);
@@ -560,8 +563,7 @@ public class PGCoverageReference extends AbstractCoverageReference implements Py
                     query.append(" (\"layerId\",\"indice\",\"description\",\"dataType\",\"unit\",\"noData\", \"min\", \"max\") ");
                     query.append("VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
 
-                    cnx = store.getDataSource().getConnection();
-                    cnx.setReadOnly(false);
+                    
                     pstmt = cnx.prepareStatement(query.toString());
 
                     pstmt.setInt(1, layerId);

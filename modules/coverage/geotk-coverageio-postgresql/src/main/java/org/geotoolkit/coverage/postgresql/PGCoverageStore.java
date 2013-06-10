@@ -201,7 +201,7 @@ public class PGCoverageStore extends AbstractCoverageStore{
         return super.getLogger();
     }
 
-    int getLayerId(String name) throws SQLException {
+    int getLayerId(Connection cnx, String name) throws SQLException {
         final StringBuilder query = new StringBuilder();
         query.append("SELECT id FROM ");
         query.append(encodeTableName("Layer"));
@@ -209,11 +209,9 @@ public class PGCoverageStore extends AbstractCoverageStore{
         query.append(name);
         query.append("'");
 
-        Connection cnx = null;
         Statement stmt = null;
         ResultSet rs = null;
         try {
-            cnx = source.getConnection();
             stmt = cnx.createStatement();
             rs = stmt.executeQuery(query.toString());
             if(rs.next()){
@@ -222,7 +220,7 @@ public class PGCoverageStore extends AbstractCoverageStore{
                 throw new SQLException("No layer for name : "+name);
             }
         } finally {
-            closeSafe(cnx,stmt,rs);
+            closeSafe(null,stmt,rs);
         }
 
     }
