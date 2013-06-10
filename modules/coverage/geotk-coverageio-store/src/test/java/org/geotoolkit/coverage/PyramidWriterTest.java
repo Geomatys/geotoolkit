@@ -263,12 +263,6 @@ public class PyramidWriterTest {
         //the higher tiles------------------------------------------------------
         final BufferedImage top1 = mosaic2.getTile(0, 0, null).getImageReader().read(0);
         final BufferedImage top2 = mosaic2.getTile(1, 0, null).getImageReader().read(0);
-        try {
-            ImageIO.write(top1, "png", new File("/home/jsorel/top1.png"));
-            ImageIO.write(top2, "png", new File("/home/jsorel/top2.png"));
-        } catch (IOException ex) {
-            Logger.getLogger(PyramidWriterTest.class.getName()).log(Level.SEVERE, null, ex);
-        }
         
         data = top1.getData();
         for(int y=0;y<9;y++){
@@ -340,11 +334,6 @@ public class PyramidWriterTest {
         //lower image should be black/red---------------------------------------
         candidate = ((GridCoverage2D)ref.createReader().read(0, null)).getRenderedImage();
         Raster data = candidate.getData();
-        try {
-            ImageIO.write(candidate, "png", new File("/home/jsorel/all.png"));
-        } catch (IOException ex) {
-            Logger.getLogger(PyramidWriterTest.class.getName()).log(Level.SEVERE, null, ex);
-        }
         
         final int[] black = new int[]{Color.BLACK.getRed(),Color.BLACK.getGreen(),Color.BLACK.getBlue(),Color.BLACK.getAlpha()};
         final int[] red = new int[]{Color.RED.getRed(),Color.RED.getGreen(),Color.RED.getBlue(),Color.RED.getAlpha()};
@@ -363,12 +352,6 @@ public class PyramidWriterTest {
         //the higher tiles------------------------------------------------------
         final BufferedImage top1 = mosaic2.getTile(0, 0, null).getImageReader().read(0);
         final BufferedImage top2 = mosaic2.getTile(0, 1, null).getImageReader().read(0);
-        try {
-            ImageIO.write(top1, "png", new File("/home/jsorel/top1.png"));
-            ImageIO.write(top2, "png", new File("/home/jsorel/top2.png"));
-        } catch (IOException ex) {
-            Logger.getLogger(PyramidWriterTest.class.getName()).log(Level.SEVERE, null, ex);
-        }
         
         data = top1.getData();
         for(int y=0;y<9;y++){
@@ -458,12 +441,6 @@ public class PyramidWriterTest {
         //the higher tiles------------------------------------------------------
         final BufferedImage top1 = mosaic2.getTile(0, 0, null).getImageReader().read(0);
         final BufferedImage top2 = mosaic2.getTile(1, 0, null).getImageReader().read(0);
-        try {
-            ImageIO.write(top1, "png", new File("/home/jsorel/top1.png"));
-            ImageIO.write(top2, "png", new File("/home/jsorel/top2.png"));
-        } catch (IOException ex) {
-            Logger.getLogger(PyramidWriterTest.class.getName()).log(Level.SEVERE, null, ex);
-        }
         
         data = top1.getData();
         for(int y=0;y<9;y++){
