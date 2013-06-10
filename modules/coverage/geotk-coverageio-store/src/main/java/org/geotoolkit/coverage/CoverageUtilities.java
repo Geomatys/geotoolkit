@@ -21,6 +21,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.ReferencingUtilities;
@@ -34,6 +36,7 @@ import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.cs.EllipsoidalCS;
 import org.opengis.referencing.cs.SphericalCS;
 import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 
 /**
@@ -93,13 +96,18 @@ public final class CoverageUtilities {
             noValidityDomainFound :
             for(Pyramid pyramid : set.getPyramids()) {
                 double ratioTemp = 0;
-                final Envelope pyramidBound = CRS.getEnvelope(get2Dpart(pyramid.getCoordinateReferenceSystem()));
+                Envelope pyramidBound = CRS.getEnvelope(get2Dpart(pyramid.getCoordinateReferenceSystem()));
                 if (pyramidBound == null) {
                     results.add(pyramid);
                     continue noValidityDomainFound;
                 }
                 // compute sum of recovery ratio 
                 // from crs validity domain area on pyramid crs validity domain area
+                try {
+                    pyramidBound = CRS.transform(pyramidBound, crs2D);
+                } catch (TransformException ex) {
+                    Logger.getLogger(CoverageUtilities.class.getName()).log(Level.WARNING, ex.getMessage(), ex);
+                }
                 if (!crsBound.intersects(pyramidBound, true)) continue;// no intersection
                 intersection.setEnvelope(crsBound);
                 intersection.intersect(pyramidBound);
@@ -123,7 +131,14 @@ public final class CoverageUtilities {
         }
             
         //paranoiac test
-        if (results.isEmpty())   throw new IllegalStateException("pyramid not find");
+        if (results.isEmpty()){
+            //could not find any proper candidates
+            if(set.getPyramids().isEmpty()){
+                return null;
+            }else{
+                return set.getPyramids().iterator().next();
+            }
+        }
         if (results.size() == 1) return results.get(0);
         // if several equal ratio.
         for (Pyramid pyramid : results) {
