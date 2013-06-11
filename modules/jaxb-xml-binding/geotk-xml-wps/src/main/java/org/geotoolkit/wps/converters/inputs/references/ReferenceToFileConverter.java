@@ -31,7 +31,7 @@ import org.geotoolkit.wps.xml.v100.ReferenceType;
  *
  * @author Quentin Boileau (Geomatys).
  */
-public final class ReferenceToFileConverter extends AbstractReferenceInputConverter {
+public final class ReferenceToFileConverter extends AbstractReferenceInputConverter<File> {
 
     private static ReferenceToFileConverter INSTANCE;
 
@@ -46,7 +46,7 @@ public final class ReferenceToFileConverter extends AbstractReferenceInputConver
     }
 
     @Override
-    public Class<? extends Object> getTargetClass() {
+    public Class<? extends File> getTargetClass() {
         return File.class;
     }
 

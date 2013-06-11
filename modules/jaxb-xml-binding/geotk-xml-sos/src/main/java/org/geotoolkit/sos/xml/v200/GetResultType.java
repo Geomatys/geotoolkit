@@ -19,18 +19,11 @@ package org.geotoolkit.sos.xml.v200;
 
 import java.util.ArrayList;
 import java.util.List;
-import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.ogc.xml.v200.BBOXType;
-import org.geotoolkit.ogc.xml.v200.BinarySpatialOpType;
-import org.geotoolkit.ogc.xml.v200.BinaryTemporalOpType;
-import org.geotoolkit.ogc.xml.v200.DistanceBufferType;
-import org.geotoolkit.ogc.xml.v200.FilterType;
 import org.geotoolkit.ogc.xml.v200.SpatialOpsType;
 import org.geotoolkit.ogc.xml.v200.TemporalOpsType;
 import org.geotoolkit.sos.xml.GetResult;
@@ -97,10 +90,10 @@ public class GetResultType extends ExtensibleRequestType implements GetResult {
     @XmlElement(required = true)
     @XmlSchemaType(name = "anyURI")
     private String observedProperty;
-    private List<GetResultType.TemporalFilter> temporalFilter;
+    private List<TemporalFilterType> temporalFilter;
     @XmlSchemaType(name = "anyURI")
     private List<String> featureOfInterest;
-    private GetResultType.SpatialFilter spatialFilter;
+    private SpatialFilterType spatialFilter;
 
     /*
      * An empty constructor used by jaxB
@@ -110,15 +103,21 @@ public class GetResultType extends ExtensibleRequestType implements GetResult {
     /**
      * Build a new request GetResult.
      */
-    public GetResultType(final String offering, final List<TemporalOpsType> timeFilter, final String version){
+    public GetResultType(final String version, final String service, final String offering, final String observedProperty, 
+            final List<TemporalOpsType> timeFilter, final SpatialOpsType spatialFilter, final List<String> featureOfInterest){
        super(version, "SOS");
        if (timeFilter != null) {
-            this.temporalFilter = new ArrayList<TemporalFilter>();
+            this.temporalFilter = new ArrayList<TemporalFilterType>();
             for (TemporalOpsType tfilter : timeFilter) {
-                this.temporalFilter.add(new TemporalFilter(tfilter));
+                this.temporalFilter.add(new TemporalFilterType(tfilter));
             }
        }
        this.offering = offering;
+       this.observedProperty = observedProperty;
+       if (spatialFilter != null) {
+           this.spatialFilter = new SpatialFilterType(spatialFilter);
+       }
+       this.featureOfInterest = featureOfInterest;
     }
     
     /**
@@ -154,6 +153,7 @@ public class GetResultType extends ExtensibleRequestType implements GetResult {
      *     {@link String }
      *     
      */
+    @Override
     public String getObservedProperty() {
         return observedProperty;
     }
@@ -173,12 +173,12 @@ public class GetResultType extends ExtensibleRequestType implements GetResult {
     @Override
     public List<Filter> getTemporalFilter() {
         if (temporalFilter == null) {
-            temporalFilter = new ArrayList<GetResultType.TemporalFilter>();
+            temporalFilter = new ArrayList<TemporalFilterType>();
         }
         final List<Filter> result = new ArrayList<Filter>();
-        for (GetResultType.TemporalFilter tf : temporalFilter) {
-            if (tf.temporalOps != null) {
-                result.add(tf.temporalOps.getValue());
+        for (TemporalFilterType tf : temporalFilter) {
+            if (tf.getTemporalOps() != null) {
+                result.add(tf.getTemporalOps());
             }
         }
         return result;
@@ -186,9 +186,9 @@ public class GetResultType extends ExtensibleRequestType implements GetResult {
     
     public void addTemporalFilter(final TemporalOpsType temporal) {
         if (temporalFilter == null) {
-            temporalFilter = new ArrayList<GetResultType.TemporalFilter>();
+            temporalFilter = new ArrayList<TemporalFilterType>();
         }
-        temporalFilter.add(new TemporalFilter(temporal));
+        temporalFilter.add(new TemporalFilterType(temporal));
     }
     /**
      * Gets the value of the featureOfInterest property.
@@ -212,7 +212,7 @@ public class GetResultType extends ExtensibleRequestType implements GetResult {
      *     {@link GetResultType.SpatialFilter }
      *     
      */
-    public GetResultType.SpatialFilter getSpatialFilter() {
+    public SpatialFilterType getSpatialFilter() {
         return spatialFilter;
     }
 
@@ -224,7 +224,7 @@ public class GetResultType extends ExtensibleRequestType implements GetResult {
      *     {@link GetResultType.SpatialFilter }
      *     
      */
-    public void setSpatialFilter(GetResultType.SpatialFilter value) {
+    public void setSpatialFilter(SpatialFilterType value) {
         this.spatialFilter = value;
     }
 
@@ -237,175 +237,4 @@ public class GetResultType extends ExtensibleRequestType implements GetResult {
     public String getObservationTemplateId() {
         return null;
     }
-
-
-    /**
-     * <p>Java class for anonymous complex type.
-     * 
-     * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
-     * <pre>
-     * &lt;complexType>
-     *   &lt;complexContent>
-     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-     *       &lt;sequence>
-     *         &lt;element ref="{http://www.opengis.net/fes/2.0}spatialOps"/>
-     *       &lt;/sequence>
-     *     &lt;/restriction>
-     *   &lt;/complexContent>
-     * &lt;/complexType>
-     * </pre>
-     * 
-     * 
-     */
-    @XmlAccessorType(XmlAccessType.FIELD)
-    @XmlType(name = "", propOrder = {
-        "spatialOps"
-    })
-    public static class SpatialFilter {
-
-        @XmlElementRef(name = "spatialOps", namespace = "http://www.opengis.net/fes/2.0", type = JAXBElement.class)
-        private JAXBElement<? extends SpatialOpsType> spatialOps;
-
-        /**
-         * Gets the value of the spatialOps property.
-         * 
-         * @return
-         *     possible object is
-         *     {@link JAXBElement }{@code <}{@link SpatialOpsType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link BinarySpatialOpType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link DistanceBufferType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link BinarySpatialOpType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link BinarySpatialOpType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link BBOXType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link BinarySpatialOpType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link BinarySpatialOpType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link BinarySpatialOpType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link BinarySpatialOpType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link DistanceBufferType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link BinarySpatialOpType }{@code >}
-         *     
-         */
-        public JAXBElement<? extends SpatialOpsType> getSpatialOps() {
-            return spatialOps;
-        }
-
-        /**
-         * Sets the value of the spatialOps property.
-         * 
-         * @param value
-         *     allowed object is
-         *     {@link JAXBElement }{@code <}{@link SpatialOpsType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link BinarySpatialOpType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link DistanceBufferType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link BinarySpatialOpType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link BinarySpatialOpType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link BBOXType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link BinarySpatialOpType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link BinarySpatialOpType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link BinarySpatialOpType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link BinarySpatialOpType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link DistanceBufferType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link BinarySpatialOpType }{@code >}
-         *     
-         */
-        public void setSpatialOps(JAXBElement<? extends SpatialOpsType> value) {
-            this.spatialOps = ((JAXBElement<? extends SpatialOpsType> ) value);
-        }
-
-    }
-
-
-    /**
-     * <p>Java class for anonymous complex type.
-     * 
-     * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
-     * <pre>
-     * &lt;complexType>
-     *   &lt;complexContent>
-     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-     *       &lt;sequence>
-     *         &lt;element ref="{http://www.opengis.net/fes/2.0}temporalOps"/>
-     *       &lt;/sequence>
-     *     &lt;/restriction>
-     *   &lt;/complexContent>
-     * &lt;/complexType>
-     * </pre>
-     * 
-     * 
-     */
-    @XmlAccessorType(XmlAccessType.FIELD)
-    @XmlType(name = "", propOrder = {
-        "temporalOps"
-    })
-    public static class TemporalFilter {
-
-        @XmlElementRef(name = "temporalOps", namespace = "http://www.opengis.net/fes/2.0", type = JAXBElement.class)
-        private JAXBElement<? extends TemporalOpsType> temporalOps;
-
-        public TemporalFilter() {
-            
-        }
-        
-        public TemporalFilter(final TemporalOpsType temporalOp) {
-            if (temporalOp != null) {
-                this.temporalOps = FilterType.createTemporalOps(temporalOp);
-            }
-        }
-        
-        /**
-         * Gets the value of the temporalOps property.
-         * 
-         * @return
-         *     possible object is
-         *     {@link JAXBElement }{@code <}{@link BinaryTemporalOpType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link BinaryTemporalOpType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link BinaryTemporalOpType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link BinaryTemporalOpType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link BinaryTemporalOpType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link BinaryTemporalOpType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link BinaryTemporalOpType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link BinaryTemporalOpType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link BinaryTemporalOpType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link BinaryTemporalOpType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link BinaryTemporalOpType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link BinaryTemporalOpType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link BinaryTemporalOpType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link BinaryTemporalOpType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link TemporalOpsType }{@code >}
-         *     
-         */
-        public JAXBElement<? extends TemporalOpsType> getTemporalOps() {
-            return temporalOps;
-        }
-
-        /**
-         * Sets the value of the temporalOps property.
-         * 
-         * @param value
-         *     allowed object is
-         *     {@link JAXBElement }{@code <}{@link BinaryTemporalOpType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link BinaryTemporalOpType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link BinaryTemporalOpType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link BinaryTemporalOpType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link BinaryTemporalOpType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link BinaryTemporalOpType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link BinaryTemporalOpType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link BinaryTemporalOpType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link BinaryTemporalOpType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link BinaryTemporalOpType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link BinaryTemporalOpType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link BinaryTemporalOpType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link BinaryTemporalOpType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link BinaryTemporalOpType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link TemporalOpsType }{@code >}
-         *     
-         */
-        public void setTemporalOps(JAXBElement<? extends TemporalOpsType> value) {
-            this.temporalOps = ((JAXBElement<? extends TemporalOpsType> ) value);
-        }
-
-    }
-
 }

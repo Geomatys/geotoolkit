@@ -34,7 +34,7 @@ public final class FilterUtilities extends Static {
      * Avoid instanciation.
      */
     private FilterUtilities() {}
-
+    
     /**
      * Prepare a filter against a given class.
      * @param filter : filter to optimize

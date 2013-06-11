@@ -18,7 +18,7 @@ package org.geotoolkit.util.collection;
 
 import java.util.HashMap;
 import java.util.Map;
-import org.geotoolkit.util.ArgumentChecks;
+import org.apache.sis.util.ArgumentChecks;
 
 /**
  *

@@ -40,6 +40,7 @@ import org.geotoolkit.gui.swing.propertyedit.styleproperty.JAdvancedStylePanel;
 import org.geotoolkit.gui.swing.propertyedit.styleproperty.JClassificationIntervalStylePanel;
 import org.geotoolkit.gui.swing.propertyedit.styleproperty.JClassificationSingleStylePanel;
 import org.geotoolkit.gui.swing.propertyedit.styleproperty.JSimpleStylePanel;
+import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
@@ -108,14 +109,14 @@ public class WidgetsDemo extends javax.swing.JFrame {
         lstproperty.add(new LayerCRSPropertyPanel());
 
         LayerFilterPropertyPanel filters = new LayerFilterPropertyPanel();
-        filters.addPropertyPanel(new JCQLPropertyPanel());
+        filters.addPropertyPanel(MessageBundle.getString("filter"),new JCQLPropertyPanel());
         lstproperty.add(filters);
 
         LayerStylePropertyPanel styles = new LayerStylePropertyPanel();
-        styles.addPropertyPanel(new JSimpleStylePanel());
-        styles.addPropertyPanel(new JClassificationSingleStylePanel());
-        styles.addPropertyPanel(new JClassificationIntervalStylePanel());
-        styles.addPropertyPanel(new JAdvancedStylePanel());
+        styles.addPropertyPanel(MessageBundle.getString("analyze"),new JSimpleStylePanel());
+        styles.addPropertyPanel(MessageBundle.getString("analyze"),new JClassificationSingleStylePanel());
+        styles.addPropertyPanel(MessageBundle.getString("analyze"),new JClassificationIntervalStylePanel());
+        styles.addPropertyPanel(MessageBundle.getString("sld"),new JAdvancedStylePanel());
         lstproperty.add(styles);
 
         property.setPropertyPanels(lstproperty);

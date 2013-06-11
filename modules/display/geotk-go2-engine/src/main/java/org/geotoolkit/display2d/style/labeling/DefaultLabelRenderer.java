@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.logging.Level;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.style.j2d.TextStroke;
-import static org.geotoolkit.util.ArgumentChecks.*;
+import static org.apache.sis.util.ArgumentChecks.*;
 import org.geotoolkit.util.logging.Logging;
 import org.opengis.referencing.operation.TransformException;
 

@@ -23,7 +23,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.stream.XMLStreamException;
 import org.geotoolkit.security.DefaultClientSecurity;
-import org.geotoolkit.util.ArgumentChecks;
+import org.apache.sis.util.ArgumentChecks;
 
 /**
  * Client Security object relying on an IGN token.

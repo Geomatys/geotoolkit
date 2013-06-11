@@ -32,12 +32,12 @@ import java.util.logging.Logger;
 import javax.measure.unit.NonSI;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
+import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.gui.swing.go2.CanvasHandler;
 import org.geotoolkit.gui.swing.go2.JMap2D;
 import org.geotoolkit.gui.swing.go2.control.navigation.MouseNavigatonListener;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
-import org.geotoolkit.util.collection.UnmodifiableArrayList;
 import org.geotoolkit.util.logging.Logging;
 
 /**
@@ -52,7 +52,7 @@ public class LenghtHandler implements CanvasHandler {
 
     private static final GeometryFactory GEOMETRY_FACTORY = new GeometryFactory();
 
-    public static final List<Unit> UNITS = UnmodifiableArrayList.wrap((Unit)SI.KILOMETRE,SI.METRE,NonSI.MILE,NonSI.INCH);
+    public static final List<Unit> UNITS = UnmodifiableArrayList.wrap(new Unit[] {(Unit)SI.KILOMETRE,SI.METRE,NonSI.MILE,NonSI.INCH});
 
     private final MouseListen mouseInputListener;
 

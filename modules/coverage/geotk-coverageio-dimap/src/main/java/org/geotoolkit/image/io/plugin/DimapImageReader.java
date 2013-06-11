@@ -47,7 +47,7 @@ import org.geotoolkit.metadata.dimap.DimapAccessor;
 import org.geotoolkit.metadata.dimap.DimapMetadataFormat;
 import org.geotoolkit.util.DomUtilities;
 import org.geotoolkit.util.Version;
-import org.geotoolkit.util.XArrays;
+import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.util.logging.Logging;
 
 /**
@@ -109,7 +109,7 @@ public class DimapImageReader extends ImageReaderAdapter {
             //find solution to pass the ignoreMetadata flag down in the reader stack.
             return image;
         }
-        
+
         //apply the band <-> color mapping -------------------------------------
         final int[] colorMapping = DimapAccessor.readColorBandMapping((Element)metadata.getAsTree(DimapMetadataFormat.NATIVE_FORMAT));
         if(colorMapping == null){
@@ -181,7 +181,7 @@ public class DimapImageReader extends ImageReaderAdapter {
             //stream metadata
             return super.createMetadata(imageIndex);
         }
-        
+
         //grab spatial metadata from underlying geotiff
         final SpatialMetadata metadata = super.createMetadata(imageIndex);
 
@@ -215,7 +215,7 @@ public class DimapImageReader extends ImageReaderAdapter {
             pluginClassName = "org.geotoolkit.image.io.plugin.DimapImageReader";
             vendorName      = "Geotoolkit.org";
             version         = Version.GEOTOOLKIT.toString();
-            extraImageMetadataFormatNames = XArrays.concatenate(extraImageMetadataFormatNames, new String[] {
+            extraImageMetadataFormatNames = ArraysExt.concatenate(extraImageMetadataFormatNames, new String[] {
                 nativeImageMetadataFormatName
             });
             nativeImageMetadataFormatName = DimapMetadataFormat.NATIVE_FORMAT;
@@ -243,7 +243,7 @@ public class DimapImageReader extends ImageReaderAdapter {
                         candidate = f;
                     }
                 }
-                
+
                 if(candidate != null && candidate.isFile()) return candidate;
 
                 //search for filename.dim

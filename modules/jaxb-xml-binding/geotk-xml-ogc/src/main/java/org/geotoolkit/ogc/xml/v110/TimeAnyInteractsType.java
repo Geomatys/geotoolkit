@@ -29,6 +29,10 @@ public class TimeAnyInteractsType extends BinaryTemporalOpType implements AnyInt
     public TimeAnyInteractsType() {
 
     }
+    
+    public TimeAnyInteractsType(final TimeAnyInteractsType that) {
+        super(that);
+    }
 
     public TimeAnyInteractsType(final String propertyName, final Object temporal) {
         super(propertyName, temporal);
@@ -44,4 +48,8 @@ public class TimeAnyInteractsType extends BinaryTemporalOpType implements AnyInt
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
+    public TemporalOpsType getClone() {
+        return new TimeAnyInteractsType(this);
+    }
 }

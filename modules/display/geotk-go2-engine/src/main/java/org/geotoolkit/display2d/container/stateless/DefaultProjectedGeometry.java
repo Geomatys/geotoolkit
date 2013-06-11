@@ -65,6 +65,8 @@ public class DefaultProjectedGeometry implements ProjectedGeometry {
     
     private boolean geomSet = false;
 
+    private CoordinateReferenceSystem dataCRS = null;
+    
     public DefaultProjectedGeometry(final StatelessContextParams params){
         this.params = params;
     }
@@ -95,7 +97,8 @@ public class DefaultProjectedGeometry implements ProjectedGeometry {
                 //try to extract data crs from geometry
                 dataCRS = JTS.findCoordinateReferenceSystem(geom);
             }
-            if(dataCRS != null){
+            if(dataCRS != null && this.dataCRS!=dataCRS){
+                this.dataCRS = dataCRS;
                 dataCRS = CRSUtilities.getCRS2D(dataCRS);
                 dataToObjective = (MathTransform2D) CRS.findMathTransform(dataCRS, params.context.getObjectiveCRS2D());
                 dataToDisplay = (MathTransform2D) CRS.findMathTransform(dataCRS, params.displayCRS);

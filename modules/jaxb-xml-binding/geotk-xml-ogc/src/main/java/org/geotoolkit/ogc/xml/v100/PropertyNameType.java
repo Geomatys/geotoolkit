@@ -21,6 +21,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
 import javax.xml.namespace.QName;
+import org.opengis.filter.expression.ExpressionVisitor;
+import org.opengis.filter.expression.PropertyName;
 
 
 /**
@@ -44,7 +46,7 @@ import javax.xml.namespace.QName;
 @XmlType(name = "PropertyNameType", propOrder = {
     "content"
 })
-public class PropertyNameType {
+public class PropertyNameType implements PropertyName {
 
     @XmlValue
     private String content;
@@ -96,6 +98,26 @@ public class PropertyNameType {
      */
     public void setContent(final String value) {
         this.content = value;
+    }
+
+    @Override
+    public String getPropertyName() {
+        return content;
+    }
+
+    @Override
+    public Object evaluate(Object o) {
+        throw new UnsupportedOperationException("Not supported yet."); 
+    }
+
+    @Override
+    public <T> T evaluate(Object o, Class<T> type) {
+        throw new UnsupportedOperationException("Not supported yet."); 
+    }
+
+    @Override
+    public Object accept(ExpressionVisitor ev, Object o) {
+        throw new UnsupportedOperationException("Not supported yet."); 
     }
 
 }

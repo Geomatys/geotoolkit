@@ -58,6 +58,10 @@ public abstract class JDBCTestSetup {
             dataSource = createDataSource();
         return dataSource;
     }
+    public DataSource getOtherDataSource() throws IOException {
+
+        return createDataSource();
+    }
 
     public void setUp() throws Exception {
         //

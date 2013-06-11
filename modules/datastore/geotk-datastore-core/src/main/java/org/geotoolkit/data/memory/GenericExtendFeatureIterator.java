@@ -33,7 +33,7 @@ import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.LenientFeatureFactory;
 import org.geotoolkit.feature.type.DefaultAttributeDescriptor;
 import org.geotoolkit.storage.DataStoreException;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureFactory;
 import org.opengis.feature.Property;
@@ -94,6 +94,7 @@ public class GenericExtendFeatureIterator<F extends Feature, R extends FeatureIt
         final AttributeDescriptor desc = new DefaultAttributeDescriptor( mask, mask.getName(), 1, 1, true, null);
         final NoCopyFeature feature = new NoCopyFeature(desc, properties, next.getIdentifier());
         extend.extendProperties(feature, properties);
+        feature.getUserData().putAll(next.getUserData());
         return (F) feature;
     }
 

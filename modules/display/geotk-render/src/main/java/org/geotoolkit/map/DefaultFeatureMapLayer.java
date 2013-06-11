@@ -18,22 +18,24 @@ package org.geotoolkit.map;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.filter.visitor.ListingPropertyVisitor;
-import org.geotoolkit.geometry.Envelope2D;
+import org.apache.sis.geometry.Envelope2D;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.style.MutableStyle;
-import static org.geotoolkit.util.ArgumentChecks.*;
+import static org.apache.sis.util.ArgumentChecks.*;
 import org.geotoolkit.util.NumberRange;
-import org.geotoolkit.util.Range;
+import org.apache.sis.measure.Range;
 import org.geotoolkit.util.collection.NotifiedCheckedList;
 import org.opengis.feature.Feature;
 import org.opengis.filter.expression.Expression;
@@ -173,7 +175,7 @@ final class DefaultFeatureMapLayer extends DefaultCollectionMapLayer implements 
         final Expression lower = def.getLower();
         final Expression upper = def.getUpper();
 
-        final List<String> properties = new ArrayList<String>();
+        final Set<String> properties = new HashSet<String>();
         lower.accept(ListingPropertyVisitor.VISITOR, properties);
         upper.accept(ListingPropertyVisitor.VISITOR, properties);
 
@@ -187,7 +189,7 @@ final class DefaultFeatureMapLayer extends DefaultCollectionMapLayer implements 
             Feature f = ite.next();
             final Comparable c1 = (Comparable) lower.evaluate(f);
             final Comparable c2 = (Comparable) upper.evaluate(f);
-            values.add( new Range(Comparable.class, c1, c2));
+            values.add( new Range(Comparable.class, c1, true, c2, true));
         }
         ite.close();
 

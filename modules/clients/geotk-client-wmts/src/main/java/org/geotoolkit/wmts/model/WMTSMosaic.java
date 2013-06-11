@@ -18,8 +18,8 @@ package org.geotoolkit.wmts.model;
 
 import java.awt.Dimension;
 import java.awt.Point;
-import java.awt.geom.Point2D;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
@@ -28,7 +28,8 @@ import org.geotoolkit.coverage.TileReference;
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.storage.DataStoreException;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
+import org.geotoolkit.coverage.PyramidSet;
 import org.geotoolkit.wmts.WMTSUtilities;
 import org.geotoolkit.wmts.xml.v100.TileMatrix;
 import org.geotoolkit.wmts.xml.v100.TileMatrixLimits;
@@ -143,6 +144,9 @@ public class WMTSMosaic implements GridMosaic{
 
     @Override
     public TileReference getTile(int col, int row, Map hints) throws DataStoreException {
+        if(hints==null) hints = new HashMap();
+        if(!hints.containsKey(PyramidSet.HINT_FORMAT)) hints.put(PyramidSet.HINT_FORMAT,"image/png");
+        
         return ((WMTSPyramidSet)getPyramid().getPyramidSet()).getTile(this, col, row, hints);
     }
  
@@ -158,6 +162,8 @@ public class WMTSMosaic implements GridMosaic{
 
     @Override
     public BlockingQueue<Object> getTiles(Collection<? extends Point> positions, Map hints) throws DataStoreException {
+        if(hints==null) hints = new HashMap();
+        if(!hints.containsKey(PyramidSet.HINT_FORMAT)) hints.put(PyramidSet.HINT_FORMAT,"image/png");
         return ((WMTSPyramidSet)getPyramid().getPyramidSet()).getTiles(this, positions, hints);
     }
     

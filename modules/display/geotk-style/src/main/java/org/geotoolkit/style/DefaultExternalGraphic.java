@@ -21,7 +21,7 @@ import java.util.Collections;
 import java.util.Objects;
 import javax.swing.Icon;
 
-import org.geotoolkit.util.collection.UnmodifiableArrayList;
+import org.apache.sis.internal.util.UnmodifiableArrayList;
 
 import org.opengis.metadata.citation.OnlineResource;
 import org.opengis.style.ColorReplacement;
@@ -30,23 +30,23 @@ import org.opengis.style.StyleVisitor;
 
 /**
  * Immutable implementation of GeoAPI External graphic.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
 public class DefaultExternalGraphic implements ExternalGraphic{
 
     private final OnlineResource resource;
-    
+
     private final Icon icon;
-    
+
     private final String format;
-    
+
     private final Collection<ColorReplacement> replaces;
-    
+
     /**
      * Create a default immutable external graphic.
-     * 
+     *
      * @param resource : can not be null
      * @param format : can not be null
      * @param replaces : can be null or empty
@@ -55,23 +55,23 @@ public class DefaultExternalGraphic implements ExternalGraphic{
         if( resource == null || format == null ){
             throw new IllegalArgumentException("OnlineResource and format can not be null");
         }
-        
+
         this.resource = resource;
         this.icon = null;
         this.format = format;
-        
+
         if(replaces != null && !replaces.isEmpty()) {
             final ColorReplacement[] rep = replaces.toArray(new ColorReplacement[replaces.size()]);
             this.replaces = UnmodifiableArrayList.wrap(rep);
         }else{
             this.replaces = Collections.emptyList();
         }
-        
+
     }
-    
+
     /**
      * Create a default immutable external graphic.
-     * 
+     *
      * @param icon : can not be null
      * @param format : can not be null
      * @param replaces : can be null
@@ -80,20 +80,20 @@ public class DefaultExternalGraphic implements ExternalGraphic{
         if( icon == null ){
             throw new IllegalArgumentException("Icon can not be null");
         }
-        
+
         this.resource = null;
         this.icon = icon;
         this.format = null;
-        
+
         if(replaces != null && !replaces.isEmpty()) {
             final ColorReplacement[] rep = replaces.toArray(new ColorReplacement[replaces.size()]);
             this.replaces = UnmodifiableArrayList.wrap(rep);
         }else{
             this.replaces = Collections.emptyList();
         }
-        
+
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -182,5 +182,5 @@ public class DefaultExternalGraphic implements ExternalGraphic{
         builder.append(']');
         return builder.toString();
     }
-    
+
 }

@@ -34,7 +34,7 @@ import org.opengis.util.FactoryException;
  *
  * @author Quentin Boileau (Geomatys).
  */
-public final class ComplexToFeatureConverter extends AbstractComplexInputConverter {
+public final class ComplexToFeatureConverter extends AbstractComplexInputConverter<Feature> {
 
     private static ComplexToFeatureConverter INSTANCE;
 
@@ -49,7 +49,7 @@ public final class ComplexToFeatureConverter extends AbstractComplexInputConvert
     }
 
     @Override
-    public Class<? extends Object> getTargetClass() {
+    public Class<? extends Feature> getTargetClass() {
         return Feature.class;
     }
     

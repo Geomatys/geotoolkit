@@ -21,13 +21,13 @@ import org.geotoolkit.util.StringUtilities;
 import java.util.List;
 import org.geotoolkit.filter.AbstractExpression;
 import org.geotoolkit.gui.swing.tree.Trees;
-import org.geotoolkit.util.collection.UnmodifiableArrayList;
+import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.ExpressionVisitor;
 import org.opengis.filter.expression.Function;
 import org.opengis.filter.expression.Literal;
 
-import static org.geotoolkit.util.ArgumentChecks.*;
+import static org.apache.sis.util.ArgumentChecks.*;
 
 /**
  * Immutable abstract function.
@@ -114,5 +114,5 @@ public abstract class AbstractFunction extends AbstractExpression implements Fun
     public String toString() {
         return Trees.toString(getName(), parameters);
     }
-    
+
 }

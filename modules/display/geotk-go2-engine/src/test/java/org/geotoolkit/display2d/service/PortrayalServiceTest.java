@@ -316,7 +316,7 @@ public class PortrayalServiceTest {
         final String geometry = "coverage";
         final Unit unit = NonSI.PIXEL;
         final Expression opacity = LITERAL_ONE_FLOAT;
-        final ChannelSelection channels = StyleConstants.DEFAULT_RASTER_CHANNEL_RGB;
+        final ChannelSelection channels = null;
         final OverlapBehavior overlap = null;
         final ColorMap colormap = null;
         final ContrastEnhancement enhance = null;

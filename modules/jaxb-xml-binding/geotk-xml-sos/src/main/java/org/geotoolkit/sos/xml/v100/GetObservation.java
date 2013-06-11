@@ -35,21 +35,17 @@ import org.geotoolkit.ogc.xml.v110.BinarySpatialOpType;
 import org.geotoolkit.ogc.xml.v110.ComparisonOpsType;
 import org.geotoolkit.ogc.xml.v110.DistanceBufferType;
 import org.geotoolkit.ogc.xml.v110.PropertyIsBetweenType;
+import org.geotoolkit.ogc.xml.v110.PropertyIsEqualToType;
+import org.geotoolkit.ogc.xml.v110.PropertyIsGreaterThanOrEqualToType;
+import org.geotoolkit.ogc.xml.v110.PropertyIsGreaterThanType;
+import org.geotoolkit.ogc.xml.v110.PropertyIsLessThanOrEqualToType;
+import org.geotoolkit.ogc.xml.v110.PropertyIsLessThanType;
 import org.geotoolkit.ogc.xml.v110.PropertyIsLikeType;
+import org.geotoolkit.ogc.xml.v110.PropertyIsNotEqualToType;
 import org.geotoolkit.ogc.xml.v110.PropertyIsNullType;
 import org.geotoolkit.ogc.xml.v110.SpatialOpsType;
 import org.geotoolkit.sos.xml.ResponseModeType;
 import org.opengis.filter.Filter;
-import org.opengis.filter.PropertyIsBetween;
-import org.opengis.filter.PropertyIsEqualTo;
-import org.opengis.filter.PropertyIsGreaterThan;
-import org.opengis.filter.PropertyIsGreaterThanOrEqualTo;
-import org.opengis.filter.PropertyIsLessThan;
-import org.opengis.filter.PropertyIsLessThanOrEqualTo;
-import org.opengis.filter.PropertyIsLike;
-import org.opengis.filter.PropertyIsNotEqualTo;
-import org.opengis.filter.PropertyIsNull;
-
 
 /**
  * <p>Java class for anonymous complex type.
@@ -691,21 +687,21 @@ public class GetObservation extends RequestBaseType implements org.geotoolkit.so
         @XmlElement(namespace = "http://www.opengis.net/ogc")
         private ComparisonOpsType comparisonOps;
         @XmlElement(name = "PropertyIsLessThan", namespace = "http://www.opengis.net/ogc")
-        private BinaryComparisonOpType propertyIsLessThan;
+        private PropertyIsLessThanType propertyIsLessThan;
         @XmlElement(name = "PropertyIsGreaterThanOrEqualTo", namespace = "http://www.opengis.net/ogc")
-        private BinaryComparisonOpType propertyIsGreaterThanOrEqualTo;
+        private PropertyIsGreaterThanOrEqualToType propertyIsGreaterThanOrEqualTo;
         @XmlElement(name = "PropertyIsEqualTo", namespace = "http://www.opengis.net/ogc")
-        private BinaryComparisonOpType propertyIsEqualTo;
+        private PropertyIsEqualToType propertyIsEqualTo;
         @XmlElement(name = "PropertyIsNotEqualTo", namespace = "http://www.opengis.net/ogc")
-        private BinaryComparisonOpType propertyIsNotEqualTo;
+        private PropertyIsNotEqualToType propertyIsNotEqualTo;
         @XmlElement(name = "PropertyIsLessThanOrEqualTo", namespace = "http://www.opengis.net/ogc")
-        private BinaryComparisonOpType propertyIsLessThanOrEqualTo;
+        private PropertyIsLessThanOrEqualToType propertyIsLessThanOrEqualTo;
         @XmlElement(name = "PropertyIsLike", namespace = "http://www.opengis.net/ogc")
         private PropertyIsLikeType propertyIsLike;
         @XmlElement(name = "PropertyIsBetween", namespace = "http://www.opengis.net/ogc")
         private PropertyIsBetweenType propertyIsBetween;
         @XmlElement(name = "PropertyIsGreaterThan", namespace = "http://www.opengis.net/ogc")
-        private BinaryComparisonOpType propertyIsGreaterThan;
+        private PropertyIsGreaterThanType propertyIsGreaterThan;
         @XmlElement(name = "PropertyIsNull", namespace = "http://www.opengis.net/ogc")
         private PropertyIsNullType propertyIsNull;
 
@@ -714,25 +710,23 @@ public class GetObservation extends RequestBaseType implements org.geotoolkit.so
         }
 
         public Result(final ComparisonOpsType ops) {
-            if (ops instanceof PropertyIsLessThan) {
-                this.propertyIsLessThan = (BinaryComparisonOpType) ops;
-            } else if (ops instanceof PropertyIsGreaterThanOrEqualTo) {
-                this.propertyIsGreaterThanOrEqualTo = (BinaryComparisonOpType) ops;
-            } else if (ops instanceof PropertyIsBetween) {
+            if (ops instanceof PropertyIsLessThanType) {
+                this.propertyIsLessThan = (PropertyIsLessThanType) ops;
+            } else if (ops instanceof PropertyIsGreaterThanOrEqualToType) {
+                this.propertyIsGreaterThanOrEqualTo = (PropertyIsGreaterThanOrEqualToType) ops;
+            } else if (ops instanceof PropertyIsBetweenType) {
                 this.propertyIsBetween = (PropertyIsBetweenType) ops;
-            } else if (ops instanceof PropertyIsEqualTo) {
-                this.propertyIsEqualTo = (BinaryComparisonOpType) ops;
-            } else if (ops instanceof PropertyIsGreaterThan) {
-                this.propertyIsGreaterThan = (BinaryComparisonOpType) ops;
-            } else if (ops instanceof PropertyIsLessThan) {
-                this.propertyIsLessThan = (BinaryComparisonOpType) ops;
-            } else if (ops instanceof PropertyIsLessThanOrEqualTo) {
-                this.propertyIsLessThanOrEqualTo = (BinaryComparisonOpType) ops;
-            } else if (ops instanceof PropertyIsLike) {
+            } else if (ops instanceof PropertyIsEqualToType) {
+                this.propertyIsEqualTo = (PropertyIsEqualToType) ops;
+            } else if (ops instanceof PropertyIsGreaterThanType) {
+                this.propertyIsGreaterThan = (PropertyIsGreaterThanType) ops;
+            } else if (ops instanceof PropertyIsLessThanOrEqualToType) {
+                this.propertyIsLessThanOrEqualTo = (PropertyIsLessThanOrEqualToType) ops;
+            } else if (ops instanceof PropertyIsLikeType) {
                 this.propertyIsLike = (PropertyIsLikeType) ops;
-            } else if (ops instanceof PropertyIsNotEqualTo) {
-                this.propertyIsNotEqualTo = (BinaryComparisonOpType) ops;
-            } else if (ops instanceof PropertyIsNull) {
+            } else if (ops instanceof PropertyIsNotEqualToType) {
+                this.propertyIsNotEqualTo = (PropertyIsNotEqualToType) ops;
+            } else if (ops instanceof PropertyIsNullType) {
                 this.propertyIsNull = (PropertyIsNullType) ops;
             } else {
                 comparisonOps = ops;

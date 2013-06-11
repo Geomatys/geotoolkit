@@ -37,7 +37,7 @@ import org.geotoolkit.display.exception.PortrayalException;
 import org.geotoolkit.display2d.ext.BackgroundTemplate;
 import org.geotoolkit.display2d.ext.BackgroundUtilities;
 import org.geotoolkit.internal.referencing.CRSUtilities;
-import org.geotoolkit.math.XMath;
+import org.apache.sis.math.MathFunctions;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.datum.DefaultEllipsoid;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -201,7 +201,7 @@ public class J2DScaleBarUtilities {
 
         // If the current logical length is between two values in the SNAP array, then select
         // the lowest value. It produces a more compact scale than selecting the highest value.
-        final double factor = XMath.pow10((int) Math.floor(Math.log10(logicalLength)));
+        final double factor = MathFunctions.pow10((int) Math.floor(Math.log10(logicalLength)));
         logicalLength /= factor;
         int index = Arrays.binarySearch(SNAP, logicalLength);
         if (index < 0) {
@@ -230,7 +230,7 @@ public class J2DScaleBarUtilities {
         final Font font                     = template.getFont();
         final StringBuffer buffer           = new StringBuffer(16);
         final FieldPosition pos             = new FieldPosition(0);
-        
+
         for (int i=0,n=template.getDivisionCount(); i<=n; i++) {
             String text = template.getNumberFormat().format(logicalLength * i, buffer, pos).toString();
             GlyphVector glyphs = font.createGlyphVector(fontContext, text);

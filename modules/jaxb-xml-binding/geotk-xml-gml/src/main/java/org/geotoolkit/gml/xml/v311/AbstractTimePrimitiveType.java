@@ -57,6 +57,14 @@ import org.opengis.temporal.TemporalPrimitive;
 })
 public abstract class AbstractTimePrimitiveType extends AbstractTimeObjectType implements TemporalPrimitive {
 
+    public AbstractTimePrimitiveType() {
+        
+    }
+    
+    public AbstractTimePrimitiveType(final String id) {
+        super(id);
+    }
+    
     private List<RelatedTimeType> relatedTime;
 
     /**

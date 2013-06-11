@@ -86,7 +86,7 @@ public class DescribeProcessTest {
             desc100.setIdentifiers(identifiers);
             final DescribeProcess request = desc100.makeRequest();
             assertEquals("WPS", request.getService());
-            assertEquals("1.0.0", request.getVersion());
+            assertEquals("1.0.0", request.getVersion().toString());
             assertEquals(request.getIdentifier(),identifierList);
 
             final StringWriter stringWriter = new StringWriter();
@@ -102,9 +102,9 @@ public class DescribeProcessTest {
                     + "    <ows:Identifier>identifier3</ows:Identifier>\n"
                     + "</wps:DescribeProcess>\n";
             assertEquals(expectedMarshalledRequest, result);
+            WPSMarshallerPool.getInstance().release(marshaller);
         } catch (JAXBException ex) {
             fail(ex.getLocalizedMessage());
-            return;
         }
    }
 

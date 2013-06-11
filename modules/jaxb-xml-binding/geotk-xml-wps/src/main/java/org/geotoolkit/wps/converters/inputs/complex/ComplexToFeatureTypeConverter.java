@@ -32,7 +32,7 @@ import org.w3c.dom.Node;
  * 
  * @author Quentin Boileau (Geomatys).
  */
-public final class ComplexToFeatureTypeConverter extends AbstractComplexInputConverter {
+public final class ComplexToFeatureTypeConverter extends AbstractComplexInputConverter<FeatureType> {
 
     private static ComplexToFeatureTypeConverter INSTANCE;
 
@@ -47,7 +47,7 @@ public final class ComplexToFeatureTypeConverter extends AbstractComplexInputCon
     }
 
     @Override
-    public Class<? extends Object> getTargetClass() {
+    public Class<? extends FeatureType> getTargetClass() {
         return FeatureType.class;
     }
     

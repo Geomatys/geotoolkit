@@ -80,10 +80,10 @@ import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyle;
-import org.geotoolkit.util.ArgumentChecks;
+import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.util.ImageIOUtilities;
-import org.geotoolkit.util.collection.UnmodifiableArrayList;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.internal.util.UnmodifiableArrayList;
+import org.apache.sis.util.Classes;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -833,9 +833,9 @@ public final class DefaultPortrayalService implements PortrayalService{
     //mime types which writer does not support indexed color model
     //even if the canEncode method says "true"
     private static final List<String> INDEXED_CM_UNSUPPORTED =
-            UnmodifiableArrayList.wrap(
+            UnmodifiableArrayList.wrap(new String[] {
                 "image/bmp",
-                "image/x-portable-pixmap");
+                "image/x-portable-pixmap"});
 
     /**
      * Check that the given color model is supported by the mime type.

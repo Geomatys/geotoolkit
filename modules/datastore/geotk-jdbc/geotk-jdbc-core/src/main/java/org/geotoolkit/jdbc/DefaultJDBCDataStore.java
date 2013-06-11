@@ -70,6 +70,7 @@ import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.filter.capability.DefaultFilterCapabilities;
 import org.geotoolkit.filter.visitor.CapabilitiesFilterSplitter;
+import org.geotoolkit.filter.visitor.CRSAdaptorVisitor;
 import org.geotoolkit.filter.visitor.FIDFixVisitor;
 import org.geotoolkit.filter.visitor.FilterAttributeExtractor;
 import org.geotoolkit.filter.visitor.SimplifyingFilterVisitor;
@@ -375,8 +376,12 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
 
         // split the filter
         final Filter[] split = splitFilter(baseFilter,type);
-        final Filter preFilter = split[0];
+        Filter preFilter = split[0];
         final Filter postFilter = split[1];
+
+        //ensure spatial filters are in featuretype geometry crs
+        final CRSAdaptorVisitor adapt = new CRSAdaptorVisitor(type);
+        preFilter = (Filter)preFilter.accept(adapt,null);
 
         // rebuild a new query with the same params, but just the pre-filter
         final QueryBuilder builder = new QueryBuilder(query);
@@ -1313,5 +1318,11 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
             }
         }
     }
+
+	@Override
+	public void refreshMetaModel() {
+		dbmodel.clearCache();
+
+	}
 
 }

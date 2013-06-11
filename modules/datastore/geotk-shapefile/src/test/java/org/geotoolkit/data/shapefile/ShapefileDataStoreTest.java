@@ -231,7 +231,7 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
         SimpleFeatureType schema = firstFeature(features).getFeatureType();
 
         assertTrue(FeatureTypeUtilities.isDecendedFrom(schema, BasicFeatureTypes.POLYGON));
-        assertTrue(FeatureTypeUtilities.isDecendedFrom(schema, FeatureTypeUtilities.DEFAULT_NAMESPACE, "polygonFeature"));
+        assertTrue(FeatureTypeUtilities.isDecendedFrom(schema, FeatureTypeUtilities.DEFAULT_NAMESPACE.toString(), "polygonFeature"));
     }
 
     @Test

@@ -21,6 +21,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.ows.xml.RequestBase;
+import org.apache.sis.util.Version;
 
 
 /**
@@ -51,7 +53,7 @@ import javax.xml.bind.annotation.XmlType;
     Execute.class,
     DescribeProcess.class
 })
-public class RequestBaseType {
+public class RequestBaseType implements RequestBase {
 
     @XmlAttribute(required = true)
     protected String service;
@@ -68,6 +70,7 @@ public class RequestBaseType {
      *     {@link String }
      *     
      */
+    @Override
     public String getService() {
         if (service == null) {
             return "WPS";
@@ -84,6 +87,7 @@ public class RequestBaseType {
      *     {@link String }
      *     
      */
+    @Override
     public void setService(final String value) {
         this.service = value;
     }
@@ -96,11 +100,12 @@ public class RequestBaseType {
      *     {@link String }
      *     
      */
-    public String getVersion() {
+    @Override
+    public Version getVersion() {
         if (version == null) {
-            return "1.0.0";
+            return new Version("1.0.0");
         } else {
-            return version;
+            return new Version(version);
         }
     }
 
@@ -112,6 +117,7 @@ public class RequestBaseType {
      *     {@link String }
      *     
      */
+    @Override
     public void setVersion(final String value) {
         this.version = value;
     }

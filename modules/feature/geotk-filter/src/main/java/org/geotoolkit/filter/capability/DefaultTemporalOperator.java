@@ -18,7 +18,7 @@ package org.geotoolkit.filter.capability;
 
 import java.util.Collection;
 import java.util.List;
-import org.geotoolkit.util.collection.UnmodifiableArrayList;
+import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.opengis.filter.capability.TemporalOperand;
 import org.opengis.filter.capability.TemporalOperator;
 
@@ -34,7 +34,7 @@ public class DefaultTemporalOperator extends DefaultOperator implements Temporal
 
     public DefaultTemporalOperator(final String name, final TemporalOperand[] operands) {
         super(name);
-        
+
         if(operands == null || operands.length == 0){
             throw new IllegalArgumentException("Operands list can not be null or empty");
         }

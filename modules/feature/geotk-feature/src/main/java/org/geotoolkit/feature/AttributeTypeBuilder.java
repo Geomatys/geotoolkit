@@ -18,7 +18,6 @@
 package org.geotoolkit.feature;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,7 +25,6 @@ import java.util.Map;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.filter.function.other.OtherFunctionFactory;
-import org.geotoolkit.filter.IllegalFilterException;
 import org.geotoolkit.util.SimpleInternationalString;
 
 import org.opengis.feature.type.AssociationType;
@@ -381,12 +379,7 @@ public class AttributeTypeBuilder {
         if (lengthFunction == null) {
             return null;
         }
-        Filter cf = null;
-        try {
-            cf = FF.lessOrEqual(lengthFunction, FF.literal(length));
-        } catch (IllegalFilterException e) {
-            // TODO something
-        }
+        Filter cf = FF.lessOrEqual(lengthFunction, FF.literal(length));
         return (cf == null) ? Filter.EXCLUDE : cf;
     }
     

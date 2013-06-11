@@ -27,7 +27,7 @@ import org.opengis.feature.Property;
 import org.opengis.filter.identity.Identifier;
 
 import static org.geotoolkit.data.osm.model.OSMModelConstants.*;
-import static org.geotoolkit.util.ArgumentChecks.*;
+import static org.apache.sis.util.ArgumentChecks.*;
 
 /**
  * A Single Member of a relation.

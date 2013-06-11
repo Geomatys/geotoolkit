@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EventObject;
 import org.geotoolkit.internal.ReferenceQueueConsumer;
-import org.geotoolkit.util.Disposable;
+import org.apache.sis.util.Disposable;
 import org.geotoolkit.util.collection.CollectionChangeEvent;
 
 /**

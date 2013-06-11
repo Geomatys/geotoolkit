@@ -966,7 +966,7 @@ public final class FeatureTypeUtilities {
      *            typename to match against, or null for a "wildcard"
      * @return true if featureType is a decendent of the indicated namespace & typeName
      */
-    public static boolean isDecendedFrom(final PropertyType featureType, final URI namespace,
+    public static boolean isDecendedFrom(final PropertyType featureType, final String namespace,
             final String typeName){
 
         if (featureType == null) {
@@ -990,12 +990,8 @@ public final class FeatureTypeUtilities {
     }
 
     public static boolean isDecendedFrom(final PropertyType featureType, final PropertyType isParentType) {
-        try {
-            return isDecendedFrom(featureType, new URI(isParentType.getName().getNamespaceURI()),
-                    isParentType.getName().getLocalPart());
-        } catch (URISyntaxException e) {
-            throw new RuntimeException(e);
-        }
+        final Name n = isParentType.getName();
+        return isDecendedFrom(featureType, n.getNamespaceURI(), n.getLocalPart());
     }
     
     /** Exact equality based on typeNames, namespace, attributes and ancestors */

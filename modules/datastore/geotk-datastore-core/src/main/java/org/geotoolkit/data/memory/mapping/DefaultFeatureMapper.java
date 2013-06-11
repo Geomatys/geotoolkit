@@ -100,7 +100,10 @@ public class DefaultFeatureMapper implements FeatureMapper {
             }
         }
 
-        return builder.buildFeature("" + id++);
+        final Feature f =  builder.buildFeature("" + id++);
+        f.getUserData().clear();
+        f.getUserData().putAll(feature.getUserData());
+        return f;
     }
 
 

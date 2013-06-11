@@ -16,7 +16,7 @@ import static org.junit.Assert.*;
 
 /**
  *
- * @author sorel
+ * @author Johann Sorel (Geomatys)
  */
 public class ConverterTest {
 
@@ -38,12 +38,6 @@ public class ConverterTest {
     @After
     public void tearDown() {
     }
-
-    // TODO add test methods here.
-    // The methods must be annotated with annotation @Test. For example:
-    //
-    // @Test
-    // public void hello() {}
 
     @Test
     public void testDate(){

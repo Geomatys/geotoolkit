@@ -21,7 +21,7 @@ import org.opengis.sld.SLDLibrary;
 import org.opengis.sld.SLDVisitor;
 import org.opengis.sld.StyledLayerDescriptor;
 
-import static org.geotoolkit.util.ArgumentChecks.*;
+import static org.apache.sis.util.ArgumentChecks.*;
 
 /**
  * Default immutable implementation of SLD library. thread safe.

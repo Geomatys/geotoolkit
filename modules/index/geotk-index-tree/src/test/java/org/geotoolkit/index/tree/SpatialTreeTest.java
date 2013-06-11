@@ -20,11 +20,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import junit.framework.Assert;
-import org.geotoolkit.geometry.GeneralDirectPosition;
-import org.geotoolkit.geometry.GeneralEnvelope;
+import org.apache.sis.geometry.GeneralDirectPosition;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.index.tree.io.DefaultTreeVisitor;
 import org.geotoolkit.referencing.crs.DefaultEngineeringCRS;
-import org.geotoolkit.util.ArgumentChecks;
+import org.apache.sis.util.ArgumentChecks;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.opengis.geometry.DirectPosition;
@@ -125,6 +125,7 @@ public abstract class SpatialTreeTest extends TreeTest{
             assertTrue(ex instanceof IllegalArgumentException);
             //ok
         }
+        assertTrue(checkTreeElts(tree));
     }
 
     /**
@@ -160,7 +161,7 @@ public abstract class SpatialTreeTest extends TreeTest{
         tree.deleteAll(lData.iterator());
         final List<Envelope> lGERef = new ArrayList<Envelope>();
         final GeneralEnvelope gR = new GeneralEnvelope(crs);
-
+        
         if (dimension == 2) {
             for (int i = 0; i < 20; i++) {
                 for (int j = 0; j < 20; j++) {
@@ -190,6 +191,7 @@ public abstract class SpatialTreeTest extends TreeTest{
         final List<Envelope> lGES = new ArrayList<Envelope>();
         tree.search(gR, new DefaultTreeVisitor(lGES));
         assertTrue(compareList(lGERef, lGES));
+        assertTrue(checkTreeElts(tree));
     }
 
     /**
@@ -229,6 +231,7 @@ public abstract class SpatialTreeTest extends TreeTest{
         final List<Envelope> listSearch = new ArrayList<Envelope>();
         tree.search(DefaultTreeUtils.getEnveloppeMin(lData), new DefaultTreeVisitor(listSearch));
         assertTrue(compareList(lData, listSearch));
+        assertTrue(checkTreeElts(tree));
     }
 
     /**
@@ -245,6 +248,7 @@ public abstract class SpatialTreeTest extends TreeTest{
         final List<Envelope> listSearch = new ArrayList<Envelope>();
         tree.search(areaSearch, new DefaultTreeVisitor(listSearch));
         assertTrue(listSearch.isEmpty());
+        assertTrue(checkTreeElts(tree));
     }
 
     /**
@@ -263,9 +267,11 @@ public abstract class SpatialTreeTest extends TreeTest{
         final List<Envelope> listSearch = new ArrayList<Envelope>();
         tree.search(areaSearch, new DefaultTreeVisitor(listSearch));
         assertTrue(listSearch.isEmpty());
-        assertTrue(tree.getElementsNumber()==0);
+        assertTrue(tree.getElementsNumber() == 0);
+        assertTrue(checkTreeElts(tree));
         insert();
         tree.search(areaSearch, new DefaultTreeVisitor(listSearch));
         assertTrue(compareList(listSearch, lData));
+        assertTrue(checkTreeElts(tree));
     }
 }

@@ -17,12 +17,13 @@
 package org.geotoolkit.gml.xml.v311;
 
 import java.io.Serializable;
+import java.sql.Timestamp;
 import java.util.Collection;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.util.ComparisonMode;
+import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.util.Utilities;
 import org.opengis.temporal.Instant;
 import org.opengis.temporal.Period;
@@ -65,10 +66,14 @@ public class TimeInstantType extends AbstractTimeGeometricPrimitiveType implemen
      */
     TimeInstantType(){}
 
+    public TimeInstantType(final Position timePosition) {
+        this(null, timePosition);
+    }
     /**
      * Build a new time instant with the specified timeposition.
      */
-    public TimeInstantType(final Position timePosition) {
+    public TimeInstantType(final String id, final Position timePosition) {
+        super(id);
         if (timePosition instanceof TimePositionType) {
             this.timePosition = (TimePositionType) timePosition;
         } else if (timePosition != null) {
@@ -76,7 +81,16 @@ public class TimeInstantType extends AbstractTimeGeometricPrimitiveType implemen
         }
     }
     
+    public TimeInstantType(final Timestamp timePosition) {
+        this.timePosition = new TimePositionType(timePosition);
+    }
+    
     public TimeInstantType(final String timePosition) {
+        this.timePosition = new TimePositionType(timePosition);
+    }
+    
+    public TimeInstantType(final String id, final String timePosition) {
+        super(id);
         this.timePosition = new TimePositionType(timePosition);
     }
 

@@ -38,7 +38,7 @@ import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
 import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
 
-import org.geotoolkit.util.Version;
+import org.apache.sis.util.Version;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.wcs.xml.InterpolationMethod;
 import org.opengis.geometry.Envelope;

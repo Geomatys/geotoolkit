@@ -98,6 +98,23 @@ public class BinaryTemporalOpType extends TemporalOpsType implements BinaryTempo
             rest.add(obj);
         }
     }
+    
+    public BinaryTemporalOpType(final BinaryTemporalOpType that) {
+        if (that != null) {
+            this.propertyName = that.propertyName;
+            for (Object o : that.getRest()) {
+                if (o instanceof TimePeriodType) {
+                    final TimePeriodType tm = (TimePeriodType)o;
+                    this.rest.add(new TimePeriodType(tm.getId(), tm.getBeginPosition(), tm.getEndPosition()));
+                } else if (o instanceof TimeInstantType) {
+                    final TimeInstantType tm = (TimeInstantType)o;
+                    this.rest.add(new TimeInstantType(tm.getId(), tm.getTimePosition()));
+                } else {
+                    throw new IllegalArgumentException("unexpected litteral type:" + o.getClass().getName());
+                }
+            }
+        }
+    }
 
     /**
      * Gets the value of the rest property.
@@ -159,6 +176,11 @@ public class BinaryTemporalOpType extends TemporalOpsType implements BinaryTempo
             return (Expression) rest.get(0);
         }
         return null;
+    }
+    
+    @Override
+    public TemporalOpsType getClone() {
+        throw new UnsupportedOperationException("Must be overriden by sub-class");
     }
 }
 

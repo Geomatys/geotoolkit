@@ -30,7 +30,7 @@ import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.feature.AbstractFeature;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.storage.DataStoreException;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.Name;

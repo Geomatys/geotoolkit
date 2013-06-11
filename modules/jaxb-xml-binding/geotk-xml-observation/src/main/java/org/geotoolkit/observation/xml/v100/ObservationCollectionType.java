@@ -26,7 +26,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.v311.AbstractFeatureType;
 import org.geotoolkit.gml.xml.v311.EnvelopeType;
-import org.geotoolkit.util.ComparisonMode;
+import org.apache.sis.util.ComparisonMode;
 import org.opengis.observation.Observation;
 import org.opengis.observation.ObservationCollection;
 

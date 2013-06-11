@@ -26,7 +26,7 @@ public final class CoverageFinderFactory {
     }
     
     /**
-     * Return a default CoverageFinder adapted for projects.
+     * Return a default {@link CoverageFinder} adapted for projects.
      * 
      * @return a default CoverageFinder adapted for projects.
      * @deprecated In attempt to replace this class by {@link strictlyCoverageFinder}.
@@ -36,6 +36,11 @@ public final class CoverageFinderFactory {
         return new DefaultCoverageFinder();
     }
     
+    /**
+     * Return a default {@link CoverageFinder}.
+     * 
+     * @return a default {@link CoverageFinder}.
+     */
     public static CoverageFinder createStrictlyCoverageFinder(){
         return new StrictlyCoverageFinder();
     }

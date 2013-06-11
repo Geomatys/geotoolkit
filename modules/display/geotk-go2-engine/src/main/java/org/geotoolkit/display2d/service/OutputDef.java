@@ -18,7 +18,7 @@
 package org.geotoolkit.display2d.service;
 
 import javax.imageio.spi.ImageWriterSpi;
-import static org.geotoolkit.util.ArgumentChecks.*;
+import static org.apache.sis.util.ArgumentChecks.*;
 
 /**
  * Output definition, several parameters are available

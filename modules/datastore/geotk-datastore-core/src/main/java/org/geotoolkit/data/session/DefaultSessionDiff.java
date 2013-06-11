@@ -25,7 +25,7 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.storage.DataStoreException;
-import org.geotoolkit.util.collection.UnmodifiableArrayList;
+import org.apache.sis.internal.util.UnmodifiableArrayList;
 
 /**
  * Contain a list of all modification, ensure concurrency when accesing
@@ -34,7 +34,7 @@ import org.geotoolkit.util.collection.UnmodifiableArrayList;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-class DefaultSessionDiff{
+public class DefaultSessionDiff{
 
     private final List<Delta> deltas = new ArrayList<Delta>();
     private List<Delta> readCopy = null;
@@ -44,7 +44,7 @@ class DefaultSessionDiff{
     private final Lock writeLock = rwlock.writeLock();
 
 
-    DefaultSessionDiff(){
+    public DefaultSessionDiff(){
     }
 
     /**
@@ -60,7 +60,7 @@ class DefaultSessionDiff{
         }finally{
             readLock.unlock();
         }
-        
+
         /*
          * Double-check: was a deprecated practice before Java 5.
          * Is okay since Java 5 provided that the readCopy field

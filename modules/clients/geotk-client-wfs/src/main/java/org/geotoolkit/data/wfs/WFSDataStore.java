@@ -104,7 +104,12 @@ public class WFSDataStore extends AbstractFeatureStore{
         super(server.getConfiguration());
         
         this.server = server;
-        final WFSCapabilities capabilities = server.getCapabilities();
+        checkTypeExist();
+
+    }
+
+	private void checkTypeExist() {
+		final WFSCapabilities capabilities = server.getCapabilities();
 
         final FeatureTypeList lst = capabilities.getFeatureTypeList();
         for(final org.geotoolkit.wfs.xml.FeatureType ftt : lst.getFeatureType()){
@@ -196,8 +201,7 @@ public class WFSDataStore extends AbstractFeatureStore{
             }
 
         }
-
-    }
+	}
     
     public boolean getUsePost(){        
         return Parameters.value(WFSDataStoreFactory.POST_REQUEST, parameters);
@@ -548,5 +552,15 @@ public class WFSDataStore extends AbstractFeatureStore{
         }
 
     }
+
+	@Override
+	public void refreshMetaModel() {
+		types.clear();
+		prefixes.clear();
+		typeNames.clear();
+		bounds.clear();
+		checkTypeExist();
+		
+	}
 
 }

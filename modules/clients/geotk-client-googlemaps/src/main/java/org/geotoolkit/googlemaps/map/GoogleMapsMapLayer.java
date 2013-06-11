@@ -25,7 +25,7 @@ import org.geotoolkit.map.DefaultCoverageMapLayer;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.StyleConstants;
-import org.geotoolkit.util.ArgumentChecks;
+import org.apache.sis.util.ArgumentChecks;
 import org.opengis.feature.type.Name;
 
 
@@ -67,7 +67,7 @@ public class GoogleMapsMapLayer extends DefaultCoverageMapLayer {
               new DefaultStyleFactory().style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER),
               new DefaultName("google"));
         this.server = server;
-        setUserPropertie(PyramidSet.HINT_FORMAT, DEFAULT_FORMAT);
+        setUserProperty(PyramidSet.HINT_FORMAT, DEFAULT_FORMAT);
     }
     
     /**
@@ -76,7 +76,7 @@ public class GoogleMapsMapLayer extends DefaultCoverageMapLayer {
      */
     public void setFormat(final String format) {
         ArgumentChecks.ensureNonNull("format", format);
-        setUserPropertie(PyramidSet.HINT_FORMAT, format);
+        setUserProperty(PyramidSet.HINT_FORMAT, format);
     }
 
     /**
@@ -84,7 +84,7 @@ public class GoogleMapsMapLayer extends DefaultCoverageMapLayer {
      * @return 
      */
     public String getFormat() {
-        Object val = getUserPropertie(PyramidSet.HINT_FORMAT);
+        Object val = getUserProperty(PyramidSet.HINT_FORMAT);
         if(val != null){
             return val.toString();
         }

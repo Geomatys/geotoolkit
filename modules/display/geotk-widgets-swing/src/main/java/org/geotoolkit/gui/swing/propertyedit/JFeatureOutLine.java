@@ -40,7 +40,7 @@ import org.geotoolkit.gui.swing.propertyedit.featureeditor.*;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.tree.DefaultMutableTreeNode;
 import org.geotoolkit.gui.swing.tree.MutableTreeNode;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 import org.jdesktop.swingx.table.DatePickerCellEditor;
 import org.netbeans.swing.outline.*;
 import org.opengis.feature.ComplexAttribute;
@@ -422,9 +422,16 @@ public class JFeatureOutLine extends Outline{
             final Object userObject = node.getUserObject();
 
             if(userObject instanceof Property){
-                final InternationalString i18n = ((Property) node.getUserObject()).getDescriptor().getType().getDescription();
+                PropertyDescriptor pdesc = ((Property) node.getUserObject()).getDescriptor();
+                PropertyType ptype;
+                if(pdesc==null){
+                    ptype = ((Property) node.getUserObject()).getType();
+                }else{
+                    ptype = pdesc.getType();
+                }
+                final InternationalString i18n = ptype.getDescription();
                 String tooltip = String.valueOf(i18n);
-                tooltip += " ("+Classes.getShortName(((Property) node.getUserObject()).getType().getBinding()) +")";
+                tooltip += " ("+Classes.getShortName(ptype.getBinding()) +")";
                 return tooltip;
             }else{
                 return null;

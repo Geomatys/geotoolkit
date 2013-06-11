@@ -22,6 +22,7 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.observation.xml.v200.OMObservationType;
 import org.geotoolkit.swes.xml.v200.ExtensibleResponseType;
@@ -62,6 +63,7 @@ import org.opengis.observation.ObservationCollection;
 @XmlType(name = "GetObservationResponseType", propOrder = {
     "observationData"
 })
+@XmlRootElement(name="GetObservationResponse")
 public class GetObservationResponseType extends ExtensibleResponseType implements ObservationCollection {
 
     private List<GetObservationResponseType.ObservationData> observationData;

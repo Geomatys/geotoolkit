@@ -31,9 +31,9 @@ import java.util.Set;
 import org.geotoolkit.io.TableWriter;
 import org.geotoolkit.util.StringUtilities;
 import org.geotoolkit.util.Utilities;
-import org.geotoolkit.util.XArrays;
+import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.util.collection.CloseableIterator;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 
 import org.opengis.feature.Association;
 import org.opengis.feature.ComplexAttribute;

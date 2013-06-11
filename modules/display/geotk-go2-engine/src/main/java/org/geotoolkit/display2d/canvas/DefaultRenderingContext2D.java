@@ -43,7 +43,7 @@ import org.geotoolkit.display2d.primitive.GraphicJ2D;
 import org.geotoolkit.display2d.style.labeling.LabelRenderer;
 import org.geotoolkit.display2d.style.labeling.decimate.DecimationLabelRenderer;
 import org.geotoolkit.geometry.DefaultBoundingBox;
-import org.geotoolkit.geometry.Envelope2D;
+import org.apache.sis.geometry.Envelope2D;
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.internal.referencing.CRSUtilities;

@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.geotoolkit.io.TableWriter;
-import org.geotoolkit.util.collection.UnmodifiableArrayList;
+import org.apache.sis.internal.util.UnmodifiableArrayList;
 
 import org.opengis.feature.Property;
 import org.opengis.feature.type.AttributeDescriptor;
@@ -82,7 +82,7 @@ public class Way extends IdentifiedElement{
         }
         return props;
     }
-    
+
     @Override
     public String toString() {
         final StringWriter writer = new StringWriter();

@@ -22,7 +22,7 @@ import java.util.Map;
 import java.util.Objects;
 import javax.xml.bind.annotation.*;
 import org.geotoolkit.util.Utilities;
-import org.geotoolkit.util.Version;
+import org.apache.sis.util.Version;
 import org.geotoolkit.wfs.xml.BaseRequest;
 
 

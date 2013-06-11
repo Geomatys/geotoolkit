@@ -61,6 +61,14 @@ public class TemporalOperatorType implements TemporalOperator {
     @XmlAttribute(required = true)
     private String name;
 
+    public TemporalOperatorType() {
+        
+    }
+    
+    public TemporalOperatorType(final String name) {
+        this.name = name;
+    }
+    
     /**
      * Gets the value of the temporalOperands property.
      *

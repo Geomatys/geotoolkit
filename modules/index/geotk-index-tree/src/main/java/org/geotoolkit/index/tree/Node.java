@@ -16,66 +16,48 @@
  */
 package org.geotoolkit.index.tree;
 
-import java.beans.PropertyChangeListener;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import javax.swing.event.EventListenerList;
-import org.geotoolkit.geometry.GeneralEnvelope;
+import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.util.ArgumentChecks;
 import org.opengis.geometry.Envelope;
 
-/**Create "generic" Node.
+/**
+ * Create "generic" Node.
  *
  * @author Johann Sorel (Geomatys)
  */
 public abstract class Node {
 
-    protected GeneralEnvelope boundary;
+    public static final String PROP_ISLEAF = "isleaf";
+    public static final String PROP_HILBERT_ORDER = "hilbertOrder";
+    public static final String PROP_HILBERT_TABLE = "tabHV";
+    public static final String PROP_HILBERT_VALUE = "hilbertValue";
+            
     protected Node parent;
-    protected Tree tree;
-    private final EventListenerList listenerList = new EventListenerList();
-    private Map<String, Object> userProperties;
+    protected final Tree tree;
+
+    public Node(Tree tree) {
+        ArgumentChecks.ensureNonNull("tree", tree);
+        this.tree = tree;
+    }
 
     /**
      * @param key
      * @return user property for given key
      */
-    public Object getUserProperty(final String key) {
-        if (userProperties == null) return null;
-        return userProperties.get(key);
-    }
+    public abstract Object getUserProperty(final String key);
 
     /**Add user property with key access.
      *
      * @param key
      * @param value Object will be stocked.
      */
-    public void setUserProperty(final String key, final Object value) {
-        if (userProperties == null) userProperties = new HashMap<String, Object>();
-        userProperties.put(key, value);
-    }
-
-    public void addListener(PropertyChangeListener l) {
-        listenerList.add(PropertyChangeListener.class, l);
-    }
-
-    public void removeListener(PropertyChangeListener l) {
-        listenerList.remove(PropertyChangeListener.class, l);
-    }
-
-    protected void fireCollectionEvent() {
-        final PropertyChangeListener[] listeners = listenerList.getListeners(PropertyChangeListener.class);
-        for (PropertyChangeListener l : listeners) {
-            l.propertyChange(null);
-        }
-    }
+    public abstract void setUserProperty(final String key, final Object value);
 
     /**
      * Affect a {@code Node} boundary.
      */
-    public void setBound(Envelope bound){
-        boundary = (bound == null) ? null : new GeneralEnvelope(bound);
-    }
+    public abstract void setBound(Envelope bound);
 
     /**<blockquote><font size=-1>
      * <strong>NOTE: Null value can be return.</strong>
@@ -83,37 +65,86 @@ public abstract class Node {
      *
      * @return {@code Node} boundary without re-computing sub-node boundary.
      */
-    public Envelope getBound(){
-        return this.boundary;
-    }
+    public abstract Envelope getBound();
 
     /**Affect a new {@code Node} parent.
      *
      * @param parent {@code Node} parent pointer.
      */
-    public abstract void setParent(Node parent);
+    public void setParent(Node parent){
+        this.parent = parent;
+    }
 
     /**
      * @return subNodes.
      */
     public abstract List<Node> getChildren();
-
+    
+    /**
+     * @return entries.
+     */
+    public abstract List<Envelope> getEntries();
+    
     /**A leaf is a {@code Node} at extremity of {@code Tree} which contains only entries.
      *
      * @return true if it is a leaf else false (branch).
      */
-    public abstract boolean isLeaf();
+    public boolean isLeaf() {
+        final Object userPropIsLeaf = getUserProperty(PROP_ISLEAF);
+        if(userPropIsLeaf != null){
+            return (Boolean)userPropIsLeaf;
+        }
+        return getChildren().isEmpty();
+    }
 
     /**
      * @return true if {@code Node} contains nothing else false.
      */
-    public abstract boolean isEmpty();
+    public boolean isEmpty() {
+        final Object userPropIsLeaf = getUserProperty(PROP_ISLEAF);
+        if(userPropIsLeaf != null && ((Boolean)userPropIsLeaf)){
+            for(Node cell : getChildren()){
+                if(!cell.isEmpty()){
+                    return false;
+                }
+            }
+            return true;
+        }
+        return (getChildren().isEmpty() && getEntries().isEmpty());
+    }
 
     /**
      * @return true if node elements number equals or overflow max elements
      *         number autorized by {@code Tree} else false.
      */
-    public abstract boolean isFull();
+    public boolean isFull() {
+        final Object userPropIsLeaf = getUserProperty(PROP_ISLEAF);
+        final List<Node> nodes = getChildren();
+        if(Boolean.TRUE.equals(userPropIsLeaf)){
+            for(Node cell : nodes){
+                if(!cell.isFull()){
+                    return false;
+                }
+            }
+            return true;
+        }
+        return (nodes.size()+getEntries().size())>=getTree().getMaxElements();
+    }
+    
+
+    /**
+     * @return {@code Node} parent pointer.
+     */
+    public Node getParent(){
+        return parent;
+    }
+
+    /**
+     * @return {@code Tree} pointer.
+     */
+    public Tree getTree(){
+        return tree;
+    }
 
     /**
      * <blockquote><font size=-1>
@@ -121,21 +152,49 @@ public abstract class Node {
      * </font></blockquote>
      * @return boundary.
      */
-    public abstract Envelope getBoundary();
-
+    public Envelope getBoundary() {
+        GeneralEnvelope env = (GeneralEnvelope) getBound();
+        if(env != null){
+            return env;
+        }
+        env = calculateBounds();
+        if(!env.isAllNaN()){
+            setBound(env);
+        }
+        return env;
+    }
+    
     /**
-     * @return entries.
+     * Compute {@code Node} boundary from stocked sub-node or entries .
      */
-    public abstract List<Envelope> getEntries();
+    private GeneralEnvelope calculateBounds(){
+        GeneralEnvelope boundary = null;        
+        for(Envelope ent2D : getEntries()){
+            boundary = addBound(boundary,ent2D);
+        }
+        for(Node n2D : getChildren()){
+            if(!n2D.isEmpty()){
+                boundary = addBound(boundary,n2D.getBoundary());
+            }
+        }
+        if(boundary == null){
+            boundary = new GeneralEnvelope(tree.getCrs());
+            boundary.setToNaN();
+        }
+        return boundary;
+    }
 
-    /**
-     * @return {@code Node} parent pointer.
+    /**Update boundary size from {@code Envelope}.
+     *
+     * @param env {@code Node} or entry boundary.
      */
-    public abstract Node getParent();
-
-    /**
-     * @return {@code Tree} pointer.
-     */
-    public abstract Tree getTree();
-
+    private static GeneralEnvelope addBound(GeneralEnvelope boundary, final Envelope env){
+        if(boundary==null){
+            boundary = new GeneralEnvelope(env);
+        }else{
+            boundary.add(env);
+        }
+        return boundary;
+    }
+    
 }

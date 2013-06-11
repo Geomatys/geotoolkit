@@ -18,15 +18,13 @@ package org.geotoolkit.index.tree;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.geotoolkit.geometry.GeneralDirectPosition;
-import org.geotoolkit.geometry.GeneralEnvelope;
+import org.apache.sis.geometry.GeneralDirectPosition;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.index.tree.basic.BasicRTree;
 import org.geotoolkit.index.tree.basic.SplitCase;
 import org.geotoolkit.index.tree.hilbert.HilbertRTree;
 import org.geotoolkit.index.tree.io.DefaultTreeVisitor;
 import org.geotoolkit.index.tree.io.TreeVisitor;
-import org.geotoolkit.index.tree.nodefactory.NodeFactory;
-import org.geotoolkit.index.tree.nodefactory.TreeNodeFactory;
 import org.geotoolkit.index.tree.star.StarRTree;
 import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
 import org.geotoolkit.referencing.crs.DefaultEngineeringCRS;
@@ -43,7 +41,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 public class SpatioTemporalTreeTest extends TreeTest{
 
-    private static final NodeFactory NODEFACTORY = TreeNodeFactory.DEFAULT_FACTORY;
+    private static final NodeFactory NODEFACTORY = DefaultNodeFactory.INSTANCE;
     private static final CoordinateReferenceSystem CARTESIAN_2DCRS = DefaultEngineeringCRS.CARTESIAN_2D;
     private static final CoordinateReferenceSystem CARTESIAN_3DCRS = DefaultEngineeringCRS.CARTESIAN_3D;
     private static final CoordinateReferenceSystem GEOCENTRIC_2DCRS = DefaultGeographicCRS.WGS84;
@@ -53,43 +51,32 @@ public class SpatioTemporalTreeTest extends TreeTest{
     CoordinateReferenceSystem crs;
     final List<GeneralEnvelope>lData = new ArrayList<GeneralEnvelope>();
     final List<List<GeneralEnvelope>> lResult = new ArrayList<List<GeneralEnvelope>>();
-    int[] dims;
     int indexTemp;
     public SpatioTemporalTreeTest() {
 
     }
 
-    public void setTree(Tree tree){
+    public void setTree(Tree tree, int indexTemp){
+        this.indexTemp = indexTemp;
         this.tree = tree;
         this.crs = tree.getCrs();
-        dims = ((DefaultAbstractTree)tree).getDims();
-        final int dim = dims.length;
-        final int compDim = crs.getCoordinateSystem().getDimension();
-        final boolean[] findOrdTemp = new boolean[compDim];
-        for(int i = 0;i<dim;i++){
-            findOrdTemp[dims[i]] = true;
-        }
-        for(int i = 0;i<compDim;i++){
-            if(!findOrdTemp[i]){
-                indexTemp = i;
-            }
-        }
         lData.clear();
         lResult.clear();
         GeneralDirectPosition dpTemp = new GeneralDirectPosition(crs);
-        for(int temp = 0;temp<100;temp+=10){
+        final int dim = crs.getCoordinateSystem().getDimension();
+        for(int temp = 0; temp < 100; temp += 10){
             dpTemp.setOrdinate(indexTemp, temp);
             final List<GeneralEnvelope> lgeT = new ArrayList<GeneralEnvelope>();
-            for(int i = 0;i<300;i++){
-                for(int o = 0;o<dim;o++){
-                    dpTemp.setOrdinate(dims[o], Math.random()*10);
+            for (int i = 0; i < 300; i++) {
+                for (int o = 0; o < dim; o++){
+                    if (o != indexTemp) dpTemp.setOrdinate(o, Math.random()*10);
                 }
                 lgeT.add(new GeneralEnvelope(dpTemp, dpTemp));
             }
             lData.addAll(lgeT);
             lResult.add(lgeT);
         }
-        for(GeneralEnvelope ge : lData){
+        for (GeneralEnvelope ge : lData) {
             tree.insert(ge);
         }
     }
@@ -98,60 +85,92 @@ public class SpatioTemporalTreeTest extends TreeTest{
     public void testHilbert(){
         CoordinateReferenceSystem crsCompound = new DefaultCompoundCRS("compoundCrs", new CoordinateReferenceSystem[] { TEMPORALCRS, CARTESIAN_2DCRS});
         final Tree hilbertA = new HilbertRTree(4, 2, crsCompound, NODEFACTORY);
-        setTree(hilbertA);
+        setTree(hilbertA, 0);
         test();
+        assertTrue(checkTreeElts(tree));
+        crsCompound = new DefaultCompoundCRS("compoundCrs", new CoordinateReferenceSystem[] { CARTESIAN_2DCRS, TEMPORALCRS});
+        final Tree hilbertABis = new HilbertRTree(4, 2, crsCompound, NODEFACTORY);
+        setTree(hilbertABis, 2);
+        test();
+        assertTrue(checkTreeElts(tree));
         crsCompound = new DefaultCompoundCRS("compoundCrs", new CoordinateReferenceSystem[] { GEOCENTRIC_2DCRS, TEMPORALCRS});
         final Tree hilbertB = new HilbertRTree(4, 2, crsCompound, NODEFACTORY);
-        setTree(hilbertB);
+        setTree(hilbertB, 2);
         test();
+        assertTrue(checkTreeElts(tree));
+        crsCompound = new DefaultCompoundCRS("compoundCrs", new CoordinateReferenceSystem[] { TEMPORALCRS, GEOCENTRIC_2DCRS});
+        final Tree hilbertBBis = new HilbertRTree(4, 2, crsCompound, NODEFACTORY);
+        setTree(hilbertBBis, 0);
+        test();
+        assertTrue(checkTreeElts(tree));
         crsCompound = new DefaultCompoundCRS("compoundCrs", new CoordinateReferenceSystem[] { TEMPORALCRS, CARTESIAN_3DCRS});
         final Tree hilbertC = new HilbertRTree(4, 2, crsCompound, NODEFACTORY);
-        setTree(hilbertC);
+        setTree(hilbertC, 0);
         test();
+        assertTrue(checkTreeElts(tree));
+        crsCompound = new DefaultCompoundCRS("compoundCrs", new CoordinateReferenceSystem[] { CARTESIAN_3DCRS, TEMPORALCRS});
+        final Tree hilbertCBis = new HilbertRTree(4, 2, crsCompound, NODEFACTORY);
+        setTree(hilbertCBis, 3);
+        test();
+        assertTrue(checkTreeElts(tree));
         crsCompound = new DefaultCompoundCRS("compoundCrs", new CoordinateReferenceSystem[] { GEOCENTRIC_3DCRS, TEMPORALCRS});
         final Tree hilbertD = new HilbertRTree(4, 2, crsCompound, NODEFACTORY);
-        setTree(hilbertD);
+        setTree(hilbertD, 3);
         test();
+        assertTrue(checkTreeElts(tree));
+        crsCompound = new DefaultCompoundCRS("compoundCrs", new CoordinateReferenceSystem[] { TEMPORALCRS, GEOCENTRIC_3DCRS});
+        final Tree hilbertDBis = new HilbertRTree(4, 2, crsCompound, NODEFACTORY);
+        setTree(hilbertDBis, 0);
+        test();
+        assertTrue(checkTreeElts(tree));
     }
 
     @Test
     public void testStar(){
         CoordinateReferenceSystem crsCompound = new DefaultCompoundCRS("compoundCrs", new CoordinateReferenceSystem[] { TEMPORALCRS, CARTESIAN_2DCRS});
         final Tree starRTreeA = new StarRTree(4, crsCompound, NODEFACTORY);
-        setTree(starRTreeA);
+        setTree(starRTreeA, 0);
         test();
+        assertTrue(checkTreeElts(tree));
         crsCompound = new DefaultCompoundCRS("compoundCrs", new CoordinateReferenceSystem[] { GEOCENTRIC_2DCRS, TEMPORALCRS});
         final Tree starRTreeB = new StarRTree(4, crsCompound, NODEFACTORY);
-        setTree(starRTreeB);
+        setTree(starRTreeB, 2);
         test();
+        assertTrue(checkTreeElts(tree));
         crsCompound = new DefaultCompoundCRS("compoundCrs", new CoordinateReferenceSystem[] { TEMPORALCRS, CARTESIAN_3DCRS});
         final Tree starRTreeC = new StarRTree(4, crsCompound, NODEFACTORY);
-        setTree(starRTreeC);
+        setTree(starRTreeC, 0);
         test();
+        assertTrue(checkTreeElts(tree));
         crsCompound = new DefaultCompoundCRS("compoundCrs", new CoordinateReferenceSystem[] { GEOCENTRIC_3DCRS, TEMPORALCRS});
         final Tree starRTreeD = new StarRTree(4, crsCompound, NODEFACTORY);
-        setTree(starRTreeD);
+        setTree(starRTreeD, 3);
         test();
+        assertTrue(checkTreeElts(tree));
     }
 
     @Test
     public void testBasic(){
         CoordinateReferenceSystem crsCompound = new DefaultCompoundCRS("compoundCrs", new CoordinateReferenceSystem[] { TEMPORALCRS, CARTESIAN_2DCRS});
-        final Tree basicA = new BasicRTree(4, crsCompound, SplitCase.QUADRATIC, TreeNodeFactory.DEFAULT_FACTORY);
-        setTree(basicA);
+        final Tree basicA = new BasicRTree(4, crsCompound, SplitCase.QUADRATIC, NODEFACTORY);
+        setTree(basicA, 0);
         test();
+        assertTrue(checkTreeElts(tree));
         crsCompound = new DefaultCompoundCRS("compoundCrs", new CoordinateReferenceSystem[] { GEOCENTRIC_2DCRS, TEMPORALCRS});
-        final Tree basicB = new BasicRTree(4, crsCompound, SplitCase.QUADRATIC, TreeNodeFactory.DEFAULT_FACTORY);
-        setTree(basicB);
+        final Tree basicB = new BasicRTree(4, crsCompound, SplitCase.QUADRATIC, NODEFACTORY);
+        setTree(basicB, 2);
         test();
+        assertTrue(checkTreeElts(tree));
         crsCompound = new DefaultCompoundCRS("compoundCrs", new CoordinateReferenceSystem[] { TEMPORALCRS, CARTESIAN_3DCRS});
-        final Tree basicC = new BasicRTree(4, crsCompound, SplitCase.QUADRATIC, TreeNodeFactory.DEFAULT_FACTORY);
-        setTree(basicC);
+        final Tree basicC = new BasicRTree(4, crsCompound, SplitCase.QUADRATIC, NODEFACTORY);
+        setTree(basicC, 0);
         test();
+        assertTrue(checkTreeElts(tree));
         crsCompound = new DefaultCompoundCRS("compoundCrs", new CoordinateReferenceSystem[] { GEOCENTRIC_3DCRS, TEMPORALCRS});
-        final Tree basicD = new BasicRTree(4, crsCompound, SplitCase.QUADRATIC, TreeNodeFactory.DEFAULT_FACTORY);
-        setTree(basicD);
+        final Tree basicD = new BasicRTree(4, crsCompound, SplitCase.QUADRATIC, NODEFACTORY);
+        setTree(basicD, 3);
         test();
+        assertTrue(checkTreeElts(tree));
     }
 
     public void test(){

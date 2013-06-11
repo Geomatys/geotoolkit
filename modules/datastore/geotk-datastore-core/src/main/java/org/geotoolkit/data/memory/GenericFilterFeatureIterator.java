@@ -25,7 +25,7 @@ import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.filter.Filter;

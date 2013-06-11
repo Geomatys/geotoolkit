@@ -29,6 +29,9 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.storage.StorageListener;
+import org.geotoolkit.version.Version;
+import org.geotoolkit.version.VersionControl;
+import org.geotoolkit.version.VersioningException;
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.Name;
@@ -67,6 +70,18 @@ public interface FeatureStore {
     FeatureStoreFactory getFactory();
     
     /**
+     * Get version history for given feature type.
+     * @return VersionControl for given type.
+     */
+    VersionControl getVersioning(String typeName) throws VersioningException;
+    
+    /**
+     * Get version history for given feature type.
+     * @return VersionControl for given type.
+     */
+    VersionControl getVersioning(Name typeName) throws VersioningException;
+    
+    /**
      * Create a session, that session may be synchrone or asynchrone.
      * If you choose it to be synchrone, every changes made in the session are directly
      * send to the feature store.
@@ -79,6 +94,23 @@ public interface FeatureStore {
      */
     Session createSession(boolean asynchrone);
 
+    /**
+     * Create a session, that session may be synchrone or asynchrone.
+     * If you choose it to be synchrone, every changes made in the session are directly
+     * send to the feature store.
+     * If you choose asynchrone mode then all changes will be send
+     * only on a call to commit().
+     * Commit and rollback has no effect on a synchrone session.
+     * 
+     * A Version gat be passed to explore features at a given state in history.
+     * If store do not supported versioning, version won't have any effect.
+     *
+     * @param asynchrone : true if you want a session that pushes changes only on commit
+     * @param version : wanted version, use to nagivate in history.
+     * @return Session
+     */
+    Session createSession(boolean asynchrone, Version version);
+    
     /**
      * Convinient way to aquire all names by ignoring the namespaces.
      * 
@@ -306,5 +338,11 @@ public interface FeatureStore {
      * @param listener to remove
      */
     void removeStorageListener(StorageListener listener);
+    
+    /**
+     * refresh metaModel (in case someone else had changed by an other way)
+     * @param listener to remove
+     */
+    void refreshMetaModel();
 
 }

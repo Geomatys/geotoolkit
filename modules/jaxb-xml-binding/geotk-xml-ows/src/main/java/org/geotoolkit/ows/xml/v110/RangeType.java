@@ -84,7 +84,7 @@ public class RangeType implements Range {
             if (that.getMinimumValue() != null) {
                 this.minimumValue = new ValueType(that.getMinimumValue());
             }
-            if (that.getRangeClosure() != null) {
+            if (that.getRangeClosure() != null && !that.getRangeClosure().isEmpty()) {
                 this.rangeClosure = new ArrayList<String>(that.getRangeClosure());
             }
             if (that.getSpacing() != null) {

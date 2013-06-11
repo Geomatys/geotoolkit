@@ -2,6 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
+ *    (C) 2013, Geomatys
  *    (C) 2010, Johann Sorel
  *
  *    This library is free software; you can redistribute it and/or
@@ -52,8 +53,9 @@ import org.geotoolkit.gui.swing.contexttree.menu.SeparatorItem;
 import org.geotoolkit.gui.swing.contexttree.menu.SessionCommitItem;
 import org.geotoolkit.gui.swing.contexttree.menu.SessionRollbackItem;
 import org.geotoolkit.gui.swing.contexttree.menu.ZoomToLayerItem;
+import org.geotoolkit.gui.swing.etl.JChainEditor;
 import org.geotoolkit.gui.swing.filestore.JCoverageStoreChooser;
-import org.geotoolkit.gui.swing.filestore.JDataStoreChooser;
+import org.geotoolkit.gui.swing.filestore.JFeatureStoreChooser;
 import org.geotoolkit.gui.swing.filestore.JServerChooser;
 import org.geotoolkit.gui.swing.go2.control.JConfigBar;
 import org.geotoolkit.gui.swing.go2.control.JCoordinateBar;
@@ -77,6 +79,7 @@ import org.geotoolkit.gui.swing.propertyedit.styleproperty.JClassificationSingle
 import org.geotoolkit.gui.swing.propertyedit.styleproperty.JRasterColorMapStylePanel;
 import org.geotoolkit.gui.swing.propertyedit.styleproperty.JSLDImportExportPanel;
 import org.geotoolkit.gui.swing.propertyedit.styleproperty.JSimpleStylePanel;
+import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
@@ -93,6 +96,7 @@ public class JMap2DFrame extends javax.swing.JFrame {
     
     private final JMap2D guiMap;
     private final JContextTree guiContextTree;
+    private final JChainEditor guiChainEditor;
     
     protected JMap2DFrame(final MapContext context, Hints hints) {
         this(context,false,hints);
@@ -111,6 +115,9 @@ public class JMap2DFrame extends javax.swing.JFrame {
         guiMap.getCanvas().setRenderingHint(GO2Hints.KEY_GENERALIZE, GO2Hints.GENERALIZE_ON);
         guiMap.getCanvas().setRenderingHint(GO2Hints.KEY_BEHAVIOR_MODE, GO2Hints.BEHAVIOR_PROGRESSIVE);
                
+        guiChainEditor = new JChainEditor(true);
+        panETL.add(BorderLayout.CENTER, guiChainEditor);
+        
         if(hints != null){
             guiMap.getCanvas().setRenderingHints(hints);
         }
@@ -150,7 +157,7 @@ public class JMap2DFrame extends javax.swing.JFrame {
         guiMap.getCanvas().getController().setAutoRepaint(true);
 
         setSize(1024,768);
-        setLocationRelativeTo(null);             
+        setLocationRelativeTo(null);
     }
 
     private void initTree(final JContextTree tree) {
@@ -175,17 +182,17 @@ public class JMap2DFrame extends javax.swing.JFrame {
         lstproperty.add(new LayerCRSPropertyPanel());
 
         LayerFilterPropertyPanel filters = new LayerFilterPropertyPanel();
-        filters.addPropertyPanel(new JCQLPropertyPanel());
+        filters.addPropertyPanel(MessageBundle.getString("filter"),new JCQLPropertyPanel());
         lstproperty.add(filters);
 
         LayerStylePropertyPanel styles = new LayerStylePropertyPanel();
-        styles.addPropertyPanel(new JSimpleStylePanel());
-        styles.addPropertyPanel(new JClassificationSingleStylePanel());
-        styles.addPropertyPanel(new JClassificationIntervalStylePanel());
-        styles.addPropertyPanel(new JClassificationJenksPanel());
-        styles.addPropertyPanel(new JRasterColorMapStylePanel());
-        styles.addPropertyPanel(new JAdvancedStylePanel());
-        styles.addPropertyPanel(new JSLDImportExportPanel());
+        styles.addPropertyPanel(MessageBundle.getString("analyze"),new JSimpleStylePanel());
+        styles.addPropertyPanel(MessageBundle.getString("analyze_vector"),new JClassificationSingleStylePanel());
+        styles.addPropertyPanel(MessageBundle.getString("analyze_vector"),new JClassificationIntervalStylePanel());
+        styles.addPropertyPanel(MessageBundle.getString("analyze_raster"),new JClassificationJenksPanel());
+        styles.addPropertyPanel(MessageBundle.getString("analyze_raster"),new JRasterColorMapStylePanel());
+        styles.addPropertyPanel(MessageBundle.getString("sld"),new JAdvancedStylePanel());
+        styles.addPropertyPanel(MessageBundle.getString("sld"),new JSLDImportExportPanel());
         lstproperty.add(styles);
 
         property.setPropertyPanels(lstproperty);
@@ -195,7 +202,7 @@ public class JMap2DFrame extends javax.swing.JFrame {
 
         tree.revalidate();
     }
-    
+        
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -221,6 +228,7 @@ public class JMap2DFrame extends javax.swing.JFrame {
         guiEditBar = new JEditionBar();
         guiConfigBar = new JConfigBar();
         guiCoordBar = new JCoordinateBar();
+        panETL = new JPanel();
         panTree = new JPanel();
         jScrollPane1 = new JContextTree();
         jMenuBar1 = new JMenuBar();
@@ -304,6 +312,9 @@ public class JMap2DFrame extends javax.swing.JFrame {
 
         panTabs.addTab("2D", panGeneral);
 
+        panETL.setLayout(new BorderLayout());
+        panTabs.addTab("ETL", panETL);
+
         jSplitPane1.setRightComponent(panTabs);
 
         panTree.setPreferredSize(new Dimension(100, 300));
@@ -324,10 +335,10 @@ public class JMap2DFrame extends javax.swing.JFrame {
         });
         jMenu1.add(jMenuItem4);
 
-        jMenuItem2.setText("Add data store ...");
+        jMenuItem2.setText("Add feature store ...");
         jMenuItem2.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
-                openDataStoreChooser(evt);
+                openFeatureStoreChooser(evt);
             }
         });
         jMenu1.add(jMenuItem2);
@@ -429,10 +440,10 @@ private void openCoverageStoreChooser(ActionEvent evt) {//GEN-FIRST:event_openCo
         
 }//GEN-LAST:event_openCoverageStoreChooser
 
-private void openDataStoreChooser(ActionEvent evt) {//GEN-FIRST:event_openDataStoreChooser
+private void openFeatureStoreChooser(ActionEvent evt) {//GEN-FIRST:event_openFeatureStoreChooser
 
         try {
-            final List<MapLayer> layers = JDataStoreChooser.showLayerDialog(null);
+            final List<MapLayer> layers = JFeatureStoreChooser.showLayerDialog(null);
             
             for(MapLayer layer : layers){
                 if(layer == null) continue;                    
@@ -443,7 +454,7 @@ private void openDataStoreChooser(ActionEvent evt) {//GEN-FIRST:event_openDataSt
             Logger.getLogger(JMap2DFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
     
-}//GEN-LAST:event_openDataStoreChooser
+}//GEN-LAST:event_openFeatureStoreChooser
 
 private void openServerChooser(ActionEvent evt) {//GEN-FIRST:event_openServerChooser
 
@@ -512,6 +523,7 @@ private void openServerChooser(ActionEvent evt) {//GEN-FIRST:event_openServerCho
     private JPopupMenu.Separator jSeparator4;
     private JSplitPane jSplitPane1;
     private JToolBar jToolBar1;
+    private JPanel panETL;
     private JPanel panGeneral;
     protected JTabbedPane panTabs;
     private JPanel panTree;

@@ -91,6 +91,21 @@ public class ExecuteResponse extends ResponseBaseType {
     @XmlSchemaType(name = "anyURI")
     protected String statusLocation;
 
+    public ExecuteResponse() {}
+
+    public ExecuteResponse(final ExecuteResponse other) {
+        this.setService(other.getService());
+        this.setLang(other.getLang());
+        this.setVersion(other.getVersion());
+        this.setProcess(other.getProcess());
+        this.setServiceInstance(other.getServiceInstance());
+        this.setStatus(other.getStatus());
+        this.setStatusLocation(other.getStatusLocation());
+        this.setDataInputs(other.getDataInputs());
+        this.setOutputDefinitions(other.getOutputDefinitions());
+        this.setProcessOutputs(other.getProcessOutputs());
+    }
+
     /**
      * Gets the value of the process property.
      * 

@@ -19,7 +19,7 @@ package org.geotoolkit.sld;
 import org.opengis.sld.RangeAxis;
 import org.opengis.sld.SLDVisitor;
 
-import static org.geotoolkit.util.ArgumentChecks.*;
+import static org.apache.sis.util.ArgumentChecks.*;
 
 /**
  * Default immutable range axis, thread safe.

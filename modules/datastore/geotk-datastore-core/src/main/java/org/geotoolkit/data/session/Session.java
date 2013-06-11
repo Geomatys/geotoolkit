@@ -25,6 +25,7 @@ import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.storage.StorageListener;
+import org.geotoolkit.version.Version;
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.Name;
@@ -58,6 +59,15 @@ public interface Session {
      */
     boolean isAsynchrone();
 
+    /**
+     * Get session version. 
+     * This version will be used on all queries passing through this session.
+     * If a session is set, writing operations will systematicaly raise an exception.
+     * 
+     * @return Version, can be null
+     */
+    Version getVersion();
+    
     /**
      * Request a collection of features that match the given query.
      *

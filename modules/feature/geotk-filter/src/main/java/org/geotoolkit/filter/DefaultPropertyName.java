@@ -17,15 +17,13 @@
  */
 package org.geotoolkit.filter;
 
-import java.util.AbstractMap.SimpleEntry;
-import java.util.Map.Entry;
-import org.geotoolkit.filter.accessor.Accessors;
-import org.geotoolkit.filter.accessor.PropertyAccessor;
 
 import org.opengis.filter.expression.ExpressionVisitor;
 import org.opengis.filter.expression.PropertyName;
 
-import static org.geotoolkit.util.ArgumentChecks.*;
+import static org.apache.sis.util.ArgumentChecks.*;
+import org.geotoolkit.filter.binding.Binding;
+import org.geotoolkit.filter.binding.Bindings;
 
 /**
  * Immutable property name expression.
@@ -40,7 +38,7 @@ public class DefaultPropertyName extends AbstractExpression implements PropertyN
     /**
      * Stores the last accessor returned.
      */
-    private Entry<Class,PropertyAccessor> lastAccessor;
+    private Binding lastAccessor;
 
     public DefaultPropertyName(final String property) {
         ensureNonNull("property name", property);
@@ -68,22 +66,16 @@ public class DefaultPropertyName extends AbstractExpression implements PropertyN
             cs = candidate.getClass();
         }
 
-        Entry<Class,PropertyAccessor> copy = lastAccessor;
-        if (copy != null && copy.getKey().equals(cs)) {
-            final PropertyAccessor access = copy.getValue();
-            if (access != null) {
-                return access.get( candidate, property, null );
-            }
-            return null;
+        Binding cp = lastAccessor;
+        if (cp != null && cp.getBindingClass().isAssignableFrom(cs)) {
+            return cp.get( candidate, property, null );
         }
 
-        final PropertyAccessor accessor = Accessors.getAccessor(cs,property, null);
-        copy = new SimpleEntry<Class, PropertyAccessor>(cs,accessor);
-        lastAccessor = copy;
-    	if (accessor == null) {
+        final Binding accessor = Bindings.getBinding(cs,property);
+        if (accessor == null) {
             return null;
     	}
-
+        lastAccessor = accessor;
     	return accessor.get( candidate, property, null );
     }
 

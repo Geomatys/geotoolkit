@@ -20,6 +20,7 @@ import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import org.geotoolkit.coverage.CoverageUtilities;
 import org.geotoolkit.coverage.GridMosaic;
 import org.geotoolkit.coverage.Pyramid;
 import org.geotoolkit.geometry.GeneralEnvelope;
@@ -37,7 +38,7 @@ class StrictlyCoverageFinder extends CoverageFinder {
 
     /**
      * {@inheritDoc }.
-     * <p>Note : Can return null if no mosaic within {@link Envelope} parameter area.</p>
+     * <p>Note : Can return null if no mosaic within {@link Envelope} parameter area exist.</p>
      */
     @Override
     public GridMosaic findMosaic(Pyramid pyramid, double resolution, double tolerance, Envelope env, int maxTileNumber) throws FactoryException {
@@ -57,7 +58,7 @@ class StrictlyCoverageFinder extends CoverageFinder {
                 final Envelope gridEnvelope = gridMosaic.getEnvelope();
                 // if intersection solution exist
                 if (findEnvelope.intersects(gridEnvelope, true)) {
-                    final double ratioTemp = getRatioND(findEnvelope, gridEnvelope);
+                    final double ratioTemp = CoverageUtilities.getRatioND(findEnvelope, gridEnvelope);
                     if (ratioTemp > (bestRatio + EPSILON)) { // >
                         goodMosaics.clear();
                         goodMosaics.add(gridMosaic);

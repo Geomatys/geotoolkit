@@ -35,7 +35,7 @@ import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.feature.LenientFeatureFactory;
 import org.geotoolkit.feature.simple.DefaultSimpleFeature;
 import org.geotoolkit.geometry.jts.transform.GeometryTransformer;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureFactory;
 import org.opengis.feature.GeometryAttribute;
@@ -124,6 +124,7 @@ public abstract class GenericTransformFeatureIterator<F extends Feature, R exten
                 if(prop instanceof GeometryAttribute){
                     Object value = prop.getValue();
                     if(value instanceof Geometry){
+                        if(((Geometry)value).isEmpty()) continue;
                         try {
                             //transform the geometry
                             prop.setValue(transformer.transform((Geometry) value));
@@ -210,6 +211,9 @@ public abstract class GenericTransformFeatureIterator<F extends Feature, R exten
                 }
                 properties.add(prop);
             }
+            
+            feature.getUserData().clear();
+            feature.getUserData().putAll(next.getUserData());
             return (F)feature;
         }
 

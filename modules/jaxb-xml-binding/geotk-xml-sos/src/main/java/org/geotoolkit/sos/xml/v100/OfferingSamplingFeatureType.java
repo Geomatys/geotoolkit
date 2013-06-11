@@ -45,6 +45,12 @@ public class OfferingSamplingFeatureType implements Entry{
         this.component  = component;
     }
 
+    public OfferingSamplingFeatureType(final String idOffering, final String componentRef) {
+        this.idOffering = idOffering;
+        this.component  = new ReferenceType(null, componentRef);
+    }
+
+    
     public String getName() {
         if (component != null) {
             return component.getId();
@@ -52,6 +58,7 @@ public class OfferingSamplingFeatureType implements Entry{
         return null;
     }
 
+    @Override
     public String getIdentifier() {
         if (component != null) {
             return component.getId();

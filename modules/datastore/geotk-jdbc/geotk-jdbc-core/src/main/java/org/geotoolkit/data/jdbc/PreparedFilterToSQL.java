@@ -43,7 +43,7 @@ import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.jdbc.JDBCDataStore;
 import org.geotoolkit.jdbc.dialect.PreparedStatementSQLDialect;
 
-import static org.geotoolkit.util.ArgumentChecks.*;
+import static org.apache.sis.util.ArgumentChecks.*;
 
 /**
  * Extension of FilterToSQL intended for use with prepared statements.

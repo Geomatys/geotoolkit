@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.v311.CodeType;
+import org.geotoolkit.wcs.xml.Output;
 
 
 /**
@@ -53,7 +54,7 @@ import org.geotoolkit.gml.xml.v311.CodeType;
     "format",
     "resolutions"
 })
-public class OutputType {
+public class OutputType implements Output {
 
     private CodeType crs;
     @XmlElement(required = true)

@@ -21,6 +21,7 @@ package org.geotoolkit.gml.xml.v321;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 
@@ -42,6 +43,7 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "FeatureCollectionType")
+@XmlRootElement(name="FeatureCollection")
 public class FeatureCollectionType extends AbstractFeatureCollectionType {
 
     public FeatureCollectionType() {

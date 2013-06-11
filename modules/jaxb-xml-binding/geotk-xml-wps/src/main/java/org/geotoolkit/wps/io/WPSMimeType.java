@@ -18,7 +18,8 @@ package org.geotoolkit.wps.io;
 
 
 /**
- * MimeType list based on OGC 12-029 paper.
+ * MimeType list based on OGC 12-029 paper. 
+ * (http://www.opengis.net/doc/wps1.0-best-practice-dp)
  *
  * @author Quentin Boileau (Geomatys)
  */
@@ -38,14 +39,20 @@ public enum WPSMimeType {
     APP_GEOJSON("application/geojson"),
     APP_GML("application/gml+xml"),
     APP_SHP("application/x-zipped-shp"),
-
-    OGC_WFS("application/x‐ogc-wfs"),
+    APP_NETCDF("application/netcdf"),
+    APP_GRIB("application/x-ogc-grib"),
+    
+    OGC_WFS("application/x-ogc-wfs"),
     OGC_WMS("application/x-ogc-wms"),
 
     //not recommended in paper
     TEXT_XML("text/xml"),
+    IMG_GEOTIFF_BIS("image/x-geotiff"),
     TEXT_GML("text/gml"),
-    TEXT_PLAIN("text/plain");
+    TEXT_PLAIN("text/plain"),
+    APP_ZIP_BIS("application/x-zip"),
+    APP_GZIP("application/x-gzip");
+
     private String mime;
 
     private WPSMimeType(final String mime) {
@@ -57,7 +64,7 @@ public enum WPSMimeType {
     }
 
     /**
-     * Search a WPSMimeType from a Sring code.
+     * Search a WPSMimeType from a String code.
      * @param str
      * @return the searched WPSMimeType or {@code null} if not found.
      */

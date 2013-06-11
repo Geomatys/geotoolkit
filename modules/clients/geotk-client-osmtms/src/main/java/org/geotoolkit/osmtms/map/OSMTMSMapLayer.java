@@ -24,7 +24,7 @@ import org.geotoolkit.osmtms.OSMTileMapServer;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.StyleConstants;
-import org.geotoolkit.util.ArgumentChecks;
+import org.apache.sis.util.ArgumentChecks;
 
 
 /**
@@ -52,7 +52,7 @@ public class OSMTMSMapLayer extends DefaultCoverageMapLayer {
         super(getReference(server),
               new DefaultStyleFactory().style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER),
               new DefaultName("osm"));
-        setUserPropertie(PyramidSet.HINT_FORMAT, DEFAULT_FORMAT);
+        setUserProperty(PyramidSet.HINT_FORMAT, DEFAULT_FORMAT);
     }
        
     /**
@@ -61,14 +61,14 @@ public class OSMTMSMapLayer extends DefaultCoverageMapLayer {
      */
     public void setFormat(final String format) {
         ArgumentChecks.ensureNonNull("format", format);
-        setUserPropertie(PyramidSet.HINT_FORMAT, format);
+        setUserProperty(PyramidSet.HINT_FORMAT, format);
     }
     
     /**
      * Gets the extension for the output response. By default {@code .png}.
      */
     public String getFormat() {
-        Object val = getUserPropertie(PyramidSet.HINT_FORMAT);
+        Object val = getUserProperty(PyramidSet.HINT_FORMAT);
         if(val != null){
             return val.toString();
         }

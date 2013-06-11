@@ -17,8 +17,8 @@
 package org.geotoolkit.filter.capability;
 
 import java.util.Collection;
-import static org.geotoolkit.util.ArgumentChecks.*;
-import org.geotoolkit.util.collection.UnmodifiableArrayList;
+import static org.apache.sis.util.ArgumentChecks.*;
+import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.opengis.filter.capability.TemporalCapabilities;
 import org.opengis.filter.capability.TemporalOperand;
 import org.opengis.filter.capability.TemporalOperators;
@@ -33,18 +33,18 @@ public class DefaultTemporalCapabilities implements TemporalCapabilities{
 
     private final Collection<TemporalOperand> operands;
     private final TemporalOperators operators;
-    
+
     public DefaultTemporalCapabilities(final TemporalOperand[] operands, final TemporalOperators operators) {
         ensureNonNull("operands", operands);
-        ensureNonNull("spatial operators", operators);
-        if(operands.length == 0){
-            throw new IllegalArgumentException("Operands must not be empty");
+        ensureNonNull("temporal operators", operators);
+        if(operands == null){
+            throw new IllegalArgumentException("Operands must not be null");
         }
-        
+
         this.operands = UnmodifiableArrayList.wrap(operands);
         this.operators = operators;
     }
-    
+
     @Override
     public Collection<TemporalOperand> getTemporalOperands() {
         return operands;
@@ -54,5 +54,5 @@ public class DefaultTemporalCapabilities implements TemporalCapabilities{
     public TemporalOperators getTemporalOperators() {
         return operators;
     }
-    
+
 }

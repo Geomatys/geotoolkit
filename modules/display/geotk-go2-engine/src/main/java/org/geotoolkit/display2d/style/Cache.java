@@ -20,7 +20,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.logging.Logger;
-import static org.geotoolkit.util.ArgumentChecks.*;
+import static org.apache.sis.util.ArgumentChecks.*;
 import org.geotoolkit.util.logging.Logging;
 
 /**

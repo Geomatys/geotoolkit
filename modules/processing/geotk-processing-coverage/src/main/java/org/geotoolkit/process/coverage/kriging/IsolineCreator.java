@@ -26,7 +26,7 @@ import java.awt.image.RenderedImage;
 import javax.vecmath.Point3d;
 
 import org.opengis.coverage.grid.SequenceType;
-import org.geotoolkit.util.ArgumentChecks;
+import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.image.iterator.PixelIterator;
 import org.geotoolkit.image.iterator.PixelIteratorFactory;
 

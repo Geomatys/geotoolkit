@@ -24,6 +24,9 @@ import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.ows.xml.AbstractDomain;
+import org.geotoolkit.ows.xml.AbstractOperation;
+import org.geotoolkit.ows.xml.AbstractOperationsMetadata;
 
 
 /**
@@ -125,7 +128,7 @@ import javax.xml.bind.annotation.XmlType;
     "exception",
     "vendorSpecificCapabilities"
 })
-public class WCSCapabilityType {
+public class WCSCapabilityType implements AbstractOperationsMetadata {
 
     @XmlElement(name = "Request", required = true)
     private Request request;
@@ -138,6 +141,24 @@ public class WCSCapabilityType {
     @XmlAttribute
     private String updateSequence;
 
+    public WCSCapabilityType() {
+        
+    }
+    
+    public WCSCapabilityType(final Request request, final Exception exption) {
+        this.exception = exption;
+        this.request = request;
+    }
+    
+    public WCSCapabilityType(final Request request, final Exception exption, 
+            final VendorSpecificCapabilities vCapa, final String version, final String upseq) {
+        this.exception = exption;
+        this.request = request;
+        this.vendorSpecificCapabilities = vCapa;
+        this.version = version;
+        this.updateSequence = upseq;
+    }
+    
     /**
      * Gets the value of the request property.
      */
@@ -183,6 +204,80 @@ public class WCSCapabilityType {
         this.version = version;
     }
 
+    @Override
+    public void updateURL(final String url) {
+        if (request != null) {
+            request.updateURL(url);
+        }
+    }
+
+    @Override
+    public void addConstraint(final AbstractDomain domain) {
+        //do nothing
+    }
+
+    @Override
+    public AbstractOperation getOperation(final String operationName) {
+        if (request != null) {
+            return request.getOperation(operationName);
+        }
+        return null;
+    }
+
+    @Override
+    public void removeOperation(final String operationName) {
+        if ("GetCapabilities".equalsIgnoreCase(operationName)) {
+            request.setGetCapabilities(null);
+        } else if ("DescribeCoverage".equalsIgnoreCase(operationName)) {
+            request.setDescribeCoverage(null);
+        } else if ("GetCoverage".equalsIgnoreCase(operationName)) {
+            request.setGetCoverage(null);
+        }
+    }
+
+    @Override
+    public AbstractDomain getConstraint(String name) {
+        //no constraint
+        return null;
+    }
+
+    @Override
+    public void removeConstraint(String name) {
+        //no constraint
+    }
+
+    @Override
+    public Object getExtendedCapabilities() {
+        if (vendorSpecificCapabilities != null) {
+            return vendorSpecificCapabilities.getAny();
+        }
+        return null;
+    }
+
+    @Override
+    public void setExtendedCapabilities(Object extendedCapabilities) {
+        if (vendorSpecificCapabilities != null) {
+            vendorSpecificCapabilities.setAny(extendedCapabilities);
+        }
+    }
+
+    @Override
+    public AbstractOperationsMetadata clone() {
+        Request r = null; 
+        if (this.request != null) {
+            r = this.request.clone();
+        }
+        Exception e = null; 
+        if (this.exception != null) {
+            e = new Exception(new ArrayList<String>(this.exception.getFormat()));
+        }
+        VendorSpecificCapabilities v = null;
+        if (this.vendorSpecificCapabilities != null) {
+            v = new VendorSpecificCapabilities(this.vendorSpecificCapabilities.any);
+        }
+        return new WCSCapabilityType(r, e, v, this.version, this.updateSequence);
+    }
+
     /**
      * <p>Java class for anonymous complex type.
      * 
@@ -211,6 +306,14 @@ public class WCSCapabilityType {
         @XmlElement(name = "Format", required = true)
         private List<String> format;
 
+        public Exception() {
+            
+        }
+        
+        public Exception(final List<String> format) {
+            this.format = format;
+        }
+        
         /**
          * Gets the value of the format property.
          * 
@@ -252,6 +355,14 @@ public class WCSCapabilityType {
         @XmlAnyElement(lax = true)
         private Object any;
 
+        public VendorSpecificCapabilities() {
+        
+        }
+        
+        public VendorSpecificCapabilities(final Object any) {
+            this.any = any;
+        }
+        
         /**
          * Gets the value of the any property.
          * 

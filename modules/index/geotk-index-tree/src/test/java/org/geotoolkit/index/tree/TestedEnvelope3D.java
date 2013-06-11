@@ -20,7 +20,7 @@ import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
-import org.geotoolkit.geometry.GeneralEnvelope;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.referencing.crs.DefaultEngineeringCRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 

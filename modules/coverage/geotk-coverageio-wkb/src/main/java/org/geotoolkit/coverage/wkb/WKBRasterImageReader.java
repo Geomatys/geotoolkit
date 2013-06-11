@@ -27,11 +27,11 @@ import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.spi.ImageReaderSpi;
 import org.geotoolkit.util.Version;
-import org.geotoolkit.util.XArrays;
+import org.apache.sis.util.ArraysExt;
 
 /**
  * Draft java api image reader for WKB, used in postGIS 2 but can be used elsewhere.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public class WKBRasterImageReader extends ImageReader{
@@ -39,7 +39,7 @@ public class WKBRasterImageReader extends ImageReader{
     public WKBRasterImageReader(ImageReaderSpi spi){
         super(spi);
     }
-    
+
     @Override
     public int getNumImages(boolean allowSearch) throws IOException {
         return 1;
@@ -80,9 +80,9 @@ public class WKBRasterImageReader extends ImageReader{
         }
         throw new IOException("Unsupported input : "+input);
     }
-    
+
     public static class Spi extends ImageReaderSpi {
-        
+
         public Spi() {
             super();
             names           = new String[] {"PostGISWKBraster"};
@@ -92,10 +92,10 @@ public class WKBRasterImageReader extends ImageReader{
             version         = Version.GEOTOOLKIT.toString();
             writerSpiNames  = new String[] {};
             inputTypes = new Class[0];
-            inputTypes      = XArrays.append(inputTypes, InputStream.class);
-            inputTypes      = XArrays.append(inputTypes, byte[].class);
+            inputTypes      = ArraysExt.append(inputTypes, InputStream.class);
+            inputTypes      = ArraysExt.append(inputTypes, byte[].class);
         }
-        
+
         @Override
         public ImageReader createReaderInstance(final Object extension) throws IOException {
             return new WKBRasterImageReader(this);
@@ -103,20 +103,20 @@ public class WKBRasterImageReader extends ImageReader{
 
         @Override
         public boolean canDecodeInput(final Object source) throws IOException {
-            
+
             if(source instanceof byte[] || source instanceof InputStream){
                 //TODO we must check more then that
                 return true;
             }
-            
+
             return false;
         }
-        
+
         @Override
         public String getDescription(Locale locale) {
             return "Postgis WKB Raster reader.";
         }
-        
+
     }
-    
+
 }

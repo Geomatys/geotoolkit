@@ -30,7 +30,7 @@ import org.geotoolkit.gml.xml.v321.FeaturePropertyType;
 import org.geotoolkit.internal.jaxb.metadata.DQ_Element;
 import org.geotoolkit.observation.xml.v200.OMProcessPropertyType;
 import org.geotoolkit.sampling.xml.v200.SFSamplingFeatureType;
-import org.geotoolkit.util.ComparisonMode;
+import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.util.Utilities;
 import org.opengis.geometry.Geometry;
 import org.opengis.metadata.quality.PositionalAccuracy;

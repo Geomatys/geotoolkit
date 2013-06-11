@@ -29,7 +29,7 @@ import org.geotoolkit.wps.xml.v100.ComplexDataType;
  * 
  * @author Quentin Boileau (Geomatys).
  */
-public class ComplexToAffineTransformConverter  extends AbstractComplexInputConverter {
+public class ComplexToAffineTransformConverter  extends AbstractComplexInputConverter<AffineTransform> {
 
     private static ComplexToAffineTransformConverter INSTANCE;
 
@@ -44,12 +44,12 @@ public class ComplexToAffineTransformConverter  extends AbstractComplexInputConv
     }
 
     @Override
-    public Class<? extends Object> getTargetClass() {
+    public Class<? extends AffineTransform> getTargetClass() {
         return AffineTransform.class;
     }
 
     @Override
-    public Object convert(final ComplexDataType source, Map<String, Object> params) throws NonconvertibleObjectException {
+    public AffineTransform convert(final ComplexDataType source, Map<String, Object> params) throws NonconvertibleObjectException {
         
         final List<Object> datas = source.getContent();
         

@@ -66,7 +66,7 @@ import org.opengis.util.FactoryException;
 
 import static org.geotoolkit.metadata.geotiff.GeoTiffConstants.*;
 import static org.geotoolkit.referencing.AbstractIdentifiedObject.*;
-import static org.geotoolkit.util.ArgumentChecks.*;
+import static org.apache.sis.util.ArgumentChecks.*;
 
 /**
  * Encode a CoordinateReferenceSystem as GeoTiff tags.
@@ -523,7 +523,7 @@ final class GeoTiffCRSWriter {
         final Unit linearUnit = CRSUtilities.getUnit(projectedCRS.getCoordinateSystem());
         if (linearUnit != null && !SI.METRE.isCompatible(linearUnit)) {
             throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.NON_LINEAR_UNIT_$1, linearUnit));
+                    Errors.Keys.NON_LINEAR_UNIT_1, linearUnit));
         }
         if (SI.METRE.isCompatible(linearUnit)) {
             if (SI.METRE.equals(linearUnit)) {

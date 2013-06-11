@@ -38,7 +38,7 @@
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="guiRadius" max="32767" attributes="0"/>
+                          <Component id="guiRadius" pref="539" max="32767" attributes="0"/>
                           <Group type="102" attributes="0">
                               <Component id="guiHaloFillPane" min="-2" max="-2" attributes="0"/>
                               <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
@@ -65,7 +65,7 @@
                   <Component id="jLabel9" linkSize="4" min="-2" max="-2" attributes="0"/>
                   <Component id="guiHaloFillPane" linkSize="4" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace max="32767" attributes="0"/>
+              <EmptySpace pref="28" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -73,17 +73,23 @@
   <SubComponents>
     <Component class="javax.swing.JLabel" name="jLabel6">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Halo :"/>
+        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+          <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="halo" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
+        </Property>
       </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel7">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Rayon :"/>
+        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+          <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="radius" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
+        </Property>
       </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel9">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Couleur :"/>
+        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+          <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="color" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
+        </Property>
       </Properties>
     </Component>
     <Component class="org.geotoolkit.gui.swing.style.JNumberSliderExpressionPane" name="guiRadius">

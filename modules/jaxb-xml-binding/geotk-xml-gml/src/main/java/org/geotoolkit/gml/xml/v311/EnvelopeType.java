@@ -34,6 +34,8 @@ import org.geotoolkit.internal.sql.table.Entry;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.util.logging.Logging;
+import org.opengis.filter.expression.Expression;
+import org.opengis.filter.expression.ExpressionVisitor;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
@@ -81,7 +83,7 @@ import org.opengis.util.FactoryException;
     EnvelopeWithTimePeriodType.class
 })
 @XmlRootElement(name="Envelope")
-public class EnvelopeType implements Entry, Envelope {
+public class EnvelopeType implements Entry, Envelope, Expression {
 
     private static final Logger LOGGER = Logging.getLogger(EnvelopeType.class);
 
@@ -267,6 +269,7 @@ public class EnvelopeType implements Entry, Envelope {
      *     {@link Integer }
      *
      */
+    @Override
     public void setSrsDimension(final Integer value) {
         this.srsDimension = value;
     }
@@ -282,6 +285,7 @@ public class EnvelopeType implements Entry, Envelope {
         return this.axisLabels;
     }
 
+    @Override
     public void setAxisLabels(final List<String> axisLabels) {
         this.axisLabels = axisLabels;
     }
@@ -487,5 +491,20 @@ public class EnvelopeType implements Entry, Envelope {
     @Override
     public double getSpan(final int i) throws IndexOutOfBoundsException {
         throw new UnsupportedOperationException("Not implemented yet.");
+    }
+
+    @Override
+    public Object evaluate(Object o) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public <T> T evaluate(Object o, Class<T> type) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Object accept(ExpressionVisitor ev, Object o) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

@@ -25,7 +25,8 @@ import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.storage.StorageListener;
-import org.geotoolkit.util.ArgumentChecks;
+import org.apache.sis.util.ArgumentChecks;
+import org.geotoolkit.version.Version;
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.Name;
@@ -56,6 +57,11 @@ public class SessionDecorator implements Session{
     @Override
     public boolean isAsynchrone() {
         return wrapped.isAsynchrone();
+    }
+
+    @Override
+    public Version getVersion() {
+        return wrapped.getVersion();
     }
 
     @Override

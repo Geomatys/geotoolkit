@@ -26,7 +26,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.swe.xml.Coordinate;
 import org.geotoolkit.swe.xml.Vector;
-import org.geotoolkit.util.ComparisonMode;
+import org.apache.sis.util.ComparisonMode;
 
 
 /**

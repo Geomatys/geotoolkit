@@ -43,7 +43,7 @@ import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display.shape.TransformedShape;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.primitive.AbstractGraphicJ2D;
-import org.geotoolkit.util.XArrays;
+import org.apache.sis.util.ArraysExt;
 
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.util.FactoryException;
@@ -61,9 +61,9 @@ import org.opengis.referencing.operation.TransformException;
  * @module pending
  */
 public abstract class RenderedMarks extends AbstractGraphicJ2D {
-    
+
     private static final Stroke DEFAULT_STROKE = new BasicStroke(1);
-    
+
     /**
      * The number of entries in {@link #markTransforms} for each {@link AffineTransform}.
      */
@@ -201,7 +201,7 @@ public abstract class RenderedMarks extends AbstractGraphicJ2D {
      * @throws IllegalArgumentException if <code>cs</code> is nul.
      */
     public RenderedMarks(final J2DCanvas canvas) {
-        super(canvas);        
+        super(canvas);
     }
 
     /**
@@ -223,7 +223,7 @@ public abstract class RenderedMarks extends AbstractGraphicJ2D {
      *         This iterator doesn't need to be thread-safe.
      */
     public abstract MarkIterator getMarkIterator();
-    
+
     /**
      * Returns the units for {@linkplain MarkIterator#amplitude marks amplitude}, or
      * <code>null</code> if unknow. All marks must use the same units. The default
@@ -297,8 +297,8 @@ public abstract class RenderedMarks extends AbstractGraphicJ2D {
      */
     @Override
     public void paint(final RenderingContext2D context) {
-        
-        assert Thread.holdsLock(getTreeLock());        
+
+        assert Thread.holdsLock(getTreeLock());
         final Graphics2D g2 = context.getGraphics();
         final AffineTransform oldTransform = g2.getTransform();
         final Stroke oldStroke = g2.getStroke();
@@ -306,18 +306,18 @@ public abstract class RenderedMarks extends AbstractGraphicJ2D {
         final Rectangle zoomableBounds = context.getGraphics().getClipBounds(); //paintedArea.getBounds();
         final MarkIterator iterator = getMarkIterator();
         iterator.font = g2.getFont();
-        
+
         if (transformedShape == null) {
             transformedShape = new TransformedShape();
         }
-        
+
         try {
             context.switchToDisplayCRS();
             g2.setStroke(DEFAULT_STROKE);
 
-            
+
             final AffineTransform objectiveToDisplay = context.getObjectiveToDisplay();
-                        
+
             MathTransform2D coverageToObjective = null;
             try {
                 coverageToObjective = (MathTransform2D) context.getMathTransform(
@@ -374,31 +374,31 @@ public abstract class RenderedMarks extends AbstractGraphicJ2D {
                 boolean    hasMarks  = false;
                 boolean    hasLabels = false;
                 int        numShapes = 0;
-                
+
                 while (iterator.next()) {
-                    
+
                     if (!iterator.visible(gridClip)) {
                         continue;
                     }
                     Point2D position;
-                    try { 
+                    try {
                         position = iterator.position();
-                    } catch (TransformException ex) { 
+                    } catch (TransformException ex) {
                         context.getMonitor().exceptionOccured(ex, Level.WARNING);
                         return;
                     }
-                    
+
                     if (position == null) {
                         continue;
                     }
-                    
-                    try { 
+
+                    try {
                         position = coverageToObjective.transform(position, position);
-                    } catch (TransformException ex) { 
+                    } catch (TransformException ex) {
                         context.getMonitor().exceptionOccured(ex, Level.WARNING);
                         return;
                     }
-                    
+
                     if (Double.isNaN(matrix[4] = position.getX())) continue;
                     if (Double.isNaN(matrix[5] = position.getY())) continue;
                     objectiveToDisplay.transform(matrix, 4, matrix, 4, 1);
@@ -413,14 +413,14 @@ public abstract class RenderedMarks extends AbstractGraphicJ2D {
                     Shape geographicArea = iterator.geographicArea();
                     if (geographicArea != null) {
                         final Shape oldShape = geographicArea;
-                        
-                        try { 
+
+                        try {
                             geographicArea = coverageToObjective.createTransformedShape(geographicArea);
-                        } catch (TransformException ex) { 
+                        } catch (TransformException ex) {
                             context.getMonitor().exceptionOccured(ex, Level.WARNING);
                             return;
                         }
-                        
+
                         if (oldShape!=geographicArea && (geographicArea instanceof GeneralPath)) {
                             ((GeneralPath) geographicArea).transform(objectiveToDisplay);
                         } else {
@@ -555,17 +555,17 @@ public abstract class RenderedMarks extends AbstractGraphicJ2D {
                     if (numShapes >= markIndex.length) {
                         // Augment the capacity
                         final int capacity = numShapes + Math.min(Math.max(numShapes, 8), 2048);
-                        markIndex = XArrays.resize(markIndex, capacity);
+                        markIndex = ArraysExt.resize(markIndex, capacity);
                         if (areaShapes != null) {
-                            areaShapes = (Shape[])XArrays.resize(areaShapes, capacity);
+                            areaShapes = (Shape[])ArraysExt.resize(areaShapes, capacity);
                         }
                         if (markShapes != null) {
-                            markShapes     = (Shape[])XArrays.resize(markShapes, capacity);
-                            markTransforms = XArrays.resize(markTransforms, capacity*TRANSFORM_RECORD_LENGTH);
+                            markShapes     = (Shape[])ArraysExt.resize(markShapes, capacity);
+                            markTransforms = ArraysExt.resize(markTransforms, capacity*TRANSFORM_RECORD_LENGTH);
                         }
                         if (glyphVectors != null) {
-                            glyphVectors   = (GlyphVector[]) XArrays.resize(glyphVectors, capacity);
-                            glyphPositions = XArrays.resize(glyphPositions, capacity*2);
+                            glyphVectors   = (GlyphVector[]) ArraysExt.resize(glyphVectors, capacity);
+                            glyphPositions = ArraysExt.resize(glyphPositions, capacity*2);
                         }
                     }
                     // STEP 1  -  Geographic areas
@@ -614,18 +614,18 @@ public abstract class RenderedMarks extends AbstractGraphicJ2D {
                     markIndex = null;
                 }
                 if (markIndex != null) {
-                    markIndex = XArrays.resize(markIndex, numShapes);
+                    markIndex = ArraysExt.resize(markIndex, numShapes);
                 }
                 if (areaShapes != null) {
-                    areaShapes = (Shape[])XArrays.resize(areaShapes, numShapes);
+                    areaShapes = ArraysExt.resize(areaShapes, numShapes);
                 }
                 if (markShapes != null) {
-                    markShapes = (Shape[])XArrays.resize(markShapes, numShapes);
-                    markTransforms = XArrays.resize(markTransforms, numShapes*TRANSFORM_RECORD_LENGTH);
+                    markShapes = ArraysExt.resize(markShapes, numShapes);
+                    markTransforms = ArraysExt.resize(markTransforms, numShapes*TRANSFORM_RECORD_LENGTH);
                 }
                 if (glyphVectors != null) {
-                    glyphVectors   = (GlyphVector[]) XArrays.resize(glyphVectors, numShapes);
-                    glyphPositions = XArrays.resize(glyphPositions, numShapes*2);
+                    glyphVectors   = ArraysExt.resize(glyphVectors, numShapes);
+                    glyphPositions = ArraysExt.resize(glyphPositions, numShapes*2);
                 }
                 validMask |= AREAS_MASK|MARKS_MASK|ICONS_MASK|GLYPHS_MASK;
             }
@@ -773,17 +773,17 @@ public abstract class RenderedMarks extends AbstractGraphicJ2D {
         invalidate(AREAS_MASK | MARKS_MASK | ICONS_MASK | GLYPHS_MASK);
         assert validMask == 0 : validMask;
     }
-    
+
     @Override
     public void propertyChange(final PropertyChangeEvent prop) {
 //        super.zoomChanged(change);
-        
+
         if(prop.getPropertyName().equals(ReferencedCanvas2D.OBJECTIVE_TO_DISPLAY_PROPERTY)){
             invalidate();
             clearCache();
             setDisplayBounds(null);
         }
-        
+
 //        if (change == null) {
 //            invalidate();
 //        } else if (!change.isIdentity()) {
@@ -810,7 +810,7 @@ public abstract class RenderedMarks extends AbstractGraphicJ2D {
 //            invalidate();
 //        }
     }
-    
+
     /**
      * Efface des informations qui avaient été conservées dans une mémoire cache.
      * Cette méthode est automatiquement appelée lorsqu'il a été déterminé que cette
@@ -835,5 +835,5 @@ public abstract class RenderedMarks extends AbstractGraphicJ2D {
         super.dispose();
         clearCache();
     }
-    
+
 }

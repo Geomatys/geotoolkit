@@ -20,8 +20,11 @@ package org.geotoolkit.swes.xml.v200;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.swes.xml.DeleteSensorResponse;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -47,12 +50,21 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "DeleteSensorResponseType", propOrder = {
     "deletedProcedure"
 })
-public class DeleteSensorResponseType extends ExtensibleResponseType {
+@XmlRootElement(name="DeleteSensorResponse")
+public class DeleteSensorResponseType extends ExtensibleResponseType implements DeleteSensorResponse {
 
     @XmlElement(required = true)
     @XmlSchemaType(name = "anyURI")
     private String deletedProcedure;
 
+    public DeleteSensorResponseType() {
+        
+    }
+    
+    public DeleteSensorResponseType(final String deletedProcedure) {
+        this.deletedProcedure = deletedProcedure;
+    }
+    
     /**
      * Gets the value of the deletedProcedure property.
      * 
@@ -76,5 +88,33 @@ public class DeleteSensorResponseType extends ExtensibleResponseType {
     public void setDeletedProcedure(String value) {
         this.deletedProcedure = value;
     }
+    
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder(super.toString());
+        if (deletedProcedure != null) {
+            sb.append("deletedProcedure:").append(deletedProcedure).append('\n');
+        }
+        return sb.toString();
+    }
 
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj instanceof DeleteSensorResponseType && super.equals(obj)) {
+            final DeleteSensorResponseType that = (DeleteSensorResponseType)obj;
+            return Utilities.equals(this.deletedProcedure, that.deletedProcedure);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 97 * hash + super.hashCode();
+        hash = 97 * hash + (this.deletedProcedure != null ? this.deletedProcedure.hashCode() : 0);
+        return hash;
+    }
 }

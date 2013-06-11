@@ -194,4 +194,15 @@ public interface JDBCDataStore extends FeatureStore {
      */
     void closeSafe(final Connection cx);
 
+    /**
+     * Utility method for refreshing the metamodel.
+     * <p>
+     * This method closed the connection "safely" in that it never throws an
+     * exception. Any exceptions that do occur are logged at {@link Level#FINER}.
+     * </p>
+     * @param cx The connection to close.
+     */
+	void refreshMetaModel();
+	
+
 }

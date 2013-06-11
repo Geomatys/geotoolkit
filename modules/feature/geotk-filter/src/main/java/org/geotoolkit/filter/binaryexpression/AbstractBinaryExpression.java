@@ -22,7 +22,7 @@ import org.geotoolkit.filter.AbstractExpression;
 import org.opengis.filter.expression.BinaryExpression;
 import org.opengis.filter.expression.Expression;
 
-import static org.geotoolkit.util.ArgumentChecks.*;
+import static org.apache.sis.util.ArgumentChecks.*;
 
 /**
  * Immutable abstract binary expression.

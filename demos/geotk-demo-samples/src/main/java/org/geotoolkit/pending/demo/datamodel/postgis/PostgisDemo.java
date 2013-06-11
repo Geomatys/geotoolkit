@@ -28,7 +28,7 @@ public class PostgisDemo {
         Parameters.getOrCreate(PostgisNGDataStoreFactory.PORT, parameters).setValue(5432);
         Parameters.getOrCreate(PostgisNGDataStoreFactory.DATABASE, parameters).setValue("base");
         Parameters.getOrCreate(PostgisNGDataStoreFactory.USER, parameters).setValue("user");
-        Parameters.getOrCreate(PostgisNGDataStoreFactory.PASSWD, parameters).setValue("secret");
+        Parameters.getOrCreate(PostgisNGDataStoreFactory.PASSWORD, parameters).setValue("secret");
         
         final FeatureStore store = FeatureStoreFinder.open(parameters);
         

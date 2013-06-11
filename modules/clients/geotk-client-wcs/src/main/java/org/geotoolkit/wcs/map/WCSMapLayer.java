@@ -21,7 +21,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
-import org.geotoolkit.geometry.Envelope2D;
+import org.apache.sis.geometry.Envelope2D;
 import org.geotoolkit.map.AbstractMapLayer;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.wcs.GetCoverageRequest;

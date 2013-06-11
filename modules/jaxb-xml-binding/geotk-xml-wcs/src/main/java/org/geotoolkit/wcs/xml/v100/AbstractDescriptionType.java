@@ -103,6 +103,10 @@ public abstract class AbstractDescriptionType extends AbstractDescriptionBaseTyp
         return null;
     }
 
+    public void setTitle(final String label) {
+        setLabel(label);
+    }
+    
     public void setLabel(final String label) {
         //first we erase the old one.
         for (int i = 0; i < rest.size(); i++) {
@@ -142,6 +146,10 @@ public abstract class AbstractDescriptionType extends AbstractDescriptionBaseTyp
         }
     }
 
+    public void setAbstract(final String abs) {
+        setDescription(abs);
+    }
+    
     public String getDescription() {
         for (JAXBElement<String> jb : rest) {
             if ("description".equals(jb.getName().getLocalPart())) {

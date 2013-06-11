@@ -182,6 +182,9 @@ public class FilterFactoryImpl implements FilterFactory2 {
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.filter");
 
     private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+    static {
+        DATE_FORMAT.setTimeZone(TimeZone.getTimeZone("UTC"));
+    }
 
     @Override
     public FeatureId featureId(final String id) {
@@ -220,7 +223,7 @@ public class FilterFactoryImpl implements FilterFactory2 {
 
     @Override
     public And and(final List<Filter> f) {
-        return new AndType(f);
+        return new AndType(f.toArray());
     }
 
     @Override

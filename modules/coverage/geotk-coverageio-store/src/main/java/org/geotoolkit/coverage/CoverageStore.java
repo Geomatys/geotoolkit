@@ -19,6 +19,9 @@ package org.geotoolkit.coverage;
 import java.util.Set;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.storage.StorageListener;
+import org.geotoolkit.version.Version;
+import org.geotoolkit.version.VersionControl;
+import org.geotoolkit.version.VersioningException;
 import org.opengis.feature.type.Name;
 import org.opengis.parameter.ParameterValueGroup;
 
@@ -51,6 +54,18 @@ public interface CoverageStore {
     Set<Name> getNames() throws DataStoreException;
 
     /**
+     * Check if this coverage store support versioning.
+     * @return true if versioning is supported.
+     */
+    boolean handleVersioning();
+        
+    /**
+     * Get version history for given coverage.
+     * @return VersionHistory for given name.
+     */
+    VersionControl getVersioning(Name typeName) throws VersioningException;
+    
+    /**
      * Get the coverage reference for the given name.
      * @param name reference name
      * @return CoverageReference
@@ -58,6 +73,17 @@ public interface CoverageStore {
      */
     CoverageReference getCoverageReference(Name name) throws DataStoreException;
 
+    /**
+     * Get the coverage reference for the given name and version.
+     * If the version do not exist it will be created.
+     * 
+     * @param name reference name
+     * @param version version
+     * @return CoverageReference
+     * @throws DataStoreException
+     */
+    CoverageReference getCoverageReference(Name name, Version version) throws DataStoreException;
+    
     /**
      * Create a new coverage reference.
      * The returned coverage reference might have a different namespace.

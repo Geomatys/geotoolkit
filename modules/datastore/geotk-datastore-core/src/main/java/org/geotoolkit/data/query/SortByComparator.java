@@ -19,7 +19,7 @@ package org.geotoolkit.data.query;
 import java.util.Arrays;
 import java.util.Comparator;
 import org.geotoolkit.util.StringUtilities;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 import org.opengis.feature.Feature;
 import org.opengis.filter.expression.PropertyName;
 import org.opengis.filter.sort.SortBy;

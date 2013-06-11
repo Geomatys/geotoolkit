@@ -22,7 +22,7 @@ import java.util.logging.Logger;
 import org.geotoolkit.client.AbstractRequest;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
-import org.geotoolkit.util.ArgumentChecks;
+import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.util.logging.Logging;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.operation.MathTransform;

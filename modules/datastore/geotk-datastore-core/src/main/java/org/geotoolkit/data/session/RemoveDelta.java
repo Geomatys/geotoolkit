@@ -25,7 +25,7 @@ import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.storage.DataStoreException;
-import static org.geotoolkit.util.ArgumentChecks.*;
+import static org.apache.sis.util.ArgumentChecks.*;
 import org.opengis.feature.type.Name;
 import org.opengis.filter.Id;
 import org.opengis.filter.identity.Identifier;
@@ -38,11 +38,11 @@ import org.opengis.geometry.Envelope;
  * @module pending
  * @todo make this concurrent
  */
-class RemoveDelta extends AbstractDelta{
+public class RemoveDelta extends AbstractDelta{
 
-    private Id removedIds;
+    protected Id removedIds;
 
-    RemoveDelta(final Session session, final Name typeName, final Id filter){
+    public RemoveDelta(final Session session, final Name typeName, final Id filter){
         super(session,typeName);
         ensureNonNull("type name", typeName);
         ensureNonNull("filter", filter);

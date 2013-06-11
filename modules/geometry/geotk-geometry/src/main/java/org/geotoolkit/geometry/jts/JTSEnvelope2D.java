@@ -32,10 +32,10 @@ import org.opengis.referencing.operation.CoordinateOperation;
 import org.opengis.referencing.operation.CoordinateOperationFactory;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
-import org.geotoolkit.geometry.DirectPosition2D;
+import org.apache.sis.geometry.DirectPosition2D;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 import org.geotoolkit.resources.Errors;
 
 /**
@@ -53,7 +53,7 @@ import org.geotoolkit.resources.Errors;
  * @author Simone Giannecchini
  * @author Johann Sorel
  *
- * @see org.geotoolkit.geometry.Envelope2D
+ * @see org.apache.sis.geometry.Envelope2D
  * @see org.geotoolkit.geometry.GeneralEnvelope
  * @see org.opengis.metadata.extent.GeographicBoundingBox
  */
@@ -251,7 +251,7 @@ public class JTSEnvelope2D extends Envelope implements org.opengis.geometry.Enve
             final int dimension = crs.getCoordinateSystem().getDimension();
             if (dimension != expected) {
                 throw new MismatchedDimensionException(Errors.format(
-                        Errors.Keys.MISMATCHED_DIMENSION_$3, crs.getName().getCode(),
+                        Errors.Keys.MISMATCHED_DIMENSION_3, crs.getName().getCode(),
                         new Integer(dimension), new Integer(expected)));
             }
         }

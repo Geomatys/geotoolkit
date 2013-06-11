@@ -63,6 +63,10 @@ public abstract class AbstractTimePrimitiveType extends AbstractTimeObjectType i
         
     }
     
+    public AbstractTimePrimitiveType(final String id) {
+        super(id);
+    }
+    
     public AbstractTimePrimitiveType(final AbstractTimePrimitiveType that) {
         super(that);
         if (that != null && that.relatedTime != null) {

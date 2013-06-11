@@ -30,7 +30,7 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.HintsPending;
 import org.geotoolkit.feature.LenientFeatureFactory;
 import org.geotoolkit.feature.simple.DefaultSimpleFeature;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureFactory;
 import org.opengis.feature.Property;
@@ -215,7 +215,11 @@ public abstract class GenericRetypeFeatureIterator<F extends Feature, R extends 
             for(final PropertyDescriptor prop : types){
                 properties.addAll(next.getProperties(prop.getName()));
             }
-            return (F) FF.createFeature(properties, mask, next.getIdentifier().getID());
+            
+            final F cp = (F) FF.createFeature(properties, mask, next.getIdentifier().getID());
+            //copy user datas
+            cp.getUserData().putAll(next.getUserData());
+            return cp;
         }
 
         @Override
@@ -267,7 +271,9 @@ public abstract class GenericRetypeFeatureIterator<F extends Feature, R extends 
             for (int i = 0; i < types.length; i++) {
                 feature.setAttribute(i, next.getAttribute(types[i]));
             }
-            
+            //copy user datas
+            feature.getUserData().clear();
+            feature.getUserData().putAll(next.getUserData());            
             return (F) feature;
         }
 
@@ -343,14 +349,4 @@ public abstract class GenericRetypeFeatureIterator<F extends Feature, R extends 
         return new GenericRetypeFeatureCollection(original, mask);
     }
 
-    public static Feature apply(Feature candidate, final FeatureType mask){
-        final PropertyDescriptor[] types = typeAttributes(candidate.getType(), mask);
-
-        final Collection<Property> properties = new ArrayList<Property>();
-        for(final PropertyDescriptor prop : types){
-            properties.addAll(candidate.getProperties(prop.getName()));
-        }
-        return FF.createFeature(properties, mask, candidate.getIdentifier().getID());
-
-    }
 }

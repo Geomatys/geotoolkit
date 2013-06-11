@@ -35,7 +35,7 @@ import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.storage.DataStoreException;
-import static org.geotoolkit.util.ArgumentChecks.*;
+import static org.apache.sis.util.ArgumentChecks.*;
 import org.geotoolkit.util.logging.Logging;
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
@@ -52,9 +52,9 @@ import org.opengis.geometry.Envelope;
  * @module pending
  * @todo make this concurrent
  */
-class AddDelta extends AbstractDelta{
+public class AddDelta extends AbstractDelta{
 
-    private final FeatureCollection<Feature> features;
+    protected final FeatureCollection<Feature> features;
 
     /**
      *
@@ -65,7 +65,7 @@ class AddDelta extends AbstractDelta{
      * a feature store which may be slow or changing with time.
      * this features from the given collection will be copied.
      */
-    AddDelta(final Session session, final Name typeName, final Collection<Feature> features){
+    public AddDelta(final Session session, final Name typeName, final Collection<? extends Feature> features){
         super(session,typeName);
         ensureNonNull("type name", typeName);
         ensureNonNull("features", features);

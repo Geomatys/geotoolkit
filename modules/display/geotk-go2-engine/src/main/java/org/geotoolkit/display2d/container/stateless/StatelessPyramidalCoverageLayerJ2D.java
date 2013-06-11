@@ -44,6 +44,7 @@ import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
 import org.geotoolkit.display.exception.PortrayalException;
 import org.geotoolkit.display.primitive.SearchArea;
+import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
@@ -51,6 +52,8 @@ import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.display2d.style.CachedRule;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
+import org.geotoolkit.display2d.style.renderer.DefaultRasterSymbolizerRenderer;
+import org.geotoolkit.factory.Hints;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.map.CoverageMapLayer;
@@ -155,7 +158,12 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
             monitor.exceptionOccured(ex, Level.WARNING);
             return;
         }
-        
+
+        /*
+         * Apply CoverageMapLayer query (if not null) to wantedEnv Envelope.
+         */
+        final Map<String, Double> queryValues = DefaultRasterSymbolizerRenderer.extractQuery(item);
+        wantedEnv = new GeneralEnvelope(DefaultRasterSymbolizerRenderer.fixEnvelopeWithQuery(queryValues, wantedEnv, pyramidCRS));
 
         //ensure we don't go out of the crs envelope
         final Envelope maxExt = CRS.getEnvelope(pyramidCRS);
@@ -227,12 +235,6 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
         if(tileMinRow < 0) tileMinRow = 0;
         if(tileMaxRow > gridHeight) tileMaxRow = gridHeight;
                 
-        //don't render layer if it requieres more then 100 queries
-        if( (tileMaxCol-tileMinCol) * (tileMaxRow-tileMinRow) > 500 ){
-            System.out.println("Too much tiles requiered to render layer at this scale.");
-            return;
-        }
-        
         //tiles to render         
         final Map<Point,MathTransform> queries = new HashMap<Point,MathTransform>();
         final Map hints = new HashMap(item.getUserProperties());
@@ -253,6 +255,12 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
         //paint tiles ----------------------------------------------------------
         if(queries.isEmpty()){
             //bypass if no queries
+            return;
+        } 
+        Integer maxTiles = (Integer)context2D.getRenderingHints().get(GO2Hints.KEY_MAX_TILES);
+        if(maxTiles==null) maxTiles = 500;
+        if( queries.size() > maxTiles) {
+            LOGGER.log(Level.INFO, "Too much tiles requiered to render layer at this scale.");
             return;
         }
         

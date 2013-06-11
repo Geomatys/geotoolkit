@@ -34,9 +34,12 @@ import org.antlr.runtime.tree.CommonTree;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.gui.swing.tree.Trees;
+import org.geotoolkit.temporal.object.ISODateParser;
 import org.geotoolkit.temporal.object.TemporalUtilities;
+import org.opengis.filter.And;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory2;
+import org.opengis.filter.Or;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Literal;
 import org.opengis.filter.expression.PropertyName;
@@ -99,21 +102,31 @@ public final class CQL {
     }
     
     public static Expression parseExpression(String cql) throws CQLException{
+        return parseExpression(cql, null);
+    }
+    
+    public static Expression parseExpression(String cql, FilterFactory2 factory) throws CQLException{
         final Object obj = compileExpression(cql);
         
         CommonTree tree = null;
         Expression result = null;
         if(obj instanceof CQLParser.expression_return){
             tree = (CommonTree)((CQLParser.expression_return)obj).tree;
-            final FilterFactory2 ff = (FilterFactory2) FactoryFinder
+            if(factory == null){
+                factory = (FilterFactory2) FactoryFinder
                     .getFilterFactory(new Hints(Hints.FILTER_FACTORY,FilterFactory2.class));
-            result = convertExpression(tree, ff);
+            }
+            result = convertExpression(tree, factory);
         }
         
         return result;
     }
     
     public static Filter parseFilter(String cql) throws CQLException{
+        return parseFilter(cql, null);
+    }
+    
+    public static Filter parseFilter(String cql, FilterFactory2 factory) throws CQLException{
         cql = cql.trim();
         
         //bypass parsing for inclusive filter
@@ -127,9 +140,11 @@ public final class CQL {
         Filter result = null;
         if(obj instanceof CQLParser.filter_return){
             tree = (CommonTree)((CQLParser.filter_return)obj).tree;
-            final FilterFactory2 ff = (FilterFactory2) FactoryFinder
+            if(factory == null){
+                factory = (FilterFactory2) FactoryFinder
                     .getFilterFactory(new Hints(Hints.FILTER_FACTORY,FilterFactory2.class));
-            result = convertFilter(tree, ff);
+            }
+            result = convertFilter(tree, factory);
         }
         
         return result;
@@ -197,7 +212,8 @@ public final class CQL {
         }else if(CQLParser.FLOAT == type){
             return ff.literal(Double.valueOf(tree.getText()));
         }else if(CQLParser.DATE == type){
-            return ff.literal(TemporalUtilities.parseDateSafe(tree.getText(),true));
+            final ISODateParser parser = new ISODateParser();
+            return ff.literal(parser.parseToDate(tree.getText()));
         }else if(CQLParser.DURATION_P == type || CQLParser.DURATION_T == type){
             return ff.literal(TemporalUtilities.getTimeInMillis(tree.getText()));
         }else if(CQLParser.UNARY == type){
@@ -253,51 +269,123 @@ public final class CQL {
         
         // GEOMETRY TYPES ------------------------------------------------------
         else if(CQLParser.POINT == type){
-            final CoordinateSequence cs = parseSequence((CommonTree)tree.getChild(0));
+            final CommonTree st = (CommonTree) tree.getChild(0);
+            final CoordinateSequence cs;
+            if(st.getType() == CQLParser.EMPTY){
+                cs = GF.getCoordinateSequenceFactory().create(new Coordinate[0]);
+            }else{
+                cs = parseSequence(st);
+            }
             final Geometry geom = GF.createPoint(cs);
             return ff.literal(geom);
         }else if(CQLParser.LINESTRING == type){
-            final CoordinateSequence cs = parseSequence((CommonTree)tree.getChild(0));
+            final CommonTree st = (CommonTree) tree.getChild(0);
+            final CoordinateSequence cs;
+            if(st.getType() == CQLParser.EMPTY){
+                cs = GF.getCoordinateSequenceFactory().create(new Coordinate[0]);
+            }else{
+                cs = parseSequence(st);
+            }
             final Geometry geom = GF.createLineString(cs);
             return ff.literal(geom);
         }else if(CQLParser.POLYGON == type){
-            final CommonTree serie = (CommonTree)tree.getChild(0);
-            final LinearRing contour = GF.createLinearRing(parseSequence((CommonTree)serie.getChild(0)));
-            final int n = serie.getChildCount();
-            final LinearRing[] holes = new LinearRing[n-1];
-            for(int i=1; i<n; i++){
-                holes[i-1] = GF.createLinearRing(parseSequence((CommonTree)serie.getChild(i)));
-            }
-            final Geometry geom = GF.createPolygon(contour,holes);
+            final CommonTree st = (CommonTree) tree.getChild(0);            
+            final Geometry geom;
+            if(st.getType() == CQLParser.EMPTY){
+                geom = GF.createPolygon(GF.createLinearRing(new Coordinate[0]),new LinearRing[0]);
+            }else{
+                final CommonTree serie = (CommonTree)tree.getChild(0);
+                final LinearRing contour = GF.createLinearRing(parseSequence((CommonTree)serie.getChild(0)));
+                final int n = serie.getChildCount();
+                final LinearRing[] holes = new LinearRing[n-1];
+                for(int i=1; i<n; i++){
+                    holes[i-1] = GF.createLinearRing(parseSequence((CommonTree)serie.getChild(i)));
+                }
+                geom = GF.createPolygon(contour,holes);
+            }            
             return ff.literal(geom);
         }else if(CQLParser.MPOINT == type){
-            final CoordinateSequence cs = parseSequence((CommonTree)tree.getChild(0));
+            final CommonTree st = (CommonTree) tree.getChild(0);
+            final CoordinateSequence cs;
+            if(st.getType() == CQLParser.EMPTY){
+                cs = GF.getCoordinateSequenceFactory().create(new Coordinate[0]);
+            }else{
+                cs = parseSequence(st);
+            }
             final Geometry geom = GF.createMultiPoint(cs);
             return ff.literal(geom);
         }else if(CQLParser.MLINESTRING == type){
-            final CommonTree series = (CommonTree) tree.getChild(0);
-            final int n = series.getChildCount();
-            final LineString[] strings = new LineString[n];
-            for(int i=0; i<n; i++){
-                strings[i] = GF.createLineString(parseSequence((CommonTree)series.getChild(i)));
+            final CommonTree st = (CommonTree) tree.getChild(0);            
+            final Geometry geom;
+            if(st.getType() == CQLParser.EMPTY){
+                geom = GF.createMultiLineString(new LineString[0]);
+            }else{
+                final CommonTree series = (CommonTree) tree.getChild(0);
+                final int n = series.getChildCount();
+                final LineString[] strings = new LineString[n];
+                for(int i=0; i<n; i++){
+                    strings[i] = GF.createLineString(parseSequence((CommonTree)series.getChild(i)));
+                }            
+                geom = GF.createMultiLineString(strings);
             }            
-            final Geometry geom = GF.createMultiLineString(strings);
             return ff.literal(geom);
         }else if(CQLParser.MPOLYGON == type){
-            final int n = tree.getChildCount();
-            final Polygon[] polygons = new Polygon[n];
-            for(int i=0; i<n; i++){
-                final CommonTree polyTree = (CommonTree) tree.getChild(i);
-                final LinearRing contour = GF.createLinearRing(parseSequence((CommonTree)polyTree.getChild(0)));
-                final int hn = polyTree.getChildCount();
-                final LinearRing[] holes = new LinearRing[hn-1];
-                for(int j=1; j<hn; j++){
-                    holes[j-1] = GF.createLinearRing(parseSequence((CommonTree)polyTree.getChild(j)));
-                }
-                final Polygon geom = GF.createPolygon(contour,holes);
-                polygons[i] = geom;
+            final CommonTree st = (CommonTree) tree.getChild(0);            
+            final Geometry geom;
+            if(st.getType() == CQLParser.EMPTY){
+                geom = GF.createMultiPolygon(new Polygon[0]);
+            }else{
+                final int n = tree.getChildCount();
+                final Polygon[] polygons = new Polygon[n];
+                for(int i=0; i<n; i++){
+                    final CommonTree polyTree = (CommonTree) tree.getChild(i);
+                    final LinearRing contour = GF.createLinearRing(parseSequence((CommonTree)polyTree.getChild(0)));
+                    final int hn = polyTree.getChildCount();
+                    final LinearRing[] holes = new LinearRing[hn-1];
+                    for(int j=1; j<hn; j++){
+                        holes[j-1] = GF.createLinearRing(parseSequence((CommonTree)polyTree.getChild(j)));
+                    }
+                    final Polygon poly = GF.createPolygon(contour,holes);
+                    polygons[i] = poly;
+                }            
+                geom = GF.createMultiPolygon(polygons);
+            }
+            return ff.literal(geom);
+        }else if(CQLParser.GEOMETRYCOLLECTION == type){
+            final CommonTree st = (CommonTree) tree.getChild(0);            
+            final Geometry geom;
+            if(st.getType() == CQLParser.EMPTY){
+                geom = GF.createGeometryCollection(new Geometry[0]);
+            }else{
+                final int n = tree.getChildCount();
+                final Geometry[] subs = new Geometry[n];
+                for(int i=0; i<n; i++){
+                    final CommonTree subTree = (CommonTree) tree.getChild(i);
+                    final Geometry sub = (Geometry)convertExpression(subTree, ff).evaluate(null);
+                    subs[i] = sub;
+                }            
+                geom = GF.createGeometryCollection(subs);
+            }
+            return ff.literal(geom);
+        }else if(CQLParser.ENVELOPE == type){
+            final CommonTree st = (CommonTree) tree.getChild(0);            
+            final Geometry geom;
+            if(st.getType() == CQLParser.EMPTY){
+                geom = GF.createPolygon(GF.createLinearRing(new Coordinate[0]),new LinearRing[0]);
+            }else{
+                final double west = Double.valueOf(tree.getChild(0).getText());
+                final double east = Double.valueOf(tree.getChild(1).getText());
+                final double north = Double.valueOf(tree.getChild(2).getText());
+                final double south = Double.valueOf(tree.getChild(3).getText());
+                final LinearRing contour = GF.createLinearRing(new Coordinate[]{
+                    new Coordinate(west, north),
+                    new Coordinate(east, north),
+                    new Coordinate(east, south),
+                    new Coordinate(west, south),
+                    new Coordinate(west, north)
+                });
+                geom = GF.createPolygon(contour,new LinearRing[0]);
             }            
-            final Geometry geom = GF.createMultiPolygon(polygons);
             return ff.literal(geom);
         }
         
@@ -351,10 +439,10 @@ public final class CQL {
             final CommonTree negateNode = (CommonTree)tree.getChild(1);
             if(CQLParser.NOT == negateNode.getType()){
                 final Expression right = convertExpression((CommonTree)tree.getChild(2), ff);
-                return ff.not(ff.like(left, right.evaluate(null, String.class)));
+                return ff.not(ff.like(left, right.evaluate(null, String.class), "%", "_", "\\"));
             }else{
                 final Expression right = convertExpression((CommonTree)tree.getChild(1), ff);
-                return ff.like(left, right.evaluate(null, String.class));
+                return ff.like(left, right.evaluate(null, String.class), "%", "_", "\\");
             }
             
         }else if(CQLParser.IS == type){
@@ -419,13 +507,25 @@ public final class CQL {
             final int nbchild = tree.getChildCount();
             final String logicType = tree.getChild(0).getText();
             
-            for(int i=1; i<nbchild; i++){
-                filters.add(convertFilter((CommonTree)tree.getChild(i), ff));
-            }
-            
             if("AND".equalsIgnoreCase(logicType)){
+                for(int i=1; i<nbchild; i++){
+                    final Filter f = convertFilter((CommonTree)tree.getChild(i), ff);
+                    if(f instanceof And){
+                        filters.addAll(((And)f).getChildren());
+                    }else{
+                        filters.add(f);
+                    }
+                }
                 return ff.and(filters);
             }else if("OR".equalsIgnoreCase(logicType)){
+                for(int i=1; i<nbchild; i++){
+                    final Filter f = convertFilter((CommonTree)tree.getChild(i), ff);
+                    if(f instanceof Or){
+                        filters.addAll(((Or)f).getChildren());
+                    }else{
+                        filters.add(f);
+                    }
+                }
                 return ff.or(filters);
             }
             
@@ -433,14 +533,24 @@ public final class CQL {
             final List<Filter> filters = new ArrayList<Filter>();
             final int nbchild = tree.getChildCount();
             for(int i=0; i<nbchild; i++){
-                filters.add(convertFilter((CommonTree)tree.getChild(i), ff));
+                final Filter f = convertFilter((CommonTree)tree.getChild(i), ff);
+                if(f instanceof And){
+                    filters.addAll(((And)f).getChildren());
+                }else{
+                    filters.add(f);
+                }
             }
             return ff.and(filters);
         }else if(CQLParser.OR == type){
             final List<Filter> filters = new ArrayList<Filter>();
             final int nbchild = tree.getChildCount();
             for(int i=0; i<nbchild; i++){
-                filters.add(convertFilter((CommonTree)tree.getChild(i), ff));
+                final Filter f = convertFilter((CommonTree)tree.getChild(i), ff);
+                if(f instanceof Or){
+                    filters.addAll(((Or)f).getChildren());
+                }else{
+                    filters.add(f);
+                }
             }
             return ff.or(filters);
         }else if(CQLParser.NOT == type){
@@ -460,12 +570,14 @@ public final class CQL {
         }else if(CQLParser.BEYOND == type){
             final Expression exp1 = convertExpression((CommonTree)tree.getChild(0), ff);
             final Expression exp2 = convertExpression((CommonTree)tree.getChild(1), ff);  
-            return ff.beyond(exp1,exp2,0,"");
+            final double distance = Double.valueOf(tree.getChild(2).getText());
+            final String unit = tree.getChild(3).getText();
+            return ff.beyond(exp1,exp2,distance,unit);
         }else if(CQLParser.CONTAINS == type){
             final Expression exp1 = convertExpression((CommonTree)tree.getChild(0), ff);
             final Expression exp2 = convertExpression((CommonTree)tree.getChild(1), ff);  
             return ff.contains(exp1,exp2);
-        }else if(CQLParser.CROSS == type){
+        }else if(CQLParser.CROSSES == type){
             final Expression exp1 = convertExpression((CommonTree)tree.getChild(0), ff);
             final Expression exp2 = convertExpression((CommonTree)tree.getChild(1), ff);  
             return ff.crosses(exp1,exp2);
@@ -475,21 +587,23 @@ public final class CQL {
             return ff.disjoint(exp1,exp2);
         }else if(CQLParser.DWITHIN == type){
             final Expression exp1 = convertExpression((CommonTree)tree.getChild(0), ff);
-            final Expression exp2 = convertExpression((CommonTree)tree.getChild(1), ff);  
-            return ff.dwithin(exp1,exp2,0,"");
+            final Expression exp2 = convertExpression((CommonTree)tree.getChild(1), ff);
+            final double distance = Double.valueOf(tree.getChild(2).getText());
+            final String unit = tree.getChild(3).getText();
+            return ff.dwithin(exp1,exp2,distance,unit);
         }else if(CQLParser.EQUALS == type){
             final Expression exp1 = convertExpression((CommonTree)tree.getChild(0), ff);
             final Expression exp2 = convertExpression((CommonTree)tree.getChild(1), ff);  
             return ff.equal(exp1,exp2);
-        }else if(CQLParser.INTERSECT == type){
+        }else if(CQLParser.INTERSECTS == type){
             final Expression exp1 = convertExpression((CommonTree)tree.getChild(0), ff);
             final Expression exp2 = convertExpression((CommonTree)tree.getChild(1), ff);  
             return ff.intersects(exp1,exp2);
-        }else if(CQLParser.OVERLAP == type){
+        }else if(CQLParser.OVERLAPS == type){
             final Expression exp1 = convertExpression((CommonTree)tree.getChild(0), ff);
             final Expression exp2 = convertExpression((CommonTree)tree.getChild(1), ff);  
             return ff.overlaps(exp1,exp2);
-        }else if(CQLParser.TOUCH == type){
+        }else if(CQLParser.TOUCHES == type){
             final Expression exp1 = convertExpression((CommonTree)tree.getChild(0), ff);
             final Expression exp2 = convertExpression((CommonTree)tree.getChild(1), ff);  
             return ff.touches(exp1,exp2);

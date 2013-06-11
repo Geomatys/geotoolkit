@@ -18,9 +18,10 @@
 package org.geotoolkit.data.query;
 
 import java.util.Arrays;
+import java.util.Date;
 import org.geotoolkit.factory.Hints;
-import static org.geotoolkit.util.ArgumentChecks.*;
-import org.geotoolkit.util.NullArgumentException;
+import static org.apache.sis.util.ArgumentChecks.*;
+import org.apache.sis.util.NullArgumentException;
 import org.opengis.feature.type.Name;
 import org.opengis.filter.Filter;
 import org.opengis.filter.sort.SortBy;
@@ -44,6 +45,7 @@ class DefaultQuery implements Query {
     private final Hints hints;
     private final CoordinateReferenceSystem crs;
     private final double[] resolution;
+    private final Object version;
 
     /**
      * Query with typeName.
@@ -68,12 +70,13 @@ class DefaultQuery implements Query {
                 0,
                 null,
                 null,
+                null,
                 null);
     }
-
+    
     DefaultQuery(final Source source, final Filter filter, final Name[] attributs, final SortBy[] sort,
             final CoordinateReferenceSystem crs, final int startIndex, final Integer MaxFeature, 
-            final double[] resolution, final Hints hints){
+            final double[] resolution, final Object version, final Hints hints){
 
         ensureNonNull("query source", source);
         if(filter == null){
@@ -88,6 +91,7 @@ class DefaultQuery implements Query {
         this.startIndex = startIndex;
         this.maxFeatures = MaxFeature;
         this.resolution = resolution;
+        this.version = version;
 
         if(hints == null){
             this.hints = new Hints();
@@ -112,6 +116,7 @@ class DefaultQuery implements Query {
         this.hints = null;
         this.crs = null;
         this.resolution = null;
+        this.version = null;
     }
 
     /**
@@ -127,6 +132,7 @@ class DefaultQuery implements Query {
              query.getStartIndex(),
              query.getMaxFeatures(),
              (query.getResolution()==null)?null:query.getResolution().clone(),
+             (query.getVersionDate()!=null)? query.getVersionDate() : query.getVersionLabel(),
              query.getHints());
     }
 
@@ -288,6 +294,28 @@ class DefaultQuery implements Query {
         return resolution;
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public String getVersionLabel() {
+        if(version instanceof String){
+            return (String)version;
+        }
+        return null;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public Date getVersionDate() {
+        if(version instanceof Date){
+            return (Date)version;
+        }
+        return null;
+    }
+    
     /**
      * {@inheritDoc }
      */

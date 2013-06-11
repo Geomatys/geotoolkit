@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.wcs.xml.SupportedInterpolations;
 
 
 /**
@@ -53,7 +54,7 @@ import javax.xml.bind.annotation.XmlType;
     "_default"
 })
 @XmlRootElement(name = "InterpolationMethods")
-public class InterpolationMethods {
+public class InterpolationMethods implements SupportedInterpolations {
 
     @XmlElement(name = "InterpolationMethod", required = true)
     private List<InterpolationMethodType> interpolationMethod = new ArrayList<InterpolationMethodType>();

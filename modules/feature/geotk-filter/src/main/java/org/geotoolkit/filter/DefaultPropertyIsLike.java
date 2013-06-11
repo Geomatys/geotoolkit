@@ -29,7 +29,7 @@ import org.opengis.filter.FilterVisitor;
 import org.opengis.filter.PropertyIsLike;
 import org.opengis.filter.expression.Expression;
 
-import static org.geotoolkit.util.ArgumentChecks.*;
+import static org.apache.sis.util.ArgumentChecks.*;
 
 /**
  * Defines a like filter, which checks to see if an attribute matches a REGEXP.

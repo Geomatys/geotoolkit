@@ -18,7 +18,7 @@
 package org.geotoolkit.data.query;
 
 import org.geotoolkit.data.session.Session;
-import static org.geotoolkit.util.ArgumentChecks.*;
+import static org.apache.sis.util.ArgumentChecks.*;
 import org.opengis.feature.type.Name;
 
 /**

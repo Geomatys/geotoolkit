@@ -33,8 +33,8 @@ public class DefaultTemporalOperators implements TemporalOperators {
     private final Map<String,TemporalOperator> operators = new HashMap<String, TemporalOperator>();
 
     public DefaultTemporalOperators(final TemporalOperator[] operators) {
-        if(operators == null || operators.length == 0){
-            throw new IllegalArgumentException("Functions must not be null or empty");
+        if(operators == null){
+            throw new IllegalArgumentException("Operators must not be null");
         }
         for(TemporalOperator op : operators){
             this.operators.put(op.getName(), op);

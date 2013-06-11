@@ -44,7 +44,7 @@ import org.geotoolkit.referencing.EPSGWriter;
 import org.geotoolkit.referencing.datum.AbstractDatum;
 import org.geotoolkit.referencing.factory.IdentifiedObjectFinder;
 import org.geotoolkit.temporal.object.TemporalUtilities;
-import org.geotoolkit.util.ComparisonMode;
+import org.apache.sis.util.ComparisonMode;
 import org.opengis.metadata.extent.Extent;
 import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.crs.SingleCRS;
@@ -468,9 +468,11 @@ public class PGEPSGWriter implements EPSGWriter {
             cnx = source.getConnection();
             
             //find similar
-            final Integer similar = findSimilar(cnx, FIND_DATUM, datum_type,origin_description,ellipsoid_code,prime_meridian_code);
-            if(similar != null){ return similar; }
-                        
+            if (!(candidate instanceof VerticalDatum)) {
+                final Integer similar = findSimilar(cnx, FIND_DATUM, datum_type,origin_description,ellipsoid_code,prime_meridian_code);
+                if(similar != null){ return similar; }
+            }
+
             final Integer area_of_use_code = getOrCreateArea(candidate.getDomainOfValidity());
             
             cnx.setReadOnly(false);

@@ -23,7 +23,6 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.AbstractCurveSegment;
-import org.geotoolkit.util.Utilities;
 
 
 /**

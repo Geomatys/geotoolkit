@@ -336,7 +336,7 @@ public class FilterToCQLVisitor implements FilterVisitor, ExpressionVisitor {
     @Override
     public Object visit(final Crosses filter, final Object o) {
         final StringBuilder sb = toStringBuilder(o);
-        sb.append("CROSS(");
+        sb.append("CROSSES(");
         filter.getExpression1().accept(this,sb);
         sb.append(',');
         filter.getExpression2().accept(this,sb);
@@ -380,7 +380,7 @@ public class FilterToCQLVisitor implements FilterVisitor, ExpressionVisitor {
     @Override
     public Object visit(final Intersects filter, final Object o) {
         final StringBuilder sb = toStringBuilder(o);
-        sb.append("INTERSECT(");
+        sb.append("INTERSECTS(");
         filter.getExpression1().accept(this,sb);
         sb.append(',');
         filter.getExpression2().accept(this,sb);
@@ -391,7 +391,7 @@ public class FilterToCQLVisitor implements FilterVisitor, ExpressionVisitor {
     @Override
     public Object visit(final Overlaps filter, final Object o) {
         final StringBuilder sb = toStringBuilder(o);
-        sb.append("OVERLAP(");
+        sb.append("OVERLAPS(");
         filter.getExpression1().accept(this,sb);
         sb.append(',');
         filter.getExpression2().accept(this,sb);
@@ -402,7 +402,7 @@ public class FilterToCQLVisitor implements FilterVisitor, ExpressionVisitor {
     @Override
     public Object visit(final Touches filter, final Object o) {
         final StringBuilder sb = toStringBuilder(o);
-        sb.append("TOUCH(");
+        sb.append("TOUCHES(");
         filter.getExpression1().accept(this,sb);
         sb.append(',');
         filter.getExpression2().accept(this,sb);

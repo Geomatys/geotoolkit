@@ -10,7 +10,7 @@
     <parent>
         <groupId>org.geotoolkit.pending</groupId>
         <artifactId>jaxb-xml-binding</artifactId>
-        <version>3.x-SNAPSHOT</version>
+        <version>4.x-SNAPSHOT</version>
     </parent>
 
 
@@ -68,6 +68,9 @@
     </developers>
 
 
+    <properties>
+        <testSuit>**/WPSConverterTestSuit.class</testSuit>
+    </properties>
 
   <!--
     Required dependencies for building. These dependencies will be included
@@ -89,11 +92,15 @@
             <artifactId>geotk-xml-mathml</artifactId>
             <version>${project.version}</version>
         </dependency>
-    
-    <!-- 
-        Provided dependencies for converters 
-    -->
-    
+
+        <dependency>
+            <groupId>net.sf.json-lib</groupId>
+            <artifactId>json-lib</artifactId>
+            <version>2.4</version>
+            <classifier>jdk15</classifier>
+        </dependency>
+        
+        <!-- Provided dependencies for converters -->
         <dependency>
             <groupId>org.geotoolkit.pending</groupId>
             <artifactId>geotk-jaxp-core</artifactId>
@@ -118,11 +125,26 @@
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
-           <dependency>
+        <dependency>
             <groupId>org.geotoolkit.pending</groupId>
             <artifactId>geotk-coverageio-geotiff</artifactId>
             <version>${project.version}</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
-
+    
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <includes>
+                        <include>${testSuit}</include>
+                    </includes>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+    
 </project>

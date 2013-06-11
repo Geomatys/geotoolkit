@@ -17,6 +17,7 @@
 package org.geotoolkit.observation.xml;
 
 import org.opengis.observation.Observation;
+import org.opengis.temporal.Period;
 import org.opengis.temporal.TemporalGeometricPrimitive;
 
 /**
@@ -25,11 +26,19 @@ import org.opengis.temporal.TemporalGeometricPrimitive;
  */
 public interface AbstractObservation extends Observation {
  
+    void setId(final String id);
+    
     void setName(final String name);
     
     void setProcedure(final String procedureID);
     
+    void setResult(final Object result);
+    
     void emptySamplingTime();
+    
+    void setSamplingTimePeriod(final Period period);
+    
+    void extendSamplingTime(final String newEndBound);
     
     boolean matchTemplate(final Observation template);
     

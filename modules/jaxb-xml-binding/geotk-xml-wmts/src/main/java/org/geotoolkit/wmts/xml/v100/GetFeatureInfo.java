@@ -24,7 +24,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ows.xml.RequestBase;
-import org.geotoolkit.util.Version;
+import org.apache.sis.util.Version;
 
 
 /**

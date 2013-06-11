@@ -21,7 +21,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.util.ComparisonMode;
+import org.apache.sis.util.ComparisonMode;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.UnmodifiableGeometryException;
 import org.opengis.geometry.coordinate.Position;

@@ -17,22 +17,25 @@
 package org.geotoolkit.wps.converters.inputs.references;
 
 import java.awt.image.RenderedImage;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.util.Map;
+import java.util.logging.Level;
 import javax.imageio.ImageIO;
-import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
-import org.geotoolkit.image.io.XImageIO;
+import net.iharder.Base64;
+import org.geotoolkit.util.FileUtilities;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
+import org.geotoolkit.wps.io.WPSEncoding;
 import org.geotoolkit.wps.xml.v100.ReferenceType;
 
 /**
  * 
  * @author Quentin Boileau (Geomatys).
  */
-public class ReferenceToRenderedImageConverter extends AbstractReferenceInputConverter {
+public class ReferenceToRenderedImageConverter extends AbstractReferenceInputConverter<RenderedImage> {
 
     private static ReferenceToRenderedImageConverter INSTANCE;
 
@@ -47,7 +50,7 @@ public class ReferenceToRenderedImageConverter extends AbstractReferenceInputCon
     }
 
     @Override
-    public Class<? extends Object> getTargetClass() {
+    public Class<? extends RenderedImage> getTargetClass() {
         return RenderedImage.class;
     }
 
@@ -61,13 +64,31 @@ public class ReferenceToRenderedImageConverter extends AbstractReferenceInputCon
 
         final InputStream stream = getInputStreamFromReference(source);
 
+        final String encoding = (String)params.get(ENCODING);
+        
         ImageInputStream imageStream = null;
         try {
-
-            imageStream = ImageIO.createImageInputStream(stream);
-            final ImageReader imageReader = XImageIO.getReader(imageStream, true, true);
-            //read the first image.
-            return imageReader.read(0);
+            
+            //decode form base64 stream
+            if (encoding != null && encoding.equals(WPSEncoding.BASE64.getValue())) {
+                final String encodedImage = FileUtilities.getStringFromStream(stream);
+                final byte[] byteData = Base64.decode(encodedImage.trim());
+                if (byteData != null && byteData.length > 0) {
+                    final InputStream is = new ByteArrayInputStream(byteData);
+                    if (is != null) {
+                        imageStream = ImageIO.createImageInputStream(is);
+                    }
+                }
+                
+            } else {
+                imageStream = ImageIO.createImageInputStream(stream);
+            }
+            
+            if (imageStream != null) {
+                 return ImageIO.read(imageStream);
+            } else {
+                throw new NonconvertibleObjectException("Error during image stream acquisition.");
+            }
             
         } catch (MalformedURLException ex) {
             throw new NonconvertibleObjectException("Reference image invalid URL : Malformed url", ex);
@@ -78,7 +99,7 @@ public class ReferenceToRenderedImageConverter extends AbstractReferenceInputCon
                 try {
                     imageStream.close();
                 } catch (IOException ex) {
-                    throw new NonconvertibleObjectException("Error during release the image stream.", ex);
+                    LOGGER.log(Level.WARNING, "Error during release the image stream.", ex);
                 }
             }
         }

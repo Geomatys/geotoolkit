@@ -20,6 +20,7 @@ package org.geotoolkit.sos.xml.v200;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.sos.xml.GetResultResponse;
 import org.geotoolkit.swes.xml.v200.ExtensibleResponseType;
@@ -48,6 +49,7 @@ import org.geotoolkit.swes.xml.v200.ExtensibleResponseType;
 @XmlType(name = "GetResultResponseType", propOrder = {
     "resultValues"
 })
+@XmlRootElement(name="GetResultResponse")
 public class GetResultResponseType extends ExtensibleResponseType implements GetResultResponse {
 
     @XmlElement(required = true)

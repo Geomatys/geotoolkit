@@ -97,7 +97,6 @@ public class TimeGeometricPrimitivePropertyType {
      * 
      */
     public TimeGeometricPrimitivePropertyType(final AbstractTimeGeometricPrimitiveType time) {
-        
         if (time instanceof TimePeriodType) {
             this.timePeriod = (TimePeriodType) time;
         } else if (time instanceof TimeInstantType) {
@@ -110,12 +109,13 @@ public class TimeGeometricPrimitivePropertyType {
      * Gets the value of the timeGeometricPrimitive property.
       */
     public AbstractTimeGeometricPrimitiveType getTimeGeometricPrimitive() {
-        if (timeGeometricPrimitive != null)
+        if (timeGeometricPrimitive != null) {
             return timeGeometricPrimitive;
-        else if (timeInstant != null)
+        } else if (timeInstant != null) {
             return timeInstant;
-        else if (timePeriod != null)
+        } else if (timePeriod != null) {
             return timePeriod;
+        }
         return null;
     }
 
@@ -242,13 +242,15 @@ public class TimeGeometricPrimitivePropertyType {
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder();
-        if (timeGeometricPrimitive != null)
+        if (timeGeometricPrimitive != null) {
             s.append(timeGeometricPrimitive).append('\n');
-        if (timeInstant != null)
+        }
+        if (timeInstant != null) {
             s.append(timeInstant).append('\n');
-        if (timePeriod != null)
+        }
+        if (timePeriod != null) {
             s.append(timePeriod).append('\n');
-        
+        }
         if(actuate != null) {
             s.append("actuate=").append(actuate).append('\n');
         }

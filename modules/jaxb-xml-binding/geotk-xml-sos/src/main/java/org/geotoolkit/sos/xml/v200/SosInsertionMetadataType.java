@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.sos.xml.SosInsertionMetadata;
 import org.geotoolkit.swes.xml.v200.InsertionMetadataType;
 
 
@@ -52,7 +53,7 @@ import org.geotoolkit.swes.xml.v200.InsertionMetadataType;
     "observationType",
     "featureOfInterestType"
 })
-public class SosInsertionMetadataType extends InsertionMetadataType {
+public class SosInsertionMetadataType extends InsertionMetadataType implements SosInsertionMetadata {
 
     @XmlElement(required = true)
     @XmlSchemaType(name = "anyURI")
@@ -64,11 +65,8 @@ public class SosInsertionMetadataType extends InsertionMetadataType {
     /**
      * Gets the value of the observationType property.
      * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link String }
-     * 
      */
+    @Override
     public List<String> getObservationType() {
         if (observationType == null) {
             observationType = new ArrayList<String>();
@@ -78,9 +76,6 @@ public class SosInsertionMetadataType extends InsertionMetadataType {
 
     /**
      * Gets the value of the featureOfInterestType property.
-     * 
-     * Objects of the following type(s) are allowed in the list
-     * {@link String }
      * 
      */
     public List<String> getFeatureOfInterestType() {

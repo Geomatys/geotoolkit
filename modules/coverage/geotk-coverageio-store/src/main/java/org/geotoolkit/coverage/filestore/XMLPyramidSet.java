@@ -34,7 +34,7 @@ import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.storage.DataStoreException;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 import org.geotoolkit.xml.MarshallerPool;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;

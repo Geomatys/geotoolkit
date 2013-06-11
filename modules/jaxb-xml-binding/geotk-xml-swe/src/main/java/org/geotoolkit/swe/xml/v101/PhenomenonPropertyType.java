@@ -116,7 +116,7 @@ public class PhenomenonPropertyType implements PhenomenonProperty {
         } else if (observedProperty instanceof PhenomenonType) {
             this.phenomenon    =  observedProperty;
         } else {
-            throw new IllegalArgumentException("only phenomenonType, CompositePhenomenonType and compoundPhenomenonType are allowed");
+            throw new IllegalArgumentException("only phenomenonType, CompositePhenomenonType and compoundPhenomenonType are allowed was:" + observedProperty);
         }
     }
     

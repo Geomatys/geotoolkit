@@ -24,7 +24,7 @@ import org.geotoolkit.data.FeatureStoreListener;
 import org.geotoolkit.data.FeatureStoreManagementEvent;
 import org.geotoolkit.storage.AbstractStorage;
 import org.geotoolkit.storage.DataStoreException;
-import static org.geotoolkit.util.ArgumentChecks.*;
+import static org.apache.sis.util.ArgumentChecks.*;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.Name;
 import org.opengis.filter.Filter;

@@ -20,7 +20,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import org.opengis.feature.type.FeatureType;
 
-import static org.geotoolkit.util.ArgumentChecks.*;
+import static org.apache.sis.util.ArgumentChecks.*;
 
 /**
  * Simple implementation of a feature id generator which

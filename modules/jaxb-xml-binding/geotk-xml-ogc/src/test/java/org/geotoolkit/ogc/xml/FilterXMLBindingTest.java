@@ -43,6 +43,7 @@ import org.geotoolkit.ogc.xml.v110.SortPropertyType;
 import org.geotoolkit.ogc.xml.v200.BBOXType;
 import org.geotoolkit.ogc.xml.v200.ContainsType;
 import org.geotoolkit.ogc.xml.v200.TimeAfterType;
+import org.geotoolkit.util.StringUtilities;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.xml.MarshallerPool;
 
@@ -112,15 +113,11 @@ public class FilterXMLBindingTest {
 
         String result = sw.toString();
         //we remove the xmlmns
-        result = result.replace(" xmlns:xlink=\"http://www.w3.org/1999/xlink\"", "");
-        result = result.replace(" xmlns:gml=\"http://www.opengis.net/gml\"", "");
-        result = result.replace(" xmlns:ogc=\"http://www.opengis.net/ogc\"", "");
-        result = result.replace(" xmlns:fes=\"http://www.opengis.net/fes/2.0\"", "");
-        result = result.replace(" xmlns:ows=\"http://www.opengis.net/ows/1.1\"","");
-
+        result = StringUtilities.removeXmlns(result);
+        
         String expResult =
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"     + '\n' +
-        "<ogc:Filter>"                                                      + '\n' +
+        "<ogc:Filter >"                                                      + '\n' +
         "    <ogc:Overlaps>"                                                + '\n' +
         "        <ogc:PropertyName>boundingBox</ogc:PropertyName>"          + '\n' +
         "        <gml:Envelope srsName=\"EPSG:4326\" gml:id=\"env-id\">"    + '\n' +

@@ -127,7 +127,7 @@ public class JTextSymbolizerPane extends StyleElementEditor<TextSymbolizer> {
         guiHalo = new JHaloPane();
         guiLabelPlacement = new JLabelPlacementPane();
 
-        jLabel5.setText("Couleur :");
+        jLabel5.setText(MessageBundle.getString("color")); // NOI18N
 
         jLabel10.setText(MessageBundle.getString("label")); // NOI18N
 
@@ -169,7 +169,7 @@ public class JTextSymbolizerPane extends StyleElementEditor<TextSymbolizer> {
                                 .addComponent(jLabel5)
                                 .addPreferredGap(ComponentPlacement.RELATED)
                                 .addComponent(guiFill, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                                .addGap(0, 500, Short.MAX_VALUE)))
+                                .addGap(0, 516, Short.MAX_VALUE)))
                         .addContainerGap())
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(Alignment.LEADING)
@@ -211,7 +211,7 @@ public class JTextSymbolizerPane extends StyleElementEditor<TextSymbolizer> {
                 JTextSymbolizerPane.this.propertyChange(evt);
             }
         });
-        jTabbedPane1.addTab("Position", guiLabelPlacement);
+        jTabbedPane1.addTab(MessageBundle.getString("position"), guiLabelPlacement); // NOI18N
 
         GroupLayout layout = new GroupLayout(this);
         this.setLayout(layout);
@@ -223,6 +223,8 @@ public class JTextSymbolizerPane extends StyleElementEditor<TextSymbolizer> {
             layout.createParallelGroup(Alignment.LEADING)
             .addComponent(jTabbedPane1)
         );
+
+        jTabbedPane1.getAccessibleContext().setAccessibleName(MessageBundle.getString("libPoliceStyle")); // NOI18N
     }// </editor-fold>//GEN-END:initComponents
 
     private void propertyChange(PropertyChangeEvent evt) {//GEN-FIRST:event_propertyChange

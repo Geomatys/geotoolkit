@@ -14,7 +14,7 @@
   <parent>
     <groupId>org.geotoolkit.pending</groupId>
     <artifactId>modules</artifactId>
-    <version>3.x-SNAPSHOT</version>
+    <version>4.x-SNAPSHOT</version>
   </parent>
 
 
@@ -104,6 +104,10 @@
     <module>geotk-om</module>
     <module>geotk-osm</module>
     <module>geotk-sensorml</module>
+    <module>geotk-geojson</module>
+    <module>geotk-db-core</module>
+    <module>geotk-db-postgres</module>
+    <module>geotk-s57</module>
   </modules>
 
 </project>

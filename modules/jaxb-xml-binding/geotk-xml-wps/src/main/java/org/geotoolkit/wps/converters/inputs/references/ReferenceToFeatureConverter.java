@@ -37,7 +37,7 @@ import org.opengis.util.FactoryException;
  *
  * @author Quentin Boileau (Geomatys).
  */
-public final class ReferenceToFeatureConverter extends AbstractReferenceInputConverter {
+public final class ReferenceToFeatureConverter extends AbstractReferenceInputConverter<Feature> {
 
     private static ReferenceToFeatureConverter INSTANCE;
 
@@ -52,12 +52,12 @@ public final class ReferenceToFeatureConverter extends AbstractReferenceInputCon
     }
 
     @Override
-    public Class<? extends Object> getTargetClass() {
+    public Class<? extends Feature> getTargetClass() {
         return Feature.class;
     }
     
     @Override
-    public Object convert(ReferenceType source, final Map<String, Object> params) throws NonconvertibleObjectException {
+    public Feature convert(ReferenceType source, final Map<String, Object> params) throws NonconvertibleObjectException {
         
         final String mime = source.getMimeType() != null ? source.getMimeType() : WPSMimeType.TEXT_XML.val();
         final InputStream stream = getInputStreamFromReference(source);

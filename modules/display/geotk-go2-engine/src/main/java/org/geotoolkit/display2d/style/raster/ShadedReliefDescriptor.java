@@ -21,7 +21,7 @@ import java.awt.image.renderable.ParameterBlock;
 import javax.media.jai.OperationDescriptorImpl;
 import javax.media.jai.registry.RenderedRegistryMode;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 
 /**
  * Description of the shading operation.
@@ -76,7 +76,7 @@ public class ShadedReliefDescriptor extends OperationDescriptorImpl {
 
             final Object source = param.getSource(0);
             if (!(source instanceof RenderedImage)) {
-                message.append(Errors.format(Errors.Keys.ILLEGAL_PARAMETER_TYPE_$2,
+                message.append(Errors.format(Errors.Keys.ILLEGAL_PARAMETER_TYPE_2,
                                "source"+0, Classes.getClass(source)));
                 return false;
             }

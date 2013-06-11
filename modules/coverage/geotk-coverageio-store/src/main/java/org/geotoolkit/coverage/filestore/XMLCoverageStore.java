@@ -43,7 +43,7 @@ public class XMLCoverageStore extends AbstractCoverageStore{
 
     private final File root;
     private final URL rootPath;
-    private final Map<Name,XMlCoverageReference> names = new HashMap<Name, XMlCoverageReference>();
+    private final Map<Name,XMLCoverageReference> names = new HashMap<Name, XMLCoverageReference>();
     
     XMLCoverageStore(ParameterValueGroup params) throws URISyntaxException{
         super(params);
@@ -77,7 +77,7 @@ public class XMLCoverageStore extends AbstractCoverageStore{
                 try {
                     final XMLPyramidSet set = XMLPyramidSet.read(f);
                     final Name name = new DefaultName(getDefaultNamespace(), set.getId());
-                    final XMlCoverageReference ref = new XMlCoverageReference(this,name,set);
+                    final XMLCoverageReference ref = new XMLCoverageReference(this,name,set);
                     names.put(name, ref);
                 } catch (JAXBException ex) {
                     getLogger().log(Level.FINE, "file is not a pyramid : {0}", f.getPath());
@@ -110,7 +110,7 @@ public class XMLCoverageStore extends AbstractCoverageStore{
         
         final XMLPyramidSet set = new XMLPyramidSet();
         set.initialize(new File(root, name.getLocalPart()+".xml"));
-        final XMlCoverageReference ref = new XMlCoverageReference(this,name,set);
+        final XMLCoverageReference ref = new XMLCoverageReference(this,name,set);
         names.put(name, ref);
         ref.save();
         return ref;

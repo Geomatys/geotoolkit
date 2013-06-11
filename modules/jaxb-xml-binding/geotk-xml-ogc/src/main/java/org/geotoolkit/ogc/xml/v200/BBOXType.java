@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.logging.Level;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -29,10 +30,14 @@ import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlMixed;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.gml.xml.Envelope;
 import org.geotoolkit.gml.xml.v321.DirectPositionType;
 import org.geotoolkit.gml.xml.v321.EnvelopeType;
 import org.geotoolkit.util.Utilities;
 import org.opengis.filter.FilterVisitor;
+import org.opengis.filter.expression.Expression;
+import org.opengis.filter.spatial.BBOX;
+import org.opengis.geometry.DirectPosition;
 
 
 /**
@@ -60,8 +65,10 @@ import org.opengis.filter.FilterVisitor;
     "expression",
     "any"
 })
-public class BBOXType extends SpatialOpsType {
+public class BBOXType extends SpatialOpsType implements BBOX {
 
+    private static final String DEFAULT_SRS = "EPSG:4326";
+    
     @XmlElementRef(name = "expression", namespace = "http://www.opengis.net/fes/2.0", type = JAXBElement.class)
     private JAXBElement<?> expression;
 
@@ -102,6 +109,38 @@ public class BBOXType extends SpatialOpsType {
         this.any = Arrays.asList(any);
     }
 
+    public BBOXType(final BBOXType that) {
+        if (that != null) {
+            if (that.expression != null) {
+                final ObjectFactory factory = new ObjectFactory();
+                final Object exp = that.expression.getValue();
+                if (exp instanceof String) {
+                    this.expression = factory.createValueReference((String)exp);
+                } else if (exp instanceof LiteralType) {
+                    final LiteralType lit = new LiteralType((LiteralType)exp);
+                    this.expression = factory.createLiteral(lit);
+                } else if (exp instanceof FunctionType) {
+                    final FunctionType func = new FunctionType((FunctionType)exp);
+                    this.expression = factory.createFunction(func);
+                } else {
+                    throw new IllegalArgumentException("Unexpected type for expression in PropertyIsBetweenType:" + expression.getClass().getName());
+                }
+            }
+            
+            if (that.any != null) {
+                this.any = new ArrayList<Object>();
+                for (Object obj : that.any) {
+                    if (obj instanceof EnvelopeType) {
+                        this.any.add(new EnvelopeType((EnvelopeType)obj));
+                    } else {
+                        this.any.add(obj);
+                        LOGGER.log(Level.INFO, "Unable to clone:{0}", obj.getClass().getName());
+                    }
+                }
+            }
+        }
+    }
+    
     /**
      * Gets the value of the expression property.
      *
@@ -117,6 +156,7 @@ public class BBOXType extends SpatialOpsType {
         return expression;
     }
 
+    @Override
     public String getPropertyName() {
         if (expression != null && expression.getValue() instanceof String) {
             return (String)expression.getValue();
@@ -200,6 +240,84 @@ public class BBOXType extends SpatialOpsType {
     }
 
     @Override
+    public Expression getExpression1() {
+        return new InternalPropertyName(getPropertyName());
+    }
+
+    @Override
+    public Expression getExpression2() {
+        if (this.any != null && !this.any.isEmpty()) {
+            return new LiteralType(this.any.get(0));
+        }
+        return null;
+    }
+    
+    @Override
+    public SpatialOpsType getClone() {
+        return new BBOXType(this);
+    }
+    
+    @Override
+    public String getSRS() {
+        if (any != null && any.get(0) instanceof Envelope) {
+            final Envelope env = (Envelope) any.get(0);
+            return (env.getSrsName() != null) ? env.getSrsName() : DEFAULT_SRS;
+        }
+        return null;
+    }
+
+    @Override
+    public double getMinX() {
+        DirectPosition pos = null;
+        if (any != null && any.get(0) instanceof Envelope) {
+            final Envelope env = (Envelope) any.get(0);
+            pos = env.getLowerCorner();
+        }
+        if (pos != null && pos.getCoordinate() != null && pos.getCoordinate().length > 1) {
+            return pos.getCoordinate()[0];
+        }
+        return -1;
+    }
+
+    @Override
+    public double getMinY() {
+       DirectPosition pos = null;
+        if (any != null && any.get(0) instanceof Envelope) {
+            final Envelope env = (Envelope) any.get(0);
+            pos = env.getLowerCorner();
+        }
+        if (pos != null && pos.getCoordinate() != null && pos.getCoordinate().length > 1) {
+            return pos.getCoordinate()[1];
+        }
+        return -1;
+    }
+
+    @Override
+    public double getMaxX() {
+        DirectPosition pos = null;
+        if (any != null && any.get(0) instanceof Envelope) {
+            final Envelope env = (Envelope) any.get(0);
+            pos = env.getUpperCorner();
+        }
+        if (pos != null && pos.getCoordinate() != null && pos.getCoordinate().length > 1) {
+            return pos.getCoordinate()[0];
+        }
+        return -1;
+    }
+
+    @Override
+    public double getMaxY() {
+        DirectPosition pos = null;
+        if (any != null && any.get(0) instanceof Envelope) {
+            final Envelope env = (Envelope) any.get(0);
+            pos = env.getUpperCorner();
+        }
+        if (pos != null && pos.getCoordinate() != null && pos.getCoordinate().length > 1) {
+            return pos.getCoordinate()[1];
+        }
+        return -1;
+    }
+    @Override
     public String toString() {
         final StringBuilder s = new StringBuilder("[BBOXType]");
         if (expression != null) {
@@ -260,10 +378,5 @@ public class BBOXType extends SpatialOpsType {
         hash = 97 * hash + (this.expression != null ? this.expression.hashCode() : 0);
         hash = 97 * hash + (this.any != null ? this.any.hashCode() : 0);
         return hash;
-    }
-
-    @Override
-    public SpatialOpsType getClone() {
-        return new BBOXType(null, any);
     }
 }

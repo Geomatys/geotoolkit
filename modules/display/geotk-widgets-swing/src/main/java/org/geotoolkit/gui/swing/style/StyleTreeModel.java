@@ -31,7 +31,7 @@ import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.RuleListener;
 import org.geotoolkit.style.StyleListener;
 import org.geotoolkit.style.StyleUtilities;
-import static org.geotoolkit.util.ArgumentChecks.*;
+import static org.apache.sis.util.ArgumentChecks.*;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.geotoolkit.util.logging.Logging;

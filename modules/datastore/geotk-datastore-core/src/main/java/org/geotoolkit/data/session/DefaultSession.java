@@ -42,6 +42,8 @@ import org.geotoolkit.geometry.DefaultBoundingBox;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.storage.DataStoreException;
+import org.geotoolkit.version.Version;
+import org.opengis.feature.Feature;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.Name;
@@ -69,14 +71,36 @@ public class DefaultSession extends AbstractSession {
     
     private final DefaultSessionDiff diff;
     private final boolean async;
+    private final Version version;
 
     public DefaultSession(final FeatureStore store, final boolean async){
+        this(store,async,null);
+    }
+    
+    public DefaultSession(final FeatureStore store, final boolean async, final Version version){
         super(store);
-        
-        this.diff = new DefaultSessionDiff();
+        this.diff = createDiff();
         this.async = async;
+        this.version = version;
+    }
+    
+    protected DefaultSessionDiff createDiff(){
+        return new DefaultSessionDiff();
     }
 
+    protected AddDelta createAddDelta(Session session, Name typeName, Collection<? extends Feature> features){
+        return new AddDelta(this, typeName, features);
+    }
+    
+    protected ModifyDelta createModifyDelta(Session session, Name typeName, 
+            Id filter , final Map<? extends AttributeDescriptor,? extends Object> values){
+        return new ModifyDelta(this, typeName, filter, values);
+    }
+    
+    protected RemoveDelta createRemoveDelta(Session session, Name typeName, Id filter){
+        return new RemoveDelta(session, typeName, filter);
+    }
+    
     /**
      * {@inheritDoc }
      */
@@ -85,6 +109,14 @@ public class DefaultSession extends AbstractSession {
         return async;
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public Version getVersion() {
+        return version;
+    }
+    
     /**
      * {@inheritDoc }
      */
@@ -136,11 +168,12 @@ public class DefaultSession extends AbstractSession {
      */
     @Override
     public void addFeatures(final Name groupName, final Collection newFeatures) throws DataStoreException {
+        checkVersion();
         //will raise an error if the name doesnt exist
         store.getFeatureType(groupName);
 
         if(async){
-            diff.add(new AddDelta(this, groupName, newFeatures));
+            diff.add(createAddDelta(this, groupName, newFeatures));
             fireSessionChanged();
         }else{
             store.addFeatures(groupName, newFeatures);
@@ -152,6 +185,7 @@ public class DefaultSession extends AbstractSession {
      */
     @Override
     public void updateFeatures(final Name groupName, Filter filter, final Map<? extends AttributeDescriptor,? extends Object> values) throws DataStoreException {
+        checkVersion();
         //will raise an error if the name doesnt exist
         store.getFeatureType(groupName);
 
@@ -190,7 +224,7 @@ public class DefaultSession extends AbstractSession {
                 }
             }
 
-            diff.add(new ModifyDelta(this, groupName, modified, values));
+            diff.add(createModifyDelta(this, groupName, modified, values));
             fireSessionChanged();
         }else{
             store.updateFeatures(groupName, filter, values);
@@ -202,6 +236,7 @@ public class DefaultSession extends AbstractSession {
      */
     @Override
     public void removeFeatures(final Name groupName, final Filter filter) throws DataStoreException {
+        checkVersion();
         //will raise an error if the name doesnt exist
         store.getFeatureType(groupName);
 
@@ -231,7 +266,7 @@ public class DefaultSession extends AbstractSession {
                 }
             }
 
-            diff.add(new RemoveDelta(this, groupName, removed));
+            diff.add(createRemoveDelta(this, groupName, removed));
             fireSessionChanged();
         }else{
             store.removeFeatures(groupName, filter);
@@ -288,6 +323,21 @@ public class DefaultSession extends AbstractSession {
         }
     }
 
+    protected DefaultSessionDiff getDiff() {
+        return diff;
+    }
+
+    /**
+     * Test if a version is set, raise an error if it's the case.
+     * Version must not be set when doing writing operations
+     */
+    private void checkVersion() throws DataStoreException {
+        if(version!=null){
+            throw new DataStoreException("Session is opened on version : "+version+". "
+                    + "Writing operations are not allowed, open a session without version to support writing.");
+        }
+    }
+    
     private Query forceCRS(final Query query, boolean replace) throws DataStoreException{
         final FeatureType ft = store.getFeatureType(query.getTypeName());
         final CoordinateReferenceSystem crs = ft.getCoordinateReferenceSystem();

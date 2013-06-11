@@ -29,7 +29,6 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.swe.xml.DataArray;
-import org.geotoolkit.swe.xml.DataComponentProperty;
 import org.geotoolkit.util.Utilities;
 
 
@@ -178,7 +177,7 @@ public class DataArrayType extends AbstractDataComponentType implements DataArra
      * Gets the value of the elementType property.
      */
     @Override
-    public DataComponentProperty getPropertyElementType() {
+    public DataArrayType.ElementType getPropertyElementType() {
         return elementType;
     }
     

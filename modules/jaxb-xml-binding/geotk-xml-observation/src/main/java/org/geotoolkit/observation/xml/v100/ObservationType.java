@@ -31,7 +31,6 @@ import javax.xml.bind.annotation.XmlType;
 
 // openGis dependencies
 import org.geotoolkit.gml.xml.v311.*;
-import org.opengis.observation.Process;
 import org.opengis.metadata.quality.Element;
 import org.opengis.metadata.Metadata;
 import org.opengis.observation.Observation;
@@ -54,6 +53,7 @@ import org.geotoolkit.sampling.xml.v100.SamplingCurveType;
 import org.geotoolkit.sampling.xml.v100.SamplingSolidType;
 import org.geotoolkit.sampling.xml.v100.SamplingSurfaceType;
 import org.geotoolkit.util.logging.Logging;
+import org.opengis.temporal.Period;
 import org.opengis.temporal.TemporalGeometricPrimitive;
 
 
@@ -190,7 +190,7 @@ public class ObservationType implements Entry, AbstractObservation {
         if (observation.result != null && observation.result.getValue() instanceof DataArrayPropertyType) {
             this.result = OM_FACTORY.createResult(new DataArrayPropertyType((DataArrayPropertyType)observation.result.getValue()));
         } else {
-            this.result              = observation.result;
+            this.result          = observation.result;
         }
         this.resultQuality       = observation.resultQuality;
         this.samplingTime        = observation.samplingTime;
@@ -249,11 +249,11 @@ public class ObservationType implements Entry, AbstractObservation {
      * @param procedure         The associated procedure.
      */
     public ObservationType(final String                name,
-                            final String                definition,
+                            final String               definition,
                             final SamplingFeatureType  featureOfInterest,
                             final PhenomenonType       observedProperty,
-                            final ProcessType          procedure,
-                            final Object                result,
+                            final String               procedure,
+                            final Object               result,
                             final AbstractTimeGeometricPrimitiveType   samplingTime)
     {
         this.name                = name;
@@ -267,8 +267,12 @@ public class ObservationType implements Entry, AbstractObservation {
         } else if (featureOfInterest instanceof SamplingSurfaceType) {
             this.featureOfInterest   = new FeaturePropertyType(SAMPLING_FACTORY.createSamplingSurface((SamplingSurfaceType)featureOfInterest));
         }
-        this.observedProperty    = new PhenomenonPropertyType(observedProperty);
-        this.procedure           = procedure;
+        if (observedProperty != null) {
+            this.observedProperty = new PhenomenonPropertyType(observedProperty);
+        }
+        if (procedure != null) {
+            this.procedure       = new ProcessType(procedure);
+        }
         this.resultQuality       = null;      
         this.result              = OM_FACTORY.createResult(result);
         this.observationMetadata = null;
@@ -289,7 +293,7 @@ public class ObservationType implements Entry, AbstractObservation {
                             final String                 definition,
                             final FeaturePropertyType    featureOfInterest,
                             final PhenomenonPropertyType observedProperty,
-                            final ProcessType            procedure,
+                            final String                 procedure,
                             final Object                 result,
                             final AbstractTimeGeometricPrimitiveType   samplingTime)
     {
@@ -297,7 +301,9 @@ public class ObservationType implements Entry, AbstractObservation {
         this.definition          = definition;
         this.featureOfInterest   = featureOfInterest;
         this.observedProperty    = observedProperty;
-        this.procedure           = procedure;
+        if (procedure != null) {
+            this.procedure       = new ProcessType(procedure);
+        }
         this.resultQuality       = null;
         this.result              = OM_FACTORY.createResult(result);
         this.observationMetadata = null;
@@ -315,12 +321,12 @@ public class ObservationType implements Entry, AbstractObservation {
      * @param procedure         The associated procedure.
      */
     public ObservationType(final String                name,
-                            final String                definition,
-                            final FeaturePropertyType   featureOfInterest,
-                            final PhenomenonType       observedProperty,
-                            final ProcessType          procedure,
-                            final Object                result,
-                            final AbstractTimeGeometricPrimitiveType   samplingTime)
+                           final String                definition,
+                           final FeaturePropertyType   featureOfInterest,
+                           final PhenomenonType       observedProperty,
+                           final String          procedure,
+                           final Object                result,
+                           final AbstractTimeGeometricPrimitiveType   samplingTime)
     {
        this(name, definition, featureOfInterest, new PhenomenonPropertyType(observedProperty), procedure, result, samplingTime);
     }
@@ -350,7 +356,7 @@ public class ObservationType implements Entry, AbstractObservation {
                                     this.definition,
                                     this.featureOfInterest,
                                     this.observedProperty,
-                                    this.procedure,
+                                    this.procedure.getHref(),
                                     res,
                                     (AbstractTimeGeometricPrimitiveType)time);
         
@@ -446,7 +452,7 @@ public class ObservationType implements Entry, AbstractObservation {
      * {@inheritDoc}
      */
     @Override
-    public Process getProcedure() {
+    public ProcessType getProcedure() {
         return procedure;
     }
     
@@ -486,6 +492,7 @@ public class ObservationType implements Entry, AbstractObservation {
     /**
      * Set the result of the observation.
      */
+    @Override
     public void setResult(final Object result) {
         if (!(result instanceof ReferenceType) && !(result instanceof AnyResultType) &&
             !(result instanceof DataArrayPropertyType) && !(result instanceof MeasureType)) {
@@ -543,25 +550,31 @@ public class ObservationType implements Entry, AbstractObservation {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void extendSamplingTime(final String newEndBound) {
         if (newEndBound != null) {
-            System.out.println("new end Bound:" + newEndBound);
             if (samplingTime != null && samplingTime.getTimeGeometricPrimitive() instanceof TimePeriodType) {
                 ((TimePeriodType)samplingTime.getTimeGeometricPrimitive()).setEndPosition(new TimePositionType(newEndBound));
-                System.out.println("update end");
             } else if (samplingTime != null && samplingTime.getTimeGeometricPrimitive() instanceof TimeInstantType) {
                 final TimeInstantType instant = (TimeInstantType) samplingTime.getTimeGeometricPrimitive();
                 if (!newEndBound.equals(instant.getTimePosition().getValue())) {
-                    final TimePeriodType period = new TimePeriodType(instant.getTimePosition().getValue(), newEndBound);
+                    final TimePeriodType period = new TimePeriodType(instant.getId(), instant.getTimePosition().getValue(), newEndBound);
                     samplingTime.setTimeGeometricPrimitive(period);
-                    System.out.println("not equals updatting: old=" +instant.getTimePosition().getValue());
-                } else {
-                    System.out.println("equals old=" + instant.getTimePosition().getValue());
                 }
             }
         }
     }
 
+    @Override
+    public void setSamplingTimePeriod(final Period period) {
+        if (period instanceof TimePeriodType) {
+            this.samplingTime = new TimeGeometricPrimitivePropertyType((TimePeriodType)period);
+        } else if (period != null) {
+            final TimePeriodType pt = new TimePeriodType(period.getBeginning().getPosition(), period.getEnding().getPosition());
+            this.samplingTime = new TimeGeometricPrimitivePropertyType(pt);
+        }
+    }
+    
     /**
      * {@inheritDoc}
      */
@@ -735,5 +748,10 @@ public class ObservationType implements Entry, AbstractObservation {
             s.append(" result = ").append(result.getValue()).append(lineSeparator);
         }
         return s.toString();
+    }
+
+    @Override
+    public void setId(String id) {
+        // do nothing no id on v 1.0.0
     }
 }

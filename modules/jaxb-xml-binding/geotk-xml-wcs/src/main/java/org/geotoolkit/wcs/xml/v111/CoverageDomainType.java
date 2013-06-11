@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.wcs.xml.CoverageDomain;
 
 
 /**
@@ -51,7 +52,7 @@ import javax.xml.bind.annotation.XmlType;
     "spatialDomain",
     "temporalDomain"
 })
-public class CoverageDomainType {
+public class CoverageDomainType implements CoverageDomain {
 
     @XmlElement(name = "SpatialDomain", required = true)
     private SpatialDomainType spatialDomain;
@@ -81,6 +82,7 @@ public class CoverageDomainType {
      * Gets the value of the spatialDomain property.
      * 
      */
+    @Override
     public SpatialDomainType getSpatialDomain() {
         return spatialDomain;
     }
@@ -88,6 +90,7 @@ public class CoverageDomainType {
     /**
      * Although optional, the TemporalDomain should be included whenever a value is known or a useful estimate is available. 
      */
+    @Override
     public TimeSequenceType getTemporalDomain() {
         return temporalDomain;
     }

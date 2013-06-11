@@ -46,4 +46,5 @@ import org.opengis.filter.Filter;
 public abstract class TemporalOpsType implements Filter {
 
 
+    public abstract TemporalOpsType getClone();
 }

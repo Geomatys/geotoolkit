@@ -31,7 +31,9 @@ import java.nio.channels.WritableByteChannel;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.geotoolkit.feature.AttributeDescriptorBuilder;
@@ -526,7 +528,8 @@ public class DbaseFileHeader {
                 / FILE_DESCRIPTOR_SIZE;
 
         // read all of the header records
-        List lfields = new ArrayList();
+        final Set<String> names = new HashSet<String>();
+        final List<DbaseField> lfields = new ArrayList<DbaseField>();
         for (int i = 0; i < fieldCnt; i++) {
 
             // read the field name
@@ -538,6 +541,14 @@ public class DbaseFileHeader {
                 name = name.substring(0, nullPoint);
             }
             String fieldName = name.trim();
+            if(names.contains(fieldName)){
+                int inc = 2;
+                while(names.contains(fieldName+inc)){
+                    inc++;
+                }
+                LOGGER.log(Level.INFO, "DBF : multiple fields for name {0} , one will be exposed as {1}{2}", new Object[]{fieldName, fieldName, inc});
+                fieldName = fieldName+inc;
+            }
 
             // read the field type
             char fieldType = (char) in.get();
@@ -572,6 +583,7 @@ public class DbaseFileHeader {
             if (field.fieldLength > 0) {
                 lfields.add(field);
             }
+            names.add(fieldName);
         }
 
         // Last byte is a marker for the end of the field definitions.

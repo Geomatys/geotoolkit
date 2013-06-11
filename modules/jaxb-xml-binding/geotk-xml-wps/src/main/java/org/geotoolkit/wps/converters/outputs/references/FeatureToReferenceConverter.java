@@ -91,10 +91,6 @@ public class FeatureToReferenceConverter extends AbstractReferenceOutputConverte
         } else {
             reference = new OutputReferenceType();
         }
-
-        reference.setMimeType((String) params.get(MIME));
-        reference.setEncoding((String) params.get(ENCODING));
-        reference.setSchema((String) params.get(SCHEMA));
         
         reference.setMimeType((String) params.get(MIME));
         reference.setEncoding((String) params.get(ENCODING));
@@ -106,7 +102,6 @@ public class FeatureToReferenceConverter extends AbstractReferenceOutputConverte
         
         //Write FeatureType
         try {
-            
             final String schemaFileName = randomFileName + "_schema" + ".xsd";
             
             //create file

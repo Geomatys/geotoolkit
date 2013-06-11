@@ -33,7 +33,6 @@ import org.geotoolkit.process.AbstractProcess;
 import org.geotoolkit.process.ProcessException;
 import static org.geotoolkit.process.datastore.copy.CopyDescriptor.*;
 import org.geotoolkit.storage.DataStoreException;
-import org.geotoolkit.util.collection.UnmodifiableArrayList;
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.Name;
@@ -90,8 +89,7 @@ public class Copy extends AbstractProcess {
         } else {
             //pick only the wanted names
             names = new HashSet<Name>();
-            final List<String> wanted = UnmodifiableArrayList.wrap(typenameParam.split(","));
-            for(String s : wanted) {
+            for(String s : typenameParam.split(",")) {
                 try{
                     final FeatureType type = sourceDS.getFeatureType(s);
                     names.add(type.getName());
@@ -118,9 +116,9 @@ public class Copy extends AbstractProcess {
 
     private void insert(final Name name, final FeatureStore source, final FeatureStore target, final boolean erase) throws DataStoreException{
 
-        final FeatureType type = source.getFeatureType(name);
         final Session session = source.createSession(false);
         final FeatureCollection collection = session.getFeatureCollection(QueryBuilder.all(name));
+        final FeatureType type = collection.getFeatureType();
 
         final FeatureCollection wrap = new WrapFeatureCollection(collection) {
 
@@ -141,19 +139,22 @@ public class Copy extends AbstractProcess {
         }else{
             target.createSchema(name, type);
         }
+        
+        //get the created name, namespace might change
+        final Name tname = target.getFeatureType(type.getName().getLocalPart()).getName();
 
         final Hints hints = new Hints();
         hints.put(HintsPending.UPDATE_ID_ON_INSERT, Boolean.FALSE);
-        target.addFeatures(name, wrap, hints);
+        target.addFeatures(tname, wrap, hints);
 
     }
 
     private void insert(final Query query, final FeatureStore source, final FeatureStore target, final boolean erase) throws DataStoreException{
 
         final Name name = query.getTypeName();
-        final FeatureType type = source.getFeatureType(name);
         final Session session = source.createSession(false);
         final FeatureCollection collection = session.getFeatureCollection(query);
+        final FeatureType type = collection.getFeatureType();
 
         if(target.getNames().contains(name)) {
             if(erase) {

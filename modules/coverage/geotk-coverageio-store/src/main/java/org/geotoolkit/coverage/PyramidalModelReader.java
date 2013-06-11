@@ -33,6 +33,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.TimeUnit;
 import javax.imageio.ImageReader;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.coverage.finder.CoverageFinder;
 import org.geotoolkit.coverage.finder.CoverageFinderFactory;
 import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
@@ -44,7 +45,6 @@ import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.ReferencingUtilities;
@@ -82,6 +82,7 @@ public class PyramidalModelReader extends GridCoverageReader{
     @Deprecated
     public PyramidalModelReader() {
         this.coverageFinder = CoverageFinderFactory.createDefaultCoverageFinder();
+//        this.coverageFinder = CoverageFinderFactory.createStrictlyCoverageFinder();
     }
     
     public PyramidalModelReader(CoverageFinder coverageFinder) {

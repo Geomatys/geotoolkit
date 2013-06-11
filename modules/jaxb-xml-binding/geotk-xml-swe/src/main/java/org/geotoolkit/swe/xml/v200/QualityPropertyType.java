@@ -188,6 +188,7 @@ public class QualityPropertyType implements AbstractQualityProperty {
      *     {@link TypeType }
      *     
      */
+    @Override
     public String getType() {
         if (type == null) {
             return TypeType.SIMPLE.toString();

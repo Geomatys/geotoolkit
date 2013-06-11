@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2012, Geomatys
+ *    (C) 2012 - 2013, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -20,22 +20,27 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Calendar;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.rmi.CORBA.Tie;
 import javax.sql.DataSource;
 import org.geotoolkit.coverage.AbstractCoverageStore;
 import org.geotoolkit.coverage.CoverageReference;
-import org.geotoolkit.coverage.CoverageStoreContentEvent;
+import org.geotoolkit.coverage.CoverageStore;
 import org.geotoolkit.coverage.CoverageStoreFactory;
 import org.geotoolkit.coverage.CoverageStoreFinder;
-import org.geotoolkit.coverage.CoverageStoreManagementEvent;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.jdbc.ManageableDataSource;
 import org.geotoolkit.referencing.factory.epsg.ThreadedEpsgFactory;
 import org.geotoolkit.storage.DataStoreException;
-import org.geotoolkit.util.ArgumentChecks;
+import org.apache.sis.util.ArgumentChecks;
+import org.geotoolkit.version.Version;
+import org.geotoolkit.version.VersionControl;
+import org.geotoolkit.version.VersioningException;
 import org.opengis.feature.type.Name;
 import org.opengis.parameter.ParameterValueGroup;
 
@@ -85,11 +90,17 @@ public class PGCoverageStore extends AbstractCoverageStore{
         return epsgfactory;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public CoverageStoreFactory getFactory() {
         return CoverageStoreFinder.getFactoryById(PGCoverageStoreFactory.NAME);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Set<Name> getNames() throws DataStoreException {
         final Set<Name> names = new HashSet<Name>();
@@ -118,10 +129,17 @@ public class PGCoverageStore extends AbstractCoverageStore{
         return names;
     }
 
+    /**
+     * Get the coverage reference for the given name.
+     *
+     * @param name Table name in the {@linkplain CoverageStore coverage store}.
+     *
+     * @return The matching {@linkplain CoverageReference coverage reference}.
+     * @throws DataStoreException if the name was not found in the {@linkplain CoverageStore coverage store}.
+     */
     @Override
     public CoverageReference getCoverageReference(Name name) throws DataStoreException {
-        typeCheck(name);
-        return new PGCoverageReference(this, name);
+        return getCoverageReference(name, null);
     }
 
     @Override
@@ -147,7 +165,7 @@ public class PGCoverageStore extends AbstractCoverageStore{
         } finally {
             closeSafe(cnx,stmt,rs);
         }
-        
+
         fireCoverageAdded(name);
         return getCoverageReference(new DefaultName(getDefaultNamespace(), name.getLocalPart()));
     }
@@ -174,7 +192,7 @@ public class PGCoverageStore extends AbstractCoverageStore{
         } finally {
             closeSafe(cnx,stmt,rs);
         }
-        
+
         fireCoverageDeleted(name);
     }
 
@@ -183,7 +201,7 @@ public class PGCoverageStore extends AbstractCoverageStore{
         return super.getLogger();
     }
 
-    int getLayerId(String name) throws SQLException {
+    int getLayerId(Connection cnx, String name) throws SQLException {
         final StringBuilder query = new StringBuilder();
         query.append("SELECT id FROM ");
         query.append(encodeTableName("Layer"));
@@ -191,11 +209,9 @@ public class PGCoverageStore extends AbstractCoverageStore{
         query.append(name);
         query.append("'");
 
-        Connection cnx = null;
         Statement stmt = null;
         ResultSet rs = null;
         try {
-            cnx = source.getConnection();
             stmt = cnx.createStatement();
             rs = stmt.executeQuery(query.toString());
             if(rs.next()){
@@ -204,9 +220,50 @@ public class PGCoverageStore extends AbstractCoverageStore{
                 throw new SQLException("No layer for name : "+name);
             }
         } finally {
-            closeSafe(cnx,stmt,rs);
+            closeSafe(null,stmt,rs);
         }
 
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Versioning support //////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+    
+    @Override
+    public boolean handleVersioning() {
+        return true;
+    }
+
+    @Override
+    public VersionControl getVersioning(Name typeName) throws VersioningException {
+        try {
+            typeCheck(typeName);
+            return new PGVersionControl(this, typeName);
+        } catch (DataStoreException ex) {
+            throw new VersioningException(ex.getMessage(), ex);
+        }
+    }
+
+    @Override
+    public CoverageReference getCoverageReference(Name name, Version version) throws DataStoreException {
+        typeCheck(name);
+        if(version == null){
+            try {
+                //grab the latest
+                VersionControl vc = getVersioning(name);
+                final List<Version> versions = vc.list();
+                if(versions.isEmpty()){
+                    final Calendar cal = Calendar.getInstance(PGVersionControl.GMT0);
+                    cal.setTimeInMillis(0);
+                    version = vc.createVersion(cal.getTime());
+                }else{
+                    version = versions.get(versions.size()-1);
+                }
+            } catch (VersioningException ex) {
+                throw new DataStoreException(ex.getMessage(), ex);
+            }
+        }
+        return new PGCoverageReference(this, name, version);
     }
     
     ////////////////////////////////////////////////////////////////////////////

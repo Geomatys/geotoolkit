@@ -16,20 +16,22 @@
  */
 package org.geotoolkit.wps.converters.inputs.references;
 
-import com.sun.media.imageioimpl.plugins.tiff.TIFFImageReader;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import java.util.Map;
+import java.util.logging.Level;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
+import net.iharder.Base64;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageIO;
 import org.geotoolkit.coverage.io.CoverageStoreException;
-import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.image.io.XImageIO;
+import org.geotoolkit.util.FileUtilities;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
+import org.geotoolkit.wps.io.WPSEncoding;
 import org.geotoolkit.wps.xml.v100.ReferenceType;
 
 /**
@@ -37,7 +39,7 @@ import org.geotoolkit.wps.xml.v100.ReferenceType;
  *
  * @author Quentin Boileau (Geomatys).
  */
-public final class ReferenceToGridCoverage2DConverter extends AbstractReferenceInputConverter {
+public final class ReferenceToGridCoverage2DConverter extends AbstractReferenceInputConverter<GridCoverage2D> {
 
     private static ReferenceToGridCoverage2DConverter INSTANCE;
 
@@ -52,7 +54,7 @@ public final class ReferenceToGridCoverage2DConverter extends AbstractReferenceI
     }
 
     @Override
-    public Class<? extends Object> getTargetClass() {
+    public Class<? extends GridCoverage2D> getTargetClass() {
         return GridCoverage2D.class;
     }
 
@@ -65,46 +67,52 @@ public final class ReferenceToGridCoverage2DConverter extends AbstractReferenceI
     public GridCoverage2D convert(final ReferenceType source, final Map<String, Object> params) throws NonconvertibleObjectException {
 
         final InputStream stream = getInputStreamFromReference(source);
-        GridCoverageReader reader = null;
-//        ImageInputStream imageStream = null;
-        ImageReader imgReader = null;
+                
+        String encoding = null;
+        if(params != null && params.get(ENCODING) != null) {
+            encoding = (String) params.get(ENCODING);
+        }
+        ImageInputStream imageStream = null;
         try {
-            //We used to work with an ImageInputStream, but the url choice have been prefered.
-//            imageStream = ImageIO.createImageInputStream(stream);
-            URL imgRef = new URL(source.getHref());
-            imgReader = XImageIO.getReader/*ByMIMEType(source.getMimeType(), */(imgRef, Boolean.FALSE, Boolean.FALSE);
-            if(imgReader instanceof TIFFImageReader) {
-                ImageReader imgReader2 = XImageIO.getReaderByFormatName("geotiff", null, Boolean.FALSE, Boolean.FALSE);
-                if(imgReader2 != null) {
-                    imgReader2.setInput(imgRef);
-                    imgReader = imgReader2;
+            //decode form base64 stream
+            if (encoding != null && encoding.equals(WPSEncoding.BASE64.getValue())) {
+                final String encodedImage = FileUtilities.getStringFromStream(stream);
+                final byte[] byteData = Base64.decode(encodedImage.trim());
+                if (byteData != null && byteData.length > 0) {
+                    final InputStream is = new ByteArrayInputStream(byteData);
+                    if (is != null) {
+                        imageStream = ImageIO.createImageInputStream(is);
+                    }
                 }
+                
+            } else {
+                imageStream = ImageIO.createImageInputStream(stream);
             }
-            reader = CoverageIO.createSimpleReader(imgReader);
-            return (GridCoverage2D) reader.read(0, null);
+            
+            if (imageStream != null) {
+                final ImageReader reader;
+                if (source.getMimeType() != null) {
+                    reader = XImageIO.getReaderByMIMEType(source.getMimeType(), imageStream, null, null);
+                } else {
+                    reader = XImageIO.getReader(imageStream, null, Boolean.FALSE);
+                }
+                return (GridCoverage2D) CoverageIO.read(reader);
+            } else {
+                throw new NonconvertibleObjectException("Error during image stream acquisition.");
+            }
 
         } catch (IOException ex) {
             throw new NonconvertibleObjectException("Reference coverage invalid input : IO", ex);
         } catch (CoverageStoreException ex) {
             throw new NonconvertibleObjectException("Reference coverage invalid input : Can't read coverage", ex);
         } finally {
-            if (reader != null) {
+            if (imageStream != null) {
                 try {
-                    reader.dispose();
-                } catch (CoverageStoreException ex) {
-                    throw new NonconvertibleObjectException("Error during release the coverage reader.", ex);
+                    imageStream.close();
+                } catch (IOException ex) {
+                    LOGGER.log(Level.WARNING, "Error during release the image stream.", ex);
                 }
             }
-            if(imgReader != null) {
-                imgReader.dispose();
-            }
-//            if (imageStream != null) {
-//                try {
-//                    imageStream.close();
-//                } catch (IOException ex) {
-//                    throw new NonconvertibleObjectException("Error during release the image stream.", ex);
-//                }
-//            }
         }
     }
 }

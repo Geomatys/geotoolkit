@@ -33,7 +33,7 @@ import org.geotoolkit.gml.xml.v311.PointPropertyType;
 import org.geotoolkit.gml.xml.v311.PointType;
 import org.geotoolkit.observation.xml.v100.ObservationType;
 import org.geotoolkit.observation.xml.v100.SurveyProcedureType;
-import org.geotoolkit.util.ComparisonMode;
+import org.apache.sis.util.ComparisonMode;
 import org.opengis.geometry.Geometry;
 import org.opengis.observation.sampling.SamplingPoint;
 

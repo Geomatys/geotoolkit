@@ -23,11 +23,11 @@ import java.util.logging.Logger;
 import javax.swing.event.EventListenerList;
 import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.style.StyleConstants;
-import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
+import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.collection.CollectionChangeEvent;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 import org.geotoolkit.util.logging.Logging;
 import org.opengis.style.Description;
 
@@ -144,7 +144,7 @@ public abstract class AbstractMapItem implements MapItem {
      * {@inheritDoc }
      */
     @Override
-    public void setUserPropertie(final String key,final Object value){
+    public void setUserProperty(final String key,final Object value){
         parameters.put(key, value);
     }
 
@@ -152,7 +152,7 @@ public abstract class AbstractMapItem implements MapItem {
      * {@inheritDoc }
      */
     @Override
-    public Object getUserPropertie(final String key){
+    public Object getUserProperty(final String key){
         return parameters.get(key);
     }
 

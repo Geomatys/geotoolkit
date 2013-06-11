@@ -113,7 +113,7 @@ public class TimePositionType extends AbstractTimePosition implements Serializab
      * @param value a date.
      */
     public TimePositionType(final Timestamp time){
-        this.value = time.toString();
+        this.value = FORMATTERS.get(0).format(time);
     }
 
     /**
@@ -293,8 +293,9 @@ public class TimePositionType extends AbstractTimePosition implements Serializab
         }
 
         if (value != null && getDate() != null) {
-            final SimpleDateFormat sdf = new SimpleDateFormat("d MMMMM yyyy HH:mm:ss z");
-            s.append(sdf.format(getDate()));
+            //final SimpleDateFormat sdf = new SimpleDateFormat("d MMMMM yyyy HH:mm:ss z");
+            //s.append(sdf.format(getDate()));
+            s.append("value=") .append(value).append('\n');
         }
         return s.toString();
     }

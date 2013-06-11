@@ -22,7 +22,6 @@ import java.text.ParseException;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import org.geotoolkit.util.Converters;
-import org.geotoolkit.util.converter.Classes;
 import org.opengis.feature.type.AttributeType;
 import org.opengis.feature.type.PropertyType;
 

@@ -149,7 +149,7 @@ public class JClassificationJenksPanel extends JPanel implements PropertyPane{
         guiLblClasses = new javax.swing.JLabel();
         guiClasses = new javax.swing.JSpinner();
 
-        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(MessageBundle.getString("properties"))); // NOI18N
+        jPanel1.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 0, 5, 0));
 
         guiLblPalette.setText(MessageBundle.getString("palette")); // NOI18N
 
@@ -172,7 +172,7 @@ public class JClassificationJenksPanel extends JPanel implements PropertyPane{
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(guiLblPalette)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(guiPalette, 0, 347, Short.MAX_VALUE))
+                        .addComponent(guiPalette, 0, 359, Short.MAX_VALUE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(guiLblClasses)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -205,7 +205,7 @@ public class JClassificationJenksPanel extends JPanel implements PropertyPane{
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 189, Short.MAX_VALUE))
+                .addGap(0, 206, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -245,8 +245,7 @@ public class JClassificationJenksPanel extends JPanel implements PropertyPane{
         final Literal fallback = DEFAULT_FALLBACK;
         final Jenks function = SF.jenksFunction(FF.literal(classNumber), FF.literal(paletteName), fallback);
 
-        final ChannelSelection selection = DEFAULT_RASTER_CHANNEL_RGB;
-
+        final ChannelSelection selection = null;
         final Expression opacity = LITERAL_ONE_FLOAT;
         final OverlapBehavior overlap = OverlapBehavior.LATEST_ON_TOP;
         final ColorMap colorMap = SF.colorMap(function);

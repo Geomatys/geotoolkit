@@ -22,13 +22,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 
 import org.opengis.feature.type.Name;
 import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.feature.type.PropertyType;
 
-import static org.geotoolkit.util.ArgumentChecks.*;
+import static org.apache.sis.util.ArgumentChecks.*;
 
 /**
  * Default implementation of a property descriptor

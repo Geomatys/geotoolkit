@@ -18,12 +18,11 @@ package org.geotoolkit.index.tree;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.filter.SpatialFilterType;
-import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.index.tree.io.DefaultTreeVisitor;
 import org.geotoolkit.index.tree.io.TreeVisitor;
 import org.geotoolkit.index.tree.io.TreeX;
-import org.geotoolkit.index.tree.nodefactory.TreeNodeFactory;
 import org.geotoolkit.index.tree.star.StarRTree;
 import org.geotoolkit.referencing.crs.DefaultEngineeringCRS;
 import static org.junit.Assert.assertTrue;
@@ -39,7 +38,7 @@ public class TreeXTest extends TreeTest {
 
     List<Envelope> listSearch = new ArrayList<Envelope>();
     TreeVisitor defVisit = new DefaultTreeVisitor(listSearch);
-    Tree tree = new StarRTree(4, DefaultEngineeringCRS.CARTESIAN_3D, TreeNodeFactory.DEFAULT_FACTORY);
+    Tree tree = new StarRTree(4, DefaultEngineeringCRS.CARTESIAN_3D);
 
     public TreeXTest() {
         final GeneralEnvelope geTemp = new GeneralEnvelope(DefaultEngineeringCRS.CARTESIAN_3D);

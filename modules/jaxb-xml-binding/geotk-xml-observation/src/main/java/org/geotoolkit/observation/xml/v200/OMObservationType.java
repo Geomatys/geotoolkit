@@ -22,6 +22,8 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.gml.xml.v321.AbstractFeatureType;
@@ -30,18 +32,23 @@ import org.geotoolkit.gml.xml.v321.FeaturePropertyType;
 import org.geotoolkit.gml.xml.v321.ReferenceType;
 import org.geotoolkit.gml.xml.v321.TimeInstantPropertyType;
 import org.geotoolkit.gml.xml.v321.TimePeriodPropertyType;
+import org.geotoolkit.gml.xml.v321.TimePeriodType;
 import org.geotoolkit.internal.jaxb.metadata.DQ_Element;
-import org.geotoolkit.internal.jaxb.metadata.direct.MetadataAdapter;
+import org.geotoolkit.internal.jaxb.metadata.MD_Metadata;
 import org.geotoolkit.observation.xml.AbstractObservation;
+import org.geotoolkit.observation.xml.v200.OMObservationType.InternalPhenomenon;
 import org.geotoolkit.sampling.xml.v200.SFSamplingFeatureType;
 import org.geotoolkit.swe.xml.v200.DataArrayPropertyType;
-import org.geotoolkit.util.ComparisonMode;
+import org.apache.sis.util.ComparisonMode;
+import org.geotoolkit.gml.xml.v321.TimeInstantType;
+import org.geotoolkit.gml.xml.v321.TimePositionType;
 import org.geotoolkit.util.Utilities;
 import org.opengis.metadata.Metadata;
 import org.opengis.metadata.quality.Element;
 import org.opengis.observation.Observation;
 import org.opengis.observation.Phenomenon;
 import org.opengis.observation.sampling.SamplingFeature;
+import org.opengis.temporal.Period;
 import org.opengis.temporal.TemporalGeometricPrimitive;
 import org.opengis.temporal.TemporalObject;
 
@@ -86,10 +93,12 @@ import org.opengis.temporal.TemporalObject;
     "resultQuality",
     "result"
 })
+@XmlSeeAlso(InternalPhenomenon.class)
+@XmlRootElement(name = "Observation")
 public class OMObservationType extends AbstractFeatureType implements AbstractObservation {
 
     private ReferenceType type;
-    @XmlJavaTypeAdapter(MetadataAdapter.class)
+    @XmlJavaTypeAdapter(MD_Metadata.class)
     private Metadata metadata;
     private List<ObservationContextPropertyType> relatedObservation;
     @XmlElement(required = true)
@@ -113,13 +122,13 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
     public OMObservationType() {
     }
     
-    public OMObservationType(final String name, final String type, final AbstractTimeObjectType phenomenonTime, 
+    public OMObservationType(final String id, final String name, final String type, final AbstractTimeObjectType phenomenonTime, 
             final String procedure, final String observedProperty, final FeaturePropertyType foi, final Object result) {
-        super(null, name, null);
+        super(id, name, null);
         this.type = new ReferenceType(type);
-        if (phenomenonTime != null) {
-            this.phenomenonTime = new TimeObjectPropertyType(phenomenonTime);
-        }
+        this.phenomenonTime = new TimeObjectPropertyType(phenomenonTime);
+        this.resultTime     = new TimeInstantPropertyType();
+        
         if (procedure != null) {
             this.procedure      = new OMProcessPropertyType(procedure);
         }
@@ -268,6 +277,30 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
     public void emptySamplingTime() {
         this.phenomenonTime = null;
     }
+    @Override
+    public void setSamplingTimePeriod(final Period period) {
+        if (period instanceof TimePeriodType) {
+            this.phenomenonTime = new TimeObjectPropertyType((TimePeriodType)period);
+        } else if (period != null) {
+            final TimePeriodType pt = new TimePeriodType(period.getBeginning().getPosition(), period.getEnding().getPosition());
+            this.phenomenonTime = new TimeObjectPropertyType(pt);
+        }
+    }
+    
+    @Override
+    public void extendSamplingTime(final String newEndBound) {
+        if (newEndBound != null) {
+            if (phenomenonTime != null && phenomenonTime.getTimeObject() instanceof TimePeriodType) {
+                ((TimePeriodType)phenomenonTime.getTimeObject()).setEndPosition(new TimePositionType(newEndBound));
+            } else if (phenomenonTime != null && phenomenonTime.getTimeObject() instanceof TimeInstantType) {
+                final TimeInstantType instant = (TimeInstantType) phenomenonTime.getTimeObject();
+                if (!newEndBound.equals(instant.getTimePosition().getSingleValue())) {
+                    final TimePeriodType period = new TimePeriodType(instant.getId(), instant.getTimePosition().getSingleValue(), newEndBound);
+                    phenomenonTime.setTimeObject(period);
+                }
+            }
+        }
+    }
     
     @Override
     public TemporalObject getProcedureTime() {
@@ -391,37 +424,10 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
     
     @Override
     public Phenomenon getObservedProperty() {
-        return new org.geotoolkit.swe.xml.Phenomenon() {
-
-            @Override
-            public String getName() {
-                if (observedProperty != null) {
-                    return observedProperty.getHref();
-                }
-                return null;
-            }
-            
-            @Override
-            public boolean equals(final Object obj) {
-                if (obj instanceof Phenomenon) {
-                    final org.geotoolkit.swe.xml.Phenomenon that = (org.geotoolkit.swe.xml.Phenomenon) obj;
-                    return Utilities.equals(this.getName(), that.getName());
-                }
-                return false;
-            }
-            
-            @Override
-            public String toString() {
-                return "[Anonymous Phenomenon] name:" + getName();
-            }
-
-            @Override
-            public int hashCode() {
-                int hash = 7;
-                hash = 7 * hash + (this.getName() != null ? this.getName().hashCode() : 0);
-                return hash;
-            }
-        };
+        if (observedProperty != null) {
+            return new InternalPhenomenon(observedProperty.getHref());
+        }
+        return null;
     }
 
     /**
@@ -514,7 +520,8 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
      *     {@link Object }
      *     
      */
-    public void setResult(Object value) {
+    @Override
+    public void setResult(final Object value) {
         this.result = value;
     }
 
@@ -623,5 +630,45 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
         hash = 37 * hash + (this.type != null ? this.type.hashCode() : 0);
         hash = 37 * hash + (this.validTime != null ? this.validTime.hashCode() : 0);
         return hash;
+    }
+
+    @XmlRootElement
+    public static class InternalPhenomenon implements org.geotoolkit.swe.xml.Phenomenon {
+    
+        private final String name;
+        
+        public InternalPhenomenon() {
+            this.name = null;
+        }
+        
+        public InternalPhenomenon(final String name) {
+            this.name = name;
+        }
+        
+        @Override
+        public String getName() {
+            return name;
+        }
+
+        @Override
+        public boolean equals(final Object obj) {
+            if (obj instanceof Phenomenon) {
+                final org.geotoolkit.swe.xml.Phenomenon that = (org.geotoolkit.swe.xml.Phenomenon) obj;
+                return Utilities.equals(this.getName(), that.getName());
+            }
+            return false;
+        }
+
+        @Override
+        public String toString() {
+            return "[Anonymous Phenomenon] name:" + getName();
+        }
+
+        @Override
+        public int hashCode() {
+            int hash = 7;
+            hash = 7 * hash + (this.getName() != null ? this.getName().hashCode() : 0);
+            return hash;
+        }
     }
 }

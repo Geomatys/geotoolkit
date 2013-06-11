@@ -826,7 +826,7 @@ public final class GeometryUtils {
             final int actual = crs.getCoordinateSystem().getDimension();
             if (actual != expected) {
                 throw new IllegalArgumentException(/*Resources.format(
-                 ResourceKeys.ERROR_MISMATCHED_DIMENSION_$3,
+                 ResourceKeys.ERROR_MISMATCHED_DIMENSION_3,
                  name, new Integer(actual), new Integer(expected))*/"");
             }
         }
@@ -850,7 +850,7 @@ public final class GeometryUtils {
             throw new MismatchedDimensionException(name + " does not have " + dimension + "dimension(s)"
                                                     /*
                                                     * Resources.format(
-                                                    * ResourceKeys.ERROR_MISMATCHED_DIMENSION_$3,
+                                                    * ResourceKeys.ERROR_MISMATCHED_DIMENSION_3,
                                                     * name, new
                                                     * Integer(dimension), new
                                                     * Integer(expectedDimension))

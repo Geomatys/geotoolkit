@@ -23,7 +23,7 @@ import java.util.Collection;
 import java.util.EventListener;
 
 import org.geotoolkit.internal.ReferenceQueueConsumer;
-import org.geotoolkit.util.Disposable;
+import org.apache.sis.util.Disposable;
 import org.geotoolkit.util.collection.CollectionChangeEvent;
 
 import org.opengis.sld.SLDLibrary;

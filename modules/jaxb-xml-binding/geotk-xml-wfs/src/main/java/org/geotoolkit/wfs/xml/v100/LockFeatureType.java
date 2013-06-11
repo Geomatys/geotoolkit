@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import javax.xml.bind.annotation.*;
-import org.geotoolkit.util.Version;
+import org.apache.sis.util.Version;
 import org.geotoolkit.wfs.xml.AllSomeType;
 import org.geotoolkit.wfs.xml.LockFeature;
 

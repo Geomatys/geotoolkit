@@ -88,9 +88,14 @@ public class GetResult extends RequestBaseType implements org.geotoolkit.sos.xml
      
     @Override
     public String getOffering() {
-        return null;
+        return null; // not in v1.0.0
     }
-     
+    
+    @Override
+    public String getObservedProperty() {
+        return null;  // not in v1.0.0
+    }
+    
     /**
      * Gets the value of the observationTemplateId property.
      * 

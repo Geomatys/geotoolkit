@@ -31,10 +31,15 @@ import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.StoredField;
 import org.apache.lucene.index.CorruptIndexException;
+import org.apache.lucene.index.DirectoryReader;
+import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.Term;
+import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.TermQuery;
+import org.apache.lucene.search.TopDocs;
+import org.apache.lucene.store.Directory;
 import org.apache.lucene.util.Version;
 
 // Geotoolkit dependencies
@@ -299,6 +304,8 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
             writer.addDocument(createDocument(meta, docId));
             LOGGER.log(Level.FINER, "Metadata: {0} indexed", getIdentifier(meta));
             writer.close();
+            
+            writeTree();
 
         } catch (IndexingException ex) {
             LOGGER.log(Level.WARNING, "IndexingException " + ex.getMessage(), ex);
@@ -370,19 +377,35 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
      */
     public void removeDocument(final String identifier) {
         try {
-            final IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_40, analyzer);
-            final IndexWriter writer = new IndexWriter(LuceneUtils.getAppropriateDirectory(getFileDirectory()), config);
-
+            final Directory dir   = LuceneUtils.getAppropriateDirectory(getFileDirectory());
             final Term t          = new Term("id", identifier);
             final TermQuery query = new TermQuery(t);
             LOGGER.log(logLevel, "Term query:{0}", query);
 
+            // look for DOC ID for R-Tree removal
+            if (rTree != null) {
+                final IndexReader reader      = DirectoryReader.open(dir);
+                final IndexSearcher searcher  = new IndexSearcher(reader);
+                final TopDocs docs            = searcher.search(query, 1);
+                if (docs.totalHits > 0) {
+                    int docID = docs.scoreDocs[0].doc;
+                    if (rTree.getElementsNumber() > 0) {
+                        final NamedEnvelope env = new NamedEnvelope(rTree.getCrs(), docID);
+                        rTree.remove(env);
+                        writeTree();
+                    }
+                }
+                reader.close();
+            }
+
+            final IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_40, analyzer);
+            final IndexWriter writer       = new IndexWriter(dir, config);
             writer.deleteDocuments(query);
             LOGGER.log(logLevel, "Metadata: {0} removed from the index", identifier);
 
             writer.commit();
             writer.close();
-
+            
         } catch (CorruptIndexException ex) {
             LOGGER.log(Level.WARNING, "CorruptIndexException while indexing document: " + ex.getMessage(), ex);
         } catch (IOException ex) {

@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Map;
 import org.geotoolkit.index.tree.Node;
 import org.geotoolkit.index.tree.Tree;
-import org.geotoolkit.util.ArgumentChecks;
+import org.apache.sis.util.ArgumentChecks;
 import org.opengis.geometry.Envelope;
 
 /**Create TreeWriter object.

@@ -97,18 +97,23 @@ public class TimeObjectPropertyType {
     }
     
     public TimeObjectPropertyType(final AbstractTimeObjectType value) {
+       this.abstractTimeObject =  buildTime(value);
+    }
+    
+    private JAXBElement<? extends AbstractTimeObjectType> buildTime(final AbstractTimeObjectType value) {
         final ObjectFactory factory = new ObjectFactory();
         if (value instanceof TimePeriodType) {
-            this.abstractTimeObject = factory.createTimePeriod((TimePeriodType)value);
+           return factory.createTimePeriod((TimePeriodType)value);
         } else if (value instanceof TimeInstantType) {
-            this.abstractTimeObject = factory.createTimeInstant((TimeInstantType)value);
+           return factory.createTimeInstant((TimeInstantType)value);
         } else if (value instanceof TimeEdgeType) {
-            this.abstractTimeObject = factory.createTimeEdge((TimeEdgeType)value);
+           return factory.createTimeEdge((TimeEdgeType)value);
         } else if (value instanceof TimeNodeType) {
-            this.abstractTimeObject = factory.createTimeNode((TimeNodeType)value);
+           return factory.createTimeNode((TimeNodeType)value);
         } else if (value instanceof TimeTopologyComplexType) {
-            this.abstractTimeObject = factory.createTimeTopologyComplex((TimeTopologyComplexType)value);
+           return factory.createTimeTopologyComplex((TimeTopologyComplexType)value);
         }
+        return null;
     }
     
     /**
@@ -137,6 +142,10 @@ public class TimeObjectPropertyType {
             return abstractTimeObject.getValue();
         }
         return null;
+    }
+    
+    public void setTimeObject(final AbstractTimeObjectType timeObj) {
+        abstractTimeObject = buildTime(timeObj);
     }
 
     /**

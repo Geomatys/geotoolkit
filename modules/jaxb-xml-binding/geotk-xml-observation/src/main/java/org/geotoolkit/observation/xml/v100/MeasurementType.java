@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.v311.AbstractTimeGeometricPrimitiveType;
+import org.geotoolkit.gml.xml.v311.FeaturePropertyType;
 import org.geotoolkit.gml.xml.v311.TimePeriodType;
 import org.geotoolkit.gml.xml.v311.TimePositionType;
 import org.geotoolkit.sampling.xml.v100.SamplingFeatureType;
@@ -90,16 +91,32 @@ public class MeasurementType extends ObservationType implements Measurement {
      * @param error       Estimation de l'erreur sur la valeur mesurée, ou {@link Float#NaN NaN}
      *                    si l'erreur est inconnue ou ne s'applique pas.
      */
-    public MeasurementType(final String name,
-            final String definition,
-            final SamplingFeatureType station,
-            final PhenomenonType      observedProperty,
-            final ProcessType         procedure,
-            //final ElementType         quality,
-            final MeasureType         result,
-            final AbstractTimeGeometricPrimitiveType  samplingTime) {
+    public MeasurementType(final String              name,
+                           final String              definition,
+                           final SamplingFeatureType station,
+                           final PhenomenonType      observedProperty,
+                           final String              procedure,
+                           final MeasureType         result,
+                           final AbstractTimeGeometricPrimitiveType  samplingTime) {
         super(name, definition, station, observedProperty, procedure, result,
                 samplingTime);
+        
+    }
+    
+    public MeasurementType(final String              name,
+                           final String              definition,
+                           final FeaturePropertyType station,
+                           final PhenomenonType      observedProperty,
+                           final String              procedure,
+                           final MeasureType         result,
+                           final AbstractTimeGeometricPrimitiveType  samplingTime) {
+        super(name, definition, station, observedProperty, procedure, result,
+                samplingTime);
+        
+    }
+    
+    public MeasurementType(final MeasurementType meas) {
+        super(meas);
         
     }
     
@@ -127,13 +144,14 @@ public class MeasurementType extends ObservationType implements Measurement {
         if (getFeatureOfInterest() != null) {
             foi = (SamplingFeatureType) getFeatureOfInterest();
         }
-        
+        final MeasureType res = (MeasureType) getResult();
+        res.setValue(0);
         return new MeasurementType(temporaryName,
                                     getDefinition(),
                                     foi,
                                     pheno,
-                                    (ProcessType)getProcedure(),
-                                    (MeasureType) getResult(),
+                                    getProcedure().getHref(),
+                                    res,
                                     (AbstractTimeGeometricPrimitiveType)time);
 
     }

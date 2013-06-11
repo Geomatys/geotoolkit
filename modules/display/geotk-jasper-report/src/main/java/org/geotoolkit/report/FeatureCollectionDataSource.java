@@ -30,7 +30,7 @@ import org.geotoolkit.util.Converters;
 import org.opengis.feature.Feature;
 import org.opengis.feature.Property;
 
-import static org.geotoolkit.util.ArgumentChecks.*;
+import static org.apache.sis.util.ArgumentChecks.*;
 
 /**
  * Map a FeatureCollection as a Jasper report data source.

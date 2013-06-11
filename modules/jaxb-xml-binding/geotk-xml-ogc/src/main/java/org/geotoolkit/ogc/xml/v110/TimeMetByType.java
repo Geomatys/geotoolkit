@@ -37,6 +37,15 @@ public class TimeMetByType extends BinaryTemporalOpType implements MetBy {
         super(propertyName, temporal);
     }
 
+    public TimeMetByType(final TimeMetByType that) {
+        super(that);
+    }
+
+    @Override
+    public TemporalOpsType getClone() {
+        return new TimeMetByType(this);
+    }
+    
     @Override
     public boolean evaluate(Object o) {
         throw new UnsupportedOperationException("Not supported yet.");

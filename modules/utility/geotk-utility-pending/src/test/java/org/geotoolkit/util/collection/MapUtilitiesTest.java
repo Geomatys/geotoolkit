@@ -5,7 +5,7 @@
 package org.geotoolkit.util.collection;
 
 import java.util.Map;
-import org.geotoolkit.util.NullArgumentException;
+import org.apache.sis.util.NullArgumentException;
 import static org.junit.Assert.*;
 import org.junit.Test;
 

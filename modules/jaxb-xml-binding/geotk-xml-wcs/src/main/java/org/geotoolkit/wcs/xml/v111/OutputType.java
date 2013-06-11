@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.wcs.xml.Output;
 
 
 /**
@@ -51,7 +52,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "OutputType", propOrder = {
     "gridCRS"
 })
-public class OutputType {
+public class OutputType implements Output {
 
     @XmlElement(name = "GridCRS")
     private GridCrsType gridCRS;

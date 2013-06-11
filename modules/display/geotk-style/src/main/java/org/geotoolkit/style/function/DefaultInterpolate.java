@@ -39,7 +39,7 @@ import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.geotoolkit.internal.image.ColorUtilities;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.Converters;
-import org.geotoolkit.util.collection.UnmodifiableArrayList;
+import org.apache.sis.internal.util.UnmodifiableArrayList;
 
 import org.opengis.feature.Feature;
 import org.opengis.filter.capability.FunctionName;
@@ -48,7 +48,7 @@ import org.opengis.filter.expression.ExpressionVisitor;
 import org.opengis.filter.expression.Literal;
 
 import static org.geotoolkit.style.StyleConstants.*;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 import static org.opengis.filter.expression.Expression.*;
 
 /**
@@ -424,7 +424,7 @@ public class DefaultInterpolate extends AbstractExpression implements Interpolat
             } else {
                 // Current implementation supports only sources that use of index color model
                 // and component color model
-                throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_CLASS_$2,
+                throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_CLASS_2,
                         Classes.getClass(candidate), IndexColorModel.class));
             }
 

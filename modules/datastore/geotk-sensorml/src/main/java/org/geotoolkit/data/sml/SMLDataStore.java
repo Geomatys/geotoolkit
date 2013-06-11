@@ -811,4 +811,11 @@ public class SMLDataStore extends AbstractFeatureStore {
 
     }
 
+
+	@Override
+	public void refreshMetaModel() {
+		return;
+		
+	}
+
 }

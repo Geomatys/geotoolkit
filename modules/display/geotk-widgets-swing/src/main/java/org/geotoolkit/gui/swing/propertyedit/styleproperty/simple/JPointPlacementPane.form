@@ -92,7 +92,9 @@
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel5">
       <Properties>
-        <Property name="text" type="java.lang.String" value="D&#xe9;callage X :"/>
+        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+          <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="displacementX" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
+        </Property>
       </Properties>
     </Component>
     <Component class="org.geotoolkit.gui.swing.style.JNumberExpressionPane" name="guiDisplacementY">
@@ -102,7 +104,9 @@
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel6">
       <Properties>
-        <Property name="text" type="java.lang.String" value="D&#xe9;callage Y :"/>
+        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+          <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="displacementY" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
+        </Property>
       </Properties>
     </Component>
     <Component class="org.geotoolkit.gui.swing.style.JNumberExpressionPane" name="guiDisplacementX">

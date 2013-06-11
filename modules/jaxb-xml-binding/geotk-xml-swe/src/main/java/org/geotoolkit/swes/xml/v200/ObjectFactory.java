@@ -379,8 +379,8 @@ public class ObjectFactory {
      * Create an instance of {@link InsertSensorType.ProcedureDescription }
      * 
      */
-    public InsertSensorType.ProcedureDescription createInsertSensorTypeProcedureDescription() {
-        return new InsertSensorType.ProcedureDescription();
+    public ProcedureDescription createProcedureDescription() {
+        return new ProcedureDescription();
     }
 
     /**

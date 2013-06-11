@@ -24,8 +24,8 @@ import java.util.*;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.io.TableWriter;
 import org.geotoolkit.referencing.IdentifiedObjects;
-import org.geotoolkit.util.collection.UnmodifiableArrayList;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
+import org.apache.sis.internal.util.UnmodifiableArrayList;
 
 import org.opengis.feature.Property;
 import org.opengis.feature.type.AssociationType;
@@ -56,8 +56,8 @@ public class DefaultComplexType extends DefaultAttributeType<AttributeType> impl
     /**
      * Immutable copy of the properties list with which we were constructed.
      */
-    protected final PropertyDescriptor[] descriptors;
-    protected final List<PropertyDescriptor> descriptorsList;
+    protected PropertyDescriptor[] descriptors;
+    protected List<PropertyDescriptor> descriptorsList;
 
     /**
      * Map to locate properties by name or string.
@@ -259,7 +259,7 @@ public class DefaultComplexType extends DefaultAttributeType<AttributeType> impl
         if(inCycle){
             builder.append(" <...CYCLIC...>");
         }
-        
+
         builder.append("\t");
         builder.append(Integer.toString(property.getMinOccurs()));
         builder.append("\t");

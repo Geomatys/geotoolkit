@@ -20,14 +20,11 @@ package org.geotoolkit.sos.xml.v200;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
-import org.geotoolkit.ogc.xml.v200.FilterType;
 import org.geotoolkit.ogc.xml.v200.SpatialOpsType;
 import org.geotoolkit.ogc.xml.v200.TemporalOpsType;
 import org.geotoolkit.sos.xml.GetObservation;
@@ -98,10 +95,10 @@ public class GetObservationType extends ExtensibleRequestType implements GetObse
     private List<String> offering;
     @XmlSchemaType(name = "anyURI")
     private List<String> observedProperty;
-    private List<GetObservationType.TemporalFilter> temporalFilter;
+    private List<TemporalFilterType> temporalFilter;
     @XmlSchemaType(name = "anyURI")
     private List<String> featureOfInterest;
-    private GetObservationType.SpatialFilter spatialFilter;
+    private SpatialFilterType spatialFilter;
     @XmlSchemaType(name = "anyURI")
     private String responseFormat;
 
@@ -116,15 +113,15 @@ public class GetObservationType extends ExtensibleRequestType implements GetObse
             this.offering = Arrays.asList(offering);
         }
         if (eventTime != null) {
-            temporalFilter = new ArrayList<TemporalFilter>();
+            temporalFilter = new ArrayList<TemporalFilterType>();
             for (TemporalOpsType temporal : eventTime) {
-                this.temporalFilter.add(new TemporalFilter(temporal));
+                this.temporalFilter.add(new TemporalFilterType(temporal));
             }
         }
         this.procedure = procedure;
         this.observedProperty = observedProperty;
         if (spatialFilter != null) {
-            this.spatialFilter = new SpatialFilter(spatialFilter);
+            this.spatialFilter = new SpatialFilterType(spatialFilter);
         }
         this.responseFormat = responseFormat;
     }
@@ -136,13 +133,33 @@ public class GetObservationType extends ExtensibleRequestType implements GetObse
             this.offering = Arrays.asList(offering);
         }
         if (eventTime != null) {
-            temporalFilter = new ArrayList<TemporalFilter>();
+            temporalFilter = new ArrayList<TemporalFilterType>();
             for (TemporalOpsType temporal : eventTime) {
-                this.temporalFilter.add(new TemporalFilter(temporal));
+                this.temporalFilter.add(new TemporalFilterType(temporal));
             }
         }
         this.procedure = procedure;
         this.observedProperty = observedProperty;
+        this.featureOfInterest = foi;
+        this.responseFormat = responseFormat;
+    }
+    
+    public GetObservationType(final String version, final String service, final List<String> offering, final List<TemporalOpsType> eventTime, 
+            final List<String> procedure, final List<String> observedProperty, final SpatialOpsType spatialFilter,
+            final List<String> foi, final String responseFormat) {
+        super(version, service);
+        this.offering = offering;
+        if (eventTime != null) {
+            temporalFilter = new ArrayList<TemporalFilterType>();
+            for (TemporalOpsType temporal : eventTime) {
+                this.temporalFilter.add(new TemporalFilterType(temporal));
+            }
+        }
+        this.procedure = procedure;
+        this.observedProperty = observedProperty;
+        if (spatialFilter != null) {
+            this.spatialFilter = new SpatialFilterType(spatialFilter);
+        }
         this.featureOfInterest = foi;
         this.responseFormat = responseFormat;
     }
@@ -203,12 +220,12 @@ public class GetObservationType extends ExtensibleRequestType implements GetObse
     @Override
     public List<Filter> getTemporalFilter() {
         if (temporalFilter == null) {
-            temporalFilter = new ArrayList<GetObservationType.TemporalFilter>();
+            temporalFilter = new ArrayList<TemporalFilterType>();
         }
         final List<Filter> result = new ArrayList<Filter>();
-        for (GetObservationType.TemporalFilter tf : temporalFilter) {
-            if (tf.temporalOps != null) {
-                result.add(tf.temporalOps.getValue());
+        for (TemporalFilterType tf : temporalFilter) {
+            if (tf.getTemporalOps() != null) {
+                result.add(tf.getTemporalOps());
             }
         }
         return result;
@@ -237,7 +254,7 @@ public class GetObservationType extends ExtensibleRequestType implements GetObse
      *     {@link GetObservationType.SpatialFilter }
      *     
      */
-    public void setSpatialFilter(GetObservationType.SpatialFilter value) {
+    public void setSpatialFilter(SpatialFilterType value) {
         this.spatialFilter = value;
     }
 
@@ -287,8 +304,8 @@ public class GetObservationType extends ExtensibleRequestType implements GetObse
 
     @Override
     public Filter getSpatialFilter() {
-        if (spatialFilter != null && spatialFilter.spatialOps != null) {
-            return spatialFilter.spatialOps.getValue();
+        if (spatialFilter != null) {
+            return spatialFilter.getSpatialOps();
         }
         return null;
     }
@@ -297,184 +314,4 @@ public class GetObservationType extends ExtensibleRequestType implements GetObse
     public Filter getComparisonFilter() {
         return null;
     }
-    
-    /**
-     * <p>Java class for anonymous complex type.
-     * 
-     * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
-     * <pre>
-     * &lt;complexType>
-     *   &lt;complexContent>
-     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-     *       &lt;sequence>
-     *         &lt;element ref="{http://www.opengis.net/fes/2.0}spatialOps"/>
-     *       &lt;/sequence>
-     *     &lt;/restriction>
-     *   &lt;/complexContent>
-     * &lt;/complexType>
-     * </pre>
-     * 
-     * 
-     */
-    @XmlAccessorType(XmlAccessType.FIELD)
-    @XmlType(name = "", propOrder = {
-        "spatialOps"
-    })
-    public static class SpatialFilter {
-
-        @XmlElementRef(name = "spatialOps", namespace = "http://www.opengis.net/fes/2.0", type = JAXBElement.class)
-        private JAXBElement<? extends SpatialOpsType> spatialOps;
-
-        public SpatialFilter() {
-            
-        }
-        
-        public SpatialFilter(final SpatialOpsType spa) {
-            if (spa != null) {
-                spatialOps = FilterType.createSpatialOps(spa);
-            }
-        }
-        
-        /**
-         * Gets the value of the spatialOps property.
-         * 
-         * @return
-         *     possible object is
-         *     {@link JAXBElement }{@code <}{@link SpatialOpsType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link BinarySpatialOpType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link DistanceBufferType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link BinarySpatialOpType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link BinarySpatialOpType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link BBOXType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link BinarySpatialOpType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link BinarySpatialOpType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link BinarySpatialOpType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link BinarySpatialOpType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link DistanceBufferType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link BinarySpatialOpType }{@code >}
-         *     
-         */
-        public JAXBElement<? extends SpatialOpsType> getSpatialOps() {
-            return spatialOps;
-        }
-
-        /**
-         * Sets the value of the spatialOps property.
-         * 
-         * @param value
-         *     allowed object is
-         *     {@link JAXBElement }{@code <}{@link SpatialOpsType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link BinarySpatialOpType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link DistanceBufferType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link BinarySpatialOpType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link BinarySpatialOpType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link BBOXType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link BinarySpatialOpType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link BinarySpatialOpType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link BinarySpatialOpType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link BinarySpatialOpType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link DistanceBufferType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link BinarySpatialOpType }{@code >}
-         *     
-         */
-        public void setSpatialOps(JAXBElement<? extends SpatialOpsType> value) {
-            this.spatialOps = ((JAXBElement<? extends SpatialOpsType> ) value);
-        }
-
-    }
-
-
-    /**
-     * <p>Java class for anonymous complex type.
-     * 
-     * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
-     * <pre>
-     * &lt;complexType>
-     *   &lt;complexContent>
-     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-     *       &lt;sequence>
-     *         &lt;element ref="{http://www.opengis.net/fes/2.0}temporalOps"/>
-     *       &lt;/sequence>
-     *     &lt;/restriction>
-     *   &lt;/complexContent>
-     * &lt;/complexType>
-     * </pre>
-     * 
-     * 
-     */
-    @XmlAccessorType(XmlAccessType.FIELD)
-    @XmlType(name = "", propOrder = {
-        "temporalOps"
-    })
-    public static class TemporalFilter {
-
-        @XmlElementRef(name = "temporalOps", namespace = "http://www.opengis.net/fes/2.0", type = JAXBElement.class)
-        private JAXBElement<? extends TemporalOpsType> temporalOps;
-
-        public TemporalFilter() {
-            
-        }
-        
-        public TemporalFilter(final TemporalOpsType temporalOp) {
-            if (temporalOp != null) {
-                this.temporalOps = FilterType.createTemporalOps(temporalOp);
-            }
-        }
-        
-        /**
-         * Gets the value of the temporalOps property.
-         * 
-         * @return
-         *     possible object is
-         *     {@link JAXBElement }{@code <}{@link BinaryTemporalOpType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link BinaryTemporalOpType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link BinaryTemporalOpType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link BinaryTemporalOpType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link BinaryTemporalOpType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link BinaryTemporalOpType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link BinaryTemporalOpType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link BinaryTemporalOpType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link BinaryTemporalOpType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link BinaryTemporalOpType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link BinaryTemporalOpType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link BinaryTemporalOpType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link BinaryTemporalOpType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link BinaryTemporalOpType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link TemporalOpsType }{@code >}
-         *     
-         */
-        public JAXBElement<? extends TemporalOpsType> getTemporalOps() {
-            return temporalOps;
-        }
-
-        /**
-         * Sets the value of the temporalOps property.
-         * 
-         * @param value
-         *     allowed object is
-         *     {@link JAXBElement }{@code <}{@link BinaryTemporalOpType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link BinaryTemporalOpType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link BinaryTemporalOpType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link BinaryTemporalOpType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link BinaryTemporalOpType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link BinaryTemporalOpType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link BinaryTemporalOpType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link BinaryTemporalOpType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link BinaryTemporalOpType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link BinaryTemporalOpType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link BinaryTemporalOpType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link BinaryTemporalOpType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link BinaryTemporalOpType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link BinaryTemporalOpType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link TemporalOpsType }{@code >}
-         *     
-         */
-        public void setTemporalOps(JAXBElement<? extends TemporalOpsType> value) {
-            this.temporalOps = ((JAXBElement<? extends TemporalOpsType> ) value);
-        }
-
-    }
-
 }

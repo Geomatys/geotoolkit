@@ -136,4 +136,9 @@ public class InsertObservation extends RequestBaseType implements org.geotoolkit
         }
         return s.toString();
     }
+
+    @Override
+    public List<String> getOffering() {
+        return null;
+    }
 }

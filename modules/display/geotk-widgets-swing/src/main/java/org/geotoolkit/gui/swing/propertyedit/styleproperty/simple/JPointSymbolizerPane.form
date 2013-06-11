@@ -67,7 +67,7 @@
                               <Component id="guiDisplacementY" min="-2" max="-2" attributes="0"/>
                           </Group>
                       </Group>
-                      <EmptySpace min="0" pref="12" max="32767" attributes="0"/>
+                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                   </Group>
               </Group>
           </Group>
@@ -124,22 +124,30 @@
   <SubComponents>
     <Component class="javax.swing.JLabel" name="jLabel1">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Type de forme :"/>
+        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+          <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="type" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
+        </Property>
       </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel2">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Remplissage de la forme :"/>
+        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+          <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="fill" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
+        </Property>
       </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel10">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Bordure de la forme :"/>
+        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+          <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="border" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
+        </Property>
       </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel4">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Taille :"/>
+        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+          <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="size" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
+        </Property>
       </Properties>
     </Component>
     <Component class="org.geotoolkit.gui.swing.style.JNumberSliderExpressionPane" name="guiSize">
@@ -149,7 +157,9 @@
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel7">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Angle :"/>
+        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+          <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="rotation" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
+        </Property>
       </Properties>
     </Component>
     <Component class="org.geotoolkit.gui.swing.style.JNumberSliderExpressionPane" name="guiRotation">
@@ -159,7 +169,9 @@
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel3">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Opacit&#xe9; :"/>
+        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+          <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="opacity" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
+        </Property>
       </Properties>
     </Component>
     <Component class="org.geotoolkit.gui.swing.style.JNumberSliderExpressionPane" name="guiOpacity">
@@ -169,7 +181,9 @@
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel5">
       <Properties>
-        <Property name="text" type="java.lang.String" value="D&#xe9;callage X :"/>
+        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+          <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="displacementX" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
+        </Property>
       </Properties>
     </Component>
     <Component class="org.geotoolkit.gui.swing.style.JNumberExpressionPane" name="guiDisplacementY">
@@ -184,7 +198,9 @@
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel8">
       <Properties>
-        <Property name="text" type="java.lang.String" value="D&#xe9;callage Y :"/>
+        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+          <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="displacementY" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
+        </Property>
       </Properties>
     </Component>
     <Component class="org.geotoolkit.gui.swing.propertyedit.styleproperty.simple.JGraphicSymbolControlPane" name="guiGraphicSymbol">

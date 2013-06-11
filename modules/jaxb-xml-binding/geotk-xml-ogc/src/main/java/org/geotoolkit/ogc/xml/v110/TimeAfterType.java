@@ -33,6 +33,10 @@ public class TimeAfterType extends BinaryTemporalOpType implements After {
     public TimeAfterType() {
 
     }
+    
+    public TimeAfterType(final TimeAfterType that) {
+        super(that);
+    }
 
     /**
      * Build a new TIme After Type
@@ -51,4 +55,8 @@ public class TimeAfterType extends BinaryTemporalOpType implements After {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
+    public TemporalOpsType getClone() {
+        return new TimeAfterType(this);
+    }
 }

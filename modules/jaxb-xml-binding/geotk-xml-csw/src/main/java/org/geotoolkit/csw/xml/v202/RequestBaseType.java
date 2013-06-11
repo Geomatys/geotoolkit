@@ -24,7 +24,7 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.csw.xml.AbstractCswRequest;
 import org.geotoolkit.ows.xml.RequestBase;
-import org.geotoolkit.util.Version;
+import org.apache.sis.util.Version;
 
 
 /**

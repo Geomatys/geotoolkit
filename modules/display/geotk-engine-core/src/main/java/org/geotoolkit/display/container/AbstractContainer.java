@@ -221,7 +221,7 @@ public abstract class AbstractContainer<C extends AbstractCanvas, G extends Grap
 //                        graphic = candidate.clone();
 //                        } catch (CloneNotSupportedException e) {
 //                            throw new IllegalArgumentException(
-//                                    Errors.format(Errors.Keys.CANVAS_NOT_OWNER_$1, candidate.getName()), e);
+//                                    Errors.format(Errors.Keys.CANVAS_NOT_OWNER_1, candidate.getName()), e);
 //                        }
 
                     }
@@ -289,7 +289,7 @@ public abstract class AbstractContainer<C extends AbstractCanvas, G extends Grap
             if (canvas != this) {
                 assert !graphics.containsKey(candidate) : candidate;
                 throw new IllegalArgumentException(Errors.format(
-                            Errors.Keys.CANVAS_NOT_OWNER_$1, candidate.toString()));
+                            Errors.Keys.CANVAS_NOT_OWNER_1, candidate.toString()));
             }
 //            assert Thread.holdsLock(candidate.getTreeLock());
             candidate.removePropertyChangeListener(graphicListener);

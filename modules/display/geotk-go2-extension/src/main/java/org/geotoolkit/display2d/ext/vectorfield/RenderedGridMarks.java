@@ -63,7 +63,7 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
 
-import static org.geotoolkit.util.ArgumentChecks.*;
+import static org.apache.sis.util.ArgumentChecks.*;
 
 
 /**
@@ -412,11 +412,11 @@ public class RenderedGridMarks extends RenderedMarks {
      */
     public void setAutoDecimation(final int spaceX, final int spaceY) {
         if (spaceX < 0) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_$2,
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_2,
                                                "spaceX", new Integer(spaceX)));
         }
         if (spaceY < 0) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_$2,
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_2,
                                                "spaceY", new Integer(spaceY)));
         }
         if (spaceX!=this.spaceX || spaceY!=this.spaceY) {
@@ -483,7 +483,7 @@ public class RenderedGridMarks extends RenderedMarks {
      */
     public void setMarkPaint(final Paint paint) {
         if (paint == null) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_$2,
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_2,
                                                "paint", paint));
         }
         final Paint oldPaint;

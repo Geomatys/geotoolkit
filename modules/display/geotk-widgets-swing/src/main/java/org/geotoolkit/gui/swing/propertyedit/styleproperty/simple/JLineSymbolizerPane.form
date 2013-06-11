@@ -30,7 +30,7 @@
                       <Component id="guiStrokeControlPane" min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
-              <EmptySpace pref="72" max="32767" attributes="0"/>
+              <EmptySpace pref="126" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -55,12 +55,16 @@
   <SubComponents>
     <Component class="javax.swing.JLabel" name="jLabel1">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Forme et couleur de la ligne :"/>
+        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+          <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="lineShapeAndColor" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
+        </Property>
       </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel5">
       <Properties>
-        <Property name="text" type="java.lang.String" value="D&#xe9;callage X :"/>
+        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+          <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="displacementX" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
+        </Property>
       </Properties>
     </Component>
     <Component class="org.geotoolkit.gui.swing.propertyedit.styleproperty.simple.JStrokeControlPane" name="guiStrokeControlPane">

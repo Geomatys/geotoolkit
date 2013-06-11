@@ -275,8 +275,15 @@ public class BinaryTemporalOpType extends TemporalOpsType  implements BinaryTemp
         if (expression != null && expression.getValue() instanceof Expression) {
             return (Expression) expression.getValue();
         }
-        if (any != null && !any.isEmpty() && any.get(0) instanceof Expression) {
-            return (Expression)any.get(0);
+        this.cleanAny();
+        if (any != null && !any.isEmpty()) {
+            Object obj = any.get(0);
+            if (obj instanceof JAXBElement) {
+                obj = ((JAXBElement)obj).getValue();
+            }
+            if (obj instanceof Expression) {
+                return (Expression)obj;
+            }
         }
         return null;
     }

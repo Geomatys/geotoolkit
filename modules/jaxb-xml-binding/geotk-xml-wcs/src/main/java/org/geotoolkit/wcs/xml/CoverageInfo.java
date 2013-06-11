@@ -31,5 +31,13 @@ public interface CoverageInfo {
     Envelope getLonLatEnvelope();
 
     List<?> getRest();
+    
+    void setTitle(final String title);
+    
+    void setAbstract(final String abs);
+    
+    void setKeywordValues(final List<String> values);
+    
+    void setMetadata(final String url);
 
 }

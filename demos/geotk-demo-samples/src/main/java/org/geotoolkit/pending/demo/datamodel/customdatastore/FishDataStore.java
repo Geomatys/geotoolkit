@@ -142,4 +142,8 @@ public class FishDataStore extends AbstractFeatureStore{
         throw new DataStoreException("Not supported.");
     }
 
+    @Override
+    public void refreshMetaModel() {
+    }
+
 }

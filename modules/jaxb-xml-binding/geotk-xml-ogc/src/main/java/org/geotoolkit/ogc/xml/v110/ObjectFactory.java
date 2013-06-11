@@ -811,8 +811,8 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/ogc", name = "TM_Overalps", substitutionHeadNamespace = "http://www.opengis.net/ogc", substitutionHeadName = "temporalOps")
-    public JAXBElement<BinaryTemporalOpType> createTOveralps(final BinaryTemporalOpType value) {
-        return new JAXBElement<BinaryTemporalOpType>(_TOveralps_QNAME, BinaryTemporalOpType.class, null, value);
+    public JAXBElement<TimeOverlapsType> createTOveralps(final TimeOverlapsType value) {
+        return new JAXBElement<TimeOverlapsType>(_TOveralps_QNAME, TimeOverlapsType.class, null, value);
     }
 
     /**
@@ -820,8 +820,8 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/ogc", name = "TM_Equals", substitutionHeadNamespace = "http://www.opengis.net/ogc", substitutionHeadName = "temporalOps")
-    public JAXBElement<BinaryTemporalOpType> createTEquals(final BinaryTemporalOpType value) {
-        return new JAXBElement<BinaryTemporalOpType>(_TEquals_QNAME, BinaryTemporalOpType.class, null, value);
+    public JAXBElement<TimeEqualsType> createTEquals(final TimeEqualsType value) {
+        return new JAXBElement<TimeEqualsType>(_TEquals_QNAME, TimeEqualsType.class, null, value);
     }
     
     /**
@@ -856,8 +856,8 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/ogc", name = "TM_Meets", substitutionHeadNamespace = "http://www.opengis.net/ogc", substitutionHeadName = "temporalOps")
-    public JAXBElement<BinaryTemporalOpType> createTMeets(final BinaryTemporalOpType value) {
-        return new JAXBElement<BinaryTemporalOpType>(_TMeets_QNAME, BinaryTemporalOpType.class, null, value);
+    public JAXBElement<TimeMeetsType> createTMeets(final TimeMeetsType value) {
+        return new JAXBElement<TimeMeetsType>(_TMeets_QNAME, TimeMeetsType.class, null, value);
     }
 
     /**
@@ -865,8 +865,8 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/ogc", name = "TM_OverlappedBy", substitutionHeadNamespace = "http://www.opengis.net/ogc", substitutionHeadName = "temporalOps")
-    public JAXBElement<BinaryTemporalOpType> createTOverlappedBy(final BinaryTemporalOpType value) {
-        return new JAXBElement<BinaryTemporalOpType>(_TOverlappedBy_QNAME, BinaryTemporalOpType.class, null, value);
+    public JAXBElement<TimeOverlappedByType> createTOverlappedBy(final TimeOverlappedByType value) {
+        return new JAXBElement<TimeOverlappedByType>(_TOverlappedBy_QNAME, TimeOverlappedByType.class, null, value);
     }
 
     /**
@@ -883,8 +883,8 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/ogc", name = "TM_EndedBy", substitutionHeadNamespace = "http://www.opengis.net/ogc", substitutionHeadName = "temporalOps")
-    public JAXBElement<BinaryTemporalOpType> createTEndedBy(final BinaryTemporalOpType value) {
-        return new JAXBElement<BinaryTemporalOpType>(_TEndedBy_QNAME, BinaryTemporalOpType.class, null, value);
+    public JAXBElement<TimeEndedByType> createTEndedBy(final TimeEndedByType value) {
+        return new JAXBElement<TimeEndedByType>(_TEndedBy_QNAME, TimeEndedByType.class, null, value);
     }
 
     /**
@@ -966,8 +966,8 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/ogc", name = "TM_Ends", substitutionHeadNamespace = "http://www.opengis.net/ogc", substitutionHeadName = "temporalOps")
-    public JAXBElement<BinaryTemporalOpType> createTEnds(final BinaryTemporalOpType value) {
-        return new JAXBElement<BinaryTemporalOpType>(_TEnds_QNAME, BinaryTemporalOpType.class, null, value);
+    public JAXBElement<TimeEndsType> createTEnds(final TimeEndsType value) {
+        return new JAXBElement<TimeEndsType>(_TEnds_QNAME, TimeEndsType.class, null, value);
     }
 
     /**
@@ -993,8 +993,8 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/ogc", name = "TM_After", substitutionHeadNamespace = "http://www.opengis.net/ogc", substitutionHeadName = "temporalOps")
-    public JAXBElement<BinaryTemporalOpType> createTAfter(final BinaryTemporalOpType value) {
-        return new JAXBElement<BinaryTemporalOpType>(_TAfter_QNAME, BinaryTemporalOpType.class, null, value);
+    public JAXBElement<TimeAfterType> createTAfter(final TimeAfterType value) {
+        return new JAXBElement<TimeAfterType>(_TAfter_QNAME, TimeAfterType.class, null, value);
     }
 
     /**
@@ -1029,8 +1029,8 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/ogc", name = "TM_MetBy", substitutionHeadNamespace = "http://www.opengis.net/ogc", substitutionHeadName = "temporalOps")
-    public JAXBElement<BinaryTemporalOpType> createTMetBy(final BinaryTemporalOpType value) {
-        return new JAXBElement<BinaryTemporalOpType>(_TMetBy_QNAME, BinaryTemporalOpType.class, null, value);
+    public JAXBElement<TimeMetByType> createTMetBy(final TimeMetByType value) {
+        return new JAXBElement<TimeMetByType>(_TMetBy_QNAME, TimeMetByType.class, null, value);
     }
 
     /**
@@ -1038,8 +1038,8 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/ogc", name = "TM_Begins", substitutionHeadNamespace = "http://www.opengis.net/ogc", substitutionHeadName = "temporalOps")
-    public JAXBElement<BinaryTemporalOpType> createTBegins(final BinaryTemporalOpType value) {
-        return new JAXBElement<BinaryTemporalOpType>(_TBegins_QNAME, BinaryTemporalOpType.class, null, value);
+    public JAXBElement<TimeBeginsType> createTBegins(final TimeBeginsType value) {
+        return new JAXBElement<TimeBeginsType>(_TBegins_QNAME, TimeBeginsType.class, null, value);
     }
 
     /**
@@ -1047,8 +1047,8 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/ogc", name = "TM_Before", substitutionHeadNamespace = "http://www.opengis.net/ogc", substitutionHeadName = "temporalOps")
-    public JAXBElement<BinaryTemporalOpType> createTBefore(final BinaryTemporalOpType value) {
-        return new JAXBElement<BinaryTemporalOpType>(_TBefore_QNAME, BinaryTemporalOpType.class, null, value);
+    public JAXBElement<TimeBeforeType> createTBefore(final TimeBeforeType value) {
+        return new JAXBElement<TimeBeforeType>(_TBefore_QNAME, TimeBeforeType.class, null, value);
     }
 
     /**
@@ -1065,8 +1065,8 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/ogc", name = "TM_BegunBy", substitutionHeadNamespace = "http://www.opengis.net/ogc", substitutionHeadName = "temporalOps")
-    public JAXBElement<BinaryTemporalOpType> createTBegunBy(final BinaryTemporalOpType value) {
-        return new JAXBElement<BinaryTemporalOpType>(_TBegunBy_QNAME, BinaryTemporalOpType.class, null, value);
+    public JAXBElement<TimeBegunByType> createTBegunBy(final TimeBegunByType value) {
+        return new JAXBElement<TimeBegunByType>(_TBegunBy_QNAME, TimeBegunByType.class, null, value);
     }
 
     /**
@@ -1083,8 +1083,8 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/ogc", name = "TM_Contains", substitutionHeadNamespace = "http://www.opengis.net/ogc", substitutionHeadName = "temporalOps")
-    public JAXBElement<BinaryTemporalOpType> createTContains(final BinaryTemporalOpType value) {
-        return new JAXBElement<BinaryTemporalOpType>(_TContains_QNAME, BinaryTemporalOpType.class, null, value);
+    public JAXBElement<TimeContainsType> createTContains(final TimeContainsType value) {
+        return new JAXBElement<TimeContainsType>(_TContains_QNAME, TimeContainsType.class, null, value);
     }
 
     
@@ -1093,8 +1093,8 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/ogc", name = "TM_During", substitutionHeadNamespace = "http://www.opengis.net/ogc", substitutionHeadName = "temporalOps")
-    public JAXBElement<BinaryTemporalOpType> createTDuring(final BinaryTemporalOpType value) {
-        return new JAXBElement<BinaryTemporalOpType>(_TDuring_QNAME, BinaryTemporalOpType.class, null, value);
+    public JAXBElement<TimeDuringType> createTDuring(final TimeDuringType value) {
+        return new JAXBElement<TimeDuringType>(_TDuring_QNAME, TimeDuringType.class, null, value);
     }
 
     /**

@@ -20,10 +20,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.apache.sis.internal.util.UnmodifiableArrayList;
 
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.type.DefaultFeatureType;
-import org.geotoolkit.util.collection.UnmodifiableArrayList;
 
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
@@ -44,8 +44,8 @@ import org.opengis.util.InternationalString;
  */
 public class DefaultSimpleFeatureType extends DefaultFeatureType implements SimpleFeatureType {
 
-    protected final AttributeType[] types;
-    private final List<AttributeType> typesList;
+    protected AttributeType[] types;
+    protected List<AttributeType> typesList;
     final Map<Object, Integer> index;
 
     public DefaultSimpleFeatureType(final Name name, final List<AttributeDescriptor> schema,

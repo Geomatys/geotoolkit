@@ -44,7 +44,6 @@
     <Container class="javax.swing.JSplitPane" name="jSplitPane1">
       <Properties>
         <Property name="dividerLocation" type="int" value="200"/>
-        <Property name="dividerSize" type="int" value="3"/>
       </Properties>
 
       <Layout class="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout"/>
@@ -78,7 +77,7 @@
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="jXTitledSeparator1" alignment="0" pref="612" max="32767" attributes="0"/>
+                          <Component id="jXTitledSeparator1" alignment="0" max="32767" attributes="0"/>
                           <Group type="102" alignment="0" attributes="0">
                               <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
@@ -88,8 +87,8 @@
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="jRadioButton3" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <Component id="jXTitledSeparator2" alignment="0" pref="612" max="32767" attributes="0"/>
-                          <Group type="102" max="-2" attributes="0">
+                          <Component id="jXTitledSeparator2" alignment="0" max="32767" attributes="0"/>
+                          <Group type="102" attributes="0">
                               <Group type="103" groupAlignment="0" max="-2" attributes="0">
                                   <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
                                   <Component id="jScrollPane2" linkSize="1" pref="199" max="32767" attributes="0"/>
@@ -119,7 +118,6 @@
                       </Group>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
                       <Component id="jXTitledSeparator2" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace type="separate" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" attributes="0">
                               <Group type="103" groupAlignment="3" attributes="0">

@@ -29,13 +29,13 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
+import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.geotoolkit.factory.FactoryFinder;
 
 import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
-import org.geotoolkit.util.collection.UnmodifiableArrayList;
 
 import org.junit.Test;
 
@@ -189,7 +189,7 @@ public class FeatureTypeBuilderTest {
         assertEquals(new DefaultName(ns,"att_String4"), sft.getDescriptor(3).getName());
 
     }
-    
+
     @Test
     public void testAttributeOrderConformance(){
 
@@ -312,7 +312,7 @@ public class FeatureTypeBuilderTest {
         assertEquals(DefaultName.valueOf("{http://test.com}att_Geom"), sft.getGeometryDescriptor().getName());
         assertEquals(DefaultGeographicCRS.WGS84, sft.getCoordinateReferenceSystem());
 
-        
+
         ////////////////////////////////////////////////////////////////////////
         //same test on complex type ////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////
@@ -420,7 +420,7 @@ public class FeatureTypeBuilderTest {
         assertEquals(String.class, atDesc.getType().getBinding());
         assertEquals(0,atDesc.getUserData().size());
 
-        
+
         //geometries -----------------------------------------------------------
 
         desc = properties.get(4);
@@ -515,7 +515,7 @@ public class FeatureTypeBuilderTest {
         ftb.setSuperType(typeA);
         ftb.add(new DefaultName("b"), String.class);
         final SimpleFeatureType typeB = ftb.buildSimpleFeatureType();
-        
+
         ftb.reset();
         ftb.setName(new DefaultName(uri, "C"));
         ftb.setSuperType(typeB);
@@ -528,15 +528,15 @@ public class FeatureTypeBuilderTest {
                 FeatureTypeUtilities.getAncestors(BasicFeatureTypes.FEATURE));
 
         assertEquals("Ancestors of A, nearest first",
-                UnmodifiableArrayList.wrap(BasicFeatureTypes.FEATURE),
+                UnmodifiableArrayList.wrap(new SimpleFeatureType[] {BasicFeatureTypes.FEATURE}),
                 FeatureTypeUtilities.getAncestors(typeA));
 
         assertEquals("Ancestors of B, nearest first",
-                UnmodifiableArrayList.wrap(typeA,BasicFeatureTypes.FEATURE),
+                UnmodifiableArrayList.wrap(new SimpleFeatureType[] {typeA,BasicFeatureTypes.FEATURE}),
                 FeatureTypeUtilities.getAncestors(typeB));
 
         assertEquals("Ancestors of C, nearest first",
-                UnmodifiableArrayList.wrap(typeB,typeA,BasicFeatureTypes.FEATURE),
+                UnmodifiableArrayList.wrap(new SimpleFeatureType[] {typeB,typeA,BasicFeatureTypes.FEATURE}),
                 FeatureTypeUtilities.getAncestors(typeC));
     }
 

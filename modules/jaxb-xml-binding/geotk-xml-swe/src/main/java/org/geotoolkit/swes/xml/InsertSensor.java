@@ -24,7 +24,9 @@ import org.geotoolkit.ows.xml.RequestBase;
  */
 public interface InsertSensor extends RequestBase {
     
-    Object getSensorMetadata();
+    Object getSensorDescription();
+    
+    Object getInsertionMetadata();
     
     ObservationTemplate getObservationTemplate();
     

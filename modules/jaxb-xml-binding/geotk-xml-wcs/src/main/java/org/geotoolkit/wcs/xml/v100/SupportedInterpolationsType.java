@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.wcs.xml.SupportedInterpolations;
 
 
 /**
@@ -51,7 +52,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "SupportedInterpolationsType", propOrder = {
     "interpolationMethod"
 })
-public class SupportedInterpolationsType {
+public class SupportedInterpolationsType implements SupportedInterpolations {
 
     @XmlElement(required = true)
     private List<InterpolationMethod> interpolationMethod;

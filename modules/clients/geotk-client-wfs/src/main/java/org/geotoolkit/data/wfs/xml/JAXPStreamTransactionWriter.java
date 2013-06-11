@@ -276,9 +276,13 @@ public class JAXPStreamTransactionWriter {
 
         //write typename--------------------------------------------------------
         final Name typeName = element.getTypeName();
-        final String prefix = "geons"+inc.incrementAndGet();
-        writer.writeAttribute("xmlns:"+prefix, typeName.getNamespaceURI());
-        writer.writeAttribute(PROP_TYPENAME, prefix+":"+typeName.getLocalPart());
+        if (typeName.getNamespaceURI() != null && !typeName.getNamespaceURI().isEmpty()) {
+            final String prefix = "geons"+inc.incrementAndGet();
+            writer.writeAttribute("xmlns:"+prefix, typeName.getNamespaceURI());
+            writer.writeAttribute(PROP_TYPENAME, prefix+":"+typeName.getLocalPart());
+        } else {
+            writer.writeAttribute(PROP_TYPENAME, typeName.getLocalPart());
+        }
 
         //write crs-------------------------------------------------------------
         final CoordinateReferenceSystem crs = element.getCoordinateReferenceSystem();
@@ -321,7 +325,7 @@ public class JAXPStreamTransactionWriter {
             //write namespace
             final Name name = entry.getKey().getName();
             String pref = writer.getNamespaceContext().getPrefix(name.getNamespaceURI());
-            if(pref == null){
+            if(pref == null && name.getNamespaceURI() != null && !name.getNamespaceURI().isEmpty()){
                 pref = "geons"+inc.incrementAndGet();
                 writer.writeAttribute("xmlns:"+pref, name.getNamespaceURI());
             }
@@ -329,7 +333,11 @@ public class JAXPStreamTransactionWriter {
 
             //write name
             writer.writeStartElement(WFS_PREFIX, TAG_NAME, WFS_NAMESPACE);
-            writer.writeCharacters(pref+":"+name.getLocalPart());
+            if (pref != null) {
+                writer.writeCharacters(pref+":"+name.getLocalPart());
+            } else {
+                writer.writeCharacters(name.getLocalPart());
+            }
             writer.writeEndElement();
 
             //write value
@@ -392,9 +400,15 @@ public class JAXPStreamTransactionWriter {
 
         //write typename--------------------------------------------------------
         final Name typeName = element.getTypeName();
-        final String prefix = "geons"+inc.incrementAndGet();
-        writer.writeAttribute("xmlns:"+prefix, typeName.getNamespaceURI());
-        writer.writeAttribute(PROP_TYPENAME, prefix+":"+typeName.getLocalPart());
+        
+        if (typeName.getNamespaceURI() != null && !typeName.getNamespaceURI().isEmpty()) {
+            final String prefix = "geons"+inc.incrementAndGet();
+            writer.writeAttribute("xmlns:"+prefix, typeName.getNamespaceURI());
+            writer.writeAttribute(PROP_TYPENAME, prefix+":"+typeName.getLocalPart());
+        } else {
+            writer.writeAttribute(PROP_TYPENAME, typeName.getLocalPart());
+        }
+        
 
         //write handle----------------------------------------------------------
         final String handle = element.getHandle();

@@ -19,6 +19,7 @@ package org.geotoolkit.ogc.xml.v100;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
+import org.opengis.filter.PropertyIsNotEqualTo;
 
 /**
  *
@@ -27,10 +28,17 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "PropertyIsNotEqualTo")
-public class PropertyIsNotEqualToType extends BinaryComparisonOpType {
+public class PropertyIsNotEqualToType extends BinaryComparisonOpType implements PropertyIsNotEqualTo {
     
     public PropertyIsNotEqualToType() {
         
+    }
+    
+    /**
+     * Build a new Binary comparison operator
+     */
+    public PropertyIsNotEqualToType(final LiteralType literal, final PropertyNameType propertyName) {
+        super(literal, propertyName);
     }
     
     public PropertyIsNotEqualToType(final PropertyIsNotEqualToType that) {

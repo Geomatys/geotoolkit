@@ -124,7 +124,7 @@ public class JRasterSymbolizerPane extends StyleElementEditor<RasterSymbolizer> 
                 (oldSymbolizer!=null) ? oldSymbolizer.getDescription() : StyleConstants.DEFAULT_DESCRIPTION,
                 guiUOM.create(),
                 guiOpacity.create(),
-                (oldSymbolizer!=null) ? oldSymbolizer.getChannelSelection() : StyleConstants.DEFAULT_RASTER_CHANNEL_RGB,
+                (oldSymbolizer!=null) ? oldSymbolizer.getChannelSelection() : null,
                 (oldSymbolizer!=null) ? oldSymbolizer.getOverlapBehavior() : OverlapBehavior.AVERAGE, 
                 (oldSymbolizer!=null) ? oldSymbolizer.getColorMap() : null, 
                 guiContrast.create(), 

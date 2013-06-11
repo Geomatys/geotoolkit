@@ -32,4 +32,8 @@ public interface AbstractServiceIdentification extends AbstractDescription {
     List<String> getServiceTypeVersion();
 
     AbstractCodeType getServiceType();
+    
+    List<String> getProfile();
+    
+    void setProfile(final List<String> profiles);
 }

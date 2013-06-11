@@ -32,7 +32,7 @@ import org.geotoolkit.factory.HintsPending;
 import org.geotoolkit.feature.simple.DefaultSimpleSchema;
 import org.geotoolkit.feature.type.BasicFeatureTypes;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
@@ -50,7 +50,7 @@ import org.opengis.filter.Filter;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.InternationalString;
 
-import static org.geotoolkit.util.ArgumentChecks.*;
+import static org.apache.sis.util.ArgumentChecks.*;
 
 /**
  * A builder for feature types.
@@ -715,7 +715,7 @@ public class FeatureTypeBuilder {
             }
 
             //to be simple property must be an attribut
-            final Set<Class<?>> ints = Classes.getAllInterfaces(desc.getType().getClass());
+            final Class<?>[] ints = Classes.getAllInterfaces(desc.getType().getClass());
             boolean found = false;
             for(Class<?> c : ints){
                 if(AttributeType.class.isAssignableFrom(c)){
@@ -776,7 +776,7 @@ public class FeatureTypeBuilder {
      * @param types
      * @return SimpleFeatureType
      */
-    public static FeatureType retype(final FeatureType original, final Name[] types) {
+    public static <T extends ComplexType> T retype(final T original, final Name[] types) {
         final FeatureTypeBuilder b = new FeatureTypeBuilder();
 
         //initialize the builder
@@ -805,9 +805,11 @@ public class FeatureTypeBuilder {
         }
 
         if(original instanceof SimpleFeatureType){
-            return b.buildSimpleFeatureType();
+            return (T) b.buildSimpleFeatureType();
+        }else if(original instanceof FeatureType){
+            return (T) b.buildFeatureType();
         }else{
-            return b.buildFeatureType();
+            return (T) b.buildType();
         }
         
     }

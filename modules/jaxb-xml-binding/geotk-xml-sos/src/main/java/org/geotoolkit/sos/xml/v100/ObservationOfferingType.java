@@ -17,7 +17,6 @@
 package org.geotoolkit.sos.xml.v100;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -29,6 +28,7 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.namespace.QName;
+import org.geotoolkit.gml.xml.Envelope;
 import org.geotoolkit.gml.xml.v311.AbstractFeatureType;
 import org.geotoolkit.gml.xml.v311.AbstractTimeGeometricPrimitiveType;
 import org.geotoolkit.gml.xml.v311.BoundingShapeType;
@@ -38,7 +38,7 @@ import org.geotoolkit.sos.xml.ResponseModeType;
 import org.geotoolkit.swe.xml.v101.PhenomenonType;
 import org.geotoolkit.swe.xml.v101.PhenomenonPropertyType;
 import org.geotoolkit.swe.xml.v101.TimeGeometricPrimitivePropertyType;
-import org.geotoolkit.util.ComparisonMode;
+import org.apache.sis.util.ComparisonMode;
 
 
 /**
@@ -80,6 +80,44 @@ public class ObservationOfferingType extends AbstractFeatureType implements Obse
      */ 
     ObservationOfferingType(){}
     
+    public ObservationOfferingType(final ObservationOfferingType that){
+        super(that);
+        if (that != null) {
+            if (that.intendedApplication != null) {
+                this.intendedApplication = new ArrayList<String>(that.intendedApplication);
+            }
+            this.time = that.time; // todo clone
+            if (that.featureOfInterest != null) {
+                this.featureOfInterest = new ArrayList<ReferenceType>();
+                for (ReferenceType ref : that.featureOfInterest) {
+                    this.featureOfInterest.add(new ReferenceType(ref));
+                }
+            }
+            if (that.procedure != null) {
+                this.procedure = new ArrayList<ReferenceType>();
+                for (ReferenceType ref : that.procedure) {
+                    this.procedure.add(new ReferenceType(ref));
+                }
+            }
+            if (that.observedProperty != null) {
+                this.observedProperty = new ArrayList<PhenomenonPropertyType>();
+                for (PhenomenonPropertyType ref : that.observedProperty) {
+                    this.observedProperty.add(ref); // todo clone
+                }
+            }
+            if (that.responseFormat != null) {
+                this.responseFormat = new ArrayList<String>(that.responseFormat);
+            }
+            if (that.responseMode != null) {
+                this.responseMode = new ArrayList<ResponseModeType>(that.responseMode);
+            }
+            if (that.resultModel != null) {
+                this.resultModel = new ArrayList<QName>(that.resultModel);
+            }
+        }
+    } 
+    
+    
     /**
      *  Build a new offering.
      */ 
@@ -102,26 +140,35 @@ public class ObservationOfferingType extends AbstractFeatureType implements Obse
      *  Build a new offering.
      */
     public ObservationOfferingType(final String id, final String name, final String description, final List<String> srsName, final AbstractTimeGeometricPrimitiveType time, 
-            final String procedure, final List<String> observedProperties, final String featureOfInterest,
+            final List<String> procedure, final List<PhenomenonPropertyType> observedProperties, final List<String> featureOfInterest,
             final List<String> responseFormat, final List<QName> resultModel, final List<ResponseModeType> responseMode) {
 
         super(id, name, description, null, null, srsName);
         if (procedure != null) {
-            this.procedure     = Arrays.asList(new ReferenceType(null, procedure));
-        }
-        if(observedProperty != null){
-            this.observedProperty = new ArrayList<PhenomenonPropertyType>();
-            for (String observedProperty : observedProperties) {
-                this.observedProperty.add(new PhenomenonPropertyType(observedProperty));
+            this.procedure = new ArrayList<ReferenceType>();
+            for (String proc : procedure) {
+                this.procedure.add(new ReferenceType(null, proc));
             }
         }
+        this.observedProperty = observedProperties;
         if (featureOfInterest != null) {
-            this.featureOfInterest = Arrays.asList(new ReferenceType(null, featureOfInterest));
+            this.featureOfInterest = new ArrayList<ReferenceType>();
+            for (String foi : featureOfInterest) {
+                this.featureOfInterest.add(new ReferenceType(null, foi));
+            }
         }
         this.responseFormat    = responseFormat;
         this.resultModel       = resultModel;
         this.responseMode      = responseMode;
         this.time              = new TimeGeometricPrimitivePropertyType(time);
+    }
+    
+    @Override
+    public Envelope getObservedArea() {
+        if (getBoundedBy() != null) {
+            return getBoundedBy().getEnvelope();
+        }
+        return null;
     }
     
     /**
@@ -139,6 +186,7 @@ public class ObservationOfferingType extends AbstractFeatureType implements Obse
      * Return the value of the eventTime property.
      * 
      */
+    @Override
     public AbstractTimeGeometricPrimitiveType getTime() {
        return time.getTimeGeometricPrimitive();
     }
@@ -176,6 +224,14 @@ public class ObservationOfferingType extends AbstractFeatureType implements Obse
         return result;
     }
     
+    public void setProcedures(final List<String> procedures) {
+        if (procedures != null) {
+            procedure = new ArrayList<ReferenceType>();
+            for (String s : procedures) {
+                procedure.add(new ReferenceType(null, s));
+            }
+        }
+    }
     
     /**
      * Return an unmodifiable list of the observedProperty.
@@ -241,6 +297,7 @@ public class ObservationOfferingType extends AbstractFeatureType implements Obse
      * Return the value of the resultFormat property.
      * 
      */
+    @Override
     public List<String> getResponseFormat() {
         if (responseFormat == null){
             responseFormat = new ArrayList<String>();
@@ -355,6 +412,4 @@ public class ObservationOfferingType extends AbstractFeatureType implements Obse
         }
         return s.toString();
     }
-
-
 }

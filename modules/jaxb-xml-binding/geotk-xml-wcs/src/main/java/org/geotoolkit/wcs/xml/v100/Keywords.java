@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.v311.CodeType;
+import org.geotoolkit.ows.xml.AbstractKeywords;
 
 
 /**
@@ -53,7 +54,7 @@ import org.geotoolkit.gml.xml.v311.CodeType;
     "type"
 })
 @XmlRootElement(name = "keywords")
-public class Keywords {
+public class Keywords implements AbstractKeywords {
 
     @XmlElement(required = true)
     private List<String> keyword;
@@ -98,5 +99,10 @@ public class Keywords {
      */
     public CodeType getType() {
         return type;
+    }
+
+    @Override
+    public List<String> getKeywordList() {
+        return getKeyword();
     }
 }

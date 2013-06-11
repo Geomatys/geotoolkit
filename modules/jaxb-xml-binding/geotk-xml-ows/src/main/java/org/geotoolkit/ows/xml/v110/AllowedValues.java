@@ -104,7 +104,6 @@ public class AllowedValues {
         
     }
     
-    
     /**
      *  Build an allowed value with the specified range
      */
@@ -113,7 +112,6 @@ public class AllowedValues {
         valueOrRange = new ArrayList<Object>();
         valueOrRange.add(range);
     }
-    
     
     /**
      * Gets the value of the valueOrRange property.

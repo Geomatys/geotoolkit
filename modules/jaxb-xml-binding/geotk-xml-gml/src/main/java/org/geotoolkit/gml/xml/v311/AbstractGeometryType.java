@@ -33,7 +33,7 @@ import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.AbstractGeometry;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.metadata.MetadataStandard;
-import org.geotoolkit.util.ComparisonMode;
+import org.apache.sis.util.ComparisonMode;
 
 import org.opengis.filter.expression.Expression;
 import org.opengis.geometry.DirectPosition;

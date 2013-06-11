@@ -44,7 +44,7 @@ import org.geotoolkit.gui.swing.misc.LoadingLockableUI;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.io.wkt.UnformattableObjectException;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 import org.geotoolkit.resources.Vocabulary;
 import org.jdesktop.swingx.JXBusyLabel;
 
@@ -312,7 +312,7 @@ public class ContextCRSPropertyPanel extends javax.swing.JPanel implements Prope
      * @param message The error message.
      */
     private void setErrorMessage(final String message) {
-        wktArea.setText(Vocabulary.format(Vocabulary.Keys.ERROR_$1, message));
+        wktArea.setText(Vocabulary.format(Vocabulary.Keys.ERROR_1, message));
     }
     
 }

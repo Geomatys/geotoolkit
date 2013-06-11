@@ -34,7 +34,7 @@ import org.geotoolkit.display2d.primitive.ProjectedGeometry;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.ElevationModel;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.util.collection.Cache;
+import org.apache.sis.util.collection.Cache;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.operation.TransformException;
 

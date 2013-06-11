@@ -41,4 +41,18 @@ public abstract class PropertyValueEditor extends JPanel {
 
     public abstract Object getValue();
 
+    /**
+     * Create a copy of this editor.
+     * @return PropertyValueEditor
+     */
+    public PropertyValueEditor copy(){
+        try {
+            return getClass().newInstance();
+        } catch (InstantiationException ex) {
+            throw new RuntimeException(ex.getMessage(), ex);
+        } catch (IllegalAccessException ex) {
+            throw new RuntimeException(ex.getMessage(), ex);
+        }
+    }
+    
 }

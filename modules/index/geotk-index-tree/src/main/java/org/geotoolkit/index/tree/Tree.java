@@ -20,7 +20,6 @@ import java.util.Iterator;
 import java.util.List;
 import org.geotoolkit.index.tree.calculator.Calculator;
 import org.geotoolkit.index.tree.io.TreeVisitor;
-import org.geotoolkit.index.tree.nodefactory.NodeFactory;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.MismatchedReferenceSystemException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -154,7 +153,6 @@ public interface Tree {
      * @return all tree data set boundary.
      */
     Envelope getExtent();
-
 
     /**Create a node in accordance with this properties.
      *

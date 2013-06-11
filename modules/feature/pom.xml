@@ -14,7 +14,7 @@
   <parent>
     <groupId>org.geotoolkit.pending</groupId>
     <artifactId>modules</artifactId>
-    <version>3.x-SNAPSHOT</version>
+    <version>4.x-SNAPSHOT</version>
   </parent>
 
 
@@ -93,7 +93,6 @@
     <module>geotk-filter</module>
     <module>geotk-filter-cql</module>
     <module>geotk-feature</module>
-    <module>geotk-cql</module>
   </modules>
 
 </project>

@@ -21,7 +21,7 @@ import org.opengis.style.SelectedChannelType;
 import org.opengis.style.StyleVisitor;
 
 import static org.geotoolkit.style.StyleConstants.*;
-import static org.geotoolkit.util.ArgumentChecks.*;
+import static org.apache.sis.util.ArgumentChecks.*;
 
 /**
  * Immutable implementation of GeoAPI SelectedChannelType.

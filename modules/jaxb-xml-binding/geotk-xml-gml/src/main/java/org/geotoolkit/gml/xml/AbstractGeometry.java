@@ -28,6 +28,8 @@ public interface AbstractGeometry {
     
     void setSrsName(final String srsName);
     
+    void setId(final String id);
+    
     int getCoordinateDimension();
     
     CoordinateReferenceSystem getCoordinateReferenceSystem();

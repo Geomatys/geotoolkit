@@ -21,7 +21,7 @@ import com.vividsolutions.jts.geom.Geometry;
 import java.util.Map;
 import java.util.Objects;
 
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.AttributeType;

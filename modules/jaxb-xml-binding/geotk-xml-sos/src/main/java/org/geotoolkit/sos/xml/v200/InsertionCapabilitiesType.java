@@ -69,6 +69,18 @@ public class InsertionCapabilitiesType {
     @XmlSchemaType(name = "anyURI")
     private List<String> supportedEncoding;
 
+    public InsertionCapabilitiesType() {
+        
+    }
+    
+    public InsertionCapabilitiesType(final List<String> procedureDescriptionFormat, List<String> featureOfInterestType,
+            final List<String> observationType, final List<String> supportedEncoding) {
+        this.featureOfInterestType      = featureOfInterestType;
+        this.observationType            = observationType;
+        this.procedureDescriptionFormat = procedureDescriptionFormat;
+        this.supportedEncoding          = supportedEncoding;
+    }
+    
     /**
      * Gets the value of the procedureDescriptionFormat property.
      * 

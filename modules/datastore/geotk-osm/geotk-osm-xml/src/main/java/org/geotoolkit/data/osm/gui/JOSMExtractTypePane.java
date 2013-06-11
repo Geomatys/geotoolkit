@@ -84,11 +84,11 @@ public class JOSMExtractTypePane extends javax.swing.JPanel {
         final FeatureStore store = FeatureStoreFinder.open(dbParameters);
         final Session session = store.createSession(false);
 
-//        processLanduse(store, session);
-//        processHighWay(store, session);
-//        processLeisure(store, session);
-//        processWaterWay(store, session);
-//        processBuilding(store, session);
+        processLanduse(store, session);
+        processHighWay(store, session);
+        processLeisure(store, session);
+        processWaterWay(store, session);
+        processBuilding(store, session);
         processNatural(store, session);
         processRailWay(store, session);
         

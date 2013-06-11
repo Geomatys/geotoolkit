@@ -24,7 +24,7 @@ import org.geotoolkit.data.shapefile.shp.ShapeType;
 import org.geotoolkit.data.shapefile.shp.ShapefileHeader;
 import org.geotoolkit.io.Closeable;
 
-import static org.geotoolkit.util.ArgumentChecks.*;
+import static org.apache.sis.util.ArgumentChecks.*;
 
 /**
  * Handle writing of shx files.

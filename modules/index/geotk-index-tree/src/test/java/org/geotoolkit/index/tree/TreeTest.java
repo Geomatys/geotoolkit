@@ -17,9 +17,9 @@
 package org.geotoolkit.index.tree;
 
 import java.util.List;
-import org.geotoolkit.geometry.GeneralDirectPosition;
-import org.geotoolkit.geometry.GeneralEnvelope;
-import org.geotoolkit.util.ArgumentChecks;
+import org.apache.sis.geometry.GeneralDirectPosition;
+import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.util.ArgumentChecks;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -59,6 +59,34 @@ public abstract class TreeTest {
             shapequals = false;
         }
         return true;
+    }
+    
+    /**
+     * Find all entries number in a {@link Tree}.
+     * 
+     * @param tree where to looking for entries.
+     * @return all entries number in a {@link Tree}.
+     */
+    protected boolean checkTreeElts(Tree tree) {
+        return tree.getElementsNumber() == countElement(tree.getRoot(), 0);
+    }
+    
+    /**
+     * Compute recursively entries number contained in a {@link Node}.
+     * 
+     * @param node current within entries are. 
+     * @param count current count.
+     * @return entries number contained in a {@link Node}.
+     */
+    private int countElement(Node node, int count){
+        if ((node.getEntries() == null || node.getEntries().isEmpty()) && !node.getChildren().isEmpty()) {
+            for (Node nod : node.getChildren()) {
+                count = countElement(nod, count);
+            }
+        } else {
+            count += node.getEntries().size();
+        }
+        return count;
     }
 
     /**Create a default adapted test entry({@code GeneralEnvelope}).

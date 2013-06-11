@@ -79,7 +79,7 @@ public class GetFeatureOfInterestType extends ExtensibleRequestType implements G
     private List<String> observedProperty;
     @XmlSchemaType(name = "anyURI")
     private List<String> featureOfInterest;
-    private List<GetFeatureOfInterestType.SpatialFilter> spatialFilter;
+    private List<SpatialFilterType> spatialFilter;
 
     public GetFeatureOfInterestType() {
         
@@ -93,6 +93,18 @@ public class GetFeatureOfInterestType extends ExtensibleRequestType implements G
         }
     }
     
+    public GetFeatureOfInterestType(final String version, final String service, final List<String> observedProperties,
+            final List<String> procedure, final List<String> featureId, final Filter location) {
+        super(version, service);
+        this.observedProperty  = observedProperties;
+        this.procedure         = procedure;
+        this.featureOfInterest = featureId;
+        if (location != null) {
+            this.spatialFilter = new ArrayList<SpatialFilterType>();
+            this.spatialFilter.add(new SpatialFilterType(location));
+        }
+    }
+    
     public GetFeatureOfInterestType(final String version, final String service, final List<String> featureId) {
         super(version, service);
         this.featureOfInterest = featureId;
@@ -101,8 +113,8 @@ public class GetFeatureOfInterestType extends ExtensibleRequestType implements G
     public GetFeatureOfInterestType(final String version, final String service, final Filter location) {
         super(version, service);
         if (location != null) {
-            this.spatialFilter = new ArrayList<SpatialFilter>();
-            this.spatialFilter.add(new SpatialFilter(location));
+            this.spatialFilter = new ArrayList<SpatialFilterType>();
+            this.spatialFilter.add(new SpatialFilterType(location));
         }
      }
     
@@ -113,6 +125,7 @@ public class GetFeatureOfInterestType extends ExtensibleRequestType implements G
      * {@link String }
      * 
      */
+    @Override
     public List<String> getProcedure() {
         if (procedure == null) {
             procedure = new ArrayList<String>();
@@ -127,6 +140,7 @@ public class GetFeatureOfInterestType extends ExtensibleRequestType implements G
      * {@link String }
      * 
      */
+    @Override
     public List<String> getObservedProperty() {
         if (observedProperty == null) {
             observedProperty = new ArrayList<String>();
@@ -156,9 +170,9 @@ public class GetFeatureOfInterestType extends ExtensibleRequestType implements G
      * {@link GetFeatureOfInterestType.SpatialFilter }
      * 
      */
-    public List<GetFeatureOfInterestType.SpatialFilter> getRealSpatialFilter() {
+    public List<SpatialFilterType> getRealSpatialFilter() {
         if (spatialFilter == null) {
-            spatialFilter = new ArrayList<GetFeatureOfInterestType.SpatialFilter>();
+            spatialFilter = new ArrayList<SpatialFilterType>();
         }
         return this.spatialFilter;
     }
@@ -167,8 +181,8 @@ public class GetFeatureOfInterestType extends ExtensibleRequestType implements G
     public List<Filter> getSpatialFilters() {
         final List<Filter> results = new ArrayList<Filter>();
         if (spatialFilter != null) {
-            for (SpatialFilter sp : spatialFilter) {
-                results.add(sp.getSpatialOperator());
+            for (SpatialFilterType sp : spatialFilter) {
+                results.add(sp.getSpatialOps());
             }
         }
         return results;
@@ -182,105 +196,4 @@ public class GetFeatureOfInterestType extends ExtensibleRequestType implements G
     public List<Filter> getTemporalFilters() {
         return new ArrayList<Filter>();
     }
-
-
-    /**
-     * <p>Java class for anonymous complex type.
-     * 
-     * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
-     * <pre>
-     * &lt;complexType>
-     *   &lt;complexContent>
-     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-     *       &lt;sequence>
-     *         &lt;element ref="{http://www.opengis.net/fes/2.0}spatialOps"/>
-     *       &lt;/sequence>
-     *     &lt;/restriction>
-     *   &lt;/complexContent>
-     * &lt;/complexType>
-     * </pre>
-     * 
-     * 
-     */
-    @XmlAccessorType(XmlAccessType.FIELD)
-    @XmlType(name = "", propOrder = {
-        "spatialOps"
-    })
-    public static class SpatialFilter {
-
-        @XmlElementRef(name = "spatialOps", namespace = "http://www.opengis.net/fes/2.0", type = JAXBElement.class)
-        private JAXBElement<? extends SpatialOpsType> spatialOps;
-
-        public SpatialFilter() {
-
-        }
-
-        public SpatialFilter(final JAXBElement<? extends SpatialOpsType> spatialOps) {
-            this.spatialOps = spatialOps;
-        }
-
-        public SpatialFilter(final Filter filter) {
-            if (filter instanceof SpatialOpsType) {
-                this.spatialOps = FilterType.createSpatialOps((SpatialOpsType)filter);
-            } else if (filter != null) {
-                throw new IllegalArgumentException("Unexpected spatial filter type:" + filter);
-            }
-        }
-        
-        public SpatialOpsType getSpatialOperator() {
-            if (spatialOps != null) {
-                return spatialOps.getValue();
-            }
-            return null;
-        }
-        
-        /**
-         * Gets the value of the spatialOps property.
-         * 
-         * @return
-         *     possible object is
-         *     {@link JAXBElement }{@code <}{@link SpatialOpsType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link BinarySpatialOpType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link DistanceBufferType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link BinarySpatialOpType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link BinarySpatialOpType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link BBOXType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link BinarySpatialOpType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link BinarySpatialOpType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link BinarySpatialOpType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link BinarySpatialOpType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link DistanceBufferType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link BinarySpatialOpType }{@code >}
-         *     
-         */
-        public JAXBElement<? extends SpatialOpsType> getSpatialOps() {
-            return spatialOps;
-        }
-
-        /**
-         * Sets the value of the spatialOps property.
-         * 
-         * @param value
-         *     allowed object is
-         *     {@link JAXBElement }{@code <}{@link SpatialOpsType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link BinarySpatialOpType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link DistanceBufferType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link BinarySpatialOpType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link BinarySpatialOpType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link BBOXType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link BinarySpatialOpType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link BinarySpatialOpType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link BinarySpatialOpType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link BinarySpatialOpType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link DistanceBufferType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link BinarySpatialOpType }{@code >}
-         *     
-         */
-        public void setSpatialOps(JAXBElement<? extends SpatialOpsType> value) {
-            this.spatialOps = ((JAXBElement<? extends SpatialOpsType> ) value);
-        }
-
-    }
-
 }

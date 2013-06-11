@@ -36,7 +36,7 @@ import org.opengis.feature.type.FeatureType;
  *
  * @author Quentin Boileau (Geomatys).
  */
-public abstract class AbstractComplexInputConverter extends WPSDefaultConverter<ComplexDataType, Object> {
+public abstract class AbstractComplexInputConverter<T> extends WPSDefaultConverter<ComplexDataType, T> {
 
     @Override
     public Class<? super ComplexDataType> getSourceClass() {
@@ -44,7 +44,7 @@ public abstract class AbstractComplexInputConverter extends WPSDefaultConverter<
     }
 
     @Override
-    public abstract Class<? extends Object> getTargetClass();
+    public abstract Class<? extends T> getTargetClass();
 
     /**
      * Convert a {@link ComplexDataType complex} into the requested {@code Object}. 
@@ -53,11 +53,11 @@ public abstract class AbstractComplexInputConverter extends WPSDefaultConverter<
      * @throws NonconvertibleObjectException 
      */
     @Override
-    public abstract Object convert(final ComplexDataType source, Map<String, Object> params) throws NonconvertibleObjectException;
+    public abstract T convert(final ComplexDataType source, Map<String, Object> params) throws NonconvertibleObjectException;
     
     /**
      * Get the JAXPStreamFeatureReader to read feature. If there is a schema defined, the JAXPStreamFeatureReader will
-     * use it overwise it will use the embedded.
+     * use it otherwise it will use the embedded.
      *
      * @param source
      * @return

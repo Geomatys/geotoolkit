@@ -33,8 +33,8 @@ import org.geotoolkit.geometry.jts.transform.CoordinateSequenceMathTransformer;
 import org.geotoolkit.geometry.jts.transform.GeometryCSTransformer;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.storage.DataStoreException;
-import static org.geotoolkit.util.ArgumentChecks.*;
-import org.geotoolkit.util.NullArgumentException;
+import static org.apache.sis.util.ArgumentChecks.*;
+import org.apache.sis.util.NullArgumentException;
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.FeatureType;
@@ -53,12 +53,12 @@ import org.opengis.util.FactoryException;
  * @module pending
  * @todo make this concurrent
  */
-class ModifyDelta extends AbstractDelta{
+public class ModifyDelta extends AbstractDelta{
 
-    private final Map<AttributeDescriptor,Object> values = new HashMap<AttributeDescriptor, Object>();
-    private Id filter;
+    protected final Map<AttributeDescriptor,Object> values = new HashMap<AttributeDescriptor, Object>();
+    protected Id filter;
 
-    ModifyDelta(final Session session, final Name typeName, final Id filter, final Map<? extends AttributeDescriptor,? extends Object> values){
+    public ModifyDelta(final Session session, final Name typeName, final Id filter, final Map<? extends AttributeDescriptor,? extends Object> values){
         super(session,typeName);
         ensureNonNull("type name", typeName);
         if(filter == null){

@@ -63,6 +63,10 @@ public abstract class AbstractTimeGeometricPrimitiveType extends AbstractTimePri
         
     }
     
+    public AbstractTimeGeometricPrimitiveType(final String id) {
+        super(id);
+    }
+    
     public AbstractTimeGeometricPrimitiveType(final AbstractTimeGeometricPrimitiveType that) {
         super(that);
         if (that != null) {

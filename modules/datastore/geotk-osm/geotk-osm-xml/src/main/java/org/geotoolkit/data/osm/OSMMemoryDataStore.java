@@ -266,4 +266,10 @@ public class OSMMemoryDataStore extends AbstractFeatureStore{
         }
     }
 
+	@Override
+	public void refreshMetaModel() {
+		return;
+		
+	}
+
 }

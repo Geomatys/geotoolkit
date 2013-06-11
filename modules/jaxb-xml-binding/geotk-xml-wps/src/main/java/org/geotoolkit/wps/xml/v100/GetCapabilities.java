@@ -22,7 +22,9 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.ows.xml.RequestBase;
 import org.geotoolkit.ows.xml.v110.AcceptVersionsType;
+import org.apache.sis.util.Version;
 
 
 /**
@@ -52,7 +54,7 @@ import org.geotoolkit.ows.xml.v110.AcceptVersionsType;
     "acceptVersions"
 })
 @XmlRootElement(name = "GetCapabilities")
-public class GetCapabilities {
+public class GetCapabilities implements RequestBase {
 
     @XmlElement(name = "AcceptVersions")
     private AcceptVersionsType acceptVersions;
@@ -95,6 +97,7 @@ public class GetCapabilities {
      *     {@link String }
      *     
      */
+    @Override
     public String getService() {
         if (service == null) {
             return "WPS";
@@ -111,6 +114,7 @@ public class GetCapabilities {
      *     {@link String }
      *     
      */
+    @Override
     public void setService(final String value) {
         this.service = value;
     }
@@ -151,6 +155,25 @@ public class GetCapabilities {
      */
     public void setUpdateSequence(String updateSequence) {
         this.updateSequence = updateSequence;
+    }
+
+    @Override
+    public void setVersion(String version) {
+        if (version != null) {
+            if (acceptVersions == null) {
+                this.acceptVersions = new AcceptVersionsType(version);
+            } else {
+                 this.acceptVersions.addFirstVersion(version);
+            }
+        }
+    }
+
+    @Override
+    public Version getVersion() {
+        if (acceptVersions!= null && !acceptVersions.getVersion().isEmpty()) {
+            return new Version(acceptVersions.getVersion().get(0));
+        } 
+        return null;
     }
 
 }

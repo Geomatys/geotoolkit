@@ -23,6 +23,10 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
+import org.opengis.filter.BinaryComparisonOperator;
+import org.opengis.filter.FilterVisitor;
+import org.opengis.filter.MatchAction;
+import org.opengis.filter.expression.Expression;
 
 
 /**
@@ -49,14 +53,32 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "BinaryComparisonOpType", propOrder = {
     "expression"
 })
-public class BinaryComparisonOpType extends ComparisonOpsType {
+public class BinaryComparisonOpType extends ComparisonOpsType implements BinaryComparisonOperator {
 
     @XmlElementRef(name = "expression", namespace = "http://www.opengis.net/ogc", type = JAXBElement.class)
     private List<JAXBElement<?>> expression;
 
+    private static final ObjectFactory FACTORY = new ObjectFactory();
+    
     public BinaryComparisonOpType() {
 
     }
+    
+    /**
+     * Build a new Binary comparison operator
+     */
+    public BinaryComparisonOpType(final LiteralType literal, final PropertyNameType propertyName) {
+        if (this.expression == null) {
+            this.expression = new ArrayList<JAXBElement<?>>();
+        }
+        if (propertyName != null) {
+            this.expression.add(FACTORY.createPropertyName(propertyName));
+        }
+        if (literal != null) {
+            this.expression.add(FACTORY.createLiteral(literal));
+        }
+    }
+    
     
     public BinaryComparisonOpType(final BinaryComparisonOpType that) {
         if (that != null) {
@@ -94,6 +116,50 @@ public class BinaryComparisonOpType extends ComparisonOpsType {
     @Override
     public ComparisonOpsType getClone() {
         throw new IllegalArgumentException("Must be overriden by sub-class");
+    }
+
+    @Override
+    public Expression getExpression1() {
+        for (JAXBElement<?> elem : getExpression()) {
+            final Object value = elem.getValue();
+            if (value instanceof String) {
+                return new PropertyNameType((String) value);
+            }
+            if (value instanceof PropertyNameType) {
+                return (PropertyNameType) value;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public Expression getExpression2() {
+        for (JAXBElement<?> elem : getExpression()) {
+            if (elem.getValue() instanceof LiteralType) {
+                return (LiteralType)elem.getValue();
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public boolean isMatchingCase() {
+        return true;
+    }
+
+    @Override
+    public MatchAction getMatchAction() {
+        return MatchAction.ANY;
+    }
+
+    @Override
+    public boolean evaluate(Object o) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Object accept(FilterVisitor fv, Object o) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }

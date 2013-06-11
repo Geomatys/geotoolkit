@@ -32,7 +32,7 @@ import org.geotoolkit.style.StyleConstants;
 import org.geotoolkit.style.StyleListener;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.collection.NotifiedCheckedList;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 
 import org.opengis.sld.Constraint;
 import org.opengis.sld.FeatureTypeConstraint;
@@ -40,7 +40,7 @@ import org.opengis.sld.SLDVisitor;
 import org.opengis.sld.Source;
 import org.opengis.style.Description;
 
-import static org.geotoolkit.util.ArgumentChecks.*;
+import static org.apache.sis.util.ArgumentChecks.*;
 
 /**
  * Default mutable user layer, thread safe.

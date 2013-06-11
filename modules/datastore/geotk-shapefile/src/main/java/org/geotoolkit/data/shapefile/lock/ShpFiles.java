@@ -39,31 +39,31 @@ import org.geotoolkit.index.quadtree.QuadTree;
 import org.geotoolkit.index.quadtree.StoreException;
 import org.geotoolkit.index.quadtree.fs.FileSystemIndexStore;
 import org.geotoolkit.internal.io.IOUtilities;
-import org.geotoolkit.util.collection.WeakHashSet;
+import org.apache.sis.util.collection.WeakHashSet;
 
 /**
  * The collection of all the files that are the shapefile and its metadata and
  * indices.
- * 
+ *
  * <p>
  * This class has methods for performing actions on the files. Currently mainly
  * for obtaining read and write channels and streams. But in the future a move
  * method may be introduced.
  * </p>
- * 
+ *
  * <p>
  * Note: The method that require locks (such as getInputStream()) will
  * automatically acquire locks and the javadocs should document how to release
  * the lock. Therefore the methods {@link #acquireRead(ShpFileType, FileReader)}
  * and {@link #acquireWrite(ShpFileType, FileWriter)}
  * </p>
- * 
+ *
  * @author jesse
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
 public final class ShpFiles {
-    
+
     /**
      * The urls for each type of file that is associated with the shapefile. The
      * key is the type of file
@@ -71,17 +71,17 @@ public final class ShpFiles {
     private final Map<ShpFileType, URL> urls = new EnumMap<ShpFileType, URL>(ShpFileType.class);
 
     /**
-     * A read/write lock, so that we can have concurrent readers 
+     * A read/write lock, so that we can have concurrent readers
      */
     private final ReentrantReadWriteLock readWriteLock = new ReentrantReadWriteLock();
 
-    private final WeakHashSet<AccessManager> managers = WeakHashSet.newInstance(AccessManager.class);
-    
+    private final WeakHashSet<AccessManager> managers = new WeakHashSet<AccessManager>(AccessManager.class);
+
     private final boolean loadQuadTree;
 
     /**
      * Searches for all the files and adds then to the map of files.
-     * 
+     *
      * @param file any one of the shapefile files
      * @throws FileNotFoundException if the shapefile associated with file is not found
      */
@@ -91,7 +91,7 @@ public final class ShpFiles {
 
     /**
      * Searches for all the files and adds then to the map of files.
-     * 
+     *
      * @param url any one of the shapefile files
      */
     public ShpFiles(final Object path, final boolean loadQix) throws IllegalArgumentException {
@@ -136,14 +136,14 @@ public final class ShpFiles {
 
         //retrive all file urls associated with this shapefile
         for(final ShpFileType type : ShpFileType.values()) {
-            
+
             final String extensionWithPeriod;
             if(upperCase){
                 extensionWithPeriod = type.extensionWithPeriod.toUpperCase();
             }else{
                 extensionWithPeriod = type.extensionWithPeriod.toLowerCase();
             }
-            
+
             final URL newURL;
             try {
                 newURL = new URL(url, base+extensionWithPeriod);
@@ -155,7 +155,7 @@ public final class ShpFiles {
         }
 
         // if the files are local check each file to see if it exists
-        // if not then search for a file of the same name but try all combinations of the 
+        // if not then search for a file of the same name but try all combinations of the
         // different cases that the extension can be made up of.
         // IE Shp, SHP, Shp, ShP etc...
         if( isLocal() ){
@@ -168,7 +168,7 @@ public final class ShpFiles {
                 }
             }
         }
-        
+
     }
 
     public AccessManager createLocker(){
@@ -176,23 +176,23 @@ public final class ShpFiles {
         managers.add(locker);
         return locker;
     }
-    
+
     void aquiereReadLock(){
         readWriteLock.readLock().lock();
     }
-    
+
     void releaseReadLock(){
         readWriteLock.readLock().unlock();
     }
-    
+
     void aquiereWriteLock(){
         readWriteLock.writeLock().lock();
     }
-    
+
     void releaseWriteLock(){
         readWriteLock.writeLock().unlock();
     }
-    
+
     /**
      * @return the URLs (in string form) of all the files for the shapefile datastore.
      */
@@ -209,14 +209,14 @@ public final class ShpFiles {
     /**
      * Returns the string form of the url that identifies the file indicated by
      * the type parameter or null if it is known that the file does not exist.
-     * 
+     *
      * <p>
      * Note: a URL should NOT be constructed from the string instead the URL
      * should be obtained through calling one of the aquireLock methods.
-     * 
+     *
      * @param type
      *                indicates the type of file the caller is interested in.
-     * 
+     *
      * @return the string form of the url that identifies the file indicated by
      *         the type parameter or null if it is known that the file does not
      *         exist.
@@ -229,15 +229,15 @@ public final class ShpFiles {
      * Acquire a File for read only purposes. It is recommended that get*Stream or
      * get*Channel methods are used when reading or writing to the file is
      * desired.
-     * 
-     * 
+     *
+     *
      * @see #getInputStream(ShpFileType, FileReader)
      * @see #getReadChannel(ShpFileType, FileReader)
      * @see #getWriteChannel(org.geotoolkit.data.shapefile.ShpFileType, org.geotoolkit.data.shapefile.FileWriter)
-     * 
+     *
      * @param type
      *                the type of the file desired.
-     * @return the File type requested 
+     * @return the File type requested
      */
     public File getFile(final ShpFileType type) {
         if(!isLocal() ){
@@ -246,17 +246,17 @@ public final class ShpFiles {
         final URL url = getURL(type);
         return toFile(url);
     }
-    
+
     /**
      * Acquire a URL for read only purposes.  It is recommended that get*Stream or
      * get*Channel methods are used when reading or writing to the file is
      * desired.
-     * 
-     * 
+     *
+     *
      * @see #getInputStream(ShpFileType, FileReader)
      * @see #getReadChannel(ShpFileType, FileReader)
      * @see #getWriteChannel(org.geotoolkit.data.shapefile.ShpFileType, org.geotoolkit.data.shapefile.FileWriter)
-     * 
+     *
      * @param type
      *                the type of the file desired.
      * @return the URL to the file of the type requested
@@ -267,7 +267,7 @@ public final class ShpFiles {
 
     /**
      * Determine if the location of this shapefile is local or remote.
-     * 
+     *
      * @return true if local, false if remote
      */
     public boolean isLocal() {
@@ -280,7 +280,7 @@ public final class ShpFiles {
      */
     public boolean delete() {
         aquiereWriteLock();
-        
+
         boolean retVal = true;
         try{
             if (isLocal()) {
@@ -302,11 +302,11 @@ public final class ShpFiles {
 
     /**
      * Opens a input stream for the indicated file.
-     * 
+     *
      * @param type
      *                the type of file to open the stream to.
      * @return an input stream
-     * 
+     *
      * @throws IOException
      *                 if a problem occurred opening the stream.
      */
@@ -329,11 +329,11 @@ public final class ShpFiles {
     }
     /**
      * Opens a output stream for the indicated file.
-     * 
+     *
      * @param type
      *                the type of file to open the stream to.
      * @return an output stream
-     * 
+     *
      * @throws IOException
      *                 if a problem occurred opening the stream.
      */
@@ -350,7 +350,7 @@ public final class ShpFiles {
                 connection.setDoOutput(true);
                 out = connection.getOutputStream();
             }
-            
+
             return out;
         } catch (Throwable e) {;
             if (e instanceof IOException) {
@@ -373,18 +373,18 @@ public final class ShpFiles {
      * A read lock is obtained when this method is called and released when the
      * channel is closed.
      * </p>
-     * 
+     *
      * @param type
      *                the type of file to open the channel to.
      * @param requestor
      *                the object requesting the channel
-     * 
+     *
      */
     public ReadableByteChannel getReadChannel(final ShpFileType type) throws IOException {
         final URL url = getURL(type);
         return getReadChannel(url);
     }
-    
+
     public ReadableByteChannel getReadChannel(final URL url) throws IOException {
         ReadableByteChannel channel = null;
         try {
@@ -418,24 +418,24 @@ public final class ShpFiles {
         }
         return channel;
     }
-    
+
     /**
      * Obtain a WritableByteChannel from the given URL. If the url protocol is
      * file, a FileChannel will be returned. Currently, this method will return
      * a generic channel for remote urls, however both shape and dbf writing can
      * only occur with a local FileChannel channel.
-     * 
+     *
      * <p>
      * A write lock is obtained when this method is called and released when the
      * channel is closed.
      * </p>
-     * 
-     * 
+     *
+     *
      * @param type
      *                the type of file to open the stream to.
-     * 
+     *
      * @return a WritableByteChannel for the provided file type
-     * 
+     *
      * @throws IOException
      *                 if there is an error opening the stream
      */
@@ -443,7 +443,7 @@ public final class ShpFiles {
         final URL url = getURL(type);
         return getWriteChannel(url);
     }
-    
+
     public WritableByteChannel getWriteChannel(final URL url) throws IOException {
 
         try {
@@ -471,7 +471,7 @@ public final class ShpFiles {
             }
         }
     }
-    
+
     public String getTypeName() {
         final String path = SHP.toBase(urls.get(SHP));
         final int slash = Math.max(0, path.lastIndexOf('/') + 1);
@@ -487,7 +487,7 @@ public final class ShpFiles {
     /**
      * Returns true if the file exists.
      * Throws an exception if the file is not local.
-     * 
+     *
      * @param fileType the type of file to check existance for.
      * @return true if the file exists.
      * @throws IllegalArgumentException if the files are not local.
@@ -495,7 +495,7 @@ public final class ShpFiles {
     public boolean exists(final ShpFileType fileType) throws IllegalArgumentException {
         return exists( urls.get(fileType) );
     }
-    
+
     public boolean exists(final URL url) throws IllegalArgumentException {
         if (!isLocal()) {
             throw new IllegalArgumentException("This method only makes sense if the files are local");
@@ -505,8 +505,8 @@ public final class ShpFiles {
         }
         return toFile(url).exists();
     }
-    
-    
+
+
     ////////////////////////////////////////////////////////////////////////////
     /////////////// utils methods //////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
@@ -641,7 +641,7 @@ public final class ShpFiles {
                 }else{
                     return qixStore.load();
                 }
-                
+
             } finally {
             }
         }
@@ -657,5 +657,5 @@ public final class ShpFiles {
     public static boolean isLocal(final URL url){
         return url.toExternalForm().toLowerCase().startsWith("file:");
     }
-    
+
 }

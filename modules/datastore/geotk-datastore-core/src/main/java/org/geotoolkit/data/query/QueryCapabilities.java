@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2010, Geomatys
+ *    (C) 2010-2013, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -37,9 +37,15 @@ public interface QueryCapabilities {
     public String[] getSupportedQueryLanguages();
 
     /**
-     * 
+     * Check if this feature store support join queries on it's own feature types.
      * @return true if the feature store can handle queries with join operations.
      */
     boolean handleCrossQuery();
 
+    /**
+     * Check if this feature store support versioning.
+     * @return true if versioning is supported.
+     */
+    boolean handleVersioning();
+    
 }

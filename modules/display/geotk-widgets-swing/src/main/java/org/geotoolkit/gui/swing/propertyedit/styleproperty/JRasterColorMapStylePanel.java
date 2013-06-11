@@ -24,18 +24,13 @@ import javax.measure.unit.NonSI;
 import javax.measure.unit.Unit;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.Image;
-import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.util.AbstractMap;
 import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
@@ -43,7 +38,6 @@ import java.util.logging.Logger;
 import javax.swing.AbstractCellEditor;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultCellEditor;
-import javax.swing.DefaultListCellRenderer;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.ImageIcon;
@@ -51,7 +45,6 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -107,7 +100,6 @@ import org.opengis.style.Symbolizer;
 import org.opengis.filter.expression.Function;
 
 import static org.geotoolkit.style.StyleConstants.*;
-import org.geotoolkit.util.XArrays;
 import org.opengis.util.GenericName;
 
 /**
@@ -159,8 +151,7 @@ public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
     }
 
     private static final MutableStyleFactory SF = (MutableStyleFactory) FactoryFinder.getStyleFactory(new Hints(Hints.STYLE_FACTORY, MutableStyleFactory.class));
-    private static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
-
+    
     private final ColorMapModel model = new ColorMapModel();
     private MapLayer layer = null;
 
@@ -180,7 +171,6 @@ public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
         guiTable.getColumnModel().getColumn(2).setCellEditor(new DeleteEditor());
 
         guiTable.setShowGrid(false, false);
-        //guiTable.setHighlighters(new Highlighter[]{HighlighterFactory.createAlternateStriping(Color.WHITE, HighlighterFactory.QUICKSILVER, 1)});
         
         guiTable.getColumnExt(2).setMaxWidth(20);
     }
@@ -256,7 +246,7 @@ public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
             }
         });
 
-        jPanel1.setBorder(BorderFactory.createTitledBorder(MessageBundle.getString("properties"))); // NOI18N
+        jPanel1.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 5));
 
         guiNaN.setSelected(true);
         guiNaN.setText(MessageBundle.getString("nanValue")); // NOI18N
@@ -282,12 +272,12 @@ public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(guiLblPalette)
                         .addPreferredGap(ComponentPlacement.RELATED)
-                        .addComponent(guiPalette, 0, 379, Short.MAX_VALUE))
+                        .addComponent(guiPalette, 0, 391, Short.MAX_VALUE))
                     .addGroup(Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addComponent(guiNaN)
                         .addPreferredGap(ComponentPlacement.RELATED)
                         .addComponent(guiInvert)
-                        .addPreferredGap(ComponentPlacement.RELATED, 153, Short.MAX_VALUE)
+                        .addPreferredGap(ComponentPlacement.RELATED, 183, Short.MAX_VALUE)
                         .addComponent(guiGenerate)))
                 .addContainerGap())
         );
@@ -323,7 +313,7 @@ public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanel1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, GroupLayout.DEFAULT_SIZE, 230, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, GroupLayout.DEFAULT_SIZE, 247, Short.MAX_VALUE)
                 .addPreferredGap(ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(Alignment.BASELINE)
                     .addComponent(guiAddOne)
@@ -493,8 +483,7 @@ public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
         final Interpolate function = SF.interpolateFunction(
                 lookup, new ArrayList<InterpolationPoint>(model.points), Method.COLOR, Mode.LINEAR, fallback);
 
-        final ChannelSelection selection = DEFAULT_RASTER_CHANNEL_RGB;
-
+        final ChannelSelection selection = null;
         final Expression opacity = LITERAL_ONE_FLOAT;
         final OverlapBehavior overlap = OverlapBehavior.LATEST_ON_TOP;
         final ColorMap colorMap = SF.colorMap(function);

@@ -19,7 +19,7 @@ package org.geotoolkit.swe.xml.v101;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.swe.xml.AbstractDataRecord;
-import org.geotoolkit.util.ComparisonMode;
+import org.apache.sis.util.ComparisonMode;
 
 /**
  *
@@ -49,7 +49,7 @@ public class AbstractDataRecordType extends AbstractDataComponentType implements
     /**
      * super-constructor called by sub-classes.
      */
-    public AbstractDataRecordType(final String id, final String definition, final boolean fixed) {
+    public AbstractDataRecordType(final String id, final String definition, final Boolean fixed) {
         super(id, definition, fixed);
     }
 

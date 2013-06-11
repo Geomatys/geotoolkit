@@ -20,7 +20,7 @@ package org.geotoolkit.filter.binarycomparison;
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
-import static org.geotoolkit.util.ArgumentChecks.*;
+import static org.apache.sis.util.ArgumentChecks.*;
 import org.geotoolkit.util.Converters;
 import org.opengis.filter.BinaryComparisonOperator;
 import org.opengis.filter.MatchAction;

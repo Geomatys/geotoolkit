@@ -25,6 +25,7 @@ import javax.swing.GroupLayout.Alignment;
 import javax.swing.JLabel;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SwingConstants;
+import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.gui.swing.style.JNumberExpressionPane;
 import org.geotoolkit.gui.swing.style.StyleElementEditor;
 import org.geotoolkit.map.MapLayer;
@@ -109,9 +110,9 @@ public class JLineSymbolizerPane extends StyleElementEditor<LineSymbolizer> {
         guiStrokeControlPane = new JStrokeControlPane();
         guiDisplacementX = new JNumberExpressionPane();
 
-        jLabel1.setText("Forme et couleur de la ligne :");
+        jLabel1.setText(MessageBundle.getString("lineShapeAndColor")); // NOI18N
 
-        jLabel5.setText("Décallage X :");
+        jLabel5.setText(MessageBundle.getString("displacementX")); // NOI18N
 
         guiStrokeControlPane.addPropertyChangeListener(new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent evt) {
@@ -140,7 +141,7 @@ public class JLineSymbolizerPane extends StyleElementEditor<LineSymbolizer> {
                         .addComponent(jLabel1)
                         .addPreferredGap(ComponentPlacement.RELATED)
                         .addComponent(guiStrokeControlPane, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(72, Short.MAX_VALUE))
+                .addContainerGap(126, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(Alignment.LEADING)

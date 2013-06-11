@@ -71,6 +71,19 @@ public class InsertObservationType extends ExtensibleRequestType implements org.
     @XmlElement(required = true)
     private List<InsertObservationType.Observation> observation;
 
+    public InsertObservationType() {
+        
+    }
+    
+    public InsertObservationType(final String version, final List<String> offering, final List<OMObservationType> observations) {
+        super(version, "SOS");
+        this.observation = new ArrayList<Observation>();
+        this.offering = offering;
+        for (OMObservationType om : observations) {
+            this.observation.add(new Observation(om));
+        }
+    }
+    
     /**
      * Gets the value of the offering property.
      * 
@@ -142,6 +155,14 @@ public class InsertObservationType extends ExtensibleRequestType implements org.
         @XmlElement(name = "OM_Observation", namespace = "http://www.opengis.net/om/2.0", required = true)
         private OMObservationType omObservation;
 
+        public Observation() {
+            
+        }
+        
+        public Observation(final OMObservationType omObservation) {
+            this.omObservation = omObservation;
+        }
+        
         /**
          * Gets the value of the omObservation property.
          * 

@@ -29,7 +29,7 @@ import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.swe.xml.AbstractCount;
 import org.geotoolkit.swe.xml.AbstractQualityProperty;
-import org.geotoolkit.util.ComparisonMode;
+import org.apache.sis.util.ComparisonMode;
 
 
 /**
@@ -171,6 +171,7 @@ public class Count extends AbstractDataComponentType implements AbstractCount {
     /**
      * @return the constraint
      */
+    @Override
     public AllowedValuesPropertyType getConstraint() {
         return constraint;
     }
@@ -187,7 +188,7 @@ public class Count extends AbstractDataComponentType implements AbstractCount {
             final Count that = (Count) object;
             return Objects.equals(this.axisID, that.axisID) &&
                     Objects.equals(this.constraint, that.constraint) &&
-                    Objects.equals(this.quality, that.quality) &&
+                    Objects.equals(this.getQuality(), that.getQuality()) &&
                     Objects.equals(this.referenceFrame, that.referenceFrame) &&
                     Objects.equals(this.value, that.value);
         }

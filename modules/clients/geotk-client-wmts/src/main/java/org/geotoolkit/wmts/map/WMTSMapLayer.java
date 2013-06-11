@@ -23,7 +23,7 @@ import org.geotoolkit.map.DefaultCoverageMapLayer;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.StyleConstants;
-import org.geotoolkit.util.ArgumentChecks;
+import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.wmts.WebMapTileServer;
 import org.geotoolkit.wmts.model.WMTSPyramidSet;
 import org.opengis.feature.type.Name;
@@ -64,7 +64,7 @@ public class WMTSMapLayer extends DefaultCoverageMapLayer {
         super(getReference(server, layerName),
               new DefaultStyleFactory().style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER),
               new DefaultName("osm"));
-        setUserPropertie(PyramidSet.HINT_FORMAT, DEFAULT_FORMAT);
+        setUserProperty(PyramidSet.HINT_FORMAT, DEFAULT_FORMAT);
         this.server = server;
     }
     
@@ -74,7 +74,7 @@ public class WMTSMapLayer extends DefaultCoverageMapLayer {
      */
     public void setFormat(final String format) {
         ArgumentChecks.ensureNonNull("format", format);
-        setUserPropertie(PyramidSet.HINT_FORMAT, format);
+        setUserProperty(PyramidSet.HINT_FORMAT, format);
     }
     
     /**
@@ -82,7 +82,7 @@ public class WMTSMapLayer extends DefaultCoverageMapLayer {
      * @return 
      */
     public String getFormat() {
-        Object val = getUserPropertie(PyramidSet.HINT_FORMAT);
+        Object val = getUserProperty(PyramidSet.HINT_FORMAT);
         if(val != null){
             return val.toString();
         }
@@ -93,7 +93,7 @@ public class WMTSMapLayer extends DefaultCoverageMapLayer {
      * @return named style use on server.
      */
     public String getTileSetStyle() {
-        Object val = getUserPropertie(WMTSPyramidSet.HINT_STYLE);
+        Object val = getUserProperty(WMTSPyramidSet.HINT_STYLE);
         if(val != null){
             return val.toString();
         }
@@ -105,7 +105,7 @@ public class WMTSMapLayer extends DefaultCoverageMapLayer {
      */
     public void setTileSetStyle(String tileSetStyle) {
         ArgumentChecks.ensureNonNull("tileSetStyle", tileSetStyle);
-        setUserPropertie(WMTSPyramidSet.HINT_STYLE, tileSetStyle);
+        setUserProperty(WMTSPyramidSet.HINT_STYLE, tileSetStyle);
     }
 
     /**

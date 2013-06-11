@@ -43,7 +43,7 @@ import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.filter.identity.DefaultFeatureId;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.storage.DataStoreException;
-import static org.geotoolkit.util.ArgumentChecks.*;
+import static org.apache.sis.util.ArgumentChecks.*;
 import org.opengis.feature.Feature;
 import org.opengis.feature.Property;
 import org.opengis.feature.type.FeatureType;
@@ -463,5 +463,11 @@ public class MemoryFeatureStore extends AbstractFeatureStore{
         super.dispose();
         groups.clear();
     }
+
+	@Override
+	public void refreshMetaModel() {
+		return;
+		
+	}
 
 }

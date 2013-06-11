@@ -109,6 +109,7 @@ public class MetadataType implements AbstractMetadata {
     /**
      * Gets the value of the abstractMetaData property.
      */
+    @Override
     public Object getAbstractMetaData() {
         return abstractMetaData;
     }
@@ -116,6 +117,7 @@ public class MetadataType implements AbstractMetadata {
     /**
      * Gets the value of the about property.
      */
+    @Override
     public String getAbout() {
         return about;
     }
@@ -123,6 +125,7 @@ public class MetadataType implements AbstractMetadata {
     /**
      * Gets the value of the type property.
      */
+    @Override
     public String getType() {
         if (type == null) {
             return "simple";
@@ -134,6 +137,7 @@ public class MetadataType implements AbstractMetadata {
     /**
      * Gets the value of the href property.
      */
+    @Override
     public String getHref() {
         return href;
     }
@@ -141,6 +145,7 @@ public class MetadataType implements AbstractMetadata {
     /**
      * Gets the value of the role property.
      */
+    @Override
     public String getRole() {
         return role;
     }
@@ -149,6 +154,7 @@ public class MetadataType implements AbstractMetadata {
      * Gets the value of the arcrole property.
      *
      */
+    @Override
     public String getArcrole() {
         return arcrole;
     }
@@ -157,6 +163,7 @@ public class MetadataType implements AbstractMetadata {
      * Gets the value of the title property.
      *
      */
+    @Override
     public String getTitle() {
         return title;
     }
@@ -165,6 +172,7 @@ public class MetadataType implements AbstractMetadata {
     * Gets the value of the show property.
     *
     */
+    @Override
     public String getShow() {
         return show;
     }
@@ -172,6 +180,7 @@ public class MetadataType implements AbstractMetadata {
     /**
      * Gets the value of the actuate property.
      */
+    @Override
     public String getActuate() {
         return actuate;
     }

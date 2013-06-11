@@ -82,7 +82,7 @@ public class OSMPostgresQueries {
             "SELECT AddGeometryColumn('public', 'Node', 'geometry', 4326, 'POINT', 2)";
 
     public static final String GENERATE_NODE_GEOMETRY =
-            "UPDATE \"Node\" SET geometry = geomfromtext('POINT(' || lon || ' ' || lat || ')', 4326)";
+            "UPDATE \"Node\" SET geometry = st_geomfromtext('POINT(' || lon || ' ' || lat || ')', 4326)";
 
     public static final String CREATE_NODE_GEOMETRY_INDEX =
             "CREATE INDEX idx_node_geom ON \"Node\" USING gist (geometry)";
@@ -164,7 +164,7 @@ public class OSMPostgresQueries {
 
     public static final String GENERATE_WAY_GEOMETRY =
 		"UPDATE \"Way\" w SET geometry = ( " +
-                    "SELECT makeline(c.geom) AS way_line FROM ( " +
+                    "SELECT st_makeline(c.geom) AS way_line FROM ( " +
                         "SELECT n.geometry AS geom " +
                         "FROM \"Node\" n INNER JOIN \"WayMember\" wn ON n.id = wn.\"nodeId\" " +
                         "WHERE (wn.\"wayId\" = w.id) ORDER BY wn.index " +

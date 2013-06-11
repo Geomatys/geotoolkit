@@ -122,7 +122,7 @@ public class TimePositionType extends AbstractTimePosition implements Serializab
      */
     public TimePositionType(final Timestamp time){
         if (time != null) {
-            this.value = Arrays.asList(time.toString());
+            this.value = Arrays.asList(FORMATTERS.get(0).format(time));
         }
     }
 
@@ -150,6 +150,13 @@ public class TimePositionType extends AbstractTimePosition implements Serializab
             value = new ArrayList<String>();
         }
         return this.value;
+    }
+    
+    public String getSingleValue() {
+        if (value != null && !value.isEmpty()) {
+            return value.get(0);
+        }
+        return null;
     }
 
     public final void setValue(final Date value) {
@@ -279,10 +286,12 @@ public class TimePositionType extends AbstractTimePosition implements Serializab
         }
         if (object instanceof TimePositionType) {
             final TimePositionType that = (TimePositionType) object;
-            return Objects.equals(this.calendarEraName,       that.calendarEraName)       &&
+           return Objects.equals(this.calendarEraName,       that.calendarEraName)       &&
                    Objects.equals(this.frame,                 that.frame)                 &&
                    Objects.equals(this.indeterminatePosition, that.indeterminatePosition) &&
-                   Objects.equals(this.value,                 that.value);
+                   // fix equals issue with diferent facet value, but same dateTime
+                   (Objects.equals(this.value, that.value) || Objects.equals(this.getDate(), that.getDate()));
+
         }
         return false;
     }
@@ -316,7 +325,7 @@ public class TimePositionType extends AbstractTimePosition implements Serializab
                 try {
                     final Date date;
                     synchronized (FORMATTERS.get(0)) {
-                        date = sdf.parse(v);
+                        date = FORMATTERS.get(0).parse(v);
                     }
                     s.append(sdf.format(date));
                 } catch (ParseException ex) {

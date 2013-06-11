@@ -24,7 +24,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 import org.opengis.feature.Feature;
 
 /**

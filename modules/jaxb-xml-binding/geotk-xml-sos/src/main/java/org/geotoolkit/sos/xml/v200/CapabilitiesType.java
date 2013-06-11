@@ -22,6 +22,7 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ows.xml.AbstractCapabilitiesCore;
 import org.geotoolkit.ows.xml.Sections;
@@ -80,9 +81,10 @@ import org.geotoolkit.swes.xml.SOSResponse;
     "filterCapabilities",
     "contents"
 })
+@XmlRootElement(name="Capabilities")
 public class CapabilitiesType extends CapabilitiesBaseType implements Capabilities, SOSResponse {
 
-    private List<Object> extension;
+    private List<InsertionCapabilitiesPropertyType> extension;
     private FilterCapabilities filterCapabilities;
     private CapabilitiesType.Contents contents;
 
@@ -98,13 +100,13 @@ public class CapabilitiesType extends CapabilitiesBaseType implements Capabiliti
     
     public CapabilitiesType(final ServiceIdentification serviceIdentification, final ServiceProvider serviceProvider,
             final OperationsMetadata operationsMetadata, final String version, final String updateSequence, final FilterCapabilities filterCapabilities,
-            final ContentsType contents) {
+            final ContentsType contents, final List<InsertionCapabilitiesPropertyType> extension) {
         super(serviceIdentification, serviceProvider, operationsMetadata, version, updateSequence);
         if (contents != null) {
-            this.contents           = new Contents(contents);
+            this.contents       = new Contents(contents);
         }
         this.filterCapabilities = filterCapabilities;
-                    
+        this.extension          = extension;
     }
     
     /**
@@ -115,9 +117,9 @@ public class CapabilitiesType extends CapabilitiesBaseType implements Capabiliti
      * 
      * 
      */
-    public List<Object> getExtension() {
+    public List<InsertionCapabilitiesPropertyType> getExtension() {
         if (extension == null) {
-            extension = new ArrayList<Object>();
+            extension = new ArrayList<InsertionCapabilitiesPropertyType>();
         }
         return this.extension;
     }
@@ -172,6 +174,10 @@ public class CapabilitiesType extends CapabilitiesBaseType implements Capabiliti
         this.contents = value;
     }
 
+    @Override
+    public String getSpecificationVersion() {
+        return "2.0.0";
+    }
 
     @Override
     public AbstractCapabilitiesCore applySections(final Sections sections) {
@@ -208,7 +214,7 @@ public class CapabilitiesType extends CapabilitiesBaseType implements Capabiliti
             }
         }
         // we build and normalize the document
-        return new CapabilitiesType(si, sp, om, "2.0.0", getUpdateSequence(), fc, cont);
+        return new CapabilitiesType(si, sp, om, "2.0.0", getUpdateSequence(), fc, cont, extension);
     }
     
     /**

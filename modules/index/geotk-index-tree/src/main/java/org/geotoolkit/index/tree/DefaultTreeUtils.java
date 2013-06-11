@@ -17,10 +17,10 @@
 package org.geotoolkit.index.tree;
 
 import java.util.List;
-import org.geotoolkit.geometry.GeneralDirectPosition;
-import org.geotoolkit.geometry.GeneralEnvelope;
-import org.geotoolkit.math.XMath;
-import org.geotoolkit.util.ArgumentChecks;
+import org.apache.sis.geometry.GeneralDirectPosition;
+import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.math.MathFunctions;
+import org.apache.sis.util.ArgumentChecks;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 
@@ -41,6 +41,13 @@ public class DefaultTreeUtils {
         return node.getChildren().size()+node.getEntries().size();
     }
 
+    public static void recursiveCount(Node n, int[] counter){
+        counter[0] = counter[0]+n.getEntries().size();
+        for(Node c : n.getChildren()){
+            recursiveCount(c, counter);
+        }
+    }
+    
     /**Compute {@code Envelop} bulk.
      *
      * @param envelope {@code Envelope}.
@@ -54,8 +61,8 @@ public class DefaultTreeUtils {
         if (dim<3) throw new IllegalArgumentException("getGeneralEnvelopBulk : compute envelop bulk with lesser than three dimensions have no sens");
         if (lower.equals(upper)) return 0;
         double bulk = 1;
-        for(int i = 0; i<3;i++){
-            bulk*=envelope.getSpan(i);
+        for(int i = 0; i<dim; i++){
+            bulk *= envelope.getSpan(i);
         }
         return bulk;
     }
@@ -122,7 +129,7 @@ public class DefaultTreeUtils {
         for(int i =0; i<length; i++){
             tab[i] = dpACoords[i]-ordinateDB[i];
         }
-        return XMath.magnitude(tab);
+        return MathFunctions.magnitude(tab);
     }
 
     /**Compute Euclidean distance between two {@code Envelope} in dimension n.
@@ -149,14 +156,18 @@ public class DefaultTreeUtils {
      * @throws IllegalArgumentException if {@code Envelope} list lS is empty.
      * @return GeneralEnvelope which is general boundary.
      */
-    public static GeneralEnvelope getEnveloppeMin(final List<? extends Envelope> lGE){
+    public static GeneralEnvelope getEnveloppeMin(final List lGE){
         ArgumentChecks.ensureNonNull("getEnveloppeMin : lGE", lGE);
         if(lGE.isEmpty()){
             throw new IllegalArgumentException("impossible to get Enveloppe : empty list");
         }
-        final GeneralEnvelope envlop = new GeneralEnvelope(lGE.get(0));
-        for(int i = 1, s = lGE.size(); i<s;i++){
-            envlop.add(lGE.get(i));
+        Object first = lGE.get(0);
+        if (!(first instanceof Envelope) && !(first instanceof Node))
+            throw new IllegalArgumentException("list elements should be instance of Node or Envelope : use only for tree work.");
+        final boolean isNode = first instanceof Node;
+        final GeneralEnvelope envlop = new GeneralEnvelope((isNode)?((Node)first).getBoundary():(Envelope)first);
+        for(int i = 1, s = lGE.size(); i < s; i++){
+            envlop.add((isNode)?((Node)lGE.get(i)).getBoundary():(Envelope)lGE.get(i));
         }
         return envlop;
     }

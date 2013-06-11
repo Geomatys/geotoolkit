@@ -62,7 +62,7 @@ import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
@@ -304,7 +304,7 @@ public class JCRSChooser extends javax.swing.JDialog {
      * @param message The error message.
      */
     private void setErrorMessage(final String message) {
-        wktArea.setText("<html>"+Vocabulary.format(Vocabulary.Keys.ERROR_$1, message)+"</html>");
+        wktArea.setText("<html>"+Vocabulary.format(Vocabulary.Keys.ERROR_1, message)+"</html>");
     }
 
     public ACTION showDialog() {

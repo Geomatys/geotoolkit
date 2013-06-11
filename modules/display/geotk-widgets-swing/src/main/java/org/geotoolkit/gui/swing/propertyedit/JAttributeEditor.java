@@ -29,6 +29,7 @@ import org.geotoolkit.gui.swing.propertyedit.featureeditor.BooleanEditor;
 import org.geotoolkit.gui.swing.propertyedit.featureeditor.CRSEditor;
 import org.geotoolkit.gui.swing.propertyedit.featureeditor.CharsetEditor;
 import org.geotoolkit.gui.swing.propertyedit.featureeditor.ChoiceEditor;
+import org.geotoolkit.gui.swing.propertyedit.featureeditor.DateEditor;
 import org.geotoolkit.gui.swing.propertyedit.featureeditor.EnumEditor;
 import org.geotoolkit.gui.swing.propertyedit.featureeditor.FileEditor;
 import org.geotoolkit.gui.swing.propertyedit.featureeditor.FilterEditor;
@@ -37,6 +38,7 @@ import org.geotoolkit.gui.swing.propertyedit.featureeditor.NumberEditor;
 import org.geotoolkit.gui.swing.propertyedit.featureeditor.PropertyValueEditor;
 import org.geotoolkit.gui.swing.propertyedit.featureeditor.StringEditor;
 import org.geotoolkit.gui.swing.propertyedit.featureeditor.StyleEditor;
+import org.geotoolkit.gui.swing.propertyedit.featureeditor.TimeStampEditor;
 import org.geotoolkit.gui.swing.propertyedit.featureeditor.URLEditor;
 import org.geotoolkit.gui.swing.propertyedit.featureeditor.UnitEditor;
 import org.opengis.feature.Property;
@@ -105,6 +107,8 @@ public class JAttributeEditor extends JPanel{
         lst.add(new ArrayEditor());
         lst.add(new StyleEditor());
         lst.add(new FilterEditor());
+        lst.add(new DateEditor());
+        lst.add(new TimeStampEditor());
         return lst;
     }
 
@@ -117,18 +121,12 @@ public class JAttributeEditor extends JPanel{
                 }
 
                 if(edit.canHandle(type)){
-                    try {
-                        PropertyValueEditor newInst = edit.getClass().newInstance();
+                    PropertyValueEditor newInst = edit.copy();
 
-                        if(edit instanceof ArrayEditor){
-                            ((ArrayEditor)edit).setEditors(editors);
-                        }
-                        return newInst;
-                    } catch (InstantiationException ex) {
-                        Logger.getLogger(JAttributeEditor.class.getName()).log(Level.WARNING, ex.getMessage(), ex);
-                    } catch (IllegalAccessException ex) {
-                        Logger.getLogger(JAttributeEditor.class.getName()).log(Level.WARNING, ex.getMessage(), ex);
+                    if(edit instanceof ArrayEditor){
+                        ((ArrayEditor)edit).setEditors(editors);
                     }
+                    return newInst;
                 }
             }
         }

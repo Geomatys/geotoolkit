@@ -23,7 +23,7 @@ import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.process.AbstractProcess;
 import org.geotoolkit.process.ProcessException;
-import org.geotoolkit.util.ArgumentChecks;
+import org.apache.sis.util.ArgumentChecks;
 import org.opengis.parameter.ParameterValueGroup;
 import static org.geotoolkit.process.coverage.bandcombiner.CombinerDescriptor.*;
 import org.opengis.coverage.Coverage;

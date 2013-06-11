@@ -17,7 +17,7 @@
 package org.geotoolkit.filter;
 
 import java.io.Serializable;
-import static org.geotoolkit.util.ArgumentChecks.*;
+import static org.apache.sis.util.ArgumentChecks.*;
 import org.opengis.filter.FilterVisitor;
 import org.opengis.filter.PropertyIsNil;
 import org.opengis.filter.expression.Expression;

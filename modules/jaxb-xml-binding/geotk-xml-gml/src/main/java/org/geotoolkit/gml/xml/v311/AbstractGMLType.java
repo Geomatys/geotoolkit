@@ -30,7 +30,7 @@ import org.geotoolkit.gml.xml.AbstractGML;
 import org.geotoolkit.internal.sql.table.Entry;
 import org.geotoolkit.metadata.AbstractMetadata;
 import org.geotoolkit.metadata.MetadataStandard;
-import org.geotoolkit.util.ComparisonMode;
+import org.apache.sis.util.ComparisonMode;
 
 
 /**

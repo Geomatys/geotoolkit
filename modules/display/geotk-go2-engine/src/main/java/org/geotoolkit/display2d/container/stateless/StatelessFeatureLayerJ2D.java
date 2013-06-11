@@ -63,7 +63,7 @@ import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.filter.binaryspatial.LooseBBox;
 import org.geotoolkit.filter.binaryspatial.UnreprojectedLooseBBox;
 import org.geotoolkit.geometry.DefaultBoundingBox;
-import org.geotoolkit.geometry.Envelope2D;
+import org.apache.sis.geometry.Envelope2D;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.GraphicBuilder;

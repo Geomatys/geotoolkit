@@ -24,7 +24,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import org.geotoolkit.mathml.xml.Mtable;
 import org.geotoolkit.mathml.xml.Mtr;
-import org.geotoolkit.util.ArgumentChecks;
+import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
 import org.geotoolkit.wps.converters.WPSConvertersUtils;
 import org.geotoolkit.wps.io.WPSMimeType;
@@ -35,7 +35,7 @@ import org.geotoolkit.wps.xml.v100.ReferenceType;
  *
  * @author Quentin Boileau (Geomatys).
  */
-public class ReferenceToAffineTransformConverter extends AbstractReferenceInputConverter {
+public class ReferenceToAffineTransformConverter extends AbstractReferenceInputConverter<AffineTransform> {
 
     private static ReferenceToAffineTransformConverter INSTANCE;
 
@@ -50,12 +50,12 @@ public class ReferenceToAffineTransformConverter extends AbstractReferenceInputC
     }
 
     @Override
-    public Class<? extends Object> getTargetClass() {
+    public Class<? extends AffineTransform> getTargetClass() {
         return AffineTransform.class;
     }
 
     @Override
-    public Object convert(final ReferenceType source, final Map<String, Object> params) throws NonconvertibleObjectException {
+    public AffineTransform convert(final ReferenceType source, final Map<String, Object> params) throws NonconvertibleObjectException {
         
         final String mime = source.getMimeType() != null ? source.getMimeType() : WPSMimeType.TEXT_XML.val();
         final InputStream stream = getInputStreamFromReference(source);

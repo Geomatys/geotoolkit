@@ -64,7 +64,10 @@ import org.opengis.feature.type.PropertyDescriptor;
 
 import static javax.xml.stream.events.XMLEvent.*;
 import net.iharder.Base64;
+import org.geotoolkit.feature.DefaultComplexAttribute;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
+import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSLineString;
+import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.gml.GeometrytoJTS;
 import org.geotoolkit.gml.xml.AbstractGeometry;
 import org.geotoolkit.gml.xml.GMLMarshallerPool;
@@ -268,14 +271,27 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
     }
 
     private ComplexAttribute readFeature(final String id, final ComplexType featureType) throws XMLStreamException {
+        
+        /*
+         * We create a map and a collection because we can encounter two cases : 
+         * - The case featureType defines a property with max occur > 1.
+         * - The case featureType defines a property with max occur = 1, and its
+         * value instance of collection or map. 
+         * We store all encountered name with its linked property in the map, so 
+         * at each value parsed, we can add it in the existing property if its 
+         * value is a list or map. The collection is the final property store, 
+         * we add the all the created properties in it (so we can put multiple 
+         * properties with the same name).
+         */
         final Map<Name,Property> namedProperties = new LinkedHashMap<Name, Property>();
-
+        final Collection<Property> propertyContainer = new ArrayList<Property>();
+        
         while (reader.hasNext()) {
             int event = reader.next();
 
             if (event == START_ELEMENT) {
                 final Name propName = Utils.getNameFromQname(reader.getName());
-
+                
                 // we skip the boundedby attribute if it's present
                 if ("boundedBy".equals(propName.getLocalPart())) {
                     toTagEnd("boundedBy");
@@ -314,9 +330,17 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                             }
                             jtsGeom = isoGeom.getJTSGeometry();
                         } else if (geometry instanceof PolygonType) {
-                            jtsGeom = ((PolygonType)geometry).getJTSPolygon().getJTSGeometry();
+                            final PolygonType polygon = ((PolygonType)geometry);
+                            jtsGeom = polygon.getJTSPolygon().getJTSGeometry();
+                            if(polygon.getCoordinateReferenceSystem() != null) {
+                                JTS.setCRS(jtsGeom, polygon.getCoordinateReferenceSystem());
+                            }
                         } else if (geometry instanceof LineStringPosListType) {
-                            jtsGeom = ((LineStringPosListType)geometry).getJTSLineString().getJTSGeometry();
+                            final JTSLineString line = ((LineStringPosListType)geometry).getJTSLineString();
+                            jtsGeom = line.getJTSGeometry();
+                            if(line.getCoordinateReferenceSystem() != null) {
+                                JTS.setCRS(jtsGeom, line.getCoordinateReferenceSystem());
+                            }
                         } else if (geometry instanceof AbstractGeometry) {
                             try {
                                 jtsGeom = GeometrytoJTS.toJTS((AbstractGeometry) geometry);
@@ -327,6 +351,7 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                             throw new IllegalArgumentException("unexpected geometry type:" + geometry);
                         }
                         namedProperties.put(propName,FF.createAttribute(jtsGeom, (AttributeDescriptor)pdesc, null));
+                        propertyContainer.add(namedProperties.get(propName));
 
                     } catch (JAXBException ex) {
                         String msg = ex.getMessage();
@@ -347,10 +372,34 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                             break;
                         }
                     }
+                    
+                    final ComplexAttribute catt = readFeature(null, (ComplexType) propertyType);
+                    if (pdesc.getMaxOccurs() > 1) {
+                        propertyContainer.add(FF.createComplexAttribute(catt.getProperties(), (AttributeDescriptor) pdesc, null));
+                    } else {
+                        if (namedProperties.containsKey(propName)) {
+                            Property complexProp = namedProperties.get(propName);
+                            if (complexProp.getValue() instanceof List) {
+                                ((List) complexProp.getValue()).add(FF.createComplexAttribute(catt.getProperties(), (AttributeDescriptor) pdesc, null));
+                            } else if (complexProp.getValue() instanceof Map) {
+                                if (nameAttribute != null) {
+                                    ((Map) complexProp.getValue()).put(nameAttribute, FF.createComplexAttribute(catt.getProperties(), (AttributeDescriptor) pdesc, null));
+                                } else {
+                                    LOGGER.severe("unable to read a composite attribute : no name has been found");
+                                }
+                            }
+                        } else {
+                            namedProperties.put(propName, FF.createComplexAttribute(catt.getProperties(), (AttributeDescriptor) pdesc, null));
+                            propertyContainer.add(namedProperties.get(propName));
+                        }
+                    }
 
-                    final ComplexAttribute catt = readFeature(null, (ComplexType)propertyType);
-                    namedProperties.put(propName, FF.createComplexAttribute(catt.getProperties(), (AttributeDescriptor)pdesc, null));
-
+                    /**
+                     * TODO : Change to adopt the same behavior than in complexAttribute case :
+                     * Check if the parameter is multi occurence : if ot is, we just create a new property that
+                     * we'll add in property container. Otherwise, if a previous value already exists, we must throw an
+                     * exception (or set value as a list, but I don't think it's a safe behavior).
+                     */
                 } else {
                     final String content = reader.getElementText();
                     final Class typeBinding = propertyType.getBinding();
@@ -361,21 +410,24 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                         final Map<String, Object> map = new LinkedHashMap<String, Object>();
                         map.put(nameAttribute, content);
                         namedProperties.put(propName, FF.createAttribute(map, (AttributeDescriptor)pdesc, null));
+                        propertyContainer.add(namedProperties.get(propName));
 
                     } else if (previous == null && List.class.equals(typeBinding)) {
                         final List<String> list = new ArrayList<String>();
                         list.add(content);
                         namedProperties.put(propName, FF.createAttribute(list, (AttributeDescriptor)pdesc, null));
+                        propertyContainer.add(namedProperties.get(propName));
 
                     } else if (previous == null) {
                         namedProperties.put(propName, FF.createAttribute(readValue(content, propertyType),
                             (AttributeDescriptor)pdesc, null));
+                        propertyContainer.add(namedProperties.get(propName));
 
                     } else if (previous instanceof Map && nameAttribute != null) {
                         ((Map) previous).put(nameAttribute, content);
 
                     } else if (previous instanceof Map && nameAttribute == null) {
-                        LOGGER.severe("unable to reader a composite attribute no name has been found");
+                        LOGGER.severe("unable to read a composite attribute : no name has been found");
 
                     } else if (previous instanceof Collection) {
                         ((Collection) previous).add(content);
@@ -385,6 +437,8 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                         multipleValue.add(previous);
                         multipleValue.add(readValue(content, propertyType));                        
                         namedProperties.put(propName, FF.createAttribute(multipleValue, (AttributeDescriptor)pdesc, null));
+                        propertyContainer.remove(prevProp);
+                        propertyContainer.add(namedProperties.get(propName));
                     }
 
                 }
@@ -406,10 +460,10 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                 sfb.set(p.getName(), p.getValue());
             }
             return sfb.buildFeature(id);
-        }else if (featureType instanceof FeatureType) {
-            return FF.createFeature(namedProperties.values(), (FeatureType)featureType, id);
+        } else if (featureType instanceof FeatureType) {
+            return FF.createFeature(propertyContainer, (FeatureType)featureType, id);
         } else {
-            return FF.createComplexAttribute(namedProperties.values(), (ComplexType)featureType, null);
+            return FF.createComplexAttribute(propertyContainer, (ComplexType)featureType, null);
         }
     }
     

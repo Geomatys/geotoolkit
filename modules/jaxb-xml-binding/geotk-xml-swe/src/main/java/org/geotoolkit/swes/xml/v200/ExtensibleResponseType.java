@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.swes.xml.SOSResponse;
 import org.geotoolkit.util.Utilities;
 
 
@@ -64,7 +65,7 @@ import org.geotoolkit.util.Utilities;
     DescribeSensorResponseType.class,
     UpdateSensorDescriptionResponseType.class
 })
-public abstract class ExtensibleResponseType {
+public abstract class ExtensibleResponseType implements SOSResponse {
 
     private List<Object> extension;
 
@@ -92,6 +93,11 @@ public abstract class ExtensibleResponseType {
     
     public void setExtension(final List<Object> extension) {
         this.extension = extension;
+    }
+    
+    @Override
+    public String getSpecificationVersion() {
+        return "2.0.0";
     }
 
     @Override

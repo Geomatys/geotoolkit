@@ -653,4 +653,10 @@ public class CSVDataStore extends AbstractFeatureStore{
 
     }
 
+	@Override
+	public void refreshMetaModel() {
+		featureType=null;
+		
+	}
+
 }

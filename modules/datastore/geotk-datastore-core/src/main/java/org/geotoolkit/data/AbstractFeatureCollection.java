@@ -46,7 +46,7 @@ import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.geometry.jts.transform.GeometryScaleTransformer;
 import org.geotoolkit.storage.DataStoreException;
-import static org.geotoolkit.util.ArgumentChecks.*;
+import static org.apache.sis.util.ArgumentChecks.*;
 import org.geotoolkit.util.collection.CloseableIterator;
 import org.opengis.feature.Feature;
 import org.opengis.feature.Property;

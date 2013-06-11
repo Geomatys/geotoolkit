@@ -25,7 +25,7 @@ import java.util.TreeSet;
 import java.util.UUID;
 import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.referencing.IdentifiedObjects;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**

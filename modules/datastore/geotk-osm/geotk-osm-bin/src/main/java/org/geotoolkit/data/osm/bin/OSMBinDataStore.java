@@ -179,4 +179,10 @@ public class OSMBinDataStore extends AbstractFeatureStore{
         }
     }
 
+	@Override
+	public void refreshMetaModel() {
+		return;
+		
+	}
+
 }

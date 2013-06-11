@@ -25,6 +25,7 @@ import javax.swing.GroupLayout.Alignment;
 import javax.swing.JLabel;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SwingConstants;
+import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.gui.swing.style.JNumberSliderExpressionPane;
 import org.geotoolkit.gui.swing.style.StyleElementEditor;
 import org.opengis.style.Halo;
@@ -64,11 +65,11 @@ public class JHaloPane extends StyleElementEditor<Halo> {
         setMaximumSize(new Dimension(625, 32767));
         setPreferredSize(new Dimension(625, 156));
 
-        jLabel6.setText("Halo :");
+        jLabel6.setText(MessageBundle.getString("halo")); // NOI18N
 
-        jLabel7.setText("Rayon :");
+        jLabel7.setText(MessageBundle.getString("radius")); // NOI18N
 
-        jLabel9.setText("Couleur :");
+        jLabel9.setText(MessageBundle.getString("color")); // NOI18N
 
         guiRadius.addPropertyChangeListener(new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent evt) {
@@ -98,7 +99,7 @@ public class JHaloPane extends StyleElementEditor<Halo> {
                             .addComponent(jLabel9))
                         .addPreferredGap(ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(Alignment.LEADING)
-                            .addComponent(guiRadius, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(guiRadius, GroupLayout.DEFAULT_SIZE, 539, Short.MAX_VALUE)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(guiHaloFillPane, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                                 .addGap(0, 0, Short.MAX_VALUE)))))
@@ -117,7 +118,7 @@ public class JHaloPane extends StyleElementEditor<Halo> {
                 .addGroup(layout.createParallelGroup(Alignment.LEADING)
                     .addComponent(jLabel9)
                     .addComponent(guiHaloFillPane, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(28, Short.MAX_VALUE))
         );
 
         layout.linkSize(SwingConstants.VERTICAL, new Component[] {guiRadius, jLabel7});

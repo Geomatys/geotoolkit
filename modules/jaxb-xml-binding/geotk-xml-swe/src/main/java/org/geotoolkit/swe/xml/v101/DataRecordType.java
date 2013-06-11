@@ -24,7 +24,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.swe.xml.DataComponentProperty;
 import org.geotoolkit.swe.xml.DataRecord;
-import org.geotoolkit.util.ComparisonMode;
+import org.apache.sis.util.ComparisonMode;
 
 /**
  * <p>Java class for DataRecordType complex type.
@@ -77,6 +77,7 @@ public class DataRecordType extends AbstractDataRecordType implements DataRecord
     /**
      * Gets the value of the field property.
      */
+    @Override
     public List<DataComponentPropertyType> getField() {
         if (field == null) {
             field = new ArrayList<DataComponentPropertyType>();

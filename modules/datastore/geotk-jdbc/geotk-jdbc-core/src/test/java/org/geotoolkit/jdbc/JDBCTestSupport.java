@@ -88,6 +88,7 @@ public abstract class JDBCTestSupport extends TestCase {
 
     protected JDBCTestSetup setup;
     protected JDBCDataStore dataStore;
+    protected JDBCDataStore dataStore2;
     protected SQLDialect dialect;
     
     /**
@@ -145,17 +146,29 @@ public abstract class JDBCTestSupport extends TestCase {
         final JDBCDataStoreFactory factory = setup.createDataStoreFactory();
         final ParameterDescriptorGroup desc = factory.getParametersDescriptor();
         final ParameterValueGroup param = desc.createValue();
+        
         Parameters.getOrCreate(JDBCDataStoreFactory.NAMESPACE, param).setValue("http://www.geotoolkit.org/test");
         Parameters.getOrCreate(JDBCDataStoreFactory.SCHEMA, param).setValue("geotoolkit");
         Parameters.getOrCreate(JDBCDataStoreFactory.DATASOURCE, param).setValue(setup.getDataSource());
         Parameters.getOrCreate(JDBCDataStoreFactory.HOST, param).setValue("");
         Parameters.getOrCreate(JDBCDataStoreFactory.PORT, param).setValue(5432);
         Parameters.getOrCreate(JDBCDataStoreFactory.USER, param).setValue("");
-        Parameters.getOrCreate(JDBCDataStoreFactory.PASSWD, param).setValue("");
+        Parameters.getOrCreate(JDBCDataStoreFactory.PASSWORD, param).setValue("");
+        final ParameterValueGroup param2 = desc.createValue();
+        Parameters.getOrCreate(JDBCDataStoreFactory.NAMESPACE, param2).setValue("http://www.geotoolkit.org/test");
+        Parameters.getOrCreate(JDBCDataStoreFactory.SCHEMA, param2).setValue("geotoolkit");
+        Parameters.getOrCreate(JDBCDataStoreFactory.DATASOURCE, param2).setValue(setup.getOtherDataSource());
+        Parameters.getOrCreate(JDBCDataStoreFactory.HOST, param2).setValue("");
+        Parameters.getOrCreate(JDBCDataStoreFactory.PORT, param2).setValue(5432);
+        Parameters.getOrCreate(JDBCDataStoreFactory.USER, param2).setValue("");
+        Parameters.getOrCreate(JDBCDataStoreFactory.PASSWORD, param2).setValue("");
         
         dataStore = (JDBCDataStore) factory.open( param );
+        dataStore2 = (JDBCDataStore) factory.open( param2 );
         
         setup.setUpDataStore(dataStore);
+        dataStore2.setDatabaseSchema("public");
+        
         dialect = dataStore.getDialect();
     }
 
@@ -165,6 +178,7 @@ public abstract class JDBCTestSupport extends TestCase {
     protected void tearDown() throws Exception {
         setup.tearDown();
         dataStore.dispose();
+        dataStore2.dispose();
         super.tearDown();
     }
     

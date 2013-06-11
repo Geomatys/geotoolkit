@@ -53,6 +53,8 @@ public class GeometryScaleTransformer extends AbstractGeometryTransformer{
     }
 
     private Coordinate[] decimate(final Coordinate[] coords, final int minpoint) {
+        if(coords.length==0) return coords;
+        
         int lenght = 1;
 
         final boolean closed = coords[0].equals2D(coords[coords.length-1]);

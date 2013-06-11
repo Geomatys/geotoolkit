@@ -16,35 +16,15 @@
  */
 package org.geotoolkit.sos.xml.v200;
 
-import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.observation.xml.v200.OMObservationType;
+import org.geotoolkit.sos.xml.ResultTemplate;
 import org.geotoolkit.swe.xml.v200.AbstractDataComponentType;
 import org.geotoolkit.swe.xml.v200.AbstractEncodingType;
-import org.geotoolkit.swe.xml.v200.AbstractSimpleComponentType;
-import org.geotoolkit.swe.xml.v200.BinaryEncodingType;
-import org.geotoolkit.swe.xml.v200.BooleanType;
-import org.geotoolkit.swe.xml.v200.CategoryRangeType;
-import org.geotoolkit.swe.xml.v200.CategoryType;
-import org.geotoolkit.swe.xml.v200.CountRangeType;
-import org.geotoolkit.swe.xml.v200.CountType;
-import org.geotoolkit.swe.xml.v200.DataArrayType;
-import org.geotoolkit.swe.xml.v200.DataChoiceType;
-import org.geotoolkit.swe.xml.v200.DataRecordType;
-import org.geotoolkit.swe.xml.v200.MatrixType;
-import org.geotoolkit.swe.xml.v200.QuantityRangeType;
-import org.geotoolkit.swe.xml.v200.QuantityType;
-import org.geotoolkit.swe.xml.v200.TextEncodingType;
-import org.geotoolkit.swe.xml.v200.TextType;
-import org.geotoolkit.swe.xml.v200.TimeRangeType;
-import org.geotoolkit.swe.xml.v200.TimeType;
-import org.geotoolkit.swe.xml.v200.VectorType;
-import org.geotoolkit.swe.xml.v200.XMLEncodingType;
 import org.geotoolkit.swes.xml.v200.AbstractSWESType;
 
 
@@ -107,7 +87,7 @@ import org.geotoolkit.swes.xml.v200.AbstractSWESType;
     "resultStructure",
     "resultEncoding"
 })
-public class ResultTemplateType extends AbstractSWESType {
+public class ResultTemplateType extends AbstractSWESType implements ResultTemplate {
 
     @XmlElement(required = true)
     @XmlSchemaType(name = "anyURI")
@@ -115,10 +95,28 @@ public class ResultTemplateType extends AbstractSWESType {
     @XmlElement(required = true)
     private ResultTemplateType.ObservationTemplate observationTemplate;
     @XmlElement(required = true)
-    private ResultTemplateType.ResultStructure resultStructure;
+    private ResultStructure resultStructure;
     @XmlElement(required = true)
-    private ResultTemplateType.ResultEncoding resultEncoding;
+    private ResultEncoding resultEncoding;
 
+    public ResultTemplateType() {
+        
+    }
+    
+    public ResultTemplateType(final String offering, final OMObservationType template,  final AbstractDataComponentType resultStructure,
+            final AbstractEncodingType encoding) {
+        this.offering = offering;
+        if (template != null) {
+            this.observationTemplate = new ObservationTemplate(template);
+        }
+        if (resultStructure != null) {
+            this.resultStructure = new ResultStructure(resultStructure);
+        }
+        if (encoding != null) {
+            this.resultEncoding = new ResultEncoding(encoding);
+        }
+    }
+    
     /**
      * Gets the value of the offering property.
      * 
@@ -127,6 +125,7 @@ public class ResultTemplateType extends AbstractSWESType {
      *     {@link String }
      *     
      */
+    @Override
     public String getOffering() {
         return offering;
     }
@@ -151,8 +150,12 @@ public class ResultTemplateType extends AbstractSWESType {
      *     {@link ResultTemplateType.ObservationTemplate }
      *     
      */
-    public ResultTemplateType.ObservationTemplate getObservationTemplate() {
-        return observationTemplate;
+    @Override
+    public OMObservationType getObservationTemplate() {
+        if (observationTemplate != null) {
+            return observationTemplate.omObservation;
+        }
+        return null;
     }
 
     /**
@@ -163,8 +166,8 @@ public class ResultTemplateType extends AbstractSWESType {
      *     {@link ResultTemplateType.ObservationTemplate }
      *     
      */
-    public void setObservationTemplate(ResultTemplateType.ObservationTemplate value) {
-        this.observationTemplate = value;
+    public void setObservationTemplate(final OMObservationType value) {
+        this.observationTemplate = new ObservationTemplate(value);
     }
 
     /**
@@ -175,8 +178,12 @@ public class ResultTemplateType extends AbstractSWESType {
      *     {@link ResultTemplateType.ResultStructure }
      *     
      */
-    public ResultTemplateType.ResultStructure getResultStructure() {
-        return resultStructure;
+    @Override
+    public AbstractDataComponentType getResultStructure() {
+        if (resultStructure != null) {
+            return resultStructure.getAbstractDataComponent();
+        }
+        return null;
     }
 
     /**
@@ -187,8 +194,8 @@ public class ResultTemplateType extends AbstractSWESType {
      *     {@link ResultTemplateType.ResultStructure }
      *     
      */
-    public void setResultStructure(ResultTemplateType.ResultStructure value) {
-        this.resultStructure = value;
+    public void setResultStructure(final AbstractDataComponentType value) {
+        this.resultStructure = new ResultStructure(value);
     }
 
     /**
@@ -199,8 +206,12 @@ public class ResultTemplateType extends AbstractSWESType {
      *     {@link ResultTemplateType.ResultEncoding }
      *     
      */
-    public ResultTemplateType.ResultEncoding getResultEncoding() {
-        return resultEncoding;
+    @Override
+    public AbstractEncodingType getResultEncoding() {
+        if (resultEncoding != null) {
+            return resultEncoding.getAbstractEncoding();
+        }
+        return null;
     }
 
     /**
@@ -211,8 +222,8 @@ public class ResultTemplateType extends AbstractSWESType {
      *     {@link ResultTemplateType.ResultEncoding }
      *     
      */
-    public void setResultEncoding(ResultTemplateType.ResultEncoding value) {
-        this.resultEncoding = value;
+    public void setResultEncoding(final AbstractEncodingType value) {
+        this.resultEncoding = new ResultEncoding(value);
     }
 
 
@@ -243,6 +254,13 @@ public class ResultTemplateType extends AbstractSWESType {
 
         @XmlElement(name = "OM_Observation", namespace = "http://www.opengis.net/om/2.0", required = true)
         private OMObservationType omObservation;
+        
+        public ObservationTemplate() {
+        }
+        
+        public ObservationTemplate(final OMObservationType omObservation) {
+            this.omObservation = omObservation;
+        }
 
         /**
          * Gets the value of the omObservation property.
@@ -269,153 +287,4 @@ public class ResultTemplateType extends AbstractSWESType {
         }
 
     }
-
-
-    /**
-     * <p>Java class for anonymous complex type.
-     * 
-     * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
-     * <pre>
-     * &lt;complexType>
-     *   &lt;complexContent>
-     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-     *       &lt;sequence>
-     *         &lt;element ref="{http://www.opengis.net/swe/2.0}AbstractEncoding"/>
-     *       &lt;/sequence>
-     *     &lt;/restriction>
-     *   &lt;/complexContent>
-     * &lt;/complexType>
-     * </pre>
-     * 
-     * 
-     */
-    @XmlAccessorType(XmlAccessType.FIELD)
-    @XmlType(name = "", propOrder = {
-        "abstractEncoding"
-    })
-    public static class ResultEncoding {
-
-        @XmlElementRef(name = "AbstractEncoding", namespace = "http://www.opengis.net/swe/2.0", type = JAXBElement.class)
-        private JAXBElement<? extends AbstractEncodingType> abstractEncoding;
-
-        /**
-         * Gets the value of the abstractEncoding property.
-         * 
-         * @return
-         *     possible object is
-         *     {@link JAXBElement }{@code <}{@link TextEncodingType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link XMLEncodingType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link BinaryEncodingType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link AbstractEncodingType }{@code >}
-         *     
-         */
-        public JAXBElement<? extends AbstractEncodingType> getAbstractEncoding() {
-            return abstractEncoding;
-        }
-
-        /**
-         * Sets the value of the abstractEncoding property.
-         * 
-         * @param value
-         *     allowed object is
-         *     {@link JAXBElement }{@code <}{@link TextEncodingType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link XMLEncodingType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link BinaryEncodingType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link AbstractEncodingType }{@code >}
-         *     
-         */
-        public void setAbstractEncoding(JAXBElement<? extends AbstractEncodingType> value) {
-            this.abstractEncoding = ((JAXBElement<? extends AbstractEncodingType> ) value);
-        }
-
-    }
-
-
-    /**
-     * <p>Java class for anonymous complex type.
-     * 
-     * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
-     * <pre>
-     * &lt;complexType>
-     *   &lt;complexContent>
-     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-     *       &lt;sequence>
-     *         &lt;element ref="{http://www.opengis.net/swe/2.0}AbstractDataComponent"/>
-     *       &lt;/sequence>
-     *     &lt;/restriction>
-     *   &lt;/complexContent>
-     * &lt;/complexType>
-     * </pre>
-     * 
-     * 
-     */
-    @XmlAccessorType(XmlAccessType.FIELD)
-    @XmlType(name = "", propOrder = {
-        "abstractDataComponent"
-    })
-    public static class ResultStructure {
-
-        @XmlElementRef(name = "AbstractDataComponent", namespace = "http://www.opengis.net/swe/2.0", type = JAXBElement.class)
-        private JAXBElement<? extends AbstractDataComponentType> abstractDataComponent;
-
-        /**
-         * Gets the value of the abstractDataComponent property.
-         * 
-         * @return
-         *     possible object is
-         *     {@link JAXBElement }{@code <}{@link BooleanType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link VectorType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link TimeType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link CategoryRangeType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link DataChoiceType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link MatrixType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link AbstractSimpleComponentType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link TimeRangeType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link CategoryType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link DataRecordType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link DataArrayType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link QuantityRangeType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link CountRangeType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link QuantityType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link TextType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link AbstractDataComponentType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link CountType }{@code >}
-         *     
-         */
-        public JAXBElement<? extends AbstractDataComponentType> getAbstractDataComponent() {
-            return abstractDataComponent;
-        }
-
-        /**
-         * Sets the value of the abstractDataComponent property.
-         * 
-         * @param value
-         *     allowed object is
-         *     {@link JAXBElement }{@code <}{@link BooleanType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link VectorType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link TimeType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link CategoryRangeType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link DataChoiceType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link MatrixType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link AbstractSimpleComponentType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link TimeRangeType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link CategoryType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link DataRecordType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link DataArrayType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link QuantityRangeType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link CountRangeType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link QuantityType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link TextType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link AbstractDataComponentType }{@code >}
-         *     {@link JAXBElement }{@code <}{@link CountType }{@code >}
-         *     
-         */
-        public void setAbstractDataComponent(JAXBElement<? extends AbstractDataComponentType> value) {
-            this.abstractDataComponent = ((JAXBElement<? extends AbstractDataComponentType> ) value);
-        }
-
-    }
-
 }

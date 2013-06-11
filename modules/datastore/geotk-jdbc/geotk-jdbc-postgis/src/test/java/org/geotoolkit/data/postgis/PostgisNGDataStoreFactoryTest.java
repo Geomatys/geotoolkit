@@ -22,7 +22,7 @@ import static org.geotoolkit.data.postgis.PostgisNGDataStoreFactory.PORT;
 import static org.geotoolkit.jdbc.JDBCDataStoreFactory.DATABASE;
 import static org.geotoolkit.jdbc.JDBCDataStoreFactory.IDENTIFIER;
 import static org.geotoolkit.jdbc.JDBCDataStoreFactory.HOST;
-import static org.geotoolkit.jdbc.JDBCDataStoreFactory.PASSWD;
+import static org.geotoolkit.jdbc.JDBCDataStoreFactory.PASSWORD;
 import static org.geotoolkit.jdbc.JDBCDataStoreFactory.USER;
 
 import java.util.HashMap;
@@ -52,7 +52,7 @@ public class PostgisNGDataStoreFactoryTest extends JDBCTestSupport {
         params.put(DATABASE.getName().toString(), db.getProperty(DATABASE.getName().toString()));
         params.put(PORT.getName().toString(), Integer.valueOf(db.getProperty(PORT.getName().toString())));
         params.put(USER.getName().toString(), db.getProperty(USER.getName().toString()));
-        params.put(PASSWD.getName().toString(), db.getProperty(PASSWD.getName().toString()));
+        params.put(PASSWORD.getName().toString(), db.getProperty(PASSWORD.getName().toString()));
         
         params.put(IDENTIFIER.getName().toString(), "postgis");
 

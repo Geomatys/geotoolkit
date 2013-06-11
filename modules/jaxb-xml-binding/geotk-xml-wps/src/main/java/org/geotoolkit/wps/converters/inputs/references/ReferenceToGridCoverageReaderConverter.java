@@ -16,16 +16,24 @@
  */
 package org.geotoolkit.wps.converters.inputs.references;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.util.Map;
+import java.util.logging.Level;
 import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
+import net.iharder.Base64;
+import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageIO;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
+import org.geotoolkit.image.io.XImageIO;
+import org.geotoolkit.util.FileUtilities;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
+import org.geotoolkit.wps.io.WPSEncoding;
 import org.geotoolkit.wps.xml.v100.ReferenceType;
 
 /**
@@ -33,7 +41,7 @@ import org.geotoolkit.wps.xml.v100.ReferenceType;
  *
  * @author Quentin Boileau (Geomatys).
  */
-public final class ReferenceToGridCoverageReaderConverter extends AbstractReferenceInputConverter {
+public final class ReferenceToGridCoverageReaderConverter extends AbstractReferenceInputConverter<GridCoverageReader> {
 
     private static ReferenceToGridCoverageReaderConverter INSTANCE;
 
@@ -48,7 +56,7 @@ public final class ReferenceToGridCoverageReaderConverter extends AbstractRefere
     }
 
     @Override
-    public Class<? extends Object> getTargetClass() {
+    public Class<? extends GridCoverageReader> getTargetClass() {
         return GridCoverageReader.class;
     }
 
@@ -61,12 +69,40 @@ public final class ReferenceToGridCoverageReaderConverter extends AbstractRefere
     public GridCoverageReader convert(final ReferenceType source, final Map<String, Object> params) throws NonconvertibleObjectException {
 
         final InputStream stream = getInputStreamFromReference(source);
-        GridCoverageReader reader = null;
+        
+        String encoding = null;
+        if(params != null && params.get(ENCODING) != null) {
+            encoding = (String) params.get(ENCODING);
+        }
         ImageInputStream imageStream = null;
         try {
 
-            imageStream = ImageIO.createImageInputStream(stream);
-            return CoverageIO.createSimpleReader(imageStream);
+             //decode form base64 stream
+            if (encoding != null && encoding.equals(WPSEncoding.BASE64.getValue())) {
+                final String encodedImage = FileUtilities.getStringFromStream(stream);
+                final byte[] byteData = Base64.decode(encodedImage.trim());
+                if (byteData != null && byteData.length > 0) {
+                    final InputStream is = new ByteArrayInputStream(byteData);
+                    if (is != null) {
+                        imageStream = ImageIO.createImageInputStream(is);
+                    }
+                }
+                
+            } else {
+                imageStream = ImageIO.createImageInputStream(stream);
+            }
+            
+            if (imageStream != null) {
+                final ImageReader reader;
+                if (source.getMimeType() != null) {
+                    reader = XImageIO.getReaderByMIMEType(source.getMimeType(), imageStream, null, null);
+                } else {
+                    reader = XImageIO.getReader(imageStream, null, Boolean.FALSE);
+                }
+                return CoverageIO.createSimpleReader(reader);
+            } else {
+                throw new NonconvertibleObjectException("Error during image stream acquisition.");
+            }
             
         } catch (MalformedURLException ex) {
             throw new NonconvertibleObjectException("Reference grid coverage invalid input : Malformed url", ex);
@@ -79,7 +115,7 @@ public final class ReferenceToGridCoverageReaderConverter extends AbstractRefere
                 try {
                     imageStream.close();
                 } catch (IOException ex) {
-                    throw new NonconvertibleObjectException("Error during release the image stream.", ex);
+                    LOGGER.log(Level.WARNING, "Error during release the image stream.", ex);
                 }
             }
         }

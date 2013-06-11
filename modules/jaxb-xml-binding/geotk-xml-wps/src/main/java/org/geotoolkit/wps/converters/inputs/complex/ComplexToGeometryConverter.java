@@ -32,7 +32,7 @@ import org.opengis.util.FactoryException;
  * 
  * @author Quentin Boileau (Geomatys).
  */
-public final class ComplexToGeometryConverter extends AbstractComplexInputConverter {
+public final class ComplexToGeometryConverter extends AbstractComplexInputConverter<Geometry> {
 
     private static ComplexToGeometryConverter INSTANCE;
 
@@ -47,7 +47,7 @@ public final class ComplexToGeometryConverter extends AbstractComplexInputConver
     }
  
     @Override
-    public Class<? extends Object> getTargetClass() {
+    public Class<? extends Geometry> getTargetClass() {
         return Geometry.class;
     }
     

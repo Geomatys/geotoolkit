@@ -126,7 +126,7 @@ fragment W: ('w'|'W');
 fragment X: ('x'|'X');
 fragment Y: ('y'|'Y');
 fragment Z: ('z'|'Z');
-fragment LETTER : ~('0'..'9' | ' ' | '\t' | '\r'| '\n' | ',' | '-' | '+' | '*' | '/' | '(' | ')' | '=');
+fragment LETTER : ~('0'..'9' | ' ' | '\t' | '\r'| '\n' | ',' | '-' | '+' | '*' | '/' | '(' | ')' | '=' | '>' | '<');
 
 LPAREN : '(';
 RPAREN : ')';
@@ -181,17 +181,19 @@ MPOINT              : M U L T I P O I N T ;
 MLINESTRING         : M U L T I L I N E S T R I N G ;
 MPOLYGON            : M U L T I P O L Y G O N ;
 GEOMETRYCOLLECTION  : G E O M E T R Y C O L L E C T I O N ;
+ENVELOPE            : E N V E L O P E ;
+EMPTY               : E M P T Y ;
 
 BBOX        : B B O X ;
 BEYOND      : B E Y O N D ;
 CONTAINS    : C O N T A I N S ;
-CROSS       : C R O S S ;
+CROSSES     : C R O S S E S;
 DISJOINT    : D I S J O I N T ;
 DWITHIN     : D W I T H I N ;
 EQUALS      : E Q U A L S ;
-INTERSECT   : I N T E R S E C T ;
-OVERLAP     : O V E R L A P ;
-TOUCH       : T O U C H ;
+INTERSECTS  : I N T E R S E C T S;
+OVERLAPS    : O V E R L A P S;
+TOUCHES     : T O U C H E S;
 WITHIN      : W I T H I N ;
 
 // TEMPORAL TYPES AND FILTERS
@@ -269,12 +271,14 @@ coordinate_series   : LPAREN coordinate_serie (COMMA coordinate_serie)* RPAREN -
 
 
 expression_geometry	
-	: POINT^ coordinate_serie
-	| LINESTRING^ coordinate_serie
-	| POLYGON^ coordinate_series
-	| MPOINT^ coordinate_serie
-	| MLINESTRING^  coordinate_series
-	| MPOLYGON^ LPAREN! coordinate_series (COMMA! coordinate_series)* RPAREN! 
+	: POINT^ ( EMPTY | coordinate_serie )
+	| LINESTRING^ ( EMPTY | coordinate_serie )
+	| POLYGON^ ( EMPTY | coordinate_series )
+	| MPOINT^ ( EMPTY | coordinate_serie )
+	| MLINESTRING^  ( EMPTY | coordinate_series )
+	| MPOLYGON^ ( EMPTY | LPAREN! coordinate_series (COMMA! coordinate_series)* RPAREN! )
+        | GEOMETRYCOLLECTION^ ( EMPTY | (LPAREN! expression_geometry (COMMA! expression_geometry)* RPAREN!) )
+        | ENVELOPE^ ( EMPTY | (LPAREN! expression_unary COMMA! expression_unary COMMA! expression_unary COMMA! expression_unary RPAREN!) )
 	;
 
 expression_fct_param
@@ -309,15 +313,15 @@ expression
 
 filter_geometry
         : BBOX^ LPAREN! (PROPERTY_NAME|NAME) COMMA! expression_unary COMMA! expression_unary COMMA! expression_unary COMMA! expression_unary (COMMA! TEXT)? RPAREN!
-        | BEYOND^ LPAREN! expression COMMA! expression RPAREN!
+        | BEYOND^ LPAREN! expression COMMA! expression COMMA! expression COMMA! expression RPAREN!
         | CONTAINS^ LPAREN! expression COMMA! expression RPAREN!
-        | CROSS^ LPAREN! expression COMMA! expression RPAREN!
+        | CROSSES^ LPAREN! expression COMMA! expression RPAREN!
         | DISJOINT^ LPAREN! expression COMMA! expression RPAREN!
-        | DWITHIN^ LPAREN! expression COMMA! expression RPAREN!
+        | DWITHIN^ LPAREN! expression COMMA! expression COMMA! expression COMMA! expression RPAREN!
         | EQUALS^ LPAREN! expression COMMA! expression RPAREN!
-        | INTERSECT^ LPAREN! expression COMMA! expression RPAREN!
-        | OVERLAP^ LPAREN! expression COMMA! expression RPAREN!
-        | TOUCH^ LPAREN! expression COMMA! expression RPAREN!
+        | INTERSECTS^ LPAREN! expression COMMA! expression RPAREN!
+        | OVERLAPS^ LPAREN! expression COMMA! expression RPAREN!
+        | TOUCHES^ LPAREN! expression COMMA! expression RPAREN!
         | WITHIN^ LPAREN! expression COMMA! expression RPAREN!
         ;
 

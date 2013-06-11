@@ -217,7 +217,8 @@ public class GmlXMLBindingTest {
         }
         assertEquals(expResult, result);
 
-        expResult = new TimePeriodType(begin, null);
+        end = null;
+        expResult = new TimePeriodType(begin, end);
 
 
         xml = "<gml:TimePeriod xmlns:gml=\"http://www.opengis.net/gml\">" + '\n' +

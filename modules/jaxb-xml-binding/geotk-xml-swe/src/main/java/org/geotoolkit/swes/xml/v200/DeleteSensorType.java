@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.swes.xml.DeleteSensor;
 
 
 /**
@@ -47,12 +48,26 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "DeleteSensorType", propOrder = {
     "procedure"
 })
-public class DeleteSensorType extends ExtensibleRequestType {
+public class DeleteSensorType extends ExtensibleRequestType implements DeleteSensor {
 
     @XmlElement(required = true)
     @XmlSchemaType(name = "anyURI")
     private String procedure;
 
+    public DeleteSensorType() {
+        
+    }
+    
+    public DeleteSensorType(final String version, final String procedure) {
+        super(version, "SOS");
+        this.procedure = procedure;
+    }
+    
+    public DeleteSensorType(final String version, final String service, final String procedure) {
+        super(version, service);
+        this.procedure = procedure;
+    }
+    
     /**
      * Gets the value of the procedure property.
      * 
@@ -61,6 +76,7 @@ public class DeleteSensorType extends ExtensibleRequestType {
      *     {@link String }
      *     
      */
+    @Override
     public String getProcedure() {
         return procedure;
     }

@@ -17,7 +17,7 @@
 package org.geotoolkit.security;
 
 import java.net.URLConnection;
-import org.geotoolkit.util.ArgumentChecks;
+import org.apache.sis.util.ArgumentChecks;
 
 /**
  * Client security which fill the referer for url connections.

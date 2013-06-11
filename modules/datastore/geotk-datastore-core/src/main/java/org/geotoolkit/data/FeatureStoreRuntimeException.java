@@ -18,7 +18,7 @@
 package org.geotoolkit.data;
 
 import org.geotoolkit.util.Exceptions;
-import org.geotoolkit.util.collection.BackingStoreException;
+import org.apache.sis.util.collection.BackingStoreException;
 
 /**
  * Exception used in FeatureCollection, extends RuntimeException to

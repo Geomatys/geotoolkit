@@ -33,7 +33,7 @@ import org.geotoolkit.data.osm.model.Transaction;
 import org.geotoolkit.data.osm.model.TransactionType;
 import org.geotoolkit.data.osm.model.User;
 import org.geotoolkit.data.osm.model.Way;
-import org.geotoolkit.util.collection.UnmodifiableArrayList;
+import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -49,7 +49,7 @@ import static org.junit.Assert.*;
 public class OSMXMLWriterTest {
 
     private static final double DELTA = 0.000000001;
-    
+
     public OSMXMLWriterTest() {
     }
 

@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.sos.xml.GetResultTemplate;
 import org.geotoolkit.swes.xml.v200.ExtensibleRequestType;
 
 
@@ -50,7 +51,7 @@ import org.geotoolkit.swes.xml.v200.ExtensibleRequestType;
     "offering",
     "observedProperty"
 })
-public class GetResultTemplateType extends ExtensibleRequestType {
+public class GetResultTemplateType extends ExtensibleRequestType implements GetResultTemplate {
 
     @XmlElement(required = true)
     @XmlSchemaType(name = "anyURI")
@@ -59,6 +60,22 @@ public class GetResultTemplateType extends ExtensibleRequestType {
     @XmlSchemaType(name = "anyURI")
     private String observedProperty;
 
+    public GetResultTemplateType() {
+        
+    }
+    
+    public GetResultTemplateType(final String version, final String offering, final String observedProperty) {
+        super(version, "SOS");
+        this.observedProperty = observedProperty;
+        this.offering         = offering;
+    }
+    
+    public GetResultTemplateType(final String version, final String service, final String offering, final String observedProperty) {
+        super(version, service);
+        this.observedProperty = observedProperty;
+        this.offering         = offering;
+    }
+    
     /**
      * Gets the value of the offering property.
      * 
@@ -67,6 +84,7 @@ public class GetResultTemplateType extends ExtensibleRequestType {
      *     {@link String }
      *     
      */
+    @Override
     public String getOffering() {
         return offering;
     }
@@ -91,6 +109,7 @@ public class GetResultTemplateType extends ExtensibleRequestType {
      *     {@link String }
      *     
      */
+    @Override
     public String getObservedProperty() {
         return observedProperty;
     }

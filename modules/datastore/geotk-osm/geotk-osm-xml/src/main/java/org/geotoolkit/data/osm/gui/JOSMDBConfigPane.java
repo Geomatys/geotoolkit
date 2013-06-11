@@ -48,7 +48,7 @@ public class JOSMDBConfigPane extends javax.swing.JPanel {
         params.put(PostgisNGDataStoreFactory.SCHEMA.getName().getCode(), guiSchema.getText());
         params.put(PostgisNGDataStoreFactory.DATABASE.getName().getCode(), guiDatabase.getText());
         params.put(PostgisNGDataStoreFactory.USER.getName().getCode(), guiUser.getText());
-        params.put(PostgisNGDataStoreFactory.PASSWD.getName().getCode(), new String(guiPassword.getPassword()));
+        params.put(PostgisNGDataStoreFactory.PASSWORD.getName().getCode(), new String(guiPassword.getPassword()));
         return params;
     }
 

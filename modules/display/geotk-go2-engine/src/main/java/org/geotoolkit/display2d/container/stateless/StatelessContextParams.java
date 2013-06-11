@@ -23,7 +23,7 @@ import org.geotoolkit.geometry.jts.transform.CoordinateSequenceMathTransformer;
 import org.geotoolkit.geometry.jts.transform.GeometryCSTransformer;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**

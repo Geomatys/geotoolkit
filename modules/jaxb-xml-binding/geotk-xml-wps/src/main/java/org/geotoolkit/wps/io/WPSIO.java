@@ -22,16 +22,20 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.RenderedImage;
 import java.io.File;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.measure.unit.Unit;
+import org.geotoolkit.coverage.grid.GridCoverage2D;
 
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.ows.xml.v110.BoundingBoxType;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.ows.xml.v110.DomainMetadataType;
-import org.geotoolkit.util.ArgumentChecks;
+import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.util.converter.ConverterRegistry;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
+import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.wps.converters.WPSConverterRegistry;
 import org.geotoolkit.wps.converters.WPSConvertersUtils;
 import org.geotoolkit.wps.converters.WPSObjectConverter;
@@ -40,6 +44,7 @@ import org.geotoolkit.wps.xml.v100.ComplexDataType;
 import org.geotoolkit.wps.xml.v100.DataType;
 import org.geotoolkit.wps.xml.v100.ReferenceType;
 import org.opengis.coverage.Coverage;
+import org.opengis.coverage.grid.GridCoverage;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
@@ -53,41 +58,56 @@ import org.opengis.geometry.Envelope;
  */
 public final class WPSIO {
 
+    private static final Logger LOGGER = Logging.getLogger(WPSIO.class);
+
+    /**
+     * A key for userdata map of an {@link org.geotoolkit.parameter.ExtendedParameterDescriptor} object. The aim is to
+     * link it with a list of {@link FormatSupport} wanted for the parameter.
+     */
+    public static final String SUPPORTED_FORMATS_KEY = "supportedFormats";
+    /**
+     * A key for userdata map of an {@link org.geotoolkit.parameter.ExtendedParameterDescriptor} object. The aim is to
+     * link it with a String, which is an URL to the schema which current parameter must match.
+     */
+    public static final String SCHEMA_KEY = "schema";
+
     private static final List<FormatSupport> FORMATSUPPORTS = Collections.synchronizedList(new ArrayList<FormatSupport>());
-
     static {
-        FORMATSUPPORTS.add(new FormatSupport(Feature.class, IOType.BOTH, WPSMimeType.TEXT_XML.val(), Encoding.UTF8.getValue(), Schema.OGC_FEATURE_3_1_1.getValue(), false));
-        FORMATSUPPORTS.add(new FormatSupport(Feature.class, IOType.BOTH, WPSMimeType.TEXT_GML.val(), Encoding.UTF8.getValue(), Schema.OGC_FEATURE_3_1_1.getValue(), false));
-        FORMATSUPPORTS.add(new FormatSupport(Feature.class, IOType.BOTH, WPSMimeType.APP_GML.val(), Encoding.UTF8.getValue(), Schema.OGC_FEATURE_3_1_1.getValue(), true));
+        FORMATSUPPORTS.add(new FormatSupport(Feature.class, IOType.BOTH, WPSMimeType.TEXT_XML.val(), WPSEncoding.UTF8.getValue(), WPSSchema.OGC_FEATURE_3_1_1.getValue(), false));
+        FORMATSUPPORTS.add(new FormatSupport(Feature.class, IOType.BOTH, WPSMimeType.TEXT_GML.val(), WPSEncoding.UTF8.getValue(), WPSSchema.OGC_FEATURE_3_1_1.getValue(), false));
+        FORMATSUPPORTS.add(new FormatSupport(Feature.class, IOType.BOTH, WPSMimeType.APP_GML.val(), WPSEncoding.UTF8.getValue(), WPSSchema.OGC_FEATURE_3_1_1.getValue(), true));
 
-        FORMATSUPPORTS.add(new FormatSupport(Feature[].class, IOType.INPUT, WPSMimeType.TEXT_XML.val(), Encoding.UTF8.getValue(), Schema.OGC_FEATURE_3_1_1.getValue(), false));
-        FORMATSUPPORTS.add(new FormatSupport(Feature[].class, IOType.INPUT, WPSMimeType.TEXT_GML.val(), Encoding.UTF8.getValue(), Schema.OGC_FEATURE_3_1_1.getValue(), false));
-        FORMATSUPPORTS.add(new FormatSupport(Feature[].class, IOType.INPUT, WPSMimeType.APP_GML.val(), Encoding.UTF8.getValue(), Schema.OGC_FEATURE_3_1_1.getValue(), true));
+        FORMATSUPPORTS.add(new FormatSupport(Feature[].class, IOType.INPUT, WPSMimeType.TEXT_XML.val(), WPSEncoding.UTF8.getValue(), WPSSchema.OGC_FEATURE_3_1_1.getValue(), false));
+        FORMATSUPPORTS.add(new FormatSupport(Feature[].class, IOType.INPUT, WPSMimeType.TEXT_GML.val(), WPSEncoding.UTF8.getValue(), WPSSchema.OGC_FEATURE_3_1_1.getValue(), false));
+        FORMATSUPPORTS.add(new FormatSupport(Feature[].class, IOType.INPUT, WPSMimeType.APP_GML.val(), WPSEncoding.UTF8.getValue(), WPSSchema.OGC_FEATURE_3_1_1.getValue(), true));
 
-        FORMATSUPPORTS.add(new FormatSupport(FeatureCollection.class, IOType.BOTH, WPSMimeType.TEXT_XML.val(), Encoding.UTF8.getValue(), Schema.OGC_FEATURE_3_1_1.getValue(), false));
-        FORMATSUPPORTS.add(new FormatSupport(FeatureCollection.class, IOType.BOTH, WPSMimeType.TEXT_GML.val(), Encoding.UTF8.getValue(), Schema.OGC_FEATURE_3_1_1.getValue(), false));
-        FORMATSUPPORTS.add(new FormatSupport(FeatureCollection.class, IOType.BOTH, WPSMimeType.APP_GML.val(), Encoding.UTF8.getValue(), Schema.OGC_FEATURE_3_1_1.getValue(), true));
+        FORMATSUPPORTS.add(new FormatSupport(FeatureCollection.class, IOType.BOTH, WPSMimeType.TEXT_XML.val(), WPSEncoding.UTF8.getValue(), WPSSchema.OGC_FEATURE_3_1_1.getValue(), false));
+        FORMATSUPPORTS.add(new FormatSupport(FeatureCollection.class, IOType.BOTH, WPSMimeType.TEXT_GML.val(), WPSEncoding.UTF8.getValue(), WPSSchema.OGC_FEATURE_3_1_1.getValue(), false));
+        FORMATSUPPORTS.add(new FormatSupport(FeatureCollection.class, IOType.BOTH, WPSMimeType.APP_GML.val(), WPSEncoding.UTF8.getValue(), WPSSchema.OGC_FEATURE_3_1_1.getValue(), true));
 
-        FORMATSUPPORTS.add(new FormatSupport(FeatureCollection[].class, IOType.INPUT, WPSMimeType.TEXT_XML.val(), Encoding.UTF8.getValue(), Schema.OGC_FEATURE_3_1_1.getValue(), false));
-        FORMATSUPPORTS.add(new FormatSupport(FeatureCollection[].class, IOType.INPUT, WPSMimeType.TEXT_GML.val(), Encoding.UTF8.getValue(), Schema.OGC_FEATURE_3_1_1.getValue(), false));
-        FORMATSUPPORTS.add(new FormatSupport(FeatureCollection[].class, IOType.INPUT, WPSMimeType.APP_GML.val(), Encoding.UTF8.getValue(), Schema.OGC_FEATURE_3_1_1.getValue(), true));
+        FORMATSUPPORTS.add(new FormatSupport(FeatureCollection[].class, IOType.INPUT, WPSMimeType.TEXT_XML.val(), WPSEncoding.UTF8.getValue(), WPSSchema.OGC_FEATURE_3_1_1.getValue(), false));
+        FORMATSUPPORTS.add(new FormatSupport(FeatureCollection[].class, IOType.INPUT, WPSMimeType.TEXT_GML.val(), WPSEncoding.UTF8.getValue(), WPSSchema.OGC_FEATURE_3_1_1.getValue(), false));
+        FORMATSUPPORTS.add(new FormatSupport(FeatureCollection[].class, IOType.INPUT, WPSMimeType.APP_GML.val(), WPSEncoding.UTF8.getValue(), WPSSchema.OGC_FEATURE_3_1_1.getValue(), true));
 
-        FORMATSUPPORTS.add(new FormatSupport(Geometry.class, IOType.BOTH, WPSMimeType.TEXT_XML.val(), Encoding.UTF8.getValue(), Schema.OGC_GML_3_1_1.getValue(), false));
-        FORMATSUPPORTS.add(new FormatSupport(Geometry.class, IOType.BOTH, WPSMimeType.TEXT_GML.val(), Encoding.UTF8.getValue(), Schema.OGC_GML_3_1_1.getValue(), false));
-        FORMATSUPPORTS.add(new FormatSupport(Geometry.class, IOType.BOTH, WPSMimeType.APP_GML.val(), Encoding.UTF8.getValue(), Schema.OGC_GML_3_1_1.getValue(), true));
+        FORMATSUPPORTS.add(new FormatSupport(Geometry.class, IOType.BOTH, WPSMimeType.TEXT_XML.val(), WPSEncoding.UTF8.getValue(), WPSSchema.OGC_GML_3_1_1.getValue(), false));
+        FORMATSUPPORTS.add(new FormatSupport(Geometry.class, IOType.BOTH, WPSMimeType.TEXT_GML.val(), WPSEncoding.UTF8.getValue(), WPSSchema.OGC_GML_3_1_1.getValue(), false));
+        FORMATSUPPORTS.add(new FormatSupport(Geometry.class, IOType.BOTH, WPSMimeType.APP_GML.val(), WPSEncoding.UTF8.getValue(), WPSSchema.OGC_GML_3_1_1.getValue(), true));
 
-        FORMATSUPPORTS.add(new FormatSupport(Geometry[].class, IOType.BOTH, WPSMimeType.TEXT_XML.val(), Encoding.UTF8.getValue(), Schema.OGC_GML_3_1_1.getValue(), false));
-        FORMATSUPPORTS.add(new FormatSupport(Geometry[].class, IOType.BOTH, WPSMimeType.TEXT_GML.val(), Encoding.UTF8.getValue(), Schema.OGC_GML_3_1_1.getValue(), false));
-        FORMATSUPPORTS.add(new FormatSupport(Geometry[].class, IOType.BOTH, WPSMimeType.APP_GML.val(), Encoding.UTF8.getValue(), Schema.OGC_GML_3_1_1.getValue(), true));
+        FORMATSUPPORTS.add(new FormatSupport(Geometry[].class, IOType.BOTH, WPSMimeType.TEXT_XML.val(), WPSEncoding.UTF8.getValue(), WPSSchema.OGC_GML_3_1_1.getValue(), false));
+        FORMATSUPPORTS.add(new FormatSupport(Geometry[].class, IOType.BOTH, WPSMimeType.TEXT_GML.val(), WPSEncoding.UTF8.getValue(), WPSSchema.OGC_GML_3_1_1.getValue(), false));
+        FORMATSUPPORTS.add(new FormatSupport(Geometry[].class, IOType.BOTH, WPSMimeType.APP_GML.val(), WPSEncoding.UTF8.getValue(), WPSSchema.OGC_GML_3_1_1.getValue(), true));
 
-        FORMATSUPPORTS.add(new FormatSupport(FeatureType.class, IOType.BOTH, WPSMimeType.TEXT_XML.val(), Encoding.UTF8.getValue(), Schema.OGC_FEATURE_3_1_1.getValue(), true));
+        FORMATSUPPORTS.add(new FormatSupport(FeatureType.class, IOType.BOTH, WPSMimeType.TEXT_XML.val(), WPSEncoding.UTF8.getValue(), WPSSchema.OGC_FEATURE_3_1_1.getValue(), true));
 
+        // Images support
         for (final String readerMime : ImageIO.getReaderMIMETypes()) {
             if (!readerMime.isEmpty()) {
                 if (readerMime.equals("image/png")) {
                     FORMATSUPPORTS.add(new FormatSupport(RenderedImage.class, IOType.INPUT, readerMime, null, null, true));
+                    FORMATSUPPORTS.add(new FormatSupport(RenderedImage.class, IOType.INPUT, readerMime, WPSEncoding.BASE64.getValue(), null, true));
                 } else {
                     FORMATSUPPORTS.add(new FormatSupport(RenderedImage.class, IOType.INPUT, readerMime, null, null, false));
+                    FORMATSUPPORTS.add(new FormatSupport(RenderedImage.class, IOType.INPUT, readerMime, WPSEncoding.BASE64.getValue(), null, false));
                 }
             }
         }
@@ -96,53 +116,78 @@ public final class WPSIO {
             if (!writerMime.isEmpty()) {
                 if (writerMime.equals("image/png")) {
                     FORMATSUPPORTS.add(new FormatSupport(RenderedImage.class, IOType.OUTPUT, writerMime, null, null, true));
+                    FORMATSUPPORTS.add(new FormatSupport(RenderedImage.class, IOType.OUTPUT, writerMime, WPSEncoding.BASE64.getValue(), null, true));
                 } else {
                     FORMATSUPPORTS.add(new FormatSupport(RenderedImage.class, IOType.OUTPUT, writerMime, null, null, false));
+                    FORMATSUPPORTS.add(new FormatSupport(RenderedImage.class, IOType.OUTPUT, writerMime, WPSEncoding.BASE64.getValue(), null, false));
                 }
             }
         }
 
-        //  Coverage
+        //Coverage support
         for (final String readerMime : ImageIO.getReaderMIMETypes()) {
             if (!readerMime.isEmpty()) {
-                if (readerMime.equals("image/png")) {
+                if (readerMime.equals(WPSMimeType.IMG_GEOTIFF_BIS.val())) {
                     FORMATSUPPORTS.add(new FormatSupport(Coverage.class, IOType.INPUT, readerMime, null, null, true));
+                    FORMATSUPPORTS.add(new FormatSupport(Coverage.class, IOType.INPUT, readerMime, WPSEncoding.BASE64.getValue(), null, true));
+                    FORMATSUPPORTS.add(new FormatSupport(Coverage.class, IOType.INPUT, WPSMimeType.IMG_GEOTIFF.val(), null, null, true));
+                    FORMATSUPPORTS.add(new FormatSupport(Coverage.class, IOType.INPUT, WPSMimeType.IMG_GEOTIFF.val(), WPSEncoding.BASE64.getValue(), null, true));
                 } else {
                     FORMATSUPPORTS.add(new FormatSupport(Coverage.class, IOType.INPUT, readerMime, null, null, false));
+                    FORMATSUPPORTS.add(new FormatSupport(Coverage.class, IOType.INPUT, readerMime, WPSEncoding.BASE64.getValue(), null, true));
                 }
             }
         }
 
         for (final String writerMime : ImageIO.getWriterMIMETypes()) {
             if (!writerMime.isEmpty()) {
-                if (writerMime.equals("image/png")) {
+                if (writerMime.equals(WPSMimeType.IMG_GEOTIFF_BIS.val())) {
                     FORMATSUPPORTS.add(new FormatSupport(Coverage.class, IOType.OUTPUT, writerMime, null, null, true));
+                    FORMATSUPPORTS.add(new FormatSupport(Coverage.class, IOType.OUTPUT, writerMime, WPSEncoding.BASE64.getValue(), null, true));
+                    FORMATSUPPORTS.add(new FormatSupport(Coverage.class, IOType.OUTPUT, WPSMimeType.IMG_GEOTIFF.val(), null, null, true));
+                    FORMATSUPPORTS.add(new FormatSupport(Coverage.class, IOType.OUTPUT, WPSMimeType.IMG_GEOTIFF.val(), WPSEncoding.BASE64.getValue(), null, true));
                 } else {
                     FORMATSUPPORTS.add(new FormatSupport(Coverage.class, IOType.OUTPUT, writerMime, null, null, false));
+                    FORMATSUPPORTS.add(new FormatSupport(Coverage.class, IOType.OUTPUT, writerMime, WPSEncoding.BASE64.getValue(), null, false));
                 }
             }
         }
+        FORMATSUPPORTS.add(new FormatSupport(Coverage.class, IOType.OUTPUT, WPSMimeType.OGC_WMS.val(), WPSEncoding.UTF8.getValue(), null, false));
 
-        FORMATSUPPORTS.add(new FormatSupport(AffineTransform.class, IOType.INPUT, WPSMimeType.TEXT_XML.val(), Encoding.UTF8.getValue(), Schema.MATHML_3.getValue(), true));
+        //TODO test NetCDF & GRIB in base64
+        //FORMATSUPPORTS.add(new FormatSupport(GridCoverage2D.class, IOType.INPUT, WPSMimeType.APP_NETCDF.val(), null, null, false));
+        //FORMATSUPPORTS.add(new FormatSupport(GridCoverage2D.class, IOType.INPUT, WPSMimeType.APP_NETCDF.val(), WPSEncoding.BASE64.getValue(), null, false));
+        //FORMATSUPPORTS.add(new FormatSupport(GridCoverage2D.class, IOType.INPUT, WPSMimeType.APP_GRIB.val(), null, null, false));
+        //FORMATSUPPORTS.add(new FormatSupport(GridCoverage2D.class, IOType.INPUT, WPSMimeType.APP_GRIB.val(), WPSEncoding.BASE64.getValue(), null, false));
 
-        FORMATSUPPORTS.add(new FormatSupport(Number.class, IOType.BOTH, null, Encoding.UTF8.getValue(), null, true));
-        FORMATSUPPORTS.add(new FormatSupport(Boolean.class, IOType.BOTH, null, Encoding.UTF8.getValue(), null, true));
-        FORMATSUPPORTS.add(new FormatSupport(String.class, IOType.BOTH, null, Encoding.UTF8.getValue(), null, true));
+
+        FORMATSUPPORTS.add(new FormatSupport(AffineTransform.class, IOType.INPUT, WPSMimeType.TEXT_XML.val(), WPSEncoding.UTF8.getValue(), WPSSchema.MATHML_3.getValue(), true));
+
+        FORMATSUPPORTS.add(new FormatSupport(Number.class, IOType.BOTH, null, WPSEncoding.UTF8.getValue(), null, true));
+        FORMATSUPPORTS.add(new FormatSupport(Boolean.class, IOType.BOTH, null, WPSEncoding.UTF8.getValue(), null, true));
+        FORMATSUPPORTS.add(new FormatSupport(String.class, IOType.BOTH, null, WPSEncoding.UTF8.getValue(), null, true));
 
         FORMATSUPPORTS.add(new FormatSupport(File.class, IOType.BOTH, WPSMimeType.APP_OCTET.val(), null, null, true));
         FORMATSUPPORTS.add(new FormatSupport(File.class, IOType.BOTH, WPSMimeType.APP_ZIP.val(), null, null, true));
+        FORMATSUPPORTS.add(new FormatSupport(File.class, IOType.BOTH, WPSMimeType.APP_ZIP_BIS.val(), null, null, true));
+        FORMATSUPPORTS.add(new FormatSupport(File.class, IOType.BOTH, WPSMimeType.APP_GZIP.val(), null, null, true));
 
-        FORMATSUPPORTS.add(new FormatSupport(Unit.class, IOType.INPUT, null, Encoding.UTF8.getValue(), null, true));
+        FORMATSUPPORTS.add(new FormatSupport(Unit.class, IOType.INPUT, null, WPSEncoding.UTF8.getValue(), null, true));
 
-        FORMATSUPPORTS.add(new FormatSupport(SortBy[].class, IOType.INPUT, null, Encoding.UTF8.getValue(), null, true));
-        FORMATSUPPORTS.add(new FormatSupport(NumberRange[].class, IOType.INPUT, null, Encoding.UTF8.getValue(), null, true));
-        FORMATSUPPORTS.add(new FormatSupport(Filter.class, IOType.INPUT, null, Encoding.UTF8.getValue(), null, true));
-        FORMATSUPPORTS.add(new FormatSupport(Date.class, IOType.INPUT, null, Encoding.UTF8.getValue(), null, true));
-        
+        FORMATSUPPORTS.add(new FormatSupport(SortBy[].class, IOType.INPUT, null, WPSEncoding.UTF8.getValue(), null, true));
+        FORMATSUPPORTS.add(new FormatSupport(NumberRange[].class, IOType.INPUT, null, WPSEncoding.UTF8.getValue(), null, true));
+        FORMATSUPPORTS.add(new FormatSupport(Filter.class, IOType.INPUT, null, WPSEncoding.UTF8.getValue(), null, true));
+        FORMATSUPPORTS.add(new FormatSupport(Date.class, IOType.INPUT, null, WPSEncoding.UTF8.getValue(), null, true));
+
         //primitive arrays
-        FORMATSUPPORTS.add(new FormatSupport(double[].class, IOType.BOTH, null, Encoding.UTF8.getValue(), null, true));
-        FORMATSUPPORTS.add(new FormatSupport(int[].class, IOType.BOTH, null, Encoding.UTF8.getValue(), null, true));
-        FORMATSUPPORTS.add(new FormatSupport(float[].class, IOType.BOTH, null, Encoding.UTF8.getValue(), null, true));
+        FORMATSUPPORTS.add(new FormatSupport(double[].class, IOType.BOTH, null, WPSEncoding.UTF8.getValue(), null, true));
+        FORMATSUPPORTS.add(new FormatSupport(int[].class, IOType.BOTH, null, WPSEncoding.UTF8.getValue(), null, true));
+        FORMATSUPPORTS.add(new FormatSupport(float[].class, IOType.BOTH, null, WPSEncoding.UTF8.getValue(), null, true));
+    }
+
+    public static void addFormatSupport(FormatSupport newSupport) {
+           ArgumentChecks.ensureNonNull("Support format to add", newSupport);
+        FORMATSUPPORTS.add(newSupport);
     }
 
     /**
@@ -311,6 +356,9 @@ public final class WPSIO {
      * @return true if supported, false otherwise.
      */
     public static boolean isSupportedInputClass(final Class clazz) {
+        if(isSupportedBBoxInputClass(clazz)) {
+            return true;
+        }
         return isSupportedClass(clazz, IOType.INPUT, FormChoice.ALL);
     }
 
@@ -635,65 +683,6 @@ public final class WPSIO {
             }
         }
         return clazz;
-    }
-
-    /**
-     * Supported encoding.
-     */
-    public static enum Encoding {
-
-        UTF8("utf-8"),
-        BASE64("base64");
-        public final String encoding;
-
-        private Encoding(final String encoding) {
-            this.encoding = encoding;
-        }
-
-        public String getValue() {
-            return encoding;
-        }
-
-        public static Encoding customValueOf(String candidate) {
-            for (final Encoding encoding : values()) {
-                if (encoding.getValue() != null) {
-                    if (encoding.getValue().equalsIgnoreCase(candidate)) {
-                        return encoding;
-                    }
-                }
-            }
-            return null;
-        }
-    }
-
-    /**
-     * Supported schema.
-     */
-    public static enum Schema {
-
-        OGC_FEATURE_3_1_1("http://schemas.opengis.net/gml/3.1.1/base/feature.xsd"),
-        OGC_GML_3_1_1("http://schemas.opengis.net/gml/3.1.1/base/gml.xsd"),
-        MATHML_3("http://www.w3.org/Math/XMLSchema/mathml3/mathml3.xsd");
-        public final String schema;
-
-        private Schema(final String schema) {
-            this.schema = schema;
-        }
-
-        public String getValue() {
-            return schema;
-        }
-
-        public static Schema customValueOf(String candidate) {
-            for (final Schema schema : values()) {
-                if (schema.getValue() != null) {
-                    if (schema.getValue().equalsIgnoreCase(candidate)) {
-                        return schema;
-                    }
-                }
-            }
-            return null;
-        }
     }
 
     /**

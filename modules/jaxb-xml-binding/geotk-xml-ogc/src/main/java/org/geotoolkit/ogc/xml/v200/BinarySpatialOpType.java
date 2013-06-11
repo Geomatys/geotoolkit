@@ -34,6 +34,7 @@ import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.v321.EnvelopeType;
 import org.opengis.filter.FilterVisitor;
 import org.opengis.filter.expression.Expression;
+import org.opengis.filter.spatial.BinarySpatialOperator;
 
 
 /**
@@ -65,7 +66,7 @@ import org.opengis.filter.expression.Expression;
     "expression",
     "any"
 })
-public class BinarySpatialOpType extends SpatialOpsType {
+public class BinarySpatialOpType extends SpatialOpsType implements BinarySpatialOperator {
 
     @XmlElement(name = "ValueReference", required = true)
     private String valueReference;
@@ -224,12 +225,32 @@ public class BinarySpatialOpType extends SpatialOpsType {
         }
     }
 
+    @Override
      public Expression getExpression1() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        if (valueReference != null) {
+            return new InternalPropertyName(valueReference);
+        }
+        return null;
     }
 
+    @Override
     public Expression getExpression2() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        if (expression != null) {
+            if (expression.getValue() instanceof Expression) {
+                return (Expression)expression.getValue();
+            } else if (expression.getValue() != null){
+                throw new IllegalArgumentException("The object:" + expression.getValue() + "can be casted as an Expression");
+            }
+        }
+        final Object a = getAny();
+        if (a != null) {
+            if (a instanceof Expression) {
+                return (Expression)a;
+            } else {
+                throw new IllegalArgumentException("The object:" + a + "can be casted as an Expression");
+            }
+        }
+        return null;
     }
 
     @Override

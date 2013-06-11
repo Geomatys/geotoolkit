@@ -22,7 +22,7 @@ import org.geotoolkit.data.FeatureReader;
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
 
-import static org.geotoolkit.util.ArgumentChecks.*;
+import static org.apache.sis.util.ArgumentChecks.*;
 
 /**
  * Wrap a feature Iterator and check that it is properly close.

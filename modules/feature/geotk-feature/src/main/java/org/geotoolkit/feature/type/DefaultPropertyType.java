@@ -20,15 +20,15 @@ package org.geotoolkit.feature.type;
 import java.io.Serializable;
 import java.util.*;
 
-import org.geotoolkit.util.converter.Classes;
-import org.geotoolkit.util.collection.UnmodifiableArrayList;
+import org.apache.sis.util.Classes;
 
 import org.opengis.feature.type.Name;
 import org.opengis.feature.type.PropertyType;
 import org.opengis.filter.Filter;
 import org.opengis.util.InternationalString;
 
-import static org.geotoolkit.util.ArgumentChecks.*;
+import static org.apache.sis.util.ArgumentChecks.*;
+import org.apache.sis.internal.util.UnmodifiableArrayList;
 
 /**
  * Default implementation of a property type

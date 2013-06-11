@@ -29,12 +29,13 @@ import java.util.Iterator;
 import java.util.Locale;
 import java.util.Objects;
 import net.jcip.annotations.ThreadSafe;
+import org.apache.sis.util.collection.Containers;
+import org.apache.sis.util.iso.AbstractInternationalString;
 
 import org.opengis.util.InternationalString;
-import org.geotoolkit.util.*;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Locales;
-import org.geotoolkit.util.collection.XCollections;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -52,7 +53,7 @@ import org.geotoolkit.util.collection.XCollections;
  */
 @ThreadSafe
 public class MockInternationalString extends AbstractInternationalString implements Serializable {
-    
+
     private String defaultVar;
     /**
      * Serial number for inter-operability with different versions.
@@ -106,7 +107,7 @@ public class MockInternationalString extends AbstractInternationalString impleme
      * @since 3.00
      */
     public MockInternationalString(final Map<Locale,String> strings) {
-        if (XCollections.isNullOrEmpty(strings)) {
+        if (Containers.isNullOrEmpty(strings)) {
             localeMap = Collections.emptyMap();
         } else {
             final Iterator<Map.Entry<Locale,String>> it = strings.entrySet().iterator();
@@ -152,7 +153,7 @@ public class MockInternationalString extends AbstractInternationalString impleme
                     return;
                 }
                 throw new IllegalArgumentException(Errors.format(
-                        Errors.Keys.VALUE_ALREADY_DEFINED_$1, locale));
+                        Errors.Keys.VALUE_ALREADY_DEFINED_1, locale));
             }
             localeMap.put(locale, string);
             defaultVar = null; // Will be recomputed when first needed.

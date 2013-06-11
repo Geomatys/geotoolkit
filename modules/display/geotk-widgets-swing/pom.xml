@@ -16,7 +16,7 @@
   <parent>
     <groupId>org.geotoolkit.pending</groupId>
     <artifactId>display</artifactId>
-    <version>3.x-SNAPSHOT</version>
+    <version>4.x-SNAPSHOT</version>
   </parent>
 
 
@@ -178,6 +178,10 @@
     <dependency>
       <groupId>org.netbeans.api</groupId>
       <artifactId>org-openide-awt</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>org.netbeans.api</groupId>
+        <artifactId>org-netbeans-api-visual</artifactId>
     </dependency>
     <dependency>
       <groupId>org.jdesktop</groupId>

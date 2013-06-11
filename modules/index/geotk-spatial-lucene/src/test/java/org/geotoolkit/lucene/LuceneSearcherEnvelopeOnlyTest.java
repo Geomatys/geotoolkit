@@ -55,12 +55,10 @@ import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.geometry.jts.SRIDGenerator;
 import org.geotoolkit.geometry.jts.SRIDGenerator.Version;
 import org.geotoolkit.index.tree.Tree;
-import org.geotoolkit.index.tree.TreeFactory;
 import org.geotoolkit.index.tree.io.DefaultTreeVisitor;
 import org.geotoolkit.index.tree.io.TreeVisitor;
 import org.geotoolkit.index.tree.io.TreeWriter;
-import org.geotoolkit.index.tree.nodefactory.NodeFactory;
-import org.geotoolkit.index.tree.nodefactory.TreeNodeFactory;
+import org.geotoolkit.index.tree.star.StarRTree;
 import org.geotoolkit.lucene.analysis.standard.ClassicAnalyzer;
 import org.geotoolkit.lucene.filter.SerialChainFilter;
 import org.geotoolkit.lucene.filter.SpatialQuery;
@@ -127,11 +125,9 @@ public class LuceneSearcherEnvelopeOnlyTest {
         //Create Calculator. Be careful to choice calculator adapted from crs---
         //final Calculator calculator = DefaultCalculator.CALCULATOR_2D;
 
-        //Create NodeFactory adapted about caller uses.
-        final NodeFactory nodefactory = TreeNodeFactory.DEFAULT_FACTORY;
 
         //creating tree (R-Tree)------------------------------------------------
-        rTree = TreeFactory.createStarRTree(10, treeCrs, nodefactory);
+        rTree = new StarRTree(10, treeCrs);
 
         final Analyzer analyzer  = new StandardAnalyzer(org.apache.lucene.util.Version.LUCENE_40);
         IndexWriterConfig config = new IndexWriterConfig(org.apache.lucene.util.Version.LUCENE_40, analyzer);

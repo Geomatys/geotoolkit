@@ -18,10 +18,11 @@
 package org.geotoolkit.sos.xml.v200;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ows.xml.v110.AcceptFormatsType;
 import org.geotoolkit.ows.xml.v110.AcceptVersionsType;
@@ -53,17 +54,23 @@ import org.geotoolkit.sos.xml.GetCapabilities;
 @XmlType(name = "GetCapabilitiesType", propOrder = {
     "extension"
 })
+@XmlRootElement(name="GetCapabilities")
 public class GetCapabilitiesType extends org.geotoolkit.ows.xml.v110.GetCapabilitiesType implements GetCapabilities {
 
     private List<Object> extension;
-    @XmlAttribute
-    private String service;
+    
+    private static List<String> ACCEPTED_SECTIONS = Arrays.asList("All",
+                                                                  "ServiceIdentification",
+                                                                  "ServiceProvider",
+                                                                  "OperationsMetadata",
+                                                                  "Filter_Capabilities",
+                                                                  "Contents");
 
     /**
      * minimal getCapabilities request.
      */
     public GetCapabilitiesType() {
-        super("SOS");
+        
     }
     
     /**
@@ -125,4 +132,15 @@ public class GetCapabilitiesType extends org.geotoolkit.ows.xml.v110.GetCapabili
         this.service = value;
     }
 
+    @Override
+    public boolean isValidSections() {
+        if (sections != null) {
+            for (String section : sections.getSection()) {
+                if (!ACCEPTED_SECTIONS.contains(section)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
 }

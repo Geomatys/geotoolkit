@@ -8,14 +8,13 @@ import java.util.List;
 
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.index.tree.Tree;
-import org.geotoolkit.index.tree.TreeFactory;
+import org.geotoolkit.index.tree.basic.BasicRTree;
 import org.geotoolkit.index.tree.basic.SplitCase;
 import org.geotoolkit.index.tree.io.DefaultTreeVisitor;
 import org.geotoolkit.index.tree.io.TreeReader;
 import org.geotoolkit.index.tree.io.TreeVisitor;
 import org.geotoolkit.index.tree.io.TreeWriter;
-import org.geotoolkit.index.tree.nodefactory.TreeNodeFactory;
-import org.geotoolkit.index.tree.nodefactory.NodeFactory;
+import org.geotoolkit.index.tree.star.StarRTree;
 import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.referencing.crs.DefaultEngineeringCRS;
 
@@ -23,7 +22,8 @@ import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 
-/**R-tree uses.
+/**
+ * R-tree uses.
  * Exist : R-Tree (BasicRTree), R*Tree (StarRTree), Hilbert R-Tree (HilbertRTree).
  *
  * R-Tree         : fast indexing time, slow search query time.
@@ -50,11 +50,8 @@ public class TreeDemo {
         //In this demo basic r-tree requires split case. "LINEAR" or "QUADRATIC"
         final SplitCase splitcase = SplitCase.QUADRATIC;
 
-        //Create NodeFactory adapted about caller uses.
-        final NodeFactory nodefactory = TreeNodeFactory.DEFAULT_FACTORY;
-
         //creating tree (R-Tree)------------------------------------------------
-        final Tree tree = TreeFactory.createBasicRTree(4, crs, splitcase, nodefactory);
+        final Tree tree = new BasicRTree(4, crs, splitcase);
 
         //Create an entry to add in tree----------------------------------------
         //NOTE : entry are GeneralEnvelope type---------------------------------
@@ -95,7 +92,7 @@ public class TreeDemo {
         //final Calculator anotherCalculator = DefaultCalculator.CARTESIAN_3D;
 
         //NOTE : no Splitcase required because split made is single in this tree case and contained in Tree body.
-        final Tree anotherTree = TreeFactory.createStarRTree(3, anotherCrs, nodefactory);
+        final Tree anotherTree = new StarRTree(3, anotherCrs);
 
         //Same methods ---------------------------------------------------------
         final GeneralEnvelope anotherEntry = new GeneralEnvelope(anotherCrs);
@@ -138,7 +135,7 @@ public class TreeDemo {
         treeReader.setInput(fil);
 
         //Create an R-Tree to re-build read result------------------------------
-        final Tree resultTree = TreeFactory.createBasicRTree(4, crs, splitcase, nodefactory);
+        final Tree resultTree = new BasicRTree(4, crs, splitcase);
 
         //read (read result pushing in result tree)-----------------------------
         treeReader.read(resultTree);

@@ -17,11 +17,15 @@
 package org.geotoolkit.wcs.xml.v100;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.ows.xml.AbstractDomain;
+import org.geotoolkit.ows.xml.AbstractOperation;
+import org.geotoolkit.ows.xml.Range;
 
 /**
  * <p>Java class for anonymous complex type.
@@ -174,6 +178,17 @@ public class Request {
         return new Request(this);
     }
 
+    public AbstractOperation getOperation(final String operationName) {
+        if (operationName.equalsIgnoreCase("GetCapabilities")) {
+            return getCapabilities;
+        } else if (operationName.equalsIgnoreCase("GetCoverage")) {
+            return getCoverage;
+        } else if (operationName.equalsIgnoreCase("DescribeCoverage")) {
+            return describeCoverage;
+        }
+        return null;
+    }
+
     /**
      * <p>Java class for anonymous complex type.
      *
@@ -198,7 +213,7 @@ public class Request {
     @XmlType(name = "", propOrder = {
         "dcpType"
     })
-    public static class DescribeCoverage {
+    public static class DescribeCoverage implements AbstractOperation {
 
         @XmlElement(name = "DCPType", required = true)
         private List<DCPTypeType> dcpType;
@@ -223,7 +238,8 @@ public class Request {
          * Gets the value of the dcpType property.
          *
          */
-        public List<DCPTypeType> getDCPType() {
+        @Override
+        public List<DCPTypeType> getDCP() {
             if (dcpType == null) {
                 dcpType = new ArrayList<DCPTypeType>();
             }
@@ -236,6 +252,52 @@ public class Request {
                     dcp.updateURL(url);
                 }
             }
+        }
+
+        @Override
+        public List<? extends AbstractDomain> getParameter() {
+            //no parameter
+            return new ArrayList<AbstractDomain>();
+        }
+
+        @Override
+        public AbstractDomain getParameter(String name) {
+            //no parameter
+            return null;
+        }
+
+        @Override
+        public AbstractDomain getParameterIgnoreCase(String name) {
+            //no parameter
+            return null;
+        }
+
+        @Override
+        public List<? extends AbstractDomain> getConstraint() {
+            //no constraint
+            return new ArrayList<AbstractDomain>();
+        }
+
+        @Override
+        public AbstractDomain getConstraint(String name) {
+            //no constraint
+            return null;
+        }
+
+        @Override
+        public AbstractDomain getConstraintIgnoreCase(String name) {
+            //no constraint
+            return null;
+        }
+
+        @Override
+        public void updateParameter(String parameterName, Collection<String> values) {
+            //no parameter
+        }
+
+        @Override
+        public void updateParameter(String parameterName, Range range) {
+            //no parameter
         }
     }
 
@@ -263,7 +325,7 @@ public class Request {
     @XmlType(name = "", propOrder = {
         "dcpType"
     })
-    public static class GetCapabilities {
+    public static class GetCapabilities implements AbstractOperation {
 
         @XmlElement(name = "DCPType", required = true)
         private List<DCPTypeType> dcpType;
@@ -288,7 +350,8 @@ public class Request {
          * Gets the value of the dcpType property.
          *
          */
-        public List<DCPTypeType> getDCPType() {
+        @Override
+        public List<DCPTypeType> getDCP() {
             if (dcpType == null) {
                 dcpType = new ArrayList<DCPTypeType>();
             }
@@ -301,6 +364,52 @@ public class Request {
                     dcp.updateURL(url);
                 }
             }
+        }
+
+        @Override
+        public List<? extends AbstractDomain> getParameter() {
+            //no parameter
+            return new ArrayList<AbstractDomain>();
+        }
+
+        @Override
+        public AbstractDomain getParameter(String name) {
+            //no parameter
+            return null;
+        }
+
+        @Override
+        public AbstractDomain getParameterIgnoreCase(String name) {
+            //no parameter
+            return null;
+        }
+
+        @Override
+        public List<? extends AbstractDomain> getConstraint() {
+            //no constraint
+            return new ArrayList<AbstractDomain>();
+        }
+
+        @Override
+        public AbstractDomain getConstraint(String name) {
+            //no constraint
+            return null;
+        }
+
+        @Override
+        public AbstractDomain getConstraintIgnoreCase(String name) {
+            //no constraint
+            return null;
+        }
+
+        @Override
+        public void updateParameter(String parameterName, Collection<String> values) {
+            //no parameter
+        }
+
+        @Override
+        public void updateParameter(String parameterName, Range range) {
+            //no parameter
         }
     }
 
@@ -328,7 +437,7 @@ public class Request {
     @XmlType(name = "", propOrder = {
         "dcpType"
     })
-    public static class GetCoverage {
+    public static class GetCoverage implements AbstractOperation {
 
         @XmlElement(name = "DCPType", required = true)
         private List<DCPTypeType> dcpType;
@@ -353,7 +462,8 @@ public class Request {
          * Gets the value of the dcpType property.
          *
          */
-        public List<DCPTypeType> getDCPType() {
+        @Override
+        public List<DCPTypeType> getDCP() {
             if (dcpType == null) {
                 dcpType = new ArrayList<DCPTypeType>();
             }
@@ -366,6 +476,52 @@ public class Request {
                     dcp.updateURL(url);
                 }
             }
+        }
+
+        @Override
+        public List<? extends AbstractDomain> getParameter() {
+            //no parameter
+            return new ArrayList<AbstractDomain>();
+        }
+
+        @Override
+        public AbstractDomain getParameter(String name) {
+            //no parameter
+            return null;
+        }
+
+        @Override
+        public AbstractDomain getParameterIgnoreCase(String name) {
+            //no parameter
+            return null;
+        }
+
+        @Override
+        public List<? extends AbstractDomain> getConstraint() {
+            //no constraint
+            return new ArrayList<AbstractDomain>();
+        }
+
+        @Override
+        public AbstractDomain getConstraint(String name) {
+            //no constraint
+            return null;
+        }
+
+        @Override
+        public AbstractDomain getConstraintIgnoreCase(String name) {
+            //no constraint
+            return null;
+        }
+
+        @Override
+        public void updateParameter(String parameterName, Collection<String> values) {
+            //no parameter
+        }
+
+        @Override
+        public void updateParameter(String parameterName, Range range) {
+            //no parameter
         }
     }
 }

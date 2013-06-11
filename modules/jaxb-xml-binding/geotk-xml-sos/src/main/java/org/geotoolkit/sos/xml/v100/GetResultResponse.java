@@ -60,7 +60,7 @@ import javax.xml.bind.annotation.XmlValue;
     "result"
 })
 @XmlRootElement(name = "GetResultResponse")
-public class GetResultResponse implements org.geotoolkit.sos.xml.GetResultResponse {
+public class GetResultResponse extends ResponseBaseType implements org.geotoolkit.sos.xml.GetResultResponse {
 
     @XmlElement(required = true)
     private GetResultResponse.Result result;

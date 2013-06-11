@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2012, Geomatys
+ *    (C) 2012-2013, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -26,23 +26,23 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.vecmath.Point3d;
 import org.geotoolkit.coverage.*;
 import org.geotoolkit.coverage.finder.CoverageFinder;
 import org.geotoolkit.coverage.finder.CoverageFinderFactory;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
+import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.style.CachedRule;
-import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.storage.DataStoreException;
+import static org.geotoolkit.storage.StorageListener.LOGGER;
 import org.opengis.feature.type.Name;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
@@ -231,8 +231,10 @@ public class StatefullPyramidalCoverageLayerJ2D extends StatefullMapLayerJ2D<Cov
         if(tileMaxRow > gridHeight) tileMaxRow = gridHeight;
                 
         //don't render layer if it requieres more then 100 queries
-        if( (tileMaxCol-tileMinCol) * (tileMaxRow-tileMinRow) > 500 ){
-            System.out.println("Too much tiles requiered to render layer at this scale.");
+        Integer maxTiles = (Integer)context2D.getRenderingHints().get(GO2Hints.KEY_MAX_TILES);
+        if(maxTiles==null) maxTiles = 500;
+        if( (tileMaxCol-tileMinCol) * (tileMaxRow-tileMinRow) > maxTiles) {
+            LOGGER.log(Level.INFO, "Too much tiles requiered to render layer at this scale.");
             return;
         }
         

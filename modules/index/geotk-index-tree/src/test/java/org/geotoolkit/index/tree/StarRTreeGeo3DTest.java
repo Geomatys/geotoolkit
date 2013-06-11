@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.index.tree;
 
-import org.geotoolkit.index.tree.nodefactory.TreeNodeFactory;
 import org.geotoolkit.index.tree.star.StarRTree;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.opengis.referencing.operation.TransformException;
@@ -28,6 +27,6 @@ import org.opengis.referencing.operation.TransformException;
 public class StarRTreeGeo3DTest extends SpatialTreeTest {
 
     public StarRTreeGeo3DTest() throws TransformException {
-        super(new StarRTree(4, DefaultGeographicCRS.WGS84_3D, TreeNodeFactory.DEFAULT_FACTORY));
+        super(new StarRTree(4, DefaultGeographicCRS.WGS84_3D));
     }
 }

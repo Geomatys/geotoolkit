@@ -34,7 +34,7 @@ import org.geotoolkit.sml.xml.AbstractKeywords;
 import org.geotoolkit.sml.xml.AbstractLegalConstraint;
 import org.geotoolkit.sml.xml.AbstractProcess;
 import org.geotoolkit.sml.xml.AbstractValidTime;
-import org.geotoolkit.util.ComparisonMode;
+import org.apache.sis.util.ComparisonMode;
 
 
 /**

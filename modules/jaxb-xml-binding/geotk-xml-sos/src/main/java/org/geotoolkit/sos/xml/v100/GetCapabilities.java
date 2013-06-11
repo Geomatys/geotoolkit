@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.sos.xml.v100;
 
+import java.util.Arrays;
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -51,6 +53,12 @@ import org.geotoolkit.ows.xml.v110.SectionsType;
 @XmlRootElement(name = "GetCapabilities")
 public class GetCapabilities extends GetCapabilitiesType implements org.geotoolkit.sos.xml.GetCapabilities {
 
+    private static List<String> ACCEPTED_SECTIONS = Arrays.asList("All",
+                                                                  "ServiceIdentification",
+                                                                  "ServiceProvider",
+                                                                  "OperationsMetadata",
+                                                                  "Filter_Capabilities",
+                                                                  "Contents");
     /**
      * minimal getCapabilities request.
      */
@@ -93,5 +101,15 @@ public class GetCapabilities extends GetCapabilitiesType implements org.geotoolk
         return super.hashCode();
     }
     
-
+    @Override
+    public boolean isValidSections() {
+        if (sections != null) {
+            for (String section : sections.getSection()) {
+                if (!ACCEPTED_SECTIONS.contains(section)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
 }

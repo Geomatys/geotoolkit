@@ -30,7 +30,7 @@ import org.geotoolkit.wcs.xml.GetCapabilities;
 import org.geotoolkit.ows.xml.AcceptFormats;
 import org.geotoolkit.ows.xml.AcceptVersions;
 import org.geotoolkit.ows.xml.Sections;
-import org.geotoolkit.util.Version;
+import org.apache.sis.util.Version;
 
 
 /**
@@ -81,15 +81,15 @@ public class GetCapabilitiesType implements GetCapabilities {
     /**
      * Build a new getCapabilities request version 1.0.0.
      */
-    public GetCapabilitiesType(String section, final String updateSequence){
-        this.version = "1.0.0";
+    public GetCapabilitiesType(final String version, final String service, String section, final String updateSequence){
+        this.version = version;
         this.updateSequence = updateSequence;
         if (section == null) {
             this.section = "/";
         } else {
             this.section = section;
         }
-        this.service = "WCS";
+        this.service = service;
     }
     
     /**

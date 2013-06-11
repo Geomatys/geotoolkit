@@ -5,9 +5,11 @@
 package org.geotoolkit.wps.converters;
 
 import java.util.Map;
+import java.util.logging.Logger;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
+import org.geotoolkit.util.logging.Logging;
 
 /**
  * Default abstract class for {@link WPSObjectConverter}.
@@ -15,6 +17,8 @@ import org.geotoolkit.util.converter.NonconvertibleObjectException;
  */
 public abstract class WPSDefaultConverter<S, T> implements WPSObjectConverter<S, T> {
 
+    protected static final Logger LOGGER = Logging.getLogger(WPSObjectConverter.class);
+    
     /**
      * Default constructor.
      */
@@ -63,7 +67,7 @@ public abstract class WPSDefaultConverter<S, T> implements WPSObjectConverter<S,
      * @return The error message.
      */
     static String formatErrorMessage(final String name, final Object value, final Exception cause) {
-        String message = Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_$2, name, value);
+        String message = Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_2, name, value);
         if (cause != null) {
             final String cm = cause.getLocalizedMessage();
             if (cm != null) {
@@ -92,6 +96,6 @@ public abstract class WPSDefaultConverter<S, T> implements WPSObjectConverter<S,
      */
     @Override
     public final T convert(S source) throws NonconvertibleObjectException {
-        return null;
+        throw new UnsupportedOperationException("Operation not allowed. Use ObjectConverter.convert(source, parameters) instead.");
     }
 }

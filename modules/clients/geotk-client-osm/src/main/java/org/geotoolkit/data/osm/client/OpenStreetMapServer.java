@@ -52,7 +52,7 @@ import org.geotoolkit.data.osm.model.Api;
 import org.geotoolkit.data.osm.xml.OSMXMLReader;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.security.ClientSecurity;
-import org.geotoolkit.util.ArgumentChecks;
+import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.util.logging.Logging;
 import org.opengis.parameter.ParameterValueGroup;
 

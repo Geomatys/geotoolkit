@@ -29,7 +29,7 @@ import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
 import org.geotoolkit.internal.image.io.GridDomainAccessor;
 import org.geotoolkit.referencing.operation.builder.LocalizationGrid;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 import org.geotoolkit.util.logging.Logging;
 
 import org.opengis.metadata.spatial.CellGeometry;

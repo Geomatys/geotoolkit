@@ -26,7 +26,7 @@ import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.geotoolkit.util.collection.NotifiedCheckedList;
 import org.geotoolkit.util.collection.NotifiedCheckedSet;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 
 import org.opengis.feature.type.Name;
 import org.opengis.filter.Id;
@@ -36,7 +36,7 @@ import org.opengis.style.SemanticType;
 import org.opengis.style.StyleVisitor;
 import org.opengis.style.Symbolizer;
 
-import static org.geotoolkit.util.ArgumentChecks.*;
+import static org.apache.sis.util.ArgumentChecks.*;
 
 /**
  * Mutable implementation of GeoAPI FeatureTypeStyle.

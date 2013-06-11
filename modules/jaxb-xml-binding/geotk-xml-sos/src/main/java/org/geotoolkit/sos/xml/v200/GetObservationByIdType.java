@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.sos.xml.GetObservationById;
 import org.geotoolkit.swes.xml.v200.ExtensibleRequestType;
 
 
@@ -50,12 +51,26 @@ import org.geotoolkit.swes.xml.v200.ExtensibleRequestType;
 @XmlType(name = "GetObservationByIdType", propOrder = {
     "observation"
 })
-public class GetObservationByIdType extends ExtensibleRequestType {
+public class GetObservationByIdType extends ExtensibleRequestType implements GetObservationById {
 
     @XmlElement(required = true)
     @XmlSchemaType(name = "anyURI")
     private List<String> observation;
 
+    public GetObservationByIdType() {
+        
+    }
+    
+    public GetObservationByIdType(final String version, final List<String> observation) {
+        super(version, "SOS");
+        this.observation = observation;
+    }
+    
+    public GetObservationByIdType(final String version, final String service, final List<String> observation) {
+        super(version, service);
+        this.observation = observation;
+    }
+    
     /**
      * Gets the value of the observation property.
      * 
@@ -63,6 +78,7 @@ public class GetObservationByIdType extends ExtensibleRequestType {
      * {@link String }
      * 
      */
+    @Override
     public List<String> getObservation() {
         if (observation == null) {
             observation = new ArrayList<String>();

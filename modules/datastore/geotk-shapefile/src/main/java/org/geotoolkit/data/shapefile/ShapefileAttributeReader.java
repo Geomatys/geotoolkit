@@ -23,7 +23,7 @@ import org.geotoolkit.data.dbf.DbaseFileReader;
 import org.geotoolkit.data.shapefile.lock.AccessManager;
 import org.geotoolkit.data.shapefile.shp.ShapefileReader;
 import org.geotoolkit.storage.DataStoreException;
-import org.geotoolkit.util.ArgumentChecks;
+import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.util.Converters;
 import org.opengis.feature.type.PropertyDescriptor;
 

@@ -28,6 +28,8 @@ import org.geotoolkit.ows.xml.v110.DescriptionType;
 import org.geotoolkit.ows.xml.v110.KeywordsType;
 import org.geotoolkit.ows.xml.v110.LanguageStringType;
 import org.geotoolkit.ows.xml.v110.MetadataType;
+import org.geotoolkit.wcs.xml.CoverageInfo;
+import org.opengis.geometry.Envelope;
 
 
 /**
@@ -67,7 +69,7 @@ import org.geotoolkit.ows.xml.v110.MetadataType;
     "supportedCRS",
     "supportedFormat"
 })
-public class CoverageDescriptionType extends DescriptionType {
+public class CoverageDescriptionType extends DescriptionType implements CoverageInfo {
 
     @XmlElement(name = "Identifier", required = true)
     private String identifier;
@@ -149,6 +151,14 @@ public class CoverageDescriptionType extends DescriptionType {
         return Collections.unmodifiableList(metadata);
     }
 
+    @Override
+    public void setMetadata(final String href) {
+        if (href != null) {
+            this.metadata = new ArrayList<MetadataType>();
+            this.metadata.add(new MetadataType(href));
+        }
+    }
+    
     /**
      * Gets the value of the domain property.
      */
@@ -175,6 +185,16 @@ public class CoverageDescriptionType extends DescriptionType {
      */
     public List<String> getSupportedFormat() {
         return Collections.unmodifiableList(supportedFormat);
+    }
+
+    @Override
+    public Envelope getLonLatEnvelope() {
+        throw new UnsupportedOperationException("TODO.");
+    }
+
+    @Override
+    public List<?> getRest() {
+        throw new UnsupportedOperationException("TODO.");
     }
 
 }

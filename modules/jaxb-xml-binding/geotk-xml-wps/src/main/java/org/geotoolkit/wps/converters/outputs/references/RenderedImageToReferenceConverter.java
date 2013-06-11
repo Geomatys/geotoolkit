@@ -18,14 +18,16 @@ package org.geotoolkit.wps.converters.outputs.references;
 
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 import java.util.UUID;
 import javax.imageio.ImageIO;
-import javax.imageio.ImageWriter;
-import org.geotoolkit.image.io.XImageIO;
+import net.iharder.Base64;
+import org.geotoolkit.util.FileUtilities;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
+import org.geotoolkit.wps.io.WPSEncoding;
 import org.geotoolkit.wps.io.WPSIO;
 import org.geotoolkit.wps.xml.v100.InputReferenceType;
 import org.geotoolkit.wps.xml.v100.OutputReferenceType;
@@ -80,22 +82,32 @@ public class RenderedImageToReferenceConverter extends AbstractReferenceOutputCo
         } else {
             reference = new OutputReferenceType();
         }
-
-        reference.setMimeType((String) params.get(MIME));
-        reference.setEncoding((String) params.get(ENCODING));
-        reference.setSchema((String) params.get(SCHEMA));
-
+        
+        final String encoding = (String) params.get(ENCODING);
+        
         final String mime = (String) params.get(MIME) != null ? (String) params.get(MIME) : "image/png";
         final String formatName = mime.substring(mime.indexOf("/")+1).toUpperCase();
+
         reference.setMimeType(mime);
         reference.setEncoding((String) params.get(ENCODING));
         reference.setSchema((String) params.get(SCHEMA));
 
         final String randomFileName = UUID.randomUUID().toString();
         try {
-            //create file
+            
             final File imageFile = new File((String) params.get(TMP_DIR_PATH), randomFileName);
-            ImageIO.write(source, formatName, imageFile);
+            
+            if (encoding != null && encoding.equals(WPSEncoding.BASE64.getValue())) {
+                final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                ImageIO.write(source, formatName, baos);
+                baos.flush();
+                byte[] bytesOut = baos.toByteArray();
+                FileUtilities.stringToFile(imageFile, Base64.encodeBytes(bytesOut));
+                
+            } else {
+                ImageIO.write(source, formatName, imageFile);
+            }
+            
             reference.setHref((String) params.get(TMP_DIR_URL) + "/" + randomFileName);
             
         } catch (IOException ex) {

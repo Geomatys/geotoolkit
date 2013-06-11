@@ -86,6 +86,7 @@ public class AcceptFormatsType implements AcceptFormats {
      * Gets the value of the outputFormat property.
      * (unmodifable)
      */
+    @Override
     public List<String> getOutputFormat() {
         if (outputFormat == null) {
             outputFormat = new ArrayList<String>();

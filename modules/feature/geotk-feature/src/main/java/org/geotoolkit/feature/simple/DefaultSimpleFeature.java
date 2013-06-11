@@ -21,12 +21,12 @@ import com.vividsolutions.jts.geom.Geometry;
 
 import java.util.List;
 import java.util.Map;
+import org.apache.sis.internal.util.UnmodifiableArrayList;
 
 import org.geotoolkit.feature.DefaultAttribute;
 import org.geotoolkit.feature.DefaultGeometryAttribute;
 import org.geotoolkit.filter.identity.DefaultFeatureId;
 
-import org.geotoolkit.util.collection.UnmodifiableArrayList;
 import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -48,7 +48,7 @@ public final class DefaultSimpleFeature extends AbstractSimpleFeature {
     private String strID;
 
     private final Object[] valueArray;
-    
+
     /**
      * The attribute name -> position index
      */
@@ -75,10 +75,10 @@ public final class DefaultSimpleFeature extends AbstractSimpleFeature {
         if (validating) {
             validate();
         }
-        
+
         this.valueArray = values;
     }
-    
+
     public DefaultSimpleFeature(final AttributeDescriptor desc, final FeatureId id, final Object[] values, final boolean validating){
         super(desc,id);
 
@@ -96,10 +96,10 @@ public final class DefaultSimpleFeature extends AbstractSimpleFeature {
         if (validating) {
             validate();
         }
-        
+
         this.valueArray = values;
     }
-    
+
     public DefaultSimpleFeature(final SimpleFeatureType type, final FeatureId id, final List<Property> properties, final boolean validating){
         super(type,id);
 
@@ -143,7 +143,7 @@ public final class DefaultSimpleFeature extends AbstractSimpleFeature {
             validate();
         }
     }
-    
+
     @Override
     public List<Property> getValue() {
         if(value == null){
@@ -164,7 +164,7 @@ public final class DefaultSimpleFeature extends AbstractSimpleFeature {
     public Object getAttribute(String name) {
         return super.getAttribute(name);
     }
-    
+
     @Override
     public void setAttribute(int idx, Object value) throws IndexOutOfBoundsException {
         if(valueArray == null){
@@ -172,7 +172,7 @@ public final class DefaultSimpleFeature extends AbstractSimpleFeature {
             return;
         }
         valueArray[idx] = value;
-        
+
         //clear the geometry cache if necessary
 //        if(this.value != null){
 //            Object prop = this.value.get(idx);
@@ -180,9 +180,9 @@ public final class DefaultSimpleFeature extends AbstractSimpleFeature {
 //                ((SimpleGeometryAttribut)prop).clearCache();
 //            }
 //        }
-        
+
     }
-    
+
     @Override
     protected boolean isValidating() {
         return validating;
@@ -222,7 +222,7 @@ public final class DefaultSimpleFeature extends AbstractSimpleFeature {
             return id.getID();
         }
     }
-    
+
     private List<Property> toProperties(){
         final SimpleFeatureType sft = (SimpleFeatureType) this.type;
         final int n = sft.getAttributeCount();
@@ -237,7 +237,7 @@ public final class DefaultSimpleFeature extends AbstractSimpleFeature {
         }
         return UnmodifiableArrayList.wrap(properties);
     }
-    
+
 
     /**
      * returns a unique code for this feature
@@ -319,9 +319,9 @@ public final class DefaultSimpleFeature extends AbstractSimpleFeature {
     }
 
     private class SimpleAttribut extends DefaultAttribute<Object,AttributeDescriptor,Identifier> {
-        
+
         private final int index;
-        
+
         private SimpleAttribut(final int index, final AttributeDescriptor desc){
             super(null, desc, null);
             this.index = index;
@@ -337,11 +337,11 @@ public final class DefaultSimpleFeature extends AbstractSimpleFeature {
             valueArray[index] = newValue;
         }
     }
-    
+
     private class SimpleGeometryAttribut extends DefaultGeometryAttribute{
-        
+
          private final int index;
-        
+
         private SimpleGeometryAttribut(final int index, final GeometryDescriptor desc){
             super(null, desc, null);
             this.index = index;
@@ -356,7 +356,7 @@ public final class DefaultSimpleFeature extends AbstractSimpleFeature {
         public void setValue(Object newValue) throws IllegalArgumentException, IllegalStateException {
             valueArray[index] = newValue;
         }
-        
+
     }
-    
+
 }

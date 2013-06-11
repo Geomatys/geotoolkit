@@ -17,20 +17,38 @@
 package org.geotoolkit.wps.converters;
 
 import com.vividsolutions.jts.geom.Geometry;
+import java.awt.image.RenderedImage;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.net.URL;
 import java.util.List;
 import java.util.*;
+import java.util.Set;
 import javax.xml.bind.JAXBElement;
+
+import net.sf.json.JSONObject;
+import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.geotoolkit.coverage.io.CoverageIO;
+import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.feature.FeatureTypeBuilder;
+import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.feature.type.DefaultFeatureType;
 import org.geotoolkit.feature.type.DefaultGeometryType;
 import org.geotoolkit.feature.type.DefaultPropertyDescriptor;
+import org.geotoolkit.feature.type.DefaultPropertyType;
+import org.geotoolkit.geometry.Envelopes;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.mathml.xml.*;
 import org.geotoolkit.ows.xml.v110.DomainMetadataType;
+import org.geotoolkit.parameter.Parameters;
+import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.IdentifiedObjects;
-import org.geotoolkit.util.ArgumentChecks;
+import org.apache.sis.util.ArgumentChecks;
+import org.geotoolkit.util.FileUtilities;
 import org.geotoolkit.util.converter.ConverterRegistry;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
 import org.geotoolkit.wps.io.WPSIO;
@@ -38,11 +56,27 @@ import org.geotoolkit.wps.xml.v100.ComplexDataType;
 import org.geotoolkit.wps.xml.v100.InputReferenceType;
 import org.geotoolkit.wps.xml.v100.OutputReferenceType;
 import org.geotoolkit.wps.xml.v100.ReferenceType;
+import org.opengis.coverage.Coverage;
+import org.opengis.feature.ComplexAttribute;
 import org.opengis.feature.Feature;
 import org.opengis.feature.Property;
+import org.opengis.feature.type.ComplexType;
+import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.feature.type.PropertyDescriptor;
+import org.opengis.feature.type.PropertyType;
+import org.opengis.geometry.Envelope;
+import org.opengis.metadata.Identifier;
+import org.opengis.parameter.GeneralParameterDescriptor;
+import org.opengis.parameter.ParameterDescriptor;
+import org.opengis.parameter.ParameterDescriptorGroup;
+import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.referencing.ReferenceIdentifier;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.cs.AxisDirection;
+import org.opengis.referencing.cs.CoordinateSystem;
+import org.opengis.referencing.cs.CoordinateSystemAxis;
+import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 
 /**
@@ -51,12 +85,20 @@ import org.opengis.util.FactoryException;
  */
 public class WPSConvertersUtils {
 
+    public static final String OUT_STORAGE_DIR      = "OUT_STORAGE_DIR";    //webdav storage directory path
+    public static final String OUT_STORAGE_URL      = "OUT_STORAGE_URL";    //webdav url
+    public static final String WMS_STORAGE_DIR      = "WMS_STORAGE_DIR";    // provider storage directory path
+    public static final String WMS_STORAGE_ID       = "WMS_STORAGE_ID";     // provider name
+    public static final String WMS_INSTANCE_NAME    = "WMS_INSTANCE_NAME";  //WMS instance name
+    public static final String WMS_INSTANCE_URL     = "WMS_INSTANCE_URL";   //WMS instance url
+    public static final String WMS_LAYER_NAME       = "WMS_LAYER_NAME";   //WMS instance url
+
     /**
      * Fix the CRS problem for a Feature or a FeatureCollection
      *
      * @param dataValue a Feature or a FeatureCollection
      * @return the sale Feature/FeatureCollection fixed
-     * @throws CstlServiceException
+     * @throws NonconvertibleObjectException
      */
     public static Object fixFeature(final Object dataValue) throws FactoryException {
 
@@ -90,7 +132,7 @@ public class WPSConvertersUtils {
      *
      * @param featureIN feature with geometry used to fix the geometry descriptor
      * @param type the featureType to fix
-     * @throws CstlServiceException
+     * @throws NonconvertibleObjectException
      */
     private static void fixFeatureType(final Feature featureIN, DefaultFeatureType type) throws FactoryException {
 
@@ -126,7 +168,7 @@ public class WPSConvertersUtils {
      * @param data string to convert
      * @param binding wanted class
      * @return converted object
-     * @throws CstlServiceException if there is no match found
+     * @throws NonconvertibleObjectException if there is no match found
      */
     public static <T> Object convertFromString(final String data, final Class binding) throws NonconvertibleObjectException {
 
@@ -178,7 +220,7 @@ public class WPSConvertersUtils {
      * @param expectedClass
      * @param complex
      * @return
-     * @throws CstlServiceException
+     * @throws NonconvertibleObjectException
      */
     public static Object convertFromComplex(final ComplexDataType complex, final Class expectedClass) throws NonconvertibleObjectException {
 
@@ -188,6 +230,11 @@ public class WPSConvertersUtils {
         
         WPSIO.checkSupportedFormat(expectedClass, WPSIO.IOType.INPUT, mime, encoding, schema);
            
+        final Map<String, Object> parameters = new HashMap<String, Object>();
+        parameters.put(WPSObjectConverter.ENCODING, encoding);
+        parameters.put(WPSObjectConverter.MIME, mime);
+        parameters.put(WPSObjectConverter.SCHEMA, schema);
+        
         final List<Object> content = complex.getContent();
         
         //remove white spaces
@@ -207,7 +254,7 @@ public class WPSConvertersUtils {
             throw new NonconvertibleObjectException("Input complex not supported, no converter found.");
         }
 
-        return converter.convert(complex, null);
+        return converter.convert(complex, parameters);
     }
 
     /**
@@ -217,22 +264,20 @@ public class WPSConvertersUtils {
      * @param mime
      * @param encoding
      * @param schema
-     * @param storageDirectory
-     * @param storageURL
+     * @param params
      * @return
      * @throws NonconvertibleObjectException 
      */
     public static ComplexDataType convertToComplex(final Object object, final String mime, final String encoding, final String schema,
-            final String storageDirectory, final String storageURL)
-            throws NonconvertibleObjectException {
+            final Map<String, Object> params) throws NonconvertibleObjectException {
         
         ArgumentChecks.ensureNonNull("Object", object);
         
         WPSIO.checkSupportedFormat(object.getClass(), WPSIO.IOType.INPUT, mime, encoding, schema);
         
         final Map<String, Object> parameters = new HashMap<String, Object>();
-        parameters.put(WPSObjectConverter.TMP_DIR_PATH, storageDirectory);
-        parameters.put(WPSObjectConverter.TMP_DIR_URL, storageURL);
+        parameters.put(WPSObjectConverter.TMP_DIR_PATH, params.get(OUT_STORAGE_DIR));
+        parameters.put(WPSObjectConverter.TMP_DIR_URL, params.get(OUT_STORAGE_URL));
         parameters.put(WPSObjectConverter.ENCODING, encoding);
         parameters.put(WPSObjectConverter.MIME, mime);
         parameters.put(WPSObjectConverter.SCHEMA, schema);
@@ -244,6 +289,96 @@ public class WPSConvertersUtils {
         }
 
         return (ComplexDataType) converter.convert(object, parameters);
+    }
+
+
+    public static ComplexDataType convertToWMSComplex(Object object, String mimeType, String encoding, String schema, Map<String, Object> params)
+            throws NonconvertibleObjectException {
+
+        ArgumentChecks.ensureNonNull("Object", object);
+
+        WPSIO.checkSupportedFormat(object.getClass(), WPSIO.IOType.INPUT, mimeType, encoding, schema);
+
+        final Map<String, Object> parameters = new HashMap<String, Object>();
+        parameters.put(WPSObjectConverter.TMP_DIR_PATH, params.get(OUT_STORAGE_DIR));
+        parameters.put(WPSObjectConverter.TMP_DIR_URL, params.get(OUT_STORAGE_URL));
+        parameters.put(WPSObjectConverter.ENCODING, encoding);
+        parameters.put(WPSObjectConverter.MIME, mimeType);
+        parameters.put(WPSObjectConverter.SCHEMA, schema);
+
+        final ComplexDataType complex = new ComplexDataType();
+        complex.setEncoding(encoding);
+        complex.setMimeType(mimeType);
+        complex.setSchema(schema);
+
+        final Map<String,Object> jsonMap = new HashMap<String, Object>();
+        jsonMap.put("url", (String)params.get(WMS_INSTANCE_URL));
+        jsonMap.put("type", "WMS");
+        jsonMap.put("version", "1.3.0");
+
+        final String layerName = params.get(WMS_LAYER_NAME)+"_"+System.currentTimeMillis();
+        jsonMap.put("title", layerName);
+        jsonMap.put("layers", layerName);
+
+        final File coverageFile = new File((String)params.get(WMS_STORAGE_DIR), layerName+".tiff");
+
+        try {
+            // Set the envelope crs to 4326 because of client request :
+            final CoordinateReferenceSystem outCRS = CRS.decode("EPSG:4326");
+            Envelope env =null;
+            Integer crsCode = null;
+            if (object instanceof GridCoverage2D) {
+                final GridCoverage2D coverage = (GridCoverage2D) object;
+                CoverageIO.write(coverage, "GEOTIFF", coverageFile);
+                env = Envelopes.transform(coverage.getEnvelope2D(), outCRS);
+                crsCode = IdentifiedObjects.lookupEpsgCode(coverage.getCoordinateReferenceSystem(), false);
+
+            } else if (object instanceof File) {
+                final GridCoverageReader reader = CoverageIO.createSimpleReader(object);
+                env = Envelopes.transform(reader.getGridGeometry(0).getEnvelope(), outCRS);
+                crsCode = IdentifiedObjects.lookupEpsgCode(reader.getGridGeometry(0).getCoordinateReferenceSystem(), false);
+                FileUtilities.copy((File) object, coverageFile);
+
+            } else if (object instanceof GridCoverageReader) {
+                final GridCoverageReader reader = (GridCoverageReader) object;
+                env = Envelopes.transform(reader.getGridGeometry(0).getEnvelope(), outCRS);
+                crsCode = IdentifiedObjects.lookupEpsgCode(reader.getGridGeometry(0).getCoordinateReferenceSystem(), false);
+                Object in = reader.getInput();
+                if(in == null) {
+                    throw new IOException("Input coverage is invalid.");
+                } else if( in instanceof File) {
+                    FileUtilities.copy((File) in, coverageFile);
+                } else if(in instanceof InputStream) {
+                    FileUtilities.buildFileFromStream((InputStream)in, coverageFile);
+                } else {
+                    throw new IOException("Input coverage is invalid.");
+                }
+            }
+
+            if(crsCode == null) {
+                crsCode = 3857;
+            }
+
+            final double xMin = env.getLowerCorner().getOrdinate(0);
+            final double xMax = env.getUpperCorner().getOrdinate(0);
+            final double yMin = env.getLowerCorner().getOrdinate(1);
+            final double yMax = env.getUpperCorner().getOrdinate(1);
+            final Map<String,String> bboxMap = new HashMap<String, String>();
+            bboxMap.put("bounds", xMin+","+yMin+","+xMax+","+yMax);
+            bboxMap.put("crs", "EPSG:4326");
+            jsonMap.put("bbox", bboxMap);
+            jsonMap.put("srs", "EPSG:" + crsCode);
+
+        } catch (TransformException e) {
+            throw new NonconvertibleObjectException("The geographic envelope of the layer can't be retrieved", e);
+        } catch (Exception e) {
+            throw new NonconvertibleObjectException(e.getMessage(), e);
+        }
+
+        final String json = JSONObject.fromObject(jsonMap).toString();
+        complex.getContent().add(json);
+        return complex;
+
     }
     
     /**
@@ -261,13 +396,18 @@ public class WPSConvertersUtils {
         final String schema = reference.getSchema();
         WPSIO.checkSupportedFormat(expectedClass, WPSIO.IOType.INPUT, mime, encoding, schema);
         
+        final Map<String, Object> parameters = new HashMap<String, Object>();
+        parameters.put(WPSObjectConverter.ENCODING, encoding);
+        parameters.put(WPSObjectConverter.MIME, mime);
+        parameters.put(WPSObjectConverter.SCHEMA, schema);
+        
         final WPSObjectConverter converter = WPSIO.getConverter(expectedClass, WPSIO.IOType.INPUT, WPSIO.FormChoice.REFERENCE);
 
         if (converter == null) {
             throw new NonconvertibleObjectException("Input reference not supported, no converter found.");
         }
 
-        return converter.convert(reference, null);
+        return converter.convert(reference, parameters);
     }
 
     /**
@@ -277,22 +417,21 @@ public class WPSConvertersUtils {
      * @param mime
      * @param encoding
      * @param schema
-     * @param storageDirectory
-     * @param storageURL
+     * @param params
      * @param iotype the io type requested (INPUT/OUTPUT)
      * @return an {@link InputReferenceType input reference} if ioType is set to INPUT, or an {@link OutputReferenceType output reference} otherwise.
      * @throws NonconvertibleObjectException 
      */
     public static ReferenceType convertToReference(final Object object, final String mime, final String encoding, final String schema,
-            final String storageDirectory, final String storageURL, final WPSIO.IOType iotype) throws NonconvertibleObjectException {
+            final Map<String, Object> params, final WPSIO.IOType iotype) throws NonconvertibleObjectException {
         
         ArgumentChecks.ensureNonNull("Object", object);
         
         WPSIO.checkSupportedFormat(object.getClass(), WPSIO.IOType.INPUT, mime, encoding, schema);
         
         final Map<String, Object> parameters = new HashMap<String, Object>();
-        parameters.put(WPSObjectConverter.TMP_DIR_PATH, storageDirectory);
-        parameters.put(WPSObjectConverter.TMP_DIR_URL, storageURL);
+        parameters.put(WPSObjectConverter.TMP_DIR_PATH, params.get(OUT_STORAGE_DIR));
+        parameters.put(WPSObjectConverter.TMP_DIR_URL, params.get(OUT_STORAGE_URL));
         parameters.put(WPSObjectConverter.ENCODING, encoding);
         parameters.put(WPSObjectConverter.MIME, mime);
         parameters.put(WPSObjectConverter.SCHEMA, schema);
@@ -305,13 +444,13 @@ public class WPSConvertersUtils {
 
         return (ReferenceType) converter.convert(object, parameters);
     }
-    
+
     /**
      * Create the DomaineMetaData object for a literal
      *
      * @param clazz
      * @return
-     * @throws CstlServiceException
+     * @throws NonconvertibleObjectException
      */
     public static DomainMetadataType createDataType(final Class clazz) {
 
@@ -445,5 +584,156 @@ public class WPSConvertersUtils {
         }
         
         return cellsArray;
+    }
+    
+    /**
+     * A function to transform a {@link ParameterDescriptorGroup} into {@link FeatureType}.
+     * 
+     * This function care about wps constraints, so if our feature contains
+     * heavy object type as coverages, we replace them with reference type.
+     * 
+     * @param toConvert The group to convert.
+     * @return A complex feature type which is the equivalent of the descriptor input.
+     */
+    public static FeatureType descriptorGroupToFeatureType(ParameterDescriptorGroup toConvert) {
+        final ComplexType ct = FeatureTypeUtilities.toPropertyType(toConvert);
+        final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
+        ftb.copy(ct);
+        if(ftb.getName().getNamespaceURI() == null) {
+            ftb.setName("constellation-sdi/WS/wps", ftb.getName().getLocalPart());
+        }
+        List<PropertyDescriptor> properties = ftb.getProperties();
+        
+        for(int i = 0 ; i < properties.size(); i++) {
+            final PropertyDescriptor desc = properties.get(i);
+            final PropertyType type = desc.getType();
+            Class binded = type.getBinding();
+            if(RenderedImage.class.isAssignableFrom(binded) ||
+                    Coverage.class.isAssignableFrom(binded) ||
+                    File.class.isAssignableFrom(binded)) {
+                final DefaultPropertyType newType = new DefaultPropertyType(type.getName(), 
+                        URL.class, 
+                        false, 
+                        type.getRestrictions(), 
+                        type.getSuper(), 
+                        type.getDescription());
+                final PropertyDescriptor newDesc = new DefaultPropertyDescriptor(newType, 
+                        desc.getName(), 
+                        desc.getMinOccurs(), 
+                        desc.getMaxOccurs(), 
+                        desc.isNillable());
+                properties.remove(i);
+                properties.add(i, newDesc);
+                
+            }
+        }        
+        return ftb.buildFeatureType();
+    }
+    
+    /**
+     * Convert a feature into a ParameterValueGroup.
+     * 
+     * This function will try to convert objects if their types doesn't match between feature and parameter.
+     * 
+     * @param toConvert The feature to transform.
+     * @param toFill The descriptor of the ParameterValueGroup which will be created.
+     * @return A ParameterValueGroup which contains data of the feature in parameter.
+     */
+    public static void featureToParameterGroup(ComplexAttribute toConvert, ParameterValueGroup toFill) throws NonconvertibleObjectException {
+        ArgumentChecks.ensureNonNull("feature", toConvert);
+        ArgumentChecks.ensureNonNull("ParameterGroup", toFill);
+
+        final WPSConverterRegistry registry = WPSConverterRegistry.getInstance();
+        for (final GeneralParameterDescriptor gpd : toFill.getDescriptor().descriptors()) {
+
+            if (gpd instanceof ParameterDescriptor) {
+                final Property prop = toConvert.getProperty(gpd.getName().getCode());
+                if (prop == null && gpd.getMinimumOccurs() > 0) {
+                    throw new NonconvertibleObjectException("A mandatory attribute can't be found");
+                }
+                final ParameterDescriptor desc = (ParameterDescriptor) gpd;
+                if (prop.getValue().getClass().isAssignableFrom(desc.getValueClass()) || desc.getValueClass().isAssignableFrom(prop.getValue().getClass())) {
+                    Parameters.getOrCreate(desc, toFill).setValue(prop.getValue());
+                } else {
+                    if (prop.getValue().getClass().isAssignableFrom(URI.class)) {
+                        ReferenceType type = UriToReference((URI) prop.getValue(), WPSIO.IOType.INPUT, null);
+                        WPSObjectConverter converter = registry.getConverter(type.getClass(), desc.getValueClass());
+                        Parameters.getOrCreate(desc, toFill).setValue(converter.convert(type, null));
+                    }
+                }
+            } else if (gpd instanceof ParameterDescriptorGroup) {
+                final Collection<Property> propCollection = toConvert.getProperties(gpd.getName().getCode());
+                int filledGroups = 0;
+                for (Property complex : propCollection) {
+                    if (complex instanceof ComplexAttribute) {
+                        ParameterValueGroup childGroup = toFill.addGroup(gpd.getName().getCode());
+                        featureToParameterGroup((ComplexAttribute) complex, childGroup);
+                        filledGroups++;
+                    }
+                }
+                if(filledGroups < gpd.getMinimumOccurs()) {
+                    throw new NonconvertibleObjectException("Not enough attributes have been found.");
+                }
+            } else {
+                throw new NonconvertibleObjectException("Parameter type is not managed.");
+            }
+        }
+    }
+    
+    
+    /**
+     * Convert an URI into a wps reference.
+     * @param toConvert The source URI.
+     * @param type The type of reference (input or output), can be null.
+     * @param mimeType Mime type of the data pointed by the URI, can be null.
+     * @return A reference equivalent to the input URI.
+     */
+    public static ReferenceType UriToReference(URI toConvert, WPSIO.IOType type, String mimeType) {
+        ReferenceType ref;
+        if(WPSIO.IOType.INPUT.equals(type)) {
+            ref = new InputReferenceType();
+        } else {
+            ref = new OutputReferenceType();
+        }
+        ref.setHref(toConvert.toString());
+        ref.setMimeType(mimeType);
+        ref.setEncoding("UTF-8");        
+        
+        return ref;
+    }
+
+
+    /**
+     * Check if a CRS has longitude first or not.
+     * @param crs
+     * @return
+     */
+    public static boolean isLongFirst(CoordinateReferenceSystem crs) {
+
+        final CoordinateReferenceSystem hcrs = CRS.getHorizontalCRS(crs);
+        final CoordinateSystem cs = hcrs.getCoordinateSystem();
+        final CoordinateSystemAxis csa = cs.getAxis(0);
+        if (csa.getDirection().equals(AxisDirection.NORTH) || csa.getDirection().equals(AxisDirection.SOUTH)) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    /**
+     * Extract CRS code like "EPSG:4326".
+     * @param crs
+     * @return
+     */
+    public static String encodeCRS(CoordinateReferenceSystem crs) {
+        final Set<ReferenceIdentifier> identifiers = crs.getIdentifiers();
+        final ReferenceIdentifier id = !identifiers.isEmpty() ? identifiers.iterator().next() : null;
+        if (id != null) {
+            final Collection<Identifier> authIdentifier = (Collection<Identifier>) id.getAuthority().getIdentifiers();
+            final Identifier authId = !authIdentifier.isEmpty() ? authIdentifier.iterator().next() : null;
+            return authId.getCode() + ":" + id.getCode();
+        }
+
+        return null;
     }
 }

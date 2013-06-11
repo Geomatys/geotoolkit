@@ -25,7 +25,7 @@ import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import org.geotoolkit.geometry.DirectPosition2D;
+import org.apache.sis.geometry.DirectPosition2D;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSGeometryFactory;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.JTSPrimitiveFactory;
 import org.opengis.geometry.Envelope;
@@ -102,7 +102,7 @@ public class ISOGeometryJ2D implements Shape, Cloneable {
      */
     @Override
     public boolean contains(final Point2D p) {
-        return geometry.contains(new DirectPosition2D(p));
+        return geometry.contains(new DirectPosition2D(p.getX(), p.getY()));
     }
 
     /**

@@ -30,7 +30,7 @@ import java.util.logging.Logger;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.parameter.Parameters;
-import org.geotoolkit.util.ArgumentChecks;
+import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.util.Converters;
 import org.geotoolkit.util.logging.Logging;
 import org.opengis.coverage.grid.GridCoverage;
@@ -40,7 +40,6 @@ import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.*;
 import org.opengis.filter.identity.Identifier;
 import org.opengis.parameter.*;
-import org.opengis.util.InternationalString;
 
 /**
  *
@@ -52,6 +51,11 @@ import org.opengis.util.InternationalString;
  */
 public final class FeatureUtilities {
 
+    /**
+     * Key used if properties to store a version manager for the object.
+     */
+    public static final String ATT_VERSIONING = "versioning";
+    
     private static final Logger LOGGER = Logging.getLogger(FeatureUtilities.class);
 
     private static final FeatureFactory FF = FactoryFinder
@@ -476,6 +480,34 @@ public final class FeatureUtilities {
         }
     }
 
+    /**
+     * Reset the property values.
+     * @param candidate 
+     */
+    public static void resetProperty(final Property candidate){
+        final PropertyType type = candidate.getType();
+        final PropertyDescriptor desc = candidate.getDescriptor();
+        
+        if(type instanceof ComplexType){
+            final ComplexType ct = (ComplexType) type;
+            final ComplexAttribute ca = (ComplexAttribute) candidate;
+            final Collection<Property> props = ca.getProperties();
+            props.clear();
+            for(final PropertyDescriptor subDesc : ct.getDescriptors()){
+                for(int i=0,n=subDesc.getMinOccurs();i<n;i++){
+                    final Property prop = defaultProperty(subDesc);
+                    if(prop != null){
+                        props.add(prop);
+                    }
+                }
+            }
+
+        }else if(desc instanceof AttributeDescriptor){
+            candidate.setValue( ((AttributeDescriptor)desc).getDefaultValue() );
+        }
+
+    }
+    
     ////////////////////////////////////////////////////////////////////////////
     // ENCAPSULATION OPERATIONS ////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////

@@ -21,9 +21,11 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.observation.xml.v200.OMObservationType;
 import org.geotoolkit.swes.xml.v200.ExtensibleResponseType;
+import org.opengis.observation.ObservationCollection;
 
 
 /**
@@ -59,10 +61,23 @@ import org.geotoolkit.swes.xml.v200.ExtensibleResponseType;
 @XmlType(name = "GetObservationByIdResponseType", propOrder = {
     "observation"
 })
-public class GetObservationByIdResponseType extends ExtensibleResponseType {
+@XmlRootElement(name="GetObservationByIdResponse")
+public class GetObservationByIdResponseType extends ExtensibleResponseType implements ObservationCollection {
 
     private List<GetObservationByIdResponseType.Observation> observation;
 
+    public GetObservationByIdResponseType() {
+        
+    }
+    
+    public GetObservationByIdResponseType(final List<OMObservationType> observations) {
+        if (observations != null) {
+            this.observation = new ArrayList<Observation>();
+            for (OMObservationType o : observations) {
+                this.observation.add(new Observation(o));
+            }
+        }
+    }
     /**
      * Gets the value of the observation property.
      * 
@@ -75,6 +90,17 @@ public class GetObservationByIdResponseType extends ExtensibleResponseType {
             observation = new ArrayList<GetObservationByIdResponseType.Observation>();
         }
         return this.observation;
+    }
+
+    @Override
+    public List<org.opengis.observation.Observation> getMember() {
+        final List<org.opengis.observation.Observation> observations = new ArrayList<org.opengis.observation.Observation>();
+        if (observation != null) {
+            for (Observation data : observation) {
+                observations.add(data.omObservation);
+            }
+        } 
+        return observations;
     }
 
 
@@ -106,6 +132,14 @@ public class GetObservationByIdResponseType extends ExtensibleResponseType {
         @XmlElement(name = "OM_Observation", namespace = "http://www.opengis.net/om/2.0", required = true)
         private OMObservationType omObservation;
 
+        public Observation() {
+            
+        }
+        
+        public Observation(final OMObservationType omObservation) {
+            this.omObservation = omObservation;
+        }
+        
         /**
          * Gets the value of the omObservation property.
          * 

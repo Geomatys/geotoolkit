@@ -25,7 +25,7 @@ import org.geotoolkit.process.AbstractProcess;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessListener;
-import org.geotoolkit.util.ArgumentChecks;
+import org.apache.sis.util.ArgumentChecks;
 
 import org.opengis.parameter.ParameterValueGroup;
 

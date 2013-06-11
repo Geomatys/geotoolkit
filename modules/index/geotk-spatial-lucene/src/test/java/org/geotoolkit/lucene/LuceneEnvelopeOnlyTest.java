@@ -54,8 +54,6 @@ import org.geotoolkit.filter.DefaultFilterFactory2;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.geometry.jts.SRIDGenerator;
 import org.geotoolkit.geometry.jts.SRIDGenerator.Version;
-import org.geotoolkit.index.tree.nodefactory.NodeFactory;
-import org.geotoolkit.index.tree.nodefactory.TreeNodeFactory;
 import org.geotoolkit.lucene.analysis.standard.ClassicAnalyzer;
 import org.geotoolkit.lucene.filter.SerialChainFilter;
 import org.geotoolkit.lucene.filter.SpatialQuery;
@@ -113,9 +111,6 @@ public class LuceneEnvelopeOnlyTest {
 
         //Create Calculator. Be careful to choice calculator adapted from crs---
         //final Calculator calculator = DefaultCalculator.CALCULATOR_2D;
-
-        //Create NodeFactory adapted about caller uses.
-        final NodeFactory nodefactory = TreeNodeFactory.DEFAULT_FACTORY;
 
         //creating tree (R-Tree)------------------------------------------------
         final Analyzer analyzer = new StandardAnalyzer(org.apache.lucene.util.Version.LUCENE_40);

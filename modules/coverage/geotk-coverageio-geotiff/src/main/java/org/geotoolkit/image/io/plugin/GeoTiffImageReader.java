@@ -32,7 +32,7 @@ import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.lang.Configuration;
 import org.geotoolkit.metadata.geotiff.GeoTiffMetaDataReader;
 import org.geotoolkit.util.Version;
-import org.geotoolkit.util.XArrays;
+import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.util.logging.Logging;
 
 import org.opengis.referencing.NoSuchAuthorityCodeException;
@@ -94,7 +94,7 @@ public class GeoTiffImageReader extends ImageReaderAdapter {
             vendorName      = "Geotoolkit.org";
             version         = Version.GEOTOOLKIT.toString();
             writerSpiNames  = new String[] {GeoTiffImageWriter.TIFF.class.getName()};
-            inputTypes      = XArrays.append(inputTypes, ImageInputStream.class);
+            inputTypes      = ArraysExt.append(inputTypes, ImageInputStream.class);
         }
 
         public Spi(final String format) throws IllegalArgumentException {
@@ -120,13 +120,13 @@ public class GeoTiffImageReader extends ImageReaderAdapter {
                      if (source instanceof ImageInputStream) {
                        ((ImageInputStream) source).reset();
                     }
-                    return true;                    
+                    return true;
                 }catch(IOException ex){
                     return false;
                     //maybe it's a stream
                 }
             }
-            
+
             return false;
         }
 

@@ -41,6 +41,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
+import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.MemoryCacheImageInputStream;
 import org.geotoolkit.client.Request;
@@ -49,7 +50,8 @@ import org.geotoolkit.coverage.*;
 import org.geotoolkit.security.DefaultClientSecurity;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.util.ImageIOUtilities;
-import org.geotoolkit.util.collection.Cache;
+import org.apache.sis.util.collection.Cache;
+import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.util.logging.Logging;
 import org.jboss.netty.bootstrap.ClientBootstrap;
 import org.jboss.netty.buffer.ChannelBuffer;
@@ -118,11 +120,20 @@ public abstract class CachedPyramidSet extends DefaultPyramidSet {
     public abstract Request getTileRequest(GridMosaic mosaic, int col, int row, Map hints) throws DataStoreException;
 
     public TileReference getTile(GridMosaic mosaic, int col, int row, Map hints) throws DataStoreException {
-
+        final String formatmime = (String) hints.get(PyramidSet.HINT_FORMAT);
+        ImageReaderSpi spi = null;
+        if(formatmime!=null){
+            try {
+                spi = XImageIO.getReaderByMIMEType(formatmime, null, false, false).getOriginatingProvider();
+            } catch (IOException ex) {
+                LOGGER.log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
+        
         if (cacheImages) {
-            return new DefaultTileReference(null, getTileImage(mosaic, col, row, hints), 0, new Point(col, row));
+            return new DefaultTileReference(spi, getTileImage(mosaic, col, row, hints), 0, new Point(col, row));
         } else {
-            return new RequestTileReference(null, getTileRequest(mosaic, col, row, hints), 0, new Point(col, row));
+            return new RequestTileReference(spi, getTileRequest(mosaic, col, row, hints), 0, new Point(col, row));
         }
     }
 
@@ -227,7 +238,7 @@ public abstract class CachedPyramidSet extends DefaultPyramidSet {
 
             if (image != null) {
                 //image was in cache, reuse it
-                final ImagePack pack = new ImagePack(mosaic, p);
+                final ImagePack pack = new ImagePack(mosaic, p, hints);
                 pack.img = image;
                 queue.offer(pack.getTile());
             } else {
@@ -237,7 +248,7 @@ public abstract class CachedPyramidSet extends DefaultPyramidSet {
                     str = getTileRequest(mosaic, p.x, p.y, hints).getURL().toString();
                     str = str.replaceFirst("http://", "");
                     str = str.substring(str.indexOf('/'));
-                    downloadList.add(new ImagePack(str, mosaic, p));
+                    downloadList.add(new ImagePack(str, mosaic, p, hints));
                 } catch (MalformedURLException ex) {
                     Logger.getLogger(CachedPyramidSet.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -404,12 +415,12 @@ public abstract class CachedPyramidSet extends DefaultPyramidSet {
 
             if (image != null) {
                 //image was in cache, reuse it
-                final ImagePack pack = new ImagePack(tid, mosaic, p);
+                final ImagePack pack = new ImagePack(tid, mosaic, p, hints);
                 pack.img = image;
                 queue.offer(pack.getTile());
             } else {
                 //we will have to download this image
-                downloadList.add(new ImagePack(mosaic, p));
+                downloadList.add(new ImagePack(mosaic, p, hints));
             }
         }
 
@@ -432,18 +443,21 @@ public abstract class CachedPyramidSet extends DefaultPyramidSet {
         private final GridMosaic mosaic;
         private final Point pt;
         private final ChannelBuffer buffer = ChannelBuffers.dynamicBuffer();
+        private final Map hints;
         private RenderedImage img;
 
-        public ImagePack(String requestPath, GridMosaic mosaic, Point pt) {
+        public ImagePack(String requestPath, GridMosaic mosaic, Point pt, Map hints) {
             this.requestPath = requestPath;
             this.mosaic = mosaic;
             this.pt = pt;
+            this.hints = hints;
         }
 
-        public ImagePack(GridMosaic mosaic, Point pt) {
+        public ImagePack(GridMosaic mosaic, Point pt, Map hints) {
             this.requestPath = null;
             this.mosaic = mosaic;
             this.pt = pt;
+            this.hints = hints;
         }
 
         public String getRequestPath() {
@@ -451,7 +465,7 @@ public abstract class CachedPyramidSet extends DefaultPyramidSet {
         }
 
         public TileReference readNow() throws DataStoreException, IOException{
-            final TileReference ref = mosaic.getTile(pt.x, pt.y, null);
+            final TileReference ref = mosaic.getTile(pt.x, pt.y, hints);
             if(ref.getInput() instanceof RenderedImage){
                 return ref;
             }

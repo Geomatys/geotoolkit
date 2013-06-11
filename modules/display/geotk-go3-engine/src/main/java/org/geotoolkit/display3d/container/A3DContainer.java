@@ -18,7 +18,7 @@ package org.geotoolkit.display3d.container;
 
 import com.ardor3d.framework.Scene;
 import com.ardor3d.image.Texture;
-import com.ardor3d.image.util.AWTImageLoader;
+import com.ardor3d.image.util.awt.AWTImageLoader;
 import com.ardor3d.intersection.PickResults;
 import com.ardor3d.light.DirectionalLight;
 import com.ardor3d.math.ColorRGBA;
@@ -40,7 +40,7 @@ import com.ardor3d.util.resource.URLResourceSource;
 import java.net.URL;
 import org.geotoolkit.display3d.canvas.A3DCanvas;
 import org.geotoolkit.map.MapContext;
-import org.geotoolkit.util.ArgumentChecks;
+import org.apache.sis.util.ArgumentChecks;
 import org.opengis.display.canvas.Canvas;
 
 /**

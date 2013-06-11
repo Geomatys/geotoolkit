@@ -27,8 +27,11 @@ public class SOSResponseWrapper implements SOSResponse {
 
     private Object response;
 
-    public SOSResponseWrapper(final Object response) {
+    private String version;
+    
+    public SOSResponseWrapper(final Object response, final String version) {
         this.response = response;
+        this.version  = version;
     }
 
     /**
@@ -43,5 +46,10 @@ public class SOSResponseWrapper implements SOSResponse {
      */
     public void setCollection(final Object response) {
         this.response = response;
+    }
+
+    @Override
+    public String getSpecificationVersion() {
+        return version;
     }
 }

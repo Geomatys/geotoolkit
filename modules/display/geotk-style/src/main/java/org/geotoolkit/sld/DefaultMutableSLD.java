@@ -28,14 +28,14 @@ import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.geotoolkit.style.StyleConstants;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.collection.NotifiedCheckedList;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 
 import org.opengis.sld.Constraint;
 import org.opengis.sld.SLDLibrary;
 import org.opengis.sld.SLDVisitor;
 import org.opengis.style.Description;
 
-import static org.geotoolkit.util.ArgumentChecks.*;
+import static org.apache.sis.util.ArgumentChecks.*;
 
 /**
  * Default mutable Style Layer Descriptor, thread safe.

@@ -33,7 +33,7 @@ import org.opengis.display.container.ContainerEvent;
 import org.opengis.display.container.ContainerListener;
 import org.opengis.geometry.DirectPosition;
 
-import static org.geotoolkit.util.ArgumentChecks.*;
+import static org.apache.sis.util.ArgumentChecks.*;
 
 /**
  * Manages the display and user manipulation of {@link Graphic} instances. A newly constructed

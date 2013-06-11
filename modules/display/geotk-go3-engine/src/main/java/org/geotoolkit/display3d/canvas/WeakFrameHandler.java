@@ -25,7 +25,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.geotoolkit.util.collection.WeakHashSet;
+import org.apache.sis.util.collection.WeakHashSet;
 import org.geotoolkit.util.logging.Logging;
 
 /**
@@ -35,12 +35,12 @@ import org.geotoolkit.util.logging.Logging;
  * - Use weak references toward canvas and updater avoiding possible memory leaks.
  */
 public final class WeakFrameHandler {
-    
+
     private static final Logger LOGGER = Logging.getLogger(WeakFrameHandler.class);
     private static WeakFrameHandler INSTANCE = null;
 
-    private final WeakHashSet<Updater> _updaters = WeakHashSet.newInstance(Updater.class);
-    private final WeakHashSet<Canvas> _canvases = WeakHashSet.newInstance(Canvas.class);
+    private final WeakHashSet<Updater> _updaters = new WeakHashSet<Updater>(Updater.class);
+    private final WeakHashSet<Canvas> _canvases = new WeakHashSet<Canvas>(Canvas.class);
     private final Timer _timer;
 
     /**
@@ -60,24 +60,24 @@ public final class WeakFrameHandler {
 
         _timer.update();
 
-        
+
         //defensive copy, avoids concurrent modification
         final Updater[] updaters;
         synchronized(_updaters){
             updaters = _updaters.toArray(new Updater[0]);
         }
-                
+
         for (final Updater updater : updaters) {
             updater.update(_timer);
         }
 
-        
+
         //defensive copy, avoids concurrent modification
         final Canvas[] canvas;
         synchronized(_canvases){
             canvas = _canvases.toArray(new Canvas[0]);
         }
-        
+
         final CountDownLatch latch = new CountDownLatch(canvas.length);
         for(final Canvas canva : canvas){
             if(canva instanceof JoglAwtCanvas){
@@ -121,19 +121,19 @@ public final class WeakFrameHandler {
      * <strong>Note:</strong> that is the frame handler has already been initialized then the updater will <em>not</em>
      * have it's {@code init} method called automatically, it is up to the client code to perform any initialization
      * explicitly under this scenario.
-     * 
+     *
      * @param updater
      *            the updater to add.
      */
     public void addUpdater(final Updater updater) {
-        synchronized(_updaters){            
+        synchronized(_updaters){
             _updaters.add(updater);
         }
     }
 
     /**
      * Remove an updater from the frame handler.
-     * 
+     *
      * @param updater
      *            the updater to remove.
      * @return {@code true} if the updater was removed, {@code false} otherwise (which will happen if, for example, the
@@ -156,7 +156,7 @@ public final class WeakFrameHandler {
      * <strong>Note:</strong> that is the frame handler has already been initialized then the canvas will <em>not</em>
      * have it's {@code init} method called automatically, it is up to the client code to perform any initialization
      * explicitly under this scenario.
-     * 
+     *
      * @param canvas
      *            the canvas to add.
      */
@@ -168,7 +168,7 @@ public final class WeakFrameHandler {
 
     /**
      * Remove a canvas from the frame handler.
-     * 
+     *
      * @param canvas
      *            the canvas to remove.
      * @return {@code true} if the canvas was removed, {@code false} otherwise (which will happen if, for example, the
@@ -204,11 +204,11 @@ public final class WeakFrameHandler {
     public Timer getTimer() {
         return _timer;
     }
-    
+
     public static synchronized WeakFrameHandler getInstance(){
         if(INSTANCE == null){
             INSTANCE = new WeakFrameHandler(new Timer());
-            
+
             final Thread t = new Thread(){
                 @Override
                 public void run() {
@@ -221,8 +221,8 @@ public final class WeakFrameHandler {
             t.setName("Geotk-Ardor3D: updater thread");
             t.start();
         }
-        
+
         return INSTANCE;
     }
-    
+
 }

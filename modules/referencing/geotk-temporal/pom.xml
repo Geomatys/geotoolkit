@@ -15,7 +15,7 @@
   <parent>
     <groupId>org.geotoolkit.pending</groupId>
     <artifactId>referencing</artifactId>
-    <version>3.x-SNAPSHOT</version>
+    <version>4.x-SNAPSHOT</version>
   </parent>
 
 

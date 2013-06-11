@@ -16,17 +16,19 @@
  */
 package org.geotoolkit.index.tree;
 
-import java.beans.PropertyChangeEvent;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
-import org.geotoolkit.geometry.GeneralDirectPosition;
-import org.geotoolkit.geometry.GeneralEnvelope;
+import java.util.Map;
+import org.apache.sis.geometry.GeneralDirectPosition;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.gui.swing.tree.Trees;
-import org.geotoolkit.util.ArgumentChecks;
+import static org.geotoolkit.index.tree.Node.PROP_ISLEAF;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.collection.NotifiedCheckedList;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 
@@ -37,68 +39,61 @@ import org.opengis.geometry.Envelope;
  */
 public class DefaultNode extends Node {
 
-    private final List<Node> children = new CrossList<Node>(Node.class) {
+    private final List<Node> children = new NotifiedCheckedList<Node>(Node.class) {
 
         @Override
         protected void notifyAdd(Node e, int i) {
-            super.notifyAdd(e, i);
-            clearBounds();
+            setBound(null);
         }
 
         @Override
         protected void notifyAdd(Collection<? extends Node> clctn, NumberRange<Integer> nr) {
-            super.notifyAdd(clctn, nr);
-            clearBounds();
+            setBound(null);
         }
 
         @Override
         protected void notifyRemove(Node e, int i) {
-            super.notifyRemove(e, i);
-            clearBounds();
+            setBound(null);
         }
 
         @Override
         protected void notifyRemove(Collection<? extends Node> clctn, NumberRange<Integer> nr) {
-            super.notifyRemove(clctn, nr);
-            clearBounds();
-        }
-
-        @Override
-        public void propertyChange(PropertyChangeEvent evt) {
-            clearBounds();
+            setBound(null);
         }
 
         @Override
         protected void notifyChange(Node oldItem, Node newItem, int index) {
-            super.notifyChange(oldItem, newItem, index);
-            clearBounds();
+            setBound(null);
         }
     };
 
     private final List<Envelope> entries = new NotifiedCheckedList<Envelope>(Envelope.class) {
         @Override
         protected void notifyAdd(Envelope e, int i) {
-            clearBounds();
+            setBound(null);
         }
         @Override
         protected void notifyAdd(Collection<? extends Envelope> clctn, NumberRange<Integer> nr) {
-            clearBounds();
+            setBound(null);
         }
         @Override
         protected void notifyRemove(Envelope e, int i) {
-            clearBounds();
+            setBound(null);
         }
         @Override
         protected void notifyRemove(Collection<? extends Envelope> clctn, NumberRange<Integer> nr) {
-            clearBounds();
+            setBound(null);
         }
 
         @Override
         protected void notifyChange(Envelope oldItem, Envelope newItem, int index) {
-            clearBounds();
+            setBound(null);
         }
     };
 
+    private Map<String, Object> userProperties;
+    private GeneralEnvelope boundary;
+    
     /**Create an empty {@code DefaultNode}.
      *
      * @param tree
@@ -116,8 +111,7 @@ public class DefaultNode extends Node {
      * @throws IllegalArgumentException if tree pointer is null.
      */
     public DefaultNode(final Tree tree, final Node parent, final DirectPosition lowerCorner, final DirectPosition upperCorner, final List<Node> children, final List<Envelope> entries) {
-        ArgumentChecks.ensureNonNull("tree", tree);
-        this.tree = tree;
+        super(tree);
         this.parent = parent;
         if(children!=null){
             for(Node n3d : children){
@@ -133,7 +127,50 @@ public class DefaultNode extends Node {
             this.boundary = new GeneralEnvelope(new GeneralDirectPosition(lowerCorner), new GeneralDirectPosition(upperCorner));
         }
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setBound(Envelope bound){
+        if(boundary == bound){
+            return;
+        }
+        boundary = (bound == null) ? null : new GeneralEnvelope(bound);
+        
+        if(parent != null){
+            parent.setBound(null);
+        }
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Envelope getBound(){
+        return this.boundary;
+    }
+    
+    /**
+     * @param key
+     * @return user property for given key
+     */
+    @Override
+    public Object getUserProperty(final String key) {
+        if (userProperties == null) return null;
+        return userProperties.get(key);
+    }
 
+    /**Add user property with key access.
+     *
+     * @param key
+     * @param value Object will be stocked.
+     */
+    @Override
+    public void setUserProperty(final String key, final Object value) {
+        if (userProperties == null) userProperties = new HashMap<String, Object>();
+        userProperties.put(key, value);
+    }
 
     /**
      * {@inheritDoc}
@@ -147,124 +184,8 @@ public class DefaultNode extends Node {
      * {@inheritDoc}
      */
     @Override
-    public boolean isLeaf() {
-        final Object userPropIsLeaf = getUserProperty("isleaf");
-        if(userPropIsLeaf != null){
-            return (Boolean)userPropIsLeaf;
-        }
-        return getChildren().isEmpty();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean isEmpty() {
-        final Object userPropIsLeaf = getUserProperty("isleaf");
-        if(userPropIsLeaf != null && ((Boolean)userPropIsLeaf)){
-            for(Node cell : getChildren()){
-                if(!cell.isEmpty()){
-                    return false;
-                }
-            }
-            return true;
-        }
-        return (getChildren().isEmpty() && getEntries().isEmpty());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean isFull() {
-        final Object userPropIsLeaf = getUserProperty("isleaf");
-        if(userPropIsLeaf != null && ((Boolean)userPropIsLeaf)){
-            for(Node cell : getChildren()){
-                if(!cell.isFull()){
-                    return false;
-                }
-            }
-            return true;
-        }
-        return (getChildren().size()+getEntries().size())>=getTree().getMaxElements();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Envelope getBoundary() {
-        if(boundary==null){
-            calculateBounds();
-        }
-        return boundary;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public List<Envelope> getEntries() {
         return entries;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Node getParent() {
-        return parent;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Tree getTree() {
-        return tree;
-    }
-
-    /**
-     * Affect a {@code null} on boundary.
-     */
-    protected final void clearBounds() {
-        boundary=null;
-        fireCollectionEvent();
-    }
-
-    /**
-     * Compute {@code Node} boundary from stocked sub-node or entries .
-     */
-    protected void calculateBounds(){
-        for(Envelope ent2D : getEntries()){
-            addBound(ent2D);
-        }
-        for(Node n2D : getChildren()){
-            if(!n2D.isEmpty()){
-                addBound(n2D.getBoundary());
-            }
-        }
-    }
-
-    /**Update boundary size from {@code Envelope}.
-     *
-     * @param env {@code Node} or entry boundary.
-     */
-    protected void addBound(final Envelope env){
-        if(boundary==null){
-            boundary = new GeneralEnvelope(env);
-        }else{
-            boundary.add(env);
-        }
-    }
-
-    /**Affect a new parent pointer.
-     *
-     * @param parent
-     */
-    @Override
-    public void setParent(final Node parent){
-        this.parent = parent;
     }
 
     /**
@@ -276,6 +197,6 @@ public class DefaultNode extends Node {
         col.addAll(children);
         String strparent =  (parent == null)?"null":String.valueOf(parent.hashCode());
         return Trees.toString(Classes.getShortClassName(this)+" : "+this.hashCode()+" parent : "+strparent
-                + " leaf : "+isLeaf()+ " userPropLeaf : "+(Boolean)getUserProperty("isleaf"), col);
+                + " leaf : "+isLeaf()+ " userPropLeaf : "+(Boolean)getUserProperty(PROP_ISLEAF), Collections.EMPTY_LIST);
     }
 }

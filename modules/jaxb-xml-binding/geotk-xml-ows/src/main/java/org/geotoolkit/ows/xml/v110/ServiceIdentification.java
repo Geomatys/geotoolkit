@@ -112,6 +112,7 @@ public class ServiceIdentification extends DescriptionType implements AbstractSe
     /**
      * Gets the value of the serviceType property.
      */
+    @Override
     public CodeType getServiceType() {
         return serviceType;
     }
@@ -119,6 +120,7 @@ public class ServiceIdentification extends DescriptionType implements AbstractSe
     /**
      * Gets the value of the serviceTypeVersion property.
      */
+    @Override
     public List<String> getServiceTypeVersion() {
         if (serviceTypeVersion == null) {
             serviceTypeVersion = new ArrayList<String>();
@@ -129,16 +131,23 @@ public class ServiceIdentification extends DescriptionType implements AbstractSe
     /**
      * Gets the value of the profile property.
      */
+    @Override
     public List<String> getProfile() {
         if (profile == null) {
             profile = new ArrayList<String>();
         }
         return Collections.unmodifiableList(profile);
     }
+    
+    @Override
+    public void setProfile(final List<String> profiles) {
+        this.profile = profiles;
+    }
 
     /**
      * If this element is omitted, no meaning is implied. 
      */
+    @Override
     public String getFees() {
         return fees;
     }
@@ -150,6 +159,7 @@ public class ServiceIdentification extends DescriptionType implements AbstractSe
      * When this element is omitted, no meaning is implied.
      * Gets the value of the accessConstraints property.
      */
+    @Override
     public List<String> getAccessConstraints() {
         if (accessConstraints == null) {
             accessConstraints = new ArrayList<String>();

@@ -36,7 +36,16 @@ public class TimeBeforeType extends BinaryTemporalOpType implements Before {
     public TimeBeforeType(final String propertyName, final Object temporal) {
         super(propertyName, temporal);
     }
+    
+    public TimeBeforeType(final TimeBeforeType that) {
+        super(that);
+    }
 
+    @Override
+    public TemporalOpsType getClone() {
+        return new TimeBeforeType(this);
+    }
+    
     @Override
     public boolean evaluate(Object o) {
         throw new UnsupportedOperationException("Not supported yet.");

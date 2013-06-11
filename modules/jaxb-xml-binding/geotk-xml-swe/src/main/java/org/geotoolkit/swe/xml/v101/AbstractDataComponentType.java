@@ -25,7 +25,7 @@ import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.v311.AbstractGMLType;
 import org.geotoolkit.swe.xml.AbstractDataComponent;
 
-import org.geotoolkit.util.ComparisonMode;
+import org.apache.sis.util.ComparisonMode;
 
 /**
  *

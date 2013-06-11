@@ -201,7 +201,7 @@ public class DefaultPointSymbolizerRenderer extends AbstractSymbolizerRenderer<C
                     g2d.drawRenderedImage(img, imgTrs);
                 }
 
-            }else{
+            }else if(geom!=null){
 
                 final Point pt2d = geom.getCentroid();
                 if(pt2d == null){

@@ -17,16 +17,9 @@
 package org.geotoolkit.map;
 
 import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.concurrent.CancellationException;
 import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.coverage.DefaultCoverageReference;
-import org.geotoolkit.coverage.GridSampleDimension;
-import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.io.CoverageStoreException;
-import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.factory.FactoryFinder;
@@ -36,14 +29,18 @@ import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.style.DefaultDescription;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
-import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
+import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
+import org.geotoolkit.coverage.memory.MemoryCoverageReader;
+import org.geotoolkit.style.DefaultStyleFactory;
+import org.geotoolkit.style.MutableFeatureTypeStyle;
+import org.geotoolkit.style.MutableRule;
+import org.geotoolkit.style.StyleConstants;
 import org.geotoolkit.util.SimpleInternationalString;
-import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.feature.Feature;
+import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.expression.Expression;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.util.GenericName;
 
 /**
  * Utility class to create MapLayers, MapContexts and Elevation models from different sources.
@@ -96,6 +93,45 @@ public final class MapBuilder {
         return new EmptyMapLayer(factory.style());
     }
 
+    //geometryType
+    /**
+     * Create a default collection map layer with a collection.
+     * The style expect the default geometry property to be named 'Geometry'
+     * 
+     * @param collection layer data collection
+     * @param style layer style
+     * @return CollectionMapLayer
+     */
+    public static CollectionMapLayer createCollectionLayer(final Collection<?> collection){
+        final MutableStyleFactory sf = new DefaultStyleFactory();
+        final FilterFactory ff = FactoryFinder.getFilterFactory(null);
+        final MutableStyle style = sf.style();
+        final MutableFeatureTypeStyle fts = sf.featureTypeStyle();
+        
+        final MutableRule rulePoint = sf.rule(StyleConstants.DEFAULT_POINT_SYMBOLIZER);
+        rulePoint.setFilter(ff.or(
+                                ff.equals(ff.function("geometryType", ff.property("geometry")), ff.literal("Point")),
+                                ff.equals(ff.function("geometryType", ff.property("geometry")), ff.literal("MultiPoint"))
+                            ));
+        final MutableRule ruleLine = sf.rule(StyleConstants.DEFAULT_LINE_SYMBOLIZER);
+        ruleLine.setFilter(ff.or(
+                                ff.equals(ff.function("geometryType", ff.property("geometry")), ff.literal("LineString")),
+                                ff.equals(ff.function("geometryType", ff.property("geometry")), ff.literal("MultiLineString"))
+                            ));
+        final MutableRule rulePolygon = sf.rule(StyleConstants.DEFAULT_POLYGON_SYMBOLIZER);
+        rulePolygon.setFilter(ff.or(
+                                ff.equals(ff.function("geometryType", ff.property("geometry")), ff.literal("Polygon")),
+                                ff.equals(ff.function("geometryType", ff.property("geometry")), ff.literal("MultiPolygon"))
+                            ));
+        
+        fts.rules().add(rulePoint);
+        fts.rules().add(ruleLine);
+        fts.rules().add(rulePolygon);
+        style.featureTypeStyles().add(fts);
+        
+        return createCollectionLayer(collection, style);
+    }
+    
     /**
      * Create a default collection map layer with a collection and a style.
      * @param collection layer data collection
@@ -124,7 +160,7 @@ public final class MapBuilder {
      * @return  CoverageMapLayer
      */
     public static CoverageMapLayer createCoverageLayer(final GridCoverage2D grid, final MutableStyle style, final String name){
-        return createCoverageLayer(new SimpleCoverageReader(grid), 0, style, name);
+        return createCoverageLayer(new MemoryCoverageReader(grid), 0, style, name);
     }
 
     /**
@@ -176,37 +212,6 @@ public final class MapBuilder {
      */
     public static ElevationModel createElevationModel(final GridCoverageReader grid, final Expression offset, final Expression scale){
         return new DefaultElevationModel(grid, offset,scale);
-    }
-
-
-    private static class SimpleCoverageReader extends GridCoverageReader{
-
-        private final GridCoverage2D coverage;
-
-        public SimpleCoverageReader(final GridCoverage2D coverage){
-            this.coverage = coverage;
-        }
-
-        @Override
-        public GeneralGridGeometry getGridGeometry(final int i) throws CoverageStoreException, CancellationException {
-            return (GeneralGridGeometry) coverage.getGridGeometry();
-        }
-
-        @Override
-        public List<GridSampleDimension> getSampleDimensions(final int i) throws CoverageStoreException, CancellationException {
-            return Collections.singletonList(coverage.getSampleDimension(i));
-        }
-
-        @Override
-        public GridCoverage read(final int i, final GridCoverageReadParam gcrp) throws CoverageStoreException, CancellationException {
-            return coverage;
-        }
-
-        @Override
-        public List<? extends GenericName> getCoverageNames() throws CoverageStoreException, CancellationException {
-            return Collections.emptyList();
-        }
-
     }
 
 }

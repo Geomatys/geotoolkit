@@ -21,8 +21,20 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.ogc.xml.v110.BinaryTemporalOpType;
 import org.geotoolkit.ogc.xml.v110.TemporalOpsType;
+import org.geotoolkit.ogc.xml.v110.TimeAfterType;
+import org.geotoolkit.ogc.xml.v110.TimeBeforeType;
+import org.geotoolkit.ogc.xml.v110.TimeBeginsType;
+import org.geotoolkit.ogc.xml.v110.TimeBegunByType;
+import org.geotoolkit.ogc.xml.v110.TimeContainsType;
+import org.geotoolkit.ogc.xml.v110.TimeDuringType;
+import org.geotoolkit.ogc.xml.v110.TimeEndedByType;
+import org.geotoolkit.ogc.xml.v110.TimeEndsType;
+import org.geotoolkit.ogc.xml.v110.TimeEqualsType;
+import org.geotoolkit.ogc.xml.v110.TimeMeetsType;
+import org.geotoolkit.ogc.xml.v110.TimeMetByType;
+import org.geotoolkit.ogc.xml.v110.TimeOverlappedByType;
+import org.geotoolkit.ogc.xml.v110.TimeOverlapsType;
 import org.opengis.filter.Filter;
 
 /**
@@ -52,31 +64,31 @@ public class EventTime {
     @XmlElement(namespace = "http://www.opengis.net/ogc")
     private TemporalOpsType temporalOps;
     @XmlElement(name = "TM_Overalps", namespace = "http://www.opengis.net/ogc")
-    private BinaryTemporalOpType tOveralps;
+    private TimeOverlapsType tOveralps;
     @XmlElement(name = "TM_Equals", namespace = "http://www.opengis.net/ogc")
-    private BinaryTemporalOpType tEquals;
+    private TimeEqualsType tEquals;
     @XmlElement(name = "TM_Meets", namespace = "http://www.opengis.net/ogc")
-    private BinaryTemporalOpType tMeets;
+    private TimeMeetsType tMeets;
     @XmlElement(name = "TM_OverlappedBy", namespace = "http://www.opengis.net/ogc")
-    private BinaryTemporalOpType tOverlappedBy;
+    private TimeOverlappedByType tOverlappedBy;
     @XmlElement(name = "TM_EndedBy", namespace = "http://www.opengis.net/ogc")
-    private BinaryTemporalOpType tEndedBy;
+    private TimeEndedByType tEndedBy;
     @XmlElement(name = "TM_Ends", namespace = "http://www.opengis.net/ogc")
-    private BinaryTemporalOpType tEnds;
+    private TimeEndsType tEnds;
     @XmlElement(name = "TM_After", namespace = "http://www.opengis.net/ogc")
-    private BinaryTemporalOpType tAfter;
+    private TimeAfterType tAfter;
     @XmlElement(name = "TM_MetBy", namespace = "http://www.opengis.net/ogc")
-    private BinaryTemporalOpType tMetBy;
+    private TimeMetByType tMetBy;
     @XmlElement(name = "TM_Begins", namespace = "http://www.opengis.net/ogc")
-    private BinaryTemporalOpType tBegins;
+    private TimeBeginsType tBegins;
     @XmlElement(name = "TM_Before", namespace = "http://www.opengis.net/ogc")
-    private BinaryTemporalOpType tBefore;
+    private TimeBeforeType tBefore;
     @XmlElement(name = "TM_BegunBy", namespace = "http://www.opengis.net/ogc")
-    private BinaryTemporalOpType tBegunBy;
+    private TimeBegunByType tBegunBy;
     @XmlElement(name = "TM_Contains", namespace = "http://www.opengis.net/ogc")
-    private BinaryTemporalOpType tContains;
+    private TimeContainsType tContains;
     @XmlElement(name = "TM_During", namespace = "http://www.opengis.net/ogc")
-    private BinaryTemporalOpType tDuring;
+    private TimeDuringType tDuring;
 
     /**
      * An empty constructor used by jaxB
@@ -84,19 +96,30 @@ public class EventTime {
      EventTime(){}
      
     /**
+     * Build a new Event time with T_After parameter
+     */
+     public EventTime(final TimeAfterType tAfter){
+         this.tAfter  = tAfter;
+     }
+     
+    /**
+     * Build a new Event time with T_Before parameter
+     */
+     public EventTime(final TimeBeforeType tBefore){
+         this.tBefore = tBefore;
+     }
+     
+    /**
      * Build a new Event time with T_After parameter or T_Before or T_During
      */
-     public EventTime(final BinaryTemporalOpType tAfter, final BinaryTemporalOpType tBefore,
-             final BinaryTemporalOpType tDuring){
-         this.tAfter  = tAfter;
-         this.tBefore = tBefore;
+     public EventTime(final TimeDuringType tDuring){
          this.tDuring = tDuring;
      }
      
      /**
      * Build a new Event time with T_Equals.
      */
-     public EventTime(final BinaryTemporalOpType tEquals){
+     public EventTime(final TimeEqualsType tEquals){
          this.tEquals = tEquals;
      }
      
@@ -110,91 +133,91 @@ public class EventTime {
     /**
      * Gets the value of the tOveralps property.
      */
-    public BinaryTemporalOpType getTOveralps() {
+    public TimeOverlapsType getTOveralps() {
         return tOveralps;
     }
 
     /**
      * Gets the value of the tEquals property.
      */
-    public BinaryTemporalOpType getTEquals() {
+    public TimeEqualsType getTEquals() {
         return tEquals;
     }
 
     /**
      * Gets the value of the tMeets property.
      */
-    public BinaryTemporalOpType getTMeets() {
+    public TimeMeetsType getTMeets() {
         return tMeets;
     }
 
     /**
      * Gets the value of the tOverlappedBy property.
      */
-    public BinaryTemporalOpType getTOverlappedBy() {
+    public TimeOverlappedByType getTOverlappedBy() {
         return tOverlappedBy;
     }
 
     /**
      * Gets the value of the tEndedBy property.
      */
-    public BinaryTemporalOpType getTEndedBy() {
+    public TimeEndedByType getTEndedBy() {
         return tEndedBy;
     }
 
     /**
      * Gets the value of the tEnds property.
      */
-    public BinaryTemporalOpType getTEnds() {
+    public TimeEndsType getTEnds() {
         return tEnds;
     }
 
     /**
      * Gets the value of the tAfter property.
      */
-    public BinaryTemporalOpType getTAfter() {
+    public TimeAfterType getTAfter() {
         return tAfter;
     }
 
     /**
      * Gets the value of the tMetBy property.
      */
-    public BinaryTemporalOpType getTMetBy() {
+    public TimeMetByType getTMetBy() {
         return tMetBy;
     }
 
     /**
      * Gets the value of the tBegins property.
      */
-    public BinaryTemporalOpType getTBegins() {
+    public TimeBeginsType getTBegins() {
         return tBegins;
     }
 
     /**
      * Gets the value of the tBefore property.
      */
-    public BinaryTemporalOpType getTBefore() {
+    public TimeBeforeType getTBefore() {
         return tBefore;
     }
 
     /**
      * Gets the value of the tBegunBy property.
      */
-    public BinaryTemporalOpType getTBegunBy() {
+    public TimeBegunByType getTBegunBy() {
         return tBegunBy;
     }
 
     /**
      * Gets the value of the tContains property.
      */
-    public BinaryTemporalOpType getTContains() {
+    public TimeContainsType getTContains() {
         return tContains;
     }
 
     /**
      * Gets the value of the tDuring property.
      */
-    public BinaryTemporalOpType getTDuring() {
+    public TimeDuringType getTDuring() {
         return tDuring;
     }
 

@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageWriter;
@@ -37,7 +38,9 @@ import org.geotoolkit.coverage.CoverageStoreFinder;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.image.io.NamedImageStore;
 import org.geotoolkit.image.io.XImageIO;
+import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.storage.DataStoreException;
+import org.geotoolkit.util.logging.Logging;
 import org.opengis.feature.type.Name;
 import org.opengis.parameter.ParameterValueGroup;
 
@@ -49,6 +52,7 @@ import org.opengis.parameter.ParameterValueGroup;
  */
 public class FileCoverageStore extends AbstractCoverageStore{
 
+    private static final Logger LOGGER = Logging.getLogger(FileCoverageStore.class);
     private final File root;
     private final String format;
     private final URL rootPath;
@@ -90,15 +94,16 @@ public class FileCoverageStore extends AbstractCoverageStore{
      *
      * @param candidate Candidate to be a image file.
      */
-    private void test(final File candidate){
+    private void test(final File candidate) {
         if(!candidate.isFile()){
             return;
         }
-        
+
+        ImageReader reader = null;
         try {
             //don't comment this block, This raise an error if no reader for the file can be found
             //this way we are sure that the file is an image.
-            final ImageReader reader = createReader(candidate);
+            reader = createReader(candidate);
             final String fullName = candidate.getName();
             final int idx = fullName.lastIndexOf('.');
             final String filename = fullName.substring(0, idx);
@@ -142,14 +147,21 @@ public class FileCoverageStore extends AbstractCoverageStore{
                     }
                 }
             }
-            
-            reader.dispose();
-            if (reader.getInput() instanceof ImageInputStream) {
-                ((ImageInputStream)reader.getInput()).close();
-            }
+
 
         } catch (Exception ex) {
             //Exception type is not specified cause we can get IOException as IllegalArgumentException.
+            LOGGER.log(Level.WARNING, "Error for file {0} : {1}", new Object[]{candidate.getName(), ex.getMessage()});
+        } finally {
+            try {
+                reader.dispose();
+                if (reader.getInput() instanceof ImageInputStream) {
+                    ((ImageInputStream) reader.getInput()).close();
+                }
+            } catch (Exception e) {
+                LOGGER.log(Level.WARNING, "A coverage reader can't be closed.", e);
+            }
+
         }
     }
     
@@ -179,7 +191,11 @@ public class FileCoverageStore extends AbstractCoverageStore{
     ImageReader createReader(final File candidate) throws IOException{
         final ImageReader reader;
         if("AUTO".equals(format)){
-            reader = XImageIO.getReaderBySuffix(candidate, Boolean.TRUE, Boolean.TRUE);
+            if (!IOUtilities.extension(candidate).isEmpty()) {
+                reader = XImageIO.getReaderBySuffix(candidate, Boolean.FALSE, Boolean.FALSE);
+            } else {
+                reader = XImageIO.getReader(candidate,Boolean.FALSE,Boolean.FALSE);
+            }
         }else{
             final ImageReaderSpi spi = XImageIO.getReaderSpiByFormatName(format);
             reader = spi.createReaderInstance();

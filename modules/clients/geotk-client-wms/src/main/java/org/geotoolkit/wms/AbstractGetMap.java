@@ -454,10 +454,13 @@ public abstract class AbstractGetMap extends AbstractRequest implements GetMapRe
                             }
                         }
                         if(dimensionSupported) {
-                            // TODO: handle it with a cql filter and then get back with the toString method
-                            // in order to handle the AND filter and to filter on several dimensions.
-                            // For now, it only works with one.
-                            map.put("cql_filter", axis.getName().getCode() +"="+ env.getMedian(i));
+                            final String newFilter = axis.getName().getCode() +"="+ env.getMedian(i);
+                            if (map.containsKey("cql_filter")) {
+                                final String previousFilter = map.get("cql_filter");
+                                map.put("cql_filter", previousFilter + " AND " + newFilter);
+                            } else {
+                                map.put("cql_filter", newFilter);
+                            }
                         }
                         
                     } catch (CapabilitiesException ex) {

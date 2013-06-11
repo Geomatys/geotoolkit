@@ -74,8 +74,8 @@ public abstract class JDBCDataStoreFactory extends AbstractFeatureStoreFactory {
              new DefaultParameterDescriptor<String>("user","user name to login as",String.class,null,true);
 
     /** parameter for database password */
-    public static final ParameterDescriptor<String> PASSWD =
-             new DefaultParameterDescriptor<String>("passwd","password used to login",String.class,null,true);
+    public static final ParameterDescriptor<String> PASSWORD =
+             new DefaultParameterDescriptor<String>("password","password used to login",String.class,null,true);
 
     /** parameter for data source */
     public static final ParameterDescriptor<DataSource> DATASOURCE =
@@ -100,6 +100,10 @@ public abstract class JDBCDataStoreFactory extends AbstractFeatureStoreFactory {
     /** Maximum amount of time the pool will wait when trying to grab a new connection **/
     public static final ParameterDescriptor<Integer> MAXWAIT =
              new DefaultParameterDescriptor<Integer>("Connection timeout","number of seconds the connection pool wait for login",Integer.class,20,false);
+    
+    /** parameter for table to load **/
+    public static final ParameterDescriptor<String> TABLE =
+             new DefaultParameterDescriptor<String>("Table Name","Table Name",String.class,null,false);
 
     @Override
     public CharSequence getDisplayName() {
@@ -263,7 +267,7 @@ public abstract class JDBCDataStoreFactory extends AbstractFeatureStoreFactory {
         dataSource.setUsername(user);
 
         // password
-        final String passwd = (String) params.parameter(PASSWD.getName().toString()).getValue();
+        final String passwd = (String) params.parameter(PASSWORD.getName().toString()).getValue();
         if (passwd != null) {
             dataSource.setPassword(passwd);
         }
