@@ -75,6 +75,8 @@ import static org.apache.sis.util.ArgumentChecks.ensureBetween;
  *
  * @since 3.07
  * @module
+ *
+ * @deprecated No public replacement (actually moved to {@link org.apache.sis.internal.storage.ChannelImageInputStream}).
  */
 public class ChannelImageInputStream extends InputStream implements ImageInputStream {
     /**

@@ -20,16 +20,11 @@ package org.geotoolkit.internal.io;
 import java.io.*;
 import java.net.URI;
 import java.net.URL;
-import java.net.URLDecoder;
-import java.net.URISyntaxException;
 import java.net.MalformedURLException;
-import java.nio.charset.Charset;
-import java.util.Locale;
 import java.util.StringTokenizer;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import javax.imageio.stream.ImageInputStream;
-import static java.lang.Character.isLetter;
 
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.resources.Errors;
@@ -150,42 +145,12 @@ public final class IOUtilities extends Static {
      * @return The encoded path.
      *
      * @since 3.15
+     *
+     * @deprecated Moved to Apache SIS as {@link org.apache.sis.internal.storage.IOUtilities#encodeURI(String)}.
      */
+    @Deprecated
     public static String encodeURI(final String path) {
-        Charset encoding = null;
-        StringBuilder buffer = null;
-        final int length = path.length();
-        for (int i=0; i<length; i++) {
-            final char c = path.charAt(i);
-            if (!Character.isSpaceChar(c) && !Character.isISOControl(c) && c != '%') {
-                /*
-                 * The character is valid, or is punction character, or is a reserved character.
-                 * All those characters should be handled properly by the URI(String) constructor.
-                 */
-                if (buffer != null) {
-                    buffer.append(c);
-                }
-                continue;
-            }
-            /*
-             * The character is invalid, so we need to escape it. Note that the encoding
-             * is fixed to UTF-8 as of java.net.URI specification (see its class javadoc).
-             */
-            if (buffer == null) {
-                buffer = new StringBuilder(path);
-                buffer.setLength(i);
-                encoding = Charset.forName("UTF-8");
-            }
-            for (final byte b : String.valueOf(c).getBytes(encoding)) {
-                buffer.append('%');
-                final String hex = Integer.toHexString(b & 0xFF).toUpperCase(Locale.US);
-                if (hex.length() < 2) {
-                    buffer.append('0');
-                }
-                buffer.append(hex);
-            }
-        }
-        return (buffer != null) ? buffer.toString() : path;
+        return org.apache.sis.internal.storage.IOUtilities.encodeURI(path);
     }
 
     /**
@@ -205,35 +170,12 @@ public final class IOUtilities extends Static {
      * @throws IOException if the URL can not be converted to a URI.
      *
      * @since 3.20 (derived from 3.05)
+     *
+     * @deprecated Moved to Apache SIS as {@link org.apache.sis.internal.storage.IOUtilities#toURI}.
      */
+    @Deprecated
     public static URI toURI(final URL url, final String encoding) throws IOException {
-        if (url == null) {
-            return null;
-        }
-        /*
-         * Convert the URL to an URI, taking in account the encoding if any.
-         *
-         * Note: URL.toURI() is implemented as new URI(URL.toString()) where toString()
-         * delegates to toExternalForm(), and all those methods are final. So we really
-         * don't lost anything by doing those steps ourself.
-         */
-        String path = url.toExternalForm();
-        if (encoding != null) {
-            path = URLDecoder.decode(path, encoding);
-        }
-        path = encodeURI(path);
-        try {
-            return new URI(path);
-        } catch (URISyntaxException cause) {
-            /*
-             * Occurs only if the URL is not compliant with RFC 2396. Otherwise every URL
-             * should succeed, so a failure can actually be considered as a malformed URL.
-             */
-            final MalformedURLException e = new MalformedURLException(concatenate(
-                    Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_2, "URL", path), cause));
-            e.initCause(cause);
-            throw e;
-        }
+        return org.apache.sis.internal.storage.IOUtilities.toURI(url, encoding);
     }
 
     /**
@@ -254,54 +196,12 @@ public final class IOUtilities extends Static {
      * @throws IOException if the URL can not be converted to a file.
      *
      * @since 3.05
+     *
+     * @deprecated Moved to Apache SIS as {@link org.apache.sis.internal.storage.IOUtilities#toFile}.
      */
+    @Deprecated
     public static File toFile(final URL url, final String encoding) throws IOException {
-        if (url == null) {
-            return null;
-        }
-        final URI uri = toURI(url, encoding);
-        /*
-         * We really want to call the File constructor expecting a URI argument,
-         * not the constructor expecting a String argument, because the one for
-         * the URI argument performs additional platform-specific parsing.
-         */
-        try {
-            return new File(uri);
-        } catch (IllegalArgumentException cause) {
-            /*
-             * Typically happen when the URI contains fragment that can not be represented
-             * in a File (e.g. a Query part), so it could be considered as if the URI with
-             * the fragment part can not represent an existing file.
-             */
-            final MalformedURLException e = new MalformedURLException(concatenate(
-                    Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_2, "URL", url), cause));
-            e.initCause(cause);
-            throw e;
-        }
-    }
-
-    /**
-     * Returns {@code true} if the given string seems to be an ordinary file.
-     * If {@code false}, then the path is more likely to be a URL.
-     *
-     * @param  path The path to check.
-     * @return {@code true} if the path seems to be an ordinary file path.
-     *
-     * @since 3.20 (derived from 3.00)
-     */
-    private static boolean isFile(final String path) {
-        if (path.indexOf('?') < 0 && path.indexOf('#') < 0) {
-            final int split = path.indexOf(':');
-            /*
-             * If the ':' character is found, the part before it is probably a protocol in a URL,
-             * except in the particular case where there is just one letter before ':'. In such
-             * case, it may be the drive letter of a Windows file.
-             */
-            if (split<0 || (split==1 && isLetter(path.charAt(0)) && !path.regionMatches(2, "//", 0, 2))) {
-                return true;
-            }
-        }
-        return false;
+        return org.apache.sis.internal.storage.IOUtilities.toFile(url, encoding);
     }
 
     /**
@@ -310,16 +210,12 @@ public final class IOUtilities extends Static {
      * @param  path The path to parse.
      * @return The path as a {@link File} if possible, or a {@link URL} otherwise.
      * @throws IOException If the given path is not a file and can't be parsed as a URL.
+     *
+     * @deprecated Moved to Apache SIS as {@link org.apache.sis.internal.storage.IOUtilities#toFileOrURL}.
      */
+    @Deprecated
     public static Object toFileOrURL(final String path) throws IOException {
-        if (isFile(path)) {
-            return new File(path);
-        }
-        final URL url = new URL(path);
-        if (url.getProtocol().equalsIgnoreCase("file")) {
-            return toFile(url, null);
-        }
-        return url;
+        return org.apache.sis.internal.storage.IOUtilities.toFileOrURL(path, null);
     }
 
     /**
@@ -384,20 +280,12 @@ public final class IOUtilities extends Static {
      * @return The filename in the given path.
      *
      * @since 3.07
+     *
+     * @deprecated Moved to Apache SIS as {@link org.apache.sis.internal.storage.IOUtilities#filename(String)}.
      */
+    @Deprecated
     public static String name(final Object path) {
-        if (path instanceof File) {
-            return ((File) path).getName();
-        }
-        final String name;
-        if (path instanceof URL) {
-            name = ((URL) path).getPath();
-        } else if (path instanceof URI) {
-            name = ((URI) path).getPath();
-        } else {
-            name = path.toString();
-        }
-        return name.substring(name.lastIndexOf('/') + 1);
+        return org.apache.sis.internal.storage.IOUtilities.filename(path);
     }
 
     /**
@@ -406,25 +294,12 @@ public final class IOUtilities extends Static {
      *
      * @param  path The path as a {@link String}, {@link File}, {@link URL} or {@link URI}.
      * @return The filename extension in the given path, or an empty string if none.
+     *
+     * @deprecated Moved to Apache SIS as {@link org.apache.sis.internal.storage.IOUtilities#extension(String)}.
      */
+    @Deprecated
     public static String extension(final Object path) {
-        final String name;
-        final int base;
-        if (path instanceof File) {
-            name = ((File) path).getName();
-            base = 0;
-        } else {
-            if (path instanceof URL) {
-                name = ((URL) path).getPath();
-            } else if (path instanceof URI) {
-                name = ((URI) path).getPath();
-            } else {
-                name = path.toString();
-            }
-            base = name.lastIndexOf('/');
-        }
-        final int i = name.lastIndexOf('.');
-        return (i > base) ? name.substring(i+1).trim() : "";
+        return org.apache.sis.internal.storage.IOUtilities.extension(path);
     }
 
     /**
