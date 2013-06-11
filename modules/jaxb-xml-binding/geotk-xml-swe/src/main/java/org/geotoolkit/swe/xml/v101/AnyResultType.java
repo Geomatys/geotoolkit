@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.swe.xml.v101;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -23,7 +24,6 @@ import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.v311.ReferenceType;
 import org.geotoolkit.internal.sql.table.Entry;
 import org.geotoolkit.swe.xml.AnyResult;
-import org.geotoolkit.util.Utilities;
 
 /**
  * Enregistrement permettant de regrouper plusieur type de resultat en un meme type.
@@ -134,9 +134,9 @@ public class AnyResultType implements AnyResult, Entry {
         if (object instanceof AnyResultType) {
             final AnyResultType that = (AnyResultType) object;
 
-            return Utilities.equals(this.array,     that.array)    &&
-                   Utilities.equals(this.id,        that.id)          &&
-                   Utilities.equals(this.reference, that.reference);
+            return Objects.equals(this.array,     that.array)    &&
+                   Objects.equals(this.id,        that.id)          &&
+                   Objects.equals(this.reference, that.reference);
         }
         return false;
     }

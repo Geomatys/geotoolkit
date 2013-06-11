@@ -18,6 +18,7 @@ package org.geotoolkit.xsd.xml.v2001;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -264,7 +265,7 @@ public abstract class Group extends Annotated {
                         if (o2 instanceof JAXBElement) {
                             o2 = ((JAXBElement)o2).getValue();
                         }
-                        if (!Utilities.equals(o1, o2)) {
+                        if (!Objects.equals(o1, o2)) {
                             part = false;
                             break;
                         }
@@ -273,10 +274,10 @@ public abstract class Group extends Annotated {
             } else if (this.particle == null && that.particle == null) {
                 part = true;
             }
-            return Utilities.equals(this.maxOccurs,                 that.maxOccurs) &&
-                   Utilities.equals(this.minOccurs,                 that.minOccurs) &&
-                   Utilities.equals(this.name,                      that.name) &&
-                   Utilities.equals(this.ref,                       that.ref) &&
+            return Objects.equals(this.maxOccurs,                 that.maxOccurs) &&
+                   Objects.equals(this.minOccurs,                 that.minOccurs) &&
+                   Objects.equals(this.name,                      that.name) &&
+                   Objects.equals(this.ref,                       that.ref) &&
                    part;
         }
         return false;

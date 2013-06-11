@@ -18,6 +18,7 @@ package org.geotoolkit.sml.xml.v101;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.logging.Logger;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -48,7 +49,6 @@ import org.geotoolkit.sml.xml.Component;
 import org.geotoolkit.sml.xml.ComponentArray;
 import org.geotoolkit.sml.xml.System;
 import org.geotoolkit.sml.xml.SMLMember;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -478,19 +478,19 @@ public class SensorML extends AbstractSensorML {
 
         if (object instanceof SensorML) {
             final SensorML that = (SensorML) object;
-            return Utilities.equals(this.capabilities,       that.capabilities)       &&
-                   Utilities.equals(this.characteristics,    that.characteristics)    &&
-                   Utilities.equals(this.classification,     that.classification)     &&
-                   Utilities.equals(this.contact,            that.contact)            &&
-                   Utilities.equals(this.documentation,      that.contact)            &&
-                   Utilities.equals(this.history,            that.history)            &&
-                   Utilities.equals(this.identification,     that.identification)     &&
-                   Utilities.equals(this.keywords,           that.keywords)           &&
-                   Utilities.equals(this.legalConstraint,    that.legalConstraint)    &&
-                   Utilities.equals(this.member,             that.member)             &&
-                   Utilities.equals(this.securityConstraint, that.securityConstraint) &&
-                   Utilities.equals(this.validTime,          that.validTime)          &&
-                   Utilities.equals(this.version,            that.version);
+            return Objects.equals(this.capabilities,       that.capabilities)       &&
+                   Objects.equals(this.characteristics,    that.characteristics)    &&
+                   Objects.equals(this.classification,     that.classification)     &&
+                   Objects.equals(this.contact,            that.contact)            &&
+                   Objects.equals(this.documentation,      that.contact)            &&
+                   Objects.equals(this.history,            that.history)            &&
+                   Objects.equals(this.identification,     that.identification)     &&
+                   Objects.equals(this.keywords,           that.keywords)           &&
+                   Objects.equals(this.legalConstraint,    that.legalConstraint)    &&
+                   Objects.equals(this.member,             that.member)             &&
+                   Objects.equals(this.securityConstraint, that.securityConstraint) &&
+                   Objects.equals(this.validTime,          that.validTime)          &&
+                   Objects.equals(this.version,            that.version);
         }
         return false;
     }
@@ -960,22 +960,22 @@ public class SensorML extends AbstractSensorML {
                 final Member that = (Member) object;
                 boolean proc = false;
                 if (this.process != null && that.process != null) {
-                    proc = Utilities.equals(this.process.getValue(), that.process.getValue());
+                    proc = Objects.equals(this.process.getValue(), that.process.getValue());
                 } else if (this.process == null && that.process == null) {
                     proc = true;
                 }
 
-                return Utilities.equals(this.actuate,      that.actuate)       &&
-                       Utilities.equals(this.arcrole,      that.arcrole)       &&
-                       Utilities.equals(this.contactList,  that.contactList)   &&
-                       Utilities.equals(this.documentList, that.documentList)  &&
-                       Utilities.equals(this.href,         that.href)          &&
+                return Objects.equals(this.actuate,      that.actuate)       &&
+                       Objects.equals(this.arcrole,      that.arcrole)       &&
+                       Objects.equals(this.contactList,  that.contactList)   &&
+                       Objects.equals(this.documentList, that.documentList)  &&
+                       Objects.equals(this.href,         that.href)          &&
                        proc                                                    &&
-                       Utilities.equals(this.remoteSchema, that.remoteSchema)  &&
-                       Utilities.equals(this.role,         that.role)          &&
-                       Utilities.equals(this.show,         that.show)          &&
-                       Utilities.equals(this.title,        that.title)         &&
-                       Utilities.equals(this.type,         that.type);
+                       Objects.equals(this.remoteSchema, that.remoteSchema)  &&
+                       Objects.equals(this.role,         that.role)          &&
+                       Objects.equals(this.show,         that.show)          &&
+                       Objects.equals(this.title,        that.title)         &&
+                       Objects.equals(this.type,         that.type);
             }
             return false;
         }

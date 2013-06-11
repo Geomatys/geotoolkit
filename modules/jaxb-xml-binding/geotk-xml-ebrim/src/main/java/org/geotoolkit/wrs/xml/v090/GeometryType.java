@@ -16,13 +16,13 @@
  */
 package org.geotoolkit.wrs.xml.v090;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -137,9 +137,9 @@ public class GeometryType extends WRSExtrinsicObjectType {
         }
         if (obj instanceof GeometryType && super.equals(obj)) {
             final GeometryType that = (GeometryType) obj;
-            return Utilities.equals(this.dimension,    that.dimension) &&
-                   Utilities.equals(this.geometryType, that.geometryType) &&
-                   Utilities.equals(this.srid,         that.srid);
+            return Objects.equals(this.dimension,    that.dimension) &&
+                   Objects.equals(this.geometryType, that.geometryType) &&
+                   Objects.equals(this.srid,         that.srid);
         }
         return false;
     }

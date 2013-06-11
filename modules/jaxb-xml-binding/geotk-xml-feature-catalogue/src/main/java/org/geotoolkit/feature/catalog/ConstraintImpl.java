@@ -17,12 +17,12 @@
 
 package org.geotoolkit.feature.catalog;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.util.Utilities;
 import org.opengis.feature.catalog.Constraint;
 
 
@@ -114,7 +114,7 @@ public class ConstraintImpl implements Constraint {
         if (object instanceof ConstraintImpl) {
             final ConstraintImpl that = (ConstraintImpl) object;
             
-            return Utilities.equals(this.description, that.description);
+            return Objects.equals(this.description, that.description);
         }
         return false;
     }

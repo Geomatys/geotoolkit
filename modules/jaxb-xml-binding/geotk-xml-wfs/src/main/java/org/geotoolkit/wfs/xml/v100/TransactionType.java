@@ -19,6 +19,7 @@ package org.geotoolkit.wfs.xml.v100;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import javax.xml.bind.annotation.*;
 import org.geotoolkit.util.Utilities;
 import org.apache.sis.util.Version;
@@ -309,9 +310,9 @@ public class TransactionType implements Transaction {
         }
         if (object instanceof TransactionType) {
             final TransactionType that = (TransactionType) object;
-            return  Utilities.equals(this.insertOrUpdateOrDelete, that.insertOrUpdateOrDelete) &&
-                    Utilities.equals(this.lockId, that.lockId) &&
-                    Utilities.equals(this.releaseAction, that.releaseAction);
+            return  Objects.equals(this.insertOrUpdateOrDelete, that.insertOrUpdateOrDelete) &&
+                    Objects.equals(this.lockId, that.lockId) &&
+                    Objects.equals(this.releaseAction, that.releaseAction);
         }
         return false;
     }

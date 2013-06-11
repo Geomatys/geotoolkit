@@ -17,10 +17,9 @@
 package org.geotoolkit.style;
 
 
-import org.apache.sis.util.Classes;
+import java.util.Objects;
+import org.geotoolkit.util.converter.Classes;
 import javax.measure.unit.Unit;
-
-import org.geotoolkit.util.Utilities;
 
 import org.opengis.style.Description;
 import org.opengis.style.Graphic;
@@ -88,8 +87,8 @@ public class DefaultPointSymbolizer extends AbstractSymbolizer implements PointS
         return this.graphic.equals(other.graphic)
                 && this.desc.equals(other.desc)
                 && this.uom.equals(other.uom)
-                && Utilities.equals(this.geom, other.geom)
-                && Utilities.equals(this.name, other.name);
+                && Objects.equals(this.geom, other.geom)
+                && Objects.equals(this.name, other.name);
 
     }
 

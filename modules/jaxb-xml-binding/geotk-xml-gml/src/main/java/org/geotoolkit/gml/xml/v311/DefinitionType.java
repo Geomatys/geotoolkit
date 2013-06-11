@@ -16,11 +16,11 @@
  */
 package org.geotoolkit.gml.xml.v311;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 import org.apache.sis.util.ComparisonMode;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -96,7 +96,7 @@ public class DefinitionType extends DefinitionBaseType {
         }
         if (object instanceof DefinitionType && super.equals(object, mode)) {
             final DefinitionType that = (DefinitionType) object;
-            return Utilities.equals(this.remarks, that.remarks);
+            return Objects.equals(this.remarks, that.remarks);
         }
         return false;
     }

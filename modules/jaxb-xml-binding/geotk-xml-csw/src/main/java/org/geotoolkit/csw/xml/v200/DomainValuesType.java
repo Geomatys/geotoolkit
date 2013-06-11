@@ -17,6 +17,7 @@
 package org.geotoolkit.csw.xml.v200;
 
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -25,7 +26,6 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
 import org.geotoolkit.csw.xml.DomainValues;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -276,13 +276,13 @@ public class DomainValuesType implements DomainValues {
         if (object instanceof DomainValuesType) {
             final DomainValuesType that = (DomainValuesType) object;
 
-            return  Utilities.equals(this.conceptualScheme, that.conceptualScheme) &&
-                    Utilities.equals(this.listOfValues,     that.listOfValues) &&
-                    Utilities.equals(this.parameterName,    that.parameterName) &&
-                    Utilities.equals(this.propertyName,     that.propertyName) &&
-                    Utilities.equals(this.rangeOfValues,    that.rangeOfValues) &&
-                    Utilities.equals(this.type,             that.type) &&
-                    Utilities.equals(this.uom,              that.uom);
+            return  Objects.equals(this.conceptualScheme, that.conceptualScheme) &&
+                    Objects.equals(this.listOfValues,     that.listOfValues) &&
+                    Objects.equals(this.parameterName,    that.parameterName) &&
+                    Objects.equals(this.propertyName,     that.propertyName) &&
+                    Objects.equals(this.rangeOfValues,    that.rangeOfValues) &&
+                    Objects.equals(this.type,             that.type) &&
+                    Objects.equals(this.uom,              that.uom);
         }
         return false;
     }

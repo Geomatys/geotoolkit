@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.style;
 
-import org.geotoolkit.util.Utilities;
+import java.util.Objects;
 import org.opengis.filter.expression.Function;
 import org.opengis.style.ColorMap;
 import org.opengis.style.StyleVisitor;
@@ -76,7 +76,7 @@ public class DefaultColorMap implements ColorMap{
 
         DefaultColorMap other = (DefaultColorMap) obj;
 
-        return Utilities.equals(this.function, other.function);
+        return Objects.equals(this.function, other.function);
     }
 
     /**

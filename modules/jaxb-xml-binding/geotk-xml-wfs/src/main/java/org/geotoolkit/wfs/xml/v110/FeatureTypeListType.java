@@ -18,6 +18,7 @@ package org.geotoolkit.wfs.xml.v110;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -132,8 +133,8 @@ public class FeatureTypeListType implements FeatureTypeList {
         if (object instanceof FeatureTypeListType) {
             final FeatureTypeListType that = (FeatureTypeListType) object;
 
-            return Utilities.equals(this.featureType, that.featureType) &&
-                   Utilities.equals(this.operations,  that.operations);
+            return Objects.equals(this.featureType, that.featureType) &&
+                   Objects.equals(this.operations,  that.operations);
             }
         return false;
     }

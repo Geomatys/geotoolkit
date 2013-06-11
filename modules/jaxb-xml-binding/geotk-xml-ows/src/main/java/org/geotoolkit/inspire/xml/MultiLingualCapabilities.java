@@ -16,13 +16,13 @@
  */
 package org.geotoolkit.inspire.xml;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ows.xml.v100.AbstractExtendedCapabilitiesType;
-import org.geotoolkit.util.Utilities;
 
 /**
  *
@@ -75,7 +75,7 @@ public class MultiLingualCapabilities extends AbstractExtendedCapabilitiesType {
         }
         if (object instanceof MultiLingualCapabilities) {
             final MultiLingualCapabilities that = (MultiLingualCapabilities) object;
-            return Utilities.equals(this.multiLingualCapabilities, that.multiLingualCapabilities);
+            return Objects.equals(this.multiLingualCapabilities, that.multiLingualCapabilities);
         }
         return false;
     }

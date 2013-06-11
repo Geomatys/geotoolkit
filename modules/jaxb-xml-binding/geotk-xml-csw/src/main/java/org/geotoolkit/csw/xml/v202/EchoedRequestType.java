@@ -16,11 +16,11 @@
  */
 package org.geotoolkit.csw.xml.v202;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -85,7 +85,7 @@ public class EchoedRequestType {
         }
         if (object instanceof EchoedRequestType) {
             final EchoedRequestType that = (EchoedRequestType) object;
-            return Utilities.equals(this.any, that.any);
+            return Objects.equals(this.any, that.any);
         }
         return false;
     }

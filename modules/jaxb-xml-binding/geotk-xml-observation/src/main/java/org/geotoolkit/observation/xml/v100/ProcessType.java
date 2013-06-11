@@ -16,13 +16,13 @@
  */
 package org.geotoolkit.observation.xml.v100;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.internal.sql.table.Entry;
 import org.geotoolkit.observation.xml.Process;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -91,7 +91,7 @@ public class ProcessType implements Process, Entry {
         }
         if (object instanceof ProcessType) {
             final ProcessType that = (ProcessType) object;
-            return Utilities.equals(this.href, that.href);
+            return Objects.equals(this.href, that.href);
         }
         return false;
     }

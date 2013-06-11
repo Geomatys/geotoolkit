@@ -18,6 +18,7 @@ package org.geotoolkit.swe.xml.v101;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -33,7 +34,6 @@ import org.geotoolkit.swe.xml.BinaryBlockMemberBlock;
 import org.geotoolkit.swe.xml.BinaryBlockMemberComponent;
 import org.geotoolkit.swe.xml.ByteEncoding;
 import org.geotoolkit.swe.xml.ByteOrder;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -196,10 +196,10 @@ public class BinaryBlock extends AbstractEncodingType  implements AbstractBinary
         if (object instanceof BinaryBlock && super.equals(object)) {
             final BinaryBlock that = (BinaryBlock) object;
 
-            return Utilities.equals(this.byteEncoding, that.byteEncoding) &&
-                   Utilities.equals(this.byteLength,   that.byteLength)   &&
-                   Utilities.equals(this.member,       that.member)   &&
-                   Utilities.equals(this.byteOrder,    that.byteOrder);
+            return Objects.equals(this.byteEncoding, that.byteEncoding) &&
+                   Objects.equals(this.byteLength,   that.byteLength)   &&
+                   Objects.equals(this.member,       that.member)   &&
+                   Objects.equals(this.byteOrder,    that.byteOrder);
         }
         return false;
     }
@@ -330,8 +330,8 @@ public class BinaryBlock extends AbstractEncodingType  implements AbstractBinary
             if (object instanceof Member) {
                 final Member that = (Member) object;
 
-                return Utilities.equals(this.block, that.block) &&
-                       Utilities.equals(this.component, that.component);
+                return Objects.equals(this.block, that.block) &&
+                       Objects.equals(this.component, that.component);
             }
             return false;
         }
@@ -510,12 +510,12 @@ public class BinaryBlock extends AbstractEncodingType  implements AbstractBinary
                 if (object instanceof Block) {
                     final Block that = (Block) object;
 
-                    return Utilities.equals(this.byteLength,  that.byteLength)                &&
-                           Utilities.equals(this.encryption,  that.encryption)                &&
-                           Utilities.equals(this.paddingBytesAfter,  that.paddingBytesAfter)  &&
-                           Utilities.equals(this.paddingBytesBefore, that.paddingBytesBefore) &&
-                           Utilities.equals(this.ref,         that.ref)                       &&
-                           Utilities.equals(this.compression, that.compression);
+                    return Objects.equals(this.byteLength,  that.byteLength)                &&
+                           Objects.equals(this.encryption,  that.encryption)                &&
+                           Objects.equals(this.paddingBytesAfter,  that.paddingBytesAfter)  &&
+                           Objects.equals(this.paddingBytesBefore, that.paddingBytesBefore) &&
+                           Objects.equals(this.ref,         that.ref)                       &&
+                           Objects.equals(this.compression, that.compression);
                 }
                 return false;
             }
@@ -723,13 +723,13 @@ public class BinaryBlock extends AbstractEncodingType  implements AbstractBinary
                 if (object instanceof Component) {
                     final Component that = (Component) object;
 
-                    return Utilities.equals(this.bitLength,   that.bitLength)                 &&
-                           Utilities.equals(this.encryption,  that.encryption)                &&
-                           Utilities.equals(this.dataType,    that.dataType)                  &&
-                           Utilities.equals(this.paddingBitsAfter,  that.paddingBitsAfter)    &&
-                           Utilities.equals(this.paddingBitsBefore, that.paddingBitsBefore)   &&
-                           Utilities.equals(this.ref,         that.ref)                       &&
-                           Utilities.equals(this.significantBits, that.significantBits);
+                    return Objects.equals(this.bitLength,   that.bitLength)                 &&
+                           Objects.equals(this.encryption,  that.encryption)                &&
+                           Objects.equals(this.dataType,    that.dataType)                  &&
+                           Objects.equals(this.paddingBitsAfter,  that.paddingBitsAfter)    &&
+                           Objects.equals(this.paddingBitsBefore, that.paddingBitsBefore)   &&
+                           Objects.equals(this.ref,         that.ref)                       &&
+                           Objects.equals(this.significantBits, that.significantBits);
                 }
                 return false;
             }

@@ -19,6 +19,7 @@ package org.geotoolkit.ebrim.xml.v300;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -26,7 +27,6 @@ import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlMixed;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -145,14 +145,14 @@ public class QueryExpressionType {
                         if (thatCont instanceof JAXBElement) {
                             thatCont = ((JAXBElement)thatCont).getValue();
                         }
-                        if (!Utilities.equals(thisCont, thatCont)) {
+                        if (!Objects.equals(thisCont, thatCont)) {
                             return false;
                         }
                     }
                     eq = true;
                 }
             }
-            return eq && Utilities.equals(this.queryLanguage,   that.queryLanguage);
+            return eq && Objects.equals(this.queryLanguage,   that.queryLanguage);
         }
         return false;
     }

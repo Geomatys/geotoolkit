@@ -16,10 +16,8 @@
  */
 package org.geotoolkit.xsd.xml.v2001;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAnyAttribute;
@@ -30,7 +28,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -148,10 +145,10 @@ public class Documentation {
         }
         if (object instanceof Documentation) {
             final Documentation that = (Documentation) object;
-            return Utilities.equals(this.content,         that.content)         &&
-                   Utilities.equals(this.lang,            that.lang)            &&
-                   Utilities.equals(this.otherAttributes, that.otherAttributes) &&
-                   Utilities.equals(this.source,          that.source);
+            return Objects.equals(this.content,         that.content)         &&
+                   Objects.equals(this.lang,            that.lang)            &&
+                   Objects.equals(this.otherAttributes, that.otherAttributes) &&
+                   Objects.equals(this.source,          that.source);
         }
         return false;
     }

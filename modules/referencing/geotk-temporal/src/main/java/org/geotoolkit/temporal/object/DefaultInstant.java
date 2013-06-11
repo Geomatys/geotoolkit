@@ -18,7 +18,7 @@
 package org.geotoolkit.temporal.object;
 
 import java.util.Collection;
-import org.geotoolkit.util.Utilities;
+import java.util.Objects;
 import org.opengis.temporal.Instant;
 import org.opengis.temporal.Period;
 import org.opengis.temporal.Position;
@@ -109,9 +109,9 @@ public class DefaultInstant extends DefaultTemporalGeometricPrimitive implements
         if (object instanceof DefaultInstant) {
             final DefaultInstant that = (DefaultInstant) object;
 
-            return Utilities.equals(this.position, that.position) &&
-                    Utilities.equals(this.begunBy, that.begunBy) &&
-                    Utilities.equals(this.endBy, that.endBy);
+            return Objects.equals(this.position, that.position) &&
+                    Objects.equals(this.begunBy, that.begunBy) &&
+                    Objects.equals(this.endBy, that.endBy);
         }
         return false;
     }

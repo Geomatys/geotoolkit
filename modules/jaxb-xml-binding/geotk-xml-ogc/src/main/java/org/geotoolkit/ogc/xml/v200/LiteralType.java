@@ -20,6 +20,7 @@ package org.geotoolkit.ogc.xml.v200;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAnyElement;
@@ -229,8 +230,8 @@ public class LiteralType implements XMLLiteral {
         }
         if (object instanceof LiteralType) {
             final LiteralType that = (LiteralType) object;
-            return Utilities.equals(this.content, that.content) &&
-                   Utilities.equals(this.type,    that.type);
+            return Objects.equals(this.content, that.content) &&
+                   Objects.equals(this.type,    that.type);
         }
         return false;
     }

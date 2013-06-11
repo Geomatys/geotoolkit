@@ -20,13 +20,13 @@ package org.geotoolkit.wfs.xml.v200;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.wfs.xml.IdentifierGenerationOptionType;
 import org.geotoolkit.wfs.xml.InsertElement;
 
@@ -161,9 +161,9 @@ public class InsertType extends AbstractTransactionActionType implements InsertE
         
         if (obj instanceof InsertType) {
             InsertType that = (InsertType) obj;
-            return Utilities.equals(this.any, that.any) &&
-                   Utilities.equals(this.inputFormat, that.inputFormat) &&
-                   Utilities.equals(this.srsName, that.srsName);
+            return Objects.equals(this.any, that.any) &&
+                   Objects.equals(this.inputFormat, that.inputFormat) &&
+                   Objects.equals(this.srsName, that.srsName);
         }
         return false;
     }

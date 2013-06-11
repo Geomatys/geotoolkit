@@ -18,11 +18,11 @@
 package org.geotoolkit.inspire.xml.vs;
 
 import java.util.Date;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.util.Utilities;
 import org.opengis.metadata.citation.OnlineResource;
 import org.opengis.metadata.citation.ResponsibleParty;
 import org.opengis.metadata.extent.Extent;
@@ -289,17 +289,17 @@ public class ExtendedCapabilitiesType {
         if (object instanceof ExtendedCapabilitiesType) {
             final ExtendedCapabilitiesType that = (ExtendedCapabilitiesType) object;
 
-            return Utilities.equals(this.conformity, that.conformity) &&
-                   Utilities.equals(this.currentLanguage, that.currentLanguage) &&
-                   Utilities.equals(this.inpireKeywords, that.inpireKeywords) &&
-                   Utilities.equals(this.languages, that.languages) &&
-                   Utilities.equals(this.metadataDate, that.metadataDate) &&
-                   Utilities.equals(this.metadataPointOfContact, that.metadataPointOfContact) &&
-                   Utilities.equals(this.metadataUrl, that.metadataUrl) &&
-                   Utilities.equals(this.resourcelocator, that.resourcelocator) &&
-                   Utilities.equals(this.spatialDataService, that.spatialDataService) &&
-                   Utilities.equals(this.temporalRefererence, that.temporalRefererence) &&
-                   Utilities.equals(this.resourceType, that.resourceType);
+            return Objects.equals(this.conformity, that.conformity) &&
+                   Objects.equals(this.currentLanguage, that.currentLanguage) &&
+                   Objects.equals(this.inpireKeywords, that.inpireKeywords) &&
+                   Objects.equals(this.languages, that.languages) &&
+                   Objects.equals(this.metadataDate, that.metadataDate) &&
+                   Objects.equals(this.metadataPointOfContact, that.metadataPointOfContact) &&
+                   Objects.equals(this.metadataUrl, that.metadataUrl) &&
+                   Objects.equals(this.resourcelocator, that.resourcelocator) &&
+                   Objects.equals(this.spatialDataService, that.spatialDataService) &&
+                   Objects.equals(this.temporalRefererence, that.temporalRefererence) &&
+                   Objects.equals(this.resourceType, that.resourceType);
         }
         return false;
     }

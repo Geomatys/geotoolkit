@@ -18,6 +18,7 @@ package org.geotoolkit.gml.xml.v311;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -479,23 +480,23 @@ public class LocationPropertyType implements LocationProperty {
 
             boolean geom = false;
             if (this.abstractGeometry != null && that.abstractGeometry != null) {
-                geom = Utilities.equals(this.abstractGeometry.getValue(),   that.abstractGeometry.getValue());
+                geom = Objects.equals(this.abstractGeometry.getValue(),   that.abstractGeometry.getValue());
             } else if (this.abstractGeometry == null && that.abstractGeometry == null) {
                 geom = true;
             }
 
-            return Utilities.equals(this.actuate,            that.actuate)          &&
-                   Utilities.equals(this._null,              that._null)            &&
-                   Utilities.equals(this.arcrole,            that.arcrole)          &&
-                   Utilities.equals(this.type,               that.type)             &&
-                   Utilities.equals(this.href,               that.href)             &&
-                   Utilities.equals(this.locationKeyWord,    that.locationKeyWord)  &&
-                   Utilities.equals(this.locationString,     that.locationString)   &&
-                   Utilities.equals(this.nilReason,          that.nilReason)        &&
-                   Utilities.equals(this.remoteSchema,       that.remoteSchema)     &&
-                   Utilities.equals(this.show,               that.show)             &&
-                   Utilities.equals(this.role,               that.role)             &&
-                   Utilities.equals(this.title,              that.title)            &&
+            return Objects.equals(this.actuate,            that.actuate)          &&
+                   Objects.equals(this._null,              that._null)            &&
+                   Objects.equals(this.arcrole,            that.arcrole)          &&
+                   Objects.equals(this.type,               that.type)             &&
+                   Objects.equals(this.href,               that.href)             &&
+                   Objects.equals(this.locationKeyWord,    that.locationKeyWord)  &&
+                   Objects.equals(this.locationString,     that.locationString)   &&
+                   Objects.equals(this.nilReason,          that.nilReason)        &&
+                   Objects.equals(this.remoteSchema,       that.remoteSchema)     &&
+                   Objects.equals(this.show,               that.show)             &&
+                   Objects.equals(this.role,               that.role)             &&
+                   Objects.equals(this.title,              that.title)            &&
                    geom;
         }
         return false;

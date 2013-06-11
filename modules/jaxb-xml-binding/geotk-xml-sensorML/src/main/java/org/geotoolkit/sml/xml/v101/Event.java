@@ -18,6 +18,7 @@ package org.geotoolkit.sml.xml.v101;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -37,7 +38,6 @@ import org.geotoolkit.sml.xml.AbstractIdentification;
 import org.geotoolkit.sml.xml.AbstractKeywords;
 import org.geotoolkit.swe.xml.DataComponentProperty;
 import org.geotoolkit.swe.xml.v101.DataComponentPropertyType;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -519,15 +519,15 @@ public class Event implements AbstractEvent {
         if (object instanceof Event) {
             final Event that = (Event) object;
 
-            return Utilities.equals(this.getClassification(), that.getClassification())
-                    && Utilities.equals(this.getContact(), that.getContact())
-                    && Utilities.equals(this.date, that.date)
-                    && Utilities.equals(this.description, that.description)
-                    && Utilities.equals(this.getDocumentation(), that.getDocumentation())
-                    && Utilities.equals(this.id, that.id)
-                    && Utilities.equals(this.getIdentification(), that.getIdentification())
-                    && Utilities.equals(this.getKeywords(), that.getKeywords())
-                    && Utilities.equals(this.getProperty(), that.getProperty());
+            return Objects.equals(this.getClassification(), that.getClassification())
+                    && Objects.equals(this.getContact(), that.getContact())
+                    && Objects.equals(this.date, that.date)
+                    && Objects.equals(this.description, that.description)
+                    && Objects.equals(this.getDocumentation(), that.getDocumentation())
+                    && Objects.equals(this.id, that.id)
+                    && Objects.equals(this.getIdentification(), that.getIdentification())
+                    && Objects.equals(this.getKeywords(), that.getKeywords())
+                    && Objects.equals(this.getProperty(), that.getProperty());
         }
         return false;
     }

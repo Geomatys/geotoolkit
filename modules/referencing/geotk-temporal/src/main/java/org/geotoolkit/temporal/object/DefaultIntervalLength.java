@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.temporal.object;
 
+import java.util.Objects;
 import javax.measure.unit.Unit;
 import org.geotoolkit.util.Utilities;
 import org.opengis.temporal.IntervalLength;
@@ -103,10 +104,10 @@ public class DefaultIntervalLength extends DefaultDuration implements IntervalLe
         if (object instanceof DefaultIntervalLength) {
             final DefaultIntervalLength that = (DefaultIntervalLength) object;
 
-            return Utilities.equals(this.factor, that.factor) &&
-                    Utilities.equals(this.radix, that.radix) &&
-                    Utilities.equals(this.unit, that.unit) &&
-                    Utilities.equals(this.value, that.unit);
+            return Objects.equals(this.factor, that.factor) &&
+                    Objects.equals(this.radix, that.radix) &&
+                    Objects.equals(this.unit, that.unit) &&
+                    Objects.equals(this.value, that.unit);
         }
         return false;
     }

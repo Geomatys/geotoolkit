@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.xsd.xml.v2001;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -113,8 +114,8 @@ public class SimpleContent extends Annotated {
         }
         if (object instanceof SimpleContent && super.equals(object)) {
             final SimpleContent that = (SimpleContent) object;
-            return Utilities.equals(this.extension,   that.extension) &&
-                   Utilities.equals(this.restriction, that.restriction);
+            return Objects.equals(this.extension,   that.extension) &&
+                   Objects.equals(this.restriction, that.restriction);
         }
         return false;
     }

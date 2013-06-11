@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.wms.xml.v111;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -154,13 +155,13 @@ public class BoundingBox implements AbstractBoundingBox{
             final BoundingBox that = (BoundingBox) object;
 
             
-            return Utilities.equals(this.maxx, that.maxx) &&
-                   Utilities.equals(this.maxy,     that.maxy)     &&
-                   Utilities.equals(this.minx,   that.minx)   &&
-                   Utilities.equals(this.miny,   that.miny)   &&
-                   Utilities.equals(this.resx,   that.resx)   &&
-                   Utilities.equals(this.resy,   that.resy)   &&
-                   Utilities.equals(this.srs,   that.srs);
+            return Objects.equals(this.maxx, that.maxx) &&
+                   Objects.equals(this.maxy,     that.maxy)     &&
+                   Objects.equals(this.minx,   that.minx)   &&
+                   Objects.equals(this.miny,   that.miny)   &&
+                   Objects.equals(this.resx,   that.resx)   &&
+                   Objects.equals(this.resy,   that.resy)   &&
+                   Objects.equals(this.srs,   that.srs);
         }
         return false;
     }

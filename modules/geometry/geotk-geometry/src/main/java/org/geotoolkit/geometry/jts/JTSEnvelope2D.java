@@ -21,6 +21,7 @@ import java.awt.geom.Rectangle2D;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
+import java.util.Objects;
 import org.opengis.geometry.BoundingBox;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.MismatchedDimensionException;
@@ -35,7 +36,6 @@ import org.apache.sis.geometry.DirectPosition2D;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.referencing.CRS;
 import org.apache.sis.util.Classes;
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.resources.Errors;
 
 /**
@@ -547,7 +547,7 @@ public class JTSEnvelope2D extends Envelope implements org.opengis.geometry.Enve
             final CoordinateReferenceSystem otherCRS = (object instanceof JTSEnvelope2D)
                     ? ((JTSEnvelope2D) object).crs : null;
 
-            return Utilities.equals(crs, otherCRS);
+            return Objects.equals(crs, otherCRS);
         }
         return false;
     }

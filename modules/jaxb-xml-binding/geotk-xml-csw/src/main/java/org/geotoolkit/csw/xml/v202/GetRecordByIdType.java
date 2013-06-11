@@ -18,6 +18,7 @@ package org.geotoolkit.csw.xml.v202;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -26,7 +27,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.csw.xml.GetRecordById;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -162,10 +162,10 @@ public class GetRecordByIdType extends RequestBaseType implements GetRecordById 
         }
         if (object instanceof GetRecordByIdType && super.equals(object)) {
             final GetRecordByIdType that = (GetRecordByIdType) object;
-            return Utilities.equals(this.elementSetName, that.elementSetName) &&
-                   Utilities.equals(this.outputFormat,   that.outputFormat)   &&
-                   Utilities.equals(this.outputSchema,   that.outputSchema)   &&
-                   Utilities.equals(this.id,             that.id);
+            return Objects.equals(this.elementSetName, that.elementSetName) &&
+                   Objects.equals(this.outputFormat,   that.outputFormat)   &&
+                   Objects.equals(this.outputSchema,   that.outputSchema)   &&
+                   Objects.equals(this.id,             that.id);
         }
         return false;
     }

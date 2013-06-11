@@ -21,12 +21,12 @@ package org.geotoolkit.service;
 import org.opengis.service.DCPList;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.internal.jaxb.gco.StringAdapter;
-import org.geotoolkit.util.Utilities;
 import org.opengis.metadata.citation.OnlineResource;
 import org.opengis.service.OperationMetadata;
 import org.opengis.service.Parameter;
@@ -307,13 +307,13 @@ public class OperationMetadataImpl implements OperationMetadata {
         }
         if (obj instanceof OperationMetadataImpl) {
             final OperationMetadataImpl that = (OperationMetadataImpl) obj;
-            return Utilities.equals(this.connectPoint, that.connectPoint) &&
-                   Utilities.equals(this.dcp, that.dcp) &&
-                   Utilities.equals(this.dependsOn, that.dependsOn) &&
-                   Utilities.equals(this.invocationName, that.invocationName) &&
-                   Utilities.equals(this.operationDescription, that.operationDescription) &&
-                   Utilities.equals(this.operationName, that.operationName) &&
-                   Utilities.equals(this.parameters, that.parameters);
+            return Objects.equals(this.connectPoint, that.connectPoint) &&
+                   Objects.equals(this.dcp, that.dcp) &&
+                   Objects.equals(this.dependsOn, that.dependsOn) &&
+                   Objects.equals(this.invocationName, that.invocationName) &&
+                   Objects.equals(this.operationDescription, that.operationDescription) &&
+                   Objects.equals(this.operationName, that.operationName) &&
+                   Objects.equals(this.parameters, that.parameters);
         }
         return false;
     }

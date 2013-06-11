@@ -18,6 +18,7 @@ package org.geotoolkit.xsd.xml.v2001;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -584,22 +585,22 @@ public abstract class Element extends Annotated {
         }
         if (object instanceof Element && super.equals(object)) {
             final Element that = (Element) object;
-            return Utilities.equals(this._abstract,          that._abstract)          &&
-                   Utilities.equals(this._default,           that._default)           &&
-                   Utilities.equals(this._final,             that._final)             &&
-                   Utilities.equals(this.block,              that.block)              &&
-                   Utilities.equals(this.complexType,        that.complexType)        &&
-                   Utilities.equals(this.fixed,              that.fixed)              &&
-                   Utilities.equals(this.form,               that.form)               &&
-                   Utilities.equals(this.identityConstraint, that.identityConstraint) &&
-                   Utilities.equals(this.maxOccurs,          that.maxOccurs)          &&
-                   Utilities.equals(this.minOccurs,          that.minOccurs)          &&
-                   Utilities.equals(this.name,               that.name)               &&
-                   Utilities.equals(this.nillable,           that.nillable)           &&
-                   Utilities.equals(this.ref,                that.ref)                &&
-                   Utilities.equals(this.simpleType,         that.simpleType)         &&
-                   Utilities.equals(this.substitutionGroup,  that.substitutionGroup)  &&
-                   Utilities.equals(this.type,               that.type) ;
+            return Objects.equals(this._abstract,          that._abstract)          &&
+                   Objects.equals(this._default,           that._default)           &&
+                   Objects.equals(this._final,             that._final)             &&
+                   Objects.equals(this.block,              that.block)              &&
+                   Objects.equals(this.complexType,        that.complexType)        &&
+                   Objects.equals(this.fixed,              that.fixed)              &&
+                   Objects.equals(this.form,               that.form)               &&
+                   Objects.equals(this.identityConstraint, that.identityConstraint) &&
+                   Objects.equals(this.maxOccurs,          that.maxOccurs)          &&
+                   Objects.equals(this.minOccurs,          that.minOccurs)          &&
+                   Objects.equals(this.name,               that.name)               &&
+                   Objects.equals(this.nillable,           that.nillable)           &&
+                   Objects.equals(this.ref,                that.ref)                &&
+                   Objects.equals(this.simpleType,         that.simpleType)         &&
+                   Objects.equals(this.substitutionGroup,  that.substitutionGroup)  &&
+                   Objects.equals(this.type,               that.type) ;
         }
         return false;
     }

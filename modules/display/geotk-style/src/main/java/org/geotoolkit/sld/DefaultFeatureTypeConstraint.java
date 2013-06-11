@@ -19,8 +19,7 @@ package org.geotoolkit.sld;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import org.geotoolkit.util.Utilities;
+import java.util.Objects;
 
 import org.opengis.feature.type.Name;
 import org.opengis.filter.Filter;
@@ -102,8 +101,8 @@ class DefaultFeatureTypeConstraint implements FeatureTypeConstraint{
 
         DefaultFeatureTypeConstraint other = (DefaultFeatureTypeConstraint) obj;
 
-        return Utilities.equals(this.featureName, other.featureName)
-                && Utilities.equals(this.filter, other.filter)
+        return Objects.equals(this.featureName, other.featureName)
+                && Objects.equals(this.filter, other.filter)
                 && this.extents.equals(other.extents);
 
     }

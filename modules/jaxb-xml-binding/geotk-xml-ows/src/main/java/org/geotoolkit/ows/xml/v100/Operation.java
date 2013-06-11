@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -28,7 +29,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ows.xml.AbstractOperation;
 import org.geotoolkit.ows.xml.Range;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -272,11 +272,11 @@ public class Operation implements AbstractOperation {
         }
         if (object instanceof Operation) {
             final Operation that = (Operation) object;
-            return Utilities.equals(this.constraint, that.constraint) &&
-                   Utilities.equals(this.dcp,        that.dcp)        &&
-                   Utilities.equals(this.metadata,   that.metadata)   &&
-                   Utilities.equals(this.parameter,  that.parameter)  &&
-                   Utilities.equals(this.name,       that.name);
+            return Objects.equals(this.constraint, that.constraint) &&
+                   Objects.equals(this.dcp,        that.dcp)        &&
+                   Objects.equals(this.metadata,   that.metadata)   &&
+                   Objects.equals(this.parameter,  that.parameter)  &&
+                   Objects.equals(this.name,       that.name);
         }
         return false;
     }

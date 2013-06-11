@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.wmc.xml.v110;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -251,12 +252,12 @@ public class StyleType {
         if (object instanceof StyleType) {
             final StyleType that = (StyleType) object;
 
-            return Utilities.equals(this._abstract, that._abstract) &&
-                   Utilities.equals(this.current, that.current) &&
-                   Utilities.equals(this.legendURL, that.legendURL) &&
-                   Utilities.equals(this.title, that.title) &&
-                   Utilities.equals(this.name, that.name) &&
-                   Utilities.equals(this.sld, that.sld);
+            return Objects.equals(this._abstract, that._abstract) &&
+                   Objects.equals(this.current, that.current) &&
+                   Objects.equals(this.legendURL, that.legendURL) &&
+                   Objects.equals(this.title, that.title) &&
+                   Objects.equals(this.name, that.name) &&
+                   Objects.equals(this.sld, that.sld);
             }
         return false;
     }

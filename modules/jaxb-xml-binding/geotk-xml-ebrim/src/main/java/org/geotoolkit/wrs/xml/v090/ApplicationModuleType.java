@@ -18,6 +18,7 @@ package org.geotoolkit.wrs.xml.v090;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -27,7 +28,6 @@ import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.csw.xml.v200.AbstractQueryType;
 import org.geotoolkit.csw.xml.v200.QueryType;
 import org.geotoolkit.ebrim.xml.v250.RegistryPackageType;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -112,7 +112,7 @@ public class ApplicationModuleType extends RegistryPackageType {
         }
         if (obj instanceof ApplicationModuleType && super.equals(obj)) {
             final ApplicationModuleType that = (ApplicationModuleType) obj;
-            return Utilities.equals(this.abstractQuery, that.abstractQuery);
+            return Objects.equals(this.abstractQuery, that.abstractQuery);
         }
         return false;
     }

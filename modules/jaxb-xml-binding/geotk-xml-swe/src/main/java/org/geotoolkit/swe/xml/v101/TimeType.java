@@ -18,6 +18,7 @@ package org.geotoolkit.swe.xml.v101;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -25,7 +26,6 @@ import javax.xml.bind.annotation.XmlList;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.swe.xml.AbstractTime;
 import org.apache.sis.util.ComparisonMode;
-import org.geotoolkit.util.Utilities;
 
 
 
@@ -149,17 +149,17 @@ public class TimeType extends AbstractDataComponentType implements AbstractTime 
         if (object instanceof TimeType && super.equals(object, mode)) {
             final TimeType that = (TimeType) object;
 
-            boolean valueEqorEmpty = Utilities.equals(this.value, that.value);
+            boolean valueEqorEmpty = Objects.equals(this.value, that.value);
             if (!valueEqorEmpty) {
                 if (this.value == null && (that.value != null && that.value.isEmpty()) ||
                     that.value == null && (this.value != null && this.value.isEmpty())) {
                     valueEqorEmpty = true;
                 }
             }
-            return Utilities.equals(this.localFrame,     that.localFrame)     &&
-                   Utilities.equals(this.referenceFrame, that.referenceFrame) &&
-                   Utilities.equals(this.referenceTime,  that.referenceTime)  &&
-                   Utilities.equals(this.uom,            that.uom)            &&
+            return Objects.equals(this.localFrame,     that.localFrame)     &&
+                   Objects.equals(this.referenceFrame, that.referenceFrame) &&
+                   Objects.equals(this.referenceTime,  that.referenceTime)  &&
+                   Objects.equals(this.uom,            that.uom)            &&
                    valueEqorEmpty;
         } 
         return false;

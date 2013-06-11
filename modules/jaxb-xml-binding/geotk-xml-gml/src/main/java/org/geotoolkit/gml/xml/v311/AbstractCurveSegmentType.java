@@ -16,13 +16,13 @@
  */
 package org.geotoolkit.gml.xml.v311;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.AbstractCurveSegment;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -171,9 +171,9 @@ public abstract class AbstractCurveSegmentType implements AbstractCurveSegment {
         }
         if (object instanceof AbstractCurveSegmentType) {
             final AbstractCurveSegmentType that = (AbstractCurveSegmentType) object;
-            return  Utilities.equals(this.numDerivativeInterior, that.numDerivativeInterior) &&
-                    Utilities.equals(this.numDerivativesAtEnd,   that.numDerivativesAtEnd)   &&
-                    Utilities.equals(this.numDerivativesAtStart, that.numDerivativesAtStart);
+            return  Objects.equals(this.numDerivativeInterior, that.numDerivativeInterior) &&
+                    Objects.equals(this.numDerivativesAtEnd,   that.numDerivativesAtEnd)   &&
+                    Objects.equals(this.numDerivativesAtStart, that.numDerivativesAtStart);
         }
         return false;
     }

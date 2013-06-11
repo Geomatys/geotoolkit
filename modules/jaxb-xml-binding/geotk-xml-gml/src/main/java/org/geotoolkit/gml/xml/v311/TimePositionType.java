@@ -23,6 +23,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -32,7 +33,6 @@ import javax.xml.bind.annotation.XmlValue;
 import org.geotoolkit.gml.xml.AbstractTimePosition;
 import org.geotoolkit.gml.xml.TimeIndeterminateValueType;
 import org.geotoolkit.util.SimpleInternationalString;
-import org.geotoolkit.util.Utilities;
 import org.opengis.temporal.Position;
 import org.opengis.util.InternationalString;
 
@@ -261,10 +261,10 @@ public class TimePositionType extends AbstractTimePosition implements Serializab
         }
         if (object instanceof TimePositionType) {
             final TimePositionType that = (TimePositionType) object;
-            return Utilities.equals(this.calendarEraName,       that.calendarEraName)       &&
-                   Utilities.equals(this.frame,                 that.frame)                 &&
-                   Utilities.equals(this.indeterminatePosition, that.indeterminatePosition) &&
-                   Utilities.equals(this.value,                 that.value);
+            return Objects.equals(this.calendarEraName,       that.calendarEraName)       &&
+                   Objects.equals(this.frame,                 that.frame)                 &&
+                   Objects.equals(this.indeterminatePosition, that.indeterminatePosition) &&
+                   Objects.equals(this.value,                 that.value);
         }
         return false;
     }

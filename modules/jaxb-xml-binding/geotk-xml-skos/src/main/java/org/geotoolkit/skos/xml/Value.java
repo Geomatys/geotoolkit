@@ -17,6 +17,7 @@
 package org.geotoolkit.skos.xml;
 
 import java.io.Serializable;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -91,8 +92,8 @@ public class Value implements Serializable{
         }
         if (object instanceof Value) {
             final Value that = (Value) object;
-            return Utilities.equals(this.lang,  that.lang) &&
-                   Utilities.equals(this.value, that.value);
+            return Objects.equals(this.lang,  that.lang) &&
+                   Objects.equals(this.value, that.value);
         }
         return false;
     }

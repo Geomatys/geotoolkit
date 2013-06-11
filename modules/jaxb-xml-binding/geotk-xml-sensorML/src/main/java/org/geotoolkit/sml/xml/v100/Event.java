@@ -18,6 +18,7 @@ package org.geotoolkit.sml.xml.v100;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -36,7 +37,6 @@ import org.geotoolkit.sml.xml.AbstractIdentification;
 import org.geotoolkit.sml.xml.AbstractKeywords;
 import org.geotoolkit.swe.xml.DataComponentProperty;
 import org.geotoolkit.swe.xml.v100.DataComponentPropertyType;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -483,15 +483,15 @@ public class Event implements AbstractEvent {
         if (object instanceof Event) {
             final Event that = (Event) object;
 
-            return Utilities.equals(this.classification, that.classification)
-                    && Utilities.equals(this.contact, that.contact)
-                    && Utilities.equals(this.date, that.date)
-                    && Utilities.equals(this.description, that.description)
-                    && Utilities.equals(this.documentation, that.documentation)
-                    && Utilities.equals(this.id, that.id)
-                    && Utilities.equals(this.identification, that.identification)
-                    && Utilities.equals(this.keywords, that.keywords)
-                    && Utilities.equals(this.property, that.property);
+            return Objects.equals(this.classification, that.classification)
+                    && Objects.equals(this.contact, that.contact)
+                    && Objects.equals(this.date, that.date)
+                    && Objects.equals(this.description, that.description)
+                    && Objects.equals(this.documentation, that.documentation)
+                    && Objects.equals(this.id, that.id)
+                    && Objects.equals(this.identification, that.identification)
+                    && Objects.equals(this.keywords, that.keywords)
+                    && Objects.equals(this.property, that.property);
         }
         return false;
     }

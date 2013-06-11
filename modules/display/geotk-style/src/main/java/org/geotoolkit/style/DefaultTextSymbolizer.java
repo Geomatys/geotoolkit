@@ -16,10 +16,9 @@
  */
 package org.geotoolkit.style;
 
-import org.apache.sis.util.Classes;
+import java.util.Objects;
+import org.geotoolkit.util.converter.Classes;
 import javax.measure.unit.Unit;
-
-import org.geotoolkit.util.Utilities;
 
 import org.opengis.filter.expression.Expression;
 import org.opengis.style.Description;
@@ -185,10 +184,10 @@ public class DefaultTextSymbolizer implements TextSymbolizer{
         return this.desc.equals(other.desc)
                 && this.fill.equals(other.fill)
                 && this.font.equals(other.font)
-                && Utilities.equals(this.geom,other.geom)
+                && Objects.equals(this.geom,other.geom)
                 && this.halo.equals(other.halo)
                 && this.label.equals(other.label)
-                && Utilities.equals(this.name, other.name)
+                && Objects.equals(this.name, other.name)
                 && this.placement.equals(other.placement)
                 && this.uom.equals(other.uom);
                         

@@ -16,13 +16,13 @@
  */
 package org.geotoolkit.ebrim.xml.v300;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -87,7 +87,7 @@ public class ExternalLinkType extends RegistryObjectType {
         }
         if (obj instanceof ExternalLinkType && super.equals(obj)) {
             final ExternalLinkType that = (ExternalLinkType) obj;
-            return Utilities.equals(this.externalURI, that.externalURI);
+            return Objects.equals(this.externalURI, that.externalURI);
         }
         return false;
     }

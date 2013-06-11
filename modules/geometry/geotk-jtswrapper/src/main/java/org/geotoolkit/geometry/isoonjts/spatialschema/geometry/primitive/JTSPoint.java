@@ -10,11 +10,13 @@
 package org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive;
 
 import java.util.Collections;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
@@ -24,7 +26,6 @@ import org.geotoolkit.geometry.jts.SRIDGenerator.Version;
 import org.geotoolkit.internal.jaxb.DirectPositionAdapter;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 
-import org.geotoolkit.util.Utilities;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.CoordinateOperation;
@@ -243,7 +244,7 @@ public class JTSPoint extends AbstractJTSGeometry implements Point {
         }
         if (obj instanceof JTSPoint && super.equals(obj)) {
             final JTSPoint that = (JTSPoint) obj;
-            return Utilities.equals(this.position, that.position);
+            return Objects.equals(this.position, that.position);
         }
         return false;
     }

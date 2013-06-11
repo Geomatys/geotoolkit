@@ -20,6 +20,7 @@ package org.geotoolkit.wfs.xml.v200;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -96,7 +97,7 @@ public class ActionResultsType {
         }
         if (object instanceof ActionResultsType) {
             final ActionResultsType that = (ActionResultsType) object;
-            return Utilities.equals(this.feature,   that.feature);
+            return Objects.equals(this.feature,   that.feature);
         }
         return false;
     }

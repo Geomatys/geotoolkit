@@ -18,13 +18,13 @@ package org.geotoolkit.gml.xml.v311;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.MultiPoint;
 import org.apache.sis.util.ComparisonMode;
-import org.geotoolkit.util.Utilities;
 import org.opengis.filter.expression.ExpressionVisitor;
 
 
@@ -150,8 +150,8 @@ public class MultiPointType extends AbstractGeometricAggregateType implements Mu
         if (object instanceof MultiPointType && super.equals(object, mode)) {
             final MultiPointType that = (MultiPointType) object;
 
-            return Utilities.equals(this.pointMember,  that.pointMember) &&
-                   Utilities.equals(this.pointMembers, that.pointMembers) ;
+            return Objects.equals(this.pointMember,  that.pointMember) &&
+                   Objects.equals(this.pointMembers, that.pointMembers) ;
         }
         return false;
     }

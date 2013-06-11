@@ -18,12 +18,12 @@ package org.geotoolkit.ows.xml.v100;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ows.xml.AbstractKeywords;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -120,8 +120,8 @@ public class KeywordsType implements AbstractKeywords {
         }
         if (object instanceof KeywordsType) {
             final KeywordsType that = (KeywordsType) object;
-            return Utilities.equals(this.keyword, that.keyword) &&
-                   Utilities.equals(this.type,    that.type);
+            return Objects.equals(this.keyword, that.keyword) &&
+                   Objects.equals(this.type,    that.type);
         }
         return false;
     }

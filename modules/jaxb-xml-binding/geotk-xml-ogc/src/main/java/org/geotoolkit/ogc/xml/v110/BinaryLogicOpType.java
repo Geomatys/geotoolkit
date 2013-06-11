@@ -18,12 +18,12 @@ package org.geotoolkit.ogc.xml.v110;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.util.Utilities;
 import org.opengis.filter.BinaryLogicOperator;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterVisitor;
@@ -336,7 +336,7 @@ public class BinaryLogicOpType extends LogicOpsType implements BinaryLogicOperat
                     for (int i = 0; i < this.logicOps.size(); i++) {
                         Object thisExp = ((JAXBElement)this.logicOps.get(i)).getValue();
                         Object thatExp = ((JAXBElement)that.logicOps.get(i)).getValue();
-                        if (!Utilities.equals(thisExp, thatExp)) {
+                        if (!Objects.equals(thisExp, thatExp)) {
                             return false;
                         }
                     }
@@ -351,7 +351,7 @@ public class BinaryLogicOpType extends LogicOpsType implements BinaryLogicOperat
                     for (int i = 0; i < this.comparisonOps.size(); i++) {
                         Object thisExp = ((JAXBElement)this.comparisonOps.get(i)).getValue();
                         Object thatExp = ((JAXBElement)that.comparisonOps.get(i)).getValue();
-                        if (!Utilities.equals(thisExp, thatExp)) {
+                        if (!Objects.equals(thisExp, thatExp)) {
                             return false;
                         }
                     }
@@ -366,7 +366,7 @@ public class BinaryLogicOpType extends LogicOpsType implements BinaryLogicOperat
                     for (int i = 0; i < this.spatialOps.size(); i++) {
                         Object thisExp = ((JAXBElement)this.spatialOps.get(i)).getValue();
                         Object thatExp = ((JAXBElement)that.spatialOps.get(i)).getValue();
-                        if (!Utilities.equals(thisExp, thatExp)) {
+                        if (!Objects.equals(thisExp, thatExp)) {
                             return false;
                         }
                     }
@@ -381,7 +381,7 @@ public class BinaryLogicOpType extends LogicOpsType implements BinaryLogicOperat
                     for (int i = 0; i < this.temporalOps.size(); i++) {
                         Object thisExp = ((JAXBElement)this.temporalOps.get(i)).getValue();
                         Object thatExp = ((JAXBElement)that.temporalOps.get(i)).getValue();
-                        if (!Utilities.equals(thisExp, thatExp)) {
+                        if (!Objects.equals(thisExp, thatExp)) {
                             return false;
                         }
                     }

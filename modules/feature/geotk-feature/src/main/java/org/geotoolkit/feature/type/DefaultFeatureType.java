@@ -19,8 +19,7 @@ package org.geotoolkit.feature.type;
 
 import java.util.Collection;
 import java.util.List;
-
-import org.geotoolkit.util.Utilities;
+import java.util.Objects;
 
 import org.opengis.feature.type.AttributeType;
 import org.opengis.feature.type.FeatureType;
@@ -119,7 +118,7 @@ public class DefaultFeatureType extends DefaultComplexType implements FeatureTyp
         }
         if (o instanceof FeatureType && super.equals(o)) {
             final FeatureType that = (FeatureType) o;
-            return Utilities.equals(this.defaultGeometry, that.getGeometryDescriptor());
+            return Objects.equals(this.defaultGeometry, that.getGeometryDescriptor());
                 
         }
         return false;

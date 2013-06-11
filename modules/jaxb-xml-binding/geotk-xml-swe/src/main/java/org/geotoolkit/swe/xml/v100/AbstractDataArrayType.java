@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.swe.xml.v100;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -23,7 +24,6 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.swe.xml.AbstractDataArray;
 import org.apache.sis.util.ComparisonMode;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -127,7 +127,7 @@ public abstract class AbstractDataArrayType extends AbstractDataComponentType im
 
         if (object instanceof AbstractDataArrayType && super.equals(object, mode)) {
             final AbstractDataArrayType  that = (AbstractDataArrayType) object;
-            return Utilities.equals(this.elementCount, that.elementCount);
+            return Objects.equals(this.elementCount, that.elementCount);
 
         }
         return false;

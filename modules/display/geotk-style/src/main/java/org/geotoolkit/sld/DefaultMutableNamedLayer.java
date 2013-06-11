@@ -20,9 +20,10 @@ import java.beans.PropertyChangeEvent;
 import java.util.Collection;
 import java.util.EventObject;
 import java.util.List;
+import java.util.Objects;
 import javax.swing.event.EventListenerList;
-import org.geotoolkit.gui.swing.tree.Trees;
 
+import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.geotoolkit.util.collection.CollectionChangeListener;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
@@ -137,7 +138,7 @@ class DefaultMutableNamedLayer implements MutableNamedLayer,StyleListener{
         final String oldName;
         synchronized (this) {
             oldName = this.name;
-            if (Utilities.equals(oldName, name)) {
+            if (Objects.equals(oldName, name)) {
                 return;
             }
             this.name = name;
@@ -308,7 +309,7 @@ class DefaultMutableNamedLayer implements MutableNamedLayer,StyleListener{
 
         DefaultMutableNamedLayer other = (DefaultMutableNamedLayer) obj;
 
-        return Utilities.equals(this.name, other.name)
+        return Objects.equals(this.name, other.name)
                 && this.description.equals(other.description)
                 && this.constraints.equals(other.constraints)
                 && this.styles.equals(other.styles);

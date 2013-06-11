@@ -20,6 +20,7 @@ package org.geotoolkit.wfs.xml.v200;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlSeeAlso;
@@ -116,8 +117,8 @@ public class SimpleFeatureCollectionType {
         }
         if (obj instanceof SimpleFeatureCollectionType) {
             final SimpleFeatureCollectionType that = (SimpleFeatureCollectionType) obj;
-            return Utilities.equals(this.boundedBy, that.boundedBy) &&
-                   Utilities.equals(this.member,    that.member);
+            return Objects.equals(this.boundedBy, that.boundedBy) &&
+                   Objects.equals(this.member,    that.member);
         }
         return false;
     }

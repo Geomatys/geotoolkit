@@ -18,6 +18,7 @@ package org.geotoolkit.ows.xml.v100;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -25,7 +26,6 @@ import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlElementRefs;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.ows.xml.AbstractHTTP;
 
 
@@ -149,7 +149,7 @@ public class HTTP implements AbstractHTTP {
             final HTTP that = (HTTP) object;
             int i=0;
             for (JAXBElement<RequestMethodType> j:getOrPost) {
-                if (!Utilities.equals(j.getValue(), that.getOrPost.get(i).getValue()))
+                if (!Objects.equals(j.getValue(), that.getOrPost.get(i).getValue()))
                     return false;
 
                 i++;

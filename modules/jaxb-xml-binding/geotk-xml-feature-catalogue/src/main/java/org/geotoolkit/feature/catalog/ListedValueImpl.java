@@ -17,12 +17,12 @@
 
 package org.geotoolkit.feature.catalog;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.util.Utilities;
 import org.opengis.feature.catalog.DefinitionReference;
 import org.opengis.feature.catalog.ListedValue;
 
@@ -191,10 +191,10 @@ public class ListedValueImpl implements ListedValue {
         if (object instanceof ListedValueImpl) {
             final ListedValueImpl that = (ListedValueImpl) object;
             
-           return Utilities.equals(this.code,                that.code)                &&
-                   Utilities.equals(this.definition,          that.definition)          &&
-                   Utilities.equals(this.definitionReference, that.definitionReference) &&
-                   Utilities.equals(this.label,               that.label);
+           return Objects.equals(this.code,                that.code)                &&
+                   Objects.equals(this.definition,          that.definition)          &&
+                   Objects.equals(this.definitionReference, that.definitionReference) &&
+                   Objects.equals(this.label,               that.label);
         }
         return false;
     }

@@ -18,15 +18,11 @@ package org.geotoolkit.style;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.Collection;
-import java.util.EventObject;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import javax.swing.event.EventListenerList;
 
 import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.util.NumberRange;
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.geotoolkit.util.collection.NotifiedCheckedList;
 import org.geotoolkit.util.collection.NotifiedCheckedSet;
@@ -179,7 +175,7 @@ public class DefaultMutableFeatureTypeStyle implements MutableFeatureTypeStyle, 
         final String oldName;
         synchronized (this) {
             oldName = this.name;
-            if (Utilities.equals(oldName,name)) {
+            if (Objects.equals(oldName,name)) {
                 return;
             }
             this.name = name;
@@ -233,7 +229,7 @@ public class DefaultMutableFeatureTypeStyle implements MutableFeatureTypeStyle, 
         final Id oldIds;
         synchronized (this) {
             oldIds = this.ids;
-            if(Utilities.equals(oldIds, id)){
+            if(Objects.equals(oldIds, id)){
                 return;
             }
             this.ids = id;
@@ -286,7 +282,7 @@ public class DefaultMutableFeatureTypeStyle implements MutableFeatureTypeStyle, 
         final OnlineResource oldOnline;
         synchronized (this) {
             oldOnline = this.online;
-            if(Utilities.equals(oldOnline, online)){
+            if(Objects.equals(oldOnline, online)){
                 return;
             }
             this.online = online;

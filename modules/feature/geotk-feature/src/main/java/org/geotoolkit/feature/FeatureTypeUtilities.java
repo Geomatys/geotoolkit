@@ -36,7 +36,6 @@ import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.feature.simple.DefaultSimpleFeatureType;
 import org.geotoolkit.filter.function.other.LengthFunction;
 import org.geotoolkit.geometry.jts.JTS;
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.feature.type.DefaultAttributeDescriptor;
 import org.geotoolkit.feature.type.DefaultAttributeType;
 import org.geotoolkit.feature.type.DefaultGeometryDescriptor;
@@ -74,6 +73,7 @@ import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 import java.util.Collection;
+import java.util.Objects;
 import org.geotoolkit.factory.FactoryFinder;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.expression.Function;
@@ -255,7 +255,7 @@ public final class FeatureTypeUtilities {
         final String namespaceURI = namespace != null ? namespace.toString() : null;
         boolean same = (propCount == properties.length) &&
                 featureType.getName().getLocalPart().equals(typeName) &&
-                Utilities.equals(featureType.getName().getNamespaceURI(), namespaceURI);
+                Objects.equals(featureType.getName().getNamespaceURI(), namespaceURI);
 
 
         int i=0;
@@ -976,12 +976,12 @@ public final class FeatureTypeUtilities {
         for (PropertyType superType : ancestors) {
             if (namespace == null) {
                 // dont match on namespace
-                if (Utilities.equals(superType.getName().getLocalPart(), typeName)) {
+                if (Objects.equals(superType.getName().getLocalPart(), typeName)) {
                     return true;
                 }
             } else {
-                if (Utilities.equals(superType.getName().getNamespaceURI(), namespace.toString()) &&
-                    Utilities.equals(superType.getName().getLocalPart(), typeName)){
+                if (Objects.equals(superType.getName().getNamespaceURI(), namespace.toString()) &&
+                    Objects.equals(superType.getName().getLocalPart(), typeName)){
                     return true;
                 }
             }

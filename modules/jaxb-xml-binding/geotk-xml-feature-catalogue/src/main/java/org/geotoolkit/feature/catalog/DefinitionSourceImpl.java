@@ -18,6 +18,7 @@
 package org.geotoolkit.feature.catalog;
 
 import java.util.Iterator;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -160,21 +161,21 @@ public class DefinitionSourceImpl implements DefinitionSource, Referenceable {
             
             
             //we redefine the Equals method of Citation
-            boolean sourceb = Utilities.equals(this.source.getCollectiveTitle(),         that.source.getCollectiveTitle())         &&
-                              Utilities.equals(this.source.getEdition(),                 that.source.getEdition())                 &&
-                              Utilities.equals(this.source.getEditionDate(),             that.source.getEditionDate())             &&
-                              Utilities.equals(this.source.getISBN(),                    that.source.getISBN())                    &&
-                              Utilities.equals(this.source.getISSN(),                    that.source.getISSN())                    &&
-                              Utilities.equals(this.source.getIdentifiers(),             that.source.getIdentifiers())             &&
-                              Utilities.equals(this.source.getOtherCitationDetails(),    that.source.getOtherCitationDetails())    &&
-                              Utilities.equals(this.source.getSeries(),                  that.source.getSeries())                  &&
-                              Utilities.equals(this.source.getTitle(),                   that.source.getTitle());
-            if (Utilities.equals(this.source.getDates().size(), that.source.getDates().size())) {
+            boolean sourceb = Objects.equals(this.source.getCollectiveTitle(),         that.source.getCollectiveTitle())         &&
+                              Objects.equals(this.source.getEdition(),                 that.source.getEdition())                 &&
+                              Objects.equals(this.source.getEditionDate(),             that.source.getEditionDate())             &&
+                              Objects.equals(this.source.getISBN(),                    that.source.getISBN())                    &&
+                              Objects.equals(this.source.getISSN(),                    that.source.getISSN())                    &&
+                              Objects.equals(this.source.getIdentifiers(),             that.source.getIdentifiers())             &&
+                              Objects.equals(this.source.getOtherCitationDetails(),    that.source.getOtherCitationDetails())    &&
+                              Objects.equals(this.source.getSeries(),                  that.source.getSeries())                  &&
+                              Objects.equals(this.source.getTitle(),                   that.source.getTitle());
+            if (Objects.equals(this.source.getDates().size(), that.source.getDates().size())) {
                 Iterator<? extends CitationDate> thisIT = this.source.getDates().iterator();
                 Iterator<? extends CitationDate> thatIT = that.source.getDates().iterator();
                 
                 while (thisIT.hasNext() && thatIT.hasNext()) {
-                    if (!Utilities.equals(thisIT.next(), thatIT.next())) {
+                    if (!Objects.equals(thisIT.next(), thatIT.next())) {
                         sourceb = false;
                     }
                 }
@@ -182,19 +183,19 @@ public class DefinitionSourceImpl implements DefinitionSource, Referenceable {
                 sourceb = false;
             }
             
-            if (Utilities.equals(this.source.getCitedResponsibleParties().size(), that.source.getCitedResponsibleParties().size())) {
+            if (Objects.equals(this.source.getCitedResponsibleParties().size(), that.source.getCitedResponsibleParties().size())) {
                 Iterator<? extends ResponsibleParty> thisIT = this.source.getCitedResponsibleParties().iterator();
                 Iterator<? extends ResponsibleParty> thatIT = that.source.getCitedResponsibleParties().iterator();
                 
                 while (thisIT.hasNext() && thatIT.hasNext()) {
-                    if (!Utilities.equals(thisIT.next(), thatIT.next())) {
+                    if (!Objects.equals(thisIT.next(), thatIT.next())) {
                         sourceb = false;
                     }
                 }
             } else {
                 sourceb = false;
             }
-            return Utilities.equals(this.id, that.id) && 
+            return Objects.equals(this.id, that.id) && 
                    sourceb;
             
         }

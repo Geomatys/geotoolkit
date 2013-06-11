@@ -18,11 +18,11 @@ package org.geotoolkit.sld;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.Objects;
 import javax.swing.event.EventListenerList;
 
 import org.geotoolkit.style.StyleConstants;
 import org.geotoolkit.style.StyleListener;
-import org.geotoolkit.util.Utilities;
 
 import org.opengis.sld.SLDVisitor;
 import org.opengis.style.Description;
@@ -61,7 +61,7 @@ class DefaultMutableNamedStyle implements MutableNamedStyle{
         final String oldName;
         synchronized (this) {
             oldName = this.name;
-            if (Utilities.equals(oldName, name)) {
+            if (Objects.equals(oldName, name)) {
                 return;
             }
             this.name = name;
@@ -167,7 +167,7 @@ class DefaultMutableNamedStyle implements MutableNamedStyle{
 
         DefaultMutableNamedStyle other = (DefaultMutableNamedStyle) obj;
 
-        return Utilities.equals(this.name, other.name)
+        return Objects.equals(this.name, other.name)
                 && this.description.equals(other.description);
 
     }

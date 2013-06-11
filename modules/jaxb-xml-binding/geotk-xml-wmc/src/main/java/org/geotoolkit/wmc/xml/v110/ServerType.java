@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.wmc.xml.v110;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -169,10 +170,10 @@ public class ServerType {
         if (object instanceof ServerType) {
             final ServerType that = (ServerType) object;
 
-            return Utilities.equals(this.onlineResource, that.onlineResource) &&
-                   Utilities.equals(this.service, that.service) &&
-                   Utilities.equals(this.title, that.title) &&
-                   Utilities.equals(this.version, that.version);
+            return Objects.equals(this.onlineResource, that.onlineResource) &&
+                   Objects.equals(this.service, that.service) &&
+                   Objects.equals(this.title, that.title) &&
+                   Objects.equals(this.version, that.version);
             }
         return false;
     }

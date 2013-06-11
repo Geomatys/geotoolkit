@@ -19,6 +19,7 @@ package org.geotoolkit.sos.xml.v100;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -26,7 +27,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.observation.xml.v100.ObservationType;
 import org.geotoolkit.observation.xml.v100.ProcessType;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -147,7 +147,7 @@ public class ObservationTemplate implements org.geotoolkit.swes.xml.ObservationT
         }
         if (object instanceof ObservationTemplate && super.equals(object)) {
             final ObservationTemplate that = (ObservationTemplate) object;
-            return Utilities.equals(this.observation, that.observation);
+            return Objects.equals(this.observation, that.observation);
         }
         return false;
     }

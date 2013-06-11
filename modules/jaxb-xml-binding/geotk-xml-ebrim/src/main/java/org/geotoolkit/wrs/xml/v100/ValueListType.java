@@ -18,11 +18,11 @@ package org.geotoolkit.wrs.xml.v100;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -103,7 +103,7 @@ public class ValueListType extends org.geotoolkit.ebrim.xml.v300.ValueListType {
         }
         if (obj instanceof ValueListType && super.equals(obj)) {
             final ValueListType that = (ValueListType) obj;
-            return Utilities.equals(this.anyValue,  that.anyValue);
+            return Objects.equals(this.anyValue,  that.anyValue);
         }
         return false;
     }

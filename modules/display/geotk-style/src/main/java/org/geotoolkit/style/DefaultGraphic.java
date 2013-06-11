@@ -17,11 +17,10 @@
 package org.geotoolkit.style;
 
 import java.util.Collections;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.apache.sis.internal.util.UnmodifiableArrayList;
-import org.geotoolkit.util.Utilities;
 
 import org.opengis.filter.expression.Expression;
 import org.opengis.style.AnchorPoint;
@@ -158,11 +157,11 @@ public class DefaultGraphic implements Graphic{
         DefaultGraphic other = (DefaultGraphic) obj;
 
         return this.symbols.equals(other.symbols)
-                && Utilities.equals(this.size, other.size)
+                && Objects.equals(this.size, other.size)
                 && this.opacity.equals(other.opacity)
                 && this.rotation.equals(other.rotation)
-                && Utilities.equals(this.anchor,other.anchor)
-                && Utilities.equals(this.disp,other.disp);
+                && Objects.equals(this.anchor,other.anchor)
+                && Objects.equals(this.disp,other.disp);
 
     }
 

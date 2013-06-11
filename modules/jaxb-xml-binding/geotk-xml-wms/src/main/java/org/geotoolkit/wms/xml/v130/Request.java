@@ -18,6 +18,7 @@ package org.geotoolkit.wms.xml.v130;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -25,7 +26,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.wms.xml.AbstractRequest;
 
 
@@ -200,7 +200,7 @@ public class Request implements AbstractRequest {
             if (this.extendedOperation != null && that.extendedOperation != null &&
                 this.extendedOperation.size() == extendedOperation.size()) {
                 for (int i = 0; i < this.extendedOperation.size(); i++) {
-                    if (!Utilities.equals(this.extendedOperation.get(i), that.extendedOperation.get(i))) {
+                    if (!Objects.equals(this.extendedOperation.get(i), that.extendedOperation.get(i))) {
                         ext = false;
                         break;
                     }
@@ -211,9 +211,9 @@ public class Request implements AbstractRequest {
             } else  {
                 ext = false;
             }
-            return Utilities.equals(this.getCapabilities, that.getCapabilities) &&
-                   Utilities.equals(this.getFeatureInfo,  that.getFeatureInfo)     &&
-                   Utilities.equals(this.getMap,          that.getMap)   &&
+            return Objects.equals(this.getCapabilities, that.getCapabilities) &&
+                   Objects.equals(this.getFeatureInfo,  that.getFeatureInfo)     &&
+                   Objects.equals(this.getMap,          that.getMap)   &&
                    ext;
         }
         return false;

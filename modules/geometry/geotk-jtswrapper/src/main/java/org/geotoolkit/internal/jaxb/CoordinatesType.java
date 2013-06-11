@@ -18,6 +18,7 @@ package org.geotoolkit.internal.jaxb;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -26,7 +27,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
-import org.geotoolkit.util.Utilities;
 
 /**
  *
@@ -236,10 +236,10 @@ public class CoordinatesType {
             final CoordinatesType that = (CoordinatesType) object;
 
 
-            return Utilities.equals(this.cs,      that.cs) &&
-                   Utilities.equals(this.ts,      that.ts) &&
-                   Utilities.equals(this.value,   that.value) &&
-                   Utilities.equals(this.decimal, that.decimal);
+            return Objects.equals(this.cs,      that.cs) &&
+                   Objects.equals(this.ts,      that.ts) &&
+                   Objects.equals(this.value,   that.value) &&
+                   Objects.equals(this.decimal, that.decimal);
         }
         return false;
     }

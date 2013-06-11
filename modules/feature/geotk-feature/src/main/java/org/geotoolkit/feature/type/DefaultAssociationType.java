@@ -17,8 +17,7 @@
 package org.geotoolkit.feature.type;
 
 import java.util.List;
-
-import org.geotoolkit.util.Utilities;
+import java.util.Objects;
 
 import org.opengis.feature.type.AssociationType;
 import org.opengis.feature.type.AttributeType;
@@ -73,7 +72,7 @@ public class DefaultAssociationType extends DefaultPropertyType<AssociationType>
 
         AssociationType asso = (AssociationType) other;
 
-        return super.equals(asso) && Utilities.equals(relatedType, asso.getRelatedType());
+        return super.equals(asso) && Objects.equals(relatedType, asso.getRelatedType());
     }
 
     /**

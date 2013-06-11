@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.sos.xml.v100;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -23,7 +24,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -121,8 +121,8 @@ public class DescribeSensor extends RequestBaseType implements org.geotoolkit.sw
         }
         if (object instanceof DescribeSensor && super.equals(object)) {
             final DescribeSensor that = (DescribeSensor) object;
-            return Utilities.equals(this.outputFormat, that.outputFormat) &&
-                   Utilities.equals(this.procedure,   that.procedure);
+            return Objects.equals(this.outputFormat, that.outputFormat) &&
+                   Objects.equals(this.procedure,   that.procedure);
         } 
         return false;
     }

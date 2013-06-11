@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.csw.xml.v202;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -130,10 +131,10 @@ public class TransactionSummaryType implements TransactionSummary {
         }
         if (object instanceof TransactionSummaryType) {
             final TransactionSummaryType that = (TransactionSummaryType) object;
-            return Utilities.equals(this.requestId,      that.requestId)     &&
-                   Utilities.equals(this.totalDeleted,   that.totalDeleted)  &&
-                   Utilities.equals(this.totalInserted,  that.totalInserted) &&
-                   Utilities.equals(this.totalUpdated,   that.totalUpdated);
+            return Objects.equals(this.requestId,      that.requestId)     &&
+                   Objects.equals(this.totalDeleted,   that.totalDeleted)  &&
+                   Objects.equals(this.totalInserted,  that.totalInserted) &&
+                   Objects.equals(this.totalUpdated,   that.totalUpdated);
         }
         return false;
     }

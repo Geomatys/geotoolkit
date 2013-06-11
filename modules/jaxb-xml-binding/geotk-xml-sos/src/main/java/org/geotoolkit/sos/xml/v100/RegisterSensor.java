@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.sos.xml.v100;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAnyElement;
@@ -23,7 +24,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.swes.xml.InsertSensor;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -136,8 +136,8 @@ public class RegisterSensor extends RequestBaseType implements InsertSensor {
         }
         if (object instanceof RegisterSensor && super.equals(object)) {
             final RegisterSensor that = (RegisterSensor) object;
-            return Utilities.equals(this.observationTemplate, that.observationTemplate) &&
-                   Utilities.equals(this.sensorDescription,   that.sensorDescription);
+            return Objects.equals(this.observationTemplate, that.observationTemplate) &&
+                   Objects.equals(this.sensorDescription,   that.sensorDescription);
         } 
         return false;
     }
@@ -219,7 +219,7 @@ public class RegisterSensor extends RequestBaseType implements InsertSensor {
             }
             if (object instanceof SensorDescription && super.equals(object)) {
                 final SensorDescription that = (SensorDescription) object;
-                return Utilities.equals(this.any, that.any);
+                return Objects.equals(this.any, that.any);
             }
             return false;
         }

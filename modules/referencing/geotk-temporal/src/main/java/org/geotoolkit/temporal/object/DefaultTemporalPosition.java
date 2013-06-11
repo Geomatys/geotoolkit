@@ -17,9 +17,9 @@
  */
 package org.geotoolkit.temporal.object;
 
+import java.util.Objects;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.referencing.NamedIdentifier;
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.temporal.reference.DefaultTemporalReferenceSystem;
 import org.geotoolkit.util.SimpleInternationalString;
 import org.opengis.temporal.IndeterminateValue;
@@ -91,8 +91,8 @@ public class DefaultTemporalPosition implements TemporalPosition {
         if (object instanceof DefaultTemporalPosition) {
             final DefaultTemporalPosition that = (DefaultTemporalPosition) object;
 
-            return Utilities.equals(this.frame, that.frame) &&
-                    Utilities.equals(this.indeterminatePosition, that.indeterminatePosition);
+            return Objects.equals(this.frame, that.frame) &&
+                    Objects.equals(this.indeterminatePosition, that.indeterminatePosition);
         }
         return false;
     }

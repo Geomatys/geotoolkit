@@ -16,13 +16,13 @@
  */
 package org.geotoolkit.ows.xml.v110;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ows.xml.AbstractServiceProvider;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -111,9 +111,9 @@ public class ServiceProvider implements AbstractServiceProvider {
         if (object instanceof ServiceProvider) {
             final ServiceProvider that = (ServiceProvider) object;
 
-            return Utilities.equals(this.providerName,   that.providerName) &&
-                   Utilities.equals(this.providerSite,   that.providerSite) &&
-                   Utilities.equals(this.serviceContact, that.serviceContact);
+            return Objects.equals(this.providerName,   that.providerName) &&
+                   Objects.equals(this.providerSite,   that.providerSite) &&
+                   Objects.equals(this.serviceContact, that.serviceContact);
         }
         return true;
     }

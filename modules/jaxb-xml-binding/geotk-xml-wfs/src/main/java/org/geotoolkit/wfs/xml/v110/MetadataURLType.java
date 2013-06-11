@@ -16,12 +16,12 @@
  */
 package org.geotoolkit.wfs.xml.v110;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -177,9 +177,9 @@ public class MetadataURLType {
         if (object instanceof MetadataURLType) {
             final MetadataURLType that = (MetadataURLType) object;
 
-            return Utilities.equals(this.format,  that.format) &&
-                   Utilities.equals(this.type,    that.type)   &&
-                   Utilities.equals(this.value,   that.value);
+            return Objects.equals(this.format,  that.format) &&
+                   Objects.equals(this.type,    that.type)   &&
+                   Objects.equals(this.value,   that.value);
             }
         return false;
     }

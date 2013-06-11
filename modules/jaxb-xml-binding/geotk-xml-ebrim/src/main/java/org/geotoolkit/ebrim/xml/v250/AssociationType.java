@@ -16,13 +16,13 @@
  */
 package org.geotoolkit.ebrim.xml.v250;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -175,11 +175,11 @@ public class AssociationType extends RegistryObjectType {
         }
         if (obj instanceof AssociationType && super.equals(obj)) {
             final AssociationType that = (AssociationType) obj;
-            return Utilities.equals(this.associationType,          that.associationType) &&
-                   Utilities.equals(this.isConfirmedBySourceOwner, that.isConfirmedBySourceOwner) &&
-                   Utilities.equals(this.isConfirmedByTargetOwner, that.isConfirmedByTargetOwner) &&
-                   Utilities.equals(this.targetObject,             that.targetObject) &&
-                   Utilities.equals(this.sourceObject,             that.sourceObject);
+            return Objects.equals(this.associationType,          that.associationType) &&
+                   Objects.equals(this.isConfirmedBySourceOwner, that.isConfirmedBySourceOwner) &&
+                   Objects.equals(this.isConfirmedByTargetOwner, that.isConfirmedByTargetOwner) &&
+                   Objects.equals(this.targetObject,             that.targetObject) &&
+                   Objects.equals(this.sourceObject,             that.sourceObject);
         }
         return false;
     }

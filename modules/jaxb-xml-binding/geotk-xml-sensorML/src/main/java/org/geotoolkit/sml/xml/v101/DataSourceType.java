@@ -17,12 +17,12 @@
 
 package org.geotoolkit.sml.xml.v101;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.sml.xml.AbstractDataSource;
 import org.apache.sis.util.ComparisonMode;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -213,9 +213,9 @@ public class DataSourceType extends AbstractProcessType implements AbstractDataS
 
         if (object instanceof DataSourceType && super.equals(object, mode)) {
             final DataSourceType that = (DataSourceType) object;
-            return Utilities.equals(this.dataDefinition,    that.dataDefinition)       &&
-                   Utilities.equals(this.observationReference, that.observationReference)    &&
-                   Utilities.equals(this.values,  that.values);
+            return Objects.equals(this.dataDefinition,    that.dataDefinition)       &&
+                   Objects.equals(this.observationReference, that.observationReference)    &&
+                   Objects.equals(this.values,  that.values);
         }
         return false;
     }

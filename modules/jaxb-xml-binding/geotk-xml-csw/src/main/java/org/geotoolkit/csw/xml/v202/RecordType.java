@@ -19,6 +19,7 @@ package org.geotoolkit.csw.xml.v202;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -31,7 +32,6 @@ import org.geotoolkit.csw.xml.Settable;
 import org.geotoolkit.ows.xml.v100.BoundingBoxType;
 import org.geotoolkit.dublincore.xml.v2.elements.SimpleLiteral;
 import org.geotoolkit.ows.xml.v100.WGS84BoundingBoxType;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -268,7 +268,7 @@ public class RecordType extends DCMIRecordType implements Record, Settable {
                     bbox = false;
                 }
             }
-            return  Utilities.equals(this.anyText,   that.anyText)   &&
+            return  Objects.equals(this.anyText,   that.anyText)   &&
                     bbox;
         }
         return false;

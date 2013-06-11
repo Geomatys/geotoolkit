@@ -19,11 +19,11 @@ package org.geotoolkit.ogc.xml.v110;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.util.Utilities;
 import org.opengis.filter.capability.TemporalOperator;
 import org.opengis.filter.capability.TemporalOperators;
 
@@ -118,7 +118,7 @@ public class TemporalOperatorsType implements TemporalOperators {
         if (object instanceof TemporalOperatorsType) {
             final TemporalOperatorsType that = (TemporalOperatorsType) object;
 
-            return Utilities.equals(this.temporalOperator, that.temporalOperator);
+            return Objects.equals(this.temporalOperator, that.temporalOperator);
         }
         return false;
     }

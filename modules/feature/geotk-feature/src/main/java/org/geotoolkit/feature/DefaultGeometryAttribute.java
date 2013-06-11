@@ -34,10 +34,9 @@ import com.vividsolutions.jts.geom.GeometryCollection;
 import com.vividsolutions.jts.geom.MultiLineString;
 import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.MultiPolygon;
-
+import java.util.Objects;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -134,18 +133,18 @@ public class DefaultGeometryAttribute extends DefaultAttribute<Object,GeometryDe
         //JD: since Geometry does not implement equals(Object) "properly",( ie
         // if you dont call equals(Geomtery) two geometries which are equal
         // will not be equal) we dont call super.equals()
-        if (!Utilities.equals(descriptor, att.descriptor)) {
+        if (!Objects.equals(descriptor, att.descriptor)) {
             return false;
         }
 
         if(descriptor==null){
             //test type
-            if (!Utilities.equals(type, att.type)) {
+            if (!Objects.equals(type, att.type)) {
                 return false;
             }
         }
 
-        if (!Utilities.equals(id, att.id)) {
+        if (!Objects.equals(id, att.id)) {
             return false;
         }
 
@@ -185,7 +184,7 @@ public class DefaultGeometryAttribute extends DefaultAttribute<Object,GeometryDe
                 return false;
             }
         } else {
-            return Utilities.deepEquals(value, this.value);
+            return Objects.deepEquals(value, this.value);
         }
 
         return true;

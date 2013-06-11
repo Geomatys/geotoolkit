@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.swe.xml.v100;
 
+import java.util.Objects;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -26,7 +27,6 @@ import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.v311.BaseUnitType;
 import org.geotoolkit.gml.xml.v311.UnitDefinitionType;
 import org.geotoolkit.swe.xml.UomProperty;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -377,19 +377,19 @@ public class UomPropertyType implements UomProperty {
             final UomPropertyType that = (UomPropertyType) object;
             boolean unitDef = false;
             if (this.unitDefinition != null && that.unitDefinition != null) {
-                unitDef = Utilities.equals(this.unitDefinition.getValue(), that.unitDefinition.getValue());
+                unitDef = Objects.equals(this.unitDefinition.getValue(), that.unitDefinition.getValue());
             } else if (this.unitDefinition == null && that.unitDefinition == null) {
                 unitDef = true;
             }
-            return Utilities.equals(this.actuate, that.actuate)           &&
-                   Utilities.equals(this.href, that.href)                 &&
+            return Objects.equals(this.actuate, that.actuate)           &&
+                   Objects.equals(this.href, that.href)                 &&
                    unitDef                                                &&
-                   Utilities.equals(this.remoteSchema, that.remoteSchema) &&
-                   Utilities.equals(this.role, that.role)                 &&
-                   Utilities.equals(this.show, that.show)                 &&
-                   Utilities.equals(this.title, that.title)               &&
-                   Utilities.equals(this.type, that.type)                 &&
-                   Utilities.equals(this.arcrole, that.arcrole);
+                   Objects.equals(this.remoteSchema, that.remoteSchema) &&
+                   Objects.equals(this.role, that.role)                 &&
+                   Objects.equals(this.show, that.show)                 &&
+                   Objects.equals(this.title, that.title)               &&
+                   Objects.equals(this.type, that.type)                 &&
+                   Objects.equals(this.arcrole, that.arcrole);
         }
         return false;
     }

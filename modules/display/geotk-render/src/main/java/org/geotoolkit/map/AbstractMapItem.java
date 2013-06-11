@@ -76,7 +76,7 @@ public abstract class AbstractMapItem implements MapItem {
         final String oldName;
         synchronized (this) {
             oldName = this.name;
-            if (Utilities.equals(oldName, name)) {
+            if (Objects.equals(oldName, name)) {
                 return;
             }
             this.name = name;

@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.gml.xml.v311;
 
+import java.util.Objects;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -23,7 +24,6 @@ import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 import org.apache.sis.util.ComparisonMode;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -152,7 +152,7 @@ public class SurfaceType extends AbstractSurfaceType {
         if (object instanceof SurfaceType && super.equals(object, mode)) {
             final SurfaceType that = (SurfaceType) object;
 
-            return Utilities.equals(this.getPatches(), that.getPatches());
+            return Objects.equals(this.getPatches(), that.getPatches());
         }
         return false;
     }

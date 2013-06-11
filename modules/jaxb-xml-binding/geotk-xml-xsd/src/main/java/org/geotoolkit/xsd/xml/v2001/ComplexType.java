@@ -18,6 +18,7 @@ package org.geotoolkit.xsd.xml.v2001;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -419,19 +420,19 @@ public abstract class ComplexType extends Annotated {
         }
         if (object instanceof ComplexType && super.equals(object)) {
             final ComplexType that = (ComplexType) object;
-            return Utilities.equals(this._abstract,                 that._abstract) &&
-                   Utilities.equals(this._final,                    that._final) &&
-                   Utilities.equals(this.all,                       that.all) &&
-                   Utilities.equals(this.anyAttribute,              that.anyAttribute) &&
-                   Utilities.equals(this.attributeOrAttributeGroup, that.attributeOrAttributeGroup) &&
-                   Utilities.equals(this.block,                     that.block) &&
-                   Utilities.equals(this.choice,                    that.choice) &&
-                   Utilities.equals(this.complexContent,            that.complexContent) &&
-                   Utilities.equals(this.group,                     that.group) &&
-                   Utilities.equals(this.mixed,                     that.mixed) &&
-                   Utilities.equals(this.name,                      that.name) &&
-                   Utilities.equals(this.sequence,                  that.sequence) &&
-                   Utilities.equals(this.simpleContent,             that.simpleContent);
+            return Objects.equals(this._abstract,                 that._abstract) &&
+                   Objects.equals(this._final,                    that._final) &&
+                   Objects.equals(this.all,                       that.all) &&
+                   Objects.equals(this.anyAttribute,              that.anyAttribute) &&
+                   Objects.equals(this.attributeOrAttributeGroup, that.attributeOrAttributeGroup) &&
+                   Objects.equals(this.block,                     that.block) &&
+                   Objects.equals(this.choice,                    that.choice) &&
+                   Objects.equals(this.complexContent,            that.complexContent) &&
+                   Objects.equals(this.group,                     that.group) &&
+                   Objects.equals(this.mixed,                     that.mixed) &&
+                   Objects.equals(this.name,                      that.name) &&
+                   Objects.equals(this.sequence,                  that.sequence) &&
+                   Objects.equals(this.simpleContent,             that.simpleContent);
         }
         return false;
     }

@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -472,21 +473,21 @@ public class FilterType implements Filter, XMLFilter {
             
             boolean comp = false;
             if (this.comparisonOps != null && that.comparisonOps != null) {
-                comp = Utilities.equals(this.comparisonOps.getValue(), that.comparisonOps.getValue());
+                comp = Objects.equals(this.comparisonOps.getValue(), that.comparisonOps.getValue());
             } else if (this.comparisonOps == null && that.comparisonOps == null) {
                 comp = true;
             }
             
             boolean log = false;
             if (this.logicOps != null && that.logicOps != null) {
-                log = Utilities.equals(this.logicOps.getValue(), that.logicOps.getValue());
+                log = Objects.equals(this.logicOps.getValue(), that.logicOps.getValue());
             } else if (this.logicOps == null && that.logicOps == null) {
                 log = true;
             }
             
             boolean spa = false;
             if (this.spatialOps != null && that.spatialOps != null) {
-                spa = Utilities.equals(this.spatialOps.getValue(), that.spatialOps.getValue());
+                spa = Objects.equals(this.spatialOps.getValue(), that.spatialOps.getValue());
             } else if (this.spatialOps == null && that.spatialOps == null) {
                 spa = true;
             }

@@ -18,13 +18,13 @@ package org.geotoolkit.ows.xml.v100;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ows.xml.AbstractServiceIdentification;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -162,10 +162,10 @@ public class ServiceIdentification extends DescriptionType implements AbstractSe
         }
         if (object instanceof ServiceIdentification && super.equals(object)) {
             final ServiceIdentification that = (ServiceIdentification) object;
-            return Utilities.equals(this.accessConstraints,  that.accessConstraints) &&
-                   Utilities.equals(this.fees,               that.fees)              &&
-                   Utilities.equals(this.serviceType,        that.serviceType)       &&
-                   Utilities.equals(this.serviceTypeVersion, that.serviceTypeVersion);
+            return Objects.equals(this.accessConstraints,  that.accessConstraints) &&
+                   Objects.equals(this.fees,               that.fees)              &&
+                   Objects.equals(this.serviceType,        that.serviceType)       &&
+                   Objects.equals(this.serviceTypeVersion, that.serviceTypeVersion);
         }
         return false;
     }

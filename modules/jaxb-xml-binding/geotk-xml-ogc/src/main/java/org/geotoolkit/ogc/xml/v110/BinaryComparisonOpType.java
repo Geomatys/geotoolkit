@@ -18,6 +18,7 @@ package org.geotoolkit.ogc.xml.v110;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -25,7 +26,6 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
-import org.geotoolkit.util.Utilities;
 import org.opengis.filter.BinaryComparisonOperator;
 import org.opengis.filter.FilterVisitor;
 import org.opengis.filter.MatchAction;
@@ -309,10 +309,10 @@ public class BinaryComparisonOpType extends ComparisonOpsType implements BinaryC
         }
         if (obj instanceof BinaryComparisonOpType) {
             BinaryComparisonOpType that = (BinaryComparisonOpType) obj;
-            return Utilities.equals(this.matchCase, that.matchCase) &&
-                   Utilities.equals(this.getLiteral(), that.getLiteral()) &&
-                   Utilities.equals(this.getPropertyName(), that.getPropertyName()) &&
-                   Utilities.equals(this.getExpressionType(), that.getExpressionType());
+            return Objects.equals(this.matchCase, that.matchCase) &&
+                   Objects.equals(this.getLiteral(), that.getLiteral()) &&
+                   Objects.equals(this.getPropertyName(), that.getPropertyName()) &&
+                   Objects.equals(this.getExpressionType(), that.getExpressionType());
         }
         return false;
     }

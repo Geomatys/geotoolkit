@@ -16,11 +16,11 @@
  */
 package org.geotoolkit.ogc.xml.v110;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -80,7 +80,7 @@ public class ClassificationCapabilitiesType {
        if (object instanceof ClassificationCapabilitiesType) {
            final ClassificationCapabilitiesType that = (ClassificationCapabilitiesType) object;
        
-            return Utilities.equals(this.classificationOperators, that.classificationOperators);
+            return Objects.equals(this.classificationOperators, that.classificationOperators);
         }
         return false;
     }

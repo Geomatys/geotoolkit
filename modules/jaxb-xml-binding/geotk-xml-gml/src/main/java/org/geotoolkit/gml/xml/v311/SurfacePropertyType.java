@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.gml.xml.v311;
 
+import java.util.Objects;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -377,15 +378,15 @@ public class SurfacePropertyType implements SurfaceProperty {
         if (object instanceof SurfacePropertyType) {
             final SurfacePropertyType that = (SurfacePropertyType) object;
 
-            return Utilities.equals(this.actuate,              that.actuate)          &&
-                   Utilities.equals(this.arcrole,              that.arcrole)          &&
-                   Utilities.equals(this.type,                 that.type)             &&
-                   Utilities.equals(this.href,                 that.href)             &&
-                   Utilities.equals(this.remoteSchema,         that.remoteSchema)     &&
-                   Utilities.equals(this.show,                 that.show)             &&
-                   Utilities.equals(this.role,                 that.role)             &&
-                   Utilities.equals(this.title,                that.title)            &&
-                   Utilities.equals(this.getAbstractSurface(), that.getAbstractSurface());
+            return Objects.equals(this.actuate,              that.actuate)          &&
+                   Objects.equals(this.arcrole,              that.arcrole)          &&
+                   Objects.equals(this.type,                 that.type)             &&
+                   Objects.equals(this.href,                 that.href)             &&
+                   Objects.equals(this.remoteSchema,         that.remoteSchema)     &&
+                   Objects.equals(this.show,                 that.show)             &&
+                   Objects.equals(this.role,                 that.role)             &&
+                   Objects.equals(this.title,                that.title)            &&
+                   Objects.equals(this.getAbstractSurface(), that.getAbstractSurface());
         }
         return false;
     }

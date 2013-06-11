@@ -18,6 +18,7 @@ package org.geotoolkit.wfs.xml.v110;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -27,7 +28,6 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
 
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.ogc.xml.v110.FilterType;
 import org.geotoolkit.ogc.xml.v110.FunctionType;
 import org.geotoolkit.ogc.xml.v110.SortByType;
@@ -374,13 +374,13 @@ public class QueryType implements Query {
         
         if (obj instanceof QueryType) {
             QueryType that = (QueryType) obj;
-            return Utilities.equals(this.featureVersion, that.featureVersion) &&
-                   Utilities.equals(this.filter, that.filter) &&
-                   Utilities.equals(this.handle, that.handle) &&
-                   Utilities.equals(this.propertyNameOrXlinkPropertyNameOrFunction, that.propertyNameOrXlinkPropertyNameOrFunction) &&
-                   Utilities.equals(this.sortBy, that.sortBy) &&
-                   Utilities.equals(this.srsName, that.srsName) &&
-                   Utilities.equals(this.typeName, that.typeName);
+            return Objects.equals(this.featureVersion, that.featureVersion) &&
+                   Objects.equals(this.filter, that.filter) &&
+                   Objects.equals(this.handle, that.handle) &&
+                   Objects.equals(this.propertyNameOrXlinkPropertyNameOrFunction, that.propertyNameOrXlinkPropertyNameOrFunction) &&
+                   Objects.equals(this.sortBy, that.sortBy) &&
+                   Objects.equals(this.srsName, that.srsName) &&
+                   Objects.equals(this.typeName, that.typeName);
         }
         return false;
     }

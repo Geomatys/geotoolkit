@@ -17,8 +17,7 @@
 package org.geotoolkit.style;
 
 import java.util.List;
-
-import org.geotoolkit.util.Utilities;
+import java.util.Objects;
 
 import org.opengis.filter.expression.Expression;
 import org.opengis.style.AnchorPoint;
@@ -110,7 +109,7 @@ public class DefaultGraphicStroke extends DefaultGraphic implements GraphicStrok
         DefaultGraphicStroke other = (DefaultGraphicStroke) obj;
 
         return this.symbols.equals(other.symbols)
-                && Utilities.equals(this.size, other.size)
+                && Objects.equals(this.size, other.size)
                 && this.opacity.equals(other.opacity)
                 && this.rotation.equals(other.rotation)
                 && this.anchor.equals(other.anchor)

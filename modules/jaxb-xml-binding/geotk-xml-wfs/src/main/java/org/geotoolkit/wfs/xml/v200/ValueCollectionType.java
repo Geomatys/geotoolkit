@@ -20,6 +20,7 @@ package org.geotoolkit.wfs.xml.v200;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -315,14 +316,14 @@ public class ValueCollectionType implements ValueCollection {
         }
         if (obj instanceof ValueCollectionType) {
             final ValueCollectionType that = (ValueCollectionType) obj;
-            return Utilities.equals(this.member,            that.member) &&
-                   Utilities.equals(this.additionalValues,  that.additionalValues) &&
-                   Utilities.equals(this.next,              that.next) &&
-                   Utilities.equals(this.numberMatched,     that.numberMatched) &&
-                   Utilities.equals(this.numberReturned,    that.numberReturned) &&
-                   Utilities.equals(this.previous,          that.previous) &&
-                   Utilities.equals(this.timeStamp,         that.timeStamp) &&
-                   Utilities.equals(this.truncatedResponse, that.truncatedResponse);
+            return Objects.equals(this.member,            that.member) &&
+                   Objects.equals(this.additionalValues,  that.additionalValues) &&
+                   Objects.equals(this.next,              that.next) &&
+                   Objects.equals(this.numberMatched,     that.numberMatched) &&
+                   Objects.equals(this.numberReturned,    that.numberReturned) &&
+                   Objects.equals(this.previous,          that.previous) &&
+                   Objects.equals(this.timeStamp,         that.timeStamp) &&
+                   Objects.equals(this.truncatedResponse, that.truncatedResponse);
         }
         return false;
     }

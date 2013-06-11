@@ -19,6 +19,7 @@ package org.geotoolkit.sampling.xml.v100;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -33,7 +34,6 @@ import org.geotoolkit.gml.xml.v311.PointType;
 import org.geotoolkit.observation.xml.v100.ObservationType;
 import org.geotoolkit.observation.xml.v100.SurveyProcedureType;
 import org.apache.sis.util.ComparisonMode;
-import org.geotoolkit.util.Utilities;
 import org.opengis.geometry.Geometry;
 import org.opengis.observation.sampling.SamplingPoint;
 
@@ -157,7 +157,7 @@ public class SamplingPointType extends SamplingFeatureType implements SamplingPo
         if (object instanceof SamplingFeatureType && super.equals(object, mode)) {
             final SamplingPointType that = (SamplingPointType) object;
         
-            return  Utilities.equals(this.position, that.position);
+            return  Objects.equals(this.position, that.position);
         } 
         return false;
     }

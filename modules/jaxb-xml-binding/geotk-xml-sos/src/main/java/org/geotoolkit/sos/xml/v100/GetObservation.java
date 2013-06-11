@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -44,7 +45,6 @@ import org.geotoolkit.ogc.xml.v110.PropertyIsNotEqualToType;
 import org.geotoolkit.ogc.xml.v110.PropertyIsNullType;
 import org.geotoolkit.ogc.xml.v110.SpatialOpsType;
 import org.geotoolkit.sos.xml.ResponseModeType;
-import org.geotoolkit.util.Utilities;
 import org.opengis.filter.Filter;
 
 /**
@@ -313,16 +313,16 @@ public class GetObservation extends RequestBaseType implements org.geotoolkit.so
         }
         if (object instanceof GetObservation && super.equals(object)) {
             final GetObservation that = (GetObservation) object;
-            return Utilities.equals(this.eventTime,         that.eventTime)         &&
-                   Utilities.equals(this.featureOfInterest, that.featureOfInterest) &&
-                   Utilities.equals(this.observedProperty,  that.observedProperty)  &&
-                   Utilities.equals(this.offering,          that.offering)          &&
-                   Utilities.equals(this.procedure,         that.procedure)         &&
-                   Utilities.equals(this.responseFormat,    that.responseFormat)    &&
-                   Utilities.equals(this.responseMode,      that.responseMode)      &&
-                   Utilities.equals(this.result,            that.result)            &&
-                   Utilities.equals(this.resultModel,       that.resultModel)       &&
-                   Utilities.equals(this.srsName,           that.srsName);
+            return Objects.equals(this.eventTime,         that.eventTime)         &&
+                   Objects.equals(this.featureOfInterest, that.featureOfInterest) &&
+                   Objects.equals(this.observedProperty,  that.observedProperty)  &&
+                   Objects.equals(this.offering,          that.offering)          &&
+                   Objects.equals(this.procedure,         that.procedure)         &&
+                   Objects.equals(this.responseFormat,    that.responseFormat)    &&
+                   Objects.equals(this.responseMode,      that.responseMode)      &&
+                   Objects.equals(this.result,            that.result)            &&
+                   Objects.equals(this.resultModel,       that.resultModel)       &&
+                   Objects.equals(this.srsName,           that.srsName);
         } 
         return false;
     }
@@ -602,19 +602,19 @@ public class GetObservation extends RequestBaseType implements org.geotoolkit.so
         }
         if (object instanceof FeatureOfInterest) {
         final FeatureOfInterest that = (FeatureOfInterest) object;
-            return Utilities.equals(this.bbox,       that.bbox)       &&
-                   Utilities.equals(this.beyond,     that.beyond)     &&
-                   Utilities.equals(this.contains,   that.contains)   &&
-                   Utilities.equals(this.crosses,    that.crosses)    &&
-                   Utilities.equals(this.dWithin,    that.dWithin )   &&
-                   Utilities.equals(this.disjoint,   that.disjoint)   &&
-                   Utilities.equals(this.equals,     that.equals)     &&
-                   Utilities.equals(this.intersects, that.intersects) &&
-                   Utilities.equals(this.objectID,   that.objectID)   &&
-                   Utilities.equals(this.overlaps,   that.overlaps)   &&
-                   Utilities.equals(this.spatialOps, that.spatialOps) &&
-                   Utilities.equals(this.touches,    that.touches)    &&
-                   Utilities.equals(this.within,     that.within);
+            return Objects.equals(this.bbox,       that.bbox)       &&
+                   Objects.equals(this.beyond,     that.beyond)     &&
+                   Objects.equals(this.contains,   that.contains)   &&
+                   Objects.equals(this.crosses,    that.crosses)    &&
+                   Objects.equals(this.dWithin,    that.dWithin )   &&
+                   Objects.equals(this.disjoint,   that.disjoint)   &&
+                   Objects.equals(this.equals,     that.equals)     &&
+                   Objects.equals(this.intersects, that.intersects) &&
+                   Objects.equals(this.objectID,   that.objectID)   &&
+                   Objects.equals(this.overlaps,   that.overlaps)   &&
+                   Objects.equals(this.spatialOps, that.spatialOps) &&
+                   Objects.equals(this.touches,    that.touches)    &&
+                   Objects.equals(this.within,     that.within);
         }
         return false;
     }
@@ -839,16 +839,16 @@ public class GetObservation extends RequestBaseType implements org.geotoolkit.so
             }
             if (object instanceof Result) {
                 final Result that = (Result) object;
-                return Utilities.equals(this.comparisonOps,                  that.comparisonOps)                  &&
-                       Utilities.equals(this.propertyIsBetween,              that.propertyIsBetween)              &&
-                       Utilities.equals(this.propertyIsEqualTo,              that.propertyIsEqualTo)              &&
-                       Utilities.equals(this.propertyIsGreaterThan,          that.propertyIsGreaterThan)          &&
-                       Utilities.equals(this.propertyIsGreaterThanOrEqualTo, that.propertyIsGreaterThanOrEqualTo) &&
-                       Utilities.equals(this.propertyIsLessThan,             that.propertyIsLessThan)             &&
-                       Utilities.equals(this.propertyIsLessThanOrEqualTo,    that.propertyIsLessThanOrEqualTo)    &&
-                       Utilities.equals(this.propertyIsLike,                 that.propertyIsLike)                 &&
-                       Utilities.equals(this.propertyIsNotEqualTo,           that.propertyIsNotEqualTo)           &&
-                       Utilities.equals(this.propertyIsNull,                 that.propertyIsNull);
+                return Objects.equals(this.comparisonOps,                  that.comparisonOps)                  &&
+                       Objects.equals(this.propertyIsBetween,              that.propertyIsBetween)              &&
+                       Objects.equals(this.propertyIsEqualTo,              that.propertyIsEqualTo)              &&
+                       Objects.equals(this.propertyIsGreaterThan,          that.propertyIsGreaterThan)          &&
+                       Objects.equals(this.propertyIsGreaterThanOrEqualTo, that.propertyIsGreaterThanOrEqualTo) &&
+                       Objects.equals(this.propertyIsLessThan,             that.propertyIsLessThan)             &&
+                       Objects.equals(this.propertyIsLessThanOrEqualTo,    that.propertyIsLessThanOrEqualTo)    &&
+                       Objects.equals(this.propertyIsLike,                 that.propertyIsLike)                 &&
+                       Objects.equals(this.propertyIsNotEqualTo,           that.propertyIsNotEqualTo)           &&
+                       Objects.equals(this.propertyIsNull,                 that.propertyIsNull);
             }
             return false;
         }

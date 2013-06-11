@@ -17,6 +17,7 @@
 package org.geotoolkit.observation.xml.v100;
 
 // jaxb import
+import java.util.Objects;
 import java.util.logging.Logger;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -46,7 +47,6 @@ import org.geotoolkit.swe.xml.v101.DataArrayPropertyType;
 import org.geotoolkit.swe.xml.v101.PhenomenonType;
 import org.geotoolkit.swe.xml.v101.PhenomenonPropertyType;
 import org.geotoolkit.swe.xml.v101.TimeGeometricPrimitivePropertyType;
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.metadata.iso.DefaultMetadata;
 import org.geotoolkit.observation.xml.AbstractObservation;
 import org.geotoolkit.sampling.xml.v100.SamplingCurveType;
@@ -623,7 +623,7 @@ public class ObservationType implements Entry, AbstractObservation {
         final ObservationType template = (ObservationType) abstractTemplate;
         final boolean obsProperty;
         if (this.observedProperty != null && template.observedProperty != null) {
-            obsProperty = Utilities.equals(this.observedProperty.getPhenomenon(),    template.observedProperty.getPhenomenon());
+            obsProperty = Objects.equals(this.observedProperty.getPhenomenon(),    template.observedProperty.getPhenomenon());
             if (!obsProperty) {
                 LOGGER.info("\ncomparing observed property:\nTHIS     => " +  this.observedProperty.getPhenomenon() +
                             "\nTEMPLATE => "                               + template.observedProperty.getPhenomenon() + '\n');
@@ -634,7 +634,7 @@ public class ObservationType implements Entry, AbstractObservation {
         
         final boolean obsFoi;
         if (this.featureOfInterest != null && template.featureOfInterest != null) {
-            obsFoi = Utilities.equals(this.featureOfInterest.getAbstractFeature(),    template.featureOfInterest.getAbstractFeature());
+            obsFoi = Objects.equals(this.featureOfInterest.getAbstractFeature(),    template.featureOfInterest.getAbstractFeature());
             if (!obsFoi) {
                 LOGGER.info("\ncomparing feature of interest:\nTHIS    => "+  this.featureOfInterest.getAbstractFeature() +
                             "\nTEMPLATE => " + template.featureOfInterest.getAbstractFeature() + '\n');
@@ -644,20 +644,20 @@ public class ObservationType implements Entry, AbstractObservation {
         }
         
         boolean match = obsFoi                                                                   &&
-                        Utilities.equals(this.procedure,           template.procedure)           &&
-                        Utilities.equals(this.resultQuality,       template.resultQuality)       && 
-                        Utilities.equals(this.observationMetadata, template.observationMetadata) &&
-                        Utilities.equals(this.procedureTime,       template.procedureTime)       &&
-                        Utilities.equals(this.procedureParameter,  template.procedureParameter)  &&
+                        Objects.equals(this.procedure,           template.procedure)           &&
+                        Objects.equals(this.resultQuality,       template.resultQuality)       && 
+                        Objects.equals(this.observationMetadata, template.observationMetadata) &&
+                        Objects.equals(this.procedureTime,       template.procedureTime)       &&
+                        Objects.equals(this.procedureParameter,  template.procedureParameter)  &&
                         obsProperty;
         if (!match) {
             LOGGER.severe("error matching template report:" +
                    "\nFOI  =>" + obsFoi                                                                   + 
-                   "\nPROC =>" + Utilities.equals(this.procedure,           template.procedure)           + 
-                   "\nQUAL =>" + Utilities.equals(this.resultQuality,       template.resultQuality)       + 
-                   "\nMETA =>" + Utilities.equals(this.observationMetadata, template.observationMetadata) + 
-                   "\nPTI  =>" + Utilities.equals(this.procedureTime,       template.procedureTime)       + 
-                   "\nPPAM =>" + Utilities.equals(this.procedureParameter,  template.procedureParameter)  + 
+                   "\nPROC =>" + Objects.equals(this.procedure,           template.procedure)           + 
+                   "\nQUAL =>" + Objects.equals(this.resultQuality,       template.resultQuality)       + 
+                   "\nMETA =>" + Objects.equals(this.observationMetadata, template.observationMetadata) + 
+                   "\nPTI  =>" + Objects.equals(this.procedureTime,       template.procedureTime)       + 
+                   "\nPPAM =>" + Objects.equals(this.procedureParameter,  template.procedureParameter)  + 
                    "\nPHEN =>" + obsProperty);
         }
         return match;
@@ -690,17 +690,17 @@ public class ObservationType implements Entry, AbstractObservation {
             if (this.result == null && that.result == null) {
                 res = true;
             } else if (this.result != null && that.result != null) {
-                res = Utilities.equals(this.result.getValue(), that.result.getValue());
+                res = Objects.equals(this.result.getValue(), that.result.getValue());
             }
-            return Utilities.equals(this.featureOfInterest,   that.featureOfInterest)   &&
-                   Utilities.equals(this.observedProperty,    that.observedProperty)    &&
-                   Utilities.equals(this.procedure,           that.procedure)           &&
-                   Utilities.equals(this.resultQuality,       that.resultQuality)       && 
+            return Objects.equals(this.featureOfInterest,   that.featureOfInterest)   &&
+                   Objects.equals(this.observedProperty,    that.observedProperty)    &&
+                   Objects.equals(this.procedure,           that.procedure)           &&
+                   Objects.equals(this.resultQuality,       that.resultQuality)       && 
                    res                                                                  &&
-                   Utilities.equals(this.samplingTime,        that.samplingTime)        &&
-                   Utilities.equals(this.observationMetadata, that.observationMetadata) &&
-                   Utilities.equals(this.procedureTime,       that.procedureTime)       &&
-                   Utilities.equals(this.procedureParameter,  that.procedureParameter);
+                   Objects.equals(this.samplingTime,        that.samplingTime)        &&
+                   Objects.equals(this.observationMetadata, that.observationMetadata) &&
+                   Objects.equals(this.procedureTime,       that.procedureTime)       &&
+                   Objects.equals(this.procedureParameter,  that.procedureParameter);
         }
         return false;
     }

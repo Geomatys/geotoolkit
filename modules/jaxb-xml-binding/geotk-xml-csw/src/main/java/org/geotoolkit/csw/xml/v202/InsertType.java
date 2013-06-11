@@ -18,6 +18,7 @@ package org.geotoolkit.csw.xml.v202;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAnyElement;
@@ -28,7 +29,6 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.csw.xml.Insert;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -138,9 +138,9 @@ public class InsertType implements Insert {
         }
         if (object instanceof InsertType) {
             final InsertType that = (InsertType) object;
-            return Utilities.equals(this.any,      that.any)    &&
-                   Utilities.equals(this.handle,   that.handle) &&
-                   Utilities.equals(this.typeName, that.typeName);
+            return Objects.equals(this.any,      that.any)    &&
+                   Objects.equals(this.handle,   that.handle) &&
+                   Objects.equals(this.typeName, that.typeName);
         }
         return false;
     }

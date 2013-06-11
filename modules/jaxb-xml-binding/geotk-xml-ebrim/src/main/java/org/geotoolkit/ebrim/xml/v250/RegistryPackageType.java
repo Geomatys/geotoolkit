@@ -16,13 +16,13 @@
  */
 package org.geotoolkit.ebrim.xml.v250;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.wrs.xml.v090.ApplicationModuleType;
 
 
@@ -96,7 +96,7 @@ public class RegistryPackageType extends RegistryEntryType {
         }
         if (obj instanceof RegistryPackageType && super.equals(obj)) {
             final RegistryPackageType that = (RegistryPackageType) obj;
-            return Utilities.equals(this.registryObjectList,         that.registryObjectList);
+            return Objects.equals(this.registryObjectList,         that.registryObjectList);
         }
         return false;
     }

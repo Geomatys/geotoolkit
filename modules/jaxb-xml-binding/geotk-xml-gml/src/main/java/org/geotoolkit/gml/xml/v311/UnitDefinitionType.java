@@ -16,13 +16,13 @@
  */
 package org.geotoolkit.gml.xml.v311;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 import org.apache.sis.util.ComparisonMode;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -138,9 +138,9 @@ public class UnitDefinitionType extends DefinitionType {
         }
         if (object instanceof UnitDefinitionType && super.equals(object, mode)) {
             final UnitDefinitionType that = (UnitDefinitionType) object;
-            return Utilities.equals(this.catalogSymbol,        that.catalogSymbol)        &&
-                   Utilities.equals(this.quantityType,        that.quantityType)        &&
-                   Utilities.equals(this.quantityTypeReference,       that.quantityTypeReference);
+            return Objects.equals(this.catalogSymbol,        that.catalogSymbol)        &&
+                   Objects.equals(this.quantityType,        that.quantityType)        &&
+                   Objects.equals(this.quantityTypeReference,       that.quantityTypeReference);
         }
         return false;
     }

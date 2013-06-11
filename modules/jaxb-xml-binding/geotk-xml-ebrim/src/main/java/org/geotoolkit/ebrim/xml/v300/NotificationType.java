@@ -16,13 +16,13 @@
  */
 package org.geotoolkit.ebrim.xml.v300;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -108,8 +108,8 @@ public class NotificationType extends RegistryObjectType {
         }
         if (obj instanceof NotificationType && super.equals(obj)) {
             final NotificationType that = (NotificationType) obj;
-            return Utilities.equals(this.registryObjectList, that.registryObjectList) &&
-                   Utilities.equals(this.subscription,       that.subscription);
+            return Objects.equals(this.registryObjectList, that.registryObjectList) &&
+                   Objects.equals(this.subscription,       that.subscription);
         }
         return false;
     }

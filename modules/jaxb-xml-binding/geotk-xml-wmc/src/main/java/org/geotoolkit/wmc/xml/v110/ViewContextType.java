@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.wmc.xml.v110;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -176,10 +177,10 @@ public class ViewContextType {
         if (object instanceof ViewContextType) {
             final ViewContextType that = (ViewContextType) object;
 
-            return Utilities.equals(this.general, that.general) &&
-                   Utilities.equals(this.layerList, that.layerList) &&
-                   Utilities.equals(this.version, that.version) &&
-                   Utilities.equals(this.id,  that.id);
+            return Objects.equals(this.general, that.general) &&
+                   Objects.equals(this.layerList, that.layerList) &&
+                   Objects.equals(this.version, that.version) &&
+                   Objects.equals(this.id,  that.id);
             }
         return false;
     }

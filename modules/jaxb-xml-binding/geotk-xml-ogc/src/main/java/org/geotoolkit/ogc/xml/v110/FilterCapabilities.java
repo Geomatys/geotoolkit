@@ -16,12 +16,12 @@
  */
 package org.geotoolkit.ogc.xml.v110;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.util.Utilities;
 import org.opengis.filter.capability.IdCapabilities;
 import org.opengis.filter.capability.ScalarCapabilities;
 import org.opengis.filter.capability.SpatialCapabilities;
@@ -216,14 +216,14 @@ public class FilterCapabilities implements org.opengis.filter.capability.FilterC
 
        if (object instanceof FilterCapabilities) {
            final FilterCapabilities that = (FilterCapabilities) object;
-
-
-            return Utilities.equals(this.classificationCapabilities, that.classificationCapabilities) &&
-                   Utilities.equals(this.existenceCapabilities,      that.existenceCapabilities)      &&
-                   Utilities.equals(this.idCapabilities,             that.idCapabilities)             &&
-                   Utilities.equals(this.scalarCapabilities,         that.scalarCapabilities)         &&
-                   Utilities.equals(this.spatialCapabilities,        that.spatialCapabilities)        &&
-                   Utilities.equals(this.temporalCapabilities,        that.temporalCapabilities);
+       
+            
+            return Objects.equals(this.classificationCapabilities, that.classificationCapabilities) &&
+                   Objects.equals(this.existenceCapabilities,      that.existenceCapabilities)      &&
+                   Objects.equals(this.idCapabilities,             that.idCapabilities)             &&
+                   Objects.equals(this.scalarCapabilities,         that.scalarCapabilities)         &&
+                   Objects.equals(this.spatialCapabilities,        that.spatialCapabilities)        &&
+                   Objects.equals(this.temporalCapabilities,        that.temporalCapabilities);
         }
         return false;
     }

@@ -18,6 +18,7 @@ package org.geotoolkit.ebrim.xml.v250;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -26,7 +27,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -170,9 +170,9 @@ public class ClassificationSchemeType extends RegistryEntryType {
         }
         if (obj instanceof ClassificationSchemeType && super.equals(obj)) {
             final ClassificationSchemeType that = (ClassificationSchemeType) obj;
-            return Utilities.equals(this.classificationNode, that.classificationNode) &&
-                   Utilities.equals(this.isInternal,         that.isInternal) &&
-                   Utilities.equals(this.nodeType,           that.nodeType);
+            return Objects.equals(this.classificationNode, that.classificationNode) &&
+                   Objects.equals(this.isInternal,         that.isInternal) &&
+                   Objects.equals(this.nodeType,           that.nodeType);
         }
         return false;
     }

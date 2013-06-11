@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.gml.xml.v311;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -112,8 +113,8 @@ public class EngineeringCRSType extends AbstractReferenceSystemType {
 
         if (object instanceof EngineeringCRSType) {
             final EngineeringCRSType that = (EngineeringCRSType) object;
-            return Utilities.equals(this.usesCS, that.usesCS) &&
-                   Utilities.equals(this.usesEngineeringDatum, that.usesEngineeringDatum);
+            return Objects.equals(this.usesCS, that.usesCS) &&
+                   Objects.equals(this.usesEngineeringDatum, that.usesEngineeringDatum);
 
         }
         return false;

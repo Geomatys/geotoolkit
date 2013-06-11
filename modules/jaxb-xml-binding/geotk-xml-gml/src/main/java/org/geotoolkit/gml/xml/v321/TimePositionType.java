@@ -29,6 +29,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.logging.Level;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -39,7 +40,6 @@ import javax.xml.bind.annotation.XmlValue;
 import org.geotoolkit.gml.xml.AbstractTimePosition;
 import org.geotoolkit.gml.xml.TimeIndeterminateValueType;
 import org.geotoolkit.util.SimpleInternationalString;
-import org.geotoolkit.util.Utilities;
 import org.opengis.temporal.Position;
 import org.opengis.util.InternationalString;
 
@@ -286,12 +286,12 @@ public class TimePositionType extends AbstractTimePosition implements Serializab
         }
         if (object instanceof TimePositionType) {
             final TimePositionType that = (TimePositionType) object;
-            
-            return Utilities.equals(this.calendarEraName,       that.calendarEraName)       &&
-                   Utilities.equals(this.frame,                 that.frame)                 &&
-                   Utilities.equals(this.indeterminatePosition, that.indeterminatePosition) &&
+           return Objects.equals(this.calendarEraName,       that.calendarEraName)       &&
+                   Objects.equals(this.frame,                 that.frame)                 &&
+                   Objects.equals(this.indeterminatePosition, that.indeterminatePosition) &&
                    // fix equals issue with diferent facet value, but same dateTime
-                   (Utilities.equals(this.value, that.value) || Utilities.equals(this.getDate(), that.getDate()));
+                   (Objects.equals(this.value, that.value) || Objects.equals(this.getDate(), that.getDate()));
+
         }
         return false;
     }

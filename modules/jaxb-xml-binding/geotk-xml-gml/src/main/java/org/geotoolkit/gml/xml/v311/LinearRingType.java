@@ -18,6 +18,7 @@ package org.geotoolkit.gml.xml.v311;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -26,7 +27,6 @@ import javax.xml.bind.annotation.XmlElementRefs;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.LinearRing;
 import org.apache.sis.util.ComparisonMode;
-import org.geotoolkit.util.Utilities;
 import org.opengis.filter.expression.ExpressionVisitor;
 
 
@@ -205,9 +205,9 @@ public class LinearRingType extends AbstractRingType implements LinearRing {
                     }
                 }
             }
-            return Utilities.equals(this.coordinates,  that.coordinates) &&
-                   Utilities.equals(this.posList,      that.posList)     &&
-                   Utilities.equals(this.coord,        that.coord)       &&
+            return Objects.equals(this.coordinates,  that.coordinates) &&
+                   Objects.equals(this.posList,      that.posList)     &&
+                   Objects.equals(this.coord,        that.coord)       &&
                    jb;
         }
         return false;
@@ -225,7 +225,7 @@ public class LinearRingType extends AbstractRingType implements LinearRing {
 
     private boolean JAXBElementEquals(final JAXBElement a, final JAXBElement b) {
         if (a  != null && b != null) {
-            return Utilities.equals(a.getValue(), b.getValue());
+            return Objects.equals(a.getValue(), b.getValue());
         } else if (a == null && b == null) {
             return true;
         }

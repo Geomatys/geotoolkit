@@ -18,6 +18,7 @@ package org.geotoolkit.wmc.xml.v110;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -519,21 +520,21 @@ public class LayerType {
         if (object instanceof LayerType) {
             final LayerType that = (LayerType) object;
 
-            return Utilities.equals(this._abstract, that._abstract) &&
-                   Utilities.equals(this.dataURL, that.dataURL) &&
-                   Utilities.equals(this.dimensionList, that.dimensionList) &&
-                   Utilities.equals(this.formatList, that.formatList) &&
-                   Utilities.equals(this.extension, that.extension) &&
-                   Utilities.equals(this.hidden, that.hidden) &&
-                   Utilities.equals(this.maxScaleDenominator, that.maxScaleDenominator) &&
-                   Utilities.equals(this.title, that.title) &&
-                   Utilities.equals(this.minScaleDenominator, that.minScaleDenominator) &&
-                   Utilities.equals(this.name, that.name) &&
-                   Utilities.equals(this.queryable, that.queryable) &&
-                   Utilities.equals(this.server, that.server) &&
-                   Utilities.equals(this.srs, that.srs) &&
-                   Utilities.equals(this.styleList, that.styleList) &&
-                   Utilities.equals(this.metadataURL,  that.metadataURL);
+            return Objects.equals(this._abstract, that._abstract) &&
+                   Objects.equals(this.dataURL, that.dataURL) &&
+                   Objects.equals(this.dimensionList, that.dimensionList) &&
+                   Objects.equals(this.formatList, that.formatList) &&
+                   Objects.equals(this.extension, that.extension) &&
+                   Objects.equals(this.hidden, that.hidden) &&
+                   Objects.equals(this.maxScaleDenominator, that.maxScaleDenominator) &&
+                   Objects.equals(this.title, that.title) &&
+                   Objects.equals(this.minScaleDenominator, that.minScaleDenominator) &&
+                   Objects.equals(this.name, that.name) &&
+                   Objects.equals(this.queryable, that.queryable) &&
+                   Objects.equals(this.server, that.server) &&
+                   Objects.equals(this.srs, that.srs) &&
+                   Objects.equals(this.styleList, that.styleList) &&
+                   Objects.equals(this.metadataURL,  that.metadataURL);
             }
         return false;
     }

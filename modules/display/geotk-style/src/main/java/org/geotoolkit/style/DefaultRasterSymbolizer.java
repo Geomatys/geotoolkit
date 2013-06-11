@@ -16,7 +16,8 @@
  */
 package org.geotoolkit.style;
 
-import org.apache.sis.util.Classes;
+import java.util.Objects;
+import org.geotoolkit.util.converter.Classes;
 import javax.measure.unit.Unit;
 
 import org.opengis.filter.expression.Expression;
@@ -172,17 +173,17 @@ public class DefaultRasterSymbolizer extends AbstractSymbolizer implements Raste
 
         DefaultRasterSymbolizer other = (DefaultRasterSymbolizer) obj;
 
-        return Utilities.equals(this.colorMap ,other.colorMap)
+        return Objects.equals(this.colorMap ,other.colorMap)
                 && this.desc.equals(other.desc)
                 && this.enhance.equals(other.enhance)
-                && Utilities.equals(this.geom,other.geom)
-                && Utilities.equals(this.name,other.name)
+                && Objects.equals(this.geom,other.geom)
+                && Objects.equals(this.name,other.name)
                 && this.opacity.equals(other.opacity)
-                && Utilities.equals(this.outline,other.outline)
-                && Utilities.equals(this.outline,other.outline)
+                && Objects.equals(this.outline,other.outline)
+                && Objects.equals(this.outline,other.outline)
                 && this.overlap.equals(other.overlap)
-                && Utilities.equals(this.relief,other.relief)
-                && Utilities.equals(this.selection,other.selection)
+                && Objects.equals(this.relief,other.relief)
+                && Objects.equals(this.selection,other.selection)
                 && this.uom.equals(other.uom);
                         
 

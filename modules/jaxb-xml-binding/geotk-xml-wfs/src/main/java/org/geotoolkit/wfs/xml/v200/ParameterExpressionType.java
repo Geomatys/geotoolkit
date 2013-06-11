@@ -20,6 +20,7 @@ package org.geotoolkit.wfs.xml.v200;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -216,11 +217,11 @@ public class ParameterExpressionType implements ParameterExpression {
         if (object instanceof ParameterExpressionType) {
             final ParameterExpressionType that = (ParameterExpressionType) object;
 
-            return Utilities.equals(this._abstract, that._abstract) &&
-                   Utilities.equals(this.name, that.name) &&
-                   Utilities.equals(this.metadata, that.metadata) &&
-                   Utilities.equals(this.type, that.type) &&
-                   Utilities.equals(this.title, that.title);
+            return Objects.equals(this._abstract, that._abstract) &&
+                   Objects.equals(this.name, that.name) &&
+                   Objects.equals(this.metadata, that.metadata) &&
+                   Objects.equals(this.type, that.type) &&
+                   Objects.equals(this.title, that.title);
             }
         return false;
     }

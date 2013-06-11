@@ -16,12 +16,12 @@
  */
 package org.geotoolkit.ogc.xml.v110;
 
+import java.util.Objects;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.util.Utilities;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterVisitor;
 
@@ -205,21 +205,21 @@ public class UnaryLogicOpType extends LogicOpsType {
 
             boolean comp = false;
             if (this.comparisonOps != null && that.comparisonOps != null) {
-                comp = Utilities.equals(this.comparisonOps.getValue(), that.comparisonOps.getValue());
+                comp = Objects.equals(this.comparisonOps.getValue(), that.comparisonOps.getValue());
             } else if (this.comparisonOps == null && that.comparisonOps == null) {
                 comp = true;
             }
 
             boolean log = false;
             if (this.logicOps != null && that.logicOps != null) {
-                log = Utilities.equals(this.logicOps.getValue(), that.logicOps.getValue());
+                log = Objects.equals(this.logicOps.getValue(), that.logicOps.getValue());
             } else if (this.logicOps == null && that.logicOps == null) {
                 log = true;
             }
 
             boolean spa = false;
             if (this.spatialOps != null && that.spatialOps != null) {
-                spa = Utilities.equals(this.spatialOps.getValue(), that.spatialOps.getValue());
+                spa = Objects.equals(this.spatialOps.getValue(), that.spatialOps.getValue());
             } else if (this.spatialOps == null && that.spatialOps == null) {
                 spa = true;
             }

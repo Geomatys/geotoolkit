@@ -18,11 +18,11 @@ package org.geotoolkit.gml.xml.v311;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 import org.apache.sis.util.ComparisonMode;
-import org.geotoolkit.util.Utilities;
 import org.opengis.filter.expression.ExpressionVisitor;
 
 
@@ -154,8 +154,8 @@ public class MultiGeometryType extends AbstractGeometricAggregateType {
         }
         if (object instanceof MultiGeometryType && super.equals(object, mode)) {
             final MultiGeometryType that = (MultiGeometryType) object;
-            return  Utilities.equals(this.geometryMember,  that.geometryMember) &&
-                    Utilities.equals(this.geometryMembers, that.geometryMembers);
+            return  Objects.equals(this.geometryMember,  that.geometryMember) &&
+                    Objects.equals(this.geometryMembers, that.geometryMembers);
         }
         return false;
     }

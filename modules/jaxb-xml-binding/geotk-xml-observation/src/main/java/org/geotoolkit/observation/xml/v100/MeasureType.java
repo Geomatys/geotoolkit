@@ -19,6 +19,7 @@ package org.geotoolkit.observation.xml.v100;
 // Constellation dependencies
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
@@ -26,7 +27,6 @@ import org.geotoolkit.gml.xml.v311.UnitOfMeasureEntry;
 
 // GeotoolKit dependencies
 import org.geotoolkit.internal.sql.table.Entry;
-import org.geotoolkit.util.Utilities;
 import org.opengis.observation.Measure;
 
 
@@ -141,9 +141,9 @@ public class MeasureType implements Measure, Entry{
         
         if (object instanceof MeasureType) {
             final MeasureType that = (MeasureType) object;
-            return Utilities.equals(this.name,  that.name) &&
-                   Utilities.equals(this.uom,   that.uom) &&
-                   Utilities.equals(this.value, that.value) ;
+            return Objects.equals(this.name,  that.name) &&
+                   Objects.equals(this.uom,   that.uom) &&
+                   Objects.equals(this.value, that.value) ;
         }
         return false;
     }

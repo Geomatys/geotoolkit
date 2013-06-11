@@ -16,13 +16,13 @@
  */
 package org.geotoolkit.gml.xml.v311;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 import org.apache.sis.util.ComparisonMode;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -95,7 +95,7 @@ public abstract class AbstractReferenceSystemBaseType extends DefinitionType {
         }
         if (object instanceof AbstractReferenceSystemBaseType && super.equals(object, mode)) {
             final AbstractReferenceSystemBaseType that = (AbstractReferenceSystemBaseType) object;
-            return Utilities.equals(this.srsName, that.srsName);
+            return Objects.equals(this.srsName, that.srsName);
         }
         return false;
     }

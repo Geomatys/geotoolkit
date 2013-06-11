@@ -19,12 +19,12 @@ package org.geotoolkit.ogc.xml.v110;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
-import org.geotoolkit.util.Utilities;
 import org.opengis.filter.capability.GeometryOperand;
 import org.opengis.filter.capability.SpatialCapabilities;
 import org.opengis.filter.capability.SpatialOperators;
@@ -139,9 +139,9 @@ public class SpatialCapabilitiesType implements SpatialCapabilities {
 
        if (object instanceof SpatialCapabilitiesType) {
            final SpatialCapabilitiesType that = (SpatialCapabilitiesType) object;
-
-            return Utilities.equals(this.geometryOperands, that.geometryOperands) &&
-                   Utilities.equals(this.spatialOperators, that.spatialOperators);
+       
+            return Objects.equals(this.geometryOperands, that.geometryOperands) &&
+                   Objects.equals(this.spatialOperators, that.spatialOperators);
         }
         return false;
     }

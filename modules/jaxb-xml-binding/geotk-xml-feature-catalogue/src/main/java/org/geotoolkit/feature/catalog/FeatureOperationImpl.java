@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
+import java.util.Objects;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -29,7 +30,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.util.Utilities;
 import org.opengis.feature.catalog.BoundFeatureAttribute;
 import org.opengis.feature.catalog.FeatureOperation;
 
@@ -289,11 +289,11 @@ public class FeatureOperationImpl extends PropertyTypeImpl implements FeatureOpe
         if (super.equals(object) && object instanceof FeatureOperationImpl) {
             final FeatureOperationImpl that = (FeatureOperationImpl) object;
             
-            return Utilities.equals(this.affectsValuesOf,     that.affectsValuesOf)   &&
-                   Utilities.equals(this.formalDefinition,   that.formalDefinition) &&
-                   Utilities.equals(this.observesValuesOf,    that.observesValuesOf)  &&
-                   Utilities.equals(this.signature,          that.signature)        &&
-                   Utilities.equals(this.triggeredByValuesOf, that.triggeredByValuesOf);
+            return Objects.equals(this.affectsValuesOf,     that.affectsValuesOf)   &&
+                   Objects.equals(this.formalDefinition,   that.formalDefinition) &&
+                   Objects.equals(this.observesValuesOf,    that.observesValuesOf)  &&
+                   Objects.equals(this.signature,          that.signature)        &&
+                   Objects.equals(this.triggeredByValuesOf, that.triggeredByValuesOf);
         }
         return false;
     }

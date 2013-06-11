@@ -17,6 +17,7 @@
 package org.geotoolkit.gml.xml.v311;
 
 import java.io.Serializable;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -28,7 +29,6 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.gml.xml.AbstractGML;
 import org.geotoolkit.internal.sql.table.Entry;
 import org.geotoolkit.metadata.AbstractMetadata;
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.metadata.MetadataStandard;
 import org.apache.sis.util.ComparisonMode;
 
@@ -215,11 +215,11 @@ public abstract class AbstractGMLType extends AbstractMetadata implements Abstra
         }
         if (obj instanceof AbstractGMLType) {
             final AbstractGMLType that = (AbstractGMLType) obj;
-            return Utilities.equals(this.description,          that.description)          &&
-                   Utilities.equals(this.descriptionReference, that.descriptionReference) &&
-                   Utilities.equals(this.id,                   that.id)                   &&
-                   Utilities.equals(this.getName(),            that.getName())                 &&
-                   Utilities.equals(this.parameterName,        that.parameterName);
+            return Objects.equals(this.description,          that.description)          &&
+                   Objects.equals(this.descriptionReference, that.descriptionReference) &&
+                   Objects.equals(this.id,                   that.id)                   &&
+                   Objects.equals(this.getName(),            that.getName())                 &&
+                   Objects.equals(this.parameterName,        that.parameterName);
         }
         return false;
     }

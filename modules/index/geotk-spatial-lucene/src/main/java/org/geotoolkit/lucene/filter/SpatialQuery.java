@@ -19,12 +19,11 @@ package org.geotoolkit.lucene.filter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.apache.lucene.search.Filter;
 import org.apache.lucene.search.Sort;
 import org.geotoolkit.index.tree.Tree;
-
-import org.geotoolkit.util.Utilities;
 
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
@@ -248,10 +247,10 @@ public class SpatialQuery {
             final SpatialQuery that = (SpatialQuery) object;
 
             return (this.logicalOperator ==  that.logicalOperator)          &&
-                   Utilities.equals(this.getQuery(), that.getQuery())       &&
-                   Utilities.equals(this.sort, that.sort)                   &&
-                   Utilities.equals(this.spatialFilter, that.spatialFilter) &&
-                   Utilities.equals(this.subQueries, that.subQueries);
+                   Objects.equals(this.getQuery(), that.getQuery())       &&
+                   Objects.equals(this.sort, that.sort)                   &&
+                   Objects.equals(this.spatialFilter, that.spatialFilter) &&
+                   Objects.equals(this.subQueries, that.subQueries);
         }
         return false;
     }

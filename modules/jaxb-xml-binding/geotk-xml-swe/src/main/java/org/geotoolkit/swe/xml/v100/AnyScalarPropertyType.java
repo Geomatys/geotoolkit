@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.swe.xml.v100;
 
+import java.sql.Time;
+import java.util.Objects;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -31,7 +33,6 @@ import org.geotoolkit.swe.xml.AbstractText;
 import org.geotoolkit.swe.xml.AbstractTime;
 import org.geotoolkit.swe.xml.AnyScalar;
 import org.geotoolkit.swe.xml.Quantity;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -564,21 +565,21 @@ public class AnyScalarPropertyType implements AnyScalar {
 
         if (object instanceof AnyScalarPropertyType) {
             final AnyScalarPropertyType that = (AnyScalarPropertyType) object;
-            return Utilities.equals(this.actuate,      that.actuate)       &&
-                   Utilities.equals(this.arcrole,      that.arcrole)       &&
-                   Utilities.equals(this.href,         that.href)          &&
-                   Utilities.equals(this.remoteSchema, that.remoteSchema)  &&
-                   Utilities.equals(this.role,         that.role)          &&
-                   Utilities.equals(this.show,         that.show)          &&
-                   Utilities.equals(this.title,        that.title)         &&
-                   Utilities.equals(this._boolean,     that._boolean)      &&
-                   Utilities.equals(this.category,     that.category)      &&
-                   Utilities.equals(this.text,         that.text)          &&
-                   Utilities.equals(this.count,        that.count)         &&
-                   Utilities.equals(this.name,         that.name)          &&
-                   Utilities.equals(this.quantity,     that.quantity)      &&
-                   Utilities.equals(this.time,         that.time)          &&
-                   Utilities.equals(this.type,         that.type);
+            return Objects.equals(this.actuate,      that.actuate)       &&
+                   Objects.equals(this.arcrole,      that.arcrole)       &&
+                   Objects.equals(this.href,         that.href)          &&
+                   Objects.equals(this.remoteSchema, that.remoteSchema)  &&
+                   Objects.equals(this.role,         that.role)          &&
+                   Objects.equals(this.show,         that.show)          &&
+                   Objects.equals(this.title,        that.title)         &&
+                   Objects.equals(this._boolean,     that._boolean)      &&
+                   Objects.equals(this.category,     that.category)      &&
+                   Objects.equals(this.text,         that.text)          &&
+                   Objects.equals(this.count,        that.count)         &&
+                   Objects.equals(this.name,         that.name)          &&
+                   Objects.equals(this.quantity,     that.quantity)      &&
+                   Objects.equals(this.time,         that.time)          &&
+                   Objects.equals(this.type,         that.type);
         }
         return false;
     }

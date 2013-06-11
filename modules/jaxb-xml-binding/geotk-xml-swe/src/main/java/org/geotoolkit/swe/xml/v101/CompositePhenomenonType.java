@@ -16,10 +16,7 @@
  */
 package org.geotoolkit.swe.xml.v101;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -28,7 +25,6 @@ import org.apache.sis.util.ComparisonMode;
 import org.opengis.observation.CompositePhenomenon;
 
 // geotoolkit dependencies
-import org.geotoolkit.util.Utilities;
 
 /**
   * Une propriété complexe composée de plusieur {@linkPlain Phenomenon phenomenon}
@@ -159,11 +155,11 @@ public class CompositePhenomenonType extends CompoundPhenomenonType implements C
                     }
                 } else return false;
             } 
-            return Utilities.equals(this.getId(),             that.getId()) &&
-                   Utilities.equals(this.getDescription(),    that.getDescription()) &&
-                   Utilities.equals(this.getName(),           that.getName()) &&
-                   Utilities.equals(this.base,                that.base) && 
-                   Utilities.equals(this.component,           that.component);
+            return Objects.equals(this.getId(),             that.getId()) &&
+                   Objects.equals(this.getDescription(),    that.getDescription()) &&
+                   Objects.equals(this.getName(),           that.getName()) &&
+                   Objects.equals(this.base,                that.base) && 
+                   Objects.equals(this.component,           that.component);
        }
        return false;
     }

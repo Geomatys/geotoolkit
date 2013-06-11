@@ -18,13 +18,13 @@ package org.geotoolkit.ows.xml.v100;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ows.xml.Sections;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -152,7 +152,7 @@ public class SectionsType implements Sections {
         }
         if (object instanceof SectionsType) {
             final SectionsType that = (SectionsType) object;
-            return Utilities.equals(this.section, that.section);
+            return Objects.equals(this.section, that.section);
         }
         return false;
     }

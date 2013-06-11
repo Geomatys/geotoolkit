@@ -17,8 +17,8 @@
 package org.geotoolkit.csw.xml.v202;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -28,7 +28,6 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
 import org.geotoolkit.csw.xml.DescribeRecord;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -161,9 +160,9 @@ public class DescribeRecordType extends RequestBaseType implements DescribeRecor
         }
         if (object instanceof DescribeRecordType && super.equals(object)) {
             final DescribeRecordType that = (DescribeRecordType) object;
-            return Utilities.equals(this.outputFormat,   that.outputFormat)   &&
-                   Utilities.equals(this.schemaLanguage, that.schemaLanguage) &&
-                   Utilities.equals(this.typeName,       that.typeName);
+            return Objects.equals(this.outputFormat,   that.outputFormat)   &&
+                   Objects.equals(this.schemaLanguage, that.schemaLanguage) &&
+                   Objects.equals(this.typeName,       that.typeName);
         }
         return false;
     }

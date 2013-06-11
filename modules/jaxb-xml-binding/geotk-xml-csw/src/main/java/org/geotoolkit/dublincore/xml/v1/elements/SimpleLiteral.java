@@ -18,6 +18,7 @@ package org.geotoolkit.dublincore.xml.v1.elements;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -25,7 +26,6 @@ import javax.xml.bind.annotation.XmlMixed;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.dublincore.xml.AbstractSimpleLiteral;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -152,8 +152,8 @@ public class SimpleLiteral extends AbstractSimpleLiteral {
         }
         if (object instanceof SimpleLiteral) {
             final SimpleLiteral that = (SimpleLiteral) object;
-            return Utilities.equals(this.content,  that.content)   &&
-                   Utilities.equals(this.scheme ,  that.scheme);
+            return Objects.equals(this.content,  that.content)   &&
+                   Objects.equals(this.scheme ,  that.scheme);
         }
         return false;
     }

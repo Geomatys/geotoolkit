@@ -18,6 +18,7 @@
 package org.geotoolkit.feature.catalog;
 
 import java.util.Map;
+import java.util.Objects;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -30,7 +31,6 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import org.geotoolkit.util.Utilities;
 import org.opengis.feature.catalog.BoundFeatureAttribute;
 import org.opengis.feature.catalog.FeatureAttribute;
 import org.opengis.feature.catalog.FeatureType;
@@ -170,8 +170,8 @@ public class BoundFeatureAttributeImpl implements BoundFeatureAttribute, Referen
         if (object instanceof BoundFeatureAttributeImpl) {
             final BoundFeatureAttributeImpl that = (BoundFeatureAttributeImpl) object;
             
-            return Utilities.equals(this.attribute,   that.attribute) &&
-                   Utilities.equals(this.featureType, that.featureType);
+            return Objects.equals(this.attribute,   that.attribute) &&
+                   Objects.equals(this.featureType, that.featureType);
         }
         return false;
     }

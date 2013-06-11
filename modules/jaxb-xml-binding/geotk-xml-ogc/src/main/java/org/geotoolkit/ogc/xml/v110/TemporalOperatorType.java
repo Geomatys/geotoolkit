@@ -19,13 +19,13 @@ package org.geotoolkit.ogc.xml.v110;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
-import org.geotoolkit.util.Utilities;
 import org.opengis.filter.capability.TemporalOperand;
 import org.opengis.filter.capability.TemporalOperator;
 
@@ -140,9 +140,9 @@ public class TemporalOperatorType implements TemporalOperator {
 
        if (object instanceof TemporalOperatorType) {
            final TemporalOperatorType that = (TemporalOperatorType) object;
-
-            return Utilities.equals(this.temporalOperands, that.temporalOperands) &&
-                   Utilities.equals(this.name, that.name);
+       
+            return Objects.equals(this.temporalOperands, that.temporalOperands) &&
+                   Objects.equals(this.name, that.name);
         }
         return false;
     }

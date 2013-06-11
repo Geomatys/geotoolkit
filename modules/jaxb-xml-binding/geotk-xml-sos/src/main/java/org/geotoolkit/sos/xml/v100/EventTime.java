@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.sos.xml.v100;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -34,7 +35,6 @@ import org.geotoolkit.ogc.xml.v110.TimeMeetsType;
 import org.geotoolkit.ogc.xml.v110.TimeMetByType;
 import org.geotoolkit.ogc.xml.v110.TimeOverlappedByType;
 import org.geotoolkit.ogc.xml.v110.TimeOverlapsType;
-import org.geotoolkit.util.Utilities;
 import org.opengis.filter.Filter;
 
 /**
@@ -277,20 +277,20 @@ public class EventTime {
         }
         if (object instanceof EventTime) {
             final EventTime that = (EventTime) object;
-            return Utilities.equals(this.tAfter, that.tAfter) &&
-                    Utilities.equals(this.tBefore, that.tBefore) &&
-                    Utilities.equals(this.tBegins, that.tBegins) &&
-                    Utilities.equals(this.tBegunBy, that.tBegunBy) &&
-                    Utilities.equals(this.tContains, that.tContains) &&
-                    Utilities.equals(this.tDuring, that.tDuring) &&
-                    Utilities.equals(this.tEndedBy, that.tEndedBy) &&
-                    Utilities.equals(this.tEnds, that.tEnds) &&
-                    Utilities.equals(this.tEquals, that.tEquals) &&
-                    Utilities.equals(this.tMeets, that.tMeets) &&
-                    Utilities.equals(this.tMetBy, that.tMetBy) &&
-                    Utilities.equals(this.tOveralps, that.tOveralps) &&
-                    Utilities.equals(this.tOverlappedBy, that.tOverlappedBy) &&
-                    Utilities.equals(this.temporalOps, that.temporalOps);
+            return Objects.equals(this.tAfter, that.tAfter) &&
+                    Objects.equals(this.tBefore, that.tBefore) &&
+                    Objects.equals(this.tBegins, that.tBegins) &&
+                    Objects.equals(this.tBegunBy, that.tBegunBy) &&
+                    Objects.equals(this.tContains, that.tContains) &&
+                    Objects.equals(this.tDuring, that.tDuring) &&
+                    Objects.equals(this.tEndedBy, that.tEndedBy) &&
+                    Objects.equals(this.tEnds, that.tEnds) &&
+                    Objects.equals(this.tEquals, that.tEquals) &&
+                    Objects.equals(this.tMeets, that.tMeets) &&
+                    Objects.equals(this.tMetBy, that.tMetBy) &&
+                    Objects.equals(this.tOveralps, that.tOveralps) &&
+                    Objects.equals(this.tOverlappedBy, that.tOverlappedBy) &&
+                    Objects.equals(this.temporalOps, that.temporalOps);
         }
         return false;
     }

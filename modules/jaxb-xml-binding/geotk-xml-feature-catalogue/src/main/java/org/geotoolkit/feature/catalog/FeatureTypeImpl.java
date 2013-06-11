@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -545,7 +546,7 @@ public class FeatureTypeImpl implements FeatureType, Referenceable {
             
              //to avoid infinite cycle
              boolean carrier = false;
-             carrier = Utilities.equals(this.getCarrierOfCharacteristics().size(), that.getCarrierOfCharacteristics().size());
+             carrier = Objects.equals(this.getCarrierOfCharacteristics().size(), that.getCarrierOfCharacteristics().size());
              if (carrier) {
                  for (int i = 0; i < this.getCarrierOfCharacteristics().size(); i++) {
                      final String thisId = this.getCarrierOfCharacteristics().get(i).getId();
@@ -554,10 +555,10 @@ public class FeatureTypeImpl implements FeatureType, Referenceable {
                      if (thisId == null && thatId == null) {
                          final LocalName thisName = this.getCarrierOfCharacteristics().get(i).getMemberName();
                          final LocalName thatName = that.getCarrierOfCharacteristics().get(i).getMemberName();
-                         carrier = Utilities.equals(thisName, thatName);
+                         carrier = Objects.equals(thisName, thatName);
                      
                      } else {
-                         carrier = Utilities.equals(thisId, thatId);
+                         carrier = Objects.equals(thisId, thatId);
                      }
                  }
              } else {
@@ -574,17 +575,17 @@ public class FeatureTypeImpl implements FeatureType, Referenceable {
              }
              
              //to avoid infinite cycle
-             boolean inherits = Utilities.equals(this.getInheritsFrom().size(), that.getInheritsFrom().size()) && 
-                                Utilities.equals(this.getInheritsTo().size(),   that.getInheritsTo().size()); 
+             boolean inherits = Objects.equals(this.getInheritsFrom().size(), that.getInheritsFrom().size()) && 
+                                Objects.equals(this.getInheritsTo().size(),   that.getInheritsTo().size()); 
             
-            return Utilities.equals(this.aliases,                  that.aliases)                  &&
-                   Utilities.equals(this.code,                     that.code)                     &&
-                   Utilities.equals(this.constrainedBy,            that.constrainedBy)            &&
-                   Utilities.equals(this.definition,               that.definition)               &&
-                   Utilities.equals(this.definitionReference,      that.definitionReference)      &&
-                   Utilities.equals(this.id,                       that.id)                       &&
-                   Utilities.equals(this.isAbstract,               that.isAbstract)               &&
-                   Utilities.equals(this.typeName,                 that.typeName)                 &&
+            return Objects.equals(this.aliases,                  that.aliases)                  &&
+                   Objects.equals(this.code,                     that.code)                     &&
+                   Objects.equals(this.constrainedBy,            that.constrainedBy)            &&
+                   Objects.equals(this.definition,               that.definition)               &&
+                   Objects.equals(this.definitionReference,      that.definitionReference)      &&
+                   Objects.equals(this.id,                       that.id)                       &&
+                   Objects.equals(this.isAbstract,               that.isAbstract)               &&
+                   Objects.equals(this.typeName,                 that.typeName)                 &&
                    inherits && catalogue && carrier;
         }
         return false;

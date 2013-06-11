@@ -18,6 +18,7 @@ package org.geotoolkit.wmc.xml.v110;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -76,7 +77,7 @@ public class LayerListType {
         if (object instanceof LayerListType) {
             final LayerListType that = (LayerListType) object;
 
-            return Utilities.equals(this.layer, that.layer);
+            return Objects.equals(this.layer, that.layer);
             }
         return false;
     }

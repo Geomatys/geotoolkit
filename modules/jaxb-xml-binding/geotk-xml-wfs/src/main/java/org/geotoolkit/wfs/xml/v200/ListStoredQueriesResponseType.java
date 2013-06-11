@@ -20,6 +20,7 @@ package org.geotoolkit.wfs.xml.v200;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -98,7 +99,7 @@ public class ListStoredQueriesResponseType implements ListStoredQueriesResponse 
         }
         if (object instanceof ListStoredQueriesResponseType) {
             final ListStoredQueriesResponseType that = (ListStoredQueriesResponseType) object;
-            return Utilities.equals(this.storedQuery,   that.storedQuery);
+            return Objects.equals(this.storedQuery,   that.storedQuery);
         }
         return false;
     }

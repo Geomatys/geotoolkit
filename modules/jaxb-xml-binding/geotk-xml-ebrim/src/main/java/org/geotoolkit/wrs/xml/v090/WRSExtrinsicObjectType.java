@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.wrs.xml.v090;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -23,7 +24,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ebrim.xml.v250.ExtrinsicObjectType;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -95,7 +95,7 @@ public class WRSExtrinsicObjectType extends ExtrinsicObjectType {
         }
         if (obj instanceof WRSExtrinsicObjectType && super.equals(obj)) {
             final WRSExtrinsicObjectType that = (WRSExtrinsicObjectType) obj;
-            return Utilities.equals(this.content, that.content);
+            return Objects.equals(this.content, that.content);
         }
         return false;
     }

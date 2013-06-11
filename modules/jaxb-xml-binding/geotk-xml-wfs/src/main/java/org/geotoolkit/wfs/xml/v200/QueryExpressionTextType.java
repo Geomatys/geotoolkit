@@ -20,6 +20,7 @@ package org.geotoolkit.wfs.xml.v200;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -226,11 +227,11 @@ public class QueryExpressionTextType implements org.geotoolkit.wfs.xml.QueryExpr
                         if (thiso instanceof JAXBElement && thato instanceof JAXBElement) {
                             final JAXBElement thisjb = (JAXBElement)thiso;
                             final JAXBElement thatjb = (JAXBElement)thato;
-                            if (!Utilities.equals(thisjb.getValue(), thatjb.getValue())) {
+                            if (!Objects.equals(thisjb.getValue(), thatjb.getValue())) {
                                 return false;
                             }
                         } else {
-                            if (!Utilities.equals(thiso, thato)) {
+                            if (!Objects.equals(thiso, thato)) {
                                 return false;
                             }
                         }
@@ -243,9 +244,9 @@ public class QueryExpressionTextType implements org.geotoolkit.wfs.xml.QueryExpr
             }
 
             return contentE &&
-                   Utilities.equals(this.isPrivate, that.isPrivate) &&
-                   Utilities.equals(this.language, that.language) &&
-                   Utilities.equals(this.returnFeatureTypes, that.returnFeatureTypes);
+                   Objects.equals(this.isPrivate, that.isPrivate) &&
+                   Objects.equals(this.language, that.language) &&
+                   Objects.equals(this.returnFeatureTypes, that.returnFeatureTypes);
             }
         return false;
     }

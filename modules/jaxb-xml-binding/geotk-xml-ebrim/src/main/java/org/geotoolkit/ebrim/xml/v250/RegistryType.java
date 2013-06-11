@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.ebrim.xml.v250;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -23,7 +24,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.Duration;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -243,14 +243,14 @@ public class RegistryType extends RegistryEntryType {
         }
         if (obj instanceof RegistryType && super.equals(obj)) {
             final RegistryType that = (RegistryType) obj;
-            return Utilities.equals(this.catalogingLatency,          that.catalogingLatency) &&
-                   Utilities.equals(this.eventNotificationSupported, that.eventNotificationSupported) &&
-                   Utilities.equals(this.objectRelocationSupported,  that.objectRelocationSupported) &&
-                   Utilities.equals(this.objectReplicationSupported, that.objectReplicationSupported) &&
-                   Utilities.equals(this.operator,                   that.operator) &&
-                   Utilities.equals(this.replicationSyncLatency,     that.replicationSyncLatency) &&
-                   Utilities.equals(this.specificationVersion,       that.specificationVersion) &&
-                   Utilities.equals(this.sqlQuerySupported,          that.sqlQuerySupported);
+            return Objects.equals(this.catalogingLatency,          that.catalogingLatency) &&
+                   Objects.equals(this.eventNotificationSupported, that.eventNotificationSupported) &&
+                   Objects.equals(this.objectRelocationSupported,  that.objectRelocationSupported) &&
+                   Objects.equals(this.objectReplicationSupported, that.objectReplicationSupported) &&
+                   Objects.equals(this.operator,                   that.operator) &&
+                   Objects.equals(this.replicationSyncLatency,     that.replicationSyncLatency) &&
+                   Objects.equals(this.specificationVersion,       that.specificationVersion) &&
+                   Objects.equals(this.sqlQuerySupported,          that.sqlQuerySupported);
         }
         return false;
     }

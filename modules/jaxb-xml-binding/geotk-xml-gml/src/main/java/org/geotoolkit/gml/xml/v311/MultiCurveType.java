@@ -18,12 +18,12 @@ package org.geotoolkit.gml.xml.v311;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.MultiCurve;
 import org.apache.sis.util.ComparisonMode;
-import org.geotoolkit.util.Utilities;
 import org.opengis.filter.expression.ExpressionVisitor;
 
 
@@ -125,8 +125,8 @@ public class MultiCurveType extends AbstractGeometricAggregateType implements Mu
         if (object instanceof MultiCurveType && super.equals(object, mode)) {
             final MultiCurveType that = (MultiCurveType) object;
 
-            return Utilities.equals(this.curveMember,  that.curveMember) &&
-                   Utilities.equals(this.curveMembers, that.curveMembers) ;
+            return Objects.equals(this.curveMember,  that.curveMember) &&
+                   Objects.equals(this.curveMembers, that.curveMembers) ;
         }
         return false;
     }

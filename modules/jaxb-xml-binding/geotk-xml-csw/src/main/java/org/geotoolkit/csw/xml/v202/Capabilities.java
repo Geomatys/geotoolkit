@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.csw.xml.v202;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -30,7 +31,6 @@ import org.geotoolkit.ows.xml.v100.CapabilitiesBaseType;
 import org.geotoolkit.ows.xml.v100.OperationsMetadata;
 import org.geotoolkit.ows.xml.v100.ServiceIdentification;
 import org.geotoolkit.ows.xml.v100.ServiceProvider;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -106,7 +106,7 @@ public class Capabilities extends CapabilitiesBaseType implements AbstractCapabi
         }
         if (object instanceof Capabilities && super.equals(object)) {
             final Capabilities that = (Capabilities) object;
-            return Utilities.equals(this.filterCapabilities, that.filterCapabilities);
+            return Objects.equals(this.filterCapabilities, that.filterCapabilities);
         }
         return false;
     }

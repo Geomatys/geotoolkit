@@ -17,7 +17,7 @@
  */
 package org.geotoolkit.temporal.object;
 
-import org.geotoolkit.util.Utilities;
+import java.util.Objects;
 import org.opengis.temporal.IndeterminateValue;
 import org.opengis.temporal.TemporalCoordinate;
 import org.opengis.temporal.TemporalReferenceSystem;
@@ -63,7 +63,7 @@ public class DefaultTemporalCoordinate extends DefaultTemporalPosition implement
         if (object instanceof DefaultTemporalCoordinate && super.equals(object)) {
             final DefaultTemporalCoordinate that = (DefaultTemporalCoordinate) object;
 
-            return Utilities.equals(this.coordinateValue, that.coordinateValue);
+            return Objects.equals(this.coordinateValue, that.coordinateValue);
         }
         return false;
     }

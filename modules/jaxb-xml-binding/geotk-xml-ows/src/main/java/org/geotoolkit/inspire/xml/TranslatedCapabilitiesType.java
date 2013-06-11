@@ -18,11 +18,11 @@ package org.geotoolkit.inspire.xml;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -115,7 +115,7 @@ public class TranslatedCapabilitiesType {
         }
         if (object instanceof TranslatedCapabilitiesType) {
             final TranslatedCapabilitiesType that = (TranslatedCapabilitiesType) object;
-            return Utilities.equals(this.document, that.document);
+            return Objects.equals(this.document, that.document);
         }
         return false;
     }

@@ -21,6 +21,7 @@ package org.geotoolkit.ogc.xml.v200;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.logging.Level;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -31,7 +32,6 @@ import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlMixed;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.v321.AbstractTimeObjectType;
-import org.geotoolkit.util.Utilities;
 import org.opengis.filter.FilterVisitor;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.ExpressionVisitor;
@@ -307,7 +307,7 @@ public class BinaryTemporalOpType extends TemporalOpsType  implements BinaryTemp
 
             boolean env = false;
             if (this.expression != null && that.expression != null) {
-                env = Utilities.equals(this.expression.getValue(), that.expression.getValue());
+                env = Objects.equals(this.expression.getValue(), that.expression.getValue());
             } else if (this.expression == null && that.expression == null) {
                 env = true;
             }
@@ -323,15 +323,15 @@ public class BinaryTemporalOpType extends TemporalOpsType  implements BinaryTemp
                         final Object thisany = this.any.get(i);
                         final Object thatany = that.any.get(i);
                         if (thisany instanceof JAXBElement && thatany instanceof JAXBElement) {
-                            anyEq = Utilities.equals(((JAXBElement)thisany).getValue(), ((JAXBElement)thatany).getValue());
+                            anyEq = Objects.equals(((JAXBElement)thisany).getValue(), ((JAXBElement)thatany).getValue());
                         } else {
-                            anyEq = Utilities.equals(thisany, thatany);
+                            anyEq = Objects.equals(thisany, thatany);
                         }
                     }
                 }
             }
 
-            return  Utilities.equals(this.valueReference, that.valueReference) && env && anyEq;
+            return  Objects.equals(this.valueReference, that.valueReference) && env && anyEq;
         }
         return false;
     }

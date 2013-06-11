@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.gml.xml.v311;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -23,7 +24,6 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.XMLGregorianCalendar;
 import org.apache.sis.util.ComparisonMode;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -96,7 +96,7 @@ public class TemporalDatumType extends TemporalDatumBaseType {
         if (object instanceof TemporalDatumType && super.equals(object, mode)) {
             final TemporalDatumType that = (TemporalDatumType) object;
 
-            return Utilities.equals(this.origin,     that.origin);
+            return Objects.equals(this.origin,     that.origin);
         }
         return false;
     }

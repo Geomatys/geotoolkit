@@ -18,11 +18,11 @@
 
 package org.geotoolkit.wfs.xml.v200;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -69,11 +69,17 @@ public class TransactionSummaryType {
 
     }
 
+    public TransactionSummaryType(final Integer totalInserted, final Integer totalUpdated, final Integer totalDeleted) {
+        this.totalDeleted  = totalDeleted;
+        this.totalInserted = totalInserted;
+        this.totalUpdated  = totalUpdated;
+    }
+    
     public TransactionSummaryType(final Integer totalInserted, final Integer totalUpdated, final Integer totalDeleted, final Integer totalReplaced) {
         this.totalDeleted  = totalDeleted;
         this.totalInserted = totalInserted;
         this.totalUpdated  = totalUpdated;
-        this.totalReplaced = totalReplaced;
+        this.totalReplaced  = totalReplaced;
     }
 
     /**
@@ -177,8 +183,7 @@ public class TransactionSummaryType {
         final StringBuilder sb = new StringBuilder("[TransactionSummaryType]\n");
         sb.append("totalDeleted: ").append(totalDeleted).append('\n');
         sb.append("totalInserted: ").append(totalInserted).append('\n');
-        sb.append("totalUpdated: ").append(totalUpdated).append('\n');
-        sb.append("totalReplaced: ").append(totalReplaced).append('\n');
+        sb.append("totalUpdated: ").append(totalUpdated ).append('\n');
         return sb.toString();
     }
 
@@ -192,10 +197,9 @@ public class TransactionSummaryType {
         }
         if (object instanceof TransactionSummaryType) {
             final TransactionSummaryType that = (TransactionSummaryType) object;
-            return Utilities.equals(this.totalDeleted,   that.totalDeleted)  &&
-                   Utilities.equals(this.totalInserted,  that.totalInserted) &&
-                   Utilities.equals(this.totalReplaced,  that.totalReplaced) &&
-                   Utilities.equals(this.totalUpdated,   that.totalUpdated);
+            return Objects.equals(this.totalDeleted,   that.totalDeleted)  &&
+                   Objects.equals(this.totalInserted,  that.totalInserted) &&
+                   Objects.equals(this.totalUpdated,   that.totalUpdated);
         }
         return false;
     }
@@ -206,7 +210,6 @@ public class TransactionSummaryType {
         hash = 59 * hash + this.totalInserted;
         hash = 59 * hash + this.totalUpdated;
         hash = 59 * hash + this.totalDeleted;
-        hash = 59 * hash + this.totalReplaced;
         return hash;
     }
 

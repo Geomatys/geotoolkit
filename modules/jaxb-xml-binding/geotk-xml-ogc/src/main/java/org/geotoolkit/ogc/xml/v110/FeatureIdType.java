@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.ogc.xml.v110;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -24,7 +25,6 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import org.geotoolkit.util.Utilities;
 import org.opengis.feature.Attribute;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.filter.identity.Identifier;
@@ -122,7 +122,7 @@ public class FeatureIdType extends AbstractIdType implements FeatureId {
         }
         if (object instanceof FeatureIdType) {
             final FeatureIdType that = (FeatureIdType) object;
-            return Utilities.equals(this.fid,  that.fid);
+            return Objects.equals(this.fid,  that.fid);
         }
         return false;
     }

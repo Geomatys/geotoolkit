@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.swe.xml.v100;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -25,7 +26,6 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.swe.xml.Coordinate;
-import org.geotoolkit.util.Utilities;
 
 /**
  * <p>Java class for anonymous complex type.
@@ -187,10 +187,10 @@ public class CoordinateType implements Coordinate {
         }
         if (object instanceof CoordinateType) {
             final CoordinateType  that = (CoordinateType) object;
-            return Utilities.equals(this.count,    that.count)    &&
-                   Utilities.equals(this.name,     that.name)     &&
-                   Utilities.equals(this.quantity, that.quantity) &&
-                   Utilities.equals(this.time,     that.time);
+            return Objects.equals(this.count,    that.count)    &&
+                   Objects.equals(this.name,     that.name)     &&
+                   Objects.equals(this.quantity, that.quantity) &&
+                   Objects.equals(this.time,     that.time);
 
         }
         return false;

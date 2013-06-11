@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.ows.xml.v110;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -23,7 +24,6 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
 import org.geotoolkit.ows.xml.AbstractCodeType;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -104,8 +104,8 @@ public class CodeType implements AbstractCodeType {
         if (object instanceof CodeType) {
             final CodeType that = (CodeType) object;
 
-            return Utilities.equals(this.value,     that.value) &&
-                   Utilities.equals(this.codeSpace, that.codeSpace);
+            return Objects.equals(this.value,     that.value) &&
+                   Objects.equals(this.codeSpace, that.codeSpace);
         }
         return false;
     }

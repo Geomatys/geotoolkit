@@ -16,8 +16,8 @@
  */
 package org.geotoolkit.swe.xml.v101;
 
+import java.util.Objects;
 import org.geotoolkit.internal.sql.table.Entry;
-import org.geotoolkit.util.Utilities;
 
 /**
  * Une liste de phénomèmene pour un phenoméne composé.
@@ -83,8 +83,8 @@ public class ComponentType implements Entry{
         if (object instanceof ComponentType)  {
             final ComponentType that = (ComponentType) object;
 
-            return  Utilities.equals(this.component,   that.component)   &&
-                    Utilities.equals(this.idCompositePhenomenon,   that.idCompositePhenomenon);
+            return  Objects.equals(this.component,   that.component)   &&
+                    Objects.equals(this.idCompositePhenomenon,   that.idCompositePhenomenon);
         }
         return false;
     }

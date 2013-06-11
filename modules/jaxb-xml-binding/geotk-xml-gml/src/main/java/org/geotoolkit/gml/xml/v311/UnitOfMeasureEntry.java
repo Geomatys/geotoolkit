@@ -16,12 +16,12 @@
  */
 package org.geotoolkit.gml.xml.v311;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.internal.sql.table.Entry;
-import org.geotoolkit.util.Utilities;
 import org.opengis.observation.BaseUnit;
 
 /**
@@ -117,10 +117,10 @@ public class UnitOfMeasureEntry implements BaseUnit, Entry {
         }
         if (object instanceof UnitOfMeasureEntry) {
             final UnitOfMeasureEntry that = (UnitOfMeasureEntry) object;
-            return Utilities.equals(this.name,  that.name) &&
-                   Utilities.equals(this.id,   that.id) &&
-                   Utilities.equals(this.quantityType, that.quantityType) &&
-                   Utilities.equals(this.unitsSystem, that.unitsSystem);
+            return Objects.equals(this.name,  that.name) &&
+                   Objects.equals(this.id,   that.id) &&
+                   Objects.equals(this.quantityType, that.quantityType) &&
+                   Objects.equals(this.unitsSystem, that.unitsSystem);
             }
         return false;
     }

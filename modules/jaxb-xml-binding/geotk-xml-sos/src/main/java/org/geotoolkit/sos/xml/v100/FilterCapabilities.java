@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.sos.xml.v100;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -25,7 +26,6 @@ import org.geotoolkit.ogc.xml.v110.IdCapabilitiesType;
 import org.geotoolkit.ogc.xml.v110.ScalarCapabilitiesType;
 import org.geotoolkit.ogc.xml.v110.SpatialCapabilitiesType;
 import org.geotoolkit.ogc.xml.v110.TemporalCapabilitiesType;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -161,10 +161,10 @@ public class FilterCapabilities implements org.geotoolkit.sos.xml.FilterCapabili
         }
         if (object instanceof FilterCapabilities) {
             final FilterCapabilities that = (FilterCapabilities) object;
-            return Utilities.equals(this.idCapabilities,       that.idCapabilities)      &&
-                   Utilities.equals(this.scalarCapabilities,   that.scalarCapabilities)  &&
-                   Utilities.equals(this.spatialCapabilities,  that.spatialCapabilities) &&
-                   Utilities.equals(this.temporalCapabilities, that.temporalCapabilities);
+            return Objects.equals(this.idCapabilities,       that.idCapabilities)      &&
+                   Objects.equals(this.scalarCapabilities,   that.scalarCapabilities)  &&
+                   Objects.equals(this.spatialCapabilities,  that.spatialCapabilities) &&
+                   Objects.equals(this.temporalCapabilities, that.temporalCapabilities);
         }
         return false;
     }

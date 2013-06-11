@@ -30,6 +30,7 @@ import java.awt.geom.NoninvertibleTransformException;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.util.List;
+import java.util.Objects;
 import javax.measure.unit.Unit;
 import javax.media.jai.PlanarImage;
 import javax.media.jai.iterator.RectIter;
@@ -50,7 +51,6 @@ import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 
 import org.opengis.coverage.SampleDimension;
@@ -287,7 +287,7 @@ public class RenderedGridMarks extends RenderedMarks {
             final SampleDimension sampleY = samples[bandY];
             final Unit unitX = sampleX.getUnits();
             final Unit unitY = sampleY.getUnits();
-            if (!Utilities.equals(unitX, unitY)) {
+            if (!Objects.equals(unitX, unitY)) {
                 // TODO: localize.
                 throw new IllegalArgumentException("Mismatched units");
             }

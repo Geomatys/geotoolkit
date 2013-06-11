@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.csw.xml.v202;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -23,7 +24,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.csw.xml.GetDomain;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -129,8 +129,8 @@ public class GetDomainType extends RequestBaseType implements GetDomain {
         }
         if (object instanceof GetDomainType && super.equals(object)) {
             final GetDomainType that = (GetDomainType) object;
-            return Utilities.equals(this.parameterName, that.parameterName) &&
-                   Utilities.equals(this.propertyName,  that.propertyName);
+            return Objects.equals(this.parameterName, that.parameterName) &&
+                   Objects.equals(this.propertyName,  that.propertyName);
         }
         return false;
     }

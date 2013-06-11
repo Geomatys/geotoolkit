@@ -16,13 +16,13 @@
  */
 package org.geotoolkit.csw.xml.v202;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.csw.xml.HarvestResponse;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -105,8 +105,8 @@ public class HarvestResponseType implements HarvestResponse {
         }
         if (object instanceof HarvestResponseType) {
             final HarvestResponseType that = (HarvestResponseType) object;
-            return Utilities.equals(this.acknowledgement,      that.acknowledgement)   &&
-                   Utilities.equals(this.transactionResponse,  that.transactionResponse);
+            return Objects.equals(this.acknowledgement,      that.acknowledgement)   &&
+                   Objects.equals(this.transactionResponse,  that.transactionResponse);
         }
         return false;
     }

@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.gml.xml.v311;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -318,15 +319,15 @@ public class LineStringPropertyType implements LineStringProperty {
         if (object instanceof LineStringPropertyType) {
             final LineStringPropertyType that = (LineStringPropertyType) object;
 
-            return Utilities.equals(this.actuate,            that.actuate)          &&
-                   Utilities.equals(this.arcrole,            that.arcrole)          &&
-                   Utilities.equals(this.type,               that.type)             &&
-                   Utilities.equals(this.href,               that.href)             &&
-                   Utilities.equals(this.remoteSchema,       that.remoteSchema)     &&
-                   Utilities.equals(this.show,               that.show)             &&
-                   Utilities.equals(this.role,               that.role)             &&
-                   Utilities.equals(this.title,              that.title)            &&
-                   Utilities.equals(this.lineString,         that.lineString);
+            return Objects.equals(this.actuate,            that.actuate)          &&
+                   Objects.equals(this.arcrole,            that.arcrole)          &&
+                   Objects.equals(this.type,               that.type)             &&
+                   Objects.equals(this.href,               that.href)             &&
+                   Objects.equals(this.remoteSchema,       that.remoteSchema)     &&
+                   Objects.equals(this.show,               that.show)             &&
+                   Objects.equals(this.role,               that.role)             &&
+                   Objects.equals(this.title,              that.title)            &&
+                   Objects.equals(this.lineString,         that.lineString);
         }
         return false;
     }

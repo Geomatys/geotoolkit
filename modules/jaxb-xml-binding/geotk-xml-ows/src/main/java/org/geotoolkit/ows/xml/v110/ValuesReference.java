@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.ows.xml.v110;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -23,7 +24,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -105,8 +105,8 @@ public class ValuesReference {
         if (object instanceof ValuesReference) {
             final  ValuesReference that = ( ValuesReference) object;
 
-            return Utilities.equals(this.reference,   that.reference)   &&
-                   Utilities.equals(this.value,       that.value);
+            return Objects.equals(this.reference,   that.reference)   &&
+                   Objects.equals(this.value,       that.value);
         }
         return false;
     }

@@ -18,13 +18,13 @@ package org.geotoolkit.sml.xml.v100;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.sml.xml.AbstractComponentList;
 import org.geotoolkit.sml.xml.ComponentProperty;
-import org.geotoolkit.util.Utilities;
 
 /**
  * <p>Java class for anonymous complex type.
@@ -136,7 +136,7 @@ public class ComponentList implements AbstractComponentList {
         }
         if (object instanceof ComponentList) {
             final ComponentList that = (ComponentList) object;
-            return Utilities.equals(this.component, that.component);
+            return Objects.equals(this.component, that.component);
 
         }
         return false;

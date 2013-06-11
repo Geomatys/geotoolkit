@@ -18,6 +18,7 @@
 
 package org.geotoolkit.wfs.xml.v200;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -139,8 +140,8 @@ public class Title implements org.geotoolkit.wfs.xml.Title {
         if (object instanceof Title) {
             final Title that = (Title) object;
 
-            return Utilities.equals(this.lang, that.lang) &&
-                   Utilities.equals(this.value, that.value);
+            return Objects.equals(this.lang, that.lang) &&
+                   Objects.equals(this.value, that.value);
             }
         return false;
     }

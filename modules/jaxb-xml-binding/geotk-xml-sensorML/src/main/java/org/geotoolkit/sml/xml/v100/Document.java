@@ -18,6 +18,7 @@ package org.geotoolkit.sml.xml.v100;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -30,7 +31,6 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.gml.xml.v311.StringOrRefType;
 import org.geotoolkit.sml.xml.AbstractDocument;
 import org.geotoolkit.sml.xml.AbstractOnlineResource;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -241,13 +241,13 @@ public class Document implements AbstractDocument {
 
         if (object instanceof Document) {
             final Document that = (Document) object;
-            return Utilities.equals(this.contact,             that.contact)        &&
-                   Utilities.equals(this.date,                that.date)           &&
-                   Utilities.equals(this.description,         that.description)    &&
-                   Utilities.equals(this.format,              that.format)         &&
-                   Utilities.equals(this.id,                  that.id)             &&
-                   Utilities.equals(this.getOnlineResource(), that.getOnlineResource()) &&
-                   Utilities.equals(this.version,             that.version);
+            return Objects.equals(this.contact,             that.contact)        &&
+                   Objects.equals(this.date,                that.date)           &&
+                   Objects.equals(this.description,         that.description)    &&
+                   Objects.equals(this.format,              that.format)         &&
+                   Objects.equals(this.id,                  that.id)             &&
+                   Objects.equals(this.getOnlineResource(), that.getOnlineResource()) &&
+                   Objects.equals(this.version,             that.version);
         }
         return false;
     }

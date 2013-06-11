@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.swe.xml.v101;
 
+import java.util.Objects;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -23,7 +24,6 @@ import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.swe.xml.DataArrayProperty;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -105,7 +105,7 @@ public class DataArrayPropertyType implements DataArrayProperty {
             if (this.dataArray == null && that.dataArray == null) {
                 return true;
             } else if (this.dataArray != null && that.dataArray != null) {
-                return Utilities.equals(this.dataArray.getValue(), that.dataArray.getValue());
+                return Objects.equals(this.dataArray.getValue(), that.dataArray.getValue());
             }
             return false;
         }

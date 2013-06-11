@@ -18,6 +18,7 @@ package org.geotoolkit.sml.xml.v100;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -34,7 +35,6 @@ import org.geotoolkit.sml.xml.Component;
 import org.geotoolkit.sml.xml.ComponentArray;
 import org.geotoolkit.sml.xml.ComponentProperty;
 import org.geotoolkit.sml.xml.System;
-import org.geotoolkit.util.Utilities;
 
 /**
  * <p>Java class for anonymous complex type.
@@ -340,21 +340,21 @@ public class ComponentPropertyType implements ComponentProperty {
             final ComponentPropertyType that = (ComponentPropertyType) object;
            boolean absDataArr = false;
             if (this.process != null && that.process != null) {
-                absDataArr = Utilities.equals(this.process.getValue(), that.process.getValue());
+                absDataArr = Objects.equals(this.process.getValue(), that.process.getValue());
             } else if (this.process == null && that.process == null) {
                 absDataArr = true;
             }
-            return Utilities.equals(this.actuate,      that.actuate)       &&
-                   Utilities.equals(this.arcrole,      that.arcrole)       &&
-                   Utilities.equals(this.href,         that.href)          &&
+            return Objects.equals(this.actuate,      that.actuate)       &&
+                   Objects.equals(this.arcrole,      that.arcrole)       &&
+                   Objects.equals(this.href,         that.href)          &&
                    absDataArr                                              &&
-                   Utilities.equals(this.remoteSchema, that.remoteSchema)  &&
-                   Utilities.equals(this.role,         that.role)          &&
-                   Utilities.equals(this.show,         that.show)          &&
-                   Utilities.equals(this.title,        that.title)         &&
-                   Utilities.equals(this.name,         that.name)          &&
-                   Utilities.equals(this.nilReason,    that.nilReason)     &&
-                   Utilities.equals(this.type,         that.type);
+                   Objects.equals(this.remoteSchema, that.remoteSchema)  &&
+                   Objects.equals(this.role,         that.role)          &&
+                   Objects.equals(this.show,         that.show)          &&
+                   Objects.equals(this.title,        that.title)         &&
+                   Objects.equals(this.name,         that.name)          &&
+                   Objects.equals(this.nilReason,    that.nilReason)     &&
+                   Objects.equals(this.type,         that.type);
         }
         return false;
     }

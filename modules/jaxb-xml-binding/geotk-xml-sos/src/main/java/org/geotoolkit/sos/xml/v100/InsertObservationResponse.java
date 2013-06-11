@@ -16,13 +16,13 @@
  */
 package org.geotoolkit.sos.xml.v100;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -89,7 +89,7 @@ public class InsertObservationResponse extends ResponseBaseType implements org.g
         }
         if (object instanceof InsertObservationResponse) {
             final InsertObservationResponse that = (InsertObservationResponse) object;
-            return Utilities.equals(this.assignedObservationId, that.assignedObservationId);
+            return Objects.equals(this.assignedObservationId, that.assignedObservationId);
         }
         return false;
     }

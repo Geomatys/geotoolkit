@@ -18,13 +18,13 @@ package org.geotoolkit.ows.xml.v100;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ows.xml.AbstractDCP;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -107,7 +107,7 @@ public class DCP implements AbstractDCP {
         }
         if (object instanceof DCP) {
             final DCP that = (DCP) object;
-            return Utilities.equals(this.http, that.http);
+            return Objects.equals(this.http, that.http);
         }
         return false;
     }

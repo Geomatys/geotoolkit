@@ -18,6 +18,7 @@ package org.geotoolkit.gml.xml.v311;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -275,7 +276,7 @@ public class GeometryArrayPropertyType {
                     AbstractGeometryType thisGeom = this.abstractGeometry.get(i).getValue();
                     AbstractGeometryType thatGeom = that.abstractGeometry.get(i).getValue();
 
-                    if (!Utilities.equals(thisGeom,   thatGeom))
+                    if (!Objects.equals(thisGeom,   thatGeom))
                         return false;
                 }
                 return true;

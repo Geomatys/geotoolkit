@@ -16,9 +16,9 @@
  */
 package org.geotoolkit.sos.xml.v100;
 
+import java.util.Objects;
 import org.geotoolkit.internal.sql.table.Entry;
 import org.geotoolkit.swe.xml.v101.PhenomenonType;
-import org.geotoolkit.util.Utilities;
 
 /**
  *
@@ -83,8 +83,8 @@ public class OfferingPhenomenonType implements Entry{
         }
         if (object instanceof OfferingPhenomenonType && super.equals(object)) {
             final OfferingPhenomenonType that = (OfferingPhenomenonType) object;
-            return Utilities.equals(this.idOffering, that.idOffering) &&
-                   Utilities.equals(this.component,  that.component);
+            return Objects.equals(this.idOffering, that.idOffering) &&
+                   Objects.equals(this.component,  that.component);
         }
         return false;
     }

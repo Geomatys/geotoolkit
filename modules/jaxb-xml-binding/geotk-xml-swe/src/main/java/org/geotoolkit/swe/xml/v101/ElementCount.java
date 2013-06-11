@@ -17,6 +17,7 @@
 
 package org.geotoolkit.swe.xml.v101;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -25,7 +26,6 @@ import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.swe.xml.AbstractElementCount;
-import org.geotoolkit.util.Utilities;
 
 /**
  * <p>Java class for anonymous complex type.
@@ -109,8 +109,8 @@ public class ElementCount implements AbstractElementCount {
         }
         if (object instanceof ElementCount) {
             final ElementCount that = (ElementCount) object;
-            return Utilities.equals(this.count, that.count)
-                    && Utilities.equals(this.ref, that.ref);
+            return Objects.equals(this.count, that.count)
+                    && Objects.equals(this.ref, that.ref);
         }
         return false;
     }

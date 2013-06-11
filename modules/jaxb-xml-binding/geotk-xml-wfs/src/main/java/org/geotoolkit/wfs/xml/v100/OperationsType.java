@@ -18,13 +18,13 @@ package org.geotoolkit.wfs.xml.v100;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlElementRefs;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -113,8 +113,8 @@ public class OperationsType {
                 for (int i = 0; i < insertOrUpdateOrDelete.size(); i++) {
                     final JAXBElement<EmptyType> thisJb = this.insertOrUpdateOrDelete.get(i);
                     final JAXBElement<EmptyType> thatJb = that.insertOrUpdateOrDelete.get(i);
-                    if (!Utilities.equals(thisJb.getName(), thatJb.getName()) ||
-                        !Utilities.equals(thisJb.getValue(), thatJb.getValue())) {
+                    if (!Objects.equals(thisJb.getName(), thatJb.getName()) ||
+                        !Objects.equals(thisJb.getValue(), thatJb.getValue())) {
                         return false;
                     }    
                 }

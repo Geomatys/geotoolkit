@@ -19,12 +19,12 @@ package org.geotoolkit.gml.xml.v311;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import org.apache.sis.util.ComparisonMode;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -112,8 +112,8 @@ public abstract class AbstractCoordinateSystemType extends AbstractCoordinateSys
 
         if (object instanceof AbstractCoordinateSystemType) {
             final AbstractCoordinateSystemType that = (AbstractCoordinateSystemType) object;
-            return Utilities.equals(this.csID, that.csID) &&
-                   Utilities.equals(this.usesAxis, that.usesAxis);
+            return Objects.equals(this.csID, that.csID) &&
+                   Objects.equals(this.usesAxis, that.usesAxis);
 
         }
         return false;

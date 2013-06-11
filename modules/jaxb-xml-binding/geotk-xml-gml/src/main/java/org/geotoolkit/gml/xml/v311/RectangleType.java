@@ -16,13 +16,13 @@
  */
 package org.geotoolkit.gml.xml.v311;
 
+import java.util.Objects;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -154,8 +154,8 @@ public class RectangleType extends AbstractSurfacePatchType {
         if (object instanceof RectangleType) {
             final RectangleType that = (RectangleType) object;
 
-            return Utilities.equals(this.getExterior(),    that.getExterior()) &&
-                   Utilities.equals(this.interpolation,    that.interpolation);
+            return Objects.equals(this.getExterior(),    that.getExterior()) &&
+                   Objects.equals(this.interpolation,    that.interpolation);
         }
         return false;
     }

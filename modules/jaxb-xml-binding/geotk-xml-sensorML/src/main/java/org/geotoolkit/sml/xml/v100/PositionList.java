@@ -18,6 +18,7 @@ package org.geotoolkit.sml.xml.v100;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -26,7 +27,6 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.sml.xml.AbstractPositionList;
-import org.geotoolkit.util.Utilities;
 
 /**
  * <p>Java class for anonymous complex type.
@@ -171,9 +171,9 @@ public class PositionList implements AbstractPositionList {
         if (object instanceof PositionList) {
             final PositionList that = (PositionList) object;
 
-            return Utilities.equals(this.position, that.position) &&
-                   Utilities.equals(this.timePosition, that.timePosition) &&
-                   Utilities.equals(this.id, that.id);
+            return Objects.equals(this.position, that.position) &&
+                   Objects.equals(this.timePosition, that.timePosition) &&
+                   Objects.equals(this.id, that.id);
         }
         return false;
     }

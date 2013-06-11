@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.ogc.xml.v110;
 
+import java.util.Objects;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -37,7 +38,6 @@ import org.geotoolkit.gml.xml.v311.OrientableSurfaceType;
 import org.geotoolkit.gml.xml.v311.PointType;
 import org.geotoolkit.gml.xml.v311.PolyhedralSurfaceType;
 import org.geotoolkit.gml.xml.v311.RingType;
-import org.geotoolkit.util.Utilities;
 import org.opengis.filter.FilterVisitor;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.spatial.BinarySpatialOperator;
@@ -245,19 +245,19 @@ public class BinarySpatialOpType extends SpatialOpsType implements BinarySpatial
 
             boolean pname = false;
             if (this.propertyName != null && that.propertyName != null) {
-                pname = Utilities.equals(this.propertyName.getValue(), that.propertyName.getValue());
+                pname = Objects.equals(this.propertyName.getValue(), that.propertyName.getValue());
             } else if (this.propertyName == null && that.propertyName == null) {
                 pname = true;
             }
             boolean env = false;
             if (this.envelope != null && that.envelope != null) {
-                env = Utilities.equals(this.envelope.getValue(), that.envelope.getValue());
+                env = Objects.equals(this.envelope.getValue(), that.envelope.getValue());
             } else if (this.envelope == null && that.envelope == null) {
                 env = true;
             }
             boolean abgeo = false;
             if (this.abstractGeometry != null && that.abstractGeometry != null) {
-                abgeo = Utilities.equals(this.abstractGeometry.getValue(), that.abstractGeometry.getValue());
+                abgeo = Objects.equals(this.abstractGeometry.getValue(), that.abstractGeometry.getValue());
             } else if (this.abstractGeometry == null && that.abstractGeometry == null) {
                 abgeo = true;
             }

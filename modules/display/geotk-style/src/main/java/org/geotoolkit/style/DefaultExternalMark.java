@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.style;
 
+import java.util.Objects;
 import javax.swing.Icon;
 import org.geotoolkit.util.Utilities;
 import org.opengis.metadata.citation.OnlineResource;
@@ -131,10 +132,10 @@ public class DefaultExternalMark implements ExternalMark{
 
         DefaultExternalMark other = (DefaultExternalMark) obj;
 
-        return Utilities.equals(this.online, other.online)
-                && Utilities.equals(this.icon, other.icon)
-                && Utilities.equals(this.format, other.format)
-                && Utilities.equals(this.index, other.index);
+        return Objects.equals(this.online, other.online)
+                && Objects.equals(this.icon, other.icon)
+                && Objects.equals(this.format, other.format)
+                && Objects.equals(this.index, other.index);
 
     }
 

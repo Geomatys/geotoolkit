@@ -18,6 +18,7 @@ package org.geotoolkit.csw.xml.v202;
 
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.Objects;
 import java.util.logging.Logger;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -28,7 +29,6 @@ import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 import org.geotoolkit.csw.xml.RequestStatus;
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.logging.Logging;
 
 
@@ -137,7 +137,7 @@ public class RequestStatusType implements RequestStatus {
         }
         if (object instanceof RequestStatusType) {
             RequestStatusType that = (RequestStatusType) object;
-            return Utilities.equals(this.timestamp, that.timestamp);
+            return Objects.equals(this.timestamp, that.timestamp);
         }
         return false;
     }

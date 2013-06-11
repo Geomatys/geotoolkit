@@ -16,15 +16,15 @@
  */
 package org.geotoolkit.ogc.xml.v110;
 
+import java.util.Objects;
+import java.util.List;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
-import org.geotoolkit.util.Utilities;
 import org.opengis.filter.capability.TemporalCapabilities;
 import org.opengis.filter.capability.TemporalOperand;
 import org.opengis.filter.capability.TemporalOperators;
@@ -71,7 +71,7 @@ public class TemporalCapabilitiesType implements TemporalCapabilities {
     }
 
     /**
-     * Build a new SpatialCapabilities
+     * Build a new TemporalCapabilitiesType
      */
     public TemporalCapabilitiesType(final TemporalOperand[] geometryOperands, final TemporalOperators spatial) {
         this.temporalOperands = new TemporalOperandsType(geometryOperands);
@@ -149,9 +149,9 @@ public class TemporalCapabilitiesType implements TemporalCapabilities {
 
        if (object instanceof TemporalCapabilitiesType) {
            final TemporalCapabilitiesType that = (TemporalCapabilitiesType) object;
-
-            return Utilities.equals(this.temporalOperands, that.temporalOperands) &&
-                   Utilities.equals(this.temporalOperators, that.temporalOperators);
+       
+            return Objects.equals(this.temporalOperands, that.temporalOperands) &&
+                   Objects.equals(this.temporalOperators, that.temporalOperators);
         }
         return false;
     }

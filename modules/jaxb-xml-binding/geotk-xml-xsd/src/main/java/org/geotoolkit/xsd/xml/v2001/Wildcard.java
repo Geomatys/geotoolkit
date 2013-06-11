@@ -18,6 +18,7 @@ package org.geotoolkit.xsd.xml.v2001;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -119,8 +120,8 @@ public class Wildcard extends Annotated {
         }
         if (object instanceof Wildcard && super.equals(object)) {
             final Wildcard that = (Wildcard) object;
-            return Utilities.equals(this.namespace,   that.namespace) &&
-                   Utilities.equals(this.processContents, that.processContents);
+            return Objects.equals(this.namespace,   that.namespace) &&
+                   Objects.equals(this.processContents, that.processContents);
         }
         return false;
     }

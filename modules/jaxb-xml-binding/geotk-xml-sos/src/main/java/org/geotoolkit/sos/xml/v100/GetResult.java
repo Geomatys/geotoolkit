@@ -18,13 +18,13 @@ package org.geotoolkit.sos.xml.v100;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.util.Utilities;
 import org.opengis.filter.Filter;
 
 
@@ -138,8 +138,8 @@ public class GetResult extends RequestBaseType implements org.geotoolkit.sos.xml
         }
         if (object instanceof GetResult && super.equals(object)) {
             final GetResult that = (GetResult) object;
-            return Utilities.equals(this.eventTime, that.eventTime) &&
-                   Utilities.equals(this.observationTemplateId,   that.observationTemplateId);
+            return Objects.equals(this.eventTime, that.eventTime) &&
+                   Objects.equals(this.observationTemplateId,   that.observationTemplateId);
         } 
         return false;
     }

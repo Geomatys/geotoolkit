@@ -19,18 +19,11 @@ package org.geotoolkit.feature.type;
 import java.util.Set;
 import java.io.IOException;
 import java.io.StringWriter;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.io.TableWriter;
 import org.geotoolkit.referencing.IdentifiedObjects;
-import org.geotoolkit.util.Utilities;
 import org.apache.sis.util.Classes;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
 
@@ -177,7 +170,7 @@ public class DefaultComplexType extends DefaultAttributeType<AttributeType> impl
         }
         if (o instanceof ComplexType && super.equals(o)) {
             final ComplexType that = (ComplexType) o;
-            return Utilities.deepEquals(this.getDescriptors(), that.getDescriptors());
+            return Objects.deepEquals(this.getDescriptors(), that.getDescriptors());
         }
         return false;
     }

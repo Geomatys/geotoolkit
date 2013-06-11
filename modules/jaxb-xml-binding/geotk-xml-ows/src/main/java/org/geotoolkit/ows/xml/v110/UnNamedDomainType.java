@@ -19,12 +19,12 @@ package org.geotoolkit.ows.xml.v110;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -287,16 +287,16 @@ public class UnNamedDomainType {
         if (object instanceof UnNamedDomainType) {
             final UnNamedDomainType that = (UnNamedDomainType) object;
 
-            return Utilities.equals(this.allowedValues,   that.allowedValues)   &&
-                   Utilities.equals(this.anyValue,        that.anyValue)        &&
-                   Utilities.equals(this.dataType,        that.dataType)        &&
-                   Utilities.equals(this.defaultValue,    that.defaultValue)    &&
-                   Utilities.equals(this.meaning,         that.meaning)         &&
-                   Utilities.equals(this.metadata,        that.metadata)        &&
-                   Utilities.equals(this.noValues,        that.noValues)        &&
-                   Utilities.equals(this.referenceSystem, that.referenceSystem) &&
-                   Utilities.equals(this.uom,             that.uom)             &&
-                   Utilities.equals(this.valuesReference, that.valuesReference);
+            return Objects.equals(this.allowedValues,   that.allowedValues)   &&
+                   Objects.equals(this.anyValue,        that.anyValue)        &&
+                   Objects.equals(this.dataType,        that.dataType)        &&
+                   Objects.equals(this.defaultValue,    that.defaultValue)    &&
+                   Objects.equals(this.meaning,         that.meaning)         &&
+                   Objects.equals(this.metadata,        that.metadata)        &&
+                   Objects.equals(this.noValues,        that.noValues)        &&
+                   Objects.equals(this.referenceSystem, that.referenceSystem) &&
+                   Objects.equals(this.uom,             that.uom)             &&
+                   Objects.equals(this.valuesReference, that.valuesReference);
         }
         return false;
     }

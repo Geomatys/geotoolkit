@@ -20,6 +20,7 @@ package org.geotoolkit.wfs.xml.v200;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -179,8 +180,8 @@ public class QueryType extends AbstractAdhocQueryExpressionType implements Query
         if (object instanceof QueryType && super.equals(object)) {
             final QueryType that = (QueryType) object;
 
-            return Utilities.equals(this.featureVersion, that.featureVersion) &&
-                   Utilities.equals(this.srsName, that.srsName);
+            return Objects.equals(this.featureVersion, that.featureVersion) &&
+                   Objects.equals(this.srsName, that.srsName);
             }
         return false;
     }

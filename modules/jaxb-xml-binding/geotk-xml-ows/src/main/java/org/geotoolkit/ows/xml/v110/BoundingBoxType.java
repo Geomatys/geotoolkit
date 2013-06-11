@@ -18,6 +18,7 @@ package org.geotoolkit.ows.xml.v110;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -174,10 +175,10 @@ public class BoundingBoxType implements BoundingBox {
         }
         if (object instanceof BoundingBoxType) {
             final BoundingBoxType that = (BoundingBoxType) object;
-            return Utilities.equals(this.crs        , that.crs)         &&
-                   Utilities.equals(this.dimensions , that.dimensions)  &&
-                   Utilities.equals(this.lowerCorner, that.lowerCorner) &&
-                   Utilities.equals(this.upperCorner, that.upperCorner);
+            return Objects.equals(this.crs        , that.crs)         &&
+                   Objects.equals(this.dimensions , that.dimensions)  &&
+                   Objects.equals(this.lowerCorner, that.lowerCorner) &&
+                   Objects.equals(this.upperCorner, that.upperCorner);
         }
         return false;
     }

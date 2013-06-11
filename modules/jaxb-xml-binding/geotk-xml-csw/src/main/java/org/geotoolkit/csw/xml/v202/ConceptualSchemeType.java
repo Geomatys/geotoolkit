@@ -16,12 +16,12 @@
  */
 package org.geotoolkit.csw.xml.v202;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -110,9 +110,9 @@ public class ConceptualSchemeType {
         if (object instanceof ConceptualSchemeType) {
             final ConceptualSchemeType that = (ConceptualSchemeType) object;
 
-            return  Utilities.equals(this.authority, that.authority) &&
-                    Utilities.equals(this.name,      that.name)      &&
-                    Utilities.equals(this.document,  that.document);
+            return  Objects.equals(this.authority, that.authority) &&
+                    Objects.equals(this.name,      that.name)      &&
+                    Objects.equals(this.document,  that.document);
         }
         return false;
     }

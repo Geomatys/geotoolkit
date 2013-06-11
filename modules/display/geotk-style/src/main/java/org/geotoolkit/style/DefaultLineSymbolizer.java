@@ -16,11 +16,9 @@
  */
 package org.geotoolkit.style;
 
-import org.apache.sis.util.Classes;
-import javax.measure.quantity.Length;
+import java.util.Objects;
+import org.geotoolkit.util.converter.Classes;
 import javax.measure.unit.Unit;
-
-import org.geotoolkit.util.Utilities;
 
 import org.opengis.filter.expression.Expression;
 import org.opengis.style.Description;
@@ -104,8 +102,8 @@ public class DefaultLineSymbolizer extends AbstractSymbolizer implements LineSym
                 && this.desc.equals(other.desc)
                 && this.offset.equals(other.offset)
                 && this.uom.equals(other.uom)
-                && Utilities.equals(this.geom, other.geom)
-                && Utilities.equals(this.name, other.name);
+                && Objects.equals(this.geom, other.geom)
+                && Objects.equals(this.name, other.name);
 
     }
 

@@ -20,6 +20,7 @@ package org.geotoolkit.feature.catalog;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -32,7 +33,6 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import org.geotoolkit.util.Utilities;
 import org.opengis.feature.catalog.FeatureType;
 import org.opengis.feature.catalog.InheritanceRelation;
 
@@ -308,12 +308,12 @@ public class InheritanceRelationImpl implements InheritanceRelation, Referenceab
         if (object instanceof InheritanceRelationImpl) {
             final InheritanceRelationImpl that = (InheritanceRelationImpl) object;
             
-            return Utilities.equals(this.description,    that.description) &&
-                   Utilities.equals(this.id,             that.id)          &&
-                   Utilities.equals(this.name,           that.name)        &&
-                   Utilities.equals(this.subtype,        that.subtype)     &&
-                   Utilities.equals(this.supertype,      that.supertype)   &&
-                   Utilities.equals(this.uniqueInstance, that.uniqueInstance);
+            return Objects.equals(this.description,    that.description) &&
+                   Objects.equals(this.id,             that.id)          &&
+                   Objects.equals(this.name,           that.name)        &&
+                   Objects.equals(this.subtype,        that.subtype)     &&
+                   Objects.equals(this.supertype,      that.supertype)   &&
+                   Objects.equals(this.uniqueInstance, that.uniqueInstance);
         }
         return false;
     }

@@ -18,13 +18,13 @@ package org.geotoolkit.gml.xml.v311;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.MultiPolygon;
 import org.apache.sis.util.ComparisonMode;
-import org.geotoolkit.util.Utilities;
 import org.opengis.filter.expression.ExpressionVisitor;
 
 
@@ -122,7 +122,7 @@ public class MultiPolygonType extends AbstractGeometricAggregateType implements 
         if (object instanceof MultiPolygonType && super.equals(object, mode)) {
             final MultiPolygonType that = (MultiPolygonType) object;
 
-            return Utilities.equals(this.polygonMember, that.polygonMember);
+            return Objects.equals(this.polygonMember, that.polygonMember);
         }
         return false;
     }

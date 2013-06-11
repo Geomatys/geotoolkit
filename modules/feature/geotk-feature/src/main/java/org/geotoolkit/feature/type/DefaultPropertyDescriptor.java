@@ -20,10 +20,9 @@ package org.geotoolkit.feature.type;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
-import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.apache.sis.util.Classes;
-import org.geotoolkit.util.Utilities;
 
 import org.opengis.feature.type.Name;
 import org.opengis.feature.type.PropertyDescriptor;
@@ -116,15 +115,15 @@ public class DefaultPropertyDescriptor<T extends PropertyType> implements Proper
      */
     @Override
     public boolean equals(final Object obj) {
-        if (!(obj instanceof PropertyDescriptor)) {
+        if (!(obj instanceof DefaultPropertyDescriptor)) {
             return false;
         }
 
-        PropertyDescriptor other = (PropertyDescriptor) obj;
-        return Utilities.equals(type, other.getType()) &&
-                Utilities.equals(name, other.getName()) &&
-                (minOccurs == other.getMinOccurs()) && (maxOccurs == other.getMaxOccurs()) &&
-                (isNillable == other.isNillable());
+        DefaultPropertyDescriptor other = (DefaultPropertyDescriptor) obj;
+        return Objects.equals(type, other.type) &&
+                Objects.equals(name, other.name) &&
+                (minOccurs == other.minOccurs) && (maxOccurs == other.maxOccurs) &&
+                (isNillable == other.isNillable);
     }
 
     /**

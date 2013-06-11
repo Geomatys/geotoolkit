@@ -18,6 +18,7 @@ package org.geotoolkit.xsd.xml.v2001;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -271,13 +272,13 @@ public class ExtensionType extends Annotated {
         if (object instanceof ExtensionType && super.equals(object)) {
             final ExtensionType that = (ExtensionType) object;
                    return
-                   Utilities.equals(this.all,                       that.all) &&
-                   Utilities.equals(this.anyAttribute,              that.anyAttribute) &&
-                   Utilities.equals(this.attributeOrAttributeGroup, that.attributeOrAttributeGroup) &&
-                   Utilities.equals(this.base,                      that.base) &&
-                   Utilities.equals(this.choice,                    that.choice) &&
-                   Utilities.equals(this.group,                     that.group) &&
-                   Utilities.equals(this.sequence,                  that.sequence);
+                   Objects.equals(this.all,                       that.all) &&
+                   Objects.equals(this.anyAttribute,              that.anyAttribute) &&
+                   Objects.equals(this.attributeOrAttributeGroup, that.attributeOrAttributeGroup) &&
+                   Objects.equals(this.base,                      that.base) &&
+                   Objects.equals(this.choice,                    that.choice) &&
+                   Objects.equals(this.group,                     that.group) &&
+                   Objects.equals(this.sequence,                  that.sequence);
         }
         return false;
     }

@@ -19,12 +19,12 @@ package org.geotoolkit.feature.catalog;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.util.Utilities;
 import org.opengis.feature.catalog.AssociationRole;
 import org.opengis.feature.catalog.Constraint;
 import org.opengis.feature.catalog.DefinitionReference;
@@ -264,7 +264,7 @@ public class AssociationRoleImpl extends PropertyTypeImpl implements Association
             // to avoid infinite cycle
             boolean association = false;
             if (this.relation != null && that.relation != null) {
-                association = Utilities.equals(this.relation.getCode(), that.relation.getCode());
+                association = Objects.equals(this.relation.getCode(), that.relation.getCode());
             } else if (this.relation == null && that.relation == null) {
                 association = true;
                 
@@ -272,10 +272,10 @@ public class AssociationRoleImpl extends PropertyTypeImpl implements Association
                 return false;
             }
             
-            return Utilities.equals(this.isNavigable, that.isNavigable) &&
-                   Utilities.equals(this.isOrdered,   that.isOrdered)   &&
-                   Utilities.equals(this.type,        that.type)        &&
-                   Utilities.equals(this.valueType,   that.valueType)   &&
+            return Objects.equals(this.isNavigable, that.isNavigable) &&
+                   Objects.equals(this.isOrdered,   that.isOrdered)   &&
+                   Objects.equals(this.type,        that.type)        &&
+                   Objects.equals(this.valueType,   that.valueType)   &&
                    association;
         } 
         return false;

@@ -17,6 +17,7 @@
 
 package org.geotoolkit.service;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -24,7 +25,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.internal.jaxb.gco.GO_GenericName;
-import org.geotoolkit.util.Utilities;
 import org.opengis.service.ServiceType;
 import org.opengis.util.LocalName;
 
@@ -83,7 +83,7 @@ public class ServiceTypeImpl implements ServiceType {
         }
         if (object instanceof ServiceTypeImpl) {
             final ServiceTypeImpl that = (ServiceTypeImpl) object;
-            return Utilities.equals(this.serviceType, that.serviceType);
+            return Objects.equals(this.serviceType, that.serviceType);
         }
         return false;
     }

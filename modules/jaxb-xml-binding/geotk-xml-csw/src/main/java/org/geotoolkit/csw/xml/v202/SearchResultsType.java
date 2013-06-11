@@ -18,6 +18,7 @@ package org.geotoolkit.csw.xml.v202;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -360,14 +361,14 @@ public class SearchResultsType implements SearchResults {
 
             
             return abstractRecordB                                                              &&
-                   Utilities.equals(this.any,                     that.any)                     &&
-                   Utilities.equals(this.elementSet,              that.elementSet)              &&
-                   Utilities.equals(this.expires,                 that.expires)                 &&
-                   Utilities.equals(this.nextRecord,              that.nextRecord)              &&
-                   Utilities.equals(this.numberOfRecordsMatched,  that.numberOfRecordsMatched)  &&
-                   Utilities.equals(this.numberOfRecordsReturned, that.numberOfRecordsReturned) &&
-                   Utilities.equals(this.recordSchema,            that.recordSchema)            &&
-                   Utilities.equals(this.resultSetId,             that.resultSetId);
+                   Objects.equals(this.any,                     that.any)                     &&
+                   Objects.equals(this.elementSet,              that.elementSet)              &&
+                   Objects.equals(this.expires,                 that.expires)                 &&
+                   Objects.equals(this.nextRecord,              that.nextRecord)              &&
+                   Objects.equals(this.numberOfRecordsMatched,  that.numberOfRecordsMatched)  &&
+                   Objects.equals(this.numberOfRecordsReturned, that.numberOfRecordsReturned) &&
+                   Objects.equals(this.recordSchema,            that.recordSchema)            &&
+                   Objects.equals(this.resultSetId,             that.resultSetId);
         }
         return false;
     }

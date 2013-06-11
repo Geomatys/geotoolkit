@@ -21,12 +21,12 @@ package org.geotoolkit.ogc.xml.v200;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.logging.Level;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.*;
 import org.geotoolkit.gml.xml.v321.AbstractGeometryType;
 import org.geotoolkit.gml.xml.v321.EnvelopeType;
-import org.geotoolkit.util.Utilities;
 import org.opengis.filter.FilterVisitor;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.spatial.DistanceBufferOperator;
@@ -307,7 +307,7 @@ public class DistanceBufferType extends SpatialOpsType implements DistanceBuffer
 
             boolean env = false;
             if (this.expression != null && that.expression != null) {
-                env = Utilities.equals(this.expression.getValue(), that.expression.getValue());
+                env = Objects.equals(this.expression.getValue(), that.expression.getValue());
             } else if (this.expression == null && that.expression == null) {
                 env = true;
             }
@@ -323,15 +323,15 @@ public class DistanceBufferType extends SpatialOpsType implements DistanceBuffer
                         final Object thisany = this.any.get(i);
                         final Object thatany = that.any.get(i);
                         if (thisany instanceof JAXBElement && thatany instanceof JAXBElement) {
-                            anyEq = Utilities.equals(((JAXBElement)thisany).getValue(), ((JAXBElement)thatany).getValue());
+                            anyEq = Objects.equals(((JAXBElement)thisany).getValue(), ((JAXBElement)thatany).getValue());
                         } else {
-                            anyEq = Utilities.equals(thisany, thatany);
+                            anyEq = Objects.equals(thisany, thatany);
                         }
                     }
                 }
             }
 
-            return  Utilities.equals(this.distance, that.distance) && env && anyEq;
+            return  Objects.equals(this.distance, that.distance) && env && anyEq;
         }
         return false;
     }

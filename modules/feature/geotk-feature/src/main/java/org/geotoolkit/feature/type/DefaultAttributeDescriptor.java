@@ -19,9 +19,9 @@ package org.geotoolkit.feature.type;
 
 import com.vividsolutions.jts.geom.Geometry;
 import java.util.Map;
+import java.util.Objects;
 
 import org.apache.sis.util.Classes;
-import org.geotoolkit.util.Utilities;
 
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.AttributeType;
@@ -78,20 +78,20 @@ public class DefaultAttributeDescriptor<T extends AttributeType> extends Default
      */
     @Override
     public boolean equals(final Object o) {
-        if (!(o instanceof AttributeDescriptor)) {
+        if (!(o instanceof DefaultAttributeDescriptor)) {
             return false;
         }
 
-        final AttributeDescriptor d = (AttributeDescriptor) o;
+        final DefaultAttributeDescriptor d = (DefaultAttributeDescriptor) o;
 
         if(!super.equals(o)){
             return false;
         }
 
-        if(defaultValue instanceof Geometry && d.getDefaultValue() instanceof Geometry){
-            return ((Geometry)defaultValue).equalsExact((Geometry) d.getDefaultValue());
+        if(defaultValue instanceof Geometry && d.defaultValue instanceof Geometry){
+            return ((Geometry)defaultValue).equalsExact((Geometry) d.defaultValue);
         }else{
-            return Utilities.deepEquals(defaultValue, d.getDefaultValue());
+            return Objects.deepEquals(defaultValue, d.defaultValue);
         }
     }
 

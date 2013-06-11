@@ -19,12 +19,12 @@ package org.geotoolkit.ows.xml.v100;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ows.xml.AcceptFormats;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -114,7 +114,7 @@ public class AcceptFormatsType implements AcceptFormats {
         }
         if (object instanceof AcceptFormatsType) {
             final AcceptFormatsType that = (AcceptFormatsType) object;
-            return Utilities.equals(this.outputFormat, that.outputFormat);
+            return Objects.equals(this.outputFormat, that.outputFormat);
         }
         return false;
     }

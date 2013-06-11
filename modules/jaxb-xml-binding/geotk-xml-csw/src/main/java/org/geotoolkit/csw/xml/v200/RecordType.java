@@ -17,6 +17,7 @@
 package org.geotoolkit.csw.xml.v200;
 
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -28,7 +29,6 @@ import org.geotoolkit.dublincore.xml.AbstractSimpleLiteral;
 import org.geotoolkit.dublincore.xml.v1.elements.SimpleLiteral;
 import org.geotoolkit.ows.xml.v100.BoundingBoxType;
 import org.geotoolkit.ows.xml.v100.WGS84BoundingBoxType;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -136,7 +136,7 @@ public class RecordType extends DCMIRecordType implements Record {
             final RecordType that = (RecordType) object;
             
             if (this.boundingBox != null && that.boundingBox != null) {
-                return Utilities.equals(this.boundingBox.getValue(),   that.boundingBox.getValue());
+                return Objects.equals(this.boundingBox.getValue(),   that.boundingBox.getValue());
                 
             } else {
                  if (this.boundingBox == null && that.boundingBox == null) {

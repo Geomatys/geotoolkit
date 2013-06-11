@@ -202,7 +202,8 @@ public class WFSXmlFactory {
                 replaceResults = new org.geotoolkit.wfs.xml.v200.ActionResultsType(ift);
             }
 
-            final org.geotoolkit.wfs.xml.v200.TransactionSummaryType ts = new org.geotoolkit.wfs.xml.v200.TransactionSummaryType(totalInserted, totalUpdated, totalDeleted, totalReplaced);
+            final org.geotoolkit.wfs.xml.v200.TransactionSummaryType ts = new org.geotoolkit.wfs.xml.v200.TransactionSummaryType(
+                    totalInserted, totalUpdated, totalDeleted, totalReplaced);
             return new org.geotoolkit.wfs.xml.v200.TransactionResponseType(ts, null, insertResults, replaceResults, version);
         } else if ("1.1.0".equals(version)) {
             org.geotoolkit.wfs.xml.v110.InsertResultsType insertResults = null;

@@ -18,6 +18,7 @@ package org.geotoolkit.sml.xml.v100;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -27,7 +28,6 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.sml.xml.AbstractSensorML;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -381,19 +381,19 @@ public class SensorML extends AbstractSensorML {
 
         if (object instanceof SensorML) {
             final SensorML that = (SensorML) object;
-            return Utilities.equals(this.capabilities,       that.capabilities)       &&
-                   Utilities.equals(this.characteristics,    that.characteristics)    &&
-                   Utilities.equals(this.classification,     that.classification)     &&
-                   Utilities.equals(this.contact,            that.contact)            &&
-                   Utilities.equals(this.documentation,      that.contact)            &&
-                   Utilities.equals(this.history,            that.history)            &&
-                   Utilities.equals(this.identification,     that.identification)     &&
-                   Utilities.equals(this.keywords,           that.keywords)           &&
-                   Utilities.equals(this.legalConstraint,    that.legalConstraint)    &&
-                   Utilities.equals(this.member,             that.member)             &&
-                   Utilities.equals(this.securityConstraint, that.securityConstraint) &&
-                   Utilities.equals(this.validTime,          that.validTime)          &&
-                   Utilities.equals(this.version,            that.version);
+            return Objects.equals(this.capabilities,       that.capabilities)       &&
+                   Objects.equals(this.characteristics,    that.characteristics)    &&
+                   Objects.equals(this.classification,     that.classification)     &&
+                   Objects.equals(this.contact,            that.contact)            &&
+                   Objects.equals(this.documentation,      that.contact)            &&
+                   Objects.equals(this.history,            that.history)            &&
+                   Objects.equals(this.identification,     that.identification)     &&
+                   Objects.equals(this.keywords,           that.keywords)           &&
+                   Objects.equals(this.legalConstraint,    that.legalConstraint)    &&
+                   Objects.equals(this.member,             that.member)             &&
+                   Objects.equals(this.securityConstraint, that.securityConstraint) &&
+                   Objects.equals(this.validTime,          that.validTime)          &&
+                   Objects.equals(this.version,            that.version);
         }
         return false;
     }

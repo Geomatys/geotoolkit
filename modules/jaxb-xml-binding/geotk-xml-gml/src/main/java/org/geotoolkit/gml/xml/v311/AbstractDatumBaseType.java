@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.gml.xml.v311;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -103,7 +104,7 @@ public abstract class AbstractDatumBaseType extends DefinitionType {
         if (object instanceof AbstractDatumType && super.equals(object, mode)) {
             final AbstractDatumType that = (AbstractDatumType) object;
 
-            return Utilities.equals(this.datumName,     that.getDatumName());
+            return Objects.equals(this.datumName,     that.getDatumName());
         }
         return false;
     }

@@ -18,6 +18,7 @@ package org.geotoolkit.xsd.xml.v2001;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -452,16 +453,16 @@ public class Schema extends OpenAttrs {
         }
         if (object instanceof Schema && super.equals(object)) {
             final Schema that = (Schema) object;
-            return Utilities.equals(this.attributeFormDefault,           that.attributeFormDefault)           &&
-                   Utilities.equals(this.blockDefault,                   that.blockDefault)                   &&
-                   Utilities.equals(this.elementFormDefault,             that.elementFormDefault)             &&
-                   Utilities.equals(this.finalDefault,                   that.finalDefault)                   &&
-                   Utilities.equals(this.id,                             that.id)                             &&
-                   Utilities.equals(this.includeOrImportOrRedefine,      that.includeOrImportOrRedefine)      &&
-                   Utilities.equals(this.lang,                           that.lang)                           &&
-                   Utilities.equals(this.simpleTypeOrComplexTypeOrGroup, that.simpleTypeOrComplexTypeOrGroup) &&
-                   Utilities.equals(this.targetNamespace,                that.targetNamespace)                &&
-                   Utilities.equals(this.version,                        that.version) ;
+            return Objects.equals(this.attributeFormDefault,           that.attributeFormDefault)           &&
+                   Objects.equals(this.blockDefault,                   that.blockDefault)                   &&
+                   Objects.equals(this.elementFormDefault,             that.elementFormDefault)             &&
+                   Objects.equals(this.finalDefault,                   that.finalDefault)                   &&
+                   Objects.equals(this.id,                             that.id)                             &&
+                   Objects.equals(this.includeOrImportOrRedefine,      that.includeOrImportOrRedefine)      &&
+                   Objects.equals(this.lang,                           that.lang)                           &&
+                   Objects.equals(this.simpleTypeOrComplexTypeOrGroup, that.simpleTypeOrComplexTypeOrGroup) &&
+                   Objects.equals(this.targetNamespace,                that.targetNamespace)                &&
+                   Objects.equals(this.version,                        that.version) ;
         }
         return false;
     }

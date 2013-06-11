@@ -17,11 +17,11 @@
 
 package org.geotoolkit.feature.catalog;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.util.Utilities;
 import org.opengis.feature.catalog.Binding;
 
 /**
@@ -75,7 +75,7 @@ public class BindingImpl implements Binding {
         if (object instanceof BindingImpl) {
             final BindingImpl that = (BindingImpl) object;
             
-            return Utilities.equals(this.description, that.description);
+            return Objects.equals(this.description, that.description);
         }
         return false;
     }

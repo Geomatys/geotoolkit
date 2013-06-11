@@ -18,6 +18,7 @@ package org.geotoolkit.gml.xml.v311;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -236,10 +237,10 @@ public class LineStringSegmentType extends AbstractCurveSegmentType implements L
                     }
                 }
             }
-            return Utilities.equals(this.coordinates,    that.coordinates)   &&
-                   Utilities.equals(this.posList,        that.posList)       &&
-                   Utilities.equals(this.interpolation,  that.interpolation) &&
-                   Utilities.equals(this.pos,            that.pos) &&
+            return Objects.equals(this.coordinates,    that.coordinates)   &&
+                   Objects.equals(this.posList,        that.posList)       &&
+                   Objects.equals(this.interpolation,  that.interpolation) &&
+                   Objects.equals(this.pos,            that.pos) &&
                    jb;
         }
         return false;
@@ -257,7 +258,7 @@ public class LineStringSegmentType extends AbstractCurveSegmentType implements L
 
     private boolean JAXBElementEquals(final JAXBElement a, final JAXBElement b) {
         if (a  != null && b != null) {
-            return Utilities.equals(a.getValue(), b.getValue());
+            return Objects.equals(a.getValue(), b.getValue());
         } else if (a == null && b == null) {
             return true;
         }

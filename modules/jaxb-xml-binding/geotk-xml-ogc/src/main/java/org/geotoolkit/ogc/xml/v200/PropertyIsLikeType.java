@@ -20,6 +20,7 @@ package org.geotoolkit.ogc.xml.v200;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -263,7 +264,7 @@ public class PropertyIsLikeType extends ComparisonOpsType {
                 if (this.expression.size() == that.expression.size()) {
                     exp = true;
                     for (int i = 0; i< this.expression.size(); i++) {
-                        if (!Utilities.equals(this.expression.get(i).getValue(), that.expression.get(i).getValue())) {
+                        if (!Objects.equals(this.expression.get(i).getValue(), that.expression.get(i).getValue())) {
                             return false;
                         }
                     }
@@ -274,9 +275,9 @@ public class PropertyIsLikeType extends ComparisonOpsType {
                 return false;
             }
             return exp &&
-                   Utilities.equals(this.escapeChar,   that.escapeChar)   &&
-                   Utilities.equals(this.singleChar,   that.singleChar)   &&
-                   Utilities.equals(this.wildCard,     that.wildCard);
+                   Objects.equals(this.escapeChar,   that.escapeChar)   &&
+                   Objects.equals(this.singleChar,   that.singleChar)   &&
+                   Objects.equals(this.wildCard,     that.wildCard);
         }
         return false;
     }

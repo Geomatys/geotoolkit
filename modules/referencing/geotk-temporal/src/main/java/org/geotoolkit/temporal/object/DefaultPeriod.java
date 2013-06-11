@@ -18,7 +18,7 @@
 package org.geotoolkit.temporal.object;
 
 import java.util.Date;
-import org.geotoolkit.util.Utilities;
+import java.util.Objects;
 import org.opengis.temporal.Instant;
 import org.opengis.temporal.Period;
 import org.opengis.temporal.Position;
@@ -104,8 +104,8 @@ public class DefaultPeriod extends DefaultTemporalGeometricPrimitive implements 
         if (object instanceof DefaultPeriod) {
             final DefaultPeriod that = (DefaultPeriod) object;
 
-            return Utilities.equals(this.begining, that.begining) &&
-                    Utilities.equals(this.ending, that.ending);
+            return Objects.equals(this.begining, that.begining) &&
+                    Objects.equals(this.ending, that.ending);
         }
         return false;
     }

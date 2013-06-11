@@ -18,13 +18,13 @@ package org.geotoolkit.gml.xml.v311;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.FeatureCollection;
 import org.apache.sis.util.ComparisonMode;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -206,8 +206,8 @@ public abstract class AbstractFeatureCollectionType extends AbstractFeatureType 
         if (object instanceof AbstractFeatureCollectionType && super.equals(object, mode)) {
             final AbstractFeatureCollectionType that = (AbstractFeatureCollectionType) object;
 
-            return Utilities.equals(this.featureMember,  that.featureMember) &&
-                   Utilities.equals(this.featureMembers, that.featureMembers);
+            return Objects.equals(this.featureMember,  that.featureMember) &&
+                   Objects.equals(this.featureMembers, that.featureMembers);
         }
         return false;
     }

@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.sml.xml.v101;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -26,7 +27,6 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.sml.xml.AbstractResponsibleParty;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -252,11 +252,11 @@ public class ResponsibleParty implements AbstractResponsibleParty {
 
         if (object instanceof ResponsibleParty) {
             final ResponsibleParty that = (ResponsibleParty) object;
-            return Utilities.equals(this.contactInfo,      that.contactInfo)      &&
-                   Utilities.equals(this.id,               that.id)               &&
-                   Utilities.equals(this.individualName,   that.individualName)   &&
-                   Utilities.equals(this.organizationName, that.organizationName) &&
-                   Utilities.equals(this.positionName,     that.positionName);
+            return Objects.equals(this.contactInfo,      that.contactInfo)      &&
+                   Objects.equals(this.id,               that.id)               &&
+                   Objects.equals(this.individualName,   that.individualName)   &&
+                   Objects.equals(this.organizationName, that.organizationName) &&
+                   Objects.equals(this.positionName,     that.positionName);
         }
         return false;
     }

@@ -20,6 +20,7 @@ package org.geotoolkit.wfs.xml.v200;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -77,7 +78,7 @@ public class ExtendedDescriptionType {
         if (object instanceof ExtendedDescriptionType) {
             final ExtendedDescriptionType that = (ExtendedDescriptionType) object;
 
-            return Utilities.equals(this.element, that.element);
+            return Objects.equals(this.element, that.element);
             }
         return false;
     }

@@ -19,11 +19,11 @@ package org.geotoolkit.ows.xml.v100;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -113,7 +113,7 @@ public class AcceptVersionsType implements org.geotoolkit.ows.xml.AcceptVersions
         }
         if (object instanceof AcceptVersionsType) {
             final AcceptVersionsType that = (AcceptVersionsType) object;
-            return Utilities.equals(this.version, that.version);
+            return Objects.equals(this.version, that.version);
         }
         return false;
     }

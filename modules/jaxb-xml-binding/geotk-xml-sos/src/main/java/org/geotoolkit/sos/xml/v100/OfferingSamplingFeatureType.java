@@ -16,9 +16,9 @@
  */
 package org.geotoolkit.sos.xml.v100;
 
+import java.util.Objects;
 import org.geotoolkit.gml.xml.v311.ReferenceType;
 import org.geotoolkit.internal.sql.table.Entry;
-import org.geotoolkit.util.Utilities;
 
 /**
  *
@@ -90,8 +90,8 @@ public class OfferingSamplingFeatureType implements Entry{
         }
         if (object instanceof OfferingSamplingFeatureType && super.equals(object)) {
             final OfferingSamplingFeatureType that = (OfferingSamplingFeatureType) object;
-            return Utilities.equals(this.idOffering, that.idOffering) &&
-                   Utilities.equals(this.component,  that.component);
+            return Objects.equals(this.idOffering, that.idOffering) &&
+                   Objects.equals(this.component,  that.component);
         }
         return false;
     }

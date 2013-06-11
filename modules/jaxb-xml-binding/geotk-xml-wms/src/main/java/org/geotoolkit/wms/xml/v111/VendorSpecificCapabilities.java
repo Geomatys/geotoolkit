@@ -18,12 +18,12 @@ package org.geotoolkit.wms.xml.v111;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.wmsc.xml.v111.TileSet;
 
 
@@ -59,7 +59,7 @@ public class VendorSpecificCapabilities {
         if (object instanceof VendorSpecificCapabilities) {
             final VendorSpecificCapabilities that = (VendorSpecificCapabilities) object;
 
-            return Utilities.equals(this.tileSet, that.tileSet);
+            return Objects.equals(this.tileSet, that.tileSet);
         }
         return false;
     }

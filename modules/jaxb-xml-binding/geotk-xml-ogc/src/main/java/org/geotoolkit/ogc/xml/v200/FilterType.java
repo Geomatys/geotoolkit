@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.*;
 import org.geotoolkit.ogc.xml.XMLFilter;
@@ -607,27 +608,27 @@ public class FilterType extends AbstractSelectionClauseType implements Filter, X
 
             boolean comp = false;
             if (this.comparisonOps != null && that.comparisonOps != null) {
-                comp = Utilities.equals(this.comparisonOps.getValue(), that.comparisonOps.getValue());
+                comp = Objects.equals(this.comparisonOps.getValue(), that.comparisonOps.getValue());
             } else if (this.comparisonOps == null && that.comparisonOps == null) {
                 comp = true;
             }
 
             boolean log = false;
             if (this.logicOps != null && that.logicOps != null) {
-                log = Utilities.equals(this.logicOps.getValue(), that.logicOps.getValue());
+                log = Objects.equals(this.logicOps.getValue(), that.logicOps.getValue());
             } else if (this.logicOps == null && that.logicOps == null) {
                 log = true;
             }
 
             boolean spa = false;
             if (this.spatialOps != null && that.spatialOps != null) {
-                spa = Utilities.equals(this.spatialOps.getValue(), that.spatialOps.getValue());
+                spa = Objects.equals(this.spatialOps.getValue(), that.spatialOps.getValue());
             } else if (this.spatialOps == null && that.spatialOps == null) {
                 spa = true;
             }
             boolean temp = false;
             if (this.temporalOps != null && that.temporalOps != null) {
-                temp = Utilities.equals(this.temporalOps.getValue(), that.temporalOps.getValue());
+                temp = Objects.equals(this.temporalOps.getValue(), that.temporalOps.getValue());
             } else if (this.temporalOps == null && that.temporalOps == null) {
                 temp = true;
             }
@@ -635,8 +636,8 @@ public class FilterType extends AbstractSelectionClauseType implements Filter, X
              * TODO ID
              */
             return  comp && spa && log && temp &&
-                    Utilities.equals(this.extensionOps, that.extensionOps) &&
-                    Utilities.equals(this.function,     that.function);
+                    Objects.equals(this.extensionOps, that.extensionOps) &&
+                    Objects.equals(this.function,     that.function);
         }
         return false;
     }

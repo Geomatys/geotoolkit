@@ -18,12 +18,12 @@
 package org.geotoolkit.service;
 
 import org.opengis.service.ParameterDirection;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.resources.jaxb.service.MemberNameAdapter;
-import org.geotoolkit.util.Utilities;
 import org.opengis.service.Parameter;
 import org.opengis.util.MemberName;
 import org.opengis.util.TypeName;
@@ -239,12 +239,12 @@ public class ParameterImpl implements Parameter {
         }
         if (obj instanceof ParameterImpl) {
             final ParameterImpl that = (ParameterImpl) obj;
-            return Utilities.equals(this.description, that.description) &&
-                   Utilities.equals(this.direction, that.direction) &&
-                   Utilities.equals(this.name, that.name) &&
-                   Utilities.equals(this.optionality, that.optionality) &&
-                    Utilities.equals(this.valueType, that.valueType) &&
-                   Utilities.equals(this.repeatability, that.repeatability);
+            return Objects.equals(this.description, that.description) &&
+                   Objects.equals(this.direction, that.direction) &&
+                   Objects.equals(this.name, that.name) &&
+                   Objects.equals(this.optionality, that.optionality) &&
+                    Objects.equals(this.valueType, that.valueType) &&
+                   Objects.equals(this.repeatability, that.repeatability);
         }
         return false;
     }

@@ -19,6 +19,7 @@ package org.geotoolkit.gml.xml.v311;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -26,7 +27,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import org.apache.sis.util.ComparisonMode;
-import org.geotoolkit.util.Utilities;
 import org.opengis.referencing.cs.AxisDirection;
 
 
@@ -139,10 +139,10 @@ public class CoordinateSystemAxisType extends CoordinateSystemAxisBaseType {
 
         if (object instanceof CoordinateSystemAxisType) {
             final CoordinateSystemAxisType that = (CoordinateSystemAxisType) object;
-            return Utilities.equals(this.axisAbbrev, that.axisAbbrev) &&
-                   Utilities.equals(this.axisDirection, that.axisDirection) &&
-                   Utilities.equals(this.axisID, that.axisID) &&
-                   Utilities.equals(this.uom, that.uom);
+            return Objects.equals(this.axisAbbrev, that.axisAbbrev) &&
+                   Objects.equals(this.axisDirection, that.axisDirection) &&
+                   Objects.equals(this.axisID, that.axisID) &&
+                   Objects.equals(this.uom, that.uom);
 
         }
         return false;

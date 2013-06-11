@@ -16,12 +16,12 @@
  */
 package org.geotoolkit.sml.xml.v101;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.sml.xml.Component;
 import org.apache.sis.util.ComparisonMode;
-import org.geotoolkit.util.Utilities;
 
 /**
  * <p>Java class for ComponentType complex type.
@@ -85,7 +85,7 @@ public class ComponentType extends AbstractComponentType implements Component {
 
         if (object instanceof ComponentType && super.equals(object, mode)) {
             final ComponentType that = (ComponentType) object;
-            return Utilities.equals(this.method,     that.method);
+            return Objects.equals(this.method,     that.method);
         }
         return false;
     }

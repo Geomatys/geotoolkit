@@ -20,13 +20,13 @@ import java.beans.PropertyChangeEvent;
 import java.util.Collection;
 import java.util.EventObject;
 import java.util.List;
+import java.util.Objects;
 import javax.swing.event.EventListenerList;
 
 import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.geotoolkit.style.StyleConstants;
 import org.geotoolkit.util.NumberRange;
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.collection.NotifiedCheckedList;
 import org.apache.sis.util.Classes;
 
@@ -171,7 +171,7 @@ class DefaultMutableSLD implements MutableStyledLayerDescriptor{
         final String oldName;
         synchronized (this) {
             oldName = this.name;
-            if (Utilities.equals(oldName, name)) {
+            if (Objects.equals(oldName, name)) {
                 return;
             }
             this.name = name;
@@ -225,7 +225,7 @@ class DefaultMutableSLD implements MutableStyledLayerDescriptor{
         final String oldVersion;
         synchronized (this) {
             oldVersion = this.version;
-            if (Utilities.equals(oldVersion, version)) {
+            if (Objects.equals(oldVersion, version)) {
                 return;
             }
             this.version = version;
@@ -381,8 +381,8 @@ class DefaultMutableSLD implements MutableStyledLayerDescriptor{
 
         DefaultMutableSLD other = (DefaultMutableSLD) obj;
 
-        return Utilities.equals(this.name, other.name)
-                && Utilities.equals(this.version, other.version)
+        return Objects.equals(this.name, other.name)
+                && Objects.equals(this.version, other.version)
                 && this.description.equals(other.description)
                 && this.layers.equals(other.layers)
                 && this.libraries.equals(other.libraries);

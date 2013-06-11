@@ -18,6 +18,7 @@ package org.geotoolkit.sml.xml.v100;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -33,7 +34,6 @@ import org.geotoolkit.gml.xml.v311.LineStringType;
 import org.geotoolkit.gml.xml.v311.OrientableCurveType;
 import org.geotoolkit.gml.xml.v311.PointType;
 import org.geotoolkit.sml.xml.AbstractLocation;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -333,22 +333,22 @@ public class Location implements AbstractLocation {
         if (object instanceof Location) {
             final Location that = (Location) object;
             if (this.abstractCurve != null && that.abstractCurve != null) {
-                record = Utilities.equals(this.abstractCurve.getValue(), that.abstractCurve.getValue());
+                record = Objects.equals(this.abstractCurve.getValue(), that.abstractCurve.getValue());
             } else if (this.abstractCurve == null && that.abstractCurve == null) {
                 record = true;
             }
 
-            return Utilities.equals(this.actuate,      that.actuate)       &&
-                   Utilities.equals(this.arcrole,      that.arcrole)       &&
-                   Utilities.equals(this.point,        that.point)         &&
-                   Utilities.equals(this.href,         that.href)          &&
-                   Utilities.equals(this.remoteSchema, that.remoteSchema)  &&
-                   Utilities.equals(this.role,         that.role)          &&
-                   Utilities.equals(this.show,         that.show)          &&
-                   Utilities.equals(this.title,        that.title)         &&
+            return Objects.equals(this.actuate,      that.actuate)       &&
+                   Objects.equals(this.arcrole,      that.arcrole)       &&
+                   Objects.equals(this.point,        that.point)         &&
+                   Objects.equals(this.href,         that.href)          &&
+                   Objects.equals(this.remoteSchema, that.remoteSchema)  &&
+                   Objects.equals(this.role,         that.role)          &&
+                   Objects.equals(this.show,         that.show)          &&
+                   Objects.equals(this.title,        that.title)         &&
                    record                                                  &&
-                   Utilities.equals(this.type,         that.type)          &&
-                   Utilities.equals(this.nilReason,         that.nilReason);
+                   Objects.equals(this.type,         that.type)          &&
+                   Objects.equals(this.nilReason,         that.nilReason);
         }
         return false;
     }

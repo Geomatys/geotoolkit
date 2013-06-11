@@ -18,6 +18,7 @@ package org.geotoolkit.swe.xml.v101;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -29,7 +30,6 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.swe.xml.AbstractCount;
 import org.geotoolkit.swe.xml.AbstractQualityProperty;
 import org.apache.sis.util.ComparisonMode;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -186,11 +186,11 @@ public class Count extends AbstractDataComponentType implements AbstractCount {
         }
         if (object instanceof Count && super.equals(object, mode)) {
             final Count that = (Count) object;
-            return Utilities.equals(this.axisID, that.axisID) &&
-                    Utilities.equals(this.constraint, that.constraint) &&
-                    Utilities.equals(this.getQuality(), that.getQuality()) &&
-                    Utilities.equals(this.referenceFrame, that.referenceFrame) &&
-                    Utilities.equals(this.value, that.value);
+            return Objects.equals(this.axisID, that.axisID) &&
+                    Objects.equals(this.constraint, that.constraint) &&
+                    Objects.equals(this.getQuality(), that.getQuality()) &&
+                    Objects.equals(this.referenceFrame, that.referenceFrame) &&
+                    Objects.equals(this.value, that.value);
         }
         return false;
     }

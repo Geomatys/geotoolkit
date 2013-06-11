@@ -16,11 +16,11 @@
  */
 package org.geotoolkit.wrs.xml.v100;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -80,7 +80,7 @@ public class RecordIdType {
         }
         if (obj instanceof RecordIdType) {
             final RecordIdType that = (RecordIdType) obj;
-            return Utilities.equals(this.content,  that.content);
+            return Objects.equals(this.content,  that.content);
         }
         return false;
     }

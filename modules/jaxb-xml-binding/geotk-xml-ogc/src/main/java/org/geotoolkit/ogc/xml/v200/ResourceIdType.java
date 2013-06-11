@@ -18,6 +18,7 @@
 
 package org.geotoolkit.ogc.xml.v200;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -237,11 +238,11 @@ public class ResourceIdType extends AbstractIdType  implements FeatureId {
         }
         if (object instanceof ResourceIdType) {
             final ResourceIdType that = (ResourceIdType) object;
-            return Utilities.equals(this.endDate,      that.endDate)        &&
-                   Utilities.equals(this.previousRid,  that.previousRid)   &&
-                   Utilities.equals(this.rid,          that.rid)   &&
-                   Utilities.equals(this.startDate,    that.startDate)   &&
-                   Utilities.equals(this.version,      that.version) ;
+            return Objects.equals(this.endDate,      that.endDate)        &&
+                   Objects.equals(this.previousRid,  that.previousRid)   &&
+                   Objects.equals(this.rid,          that.rid)   &&
+                   Objects.equals(this.startDate,    that.startDate)   &&
+                   Objects.equals(this.version,      that.version) ;
         }
         return false;
     }

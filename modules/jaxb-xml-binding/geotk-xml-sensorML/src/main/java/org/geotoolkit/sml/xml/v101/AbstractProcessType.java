@@ -18,6 +18,7 @@ package org.geotoolkit.sml.xml.v101;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlSeeAlso;
@@ -34,7 +35,6 @@ import org.geotoolkit.sml.xml.AbstractLegalConstraint;
 import org.geotoolkit.sml.xml.AbstractProcess;
 import org.geotoolkit.sml.xml.AbstractValidTime;
 import org.apache.sis.util.ComparisonMode;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -551,17 +551,17 @@ public abstract class AbstractProcessType extends AbstractSMLType implements Abs
 
         if (object instanceof AbstractProcessType && super.equals(object, mode)) {
             final AbstractProcessType that = (AbstractProcessType) object;
-            return Utilities.equals(this.capabilities,    that.capabilities)       &&
-                   Utilities.equals(this.characteristics, that.characteristics)    &&
-                   Utilities.equals(this.classification,  that.classification)     &&
-                   Utilities.equals(this.contact,         that.contact)            &&
-                   Utilities.equals(this.documentation,   that.documentation)      &&
-                   Utilities.equals(this.identification,  that.identification)     &&
-                   Utilities.equals(this.keywords,        that.keywords)           &&
-                   Utilities.equals(this.legalConstraint, that.legalConstraint)    &&
-                   Utilities.equals(this.securityConstraint, that.securityConstraint)    &&
-                   Utilities.equals(this.validTime,       that.validTime)          &&
-                   Utilities.equals(this.history,         that.history);
+            return Objects.equals(this.capabilities,    that.capabilities)       &&
+                   Objects.equals(this.characteristics, that.characteristics)    &&
+                   Objects.equals(this.classification,  that.classification)     &&
+                   Objects.equals(this.contact,         that.contact)            &&
+                   Objects.equals(this.documentation,   that.documentation)      &&
+                   Objects.equals(this.identification,  that.identification)     &&
+                   Objects.equals(this.keywords,        that.keywords)           &&
+                   Objects.equals(this.legalConstraint, that.legalConstraint)    &&
+                   Objects.equals(this.securityConstraint, that.securityConstraint)    &&
+                   Objects.equals(this.validTime,       that.validTime)          &&
+                   Objects.equals(this.history,         that.history);
         }
         return false;
     }

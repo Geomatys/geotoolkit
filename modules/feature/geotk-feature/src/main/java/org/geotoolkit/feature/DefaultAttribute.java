@@ -17,7 +17,7 @@
  */
 package org.geotoolkit.feature;
 
-import org.geotoolkit.util.Utilities;
+import java.util.Objects;
 import org.geotoolkit.util.Converters;
 
 import org.opengis.feature.Attribute;
@@ -145,7 +145,7 @@ public class DefaultAttribute<V extends Object, D extends AttributeDescriptor, I
 
         final DefaultAttribute att = (DefaultAttribute) obj;
 
-        return Utilities.equals(id, att.id);
+        return Objects.equals(id, att.id);
     }
 
     /**

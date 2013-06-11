@@ -21,6 +21,7 @@ package org.geotoolkit.ogc.xml.v200;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.logging.Level;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -346,7 +347,7 @@ public class BBOXType extends SpatialOpsType implements BBOX {
             if (this.expression == null && that.expression == null) {
                 prop = true;
             } else if (this.expression != null && that.expression != null) {
-                prop = Utilities.equals(this.expression.getValue(), that.expression.getValue());
+                prop = Objects.equals(this.expression.getValue(), that.expression.getValue());
             }
             boolean anyEq = false;
             if (this.any == null && that.any == null) {
@@ -359,9 +360,9 @@ public class BBOXType extends SpatialOpsType implements BBOX {
                         final Object thisany = this.any.get(i);
                         final Object thatany = that.any.get(i);
                         if (thisany instanceof JAXBElement && thatany instanceof JAXBElement) {
-                            anyEq = Utilities.equals(((JAXBElement)thisany).getValue(), ((JAXBElement)thatany).getValue());
+                            anyEq = Objects.equals(((JAXBElement)thisany).getValue(), ((JAXBElement)thatany).getValue());
                         } else {
-                            anyEq = Utilities.equals(thisany, thatany);
+                            anyEq = Objects.equals(thisany, thatany);
                         }
                     }
                 }

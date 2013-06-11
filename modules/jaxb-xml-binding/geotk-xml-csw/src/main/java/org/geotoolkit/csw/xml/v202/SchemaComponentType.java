@@ -19,6 +19,7 @@ package org.geotoolkit.csw.xml.v202;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAnyElement;
@@ -27,7 +28,6 @@ import javax.xml.bind.annotation.XmlMixed;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.csw.xml.SchemaComponent;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -144,10 +144,10 @@ public class SchemaComponentType implements SchemaComponent {
         }
         if (object instanceof SchemaComponentType ) {
             final SchemaComponentType that = (SchemaComponentType) object;
-            return Utilities.equals(this.content,         that.content)   &&
-                   Utilities.equals(this.schemaLanguage,  that.schemaLanguage) &&
-                   Utilities.equals(this.targetNamespace, that.targetNamespace) &&
-                   Utilities.equals(this.parentSchema,    that.parentSchema);
+            return Objects.equals(this.content,         that.content)   &&
+                   Objects.equals(this.schemaLanguage,  that.schemaLanguage) &&
+                   Objects.equals(this.targetNamespace, that.targetNamespace) &&
+                   Objects.equals(this.parentSchema,    that.parentSchema);
         }
         return false;
     }

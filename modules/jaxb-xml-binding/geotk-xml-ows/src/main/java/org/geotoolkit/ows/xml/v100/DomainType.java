@@ -19,13 +19,13 @@ package org.geotoolkit.ows.xml.v100;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ows.xml.AbstractDomain;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -171,10 +171,10 @@ public class DomainType implements AbstractDomain {
         }
         if (object instanceof DomainType) {
             final DomainType that = (DomainType) object;
-            return Utilities.equals(this.defaultValue, that.defaultValue) &&
-                   Utilities.equals(this.metadata,     that.metadata)     &&
-                   Utilities.equals(this.name,         that.name)         &&
-                   Utilities.equals(this.value,        that.value);
+            return Objects.equals(this.defaultValue, that.defaultValue) &&
+                   Objects.equals(this.metadata,     that.metadata)     &&
+                   Objects.equals(this.name,         that.name)         &&
+                   Objects.equals(this.value,        that.value);
         }
         return false;
     }

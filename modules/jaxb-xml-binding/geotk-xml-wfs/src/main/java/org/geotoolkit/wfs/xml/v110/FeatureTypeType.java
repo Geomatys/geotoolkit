@@ -18,6 +18,7 @@ package org.geotoolkit.wfs.xml.v110;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -374,17 +375,17 @@ public class FeatureTypeType implements FeatureType {
         if (object instanceof FeatureTypeType) {
             final FeatureTypeType that = (FeatureTypeType) object;
 
-            return Utilities.equals(this._abstract, that._abstract) &&
-                   Utilities.equals(this.defaultSRS, that.defaultSRS) &&
-                   Utilities.equals(this.keywords, that.keywords) &&
-                   Utilities.equals(this.metadataURL, that.metadataURL) &&
-                   Utilities.equals(this.name, that.name) &&
-                   Utilities.equals(this.operations, that.operations) &&
-                   Utilities.equals(this.otherSRS, that.otherSRS) &&
-                   Utilities.equals(this.outputFormats, that.outputFormats) &&
-                   Utilities.equals(this.title, that.title) &&
-                   Utilities.equals(this.wgs84BoundingBox, that.wgs84BoundingBox) &&
-                   Utilities.equals(this.noSRS,  that.noSRS);
+            return Objects.equals(this._abstract, that._abstract) &&
+                   Objects.equals(this.defaultSRS, that.defaultSRS) &&
+                   Objects.equals(this.keywords, that.keywords) &&
+                   Objects.equals(this.metadataURL, that.metadataURL) &&
+                   Objects.equals(this.name, that.name) &&
+                   Objects.equals(this.operations, that.operations) &&
+                   Objects.equals(this.otherSRS, that.otherSRS) &&
+                   Objects.equals(this.outputFormats, that.outputFormats) &&
+                   Objects.equals(this.title, that.title) &&
+                   Objects.equals(this.wgs84BoundingBox, that.wgs84BoundingBox) &&
+                   Objects.equals(this.noSRS,  that.noSRS);
             }
         return false;
     }

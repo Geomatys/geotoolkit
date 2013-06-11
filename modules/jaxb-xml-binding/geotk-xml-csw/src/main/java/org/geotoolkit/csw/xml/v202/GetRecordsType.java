@@ -18,6 +18,7 @@ package org.geotoolkit.csw.xml.v202;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAnyElement;
@@ -32,7 +33,6 @@ import javax.xml.namespace.QName;
 import org.geotoolkit.csw.xml.GetRecordsRequest;
 import org.geotoolkit.csw.xml.ResultType;
 import org.geotoolkit.ogc.xml.v110.FilterType;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -322,16 +322,16 @@ public class GetRecordsType extends RequestBaseType implements GetRecordsRequest
         }
         if (object instanceof GetRecordsType && super.equals(object)) {
             final GetRecordsType that = (GetRecordsType) object;
-            return Utilities.equals(this.abstractQuery,  that.abstractQuery)   &&
-                   Utilities.equals(this.distributedSearch,  that.distributedSearch)   &&
-                   Utilities.equals(this.getMaxRecords(),  that.getMaxRecords())   &&
-                   Utilities.equals(this.outputFormat,  that.outputFormat)   &&
-                   Utilities.equals(this.outputSchema,  that.outputSchema)   &&
-                   Utilities.equals(this.requestId,  that.requestId)   &&
-                   Utilities.equals(this.responseHandler,  that.responseHandler)   &&
-                   Utilities.equals(this.getResultType(),  that.getResultType())   &&
-                   Utilities.equals(this.getStartPosition(),  that.getStartPosition())   &&
-                   Utilities.equals(this.any ,  that.any);
+            return Objects.equals(this.abstractQuery,  that.abstractQuery)   &&
+                   Objects.equals(this.distributedSearch,  that.distributedSearch)   &&
+                   Objects.equals(this.getMaxRecords(),  that.getMaxRecords())   &&
+                   Objects.equals(this.outputFormat,  that.outputFormat)   &&
+                   Objects.equals(this.outputSchema,  that.outputSchema)   &&
+                   Objects.equals(this.requestId,  that.requestId)   &&
+                   Objects.equals(this.responseHandler,  that.responseHandler)   &&
+                   Objects.equals(this.getResultType(),  that.getResultType())   &&
+                   Objects.equals(this.getStartPosition(),  that.getStartPosition())   &&
+                   Objects.equals(this.any ,  that.any);
         }
         return false;
     }

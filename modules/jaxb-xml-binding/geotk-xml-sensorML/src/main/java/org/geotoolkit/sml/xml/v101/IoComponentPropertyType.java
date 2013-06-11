@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.sml.xml.v101;
 
+import java.util.Objects;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -848,37 +849,37 @@ public class IoComponentPropertyType implements IoComponent {
             final IoComponentPropertyType that = (IoComponentPropertyType) object;
             boolean absDataRec = false;
             if (this.abstractDataRecord != null && that.abstractDataRecord != null) {
-                absDataRec = Utilities.equals(this.abstractDataRecord.getValue(), that.abstractDataRecord.getValue());
+                absDataRec = Objects.equals(this.abstractDataRecord.getValue(), that.abstractDataRecord.getValue());
             } else if (this.abstractDataRecord == null && that.abstractDataRecord == null) {
                 absDataRec = true;
             }
             boolean absDataArr = false;
             if (this.abstractDataArray != null && that.abstractDataArray != null) {
-                absDataArr = Utilities.equals(this.abstractDataArray.getValue(), that.abstractDataArray.getValue());
+                absDataArr = Objects.equals(this.abstractDataArray.getValue(), that.abstractDataArray.getValue());
             } else if (this.abstractDataArray == null && that.abstractDataArray == null) {
                 absDataArr = true;
             }
-            return Utilities.equals(this.actuate,      that.actuate)       &&
-                   Utilities.equals(this.arcrole,      that.arcrole)       &&
-                   Utilities.equals(this.href,         that.href)          &&
+            return Objects.equals(this.actuate,      that.actuate)       &&
+                   Objects.equals(this.arcrole,      that.arcrole)       &&
+                   Objects.equals(this.href,         that.href)          &&
                    absDataRec                                              &&
                    absDataArr                                              &&
-                   Utilities.equals(this.remoteSchema, that.remoteSchema)  &&
-                   Utilities.equals(this.role,         that.role)          &&
-                   Utilities.equals(this.show,         that.show)          &&
-                   Utilities.equals(this.title,        that.title)         &&
-                   Utilities.equals(this._boolean,     that._boolean)      &&
-                   Utilities.equals(this.category,     that.category)      &&
-                   Utilities.equals(this.count,        that.count)         &&
-                   Utilities.equals(this.countRange,   that.countRange)    &&
-                   Utilities.equals(this.name,         that.name)          &&
-                   Utilities.equals(this.quantity,     that.quantity)      &&
-                   Utilities.equals(this.quantityRange,that.quantityRange) &&
-                   Utilities.equals(this.time,         that.time)          &&
-                   Utilities.equals(this.timeRange,    that.timeRange)     &&
-                   Utilities.equals(this.text,         that.text)          &&
-                   Utilities.equals(this.observableProperty,  that.observableProperty) &&
-                   Utilities.equals(this.type,         that.type);
+                   Objects.equals(this.remoteSchema, that.remoteSchema)  &&
+                   Objects.equals(this.role,         that.role)          &&
+                   Objects.equals(this.show,         that.show)          &&
+                   Objects.equals(this.title,        that.title)         &&
+                   Objects.equals(this._boolean,     that._boolean)      &&
+                   Objects.equals(this.category,     that.category)      &&
+                   Objects.equals(this.count,        that.count)         &&
+                   Objects.equals(this.countRange,   that.countRange)    &&
+                   Objects.equals(this.name,         that.name)          &&
+                   Objects.equals(this.quantity,     that.quantity)      &&
+                   Objects.equals(this.quantityRange,that.quantityRange) &&
+                   Objects.equals(this.time,         that.time)          &&
+                   Objects.equals(this.timeRange,    that.timeRange)     &&
+                   Objects.equals(this.text,         that.text)          &&
+                   Objects.equals(this.observableProperty,  that.observableProperty) &&
+                   Objects.equals(this.type,         that.type);
         }
         return false;
     }

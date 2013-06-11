@@ -16,13 +16,13 @@
  */
 package org.geotoolkit.ebrim.xml.v250;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.wrs.xml.v090.WRSExtrinsicObjectType;
 
 
@@ -118,8 +118,8 @@ public class ExtrinsicObjectType extends RegistryEntryType {
         }
         if (obj instanceof ExtrinsicObjectType && super.equals(obj)) {
             final ExtrinsicObjectType that = (ExtrinsicObjectType) obj;
-            return Utilities.equals(this.isOpaque, that.isOpaque) &&
-                   Utilities.equals(this.getMimeType(), that.getMimeType());
+            return Objects.equals(this.isOpaque, that.isOpaque) &&
+                   Objects.equals(this.getMimeType(), that.getMimeType());
         }
         return false;
     }

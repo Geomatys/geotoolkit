@@ -18,13 +18,9 @@
 package org.geotoolkit.feature.type;
 
 import java.io.Serializable;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.apache.sis.util.Classes;
-import org.geotoolkit.util.Utilities;
 
 import org.opengis.feature.type.Name;
 import org.opengis.feature.type.PropertyType;
@@ -150,11 +146,11 @@ public class DefaultPropertyType<T extends PropertyType> implements PropertyType
 
         final PropertyType prop = (PropertyType) other;
 
-        if (!Utilities.equals(name, prop.getName())) {
+        if (!Objects.equals(name, prop.getName())) {
             return false;
         }
 
-        if (!Utilities.equals(binding, prop.getBinding())) {
+        if (!Objects.equals(binding, prop.getBinding())) {
             return false;
         }
 
@@ -166,11 +162,11 @@ public class DefaultPropertyType<T extends PropertyType> implements PropertyType
             return false;
         }
 
-        if (!Utilities.equals(superType, prop.getSuper())) {
+        if (!Objects.equals(superType, prop.getSuper())) {
             return false;
         }
 
-        if (!Utilities.equals(description, prop.getDescription())) {
+        if (!Objects.equals(description, prop.getDescription())) {
             return false;
         }
 

@@ -21,6 +21,7 @@ package org.geotoolkit.feature.catalog;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -34,7 +35,6 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.internal.jaxb.gco.GO_GenericName;
-import org.geotoolkit.util.Utilities;
 import org.opengis.util.LocalName;
 import org.opengis.feature.catalog.Constraint;
 import org.opengis.feature.catalog.DefinitionReference;
@@ -327,13 +327,13 @@ public class PropertyTypeImpl implements PropertyType, Referenceable {
         if (object instanceof PropertyTypeImpl) {
             final PropertyTypeImpl that = (PropertyTypeImpl) object;
             
-            return Utilities.equals(this.cardinality,         that.cardinality)         &&
-                   Utilities.equals(this.constrainedBy,       that.constrainedBy)       &&
-                   Utilities.equals(this.definition,          that.definition)          &&
-                   Utilities.equals(this.definitionReference, that.definitionReference) &&
-                   Utilities.equals(this.featureType,         that.featureType)         &&
-                   Utilities.equals(this.id,                  that.id)                  &&
-                   Utilities.equals(this.memberName,          that.memberName);
+            return Objects.equals(this.cardinality,         that.cardinality)         &&
+                   Objects.equals(this.constrainedBy,       that.constrainedBy)       &&
+                   Objects.equals(this.definition,          that.definition)          &&
+                   Objects.equals(this.definitionReference, that.definitionReference) &&
+                   Objects.equals(this.featureType,         that.featureType)         &&
+                   Objects.equals(this.id,                  that.id)                  &&
+                   Objects.equals(this.memberName,          that.memberName);
         }
         return false;
     }

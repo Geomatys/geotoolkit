@@ -20,6 +20,7 @@ package org.geotoolkit.ogc.xml.v200;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -293,7 +294,7 @@ public class BinaryComparisonOpType extends ComparisonOpsType implements BinaryC
                 if (this.expression.size() == that.expression.size()) {
                     exp = true;
                     for (int i = 0; i< this.expression.size(); i++) {
-                        if (!Utilities.equals(this.expression.get(i).getValue(), that.expression.get(i).getValue())) {
+                        if (!Objects.equals(this.expression.get(i).getValue(), that.expression.get(i).getValue())) {
                             return false;
                         }
                     }
@@ -303,7 +304,7 @@ public class BinaryComparisonOpType extends ComparisonOpsType implements BinaryC
             } else {
                 return false;
             }
-            return exp && Utilities.equals(this.matchCase, that.matchCase);
+            return exp && Objects.equals(this.matchCase, that.matchCase);
         }
         return false;
     }

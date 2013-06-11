@@ -16,10 +16,7 @@
  */
 package org.geotoolkit.sampling.xml.v100;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -34,7 +31,6 @@ import org.geotoolkit.observation.xml.v100.ObservationType;
 import org.geotoolkit.observation.xml.v100.SurveyProcedureType;
 import org.geotoolkit.sampling.xml.SamplingFeature;
 import org.apache.sis.util.ComparisonMode;
-import org.geotoolkit.util.Utilities;
 import org.opengis.geometry.Geometry;
 
 // openGis dependencies
@@ -171,10 +167,10 @@ public class SamplingFeatureType extends AbstractFeatureType implements Sampling
         
         if (object instanceof SamplingFeatureType && super.equals(object, mode)) {
             final SamplingFeatureType that = (SamplingFeatureType) object;
-            return Utilities.equals(this.surveyDetail,           that.surveyDetail)   &&
-                   Utilities.equals(this.relatedObservation,     that.relatedObservation) &&
-                   Utilities.equals(this.relatedSamplingFeature, that.relatedSamplingFeature) &&
-                   Utilities.equals(this.sampledFeature,         that.sampledFeature);
+            return Objects.equals(this.surveyDetail,           that.surveyDetail)   &&
+                   Objects.equals(this.relatedObservation,     that.relatedObservation) &&
+                   Objects.equals(this.relatedSamplingFeature, that.relatedSamplingFeature) &&
+                   Objects.equals(this.sampledFeature,         that.sampledFeature);
         }
         return false;
     }

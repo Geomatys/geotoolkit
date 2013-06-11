@@ -22,6 +22,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.logging.Logger;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -35,7 +36,6 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import org.geotoolkit.util.Utilities;
 import org.opengis.feature.catalog.DefinitionSource;
 import org.opengis.feature.catalog.FeatureCatalogue;
 import org.opengis.feature.catalog.FeatureType;
@@ -440,16 +440,16 @@ public class FeatureCatalogueImpl implements  FeatureCatalogue, Referenceable {
         if (object instanceof FeatureCatalogueImpl) {
             final FeatureCatalogueImpl that = (FeatureCatalogueImpl) object;
             
-            return Utilities.equals(this.definitionSource,   that.definitionSource)   &&
-                   Utilities.equals(this.featureType,        that.featureType)        &&
-                   Utilities.equals(this.fieldOfApplication, that.fieldOfApplication) &&
-                   Utilities.equals(this.functionalLanguage, that.functionalLanguage) &&
-                   Utilities.equals(this.getId(), that.getId())                 &&
-                   Utilities.equals(this.name,               that.name)               &&
-                   Utilities.equals(this.producer,           that.producer)           &&
-                   Utilities.equals(this.scope,              that.scope)              &&
-                   Utilities.equals(this.versionDate,        that.versionDate)        &&
-                   Utilities.equals(this.versionNumber,      that.versionNumber);
+            return Objects.equals(this.definitionSource,   that.definitionSource)   &&
+                   Objects.equals(this.featureType,        that.featureType)        &&
+                   Objects.equals(this.fieldOfApplication, that.fieldOfApplication) &&
+                   Objects.equals(this.functionalLanguage, that.functionalLanguage) &&
+                   Objects.equals(this.getId(), that.getId())                 &&
+                   Objects.equals(this.name,               that.name)               &&
+                   Objects.equals(this.producer,           that.producer)           &&
+                   Objects.equals(this.scope,              that.scope)              &&
+                   Objects.equals(this.versionDate,        that.versionDate)        &&
+                   Objects.equals(this.versionNumber,      that.versionNumber);
         }
         return false;
     }

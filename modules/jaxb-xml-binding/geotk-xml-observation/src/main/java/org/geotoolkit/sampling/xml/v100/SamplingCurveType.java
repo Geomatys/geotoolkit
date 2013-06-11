@@ -17,6 +17,7 @@
 
 package org.geotoolkit.sampling.xml.v100;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -27,7 +28,6 @@ import org.geotoolkit.gml.xml.v311.EnvelopeType;
 import org.geotoolkit.gml.xml.v311.FeaturePropertyType;
 import org.geotoolkit.gml.xml.v311.MeasureType;
 import org.apache.sis.util.ComparisonMode;
-import org.geotoolkit.util.Utilities;
 import org.opengis.geometry.Geometry;
 
 
@@ -144,8 +144,8 @@ public class SamplingCurveType extends SpatiallyExtensiveSamplingFeatureType {
 
         if (object instanceof SamplingCurveType && super.equals(object, mode)) {
             final SamplingCurveType that = (SamplingCurveType) object;
-            return Utilities.equals(this.length, that.length)   &&
-                   Utilities.equals(this.shape,  that.shape);
+            return Objects.equals(this.length, that.length)   &&
+                   Objects.equals(this.shape,  that.shape);
         } 
         return false;
     }

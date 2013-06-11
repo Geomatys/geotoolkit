@@ -18,7 +18,7 @@
 package org.geotoolkit.temporal.reference;
 
 import java.util.Collection;
-import org.geotoolkit.util.Utilities;
+import java.util.Objects;
 import org.opengis.temporal.Calendar;
 import org.opengis.temporal.CalendarDate;
 import org.opengis.temporal.CalendarEra;
@@ -116,12 +116,12 @@ public class DefaultCalendarEra implements CalendarEra {
         if (object instanceof CalendarEra) {
             final DefaultCalendarEra that = (DefaultCalendarEra) object;
 
-            return Utilities.equals(this.datingSystem, that.datingSystem) &&
-                    Utilities.equals(this.epochOfUse, that.epochOfUse) &&
-                    Utilities.equals(this.julianReference, that.julianReference) &&
-                    Utilities.equals(this.name, that.name) &&
-                    Utilities.equals(this.referenceDate, that.referenceDate) &&
-                    Utilities.equals(this.referenceEvent, that.referenceEvent);
+            return Objects.equals(this.datingSystem, that.datingSystem) &&
+                    Objects.equals(this.epochOfUse, that.epochOfUse) &&
+                    Objects.equals(this.julianReference, that.julianReference) &&
+                    Objects.equals(this.name, that.name) &&
+                    Objects.equals(this.referenceDate, that.referenceDate) &&
+                    Objects.equals(this.referenceEvent, that.referenceEvent);
         }
         return false;
     }

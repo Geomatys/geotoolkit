@@ -18,10 +18,10 @@ package org.geotoolkit.style;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Objects;
 import javax.swing.Icon;
 
 import org.apache.sis.internal.util.UnmodifiableArrayList;
-import org.geotoolkit.util.Utilities;
 
 import org.opengis.metadata.citation.OnlineResource;
 import org.opengis.style.ColorReplacement;
@@ -150,10 +150,10 @@ public class DefaultExternalGraphic implements ExternalGraphic{
 
         DefaultExternalGraphic other = (DefaultExternalGraphic) obj;
 
-        return Utilities.equals(this.resource, other.resource)
-                && Utilities.equals(this.icon, other.icon)
-                && Utilities.equals(this.format, other.format)
-                && Utilities.equals(this.replaces, other.replaces);
+        return Objects.equals(this.resource, other.resource)
+                && Objects.equals(this.icon, other.icon)
+                && Objects.equals(this.format, other.format)
+                && Objects.equals(this.replaces, other.replaces);
 
     }
 

@@ -16,11 +16,11 @@
  */
 package org.geotoolkit.sml.xml.v100;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.sml.xml.System;
 import org.apache.sis.util.ComparisonMode;
 
@@ -153,9 +153,9 @@ public class SystemType extends AbstractComponentType implements System {
 
         if (object instanceof SystemType && super.equals(object, mode)) {
             final SystemType that = (SystemType) object;
-            return Utilities.equals(this.components,  that.components)  &&
-                   Utilities.equals(this.connections, that.connections) &&
-                   Utilities.equals(this.positions,   that.positions);
+            return Objects.equals(this.components,  that.components)  &&
+                   Objects.equals(this.connections, that.connections) &&
+                   Objects.equals(this.positions,   that.positions);
         }
         return false;
     }

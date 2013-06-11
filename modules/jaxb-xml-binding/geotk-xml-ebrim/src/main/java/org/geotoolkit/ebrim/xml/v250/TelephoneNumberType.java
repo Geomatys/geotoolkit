@@ -16,12 +16,12 @@
  */
 package org.geotoolkit.ebrim.xml.v250;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -184,12 +184,12 @@ public class TelephoneNumberType {
         }
         if (obj instanceof TelephoneNumberType) {
             final TelephoneNumberType that = (TelephoneNumberType) obj;
-            return Utilities.equals(this.areaCode,    that.areaCode) &&
-                   Utilities.equals(this.countryCode, that.countryCode) &&
-                   Utilities.equals(this.extension,   that.extension) &&
-                   Utilities.equals(this.url,         that.url) &&
-                   Utilities.equals(this.phoneType,   that.phoneType) &&
-                   Utilities.equals(this.number,      that.number);
+            return Objects.equals(this.areaCode,    that.areaCode) &&
+                   Objects.equals(this.countryCode, that.countryCode) &&
+                   Objects.equals(this.extension,   that.extension) &&
+                   Objects.equals(this.url,         that.url) &&
+                   Objects.equals(this.phoneType,   that.phoneType) &&
+                   Objects.equals(this.number,      that.number);
         }
         return false;
     }

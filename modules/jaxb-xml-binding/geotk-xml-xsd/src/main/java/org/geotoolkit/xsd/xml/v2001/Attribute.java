@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.xsd.xml.v2001;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -296,14 +297,14 @@ public class Attribute extends Annotated {
         }
         if (object instanceof Attribute && super.equals(object)) {
             final Attribute that = (Attribute) object;
-            return Utilities.equals(this._default,     that._default) &&
-                   Utilities.equals(this.fixed,        that.fixed) &&
-                   Utilities.equals(this.name,         that.name) &&
-                   Utilities.equals(this.form,         that.form) &&
-                   Utilities.equals(this.simpleType,   that.simpleType) &&
-                   Utilities.equals(this.type,         that.type) &&
-                   Utilities.equals(this.use,          that.use) &&
-                   Utilities.equals(this.ref,          that.ref);
+            return Objects.equals(this._default,     that._default) &&
+                   Objects.equals(this.fixed,        that.fixed) &&
+                   Objects.equals(this.name,         that.name) &&
+                   Objects.equals(this.form,         that.form) &&
+                   Objects.equals(this.simpleType,   that.simpleType) &&
+                   Objects.equals(this.type,         that.type) &&
+                   Objects.equals(this.use,          that.use) &&
+                   Objects.equals(this.ref,          that.ref);
         }
         return false;
     }

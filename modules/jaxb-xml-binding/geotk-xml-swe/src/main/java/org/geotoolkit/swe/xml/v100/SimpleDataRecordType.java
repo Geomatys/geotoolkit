@@ -18,6 +18,7 @@ package org.geotoolkit.swe.xml.v100;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlTransient;
@@ -25,7 +26,6 @@ import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.swe.xml.AnyScalar;
 import org.geotoolkit.swe.xml.SimpleDataRecord;
 import org.apache.sis.util.ComparisonMode;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -128,7 +128,7 @@ public class SimpleDataRecordType extends AbstractDataRecordType implements Simp
 
         if (object instanceof SimpleDataRecordType && super.equals(object, mode)) {
             final SimpleDataRecordType that = (SimpleDataRecordType) object;
-            return Utilities.equals(this.field, that.field);
+            return Objects.equals(this.field, that.field);
         }
         return false;
     }

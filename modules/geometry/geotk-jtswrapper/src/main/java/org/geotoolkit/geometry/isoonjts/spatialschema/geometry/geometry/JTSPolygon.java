@@ -17,6 +17,7 @@
 package org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry;
 
 import java.util.List;
+import java.util.Objects;
 
 import java.util.Set;
 import javax.xml.bind.annotation.XmlType;
@@ -26,7 +27,6 @@ import org.geotoolkit.geometry.isoonjts.JTSUtils;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.JTSSurfacePatch;
 import org.geotoolkit.geometry.jts.SRIDGenerator;
 import org.geotoolkit.geometry.jts.SRIDGenerator.Version;
-import org.geotoolkit.util.Utilities;
 
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.geometry.complex.Complex;
@@ -136,7 +136,7 @@ public class JTSPolygon extends JTSSurfacePatch implements Polygon, Primitive {
 
         if (object instanceof JTSPolygon && super.equals(object)) {
             JTSPolygon that = (JTSPolygon) object;
-            return Utilities.equals(this.spanningSurface, that.spanningSurface);
+            return Objects.equals(this.spanningSurface, that.spanningSurface);
         }
         return false;
     }

@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.swe.xml.v101;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -24,7 +25,6 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.swe.xml.AbstractMatrix;
 import org.apache.sis.util.ComparisonMode;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -113,8 +113,8 @@ public class AbstractMatrixType extends AbstractDataArrayType implements Abstrac
         if (object instanceof AbstractMatrixType && super.equals(object, mode)) {
             final AbstractMatrixType that = (AbstractMatrixType) object;
 
-            return Utilities.equals(this.localFrame,     that.localFrame) &&
-                   Utilities.equals(this.referenceFrame, that.referenceFrame);
+            return Objects.equals(this.localFrame,     that.localFrame) &&
+                   Objects.equals(this.referenceFrame, that.referenceFrame);
         }
         return false;
     }

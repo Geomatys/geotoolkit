@@ -20,6 +20,7 @@ import java.beans.PropertyChangeEvent;
 import java.util.Collection;
 import java.util.EventObject;
 import java.util.List;
+import java.util.Objects;
 import javax.swing.event.EventListenerList;
 
 import org.geotoolkit.gui.swing.tree.Trees;
@@ -30,7 +31,6 @@ import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.StyleConstants;
 import org.geotoolkit.style.StyleListener;
 import org.geotoolkit.util.NumberRange;
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.collection.NotifiedCheckedList;
 import org.apache.sis.util.Classes;
 
@@ -140,7 +140,7 @@ class DefaultMutableUserLayer implements MutableUserLayer,StyleListener{
         final String oldName;
         synchronized (this) {
             oldName = this.name;
-            if (Utilities.equals(oldName, name)) {
+            if (Objects.equals(oldName, name)) {
                 return;
             }
             this.name = name;
@@ -194,7 +194,7 @@ class DefaultMutableUserLayer implements MutableUserLayer,StyleListener{
         final Source oldSource;
         synchronized (this) {
             oldSource = this.source;
-            if(Utilities.equals(oldSource, source)){
+            if(Objects.equals(oldSource, source)){
                 return;
             }
             this.source = source;
@@ -361,10 +361,10 @@ class DefaultMutableUserLayer implements MutableUserLayer,StyleListener{
 
         DefaultMutableUserLayer other = (DefaultMutableUserLayer) obj;
 
-        return Utilities.equals(this.name, other.name)
-                && Utilities.equals(this.source, other.source)
+        return Objects.equals(this.name, other.name)
+                && Objects.equals(this.source, other.source)
                 && this.description.equals(other.description)
-                && Utilities.equals(this.constraints, other.constraints)
+                && Objects.equals(this.constraints, other.constraints)
                 && this.styles.equals(other.styles);
 
     }

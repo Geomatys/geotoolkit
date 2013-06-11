@@ -16,12 +16,12 @@
  */
 package org.geotoolkit.ogc.xml.v110;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.util.Utilities;
 import org.opengis.filter.FilterVisitor;
 import org.opengis.filter.PropertyIsLike;
 import org.opengis.filter.expression.Expression;
@@ -245,12 +245,12 @@ public class PropertyIsLikeType extends ComparisonOpsType implements PropertyIsL
             final PropertyIsLikeType that = (PropertyIsLikeType) object;
 
 
-            return Utilities.equals(this.escapeChar,   that.escapeChar)   &&
-                   Utilities.equals(this.literal,      that.literal)      &&
-                   Utilities.equals(this.matchCase,    that.matchCase)    &&
-                   Utilities.equals(this.propertyName, that.propertyName) &&
-                   Utilities.equals(this.singleChar,   that.singleChar)   &&
-                   Utilities.equals(this.wildCard,     that.wildCard);
+            return Objects.equals(this.escapeChar,   that.escapeChar)   &&
+                   Objects.equals(this.literal,      that.literal)      &&
+                   Objects.equals(this.matchCase,    that.matchCase)    &&
+                   Objects.equals(this.propertyName, that.propertyName) &&
+                   Objects.equals(this.singleChar,   that.singleChar)   &&
+                   Objects.equals(this.wildCard,     that.wildCard);
         }
         return false;
     }

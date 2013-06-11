@@ -19,13 +19,13 @@ package org.geotoolkit.ows.xml.v110;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -145,7 +145,7 @@ public class AllowedValues {
         }
         if (object instanceof AllowedValues) {
             final AllowedValues that = (AllowedValues) object;
-            return Utilities.equals(this.valueOrRange,   that.valueOrRange);
+            return Objects.equals(this.valueOrRange,   that.valueOrRange);
         }
         return false;
     }

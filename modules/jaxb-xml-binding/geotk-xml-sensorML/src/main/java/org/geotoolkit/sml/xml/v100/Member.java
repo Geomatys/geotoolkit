@@ -18,6 +18,7 @@ package org.geotoolkit.sml.xml.v100;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -27,7 +28,6 @@ import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.sml.xml.AbstractProcess;
 import org.geotoolkit.sml.xml.SMLMember;
-import org.geotoolkit.util.Utilities;
 
 /**
  * <p>Java class for anonymous complex type.
@@ -497,23 +497,23 @@ public class Member implements SMLMember {
             final Member that = (Member) object;
             boolean proc = false;
             if (this.process != null && that.process != null) {
-                proc = Utilities.equals(this.process.getValue(), that.process.getValue());
+                proc = Objects.equals(this.process.getValue(), that.process.getValue());
             } else if (this.process == null && that.process == null) {
                 proc = true;
             }
 
-            return Utilities.equals(this.actuate, that.actuate)
-                    && Utilities.equals(this.arcrole, that.arcrole)
-                    && Utilities.equals(this.contactList, that.contactList)
-                    && Utilities.equals(this.documentList, that.documentList)
-                    && Utilities.equals(this.href, that.href)
-                    && Utilities.equals(this.nilReason, that.nilReason)
+            return Objects.equals(this.actuate, that.actuate)
+                    && Objects.equals(this.arcrole, that.arcrole)
+                    && Objects.equals(this.contactList, that.contactList)
+                    && Objects.equals(this.documentList, that.documentList)
+                    && Objects.equals(this.href, that.href)
+                    && Objects.equals(this.nilReason, that.nilReason)
                     && proc
-                    && Utilities.equals(this.remoteSchema, that.remoteSchema)
-                    && Utilities.equals(this.role, that.role)
-                    && Utilities.equals(this.show, that.show)
-                    && Utilities.equals(this.title, that.title)
-                    && Utilities.equals(this.type, that.type);
+                    && Objects.equals(this.remoteSchema, that.remoteSchema)
+                    && Objects.equals(this.role, that.role)
+                    && Objects.equals(this.show, that.show)
+                    && Objects.equals(this.title, that.title)
+                    && Objects.equals(this.type, that.type);
         }
         return false;
     }

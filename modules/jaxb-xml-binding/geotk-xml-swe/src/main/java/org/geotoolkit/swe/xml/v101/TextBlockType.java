@@ -16,12 +16,12 @@
  */
 package org.geotoolkit.swe.xml.v101;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.swe.xml.TextBlock;
-import org.geotoolkit.util.Utilities;
 
 /**
  * Textual Encoding of the data.
@@ -117,9 +117,9 @@ public class TextBlockType extends AbstractEncodingType implements TextBlock {
         }
         if (object instanceof TextBlockType && super.equals(object)) {
             final TextBlockType that = (TextBlockType) object;
-            return Utilities.equals(this.tokenSeparator,          that.tokenSeparator)   &&
-                   Utilities.equals(this.blockSeparator,    that.blockSeparator)   && 
-                   Utilities.equals(this.decimalSeparator,   that.decimalSeparator) ;
+            return Objects.equals(this.tokenSeparator,          that.tokenSeparator)   &&
+                   Objects.equals(this.blockSeparator,    that.blockSeparator)   && 
+                   Objects.equals(this.decimalSeparator,   that.decimalSeparator) ;
         }
         return false;
     }

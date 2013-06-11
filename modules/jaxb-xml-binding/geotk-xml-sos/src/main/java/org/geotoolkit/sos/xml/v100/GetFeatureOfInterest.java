@@ -18,6 +18,7 @@ package org.geotoolkit.sos.xml.v100;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -28,7 +29,6 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ogc.xml.v110.FilterType;
 import org.geotoolkit.ogc.xml.v110.SpatialOpsType;
-import org.geotoolkit.util.Utilities;
 import org.opengis.filter.Filter;
 
 
@@ -217,9 +217,9 @@ public class GetFeatureOfInterest extends RequestBaseType implements org.geotool
         }
         if (object instanceof GetFeatureOfInterest && super.equals(object)) {
             final GetFeatureOfInterest that = (GetFeatureOfInterest) object;
-            return Utilities.equals(this.eventTime,           that.eventTime)           &&
-                   Utilities.equals(this.featureOfInterestId, that.featureOfInterestId) &&
-                   Utilities.equals(this.location,            that.location);
+            return Objects.equals(this.eventTime,           that.eventTime)           &&
+                   Objects.equals(this.featureOfInterestId, that.featureOfInterestId) &&
+                   Objects.equals(this.location,            that.location);
         } 
         return false;
     }
@@ -309,7 +309,7 @@ public class GetFeatureOfInterest extends RequestBaseType implements org.geotool
             }
             if (object instanceof Location) {
                 final  Location that = ( Location) object;
-                return Utilities.equals(this.spatialOps.getValue(), that.spatialOps.getValue());
+                return Objects.equals(this.spatialOps.getValue(), that.spatialOps.getValue());
             }
             return false;
         }

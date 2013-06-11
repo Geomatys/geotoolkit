@@ -18,6 +18,7 @@ package org.geotoolkit.csw.xml.v202;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAnyElement;
@@ -29,7 +30,6 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.csw.xml.Update;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -164,10 +164,10 @@ public class UpdateType implements Update {
         }
         if (object instanceof UpdateType) {
             final UpdateType that = (UpdateType) object;
-            return Utilities.equals(this.constraint,     that.constraint) &&
-                   Utilities.equals(this.handle,         that.handle)     &&
-                   Utilities.equals(this.any,            that.any)        &&
-                   Utilities.equals(this.recordProperty, that.recordProperty);
+            return Objects.equals(this.constraint,     that.constraint) &&
+                   Objects.equals(this.handle,         that.handle)     &&
+                   Objects.equals(this.any,            that.any)        &&
+                   Objects.equals(this.recordProperty, that.recordProperty);
         }
         return false;
     }

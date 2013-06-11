@@ -16,13 +16,13 @@
  */
 package org.geotoolkit.csw.xml.v202;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.csw.xml.DistributedSearch;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -99,7 +99,7 @@ public class DistributedSearchType implements DistributedSearch {
         }
         if (object instanceof DistributedSearchType) {
             DistributedSearchType that = (DistributedSearchType) object;
-            return Utilities.equals(this.hopCount,  that.hopCount);
+            return Objects.equals(this.hopCount,  that.hopCount);
         }
         return false;
     }

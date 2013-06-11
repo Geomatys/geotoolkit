@@ -18,6 +18,7 @@
 
 package org.geotoolkit.wfs.xml.v200;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -108,7 +109,7 @@ public class ExecutionStatusType implements ExecutionStatus {
         }
         if (object instanceof ExecutionStatusType) {
             final ExecutionStatusType that = (ExecutionStatusType) object;
-            return Utilities.equals(this.status, that.status);
+            return Objects.equals(this.status, that.status);
         }
         return false;
     }

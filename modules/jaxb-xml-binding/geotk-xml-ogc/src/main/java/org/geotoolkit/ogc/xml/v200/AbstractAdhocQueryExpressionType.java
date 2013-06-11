@@ -20,6 +20,7 @@ package org.geotoolkit.ogc.xml.v200;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -279,7 +280,7 @@ public abstract class AbstractAdhocQueryExpressionType extends AbstractQueryExpr
             if (this.abstractSelectionClause == null && that.abstractSelectionClause == null) {
                 selection = true;
             } else if (this.abstractSelectionClause != null && that.abstractSelectionClause != null) {
-                selection = Utilities.equals(this.abstractSelectionClause.getValue(), that.abstractSelectionClause.getValue());
+                selection = Objects.equals(this.abstractSelectionClause.getValue(), that.abstractSelectionClause.getValue());
             } else {
                 return false;
             }
@@ -288,7 +289,7 @@ public abstract class AbstractAdhocQueryExpressionType extends AbstractQueryExpr
             if (this.abstractSortingClause == null && that.abstractSortingClause == null) {
                 sorting = true;
             } else if (this.abstractSortingClause != null && that.abstractSortingClause != null) {
-                sorting = Utilities.equals(this.abstractSortingClause.getValue(), that.abstractSortingClause.getValue());
+                sorting = Objects.equals(this.abstractSortingClause.getValue(), that.abstractSortingClause.getValue());
             } else {
                 return false;
             }
@@ -299,7 +300,7 @@ public abstract class AbstractAdhocQueryExpressionType extends AbstractQueryExpr
             } else if (this.abstractProjectionClause != null && that.abstractProjectionClause != null) {
                 if (this.abstractProjectionClause.size() == that.abstractProjectionClause.size()) {
                     for (int i = 0; i < this.abstractProjectionClause.size(); i++){
-                        if (!Utilities.equals(this.abstractProjectionClause.get(i), that.abstractProjectionClause.get(i))) {
+                        if (!Objects.equals(this.abstractProjectionClause.get(i), that.abstractProjectionClause.get(i))) {
                             return false;
                         }
                     }
@@ -314,8 +315,8 @@ public abstract class AbstractAdhocQueryExpressionType extends AbstractQueryExpr
             return projection &&
                    selection &&
                    sorting &&
-                   Utilities.equals(this.typeNames, that.typeNames) &&
-                   Utilities.equals(this.aliases, that.aliases);
+                   Objects.equals(this.typeNames, that.typeNames) &&
+                   Objects.equals(this.aliases, that.aliases);
         }
         return false;
     }

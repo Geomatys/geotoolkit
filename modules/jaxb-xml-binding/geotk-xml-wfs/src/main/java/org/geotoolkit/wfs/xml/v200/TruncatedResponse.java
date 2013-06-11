@@ -18,6 +18,7 @@
 
 package org.geotoolkit.wfs.xml.v200;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -96,7 +97,7 @@ public class TruncatedResponse {
         }
         if (obj instanceof TruncatedResponse) {
             final TruncatedResponse that = (TruncatedResponse) obj;
-            return Utilities.equals(this.exceptionReport, that.exceptionReport);
+            return Objects.equals(this.exceptionReport, that.exceptionReport);
         }
         return false;
     }

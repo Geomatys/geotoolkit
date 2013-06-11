@@ -19,6 +19,7 @@ package org.geotoolkit.csw.xml.v202;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -30,7 +31,6 @@ import org.geotoolkit.csw.xml.SummaryRecord;
 import org.geotoolkit.ows.xml.v100.BoundingBoxType;
 import org.geotoolkit.dublincore.xml.v2.elements.SimpleLiteral;
 import org.geotoolkit.ows.xml.v100.WGS84BoundingBoxType;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -412,22 +412,22 @@ public class SummaryRecordType extends AbstractRecordType implements SummaryReco
                 for (int i = 0; i < this.boundingBox.size(); i++) {
                     JAXBElement<? extends BoundingBoxType> thisJB = this.boundingBox.get(i);
                     JAXBElement<? extends BoundingBoxType> thatJB = that.boundingBox.get(i);
-                    if (!Utilities.equals(thisJB.getValue(), thatJB.getValue())) {
+                    if (!Objects.equals(thisJB.getValue(), thatJB.getValue())) {
                         bbox = false;
                     }
                 }
             }
 
-            return Utilities.equals(this.type,       that.type)       &&
-                   Utilities.equals(this.subject,    that.subject)    &&
-                   Utilities.equals(this._abstract,  that._abstract)  &&
-                   Utilities.equals(this.modified,   that.modified)   &&
-                   Utilities.equals(this.subject,    that.subject)    &&
-                   Utilities.equals(this.spatial,    that.spatial)    &&
-                   Utilities.equals(this.identifier, that.identifier) &&
-                   Utilities.equals(this.title,      that.title)      &&
-                   Utilities.equals(this.relation,   that.relation)   &&
-                   Utilities.equals(this.format,     that.format)     &&
+            return Objects.equals(this.type,       that.type)       &&
+                   Objects.equals(this.subject,    that.subject)    &&
+                   Objects.equals(this._abstract,  that._abstract)  &&
+                   Objects.equals(this.modified,   that.modified)   &&
+                   Objects.equals(this.subject,    that.subject)    &&
+                   Objects.equals(this.spatial,    that.spatial)    &&
+                   Objects.equals(this.identifier, that.identifier) &&
+                   Objects.equals(this.title,      that.title)      &&
+                   Objects.equals(this.relation,   that.relation)   &&
+                   Objects.equals(this.format,     that.format)     &&
                    bbox;
         }
         return false;

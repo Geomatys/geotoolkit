@@ -12,10 +12,7 @@ package org.geotoolkit.geometry.isoonjts.spatialschema.geometry.aggregate;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.JTSGeometry;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
@@ -23,7 +20,6 @@ import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.AbstractJTSGeomet
 import org.geotoolkit.geometry.jts.SRIDGenerator;
 import org.geotoolkit.geometry.jts.SRIDGenerator.Version;
 
-import org.geotoolkit.util.Utilities;
 import org.opengis.geometry.Geometry;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.geometry.aggregate.Aggregate;
@@ -115,7 +111,7 @@ public abstract class AbstractJTSAggregate<T extends Geometry> extends AbstractJ
             return true;
         if (object instanceof AbstractJTSAggregate && super.equals(object)) {
             AbstractJTSAggregate that = (AbstractJTSAggregate) object;
-            return Utilities.equals(this.elements, that.elements);
+            return Objects.equals(this.elements, that.elements);
         }
         return false;
     }

@@ -19,6 +19,7 @@
 package org.geotoolkit.wfs.xml.v200;
 
 import java.util.Map;
+import java.util.Objects;
 import javax.xml.bind.annotation.*;
 import org.geotoolkit.util.Utilities;
 import org.apache.sis.util.Version;
@@ -202,9 +203,9 @@ public abstract class BaseRequestType implements BaseRequest {
         }
         if (object instanceof BaseRequestType) {
             final BaseRequestType that = (BaseRequestType) object;
-            return  Utilities.equals(this.handle, that.handle) &&
-                    Utilities.equals(this.service, that.service) &&
-                    Utilities.equals(this.version, that.version);
+            return  Objects.equals(this.handle, that.handle) &&
+                    Objects.equals(this.service, that.service) &&
+                    Objects.equals(this.version, that.version);
         }
         return false;
     }

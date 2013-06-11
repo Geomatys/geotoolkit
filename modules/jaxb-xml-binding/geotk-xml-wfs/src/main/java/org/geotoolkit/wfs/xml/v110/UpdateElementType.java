@@ -18,6 +18,7 @@ package org.geotoolkit.wfs.xml.v110;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -267,12 +268,12 @@ public class UpdateElementType implements UpdateElement {
         }
         if (object instanceof UpdateElementType) {
             final UpdateElementType that = (UpdateElementType) object;
-            return  Utilities.equals(this.handle, that.handle) &&
-                    Utilities.equals(this.filter, that.filter) &&
-                    Utilities.equals(this.inputFormat, that.inputFormat) &&
-                    Utilities.equals(this.property, that.property) &&
-                    Utilities.equals(this.srsName, that.srsName)  &&
-                    Utilities.equals(this.typeName, that.typeName);
+            return  Objects.equals(this.handle, that.handle) &&
+                    Objects.equals(this.filter, that.filter) &&
+                    Objects.equals(this.inputFormat, that.inputFormat) &&
+                    Objects.equals(this.property, that.property) &&
+                    Objects.equals(this.srsName, that.srsName)  &&
+                    Objects.equals(this.typeName, that.typeName);
         }
         return false;
     }

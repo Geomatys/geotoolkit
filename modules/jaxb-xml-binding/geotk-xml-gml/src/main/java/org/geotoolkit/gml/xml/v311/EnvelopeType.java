@@ -18,6 +18,7 @@ package org.geotoolkit.gml.xml.v311;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -372,14 +373,14 @@ public class EnvelopeType implements Entry, Envelope, Expression {
         if (object instanceof EnvelopeType) {
             final EnvelopeType that = (EnvelopeType) object;
 
-            return Utilities.equals(this.getAxisLabels(), that.getAxisLabels()) &&
-                   Utilities.equals(this.coordinates,     that.coordinates)     &&
-                   Utilities.equals(this.id,              that.id)              &&
-                   Utilities.equals(this.lowerCorner,     that.lowerCorner)     &&
-                   Utilities.equals(this.getPos(),        that.getPos())        &&
-                   Utilities.equals(this.srsDimension,    that.srsDimension)    &&
-                   Utilities.equals(this.getUomLabels(),  that.getUomLabels())  &&
-                   Utilities.equals(this.srsName,         that.srsName);
+            return Objects.equals(this.getAxisLabels(), that.getAxisLabels()) &&
+                   Objects.equals(this.coordinates,     that.coordinates)     &&
+                   Objects.equals(this.id,              that.id)              &&
+                   Objects.equals(this.lowerCorner,     that.lowerCorner)     &&
+                   Objects.equals(this.getPos(),        that.getPos())        &&
+                   Objects.equals(this.srsDimension,    that.srsDimension)    &&
+                   Objects.equals(this.getUomLabels(),  that.getUomLabels())  &&
+                   Objects.equals(this.srsName,         that.srsName);
         }
         return false;
     }

@@ -18,16 +18,16 @@ package org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
-
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.JTSGeometry;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.AbstractJTSGeometry;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSPolygon;
 
-import org.geotoolkit.util.Utilities;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.complex.CompositeSurface;
@@ -192,7 +192,7 @@ public class JTSPolyhedralSurface extends AbstractJTSGeometry implements Polyhed
 
         if (object instanceof JTSPolyhedralSurface && super.equals(object)) {
             JTSPolyhedralSurface that = (JTSPolyhedralSurface) object;
-            return Utilities.equals(this.patches, that.patches);
+            return Objects.equals(this.patches, that.patches);
         }
         return false;
     }

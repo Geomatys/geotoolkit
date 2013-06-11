@@ -17,6 +17,7 @@
 package org.geotoolkit.sos.xml.v100;
 
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.Arrays;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -28,7 +29,6 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
 import org.geotoolkit.sos.xml.ResponseModeType;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -158,11 +158,11 @@ public class GetObservationById extends RequestBaseType implements org.geotoolki
         }
         if (object instanceof GetObservationById && super.equals(object)) {
             final GetObservationById that = (GetObservationById) object;
-            return Utilities.equals(this.observationId,         that.observationId) &&
-                   Utilities.equals(this.responseFormat,    that.responseFormat)    &&
-                   Utilities.equals(this.responseMode,      that.responseMode)      &&
-                   Utilities.equals(this.resultModel,       that.resultModel)       &&
-                   Utilities.equals(this.srsName,           that.srsName);
+            return Objects.equals(this.observationId,         that.observationId) &&
+                   Objects.equals(this.responseFormat,    that.responseFormat)    &&
+                   Objects.equals(this.responseMode,      that.responseMode)      &&
+                   Objects.equals(this.resultModel,       that.resultModel)       &&
+                   Objects.equals(this.srsName,           that.srsName);
         }
         return false;
     }

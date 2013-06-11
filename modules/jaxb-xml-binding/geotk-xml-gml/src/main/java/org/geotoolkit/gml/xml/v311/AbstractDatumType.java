@@ -18,6 +18,7 @@ package org.geotoolkit.gml.xml.v311;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlSchemaType;
@@ -25,7 +26,6 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.XMLGregorianCalendar;
 import org.apache.sis.util.ComparisonMode;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -164,11 +164,11 @@ public abstract class AbstractDatumType extends AbstractDatumBaseType {
         if (object instanceof AbstractDatumType && super.equals(object, mode)) {
             final AbstractDatumType that = (AbstractDatumType) object;
 
-            return Utilities.equals(this.scope,     that.scope)     &&
-                   Utilities.equals(this.datumID,   that.datumID)   &&
-                   Utilities.equals(this.validArea, that.validArea) &&
-                   Utilities.equals(this.realizationEpoch, that.realizationEpoch) &&
-                   Utilities.equals(this.anchorPoint, that.anchorPoint);
+            return Objects.equals(this.scope,     that.scope)     &&
+                   Objects.equals(this.datumID,   that.datumID)   &&
+                   Objects.equals(this.validArea, that.validArea) &&
+                   Objects.equals(this.realizationEpoch, that.realizationEpoch) &&
+                   Objects.equals(this.anchorPoint, that.anchorPoint);
         }
         return false;
     }

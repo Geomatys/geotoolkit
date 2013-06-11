@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.csw.xml.v202;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -23,7 +24,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.csw.xml.QueryConstraint;
 import org.geotoolkit.ogc.xml.v110.FilterType;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -147,9 +147,9 @@ public class QueryConstraintType implements QueryConstraint {
         }
         if (object instanceof QueryConstraintType) {
             final QueryConstraintType that = (QueryConstraintType) object;
-            return Utilities.equals(this.cqlText,  that.cqlText)   &&
-                   Utilities.equals(this.filter,  that.filter)   &&
-                   Utilities.equals(this.version,  that.version);
+            return Objects.equals(this.cqlText,  that.cqlText)   &&
+                   Objects.equals(this.filter,  that.filter)   &&
+                   Objects.equals(this.version,  that.version);
         }
         return false;
     }

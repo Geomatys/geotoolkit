@@ -20,6 +20,7 @@ package org.geotoolkit.feature.catalog;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -27,7 +28,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.internal.jaxb.gco.GO_GenericName;
-import org.geotoolkit.util.Utilities;
 import org.opengis.feature.catalog.Constraint;
 import org.opengis.feature.catalog.FeatureAttribute;
 import org.opengis.feature.catalog.FeatureType;
@@ -215,9 +215,9 @@ public class FeatureAttributeImpl extends PropertyTypeImpl implements FeatureAtt
         if (super.equals(object) && object instanceof FeatureAttributeImpl) {
             final FeatureAttributeImpl that = (FeatureAttributeImpl) object;
             
-            return Utilities.equals(this.code,        that.code)        &&
-                   Utilities.equals(this.listedValue, that.listedValue) &&
-                   Utilities.equals(this.valueType,   that.valueType);
+            return Objects.equals(this.code,        that.code)        &&
+                   Objects.equals(this.listedValue, that.listedValue) &&
+                   Objects.equals(this.valueType,   that.valueType);
         }
         return false;
     }

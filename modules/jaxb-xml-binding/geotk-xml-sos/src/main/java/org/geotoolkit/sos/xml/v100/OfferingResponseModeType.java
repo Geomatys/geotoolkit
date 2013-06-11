@@ -16,9 +16,9 @@
  */
 package org.geotoolkit.sos.xml.v100;
 
+import java.util.Objects;
 import org.geotoolkit.internal.sql.table.Entry;
 import org.geotoolkit.sos.xml.ResponseModeType;
-import org.geotoolkit.util.Utilities;
 
 /**
  *
@@ -84,8 +84,8 @@ public class OfferingResponseModeType implements Entry {
         }
         if (object instanceof OfferingResponseModeType && super.equals(object)) {
             final OfferingResponseModeType that = (OfferingResponseModeType) object;
-            return Utilities.equals(this.idOffering, that.idOffering) &&
-                   Utilities.equals(this.mode,       that.mode);
+            return Objects.equals(this.idOffering, that.idOffering) &&
+                   Objects.equals(this.mode,       that.mode);
         }
         return false;
     }

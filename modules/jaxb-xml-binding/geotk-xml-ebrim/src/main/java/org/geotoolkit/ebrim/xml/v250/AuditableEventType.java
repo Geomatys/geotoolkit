@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.ebrim.xml.v250;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -24,7 +25,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.XMLGregorianCalendar;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -173,11 +173,11 @@ public class AuditableEventType extends RegistryObjectType {
         }
         if (obj instanceof AuditableEventType && super.equals(obj)) {
             final AuditableEventType that = (AuditableEventType) obj;
-            return Utilities.equals(this.affectedObject, that.affectedObject) &&
-                   Utilities.equals(this.eventType,      that.eventType) &&
-                   Utilities.equals(this.requestId,      that.requestId) &&
-                   Utilities.equals(this.timestamp,      that.timestamp) &&
-                   Utilities.equals(this.user,           that.user);
+            return Objects.equals(this.affectedObject, that.affectedObject) &&
+                   Objects.equals(this.eventType,      that.eventType) &&
+                   Objects.equals(this.requestId,      that.requestId) &&
+                   Objects.equals(this.timestamp,      that.timestamp) &&
+                   Objects.equals(this.user,           that.user);
         }
         return false;
     }

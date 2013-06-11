@@ -18,12 +18,12 @@ package org.geotoolkit.ebrim.xml.v300;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ebrim.xml.EbrimInternationalString;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -121,7 +121,7 @@ public class InternationalStringType implements EbrimInternationalString {
         }
         if (obj instanceof InternationalStringType) {
             final InternationalStringType that = (InternationalStringType) obj;
-            return Utilities.equals(this.localizedString, that.localizedString);
+            return Objects.equals(this.localizedString, that.localizedString);
         }
         return false;
     }

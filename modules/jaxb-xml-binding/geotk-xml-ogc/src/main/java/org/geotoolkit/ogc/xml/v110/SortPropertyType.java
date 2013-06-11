@@ -16,13 +16,13 @@
  */
 package org.geotoolkit.ogc.xml.v110;
 
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.logging.Logging;
 import org.opengis.filter.sort.SortBy;
 import org.opengis.filter.sort.SortOrder;
@@ -133,8 +133,8 @@ public class SortPropertyType implements SortBy {
         }
         if (object instanceof SortPropertyType) {
             final SortPropertyType that = (SortPropertyType) object;
-            return Utilities.equals(this.propertyName,  that.propertyName)   &&
-                   Utilities.equals(this.sortOrder,  that.sortOrder);
+            return Objects.equals(this.propertyName,  that.propertyName)   &&
+                   Objects.equals(this.sortOrder,  that.sortOrder);
         }
         return false;
     }

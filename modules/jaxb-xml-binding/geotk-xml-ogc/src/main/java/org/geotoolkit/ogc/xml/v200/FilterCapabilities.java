@@ -18,6 +18,7 @@
 
 package org.geotoolkit.ogc.xml.v200;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -321,15 +322,15 @@ public class FilterCapabilities implements org.opengis.filter.capability.FilterC
 
        if (object instanceof FilterCapabilities) {
            final FilterCapabilities that = (FilterCapabilities) object;
-
-
-            return Utilities.equals(this.conformance,          that.conformance)            &&
-                   Utilities.equals(this.extendedCapabilities, that.extendedCapabilities)   &&
-                   Utilities.equals(this.functions,            that.functions)              &&
-                   Utilities.equals(this.idCapabilities,       that.idCapabilities)         &&
-                   Utilities.equals(this.scalarCapabilities,   that.scalarCapabilities)     &&
-                   Utilities.equals(this.spatialCapabilities,  that.spatialCapabilities)    &&
-                   Utilities.equals(this.temporalCapabilities, that.temporalCapabilities);
+       
+            
+            return Objects.equals(this.conformance,          that.conformance)            &&
+                   Objects.equals(this.extendedCapabilities, that.extendedCapabilities)   &&
+                   Objects.equals(this.functions,            that.functions)              &&
+                   Objects.equals(this.idCapabilities,       that.idCapabilities)         &&
+                   Objects.equals(this.scalarCapabilities,   that.scalarCapabilities)     &&
+                   Objects.equals(this.spatialCapabilities,  that.spatialCapabilities)    &&
+                   Objects.equals(this.temporalCapabilities, that.temporalCapabilities);
         }
         return false;
     }

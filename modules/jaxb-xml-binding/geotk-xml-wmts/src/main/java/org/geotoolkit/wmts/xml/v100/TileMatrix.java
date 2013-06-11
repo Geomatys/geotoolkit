@@ -18,6 +18,7 @@ package org.geotoolkit.wmts.xml.v100;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -277,13 +278,13 @@ public class TileMatrix extends DescriptionType {
         }
         if (object instanceof TileMatrix) {
             final TileMatrix that = (TileMatrix) object;
-            return  Utilities.equals(this.identifier, that.identifier)     &&
-                    Utilities.equals(this.matrixHeight, that.matrixHeight) &&
-                    Utilities.equals(this.matrixWidth, that.matrixWidth)   &&
-                    Utilities.equals(this.scaleDenominator, that.scaleDenominator) &&
-                    Utilities.equals(this.tileHeight, that.tileHeight) &&
-                    Utilities.equals(this.tileWidth, that.tileWidth) &&
-                    Utilities.equals(this.topLeftCorner, that.topLeftCorner);
+            return  Objects.equals(this.identifier, that.identifier)     &&
+                    Objects.equals(this.matrixHeight, that.matrixHeight) &&
+                    Objects.equals(this.matrixWidth, that.matrixWidth)   &&
+                    Objects.equals(this.scaleDenominator, that.scaleDenominator) &&
+                    Objects.equals(this.tileHeight, that.tileHeight) &&
+                    Objects.equals(this.tileWidth, that.tileWidth) &&
+                    Objects.equals(this.topLeftCorner, that.topLeftCorner);
         }
         return false;
     }

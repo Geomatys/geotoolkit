@@ -21,7 +21,7 @@ import java.sql.Time;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import org.geotoolkit.util.Utilities;
+import java.util.Objects;
 import org.geotoolkit.util.SimpleInternationalString;
 import org.opengis.temporal.CalendarDate;
 import org.opengis.temporal.DateAndTime;
@@ -156,7 +156,7 @@ public class DefaultPosition implements Position {
         }
         if (object instanceof DefaultPosition) {
             final DefaultPosition that = (DefaultPosition) object;
-            return Utilities.equals(this.position, that.position);
+            return Objects.equals(this.position, that.position);
         }
         return false;
     }

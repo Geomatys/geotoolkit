@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.csw.xml.v202;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -23,7 +24,6 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.csw.xml.AbstractCswRequest;
 import org.geotoolkit.ows.xml.RequestBase;
-import org.geotoolkit.util.Utilities;
 import org.apache.sis.util.Version;
 
 
@@ -129,8 +129,8 @@ public abstract class RequestBaseType implements RequestBase, AbstractCswRequest
         }
         if (object instanceof RequestBaseType) {
             final RequestBaseType that = (RequestBaseType) object;
-            return Utilities.equals(this.service,  that.service) &&
-                   Utilities.equals(this.version,  that.version);
+            return Objects.equals(this.service,  that.service) &&
+                   Objects.equals(this.version,  that.version);
         }
         return false;
     }

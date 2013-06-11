@@ -16,12 +16,12 @@
  */
 package org.geotoolkit.gml.xml.v311;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.apache.sis.util.ComparisonMode;
-import org.geotoolkit.util.Utilities;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.UnmodifiableGeometryException;
 import org.opengis.geometry.coordinate.Position;
@@ -232,8 +232,8 @@ public class PointType extends AbstractGeometricPrimitiveType implements Point, 
         }
         if (object instanceof PointType && super.equals(object, mode)) {
             final PointType that = (PointType) object;
-            return  Utilities.equals(this.pos, that.pos) &&
-                    Utilities.equals(this.coordinates, that.coordinates);
+            return  Objects.equals(this.pos, that.pos) &&
+                    Objects.equals(this.coordinates, that.coordinates);
         }
         return false;
     }

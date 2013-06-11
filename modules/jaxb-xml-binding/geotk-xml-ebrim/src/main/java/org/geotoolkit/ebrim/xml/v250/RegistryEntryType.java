@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.ebrim.xml.v250;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -25,7 +26,6 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.datatype.XMLGregorianCalendar;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -189,11 +189,11 @@ public class RegistryEntryType extends RegistryObjectType {
         }
         if (obj instanceof RegistryEntryType && super.equals(obj)) {
             final RegistryEntryType that = (RegistryEntryType) obj;
-            return Utilities.equals(this.expiration,         that.expiration) &&
-                   Utilities.equals(this.majorVersion,    that.majorVersion) &&
-                   Utilities.equals(this.minorVersion,          that.minorVersion) &&
-                   Utilities.equals(this.stability,  that.stability) &&
-                   Utilities.equals(this.userVersion, that.userVersion);
+            return Objects.equals(this.expiration,         that.expiration) &&
+                   Objects.equals(this.majorVersion,    that.majorVersion) &&
+                   Objects.equals(this.minorVersion,          that.minorVersion) &&
+                   Objects.equals(this.stability,  that.stability) &&
+                   Objects.equals(this.userVersion, that.userVersion);
         }
         return false;
     }

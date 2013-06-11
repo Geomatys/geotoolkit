@@ -16,13 +16,13 @@
  */
 package org.geotoolkit.ows.xml.v100;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ows.xml.AbstractCapabilitiesBase;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -165,11 +165,11 @@ public abstract class CapabilitiesBaseType implements AbstractCapabilitiesBase {
         }
         if (object instanceof CapabilitiesBaseType) {
             final CapabilitiesBaseType that = (CapabilitiesBaseType) object;
-            return Utilities.equals(this.operationsMetadata,    that.operationsMetadata)    &&
-                   Utilities.equals(this.serviceIdentification, that.serviceIdentification) &&
-                   Utilities.equals(this.serviceProvider,       that.serviceProvider)       &&
-                   Utilities.equals(this.updateSequence,        that.updateSequence)        &&
-                   Utilities.equals(this.version,               that.version);
+            return Objects.equals(this.operationsMetadata,    that.operationsMetadata)    &&
+                   Objects.equals(this.serviceIdentification, that.serviceIdentification) &&
+                   Objects.equals(this.serviceProvider,       that.serviceProvider)       &&
+                   Objects.equals(this.updateSequence,        that.updateSequence)        &&
+                   Objects.equals(this.version,               that.version);
         }
         return false;
     }

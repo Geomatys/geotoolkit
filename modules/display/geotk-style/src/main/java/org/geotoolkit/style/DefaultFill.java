@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.style;
 
-import org.geotoolkit.util.Utilities;
+import java.util.Objects;
 import org.opengis.filter.expression.Expression;
 import org.opengis.style.Fill;
 import org.opengis.style.GraphicFill;
@@ -100,9 +100,9 @@ public class DefaultFill implements Fill{
 
         DefaultFill other = (DefaultFill) obj;
 
-        return Utilities.equals(this.color, other.color)
-                && Utilities.equals(this.fill, this.fill)
-                && Utilities.equals(this.opacity, other.opacity);
+        return Objects.equals(this.color, other.color)
+                && Objects.equals(this.fill, this.fill)
+                && Objects.equals(this.opacity, other.opacity);
 
     }
 

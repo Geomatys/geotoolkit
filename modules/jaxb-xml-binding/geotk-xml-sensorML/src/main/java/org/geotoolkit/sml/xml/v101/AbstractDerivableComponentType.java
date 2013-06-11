@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.sml.xml.v101;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -25,7 +26,6 @@ import org.geotoolkit.sml.xml.AbstractDerivableComponent;
 import org.geotoolkit.sml.xml.AbstractLocation;
 import org.geotoolkit.sml.xml.AbstractPosition;
 import org.apache.sis.util.ComparisonMode;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -216,12 +216,12 @@ public abstract class AbstractDerivableComponentType extends AbstractProcessType
 
         if (object instanceof AbstractDerivableComponentType && super.equals(object, mode)) {
             final AbstractDerivableComponentType that = (AbstractDerivableComponentType) object;
-            return Utilities.equals(this.interfaces,             that.interfaces)            &&
-                   Utilities.equals(this.location,               that.location)              &&
-                   Utilities.equals(this.position,               that.position)              &&
-                   Utilities.equals(this.spatialReferenceFrame,  that.spatialReferenceFrame) &&
-                   Utilities.equals(this.temporalReferenceFrame, that.temporalReferenceFrame)&&
-                   Utilities.equals(this.timePosition,           that.timePosition);
+            return Objects.equals(this.interfaces,             that.interfaces)            &&
+                   Objects.equals(this.location,               that.location)              &&
+                   Objects.equals(this.position,               that.position)              &&
+                   Objects.equals(this.spatialReferenceFrame,  that.spatialReferenceFrame) &&
+                   Objects.equals(this.temporalReferenceFrame, that.temporalReferenceFrame)&&
+                   Objects.equals(this.timePosition,           that.timePosition);
         }
         return false;
     }

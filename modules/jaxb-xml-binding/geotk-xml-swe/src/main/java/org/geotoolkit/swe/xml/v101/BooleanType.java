@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.swe.xml.v101;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -24,7 +25,6 @@ import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.swe.xml.AbstractBoolean;
 import org.apache.sis.util.ComparisonMode;
-import org.geotoolkit.util.Utilities;
 
 
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -100,9 +100,9 @@ public class BooleanType extends AbstractDataComponentType  implements AbstractB
         }
         if (super.equals(object, mode)) {
         final BooleanType that = (BooleanType) object;
-        return Utilities.equals(this.referenceFrame, that.referenceFrame) &&
-               Utilities.equals(this.axisID,         that.axisID)  &&
-               Utilities.equals(this.value,          that.value);
+        return Objects.equals(this.referenceFrame, that.referenceFrame) &&
+               Objects.equals(this.axisID,         that.axisID)  &&
+               Objects.equals(this.value,          that.value);
         }
         return false;
     }

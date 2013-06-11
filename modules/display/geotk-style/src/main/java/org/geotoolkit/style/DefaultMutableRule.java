@@ -20,11 +20,11 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import javax.swing.event.EventListenerList;
 
 import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.util.NumberRange;
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.geotoolkit.util.collection.NotifiedCheckedList;
 import org.apache.sis.util.Classes;
@@ -114,7 +114,7 @@ public class DefaultMutableRule implements MutableRule{
         final String oldName;
         synchronized (this) {
             oldName = this.name;
-            if (Utilities.equals(oldName, name)) {
+            if (Objects.equals(oldName, name)) {
                 return;
             }
             this.name = name;
@@ -168,7 +168,7 @@ public class DefaultMutableRule implements MutableRule{
         final GraphicLegend oldLegend;
         synchronized (this) {
             oldLegend = this.legend;
-            if(Utilities.equals(oldLegend, legend)){
+            if(Objects.equals(oldLegend, legend)){
                 return;
             }
             this.legend = legend;
@@ -197,7 +197,7 @@ public class DefaultMutableRule implements MutableRule{
         final Filter oldFilter;
         synchronized (this) {
             oldFilter = this.filter;
-            if(Utilities.equals(oldFilter, filter)){
+            if(Objects.equals(oldFilter, filter)){
                 return;
             }
             this.filter = filter;
@@ -314,7 +314,7 @@ public class DefaultMutableRule implements MutableRule{
         final OnlineResource oldOnline;
         synchronized (this) {
             oldOnline = this.online;
-            if(Utilities.equals(oldOnline, online)){
+            if(Objects.equals(oldOnline, online)){
                 return;
             }
             this.online = online;

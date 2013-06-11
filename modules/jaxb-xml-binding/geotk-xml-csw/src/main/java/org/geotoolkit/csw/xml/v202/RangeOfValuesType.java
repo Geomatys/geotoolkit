@@ -16,11 +16,11 @@
  */
 package org.geotoolkit.csw.xml.v202;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -93,8 +93,8 @@ public class RangeOfValuesType {
         if (object instanceof RangeOfValuesType) {
             final RangeOfValuesType that = (RangeOfValuesType) object;
 
-            return  Utilities.equals(this.minValue, that.minValue) &&
-                    Utilities.equals(this.maxValue, that.maxValue);
+            return  Objects.equals(this.minValue, that.minValue) &&
+                    Objects.equals(this.maxValue, that.maxValue);
         }
         return false;
     }

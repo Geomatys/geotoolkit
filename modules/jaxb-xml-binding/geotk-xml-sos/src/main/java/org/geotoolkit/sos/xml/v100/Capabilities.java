@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.sos.xml.v100;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -28,7 +29,6 @@ import org.geotoolkit.ows.xml.v110.OperationsMetadata;
 import org.geotoolkit.ows.xml.v110.ServiceIdentification;
 import org.geotoolkit.ows.xml.v110.ServiceProvider;
 import org.geotoolkit.swes.xml.SOSResponse;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -161,8 +161,8 @@ public class Capabilities extends CapabilitiesBaseType implements org.geotoolkit
         if (object instanceof Capabilities && super.equals(object)) {
             final Capabilities that = (Capabilities) object;
 
-            return Utilities.equals(this.contents,              that.contents)              &&
-                   Utilities.equals(this.filterCapabilities,    that.filterCapabilities);
+            return Objects.equals(this.contents,              that.contents)              &&
+                   Objects.equals(this.filterCapabilities,    that.filterCapabilities);
         }
         return false;
     }

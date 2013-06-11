@@ -17,6 +17,7 @@
 package org.geotoolkit.sml.xml.v101;
 
 import java.net.URI;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -28,7 +29,6 @@ import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.sml.xml.AbstractTerm;
 import org.geotoolkit.swe.xml.v101.CodeSpacePropertyType;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -213,9 +213,9 @@ public class Term implements AbstractTerm {
         if (object instanceof Term) {
             final Term that = (Term) object;
 
-            return Utilities.equals(this.codeSpace,  that.codeSpace) &&
-                   Utilities.equals(this.value,      that.value)     &&
-                   Utilities.equals(this.definition, that.definition);
+            return Objects.equals(this.codeSpace,  that.codeSpace) &&
+                   Objects.equals(this.value,      that.value)     &&
+                   Objects.equals(this.definition, that.definition);
         }
         return false;
     }

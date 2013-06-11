@@ -18,6 +18,7 @@
 
 package org.geotoolkit.wfs.xml.v200;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -25,7 +26,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
 import org.geotoolkit.ogc.xml.v200.FilterType;
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.wfs.xml.DeleteElement;
 
 
@@ -140,8 +140,8 @@ public class DeleteType extends AbstractTransactionActionType implements DeleteE
         
         if (obj instanceof DeleteType) {
             DeleteType that = (DeleteType) obj;
-            return Utilities.equals(this.filter, that.filter) &&
-                   Utilities.equals(this.typeName, that.typeName);
+            return Objects.equals(this.filter, that.filter) &&
+                   Objects.equals(this.typeName, that.typeName);
         }
         return false;
     }

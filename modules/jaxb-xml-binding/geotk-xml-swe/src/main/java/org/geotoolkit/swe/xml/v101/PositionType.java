@@ -17,12 +17,12 @@
 package org.geotoolkit.swe.xml.v101;
 
 import java.net.URI;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.swe.xml.Position;
 import org.apache.sis.util.ComparisonMode;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -358,14 +358,14 @@ public class PositionType extends AbstractVectorType implements Position {
         if (object instanceof PositionType && super.equals(object, mode)) {
             final PositionType that = (PositionType) object;
 
-            return Utilities.equals(this.acceleration,        that.acceleration) &&
-                   Utilities.equals(this.angularAcceleration, that.angularAcceleration) &&
-                   Utilities.equals(this.angularVelocity,     that.angularVelocity) &&
-                   Utilities.equals(this.location,            that.location) &&
-                   Utilities.equals(this.orientation,         that.orientation) &&
-                   Utilities.equals(this.state,               that.state) &&
-                   Utilities.equals(this.time,                that.time) &&
-                   Utilities.equals(this.velocity,            that.velocity);
+            return Objects.equals(this.acceleration,        that.acceleration) &&
+                   Objects.equals(this.angularAcceleration, that.angularAcceleration) &&
+                   Objects.equals(this.angularVelocity,     that.angularVelocity) &&
+                   Objects.equals(this.location,            that.location) &&
+                   Objects.equals(this.orientation,         that.orientation) &&
+                   Objects.equals(this.state,               that.state) &&
+                   Objects.equals(this.time,                that.time) &&
+                   Objects.equals(this.velocity,            that.velocity);
         }
         return false;
     }

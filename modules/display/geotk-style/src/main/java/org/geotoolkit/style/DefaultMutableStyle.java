@@ -21,11 +21,11 @@ import java.beans.PropertyChangeListener;
 import java.util.Collection;
 import java.util.EventObject;
 import java.util.List;
+import java.util.Objects;
 import javax.swing.event.EventListenerList;
 
 import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.util.NumberRange;
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.geotoolkit.util.collection.NotifiedCheckedList;
 import org.apache.sis.util.Classes;
@@ -134,7 +134,7 @@ public class DefaultMutableStyle implements MutableStyle,FeatureTypeStyleListene
         final Symbolizer oldSymbolizer;
         synchronized (this) {
             oldSymbolizer = this.symbol;
-            if (Utilities.equals(oldSymbolizer, symbol)) {
+            if (Objects.equals(oldSymbolizer, symbol)) {
                 return;
             }
             this.symbol = symbol;
@@ -160,7 +160,7 @@ public class DefaultMutableStyle implements MutableStyle,FeatureTypeStyleListene
         final String oldName;
         synchronized (this) {
             oldName = this.name;
-            if (Utilities.equals(oldName, name)) {
+            if (Objects.equals(oldName, name)) {
                 return;
             }
             this.name = name;

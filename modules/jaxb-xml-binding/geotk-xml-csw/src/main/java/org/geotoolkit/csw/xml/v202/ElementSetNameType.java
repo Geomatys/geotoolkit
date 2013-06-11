@@ -19,6 +19,7 @@ package org.geotoolkit.csw.xml.v202;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -27,7 +28,6 @@ import javax.xml.bind.annotation.XmlValue;
 import javax.xml.namespace.QName;
 import org.geotoolkit.csw.xml.ElementSetName;
 import org.geotoolkit.csw.xml.ElementSetType;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -131,8 +131,8 @@ public class ElementSetNameType implements ElementSetName {
         }
         if (object instanceof ElementSetNameType) {
             final ElementSetNameType that = (ElementSetNameType) object;
-            return Utilities.equals(this.typeNames,  that.typeNames)   &&
-                   Utilities.equals(this.value,  that.value);
+            return Objects.equals(this.typeNames,  that.typeNames)   &&
+                   Objects.equals(this.value,  that.value);
         }
         return false;
     }

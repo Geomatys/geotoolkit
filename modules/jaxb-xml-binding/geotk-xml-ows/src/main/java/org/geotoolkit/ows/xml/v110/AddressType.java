@@ -18,12 +18,12 @@ package org.geotoolkit.ows.xml.v110;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ows.xml.AbstractAddress;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -173,12 +173,12 @@ public class AddressType implements AbstractAddress {
         }
         if (object instanceof AddressType) {
             final AddressType that = (AddressType) object;
-            return Utilities.equals(this.administrativeArea,    that.administrativeArea)    &&
-                   Utilities.equals(this.city,                  that.city)                  && 
-                   Utilities.equals(this.country,               that.country)               && 
-                   Utilities.equals(this.deliveryPoint,         that.deliveryPoint)         &&
-                   Utilities.equals(this.electronicMailAddress, that.electronicMailAddress) &&
-                   Utilities.equals(this.postalCode,            that.postalCode) ;
+            return Objects.equals(this.administrativeArea,    that.administrativeArea)    &&
+                   Objects.equals(this.city,                  that.city)                  && 
+                   Objects.equals(this.country,               that.country)               && 
+                   Objects.equals(this.deliveryPoint,         that.deliveryPoint)         &&
+                   Objects.equals(this.electronicMailAddress, that.electronicMailAddress) &&
+                   Objects.equals(this.postalCode,            that.postalCode) ;
         }
         return false;
     }

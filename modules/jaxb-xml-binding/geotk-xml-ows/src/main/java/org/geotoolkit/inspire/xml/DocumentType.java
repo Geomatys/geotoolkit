@@ -16,13 +16,13 @@
  */
 package org.geotoolkit.inspire.xml;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ows.xml.v100.OnlineResourceType;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -93,7 +93,7 @@ public class DocumentType extends OnlineResourceType {
         }
         if (object instanceof DocumentType && super.equals(object)) {
             final DocumentType that = (DocumentType) object;
-            return Utilities.equals(this.language, that.language);
+            return Objects.equals(this.language, that.language);
         }
         return false;
     }

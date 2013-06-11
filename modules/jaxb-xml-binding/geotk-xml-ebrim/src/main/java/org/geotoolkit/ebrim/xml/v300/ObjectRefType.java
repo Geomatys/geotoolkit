@@ -16,11 +16,11 @@
  */
 package org.geotoolkit.ebrim.xml.v300;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -87,7 +87,7 @@ public class ObjectRefType extends IdentifiableType {
         }
         if (obj instanceof ObjectRefType && super.equals(obj)) {
             final ObjectRefType that = (ObjectRefType) obj;
-            return Utilities.equals(this.createReplica, that.createReplica);
+            return Objects.equals(this.createReplica, that.createReplica);
         }
         return false;
     }

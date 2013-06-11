@@ -21,6 +21,7 @@ package org.geotoolkit.gml.xml.v321;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -388,10 +389,10 @@ public abstract class AbstractGeometryType extends AbstractGMLType implements Ge
         if (object != null && getClass().equals(object.getClass())) {
             final AbstractGeometryType that = (AbstractGeometryType) object;
 
-            return Utilities.equals(this.axisLabels,   that.axisLabels)   &&
-                   Utilities.equals(this.srsDimension, that.srsDimension) &&
-                   Utilities.equals(this.srsName,      that.srsName)      &&
-                   Utilities.equals(this.uomLabels,    that.uomLabels);
+            return Objects.equals(this.axisLabels,   that.axisLabels)   &&
+                   Objects.equals(this.srsDimension, that.srsDimension) &&
+                   Objects.equals(this.srsName,      that.srsName)      &&
+                   Objects.equals(this.uomLabels,    that.uomLabels);
         }
         return false;
     }

@@ -17,8 +17,8 @@
  */
 package org.geotoolkit.temporal.object;
 
+import java.util.Objects;
 import org.geotoolkit.util.StringUtilities;
-import org.geotoolkit.util.Utilities;
 import org.opengis.temporal.CalendarDate;
 import org.opengis.temporal.DateAndTime;
 import org.opengis.temporal.IndeterminateValue;
@@ -107,9 +107,9 @@ public class DefaultDateAndTime extends DefaultTemporalPosition implements DateA
         if (object instanceof DefaultDateAndTime && super.equals(object)) {
             final DefaultDateAndTime that = (DefaultDateAndTime) object;
 
-            return Utilities.equals(this.calendarDate, that.calendarDate) &&
-                    Utilities.equals(this.calendarEraName, that.calendarEraName) &&
-                    Utilities.equals(this.clockTime, that.clockTime);
+            return Objects.equals(this.calendarDate, that.calendarDate) &&
+                    Objects.equals(this.calendarEraName, that.calendarEraName) &&
+                    Objects.equals(this.clockTime, that.clockTime);
         }
         return false;
     }

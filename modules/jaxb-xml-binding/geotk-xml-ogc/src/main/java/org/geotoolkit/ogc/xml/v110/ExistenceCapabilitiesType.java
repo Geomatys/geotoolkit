@@ -16,11 +16,11 @@
  */
 package org.geotoolkit.ogc.xml.v110;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -80,7 +80,7 @@ public class ExistenceCapabilitiesType {
        if (object instanceof ExistenceCapabilitiesType) {
            final ExistenceCapabilitiesType that = (ExistenceCapabilitiesType) object;
        
-            return Utilities.equals(this.existenceOperators, that.existenceOperators);
+            return Objects.equals(this.existenceOperators, that.existenceOperators);
         }
         return false;
     }

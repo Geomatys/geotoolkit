@@ -19,6 +19,7 @@ package org.geotoolkit.swe.xml.v101;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -31,7 +32,6 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.swe.xml.AbstractAllowedTokens;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -165,7 +165,7 @@ public class AllowedTokens implements AbstractAllowedTokens {
                     for (int i = 0; i < this.valueList.size(); i++) {
                         JAXBElement<List<String>> thisJB = this.valueList.get(i);
                         JAXBElement<List<String>> thatJB = that.valueList.get(i);
-                        if (!Utilities.equals(thisJB.getValue(), thatJB.getValue())) {
+                        if (!Objects.equals(thisJB.getValue(), thatJB.getValue())) {
                             valueL = false;
                         }
                     }
@@ -173,7 +173,7 @@ public class AllowedTokens implements AbstractAllowedTokens {
             } else if (this.valueList == null && that.valueList == null) {
                 valueL = true;
             }
-            return Utilities.equals(this.id,  that.id) &&
+            return Objects.equals(this.id,  that.id) &&
                    valueL;
         }
         return false;

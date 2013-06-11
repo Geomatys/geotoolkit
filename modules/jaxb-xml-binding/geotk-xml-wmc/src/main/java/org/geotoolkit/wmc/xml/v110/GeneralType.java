@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.wmc.xml.v110;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -311,15 +312,15 @@ public class GeneralType {
         if (object instanceof GeneralType) {
             final GeneralType that = (GeneralType) object;
 
-            return Utilities.equals(this._abstract, that._abstract) &&
-                   Utilities.equals(this.boundingBox, that.boundingBox) &&
-                   Utilities.equals(this.contactInformation, that.contactInformation) &&
-                   Utilities.equals(this.descriptionURL, that.descriptionURL) &&
-                   Utilities.equals(this.extension, that.extension) &&
-                   Utilities.equals(this.keywordList, that.keywordList) &&
-                   Utilities.equals(this.logoURL, that.logoURL) &&
-                   Utilities.equals(this.title, that.title) &&
-                   Utilities.equals(this.window,  that.window);
+            return Objects.equals(this._abstract, that._abstract) &&
+                   Objects.equals(this.boundingBox, that.boundingBox) &&
+                   Objects.equals(this.contactInformation, that.contactInformation) &&
+                   Objects.equals(this.descriptionURL, that.descriptionURL) &&
+                   Objects.equals(this.extension, that.extension) &&
+                   Objects.equals(this.keywordList, that.keywordList) &&
+                   Objects.equals(this.logoURL, that.logoURL) &&
+                   Objects.equals(this.title, that.title) &&
+                   Objects.equals(this.window,  that.window);
             }
         return false;
     }

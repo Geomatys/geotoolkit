@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.gml.xml.v311;
 
+import java.util.Objects;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -100,14 +101,14 @@ public class IdentifierType {
             IdentifierType that = (IdentifierType) object;
             boolean proc = false;
             if (this.name != null && that.name != null) {
-                proc = Utilities.equals(this.name.getValue(), that.name.getValue());
+                proc = Objects.equals(this.name.getValue(), that.name.getValue());
             } else if (this.name == null && that.name == null) {
                 proc = true;
             }
 
-            return Utilities.equals(this.remarks, that.remarks)  &&
+            return Objects.equals(this.remarks, that.remarks)  &&
                    proc                                          &&
-                   Utilities.equals(this.version, that.version);
+                   Objects.equals(this.version, that.version);
         }
         return false;
     }

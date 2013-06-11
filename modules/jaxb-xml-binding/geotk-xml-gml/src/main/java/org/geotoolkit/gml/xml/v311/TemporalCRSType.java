@@ -16,12 +16,12 @@
  */
 package org.geotoolkit.gml.xml.v311;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import org.apache.sis.util.ComparisonMode;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -123,8 +123,8 @@ public class TemporalCRSType extends AbstractReferenceSystemType {
         if (object instanceof TemporalCRSType && super.equals(object, mode)) {
             final TemporalCRSType that = (TemporalCRSType) object;
 
-            return Utilities.equals(this.usesTemporalCS,    that.usesTemporalCS) &&
-                   Utilities.equals(this.usesTemporalDatum, that.usesTemporalDatum);
+            return Objects.equals(this.usesTemporalCS,    that.usesTemporalCS) &&
+                   Objects.equals(this.usesTemporalDatum, that.usesTemporalDatum);
         }
         return false;
     }

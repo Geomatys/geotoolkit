@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.wfs.xml.v110;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -209,10 +210,10 @@ public class WFSCapabilitiesType extends CapabilitiesBaseType implements WFSResp
         if (object instanceof WFSCapabilitiesType && super.equals(object)) {
             final WFSCapabilitiesType that = (WFSCapabilitiesType) object;
 
-            return Utilities.equals(this.featureTypeList,           that.featureTypeList)           &&
-                   Utilities.equals(this.filterCapabilities,        that.filterCapabilities)        &&
-                   Utilities.equals(this.servesGMLObjectTypeList,   that.servesGMLObjectTypeList)   &&
-                   Utilities.equals(this.supportsGMLObjectTypeList, that.supportsGMLObjectTypeList);
+            return Objects.equals(this.featureTypeList,           that.featureTypeList)           &&
+                   Objects.equals(this.filterCapabilities,        that.filterCapabilities)        &&
+                   Objects.equals(this.servesGMLObjectTypeList,   that.servesGMLObjectTypeList)   &&
+                   Objects.equals(this.supportsGMLObjectTypeList, that.supportsGMLObjectTypeList);
             }
         return false;
     }

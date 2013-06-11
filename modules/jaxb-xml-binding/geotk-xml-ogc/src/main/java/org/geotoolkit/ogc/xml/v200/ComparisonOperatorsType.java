@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -144,7 +145,7 @@ public class ComparisonOperatorsType implements ComparisonOperators {
         if (object instanceof ComparisonOperatorsType) {
             final ComparisonOperatorsType that = (ComparisonOperatorsType) object;
 
-            return Utilities.equals(this.comparisonOperator, that.comparisonOperator);
+            return Objects.equals(this.comparisonOperator, that.comparisonOperator);
         }
         return false;
     }

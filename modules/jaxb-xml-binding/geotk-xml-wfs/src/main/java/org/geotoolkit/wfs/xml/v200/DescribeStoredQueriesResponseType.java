@@ -20,6 +20,7 @@ package org.geotoolkit.wfs.xml.v200;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -99,7 +100,7 @@ public class DescribeStoredQueriesResponseType implements DescribeStoredQueriesR
         }
         if (object instanceof DescribeStoredQueriesResponseType) {
             final DescribeStoredQueriesResponseType that = (DescribeStoredQueriesResponseType) object;
-            return Utilities.equals(this.storedQueryDescription,   that.storedQueryDescription);
+            return Objects.equals(this.storedQueryDescription,   that.storedQueryDescription);
         }
         return false;
     }

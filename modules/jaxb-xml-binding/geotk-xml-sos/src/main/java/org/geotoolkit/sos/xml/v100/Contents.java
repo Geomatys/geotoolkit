@@ -19,12 +19,12 @@ package org.geotoolkit.sos.xml.v100;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -110,7 +110,7 @@ public class Contents implements org.geotoolkit.sos.xml.Contents {
         }
         if (object instanceof Contents) {
             final Contents that = (Contents) object;
-            return Utilities.equals(this.observationOfferingList, that.observationOfferingList);
+            return Objects.equals(this.observationOfferingList, that.observationOfferingList);
         }
         return false;
     }
@@ -191,7 +191,7 @@ public class Contents implements org.geotoolkit.sos.xml.Contents {
             }
             if (object instanceof ObservationOfferingList) {
                 final ObservationOfferingList that = (ObservationOfferingList) object;
-                return Utilities.equals(this.observationOffering, that.observationOffering);
+                return Objects.equals(this.observationOffering, that.observationOffering);
             }
             return false;
         }

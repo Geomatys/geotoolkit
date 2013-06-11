@@ -19,6 +19,7 @@ package org.geotoolkit.ogc.xml.v110;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -101,7 +102,7 @@ public class SortByType implements SortBy {
         }
         if (object instanceof SortByType) {
             final SortByType that = (SortByType) object;
-            return Utilities.equals(this.sortProperty,  that.sortProperty);
+            return Objects.equals(this.sortProperty,  that.sortProperty);
         }
         return false;
     }

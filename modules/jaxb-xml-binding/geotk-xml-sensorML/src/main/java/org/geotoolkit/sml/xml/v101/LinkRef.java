@@ -18,13 +18,13 @@
 
 package org.geotoolkit.sml.xml.v101;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.sml.xml.AbstractLinkRef;
 /**
  *
@@ -68,7 +68,7 @@ public class LinkRef implements AbstractLinkRef {
 
         if (object instanceof LinkRef) {
             final LinkRef that = (LinkRef) object;
-            return Utilities.equals(this.ref, that.ref);
+            return Objects.equals(this.ref, that.ref);
 
         }
         return false;

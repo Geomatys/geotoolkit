@@ -19,6 +19,7 @@ package org.geotoolkit.util;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -26,7 +27,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.resources.jaxb.feature.catalog.MultiplicityRangeAdapter;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -132,7 +132,7 @@ public class Multiplicity {
         }
         if (object instanceof Multiplicity) {
             final Multiplicity that = (Multiplicity) object;
-            return Utilities.equals(this.range, that.range);
+            return Objects.equals(this.range, that.range);
         }
         return false;
     }

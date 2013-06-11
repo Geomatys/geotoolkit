@@ -18,12 +18,12 @@ package org.geotoolkit.wrs.xml.v100;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlMixed;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -103,7 +103,7 @@ public class AnyValueType {
         }
         if (obj instanceof AnyValueType) {
             final AnyValueType that = (AnyValueType) obj;
-            return Utilities.equals(this.content,  that.content);
+            return Objects.equals(this.content,  that.content);
         }
         return false;
     }

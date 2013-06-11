@@ -17,6 +17,7 @@
 package org.geotoolkit.swe.xml.v100;
 
 import java.net.URI;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -25,7 +26,6 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.swe.xml.AbstractVector;
 import org.apache.sis.util.ComparisonMode;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -128,8 +128,8 @@ public abstract class AbstractVectorType extends AbstractDataRecordType implemen
 
         if (object instanceof AbstractVectorType && super.equals(object, mode)) {
             final AbstractVectorType  that = (AbstractVectorType) object;
-            return Utilities.equals(this.localFrame,     that.localFrame)&&
-                   Utilities.equals(this.referenceFrame, that.referenceFrame);
+            return Objects.equals(this.localFrame,     that.localFrame)&&
+                   Objects.equals(this.referenceFrame, that.referenceFrame);
 
         }
         return false;

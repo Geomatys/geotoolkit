@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.sos.xml.v100;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -23,7 +24,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.swes.xml.InsertSensorResponse;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -95,7 +95,7 @@ public class RegisterSensorResponse extends ResponseBaseType implements InsertSe
         }
         if (object instanceof RegisterSensorResponse) {
             final RegisterSensorResponse that = (RegisterSensorResponse) object;
-            return Utilities.equals(this.assignedSensorId, that.assignedSensorId);
+            return Objects.equals(this.assignedSensorId, that.assignedSensorId);
         }
         return false;
     }

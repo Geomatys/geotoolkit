@@ -18,6 +18,7 @@
 
 package org.geotoolkit.ogc.xml.v200;
 
+import java.util.Objects;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -183,11 +184,11 @@ public class PropertyIsNilType extends ComparisonOpsType {
             if (this.expression == null && that.expression == null) {
                 exp = true;
             } else if (this.expression != null && that.expression != null) {
-                exp = Utilities.equals(this.expression.getValue(), that.expression.getValue());
+                exp = Objects.equals(this.expression.getValue(), that.expression.getValue());
             } else {
                 return false;
             }
-            return exp && Utilities.equals(this.nilReason, that.nilReason);
+            return exp && Objects.equals(this.nilReason, that.nilReason);
         }
         return false;
     }

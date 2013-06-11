@@ -18,11 +18,11 @@ package org.geotoolkit.gml.xml.v311;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 import org.apache.sis.util.ComparisonMode;
-import org.geotoolkit.util.Utilities;
 import org.opengis.filter.expression.ExpressionVisitor;
 
 
@@ -143,8 +143,8 @@ public class MultiSolidType extends AbstractGeometricAggregateType {
         }
         if (object instanceof MultiSolidType && super.equals(object, mode)) {
             final MultiSolidType that = (MultiSolidType) object;
-            return  Utilities.equals(this.solidMember,  that.solidMember) &&
-                    Utilities.equals(this.solidMembers, that.solidMembers);
+            return  Objects.equals(this.solidMember,  that.solidMember) &&
+                    Objects.equals(this.solidMembers, that.solidMembers);
         }
         return false;
     }

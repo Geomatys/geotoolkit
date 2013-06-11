@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.swe.xml.v101;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -24,7 +25,6 @@ import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.swe.xml.AbstractDataValueProperty;
 import org.geotoolkit.swe.xml.DataArray;
 import org.apache.sis.util.ComparisonMode;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -175,9 +175,9 @@ public class DataArrayType extends AbstractDataArrayType implements DataArray {
         }
         if (object instanceof DataArrayType && super.equals(object, mode)) {
             final DataArrayType that = (DataArrayType) object;
-            return Utilities.equals(this.elementType,   that.elementType)   &&
-                   Utilities.equals(this.encoding,    that.encoding)    &&
-                   Utilities.equals(this.values,       that.values);
+            return Objects.equals(this.elementType,   that.elementType)   &&
+                   Objects.equals(this.encoding,    that.encoding)    &&
+                   Objects.equals(this.values,       that.values);
         }
         return false;
     }

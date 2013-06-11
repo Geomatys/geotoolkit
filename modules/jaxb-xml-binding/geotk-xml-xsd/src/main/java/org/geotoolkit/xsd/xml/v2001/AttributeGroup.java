@@ -18,6 +18,7 @@ package org.geotoolkit.xsd.xml.v2001;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -173,10 +174,10 @@ public abstract class AttributeGroup extends Annotated {
         }
         if (object instanceof AttributeGroup && super.equals(object)) {
             final AttributeGroup that = (AttributeGroup) object;
-            return Utilities.equals(this.anyAttribute,              that.anyAttribute) &&
-                   Utilities.equals(this.attributeOrAttributeGroup, that.attributeOrAttributeGroup) &&
-                   Utilities.equals(this.name,                      that.name) &&
-                   Utilities.equals(this.ref,                       that.ref);
+            return Objects.equals(this.anyAttribute,              that.anyAttribute) &&
+                   Objects.equals(this.attributeOrAttributeGroup, that.attributeOrAttributeGroup) &&
+                   Objects.equals(this.name,                      that.name) &&
+                   Objects.equals(this.ref,                       that.ref);
         }
         return false;
     }

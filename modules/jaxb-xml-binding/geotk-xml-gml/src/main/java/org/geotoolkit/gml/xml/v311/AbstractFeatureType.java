@@ -19,6 +19,7 @@ package org.geotoolkit.gml.xml.v311;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -26,7 +27,6 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.AbstractFeature;
 import org.apache.sis.util.ComparisonMode;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -206,9 +206,9 @@ public abstract class AbstractFeatureType extends AbstractGMLType implements Abs
         if (object instanceof AbstractFeatureType && super.equals(object, mode)) {
             final AbstractFeatureType that = (AbstractFeatureType) object;
 
-            return Utilities.equals(this.boundedBy, that.boundedBy) &&
-                   Utilities.equals(this.location,  that.location)  &&
-                   Utilities.equals(this.srsName,   that.srsName);
+            return Objects.equals(this.boundedBy, that.boundedBy) &&
+                   Objects.equals(this.location,  that.location)  &&
+                   Objects.equals(this.srsName,   that.srsName);
         }
         return false;
     }

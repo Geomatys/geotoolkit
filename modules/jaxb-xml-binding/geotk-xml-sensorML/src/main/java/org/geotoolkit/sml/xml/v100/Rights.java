@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.sml.xml.v100;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -26,7 +27,6 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.sml.xml.AbstractRights;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -204,11 +204,11 @@ public class Rights implements AbstractRights {
 
         if (object instanceof Rights) {
             final Rights that = (Rights) object;
-            return Utilities.equals(this.copyRights,    that.copyRights)       &&
-                   Utilities.equals(this.documentation, that.documentation)       &&
-                   Utilities.equals(this.id,            that.id)          &&
-                   Utilities.equals(this.intellectualPropertyRights, that.intellectualPropertyRights)  &&
-                   Utilities.equals(this.privacyAct,    that.privacyAct);
+            return Objects.equals(this.copyRights,    that.copyRights)       &&
+                   Objects.equals(this.documentation, that.documentation)       &&
+                   Objects.equals(this.id,            that.id)          &&
+                   Objects.equals(this.intellectualPropertyRights, that.intellectualPropertyRights)  &&
+                   Objects.equals(this.privacyAct,    that.privacyAct);
         }
         return false;
     }

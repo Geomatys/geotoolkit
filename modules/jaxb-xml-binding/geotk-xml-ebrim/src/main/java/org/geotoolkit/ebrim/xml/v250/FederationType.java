@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.ebrim.xml.v250;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -23,7 +24,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.Duration;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -110,8 +110,8 @@ public class FederationType extends RegistryEntryType {
         }
         if (obj instanceof FederationType && super.equals(obj)) {
             final FederationType that = (FederationType) obj;
-            return Utilities.equals(this.members,                that.members) &&
-                   Utilities.equals(this.replicationSyncLatency, that.replicationSyncLatency);
+            return Objects.equals(this.members,                that.members) &&
+                   Objects.equals(this.replicationSyncLatency, that.replicationSyncLatency);
         }
         return false;
     }

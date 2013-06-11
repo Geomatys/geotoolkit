@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.gml.xml.v311;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -129,8 +130,8 @@ public class MeasureType {
 
         if (object instanceof MeasureType) {
             final MeasureType that = (MeasureType) object;
-            return Utilities.equals(this.uom,    that.uom)   &&
-                   Utilities.equals(this.value,  that.value);
+            return Objects.equals(this.uom,    that.uom)   &&
+                   Objects.equals(this.value,  that.value);
         }
         return false;
     }

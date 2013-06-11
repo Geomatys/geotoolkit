@@ -16,13 +16,13 @@
  */
 package org.geotoolkit.swe.xml.v100;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.swe.xml.AbstractSquareMatrix;
 import org.apache.sis.util.ComparisonMode;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -161,9 +161,9 @@ public class SquareMatrixType extends AbstractMatrixType implements AbstractSqua
 
         if (object instanceof SquareMatrixType && super.equals(object, mode)) {
             final SquareMatrixType  that = (SquareMatrixType) object;
-            return Utilities.equals(this.elementType, that.elementType) &&
-                   Utilities.equals(this.encoding,    that.encoding)    &&
-                   Utilities.equals(this.values,      that.values);
+            return Objects.equals(this.elementType, that.elementType) &&
+                   Objects.equals(this.encoding,    that.encoding)    &&
+                   Objects.equals(this.values,      that.values);
 
         }
         return false;

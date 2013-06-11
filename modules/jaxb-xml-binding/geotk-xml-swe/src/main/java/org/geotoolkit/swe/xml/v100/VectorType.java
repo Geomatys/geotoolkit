@@ -19,6 +19,7 @@ package org.geotoolkit.swe.xml.v100;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -26,7 +27,6 @@ import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.swe.xml.Coordinate;
 import org.geotoolkit.swe.xml.Vector;
 import org.apache.sis.util.ComparisonMode;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -163,7 +163,7 @@ public class VectorType extends AbstractVectorType implements Vector {
 
         if (object instanceof VectorType && super.equals(object, mode)) {
             final VectorType  that = (VectorType ) object;
-            return Utilities.equals(this.coordinate, that.coordinate);
+            return Objects.equals(this.coordinate, that.coordinate);
 
         }
         return false;

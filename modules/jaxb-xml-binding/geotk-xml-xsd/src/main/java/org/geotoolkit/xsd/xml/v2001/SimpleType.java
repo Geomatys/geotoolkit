@@ -17,6 +17,7 @@
 package org.geotoolkit.xsd.xml.v2001;
 
 import java.util.ArrayList;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -214,11 +215,11 @@ public abstract class SimpleType extends Annotated {
         }
         if (object instanceof SimpleType && super.equals(object)) {
             final SimpleType that = (SimpleType) object;
-            return Utilities.equals(this.list,                      that.list) &&
-                   Utilities.equals(this._final,                    that._final) &&
-                   Utilities.equals(this.name,                      that.name) &&
-                   Utilities.equals(this.restriction,               that.restriction) &&
-                   Utilities.equals(this.union,                     that.union);
+            return Objects.equals(this.list,                      that.list) &&
+                   Objects.equals(this._final,                    that._final) &&
+                   Objects.equals(this.name,                      that.name) &&
+                   Objects.equals(this.restriction,               that.restriction) &&
+                   Objects.equals(this.union,                     that.union);
         }
         return false;
     }

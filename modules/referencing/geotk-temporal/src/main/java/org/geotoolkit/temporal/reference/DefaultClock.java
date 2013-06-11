@@ -18,7 +18,7 @@
 package org.geotoolkit.temporal.reference;
 
 import java.util.Collection;
-import org.geotoolkit.util.Utilities;
+import java.util.Objects;
 import org.opengis.temporal.Calendar;
 import org.opengis.temporal.Clock;
 import org.opengis.temporal.ClockTime;
@@ -118,10 +118,10 @@ public class DefaultClock extends DefaultTemporalReferenceSystem implements Cloc
             if (object instanceof DefaultClock) {
                 that = (DefaultClock) object;
 
-                return Utilities.equals(this.dateBasis, that.dateBasis) &&
-                        Utilities.equals(this.referenceEvent, that.referenceEvent) &&
-                        Utilities.equals(this.referenceTime, that.referenceTime) &&
-                        Utilities.equals(this.utcReference, that.utcReference);
+                return Objects.equals(this.dateBasis, that.dateBasis) &&
+                        Objects.equals(this.referenceEvent, that.referenceEvent) &&
+                        Objects.equals(this.referenceTime, that.referenceTime) &&
+                        Objects.equals(this.utcReference, that.utcReference);
             }
         }
         return false;

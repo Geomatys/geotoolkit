@@ -19,7 +19,7 @@ package org.geotoolkit.csw.xml.v202;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import javax.xml.bind.JAXBElement;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAnyElement;
@@ -27,7 +27,6 @@ import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.csw.xml.GetRecordByIdResponse;
-import org.geotoolkit.util.Utilities;
 
 /**
  * Returns a representation of the matching entry. If there is no 
@@ -140,8 +139,8 @@ public class GetRecordByIdResponseType implements GetRecordByIdResponse {
         }
         if (object instanceof GetRecordByIdResponseType) {
             final GetRecordByIdResponseType that = (GetRecordByIdResponseType) object;
-            return Utilities.equals(this.abstractRecord, that.abstractRecord) &&
-                   Utilities.equals(this.any,            that.any);
+            return Objects.equals(this.abstractRecord, that.abstractRecord) &&
+                   Objects.equals(this.any,            that.any);
         }
         return false;
 

@@ -20,6 +20,7 @@ package org.geotoolkit.wfs.xml.v200;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -77,7 +78,7 @@ public class OutputFormatListType {
         if (object instanceof OutputFormatListType) {
             final OutputFormatListType that = (OutputFormatListType) object;
 
-            return Utilities.equals(this.format, that.format);
+            return Objects.equals(this.format, that.format);
             }
         return false;
     }

@@ -16,12 +16,12 @@
  */
 package org.geotoolkit.ows.xml.v100;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ows.xml.AbstractContact;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -134,11 +134,11 @@ public class ContactType implements AbstractContact {
         }
         if (object instanceof ContactType) {
             final ContactType that = (ContactType) object;
-            return Utilities.equals(this.address,             that.address)             &&
-                   Utilities.equals(this.contactInstructions, that.contactInstructions) &&
-                   Utilities.equals(this.hoursOfService,      that.hoursOfService)      &&
-                   Utilities.equals(this.onlineResource,      that.onlineResource)      &&
-                   Utilities.equals(this.phone,               that.phone);
+            return Objects.equals(this.address,             that.address)             &&
+                   Objects.equals(this.contactInstructions, that.contactInstructions) &&
+                   Objects.equals(this.hoursOfService,      that.hoursOfService)      &&
+                   Objects.equals(this.onlineResource,      that.onlineResource)      &&
+                   Objects.equals(this.phone,               that.phone);
         }
         return false;
     }

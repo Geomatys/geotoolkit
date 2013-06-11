@@ -18,6 +18,7 @@ package org.geotoolkit.sml.xml.v100;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -28,7 +29,6 @@ import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.sml.xml.AbstractIdentifier;
 import org.geotoolkit.sml.xml.AbstractIdentifierList;
-import org.geotoolkit.util.Utilities;
 
 /**
  * <p>Java class for anonymous complex type.
@@ -162,8 +162,8 @@ public class IdentifierList implements AbstractIdentifierList {
         if (object instanceof IdentifierList) {
             final IdentifierList that = (IdentifierList) object;
 
-            return Utilities.equals(this.identifier, that.identifier) &&
-                    Utilities.equals(this.id, that.id);
+            return Objects.equals(this.identifier, that.identifier) &&
+                    Objects.equals(this.id, that.id);
         }
         return false;
     }

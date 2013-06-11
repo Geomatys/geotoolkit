@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.observation.xml.v100;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlTransient;
@@ -23,7 +24,6 @@ import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.v311.AbstractTimeGeometricPrimitiveType;
 import org.geotoolkit.internal.sql.table.Entry;
 import org.geotoolkit.metadata.iso.citation.DefaultResponsibleParty;
-import org.geotoolkit.util.Utilities;
 import org.opengis.metadata.citation.ResponsibleParty;
 import org.opengis.observation.Measure;
 import org.opengis.observation.sampling.SurveyProcedure;
@@ -167,14 +167,14 @@ public class SurveyProcedureType implements SurveyProcedure, Entry {
         }
         if (object instanceof SurveyProcedureType && super.equals(object)) {
             final SurveyProcedureType that = (SurveyProcedureType) object;
-            return Utilities.equals(this.operator,          that.operator)   &&
-                   //Utilities.equals(this.elevationDatum,    that.elevationDatum)   && 
-                   Utilities.equals(this.elevationMethod,   that.elevationMethod) &&
-                   Utilities.equals(this.elevationAccuracy, that.elevationAccuracy) &&
-                   Utilities.equals(this.positionAccuracy,  that.positionAccuracy) &&
-                   Utilities.equals(this.positionMethod,    that.positionMethod) &&
-                   //Utilities.equals(this.projection,        that.projection) &&
-                   Utilities.equals(this.surveyTime,        that.surveyTime);
+            return Objects.equals(this.operator,          that.operator)   &&
+                   //Objects.equals(this.elevationDatum,    that.elevationDatum)   && 
+                   Objects.equals(this.elevationMethod,   that.elevationMethod) &&
+                   Objects.equals(this.elevationAccuracy, that.elevationAccuracy) &&
+                   Objects.equals(this.positionAccuracy,  that.positionAccuracy) &&
+                   Objects.equals(this.positionMethod,    that.positionMethod) &&
+                   //Objects.equals(this.projection,        that.projection) &&
+                   Objects.equals(this.surveyTime,        that.surveyTime);
         }
         return false;
     }

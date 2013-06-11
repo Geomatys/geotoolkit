@@ -20,6 +20,7 @@ package org.geotoolkit.wfs.xml.v200;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -386,22 +387,22 @@ public class MemberPropertyType {
                         final Object thisany = this.content.get(i);
                         final Object thatany = that.content.get(i);
                         if (thisany instanceof JAXBElement && thatany instanceof JAXBElement) {
-                            anyEq = Utilities.equals(((JAXBElement)thisany).getValue(), ((JAXBElement)thatany).getValue());
+                            anyEq = Objects.equals(((JAXBElement)thisany).getValue(), ((JAXBElement)thatany).getValue());
                         } else {
-                            anyEq = Utilities.equals(thisany, thatany);
+                            anyEq = Objects.equals(thisany, thatany);
                         }
                     }
                 }
             }
-            return Utilities.equals(this.actuate, that.actuate) &&
-                   Utilities.equals(this.arcrole, that.arcrole) &&
+            return Objects.equals(this.actuate, that.actuate) &&
+                   Objects.equals(this.arcrole, that.arcrole) &&
                    anyEq                                        &&
-                   Utilities.equals(this.href,    that.href)    &&
-                   Utilities.equals(this.role,    that.role)    &&
-                   Utilities.equals(this.show,    that.show)    &&
-                   Utilities.equals(this.state,   that.state)   &&
-                   Utilities.equals(this.title,   that.title)   &&
-                   Utilities.equals(this.type,    that.type);
+                   Objects.equals(this.href,    that.href)    &&
+                   Objects.equals(this.role,    that.role)    &&
+                   Objects.equals(this.show,    that.show)    &&
+                   Objects.equals(this.state,   that.state)   &&
+                   Objects.equals(this.title,   that.title)   &&
+                   Objects.equals(this.type,    that.type);
         }
         return false;
     }

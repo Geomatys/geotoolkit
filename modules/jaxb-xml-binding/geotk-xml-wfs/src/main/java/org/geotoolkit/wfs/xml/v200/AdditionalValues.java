@@ -18,6 +18,7 @@
 
 package org.geotoolkit.wfs.xml.v200;
 
+import java.util.Objects;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -132,11 +133,11 @@ public class AdditionalValues {
             final AdditionalValues that = (AdditionalValues) obj;
             boolean spa = false;
             if (this.simpleFeatureCollection != null && that.simpleFeatureCollection != null) {
-                spa = Utilities.equals(this.simpleFeatureCollection.getValue(), that.simpleFeatureCollection.getValue());
+                spa = Objects.equals(this.simpleFeatureCollection.getValue(), that.simpleFeatureCollection.getValue());
             } else if (this.simpleFeatureCollection == null && that.simpleFeatureCollection == null) {
                 spa = true;
             }
-            return spa && Utilities.equals(this.valueCollection, that.valueCollection);
+            return spa && Objects.equals(this.valueCollection, that.valueCollection);
         }
         return false;
     }

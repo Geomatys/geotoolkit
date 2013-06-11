@@ -19,6 +19,7 @@ package org.geotoolkit.csw.xml.v202;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -26,7 +27,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.csw.xml.TransactionResponse;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -124,9 +124,9 @@ public class TransactionResponseType implements TransactionResponse {
         }
         if (object instanceof TransactionResponseType) {
             final TransactionResponseType that = (TransactionResponseType) object;
-            return Utilities.equals(this.insertResult,       that.insertResult)       &&
-                   Utilities.equals(this.transactionSummary, that.transactionSummary) &&
-                   Utilities.equals(this.version,            that.version);
+            return Objects.equals(this.insertResult,       that.insertResult)       &&
+                   Objects.equals(this.transactionSummary, that.transactionSummary) &&
+                   Objects.equals(this.version,            that.version);
         }
         return false;
     }

@@ -18,12 +18,12 @@ package org.geotoolkit.gml.xml.v311;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.MultiSurface;
 import org.apache.sis.util.ComparisonMode;
-import org.geotoolkit.util.Utilities;
 import org.opengis.filter.expression.ExpressionVisitor;
 
 
@@ -132,8 +132,8 @@ public class MultiSurfaceType extends AbstractGeometricAggregateType implements 
         if (object instanceof MultiSurfaceType && super.equals(object, mode)) {
             final MultiSurfaceType that = (MultiSurfaceType) object;
 
-            return Utilities.equals(this.surfaceMember,  that.surfaceMember) &&
-                   Utilities.equals(this.surfaceMembers, that.surfaceMembers);
+            return Objects.equals(this.surfaceMember,  that.surfaceMember) &&
+                   Objects.equals(this.surfaceMembers, that.surfaceMembers);
         }
         return false;
     }

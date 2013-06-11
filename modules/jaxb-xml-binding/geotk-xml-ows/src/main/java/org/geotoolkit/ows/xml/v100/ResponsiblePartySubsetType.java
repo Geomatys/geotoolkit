@@ -16,12 +16,12 @@
  */
 package org.geotoolkit.ows.xml.v100;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ows.xml.AbstractResponsiblePartySubset;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -126,10 +126,10 @@ public class ResponsiblePartySubsetType implements AbstractResponsiblePartySubse
         }
         if (object instanceof ResponsiblePartySubsetType) {
             final ResponsiblePartySubsetType that = (ResponsiblePartySubsetType) object;
-            return Utilities.equals(this.contactInfo,    that.contactInfo)    &&
-                   Utilities.equals(this.individualName, that.individualName) &&
-                   Utilities.equals(this.positionName,   that.positionName)   &&
-                   Utilities.equals(this.role,           that.role);
+            return Objects.equals(this.contactInfo,    that.contactInfo)    &&
+                   Objects.equals(this.individualName, that.individualName) &&
+                   Objects.equals(this.positionName,   that.positionName)   &&
+                   Objects.equals(this.role,           that.role);
         }
         return false;
     }

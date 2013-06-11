@@ -16,12 +16,12 @@
  */
 package org.geotoolkit.wrs.xml.v100;
 
+import java.util.Objects;
 import javax.activation.DataHandler;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlMimeType;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -110,8 +110,8 @@ public class ExtrinsicObjectType extends org.geotoolkit.ebrim.xml.v300.Extrinsic
         }
         if (obj instanceof ExtrinsicObjectType && super.equals(obj)) {
             final ExtrinsicObjectType that = (ExtrinsicObjectType) obj;
-            return Utilities.equals(this.repositoryItem,    that.repositoryItem) &&
-                   Utilities.equals(this.repositoryItemRef, that.repositoryItemRef);
+            return Objects.equals(this.repositoryItem,    that.repositoryItem) &&
+                   Objects.equals(this.repositoryItemRef, that.repositoryItemRef);
         }
         return false;
     }

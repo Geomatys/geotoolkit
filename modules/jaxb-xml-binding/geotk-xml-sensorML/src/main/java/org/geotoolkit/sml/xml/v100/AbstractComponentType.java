@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.sml.xml.v100;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlSeeAlso;
@@ -25,7 +26,6 @@ import org.geotoolkit.sml.xml.AbstractInputs;
 import org.geotoolkit.sml.xml.AbstractOutputs;
 import org.geotoolkit.sml.xml.AbstractParameters;
 import org.apache.sis.util.ComparisonMode;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -162,9 +162,9 @@ public abstract class AbstractComponentType extends AbstractDerivableComponentTy
 
         if (object instanceof AbstractComponentType && super.equals(object, mode)) {
             final AbstractComponentType that = (AbstractComponentType) object;
-            return Utilities.equals(this.inputs,     that.inputs)     &&
-                   Utilities.equals(this.outputs,    that.outputs)    &&
-                   Utilities.equals(this.parameters, that.parameters);
+            return Objects.equals(this.inputs,     that.inputs)     &&
+                   Objects.equals(this.outputs,    that.outputs)    &&
+                   Objects.equals(this.parameters, that.parameters);
         }
         return false;
     }

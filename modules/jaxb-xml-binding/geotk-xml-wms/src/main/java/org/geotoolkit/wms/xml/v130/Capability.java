@@ -18,6 +18,7 @@ package org.geotoolkit.wms.xml.v130;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -26,7 +27,6 @@ import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.inspire.xml.vs.ExtendedCapabilitiesType;
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.wms.xml.AbstractCapability;
 import org.geotoolkit.wms.xml.AbstractLayer;
 import org.geotoolkit.wms.xml.AbstractRequest;
@@ -219,7 +219,7 @@ public class Capability implements AbstractCapability {
             if (this.extendedCapabilities != null && that.extendedCapabilities != null &&
                 this.extendedCapabilities.size() == that.extendedCapabilities.size()) {
                 for (int i = 0; i < this.extendedCapabilities.size(); i++) {
-                    if (!Utilities.equals(this.extendedCapabilities.get(i).getValue(), that.extendedCapabilities.get(i).getValue())) {
+                    if (!Objects.equals(this.extendedCapabilities.get(i).getValue(), that.extendedCapabilities.get(i).getValue())) {
                         ext = false;
                         break;
                     }
@@ -230,9 +230,9 @@ public class Capability implements AbstractCapability {
             } else  {
                 ext = false;
             }
-            return Utilities.equals(this.exception, that.exception) &&
-                   Utilities.equals(this.layer,     that.layer)     &&
-                   Utilities.equals(this.request,   that.request)   &&
+            return Objects.equals(this.exception, that.exception) &&
+                   Objects.equals(this.layer,     that.layer)     &&
+                   Objects.equals(this.request,   that.request)   &&
                    ext;
         }
         return false;

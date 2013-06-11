@@ -20,6 +20,7 @@ package org.geotoolkit.wfs.xml.v200;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -259,12 +260,12 @@ public class StoredQueryDescriptionType implements StoredQueryDescription {
         if (object instanceof StoredQueryDescriptionType) {
             final StoredQueryDescriptionType that = (StoredQueryDescriptionType) object;
 
-            return Utilities.equals(this._abstract, that._abstract) &&
-                   Utilities.equals(this.id, that.id) &&
-                   Utilities.equals(this.metadata, that.metadata) &&
-                   Utilities.equals(this.parameter, that.parameter) &&
-                   Utilities.equals(this.queryExpressionText, that.queryExpressionText) &&
-                   Utilities.equals(this.title, that.title);
+            return Objects.equals(this._abstract, that._abstract) &&
+                   Objects.equals(this.id, that.id) &&
+                   Objects.equals(this.metadata, that.metadata) &&
+                   Objects.equals(this.parameter, that.parameter) &&
+                   Objects.equals(this.queryExpressionText, that.queryExpressionText) &&
+                   Objects.equals(this.title, that.title);
             }
         return false;
     }

@@ -27,6 +27,7 @@ import java.util.LinkedHashMap;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.Locale;
+import java.util.Objects;
 import net.jcip.annotations.ThreadSafe;
 import org.apache.sis.util.collection.Containers;
 import org.apache.sis.util.iso.AbstractInternationalString;
@@ -392,7 +393,7 @@ public class MockInternationalString extends AbstractInternationalString impleme
     public boolean equals(final Object object) {
         if (object != null && object.getClass() == getClass()) {
             final MockInternationalString that = (MockInternationalString) object;
-            return Utilities.equals(this.localeMap, that.localeMap);
+            return Objects.equals(this.localeMap, that.localeMap);
         }
         return false;
     }

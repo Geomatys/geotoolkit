@@ -16,13 +16,13 @@
  */
 package org.geotoolkit.swe.xml.v101;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.swe.xml.AbstractText;
 import org.apache.sis.util.ComparisonMode;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -95,7 +95,7 @@ public class Text extends AbstractDataComponentType implements AbstractText {
         if (object instanceof Text && super.equals(object, mode)) {
             final Text that = (Text) object;
 
-            return Utilities.equals(this.value, that.value);
+            return Objects.equals(this.value, that.value);
         }
         return false;
     }

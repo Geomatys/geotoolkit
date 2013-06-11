@@ -16,10 +16,7 @@
  */
 package org.geotoolkit.swe.xml.v101;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -32,7 +29,6 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.internal.sql.table.Entry;
 import org.geotoolkit.swe.xml.AbstractDataComponent;
 import org.geotoolkit.swe.xml.DataBlockDefinition;
-import org.geotoolkit.util.Utilities;
 
 /**
  * Resultat d'une observation de type DataBlockDefinition.
@@ -231,15 +227,15 @@ import org.geotoolkit.util.Utilities;
             final Iterator<? extends JAXBElement<? extends AbstractDataComponentType>> i  = this.components.iterator();
             final Iterator<? extends JAXBElement<? extends AbstractDataComponentType>> i2 = that.components.iterator();
             while (i.hasNext() && i2.hasNext()) {
-                if (!Utilities.equals(i.next().getValue(), i2.next().getValue())) return false;
+                if (!Objects.equals(i.next().getValue(), i2.next().getValue())) return false;
             }
         } else {
             if (this.components != null || that.components != null) {
                 return false;
             }
         }
-        return Utilities.equals(this.id,         that.id) &&
-               Utilities.equals(this.encoding,   that.encoding) ;
+        return Objects.equals(this.id,         that.id) &&
+               Objects.equals(this.encoding,   that.encoding) ;
     }
     
     /**

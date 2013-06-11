@@ -17,12 +17,12 @@
 package org.geotoolkit.wms.xml.v111;
 
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.wms.xml.AbstractCapability;
 import org.geotoolkit.wms.xml.AbstractLayer;
 import org.geotoolkit.wms.xml.AbstractRequest;
@@ -158,11 +158,11 @@ public class Capability implements AbstractCapability {
             final Capability that = (Capability) object;
 
             
-            return Utilities.equals(this.exception, that.exception) &&
-                   Utilities.equals(this.layer,     that.layer)     &&
-                   Utilities.equals(this.request,   that.request)   &&
-                   Utilities.equals(this.userDefinedSymbolization,   that.userDefinedSymbolization)   &&
-                   Utilities.equals(this.vendorSpecificCapabilities,   that.vendorSpecificCapabilities);
+            return Objects.equals(this.exception, that.exception) &&
+                   Objects.equals(this.layer,     that.layer)     &&
+                   Objects.equals(this.request,   that.request)   &&
+                   Objects.equals(this.userDefinedSymbolization,   that.userDefinedSymbolization)   &&
+                   Objects.equals(this.vendorSpecificCapabilities,   that.vendorSpecificCapabilities);
         }
         return false;
     }

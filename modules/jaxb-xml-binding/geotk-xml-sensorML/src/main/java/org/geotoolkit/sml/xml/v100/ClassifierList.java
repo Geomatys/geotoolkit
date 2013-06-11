@@ -18,6 +18,7 @@ package org.geotoolkit.sml.xml.v100;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -28,7 +29,6 @@ import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.sml.xml.AbstractClassifier;
 import org.geotoolkit.sml.xml.AbstractClassifierList;
-import org.geotoolkit.util.Utilities;
 
 /**
  * <p>Java class for anonymous complex type.
@@ -174,8 +174,8 @@ public class ClassifierList implements AbstractClassifierList {
         if (object instanceof ClassifierList) {
             final ClassifierList that = (ClassifierList) object;
 
-            return Utilities.equals(this.classifier, that.classifier) &&
-                    Utilities.equals(this.id, that.id);
+            return Objects.equals(this.classifier, that.classifier) &&
+                    Objects.equals(this.id, that.id);
         }
         return false;
     }

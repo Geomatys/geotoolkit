@@ -18,6 +18,7 @@
 
 package org.geotoolkit.ogc.xml.v200;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -103,7 +104,7 @@ public abstract class AbstractQueryExpressionType {
         if (object instanceof AbstractQueryExpressionType) {
             final AbstractQueryExpressionType that = (AbstractQueryExpressionType) object;
 
-            return Utilities.equals(this.handle, that.handle);
+            return Objects.equals(this.handle, that.handle);
             }
         return false;
     }

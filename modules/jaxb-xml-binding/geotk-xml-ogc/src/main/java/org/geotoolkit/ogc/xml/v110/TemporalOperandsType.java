@@ -18,20 +18,20 @@ package org.geotoolkit.ogc.xml.v110;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
-import org.geotoolkit.util.Utilities;
 import org.opengis.filter.capability.TemporalOperand;
 
 
 /**
  * <p>Java class for TemporalOperandsType complex type.
- *
+ * 
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * 
  * <pre>
  * &lt;complexType name="TemporalOperandsType">
  *   &lt;complexContent>
@@ -43,8 +43,8 @@ import org.opengis.filter.capability.TemporalOperand;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
+ * 
+ * 
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -120,8 +120,8 @@ public class TemporalOperandsType {
 
        if (object instanceof TemporalOperandsType) {
            final TemporalOperandsType that = (TemporalOperandsType) object;
-
-            return Utilities.equals(this.temporalOperand, that.temporalOperand);
+       
+            return Objects.equals(this.temporalOperand, that.temporalOperand);
         }
         return false;
     }

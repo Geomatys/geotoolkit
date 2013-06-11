@@ -18,6 +18,7 @@ package org.geotoolkit.swe.xml.v101;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -26,7 +27,6 @@ import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.v311.BaseUnitType;
 import org.geotoolkit.gml.xml.v311.UnitDefinitionType;
 import org.geotoolkit.swe.xml.UomProperty;
-import org.geotoolkit.util.Utilities;
 
 /**
  * <p>Java class for UomPropertyType complex type.
@@ -222,18 +222,18 @@ public class UomPropertyType implements UomProperty {
         }
         if (object instanceof UomPropertyType) {
             final UomPropertyType that = (UomPropertyType) object;
-            return Utilities.equals(this.actuate,        that.actuate)        &&
-                   Utilities.equals(this.arcrole,        that.arcrole)        &&
-                   Utilities.equals(this.baseUnit,       that.baseUnit)       &&
-                   Utilities.equals(this.code,           that.code)           &&
-                   Utilities.equals(this.href,           that.href)           &&
-                   Utilities.equals(this.nilReason,      that.nilReason)      &&
-                   Utilities.equals(this.remoteSchema,   that.remoteSchema)   &&
-                   Utilities.equals(this.role,           that.role)           &&
-                   Utilities.equals(this.show,           that.show)           &&
-                   Utilities.equals(this.title,          that.title)          &&
-                   Utilities.equals(this.type,           that.type)           &&
-                   Utilities.equals(this.unitDefinition, that.unitDefinition);
+            return Objects.equals(this.actuate,        that.actuate)        &&
+                   Objects.equals(this.arcrole,        that.arcrole)        &&
+                   Objects.equals(this.baseUnit,       that.baseUnit)       &&
+                   Objects.equals(this.code,           that.code)           &&
+                   Objects.equals(this.href,           that.href)           &&
+                   Objects.equals(this.nilReason,      that.nilReason)      &&
+                   Objects.equals(this.remoteSchema,   that.remoteSchema)   &&
+                   Objects.equals(this.role,           that.role)           &&
+                   Objects.equals(this.show,           that.show)           &&
+                   Objects.equals(this.title,          that.title)          &&
+                   Objects.equals(this.type,           that.type)           &&
+                   Objects.equals(this.unitDefinition, that.unitDefinition);
         }
         return false;
     }

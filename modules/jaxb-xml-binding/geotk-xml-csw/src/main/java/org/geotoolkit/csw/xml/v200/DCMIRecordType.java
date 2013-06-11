@@ -16,10 +16,7 @@
  */
 package org.geotoolkit.csw.xml.v200;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -31,7 +28,6 @@ import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.csw.xml.DCMIRecord;
 import org.geotoolkit.dublincore.xml.AbstractSimpleLiteral;
 import org.geotoolkit.dublincore.xml.v1.elements.SimpleLiteral;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -690,18 +686,18 @@ public class DCMIRecordType extends AbstractRecordType implements DCMIRecord {
                     dcelement = false;
                 }
             }
-            return Utilities.equals(this._abstract,   that._abstract)   &&
-                   Utilities.equals(this.creator  ,   that.creator)     &&
-                   Utilities.equals(this.distributor, that.distributor) &&
-                   Utilities.equals(this.format,      that.format)      &&
-                   Utilities.equals(this.identifier,  that.identifier)  &&
-                   Utilities.equals(this.language,    that.language)    &&
-                   Utilities.equals(this.modified,    that.modified)    &&
-                   Utilities.equals(this.references,  that.references)  &&
-                   Utilities.equals(this.spatial,     that.spatial)     &&
-                   Utilities.equals(this.subject,     that.subject)     &&
-                   Utilities.equals(this.title,       that.title)       &&
-                   Utilities.equals(this.type,        that.type)        &&
+            return Objects.equals(this._abstract,   that._abstract)   &&
+                   Objects.equals(this.creator  ,   that.creator)     &&
+                   Objects.equals(this.distributor, that.distributor) &&
+                   Objects.equals(this.format,      that.format)      &&
+                   Objects.equals(this.identifier,  that.identifier)  &&
+                   Objects.equals(this.language,    that.language)    &&
+                   Objects.equals(this.modified,    that.modified)    &&
+                   Objects.equals(this.references,  that.references)  &&
+                   Objects.equals(this.spatial,     that.spatial)     &&
+                   Objects.equals(this.subject,     that.subject)     &&
+                   Objects.equals(this.title,       that.title)       &&
+                   Objects.equals(this.type,        that.type)        &&
                    dcelement;
         }
         return false;

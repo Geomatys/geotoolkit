@@ -16,12 +16,12 @@
  */
 package org.geotoolkit.swe.xml.v100;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.swe.xml.AbstractTimeProperty;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -94,7 +94,7 @@ public class TimePropertyType implements AbstractTimeProperty {
 
         if (object instanceof TimePropertyType && super.equals(object)) {
             final TimePropertyType  that = (TimePropertyType) object;
-            return Utilities.equals(this.time, that.time);
+            return Objects.equals(this.time, that.time);
         }
         return false;
     }

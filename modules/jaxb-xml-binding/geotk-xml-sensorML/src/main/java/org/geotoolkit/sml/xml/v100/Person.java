@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.sml.xml.v100;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -26,7 +27,6 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.sml.xml.AbstractPerson;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -215,13 +215,13 @@ public class Person implements AbstractPerson {
 
         if (object instanceof Person && super.equals(object)) {
             final Person that = (Person) object;
-            return Utilities.equals(this.affiliation,     that.affiliation)       &&
-                   Utilities.equals(this.email,           that.email)             &&
-                   Utilities.equals(this.id,              that.id)                &&
-                   Utilities.equals(this.name,            that.name)              &&
-                   Utilities.equals(this.phoneNumber,     that.phoneNumber)       &&
-                   Utilities.equals(this.surname,         that.surname)           &&
-                   Utilities.equals(this.userID,          that.userID);
+            return Objects.equals(this.affiliation,     that.affiliation)       &&
+                   Objects.equals(this.email,           that.email)             &&
+                   Objects.equals(this.id,              that.id)                &&
+                   Objects.equals(this.name,            that.name)              &&
+                   Objects.equals(this.phoneNumber,     that.phoneNumber)       &&
+                   Objects.equals(this.surname,         that.surname)           &&
+                   Objects.equals(this.userID,          that.userID);
         }
         return false;
     }
