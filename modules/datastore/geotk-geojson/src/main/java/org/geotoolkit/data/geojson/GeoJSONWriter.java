@@ -225,35 +225,53 @@ public final class GeoJSONWriter {
     }
 
     /**
-     * Convert a given object into GeoJSON object.
+     * Convert a given object into GeoJSON object with indentFactor 2 {@see toGeoJSON}
+     *
      * @param source An object to convert. For now, only {@link org.opengis.feature.Feature}, {@link FeatureCollection} and {@link org.opengis.geometry.Geometry}
      *               objects are managed.
+     * @param source
+     * @return A string representation of the generated GeoJSON.
+     * @throws UnconvertibleObjectException
+     */
+    public static String toGeoJSON(Object source) throws UnconvertibleObjectException {
+        return GeoJSONWriter.toGeoJSON(source, 2);
+    }
+
+    /**
+     * Convert a given object into GeoJSON object.
+     *
+     * @param source An object to convert. For now, only {@link org.opengis.feature.Feature}, {@link FeatureCollection} and {@link org.opengis.geometry.Geometry}
+     *               objects are managed.
+     * @param indentFactor the integer for the indentFactor of the {@see JSONObject.toString}. If null the indent factor is not specify
      * @return A string representation of the generated GeoJSON.
      * @throws org.geotoolkit.util.converter.NonconvertibleObjectException If the input object is of unknown type.
      */
-    public static String toGeoJSON(Object source) throws UnconvertibleObjectException {
+    public static String toGeoJSON(Object source, Integer indentFactor) throws UnconvertibleObjectException {
         final Map<String, Object> jsonMap;
-        if(source instanceof FeatureCollection) {
+        if (source instanceof FeatureCollection) {
             jsonMap = new LinkedHashMap<>();
             final FeatureCollection fColl = (FeatureCollection) source;
             jsonMap.put("type", "FeatureCollection");
             jsonMap.put("totalResults", fColl.size());
 
-            final ArrayList<Map<String, Object> > features = new ArrayList<>(fColl.size());
+            final ArrayList<Map<String, Object>> features = new ArrayList<>(fColl.size());
             for (Iterator<Feature> it = fColl.iterator(); it.hasNext(); ) {
                 features.add(featureToGeoJSON(it.next()));
             }
             jsonMap.put("features", features);
 
-        } else if(source instanceof Feature) {
+        } else if (source instanceof Feature) {
             jsonMap = featureToGeoJSON((Feature) source);
         } else if (source instanceof Geometry) {
             jsonMap = geometryToGeoJSON(source);
         } else {
-            throw new UnconvertibleObjectException("No JSON conversion found for object type : "+source.getClass());
+            throw new UnconvertibleObjectException("No JSON conversion found for object type : " + source.getClass());
         }
 
-        return JSONObject.fromObject(jsonMap).toString(2);
+        if (indentFactor != null) {
+            return JSONObject.fromObject(jsonMap).toString(indentFactor.intValue());
+        }
+        return JSONObject.fromObject(jsonMap).toString();
     }
 
 }
