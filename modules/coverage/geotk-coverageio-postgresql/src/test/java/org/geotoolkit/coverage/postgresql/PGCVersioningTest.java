@@ -37,7 +37,7 @@ import org.geotoolkit.coverage.CoverageStoreFactory;
 import org.geotoolkit.coverage.CoverageStoreFinder;
 import org.geotoolkit.coverage.GridMosaic;
 import org.geotoolkit.coverage.Pyramid;
-import org.geotoolkit.coverage.PyramidalModel;
+import org.geotoolkit.coverage.PyramidalCoverageReference;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.storage.DataStoreException;
@@ -128,7 +128,7 @@ public class PGCVersioningTest {
         upperLeft.setOrdinate(1, +180);
         List<Version> versions;
         Version version;
-        PyramidalModel cref;
+        PyramidalCoverageReference cref;
         Pyramid pyramid;
         GridMosaic mosaic;
         GridCoverage2D coverage;
@@ -143,7 +143,7 @@ public class PGCVersioningTest {
         calendar.setTimeInMillis(0);
         final Date date1 = calendar.getTime();        
         version = vc.createVersion(date1);
-        cref = (PyramidalModel) store.getCoverageReference(name, version);
+        cref = (PyramidalCoverageReference) store.getCoverageReference(name, version);
         assertNotNull(cref);
         //we need to create a pyramid otherwise the version not really be created
         pyramid = cref.createPyramid(CRS_4326);
@@ -162,7 +162,7 @@ public class PGCVersioningTest {
         calendar.setTimeInMillis(50000);
         final Date date2 = calendar.getTime();
         version = vc.createVersion(date2);
-        cref = (PyramidalModel) store.getCoverageReference(name, version);
+        cref = (PyramidalCoverageReference) store.getCoverageReference(name, version);
         assertNotNull(cref);
         //we need to create a pyramid otherwise the version not really be created
         pyramid = cref.createPyramid(CRS_4326);
@@ -181,7 +181,7 @@ public class PGCVersioningTest {
         calendar.setTimeInMillis(20000);
         final Date date3 = calendar.getTime();
         version = vc.createVersion(date3);
-        cref = (PyramidalModel) store.getCoverageReference(name, version);
+        cref = (PyramidalCoverageReference) store.getCoverageReference(name, version);
         assertNotNull(cref);
         //we need to create a pyramid otherwise the version not really be created
         pyramid = cref.createPyramid(CRS_4326);
@@ -199,19 +199,19 @@ public class PGCVersioningTest {
                 
         
         //try accesing different version ---------------------------------------
-        cref = (PyramidalModel) store.getCoverageReference(name);
+        cref = (PyramidalCoverageReference) store.getCoverageReference(name);
         //we should have the blue image
         coverage = (GridCoverage2D)cref.createReader().read(cref.getImageIndex(), null);
         assertImageColor(coverage.getRenderedImage(), Color.BLUE);
         
         //grab by version
-        cref = (PyramidalModel) store.getCoverageReference(name,versions.get(0));
+        cref = (PyramidalCoverageReference) store.getCoverageReference(name,versions.get(0));
         coverage = (GridCoverage2D)cref.createReader().read(cref.getImageIndex(), null);
         assertImageColor(coverage.getRenderedImage(), Color.RED);
-        cref = (PyramidalModel) store.getCoverageReference(name,versions.get(1));
+        cref = (PyramidalCoverageReference) store.getCoverageReference(name,versions.get(1));
         coverage = (GridCoverage2D)cref.createReader().read(cref.getImageIndex(), null);
         assertImageColor(coverage.getRenderedImage(), Color.GREEN);
-        cref = (PyramidalModel) store.getCoverageReference(name,versions.get(2));
+        cref = (PyramidalCoverageReference) store.getCoverageReference(name,versions.get(2));
         coverage = (GridCoverage2D)cref.createReader().read(cref.getImageIndex(), null);
         assertImageColor(coverage.getRenderedImage(), Color.BLUE);
         
@@ -223,10 +223,10 @@ public class PGCVersioningTest {
         assertEquals(versions.get(0).getDate().getTime(),0);
         assertEquals(versions.get(1).getDate().getTime(),50000);
         
-        cref = (PyramidalModel) store.getCoverageReference(name,versions.get(0));
+        cref = (PyramidalCoverageReference) store.getCoverageReference(name,versions.get(0));
         coverage = (GridCoverage2D)cref.createReader().read(cref.getImageIndex(), null);
         assertImageColor(coverage.getRenderedImage(), Color.RED);
-        cref = (PyramidalModel) store.getCoverageReference(name,versions.get(1));
+        cref = (PyramidalCoverageReference) store.getCoverageReference(name,versions.get(1));
         coverage = (GridCoverage2D)cref.createReader().read(cref.getImageIndex(), null);
         assertImageColor(coverage.getRenderedImage(), Color.BLUE);
         

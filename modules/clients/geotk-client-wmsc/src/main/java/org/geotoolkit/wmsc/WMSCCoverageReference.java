@@ -37,7 +37,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class WMSCCoverageReference extends WMSCoverageReference implements PyramidalModel{
+public class WMSCCoverageReference extends WMSCoverageReference implements PyramidalCoverageReference{
 
     private final PyramidSet set;
     

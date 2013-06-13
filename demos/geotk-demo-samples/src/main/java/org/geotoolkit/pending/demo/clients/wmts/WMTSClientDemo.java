@@ -3,7 +3,7 @@ package org.geotoolkit.pending.demo.clients.wmts;
 
 import java.net.URL;
 import org.geotoolkit.coverage.CoverageReference;
-import org.geotoolkit.coverage.PyramidalModel;
+import org.geotoolkit.coverage.PyramidalCoverageReference;
 import org.geotoolkit.gui.swing.go2.JMap2DFrame;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
@@ -48,7 +48,7 @@ public class WMTSClientDemo {
                     new DefaultStyleFactory().style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER), 
                     n.getLocalPart());
             
-            PyramidalModel model = (PyramidalModel) ref;
+            PyramidalCoverageReference model = (PyramidalCoverageReference) ref;
             System.out.println(model.getPyramidSet());
             
             layer.setDescription(SF.description(n.getLocalPart(), n.getLocalPart()));

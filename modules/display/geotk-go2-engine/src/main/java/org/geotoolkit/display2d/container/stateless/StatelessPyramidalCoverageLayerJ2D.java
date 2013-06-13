@@ -29,7 +29,6 @@ import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.imageio.ImageReader;
 import org.geotoolkit.coverage.*;
 import org.geotoolkit.coverage.finder.CoverageFinder;
@@ -38,7 +37,6 @@ import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.grid.GridEnvelope2D;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
-import org.geotoolkit.data.FeatureStoreListener;
 import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
@@ -53,7 +51,6 @@ import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.display2d.style.CachedRule;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.geotoolkit.display2d.style.renderer.DefaultRasterSymbolizerRenderer;
-import org.geotoolkit.factory.Hints;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.map.CoverageMapLayer;
@@ -83,7 +80,7 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
     
     protected CoverageStoreListener.Weak weakStoreListener = new CoverageStoreListener.Weak(this);
     
-    private final PyramidalModel model;
+    private final PyramidalCoverageReference model;
     private final double tolerance;
     private final CoverageFinder coverageFinder;
 
@@ -91,7 +88,7 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
     public StatelessPyramidalCoverageLayerJ2D(final J2DCanvas canvas, final CoverageMapLayer layer){
         super(canvas, layer);
         this.coverageFinder = CoverageFinderFactory.createDefaultCoverageFinder();
-        model = (PyramidalModel)layer.getCoverageReference();
+        model = (PyramidalCoverageReference)layer.getCoverageReference();
         tolerance = 0.1; // in % , TODO use a flag to allow change value
         this.weakStoreListener.registerSource(layer.getCoverageReference());
     }
@@ -99,7 +96,7 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
     public StatelessPyramidalCoverageLayerJ2D(final J2DCanvas canvas, final CoverageMapLayer layer, CoverageFinder coverageFinder){
         super(canvas, layer);
         this.coverageFinder = coverageFinder;
-        model = (PyramidalModel)layer.getCoverageReference();
+        model = (PyramidalCoverageReference)layer.getCoverageReference();
         tolerance = 0.1; // in % , TODO use a flag to allow change value
         this.weakStoreListener.registerSource(layer.getCoverageReference());
     }

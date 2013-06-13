@@ -21,7 +21,7 @@ import java.awt.Dimension;
 import java.awt.geom.Point2D;
 import org.geotoolkit.coverage.GridMosaic;
 import org.geotoolkit.coverage.Pyramid;
-import org.geotoolkit.coverage.PyramidalModel;
+import org.geotoolkit.coverage.PyramidalCoverageReference;
 import org.geotoolkit.display.exception.PortrayalException;
 import org.geotoolkit.display2d.service.CanvasDef;
 import org.geotoolkit.display2d.service.SceneDef;
@@ -70,7 +70,7 @@ public final class MapcontextPyramidProcess extends AbstractProcess {
         final Dimension tileSize = value(IN_TILE_SIZE, inputParameters);
         final double[] scales = value(IN_SCALES, inputParameters);
         Integer nbpainter = value(IN_NBPAINTER, inputParameters);
-        final PyramidalModel container = value(IN_CONTAINER, inputParameters);
+        final PyramidalCoverageReference container = value(IN_CONTAINER, inputParameters);
         
         if(nbpainter == null){
             nbpainter = Runtime.getRuntime().availableProcessors();

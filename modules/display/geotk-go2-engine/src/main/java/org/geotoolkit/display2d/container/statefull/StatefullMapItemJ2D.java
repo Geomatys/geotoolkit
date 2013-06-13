@@ -28,7 +28,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import org.geotoolkit.coverage.CoverageReference;
-import org.geotoolkit.coverage.PyramidalModel;
+import org.geotoolkit.coverage.PyramidalCoverageReference;
 import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.primitive.SearchArea;
@@ -143,7 +143,7 @@ public class StatefullMapItemJ2D<T extends MapItem> extends AbstractGraphicJ2D i
         }else if (child instanceof CoverageMapLayer){
             final CoverageMapLayer layer = (CoverageMapLayer) child;
             final CoverageReference ref = layer.getCoverageReference();
-            if(ref != null && ref instanceof PyramidalModel){
+            if(ref != null && ref instanceof PyramidalCoverageReference){
                 //pyramidal model, we can improve rendering
                 //TODO not ready yet
                 g2d = new StatefullPyramidalCoverageLayerJ2D(getCanvas(), this, (CoverageMapLayer)child);

@@ -60,7 +60,7 @@ public class StatefullPyramidalCoverageLayerJ2D extends StatefullMapLayerJ2D<Cov
     
     protected CoverageStoreListener.Weak weakStoreListener = new CoverageStoreListener.Weak(this);
     
-    private final PyramidalModel model;
+    private final PyramidalCoverageReference model;
     private final double tolerance;
     private final CoverageFinder coverageFinder;
     private final Map<Point3d,StatefullTileJ2D> gtiles = new TreeMap<Point3d, StatefullTileJ2D>(new Comparator<Point3d>() {
@@ -89,7 +89,7 @@ public class StatefullPyramidalCoverageLayerJ2D extends StatefullMapLayerJ2D<Cov
     public StatefullPyramidalCoverageLayerJ2D(final J2DCanvas canvas, final StatefullMapItemJ2D parent, final CoverageMapLayer layer) {
         super(canvas, parent, layer);
         this.coverageFinder = CoverageFinderFactory.createDefaultCoverageFinder();
-        model = (PyramidalModel)layer.getCoverageReference();
+        model = (PyramidalCoverageReference)layer.getCoverageReference();
         tolerance = 0.1; // in % , TODO use a flag to allow change value
         weakStoreListener.registerSource(layer.getCoverageReference());
     }
@@ -97,7 +97,7 @@ public class StatefullPyramidalCoverageLayerJ2D extends StatefullMapLayerJ2D<Cov
     public StatefullPyramidalCoverageLayerJ2D(final J2DCanvas canvas, final StatefullMapItemJ2D parent, final CoverageMapLayer layer, CoverageFinder coverageFinder) {
         super(canvas, parent, layer);
         this.coverageFinder = coverageFinder;
-        model = (PyramidalModel)layer.getCoverageReference();
+        model = (PyramidalCoverageReference)layer.getCoverageReference();
         tolerance = 0.1; // in % , TODO use a flag to allow change value
         weakStoreListener.registerSource(layer.getCoverageReference());
     }

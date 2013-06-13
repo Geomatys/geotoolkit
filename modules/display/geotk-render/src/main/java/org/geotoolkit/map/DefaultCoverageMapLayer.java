@@ -19,7 +19,7 @@ package org.geotoolkit.map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.geotoolkit.coverage.CoverageReference;
-import org.geotoolkit.coverage.PyramidalModel;
+import org.geotoolkit.coverage.PyramidalCoverageReference;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
@@ -130,9 +130,9 @@ public class DefaultCoverageMapLayer extends AbstractMapLayer implements Coverag
      */
     @Override
     public Envelope getBounds() {
-        if(ref != null && ref instanceof PyramidalModel){
+        if(ref != null && ref instanceof PyramidalCoverageReference){
             try {
-                return ((PyramidalModel)ref).getPyramidSet().getEnvelope();
+                return ((PyramidalCoverageReference)ref).getPyramidSet().getEnvelope();
             } catch (DataStoreException ex) {
                 Logger.getLogger(DefaultCoverageMapLayer.class.getName()).log(Level.SEVERE, null, ex);
             }

@@ -84,7 +84,7 @@ public class PyramidWriterTest {
     @Test
     public void testSingleGridOverride() throws DataStoreException{
         final MPCoverageStore store = new MPCoverageStore();
-        final PyramidalModel ref = (PyramidalModel) store.create(NAME);
+        final PyramidalCoverageReference ref = (PyramidalCoverageReference) store.create(NAME);
         final Pyramid pyramid = ref.createPyramid(CRS84);
         final GridMosaic mosaic = ref.createMosaic(pyramid.getId(), new Dimension(1, 1), new Dimension(360, 180), UL84, 1);
         ref.writeTile(pyramid.getId(), mosaic.getId(), 0, 0, createImage(360, 180, Color.BLACK));
@@ -118,7 +118,7 @@ public class PyramidWriterTest {
     @Test
     public void testQuadGridOverride() throws DataStoreException{
         final MPCoverageStore store = new MPCoverageStore();
-        final PyramidalModel ref = (PyramidalModel) store.create(NAME);
+        final PyramidalCoverageReference ref = (PyramidalCoverageReference) store.create(NAME);
         final Pyramid pyramid = ref.createPyramid(CRS84);
         final GridMosaic mosaic = ref.createMosaic(pyramid.getId(), new Dimension(4, 2), new Dimension(9, 9), UL84, 10);
         for(int y=0;y<2;y++){
@@ -156,7 +156,7 @@ public class PyramidWriterTest {
     @Test
     public void testPartialQuadGridOverride() throws DataStoreException{
         final MPCoverageStore store = new MPCoverageStore();
-        final PyramidalModel ref = (PyramidalModel) store.create(NAME);
+        final PyramidalCoverageReference ref = (PyramidalCoverageReference) store.create(NAME);
         final Pyramid pyramid = ref.createPyramid(CRS84);
         final GridMosaic mosaic = ref.createMosaic(pyramid.getId(), new Dimension(4, 2), new Dimension(9, 9), UL84, 10);
         for(int y=0;y<2;y++){
@@ -209,7 +209,7 @@ public class PyramidWriterTest {
     @Test
     public void testPartialQuadGridOverride2() throws DataStoreException, IOException{
         final MPCoverageStore store = new MPCoverageStore();
-        final PyramidalModel ref = (PyramidalModel) store.create(NAME);
+        final PyramidalCoverageReference ref = (PyramidalCoverageReference) store.create(NAME);
         final Pyramid pyramid = ref.createPyramid(CRS84);
         final GridMosaic mosaic1 = ref.createMosaic(pyramid.getId(), new Dimension(4, 2), new Dimension(9, 9), UL84, 10);
         for(int y=0;y<2;y++){
@@ -298,7 +298,7 @@ public class PyramidWriterTest {
     @Test
     public void testPartialQuadGridOverrideFlip() throws DataStoreException, IOException, NoSuchAuthorityCodeException, FactoryException{
         final MPCoverageStore store = new MPCoverageStore();
-        final PyramidalModel ref = (PyramidalModel) store.create(NAME);
+        final PyramidalCoverageReference ref = (PyramidalCoverageReference) store.create(NAME);
         final Pyramid pyramid = ref.createPyramid(EPSG4326);
         final GridMosaic mosaic1 = ref.createMosaic(pyramid.getId(), new Dimension(2, 4), new Dimension(9, 9), UL4326, 10);
         for(int y=0;y<4;y++){
@@ -387,7 +387,7 @@ public class PyramidWriterTest {
     @Test
     public void testPartialQuadGridOverrideFlip2() throws DataStoreException, IOException, NoSuchAuthorityCodeException, FactoryException{
         final MPCoverageStore store = new MPCoverageStore();
-        final PyramidalModel ref = (PyramidalModel) store.create(NAME);
+        final PyramidalCoverageReference ref = (PyramidalCoverageReference) store.create(NAME);
         final Pyramid pyramid = ref.createPyramid(CRS84);
         final GridMosaic mosaic1 = ref.createMosaic(pyramid.getId(), new Dimension(4, 2), new Dimension(9, 9), UL84, 10);
         for(int y=0;y<2;y++){

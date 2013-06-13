@@ -4,7 +4,7 @@ package org.geotoolkit.pending.demo.clients.ignrm;
 import java.net.URL;
 import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.coverage.CoverageStoreFinder;
-import org.geotoolkit.coverage.PyramidalModel;
+import org.geotoolkit.coverage.PyramidalCoverageReference;
 import org.geotoolkit.gui.swing.go2.JMap2DFrame;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.MapBuilder;
@@ -45,8 +45,8 @@ public class IGN_GEOPORTAIL_WMTS {
         
         for(Name n : store.getNames()){            
             final CoverageReference cr = store.getCoverageReference(n);
-            if(cr instanceof PyramidalModel){
-                PyramidalModel model = (PyramidalModel) cr;
+            if(cr instanceof PyramidalCoverageReference){
+                PyramidalCoverageReference model = (PyramidalCoverageReference) cr;
                 System.out.println(model.getPyramidSet());
             }
             

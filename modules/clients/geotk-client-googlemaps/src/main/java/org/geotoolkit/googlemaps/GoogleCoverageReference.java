@@ -36,7 +36,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class GoogleCoverageReference extends AbstractCoverageReference implements PyramidalModel{
+public class GoogleCoverageReference extends AbstractCoverageReference implements PyramidalCoverageReference{
 
     private final StaticGoogleMapsServer server;
     private final GoogleMapsPyramidSet set;

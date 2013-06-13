@@ -76,7 +76,7 @@ public class PyramidalModelWriter extends GridCoverageWriter {
      *                                  is not an instance of {@link PyramidalModel}.
      */
     public PyramidalModelWriter(final CoverageReference reference) {
-        if (!(reference instanceof PyramidalModel)) {
+        if (!(reference instanceof PyramidalCoverageReference)) {
             throw new IllegalArgumentException("Given coverage reference should be an instance of PyramidalModel!");
         }
         this.reference = reference;
@@ -138,7 +138,7 @@ public class PyramidalModelWriter extends GridCoverageWriter {
         
         //to fill value table : see resample.
         final int nbBand        = image.getSampleModel().getNumBands();        
-        final PyramidalModel pm = (PyramidalModel)reference;
+        final PyramidalCoverageReference pm = (PyramidalCoverageReference)reference;
         
         final BlockingQueue<Runnable> tileQueue;
         try {
@@ -165,7 +165,7 @@ public class PyramidalModelWriter extends GridCoverageWriter {
     
     private static class ByTileQueue extends AbstractQueue<Runnable> implements BlockingQueue<Runnable> {
 
-        private final PyramidalModel model;
+        private final PyramidalCoverageReference model;
         private final Envelope requestedEnvelope;
         private final CoordinateReferenceSystem crsCoverage2D;
         private final RenderedImage sourceImage;
@@ -198,7 +198,7 @@ public class PyramidalModelWriter extends GridCoverageWriter {
         private int idx = -1;
         private int idy = -1;
         
-        private ByTileQueue(PyramidalModel model, Envelope requestedEnvelope, 
+        private ByTileQueue(PyramidalCoverageReference model, Envelope requestedEnvelope, 
                 CoordinateReferenceSystem crsCoverage2D, RenderedImage sourceImage, int nbBand, MathTransform srcCRSToGrid) throws DataStoreException{
             this.model = model;
             this.requestedEnvelope = requestedEnvelope;
@@ -390,7 +390,7 @@ public class PyramidalModelWriter extends GridCoverageWriter {
     
     private static class TileUpdater implements Runnable{
 
-        private final PyramidalModel pm;
+        private final PyramidalCoverageReference pm;
         private final Pyramid pyramid;
         private final GridMosaic mosaic;
         private final int idx;
@@ -410,7 +410,7 @@ public class PyramidalModelWriter extends GridCoverageWriter {
         private final int tileWidth;
         private final int tileHeight;
 
-        public TileUpdater(PyramidalModel pm, GridMosaic mosaic, int idx, int idy, 
+        public TileUpdater(PyramidalCoverageReference pm, GridMosaic mosaic, int idx, int idy, 
                 int mosAreaX, int mosAreaY, int mosAreaMaxX, int mosAreaMaxY, 
                 double mosULX, double mosULY, MathTransform crsDestToSrcGrid,
                 RenderedImage image, int nbBand, double res) {

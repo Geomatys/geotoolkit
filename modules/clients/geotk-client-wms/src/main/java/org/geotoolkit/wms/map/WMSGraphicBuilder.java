@@ -24,7 +24,7 @@ import java.net.MalformedURLException;
 import java.util.*;
 import javax.imageio.ImageIO;
 import org.geotoolkit.coverage.CoverageReference;
-import org.geotoolkit.coverage.PyramidalModel;
+import org.geotoolkit.coverage.PyramidalCoverageReference;
 import org.geotoolkit.display.exception.PortrayalException;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.container.stateless.StatelessCoverageLayerJ2D;
@@ -64,7 +64,7 @@ public class WMSGraphicBuilder implements GraphicBuilder<GraphicJ2D>{
         
         final CoverageReference cr = cml.getCoverageReference();
         final GraphicJ2D gra;
-        if(cr instanceof PyramidalModel){
+        if(cr instanceof PyramidalCoverageReference){
             gra = new StatelessPyramidalCoverageLayerJ2D((J2DCanvas)canvas, cml);
         }else{
             gra = new StatelessCoverageLayerJ2D((J2DCanvas)canvas, cml,true);

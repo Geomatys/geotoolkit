@@ -34,7 +34,7 @@ import org.geotoolkit.coverage.CoverageStoreFactory;
 import org.geotoolkit.coverage.CoverageStoreFinder;
 import org.geotoolkit.coverage.GridMosaic;
 import org.geotoolkit.coverage.Pyramid;
-import org.geotoolkit.coverage.PyramidalModel;
+import org.geotoolkit.coverage.PyramidalCoverageReference;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.storage.DataStoreException;
 import org.junit.Test;
@@ -120,7 +120,7 @@ public class PGPyramidTest {
         final Dimension dimension = new Dimension(20, 20);
         upperLeft.setOrdinate(0, -90);
         upperLeft.setOrdinate(1, +180);
-        PyramidalModel cref;
+        PyramidalCoverageReference cref;
         Pyramid pyramid;
         GridMosaic mosaic;
         BufferedImage image;
@@ -129,7 +129,7 @@ public class PGPyramidTest {
         store.create(name);
         
         //create version 1 -----------------------------------------------------
-        cref = (PyramidalModel) store.getCoverageReference(name);
+        cref = (PyramidalCoverageReference) store.getCoverageReference(name);
         assertNotNull(cref);
         
         //test create pyramid

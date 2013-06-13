@@ -17,7 +17,7 @@
 package org.geotoolkit.process.coverage.pyramid;
 
 import java.awt.Dimension;
-import org.geotoolkit.coverage.PyramidalModel;
+import org.geotoolkit.coverage.PyramidalCoverageReference;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
@@ -83,9 +83,9 @@ public final class MapcontextPyramidDescriptor extends AbstractProcessDescriptor
     /**
      * Mandatory - Container which will receive the tiles.
      */
-    public static final ParameterDescriptor<PyramidalModel> IN_CONTAINER =
-            new DefaultParameterDescriptor<PyramidalModel>("container",
-            "The container which will receive the tiles.",PyramidalModel.class,null,true);
+    public static final ParameterDescriptor<PyramidalCoverageReference> IN_CONTAINER =
+            new DefaultParameterDescriptor<PyramidalCoverageReference>("container",
+            "The container which will receive the tiles.",PyramidalCoverageReference.class,null,true);
     
     /**
      * Optional - Rendering hints.
@@ -98,9 +98,9 @@ public final class MapcontextPyramidDescriptor extends AbstractProcessDescriptor
             new DefaultParameterDescriptorGroup(NAME+"InputParameters",
                 IN_MAPCONTEXT,IN_EXTENT,IN_TILE_SIZE,IN_SCALES,IN_NBPAINTER,IN_CONTAINER,IN_HINTS);
 
-    public static final ParameterDescriptor<PyramidalModel> OUT_CONTAINER =
-            new DefaultParameterDescriptor<PyramidalModel>("outContainer",
-            "The container which will receive the tiles.",PyramidalModel.class,null,true);
+    public static final ParameterDescriptor<PyramidalCoverageReference> OUT_CONTAINER =
+            new DefaultParameterDescriptor<PyramidalCoverageReference>("outContainer",
+            "The container which will receive the tiles.",PyramidalCoverageReference.class,null,true);
     
     public static final ParameterDescriptorGroup OUTPUT_DESC =
             new DefaultParameterDescriptorGroup(NAME+"OutputParameters", OUT_CONTAINER);

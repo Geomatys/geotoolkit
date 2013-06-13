@@ -50,7 +50,7 @@ public abstract class PyramidalModelStoreTest {
     private CoverageStore store;
     private DirectPosition corner;
     private CoordinateReferenceSystem crs;
-    private PyramidalModel ref;
+    private PyramidalCoverageReference ref;
 
     protected abstract CoverageStore createStore() throws Exception ;
 
@@ -68,7 +68,7 @@ public abstract class PyramidalModelStoreTest {
         store = createStore();
         crs = CRS.decode("EPSG:3395");
         final DefaultName name = new DefaultName("test");
-        ref = (PyramidalModel) store.create(name);
+        ref = (PyramidalCoverageReference) store.create(name);
 
         corner = new GeneralDirectPosition(crs);
         corner.setOrdinate(0, 100);

@@ -34,7 +34,7 @@ import java.util.logging.Logger;
 /**
  * @author Johann Sorel (Geomatys)
  */
-public abstract class AbstractPyramidalModel extends AbstractCoverageReference implements PyramidalModel {
+public abstract class AbstractPyramidalModel extends AbstractCoverageReference implements PyramidalCoverageReference {
 
     protected final CoverageStore store;
     protected final Name name;

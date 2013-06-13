@@ -36,7 +36,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class WMTSCoverageReference extends AbstractCoverageReference implements PyramidalModel{
+public class WMTSCoverageReference extends AbstractCoverageReference implements PyramidalCoverageReference{
 
     private final WebMapTileServer server;
     private final Name name;

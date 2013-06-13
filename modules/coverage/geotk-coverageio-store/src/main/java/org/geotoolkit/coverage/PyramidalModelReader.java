@@ -94,13 +94,13 @@ public class PyramidalModelReader extends GridCoverageReader{
         return ref;
     }
 
-    private PyramidalModel getPyramidalModel(){
-        return (PyramidalModel)ref;
+    private PyramidalCoverageReference getPyramidalModel(){
+        return (PyramidalCoverageReference)ref;
     }
 
     @Override
     public void setInput(Object input) throws CoverageStoreException {
-        if(!(input instanceof CoverageReference) || !(input instanceof PyramidalModel)){
+        if(!(input instanceof CoverageReference) || !(input instanceof PyramidalCoverageReference)){
             throw new CoverageStoreException("Unsupported input type, can only be CoverageReference implementing PyramidalModel.");
         }
         this.ref = (CoverageReference) input;

@@ -177,8 +177,8 @@ public class PyramidCoverageBuilder {
 
         //one coverageReference for each reader.
         final CoverageReference cv = coverageStore.create(coverageName);
-        if (!(cv instanceof PyramidalModel)) throw new IllegalArgumentException("CoverageStore parameter not instance of PyramidalModel");
-        final PyramidalModel pm    = (PyramidalModel) cv;
+        if (!(cv instanceof PyramidalCoverageReference)) throw new IllegalArgumentException("CoverageStore parameter not instance of PyramidalModel");
+        final PyramidalCoverageReference pm    = (PyramidalCoverageReference) cv;
         
         for (Envelope outEnv : resolution_Per_Envelope.keySet()) {
             final CoordinateReferenceSystem crs = outEnv.getCoordinateReferenceSystem();
@@ -233,7 +233,7 @@ public class PyramidCoverageBuilder {
      * @throws TransformException
      * @throws DataStoreException 
      */
-    private void resample (PyramidalModel pm, String pyramidID, GridCoverage2D gridCoverage2D, double[] scaleLevel, 
+    private void resample (PyramidalCoverageReference pm, String pyramidID, GridCoverage2D gridCoverage2D, double[] scaleLevel, 
             DirectPosition upperLeft, Envelope envDest, int widthAxis, int heightAxis, double[] fillValue) 
             throws NoninvertibleTransformException, FactoryException, TransformException, DataStoreException {
         
@@ -316,8 +316,8 @@ public class PyramidCoverageBuilder {
         if (!(gg instanceof GridGeometry2D)) throw new IllegalArgumentException("GridGeometry not instance of GridGeometry2D");
 
         final CoverageReference cv  = coverageStore.create(coverageName);
-        if (!(cv instanceof PyramidalModel)) throw new IllegalArgumentException("CoverageStore parameter not instance of PyramidalModel");
-        final PyramidalModel pm     = (PyramidalModel) cv;
+        if (!(cv instanceof PyramidalCoverageReference)) throw new IllegalArgumentException("CoverageStore parameter not instance of PyramidalModel");
+        final PyramidalCoverageReference pm     = (PyramidalCoverageReference) cv;
 
         //Image
         final RenderedImage baseImg = ((GridCoverage2D)gridCoverage).getRenderedImage();

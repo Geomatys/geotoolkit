@@ -54,7 +54,7 @@ import org.geotoolkit.coverage.GridMosaic;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.Pyramid;
 import org.geotoolkit.coverage.PyramidSet;
-import org.geotoolkit.coverage.PyramidalModel;
+import org.geotoolkit.coverage.PyramidalCoverageReference;
 import org.geotoolkit.coverage.PyramidalModelReader;
 import org.geotoolkit.coverage.PyramidalModelWriter;
 import org.geotoolkit.coverage.io.GridCoverageReader;
@@ -79,7 +79,7 @@ import org.opengis.util.FactoryException;
  * @author Johann Sorel (Geomatys)
  * @author Cédric Briançon (Geomatys)
  */
-public class PGCoverageReference extends AbstractCoverageReference implements PyramidalModel{
+public class PGCoverageReference extends AbstractCoverageReference implements PyramidalCoverageReference{
 
     private final PGCoverageStore store;
     private final PGPyramidSet pyramidSet;
