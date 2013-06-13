@@ -202,6 +202,7 @@ public final class DataBaseModel {
                     Column.TABLE_SCHEM,
                     Column.TABLE_NAME,
                     Column.COLUMN_NAME,
+                    Column.COLUMN_SIZE,
                     Column.DATA_TYPE,
                     Column.TYPE_NAME,
                     Column.IS_NULLABLE,
@@ -549,11 +550,13 @@ public final class DataBaseModel {
         final String schemaName     = (String) columnSet.get(Column.TABLE_SCHEM);
         final String tableName      = (String) columnSet.get(Column.TABLE_NAME);
         final String columnName     = (String) columnSet.get(Column.COLUMN_NAME);
+        final int columnSize        = (Integer)columnSet.get(Column.COLUMN_SIZE);
         final int columnDataType    = (Integer)columnSet.get(Column.DATA_TYPE);
         final String columnTypeName = (String) columnSet.get(Column.TYPE_NAME);
         final String columnNullable = (String) columnSet.get(Column.IS_NULLABLE);
 
         atb.setName(columnName);
+        atb.setLength(columnSize);
         adb.setName(columnName);
 
         try {
